@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.0" xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
+  <persistence-unit name="NBNCore-PU" transaction-type="RESOURCE_LOCAL">
+    <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+    <class>uk.org.nbn.nbnv.jpa.nbncore.DateType</class>
+    <class>uk.org.nbn.nbnv.jpa.nbncore.DatasetType</class>
+    <class>uk.org.nbn.nbnv.jpa.nbncore.Survey</class>
+    <class>uk.org.nbn.nbnv.jpa.nbncore.TaxonDataset</class>
+    <class>uk.org.nbn.nbnv.jpa.nbncore.Taxon</class>
+    <class>uk.org.nbn.nbnv.jpa.nbncore.DatasetUpdateFrequency</class>
+    <class>uk.org.nbn.nbnv.jpa.nbncore.Resolution</class>
+    <class>uk.org.nbn.nbnv.jpa.nbncore.TaxonObservationPublic</class>
+    <class>uk.org.nbn.nbnv.jpa.nbncore.Recorder</class>
+    <class>uk.org.nbn.nbnv.jpa.nbncore.Sample</class>
+    <class>uk.org.nbn.nbnv.jpa.nbncore.Dataset</class>
+    <class>uk.org.nbn.nbnv.jpa.nbncore.TaxonObservation</class>
+    <class>uk.org.nbn.nbnv.jpa.nbncore.Organisation</class>
+    <class>uk.org.nbn.nbnv.jpa.nbncore.Feature</class>
+    <class>uk.org.nbn.nbnv.jpa.nbncore.KnownLanguage</class>
+    <class>uk.org.nbn.nbnv.jpa.nbncore.Site</class>
+    <properties>
+      <property name="javax.persistence.jdbc.url" value="jdbc:sqlserver://nbnsql-b.nerc-lancaster.ac.uk;databaseName=NBNCore"/>
+      <property name="javax.persistence.jdbc.password" value="Ecowaswashere9"/>
+      <property name="javax.persistence.jdbc.driver" value="com.microsoft.sqlserver.jdbc.SQLServerDriver"/>
+      <property name="javax.persistence.jdbc.user" value="NBNImporter"/>
+    </properties>
+  </persistence-unit>
+</persistence>
