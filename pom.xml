@@ -1,0 +1,57 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+	<!-- nbn solution -->
+
+    <groupId>uk.org.nbn</groupId>
+    <artifactId>nbnv</artifactId>
+    <version>0.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <name>${project.artifactId}-${project.version}</name>
+
+    <properties>
+        <scala.version>2.9.2</scala.version>
+    </properties>
+
+    <modules>
+        <module>crud</module>
+        <module>importer</module>
+    </modules>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- Inter-Module dependencies -->
+            <!-- 
+			-->
+            <dependency>
+                <groupId>uk.org.nbn</groupId>
+                <artifactId>nbnv-crud</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.scala-lang</groupId>
+                <artifactId>scala-library</artifactId>
+                <version>${scala.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <repositories>
+        <repository>
+            <id>scala-tools.org</id>
+            <name>Scala Tools Maven2 Repository</name>
+            <url>http://scala-tools.org/repo-releases</url>
+        </repository>
+    </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>scala-tools.org</id>
+            <name>Scala Tools Maven2 Repository</name>
+            <url>http://scala-tools.org/repo-releases</url>
+        </pluginRepository>
+    </pluginRepositories>
+
+</project>
