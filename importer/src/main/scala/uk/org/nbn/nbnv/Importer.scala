@@ -6,14 +6,12 @@ import javax.persistence.EntityManager
 
 object Importer {
 
-  val datasetKey = "TESTJUTD"
+  val datasetKey = "TESTPETE"
   val datasetTitle = "JUnit Test dataset"
 
   def main(args: Array[String]) {
     println("Hello, world!")
-
-    val em = createEntityManager()
-
+    connectToDatabase()
     println("Goodbye, world!")
   }
 
@@ -23,16 +21,15 @@ object Importer {
     f.createEntityManager()
   }
 
-//  def blah() {
-//    println("deleteTaxonDataset");
-//
-//    val _em.getTransaction().begin()
-//    TaxonDatasetLoader.deleteTaxonDataset(_em, _datasetKey);
-//    _em.getTransaction().commit();
-//
+  def connectToDatabase() {
+    val em = createEntityManager()
+    em.getTransaction().begin()
+    TaxonDatasetLoader.upsertTaxonDataset(em, datasetKey, datasetTitle);
+    em.getTransaction().commit()
+
 //    TaxonDataset td = _em.find(TaxonDataset.class, _datasetKey);
 //    assertNull("TaxonDataset entry not removed", td);
 //    Dataset d = _em.find(Dataset.class, _datasetKey);
 //    assertNull("Dataset entry not removed", d)
-//  }
+  }
 }
