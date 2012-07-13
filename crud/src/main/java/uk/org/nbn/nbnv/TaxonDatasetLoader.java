@@ -1,22 +1,11 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package uk.org.nbn.nbnv;
 
 import java.util.Date;
 import javax.persistence.EntityManager;
 import uk.org.nbn.nbnv.jpa.nbncore.*;
 
-/**
- * A dataset loading class for TaxonDataset metadata.
- * 
- * @author Paul Gilbertson
- * @version %I%, %G%
- * @since   1.0
- */
 public class TaxonDatasetLoader {
-    
+
     /**
      * This function adds a new dataset entry with minimal data.
      * 
