@@ -8,29 +8,23 @@ public class TaxonDatasetLoader {
 
     /**
      * This function adds a new dataset entry with minimal data.
-     * 
-     * Currently the following fields are hard coded :-
-     *      Organisation : Organisation 1
-     *      DatasetType : 'T' - a taxon dataset
-     *      UpdateFrequency : '012' - unknown
-     *      publicResolution : Unknown
-     *      maxResolution : Unknown
-     * 
      * @param em            EntityManager with an open transaction
      * @param datasetKey    Eight character dataset identifier
      * @param datasetTitle  Dataset title
      */
     public static void upsertTaxonDataset(EntityManager em, String datasetKey, String datasetTitle) {
+        // insert the top level object (it's a table-per-type model so need two tables)
+        // allowRecordValidation = true, recordCount = 0 -- what do these mean?
         TaxonDataset td = new TaxonDataset(datasetKey, true, 0);
         Dataset d = new Dataset(datasetKey, true, new Date(), new Date(), datasetTitle);
         
         Organisation o = em.find(Organisation.class, 1);
-        DatasetType dt = em.find(DatasetType.class, 'T');
+        DatasetType taxonDatasetType = em.find(DatasetType.class, 'T');
         DatasetUpdateFrequency uf = em.find(DatasetUpdateFrequency.class, "012");
         Resolution res = em.find(Resolution.class, (short)0);
         
         d.setDatasetProvider(o);
-        d.setDatasetTypeKey(dt);
+        d.setDatasetTypeKey(taxonDatasetType);
         d.setUpdateFrequency(uf);
         td.setDataset(d);
         td.setMaxResolution(res);
@@ -49,5 +43,26 @@ public class TaxonDatasetLoader {
     public static void deleteTaxonDataset(EntityManager em, String datasetKey) {
         em.remove(em.find(TaxonDataset.class, datasetKey));
         em.remove(em.find(Dataset.class, datasetKey));
+    }
+
+    public static void upsertTaxonObservation(
+            int observationID,
+            int sampleID,
+            String observationKey,
+            Date dateStart,
+            Date dateEnd,
+            String dateType,
+            int siteID,
+            int featureID,
+            String taxonVersionKey,
+            boolean absenceRecord,
+            boolean sensitiveRecord,
+            int recordersID,
+            int determinerID) {
+
+        // todo...
+//        TaxonObservation o = new TaxonObservation(
+//                observationID,
+//                observationKey ...);
     }
 }
