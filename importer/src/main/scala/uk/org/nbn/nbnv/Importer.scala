@@ -17,7 +17,7 @@ object Importer {
       println("parsed record " + record.recordKey)
     }
   }
-  
+
   def createEntityManager() : EntityManager = {
     val u = new PersistenceUtility()
     val f = u.createEntityManagerFactory()

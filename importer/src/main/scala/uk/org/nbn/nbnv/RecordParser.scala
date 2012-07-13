@@ -1,10 +1,13 @@
 package uk.org.nbn.nbnv
 
-class RecordParser {
-  def parse(line: String):Record = {
-    val splat = line.split("\t", -1).map(s => s.trim()) // -1 to retain empty strings!
-    val format = new java.text.SimpleDateFormat("dd/MM/yyyy")
+import java.text.ParseException
 
+class RecordParser {
+  val format = new java.text.SimpleDateFormat("dd/MM/yyyy")
+  def parse(line: String) = {
+    val splat = line
+      .split("\t", -1) // -1 to retain empty strings!
+      .map(s => s.trim)
     new Record(
       recordKey = splat(0),
       surveyKey = splat(1),
@@ -12,17 +15,23 @@ class RecordParser {
       startDate = format.parse(splat(3)),
       endDate = format.parse(splat(4)),
       dateType = splat(5),
-      taxonVersionKey = "",
-      sensitive = false,
-      siteKey = "",
-      siteName = "",
-      projection = "",
-      gridReference = "",
-      precision = "",
-      recorder = "",
-      determiner = "",
-      sampleMethod = "",
-      comment = "",
-      abundance = "")
+      taxonVersionKey = splat(6),
+      sensitive = parseBool(splat(7)),
+      siteKey = splat(8),
+      siteName = splat(9),
+      projection = splat(10),
+      gridReference = splat(11),
+      precision = splat(12),
+      recorder = splat(13),
+      determiner = splat(14),
+      sampleMethod = splat(15),
+      comment = splat(16),
+      abundance = splat(17))
+  }
+
+  def parseBool(s: String) = s match {
+    case "T" => true
+    case "F" => false
+    case _  => throw new ParseException("Bad", 0)
   }
 }
