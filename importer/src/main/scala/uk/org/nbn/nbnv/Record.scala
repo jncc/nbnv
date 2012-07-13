@@ -1,11 +1,13 @@
 package uk.org.nbn.nbnv
 
+import java.util.Date
+
 class Record(
   val recordKey: String,
   val surveyKey: String,
-  val sampleKey	: String,
-  val startDate: String,
-  val endDate: String,
+  val sampleKey: String,
+  val startDate: Date,
+  val endDate: Date,
   val dateType: String,
   val taxonVersionKey: String,
   val sensitive: Boolean,
