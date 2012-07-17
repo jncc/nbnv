@@ -7,7 +7,7 @@ class RecordParser {
   def parse(line: String) = {
     val splat = line
       .split("\t", -1) // -1 to retain empty strings!
-      .map(s => s.trim)
+      .map(_.trim)
     new Record(
       recordKey = splat(0),
       surveyKey = splat(1),

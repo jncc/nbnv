@@ -12,15 +12,17 @@ object Importer {
   val dataPath = "C:\\Work\\nbnv-example-dataset\\TESTDS01.txt"
 
   def main(args: Array[String]) {
-    val em = createEntityManager
-    em.getTransaction.begin
-    for (line <- Source.fromFile(dataPath).getLines.drop(1).take(10)) {
-      val r = new RecordParser().parse(line)
-      println("parsed record " + r.recordKey)
-      upsertRecord(em, r)
-      println("upserted record " + r.recordKey)
+    val em = createEntityManager()
+    em.getTransaction.begin()
+    for (line <- Source.fromFile(dataPath).getLines().drop(1).take(10)) {
+      // parse the record from the text line
+      val record = new RecordParser().parse(line)
+      println("parsed record " + record.recordKey)
+      // stick the record in the database
+      upsertRecord(em, record)
+      println("upserted record " + record.recordKey)
     }
-    em.getTransaction.commit
+    //em.getTransaction.commit
   }
 
   def upsertRecord(em: EntityManager, r: Record) {
