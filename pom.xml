@@ -20,6 +20,7 @@
         <module>crud</module>
         <module>importer</module>
         <module>rs</module>
+        <module>api</module>
     </modules>
 
     <dependencyManagement>
@@ -59,6 +60,5 @@
             <url>http://scala-tools.org/repo-releases</url>
         </pluginRepository>
     </pluginRepositories>
-
-
 </project>
+
