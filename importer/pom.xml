@@ -24,11 +24,17 @@
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-library</artifactId>
         </dependency>
+		<dependency>
+			<groupId>org.scalatest</groupId>
+			<artifactId>scalatest_2.8.1</artifactId>
+			<version>1.8</version>
+            <scope>test</scope>
+		</dependency>			
 	</dependencies>
 
     <build>
         <sourceDirectory>src/main/scala</sourceDirectory>
-
+        <testSourceDirectory>src/test/scala</testSourceDirectory>
         <plugins>
             <plugin>
                 <groupId>org.scala-tools</groupId>
@@ -49,6 +55,11 @@
                         <phase>test-compile</phase>
                     </execution>
                 </executions>
+                <!--<configuration>-->
+                    <!--<includes>-->
+                        <!--<include>**/*Suite.class</include>-->
+                    <!--</includes>-->
+                <!--</configuration>-->
             </plugin>
         </plugins>
     </build>
