@@ -10,6 +10,7 @@ import java.io.Reader;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
+import uk.org.nbn.nbnv.api.dao.designation.DesignationCategoryMapper;
 import uk.org.nbn.nbnv.api.dao.designation.DesignationMapper;
 
 /**
@@ -26,6 +27,7 @@ public class MyBatisConnectionFactory {
             if (sqlSessionFactory == null) {
                 sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
                 sqlSessionFactory.getConfiguration().addMapper(DesignationMapper.class);
+                sqlSessionFactory.getConfiguration().addMapper(DesignationCategoryMapper.class);
             }
         }
         catch (FileNotFoundException fnfe) {
