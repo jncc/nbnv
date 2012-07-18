@@ -1,0 +1,13 @@
+
+
+manually produce a meta.xml file
+
+run all scalatests from idea
+run scalatests from maven
+ask gbif whether dwca reader is tested with large (?) files (it makes a copies of them)
+
+
+Use EML for our metadata
+http://knb.ecoinformatics.org/software/eml/
+paul's EML example:
+view-source:http://data.nbn.org.uk/export/gbif/GA000466.xml

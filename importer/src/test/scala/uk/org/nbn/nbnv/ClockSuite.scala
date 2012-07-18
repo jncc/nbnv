@@ -28,6 +28,4 @@ class ClockSuite extends FunSuite with ShouldMatchers {
     d should not be (birthday)
 
   }
-
-
 }
