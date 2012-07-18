@@ -9,4 +9,26 @@
             30
         </session-timeout>
     </session-config>
+ 
+    <display-name>NBN V Portal</display-name>
+ 
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+ 
+    <servlet>
+        <servlet-name>portal</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+ 
+    <servlet-mapping>
+        <servlet-name>portal</servlet-name>
+        <url-pattern>/*</url-pattern>
+    </servlet-mapping>
+ 
+    <welcome-file-list>
+        <welcome-file>home.jsp</welcome-file>
+    </welcome-file-list>
+ 
 </web-app>
