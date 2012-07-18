@@ -52,6 +52,11 @@
             <version>1.13</version>
         </dependency>
         <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-client</artifactId>
+            <version>1.13</version>
+        </dependency>
+        <dependency>
             <artifactId>spring-context</artifactId>
             <groupId>org.springframework</groupId>
             <type>jar</type>
