@@ -7,9 +7,9 @@ import io.Source
 
 object Importer {
 
-  val datasetKey = "TESTPETE"
-  val datasetTitle = "JUnit Test dataset"
-  val dataPath = "C:\\Work\\nbnv-example-dataset\\TESTDS01.txt"
+  val datasetKey = "TESTfelix"
+  val datasetTitle = "JUnit Test dataset arg"
+  val dataPath = "C:\\Working\\nbntest\\TESTDS01.txt"
 
   def main(args: Array[String]) {
     val em = createEntityManager

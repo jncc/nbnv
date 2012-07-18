@@ -24,6 +24,11 @@
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-library</artifactId>
         </dependency>
+		<dependency>
+		  <groupId>org.gbif</groupId>
+		  <artifactId>dwca-reader</artifactId>
+		  <version>1.11</version>
+		</dependency>
 	</dependencies>
 
     <build>
