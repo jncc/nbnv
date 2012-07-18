@@ -53,6 +53,10 @@
             <name>Scala Tools Maven2 Repository</name>
             <url>http://scala-tools.org/repo-releases</url>
         </repository>
+		<repository>
+		  <id>gbif-all</id>
+		  <url>http://repository.gbif.org/content/groups/gbif</url>
+		</repository>
     </repositories>
     <pluginRepositories>
         <pluginRepository>
