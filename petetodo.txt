@@ -2,10 +2,16 @@
 
 manually produce a meta.xml file
 
+scalafy the reader code
+read in dwca in scala using gbif reader
+read in EML metadata
+save in database
 run all scalatests from idea
 run scalatests from maven
 ask gbif whether dwca reader is tested with large (?) files (it makes a copies of them)
-
+set up a logging framework similar to BARS importer
+set up dependency injection
+use scala 2.9.1 to fix my console - what's the problem in netbeans exactly? 
 
 Use EML for our metadata
 http://knb.ecoinformatics.org/software/eml/
