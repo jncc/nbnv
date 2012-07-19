@@ -4,8 +4,6 @@
  */
 package uk.org.nbn.nbnv.api.model;
 
-import java.util.List;
-
 /**
  *
  * @author Administrator
@@ -14,12 +12,14 @@ public class DesignationCategory {
     private int designationCategoryID;
     private String label;
     private String description;
+    private int sortOrder;
 
-    public DesignationCategory(int designationCategoryID, String label, String description) {
+    public DesignationCategory(int designationCategoryID, String label, String description, int sortOrder) {
         super();
         this.designationCategoryID = designationCategoryID;
         this.label = label;
         this.description = description;
+        this.sortOrder = sortOrder;
     }
     
     public DesignationCategory() { }
@@ -63,5 +63,19 @@ public class DesignationCategory {
      */
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    /**
+     * @return the sortOrder
+     */
+    public int getSortOrder() {
+        return sortOrder;
+    }
+
+    /**
+     * @param sortOrder the sortOrder to set
+     */
+    public void setSortOrder(int sortOrder) {
+        this.sortOrder = sortOrder;
     }
 }

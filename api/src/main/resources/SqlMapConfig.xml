@@ -6,7 +6,7 @@
             <transactionManager type="JDBC"/>
             <dataSource type="POOLED">
                 <property name="driver" value="com.microsoft.sqlserver.jdbc.SQLServerDriver"/>
-                <property name="url" value="jdbc:sqlserver://nbnsql-b.nerc-lancaster.ac.uk;databaseName=NBNCore"/>
+                <property name="url" value="jdbc:sqlserver://nbnsql-b.nerc-lancaster.ac.uk;databaseName=NBNWarehouse"/>
                 <property name="username" value="NBNImporter"/>
                 <property name="password" value="Ecowaswashere9"/>
             </dataSource>

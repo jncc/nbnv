@@ -14,10 +14,10 @@ import uk.org.nbn.nbnv.api.model.Designation;
  * @author Administrator
  */
 public interface DesignationMapper {
-    final String SELECT_ALL = "SELECT * FROM Designation";
-    final String SELECT_BY_ID = "SELECT * FROM Designation WHERE designationID = #{id}";
-    final String SELECT_BY_CATEGORYID = "SELECT * FROM Designation WHERE designationCategoryID = #{id}";
-    final String SELECT_BY_ID_AND_CATEGORYID = "SELECT * FROM Designation WHERE designationID = #{desigID} AND designationCategoryID = #{id}";
+    final String SELECT_ALL = "SELECT * FROM DesignationData";
+    final String SELECT_BY_ID = "SELECT * FROM DesignationData WHERE designationID = #{id}";
+    final String SELECT_BY_CATEGORYID = "SELECT * FROM DesignationData WHERE designationCategoryID = #{id}";
+    final String SELECT_BY_ID_AND_CATEGORYID = "SELECT * FROM DesignationData WHERE designationID = #{desigID} AND designationCategoryID = #{id}";
     
     @Select(SELECT_ALL)
     List<Designation> selectAll();
