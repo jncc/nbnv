@@ -1,6 +1,6 @@
-<html>
-    <head></head>
-    <body>
+<#include "master.ftl">
+<@master title="Designation Categories">
+
         Test message: ${dc.label}
-    </body>
-</html>
+
+</@master>
