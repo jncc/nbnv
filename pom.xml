@@ -21,6 +21,7 @@
         <module>importer</module>
         <module>rs</module>
         <module>api</module>
+        <module>api.model</module>
         <module>portal</module>
     </modules>
 
