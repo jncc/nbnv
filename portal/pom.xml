@@ -3,7 +3,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-	<!-- nbn rs library -->
+	<!-- nbn portal library -->
 
     <parent>
         <groupId>uk.org.nbn</groupId>
@@ -11,7 +11,7 @@
         <version>0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>nbnv-api</artifactId>
+    <artifactId>nbnv-portal</artifactId>
     <packaging>war</packaging>
     
     <name>${project.artifactId}-${project.version}</name>
@@ -20,7 +20,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <netbeans.hint.deploy.server>Tomcat</netbeans.hint.deploy.server>
     </properties>
-
+	
     <build>
         <plugins>
             <plugin>
@@ -37,34 +37,35 @@
 	
     <dependencies>
         <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+            <version>3.1.2.RELEASE</version>
+        </dependency>
+        <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-core</artifactId>
-            <version>1.12</version>
+            <version>1.13</version>
         </dependency>
         <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-json</artifactId>
-            <version>1.12</version>
+            <version>1.13</version>
         </dependency>
         <dependency>
-            <groupId>com.google.inject</groupId>
-            <artifactId>guice</artifactId>
-            <version>3.0</version>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-client</artifactId>
+            <version>1.13</version>
         </dependency>
         <dependency>
-            <groupId>org.mybatis</groupId>
-            <artifactId>mybatis</artifactId>
-            <version>3.1.1</version>
+            <artifactId>spring-context</artifactId>
+            <groupId>org.springframework</groupId>
+            <type>jar</type>
+            <version>3.1.2.RELEASE</version>
         </dependency>
         <dependency>
-            <groupId>com.sun.jersey.contribs</groupId>
-            <artifactId>jersey-guice</artifactId>
-            <version>1.12</version>
-        </dependency>
-        <dependency>
-            <groupId>com.microsoft.sqlserver</groupId>
-            <artifactId>sqljdbc4</artifactId>
-            <version>4.0</version>
+            <groupId>org.freemarker</groupId>
+            <artifactId>freemarker</artifactId>
+            <version>2.3.19</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
