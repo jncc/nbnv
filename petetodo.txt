@@ -1,10 +1,14 @@
 
-
 manually produce a meta.xml file
-
+manually produce an EML metadata file
 scalafy the reader code
+
 read in dwca in scala using gbif reader
-read in EML metadata
+save in database
+
+look at the metadata standard in NXF and work out the things we need to import
+(which all should be in the EML)
+read in EML metadata - use scala XML stuff? or gbif reader
 save in database
 run all scalatests from idea
 run scalatests from maven
@@ -13,7 +17,9 @@ set up a logging framework similar to BARS importer
 set up dependency injection
 use scala 2.9.1 to fix my console - what's the problem in netbeans exactly? 
 
+
 Use EML for our metadata
 http://knb.ecoinformatics.org/software/eml/
 paul's EML example:
 view-source:http://data.nbn.org.uk/export/gbif/GA000466.xml
+

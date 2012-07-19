@@ -21,12 +21,23 @@ class Reader {
       }
       println("\n")
 
+      val metadataLocation = archive.getMetadataLocation
+      println(metadataLocation)
+
       // read some values (but i wonder why they're using "iteratorRaw"??)
       for (record <- archive.iteratorRaw) {
         println("occurrenceID: " + record.core.value(DwcTerm.occurrenceID))
         // in our case we know there should be exactly one extension record ("head" is first in a list)
         val extensionRecord = record.extension("http://uknbn.org/terms/NBNExchange").head
-        println("  dateType: " + extensionRecord.value("http://uknbn.org/terms/dateType"))
+        for (extensionTerm <- extensionRecord.terms) {
+          println(extensionTerm.simpleName())
+        }
+//        println("  dateType: " + extensionRecord.value("http://uknbn.org/terms/dateType"))
+//        println("  sensitiveOccurrence: " + extensionRecord.value("http://uknbn.org/terms/dateType"))
+//        println("  dateType: " + extensionRecord.value("http://uknbn.org/terms/dateType"))
+//        println("  dateType: " + extensionRecord.value("http://uknbn.org/terms/dateType"))
+
+
       }
     }
     catch {
