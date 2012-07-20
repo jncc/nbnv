@@ -31,9 +31,9 @@ public class DesignationCategoryResourceTest extends JerseyTest {
     }
 
     public DesignationCategoryResourceTest() throws Exception {
-        super(new WebAppDescriptor.Builder("uk.org.nbn.nbnv.api").clientConfig(cc).build()); 
+        super(new WebAppDescriptor.Builder("uk.org.nbn.nbnv.api", "org.codehaus.jackson.jaxrs", "org.nbn.nbnv.api.dao").clientConfig(cc).build()); 
     }
-/*    
+    
     @Test
     public void categoryListTest() {
         WebResource webResource = resource();
@@ -42,11 +42,13 @@ public class DesignationCategoryResourceTest extends JerseyTest {
         Assert.assertTrue(dc.size() > 0);
     }
 
+    // TODO: Learn to use mocking to create a self contained test
     @Test
     public void categoryTest() {
         WebResource webResource = resource();
         DesignationCategory dc = webResource.path("designationCategories").path("20").accept(MediaType.APPLICATION_JSON).get(DesignationCategory.class);
+        Assert.assertEquals("Nat Legislation", dc.getLabel());
         //Assert.assertTrue(dc.size() > 0);
     }
-*/
+
 }

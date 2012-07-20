@@ -20,7 +20,6 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <netbeans.hint.deploy.server>Tomcat</netbeans.hint.deploy.server>
-        <jersey.version>1.13</jersey.version>
     </properties>
 
     <build>
@@ -75,7 +74,7 @@
         </dependency>
         <dependency>
             <groupId>com.sun.jersey.jersey-test-framework</groupId>
-            <artifactId>jersey-test-framework-inmemory</artifactId>
+            <artifactId>jersey-test-framework-grizzly2</artifactId>
             <version>${jersey.version}</version>
             <scope>test</scope>
         </dependency>
