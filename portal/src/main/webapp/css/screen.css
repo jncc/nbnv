@@ -1,0 +1,144 @@
+@import "compass/css3/border-radius";
+@import "compass/utilities/general/clearfix";
+
+body {
+    padding-right: 20px;
+    padding-left: 20px;
+    background: #E1E9F0;
+    color: #393733;
+    font-family: Arial,Helvetica,Sans-serif;
+    font-size: 83%;
+    margin-top: 0;
+}
+
+#nbn-page-content, #nbn-page-footer, #nbn-page-header, #nbn-page-copyright {
+    width: 1024px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 10px;
+}
+
+#nbn-page-content, #nbn-page-footer, #nbn-page-header {
+    background-color: white;
+}
+
+/*--------Header-----*/
+
+#nbn-page-header{
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    margin-top: 8px;
+}
+
+#nbn-page-header h1 {
+    background-image: url("/portal/img/logo.jpg");
+    background-repeat: no-repeat;
+    display: block;
+    padding: 15px;
+    text-indent: -9999px;
+}
+
+#nbn-page-header ul {
+    width: 100%;
+    float:left;
+    position:relative;
+    padding:0;
+    background-color:#ffffff;
+    background-image: url("/portal/img/nav_bg.png");
+    background-repeat: repeat-x;
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+}
+
+#nbn-page-header li {
+    height:35px;
+    float: left;
+    list-style:none;
+}
+
+#nbn-page-header li:hover {
+    background-color: #47C0D7;
+}
+
+#nbn-page-header li:hover:first-child {
+    background-color: #47C0D7;
+    border-bottom-left-radius: 5px;
+    border-top-left-radius: 5px;
+}
+
+#nbn-page-header li:hover:last-child-child {
+    background-color: #47C0D7;
+    border-bottom-right-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+#nbn-page-header li a {
+    float:left;
+    color:#ffffff;
+    padding: 9px 16px 12px 16px;
+    text-decoration: none;
+}
+/*--------End header-----*/
+
+/*--------Content-----*/
+#nbn-page-content{
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+#nbn-page-content p.greyBlock{
+    margin-left: 10%;
+    margin-right: 10%;
+    padding: 4px;
+    background-color: #F7F7F7;
+    border: 1px solid silver;
+}
+
+#nbn-page-content div.greyBlock{
+    margin-left: 10%;
+    margin-right: 10%;
+    padding: 4px;
+    background-color: #F7F7F7;
+    border: 1px solid silver;
+}
+
+#nbn-page-content h4 {
+    font-family: Arial, Helvetica, Sans-serif;
+    font-size: 1.3em;
+    font-weight: bold;
+    color: #007BA6;
+    margin: 5px 0px 10px 0px;
+}
+
+/*--------End content-----*/
+
+/*--------Footer-----*/
+#nbn-page-footer {
+    border-radius: 5px;
+    margin: 1;
+    font-size: 80%;
+    height: 30px;
+    background-color: #ffffff; 
+    color: #8696A4;
+    margin-top: 8px;
+}
+
+#nbn-page-footer a:link, a:visited { 
+    color: #8696A4; 
+}
+
+.cookieStatement {
+    float: left;
+    width: 400px;
+}
+
+.developedBy { 
+    float: right;   
+}
+
+#nbn-page-copyright{
+    font-size: 80%;
+    color: #8696A4;
+}
+/*--------End footer-----*/
+
