@@ -12,35 +12,22 @@ class MetadataReader {
   def GetMetaData(metadataFile:File) : Metadata = {
     val data = XML.loadFile(metadataFile)
     
-    val datasetKey = (data \\ "alternateIdentifier").text
-    val datsetTitle = (data \\ "title").text
-    val description = (data \\ "abstract" \ "para").text
+    val dataset = (data \ "dataset")
     
-    val constraints = (data \\ "intellectualRights" \ "para")
+    val constraints = (dataset \ "intellectualRights" \ "para")
                        .text.replace("Access Constraints:", "")
                        .split("Use Constraints:");
                        
-    val accessConstraints = constraints(0).trim
-    val useConstratints = constraints(1).trim
-    
-    val geographicCoverage = (data \\ "geographicCoverage" \ "geographicDescription").text
-    
-    val purpose = (data \\ "purpose" \ "para").text
-    
-    val method = (data \\ "methods" \ "methodStep" \ "description" \ "para").text
-    
-    val quality = (data \\ "methods" \ "qualityControl" \ "description" \ "para").text
-    
-    new Metadata(
-      datasetKey,
-      datsetTitle,
-      description,
-      accessConstraints,
-      useConstratints,
-      geographicCoverage,
-      purpose,
-      method,
-      quality
-    )
+    new Metadata {
+      val datasetKey = (dataset \ "alternateIdentifier").text
+      val datsetTitle = (dataset \ "title").text
+      val description = (dataset \ "abstract" \ "para").text
+      val accessConstraints = constraints(0).trim
+      val useConstraints = constraints(1).trim
+      val geographicCoverage = (dataset  \ "coverage" \ "geographicCoverage" \ "geographicDescription").text 
+      val purpose = (dataset \ "purpose" \ "para").text
+      val method = (dataset \ "methods" \  "methodStep" \ "description" \ "para").text
+      val quality = (dataset \ "methods" \ "qualityControl" \ "description" \ "para" ).text
+    }
   }
 }

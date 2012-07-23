@@ -28,15 +28,13 @@ object Importer {
     val metadataReader = new MetadataReader()
     val metadata = metadataReader.GetMetaData(archive.getMetadataLocationFile)
     
-    println("har har")
-    
     for (record <- archive.iteratorRaw) {
       println("upserting record " + record.core.value(DwcTerm.occurrenceID))
       // in our case we know there should be exactly one extension record ("head" is first in a list)
       val extensionRecord = record.extension("http://uknbn.org/terms/NBNExchange").head
       upsertRecord(em, record, extensionRecord)
     }
-    //em.getTransaction.commit
+    em.getTransaction.commit
   }
 
   def upsertRecord(em: EntityManager, r: StarRecord, er: Record) {
@@ -63,7 +61,7 @@ object Importer {
     o.setSensitiveRecord(false)
     o.setSiteID(site)
     o.setTaxonVersionKey(taxon)
-    //em.merge(o)
+    em.merge(o)
   }
 
   def createEntityManager() = {
