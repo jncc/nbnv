@@ -12,6 +12,7 @@ import java.util.List;
  */
 public class UploadItemResults {
     private List<String> results;
+    private List<String> headers;
 
     /**
      * @return the results
@@ -25,5 +26,19 @@ public class UploadItemResults {
      */
     public void setResults(List<String> results) {
         this.results = results;
+    }
+
+    /**
+     * @return the headers
+     */
+    public List<String> getHeaders() {
+        return headers;
+    }
+
+    /**
+     * @param headers the headers to set
+     */
+    public void setHeaders(List<String> headers) {
+        this.headers = headers;
     }
 }

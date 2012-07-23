@@ -4,6 +4,7 @@
  */
 package uk.org.nbn.nbnv.importer.ui;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import uk.org.nbn.nbnv.importer.ui.model.UploadItem;
 import uk.org.nbn.nbnv.importer.ui.model.UploadItemResults;
+import uk.org.nbn.nbnv.importer.ui.parser.NXFParser;
 
 /**
  *
@@ -44,8 +46,16 @@ public class UploadController {
         messages.add("File size: " + Long.toString(uploadItem.getFileData().getSize()));
         messages.add("Content Type: " + uploadItem.getFileData().getContentType());
         messages.add("Storage description: " + uploadItem.getFileData().getStorageDescription());
-        
+
         UploadItemResults model = new UploadItemResults();
+
+        try {
+            NXFParser parser = new NXFParser();
+            model.setHeaders(parser.parseHeaders(uploadItem.getFileData().getFileItem()));
+        } catch (IOException ex) {
+            messages.add("EXCEPTION: Parse exception: " + ex.getMessage());
+        }
+        
         model.setResults(messages);
         
         return new ModelAndView("uploadSuccess", "model", model);

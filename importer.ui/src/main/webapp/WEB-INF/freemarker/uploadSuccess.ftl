@@ -10,5 +10,11 @@
                 <li>${result}</li>
             </#list>
         </ul>
+        <p>Headers:</p>
+        <ul>
+            <#list model.headers as header>
+                <li>${header}</li>
+            </#list>
+        </ul>
     </body>
 </html>
