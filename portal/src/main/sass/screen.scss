@@ -1,0 +1,84 @@
+@import "compass/reset";
+@import "compass/css3/border-radius";
+@import "_nbn-colour-scheme";
+@import "_header";
+@import "_footer";
+
+body {
+    padding-right: 20px;
+    padding-left: 20px;
+    background: $backgroundPageColour;
+    color: $pageTextColour;
+    font-family: Arial,Helvetica,Sans-serif;
+    font-size: 83%;
+    margin-top: 0;
+    
+    #nbn-page-content, #nbn-page-header { 
+        background-color: $backgroundContentColor; 
+        color: $textColour;
+    }
+    
+    #nbn-page-content, #nbn-page-footer, #nbn-page-header, #nbn-page-copyright {
+        width: 1004px;
+        padding: 10px;
+        margin: 0 auto;
+    }
+    
+    #nbn-page-header { 
+        @include border-top-radius(5px); 
+        margin-top:10px;
+    }
+    
+    #nbn-page-content { @include border-bottom-radius(5px); }
+    #nbn-page-footer { @include border-radius(5px); }
+    
+    #nbn-page-content, #nbn-page-footer { margin-bottom: 7px; }
+    #nbn-page-footer, #nbn-page-copyright { font-size: 0.85em; }
+    
+    #nbn-page-copyright { padding: 20px 15px 30px 15px; }
+    
+
+    a:link, a:visited {
+        text-decoration: underline;
+        font-weight: normal;
+        color: $majorColour;
+    }
+
+    ul, ol {
+        margin-left: 10px;
+        list-style-type: circle;
+    }
+
+    h1 {
+        font-family: Trebuchet MS, Georgia, Sans-Serif;
+        font-size: 2.0em;
+        font-weight: lighter;
+        color: $majorColour;
+        margin-bottom: 20px;
+        line-height: 40px;
+        margin-top: 0;
+
+    }
+    
+    h2 {
+        color: $majorColour;
+        font-size: 1.5em;
+        text-decoration: none;
+    }
+
+    h3 {
+        font-size: 1.1em;
+        font-weight: lighter;
+        color: $majorColour;
+        margin: 10px 0px 5px 0px;
+        text-decoration: none;
+    }
+
+    h4 {
+        font-size: 1.3em;
+        color:$majorColour;
+        margin: 5px 0px 10px 0px;
+    }
+    
+    p { margin-top: 1em;}
+}
