@@ -25,8 +25,10 @@ object Importer {
 
     val archive = ArchiveFactory.openArchive(new File("c:\\working\\uk-dwca.zip"), new File("c:\\working\\deleteme"))
     
-    val metaImporter = new MetadataImporter()
-    metaImporter.Read(archive.getMetadataLocationFile)
+    val metadataReader = new MetadataReader()
+    val metadata = metadataReader.GetMetaData(archive.getMetadataLocationFile)
+    
+    println("har har")
     
     for (record <- archive.iteratorRaw) {
       println("upserting record " + record.core.value(DwcTerm.occurrenceID))
