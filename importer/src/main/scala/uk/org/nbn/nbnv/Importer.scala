@@ -12,6 +12,7 @@ import org.gbif.dwc.terms.DwcTerm
 import org.gbif.dwc
 import dwc.record.Record
 import java.text.SimpleDateFormat
+import scala.xml._
 
 
 object Importer {
@@ -26,7 +27,8 @@ object Importer {
     val archive = ArchiveFactory.openArchive(new File("c:\\working\\uk-dwca.zip"), new File("c:\\working\\deleteme"))
     
     val metadataReader = new MetadataReader()
-    val metadata = metadataReader.GetMetaData(archive.getMetadataLocationFile)
+    val xmlMetadata = XML.loadFile(archive.getMetadataLocationFile)
+    val metadata = metadataReader.GetMetaData(xmlMetadata)
     
     for (record <- archive.iteratorRaw) {
       println("upserting record " + record.core.value(DwcTerm.occurrenceID))
@@ -34,7 +36,7 @@ object Importer {
       val extensionRecord = record.extension("http://uknbn.org/terms/NBNExchange").head
       upsertRecord(em, record, extensionRecord)
     }
-    em.getTransaction.commit
+    //em.getTransaction.commit
   }
 
   def upsertRecord(em: EntityManager, r: StarRecord, er: Record) {

@@ -9,10 +9,9 @@ import java.io.File
 import scala.xml._
 
 class MetadataReader {
-  def GetMetaData(metadataFile:File) : Metadata = {
-    val data = XML.loadFile(metadataFile)
+  def GetMetaData(xmlMetadata:Elem) : Metadata = {
     
-    val dataset = (data \ "dataset")
+    val dataset = (xmlMetadata \ "dataset")
     
     val constraints = (dataset \ "intellectualRights" \ "para")
                        .text.replace("Access Constraints:", "")
