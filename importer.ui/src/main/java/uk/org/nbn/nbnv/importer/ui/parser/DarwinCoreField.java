@@ -27,10 +27,11 @@ public enum DarwinCoreField {
     GRIDREFERENCETYPE ("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/gridReferenceType", DarwinCoreFieldType.NBNEXCHANGE),
     GRIDREFERENCEPRECISION ("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/gridReferencePrecision", DarwinCoreFieldType.NBNEXCHANGE),
     SITEFEATUREKEY ("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/siteFeatureKey", DarwinCoreFieldType.NBNEXCHANGE),
-    SENSITIVEOCCURRENCE ("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/sensitiveOccurrence", DarwinCoreFieldType.NBNEXCHANGE);
-    
-    
-    
+    SENSITIVEOCCURRENCE ("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/sensitiveOccurrence", DarwinCoreFieldType.NBNEXCHANGE),
+    DYNAMICPROPERTIES ("http://rs.tdwg.org/dwc/terms/dynamicProperties", DarwinCoreFieldType.DWCA_OCCURRENCE),
+    STARTDATE ("Start Date", DarwinCoreFieldType.INTERNAL),
+    ENDDATE ("End Date", DarwinCoreFieldType.INTERNAL),
+    ATTRIBUTE ("Attribute", DarwinCoreFieldType.INTERNAL);
     
     private final String term;
     private final DarwinCoreFieldType type;
@@ -42,6 +43,10 @@ public enum DarwinCoreField {
     
     public String getTerm() {
         return this.term;
+    }
+    
+    public DarwinCoreFieldType getType() {
+        return this.type;
     }
     
     @Override
