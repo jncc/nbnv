@@ -1,0 +1,27 @@
+@import "_nbn-colour-scheme";
+
+#nbn-designation-content{
+    
+    table{
+        border-spacing: 1px;
+        border-top-width: 0px;
+        border-right-width: 0px;
+        border-bottom-width: 0px;
+        border-left-width: 0px;
+        background-color: #CCC;
+        width: 700px;    
+        
+        th{
+            background-color: $minorColour;
+            font-weight: bold;
+            width: 40%;
+        }
+        
+        td{
+            background-color: white;
+            width: 40%;
+        }
+    }
+    
+    
+}
