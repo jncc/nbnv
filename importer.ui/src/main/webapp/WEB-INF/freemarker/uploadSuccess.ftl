@@ -13,8 +13,16 @@
         <p>Headers:</p>
         <ul>
             <#list model.headers as header>
-                <li>${header.columnNumber}: ${header.columnLabel} -&gt; <#if header.field??> ${header.field} </#if></li>
+                <li>
+                    ${header.columnNumber}: ${header.columnLabel} -&gt;
+                    <select>
+                        <#list model.fields as field>
+                            <option <#if field == header.field>selected="true"</#if>>${field} </option>
+                        </#list>
+                    </select>
+                </li>
             </#list>
         </ul>
+        <p>Fields:</p>
     </body>
 </html>

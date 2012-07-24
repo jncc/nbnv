@@ -61,6 +61,7 @@ public class NXFParser {
                 ColumnMapping cm = new ColumnMapping(i, origHeaders[i], dcf);
                 headers.add(cm);
             }
+            
             return headers;
         } finally {
             if (r != null)
