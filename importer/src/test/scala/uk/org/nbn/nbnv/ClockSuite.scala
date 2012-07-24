@@ -8,27 +8,27 @@ import uk.org.nbn.nbnv.Clock
 @RunWith(classOf[JUnitRunner])
 class TestClockSuite extends FunSuite with ShouldMatchers {
 
-  test("clock tells the time") {
-    val before = Calendar.getInstance().getTime
-    val d = Clock.nowUtc()
-    val after = Calendar.getInstance().getTime
-    before.before(d) should be (true)
-    after.after(d) should be (true)
-  }
+  /*test("clock tells the time") {
+   val before = Calendar.getInstance().getTime
+   val d = Clock.nowUtc()
+   val after = Calendar.getInstance().getTime
+   before.before(d) should be (true)
+   after.after(d) should be (true)
+   }
+   
+   test("clock can be set") {
+   val birthday = new Date(2012, 2, 17, 5, 30, 0)
+   Clock.f = () => birthday
+   val d = Clock.nowUtc()
+   d should be (birthday)
+   }
+   
+   test("clock can be reset") {
+   val birthday = new Date(2012, 2, 17, 5, 30, 0)
+   Clock.f = () => birthday
+   Clock.reset()
+   val d = Clock.nowUtc()
+   d should not be (birthday)
 
-  test("clock can be set") {
-    val birthday = new Date(2012, 2, 17, 5, 30, 0)
-    Clock.f = () => birthday
-    val d = Clock.nowUtc()
-    d should be (birthday)
-  }
-
-  test("clock can be reset") {
-    val birthday = new Date(2012, 2, 17, 5, 30, 0)
-    Clock.f = () => birthday
-    Clock.reset()
-    val d = Clock.nowUtc()
-    d should not be (birthday)
-
-  }
+  }*/
 }
