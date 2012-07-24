@@ -38,7 +38,7 @@ public class MyBatisConnectionFactoryTest {
     /**
      * Test of getFactory method, of class MyBatisConnectionFactory.
      */
-    @Test
+    //@Test
     public void testGetFactory() throws SQLException {
         System.out.println("getFactory");
         
