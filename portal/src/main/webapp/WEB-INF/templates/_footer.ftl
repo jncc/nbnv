@@ -1,0 +1,2 @@
+<span class="cookieStatement">By using this site you accept to be bound by the <a href="terms">NBN GATEWAY TERMS & CONDITIONS</a> and our <a href="privacy">COOKIES AND PRIVACY POLICY</a></span>
+<span class="developedBy">Developed for National Biodiversity Network by CEH and JNCC.</span>

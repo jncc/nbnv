@@ -1,0 +1,16 @@
+@import "_nbn-colour-scheme";
+
+#nbn-page-footer {
+    height: 30px;
+    background-color: $backgroundContentColor; 
+    color: $minorColour;
+    
+    a:link, a:visited { color: $minorColour; }
+    
+    .cookieStatement {
+        float: left;
+        width: 400px;
+    }
+
+    .developedBy { float: right;   }
+}

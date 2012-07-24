@@ -1,0 +1,40 @@
+@import "compass/css3/border-radius";
+@import "compass/utilities/general/clearfix";
+@import "_nbn-colour-scheme";
+
+#nbn-page-header {
+    @include clearfix;
+    h1 {
+        background: image-url("logo.jpg") no-repeat 15px 15px;
+        display: block;
+        padding: 15px;
+        width: 200px;
+        height: 73px;
+        float: left;
+        text-indent: -9999px;
+    }
+    
+    ul {
+        @include border-radius(5px);
+        width: 100%;
+        float:left;
+        position:relative;
+        padding:0;
+        background: $majorColour image-url("nav_bg.png") repeat-x;
+
+        li {
+            height:35px;
+            float: left;
+            list-style:none;
+            &:hover { background-color: #47C0D7; }
+            a {
+                float:left;
+                color:$backgroundContentColor;
+                padding: 9px 16px 12px 16px;
+                text-decoration: none;
+            }
+        }
+
+        .first:hover { @include border-left-radius(5px); }
+    }
+}

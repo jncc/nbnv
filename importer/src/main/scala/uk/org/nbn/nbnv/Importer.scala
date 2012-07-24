@@ -23,8 +23,11 @@ object Importer {
     val em = createEntityManager()
     em.getTransaction.begin()
 
-    val archive = ArchiveFactory.openArchive(new File("c:\\work\\uk-dwca.zip"), new File("c:\\work\\deleteme"))
-
+    val archive = ArchiveFactory.openArchive(new File("c:\\working\\uk-dwca.zip"), new File("c:\\working\\deleteme"))
+    
+    val metadataReader = new MetadataReader()
+    val metadata = metadataReader.GetMetaData(archive.getMetadataLocationFile)
+    
     for (record <- archive.iteratorRaw) {
       println("upserting record " + record.core.value(DwcTerm.occurrenceID))
       // in our case we know there should be exactly one extension record ("head" is first in a list)
@@ -35,6 +38,7 @@ object Importer {
   }
 
   def upsertRecord(em: EntityManager, r: StarRecord, er: Record) {
+    
     val format = new SimpleDateFormat("dd/MM/yyyy")
     val dateType = em.find(classOf[DateType], er.value("http://uknbn.org/terms/dateType"))
     val site = em.find(classOf[Site], 1)
@@ -57,7 +61,6 @@ object Importer {
     o.setSensitiveRecord(false)
     o.setSiteID(site)
     o.setTaxonVersionKey(taxon)
-
     em.merge(o)
   }
 

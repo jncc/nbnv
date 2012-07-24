@@ -1,13 +1,11 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package uk.org.nbn.nbnv.api.dao;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Reader;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.ibatis.io.Resources;
+import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import uk.org.nbn.nbnv.api.dao.designation.DesignationCategoryMapper;
@@ -18,27 +16,23 @@ import uk.org.nbn.nbnv.api.dao.designation.DesignationMapper;
  * @author Administrator
  */
 public class MyBatisConnectionFactory {
-    private static SqlSessionFactory sqlSessionFactory;
+    private static SqlSessionFactory sqlSessionFactory = null;
+    private static Reader reader = null;
     
     static {
         try {
-            Reader reader = Resources.getResourceAsReader("SqlMapConfig.xml");
-            
-            if (sqlSessionFactory == null) {
+            reader = Resources.getResourceAsReader("SqlMapConfig.xml");
+        } catch (IOException ex) {
+            Logger.getLogger(MyBatisConnectionFactory.class.getName()).log(Level.SEVERE, "Cannot read MyBatis config file: SqlMapConfig.xml", ex);
+        }
+    }
+
+    public static SqlSessionFactory getFactory() {
+        if (sqlSessionFactory == null) {
                 sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
                 sqlSessionFactory.getConfiguration().addMapper(DesignationMapper.class);
                 sqlSessionFactory.getConfiguration().addMapper(DesignationCategoryMapper.class);
-            }
         }
-        catch (FileNotFoundException fnfe) {
-            fnfe.printStackTrace();
-        }
-        catch (IOException ioe) {
-            ioe.printStackTrace();
-        }
-    }
-    
-    public static SqlSessionFactory getFactory() {
         return sqlSessionFactory;
     }
 }
