@@ -5,6 +5,7 @@
 package uk.org.nbn.nbnv.importer.ui.model;
 
 import java.util.List;
+import uk.org.nbn.nbnv.importer.ui.parser.ColumnMapping;
 
 /**
  *
@@ -12,7 +13,7 @@ import java.util.List;
  */
 public class UploadItemResults {
     private List<String> results;
-    private List<String> headers;
+    private List<ColumnMapping> headers;
 
     /**
      * @return the results
@@ -31,14 +32,14 @@ public class UploadItemResults {
     /**
      * @return the headers
      */
-    public List<String> getHeaders() {
+    public List<ColumnMapping> getHeaders() {
         return headers;
     }
 
     /**
      * @param headers the headers to set
      */
-    public void setHeaders(List<String> headers) {
+    public void setHeaders(List<ColumnMapping> headers) {
         this.headers = headers;
     }
 }

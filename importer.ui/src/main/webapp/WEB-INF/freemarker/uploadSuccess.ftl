@@ -13,7 +13,7 @@
         <p>Headers:</p>
         <ul>
             <#list model.headers as header>
-                <li>${header}</li>
+                <li>${header.columnNumber}: ${header.columnLabel} -&gt; <#if header.field??> ${header.field} </#if></li>
             </#list>
         </ul>
     </body>
