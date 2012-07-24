@@ -3,8 +3,16 @@
 @import "_nbn-colour-scheme";
 @import "_header";
 @import "_footer";
+@import "_designation";
+@import "icons/*.png";
 
 body {
+    @include all-icons-sprites;
+/*    
+    .icons-collapse{
+        background: url(/img/icons/expand.png);
+    }*/
+    
     padding-right: 20px;
     padding-left: 20px;
     background: $backgroundPageColour;
@@ -12,6 +20,11 @@ body {
     font-family: Arial,Helvetica,Sans-serif;
     font-size: 83%;
     margin-top: 0;
+    
+    #nbn-page-content, #nbn-page-header { 
+        background-color: $backgroundContentColor; 
+        color: $textColour;
+    }
     
     #nbn-page-content, #nbn-page-header { 
         background-color: $backgroundContentColor; 
@@ -37,18 +50,17 @@ body {
     
     #nbn-page-copyright { padding: 20px 15px 30px 15px; }
     
-
     a:link, a:visited {
         text-decoration: underline;
         font-weight: normal;
         color: $majorColour;
     }
-
+    
     ul, ol {
         margin-left: 10px;
         list-style-type: circle;
     }
-
+    
     h1 {
         font-family: Trebuchet MS, Georgia, Sans-Serif;
         font-size: 2.0em;
@@ -57,7 +69,7 @@ body {
         margin-bottom: 20px;
         line-height: 40px;
         margin-top: 0;
-
+        
     }
     
     h2 {
@@ -65,7 +77,7 @@ body {
         font-size: 1.5em;
         text-decoration: none;
     }
-
+    
     h3 {
         font-size: 1.1em;
         font-weight: lighter;
@@ -73,7 +85,7 @@ body {
         margin: 10px 0px 5px 0px;
         text-decoration: none;
     }
-
+    
     h4 {
         font-size: 1.3em;
         color:$majorColour;
