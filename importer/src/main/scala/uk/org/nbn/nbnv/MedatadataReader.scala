@@ -19,15 +19,15 @@ class MetadataReader {
                        .split("Use Constraints:");
                        
     new Metadata {
-      val datasetKey = (dataset \ "alternateIdentifier").text
-      val datsetTitle = (dataset \ "title").text
-      val description = (dataset \ "abstract" \ "para").text
+      val datasetKey = (dataset \ "alternateIdentifier").text.trim
+      val datsetTitle = (dataset \ "title").text.trim
+      val description = (dataset \ "abstract" \ "para").text.trim
       val accessConstraints = constraints(0).trim
       val useConstraints = constraints(1).trim
-      val geographicCoverage = (dataset  \ "coverage" \ "geographicCoverage" \ "geographicDescription").text 
-      val purpose = (dataset \ "purpose" \ "para").text
-      val method = (dataset \ "methods" \  "methodStep" \ "description" \ "para").text
-      val quality = (dataset \ "methods" \ "qualityControl" \ "description" \ "para" ).text
+      val geographicCoverage = (dataset  \ "coverage" \ "geographicCoverage" \ "geographicDescription").text.trim
+      val purpose = (dataset \ "purpose" \ "para").text.trim
+      val method = (dataset \ "methods" \  "methodStep" \ "description" \ "para").text.trim
+      val quality = (dataset \ "methods" \ "qualityControl" \ "description" \ "para" ).text.trim
     }
   }
 }
