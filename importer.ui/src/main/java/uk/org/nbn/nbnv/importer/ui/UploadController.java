@@ -4,6 +4,7 @@
  */
 package uk.org.nbn.nbnv.importer.ui;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -48,10 +49,14 @@ public class UploadController {
         messages.add("File size: " + Long.toString(uploadItem.getFileData().getSize()));
         messages.add("Content Type: " + uploadItem.getFileData().getContentType());
         messages.add("Storage description: " + uploadItem.getFileData().getStorageDescription());
-
+       
         UploadItemResults model = new UploadItemResults();
 
         try {
+            File dFile = File.createTempFile("nbnimporter", "raw.tab");
+            messages.add("Storage location: " + dFile.getAbsolutePath());
+            model.setFileName(dFile.getAbsolutePath());
+            uploadItem.getFileData().transferTo(dFile);
             NXFParser parser = new NXFParser();
             model.setHeaders(parser.parseHeaders(uploadItem.getFileData().getFileItem()));
         } catch (IOException ex) {

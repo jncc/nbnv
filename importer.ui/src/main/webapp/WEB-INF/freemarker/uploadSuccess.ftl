@@ -11,6 +11,7 @@
             </#list>
         </ul>
         <p>Headers:</p>
+        <input type="hidden" name="filename" value="${model.fileName}" />
         <ul>
             <#list model.headers as header>
                 <li>
