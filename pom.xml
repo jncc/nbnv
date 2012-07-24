@@ -75,6 +75,7 @@
 		  <url>http://repository.gbif.org/content/groups/gbif</url>
 		</repository>
     </repositories>
+	
     <pluginRepositories>
         <pluginRepository>
             <id>scala-tools.org</id>

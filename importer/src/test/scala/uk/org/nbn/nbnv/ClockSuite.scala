@@ -1,9 +1,12 @@
 import java.util.{Date, Calendar}
+import org.junit.runner.RunWith
+import org.scalatest.junit.JUnitRunner
 import org.scalatest.FunSuite
 import org.scalatest.matchers.ShouldMatchers
 import uk.org.nbn.nbnv.Clock
 
-class ClockSuite extends FunSuite with ShouldMatchers {
+@RunWith(classOf[JUnitRunner])
+class TestClockSuite extends FunSuite with ShouldMatchers {
 
   test("clock tells the time") {
     val before = Calendar.getInstance().getTime

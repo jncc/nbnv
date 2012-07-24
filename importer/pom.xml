@@ -34,8 +34,12 @@
 			<artifactId>scalatest_2.8.1</artifactId>
 			<version>1.8</version>
             <scope>test</scope>
-		</dependency>			
-	</dependencies>
+		</dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+        </dependency>
+    </dependencies>
 
     <build>
         <sourceDirectory>src/main/scala</sourceDirectory>
@@ -68,4 +72,18 @@
             </plugin>
         </plugins>
     </build>
+	
+	<reporting>
+	  <plugins>
+		<plugin>
+		  <groupId>org.apache.maven.plugins</groupId>
+		  <artifactId>maven-surefire-plugin</artifactId>
+		  <configuration>
+			<includes>
+			  <include>**/*Spec.class</include>
+			</includes>
+		  </configuration>
+		</plugin>
+	  </plugins>
+	</reporting>
 </project>
