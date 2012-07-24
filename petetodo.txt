@@ -2,14 +2,17 @@
 manually produce a meta.xml file
 manually produce an EML metadata file
 scalafy the reader code
-
 read in dwca in scala using gbif reader
 save in database
-
+get licence(s) for intellij
+ping tim with validator plan 
+investigate the validator
+what do we need to do re sample, survey, (dataset) that already exist / don' already exist?
 look at the metadata standard in NXF and work out the things we need to import
-(which all should be in the EML)
-read in EML metadata - use scala XML stuff? or gbif reader
+
+read in EML metadata - parse xml
 save in database
+
 run all scalatests from idea
 run scalatests from maven
 ask gbif whether dwca reader is tested with large (?) files (it makes a copies of them)
@@ -18,8 +21,14 @@ set up dependency injection
 use scala 2.9.1 to fix my console - what's the problem in netbeans exactly? 
 
 
-Use EML for our metadata
-http://knb.ecoinformatics.org/software/eml/
-paul's EML example:
-view-source:http://data.nbn.org.uk/export/gbif/GA000466.xml
-
+parse EML metadata
+open dwca reader
+begin tx
+upsert dataset, samples and surveys
+loop through the records
+  get survey for this dataset using key
+    create it if not exists
+  get sample for this dataset using key
+    create it if not exists
+  upsert observation
+end tx
