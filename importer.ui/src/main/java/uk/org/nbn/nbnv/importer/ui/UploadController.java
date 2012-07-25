@@ -4,8 +4,10 @@
  */
 package uk.org.nbn.nbnv.importer.ui;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import uk.org.nbn.nbnv.importer.ui.model.UploadItem;
 import uk.org.nbn.nbnv.importer.ui.model.UploadItemResults;
+import uk.org.nbn.nbnv.importer.ui.parser.DarwinCoreField;
 import uk.org.nbn.nbnv.importer.ui.parser.NXFParser;
 
 /**
@@ -46,17 +49,22 @@ public class UploadController {
         messages.add("File size: " + Long.toString(uploadItem.getFileData().getSize()));
         messages.add("Content Type: " + uploadItem.getFileData().getContentType());
         messages.add("Storage description: " + uploadItem.getFileData().getStorageDescription());
-
+       
         UploadItemResults model = new UploadItemResults();
 
         try {
+            File dFile = File.createTempFile("nbnimporter", "raw.tab");
+            messages.add("Storage location: " + dFile.getAbsolutePath());
+            model.setFileName(dFile.getAbsolutePath());
+            uploadItem.getFileData().transferTo(dFile);
             NXFParser parser = new NXFParser();
             model.setHeaders(parser.parseHeaders(uploadItem.getFileData().getFileItem()));
         } catch (IOException ex) {
             messages.add("EXCEPTION: Parse exception: " + ex.getMessage());
         }
-        
+
         model.setResults(messages);
+        model.setFields(Arrays.asList(DarwinCoreField.values()));
         
         return new ModelAndView("uploadSuccess", "model", model);
     }
