@@ -6,7 +6,7 @@ import org.scalatest.FunSuite
 import org.scalatest.matchers.ShouldMatchers
 
 @RunWith(classOf[JUnitRunner])
-class TestMetadataParserSuite extends FunSuite with ShouldMatchers {
+class MetadataParserSuite extends FunSuite with ShouldMatchers {
   test("can parse valid metadata") {
 
     val parser = new MetadataParser()
