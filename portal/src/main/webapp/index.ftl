@@ -33,7 +33,6 @@ molestie dui. Praesent blandit dolor. Sed non quam. In vel mi sit amet augue
 congue elementum. Morbi in ipsum sit amet pede facilisis laoreet. Donec lacus 
 nunc, viverra nec, blandit vel, egestas et, augue. 
     </@markdown>
-${doh}
     <#assign youtube=json.readURL("http://gdata.youtube.com/feeds/api/users/nbngatewaydev/uploads", "GET", {
         "alt": "json"
     })>
