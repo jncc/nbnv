@@ -6,7 +6,7 @@ import org.scalatest.matchers.ShouldMatchers
 import uk.org.nbn.nbnv.Clock
 
 @RunWith(classOf[JUnitRunner])
-class TestClockSuite extends FunSuite with ShouldMatchers {
+class ClockSuite extends FunSuite with ShouldMatchers {
 
   /*test("clock tells the time") {
    val before = Calendar.getInstance().getTime

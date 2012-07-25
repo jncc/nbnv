@@ -9,7 +9,7 @@ import org.scalatest.matchers.ShouldMatchers
 import org.mockito.Mockito._
 
 @RunWith(classOf[JUnitRunner])
-class TestFileSystemSuite extends FunSuite with ShouldMatchers  {
+class FileSystemSuite extends FunSuite with ShouldMatchers  {
   // just checking i can do some mockin'
   test("can mock with mockito") {
     val fs = mock(classOf[FileSystem])

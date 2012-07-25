@@ -7,7 +7,7 @@ import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
-class TestInjectionSuite extends FunSuite with ShouldMatchers {
+class InjectionSuite extends FunSuite with ShouldMatchers {
 
   test("google guice injection framework should work") {
 

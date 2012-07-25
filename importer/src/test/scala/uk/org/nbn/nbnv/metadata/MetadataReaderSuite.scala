@@ -10,7 +10,7 @@ import uk.org.nbn.nbnv.utility.FileSystem
 import java.io.File
 
 @RunWith(classOf[JUnitRunner])
-class TestMetadataReaderSuite extends FunSuite with ShouldMatchers {
+class MetadataReaderSuite extends FunSuite with ShouldMatchers {
 
   test("should read metadata") {
 
