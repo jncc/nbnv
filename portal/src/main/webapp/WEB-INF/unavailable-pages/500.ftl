@@ -1,8 +1,8 @@
 <#include "/WEB-INF/templates/master.ftl">
 
-<@error title="National Biodiversity Network Gateway">
+<@error title="National Biodiversity Network Gateway - Internal Server Error">
 	<@markdown>
-#Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+#D'oh. Something went wrong.
 
 Integer nec odio. 
 Praesent libero. Sed cursus ante dapibus diam. Sed nisi. Nulla quis sem at nibh 

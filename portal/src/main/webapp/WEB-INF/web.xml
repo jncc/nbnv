@@ -49,7 +49,16 @@
     
     <!--Define custom error pages -->
     <error-page>
+        <error-code>404</error-code>
+        <location>/WEB-INF/unavailable-pages/404.ftl</location>
+    </error-page>
+    <error-page>
         <error-code>500</error-code>
         <location>/WEB-INF/unavailable-pages/500.ftl</location>
     </error-page>
+    <error-page>
+        <exception-type>java.io.FileNotFoundException</exception-type>
+        <location>/WEB-INF/unavailable-pages/data-service-not-responding.ftl</location>
+    </error-page>
+    
 </web-app>
