@@ -1,4 +1,4 @@
-package uk.org.nbn.nbnv
+package uk.org.nbn.nbnv.importer
 
 import org.scalatest.FunSuite
 import org.scalatest.matchers.ShouldMatchers
@@ -14,7 +14,7 @@ class InjectionSuite extends FunSuite with ShouldMatchers {
     val injector = Guice.createInjector(new TestInjectionModule)
     val dependee = injector.getInstance(classOf[Dependee])
     val result = dependee.bar(3)
-    result should be (12)
+    result should be(12)
   }
 }
 
@@ -30,7 +30,7 @@ class TestInjectionModule extends AbstractModule {
   @Override
   protected def configure() {
     // looks like self-bindings are automatic in guice
-//    bind(classOf[Dependent]).to(classOf[Dependent]) // causes error
+    //    bind(classOf[Dependent]).to(classOf[Dependent]) // causes error
   }
 }
 
