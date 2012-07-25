@@ -1,4 +1,4 @@
-package uk.org.nbn.nbnv.importer
+package uk.org.nbn.nbnv.importer.utility
 
 import java.util.{Date, Calendar}
 
