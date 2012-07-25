@@ -3,25 +3,41 @@
 #nbn-designation-content{
     
     table{
-        border-spacing: 1px;
-        border-top-width: 0px;
-        border-right-width: 0px;
-        border-bottom-width: 0px;
-        border-left-width: 0px;
-        background-color: #CCC;
-        width: 700px;    
+        border-width: 1px;
+        border-style: none;
+        border-collapse: collapse;
+        width: 80%;
+        margin: auto;
         
         th{
-            background-color: $minorColour;
+            border-width: 1px;
+            padding: 5px;
+            border-style: inset;
+            border-color: $mediumGrey;
+            background-color: $minorGrey;
             font-weight: bold;
             width: 40%;
         }
         
         td{
+            border-width: 1px;
+            padding: 5px;
+            border-style: inset;
+            border-color: $mediumGrey;
             background-color: white;
             width: 40%;
         }
+        
     }
     
+    h4{
+        text-align: center;
+        padding: 20px;
+    }
+    
+    p{
+        text-align: center;
+        padding: 20px;
+    }
     
 }
