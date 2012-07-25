@@ -5,7 +5,7 @@
     <li><a href="/Datasets">Browse Datasets</a></li>
     <li><a href="/Species">Browse Species</a></li>
     <li><a href="/Sites">Browse Sites</a></li>
-    <li><a href="/Designations">Browse Designations</a></li>
+    <li><a href="/Designation_Categories">Browse Designations</a></li>
     <li><a href="/Documentation">Documentation</a></li>
     <li><a href="#">Feedback</a></li>
 </ul>
