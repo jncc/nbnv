@@ -1,6 +1,7 @@
 
 package uk.org.nbn.nbnv
 
+import metadata.MetadataReader
 import org.gbif.dwc.text.{UnsupportedArchiveException, StarRecord, ArchiveFactory}
 import org.gbif.dwc.terms.{DwcTerm, ConceptTerm}
 import scala.collection.JavaConversions._
@@ -26,9 +27,8 @@ object Importer {
 
     val archive = ArchiveFactory.openArchive(new File("c:\\working\\uk-dwca.zip"), new File("c:\\working\\deleteme"))
     
-    val metadataReader = new MetadataReader()
-    val xmlMetadata = XML.loadFile(archive.getMetadataLocationFile)
-    val metadata = metadataReader.GetMetaData(xmlMetadata)
+//    val metadataReader = new MetadataReader()
+//    val metadata = metadataReader.read(archive)
     
     for (record <- archive.iteratorRaw) {
       println("upserting record " + record.core.value(DwcTerm.occurrenceID))
