@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app id="WebApp_ID" version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
-    <display-name>FreeMarker_Hello_World</display-name>
-    <welcome-file-list>
-        <welcome-file>index.ftl</welcome-file>
-    </welcome-file-list>
-    
+    <display-name>NBN Gateway Frontend</display-name>
+
+    <!--Create the Powerless Servlet-->
     <servlet>
         <servlet-name>freemarker</servlet-name>
         <servlet-class>uk.gov.nbn.data.powerless.PowerlessServlet</servlet-class>
@@ -39,8 +37,19 @@
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
+    
+    <!--Define servlet hosting-->
+    <welcome-file-list>
+        <welcome-file>index.ftl</welcome-file>
+    </welcome-file-list>
     <servlet-mapping>
         <servlet-name>freemarker</servlet-name>
         <url-pattern>*.ftl</url-pattern>
     </servlet-mapping>
+    
+    <!--Define custom error pages -->
+    <error-page>
+        <error-code>500</error-code>
+        <location>/WEB-INF/unavailable-pages/500.ftl</location>
+    </error-page>
 </web-app>
