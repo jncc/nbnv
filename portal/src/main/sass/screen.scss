@@ -4,9 +4,11 @@
 @import "_header";
 @import "_footer";
 @import "_designation";
+@import "jquery/_collapsible-list";
 @import "icons/*.png";
 
 body {
+    $icons-sprite-dimensions: true;
     @include all-icons-sprites;
     
     padding-right: 20px;

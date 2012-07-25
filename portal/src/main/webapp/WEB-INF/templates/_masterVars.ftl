@@ -1,1 +1,1 @@
-<#assign api="http://localhost:8084/api/">
+<#assign api="http://localhost:8084/api">

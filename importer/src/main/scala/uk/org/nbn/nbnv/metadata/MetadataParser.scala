@@ -1,25 +1,19 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+package uk.org.nbn.nbnv.metadata
 
-package uk.org.nbn.nbnv
+import xml.Elem
 
-import java.io.File
-import scala.xml._
+class MetadataParser {
+  def parse(xml: Elem) : Metadata = {
 
-class MetadataReader {
-  def GetMetaData(xmlMetadata:Elem) : Metadata = {
-    
-    val dataset = (xmlMetadata \ "dataset")
-    
+    val dataset = (xml \ "dataset")
+
     val constraints = (dataset \ "intellectualRights" \ "para")
-                       .text.replace("Access Constraints:", "")
-                       .split("Use Constraints:");
-                       
+      .text.replace("Access Constraints:", "")
+      .split("Use Constraints:");
+
     new Metadata {
       val datasetKey = (dataset \ "alternateIdentifier").text.trim
-      val datsetTitle = (dataset \ "title").text.trim
+      val datasetTitle = (dataset \ "title").text.trim
       val description = (dataset \ "abstract" \ "para").text.trim
       val accessConstraints = constraints(0).trim
       val useConstraints = constraints(1).trim
