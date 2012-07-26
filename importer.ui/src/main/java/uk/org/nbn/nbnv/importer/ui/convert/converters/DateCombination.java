@@ -53,4 +53,16 @@ public class DateCombination implements ConverterStep {
     public void modifyRow(Map<DarwinCoreField, String> row) throws BadDataException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+
+    @Override
+    public void modifyHeader(List<ColumnMapping> columns) {
+        int highestNumber = -1;
+        
+        for (ColumnMapping col : columns) {
+            highestNumber = col.getColumnNumber() > highestNumber ? col.getColumnNumber() : highestNumber;
+        }
+        
+        ColumnMapping cm = new ColumnMapping(highestNumber + 1, "ISODate", DarwinCoreField.EVENTDATE);
+        columns.add(cm);
+    }
 }

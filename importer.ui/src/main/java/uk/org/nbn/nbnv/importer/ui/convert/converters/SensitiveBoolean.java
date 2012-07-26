@@ -44,5 +44,10 @@ public class SensitiveBoolean implements ConverterStep {
             throw new BadDataException("Bad sensitive entry: " + data);
         }
     }
+
+    @Override
+    public void modifyHeader(List<ColumnMapping> columns) {
+        // Nothing to do
+    }
 }
 
