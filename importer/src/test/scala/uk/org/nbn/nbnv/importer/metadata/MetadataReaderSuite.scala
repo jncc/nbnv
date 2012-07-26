@@ -29,7 +29,7 @@ class MetadataReaderSuite extends FunSuite with ShouldMatchers {
     when(fileSystem.loadXml(path)).thenReturn(TestData.validMetadataXml)
 
     // act
-    val reader = new MetadataReader(fileSystem, new MetadataParser())
+    val reader = new MetadataReader(fileSystem, new MetadataParser)
     val metadata = reader.read(archive)
 
     // assert

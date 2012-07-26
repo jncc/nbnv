@@ -1,1 +1,0 @@
-<#assign api="http://localhost:8084/api">
