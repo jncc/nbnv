@@ -13,7 +13,10 @@ object Importer {
         printWelcome(options)
         createImporter(options).run()
       }
-      case OptionsFailure(message) => println(message)
+      case OptionsFailure(message) => {
+        println(message)
+        exit(1)
+      }
     }
   }
 
