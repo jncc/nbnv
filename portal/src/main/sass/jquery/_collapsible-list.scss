@@ -1,0 +1,21 @@
+.collapsible-list {
+
+    h1, li { line-height: normal; }
+
+    &, ul { list-style: none; }
+
+    background-color: #F7F7F7;
+    h1 {
+        color: black;
+        font-size: 1em;
+        font-weight: bold;
+        margin: 0;
+        font-size: 1em;
+        padding: 0;
+    }
+
+    span.collapsible-list-icon {
+        display: block;
+        float:left;
+    }
+}

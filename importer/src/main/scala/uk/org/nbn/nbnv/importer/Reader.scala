@@ -1,4 +1,4 @@
-package uk.org.nbn.nbnv
+package uk.org.nbn.nbnv.importer
 
 import org.gbif.dwc.text.{UnsupportedArchiveException, StarRecord, ArchiveFactory}
 import java.io.File
@@ -32,10 +32,10 @@ class Reader {
         for (extensionTerm <- extensionRecord.terms) {
           println(extensionTerm.simpleName())
         }
-//        println("  dateType: " + extensionRecord.value("http://uknbn.org/terms/dateType"))
-//        println("  sensitiveOccurrence: " + extensionRecord.value("http://uknbn.org/terms/dateType"))
-//        println("  dateType: " + extensionRecord.value("http://uknbn.org/terms/dateType"))
-//        println("  dateType: " + extensionRecord.value("http://uknbn.org/terms/dateType"))
+        //        println("  dateType: " + extensionRecord.value("http://uknbn.org/terms/dateType"))
+        //        println("  sensitiveOccurrence: " + extensionRecord.value("http://uknbn.org/terms/dateType"))
+        //        println("  dateType: " + extensionRecord.value("http://uknbn.org/terms/dateType"))
+        //        println("  dateType: " + extensionRecord.value("http://uknbn.org/terms/dateType"))
 
 
       }

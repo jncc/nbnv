@@ -4,14 +4,12 @@
 @import "_header";
 @import "_footer";
 @import "_designation";
+@import "jquery/_collapsible-list";
 @import "icons/*.png";
 
 body {
+    $icons-sprite-dimensions: true;
     @include all-icons-sprites;
-/*    
-    .icons-collapse{
-        background: url(/img/icons/expand.png);
-    }*/
     
     padding-right: 20px;
     padding-left: 20px;

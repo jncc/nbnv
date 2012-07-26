@@ -1,13 +1,8 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
-package uk.org.nbn.nbnv
+package uk.org.nbn.nbnv.metadata
 
 abstract class Metadata {
   val datasetKey: String
-  val datsetTitle: String
+  val datasetTitle: String
   val description: String
   val accessConstraints: String
   val useConstraints: String
@@ -15,6 +10,6 @@ abstract class Metadata {
   val purpose: String
   val method: String
   val quality: String
-  
+
   override def toString = datasetKey
 }

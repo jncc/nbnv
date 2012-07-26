@@ -1,3 +1,5 @@
+package uk.org.nbn.nbnv.importer
+
 import org.scalatest.FunSuite
 import org.scalatest.junit.JUnitRunner
 import scala.collection.mutable.Stack
