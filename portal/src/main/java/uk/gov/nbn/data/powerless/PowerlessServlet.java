@@ -21,7 +21,7 @@ public class PowerlessServlet extends FreemarkerServlet{
             super.init();
             getConfiguration().setSharedVariable("markdown", new MarkDownDirectiveModel());
             getConfiguration().setSharedVariable("json", new JSONReaderForFreeMarker());
-            //getConfiguration().setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
+            getConfiguration().setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
         } catch (TemplateModelException ex) {
             throw new ServletException(ex);
         }
