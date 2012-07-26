@@ -1,5 +1,6 @@
 package uk.org.nbn.nbnv.importer
 
+import darwin.ArchiveManager
 import org.scalatest.junit.JUnitRunner
 import org.junit.runner.RunWith
 import org.scalatest.FunSuite
@@ -13,16 +14,17 @@ import uk.org.nbn.nbnv.metadata.MetadataReader
 class ImporterSuite extends FunSuite with ShouldMatchers {
 
   test("importer should say hello") {
-    val log = mock(classOf[Logger])
     val options = new Options {
       val archivePath = "."
       val tempDir = "."
       val logDir = "."
       val whatIf = false
     }
+    val log = mock(classOf[Logger])
+    val archiveManager = mock(classOf[ArchiveManager])
     val metadataReader = mock(classOf[MetadataReader])
 
-    val importer = new Importer(options, log, metadataReader)
+    val importer = new Importer(options, log, archiveManager, metadataReader)
     importer.run()
 
     verify(log).info(startsWith("Welcome"))
