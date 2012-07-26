@@ -1,16 +1,17 @@
 package uk.org.nbn.nbnv.importer
 
+import logging.Log
 import uk.org.nbn.nbnv.metadata.{MetadataParser, MetadataReader}
 import uk.org.nbn.nbnv.utility.FileSystem
 import java.io.File
 import org.gbif.dwc.text.ArchiveFactory
+import org.apache.log4j.Logger
 
 object Importer {
 
   def main(args: Array[String]) {
     Options.parse(args.toList) match {
       case OptionsSuccess(options) => {
-        printWelcome(options)
         createImporter(options).run()
       }
       case OptionsFailure(message) => {
@@ -20,26 +21,21 @@ object Importer {
     }
   }
 
-  def printWelcome(options: Options) {
-    //val newline = scala.sys.props("line.separator")
-    println("Welcome to the NBN Gateway importer.")
-    println()
-    println("Options:")
-    println(options)
-  }
-
   def createImporter(options: Options) : Importer = {
     // todo use guice
-    new Importer(options, new MetadataReader(new FileSystem, new MetadataParser))
+    new Importer(options, Log.getLog(), new MetadataReader(new FileSystem, new MetadataParser))
   }
 
 }
 
-class Importer(options: Options, metadataReader: MetadataReader) {
+class Importer(options: Options, log: Logger, metadataReader: MetadataReader) {
   def run() {
-    val archive = ArchiveFactory.openArchive(new File("c:\\working\\uk-dwca.zip"), new File("c:\\working\\deleteme"))
-//    val metadata = metadataReader.read()
-//    parse EML metadata
+    log.info("Welcome! Starting the NBN Gateway importer...")
+    log.info("Options are: ... todo")
+
+    val archive = ArchiveFactory.openArchive(new File(options.archivePath), new File(options.tempDir))
+    // read EML metadata
+    val metadata = metadataReader.read(archive)
 //    open dwca reader
 //    begin tx
 //      upsert dataset, samples and surveys

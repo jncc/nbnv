@@ -20,21 +20,22 @@ object Options {
         case Nil => m
         case "--someflag" :: v :: tail  => process(m ++ Map('someflag -> v.toInt), tail)
         case "-someswitch" :: v :: tail => process(m ++ Map('someswitch -> v), xs.tail)
+        case "-tempDir" :: v :: tail => process(m ++ Map('someswitch -> v), xs.tail)
         case arg :: _                   => process(m ++ Map('arg -> arg), xs.tail)
     }
 
     args match {
       case List() => OptionsFailure("Usage: Please provide required options...!")
-      case _      => createOptions(process(Map(), args))
+      case _      => createOptions(process(Map(), args.map(_.toLowerCase)))
     }
   }
 
   def createOptions(map: OptionMap): OptionsSuccess = {
     val options = new Options {
       val archivePath = " "
-      val tempDirectory = ""
-      val logDirectory = ""
-      val validateOnly = false
+      val tempDir = ""
+      val logDir = ""
+      val whatIf = false
     }
     OptionsSuccess(options)
   }
@@ -44,8 +45,8 @@ object Options {
 /// The command line options that can be provided to the importer.
 abstract class Options {
   val archivePath:  String
-  val tempDirectory: String
-  val logDirectory: String
-  val validateOnly: Boolean
+  val tempDir: String
+  val logDir: String
+  val whatIf: Boolean
 }
 
