@@ -5,8 +5,10 @@
     <#assign designation=json.readURL("${api}/designations/${RequestParameters.desig}")>
     <#assign designationCategory=json.readURL("${api}/designationCategories/${designation.designationCategoryID}")>
     <#assign topLevelTaxonGroups=json.readURL("${api}/designations/${RequestParameters.desig}/topLevelTaxonNavigationGroups")>
+    <#assign taxa=json.readURL("${api}/designations/${RequestParameters.desig}/taxa")>
 
     <div id="nbn-designation-content">
+${api}/designations/${RequestParameters.desig}/taxa
         <h4>${designation.name}</h4>
 
             <table>
@@ -29,23 +31,35 @@
                 <tr>
                     <th>Groups that have species with this designation:</td>
                     <td>
-                        <ul>
+                        <ul class="collapsible-list">
                         <#list topLevelTaxonGroups as taxonGroup>
-                            <li>${taxonGroup.name} ${taxonGroup.taxonGroupId}
-                            <#if taxonGroup.parent>
-                                <#assign childTaxonGroups=json.readURL("${api}/designations/${RequestParameters.desig}/childTaxonNavigationGroups/${taxonGroup.taxonGroupId}")>
+                            <li>
+                                <h1 class="nbn-h1-minor">&nbsp;${taxonGroup.name}</h1>
                                 <ul>
-                                    <#list childTaxonGroups as childTaxonGroup>
-                                    <li><a href="blah/${childTaxonGroup.taxonGroupId}">${childTaxonGroup.name}</a>
-                                </#list>
+                                    <#if taxonGroup.parent>
+                                        <#assign childTaxonGroups=json.readURL("${api}/designations/${RequestParameters.desig}/childTaxonNavigationGroups/${taxonGroup.taxonGroupId}")>
+                                        <#list childTaxonGroups as childTaxonGroup>
+                                            <li><a href="blah/${childTaxonGroup.taxonGroupId}">${childTaxonGroup.name}</a></li>
+                                        </#list>
+                                    <#else>
+                                        <li><a href="blah/${taxonGroup.taxonGroupId}">${taxonGroup.name}</a></li>
+                                    </#if>
                                 </ul>
-                            </#if>
+                        </li>
                         </#list>
                         </ul>
 
                     </td>
                 </tr>
-
+                <tr>
+                    <th>View all species for this designation</th>
+                    <td>
+                                <h1>All species for designation</h1>
+                                <#list taxa as taxon>
+                                    <br/>${taxon.taxonName}
+                                </#list>
+                    </td>
+                </tr>
             </table>
             <p>All designation information on the NBN Gateway is collated and supplied by the <a href="http://jncc.defra.gov.uk/page-5546">Joint Nature Conservation Committee (JNCC)</a></p>
         </div>
