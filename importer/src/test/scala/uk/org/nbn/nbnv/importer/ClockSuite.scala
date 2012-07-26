@@ -6,7 +6,6 @@ import org.scalatest.junit.JUnitRunner
 import org.scalatest.FunSuite
 import org.scalatest.matchers.ShouldMatchers
 import uk.org.nbn.nbnv.importer.Clock
-import uk.org.nbn.nbnv.Clock
 
 @RunWith(classOf[JUnitRunner])
 class ClockSuite extends FunSuite with ShouldMatchers {
