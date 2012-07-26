@@ -2,7 +2,6 @@ package uk.org.nbn.nbnv.importer.logging
 
 import org.apache.log4j._
 
-
 class log { 
    val importLogger = "uk.org.nbn.nbnv.importer"
   
