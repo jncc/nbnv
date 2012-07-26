@@ -10,7 +10,7 @@ import org.apache.log4j._
 class LogSuite extends FunSuite with ShouldMatchers {
   test("the log should work"){
 
-    Log.configure("testLog.log", "2MB", Level.ALL)
+    Log.configure(".", "2MB", Level.ALL)
     Log.get().info("Arrrrggghh!")
   }
 }

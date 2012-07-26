@@ -5,7 +5,7 @@ import java.io.File
 
 object Log {
 
-  def configure(logDir : String, maxLogSize : String, level: Level) = {
+  def configure(logDir: String, maxLogSize: String, level: Level) = {
 
     val pattern = new PatternLayout("%d{yyyy-MMM-dd HH:mm:ss} %-5p %m%n")
 

@@ -42,6 +42,7 @@ class Importer(options: Options,
                archiveManager: ArchiveManager,
                metadataReader: MetadataReader) {
   def run() {
+
     log.info("Welcome! Starting the NBN Gateway importer...")
     log.info("Options are: ... todo")
 

@@ -29,5 +29,4 @@ class ImporterSuite extends FunSuite with ShouldMatchers {
 
     verify(log).info(startsWith("Welcome"))
   }
-
 }
