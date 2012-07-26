@@ -2,8 +2,9 @@
 
 <@master title="NBN Gateway - designation">
 
-    <#assign designation=json.readURL("${api}designations/${RequestParameters.desig}")>
-    <#assign designationCategory=json.readURL("${api}designationCategories/${designation.designationCategoryID}")>
+    <#assign designation=json.readURL("${api}/designations/${RequestParameters.desig}")>
+    <#assign designationCategory=json.readURL("${api}/designationCategories/${designation.designationCategoryID}")>
+    <#assign topLevelTaxonCategories=json.readURL("${api}/designations/${RequestParameters.desig}/topLevelTaxonNavigationCategories")>
 
     <div id="nbn-designation-content">
         <h4>${designation.name}</h4>
@@ -27,7 +28,22 @@
                 </tr>
                 <tr>
                     <th>Groups that have species with this designation:</td>
-                    <td>[TODO] SERVICES NOT YET AVAILABLE TO SUPPORT THIS</td>
+                    <td>
+                        <ul>
+                        <#list topLevelTaxonCategories as taxonCategory>
+                            <li>${taxonCategory.name} ${taxonCategory.taxonGroupId}
+                            <#if taxonCategory.parent>
+                                <#assign childTaxonCategories=json.readURL("${api}/designations/${RequestParameters.desig}/childTaxonNavigationCategories/${taxonCategory.taxonGroupId}")>
+                                <ul>
+                                    <#list childTaxonCategories as childTaxonCategory>
+                                    <li><a href="blah/${childTaxonCategory.taxonGroupId}">${childTaxonCategory.name}</a>
+                                </#list>
+                                </ul>
+                            </#if>
+                        </#list>
+                        </ul>
+
+                    </td>
                 </tr>
 
             </table>

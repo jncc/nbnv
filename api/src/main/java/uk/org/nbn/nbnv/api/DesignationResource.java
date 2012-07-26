@@ -12,8 +12,12 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import uk.org.nbn.nbnv.api.dao.MyBatisConnectionFactory;
 import uk.org.nbn.nbnv.api.dao.designation.DesignationCategoryMapper;
 import uk.org.nbn.nbnv.api.dao.designation.DesignationMapper;
+import uk.org.nbn.nbnv.api.dao.designation.TaxonCategoryMapper;
+import uk.org.nbn.nbnv.api.dao.designation.TaxonMapper;
 import uk.org.nbn.nbnv.api.model.Designation;
 import uk.org.nbn.nbnv.api.model.DesignationCategory;
+import uk.org.nbn.nbnv.api.model.Taxon;
+import uk.org.nbn.nbnv.api.model.TaxonCategory;
 
 /**
  *
@@ -65,17 +69,46 @@ public class DesignationResource {
         }
     }
 
-/*    @GET
+    @GET
+    @Path("/{id}/taxa")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Designation> getDesignationListByCategoryID(@QueryParam("category") int categoryID) {
+    public List<Taxon> getSpeciesByDesignation(@PathParam("id") int id) {
         SqlSessionFactory fact = MyBatisConnectionFactory.getFactory();
         SqlSession session = fact.openSession();
-        
-        try {
-            DesignationMapper m = session.getMapper(DesignationMapper.class);
-            return m.selectByCategoryID(categoryID);
+        try{
+            TaxonMapper taxonMapper = session.getMapper(TaxonMapper.class);
+            return taxonMapper.selectByDesignationID(id);
         } finally {
             session.close();
         }
-    }*/
+    }
+
+    @GET
+    @Path("/{id}/topLevelTaxonNavigationCategories")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<TaxonCategory> getTopLevelTaxonNavigationCategoriesByDesignation(@PathParam("id") int id) {
+        SqlSessionFactory fact = MyBatisConnectionFactory.getFactory();
+        SqlSession session = fact.openSession();
+        try{
+            TaxonCategoryMapper taxonCategoryMapper = session.getMapper(TaxonCategoryMapper.class);
+            return taxonCategoryMapper.selectTopLevelTaxonNavigationCategoriesByDesignationID(id);
+        } finally {
+            session.close();
+        }
+    }
+
+    @GET
+    @Path("/{designationId}/childTaxonNavigationCategories/{parentCategoryId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<TaxonCategory> getChildCategoriesByParentCategoryAndDesignation(@PathParam("designationId") int designationId, @PathParam("parentCategoryId") String parentCategoryId) {
+        SqlSessionFactory fact = MyBatisConnectionFactory.getFactory();
+        SqlSession session = fact.openSession();
+        try{
+            TaxonCategoryMapper taxonCategoryMapper = session.getMapper(TaxonCategoryMapper.class);
+            return taxonCategoryMapper.selectChildTaxonNavigationCategoriesByDesignationID(designationId, parentCategoryId);
+        } finally {
+            session.close();
+        }
+    }
+
 }
