@@ -1,11 +1,10 @@
-package uk.org.nbn.nbnv.importer
+package uk.org.nbn.nbnv.importer.utility
 
 import java.util.{Date, Calendar}
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.FunSuite
 import org.scalatest.matchers.ShouldMatchers
-import uk.org.nbn.nbnv.importer.Clock
 
 @RunWith(classOf[JUnitRunner])
 class ClockSuite extends FunSuite with ShouldMatchers {

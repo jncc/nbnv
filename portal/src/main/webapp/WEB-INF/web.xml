@@ -42,6 +42,14 @@
     <welcome-file-list>
         <welcome-file>index.ftl</welcome-file>
     </welcome-file-list>
+    <filter>
+        <filter-name>PowerlessTemplateExceptionFilter</filter-name>
+        <filter-class>uk.gov.nbn.data.powerless.PowerlessTemplateExceptionFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>PowerlessTemplateExceptionFilter</filter-name>
+        <url-pattern>*.ftl</url-pattern>
+    </filter-mapping>
     <servlet-mapping>
         <servlet-name>freemarker</servlet-name>
         <url-pattern>*.ftl</url-pattern>
@@ -53,12 +61,11 @@
         <location>/WEB-INF/unavailable-pages/404.ftl</location>
     </error-page>
     <error-page>
-        <error-code>500</error-code>
-        <location>/WEB-INF/unavailable-pages/500.ftl</location>
-    </error-page>
-    <error-page>
         <exception-type>java.io.FileNotFoundException</exception-type>
         <location>/WEB-INF/unavailable-pages/data-service-not-responding.ftl</location>
     </error-page>
-    
+    <error-page>
+        <error-code>500</error-code>
+        <location>/WEB-INF/unavailable-pages/500.ftl</location>
+    </error-page>
 </web-app>
