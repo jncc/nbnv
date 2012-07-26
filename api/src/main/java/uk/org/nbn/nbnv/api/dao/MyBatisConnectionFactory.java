@@ -10,7 +10,7 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import uk.org.nbn.nbnv.api.dao.designation.DesignationCategoryMapper;
 import uk.org.nbn.nbnv.api.dao.designation.DesignationMapper;
-import uk.org.nbn.nbnv.api.dao.designation.TaxonCategoryMapper;
+import uk.org.nbn.nbnv.api.dao.designation.TaxonGroupMapper;
 import uk.org.nbn.nbnv.api.dao.designation.TaxonMapper;
 
 /**
@@ -35,7 +35,7 @@ public class MyBatisConnectionFactory {
                 sqlSessionFactory.getConfiguration().addMapper(DesignationMapper.class);
                 sqlSessionFactory.getConfiguration().addMapper(DesignationCategoryMapper.class);
                 sqlSessionFactory.getConfiguration().addMapper(TaxonMapper.class);
-                sqlSessionFactory.getConfiguration().addMapper(TaxonCategoryMapper.class);
+                sqlSessionFactory.getConfiguration().addMapper(TaxonGroupMapper.class);
         }
         return sqlSessionFactory;
     }

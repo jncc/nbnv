@@ -1,6 +1,6 @@
 package uk.org.nbn.nbnv.api.model;
 
-public class TaxonCategory {
+public class TaxonGroup {
      
     private String taxonGroupId;
     private int sortOrder;
@@ -8,9 +8,9 @@ public class TaxonCategory {
     private String description;
     private boolean isParent;
     
-    public TaxonCategory(){}
+    public TaxonGroup(){}
     
-    public TaxonCategory(String taxonGroupId, int sortOrder, String name, String description, boolean isParent){
+    public TaxonGroup(String taxonGroupId, int sortOrder, String name, String description, boolean isParent){
         super();
         this.taxonGroupId = taxonGroupId;
         this.sortOrder = sortOrder;

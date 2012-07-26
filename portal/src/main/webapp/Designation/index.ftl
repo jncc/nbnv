@@ -4,7 +4,7 @@
 
     <#assign designation=json.readURL("${api}/designations/${RequestParameters.desig}")>
     <#assign designationCategory=json.readURL("${api}/designationCategories/${designation.designationCategoryID}")>
-    <#assign topLevelTaxonCategories=json.readURL("${api}/designations/${RequestParameters.desig}/topLevelTaxonNavigationCategories")>
+    <#assign topLevelTaxonGroups=json.readURL("${api}/designations/${RequestParameters.desig}/topLevelTaxonNavigationGroups")>
 
     <div id="nbn-designation-content">
         <h4>${designation.name}</h4>
@@ -30,13 +30,13 @@
                     <th>Groups that have species with this designation:</td>
                     <td>
                         <ul>
-                        <#list topLevelTaxonCategories as taxonCategory>
-                            <li>${taxonCategory.name} ${taxonCategory.taxonGroupId}
-                            <#if taxonCategory.parent>
-                                <#assign childTaxonCategories=json.readURL("${api}/designations/${RequestParameters.desig}/childTaxonNavigationCategories/${taxonCategory.taxonGroupId}")>
+                        <#list topLevelTaxonGroups as taxonGroup>
+                            <li>${taxonGroup.name} ${taxonGroup.taxonGroupId}
+                            <#if taxonGroup.parent>
+                                <#assign childTaxonGroups=json.readURL("${api}/designations/${RequestParameters.desig}/childTaxonNavigationGroups/${taxonGroup.taxonGroupId}")>
                                 <ul>
-                                    <#list childTaxonCategories as childTaxonCategory>
-                                    <li><a href="blah/${childTaxonCategory.taxonGroupId}">${childTaxonCategory.name}</a>
+                                    <#list childTaxonGroups as childTaxonGroup>
+                                    <li><a href="blah/${childTaxonGroup.taxonGroupId}">${childTaxonGroup.name}</a>
                                 </#list>
                                 </ul>
                             </#if>
