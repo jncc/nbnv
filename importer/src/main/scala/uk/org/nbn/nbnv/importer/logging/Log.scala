@@ -4,7 +4,6 @@ import org.apache.log4j._
 
 object Log {
 
-
   def configure(logPath : String, maxLogSize : String, level: Level) = {
 
     val pattern = new PatternLayout("%d %-5p [%c{1}] %m%n")
@@ -26,7 +25,7 @@ object Log {
     getLog.addAppender(ca)
     getLog.addAppender(fa)
   }
-  
 
+  /// Gets the user-facing logger for the importer.
   def getLog() = Logger.getLogger("uk.org.nbn.nbnv.importer")
 }

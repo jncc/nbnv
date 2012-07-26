@@ -13,7 +13,7 @@ object Options {
   /// Parses the command line arguments.
   def parse(args: List[String]) : OptionsResult = {
 
-    def isSwitch(s : String) = s.startsWith("-")
+//    def isSwitch(s : String) = s.startsWith("-")
 
     // process the arguments recursively
     def process(m : OptionMap, xs: List[String]) : OptionMap = xs match {
@@ -32,9 +32,9 @@ object Options {
 
   def createOptions(map: OptionMap): OptionsSuccess = {
     val options = new Options {
-      val archivePath = " "
-      val tempDir = ""
-      val logDir = ""
+      val archivePath = "."
+      val tempDir = "."
+      val logDir = "."
       val whatIf = false
     }
     OptionsSuccess(options)

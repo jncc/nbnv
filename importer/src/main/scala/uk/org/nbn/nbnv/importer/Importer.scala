@@ -5,7 +5,7 @@ import uk.org.nbn.nbnv.metadata.{MetadataParser, MetadataReader}
 import uk.org.nbn.nbnv.utility.FileSystem
 import java.io.File
 import org.gbif.dwc.text.ArchiveFactory
-import org.apache.log4j.Logger
+import org.apache.log4j.{Level, Logger}
 
 object Importer {
 
@@ -22,8 +22,12 @@ object Importer {
   }
 
   def createImporter(options: Options) : Importer = {
+
+    Log.configure(options.logDir, "4MB", Level.ALL)
+    val log = Log.getLog
+
     // todo use guice
-    new Importer(options, Log.getLog(), new MetadataReader(new FileSystem, new MetadataParser))
+    new Importer(options, log, new MetadataReader(new FileSystem, new MetadataParser))
   }
 
 }
@@ -33,9 +37,9 @@ class Importer(options: Options, log: Logger, metadataReader: MetadataReader) {
     log.info("Welcome! Starting the NBN Gateway importer...")
     log.info("Options are: ... todo")
 
-    val archive = ArchiveFactory.openArchive(new File(options.archivePath), new File(options.tempDir))
+    //val archive = ArchiveFactory.openArchive(new File(options.archivePath), new File(options.tempDir))
     // read EML metadata
-    val metadata = metadataReader.read(archive)
+    //val metadata = metadataReader.read(archive)
 //    open dwca reader
 //    begin tx
 //      upsert dataset, samples and surveys

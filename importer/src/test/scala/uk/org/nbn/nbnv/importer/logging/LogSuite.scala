@@ -9,7 +9,8 @@ import org.apache.log4j._
 @RunWith(classOf[JUnitRunner])
 class LogSuite extends FunSuite with ShouldMatchers {
   test("the log should work"){
-    Log.configure("c:\\working\\testLog.log","2MB", Level.ALL)
+
+    Log.configure("testLog.log", "2MB", Level.ALL)
     Log.getLog().info("Arrrrggghh!")
   }
 }
