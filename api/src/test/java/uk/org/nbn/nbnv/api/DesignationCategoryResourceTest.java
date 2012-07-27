@@ -14,7 +14,6 @@ import com.sun.jersey.test.framework.WebAppDescriptor;
 import java.util.List;
 import javax.ws.rs.core.MediaType;
 import junit.framework.Assert;
-import org.junit.Test;
 import uk.org.nbn.nbnv.api.model.DesignationCategory;
 
 /**
