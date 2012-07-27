@@ -9,16 +9,12 @@ case class OptionsFailure(message: String)  extends OptionsResult
 // case class OptionsException(message: String) extends Exception(message)
 
 /// The command line options that can be provided to the importer.
-abstract class Options {
-  val archivePath:  String
-  val tempDir: String
-  val logDir: String
-  val whatIf: Boolean
-}
+case class Options(archivePath: String  = "archive.zip",
+                   tempDir:     String  = ".",
+                   logDir:      String  = ".",
+                   whatIf:      Boolean = false)
 
 object Options {
-
-  type OptionMap = Map[Symbol, Any]
 
   val usage =
     """|
@@ -32,39 +28,17 @@ object Options {
   /// Parses the command line arguments.
   def parse(args: List[String]) : OptionsResult = {
 
-    def process(out: OptionMap, in: List[String]): OptionMap = in match {
-      case Nil                     => out
-      case "-logdir"  :: v :: tail => process(out ++ Map('logDir -> v), tail)
-      case "-tempdir" :: v :: tail => process(out ++ Map('tempDir -> v), tail)
-      case "-whatif"       :: tail => process(out ++ Map('whatIf -> true), tail)
-      case v               :: tail => process(out ++ Map('archivePath -> v), tail)
+    def process(options: Options, in: List[String]) : Options = in match {
+      case Nil                     => options
+      case "-logdir"  :: v :: tail => process(options.copy(logDir = v), tail)
+      case "-tempdir" :: v :: tail => process(options.copy(tempDir = v), tail)
+      case "-whatif"       :: tail => process(options.copy(whatIf = true), tail)
+      case v               :: tail => process(options.copy(archivePath = v), tail)
     }
 
     args match {
       case Nil => OptionsFailure(usage)
-      case _   => {
-        val options = process(Map(), args.map(_.toLowerCase))
-        createSuccessObject(options)
-      }
+      case _   => OptionsSuccess(process(Options(), args.map(_.toLowerCase)))
     }
-  }
-
-  def createSuccessObject(map: OptionMap) : OptionsResult = {
-
-    def getString(options: OptionMap, name: Symbol): String = options.get(name) match {
-      case Some(s: String) => s
-      case None => "" // todo throw new Exception? :-(
-    }
-
-    val options = new Options {
-      val archivePath = getString(map, 'archivePath)
-      val logDir      = getString(map, 'logDir)
-      val tempDir     = getString(map, 'tempDir)
-      val whatIf      = map.get('whatIf) match {
-        case Some(b: Boolean) => b
-        case None             => false
-      }
-    }
-    OptionsSuccess(options)
   }
 }

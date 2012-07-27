@@ -19,17 +19,7 @@ import org.gbif.utils.file.ClosableIterator
 class ImporterSuite extends FunSuite with ShouldMatchers {
 
   test("importer should say hello") {
-    val options = new Options {
-      val archivePath = "."
-      val tempDir = "."
-      val logDir = "."
-      val whatIf = false
-    }
     val log = mock(classOf[Logger])
-    
-    
-    
-    
     val archive = mock(classOf[Archive])
     val iterator = mock(classOf[ClosableIterator[StarRecord]])
     when(archive.iteratorRaw).thenReturn(iterator)
@@ -47,7 +37,7 @@ class ImporterSuite extends FunSuite with ShouldMatchers {
     val recordIngester = mock(classOf[RecordIngester])
     
 
-    val importer = new Importer(options, log, archiveManager, metadataReader
+    val importer = new Importer(Options(), log, archiveManager, metadataReader
                                 , entityManager,datasetIngester,recordIngester)
     importer.run()
 
