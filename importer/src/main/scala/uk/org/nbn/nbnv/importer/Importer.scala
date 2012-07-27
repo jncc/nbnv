@@ -6,6 +6,11 @@ import uk.org.nbn.nbnv.metadata.{MetadataParser, MetadataReader}
 import uk.org.nbn.nbnv.utility.FileSystem
 import org.apache.log4j.{Level, Logger}
 import utility.ImportException
+import javax.persistence.EntityManager;
+import uk.org.nbn.nbnv.PersistenceUtility
+import uk.org.nbn.nbnv.importer.data.{DatasetIngester, RecordIngester}
+import scala.collection.JavaConversions._
+
 
 object Importer {
 
@@ -30,17 +35,34 @@ object Importer {
     // configure log
     Log.configure(options.logDir, "4MB", Level.ALL)
     val log = Log.get()
-
+    
+    val entityManager = createEntityManager
+   
     // todo use guice
-    new Importer(options, log, new ArchiveManager(options), new MetadataReader(new FileSystem, new MetadataParser))
+    new Importer(options, 
+                 log, 
+                 new ArchiveManager(options), 
+                 new MetadataReader(new FileSystem, new MetadataParser),
+                 entityManager,
+                 new DatasetIngester(entityManager),
+                 new RecordIngester(entityManager))
   }
+  
+  def createEntityManager() = {
+   val u = new PersistenceUtility()
+   val f = u.createEntityManagerFactory()
+   f.createEntityManager()
+   }
 }
 
 /// Imports data into the NBN Gateway core database.
 class Importer(options: Options,
                log: Logger,
                archiveManager: ArchiveManager,
-               metadataReader: MetadataReader) {
+               metadataReader: MetadataReader,
+               entityManager: EntityManager,
+               datasetIngester: DatasetIngester,
+               recordIngester: RecordIngester) {
   def run() {
 
     log.info("Welcome! Starting the NBN Gateway importer...")
@@ -49,6 +71,21 @@ class Importer(options: Options,
     try {
       val archive = archiveManager.open()
       val metadata = metadataReader.read(archive)
+      
+      entityManager.getTransaction.begin()
+      
+      val dataset = datasetIngester.upsertDataset(metadata)
+
+      for (record <- archive.iteratorRaw) { // iteratorRaw
+        /*println("upserting record " + record.core.value(DwcTerm.occurrenceID))
+         // in our case we know there should be exactly one extension record ("head" is first in a list)
+         val extensionRecord = record.extension("http://uknbn.org/terms/NBNExchange").head
+         upsertRecord(em, record, extensionRecord)*/
+      }
+
+      entityManager.getTransaction.commit()
+      entityManager.close()
+      
       //    open dwca reader
       //    begin tx
       //      upsert dataset
@@ -61,6 +98,8 @@ class Importer(options: Options,
       //      end tx
     }
     catch {
+      //Do we need to rollback the jpa transaction here 
+      //or is that taken care of?
       case ie: ImportException => {
         log.error("Import run failed.", ie)
       }
@@ -70,6 +109,8 @@ class Importer(options: Options,
       }
     }
   }
+  
+
 }
 
 
