@@ -19,8 +19,8 @@ class MetadataParser {
       val useConstraints = constraints(1).trim
       val geographicCoverage = (dataset  \ "coverage" \ "geographicCoverage" \ "geographicDescription").text.trim
       val purpose = (dataset \ "purpose" \ "para").text.trim
-      val method = (dataset \ "methods" \  "methodStep" \ "description" \ "para").text.trim
-      val quality = (dataset \ "methods" \ "qualityControl" \ "description" \ "para" ).text.trim
+      val dataCaptureMethod = (dataset \ "methods" \  "methodStep" \ "description" \ "para").text.trim
+      val dataQuality = (dataset \ "methods" \ "qualityControl" \ "description" \ "para" ).text.trim
     }
   }
 }

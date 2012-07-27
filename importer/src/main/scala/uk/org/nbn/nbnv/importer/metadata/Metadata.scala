@@ -8,8 +8,8 @@ abstract class Metadata {
   val useConstraints: String
   val geographicCoverage: String
   val purpose: String
-  val method: String
-  val quality: String
+  val dataCaptureMethod: String
+  val dataQuality: String
 
   override def toString = datasetKey
 }
