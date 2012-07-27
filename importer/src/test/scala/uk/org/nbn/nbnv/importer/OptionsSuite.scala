@@ -7,7 +7,7 @@ import org.scalatest.{Inside, FunSuite}
 import org.scalatest.matchers.ShouldMatchers
 
 @RunWith(classOf[JUnitRunner])
-class OptionsSuite extends FunSuite with ShouldMatchers with Inside {
+class OptionsSuite extends FunSuite with ShouldMatchers {
 
   val archivePath = "c:\\some\\archive.zip"
   val logDir = "c:\\logs"
@@ -18,7 +18,7 @@ class OptionsSuite extends FunSuite with ShouldMatchers with Inside {
     val valid = List(archivePath, "-logDir", logDir, "-tempDir", tempDir, "-whatIf")
     val result = Options.parse(valid)
 
-    inside (result) {
+    result match {
       case OptionsSuccess(options) => {
         options.archivePath should be (archivePath)
         options.logDir should be (logDir)
@@ -34,7 +34,7 @@ class OptionsSuite extends FunSuite with ShouldMatchers with Inside {
     val empty = List()
     val result = Options.parse(empty)
 
-    inside (result) {
+    result match {
       case OptionsFailure(message) => message.trim should startWith ("Usage")
       case _ => fail()
     }

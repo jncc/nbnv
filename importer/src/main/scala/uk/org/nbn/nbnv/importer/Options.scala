@@ -20,53 +20,51 @@ object Options {
 
   type OptionMap = Map[Symbol, Any]
 
+  val usage =
+    """|
+       |Usage:
+       |importer "C:\some\archive.zip" (specify a DwcA archive)
+       |         [-logDir "C:\logs"]   (specify a log directory)
+       |         [-tempDir "C:\temp"]  (specify a temp directory)
+       |         [-whatIf]             (validate only, don't import)
+    """.stripMargin
+
   /// Parses the command line arguments.
   def parse(args: List[String]) : OptionsResult = {
 
-    // todo catch exception
-    val usage =
-      """|
-         |Usage:
-         |importer "C:\some\archive.zip" (specify a DwcA archive)
-         |         [-logDir "C:\logs"]   (specify a log directory)
-         |         [-tempDir "C:\temp"]  (specify a temp directory)
-         |         [-whatIf]             (validate only, don't import)
-      """.stripMargin
-
-    def isSwitch(s: String) = s.startsWith("-")
-
     def process(out: OptionMap, in: List[String]): OptionMap = in match {
-      case Nil                             => out
-      case "-tempdir" :: v :: tail         => process(out ++ Map('tempDir -> v), tail)
-      case "-logdir"  :: v :: tail         => process(out ++ Map('logDir  -> v), tail)
-      case "-whatif"  :: tail              => process(out ++ Map('whatIf  -> true), tail)
-//    case arg :: s :: tail if isSwitch(s) => process(out ++ Map('arg     -> arg), in.tail)
-      case arg :: tail                     => process(out ++ Map('arg     -> arg), tail)
+      case Nil                     => out
+      case "-logdir"  :: v :: tail => process(out ++ Map('logDir -> v), tail)
+      case "-tempdir" :: v :: tail => process(out ++ Map('tempDir -> v), tail)
+      case "-whatif"       :: tail => process(out ++ Map('whatIf -> true), tail)
+      case v               :: tail => process(out ++ Map('archivePath -> v), tail)
     }
+
+    args match {
+      case Nil => OptionsFailure(usage)
+      case _   => {
+        val options = process(Map(), args.map(_.toLowerCase))
+        createSuccessObject(options)
+      }
+    }
+  }
+
+  def createSuccessObject(map: OptionMap) : OptionsResult = {
 
     def getString(options: OptionMap, name: Symbol): String = options.get(name) match {
       case Some(s: String) => s
       case None => "" // todo throw new Exception? :-(
     }
-    args match {
-      case Nil => OptionsFailure(usage)
-      case _   => {
-        // process the arguments
-        val options = process(Map(), args.map(_.toLowerCase))
-        // include defaults
-        val o = new Options {
-          val archivePath = getString(options, 'arg)
-          val logDir = getString(options, 'logDir)
-          val tempDir = getString(options, 'tempDir)
-          val whatIf = options.get('whatIf) match {
-            case Some(b: Boolean) => b
-            case None             => false
-          }
-        }
-        OptionsSuccess(o)
+
+    val options = new Options {
+      val archivePath = getString(map, 'archivePath)
+      val logDir      = getString(map, 'logDir)
+      val tempDir     = getString(map, 'tempDir)
+      val whatIf      = map.get('whatIf) match {
+        case Some(b: Boolean) => b
+        case None             => false
       }
     }
+    OptionsSuccess(options)
   }
 }
-
-
