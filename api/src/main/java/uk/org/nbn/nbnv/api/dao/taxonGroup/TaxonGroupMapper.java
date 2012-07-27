@@ -13,12 +13,12 @@ import uk.org.nbn.nbnv.api.model.TaxonGroup;
  * @author Administrator
  */
 public interface TaxonGroupMapper {   
-    @Select("SELECT taxonGroupKey FROM TaxonGroupData")
+    @Select("SELECT * FROM TaxonGroupData")
     List<TaxonGroup> selectAll();
     
-    @Select("SELECT taxonGroupKey FROM TaxonGroupData WHERE taxonGroupKey = #{id}")
+    @Select("SELECT * FROM TaxonGroupData WHERE taxonGroupKey = #{id}")
     TaxonGroup getTaxonGroup(String id);
     
-    @Select("SELECT taxonGroupKey FROM TaxonGroupData WHERE parent = #{id}")
+    @Select("SELECT * FROM TaxonGroupData WHERE parent = #{id}")
     List<TaxonGroup> getChildren(String id);
 }

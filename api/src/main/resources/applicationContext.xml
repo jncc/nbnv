@@ -16,10 +16,10 @@
 <!-- Scans the classpath of this application for @Components to deploy as beans -->
     <context:component-scan base-package="uk.org.nbn.nbnv.api" /> 
     <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-            <property name="driverClassName" value="com.microsoft.sqlserver.jdbc.SQLServerDriver" />
-            <property name="url" value="jdbc:sqlserver://nbnsql-b.nerc-lancaster.ac.uk;databaseName=NBNWarehouse" />
-            <property name="username" value="NBNImporter" />
-            <property name="password" value="Ecowaswashere9" />
+        <property name="driverClassName" value="com.microsoft.sqlserver.jdbc.SQLServerDriver" />
+        <property name="url" value="jdbc:sqlserver://nbnsql-b.nerc-lancaster.ac.uk;databaseName=NBNWarehouse" />
+        <property name="username" value="NBNImporter" />
+        <property name="password" value="Ecowaswashere9" />
     </bean>
     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
         <property name="dataSource" ref="dataSource" />
