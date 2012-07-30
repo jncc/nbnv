@@ -77,7 +77,7 @@ class Importer(options: Options,
       val dataset = datasetIngester.upsertDataset(metadata)
 
       for (record <- archive.iteratorRaw) { 
-        recordIngester.upsertRecord(record);
+        recordIngester.upsertRecord(record, dataset);
 // iteratorRaw
         /*println("upserting record " + record.core.value(DwcTerm.occurrenceID))
          // in our case we know there should be exactly one extension record ("head" is first in a list)

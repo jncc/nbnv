@@ -27,14 +27,13 @@ class DatasetIngester (val em : EntityManager) {
       dataset.setPurpose(metadata.purpose)
       dataset.setUseConstraints(metadata.useConstraints)
       
-      //Returns the instance of the dataset entity that the dataset was merged with
+      //Returns the merged instance of the dataset entity
       em.merge(dataset)
-     
     }
     
-    def getDataset : Option[Dataset] = Some(em.find(classOf[Dataset], metadata.datasetKey))
+    val dataset : Option[Dataset] = Some(em.find(classOf[Dataset], metadata.datasetKey))
     
-    getDataset match {
+    dataset match {
       case Some(ds) => mergeDataset(ds, metadata)
       case None => mergeDataset(new Dataset, metadata)
     }
