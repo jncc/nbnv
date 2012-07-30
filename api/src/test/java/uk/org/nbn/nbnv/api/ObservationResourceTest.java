@@ -7,7 +7,6 @@ package uk.org.nbn.nbnv.api;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.test.framework.JerseyTest;
 import static org.junit.Assert.assertEquals;
-import org.junit.Test;
 
 /**
  *

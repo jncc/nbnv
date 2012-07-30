@@ -1,30 +1,37 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package uk.org.nbn.nbnv.api.model;
 
+import java.util.List;
+
+/**
+ *
+ * @author Administrator
+ */
 public class TaxonGroup {
-     
-    private String taxonGroupId;
     private int sortOrder;
-    private String name;
-    private String description;
-    private boolean isParent;
-    
-    public TaxonGroup(){}
-    
-    public TaxonGroup(String taxonGroupId, int sortOrder, String name, String description, boolean isParent){
-        super();
-        this.taxonGroupId = taxonGroupId;
-        this.sortOrder = sortOrder;
-        this.name = name;
-        this.description = description;
-        this.isParent = isParent;
+    private String taxonGroupName;
+    private String descriptor;
+    private String parent;
+    private String taxonGroupKey;
+    private List<TaxonGroup> children;
+
+    public String getDescriptor() {
+        return descriptor;
     }
 
-    public String getTaxonGroupId() {
-        return taxonGroupId;
+    public void setDescriptor(String descriptor) {
+        this.descriptor = descriptor;
     }
 
-    public void setTaxonGroupId(String taxonGroupId) {
-        this.taxonGroupId = taxonGroupId;
+    public String getParent() {
+        return parent;
+    }
+
+    public void setParent(String parent) {
+        this.parent = parent;
     }
 
     public int getSortOrder() {
@@ -35,28 +42,27 @@ public class TaxonGroup {
         this.sortOrder = sortOrder;
     }
 
-    public String getName() {
-        return name;
+    public String getTaxonGroupName() {
+        return taxonGroupName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setTaxonGroupName(String taxonGroupName) {
+        this.taxonGroupName = taxonGroupName;
     }
-
-    public String getDescription() {
-        return description;
+    
+    public String getTaxonGroupKey() {
+        return taxonGroupKey;
     }
-
-    public void setDescription(String description) {
-        this.description = description;
+    
+    public void setTaxonGroupKey(String taxonGroupKey) {
+        this.taxonGroupKey = taxonGroupKey;
     }
-
-    public boolean isParent() {
-        return isParent;
+    
+    public List<TaxonGroup> getChildren() {
+        return children;
     }
-
-    public void setParent(boolean isParent) {
-        this.isParent = isParent;
+        
+    public void setChildren(List<TaxonGroup> children) {
+        this.children = children;
     }
-
 }
