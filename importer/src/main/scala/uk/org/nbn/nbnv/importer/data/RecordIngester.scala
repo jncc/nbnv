@@ -13,7 +13,7 @@ import org.gbif.dwc.terms.DwcTerm;
 
 class RecordIngester (em : EntityManager) {
   
-  def upsertRecord(record : StarRecord, dataset : Dataset) {
+  def upsertRecord(record : StarRecord, dataset : TaxonDataset) {
     
     /*Query query = entityManager.createQuery("Select sm from SecureMessage sm where sm.someField=:arg1");
      query.setParameter("arg1", arg1);*/
@@ -24,6 +24,9 @@ class RecordIngester (em : EntityManager) {
                       .setParameter("datasetKey", dataset.getDatasetKey)
                       .getResultList
     
+    //todo: Generate a new sample key if none given.
+    //todo: use the survey key as title when creating a new survey - check this is correct
+    val survey = if (!surveyQuery.isEmpty) surveyQuery.get(0) else new Survey(surveyKey, surveyKey)
     
     
     val sampleKey = record.core().value(DwcTerm.eventID)
@@ -32,14 +35,9 @@ class RecordIngester (em : EntityManager) {
                       .setParameter("surveyKey", surveyKey)
                       .getResultList
 
-    //todo: Wouldn't this would be better as a constructor for the sample entity
-    def getNewSample(sampleKey : String) : Sample = {
-      val sample = new Sample() 
-      sample.setSampleKey(sampleKey)
-      return sample
-    }
-    
-    val sample = if (!sampleQuery.isEmpty) sampleQuery.get(0) else getNewSample(sampleKey)
+    //todo: Generate new sample key if none given
+
+    val sample = if (!sampleQuery.isEmpty) sampleQuery.get(0) else new Sample(sampleKey)
     
     
   }

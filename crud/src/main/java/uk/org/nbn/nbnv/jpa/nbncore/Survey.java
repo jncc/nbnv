@@ -61,6 +61,11 @@ public class Survey implements Serializable {
         this.surveyKey = surveyKey;
         this.title = title;
     }
+    
+    public Survey(String surveyKey, String title) {
+        this.surveyKey = surveyKey;
+        this.title = title;
+    }
 
     public Integer getSurveyID() {
         return surveyID;

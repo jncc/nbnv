@@ -7,7 +7,7 @@ import org.scalatest.matchers.ShouldMatchers
 import org.scalatest.FunSuite
 import org.scalatest.mock.MockitoSugar
 import javax.persistence.EntityManager
-import uk.org.nbn.nbnv.jpa.nbncore.Dataset
+import uk.org.nbn.nbnv.jpa.nbncore.{Dataset, TaxonDataset}
 import uk.org.nbn.nbnv.metadata.Metadata
 
 @RunWith(classOf[JUnitRunner])
@@ -18,9 +18,13 @@ class DatasetIngesterSuite extends FunSuite with ShouldMatchers with MockitoSuga
     // arrange
     val key = "existing-dataset-key"
     val metadata = buildFakeMetadata(key)
+ 
     val dataset = mock[Dataset]
+    val taxonDataset = mock[TaxonDataset]
+    when(taxonDataset.getDataset()).thenReturn(dataset)
+    
     val em = mock[EntityManager]
-    when(em.find(classOf[Dataset], key)).thenReturn(dataset)
+    when(em.find(classOf[TaxonDataset], key)).thenReturn(taxonDataset)
 
     // act
     val ingester = new DatasetIngester(em)
