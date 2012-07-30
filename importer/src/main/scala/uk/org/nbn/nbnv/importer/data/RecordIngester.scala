@@ -31,6 +31,5 @@ class RecordIngester (em : EntityManager) {
     val sample : Option[Sample] = Some(sampleQuery.getSingleResult())
     
     
-    
   }
 }
