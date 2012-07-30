@@ -13,6 +13,17 @@ case class Options(archivePath: String  = "archive.zip",
                    tempDir:     String  = ".",
                    logDir:      String  = ".",
                    whatIf:      Boolean = false)
+{
+  override def toString() = {
+    Map(
+      "  archivePath: %s" -> archivePath,
+      "  tempDir:     %s" -> tempDir,
+      "  logDir:      %s" -> logDir,
+      "  whatIf:      %s" -> whatIf)
+      .map(x => x._1.format(x._2))
+      .mkString("\n")
+  }
+}
 
 object Options {
 
