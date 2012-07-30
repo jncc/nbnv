@@ -12,8 +12,6 @@ import javax.persistence.EntityManager;
 
 class DatasetIngester (val em : EntityManager) {
   def upsertDataset(metadata : Metadata) : Dataset = {
-    
-    def getDataset : Option[Dataset] = Some(em.find(classOf[Dataset], metadata.datasetKey))
       
     def mergeDataset( dataset : Dataset, metadata : Metadata) : Dataset = {
       
@@ -29,8 +27,12 @@ class DatasetIngester (val em : EntityManager) {
       dataset.setPurpose(metadata.purpose)
       dataset.setUseConstraints(metadata.useConstraints)
       
-      return dataset
+      //Returns the instance of the dataset entity that the dataset was merged with
+      em.merge(dataset)
+     
     }
+    
+    def getDataset : Option[Dataset] = Some(em.find(classOf[Dataset], metadata.datasetKey))
     
     getDataset match {
       case Some(ds) => mergeDataset(ds, metadata)
