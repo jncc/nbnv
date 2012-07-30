@@ -30,11 +30,9 @@ class DatasetIngester (val em : EntityManager) {
       //Returns the merged instance of the dataset entity
       em.merge(dataset)
     }
-    
-    val dataset : Option[Dataset] = Some(em.find(classOf[Dataset], metadata.datasetKey))
-    
+
     //todo : need a mechanism to generate a new dataset key (jpql?)
-    dataset match {
+    Option(em.find(classOf[Dataset], metadata.datasetKey)) match {
       case Some(ds) => mergeDataset(ds, metadata)
       case None => mergeDataset(new Dataset, metadata)
     }
