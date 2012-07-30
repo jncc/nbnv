@@ -66,7 +66,7 @@ class Importer(options: Options,
   def run() {
 
     log.info("Welcome! Starting the NBN Gateway importer...")
-    log.info("Options are: ... todo")
+    log.info("Options are: \n%s".format(options))
 
     try {
       val archive = archiveManager.open()
