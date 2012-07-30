@@ -27,7 +27,6 @@ class DatasetIngester (val em: EntityManager) {
       em.merge(dataset)
     }
 
-
     Option(em.find(classOf[Dataset], metadata.datasetKey)) match {
       case Some(dataset) => mergeDataset(dataset, metadata)
       case None => {

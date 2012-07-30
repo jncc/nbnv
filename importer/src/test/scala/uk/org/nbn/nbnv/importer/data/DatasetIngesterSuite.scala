@@ -1,23 +1,46 @@
 package uk.org.nbn.nbnv.importer.data
 
 import org.junit.runner.RunWith
+import org.mockito.Mockito._
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.matchers.ShouldMatchers
 import org.scalatest.FunSuite
 import org.scalatest.mock.MockitoSugar
 import javax.persistence.EntityManager
-import org.mockito.Mockito
+import uk.org.nbn.nbnv.jpa.nbncore.Dataset
+import uk.org.nbn.nbnv.metadata.Metadata
 
 @RunWith(classOf[JUnitRunner])
 class DatasetIngesterSuite extends FunSuite with ShouldMatchers with MockitoSugar {
 
-  test("existing dataset should be updated") {
+  test("an existing dataset should be updated") {
 
-//    val file = mock(classOf[File])
-//    when(file.getCanonicalPath).thenReturn(path)
+    // arrange
+    val key = "existing-dataset-key"
+    val metadata = buildFakeMetadata(key)
+    val dataset = mock[Dataset]
     val em = mock[EntityManager]
+    when(em.find(classOf[Dataset], key)).thenReturn(dataset)
 
-    val injester = new DatasetIngester(em)
+    // act
+    val ingester = new DatasetIngester(em)
+    ingester.upsertDataset(metadata)
+
+    // assert - that the entity manager was called with the retrieved dataset
+    verify(em).merge(dataset)
   }
 
+  def buildFakeMetadata(key: String) = {
+    new Metadata {
+      val datasetKey: String = key
+      val accessConstraints: String = ""
+      val geographicCoverage: String = ""
+      val useConstraints: String = ""
+      val description: String = ""
+      val datasetTitle: String = ""
+      val dataCaptureMethod: String = ""
+      val dataQuality: String = ""
+      val purpose: String = ""
+    }
+  }
 }
