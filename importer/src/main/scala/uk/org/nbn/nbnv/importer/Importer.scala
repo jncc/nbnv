@@ -2,6 +2,7 @@ package uk.org.nbn.nbnv.importer
 
 import darwin.ArchiveManager
 import logging.Log
+import records.NbnRecord
 import uk.org.nbn.nbnv.metadata.{MetadataParser, MetadataReader}
 import uk.org.nbn.nbnv.utility.FileSystem
 import org.apache.log4j.{Level, Logger}
@@ -16,6 +17,7 @@ object Importer {
 
   /// The entry point to the console application.
   def main(args: Array[String]) {
+
     Options.parse(args.toList) match {
       case OptionsSuccess(options) => {
         val importer = createImporter(options)
@@ -35,9 +37,10 @@ object Importer {
     // configure log
     Log.configure(options.logDir, "4MB", Level.ALL)
     val log = Log.get()
-    
-    val entityManager = createEntityManager
-   
+
+    // create entity manager
+    val entityManager = new PersistenceUtility().createEntityManagerFactory.createEntityManager
+
     // todo use guice
     new Importer(options, 
                  log, 
@@ -45,46 +48,40 @@ object Importer {
                  new MetadataReader(new FileSystem, new MetadataParser),
                  entityManager,
                  new DatasetIngester(entityManager),
-                 new RecordIngester(entityManager))
+                 new RecordIngester(log, entityManager))
   }
-  
-  def createEntityManager() = {
-   val u = new PersistenceUtility()
-   val f = u.createEntityManagerFactory()
-   f.createEntityManager()
-   }
 }
 
 /// Imports data into the NBN Gateway core database.
-class Importer(options: Options,
-               log: Logger,
-               archiveManager: ArchiveManager,
-               metadataReader: MetadataReader,
-               entityManager: EntityManager,
+class Importer(options:         Options,
+               log:             Logger,
+               archiveManager:  ArchiveManager,
+               metadataReader:  MetadataReader,
+               entityManager:   EntityManager,
                datasetIngester: DatasetIngester,
-               recordIngester: RecordIngester) {
+               recordIngester:  RecordIngester) {
   def run() {
 
     log.info("Welcome! Starting the NBN Gateway importer...")
-    log.info("Options are: \n%s".format(options))
+    log.info("Options are: \n" + options)
 
     try {
+      // open the archive and read the metadata
       val archive = archiveManager.open()
       val metadata = metadataReader.read(archive)
-      
+
+      // begin transaction
       entityManager.getTransaction.begin()
-      
+
+      // upsert dataset
       val dataset = datasetIngester.upsertDataset(metadata)
 
-      for (record <- archive.iteratorRaw) { 
-        recordIngester.upsertRecord(record, dataset);
-// iteratorRaw
-        /*println("upserting record " + record.core.value(DwcTerm.occurrenceID))
-         // in our case we know there should be exactly one extension record ("head" is first in a list)
-         val extensionRecord = record.extension("http://uknbn.org/terms/NBNExchange").head
-         upsertRecord(em, record, extensionRecord)*/
+      // upsert records
+      for (record <- archive.iteratorRaw.map(r => new NbnRecord(r))) {
+        recordIngester.upsertRecord(record, dataset)
       }
 
+      // commit the transaction
       entityManager.getTransaction.commit()
       entityManager.close()
       
