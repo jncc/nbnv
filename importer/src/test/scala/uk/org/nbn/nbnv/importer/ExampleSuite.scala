@@ -2,27 +2,23 @@ package uk.org.nbn.nbnv.importer
 
 import org.scalatest.FunSuite
 import org.scalatest.junit.JUnitRunner
-import scala.collection.mutable.Stack
+import uk.org.nbn.nbnv.utility.FileSystem
+import org.mockito.Mockito._
+import org.scalatest.mock.MockitoSugar
+import org.scalatest.matchers.ShouldMatchers
+import org.junit.runner.RunWith
 
-class ExampleSuite extends FunSuite {
+@RunWith(classOf[JUnitRunner])
+class ExampleSuite extends FunSuite with ShouldMatchers with MockitoSugar {
 
-  test("pop is invoked on a non-empty stack") {
+  test("can mock with mockito") {
 
-    val stack = new Stack[Int]
-    stack.push(1)
-    stack.push(2)
-    val oldSize = stack.size
-    val result = stack.pop()
-    assert(result === 2)
-    assert(stack.size === oldSize - 1)
-  }
+    val xml = <hello>world</hello>
 
-  test("pop is invoked on an empty stack") {
+    val fs = mock[FileSystem]
+    when(fs.loadXml("bob")).thenReturn(xml)
 
-    val emptyStack = new Stack[Int]
-    intercept[NoSuchElementException] {
-      emptyStack.pop()
-    }
-    assert(emptyStack.isEmpty)
+    val result = fs.loadXml("bob")
+    result should be (xml)
   }
 }
