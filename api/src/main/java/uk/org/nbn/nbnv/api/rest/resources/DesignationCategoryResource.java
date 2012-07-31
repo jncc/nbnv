@@ -22,7 +22,7 @@ import uk.org.nbn.nbnv.api.model.DesignationCategory;
  * @author Administrator
  */
 @Component
-@Path("/designationCategories")
+@Path("/designation_categories")
 public class DesignationCategoryResource {
     @Autowired DesignationCategoryMapper desigCat;
     @Autowired DesignationMapper desig;
