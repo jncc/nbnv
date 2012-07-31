@@ -41,8 +41,7 @@ public interface TaxonGroupMapper {
         @Param("end") int end
     );
     
-//    @Select("SELECT taxonGroupKey, taxonGroupName, descriptor, sortOrder, parent FROM (SELECT distinct taxonGroupKey, sortOrder, taxonGroupName, descriptor, parent FROM DesignationTaxonData dtd INNER JOIN NBNCore.dbo.Taxon t ON dtd.pTaxonVersionKey = t.taxonVersionKey INNER JOIN TaxonGroupData tgd ON t.taxonNavigationGroupKey = tgd.taxonGroupKey WHERE parent is null AND designationID = #{id} UNION ALL SELECT distinct tgd2.taxonGroupKey, tgd2.sortOrder, tgd2.taxonGroupName, tgd2.descriptor, tgd2.parent FROM DesignationTaxonData dtd INNER JOIN NBNCore.dbo.Taxon t ON dtd.pTaxonVersionKey = t.taxonVersionKey INNER JOIN TaxonGroupData tgd1 ON t.taxonNavigationGroupKey = tgd1.taxonGroupKey INNER JOIN TaxonGroupData tgd2 ON tgd1.parent = tgd2.taxonGroupKey WHERE tgd1.parent IS NOT NULL AND designationID = #{id}) a ORDER BY sortOrder ASC")
-    @Select("SELECT * from JonTestLevel1TaxonGroup where designationID = #{id}")
+    @Select("SELECT * from DesignationTaxonGroupData where designationID = #{id}")
     List<TaxonGroup> selectTopLevelTaxonNavigationGroupsByDesignationID(int id);
     
     @Select("SELECT distinct tgd.taxonGroupKey, tgd.taxonGroupName, descriptor, tgd.sortOrder, tgd.parent FROM DesignationTaxonData dtd INNER JOIN NBNCore.dbo.Taxon t ON dtd.pTaxonVersionKey = t.taxonVersionKey INNER JOIN TaxonGroupData tgd ON t.taxonNavigationGroupKey = tgd.taxonGroupKey WHERE parent = #{taxonGroupId} AND designationID = #{designationId} ORDER BY sortOrder ASC")
