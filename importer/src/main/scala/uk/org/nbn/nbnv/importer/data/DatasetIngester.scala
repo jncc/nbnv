@@ -10,7 +10,7 @@ class DatasetIngester (val em: EntityManager) {
   def upsertDataset(metadata: Metadata) : TaxonDataset = {
 
         // returns the merged instance of the dataset entity
-    def mergeBaseDataset(dataset: Dataset, metadata: Metadata) : Dataset = {
+    def mergeDataset(dataset: Dataset, metadata: Metadata) : Dataset = {
 
       dataset.setAccessConstraints(metadata.accessConstraints)
       dataset.setDataCaptureMethod(metadata.dataCaptureMethod)
@@ -29,14 +29,17 @@ class DatasetIngester (val em: EntityManager) {
     
     Option(em.find(classOf[TaxonDataset], metadata.datasetKey)) match {
       case Some(taxonDataset) => {
-          mergeBaseDataset(taxonDataset.getDataset, metadata)
+          taxonDataset.setDataset(mergeDataset(taxonDataset.getDataset, metadata))
           return taxonDataset
       }
       case None => {
           // todo: need a mechanism to generate a new dataset key
-          val baseDataset = mergeBaseDataset(new Dataset, metadata)
-          val taxonDataset = new TaxonDataset(baseDataset.getDatasetKey)
-          taxonDataset.setDataset(baseDataset)
+          val dataset = mergeDataset(new Dataset, metadata)
+          val taxonDataset = new TaxonDataset(dataset.getDatasetKey)
+          taxonDataset.setDataset(dataset)
+          
+          em.persist(taxonDataset)
+          
           return taxonDataset
       }
     }    

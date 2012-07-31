@@ -41,14 +41,21 @@ class DatasetIngesterSuite extends FunSuite with ShouldMatchers with MockitoSuga
     val key = "new-dataset-key"
     val metadata = buildFakeMetadata(key)
     val em = mock[EntityManager]
-    when(em.find(classOf[Dataset], key)).thenReturn(null)
+    when(em.find(classOf[TaxonDataset], key)).thenReturn(null)
+    val dataset = mock[Dataset]
+    when(em.merge(any(classOf[Dataset]))).thenReturn(dataset)
 
     // act
     val ingester = new DatasetIngester(em)
-    ingester.upsertDataset(metadata)
+    val taxonDataset = ingester.upsertDataset(metadata)
 
+    //verify that setDataset is called against the new taxondataset enity with a dataset
+    // check that the taxondataset has got a dataset on it
+    //verify that em.persist is called with a new taxon dataset.
+    
+    
     // assert - that the entity manager was called with a dataset
-    verify(em).merge(any(classOf[Dataset])) // would be better to verify that it's called with some dataset with key=key
+    verify(em).persist(any(classOf[TaxonDataset])) // would be better to verify that it's called with some dataset with key=key
   }
 
 

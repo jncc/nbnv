@@ -35,9 +35,6 @@ class RecordIngester (log: Logger, em: EntityManager) {
 
     //todo: Generate new sample key if none given
 
-    val sample = if (!sampleQuery.isEmpty) sampleQuery.get(0) else new Sample(sampleKey)
-    
-    val sample = if (!sampleQuery.isEmpty) sampleQuery.get(0) else getNewSample(record.sampleKey)
-    
+    val sample = if (!sampleQuery.isEmpty) sampleQuery.get(0) else new Sample(record.sampleKey)  
   }
 }
