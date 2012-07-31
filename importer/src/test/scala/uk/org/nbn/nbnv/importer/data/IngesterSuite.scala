@@ -40,7 +40,15 @@ class IngesterSuite extends FunSuite with ShouldMatchers with MockitoSugar {
 
   test("should begin transaction") {
     new ArrangeAndAct {
+      // assert
       verify(t).begin()
+    }
+  }
+
+  test("should commit transaction") {
+    new ArrangeAndAct {
+      // assert
+      verify(t).commit()
     }
   }
 }
