@@ -1,14 +1,16 @@
 package uk.org.nbn.nbnv.importer
 
 import darwin.ArchiveManager
+import data._
 import logging.Log
 import uk.org.nbn.nbnv.metadata.{MetadataParser, MetadataReader}
 import uk.org.nbn.nbnv.utility.FileSystem
 import org.apache.log4j.{Level, Logger}
 import utility.ImportException
 import uk.org.nbn.nbnv.PersistenceUtility
-import data._
-
+import uk.org.nbn.nbnv.importer.OptionsFailure
+import uk.org.nbn.nbnv.importer.OptionsSuccess
+import utility.ImportException
 
 object Importer {
 
@@ -29,7 +31,7 @@ object Importer {
 
   /// Creates an importer instance for real life use
   /// with its dependencies injected.
-  def createImporter(options: Options) : Importer = {
+  private def createImporter(options: Options) = {
 
     // configure log
     Log.configure(options.logDir, "4MB", Level.ALL)
@@ -38,13 +40,17 @@ object Importer {
     // create entity manager
     val entityManager = new PersistenceUtility().createEntityManagerFactory.createEntityManager
 
-    // todo use guice
+    // manually inject dependencies
     new Importer(options,
                  log,
                  new ArchiveManager(options),
                  new MetadataReader(new FileSystem, new MetadataParser),
-                 new Ingester(entityManager, new DatasetIngester(entityManager),
-                              new RecordIngester(log, entityManager, new SurveyIngester(entityManager), new SampleIngester(entityManager))))
+                 new Ingester(entityManager,
+                              new DatasetIngester(entityManager),
+                              new RecordIngester(log,
+                                                 entityManager,
+                                                 new SurveyIngester(entityManager),
+                                                 new SampleIngester(entityManager))))
   }
 }
 
@@ -54,6 +60,7 @@ class Importer(options:        Options,
                archiveManager: ArchiveManager,
                metadataReader: MetadataReader,
                ingester:       Ingester) {
+
   def run() {
 
     log.info("Welcome! Starting the NBN Gateway importer...")
