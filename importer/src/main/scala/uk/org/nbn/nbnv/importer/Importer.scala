@@ -83,7 +83,7 @@ class Importer(options:        Options,
     }
   }
 
-  private def withTopLevelExceptionHandling(f: => Unit) = {
+  private def withTopLevelExceptionHandling(f: => Unit) {
     try { f }
     catch {
       case ie: ImportException => {
