@@ -17,8 +17,8 @@ class MetadataParserSuite extends FunSuite with ShouldMatchers {
     result.datasetTitle should be("Test Title")
     result.description should be("Test Description")
     result.geographicCoverage should be("Test geographic coverage")
-    result.method should be("Test Method")
-    result.quality should be("Test Quality")
+    result.dataCaptureMethod should be("Test Method")
+    result.dataQuality should be("Test Quality")
     result.purpose should be("Test purpose")
     result.useConstraints should be("Test Use Constraints")
   }

@@ -8,24 +8,24 @@ import org.gbif.dwc.text.Archive
 import org.mockito.Mockito._
 import uk.org.nbn.nbnv.utility.FileSystem
 import java.io.File
+import org.scalatest.mock.MockitoSugar
 
 @RunWith(classOf[JUnitRunner])
-class MetadataReaderSuite extends FunSuite with ShouldMatchers {
+class MetadataReaderSuite extends FunSuite with ShouldMatchers with MockitoSugar {
 
   test("should read metadata") {
 
     // arrange
-    // (this class uses a bunch of "real" classes so needs quite a few stubs)
 
     val path = "some/path"
 
-    val file = mock(classOf[File])
+    val file = mock[File]
     when(file.getCanonicalPath).thenReturn(path)
 
-    val archive = mock(classOf[Archive])
+    val archive = mock[Archive]
     when(archive.getMetadataLocationFile).thenReturn(file)
 
-    val fileSystem = mock(classOf[FileSystem])
+    val fileSystem = mock[FileSystem]
     when(fileSystem.loadXml(path)).thenReturn(TestData.validMetadataXml)
 
     // act
