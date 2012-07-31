@@ -6,11 +6,11 @@ import logging.Log
 import uk.org.nbn.nbnv.metadata.{MetadataParser, MetadataReader}
 import uk.org.nbn.nbnv.utility.FileSystem
 import org.apache.log4j.{Level, Logger}
-import utility.ImportException
-import uk.org.nbn.nbnv.PersistenceUtility
+import uk.org.nbn.nbnv.{importer, PersistenceUtility}
+import importer.ImportException
 import uk.org.nbn.nbnv.importer.OptionsFailure
 import uk.org.nbn.nbnv.importer.OptionsSuccess
-import utility.ImportException
+import importer.ImportException
 
 object Importer {
 
