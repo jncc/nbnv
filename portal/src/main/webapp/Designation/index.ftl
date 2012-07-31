@@ -3,7 +3,12 @@
 <@master title="NBN Gateway - designation">
 
     <#assign designation=json.readURL("${api}/designations/${RequestParameters.desig}")>
+<<<<<<< HEAD
     <#assign designationCategory=json.readURL("${api}designationCategories/${designation.designationCategoryID}")>
+=======
+    <#assign designationCategory=json.readURL("${api}/designationCategories/${designation.designationCategoryID}")>
+    <#assign topLevelTaxonGroups=json.readURL("${api}/designations/${RequestParameters.desig}/topLevelTaxonNavigationGroups")>
+>>>>>>> fa4f2960f284c6df93bd426fe73417f9789509cf
 
     <div id="nbn-designation-content">
         <h4>${designation.name}</h4>
@@ -27,9 +32,27 @@
                 </tr>
                 <tr>
                     <th>Groups that have species with this designation:</td>
-                    <td>[TODO] SERVICES NOT YET AVAILABLE TO SUPPORT THIS</td>
-                </tr>
+                    <td>
+                        <ul class="collapsible-list">
+                        <#list topLevelTaxonGroups as topLevelTaxonGroup>
+                            <li>
+                                <h1 class="nbn-h1-minor">&nbsp;${topLevelTaxonGroup.taxonGroupName}</h1>
+                                <ul>
+                                    <#assign taxonGroupWithChildren=json.readURL("${api}/designations/${RequestParameters.desig}/taxonGroup/${topLevelTaxonGroup.taxonGroupKey}")>
+                                    <#if taxonGroupWithChildren.children?has_content>
+                                        <#list taxonGroupWithChildren.children as childTaxonGroup>
+                                            <li><a href="${api}/designations/${RequestParameters.desig}/taxonGroup/${childTaxonGroup.taxonGroupKey}/species">${childTaxonGroup.taxonGroupName}</a></li>
+                                        </#list>
+                                    <#else>
+                                            <li><a href="${api}/designations/${RequestParameters.desig}/taxonGroup/${topLevelTaxonGroup.taxonGroupKey}/species">${topLevelTaxonGroup.taxonGroupName}</a></li>
+                                    </#if>
+                                </ul>
+                        </li>
+                        </#list>
+                        </ul>
 
+                    </td>
+                </tr>
             </table>
             <p>All designation information on the NBN Gateway is collated and supplied by the <a href="http://jncc.defra.gov.uk/page-5546">Joint Nature Conservation Committee (JNCC)</a></p>
         </div>

@@ -14,33 +14,37 @@ import uk.org.nbn.nbnv.importer.data.{DatasetIngester, RecordIngester}
 import org.gbif.dwc.text.{StarRecord, Archive}
 import java.util.Iterator
 import org.gbif.utils.file.ClosableIterator
+import org.scalatest.mock.MockitoSugar
 
 @RunWith(classOf[JUnitRunner])
-class ImporterSuite extends FunSuite with ShouldMatchers {
+class ImporterSuite extends FunSuite with ShouldMatchers with MockitoSugar {
 
   test("importer should say hello") {
-    val log = mock(classOf[Logger])
-    val archive = mock(classOf[Archive])
-    val iterator = mock(classOf[ClosableIterator[StarRecord]])
+
+    // arrange
+
+    val log = mock[Logger]
+    val archive = mock[Archive]
+    val iterator = mock[ClosableIterator[StarRecord]]
     when(archive.iteratorRaw).thenReturn(iterator)
     
-    val archiveManager = mock(classOf[ArchiveManager])
+    val archiveManager = mock[ArchiveManager]
     when(archiveManager.open).thenReturn(archive)
     
-    val metadataReader = mock(classOf[MetadataReader])
+    val metadataReader = mock[MetadataReader]
 
-    val tx = mock(classOf[EntityTransaction])
-    val entityManager = mock(classOf[EntityManager])
-    when(entityManager.getTransaction).thenReturn(tx)
+    val entityManager = mock[EntityManager]
+    when(entityManager.getTransaction).thenReturn(mock[EntityTransaction])
 
-    val datasetIngester = mock(classOf[DatasetIngester])
-    val recordIngester = mock(classOf[RecordIngester])
-    
+    val datasetIngester = mock[DatasetIngester]
+    val recordIngester = mock[RecordIngester]
 
-    val importer = new Importer(Options(), log, archiveManager, metadataReader
-                                , entityManager,datasetIngester,recordIngester)
+    //act
+    val importer = new Importer(Options(), log, archiveManager, metadataReader,
+      entityManager, datasetIngester, recordIngester)
     importer.run()
 
+    // assert
     verify(log).info(startsWith("Welcome"))
   }
 }
