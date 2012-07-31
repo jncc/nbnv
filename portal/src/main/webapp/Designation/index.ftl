@@ -3,8 +3,12 @@
 <@master title="NBN Gateway - designation">
 
     <#assign designation=json.readURL("${api}/designations/${RequestParameters.desig}")>
+<<<<<<< HEAD
+    <#assign designationCategory=json.readURL("${api}designationCategories/${designation.designationCategoryID}")>
+=======
     <#assign designationCategory=json.readURL("${api}/designationCategories/${designation.designationCategoryID}")>
     <#assign topLevelTaxonGroups=json.readURL("${api}/designations/${RequestParameters.desig}/topLevelTaxonNavigationGroups")>
+>>>>>>> fa4f2960f284c6df93bd426fe73417f9789509cf
 
     <div id="nbn-designation-content">
         <h4>${designation.name}</h4>

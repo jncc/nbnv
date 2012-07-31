@@ -58,6 +58,10 @@ public class Sample implements Serializable {
         this.sampleID = sampleID;
         this.sampleKey = sampleKey;
     }
+    
+    public Sample(String sampleKey) {
+        this.sampleKey = sampleKey;
+    }
 
     public Integer getSampleID() {
         return sampleID;

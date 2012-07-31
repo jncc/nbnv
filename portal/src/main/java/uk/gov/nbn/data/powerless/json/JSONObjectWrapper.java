@@ -25,7 +25,7 @@ public class JSONObjectWrapper implements ObjectWrapper {
         } else if (o instanceof JSONArray) {
             return new JSONArrayTemplateCollectionModel((JSONArray) o, this);
         } else if (JSONObject.NULL.equals(o)){
-            return null;
+            return TemplateModel.NOTHING;
         } else {
             return SIMPLE_OBJECT_WRAPPER.wrap(o);
         }

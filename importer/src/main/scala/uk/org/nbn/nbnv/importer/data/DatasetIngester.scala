@@ -7,9 +7,9 @@ import javax.persistence.EntityManager;
 
 class DatasetIngester (val em: EntityManager) {
 
-  def upsertDataset(metadata: Metadata) : Dataset = {
+  def upsertDataset(metadata: Metadata) : TaxonDataset = {
 
-    // returns the merged instance of the dataset entity
+        // returns the merged instance of the dataset entity
     def mergeDataset(dataset: Dataset, metadata: Metadata) : Dataset = {
 
       dataset.setAccessConstraints(metadata.accessConstraints)
@@ -26,13 +26,22 @@ class DatasetIngester (val em: EntityManager) {
 
       em.merge(dataset)
     }
-
-    Option(em.find(classOf[Dataset], metadata.datasetKey)) match {
-      case Some(dataset) => mergeDataset(dataset, metadata)
-      case None => {
-        // todo: need a mechanism to generate a new dataset key
-        mergeDataset(new Dataset, metadata)
+    
+    Option(em.find(classOf[TaxonDataset], metadata.datasetKey)) match {
+      case Some(taxonDataset) => {
+          taxonDataset.setDataset(mergeDataset(taxonDataset.getDataset, metadata))
+          return taxonDataset
       }
-    }
+      case None => {
+          // todo: need a mechanism to generate a new dataset key
+          val dataset = mergeDataset(new Dataset, metadata)
+          val taxonDataset = new TaxonDataset(dataset.getDatasetKey)
+          taxonDataset.setDataset(dataset)
+          
+          em.persist(taxonDataset)
+          
+          return taxonDataset
+      }
+    }    
   }
 }
