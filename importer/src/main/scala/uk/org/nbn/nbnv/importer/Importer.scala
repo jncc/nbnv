@@ -38,19 +38,19 @@ object Importer {
     val log = Log.get()
 
     // create entity manager
-    val entityManager = new PersistenceUtility().createEntityManagerFactory.createEntityManager
+    val em = new PersistenceUtility().createEntityManagerFactory.createEntityManager
 
     // manually inject dependencies
     new Importer(options,
                  log,
                  new ArchiveManager(options),
                  new MetadataReader(new FileSystem, new MetadataParser),
-                 new Ingester(entityManager,
-                              new DatasetIngester(entityManager),
+                 new Ingester(em,
+                              new DatasetIngester(em),
                               new RecordIngester(log,
-                                                 entityManager,
-                                                 new SurveyIngester(entityManager),
-                                                 new SampleIngester(entityManager))))
+                                                 em,
+                                                 new SurveyIngester(em),
+                                                 new SampleIngester(em))))
   }
 }
 
@@ -63,10 +63,10 @@ class Importer(options:        Options,
 
   def run() {
 
-    log.info("Welcome! Starting the NBN Gateway importer...")
-    log.info("Options are: \n" + options)
-
     withTopLevelExceptionHandling {
+
+      log.info("Welcome! Starting the NBN Gateway importer...")
+      log.info("Options are: \n" + options)
 
       // open the archive and read the metadata
       val archive = archiveManager.open()
@@ -78,12 +78,12 @@ class Importer(options:        Options,
 
       // ingest the archive and metadata
       ingester.ingest(archive, metadata)
-    }
 
-    log.info("Done importing archive '%s'.".format(options.archivePath))
+      log.info("Done importing archive '%s'.".format(options.archivePath))
+    }
   }
 
-  def withTopLevelExceptionHandling(f: => Unit) = {
+  private def withTopLevelExceptionHandling(f: => Unit) = {
     try { f }
     catch {
       case ie: ImportException => {
