@@ -6,7 +6,7 @@
 package uk.org.nbn.nbnv.importer.data
 
 import uk.org.nbn.nbnv.jpa.nbncore._
-import javax.persistence.{EntityManager, Query}
+import javax.persistence.EntityManager
 import org.gbif.dwc.text.StarRecord
 import org.gbif.dwc.terms.DwcTerm
 import org.apache.log4j.Logger
@@ -14,27 +14,21 @@ import uk.org.nbn.nbnv.importer.records.NbnRecord
 ;
 
 
-class RecordIngester (log: Logger, em: EntityManager) {
+class RecordIngester (log: Logger, em: EntityManager, surveyIngester : SurveyIngester, sampleIngester : SampleIngester) {
   
   def upsertRecord(record: NbnRecord, dataset: TaxonDataset) {
 
     log.info("Upserting record %s".format(record.key))
 
-    /*Query query = entityManager.createQuery("Select sm from SecureMessage sm where sm.someField=:arg1");
-     query.setParameter("arg1", arg1);*/
+    //todo: Generate surveyKey if blank
+    val survey = surveyIngester.upsertSurvey(record.surveyKey, dataset)
+    
+    //todo: Generate sampleKey if blank
+    val sample = sampleIngester.upsertSample(record.sampleKey, survey)
 
-    val surveyQuery = em.createQuery("SELECT s FROM Survey WHERE s.surveyKey = :surveyKey AND s.datasetKey = :datasetKey", classOf[Survey])
-                      .setParameter("surveyKey", record.surveyKey)
-                      .setParameter("datasetKey", dataset.getDatasetKey)
-                      .getResultList
+    val site = em.find(classOf[Site], record.siteKey)
+    //todo : do something if the site can't be found
 
-    val sampleQuery = em.createQuery("SELECT s FROM Sample WHERE s.sampleKey=:sampleKey AND s.surveyKey = :surveyKey", classOf[Sample])
-                      .setParameter("sampleKey", record.sampleKey)
-                      .setParameter("surveyKey", record.surveyKey)
-                      .getResultList
-
-    //todo: Generate new sample key if none given
-
-    val sample = if (!sampleQuery.isEmpty) sampleQuery.get(0) else new Sample(record.sampleKey)  
+    
   }
 }

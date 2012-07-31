@@ -16,14 +16,14 @@ class SurveyIngester (em : EntityManager ){
                       .setParameter("datasetKey", dataset.getDatasetKey)
                       .getResultList
     
-    //todo: Generate a new sample key if none given.
-    //todo: use the survey key as title when creating a new survey - check this is correct
     if (!surveyQuery.isEmpty) {
       surveyQuery.get(0)
     }
     else {
+      //todo: use the survey key as title when creating a new survey - check this is correct
       val survey = new Survey(surveyKey, surveyKey)
       survey.setDatasetKey(dataset)
+      em.persist(survey)
       return survey
     }
   }

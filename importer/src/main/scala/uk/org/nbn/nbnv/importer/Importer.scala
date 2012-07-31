@@ -9,7 +9,7 @@ import org.apache.log4j.{Level, Logger}
 import utility.ImportException
 import javax.persistence.EntityManager;
 import uk.org.nbn.nbnv.PersistenceUtility
-import uk.org.nbn.nbnv.importer.data.{DatasetIngester, RecordIngester}
+import uk.org.nbn.nbnv.importer.data._
 import scala.collection.JavaConversions._
 
 
@@ -48,7 +48,7 @@ object Importer {
                  new MetadataReader(new FileSystem, new MetadataParser),
                  entityManager,
                  new DatasetIngester(entityManager),
-                 new RecordIngester(log, entityManager))
+                 new RecordIngester(log, entityManager, new SurveyIngester(entityManager), new SampleIngester(entityManager)))
   }
 }
 

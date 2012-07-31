@@ -15,15 +15,14 @@ class SampleIngester (em : EntityManager) {
                       .setParameter("surveyKey", survey.getSurveyKey)
                       .getResultList
 
-    //todo: Generate new sample key if none given
-
     if (!sampleQuery.isEmpty) {
       sampleQuery.get(0) 
     }
     else {
-      val newSample = new Sample(sampleKey)
-      newSample.setSurveyID(survey)
-      em.merge(newSample)
+      val sample = new Sample(sampleKey)
+      sample.setSurveyID(survey)
+      em.persist(sample)
+      return sample
     } 
   }
 }
