@@ -26,7 +26,7 @@ class Ingester(entityManager:   EntityManager,
         recordIngester.upsertRecord(new NbnRecord(record), dataset)
       }
 
-      //throw new Exception("boom!")
+//      throw new Exception("boom!")
       t.commit()
     }
     catch {
