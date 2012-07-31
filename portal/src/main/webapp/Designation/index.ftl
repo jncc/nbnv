@@ -5,10 +5,8 @@
     <#assign designation=json.readURL("${api}/designations/${RequestParameters.desig}")>
     <#assign designationCategory=json.readURL("${api}/designationCategories/${designation.designationCategoryID}")>
     <#assign topLevelTaxonGroups=json.readURL("${api}/designations/${RequestParameters.desig}/topLevelTaxonNavigationGroups")>
-    <#assign taxa=json.readURL("${api}/designations/${RequestParameters.desig}/taxa")>
 
     <div id="nbn-designation-content">
-${api}/designations/${RequestParameters.desig}/taxa
         <h4>${designation.name}</h4>
 
             <table>
@@ -32,32 +30,23 @@ ${api}/designations/${RequestParameters.desig}/taxa
                     <th>Groups that have species with this designation:</td>
                     <td>
                         <ul class="collapsible-list">
-                        <#list topLevelTaxonGroups as taxonGroup>
+                        <#list topLevelTaxonGroups as topLevelTaxonGroup>
                             <li>
-                                <h1 class="nbn-h1-minor">&nbsp;${taxonGroup.name}</h1>
+                                <h1 class="nbn-h1-minor">&nbsp;${topLevelTaxonGroup.taxonGroupName}</h1>
                                 <ul>
-                                    <#if taxonGroup.parent>
-                                        <#assign childTaxonGroups=json.readURL("${api}/designations/${RequestParameters.desig}/childTaxonNavigationGroups/${taxonGroup.taxonGroupId}")>
-                                        <#list childTaxonGroups as childTaxonGroup>
-                                            <li><a href="blah/${childTaxonGroup.taxonGroupId}">${childTaxonGroup.name}</a></li>
+                                    <#assign taxonGroupWithChildren=json.readURL("${api}/designations/${RequestParameters.desig}/taxonGroup/${topLevelTaxonGroup.taxonGroupKey}")>
+                                    <#if taxonGroupWithChildren.children?has_content>
+                                        <#list taxonGroupWithChildren.children as childTaxonGroup>
+                                            <li><a href="${api}/designations/${RequestParameters.desig}/taxonGroup/${childTaxonGroup.taxonGroupKey}/species">${childTaxonGroup.taxonGroupName}</a></li>
                                         </#list>
                                     <#else>
-                                        <li><a href="blah/${taxonGroup.taxonGroupId}">${taxonGroup.name}</a></li>
+                                            <li><a href="${api}/designations/${RequestParameters.desig}/taxonGroup/${topLevelTaxonGroup.taxonGroupKey}/species">${topLevelTaxonGroup.taxonGroupName}</a></li>
                                     </#if>
                                 </ul>
                         </li>
                         </#list>
                         </ul>
 
-                    </td>
-                </tr>
-                <tr>
-                    <th>View all species for this designation</th>
-                    <td>
-                                <h1>All species for designation</h1>
-                                <#list taxa as taxon>
-                                    <br/>${taxon.taxonName}
-                                </#list>
                     </td>
                 </tr>
             </table>
