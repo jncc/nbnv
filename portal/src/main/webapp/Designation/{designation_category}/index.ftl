@@ -1,10 +1,12 @@
 <#include "/WEB-INF/templates/master.ftl">
 
+
 <@master title="NBN Gateway - designation">
 
-    <#assign designation=json.readURL("${api}/designations/${RequestParameters.desig}")>
-    <#assign designationCategory=json.readURL("${api}/designationCategories/${designation.designationCategoryID}")>
-    <#assign topLevelTaxonGroups=json.readURL("${api}/designations/${RequestParameters.desig}/topLevelTaxonNavigationGroups")>
+    <#assign designationId="${URLParameters.designation_category}">
+    <#assign designation=json.readURL("${api}/designations/${designationId}")>
+    <#assign designationCategory=json.readURL("${api}/designation_categories/${designation.designationCategoryID}")>
+    <#assign topLevelTaxonGroups=json.readURL("${api}/designations/${designationId}/taxon_groups/top_levels")>
 
     <div id="nbn-designation-content">
         <h4>${designation.name}</h4>
@@ -34,13 +36,13 @@
                             <li>
                                 <h1 class="nbn-h1-minor">&nbsp;${topLevelTaxonGroup.taxonGroupName}</h1>
                                 <ul>
-                                    <#assign taxonGroupWithChildren=json.readURL("${api}/designations/${RequestParameters.desig}/taxonGroup/${topLevelTaxonGroup.taxonGroupKey}")>
+                                    <#assign taxonGroupWithChildren=json.readURL("${api}/designations/${designationId}/taxon_groups/${topLevelTaxonGroup.taxonGroupKey}")>
                                     <#if taxonGroupWithChildren.children?has_content>
                                         <#list taxonGroupWithChildren.children as childTaxonGroup>
-                                            <li><a href="${api}/designations/${RequestParameters.desig}/taxonGroup/${childTaxonGroup.taxonGroupKey}/species">${childTaxonGroup.taxonGroupName}</a></li>
+                                            <li><a href="${api}/designations/${designationId}/taxon_groups/${childTaxonGroup.taxonGroupKey}/species">${childTaxonGroup.taxonGroupName}</a></li>
                                         </#list>
                                     <#else>
-                                            <li><a href="${api}/designations/${RequestParameters.desig}/taxonGroup/${topLevelTaxonGroup.taxonGroupKey}/species">${topLevelTaxonGroup.taxonGroupName}</a></li>
+                                            <li><a href="${api}/designations/${designationId}/taxon_groups/${topLevelTaxonGroup.taxonGroupKey}/species">${topLevelTaxonGroup.taxonGroupName}</a></li>
                                     </#if>
                                 </ul>
                         </li>

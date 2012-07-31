@@ -8,10 +8,10 @@ package uk.org.nbn.nbnv.importer.data
 import uk.org.nbn.nbnv.jpa.nbncore._
 import javax.persistence.EntityManager;
 
-class SurveyIngester (em : EntityManager ){
+class SurveyIngester (entityManager : EntityManager ){
   def upsertSurvey(surveyKey : String, dataset : TaxonDataset) : Survey = {
 
-    val surveyQuery = em.createQuery("SELECT s FROM Survey WHERE s.surveyKey = :surveyKey AND s.datasetKey = :datasetKey", classOf[Survey])
+    val surveyQuery = entityManager.createQuery("SELECT s FROM Survey WHERE s.surveyKey = :surveyKey AND s.datasetKey = :datasetKey", classOf[Survey])
                       .setParameter("surveyKey", surveyKey)
                       .setParameter("datasetKey", dataset.getDatasetKey)
                       .getResultList
@@ -23,7 +23,7 @@ class SurveyIngester (em : EntityManager ){
       //todo: use the survey key as title when creating a new survey - check this is correct
       val survey = new Survey(surveyKey, surveyKey)
       survey.setDatasetKey(dataset)
-      em.persist(survey)
+      entityManager.persist(survey)
       return survey
     }
   }

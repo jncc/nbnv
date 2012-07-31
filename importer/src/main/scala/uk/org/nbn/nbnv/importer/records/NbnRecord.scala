@@ -8,7 +8,7 @@ import org.gbif.dwc.text.StarRecord
 class NbnRecord(record: StarRecord) {
 
   // there should be exactly one extension record for a record (hence .head)
-  val extension = record.extension("http://uknbn.org/terms/NBNExchange").head
+  private val extension = record.extension("http://uknbn.org/terms/NBNExchange").head
 
   def key =             record.core.value(DwcTerm.occurrenceID)
   def surveyKey =       record.core.value(DwcTerm.collectionCode)

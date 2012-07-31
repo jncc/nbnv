@@ -14,7 +14,7 @@ import javax.ws.rs.core.MediaType;
  *
  * @author Administrator
  */
-@Path("/observation/{id}")
+@Path("/observations/{id}")
 public class ObservationResource {
     @GET
     @Produces(MediaType.TEXT_PLAIN)

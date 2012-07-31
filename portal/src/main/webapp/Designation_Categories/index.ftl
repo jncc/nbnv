@@ -7,16 +7,16 @@
     <p>Browse these designation categories to find the designations you need.
     Select individual designations to obtain more information about them and associated species.</p>
     
-    <#assign designationCategories=json.readURL("${api}/designationCategories")>
+    <#assign designationCategories=json.readURL("${api}/designation_categories")>
     
     <ul class="collapsible-list">
         <#list designationCategories as currEntry>
             <li>
                 <h1>${currEntry.label} - (${currEntry.description})</h1>
                 <ul>
-                    <#assign designationCategory=json.readURL("${api}/designationCategories/${currEntry.designationCategoryID}/designations")>
+                    <#assign designationCategory=json.readURL("${api}/designation_categories/${currEntry.designationCategoryID}/designations")>
                     <#list designationCategory as currDesignation>
-                        <li><a title="${currDesignation.description!}" href="/Designation?desig=${currDesignation.designationID}">${currDesignation.name}</a> : ${currDesignation.label}</li>
+                        <li><a title="${currDesignation.description!}" href="/Designation/${currDesignation.designationID}">${currDesignation.name}</a> : ${currDesignation.label}</li>
                     </#list>
                 </ul>
             </li>

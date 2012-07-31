@@ -39,9 +39,9 @@ public class JSONTemplateHashModel extends WrappedTemplateMethod<JSONObject> imp
     }
 
     @Override
-    public TemplateModel get(String string) throws TemplateModelException {
+    public TemplateModel get(String param) throws TemplateModelException {
         try {
-            return wrapper.wrap(toWrap.get(string));
+            return (toWrap.has(param)) ? wrapper.wrap(toWrap.get(param)) : null;
         } catch (JSONException jsonEx) {
             throw new TemplateModelException("A JSON Exception occurred", jsonEx);
         }
