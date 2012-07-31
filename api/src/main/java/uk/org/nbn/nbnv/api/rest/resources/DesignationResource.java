@@ -44,7 +44,7 @@ public class DesignationResource {
     }
 
     @GET
-    @Path("/{id}/designationCategory")
+    @Path("/{id}/designation_category")
     @Produces(MediaType.APPLICATION_JSON)
     public DesignationCategory getDesignationCategory(@PathParam("id") int id) {
         return designationCategoryMapper.selectByDesignationID(id);
@@ -58,14 +58,14 @@ public class DesignationResource {
     }
 
     @GET
-    @Path("/{id}/topLevelTaxonNavigationGroups")
+    @Path("/{id}/taxon_groups/top_levels")
     @Produces(MediaType.APPLICATION_JSON)
     public List<TaxonGroup> getTopLevelTaxonNavigationGroupsByDesignation(@PathParam("id") int id) {
             return taxonGroupMapper.selectTopLevelTaxonNavigationGroupsByDesignationID(id);
     }
     
     @GET
-    @Path("{designationId}/taxonGroup/{taxonGroupId}")
+    @Path("{designationId}/taxon_groups/{taxonGroupId}")
     @Produces(MediaType.APPLICATION_JSON)
     public TaxonGroup getTaxonGroupByDesignation(@PathParam("designationId") int designationId, @PathParam("taxonGroupId") String taxonGroupId){
         TaxonGroup toReturn = taxonGroupMapper.getTaxonGroup(taxonGroupId);

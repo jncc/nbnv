@@ -18,7 +18,7 @@ import uk.org.nbn.nbnv.api.model.TaxonGroup;
  * @author Administrator
  */
 @Component
-@Path("/taxonGroup")
+@Path("/taxon_groups")
 public class TaxonGroupResource { 
     @Autowired TaxonGroupMapper mapper;
     
@@ -29,7 +29,7 @@ public class TaxonGroupResource {
     }
     
     @GET
-    @Path("/topLevels")
+    @Path("/top_levels")
     @Produces(MediaType.APPLICATION_JSON)
     public List<TaxonGroup> getTopLevelTaxonGroups() {
         return mapper.getTopLevels();
