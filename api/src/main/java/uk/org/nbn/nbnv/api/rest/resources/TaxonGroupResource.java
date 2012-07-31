@@ -5,14 +5,12 @@
 package uk.org.nbn.nbnv.api.rest.resources;
 
 import java.util.List;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.org.nbn.nbnv.api.dao.taxonGroup.TaxonGroupMapper;
+import uk.org.nbn.nbnv.api.model.Taxon;
 import uk.org.nbn.nbnv.api.model.TaxonGroup;
 
 /**
@@ -31,11 +29,29 @@ public class TaxonGroupResource {
     }
     
     @GET
+    @Path("/topLevels")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<TaxonGroup> getTopLevelTaxonGroups() {
+        return mapper.getTopLevels();
+    }
+    
+    @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public TaxonGroup getTaxonGroup(@PathParam("id") String id) {
         TaxonGroup toReturn = mapper.getTaxonGroup(id);
-        toReturn.setChildren(mapper.getChildren(toReturn.getTaxonGroupKey()));
+        toReturn.setChildren(mapper.getChildren(id));
         return toReturn;
+    }
+    
+    @GET
+    @Path("/{id}/taxa")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Taxon> getTaxa(
+        @PathParam("id") String taxonGroup, 
+        @QueryParam("limit") @DefaultValue("20") int limit, 
+        @QueryParam("offset") @DefaultValue("1") int offset
+    ) {
+        return mapper.getTaxa(taxonGroup, offset, offset+limit-1);
     }
 }

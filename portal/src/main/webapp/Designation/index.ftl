@@ -2,7 +2,7 @@
 
 <@master title="NBN Gateway - designation">
 
-    <#assign designation=json.readURL("${api}designations/${RequestParameters.desig}")>
+    <#assign designation=json.readURL("${api}/designations/${RequestParameters.desig}")>
     <#assign designationCategory=json.readURL("${api}designationCategories/${designation.designationCategoryID}")>
 
     <div id="nbn-designation-content">
