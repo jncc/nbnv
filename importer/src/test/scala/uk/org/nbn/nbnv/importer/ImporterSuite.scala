@@ -10,7 +10,7 @@ import org.mockito.Mockito._
 import org.mockito.Matchers._
 import uk.org.nbn.nbnv.metadata.MetadataReader
 import javax.persistence.{EntityManager, EntityTransaction}
-import uk.org.nbn.nbnv.importer.data.{DatasetIngester, RecordIngester}
+import data.{Ingester, DatasetIngester, RecordIngester}
 import org.gbif.dwc.text.{StarRecord, Archive}
 import java.util.Iterator
 import org.gbif.utils.file.ClosableIterator
@@ -25,8 +25,8 @@ class ImporterSuite extends FunSuite with ShouldMatchers with MockitoSugar {
 
     val log = mock[Logger]
     val archive = mock[Archive]
-    val iterator = mock[ClosableIterator[StarRecord]]
-    when(archive.iteratorRaw).thenReturn(iterator)
+//    val iterator = mock[ClosableIterator[StarRecord]]
+//    when(archive.iteratorRaw).thenReturn(iterator)
     
     val archiveManager = mock[ArchiveManager]
     when(archiveManager.open).thenReturn(archive)
@@ -36,12 +36,10 @@ class ImporterSuite extends FunSuite with ShouldMatchers with MockitoSugar {
     val entityManager = mock[EntityManager]
     when(entityManager.getTransaction).thenReturn(mock[EntityTransaction])
 
-    val datasetIngester = mock[DatasetIngester]
-    val recordIngester = mock[RecordIngester]
+    val ingester = mock[Ingester]
 
     //act
-    val importer = new Importer(Options(), log, archiveManager, metadataReader,
-      entityManager, datasetIngester, recordIngester)
+    val importer = new Importer(Options(), log, archiveManager, metadataReader, ingester)
     importer.run()
 
     // assert

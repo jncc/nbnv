@@ -2,15 +2,12 @@ package uk.org.nbn.nbnv.importer
 
 import darwin.ArchiveManager
 import logging.Log
-import records.NbnRecord
 import uk.org.nbn.nbnv.metadata.{MetadataParser, MetadataReader}
 import uk.org.nbn.nbnv.utility.FileSystem
 import org.apache.log4j.{Level, Logger}
 import utility.ImportException
-import javax.persistence.EntityManager;
 import uk.org.nbn.nbnv.PersistenceUtility
-import uk.org.nbn.nbnv.importer.data.{DatasetIngester, RecordIngester}
-import scala.collection.JavaConversions._
+import data.{Ingester, DatasetIngester, RecordIngester}
 
 
 object Importer {
@@ -46,59 +43,37 @@ object Importer {
                  log, 
                  new ArchiveManager(options), 
                  new MetadataReader(new FileSystem, new MetadataParser),
-                 entityManager,
-                 new DatasetIngester(entityManager),
-                 new RecordIngester(log, entityManager))
+                 new Ingester(entityManager, new DatasetIngester(entityManager), new RecordIngester(log, entityManager)))
   }
 }
 
 /// Imports data into the NBN Gateway core database.
-class Importer(options:         Options,
-               log:             Logger,
-               archiveManager:  ArchiveManager,
-               metadataReader:  MetadataReader,
-               entityManager:   EntityManager,
-               datasetIngester: DatasetIngester,
-               recordIngester:  RecordIngester) {
+class Importer(options:        Options,
+               log:            Logger,
+               archiveManager: ArchiveManager,
+               metadataReader: MetadataReader,
+               ingester:       Ingester) {
   def run() {
 
     log.info("Welcome! Starting the NBN Gateway importer...")
     log.info("Options are: \n" + options)
 
-    try {
+    withTopLevelExceptionHandling {
+
       // open the archive and read the metadata
       val archive = archiveManager.open()
       val metadata = metadataReader.read(archive)
 
-      // begin transaction
-      entityManager.getTransaction.begin()
-
-      // upsert dataset
-      val dataset = datasetIngester.upsertDataset(metadata)
-
-      // upsert records
-      for (record <- archive.iteratorRaw.map(r => new NbnRecord(r))) {
-        recordIngester.upsertRecord(record, dataset)
-      }
-
-      // commit the transaction
-      entityManager.getTransaction.commit()
-      entityManager.close()
-      
-      //    open dwca reader
-      //    begin tx
-      //      upsert dataset
-      //    loop through the records
-      //      get survey for this dataset using key
-      //      create it if not exists
-      //      get sample for this dataset using key
-      //      create it if not exists
-      //      upsert observation
-      //      end tx
+      // ingest the archive and metadata
+      ingester.ingest(archive, metadata)
     }
+
+    log.info("Done importing archive %s.".format(options.archivePath))
+  }
+
+  def withTopLevelExceptionHandling[F](f: => F) = {
+    try { f }
     catch {
-      //Do we need to rollback the jpa transaction here 
-      //or is that taken care of?
       case ie: ImportException => {
         log.error("Import run failed.", ie)
       }
@@ -108,11 +83,20 @@ class Importer(options:         Options,
       }
     }
   }
-  
-
 }
 
 
+
+//    open dwca reader
+//    begin tx
+//      upsert dataset
+//    loop through the records
+//      get survey for this dataset using key
+//      create it if not exists
+//      get sample for this dataset using key
+//      create it if not exists
+//      upsert observation
+//      end tx
 
 //    val em = createEntityManager()
 //    em.getTransaction.begin()
