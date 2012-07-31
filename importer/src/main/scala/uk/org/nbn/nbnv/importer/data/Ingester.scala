@@ -1,7 +1,7 @@
 package uk.org.nbn.nbnv.importer.data
 
 import scala.collection.JavaConversions._
-import javax.persistence.EntityManager
+import javax.persistence.{EntityTransaction, EntityManager}
 import uk.org.nbn.nbnv.importer.records.NbnRecord
 import org.gbif.dwc.text.Archive
 import uk.org.nbn.nbnv.metadata.Metadata
@@ -15,7 +15,8 @@ class Ingester(entityManager:   EntityManager,
 
     val t = entityManager.getTransaction
 
-    try {
+    withEntityTransaction(t) {
+
       t.begin()
 
       // upsert dataset
@@ -26,9 +27,12 @@ class Ingester(entityManager:   EntityManager,
         recordIngester.upsertRecord(new NbnRecord(record), dataset)
       }
 
-//      throw new Exception("boom!")
       t.commit()
     }
+  }
+
+  def withEntityTransaction(t: EntityTransaction)(f: => Unit) {
+    try { f }
     catch {
       case e: Exception => {
         if (t != null && t.isActive) t.rollback()

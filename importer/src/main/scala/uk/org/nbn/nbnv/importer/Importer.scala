@@ -39,11 +39,11 @@ object Importer {
     val entityManager = new PersistenceUtility().createEntityManagerFactory.createEntityManager
 
     // todo use guice
-    new Importer(options, 
-                 log, 
-                 new ArchiveManager(options), 
+    new Importer(options,
+                 log,
+                 new ArchiveManager(options),
                  new MetadataReader(new FileSystem, new MetadataParser),
-                 new Ingester(entityManager, new DatasetIngester(entityManager), 
+                 new Ingester(entityManager, new DatasetIngester(entityManager),
                               new RecordIngester(log, entityManager, new SurveyIngester(entityManager), new SampleIngester(entityManager))))
   }
 }
@@ -65,14 +65,18 @@ class Importer(options:        Options,
       val archive = archiveManager.open()
       val metadata = metadataReader.read(archive)
 
+      // validate
+      // ...
+      // verify
+
       // ingest the archive and metadata
       ingester.ingest(archive, metadata)
     }
 
-    log.info("Done importing archive %s.".format(options.archivePath))
+    log.info("Done importing archive '%s'.".format(options.archivePath))
   }
 
-  def withTopLevelExceptionHandling[F](f: => F) = {
+  def withTopLevelExceptionHandling(f: => Unit) = {
     try { f }
     catch {
       case ie: ImportException => {
