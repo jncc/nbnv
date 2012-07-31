@@ -16,10 +16,9 @@ import org.gbif.utils.file.ClosableIterator
 @RunWith(classOf[JUnitRunner])
 class IngesterSuite extends FunSuite with ShouldMatchers with MockitoSugar {
 
-  test("should begin transaction") {
+  trait ArrangeAndAct {
 
     // arrange
-
     val t = mock[EntityTransaction]
 
     val em = mock[EntityManager]
@@ -37,8 +36,11 @@ class IngesterSuite extends FunSuite with ShouldMatchers with MockitoSugar {
     // act
     val ingester = new Ingester(em, datasetIngester, recordIngester)
     ingester.ingest(archive, metadata)
+  }
 
-    // assert
-    verify(t).begin()
+  test("should begin transaction") {
+    new ArrangeAndAct {
+      verify(t).begin()
+    }
   }
 }
