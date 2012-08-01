@@ -3,7 +3,7 @@
 
 <@master title="NBN Gateway - designation">
 
-    <#assign designationId="${URLParameters.designation_category}">
+    <#assign designationId="${URLParameters.designation}">
     <#assign designation=json.readURL("${api}/designations/${designationId}")>
     <#assign designationCategory=json.readURL("${api}/designation_categories/${designation.designationCategoryID}")>
     <#assign topLevelTaxonGroups=json.readURL("${api}/designations/${designationId}/taxon_groups/top_levels")>
@@ -39,10 +39,10 @@
                                         <#assign taxonGroupWithChildren=json.readURL("${api}/designations/${designationId}/taxon_groups/${topLevelTaxonGroup.taxonGroupKey}")>
                                         <#if taxonGroupWithChildren.children?has_content>
                                             <#list taxonGroupWithChildren.children as childTaxonGroup>
-                                                <li class="nbn-designation-nested-list"><a href="${api}/designations/${designationId}/taxon_groups/${childTaxonGroup.taxonGroupKey}/species">${childTaxonGroup.taxonGroupName}</a></li>
+                                                <li class="nbn-designation-nested-list"><a href="/designation/${designationId}/species_group/${childTaxonGroup.taxonGroupKey}">${childTaxonGroup.taxonGroupName}</a></li>
                                             </#list>
                                         <#else>
-                                                <li class="nbn-designation-nested-list"><a href="${api}/designations/${designationId}/taxon_groups/${topLevelTaxonGroup.taxonGroupKey}/species">${topLevelTaxonGroup.taxonGroupName}</a></li>
+                                                <li class="nbn-designation-nested-list"><a href="/designation/${designationId}/species_group/${topLevelTaxonGroup.taxonGroupKey}">${topLevelTaxonGroup.taxonGroupName}</a></li>
                                         </#if>
                                     </ul>
                                 </li>

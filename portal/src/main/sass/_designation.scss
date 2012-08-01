@@ -19,6 +19,7 @@ body{
                 background-color: $minorGrey;
                 font-weight: bold;
                 width: 40%;
+                vertical-align: text-top;
             }
             
             td {
@@ -28,6 +29,7 @@ body{
                 border-color: $mediumGrey;
                 background-color: white;
                 width: 40%;
+                vertical-align: text-top;
             }
             
         }

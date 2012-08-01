@@ -5,13 +5,14 @@
 
     <#assign designationId="${URLParameters.designation}">
     <#assign taxonGroupId="${URLParameters.taxon_group}">
+
     <#assign designation=json.readURL("${api}/designations/${designationId}")>
     <#assign designationCategory=json.readURL("${api}/designation_categories/${designation.designationCategoryID}")>
+    <#assign taxonGroup=json.readURL("${api}/taxon_groups/${taxonGroupId}")>
     <#assign species=json.readURL("${api}/species/taxon_group/${taxonGroupId}/designation/${designationId}")>
 
     <div id="nbn-designation-content">
-        <h4>${designation.name}</h4>
-
+        <h4>${designation.name} : ${taxonGroup.taxonGroupName}</h4>
             <table>
                 <tr>
                     <th>Abbreviation:</th>
@@ -26,11 +27,7 @@
                     <td>${designationCategory.label}: ${designationCategory.description!""}</td>
                 </tr>
                 <tr>
-                    <th>Interactive map of species with this designation:</th>
-                    <td><a href="http://data.nbn.org.uk/imt/?mode=DESIGNATION&designation=${designation.label}" target="_blank">Go to map</a></td>
-                </tr>
-                <tr>
-                    <th></th>
+                    <th>Species list for: ${taxonGroup.taxonGroupName}</th>
                     <td>
                         <#list species as spec>
                             ${spec.taxonName} <br/>
