@@ -18,11 +18,11 @@
                 </tr>
                 <tr>
                     <th>Description:</th>
-                    <td>${designation.description}</td>
+                    <td>${designation.description!"Not available"}</td>
                 </tr>
                 <tr>
                     <th>Parent category:</th>
-                    <td>${designationCategory.label}: ${designationCategory.description}</td>
+                    <td>${designationCategory.label}: ${designationCategory.description!""}</td>
                 </tr>
                 <tr>
                     <th>Interactive map of species with this designation:</th>
@@ -39,10 +39,10 @@
                                     <#assign taxonGroupWithChildren=json.readURL("${api}/designations/${designationId}/taxon_groups/${topLevelTaxonGroup.taxonGroupKey}")>
                                     <#if taxonGroupWithChildren.children?has_content>
                                         <#list taxonGroupWithChildren.children as childTaxonGroup>
-                                            <li><a href="${api}/designations/${designationId}/taxon_groups/${childTaxonGroup.taxonGroupKey}/species">${childTaxonGroup.taxonGroupName}</a></li>
+                                            <li class="nbn-designation-nested-list"><a href="${api}/designations/${designationId}/taxon_groups/${childTaxonGroup.taxonGroupKey}/species">${childTaxonGroup.taxonGroupName}</a></li>
                                         </#list>
                                     <#else>
-                                            <li><a href="${api}/designations/${designationId}/taxon_groups/${topLevelTaxonGroup.taxonGroupKey}/species">${topLevelTaxonGroup.taxonGroupName}</a></li>
+                                            <li class="nbn-designation-nested-list"><a href="${api}/designations/${designationId}/taxon_groups/${topLevelTaxonGroup.taxonGroupKey}/species">${topLevelTaxonGroup.taxonGroupName}</a></li>
                                     </#if>
                                 </ul>
                         </li>
@@ -52,7 +52,7 @@
                     </td>
                 </tr>
             </table>
-            <p>All designation information on the NBN Gateway is collated and supplied by the <a href="http://jncc.defra.gov.uk/page-5546">Joint Nature Conservation Committee (JNCC)</a></p>
+            <p class="nbn-designation-footer">All designation information on the NBN Gateway is collated and supplied by the <a href="http://jncc.defra.gov.uk/page-5546">Joint Nature Conservation Committee (JNCC)</a></p>
         </div>
 
 </@master>

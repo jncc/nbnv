@@ -1,43 +1,65 @@
 @import "_nbn-colour-scheme";
 
-#nbn-designation-content{
+body{
     
-    table{
-        border-width: 1px;
-        border-style: none;
-        border-collapse: collapse;
-        width: 80%;
-        margin: auto;
+    #nbn-designation-content{
         
-        th{
+        table {
             border-width: 1px;
-            padding: 5px;
-            border-style: inset;
-            border-color: $mediumGrey;
-            background-color: $minorGrey;
-            font-weight: bold;
-            width: 40%;
+            border-style: none;
+            border-collapse: collapse;
+            width: 80%;
+            margin: auto;
+            
+            th {
+                border-width: 1px;
+                padding: 5px;
+                border-style: inset;
+                border-color: $mediumGrey;
+                background-color: $minorGrey;
+                font-weight: bold;
+                width: 40%;
+            }
+            
+            td {
+                border-width: 1px;
+                padding: 5px;
+                border-style: inset;
+                border-color: $mediumGrey;
+                background-color: white;
+                width: 40%;
+            }
+            
         }
         
-        td{
-            border-width: 1px;
-            padding: 5px;
-            border-style: inset;
-            border-color: $mediumGrey;
-            background-color: white;
-            width: 40%;
+        h4 {
+            text-align: center;
+            padding: 20px;
         }
         
     }
     
-    h4{
+    #nbn-designation-categories-tree{
+        margin-left: 10%;
+        margin-right: 10%;
+        margin-bottom: 10px;
+        padding: 10px;
+        background-color: $minorGrey;
+        border: 1px solid $mediumGrey;
+    }
+    
+    .nbn-designation-category-heading-strong{
+        font-weight: bold;
+    }
+    
+    .nbn-designation-footer{
         text-align: center;
         padding: 20px;
     }
     
-    p{
-        text-align: center;
-        padding: 20px;
+    .nbn-designation-nested-list{
+        margin-left: 30px;
     }
+    
     
 }
