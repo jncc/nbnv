@@ -13,7 +13,7 @@
     <name>${project.artifactId}-${project.version}</name>
 
     <properties>
-        <scala.version>2.8.2</scala.version>
+        <scala.version>2.9.2</scala.version>
         <jersey.version>1.13</jersey.version>
     </properties>
 

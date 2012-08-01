@@ -2,15 +2,11 @@ package uk.org.nbn.nbnv.importer
 
 import darwin.ArchiveManager
 import data._
-import logging.Log
+import uk.org.nbn.nbnv.importer.logging.Log
 import uk.org.nbn.nbnv.metadata.{MetadataParser, MetadataReader}
 import uk.org.nbn.nbnv.utility.FileSystem
+import uk.org.nbn.nbnv.PersistenceUtility
 import org.apache.log4j.{Level, Logger}
-import uk.org.nbn.nbnv.{importer, PersistenceUtility}
-import importer.ImportException
-import uk.org.nbn.nbnv.importer.OptionsFailure
-import uk.org.nbn.nbnv.importer.OptionsSuccess
-import importer.ImportException
 
 object Importer {
 
@@ -24,14 +20,14 @@ object Importer {
       }
       case OptionsFailure(message) => {
         println(message)
-        exit(1)
+        sys.exit(1)
       }
     }
   }
 
   /// Creates an importer instance for real life use
   /// with its dependencies injected.
-  private def createImporter(options: Options) = {
+  def createImporter(options: Options) = {
 
     // configure log
     Log.configure(options.logDir, "4MB", Level.ALL)
