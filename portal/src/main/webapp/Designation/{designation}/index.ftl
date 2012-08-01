@@ -29,26 +29,25 @@
                     <td><a href="http://data.nbn.org.uk/imt/?mode=DESIGNATION&designation=${designation.label}" target="_blank">Go to map</a></td>
                 </tr>
                 <tr>
-                    <th>Groups that have species with this designation:</td>
+                    <th>Groups that have species with this designation:</th>
                     <td>
                         <ul class="collapsible-list">
-                        <#list topLevelTaxonGroups as topLevelTaxonGroup>
-                            <li>
-                                <h1 class="nbn-h1-minor">&nbsp;${topLevelTaxonGroup.taxonGroupName}</h1>
-                                <ul>
-                                    <#assign taxonGroupWithChildren=json.readURL("${api}/designations/${designationId}/taxon_groups/${topLevelTaxonGroup.taxonGroupKey}")>
-                                    <#if taxonGroupWithChildren.children?has_content>
-                                        <#list taxonGroupWithChildren.children as childTaxonGroup>
-                                            <li class="nbn-designation-nested-list"><a href="${api}/designations/${designationId}/taxon_groups/${childTaxonGroup.taxonGroupKey}/species">${childTaxonGroup.taxonGroupName}</a></li>
-                                        </#list>
-                                    <#else>
-                                            <li class="nbn-designation-nested-list"><a href="${api}/designations/${designationId}/taxon_groups/${topLevelTaxonGroup.taxonGroupKey}/species">${topLevelTaxonGroup.taxonGroupName}</a></li>
-                                    </#if>
-                                </ul>
-                        </li>
-                        </#list>
+                            <#list topLevelTaxonGroups as topLevelTaxonGroup>
+                                <li>
+                                    <h1 class="nbn-h1-minor">&nbsp;${topLevelTaxonGroup.taxonGroupName}</h1>
+                                    <ul>
+                                        <#assign taxonGroupWithChildren=json.readURL("${api}/designations/${designationId}/taxon_groups/${topLevelTaxonGroup.taxonGroupKey}")>
+                                        <#if taxonGroupWithChildren.children?has_content>
+                                            <#list taxonGroupWithChildren.children as childTaxonGroup>
+                                                <li class="nbn-designation-nested-list"><a href="${api}/designations/${designationId}/taxon_groups/${childTaxonGroup.taxonGroupKey}/species">${childTaxonGroup.taxonGroupName}</a></li>
+                                            </#list>
+                                        <#else>
+                                                <li class="nbn-designation-nested-list"><a href="${api}/designations/${designationId}/taxon_groups/${topLevelTaxonGroup.taxonGroupKey}/species">${topLevelTaxonGroup.taxonGroupName}</a></li>
+                                        </#if>
+                                    </ul>
+                                </li>
+                            </#list>
                         </ul>
-
                     </td>
                 </tr>
             </table>

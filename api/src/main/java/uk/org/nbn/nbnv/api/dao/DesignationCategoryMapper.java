@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package uk.org.nbn.nbnv.api.dao.designation;
+package uk.org.nbn.nbnv.api.dao;
 
 import java.util.List;
 import org.apache.ibatis.annotations.Select;

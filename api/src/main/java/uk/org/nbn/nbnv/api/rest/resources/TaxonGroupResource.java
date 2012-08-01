@@ -9,7 +9,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import uk.org.nbn.nbnv.api.dao.taxonGroup.TaxonGroupMapper;
+import uk.org.nbn.nbnv.api.dao.TaxonGroupMapper;
 import uk.org.nbn.nbnv.api.model.Taxon;
 import uk.org.nbn.nbnv.api.model.TaxonGroup;
 

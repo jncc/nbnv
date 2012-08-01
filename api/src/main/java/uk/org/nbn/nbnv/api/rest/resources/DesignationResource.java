@@ -9,10 +9,10 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import uk.org.nbn.nbnv.api.dao.designation.DesignationCategoryMapper;
-import uk.org.nbn.nbnv.api.dao.designation.DesignationMapper;
-import uk.org.nbn.nbnv.api.dao.designation.TaxonMapper;
-import uk.org.nbn.nbnv.api.dao.taxonGroup.TaxonGroupMapper;
+import uk.org.nbn.nbnv.api.dao.DesignationCategoryMapper;
+import uk.org.nbn.nbnv.api.dao.DesignationMapper;
+import uk.org.nbn.nbnv.api.dao.TaxonMapper;
+import uk.org.nbn.nbnv.api.dao.TaxonGroupMapper;
 import uk.org.nbn.nbnv.api.model.Designation;
 import uk.org.nbn.nbnv.api.model.DesignationCategory;
 import uk.org.nbn.nbnv.api.model.Taxon;
@@ -51,7 +51,7 @@ public class DesignationResource {
     }
 
     @GET
-    @Path("/{id}/taxa")
+    @Path("/{id}/species")
     @Produces(MediaType.APPLICATION_JSON)
     public List<Taxon> getSpeciesByDesignation(@PathParam("id") int id) {
             return taxonMapper.selectByDesignationID(id);
