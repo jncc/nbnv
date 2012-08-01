@@ -10,6 +10,7 @@ import javax.persistence.EntityManager;
 class SampleIngester (entityManager : EntityManager) {
   def upsertSample(sampleKey : String, survey : Survey) : Sample = {
 
+    //todo: Generate sampleKey if blank
     val sampleQuery = entityManager.createQuery("SELECT s FROM Sample WHERE s.sampleKey=:sampleKey AND s.surveyKey = :surveyKey", classOf[Sample])
                       .setParameter("sampleKey", sampleKey)
                       .setParameter("surveyKey", survey.getSurveyKey)

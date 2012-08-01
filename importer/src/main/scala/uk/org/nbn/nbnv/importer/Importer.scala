@@ -10,7 +10,7 @@ import uk.org.nbn.nbnv.{importer, PersistenceUtility}
 import importer.ImportException
 import uk.org.nbn.nbnv.importer.OptionsFailure
 import uk.org.nbn.nbnv.importer.OptionsSuccess
-import importer.ImportException
+
 
 object Importer {
 

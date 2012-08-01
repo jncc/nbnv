@@ -8,7 +8,7 @@ import javax.persistence.EntityManager;
 class DatasetIngester (val em: EntityManager) {
 
   def upsertDataset(metadata: Metadata) : TaxonDataset = {
-
+    
         // returns the merged instance of the dataset entity
     def mergeDataset(dataset: Dataset, metadata: Metadata) : Dataset = {
 

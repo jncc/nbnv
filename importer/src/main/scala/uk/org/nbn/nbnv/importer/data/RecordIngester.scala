@@ -7,12 +7,8 @@ package uk.org.nbn.nbnv.importer.data
 
 import uk.org.nbn.nbnv.jpa.nbncore._
 import javax.persistence.EntityManager
-import org.gbif.dwc.text.StarRecord
-import org.gbif.dwc.terms.DwcTerm
 import org.apache.log4j.Logger
 import uk.org.nbn.nbnv.importer.records.NbnRecord
-;
-
 
 class RecordIngester (log: Logger, em: EntityManager, surveyIngester : SurveyIngester, sampleIngester : SampleIngester) {
   
@@ -20,15 +16,40 @@ class RecordIngester (log: Logger, em: EntityManager, surveyIngester : SurveyIng
 
     log.info("Upserting record %s".format(record.key))
 
-    //todo: Generate surveyKey if blank
-    val survey = surveyIngester.upsertSurvey(record.surveyKey, dataset)
+    // todo: get existing if it's there
     
-    //todo: Generate sampleKey if blank
+    val survey = surveyIngester.upsertSurvey(record.surveyKey, dataset)
     val sample = sampleIngester.upsertSample(record.sampleKey, survey)
 
-    val site = em.find(classOf[Site], record.siteKey)
-    //todo : do something if the site can't be found
-
+    // sites are a bit up in the air - assume it already exists for now
+    val site = em.getReference(classOf[Site], record.siteKey)
     
+    // todo: taxonobservation needs a feature, but what is a feature? we've forgotten 
+    val feature = em.find(classOf[Feature], 1)    
+    val taxon = em.getReference(classOf[Taxon], record.taxonVersionKey)
+    val dateType =  em.getReference(classOf[DateType], record.dateType)
+
+    // todo: look up by value
+    val determiner = em.find(classOf[Recorder], 1)
+    val recorder = em.find(classOf[Recorder], 1)
+    
+    // now we've got the  related entities, we can upsert the actual record
+    val o =  new TaxonObservation()
+    
+    o.setAbsenceRecord(false)
+    o.setDateStart(record.startDate) // todo?
+    o.setDateEnd(record.startDate)   // todo??
+    o.setDateType(dateType)
+    o.setDeterminerID(determiner)
+    o.setFeatureID(feature)
+    //o.setObservationID()
+    o.setObservationKey(record.key)
+    o.setRecorderID(recorder)
+    o.setSampleID(sample)
+    o.setSensitiveRecord(false)
+    o.setSiteID(site)
+    o.setTaxonVersionKey(taxon)
+    
+    em.merge(o)    
   }
 }

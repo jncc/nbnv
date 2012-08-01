@@ -11,6 +11,8 @@ import javax.persistence.EntityManager;
 class SurveyIngester (entityManager : EntityManager ){
   def upsertSurvey(surveyKey : String, dataset : TaxonDataset) : Survey = {
 
+    //todo: Generate surveyKey if blank
+
     val surveyQuery = entityManager.createQuery("SELECT s FROM Survey WHERE s.surveyKey = :surveyKey AND s.datasetKey = :datasetKey", classOf[Survey])
                       .setParameter("surveyKey", surveyKey)
                       .setParameter("datasetKey", dataset.getDatasetKey)
