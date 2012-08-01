@@ -2,10 +2,13 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package uk.org.nbn.nbnv.api.dao;
+package uk.org.nbn.nbnv.api.dao.mappers;
 
 import java.util.List;
+import org.apache.ibatis.annotations.Many;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Result;
+import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.session.RowBounds;
 import uk.org.nbn.nbnv.api.model.Taxon;
@@ -20,6 +23,9 @@ public interface TaxonGroupMapper {
     List<TaxonGroup> selectAll();
     
     @Select("SELECT * FROM TaxonGroupData WHERE taxonGroupKey = #{id}")
+    @Results(
+        @Result(column = "taxonGroupKey", property = "children", javaType=List.class, many=@Many(select="uk.org.nbn.nbnv.api.dao.mappers.TaxonGroupMapper.getChildren"))
+    )
     TaxonGroup getTaxonGroup(String id);
     
     @Select("SELECT * FROM TaxonGroupData WHERE parent = #{id}")

@@ -10,7 +10,7 @@ import javax.ws.rs.core.MediaType;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import uk.org.nbn.nbnv.api.dao.TaxonGroupMapper;
+import uk.org.nbn.nbnv.api.dao.mappers.TaxonGroupMapper;
 import uk.org.nbn.nbnv.api.model.Taxon;
 import uk.org.nbn.nbnv.api.model.TaxonGroup;
 
@@ -40,9 +40,7 @@ public class TaxonGroupResource {
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public TaxonGroup getTaxonGroup(@PathParam("id") String id) {
-        TaxonGroup toReturn = mapper.getTaxonGroup(id);
-        toReturn.setChildren(mapper.getChildren(id));
-        return toReturn;
+        return mapper.getTaxonGroup(id);
     }
     
     @GET
