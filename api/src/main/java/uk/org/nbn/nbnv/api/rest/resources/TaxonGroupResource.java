@@ -7,6 +7,7 @@ package uk.org.nbn.nbnv.api.rest.resources;
 import java.util.List;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.org.nbn.nbnv.api.dao.TaxonGroupMapper;
@@ -52,6 +53,6 @@ public class TaxonGroupResource {
         @QueryParam("limit") @DefaultValue("20") int limit, 
         @QueryParam("offset") @DefaultValue("1") int offset
     ) {
-        return mapper.getTaxa(taxonGroup, offset, offset+limit-1);
+        return mapper.getTaxa(taxonGroup, new RowBounds(offset, limit));
     }
 }

@@ -7,6 +7,7 @@ package uk.org.nbn.nbnv.api.dao;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.session.RowBounds;
 import uk.org.nbn.nbnv.api.model.Taxon;
 import uk.org.nbn.nbnv.api.model.TaxonGroup;
 
@@ -27,19 +28,8 @@ public interface TaxonGroupMapper {
     @Select("SELECT * FROM TaxonGroupData WHERE parent is NULL")
     List<TaxonGroup> getTopLevels();
     
-    @Select("SELECT taxonVersionKey, taxonName, taxonAuthority " +
-        "FROM ( "+
-            "SELECT taxonVersionKey, ROW_NUMBER() OVER (ORDER BY taxonname) AS RowNum "+
-            "FROM NBNCore.dbo.Taxon " +
-            "WHERE taxonOutputGroupKey = #{taxonGroupKey} " +
-        ") AS MyDerivedTable "+
-        "WHERE MyDerivedTable.RowNum BETWEEN #{start} AND #{end}"
-    )
-    List<Taxon> getTaxa(
-        @Param("taxonGroupKey") String taxonGroupKey,
-        @Param("start") int start, 
-        @Param("end") int end
-    );
+    @Select("SELECT * FROM NBNCore.dbo.Taxon WHERE taxonOutputGroupKey = #{taxonGroupKey}")
+    List<Taxon> getTaxa(@Param("taxonGroupKey") String taxonGroupKey, RowBounds bounds);
     
     @Select("SELECT * from DesignationTaxonGroupData where designationID = #{id}")
     List<TaxonGroup> selectTopLevelTaxonNavigationGroupsByDesignationID(int id);
