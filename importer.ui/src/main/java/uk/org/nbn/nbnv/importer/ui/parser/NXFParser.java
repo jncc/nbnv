@@ -39,8 +39,8 @@ public class NXFParser {
         NXFtoDWCAMapping.put("SurveyKey", DarwinCoreField.COLLECTIONCODE);
         NXFtoDWCAMapping.put("SampleKey", DarwinCoreField.EVENTID);
         NXFtoDWCAMapping.put("DateType", DarwinCoreField.EVENTDATETYPECODE);
-        NXFtoDWCAMapping.put("StartDate", DarwinCoreField.STARTDATE);
-        NXFtoDWCAMapping.put("EndDate", DarwinCoreField.ENDDATE);
+        NXFtoDWCAMapping.put("StartDate", DarwinCoreField.EVENTDATESTART);
+        NXFtoDWCAMapping.put("EndDate", DarwinCoreField.EVENTDATEEND);
     }
 
     public List<ColumnMapping> parseHeaders(FileItem file) throws IOException {
@@ -55,8 +55,9 @@ public class NXFParser {
             for (int i = 0; i < origHeaders.length; i++) {
                 DarwinCoreField dcf = NXFtoDWCAMapping.get(origHeaders[i]);
                 
-                if (dcf == null)
+                if (dcf == null) {
                     dcf = DarwinCoreField.ATTRIBUTE;
+                }
                 
                 ColumnMapping cm = new ColumnMapping(i, origHeaders[i], dcf);
                 headers.add(cm);
@@ -64,8 +65,9 @@ public class NXFParser {
             
             return headers;
         } finally {
-            if (r != null)
+            if (r != null) {
                 r.close();
+            }
         }
     }
 }

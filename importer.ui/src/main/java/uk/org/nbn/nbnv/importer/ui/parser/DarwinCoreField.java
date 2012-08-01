@@ -22,15 +22,15 @@ public enum DarwinCoreField {
     OCCURRENCESTATUS ("http://rs.tdwg.org/dwc/terms/occurrenceStatus", DarwinCoreFieldType.DWCA_OCCURRENCE),
     COLLECTIONCODE ("http://rs.tdwg.org/dwc/terms/collectionCode", DarwinCoreFieldType.DWCA_OCCURRENCE),
     EVENTID ("http://rs.tdwg.org/dwc/terms/eventID", DarwinCoreFieldType.DWCA_OCCURRENCE),
-    EVENTDATETYPECODE ("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/dateTypeCode", DarwinCoreFieldType.NBNEXCHANGE),
+    EVENTDATETYPECODE ("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateTypeCode", DarwinCoreFieldType.NBNEXCHANGE),
+    EVENTDATESTART ("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateStart", DarwinCoreFieldType.NBNEXCHANGE),
+    EVENTDATEEND ("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateEnd", DarwinCoreFieldType.NBNEXCHANGE),
     GRIDREFERENCE ("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/gridReference", DarwinCoreFieldType.NBNEXCHANGE),
     GRIDREFERENCETYPE ("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/gridReferenceType", DarwinCoreFieldType.NBNEXCHANGE),
     GRIDREFERENCEPRECISION ("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/gridReferencePrecision", DarwinCoreFieldType.NBNEXCHANGE),
     SITEFEATUREKEY ("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/siteFeatureKey", DarwinCoreFieldType.NBNEXCHANGE),
     SENSITIVEOCCURRENCE ("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/sensitiveOccurrence", DarwinCoreFieldType.NBNEXCHANGE),
     DYNAMICPROPERTIES ("http://rs.tdwg.org/dwc/terms/dynamicProperties", DarwinCoreFieldType.DWCA_OCCURRENCE),
-    STARTDATE ("Start Date", DarwinCoreFieldType.INTERNAL),
-    ENDDATE ("End Date", DarwinCoreFieldType.INTERNAL),
     ATTRIBUTE ("Attribute", DarwinCoreFieldType.INTERNAL);
     
     private final String term;
