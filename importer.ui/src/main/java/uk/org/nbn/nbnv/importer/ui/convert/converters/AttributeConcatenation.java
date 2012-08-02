@@ -67,7 +67,7 @@ public class AttributeConcatenation implements ConverterStep {
             }
         }
         
-        row.set(outputColumn, obj.toString());
+        row.add(obj.toString());
     }
     
 }
