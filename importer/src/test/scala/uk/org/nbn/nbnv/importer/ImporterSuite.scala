@@ -27,7 +27,7 @@ class ImporterSuite extends FunSuite with ShouldMatchers with MockitoSugar {
     val archive = mock[Archive]
 
     val archiveManager = mock[ArchiveManager]
-    when(archiveManager.open).thenReturn(archive)
+    when(archiveManager.open()).thenReturn(archive)
     
     val metadataReader = mock[MetadataReader]
 
@@ -36,7 +36,7 @@ class ImporterSuite extends FunSuite with ShouldMatchers with MockitoSugar {
 
     val ingester = mock[Ingester]
 
-    //act
+    // act
     val importer = new Importer(Options(), log, archiveManager, metadataReader, ingester)
     importer.run()
 

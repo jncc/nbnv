@@ -13,7 +13,6 @@ class SmokeSuite extends FunSuite with ShouldMatchers with ResourceLoader {
 
   test("should be able to load a resource for automated testing") {
     val r = resource("/some-resource.txt")
-//    1 should be (2)
     r should not be (null)
   }
 

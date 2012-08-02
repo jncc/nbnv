@@ -11,6 +11,6 @@ class LogSuite extends FunSuite with ShouldMatchers {
   test("the log should work"){
 
     Log.configure(".", "2MB", Level.ALL)
-    Log.get().info("Arrrrggghh!")
+    Log.get().info("The log is working!")
   }
 }
