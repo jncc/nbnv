@@ -1,23 +1,16 @@
 package uk.org.nbn.nbnv.importer
 
 import darwin.ArchiveManager
-import org.scalatest.junit.JUnitRunner
-import org.junit.runner.RunWith
-import org.scalatest.FunSuite
-import org.scalatest.matchers.ShouldMatchers
 import org.apache.log4j.Logger
 import org.mockito.Mockito._
 import org.mockito.Matchers._
+import testing.BaseFunSuite
 import uk.org.nbn.nbnv.metadata.MetadataReader
 import javax.persistence.{EntityManager, EntityTransaction}
-import data.{Ingester, DatasetIngester, RecordIngester}
-import org.gbif.dwc.text.{StarRecord, Archive}
-import java.util.Iterator
-import org.gbif.utils.file.ClosableIterator
-import org.scalatest.mock.MockitoSugar
+import data.Ingester
+import org.gbif.dwc.text.Archive
 
-@RunWith(classOf[JUnitRunner])
-class ImporterSuite extends FunSuite with ShouldMatchers with MockitoSugar {
+class ImporterSuite extends BaseFunSuite  {
 
   test("importer should say hello") {
 
@@ -27,7 +20,7 @@ class ImporterSuite extends FunSuite with ShouldMatchers with MockitoSugar {
     val archive = mock[Archive]
 
     val archiveManager = mock[ArchiveManager]
-    when(archiveManager.open).thenReturn(archive)
+    when(archiveManager.open()).thenReturn(archive)
     
     val metadataReader = mock[MetadataReader]
 
@@ -36,7 +29,7 @@ class ImporterSuite extends FunSuite with ShouldMatchers with MockitoSugar {
 
     val ingester = mock[Ingester]
 
-    //act
+    // act
     val importer = new Importer(Options(), log, archiveManager, metadataReader, ingester)
     importer.run()
 

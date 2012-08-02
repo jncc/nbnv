@@ -1,18 +1,13 @@
 package uk.org.nbn.nbnv.importer.data
 
-import org.junit.runner.RunWith
 import org.mockito.Mockito._
 import org.mockito.Matchers._
-import org.scalatest.junit.JUnitRunner
-import org.scalatest.matchers.ShouldMatchers
-import org.scalatest.FunSuite
-import org.scalatest.mock.MockitoSugar
 import javax.persistence.EntityManager
 import uk.org.nbn.nbnv.jpa.nbncore.{Dataset, TaxonDataset}
 import uk.org.nbn.nbnv.metadata.Metadata
+import uk.org.nbn.nbnv.importer.testing.BaseFunSuite
 
-@RunWith(classOf[JUnitRunner])
-class DatasetIngesterSuite extends FunSuite with ShouldMatchers with MockitoSugar {
+class DatasetIngesterSuite extends BaseFunSuite {
 
   test("an existing dataset should be updated") {
 
@@ -22,7 +17,7 @@ class DatasetIngesterSuite extends FunSuite with ShouldMatchers with MockitoSuga
  
     val dataset = mock[Dataset]
     val taxonDataset = mock[TaxonDataset]
-    when(taxonDataset.getDataset()).thenReturn(dataset)
+    when(taxonDataset.getDataset).thenReturn(dataset)
     
     val em = mock[EntityManager]
     when(em.find(classOf[TaxonDataset], key)).thenReturn(taxonDataset)

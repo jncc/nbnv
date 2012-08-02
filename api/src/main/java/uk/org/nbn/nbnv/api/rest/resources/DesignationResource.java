@@ -44,7 +44,7 @@ public class DesignationResource {
     }
 
     @GET
-    @Path("/{id}/designation_category")
+    @Path("/{id}/designationCategories")
     @Produces(MediaType.APPLICATION_JSON)
     public DesignationCategory getDesignationCategory(@PathParam("id") int id) {
         return designationCategoryMapper.selectByDesignationID(id);
@@ -53,21 +53,18 @@ public class DesignationResource {
     @GET
     @Path("/{id}/species")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Taxon> getSpeciesByDesignation(@PathParam("id") int id) {
+    public List<Taxon> getSpeciesByDesignationAndTaxonGroup(@PathParam("id") int id, @QueryParam("taxonGroupId") String taxonGroupId) {
+        if(taxonGroupId != null){
+            return taxonMapper.selectByDesignationAndTaxonNavigationGroup(id, taxonGroupId);
+        }else{
             return taxonMapper.selectByDesignationID(id);
+        }
     }
 
     @GET
-    @Path("/{id}/taxon_groups/top_levels")
+    @Path("{id}/taxonGroups/{taxonGroupId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<TaxonGroup> getTopLevelTaxonNavigationGroupsByDesignation(@PathParam("id") int id) {
-            return taxonGroupMapper.selectTopLevelTaxonNavigationGroupsByDesignationID(id);
-    }
-    
-    @GET
-    @Path("{designationId}/taxon_groups/{taxonGroupId}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public TaxonGroup getTaxonGroupByDesignation(@PathParam("designationId") int designationId, @PathParam("taxonGroupId") String taxonGroupId){
+    public TaxonGroup getTaxonGroupByDesignation(@PathParam("id") int designationId, @PathParam("taxonGroupId") String taxonGroupId){
         TaxonGroup toReturn = taxonGroupMapper.getTaxonGroup(taxonGroupId);
         toReturn.setChildren(taxonGroupMapper.getChildrenByDesignation(taxonGroupId, designationId));
         return toReturn;

@@ -1,17 +1,12 @@
 package uk.org.nbn.nbnv.metadata
 
-import org.junit.runner.RunWith
-import org.scalatest.junit.JUnitRunner
-import org.scalatest.FunSuite
-import org.scalatest.matchers.ShouldMatchers
 import org.gbif.dwc.text.Archive
 import org.mockito.Mockito._
 import uk.org.nbn.nbnv.utility.FileSystem
 import java.io.File
-import org.scalatest.mock.MockitoSugar
+import uk.org.nbn.nbnv.importer.testing.BaseFunSuite
 
-@RunWith(classOf[JUnitRunner])
-class MetadataReaderSuite extends FunSuite with ShouldMatchers with MockitoSugar {
+class MetadataReaderSuite extends BaseFunSuite {
 
   test("should read metadata") {
 

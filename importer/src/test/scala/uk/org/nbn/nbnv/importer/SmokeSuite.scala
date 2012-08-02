@@ -1,20 +1,20 @@
 package uk.org.nbn.nbnv.importer
 
-import org.scalatest.FunSuite
-import org.scalatest.junit.JUnitRunner
-import org.mockito.Mockito._
-import org.scalatest.mock.MockitoSugar
-import org.scalatest.matchers.ShouldMatchers
-import org.junit.runner.RunWith
-import testing.ResourceLoader
+import testing.{BaseFunSuite, ResourceLoader}
+import java.io.File
 
-@RunWith(classOf[JUnitRunner])
-class SmokeSuite extends FunSuite with ShouldMatchers with ResourceLoader {
+class SmokeSuite extends BaseFunSuite with ResourceLoader {
 
   test("should be able to load a resource for automated testing") {
     val r = resource("/some-resource.txt")
-//    1 should be (2)
     r should not be (null)
+
+    println(r.toString)
+    val f = new File(r.toString)
+    println(f)
+    val source = io.Source.fromFile("C:\\Work\\nbnv\\importer\\target\\test-classes\\some-resource.txt") // (f.getPath)
+    val line = source.getLines().toTraversable.head
+    println(line)
   }
 
   ignore("should import a valid archive") {

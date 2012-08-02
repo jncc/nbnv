@@ -38,7 +38,7 @@ public interface TaxonGroupMapper {
     List<Taxon> getTaxa(@Param("taxonGroupKey") String taxonGroupKey, RowBounds bounds);
     
     @Select("SELECT * from DesignationTaxonGroupData where designationID = #{id} order by sortOrder ASC")
-    List<TaxonGroup> selectTopLevelTaxonNavigationGroupsByDesignationID(int id);
+    List<TaxonGroup> getTopLevelssByDesignationID(int id);
     
     @Select("SELECT distinct tgd.taxonGroupKey, tgd.taxonGroupName, descriptor, tgd.sortOrder, tgd.parent FROM DesignationTaxonData dtd INNER JOIN NBNCore.dbo.Taxon t ON dtd.pTaxonVersionKey = t.taxonVersionKey INNER JOIN TaxonGroupData tgd ON t.taxonNavigationGroupKey = tgd.taxonGroupKey WHERE parent = #{taxonGroupId} AND designationID = #{designationId} ORDER BY sortOrder ASC")
     List<TaxonGroup> getChildrenByDesignation(@Param("taxonGroupId") String taxonGroupId, @Param("designationId") int designationId);

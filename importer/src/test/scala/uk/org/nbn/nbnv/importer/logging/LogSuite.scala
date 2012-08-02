@@ -1,16 +1,12 @@
 package uk.org.nbn.nbnv.importer.logging
 
-import org.scalatest.junit.JUnitRunner
-import org.junit.runner.RunWith
-import org.scalatest.FunSuite
-import org.scalatest.matchers.ShouldMatchers
 import org.apache.log4j._
+import uk.org.nbn.nbnv.importer.testing.BaseFunSuite
 
-@RunWith(classOf[JUnitRunner])
-class LogSuite extends FunSuite with ShouldMatchers {
+class LogSuite extends BaseFunSuite {
   test("the log should work"){
 
     Log.configure(".", "2MB", Level.ALL)
-    Log.get().info("Arrrrggghh!")
+    Log.get().info("The log is working!")
   }
 }
