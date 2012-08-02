@@ -26,4 +26,14 @@ public class BadDataException extends Exception {
     public BadDataException(String msg) {
         super(msg);
     }
+    
+    /**
+     * Constructs an instance of
+     * <code>BadDataException</code> with the specified inner exception.
+     *
+     * @param ex the inner exception.
+     */
+    public BadDataException(Exception ex) {
+        super(ex);
+    }
 }

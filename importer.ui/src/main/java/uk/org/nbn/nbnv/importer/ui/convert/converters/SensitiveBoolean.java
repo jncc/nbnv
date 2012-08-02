@@ -5,7 +5,6 @@
 package uk.org.nbn.nbnv.importer.ui.convert.converters;
 
 import java.util.List;
-import java.util.Map;
 import uk.org.nbn.nbnv.importer.ui.convert.BadDataException;
 import uk.org.nbn.nbnv.importer.ui.convert.ConverterStep;
 import uk.org.nbn.nbnv.importer.ui.parser.ColumnMapping;
@@ -16,6 +15,7 @@ import uk.org.nbn.nbnv.importer.ui.parser.DarwinCoreField;
  * @author Paul Gilbertson
  */
 public class SensitiveBoolean implements ConverterStep {
+    private int column;
 
     @Override
     public String getName() {
@@ -26,6 +26,7 @@ public class SensitiveBoolean implements ConverterStep {
     public boolean isStepNeeded(List<ColumnMapping> columns) {
         for (ColumnMapping cm : columns) {
             if (cm.getField() == DarwinCoreField.SENSITIVEOCCURRENCE) {
+                column = cm.getColumnNumber();
                 return true;
             }
         }
@@ -33,13 +34,13 @@ public class SensitiveBoolean implements ConverterStep {
     }
 
     @Override
-    public void modifyRow(Map<DarwinCoreField, String> row) throws BadDataException {
-        String data = row.get(DarwinCoreField.SENSITIVEOCCURRENCE);
+    public void modifyRow(List<String> row) throws BadDataException {
+        String data = row.get(column);
 
         if (data.equalsIgnoreCase("T")) {
-            row.put(DarwinCoreField.SENSITIVEOCCURRENCE, "true");
+            row.set(column, "true");
         } else if (data.equalsIgnoreCase("F")) {
-            row.put(DarwinCoreField.SENSITIVEOCCURRENCE, "false");
+            row.set(column, "false");
         } else {
             throw new BadDataException("Bad sensitive entry: " + data);
         }

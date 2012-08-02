@@ -8,12 +8,8 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Test;
 import uk.org.nbn.nbnv.importer.ui.convert.BadDataException;
 import uk.org.nbn.nbnv.importer.ui.parser.ColumnMapping;
 import uk.org.nbn.nbnv.importer.ui.parser.DarwinCoreField;
@@ -81,13 +77,19 @@ public class SensitiveBooleanTest {
     public void testModifyRowT() throws BadDataException {
         System.out.println("modifyRowT");
         
-        Map<DarwinCoreField, String> row = new EnumMap<DarwinCoreField, String>(DarwinCoreField.class);
-        row.put(DarwinCoreField.SENSITIVEOCCURRENCE, "T");
-        
+        List<ColumnMapping> columns = new ArrayList<ColumnMapping>();
+        ColumnMapping mapping = new ColumnMapping(0, "mapping", DarwinCoreField.SENSITIVEOCCURRENCE);
+        columns.add(mapping);
+
         SensitiveBoolean instance = new SensitiveBoolean();
+        instance.isStepNeeded(columns);
+        
+        List<String> row = new ArrayList<String>();
+        row.add("T");
+        
         instance.modifyRow(row);
         
-        assertEquals("true", row.get(DarwinCoreField.SENSITIVEOCCURRENCE));
+        assertEquals("true", row.get(0));
     }
 
     /**
@@ -97,13 +99,19 @@ public class SensitiveBooleanTest {
     public void testModifyRowF() throws BadDataException {
         System.out.println("modifyRowF");
         
-        Map<DarwinCoreField, String> row = new EnumMap<DarwinCoreField, String>(DarwinCoreField.class);
-        row.put(DarwinCoreField.SENSITIVEOCCURRENCE, "F");
-        
+        List<ColumnMapping> columns = new ArrayList<ColumnMapping>();
+        ColumnMapping mapping = new ColumnMapping(0, "mapping", DarwinCoreField.SENSITIVEOCCURRENCE);
+        columns.add(mapping);
+
         SensitiveBoolean instance = new SensitiveBoolean();
+        instance.isStepNeeded(columns);
+        
+        List<String> row = new ArrayList<String>();
+        row.add("F");
+        
         instance.modifyRow(row);
         
-        assertEquals("false", row.get(DarwinCoreField.SENSITIVEOCCURRENCE));
+        assertEquals("false", row.get(0));
     }
     
         /**
@@ -113,10 +121,16 @@ public class SensitiveBooleanTest {
     public void testModifyRowBadData() throws BadDataException {
         System.out.println("modifyRowBadData");
         
-        Map<DarwinCoreField, String> row = new EnumMap<DarwinCoreField, String>(DarwinCoreField.class);
-        row.put(DarwinCoreField.SENSITIVEOCCURRENCE, "Crud");
-        
+        List<ColumnMapping> columns = new ArrayList<ColumnMapping>();
+        ColumnMapping mapping = new ColumnMapping(0, "mapping", DarwinCoreField.SENSITIVEOCCURRENCE);
+        columns.add(mapping);
+
         SensitiveBoolean instance = new SensitiveBoolean();
+        instance.isStepNeeded(columns);
+        
+        List<String> row = new ArrayList<String>();
+        row.add("Crap");
+        
         instance.modifyRow(row);
     }
 

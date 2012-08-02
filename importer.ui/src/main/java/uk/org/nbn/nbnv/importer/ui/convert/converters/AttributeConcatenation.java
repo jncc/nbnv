@@ -4,8 +4,12 @@
  */
 package uk.org.nbn.nbnv.importer.ui.convert.converters;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.json.JSONException;
 import org.json.JSONObject;
 import uk.org.nbn.nbnv.importer.ui.convert.BadDataException;
 import uk.org.nbn.nbnv.importer.ui.convert.ConverterStep;
@@ -17,6 +21,8 @@ import uk.org.nbn.nbnv.importer.ui.parser.DarwinCoreField;
  * @author Paul Gilbertson
  */
 public class AttributeConcatenation implements ConverterStep {
+    private Map<Integer, String> columnList = new HashMap<Integer, String>();
+    private int outputColumn;
 
     @Override
     public String getName() {
@@ -27,10 +33,11 @@ public class AttributeConcatenation implements ConverterStep {
     public boolean isStepNeeded(List<ColumnMapping> columns) {
         for (ColumnMapping cm : columns) {
             if (cm.getField() == DarwinCoreField.ATTRIBUTE) {
-                return true;
+                columnList.put(cm.getColumnNumber(), cm.getColumnLabel());
             }
         }
-        return false;
+        
+        return columnList.size() > 0;
     }
 
     @Override
@@ -43,12 +50,24 @@ public class AttributeConcatenation implements ConverterStep {
         
         ColumnMapping col = new ColumnMapping(highestColumn + 1, "attributes", DarwinCoreField.DYNAMICPROPERTIES);
         columns.add(col);
+        
+        outputColumn = highestColumn + 1;
     }
 
     @Override
-    public void modifyRow(Map<DarwinCoreField, String> row) throws BadDataException {
+    public void modifyRow(List<String> row) throws BadDataException {
         JSONObject obj = new JSONObject();
         
+        for (int c : columnList.keySet()) {
+            try {
+                obj.append(columnList.get(c), row.get(c));
+            } catch (JSONException ex) {
+                Logger.getLogger(AttributeConcatenation.class.getName()).log(Level.SEVERE, null, ex);
+                throw new BadDataException(ex);
+            }
+        }
+        
+        row.set(outputColumn, obj.toString());
     }
     
 }

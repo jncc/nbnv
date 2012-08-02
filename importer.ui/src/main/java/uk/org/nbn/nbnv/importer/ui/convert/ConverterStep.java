@@ -5,9 +5,7 @@
 package uk.org.nbn.nbnv.importer.ui.convert;
 
 import java.util.List;
-import java.util.Map;
 import uk.org.nbn.nbnv.importer.ui.parser.ColumnMapping;
-import uk.org.nbn.nbnv.importer.ui.parser.DarwinCoreField;
 
 /**
  *
@@ -17,5 +15,5 @@ public interface ConverterStep {
     public String getName();
     public boolean isStepNeeded(List<ColumnMapping> columns);
     public void modifyHeader(List<ColumnMapping> columns);
-    public void modifyRow(Map<DarwinCoreField, String> row) throws BadDataException;
+    public void modifyRow(List<String> row) throws BadDataException;
 }
