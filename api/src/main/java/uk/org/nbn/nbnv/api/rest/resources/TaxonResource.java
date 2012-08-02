@@ -17,11 +17,4 @@ public class TaxonResource {
     
     @Autowired TaxonMapper taxonMapper;
     
-    @GET
-    @Path("/taxon_group/{taxonGroupId}/designation/{designationId}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public List<Taxon> getSpeciesByDesignationAndTaxonGroup(@PathParam("designationId") int designationId, @PathParam("taxonGroupId") String taxonGroupId) {
-            return taxonMapper.selectByDesignationAndTaxonNavigationGroup(designationId, taxonGroupId);
-    }
-    
 }

@@ -7,9 +7,9 @@
     <#assign taxonGroupId="${URLParameters.taxon_group}">
 
     <#assign designation=json.readURL("${api}/designations/${designationId}")>
-    <#assign designationCategory=json.readURL("${api}/designation_categories/${designation.designationCategoryID}")>
-    <#assign taxonGroup=json.readURL("${api}/taxon_groups/${taxonGroupId}")>
-    <#assign species=json.readURL("${api}/species/taxon_group/${taxonGroupId}/designation/${designationId}")>
+    <#assign designationCategory=json.readURL("${api}/designationCategories/${designation.designationCategoryID}")>
+    <#assign taxonGroup=json.readURL("${api}/taxonGroups/${taxonGroupId}")>
+    <#assign species=json.readURL("${api}/designations/${designationId}/species", {"taxonGroupId": taxonGroupId})>
 
     <div id="nbn-designation-content">
         <h4>${designation.name} : ${taxonGroup.taxonGroupName}</h4>

@@ -19,38 +19,51 @@ import uk.org.nbn.nbnv.api.model.TaxonGroup;
  * @author Administrator
  */
 @Component
-@Path("/taxon_groups")
-public class TaxonGroupResource { 
-    @Autowired TaxonGroupMapper mapper;
-    
+@Path("/taxonGroups")
+public class TaxonGroupResource {
+
+    @Autowired
+    TaxonGroupMapper mapper;
+
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public List<TaxonGroup> getTaxonGroups() {
         return mapper.selectAll();
     }
-    
-    @GET
-    @Path("/top_levels")
-    @Produces(MediaType.APPLICATION_JSON)
-    public List<TaxonGroup> getTopLevelTaxonGroups() {
-        return mapper.getTopLevels();
-    }
-    
+
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public TaxonGroup getTaxonGroup(@PathParam("id") String id) {
         return mapper.getTaxonGroup(id);
     }
-    
+
     @GET
-    @Path("/{id}/taxa")
+    @Path("/topLevels")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<TaxonGroup> getTopLevelTaxonGroups(@QueryParam("designationId") int designationId) {
+        if (designationId != 0) {
+            return mapper.getTopLevelssByDesignationID(designationId);
+        } else {
+            return mapper.getTopLevels();
+        }
+    }
+
+    @GET
+    @Path("/topLevels/designations/{designationId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<TaxonGroup> getTopLevelTaxonNavigationGroupsByDesignation(@PathParam("designationId") int id) {
+        return mapper.getTopLevelssByDesignationID(id);
+    }
+
+    @GET
+    @Path("/{id}/species")
     @Produces(MediaType.APPLICATION_JSON)
     public List<Taxon> getTaxa(
-        @PathParam("id") String taxonGroup, 
-        @QueryParam("limit") @DefaultValue("20") int limit, 
-        @QueryParam("offset") @DefaultValue("1") int offset
-    ) {
+            @PathParam("id") String taxonGroup,
+            @QueryParam("limit") @DefaultValue("20") int limit,
+            @QueryParam("offset") @DefaultValue("1") int offset) {
         return mapper.getTaxa(taxonGroup, new RowBounds(offset, limit));
     }
+    
 }

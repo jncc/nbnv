@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package uk.org.nbn.nbnv.api.rest.resources;
 
 import java.util.List;
@@ -17,12 +13,8 @@ import uk.org.nbn.nbnv.api.dao.mappers.DesignationMapper;
 import uk.org.nbn.nbnv.api.model.Designation;
 import uk.org.nbn.nbnv.api.model.DesignationCategory;
 
-/**
- *
- * @author Administrator
- */
 @Component
-@Path("/designation_categories")
+@Path("/designationCategories")
 public class DesignationCategoryResource {
     @Autowired DesignationCategoryMapper desigCat;
     @Autowired DesignationMapper desig;
@@ -48,9 +40,9 @@ public class DesignationCategoryResource {
     }
 
     @GET
-    @Path("/{id}/designations/{desigID}")
+    @Path("/{id}/designations/{designationId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Designation getDesignationByCategoryIDAndID(@PathParam("id") int id, @PathParam("desigID") int desigID) { 
-        return desig.selectByIDAndCategoryID(desigID, id);
+    public Designation getDesignationByCategoryIDAndID(@PathParam("id") int id, @PathParam("designationId") int designationId) { 
+        return desig.selectByIDAndCategoryID(designationId, id);
     }
 }

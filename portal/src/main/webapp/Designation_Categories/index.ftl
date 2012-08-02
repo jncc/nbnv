@@ -2,7 +2,7 @@
 
 <@master title="NBN Gateway - Designation Categories">
     
-    <#assign designationCategories=json.readURL("${api}/designation_categories")>
+    <#assign designationCategories=json.readURL("${api}/designationCategories")>
 
     <div id="nbn-designation-content">
         <h1>Designation Categories</h1>
@@ -15,9 +15,9 @@
                 <li>
                     <h1><span class="nbn-designation-category-heading-strong">${currEntry.label}:</span> ${currEntry.description}</h1>
                     <ul>
-                        <#assign designationCategory=json.readURL("${api}/designation_categories/${currEntry.designationCategoryID}/designations")>
+                        <#assign designationCategory=json.readURL("${api}/designationCategories/${currEntry.designationCategoryID}/designations")>
                         <#list designationCategory as currDesignation>
-                            <li class="nbn-designation-nested-list"><a title="${currDesignation.description!}" href="/Designation/${currDesignation.designationID}">${currDesignation.name}</a> : ${currDesignation.label}</li>
+                            <li class="nbn-designation-nested-list"><a title="${currDesignation.description!}" href="/Designations/${currDesignation.designationID}">${currDesignation.name}</a> : ${currDesignation.label}</li>
                         </#list>
                     </ul>
                 </li>

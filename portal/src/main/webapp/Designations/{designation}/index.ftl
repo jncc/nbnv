@@ -5,8 +5,8 @@
 
     <#assign designationId="${URLParameters.designation}">
     <#assign designation=json.readURL("${api}/designations/${designationId}")>
-    <#assign designationCategory=json.readURL("${api}/designation_categories/${designation.designationCategoryID}")>
-    <#assign topLevelTaxonGroups=json.readURL("${api}/designations/${designationId}/taxon_groups/top_levels")>
+    <#assign designationCategory=json.readURL("${api}/designationCategories/${designation.designationCategoryID}")>
+    <#assign topLevelTaxonGroups=json.readURL("${api}/taxonGroups/topLevels", {"designationId" : designationId })>
 
     <div id="nbn-designation-content">
         <h4>${designation.name}</h4>
@@ -25,7 +25,7 @@
                     <td>${designationCategory.label}: ${designationCategory.description!""}</td>
                 </tr>
                 <tr>
-                    <th>Interactive map of species with this designation:</th>
+                    <th>Interactive species richness map for this designation:</th>
                     <td><a href="http://data.nbn.org.uk/imt/?mode=DESIGNATION&designation=${designation.label}" target="_blank">Go to map</a></td>
                 </tr>
                 <tr>
@@ -36,13 +36,13 @@
                                 <li>
                                     <h1 class="nbn-h1-minor">&nbsp;${topLevelTaxonGroup.taxonGroupName}</h1>
                                     <ul>
-                                        <#assign taxonGroupWithChildren=json.readURL("${api}/designations/${designationId}/taxon_groups/${topLevelTaxonGroup.taxonGroupKey}")>
+                                        <#assign taxonGroupWithChildren=json.readURL("${api}/designations/${designationId}/taxonGroups/${topLevelTaxonGroup.taxonGroupKey}")>
                                         <#if taxonGroupWithChildren.children?has_content>
                                             <#list taxonGroupWithChildren.children as childTaxonGroup>
-                                                <li class="nbn-designation-nested-list"><a href="/designation/${designationId}/species_group/${childTaxonGroup.taxonGroupKey}">${childTaxonGroup.taxonGroupName}</a></li>
+                                                <li class="nbn-designation-nested-list"><a href="/Designations/${designationId}/Species_Group/${childTaxonGroup.taxonGroupKey}">${childTaxonGroup.taxonGroupName}</a></li>
                                             </#list>
                                         <#else>
-                                                <li class="nbn-designation-nested-list"><a href="/designation/${designationId}/species_group/${topLevelTaxonGroup.taxonGroupKey}">${topLevelTaxonGroup.taxonGroupName}</a></li>
+                                                <li class="nbn-designation-nested-list"><a href="/Designations/${designationId}/Species_Group/${topLevelTaxonGroup.taxonGroupKey}">${topLevelTaxonGroup.taxonGroupName}</a></li>
                                         </#if>
                                     </ul>
                                 </li>
