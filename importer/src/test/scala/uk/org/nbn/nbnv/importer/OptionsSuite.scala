@@ -1,13 +1,8 @@
 package uk.org.nbn.nbnv.importer
 
-import com.google.inject.{Inject, AbstractModule, Guice}
-import org.junit.runner.RunWith
-import org.scalatest.junit.JUnitRunner
-import org.scalatest.{Inside, FunSuite}
-import org.scalatest.matchers.ShouldMatchers
+import testing.BaseFunSuite
 
-@RunWith(classOf[JUnitRunner])
-class OptionsSuite extends FunSuite with ShouldMatchers {
+class OptionsSuite extends BaseFunSuite {
 
   val archivePath = "c:\\some\\archive.zip"
   val logDir = "c:\\logs"

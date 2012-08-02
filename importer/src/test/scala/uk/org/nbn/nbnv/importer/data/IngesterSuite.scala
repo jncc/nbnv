@@ -1,20 +1,13 @@
 package uk.org.nbn.nbnv.importer.data
 
-import org.junit.runner.RunWith
 import org.mockito.Mockito._
-import org.mockito.Matchers._
-import org.scalatest.junit.JUnitRunner
-import org.scalatest.matchers.ShouldMatchers
-import org.scalatest.FunSuite
-import org.scalatest.mock.MockitoSugar
 import javax.persistence.{EntityTransaction, EntityManager}
-import uk.org.nbn.nbnv.jpa.nbncore.{Dataset, TaxonDataset}
 import uk.org.nbn.nbnv.metadata.Metadata
 import org.gbif.dwc.text.{StarRecord, Archive}
 import org.gbif.utils.file.ClosableIterator
+import uk.org.nbn.nbnv.importer.testing.BaseFunSuite
 
-@RunWith(classOf[JUnitRunner])
-class IngesterSuite extends FunSuite with ShouldMatchers with MockitoSugar {
+class IngesterSuite extends BaseFunSuite {
 
   trait ArrangeAndAct {
 

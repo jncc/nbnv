@@ -1,13 +1,9 @@
 package uk.org.nbn.nbnv.importer
 
-import org.scalatest.FunSuite
-import org.scalatest.matchers.ShouldMatchers
 import com.google.inject.{Inject, AbstractModule, Guice}
-import org.junit.runner.RunWith
-import org.scalatest.junit.JUnitRunner
+import testing.BaseFunSuite
 
-@RunWith(classOf[JUnitRunner])
-class InjectionSuite extends FunSuite with ShouldMatchers {
+class InjectionSuite extends BaseFunSuite {
 
   test("google guice injection framework should work") {
 

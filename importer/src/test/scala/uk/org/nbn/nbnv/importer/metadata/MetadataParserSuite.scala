@@ -1,12 +1,8 @@
 package uk.org.nbn.nbnv.metadata
 
-import org.scalatest.junit.JUnitRunner
-import org.junit.runner.RunWith
-import org.scalatest.FunSuite
-import org.scalatest.matchers.ShouldMatchers
+import uk.org.nbn.nbnv.importer.testing.BaseFunSuite
 
-@RunWith(classOf[JUnitRunner])
-class MetadataParserSuite extends FunSuite with ShouldMatchers {
+class MetadataParserSuite extends BaseFunSuite {
   test("can parse valid metadata") {
 
     val parser = new MetadataParser()
