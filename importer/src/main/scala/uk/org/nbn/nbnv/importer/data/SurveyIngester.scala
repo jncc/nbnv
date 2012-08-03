@@ -14,12 +14,12 @@ class SurveyIngester (entityManager : EntityManager ){
     //todo: Generate surveyKey if blank
 
     val surveyQuery = entityManager.createQuery("SELECT s FROM Survey WHERE s.surveyKey = :surveyKey AND s.datasetKey = :datasetKey", classOf[Survey])
-                      .setParameter("surveyKey", surveyKey)
-                      .setParameter("datasetKey", dataset.getDatasetKey)
-                      .getResultList
+    surveyQuery.setParameter("surveyKey", surveyKey)
+    surveyQuery.setParameter("datasetKey", dataset.getDatasetKey)
+    val surveyList = surveyQuery.getResultList
     
-    if (!surveyQuery.isEmpty) {
-      surveyQuery.get(0)
+    if (!surveyList.isEmpty) {
+      surveyList.get(0)
     }
     else {
       //todo: use the survey key as title when creating a new survey - check this is correct
