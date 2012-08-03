@@ -4,23 +4,23 @@ public class Taxon {
     
     private String taxonVersionKey;
     private String prefnameTaxonVersionKey;
-    private String taxonName;
-    private String taxonAuthority;
+    private String name;
+    private String authority;
     private String lang;
-    private String taxonOutputGroupKey;
-    private String taxonNavigationGroupKey;
+    private String outputGroupKey;
+    private String navigationGroupKey;
     
     public Taxon(){}
     
-    public Taxon(String taxonVersionKey, String prefnameTaxonVersionKey, String taxonName, String taxonAuthority, String lang, String taxonOutputGroupKey, String taxonNavigationGroupKey){
+    public Taxon(String taxonVersionKey, String prefnameTaxonVersionKey, String name, String authority, String lang, String outputGroupKey, String navigationGroupKey){
         super();
         this.taxonVersionKey = taxonVersionKey;
         this.prefnameTaxonVersionKey = prefnameTaxonVersionKey;
-        this.taxonName = taxonName;
-        this.taxonAuthority = taxonAuthority;
+        this.name = name;
+        this.authority = authority;
         this.lang = lang;
-        this.taxonOutputGroupKey = taxonOutputGroupKey;
-        this.taxonNavigationGroupKey = taxonNavigationGroupKey;
+        this.outputGroupKey = outputGroupKey;
+        this.navigationGroupKey = navigationGroupKey;
     }
 
     public String getTaxonVersionKey() {
@@ -39,36 +39,36 @@ public class Taxon {
         this.prefnameTaxonVersionKey = prefnameTaxonVersionKey;
     }
 
-    public String getTaxonName() {
-        return taxonName;
+    public String getName() {
+        return name;
     }
 
-    public void setTaxonName(String taxonName) {
-        this.taxonName = taxonName;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getTaxonAuthority() {
-        return taxonAuthority;
+    public String getAuthority() {
+        return authority;
     }
 
-    public void setTaxonAuthority(String taxonAuthority) {
-        this.taxonAuthority = taxonAuthority;
+    public void setAuthority(String authority) {
+        this.authority = authority;
     }
 
-    public String getTaxonOutputGroupKey() {
-        return taxonOutputGroupKey;
+    public String getOutputGroupKey() {
+        return outputGroupKey;
     }
 
-    public void setTaxonOutputGroupKey(String taxonOutputGroupKey) {
-        this.taxonOutputGroupKey = taxonOutputGroupKey;
+    public void setOutputGroupKey(String outputGroupKey) {
+        this.outputGroupKey = outputGroupKey;
     }
 
-    public String getTaxonNavigationGroupKey() {
-        return taxonNavigationGroupKey;
+    public String getNavigationGroupKey() {
+        return navigationGroupKey;
     }
 
-    public void setTaxonNavigationGroupKey(String taxonNavigationGroupKey) {
-        this.taxonNavigationGroupKey = taxonNavigationGroupKey;
+    public void setNavigationGroupKey(String navigationGroupKey) {
+        this.navigationGroupKey = navigationGroupKey;
     }
 
     public String getLang() {

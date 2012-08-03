@@ -1,26 +1,33 @@
 package uk.org.nbn.nbnv.importer
 
-import testing.{BaseFunSuite, ResourceLoader}
-import java.io.File
+import data.{TaxonDatasetRepository, KeyGenerator}
+import testing.BaseFunSuite
+import utility.ResourceLoader
+import uk.org.nbn.nbnv.PersistenceUtility
+import org.mockito.Mockito._
+
+/// This is an end-to-end test which requires the database.
 
 class SmokeSuite extends BaseFunSuite with ResourceLoader {
 
-  test("should be able to load a resource for automated testing") {
-    val r = resource("/some-resource.txt")
-    r should not be (null)
+  ignore("should be able to get next dataset key") {
 
-    println(r.toString)
-    val f = new File(r.toString)
-    println(f)
-    val source = io.Source.fromFile("C:\\Work\\nbnv\\importer\\target\\test-classes\\some-resource.txt") // (f.getPath)
-    val line = source.getLines().toTraversable.head
-    println(line)
+    val em = new PersistenceUtility().createEntityManagerFactory.createEntityManager
+    val dr = new TaxonDatasetRepository(em)
+    val kg = new KeyGenerator(dr)
+
+    val key = kg.nextTaxonDatasetKey
+
+    key should startWith ("GA")
+    key should have length 8
   }
 
   ignore("should import a valid archive") {
+
     val archivePath = resource("/archives/valid.zip")
 
-    val options = Options(archivePath = archivePath.toString)
+    val options = Options(archivePath = archivePath.getFile,
+                          tempDir = ".\\temp")
 
     val importer = Importer.createImporter(options)
     importer.run()

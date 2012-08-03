@@ -30,7 +30,7 @@
                     <th>Species list for: ${taxonGroup.taxonGroupName}</th>
                     <td>
                         <#list species as spec>
-                            ${spec.taxonName} <br/>
+                            <@formatSpeciesNameLong speciesName=spec/><br/>
                         </#list>
                     </td>
                 </tr>

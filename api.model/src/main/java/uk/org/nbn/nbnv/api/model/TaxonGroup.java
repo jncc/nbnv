@@ -16,6 +16,7 @@ public class TaxonGroup {
     private String descriptor;
     private String parent;
     private String taxonGroupKey;
+    private int numSpecies;
     private List<TaxonGroup> children;
 
     public String getDescriptor() {
@@ -64,5 +65,13 @@ public class TaxonGroup {
         
     public void setChildren(List<TaxonGroup> children) {
         this.children = children;
+    }
+
+    public int getNumSpecies() {
+        return numSpecies;
+    }
+
+    public void setNumSpecies(int numSpecies) {
+        this.numSpecies = numSpecies;
     }
 }
