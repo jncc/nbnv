@@ -1,7 +1,7 @@
 package uk.org.nbn.nbnv.importer
 
 import darwin.ArchiveManager
-import data._
+import ingestion._
 import uk.org.nbn.nbnv.importer.logging.Log
 import uk.org.nbn.nbnv.metadata.{MetadataParser, MetadataReader}
 import uk.org.nbn.nbnv.utility.FileSystem

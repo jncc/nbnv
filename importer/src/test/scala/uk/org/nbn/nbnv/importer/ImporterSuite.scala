@@ -1,13 +1,13 @@
 package uk.org.nbn.nbnv.importer
 
 import darwin.ArchiveManager
+import ingestion.Ingester
 import org.apache.log4j.Logger
 import org.mockito.Mockito._
 import org.mockito.Matchers._
 import testing.BaseFunSuite
 import uk.org.nbn.nbnv.metadata.MetadataReader
 import javax.persistence.{EntityManager, EntityTransaction}
-import data.Ingester
 import org.gbif.dwc.text.Archive
 
 class ImporterSuite extends BaseFunSuite  {

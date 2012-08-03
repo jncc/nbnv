@@ -3,13 +3,13 @@
  * and open the template in the editor.
  */
 
-package uk.org.nbn.nbnv.importer.data
+package uk.org.nbn.nbnv.importer.ingestion
 
 import uk.org.nbn.nbnv.jpa.nbncore._
 import javax.persistence.EntityManager;
 
-class SurveyIngester (entityManager : EntityManager ){
-  def upsertSurvey(surveyKey : String, dataset : TaxonDataset) : Survey = {
+class SurveyIngester(entityManager: EntityManager) {
+  def upsertSurvey(surveyKey: String, dataset: TaxonDataset): Survey = {
 
     //todo: Generate surveyKey if blank
 
@@ -17,7 +17,7 @@ class SurveyIngester (entityManager : EntityManager ){
     surveyQuery.setParameter("surveyKey", surveyKey)
     surveyQuery.setParameter("datasetKey", dataset.getDatasetKey)
     val surveyList = surveyQuery.getResultList
-    
+
     if (!surveyList.isEmpty) {
       surveyList.get(0)
     }

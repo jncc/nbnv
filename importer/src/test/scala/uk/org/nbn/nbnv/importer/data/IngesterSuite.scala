@@ -6,6 +6,7 @@ import uk.org.nbn.nbnv.metadata.Metadata
 import org.gbif.dwc.text.{StarRecord, Archive}
 import org.gbif.utils.file.ClosableIterator
 import uk.org.nbn.nbnv.importer.testing.BaseFunSuite
+import uk.org.nbn.nbnv.importer.ingestion.{RecordIngester, Ingester, DatasetIngester}
 
 class IngesterSuite extends BaseFunSuite {
 

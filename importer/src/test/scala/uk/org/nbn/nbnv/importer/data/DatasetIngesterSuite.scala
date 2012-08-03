@@ -6,6 +6,7 @@ import javax.persistence.EntityManager
 import uk.org.nbn.nbnv.jpa.nbncore.{Dataset, TaxonDataset}
 import uk.org.nbn.nbnv.metadata.Metadata
 import uk.org.nbn.nbnv.importer.testing.BaseFunSuite
+import uk.org.nbn.nbnv.importer.ingestion.DatasetIngester
 
 class DatasetIngesterSuite extends BaseFunSuite {
 
