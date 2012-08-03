@@ -9,7 +9,8 @@ class KeyGenerator(repository: TaxonDatasetRepository) {
     latest match {
       case Some(key) => {
         val number = key.substring(2).toInt
-        val padded = "%6s".format(number.toString).replace(' ', '0')
+        val incremented = number + 1
+        val padded = "%6s".format(incremented.toString).replace(' ', '0')
         "GA" + padded
       }
       case None => "GA000001"
