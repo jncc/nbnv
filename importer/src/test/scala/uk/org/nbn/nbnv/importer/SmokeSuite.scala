@@ -11,19 +11,19 @@ class SmokeSuite extends BaseFunSuite with ResourceLoader {
     val r = resource("/some-resource.txt")
     r should not be (null)
 
-//    println(r.toString)
-//    val f = new File(r.toString)
-//    println(f)
-//    val source = io.Source.fromFile("C:\\Work\\nbnv\\importer\\target\\test-classes\\some-resource.txt") // (f.getPath)
-//    val line = source.getLines().toTraversable.head
-//    println(line)
+    // let's actually read the resource
+    val file = new File(r.getFile)
+    val source = io.Source.fromFile(file)
+    val firstLine = source.getLines().toTraversable.head
+
+    firstLine should startWith ("This is a resource")
   }
 
   ignore("should import a valid archive") {
 
     val archivePath = resource("/archives/valid.zip")
 
-    val options = Options(archivePath = archivePath.toString)
+    val options = Options(archivePath = archivePath.getFile)
 
     val importer = Importer.createImporter(options)
     importer.run()
