@@ -22,7 +22,6 @@ import uk.org.nbn.nbnv.importer.ui.parser.DarwinCoreField;
  */
 public class AttributeConcatenation implements ConverterStep {
     private Map<Integer, String> columnList = new HashMap<Integer, String>();
-    private int outputColumn;
 
     @Override
     public String getName() {
@@ -48,10 +47,8 @@ public class AttributeConcatenation implements ConverterStep {
             highestColumn = cm.getColumnNumber() > highestColumn ? cm.getColumnNumber() : highestColumn;
         }
         
-        ColumnMapping col = new ColumnMapping(highestColumn + 1, "attributes", DarwinCoreField.DYNAMICPROPERTIES);
+        ColumnMapping col = new ColumnMapping(highestColumn + 1, "DynamicProperties", DarwinCoreField.DYNAMICPROPERTIES);
         columns.add(col);
-        
-        outputColumn = highestColumn + 1;
     }
 
     @Override

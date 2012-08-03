@@ -57,8 +57,8 @@ public class UploadController {
             messages.add("Storage location: " + dFile.getAbsolutePath());
             model.setFileName(dFile.getAbsolutePath());
             uploadItem.getFileData().transferTo(dFile);
-            NXFParser parser = new NXFParser();
-            model.setHeaders(parser.parseHeaders(uploadItem.getFileData().getFileItem()));
+            NXFParser parser = new NXFParser(dFile);
+            model.setHeaders(parser.parseHeaders());
         } catch (IOException ex) {
             messages.add("EXCEPTION: Parse exception: " + ex.getMessage());
         }
