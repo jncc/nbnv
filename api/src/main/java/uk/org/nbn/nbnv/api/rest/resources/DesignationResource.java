@@ -64,9 +64,9 @@ public class DesignationResource {
     @GET
     @Path("{id}/taxonGroups/{taxonGroupId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public TaxonGroup getTaxonGroupByDesignation(@PathParam("id") int designationId, @PathParam("taxonGroupId") String taxonGroupId){
+    public TaxonGroup getTaxonGroupByDesignation(@PathParam("id") int id, @PathParam("taxonGroupId") String taxonGroupId){
         TaxonGroup toReturn = taxonGroupMapper.getTaxonGroup(taxonGroupId);
-        toReturn.setChildren(taxonGroupMapper.getChildrenByDesignation(taxonGroupId, designationId));
+        toReturn.setChildren(taxonGroupMapper.getChildrenByDesignation(taxonGroupId, id));
         return toReturn;
     }
 

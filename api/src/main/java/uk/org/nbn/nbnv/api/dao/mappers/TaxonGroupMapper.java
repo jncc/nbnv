@@ -34,12 +34,12 @@ public interface TaxonGroupMapper {
     @Select("SELECT * FROM TaxonGroupData WHERE parent is NULL")
     List<TaxonGroup> getTopLevels();
     
-    @Select("SELECT * FROM NBNCore.dbo.Taxon WHERE taxonOutputGroupKey = #{taxonGroupKey}")
+    @Select("SELECT * FROM TaxonData WHERE outputGroupKey = #{taxonGroupKey}")
     List<Taxon> getTaxa(@Param("taxonGroupKey") String taxonGroupKey, RowBounds bounds);
     
-    @Select("SELECT * from DesignationTaxonGroupData where designationID = #{id} order by sortOrder ASC")
+    @Select("SELECT * from DesignationTaxonNavigationGroupData WHERE designationID = #{id} AND parent IS NULL ORDER BY sortOrder ASC")
     List<TaxonGroup> getTopLevelssByDesignationID(int id);
     
-    @Select("SELECT distinct tgd.taxonGroupKey, tgd.taxonGroupName, descriptor, tgd.sortOrder, tgd.parent FROM DesignationTaxonData dtd INNER JOIN NBNCore.dbo.Taxon t ON dtd.pTaxonVersionKey = t.taxonVersionKey INNER JOIN TaxonGroupData tgd ON t.taxonNavigationGroupKey = tgd.taxonGroupKey WHERE parent = #{taxonGroupId} AND designationID = #{designationId} ORDER BY sortOrder ASC")
+    @Select("SELECT * from DesignationTaxonNavigationGroupData WHERE designationID = #{designationId} AND parent = #{taxonGroupId} ORDER BY sortOrder ASC")
     List<TaxonGroup> getChildrenByDesignation(@Param("taxonGroupId") String taxonGroupId, @Param("designationId") int designationId);
 }

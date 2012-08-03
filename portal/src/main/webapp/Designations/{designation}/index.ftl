@@ -34,15 +34,15 @@
                         <ul class="collapsible-list">
                             <#list topLevelTaxonGroups as topLevelTaxonGroup>
                                 <li>
-                                    <h1 class="nbn-h1-minor">&nbsp;${topLevelTaxonGroup.taxonGroupName}</h1>
+                                    <h1 class="nbn-h1-minor">&nbsp;${topLevelTaxonGroup.taxonGroupName} (${topLevelTaxonGroup.numSpecies} species)</h1>
                                     <ul>
                                         <#assign taxonGroupWithChildren=json.readURL("${api}/designations/${designationId}/taxonGroups/${topLevelTaxonGroup.taxonGroupKey}")>
                                         <#if taxonGroupWithChildren.children?has_content>
                                             <#list taxonGroupWithChildren.children as childTaxonGroup>
-                                                <li class="nbn-designation-nested-list"><a href="/Designations/${designationId}/Species_Group/${childTaxonGroup.taxonGroupKey}">${childTaxonGroup.taxonGroupName}</a></li>
+                                                <@childTaxonGroupListItem designationId=designationId taxonGroup=childTaxonGroup/>
                                             </#list>
                                         <#else>
-                                                <li class="nbn-designation-nested-list"><a href="/Designations/${designationId}/Species_Group/${topLevelTaxonGroup.taxonGroupKey}">${topLevelTaxonGroup.taxonGroupName}</a></li>
+                                                <@childTaxonGroupListItem designationId=designationId taxonGroup=topLevelTaxonGroup/>
                                         </#if>
                                     </ul>
                                 </li>
@@ -55,3 +55,7 @@
         </div>
 
 </@master>
+
+<#macro childTaxonGroupListItem designationId taxonGroup>
+    <li class="nbn-designation-nested-list"><a href="/Designations/${designationId}/Species_Group/${taxonGroup.taxonGroupKey}">${taxonGroup.taxonGroupName}</a> (${taxonGroup.numSpecies} species)</li>
+</#macro>
