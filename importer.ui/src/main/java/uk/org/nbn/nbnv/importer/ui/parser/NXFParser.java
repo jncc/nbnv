@@ -5,24 +5,29 @@
 package uk.org.nbn.nbnv.importer.ui.parser;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.apache.commons.fileupload.FileItem;
 
 /**
  *
  * @author Administrator
  */
 public class NXFParser {
-    private static Map<String, DarwinCoreField> NXFtoDWCAMapping;
-    
-    public NXFParser() {
+
+    private BufferedReader r = null;
+    private static final Map<String, DarwinCoreField> NXFtoDWCAMapping;
+
+    static {
         NXFtoDWCAMapping = new HashMap<String, DarwinCoreField>();
-        
+
         NXFtoDWCAMapping.put("RecordKey", DarwinCoreField.OCCURRENCEID);
         NXFtoDWCAMapping.put("TaxonVersionKey", DarwinCoreField.TAXONID);
         NXFtoDWCAMapping.put("SiteKey", DarwinCoreField.LOCATIONID);
@@ -43,31 +48,34 @@ public class NXFParser {
         NXFtoDWCAMapping.put("EndDate", DarwinCoreField.EVENTDATEEND);
     }
 
-    public List<ColumnMapping> parseHeaders(FileItem file) throws IOException {
-        BufferedReader r = null;
+    public NXFParser(File file) throws FileNotFoundException {
+        r = new BufferedReader(new FileReader(file));
+    }
 
-        try {
-            List<ColumnMapping> headers = new ArrayList<ColumnMapping>();
+    public List<ColumnMapping> parseHeaders() throws IOException {
+        List<ColumnMapping> headers = new ArrayList<ColumnMapping>();
 
-            r = new BufferedReader(new InputStreamReader(file.getInputStream()));
-            String[] origHeaders = r.readLine().split("\t");
+        String[] origHeaders = r.readLine().split("\t", -1);
 
-            for (int i = 0; i < origHeaders.length; i++) {
-                DarwinCoreField dcf = NXFtoDWCAMapping.get(origHeaders[i]);
-                
-                if (dcf == null) {
-                    dcf = DarwinCoreField.ATTRIBUTE;
-                }
-                
-                ColumnMapping cm = new ColumnMapping(i, origHeaders[i], dcf);
-                headers.add(cm);
+        for (int i = 0; i < origHeaders.length; i++) {
+            DarwinCoreField dcf = NXFtoDWCAMapping.get(origHeaders[i]);
+
+            if (dcf == null) {
+                dcf = DarwinCoreField.ATTRIBUTE;
             }
-            
-            return headers;
-        } finally {
-            if (r != null) {
-                r.close();
-            }
+
+            ColumnMapping cm = new ColumnMapping(i, origHeaders[i], dcf);
+            headers.add(cm);
         }
+
+        return headers;
+    }
+
+    public List<String> readDataLine() throws IOException {
+        if (!r.ready()) {
+            return null;
+        }
+        
+        return new ArrayList<String>(Arrays.asList(r.readLine().split("\t", -1)));
     }
 }

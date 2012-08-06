@@ -9,11 +9,12 @@ class MetadataParser {
 
     val constraints = (dataset \ "intellectualRights" \ "para")
       .text.replace("Access Constraints:", "")
-      .split("Use Constraints:");
+      .split("Use Constraints:")
 
     new Metadata {
       val datasetKey = (dataset \ "alternateIdentifier").text.trim
       val datasetTitle = (dataset \ "title").text.trim
+      val datasetProviderName = (dataset \ "creator" \ "organizationName").text.trim
       val description = (dataset \ "abstract" \ "para").text.trim
       val accessConstraints = constraints(0).trim
       val useConstraints = constraints(1).trim

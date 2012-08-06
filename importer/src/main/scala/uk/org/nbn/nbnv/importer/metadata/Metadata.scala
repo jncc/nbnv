@@ -3,6 +3,7 @@ package uk.org.nbn.nbnv.metadata
 abstract class Metadata {
   val datasetKey: String
   val datasetTitle: String
+  val datasetProviderName: String
   val description: String
   val accessConstraints: String
   val useConstraints: String

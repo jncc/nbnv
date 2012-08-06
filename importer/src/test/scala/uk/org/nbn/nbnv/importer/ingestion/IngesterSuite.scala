@@ -1,4 +1,4 @@
-package uk.org.nbn.nbnv.importer.data
+package uk.org.nbn.nbnv.importer.ingestion
 
 import org.mockito.Mockito._
 import javax.persistence.{EntityTransaction, EntityManager}

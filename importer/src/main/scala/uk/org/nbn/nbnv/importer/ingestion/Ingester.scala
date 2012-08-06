@@ -1,4 +1,4 @@
-package uk.org.nbn.nbnv.importer.data
+package uk.org.nbn.nbnv.importer.ingestion
 
 import scala.collection.JavaConversions._
 import javax.persistence.{EntityTransaction, EntityManager}
@@ -7,9 +7,9 @@ import org.gbif.dwc.text.Archive
 import uk.org.nbn.nbnv.metadata.Metadata
 
 /// Performs the interaction with the NBN core database.
-class Ingester(entityManager:   EntityManager,
+class Ingester(entityManager: EntityManager,
                datasetIngester: DatasetIngester,
-               recordIngester:  RecordIngester) {
+               recordIngester: RecordIngester) {
 
   def ingest(archive: Archive, metadata: Metadata) {
 
@@ -21,10 +21,13 @@ class Ingester(entityManager:   EntityManager,
 
       // upsert dataset
       val dataset = datasetIngester.upsertDataset(metadata)
+      entityManager.flush()
 
       // upsert records
       for (record <- archive.iteratorRaw) {
         recordIngester.upsertRecord(new NbnRecord(record), dataset)
+        entityManager.flush()
+        // todo: set no caching for records?
       }
 
       t.commit()
@@ -32,11 +35,13 @@ class Ingester(entityManager:   EntityManager,
   }
 
   def withEntityTransaction(t: EntityTransaction)(f: => Unit) {
-    try { f }
+    try {
+      f
+    }
     catch {
       case e: Exception => {
         if (t != null && t.isActive) t.rollback()
-        throw(e)
+        throw (e)
       }
     }
     finally {
