@@ -11,10 +11,10 @@
         <ul class="collapsible-list" id="nbn-designation-categories-tree">
             <#list siteCategories as siteCategory>
                 <li class="collapsible-list">
-                    <h1>${siteCategory.name}</h1>
+                    <h1><span class="nbn-designation-category-heading-strong">${siteCategory.name}</span></h1>
                     <ul>
                         <#list siteCategory.siteBoundaryDatasets as siteDataset>
-                                <li>${siteDataset.datasetTitle}</li>
+                                <li class="nbn-designation-nested-list"><a href="#">${siteDataset.datasetTitle}</a></li>
                         </#list>
                     </ul>
                 </li>
