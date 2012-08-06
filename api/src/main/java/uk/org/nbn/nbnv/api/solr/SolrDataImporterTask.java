@@ -13,8 +13,9 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 /**
- *
- * @author Administrator
+ * The following class represents a scheduled service which will perform a full
+ * data import into the SolrServer every 3 hours
+ * @author Christopher Johnson
  */
 @Service
 public class SolrDataImporterTask {
