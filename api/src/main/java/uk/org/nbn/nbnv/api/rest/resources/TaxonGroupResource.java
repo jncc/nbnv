@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package uk.org.nbn.nbnv.api.rest.resources;
 
 import java.util.List;
@@ -14,10 +10,6 @@ import uk.org.nbn.nbnv.api.dao.mappers.TaxonGroupMapper;
 import uk.org.nbn.nbnv.api.model.Taxon;
 import uk.org.nbn.nbnv.api.model.TaxonGroup;
 
-/**
- *
- * @author Administrator
- */
 @Component
 @Path("/taxonGroups")
 public class TaxonGroupResource {
