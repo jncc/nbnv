@@ -1,7 +1,7 @@
 package uk.org.nbn.nbnv.importer
 
 import darwin.ArchiveManager
-import data.{TaxonDatasetRepository, KeyGenerator}
+import data.{OrganisationRepository, TaxonDatasetRepository, KeyGenerator}
 import ingestion._
 import uk.org.nbn.nbnv.importer.logging.Log
 import uk.org.nbn.nbnv.metadata.{MetadataParser, MetadataReader}
@@ -43,7 +43,7 @@ object Importer {
                  new ArchiveManager(options),
                  new MetadataReader(new FileSystem, new MetadataParser),
                  new Ingester(em,
-                              new DatasetIngester(em, new KeyGenerator(new TaxonDatasetRepository(em))),
+                              new DatasetIngester(em, new KeyGenerator(new TaxonDatasetRepository(em)), new OrganisationRepository(em)),
                               new RecordIngester(log,
                                                  em,
                                                  new SurveyIngester(em),
