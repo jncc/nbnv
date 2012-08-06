@@ -6,6 +6,7 @@ import javax.persistence.EntityManager
 import uk.org.nbn.nbnv.jpa.nbncore.{Dataset, TaxonDataset}
 import uk.org.nbn.nbnv.metadata.Metadata
 import uk.org.nbn.nbnv.importer.testing.BaseFunSuite
+import uk.org.nbn.nbnv.importer.data.KeyGenerator
 
 class DatasetIngesterSuite extends BaseFunSuite {
 
@@ -22,8 +23,10 @@ class DatasetIngesterSuite extends BaseFunSuite {
     val em = mock[EntityManager]
     when(em.find(classOf[TaxonDataset], key)).thenReturn(taxonDataset)
 
+    val keyGenerator = mock[KeyGenerator]
+
     // act
-    val ingester = new DatasetIngester(em)
+    val ingester = new DatasetIngester(em, keyGenerator)
     ingester.upsertDataset(metadata)
 
     // assert - that the entity manager was called with the retrieved dataset
@@ -40,8 +43,10 @@ class DatasetIngesterSuite extends BaseFunSuite {
     val dataset = mock[Dataset]
     when(em.merge(any(classOf[Dataset]))).thenReturn(dataset)
 
+    val keyGenerator = mock[KeyGenerator]
+
     // act
-    val ingester = new DatasetIngester(em)
+    val ingester = new DatasetIngester(em, keyGenerator)
     val taxonDataset = ingester.upsertDataset(metadata)
 
     //verify that setDataset is called against the new taxondataset enity with a dataset

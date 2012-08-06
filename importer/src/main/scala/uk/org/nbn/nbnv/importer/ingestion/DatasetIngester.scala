@@ -3,9 +3,11 @@ package uk.org.nbn.nbnv.importer.ingestion
 import uk.org.nbn.nbnv.metadata.Metadata
 import uk.org.nbn.nbnv.jpa.nbncore._
 import uk.org.nbn.nbnv.importer.utility._
-import javax.persistence.EntityManager;
+import javax.persistence.EntityManager
+import uk.org.nbn.nbnv.importer.data.KeyGenerator
+;
 
-class DatasetIngester(val em: EntityManager) {
+class DatasetIngester(val em: EntityManager, keyGenerator: KeyGenerator) {
 
   def upsertDataset(metadata: Metadata): TaxonDataset = {
 
@@ -27,14 +29,16 @@ class DatasetIngester(val em: EntityManager) {
       em.merge(dataset)
     }
 
-    Option(em.find(classOf[TaxonDataset], metadata.datasetKey)) match {
+    val dataset = Option(em.find(classOf[TaxonDataset], metadata.datasetKey))
+
+    dataset match {
       case Some(taxonDataset) => {
         taxonDataset.setDataset(mergeDataset(taxonDataset.getDataset, metadata))
         return taxonDataset
       }
       case None => {
-        // todo: need a mechanism to generate a new dataset key
-        val dataset = mergeDataset(new Dataset, metadata)
+        val key = keyGenerator.nextTaxonDatasetKey
+        val dataset = mergeDataset(new Dataset(key), metadata)
         val taxonDataset = new TaxonDataset(dataset.getDatasetKey)
         taxonDataset.setDataset(dataset)
 
