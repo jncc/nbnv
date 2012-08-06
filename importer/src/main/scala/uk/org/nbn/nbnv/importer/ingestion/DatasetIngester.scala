@@ -11,41 +11,45 @@ class DatasetIngester(val em: EntityManager, keyGenerator: KeyGenerator) {
 
   def upsertDataset(metadata: Metadata): TaxonDataset = {
 
-    // returns the merged instance of the dataset entity
-    def mergeDataset(dataset: Dataset, metadata: Metadata): Dataset = {
+    // we're only dealing with *Taxon*Datasets at the moment
+    // try to find the (taxon) dataset in the database
+    val taxonDataset = Option(em.find(classOf[TaxonDataset], metadata.datasetKey))
 
-      dataset.setAccessConstraints(metadata.accessConstraints)
-      dataset.setDataCaptureMethod(metadata.dataCaptureMethod)
-      dataset.setDataQuality(metadata.dataQuality)
-      dataset.setDatasetTitle(metadata.datasetTitle)
-      dataset.setDatasetTypeKey(em.getReference(classOf[DatasetType], 'T'))
-      dataset.setDateUploaded(Clock.nowUtc) // todo: check this
-      dataset.setDescription(metadata.description)
-      dataset.setGeographicalCoverage(metadata.geographicCoverage)
-      dataset.setMetadataLastEdited(Clock.nowUtc) // todo: check this
-      dataset.setPurpose(metadata.purpose)
-      dataset.setUseConstraints(metadata.useConstraints)
-
-      em.merge(dataset)
-    }
-
-    val dataset = Option(em.find(classOf[TaxonDataset], metadata.datasetKey))
-
-    dataset match {
-      case Some(taxonDataset) => {
-        taxonDataset.setDataset(mergeDataset(taxonDataset.getDataset, metadata))
-        return taxonDataset
+    taxonDataset match {
+      case Some(td) => {
+        val d = td.getDataset
+        modifyDataset(d, metadata)
+        td
       }
       case None => {
+        // generate a new key and a new dataset
         val key = keyGenerator.nextTaxonDatasetKey
-        val dataset = mergeDataset(new Dataset(key), metadata)
-        val taxonDataset = new TaxonDataset(dataset.getDatasetKey)
-        taxonDataset.setDataset(dataset)
-
-        em.persist(taxonDataset)
-
-        return taxonDataset
+        val d = new Dataset(key)
+        modifyDataset(d, metadata)
+        em.persist(d)
+        // deal with the table-per-class inheritance model (TaxonDataset has-a Dataset)
+        val td = new TaxonDataset(key)
+        td.setDataset(d)
+        em.persist(td)
+        td
       }
     }
+  }
+
+  private def modifyDataset(dataset: Dataset, metadata: Metadata) = {
+
+    dataset.setAccessConstraints(metadata.accessConstraints)
+    dataset.setDataCaptureMethod(metadata.dataCaptureMethod)
+//    dataset.setDatasetProvider()
+    dataset.setDataQuality(metadata.dataQuality)
+    dataset.setDatasetTitle(metadata.datasetTitle)
+    dataset.setDatasetTypeKey(em.getReference(classOf[DatasetType], 'T'))
+    dataset.setDateUploaded(Clock.nowUtc) // todo: check this
+    dataset.setDescription(metadata.description)
+    dataset.setGeographicalCoverage(metadata.geographicCoverage)
+    dataset.setMetadataLastEdited(Clock.nowUtc) // todo: check this
+    dataset.setPurpose(metadata.purpose)
+    dataset.setUseConstraints(metadata.useConstraints)
+    dataset
   }
 }
