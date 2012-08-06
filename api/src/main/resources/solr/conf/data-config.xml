@@ -1,0 +1,18 @@
+<dataConfig>
+    <dataSource type="JdbcDataSource"
+              driver="com.microsoft.sqlserver.jdbc.SQLServerDriver"
+              url="jdbc:sqlserver://nbnsql-b.nerc-lancaster.ac.uk;databaseName=NBNWarehouse" 
+              user="NBNImporter"
+              password="Ecowaswashere9"/>
+    <document name="nbn-gateway">
+        <entity name="taxon" query="Select * From TaxonData" transformer="TemplateTransformer">	  
+            <field column="record_id" template="TAXON-${taxon.taxonVersionKey}" />
+            <field column="record_type" template="taxon" />
+        </entity>
+ 
+        <entity name="designation" query="Select * From DesignationData" transformer="TemplateTransformer">
+            <field column="record_id" template="DESIG-${designation.designationID}" />
+            <field column="record_type" template="desig" />
+        </entity>
+    </document>
+</dataConfig>
