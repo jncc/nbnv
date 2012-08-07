@@ -1,7 +1,7 @@
 <#include "/WEB-INF/templates/master.ftl">
 
 <@master title="NBN Gateway - Taxa for ${URLParameters.taxonGroupKey}">
-    <#assign search=json.readURL("${api}/taxonGroups/${URLParameters.taxonGroupKey}/species", RequestParameters)/>
+    <#assign search=json.readURL("${api}/taxonNavigationGroups/${URLParameters.taxonGroupKey}/species", RequestParameters)/>
     
 
     <ul>
