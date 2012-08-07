@@ -21,10 +21,13 @@ class Ingester(entityManager: EntityManager,
 
       // upsert dataset
       val dataset = datasetIngester.upsertDataset(metadata)
+      entityManager.flush()
 
       // upsert records
       for (record <- archive.iteratorRaw) {
         recordIngester.upsertRecord(new NbnRecord(record), dataset)
+        entityManager.flush()
+        // todo: set no caching for records?
       }
 
       t.commit()
