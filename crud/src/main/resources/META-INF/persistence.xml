@@ -19,10 +19,7 @@
     <class>uk.org.nbn.nbnv.jpa.nbncore.KnownLanguage</class>
     <class>uk.org.nbn.nbnv.jpa.nbncore.Site</class>
     <properties>
-      <property name="javax.persistence.jdbc.url" value="jdbc:sqlserver://sql-spatial;databaseName=NBNCore"/>
-      <property name="javax.persistence.jdbc.password" value="Ecowaswashere9"/>
       <property name="javax.persistence.jdbc.driver" value="com.microsoft.sqlserver.jdbc.SQLServerDriver"/>
-      <property name="javax.persistence.jdbc.user" value="NBNImporter"/>
     </properties>
   </persistence-unit>
 </persistence>
