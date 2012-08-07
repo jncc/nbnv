@@ -10,7 +10,7 @@
             </#list>
         </ul>
     <#else>
-        <a href="/Taxon_Groups/Taxa/?taxonGroup=${details.taxonGroupKey}">${details.taxonGroupKey}</a>
+        <a href="/Taxon_Groups/${details.taxonGroupKey}/Species">${details.taxonGroupKey}</a>
     </#if>
 </#macro>
 
