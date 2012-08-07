@@ -1,24 +1,34 @@
 package uk.org.nbn.nbnv.api.model;
 
+import java.util.Date;
+
 public class SiteBoundaryDataset {
     
     private String datasetkey;
-    private String datasetTitle;
+    private String name;
+    private String description;
+    private Date dateUploaded;
+    private String provider;
+    private int providerID;
+    private String siteBoundaryCategoryName;
+    private int siteBoundaryCategoryID;
     private String geoLayerName;
     private String nameField;
-    private int gisLayerID;
-    private int siteBoundaryCategory;
     
     public SiteBoundaryDataset(){}
 
-    public SiteBoundaryDataset(String datasetKey, String datasetTitle, String geoLayerName, String nameField, int gisLayerID, int siteBoundaryCategory){
+    public SiteBoundaryDataset(String datasetKey, String name, String description, Date dateUploaded, String provider, int providerID, String siteBoundaryCategoryName, int siteBoundaryCategoryID, String geoLayerName, String nameField){
         super();
         this.datasetkey = datasetKey;
-        this.datasetTitle = datasetTitle;
+        this.name = name;
+        this.description = description;
+        this.dateUploaded = dateUploaded;
+        this.provider = provider;
+        this.providerID = providerID;
+        this.siteBoundaryCategoryName = siteBoundaryCategoryName;
+        this.siteBoundaryCategoryID = siteBoundaryCategoryID;
         this.geoLayerName = geoLayerName;
         this.nameField = nameField;
-        this.gisLayerID = gisLayerID;
-        this.siteBoundaryCategory = siteBoundaryCategory;
     }
 
     public String getDatasetkey() {
@@ -27,6 +37,62 @@ public class SiteBoundaryDataset {
 
     public void setDatasetkey(String datasetkey) {
         this.datasetkey = datasetkey;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Date getDateUploaded() {
+        return dateUploaded;
+    }
+
+    public void setDateUploaded(Date dateUploaded) {
+        this.dateUploaded = dateUploaded;
+    }
+
+    public String getProvider() {
+        return provider;
+    }
+
+    public void setProvider(String provider) {
+        this.provider = provider;
+    }
+
+    public int getProviderID() {
+        return providerID;
+    }
+
+    public void setProviderID(int providerID) {
+        this.providerID = providerID;
+    }
+
+    public String getSiteBoundaryCategoryName() {
+        return siteBoundaryCategoryName;
+    }
+
+    public void setSiteBoundaryCategoryName(String siteBoundaryCategoryName) {
+        this.siteBoundaryCategoryName = siteBoundaryCategoryName;
+    }
+
+    public int getSiteBoundaryCategoryID() {
+        return siteBoundaryCategoryID;
+    }
+
+    public void setSiteBoundaryCategoryID(int siteBoundaryCategoryID) {
+        this.siteBoundaryCategoryID = siteBoundaryCategoryID;
     }
 
     public String getGeoLayerName() {
@@ -45,28 +111,4 @@ public class SiteBoundaryDataset {
         this.nameField = nameField;
     }
 
-    public int getGisLayerID() {
-        return gisLayerID;
-    }
-
-    public void setGisLayerID(int gisLayerID) {
-        this.gisLayerID = gisLayerID;
-    }
-
-    public int getSiteBoundaryCategory() {
-        return siteBoundaryCategory;
-    }
-
-    public void setSiteBoundaryCategory(int siteBoundaryCategory) {
-        this.siteBoundaryCategory = siteBoundaryCategory;
-    }
-
-    public String getDatasetTitle() {
-        return datasetTitle;
-    }
-
-    public void setDatasetTitle(String datasetTitle) {
-        this.datasetTitle = datasetTitle;
-    }
-    
 }
