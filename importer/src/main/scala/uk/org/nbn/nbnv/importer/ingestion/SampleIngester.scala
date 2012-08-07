@@ -12,16 +12,17 @@ class SampleIngester(entityManager: EntityManager) {
   def upsertSample(sampleKey: String, survey: Survey): Sample = {
 
     //todo: Generate sampleKey if blank
-    val sampleQuery = entityManager.createQuery("SELECT s FROM Sample WHERE s.sampleKey=:sampleKey AND s.surveyKey = :surveyKey", classOf[Sample])
+    val sampleQuery = entityManager.createQuery("SELECT s FROM Sample s WHERE s.sampleKey=:sampleKey AND s.surveyID = :surveyID", classOf[Sample])
       .setParameter("sampleKey", sampleKey)
-      .setParameter("surveyKey", survey.getSurveyKey)
+      .setParameter("surveyID", survey)
       .getResultList
 
     if (!sampleQuery.isEmpty) {
       sampleQuery.get(0)
     }
     else {
-      val sample = new Sample(sampleKey)
+      val sample = new Sample()
+      sample.setSampleKey(sampleKey)
       sample.setSurveyID(survey)
       entityManager.persist(sample)
       return sample
