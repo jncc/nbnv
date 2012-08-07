@@ -1,13 +1,24 @@
 package uk.org.nbn.nbnv.importer.data
 
-/**
- * Created with IntelliJ IDEA.
- * User: Pete Montgomery
- * Date: 07/08/12
- * Time: 10:22
- * To change this template use File | Settings | File Templates.
- */
+import javax.persistence.{NonUniqueResultException, TypedQuery}
+import scala.collection.JavaConversions._
 
-class Implicits {
+object Implicits {
 
+  class RichTypedQuery[T](q: TypedQuery[T]) {
+
+    def singleOrNone : Option[T] = {
+
+      val results = q.setMaxResults(2).getResultList
+
+      if (results.isEmpty)
+        None
+      else if (results.size == 1)
+        Some(results.head)
+      else
+        throw new NonUniqueResultException("The sequence contains more than one element.")
+    }
+  }
+
+  implicit def query2RichTypedQuery[T](q: TypedQuery[T]) = new RichTypedQuery[T](q)
 }
