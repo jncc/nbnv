@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import uk.org.nbn.nbnv.importer.ui.archive.ArchiveWriter;
 import uk.org.nbn.nbnv.importer.ui.convert.RunConversions;
 import uk.org.nbn.nbnv.importer.ui.meta.MetaWriter;
 import uk.org.nbn.nbnv.importer.ui.model.ConvertResults;
@@ -39,11 +40,20 @@ public class ConvertController {
             File in = new File(args.get("filename"));
             File out = File.createTempFile("nbnimporter", "processed.tab");
             File meta = File.createTempFile("nbnimporter", "meta.xml");
+            File archive = File.createTempFile("nbnimporter", "archive.zip");
             
             messages.add("Outfile: " + out.getAbsolutePath());
             messages.add("Metafile: " + meta.getAbsolutePath());
+            messages.add("Archive: " + archive.getAbsolutePath());
             
             List<String> errors = rc.run(in, out, meta, args);
+            
+            ArchiveWriter aw = new ArchiveWriter();
+            aw.createArchive(out, meta, archive);
+            
+            if (errors.isEmpty()) {
+                errors.add("None");
+            }
             
             model.setMessages(messages);
             model.setErrors(errors);
