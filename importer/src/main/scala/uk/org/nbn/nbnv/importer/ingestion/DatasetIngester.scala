@@ -3,45 +3,87 @@ package uk.org.nbn.nbnv.importer.ingestion
 import uk.org.nbn.nbnv.metadata.Metadata
 import uk.org.nbn.nbnv.jpa.nbncore._
 import uk.org.nbn.nbnv.importer.utility._
-import javax.persistence.EntityManager;
+import javax.persistence.EntityManager
+import uk.org.nbn.nbnv.importer.data.{OrganisationRepository, KeyGenerator}
+import uk.org.nbn.nbnv.importer.ImportException
+;
 
-class DatasetIngester(val em: EntityManager) {
+class DatasetIngester(val em: EntityManager, keyGenerator: KeyGenerator, organisationRepository: OrganisationRepository) {
 
   def upsertDataset(metadata: Metadata): TaxonDataset = {
 
-    // returns the merged instance of the dataset entity
-    def mergeDataset(dataset: Dataset, metadata: Metadata): Dataset = {
+    // we're only dealing with *Taxon* Datasets at the moment
 
-      dataset.setAccessConstraints(metadata.accessConstraints)
-      dataset.setDataCaptureMethod(metadata.dataCaptureMethod)
-      dataset.setDataQuality(metadata.dataQuality)
-      dataset.setDatasetTitle(metadata.datasetTitle)
-      dataset.setDatasetTypeKey(em.getReference(classOf[DatasetType], 'T'))
-      dataset.setDateUploaded(Clock.nowUtc) // todo: check this
-      dataset.setDescription(metadata.description)
-      dataset.setGeographicalCoverage(metadata.geographicCoverage)
-      dataset.setMetadataLastEdited(Clock.nowUtc) // todo: check this
-      dataset.setPurpose(metadata.purpose)
-      dataset.setUseConstraints(metadata.useConstraints)
+    // when there's no key given, insert a new dataset
+    // when there is one, find it and update it
+    // otherwise throw
 
-      em.merge(dataset)
-    }
+    if (metadata.datasetKey.isEmpty)
+      insertNew(metadata)
+    else
+      updateExisting(metadata)  }
 
-    Option(em.find(classOf[TaxonDataset], metadata.datasetKey)) match {
-      case Some(taxonDataset) => {
-        taxonDataset.setDataset(mergeDataset(taxonDataset.getDataset, metadata))
-        return taxonDataset
+  private def insertNew(metadata: Metadata) = {
+    // generate a new key and a new dataset
+    val key = keyGenerator.nextTaxonDatasetKey
+    val d = new Dataset(key)
+    modifyDataset(d, metadata)
+    em.persist(d)
+    // deal with the table-per-class inheritance model (TaxonDataset has-a Dataset)
+    val td = new TaxonDataset(key)
+    td.setDataset(d)
+    modifyTaxonDataset(td, metadata)
+    em.persist(td)
+    td
+  }
+
+  private def updateExisting(metadata: Metadata) = {
+
+    val taxonDataset = Option(em.find(classOf[TaxonDataset], metadata.datasetKey))
+
+    taxonDataset match {
+      case Some(td) => {
+        modifyTaxonDataset(td, metadata)
+        val d = td.getDataset
+        modifyDataset(d, metadata)
+        td
       }
       case None => {
-        // todo: need a mechanism to generate a new dataset key
-        val dataset = mergeDataset(new Dataset, metadata)
-        val taxonDataset = new TaxonDataset(dataset.getDatasetKey)
-        taxonDataset.setDataset(dataset)
-
-        em.persist(taxonDataset)
-
-        return taxonDataset
+        throw new ImportException("Dataset key '%s' not found.".format(metadata.datasetKey))
       }
     }
+  }
+
+  private def modifyDataset(d: Dataset, m: Metadata) = {
+
+    val provider = organisationRepository.getOrganisation(m.datasetProviderName)
+    val datasetUpdateFrequency = em.getReference(classOf[DatasetUpdateFrequency], "012")
+    val datasetType = em.getReference(classOf[DatasetType], 'T')
+
+    d.setAccessConstraints(m.accessConstraints)
+    d.setDataCaptureMethod(m.dataCaptureMethod)
+    d.setDatasetProvider(provider)
+    d.setDataQuality(m.dataQuality)
+    d.setDatasetTitle(m.datasetTitle)
+    d.setDatasetTypeKey(datasetType)
+    d.setDateUploaded(Clock.nowUtc)
+    d.setDescription(m.description)
+    d.setGeographicalCoverage(m.geographicCoverage)
+    d.setMetadataLastEdited(Clock.nowUtc)
+    d.setPurpose(m.purpose)
+    d.setUseConstraints(m.useConstraints)
+    d.setUpdateFrequency(datasetUpdateFrequency)
+    d
+  }
+
+  private def modifyTaxonDataset(td: TaxonDataset, m: Metadata) = {
+
+    val resolution = em.getReference(classOf[Resolution], 1.toShort)
+    td.setPublicResolution(resolution) // column will be deleted
+    td.setMaxResolution(resolution)    // column will be deleted
+
+    // default .. to be read from extra metadata.
+    // ...could be more columns like this
+    td.setAllowRecordValidation(true)
   }
 }

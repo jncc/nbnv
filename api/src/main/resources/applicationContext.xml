@@ -1,17 +1,22 @@
-
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:p="http://www.springframework.org/schema/p"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:task="http://www.springframework.org/schema/task"
        xsi:schemaLocation="http://www.springframework.org/schema/beans 
                     http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
                     http://www.springframework.org/schema/context 
                     http://www.springframework.org/schema/context/spring-context-2.5.xsd 
                     http://www.springframework.org/schema/mvc
-                    http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
+                    http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
+                    http://www.springframework.org/schema/task
+                    http://www.springframework.org/schema/task/spring-task-3.0.xsd">
 <!-- Configures the @Controller programming model -->
     <mvc:annotation-driven />
+    
+<!-- Configures the @Service programming model -->
+    <task:annotation-driven />
 
 <!-- Scans the classpath of this application for @Components to deploy as beans -->
     <context:component-scan base-package="uk.org.nbn.nbnv.api" /> 
@@ -26,5 +31,15 @@
     </bean>
     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
         <property name="basePackage" value="uk.org.nbn.nbnv.api.dao"/>
+    </bean>
+    
+<!--Create an embedded solr server instance-->
+    <bean id="solrCoreContainer" class="org.apache.solr.core.CoreContainer">
+        <constructor-arg type="java.lang.String" value="/solr/"/>
+        <constructor-arg type="java.io.File" value="classpath:solr/solr.xml"/>
+    </bean>
+    <bean id="solrServer" class="org.apache.solr.client.solrj.embedded.EmbeddedSolrServer">
+        <constructor-arg ref="solrCoreContainer"/>
+        <constructor-arg value="collection1"/>
     </bean>
 </beans>

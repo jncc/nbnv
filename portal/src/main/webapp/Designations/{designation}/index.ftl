@@ -6,7 +6,7 @@
     <#assign designationId="${URLParameters.designation}">
     <#assign designation=json.readURL("${api}/designations/${designationId}")>
     <#assign designationCategory=json.readURL("${api}/designationCategories/${designation.designationCategoryID}")>
-    <#assign topLevelTaxonGroups=json.readURL("${api}/taxonGroups/topLevels", {"designationId" : designationId })>
+    <#assign topLevelTaxonNavigationGroups=json.readURL("${api}/taxonNavigationGroups/topLevels", {"designationId" : designationId })>
 
     <div id="nbn-designation-content">
         <h4>${designation.name}</h4>
@@ -32,17 +32,17 @@
                     <th>Groups that have species with this designation:</th>
                     <td>
                         <ul class="collapsible-list">
-                            <#list topLevelTaxonGroups as topLevelTaxonGroup>
+                            <#list topLevelTaxonNavigationGroups as topLevelTaxonNavigationGroup>
                                 <li>
-                                    <h1 class="nbn-h1-minor">&nbsp;${topLevelTaxonGroup.taxonGroupName} (${topLevelTaxonGroup.numSpecies} species)</h1>
+                                    <h1 class="nbn-h1-minor">&nbsp;${topLevelTaxonNavigationGroup.taxonGroupName} (${topLevelTaxonNavigationGroup.numSpecies} species)</h1>
                                     <ul>
-                                        <#assign taxonGroupWithChildren=json.readURL("${api}/designations/${designationId}/taxonGroups/${topLevelTaxonGroup.taxonGroupKey}")>
-                                        <#if taxonGroupWithChildren.children?has_content>
-                                            <#list taxonGroupWithChildren.children as childTaxonGroup>
-                                                <@childTaxonGroupListItem designationId=designationId taxonGroup=childTaxonGroup/>
+                                        <#assign taxonNavigationGroupWithChildren=json.readURL("${api}/designations/${designationId}/taxonNavigationGroups/${topLevelTaxonNavigationGroup.taxonGroupKey}")>
+                                        <#if taxonNavigationGroupWithChildren.children?has_content>
+                                            <#list taxonNavigationGroupWithChildren.children as childTaxonGroup>
+                                                <@childTaxonNavigationGroupListItem designationId=designationId taxonNavigationGroup=childTaxonGroup/>
                                             </#list>
                                         <#else>
-                                                <@childTaxonGroupListItem designationId=designationId taxonGroup=topLevelTaxonGroup/>
+                                                <@childTaxonNavigationGroupListItem designationId=designationId taxonNavigationGroup=topLevelTaxonNavigationGroup/>
                                         </#if>
                                     </ul>
                                 </li>
@@ -56,6 +56,6 @@
 
 </@master>
 
-<#macro childTaxonGroupListItem designationId taxonGroup>
-    <li class="nbn-designation-nested-list"><a href="/Designations/${designationId}/Species_Group/${taxonGroup.taxonGroupKey}">${taxonGroup.taxonGroupName}</a> (${taxonGroup.numSpecies} species)</li>
+<#macro childTaxonNavigationGroupListItem designationId taxonNavigationGroup>
+    <li class="nbn-designation-nested-list"><a href="/Designations/${designationId}/Species_Group/${taxonNavigationGroup.taxonGroupKey}">${taxonNavigationGroup.taxonGroupName}</a> (${taxonNavigationGroup.numSpecies} species)</li>
 </#macro>
