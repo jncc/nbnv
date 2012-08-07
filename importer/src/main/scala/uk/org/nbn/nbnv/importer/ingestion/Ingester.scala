@@ -7,13 +7,14 @@ import org.gbif.dwc.text.Archive
 import uk.org.nbn.nbnv.metadata.Metadata
 
 /// Performs the interaction with the NBN core database.
-class Ingester(entityManager: EntityManager,
+
+class Ingester(em: EntityManager,
                datasetIngester: DatasetIngester,
                recordIngester: RecordIngester) {
 
   def ingest(archive: Archive, metadata: Metadata) {
 
-    val t = entityManager.getTransaction
+    val t = em.getTransaction
 
     withEntityTransaction(t) {
 
@@ -21,12 +22,12 @@ class Ingester(entityManager: EntityManager,
 
       // upsert dataset
       val dataset = datasetIngester.upsertDataset(metadata)
-      entityManager.flush()
+      em.flush()
 
       // upsert records
       for (record <- archive.iteratorRaw) {
         recordIngester.upsertRecord(new NbnRecord(record), dataset)
-        entityManager.flush()
+        em.flush()
         // todo: set no caching for records?
       }
 
@@ -45,7 +46,7 @@ class Ingester(entityManager: EntityManager,
       }
     }
     finally {
-      entityManager.close()
+      em.close()
     }
   }
 }

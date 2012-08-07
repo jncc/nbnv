@@ -55,8 +55,6 @@
 
         <fieldtype name="geohash" class="solr.GeoHashField"/>
 
-        <fieldType name="currency" class="solr.CurrencyField" precisionStep="8" defaultCurrency="USD" currencyConfig="currency.xml" />
-
     </types>
 
 
@@ -66,7 +64,7 @@
         <field name="taxonName" type="testedgengrams" indexed="true" stored="true"/>
         <field name="taxonAuthority" type="string" indexed="true" stored="true"/>
         <field name="lang" type="string"/>
-        <field name="taxonNavigationGroupKey" type="string" indexed="true"/>
+        <field name="navigationGroupKey" type="string" indexed="true" stored="true"/>
   
         <field name="designationID" type="string" indexed="true" stored="true"/>
         <field name="name" type="string" indexed="true" stored="true"/>

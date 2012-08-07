@@ -23,9 +23,10 @@ public interface TaxonGroupMapper {
     List<TaxonGroup> selectAll();
     
     @Select("SELECT * FROM TaxonGroupData WHERE taxonGroupKey = #{id}")
-    @Results(
-        @Result(column = "taxonGroupKey", property = "children", javaType=List.class, many=@Many(select="uk.org.nbn.nbnv.api.dao.mappers.TaxonGroupMapper.getChildren"))
-    )
+    @Results({ 
+        @Result(column = "taxonGroupKey", property = "children", javaType=List.class, many=@Many(select="uk.org.nbn.nbnv.api.dao.mappers.TaxonGroupMapper.getChildren")),
+        @Result(column = "taxonGroupKey", property = "taxonGroupKey") //map but retain key
+    })
     TaxonGroup getTaxonGroup(String id);
     
     @Select("SELECT * FROM TaxonGroupData WHERE parent = #{id}")
