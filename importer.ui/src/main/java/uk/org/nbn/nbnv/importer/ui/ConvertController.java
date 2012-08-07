@@ -12,18 +12,13 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-import uk.org.nbn.nbnv.importer.ui.convert.BadDataException;
-import uk.org.nbn.nbnv.importer.ui.convert.ConverterStep;
 import uk.org.nbn.nbnv.importer.ui.convert.RunConversions;
+import uk.org.nbn.nbnv.importer.ui.meta.MetaWriter;
 import uk.org.nbn.nbnv.importer.ui.model.ConvertResults;
-import uk.org.nbn.nbnv.importer.ui.parser.ColumnMapping;
-import uk.org.nbn.nbnv.importer.ui.parser.DarwinCoreField;
-import uk.org.nbn.nbnv.importer.ui.parser.NXFParser;
 
 /**
  *
@@ -43,10 +38,12 @@ public class ConvertController {
 
             File in = new File(args.get("filename"));
             File out = File.createTempFile("nbnimporter", "processed.tab");
+            File meta = File.createTempFile("nbnimporter", "meta.xml");
             
             messages.add("Outfile: " + out.getAbsolutePath());
+            messages.add("Metafile: " + meta.getAbsolutePath());
             
-            List<String> errors = rc.run(in, out, args);
+            List<String> errors = rc.run(in, out, meta, args);
             
             model.setMessages(messages);
             model.setErrors(errors);
