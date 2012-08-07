@@ -16,6 +16,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.reflections.Reflections;
 import org.springframework.util.StringUtils;
+import uk.org.nbn.nbnv.importer.ui.meta.MetaWriter;
 import uk.org.nbn.nbnv.importer.ui.parser.ColumnMapping;
 import uk.org.nbn.nbnv.importer.ui.parser.DarwinCoreField;
 import uk.org.nbn.nbnv.importer.ui.parser.NXFParser;
@@ -60,7 +61,7 @@ public class RunConversions {
         }
     }
 
-    public List<String> run(File in, File out, Map<String, String> args) throws IOException {
+    public List<String> run(File in, File out, File meta, Map<String, String> args) throws IOException {
         List<String> errors = new ArrayList<String>();
         BufferedWriter w = null;
         
@@ -98,6 +99,9 @@ public class RunConversions {
                 w.write(StringUtils.collectionToDelimitedString(row, "\t"));
                 w.newLine();
             }
+            
+            MetaWriter mw = new MetaWriter();
+            errors.addAll(mw.createMetaFile(mappings, meta));
         } catch (IOException ex) {
             errors.add("IOException: " + ex.getMessage());
         } finally {

@@ -14,7 +14,7 @@
                     <h1><span class="nbn-designation-category-heading-strong">${siteCategory.name}</span></h1>
                     <ul>
                         <#list siteCategory.siteBoundaryDatasets as siteDataset>
-                                <li class="nbn-designation-nested-list"><a href="#">${siteDataset.datasetTitle}</a></li>
+                                <li class="nbn-designation-nested-list"><a href="#">${siteDataset.name}</a></li>
                         </#list>
                     </ul>
                 </li>

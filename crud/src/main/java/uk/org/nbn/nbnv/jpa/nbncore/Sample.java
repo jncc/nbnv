@@ -28,6 +28,7 @@ public class Sample implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name = "sampleID")
     private Integer sampleID;
     @Basic(optional = false)

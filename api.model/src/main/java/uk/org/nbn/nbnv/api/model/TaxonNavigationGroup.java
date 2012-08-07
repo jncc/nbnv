@@ -10,14 +10,14 @@ import java.util.List;
  *
  * @author Administrator
  */
-public class TaxonGroup {
+public class TaxonNavigationGroup {
     private int sortOrder;
     private String taxonGroupName;
     private String descriptor;
     private String parent;
     private String taxonGroupKey;
     private int numSpecies;
-    private List<TaxonGroup> children;
+    private List<TaxonNavigationGroup> children;
 
     public String getDescriptor() {
         return descriptor;
@@ -59,11 +59,11 @@ public class TaxonGroup {
         this.taxonGroupKey = taxonGroupKey;
     }
     
-    public List<TaxonGroup> getChildren() {
+    public List<TaxonNavigationGroup> getChildren() {
         return children;
     }
         
-    public void setChildren(List<TaxonGroup> children) {
+    public void setChildren(List<TaxonNavigationGroup> children) {
         this.children = children;
     }
 
