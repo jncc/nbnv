@@ -1,7 +1,7 @@
 <#include "/WEB-INF/templates/master.ftl">
 
 <#macro loadTaxonGroup taxonGroupKey>
-    <#assign details=json.readURL("${api}/taxonGroup/${taxonGroupKey}")/>
+    <#assign details=json.readURL("${api}/taxonGroups/${taxonGroupKey}")/>
     <#if details.children?has_content>
         <h1>${details.taxonGroupName}</h1>
         <ul>

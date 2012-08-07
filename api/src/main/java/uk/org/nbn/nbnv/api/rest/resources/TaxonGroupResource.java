@@ -7,12 +7,15 @@ package uk.org.nbn.nbnv.api.rest.resources;
 import java.util.List;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import org.apache.ibatis.session.RowBounds;
+import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.SolrServer;
+import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.response.QueryResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.org.nbn.nbnv.api.dao.mappers.TaxonGroupMapper;
-import uk.org.nbn.nbnv.api.model.Taxon;
 import uk.org.nbn.nbnv.api.model.TaxonGroup;
+import uk.org.nbn.nbnv.api.solr.SolrResponse;
 
 /**
  *
@@ -22,9 +25,10 @@ import uk.org.nbn.nbnv.api.model.TaxonGroup;
 @Path("/taxonGroups")
 public class TaxonGroupResource {
 
-    @Autowired
-    TaxonGroupMapper mapper;
+    @Autowired TaxonGroupMapper mapper;
 
+    @Autowired SolrServer solrServer;
+    
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public List<TaxonGroup> getTaxonGroups() {
@@ -59,11 +63,16 @@ public class TaxonGroupResource {
     @GET
     @Path("/{id}/species")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Taxon> getTaxa(
+    public SolrResponse getTaxa(
             @PathParam("id") String taxonGroup,
             @QueryParam("limit") @DefaultValue("20") int limit,
-            @QueryParam("offset") @DefaultValue("1") int offset) {
-        return mapper.getTaxa(taxonGroup, new RowBounds(offset, limit));
+            @QueryParam("offset") @DefaultValue("0") int offset) throws SolrServerException {
+        
+        SolrQuery query = new SolrQuery();
+        query.setQuery("navigationGroupKey:" + taxonGroup);
+        query.setRows(limit);
+        query.setStart(offset);
+        return new SolrResponse(solrServer.query(query));
     }
     
 }
