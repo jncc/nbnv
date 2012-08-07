@@ -17,10 +17,9 @@
             </#list>
         </ul>
         <p>Result:</p>
-        <ul>
-            <#list model.messages as result>
-                <li>${result}</li>
-            </#list>
-        </ul>
+        <form action="download.html" method="POST">
+            <input type="hidden" name="file" value="${model.archive}"/>
+            <input type="submit" value="Download"/>
+        </form>
     </body>
 </html>
