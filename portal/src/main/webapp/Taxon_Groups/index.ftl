@@ -10,13 +10,13 @@
             </#list>
         </ul>
     <#else>
-        <a href="/Taxon_Groups/Taxa/?taxonGroup=${details.taxonGroupKey}">${details.taxonGroupName}</a>
+        <a href="/Taxon_Groups/Taxa/?taxonGroup=${details.taxonGroupKey}">${details.taxonGroupKey}</a>
     </#if>
 </#macro>
 
 <@master title="NBN Gateway - Taxon Groups">
     <ul class="collapsible-list">
-        <#list json.readURL("${api}/taxonGroup/topLevels") as taxonGroup>
+        <#list json.readURL("${api}/taxonGroups/topLevels") as taxonGroup>
             <li><@loadTaxonGroup taxonGroupKey="${taxonGroup.taxonGroupKey}"/></li>
         </#list>
     </ul>
