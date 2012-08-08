@@ -9,8 +9,9 @@ import uk.org.nbn.nbnv.jpa.nbncore._
 import javax.persistence.EntityManager
 import org.apache.log4j.Logger
 import uk.org.nbn.nbnv.importer.records.NbnRecord
+import uk.org.nbn.nbnv.importer.data.SiteRepository
 
-class RecordIngester(log: Logger, em: EntityManager, surveyIngester: SurveyIngester, sampleIngester: SampleIngester) {
+class RecordIngester(log: Logger, em: EntityManager, surveyIngester: SurveyIngester, sampleIngester: SampleIngester, siteRepository: SiteRepository) {
 
   def upsertRecord(record: NbnRecord, dataset: TaxonDataset) {
 
@@ -22,7 +23,7 @@ class RecordIngester(log: Logger, em: EntityManager, surveyIngester: SurveyInges
     val sample = sampleIngester.upsertSample(record.sampleKey, survey)
 
     // sites are a bit up in the air - assume it already exists for now
-    val site = em.getReference(classOf[Site], record.siteKey)
+    val site = siteRepository.getSite(record.siteKey)
 
     // todo: taxonobservation needs a feature, but what is a feature? we've forgotten
     val feature = em.find(classOf[Feature], 1)
