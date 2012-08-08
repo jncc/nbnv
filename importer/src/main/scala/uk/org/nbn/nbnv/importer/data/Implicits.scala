@@ -7,7 +7,7 @@ object Implicits {
 
   class RichTypedQuery[T](q: TypedQuery[T]) {
 
-    def singleOrNone : Option[T] = {
+    def getSingleOrNone : Option[T] = {
 
       val results = q.setMaxResults(2).getResultList
 

@@ -11,22 +11,22 @@ import java.util.List;
  * @author Paul Gilbertson
  */
 public class ConvertResults {
-    private List<String> messages;
+    private String archive;
     private List<String> steps;
     private List<String> errors;
 
     /**
      * @return the messages
      */
-    public List<String> getMessages() {
-        return messages;
+    public String getArchive() {
+        return archive;
     }
 
     /**
      * @param messages the messages to set
      */
-    public void setMessages(List<String> messages) {
-        this.messages = messages;
+    public void setArchive(String archive) {
+        this.archive = archive;
     }
 
     /**

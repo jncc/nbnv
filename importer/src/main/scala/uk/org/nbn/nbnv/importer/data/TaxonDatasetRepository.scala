@@ -11,6 +11,6 @@ class TaxonDatasetRepository(em: EntityManager) {
       "where d.datasetKey like 'GA%' " +
       "order by d.datasetKey desc"
 
-    em.createQuery(q, classOf[String]).singleOrNone
+    em.createQuery(q, classOf[String]).getSingleOrNone
   }
 }

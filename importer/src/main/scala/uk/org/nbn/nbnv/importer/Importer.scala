@@ -35,7 +35,7 @@ object Importer {
     val log = Log.get()
 
     // create entity manager
-    val em = new PersistenceUtility().createEntityManagerFactory.createEntityManager
+    val em = new PersistenceUtility().createEntityManagerFactory(Settings.map).createEntityManager
 
     // manually inject dependencies
     new Importer(options,
