@@ -17,8 +17,6 @@ object Settings {
   // override with server-specific file on a conventional path
   private val overridingFile = new java.io.File("/nbnv-settings/importer/settings.properties")
 
-  println("### overriding settings path: " + overridingFile.getAbsolutePath)
-
   if (overridingFile.exists) {
     val overriding = new Properties
 

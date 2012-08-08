@@ -11,7 +11,7 @@ import java.io.{File, InputStream}
 
 class SmokeSuiteIT extends BaseFunSuite with ResourceLoader {
 
-  ignore("should be able to get next dataset key") {
+  test("should be able to get next dataset key") {
 
     val em = new PersistenceUtility().createEntityManagerFactory(Settings.map).createEntityManager
     val dr = new TaxonDatasetRepository(em)
@@ -33,9 +33,5 @@ class SmokeSuiteIT extends BaseFunSuite with ResourceLoader {
 
     val importer = Importer.createImporter(options)
     importer.run()
-  }
-
-  test("print working directory") {
-    println("### " + new File(".").getAbsolutePath)
   }
 }
