@@ -5,11 +5,11 @@ import testing.BaseFunSuite
 import utility.ResourceLoader
 import uk.org.nbn.nbnv.PersistenceUtility
 import org.mockito.Mockito._
-import java.io.InputStream
+import java.io.{File, InputStream}
 
 /// This is an end-to-end test suite which requires the database.
 
-class SmokeIntegrationSuite extends BaseFunSuite with ResourceLoader {
+class SmokeSuiteIT extends BaseFunSuite with ResourceLoader {
 
   ignore("should be able to get next dataset key") {
 
@@ -30,5 +30,9 @@ class SmokeIntegrationSuite extends BaseFunSuite with ResourceLoader {
 
     val importer = Importer.createImporter(options)
     importer.run()
+  }
+
+  test("print working directory") {
+    println("### " + new File(".").getAbsolutePath)
   }
 }
