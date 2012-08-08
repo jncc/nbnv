@@ -59,6 +59,11 @@ public class UploadController {
             uploadItem.getFileData().transferTo(dFile);
             NXFParser parser = new NXFParser(dFile);
             model.setHeaders(parser.parseHeaders());
+            
+            //Test parse results
+            if (model.getHeaders().size() < 4) {
+                return new ModelAndView("exception", "error", "Not enough fields to be a NXF file. Is it tab delimited?");
+            }
         } catch (IOException ex) {
             messages.add("EXCEPTION: Parse exception: " + ex.getMessage());
         }

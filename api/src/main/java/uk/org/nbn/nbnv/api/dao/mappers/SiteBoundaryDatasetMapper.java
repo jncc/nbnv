@@ -7,10 +7,10 @@ import uk.org.nbn.nbnv.api.model.SiteBoundaryDataset;
 
 public interface SiteBoundaryDatasetMapper {
 
-    @Select("SELECT * FROM SiteBoundaryDataset")
+    @Select("SELECT * FROM SiteBoundaryDatasetData")
     List<SiteBoundaryDataset> get();
     
-    @Select("SELECT * FROM SiteBoundaryDataset where siteBoundaryCategory = #{id}")
+    @Select("SELECT * FROM SiteBoundaryDatasetData where siteBoundaryCategory = #{id}")
     List<SiteBoundaryDataset> getBySiteBoundaryCategoryID(int id);
     
 }

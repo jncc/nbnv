@@ -12,18 +12,15 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-import uk.org.nbn.nbnv.importer.ui.convert.BadDataException;
+import uk.org.nbn.nbnv.importer.ui.archive.ArchiveWriter;
 import uk.org.nbn.nbnv.importer.ui.convert.ConverterStep;
 import uk.org.nbn.nbnv.importer.ui.convert.RunConversions;
+import uk.org.nbn.nbnv.importer.ui.meta.MetaWriter;
 import uk.org.nbn.nbnv.importer.ui.model.ConvertResults;
-import uk.org.nbn.nbnv.importer.ui.parser.ColumnMapping;
-import uk.org.nbn.nbnv.importer.ui.parser.DarwinCoreField;
-import uk.org.nbn.nbnv.importer.ui.parser.NXFParser;
 
 /**
  *
@@ -36,21 +33,32 @@ public class ConvertController {
     public ModelAndView compile(@RequestParam Map<String, String> args) {
         try {
             ConvertResults model = new ConvertResults();
-            RunConversions rc = new RunConversions();
             
-            List<String> messages = new ArrayList<String>();
-            messages.add("Filename: " + args.get("filename"));
-
             File in = new File(args.get("filename"));
+            RunConversions rc = new RunConversions(in);
+            
             File out = File.createTempFile("nbnimporter", "processed.tab");
+            File meta = File.createTempFile("nbnimporter", "meta.xml");
+            File archive = File.createTempFile("nbnimporter", "archive.zip");
             
-            messages.add("Outfile: " + out.getAbsolutePath());
+            List<String> errors = rc.run(out, meta, args);
             
-            List<String> errors = rc.run(in, out, args);
+            ArchiveWriter aw = new ArchiveWriter();
+            aw.createArchive(out, meta, archive);
+
+            model.setArchive(archive.getAbsolutePath());
             
-            model.setMessages(messages);
+            if (errors.isEmpty()) {
+                errors.add("None");
+            }
+            
+            List<String> steps = new ArrayList<String>();
+            for (ConverterStep cs : rc.getSteps()) {
+                steps.add(cs.getName());
+            }
+            
             model.setErrors(errors);
-            model.setSteps(new ArrayList<String>());
+            model.setSteps(steps);
             return new ModelAndView("compile", "model", model);
         } catch (IOException ex) {
             Logger.getLogger(ConvertController.class.getName()).log(Level.SEVERE, null, ex);

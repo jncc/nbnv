@@ -9,35 +9,35 @@ import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import uk.org.nbn.nbnv.api.dao.mappers.TaxonGroupMapper;
-import uk.org.nbn.nbnv.api.model.TaxonGroup;
+import uk.org.nbn.nbnv.api.dao.mappers.TaxonNavigationGroupMapper;
+import uk.org.nbn.nbnv.api.model.TaxonNavigationGroup;
 import uk.org.nbn.nbnv.api.solr.SolrResponse;
 
 @Component
-@Path("/taxonGroups")
-public class TaxonGroupResource {
+@Path("/taxonNavigationGroups")
+public class TaxonNavigationGroupResource {
 
-    @Autowired TaxonGroupMapper mapper;
+    @Autowired TaxonNavigationGroupMapper mapper;
 
     @Autowired SolrServer solrServer;
     
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<TaxonGroup> getTaxonGroups() {
+    public List<TaxonNavigationGroup> getTaxonNavigationGroups() {
         return mapper.selectAll();
     }
 
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public TaxonGroup getTaxonGroup(@PathParam("id") String id) {
-        return mapper.getTaxonGroup(id);
+    public TaxonNavigationGroup getTaxonNavigationGroup(@PathParam("id") String id) {
+        return mapper.getTaxonNavigationGroup(id);
     }
 
     @GET
     @Path("/topLevels")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<TaxonGroup> getTopLevelTaxonGroups(@QueryParam("designationId") int designationId) {
+    public List<TaxonNavigationGroup> getTopLevelTaxonNavigationGroups(@QueryParam("designationId") int designationId) {
         if (designationId != 0) {
             return mapper.getTopLevelssByDesignationID(designationId);
         } else {
@@ -48,7 +48,7 @@ public class TaxonGroupResource {
     @GET
     @Path("/topLevels/designations/{designationId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<TaxonGroup> getTopLevelTaxonNavigationGroupsByDesignation(@PathParam("designationId") int id) {
+    public List<TaxonNavigationGroup> getTopLevelTaxonNavigationGroupsByDesignation(@PathParam("designationId") int id) {
         return mapper.getTopLevelssByDesignationID(id);
     }
 

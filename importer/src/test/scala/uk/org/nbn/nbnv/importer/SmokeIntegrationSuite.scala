@@ -5,14 +5,15 @@ import testing.BaseFunSuite
 import utility.ResourceLoader
 import uk.org.nbn.nbnv.PersistenceUtility
 import org.mockito.Mockito._
+import java.io.InputStream
 
-/// This is an end-to-end test which requires the database.
+/// This is an end-to-end test suite which requires the database.
 
-class SmokeSuite extends BaseFunSuite with ResourceLoader {
+class SmokeIntegrationSuite extends BaseFunSuite with ResourceLoader {
 
   ignore("should be able to get next dataset key") {
 
-    val em = new PersistenceUtility().createEntityManagerFactory.createEntityManager
+    val em = new PersistenceUtility().createEntityManagerFactory(Settings.map).createEntityManager
     val dr = new TaxonDatasetRepository(em)
     val kg = new KeyGenerator(dr)
 

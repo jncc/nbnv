@@ -6,6 +6,7 @@ package uk.org.nbn.nbnv.importer.ui.convert;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.reflections.Reflections;
 import org.springframework.util.StringUtils;
+import uk.org.nbn.nbnv.importer.ui.meta.MetaWriter;
 import uk.org.nbn.nbnv.importer.ui.parser.ColumnMapping;
 import uk.org.nbn.nbnv.importer.ui.parser.DarwinCoreField;
 import uk.org.nbn.nbnv.importer.ui.parser.NXFParser;
@@ -26,8 +28,18 @@ import uk.org.nbn.nbnv.importer.ui.parser.NXFParser;
  */
 public class RunConversions {
 
-    public List<ConverterStep> getSteps(List<ColumnMapping> mappings) {
-        List<ConverterStep> steps = new ArrayList<ConverterStep>();
+    private File in;
+    private List<ConverterStep> steps;
+    private List<ColumnMapping> mappings;
+    private NXFParser nxfParser;
+
+    public RunConversions(File in) throws IOException {
+        this.in = in;
+        this.nxfParser = new NXFParser(in);
+    }
+
+    private List<ConverterStep> getSteps(List<ColumnMapping> mappings) {
+        setSteps(new ArrayList<ConverterStep>());
 
         Reflections reflections = new Reflections("uk.org.nbn.nbnv.importer.ui.convert.converters");
         Set<Class<? extends ConverterStep>> converters = reflections.getSubTypesOf(ConverterStep.class);
@@ -36,7 +48,7 @@ public class RunConversions {
             try {
                 ConverterStep step = stepClass.newInstance();
                 if (step.isStepNeeded(mappings)) {
-                    steps.add(step);
+                    getSteps().add(step);
                 }
             } catch (InstantiationException ex) {
                 Logger.getLogger(RunConversions.class.getName()).log(Level.SEVERE, null, ex);
@@ -45,40 +57,31 @@ public class RunConversions {
             }
         }
 
-        return steps;
+        return getSteps();
     }
 
-    public void modifyColumns(List<ConverterStep> steps, List<ColumnMapping> mappings) {
+    private void modifyColumns(List<ConverterStep> steps, List<ColumnMapping> mappings) {
         for (ConverterStep step : steps) {
             step.modifyHeader(mappings);
         }
     }
 
-    public void modifyRow(List<ConverterStep> steps, List<String> row) throws BadDataException {
+    private void modifyRow(List<ConverterStep> steps, List<String> row) throws BadDataException {
         for (ConverterStep step : steps) {
             step.modifyRow(row);
         }
     }
 
-    public List<String> run(File in, File out, Map<String, String> args) throws IOException {
+    public List<String> run(File out, File meta, Map<String, String> args) throws IOException {
         List<String> errors = new ArrayList<String>();
         BufferedWriter w = null;
-        
+
         try {
             w = new BufferedWriter(new FileWriter(out));
 
-            NXFParser nxfParser = new NXFParser(in);
-            List<ColumnMapping> mappings = nxfParser.parseHeaders();
-
-            for (ColumnMapping cm : mappings) {
-                if (args.containsKey(Integer.toString(cm.getColumnNumber()))) {
-                    cm.setField(DarwinCoreField.valueOf(args.get(Integer.toString(cm.getColumnNumber()))));
-                }
-            }
-
-            RunConversions rc = new RunConversions();
-            List<ConverterStep> steps = rc.getSteps(mappings);
-            rc.modifyColumns(steps, mappings);
+            getMappings(args);
+            getSteps(mappings);
+            modifyColumns(getSteps(), mappings);
             List<String> columnNames = new ArrayList<String>();
 
             for (ColumnMapping cm : mappings) {
@@ -91,13 +94,16 @@ public class RunConversions {
             List<String> row;
             while ((row = nxfParser.readDataLine()) != null) {
                 try {
-                    rc.modifyRow(steps, row);
+                    modifyRow(getSteps(), row);
                 } catch (BadDataException ex) {
                     errors.add("Bad Data: " + ex.getMessage());
                 }
                 w.write(StringUtils.collectionToDelimitedString(row, "\t"));
                 w.newLine();
             }
+
+            MetaWriter mw = new MetaWriter();
+            errors.addAll(mw.createMetaFile(mappings, meta));
         } catch (IOException ex) {
             errors.add("IOException: " + ex.getMessage());
         } finally {
@@ -106,5 +112,28 @@ public class RunConversions {
             }
         }
         return errors;
+    }
+
+    private void getMappings(Map<String, String> args) throws IOException, FileNotFoundException {
+        mappings = nxfParser.parseHeaders();
+        for (ColumnMapping cm : mappings) {
+            if (args.containsKey(Integer.toString(cm.getColumnNumber()))) {
+                cm.setField(DarwinCoreField.valueOf(args.get(Integer.toString(cm.getColumnNumber()))));
+            }
+        }
+    }
+
+    /**
+     * @return the steps
+     */
+    public List<ConverterStep> getSteps() {
+        return steps;
+    }
+
+    /**
+     * @param steps the steps to set
+     */
+    public void setSteps(List<ConverterStep> steps) {
+        this.steps = steps;
     }
 }

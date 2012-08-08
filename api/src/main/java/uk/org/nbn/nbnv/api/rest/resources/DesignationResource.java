@@ -12,11 +12,11 @@ import org.springframework.stereotype.Component;
 import uk.org.nbn.nbnv.api.dao.mappers.DesignationCategoryMapper;
 import uk.org.nbn.nbnv.api.dao.mappers.DesignationMapper;
 import uk.org.nbn.nbnv.api.dao.mappers.TaxonMapper;
-import uk.org.nbn.nbnv.api.dao.mappers.TaxonGroupMapper;
+import uk.org.nbn.nbnv.api.dao.mappers.TaxonNavigationGroupMapper;
 import uk.org.nbn.nbnv.api.model.Designation;
 import uk.org.nbn.nbnv.api.model.DesignationCategory;
 import uk.org.nbn.nbnv.api.model.Taxon;
-import uk.org.nbn.nbnv.api.model.TaxonGroup;
+import uk.org.nbn.nbnv.api.model.TaxonNavigationGroup;
 
 /**
  *
@@ -28,7 +28,7 @@ public class DesignationResource {
     @Autowired DesignationCategoryMapper designationCategoryMapper;
     @Autowired DesignationMapper designationMapper;
     @Autowired TaxonMapper taxonMapper;
-    @Autowired TaxonGroupMapper taxonGroupMapper;
+    @Autowired TaxonNavigationGroupMapper taxonNavigationGroupMapper;
 	
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -49,24 +49,23 @@ public class DesignationResource {
     public DesignationCategory getDesignationCategory(@PathParam("id") int id) {
         return designationCategoryMapper.selectByDesignationID(id);
     }
-
     @GET
     @Path("/{id}/species")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Taxon> getSpeciesByDesignationAndTaxonGroup(@PathParam("id") int id, @QueryParam("taxonGroupId") String taxonGroupId) {
-        if(taxonGroupId != null){
-            return taxonMapper.selectByDesignationAndTaxonNavigationGroup(id, taxonGroupId);
+    public List<Taxon> getSpeciesByDesignationAndTaxonNavigationGroup(@PathParam("id") int id, @QueryParam("taxonNavigationGroupId") String taxonNavigationGroupId) {
+        if(taxonNavigationGroupId != null){
+            return taxonMapper.selectByDesignationAndTaxonNavigationGroup(id, taxonNavigationGroupId);
         }else{
             return taxonMapper.selectByDesignationID(id);
         }
     }
 
     @GET
-    @Path("{id}/taxonGroups/{taxonGroupId}")
+    @Path("{id}/taxonNavigationGroups/{taxonNavigationGroupId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public TaxonGroup getTaxonGroupByDesignation(@PathParam("id") int id, @PathParam("taxonGroupId") String taxonGroupId){
-        TaxonGroup toReturn = taxonGroupMapper.getTaxonGroup(taxonGroupId);
-        toReturn.setChildren(taxonGroupMapper.getChildrenByDesignation(taxonGroupId, id));
+    public TaxonNavigationGroup getTaxonNavigationGroupByDesignation(@PathParam("id") int id, @PathParam("taxonNavigationGroupId") String taxonNavigationGroupId){
+        TaxonNavigationGroup toReturn = taxonNavigationGroupMapper.getTaxonNavigationGroup(taxonNavigationGroupId);
+        toReturn.setChildren(taxonNavigationGroupMapper.getChildrenByDesignation(taxonNavigationGroupId, id));
         return toReturn;
     }
 

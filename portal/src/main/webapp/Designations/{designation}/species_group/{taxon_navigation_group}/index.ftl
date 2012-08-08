@@ -4,15 +4,15 @@
 <@master title="NBN Gateway - designation">
 
     <#assign designationId="${URLParameters.designation}">
-    <#assign taxonGroupId="${URLParameters.taxon_group}">
+    <#assign taxonNavigationGroupId="${URLParameters.taxon_navigation_group}">
 
     <#assign designation=json.readURL("${api}/designations/${designationId}")>
     <#assign designationCategory=json.readURL("${api}/designationCategories/${designation.designationCategoryID}")>
-    <#assign taxonGroup=json.readURL("${api}/taxonGroups/${taxonGroupId}")>
-    <#assign species=json.readURL("${api}/designations/${designationId}/species", {"taxonGroupId": taxonGroupId})>
+    <#assign taxonNavigationGroup=json.readURL("${api}/taxonNavigationGroups/${taxonNavigationGroupId}")>
+    <#assign species=json.readURL("${api}/designations/${designationId}/species", {"taxonNavigationGroupId": taxonNavigationGroupId})>
 
     <div id="nbn-designation-content">
-        <h4>${designation.name} : ${taxonGroup.taxonGroupName}</h4>
+        <h4>${designation.name} : ${taxonNavigationGroup.taxonGroupName}</h4>
             <table>
                 <tr>
                     <th>Abbreviation:</th>
@@ -27,7 +27,7 @@
                     <td>${designationCategory.label}: ${designationCategory.description!""}</td>
                 </tr>
                 <tr>
-                    <th>Species list for: ${taxonGroup.taxonGroupName}</th>
+                    <th>Species list for: ${taxonNavigationGroup.taxonGroupName}</th>
                     <td>
                         <#list species as spec>
                             <@formatSpeciesNameLong speciesName=spec/><br/>
