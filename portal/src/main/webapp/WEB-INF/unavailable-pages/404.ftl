@@ -1,6 +1,4 @@
-<#include "/WEB-INF/templates/master.ftl">
-
-<@error title="National Biodiversity Network Gateway - The page you were looking for was not found">
+<@template.error title="National Biodiversity Network Gateway - The page you were looking for was not found">
 	<@markdown>
 #The page you were looking for was not found
 
@@ -9,4 +7,4 @@ yet or has been deleted. Please check the URL.
 
 [Please click to go back to the NBN Gateway](/)
 	</@markdown>
-</@error>
+</@template.error>

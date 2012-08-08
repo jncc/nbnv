@@ -1,6 +1,4 @@
-<#include "/WEB-INF/templates/master.ftl">
-
-<@error title="National Biodiversity Network Gateway - Internal Server Error">
+<@template.error title="National Biodiversity Network Gateway - Internal Server Error">
 	<@markdown>
 #D'oh. Something went wrong.
 
@@ -13,4 +11,4 @@ himenaeos. Curabitur sodales ligula in libero.
 
 [Please click to go back to the NBN Gateway](/)
 	</@markdown>
-</@error>
+</@template.error>

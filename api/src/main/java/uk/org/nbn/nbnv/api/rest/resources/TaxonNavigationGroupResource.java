@@ -57,13 +57,13 @@ public class TaxonNavigationGroupResource {
     @Produces(MediaType.APPLICATION_JSON)
     public SolrResponse getTaxa(
             @PathParam("id") String taxonGroup,
-            @QueryParam("limit") @DefaultValue("20") int limit,
-            @QueryParam("offset") @DefaultValue("0") int offset) throws SolrServerException {
+            @QueryParam("rows") @DefaultValue("20") int rows,
+            @QueryParam("start") @DefaultValue("0") int start) throws SolrServerException {
         
         SolrQuery query = new SolrQuery();
         query.setQuery("navigationGroupKey:" + taxonGroup);
-        query.setRows(limit);
-        query.setStart(offset);
+        query.setRows(rows);
+        query.setStart(start);
         return new SolrResponse(solrServer.query(query));
     }
     

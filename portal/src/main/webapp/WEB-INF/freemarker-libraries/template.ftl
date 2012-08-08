@@ -34,20 +34,3 @@
         <body><div id="container"><#nested></div></body>
     </html>
 </#macro>
-
-<#macro formatSpeciesNameLong speciesName>
-    <span class="nbn-taxon-name">${speciesName.name}</span>
-    <#if speciesName.taxonAuthority?has_content>
-        ${speciesName.taxonAuthority}
-    </#if>
-    <#if speciesName.commonName?has_content>
-        ${speciesName.commonName}
-    </#if>
-</#macro>
-
-<#macro formatSpeciesNameShort speciesName>
-    <span class="nbn-taxon-name">${speciesName.name}</span>
-    <#if speciesName.commonName?has_content>
-        ${speciesName.commonName}
-    </#if>
-</#macro>
