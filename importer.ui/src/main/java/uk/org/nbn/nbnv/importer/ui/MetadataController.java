@@ -1,0 +1,93 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package uk.org.nbn.nbnv.importer.ui;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
+import uk.org.nbn.nbnv.importer.ui.metadata.MetadataWriter;
+import uk.org.nbn.nbnv.importer.ui.model.Metadata;
+import uk.org.nbn.nbnv.importer.ui.model.MetadataForm;
+import uk.org.nbn.nbnv.importer.ui.model.UploadItem;
+import uk.org.nbn.nbnv.importer.ui.parser.NXFParser;
+
+/**
+ *
+ * @author Paul Gilbertson
+ */
+@Controller
+public class MetadataController {
+
+    @RequestMapping(value="/metadata.html", method = RequestMethod.GET)
+    public ModelAndView metadata() {
+        return new ModelAndView("metadataForm", "model", new MetadataForm());
+    }
+
+    @RequestMapping(value="/metadataProcess.html", method = RequestMethod.POST)
+    public ModelAndView uploadFile(Metadata metadata, BindingResult result) {
+        MetadataForm model = new MetadataForm();
+        model.setMetadata(metadata);
+
+        if (result.hasErrors()) {
+            for (ObjectError error : result.getAllErrors()) {
+                Logger.getLogger(UploadController.class.getName()).log(Level.WARNING, "Error ({0}): {1}", new Object[]{error.getCode(), error.getDefaultMessage()});
+                model.getErrors().add(error.getDefaultMessage());
+            }
+            return new ModelAndView("metadataForm", "model", model);
+        }
+
+
+        try {
+            File metadataFile = File.createTempFile("nbnimporter", "metadata.xml");
+            MetadataWriter mw = new MetadataWriter(metadataFile);
+            
+            return new ModelAndView("dump", "data", org.springframework.web.util.HtmlUtils.htmlEscape(mw.datasetToEML(metadata)));
+        } catch (Exception ex) {
+            Logger.getLogger(MetadataController.class.getName()).log(Level.SEVERE, null, ex);
+            model.getErrors().add(ex.getMessage());
+        }
+
+        return new ModelAndView("metadataForm", "model", model);
+    }
+
+    @RequestMapping(value="/metadata.html", method = RequestMethod.POST)
+    public ModelAndView uploadFile(UploadItem uploadItem, BindingResult result) {
+        MetadataForm model = new MetadataForm();
+
+        if (result.hasErrors()) {
+            for (ObjectError error : result.getAllErrors()) {
+                Logger.getLogger(UploadController.class.getName()).log(Level.WARNING, "Error ({0}): {1}", new Object[]{error.getCode(), error.getDefaultMessage()});
+                model.getErrors().add(error.getDefaultMessage());
+            }
+            return new ModelAndView("metadataForm", "model", model);
+        }
+
+        List<String> messages = new ArrayList<String>();
+        messages.add("Original File name: " + uploadItem.getFileData().getOriginalFilename());
+        messages.add("File size: " + Long.toString(uploadItem.getFileData().getSize()));
+        messages.add("Content Type: " + uploadItem.getFileData().getContentType());
+        messages.add("Storage description: " + uploadItem.getFileData().getStorageDescription());
+
+        try {
+            File dFile = File.createTempFile("nbnimporter", "metadata.doc");
+            messages.add("Storage location: " + dFile.getAbsolutePath());
+
+            uploadItem.getFileData().transferTo(dFile);
+        } catch (IOException ex) {
+            messages.add("EXCEPTION: Parse exception: " + ex.getMessage());
+        }
+
+        return new ModelAndView("debug", "messages", messages);
+    }
+}

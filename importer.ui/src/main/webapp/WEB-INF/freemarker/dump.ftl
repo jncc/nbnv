@@ -1,10 +1,10 @@
 <html>
     <head>
         <META http-equiv="Content-Type" content="text/html;charset=UTF-8">
-        <title>Test</title>
+        <title>Debug</title>
     </head>
     <body>
-        <p>Result:</p>
-        <pre>${model.tdata}</pre>
+        <p>Results:</p>
+        <pre>${data}</pre>
     </body>
 </html>

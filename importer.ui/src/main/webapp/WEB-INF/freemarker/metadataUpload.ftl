@@ -6,7 +6,7 @@
     <body>
         <form method="post" enctype="multipart/form-data">
             <fieldset>
-                <legend>Upload Data</legend>
+                <legend>Upload Fields</legend>
                 <p>
                     <label for="fileData" path="fileData">File</label><br/>
                     <input path="fileData" type="file" id="fileData" name="fileData"/>

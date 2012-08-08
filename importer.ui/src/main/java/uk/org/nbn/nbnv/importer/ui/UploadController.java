@@ -44,7 +44,6 @@ public class UploadController {
         }
         
         List<String> messages = new ArrayList<String>();
-        messages.add("Input name: " + uploadItem.getName());
         messages.add("Original File name: " + uploadItem.getFileData().getOriginalFilename());
         messages.add("File size: " + Long.toString(uploadItem.getFileData().getSize()));
         messages.add("Content Type: " + uploadItem.getFileData().getContentType());
