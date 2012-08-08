@@ -7,10 +7,25 @@ class InjectionSuite extends BaseFunSuite {
 
   test("google guice injection framework should work") {
 
+    val singleton = new SingletonDependent
+
+    class TestInjectionModule extends AbstractModule {
+      @Override
+      protected def configure() {
+        // looks like self-bindings are automatic in guice
+        //    bind(classOf[Dependent]).to(classOf[Dependent]) // causes error
+        bind(classOf[SingletonDependent]).toInstance(singleton)
+      }
+    }
+
     val injector = Guice.createInjector(new TestInjectionModule)
     val dependee = injector.getInstance(classOf[Dependee])
+
     val result = dependee.bar(3)
     result should be(12)
+
+    val dependee2 = injector.getInstance(classOf[Dependee])
+    dependee.singleton should be (dependee2.singleton)
   }
 }
 
@@ -18,15 +33,12 @@ class Dependent {
   def foo(n: Int) = n * n
 }
 
-class Dependee @Inject()(dependent: Dependent) {
+class SingletonDependent
+
+class Dependee @Inject() (dependent: Dependent, val singleton: SingletonDependent) {
   def bar(n: Int) = dependent.foo(n) + n
 }
 
-class TestInjectionModule extends AbstractModule {
-  @Override
-  protected def configure() {
-    // looks like self-bindings are automatic in guice
-    //    bind(classOf[Dependent]).to(classOf[Dependent]) // causes error
-  }
-}
+
+
 
