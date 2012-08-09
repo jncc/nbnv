@@ -1,7 +1,4 @@
-<#include "/WEB-INF/templates/master.ftl">
-
-
-<@master title="NBN Gateway - designation">
+<@template.master title="NBN Gateway - designation">
 
     <#assign designationId="${URLParameters.designation}">
     <#assign designation=json.readURL("${api}/designations/${designationId}")>
@@ -54,7 +51,7 @@
             <p class="nbn-designation-footer">All designation information on the NBN Gateway is collated and supplied by the <a href="http://jncc.defra.gov.uk/page-5546">Joint Nature Conservation Committee (JNCC)</a></p>
         </div>
 
-</@master>
+</@template.master>
 
 <#macro childTaxonNavigationGroupListItem designationId taxonNavigationGroup>
     <li class="nbn-designation-nested-list"><a href="/Designations/${designationId}/Species_Group/${taxonNavigationGroup.taxonGroupKey}">${taxonNavigationGroup.taxonGroupName}</a> (${taxonNavigationGroup.numSpecies} species)</li>

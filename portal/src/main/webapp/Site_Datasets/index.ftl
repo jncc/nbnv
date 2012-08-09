@@ -1,6 +1,4 @@
-<#include "/WEB-INF/templates/master.ftl">
-
-<@master title="NBN Gateway - Designation Categories">
+<@template.master title="NBN Gateway - Designation Categories">
     
     <#assign siteBoundaryCategories=json.readURL("${api}/siteBoundaryCategories")>
 
@@ -22,4 +20,4 @@
         </ul>
     </div>
 
-</@master>
+</@template.master>

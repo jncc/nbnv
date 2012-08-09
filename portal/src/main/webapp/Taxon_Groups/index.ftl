@@ -1,5 +1,3 @@
-<#include "/WEB-INF/templates/master.ftl">
-
 <#macro loadTaxonGroup taxonGroupKey>
     <#assign details=json.readURL("${api}/taxonNavigationGroups/${taxonGroupKey}")/>
     <#if details.children?has_content>
@@ -14,10 +12,10 @@
     </#if>
 </#macro>
 
-<@master title="NBN Gateway - Taxon Groups">
+<@template.master title="NBN Gateway - Taxon Groups">
     <ul class="collapsible-list">
         <#list json.readURL("${api}/taxonNavigationGroups/topLevels") as taxonGroup>
             <li><@loadTaxonGroup taxonGroupKey="${taxonGroup.taxonGroupKey}"/></li>
         </#list>
     </ul>
-</@master>
+</@template.master>

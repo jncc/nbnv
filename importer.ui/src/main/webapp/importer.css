@@ -1,0 +1,21 @@
+/* 
+    Document   : importer
+    Created on : 08-Aug-2012, 10:52:09
+    Author     : Paul Gilbertson
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+root { 
+
+}
+
+.formlabel {
+    display: inline-block;
+    width: 150px;
+}
+
+input.wide {
+    display: inline-block;
+    width: 450px;    
+}

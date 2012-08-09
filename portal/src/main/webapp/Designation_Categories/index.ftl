@@ -1,6 +1,4 @@
-<#include "/WEB-INF/templates/master.ftl">
-
-<@master title="NBN Gateway - Designation Categories">
+<@template.master title="NBN Gateway - Designation Categories">
     
     <#assign designationCategories=json.readURL("${api}/designationCategories")>
 
@@ -26,4 +24,4 @@
 
         <p class="nbn-designation-footer">All designation information on the NBN Gateway is collated and supplied by the <a href="http://www.jncc.gov.uk/page-5546">Joint Nature Conservation Committee (JNCC)</a></p>
     </div>
-</@master>
+</@template.master>

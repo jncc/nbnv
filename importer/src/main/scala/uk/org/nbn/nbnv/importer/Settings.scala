@@ -10,12 +10,12 @@ object Settings {
 
   val map = new Properties
 
-  withInputStream(this.getClass.getResourceAsStream("/settings/settings.properties")) {
+  withInputStream(this.getClass.getResourceAsStream("/settings.properties")) {
     s => map.load(s)
   }
 
   // override with server-specific file on a conventional path
-  private val overridingFile = new java.io.File("/settings/settings.properties")
+  private val overridingFile = new java.io.File("/nbnv-settings/importer/settings.properties")
 
   if (overridingFile.exists) {
     val overriding = new Properties
