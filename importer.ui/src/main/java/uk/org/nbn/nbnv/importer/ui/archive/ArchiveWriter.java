@@ -4,7 +4,6 @@
  */
 package uk.org.nbn.nbnv.importer.ui.archive;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -12,8 +11,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.zip.Deflater;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -23,7 +20,7 @@ import java.util.zip.ZipOutputStream;
  * @author Paul Gilbertson
  */
 public class ArchiveWriter {
-    public List<String> createArchive(File data, File meta, File archive) throws IOException {
+    public List<String> createArchive(File data, File meta, File metadata, File archive) throws IOException {
         List<String> errors = new ArrayList<String>();
         ZipOutputStream zout = null;
         try {
@@ -31,6 +28,7 @@ public class ArchiveWriter {
             zout.setLevel(Deflater.DEFAULT_COMPRESSION);
             addFile(zout, "meta.xml", meta);
             addFile(zout, "data.tab", data);
+            addFile(zout, "eml.xml", metadata);
         } catch (FileNotFoundException ex) {
             errors.add(ex.getMessage());
         } catch (IOException ex) {

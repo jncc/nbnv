@@ -64,6 +64,7 @@ public class MetaWriter {
             root.setAttribute("xmlns", "http://rs.tdwg.org/dwc/text/");
             root.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
             root.setAttribute("xsi:schemaLocation", "http://rs.tdwg.org/dwc/text/ http://rs.tdwg.org/dwc/text/tdwg_dwc_text.xsd");
+            root.setAttribute("metadata", "eml.xml");
             doc.appendChild(root);
             Element core = createCore(doc, root);
             Element extension = createExtension(doc, root);

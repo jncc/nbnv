@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -19,8 +20,8 @@ import org.springframework.web.servlet.ModelAndView;
 import uk.org.nbn.nbnv.importer.ui.archive.ArchiveWriter;
 import uk.org.nbn.nbnv.importer.ui.convert.ConverterStep;
 import uk.org.nbn.nbnv.importer.ui.convert.RunConversions;
-import uk.org.nbn.nbnv.importer.ui.meta.MetaWriter;
 import uk.org.nbn.nbnv.importer.ui.model.ConvertResults;
+import uk.org.nbn.nbnv.importer.ui.model.SessionData;
 
 /**
  *
@@ -29,6 +30,8 @@ import uk.org.nbn.nbnv.importer.ui.model.ConvertResults;
 @Controller
 @RequestMapping("/compile.html")
 public class ConvertController {
+    @Autowired SessionData session;
+    
     @RequestMapping(method= RequestMethod.POST)
     public ModelAndView compile(@RequestParam Map<String, String> args) {
         try {
@@ -40,11 +43,12 @@ public class ConvertController {
             File out = File.createTempFile("nbnimporter", "processed.tab");
             File meta = File.createTempFile("nbnimporter", "meta.xml");
             File archive = File.createTempFile("nbnimporter", "archive.zip");
+            File metadata = new File(session.getMetadata());
             
             List<String> errors = rc.run(out, meta, args);
             
             ArchiveWriter aw = new ArchiveWriter();
-            aw.createArchive(out, meta, archive);
+            errors.addAll(aw.createArchive(out, meta, metadata, archive));
 
             model.setArchive(archive.getAbsolutePath());
             
