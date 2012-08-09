@@ -11,6 +11,8 @@ class MetadataParser {
       .text.replace("Access Constraints:", "")
       .split("Use Constraints:")
 
+    val additionalInfoNodes = dataset \ "additionalInfo" \ "para"
+
     new Metadata {
       val datasetKey = (dataset \ "alternateIdentifier").text.trim
       val datasetTitle = (dataset \ "title").text.trim
@@ -22,6 +24,18 @@ class MetadataParser {
       val purpose = (dataset \ "purpose" \ "para").text.trim
       val dataCaptureMethod = (dataset \ "methods" \  "methodStep" \ "description" \ "para").text.trim
       val dataQuality = (dataset \ "methods" \ "qualityControl" \ "description" \ "para" ).text.trim
+      val temporalCoverage = {
+        additionalInfoNodes.find { _.text matches "Temporal Coverage:(.*)" } match {
+          case Some(tcNode) => tcNode.text.replace("Temporal Coverage:", "").trim
+          case None => ""
+        }
+      }
+      val additionalInformation = {
+        additionalInfoNodes.find { _.text matches "Additional Information:(.*)" } match {
+          case Some(aiNode) => aiNode.text.replace("Additional Information:", "").trim
+          case None => ""
+        }
+      }
     }
   }
 }

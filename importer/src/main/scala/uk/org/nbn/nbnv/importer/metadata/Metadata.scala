@@ -12,6 +12,8 @@ abstract class Metadata {
   val purpose: String
   val dataCaptureMethod: String
   val dataQuality: String
+  val temporalCoverage: String
+  val additionalInformation: String
 
   override def toString = datasetKey
 }

@@ -21,12 +21,12 @@ import org.springframework.stereotype.Service;
 public class SolrDataImporterTask {
     @Autowired SolrServer solrServer;
     
-    @Scheduled(fixedDelay=10800000)
+    /*@Scheduled(fixedDelay=10800000)
     public void executeFullDataImport() throws SolrServerException {
         ModifiableSolrParams params = new ModifiableSolrParams();
         params.set("qt", "/dataimport");
         params.set("command", "full-import");
 
         solrServer.query(params, METHOD.POST);
-    }
+    }*/
 }
