@@ -65,6 +65,7 @@
         <field name="taxonAuthority" type="string" indexed="true" stored="true"/>
         <field name="lang" type="string"/>
         <field name="navigationGroupKey" type="string" indexed="true" stored="true"/>
+        <field name="category" type="string" indexed="true" stored="true"/>
   
         <field name="designationID" type="string" indexed="true" stored="true"/>
         <field name="name" type="string" indexed="true" stored="true"/>
