@@ -4,7 +4,7 @@ import uk.org.nbn.nbnv.importer.ImportFailedException
 
 trait ControlAbstractions {
 
-  def expectSingleResult[T](identifier: String)(f: => Iterable[T]): T = {
+  def expectSingleResult[T](identifier: Any)(f: => Iterable[T]): T = {
 
     val results = f
 

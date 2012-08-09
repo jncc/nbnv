@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.poi.hwpf.HWPFDocument;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -85,11 +86,15 @@ public class MetadataController {
         messages.add("Content Type: " + uploadItem.getFileData().getContentType());
         messages.add("Storage description: " + uploadItem.getFileData().getStorageDescription());
 
+        
         try {
-            File dFile = File.createTempFile("nbnimporter", "metadata.doc");
-            messages.add("Storage location: " + dFile.getAbsolutePath());
-
-            uploadItem.getFileData().transferTo(dFile);
+            //File dFile = File.createTempFile("nbnimporter", "metadata.doc");
+            //messages.add("Storage location: " + dFile.getAbsolutePath());
+            //uploadItem.getFileData().transferTo(dFile);
+            
+            HWPFDocument doc = new HWPFDocument(uploadItem.getFileData().getInputStream());
+            messages.add("Word document parsing not implemented yet");
+            
         } catch (IOException ex) {
             messages.add("EXCEPTION: Parse exception: " + ex.getMessage());
         }

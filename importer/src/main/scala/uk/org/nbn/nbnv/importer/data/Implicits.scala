@@ -1,9 +1,26 @@
 package uk.org.nbn.nbnv.importer.data
 
-import javax.persistence.{NonUniqueResultException, TypedQuery}
+import javax.persistence.{EntityManager, NonUniqueResultException, TypedQuery}
 import scala.collection.JavaConversions._
 
-object Implicits {
+object Implicits extends ControlAbstractions {
+
+  implicit def entityManager2RichEntityManager(em: EntityManager) = new RichEntityManager(em)
+
+  class RichEntityManager(em: EntityManager) {
+
+    def findSingle[T](c: Class[T], id: Any) = {
+      expectSingleResult(id) {
+
+        val t = em.find(c, id)
+
+        if (t == null) List()
+        else List(t)
+      }
+    }
+  }
+
+  implicit def typedQuery2RichTypedQuery[T](q: TypedQuery[T]) = new RichTypedQuery[T](q)
 
   class RichTypedQuery[T](q: TypedQuery[T]) {
 
@@ -29,6 +46,4 @@ object Implicits {
         Some(results.head)
     }
   }
-
-  implicit def query2RichTypedQuery[T](q: TypedQuery[T]) = new RichTypedQuery[T](q)
 }
