@@ -83,10 +83,12 @@ class Importer(options:        Options,
   }
 
   private def withTopLevelExceptionHandling(f: => Unit) {
-    try {
-      f
-    }
+    try { f }
     catch {
+      case ie: ImportFailedException => {
+        log.error("Import run failed.", ie)
+        throw ie
+      }
       case e: Exception => {
         log.fatal("Unhandled exception!", e)
         throw e
