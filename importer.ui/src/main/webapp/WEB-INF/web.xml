@@ -28,6 +28,6 @@
     </servlet-mapping>
  
     <welcome-file-list>
-        <welcome-file>upload.html</welcome-file>
+        <welcome-file>metadata.html</welcome-file>
     </welcome-file-list>
 </web-app>

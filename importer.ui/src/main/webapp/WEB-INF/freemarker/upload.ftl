@@ -4,7 +4,7 @@
         <title>Upload Example</title>
     </head>
     <body>
-        <form method="post" enctype="multipart/form-data">
+        <form method="post" enctype="multipart/form-data" action="upload.html">
             <fieldset>
                 <legend>Upload Data</legend>
                 <p>

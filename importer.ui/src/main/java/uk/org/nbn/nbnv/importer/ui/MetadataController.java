@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
@@ -19,6 +20,7 @@ import org.springframework.web.servlet.ModelAndView;
 import uk.org.nbn.nbnv.importer.ui.metadata.MetadataWriter;
 import uk.org.nbn.nbnv.importer.ui.model.Metadata;
 import uk.org.nbn.nbnv.importer.ui.model.MetadataForm;
+import uk.org.nbn.nbnv.importer.ui.model.SessionData;
 import uk.org.nbn.nbnv.importer.ui.model.UploadItem;
 import uk.org.nbn.nbnv.importer.ui.parser.NXFParser;
 
@@ -28,7 +30,8 @@ import uk.org.nbn.nbnv.importer.ui.parser.NXFParser;
  */
 @Controller
 public class MetadataController {
-
+    @Autowired SessionData session;
+    
     @RequestMapping(value="/metadata.html", method = RequestMethod.GET)
     public ModelAndView metadata() {
         return new ModelAndView("metadataForm", "model", new MetadataForm());
@@ -51,8 +54,11 @@ public class MetadataController {
         try {
             File metadataFile = File.createTempFile("nbnimporter", "metadata.xml");
             MetadataWriter mw = new MetadataWriter(metadataFile);
+            mw.datasetToEML(metadata);
             
-            return new ModelAndView("dump", "data", org.springframework.web.util.HtmlUtils.htmlEscape(mw.datasetToEML(metadata)));
+            session.setMetadata(metadataFile.getAbsolutePath());
+            
+            return new ModelAndView("upload");
         } catch (Exception ex) {
             Logger.getLogger(MetadataController.class.getName()).log(Level.SEVERE, null, ex);
             model.getErrors().add(ex.getMessage());

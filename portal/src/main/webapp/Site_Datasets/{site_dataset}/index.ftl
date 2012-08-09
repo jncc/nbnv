@@ -1,6 +1,4 @@
-<#include "/WEB-INF/templates/master.ftl">
-
-<@master title="NBN Gateway - Designation Categories">
+<@template.master title="NBN Gateway - Site Boundaries">
 
     <#assign siteDatasetKey="${URLParameters.site_dataset}">
     <#assign siteDataset=json.readURL("${api}/siteBoundaryDatasets/${siteDatasetKey}")>
@@ -17,4 +15,4 @@
         </ul>
     </div>
 
-</@master>
+</@template.master>

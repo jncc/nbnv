@@ -5,7 +5,7 @@ import uk.org.nbn.nbnv.jpa.nbncore._
 import uk.org.nbn.nbnv.importer.utility._
 import javax.persistence.EntityManager
 import uk.org.nbn.nbnv.importer.data.{Repository, KeyGenerator}
-import uk.org.nbn.nbnv.importer.ImportException
+import uk.org.nbn.nbnv.importer.ImportFailedException
 ;
 
 class DatasetIngester(val em: EntityManager, keyGenerator: KeyGenerator, repository: Repository) {
@@ -49,7 +49,7 @@ class DatasetIngester(val em: EntityManager, keyGenerator: KeyGenerator, reposit
         td
       }
       case None => {
-        throw new ImportException("Dataset key '%s' not found.".format(metadata.datasetKey))
+        throw new ImportFailedException("Dataset key '%s' not found.".format(metadata.datasetKey))
       }
     }
   }
