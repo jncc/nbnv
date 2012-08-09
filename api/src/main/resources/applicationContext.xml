@@ -34,12 +34,7 @@
     </bean>
     
 <!--Create an embedded solr server instance-->
-    <bean id="solrCoreContainer" class="org.apache.solr.core.CoreContainer">
-        <constructor-arg type="java.lang.String" value="/solr/"/>
-        <constructor-arg type="java.io.File" value="classpath:solr/solr.xml"/>
-    </bean>
-    <bean id="solrServer" class="org.apache.solr.client.solrj.embedded.EmbeddedSolrServer">
-        <constructor-arg ref="solrCoreContainer"/>
-        <constructor-arg value="collection1"/>
+    <bean id="solrServer" class="org.apache.solr.client.solrj.impl.CommonsHttpSolrServer">
+        <constructor-arg value="http://staging.testnbn.net/solr"/>
     </bean>
 </beans>

@@ -30,7 +30,7 @@ public class TaxonResource {
         SolrQuery query = new SolrQuery();
         query.setQuery(q);
         query.setFacet(true);
-        query.addFacetField("category");
+        query.addFacetField("category", "lang");
         query.setRows(rows);
         query.setStart(start);
         return new SolrResponse(solrServer.query(query));
