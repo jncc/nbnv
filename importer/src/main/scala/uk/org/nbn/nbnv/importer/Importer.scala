@@ -46,8 +46,9 @@ object Importer {
                               new DatasetIngester(em, new KeyGenerator(new Repository(em)), new Repository(em)),
                               new RecordIngester(log,
                                                  em,
-                                                 new SurveyIngester(em),
+                                                 new SurveyIngester(em, new Repository(em)),
                                                  new SampleIngester(em),
+                                                 new RecorderIngester(em, new Repository(em)),
                                                  new Repository(em)
                               )))
   }

@@ -11,6 +11,7 @@
                        em: EntityManager,
                        surveyIngester: SurveyIngester,
                        sampleIngester: SampleIngester,
+                       recorderIngester: RecorderIngester,
                        r:     Repository) {
 
     def upsertRecord(record: NbnRecord, dataset: TaxonDataset) {
@@ -32,8 +33,8 @@
       val taxon = r.getTaxon(record.taxonVersionKey)
       val dateType = r.getDateType(record.dateType)
 
-      val determiner = ensureRecorder(record.determiner)
-      val recorder = ensureRecorder(record.recorder)
+      val determiner = recorderIngester.ensureRecorder(record.determiner)
+      val recorder = recorderIngester.ensureRecorder(record.recorder)
 
     // now we've got the  related entities, we can upsert the actual record
     val o = new TaxonObservation()
@@ -55,14 +56,4 @@
     em.merge(o)
   }
 
-    def ensureRecorder(name: String) = {
-      r.getFirstRecorder(name) match {
-        case Some(recorder) => recorder
-        case _ => {
-          new Recorder
-          // todo: insert recorder
-          // todo: will inserting a recorder mean it's available in subsequent queries? probably not!
-        }
-      }
-    }
 }
