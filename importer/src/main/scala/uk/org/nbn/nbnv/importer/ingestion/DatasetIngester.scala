@@ -73,6 +73,8 @@ class DatasetIngester(val em: EntityManager, keyGenerator: KeyGenerator, reposit
     d.setPurpose(m.purpose)
     d.setUseConstraints(m.useConstraints)
     d.setUpdateFrequency(datasetUpdateFrequency)
+    d.setAdditionalInformation(m.additionalInformation)
+    d.setTemporalCoverage(m.temporalCoverage)
     d
   }
 
