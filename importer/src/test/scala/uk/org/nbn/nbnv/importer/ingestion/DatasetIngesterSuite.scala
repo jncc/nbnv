@@ -6,7 +6,8 @@ import javax.persistence.EntityManager
 import uk.org.nbn.nbnv.jpa.nbncore.{Dataset, TaxonDataset}
 import uk.org.nbn.nbnv.metadata.Metadata
 import uk.org.nbn.nbnv.importer.testing.BaseFunSuite
-import uk.org.nbn.nbnv.importer.data.{OrganisationRepository, KeyGenerator}
+import uk.org.nbn.nbnv.importer.data.{Repository, KeyGenerator}
+import org.mockito.Mockito
 
 class DatasetIngesterSuite extends BaseFunSuite {
 
@@ -14,7 +15,9 @@ class DatasetIngesterSuite extends BaseFunSuite {
 
     // arrange
     val key = "existing-dataset-key"
-    val metadata = buildFakeMetadata(key)
+
+    val metadata = mock[Metadata]
+    when(metadata.datasetKey) thenReturn key
 
     val dataset = mock[Dataset]
     val taxonDataset = mock[TaxonDataset]
@@ -24,10 +27,10 @@ class DatasetIngesterSuite extends BaseFunSuite {
     when(em.find(classOf[TaxonDataset], key)).thenReturn(taxonDataset)
 
     val keyGenerator = mock[KeyGenerator]
-    val organisationRepository = mock[OrganisationRepository]
+    val repository = mock[Repository]
 
     // act
-    val ingester = new DatasetIngester(em, keyGenerator, organisationRepository)
+    val ingester = new DatasetIngester(em, keyGenerator, repository)
     val result = ingester.upsertDataset(metadata)
 
     // assert - that the entity manager was not called with the retrieved dataset
@@ -40,17 +43,20 @@ class DatasetIngesterSuite extends BaseFunSuite {
 
     // arrange
     val key = "new-dataset-key"
-    val metadata = buildFakeMetadata(key)
+    val metadata = mock[Metadata]
+    when(metadata.datasetKey) thenReturn key
+
     val em = mock[EntityManager]
     when(em.find(classOf[TaxonDataset], key)).thenReturn(null)
+
     val dataset = mock[Dataset]
     when(em.merge(any(classOf[Dataset]))).thenReturn(dataset)
 
     val keyGenerator = mock[KeyGenerator]
-    val organisationRepository = mock[OrganisationRepository]
+    val repository = mock[Repository]
 
     // act
-    val ingester = new DatasetIngester(em, keyGenerator, organisationRepository)
+    val ingester = new DatasetIngester(em, keyGenerator, repository)
     val taxonDataset = ingester.upsertDataset(metadata)
 
     //verify that setDataset is called against the new taxondataset enity with a dataset
@@ -60,21 +66,5 @@ class DatasetIngesterSuite extends BaseFunSuite {
 
     // assert - that the entity manager was called with a dataset
     verify(em).persist(any(classOf[TaxonDataset])) // would be better to verify that it's called with some dataset with key=key
-  }
-
-
-  def buildFakeMetadata(key: String) = {
-    new Metadata {
-      val datasetKey: String = key
-      val datasetProviderName = "Some wacky provider name"
-      val accessConstraints: String = ""
-      val geographicCoverage: String = ""
-      val useConstraints: String = ""
-      val description: String = ""
-      val datasetTitle: String = ""
-      val dataCaptureMethod: String = ""
-      val dataQuality: String = ""
-      val purpose: String = ""
-    }
   }
 }

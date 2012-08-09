@@ -1,9 +1,9 @@
 <@template.error title="National Biodiversity Network Gateway - Web services offline">
-	<@markdown>
+    <@markdown>
 #NBN Gateway Data Services Offline
 
 The NBN Gateway data services are currently offline. 
 A developer has been contacted to fix this. Please check 
 back shortly.
-	</@markdown>
+    </@markdown>
 </@template.error>

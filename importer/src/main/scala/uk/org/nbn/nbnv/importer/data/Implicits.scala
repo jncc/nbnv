@@ -18,6 +18,16 @@ object Implicits {
       else
         throw new NonUniqueResultException("The sequence contains more than one element.")
     }
+
+    def getFirstOrNone : Option[T] = {
+
+      val results = q.setMaxResults(1).getResultList
+
+      if (results.isEmpty)
+        None
+      else
+        Some(results.head)
+    }
   }
 
   implicit def query2RichTypedQuery[T](q: TypedQuery[T]) = new RichTypedQuery[T](q)

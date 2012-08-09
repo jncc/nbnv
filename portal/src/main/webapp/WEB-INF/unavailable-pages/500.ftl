@@ -1,5 +1,5 @@
 <@template.error title="National Biodiversity Network Gateway - Internal Server Error">
-	<@markdown>
+    <@markdown>
 #D'oh. Something went wrong.
 
 Integer nec odio. 
@@ -10,5 +10,5 @@ aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos
 himenaeos. Curabitur sodales ligula in libero.
 
 [Please click to go back to the NBN Gateway](/)
-	</@markdown>
+    </@markdown>
 </@template.error>
