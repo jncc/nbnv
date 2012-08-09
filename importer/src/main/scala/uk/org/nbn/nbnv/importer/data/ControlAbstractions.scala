@@ -1,6 +1,6 @@
 package uk.org.nbn.nbnv.importer.data
 
-import uk.org.nbn.nbnv.importer.ImportException
+import uk.org.nbn.nbnv.importer.ImportFailedException
 
 trait ControlAbstractions {
 
@@ -9,13 +9,13 @@ trait ControlAbstractions {
     val results = f
 
     if (results.isEmpty) {
-      throw new ImportException("Expected one result for '%s', but found none.".format(identifier))
+      throw new ImportFailedException("Expected one result for '%s', but found none.".format(identifier))
     }
     else if (results.size == 1) {
       results.head
     }
     else {
-      throw new ImportException("Expected one result for '%s', but found %d.".format(identifier, results.size))
+      throw new ImportFailedException("Expected one result for '%s', but found %d.".format(identifier, results.size))
     }
   }
 
