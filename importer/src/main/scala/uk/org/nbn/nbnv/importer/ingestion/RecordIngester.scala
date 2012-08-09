@@ -1,38 +1,39 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 
-package uk.org.nbn.nbnv.importer.ingestion
+  package uk.org.nbn.nbnv.importer.ingestion
 
-import uk.org.nbn.nbnv.jpa.nbncore._
-import javax.persistence.EntityManager
-import org.apache.log4j.Logger
-import uk.org.nbn.nbnv.importer.records.NbnRecord
-import uk.org.nbn.nbnv.importer.data.Repository
+  import uk.org.nbn.nbnv.jpa.nbncore._
+  import javax.persistence.EntityManager
+  import org.apache.log4j.Logger
+  import uk.org.nbn.nbnv.importer.records.NbnRecord
+  import uk.org.nbn.nbnv.importer.data.Repository
 
-class RecordIngester(log: Logger, em: EntityManager, surveyIngester: SurveyIngester, sampleIngester: SampleIngester, repository: Repository) {
+  class RecordIngester(log:            Logger,
+                       em: EntityManager,
+                       surveyIngester: SurveyIngester,
+                       sampleIngester: SampleIngester,
+                       r:     Repository) {
 
-  def upsertRecord(record: NbnRecord, dataset: TaxonDataset) {
+    def upsertRecord(record: NbnRecord, dataset: TaxonDataset) {
 
-    log.info("Upserting record %s".format(record.key))
+      log.info("Upserting record %s".format(record.key))
 
-    // todo: get existing if it's there
+      // todo: get existing if it's there
+      //    val record = r.getTaxonObservation()
 
-    val survey = surveyIngester.upsertSurvey(record.surveyKey, dataset)
-    val sample = sampleIngester.upsertSample(record.sampleKey, survey)
+      val survey = surveyIngester.upsertSurvey(record.surveyKey, dataset)
+      val sample = sampleIngester.upsertSample(record.sampleKey, survey)
 
-    // sites are a bit up in the air - assume it already exists for now
-    val site = repository.getSite(record.siteKey)
+      // assume site already exists until spec clarified
+      val site = r.getSite(record.siteKey)
 
-    // todo: taxonobservation needs a feature, but what is a feature? we've forgotten
-    val feature = em.find(classOf[Feature], 1)
-    val taxon = em.getReference(classOf[Taxon], record.taxonVersionKey)
-    val dateType = em.getReference(classOf[DateType], record.dateType)
+      // todo: TaxonObservation needs a feature, but what is a feature? we've forgotten
+      val feature = r.getFeature(1)
 
-    // todo: look up by value
-    val determiner = em.find(classOf[Recorder], 1)
-    val recorder = em.find(classOf[Recorder], 1)
+      val taxon = r.getTaxon(record.taxonVersionKey)
+      val dateType = r.getDateType(record.dateType)
+
+      val determiner = ensureRecorder(record.determiner)
+      val recorder = ensureRecorder(record.recorder)
 
     // now we've got the  related entities, we can upsert the actual record
     val o = new TaxonObservation()
@@ -53,4 +54,15 @@ class RecordIngester(log: Logger, em: EntityManager, surveyIngester: SurveyInges
 
     em.merge(o)
   }
+
+    def ensureRecorder(name: String) = {
+      r.getFirstRecorder(name) match {
+        case Some(recorder) => recorder
+        case _ => {
+          new Recorder
+          // todo: insert recorder
+          // todo: will inserting a recorder mean it's available in subsequent queries? probably not!
+        }
+      }
+    }
 }

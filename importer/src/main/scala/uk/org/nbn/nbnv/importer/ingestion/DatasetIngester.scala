@@ -56,7 +56,7 @@ class DatasetIngester(val em: EntityManager, keyGenerator: KeyGenerator, reposit
 
   private def modifyDataset(d: Dataset, m: Metadata) = {
 
-    val provider = repository.getOrganisation(m.datasetProviderName)
+    val provider = ensureOrganisation(m.datasetProviderName)
     val datasetUpdateFrequency = em.getReference(classOf[DatasetUpdateFrequency], "012")
     val datasetType = em.getReference(classOf[DatasetType], 'T')
 
@@ -78,7 +78,7 @@ class DatasetIngester(val em: EntityManager, keyGenerator: KeyGenerator, reposit
     d
   }
 
-  private def modifyTaxonDataset(td: TaxonDataset, m: Metadata) = {
+  private def modifyTaxonDataset(td: TaxonDataset, m: Metadata) {
 
     val resolution = em.getReference(classOf[Resolution], 1.toShort)
     td.setPublicResolution(resolution) // column will be deleted
@@ -87,5 +87,15 @@ class DatasetIngester(val em: EntityManager, keyGenerator: KeyGenerator, reposit
     // default .. to be read from extra metadata.
     // ...could be more columns like this
     td.setAllowRecordValidation(true)
+  }
+
+  def ensureOrganisation(name: String) = {
+    repository.getOrganisation(name) match {
+      case Some(organisation) => organisation
+      case _ => {
+        // todo create new
+        new Organisation
+      }
+    }
   }
 }
