@@ -4,7 +4,7 @@ import java.util.Date;
 
 public class SiteBoundaryDataset {
     
-    private String datasetkey;
+    private String datasetKey;
     private String name;
     private String description;
     private Date dateUploaded;
@@ -19,7 +19,7 @@ public class SiteBoundaryDataset {
 
     public SiteBoundaryDataset(String datasetKey, String name, String description, Date dateUploaded, String provider, int providerID, String siteBoundaryCategoryName, int siteBoundaryCategoryID, String geoLayerName, String nameField){
         super();
-        this.datasetkey = datasetKey;
+        this.datasetKey = datasetKey;
         this.name = name;
         this.description = description;
         this.dateUploaded = dateUploaded;
@@ -31,12 +31,12 @@ public class SiteBoundaryDataset {
         this.nameField = nameField;
     }
 
-    public String getDatasetkey() {
-        return datasetkey;
+    public String getDatasetKey() {
+        return datasetKey;
     }
 
-    public void setDatasetkey(String datasetkey) {
-        this.datasetkey = datasetkey;
+    public void setDatasetKey(String datasetKey) {
+        this.datasetKey = datasetKey;
     }
 
     public String getName() {
