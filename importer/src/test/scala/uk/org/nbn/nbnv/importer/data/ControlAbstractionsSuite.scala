@@ -1,7 +1,7 @@
 package uk.org.nbn.nbnv.importer.data
 
 import uk.org.nbn.nbnv.importer.testing.BaseFunSpec
-import uk.org.nbn.nbnv.importer.ImportException
+import uk.org.nbn.nbnv.importer.ImportFailedException
 
 class ControlAbstractionsSuite extends BaseFunSpec with ControlAbstractions {
 
@@ -18,7 +18,7 @@ class ControlAbstractionsSuite extends BaseFunSpec with ControlAbstractions {
 
     it("should throw an exception when there are no results") {
 
-      val ex = intercept[ImportException] {
+      val ex = intercept[ImportFailedException] {
 
         expectSingleResult("some-id") {
           List() // an empty list
@@ -30,7 +30,7 @@ class ControlAbstractionsSuite extends BaseFunSpec with ControlAbstractions {
 
     it("should throw an exception when there are more than one results") {
 
-      val ex = intercept[ImportException] {
+      val ex = intercept[ImportFailedException] {
 
         expectSingleResult("some-id") {
           List("item 1", "item 2", "item 3")
