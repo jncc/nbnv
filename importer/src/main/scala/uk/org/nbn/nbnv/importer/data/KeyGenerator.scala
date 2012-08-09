@@ -1,6 +1,6 @@
 package uk.org.nbn.nbnv.importer.data
 
-class KeyGenerator(repository: TaxonDatasetRepository) {
+class KeyGenerator(repository: Repository) {
 
   def nextTaxonDatasetKey = {
 

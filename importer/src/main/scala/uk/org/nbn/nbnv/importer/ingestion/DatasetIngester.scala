@@ -4,11 +4,11 @@ import uk.org.nbn.nbnv.metadata.Metadata
 import uk.org.nbn.nbnv.jpa.nbncore._
 import uk.org.nbn.nbnv.importer.utility._
 import javax.persistence.EntityManager
-import uk.org.nbn.nbnv.importer.data.{OrganisationRepository, KeyGenerator}
+import uk.org.nbn.nbnv.importer.data.{Repository, KeyGenerator}
 import uk.org.nbn.nbnv.importer.ImportException
 ;
 
-class DatasetIngester(val em: EntityManager, keyGenerator: KeyGenerator, organisationRepository: OrganisationRepository) {
+class DatasetIngester(val em: EntityManager, keyGenerator: KeyGenerator, repository: Repository) {
 
   def upsertDataset(metadata: Metadata): TaxonDataset = {
 
@@ -56,7 +56,7 @@ class DatasetIngester(val em: EntityManager, keyGenerator: KeyGenerator, organis
 
   private def modifyDataset(d: Dataset, m: Metadata) = {
 
-    val provider = organisationRepository.getOrganisation(m.datasetProviderName)
+    val provider = repository.getOrganisation(m.datasetProviderName)
     val datasetUpdateFrequency = em.getReference(classOf[DatasetUpdateFrequency], "012")
     val datasetType = em.getReference(classOf[DatasetType], 'T')
 

@@ -39,6 +39,32 @@ class Dependee @Inject() (dependent: Dependent, val singleton: SingletonDependen
   def bar(n: Int) = dependent.foo(n) + n
 }
 
+// ---
+
+//class User
+//
+//
+//trait UserRepositoryComponent {
+//  val userRepository = new UserRepository
+//  class UserRepository {
+//    def auth(user: User) = {
+//      // authenticating...
+//      user
+//    }
+//  }
+//
+//}
+//
+//trait UserServiceComponent { this: UserRepositoryComponent =>
+//  val userService = new UserService
+//  class UserService {
+//    def authenticate(username: String) = {
+//      userRepository.auth(username)
+//    }
+//  }
+//
+//}
+
 
 
 

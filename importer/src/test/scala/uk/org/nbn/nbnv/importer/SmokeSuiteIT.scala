@@ -1,6 +1,6 @@
 package uk.org.nbn.nbnv.importer
 
-import data.{TaxonDatasetRepository, KeyGenerator}
+import data.{Repository, KeyGenerator}
 import testing.BaseFunSuite
 import utility.ResourceLoader
 import uk.org.nbn.nbnv.PersistenceUtility
@@ -14,7 +14,7 @@ class SmokeSuiteIT extends BaseFunSuite with ResourceLoader {
   test("should be able to get next dataset key") {
 
     val em = new PersistenceUtility().createEntityManagerFactory(Settings.map).createEntityManager
-    val dr = new TaxonDatasetRepository(em)
+    val dr = new Repository(em)
     val kg = new KeyGenerator(dr)
 
     val key = kg.nextTaxonDatasetKey
@@ -23,7 +23,7 @@ class SmokeSuiteIT extends BaseFunSuite with ResourceLoader {
     key should have length 8
   }
 
-  ignore("should import a valid archive") {
+  test("should import a valid archive") {
 
     val tempDir = ".\\temp"
     new File(tempDir).mkdirs()
