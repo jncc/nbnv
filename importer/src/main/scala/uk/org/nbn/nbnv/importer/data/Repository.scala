@@ -2,7 +2,6 @@ package uk.org.nbn.nbnv.importer.data
 
 import javax.persistence.EntityManager
 import uk.org.nbn.nbnv.jpa.nbncore._
-import scala.collection.JavaConversions._
 import uk.org.nbn.nbnv.importer.data.Implicits._
 
 class Repository(em: EntityManager) extends ControlAbstractions {
