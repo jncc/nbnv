@@ -68,7 +68,6 @@ public class SolrResponse {
         }
         
         public SubCategoryFacet getSubCategory(String path) {
-            System.out.println(path);
             String currSubCategoryName = path.split(">")[0];
             if(!subCategories.containsKey(currSubCategoryName)) {
                 subCategories.put(currSubCategoryName, new SubCategoryFacet());
