@@ -17,5 +17,7 @@ class MetadataParserSuite extends BaseFunSuite {
     result.dataQuality should be("Test Quality")
     result.purpose should be("Test purpose")
     result.useConstraints should be("Test Use Constraints")
+    result.temporalCoverage should be ("Test temporal coverage")
+    result.additionalInformation should be ("Test additional info")
   }
 }
