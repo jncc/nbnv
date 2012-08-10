@@ -85,6 +85,7 @@ public class JSONReaderForFreeMarker {
         Object value = entry.getValue();
         if(value instanceof List) {
             for(String currValue : (List<String>)value) {
+                toWriteTo.write("&"); //seperator others
                 writeParameter(entry.getKey(), currValue, toWriteTo);
             }
         }

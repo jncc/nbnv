@@ -8,6 +8,7 @@ import uk.org.nbn.nbnv.metadata.Metadata
 import uk.org.nbn.nbnv.importer.testing.BaseFunSuite
 import uk.org.nbn.nbnv.importer.data.{Repository, KeyGenerator}
 import org.mockito.Mockito
+import org.apache.log4j.Logger
 
 class DatasetIngesterSuite extends BaseFunSuite {
 
@@ -32,7 +33,7 @@ class DatasetIngesterSuite extends BaseFunSuite {
     val organisationIngester = mock[OrganisationIngester]
 
     // act
-    val ingester = new DatasetIngester(em, keyGenerator, repository, organisationIngester)
+    val ingester = new DatasetIngester(mock[Logger], em, keyGenerator, repository, organisationIngester)
     val result = ingester.upsertDataset(metadata)
 
     // assert - that the entity manager was not called with the retrieved dataset
@@ -60,7 +61,7 @@ class DatasetIngesterSuite extends BaseFunSuite {
     val organisationIngester = mock[OrganisationIngester]
 
     // act
-    val ingester = new DatasetIngester(em, keyGenerator, repository, organisationIngester)
+    val ingester = new DatasetIngester(mock[Logger], em, keyGenerator, repository, organisationIngester)
     val taxonDataset = ingester.upsertDataset(metadata)
 
     //verify that setDataset is called against the new taxondataset enity with a dataset

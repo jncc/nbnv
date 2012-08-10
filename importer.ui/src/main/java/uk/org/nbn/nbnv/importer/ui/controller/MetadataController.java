@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package uk.org.nbn.nbnv.importer.ui;
+package uk.org.nbn.nbnv.importer.ui.controller;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -23,7 +25,8 @@ import uk.org.nbn.nbnv.importer.ui.model.Metadata;
 import uk.org.nbn.nbnv.importer.ui.model.MetadataForm;
 import uk.org.nbn.nbnv.importer.ui.model.SessionData;
 import uk.org.nbn.nbnv.importer.ui.model.UploadItem;
-import uk.org.nbn.nbnv.importer.ui.parser.NXFParser;
+import uk.org.nbn.nbnv.importer.ui.util.DatabaseConnection;
+import uk.org.nbn.nbnv.jpa.nbncore.Organisation;
 
 /**
  *
@@ -35,13 +38,16 @@ public class MetadataController {
     
     @RequestMapping(value="/metadata.html", method = RequestMethod.GET)
     public ModelAndView metadata() {
-        return new ModelAndView("metadataForm", "model", new MetadataForm());
+        MetadataForm model = new MetadataForm();
+        model.setOrganisationList(getOrgList());
+        return new ModelAndView("metadataForm", "model", model);
     }
 
     @RequestMapping(value="/metadataProcess.html", method = RequestMethod.POST)
     public ModelAndView uploadFile(Metadata metadata, BindingResult result) {
         MetadataForm model = new MetadataForm();
         model.setMetadata(metadata);
+        model.setOrganisationList(getOrgList());
 
         if (result.hasErrors()) {
             for (ObjectError error : result.getAllErrors()) {
@@ -71,6 +77,7 @@ public class MetadataController {
     @RequestMapping(value="/metadata.html", method = RequestMethod.POST)
     public ModelAndView uploadFile(UploadItem uploadItem, BindingResult result) {
         MetadataForm model = new MetadataForm();
+        model.setOrganisationList(getOrgList());
 
         if (result.hasErrors()) {
             for (ObjectError error : result.getAllErrors()) {
@@ -100,5 +107,12 @@ public class MetadataController {
         }
 
         return new ModelAndView("debug", "messages", messages);
+    }
+    
+    private List<Organisation> getOrgList() {
+        EntityManager em = DatabaseConnection.getInstance().createEntityManager();
+        
+        Query q = em.createNamedQuery("Organisation.findAll");
+        return q.getResultList();
     }
 }

@@ -32,10 +32,8 @@ public class TaxonResource {
         SolrQuery query = new SolrQuery();
         query.setQuery((q==null) ? "*:*" : q);
         query.setFacet(true);
-        for(String filter : queryFilter) {
-            query.addFilterQuery(filter);
-            System.out.println(filter);
-        }
+        System.out.println(queryFilter);
+        query.setFilterQueries(queryFilter.toArray(new String[0]));
         query.addFacetField("category", "lang");
         if(sort!=null) {
             query.setSortField(sort, SolrQuery.ORDER.asc);
