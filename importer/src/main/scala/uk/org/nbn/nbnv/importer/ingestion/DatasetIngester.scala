@@ -5,7 +5,6 @@ import uk.org.nbn.nbnv.jpa.nbncore._
 import uk.org.nbn.nbnv.importer.utility._
 import javax.persistence.EntityManager
 import uk.org.nbn.nbnv.importer.data.{Repository, KeyGenerator}
-import uk.org.nbn.nbnv.importer.ImportFailedException
 ;
 
 class DatasetIngester(val em: EntityManager, keyGenerator: KeyGenerator, repository: Repository) {
@@ -21,7 +20,8 @@ class DatasetIngester(val em: EntityManager, keyGenerator: KeyGenerator, reposit
     if (metadata.datasetKey.isEmpty)
       insertNew(metadata)
     else
-      updateExisting(metadata)  }
+      updateExisting(metadata)
+  }
 
   private def insertNew(metadata: Metadata) = {
     // generate a new key and a new dataset
@@ -39,19 +39,11 @@ class DatasetIngester(val em: EntityManager, keyGenerator: KeyGenerator, reposit
 
   private def updateExisting(metadata: Metadata) = {
 
-    val taxonDataset = Option(em.find(classOf[TaxonDataset], metadata.datasetKey))
-
-    taxonDataset match {
-      case Some(td) => {
-        modifyTaxonDataset(td, metadata)
-        val d = td.getDataset
-        modifyDataset(d, metadata)
-        td
-      }
-      case None => {
-        throw new ImportFailedException("Dataset key '%s' not found.".format(metadata.datasetKey))
-      }
-    }
+    val td = repository.getTaxonDataset(metadata.datasetKey)
+    modifyTaxonDataset(td, metadata)
+    val d = td.getDataset
+    modifyDataset(d, metadata)
+    td
   }
 
   private def modifyDataset(d: Dataset, m: Metadata) = {

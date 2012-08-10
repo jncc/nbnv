@@ -21,7 +21,9 @@ class Repository(em: EntityManager) extends ControlAbstractions {
 
   def getTaxon(key: String) = em.findSingle(classOf[Taxon], key)
 
-  def getOrganisation(name: String) = {
+  def getTaxonDataset(key: String) = em.findSingle(classOf[TaxonDataset], key)
+
+  def getOrganisation(name: String): Option[Organisation] = {
 
     val q = "select o from Organisation o where o.organisationName = :name "
 
