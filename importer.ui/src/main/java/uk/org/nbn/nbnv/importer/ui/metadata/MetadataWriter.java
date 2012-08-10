@@ -13,6 +13,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import javax.persistence.EntityManager;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
@@ -23,6 +24,8 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import uk.org.nbn.nbnv.importer.ui.model.Metadata;
+import uk.org.nbn.nbnv.importer.ui.util.DatabaseConnection;
+import uk.org.nbn.nbnv.jpa.nbncore.Organisation;
 
 public class MetadataWriter {
     private File metadata;
@@ -64,7 +67,7 @@ public class MetadataWriter {
         title.setTextContent(ds.getTitle());
         dataset.appendChild(title);
 
-        //dataset.appendChild(createCreatorNode(doc, ds));
+        dataset.appendChild(createCreatorNode(doc, ds));
         dataset.appendChild(createMetadataProviderNode(doc));
 
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
@@ -106,19 +109,22 @@ public class MetadataWriter {
         return para;
     }
 
-    /*
-    private static Element createCreatorNode(Document doc, Dataset ds) {
+    
+    private Element createCreatorNode(Document doc, Metadata ds) {
+        EntityManager em = DatabaseConnection.getInstance().createEntityManager();
+        Organisation org = em.find(Organisation.class, ds.getOrganisationID());
+        
         Element creator = doc.createElement("creator");
         Element organisation = doc.createElement("organizationName");
-        organisation.setTextContent(ds.providingOrganisation);
+        organisation.setTextContent(org.getOrganisationName());
         creator.appendChild(organisation);
         Element email = doc.createElement("electronicMailAddress");
-        email.setTextContent(ds.admin.emailAddress);
+        email.setTextContent(org.getContactEmail());
         creator.appendChild(email);
 
         return creator;
     }
-    */
+    
     private Element createMetadataProviderNode(Document doc) {
         Element creator = doc.createElement("metadataProvider");
 

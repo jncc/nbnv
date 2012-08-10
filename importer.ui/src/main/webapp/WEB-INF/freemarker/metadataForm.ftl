@@ -35,6 +35,16 @@
                     <span class="formfield"><input class="wide" path="metadata" type="text" id="title" name="title" length="200" value="${model.metadata.title}"/></span>
                 </p>
                 <p>
+                    <span class="formlabel"><label for="organisationID" path="metadata">Organisation</label></span>
+                    <span class="formfield">
+                        <select path="metadata" name="organisationID" id="organisationID">
+                            <#list model.organisationList as org>
+                                <option value="${org.organisationID}" <#if model.metadata.organisationID==org.organisationID>selected="selected"</#if>>${org.organisationName}</option>
+                            </#list>
+                        </select>
+                    </span>
+                </p>
+                <p>
                     <span class="formlabel"><label for="description" path="metadata">Description</label></span>
                     <span class="formfield"><textarea class="wide" path="metadata" id="description" name="description" rows="6" cols="60">${model.metadata.description}</textarea></span>
                 </p>

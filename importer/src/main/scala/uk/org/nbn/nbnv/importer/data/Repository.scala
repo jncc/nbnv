@@ -14,7 +14,6 @@ class Repository(em: EntityManager) extends ControlAbstractions {
     query.getSingleOrNone
   }
 
-
   def getDateType(t: String) = em.findSingle(classOf[DateType], t)
 
   def getFeature(id: Int) = em.findSingle(classOf[Feature], id)
@@ -22,6 +21,14 @@ class Repository(em: EntityManager) extends ControlAbstractions {
   def getTaxon(key: String) = em.findSingle(classOf[Taxon], key)
 
   def getTaxonDataset(key: String) = em.findSingle(classOf[TaxonDataset], key)
+
+  def getTaxonObservation(key: String): Option[TaxonObservation] = {
+
+    val q = "select o from TaxonObservation o where o.observationKey = :key "
+
+    val query = em.createQuery(q, classOf[TaxonObservation])
+    query.setParameter("key", key).getSingleOrNone
+  }
 
   def getOrganisation(name: String): Option[Organisation] = {
 

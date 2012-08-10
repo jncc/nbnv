@@ -45,7 +45,7 @@ object Importer {
                  new MetadataReader(new FileSystem, new MetadataParser),
                  new Ingester(options,
                               em,
-                              new DatasetIngester(em, new KeyGenerator(repo), repo, new OrganisationIngester(repo)),
+                              new DatasetIngester(log, em, new KeyGenerator(repo), repo, new OrganisationIngester(repo)),
                               new RecordIngester(log,
                                                  em,
                                                  new SurveyIngester(em, repo),

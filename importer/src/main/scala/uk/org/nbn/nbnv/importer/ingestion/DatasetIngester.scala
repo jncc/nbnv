@@ -5,9 +5,10 @@ import uk.org.nbn.nbnv.jpa.nbncore._
 import uk.org.nbn.nbnv.importer.utility._
 import javax.persistence.EntityManager
 import uk.org.nbn.nbnv.importer.data.{Repository, KeyGenerator}
-;
+import org.apache.log4j.Logger
 
-class DatasetIngester(em: EntityManager,
+class DatasetIngester(log: Logger,
+                      em: EntityManager,
                       keyGenerator: KeyGenerator,
                       repository: Repository,
                       organisationIngester: OrganisationIngester) {
@@ -26,20 +27,28 @@ class DatasetIngester(em: EntityManager,
   }
 
   private def insertNew(metadata: Metadata) = {
+
     // generate a new key and a new dataset
     val key = keyGenerator.nextTaxonDatasetKey
+
+    log.info("Inserting new dataset " + key)
+
     val d = new Dataset(key)
     modifyDataset(d, metadata)
     em.persist(d)
+
     // deal with the table-per-class inheritance model (TaxonDataset has-a Dataset)
     val td = new TaxonDataset(key)
     td.setDataset(d)
     modifyTaxonDataset(td, metadata)
     em.persist(td)
+
     td
   }
 
   private def updateExisting(metadata: Metadata) = {
+
+    log.info("Updating existing dataset " + metadata.datasetKey)
 
     val td = repository.getTaxonDataset(metadata.datasetKey)
     modifyTaxonDataset(td, metadata)

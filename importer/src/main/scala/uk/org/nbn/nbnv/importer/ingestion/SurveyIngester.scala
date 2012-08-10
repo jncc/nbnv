@@ -10,16 +10,19 @@ class SurveyIngester(entityManager: EntityManager, repository: Repository) {
 
   def upsertSurvey(surveyKey: String, dataset: TaxonDataset): Survey = {
 
+    val key = if (surveyKey == "") "1" else surveyKey
+
     def update(s: Survey) {
-      s.setSurveyKey(surveyKey)
-      s.setTitle(surveyKey)
+      s.setSurveyKey(key)
+      s.setTitle(key)
       s.setDatasetKey(dataset)
     }
 
-    val survey = repository.getSurvey(surveyKey, dataset)
+    val survey = repository.getSurvey(key, dataset)
 
     survey match {
       case Some(s) => {
+        // todo: do we need to update?
         update(s)
         s
       }
