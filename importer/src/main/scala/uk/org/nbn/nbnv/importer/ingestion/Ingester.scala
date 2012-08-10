@@ -5,10 +5,12 @@ import javax.persistence.{EntityTransaction, EntityManager}
 import uk.org.nbn.nbnv.importer.records.NbnRecord
 import org.gbif.dwc.text.Archive
 import uk.org.nbn.nbnv.metadata.Metadata
+import uk.org.nbn.nbnv.importer.Options
 
 /// Performs the interaction with the NBN core database.
 
-class Ingester(em: EntityManager,
+class Ingester(options: Options,
+               em: EntityManager,
                datasetIngester: DatasetIngester,
                recordIngester: RecordIngester) {
 
@@ -31,7 +33,10 @@ class Ingester(em: EntityManager,
         // todo: set no caching for records?
       }
 
-      t.commit()
+      if (options.whatIf)
+        t.rollback()
+      else
+        t.commit()
     }
   }
 

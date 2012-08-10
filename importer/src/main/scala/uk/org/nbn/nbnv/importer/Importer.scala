@@ -42,12 +42,14 @@ object Importer {
                  log,
                  new ArchiveManager(options),
                  new MetadataReader(new FileSystem, new MetadataParser),
-                 new Ingester(em,
+                 new Ingester(options,
+                              em,
                               new DatasetIngester(em, new KeyGenerator(new Repository(em)), new Repository(em)),
                               new RecordIngester(log,
                                                  em,
-                                                 new SurveyIngester(em),
+                                                 new SurveyIngester(em, new Repository(em)),
                                                  new SampleIngester(em),
+                                                 new RecorderIngester(em, new Repository(em)),
                                                  new Repository(em)
                               )))
   }

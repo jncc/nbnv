@@ -25,6 +25,7 @@ public class Recorder implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name = "recorderID")
     private Integer recorderID;
     @Basic(optional = false)

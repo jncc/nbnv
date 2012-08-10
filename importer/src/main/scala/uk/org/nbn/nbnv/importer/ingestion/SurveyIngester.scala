@@ -1,34 +1,34 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 
 package uk.org.nbn.nbnv.importer.ingestion
 
 import uk.org.nbn.nbnv.jpa.nbncore._
-import javax.persistence.EntityManager;
+import javax.persistence.EntityManager
+import uk.org.nbn.nbnv.importer.data.Repository
+;
 
-class SurveyIngester(entityManager: EntityManager) {
+class SurveyIngester(entityManager: EntityManager, repository: Repository) {
+
   def upsertSurvey(surveyKey: String, dataset: TaxonDataset): Survey = {
 
-    //todo: Generate surveyKey if blank
-
-    val surveyQuery = entityManager.createQuery("SELECT s FROM Survey s WHERE s.surveyKey = :surveyKey AND s.datasetKey = :datasetKey", classOf[Survey])
-    surveyQuery.setParameter("surveyKey", surveyKey)
-    surveyQuery.setParameter("datasetKey", dataset)
-    val surveyList = surveyQuery.getResultList
-
-    if (!surveyList.isEmpty) {
-      surveyList.get(0)
+    def update(s: Survey) {
+      s.setSurveyKey(surveyKey)
+      s.setTitle(surveyKey)
+      s.setDatasetKey(dataset)
     }
-    else {
-      //todo: use the survey key as title when creating a new survey - check this is correct
-      val survey = new Survey()
-      survey.setSurveyKey(surveyKey)
-      survey.setTitle(surveyKey)
-      survey.setDatasetKey(dataset)
-      entityManager.persist(survey)
-      return survey
+
+    val survey = repository.getSurvey(surveyKey, dataset)
+
+    survey match {
+      case Some(s) => {
+        update(s)
+        s
+      }
+      case None => {
+        val s = new Survey
+        update(s)
+        entityManager.persist(s)
+        s
+      }
     }
   }
 }

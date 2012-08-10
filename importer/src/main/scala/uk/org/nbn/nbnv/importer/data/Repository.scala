@@ -2,10 +2,18 @@ package uk.org.nbn.nbnv.importer.data
 
 import javax.persistence.EntityManager
 import uk.org.nbn.nbnv.jpa.nbncore._
-import scala.collection.JavaConversions._
 import uk.org.nbn.nbnv.importer.data.Implicits._
 
 class Repository(em: EntityManager) extends ControlAbstractions {
+
+  def getSurvey(surveyKey: String, dataset: TaxonDataset) = {
+
+    val query = em.createQuery("SELECT s FROM Survey s WHERE s.surveyKey = :surveyKey AND s.datasetKey = :datasetKey", classOf[Survey])
+    query.setParameter("surveyKey", surveyKey)
+    query.setParameter("datasetKey", dataset)
+    query.getSingleOrNone
+  }
+
 
   def getDateType(t: String) = em.findSingle(classOf[DateType], t)
 
