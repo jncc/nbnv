@@ -49,7 +49,7 @@ public class JSONReaderForFreeMarker {
     public TemplateModel readURL(String url, String requestType, Map<String,Object> data) throws TemplateException, IOException, JSONException {
         TraditionalHttpRequestParameterIterable wrappedData = new TraditionalHttpRequestParameterIterable(data);
         if(requestType.equals("GET")) {
-            URL toCall = new URL(data.isEmpty() ? url : (((url.contains("?") ? '&' : '?') + wrappedData.getEncodedParameters() ))); //form url
+            URL toCall = new URL(url + (data.isEmpty() ? "" : (((url.contains("?") ? '&' : '?') + wrappedData.getEncodedParameters() )))); //form url
             return readAndClose(new InputStreamReader(toCall.openStream()));
         }
         else { //assuming post for now
