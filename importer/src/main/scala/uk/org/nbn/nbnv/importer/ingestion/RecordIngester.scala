@@ -18,11 +18,12 @@ class RecordIngester(log: Logger,
 
     log.info("Upserting record %s".format(record.key))
 
-    // todo: get existing if it's there
-    //    val record = r.getTaxonObservation()
-
     val survey = surveyIngester.upsertSurvey(record.surveyKey, dataset)
     val sample = sampleIngester.upsertSample(record.sampleKey, survey)
+
+    // todo: get existing if it's there
+    //val record = r.getTaxonObservation(record.key)
+
 
     // assume site already exists until spec clarified
     val site = r.getSite(record.siteKey)
