@@ -6,6 +6,7 @@ package uk.org.nbn.nbnv.importer.ui.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import uk.org.nbn.nbnv.jpa.nbncore.Organisation;
 
 /**
  *
@@ -15,6 +16,7 @@ public class MetadataForm {
     private Metadata metadata = new Metadata();
     private boolean processed = false;
     private List<String> errors = new ArrayList<String>();
+    private List<Organisation> organisationList;
 
     /**
      * @return the metadata
@@ -56,5 +58,19 @@ public class MetadataForm {
      */
     public void setProcessed(boolean processed) {
         this.processed = processed;
+    }
+
+    /**
+     * @return the organisationList
+     */
+    public List<Organisation> getOrganisationList() {
+        return organisationList;
+    }
+
+    /**
+     * @param organisationList the organisationList to set
+     */
+    public void setOrganisationList(List<Organisation> organisationList) {
+        this.organisationList = organisationList;
     }
 }

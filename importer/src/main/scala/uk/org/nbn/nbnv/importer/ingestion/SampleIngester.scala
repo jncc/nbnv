@@ -6,26 +6,35 @@
 package uk.org.nbn.nbnv.importer.ingestion
 
 import uk.org.nbn.nbnv.jpa.nbncore._
-import javax.persistence.EntityManager;
+import javax.persistence.EntityManager
+import uk.org.nbn.nbnv.importer.data.Repository
+import uk.org.nbn.nbnv.importer.data.Implicits._
 
-class SampleIngester(entityManager: EntityManager) {
+class SampleIngester(em: EntityManager) {
+
   def upsertSample(sampleKey: String, survey: Survey): Sample = {
 
-    //todo: Generate sampleKey if blank
-    val sampleQuery = entityManager.createQuery("SELECT s FROM Sample s WHERE s.sampleKey=:sampleKey AND s.surveyID = :surveyID", classOf[Sample])
-      .setParameter("sampleKey", sampleKey)
-      .setParameter("surveyID", survey)
-      .getResultList
+    val key = if (sampleKey == "") "1" else sampleKey
 
-    if (!sampleQuery.isEmpty) {
-      sampleQuery.get(0)
+    //todo: move to repository
+    def getSample(key: String, survey: Survey) = {
+      em.createQuery("SELECT s FROM Sample s WHERE s.sampleKey=:sampleKey AND s.surveyID = :surveyID", classOf[Sample])
+        .setParameter("sampleKey", sampleKey)
+        .setParameter("surveyID", survey)
+        .getSingleOrNone
     }
-    else {
-      val sample = new Sample()
-      sample.setSampleKey(sampleKey)
-      sample.setSurveyID(survey)
-      entityManager.persist(sample)
-      return sample
+
+    val sample = getSample(key, survey)
+
+    sample match {
+      case Some(s) => s
+      case None => {
+        val s = new Sample()
+        s.setSampleKey(key)
+        s.setSurveyID(survey)
+        em.persist(s)
+        s
+      }
     }
   }
 }

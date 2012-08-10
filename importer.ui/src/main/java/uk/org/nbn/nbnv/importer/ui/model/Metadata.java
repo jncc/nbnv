@@ -19,6 +19,7 @@ public class Metadata {
     private String info = "";
     private String use = "";
     private String access = "";
+    private int organisationID = -1;
 
     /**
      * @return the title
@@ -158,6 +159,20 @@ public class Metadata {
      */
     public void setAccess(String access) {
         this.access = access;
+    }
+
+    /**
+     * @return the organisationID
+     */
+    public int getOrganisationID() {
+        return organisationID;
+    }
+
+    /**
+     * @param organisationID the organisationID to set
+     */
+    public void setOrganisationID(int organisationID) {
+        this.organisationID = organisationID;
     }
     
 }

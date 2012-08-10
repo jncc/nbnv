@@ -16,6 +16,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import uk.gov.nbn.data.powerless.json.JSONReaderForFreeMarker;
+import uk.gov.nbn.data.powerless.request.TraditionalHttpRequestParametersHashModel;
 
 /**
  *

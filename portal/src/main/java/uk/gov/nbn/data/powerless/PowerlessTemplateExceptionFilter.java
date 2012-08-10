@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package uk.gov.nbn.data.powerless;
 
 import freemarker.template.TemplateException;
@@ -9,8 +5,9 @@ import java.io.IOException;
 import javax.servlet.*;
 
 /**
- *
- * @author Administrator
+ * The following Filter enables error pages to be configured in the web.xml
+ * The cause exception will be available to the template which is to be rendered
+ * @author Christopher Johnson
  */
 public class PowerlessTemplateExceptionFilter implements Filter {
     @Override public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
