@@ -4,23 +4,26 @@ import freemarker.core.Environment;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateModel;
 import freemarker.template.TemplateModelException;
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.json.JSONTokener;
 import uk.gov.nbn.data.powerless.FreeMarkerHelper;
+import uk.gov.nbn.data.powerless.request.TraditionalHttpRequestParameterIterable;
 
 /**
- *
- * @author Chris Johnson
+ * The following bean enables reading of JSON data from either the file system
+ * or from URLs.
+ * 
+ * In the case of URLs data can be posted as a Traditionally encoded url 
+ * parameters @see TraditionalHttpRequestParameterIterable.
+ * @author Christopher Johnson
  */
 public class JSONReaderForFreeMarker {
     private static final boolean PROCESS_BY_DEFAULT = false;
@@ -39,22 +42,24 @@ public class JSONReaderForFreeMarker {
         return readURL(url, new HashMap<String, Object>());
     }
     
-    public TemplateModel readURL(String url, Map data) throws TemplateException, IOException, JSONException {
+    public TemplateModel readURL(String url, Map<String, Object> data) throws TemplateException, IOException, JSONException {
         return readURL(url, "GET", data);
     }
     
     public TemplateModel readURL(String url, String requestType, Map<String,Object> data) throws TemplateException, IOException, JSONException {
+        TraditionalHttpRequestParameterIterable wrappedData = new TraditionalHttpRequestParameterIterable(data);
         if(requestType.equals("GET")) {
-            return readAndClose(new InputStreamReader(new URL(url + "?" + encodeMap(data)).openStream()));
+            URL toCall = new URL(data.isEmpty() ? url : (((url.contains("?") ? '&' : '?') + wrappedData.getEncodedParameters() ))); //form url
+            return readAndClose(new InputStreamReader(toCall.openStream()));
         }
         else { //assuming post for now
             HttpURLConnection conn = (HttpURLConnection)new URL(url).openConnection();
             conn.setRequestMethod(requestType);
-            conn.setRequestProperty("Content-Type", "application/json" );
+            conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded" );
             conn.setDoOutput(true);
             OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
             try {
-                new JSONObject(data).write(wr); //write the map as a json object
+                wrappedData.writeEncodedParameters(wr); //write the map in url encoded form
                 wr.flush();
                 return readAndClose(new InputStreamReader(conn.getInputStream()));
             }
@@ -62,42 +67,6 @@ public class JSONReaderForFreeMarker {
                 wr.close();
             }
         }
-    }
-    
-    private static String encodeMap(Map<String, Object> map) throws IOException {
-        StringWriter toReturn = new StringWriter();
-        writeMap(map, toReturn);
-        return toReturn.toString();
-    }
-    
-    private static void writeMap(Map<String, Object> map, Writer toWriteTo) throws IOException {
-        Iterator<Entry<String, Object>> iterator = map.entrySet().iterator();
-        if(iterator.hasNext()) { //is there any entries in map?
-            writeEntry(iterator.next(), toWriteTo); //write first
-            while(iterator.hasNext()) { 
-                toWriteTo.write("&"); //seperator others
-                writeEntry(iterator.next(),toWriteTo); //write others
-            }
-        }
-    }
-    
-    private static void writeEntry(Entry<String, Object> entry, Writer toWriteTo) throws IOException {
-        Object value = entry.getValue();
-        if(value instanceof List) {
-            for(String currValue : (List<String>)value) {
-                toWriteTo.write("&"); //seperator others
-                writeParameter(entry.getKey(), currValue, toWriteTo);
-            }
-        }
-        else {
-            writeParameter(entry.getKey(), value.toString(), toWriteTo);
-        }
-    }
-    
-    private static void writeParameter(String key, String value, Writer toWriteTo) throws IOException {
-        toWriteTo.write(URLEncoder.encode(key, "UTF-8"));
-        toWriteTo.write("=");
-        toWriteTo.write(URLEncoder.encode(value, "UTF-8"));
     }
     
     private TemplateModel readAndClose(Reader in) throws IOException, TemplateModelException, JSONException {

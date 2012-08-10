@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package uk.gov.nbn.data.powerless;
 
 import freemarker.template.TemplateMethodModel;
@@ -11,7 +7,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
+ * Classes which extend this class can have all there methods exposed to 
+ * freemarker callable using the following syntax
+ * <code>
+ *  freemarker_var("methodName", param1, param2 ...)
+ * </code>
  * @author Chris Johnson
  */
 public class WrappedTemplateMethod<T> implements TemplateMethodModel{
