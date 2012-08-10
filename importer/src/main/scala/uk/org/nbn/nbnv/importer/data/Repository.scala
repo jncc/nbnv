@@ -22,12 +22,14 @@ class Repository(em: EntityManager) extends ControlAbstractions {
 
   def getTaxonDataset(key: String) = em.findSingle(classOf[TaxonDataset], key)
 
-  def getTaxonObservation(key: String): Option[TaxonObservation] = {
+  def getTaxonObservation(key: String, sample: Sample): Option[TaxonObservation] = {
 
-    val q = "select o from TaxonObservation o where o.observationKey = :key "
+    val q = "select o from TaxonObservation o where o.observationKey = :key and o.sampleID = :sample "
 
-    val query = em.createQuery(q, classOf[TaxonObservation])
-    query.setParameter("key", key).getSingleOrNone
+    em.createQuery(q, classOf[TaxonObservation])
+      .setParameter("key", key)
+      .setParameter("sample", sample)
+      .getSingleOrNone
   }
 
   def getOrganisation(name: String): Option[Organisation] = {

@@ -22,8 +22,10 @@ class DatasetIngester(log: Logger,
 
     if (metadata.datasetKey.isEmpty)
       insertNew(metadata)
-    else
+    else {
+      // todo: delete existing data?
       updateExisting(metadata)
+    }
   }
 
   private def insertNew(metadata: Metadata) = {
