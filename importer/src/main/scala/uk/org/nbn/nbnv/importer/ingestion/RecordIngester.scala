@@ -40,10 +40,11 @@ class RecordIngester(log: Logger,
 
     def update(o: TaxonObservation) {
 
-      // todo:  spec clarified
+      // todo: leave until schema change is done - sites are now scoped to datasets
       val site = r.getSite(record.siteKey)
 
-      // todo: TaxonObservation needs a feature, but what is a feature? we've forgotten
+      // todo: TaxonObservation needs a feature
+      // need to get c# code ... paul will get back to us
       val feature = r.getFeature(1)
 
       val taxon = r.getTaxon(record.taxonVersionKey)
@@ -52,14 +53,12 @@ class RecordIngester(log: Logger,
       val determiner = recorderIngester.ensureRecorder(record.determiner)
       val recorder = recorderIngester.ensureRecorder(record.recorder)
 
-
       o.setAbsenceRecord(false)
-      o.setDateStart(record.startDate) // todo?
-      o.setDateEnd(record.startDate) // todo??
+      o.setDateStart(record.startDate)
+      o.setDateEnd(record.endDate)
       o.setDateType(dateType)
       o.setDeterminerID(determiner)
       o.setFeatureID(feature)
-      //o.setObservationID()
       o.setObservationKey(record.key)
       o.setRecorderID(recorder)
       o.setSampleID(sample)

@@ -20,9 +20,12 @@
 			<location>orig.txt</location>
 		</files>
 		<coreid index="0"/>
+		<field index="3" term="http://uknbn.org/terms/startDate"/>
+		<field index="4" term="http://uknbn.org/terms/endDate"/>
 		<field index="5" term="http://uknbn.org/terms/dateType"/>
 		<field index="7" term="http://uknbn.org/terms/sensitiveOccurrence"/>
 		<field index="11" term="http://uknbn.org/terms/gridReferenceType"/>
 		<field index="12" term="http://uknbn.org/terms/gridReferencePrecision"/>
+		
 	</extension>	
 </archive>
