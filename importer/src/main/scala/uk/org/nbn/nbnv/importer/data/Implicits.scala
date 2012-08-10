@@ -18,6 +18,11 @@ object Implicits extends ControlAbstractions {
         else List(t)
       }
     }
+
+    def findSingleOrNone[T](c: Class[T], id: Any): Option[T] = {
+
+      Option(em.find(c, id))
+    }
   }
 
   implicit def typedQuery2RichTypedQuery[T](q: TypedQuery[T]) = new RichTypedQuery[T](q)

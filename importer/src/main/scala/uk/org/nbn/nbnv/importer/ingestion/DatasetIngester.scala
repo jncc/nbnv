@@ -5,23 +5,25 @@ import uk.org.nbn.nbnv.jpa.nbncore._
 import uk.org.nbn.nbnv.importer.utility._
 import javax.persistence.EntityManager
 import uk.org.nbn.nbnv.importer.data.{Repository, KeyGenerator}
-import uk.org.nbn.nbnv.importer.ImportFailedException
 ;
 
-class DatasetIngester(val em: EntityManager, keyGenerator: KeyGenerator, repository: Repository) {
+class DatasetIngester(em: EntityManager,
+                      keyGenerator: KeyGenerator,
+                      repository: Repository,
+                      organisationIngester: OrganisationIngester) {
 
   def upsertDataset(metadata: Metadata): TaxonDataset = {
 
     // we're only dealing with *Taxon* Datasets at the moment
 
     // when there's no key given, insert a new dataset
-    // when there is one, find it and update it
-    // otherwise throw
+    // when there is one, find it and update it (otherwise throw)
 
     if (metadata.datasetKey.isEmpty)
       insertNew(metadata)
     else
-      updateExisting(metadata)  }
+      updateExisting(metadata)
+  }
 
   private def insertNew(metadata: Metadata) = {
     // generate a new key and a new dataset
@@ -39,24 +41,16 @@ class DatasetIngester(val em: EntityManager, keyGenerator: KeyGenerator, reposit
 
   private def updateExisting(metadata: Metadata) = {
 
-    val taxonDataset = Option(em.find(classOf[TaxonDataset], metadata.datasetKey))
-
-    taxonDataset match {
-      case Some(td) => {
-        modifyTaxonDataset(td, metadata)
-        val d = td.getDataset
-        modifyDataset(d, metadata)
-        td
-      }
-      case None => {
-        throw new ImportFailedException("Dataset key '%s' not found.".format(metadata.datasetKey))
-      }
-    }
+    val td = repository.getTaxonDataset(metadata.datasetKey)
+    modifyTaxonDataset(td, metadata)
+    val d = td.getDataset
+    modifyDataset(d, metadata)
+    td
   }
 
   private def modifyDataset(d: Dataset, m: Metadata) = {
 
-    val provider = ensureOrganisation(m.datasetProviderName)
+    val provider = organisationIngester.ensureOrganisation(m.datasetProviderName)
     val datasetUpdateFrequency = em.getReference(classOf[DatasetUpdateFrequency], "012")
     val datasetType = em.getReference(classOf[DatasetType], 'T')
 
@@ -87,15 +81,5 @@ class DatasetIngester(val em: EntityManager, keyGenerator: KeyGenerator, reposit
     // default .. to be read from extra metadata.
     // ...could be more columns like this
     td.setAllowRecordValidation(true)
-  }
-
-  def ensureOrganisation(name: String) = {
-    repository.getOrganisation(name) match {
-      case Some(organisation) => organisation
-      case _ => {
-        // todo create new
-        new Organisation
-      }
-    }
   }
 }

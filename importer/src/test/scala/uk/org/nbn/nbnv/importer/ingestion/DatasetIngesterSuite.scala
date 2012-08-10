@@ -29,8 +29,10 @@ class DatasetIngesterSuite extends BaseFunSuite {
     val keyGenerator = mock[KeyGenerator]
     val repository = mock[Repository]
 
+    val organisationIngester = mock[OrganisationIngester]
+
     // act
-    val ingester = new DatasetIngester(em, keyGenerator, repository)
+    val ingester = new DatasetIngester(em, keyGenerator, repository, organisationIngester)
     val result = ingester.upsertDataset(metadata)
 
     // assert - that the entity manager was not called with the retrieved dataset
@@ -55,8 +57,10 @@ class DatasetIngesterSuite extends BaseFunSuite {
     val keyGenerator = mock[KeyGenerator]
     val repository = mock[Repository]
 
+    val organisationIngester = mock[OrganisationIngester]
+
     // act
-    val ingester = new DatasetIngester(em, keyGenerator, repository)
+    val ingester = new DatasetIngester(em, keyGenerator, repository, organisationIngester)
     val taxonDataset = ingester.upsertDataset(metadata)
 
     //verify that setDataset is called against the new taxondataset enity with a dataset
