@@ -8,16 +8,13 @@ import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import uk.org.nbn.nbnv.api.dao.mappers.TaxonMapper;
-import uk.org.nbn.nbnv.api.model.Taxon;
 import uk.org.nbn.nbnv.api.solr.SolrResponse;
 
 @Component
 @Path("/species")
 public class TaxonResource {
-    
-    @Autowired TaxonMapper taxonMapper;
     @Autowired SolrServer solrServer;
+    
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public SolrResponse getTaxa(
@@ -32,7 +29,6 @@ public class TaxonResource {
         SolrQuery query = new SolrQuery();
         query.setQuery((q==null) ? "*:*" : q);
         query.setFacet(true);
-        System.out.println(queryFilter);
         query.setFilterQueries(queryFilter.toArray(new String[0]));
         query.addFacetField("category", "lang");
         if(sort!=null) {
@@ -40,7 +36,6 @@ public class TaxonResource {
         }
         query.setRows(rows);
         query.setStart(start);
-        System.out.println(query);
         return new SolrResponse(solrServer.query(query));
     }
     
