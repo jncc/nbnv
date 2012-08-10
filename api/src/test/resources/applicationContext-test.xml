@@ -1,0 +1,39 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:task="http://www.springframework.org/schema/task"
+       xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans 
+                    http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                    http://www.springframework.org/schema/context 
+                    http://www.springframework.org/schema/context/spring-context-2.5.xsd 
+                    http://www.springframework.org/schema/mvc
+                    http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
+                    http://www.springframework.org/schema/task
+                    http://www.springframework.org/schema/task/spring-task-3.0.xsd
+                    http://www.springframework.org/schema/jdbc
+                    http://www.springframework.org/schema/jdbc/spring-jdbc-3.0.xsd">
+
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+        <property name="driverClassName" value="org.hsqldb.jdbcDriver" />
+        <property name="url" value="jdbc:hsqldb:mem:NBNWarehouse" />
+        <property name="username" value="sa" />
+        <property name="password" value="" />
+    </bean>
+    
+    <jdbc:embedded-database id="embdataSource">
+        <jdbc:script location="classpath:test-data/organisation.sql" />
+    </jdbc:embedded-database>
+    
+    <context:component-scan base-package="uk.org.nbn.nbnv.api.mappers" /> 
+
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+    </bean>
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="uk.org.nbn.nbnv.api.dao"/>
+    </bean>
+
+</beans>
