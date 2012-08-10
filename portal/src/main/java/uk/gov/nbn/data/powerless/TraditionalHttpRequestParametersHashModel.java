@@ -30,7 +30,10 @@ public class TraditionalHttpRequestParametersHashModel  extends HttpRequestParam
     public TemplateModel get(String key) {
         String[] parameterValues = request.getParameterValues(key);
         if(parameterValues != null) {
-            return new TraditionalHttpRequestParameterModel(parameterValues);
+            if(parameterValues.length==1)
+                return new TraditionalHttpRequestParameterModel(parameterValues);
+            else
+                return new StringArraySequence(parameterValues);
         }
         return TemplateModel.NOTHING;            
     }
