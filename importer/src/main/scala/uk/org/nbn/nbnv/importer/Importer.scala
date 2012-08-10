@@ -36,6 +36,7 @@ object Importer {
 
     // create entity manager
     val em = new PersistenceUtility().createEntityManagerFactory(Settings.map).createEntityManager
+    val repo = new Repository(em)
 
     // manually inject dependencies
     new Importer(options,
@@ -44,13 +45,13 @@ object Importer {
                  new MetadataReader(new FileSystem, new MetadataParser),
                  new Ingester(options,
                               em,
-                              new DatasetIngester(em, new KeyGenerator(new Repository(em)), new Repository(em)),
+                              new DatasetIngester(em, new KeyGenerator(repo), repo, new OrganisationIngester(repo)),
                               new RecordIngester(log,
                                                  em,
-                                                 new SurveyIngester(em, new Repository(em)),
+                                                 new SurveyIngester(em, repo),
                                                  new SampleIngester(em),
-                                                 new RecorderIngester(em, new Repository(em)),
-                                                 new Repository(em)
+                                                 new RecorderIngester(em, repo),
+                                                 repo
                               )))
   }
 }

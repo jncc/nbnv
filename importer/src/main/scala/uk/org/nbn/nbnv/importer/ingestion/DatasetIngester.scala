@@ -7,15 +7,17 @@ import javax.persistence.EntityManager
 import uk.org.nbn.nbnv.importer.data.{Repository, KeyGenerator}
 ;
 
-class DatasetIngester(val em: EntityManager, keyGenerator: KeyGenerator, repository: Repository) {
+class DatasetIngester(em: EntityManager,
+                      keyGenerator: KeyGenerator,
+                      repository: Repository,
+                      organisationIngester: OrganisationIngester) {
 
   def upsertDataset(metadata: Metadata): TaxonDataset = {
 
     // we're only dealing with *Taxon* Datasets at the moment
 
     // when there's no key given, insert a new dataset
-    // when there is one, find it and update it
-    // otherwise throw
+    // when there is one, find it and update it (otherwise throw)
 
     if (metadata.datasetKey.isEmpty)
       insertNew(metadata)
@@ -48,7 +50,7 @@ class DatasetIngester(val em: EntityManager, keyGenerator: KeyGenerator, reposit
 
   private def modifyDataset(d: Dataset, m: Metadata) = {
 
-    val provider = ensureOrganisation(m.datasetProviderName)
+    val provider = organisationIngester.ensureOrganisation(m.datasetProviderName)
     val datasetUpdateFrequency = em.getReference(classOf[DatasetUpdateFrequency], "012")
     val datasetType = em.getReference(classOf[DatasetType], 'T')
 
@@ -79,15 +81,5 @@ class DatasetIngester(val em: EntityManager, keyGenerator: KeyGenerator, reposit
     // default .. to be read from extra metadata.
     // ...could be more columns like this
     td.setAllowRecordValidation(true)
-  }
-
-  def ensureOrganisation(name: String) = {
-    repository.getOrganisation(name) match {
-      case Some(organisation) => organisation
-      case _ => {
-        // todo create new
-        new Organisation
-      }
-    }
   }
 }
