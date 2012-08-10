@@ -5,6 +5,7 @@
 package uk.gov.nbn.data.powerless;
 
 import freemarker.ext.servlet.FreemarkerServlet;
+import freemarker.ext.servlet.HttpRequestParametersHashModel;
 import freemarker.template.*;
 import java.io.File;
 import java.io.FilenameFilter;
@@ -71,6 +72,11 @@ public class PowerlessServlet extends FreemarkerServlet{
         SimpleHash toReturn = (SimpleHash)super.createModel(wrapper, servletContext, request, response);
         toReturn.put(POWERLESS_URL_PARAMETERSATION_KEY, request.getAttribute(PowerlessTemplateURLParameterisationFilter.POWERLESS_URL_PARAMETERS_ATTRIBUTE));
         return toReturn;
+    }
+    
+    @Override
+    protected HttpRequestParametersHashModel createRequestParametersHashModel(javax.servlet.http.HttpServletRequest request) {
+        return new TraditionalHttpRequestParametersHashModel(request);
     }
         
     private class FreeMarkerTemplateLibraryFileFilter implements FilenameFilter{

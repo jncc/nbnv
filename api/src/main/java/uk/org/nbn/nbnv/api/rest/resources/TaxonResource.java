@@ -24,15 +24,25 @@ public class TaxonResource {
             @PathParam("id") String taxonGroup,
             @QueryParam("rows") @DefaultValue("20") int rows,
             @QueryParam("start") @DefaultValue("0") int start,
+            @QueryParam("fq") List<String> queryFilter,
+            @QueryParam("sort") String sort,
             @QueryParam("q") String q
             ) throws SolrServerException {
         
         SolrQuery query = new SolrQuery();
-        query.setQuery(q);
+        query.setQuery((q==null) ? "*:*" : q);
         query.setFacet(true);
+        for(String filter : queryFilter) {
+            query.addFilterQuery(filter);
+            System.out.println(filter);
+        }
         query.addFacetField("category", "lang");
+        if(sort!=null) {
+            query.setSortField(sort, SolrQuery.ORDER.asc);
+        }
         query.setRows(rows);
         query.setStart(start);
+        System.out.println(query);
         return new SolrResponse(solrServer.query(query));
     }
     

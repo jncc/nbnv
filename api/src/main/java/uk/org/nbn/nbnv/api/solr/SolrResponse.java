@@ -34,35 +34,27 @@ public class SolrResponse {
     private static Map processFacetFields(List<FacetField> facetFields) {
         Map toReturn = new HashMap();
         for(FacetField currField : facetFields) {
-            toReturn.put(currField.getName(), 
-                (currField.getName().startsWith("category"))
-                    ? processCategoriesdFacet(currField.getValues())
-                    : processFacetCounts(currField.getValues()));
+            String category = currField.getName();
+            toReturn.put(category, processCategoriesdFacet(currField.getValues(), category));
         }
         return toReturn;
     }
     
-    private static Map processFacetCounts(List<Count> facetCount) {
-        Map toReturn = new HashMap();
-        for(Count currCount: facetCount) {
-            toReturn.put(currCount.getName(), currCount.getCount());
-        }
-        return toReturn;
-    }
-    
-    private static Map processCategoriesdFacet(List<Count> facetCount) {
+    private static Map processCategoriesdFacet(List<Count> facetCount, String category) {
         SubCategoryFacet toReturn = new SubCategoryFacet();
         
         for(Count currCatFacet: facetCount) {
-            toReturn.getSubCategory(currCatFacet.getName()).setTotalCount(currCatFacet.getCount());
+            String path = currCatFacet.getName();
+            toReturn.getSubCategory(path).setCount(currCatFacet);
         }
         return toReturn.getSubCategories();
     }
     
     private static class SubCategoryFacet {
         private long totalCount;
+        private String filter;
         private Map<String, SubCategoryFacet> subCategories = new HashMap<String, SubCategoryFacet>();
-
+        
         public Map<String, SubCategoryFacet> getSubCategories() {
             return (subCategories.isEmpty()) ? null :subCategories;
         }
@@ -78,13 +70,18 @@ public class SolrResponse {
             else 
                 return nextCategory;
         }
+        
+        public String getFilterQuery() {
+            return filter;
+        }
 
         public long getTotalCount() {
             return totalCount;
         }
 
-        void setTotalCount(long totalCount) {
-            this.totalCount = totalCount;
+        void setCount(Count totalCount) {
+            this.totalCount = totalCount.getCount();
+            this.filter = totalCount.getAsFilterQuery();
         }
     }
     

@@ -10,6 +10,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import org.json.JSONException;
@@ -81,9 +82,21 @@ public class JSONReaderForFreeMarker {
     }
     
     private static void writeEntry(Entry<String, Object> entry, Writer toWriteTo) throws IOException {
-        toWriteTo.write(URLEncoder.encode(entry.getKey(), "UTF-8"));
+        Object value = entry.getValue();
+        if(value instanceof List) {
+            for(String currValue : (List<String>)value) {
+                writeParameter(entry.getKey(), currValue, toWriteTo);
+            }
+        }
+        else {
+            writeParameter(entry.getKey(), value.toString(), toWriteTo);
+        }
+    }
+    
+    private static void writeParameter(String key, String value, Writer toWriteTo) throws IOException {
+        toWriteTo.write(URLEncoder.encode(key, "UTF-8"));
         toWriteTo.write("=");
-        toWriteTo.write(URLEncoder.encode(entry.getValue().toString(), "UTF-8"));
+        toWriteTo.write(URLEncoder.encode(value, "UTF-8"));
     }
     
     private TemplateModel readAndClose(Reader in) throws IOException, TemplateModelException, JSONException {
