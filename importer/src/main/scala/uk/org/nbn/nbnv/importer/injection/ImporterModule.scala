@@ -22,6 +22,9 @@ class ImporterModule(options: Options) extends AbstractModule {
   @Provides
   def getLog = Log.get()
 
+//  @Provides
+//  def getEntityManager = entityManager
+
   @Provides
   def getEntityManager = {
     entityManager match {
