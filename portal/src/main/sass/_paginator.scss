@@ -18,3 +18,21 @@ div.paginator {
     }
     a:hover { border-color:$majorColour; } 
 }
+
+
+.nbn-search {
+    @include clearfix;
+
+    .nbn-search-facets {
+        float:left;
+        width: 300px;
+    }
+    
+    .controls, .results {
+        float:left;
+        width: 651px;
+    }
+    .controls {text-align: right;}
+}
+
+.paginator { margin-left: 250px; }

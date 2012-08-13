@@ -89,3 +89,14 @@
         <#if show_next_link><@next search "Next &raquo;"/></#if>
     </div>
 </#macro>
+
+<#macro show rowSizes=[20,40,60,100]>
+    <select name="rows">
+        <#list rowSizes as rowSize>
+            <option 
+                value="${rowSize}" 
+                ${RequestParameters.rows?seq_contains(rowSize?string)?string('selected="selected"','')}
+            >${rowSize}</option>
+        </#list>
+    </select>
+</#macro>
