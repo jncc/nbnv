@@ -12,7 +12,7 @@ import org.apache.log4j.Level
 class ImporterModule(options: Options) extends AbstractModule {
   var entityManager: Option[EntityManager] = None
 
-  def configure() {
+  override def configure() {
     Log.configure(options.logDir, "4MB", Level.ALL)
   }
 
