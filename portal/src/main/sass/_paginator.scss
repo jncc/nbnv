@@ -1,0 +1,20 @@
+@import "_nbn-colour-scheme";
+@import "compass/utilities/general/clearfix";
+@import "compass/utilities/color/contrast";
+
+div.paginator {
+    @include clearfix;
+    a, span {
+        border: solid 1px $backgroundPageColour;
+        float: left;
+        margin-right: 2px;
+        padding:3px 4px;
+    }
+
+    span {
+        &.gap       { border:0; }
+        &.disabled  { color:$minorColour; }
+        &.current   { @include contrasted($majorColour); }
+    }
+    a:hover { border-color:$majorColour; } 
+}
