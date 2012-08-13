@@ -10,21 +10,13 @@ import javax.persistence.EntityManager
 import uk.org.nbn.nbnv.importer.data.Repository
 import uk.org.nbn.nbnv.importer.data.Implicits._
 
-class SampleIngester(em: EntityManager) {
+class SampleIngester(em: EntityManager, repository: Repository) {
 
   def upsertSample(sampleKey: String, survey: Survey): Sample = {
 
     val key = if (sampleKey == "") "1" else sampleKey
 
-    //todo: move to repository
-    def getSample(key: String, survey: Survey) = {
-      em.createQuery("SELECT s FROM Sample s WHERE s.sampleKey=:sampleKey AND s.surveyID = :surveyID", classOf[Sample])
-        .setParameter("sampleKey", sampleKey)
-        .setParameter("surveyID", survey)
-        .getSingleOrNone
-    }
-
-    val sample = getSample(key, survey)
+    val sample = repository.getSample(key, survey)
 
     sample match {
       case Some(s) => s

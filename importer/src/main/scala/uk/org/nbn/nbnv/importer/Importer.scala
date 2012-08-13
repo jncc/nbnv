@@ -49,7 +49,7 @@ object Importer {
                               new RecordIngester(log,
                                                  em,
                                                  new SurveyIngester(em, repo),
-                                                 new SampleIngester(em),
+                                                 new SampleIngester(em, repo),
                                                  new RecorderIngester(em, repo),
                                                  repo
                               )))

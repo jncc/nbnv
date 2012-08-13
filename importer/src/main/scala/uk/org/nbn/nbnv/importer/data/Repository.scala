@@ -64,4 +64,11 @@ class Repository(em: EntityManager) extends ControlAbstractions {
 
     em.createQuery(q, classOf[String]).setMaxResults(1).getFirstOrNone
   }
+
+  def getSample(key: String, survey: Survey) = {
+    em.createQuery("SELECT s FROM Sample s WHERE s.sampleKey=:sampleKey AND s.surveyID = :surveyID", classOf[Sample])
+      .setParameter("sampleKey", key)
+      .setParameter("surveyID", survey)
+      .getSingleOrNone
+  }
 }
