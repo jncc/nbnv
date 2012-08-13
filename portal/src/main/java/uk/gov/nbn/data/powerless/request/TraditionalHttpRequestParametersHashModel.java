@@ -31,7 +31,7 @@ public class TraditionalHttpRequestParametersHashModel  extends HttpRequestParam
     public TemplateModel get(String key) {
         String[] parameterValues = request.getParameterValues(key);
         if(parameterValues == null) 
-            return TemplateModel.NOTHING; //return an empty array so that ?seq_contains can always be called   
+            return new StringArraySequence(new String[0]); //return an empty array so that ?seq_contains can always be called   
         else if(parameterValues.length==1)
             return new TraditionalHttpRequestParameterModel(parameterValues[0]); //case that a single param exists
         else
