@@ -3,9 +3,10 @@ package uk.org.nbn.nbnv.importer.darwin
 import org.gbif.dwc.text.{ArchiveFactory, Archive}
 import java.io.File
 import uk.org.nbn.nbnv.importer.Options
+import com.google.inject.Inject
 
 /// Manages Darwin archives via the GBIF Darwin Archive reader
-class ArchiveManager(options: Options) {
+class ArchiveManager @Inject()(options: Options) {
 
   def open(): Archive = {
     ArchiveFactory.openArchive(new File(options.archivePath), new File(options.tempDir))

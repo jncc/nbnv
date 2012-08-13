@@ -6,13 +6,14 @@ import uk.org.nbn.nbnv.importer.records.NbnRecord
 import org.gbif.dwc.text.Archive
 import uk.org.nbn.nbnv.metadata.Metadata
 import uk.org.nbn.nbnv.importer.Options
+import com.google.inject.Inject
 
 /// Performs the interaction with the NBN core database.
 
-class Ingester(options: Options,
-               em: EntityManager,
-               datasetIngester: DatasetIngester,
-               recordIngester: RecordIngester) {
+class Ingester @Inject()(options: Options,
+                         em: EntityManager,
+                         datasetIngester: DatasetIngester,
+                         recordIngester: RecordIngester) {
 
   def ingest(archive: Archive, metadata: Metadata) {
 

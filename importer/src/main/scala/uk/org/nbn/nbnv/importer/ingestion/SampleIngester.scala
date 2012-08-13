@@ -9,8 +9,9 @@ import uk.org.nbn.nbnv.jpa.nbncore._
 import javax.persistence.EntityManager
 import uk.org.nbn.nbnv.importer.data.Repository
 import uk.org.nbn.nbnv.importer.data.Implicits._
+import com.google.inject.Inject
 
-class SampleIngester(em: EntityManager, repository: Repository) {
+class SampleIngester  @Inject()(em: EntityManager, repository: Repository) {
 
   def upsertSample(sampleKey: String, survey: Survey): Sample = {
 
