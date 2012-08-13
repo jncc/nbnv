@@ -28,16 +28,9 @@ class ImporterModule(options: Options) extends AbstractModule {
       case Some(em) => em
       case None => {
         val em = new PersistenceUtility().createEntityManagerFactory(Settings.map).createEntityManager
-        entityManager = Some(newEntityManager)
+        entityManager = Some(em)
         em
       }
     }
   }
-
-  private def newEntityManager =
-  {
-    new PersistenceUtility().createEntityManagerFactory(Settings.map).createEntityManager
-  }
-
-
 }
