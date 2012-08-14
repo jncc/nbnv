@@ -4,9 +4,10 @@ package uk.org.nbn.nbnv.importer.ingestion
 import uk.org.nbn.nbnv.jpa.nbncore._
 import javax.persistence.EntityManager
 import uk.org.nbn.nbnv.importer.data.Repository
+import com.google.inject.Inject
 ;
 
-class SurveyIngester(entityManager: EntityManager, repository: Repository) {
+class SurveyIngester @Inject()(entityManager: EntityManager, repository: Repository) {
 
   def upsertSurvey(surveyKey: String, dataset: TaxonDataset): Survey = {
 

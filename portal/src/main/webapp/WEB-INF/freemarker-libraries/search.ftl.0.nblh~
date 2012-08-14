@@ -1,0 +1,80 @@
+<#-- 
+    The following template defines the structure of a Search Widget which can 
+    be powered by NBN Gateway API standardised search resources
+-->
+
+
+<#macro __filterInputBox name currentFacet>
+    <input 
+        type="checkbox" 
+        name="${name}" 
+        value="${currentFacet.id}"
+        ${RequestParameters[currentFacet.name]?seq_contains(currentFacet.id)?string('checked="checked"','')}
+    />
+</#macro>
+
+<#macro __treeFacetHelper name data counts>
+    <#list data as currentFacet>
+        <li>
+            <#if currentFacet.children?? >
+                <h1>${currentFacet.name} (${counts[currentFacet.id].totalCount})
+                    <@__filterInputBox name currentFacet/>
+                </h1>
+                <ul><@__treeFacetHelper name currentFacet.children counts/></ul>
+            <#else>
+                ${currentFacet.name} (${counts[currentFacet.id].totalCount}) 
+                <@__filterInputBox name currentFacet/>
+            </#if>
+        </li>
+    </#list>
+</#macro>
+
+<#macro treeFacet name data counts>
+    <h1>${name}</h1>
+    <ul class="collapsible-list"><@__treeFacetHelper name data counts/></ul>
+</#macro>
+
+<#function __createIDObject id>
+    <#--Check if the id object is already an id-->
+    <#if id?is_hash>
+        <#return id>
+    <#else>
+        <#return {"id" : id}/>
+    <#/if>
+</#function>
+
+<#macro __facets facets counts>
+    <ul class="nbn-search-facets">
+        <#list facets as facetConfig>
+            <li class="nbn-search-facet">
+                <@.vars[facetConfig.render!"treeFacet"] 
+                    name=facetConfig.name!facetConfig.id
+                    data=facetConfig.data!counts[facetConfig.id]?keys
+                    counts=counts[facetConfig.id]
+                />
+            </li>
+        </#list>
+    </ul>
+</#macro>
+
+<#macro search url query facets>
+    <#assign search=json.readURL(url, query)/>
+    <div class="nbn-search">
+        
+        <form>
+            
+            <@__facets facets search.facetFields/>
+            <div class="controls">
+                Show - <@pagination.show/> 
+                <input type="submit" value="Filter"/>
+            </div>
+            <ol class="results">
+                <#list search.results as result>
+                    <li><#nested result></li>
+                </#list>
+            </ol>
+            
+        </form>
+    </div>
+    <@pagination.paginator search/>
+</#macro>

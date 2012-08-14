@@ -6,12 +6,13 @@ import uk.org.nbn.nbnv.importer.utility._
 import javax.persistence.EntityManager
 import uk.org.nbn.nbnv.importer.data.{Repository, KeyGenerator}
 import org.apache.log4j.Logger
+import com.google.inject.Inject
 
-class DatasetIngester(log: Logger,
-                      em: EntityManager,
-                      keyGenerator: KeyGenerator,
-                      repository: Repository,
-                      organisationIngester: OrganisationIngester) {
+class DatasetIngester @Inject()(log: Logger,
+                                em: EntityManager,
+                                keyGenerator: KeyGenerator,
+                                repository: Repository,
+                                organisationIngester: OrganisationIngester) {
 
   def upsertDataset(metadata: Metadata): TaxonDataset = {
 
