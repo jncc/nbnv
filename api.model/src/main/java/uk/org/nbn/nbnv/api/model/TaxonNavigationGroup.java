@@ -43,7 +43,7 @@ public class TaxonNavigationGroup {
         this.sortOrder = sortOrder;
     }
 
-    public String getTaxonGroupName() {
+    public String getName() {
         return taxonGroupName;
     }
 
@@ -51,7 +51,7 @@ public class TaxonNavigationGroup {
         this.taxonGroupName = taxonGroupName;
     }
     
-    public String getTaxonGroupKey() {
+    public String getId() {
         return taxonGroupKey;
     }
     

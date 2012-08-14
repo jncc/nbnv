@@ -6,25 +6,15 @@ Welcome to a mockup of viewing and searching taxons. Please be aware that this
 is not a finished product.
     </@markdown>
 
-
-
     <@search.search 
         url="${api}/species" 
         query=RequestParameters 
         facets=[{
-                "id":"category",
-                "render" : "treeFacet",
-                "data": [{
-                    "name":"bob",
-                    "id": 'NHMSYS0000080012',
-                    "children": [{
-                        "name":"bob",
-                        "id": 'NHMSYS0000080012'
-                    }]
-                }]
-            },"lang"]
+            "id":"category",
+            "data":json.readURL("${api}/taxonNavigationGroups")
+        }, "lang"]
         ; result
     >
-        ${result.name}
+        <@taxon_utils.short_name taxon=result/>
     </@search.search>
 </@template.master>

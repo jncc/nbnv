@@ -19,7 +19,11 @@ import uk.org.nbn.nbnv.api.model.TaxonNavigationGroup;
  * @author Administrator
  */
 public interface TaxonNavigationGroupMapper {   
-    @Select("SELECT * FROM TaxonGroupData")
+    @Select("SELECT * FROM TaxonGroupData WHERE parent is NULL")
+    @Results({ 
+        @Result(column = "taxonGroupKey", property = "children", javaType=List.class, many=@Many(select="uk.org.nbn.nbnv.api.dao.mappers.TaxonNavigationGroupMapper.getChildren")),
+        @Result(column = "taxonGroupKey", property = "taxonGroupKey") //map but retain key
+    })
     List<TaxonNavigationGroup> selectAll();
     
     @Select("SELECT * FROM TaxonGroupData WHERE taxonGroupKey = #{id}")

@@ -30,18 +30,19 @@
 <#macro __treeFacetHelper name data counts>
     <@__listID data; currentFacet>
         <li>
-            <#if currentFacet.children?? >
-                <h1>${currentFacet.name} (${counts[currentFacet.id].totalCount})
+            <#if currentFacet.children?has_content>
+                <h1>${currentFacet.name} (${(counts[currentFacet.id].totalCount)!0})
                     <@__filterInputBox name currentFacet/>
                 </h1>
                 <ul><@__treeFacetHelper name currentFacet.children counts/></ul>
             <#else>
-                ${currentFacet.name!currentFacet.id} (${counts[currentFacet.id].totalCount}) 
+                ${currentFacet.name!currentFacet.id} (${(counts[currentFacet.id].totalCount)!0}) 
                 <@__filterInputBox name currentFacet/>
             </#if>
         </li>
     </@__listID>
 </#macro>
+
 
 
 <#--The following macro will render search results of a particular query to a 
