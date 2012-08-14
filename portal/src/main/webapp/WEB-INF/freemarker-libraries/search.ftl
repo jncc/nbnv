@@ -31,12 +31,12 @@
     <@__listID data; currentFacet>
         <li>
             <#if currentFacet.children?has_content>
-                <h1>${currentFacet.name} (${(counts[currentFacet.id].totalCount)!0})
+                <h1>${currentFacet.name} (${(counts[currentFacet.id])!0})
                     <@__filterInputBox name currentFacet/>
                 </h1>
                 <ul><@__treeFacetHelper name currentFacet.children counts/></ul>
             <#else>
-                ${currentFacet.name!currentFacet.id} (${(counts[currentFacet.id].totalCount)!0}) 
+                ${currentFacet.name!currentFacet.id} (${(counts[currentFacet.id])!0}) 
                 <@__filterInputBox name currentFacet/>
             </#if>
         </li>

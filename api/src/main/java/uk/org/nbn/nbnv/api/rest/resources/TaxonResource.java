@@ -29,9 +29,10 @@ public class TaxonResource {
             ) throws SolrServerException {
         
         SolrQuery query = new SolrQuery();
-        query.setQuery((q==null) ? "*:*" : q);
+        query.setQuery((q==null) ? "*:*" : "taxonName:"+q);
         query.setFacet(true);
 
+        
         if(!categories.isEmpty()) query.addFilterQuery(getOrFilter("category", categories));
         if(!languages.isEmpty()) query.addFilterQuery(getOrFilter("lang", languages));
         
