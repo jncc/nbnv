@@ -3,61 +3,147 @@
     be powered by NBN Gateway API standardised search resources
 -->
 
-
-<#macro __filterInputBox currentFacet>
-    <input 
-        type="checkbox" 
-        name="${currentFacet.name}" 
-        value="${currentFacet.id}"
-        ${RequestParameters[currentFacet.name]?seq_contains(currentFacet.id)?string('checked="checked"','')}
-    />
+<#--Define a tree macro for facet rendering
+    @param name (Scalar) Specifies the name of the current facet
+    @param data (Sequence) The data which is to be rendered up in tree form.
+        The structure of the data sequence is quite forgiving.
+        An example of the structure of this would be :
+        <code>
+            [{
+                "name":"Name which will be displayed in tree",
+                "id": 'ID_AS_DEFINED_IN_COUNTS_HASH',
+                "children": [{
+                    "name":"A will be rendered as a tree child of my hash parent",
+                    "id": 'ID_AS_DEFINED_IN_COUNTS_HASH',
+                }]
+            },{
+                "id": 'THIS_ID_WILL_BE_RENDERED_AS_NAME'
+            },"SO_WOULD_THIS_ONE"]
+        </code>
+-->
+<#macro tree name data counts>
+    <h1>${name}</h1>
+    <ul class="collapsible-list"><@__treeFacetHelper name data counts/></ul>
 </#macro>
 
-<#macro __facet name data counts>
-    <#list data as currentFacet>
+<#macro __treeFacetHelper name data counts>
+    <@__listID data; currentFacet>
         <li>
             <#if currentFacet.children?? >
                 <h1>${currentFacet.name} (${counts[currentFacet.id].totalCount})
-                    <@__filterInputBox currentFacet/>
+                    <@__filterInputBox name currentFacet/>
                 </h1>
-                <ul><@__facet name currentFacet.children counts/></ul>
+                <ul><@__treeFacetHelper name currentFacet.children counts/></ul>
             <#else>
-                ${currentFacet.name} (${counts[currentFacet.id].totalCount}) 
-                <@__filterInputBox currentFacet/>
+                ${currentFacet.name!currentFacet.id} (${counts[currentFacet.id].totalCount}) 
+                <@__filterInputBox name currentFacet/>
             </#if>
         </li>
-    </#list>
+    </@__listID>
 </#macro>
 
-<#macro __facets facets counts>
-    <div class="nbn-search-facets">
-        <#list facets?keys as currFacet>
-            <div class="nbn-search-facet">
-                <h1>${currFacet}</h1>
-                <ul class="collapsible-list"><@__facet currFacet facets[currFacet] counts[currFacet]/></ul>
-            </div>
-        </#list>
-    </div>
-</#macro>
 
-<#macro search url query facets>
+<#--The following macro will render search results of a particular query to a 
+    particular search resource. A sequence of facet configurations can be 
+    supplied if rendering of facets is required
+    @param url (string/java.net.URL) The url which should be called in order
+        to perform a search
+    @param query (optional) (hash) The query hash which will be passed to the 
+        readURL method in order to obtain some search results
+    @param facets (optional) (sequence) A sequence of freemarker hashs or 
+        strings which represent which facets to be rendered for later filtering
+        of search results. The form of the facets configuration can be as simple
+        as:
+        <code>
+            ["facetIDOne", "facetIDtwo"]
+        </code>
+        The above example will render the ids of the facets with default
+        rendering. If a finer level of configuration is required then the more
+        verbose form will be more of use:
+        <code>
+            [{
+                "id" : "facetIDOne",            //This key is required to target
+                                                // a particular facet.
+
+                "name" : "Display Name One",    //This key will display configure
+                                                //the display name of this facet.
+                                                //The default is to render the ID
+
+                "render" : "tree",              //One can specify a particular 
+                                                //rendering function for there 
+                                                //facet. Default is "tree"
+
+                "data" : [...]                  //A data object to pass to the
+                                                //render function. Default is
+                                                //sequence of facet keys returned
+                                                //from the search result for this
+                                                //facet id.
+            },{
+                "id" : "facetIDTwo",
+                "name" : "Display Name for facetIDTwo",
+                "render" : "anotherRenderFunction",
+                "data" : [...]
+            }]
+        </code>
+
+        In the verbose configuration, optional keys can be emitted. It is also
+        valid to mix and match verbose and simple facet configurations. E.g
+        <code>
+            ["renderMeWithDefaultSettings", {
+                "id" :"configureMeWithTheBelow",
+                "name":"Not Default Name"
+            }]
+        </code>
+-->
+<#macro search url query={} facets=[]>
     <#assign search=json.readURL(url, query)/>
-    <div class="nbn-search">
-        
-        <form>
-            
-            <@__facets facets search.facetFields/>
-            <div class="controls">
-                Show - <@pagination.show/> 
-                <input type="submit" value="Filter"/>
-            </div>
-            <ol class="results">
-                <#list search.results as result>
-                    <li><#nested result></li>
-                </#list>
-            </ol>
-            
-        </form>
-    </div>
+    <form class="nbn-search">    
+        <@__facets facets search.facetFields/>
+        <div class="controls">
+            Show - <@pagination.show/> 
+            <input type="submit" value="Filter"/>
+        </div>
+        <ol class="results">
+            <#list search.results as result>
+                <li><#nested result></li>
+            </#list>
+        </ol>
+
+    </form>
     <@pagination.paginator search/>
+</#macro>
+
+<#-- Start defining the utilities used for creating facets -->
+<#macro __facets facets counts>
+    <ul class="nbn-search-facets">
+        <@__listID facets; facetConfig>
+            <li class="nbn-search-facet">
+                <@.vars[facetConfig.render!"tree"] 
+                    name=facetConfig.name!facetConfig.id
+                    data=facetConfig.data!counts[facetConfig.id]?keys
+                    counts=counts[facetConfig.id]
+                />
+            </li>
+        </@__listID>
+    </ul>
+</#macro>
+
+<#macro __filterInputBox name currentFacet>
+    <input 
+        type="checkbox" 
+        name="${name}" 
+        value="${currentFacet.id}"
+        ${RequestParameters[name]?seq_contains(currentFacet.id)?string('checked="checked"','')}
+    />
+</#macro>
+
+<#macro __listID sequence>
+    <#list sequence as id>
+        <#--Check if the id object is already an id-->
+        <#if id?is_hash>
+            <#nested id>
+        <#else>
+            <#nested {"id" : id}/>
+        </#if>
+    </#list>
 </#macro>

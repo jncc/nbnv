@@ -11,16 +11,11 @@ is not a finished product.
     <@search.search 
         url="${api}/species" 
         query=RequestParameters 
-        facets={ 
-            "category": [{
-                "name":"bob",
-                "id": 'NHMSYS0000080012',
-                "children": [{
-                    "name":"bob",
-                    "id": 'NHMSYS0000080012'
-                }]
-            }]
-        }
+        facets=[{
+                "id":"category",
+                "render" : "treeFacet"
+                
+            },"lang"]
         ; result
     >
         ${result.name}
