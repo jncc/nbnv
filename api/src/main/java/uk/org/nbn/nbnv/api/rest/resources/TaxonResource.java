@@ -1,5 +1,6 @@
 package uk.org.nbn.nbnv.api.rest.resources;
 
+import java.util.Iterator;
 import java.util.List;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -21,7 +22,8 @@ public class TaxonResource {
             @PathParam("id") String taxonGroup,
             @QueryParam("rows") @DefaultValue("20") int rows,
             @QueryParam("start") @DefaultValue("0") int start,
-            @QueryParam("fq") List<String> queryFilter,
+            @QueryParam("category") List<String> categories,
+            @QueryParam("lang") List<String> languages,
             @QueryParam("sort") String sort,
             @QueryParam("q") String q
             ) throws SolrServerException {
@@ -29,14 +31,34 @@ public class TaxonResource {
         SolrQuery query = new SolrQuery();
         query.setQuery((q==null) ? "*:*" : q);
         query.setFacet(true);
-        query.setFilterQueries(queryFilter.toArray(new String[0]));
+
+        if(!categories.isEmpty()) query.addFilterQuery(getOrFilter("category", categories));
+        if(!languages.isEmpty()) query.addFilterQuery(getOrFilter("lang", languages));
+        
         query.addFacetField("category", "lang");
         if(sort!=null) {
             query.setSortField(sort, SolrQuery.ORDER.asc);
         }
         query.setRows(rows);
         query.setStart(start);
+        System.out.println(languages);
+        System.out.println(query);
         return new SolrResponse(solrServer.query(query));
     }
     
+    private static String getOrFilter(String parameter, List<String> values) {
+        if(values.isEmpty()) 
+            throw new IllegalArgumentException("I need some valomes in order to filter");
+        StringBuilder toReturn = new StringBuilder(parameter);
+        toReturn.append(":(");
+        Iterator<String> iterator = values.iterator();
+        
+        toReturn.append(iterator.next());
+        for(; iterator.hasNext();) {
+            toReturn.append(" OR ");
+            toReturn.append(iterator.next());
+        }
+        toReturn.append(")");
+        return toReturn.toString();
+    }
 }

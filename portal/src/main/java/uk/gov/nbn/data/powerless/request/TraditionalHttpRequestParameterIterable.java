@@ -52,7 +52,7 @@ public class TraditionalHttpRequestParameterIterable implements Iterable<HttpReq
         }
         
         @Override public boolean hasNext() {
-            return (currentIterator != null) ? currentIterator.hasNext() : toWrap.hasNext();
+            return (currentIterator != null && currentIterator.hasNext()) || toWrap.hasNext();
         }
 
         @Override public HttpRequestParameter next() {
