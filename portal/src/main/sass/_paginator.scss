@@ -22,10 +22,12 @@ div.paginator {
 
 .nbn-search {
     @include clearfix;
-
+    border: 1px solid black;
     .nbn-search-facets {
         float:left;
         width: 300px;
+        border-right: 1px solid black;
+        font-size:0.8em;
     }
     
     .controls, .results {
