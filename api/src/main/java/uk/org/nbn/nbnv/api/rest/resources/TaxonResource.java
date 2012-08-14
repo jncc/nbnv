@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 import uk.org.nbn.nbnv.api.solr.SolrResponse;
 
 @Component
-@Path("/species")
+@Path("/taxa")
 public class TaxonResource {
     @Autowired SolrServer solrServer;
     
@@ -41,8 +41,6 @@ public class TaxonResource {
         }
         query.setRows(rows);
         query.setStart(start);
-        System.out.println(languages);
-        System.out.println(query);
         return new SolrResponse(solrServer.query(query));
     }
     

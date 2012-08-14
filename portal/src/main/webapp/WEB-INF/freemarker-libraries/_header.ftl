@@ -3,7 +3,7 @@
     <li class="first"><a href="/">NBN Gateway Home</a></li>
     <li><a href="http://nbn.org.uk">The NBN</a></li>
     <li><a href="/Datasets">Browse Datasets</a></li>
-    <li><a href="/Taxon_Groups">Browse Species</a></li>
+    <li><a href="/Taxa">Browse Species</a></li>
     <li><a href="/Site_Datasets">Browse Sites</a></li>
     <li><a href="/Designation_Categories">Browse Designations</a></li>
     <li><a href="/Documentation">Documentation</a></li>

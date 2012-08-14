@@ -7,7 +7,7 @@ is not a finished product.
     </@markdown>
 
     <@search.search 
-        url="${api}/species" 
+        url="${api}/taxa" 
         query=RequestParameters 
         facets=[{
             "id":"category",
