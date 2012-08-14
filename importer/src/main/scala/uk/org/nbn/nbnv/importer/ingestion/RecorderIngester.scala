@@ -12,8 +12,9 @@ class RecorderIngester @Inject()(em: EntityManager, repo: Repository) {
     repo.getFirstRecorder(name) match {
       case Some(r) => r
       case None => {
-        // todo: create / insert recorder
-        val r = new Recorder
+        val r = new Recorder()
+        r.setRecorderName(name)
+        em.persist(r)
         r
       }
     }
