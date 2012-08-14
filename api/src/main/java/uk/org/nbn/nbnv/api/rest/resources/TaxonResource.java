@@ -29,7 +29,14 @@ public class TaxonResource {
             ) throws SolrServerException {
         
         SolrQuery query = new SolrQuery();
-        query.setQuery((q==null) ? "*:*" : "taxonName:"+q);
+        
+        if(q!=null && !q.isEmpty()) {
+            query.setQuery(q);
+            query.setParam("defType", "dismax");
+        }
+        else {
+            query.setQuery("*:*");
+        }
         query.setFacet(true);
 
         
@@ -42,6 +49,7 @@ public class TaxonResource {
         }
         query.setRows(rows);
         query.setStart(start);
+        System.out.println(query);
         return new SolrResponse(solrServer.query(query));
     }
     

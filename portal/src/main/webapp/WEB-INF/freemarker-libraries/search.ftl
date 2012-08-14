@@ -107,6 +107,7 @@
     <form class="nbn-search">    
         <@__facets facets search.facetFields/>
         <div class="controls">
+            Search - <input type="text" name="q" value="${RequestParameters.q?first!''}"/>
             Show - <@pagination.show/> 
             <input type="submit" value="Filter"/>
         </div>
