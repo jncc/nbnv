@@ -1,6 +1,8 @@
 package uk.org.nbn.nbnv.importer.data
 
-class KeyGenerator(repository: Repository) {
+import com.google.inject.Inject
+
+class KeyGenerator @Inject()(repository: Repository) {
 
   def nextTaxonDatasetKey = {
 

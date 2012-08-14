@@ -2,8 +2,9 @@ package uk.org.nbn.nbnv.importer.ingestion
 
 import uk.org.nbn.nbnv.jpa.nbncore.Organisation
 import uk.org.nbn.nbnv.importer.data.Repository
+import com.google.inject.Inject
 
-class OrganisationIngester(repository: Repository) {
+class OrganisationIngester @Inject()(repository: Repository) {
 
   def ensureOrganisation(name: String) = {
 

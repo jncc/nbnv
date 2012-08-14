@@ -3,8 +3,9 @@ package uk.org.nbn.nbnv.importer.data
 import javax.persistence.EntityManager
 import uk.org.nbn.nbnv.jpa.nbncore._
 import uk.org.nbn.nbnv.importer.data.Implicits._
+import com.google.inject.Inject
 
-class Repository(em: EntityManager) extends ControlAbstractions {
+class Repository @Inject()(em: EntityManager) extends ControlAbstractions {
 
   def getSurvey(surveyKey: String, dataset: TaxonDataset) = {
 

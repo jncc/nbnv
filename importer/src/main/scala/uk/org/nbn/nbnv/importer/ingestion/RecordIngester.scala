@@ -6,13 +6,14 @@ import javax.persistence.EntityManager
 import org.apache.log4j.Logger
 import uk.org.nbn.nbnv.importer.records.NbnRecord
 import uk.org.nbn.nbnv.importer.data.Repository
+import com.google.inject.Inject
 
-class RecordIngester(log: Logger,
-                     em: EntityManager,
-                     surveyIngester: SurveyIngester,
-                     sampleIngester: SampleIngester,
-                     recorderIngester: RecorderIngester,
-                     r: Repository) {
+class RecordIngester @Inject()(log: Logger,
+                               em: EntityManager,
+                               surveyIngester: SurveyIngester,
+                               sampleIngester: SampleIngester,
+                               recorderIngester: RecorderIngester,
+                               r: Repository) {
 
   def upsertRecord(record: NbnRecord, dataset: TaxonDataset) {
 

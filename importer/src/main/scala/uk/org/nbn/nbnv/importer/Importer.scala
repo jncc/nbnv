@@ -1,13 +1,11 @@
 package uk.org.nbn.nbnv.importer
 
 import darwin.ArchiveManager
-import data.{Repository, KeyGenerator}
 import ingestion._
-import uk.org.nbn.nbnv.importer.logging.Log
-import uk.org.nbn.nbnv.metadata.{MetadataParser, MetadataReader}
-import uk.org.nbn.nbnv.utility.FileSystem
-import uk.org.nbn.nbnv.PersistenceUtility
-import org.apache.log4j.{Level, Logger}
+import injection.ImporterModule
+import uk.org.nbn.nbnv.metadata.MetadataReader
+import org.apache.log4j.Logger
+import com.google.inject.{Inject, Guice}
 
 object Importer {
 
@@ -30,38 +28,19 @@ object Importer {
   /// with its dependencies injected.
   def createImporter(options: Options) = {
 
-    // configure log
-    Log.configure(options.logDir, "4MB", Level.ALL)
-    val log = Log.get()
+    val injector = Guice.createInjector(new ImporterModule(options));
 
-    // create entity manager
-    val em = new PersistenceUtility().createEntityManagerFactory(Settings.map).createEntityManager
-    val repo = new Repository(em)
+    injector.getInstance(classOf[Importer])
 
-    // manually inject dependencies
-    new Importer(options,
-                 log,
-                 new ArchiveManager(options),
-                 new MetadataReader(new FileSystem, new MetadataParser),
-                 new Ingester(options,
-                              em,
-                              new DatasetIngester(log, em, new KeyGenerator(repo), repo, new OrganisationIngester(repo)),
-                              new RecordIngester(log,
-                                                 em,
-                                                 new SurveyIngester(em, repo),
-                                                 new SampleIngester(em, repo),
-                                                 new RecorderIngester(em, repo),
-                                                 repo
-                              )))
   }
 }
 
 /// Imports data into the NBN Gateway core database.
-class Importer(options:        Options,
-               log:            Logger,
-               archiveManager: ArchiveManager,
-               metadataReader: MetadataReader,
-               ingester:       Ingester) {
+class Importer @Inject()(options:        Options,
+                         log:            Logger,
+                         archiveManager: ArchiveManager,
+                         metadataReader: MetadataReader,
+                         ingester:       Ingester) {
 
   def run() {
 
