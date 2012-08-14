@@ -1,15 +1,11 @@
 package uk.org.nbn.nbnv.importer
 
 import darwin.ArchiveManager
-import data.{Repository, KeyGenerator}
 import ingestion._
 import injection.ImporterModule
-import uk.org.nbn.nbnv.importer.logging.Log
-import uk.org.nbn.nbnv.metadata.{MetadataParser, MetadataReader}
-import uk.org.nbn.nbnv.utility.FileSystem
-import uk.org.nbn.nbnv.PersistenceUtility
-import org.apache.log4j.{Level, Logger}
-import com.google.inject.{Inject, Injector, Guice}
+import uk.org.nbn.nbnv.metadata.MetadataReader
+import org.apache.log4j.Logger
+import com.google.inject.{Inject, Guice}
 
 object Importer {
 
