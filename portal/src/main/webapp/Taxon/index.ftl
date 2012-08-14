@@ -13,8 +13,15 @@ is not a finished product.
         query=RequestParameters 
         facets=[{
                 "id":"category",
-                "render" : "treeFacet"
-                
+                "render" : "treeFacet",
+                "data": [{
+                    "name":"bob",
+                    "id": 'NHMSYS0000080012',
+                    "children": [{
+                        "name":"bob",
+                        "id": 'NHMSYS0000080012'
+                    }]
+                }]
             },"lang"]
         ; result
     >

@@ -20,6 +20,7 @@
                 "id": 'THIS_ID_WILL_BE_RENDERED_AS_NAME'
             },"SO_WOULD_THIS_ONE"]
         </code>
+    @param counts (hash) A hash of ids to count values
 -->
 <#macro tree name data counts>
     <h1>${name}</h1>
@@ -86,6 +87,11 @@
             }]
         </code>
 
+        The render key of the verbose configuration should point to a macro 
+        defined in this library. That macro must take in three parameters:
+            * name      - Name of the parameter 
+            * data      - Some data to be used by that function
+            * counts    - A hash of ids to result counts
         In the verbose configuration, optional keys can be emitted. It is also
         valid to mix and match verbose and simple facet configurations. E.g
         <code>
