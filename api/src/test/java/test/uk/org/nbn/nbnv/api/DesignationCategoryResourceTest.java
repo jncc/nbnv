@@ -6,38 +6,32 @@ package test.uk.org.nbn.nbnv.api;
 
 import com.sun.jersey.api.client.GenericType;
 import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.api.client.config.ClientConfig;
-import com.sun.jersey.api.client.config.DefaultClientConfig;
-import com.sun.jersey.api.json.JSONConfiguration;
-import com.sun.jersey.test.framework.AppDescriptor;
-import com.sun.jersey.test.framework.JerseyTest;
-import com.sun.jersey.test.framework.WebAppDescriptor;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import javax.ws.rs.core.MediaType;
 import junit.framework.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import uk.org.nbn.nbnv.api.model.DesignationCategory;
 
 /**
- *
- * @author Paul Gilbertson
+ * The following test is a simple example of Spring/Jersey-Client/Jetty test
+ * @author Christopher Johnson
  */
-public class DesignationCategoryResourceTest extends SpringJerseyTest{
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration("classpath:jersey-jetty-applicationContext.xml")
+public class DesignationCategoryResourceTest {
+    @Autowired WebResource resource;
 
-    
     @Test
-    public void categoryListTest() {
-        WebResource webResource = resource();
-//        GenericType<List<DesignationCategory>> gt = new GenericType<List<DesignationCategory>>() { };
-//        List<DesignationCategory> dc = webResource.path("/designationCategories").accept(MediaType.APPLICATION_JSON).get(gt);
-        DesignationCategory dc = webResource.path("designationCategories").path("19").accept(MediaType.APPLICATION_JSON).get(DesignationCategory.class);
-        //Assert.assertTrue(dc.size() > 0);
-        System.out.println(dc);
+    public void categoryListTest() {        
+        GenericType<List<DesignationCategory>> gt = new GenericType<List<DesignationCategory>>() { };
+        List<DesignationCategory> dc = resource
+                .path("designationCategories")
+                .accept(MediaType.APPLICATION_JSON)
+                .get(gt);
+        Assert.assertTrue(dc.size() > 0);
     }
-
 }
