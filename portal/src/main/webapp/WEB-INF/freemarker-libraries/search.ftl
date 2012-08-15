@@ -32,11 +32,11 @@
     <@__listID data; currentFacet>
         <li>
             <@__filterInputBox id currentFacet/>
+            ${currentFacet.name!currentFacet.id} 
+            <span class="facet-count" rel="${currentFacet.id}">(${(counts[currentFacet.id])!0})</span>
+
             <#if currentFacet.children?has_content>
-                ${currentFacet.name} (${(counts[currentFacet.id])!0})
                 <ul><@__treeFacetHelper id currentFacet.children counts/></ul>
-            <#else>
-                ${currentFacet.name!currentFacet.id} (${(counts[currentFacet.id])!0}) 
             </#if>
         </li>
     </@__listID>
@@ -125,7 +125,7 @@
 <#macro __facets facets counts>
     <ul class="nbn-search-facets">
         <@__listID facets; facetConfig>
-            <li class="nbn-search-facet">
+            <li class="nbn-search-facet" rel="${facetConfig.id}">
                 <@.vars[facetConfig.render!"tree"]
                     id=facetConfig.id
                     name=facetConfig.name!facetConfig.id

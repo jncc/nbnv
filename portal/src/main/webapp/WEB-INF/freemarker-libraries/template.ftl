@@ -8,6 +8,7 @@
             </#list>
             <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
             <script type="text/javascript" src="/js/enable-collapsible-list.js"></script>
+            <script type="text/javascript" src="/js/enable-ajaxSearch.js"></script>
             <#list javascripts as javascript>
                 <script type="text/javascript" src="${javascript}"></script>
             </#list>
