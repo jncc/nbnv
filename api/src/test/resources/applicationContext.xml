@@ -1,7 +1,4 @@
-<!--
-    The following applicationContext overrides the main code application context
-    and uses an embedded database.
--->
+<?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:tx="http://www.springframework.org/schema/tx"
@@ -15,6 +12,10 @@
             http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-3.1.xsd
             http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 
+    <!--
+        The following applicationContext overrides the main code application context
+        and uses an embedded database.
+    -->
     <jdbc:embedded-database id="dataSource" type="HSQL">
         <jdbc:script location="classpath:test-data/schema.sql"/>
     </jdbc:embedded-database>
