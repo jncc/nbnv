@@ -11,14 +11,8 @@
             http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
             http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-3.1.xsd
             http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
-
-    <jdbc:embedded-database id="dataSource" type="HSQL">
-        <jdbc:script location="classpath:test-data/schema.sql"/>
-    </jdbc:embedded-database>
-
-    <import resource="classpath:app-config.xml"/>
     
-    <!--Create a jetty server running off the web.xml-->
+    <!--Create a jetty server running off the test web.xml-->
     <bean id="JettyServer" class="org.mortbay.jetty.Server" init-method="start" destroy-method="stop">
         <property name="connectors"> 
             <list> 
@@ -32,8 +26,8 @@
         <property name="handlers"> 
             <list> 
                 <bean class="org.mortbay.jetty.webapp.WebAppContext"> 
-                    <!--Deploy the app (war points to container of the WEB-INF-->
-                    <property name="war" value="src/main/webapp/"/>
+                    <!--Deploy the app (war points to container of the test WEB-INF-->
+                    <property name="war" value="src/test/resources/"/>
                 </bean>
             </list> 
         </property> 

@@ -6,6 +6,7 @@ package test.uk.org.nbn.nbnv.api;
 
 import com.sun.jersey.api.client.GenericType;
 import com.sun.jersey.api.client.WebResource;
+import java.util.Arrays;
 import java.util.List;
 import javax.ws.rs.core.MediaType;
 import junit.framework.Assert;
@@ -32,6 +33,7 @@ public class DesignationCategoryResourceTest {
                 .path("designationCategories")
                 .accept(MediaType.APPLICATION_JSON)
                 .get(gt);
+        System.out.println(Arrays.asList(dc));
         Assert.assertTrue(dc.size() > 0);
     }
 }
