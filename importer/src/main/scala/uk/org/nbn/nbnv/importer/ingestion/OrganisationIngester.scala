@@ -13,8 +13,9 @@ class OrganisationIngester @Inject()(repository: Repository) {
       case Some(o) => o
       case None    => {
         // todo create /insert organisation
-        val o = new Organisation
-        o
+        throw new UnsupportedOperationException
+//        val o = new Organisation
+//        o
       }
     }
   }}
