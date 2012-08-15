@@ -12,7 +12,7 @@
             http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-3.1.xsd
             http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
     
-    <!--Create a jetty server running off the test web.xml-->
+    <!--Create a jetty server running off the web.xml-->
     <bean id="JettyServer" class="org.mortbay.jetty.Server" init-method="start" destroy-method="stop">
         <property name="connectors"> 
             <list> 
@@ -26,8 +26,15 @@
         <property name="handlers"> 
             <list> 
                 <bean class="org.mortbay.jetty.webapp.WebAppContext"> 
-                    <!--Deploy the app (war points to container of the test WEB-INF-->
-                    <property name="war" value="src/test/resources/"/>
+                    <!--
+                        Deploy the app (war points to container of the WEB-INF).
+                        
+                        N.B In a test enviroment The applicationContext.xml defined in
+                        the web.xml will reference the applicationContext.xml of the
+                        test resources (i.e. using embedded database) rather than
+                        the main.
+                    -->
+                    <property name="war" value="src/main/webapp/"/>
                 </bean>
             </list> 
         </property> 
