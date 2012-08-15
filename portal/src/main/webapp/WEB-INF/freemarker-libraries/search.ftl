@@ -30,14 +30,12 @@
 <#macro __treeFacetHelper name data counts>
     <@__listID data; currentFacet>
         <li>
+            <@__filterInputBox name currentFacet/>
             <#if currentFacet.children?has_content>
-                <h1>${currentFacet.name} (${(counts[currentFacet.id])!0})
-                    <@__filterInputBox name currentFacet/>
-                </h1>
+                ${currentFacet.name} (${(counts[currentFacet.id])!0})
                 <ul><@__treeFacetHelper name currentFacet.children counts/></ul>
             <#else>
                 ${currentFacet.name!currentFacet.id} (${(counts[currentFacet.id])!0}) 
-                <@__filterInputBox name currentFacet/>
             </#if>
         </li>
     </@__listID>

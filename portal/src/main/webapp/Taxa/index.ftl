@@ -10,9 +10,20 @@ is not a finished product.
         url="${api}/taxa" 
         query=RequestParameters 
         facets=[{
+            "name": "Taxon Navigation Group",
             "id":"category",
             "data":json.readURL("${api}/taxonNavigationGroups")
-        }, "lang"]
+        }, {
+            "id":"lang",
+            "name": "Language",
+            "data": [
+                {"id":"en", "name":"English"},
+                {"id":"la", "name":"Scientific"},
+                {"id":"cy", "name":"Welsh"},
+                {"id":"gd", "name":"Scottish Gaelic"},
+                {"id":"En", "name":"Invalidly imported English"}
+            ]
+        }]
         ; result
     >
         <@taxon_utils.short_name taxon=result/>
