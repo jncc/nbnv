@@ -38,7 +38,7 @@ public class TaxonResource {
         }
         query.setFacet(true);
 
-        
+        query.addFilterQuery("record_type:taxon");
         if(!categories.isEmpty()) query.addFilterQuery(getOrFilter("category", categories));
         if(!languages.isEmpty()) query.addFilterQuery(getOrFilter("lang", languages));
         
