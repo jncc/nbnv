@@ -40,13 +40,7 @@
         </property> 
     </bean>
     
-    <!--Create a jersey client and expose a resource pointing to the jetty deployed app-->
-    <bean id="client" factory-method="create" class="com.sun.jersey.api.client.Client">
-        <constructor-arg>
-            <bean class="test.uk.org.nbn.nbnv.api.JerseyClientConfig"/>
-        </constructor-arg>
-    </bean>
-    <bean id="resource" factory-bean="client" factory-method="resource">
+    <bean id="jettyRoot" class="java.lang.String">
         <constructor-arg value="http://localhost:8050/"/>
     </bean>
 </beans>
