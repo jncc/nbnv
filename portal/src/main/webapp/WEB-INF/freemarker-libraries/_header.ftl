@@ -1,4 +1,8 @@
 <h1><a href="/">NBN Gateway</a></h1>
+<form action="/Search">
+    <input type="text" name="q" value="Search the NBN Gateway"/>
+    <input type="submit" value="GO!"/>
+</form>
 <ul>
     <li class="first"><a href="/">NBN Gateway Home</a></li>
     <li><a href="http://nbn.org.uk">The NBN</a></li>

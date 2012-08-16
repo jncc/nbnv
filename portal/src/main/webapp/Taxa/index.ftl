@@ -1,4 +1,4 @@
-<@template.master title="NBN Gateway - Taxon Search">
+<@template.master title="NBN Gateway - Taxon Search" javascripts=["enable-ajaxSearch.js"]>
     <@markdown>
 #Taxon Search Demonstration
 

@@ -1,6 +1,7 @@
 @import "compass/css3/border-radius";
 @import "compass/utilities/general/clearfix";
 @import "_nbn-colour-scheme";
+@import "icons/*.png";
 
 #nbn-page-header {
     @include clearfix;
@@ -14,6 +15,8 @@
         text-indent: -9999px;
     }
     
+    form { margin-top: 30px; float: right; }
+
     ul {
         @include border-radius(5px);
         width: 100%;
