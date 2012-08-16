@@ -2,40 +2,21 @@
  * The following JavaScript will enable ajax Search
  */
 (function($){
-    
-    function renderResult(result) {
-        return result.name;
-    }
-    
-    
-    function updatePagingLinks(nbnSearchForm) {}
-    
-    function updateCounts(nbnSearchForm, facetFields) {
-        $(".facet-count", nbnSearchForm).html("(0)");// reset all facet fields
-        $.each(facetFields, function(currFacetName, facetData) {
-            $('.nbn-search-facet[rel="'+ currFacetName + '"] .facet-count', nbnSearchForm)
-                .each(function() {
-                    var currCount = $(this);
-                    currCount.html("(" + facetData[currCount.attr('rel')] + ")");
-                })
-        })
-    }
-    
-    function updateResults(nbnSearchForm) {
-        var resultsDiv = $('.results', nbnSearchForm).empty();
-        $.getJSON('/api/taxa', nbnSearchForm.serialize(), function(search) {
-            updateCounts(nbnSearchForm, search.facetFields);
-            $.each(search.results, function(i, data) {
-                resultsDiv.append($('<li>').html(renderResult(data)));
-            });
-        });
-    }
-    
     $(document).ready(function(){
-        $('form.nbn-search').each(function(){
-            var me = $(this);
-            $('input, select', me).change(function() { updateResults(me); });
-            $('input[type="submit"]', me).remove();
+        var searchForm = $('form.nbn-search').nbn_search({
+            searchNode: '/api/taxa',
+            renderSearchResult:function(data){return data.name;},
+            queried: function(evt, state) { //save state for deeplinking
+                var path = '?' + state.formencodded;
+                if (window.history.pushState)
+                    window.history.pushState( state, path, path);
+            }
         });
+        
+        window.onpopstate = function(e){  //Enable deeplinking
+            if(e.state) {
+                searchForm.nbn_search('setState',e.state); 
+            } 
+        }
     });
 })(jQuery);

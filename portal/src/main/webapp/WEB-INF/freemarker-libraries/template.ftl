@@ -7,7 +7,11 @@
                 <link type="text/css" rel="stylesheet" href="${css}" />
             </#list>
             <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+            <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.21/jquery-ui.min.js"></script>
             <script type="text/javascript" src="/js/enable-collapsible-list.js"></script>
+            <script type="text/javascript" src="/js/jquery.query_string.js"></script>
+            <script type="text/javascript" src="/js/jquery.pagination.js"></script>
+            <script type="text/javascript" src="/js/jquery.nbn_search.js"></script>
             <script type="text/javascript" src="/js/enable-ajaxSearch.js"></script>
             <#list javascripts as javascript>
                 <script type="text/javascript" src="${javascript}"></script>

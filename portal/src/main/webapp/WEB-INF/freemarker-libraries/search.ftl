@@ -116,9 +116,8 @@
                 <li><#nested result></li>
             </#list>
         </ol>
-
+        <@pagination.paginator search/>
     </form>
-    <@pagination.paginator search/>
 </#macro>
 
 <#-- Start defining the utilities used for creating facets -->

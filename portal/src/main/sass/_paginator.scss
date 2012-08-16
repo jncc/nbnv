@@ -13,14 +13,19 @@ div.paginator {
 
     span {
         &.gap       { border:0; }
-        &.disabled  { color:$minorColour; }
-        &.current   { @include contrasted($majorColour); }
+        &.current   {
+            @include contrasted($majorColour);
+            &.prev, &.next { 
+                background-color:transparent;
+                color:$minorColour;
+            }
+        }
     }
     a:hover { border-color:$majorColour; } 
 }
 
 
-.nbn-search {
+form.nbn-search {
     @include clearfix;
     border: 1px solid black;
     .nbn-search-facets {
@@ -34,7 +39,6 @@ div.paginator {
         float:left;
         width: 651px;
     }
-    .controls {text-align: right;}
+    .controls   { text-align: right; }
+    .paginator  { float: right; clear: both; }
 }
-
-.paginator { margin-left: 250px; }
