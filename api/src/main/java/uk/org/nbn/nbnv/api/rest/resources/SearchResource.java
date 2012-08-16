@@ -1,6 +1,9 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package uk.org.nbn.nbnv.api.rest.resources;
 
-import java.util.Iterator;
 import java.util.List;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -12,8 +15,8 @@ import org.springframework.stereotype.Component;
 import uk.org.nbn.nbnv.api.solr.SolrResponse;
 
 @Component
-@Path("/taxa")
-public class TaxonResource {
+@Path("/search")
+public class SearchResource {
     @Autowired SolrServer solrServer;
     
     @GET
@@ -38,32 +41,11 @@ public class TaxonResource {
         }
         query.setFacet(true);
 
-        
-        if(!categories.isEmpty()) query.addFilterQuery(getOrFilter("category", categories));
-        if(!languages.isEmpty()) query.addFilterQuery(getOrFilter("lang", languages));
-        
-        query.addFacetField("category", "lang");
         if(sort!=null) {
             query.setSortField(sort, SolrQuery.ORDER.asc);
         }
         query.setRows(rows);
         query.setStart(start);
         return new SolrResponse(solrServer.query(query));
-    }
-    
-    private static String getOrFilter(String parameter, List<String> values) {
-        if(values.isEmpty()) 
-            throw new IllegalArgumentException("I need some valomes in order to filter");
-        StringBuilder toReturn = new StringBuilder(parameter);
-        toReturn.append(":(");
-        Iterator<String> iterator = values.iterator();
-        
-        toReturn.append(iterator.next());
-        for(; iterator.hasNext();) {
-            toReturn.append(" OR ");
-            toReturn.append(iterator.next());
-        }
-        toReturn.append(")");
-        return toReturn.toString();
     }
 }

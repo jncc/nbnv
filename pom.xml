@@ -16,7 +16,7 @@
     <properties>
         <scala.version>2.9.2</scala.version>
         <jersey.version>1.13</jersey.version>
-        <spring.version>3.1.2.RELEASE</spring.version>
+        <spring.version>3.1.1.RELEASE</spring.version>
         <jetty.version>6.1.26</jetty.version>
     </properties>
 
