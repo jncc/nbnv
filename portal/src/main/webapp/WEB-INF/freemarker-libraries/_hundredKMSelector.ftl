@@ -50,7 +50,7 @@ selecting a 100km Grid Square of the British/Irish National grid-->
     "SM" : "115,267,115,294,96,294",
     "SR" : "96,294,115,294,115,320,88,320,88,305"
 }/>
-<p>
+
 <img usemap="#hundredKmSelector" alt="100km map" src="/img/hundredKmSelector.gif" width="260" height="350" />
 <map name="hundredKmSelector">
     <#list gridSquareRows as gridSquareRow>
@@ -62,4 +62,3 @@ selecting a 100km Grid Square of the British/Irish National grid-->
         <area alt="${poly}" shape="poly" coords="${nonSquareGridSquares[poly]}" href="/Site_Report/${poly}"/>
     </#list>
 </map>
-</p>

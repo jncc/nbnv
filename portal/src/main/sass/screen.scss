@@ -101,6 +101,20 @@ body {
         background-color: $minorGrey;
         border: 1px solid $mediumGrey;
     }
+
+    .tabbed {
+        $padding: 5px;
+        margin:5px;
+        @include border-top-radius(5px);
+        border: 1px solid $majorColour;
+        padding: $padding;
+        h1, h2, h3 {
+            @include contrasted($majorColour);
+            padding: 0.5em;
+            display: block;
+            margin: #{-$padding} #{-$padding} $padding;
+        }
+    }
     
     .nbn-taxon-name{
         font-style: italic;    
