@@ -6,5 +6,5 @@ This server has been configured to run with ${api}
 
 The following pages will demonstrate the development of the NBN Gateway.
     </@markdown>
-    <#include "/WEB-INF/freemarker-libraries/_hundredKMSelector.ftl"/>
+    <@image_map.hundredKM/>
 </@template.master>

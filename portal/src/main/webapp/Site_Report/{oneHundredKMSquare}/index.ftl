@@ -19,7 +19,7 @@
         </div>
         <div class="tabbed" style="float:left">
             <h3>100km Square ${URLParameters.oneHundredKMSquare}</h3>
-            <#include "/WEB-INF/freemarker-libraries/_hundredKMSelector.ftl"/>
+            <@image_map.hundredKM selected=URLParameters.oneHundredKMSquare/>
         </div>
     </div>
 </@template.master>
