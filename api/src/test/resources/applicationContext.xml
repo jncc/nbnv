@@ -18,6 +18,7 @@
     -->
     <jdbc:embedded-database id="dataSource" type="HSQL">
         <jdbc:script location="classpath:test-data/schema.sql"/>
+        <jdbc:script location="classpath:test-data/data.sql"/>
     </jdbc:embedded-database>
 
     <import resource="classpath:app-config.xml"/>
