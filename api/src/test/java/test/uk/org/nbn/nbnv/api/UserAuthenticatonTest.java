@@ -12,6 +12,7 @@ import uk.org.nbn.nbnv.api.authentication.InvalidCredentialsException;
 import uk.org.nbn.nbnv.api.authentication.Token;
 import uk.org.nbn.nbnv.api.authentication.TokenAuthenticator;
 import static org.junit.Assert.*;
+import org.springframework.test.annotation.DirtiesContext;
 import uk.org.nbn.nbnv.api.authentication.*;
 import uk.org.nbn.nbnv.api.model.User;
 
@@ -21,6 +22,7 @@ import uk.org.nbn.nbnv.api.model.User;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:applicationContext.xml")
+@DirtiesContext
 public class UserAuthenticatonTest {
     @Autowired TokenAuthenticator authenticator;
     
