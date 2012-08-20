@@ -7,6 +7,7 @@ import org.gbif.dwc.text.{StarRecord, Archive}
 import org.gbif.utils.file.ClosableIterator
 import uk.org.nbn.nbnv.importer.testing.BaseFunSuite
 import uk.org.nbn.nbnv.importer.Options
+import org.apache.log4j.Logger
 
 class IngesterSuite extends BaseFunSuite {
 
@@ -30,7 +31,7 @@ class IngesterSuite extends BaseFunSuite {
     val metadata = mock[Metadata]
 
     // act
-    val ingester = new Ingester(options, em, datasetIngester, recordIngester)
+    val ingester = new Ingester(options, mock[Logger], em, datasetIngester, recordIngester)
     ingester.ingest(archive, metadata)
   }
 

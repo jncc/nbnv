@@ -21,8 +21,9 @@ class DatasetIngester @Inject()(log: Logger,
     // when there's no key given, insert a new dataset
     // when there is one, find it and update it (otherwise throw)
 
-    if (metadata.datasetKey.isEmpty)
+    if (metadata.datasetKey.isEmpty) {
       insertNew(metadata)
+    }
     else {
       // todo: delete existing data?
       updateExisting(metadata)

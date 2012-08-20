@@ -1,5 +1,5 @@
 CREATE TABLE UserData(
-	id int NOT NULL PRIMARY KEY IDENTITY,
+	id int NOT NULL PRIMARY KEY,
 	forename varchar(25) NOT NULL,
 	surname varchar(25) NOT NULL,
 	username varchar(40) NOT NULL,

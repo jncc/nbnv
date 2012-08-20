@@ -7,10 +7,12 @@ import org.gbif.dwc.text.Archive
 import uk.org.nbn.nbnv.metadata.Metadata
 import uk.org.nbn.nbnv.importer.Options
 import com.google.inject.Inject
+import org.apache.log4j.Logger
 
 /// Performs the interaction with the NBN core database.
 
 class Ingester @Inject()(options: Options,
+                         log: Logger,
                          em: EntityManager,
                          datasetIngester: DatasetIngester,
                          recordIngester: RecordIngester) {
@@ -31,13 +33,17 @@ class Ingester @Inject()(options: Options,
       for (record <- archive.iteratorRaw) {
         recordIngester.upsertRecord(new NbnRecord(record), dataset)
         em.flush()
-        // todo: set no caching for records?
+        // todo: is caching correct for JPA entities?
       }
 
-      if (options.whatIf)
+      if (options.whatIf) {
+        log.info("Rolling back ingestion transaction (whatIf=true)")
         t.rollback()
-      else
+      }
+      else {
+        log.info("Committing ingestion transaction")
         t.commit()
+      }
     }
   }
 
@@ -46,13 +52,13 @@ class Ingester @Inject()(options: Options,
       f
     }
     catch {
-      case e: Exception => {
+      case e: Throwable => {
         if (t != null && t.isActive) t.rollback()
         throw (e)
       }
     }
     finally {
-      em.close()
+      em.close() // todo: hmm, where best to do this? necessary?
     }
   }
 }

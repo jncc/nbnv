@@ -9,6 +9,7 @@ import testing.BaseFunSuite
 import uk.org.nbn.nbnv.metadata.MetadataReader
 import javax.persistence.{EntityManager, EntityTransaction}
 import org.gbif.dwc.text.Archive
+import validation.Validator
 
 class ImporterSuite extends BaseFunSuite  {
 
@@ -28,9 +29,10 @@ class ImporterSuite extends BaseFunSuite  {
     when(entityManager.getTransaction).thenReturn(mock[EntityTransaction])
 
     val ingester = mock[Ingester]
+    val validator = mock[Validator]
 
     // act
-    val importer = new Importer(Options(), log, archiveManager, metadataReader, ingester)
+    val importer = new Importer(Options(), log, archiveManager, metadataReader, validator, ingester)
     importer.run()
 
     // assert
