@@ -19,6 +19,7 @@
 
     <modules>
         <module>crud</module>
+        <module>fidelity</module>
         <module>importer</module>
 		<module>importer.ui</module>
         <module>rs</module>
