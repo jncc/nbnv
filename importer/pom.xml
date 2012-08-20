@@ -19,6 +19,12 @@
         <dependency>
             <groupId>uk.org.nbn</groupId>
             <artifactId>nbnv-crud</artifactId>
+            <version>0.1-SNAPSHOT</version><!-- todo: seems not to be needed! -->
+        </dependency>
+        <dependency>
+            <groupId>uk.org.nbn</groupId>
+            <artifactId>nbnv-fidelity</artifactId>
+            <version>0.1-SNAPSHOT</version><!--todo: is this right?! -->
         </dependency>
         <dependency>
             <groupId>org.scala-lang</groupId>
@@ -60,8 +66,6 @@
     </dependencies>
 
     <build>
-        <sourceDirectory>src/main/scala</sourceDirectory>
-        <testSourceDirectory>src/test/scala</testSourceDirectory>
         <plugins>
             <plugin>
                 <groupId>org.scala-tools</groupId>

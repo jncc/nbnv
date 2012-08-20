@@ -6,6 +6,7 @@ import injection.ImporterModule
 import uk.org.nbn.nbnv.metadata.MetadataReader
 import org.apache.log4j.Logger
 import com.google.inject.{Inject, Guice}
+import validation.Validator
 
 object Importer {
 
@@ -28,10 +29,8 @@ object Importer {
   /// with its dependencies injected.
   def createImporter(options: Options) = {
 
-    val injector = Guice.createInjector(new ImporterModule(options));
-
+    val injector = Guice.createInjector(new ImporterModule(options))
     injector.getInstance(classOf[Importer])
-
   }
 }
 
@@ -40,27 +39,28 @@ class Importer @Inject()(options:        Options,
                          log:            Logger,
                          archiveManager: ArchiveManager,
                          metadataReader: MetadataReader,
+                         validator:      Validator,
                          ingester:       Ingester) {
 
   def run() {
 
     withTopLevelExceptionHandling {
 
-      log.info("Welcome! Starting the NBN Gateway importer...")
+      log.info("Welcome! Starting the NBN Gateway importer")
       log.info("Options are: \n" + options)
 
       // open the archive and read the metadata
       val archive = archiveManager.open()
       val metadata = metadataReader.read(archive)
 
-      // validate
-      // ...
-      // verify
+      // validate the archive
+      validator.validate(archive)
+      // verify (... or ideally in the same parallel step as validate)
 
       // ingest the archive and metadata
       ingester.ingest(archive, metadata)
 
-      log.info("Done importing archive '%s'.".format(options.archivePath))
+      log.info("Done with archive '%s'".format(options.archivePath))
     }
   }
 
@@ -68,10 +68,10 @@ class Importer @Inject()(options:        Options,
     try { f }
     catch {
       case ie: ImportFailedException => {
-        log.error("Import run failed.", ie)
+        log.error("Import run failed", ie)
         throw ie
       }
-      case e: Exception => {
+      case e: Throwable => {
         log.fatal("Unhandled exception!", e)
         throw e
       }
