@@ -4,6 +4,7 @@
 -->
 
 <#--Define a tree macro for facet rendering
+    @param id (Scalar) The query search parameter of the current facet
     @param name (Scalar) Specifies the name of the current facet
     @param data (Sequence) The data which is to be rendered up in tree form.
         The structure of the data sequence is quite forgiving.
@@ -22,22 +23,20 @@
         </code>
     @param counts (hash) A hash of ids to count values
 -->
-<#macro tree name data counts>
+<#macro tree id name data counts>
     <h1>${name}</h1>
-    <ul class="collapsible-list"><@__treeFacetHelper name data counts/></ul>
+    <ul class="collapsible-list"><@__treeFacetHelper id data counts/></ul>
 </#macro>
 
-<#macro __treeFacetHelper name data counts>
+<#macro __treeFacetHelper id data counts>
     <@__listID data; currentFacet>
         <li>
+            <@__filterInputBox id currentFacet/>
+            ${currentFacet.name!currentFacet.id} 
+            <span class="facet-count" rel="${currentFacet.id}">(${(counts[currentFacet.id])!0})</span>
+
             <#if currentFacet.children?has_content>
-                <h1>${currentFacet.name} (${(counts[currentFacet.id])!0})
-                    <@__filterInputBox name currentFacet/>
-                </h1>
-                <ul><@__treeFacetHelper name currentFacet.children counts/></ul>
-            <#else>
-                ${currentFacet.name!currentFacet.id} (${(counts[currentFacet.id])!0}) 
-                <@__filterInputBox name currentFacet/>
+                <ul><@__treeFacetHelper id currentFacet.children counts/></ul>
             </#if>
         </li>
     </@__listID>
@@ -90,7 +89,8 @@
 
         The render key of the verbose configuration should point to a macro 
         defined in this library. That macro must take in three parameters:
-            * name      - Name of the parameter 
+            * id        - The query search name
+            * name      - Display name of the parameter 
             * data      - Some data to be used by that function
             * counts    - A hash of ids to result counts
         In the verbose configuration, optional keys can be emitted. It is also
@@ -116,17 +116,17 @@
                 <li><#nested result></li>
             </#list>
         </ol>
-
+        <@pagination.paginator search/>
     </form>
-    <@pagination.paginator search/>
 </#macro>
 
 <#-- Start defining the utilities used for creating facets -->
 <#macro __facets facets counts>
     <ul class="nbn-search-facets">
         <@__listID facets; facetConfig>
-            <li class="nbn-search-facet">
-                <@.vars[facetConfig.render!"tree"] 
+            <li class="nbn-search-facet" rel="${facetConfig.id}">
+                <@.vars[facetConfig.render!"tree"]
+                    id=facetConfig.id
                     name=facetConfig.name!facetConfig.id
                     data=facetConfig.data!counts[facetConfig.id]?keys
                     counts=counts[facetConfig.id]

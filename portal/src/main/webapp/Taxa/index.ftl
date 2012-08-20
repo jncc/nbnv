@@ -1,4 +1,4 @@
-<@template.master title="NBN Gateway - Taxon Seach">
+<@template.master title="NBN Gateway - Taxon Search" javascripts=["enable-ajaxSearch.js"]>
     <@markdown>
 #Taxon Search Demonstration
 
@@ -10,11 +10,20 @@ is not a finished product.
         url="${api}/taxa" 
         query=RequestParameters 
         facets=[{
-            "id":"category",
-            "data":json.readURL("${api}/taxonNavigationGroups")
-        }, "lang"]
-        ; result
-    >
+                "name": "Taxon Navigation Group",
+                "id":"category",
+                "data":json.readURL("${api}/taxonNavigationGroups")
+            }, {
+                "id":"lang",
+                "name": "Language",
+                "data": [
+                    {"id":"en", "name":"English"},
+                    {"id":"la", "name":"Scientific"},
+                    {"id":"cy", "name":"Welsh"},
+                    {"id":"gd", "name":"Scottish Gaelic"},
+                    {"id":"En", "name":"Invalidly imported English"}
+                ]
+        }]; result>
         <@taxon_utils.short_name taxon=result/>
     </@search.search>
 </@template.master>

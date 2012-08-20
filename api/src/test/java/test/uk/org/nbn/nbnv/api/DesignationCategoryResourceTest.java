@@ -6,10 +6,9 @@ package test.uk.org.nbn.nbnv.api;
 
 import com.sun.jersey.api.client.GenericType;
 import com.sun.jersey.api.client.WebResource;
-import java.util.Arrays;
 import java.util.List;
 import javax.ws.rs.core.MediaType;
-import junit.framework.Assert;
+import static junit.framework.Assert.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +32,16 @@ public class DesignationCategoryResourceTest {
                 .path("designationCategories")
                 .accept(MediaType.APPLICATION_JSON)
                 .get(gt);
-        System.out.println(Arrays.asList(dc));
-        Assert.assertTrue(dc.size() > 0);
+        assertTrue(dc.size() > 0);
+    }
+    
+    @Test
+    public void embeddedDatabaseCategoryTest() {
+        DesignationCategory dc = resource
+                .path("designationCategories")
+                .path("100")
+                .accept(MediaType.APPLICATION_JSON)
+                .get(DesignationCategory.class);
+        assertEquals(dc.getLabel(), "Embedded Record");
     }
 }

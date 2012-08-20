@@ -19,7 +19,6 @@ public class TaxonResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public SolrResponse getTaxa(
-            @PathParam("id") String taxonGroup,
             @QueryParam("rows") @DefaultValue("20") int rows,
             @QueryParam("start") @DefaultValue("0") int start,
             @QueryParam("category") List<String> categories,
@@ -39,7 +38,7 @@ public class TaxonResource {
         }
         query.setFacet(true);
 
-        
+        query.addFilterQuery("record_type:taxon");
         if(!categories.isEmpty()) query.addFilterQuery(getOrFilter("category", categories));
         if(!languages.isEmpty()) query.addFilterQuery(getOrFilter("lang", languages));
         
@@ -49,7 +48,6 @@ public class TaxonResource {
         }
         query.setRows(rows);
         query.setStart(start);
-        System.out.println(query);
         return new SolrResponse(solrServer.query(query));
     }
     

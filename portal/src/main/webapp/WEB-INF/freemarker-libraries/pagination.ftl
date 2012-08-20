@@ -61,18 +61,18 @@
 <#macro previous search label>
     <#assign prevStart=(search.header.start - search.header.rows)/>
     <#if (prevStart >= 0)>
-        <a href="${core.queryString(RequestParameters + {"start":[prevStart]})}">${label}</a>
+        <a class="prev" href="${core.queryString(RequestParameters + {"start":[prevStart]})}">${label}</a>
     <#else>
-        <span class="disabled">${label}</span>
+        <span class="current prev">${label}</span>
     </#if>
 </#macro>
 
 <#macro next search label>
     <#assign nextStart=(search.header.start + search.header.rows)/>
     <#if (nextStart <= search.header.numFound)>
-        <a href="${core.queryString(RequestParameters + {"start":[nextStart]})}">${label}</a>
+        <a class="next" href="${core.queryString(RequestParameters + {"start":[nextStart]})}">${label}</a>
     <#else>
-        <span class="disabled">${label}</span>
+        <span class="current next">${label}</span>
     </#if>
 </#macro>
 

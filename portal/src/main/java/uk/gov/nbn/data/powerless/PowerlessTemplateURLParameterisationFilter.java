@@ -17,13 +17,16 @@ import javax.servlet.http.HttpServletRequest;
 public class PowerlessTemplateURLParameterisationFilter implements Filter {
     public static final String POWERLESS_URL_PARAMETERS_ATTRIBUTE =  "uk.gov.nbn.data.powerless.URLParameters";
     
-    @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {        
+    private ServletContext context;
+    
+    @Override public void init(FilterConfig filterConfig) {
+        context = filterConfig.getServletContext();
+    }
+    
+    @Override public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {        
         String requestedURL = ((HttpServletRequest)request).getRequestURI();
-        ServletContext context = request.getServletContext();
         
         if(!new File(context.getRealPath(requestedURL)).exists()) {
-            
             String[] requestedParts = requestedURL.substring(1).split("/"); //split the requestedURL removing the first slash
             String[] realParts = findSuitableResourcePathParts(new File(context.getRealPath("/")), requestedParts); //resolve the pathParts to realParts
             
@@ -35,6 +38,7 @@ public class PowerlessTemplateURLParameterisationFilter implements Filter {
         }
         chain.doFilter(request, response);
     }
+    
     
     /**
      * Creates a Map of parameter to value entries for a list of realPathParts
@@ -148,8 +152,7 @@ public class PowerlessTemplateURLParameterisationFilter implements Filter {
             return parameter.substring(1, parameter.length()-1);
         }
     }
-    
+
     //Do nothing here
-    @Override public void init(FilterConfig filterConfig) {}
     @Override public void destroy() {}
 }

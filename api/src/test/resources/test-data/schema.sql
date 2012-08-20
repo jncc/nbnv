@@ -5,3 +5,4 @@ INSERT INTO DesignationCategoryData ( designationCategoryID , label , descriptio
 INSERT INTO DesignationCategoryData ( designationCategoryID , label , description , sortOrder ) VALUES (22, N'Red Data List', N'Red lists based on the IUCN criteria', 2);
 INSERT INTO DesignationCategoryData ( designationCategoryID , label , description , sortOrder ) VALUES (23, N'UK BAP', N'UK BAP priority species lists', 3); 
 INSERT INTO DesignationCategoryData ( designationCategoryID , label , description , sortOrder ) VALUES (24, N'Organisation Defined Lists', N'Miscelleneous defined lists', 6);
+INSERT INTO DesignationCategoryData ( designationCategoryID , label , description , sortOrder ) VALUES (100, N'Embedded Record', N'Embedded Record test', 7);
