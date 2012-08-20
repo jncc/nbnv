@@ -8,6 +8,11 @@ package uk.org.nbn.nbnv.api.authentication;
 public class Token {
     private final byte[] bytes;
     
+    /*Default constructor for use with jersey*/
+    protected Token() {
+        this(new byte[0]);
+    }
+    
     public Token(byte[] bytes) {
         this.bytes = bytes;
     }
