@@ -44,7 +44,7 @@ public class UserAuthenticatonTest {
         Token generateToken = authenticator.generateToken("tester", "password", 1);
         
         //When
-        Thread.sleep(2); //wait 2 milliseconds
+        Thread.sleep(3); //wait 3 milliseconds
         
         //Then
         User user = authenticator.getUser(generateToken);

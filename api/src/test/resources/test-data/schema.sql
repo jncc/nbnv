@@ -20,9 +20,9 @@ CREATE TABLE UserData (
 
 CREATE TABLE UserTokenAuthenticationData (
     id int NOT NULL,
-    username_sha1 VARBINARY(8000) NOT NULL,
-    password_sha1 VARBINARY(8000) NOT NULL,
-    password_md5_sha1 VARBINARY(8000) NOT NULL
+    username_sha1 VARBINARY(20) NOT NULL,
+    password_sha1 VARBINARY(20) NOT NULL,
+    password_md5_sha1 VARBINARY(20) NOT NULL
 );
 
 --Create a single user "tester" with an id of 43
