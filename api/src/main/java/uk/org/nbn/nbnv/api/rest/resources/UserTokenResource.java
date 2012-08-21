@@ -40,13 +40,14 @@ public class UserTokenResource {
             @QueryParam("password")String password,
             @Context HttpServletRequest request
         ) throws InvalidCredentialsException {
+        System.out.println();
         Token token = tokenAuth.generateToken(username, password, DEFAULT_TOKEN_TTL);
         return Response.ok()
            .cookie(new NewCookie(
                TokenUserProvider.TOKEN_COOKIE_KEY, 
                Base64.encodeBase64URLSafeString(token.getBytes()),
                 "/",
-                ".testnbn.net",
+                request.getServerName(),
                 "authentication token",
                 DEFAULT_TOKEN_TTL/1000,
                 false
