@@ -69,19 +69,22 @@ class DatasetIngester @Inject()(log: Logger,
 
     d.setAccessConstraints(m.accessConstraints)
     d.setDataCaptureMethod(m.dataCaptureMethod)
-    d.setDatasetProvider(provider)
+    d.setDatasetProvider(provider) //* not metadata
     d.setDataQuality(m.dataQuality)
     d.setDatasetTitle(m.datasetTitle)
-    d.setDatasetTypeKey(datasetType)
-    d.setDateUploaded(Clock.nowUtc)
+    d.setDatasetTypeKey(datasetType) //* should actually never change
+    d.setDateUploaded(Clock.nowUtc) //* not metadata
     d.setDescription(m.description)
     d.setGeographicalCoverage(m.geographicCoverage)
-    d.setMetadataLastEdited(Clock.nowUtc)
     d.setPurpose(m.purpose)
     d.setUseConstraints(m.useConstraints)
     d.setUpdateFrequency(datasetUpdateFrequency)
     d.setAdditionalInformation(m.additionalInformation)
     d.setTemporalCoverage(m.temporalCoverage)
+
+    // todo: only set if any of the other fields (apart from those marked *) have changed!
+    d.setMetadataLastEdited(Clock.nowUtc)
+
     d
   }
 

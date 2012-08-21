@@ -7,9 +7,17 @@ import java.util.Date;
  * @author Christopher Johnson
  */
 public class User {
+    public static int PUBLIC_USER_ID = 0;
+    public static User PUBLIC_USER = new User();
+    
     private int id;
     private String forename, surname, username, email, phone;
     private Date registrationDate;
+    
+    /*Constructor for public user*/
+    private User() {
+        this.id=PUBLIC_USER_ID;
+    }
 
     public String getEmail() {
         return email;
