@@ -5,6 +5,7 @@ import com.google.inject.Inject
 import org.gbif.dwc.text.Archive
 import uk.org.nbn.nbnv.fidelity.{ResultLevel, Result}
 import org.apache.log4j.Logger
+import uk.org.nbn.nbnv.importer.ImportFailedException
 
 // todo: requirement for allowing e.g. 100 errors - presumably this needs to keep validating, but not import?
 // todo: mapping between darwin and nbn terms, separate from reading values, nulls throw?
@@ -36,7 +37,10 @@ class Validator @Inject()(log: Logger){
     result.level match {
       case ResultLevel.INFO  => log.info(output)
       case ResultLevel.WARN  => log.warn(output)
-      case ResultLevel.ERROR => log.error(output)
+      case ResultLevel.ERROR => {
+        log.error(output)
+        throw new ImportFailedException("Validation failure.")
+      }
     }
   }
 }
