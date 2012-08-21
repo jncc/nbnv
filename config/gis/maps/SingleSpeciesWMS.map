@@ -1,0 +1,164 @@
+MAP
+  IMAGETYPE                                             PNG
+#  EXTENT                                                -11 49 2 61
+  EXTENT                                                0 0 800000 800000
+  SIZE                                                  2800 2800
+  IMAGECOLOR                                            255 255 255
+  FONTSET                                               "/ms4w/Apache/cgi-bin/fonts/fontset"
+  
+  WEB
+    IMAGEPATH                                           "/ms4w/tmp/ms_tmp/"
+    IMAGEURL                                            "/ms_tmp/"
+    METADATA
+      "wms_title"                                       "Single Species Map"
+      "wms_onlineresource"                              "http://nbngis-a.nerc-lancaster.ac.uk/mapserver/SingleSpeciesWMS?"
+      "wms_srs"                                         "EPSG:29903 EPSG:27700 EPSG:4326 EPSG:3857"
+      "wms_enable_request"                              "*"
+    END
+  END
+
+  PROJECTION
+    "init=epsg:27700"
+  END
+
+  LAYER
+    NAME                                                "3"
+    TYPE                                                POLYGON
+    STATUS                                              OFF
+    CONNECTIONTYPE                                      PLUGIN
+    PLUGIN                                              "msplugin_mssql2008.dll"
+    CONNECTION                                          "Server=NBNSQL-B;Database=NBNWarehouse;uid=nbngis;pwd=Lo9ijnhy6tfc;Integrated Security=True"
+    PROCESSING                                          "CLOSE_CONNECTION=DEFER"
+
+    METADATA
+      "wms_title"                                       "3"
+      'default_userKey'                                 '0'
+    END
+
+    VALIDATION
+      'taxonKey'                                        '^[A-Z]{6}[0-9]{10}$'
+      'userKey'                                         '^[0-9]+$'
+    END
+
+    DATA                                                "geom from (SELECT geom, observationId, gridRef FROM vw_SingleSpeciesMap WHERE resolutionID = 1 AND taxonVersionKey = '%taxonKey%' AND userKey = %userKey%) AS foo USING UNIQUE observationId USING SRID=4326"
+
+    PROJECTION
+      "init=epsg:4326"
+    END
+        
+    CLASS
+      NAME                                              "10km std"
+          
+      STYLE
+        COLOR                                           255 255 0
+        OUTLINECOLOR                                    0 0 0
+        WIDTH                                           0.5
+      END
+    END
+  END
+
+  LAYER
+    NAME                                                "2"
+    TYPE                                                POLYGON
+    STATUS                                              OFF
+    CONNECTIONTYPE                                      PLUGIN
+    PLUGIN                                              "msplugin_mssql2008.dll"
+    CONNECTION                                          "Server=NBNSQL-A;Database=NBNWarehouse;uid=nbnimporter;pwd=Lo9ijnhy6tfc;Integrated Security=True"
+
+    METADATA
+      "wms_title"                                       "2"
+      'default_userKey'                                 '0'
+    END
+
+    VALIDATION
+      'taxonKey'                                        '^[A-Z]{6}[0-9]{10}$'
+      'userKey'                                         '^[0-9]+$'
+    END
+
+    DATA                                                "geom from (SELECT geom, observationId, gridRef FROM vw_SingleSpeciesMap WHERE resolutionID = 2 AND taxonVersionKey = '%taxonKey%' AND userKey = %userKey%) AS foo USING UNIQUE observationId USING SRID=4326"
+
+    PROJECTION
+      "init=epsg:4326"
+    END
+        
+    CLASS
+      NAME                                              "2km std"
+          
+      STYLE
+        COLOR                                           0 255 0
+        OUTLINECOLOR                                    0 0 0
+        WIDTH                                           0.5
+      END
+    END
+  END
+
+  LAYER
+    NAME                                                "1"
+    TYPE                                                POLYGON
+    STATUS                                              OFF
+    CONNECTIONTYPE                                      PLUGIN
+    PLUGIN                                              "msplugin_mssql2008.dll"
+    CONNECTION                                          "Server=NBNSQL-A;Database=NBNWarehouse;uid=nbnimporter;pwd=Lo9ijnhy6tfc;Integrated Security=True"
+
+    METADATA
+      "wms_title"                                       "1"
+      'default_userKey'                                 '0'
+    END
+
+    VALIDATION
+      'taxonKey'                                        '^[A-Z]{6}[0-9]{10}$'
+      'userKey'                                         '^[0-9]+$'
+    END
+
+    DATA                                                "geom from (SELECT geom, observationId, gridRef FROM vw_SingleSpeciesMap WHERE resolutionID = 3 AND taxonVersionKey = '%taxonKey%' AND userKey = %userKey%) AS foo USING UNIQUE observationId USING SRID=4326"
+
+    PROJECTION
+      "init=epsg:4326"
+    END
+        
+    CLASS
+      NAME                                              "1km std"
+          
+      STYLE
+        COLOR                                           0 255 255
+        OUTLINECOLOR                                    0 0 0
+        WIDTH                                           0.5
+      END
+    END
+  END
+
+  LAYER
+    NAME                                                "0"
+    TYPE                                                POLYGON
+    STATUS                                              OFF
+    CONNECTIONTYPE                                      PLUGIN
+    PLUGIN                                              "msplugin_mssql2008.dll"
+    CONNECTION                                          "Server=NBNSQL-A;Database=NBNWarehouse;uid=nbnimporter;pwd=Lo9ijnhy6tfc;Integrated Security=True"
+
+    METADATA
+      "wms_title"                                       "0"
+      'default_userKey'                                 '0'
+    END
+
+    VALIDATION
+      'taxonKey'                                        '^[A-Z]{6}[0-9]{10}$'
+      'userKey'                                         '^[0-9]+$'
+    END
+
+    DATA                                                "geom from (SELECT geom, observationId, gridRef FROM vw_SingleSpeciesMap WHERE resolutionID = 4 AND taxonVersionKey = '%taxonKey%' AND userKey = %userKey%) AS foo USING UNIQUE observationId USING SRID=4326"
+
+    PROJECTION
+      "init=epsg:4326"
+    END
+        
+    CLASS
+      NAME                                              "100m std"
+          
+      STYLE
+        COLOR                                           255 0 0
+        OUTLINECOLOR                                    0 0 0
+        WIDTH                                           0.5
+      END
+    END
+  END
+END
