@@ -22,11 +22,7 @@ class SurveyIngester @Inject()(entityManager: EntityManager, repository: Reposit
     val survey = repository.getSurvey(key, dataset)
 
     survey match {
-      case Some(s) => {
-        // todo: do we need to update?
-        update(s)
-        s
-      }
+      case Some(s) => s
       case None => {
         val s = new Survey
         update(s)
