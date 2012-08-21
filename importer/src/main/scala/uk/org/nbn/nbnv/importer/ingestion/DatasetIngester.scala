@@ -72,7 +72,7 @@ class DatasetIngester @Inject()(log: Logger,
     d.setDatasetProvider(provider) //* not metadata
     d.setDataQuality(m.dataQuality)
     d.setDatasetTitle(m.datasetTitle)
-    //d.setDatasetTypeKey(datasetType) //* should actually never change
+    d.setDatasetTypeKey(datasetType) //* should actually never change
     d.setDateUploaded(Clock.nowUtc) //* not metadata
     d.setDescription(m.description)
     d.setGeographicalCoverage(m.geographicCoverage)
