@@ -33,7 +33,6 @@ class Ingester @Inject()(options: Options,
       for (record <- archive.iteratorRaw) {
         recordIngester.upsertRecord(new NbnRecord(record), dataset)
         em.flush()
-        // todo: is caching correct for JPA entities?
       }
 
       if (options.whatIf) {
