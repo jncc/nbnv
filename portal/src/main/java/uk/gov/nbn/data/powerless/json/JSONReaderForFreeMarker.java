@@ -12,6 +12,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
 import org.json.JSONException;
 import org.json.JSONTokener;
 import uk.gov.nbn.data.powerless.FreeMarkerHelper;
@@ -28,6 +29,11 @@ import uk.gov.nbn.data.powerless.request.TraditionalHttpRequestParameterIterable
 public class JSONReaderForFreeMarker {
     private static final boolean PROCESS_BY_DEFAULT = false;
     private static final JSONObjectWrapper WRAPPER = new JSONObjectWrapper();
+    private final HttpServletRequest request;
+
+    public JSONReaderForFreeMarker(HttpServletRequest request) {
+        this.request = request;
+    }
 
     public TemplateModel readFile(String filename) throws TemplateException, IOException, JSONException {
         return readFile(filename, PROCESS_BY_DEFAULT);
@@ -50,10 +56,10 @@ public class JSONReaderForFreeMarker {
         TraditionalHttpRequestParameterIterable wrappedData = new TraditionalHttpRequestParameterIterable(data);
         if(requestType.equals("GET")) {
             URL toCall = new URL(url + (data.isEmpty() ? "" : (((url.contains("?") ? '&' : '?') + wrappedData.getEncodedParameters() )))); //form url
-            return readAndClose(new InputStreamReader(toCall.openStream()));
+            return readAndClose(new InputStreamReader(openConnection(toCall).getInputStream()));
         }
         else { //assuming post for now
-            HttpURLConnection conn = (HttpURLConnection)new URL(url).openConnection();
+            HttpURLConnection conn = openConnection(new URL(url));
             conn.setRequestMethod(requestType);
             conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded" );
             conn.setDoOutput(true);
@@ -67,6 +73,12 @@ public class JSONReaderForFreeMarker {
                 wr.close();
             }
         }
+    }
+    
+    private HttpURLConnection openConnection(URL url) throws IOException {
+        HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+        conn.setRequestProperty("Cookie", request.getHeader("Cookie"));
+        return conn;
     }
     
     private TemplateModel readAndClose(Reader in) throws IOException, TemplateModelException, JSONException {

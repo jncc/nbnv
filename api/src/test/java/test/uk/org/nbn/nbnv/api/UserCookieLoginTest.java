@@ -1,8 +1,7 @@
 package test.uk.org.nbn.nbnv.api;
 
+import java.util.Arrays;
 import javax.ws.rs.core.Cookie;
-import com.sun.jersey.api.client.UniformInterfaceException;
-import uk.org.nbn.nbnv.api.authentication.InvalidCredentialsException;
 import com.sun.jersey.api.client.WebResource;
 import java.util.List;
 import javax.ws.rs.core.MediaType;
@@ -57,15 +56,12 @@ public class UserCookieLoginTest {
         Cookie invalidCookie = new Cookie(TokenUserProvider.TOKEN_COOKIE_KEY, "Giberish");
         
         //when
-        int status = resource
-            .path("user")
-            .cookie(invalidCookie)
+        User user = addCookies(resource.path("user"), Arrays.asList(invalidCookie))
             .accept(MediaType.APPLICATION_JSON)
-            .head()
-            .getStatus();
-        
+            .get(User.class);
+            
        //then
-        assertEquals("The username was invalid", 401, status);
+        assertEquals("The username was invalid", User.PUBLIC_USER, user);
     }
     
     @Test
@@ -73,14 +69,13 @@ public class UserCookieLoginTest {
         //Given Nothing
         
         //when
-        int status = resource
+        User user = resource
             .path("user")
             .accept(MediaType.APPLICATION_JSON)
-            .head()
-            .getStatus();
+            .get(User.class);
         
        //then
-        assertEquals("The username was invalid", 401, status);
+        assertEquals("The username was invalid", User.PUBLIC_USER, user);
     }
     
     @Test
@@ -124,9 +119,9 @@ public class UserCookieLoginTest {
     }
     
     /**Helper method for passing a list of cookies to request*/
-    private static WebResource.Builder addCookies(WebResource resource, List<NewCookie> cookies) {
+    private static WebResource.Builder addCookies(WebResource resource, List<? extends Cookie> cookies) {
         WebResource.Builder builder = resource.getRequestBuilder();
-        for (NewCookie c : cookies) {
+        for (Cookie c : cookies) {
             builder = builder.cookie(c);
         }
         return builder;

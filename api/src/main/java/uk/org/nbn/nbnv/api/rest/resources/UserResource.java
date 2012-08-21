@@ -17,7 +17,7 @@ import uk.org.nbn.nbnv.api.authentication.TokenUser;
 public class UserResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public User getDetails(@TokenUser(allowPublic=false) User user) {
+    public User getDetails(@TokenUser User user) {
         return user;
     }
 }
