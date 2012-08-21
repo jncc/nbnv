@@ -6,7 +6,7 @@ class KeyGenerator @Inject()(repository: Repository) {
 
   def nextTaxonDatasetKey = {
 
-    val latest = repository.getLatestTaxonDatasetKey
+    val latest = repository.getLatestDatasetKey
 
     latest match {
       case Some(key) => {

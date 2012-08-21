@@ -57,9 +57,9 @@ class Repository @Inject()(em: EntityManager) extends ControlAbstractions {
     query.setParameter("siteKey", siteKey).getSingleResult
   }
 
-  def getLatestTaxonDatasetKey = {
+  def getLatestDatasetKey = {
 
-    val q = "select d.datasetKey from TaxonDataset d " +
+    val q = "select d.datasetKey from Dataset d " +
       "where d.datasetKey like 'GA%' " +
       "order by d.datasetKey desc"
 
