@@ -1,5 +1,6 @@
 package test.uk.org.nbn.nbnv.api;
 
+import uk.org.nbn.nbnv.api.rest.resources.UserResource;
 import java.util.Arrays;
 import javax.ws.rs.core.Cookie;
 import com.sun.jersey.api.client.WebResource;
@@ -13,7 +14,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import uk.org.nbn.nbnv.api.model.User;
-import uk.org.nbn.nbnv.api.rest.providers.TokenUserProvider;
 import static org.junit.Assert.*;
 /**
  *
@@ -33,7 +33,7 @@ public class UserCookieLoginTest {
         
         //when
         List<NewCookie> cookies = resource
-           .path("token")
+           .path("user")
            .path("login")
            .queryParam("username", username)
            .queryParam("password", password)
@@ -53,7 +53,7 @@ public class UserCookieLoginTest {
     @Test
     public void invalidToken() {
         //Given
-        Cookie invalidCookie = new Cookie(TokenUserProvider.TOKEN_COOKIE_KEY, "Giberish");
+        Cookie invalidCookie = new Cookie(UserResource.TOKEN_COOKIE_KEY, "Giberish");
         
         //when
         User user = addCookies(resource.path("user"), Arrays.asList(invalidCookie))
@@ -86,7 +86,7 @@ public class UserCookieLoginTest {
         
         //when
         int status = resource
-            .path("token")
+            .path("user")
             .path("login")
             .queryParam("username", username)
             .queryParam("password", password)
@@ -106,7 +106,7 @@ public class UserCookieLoginTest {
         
         //when
         int status = resource
-            .path("token")
+            .path("user")
             .path("login")
             .queryParam("username", username)
             .queryParam("password", password)

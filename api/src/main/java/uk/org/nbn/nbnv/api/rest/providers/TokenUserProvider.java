@@ -21,6 +21,7 @@ import uk.org.nbn.nbnv.api.authentication.InvalidTokenException;
 import uk.org.nbn.nbnv.api.authentication.Token;
 import uk.org.nbn.nbnv.api.authentication.TokenAuthenticator;
 import uk.org.nbn.nbnv.api.model.User;
+import uk.org.nbn.nbnv.api.rest.resources.UserResource;
 
 /**
  * Create a provider which will give us access to Users in jersey methods
@@ -29,7 +30,6 @@ import uk.org.nbn.nbnv.api.model.User;
 @Provider
 @Component
 public class TokenUserProvider implements InjectableProvider<TokenUser, Type> {
-    public static final String TOKEN_COOKIE_KEY = "nbn.token_key";
     
     @Autowired private TokenAuthenticator tokenAuth;
     @Context private HttpHeaders r;
@@ -67,7 +67,7 @@ public class TokenUserProvider implements InjectableProvider<TokenUser, Type> {
          *  in or public user can not be returned.
          */
         @Override public User getValue() {
-            Cookie cookie = r.getCookies().get(TOKEN_COOKIE_KEY);
+            Cookie cookie = r.getCookies().get(UserResource.TOKEN_COOKIE_KEY);
             if(cookie != null) {
                 try {
                     byte[] tokenBytes = Base64.decodeBase64(cookie.getValue());
