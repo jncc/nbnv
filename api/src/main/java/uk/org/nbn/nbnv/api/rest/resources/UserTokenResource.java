@@ -20,7 +20,7 @@ import uk.org.nbn.nbnv.api.rest.providers.TokenUserProvider;
 @Component
 @Path("/token")
 public class UserTokenResource {
-    private static final int DEFAULT_TOKEN_TTL = 30000;
+    private static final int DEFAULT_TOKEN_TTL = 2 * 7 * 24 * 60 * 60 * 1000;//2 weeks
     @Autowired TokenAuthenticator tokenAuth;
     
     @GET

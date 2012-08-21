@@ -9,7 +9,7 @@ class KeyGeneratorSuite extends BaseFunSuite {
   test("when there are no existing datasets, should generate GA000001") {
 
     val r = mock[Repository]
-    when(r.getLatestTaxonDatasetKey).thenReturn(None)
+    when(r.getLatestDatasetKey).thenReturn(None)
 
     val g = new KeyGenerator(r)
     val result = g.nextTaxonDatasetKey
@@ -19,7 +19,7 @@ class KeyGeneratorSuite extends BaseFunSuite {
   test("when there are 3 existing datasets, should generate GA000004") {
 
     val r = mock[Repository]
-    when(r.getLatestTaxonDatasetKey).thenReturn(Some("GA000003"))
+    when(r.getLatestDatasetKey).thenReturn(Some("GA000003"))
 
     val g = new KeyGenerator(r)
     val result = g.nextTaxonDatasetKey
@@ -29,11 +29,20 @@ class KeyGeneratorSuite extends BaseFunSuite {
   test("when there are 9 existing datasets, should generate GA000010") {
 
     val r = mock[Repository]
-    when(r.getLatestTaxonDatasetKey).thenReturn(Some("GA000009"))
+    when(r.getLatestDatasetKey).thenReturn(Some("GA000009"))
 
     val g = new KeyGenerator(r)
     val result = g.nextTaxonDatasetKey
     result should be ("GA000010")
   }
 
+  test("when there are 1150 existing datasets, should generate GA001151") {
+
+    val r = mock[Repository]
+    when(r.getLatestDatasetKey).thenReturn(Some("GA001150"))
+
+    val g = new KeyGenerator(r)
+    val result = g.nextTaxonDatasetKey
+    result should be ("GA001151")
+  }
 }
