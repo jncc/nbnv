@@ -9,7 +9,7 @@
     <#assign species=json.readURL("${api}/designations/${designationId}/species", {"taxonNavigationGroupId": taxonNavigationGroupId})>
 
     <div id="nbn-designation-content">
-        <h4>${designation.name} : ${taxonNavigationGroup.taxonGroupName}</h4>
+        <h4>${designation.name} : ${taxonNavigationGroup.name}</h4>
             <table>
                 <tr>
                     <th>Abbreviation:</th>
@@ -24,7 +24,7 @@
                     <td>${designationCategory.label}: ${designationCategory.description!""}</td>
                 </tr>
                 <tr>
-                    <th>Species list for: ${taxonNavigationGroup.taxonGroupName}</th>
+                    <th>Species list for: ${taxonNavigationGroup.name}</th>
                     <td>
                         <#list species as spec>
                             <@taxon_utils.long_name taxon=spec/><br/>
