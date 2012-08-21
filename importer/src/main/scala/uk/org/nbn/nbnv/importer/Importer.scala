@@ -6,6 +6,7 @@ import injection.ImporterModule
 import uk.org.nbn.nbnv.metadata.MetadataReader
 import org.apache.log4j.Logger
 import com.google.inject.{Inject, Guice}
+import utility.Stopwatch
 import validation.Validator
 
 object Importer {
@@ -37,6 +38,7 @@ object Importer {
 /// Imports data into the NBN Gateway core database.
 class Importer @Inject()(options:        Options,
                          log:            Logger,
+                         stopwatch:      Stopwatch,
                          archiveManager: ArchiveManager,
                          metadataReader: MetadataReader,
                          validator:      Validator,
@@ -49,6 +51,8 @@ class Importer @Inject()(options:        Options,
       log.info("Welcome! Starting the NBN Gateway importer")
       log.info("Options are: \n" + options)
 
+      val stopwatch = new Stopwatch().start()
+
       // open the archive and read the metadata
       val archive = archiveManager.open()
       val metadata = metadataReader.read(archive)
@@ -57,9 +61,12 @@ class Importer @Inject()(options:        Options,
       validator.validate(archive)
       // verify (... or ideally in the same parallel step as validate)
 
+      log.info("Finished validation in " + stopwatch.elapsedSeconds + " seconds")
+
       // ingest the archive and metadata
       ingester.ingest(archive, metadata)
 
+      log.info("Finished ingestion in " + stopwatch.elapsedSeconds + " seconds")
       log.info("Done with archive '%s'".format(options.archivePath))
     }
   }
