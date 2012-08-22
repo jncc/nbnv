@@ -23,18 +23,18 @@ import uk.org.nbn.nbnv.api.model.User;
  */
 @Component
 public class NBNTokenAuthenticator implements TokenAuthenticator {
-    private static final int NONCE_SIZE = 4;
+    private static final int INITALIZATION_VECTOR_SIZE = 16;
     private static final int KEY_CHECK_VALUE_SIZE = 16;
     private static final String CREDENTIALS_DIGEST = "SHA-1";
     private static final String SECRET_KEY_ALGORITHM = "AES";
     private static final String CRYPTO_ALGORITHM = "AES/CBC/PKCS5Padding";
     private static final String STRING_ENCODING = "UTF-8";
 
-    private final Cipher encrypt, decrypt;
     private final SecureRandom random;
     private final byte[] keyCheckValue;
     private final MessageDigest credentialsDigest;
-
+    private final SecretKey key;
+    
     @Autowired UserAuthenticationMapper userAuthentication;
     
     /**
@@ -46,14 +46,10 @@ public class NBNTokenAuthenticator implements TokenAuthenticator {
      * @throws InvalidAlgorithmParameterException 
      */
     public NBNTokenAuthenticator() throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException {
-        SecretKey key = KeyGenerator.getInstance(SECRET_KEY_ALGORITHM).generateKey();
+        key = KeyGenerator.getInstance(SECRET_KEY_ALGORITHM).generateKey();
         this.credentialsDigest = MessageDigest.getInstance(CREDENTIALS_DIGEST);
         this.random = new SecureRandom();
         this.keyCheckValue = randomBytes(KEY_CHECK_VALUE_SIZE);
-        this.encrypt = Cipher.getInstance(CRYPTO_ALGORITHM);
-        this.decrypt = Cipher.getInstance(CRYPTO_ALGORITHM);
-        this.encrypt.init(Cipher.ENCRYPT_MODE, key);
-        this.decrypt.init(Cipher.DECRYPT_MODE, key, new IvParameterSpec( encrypt.getIV() ));
     }
 
     /**
@@ -74,6 +70,12 @@ public class NBNTokenAuthenticator implements TokenAuthenticator {
                 return generateToken(usernameHash, ttl);
             else
                 throw new InvalidCredentialsException("Invalid username and/or password");
+        } catch (InvalidKeyException ex) {
+            throw new RuntimeException("A configuration error has occurred", ex);
+        } catch (NoSuchAlgorithmException ex) {
+            throw new RuntimeException("A configuration error has occurred", ex);
+        } catch (NoSuchPaddingException ex) {
+            throw new RuntimeException("A configuration error has occurred", ex);
         } catch (UnsupportedEncodingException ex) {
             throw new RuntimeException("A configuration error has occurred", ex);
         }
@@ -96,6 +98,12 @@ public class NBNTokenAuthenticator implements TokenAuthenticator {
                 return generateToken(usernameHash, ttl);
             else
                 throw new InvalidCredentialsException("Invalid username and/or password");
+        } catch (InvalidKeyException ex) {
+            throw new RuntimeException("A configuration error has occurred", ex);
+        } catch (NoSuchAlgorithmException ex) {
+            throw new RuntimeException("A configuration error has occurred", ex);
+        } catch (NoSuchPaddingException ex) {
+            throw new RuntimeException("A configuration error has occurred", ex);
         } catch (UnsupportedEncodingException ex) {
             throw new RuntimeException("A configuration error has occurred", ex);
         }
@@ -110,17 +118,30 @@ public class NBNTokenAuthenticator implements TokenAuthenticator {
      */
     @Override public User getUser(Token token) throws InvalidTokenException, ExpiredTokenException {
         try {
-            ByteBuffer buf = ByteBuffer.wrap(decrypt.doFinal(token.getBytes()));
-            getBytes(buf, NONCE_SIZE); // read off the nonce
-            //Check if the first set of bytes is the same key check value
-            if(Arrays.equals(keyCheckValue, getBytes(buf, KEY_CHECK_VALUE_SIZE))) {
-                if(buf.getLong() >= Calendar.getInstance().getTimeInMillis())  //is ticket still valid
-                    return userAuthentication.getUser(getBytes(buf, buf.remaining()));
-                else 
-                    throw new ExpiredTokenException("No longer valid");
+            if(token.getBytes().length > INITALIZATION_VECTOR_SIZE) {
+                ByteBuffer message = ByteBuffer.wrap(token.getBytes());
+
+                Cipher decrypt = Cipher.getInstance(CRYPTO_ALGORITHM);
+                decrypt.init(Cipher.DECRYPT_MODE, key, new IvParameterSpec( getBytes(message, INITALIZATION_VECTOR_SIZE) ));
+
+                ByteBuffer payload = ByteBuffer.wrap(decrypt.doFinal(getBytes(message, message.remaining())));
+                //Check if the first set of bytes is the same key check value
+                if(Arrays.equals(keyCheckValue, getBytes(payload, KEY_CHECK_VALUE_SIZE))) {
+                    if(payload.getLong() >= Calendar.getInstance().getTimeInMillis())  //is ticket still valid
+                        return userAuthentication.getUser(getBytes(payload, payload.remaining()));
+                    else 
+                        throw new ExpiredTokenException("No longer valid");
+                }
             }
-            else 
-                throw new InvalidTokenException("Invalid composite key");
+            throw new InvalidTokenException("Invalid composite key");
+        } catch (NoSuchAlgorithmException ex) {
+            throw new RuntimeException("A configuration error has occurred", ex);
+        } catch (NoSuchPaddingException ex) {
+            throw new RuntimeException("A configuration error has occurred", ex);
+        } catch (InvalidKeyException ex) {
+            throw new InvalidTokenException("Invalid composite key");
+        } catch (InvalidAlgorithmParameterException ex) {
+            throw new InvalidTokenException("Invalid composite key");
         } catch (IllegalBlockSizeException ibse) {
             throw new InvalidTokenException("Invalid composite key");
         } catch (BadPaddingException bpe) {
@@ -133,29 +154,40 @@ public class NBNTokenAuthenticator implements TokenAuthenticator {
      * the following structure.
      * 
      * The byte structure of a token generated by this class is :
-     *      BYTE_ARRAY_LENGTH       |                   CONTENT
+     *      BYTE_ARRAY_LENGTH           |                   CONTENT
      * -----------------------------------------------------------------------
-     *  @see #NONCE_SIZE            | A random string of values to vary token
-     *  @see #KEY_CHECK_VALUE_SIZE  | Randomly generated id for this 
-     *                              |   TokenAuthenticator
-     *  8 (byte size of long)       | The time in milliseconds from epoch when  
-     *                              | this token expires
-     *  @see #USERNAME_HASH_SIZE    | A hash of the principles username in 
-     *                              |   @see #CREDENTIALS_DIGEST
+     * ---------------------------- PLAINTEXT --------------------------------
+     *  @see #INITALIZATION_VECTOR_SIZE | The vector used for the message
+     * --------------------------- CIPHER TEXT -------------------------------
+     *  @see #KEY_CHECK_VALUE_SIZE      | Randomly generated id for this 
+     *                                  |   TokenAuthenticator
+     *  8 (byte size of long)           | The time in milliseconds from epoch 
+     *                                  | when this token expires
+     *  @see #USERNAME_HASH_SIZE        | A hash of the principles username in 
+     *                                  |   @see #CREDENTIALS_DIGEST
      * 
      * @param usernameHash The hash of the username in @see #CREDENTIALS_DIGEST
      * @param ttl Time in milliseconds until this token expires
      * @return An Token object with the above byte structure encrypted in 
      *  @see #SECRET_KEY_ALGORITHM
      */
-    private Token generateToken(byte[] usernameHash, int ttl) {
+    private Token generateToken(byte[] usernameHash, int ttl) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException {
         try {
-            ByteBuffer toEncrypt = ByteBuffer.allocate(NONCE_SIZE + KEY_CHECK_VALUE_SIZE + 8 + usernameHash.length)
-                .put(randomBytes(NONCE_SIZE))          //Add a nonce
+            Cipher encrypt = Cipher.getInstance(CRYPTO_ALGORITHM);
+            encrypt.init(Cipher.ENCRYPT_MODE, key);
+            
+            byte[] payload = encrypt.doFinal(ByteBuffer.allocate(KEY_CHECK_VALUE_SIZE + 8 + usernameHash.length) //Encrypt byte buffer
                 .put(keyCheckValue) //store key check
                 .putLong(Calendar.getInstance().getTimeInMillis() + ttl) //Store the time when this token becomes invalid
-                .put(usernameHash);                      //Store username hash
-            return new Token(encrypt.doFinal(toEncrypt.array()));  //Encrypt byte buffer
+                .put(usernameHash)                          //Store username hash
+                .array()
+            );                    
+            
+            return new Token(ByteBuffer.allocate(INITALIZATION_VECTOR_SIZE + payload.length)
+                .put(encrypt.getIV())
+                .put(payload)
+                .array()
+            );
         } catch (IllegalBlockSizeException ex) {
             throw new RuntimeException("A configuration error has occurred", ex);
         } catch (BadPaddingException ex) {
