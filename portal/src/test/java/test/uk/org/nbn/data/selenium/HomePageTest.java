@@ -5,6 +5,7 @@
 package test.uk.org.nbn.data.selenium;
 
 import static junit.framework.Assert.*;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
@@ -25,7 +26,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ContextConfiguration("classpath:embedded-jetty-applicationContext.xml")
 public class HomePageTest {
     @Autowired String jettyRoot;
-    
+    @Ignore
     @Test public void loadHomePage() {
         WebDriver driver = new HtmlUnitDriver();
         

@@ -13,6 +13,7 @@ class RecordIngester @Inject()(log: Logger,
                                surveyIngester: SurveyIngester,
                                sampleIngester: SampleIngester,
                                recorderIngester: RecorderIngester,
+                               attributeIngester: AttributeIngester,
                                r: Repository) {
 
   def upsertRecord(record: NbnRecord, dataset: TaxonDataset) {
@@ -22,19 +23,20 @@ class RecordIngester @Inject()(log: Logger,
     val survey = surveyIngester.upsertSurvey(record.surveyKey, dataset)
     val sample = sampleIngester.upsertSample(record.sampleKey, survey)
 
-    //em.flush() // get the new ids from the database
-
     val observation = r.getTaxonObservation(record.key, sample)
 
     observation match {
       case Some(o) => {
         update(o)
+//        attributeIngester.ingestAttributes(record, o)
         o
       }
       case None => {
         val o = new TaxonObservation()
         update(o)
+        // todo: attributes! json check the keys in the attributes table, create it if necessary etc
         em.persist(o)
+//        attributeIngester.ingestAttributes(record, o)
         o
       }
     }
@@ -54,7 +56,7 @@ class RecordIngester @Inject()(log: Logger,
       val determiner = recorderIngester.ensureRecorder(record.determiner)
       val recorder = recorderIngester.ensureRecorder(record.recorder)
 
-      o.setAbsenceRecord(false)
+      o.setAbsenceRecord(false) // todo: this should be set to what it is!
       o.setDateStart(record.startDate)
       o.setDateEnd(record.endDate)
       o.setDateType(dateType)
@@ -63,9 +65,10 @@ class RecordIngester @Inject()(log: Logger,
       o.setObservationKey(record.key)
       o.setRecorderID(recorder)
       o.setSampleID(sample)
-      o.setSensitiveRecord(false)
+      o.setSensitiveRecord(false) // todo: this should be set to what it is!
       o.setSiteID(site)
       o.setTaxonVersionKey(taxon)
+      // for now all attributes are of free text type
     }
   }
 }

@@ -9,7 +9,7 @@ import java.text.SimpleDateFormat
 class NbnRecord(record: StarRecord) {
 
   // there should be exactly one extension record for a record (hence .head)
-  private val extension = record.extension("http://uknbn.org/terms/NBNExchange").head
+  private val extension = record.extension("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/nxfOccurrence").head
 
   // todo: we don't want to do parsing in this class
   // todo: .value (below) returns null if the column does not exist - should throw a better exception here
@@ -21,13 +21,16 @@ class NbnRecord(record: StarRecord) {
   def sampleKey =       record.core.value(DwcTerm.eventID)
   def taxonVersionKey = record.core.value(DwcTerm.taxonID)
   def siteKey =         record.core.value(DwcTerm.locationID)
+  def siteName =        record.core.value(DwcTerm.locality)
   def recorder =        record.core.value(DwcTerm.recordedBy)
   def determiner =      record.core.value(DwcTerm.identifiedBy)
+  def attributes =      record.core.value(DwcTerm.dynamicProperties)
 
-  def startDate              = format.parse(extension.value("http://uknbn.org/terms/startDate"))
-  def endDate                = format.parse(extension.value("http://uknbn.org/terms/endDate"))
-  def dateType               = extension.value("http://uknbn.org/terms/dateType")
-  def sensitiveOccurrence    = extension.value("http://uknbn.org/terms/sensitiveOccurrence")
-  def gridReferenceType      = extension.value("http://uknbn.org/terms/gridReferenceType")
-  def gridReferencePrecision = extension.value("http://uknbn.org/terms/gridReferencePrecision")
+  def startDate              = format.parse(extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateStart"))
+  def endDate                = format.parse(extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateEnd"))
+  def dateType               = extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateTypeCode")
+  def sensitiveOccurrence    = extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/sensitiveOccurrence")
+  def gridReferenceType      = extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/gridReferenceType")
+  def gridReference          = extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/gridReference")
+  def gridReferencePrecision = extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/gridReferencePrecision")
 }

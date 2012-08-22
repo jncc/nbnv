@@ -30,7 +30,7 @@ class DatasetIngester @Inject()(log: Logger,
     }
   }
 
-  private def insertNew(metadata: Metadata) = {
+  def insertNew(metadata: Metadata) = {
 
     // generate a new key and a new dataset
     val key = keyGenerator.nextTaxonDatasetKey
@@ -50,7 +50,7 @@ class DatasetIngester @Inject()(log: Logger,
     td
   }
 
-  private def updateExisting(metadata: Metadata) = {
+  def updateExisting(metadata: Metadata) = {
 
     log.info("Updating existing dataset " + metadata.datasetKey)
 
@@ -61,29 +61,44 @@ class DatasetIngester @Inject()(log: Logger,
     td
   }
 
-  private def modifyDataset(d: Dataset, m: Metadata) = {
+  def modifyDataset(d: Dataset, m: Metadata) = {
 
     val provider = organisationIngester.ensureOrganisation(m.datasetProviderName)
     val datasetUpdateFrequency = em.getReference(classOf[DatasetUpdateFrequency], "012")
     val datasetType = em.getReference(classOf[DatasetType], 'T')
 
-    d.setAccessConstraints(m.accessConstraints)
-    d.setDataCaptureMethod(m.dataCaptureMethod)
-    d.setDatasetProvider(provider)
-    d.setDataQuality(m.dataQuality)
-    d.setDatasetTitle(m.datasetTitle)
-    d.setDatasetTypeKey(datasetType)
-    d.setDateUploaded(Clock.nowUtc)
-    d.setDescription(m.description)
-    d.setGeographicalCoverage(m.geographicCoverage)
-    d.setMetadataLastEdited(Clock.nowUtc)
-    d.setPurpose(m.purpose)
-    d.setUseConstraints(m.useConstraints)
-    d.setUpdateFrequency(datasetUpdateFrequency)
-    d.setAdditionalInformation(m.additionalInformation)
-    d.setTemporalCoverage(m.temporalCoverage)
+    // certain fields are metadata, and we have to record when any changes
+    var metadataChanged = false
+
+    def setMetadata[T](value: T, get: () => Any, set: T => Unit) {
+      metadataChanged = get != value
+      set(value)
+    }
+
+    setMetadata(m.dataCaptureMethod, d.getDataCaptureMethod, d.setDataCaptureMethod)
+    setMetadata(m.accessConstraints, d.getAccessConstraints, d.setAccessConstraints)
+    setMetadata(m.dataQuality, d.getDataQuality, d.setDataQuality)
+    setMetadata(m.datasetTitle, d.getDatasetTitle, d.setDatasetTitle)
+    setMetadata(m.description, d.getDescription, d.setDescription)
+    setMetadata(m.geographicCoverage, d.getGeographicalCoverage, d.setGeographicalCoverage)
+    setMetadata(m.purpose, d.getPurpose, d.setPurpose)
+    setMetadata(m.useConstraints, d.getUseConstraints, d.setUseConstraints)
+    setMetadata(m.additionalInformation, d.getAdditionalInformation, d.setAdditionalInformation)
+    setMetadata(m.temporalCoverage, d.getTemporalCoverage, d.setTemporalCoverage)
+
+    d.setDatasetProvider(provider) // not metadata
+    d.setDatasetTypeKey(datasetType) // never changes, always 'T'
+    d.setDateUploaded(Clock.nowUtc) // date of this import
+    d.setUpdateFrequency(datasetUpdateFrequency) // never changes, always '012'
+
+    if (metadataChanged)
+      d.setMetadataLastEdited(Clock.nowUtc)
+
     d
   }
+
+
+
 
   private def modifyTaxonDataset(td: TaxonDataset, m: Metadata) {
 
