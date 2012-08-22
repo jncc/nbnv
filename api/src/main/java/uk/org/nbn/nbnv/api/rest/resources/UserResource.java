@@ -39,13 +39,13 @@ public class UserResource {
     @GET
     @Path("/login")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getTaxonNavigationGroup(
+    public Response createTokenCookie(
             @QueryParam("username") String username, 
             @QueryParam("password")String password,
             @Context HttpServletRequest request
         ) throws InvalidCredentialsException {
         Token token = tokenAuth.generateToken(username, password, DEFAULT_TOKEN_TTL);
-        return Response.ok()
+        return Response.ok("success")
            .cookie(new NewCookie(
                TOKEN_COOKIE_KEY, 
                Base64.encodeBase64URLSafeString(token.getBytes()),
@@ -61,8 +61,8 @@ public class UserResource {
     @GET
     @Path("/logout")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getTaxonNavigationGroup(@Context HttpServletRequest request) {
-        return Response.ok()
+    public Response destroyTokenCookie(@Context HttpServletRequest request) {
+        return Response.ok("loggedout")
             .cookie(new NewCookie(TOKEN_COOKIE_KEY, null, "/", request.getServerName(), null, 0 , false))
             .build();
     }

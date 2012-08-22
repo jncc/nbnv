@@ -15,6 +15,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import uk.gov.nbn.data.powerless.json.CookiePassthrough;
 import uk.gov.nbn.data.powerless.json.JSONReaderForFreeMarker;
 import uk.gov.nbn.data.powerless.request.TraditionalHttpRequestParametersHashModel;
 
@@ -73,7 +74,7 @@ public class PowerlessServlet extends FreemarkerServlet{
                                         final HttpServletResponse response) throws TemplateModelException {
         SimpleHash toReturn = (SimpleHash)super.createModel(wrapper, servletContext, request, response);
         toReturn.put(POWERLESS_URL_PARAMETERSATION_KEY, request.getAttribute(PowerlessTemplateURLParameterisationFilter.POWERLESS_URL_PARAMETERS_ATTRIBUTE));
-        toReturn.put("json", new JSONReaderForFreeMarker(request));
+        toReturn.put("json", new JSONReaderForFreeMarker(new CookiePassthrough(request, response)));
         return toReturn;
     }
     
