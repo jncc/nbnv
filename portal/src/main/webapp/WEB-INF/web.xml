@@ -79,8 +79,17 @@
         <servlet-name>SSO_Controller</servlet-name>
         <servlet-class>uk.gov.nbn.data.portal.controllers.SSOController</servlet-class>
     </servlet>
-        <servlet-mapping>
+    <servlet-mapping>
         <servlet-name>SSO_Controller</servlet-name>
         <url-pattern>/SSO_Controller</url-pattern>
+    </servlet-mapping>
+    
+    <servlet>
+        <servlet-name>Logout_Controller</servlet-name>
+        <servlet-class>uk.gov.nbn.data.portal.controllers.LogoutController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Logout_Controller</servlet-name>
+        <url-pattern>/User/Logout</url-pattern>
     </servlet-mapping>
 </web-app>

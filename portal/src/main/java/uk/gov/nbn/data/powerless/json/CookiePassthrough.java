@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  *
