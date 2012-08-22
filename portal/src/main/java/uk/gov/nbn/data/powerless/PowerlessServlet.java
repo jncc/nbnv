@@ -15,6 +15,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import uk.gov.nbn.data.powerless.json.CookiePassthrough;
 import uk.gov.nbn.data.powerless.json.JSONReaderForFreeMarker;
 import uk.gov.nbn.data.powerless.request.TraditionalHttpRequestParametersHashModel;
 
@@ -37,7 +38,6 @@ public class PowerlessServlet extends FreemarkerServlet{
                 config.setSharedVariable((String)currEntry.getKey(), currEntry.getValue());
             }
             config.setSharedVariable("markdown", new MarkDownDirectiveModel());
-            config.setSharedVariable("json", new JSONReaderForFreeMarker());
             config.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
         } catch (TemplateModelException ex) {
             throw new ServletException(ex);
@@ -57,7 +57,9 @@ public class PowerlessServlet extends FreemarkerServlet{
     /**
      * The following method add the URL Parameters which were found by a 
      * PowerlessTemplateURLParameterisationFilter filter and will add them to
-     * the global namespace under the hash POWERLESS_URL_PARAMETERSATION_KEY
+     * the global namespace under the hash POWERLESS_URL_PARAMETERSATION_KEY.
+     * 
+     * Also adds a Cookie forwarding json reader
      * @param wrapper
      * @param servletContext
      * @param request
@@ -72,6 +74,7 @@ public class PowerlessServlet extends FreemarkerServlet{
                                         final HttpServletResponse response) throws TemplateModelException {
         SimpleHash toReturn = (SimpleHash)super.createModel(wrapper, servletContext, request, response);
         toReturn.put(POWERLESS_URL_PARAMETERSATION_KEY, request.getAttribute(PowerlessTemplateURLParameterisationFilter.POWERLESS_URL_PARAMETERS_ATTRIBUTE));
+        toReturn.put("json", new JSONReaderForFreeMarker(new CookiePassthrough(request)));
         return toReturn;
     }
     

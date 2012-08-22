@@ -5,9 +5,11 @@
 package uk.org.nbn.nbnv.jpa.nbncore;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Date;
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -25,6 +27,14 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "TaxonObservation.findByAbsenceRecord", query = "SELECT t FROM TaxonObservation t WHERE t.absenceRecord = :absenceRecord"),
     @NamedQuery(name = "TaxonObservation.findBySensitiveRecord", query = "SELECT t FROM TaxonObservation t WHERE t.sensitiveRecord = :sensitiveRecord")})
 public class TaxonObservation implements Serializable {
+    @Column(name = "dateStart")
+    @Temporal(TemporalType.DATE)
+    private Date dateStart;
+    @Column(name = "dateEnd")
+    @Temporal(TemporalType.DATE)
+    private Date dateEnd;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "taxonObservation")
+    private Collection<TaxonObservationAttribute> taxonObservationAttributeCollection;
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
@@ -34,12 +44,6 @@ public class TaxonObservation implements Serializable {
     @Basic(optional = false)
     @Column(name = "observationKey")
     private String observationKey;
-    @Column(name = "dateStart")
-    @Temporal(TemporalType.DATE)
-    private Date dateStart;
-    @Column(name = "dateEnd")
-    @Temporal(TemporalType.DATE)
-    private Date dateEnd;
     @Basic(optional = false)
     @Column(name = "absenceRecord")
     private boolean absenceRecord;
@@ -96,22 +100,6 @@ public class TaxonObservation implements Serializable {
 
     public void setObservationKey(String observationKey) {
         this.observationKey = observationKey;
-    }
-
-    public Date getDateStart() {
-        return dateStart;
-    }
-
-    public void setDateStart(Date dateStart) {
-        this.dateStart = dateStart;
-    }
-
-    public Date getDateEnd() {
-        return dateEnd;
-    }
-
-    public void setDateEnd(Date dateEnd) {
-        this.dateEnd = dateEnd;
     }
 
     public boolean getAbsenceRecord() {
@@ -209,6 +197,31 @@ public class TaxonObservation implements Serializable {
     @Override
     public String toString() {
         return "uk.org.nbn.nbnv.jpa.nbncore.TaxonObservation[ observationID=" + observationID + " ]";
+    }
+
+    public Date getDateStart() {
+        return dateStart;
+    }
+
+    public void setDateStart(Date dateStart) {
+        this.dateStart = dateStart;
+    }
+
+    public Date getDateEnd() {
+        return dateEnd;
+    }
+
+    public void setDateEnd(Date dateEnd) {
+        this.dateEnd = dateEnd;
+    }
+
+    @XmlTransient
+    public Collection<TaxonObservationAttribute> getTaxonObservationAttributeCollection() {
+        return taxonObservationAttributeCollection;
+    }
+
+    public void setTaxonObservationAttributeCollection(Collection<TaxonObservationAttribute> taxonObservationAttributeCollection) {
+        this.taxonObservationAttributeCollection = taxonObservationAttributeCollection;
     }
     
 }

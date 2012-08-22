@@ -7,8 +7,8 @@ import java.util.Date;
  * @author Christopher Johnson
  */
 public class User {
-    public static int PUBLIC_USER_ID = 0;
-    public static User PUBLIC_USER = new User();
+    public static final int PUBLIC_USER_ID = 0;
+    public static final User PUBLIC_USER = new User();
     
     private int id;
     private String forename, surname, username, email, phone;
@@ -73,5 +73,16 @@ public class User {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+    
+    @Override public boolean equals(Object o) {
+        if(o instanceof User) {
+            return id == ((User)o).id;
+        }
+        return false;
+    }
+
+    @Override public int hashCode() {
+        return this.id;
     }
 }

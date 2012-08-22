@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app id="WebApp_ID" version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
     <display-name>NBN Gateway Frontend</display-name>
-
     <!--Create the Powerless Servlet-->
     <servlet>
         <servlet-name>freemarker</servlet-name>
@@ -37,7 +36,6 @@
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
-    
     <!--Define servlet hosting-->
     <welcome-file-list>
         <welcome-file>index.ftl</welcome-file>
@@ -62,7 +60,6 @@
         <servlet-name>freemarker</servlet-name>
         <url-pattern>*.ftl</url-pattern>
     </servlet-mapping>
-    
     <!--Define custom error pages -->
     <error-page>
         <error-code>404</error-code>
@@ -72,8 +69,27 @@
         <exception-type>java.io.FileNotFoundException</exception-type>
         <location>/WEB-INF/unavailable-pages/data-service-not-responding.ftl</location>
     </error-page>
-<!--    <error-page>
+    <error-page>
         <error-code>500</error-code>
         <location>/WEB-INF/unavailable-pages/500.ftl</location>
-    </error-page>-->
+    </error-page>
+    
+    <!--Define Custom controller servlets-->
+    <servlet>
+        <servlet-name>SSO_Controller</servlet-name>
+        <servlet-class>uk.gov.nbn.data.portal.controllers.SSOController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>SSO_Controller</servlet-name>
+        <url-pattern>/SSO_Controller</url-pattern>
+    </servlet-mapping>
+    
+    <servlet>
+        <servlet-name>Logout_Controller</servlet-name>
+        <servlet-class>uk.gov.nbn.data.portal.controllers.LogoutController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Logout_Controller</servlet-name>
+        <url-pattern>/User/Logout</url-pattern>
+    </servlet-mapping>
 </web-app>
