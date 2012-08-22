@@ -6,7 +6,7 @@ import uk.org.nbn.nbnv.api.model.Dataset;
 
 public interface DatasetMapper {
     
-    @Select("SELECT * FROM DatasetData")
+    @Select("SELECT * FROM DatasetData ORDER BY name")
     List<Dataset> selectAll();
     
 }

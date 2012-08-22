@@ -1,10 +1,12 @@
 package uk.org.nbn.nbnv.api.model;
 
+import java.text.Format;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Dataset {
     
-    private String datasetKey, name, description, type, organisationName;
+    private String datasetKey, name, description, typeName, organisationName;
     private String dataCaptureMethod, purpose, geographicalCoverage, quality;
     private String additionalInformation, accessConstraints, useConstraints;
     private Date dateUploaded;
@@ -12,14 +14,14 @@ public class Dataset {
     
     public Dataset(){}
     
-    public Dataset(String datasetKey, String name, String description, String type, String organisationName,
+    public Dataset(String datasetKey, String name, String description, String typeName, String organisationName,
                         String dataCaptureMethod, String purpose, String geographicalCoverage, String quality,
                         String additionalInformation, String accessConstraints, String useConstraints,
                         Date dateUploaded, int organisationID){
         this.datasetKey = datasetKey;
         this.name = name;
         this.description = description;
-        this.type = type;
+        this.typeName = typeName;
         this.organisationName = organisationName;
         this.dataCaptureMethod = dataCaptureMethod;
         this.purpose = purpose;
@@ -57,12 +59,12 @@ public class Dataset {
         this.description = description;
     }
 
-    public String getType() {
-        return type;
+    public String getTypeName() {
+        return typeName;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setType(String typeName) {
+        this.typeName = typeName;
     }
 
     public String getOrganisationName() {
@@ -131,6 +133,10 @@ public class Dataset {
 
     public Date getDateUploaded() {
         return dateUploaded;
+    }
+    
+    public String getFormattedDateUploaded(){
+        return (new SimpleDateFormat("dd-MMM-yyyy")).format(dateUploaded);
     }
 
     public void setDateUploaded(Date dateUploaded) {
