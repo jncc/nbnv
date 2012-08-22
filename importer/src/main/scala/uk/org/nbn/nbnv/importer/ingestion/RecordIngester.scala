@@ -28,12 +28,15 @@ class RecordIngester @Inject()(log: Logger,
     observation match {
       case Some(o) => {
         update(o)
+//        attributeIngester.ingestAttributes(record, o)
         o
       }
       case None => {
         val o = new TaxonObservation()
         update(o)
+        // todo: attributes! json check the keys in the attributes table, create it if necessary etc
         em.persist(o)
+//        attributeIngester.ingestAttributes(record, o)
         o
       }
     }
@@ -65,9 +68,6 @@ class RecordIngester @Inject()(log: Logger,
       o.setSensitiveRecord(false) // todo: this should be set to what it is!
       o.setSiteID(site)
       o.setTaxonVersionKey(taxon)
-
-      // todo: attributes! json check the keys in the attributes table, create it if necessary etc.
-      attributeIngester.ingestAttributes(record, o)
       // for now all attributes are of free text type
     }
   }
