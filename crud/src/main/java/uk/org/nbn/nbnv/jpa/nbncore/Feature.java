@@ -7,6 +7,7 @@ package uk.org.nbn.nbnv.jpa.nbncore;
 import java.io.Serializable;
 import java.util.Collection;
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -22,6 +23,11 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Feature.findByFeatureID", query = "SELECT f FROM Feature f WHERE f.featureID = :featureID"),
     @NamedQuery(name = "Feature.findByWkt", query = "SELECT f FROM Feature f WHERE f.wkt = :wkt")})
 public class Feature implements Serializable {
+    @Basic(optional = false)
+    @NotNull
+    @Lob
+    @Column(name = "geom")
+    private byte[] geom;
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
@@ -30,10 +36,6 @@ public class Feature implements Serializable {
     @Basic(optional = false)
     @Column(name = "wkt")
     private String wkt;
-    @Basic(optional = false)
-    @Lob
-    @Column(name = "geom")
-    private byte[] geom;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "featureID")
     private Collection<TaxonObservationPublic> taxonObservationPublicCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "featureID")
@@ -66,14 +68,6 @@ public class Feature implements Serializable {
 
     public void setWkt(String wkt) {
         this.wkt = wkt;
-    }
-
-    public byte[] getGeom() {
-        return geom;
-    }
-
-    public void setGeom(byte[] geom) {
-        this.geom = geom;
     }
 
     @XmlTransient
@@ -117,6 +111,14 @@ public class Feature implements Serializable {
     @Override
     public String toString() {
         return "uk.org.nbn.nbnv.jpa.nbncore.Feature[ featureID=" + featureID + " ]";
+    }
+
+    public byte[] getGeom() {
+        return geom;
+    }
+
+    public void setGeom(byte[] geom) {
+        this.geom = geom;
     }
     
 }

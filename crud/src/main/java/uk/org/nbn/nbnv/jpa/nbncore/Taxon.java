@@ -23,6 +23,12 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Taxon.findByTaxonName", query = "SELECT t FROM Taxon t WHERE t.taxonName = :taxonName"),
     @NamedQuery(name = "Taxon.findByTaxonAuthority", query = "SELECT t FROM Taxon t WHERE t.taxonAuthority = :taxonAuthority")})
 public class Taxon implements Serializable {
+    @JoinColumn(name = "taxonNavigationGroupKey", referencedColumnName = "taxonGroupKey")
+    @ManyToOne
+    private TaxonGroup taxonNavigationGroupKey;
+    @JoinColumn(name = "taxonOutputGroupKey", referencedColumnName = "taxonGroupKey")
+    @ManyToOne
+    private TaxonGroup taxonOutputGroupKey;
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
@@ -142,6 +148,22 @@ public class Taxon implements Serializable {
     @Override
     public String toString() {
         return "uk.org.nbn.nbnv.jpa.nbncore.Taxon[ taxonVersionKey=" + taxonVersionKey + " ]";
+    }
+
+    public TaxonGroup getTaxonNavigationGroupKey() {
+        return taxonNavigationGroupKey;
+    }
+
+    public void setTaxonNavigationGroupKey(TaxonGroup taxonNavigationGroupKey) {
+        this.taxonNavigationGroupKey = taxonNavigationGroupKey;
+    }
+
+    public TaxonGroup getTaxonOutputGroupKey() {
+        return taxonOutputGroupKey;
+    }
+
+    public void setTaxonOutputGroupKey(TaxonGroup taxonOutputGroupKey) {
+        this.taxonOutputGroupKey = taxonOutputGroupKey;
     }
     
 }

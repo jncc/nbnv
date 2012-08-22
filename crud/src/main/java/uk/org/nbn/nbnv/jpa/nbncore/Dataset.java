@@ -35,6 +35,16 @@ import javax.validation.constraints.*;
     @NamedQuery(name = "Dataset.findByUseConstraints", query = "SELECT d FROM Dataset d WHERE d.useConstraints = :useConstraints"),
     @NamedQuery(name = "Dataset.findByDescription", query = "SELECT d FROM Dataset d WHERE d.description = :description")})
 public class Dataset implements Serializable {
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "dateUploaded")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dateUploaded;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "metadataLastEdited")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date metadataLastEdited;
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
@@ -44,14 +54,6 @@ public class Dataset implements Serializable {
     @Basic(optional = false)
     @Column(name = "conditionsAccepted")
     private boolean conditionsAccepted;
-    @Basic(optional = false)
-    @Column(name = "dateUploaded")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date dateUploaded;
-    @Basic(optional = false)
-    @Column(name = "metadataLastEdited")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date metadataLastEdited;
     @Column(name = "providerKey")
     private String providerKey;
     @Basic(optional = false)
@@ -116,22 +118,6 @@ public class Dataset implements Serializable {
 
     public void setConditionsAccepted(boolean conditionsAccepted) {
         this.conditionsAccepted = conditionsAccepted;
-    }
-
-    public Date getDateUploaded() {
-        return dateUploaded;
-    }
-
-    public void setDateUploaded(Date dateUploaded) {
-        this.dateUploaded = dateUploaded;
-    }
-
-    public Date getMetadataLastEdited() {
-        return metadataLastEdited;
-    }
-
-    public void setMetadataLastEdited(Date metadataLastEdited) {
-        this.metadataLastEdited = metadataLastEdited;
     }
 
     public String getProviderKey() {
@@ -277,6 +263,22 @@ public class Dataset implements Serializable {
     @Override
     public String toString() {
         return "uk.org.nbn.nbnv.jpa.nbncore.Dataset[ datasetKey=" + datasetKey + " ]";
+    }
+
+    public Date getDateUploaded() {
+        return dateUploaded;
+    }
+
+    public void setDateUploaded(Date dateUploaded) {
+        this.dateUploaded = dateUploaded;
+    }
+
+    public Date getMetadataLastEdited() {
+        return metadataLastEdited;
+    }
+
+    public void setMetadataLastEdited(Date metadataLastEdited) {
+        this.metadataLastEdited = metadataLastEdited;
     }
     
 }
