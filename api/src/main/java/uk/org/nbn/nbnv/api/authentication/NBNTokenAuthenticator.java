@@ -46,7 +46,7 @@ public class NBNTokenAuthenticator implements TokenAuthenticator {
      * @throws InvalidAlgorithmParameterException 
      */
     public NBNTokenAuthenticator() throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException {
-        key = KeyGenerator.getInstance(SECRET_KEY_ALGORITHM).generateKey();
+        this.key = KeyGenerator.getInstance(SECRET_KEY_ALGORITHM).generateKey();
         this.credentialsDigest = MessageDigest.getInstance(CREDENTIALS_DIGEST);
         this.random = new SecureRandom();
         this.keyCheckValue = randomBytes(KEY_CHECK_VALUE_SIZE);
@@ -177,9 +177,9 @@ public class NBNTokenAuthenticator implements TokenAuthenticator {
             encrypt.init(Cipher.ENCRYPT_MODE, key);
             
             byte[] payload = encrypt.doFinal(ByteBuffer.allocate(KEY_CHECK_VALUE_SIZE + 8 + usernameHash.length) //Encrypt byte buffer
-                .put(keyCheckValue) //store key check
-                .putLong(Calendar.getInstance().getTimeInMillis() + ttl) //Store the time when this token becomes invalid
-                .put(usernameHash)                          //Store username hash
+                .put(keyCheckValue)                                         //store key check
+                .putLong(Calendar.getInstance().getTimeInMillis() + ttl)    //Store the time when this token becomes invalid
+                .put(usernameHash)                                          //Store username hash
                 .array()
             );                    
             
