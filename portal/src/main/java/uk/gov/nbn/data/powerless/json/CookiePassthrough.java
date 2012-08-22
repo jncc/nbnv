@@ -16,12 +16,10 @@ import javax.servlet.http.HttpServletResponse;
  * @author Christopher Johnson
  */
 public class CookiePassthrough {
-    private final HttpServletResponse response;
     private final HttpServletRequest request;
     
-    public CookiePassthrough(HttpServletRequest request, HttpServletResponse response) {
+    public CookiePassthrough(HttpServletRequest request) {
        this.request = request;
-       this.response = response;
     }
     
     public HttpURLConnection openConnection(URL url) throws IOException {
@@ -29,9 +27,6 @@ public class CookiePassthrough {
         String cookie = request.getHeader("Cookie");
         if(cookie != null)
             conn.setRequestProperty("Cookie", cookie);
-        String header = conn.getHeaderField("Set-Cookie");
-        if(header != null)
-            response.addHeader("Set-Cookie", header);
         return conn;
     }
 }

@@ -74,7 +74,7 @@ public class PowerlessServlet extends FreemarkerServlet{
                                         final HttpServletResponse response) throws TemplateModelException {
         SimpleHash toReturn = (SimpleHash)super.createModel(wrapper, servletContext, request, response);
         toReturn.put(POWERLESS_URL_PARAMETERSATION_KEY, request.getAttribute(PowerlessTemplateURLParameterisationFilter.POWERLESS_URL_PARAMETERS_ATTRIBUTE));
-        toReturn.put("json", new JSONReaderForFreeMarker(new CookiePassthrough(request, response)));
+        toReturn.put("json", new JSONReaderForFreeMarker(new CookiePassthrough(request)));
         return toReturn;
     }
     

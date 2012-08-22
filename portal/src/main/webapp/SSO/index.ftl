@@ -5,11 +5,7 @@
 Please enter your username and password in order to login to the NBN Gateway 
     </@markdown>
 
-    <#if RequestParameters.username?has_content && RequestParameters.password?has_content>
-        ${json.readURL("${api}/user/login", RequestParameters)}
-    </#if>
-
-    <form>
+    <form action="/SSO_Controller" method="POST">
         <input type="text" name="username" value=""/>
         <input type="password" name="password" value=""/>
         <input type="submit" value="Login"/>
