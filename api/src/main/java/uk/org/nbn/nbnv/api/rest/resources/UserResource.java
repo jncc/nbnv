@@ -61,9 +61,9 @@ public class UserResource {
     @GET
     @Path("/logout")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getTaxonNavigationGroup() {
+    public Response getTaxonNavigationGroup(@Context HttpServletRequest request) {
         return Response.ok()
-            .cookie(new NewCookie(TOKEN_COOKIE_KEY, null, null, null, null, 0 , false))
+            .cookie(new NewCookie(TOKEN_COOKIE_KEY, null, "/", request.getServerName(), null, 0 , false))
             .build();
     }
 }
