@@ -13,6 +13,7 @@ class RecordIngester @Inject()(log: Logger,
                                surveyIngester: SurveyIngester,
                                sampleIngester: SampleIngester,
                                recorderIngester: RecorderIngester,
+                               attributeIngester: AttributeIngester,
                                r: Repository) {
 
   def upsertRecord(record: NbnRecord, dataset: TaxonDataset) {
@@ -66,7 +67,7 @@ class RecordIngester @Inject()(log: Logger,
       o.setTaxonVersionKey(taxon)
 
       // todo: attributes! json check the keys in the attributes table, create it if necessary etc.
-      // associate attribute with this record
+      attributeIngester.ingestAttributes(record, o)
       // for now all attributes are of free text type
     }
   }

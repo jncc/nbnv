@@ -23,6 +23,7 @@ class NbnRecord(record: StarRecord) {
   def siteKey =         record.core.value(DwcTerm.locationID)
   def recorder =        record.core.value(DwcTerm.recordedBy)
   def determiner =      record.core.value(DwcTerm.identifiedBy)
+  def attributes =      record.core.value(DwcTerm.dynamicProperties)
 
   def startDate              = format.parse(extension.value("http://uknbn.org/terms/startDate"))
   def endDate                = format.parse(extension.value("http://uknbn.org/terms/endDate"))
