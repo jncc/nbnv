@@ -26,8 +26,12 @@ public class CookiePassthrough {
     
     public HttpURLConnection openConnection(URL url) throws IOException {
         HttpURLConnection conn = (HttpURLConnection)url.openConnection();
-        conn.setRequestProperty("Cookie", request.getHeader("Cookie"));
-        response.addHeader("Set-Cookie", conn.getHeaderField("Set-Cookie"));
+        String cookie = request.getHeader("Cookie");
+        if(cookie != null)
+            conn.setRequestProperty("Cookie", cookie);
+        String header = conn.getHeaderField("Set-Cookie");
+        if(header != null)
+            response.addHeader("Set-Cookie", header);
         return conn;
     }
 }
