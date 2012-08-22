@@ -33,7 +33,7 @@ public class SSOController extends HttpServlet {
                 response.sendRedirect("/");
             }
             else {
-                request.getRequestDispatcher("/SSO/").forward(request, response);
+                request.getRequestDispatcher("/User/SSO/").forward(request, response);
             }
         }
         finally {
