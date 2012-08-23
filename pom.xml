@@ -29,6 +29,7 @@
         <module>api.model</module>
         <module>api</module>
         <module>portal</module>
+        <module>gis.security</module>
     </modules>
 	
     <build>
