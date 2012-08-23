@@ -18,6 +18,13 @@
     <class>uk.org.nbn.nbnv.jpa.nbncore.Feature</class>
     <class>uk.org.nbn.nbnv.jpa.nbncore.KnownLanguage</class>
     <class>uk.org.nbn.nbnv.jpa.nbncore.Site</class>
+    <class>uk.org.nbn.nbnv.jpa.nbncore.Attribute</class>
+    <class>uk.org.nbn.nbnv.jpa.nbncore.GatewayAttribute</class>
+    <class>uk.org.nbn.nbnv.jpa.nbncore.AttributeEnumeration</class>
+    <class>uk.org.nbn.nbnv.jpa.nbncore.TaxonObservationAttribute</class>
+    <class>uk.org.nbn.nbnv.jpa.nbncore.TaxonGroup</class>
+    <class>uk.org.nbn.nbnv.jpa.nbncore.StorageLevel</class>
+    <class>uk.org.nbn.nbnv.jpa.nbncore.AttributeStorageType</class>
     <properties>
       <property name="javax.persistence.jdbc.driver" value="com.microsoft.sqlserver.jdbc.SQLServerDriver"/>
     </properties>
