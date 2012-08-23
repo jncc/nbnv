@@ -3,6 +3,7 @@ package uk.org.nbn.nbnv.api.rest.resources;
 import java.util.List;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,4 +22,12 @@ public class DatasetResource {
     public List<Dataset> getDatasetList(){
         return datasetMapper.selectAll();
     }
+    
+    @GET
+    @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Dataset getDatasetByID(@PathParam("id") String id){
+        return datasetMapper.selectByDatasetKey(id);
+    }
+    
 }
