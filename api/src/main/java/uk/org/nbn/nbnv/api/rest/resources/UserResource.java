@@ -25,7 +25,7 @@ import uk.org.nbn.nbnv.api.authentication.TokenUser;
 public class UserResource {
     private static final int DEFAULT_TOKEN_TTL = 2 * 7 * 24 * 60 * 60 * 1000;//2 weeks
     public static final String TOKEN_COOKIE_KEY = "nbn.token_key";
-    public static final String SSO_DOMAIN_KEY = ".testnbn.net";
+    public static final String SSO_DOMAIN_KEY = ".nerc-lancaster.ac.uk";
     
     @Autowired TokenAuthenticator tokenAuth;
     
