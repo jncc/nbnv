@@ -1,0 +1,168 @@
+MAP
+  NAME "OS-Modern"
+  STATUS ON
+  SIZE 400 300
+  EXTENT 0 0 700000 900000
+  UNITS METERS
+  IMAGECOLOR 255 255 255
+  IMAGETYPE "png"
+  
+  OUTPUTFORMAT
+     NAME "png"
+     DRIVER "GD/PNG"
+     IMAGEMODE RGBA
+     MIMETYPE image/png
+     EXTENSION png
+     TRANSPARENT OFF
+  END
+  
+
+  WEB
+    IMAGEPATH "/ms4w/tmp/ms_tmp/"
+    IMAGEURL "/ms_tmp/"
+    METADATA
+      "wms_title"     "OS-Modern"  ##required
+      "wms_onlineresource" "http://nbnweb-2.nerc-lancaster.ac.uk/mapserver/OS-Modern?"   ##required
+      "wms_srs"       "EPSG:27700"  ##recommended
+      "wms_enable_request" "*"   ##necessary
+    END
+  END
+
+  PROJECTION
+    "init=epsg:27700"   ##required
+  END
+
+  #
+  # Start of layer definitions
+  #
+
+  LAYER
+    NAME "MiniScale-NoGrid"
+    METADATA
+      "wms_title"    "Ordnance Survey MiniScale - No Grid (Modern)"   ##required
+    END
+    TYPE RASTER
+    STATUS ON
+    DATA "F:\Modern\MiniScale\raster\MiniScale_(no_grid)_R13.tif"
+    PROJECTION
+      "init=epsg:27700"   ##recommended
+    END
+
+    MINSCALEDENOM 150000   ##Scale Dependancy
+  END # Layer
+
+  LAYER
+    NAME "MiniScale-Grid"
+    METADATA
+      "wms_title"    "Ordnance Survey MiniScale - Grid (Modern)"   ##required
+    END
+    TYPE RASTER
+    STATUS ON
+    DATA "F:\Modern\MiniScale\raster\MiniScale_(with_grid)_R13.tif"   
+    PROJECTION
+      "init=epsg:27700"   ##recommended
+    END
+
+    MINSCALEDENOM 150000   ##Scale Dependancy
+  END # Layer
+
+  LAYER
+    NAME "MiniScale-Relief1"
+    METADATA
+      "wms_title"    "Ordnance Survey MiniScale - Relief 1 (Modern)"   ##required
+    END
+    TYPE RASTER
+    STATUS ON
+    DATA "F:\Modern\MiniScale\raster\MiniScale_(with_relief1)_R13.tif"
+    PROJECTION
+      "init=epsg:27700"   ##recommended
+    END
+
+    MINSCALEDENOM 150000   ##Scale Dependancy
+  END # Layer
+
+  LAYER
+    NAME "MiniScale-Relief2"
+    METADATA
+      "wms_title"    "Ordnance Survey MiniScale - Relief 2 (Modern)"   ##required
+    END
+    TYPE RASTER
+    STATUS ON
+    DATA "F:\Modern\MiniScale\raster\MiniScale_(with_relief2)_R13.tif"
+    PROJECTION
+      "init=epsg:27700"   ##recommended
+    END
+
+    MINSCALEDENOM 150000   ##Scale Dependancy
+  END # Layer
+
+  LAYER
+    NAME "OS250k"
+    METADATA
+      "wms_title"    "Ordnance Survey 1:250000 Scale Colour Raster (Modern)"   ##required
+    END
+    TYPE RASTER
+    STATUS ON
+    TILEINDEX "F:\Modern\250k\index.shp"
+    TILEITEM "Location"
+    PROJECTION
+      "init=epsg:27700"   ##recommended
+    END
+
+    MINSCALEDENOM 35000   ##Scale Dependancy
+    MAXSCALEDENOM 150000
+  END # Layer
+
+  LAYER
+    NAME "OS50k"
+    METADATA
+      "wms_title"    "Ordnance Survey 1:50000 Scale Colour Raster (Modern)"   ##required
+    END
+    TYPE RASTER
+    STATUS ON
+    TILEINDEX "F:\Modern\50k\index.shp"
+    TILEITEM "Location"
+    PROJECTION
+      "init=epsg:27700"   ##recommended
+    END
+
+    MINSCALEDENOM 15000   ##Scale Dependancy
+    MAXSCALEDENOM 35000
+  END # Layer
+
+  LAYER
+    NAME "OS25k"
+    METADATA
+      "wms_title"    "Ordnance Survey 1:25000 Scale Colour Raster (Modern)"   ##required
+    END
+    TYPE RASTER
+    STATUS ON
+    TILEINDEX "F:\Modern\25k\index.shp"
+    TILEITEM "Location"
+    PROJECTION
+      "init=epsg:27700"   ##recommended
+    END
+
+#    MINSCALEDENOM 5000    ##Scale Dependancy
+    MAXSCALEDENOM 15000
+  END # Layer
+
+########OS10K DISABLED #################
+  LAYER
+   NAME "OS10k"
+    METADATA
+      "wms_title"    "Ordnance Survey 1:10000 Scale Raster (Modern)"   ##required
+    END
+    TYPE RASTER
+    STATUS OFF
+    #TILEINDEX "F:\Modern\10k\index.shp"
+    #TILEITEM "Location"
+    PROJECTION
+      "init=epsg:27700"   ##recommended
+    END
+
+    MAXSCALEDENOM 5000    ##Scale Dependancy
+  END # Layer
+#######################################
+
+END # Map File
