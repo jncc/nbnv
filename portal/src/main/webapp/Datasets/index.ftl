@@ -9,7 +9,7 @@
                 <tr>
                     <th>Dataset</th>
                     <th>Provider</th>
-                    <th>Date uploaded</th>
+                    <th nowrap="nowrap">Date uploaded</th>
                     <th>Type</th>
                 </tr>
             </thead>

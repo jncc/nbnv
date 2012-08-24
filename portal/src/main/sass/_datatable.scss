@@ -1,0 +1,16 @@
+/*CSS For rendering jqueryui plugin datatable*/
+
+    div.dataTables_length, div.dataTables_info {
+            float: left;
+            padding: 5px;
+    }
+    div.dataTables_filter, div.dataTables_paginate {
+            float: right;
+            padding: 5px;
+    }
+    div.DataTables_sort_wrapper {
+            float: left;
+    }
+    span.DataTables_sort_icon {
+            float: right;
+    }
