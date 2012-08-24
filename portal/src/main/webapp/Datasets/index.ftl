@@ -4,7 +4,7 @@
 
     <#assign datasets=json.readURL("${api}/datasets")>
     <div>
-        <table id="nbn-datatable" class="nbn-simple-table">
+        <table id="nbn-datatable">
             <thead>
                 <tr>
                     <th>Dataset</th>
