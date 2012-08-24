@@ -23,22 +23,22 @@ class RecordIngester @Inject()(log: Logger,
     val survey = surveyIngester.upsertSurvey(record.surveyKey, dataset)
     val sample = sampleIngester.upsertSample(record.sampleKey, survey)
 
-    val observation = r.getTaxonObservation(record.key, sample)
+    val tosbag = r.getTaxonObservation(record.key, sample)
 
-    observation match {
+    val observation = tosbag match {
       case Some(o) => {
         update(o)
-//        attributeIngester.ingestAttributes(record, o)
         o
       }
       case None => {
         val o = new TaxonObservation()
         update(o)
-        // todo: attributes! json check the keys in the attributes table, create it if necessary etc
         em.persist(o)
-//        attributeIngester.ingestAttributes(record, o)
+        em.flush()
         o
       }
+
+      attributeIngester.ingestAttributes(record, observation, dataset)
     }
 
     def update(o: TaxonObservation) {

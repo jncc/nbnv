@@ -1,5 +1,5 @@
 <@template.master title="NBN Gateway - Datasets"
-    javascripts=["/js/enable-tabs.js","/js/jqueryui.simple-table-style.js"] 
+    javascripts=["/js/enable-dataset-metadata-tabs.js","/js/jqueryui.simple-table-style.js"] 
     csss=["http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/themes/smoothness/jquery-ui.css"] >
 
     <#assign datasetId="${URLParameters.dataset}">
@@ -21,61 +21,74 @@
                 <#elseif dataset.typeName = "Habitat">
                     <li><a href="#tabs-20">Attributes</a></li>
                 <#elseif dataset.typeName = "Site Boundary">
-                    <li><a href="#tabs-30">Sites</a></li>
+                    <li><a href="/Datasets/${datasetId}/Site_Boundaries">Sites</a></li>
                 </#if>
             </ul>
 
             <div id="tabs-1">
-                <table class="nbn-simple-table">
+                <table class="nbn-dataset-table nbn-simple-table">
                     <tr>
-                        <td>Provider</td>
+                        <th>Provider</th>
                         <td>[TODO Logo] <a href="/Organisations/${dataset.organisationID}">${dataset.organisationName}</a></td>
                     </tr>
                     <tr>
-                        <td>Title</td>
+                        <th>Title</th>
                         <td>${dataset.name}</td>
                     </tr>
                     <tr>
-                        <td>Permanent key</td>
+                        <th>Permanent key</th>
                         <td>${dataset.datasetKey}</td>
                     </tr>
                     <tr>
-                        <td>Description</td>
-                        <td>${dataset.description}</td>
+                        <th>Description</th>
+                        <td>${dataset.description!"Not available"}</td>
                     </tr>
                     <tr>
-                        <td>Date uploaded</td>
+                        <th>Date uploaded</th>
                         <td>${dataset.formattedDateUploaded}</td>
                     </tr>
                     <tr>
-                        <td>Purpose of data capture</td>
-                        <td>TBA</td>
+                        <th>Purpose of data capture</th>
+                        <td>${dataset.purpose!"Not available"}</td>
                     </tr>
                     <tr>
-                        <td>Methods of data capture</td>
-                        <td>TBA</td>
+                        <th>Methods of data capture</th>
+                        <td>${dataset.captureMethod!"Not available"}</td>
                     </tr>
                     <tr>
-                        <td>Geographical coverage</td>
-                        <td>TBA</td>
+                        <th>Geographical coverage</th>
+                        <td>${dataset.geographicalCoverage!"Not available"}</td>
                     </tr>
                     <tr>
-                        <td>Temporal coverage</td>
-                        <td>TBA</td>
+                        <th>Temporal coverage</th>
+                        <td>${dataset.temporalCoverage!"Not available"}</td>
                     </tr>
                     <tr>
-                        <td>Data quality</td>
+                        <th>Data quality</th>
                         <td>${dataset.quality!"Not available"}</td>
                     </tr>
                     <tr>
-                        <td>Additional information</td>
-                        <td>TBA</td>
+                        <th>Additional information</th>
+                        <td>${dataset.additionalInformation!"Not available"}</td>
                     </tr>
                 </table>
             </div>
 
             <div id="tabs-2">
-                [TODO - Access and constraints]
+                <table class="nbn-dataset-table nbn-simple-table">
+                    <tr>
+                        <th>Your access</th>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <th>Access constraints</th>
+                        <td>${dataset.accessConstraints!"Not available"}</td>
+                    </tr>
+                    <tr>
+                        <th>Use constraints</th>
+                        <td>${dataset.useConstraints!"Not available"}</td>
+                    </tr>
+                </table>
             </div>
 
             <div id="tabs-3">
@@ -99,10 +112,6 @@
             <#elseif dataset.typeName = "Habitat">
                 <div id="tabs-20">
                     TODO - Habitat attributes
-                </div>
-            <#elseif dataset.typeName = "Site Boundary">
-                <div id="tabs-30">
-                    TODO - Site list
                 </div>
             </#if>
         </div>

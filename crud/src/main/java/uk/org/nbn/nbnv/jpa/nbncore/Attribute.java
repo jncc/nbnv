@@ -28,7 +28,7 @@ public class Attribute implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
-    @NotNull
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name = "attributeID")
     private Integer attributeID;
     @Basic(optional = false)

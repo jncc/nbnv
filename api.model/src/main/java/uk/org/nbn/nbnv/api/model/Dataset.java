@@ -7,23 +7,27 @@ import java.util.Date;
 public class Dataset {
     
     private String datasetKey, name, description, typeName, organisationName;
-    private String dataCaptureMethod, purpose, geographicalCoverage, quality;
+    private String captureMethod, purpose, geographicalCoverage, quality;
     private String additionalInformation, accessConstraints, useConstraints;
-    private Date dateUploaded;
+    private String temporalCoverage, updateFrequency;
+    private Date dateUploaded, metadataLastEdited;
     private int organisationID;
+    private boolean conditionsAccepted;
     
     public Dataset(){}
     
     public Dataset(String datasetKey, String name, String description, String typeName, String organisationName,
-                        String dataCaptureMethod, String purpose, String geographicalCoverage, String quality,
+                        String captureMethod, String purpose, String geographicalCoverage, String quality,
                         String additionalInformation, String accessConstraints, String useConstraints,
-                        Date dateUploaded, int organisationID){
+                        Date dateUploaded, int organisationID, boolean conditionsAccepted, Date metadataLastEdited,
+                        String temporalCoverage, String updateFrequency){
         this.datasetKey = datasetKey;
         this.name = name;
         this.description = description;
         this.typeName = typeName;
         this.organisationName = organisationName;
-        this.dataCaptureMethod = dataCaptureMethod;
+        this.organisationID = organisationID;
+        this.captureMethod = captureMethod;
         this.purpose = purpose;
         this.geographicalCoverage = geographicalCoverage;
         this.quality = quality;
@@ -31,8 +35,10 @@ public class Dataset {
         this.accessConstraints = accessConstraints;
         this.useConstraints = useConstraints;
         this.dateUploaded = dateUploaded;
-        this.organisationID = organisationID;
-        
+        this.conditionsAccepted = conditionsAccepted;
+        this.metadataLastEdited = metadataLastEdited;
+        this.temporalCoverage = temporalCoverage;
+        this.updateFrequency = updateFrequency;
     }
 
     public String getDatasetKey() {
@@ -64,7 +70,7 @@ public class Dataset {
     }
 
     public void setType(String typeName) {
-        this.typeName = typeName;
+        this.setTypeName(typeName);
     }
 
     public String getOrganisationName() {
@@ -75,12 +81,12 @@ public class Dataset {
         this.organisationName = organisationName;
     }
 
-    public String getDataCaptureMethod() {
-        return dataCaptureMethod;
+    public String getCaptureMethod() {
+        return captureMethod;
     }
 
-    public void setDataCaptureMethod(String dataCaptureMethod) {
-        this.dataCaptureMethod = dataCaptureMethod;
+    public void setCaptureMethod(String CaptureMethod) {
+        this.captureMethod = captureMethod;
     }
 
     public String getPurpose() {
@@ -149,5 +155,45 @@ public class Dataset {
 
     public void setOrganisationID(int organisationID) {
         this.organisationID = organisationID;
+    }
+
+    public void setTypeName(String typeName) {
+        this.typeName = typeName;
+    }
+
+    public String getTemporalCoverage() {
+        return temporalCoverage;
+    }
+
+    public void setTemporalCoverage(String temporalCoverage) {
+        this.temporalCoverage = temporalCoverage;
+    }
+
+    public String getUpdateFrequency() {
+        return updateFrequency;
+    }
+
+    public void setUpdateFrequency(String updateFrequency) {
+        this.updateFrequency = updateFrequency;
+    }
+
+    public Date getMetadataLastEdited() {
+        return metadataLastEdited;
+    }
+
+    public String getFormattedMetadataLastEdited(){
+        return (new SimpleDateFormat("dd-MMM-yyyy")).format(metadataLastEdited);
+    }
+
+    public void setMetadataLastEdited(Date metadataLastEdited) {
+        this.metadataLastEdited = metadataLastEdited;
+    }
+
+    public boolean isConditionsAccepted() {
+        return conditionsAccepted;
+    }
+
+    public void setConditionsAccepted(boolean conditionsAccepted) {
+        this.conditionsAccepted = conditionsAccepted;
     }
 }

@@ -120,4 +120,18 @@ body {
         font-style: italic;    
     }
     
+    .nbn-dataset-table{
+        $padding: 5px;
+        font-family: Arial,Helvetica,Sans-serif;
+        padding: 1px;
+        th {
+            font-weight: bold;
+            width: 25%;
+            padding: $padding;
+        }
+        td{
+            padding: $padding;
+        }
+    }
+    
 }
