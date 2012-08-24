@@ -37,6 +37,9 @@ public class Site implements Serializable {
     private String siteName;
     @Column(name = "providerKey")
     private String providerKey;
+    @JoinColumn(name = "datasetKey", referencedColumnName = "datasetKey")
+    @ManyToOne(optional = false)
+    private Dataset datasetKey;
     @OneToMany(mappedBy = "siteID")
     private Collection<TaxonObservationPublic> taxonObservationPublicCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "siteID")
@@ -86,6 +89,15 @@ public class Site implements Serializable {
     public void setProviderKey(String providerKey) {
         this.providerKey = providerKey;
     }
+
+    public Dataset getDatasetKey() {
+        return datasetKey;
+    }
+
+    public void setDatasetKey(Dataset datasetKey) {
+        this.datasetKey = datasetKey;
+    }
+
 
     @XmlTransient
     public Collection<TaxonObservationPublic> getTaxonObservationPublicCollection() {

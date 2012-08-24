@@ -5,10 +5,12 @@
 package uk.org.nbn.nbnv.jpa.nbncore;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Date;
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.validation.constraints.*;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -86,6 +88,8 @@ public class Dataset implements Serializable {
     @JoinColumn(name = "datasetTypeKey", referencedColumnName = "datasetTypeKey")
     @ManyToOne(optional = false)
     private DatasetType datasetTypeKey;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "datasetKey")
+    private Collection<Site> siteCollection;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "dataset")
     private TaxonDataset taxonDataset;
 
@@ -230,6 +234,15 @@ public class Dataset implements Serializable {
 
     public void setDatasetTypeKey(DatasetType datasetTypeKey) {
         this.datasetTypeKey = datasetTypeKey;
+    }
+
+    @XmlTransient
+    public Collection<Site> getSiteCollection() {
+        return siteCollection;
+    }
+
+    public void setSiteCollection(Collection<Site> siteCollection) {
+        this.siteCollection = siteCollection;
     }
 
     public TaxonDataset getTaxonDataset() {
