@@ -53,6 +53,9 @@ public class MapServerServlet extends HttpServlet {
                 response.setContentType(mapscript.msIO_stripStdoutBufferContentType()); //pass the content type
 
                 out.write(mapscript.msIO_getStdoutBufferBytes()); //output the bytes to the end user
+            }catch(Throwable mapEx) {
+                out.write(mapEx.getMessage().getBytes());
+                //throw new ServletException("An error occured whilst generating the map server request", mapEx);
             } finally {            
                 out.close();
             }

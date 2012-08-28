@@ -23,8 +23,7 @@
     <modules>
         <module>properties</module>
         <module>crud</module>
-        <module>fidelity</module>
-        <!--<module>importer</module>-->
+        <module>importer</module>
         <module>importer.ui</module>
         <module>rs</module>
         <module>api.model</module>
