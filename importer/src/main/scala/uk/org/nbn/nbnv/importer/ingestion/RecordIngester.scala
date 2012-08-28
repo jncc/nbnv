@@ -12,9 +12,10 @@ class RecordIngester @Inject()(log: Logger,
                                em: EntityManager,
                                surveyIngester: SurveyIngester,
                                sampleIngester: SampleIngester,
+                               siteIngester: SiteIngester,
                                recorderIngester: RecorderIngester,
                                attributeIngester: AttributeIngester,
-                               r: Repository) {
+                               repo: Repository) {
 
   def upsertRecord(record: NbnRecord, dataset: TaxonDataset) {
 
@@ -22,19 +23,13 @@ class RecordIngester @Inject()(log: Logger,
 
     val survey = surveyIngester.upsertSurvey(record.surveyKey, dataset)
     val sample = sampleIngester.upsertSample(record.sampleKey, survey)
-    val site = r.getSite(record.siteKey, dataset.getDataset)
-
-
-    // todo: TaxonObservation needs a feature
-    // need to get c# code ... paul will get back to us
-    val feature = r.getFeature(1)
-
-    val taxon = r.getTaxon(record.taxonVersionKey)
-    val dateType = r.getDateType(record.dateType)
-
+    val site = siteIngester.upsertSite(record.siteKey, record.siteName, dataset.getDataset)
+    // todo: TaxonObservation needs a feature - need to get c# code from paul
+    val feature = repo.getFeature(1)
+    val taxon = repo.getTaxon(record.taxonVersionKey)
+    val dateType = repo.getDateType(record.dateType)
     val determiner = recorderIngester.ensureRecorder(record.determiner)
     val recorder = recorderIngester.ensureRecorder(record.recorder)
-
 
     def update(o: TaxonObservation) {
 
@@ -55,7 +50,7 @@ class RecordIngester @Inject()(log: Logger,
       // for now all attributes are of free text type
     }
 
-    val observation = r.getTaxonObservation(record.key, sample) match {
+    val observation = repo.getTaxonObservation(record.key, sample) match {
       case Some(o) => {
         update(o)
         o
