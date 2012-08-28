@@ -12,9 +12,10 @@ class RecordIngester @Inject()(log: Logger,
                                em: EntityManager,
                                surveyIngester: SurveyIngester,
                                sampleIngester: SampleIngester,
+                               siteIngester: SiteIngester,
                                recorderIngester: RecorderIngester,
                                attributeIngester: AttributeIngester,
-                               r: Repository) {
+                               repo: Repository) {
 
   def upsertRecord(record: NbnRecord, dataset: TaxonDataset) {
 
@@ -22,21 +23,15 @@ class RecordIngester @Inject()(log: Logger,
 
     val survey = surveyIngester.upsertSurvey(record.surveyKey, dataset)
     val sample = sampleIngester.upsertSample(record.sampleKey, survey)
+    val site = siteIngester.upsertSite(record.siteKey, record.siteName, dataset.getDataset)
+    // todo: TaxonObservation needs a feature - need to get c# code from paul
+    val feature = repo.getFeature(1)
+    val taxon = repo.getTaxon(record.taxonVersionKey)
+    val dateType = repo.getDateType(record.dateType)
+    val determiner = recorderIngester.ensureRecorder(record.determiner)
+    val recorder = recorderIngester.ensureRecorder(record.recorder)
 
     def update(o: TaxonObservation) {
-
-      // todo: leave until schema change is done - sites are now scoped to datasets
-      val site = r.getSite(record.siteKey)
-
-      // todo: TaxonObservation needs a feature
-      // need to get c# code ... paul will get back to us
-      val feature = r.getFeature(1)
-
-      val taxon = r.getTaxon(record.taxonVersionKey)
-      val dateType = r.getDateType(record.dateType)
-
-      val determiner = recorderIngester.ensureRecorder(record.determiner)
-      val recorder = recorderIngester.ensureRecorder(record.recorder)
 
       o.setAbsenceRecord(false) // todo: this should be set to what it is!
       o.setDateStart(record.startDate)
@@ -47,13 +42,12 @@ class RecordIngester @Inject()(log: Logger,
       o.setObservationKey(record.key)
       o.setRecorderID(recorder)
       o.setSampleID(sample)
-      o.setSensitiveRecord(false) // todo: this should be set to what it is!
-      o.setSiteID(site)
+      o.setSensitiveRecord(record.sensitiveOccurrence)
+      o.setSiteID(site.orNull)
       o.setTaxonVersionKey(taxon)
-      // for now all attributes are of free text type
     }
 
-    val observation = r.getTaxonObservation(record.key, sample) match {
+    val observation = repo.getTaxonObservation(record.key, sample) match {
       case Some(o) => {
         update(o)
         o

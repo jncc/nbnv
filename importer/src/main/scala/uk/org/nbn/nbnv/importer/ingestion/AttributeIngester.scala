@@ -19,13 +19,13 @@ class AttributeIngester @Inject()(log: Logger,
     //clear the collection of existing attributes (this is for records that are being re-imported
     observation.getTaxonObservationAttributeCollection.clear()
 
-    //todo : check what is returned from the record if there are no attributes
-    if (record.attributes == "") return;
+    if (record.attributes == null || record.attributes.isEmpty) return
 
     val json = JSON.parseFull(record.attributes)
     val attributes = json.get.asInstanceOf[Map[String, List[String]]]
 
-    attributes foreach {case(attributeLabel, valueList) => {
+    for ((attributeLabel, valueList) <- attributes) {
+
       val attribute = ensureAttribute(attributeLabel)
 
       val toa = new TaxonObservationAttribute()
@@ -36,7 +36,6 @@ class AttributeIngester @Inject()(log: Logger,
       toa.setTextValue(valueList.head)
 
       em.persist(toa)
-      }
     }
 
     def ensureAttribute(attributeLabel: String) = {
@@ -47,7 +46,7 @@ class AttributeIngester @Inject()(log: Logger,
         case None => {
 
           val storageLevel = em.find(classOf[StorageLevel], 4) //observation
-          val storageType = em.find(classOf[AttributeStorageType], 3) //free text
+          val storageType = em.find(classOf[AttributeStorageType], 3) //for now all attributes are free text
 
           val a = new Attribute()
           a.setLabel(attributeLabel)

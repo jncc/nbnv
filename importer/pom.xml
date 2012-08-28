@@ -19,7 +19,6 @@
         <dependency>
             <groupId>uk.org.nbn</groupId>
             <artifactId>nbnv-crud</artifactId>
-            <version>0.1-SNAPSHOT</version><!-- todo: seems not to be needed! -->
         </dependency>
         <dependency>
             <groupId>org.scala-lang</groupId>
@@ -54,10 +53,6 @@
 		  <groupId>log4j</groupId>
 		  <artifactId>log4j</artifactId>
 		</dependency>
-        <dependency>
-            <groupId>com.google.inject</groupId>
-            <artifactId>guice</artifactId>
-        </dependency>
     </dependencies>
 
     <build>
@@ -65,7 +60,6 @@
             <plugin>
                 <groupId>org.scala-tools</groupId>
                 <artifactId>maven-scala-plugin</artifactId>
-                <version>2.15.2</version>
                 <executions>
                     <execution>
                         <id>compile</id>
@@ -96,6 +90,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
+                <version>2.12.2</version>
                 <executions>
                     <execution>
                         <goals>

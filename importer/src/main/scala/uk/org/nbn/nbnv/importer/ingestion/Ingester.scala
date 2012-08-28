@@ -57,7 +57,7 @@ class Ingester @Inject()(options: Options,
       }
     }
     finally {
-      em.close() // todo: hmm, where best to do this? necessary?
+      em.close() // todo: when we have more entity managers, where best to do this? is it even necessary?
     }
   }
 }

@@ -1,5 +1,6 @@
 package uk.org.nbn.nbnv.importer.data
 
+import scala.collection.JavaConversions._
 import javax.persistence.EntityManager
 import uk.org.nbn.nbnv.jpa.nbncore._
 import uk.org.nbn.nbnv.importer.data.Implicits._
@@ -11,7 +12,7 @@ class Repository @Inject()(em: EntityManager) extends ControlAbstractions {
     val query = em.createQuery("select a from Attribute a join a.taxonObservationAttributeCollection toa join toa.taxonObservation to join to.sampleID s join s.surveyID sv where a.label = :label and sv.datasetKey = :dataset", classOf[Attribute])
     query.setParameter("label", attributeLabel)
     query.setParameter("dataset", taxonDataset)
-    query.getSingleOrNone
+    query.getFirstOrNone
   }
 
   def getSurvey(surveyKey: String, dataset: TaxonDataset) = {
@@ -40,12 +41,15 @@ class Repository @Inject()(em: EntityManager) extends ControlAbstractions {
       .getSingleOrNone
   }
 
-  def getOrganisation(name: String): Option[Organisation] = {
+  def getOrganisation(name: String): Organisation = {
 
     val q = "select o from Organisation o where o.organisationName = :name "
 
     val query = em.createQuery(q, classOf[Organisation])
-    query.setParameter("name", name).getSingleOrNone
+
+    expectSingleResult(name) {
+      query.setParameter("name", name).getResultList
+    }
   }
 
   def getFirstRecorder(name: String) = {
@@ -56,12 +60,14 @@ class Repository @Inject()(em: EntityManager) extends ControlAbstractions {
     query.setParameter("name", name).getFirstOrNone
   }
 
-  def getSite(siteKey: String) = {
+  def getSite(siteKey: String, dataset: Dataset) = {
 
-    val q = "select s from Site s where s.siteKey = :siteKey "
+    val q = "select s from Site s where s.siteKey = :siteKey and s.datasetKey = :dataset "
 
     val query = em.createQuery(q, classOf[Site])
-    query.setParameter("siteKey", siteKey).getSingleResult
+    query.setParameter("siteKey", siteKey)
+    query.setParameter("dataset", dataset)
+    query.getSingleOrNone
   }
 
   def getLatestDatasetKey = {
