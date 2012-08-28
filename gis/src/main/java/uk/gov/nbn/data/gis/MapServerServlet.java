@@ -43,7 +43,7 @@ public class MapServerServlet extends HttpServlet {
                 mapscript.msIO_installStdoutToBuffer(); //buffer the bytes of the map script
                 
                 mapObj map = new mapObj(mapFiles.get(requestedMapFile));                
-
+                
                 int owsResult = map.OWSDispatch( createMapRequest(request) );
 
                 if( owsResult != 0 ) {

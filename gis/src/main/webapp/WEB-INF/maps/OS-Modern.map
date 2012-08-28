@@ -43,7 +43,7 @@ MAP
     END
     TYPE RASTER
     STATUS ON
-    DATA "F:\Modern\MiniScale\raster\MiniScale_(no_grid)_R13.tif"
+    DATA "D:\Modern\MiniScale\raster\MiniScale_(no_grid)_R13.tif"
     PROJECTION
       "init=epsg:27700"   ##recommended
     END
@@ -58,7 +58,7 @@ MAP
     END
     TYPE RASTER
     STATUS ON
-    DATA "F:\Modern\MiniScale\raster\MiniScale_(with_grid)_R13.tif"   
+    DATA "D:\Modern\MiniScale\raster\MiniScale_(with_grid)_R13.tif"   
     PROJECTION
       "init=epsg:27700"   ##recommended
     END
@@ -73,7 +73,7 @@ MAP
     END
     TYPE RASTER
     STATUS ON
-    DATA "F:\Modern\MiniScale\raster\MiniScale_(with_relief1)_R13.tif"
+    DATA "D:\Modern\MiniScale\raster\MiniScale_(with_relief1)_R13.tif"
     PROJECTION
       "init=epsg:27700"   ##recommended
     END
@@ -88,7 +88,7 @@ MAP
     END
     TYPE RASTER
     STATUS ON
-    DATA "F:\Modern\MiniScale\raster\MiniScale_(with_relief2)_R13.tif"
+    DATA "D:\Modern\MiniScale\raster\MiniScale_(with_relief2)_R13.tif"
     PROJECTION
       "init=epsg:27700"   ##recommended
     END
@@ -103,7 +103,7 @@ MAP
     END
     TYPE RASTER
     STATUS ON
-    TILEINDEX "F:\Modern\250k\index.shp"
+    TILEINDEX "D:\Modern\250k\index.shp"
     TILEITEM "Location"
     PROJECTION
       "init=epsg:27700"   ##recommended
@@ -120,7 +120,7 @@ MAP
     END
     TYPE RASTER
     STATUS ON
-    TILEINDEX "F:\Modern\50k\index.shp"
+    TILEINDEX "D:\Modern\50k\index.shp"
     TILEITEM "Location"
     PROJECTION
       "init=epsg:27700"   ##recommended
@@ -137,32 +137,13 @@ MAP
     END
     TYPE RASTER
     STATUS ON
-    TILEINDEX "F:\Modern\25k\index.shp"
+    TILEINDEX "D:\Modern\25k\index.shp"
     TILEITEM "Location"
     PROJECTION
       "init=epsg:27700"   ##recommended
     END
 
-#    MINSCALEDENOM 5000    ##Scale Dependancy
     MAXSCALEDENOM 15000
   END # Layer
-
-########OS10K DISABLED #################
-  LAYER
-   NAME "OS10k"
-    METADATA
-      "wms_title"    "Ordnance Survey 1:10000 Scale Raster (Modern)"   ##required
-    END
-    TYPE RASTER
-    STATUS OFF
-    #TILEINDEX "F:\Modern\10k\index.shp"
-    #TILEITEM "Location"
-    PROJECTION
-      "init=epsg:27700"   ##recommended
-    END
-
-    MAXSCALEDENOM 5000    ##Scale Dependancy
-  END # Layer
-#######################################
 
 END # Map File
