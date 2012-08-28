@@ -1,6 +1,6 @@
 package uk.org.nbn.nbnv.importer.validation
 
-import uk.org.nbn.nbnv.fidelity.{Result, ResultLevel}
+import uk.org.nbn.nbnv.importer.fidelity.{Result, ResultLevel}
 import org.gbif.dwc.text.StarRecord
 import org.gbif.dwc.terms.DwcTerm
 
