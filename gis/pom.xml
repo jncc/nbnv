@@ -20,6 +20,16 @@
             <version>20090211</version>
         </dependency>
         <dependency>
+            <groupId>net.sf.extcos</groupId>
+            <artifactId>extcos</artifactId>
+            <version>0.3b</version>
+        </dependency>
+        <dependency>
+            <groupId>org.freemarker</groupId>
+            <artifactId>freemarker</artifactId>
+            <version>2.3.19</version>
+        </dependency>
+        <dependency>
             <groupId>EDU.umn.gis</groupId>
             <artifactId>mapscript</artifactId>
             <version>3.0.6</version>
