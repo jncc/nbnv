@@ -9,7 +9,7 @@ MAP
   
   OUTPUTFORMAT
      NAME "png"
-     DRIVER "GD/PNG"
+     DRIVER "AGG/PNG"
      IMAGEMODE RGBA
      MIMETYPE image/png
      EXTENSION png
