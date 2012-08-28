@@ -22,11 +22,6 @@
             <version>0.1-SNAPSHOT</version><!-- todo: seems not to be needed! -->
         </dependency>
         <dependency>
-            <groupId>uk.org.nbn</groupId>
-            <artifactId>nbnv-fidelity</artifactId>
-            <version>0.1-SNAPSHOT</version><!--todo: is this right?! -->
-        </dependency>
-        <dependency>
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-library</artifactId>
         </dependency>

@@ -3,7 +3,7 @@ package uk.org.nbn.nbnv.importer.validation
 import scala.collection.JavaConversions._
 import com.google.inject.Inject
 import org.gbif.dwc.text.Archive
-import uk.org.nbn.nbnv.fidelity.{ResultLevel, Result}
+import uk.org.nbn.nbnv.importer.fidelity.{ResultLevel, Result}
 import org.apache.log4j.Logger
 import uk.org.nbn.nbnv.importer.ImportFailedException
 
