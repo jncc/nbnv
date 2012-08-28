@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import uk.gov.nbn.data.powerless.json.CookiePassthrough;
 import uk.gov.nbn.data.powerless.json.JSONReaderForFreeMarker;
 import uk.gov.nbn.data.powerless.request.TraditionalHttpRequestParametersHashModel;
+import uk.gov.nbn.data.properties.PropertiesReader;
 
 /**
  *

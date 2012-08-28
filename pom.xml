@@ -21,6 +21,7 @@
     </properties>
 
     <modules>
+        <module>properties</module>
         <module>crud</module>
         <module>fidelity</module>
         <module>importer</module>

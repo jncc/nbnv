@@ -19,6 +19,13 @@
         </repository>
     </repositories>
     <dependencies>
+        <!-- Get the properties reader -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>nbnv-properties</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        
         <dependency>
             <groupId>rubygems</groupId>
             <artifactId>compass</artifactId>

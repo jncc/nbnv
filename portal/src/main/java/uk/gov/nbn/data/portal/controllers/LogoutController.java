@@ -10,7 +10,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import uk.gov.nbn.data.powerless.PropertiesReader;
+import uk.gov.nbn.data.properties.PropertiesReader;
 
 /**
  * The following servlet will attempt a login to the NBN api and if successful

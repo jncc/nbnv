@@ -1,8 +1,4 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-package uk.gov.nbn.data.powerless;
+package uk.gov.nbn.data.properties;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -11,14 +7,16 @@ import java.io.InputStream;
 import java.util.Properties;
 
 /**
- *
- * @author Administrator
+ * The following reader will enable us to load properties files which can have
+ * server specific properties loaded in preference to those defined in the 
+ * application
+ * @author Christopher Johnson
  */
 public class PropertiesReader {
     private static final File PROPERTIES_OVERLOAD_DIR = new File("/server/overload/");
     
     public static Properties getEffectiveProperties(String name) throws IOException {
-        Properties localProperties = readStreamAndClose(PowerlessServlet.class.getClassLoader().getResourceAsStream(name));
+        Properties localProperties = readStreamAndClose(PropertiesReader.class.getClassLoader().getResourceAsStream(name));
         
         File overloadingProperitesFile = new File(PROPERTIES_OVERLOAD_DIR, name);
         if(overloadingProperitesFile.isFile()) {

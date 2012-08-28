@@ -5,14 +5,12 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import uk.gov.nbn.data.powerless.PropertiesReader;
+import uk.gov.nbn.data.properties.PropertiesReader;
 
 /**
  * The following servlet will attempt a login to the NBN api and if successful
