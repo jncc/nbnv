@@ -96,7 +96,6 @@
                         <!-- use the ScalaTest naming convention  -->
                         <include>**/*Suite.java</include>
                     </includes>
-                    <skipTests>true</skipTests> <!--Disabling testing on importer-->
                 </configuration>
             </plugin>
             <plugin>
