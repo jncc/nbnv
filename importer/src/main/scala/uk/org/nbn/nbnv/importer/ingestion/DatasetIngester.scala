@@ -11,8 +11,7 @@ import com.google.inject.Inject
 class DatasetIngester @Inject()(log: Logger,
                                 em: EntityManager,
                                 keyGenerator: KeyGenerator,
-                                repository: Repository,
-                                organisationIngester: OrganisationIngester) {
+                                repository: Repository) {
 
   def upsertDataset(metadata: Metadata): TaxonDataset = {
 
@@ -63,7 +62,7 @@ class DatasetIngester @Inject()(log: Logger,
 
   def modifyDataset(d: Dataset, m: Metadata) = {
 
-    val provider = organisationIngester.ensureOrganisation(m.datasetProviderName)
+    val provider = repository.getOrganisation(m.datasetProviderName)
     val datasetUpdateFrequency = em.getReference(classOf[DatasetUpdateFrequency], "012")
     val datasetType = em.getReference(classOf[DatasetType], 'T')
 

@@ -19,8 +19,7 @@ class AttributeIngester @Inject()(log: Logger,
     //clear the collection of existing attributes (this is for records that are being re-imported
     observation.getTaxonObservationAttributeCollection.clear()
 
-    //todo : check what is returned from the record if there are no attributes
-    if (record.attributes == "") return;
+    if (record.attributes == null || record.attributes.isEmpty) return
 
     val json = JSON.parseFull(record.attributes)
     val attributes = json.get.asInstanceOf[Map[String, List[String]]]

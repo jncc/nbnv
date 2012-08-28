@@ -19,7 +19,6 @@
         <dependency>
             <groupId>uk.org.nbn</groupId>
             <artifactId>nbnv-crud</artifactId>
-            <version>0.1-SNAPSHOT</version><!-- todo: seems not to be needed! -->
         </dependency>
         <dependency>
             <groupId>org.scala-lang</groupId>

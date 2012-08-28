@@ -1,5 +1,6 @@
 package uk.org.nbn.nbnv.importer.data
 
+import scala.collection.JavaConversions._
 import javax.persistence.EntityManager
 import uk.org.nbn.nbnv.jpa.nbncore._
 import uk.org.nbn.nbnv.importer.data.Implicits._
@@ -40,12 +41,15 @@ class Repository @Inject()(em: EntityManager) extends ControlAbstractions {
       .getSingleOrNone
   }
 
-  def getOrganisation(name: String): Option[Organisation] = {
+  def getOrganisation(name: String): Organisation = {
 
     val q = "select o from Organisation o where o.organisationName = :name "
 
     val query = em.createQuery(q, classOf[Organisation])
-    query.setParameter("name", name).getSingleOrNone
+
+    expectSingleResult(name) {
+      query.setParameter("name", name).getResultList
+    }
   }
 
   def getFirstRecorder(name: String) = {
