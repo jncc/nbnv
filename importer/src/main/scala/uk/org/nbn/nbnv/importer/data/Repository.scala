@@ -11,7 +11,7 @@ class Repository @Inject()(em: EntityManager) extends ControlAbstractions {
     val query = em.createQuery("select a from Attribute a join a.taxonObservationAttributeCollection toa join toa.taxonObservation to join to.sampleID s join s.surveyID sv where a.label = :label and sv.datasetKey = :dataset", classOf[Attribute])
     query.setParameter("label", attributeLabel)
     query.setParameter("dataset", taxonDataset)
-    query.getSingleOrNone
+    query.getFirstOrNone
   }
 
   def getSurvey(surveyKey: String, dataset: TaxonDataset) = {
