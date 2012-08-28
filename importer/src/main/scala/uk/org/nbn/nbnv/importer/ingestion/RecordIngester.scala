@@ -42,12 +42,9 @@ class RecordIngester @Inject()(log: Logger,
       o.setObservationKey(record.key)
       o.setRecorderID(recorder)
       o.setSampleID(sample)
-      o.setSensitiveRecord(false) // todo: this should be set to what it is!
-
-
+      o.setSensitiveRecord(record.sensitiveOccurrence)
       o.setSiteID(site.orNull)
       o.setTaxonVersionKey(taxon)
-      // for now all attributes are of free text type
     }
 
     val observation = repo.getTaxonObservation(record.key, sample) match {
