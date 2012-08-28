@@ -60,12 +60,14 @@ class Repository @Inject()(em: EntityManager) extends ControlAbstractions {
     query.setParameter("name", name).getFirstOrNone
   }
 
-  def getSite(siteKey: String) = {
+  def getSite(siteKey: String, dataset: Dataset) = {
 
-    val q = "select s from Site s where s.siteKey = :siteKey "
+    val q = "select s from Site s where s.siteKey = :siteKey and s.datasetKey = :dataset "
 
     val query = em.createQuery(q, classOf[Site])
-    query.setParameter("siteKey", siteKey).getSingleResult
+    query.setParameter("siteKey", siteKey)
+    query.setParameter("dataset", dataset)
+    query.getSingleOrNone
   }
 
   def getLatestDatasetKey = {

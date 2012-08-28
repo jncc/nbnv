@@ -22,21 +22,21 @@ class RecordIngester @Inject()(log: Logger,
 
     val survey = surveyIngester.upsertSurvey(record.surveyKey, dataset)
     val sample = sampleIngester.upsertSample(record.sampleKey, survey)
+    val site = r.getSite(record.siteKey, dataset.getDataset)
+
+
+    // todo: TaxonObservation needs a feature
+    // need to get c# code ... paul will get back to us
+    val feature = r.getFeature(1)
+
+    val taxon = r.getTaxon(record.taxonVersionKey)
+    val dateType = r.getDateType(record.dateType)
+
+    val determiner = recorderIngester.ensureRecorder(record.determiner)
+    val recorder = recorderIngester.ensureRecorder(record.recorder)
+
 
     def update(o: TaxonObservation) {
-
-      // todo: leave until schema change is done - sites are now scoped to datasets
-      val site = r.getSite(record.siteKey)
-
-      // todo: TaxonObservation needs a feature
-      // need to get c# code ... paul will get back to us
-      val feature = r.getFeature(1)
-
-      val taxon = r.getTaxon(record.taxonVersionKey)
-      val dateType = r.getDateType(record.dateType)
-
-      val determiner = recorderIngester.ensureRecorder(record.determiner)
-      val recorder = recorderIngester.ensureRecorder(record.recorder)
 
       o.setAbsenceRecord(false) // todo: this should be set to what it is!
       o.setDateStart(record.startDate)
@@ -48,7 +48,9 @@ class RecordIngester @Inject()(log: Logger,
       o.setRecorderID(recorder)
       o.setSampleID(sample)
       o.setSensitiveRecord(false) // todo: this should be set to what it is!
-      o.setSiteID(site)
+
+
+      o.setSiteID(site.orNull)
       o.setTaxonVersionKey(taxon)
       // for now all attributes are of free text type
     }
