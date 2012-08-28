@@ -29,7 +29,7 @@ class SmokeSuiteIT extends BaseFunSuite with ResourceLoader {
     new File(tempDir).mkdirs()
     val archivePath = resource("/archives/valid.zip")
 
-    val options = Options(archivePath = archivePath.getFile, tempDir = tempDir, whatIf = false)
+    val options = Options(archivePath = archivePath.getFile, tempDir = tempDir, whatIf = true)
 
     val importer = Importer.createImporter(options)
     importer.run()
