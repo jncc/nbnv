@@ -23,24 +23,6 @@ class RecordIngester @Inject()(log: Logger,
     val survey = surveyIngester.upsertSurvey(record.surveyKey, dataset)
     val sample = sampleIngester.upsertSample(record.sampleKey, survey)
 
-    val tosbag = r.getTaxonObservation(record.key, sample)
-
-    val observation = tosbag match {
-      case Some(o) => {
-        update(o)
-        o
-      }
-      case None => {
-        val o = new TaxonObservation()
-        update(o)
-        em.persist(o)
-        em.flush()
-        o
-      }
-
-      attributeIngester.ingestAttributes(record, observation, dataset)
-    }
-
     def update(o: TaxonObservation) {
 
       // todo: leave until schema change is done - sites are now scoped to datasets
@@ -70,5 +52,24 @@ class RecordIngester @Inject()(log: Logger,
       o.setTaxonVersionKey(taxon)
       // for now all attributes are of free text type
     }
+
+    val observation = r.getTaxonObservation(record.key, sample) match {
+      case Some(o) => {
+        update(o)
+        o
+      }
+      case None => {
+        val o = new TaxonObservation()
+        update(o)
+        em.persist(o)
+        em.flush()
+        o
+      }
+    }
+
+    attributeIngester.ingestAttributes(record, observation, dataset)
+
+
+
   }
 }
