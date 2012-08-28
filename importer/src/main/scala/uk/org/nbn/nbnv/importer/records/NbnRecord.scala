@@ -4,6 +4,7 @@ import scala.collection.JavaConversions._
 import org.gbif.dwc.terms.DwcTerm
 import org.gbif.dwc.text.StarRecord
 import java.text.SimpleDateFormat
+import uk.org.nbn.nbnv.importer.ImportFailedException
 
 /// Wraps a Darwin record in NBN clothing.
 class NbnRecord(record: StarRecord) {
@@ -17,6 +18,7 @@ class NbnRecord(record: StarRecord) {
   private val format = new SimpleDateFormat("yyyy/MM/dd")
   
   def key =             record.core.value(DwcTerm.occurrenceID)
+  def absence =         parseOccurrenceStatus(record.core.value(DwcTerm.occurrenceStatus))
   def surveyKey =       record.core.value(DwcTerm.collectionCode)
   def sampleKey =       record.core.value(DwcTerm.eventID)
   def taxonVersionKey = record.core.value(DwcTerm.taxonID)
@@ -33,4 +35,17 @@ class NbnRecord(record: StarRecord) {
   def gridReferenceType      = extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/gridReferenceType")
   def gridReference          = extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/gridReference")
   def gridReferencePrecision = extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/gridReferencePrecision")
+
+  def parseOccurrenceStatus(s: String) = {
+    if (s == null) {
+      false // default (missing column) means presence record
+    }
+    else {
+      s.toLowerCase match {
+        case "presence" => false
+        case "absence" => true
+        case _ => throw new ImportFailedException("Invalid occurrence status '%s'".format(s))
+      }
+    }
+  }
 }

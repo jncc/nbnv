@@ -33,7 +33,7 @@ class RecordIngester @Inject()(log: Logger,
 
     def update(o: TaxonObservation) {
 
-      o.setAbsenceRecord(false) // todo: this should be set to what it is!
+      o.setAbsenceRecord(record.absence)
       o.setDateStart(record.startDate)
       o.setDateEnd(record.endDate)
       o.setDateType(dateType)
@@ -53,7 +53,7 @@ class RecordIngester @Inject()(log: Logger,
         o
       }
       case None => {
-        val o = new TaxonObservation()
+        val o = new TaxonObservation
         update(o)
         em.persist(o)
         em.flush()
@@ -62,8 +62,5 @@ class RecordIngester @Inject()(log: Logger,
     }
 
     attributeIngester.ingestAttributes(record, observation, dataset)
-
-
-
   }
 }
