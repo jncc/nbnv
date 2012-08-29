@@ -16,5 +16,8 @@ import java.lang.annotation.Target;
 @Target({ ElementType.PARAMETER })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface QueryParam {
-    String value();
+    public static final String NO_VALIDATION = "";
+
+    String key();
+    String validation() default NO_VALIDATION;
 }

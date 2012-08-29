@@ -24,7 +24,7 @@ public class DesignationSpeciesDensityWMS {
     @MapObject("{designationKey}")
     public mapObj getTaxonMap(
             @MapFile("DesignationSpeciesDensityWMS.map") String mapFile,
-            @QueryParam("userKey") String userKey,
+            @QueryParam(key="userKey") String userKey,
             @Param(key="designationKey", validation="^[A-Z0-9.()/_\\-]+$") String key) {
         mapObj toReturn = new mapObj(mapFile);
         for(int i=0; i<toReturn.getNumlayers(); i++) {
