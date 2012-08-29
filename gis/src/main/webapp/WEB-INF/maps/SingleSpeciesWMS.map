@@ -40,8 +40,6 @@ MAP
       'userKey'                                         '^[0-9]+$'
     END
 
-    DATA                                                "geom from (SELECT geom, observationId, gridRef FROM vw_SingleSpeciesMap WHERE resolutionID = 1 AND taxonVersionKey = '%taxonKey%' AND userKey = %userKey%) AS foo USING UNIQUE observationId USING SRID=4326"
-
     PROJECTION
       "init=epsg:4326"
     END
@@ -74,8 +72,6 @@ MAP
       'taxonKey'                                        '^[A-Z]{6}[0-9]{10}$'
       'userKey'                                         '^[0-9]+$'
     END
-
-    DATA                                                "geom from (SELECT geom, observationId, gridRef FROM vw_SingleSpeciesMap WHERE resolutionID = 2 AND taxonVersionKey = '%taxonKey%' AND userKey = %userKey%) AS foo USING UNIQUE observationId USING SRID=4326"
 
     PROJECTION
       "init=epsg:4326"
@@ -110,8 +106,6 @@ MAP
       'userKey'                                         '^[0-9]+$'
     END
 
-    DATA                                                "geom from (SELECT geom, observationId, gridRef FROM vw_SingleSpeciesMap WHERE resolutionID = 3 AND taxonVersionKey = '%taxonKey%' AND userKey = %userKey%) AS foo USING UNIQUE observationId USING SRID=4326"
-
     PROJECTION
       "init=epsg:4326"
     END
@@ -145,8 +139,7 @@ MAP
       'userKey'                                         '^[0-9]+$'
     END
 
-    DATA                                                "geom from (SELECT geom, observationId, gridRef FROM vw_SingleSpeciesMap WHERE resolutionID = 4 AND taxonVersionKey = '%taxonKey%' AND userKey = %userKey%) AS foo USING UNIQUE observationId USING SRID=4326"
-
+    
     PROJECTION
       "init=epsg:4326"
     END
