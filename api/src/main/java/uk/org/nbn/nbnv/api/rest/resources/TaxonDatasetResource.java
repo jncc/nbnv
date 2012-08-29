@@ -14,23 +14,25 @@ import uk.org.nbn.nbnv.api.model.Dataset;
 import uk.org.nbn.nbnv.api.model.TaxonDataset;
 
 @Component
-@Path("/datasets")
-public class DatasetResource {
+@Path("/taxonDatasets")
+public class TaxonDatasetResource {
     
     @Autowired DatasetMapper datasetMapper;
     @Autowired TaxonMapper taxonMapper;
     
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Dataset> getDatasetList(){
-        return datasetMapper.selectAll();
+    public List<TaxonDataset> getDatasetList(){
+        return datasetMapper.selectAllTaxonDatasets();
     }
     
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Dataset getDatasetByID(@PathParam("id") String id){
-        return datasetMapper.selectByDatasetKey(id);
+    public TaxonDataset getTaxonDatasetByID(@PathParam("id") String id){
+        TaxonDataset toReturn = datasetMapper.selectTaxonDatasetByID(id);
+        toReturn.setTaxa(taxonMapper.selectByDatasetKey(id));
+        return toReturn;
     }
     
 }
