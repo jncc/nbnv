@@ -2,9 +2,9 @@ package uk.gov.nbn.data.gis.maps;
 
 import edu.umn.gis.mapscript.mapObj;
 import javax.servlet.http.HttpServletRequest;
-import uk.gov.nbn.data.gis.MapObject;
-import uk.gov.nbn.data.gis.MapService;
-import uk.gov.nbn.data.gis.Param;
+import uk.gov.nbn.data.gis.processor.MapObject;
+import uk.gov.nbn.data.gis.processor.MapService;
+import uk.gov.nbn.data.gis.providers.Param;
 
 /**
  *

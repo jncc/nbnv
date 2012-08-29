@@ -3,7 +3,7 @@
     <display-name>NBN Gateway GIS</display-name>
     <servlet>
         <servlet-name>MapServerServlet</servlet-name>
-        <servlet-class>uk.gov.nbn.data.gis.MapServerServlet</servlet-class>
+        <servlet-class>uk.gov.nbn.data.gis.processor.MapServerServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>MapServerServlet</servlet-name>

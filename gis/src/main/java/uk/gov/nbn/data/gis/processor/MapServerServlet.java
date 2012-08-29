@@ -1,4 +1,4 @@
-package uk.gov.nbn.data.gis;
+package uk.gov.nbn.data.gis.processor;
 
 import edu.umn.gis.mapscript.OWSRequest;
 import edu.umn.gis.mapscript.mapscript;
@@ -25,7 +25,7 @@ public class MapServerServlet extends HttpServlet {
     @Override public void init(ServletConfig config) throws ServletException {
         try {
             super.init(config);
-            serviceFactory = new MapServicePartFactory("uk.gov.nbn.data.gis.maps");
+            serviceFactory = new MapServicePartFactory("uk.gov.nbn.data.gis.maps", "uk.gov.nbn.data.gis.providers");
         } catch (InstantiationException ex) {
             throw new ServletException("Could not instanciate one of the map service classes", ex);
         } catch (IllegalAccessException ex) {

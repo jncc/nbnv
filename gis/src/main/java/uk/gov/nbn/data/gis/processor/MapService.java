@@ -1,4 +1,4 @@
-package uk.gov.nbn.data.gis;
+package uk.gov.nbn.data.gis.processor;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -9,8 +9,8 @@ import java.lang.annotation.Target;
  *
  * @author Administrator
  */
-@Target({ ElementType.METHOD })
+@Target({ ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
-public @interface MapObject {
-    String value() default "";
+public @interface MapService {
+    String value();
 }

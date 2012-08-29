@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package uk.gov.nbn.data.gis;
+package uk.gov.nbn.data.gis.processor;
 
 import edu.umn.gis.mapscript.mapObj;
 import java.lang.reflect.Method;

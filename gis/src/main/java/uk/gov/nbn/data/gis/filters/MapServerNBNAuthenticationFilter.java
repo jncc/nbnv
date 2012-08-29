@@ -1,4 +1,4 @@
-package uk.gov.nbn.data.gis;
+package uk.gov.nbn.data.gis.filters;
 
 import java.io.IOException;
 import java.io.InputStreamReader;

@@ -3,10 +3,12 @@
  * and open the template in the editor.
  */
 
-package uk.gov.nbn.data.gis;
+package uk.gov.nbn.data.gis.processor;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.*;
+import javax.servlet.http.HttpServletRequest;
 import net.sf.extcos.ComponentQuery;
 import net.sf.extcos.ComponentScanner;
 
@@ -15,10 +17,12 @@ import net.sf.extcos.ComponentScanner;
  * @author Christopher Johnson
  */
 public class MapServicePartFactory {   
-    private MapServicePart rootMapService;
+    private final MapServicePart rootMapService;
+    private final List<? extends Provider> providers;
     
-    public MapServicePartFactory(String packageLoc) throws InstantiationException, IllegalAccessException {
-        rootMapService = getMapCreatingMethods(packageLoc);
+    public MapServicePartFactory(String mapsPackage, String providersPackage) throws InstantiationException, IllegalAccessException {
+        rootMapService = getMapCreatingMethods(mapsPackage);
+        providers = getProviders(providersPackage);
     }
     
     public MapServiceMethod getMatchingPart(String pathInfo) throws MapServiceUndefinedException {
@@ -28,11 +32,30 @@ public class MapServicePartFactory {
     public MapServiceMethod getMatchingPart(String[] requestedParts) throws MapServiceUndefinedException {
         MapServicePart matchingPart = getMatchingPart(rootMapService, 0, requestedParts);
         if(matchingPart != null && matchingPart.hasMethod()) {
-            return new MapServiceMethod(matchingPart, requestedParts);
+            return new MapServiceMethod(matchingPart, requestedParts, this);
         }
         else {
             throw new MapServiceUndefinedException("There is no MapServicePart which matches the path supplied");
         }
+    }
+    
+    Object getProvidedForParameter(MapServiceMethod method, HttpServletRequest request, Class<?> toReturn, List<Annotation> paramAnnotations) {
+        for(Provider<?,?> currProvider : providers) {
+            Object providesResponse = callProvider(currProvider, method, request, toReturn, paramAnnotations);
+            if(providesResponse != null) {
+                return providesResponse;
+            }
+        }
+        return null; //can't find a matching parameter
+    }
+    
+    
+    private static <T,R> R callProvider(Provider<T,R> provider, MapServiceMethod method, HttpServletRequest request, Class<?> toReturn, List<Annotation> paramAnnotations) {
+        T providesResponse = provider.providesFor(method, request, toReturn, paramAnnotations);
+        if(providesResponse != null) {
+            return provider.process(providesResponse, method, request, toReturn, paramAnnotations);
+        }
+        return null;
     }
     
     /**
@@ -101,5 +124,23 @@ public class MapServicePartFactory {
             }
         }
         return rootNode;
+    }
+    
+    private static List<Provider> getProviders(final String providersPackage) throws InstantiationException, IllegalAccessException {
+        final List<Provider> providerInstances = new ArrayList<Provider>();
+        final Set<Class<? extends Provider>> providerClasses = new HashSet<Class<? extends Provider>>();
+        
+        ComponentScanner scanner = new ComponentScanner();
+        scanner.getClasses(new ComponentQuery() {
+            @Override protected void query() {
+                select().from(providersPackage).andStore(
+                    thoseImplementing(Provider.class).into(providerClasses));
+            }
+        });
+
+        for(Class<? extends Provider> currProviderClass : providerClasses) {
+            providerInstances.add(currProviderClass.newInstance());
+        }
+        return providerInstances;
     }
 }
