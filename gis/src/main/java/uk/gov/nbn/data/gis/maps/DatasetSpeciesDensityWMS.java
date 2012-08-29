@@ -17,7 +17,7 @@ public class DatasetSpeciesDensityWMS {
                     + "FROM vw_DatasetSpeciesDensityMap "
                     + "WHERE datasetKey = '%s' "
                     + "AND userKey = '%d' "
-                    + "AND resolutionID = %d "
+                    + "AND resolutionID = %d ) "
                     + "AS foo USING UNIQUE gridRef USING SRID=4326";
     
     @MapObject("{datasetKey}")
