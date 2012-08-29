@@ -25,11 +25,16 @@ public class QueryParamProvider implements Provider {
     public Object provide(Class<?> returnType, MapServiceMethod method, HttpServletRequest request, List<Annotation> annotations) throws ProviderException {
         QueryParam paramAnnot = getAnnotation(annotations);
         String toReturn = request.getParameter(paramAnnot.key());
-        if(returnType.equals(List.class)) {
-            return validateParameter(Arrays.asList(toReturn.split(",")), paramAnnot);
+        if(toReturn != null) {
+            if(returnType.equals(List.class)) {
+                return validateParameter(Arrays.asList(toReturn.split(",")), paramAnnot);
+            }
+            else {
+                return validateParameter(toReturn, paramAnnot);
+            }
         }
         else {
-            return validateParameter(toReturn, paramAnnot);
+            return null;
         }
     }
     
