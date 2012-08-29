@@ -21,6 +21,7 @@ public class SingleSpeciesWMS {
             layerObj layer = toReturn.getLayer(i);
             layer.setData("geom from (SELECT geom, observationID, label "
                     + "FROM vw_SingleSpeciesMap WHERE resolutionID = " + (i+1) + " "
+                    + "AND userKey = 0 "
                     + "AND pTaxonVersionKey = '"+ key +"') "
                     + "AS foo USING UNIQUE observationID USING SRID=4326");
             
