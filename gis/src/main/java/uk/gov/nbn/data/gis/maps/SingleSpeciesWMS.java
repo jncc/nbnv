@@ -17,7 +17,7 @@ import uk.gov.nbn.data.gis.providers.annotations.QueryParam;
 @MapService("SingleSpecies")
 public class SingleSpeciesWMS {
     private static final String QUERY = "geom from ("
-            + "SELECT geom, observationID, label "
+            + "SELECT o.geom, o.observationID, o.label "
             + "FROM [dbo].[UserTaxonObservationData] o "
                  + "INNER JOIN [dbo].[GridTree] gt ON gt.featureID = o.featureID "
                  + "INNER JOIN [dbo].[FeatureData] f ON f.featureID = gt.parentFeatureID "
