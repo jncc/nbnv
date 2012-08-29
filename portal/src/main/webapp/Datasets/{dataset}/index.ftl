@@ -1,6 +1,6 @@
 
 <@template.master title="NBN Gateway - Datasets"
-    javascripts=["/js/enable-dataset-metadata-tabs.js","/js/jquery.dataTables.min.js","/js/enable-generic-datatable.js"] 
+    javascripts=["/js/enable-dataset-metadata-tabs.js","/js/jquery.dataTables.min.js"] 
     csss=["http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/themes/smoothness/jquery-ui.css"] >
 
     <#assign datasetId="${URLParameters.dataset}">
