@@ -40,6 +40,7 @@ public class MapServerServlet extends HttpServlet {
             
             ServletOutputStream out = response.getOutputStream();
             try {
+                mapscript.msConnPoolCloseUnreferenced(); //clear all the connections to avoid any issues with connection pooling
                 mapscript.msIO_installStdoutToBuffer(); //buffer the bytes of the map script
 
                 int owsResult = mapMethod.createMapObject(request).OWSDispatch( createMapRequest(request) );
@@ -52,6 +53,8 @@ public class MapServerServlet extends HttpServlet {
                 out.write(mapscript.msIO_getStdoutBufferBytes()); //output the bytes to the end user
             }
             catch(Throwable mapEx) {
+                out.write("An error occured ".getBytes());
+                out.write(mapEx.getClass().getName().getBytes());
                 out.write(mapEx.getMessage().getBytes());
             }
             finally {

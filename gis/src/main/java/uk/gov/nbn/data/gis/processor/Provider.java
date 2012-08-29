@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
  *
  * @author Chris Johnson
  */
-public interface Provider<T,R> {
-    T providesFor(MapServiceMethod method, HttpServletRequest request, Class<?> clazz, List<Annotation> annotations);
-    R process(T providesForResponse, MapServiceMethod method, HttpServletRequest request, Class<?> clazz, List<Annotation> annotations);
+public interface Provider {
+    boolean isProviderFor(Class<?> clazz, MapServiceMethod method, HttpServletRequest request, List<Annotation> annotations) throws ProviderException;
+    Object provide(Class<?> clazz, MapServiceMethod method, HttpServletRequest request, List<Annotation> annotations) throws ProviderException;
 }

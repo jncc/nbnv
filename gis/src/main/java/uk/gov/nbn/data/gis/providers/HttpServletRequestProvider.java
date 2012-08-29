@@ -10,16 +10,15 @@ import uk.gov.nbn.data.gis.processor.Provider;
  *
  * @author Chris Johnson
  */
-public class HttpServletRequestProvider implements Provider<HttpServletRequest, HttpServletRequest> {
+public class HttpServletRequestProvider implements Provider {
 
     @Override
-    public HttpServletRequest providesFor(MapServiceMethod method, HttpServletRequest request, Class<?> clazz, List<Annotation> annotations) {
+    public boolean isProviderFor(Class<?> clazz, MapServiceMethod method, HttpServletRequest request, List<Annotation> annotations) {
+        return clazz.equals(HttpServletRequest.class);
+    }
+
+    @Override
+    public HttpServletRequest provide(Class<?> clazz, MapServiceMethod method, HttpServletRequest request, List<Annotation> annotations) {
         return request;
     }
-
-    @Override
-    public HttpServletRequest process(HttpServletRequest providesForResponse, MapServiceMethod method, HttpServletRequest request, Class<?> clazz, List<Annotation> annotations) {
-        return providesForResponse;
-    }
-    
 }

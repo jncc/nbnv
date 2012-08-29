@@ -5,7 +5,7 @@
 
 package uk.gov.nbn.data.gis.processor;
 
-import uk.gov.nbn.data.gis.providers.Param;
+import uk.gov.nbn.data.gis.providers.annotations.Param;
 import edu.umn.gis.mapscript.mapObj;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
@@ -32,7 +32,7 @@ public class MapServiceMethod {
         this.variableNamesMap = part.getVariableParameterMappings(requestParts);
     }
     
-    public mapObj createMapObject(HttpServletRequest request) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+    public mapObj createMapObject(HttpServletRequest request) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, ProviderException {
         Class<?>[] parameterTypes = method.getParameterTypes();
         Annotation[][] parameterAnnotations = method.getParameterAnnotations();
         
