@@ -37,14 +37,26 @@ public class MapServerServlet extends HttpServlet {
             HttpServletResponse response) throws ServletException, IOException {
         try {
             MapServiceMethod mapMethod = serviceFactory.getMatchingPart(request.getPathInfo());
+            
             ServletOutputStream out = response.getOutputStream();
             try {
-                mapMethod.execute(request, response);
-            }catch(Throwable mapEx) {
+                mapscript.msIO_installStdoutToBuffer(); //buffer the bytes of the map script
+
+                int owsResult = mapMethod.createMapObject(request).OWSDispatch( createMapRequest(request) );
+                if( owsResult != 0 ) {
+                    throw new ServletException("OWSDispatch failed. (expect 0): " + owsResult);
+                }
+
+                response.setContentType(mapscript.msIO_stripStdoutBufferContentType()); //pass the content type
+
+                out.write(mapscript.msIO_getStdoutBufferBytes()); //output the bytes to the end user
+            }
+            catch(Throwable mapEx) {
                 out.write(("An exception occurred" + mapEx.getClass().getName()).getBytes());
                 out.write(mapEx.getMessage().getBytes());
                 //throw new ServletException("An error occured whilst generating the map server request", mapEx);
-            } finally {            
+            }
+            finally {
                 out.close();
             }
         }
@@ -53,4 +65,15 @@ public class MapServerServlet extends HttpServlet {
         }
     }
     
+    
+    private static OWSRequest createMapRequest(HttpServletRequest request) {
+        OWSRequest toReturn = new OWSRequest();
+        Map<String, String[]> parameterMap = request.getParameterMap();
+        for(Map.Entry<String, String[]> currParam : parameterMap.entrySet()) {
+            for(String currValue : currParam.getValue()) {
+                toReturn.setParameter(currParam.getKey(), currValue);
+            }
+        }
+        return toReturn;
+    }
 }
