@@ -1,45 +1,3 @@
-<#macro speciesListForTaxonDataset>
-    <#assign datasetId="${URLParameters.dataset}">
-    <#assign taxonDataset=json.readURL("${api}/taxonDatasets/${datasetId}")>
-    <#assign taxa=taxonDataset.taxa>
-    <table id="nbn-generic-datatable">
-        <thead>
-            <tr>
-                <th>Species name</th>
-                <th>Taxon version key</th>
-            </tr>
-        </thead>
-        <tbody>
-            <#list taxa as taxon>
-                <tr>
-                    <td><a href="#">${taxon.name}</a></td>
-                    <td><a href="#">${taxon.taxonVersionKey}</a></td>
-                </tr>
-            </#list>
-        </tbody>
-    </table>
-</#macro>
-
-<#macro siteListForSiteDataset>
-    <#assign datasetId="${URLParameters.dataset}">
-    <#assign siteBoundaries=json.readURL("${api}/siteBoundaryDatasets/${datasetId}/siteBoundaries")>
-    <table id="nbn-generic-datatable">
-        <thead>
-            <tr>
-                <th>Site boundary name</th>
-                <th>Provider key</th>
-            </tr>
-        </thead>
-        <tbody>
-            <#list siteBoundaries as siteBoundary>
-                <tr>
-                    <td><a href="/Sites/#">${siteBoundary.name}</a></td>
-                    <td>${siteBoundary.providerKey}</td>
-                </tr>
-            </#list>
-        </tbody>
-    </table>
-</#macro>
 
 <@template.master title="NBN Gateway - Datasets"
     javascripts=["/js/enable-dataset-metadata-tabs.js","/js/jquery.dataTables.min.js","/js/enable-generic-datatable.js"] 
@@ -60,11 +18,11 @@
                     <li><a href="#tabs-10">Temporal</a></li>
                     <li><a href="#tabs-11">Surveys</a></li>
                     <li><a href="#tabs-12">Attributes</a></li>
-                    <li><a href="#tabs-13">Species</a></li>
+                    <li><a href="/Datasets/${datasetId}/Taxa">Species</a></li>
                 <#elseif dataset.typeName = "Habitat">
                     <li><a href="#tabs-20">Attributes</a></li>
                 <#elseif dataset.typeName = "Site Boundary">
-                    <li><a href="#tabs-30">Sites</a></li>
+                    <li><a href="/Datasets/${datasetId}/Site_Boundaries">Sites</a></li>
                 </#if>
             </ul>
 
@@ -149,16 +107,9 @@
                 <div id="tabs-12">
                     TODO - Species attributes
                 </div>
-                <div id="tabs-13">
-                    <@speciesListForTaxonDataset/>
-                </div>
             <#elseif dataset.typeName = "Habitat">
                 <div id="tabs-20">
                     TODO - Habitat attributes
-                </div>
-            <#elseif dataset.typeName = "Site Boundary">
-                <div id="tabs-30">
-                    <@siteListForSiteDataset/>
                 </div>
             </#if>
         </div>
