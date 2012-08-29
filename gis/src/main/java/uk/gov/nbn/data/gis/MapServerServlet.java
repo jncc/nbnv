@@ -3,6 +3,7 @@ package uk.gov.nbn.data.gis;
 import edu.umn.gis.mapscript.OWSRequest;
 import edu.umn.gis.mapscript.mapscript;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Map.Entry;
 import javax.servlet.ServletConfig;
@@ -47,7 +48,7 @@ public class MapServerServlet extends HttpServlet {
             }
         }
         catch(MapServiceUndefinedException msue) {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            response.sendError(HttpServletResponse.SC_NOT_FOUND, "Could not find: " + Arrays.toString(request.getPathInfo().substring(0).split("/")));
         }
     }
     
