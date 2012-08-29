@@ -24,7 +24,7 @@ public class QueryParamProvider implements Provider {
     @Override
     public Object provide(Class<?> returnType, MapServiceMethod method, HttpServletRequest request, List<Annotation> annotations) throws ProviderException {
         QueryParam paramAnnot = getAnnotation(annotations);
-        String toReturn = method.getVariableValue(paramAnnot.key());
+        String toReturn = request.getParameter(paramAnnot.key());
         if(returnType.equals(List.class)) {
             return validateParameter(Arrays.asList(toReturn.split(",")), paramAnnot);
         }
