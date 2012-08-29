@@ -1,12 +1,18 @@
 <#assign datasetId="${URLParameters.dataset}">
 <#assign siteBoundaries=json.readURL("${api}/siteBoundaryDatasets/${datasetId}/siteBoundaries")>
-
-<table id="nbn-site-boundary-table">
-    <#list siteBoundaries as siteBoundary>
+<table id="nbn-generic-datatable">
+    <thead>
         <tr>
-            <td>
-                <a href="/Sites/#">${siteBoundary.name}</a>
-            </td>
+            <th>Site boundary name</th>
+            <th>Provider key</th>
         </tr>
-    </#list>
+    </thead>
+    <tbody>
+        <#list siteBoundaries as siteBoundary>
+            <tr>
+                <td><a href="/Sites/#">${siteBoundary.name}</a></td>
+                <td>${siteBoundary.providerKey}</td>
+            </tr>
+        </#list>
+    </tbody>
 </table>

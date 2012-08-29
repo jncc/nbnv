@@ -5,6 +5,7 @@
 (function($){
     $.fn.dataTableExt.oJUIClasses.sStripeOdd = 'ui-state-highlight';
     $(document).ready(function(){
+
         $('#nbn-generic-datatable').dataTable({
             "bJQueryUI": true,
             "aoColumnDefs": [
