@@ -29,7 +29,7 @@ public class DatasetSpeciesDensityWMS {
         mapObj toReturn = new mapObj(mapFile);
         for(int i=0; i<toReturn.getNumlayers(); i++) {
             layerObj layer = toReturn.getLayer(i);
-            layer.setData(String.format(QUERY, key, 0, i+1));            
+            layer.setData(String.format(QUERY, key, userKey, i+1));            
         }
         return toReturn;
     }

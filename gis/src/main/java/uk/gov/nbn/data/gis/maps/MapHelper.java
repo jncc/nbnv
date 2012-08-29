@@ -12,6 +12,29 @@ import java.util.List;
  * @author Chris Johnson
  */
 public class MapHelper {
+    static String createStartYearSegment(String startYear) {
+        if(startYear != null) {
+            return new StringBuilder("AND startDate >= '")
+                .append(startYear)
+                .append("'")
+                .toString();
+        }
+        else {
+            return "";
+        }
+    }
+    
+    static String createEndYearSegment(String endYear) {
+        if(endYear != null) {
+            return new StringBuilder("AND endDate <= '")
+                .append(endYear)
+                .append("'")
+                .toString();
+        }
+        else {
+            return "";
+        }
+    }
     
     static String createInDatasetsSegment(List<String> datasetKeys) {
         if(datasetKeys !=null && !datasetKeys.isEmpty()) {
