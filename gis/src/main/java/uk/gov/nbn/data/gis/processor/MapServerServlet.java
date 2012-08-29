@@ -40,7 +40,7 @@ public class MapServerServlet extends HttpServlet {
             
             ServletOutputStream out = response.getOutputStream();
             try {
-                //mapscript.msConnPoolCloseUnreferenced();
+                mapscript.msConnPoolCloseUnreferenced(); //clear all the connections to avoid any issues with connection pooling
                 mapscript.msIO_installStdoutToBuffer(); //buffer the bytes of the map script
 
                 int owsResult = mapMethod.createMapObject(request).OWSDispatch( createMapRequest(request) );
