@@ -4,17 +4,17 @@
 (function($){
     $(document).ready(function(){
         $('#nbn-tabs').tabs();
-        $('#nbn-tabs').bind('tabsload', function(event, ui){
-            $(ui.panel).find('#nbn-site-boundary-table').addClass('nbn-dataset-table');
-            $(ui.panel).find('#nbn-site-boundary-table tr:even').addClass('ui-state-highlight');
-            $(ui.panel).find('#nbn-site-boundary-table tr').hover(
-                function(){
-                    $(this).children('td').addClass('ui-state-hover');
-                },
-                function(){
-                    $(this).children('td').removeClass('ui-state-hover');
-                }
-            );
-        });
+        //        $('#nbn-tabs').bind('tabsload', function(event, ui){
+        //            $(ui.panel).find('#nbn-site-boundary-table').addClass('nbn-dataset-table');
+        //            $(ui.panel).find('#nbn-site-boundary-table tr:even').addClass('ui-state-highlight');
+        //            $(ui.panel).find('#nbn-site-boundary-table tr').hover(
+        //                function(){
+        //                    $(this).children('td').addClass('ui-state-hover');
+        //                },
+        //                function(){
+        //                    $(this).children('td').removeClass('ui-state-hover');
+        //                }
+        //                );
+        //        });
     });
 })(jQuery);
