@@ -9,8 +9,8 @@
         <servlet-name>MapServerServlet</servlet-name>
         <url-pattern>/*</url-pattern>
     </servlet-mapping>
-    <filter>
+    <!--<filter>
         <filter-name>MapAuthenticationFilter</filter-name>
         <filter-class>uk.gov.nbn.data.gis.MapServerNBNAuthenticationFilter</filter-class>
-    </filter>
+    </filter>-->
 </web-app>
