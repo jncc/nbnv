@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package uk.gov.nbn.data.gis.providers;
+package uk.gov.nbn.data.gis.providers.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

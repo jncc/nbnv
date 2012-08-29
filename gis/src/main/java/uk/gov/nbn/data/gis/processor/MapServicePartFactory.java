@@ -39,23 +39,13 @@ public class MapServicePartFactory {
         }
     }
     
-    Object getProvidedForParameter(MapServiceMethod method, HttpServletRequest request, Class<?> toReturn, List<Annotation> paramAnnotations) {
-        for(Provider<?,?> currProvider : providers) {
-            Object providesResponse = callProvider(currProvider, method, request, toReturn, paramAnnotations);
-            if(providesResponse != null) {
-                return providesResponse;
+    Object getProvidedForParameter(MapServiceMethod method, HttpServletRequest request, Class<?> toReturn, List<Annotation> paramAnnotations) throws ProviderException {
+        for(Provider currProvider : providers) {
+            if(currProvider.isProviderFor(toReturn, method, request, paramAnnotations)) {
+                return currProvider.provide(toReturn, method, request, paramAnnotations);
             }
         }
         return null; //can't find a matching parameter
-    }
-    
-    
-    private static <T,R> R callProvider(Provider<T,R> provider, MapServiceMethod method, HttpServletRequest request, Class<?> toReturn, List<Annotation> paramAnnotations) {
-        T providesResponse = provider.providesFor(method, request, toReturn, paramAnnotations);
-        if(providesResponse != null) {
-            return provider.process(providesResponse, method, request, toReturn, paramAnnotations);
-        }
-        return null;
     }
     
     /**
@@ -78,8 +68,7 @@ public class MapServicePartFactory {
             return null; //failed to find anything
         }
     }
-    
-            
+             
     private static MapServicePart getPathPartOrCreate(Object instance, String name, MapServicePart toFindIn) {
         MapServicePart potentialNewPathPart = new MapServicePart(instance, name);
         List<MapServicePart> list = toFindIn.getChildren();

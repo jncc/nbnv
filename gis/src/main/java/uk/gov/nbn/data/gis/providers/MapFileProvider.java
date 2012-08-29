@@ -1,18 +1,17 @@
 package uk.gov.nbn.data.gis.providers;
 
-import uk.gov.nbn.data.gis.providers.annotations.Param;
-import uk.gov.nbn.data.gis.providers.annotations.QueryParam;
 import java.lang.annotation.Annotation;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import uk.gov.nbn.data.gis.processor.MapServiceMethod;
 import uk.gov.nbn.data.gis.processor.Provider;
+import uk.gov.nbn.data.gis.providers.annotations.MapFile;
 
 /**
  *
  * @author Chris Johnson
  */
-public class QueryParamProvider implements Provider {
+public class MapFileProvider implements Provider {
 
     @Override
     public boolean isProviderFor(Class<?> clazz, MapServiceMethod method, HttpServletRequest request, List<Annotation> annotations) {
@@ -21,13 +20,14 @@ public class QueryParamProvider implements Provider {
 
     @Override
     public String provide(Class<?> clazz, MapServiceMethod method, HttpServletRequest request, List<Annotation> annotations) {
-        return request.getParameter(getAnnotation(annotations).value());
+        MapFile annotation = getAnnotation(annotations);
+        return request.getRealPath("WEB-INF\\maps\\" + annotation.value());
     }
     
-    private static QueryParam getAnnotation(List<Annotation> annotations) {
+    private static MapFile getAnnotation(List<Annotation> annotations) {
         for(Annotation currAnnotation : annotations) {
-            if(currAnnotation instanceof QueryParam) {
-                return (QueryParam)currAnnotation;
+            if(currAnnotation instanceof MapFile) {
+                return (MapFile)currAnnotation;
             }
         }
         return null;

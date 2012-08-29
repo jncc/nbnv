@@ -5,7 +5,8 @@ import edu.umn.gis.mapscript.mapObj;
 import javax.servlet.http.HttpServletRequest;
 import uk.gov.nbn.data.gis.processor.MapObject;
 import uk.gov.nbn.data.gis.processor.MapService;
-import uk.gov.nbn.data.gis.providers.Param;
+import uk.gov.nbn.data.gis.providers.annotations.MapFile;
+import uk.gov.nbn.data.gis.providers.annotations.Param;
 
 /**
  *
@@ -21,8 +22,10 @@ public class DesignationSpeciesDensityWMS {
             + "AS foo USING UNIQUE label USING SRID=4326";
 
     @MapObject("{designationKey}")
-    public mapObj getTaxonMap(@Param("designationKey") String key,  HttpServletRequest request) {
-        mapObj toReturn = new mapObj(request.getRealPath("WEB-INF\\maps\\DesignationSpeciesDensityWMS.map"));
+    public mapObj getTaxonMap(
+            @MapFile("DesignationSpeciesDensityWMS.map") String mapFile,
+            @Param(key="designationKey", validation="^[A-Z0-9.()/_\\-]+$") String key) {
+        mapObj toReturn = new mapObj(mapFile);
         for(int i=0; i<toReturn.getNumlayers(); i++) {
             layerObj layer = toReturn.getLayer(i);
             layer.setData(String.format(QUERY, key, 0, i+1));

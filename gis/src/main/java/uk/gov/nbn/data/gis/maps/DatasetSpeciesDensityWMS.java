@@ -2,10 +2,10 @@ package uk.gov.nbn.data.gis.maps;
 
 import edu.umn.gis.mapscript.layerObj;
 import edu.umn.gis.mapscript.mapObj;
-import javax.servlet.http.HttpServletRequest;
 import uk.gov.nbn.data.gis.processor.MapObject;
 import uk.gov.nbn.data.gis.processor.MapService;
-import uk.gov.nbn.data.gis.providers.Param;
+import uk.gov.nbn.data.gis.providers.annotations.MapFile;
+import uk.gov.nbn.data.gis.providers.annotations.Param;
 
 /**
  *
@@ -21,8 +21,10 @@ public class DatasetSpeciesDensityWMS {
                     + "AS foo USING UNIQUE label USING SRID=4326";
     
     @MapObject("{datasetKey}")
-    public mapObj getTaxonMap(@Param("datasetKey") String key,  HttpServletRequest request) {
-        mapObj toReturn = new mapObj(request.getRealPath("WEB-INF\\maps\\DatasetSpeciesDensityWMS.map"));
+    public mapObj getTaxonMap(
+            @MapFile("DatasetSpeciesDensityWMS.map") String mapFile,
+            @Param(key="datasetKey", validation="^[A-Z0-9]{8}$") String key) {
+        mapObj toReturn = new mapObj(mapFile);
         for(int i=0; i<toReturn.getNumlayers(); i++) {
             layerObj layer = toReturn.getLayer(i);
             //todo validate key
