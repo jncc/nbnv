@@ -52,9 +52,7 @@ public class MapServerServlet extends HttpServlet {
                 out.write(mapscript.msIO_getStdoutBufferBytes()); //output the bytes to the end user
             }
             catch(Throwable mapEx) {
-                out.write(("An exception occurred" + mapEx.getClass().getName()).getBytes());
                 out.write(mapEx.getMessage().getBytes());
-                //throw new ServletException("An error occured whilst generating the map server request", mapEx);
             }
             finally {
                 out.close();
