@@ -7,7 +7,8 @@ package uk.gov.nbn.data.gis;
 
 import java.lang.reflect.Method;
 import java.util.*;
-import uk.gov.nbn.data.gis.maps.SingleSpeciesWMS;
+import net.sf.extcos.ComponentQuery;
+import net.sf.extcos.ComponentScanner;
 
 /**
  *
@@ -21,7 +22,7 @@ public class MapServicePartFactory {
     }
     
     public MapServiceMethod getMatchingPart(String pathInfo) throws MapServiceUndefinedException {
-        return getMatchingPart(pathInfo.substring(0).split("/"));        
+        return getMatchingPart(pathInfo.substring(1).split("/"));        
     }
     
     public MapServiceMethod getMatchingPart(String[] requestedParts) throws MapServiceUndefinedException {
@@ -71,7 +72,7 @@ public class MapServicePartFactory {
     
     private static MapServicePart getMapCreatingMethods(final String packageLoc) throws InstantiationException, IllegalAccessException {
         MapServicePart rootNode = new MapServicePart(null, "");  
-       /* ComponentScanner scanner = new ComponentScanner();
+        ComponentScanner scanner = new ComponentScanner();
         
         Set<Class<?>> classes = scanner.getClasses(new ComponentQuery() {
             @Override protected void query() {
@@ -80,8 +81,7 @@ public class MapServicePartFactory {
             }
         });
         
-        for(Class<?> currClass : classes) {*/
-        Class<?> currClass = SingleSpeciesWMS.class;
+        for(Class<?> currClass : classes) {
             Object mapServiceInstance = currClass.newInstance();
             MapService classAnnot = currClass.getAnnotation(MapService.class);
             for(Method currMethod : currClass.getMethods()) {
@@ -99,7 +99,7 @@ public class MapServicePartFactory {
                     pathPartOrCreate.setAssociatedMethod(currMethod);
                 }
             }
-        /*}*/
+        }
         return rootNode;
     }
 }

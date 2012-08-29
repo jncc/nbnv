@@ -48,7 +48,7 @@ public class MapServerServlet extends HttpServlet {
             }
         }
         catch(MapServiceUndefinedException msue) {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND, "Could not find: " + Arrays.toString(request.getPathInfo().substring(0).split("/")));
+            response.sendError(HttpServletResponse.SC_NOT_FOUND, "Could not find: " + Arrays.toString(request.getPathInfo().substring(1).split("/")));
         }
     }
     
