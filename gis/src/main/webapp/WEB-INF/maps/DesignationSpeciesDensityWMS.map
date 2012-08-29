@@ -27,19 +27,11 @@ MAP
     CONNECTIONTYPE                                      PLUGIN
     PLUGIN                                              "msplugin_mssql2008.dll"
     CONNECTION                                          "Server=NBNSQL-B;Database=NBNWarehouse;uid=NBNImporter;pwd=Ecowaswashere9;Integrated Security=True"
-    PROCESSING                                          "CLOSE_CONNECTION=DEFER"
 
     METADATA
       "wms_title"                                       "3"
       'default_userKey'                                 '0'
     END
-
-    VALIDATION
-      'designationKey'                                  '^[A-Z0-9.()/_\-]+$'
-      'userKey'                                         '^[0-9]+$'
-    END
-
-    DATA                                                "geom from (SELECT geom, species, gridRef FROM vw_DesignationSpeciesDensityMap WHERE code = '%designationKey%' AND userKey = '%userKey%' AND resolutionID = 1) AS foo USING UNIQUE gridRef USING SRID=4326"
 
     PROJECTION
       "init=epsg:4326"
@@ -206,20 +198,12 @@ MAP
     STATUS                                              OFF
     CONNECTIONTYPE                                      PLUGIN
     PLUGIN                                              "msplugin_mssql2008.dll"
-    CONNECTION                                          "Server=NBNSQL-A;Database=NBNWarehouse;uid=nbnimporter;pwd=Ecowaswashere9;Integrated Security=True"
-    PROCESSING                                          "CLOSE_CONNECTION=DEFER"
+    CONNECTION                                          "Server=NBNSQL-B;Database=NBNWarehouse;uid=NBNImporter;pwd=Ecowaswashere9;Integrated Security=True"
 
     METADATA
       "wms_title"                                       "2"
       'default_userKey'                                 '0'
     END
-
-    VALIDATION
-      'designationKey'                                  '^[A-Z0-9.()/_\-]+$'
-      'userKey'                                         '^[0-9]+$'
-    END
-
-    DATA                                                "geom from (SELECT geom, species, gridRef FROM vw_DesignationSpeciesDensityMap WHERE code = '%designationKey%' AND userKey = '%userKey%' AND resolutionID = 2) AS foo USING UNIQUE gridRef USING SRID=4326"
 
     PROJECTION
       "init=epsg:4326"
@@ -386,20 +370,12 @@ MAP
     STATUS                                              OFF
     CONNECTIONTYPE                                      PLUGIN
     PLUGIN                                              "msplugin_mssql2008.dll"
-    CONNECTION                                          "Server=NBNSQL-A;Database=NBNWarehouse;uid=nbnimporter;pwd=Ecowaswashere9;Integrated Security=True"
-    PROCESSING                                          "CLOSE_CONNECTION=DEFER"
+    CONNECTION                                          "Server=NBNSQL-B;Database=NBNWarehouse;uid=NBNImporter;pwd=Ecowaswashere9;Integrated Security=True"
 
     METADATA
       "wms_title"                                       "1"
       'default_userKey'                                 '0'
     END
-
-    VALIDATION
-      'designationKey'                                  '^[A-Z0-9.()/_\-]+$'
-      'userKey'                                         '^[0-9]+$'
-    END
-
-    DATA                                                "geom from (SELECT geom, species, gridRef FROM vw_DesignationSpeciesDensityMap WHERE code = '%designationKey%' AND userKey = '%userKey%' AND resolutionID = 3) AS foo USING UNIQUE gridRef USING SRID=4326"
 
     PROJECTION
       "init=epsg:4326"
@@ -566,20 +542,12 @@ MAP
     STATUS                                              OFF
     CONNECTIONTYPE                                      PLUGIN
     PLUGIN                                              "msplugin_mssql2008.dll"
-    CONNECTION                                          "Server=NBNSQL-A;Database=NBNWarehouse;uid=nbnimporter;pwd=Ecowaswashere9;Integrated Security=True"
-    PROCESSING                                          "CLOSE_CONNECTION=DEFER"
+    CONNECTION                                          "Server=NBNSQL-B;Database=NBNWarehouse;uid=NBNImporter;pwd=Ecowaswashere9;Integrated Security=True"
 
     METADATA
       "wms_title"                                       "0"
       'default_userKey'                                 '0'
     END
-
-    VALIDATION
-      'designationKey'                                  '^[A-Z0-9.()/_\-]+$'
-      'userKey'                                         '^[0-9]+$'
-    END
-
-    DATA                                                "geom from (SELECT geom, species, gridRef FROM vw_DesignationSpeciesDensityMap WHERE code = '%designationKey%' AND userKey = '%userKey%' AND resolutionID = 4) AS foo USING UNIQUE gridRef USING SRID=4326"
 
     PROJECTION
       "init=epsg:4326"

@@ -1,6 +1,5 @@
 MAP
   IMAGETYPE                                             PNG
-#  EXTENT                                                -11 49 2 61
   EXTENT                                                0 0 800000 800000
   SIZE                                                  2800 2800
   IMAGECOLOR                                            255 255 255
@@ -28,16 +27,10 @@ MAP
     CONNECTIONTYPE                                      PLUGIN
     PLUGIN                                              "msplugin_mssql2008.dll"
     CONNECTION                                          "Server=NBNSQL-B;Database=NBNWarehouse;uid=NBNImporter;pwd=Ecowaswashere9;Integrated Security=True"
-    PROCESSING                                          "CLOSE_CONNECTION=DEFER"
 
     METADATA
       "wms_title"                                       "3"
       'default_userKey'                                 '0'
-    END
-
-    VALIDATION
-      'taxonKey'                                        '^[A-Z]{6}[0-9]{10}$'
-      'userKey'                                         '^[0-9]+$'
     END
 
     PROJECTION
@@ -68,11 +61,6 @@ MAP
       'default_userKey'                                 '0'
     END
 
-    VALIDATION
-      'taxonKey'                                        '^[A-Z]{6}[0-9]{10}$'
-      'userKey'                                         '^[0-9]+$'
-    END
-
     PROJECTION
       "init=epsg:4326"
     END
@@ -99,11 +87,6 @@ MAP
     METADATA
       "wms_title"                                       "1"
       'default_userKey'                                 '0'
-    END
-
-    VALIDATION
-      'taxonKey'                                        '^[A-Z]{6}[0-9]{10}$'
-      'userKey'                                         '^[0-9]+$'
     END
 
     PROJECTION
@@ -133,12 +116,6 @@ MAP
       "wms_title"                                       "0"
       'default_userKey'                                 '0'
     END
-
-    VALIDATION
-      'taxonKey'                                        '^[A-Z]{6}[0-9]{10}$'
-      'userKey'                                         '^[0-9]+$'
-    END
-
     
     PROJECTION
       "init=epsg:4326"
