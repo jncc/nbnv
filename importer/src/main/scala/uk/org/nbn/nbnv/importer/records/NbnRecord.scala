@@ -14,6 +14,7 @@ class NbnRecord(record: StarRecord) {
 
   // todo: we don't want to do parsing in this class
   // todo: .value (below) returns null if the column does not exist - should throw a better exception here
+  // todo: parse all the gubbins date types that NBN uses
 
   private val format = new SimpleDateFormat("yyyy/MM/dd")
   
