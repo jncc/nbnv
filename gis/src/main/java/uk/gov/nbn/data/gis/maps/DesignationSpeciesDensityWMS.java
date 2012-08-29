@@ -2,6 +2,7 @@ package uk.gov.nbn.data.gis.maps;
 
 import edu.umn.gis.mapscript.layerObj;
 import edu.umn.gis.mapscript.mapObj;
+import java.util.List;
 import uk.gov.nbn.data.gis.processor.MapObject;
 import uk.gov.nbn.data.gis.processor.MapService;
 import uk.gov.nbn.data.gis.providers.annotations.MapFile;
@@ -18,18 +19,20 @@ public class DesignationSpeciesDensityWMS {
             + "FROM vw_DesignationSpeciesDensityMap "
             + "WHERE code = '%s' "
             + "AND userKey = '%s' "
-            + "AND resolutionID = %d) "
+            + "AND resolutionID = %d "
+            + "%s) "
             + "AS foo USING UNIQUE label USING SRID=4326";
 
     @MapObject("{designationKey}")
     public mapObj getTaxonMap(
             @MapFile("DesignationSpeciesDensityWMS.map") String mapFile,
             @QueryParam(key="userKey") String userKey,
+            @QueryParam(key="datasets", validation="^[A-Z0-9]{8}$") List<String> datasetKeys,
             @Param(key="designationKey", validation="^[A-Z0-9.()/_\\-]+$") String key) {
         mapObj toReturn = new mapObj(mapFile);
         for(int i=0; i<toReturn.getNumlayers(); i++) {
             layerObj layer = toReturn.getLayer(i);
-            layer.setData(String.format(QUERY, key, userKey, i+1));
+            layer.setData(String.format(QUERY, key, userKey, i+1, MapHelper.createInDatasetsSegment(datasetKeys)));
         }
         return toReturn;
     }

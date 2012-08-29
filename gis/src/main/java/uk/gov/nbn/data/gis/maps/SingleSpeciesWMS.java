@@ -20,8 +20,7 @@ public class SingleSpeciesWMS {
                     + "FROM vw_SingleSpeciesMap WHERE pTaxonVersionKey = '%s' "
                     + "AND userKey = '%s' "
                     + "AND resolutionID = %d "
-                    + "%s"
-                    + ") "
+                    + "%s) "
                     + "AS foo USING UNIQUE observationID USING SRID=4326";
     
     @MapObject("{taxonVersionKey}")
