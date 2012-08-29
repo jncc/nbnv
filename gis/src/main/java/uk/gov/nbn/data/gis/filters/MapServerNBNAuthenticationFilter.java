@@ -22,7 +22,7 @@ import org.json.JSONTokener;
  */
 public class MapServerNBNAuthenticationFilter implements Filter {
     private static final String TOKEN_ID = "userKey";
-    private static final String AUTHENTICATION_ADDRESS = "http://nbnstaging.nerc-lancaster.ac.uk";
+    private static final String AUTHENTICATION_ADDRESS = "http://staging.testnbn.net/api/user";
     
     
     @Override
