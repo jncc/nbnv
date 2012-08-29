@@ -13,12 +13,12 @@ import uk.gov.nbn.data.gis.Param;
  */
 @MapService("DesignationSpeciesDensity")
 public class DesignationSpeciesDensityWMS {
-    private static final String QUERY = "geom from (SELECT geom, species, gridRef "
+    private static final String QUERY = "geom from (SELECT geom, species, label "
             + "FROM vw_DesignationSpeciesDensityMap "
             + "WHERE code = '%s' "
             + "AND userKey = '%d' "
             + "AND resolutionID = %d) "
-            + "AS foo USING UNIQUE gridRef USING SRID=4326";
+            + "AS foo USING UNIQUE label USING SRID=4326";
 
     @MapObject("{designationKey}")
     public mapObj getTaxonMap(@Param("designationKey") String key,  HttpServletRequest request) {
