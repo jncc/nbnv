@@ -5,32 +5,32 @@ import uk.org.nbn.nbnv.importer.records.NbnRecord
 import org.mockito.Mockito._
 import uk.org.nbn.nbnv.importer.fidelity.ResultLevel
 
-class Nbnv91ValidatorSuite extends BaseFunSuite{
-  test("Nbnv91 should validate null recorder names") {
+class Nbnv92ValidatorSuite extends BaseFunSuite{
+  test("Nbnv92 should validate null determiner names") {
     val record = mock[NbnRecord]
-    when(record.recorder).thenReturn(null)
+    when(record.determiner).thenReturn(null)
 
-    val v = new Nbnv91Validator
+    val v = new Nbnv92Validator
     val r = v.validate(record)
 
     r.level should be (ResultLevel.DEBUG)
   }
 
-  test("Nbnv91 should validate recorder names of 140 characters of less") {
+  test("Nbnv92 should validate determiner names of 140 characters of less") {
     val record = mock[NbnRecord]
-    when(record.recorder).thenReturn("a" * 140)
+    when(record.determiner).thenReturn("a" * 140)
 
-    val v = new Nbnv91Validator
+    val v = new Nbnv92Validator
     val r = v.validate(record)
 
     r.level should be (ResultLevel.DEBUG)
   }
 
-  test("Nbnv91 should mot validate recorder names greater then 140 characters") {
+  test("Nbnv92 should mot determiner names greater then 140 characters") {
     val record = mock[NbnRecord]
-    when(record.recorder).thenReturn("a" * 141)
+    when(record.determiner).thenReturn("a" * 141)
 
-    val v = new Nbnv91Validator
+    val v = new Nbnv92Validator
     val r = v.validate(record)
 
     r.level should be (ResultLevel.ERROR)
