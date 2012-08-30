@@ -9,12 +9,22 @@ import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.org.nbn.nbnv.api.dao.mappers.TaxonMapper;
+import uk.org.nbn.nbnv.api.model.Taxon;
 import uk.org.nbn.nbnv.api.solr.SolrResponse;
 
 @Component
 @Path("/taxa")
 public class TaxonResource {
     @Autowired SolrServer solrServer;
+    @Autowired TaxonMapper taxonMapper;
+    
+    @GET
+    @Produces(MediaType.APPLICATION_JSON) 
+    @Path("{taxonVersionKey}")
+    public Taxon getTaxon(@PathParam("taxonVersionKey") String taxonVersionKey) {
+        return taxonMapper.getTaxon(taxonVersionKey);
+    }
     
     @GET
     @Produces(MediaType.APPLICATION_JSON)

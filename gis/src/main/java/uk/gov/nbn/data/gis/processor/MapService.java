@@ -6,11 +6,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- *
- * @author Administrator
+ * The following annotation can be applied to classes which can then be scanned
+ * and registered as services which provide maps
+ * @author Christopher Johnson
  */
 @Target({ ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface MapService {
-    String value();
+    String value(); //The path to register this map service to
 }

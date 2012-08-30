@@ -17,12 +17,16 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 
 /**
- *
+ * The following HttpFilter will capture requests that may contain a token cookie
+ * and pass on a request to the NBN Authentication server to obtain the current
+ * requests corresponding user. The userKey for the current user will be set as
+ * a Query Parameter to be used without the need for validation in subsequent
+ * servlet request handlers.
  * @author Christopher Johnson
  */
 public class MapServerNBNAuthenticationFilter implements Filter {
     private static final String TOKEN_ID = "userKey";
-    private static final String AUTHENTICATION_ADDRESS = "http://nbnstaging.nerc-lancaster.ac.uk";
+    private static final String AUTHENTICATION_ADDRESS = "http://staging.testnbn.net/api/user";
     
     
     @Override
@@ -36,6 +40,7 @@ public class MapServerNBNAuthenticationFilter implements Filter {
         }
     }
 
+    /**Wrap up a HttpServletRequest with a new key added to the Parameter Map (userKey)*/
     private static class SanitizedUserKeyServletRequest extends HttpServletRequestWrapper {
         private final String userID;
         SanitizedUserKeyServletRequest(HttpServletRequest request) throws IOException, JSONException {

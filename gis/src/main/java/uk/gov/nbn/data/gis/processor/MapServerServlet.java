@@ -20,12 +20,15 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class MapServerServlet extends HttpServlet {
     
-    private MapServicePartFactory serviceFactory;
+    private MapServiceMethodFactory serviceFactory;
     
     @Override public void init(ServletConfig config) throws ServletException {
         try {
+            
             super.init(config);
-            serviceFactory = new MapServicePartFactory("uk.gov.nbn.data.gis.maps", "uk.gov.nbn.data.gis.providers");
+            serviceFactory = new MapServiceMethodFactory(
+                config.getInitParameter("gis.maps.package"),
+                config.getInitParameter("gis.providers.package"));
         } catch (InstantiationException ex) {
             throw new ServletException("Could not instanciate one of the map service classes", ex);
         } catch (IllegalAccessException ex) {
@@ -40,6 +43,7 @@ public class MapServerServlet extends HttpServlet {
             
             ServletOutputStream out = response.getOutputStream();
             try {
+                mapscript.msConnPoolCloseUnreferenced(); //clear all the connections to avoid any issues with connection pooling
                 mapscript.msIO_installStdoutToBuffer(); //buffer the bytes of the map script
 
                 int owsResult = mapMethod.createMapObject(request).OWSDispatch( createMapRequest(request) );
@@ -52,6 +56,8 @@ public class MapServerServlet extends HttpServlet {
                 out.write(mapscript.msIO_getStdoutBufferBytes()); //output the bytes to the end user
             }
             catch(Throwable mapEx) {
+                out.write("An error occured ".getBytes());
+                out.write(mapEx.getClass().getName().getBytes());
                 out.write(mapEx.getMessage().getBytes());
             }
             finally {

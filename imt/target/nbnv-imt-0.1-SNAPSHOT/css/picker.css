@@ -1,0 +1,39 @@
+/* START INFO PICKER STYLING */
+.nbn-picker-container {
+	height: 200px;
+	width: 400px;
+	overflow: auto;
+}
+
+.nbn-picker-container .moreInfo {
+	padding-left: 40px;
+}
+
+.nbn-picker-container .loading  {
+	background-image:url('images/ajax-loader.gif');
+	background-repeat:no-repeat;
+	background-position: center;
+	height: 100%;
+	width: 100%;
+}
+
+.nbn-picker-speciesResults .ui-tabs-panel {
+	height: 140px;
+	overflow: auto;
+}
+
+.nbn-picker-sensitiveRecord {
+	background-image:url('images/alert.png');
+	background-repeat:no-repeat;
+	background-position: left;
+	display:inline-block;
+	padding-left: 14px;
+}
+
+.nbn-picker-absenceRecord {
+	background-color: #FFA500;
+}
+
+.nbn-picker-recordType {
+	font-weight: bold;
+}

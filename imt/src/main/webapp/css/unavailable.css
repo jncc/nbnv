@@ -1,0 +1,52 @@
+/*CSS For rendering unavailable messages*/
+#unavailable {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	height:100%;
+	width:100%;
+	padding: 0px;
+	margin: 0px;
+	font-family: Arial, Helvetica, Sans-serif;
+	background-color: #e5ecf3;
+}
+
+#unavailable .container {
+	position: absolute;
+	top:100px;
+	left:50%;
+	margin-left:-480px;
+	width: 960px;
+	
+	background-image:url('http://data.nbn.org.uk/images/general/NBNGatewayLogo.jpg');
+	background-repeat:no-repeat;
+	background-color: white;
+	background-position: 5px 5px;
+	border: thick solid #007BA6;
+	padding:10px;
+	text-align: center;
+}
+
+#unavailable .container .header {
+	font-size: xx-large;
+	font-weight: bold;
+	padding-top: 100px;
+	padding-bottom: 25px;
+	color: #686868;
+}
+
+#unavailable .container .message {
+	font-size: xx-large;
+	padding: 0px 250px;
+	color: #888;
+}
+
+#unavailable .container .backToNBN {
+	background-image:url('images/back.png');
+	background-repeat:no-repeat;
+	background-position: center top;
+	padding-top: 150px;
+	width:260px;
+	display: inline-block;
+	font-size: small;
+}

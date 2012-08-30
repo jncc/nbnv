@@ -1,0 +1,868 @@
+/* START STYLING COPYRIGHT CONTROL */
+.nbn-copyrightControl {
+    width: 100%;
+    height: 13px;
+    font-size: 10px;
+    text-align: center;
+    overflow: hidden;
+}
+
+.nbn-copyrightControl ul {
+    padding:0%;
+    margin:0px; /*start on first copyright element*/
+}
+
+.nbn-copyrightControl ul li {
+    list-style: none;
+}
+
+/* START STYLING TREE WIDGET */
+.nbn-treewidget{
+    height: 200px;
+    border-color: #47C0D7;
+    border-style: solid;
+    color: #FFFFFF;
+}
+
+/* Login widget */
+
+.nbn-login {
+    width: 200px;
+    border-color: black;
+    border-style: solid;
+    border-width: 1px;
+    background-color: white;
+    font-family: Arial, sans-serif;
+    font-size: 10px;
+	padding: 5px;
+}
+
+.nbn-login .nbn-login-label {
+	width: 30%;
+	display: inline-block;
+}
+
+.nbn-login .nbn-login-input {
+	width: 66%;
+	display: inline-block;
+	page-break-after:always;
+}
+
+.nbn-login .nbn-login-errorMessage {
+	margin-bottom: 1em;
+}
+
+/* Loading Widget */
+
+.nbn-loading {
+    width: 203px;
+	height: 9px;
+	background-image:url('images/ajax-loading-bar.gif');
+	background-repeat:no-repeat;
+	background-position: center;
+	background-color: none;
+}
+
+/*Stateful Box Widget Only*/
+.nbn-statefulBox {
+    display: block;
+    margin-top: 0.25em;
+    margin-bottom: 0.25em;
+}
+
+.nbn-statefulBox .nbn-statefulBox-content {
+    display: block;
+}
+
+.nbn-statefulBox .nbn-statefulBox-content-padding {
+    padding: 0em 1em;
+}
+
+.nbn-statefulBox .nbn-statefulBox-handleBar .nbn-statefulButton {
+    float: right;
+    margin-top: 2px;
+}
+
+.nbn-statefulBox .nbn-statefulBox-titleBar {
+    float: left;
+    margin-right: 60px;
+    padding: 0.4em 1em;
+}
+
+/*Stateful Button Widget Only*/
+.nbn-statefulButton {
+    cursor: pointer;
+}
+
+.nbn-statefulButton-padded {
+    padding: 0.4em 1em;
+}
+
+/*Button bar widget*/
+.nbn-buttonBar {
+    border-width: 1px 0px 0px 0px !important;
+    background: none !important;
+    padding: 0.1em;
+}
+
+.nbn-buttonBar .nbn-buttonBar-buttonSet {
+    float: right;
+}
+
+/*Legend widget*/
+.nbn-legend-list {
+	display: inline-block;
+}
+
+.nbn-legend-layer-title {
+    font-weight: bold;
+    text-align: center;
+    margin: 0px;
+}
+
+.nbn-legend-list, .legend-layer-item {
+	list-style: none;
+	padding: 0px;
+	margin: 0px;
+}
+
+.legend-layer-item-image {
+    width: 16px;
+    height: 16px;
+	vertical-align: middle;
+}
+
+.nbn-autocomplete {
+    width: 450px;
+}
+
+/*Dataset Metadata widget*/
+.nbn-datasetmetadata {
+	margin-top: 10px;
+}
+
+.nbn-datasetmetadata .nbn-datasetmetadata-title, .nbn-datasetmetadata .nbn-datasetmetadata-content {
+	padding: 0.5em;
+}
+
+.nbn-datasetmetadata-caveat {
+    border: 1px #000000 solid;
+    background-color: #FFEEEE;
+    text-align: center;
+    font-size: 10px;
+    padding: 3px;
+}
+
+.nbn-datasetmetadata-caveat-header {
+    color: #FF0000;
+    font-weight: bold;
+}
+
+/*NBN Icon Widget*/
+.nbn-icon {
+	width: 70px;
+	height: 70px;
+}
+
+.nbn-icon .nbn-iconImage  {
+	width:70px;
+	height: 55px;
+	background-image:url('images/baseLayer-sprites.jpg');
+}
+
+.nbn-icon .nbn-iconLabel {
+	height:15px;
+	text-align: center;
+	overflow: hidden;
+}
+
+.nbn-icon .Hybrid {
+	background-position: 70px 0px;
+}
+
+.nbn-icon .OS {
+	background-position: 0px -55px;
+}
+
+.nbn-icon .Outline {
+	background-position: 70px -55px;
+}
+
+.nbn-icon .Shaded {
+	background-position: 0px -110px;
+}
+
+.nbn-icon .Species {
+	background-position: 70px -110px;
+}
+
+.nbn-icon .Boundary {
+	background-position: 0px -165px;
+}
+
+.nbn-icon .Habitat {
+	background-position: 70px -165px;
+}
+
+/*Base Layer Selector*/
+.nbn-baseLayerSelector {
+	position: relative;
+}
+
+.nbn-baseLayerSelector  .nbn-baseLayerSelectorSelectionPane {
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: 0; /*hide initially*/
+	z-index:1;
+}
+
+.nbn-baseLayerSelector  .nbn-baseLayerSelectorSelectionPane .nbn-baseLayerSelectorTitle {
+	text-align: center;
+	font-weight: bold;
+}
+
+.nbn-baseLayerSelector  .nbn-baseLayerSelectorSelectionPane .nbn-baseLayerSelectorTitle , .nbn-baseLayerSelector  .nbn-baseLayerSelectorSelectionPane .nbn-baseLayerSelectorTypes {
+	min-width: 410px;
+}
+
+.nbn-baseLayerSelector .nbn-baseLayerSelectorSelectionPane .nbn-baseLayerSelectorTypes .nbn-icon {
+	float:left;
+	margin: 5px;
+	vertical-align: bottom;
+}
+.nbn-login .nbn-login-label, .nbn-login .nbn-login-input {
+	*zoom:1;
+	*display: inline;
+}
+/*This is the general CSS for the Interactive mapper*/
+html, body, .fullscreenMap {
+	margin: 0;
+	padding: 0;
+	height: 100%;
+	width: 100%;
+	border-collapse: collapse;
+	overflow: hidden;
+}
+
+body {
+    font: 62.5%  Lucida Grande, Lucida Sans, Arial, sans-serif;
+}
+
+/*Start css for layers container */
+.nbn-layersContainer-outerBox {
+	width: 285px;
+}
+
+.nbn-layersContainer .nbn-statefulBox-handleBar {
+    cursor: move;
+}
+
+.nbn-layersContainer {
+	overflow: auto;
+}
+
+.nbn-layersContainer .ui-helper-clearfix:after {
+	overflow: hidden; /*ClearFix fix*/
+}
+
+.nbn-layersContainer .nbn-labeledContent {
+	margin-bottom: 5px;
+}
+
+.nbn-layersContainer .nbn-labeledContent .nbn-label {
+	vertical-align:top; 
+	display: inline-block; 
+	width: 30%; 
+	font-weight:bold;
+}
+
+.nbn-layersContainer .nbn-labeledContent .nbn-content {
+	display: inline-block; 
+	width: 60%;
+}
+
+/*Start css for dataset widget*/
+.dataset-dialog .loading {
+	background-image:url('images/ajax-loader.gif');
+	background-repeat:no-repeat;
+	background-position: center;
+	background-color: none;
+	height: 100%;
+	width: 100%;
+}
+
+.dataset-list-container {
+    min-width: 780px;
+}
+
+.dataset-provider-list {
+	min-width: 765px;
+    min-height: 345px;
+    overflow: auto;
+}
+
+.dataset-list, .dataset-provider-list {
+    padding-left: 0px;
+    margin-left: 0px;
+    list-style: none;
+}
+
+.dataset-list li {
+    border-top: solid 1px #f0f0f0;
+    padding-bottom: 0.5em;
+}
+
+.dataset-list-sortByControl {
+}
+
+.dataset-list-sortByControl-label {
+    font-weight: bold;
+    padding: 5px;
+}
+
+.dataset-resolution, .dataset-userResolution, .dataset-sensitiveAccess, .dataset-downloadRawData, .dataset-viewAttributes, .dataset-viewRecorder, .dataset-name,
+.dataset-resolution-heading, .dataset-userResolution-heading, .dataset-sensitiveAccess-heading, .dataset-downloadRawData-heading, .dataset-viewAttributes-heading, .dataset-viewRecorder-heading, .dataset-name-heading {
+    display: inline-block;
+    vertical-align: top;
+}
+
+.dataset-resolution, .dataset-userResolution, .dataset-sensitiveAccess, .dataset-downloadRawData, .dataset-viewAttributes, .dataset-viewRecorder, .dataset-name {
+    padding-left: 10px;
+}
+
+.dataset-resolution, .dataset-userResolution, .dataset-sensitiveAccess, .dataset-downloadRawData, .dataset-viewAttributes, .dataset-viewRecorder {
+    width: 65px;
+}
+
+.dataset-name {
+    width: 300px;
+}
+
+.dataset-resolution-heading, .dataset-userResolution-heading, .dataset-sensitiveAccess-heading, .dataset-downloadRawData-heading, .dataset-viewAttributes-heading, .dataset-viewRecorder-heading {
+    width: 75px;
+}
+
+.dataset-name-heading {
+    width: 310px;
+}
+
+.dataset-applyForAccess {
+    display: inline-block;
+    width: 75px;
+    vertical-align: top;
+}
+
+.non-viewable-title{
+    display: inline-block;
+    padding-left: 10px;
+    width: 100%;
+    vertical-align: middle;
+}
+.nbn-dataset-provider {
+    background-color: #f0f0f0;  
+    height: 33px;
+}
+
+.nbn-dataset-provider-logo {
+    display: inline-block;
+    height: 33px;
+    width: 33px;
+    padding: 1px;
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+
+.nbn-dataset-provider-title {
+    display: inline-block;
+    font-weight: bold;
+    padding-left: 10px;
+    padding-top: 1em;
+    vertical-align: top;
+    left: 33px;
+}
+
+/*Layers Creator Box*/
+.nbn-layersCreator .nbn-layersCreatorTitle {
+	text-align: center;
+}
+.nbn-layersCreator .nbn-layersCreatorIconBar .nbn-icon {
+	display: inline-block;
+	margin: 5px
+}
+
+.nbn-layersCreator .nbn-layersCreatorIconBar {
+	margin: 0 auto;
+	width: 246px;
+}
+/*This CSS file defines all the targeted ie 7 fixes that need to be applied to IE 7*/
+.nbn-layersContainer .nbn-opacitySlider {
+	*margin-top: -8px;
+}
+
+.nbn-buttonBar .nbn-buttonBar-buttonSet .ui-button {
+	*position: static; /*override the relative positioning of the button, IE7 fix*/
+}
+
+.nbn-layersContainer, .nbn-layersContainer .nbn-statefulBox  {/*make the stateful boxes and the layers container relative, so that the internal elements (sliders float correctly)*/
+	*position:relative;
+}
+
+.nbn-legend-list,
+.nbn-layersContainer .nbn-labeledContent .nbn-label, 
+.nbn-layersContainer .nbn-labeledContent .nbn-content { /*Inline Block Fix*/
+	*zoom:1; 
+	*display: inline;
+}
+
+/*Legend Below Fixes*/
+.legend-layer-item-image {
+	*margin-left: -16px;
+}
+
+.nbn-layersContainer .ui-slider {
+	_width: 90%; /*IE6 Box Layout fix*/
+}
+
+.nbn-layersContainer, .nbn-layersContainer-outerBox  {
+	_width: 310px; /*IE6 hidden rendering fix*/
+}
+/* START INFO PICKER STYLING */
+.nbn-picker-container {
+	height: 200px;
+	width: 400px;
+	overflow: auto;
+}
+
+.nbn-picker-container .moreInfo {
+	padding-left: 40px;
+}
+
+.nbn-picker-container .loading  {
+	background-image:url('images/ajax-loader.gif');
+	background-repeat:no-repeat;
+	background-position: center;
+	height: 100%;
+	width: 100%;
+}
+
+.nbn-picker-speciesResults .ui-tabs-panel {
+	height: 140px;
+	overflow: auto;
+}
+
+.nbn-picker-sensitiveRecord {
+	background-image:url('images/alert.png');
+	background-repeat:no-repeat;
+	background-position: left;
+	display:inline-block;
+	padding-left: 14px;
+}
+
+.nbn-picker-absenceRecord {
+	background-color: #FFA500;
+}
+
+.nbn-picker-recordType {
+	font-weight: bold;
+}
+/*Mapping Layout below*/
+.TOP_CENTER_WIDGET, .BOTTOM_CENTER_WIDGET, .TOP_LEFT_WIDGET, .BOTTOM_LEFT_WIDGET, .TOP_RIGHT_WIDGET, .BOTTOM_RIGHT_WIDGET, .TOP_CENTER_WIDGET, .BOTTOM_CENTER_WIDGET {
+	display: inline-block;
+}
+
+.BOTTOM_CENTER_WIDGET, .BOTTOM_LEFT_WIDGET, .BOTTOM_RIGHT_WIDGET, .BOTTOM_CENTER_WIDGET {
+	vertical-align: bottom;
+}
+
+.TOP_CENTER_WIDGET, .TOP_LEFT_WIDGET, .TOP_RIGHT_WIDGET, .TOP_CENTER_WIDGET  {
+	vertical-align: top;
+}
+
+.BOTTOM_CENTER_CONTAINER {
+	margin-bottom: 18px; /*shifts the bottom centre up by 18px. So that it is above the copyright statement*/
+}
+ 
+/*STATIC GRID LAYOUT BELOW*/
+
+.STATIC_GRID_CONTAINER {
+	height: 100%;
+	width: 100%;
+}
+
+.STATIC_GRID_VIEWPOINT {
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+	margin: 0;
+}
+
+.STATIC_GRID_LEFT, .STATIC_GRID_RIGHT {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	overflow: hidden;
+}
+
+.STATIC_GRID_LEFT {
+	left: 0;
+}
+
+.STATIC_GRID_RIGHT {
+	right: 0;
+}
+
+.STATIC_GRID_HEADER, .STATIC_GRID_FOOTER {
+	position: absolute;
+	left: 0;
+	right: 0;
+	overflow: hidden;
+}
+
+.STATIC_GRID_HEADER {
+	top: 0;
+}
+
+.STATIC_GRID_FOOTER {
+	bottom: 0;
+}
+
+.STATIC_GRID_HEADER_WIDGET, .STATIC_GRID_FOOTER_WIDGET {
+	display: inline-block;
+}
+
+/*Beautify the Contents of the GridManager*/
+.TOP_CENTER_WIDGET, .TOP_LEFT_WIDGET, .TOP_RIGHT_WIDGET, .LEFT_TOP_WIDGET, .RIGHT_TOP_WIDGET, .LEFT_CENTER_WIDGET, .RIGHT_CENTER_WIDGET, .LEFT_BOTTOM_WIDGET, .RIGHT_BOTTOM_WIDGET, .BOTTOM_CENTER_WIDGET, .BOTTOM_LEFT_WIDGET, .BOTTOM_RIGHT_WIDGET { /*This CSS statement enables drop shadows where available*/
+	-moz--box-shadow: rgba(0, 0, 0, 0.347656) 2px 2px 3px;
+	-webkit-box-shadow: rgba(0, 0, 0, 0.347656) 2px 2px 3px;
+	box-shadow: rgba(0, 0, 0, 0.347656) 2px 2px 3px;
+	margin: 5px;
+}
+
+/*Enabling positions for Open Layers Manager*/
+.TOP_LEFT_CONTAINER, .TOP_RIGHT_CONTAINER, .RIGHT_BOTTOM_CONTAINER, .BOTTOM_CENTER_CONTAINER, .BOTTOM_LEFT_CONTAINER, .RIGHT_TOP_CONTAINER {
+	position: absolute;
+}
+
+.RIGHT_TOP_CONTAINER {
+	top: 30px;
+	right: 0px;
+}
+
+.TOP_LEFT_CONTAINER {
+	top: 0px;
+	left: 50px;
+}
+
+.TOP_RIGHT_CONTAINER {
+	top: 0px;
+	right: 0px;
+}
+
+.RIGHT_BOTTOM_CONTAINER {
+	bottom: 0px;
+	right: 0px;
+}
+
+.BOTTOM_CENTER_CONTAINER {
+	bottom: 0px;
+	left: 50%;
+	margin-left: -110px; /*Hard coded value for loading widget which is 300px wide*/
+}
+
+.BOTTOM_LEFT_CONTAINER {
+	bottom: 0px;
+	left: 0px;
+}
+
+/*Define the variations to allow bing maps copyright controls to be shown*/
+.MAPPING_TYPE-BING .RIGHT_BOTTOM_CONTAINER {
+	bottom: 25px;
+}
+
+.MAPPING_TYPE-BING .BOTTOM_LEFT_CONTAINER {
+	left: 75px;
+}
+/*Mapping Layout below*/
+.TOP_CENTER_WIDGET, .BOTTOM_CENTER_WIDGET, .TOP_LEFT_WIDGET, .BOTTOM_LEFT_WIDGET, .TOP_RIGHT_WIDGET, .BOTTOM_RIGHT_WIDGET, .TOP_CENTER_WIDGET, .BOTTOM_CENTER_WIDGET {
+	*zoom: 1; /*IE FIX HERE */
+	*display: inline;
+}
+ 
+/*STATIC GRID LAYOUT BELOW*/
+.STATIC_GRID_LEFT, .STATIC_GRID_RIGHT , .STATIC_GRID_HEADER, .STATIC_GRID_FOOTER{
+	*font-size: 0px; /*IE7 Line height fix*/
+}
+
+.STATIC_GRID_HEADER_WIDGET, .STATIC_GRID_FOOTER_WIDGET {
+	*zoom: 1; /*IE FIX HERE */
+	*display: inline;
+}
+
+.STATIC_GRID_VIEWPOINT , .STATIC_GRID_LEFT, .STATIC_GRID_RIGHT {
+	_height: 100%; /*IE6 Absolute Confliciting position fix*/
+}
+
+.STATIC_GRID_VIEWPOINT , .STATIC_GRID_HEADER, .STATIC_GRID_FOOTER {
+	_width: 100%; /*IE6 Absolute Confliciting position fix*/
+}
+.defaultTreeTable{
+			margin : 0px;
+			padding : 0px;
+			border : 0px;
+}
+.containerTableStyle { overflow : auto; position:relative; top:0; font-size : 12px; -khtml-user-select: none;}
+.containerTableStyleRTL span { direction: rtl; unicode-bidi: bidi-override;  }
+.containerTableStyleRTL { direction: rtl; overflow : auto; position:relative; top:0; font-size : 12px;}
+.standartTreeRow {	font-family : Verdana, Geneva, Arial, Helvetica, sans-serif; 	font-size : 12px; -moz-user-select: none;  }
+.selectedTreeRow{ background-color : navy; color:white; font-family : Verdana, Geneva, Arial, Helvetica, sans-serif; 		font-size : 12px;  -moz-user-select: none; }
+.dragAndDropRow{ background-color : navy; color:white; }
+.standartTreeRow_lor{	text-decoration:underline; background-color : #FFFFF0; font-family : Verdana, Geneva, Arial, Helvetica, sans-serif; 	font-size : 12px; -moz-user-select: none; }
+.selectedTreeRow_lor{   text-decoration:underline; background-color : navy; color:white; font-family : Verdana, Geneva, Arial, Helvetica, sans-serif; 		font-size : 12px;  -moz-user-select: none; }
+
+.standartTreeImage{ width:18px; height:18px;  overflow:hidden; border:0; padding:0; margin:0;
+font-size:1px; }
+.hiddenRow { width:1px;   overflow:hidden;  }
+.dragSpanDiv,.dragSpanDiv td{ 	font-size : 12px; 	background-color:white; z-index:999; }
+.a_dhx_hidden_input{ position:absolute;  top:-1px; left:-1px; width:1px; height:1px; border:none; background:none; }
+.a_dhx_hidden_input{ position:absolute;  top:-1px; left:-1px; width:1px; height:1px; border:none; background:none; }
+
+.selectionBox{
+background-color: #FFFFCC;
+}
+.selectionBar {
+	top:0;
+	background-color: Black;
+	position:absolute;
+	overflow:hidden;
+	height: 2px;
+	z-index : 11;
+}
+
+.intreeeditRow{
+  font-size:8pt; height:16px; border:1px solid silver; padding:0; margin:0;
+  margin-left:4px;
+  -moz-user-select:  text;   
+  -khtml-user-select: text;
+}
+.dhx_tree_textSign{
+   font-size:8pt;
+   font-family:monospace;
+   width:21px;
+   color:black;
+   padding:0px;
+   margin:0px;
+   cursor:pointer;
+   text-align: center;
+}
+.dhx_tree_opacity{
+    opacity:0;
+    -moz-opacity:0;
+    filter:alpha(opacity=0);
+}
+.dhx_bg_img_fix{
+width:18px;
+height:18px;
+background-repeat: no-repeat;
+background-position: center;
+background-position-x: center;
+background-position-y: center;
+}
+
+.dhxtree_dhx_black, .dhxtree_dhx_skyblue{
+	background:white;
+	color:black;
+}
+*html .dhxtree_dhx_skyblue .standartTreeRow, *html .dhxtree_dhx_skyblue .standartTreeRow_lor{
+	border-right:0px solid red;
+	border-left:0px solid red;
+}
+*html .dhxtree_dhx_skyblue span.standartTreeRow, *html .dhxtree_dhx_skyblue span.standartTreeRow_lor{
+	margin-left:1px;	
+}
+
+.dhxtree_dhx_skyblue .standartTreeRow, .dhxtree_dhx_skyblue .standartTreeRow_lor{
+	border-right:1px solid transparent;
+	border-left: 1px solid transparent;
+	font-family:Tahoma;
+	font-size:11px !important;
+	overflow:hidden;
+	padding:0px 0px 0px 0px;
+}
+.dhxtree_dhx_skyblue .selectedTreeRow_lor, .dhxtree_dhx_skyblue .selectedTreeRow{
+	background-color:white;
+	background-image:url(imgs/sky_blue_sel_tree.png);
+	background-repeat:repeat-x;
+	border:1px solid #FFB951;
+	color:black;
+
+	line-height:17px;
+	
+	font-size:11px !important;
+	font-family:Tahoma;
+	overflow:hidden;
+}
+html > body /**/ .dhxtree_dhx_skyblue .selectedTreeRow, html > body /**/ .dhxtree_dhx_skyblue .selectedTreeRow_lor{
+	padding:1px 0px 1px 0px;
+	line-height:normal;
+	display:inline-block !ie;
+	height:13px;
+}
+body:nth-of-type(1) .dhxtree_dhx_skyblue span.selectedTreeRow, body:nth-of-type(1) .dhxtree_dhx_skyblue span.selectedTreeRow_lor{
+	padding:1px 0px 1px 0px;
+  	display:inline-block;
+  	padding-top:0px;
+  	height:13px;
+}
+body:nth-of-type(1) .dhxtree_dhx_skyblue span.standartTreeRow, body:nth-of-type(1) .dhxtree_dhx_skyblue span.standartTreeRow_lor{
+  	display:inline-block;
+  	height:14px;
+}
+
+.dhxtree_dhx_web .selectedTreeRow_lor, .dhxtree_dhx_web .selectedTreeRow{
+	background-color:transparent;
+	
+}
+.dhxtree_dhx_web span.selectedTreeRow_lor , .dhxtree_dhx_web span.selectedTreeRow{
+	background-color:#ACDAF0;
+	color:black;
+}
+
+.dhxtree_dhx_web td.standartTreeRow, .dhxtree_dhx_web td.selectedTreeRow{
+	padding-left:2px;
+}
+.dhxtree_dhx_web span.standartTreeRow, .dhxtree_dhx_web span.selectedTreeRow{
+	padding-left:3px !important;
+}
+
+
+
+.dhxtree_dhx_web .standartTreeRow, .dhxtree_dhx_web .standartTreeRow, .dhxtree_dhx_web .selectedTreeRow_lor, .dhxtree_dhx_web .selectedTreeRow{
+	font-size:12px;
+	font-family:Tahoma;
+	overflow:hidden;
+}
+
+/* TipTip CSS - Version 1.2 */
+
+#tiptip_holder {
+	display: none;
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 99999;
+}
+
+#tiptip_holder.tip_top {
+	padding-bottom: 5px;
+}
+
+#tiptip_holder.tip_bottom {
+	padding-top: 5px;
+}
+
+#tiptip_holder.tip_right {
+	padding-left: 5px;
+}
+
+#tiptip_holder.tip_left {
+	padding-right: 5px;
+}
+
+#tiptip_content {
+	font-size: 11px;
+	color: #fff;
+	text-shadow: 0 0 2px #000;
+	padding: 4px 8px;
+	border: 1px solid rgba(255,255,255,0.25);
+	background-color: rgb(25,25,25);
+	background-color: rgba(25,25,25,0.92);
+	background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(transparent), to(#000));
+	border-radius: 3px;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	box-shadow: 0 0 3px #555;
+	-webkit-box-shadow: 0 0 3px #555;
+	-moz-box-shadow: 0 0 3px #555;
+}
+
+#tiptip_arrow, #tiptip_arrow_inner {
+	position: absolute;
+	border-color: transparent;
+	border-style: solid;
+	border-width: 6px;
+	height: 0;
+	width: 0;
+}
+
+#tiptip_holder.tip_top #tiptip_arrow {
+	border-top-color: #fff;
+	border-top-color: rgba(255,255,255,0.35);
+}
+
+#tiptip_holder.tip_bottom #tiptip_arrow {
+	border-bottom-color: #fff;
+	border-bottom-color: rgba(255,255,255,0.35);
+}
+
+#tiptip_holder.tip_right #tiptip_arrow {
+	border-right-color: #fff;
+	border-right-color: rgba(255,255,255,0.35);
+}
+
+#tiptip_holder.tip_left #tiptip_arrow {
+	border-left-color: #fff;
+	border-left-color: rgba(255,255,255,0.35);
+}
+
+#tiptip_holder.tip_top #tiptip_arrow_inner {
+	margin-top: -7px;
+	margin-left: -6px;
+	border-top-color: rgb(25,25,25);
+	border-top-color: rgba(25,25,25,0.92);
+}
+
+#tiptip_holder.tip_bottom #tiptip_arrow_inner {
+	margin-top: -5px;
+	margin-left: -6px;
+	border-bottom-color: rgb(25,25,25);
+	border-bottom-color: rgba(25,25,25,0.92);
+}
+
+#tiptip_holder.tip_right #tiptip_arrow_inner {
+	margin-top: -6px;
+	margin-left: -5px;
+	border-right-color: rgb(25,25,25);
+	border-right-color: rgba(25,25,25,0.92);
+}
+
+#tiptip_holder.tip_left #tiptip_arrow_inner {
+	margin-top: -6px;
+	margin-left: -7px;
+	border-left-color: rgb(25,25,25);
+	border-left-color: rgba(25,25,25,0.92);
+}
+
+/* Webkit Hacks  */
+@media screen and (-webkit-min-device-pixel-ratio:0) {	
+	#tiptip_content {
+		padding: 4px 8px 5px 8px;
+		background-color: rgba(45,45,45,0.88);
+	}
+	#tiptip_holder.tip_bottom #tiptip_arrow_inner { 
+		border-bottom-color: rgba(45,45,45,0.88);
+	}
+	#tiptip_holder.tip_top #tiptip_arrow_inner { 
+		border-top-color: rgba(20,20,20,0.92);
+	}
+}
+/*Open Layers Scale Widget*/
+.nbn-openLayersScaleWidget {
+	padding: 1px 5px;
+}
+
+.nbn-openLayersScaleWidget .olControlScaleLine {
+	position: static !important;
+}
