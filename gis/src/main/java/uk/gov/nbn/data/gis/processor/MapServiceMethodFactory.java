@@ -1,8 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package uk.gov.nbn.data.gis.processor;
 
 import java.lang.annotation.Annotation;
@@ -13,22 +8,43 @@ import net.sf.extcos.ComponentQuery;
 import net.sf.extcos.ComponentScanner;
 
 /**
- *
+ * The following is a factory for obtaining a MapServiceMethod for a given 
+ * requested path
  * @author Christopher Johnson
  */
-public class MapServicePartFactory {   
+public class MapServiceMethodFactory {   
     private final MapServicePart rootMapService;
     private final List<? extends Provider> providers;
     
-    public MapServicePartFactory(String mapsPackage, String providersPackage) throws InstantiationException, IllegalAccessException {
+    /**
+     * Create a map service part factory which loads maps and providers from
+     * the respectively provided package names
+     * @param mapsPackage The maps Package to load from
+     * @param providersPackage The providers Package to load from
+     * @throws InstantiationException If a loaded provider or map can not be instantiated
+     * @throws IllegalAccessException If a loaded provider of map can not be accesses
+     */
+    public MapServiceMethodFactory(String mapsPackage, String providersPackage) throws InstantiationException, IllegalAccessException {
         rootMapService = getMapCreatingMethods(mapsPackage);
         providers = getProviders(providersPackage);
     }
     
+    /**
+     * Obtain a map service method for a give pathInfo String
+     * @param pathInfo The path info string
+     * @return A map method which corresponds to this pathInfo
+     * @throws MapServiceUndefinedException If no map can be resolved to this path
+     */
     public MapServiceMethod getMatchingPart(String pathInfo) throws MapServiceUndefinedException {
         return getMatchingPart(pathInfo.substring(1).split("/"));        
     }
     
+    /**
+     * Obtain a map service method for a give pathInfo String
+     * @param requestedParts The path info string split into parts
+     * @return A map method which corresponds to this pathInfo
+     * @throws MapServiceUndefinedException If no map can be resolved to this path
+     */
     public MapServiceMethod getMatchingPart(String[] requestedParts) throws MapServiceUndefinedException {
         MapServicePart matchingPart = getMatchingPart(rootMapService, 0, requestedParts);
         if(matchingPart != null && matchingPart.hasMethod()) {
@@ -39,6 +55,16 @@ public class MapServicePartFactory {
         }
     }
     
+    /**
+     * Resolves a MapServiceMethod parameter from one of the providers in the 
+     * providers package
+     * @param method
+     * @param request
+     * @param toReturn
+     * @param paramAnnotations
+     * @return A instantiated Object from a provider in the provider class
+     * @throws ProviderException 
+     */
     Object getProvidedForParameter(MapServiceMethod method, HttpServletRequest request, Class<?> toReturn, List<Annotation> paramAnnotations) throws ProviderException {
         for(Provider currProvider : providers) {
             if(currProvider.isProviderFor(toReturn, method, request, paramAnnotations)) {
@@ -69,19 +95,7 @@ public class MapServicePartFactory {
         }
     }
              
-    private static MapServicePart getPathPartOrCreate(Object instance, String name, MapServicePart toFindIn) {
-        MapServicePart potentialNewPathPart = new MapServicePart(instance, name);
-        List<MapServicePart> list = toFindIn.getChildren();
-        int indexOfPathPart = list.indexOf(potentialNewPathPart);
-        if(indexOfPathPart != -1) {
-            return list.get(indexOfPathPart);
-        }
-        else {
-            toFindIn.addChild(potentialNewPathPart);
-            return potentialNewPathPart;
-        }
-    }
-    
+    /* Load and all of the maps and return the root mapservicepart */
     private static MapServicePart getMapCreatingMethods(final String packageLoc) throws InstantiationException, IllegalAccessException {
         MapServicePart rootNode = new MapServicePart(null, "");  
         ComponentScanner scanner = new ComponentScanner();
@@ -115,6 +129,20 @@ public class MapServicePartFactory {
         return rootNode;
     }
     
+    private static MapServicePart getPathPartOrCreate(Object instance, String name, MapServicePart toFindIn) {
+        MapServicePart potentialNewPathPart = new MapServicePart(instance, name);
+        List<MapServicePart> list = toFindIn.getChildren();
+        int indexOfPathPart = list.indexOf(potentialNewPathPart);
+        if(indexOfPathPart != -1) {
+            return list.get(indexOfPathPart);
+        }
+        else {
+            toFindIn.addChild(potentialNewPathPart);
+            return potentialNewPathPart;
+        }
+    }
+    
+    /* Load and instatiate a list of providers from a providers package */
     private static List<Provider> getProviders(final String providersPackage) throws InstantiationException, IllegalAccessException {
         final List<Provider> providerInstances = new ArrayList<Provider>();
         final Set<Class<? extends Provider>> providerClasses = new HashSet<Class<? extends Provider>>();

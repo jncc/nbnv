@@ -8,6 +8,14 @@
     <servlet-mapping>
         <servlet-name>MapServerServlet</servlet-name>
         <url-pattern>/*</url-pattern>
+        <init-param>
+            <param-name>gis.maps.package</param-name>
+            <param-value>uk.gov.nbn.data.gis.maps</param-value>
+        </init-param>
+        <init-param>
+            <param-name>gis.providers.package</param-name>
+            <param-value>uk.gov.nbn.data.gis.providers</param-value>
+        </init-param>
     </servlet-mapping>
     <filter>
         <filter-name>MapAuthenticationFilter</filter-name>

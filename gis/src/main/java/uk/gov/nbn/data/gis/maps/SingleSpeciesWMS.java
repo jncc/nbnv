@@ -2,7 +2,6 @@ package uk.gov.nbn.data.gis.maps;
 
 import edu.umn.gis.mapscript.layerObj;
 import edu.umn.gis.mapscript.mapObj;
-import java.util.Iterator;
 import java.util.List;
 import uk.gov.nbn.data.gis.processor.MapObject;
 import uk.gov.nbn.data.gis.processor.MapService;
@@ -11,7 +10,13 @@ import uk.gov.nbn.data.gis.providers.annotations.Param;
 import uk.gov.nbn.data.gis.providers.annotations.QueryParam;
 
 /**
- *
+ * The following represents a Map service for SingleSpecies
+ * 
+ * It is configured to take the following filters :
+ *  startyear
+ *  endyear
+ *  datasets
+ *  taxonVersionKey (As part of the url call)
  * @author Christopher Johnson
  */
 @MapService("SingleSpecies")

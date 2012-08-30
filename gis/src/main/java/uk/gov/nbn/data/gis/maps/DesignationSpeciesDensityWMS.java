@@ -10,7 +10,13 @@ import uk.gov.nbn.data.gis.providers.annotations.Param;
 import uk.gov.nbn.data.gis.providers.annotations.QueryParam;
 
 /**
- *
+ * The following represents a Map service for DesignationSpeciesDensity
+ * 
+ * It is configured to take the following filters :
+ *  startyear
+ *  endyear
+ *  datasets
+ *  designationKey (As part of the url call)
  * @author Christopher Johnson
  */
 @MapService("DesignationSpeciesDensity")

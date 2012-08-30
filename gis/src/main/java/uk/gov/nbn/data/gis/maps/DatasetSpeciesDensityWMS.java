@@ -9,7 +9,12 @@ import uk.gov.nbn.data.gis.providers.annotations.Param;
 import uk.gov.nbn.data.gis.providers.annotations.QueryParam;
 
 /**
- *
+ * The following represents a Map service for DatasetSpeciesDensitys
+ * 
+ * It is configured to take the following filters :
+ *  startyear
+ *  endyear
+ *  datasetKey (As part of the url call)
  * @author Christopher Johnson
  */
 @MapService("DatasetSpeciesDensity")
@@ -38,6 +43,7 @@ public class DatasetSpeciesDensityWMS {
             @QueryParam(key="startyear", validation="[0-9]{4}") String startYear,
             @QueryParam(key="endyear", validation="[0-9]{4}") String endYear,
             @Param(key="datasetKey", validation="^[A-Z0-9]{8}$") String key) {
+        
         mapObj toReturn = new mapObj(mapFile);
         for(int i=0; i<toReturn.getNumlayers(); i++) {
             layerObj layer = toReturn.getLayer(i);

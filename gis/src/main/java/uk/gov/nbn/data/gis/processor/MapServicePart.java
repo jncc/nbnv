@@ -1,11 +1,5 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package uk.gov.nbn.data.gis.processor;
 
-import edu.umn.gis.mapscript.mapObj;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- *
+ * The following is a utility class which helps to build up map service names
  * @author Christopher Johnson
  */
 class MapServicePart {

@@ -7,7 +7,7 @@ import uk.gov.nbn.data.gis.processor.MapServiceMethod;
 import uk.gov.nbn.data.gis.processor.Provider;
 
 /**
- *
+ * Simple provider to allow the use of HttpServletRequest object in a mapserver method
  * @author Chris Johnson
  */
 public class HttpServletRequestProvider implements Provider {

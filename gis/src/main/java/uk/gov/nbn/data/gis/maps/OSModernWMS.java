@@ -7,7 +7,7 @@ import uk.gov.nbn.data.gis.providers.annotations.MapFile;
 import uk.gov.nbn.data.gis.providers.annotations.Param;
 
 /**
- *
+ * The following represents a Map service for providing Ordinance Survey Maps
  * @author Christopher Johnson
  */
 @MapService("OS-Modern")

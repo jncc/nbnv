@@ -20,12 +20,15 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class MapServerServlet extends HttpServlet {
     
-    private MapServicePartFactory serviceFactory;
+    private MapServiceMethodFactory serviceFactory;
     
     @Override public void init(ServletConfig config) throws ServletException {
         try {
+            
             super.init(config);
-            serviceFactory = new MapServicePartFactory("uk.gov.nbn.data.gis.maps", "uk.gov.nbn.data.gis.providers");
+            serviceFactory = new MapServiceMethodFactory(
+                config.getInitParameter("gis.maps.package"),
+                config.getInitParameter("gis.providers.package"));
         } catch (InstantiationException ex) {
             throw new ServletException("Could not instanciate one of the map service classes", ex);
         } catch (IllegalAccessException ex) {

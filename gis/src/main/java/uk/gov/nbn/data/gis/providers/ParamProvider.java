@@ -9,7 +9,8 @@ import uk.gov.nbn.data.gis.processor.Provider;
 import uk.gov.nbn.data.gis.processor.ProviderException;
 
 /**
- *
+ * Provides the concrete value of a Param which was contained within the 
+ * calling url
  * @author Chris Johnson
  */
 public class ParamProvider implements Provider {

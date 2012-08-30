@@ -8,7 +8,8 @@ import uk.gov.nbn.data.gis.processor.Provider;
 import uk.gov.nbn.data.gis.providers.annotations.MapFile;
 
 /**
- *
+ * Using the annotation @see MapFile A map service can be injected with the real
+ * location of a map from from the WEB-INF\maps folder
  * @author Chris Johnson
  */
 public class MapFileProvider implements Provider {
