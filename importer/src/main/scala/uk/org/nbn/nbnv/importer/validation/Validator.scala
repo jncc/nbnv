@@ -50,6 +50,10 @@ class Validator @Inject()(log: Logger, repo: Repository){
       val v5 = new Nbnv79Validator
       val r5 = v5.validate(nbnRecord)
       logResult(r5)
+
+      val v6 = new Nbnv80Validator
+      val r6 = v6.validate(nbnRecord)
+      logResult(r6)
     }
   }
 
