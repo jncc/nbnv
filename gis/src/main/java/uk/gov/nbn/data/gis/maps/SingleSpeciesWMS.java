@@ -17,17 +17,17 @@ import uk.gov.nbn.data.gis.providers.annotations.QueryParam;
 @MapService("SingleSpecies")
 public class SingleSpeciesWMS {
     private static final String QUERY = "geom from ("
-            + "SELECT o.geom, o.observationID, o.label "
+            + "SELECT f.geom, o.observationID, f.label "
             + "FROM [dbo].[UserTaxonObservationData] o "
-                 + "INNER JOIN [dbo].[GridTree] gt ON gt.featureID = o.featureID "
-                 + "INNER JOIN [dbo].[FeatureData] f ON f.featureID = gt.parentFeatureID "
+            + "INNER JOIN [dbo].[GridTree] gt ON gt.featureID = o.featureID "
+            + "INNER JOIN [dbo].[FeatureData] f ON f.featureID = gt.parentFeatureID "
             + "WHERE pTaxonVersionKey = '%s' "
             + "AND userKey = '%s' "
             + "AND resolutionID = %d "
             + "%s " //place for dataset filter
             + "%s " //place for start year filter
             + "%s" //place for end year filter
-            + ") AS foo USING UNIQUE observationID USING SRID=4326";
+        + ") AS foo USING UNIQUE observationID USING SRID=4326";
     
     @MapObject("{taxonVersionKey}")
     public mapObj getTaxonMap(

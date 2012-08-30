@@ -15,11 +15,11 @@ import uk.gov.nbn.data.gis.providers.annotations.QueryParam;
  */
 @MapService("DesignationSpeciesDensity")
 public class DesignationSpeciesDensityWMS {
-    private static final String QUERY = 
-        "geom from ("
+    private static final String QUERY = "geom from ("
             + "SELECT geom, species, label "
             + "FROM ("
-                + "SELECT o.userKey, td.code, gt.parentFeatureID AS featureID, COUNT(DISTINCT o.pTaxonVersionKey) AS species "
+                + "SELECT o.userKey, td.code, gt.parentFeatureID AS featureID, "
+                    + "COUNT(DISTINCT o.pTaxonVersionKey) AS species "
                 + "FROM [dbo].[UserTaxonObservationData] o " 
                 + "INNER JOIN [dbo].[GridTree] gt ON gt.featureID = o.featureID "
                 + "INNER JOIN [dbo].[DesignationTaxonData] td ON td.pTaxonVersionKey = o.pTaxonVersionKey "
