@@ -8,8 +8,6 @@ import org.apache.log4j.Logger
 import com.google.inject.{Inject, Guice}
 import utility.Stopwatch
 import validation.Validator
-import com.google.inject.persist.jpa.JpaPersistModule
-import com.google.inject.persist.PersistService
 
 object Importer {
 
@@ -32,14 +30,7 @@ object Importer {
   /// with its dependencies injected.
   def createImporter(options: Options) = {
 
-    val persistenceModule = new JpaPersistModule("NBNCore-PU")
-    persistenceModule.properties(Settings.map)
-
-    val injector = Guice.createInjector(new ImporterModule(options), persistenceModule)
-
-    val persistenceService = injector.getInstance(classOf[PersistService])
-    persistenceService.start()
-
+    val injector = Guice.createInjector(new ImporterModule(options))
     injector.getInstance(classOf[Importer])
   }
 }
@@ -69,12 +60,13 @@ class Importer @Inject()(options:        Options,
       // validate the archive
       validator.validate(archive)
       // verify (... or ideally in the same parallel step as validate)
+
       log.info("Finished validation in " + stopwatch.elapsedSeconds + " seconds")
 
       // ingest the archive and metadata
       ingester.ingest(archive, metadata)
-      log.info("Finished ingestion in " + stopwatch.elapsedSeconds + " seconds")
 
+      log.info("Finished ingestion in " + stopwatch.elapsedSeconds + " seconds")
       log.info("Done with archive '%s'".format(options.archivePath))
     }
   }
@@ -82,12 +74,9 @@ class Importer @Inject()(options:        Options,
   private def withTopLevelExceptionHandling(f: => Unit) {
     try { f }
     catch {
-      case e: WhatIfException => {
-        log.info(e.message)
-      }
-      case e: ImportFailedException => {
-        log.error("Import run failed", e)
-        throw e
+      case ie: ImportFailedException => {
+        log.error("Import run failed", ie)
+        throw ie
       }
       case e: Throwable => {
         log.fatal("Unhandled exception!", e)
