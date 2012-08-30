@@ -77,7 +77,7 @@ nbn.layer.SpeciesLayer = function(hosts, googleMap, options) {
 					_setDatasets(data.datasets);
 					_abundanceFilter.setEnabled(true);
 					_constructionFilterParams = additionalFilterParams = {species: data.species.taxonVersionKey};
-					_arcGisMap.setMapService('arcgis/rest/services/grids/SingleSpeciesMap/' + data.species.taxonVersionKey + '/MapServer');
+					_arcGisMap.setMapService('SingleSpecies/' + data.species.taxonVersionKey);
 					_descriptionAttribute.setDescription('Single Species Map for ' + data.species.name + _createDatasetFilteringSummary(data.datasets));
 					_layerParameters.setLayerParameters(data);
 			});
@@ -92,7 +92,7 @@ nbn.layer.SpeciesLayer = function(hosts, googleMap, options) {
 					_abundanceFilter.setEnabled(false);
 					_constructionFilterParams = {designation: data.designation.designationKey};
 					additionalFilterParams = {desig: data.designation.designationKey};
-					_arcGisMap.setMapService('arcgis/rest/services/grids/DesignationSpeciesDensityMap/' + data.designation.designationKey + '/MapServer');
+					_arcGisMap.setMapService('DesignationSpeciesDensity/' + data.designation.designationKey);
 					_descriptionAttribute.setDescription('Designation Map for ' + data.designation.name + _createDatasetFilteringSummary(data.datasets));
 					_layerParameters.setLayerParameters(data);
 			});
@@ -106,7 +106,7 @@ nbn.layer.SpeciesLayer = function(hosts, googleMap, options) {
 					_abundanceFilter.setEnabled(false);
 					_constructionFilterParams = {dataset: data.dataset.datasetKey};
 					additionalFilterParams = {datasets: data.dataset.datasetKey};
-					_arcGisMap.setMapService('arcgis/rest/services/grids/DatasetSpeciesDensityMap/' + data.dataset.datasetKey + '/MapServer');
+					_arcGisMap.setMapService('DatasetSpeciesDensity/' + data.dataset.datasetKey);
 					_descriptionAttribute.setDescription('Single Dataset map for ' + data.dataset.name);
 					_layerParameters.setLayerParameters(data);
 			});	

@@ -110,14 +110,17 @@ nbn.layer.ArcGISMap = function(mapHosts, mapService, map, options) {
 			currProjection.setCurrentProjection(projection);
 			if(this.isToRender()) {
 				return encodeURI(
-					_me.getHostsNextElement() + _me.getMapService() + '/export?bbox=' + position.xmin + ',' + position.ymin + ',' + position.xmax + ',' + position.ymax + 
-					'&size=' + _me.tileSize.width + ',' + _me.tileSize.height +
-					'&imageSR=' + projection.imageEPSG +
-					'&bboxSR=' + projection.latLngEPSG +
+					_me.getHostsNextElement() + _me.getMapService() + 
+                                        '?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap' +
+                                        '&BBOX=' + position.xmin + ',' + position.ymin + ',' + position.xmax + ',' + position.ymax + 
+					'&WIDTH=' + _me.tileSize.width + 
+                                        '&HEIGHT=' + _me.tileSize.height +
+					//'&imageSR=' + projection.imageEPSG +
+					'&SRS=EPSG:' + projection.latLngEPSG +
 					nbn.util.ArrayTools.joinAndPrepend(nbn.util.ArrayTools.fromObject(_me.getCurrentFilters()),'&') +
-					'&layers=show:'+ _me.getCurrentVisibleLayers().join(',') + 
-					'&transparent=true' +
-					'&f=image'
+					'&LAYERS='+ _me.getCurrentVisibleLayers().join(',') + 
+					'&TRANSPARENT=true' +
+					'&FORMAT=image/png'
 				);
 			}
 		};

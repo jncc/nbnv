@@ -5,32 +5,37 @@
 
 package nbn.webmapping.json.entity.resolvers;
 
-import java.sql.SQLException;
-import nbn.common.taxon.TaxonDAO;
-import nbn.webmapping.json.bridge.TaxonToJSONObjectBridge;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
 import nbn.webmapping.json.entity.EntityResolvingException;
 import nbn.webmapping.json.entity.ResolveableEntityResolver;
+import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONTokener;
 
 /**
  *
  * @author Administrator
  */
 public class TaxonResolveableEntityResolver implements ResolveableEntityResolver<JSONObject> {
-
+    private static String taxonService = "http://staging.testnbn.net/api/taxa/"; //TODO move to properties file
     public JSONObject resolveEntity(String species) throws EntityResolvingException {
         try {
-            TaxonDAO dao = new TaxonDAO();
+            InputStream in = new URL(taxonService + species ).openStream();
             try {
-                TaxonToJSONObjectBridge taxonBridge = new TaxonToJSONObjectBridge();
-                return taxonBridge.convert(dao.getTaxon(species));
+                return new JSONObject(new JSONTokener(new InputStreamReader(in)));
             }
-            finally{
-                dao.dispose();
+            finally {
+                in.close();
             }
         }
-        catch(SQLException ex) {
-            throw new EntityResolvingException("An Sql Exception has occured whilst attempting to resolve a species entity", ex);
+        catch(IOException io) {
+            throw new EntityResolvingException(io);
+        }
+        catch (JSONException ex) {
+            throw new EntityResolvingException(ex);
         }
     }
 

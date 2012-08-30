@@ -4813,14 +4813,17 @@ nbn.layer.ArcGISMap = function(mapHosts, mapService, map, options) {
 			currProjection.setCurrentProjection(projection);
 			if(this.isToRender()) {
 				return encodeURI(
-					_me.getHostsNextElement() + _me.getMapService() + '/export?bbox=' + position.xmin + ',' + position.ymin + ',' + position.xmax + ',' + position.ymax + 
-					'&size=' + _me.tileSize.width + ',' + _me.tileSize.height +
-					'&imageSR=' + projection.imageEPSG +
-					'&bboxSR=' + projection.latLngEPSG +
+					_me.getHostsNextElement() + _me.getMapService() + 
+                                        '?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap' +
+                                        '&BBOX=' + position.xmin + ',' + position.ymin + ',' + position.xmax + ',' + position.ymax + 
+					'&WIDTH=' + _me.tileSize.width + 
+                                        '&HEIGHT=' + _me.tileSize.height +
+					//'&imageSR=' + projection.imageEPSG +
+					'&SRS=EPSG:' + projection.latLngEPSG +
 					nbn.util.ArrayTools.joinAndPrepend(nbn.util.ArrayTools.fromObject(_me.getCurrentFilters()),'&') +
-					'&layers=show:'+ _me.getCurrentVisibleLayers().join(',') + 
-					'&transparent=true' +
-					'&f=image'
+					'&LAYERS='+ _me.getCurrentVisibleLayers().join(',') + 
+					'&TRANSPARENT=true' +
+					'&FORMAT=image/png'
 				);
 			}
 		};
@@ -5139,7 +5142,7 @@ nbn.layer.SpeciesLayer = function(hosts, googleMap, options) {
 					_setDatasets(data.datasets);
 					_abundanceFilter.setEnabled(true);
 					_constructionFilterParams = additionalFilterParams = {species: data.species.taxonVersionKey};
-					_arcGisMap.setMapService('arcgis/rest/services/grids/SingleSpeciesMap/' + data.species.taxonVersionKey + '/MapServer');
+					_arcGisMap.setMapService('SingleSpecies/' + data.species.taxonVersionKey);
 					_descriptionAttribute.setDescription('Single Species Map for ' + data.species.name + _createDatasetFilteringSummary(data.datasets));
 					_layerParameters.setLayerParameters(data);
 			});
@@ -5154,7 +5157,7 @@ nbn.layer.SpeciesLayer = function(hosts, googleMap, options) {
 					_abundanceFilter.setEnabled(false);
 					_constructionFilterParams = {designation: data.designation.designationKey};
 					additionalFilterParams = {desig: data.designation.designationKey};
-					_arcGisMap.setMapService('arcgis/rest/services/grids/DesignationSpeciesDensityMap/' + data.designation.designationKey + '/MapServer');
+					_arcGisMap.setMapService('DesignationSpeciesDensity/' + data.designation.designationKey);
 					_descriptionAttribute.setDescription('Designation Map for ' + data.designation.name + _createDatasetFilteringSummary(data.datasets));
 					_layerParameters.setLayerParameters(data);
 			});
@@ -5168,7 +5171,7 @@ nbn.layer.SpeciesLayer = function(hosts, googleMap, options) {
 					_abundanceFilter.setEnabled(false);
 					_constructionFilterParams = {dataset: data.dataset.datasetKey};
 					additionalFilterParams = {datasets: data.dataset.datasetKey};
-					_arcGisMap.setMapService('arcgis/rest/services/grids/DatasetSpeciesDensityMap/' + data.dataset.datasetKey + '/MapServer');
+					_arcGisMap.setMapService('DatasetSpeciesDensity/' + data.dataset.datasetKey);
 					_descriptionAttribute.setDescription('Single Dataset map for ' + data.dataset.name);
 					_layerParameters.setLayerParameters(data);
 			});	

@@ -7,6 +7,9 @@ import uk.org.nbn.nbnv.api.model.Taxon;
 
 public interface TaxonMapper {
 
+    @Select("SELECT * FROM TaxonData WHERE taxonVersionKey = #{id}")
+    Taxon getTaxon(String taxonVersionKey);
+    
     @Select("SELECT taxonVersionKey, prefnameTaxonVersionKey, name, authority, lang, outputGroupKey, navigationGroupKey from DesignationTaxonData dtd inner join TaxonData t on dtd.pTaxonVersionKey = t.taxonVersionKey where designationID = #{id}")
     List<Taxon> selectByDesignationID(int id);
     
