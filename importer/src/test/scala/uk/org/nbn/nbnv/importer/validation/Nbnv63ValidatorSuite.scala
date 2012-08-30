@@ -6,7 +6,17 @@ import org.mockito.Mockito._
 import uk.org.nbn.nbnv.importer.fidelity.ResultLevel
 
 class Nbnv63ValidatorSuite extends BaseFunSuite{
-  test("Nvnv63 should validate") {
+  test("Nvnv63 should validate null sample keys") {
+    val record = mock[NbnRecord]
+    when(record.sampleKey).thenReturn(null)
+
+    val v = new Nbnv63Validator
+    val r = v.validate(record)
+
+    r.level should be (ResultLevel.DEBUG)
+  }
+
+  test("Nvnv63 should validate samples keys of 30 chars or less") {
     val record = mock[NbnRecord]
     when(record.sampleKey).thenReturn("a" * 30)
 
@@ -16,9 +26,9 @@ class Nbnv63ValidatorSuite extends BaseFunSuite{
     r.level should be (ResultLevel.DEBUG)
   }
 
-  test("Nvnv63 should not validate") {
+  test("Nvnv63 should not validate sample keys greater then 30 chars") {
     val record = mock[NbnRecord]
-    when(record.sampleKey).thenReturn("a" * 50)
+    when(record.sampleKey).thenReturn("a" * 31)
 
     val v = new Nbnv63Validator
     val r = v.validate(record)
