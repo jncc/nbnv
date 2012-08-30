@@ -20,7 +20,8 @@
             <param-value>true</param-value>
         </init-param>
         <init-param>
-            config<param-value>uk.org.nbn.nbnv.api.rest</param-value>
+            <param-name>com.sun.jersey.config.property.packages</param-name>
+            <param-value>uk.org.nbn.nbnv.api.rest</param-value>
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
