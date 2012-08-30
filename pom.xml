@@ -30,6 +30,7 @@
         <module>api</module>
         <module>portal</module>
         <module>gis</module>
+        <module>imt</module>
     </modules>
 	
     <build>

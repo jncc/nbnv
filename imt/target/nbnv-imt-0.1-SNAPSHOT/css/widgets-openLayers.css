@@ -1,0 +1,8 @@
+/*Open Layers Scale Widget*/
+.nbn-openLayersScaleWidget {
+	padding: 1px 5px;
+}
+
+.nbn-openLayersScaleWidget .olControlScaleLine {
+	position: static !important;
+}

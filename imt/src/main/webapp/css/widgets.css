@@ -1,0 +1,233 @@
+/* START STYLING COPYRIGHT CONTROL */
+.nbn-copyrightControl {
+    width: 100%;
+    height: 13px;
+    font-size: 10px;
+    text-align: center;
+    overflow: hidden;
+}
+
+.nbn-copyrightControl ul {
+    padding:0%;
+    margin:0px; /*start on first copyright element*/
+}
+
+.nbn-copyrightControl ul li {
+    list-style: none;
+}
+
+/* START STYLING TREE WIDGET */
+.nbn-treewidget{
+    height: 200px;
+    border-color: #47C0D7;
+    border-style: solid;
+    color: #FFFFFF;
+}
+
+/* Login widget */
+
+.nbn-login {
+    width: 200px;
+    border-color: black;
+    border-style: solid;
+    border-width: 1px;
+    background-color: white;
+    font-family: Arial, sans-serif;
+    font-size: 10px;
+	padding: 5px;
+}
+
+.nbn-login .nbn-login-label {
+	width: 30%;
+	display: inline-block;
+}
+
+.nbn-login .nbn-login-input {
+	width: 66%;
+	display: inline-block;
+	page-break-after:always;
+}
+
+.nbn-login .nbn-login-errorMessage {
+	margin-bottom: 1em;
+}
+
+/* Loading Widget */
+
+.nbn-loading {
+    width: 203px;
+	height: 9px;
+	background-image:url('images/ajax-loading-bar.gif');
+	background-repeat:no-repeat;
+	background-position: center;
+	background-color: none;
+}
+
+/*Stateful Box Widget Only*/
+.nbn-statefulBox {
+    display: block;
+    margin-top: 0.25em;
+    margin-bottom: 0.25em;
+}
+
+.nbn-statefulBox .nbn-statefulBox-content {
+    display: block;
+}
+
+.nbn-statefulBox .nbn-statefulBox-content-padding {
+    padding: 0em 1em;
+}
+
+.nbn-statefulBox .nbn-statefulBox-handleBar .nbn-statefulButton {
+    float: right;
+    margin-top: 2px;
+}
+
+.nbn-statefulBox .nbn-statefulBox-titleBar {
+    float: left;
+    margin-right: 60px;
+    padding: 0.4em 1em;
+}
+
+/*Stateful Button Widget Only*/
+.nbn-statefulButton {
+    cursor: pointer;
+}
+
+.nbn-statefulButton-padded {
+    padding: 0.4em 1em;
+}
+
+/*Button bar widget*/
+.nbn-buttonBar {
+    border-width: 1px 0px 0px 0px !important;
+    background: none !important;
+    padding: 0.1em;
+}
+
+.nbn-buttonBar .nbn-buttonBar-buttonSet {
+    float: right;
+}
+
+/*Legend widget*/
+.nbn-legend-list {
+	display: inline-block;
+}
+
+.nbn-legend-layer-title {
+    font-weight: bold;
+    text-align: center;
+    margin: 0px;
+}
+
+.nbn-legend-list, .legend-layer-item {
+	list-style: none;
+	padding: 0px;
+	margin: 0px;
+}
+
+.legend-layer-item-image {
+    width: 16px;
+    height: 16px;
+	vertical-align: middle;
+}
+
+.nbn-autocomplete {
+    width: 450px;
+}
+
+/*Dataset Metadata widget*/
+.nbn-datasetmetadata {
+	margin-top: 10px;
+}
+
+.nbn-datasetmetadata .nbn-datasetmetadata-title, .nbn-datasetmetadata .nbn-datasetmetadata-content {
+	padding: 0.5em;
+}
+
+.nbn-datasetmetadata-caveat {
+    border: 1px #000000 solid;
+    background-color: #FFEEEE;
+    text-align: center;
+    font-size: 10px;
+    padding: 3px;
+}
+
+.nbn-datasetmetadata-caveat-header {
+    color: #FF0000;
+    font-weight: bold;
+}
+
+/*NBN Icon Widget*/
+.nbn-icon {
+	width: 70px;
+	height: 70px;
+}
+
+.nbn-icon .nbn-iconImage  {
+	width:70px;
+	height: 55px;
+	background-image:url('images/baseLayer-sprites.jpg');
+}
+
+.nbn-icon .nbn-iconLabel {
+	height:15px;
+	text-align: center;
+	overflow: hidden;
+}
+
+.nbn-icon .Hybrid {
+	background-position: 70px 0px;
+}
+
+.nbn-icon .OS {
+	background-position: 0px -55px;
+}
+
+.nbn-icon .Outline {
+	background-position: 70px -55px;
+}
+
+.nbn-icon .Shaded {
+	background-position: 0px -110px;
+}
+
+.nbn-icon .Species {
+	background-position: 70px -110px;
+}
+
+.nbn-icon .Boundary {
+	background-position: 0px -165px;
+}
+
+.nbn-icon .Habitat {
+	background-position: 70px -165px;
+}
+
+/*Base Layer Selector*/
+.nbn-baseLayerSelector {
+	position: relative;
+}
+
+.nbn-baseLayerSelector  .nbn-baseLayerSelectorSelectionPane {
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: 0; /*hide initially*/
+	z-index:1;
+}
+
+.nbn-baseLayerSelector  .nbn-baseLayerSelectorSelectionPane .nbn-baseLayerSelectorTitle {
+	text-align: center;
+	font-weight: bold;
+}
+
+.nbn-baseLayerSelector  .nbn-baseLayerSelectorSelectionPane .nbn-baseLayerSelectorTitle , .nbn-baseLayerSelector  .nbn-baseLayerSelectorSelectionPane .nbn-baseLayerSelectorTypes {
+	min-width: 410px;
+}
+
+.nbn-baseLayerSelector .nbn-baseLayerSelectorSelectionPane .nbn-baseLayerSelectorTypes .nbn-icon {
+	float:left;
+	margin: 5px;
+	vertical-align: bottom;
+}

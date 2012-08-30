@@ -1,0 +1,32 @@
+/*This CSS file defines all the targeted ie 7 fixes that need to be applied to IE 7*/
+.nbn-layersContainer .nbn-opacitySlider {
+	*margin-top: -8px;
+}
+
+.nbn-buttonBar .nbn-buttonBar-buttonSet .ui-button {
+	*position: static; /*override the relative positioning of the button, IE7 fix*/
+}
+
+.nbn-layersContainer, .nbn-layersContainer .nbn-statefulBox  {/*make the stateful boxes and the layers container relative, so that the internal elements (sliders float correctly)*/
+	*position:relative;
+}
+
+.nbn-legend-list,
+.nbn-layersContainer .nbn-labeledContent .nbn-label, 
+.nbn-layersContainer .nbn-labeledContent .nbn-content { /*Inline Block Fix*/
+	*zoom:1; 
+	*display: inline;
+}
+
+/*Legend Below Fixes*/
+.legend-layer-item-image {
+	*margin-left: -16px;
+}
+
+.nbn-layersContainer .ui-slider {
+	_width: 90%; /*IE6 Box Layout fix*/
+}
+
+.nbn-layersContainer, .nbn-layersContainer-outerBox  {
+	_width: 310px; /*IE6 hidden rendering fix*/
+}
