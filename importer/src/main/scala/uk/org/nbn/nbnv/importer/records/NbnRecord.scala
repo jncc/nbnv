@@ -19,6 +19,7 @@ class NbnRecord(record: StarRecord) {
   private val format = new SimpleDateFormat("yyyy/MM/dd")
   
   def key =             record.core.value(DwcTerm.occurrenceID)
+  def absenceText =     record.core.value(DwcTerm.occurrenceStatus)
   def absence =         parseOccurrenceStatus(record.core.value(DwcTerm.occurrenceStatus))
   def surveyKey =       record.core.value(DwcTerm.collectionCode)
   def sampleKey =       record.core.value(DwcTerm.eventID)

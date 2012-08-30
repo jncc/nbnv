@@ -38,6 +38,12 @@ class Validator @Inject()(log: Logger, repo: Repository){
       val v2 = new Nbnv64Validator(repo)
       val r2 = v2.validate(nbnRecord)
       logResult(r2)
+
+      val v3 = new Nbnv54Validator
+      val r3 = v3.validate(nbnRecord)
+      logResult(r3)
+
+
     }
   }
 
