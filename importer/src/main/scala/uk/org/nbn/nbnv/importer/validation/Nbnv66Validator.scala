@@ -4,7 +4,7 @@ import uk.org.nbn.nbnv.importer.records.NbnRecord
 import uk.org.nbn.nbnv.importer.fidelity.{ResultLevel, Result}
 import uk.org.nbn.nbnv.importer.ImportFailedException
 
-class Nbnv54Validator {
+class Nbnv66Validator {
   def validate(record: NbnRecord) = {
 
     if (record.absenceText == null
