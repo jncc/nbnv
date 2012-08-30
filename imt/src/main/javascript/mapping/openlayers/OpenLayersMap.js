@@ -176,8 +176,8 @@ nbn.mapping.openlayers.OpenLayersMap = function(options, interactiveMap) {
 			return new nbn.layer.BaseLayer(customOutlineLayer);
 		})());
 		_me.addBaseLayerType(new nbn.layer.BaseLayer(new nbn.mapping.openlayers.OpenLayersLayer(
-				new OpenLayers.Layer.WMS("OS Map", "http://nbnweb-2.nerc-lancaster.ac.uk/mapserver/OS-Modern", {
-					layers: "MiniScale-NoGrid,OS250k,OS50k,OS25k,OS10k", 
+				new OpenLayers.Layer.WMS("OS Map", nbn.util.ServerGeneratedLoadTimeConstants.gisServers + "OS-Modern", {
+					layers: "MiniScale-NoGrid,OS250k,OS50k,OS25k", 
 					format:"image/png"}, {
 					isBaseLayer:true, 
 					projection:new OpenLayers.Projection("EPSG:27700"), 
