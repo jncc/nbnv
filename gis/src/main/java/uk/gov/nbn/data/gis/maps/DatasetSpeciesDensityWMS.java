@@ -21,7 +21,7 @@ import uk.gov.nbn.data.gis.providers.annotations.QueryParam;
 public class DatasetSpeciesDensityWMS {
     private static final String QUERY = "geom from ("
             + "SELECT geom, species, label"
-            + "FROM ("
+            + "FROM ( "
                 + "SELECT o.userKey, o.datasetKey, gt.parentFeatureID as featureID, "
                     + "COUNT(DISTINCT o.pTaxonVersionKey) AS species "
                 + "FROM [dbo].[UserTaxonObservationData] o "
