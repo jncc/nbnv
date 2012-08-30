@@ -74,4 +74,44 @@ class ValidationSuite extends BaseFunSuite {
 
     r.level should be (ResultLevel.ERROR)
   }
+
+  test("Nvnv54 should validate when null") {
+    val record = mock[NbnRecord]
+    when(record.absenceText).thenReturn(null)
+
+    val v = new Nbnv54Validator
+    val r = v.validate(record)
+
+    r.level should be (ResultLevel.DEBUG)
+  }
+
+  test("Nvnv54 should validate when absenceText is presence") {
+    val record = mock[NbnRecord]
+    when(record.absenceText).thenReturn("Presence")
+
+    val v = new Nbnv54Validator
+    val r = v.validate(record)
+
+    r.level should be (ResultLevel.DEBUG)
+  }
+
+  test("Nvnv54 should validate when absenceText is absence") {
+    val record = mock[NbnRecord]
+    when(record.absenceText).thenReturn("Absence")
+
+    val v = new Nbnv54Validator
+    val r = v.validate(record)
+
+    r.level should be (ResultLevel.DEBUG)
+  }
+
+  test("Nvnv54 should not validate when absenceText is not null presence or absence") {
+    val record = mock[NbnRecord]
+    when(record.absenceText).thenReturn("asdfsdfsdf")
+
+    val v = new Nbnv54Validator
+    val r = v.validate(record)
+
+    r.level should be (ResultLevel.ERROR)
+  }
 }
