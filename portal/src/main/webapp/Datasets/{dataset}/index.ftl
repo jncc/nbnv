@@ -1,7 +1,7 @@
 
 <@template.master title="NBN Gateway - Datasets"
-    javascripts=["/js/enable-dataset-metadata-tabs.js","/js/jquery.dataTables.min.js"] 
-    csss=["http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/themes/smoothness/jquery-ui.css"] >
+    javascripts=["/js/enable-dataset-metadata-tabs.js","/js/jquery.dataTables.min.js","/js/jqplot/jquery.jqplot.min.js","/js/jqplot/plugins/jqplot.json2.min.js"] 
+    csss=["http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/themes/smoothness/jquery-ui.css","/js/jqplot/jquery.jqplot.css"] >
 
     <#assign datasetId="${URLParameters.dataset}">
     <#assign dataset=json.readURL("${api}/datasets/${datasetId}")>
@@ -15,7 +15,7 @@
                 <li><a href="#tabs-2">Access and constraints</a></li>
                 <li><a href="#tabs-3">Geographical</a></li>
                 <#if dataset.typeName = "Taxon">
-                    <li><a href="#tabs-10">Temporal</a></li>
+                    <li><a href="/Datasets/${datasetId}/Records_Per_Year">Temporal</a></li>
                     <li><a href="#tabs-11">Surveys</a></li>
                     <li><a href="#tabs-12">Attributes</a></li>
                     <li><a href="/Datasets/${datasetId}/Taxa">Species</a></li>
@@ -98,9 +98,6 @@
             </div>
 
             <#if dataset.typeName = "Taxon">
-                <div id="tabs-10">
-                    TODO - temporal
-                </div>
                 <div id="tabs-11">
                     TODO - Surveys
                 </div>

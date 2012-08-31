@@ -10,8 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.org.nbn.nbnv.api.dao.mappers.DatasetMapper;
 import uk.org.nbn.nbnv.api.dao.mappers.TaxonMapper;
-import uk.org.nbn.nbnv.api.model.Dataset;
+import uk.org.nbn.nbnv.api.model.Taxon;
 import uk.org.nbn.nbnv.api.model.TaxonDataset;
+import uk.org.nbn.nbnv.api.model.YearStats;
 
 @Component
 @Path("/taxonDatasets")
@@ -32,7 +33,22 @@ public class TaxonDatasetResource {
     public TaxonDataset getTaxonDatasetByID(@PathParam("id") String id){
         TaxonDataset toReturn = datasetMapper.selectTaxonDatasetByID(id);
         toReturn.setTaxa(taxonMapper.selectByDatasetKey(id));
+        toReturn.setRecordsPerYear(datasetMapper.selectRecordsPerYear(id));
         return toReturn;
+    }
+    
+    @GET
+    @Path("/{id}/taxa")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Taxon> getTaxaByDatasetKey(@PathParam("id") String id){
+        return taxonMapper.selectByDatasetKey(id);
+    }
+    
+    @GET
+    @Path("/{id}/recordsPerYear")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<YearStats> getRecordsPerYearByDatasetKey(@PathParam("id") String id){
+        return datasetMapper.selectRecordsPerYear(id);
     }
     
 }
