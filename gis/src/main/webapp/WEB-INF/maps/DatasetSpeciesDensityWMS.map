@@ -3,7 +3,7 @@ MAP
   EXTENT                                                0 0 800000 800000
   SIZE                                                  2800 2800
   IMAGECOLOR                                            255 255 255
-  FONTSET                                               "/fonts/fontset"
+  FONTSET                                               "fonts/fontset"
 
   WEB
     IMAGEPATH                                           "/ms4w/tmp/ms_tmp/"
