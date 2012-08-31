@@ -31,7 +31,7 @@ public class SingleSpeciesWMS {
             + "AND resolutionID = %d "
             + "%s " //place for dataset filter
             + "%s " //place for start year filter
-            + "%s" //place for end year filter
+            + "%s " //place for end year filter
         + ") AS foo USING UNIQUE observationID USING SRID=4326";
     
     @MapObject("{taxonVersionKey}")

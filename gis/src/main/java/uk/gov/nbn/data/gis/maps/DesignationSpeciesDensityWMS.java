@@ -32,11 +32,11 @@ public class DesignationSpeciesDensityWMS {
                 + "WHERE code = '%s' "
                 + "AND userKey = '%s' "
                 + "AND resolutionID = %d "
-                + "%s" //placeholder for dataset filter
-                + "%s" //startyear for dataset filter
-                + "%s" //endyear for dataset filter
+                + "%s " //placeholder for dataset filter
+                + "%s " //startyear for dataset filter
+                + "%s " //endyear for dataset filter
                 + "GROUP BY gt.parentFeatureID, td.code, o.userKey"
-            + ") a"
+            + ") a "
             + "INNER JOIN [dbo].[FeatureData] f ON f.featureID = a.featureID"
         + ") AS foo USING UNIQUE label USING SRID=4326";
     

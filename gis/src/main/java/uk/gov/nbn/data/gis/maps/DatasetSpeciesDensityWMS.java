@@ -20,7 +20,7 @@ import uk.gov.nbn.data.gis.providers.annotations.QueryParam;
 @MapService("DatasetSpeciesDensity")
 public class DatasetSpeciesDensityWMS {
     private static final String QUERY = "geom from ("
-            + "SELECT geom, species, label"
+            + "SELECT geom, species, label "
             + "FROM ( "
                 + "SELECT o.userKey, o.datasetKey, gt.parentFeatureID as featureID, "
                     + "COUNT(DISTINCT o.pTaxonVersionKey) AS species "
@@ -32,7 +32,7 @@ public class DatasetSpeciesDensityWMS {
                 + "%s " //start year segment
                 + "%s " //end year segment
                 + "GROUP BY gt.parentFeatureID, o.datasetKey, o.userKey "
-            + ") AS a"
+            + ") AS a "
             + "INNER JOIN bo.featureData AS f ON f.featureID = a.featureID"
         + ") AS foo USING UNIQUE label USING SRID=4326";
     
