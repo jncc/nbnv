@@ -11,6 +11,9 @@ class ObservationAttributeValidator {
     for (attribute <- record.attributes) {
       val v0 = new Nbnv93Validator
       resultList.append(v0.validate(attribute, record.key))
+
+      val v1 = new Nbnv115Validator
+      resultList.append(v1.validate(attribute, record.key))
     }
 
     resultList.toList

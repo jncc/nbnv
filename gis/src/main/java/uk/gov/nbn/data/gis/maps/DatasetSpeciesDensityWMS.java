@@ -20,20 +20,20 @@ import uk.gov.nbn.data.gis.providers.annotations.QueryParam;
 @MapService("DatasetSpeciesDensity")
 public class DatasetSpeciesDensityWMS {
     private static final String QUERY = "geom from ("
-            + "SELECT geom, species, label"
+            + "SELECT geom, species, label "
             + "FROM ( "
                 + "SELECT o.userKey, o.datasetKey, gt.parentFeatureID as featureID, "
                     + "COUNT(DISTINCT o.pTaxonVersionKey) AS species "
                 + "FROM [dbo].[UserTaxonObservationData] o "
                 + "INNER JOIN [dbo].[GridTree] gt ON gt.featureID = o.featureID "
                 + "WHERE datasetKey = '%s' "
-                + "AND userKey = '%s' "
-                + "AND resolutionID = %d "
+                + "AND userKey = %s "
                 + "%s " //start year segment
                 + "%s " //end year segment
                 + "GROUP BY gt.parentFeatureID, o.datasetKey, o.userKey "
-            + ") AS a"
-            + "INNER JOIN bo.featureData AS f ON f.featureID = a.featureID"
+            + ") AS a "
+            + "INNER JOIN [dbo].FeatureData AS f ON f.featureID = a.featureID "
+            + "WHERE resolutionID = %d"
         + ") AS foo USING UNIQUE label USING SRID=4326";
     
     @MapObject("{datasetKey}")
@@ -47,9 +47,10 @@ public class DatasetSpeciesDensityWMS {
         mapObj toReturn = new mapObj(mapFile);
         for(int i=0; i<toReturn.getNumlayers(); i++) {
             layerObj layer = toReturn.getLayer(i);
-            layer.setData(String.format(QUERY, key, userKey, i+1,
+            layer.setData(String.format(QUERY, key, userKey, 
                 MapHelper.createStartYearSegment(startYear),
-                MapHelper.createEndYearSegment(endYear)));            
+                MapHelper.createEndYearSegment(endYear),
+                i+1)); //resolution id
         }
         return toReturn;
     }

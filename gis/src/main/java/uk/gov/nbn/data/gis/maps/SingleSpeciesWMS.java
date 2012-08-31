@@ -27,11 +27,11 @@ public class SingleSpeciesWMS {
             + "INNER JOIN [dbo].[GridTree] gt ON gt.featureID = o.featureID "
             + "INNER JOIN [dbo].[FeatureData] f ON f.featureID = gt.parentFeatureID "
             + "WHERE pTaxonVersionKey = '%s' "
-            + "AND userKey = '%s' "
+            + "AND userKey = %s "
             + "AND resolutionID = %d "
             + "%s " //place for dataset filter
             + "%s " //place for start year filter
-            + "%s" //place for end year filter
+            + "%s " //place for end year filter
         + ") AS foo USING UNIQUE observationID USING SRID=4326";
     
     @MapObject("{taxonVersionKey}")

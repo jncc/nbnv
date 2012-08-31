@@ -30,14 +30,14 @@ public class DesignationSpeciesDensityWMS {
                 + "INNER JOIN [dbo].[GridTree] gt ON gt.featureID = o.featureID "
                 + "INNER JOIN [dbo].[DesignationTaxonData] td ON td.pTaxonVersionKey = o.pTaxonVersionKey "
                 + "WHERE code = '%s' "
-                + "AND userKey = '%s' "
-                + "AND resolutionID = %d "
-                + "%s" //placeholder for dataset filter
-                + "%s" //startyear for dataset filter
-                + "%s" //endyear for dataset filter
+                + "AND userKey = %s "
+                + "%s " //placeholder for dataset filter
+                + "%s " //startyear for dataset filter
+                + "%s " //endyear for dataset filter
                 + "GROUP BY gt.parentFeatureID, td.code, o.userKey"
-            + ") a"
-            + "INNER JOIN [dbo].[FeatureData] f ON f.featureID = a.featureID"
+            + ") a "
+            + "INNER JOIN [dbo].[FeatureData] f ON f.featureID = a.featureID "
+            + "WHERE resolutionID = %d "
         + ") AS foo USING UNIQUE label USING SRID=4326";
     
  
@@ -52,10 +52,11 @@ public class DesignationSpeciesDensityWMS {
         mapObj toReturn = new mapObj(mapFile);
         for(int i=0; i<toReturn.getNumlayers(); i++) {
             layerObj layer = toReturn.getLayer(i);
-            layer.setData(String.format(QUERY, key, userKey, i+1, 
+            layer.setData(String.format(QUERY, key, userKey, 
                 MapHelper.createInDatasetsSegment(datasetKeys),
                 MapHelper.createStartYearSegment(startYear),
-                MapHelper.createEndYearSegment(endYear)));
+                MapHelper.createEndYearSegment(endYear),
+                i+1));
         }
         return toReturn;
     }
