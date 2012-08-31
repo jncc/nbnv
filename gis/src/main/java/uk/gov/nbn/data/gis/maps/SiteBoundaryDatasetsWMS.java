@@ -14,12 +14,14 @@ import uk.gov.nbn.data.gis.providers.annotations.MapFile;
 import uk.org.nbn.nbnv.api.model.SiteBoundaryDataset;
 
 /**
- *
+ * The following map service will make a call to the data api as defined in
+ * the gis.properties to retrieve the most upto-date list of site boundary 
+ * datasets. This will then be used to create the layers for the map file
  * @author Christopher Johnson
  */
 @Component
-@MapService("SiteBoundaries")
-public class SiteBoundariesWMS {
+@MapService("SiteBoundaryDatasets")
+public class SiteBoundaryDatasetsWMS {
     @Autowired Properties properties;
     @Autowired WebResource dataApi;
     
@@ -31,7 +33,7 @@ public class SiteBoundariesWMS {
         + ") AS foo USING UNIQUE featureID USING SRID=4326";
     
     @MapObject
-    public mapObj getTaxonMap(@MapFile("SiteBoundariesWMS.map") String mapFile){
+    public mapObj getTaxonMap(@MapFile("SiteBoundaryDatasetsWMS.map") String mapFile){
         mapObj toReturn = new mapObj(mapFile);
         for(SiteBoundaryDataset currSiteBoundaryDataset : dataApi
                         .path("siteBoundaryDatasets")
