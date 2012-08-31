@@ -30,7 +30,7 @@ public class DesignationSpeciesDensityWMS {
                 + "INNER JOIN [dbo].[GridTree] gt ON gt.featureID = o.featureID "
                 + "INNER JOIN [dbo].[DesignationTaxonData] td ON td.pTaxonVersionKey = o.pTaxonVersionKey "
                 + "WHERE code = '%s' "
-                + "AND userKey = '%s' "
+                + "AND userKey = %s "
                 + "%s " //placeholder for dataset filter
                 + "%s " //startyear for dataset filter
                 + "%s " //endyear for dataset filter

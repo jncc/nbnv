@@ -27,7 +27,7 @@ public class DatasetSpeciesDensityWMS {
                 + "FROM [dbo].[UserTaxonObservationData] o "
                 + "INNER JOIN [dbo].[GridTree] gt ON gt.featureID = o.featureID "
                 + "WHERE datasetKey = '%s' "
-                + "AND userKey = '%s' "
+                + "AND userKey = %s "
                 + "%s " //start year segment
                 + "%s " //end year segment
                 + "GROUP BY gt.parentFeatureID, o.datasetKey, o.userKey "
