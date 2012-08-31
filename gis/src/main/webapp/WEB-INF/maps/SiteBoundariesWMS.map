@@ -21,31 +21,5 @@ MAP
   END
 
 
-  LAYER
-    NAME                                                "1"
-    TYPE                                                POLYGON
-    STATUS                                              OFF
-    CONNECTIONTYPE                                      PLUGIN
-    PLUGIN                                              "msplugin_mssql2008.dll"
-    CONNECTION                                          "Server=NBNSQL-B;Database=NBNWarehouse;uid=NBNImporter;pwd=Ecowaswashere9;Integrated Security=True"
-
-    METADATA
-      "wms_title"                                       "3"
-      'default_userKey'                                 '0'
-    END
-
-    PROJECTION
-      "init=epsg:4326"
-    END
-        
-    CLASS
-      NAME                                              "10km std"
-          
-      STYLE
-        COLOR                                           255 255 0
-        OUTLINECOLOR                                    0 0 0
-        WIDTH                                           0.5
-      END
-    END
-  END
+  
 END
