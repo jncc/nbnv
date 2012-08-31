@@ -22,11 +22,6 @@
         </dependency>
         
         <dependency>
-            <groupId>org.json</groupId>
-            <artifactId>json</artifactId>
-            <version>20090211</version>
-        </dependency>
-        <dependency>
             <groupId>net.sf.extcos</groupId>
             <artifactId>extcos</artifactId>
             <version>0.3b</version>
