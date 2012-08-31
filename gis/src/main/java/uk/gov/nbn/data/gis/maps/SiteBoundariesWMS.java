@@ -1,26 +1,28 @@
 package uk.gov.nbn.data.gis.maps;
 
-import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.GenericType;
 import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.api.client.config.DefaultClientConfig;
-import com.sun.jersey.api.json.JSONConfiguration;
 import edu.umn.gis.mapscript.*;
 import java.util.List;
+import java.util.Properties;
 import javax.ws.rs.core.MediaType;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import uk.gov.nbn.data.gis.processor.MapObject;
 import uk.gov.nbn.data.gis.processor.MapService;
 import uk.gov.nbn.data.gis.providers.annotations.MapFile;
-import uk.org.nbn.nbnv.api.model.SiteBoundary;
 import uk.org.nbn.nbnv.api.model.SiteBoundaryDataset;
 
 /**
  *
  * @author Christopher Johnson
  */
+@Component
 @MapService("SiteBoundaries")
 public class SiteBoundariesWMS {
-
+    @Autowired Properties properties;
+    @Autowired WebResource dataApi;
+    
     private static final String DATA = "geom from ("
             + "SELECT geom, sbfd.featureID "
             + "FROM SiteBoundaryFeatureData sbfd "
@@ -31,24 +33,13 @@ public class SiteBoundariesWMS {
     @MapObject
     public mapObj getTaxonMap(@MapFile("SiteBoundariesWMS.map") String mapFile){
         mapObj toReturn = new mapObj(mapFile);
-        DefaultClientConfig config = new DefaultClientConfig();
-        config.getFeatures()
-            .put(JSONConfiguration.FEATURE_POJO_MAPPING, Boolean.TRUE);
-        Client client = Client.create(config);
-        WebResource resource = client.resource("http://staging.testnbn.net/api/");
-        GenericType<List<SiteBoundaryDataset>> gt = new GenericType<List<SiteBoundaryDataset>>() { };
-        List<SiteBoundaryDataset> siteBoundaryDatasets = resource
-                .path("siteBoundaryDatasets")
-                .accept(MediaType.APPLICATION_JSON)
-                .get(gt);
-        createLayers(siteBoundaryDatasets, toReturn);  
-        return toReturn;
-    }
-    
-    private void createLayers(List<SiteBoundaryDataset> siteBoundaryDatasets, mapObj toAddTo) {
-        for(SiteBoundaryDataset currSiteBoundaryDataset : siteBoundaryDatasets) {
-            createLayer(currSiteBoundaryDataset.getDatasetKey(), toAddTo);
+        for(SiteBoundaryDataset currSiteBoundaryDataset : dataApi
+                        .path("siteBoundaryDatasets")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .get(new GenericType<List<SiteBoundaryDataset>>() { })) {
+            createLayer(currSiteBoundaryDataset.getDatasetKey(), toReturn);
         }
+        return toReturn;
     }
     
     private void createLayer(String datasetKey, mapObj toAddTo) {
@@ -58,7 +49,7 @@ public class SiteBoundariesWMS {
         toReturn.setStatus(mapscriptConstants.MS_OFF);
         toReturn.setPlugin_library("msplugin_mssql2008.dll");
         toReturn.setConnectiontype(MS_CONNECTION_TYPE.MS_PLUGIN);
-        toReturn.setConnection("Server=NBNSQL-B;Database=NBNWarehouse;uid=NBNImporter;pwd=Ecowaswashere9;Integrated Security=True");
+        toReturn.setConnection(properties.getProperty("spatialConnection"));
         toReturn.setData(String.format(DATA, datasetKey));
         toReturn.setProjection("init=epsg:4326");
         addDefaultClass(toReturn);

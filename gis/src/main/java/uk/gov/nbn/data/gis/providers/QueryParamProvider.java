@@ -5,6 +5,7 @@ import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
+import org.springframework.stereotype.Component;
 import uk.gov.nbn.data.gis.processor.MapServiceMethod;
 import uk.gov.nbn.data.gis.processor.Provider;
 import uk.gov.nbn.data.gis.processor.ProviderException;
@@ -16,6 +17,7 @@ import uk.gov.nbn.data.gis.processor.ProviderException;
  * supplied
  * @author Chris Johnson
  */
+@Component
 public class QueryParamProvider implements Provider {
 
     @Override

@@ -3,6 +3,7 @@ package uk.gov.nbn.data.gis.maps;
 import edu.umn.gis.mapscript.layerObj;
 import edu.umn.gis.mapscript.mapObj;
 import java.util.List;
+import org.springframework.stereotype.Component;
 import uk.gov.nbn.data.gis.processor.MapObject;
 import uk.gov.nbn.data.gis.processor.MapService;
 import uk.gov.nbn.data.gis.providers.annotations.MapFile;
@@ -19,6 +20,7 @@ import uk.gov.nbn.data.gis.providers.annotations.QueryParam;
  *  designationKey (As part of the url call)
  * @author Christopher Johnson
  */
+@Component
 @MapService("DesignationSpeciesDensity")
 public class DesignationSpeciesDensityWMS {
     private static final String QUERY = "geom from ("

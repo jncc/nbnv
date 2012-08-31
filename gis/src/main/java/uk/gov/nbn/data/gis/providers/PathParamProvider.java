@@ -4,6 +4,7 @@ import uk.gov.nbn.data.gis.providers.annotations.PathParam;
 import java.lang.annotation.Annotation;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
+import org.springframework.stereotype.Component;
 import uk.gov.nbn.data.gis.processor.MapServiceMethod;
 import uk.gov.nbn.data.gis.processor.Provider;
 import uk.gov.nbn.data.gis.processor.ProviderException;
@@ -13,6 +14,7 @@ import uk.gov.nbn.data.gis.processor.ProviderException;
  * calling url
  * @author Chris Johnson
  */
+@Component
 public class PathParamProvider implements Provider {
 
     @Override

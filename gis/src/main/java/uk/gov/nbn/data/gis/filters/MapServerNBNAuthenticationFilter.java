@@ -1,15 +1,16 @@
 package uk.gov.nbn.data.gis.filters;
 
-import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.api.client.config.DefaultClientConfig;
-import com.sun.jersey.api.json.JSONConfiguration;
 import java.io.IOException;
 import java.util.*;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.ws.rs.core.MediaType;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 import uk.org.nbn.nbnv.api.model.User;
 
 /**
@@ -20,7 +21,10 @@ import uk.org.nbn.nbnv.api.model.User;
  * servlet request handlers.
  * @author Christopher Johnson
  */
+
 public class MapServerNBNAuthenticationFilter implements Filter {
+    WebResource resource; //TODO inject bean dependancy
+    
     private static final String TOKEN_ID = "userKey";
     private static final String AUTHENTICATION_ADDRESS = "user";
     
@@ -32,7 +36,7 @@ public class MapServerNBNAuthenticationFilter implements Filter {
     }
 
     /**Wrap up a HttpServletRequest with a new key added to the Parameter Map (userKey)*/
-    private static class SanitizedUserKeyServletRequest extends HttpServletRequestWrapper {
+    private class SanitizedUserKeyServletRequest extends HttpServletRequestWrapper {
         private final String userID;
         SanitizedUserKeyServletRequest(HttpServletRequest request) throws IOException {
             super(request);
@@ -61,13 +65,7 @@ public class MapServerNBNAuthenticationFilter implements Filter {
             return getParameterMap().get(name);
         }
         
-        private static User getUser(HttpServletRequest request) throws IOException {
-            DefaultClientConfig config = new DefaultClientConfig();
-            config.getFeatures()
-                .put(JSONConfiguration.FEATURE_POJO_MAPPING, Boolean.TRUE);
-            Client client = Client.create(config);
-            WebResource resource = client.resource("http://staging.testnbn.net/api/");
-
+        private User getUser(HttpServletRequest request) throws IOException {
             User user = resource
                 .path(AUTHENTICATION_ADDRESS)
                 .header("Cookie", request.getHeader("Cookie"))
@@ -77,6 +75,12 @@ public class MapServerNBNAuthenticationFilter implements Filter {
         }
     }
     
-    @Override public void init(FilterConfig fc) throws ServletException {}
+    @Override public void init(FilterConfig fc) throws ServletException {
+        ServletContext servletContext = fc.getServletContext();
+        resource = WebApplicationContextUtils
+                .getWebApplicationContext(servletContext)
+                .getAutowireCapableBeanFactory()
+                .getBean(WebResource.class);
+    }
     @Override public void destroy() {}
 }

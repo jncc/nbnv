@@ -3,6 +3,7 @@ package uk.gov.nbn.data.gis.providers;
 import java.lang.annotation.Annotation;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
+import org.springframework.stereotype.Component;
 import uk.gov.nbn.data.gis.processor.MapServiceMethod;
 import uk.gov.nbn.data.gis.processor.Provider;
 import uk.gov.nbn.data.gis.providers.annotations.MapFile;
@@ -12,6 +13,7 @@ import uk.gov.nbn.data.gis.providers.annotations.MapFile;
  * location of a map from from the WEB-INF\maps folder
  * @author Chris Johnson
  */
+@Component
 public class MapFileProvider implements Provider {
 
     @Override

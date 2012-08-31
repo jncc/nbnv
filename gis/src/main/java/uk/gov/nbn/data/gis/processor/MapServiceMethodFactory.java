@@ -3,30 +3,26 @@ package uk.gov.nbn.data.gis.processor;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.*;
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
-import net.sf.extcos.ComponentQuery;
-import net.sf.extcos.ComponentScanner;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Component;
 
 /**
  * The following is a factory for obtaining a MapServiceMethod for a given 
  * requested path
  * @author Christopher Johnson
  */
-public class MapServiceMethodFactory {   
-    private final MapServicePart rootMapService;
-    private final List<? extends Provider> providers;
+@Component
+public class MapServiceMethodFactory {
+    @Autowired ApplicationContext context;
+    private MapServicePart rootMapService;
+    private Collection<? extends Provider> providers;
     
-    /**
-     * Create a map service part factory which loads maps and providers from
-     * the respectively provided package names
-     * @param mapsPackage The maps Package to load from
-     * @param providersPackage The providers Package to load from
-     * @throws InstantiationException If a loaded provider or map can not be instantiated
-     * @throws IllegalAccessException If a loaded provider of map can not be accesses
-     */
-    public MapServiceMethodFactory(String mapsPackage, String providersPackage) throws InstantiationException, IllegalAccessException {
-        rootMapService = getMapCreatingMethods(mapsPackage);
-        providers = getProviders(providersPackage);
+    @PostConstruct public void init() {
+        rootMapService = getMapCreatingMethods();
+        providers = context.getBeansOfType(Provider.class).values();
     }
     
     /**
@@ -96,19 +92,11 @@ public class MapServiceMethodFactory {
     }
              
     /* Load and all of the maps and return the root mapservicepart */
-    private static MapServicePart getMapCreatingMethods(final String packageLoc) throws InstantiationException, IllegalAccessException {
-        MapServicePart rootNode = new MapServicePart(null, "");  
-        ComponentScanner scanner = new ComponentScanner();
+    private MapServicePart getMapCreatingMethods() {
+        MapServicePart rootNode = new MapServicePart(null, "");         
         
-        Set<Class<?>> classes = scanner.getClasses(new ComponentQuery() {
-            @Override protected void query() {
-                select().from(packageLoc).returning(
-                    allAnnotatedWith(MapService.class));
-            }
-        });
-        
-        for(Class<?> currClass : classes) {
-            Object mapServiceInstance = currClass.newInstance();
+        for(Object mapServiceInstance : context.getBeansWithAnnotation(MapService.class).values()) {
+            Class<?> currClass = mapServiceInstance.getClass();
             MapService classAnnot = currClass.getAnnotation(MapService.class);
             for(Method currMethod : currClass.getMethods()) {
                 MapObject mapService = currMethod.getAnnotation(MapObject.class);
@@ -140,24 +128,5 @@ public class MapServiceMethodFactory {
             toFindIn.addChild(potentialNewPathPart);
             return potentialNewPathPart;
         }
-    }
-    
-    /* Load and instatiate a list of providers from a providers package */
-    private static List<Provider> getProviders(final String providersPackage) throws InstantiationException, IllegalAccessException {
-        final List<Provider> providerInstances = new ArrayList<Provider>();
-        final Set<Class<? extends Provider>> providerClasses = new HashSet<Class<? extends Provider>>();
-        
-        ComponentScanner scanner = new ComponentScanner();
-        scanner.getClasses(new ComponentQuery() {
-            @Override protected void query() {
-                select().from(providersPackage).andStore(
-                    thoseImplementing(Provider.class).into(providerClasses));
-            }
-        });
-
-        for(Class<? extends Provider> currProviderClass : providerClasses) {
-            providerInstances.add(currProviderClass.newInstance());
-        }
-        return providerInstances;
     }
 }
