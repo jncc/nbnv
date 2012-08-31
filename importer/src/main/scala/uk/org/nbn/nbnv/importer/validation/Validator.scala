@@ -62,6 +62,11 @@ class Validator @Inject()(log: Logger, repo: Repository){
       val v8 = new Nbnv92Validator
       val r8 = v8.validate(nbnRecord)
       logResult(r8)
+
+      //Validates each attribute and returns a set of results
+      val oav = new ObservationAttributeValidator
+      val oavResults = oav.validate(nbnRecord)
+      for (result <- oavResults) logResult(result)
     }
   }
 
