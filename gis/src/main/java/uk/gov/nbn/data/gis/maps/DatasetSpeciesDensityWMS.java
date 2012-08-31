@@ -5,7 +5,7 @@ import edu.umn.gis.mapscript.mapObj;
 import uk.gov.nbn.data.gis.processor.MapObject;
 import uk.gov.nbn.data.gis.processor.MapService;
 import uk.gov.nbn.data.gis.providers.annotations.MapFile;
-import uk.gov.nbn.data.gis.providers.annotations.Param;
+import uk.gov.nbn.data.gis.providers.annotations.PathParam;
 import uk.gov.nbn.data.gis.providers.annotations.QueryParam;
 
 /**
@@ -42,7 +42,7 @@ public class DatasetSpeciesDensityWMS {
             @QueryParam(key="userKey") String userKey,
             @QueryParam(key="startyear", validation="[0-9]{4}") String startYear,
             @QueryParam(key="endyear", validation="[0-9]{4}") String endYear,
-            @Param(key="datasetKey", validation="^[A-Z0-9]{8}$") String key) {
+            @PathParam(key="datasetKey", validation="^[A-Z0-9]{8}$") String key) {
         
         mapObj toReturn = new mapObj(mapFile);
         for(int i=0; i<toReturn.getNumlayers(); i++) {

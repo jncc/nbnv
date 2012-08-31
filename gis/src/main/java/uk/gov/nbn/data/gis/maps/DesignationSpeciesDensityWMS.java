@@ -6,7 +6,7 @@ import java.util.List;
 import uk.gov.nbn.data.gis.processor.MapObject;
 import uk.gov.nbn.data.gis.processor.MapService;
 import uk.gov.nbn.data.gis.providers.annotations.MapFile;
-import uk.gov.nbn.data.gis.providers.annotations.Param;
+import uk.gov.nbn.data.gis.providers.annotations.PathParam;
 import uk.gov.nbn.data.gis.providers.annotations.QueryParam;
 
 /**
@@ -48,7 +48,7 @@ public class DesignationSpeciesDensityWMS {
             @QueryParam(key="datasets", validation="^[A-Z0-9]{8}$") List<String> datasetKeys,
             @QueryParam(key="startyear", validation="[0-9]{4}") String startYear,
             @QueryParam(key="endyear", validation="[0-9]{4}") String endYear,
-            @Param(key="designationKey", validation="^[A-Z0-9.()/_\\-]+$") String key) {
+            @PathParam(key="designationKey", validation="^[A-Z0-9.()/_\\-]+$") String key) {
         mapObj toReturn = new mapObj(mapFile);
         for(int i=0; i<toReturn.getNumlayers(); i++) {
             layerObj layer = toReturn.getLayer(i);

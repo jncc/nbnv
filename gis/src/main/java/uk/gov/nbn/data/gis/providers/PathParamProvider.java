@@ -1,6 +1,6 @@
 package uk.gov.nbn.data.gis.providers;
 
-import uk.gov.nbn.data.gis.providers.annotations.Param;
+import uk.gov.nbn.data.gis.providers.annotations.PathParam;
 import java.lang.annotation.Annotation;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
@@ -13,7 +13,7 @@ import uk.gov.nbn.data.gis.processor.ProviderException;
  * calling url
  * @author Chris Johnson
  */
-public class ParamProvider implements Provider {
+public class PathParamProvider implements Provider {
 
     @Override
     public boolean isProviderFor(Class<?> clazz, MapServiceMethod method, HttpServletRequest request, List<Annotation> annotations) {
@@ -22,9 +22,9 @@ public class ParamProvider implements Provider {
 
     @Override
     public String provide(Class<?> clazz, MapServiceMethod method, HttpServletRequest request, List<Annotation> annotations) throws ProviderException {
-        Param paramAnnot = getAnnotation(annotations);
+        PathParam paramAnnot = getAnnotation(annotations);
         String toReturn = method.getVariableValue(paramAnnot.key());
-        if(paramAnnot.validation().equals(Param.NO_VALIDATION) || toReturn.matches(paramAnnot.validation())) {
+        if(paramAnnot.validation().equals(PathParam.NO_VALIDATION) || toReturn.matches(paramAnnot.validation())) {
             return toReturn;
         }
         else {
@@ -32,10 +32,10 @@ public class ParamProvider implements Provider {
         }
     }
     
-    private static Param getAnnotation(List<Annotation> annotations) {
+    private static PathParam getAnnotation(List<Annotation> annotations) {
         for(Annotation currAnnotation : annotations) {
-            if(currAnnotation instanceof Param) {
-                return (Param)currAnnotation;
+            if(currAnnotation instanceof PathParam) {
+                return (PathParam)currAnnotation;
             }
         }
         return null;
