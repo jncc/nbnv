@@ -27,14 +27,11 @@ import uk.org.nbn.nbnv.importer.ui.parser.NXFParser;
  * @author Paul Gilbertson
  */
 public class RunConversions {
-
-    private File in;
     private List<ConverterStep> steps;
     private List<ColumnMapping> mappings;
     private NXFParser nxfParser;
 
     public RunConversions(File in) throws IOException {
-        this.in = in;
         this.nxfParser = new NXFParser(in);
     }
 
