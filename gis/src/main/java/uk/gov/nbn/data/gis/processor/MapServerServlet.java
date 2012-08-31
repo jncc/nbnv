@@ -62,6 +62,7 @@ public class MapServerServlet extends HttpServlet {
             }
             finally {
                 out.close();
+                mapscript.msCleanup();
             }
         }
         catch(MapServiceUndefinedException msue) {
