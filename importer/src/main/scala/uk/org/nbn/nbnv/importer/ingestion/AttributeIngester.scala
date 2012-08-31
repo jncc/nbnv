@@ -19,12 +19,7 @@ class AttributeIngester @Inject()(log: Logger,
     //clear the collection of existing attributes (this is for records that are being re-imported
     observation.getTaxonObservationAttributeCollection.clear()
 
-    if (record.attributes == null || record.attributes.isEmpty) return
-
-    val json = JSON.parseFull(record.attributes)
-    val attributes = json.get.asInstanceOf[Map[String, List[String]]]
-
-    for ((attributeLabel, valueList) <- attributes) {
+    for ((attributeLabel, value) <- record.attributes) {
 
       val attribute = ensureAttribute(attributeLabel)
 
@@ -33,7 +28,7 @@ class AttributeIngester @Inject()(log: Logger,
       pk.setAttributeID(attribute.getAttributeID)
       pk.setObservationID(observation.getObservationID)
       toa.setTaxonObservationAttributePK(pk)
-      toa.setTextValue(valueList.head)
+      toa.setTextValue(value)
 
       em.persist(toa)
     }
