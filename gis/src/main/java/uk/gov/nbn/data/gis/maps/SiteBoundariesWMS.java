@@ -14,7 +14,7 @@ import uk.gov.nbn.data.gis.providers.annotations.Param;
 public class SiteBoundariesWMS {
 
     private static final String DATA = "geom from ("
-            + "SELECT geom, featureID "
+            + "SELECT geom, sbfd.featureID "
             + "FROM SiteBoundaryFeatureData sbfd "
             + "INNER JOIN SiteBoundaryData sbd ON sbd.featureID = sbfd.featureID "
             + "WHERE siteBoundaryDatasetKey = '%s'"
