@@ -5,13 +5,14 @@ import edu.umn.gis.mapscript.mapscript;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
-import java.util.Map.Entry;
 import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 /**
  * The following Servlet wraps up MapServer as a Servlet ready for requests to be
@@ -20,17 +21,15 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class MapServerServlet extends HttpServlet {
     
-    private MapServicePartFactory serviceFactory;
+    MapServiceMethodFactory serviceFactory;
     
     @Override public void init(ServletConfig config) throws ServletException {
-        try {
-            super.init(config);
-            serviceFactory = new MapServicePartFactory("uk.gov.nbn.data.gis.maps", "uk.gov.nbn.data.gis.providers");
-        } catch (InstantiationException ex) {
-            throw new ServletException("Could not instanciate one of the map service classes", ex);
-        } catch (IllegalAccessException ex) {
-            throw new ServletException("Could not instanciate one of the map service classes", ex);
-        }
+        super.init(config);        
+        ServletContext servletContext = config.getServletContext();
+        serviceFactory = WebApplicationContextUtils
+            .getWebApplicationContext(servletContext)
+            .getAutowireCapableBeanFactory()
+            .getBean(MapServiceMethodFactory.class);
     }
     
     @Override protected void doGet(HttpServletRequest request, 
@@ -53,9 +52,12 @@ public class MapServerServlet extends HttpServlet {
                 out.write(mapscript.msIO_getStdoutBufferBytes()); //output the bytes to the end user
             }
             catch(Throwable mapEx) {
+                mapEx.printStackTrace();
                 out.write("An error occured ".getBytes());
                 out.write(mapEx.getClass().getName().getBytes());
-                out.write(mapEx.getMessage().getBytes());
+                if(mapEx.getMessage() !=null) {
+                    out.write(mapEx.getMessage().getBytes());
+                }
             }
             finally {
                 out.close();

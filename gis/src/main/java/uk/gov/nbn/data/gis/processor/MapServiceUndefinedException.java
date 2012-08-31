@@ -1,12 +1,7 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package uk.gov.nbn.data.gis.processor;
 
 /**
- *
+ * An exception which is thrown if a particular map service does not exist
  * @author Christopher Johnson
  */
 public class MapServiceUndefinedException extends Exception {

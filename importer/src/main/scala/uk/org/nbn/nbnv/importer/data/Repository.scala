@@ -7,6 +7,16 @@ import uk.org.nbn.nbnv.importer.data.Implicits._
 import com.google.inject.Inject
 
 class Repository @Inject()(em: EntityManager) extends ControlAbstractions {
+  def confirmTaxonVersionKey(taxonVersionKey: String): Boolean = {
+    val query = em.createQuery("SELECT t FROM Taxon t WHERE t.taxonVersionKey = :tvk", classOf[Taxon])
+    query.setParameter("tvk", taxonVersionKey)
+    val tvkCount = query.getResultList.size
+
+    if (tvkCount == 1) true else false
+
+  }
+
+
   def getAttribute(attributeLabel: String, taxonDataset: TaxonDataset) = {
 
     val query = em.createQuery("select a from Attribute a join a.taxonObservationAttributeCollection toa join toa.taxonObservation to join to.sampleID s join s.surveyID sv where a.label = :label and sv.datasetKey = :dataset", classOf[Attribute])

@@ -1,0 +1,23 @@
+/*Mapping Layout below*/
+.TOP_CENTER_WIDGET, .BOTTOM_CENTER_WIDGET, .TOP_LEFT_WIDGET, .BOTTOM_LEFT_WIDGET, .TOP_RIGHT_WIDGET, .BOTTOM_RIGHT_WIDGET, .TOP_CENTER_WIDGET, .BOTTOM_CENTER_WIDGET {
+	*zoom: 1; /*IE FIX HERE */
+	*display: inline;
+}
+ 
+/*STATIC GRID LAYOUT BELOW*/
+.STATIC_GRID_LEFT, .STATIC_GRID_RIGHT , .STATIC_GRID_HEADER, .STATIC_GRID_FOOTER{
+	*font-size: 0px; /*IE7 Line height fix*/
+}
+
+.STATIC_GRID_HEADER_WIDGET, .STATIC_GRID_FOOTER_WIDGET {
+	*zoom: 1; /*IE FIX HERE */
+	*display: inline;
+}
+
+.STATIC_GRID_VIEWPOINT , .STATIC_GRID_LEFT, .STATIC_GRID_RIGHT {
+	_height: 100%; /*IE6 Absolute Confliciting position fix*/
+}
+
+.STATIC_GRID_VIEWPOINT , .STATIC_GRID_HEADER, .STATIC_GRID_FOOTER {
+	_width: 100%; /*IE6 Absolute Confliciting position fix*/
+}

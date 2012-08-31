@@ -1,19 +1,23 @@
 package uk.gov.nbn.data.gis.providers;
 
-import uk.gov.nbn.data.gis.providers.annotations.Param;
 import uk.gov.nbn.data.gis.providers.annotations.QueryParam;
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
+import org.springframework.stereotype.Component;
 import uk.gov.nbn.data.gis.processor.MapServiceMethod;
 import uk.gov.nbn.data.gis.processor.Provider;
 import uk.gov.nbn.data.gis.processor.ProviderException;
 
 /**
- *
+ * Provides Map Service Methods with the value of a query parameter.
+ * If the Annotated type was a List, the value will be assumed to be comma
+ * separated and each value will be validated against a given validation regex if
+ * supplied
  * @author Chris Johnson
  */
+@Component
 public class QueryParamProvider implements Provider {
 
     @Override

@@ -1,46 +1,46 @@
 package uk.gov.nbn.data.gis.filters;
 
+import com.sun.jersey.api.client.WebResource;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONTokener;
+import javax.ws.rs.core.MediaType;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
+import org.springframework.web.context.support.WebApplicationContextUtils;
+import uk.org.nbn.nbnv.api.model.User;
 
 /**
- *
+ * The following HttpFilter will capture requests that may contain a token cookie
+ * and pass on a request to the NBN Authentication server to obtain the current
+ * requests corresponding user. The userKey for the current user will be set as
+ * a Query Parameter to be used without the need for validation in subsequent
+ * servlet request handlers.
  * @author Christopher Johnson
  */
+
 public class MapServerNBNAuthenticationFilter implements Filter {
+    WebResource resource; //TODO inject bean dependancy
+    
     private static final String TOKEN_ID = "userKey";
-    private static final String AUTHENTICATION_ADDRESS = "http://staging.testnbn.net/api/user";
+    private static final String AUTHENTICATION_ADDRESS = "user";
     
     
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest httpRequest = (HttpServletRequest)request;
-        try {
-            chain.doFilter(new SanitizedUserKeyServletRequest(httpRequest), response);
-        }
-        catch(JSONException jsonex) {
-            throw new ServletException("An exception occured when trying to read the authentication user", jsonex);
-        }
+        chain.doFilter(new SanitizedUserKeyServletRequest(httpRequest), response);
     }
 
-    private static class SanitizedUserKeyServletRequest extends HttpServletRequestWrapper {
+    /**Wrap up a HttpServletRequest with a new key added to the Parameter Map (userKey)*/
+    private class SanitizedUserKeyServletRequest extends HttpServletRequestWrapper {
         private final String userID;
-        SanitizedUserKeyServletRequest(HttpServletRequest request) throws IOException, JSONException {
+        SanitizedUserKeyServletRequest(HttpServletRequest request) throws IOException {
             super(request);
-            this.userID = Integer.toString(getUserID(request));
+            this.userID = Integer.toString(getUser(request).getId());
         }
         
         @Override public Map<String, String[]> getParameterMap() {
@@ -65,29 +65,22 @@ public class MapServerNBNAuthenticationFilter implements Filter {
             return getParameterMap().get(name);
         }
         
-        private static int getUserID(HttpServletRequest request) throws IOException, JSONException {
-            HttpURLConnection conn = (HttpURLConnection)new URL(AUTHENTICATION_ADDRESS).openConnection();
-            try {
-                String cookie = request.getHeader("Cookie");
-                if(cookie != null) {
-                    conn.setRequestProperty("Cookie", cookie);
-                }
-
-                Reader inputStreamReader = new InputStreamReader(conn.getInputStream());
-                try {
-                    JSONObject user = new JSONObject(new JSONTokener(inputStreamReader));
-                    return user.getInt("id");
-                }
-                finally {
-                    inputStreamReader.close();
-                }
-            }
-            finally {
-                conn.disconnect();
-            }
+        private User getUser(HttpServletRequest request) throws IOException {
+            User user = resource
+                .path(AUTHENTICATION_ADDRESS)
+                .header("Cookie", request.getHeader("Cookie"))
+                .accept(MediaType.APPLICATION_JSON)
+                .get(User.class);
+            return user;
         }
     }
     
-    @Override public void init(FilterConfig fc) throws ServletException {}
+    @Override public void init(FilterConfig fc) throws ServletException {
+        ServletContext servletContext = fc.getServletContext();
+        resource = WebApplicationContextUtils
+                .getWebApplicationContext(servletContext)
+                .getAutowireCapableBeanFactory()
+                .getBean(WebResource.class);
+    }
     @Override public void destroy() {}
 }

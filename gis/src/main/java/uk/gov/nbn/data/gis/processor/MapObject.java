@@ -6,11 +6,13 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- *
- * @author Administrator
+ * A method annotation which registers a map service to a given path
+ * @author Christopher Johnson
  */
 @Target({ ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface MapObject {
-    String value() default "";
+    String value() default "";  //The path from the MapService to register this 
+                                //method to. Default is to register to the 
+                                //map services path
 }

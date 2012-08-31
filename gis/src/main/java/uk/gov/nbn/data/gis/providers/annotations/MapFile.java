@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package uk.gov.nbn.data.gis.providers.annotations;
 
 import java.lang.annotation.ElementType;
@@ -10,8 +6,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- *
- * @author Administrator
+ * An annotation to be used in a map service to provide the real location
+ * of a map file
+ * @author Christopher Johnson
  */
 @Target({ ElementType.PARAMETER })
 @Retention(RetentionPolicy.RUNTIME)

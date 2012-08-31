@@ -57,7 +57,7 @@ public class AttributeConcatenation implements ConverterStep {
         
         for (int c : columnList.keySet()) {
             try {
-                obj.append(columnList.get(c), row.get(c));
+                obj.put(columnList.get(c), row.get(c));
             } catch (JSONException ex) {
                 Logger.getLogger(AttributeConcatenation.class.getName()).log(Level.SEVERE, null, ex);
                 throw new BadDataException(ex);
