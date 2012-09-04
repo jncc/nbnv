@@ -1,12 +1,13 @@
 
 <@template.master title="NBN Gateway - Datasets"
-    javascripts=["/js/enable-dataset-metadata-tabs.js","/js/jquery.dataTables.min.js","/js/jqplot/jquery.jqplot.min.js","/js/jqplot/plugins/jqplot.json2.min.js"] 
-    csss=["http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/themes/smoothness/jquery-ui.css","/js/jqplot/jquery.jqplot.css"] >
+    javascripts=["/js/enable-dataset-metadata-tabs.js","/js/jquery.dataTables.min.js","/js/jqplot/jquery.jqplot.min.js","/js/jqplot/excanvas.min.js","/js/jqplot/plugins/jqplot.json2.min.js","/js/jqplot/plugins/jqplot.highlighter.min.js","/js/jqplot/plugins/jqplot.canvasAxisLabelRenderer.min.js","/js/jqplot/plugins/jqplot.canvasTextRenderer.min.js"] 
+    csss=["http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/themes/smoothness/jquery-ui.css","/js/jqplot/jquery.jqplot.min.css"] >
 
     <#assign datasetId="${URLParameters.dataset}">
     <#assign dataset=json.readURL("${api}/datasets/${datasetId}")>
 
         <h1>${dataset.name}</h1>
+        <div id="progress" style="display: none">Your gif here</div>
 
         <div id="nbn-tabs">
             
@@ -15,14 +16,14 @@
                 <li><a href="#tabs-2">Access and constraints</a></li>
                 <li><a href="#tabs-3">Geographical</a></li>
                 <#if dataset.typeName = "Taxon">
-                    <li><a href="/Datasets/${datasetId}/Records_Per_Year">Temporal</a></li>
+                    <li><a href="/Datasets/${datasetId}/Records_Per_Year"><span>Temporal</span></a></li>
                     <li><a href="#tabs-11">Surveys</a></li>
                     <li><a href="#tabs-12">Attributes</a></li>
-                    <li><a href="/Datasets/${datasetId}/Taxa">Species</a></li>
+                    <li><a href="/Datasets/${datasetId}/Taxa"><span>Species</span></a></li>
                 <#elseif dataset.typeName = "Habitat">
                     <li><a href="#tabs-20">Attributes</a></li>
                 <#elseif dataset.typeName = "Site Boundary">
-                    <li><a href="/Datasets/${datasetId}/Site_Boundaries">Sites</a></li>
+                    <li><a href="/Datasets/${datasetId}/Site_Boundaries"><span>Sites</span></a></li>
                 </#if>
             </ul>
 
