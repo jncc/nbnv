@@ -46,9 +46,13 @@ class NbnRecord(record: StarRecord) {
   def siteName =        record.core.value(DwcTerm.locality)
   def recorder =        record.core.value(DwcTerm.recordedBy)
   def determiner =      record.core.value(DwcTerm.identifiedBy)
+  def dateRaw =         record.core.value(DwcTerm.dateIdentified)
+  def date =            format.parse(record.core.value(DwcTerm.dateIdentified))
   def attributes =      attributeMap
 
+  def startDateRaw           = extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateStart")
   def startDate              = format.parse(extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateStart"))
+  def endDateRaw             = extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateEnd")
   def endDate                = format.parse(extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateEnd"))
   def dateType               = extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateTypeCode")
   def sensitiveOccurrenceRaw = extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/sensitiveOccurrence")
