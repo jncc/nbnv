@@ -1,6 +1,5 @@
 package uk.org.nbn.nbnv.api.model;
 
-import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -85,7 +84,7 @@ public class Dataset {
         return captureMethod;
     }
 
-    public void setCaptureMethod(String CaptureMethod) {
+    public void setCaptureMethod(String captureMethod) {
         this.captureMethod = captureMethod;
     }
 
