@@ -28,8 +28,6 @@ class Validator @Inject()(log: Logger, repo: Repository){
     // (3) record-scoped validations
     for (record <- archive.iteratorRaw) {
 
-
-
       var nbnRecord = new NbnRecord(record)
       // an example record-scoped validation
       val v0 = new Nbnv62Validator
@@ -77,7 +75,7 @@ class Validator @Inject()(log: Logger, repo: Repository){
 
   private def logResult(result: Result) {
 
-    def output = "Validation: " + result.reference + " | " + result.message
+    val output = "Validation: " + result.reference + " | " + result.message
 
     result.level match {
       case ResultLevel.DEBUG => log.debug(output)
