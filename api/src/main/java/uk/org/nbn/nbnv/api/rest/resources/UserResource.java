@@ -1,7 +1,9 @@
 package uk.org.nbn.nbnv.api.rest.resources;
 
+import java.util.List;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
@@ -15,6 +17,7 @@ import uk.org.nbn.nbnv.api.authentication.Token;
 import uk.org.nbn.nbnv.api.authentication.TokenAuthenticator;
 import uk.org.nbn.nbnv.api.model.User;
 import uk.org.nbn.nbnv.api.authentication.TokenUser;
+import uk.org.nbn.nbnv.api.dao.mappers.UserMapper;
 
 /**
  *
@@ -28,6 +31,7 @@ public class UserResource {
     public static final String SSO_DOMAIN_KEY = ".nerc-lancaster.ac.uk";
     
     @Autowired TokenAuthenticator tokenAuth;
+    @Autowired UserMapper userMapper;
     
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -60,5 +64,12 @@ public class UserResource {
         return Response.ok("loggedout")
             .cookie(new NewCookie(TOKEN_COOKIE_KEY, null, "/", SSO_DOMAIN_KEY, null, 0 , false))
             .build();
+    }
+    
+    @GET
+    @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public User getUserByID(@PathParam("id") int id) {
+        return userMapper.getUser(id);
     }
 }
