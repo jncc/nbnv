@@ -6,7 +6,7 @@ import org.mockito.Mockito._
 import uk.org.nbn.nbnv.importer.fidelity.ResultLevel
 
 class Nbnv55ValidationSuite extends BaseFunSuite {
-  test("Nbnv65 should not validate if recordkey is null") {
+  test("Nbnv55 should not validate if recordkey is null") {
     val record = mock[NbnRecord]
     when(record.key).thenReturn(null)
 
@@ -16,7 +16,7 @@ class Nbnv55ValidationSuite extends BaseFunSuite {
     r.level should be (ResultLevel.ERROR)
   }
 
-  test("Nbnv65 should validate if recordkey is not null") {
+  test("Nbnv55 should validate if recordkey is not null") {
     val record = mock[NbnRecord]
     when(record.key).thenReturn("testKey")
 
