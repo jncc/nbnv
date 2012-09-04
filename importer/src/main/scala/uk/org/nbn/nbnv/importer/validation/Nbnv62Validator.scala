@@ -8,19 +8,7 @@ import uk.org.nbn.nbnv.importer.records.NbnRecord
 class Nbnv62Validator {
 
   def validate(record: NbnRecord) = {
-
-    if (record.surveyKey == null || record.surveyKey.length <= 30) {
-      new Result {
-        def level = ResultLevel.DEBUG
-        def message = "Validated: SurveyKey - max field length 30 characters."
-        def reference = "Record " + record.key
-      }
-    } else {
-      new Result {
-        def level = ResultLevel.ERROR
-        def message = "SurveyKey must not be more than 30 characters."
-        def reference = "Record " + record.key
-      }
-    }
+    val validator = new LengthValidator()
+    validator.validate(record.key,"SurveyKey",record.surveyKey,30)
   }
 }

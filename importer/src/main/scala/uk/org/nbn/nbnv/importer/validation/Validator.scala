@@ -20,10 +20,15 @@ class Validator @Inject()(log: Logger, repo: Repository){
     log.info("Hello from the validator.")
 
     // (1) archive-scoped validations
+
+
+
     // (2) head-scoped validations
 
     // (3) record-scoped validations
     for (record <- archive.iteratorRaw) {
+
+
 
       var nbnRecord = new NbnRecord(record)
       // an example record-scoped validation
