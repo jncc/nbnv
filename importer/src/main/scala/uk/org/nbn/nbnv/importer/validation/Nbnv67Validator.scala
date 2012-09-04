@@ -6,9 +6,9 @@ import uk.org.nbn.nbnv.importer.records.NbnRecord
 class Nbnv67Validator {
 
   def validate(record: NbnRecord) = {
-    if (record.sensitiveOccurrenceText == null
-      || record.sensitiveOccurrenceText.toLowerCase == "true"
-      || record.sensitiveOccurrenceText.toLowerCase == "false") {
+    if (record.sensitiveOccurrenceRaw == null
+      || record.sensitiveOccurrenceRaw.toLowerCase == "true"
+      || record.sensitiveOccurrenceRaw.toLowerCase == "false") {
       new Result {
         def level = ResultLevel.DEBUG
         def message = "Validated: sensitive field is valid"

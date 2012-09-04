@@ -20,6 +20,9 @@ class Validator @Inject()(log: Logger, repo: Repository){
     log.info("Hello from the validator.")
 
     // (1) archive-scoped validations
+
+
+
     // (2) head-scoped validations
 
     // (3) record-scoped validations
@@ -72,7 +75,7 @@ class Validator @Inject()(log: Logger, repo: Repository){
 
   private def logResult(result: Result) {
 
-    def output = "Validation: " + result.reference + " | " + result.message
+    val output = "Validation: " + result.reference + " | " + result.message
 
     result.level match {
       case ResultLevel.DEBUG => log.debug(output)

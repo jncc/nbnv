@@ -6,9 +6,9 @@ import org.mockito.Mockito._
 import uk.org.nbn.nbnv.importer.fidelity.ResultLevel
 
 class Nbnv67ValidatorSuite extends BaseFunSuite{
-  test("Nvnv67 should validate when sensitiveOccurrenceText is null") {
+  test("Nvnv67 should validate when sensitiveOccurrenceRaw is null") {
     val record = mock[NbnRecord]
-    when(record.sensitiveOccurrenceText).thenReturn(null)
+    when(record.sensitiveOccurrenceRaw).thenReturn(null)
 
     val v = new Nbnv67Validator
     val r = v.validate(record)
@@ -16,9 +16,9 @@ class Nbnv67ValidatorSuite extends BaseFunSuite{
     r.level should be (ResultLevel.DEBUG)
   }
 
-  test("Nvnv67 should validate when sensitiveOccurrenceText is true") {
+  test("Nvnv67 should validate when sensitiveOccurrenceRaw is true") {
     val record = mock[NbnRecord]
-    when(record.sensitiveOccurrenceText).thenReturn("true")
+    when(record.sensitiveOccurrenceRaw).thenReturn("true")
 
     val v = new Nbnv67Validator
     val r = v.validate(record)
@@ -26,9 +26,9 @@ class Nbnv67ValidatorSuite extends BaseFunSuite{
     r.level should be (ResultLevel.DEBUG)
   }
 
-  test("Nvnv67 should validate when sensitiveOccurrenceText is false") {
+  test("Nvnv67 should validate when sensitiveOccurrenceRaw is false") {
     val record = mock[NbnRecord]
-    when(record.sensitiveOccurrenceText).thenReturn("false")
+    when(record.sensitiveOccurrenceRaw).thenReturn("false")
 
     val v = new Nbnv67Validator
     val r = v.validate(record)
@@ -36,9 +36,9 @@ class Nbnv67ValidatorSuite extends BaseFunSuite{
     r.level should be (ResultLevel.DEBUG)
   }
 
-  test("Nvnv67 should not validate when sensitiveOccurrenceText is not null true or false") {
+  test("Nvnv67 should not validate when sensitiveOccurrenceRaw is not null true or false") {
     val record = mock[NbnRecord]
-    when(record.sensitiveOccurrenceText).thenReturn("fgadg")
+    when(record.sensitiveOccurrenceRaw).thenReturn("fgadg")
 
     val v = new Nbnv67Validator
     val r = v.validate(record)
