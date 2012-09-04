@@ -41,7 +41,7 @@
             if($(ui.panel).find('#' + 'nbn-record-chart').length > 0){
                 var datasetKey = $('#' + 'nbn-record-chart').attr('datasetKey');
                 var chartData = [ ];
-                $.getJSON('http://localhost:8084/api/taxonDatasets/' + datasetKey + '/recordsPerYear', function(data){
+                $.getJSON('/api/taxonDatasets/' + datasetKey + '/recordsPerYear', function(data){
                     var startYear = 1900;
                     var endYear = new Date().getFullYear();
                     var numYears = endYear - startYear + 1;
