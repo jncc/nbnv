@@ -7,9 +7,9 @@ import uk.org.nbn.nbnv.importer.ImportFailedException
 class Nbnv66Validator {
   def validate(record: NbnRecord) = {
 
-    if (record.absenceText == null
-      || record.absenceText.toLowerCase == "presence"
-      || record.absenceText.toLowerCase == "absence") {
+    if (record.absenceRaw == null
+      || record.absenceRaw.toLowerCase == "presence"
+      || record.absenceRaw.toLowerCase == "absence") {
       new Result {
         def level = ResultLevel.DEBUG
         def message = "Validated: Absence is null, presence or absence"

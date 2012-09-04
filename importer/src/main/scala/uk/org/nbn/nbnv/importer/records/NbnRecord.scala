@@ -37,7 +37,7 @@ class NbnRecord(record: StarRecord) {
     }
 
   def key =             record.core.value(DwcTerm.occurrenceID)
-  def absenceText =     record.core.value(DwcTerm.occurrenceStatus)
+  def absenceRaw =     record.core.value(DwcTerm.occurrenceStatus)
   def absence =         parseOccurrenceStatus(record.core.value(DwcTerm.occurrenceStatus))
   def surveyKey =       record.core.value(DwcTerm.collectionCode)
   def sampleKey =       record.core.value(DwcTerm.eventID)
@@ -51,7 +51,7 @@ class NbnRecord(record: StarRecord) {
   def startDate              = format.parse(extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateStart"))
   def endDate                = format.parse(extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateEnd"))
   def dateType               = extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateTypeCode")
-  def sensitiveOccurrenceText = extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/sensitiveOccurrence")
+  def sensitiveOccurrenceRaw = extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/sensitiveOccurrence")
   def sensitiveOccurrence    = parseSensitiveOccurrence(extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/sensitiveOccurrence"))
 
   def gridReferenceType      = extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/gridReferenceType")

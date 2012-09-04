@@ -8,7 +8,7 @@ import uk.org.nbn.nbnv.importer.fidelity.ResultLevel
 class Nbnv66ValidatorSuite extends BaseFunSuite {
   test("Nvnv66 should validate when null") {
     val record = mock[NbnRecord]
-    when(record.absenceText).thenReturn(null)
+    when(record.absenceRaw).thenReturn(null)
 
     val v = new Nbnv66Validator
     val r = v.validate(record)
@@ -16,9 +16,9 @@ class Nbnv66ValidatorSuite extends BaseFunSuite {
     r.level should be (ResultLevel.DEBUG)
   }
 
-  test("Nvnv66 should validate when absenceText is presence") {
+  test("Nvnv66 should validate when absenceRaw is presence") {
     val record = mock[NbnRecord]
-    when(record.absenceText).thenReturn("Presence")
+    when(record.absenceRaw).thenReturn("Presence")
 
     val v = new Nbnv66Validator
     val r = v.validate(record)
@@ -26,9 +26,9 @@ class Nbnv66ValidatorSuite extends BaseFunSuite {
     r.level should be (ResultLevel.DEBUG)
   }
 
-  test("Nvnv66 should validate when absenceText is absence") {
+  test("Nvnv66 should validate when absenceRaw is absence") {
     val record = mock[NbnRecord]
-    when(record.absenceText).thenReturn("Absence")
+    when(record.absenceRaw).thenReturn("Absence")
 
     val v = new Nbnv66Validator
     val r = v.validate(record)
@@ -36,9 +36,9 @@ class Nbnv66ValidatorSuite extends BaseFunSuite {
     r.level should be (ResultLevel.DEBUG)
   }
 
-  test("Nvnv66 should not validate when absenceText is not null presence or absence") {
+  test("Nvnv66 should not validate when absenceRaw is not null presence or absence") {
     val record = mock[NbnRecord]
-    when(record.absenceText).thenReturn("asdfsdfsdf")
+    when(record.absenceRaw).thenReturn("asdfsdfsdf")
 
     val v = new Nbnv66Validator
     val r = v.validate(record)
