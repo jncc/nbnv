@@ -15,7 +15,7 @@ class NbnRecord(record: StarRecord) {
 
   // todo: we don't want to do parsing in this class
   // todo: .value (below) returns null if the column does not exist - should throw a better exception here
-  // todo: parse all the gubbins date types that NBN uses
+  // todo: parse all the gubbins eventDate types that NBN uses
 
   private val format = new SimpleDateFormat("yyyy/MM/dd")
 
@@ -46,8 +46,11 @@ class NbnRecord(record: StarRecord) {
   def siteName =        record.core.value(DwcTerm.locality)
   def recorder =        record.core.value(DwcTerm.recordedBy)
   def determiner =      record.core.value(DwcTerm.identifiedBy)
-  def dateRaw =         record.core.value(DwcTerm.dateIdentified)
-  def date =            format.parse(record.core.value(DwcTerm.dateIdentified))
+  def eventDateRaw =    record.core.value(DwcTerm.eventDate)
+  def eventDate =       format.parse(record.core.value(DwcTerm.eventDate))
+  def east =            record.core.value(DwcTerm.verbatimLongitude)
+  def north =           record.core.value(DwcTerm.verbatimLatitude)
+  def srs =             record.core.value(DwcTerm.verbatimSRS)
   def attributes =      attributeMap
 
   def startDateRaw           = extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateStart")
@@ -61,6 +64,7 @@ class NbnRecord(record: StarRecord) {
   def gridReferenceType      = extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/gridReferenceType")
   def gridReference          = extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/gridReference")
   def gridReferencePrecision = extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/gridReferencePrecision")
+  def featureKey             = extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/featureKey")
 
   def parseSensitiveOccurrence(s: String) = {
     if (s == null) {

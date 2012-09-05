@@ -6,9 +6,9 @@ import org.mockito.Mockito._
 import uk.org.nbn.nbnv.importer.fidelity.ResultLevel
 
 class Nbnv57ValidationSuite extends BaseFunSuite  {
-  test("Nbnv57 should validate if the dwc date field is specified") {
+  test("Nbnv57 should validate if the dwc eventDate field is specified") {
     val record = mock[NbnRecord]
-    when(record.dateRaw).thenReturn("01/01/2012")
+    when(record.eventDateRaw).thenReturn("01/01/2012")
 
     val v = new Nbnv57Validator
     val r = v.validate(record)
@@ -16,7 +16,7 @@ class Nbnv57ValidationSuite extends BaseFunSuite  {
     r.level should be (ResultLevel.DEBUG)
   }
 
-  test("Nbnv57 should validate if the all nbn date field extensions are specified") {
+  test("Nbnv57 should validate if the all nbn eventDate field extensions are specified") {
     val record = mock[NbnRecord]
     when(record.startDateRaw).thenReturn("01/01/2012")
     when(record.endDateRaw).thenReturn("01/01/2012")
@@ -28,9 +28,9 @@ class Nbnv57ValidationSuite extends BaseFunSuite  {
     r.level should be (ResultLevel.DEBUG)
   }
 
-  test("Nbnv57 should not validate if no date field is specified") {
+  test("Nbnv57 should not validate if no eventDate field is specified") {
     val record = mock[NbnRecord]
-    when(record.date).thenReturn(null)
+    when(record.eventDate).thenReturn(null)
     when(record.startDateRaw).thenReturn(null)
     when(record.endDateRaw).thenReturn(null)
     when(record.dateType).thenReturn(null)
