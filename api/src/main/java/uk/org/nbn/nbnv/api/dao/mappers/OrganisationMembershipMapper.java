@@ -36,7 +36,7 @@ public interface OrganisationMembershipMapper {
     @Select("SELECT userKey, organisationID, role FROM OrganisationMembershipData WHERE userKey = #{userKey} AND organisationID = #{organisationID}")
     @Results(value = {
         @Result(property="user", column="userKey", javaType=User.class, one=@One(select="uk.org.nbn.nbnv.api.dao.mappers.UserMapper.getUser")),
-        @Result(property="organisation", column="organisationID", javaType=Organisation.class, one=@One(select="uk.org.nbn.nbnv.api.dao.mappers.OrganisationMapper.selectByID")),
+        @Result(property="organisation", column="organisationID", javaType=Organisation.class, one=@One(select="uk.org.nbn.nbnv.api.dao.mappers.OrganisationMapper.selectByID"))
     })
     OrganisationMembership getOrganisationMembershipsByUserAndOrganisation(@Param("userKey") int userKey, @Param("organisationID") int organisationID);
 }
