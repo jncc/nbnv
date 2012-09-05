@@ -1,4 +1,4 @@
-<@template.master title="NBN Gateway - designation">
+<@template.master title="NBN Gateway - designation"> 
 
     <#assign designationId="${URLParameters.designation}">
     <#assign taxonNavigationGroupId="${URLParameters.taxon_navigation_group}">
@@ -27,7 +27,7 @@
                     <th>Species list for: ${taxonNavigationGroup.name}</th>
                     <td>
                         <#list species as spec>
-                            <@taxon_utils.long_name taxon=spec/><br/>
+                            <@taxon_utils.short_name taxon=spec/><br/>
                         </#list>
                     </td>
                 </tr>

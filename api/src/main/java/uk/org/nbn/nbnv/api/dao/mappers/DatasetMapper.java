@@ -3,6 +3,7 @@ package uk.org.nbn.nbnv.api.dao.mappers;
 import java.util.List;
 import org.apache.ibatis.annotations.Select;
 import uk.org.nbn.nbnv.api.model.Dataset;
+import uk.org.nbn.nbnv.api.model.DateTypeStats;
 import uk.org.nbn.nbnv.api.model.TaxonDataset;
 import uk.org.nbn.nbnv.api.model.YearStats;
 
@@ -20,7 +21,12 @@ public interface DatasetMapper {
     @Select("SELECT * FROM DatasetData WHERE datasetKey = #{datasetKey}")
     TaxonDataset selectTaxonDatasetByID(String datasetKey);
     
+    //TODO this needs turning into a warehouse schema bound view when it is stable
     @Select("select year(startDate) year, count(*) recordCount from TaxonObservationData where datasetKey = #{datasetKey} group by year(startDate) order by year(startDate)")
     List<YearStats> selectRecordsPerYear(String datasetKey);
+    
+    //TODO this needs turning into a warehouse schema bound view when it is stable
+    @Select("SELECT label dateTypeName, count(*) recordCount FROM TaxonObservationData tod INNER JOIN NBNCore.dbo.DateType d ON tod.dateType = d.dateTypeKey WHERE datasetKey = #{datasetKey} GROUP BY label ORDER BY label")
+    List<DateTypeStats> selectRecordCountPerDateTypeByDatasetKey(String datasetKey);
     
 }
