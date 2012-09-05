@@ -136,6 +136,24 @@ body {
         }
     }
     
+    .nbn-temporal-table{
+        font-size:0.9em;
+        $padding: 3px;
+        font-family: Arial,Helvetica,Sans-serif;
+        padding: 1px;
+        th {
+            font-weight: bold;
+            width: 25%;
+            padding: $padding;
+            text-align: right;
+        }
+        td{
+            padding: $padding;
+            text-align: right;
+            vertical-align: top;
+        }
+    }
+    
     #nbn-temporal-chart{
         width: 100%;
         height: 400px;
@@ -148,4 +166,14 @@ body {
         margin-bottom: 25px;
     }
     
+    .nbn-temporal{
+        ul {
+            margin-top: 5px;
+        }
+        h1 {
+            font-weight: bold;
+            margin-top: 10px;
+        }
+    }
+
 }

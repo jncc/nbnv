@@ -119,6 +119,20 @@
                 
                 //The extra information under the chart needs styling
                 $(".nbn-simple-table tr:even").addClass("ui-state-highlight");
+                
+                //Toggle the table of record counts per year
+                $('.collapsible-list ul').hide(); //first off, hide all the sub lists
+                $('.collapsible-list ul').each(function(){
+                    var list = $(this);
+                    list.parent().prepend(//put the container before the sublist
+                        $("<span>")
+                            .addClass("collapsible-list-icon icons-expand")
+                            .click(function(){  //register a click listener which toggles the icon and list visibility
+                                $('.collapsible-list-icon', this).toggleClass("icons-expand icons-collapse");
+                                $('~ ul', this).stop().slideToggle('slow');
+                            })
+                    );
+                });
             }
         });
         $('#nbn-tabs').tabs({
