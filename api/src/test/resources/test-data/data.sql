@@ -13,9 +13,56 @@ INSERT INTO UserData (
 ) VALUES (
     43, 'Test', 'User', 'tester', 'test@user.com', NULL, NULL
 );
-
-
+   
 --Create an authentication user table with a single userid "43" and a password of "password
 INSERT INTO UserTokenAuthenticationData (
     id, username_sha1, password_sha1, password_md5_sha1 
 ) VALUES (43, x'AB4D8D2A5F480A137067DA17100271CD176607A1', x'5BAA61E4C9B93F3F0682250B6CF8331B7EE68FD8', x'3E3295D135520D1F6D1FDCB183AE356C48ECB8FD');
+
+--Create a single admin "admintester" with an id of 42
+INSERT INTO UserData (
+    id, forename, surname, username, email, registrationDate, phone
+) VALUES (
+    42, 'Test', 'Admin', 'admintester', 'testadmin@user.com', NULL, NULL
+);
+
+INSERT INTO SysAdminUserData (
+    userKey, username, password_sha1
+) VALUES (
+    42, 'admintester', NULL
+);
+
+--Create a test organisation "testorg" with id 1
+INSERT INTO OrganisationData (
+    organisationID, name
+) VALUES (
+    1, 'testorg'
+);
+
+--Create a single organisation admin "orgadmin" with an id of 41
+INSERT INTO UserData (
+    id, forename, surname, username, email, registrationDate, phone
+) VALUES (
+    41, 'Test', 'OrgAdmin', 'orgadmintester', 'testorgadmin@user.com', NULL, NULL
+);
+
+--Associate orgadmintester as admin of testorg
+INSERT INTO OrganisationMembershipData (
+    userKey, organisationID, role
+) VALUES (
+    41, 1, 'administrator'
+);
+
+--Create a single organisation admin "orgadmin" with an id of 41
+INSERT INTO UserData (
+    id, forename, surname, username, email, registrationDate, phone
+) VALUES (
+    40, 'Test', 'OrgMember', 'orgmembertester', 'testorgmember@user.com', NULL, NULL
+);
+
+--Associate orgadmintester as admin of testorg
+INSERT INTO OrganisationMembershipData (
+    userKey, organisationID, role
+) VALUES (
+    40, 1, 'member'
+);

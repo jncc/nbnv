@@ -125,6 +125,7 @@ body {
         $padding: 5px;
         font-family: Arial,Helvetica,Sans-serif;
         padding: 1px;
+        width: 100%;
         th {
             font-weight: bold;
             width: 25%;
@@ -133,6 +134,18 @@ body {
         td{
             padding: $padding;
         }
+    }
+    
+    #nbn-temporal-chart{
+        width: 100%;
+        height: 400px;
+        margin-bottom: 10px;
+    }
+    
+    #nbn-chart-tooltip{
+        font-size: 0.75em;
+        color: $majorGrey;
+        margin-bottom: 25px;
     }
     
 }
