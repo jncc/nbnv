@@ -10,10 +10,11 @@ public class TaxonDataset extends Dataset{
     private int recordCount;
     private List<Taxon> taxa;
     private List<YearStats> recordsPerYear;
+    private List<DateTypeStats> dateTypeStats;
     
     public TaxonDataset(){}
     
-    public TaxonDataset(String datasetKey, String maxResolution, String publicResolution, boolean allowRecordValidation, int recordCount, List<Taxon> taxa, List<YearStats> recordsPerYear){
+    public TaxonDataset(String datasetKey, String maxResolution, String publicResolution, boolean allowRecordValidation, int recordCount, List<Taxon> taxa, List<YearStats> recordsPerYear, List<DateTypeStats> dateTypeStats){
         this.datasetKey = datasetKey;
         this.maxResolution = maxResolution;
         this.publicResolution = publicResolution;
@@ -21,6 +22,7 @@ public class TaxonDataset extends Dataset{
         this.recordCount = recordCount;
         this.taxa = taxa;
         this.recordsPerYear = recordsPerYear;
+        this.dateTypeStats = dateTypeStats;
     }
 
     public String getDatasetKey() {
@@ -77,5 +79,13 @@ public class TaxonDataset extends Dataset{
 
     public void setRecordsPerYear(List<YearStats> recordsPerYear) {
         this.recordsPerYear = recordsPerYear;
+    }
+
+    public List<DateTypeStats> getDateTypeStats() {
+        return dateTypeStats;
+    }
+
+    public void setDateTypeStats(List<DateTypeStats> dateTypeStats) {
+        this.dateTypeStats = dateTypeStats;
     }
 }
