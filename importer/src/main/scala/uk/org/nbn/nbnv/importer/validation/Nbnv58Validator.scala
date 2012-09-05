@@ -5,7 +5,7 @@ import uk.org.nbn.nbnv.importer.fidelity.{ResultLevel, Result}
 
 class Nbnv58Validator {
   def validate(record: NbnRecord) = {
-    if ((record.gridReference != null && record.gridReferenceType != null && record.gridReferencePrecision != null)
+    if (record.gridReference != null
       || (record.east != null && record.north != null && record.srs != null)
       || (record.featureKey != null)){
 
