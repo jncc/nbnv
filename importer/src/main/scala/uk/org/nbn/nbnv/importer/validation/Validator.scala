@@ -22,13 +22,14 @@ class Validator @Inject()(log: Logger, repo: Repository){
     // (1) archive-scoped validations
 
 
+    val aggregateValidators = List(new Nbnv61Validator)
 
     // (2) head-scoped validations
 
     // (3) record-scoped validations
     for (record <- archive.iteratorRaw) {
 
-      var nbnRecord = new NbnRecord(record)
+      val nbnRecord = new NbnRecord(record)
       // an example record-scoped validation
       val v0 = new Nbnv62Validator
       val r0 = v0.validate(nbnRecord)
@@ -70,6 +71,16 @@ class Validator @Inject()(log: Logger, repo: Repository){
       val oav = new ObservationAttributeValidator
       val oavResults = oav.validate(nbnRecord)
       for (result <- oavResults) logResult(result)
+
+      // call aggregation callbacks
+      for (v <- aggregateValidators) {
+        val result = v.processRecord(nbnRecord)
+        logResult(result)
+      }
+    }
+
+    for (v <- aggregateValidators) {
+      v.notifyComplete()
     }
   }
 
@@ -88,3 +99,6 @@ class Validator @Inject()(log: Logger, repo: Repository){
     }
   }
 }
+
+
+
