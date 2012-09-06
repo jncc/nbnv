@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import uk.org.nbn.nbnv.api.authentication.SecurityUtil;
+import uk.org.nbn.nbnv.api.rest.security.SecurityUtil;
 import uk.org.nbn.nbnv.api.dao.mappers.DatasetMapper;
 import uk.org.nbn.nbnv.api.dao.mappers.OrganisationMapper;
 import uk.org.nbn.nbnv.api.dao.mappers.UserMapper;
