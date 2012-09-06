@@ -2,10 +2,7 @@ package uk.org.nbn.nbnv.api.dao.mappers;
 
 import java.util.List;
 import org.apache.ibatis.annotations.Select;
-import uk.org.nbn.nbnv.api.model.Dataset;
-import uk.org.nbn.nbnv.api.model.DateTypeStats;
-import uk.org.nbn.nbnv.api.model.TaxonDataset;
-import uk.org.nbn.nbnv.api.model.YearStats;
+import uk.org.nbn.nbnv.api.model.*;
 
 public interface DatasetMapper {
     
