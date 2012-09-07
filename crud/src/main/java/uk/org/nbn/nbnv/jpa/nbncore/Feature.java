@@ -28,6 +28,10 @@ public class Feature implements Serializable {
     @Lob
     @Column(name = "geom")
     private byte[] geom;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "featureID")
+    private Collection<GridSquare> gridSquareCollection;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "feature")
+    private SiteBoundary siteBoundary;
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
@@ -119,6 +123,23 @@ public class Feature implements Serializable {
 
     public void setGeom(byte[] geom) {
         this.geom = geom;
+    }
+
+    @XmlTransient
+    public Collection<GridSquare> getGridSquareCollection() {
+        return gridSquareCollection;
+    }
+
+    public void setGridSquareCollection(Collection<GridSquare> gridSquareCollection) {
+        this.gridSquareCollection = gridSquareCollection;
+    }
+
+    public SiteBoundary getSiteBoundary() {
+        return siteBoundary;
+    }
+
+    public void setSiteBoundary(SiteBoundary siteBoundary) {
+        this.siteBoundary = siteBoundary;
     }
     
 }

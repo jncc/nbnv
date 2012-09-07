@@ -25,6 +25,11 @@
     <class>uk.org.nbn.nbnv.jpa.nbncore.TaxonGroup</class>
     <class>uk.org.nbn.nbnv.jpa.nbncore.StorageLevel</class>
     <class>uk.org.nbn.nbnv.jpa.nbncore.AttributeStorageType</class>
+    <class>uk.org.nbn.nbnv.jpa.nbncore.SiteBoundaryDataset</class>
+    <class>uk.org.nbn.nbnv.jpa.nbncore.Projection</class>
+    <class>uk.org.nbn.nbnv.jpa.nbncore.GridSquare</class>
+    <class>uk.org.nbn.nbnv.jpa.nbncore.SiteBoundary</class>
+    <class>uk.org.nbn.nbnv.jpa.nbncore.SiteBoundaryType</class>
     <properties>
       <property name="javax.persistence.jdbc.driver" value="com.microsoft.sqlserver.jdbc.SQLServerDriver"/>
     </properties>
