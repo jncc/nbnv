@@ -7,6 +7,10 @@ import uk.org.nbn.nbnv.importer.data.Implicits._
 import com.google.inject.Inject
 
 class Repository @Inject()(em: EntityManager) extends ControlAbstractions {
+  def getFeatureByGridRef(gridRef: String) = {
+    val query = em.createQuery("select f from Feature join GridSquare")
+  }
+
   def confirmTaxonVersionKey(taxonVersionKey: String): Boolean = {
     val query = em.createQuery("SELECT t FROM Taxon t WHERE t.taxonVersionKey = :tvk", classOf[Taxon])
     query.setParameter("tvk", taxonVersionKey)

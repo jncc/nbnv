@@ -15,6 +15,7 @@ class RecordIngester @Inject()(log: Logger,
                                siteIngester: SiteIngester,
                                recorderIngester: RecorderIngester,
                                attributeIngester: AttributeIngester,
+                               featureIngester: FeatureIngester,
                                repo: Repository) {
 
   def upsertRecord(record: NbnRecord, dataset: TaxonDataset) {
@@ -25,7 +26,7 @@ class RecordIngester @Inject()(log: Logger,
     val sample = sampleIngester.upsertSample(record.sampleKey, survey)
     val site = siteIngester.upsertSite(record.siteKey, record.siteName, dataset.getDataset)
     // todo: TaxonObservation needs a feature - need to get c# code from paul
-    val feature = repo.getFeature(1)
+    val feature = featureIngester.getFeature(record)
     val taxon = repo.getTaxon(record.taxonVersionKey)
     val dateType = repo.getDateType(record.dateType)
     val determiner = recorderIngester.ensureRecorder(record.determiner)

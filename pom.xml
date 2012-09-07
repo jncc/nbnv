@@ -114,6 +114,11 @@
             <id>gbif-all</id>
             <url>http://repository.gbif.org/content/groups/gbif</url>
         </repository>
+        <repository>
+            <id>mygrid</id>
+            <name>mygrid</name>
+            <url>http://build.mygrid.org.uk/maven/repository/</url>
+        </repository>
     </repositories>
 	
     <pluginRepositories>

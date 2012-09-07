@@ -6,7 +6,7 @@ import collection.mutable.ListBuffer
 
 class ObservationAttributeValidator {
   def validate(record: NbnRecord) = {
-    val resultList = new ListBuffer[Result]()
+    val resultList = new ListBuffer[Result]
 
     for (attribute <- record.attributes) {
       val v0 = new Nbnv93Validator
