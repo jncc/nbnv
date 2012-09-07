@@ -20,15 +20,13 @@ import uk.org.nbn.nbnv.importer.ui.parser.DarwinCoreField;
  *
  * @author Paul Gilbertson
  */
-public class AttributeConcatenation implements ConverterStep {
+public class AttributeConcatenation {
     private Map<Integer, String> columnList = new HashMap<Integer, String>();
 
-    @Override
     public String getName() {
         return "Concatenate attributes";
     }
 
-    @Override
     public boolean isStepNeeded(List<ColumnMapping> columns) {
         for (ColumnMapping cm : columns) {
             if (cm.getField() == DarwinCoreField.ATTRIBUTE) {
@@ -39,7 +37,6 @@ public class AttributeConcatenation implements ConverterStep {
         return columnList.size() > 0;
     }
 
-    @Override
     public void modifyHeader(List<ColumnMapping> columns) {
         int highestColumn = -1;
         
@@ -51,7 +48,6 @@ public class AttributeConcatenation implements ConverterStep {
         columns.add(col);
     }
 
-    @Override
     public void modifyRow(List<String> row) throws BadDataException {
         JSONObject obj = new JSONObject();
         

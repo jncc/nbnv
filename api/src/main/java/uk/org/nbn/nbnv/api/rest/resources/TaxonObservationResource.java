@@ -15,7 +15,7 @@ import javax.ws.rs.core.MediaType;
  * @author Administrator
  */
 @Path("/observations/{id}")
-public class ObservationResource {
+public class TaxonObservationResource {
     @GET
     @Produces(MediaType.TEXT_PLAIN)
     public String getObservation(@PathParam("id") int id) {
