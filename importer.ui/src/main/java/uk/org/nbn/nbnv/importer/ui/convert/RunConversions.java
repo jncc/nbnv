@@ -17,6 +17,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.reflections.Reflections;
 import org.springframework.util.StringUtils;
+import uk.org.nbn.nbnv.importer.ui.convert.converters.AttributeConcatenation;
 import uk.org.nbn.nbnv.importer.ui.meta.MetaWriter;
 import uk.org.nbn.nbnv.importer.ui.parser.ColumnMapping;
 import uk.org.nbn.nbnv.importer.ui.parser.DarwinCoreField;
@@ -72,6 +73,8 @@ public class RunConversions {
     public List<String> run(File out, File meta, Map<String, String> args) throws IOException {
         List<String> errors = new ArrayList<String>();
         BufferedWriter w = null;
+        AttributeConcatenation ac = new AttributeConcatenation();
+        boolean acNeeded = false;
 
         try {
             w = new BufferedWriter(new FileWriter(out));
@@ -79,6 +82,12 @@ public class RunConversions {
             getMappings(args);
             getSteps(mappings);
             modifyColumns(getSteps(), mappings);
+            
+            if (ac.isStepNeeded(mappings)) {
+                acNeeded = true;
+                ac.modifyHeader(mappings);
+            }
+            
             List<String> columnNames = new ArrayList<String>();
 
             for (ColumnMapping cm : mappings) {
@@ -92,6 +101,10 @@ public class RunConversions {
             while ((row = nxfParser.readDataLine()) != null) {
                 try {
                     modifyRow(getSteps(), row);
+                    
+                    if (acNeeded) {
+                        ac.modifyRow(row);
+                    }
                 } catch (BadDataException ex) {
                     errors.add("Bad Data: " + ex.getMessage());
                 }
