@@ -148,3 +148,29 @@ CREATE TABLE OrganisationMembershipData(
         userKey int NOT NULL,
         organisationID int NOT NULL,
         role varchar(50) NOT NULL);
+
+CREATE TABLE DatasetData(
+	datasetKey char(8) NOT NULL,
+	name varchar(200) NOT NULL,
+	description longvarchar NULL,
+	typeName varchar(200) NOT NULL,
+	organisationName varchar(200) NULL,
+	organisationID int NOT NULL,
+	captureMethod longvarchar NULL,
+	purpose longvarchar NULL,
+	geographicalCoverage longvarchar NULL,
+	quality longvarchar NULL,
+	additionalInformation longvarchar NULL,
+	accessConstraints longvarchar NULL,
+	useConstraints longvarchar NULL,
+	dateUploaded timestamp NOT NULL,
+	conditionsAccepted bit NOT NULL,
+	metadataLastEdited timestamp NOT NULL,
+	temporalCoverage longvarchar NULL,
+	updateFrequency varchar(12) NOT NULL,
+        PRIMARY KEY (datasetKey));
+
+CREATE TABLE DatasetAdministrator(
+        userKey int NOT NULL,
+        datasetKey char(8) NOT NULL,
+        PRIMARY KEY (userKey, datasetKey));

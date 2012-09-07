@@ -19,13 +19,6 @@ import uk.org.nbn.nbnv.api.model.User;
  * @author Paul Gilbertson
  */
 public interface OrganisationMembershipMapper {
-    @Select("SELECT userKey, organisationID, role FROM OrganisationMembershipData WHERE userKey = #{userKey}")
-    @Results(value = {
-        @Result(property="user", column="userKey", javaType=User.class, one=@One(select="uk.org.nbn.nbnv.api.dao.mappers.UserMapper.getUser")),
-        @Result(property="organisation", column="organisationID", javaType=Organisation.class, one=@One(select="uk.org.nbn.nbnv.api.dao.mappers.OrganisationMapper.selectByID"))           
-    })
-    List<OrganisationMembership> getOrganisationMembershipsByUser(@Param("userKey") int userKey);
-
     @Select("SELECT userKey, organisationID, role FROM OrganisationMembershipData")
     @Results(value = {
         @Result(property="user", column="userKey", javaType=User.class, one=@One(select="uk.org.nbn.nbnv.api.dao.mappers.UserMapper.getUser")),
@@ -33,10 +26,24 @@ public interface OrganisationMembershipMapper {
     })
     List<OrganisationMembership> selectAll();
 
+    @Select("SELECT userKey, organisationID, role FROM OrganisationMembershipData WHERE userKey = #{userKey}")
+    @Results(value = {
+        @Result(property="user", column="userKey", javaType=User.class, one=@One(select="uk.org.nbn.nbnv.api.dao.mappers.UserMapper.getUser")),
+        @Result(property="organisation", column="organisationID", javaType=Organisation.class, one=@One(select="uk.org.nbn.nbnv.api.dao.mappers.OrganisationMapper.selectByID"))           
+    })
+    List<OrganisationMembership> selectByUser(@Param("userKey") int userKey);
+
+    @Select("SELECT userKey, organisationID, role FROM OrganisationMembershipData WHERE organisationID = #{organisationID}")
+    @Results(value = {
+        @Result(property="user", column="userKey", javaType=User.class, one=@One(select="uk.org.nbn.nbnv.api.dao.mappers.UserMapper.getUser")),
+        @Result(property="organisation", column="organisationID", javaType=Organisation.class, one=@One(select="uk.org.nbn.nbnv.api.dao.mappers.OrganisationMapper.selectByID"))
+    })
+    List<OrganisationMembership> selectByOrganisation(@Param("organisationID") int organisationID);
+
     @Select("SELECT userKey, organisationID, role FROM OrganisationMembershipData WHERE userKey = #{userKey} AND organisationID = #{organisationID}")
     @Results(value = {
         @Result(property="user", column="userKey", javaType=User.class, one=@One(select="uk.org.nbn.nbnv.api.dao.mappers.UserMapper.getUser")),
-        @Result(property="organisation", column="organisationID", javaType=Organisation.class, one=@One(select="uk.org.nbn.nbnv.api.dao.mappers.OrganisationMapper.selectByID")),
+        @Result(property="organisation", column="organisationID", javaType=Organisation.class, one=@One(select="uk.org.nbn.nbnv.api.dao.mappers.OrganisationMapper.selectByID"))
     })
-    OrganisationMembership getOrganisationMembershipsByUserAndOrganisation(@Param("userKey") int userKey, @Param("organisationID") int organisationID);
+    OrganisationMembership selectByUserAndOrganisation(@Param("userKey") int userKey, @Param("organisationID") int organisationID);
 }
