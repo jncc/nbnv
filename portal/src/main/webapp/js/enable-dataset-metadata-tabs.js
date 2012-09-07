@@ -24,7 +24,8 @@
             }
         });
         $('#nbn-tabs').tabs({
-            spinner: 'Loading <img src="/img/ajax-loader.gif"/>'
+            spinner: 'Loading <img src="/img/ajax-loader.gif"/>',
+            cache: true
         });
     });
     
