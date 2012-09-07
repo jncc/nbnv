@@ -175,5 +175,20 @@ body {
             margin-top: 10px;
         }
     }
+    
+    .nbn-survey-table{
+        font-family: Arial,Helvetica,Sans-serif;
+        font-size: 0.9em;
+        width: 95%;
+        margin-bottom: 10px;
+        margin-left: 30px;
+        th {
+            font-weight: bold;
+            width: 20%;
+            padding-left: 5px;
+        }
+        td{
+        }
+    }
 
 }

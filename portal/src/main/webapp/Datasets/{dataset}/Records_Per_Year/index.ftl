@@ -48,12 +48,12 @@
                                     <table class="nbn-temporal-table">
                                         <tr>
                                             <th class="ui-state-highlight">Year</th>
-                                            <th>Records</th>
+                                            <th class="ui-state-highlight">Records</th>
                                         </tr>
                             </#if>
                                         <tr>
                                             <td class="ui-state-highlight">${recordsPerYear.year}</td>
-                                            <td>${recordsPerYear.recordCount}</td>
+                                            <td class="ui-state-highlight">${recordsPerYear.recordCount}</td>
                                         </tr>
                             <#if (recordsPerYear_index + 1) % numRows == 0>
                                     </table>
