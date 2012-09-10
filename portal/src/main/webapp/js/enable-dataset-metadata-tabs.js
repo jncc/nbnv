@@ -22,6 +22,10 @@
             if($(ui.panel).find('#' + elementForRender).length > 0){
                 renderSurveys();
             }
+            elementForRender = 'nbn-attributes'
+            if($(ui.panel).find('#' + elementForRender).length > 0){
+                renderAttributes();
+            }
         });
         $('#nbn-tabs').tabs({
             spinner: 'Loading <img src="/img/ajax-loader.gif"/>',
@@ -131,7 +135,7 @@
         });
                 
         //The extra information under the chart needs styling
-        $(".nbn-simple-table tr:even").addClass("ui-state-highlight");
+        applyTableEvenRowStyle();
                 
         //Toggle the table of record counts per year
         doCollapsibleList();
@@ -140,8 +144,11 @@
     
     function renderSurveys(){
         doCollapsibleList();
-        $(".nbn-simple-table tr:even").addClass("ui-state-highlight");
-
+        applyTableEvenRowStyle();
+    }
+    
+    function renderAttributes(){
+        applyTableEvenRowStyle();
     }
     
     function doCollapsibleList(ui){
@@ -158,7 +165,10 @@
                 })
                 );
         });
-
+    }
+    
+    function applyTableEvenRowStyle(){
+        $(".nbn-simple-table tr:even").addClass("ui-state-highlight");
     }
     
 })(jQuery);

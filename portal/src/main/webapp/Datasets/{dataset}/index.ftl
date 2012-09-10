@@ -17,7 +17,7 @@
                 <#if dataset.typeName = "Taxon">
                     <li><a href="/Datasets/${datasetId}/Records_Per_Year"><span>Temporal</span></a></li>
                     <li><a href="/Datasets/${datasetId}/Surveys"><span>Surveys</span></a></li>
-                    <li><a href="#tabs-12">Attributes</a></li>
+                    <li><a href="/Datasets/${datasetId}/Attributes"><span>Attributes</span></a></li>
                     <li><a href="/Datasets/${datasetId}/Taxa"><span>Species</span></a></li>
                 <#elseif dataset.typeName = "Habitat">
                     <li><a href="#tabs-20">Attributes</a></li>
@@ -98,9 +98,6 @@
             </div>
 
             <#if dataset.typeName = "Taxon">
-                <div id="tabs-12">
-                    TODO - Species attributes
-                </div>
             <#elseif dataset.typeName = "Habitat">
                 <div id="tabs-20">
                     TODO - Habitat attributes
