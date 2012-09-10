@@ -6,6 +6,7 @@
         <tr>
             <th>Species name</th>
             <th>Taxon version key</th>
+            <th>Taxon group name</th>
         </tr>
     </thead>
     <tbody>
@@ -13,6 +14,7 @@
             <tr>
                 <td><a href="#"><@taxon_utils.short_name taxon=taxon/></a></td>
                 <td>${taxon.taxonVersionKey}</td>
+                <td>${taxon.outputGroupName}</td>
             </tr>
         </#list>
     </tbody>

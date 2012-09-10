@@ -26,6 +26,10 @@
             if($(ui.panel).find('#' + elementForRender).length > 0){
                 renderAttributes();
             }
+            elementForRender = 'nbn-site-boundaries'
+            if($(ui.panel).find('#' + elementForRender).length > 0){
+                renderSiteBoundaries(elementForRender);
+            }
         });
         $('#nbn-tabs').tabs({
             spinner: 'Loading <img src="/img/ajax-loader.gif"/>',
@@ -37,13 +41,11 @@
         $('#' + elementForRender).dataTable({
             "bJQueryUI": true,
             "aoColumnDefs": [
-            {
-                "bVisible": false, 
-                "aTargets": [1]
-            }
+                {"bVisible": false, "aTargets": [1]},
+                {"sWidth": "50%", "aTargets": [0]}
             ]
         });
-
+        $('#' + elementForRender).width("100%");
     }
     
     //Render the temporal chart
@@ -149,6 +151,24 @@
     
     function renderAttributes(){
         applyTableEvenRowStyle();
+    }
+    
+    function renderSiteBoundaries(elementForRender){
+        $('#' + elementForRender).dataTable({
+            "bJQueryUI": true,
+            "iDisplayLength": 50,
+            "aoColumnDefs": [
+                {
+                    "aTargets": [1],
+                    "bVisible": false 
+                },
+                {
+                    "aTargets": [0],
+                    "sWidth": "100%"
+                }
+            ]
+        });
+        $('#' + elementForRender).width("100%");
     }
     
     function doCollapsibleList(ui){

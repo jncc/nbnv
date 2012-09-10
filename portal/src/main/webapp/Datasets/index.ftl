@@ -1,11 +1,11 @@
 <@template.master title="NBN Gateway - Datasets" 
-    javascripts=["/js/jquery.dataTables.min.js","/js/enable-generic-datatable.js","/js/jqueryui.simple-table-style.js"] 
+    javascripts=["/js/jquery.dataTables.min.js","/js/enable-datasets-datatable.js","/js/jqueryui.simple-table-style.js"] 
     csss=["http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/themes/smoothness/jquery-ui.css"] >
 
     <#assign datasets=json.readURL("${api}/datasets")>
     <div>
         <h1> Datasets</h1>
-        <table id="nbn-generic-datatable">
+        <table id="nbn-datasets-datatable" class="nbn-dataset-table">
             <thead>
                 <tr>
                     <th>Dataset</th>
