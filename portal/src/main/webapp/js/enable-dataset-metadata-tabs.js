@@ -40,9 +40,10 @@
     function renderSpecies(elementForRender){
         $('#' + elementForRender).dataTable({
             "bJQueryUI": true,
+            "iDisplayLength": 25,
             "aoColumnDefs": [
                 {"bVisible": false, "aTargets": [1]},
-                {"sWidth": "50%", "aTargets": [0]}
+                {"sWidth": "75%", "aTargets": [0]}
             ]
         });
         $('#' + elementForRender).width("100%");
@@ -156,7 +157,7 @@
     function renderSiteBoundaries(elementForRender){
         $('#' + elementForRender).dataTable({
             "bJQueryUI": true,
-            "iDisplayLength": 50,
+            "iDisplayLength": 25,
             "aoColumnDefs": [
                 {
                     "aTargets": [1],

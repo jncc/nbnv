@@ -6,7 +6,7 @@
         <tr>
             <th>Species name</th>
             <th>Taxon version key</th>
-            <th>Taxon group name</th>
+            <th>Species group name</th>
         </tr>
     </thead>
     <tbody>
