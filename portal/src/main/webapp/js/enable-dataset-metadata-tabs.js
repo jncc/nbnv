@@ -41,6 +41,7 @@
         $('#' + elementForRender).dataTable({
             "bJQueryUI": true,
             "iDisplayLength": 25,
+            "sPaginationType": "full_numbers",
             "aoColumnDefs": [
                 {"bVisible": false, "aTargets": [1]},
                 {"sWidth": "75%", "aTargets": [0]}
