@@ -12,6 +12,7 @@ public class Dataset {
     private Date dateUploaded, metadataLastEdited;
     private int organisationID;
     private boolean conditionsAccepted;
+    private Organisation organisation;
     
     public Dataset(){}
     
@@ -19,7 +20,7 @@ public class Dataset {
                         String captureMethod, String purpose, String geographicalCoverage, String quality,
                         String additionalInformation, String accessConstraints, String useConstraints,
                         Date dateUploaded, int organisationID, boolean conditionsAccepted, Date metadataLastEdited,
-                        String temporalCoverage, String updateFrequency){
+                        String temporalCoverage, String updateFrequency, Organisation organisation){
         this.datasetKey = datasetKey;
         this.name = name;
         this.description = description;
@@ -38,6 +39,7 @@ public class Dataset {
         this.metadataLastEdited = metadataLastEdited;
         this.temporalCoverage = temporalCoverage;
         this.updateFrequency = updateFrequency;
+        this.organisation = organisation;
     }
 
     public String getDatasetKey() {
@@ -194,5 +196,13 @@ public class Dataset {
 
     public void setConditionsAccepted(boolean conditionsAccepted) {
         this.conditionsAccepted = conditionsAccepted;
+    }
+    
+    public Organisation getOrganisation(){
+        return this.organisation;
+    }
+    
+    public void setOrganisation(Organisation organisation){
+        this.organisation = organisation;
     }
 }

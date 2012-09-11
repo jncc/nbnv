@@ -30,7 +30,7 @@
                 <table class="nbn-dataset-table nbn-simple-table">
                     <tr>
                         <th>Provider</th>
-                        <td><img id="nbn-provider-logo" src="/img/dummyLogo/th_blslogo.gif"/><a href="/Organisations/${dataset.organisationID}">${dataset.organisationName}</a></td>
+                        <td><img id="nbn-provider-logo" src="${dataset.organisation.logoSmall}"/><a href="/Organisations/${dataset.organisationID}">${dataset.organisationName}</a></td>
                     </tr>
                     <tr>
                         <th>Title</th>
