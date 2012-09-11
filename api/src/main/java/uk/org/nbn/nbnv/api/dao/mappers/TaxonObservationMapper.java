@@ -28,5 +28,9 @@ public interface TaxonObservationMapper {
     public List<TaxonObservation> selectByFilter(@Param("userKey") int userKey
             , @Param("startYear") Integer startYear
             , @Param("endYear") Integer endYear
-            , @Param("datasetKey") List<String> datasetKey);
+            , @Param("datasetKey") List<String> datasetKey
+            , @Param("ptvk") List<String> ptvk
+            , @Param("overlaps") Integer overlaps
+            , @Param("within") Integer within
+            , @Param("sensitive") Boolean sensitive);
 }
