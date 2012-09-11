@@ -54,8 +54,10 @@ public class Organisation implements Serializable {
     private String contactName;
     @Column(name = "address")
     private String address;
-    @Column(name = "logoURL")
-    private String logoURL;
+    @Column(name = "logo")
+    private String logo;
+    @Column(name = "logoSmall")
+    private String logoSmall;
     @Column(name = "summary")
     private String summary;
     @Column(name = "phone")
@@ -147,12 +149,20 @@ public class Organisation implements Serializable {
         this.address = address;
     }
 
-    public String getLogoURL() {
-        return logoURL;
+    public String getLogo() {
+        return logo;
     }
 
-    public void setLogoURL(String logoURL) {
-        this.logoURL = logoURL;
+    public void setLogo(String logo) {
+        this.logo = logo;
+    }
+
+    public String getLogoSmall() {
+        return logoSmall;
+    }
+
+    public void setLogoSmall(String logoSmall) {
+        this.logoSmall = logoSmall;
     }
 
     public String getSummary() {
