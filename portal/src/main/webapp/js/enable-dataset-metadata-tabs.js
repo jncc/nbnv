@@ -9,106 +9,187 @@
     $(function(){
         $.fn.dataTableExt.oJUIClasses.sStripeOdd = 'ui-state-highlight';
         
-//        $.ajaxSetup({
-//            beforeSend: function(){
-//                $('#progress').show();
-//            },
-//            complete: function(){
-//                $('#progress').hide();
-//            }
-//        });
-        
         $('#nbn-tabs').bind('tabsload', function(event, ui){
-            
-            //Render the datatable
             var elementForRender = 'nbn-species-datatable'
             if($(ui.panel).find('#' + elementForRender).length > 0){
-                $(ui.panel).find('#' + elementForRender).dataTable({
-                    "bJQueryUI": true,
-                    "aoColumnDefs": [
-                    {
-                        "bVisible": false, 
-                        "aTargets": [1]
-                    }
-                    ]
-                });
+                renderSpecies(elementForRender);
             }
-            
-            //Render the temporal chart
-            //nice example from:
-            //http://stackoverflow.com/questions/3535680/problem-with-json-and-jqplot
-            elementForRender = 'nbn-record-chart'
-            if($(ui.panel).find('#' + 'nbn-record-chart').length > 0){
-                var datasetKey = $('#' + 'nbn-record-chart').attr('datasetKey');
-                var chartData = [ ];
-                $.getJSON('/api/taxonDatasets/' + datasetKey + '/recordsPerYear', function(data){
-                    var startYear = 1900;
-                    var endYear = new Date().getFullYear();
-                    var numYears = endYear - startYear + 1;
-                    for(i=startYear;i<endYear+1;i++){
-                        chartData.push([i,0]);
-                    }
-                    $.each(data, function(index, value){
-                        var year = data[index].year;
-                        var recordCount = data[index].recordCount;
-                        lineIndex = year + 1 - startYear;
-                        if(lineIndex > -1 && lineIndex < numYears){
-                            if(year >= startYear && year <= endYear){
-                                //Get rid of the spike in the test data
-                                if(recordCount < 100000){
-                                    chartData[lineIndex] = [year, recordCount];
-                                }else{
-//                                    alert('getting rid of spike in test data');
-                                }
-                            }
-                        }
-                    });
-                    $.jqplot.LabelFormatter = function(format, val) {
-                        return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-                    };
-                    $.jqplot(elementForRender, [chartData], {
-                        title:'Number of records per year',
-                        seriesDefaults:{
-                            lineWidth:4, 
-                            markerOptions:{
-                                show:false
-                            }
-                        },
-                        highlighter: {
-                            show: true
-                        },
-                        axesDefaults: {
-                            tickOptions: {
-                                fontSize: '10pt'
-                            }
-                        },
-                        axes: {
-                            xaxis: {
-                                label: 'Year', 
-                                labelRenderer: $.jqplot.CanvasAxisLabelRenderer, 
-                                min: startYear, 
-                                max: endYear, 
-                                ticks: [1900,1910,1920,1930,1940,1950,1960,1970,1980,1990,2000,2010,2020], 
-                                tickOptions: {
-                                    formatString: '%s'
-                                }
-                            },
-                            yaxis: {
-                                label: 'Number of records', 
-                                labelRenderer: $.jqplot.CanvasAxisLabelRenderer, 
-                                min: 0, 
-                                tickOptions: {
-                                    formatString: '%s', 
-                                    formatter: $.jqplot.LabelFormatter
-                                }
-                            }
-                        }
-                    });
-                });
+            elementForRender = 'nbn-temporal-chart'
+            if($(ui.panel).find('#' + elementForRender).length > 0){
+                renderTemporal(elementForRender);
+            }
+            elementForRender = 'nbn-surveys'
+            if($(ui.panel).find('#' + elementForRender).length > 0){
+                renderSurveys();
+            }
+            elementForRender = 'nbn-attributes'
+            if($(ui.panel).find('#' + elementForRender).length > 0){
+                renderAttributes();
+            }
+            elementForRender = 'nbn-site-boundaries'
+            if($(ui.panel).find('#' + elementForRender).length > 0){
+                renderSiteBoundaries(elementForRender);
             }
         });
         $('#nbn-tabs').tabs({
-            spinner: 'Loading <img src="/img/ajax-loader.gif"/>'
+            spinner: 'Loading <img src="/img/ajax-loader.gif"/>',
+            cache: true
         });
     });
+    
+    function renderSpecies(elementForRender){
+        $('#' + elementForRender).dataTable({
+            "bJQueryUI": true,
+            "iDisplayLength": 25,
+            "aoColumnDefs": [
+                {"bVisible": false, "aTargets": [1]},
+                {"sWidth": "75%", "aTargets": [0]}
+            ]
+        });
+        $('#' + elementForRender).width("100%");
+    }
+    
+    //Render the temporal chart
+    //nice example from:
+    //http://stackoverflow.com/questions/3535680/problem-with-json-and-jqplot
+    function renderTemporal(elementForRender){
+        var localElementForRender = elementForRender;
+        var datasetKey = $('#' + localElementForRender).attr('datasetKey');
+        var chartData = [ ];
+        var startYear = 1800;
+        var endYear = new Date().getFullYear();
+        var numYears = endYear - startYear + 1;
+        var earliestYearInData = endYear;
+        var latestYearInData = -1;
+        for(i=startYear;i<endYear+1;i++){
+            chartData.push([i,0]);
+        }
+        $.getJSON('/api/taxonDatasets/' + datasetKey + '/recordsPerYear', function(recordData){
+            $.each(recordData, function(index, value){
+                var year = value.year;
+                var recordCount = value.recordCount;
+                var chartDataIndex = year - startYear;
+
+                //Log the earliest and latest years for later use
+                if(year < earliestYearInData){
+                    earliestYearInData = year;
+                }
+                if(year > latestYearInData){
+                    latestYearInData = year;
+                }
+                        
+                //Put the data from the json call into the chartData array
+                if(chartDataIndex > -1 && chartDataIndex < numYears){
+                    if(year >= startYear && year <= endYear){
+                        chartData[chartDataIndex] = [year, recordCount];
+                    }
+                }
+            });
+            $.jqplot.LabelFormatter = function(format, val) {
+                //Regex to put commas into integers (eg 25,264,390)
+                return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            };
+            $.jqplot(localElementForRender, [chartData], {
+                title:'Number of records per year',
+                seriesDefaults:{
+                    lineWidth:4, 
+                    markerOptions:{
+                        show:false
+                    }
+                },
+                highlighter: {
+                    show: true
+                },
+                axesDefaults: {
+                    tickOptions: {
+                        fontSize: '10pt'
+                    }
+                },
+                axes: {
+                    xaxis: {
+                        label: 'Year', 
+                        labelRenderer: $.jqplot.CanvasAxisLabelRenderer, 
+                        min: startYear, 
+                        max: Math.ceil(endYear/10) * 10, 
+                        tickInterval: '10',
+                        tickOptions: {
+                            formatString: '%s'
+                        }
+                    },
+                    yaxis: {
+                        label: 'Number of records', 
+                        labelRenderer: $.jqplot.CanvasAxisLabelRenderer, 
+                        min: 0, 
+                        tickOptions: {
+                            formatString: '%s', 
+                            formatter: $.jqplot.LabelFormatter
+                        }
+                    }
+                },
+                cursor:{
+                    show: true,
+                    zoom: true,
+                    showTooltip: false
+                }
+            });
+            //Add the start and end years to the page
+            $('#nbn-dataset-startyear').html(earliestYearInData);
+            $('#nbn-dataset-endyear').html(latestYearInData);
+        });
+                
+        //The extra information under the chart needs styling
+        applyTableEvenRowStyle();
+                
+        //Toggle the table of record counts per year
+        doCollapsibleList();
+
+    }
+    
+    function renderSurveys(){
+        doCollapsibleList();
+        applyTableEvenRowStyle();
+    }
+    
+    function renderAttributes(){
+        applyTableEvenRowStyle();
+    }
+    
+    function renderSiteBoundaries(elementForRender){
+        $('#' + elementForRender).dataTable({
+            "bJQueryUI": true,
+            "iDisplayLength": 25,
+            "aoColumnDefs": [
+                {
+                    "aTargets": [1],
+                    "bVisible": false 
+                },
+                {
+                    "aTargets": [0],
+                    "sWidth": "100%"
+                }
+            ]
+        });
+        $('#' + elementForRender).width("100%");
+    }
+    
+    function doCollapsibleList(ui){
+        $('.collapsible-list ul').hide(); //first off. Hide all the sub lists
+
+        $('.collapsible-list ul').each(function(){
+            var list = $(this);
+            list.parent().prepend(     //put the container before the sublist
+                $("<span>")
+                .addClass("collapsible-list-icon icons-expand")
+                .click(function(){  //register a click listener which toggles the icon and list visibility
+                    $('.collapsible-list-icon', this).toggleClass("icons-expand icons-collapse");
+                    $('~ ul', this).stop().slideToggle('slow');
+                })
+                );
+        });
+    }
+    
+    function applyTableEvenRowStyle(){
+        $(".nbn-simple-table tr:even").addClass("ui-state-highlight");
+    }
+    
 })(jQuery);

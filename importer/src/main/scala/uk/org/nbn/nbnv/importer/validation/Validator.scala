@@ -18,19 +18,27 @@ class Validator @Inject()(log: Logger, repo: Repository){
 
   def validate(archive: Archive) {
     log.info("Hello from the validator.")
+//    (1) head scoped / required - can't validate darwin mappings for validation.
+//      ask gbif to alter reader to isMapped or list of defined mappings. at the mo we're checking for null in first record. perhaps null means not mapped
 
-    // (1) archive-scoped validations
+    var validator = new ArchiveHeadValidator
+    var results = validator.validate(archive)
+    for (result <- results) logResult(result)
 
+
+//    (2) archive scoped / aggregate value validation (e.g. no duplicate record keys)
+//
+//    (3) record-scoped
+//    parsing/conversions - don't want to duplicate the parsing logic
+//    size (length)
+//    lookups (range) (e.g. checking real taxon key)
 
     val aggregateValidators = List(new Nbnv61Validator)
 
-    // (2) head-scoped validations
-
-    // (3) record-scoped validations
     for (record <- archive.iteratorRaw) {
 
-      val nbnRecord = new NbnRecord(record)
-      // an example record-scoped validation
+      var nbnRecord = new NbnRecord(record)
+
       val v0 = new Nbnv62Validator
       val r0 = v0.validate(nbnRecord)
       logResult(r0)

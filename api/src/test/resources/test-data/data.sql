@@ -7,6 +7,7 @@ INSERT INTO DesignationCategoryData ( designationCategoryID , label , descriptio
 INSERT INTO DesignationCategoryData ( designationCategoryID , label , description , sortOrder ) VALUES (24, N'Organisation Defined Lists', N'Miscelleneous defined lists', 6);
 INSERT INTO DesignationCategoryData ( designationCategoryID , label , description , sortOrder ) VALUES (100, N'Embedded Record', N'Embedded Record test', 7);
 
+-- ----------------
 --Create a single user "tester" with an id of 43
 INSERT INTO UserData (
     id, forename, surname, username, email, registrationDate, phone
@@ -19,6 +20,7 @@ INSERT INTO UserTokenAuthenticationData (
     id, username_sha1, password_sha1, password_md5_sha1 
 ) VALUES (43, x'AB4D8D2A5F480A137067DA17100271CD176607A1', x'5BAA61E4C9B93F3F0682250B6CF8331B7EE68FD8', x'3E3295D135520D1F6D1FDCB183AE356C48ECB8FD');
 
+-- ---------------
 --Create a single admin "admintester" with an id of 42
 INSERT INTO UserData (
     id, forename, surname, username, email, registrationDate, phone
@@ -32,6 +34,7 @@ INSERT INTO SysAdminUserData (
     42, 'admintester', NULL
 );
 
+-- ---------------
 --Create a test organisation "testorg" with id 1
 INSERT INTO OrganisationData (
     organisationID, name
@@ -39,7 +42,7 @@ INSERT INTO OrganisationData (
     1, 'testorg'
 );
 
---Create a single organisation admin "orgadmin" with an id of 41
+--Create a single organisation admin "orgadmintester" with an id of 41
 INSERT INTO UserData (
     id, forename, surname, username, email, registrationDate, phone
 ) VALUES (
@@ -53,16 +56,45 @@ INSERT INTO OrganisationMembershipData (
     41, 1, 'administrator'
 );
 
---Create a single organisation admin "orgadmin" with an id of 41
+--Create a single organisation member "orgmembertester" with an id of 40
 INSERT INTO UserData (
     id, forename, surname, username, email, registrationDate, phone
 ) VALUES (
     40, 'Test', 'OrgMember', 'orgmembertester', 'testorgmember@user.com', NULL, NULL
 );
 
---Associate orgadmintester as admin of testorg
+--Associate orgmembertester as member of testorg
 INSERT INTO OrganisationMembershipData (
     userKey, organisationID, role
 ) VALUES (
     40, 1, 'member'
+);
+
+-- ------------------
+--Create a test organisation "testdataorg" with id 2
+INSERT INTO OrganisationData (
+    organisationID, name
+) VALUES (
+    2, 'testdataorg'
+);
+
+--Create a test dataset as 'DATASET1'
+INSERT INTO DatasetData (
+	datasetKey, name, typeName, organisationID, dateUploaded, conditionsAccepted, metadataLastEdited, updateFrequency
+) VALUES (
+    'DATASET1', 'Test Dataset', 'Taxon', 2, '2012-05-09 11:11:30', 1, '2012-05-09 11:11:30', 'unknown'
+);
+
+--Create a single dataset admin "datasetadmintester" with an id of 39
+INSERT INTO UserData (
+    id, forename, surname, username, email, registrationDate, phone
+) VALUES (
+    39, 'Test', 'DatasetAdmin', 'datasetadmintester', 'testdatasetadmin@user.com', NULL, NULL
+);
+
+--Make "datasetadmintester" the test datasets admin
+INSERT INTO DatasetAdministrator (
+    userKey, datasetKey
+) VALUES (
+    39, 'DATASET1'
 );

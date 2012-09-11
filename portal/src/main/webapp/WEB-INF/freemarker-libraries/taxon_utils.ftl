@@ -1,7 +1,7 @@
 <#macro long_name taxon>
     <span class="nbn-taxon-name">${taxon.name}</span>
-    <#if taxon.taxonAuthority?has_content>
-        ${taxon.taxonAuthority}
+    <#if taxon.authority?has_content>
+        ${taxon.authority}
     </#if>
     <#if taxon.commonName?has_content>
         ${taxon.commonName}

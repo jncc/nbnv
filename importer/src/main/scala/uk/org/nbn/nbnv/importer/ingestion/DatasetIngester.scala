@@ -87,7 +87,7 @@ class DatasetIngester @Inject()(log: Logger,
 
     d.setDatasetProvider(provider) // not metadata
     d.setDatasetTypeKey(datasetType) // never changes, always 'T'
-    d.setDateUploaded(Clock.nowUtc) // date of this import
+    d.setDateUploaded(Clock.nowUtc) // eventDate of this import
     d.setUpdateFrequency(datasetUpdateFrequency) // never changes, always '012'
 
     if (metadataChanged)

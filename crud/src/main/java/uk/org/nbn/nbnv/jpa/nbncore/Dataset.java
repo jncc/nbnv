@@ -37,6 +37,8 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Dataset.findByUseConstraints", query = "SELECT d FROM Dataset d WHERE d.useConstraints = :useConstraints"),
     @NamedQuery(name = "Dataset.findByDescription", query = "SELECT d FROM Dataset d WHERE d.description = :description")})
 public class Dataset implements Serializable {
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "dataset")
+    private SiteBoundaryDataset siteBoundaryDataset;
     @Basic(optional = false)
     @NotNull
     @Column(name = "dateUploaded")
@@ -292,6 +294,14 @@ public class Dataset implements Serializable {
 
     public void setMetadataLastEdited(Date metadataLastEdited) {
         this.metadataLastEdited = metadataLastEdited;
+    }
+
+    public SiteBoundaryDataset getSiteBoundaryDataset() {
+        return siteBoundaryDataset;
+    }
+
+    public void setSiteBoundaryDataset(SiteBoundaryDataset siteBoundaryDataset) {
+        this.siteBoundaryDataset = siteBoundaryDataset;
     }
     
 }

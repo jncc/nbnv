@@ -24,6 +24,8 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Resolution.findByAccuracy", query = "SELECT r FROM Resolution r WHERE r.accuracy = :accuracy"),
     @NamedQuery(name = "Resolution.findByArea", query = "SELECT r FROM Resolution r WHERE r.area = :area")})
 public class Resolution implements Serializable {
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "resolutionID")
+    private Collection<GridSquare> gridSquareCollection;
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
@@ -126,6 +128,15 @@ public class Resolution implements Serializable {
     @Override
     public String toString() {
         return "uk.org.nbn.nbnv.jpa.nbncore.Resolution[ resolutionID=" + resolutionID + " ]";
+    }
+
+    @XmlTransient
+    public Collection<GridSquare> getGridSquareCollection() {
+        return gridSquareCollection;
+    }
+
+    public void setGridSquareCollection(Collection<GridSquare> gridSquareCollection) {
+        this.gridSquareCollection = gridSquareCollection;
     }
     
 }
