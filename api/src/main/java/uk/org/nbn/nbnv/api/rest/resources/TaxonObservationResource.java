@@ -29,8 +29,10 @@ import uk.org.nbn.nbnv.api.model.User;
 @Component
 @Path("/taxonObservations")
 public class TaxonObservationResource {
-    @Autowired TaxonObservationMapper observationMapper;
-    
+
+    @Autowired
+    TaxonObservationMapper observationMapper;
+
     @GET
     @Path("/{id : \\d+}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -51,24 +53,38 @@ public class TaxonObservationResource {
     public List<TaxonObservation> getObservationsByTaxon(@TokenUser() User user, @PathParam("id") String id) {
         return observationMapper.selectByPTVK(id, user.getId());
     }
-    
+
     /*
      * Needs InjectorProvider to work
      
-    @GET
-    public List<TaxonObservation> getObservationsByFilter(@TokenUser() User user, TaxonObservationFilter filter) {
-        return observationMapper.selectByFilter(user.getId(), filter.getStartYear(), filter.getEndYear());
-    }
-    */
-    
+     @GET
+     public List<TaxonObservation> getObservationsByFilter(@TokenUser() User user, TaxonObservationFilter filter) {
+     return observationMapper.selectByFilter(user.getId(), filter.getStartYear(), filter.getEndYear());
+     }
+     */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<TaxonObservation> getObservationsByFilter(@TokenUser() User user
+    public List<TaxonObservation> getObservationsByFilter(
+            @TokenUser() User user
             , @QueryParam("startYear") @DefaultValue("-1") int startYear
             , @QueryParam("endYear") @DefaultValue("-1") int endYear
             , @QueryParam("datasetKey") @DefaultValue("") String datasetKey
-            , @QueryParam("ptvk") @DefaultValue("") String ptvk) {
-        return observationMapper.selectByFilter(user.getId(), startYear, endYear, Arrays.asList(datasetKey.split(",")));
+            , @QueryParam("ptvk") @DefaultValue("") String ptvk
+            , @QueryParam("overlapSite") @DefaultValue("-1") Integer overlaps
+            , @QueryParam("withinSite") @DefaultValue("-1") Integer within
+            , @QueryParam("sensitive") @DefaultValue("1") Boolean sensitive) {
+        //TODO: TaxonGroup, designation, squareBlurring(?)
+        List<String> datasets = null;
+        List<String> taxa = null;
+
+        if (!"".equalsIgnoreCase(datasetKey)) {
+            datasets = Arrays.asList(datasetKey.split(","));
+        }
+
+        if (!"".equalsIgnoreCase(ptvk)) {
+            taxa = Arrays.asList(ptvk.split(","));
+        }
+
+        return observationMapper.selectByFilter(user.getId(), startYear, endYear, datasets, taxa, overlaps, within, sensitive);
     }
-    
 }
