@@ -9,6 +9,7 @@
         $('#nbn-datasets-datatable').dataTable({
             "bJQueryUI": true,
             "iDisplayLength": 25,
+            "sPaginationType": "full_numbers",
             "aoColumnDefs": [
                 {"bVisible": false, "aTargets": [1]},
                 {"sWidth": "5%", "aTargets": [3]},
