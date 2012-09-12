@@ -11,7 +11,7 @@
                     <th>Dataset</th>
                     <th>Dataset key</th>
                     <th>Provider</th>
-                    <th nowrap="nowrap">Uploaded</th>
+                    <th>Uploaded</th>
                     <th>Type</th>
                 </tr>
             </thead>

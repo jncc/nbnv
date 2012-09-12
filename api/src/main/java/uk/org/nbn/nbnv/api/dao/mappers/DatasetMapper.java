@@ -21,6 +21,9 @@ public interface DatasetMapper {
     })
     Dataset selectByDatasetKey(String datasetKey);
     
+    @Select("SELECT * FROM DatasetData WHERE organisationID = #{organisaionID} ORDER BY name")
+    List<Dataset> selectByOrganisationID(int organisationID);
+
     @Select("SELECT * FROM DatasetData WHERE datasetKey = #{datasetKey}")
     TaxonDataset selectTaxonDatasetByID(String datasetKey);
     

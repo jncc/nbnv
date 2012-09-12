@@ -1,7 +1,7 @@
 <#assign datasetId="${URLParameters.dataset}">
 <#assign taxonDataset=json.readURL("${api}/taxonDatasets/${datasetId}")>
 <#assign taxa=taxonDataset.taxa>
-<table id="nbn-species-datatable">
+<table id="nbn-species-datatable" class="nbn-dataset-table">
     <thead>
         <tr>
             <th>Species name</th>
