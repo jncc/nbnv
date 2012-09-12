@@ -35,7 +35,7 @@
 
 <ul class="collapsible-list nbn-temporal">
     <li>
-        <h1>Toggle table of records per year</h1>
+        <h1>Show/hide table of records per year</h1>
         <ul>
             <li>
                 <#assign numRows=39>

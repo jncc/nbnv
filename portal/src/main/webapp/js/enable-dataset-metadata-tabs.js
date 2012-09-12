@@ -22,23 +22,32 @@
             if($(ui.panel).find('#' + elementForRender).length > 0){
                 renderSurveys();
             }
+            elementForRender = 'nbn-attributes'
+            if($(ui.panel).find('#' + elementForRender).length > 0){
+                renderAttributes();
+            }
+            elementForRender = 'nbn-site-boundaries'
+            if($(ui.panel).find('#' + elementForRender).length > 0){
+                renderSiteBoundaries(elementForRender);
+            }
         });
         $('#nbn-tabs').tabs({
-            spinner: 'Loading <img src="/img/ajax-loader.gif"/>'
+            spinner: 'Loading <img src="/img/ajax-loader.gif"/>',
+            cache: true
         });
     });
     
     function renderSpecies(elementForRender){
         $('#' + elementForRender).dataTable({
             "bJQueryUI": true,
+            "iDisplayLength": 25,
+            "sPaginationType": "full_numbers",
             "aoColumnDefs": [
-            {
-                "bVisible": false, 
-                "aTargets": [1]
-            }
+                {"bVisible": false, "aTargets": [1]},
+                {"sWidth": "75%", "aTargets": [0]}
             ]
         });
-
+        $('#' + elementForRender).width("100%");
     }
     
     //Render the temporal chart
@@ -130,7 +139,7 @@
         });
                 
         //The extra information under the chart needs styling
-        $(".nbn-simple-table tr:even").addClass("ui-state-highlight");
+        applyTableEvenRowStyle();
                 
         //Toggle the table of record counts per year
         doCollapsibleList();
@@ -139,8 +148,29 @@
     
     function renderSurveys(){
         doCollapsibleList();
-        $(".nbn-simple-table tr:even").addClass("ui-state-highlight");
-
+        applyTableEvenRowStyle();
+    }
+    
+    function renderAttributes(){
+        applyTableEvenRowStyle();
+    }
+    
+    function renderSiteBoundaries(elementForRender){
+        $('#' + elementForRender).dataTable({
+            "bJQueryUI": true,
+            "iDisplayLength": 25,
+            "aoColumnDefs": [
+                {
+                    "aTargets": [1],
+                    "bVisible": false 
+                },
+                {
+                    "aTargets": [0],
+                    "sWidth": "100%"
+                }
+            ]
+        });
+        $('#' + elementForRender).width("100%");
     }
     
     function doCollapsibleList(ui){
@@ -157,7 +187,10 @@
                 })
                 );
         });
-
+    }
+    
+    function applyTableEvenRowStyle(){
+        $(".nbn-simple-table tr:even").addClass("ui-state-highlight");
     }
     
 })(jQuery);

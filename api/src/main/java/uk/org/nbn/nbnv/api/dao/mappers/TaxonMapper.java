@@ -16,6 +16,6 @@ public interface TaxonMapper {
     @Select("SELECT taxonVersionKey, prefnameTaxonVersionKey, name, authority, lang, outputGroupKey, navigationGroupKey FROM DesignationTaxonData dtd INNER JOIN TaxonData t ON dtd.pTaxonVersionKey = t.taxonVersionKey WHERE designationID = #{designationId} AND t.navigationGroupKey = #{taxonNavigationGroupId} order by name")
     List<Taxon> selectByDesignationAndTaxonNavigationGroup(@Param("designationId") int designationId, @Param("taxonNavigationGroupId") String taxonNavigationGroupId);
     
-    @Select("SELECT taxonVersionKey, tdt.prefnameTaxonVersionKey, name, authority, lang, outputGroupKey, navigationGroupKey FROM TaxonDatasetTaxonData tdt INNER JOIN TaxonData t ON tdt.prefnameTaxonVersionKey = t.taxonVersionKey WHERE datasetKey = #{datasetKey} ORDER BY name")
+    @Select("SELECT taxonVersionKey, tdt.prefnameTaxonVersionKey, name, authority, lang, outputGroupKey, navigationGroupKey, taxonGroupName outputGroupName FROM TaxonDatasetTaxonData tdt INNER JOIN TaxonData t ON tdt.prefnameTaxonVersionKey = t.taxonVersionKey INNER JOIN TaxonOutputGroupData togd ON t.outputGroupKey = togd.taxonGroupKey WHERE datasetKey = #{datasetKey} ORDER BY name")
     List<Taxon> selectByDatasetKey(String datasetKey);
 }

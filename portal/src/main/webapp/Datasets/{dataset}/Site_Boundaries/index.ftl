@@ -1,6 +1,6 @@
 <#assign datasetId="${URLParameters.dataset}">
 <#assign siteBoundaries=json.readURL("${api}/siteBoundaryDatasets/${datasetId}/siteBoundaries")>
-<table id="nbn-generic-datatable">
+<table id="nbn-site-boundaries">
     <thead>
         <tr>
             <th>Site boundary name</th>

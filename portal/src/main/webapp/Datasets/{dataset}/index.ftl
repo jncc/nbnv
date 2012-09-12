@@ -1,7 +1,7 @@
 
 <@template.master title="NBN Gateway - Datasets"
-    javascripts=["/js/enable-dataset-metadata-tabs.js","/js/jqueryui.simple-table-style.js","/js/jquery.dataTables.min.js","/js/jqplot/jquery.jqplot.min.js","/js/jqplot/excanvas.min.js","/js/jqplot/plugins/jqplot.json2.min.js","/js/jqplot/plugins/jqplot.highlighter.min.js","/js/jqplot/plugins/jqplot.canvasAxisLabelRenderer.min.js","/js/jqplot/plugins/jqplot.canvasTextRenderer.min.js","/js/jqplot/plugins/jqplot.cursor.min.js"] 
-    csss=["http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/themes/smoothness/jquery-ui.css","/js/jqplot/jquery.jqplot.min.css"] >
+    javascripts=["/js/jquery-ui-1.8.23.custom.min.js/","/js/enable-dataset-metadata-tabs.js","/js/jqueryui.simple-table-style.js","/js/jquery.dataTables.min.js","/js/jqplot/jquery.jqplot.min.js","/js/jqplot/excanvas.min.js","/js/jqplot/plugins/jqplot.json2.min.js","/js/jqplot/plugins/jqplot.highlighter.min.js","/js/jqplot/plugins/jqplot.canvasAxisLabelRenderer.min.js","/js/jqplot/plugins/jqplot.canvasTextRenderer.min.js","/js/jqplot/plugins/jqplot.cursor.min.js"] 
+    csss=["/css/smoothness/jquery-ui-1.8.23.custom.css","/css/jquery.jqplot.min.css"] >
 
     <#assign datasetId="${URLParameters.dataset}">
     <#assign dataset=json.readURL("${api}/datasets/${datasetId}")>
@@ -17,7 +17,7 @@
                 <#if dataset.typeName = "Taxon">
                     <li><a href="/Datasets/${datasetId}/Records_Per_Year"><span>Temporal</span></a></li>
                     <li><a href="/Datasets/${datasetId}/Surveys"><span>Surveys</span></a></li>
-                    <li><a href="#tabs-12">Attributes</a></li>
+                    <li><a href="/Datasets/${datasetId}/Attributes"><span>Attributes</span></a></li>
                     <li><a href="/Datasets/${datasetId}/Taxa"><span>Species</span></a></li>
                 <#elseif dataset.typeName = "Habitat">
                     <li><a href="#tabs-20">Attributes</a></li>
@@ -30,7 +30,7 @@
                 <table class="nbn-dataset-table nbn-simple-table">
                     <tr>
                         <th>Provider</th>
-                        <td>[TODO Logo] <a href="/Organisations/${dataset.organisationID}">${dataset.organisationName}</a></td>
+                        <td><img id="nbn-provider-logo" src="${dataset.organisation.logoSmall}"/><a href="/Organisations/${dataset.organisationID}">${dataset.organisationName}</a></td>
                     </tr>
                     <tr>
                         <th>Title</th>
@@ -98,9 +98,6 @@
             </div>
 
             <#if dataset.typeName = "Taxon">
-                <div id="tabs-12">
-                    TODO - Species attributes
-                </div>
             <#elseif dataset.typeName = "Habitat">
                 <div id="tabs-20">
                     TODO - Habitat attributes

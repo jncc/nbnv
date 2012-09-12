@@ -33,6 +33,7 @@ class Validator @Inject()(log: Logger, repo: Repository){
 //    size (length)
 //    lookups (range) (e.g. checking real taxon key)
 
+    val aggregateValidators = List(new Nbnv61Validator)
 
     for (record <- archive.iteratorRaw) {
 
@@ -78,6 +79,16 @@ class Validator @Inject()(log: Logger, repo: Repository){
       val oav = new ObservationAttributeValidator
       val oavResults = oav.validate(nbnRecord)
       for (result <- oavResults) logResult(result)
+
+      // call aggregation callbacks
+      for (v <- aggregateValidators) {
+        val result = v.processRecord(nbnRecord)
+        logResult(result)
+      }
+    }
+
+    for (v <- aggregateValidators) {
+      v.notifyComplete()
     }
   }
 
@@ -96,3 +107,6 @@ class Validator @Inject()(log: Logger, repo: Repository){
     }
   }
 }
+
+
+

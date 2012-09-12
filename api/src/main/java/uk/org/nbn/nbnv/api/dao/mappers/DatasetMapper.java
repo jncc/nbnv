@@ -1,6 +1,9 @@
 package uk.org.nbn.nbnv.api.dao.mappers;
 
 import java.util.List;
+import org.apache.ibatis.annotations.One;
+import org.apache.ibatis.annotations.Result;
+import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.Select;
 import uk.org.nbn.nbnv.api.model.*;
 
@@ -13,6 +16,9 @@ public interface DatasetMapper {
     List<TaxonDataset> selectAllTaxonDatasets();
     
     @Select("SELECT * FROM DatasetData WHERE datasetKey = #{datasetKey}")
+    @Results(value = {
+        @Result(property="organisation", column="organisationID", javaType=Organisation.class, one=@One(select="uk.org.nbn.nbnv.api.dao.mappers.OrganisationMapper.selectByID"))
+    })
     Dataset selectByDatasetKey(String datasetKey);
     
     @Select("SELECT * FROM DatasetData WHERE datasetKey = #{datasetKey}")
