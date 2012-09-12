@@ -8,7 +8,8 @@ import com.google.inject.Inject
 
 class Repository @Inject()(em: EntityManager) extends ControlAbstractions {
   def getFeatureByGridRef(gridRef: String) = {
-    val query = em.createQuery("select f from Feature join GridSquare")
+    new Feature()
+    //todo: write query to retrieve grid square
   }
 
   def confirmTaxonVersionKey(taxonVersionKey: String): Boolean = {

@@ -54,9 +54,9 @@
 		  <artifactId>log4j</artifactId>
 		</dependency>
         <dependency>
-            <groupId>uk.org.mygrid.resources.jcoord</groupId>
+            <groupId>uk.me.jstott</groupId>
             <artifactId>jcoord</artifactId>
-            <version>1.0</version>
+            <version>1.1-b</version>
         </dependency>
     </dependencies>
 
