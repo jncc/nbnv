@@ -26,9 +26,10 @@ class GridSquareFactory {
 
   private def getGridRefType(gridRef: String) = {
     //Case insensitve (?i) regex to match each grid ref
-    val channelIslandsGridRef = """(?i)^[W][A-Z](\d\d)*$""".r
-    val ukGridRef =  """(?i)^[HNOST][A-Z](\d\d)*$""".r
-    val irishGridRef =  """(?i)^[A-HJ-Z](\d\d)*""".r
+    val channelIslandsGridRef = GridRefPatterns.channelIslandsGridRef.r
+    val ukGridRef = GridRefPatterns.ukGridRef.r
+    val ukDintyGridRef = GridRefPatterns.ukDintyGridRef.r
+    val irishGridRef =  GridRefPatterns.irishGridRef.r
 
     gridRef match {
       case channelIslandsGridRef() => "ED50"

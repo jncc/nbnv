@@ -1,48 +1,71 @@
 package uk.org.nbn.nbnv.importer.spatial
 
 import uk.me.jstott.jcoord.OSRef
+import uk.org.nbn.nbnv.importer.ImportFailedException
 
 class BritishGridSquare(gridRef : String, precision: Int = 0) extends GridSquare {
 
-  val roundedPrecision = {
-    if (precision > 10000) {
-      10000
-    }
-    else if (10000 > precision > )
-  }
-
-
+  //Normalise the precision to one of the allowable values
+  val normalisedPrecision = normalisePrecision(precision)
 
   val outputGridRef = {
-    //Get Current precision of gridref
-    //If current precision >
-    //else If precision > current precision
-    //  throw invalid arugument exception - invalid precision
-    //else If precision < current precision
-    //  decrease gridref to precision
-    //else If currentPrecision > 100
-    //  decrease gridref to precision of 100
+    val currentPrecision = getPrecision(gridRef)
 
+    if (normalisedPrecision < currentPrecision) {
+      throw ImportFailedException("Normailised precsion '%s' is greater then grid ref '%s' precision".format(normalisedPrecision, gridRef))
+    }
+    else if (normalisedPrecision > currentPrecision) {
+      decreaseGridPrecision(gridRef,normalisedPrecision)
+    }
+    else if (currentPrecision < 100) {
+      decreaseGridPrecision(gridRef, 100)
+    }
+    else {
+      gridRef
+    }
   }
 
   def gridReference = outputGridRef
 
-  def gridReferencePrecision = 0
+  def gridReferencePrecision = getPrecision(outputGridRef)
 
   def wgs84Polygon = null
 
-  def getParentGridRef = getPrecision(outputGridRef)
+  def getParentGridRef = null
+
+  private def decreaseGridPrecision(gridRef: String, targetPrecision: Int) = {
+    //If targetPrecision is 2000 decrease to DINTY grid ref
+    if (targetPrecision == 2000) {
+      computeDintyFromGridRef(gridRef)
+    }
+    //Else reduce to target grid ref
+    else {
+
+    }
+  }
+
+  private def computeDintyFromGridRef(gridRef: String) = {
+    if (gridRef.matches(GridRefPatterns.ukDintyGridRef)) {
+      gridRef
+    }
+    else {
+
+    }
+  }
 
   //Returns the grid reference precision in meters
   private def getPrecision(gridReference : String) = {
-    if (gridRef.matches("""^[HNOST][A-Z]$""")) {
+    if (gridRef.matches("""^[HNOST]$""")) {
       500000
     }
-    else if (gridRef.matches("""(?i)^[HNOST][A-Z]\d{2}[A-Z]$""")) {
+    else if (gridRef.matches("""^[HNOST][A-Z]$""")) {
+      100000
+    }
+    else if (gridRef.matches(GridRefPatterns.ukDintyGridRef)) {
       2000
     }
     else {
-      //Otherwise the precisoin is inversly proportional to the number of digits
+      //Otherwise the precision is inversely proportional to ten to the power of the number of digits
       var numerals = gridRef.substring(2, gridRef.length - 1).length
       1000000 / 10 ^ (numerals / 2)
     }
