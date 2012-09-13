@@ -43,7 +43,12 @@ public class MetadataController {
         return new ModelAndView("metadataForm", "model", model);
     }
 
-    @RequestMapping(value="/metadataProcess.html", method = RequestMethod.POST)
+    @RequestMapping(value="/metadataProcess.html", method = RequestMethod.POST, params="addOrganisation")
+    public ModelAndView addOrganisation(Metadata metadata, BindingResult result) {
+        return new ModelAndView("redirect:/addOrganisation.html");
+    }    
+    
+    @RequestMapping(value="/metadataProcess.html", method = RequestMethod.POST, params="submit")
     public ModelAndView uploadFile(Metadata metadata, BindingResult result) {
         MetadataForm model = new MetadataForm();
         model.setMetadata(metadata);
