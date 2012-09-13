@@ -8,14 +8,14 @@ public class TaxonDataset extends Dataset{
     private String datasetKey, maxResolution, publicResolution;
     private boolean allowRecordValidation;
     private int recordCount, speciesCount;
-    private List<Taxon> taxa;
+    private List<TaxonWithDatasetStats> taxa;
     private List<YearStats> recordsPerYear;
     private List<DateTypeStats> dateTypeStats;
     private List<Survey> surveys;
     
     public TaxonDataset(){}
     
-    public TaxonDataset(String datasetKey, String maxResolution, String publicResolution, boolean allowRecordValidation, int recordCount, List<Taxon> taxa, List<YearStats> recordsPerYear, List<DateTypeStats> dateTypeStats, List<Survey> surveys, int speciesCount){
+    public TaxonDataset(String datasetKey, String maxResolution, String publicResolution, boolean allowRecordValidation, int recordCount, List<TaxonWithDatasetStats> taxa, List<YearStats> recordsPerYear, List<DateTypeStats> dateTypeStats, List<Survey> surveys, int speciesCount){
         this.datasetKey = datasetKey;
         this.maxResolution = maxResolution;
         this.publicResolution = publicResolution;
@@ -68,11 +68,11 @@ public class TaxonDataset extends Dataset{
         this.recordCount = recordCount;
     }
 
-    public List<Taxon> getTaxa() {
+    public List<TaxonWithDatasetStats> getTaxa() {
         return taxa;
     }
 
-    public void setTaxa(List<Taxon> taxa) {
+    public void setTaxa(List<TaxonWithDatasetStats> taxa) {
         this.taxa = taxa;
     }
 
