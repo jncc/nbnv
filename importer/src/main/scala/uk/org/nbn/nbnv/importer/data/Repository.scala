@@ -1,19 +1,20 @@
 package uk.org.nbn.nbnv.importer.data
 
 import scala.collection.JavaConversions._
-import javax.persistence.EntityManager
+import javax.persistence.{TypedQuery, EntityManager}
 import uk.org.nbn.nbnv.jpa.nbncore._
 import uk.org.nbn.nbnv.importer.data.Implicits._
 import com.google.inject.Inject
+import org.apache.log4j.Logger
 
-class Repository @Inject()(em: EntityManager) extends ControlAbstractions {
+class Repository @Inject()(log: Logger, em: EntityManager, cache: SimpleCache) extends ControlAbstractions {
+
   def confirmTaxonVersionKey(taxonVersionKey: String): Boolean = {
+
     val query = em.createQuery("SELECT t FROM Taxon t WHERE t.taxonVersionKey = :tvk", classOf[Taxon])
     query.setParameter("tvk", taxonVersionKey)
-    val tvkCount = query.getResultList.size
 
-    if (tvkCount == 1) true else false
-
+    query.getResultList.size == 1
   }
 
 
@@ -70,6 +71,23 @@ class Repository @Inject()(em: EntityManager) extends ControlAbstractions {
     query.setParameter("name", name).getFirstOrNone
   }
 
+  def singleWithCacheOrNone[T](query: TypedQuery[T], cacheKeyValues: String*) = {
+
+    val key = cacheKeyValues.map(_.trim).mkString("|")
+
+    log.debug("Query cache key is '%s'".format(key))
+
+    // wow, look at how concise scala is!
+    cache.get(key) orElse {
+      query.getSingleOrNone map { t =>
+        cache.put(key, t)
+        t
+      }
+    }
+
+  }
+
+
   def getSite(siteKey: String, dataset: Dataset) = {
 
     val q = "select s from Site s where s.siteKey = :siteKey and s.datasetKey = :dataset "
@@ -77,7 +95,8 @@ class Repository @Inject()(em: EntityManager) extends ControlAbstractions {
     val query = em.createQuery(q, classOf[Site])
     query.setParameter("siteKey", siteKey)
     query.setParameter("dataset", dataset)
-    query.getSingleOrNone
+
+    singleWithCacheOrNone[Site](query, q, siteKey, dataset.getDatasetKey)
   }
 
   def getLatestDatasetKey = {

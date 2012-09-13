@@ -1,11 +1,12 @@
 package uk.org.nbn.nbnv.importer
 
-import data.{Repository, KeyGenerator}
+import data.{SimpleCache, Repository, KeyGenerator}
 import testing.BaseFunSuite
 import utility.ResourceLoader
 import uk.org.nbn.nbnv.PersistenceUtility
 import org.mockito.Mockito._
 import java.io.{File, InputStream}
+import org.apache.log4j.Logger
 
 /// This is an end-to-end test suite which requires the database.
 
@@ -14,7 +15,7 @@ class SmokeSuiteIT extends BaseFunSuite with ResourceLoader {
   test("should be able to get next dataset key") {
 
     val em = new PersistenceUtility().createEntityManagerFactory(Settings.map).createEntityManager
-    val dr = new Repository(em)
+    val dr = new Repository(mock[Logger], em, mock[SimpleCache])
     val kg = new KeyGenerator(dr)
 
     val key = kg.nextTaxonDatasetKey
