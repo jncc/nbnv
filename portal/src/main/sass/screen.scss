@@ -118,7 +118,7 @@ body {
     }
     
     .nbn-taxon-name{
-        font-style: italic;    
+        font-style: italic; 
     }
     
     .nbn-dataset-table{
@@ -191,7 +191,9 @@ body {
         }
     }
     
-    .nbn-provider-logo{
+    #nbn-provider-logo{
+        float: left;
+        margin-right: 10px;
     }
 
 }
