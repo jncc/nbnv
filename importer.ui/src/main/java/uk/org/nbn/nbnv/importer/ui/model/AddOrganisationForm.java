@@ -6,6 +6,7 @@ package uk.org.nbn.nbnv.importer.ui.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import uk.org.nbn.nbnv.jpa.nbncore.Organisation;
 
 
@@ -17,14 +18,14 @@ import uk.org.nbn.nbnv.jpa.nbncore.Organisation;
 public class AddOrganisationForm {
     private Organisation organisation;
     private List<String> errors;
-    private Boolean allowPub = false;
+    private CommonsMultipartFile imageData;
 
-    public Boolean getAllowPub() {
-        return allowPub;
+    public CommonsMultipartFile getImage() {
+        return imageData;
     }
 
-    public void setAllowPub(Boolean allowPub) {
-        this.allowPub = allowPub;
+    public void setImage(CommonsMultipartFile imageData) {
+        this.imageData = imageData;
     }
 
     public AddOrganisationForm () {

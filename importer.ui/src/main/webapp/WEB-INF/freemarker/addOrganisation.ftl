@@ -85,13 +85,30 @@
                 <p>
                     <span class="formlabel"><label for="logo" path="organisation">Logo</label></span>
                     <span class="formfield">
+
                         <@spring.bind "model.organisation.logo" />
-                        <img alt="" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAIAAAD/gAIDAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAABp0RVh0U29mdHdhcmUAUGFpbnQuTkVUIHYzLjUuMTAw9HKhAAAC7UlEQVR4Xu3ZvY7iQBAEYPbNyZAICEgISIhIyMgIiXkB3ma3VpaQRY+ha2x62rtFdLorc8xHzY/N13K5XOjlFACWXk6BhTOn2O8UlIJfQFh+KzWLsBKWsBgBIqs1S1iEABFVs4RFCBBRNUtYhAARVbOERQgQUTVLWIQAEVWzhEUIEFE1S1iEABFN1Kz1en04HC6Xy/V6/e69brcb/hL/tN1uiZF9IJoCCxAQ6QMN/fl+vx+Pxw84uN6yMdZms3Ey9flAtt/vXeObNNQSa7fbedo0lDmdTpNSvH+zZlgjpTpBrGXvhzhdog0WZt9QX87nMxxXq9VjjAijRJh6xUsi+9UGq7hOYRPEhviiB3AsekFzuva8eqcGWNj77Jgh5RkwemSvBb3n2vGZBli2Vphi/pEUvWKOYNFYmGi2Glik/FhI2vUrZuWKxrJzkKpVZ2rfxDmLqa/EhqOxsNk/NaviRF6s50gIz+XRWHYG1S03di57RjsyE42Fj4udHjcrKBRaVjEHuwH/F6yRXy8ux5H1CSvm9NCgWeOx7AL/N3fD8VLFowN7+Kj7GPNr1tOjQczHmDkI35lhFW8P6/bTinLNCct2CrUCX8Ww6y6ZBxZOoUWpmIP7Q3YGWDiXFR9mBUvNYM0aeqAaL5UdK5VUaqwhqcgV/WkfSLpm4TTQ/Im73TGTYhVXdNzl1G35U12VEav44LjJr6ozmIZ2AjZcp/pe6ZpVXNf7PyNONacq3icdlr37i3n84rFLh2Vva2Iev8wSyy5YYT84v/VK16wmD9ffMnUBYTmhhEVApcQiP39oPN00DB09+Z8JiwATlrAIASKarlk6ZxHfnrCERQgQUTVLWIQAEVWzCKzM0XRHB2FlFiA+m5olLEKAiKpZwiIEiKiaJSxCgIiqWcIiBIiomiUsQoCIqlnCIgSIqJolLEKAiKpZwiIEiKiaJSxCgIiqWcIiBIiomiUsQoCIqlnCIgSIqJolLEKAiKpZwiIEiOgPTJE0DTZiTIcAAAAASUVORK5CYII=" />
+                        <img alt="" src="${spring.status.value?default("")}"/>
+
+                        <@spring.bind "model.organisation.logo" />
+                        <input class="wide" path="organisation" type="hidden" id="logo" name=${spring.status.expression} value="${spring.status.value?default("")}" />
                         <#list spring.status.errorMessages as error> <b>${error}</b> <br> </#list>
+
+                    </span>
+                    <span class="formfield">
+
                         <@spring.bind "model.organisation.logoSmall" />
-                        <img alt="" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAIAAAD/gAIDAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAABp0RVh0U29mdHdhcmUAUGFpbnQuTkVUIHYzLjUuMTAw9HKhAAAC7UlEQVR4Xu3ZvY7iQBAEYPbNyZAICEgISIhIyMgIiXkB3ma3VpaQRY+ha2x62rtFdLorc8xHzY/N13K5XOjlFACWXk6BhTOn2O8UlIJfQFh+KzWLsBKWsBgBIqs1S1iEABFVs4RFCBBRNUtYhAARVbOERQgQUTVLWIQAEVWzhEUIEFE1S1iEABFN1Kz1en04HC6Xy/V6/e69brcb/hL/tN1uiZF9IJoCCxAQ6QMN/fl+vx+Pxw84uN6yMdZms3Ey9flAtt/vXeObNNQSa7fbedo0lDmdTpNSvH+zZlgjpTpBrGXvhzhdog0WZt9QX87nMxxXq9VjjAijRJh6xUsi+9UGq7hOYRPEhviiB3AsekFzuva8eqcGWNj77Jgh5RkwemSvBb3n2vGZBli2Vphi/pEUvWKOYNFYmGi2Glik/FhI2vUrZuWKxrJzkKpVZ2rfxDmLqa/EhqOxsNk/NaviRF6s50gIz+XRWHYG1S03di57RjsyE42Fj4udHjcrKBRaVjEHuwH/F6yRXy8ux5H1CSvm9NCgWeOx7AL/N3fD8VLFowN7+Kj7GPNr1tOjQczHmDkI35lhFW8P6/bTinLNCct2CrUCX8Ww6y6ZBxZOoUWpmIP7Q3YGWDiXFR9mBUvNYM0aeqAaL5UdK5VUaqwhqcgV/WkfSLpm4TTQ/Im73TGTYhVXdNzl1G35U12VEav44LjJr6ozmIZ2AjZcp/pe6ZpVXNf7PyNONacq3icdlr37i3n84rFLh2Vva2Iev8wSyy5YYT84v/VK16wmD9ffMnUBYTmhhEVApcQiP39oPN00DB09+Z8JiwATlrAIASKarlk6ZxHfnrCERQgQUTVLWIQAEVWzCKzM0XRHB2FlFiA+m5olLEKAiKpZwiIEiKiaJSxCgIiqWcIiBIiomiUsQoCIqlnCIgSIqJolLEKAiKpZwiIEiKiaJSxCgIiqWcIiBIiomiUsQoCIqlnCIgSIqJolLEKAiKpZwiIEiOgPTJE0DTZiTIcAAAAASUVORK5CYII=" />
+                        <img alt="" src="${spring.status.value?default("")}"  />
+
+                        <@spring.bind "model.organisation.logoSmall" />
+                        <input class="wide" path="organisation" type="hidden" id="logoSmall" name=${spring.status.expression} value="${spring.status.value?default("")}" />
                         <#list spring.status.errorMessages as error> <b>${error}</b> <br> </#list>
                     </span>
+                    <span class="formfield">
+                        
+                        <input path="imageData" type="file" name="imageData" value="imageData" />
+                        
+                    </span>
+                        <input type="submit" name="addImage" value="Upload Image" />
                 </p>
                 <p>
                     <span class="formlabel"><label for="summary" path="organisation">Summary</label></span>
@@ -109,7 +126,7 @@
                 </p>
 
                 <p>
-                    <input type="submit" name="submit" value="submit" />
+                    <input type="submit" name="submit" value="Submit" />
                 </p>
             </fieldset>
         </form>
