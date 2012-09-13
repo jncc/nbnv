@@ -7,7 +7,7 @@ import java.util.Map;
 public class TaxonDataset extends Dataset{
     private String datasetKey, maxResolution, publicResolution;
     private boolean allowRecordValidation;
-    private int recordCount;
+    private int recordCount, speciesCount;
     private List<Taxon> taxa;
     private List<YearStats> recordsPerYear;
     private List<DateTypeStats> dateTypeStats;
@@ -15,11 +15,12 @@ public class TaxonDataset extends Dataset{
     
     public TaxonDataset(){}
     
-    public TaxonDataset(String datasetKey, String maxResolution, String publicResolution, boolean allowRecordValidation, int recordCount, List<Taxon> taxa, List<YearStats> recordsPerYear, List<DateTypeStats> dateTypeStats, List<Survey> surveys){
+    public TaxonDataset(String datasetKey, String maxResolution, String publicResolution, boolean allowRecordValidation, int recordCount, List<Taxon> taxa, List<YearStats> recordsPerYear, List<DateTypeStats> dateTypeStats, List<Survey> surveys, int speciesCount){
         this.datasetKey = datasetKey;
         this.maxResolution = maxResolution;
         this.publicResolution = publicResolution;
         this.allowRecordValidation = allowRecordValidation;
+        this.speciesCount = speciesCount;
         this.recordCount = recordCount;
         this.taxa = taxa;
         this.recordsPerYear = recordsPerYear;
@@ -97,5 +98,13 @@ public class TaxonDataset extends Dataset{
 
     public void setSurveys(List<Survey> surveys) {
         this.surveys = surveys;
+    }
+
+    public int getSpeciesCount() {
+        return speciesCount;
+    }
+
+    public void setSpeciesCount(int speciesCount) {
+        this.speciesCount = speciesCount;
     }
 }

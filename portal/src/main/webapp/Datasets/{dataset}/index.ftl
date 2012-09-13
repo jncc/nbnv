@@ -19,8 +19,6 @@
                     <li><a href="/Datasets/${datasetId}/Surveys"><span>Surveys</span></a></li>
                     <li><a href="/Datasets/${datasetId}/Attributes"><span>Attributes</span></a></li>
                     <li><a href="/Datasets/${datasetId}/Taxa"><span>Species</span></a></li>
-                <#elseif dataset.typeName = "Habitat">
-                    <li><a href="#tabs-20">Attributes</a></li>
                 <#elseif dataset.typeName = "Site Boundary">
                     <li><a href="/Datasets/${datasetId}/Site_Boundaries"><span>Sites</span></a></li>
                 </#if>
@@ -72,6 +70,17 @@
                         <th>Additional information</th>
                         <td>${dataset.additionalInformation!"Not available"}</td>
                     </tr>
+                    <#if dataset.typeName = "Taxon">
+                        <#assign taxonDataset=json.readURL("${api}/taxonDatasets/${datasetId}")>
+                        <tr>
+                            <th>Number of records</th>
+                            <td>${taxonDataset.recordCount}</td>
+                        </tr>
+                        <tr>
+                            <th>Number of species</th>
+                            <td>${taxonDataset.speciesCount}</td>
+                        </tr>
+                    </#if>
                 </table>
             </div>
 
@@ -97,12 +106,6 @@
                 <!--<iframe width="100%" height="600px" src="http://data.nbn.org.uk/imt/?baselayer=Hybrid&bbox=-18.576014044435876,49.03927489540209,9.5489859505262,60.45827601788278&mode=SINGLE_DATASET&dataset=GA001044"></iframe>-->
             </div>
 
-            <#if dataset.typeName = "Taxon">
-            <#elseif dataset.typeName = "Habitat">
-                <div id="tabs-20">
-                    TODO - Habitat attributes
-                </div>
-            </#if>
         </div>
 
 </@template.master>

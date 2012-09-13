@@ -21,9 +21,12 @@ public interface DatasetMapper {
     })
     Dataset selectByDatasetKey(String datasetKey);
     
-    @Select("SELECT * FROM DatasetData WHERE datasetKey = #{datasetKey}")
+    @Select("SELECT * FROM DatasetData dd INNER JOIN TaxonDatasetData tdd ON dd.datasetKey = tdd.datasetKey WHERE dd.datasetKey = #{datasetKey}")
+    @Results(value = {
+        @Result(property="speciesCount", column="datasetKey", javaType=java.lang.Integer.class, one=@One(select="selectSpeciesCountByDatasetKey"))
+    })
     TaxonDataset selectTaxonDatasetByID(String datasetKey);
-    
+
     //TODO this needs turning into a warehouse schema bound view when it is stable
     @Select("select year(startDate) year, count(*) recordCount from TaxonObservationData where datasetKey = #{datasetKey} group by year(startDate) order by year(startDate)")
     List<YearStats> selectRecordsPerYear(String datasetKey);
@@ -32,4 +35,7 @@ public interface DatasetMapper {
     @Select("SELECT label dateTypeName, count(*) recordCount FROM TaxonObservationData tod INNER JOIN NBNCore.dbo.DateType d ON tod.dateType = d.dateTypeKey WHERE datasetKey = #{datasetKey} GROUP BY label ORDER BY label")
     List<DateTypeStats> selectRecordCountPerDateTypeByDatasetKey(String datasetKey);
     
+    @Select("SELECT count(*) speciesCount FROM TaxonDatasetTaxonData WHERE datasetKey = #{datasetKey}")
+    Integer selectSpeciesCountByDatasetKey(String datasetKey);
+
 }
