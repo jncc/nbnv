@@ -7,6 +7,7 @@
             <th>Species name</th>
             <th>Taxon version key</th>
             <th>Species group name</th>
+            <th>Number of observations</th>
         </tr>
     </thead>
     <tbody>
@@ -15,6 +16,7 @@
                 <td><a href="#"><@taxon_utils.short_name taxon=taxon/></a></td>
                 <td>${taxon.taxonVersionKey}</td>
                 <td>${taxon.outputGroupName}</td>
+                <td>${taxon.observationCount}</td>
             </tr>
         </#list>
     </tbody>

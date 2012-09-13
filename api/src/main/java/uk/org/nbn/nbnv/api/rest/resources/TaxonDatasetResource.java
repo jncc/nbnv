@@ -44,7 +44,7 @@ public class TaxonDatasetResource {
     @GET
     @Path("/{id}/taxa")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Taxon> getTaxaByDatasetKey(@PathParam("id") String id){
+    public List<TaxonWithDatasetStats> getTaxaByDatasetKey(@PathParam("id") String id){
         return taxonMapper.selectByDatasetKey(id);
     }
     
