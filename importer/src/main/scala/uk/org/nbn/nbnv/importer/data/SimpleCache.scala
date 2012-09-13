@@ -1,11 +1,16 @@
 package uk.org.nbn.nbnv.importer.data
 
+import org.apache.log4j.Logger
+import com.google.inject.Inject
 
-class SimpleCache {
+
+class SimpleCache @Inject()(log: Logger) {
 
   val map = scala.collection.mutable.Map[String, Any]()
 
   def get[T](key: String) =  {
+
+    log.debug("Cache has %d objects".format(map.size))
 
     map.get(key).map(_.asInstanceOf[T])
   }

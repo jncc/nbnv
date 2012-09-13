@@ -17,13 +17,16 @@ class Repository @Inject()(log: Logger, em: EntityManager, cache: SimpleCache) e
     query.getResultList.size == 1
   }
 
-
   def getAttribute(attributeLabel: String, taxonDataset: TaxonDataset) = {
 
-    val query = em.createQuery("select a from Attribute a join a.taxonObservationAttributeCollection toa join toa.taxonObservation to join to.sampleID s join s.surveyID sv where a.label = :label and sv.datasetKey = :dataset", classOf[Attribute])
+    val q = "select a from Attribute a join a.taxonObservationAttributeCollection toa join toa.taxonObservation to join to.sampleID s join s.surveyID sv where a.label = :label and sv.datasetKey = :dataset";
+    val query = em.createQuery(q, classOf[Attribute])
     query.setParameter("label", attributeLabel)
     query.setParameter("dataset", taxonDataset)
-    query.getFirstOrNone
+
+    withCache(q, attributeLabel, taxonDataset.getDatasetKey) {
+      query.getFirstOrNone
+    }
   }
 
   def getSurvey(surveyKey: String, dataset: TaxonDataset) = {
@@ -71,23 +74,6 @@ class Repository @Inject()(log: Logger, em: EntityManager, cache: SimpleCache) e
     query.setParameter("name", name).getFirstOrNone
   }
 
-  def singleWithCacheOrNone[T](query: TypedQuery[T], cacheKeyValues: String*) = {
-
-    val key = cacheKeyValues.map(_.trim).mkString("|")
-
-    log.debug("Query cache key is '%s'".format(key))
-
-    // wow, look at how concise scala is!
-    cache.get(key) orElse {
-      query.getSingleOrNone map { t =>
-        cache.put(key, t)
-        t
-      }
-    }
-
-  }
-
-
   def getSite(siteKey: String, dataset: Dataset) = {
 
     val q = "select s from Site s where s.siteKey = :siteKey and s.datasetKey = :dataset "
@@ -96,7 +82,9 @@ class Repository @Inject()(log: Logger, em: EntityManager, cache: SimpleCache) e
     query.setParameter("siteKey", siteKey)
     query.setParameter("dataset", dataset)
 
-    singleWithCacheOrNone[Site](query, q, siteKey, dataset.getDatasetKey)
+    withCache(q, siteKey, dataset.getDatasetKey) {
+      query.getSingleOrNone
+    }
   }
 
   def getLatestDatasetKey = {
@@ -114,4 +102,20 @@ class Repository @Inject()(log: Logger, em: EntityManager, cache: SimpleCache) e
       .setParameter("surveyID", survey)
       .getSingleOrNone
   }
+
+  private def withCache[T](cacheKeyValues: String*)(f: => Option[T]) = {
+
+    val key = cacheKeyValues.map(_.trim).mkString("|")
+    log.debug("Query cache key is '%s'".format(key))
+
+    // wow, look at how concise scala is!
+    cache.get(key) orElse {
+      f map { t =>
+        cache.put(key, t)
+        t
+      }
+    }
+
+  }
+
 }
