@@ -7,5 +7,5 @@ class ChannelIslandGridSquare(gridRef: String, precision: Int) extends GridSquar
 
   def wgs84Polygon = null
 
-  def getParentGridRef = null
+  def getParentGridRef = None
 }

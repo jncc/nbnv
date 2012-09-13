@@ -7,5 +7,5 @@ class IrishGridSquare(gridRef: String, precision: Int) extends GridSquare {
 
   def wgs84Polygon = null
 
-  def getParentGridRef = null
+  def getParentGridRef = None
 }

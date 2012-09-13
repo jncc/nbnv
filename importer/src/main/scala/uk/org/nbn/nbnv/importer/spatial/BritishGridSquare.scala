@@ -3,6 +3,7 @@ package uk.org.nbn.nbnv.importer.spatial
 import uk.me.jstott.jcoord.OSRef
 import uk.org.nbn.nbnv.importer.ImportFailedException
 import com.sun.javaws.exceptions.InvalidArgumentException
+import org.apache.commons.io.input.BrokenInputStream
 
 class BritishGridSquare(gridRef : String, precision: Int = 0) extends GridSquare {
 
@@ -14,17 +15,17 @@ class BritishGridSquare(gridRef : String, precision: Int = 0) extends GridSquare
   //Check grid ref is not below minimum preciesion
   val currentPrecision = getPrecision(gridRef)
 
-  if (currentPrecision > 10000) throw new IllegalArgumentException("Grid reference precision be low 10Km")
+  if (currentPrecision > 10000) throw new IllegalArgumentException("Grid reference precision must be 10Km or higher")
 
   //Normalise the precision to one of the allowable values
-  val normalisedPrecision = normalisePrecision(precision)
+  val normalisedPrecision = if (precision != 0) normalisePrecision(precision) else 0
 
   val outputGridRef = {
 
-    if (normalisedPrecision < currentPrecision) {
+    if (normalisedPrecision > 0 &&  normalisedPrecision < currentPrecision) {
       throw ImportFailedException("Normailised precsion '%s' is greater then grid ref '%s' precision".format(normalisedPrecision, gridRef))
     }
-    else if (normalisedPrecision > currentPrecision) {
+    else if (normalisedPrecision > 0 && normalisedPrecision > currentPrecision) {
       decreaseGridPrecision(gridRef,normalisedPrecision)
     }
     else if (currentPrecision < 100) {
@@ -42,7 +43,29 @@ class BritishGridSquare(gridRef : String, precision: Int = 0) extends GridSquare
 
   def wgs84Polygon = null
 
-  def getParentGridRef = null
+  def getParentGridRef: Option[BritishGridSquare] = {
+    if (gridReferencePrecision == 10000) {
+      None
+    }
+    else {
+      //get parent grid reference
+      val parentGridReference =
+        if (gridReferencePrecision == 100) {
+          decreaseGridPrecision(outputGridRef, 1000)
+        }
+        else if (gridReferencePrecision == 1000) {
+          decreaseGridPrecision(outputGridRef, 2000)
+        }
+        else if (gridReferencePrecision == 2000) {
+          decreaseGridPrecision(outputGridRef, 10000 )
+        }
+        else {
+          throw new RuntimeException("Current grid reference has an invalid precision")
+        }
+
+      Option(new BritishGridSquare(parentGridReference))
+    }
+  }
 
   private def decreaseGridPrecision(gridRef: String, targetPrecision: Int) : String = {
     //If targetPrecision is 2000 decrease to DINTY grid ref

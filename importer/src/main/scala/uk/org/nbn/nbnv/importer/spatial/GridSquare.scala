@@ -6,7 +6,7 @@ trait GridSquare {
   def gridReference : String
   def gridReferencePrecision : Int
   def wgs84Polygon : String
-  def getParentGridRef : GridSquare
+  def getParentGridRef : Option[GridSquare]
 
   protected val dintyGridByCoord = Map (
     (0,8) -> "E", (2,8) -> "J", (4,8) -> "P", (6,8) -> "U", (8,8) -> "Z",
