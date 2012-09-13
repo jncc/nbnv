@@ -20,31 +20,60 @@ class Repository @Inject()(log: Logger, em: EntityManager, cache: SimpleCache) e
   def getAttribute(attributeLabel: String, taxonDataset: TaxonDataset) = {
 
     val q = "select a from Attribute a join a.taxonObservationAttributeCollection toa join toa.taxonObservation to join to.sampleID s join s.surveyID sv where a.label = :label and sv.datasetKey = :dataset";
+
     val query = em.createQuery(q, classOf[Attribute])
     query.setParameter("label", attributeLabel)
     query.setParameter("dataset", taxonDataset)
 
-    withCache(q, attributeLabel, taxonDataset.getDatasetKey) {
+    cacheSome(q, attributeLabel, taxonDataset.getDatasetKey) {
       query.getFirstOrNone
     }
   }
 
   def getSurvey(surveyKey: String, dataset: TaxonDataset) = {
 
-    val query = em.createQuery("SELECT s FROM Survey s WHERE s.surveyKey = :surveyKey AND s.datasetKey = :datasetKey", classOf[Survey])
+    val q = "SELECT s FROM Survey s WHERE s.surveyKey = :surveyKey AND s.datasetKey = :datasetKey"
+
+    val query = em.createQuery(q, classOf[Survey])
     query.setParameter("surveyKey", surveyKey)
     query.setParameter("datasetKey", dataset)
-    query.getSingleOrNone
+
+    cacheSome(q, surveyKey, dataset.getDatasetKey) {
+      query.getSingleOrNone
+    }
   }
 
-  def getDateType(t: String) = em.findSingle(classOf[DateType], t)
+  def getDateType(t: String) = {
 
-  def getFeature(id: Int) = em.findSingle(classOf[Feature], id)
+    cacheSingle("getDateType", t) {
+      em.findSingle(classOf[DateType], t)
+    }
+  }
 
-  def getTaxon(key: String) = em.findSingle(classOf[Taxon], key)
+  def getFeature(id: Int) = {
 
-  def getTaxonDataset(key: String) = em.findSingle(classOf[TaxonDataset], key)
+    cacheSingle("getFeature", id) {
+      em.findSingle(classOf[Feature], id)
+    }
+  }
 
+  def getTaxon(key: String) = {
+
+    cacheSingle("getTaxon", key) {
+      em.findSingle(classOf[Taxon], key)
+    }
+  }
+
+  def getTaxonDataset(key: String) = {
+
+    cacheSingle("getTaxonDataset", key) {
+      em.findSingle(classOf[TaxonDataset], key)
+    }
+  }
+
+
+
+  
   def getTaxonObservation(key: String, sample: Sample): Option[TaxonObservation] = {
 
     val q = "select o from TaxonObservation o where o.observationKey = :key and o.sampleID = :sample "
@@ -82,7 +111,7 @@ class Repository @Inject()(log: Logger, em: EntityManager, cache: SimpleCache) e
     query.setParameter("siteKey", siteKey)
     query.setParameter("dataset", dataset)
 
-    withCache(q, siteKey, dataset.getDatasetKey) {
+    cacheSome(q, siteKey, dataset.getDatasetKey) {
       query.getSingleOrNone
     }
   }
@@ -103,7 +132,7 @@ class Repository @Inject()(log: Logger, em: EntityManager, cache: SimpleCache) e
       .getSingleOrNone
   }
 
-  private def withCache[T](cacheKeyValues: String*)(f: => Option[T]) = {
+  private def cacheSome[T](cacheKeyValues: String*)(f: => Option[T]) = {
 
     val key = cacheKeyValues.map(_.trim).mkString("|")
     log.debug("Query cache key is '%s'".format(key))
@@ -115,7 +144,11 @@ class Repository @Inject()(log: Logger, em: EntityManager, cache: SimpleCache) e
         t
       }
     }
+  }
 
+  /// A bit nasty - but scala won't let us overload on f's type
+  private def cacheSingle[T](cacheKeyValues: String*)(f: => T) = {
+    cacheSome(cacheKeyValues:_*) { Some(f) }.get
   }
 
 }
