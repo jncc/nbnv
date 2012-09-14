@@ -18,7 +18,10 @@ import java.util.regex.Pattern;
 import javax.imageio.ImageIO;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.MessageSourceAware;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -26,13 +29,17 @@ import org.springframework.web.servlet.ModelAndView;
 import uk.org.nbn.nbnv.importer.ui.model.SessionData;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import sun.misc.BASE64Encoder;
 import uk.org.nbn.nbnv.importer.ui.model.AddOrganisationForm;
 import uk.org.nbn.nbnv.importer.ui.model.MetadataForm;
 import uk.org.nbn.nbnv.importer.ui.util.DatabaseConnection;
-import uk.org.nbn.nbnv.importer.ui.util.Size;
+import uk.org.nbn.nbnv.importer.ui.validators.AddOrganisationFormValidator;
+import uk.org.nbn.nbnv.importer.ui.validators.OrganisationValidator;
+
 
 /**
  *
@@ -70,7 +77,7 @@ public class AddOrganisationController {
                 model.getOrganisation().setLogoSmall(logoPrefix + generateBase64EncodedImage(bi, maxLogoSmallWidth, maxLogoSmallHeight, model));
 
             } catch (IOException ex) {
-                Logger.getLogger(AddOrganisationController.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(AddOrganisationController.class.getName()).log(Level.SEVERE, "Error Processing image", ex);
                 model.addError("Error Processing image");
             }
         }
@@ -79,140 +86,31 @@ public class AddOrganisationController {
     }
     
     @RequestMapping(value="/addOrganisationProcess.html", method=RequestMethod.POST, params="submit")
-    public ModelAndView processNewOrganisation(AddOrganisationForm model, BindingResult result) {
-        
+    public ModelAndView processNewOrganisation(@Valid AddOrganisationForm model, BindingResult result) {    
         // If we have errors, pass them back to the user, keeping any inputs in 
         // place, need to improve so that errors are displayed next to the
         // correct inputs
         if (result.hasErrors()) {
             for (ObjectError error : result.getAllErrors()) {
                 Logger.getLogger(UploadController.class.getName()).log(Level.WARNING, "Error ({0}): {1}", new Object[]{error.getCode(), error.getDefaultMessage()});
-                model.getErrors().add(error.getDefaultMessage());
+                model.addErrors(error.getCodes());
             }
             return new ModelAndView("addOrganisation", "model", model);
         }
         
-        // Run Validators to give a sanity check on the data and hopefully 
-        // ensure no wierdness
-        runValidators(model);
-        
-        // If we have no errors then attempt to push the new organisation in the 
-        // database, otherwise push errors back to the user
-        if (model.getErrors().isEmpty()) {           
-            EntityManager em = DatabaseConnection.getInstance().createEntityManager();
-            em.getTransaction().begin();
-            em.persist(model.getOrganisation());
-            em.getTransaction().commit();
-        } else {
-            Logger.getLogger(UploadController.class.getName()).log(Level.WARNING, "Error ({0}): {1}", new Object[]{"0", "One or more of the Validators failed while adding organisation"});
-            return new ModelAndView("addOrganisation", "model", model);
-        }
-        
-        // Return to metadata input form, should probably find a way of auto-selecting the new organisation
-        return new ModelAndView("redirect:/metadata.html", "model", new MetadataForm());
-    }
-    
-    /**
-     * Run all of the validation methods in the OrganisationValidator Validation
-     * class, currently under development but currently runs any method in this
-     * object of the form "*Validator(AddOrganisationForm model)" and tots up
-     * errors
-     * 
-     * @param model Model containing all data to be validated for the organisation
-     * to be added
-     */
-    private void runValidators(AddOrganisationForm model) {
-
-        Class cls = this.getClass();
-        Method methodList[] = cls.getDeclaredMethods();
-
-        Pattern pattern = Pattern.compile("(a-zA-Z)*Validator$");
-
-        for (Method method : methodList) {
-            if (pattern.matcher(method.getName()).matches()) {
-                try {
-                    method.invoke(model);
-                } catch (Exception ex) {
-                    model.addError("Error occured while attempting to reflect validators");
-                }
-            }
-        }
-        
-//        orgNameValidator(model);
-//        abbrvValidator(model);
-//        addrValidator(model);
-//        allowPubValidator(model);
-//        emailValidator(model);
-//        nameValidator(model);
-//        logoValidator(model);
-//        phoneNumberValidator(model);
-//        ukPostcodeValidator(model);
-//        summaryValidator(model);
-//        websiteValidator(model);
-    } 
-    
-    private void orgNameValidator(AddOrganisationForm model) {
+        // Write validated organisation to the database
         EntityManager em = DatabaseConnection.getInstance().createEntityManager();
-        
-        Query q = em.createNamedQuery("Organisation.findByOrganisationName");
-        q.setParameter("organisationName", model.getOrganisation().getOrganisationName());
-        
-        if (!q.getResultList().isEmpty()) {
-            model.addError("Organisation already exists!");
-        }
-        
-        if (model.getOrganisation().getOrganisationName().trim().equals("") || model.getOrganisation().getOrganisationName() != null) {
-            model.addError("Need to input an Organisation Name!");
-        }
+        em.getTransaction().begin();
+        em.persist(model.getOrganisation());
+        em.getTransaction().commit();            
+
+        // Return to metadata input form, should probably find a way of auto-selecting the new organisation
+        return new ModelAndView("redirect:/metadata.html", "model", new MetadataForm());        
     }
     
-    private void abbrvValidator(AddOrganisationForm model) {
-        
-    }
-    
-    private void addrValidator(AddOrganisationForm model) {
-        
-    }
-    
-    private void allowPubValidator(AddOrganisationForm model) {
-        
-    }
-    
-    private void emailValidator(AddOrganisationForm model) {
-//        Pattern pattern = Pattern.compile("^([0-9a-zA-Z]([-.\\w]*[0-9a-zA-Z])*@([0-9a-zA-Z][-\\w]*[0-9a-zA-Z]\\.)+[a-zA-Z]{2,9})$");
-//        if (!pattern.matcher(organisation.getContactEmail()).matches()) {
-//            model.addError("Invalid E-Mail");
-//        }
-    }    
-    
-    private void nameValidator(AddOrganisationForm model) {
-        
-    }
-    
-    private void logoValidator(AddOrganisationForm model) {
-        
-    }
-    
-    private void phoneNumberValidator(AddOrganisationForm model) {
-        Pattern pattern = Pattern.compile("^[0-9]{0,14}$");
-        if (!pattern.matcher(model.getOrganisation().getPhone()).matches()) {
-            model.addError("Invalid Phonenumber");
-        }
-    }    
-    
-    private void ukPostcodeValidator(AddOrganisationForm model) {
-        //Pattern pattern = Pattern.compile("^([A-PR-UWYZ0-9][A-HK-Y0-9][AEHMNPRTVXY0-9]?[ABEHMNPRVWXY0-9]? {1,2}[0-9][ABD-HJLN-UW-Z]{2}|GIR 0AA)$");
-        //if (!pattern.matcher(organisation.getPostcode()).matches()) {
-        //     model.addError("Invalid Postcode");
-        //}
-    }
-    
-    private void summaryValidator(AddOrganisationForm model) {
-        
-    }
-    
-    private void websiteValidator(AddOrganisationForm model) {
-        
+    @InitBinder
+    protected void initBinder(WebDataBinder binder) {
+        binder.setValidator(new AddOrganisationFormValidator(new OrganisationValidator()));
     }
     
     // ********************************************************************
@@ -272,7 +170,8 @@ public class AddOrganisationController {
         
     /**
      * Generate a base64 encoded string form of any given image, given a max 
-     * height / width
+     * height / width, probably should do this using jQuery or some image library
+     * client side rather than server side, plus this code is quick and crappy
      * 
      * @param bi The original image to be encoded
      * @param maxWidth The maximum width of the image
@@ -282,7 +181,7 @@ public class AddOrganisationController {
      */
     private String generateBase64EncodedImage(BufferedImage bi, int maxWidth, int maxHeight, AddOrganisationForm model) {
         try {
-            Size size = fitBoundingBox(bi.getHeight(), bi.getWidth(), maxLogoHeight, maxLogoWidth);
+            Size size = fitBoundingBox(bi.getHeight(), bi.getWidth(), maxHeight, maxWidth);
             BufferedImage re = createResizedCopy(bi, size.getWidth(), size.getHeight(), true);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             
@@ -299,5 +198,31 @@ public class AddOrganisationController {
         }
         
         return "";
-    }        
+    }
+}
+
+class Size {
+    private int height;
+    private int width;
+    
+    public Size(int height, int width) {
+        this.height = height;
+        this.width = width;
+    }
+    
+    public int getHeight() {
+        return height;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public void setWidth(int width) {
+        this.width = width;
+    }    
 }

@@ -82,7 +82,7 @@ public class AddOrganisationForm {
         this.errors = errors;
     }
     
-    public void addErrors(List<String> errors) {
+    public void addErrors(String[] errors) {
         for (String error : errors) {
             addError(error);
         }

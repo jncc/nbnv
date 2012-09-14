@@ -22,7 +22,7 @@
                     <span class="formfield">
                         <@spring.bind "model.organisation.organisationName" />
                         <input class="wide" path="organisation" type="text" id="organisationName" name="${spring.status.expression}" length="200" value="${spring.status.value?default("")}"/>
-                        <#list spring.status.errorMessages as error> <b>${error}</b> <br> </#list>
+                        
                     </span>
                 </p>    
                 <p>
@@ -30,7 +30,6 @@
                     <span class="formfield">
                         <@spring.bind "model.organisation.abbreviation" />
                         <input class="wide" path="organisation" type="text" id="abbreviation" name="${spring.status.expression}" length="200" value="${spring.status.value?default("")}"/>
-                        <#list spring.status.errorMessages as error> <b>${error}</b> <br> </#list>
                     </span>
                 </p>
                 <p>
@@ -38,7 +37,6 @@
                     <span class="formfield">
                         <@spring.bind "model.organisation.website" />
                         <input class="wide" path="organisation" type="text" id="website" name="${spring.status.expression}" length="200" value="${spring.status.value?default("")}"/>
-                        <#list spring.status.errorMessages as error> <b>${error}</b> <br> </#list>
                     </span>
                 </p>
 
@@ -47,7 +45,6 @@
                     <span class="formfield">
                         <@spring.bind "model.organisation.contactName" />
                         <input class="wide" path="organisation" type="text" id="contactName" name="${spring.status.expression}" length="200" value="${spring.status.value?default("")}"/>
-                        <#list spring.status.errorMessages as error> <b>${error}</b> <br> </#list>
                     </span>
                 </p>
                 <p> 
@@ -55,7 +52,6 @@
                     <span class="formfield">
                         <@spring.bind "model.organisation.contactEmail" />
                         <input class="wide" path="organisation" type="text" id="contactEmail" name="${spring.status.expression}" length="200" value="${spring.status.value?default("")}"/>
-                        <#list spring.status.errorMessages as error> <b>${error}</b> <br> </#list>
                     </span>
                 </p>
                 <p>
@@ -63,7 +59,6 @@
                     <span class="formfield">
                         <@spring.bind "model.organisation.phone" />
                         <input class="wide" path="organisation" type="text" id="phone" name="${spring.status.expression}" length="200" value="${spring.status.value?default("")}"/>
-                        <#list spring.status.errorMessages as error> <b>${error}</b> <br> </#list>
                     </span>
                 </p>
                 <p>
@@ -71,7 +66,6 @@
                     <span class="formfield">
                         <@spring.bind "model.organisation.address" />
                         <textarea class="wide" path="organisation" type="text" id="address" name="${spring.status.expression}" rows="6" cols="60">${spring.status.value?default("")}</textarea>
-                        <#list spring.status.errorMessages as error> <b>${error}</b> <br> </#list>
                     </span>
                 </p>
                 <p>
@@ -79,7 +73,6 @@
                     <span class="formfield">
                         <@spring.bind "model.organisation.postcode" />
                         <input class="wide" path="organisation" type="text" id="postcode" name="${spring.status.expression}" length="10" value="${spring.status.value?default("")}"/>
-                        <#list spring.status.errorMessages as error> <b>${error}</b> <br> </#list>
                     </span>
                 </p>
                 <p>
@@ -91,7 +84,6 @@
 
                         <@spring.bind "model.organisation.logo" />
                         <input class="wide" path="organisation" type="hidden" id="logo" name=${spring.status.expression} value="${spring.status.value?default("")}" />
-                        <#list spring.status.errorMessages as error> <b>${error}</b> <br> </#list>
 
                     </span>
                     <span class="formfield">
@@ -101,7 +93,7 @@
 
                         <@spring.bind "model.organisation.logoSmall" />
                         <input class="wide" path="organisation" type="hidden" id="logoSmall" name=${spring.status.expression} value="${spring.status.value?default("")}" />
-                        <#list spring.status.errorMessages as error> <b>${error}</b> <br> </#list>
+
                     </span>
                     <span class="formfield">
                         
@@ -115,7 +107,6 @@
                     <span class="formfield">
                         <@spring.bind "model.organisation.summary" />
                         <textarea class="wide" path="organisation" type="text" id="summary" name="${spring.status.expression}" rows="6" cols="60">${spring.status.value?default("")}</textarea>
-                        <#list spring.status.errorMessages as error> <b>${error}</b> <br> </#list>
                     </span>
                 </p>
                 <p>

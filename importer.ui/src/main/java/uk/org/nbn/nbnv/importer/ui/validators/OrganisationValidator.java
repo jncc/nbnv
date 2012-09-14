@@ -8,7 +8,6 @@ import java.util.regex.Pattern;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import org.springframework.validation.Errors;
-import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 import uk.org.nbn.nbnv.importer.ui.util.DatabaseConnection;
 import uk.org.nbn.nbnv.jpa.nbncore.Organisation;
@@ -26,19 +25,22 @@ public class OrganisationValidator implements Validator {
 
     @Override
     public void validate(Object o, Errors errors) {
-        // Organisation Name Validators
-        ValidationUtils.rejectIfEmpty(errors, "organisationName", "name.empty");        
-        
         Organisation org = (Organisation) o;
         
-        // Check Organisation Name does not exist already
-        EntityManager em = DatabaseConnection.getInstance().createEntityManager();
-        Query q = em.createNamedQuery("Organisation.findByOrganisationName");
-        q.setParameter("organisationName", org.getOrganisationName());
-        
-        if (!q.getResultList().isEmpty()) {
-            errors.rejectValue("organisationName", "name.exists");
+        // Organisation Name Validators
+        if (org.getOrganisationName().trim().isEmpty()) {
+            errors.rejectValue("organisationName", "organisationName.required");
+        } else {
+            // Check Organisation Name does not exist already
+            EntityManager em = DatabaseConnection.getInstance().createEntityManager();
+            Query q = em.createNamedQuery("Organisation.findByOrganisationName");
+            q.setParameter("organisationName", org.getOrganisationName());
+
+            if (!q.getResultList().isEmpty()) {
+                errors.rejectValue("organisationName", "organisationName.exists");
+            }
         }
+        
         
         // Abbreviation Validators
         // None at present
@@ -47,12 +49,12 @@ public class OrganisationValidator implements Validator {
         // None at present
         
         // Allow Public Access Validators
-        // None Needed
+        // None Needed - Set to false by default
         
         // Email Validators
         Pattern pattern = Pattern.compile("^([0-9a-zA-Z]([-.\\w]*[0-9a-zA-Z])*@([0-9a-zA-Z][-\\w]*[0-9a-zA-Z]\\.)+[a-zA-Z]{2,9})$");
         if (!pattern.matcher(org.getContactEmail()).matches()) {
-            errors.rejectValue("contactEmail", "email.invalid");
+            errors.rejectValue("contactEmail", "contactEmail.invalid");
         }
         
         // Name Validators
@@ -79,6 +81,9 @@ public class OrganisationValidator implements Validator {
         
         // Website Validator
         // Probably need, but uncertain if we actually do
+        
+        // Combo Validators
+        // i.e. Must have at least a contact address OR phone number
     }
     
 }
