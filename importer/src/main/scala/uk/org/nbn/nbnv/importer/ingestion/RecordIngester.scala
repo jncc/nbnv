@@ -23,6 +23,7 @@ class RecordIngester @Inject()(log: Logger,
     log.info("Upserting record %s".format(record.key))
 
     val survey = surveyIngester.upsertSurvey(record.surveyKey, dataset)
+    em.flush() // to get survey key for sample caching
     val sample = sampleIngester.upsertSample(record.sampleKey, survey)
     val site = siteIngester.upsertSite(record.siteKey, record.siteName, dataset.getDataset)
     // todo: TaxonObservation needs a feature - need to get c# code from paul

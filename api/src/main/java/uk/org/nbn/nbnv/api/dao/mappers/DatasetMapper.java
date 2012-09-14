@@ -21,6 +21,9 @@ public interface DatasetMapper {
     })
     Dataset selectByDatasetKey(String datasetKey);
     
+    @Select("SELECT * FROM DatasetData WHERE organisationID = #{organisaionID} ORDER BY name")
+    List<Dataset> selectByOrganisationID(int organisationID);
+
     @Select("SELECT * FROM DatasetData dd INNER JOIN TaxonDatasetData tdd ON dd.datasetKey = tdd.datasetKey WHERE dd.datasetKey = #{datasetKey}")
     @Results(value = {
         @Result(property="speciesCount", column="datasetKey", javaType=java.lang.Integer.class, one=@One(select="selectSpeciesCountByDatasetKey"))

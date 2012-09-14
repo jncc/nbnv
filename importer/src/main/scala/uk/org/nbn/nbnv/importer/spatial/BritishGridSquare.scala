@@ -77,7 +77,7 @@ class BritishGridSquare(gridRef : String, precision: Int = 0) extends GridSquare
       br.getLongitude + " " + br.getLatitude + ", " +
       bl.getLongitude + " " + bl.getLatitude + "))"
   }
-  
+
   def getParentGridRef: Option[BritishGridSquare] = {
     if (gridReferencePrecision == 10000) {
       None

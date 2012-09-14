@@ -5,10 +5,10 @@
 (function($){
     $.fn.dataTableExt.oJUIClasses.sStripeOdd = 'ui-state-highlight';
     $(document).ready(function(){
-
         $('#nbn-datasets-datatable').dataTable({
             "bJQueryUI": true,
             "iDisplayLength": 25,
+            "bSortClasses": false,
             "sPaginationType": "full_numbers",
             "aoColumnDefs": [
                 {"bVisible": false, "aTargets": [1]},
