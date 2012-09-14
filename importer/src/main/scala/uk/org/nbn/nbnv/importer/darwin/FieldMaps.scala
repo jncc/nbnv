@@ -26,6 +26,6 @@ object FieldMaps {
     ,sensitiveOccurrence -> "sensitiveOccurrence"
     ,gridReferenceType -> "gridReferenceType"
     ,gridReference -> "gridReference"
-    ,gridReferencePrecision -> "gridReferencePrecision"
+    ,gridReferencePrecision -> "gridReferencePrecisionRaw"
   )
 }
