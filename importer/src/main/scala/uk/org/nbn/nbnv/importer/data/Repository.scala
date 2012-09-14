@@ -6,9 +6,11 @@ import uk.org.nbn.nbnv.jpa.nbncore._
 import uk.org.nbn.nbnv.importer.data.Implicits._
 import com.google.inject.Inject
 import org.apache.log4j.Logger
+import uk.org.nbn.nbnv.importer.ImportFailedException
 
-class Repository @Inject()(log: Logger, em: EntityManager, cache: SimpleCache) extends ControlAbstractions {
+class Repository @Inject()(log: Logger, em: EntityManager, cache: QueryCache) extends ControlAbstractions {
 
+  // todo: wot's this for? and does it need caching?
   def confirmTaxonVersionKey(taxonVersionKey: String): Boolean = {
 
     val query = em.createQuery("SELECT t FROM Taxon t WHERE t.taxonVersionKey = :tvk", classOf[Taxon])
@@ -21,11 +23,11 @@ class Repository @Inject()(log: Logger, em: EntityManager, cache: SimpleCache) e
 
     val q = "select a from Attribute a join a.taxonObservationAttributeCollection toa join toa.taxonObservation to join to.sampleID s join s.surveyID sv where a.label = :label and sv.datasetKey = :dataset";
 
-    val query = em.createQuery(q, classOf[Attribute])
-    query.setParameter("label", attributeLabel)
-    query.setParameter("dataset", taxonDataset)
-
     cacheSome(q, attributeLabel, taxonDataset.getDatasetKey) {
+
+      val query = em.createQuery(q, classOf[Attribute])
+      query.setParameter("label", attributeLabel)
+      query.setParameter("dataset", taxonDataset)
       query.getFirstOrNone
     }
   }
@@ -34,11 +36,12 @@ class Repository @Inject()(log: Logger, em: EntityManager, cache: SimpleCache) e
 
     val q = "SELECT s FROM Survey s WHERE s.surveyKey = :surveyKey AND s.datasetKey = :datasetKey"
 
-    val query = em.createQuery(q, classOf[Survey])
-    query.setParameter("surveyKey", surveyKey)
-    query.setParameter("datasetKey", dataset)
-
     cacheSome(q, surveyKey, dataset.getDatasetKey) {
+
+      val query = em.createQuery(q, classOf[Survey])
+      query.setParameter("surveyKey", surveyKey)
+      query.setParameter("datasetKey", dataset)
+
       query.getSingleOrNone
     }
   }
@@ -52,7 +55,7 @@ class Repository @Inject()(log: Logger, em: EntityManager, cache: SimpleCache) e
 
   def getFeature(id: Int) = {
 
-    cacheSingle("getFeature", id) {
+    cacheSingle("getFeature", id.toString) {
       em.findSingle(classOf[Feature], id)
     }
   }
@@ -71,9 +74,6 @@ class Repository @Inject()(log: Logger, em: EntityManager, cache: SimpleCache) e
     }
   }
 
-
-
-  
   def getTaxonObservation(key: String, sample: Sample): Option[TaxonObservation] = {
 
     val q = "select o from TaxonObservation o where o.observationKey = :key and o.sampleID = :sample "
@@ -88,10 +88,14 @@ class Repository @Inject()(log: Logger, em: EntityManager, cache: SimpleCache) e
 
     val q = "select o from Organisation o where o.organisationName = :name "
 
-    val query = em.createQuery(q, classOf[Organisation])
+    cacheSingle(q, name) {
 
-    expectSingleResult(name) {
-      query.setParameter("name", name).getResultList
+      val query = em.createQuery(q, classOf[Organisation])
+      query.setParameter("name", name)
+
+      expectSingleResult(name) {
+        query.getResultList
+      }
     }
   }
 
@@ -99,19 +103,24 @@ class Repository @Inject()(log: Logger, em: EntityManager, cache: SimpleCache) e
 
     val q = "select r from Recorder r where r.recorderName = :name "
 
-    val query = em.createQuery(q, classOf[Recorder])
-    query.setParameter("name", name).getFirstOrNone
+    cacheSome("getFirstRecorder", name) {
+
+      val query = em.createQuery(q, classOf[Recorder])
+      query.setParameter("name", name)
+      query.getFirstOrNone
+    }
   }
 
   def getSite(siteKey: String, dataset: Dataset) = {
 
     val q = "select s from Site s where s.siteKey = :siteKey and s.datasetKey = :dataset "
 
-    val query = em.createQuery(q, classOf[Site])
-    query.setParameter("siteKey", siteKey)
-    query.setParameter("dataset", dataset)
-
     cacheSome(q, siteKey, dataset.getDatasetKey) {
+
+      val query = em.createQuery(q, classOf[Site])
+      query.setParameter("siteKey", siteKey)
+      query.setParameter("dataset", dataset)
+
       query.getSingleOrNone
     }
   }
@@ -126,15 +135,29 @@ class Repository @Inject()(log: Logger, em: EntityManager, cache: SimpleCache) e
   }
 
   def getSample(key: String, survey: Survey) = {
-    em.createQuery("SELECT s FROM Sample s WHERE s.sampleKey=:sampleKey AND s.surveyID = :surveyID", classOf[Sample])
-      .setParameter("sampleKey", key)
-      .setParameter("surveyID", survey)
-      .getSingleOrNone
+
+    val q = "SELECT s FROM Sample s WHERE s.sampleKey=:sampleKey AND s.surveyID = :surveyID"
+
+    cacheSome(q, key, survey.getSurveyID.toString) {
+
+      em.createQuery(q, classOf[Sample])
+        .setParameter("sampleKey", key)
+        .setParameter("surveyID", survey)
+        .getSingleOrNone
+    }
   }
 
-  private def cacheSome[T](cacheKeyValues: String*)(f: => Option[T]) = {
+  /// Caches the result of the function f - but only if that result is Some(t).
+  // (this is important because we don't want to cache a None when we want to
+  // later re-execute the query)
+  private def cacheSome[T](cacheKey: String*)(f: => Option[T]): Option[T] = {
 
-    val key = cacheKeyValues.map(_.trim).mkString("|")
+    for (item <- cacheKey) {
+      if (item == null)
+        throw new ImportFailedException("Cache key component was null. This could lead to incorrectness so we're failing.")
+    }
+
+    val key = cacheKey.map(_.trim).mkString("|")
     log.debug("Query cache key is '%s'".format(key))
 
     // wow, look at how concise scala is!
@@ -146,9 +169,11 @@ class Repository @Inject()(log: Logger, em: EntityManager, cache: SimpleCache) e
     }
   }
 
-  /// A bit nasty - but scala won't let us overload on f's type
-  private def cacheSingle[T](cacheKeyValues: String*)(f: => T) = {
-    cacheSome(cacheKeyValues:_*) { Some(f) }.get
+  /// Caches the result of the function f.
+  // A bit nasty - cacheSome and cacheSingle are separate functions
+  // because scala won't let us overload on f's type
+  private def cacheSingle[T](cacheKey: String*)(f: => T) = {
+    cacheSome(cacheKey:_*) { Some(f) }.get
   }
 
 }

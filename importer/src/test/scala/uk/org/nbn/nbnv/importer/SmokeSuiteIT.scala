@@ -1,6 +1,6 @@
 package uk.org.nbn.nbnv.importer
 
-import data.{SimpleCache, Repository, KeyGenerator}
+import data.{QueryCache, Repository, KeyGenerator}
 import testing.BaseFunSuite
 import utility.ResourceLoader
 import uk.org.nbn.nbnv.PersistenceUtility
@@ -15,7 +15,7 @@ class SmokeSuiteIT extends BaseFunSuite with ResourceLoader {
   test("should be able to get next dataset key") {
 
     val em = new PersistenceUtility().createEntityManagerFactory(Settings.map).createEntityManager
-    val dr = new Repository(mock[Logger], em, mock[SimpleCache])
+    val dr = new Repository(mock[Logger], em, mock[QueryCache])
     val kg = new KeyGenerator(dr)
 
     val key = kg.nextTaxonDatasetKey

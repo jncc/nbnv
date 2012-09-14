@@ -5,7 +5,7 @@ import uk.org.nbn.nbnv.PersistenceUtility
 import uk.org.nbn.nbnv.importer.{Options, Settings}
 import uk.org.nbn.nbnv.importer.logging.Log
 import org.apache.log4j.Level
-import uk.org.nbn.nbnv.importer.data.SimpleCache
+import uk.org.nbn.nbnv.importer.data.QueryCache
 
 
 class ImporterModule(options: Options) extends AbstractModule {
@@ -15,7 +15,7 @@ class ImporterModule(options: Options) extends AbstractModule {
 
   override def configure() {
     // kinda obvious why the cache should be a singleton...
-    bind(classOf[SimpleCache]).in(classOf[Singleton])
+    bind(classOf[QueryCache]).in(classOf[Singleton])
   }
 
   @Provides
