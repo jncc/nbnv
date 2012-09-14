@@ -48,7 +48,7 @@ public class TaxonObservationProvider {
         }
 
         if (!(Boolean) params.get("sensitive")) {
-            WHERE("sensitiveRecord = false");
+            WHERE("sensitive = #{sensitive}");
         }
             
         if (!"".equals((String) params.get("designation"))) {
