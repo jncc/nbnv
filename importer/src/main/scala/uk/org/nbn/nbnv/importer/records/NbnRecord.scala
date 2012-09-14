@@ -38,7 +38,7 @@ class NbnRecord(record: StarRecord) {
 
   def key =             record.core.value(DwcTerm.occurrenceID)
   def absenceRaw =     record.core.value(DwcTerm.occurrenceStatus)
-  def absence =         parseOccurrenceStatus(record.core.value(DwcTerm.occurrenceStatus))
+  def absence =         parseOccurrenceStatus(absenceRaw)
   def surveyKey =       record.core.value(DwcTerm.collectionCode)
   def sampleKey =       record.core.value(DwcTerm.eventID)
   def taxonVersionKey = record.core.value(DwcTerm.taxonID)
@@ -47,24 +47,34 @@ class NbnRecord(record: StarRecord) {
   def recorder =        record.core.value(DwcTerm.recordedBy)
   def determiner =      record.core.value(DwcTerm.identifiedBy)
   def eventDateRaw =    record.core.value(DwcTerm.eventDate)
-  def eventDate =       format.parse(record.core.value(DwcTerm.eventDate))
+  def eventDate =       format.parse(eventDateRaw)
   def east =            record.core.value(DwcTerm.verbatimLongitude)
   def north =           record.core.value(DwcTerm.verbatimLatitude)
   def srs =             record.core.value(DwcTerm.verbatimSRS)
   def attributes =      attributeMap
 
   def startDateRaw           = extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateStart")
-  def startDate              = format.parse(extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateStart"))
+  def startDate              = format.parse(startDateRaw)
   def endDateRaw             = extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateEnd")
-  def endDate                = format.parse(extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateEnd"))
+  def endDate                = format.parse(endDateRaw)
   def dateType               = extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateTypeCode")
   def sensitiveOccurrenceRaw = extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/sensitiveOccurrence")
-  def sensitiveOccurrence    = parseSensitiveOccurrence(extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/sensitiveOccurrence"))
+  def sensitiveOccurrence    = parseSensitiveOccurrence(sensitiveOccurrenceRaw)
 
   def gridReferenceType      = extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/gridReferenceType")
   def gridReference          = extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/gridReference")
-  def gridReferencePrecision = extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/gridReferencePrecision")
+  def gridReferencePrecision = parseGridRefPrecision(gridReferencePrecisionRaw)
+  def gridReferencePrecisionRaw = extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/gridReferencePrecisionRaw")
   def featureKey             = extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/featureKey")
+
+  def parseGridRefPrecision(precision: String) = {
+    if (precision == null || precision.isEmpty) {
+      0
+    }
+    else {
+      precision.toInt
+    }
+  }
 
   def parseSensitiveOccurrence(s: String) = {
     if (s == null) {

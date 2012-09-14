@@ -21,6 +21,9 @@ class ArchiveHeadValidator {
     val v2 = new Nbnv57Validator
     results.append(v2.validate(record))
 
+    val v3 = new Nbnv58Validator
+    results.append(v3.validate(record))
+
     results.toList
   }
 }

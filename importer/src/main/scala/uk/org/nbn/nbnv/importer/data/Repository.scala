@@ -10,9 +10,13 @@ import uk.org.nbn.nbnv.importer.ImportFailedException
 
 class Repository @Inject()(log: Logger, em: EntityManager, cache: QueryCache) extends ControlAbstractions {
 
+  def getFeatureByGridRef(gridRef: String) = {
+    //todo figure this out
+    new Feature()
+  }
+
   // todo: wot's this for? and does it need caching?
   def confirmTaxonVersionKey(taxonVersionKey: String): Boolean = {
-
     val query = em.createQuery("SELECT t FROM Taxon t WHERE t.taxonVersionKey = :tvk", classOf[Taxon])
     query.setParameter("tvk", taxonVersionKey)
 

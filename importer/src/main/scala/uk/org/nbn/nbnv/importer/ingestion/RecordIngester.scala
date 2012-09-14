@@ -15,6 +15,7 @@ class RecordIngester @Inject()(log: Logger,
                                siteIngester: SiteIngester,
                                recorderIngester: RecorderIngester,
                                attributeIngester: AttributeIngester,
+                               featureIngester: FeatureIngester,
                                repo: Repository) {
 
   def upsertRecord(record: NbnRecord, dataset: TaxonDataset) {
