@@ -72,7 +72,8 @@ public class TaxonObservationResource {
             , @QueryParam("ptvk") @DefaultValue("") String ptvk
             , @QueryParam("overlapSite") @DefaultValue("-1") Integer overlaps
             , @QueryParam("withinSite") @DefaultValue("-1") Integer within
-            , @QueryParam("sensitive") @DefaultValue("1") Boolean sensitive) {
+            , @QueryParam("sensitive") @DefaultValue("1") Boolean sensitive
+            , @QueryParam("designation") @DefaultValue("") String designation) {
         //TODO: TaxonGroup, designation, squareBlurring(?)
         List<String> datasets = null;
         List<String> taxa = null;
@@ -85,6 +86,6 @@ public class TaxonObservationResource {
             taxa = Arrays.asList(ptvk.split(","));
         }
 
-        return observationMapper.selectByFilter(user.getId(), startYear, endYear, datasets, taxa, overlaps, within, sensitive);
+        return observationMapper.selectByFilter(user.getId(), startYear, endYear, datasets, taxa, overlaps, within, sensitive, designation);
     }
 }

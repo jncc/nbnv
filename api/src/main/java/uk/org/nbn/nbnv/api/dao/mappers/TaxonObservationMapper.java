@@ -25,12 +25,14 @@ public interface TaxonObservationMapper {
     public List<TaxonObservation> selectByPTVK(@Param("id") String id, @Param("userKey") int userKey);
     
     @SelectProvider(type=uk.org.nbn.nbnv.api.dao.mappers.providers.TaxonObservationProvider.class, method="filteredSelect")
-    public List<TaxonObservation> selectByFilter(@Param("userKey") int userKey
+    public List<TaxonObservation> selectByFilter(
+            @Param("userKey") int userKey
             , @Param("startYear") Integer startYear
             , @Param("endYear") Integer endYear
             , @Param("datasetKey") List<String> datasetKey
             , @Param("ptvk") List<String> ptvk
             , @Param("overlaps") Integer overlaps
             , @Param("within") Integer within
-            , @Param("sensitive") Boolean sensitive);
+            , @Param("sensitive") Boolean sensitive
+            , @Param("designation") String designation);
 }

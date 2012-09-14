@@ -51,6 +51,10 @@ public class TaxonObservationProvider {
             WHERE("sensitiveRecord = false");
         }
             
+        if (!"".equals((String) params.get("designation"))) {
+            INNER_JOIN("DesignationTaxonData dtd ON dtd.pTaxonVersionKey = o.pTaxonVersionKey");
+            WHERE("dtd.code = #{designation}");
+        }
         
         return SQL();
     }
