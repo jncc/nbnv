@@ -11,17 +11,12 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Pattern;
 import javax.imageio.ImageIO;
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.context.MessageSourceAware;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -108,7 +103,7 @@ public class AddOrganisationController {
         return new ModelAndView("redirect:/metadata.html", "model", new MetadataForm());        
     }
     
-    @InitBinder
+    @InitBinder("addOrganisationForm")
     protected void initBinder(WebDataBinder binder) {
         binder.setValidator(new AddOrganisationFormValidator(new OrganisationValidator()));
     }
