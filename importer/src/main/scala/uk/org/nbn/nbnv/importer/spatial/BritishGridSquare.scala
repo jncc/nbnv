@@ -2,8 +2,6 @@ package uk.org.nbn.nbnv.importer.spatial
 
 import uk.me.jstott.jcoord.OSRef
 import uk.org.nbn.nbnv.importer.ImportFailedException
-import com.sun.javaws.exceptions.InvalidArgumentException
-import org.apache.commons.io.input.BrokenInputStream
 
 class BritishGridSquare(gridRef : String, precision: Int = 0) extends GridSquare {
 
@@ -36,13 +34,50 @@ class BritishGridSquare(gridRef : String, precision: Int = 0) extends GridSquare
     }
   }
 
+  def projection = "OSGB36"
 
   def gridReference = outputGridRef
 
   def gridReferencePrecision = getPrecision(outputGridRef)
 
-  def wgs84Polygon = null
+  def wgs84Polygon = {
+    val gridSize =
+      if (outputGridRef.matches(GridRefPatterns.ukDintyGridRef)) {
+        2000
+      }
+      else {
+        //apart from DINTY each grid is divided into 10 subdivisions
+        gridReferencePrecision * 10
+      }
 
+    val paddedGridRef = getSixFigGridRef(outputGridRef)
+    //bottom left co-ordinate
+    val blRef = new OSRef(paddedGridRef)
+    //bottom Right coordiante
+    val brRef = new OSRef(blRef.getEasting + gridSize, blRef.getNorthing)
+    //top left coordiante
+    val tlRef = new OSRef(blRef.getEasting, blRef.getNorthing + gridSize)
+    //top right coordinate
+    val trRef = new OSRef(blRef.getEasting + gridSize, blRef.getNorthing + gridSize)
+
+    //Reproject to WGS84
+    //bottom left coordinate
+    val bl = blRef.toLatLng
+    //bottom right coordinate
+    val br = brRef.toLatLng
+    //top left coordinate
+    val tl = tlRef.toLatLng
+    //top right coordinate
+    val tr = trRef.toLatLng
+
+    //Compose and return WKT
+    "POLYGON((" + bl.getLongitude + " " + bl.getLatitude + ", " +
+      tl.getLongitude + " " + tl.getLatitude + ", " +
+      tr.getLongitude + " " + tr.getLatitude + ", " +
+      br.getLongitude + " " + br.getLatitude + ", " +
+      bl.getLongitude + " " + bl.getLatitude + "))"
+  }
+  
   def getParentGridRef: Option[BritishGridSquare] = {
     if (gridReferencePrecision == 10000) {
       None
@@ -92,12 +127,45 @@ class BritishGridSquare(gridRef : String, precision: Int = 0) extends GridSquare
     }
   }
 
+  private def getSixFigGridRef(gridRef: String)= {
+
+    val numerals =
+      if (gridRef.matches(GridRefPatterns.ukDintyGridRef)) {
+        //eg TL32C
+        //gives 32C
+        val numericPart = getNumeralsFromGridRef(gridRef)
+        //gives C
+        val dintyLetter = numericPart.substring(2,3)
+        //gives (0,4)
+        val coordinates = dintyGridByLetter(dintyLetter)
+        //gives (3,2)
+        val numericParts = numericPart.substring(0,2).splitAt(1)
+        //gives 3024
+        numericParts._1 + coordinates._1 + numericParts._2 + coordinates._2
+      }
+      else {
+        getNumeralsFromGridRef(gridRef)
+      }
+
+    if (numerals.length == 6) {
+      gridRef
+    }
+    else {
+      val numericParts = numerals.splitAt(numerals.length / 2)
+      val padLength = (6 - numerals.length) / 2
+      val padString = "0" * padLength
+      val letters = getLettersFromGridRef(gridRef)
+
+      letters + numericParts._1 + padString + numericParts._2 + padString
+    }
+  }
+
   private def trimGridDigits(gridRefString: String, maxDigits: Int) = {
     var numericPart = getNumeralsFromGridRef(gridRef)
     var parts = numericPart.splitAt(numericPart.length / 2)
     var easting = parts._1.substring(0, maxDigits / 2)
     var northing = parts._2.substring(0, maxDigits / 2)
-    var gridLetters = getlettersFromGridRef(gridRef)
+    var gridLetters = getLettersFromGridRef(gridRef)
 
     gridLetters + easting + northing
   }
@@ -121,7 +189,7 @@ class BritishGridSquare(gridRef : String, precision: Int = 0) extends GridSquare
       val dintyLetter = getDintyLeter(dintyEasting, dintyNorthing)
 
       //gives TL
-      val gridLetters = getlettersFromGridRef(gridRef)
+      val gridLetters = getLettersFromGridRef(gridRef)
       //gives 2
       val easting = numericComponents._1.substring(0,1)
       //gives 3
@@ -150,7 +218,7 @@ class BritishGridSquare(gridRef : String, precision: Int = 0) extends GridSquare
     }
   }
 
-  private def getlettersFromGridRef(gridRef : String) = {
+  private def getLettersFromGridRef(gridRef : String) = {
     gridRef.substring(0,2)
   }
 

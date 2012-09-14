@@ -3,6 +3,7 @@ package uk.org.nbn.nbnv.importer.spatial
 import uk.org.nbn.nbnv.importer.ImportFailedException
 
 trait GridSquare {
+  def projection : String
   def gridReference : String
   def gridReferencePrecision : Int
   def wgs84Polygon : String

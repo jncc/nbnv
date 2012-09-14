@@ -33,7 +33,7 @@ class FeatureIngester @Inject()(repo: Repository, gridSquareFactory: GridSquareF
     var feature = repo.getFeatureByGridRef(gridSquare.gridReference)
 
     if (feature == null) {
-      //todo: Call some crud method with data from gridSquare to create feature.
+      //todo: use the data from gridSquare to create feature.
       feature = new Feature()
     }
 

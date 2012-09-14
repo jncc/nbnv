@@ -14,12 +14,15 @@ class GridSquareFactory {
                     }
 
     gridType match {
-      case "OSBG" =>  new BritishGridSquare(gridRef, gridReferencePrecision)
-      case "BNI"  =>  new BritishGridSquare(gridRef, gridReferencePrecision)
+      case "OSGB36" =>  new BritishGridSquare(gridRef, gridReferencePrecision)
+      case "OSGB" =>  new BritishGridSquare(gridRef, gridReferencePrecision)
+      case "BNG"  =>  new BritishGridSquare(gridRef, gridReferencePrecision)
       case "OSI"  =>  new IrishGridSquare(gridRef, gridReferencePrecision)
       case "OSNI" =>  new IrishGridSquare(gridRef, gridReferencePrecision)
+      case "ING" =>  new IrishGridSquare(gridRef, gridReferencePrecision)
       case "ED50" =>  new ChannelIslandGridSquare(gridRef, gridReferencePrecision)
       case "UTM"  =>  new ChannelIslandGridSquare(gridRef, gridReferencePrecision)
+      case "CI"  =>  new ChannelIslandGridSquare(gridRef, gridReferencePrecision)
       case _      =>  throw new ImportFailedException("Unknown grid reference type '%s'".format(gridType))
     }
   }
@@ -33,8 +36,8 @@ class GridSquareFactory {
 
     gridRef match {
       case channelIslandsGridRef() => "ED50"
-      case ukGridRef() => "OSGB"
-      case irishGridRef() => "OSI"
+      case ukGridRef() => "OSGB36"
+      case irishGridRef() => "OSNI"
       case _ => throw new ImportFailedException("Grid refernce type cannot be determined from grid ref '%s'".format(gridRef))
     }
   }
