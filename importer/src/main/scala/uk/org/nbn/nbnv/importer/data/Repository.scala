@@ -160,8 +160,12 @@ class Repository @Inject()(log: Logger, em: EntityManager, cache: QueryCache) ex
     val key = cacheKey.map(_.trim).mkString("|")
     log.debug("Query cache key is '%s'".format(key))
 
-    // wow, look at how concise scala is!
     cache.get(key) orElse {
+      log.debug("Query cache miss for '%s'".format(key))
+      // using the map function here means we only cache the results of
+      // successful queries (that return Some(t)) - we don't want
+      // to cache the results of unsuccessful queries; we want to go back
+      // to the db next time
       f map { t =>
         cache.put(key, t)
         t
