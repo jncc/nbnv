@@ -137,6 +137,17 @@ body {
         }
     }
     
+    .nbn-organisation-table{
+        @extend .nbn-dataset-table;
+        $padding: 10px;
+        td{
+            padding: $padding;
+        }
+        ul{
+            padding-left: 20px;
+        }
+    }
+    
     .nbn-temporal-table{
         font-size:0.9em;
         $padding: 3px;

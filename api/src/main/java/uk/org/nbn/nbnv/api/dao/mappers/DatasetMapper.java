@@ -17,7 +17,8 @@ public interface DatasetMapper {
     
     @Select("SELECT * FROM DatasetData WHERE datasetKey = #{datasetKey}")
     @Results(value = {
-        @Result(property="organisation", column="organisationID", javaType=Organisation.class, one=@One(select="uk.org.nbn.nbnv.api.dao.mappers.OrganisationMapper.selectByID"))
+        @Result(property="organisation", column="organisationID", javaType=Organisation.class, one=@One(select="uk.org.nbn.nbnv.api.dao.mappers.OrganisationMapper.selectByID")),
+        @Result(property="organisationID", column="organisationID")
     })
     Dataset selectByDatasetKey(String datasetKey);
     
