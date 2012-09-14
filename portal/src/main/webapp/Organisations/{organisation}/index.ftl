@@ -7,7 +7,7 @@
     <#assign datasets=json.readURL("${api}/organisations/${organisationId}/datasets")>
 
     <h1>${organisation.name}</h1>
-    <table class="nbn-dataset-table nbn-simple-table">
+    <table class="nbn-organisation-table nbn-simple-table">
         <tr>
             <th>Summary</th>
         </tr>
@@ -19,28 +19,55 @@
         </tr>
         <tr>
             <td>
-                ${organisation.contactName}<br/>
-                ${organisation.contactEmail}<br/>
-                ${organisation.address}
+                <div id="nbn-organisation-contact-details">
+                    <#if organisation.contactName?has_content>${organisation.contactName}</br></#if>
+                    <#if organisation.contactEmail?has_content>${organisation.contactEmail}</br></br></#if>
+                    <#if organisation.address?has_content>${organisation.address}</br></#if>
+                    <#if organisation.postCode?has_content>${organisation.postCode}</br></#if>
+                    <#if organisation.website?has_content></br>${organisation.website}</#if>
+                </div>
             </td>
         </tr>
-        <tr>
-            <th>Taxon datasets</th>
-        </tr>
-        <tr>
-            <td>
-                <@parseDatasets datasetList=datasets />
-            </td>
-        </tr>
+        <@parseDatasets datasetList=datasets />
     </table>
 
 <#macro parseDatasets datasetList>
-    [TODO - add logic to parse datasets into taxon, habitat and admin lists]
-    <ul>
-        <#list datasetList as dataset>
-            <li>${dataset.name}</li>
-        </#list>
-    </ul>
+    <#assign taxonDatasetInfo = "">
+    <#assign habitatDatasetInfo = "">
+    <#assign siteBoundaryDatasetInfo = "">
+    <#list datasetList as dataset>
+        <#assign datasetLinkFragment = "<li><a href='/Datasets/${dataset.datasetKey}'>${dataset.name}</a></li>">
+        
+        <#if dataset.typeName == "Taxon">
+            <#if taxonDatasetInfo?length == 0>
+                <#assign taxonDatasetInfo = " ${taxonDatasetInfo}<tr><th>Species datasets</th></tr><tr><td><ul> ">
+            </#if>
+            <#assign taxonDatasetInfo = "${taxonDatasetInfo} ${datasetLinkFragment}">
+        <#elseif dataset.typeName == "Habitat">
+            <#if habitatDatasetInfo?length == 0>
+                <#assign habitatDatasetInfo = " ${habitatDatasetInfo}<tr><th>Habitat datasets</th></tr><tr><td><ul> ">
+            </#if>
+            <#assign habitatDatasetInfo = "${habitatDatasetInfo} ${datasetLinkFragment}">
+        <#elseif dataset.typeName == "Site Boundary">
+            <#if siteBoundaryDatasetInfo?length == 0>
+                <#assign siteBoundaryDatasetInfo = " ${siteBoundaryDatasetInfo}<tr><th>Site boundary datasets</th></tr><tr><td><ul> ">
+            </#if>
+            <#assign siteBoundaryDatasetInfo = "${siteBoundaryDatasetInfo} ${datasetLinkFragment}">
+        </#if>
+
+    </#list>
+    <#if taxonDatasetInfo?length != 0>
+        <#assign taxonDatasetInfo = "${taxonDatasetInfo} </td></tr></ul>">
+        ${taxonDatasetInfo}
+    </#if>
+    <#if habitatDatasetInfo?length != 0>
+        <#assign habitatDatasetInfo = "${habitatDatasetInfo} </ul>">
+        ${habitatDatasetInfo}
+    </#if>
+    <#if siteBoundaryDatasetInfo?length != 0>
+        <#assign siteBoundaryDatasetInfo = "${siteBoundaryDatasetInfo} </ul>">
+        ${siteBoundaryDatasetInfo}
+    </#if>
 </#macro>
 
 </@template.master>
