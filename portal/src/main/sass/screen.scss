@@ -6,6 +6,7 @@
 @import "_designation";
 @import "_paginator";
 @import "_datatable";
+@import "_organisation";
 @import "jquery/_collapsible-list";
 @import "icons/*.png";
 
@@ -118,7 +119,7 @@ body {
     }
     
     .nbn-taxon-name{
-        font-style: italic;    
+        font-style: italic; 
     }
     
     .nbn-dataset-table{
@@ -191,7 +192,9 @@ body {
         }
     }
     
-    .nbn-provider-logo{
+    #nbn-provider-logo{
+        float: left;
+        margin-right: 10px;
     }
 
 }
