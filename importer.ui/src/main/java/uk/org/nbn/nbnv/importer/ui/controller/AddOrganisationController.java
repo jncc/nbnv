@@ -26,6 +26,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import sun.misc.BASE64Encoder;
@@ -81,7 +82,7 @@ public class AddOrganisationController {
     }
     
     @RequestMapping(value="/addOrganisationProcess.html", method=RequestMethod.POST, params="submit")
-    public ModelAndView processNewOrganisation(@Valid AddOrganisationForm model, BindingResult result) {    
+    public ModelAndView processNewOrganisation(@ModelAttribute("model") @Valid AddOrganisationForm model, BindingResult result) {    
         // If we have errors, pass them back to the user, keeping any inputs in 
         // place, need to improve so that errors are displayed next to the
         // correct inputs
@@ -103,7 +104,7 @@ public class AddOrganisationController {
         return new ModelAndView("redirect:/metadata.html", "model", new MetadataForm());        
     }
     
-    @InitBinder("addOrganisationForm")
+    @InitBinder("model")
     protected void initBinder(WebDataBinder binder) {
         binder.setValidator(new AddOrganisationFormValidator(new OrganisationValidator()));
     }

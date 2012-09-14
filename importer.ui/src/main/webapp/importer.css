@@ -19,3 +19,7 @@ input.wide {
     display: inline-block;
     width: 450px;    
 }
+
+.error {
+    color: red;
+}
