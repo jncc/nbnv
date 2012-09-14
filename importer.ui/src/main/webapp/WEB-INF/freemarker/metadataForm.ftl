@@ -43,6 +43,7 @@
                             </#list>
                         </select>
                     </span>
+                    <input type="submit" name="addOrganisation" value="Add Organisation" />
                 </p>
                 <p>
                     <span class="formlabel"><label for="description" path="metadata">Description</label></span>
@@ -82,7 +83,7 @@
                 </p>
 
                 <p>
-                    <input type="submit" />
+                    <input type="submit" name="submit" value="submit" />
                 </p>
             </fieldset>
         </form>

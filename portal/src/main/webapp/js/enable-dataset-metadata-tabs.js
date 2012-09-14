@@ -44,7 +44,9 @@
             "sPaginationType": "full_numbers",
             "aoColumnDefs": [
                 {"bVisible": false, "aTargets": [1]},
-                {"sWidth": "75%", "aTargets": [0]}
+                {"sWidth": "20%", "sClass": "nbn-align-centre .nbn-datatable-generic", "aTargets": [2]},
+                {"sWidth": "22%", "sClass": "nbn-align-right .nbn-datatable-generic", "aTargets": [3]},
+                {"sClass": ".nbn-datatable-generic", "aTargets": [0]}
             ]
         });
         $('#' + elementForRender).width("100%");
