@@ -34,5 +34,7 @@ public interface TaxonObservationMapper {
             , @Param("overlaps") Integer overlaps
             , @Param("within") Integer within
             , @Param("sensitive") Boolean sensitive
-            , @Param("designation") String designation);
+            , @Param("designation") String designation
+            , @Param("taxonOutputGroup") String taxonOutputGroup
+            , @Param("gridRef") String gridRef);
 }
