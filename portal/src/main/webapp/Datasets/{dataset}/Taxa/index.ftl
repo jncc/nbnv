@@ -1,6 +1,5 @@
 <#assign datasetId="${URLParameters.dataset}">
-<#assign taxonDataset=json.readURL("${api}/taxonDatasets/${datasetId}")>
-<#assign taxa=taxonDataset.taxa>
+<#assign taxa=json.readURL("${api}/taxonDatasets/${datasetId}/taxa")>
 <table id="nbn-species-datatable" class="nbn-dataset-table">
     <thead>
         <tr>
