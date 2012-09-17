@@ -2,6 +2,7 @@ package uk.org.nbn.nbnv.importer.spatial
 
 import uk.me.jstott.jcoord.OSRef
 import uk.org.nbn.nbnv.importer.ImportFailedException
+import scala.math._
 
 class BritishGridSquare(gridRef : String, precision: Int = 0) extends GridSquare {
 
@@ -214,7 +215,7 @@ class BritishGridSquare(gridRef : String, precision: Int = 0) extends GridSquare
     else {
       //Otherwise the precision is inversely proportional to ten to the power of the number of digits
       val numerals = getNumeralsFromGridRef(gridRef).length
-      1000000 / 10 ^ (numerals / 2)
+      (100000 / pow(10, (numerals / 2))).toInt
     }
   }
 
