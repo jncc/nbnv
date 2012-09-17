@@ -81,6 +81,7 @@ class BritishGridSquareSuite extends BaseFunSuite {
     bgr.gridReference should be (knownGridRef_1000m)
   }
 
+  //todo: more testing required in this area
   test("should give WKT for 100m grid square") {
     val bgr = new BritishGridSquare(knownGridRef_100m)
 
@@ -92,4 +93,45 @@ class BritishGridSquareSuite extends BaseFunSuite {
       "-5.0047134199132 56.796095877734665))")
   }
 
+  test("should give 1000m grid square as parent of 100m") {
+    val bgr = new BritishGridSquare(knownGridRef_100m)
+
+    bgr.getParentGridRef match {
+      case Some(parent) => {
+        parent.gridReference should be (knownGridRef_1000m)
+        parent.gridReferencePrecision should be (1000)
+      }
+      case None => fail("no parent grid reference")
+    }
+  }
+
+  test("should give 2000m grid square as parent of 1000m") {
+    val bgr = new BritishGridSquare(knownGridRef_1000m)
+
+    bgr.getParentGridRef match {
+      case Some(parent) => {
+        parent.gridReference should be (knownGridRef_2000m)
+        parent.gridReferencePrecision should be (2000)
+      }
+      case None => fail("no parent grid reference")
+    }
+  }
+
+  test("should give 10000m grid square as parent of 2000m") {
+    val bgr = new BritishGridSquare(knownGridRef_2000m)
+
+    bgr.getParentGridRef match {
+      case Some(parent) => {
+        parent.gridReference should be (knownGridRef_10000m)
+        parent.gridReferencePrecision should be (10000)
+      }
+      case None => fail("no parent grid reference")
+    }
+  }
+
+  test("should be no parent of 10000m grid square") {
+    val bgr = new BritishGridSquare(knownGridRef_10000m)
+
+    bgr.getParentGridRef should be (None)
+  }
 }
