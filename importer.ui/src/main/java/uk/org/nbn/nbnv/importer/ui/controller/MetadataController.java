@@ -6,8 +6,11 @@ package uk.org.nbn.nbnv.importer.ui.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.persistence.EntityManager;
@@ -61,7 +64,16 @@ public class MetadataController {
         // Quick fix to grab the ID of the organisation and push it in to the 
         // model for processing or return to user to ensure correct option is 
         // re-selected
-        model.getMetadata().setOrganisationID(Integer.parseInt(organisationID));
+        
+        try {
+            NumberFormat nf = NumberFormat.getInstance(Locale.getDefault());
+            model.getMetadata().setOrganisationID(nf.parse(organisationID).intValue());
+        } catch (ParseException ex) {
+            Logger.getLogger(UploadController.class.getName()).log(Level.SEVERE, "Error ({0}): {1}", new Object[]{"ParsingError", "Could Not Parse Selected Organisation ID"});
+            model.getErrors().add("Could Not Parse Selected Organisation ID");
+            
+            return new ModelAndView("metadataForm", "model", model);
+        }
         
         if (result.hasErrors()) {
             for (ObjectError error : result.getAllErrors()) {

@@ -1,5 +1,4 @@
 <#import "spring.ftl" as spring />
-<#import "macros.ftl" as macros />
 <html>
     <head>
         <title>Metadata Entry</title>
