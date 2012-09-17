@@ -12,13 +12,18 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.validation.Valid;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import uk.org.nbn.nbnv.importer.ui.metadata.MetadataWriter;
 import uk.org.nbn.nbnv.importer.ui.model.Metadata;
@@ -26,6 +31,8 @@ import uk.org.nbn.nbnv.importer.ui.model.MetadataForm;
 import uk.org.nbn.nbnv.importer.ui.model.SessionData;
 import uk.org.nbn.nbnv.importer.ui.model.UploadItem;
 import uk.org.nbn.nbnv.importer.ui.util.DatabaseConnection;
+import uk.org.nbn.nbnv.importer.ui.validators.MetadataFormValidator;
+import uk.org.nbn.nbnv.importer.ui.validators.MetadataValidator;
 import uk.org.nbn.nbnv.jpa.nbncore.Organisation;
 
 /**
@@ -49,16 +56,20 @@ public class MetadataController {
     }    
     
     @RequestMapping(value="/metadataProcess.html", method = RequestMethod.POST, params="submit")
-    public ModelAndView uploadFile(Metadata metadata, BindingResult result) {
-        MetadataForm model = new MetadataForm();
-        model.setMetadata(metadata);
-        model.setOrganisationList(getOrgList());
+    public ModelAndView uploadFile(@ModelAttribute("model") @Valid MetadataForm model, BindingResult result, @RequestParam("organisationID") String organisationID) {
 
+        // Quick fix to grab the ID of the organisation and push it in to the 
+        // model for processing or return to user to ensure correct option is 
+        // re-selected
+        model.getMetadata().setOrganisationID(Integer.parseInt(organisationID));
+        
         if (result.hasErrors()) {
             for (ObjectError error : result.getAllErrors()) {
                 Logger.getLogger(UploadController.class.getName()).log(Level.WARNING, "Error ({0}): {1}", new Object[]{error.getCode(), error.getDefaultMessage()});
                 model.getErrors().add(error.getDefaultMessage());
             }
+            
+            model.setOrganisationList(getOrgList());
             return new ModelAndView("metadataForm", "model", model);
         }
 
@@ -66,7 +77,7 @@ public class MetadataController {
         try {
             File metadataFile = File.createTempFile("nbnimporter", "metadata.xml");
             MetadataWriter mw = new MetadataWriter(metadataFile);
-            mw.datasetToEML(metadata);
+            mw.datasetToEML(model.getMetadata());
             
             session.setMetadata(metadataFile.getAbsolutePath());
             
@@ -113,6 +124,11 @@ public class MetadataController {
 
         return new ModelAndView("debug", "messages", messages);
     }
+    
+    @InitBinder("model")
+    protected void initBinder(WebDataBinder binder) {
+        binder.setValidator(new MetadataFormValidator(new MetadataValidator()));
+    }    
     
     private List<Organisation> getOrgList() {
         EntityManager em = DatabaseConnection.getInstance().createEntityManager();
