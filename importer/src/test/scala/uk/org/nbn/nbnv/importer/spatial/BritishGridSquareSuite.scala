@@ -16,9 +16,33 @@ class BritishGridSquareSuite extends BaseFunSuite {
     bgr.gridReference should be (knownGridRef_100m)
   }
 
-  test("10m grid should be blured to 100m grid") {
+  test("10m grid ref should be blured to 100m grid") {
     var bgr = new BritishGridSquare(knownGridRef_10m)
 
     bgr.gridReference should be (knownGridRef_100m)
+  }
+
+  test("100m grid ref should have precision = 100") {
+    var bgr = new BritishGridSquare(knownGridRef_100m)
+
+    bgr.gridReferencePrecision should be (100)
+  }
+
+  test("1000m grid ref should have precision = 1000") {
+    var bgr = new BritishGridSquare(knownGridRef_1000m)
+
+    bgr.gridReferencePrecision should be (1000)
+  }
+
+  test("2000m DINTY grid ref should have precision = 1000") {
+    var bgr = new BritishGridSquare(knownGridRef_2000m)
+
+    bgr.gridReferencePrecision should be (2000)
+  }
+
+  test("10000m DINTY grid ref should have precision = 10000") {
+    var bgr = new BritishGridSquare(knownGridRef_10000m)
+
+    bgr.gridReferencePrecision should be (10000)
   }
 }
