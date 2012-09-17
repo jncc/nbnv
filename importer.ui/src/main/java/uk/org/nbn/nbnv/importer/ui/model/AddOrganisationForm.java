@@ -18,15 +18,8 @@ import uk.org.nbn.nbnv.jpa.nbncore.Organisation;
 public class AddOrganisationForm {
     private Organisation organisation;
     private List<String> errors;
+    private String imageError = "";
     private CommonsMultipartFile imageData;
-
-    public CommonsMultipartFile getImage() {
-        return imageData;
-    }
-
-    public void setImage(CommonsMultipartFile imageData) {
-        this.imageData = imageData;
-    }
 
     public AddOrganisationForm () {
         this.organisation = new Organisation();
@@ -42,20 +35,7 @@ public class AddOrganisationForm {
         this.organisation.setPhone("");
         this.organisation.setPostcode("");
         this.organisation.setSummary("");
-        this.organisation.setWebsite("");         
-        
-//        this.organisation.setAbbreviation("TEST");
-//        this.organisation.setAddress("123 Testing Drive\nTestington");
-//        this.organisation.setAllowPublicRegistration(true);
-//        this.organisation.setContactEmail("test@test.com");
-//        this.organisation.setContactName("Testy McTestington");
-//        this.organisation.setLogoURL("LogoURL");
-//        this.organisation.setOrganisationID(-1);
-//        this.organisation.setOrganisationName("Testing Event Strategy Testimonials");
-//        this.organisation.setPhone("01648599775");
-//        this.organisation.setPostcode("PE1 1SD");
-//        this.organisation.setSummary("Test Summary");
-//        this.organisation.setWebsite("www.test.com");     
+        this.organisation.setWebsite("");            
         
         this.errors = new ArrayList<String>();
     }
@@ -91,4 +71,20 @@ public class AddOrganisationForm {
     public void addError(String error) {
         this.errors.add(error);
     }
+    
+    public CommonsMultipartFile getImage() {
+        return imageData;
+    }
+
+    public void setImage(CommonsMultipartFile imageData) {
+        this.imageData = imageData;
+    }
+    
+    public String getImageError() {
+        return imageError;
+    }
+
+    public void setImageError(String imageError) {
+        this.imageError = imageError;
+    }    
 }

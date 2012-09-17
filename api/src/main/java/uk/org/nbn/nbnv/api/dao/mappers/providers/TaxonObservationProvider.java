@@ -56,6 +56,17 @@ public class TaxonObservationProvider {
             WHERE("dtd.code = #{designation}");
         }
         
+        if (!"".equals((String) params.get("gridRef"))) {
+            INNER_JOIN("GridTree gt ON gt.featureID = o.featureID");
+            INNER_JOIN("GridSquareFeatureData gsfd ON gsfd.featureID = gt.parentFeatureID");
+            WHERE("gsfd.label = #{gridRef}");
+        }
+        
+        if (!"".equals((String) params.get("taxonOutputGroup"))) {
+            INNER_JOIN("TaxonData td ON td.taxonVersionKey = o.pTaxonVersionKey");
+            WHERE("td.outputGroupKey =  #{taxonOutputGroup}");
+        }
+        
         return SQL();
     }
 
