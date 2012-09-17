@@ -8,6 +8,7 @@ import uk.gov.nbn.data.gis.processor.MapService;
 import uk.gov.nbn.data.gis.providers.annotations.MapFile;
 import uk.gov.nbn.data.gis.providers.annotations.PathParam;
 import uk.gov.nbn.data.gis.providers.annotations.QueryParam;
+import uk.org.nbn.nbnv.api.model.User;
 
 /**
  * The following represents a Map service for DatasetSpeciesDensitys
@@ -41,7 +42,7 @@ public class DatasetSpeciesDensityWMS {
     @MapObject("{datasetKey}")
     public mapObj getTaxonMap(
             @MapFile("DatasetSpeciesDensityWMS.map") String mapFile,
-            @QueryParam(key="userKey") String userKey,
+            User user,
             @QueryParam(key="startyear", validation="[0-9]{4}") String startYear,
             @QueryParam(key="endyear", validation="[0-9]{4}") String endYear,
             @PathParam(key="datasetKey", validation="^[A-Z0-9]{8}$") String key) {
@@ -49,7 +50,7 @@ public class DatasetSpeciesDensityWMS {
         mapObj toReturn = new mapObj(mapFile);
         for(int i=0; i<toReturn.getNumlayers(); i++) {
             layerObj layer = toReturn.getLayer(i);
-            layer.setData(String.format(QUERY, key, userKey, 
+            layer.setData(String.format(QUERY, key, user.getId(), 
                 MapHelper.createStartYearSegment(startYear),
                 MapHelper.createEndYearSegment(endYear),
                 i+1)); //resolution id

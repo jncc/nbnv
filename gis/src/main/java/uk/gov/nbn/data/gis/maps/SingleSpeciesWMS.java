@@ -9,6 +9,7 @@ import uk.gov.nbn.data.gis.processor.MapService;
 import uk.gov.nbn.data.gis.providers.annotations.MapFile;
 import uk.gov.nbn.data.gis.providers.annotations.PathParam;
 import uk.gov.nbn.data.gis.providers.annotations.QueryParam;
+import uk.org.nbn.nbnv.api.model.User;
 
 /**
  * The following represents a Map service for SingleSpecies
@@ -39,8 +40,8 @@ public class SingleSpeciesWMS {
     @MapObject("{taxonVersionKey}")
     public mapObj getTaxonMap(
             @MapFile("SingleSpeciesWMS.map") String mapFile,
+            User user,
             @PathParam(key="taxonVersionKey", validation="^[A-Z]{6}[0-9]{10}$") String key,
-            @QueryParam(key="userKey") String userKey,
             @QueryParam(key="datasets", validation="^[A-Z0-9]{8}$") List<String> datasetKeys,
             @QueryParam(key="startyear", validation="[0-9]{4}") String startYear,
             @QueryParam(key="endyear", validation="[0-9]{4}") String endYear
@@ -49,7 +50,7 @@ public class SingleSpeciesWMS {
         mapObj toReturn = new mapObj(mapFile);
         for(int i=0; i<toReturn.getNumlayers(); i++) {
             layerObj layer = toReturn.getLayer(i);
-            layer.setData(String.format(QUERY, key, userKey, i+1, 
+            layer.setData(String.format(QUERY, key, user.getId(), i+1, 
                 MapHelper.createInDatasetsSegment(datasetKeys),
                 MapHelper.createStartYearSegment(startYear),
                 MapHelper.createEndYearSegment(endYear)));
