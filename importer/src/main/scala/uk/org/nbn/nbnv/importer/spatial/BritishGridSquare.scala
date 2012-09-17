@@ -3,6 +3,7 @@ package uk.org.nbn.nbnv.importer.spatial
 import uk.me.jstott.jcoord.OSRef
 import uk.org.nbn.nbnv.importer.ImportFailedException
 import scala.math._
+import uk.me.jstott.jcoord.datum.WGS84Datum
 
 class BritishGridSquare(gridRef : String, precision: Int = 0) extends GridSquare {
 
@@ -61,7 +62,7 @@ class BritishGridSquare(gridRef : String, precision: Int = 0) extends GridSquare
     //top right coordinate
     val trRef = new OSRef(blRef.getEasting + gridSize, blRef.getNorthing + gridSize)
 
-    //Reproject to WGS84
+    //Get lat long in OSGB36
     //bottom left coordinate
     val bl = blRef.toLatLng
     //bottom right coordinate
@@ -70,6 +71,12 @@ class BritishGridSquare(gridRef : String, precision: Int = 0) extends GridSquare
     val tl = tlRef.toLatLng
     //top right coordinate
     val tr = trRef.toLatLng
+
+    //Reproject to WGS84
+    bl.toWGS84
+    br.toWGS84
+    tl.toWGS84
+    tr.toWGS84
 
     //Compose and return WKT
     "POLYGON((" + bl.getLongitude + " " + bl.getLatitude + ", " +
