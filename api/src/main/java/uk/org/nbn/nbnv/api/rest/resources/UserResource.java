@@ -1,6 +1,5 @@
 package uk.org.nbn.nbnv.api.rest.resources;
 
-import java.util.List;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -16,7 +15,7 @@ import uk.org.nbn.nbnv.api.authentication.InvalidCredentialsException;
 import uk.org.nbn.nbnv.api.authentication.Token;
 import uk.org.nbn.nbnv.api.authentication.TokenAuthenticator;
 import uk.org.nbn.nbnv.api.model.User;
-import uk.org.nbn.nbnv.api.authentication.TokenUser;
+import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
 import uk.org.nbn.nbnv.api.dao.mappers.UserMapper;
 
 /**
@@ -38,7 +37,7 @@ public class UserResource {
     public User getDetails(@TokenUser User user) {
         return user;
     }
-    
+
     @GET
     @Path("/login")
     @Produces(MediaType.APPLICATION_JSON)

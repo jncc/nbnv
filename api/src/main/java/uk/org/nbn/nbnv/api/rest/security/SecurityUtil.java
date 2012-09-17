@@ -15,7 +15,7 @@ import uk.org.nbn.nbnv.api.model.OrganisationMembership;
 import uk.org.nbn.nbnv.api.model.User;
 
 /**
- *
+ * TODO - Remove in favour of injectable providers
  * @author Paul Gilbertson
  */
 @Component

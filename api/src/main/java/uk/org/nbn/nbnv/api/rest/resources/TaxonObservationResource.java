@@ -17,7 +17,7 @@ import javax.ws.rs.core.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-import uk.org.nbn.nbnv.api.authentication.TokenUser;
+import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
 import uk.org.nbn.nbnv.api.dao.mappers.TaxonObservationMapper;
 import uk.org.nbn.nbnv.api.model.TaxonObservation;
 import uk.org.nbn.nbnv.api.model.User;
@@ -73,8 +73,10 @@ public class TaxonObservationResource {
             , @QueryParam("overlapSite") @DefaultValue("-1") Integer overlaps
             , @QueryParam("withinSite") @DefaultValue("-1") Integer within
             , @QueryParam("sensitive") @DefaultValue("1") Boolean sensitive
-            , @QueryParam("designation") @DefaultValue("") String designation) {
-        //TODO: TaxonGroup, designation, squareBlurring(?)
+            , @QueryParam("designation") @DefaultValue("") String designation
+            , @QueryParam("taxonOutputGroup") @DefaultValue("") String taxonOutputGroup
+            , @QueryParam("gridRef") @DefaultValue("") String gridRef) {
+        //TODO: squareBlurring(?)
         List<String> datasets = null;
         List<String> taxa = null;
 
@@ -86,6 +88,6 @@ public class TaxonObservationResource {
             taxa = Arrays.asList(ptvk.split(","));
         }
 
-        return observationMapper.selectByFilter(user.getId(), startYear, endYear, datasets, taxa, overlaps, within, sensitive, designation);
+        return observationMapper.selectByFilter(user.getId(), startYear, endYear, datasets, taxa, overlaps, within, sensitive, designation, taxonOutputGroup, gridRef);
     }
 }

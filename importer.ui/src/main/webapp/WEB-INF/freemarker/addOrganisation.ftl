@@ -56,16 +56,20 @@
                     <img alt="" src="${spring.status.value?default("")}"/>
 
                     <@spring.formHiddenInput "model.organisation.logo" "class='wide' length='1000'"/>
-                    <@spring.showErrors "" "error" />
 
                     <@spring.bind "model.organisation.logoSmall" />
                     <img alt="" src="${spring.status.value?default("")}"  />
 
                     <@spring.formHiddenInput "model.organisation.logoSmall" "class='wide' length='1000'"/>
-                    <@spring.showErrors "" "error" />
                         
                     <input path="imageData" type="file" name="imageData" value="imageData" />                        
                     <input type="submit" name="addImage" value="Upload Image" />
+
+                    <#if model.imageError != "">
+                        <span class="error">
+                            <b>${model.imageError}</b>
+                        </span>
+                    </#if>
                 </p>
                 <p>
                     <span class="formlabel"><label for="summary" path="organisation">Summary</label></span>

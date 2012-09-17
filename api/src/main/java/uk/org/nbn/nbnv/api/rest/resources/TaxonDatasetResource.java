@@ -34,10 +34,6 @@ public class TaxonDatasetResource {
     @Produces(MediaType.APPLICATION_JSON)
     public TaxonDataset getTaxonDatasetByID(@PathParam("id") String id){
         TaxonDataset toReturn = datasetMapper.selectTaxonDatasetByID(id);
-        toReturn.setTaxa(taxonMapper.selectByDatasetKey(id));
-        toReturn.setRecordsPerYear(datasetMapper.selectRecordsPerYear(id));
-        toReturn.setDateTypeStats(datasetMapper.selectRecordCountPerDateTypeByDatasetKey(id));
-        toReturn.setSurveys(surveyMapper.selectSurveysByDatasetKey(id));
         return toReturn;
     }
     
