@@ -203,18 +203,18 @@ class BritishGridSquare(gridRef : String, precision: Int = 0) extends GridSquare
 
   //Returns the grid reference precision in meters
   private def getPrecision(gridReference : String) = {
-    if (gridRef.matches("""^[HNOST]$""")) {
+    if (gridReference.matches("""^[HNOST]$""")) {
       500000
     }
-    else if (gridRef.matches("""^[HNOST][A-Z]$""")) {
+    else if (gridReference.matches("""^[HNOST][A-Z]$""")) {
       100000
     }
-    else if (gridRef.matches(GridRefPatterns.ukDintyGridRef)) {
+    else if (gridReference.matches(GridRefPatterns.ukDintyGridRef)) {
       2000
     }
     else {
       //Otherwise the precision is inversely proportional to ten to the power of the number of digits
-      val numerals = getNumeralsFromGridRef(gridRef).length
+      val numerals = getNumeralsFromGridRef(gridReference).length
       (100000 / pow(10, (numerals / 2))).toInt
     }
   }

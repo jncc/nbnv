@@ -34,7 +34,7 @@ class BritishGridSquareSuite extends BaseFunSuite {
     bgr.gridReferencePrecision should be (1000)
   }
 
-  test("2000m DINTY grid ref should have precision = 1000") {
+  test("2000m DINTY grid ref should have precision = 2000") {
     var bgr = new BritishGridSquare(knownGridRef_2000m)
 
     bgr.gridReferencePrecision should be (2000)
@@ -50,18 +50,35 @@ class BritishGridSquareSuite extends BaseFunSuite {
     var bgr = new BritishGridSquare(knownGridRef_100m, 1000)
 
     bgr.gridReference should be (knownGridRef_1000m)
+    bgr.gridReferencePrecision should be(1000)
   }
 
   test("should blur 100m grid ref to 2000m") {
     var bgr = new BritishGridSquare(knownGridRef_100m, 2000)
 
     bgr.gridReference should be (knownGridRef_2000m)
+    bgr.gridReferencePrecision should be (2000)
   }
 
   test("should blur 100m grid ref to 10000m") {
     var bgr = new BritishGridSquare(knownGridRef_100m, 10000)
 
     bgr.gridReference should be (knownGridRef_10000m)
+    bgr.gridReferencePrecision should be (10000)
   }
-  
+
+  test("should blur DINTY grid ref to 10000m") {
+    var bgr = new BritishGridSquare(knownGridRef_2000m, 10000)
+
+    bgr.gridReference should be (knownGridRef_10000m)
+    bgr.gridReferencePrecision should be (10000)
+  }
+
+  test("should normailise precision of 150 to 1000m") {
+    var bgr = new BritishGridSquare(knownGridRef_100m, 150)
+
+    bgr.gridReferencePrecision should be (1000)
+    bgr.gridReference should be (knownGridRef_1000m)
+  }
+
 }
