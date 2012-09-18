@@ -80,11 +80,32 @@ class BritishGridSquareSuite extends BaseFunSuite {
     bgr.gridReferencePrecision should be (10000)
   }
 
+  test("should normailise precision of 30 to 100m") {
+    val bgr = new BritishGridSquare(knownGridRef_100m, 30)
+
+    bgr.gridReferencePrecision should be (100)
+    bgr.gridReference should be (knownGridRef_100m)
+  }
+
   test("should normailise precision of 150 to 1000m") {
     val bgr = new BritishGridSquare(knownGridRef_100m, 150)
 
     bgr.gridReferencePrecision should be (1000)
     bgr.gridReference should be (knownGridRef_1000m)
+  }
+
+  test("should normailise precision of 1200 to 2000m") {
+    val bgr = new BritishGridSquare(knownGridRef_1000m, 1200)
+
+    bgr.gridReferencePrecision should be (2000)
+    bgr.gridReference should be (knownGridRef_2000m)
+  }
+
+  test("should normailise precision of 8000 to 10000m") {
+    val bgr = new BritishGridSquare(knownGridRef_2000m, 8000)
+
+    bgr.gridReferencePrecision should be (10000)
+    bgr.gridReference should be (knownGridRef_10000m)
   }
 
   //todo: more testing required in this area
