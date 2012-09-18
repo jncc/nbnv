@@ -62,9 +62,14 @@ public class UserProviderHelper {
     
     private User performUserHashLogin(MultivaluedMap<String, String> query) throws InvalidTokenException, ExpiredTokenException {
         try {
-            byte[] md5Password = Base64.decodeBase64(query.getFirst(MD5_PASSWORD_HASH_KEY));
-            return tokenAuth.getUser(tokenAuth.generateToken(
-                query.getFirst(USERNAME_KEY), md5Password, MD5_PASSWORD_HASH_TTL));
+            if(query.containsKey(MD5_PASSWORD_HASH_KEY)) {
+                byte[] md5Password = Base64.decodeBase64(query.getFirst(MD5_PASSWORD_HASH_KEY));
+                return tokenAuth.getUser(tokenAuth.generateToken(
+                    query.getFirst(USERNAME_KEY), md5Password, MD5_PASSWORD_HASH_TTL));
+            }
+            else {
+                throw new WebApplicationException(Response.Status.BAD_REQUEST);
+            }
         } catch (InvalidCredentialsException ice) {
             throw new WebApplicationException(ice, Response.Status.UNAUTHORIZED);
         }        

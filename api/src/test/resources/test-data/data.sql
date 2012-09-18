@@ -12,6 +12,19 @@ INSERT INTO DesignationCategoryData ( designationCategoryID , label , descriptio
 INSERT INTO UserData (
     id, forename, surname, username, email, registrationDate, phone
 ) VALUES (
+    44, 'Test', 'User', 'tester2', 'test@user.com', NULL, NULL
+);
+
+--Create an authentication user table with a single userid "43" and a password of "password
+INSERT INTO UserTokenAuthenticationData (
+    id, username_sha1, password_sha1, password_md5_sha1 
+) VALUES (44, x'5E86E8CDC7188D53916FCD1D7294CEE4611C7C49', x'5BAA61E4C9B93F3F0682250B6CF8331B7EE68FD8', x'3E3295D135520D1F6D1FDCB183AE356C48ECB8FD');
+
+-- ----------------
+--Create a single user "tester" with an id of 43
+INSERT INTO UserData (
+    id, forename, surname, username, email, registrationDate, phone
+) VALUES (
     43, 'Test', 'User', 'tester', 'test@user.com', NULL, NULL
 );
    
