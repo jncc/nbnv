@@ -63,8 +63,7 @@ public class MetadataController {
 
         // Quick fix to grab the ID of the organisation and push it in to the 
         // model for processing or return to user to ensure correct option is 
-        // re-selected
-        
+        // re-selected 
         try {
             NumberFormat nf = NumberFormat.getInstance(Locale.getDefault());
             model.getMetadata().setOrganisationID(nf.parse(organisationID).intValue());
