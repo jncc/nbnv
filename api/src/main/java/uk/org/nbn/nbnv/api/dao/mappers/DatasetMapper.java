@@ -36,7 +36,7 @@ public interface DatasetMapper {
     List<YearStats> selectRecordsPerYear(String datasetKey);
     
     //TODO this needs turning into a warehouse schema bound view when it is stable
-    @Select("SELECT label dateTypeName, count(*) recordCount FROM TaxonObservationData tod INNER JOIN NBNCore.dbo.DateType d ON tod.dateType = d.dateTypeKey WHERE datasetKey = #{datasetKey} GROUP BY label ORDER BY label")
+    @Select("SELECT * FROM DatasetDateTypeRecordCountData WHERE datasetKey = #{datasetKey}")
     List<DateTypeStats> selectRecordCountPerDateTypeByDatasetKey(String datasetKey);
     
     @Select("SELECT count(*) speciesCount FROM TaxonDatasetTaxonData WHERE datasetKey = #{datasetKey}")
