@@ -10,6 +10,12 @@ class BritishGridSquareSuite extends BaseFunSuite {
   val knownGridRef_2000m = "NN17Q"
   val knownGridRef_10000m = "NN17"
 
+  test("should identify projection as OSGB36") {
+    val bgr = new BritishGridSquare(knownGridRef_100m)
+
+    bgr.projection should be ("OSGB36")
+  }
+
   test("should output an unblurred grid referce") {
     val bgr = new BritishGridSquare(knownGridRef_100m)
 
@@ -40,7 +46,7 @@ class BritishGridSquareSuite extends BaseFunSuite {
     bgr.gridReferencePrecision should be (2000)
   }
 
-  test("10000m DINTY grid ref should have precision = 10000") {
+  test("10000m grid ref should have precision = 10000") {
     val bgr = new BritishGridSquare(knownGridRef_10000m)
 
     bgr.gridReferencePrecision should be (10000)
