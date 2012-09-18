@@ -38,7 +38,7 @@ class SmokeSuiteIT extends BaseFunSuite with ResourceLoader {
     importer.run()
   }
 
-  test("should blah") {
+  ignore("should blah") {
 
     val tempDir = ".\\temp"
     new File(tempDir).mkdirs()
