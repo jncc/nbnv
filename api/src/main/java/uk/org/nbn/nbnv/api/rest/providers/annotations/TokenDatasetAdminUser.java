@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
  * administrator of some dataset
  * @author Chris Johnson
  */
-@Target({ ElementType.PARAMETER, ElementType.METHOD, ElementType.FIELD })
+@Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface TokenDatasetAdminUser {
     String path() default "datasetID";

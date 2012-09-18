@@ -46,4 +46,7 @@ public interface OrganisationMembershipMapper {
         @Result(property="organisation", column="organisationID", javaType=Organisation.class, one=@One(select="uk.org.nbn.nbnv.api.dao.mappers.OrganisationMapper.selectByID"))
     })
     OrganisationMembership selectByUserAndOrganisation(@Param("userKey") int userKey, @Param("organisationID") int organisationID);
+    
+    @Select("SELECT COUNT(*) FROM OrganisationMembershipData WHERE userKey = #{userKey} AND organisationID = #{organisationID}")
+    boolean isUserMemberOfOrganisation(@Param("userKey") int userKey, @Param("organisationID") int organisationID);
 }

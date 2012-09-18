@@ -28,11 +28,7 @@ INSERT INTO UserData (
     42, 'Test', 'Admin', 'admintester', 'testadmin@user.com', NULL, NULL
 );
 
-INSERT INTO SysAdminUserData (
-    userKey, username, password_sha1
-) VALUES (
-    42, 'admintester', NULL
-);
+INSERT INTO UserRoleSystemAdministratorData (userKey) VALUES (42);
 
 -- ---------------
 --Create a test organisation "testorg" with id 1
