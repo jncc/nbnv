@@ -15,7 +15,7 @@ class Repository @Inject()(log: Logger, em: EntityManager, cache: QueryCache) ex
     val q = "select f from Feature f join f.gridSquareCollection s where s.gridRef = :gridRef"
 
 //    select f.*
-//    from GridSquare s
+//    from GridSquareInfo s
 //    inner join Feature f on s.featureId = f.featureId
 //    where s.gridRef = 'HY540119'
 
