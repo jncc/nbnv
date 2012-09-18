@@ -7,6 +7,7 @@ import java.util.Arrays;
 import javax.ws.rs.core.Cookie;
 import com.sun.jersey.api.client.WebResource;
 import java.util.List;
+import java.util.Properties;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.NewCookie;
 import org.junit.Test;
@@ -26,6 +27,7 @@ import static org.junit.Assert.*;
 @DirtiesContext
 public class UserCookieLoginTest {
     @Autowired WebResource resource;
+    @Autowired Properties properties;
     
     @Test
     public void validLogin() {
@@ -55,7 +57,8 @@ public class UserCookieLoginTest {
     @Test
     public void invalidToken() {
         //Given
-        Cookie invalidCookie = new Cookie(UserResource.TOKEN_COOKIE_KEY, "Giberish");
+        String cookieKey = properties.getProperty("sso_token_key");
+        Cookie invalidCookie = new Cookie(cookieKey, "Giberish");
         
         //when
         Status statusResponse = addCookies(resource.path("user"), Arrays.asList(invalidCookie))

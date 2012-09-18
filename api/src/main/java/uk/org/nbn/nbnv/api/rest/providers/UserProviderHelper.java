@@ -1,6 +1,7 @@
 
 package uk.org.nbn.nbnv.api.rest.providers;
 
+import java.util.Properties;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.HttpHeaders;
@@ -35,11 +36,12 @@ public class UserProviderHelper {
     
     @Autowired private TokenAuthenticator tokenAuth;
     @Autowired private UserResource userResource;
+    @Autowired private Properties properties;
     
     public User getValue(HttpHeaders r, UriInfo pathInfo, boolean allowPublic)  {
         try {
             MultivaluedMap<String, String> query = pathInfo.getQueryParameters();
-            Cookie cookie = r.getCookies().get(UserResource.TOKEN_COOKIE_KEY);
+            Cookie cookie = r.getCookies().get(properties.getProperty("sso_token_key"));
             if(query.containsKey(USERNAME_KEY)) {
                 return performUserHashLogin(query);
             }
