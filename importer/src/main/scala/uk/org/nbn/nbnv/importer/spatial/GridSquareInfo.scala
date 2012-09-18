@@ -2,12 +2,12 @@ package uk.org.nbn.nbnv.importer.spatial
 
 import uk.org.nbn.nbnv.importer.ImportFailedException
 
-trait GridSquare {
+trait GridSquareInfo {
   def projection : String
   def gridReference : String
   def gridReferencePrecision : Int
   def wgs84Polygon : String
-  def getParentGridRef : Option[GridSquare]
+  def getParentGridRef : Option[GridSquareInfo]
 
   protected val dintyGridByCoord = Map (
     (0,8) -> "E", (2,8) -> "J", (4,8) -> "P", (6,8) -> "U", (8,8) -> "Z",

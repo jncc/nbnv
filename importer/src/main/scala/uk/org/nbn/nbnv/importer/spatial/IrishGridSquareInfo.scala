@@ -1,6 +1,6 @@
 package uk.org.nbn.nbnv.importer.spatial
 
-class IrishGridSquare(gridRef: String, precision: Int) extends GridSquare {
+class IrishGridSquareInfo(gridRef: String, precision: Int) extends GridSquareInfo {
 
   def projection =  "OSNI"
 

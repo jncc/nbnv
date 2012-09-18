@@ -1,16 +1,16 @@
 package uk.org.nbn.nbnv.importer.spatial
 
-import uk.me.jstott.jcoord.OSRef
 import uk.org.nbn.nbnv.importer.ImportFailedException
-import scala.math._
-import uk.me.jstott.jcoord.datum.WGS84Datum
+import math._
+import uk.org.nbn.nbnv.importer.ImportFailedException
+import uk.me.jstott.jcoord.OSRef
 
-class BritishGridSquare(gridRef : String, precision: Int = 0) extends GridSquare {
+class ChannelIslandGridSquareInfo(gridRef: String, precision: Int) extends GridSquareInfo {
 
   //Check grid ref is uk grid ref
-  if (gridRef.matches(GridRefPatterns.ukGridRef) == false
-    && gridRef.matches(GridRefPatterns.ukDintyGridRef)  == false)
-    throw new IllegalArgumentException("Grid reference '%s' is not a valid uk grid reference".format(gridRef))
+  if (gridRef.matches(GridRefPatterns.channelIslandsGridRef) == false
+    && gridRef.matches(GridRefPatterns.channelIslandsDintyGridRef)  == false)
+    throw new IllegalArgumentException("Grid reference '%s' is not a valid Channel Islands grid reference".format(gridRef))
 
   //Check grid ref is not below minimum preciesion
   val currentPrecision = getPrecision(gridRef)
@@ -36,7 +36,7 @@ class BritishGridSquare(gridRef : String, precision: Int = 0) extends GridSquare
     }
   }
 
-  def projection = "OSGB36"
+  def projection =  "ED50"
 
   def gridReference = outputGridRef
 
@@ -53,6 +53,7 @@ class BritishGridSquare(gridRef : String, precision: Int = 0) extends GridSquare
       }
 
     val paddedGridRef = getSixFigGridRef(outputGridRef)
+
     //bottom left co-ordinate
     val blRef = new OSRef(paddedGridRef)
     //bottom Right coordiante
@@ -86,60 +87,13 @@ class BritishGridSquare(gridRef : String, precision: Int = 0) extends GridSquare
       bl.getLongitude + " " + bl.getLatitude + "))"
   }
 
-  def getParentGridRef: Option[BritishGridSquare] = {
-    if (gridReferencePrecision == 10000) {
-      None
-    }
-    else {
-      //get parent grid reference
-      val parentGridReference =
-        if (gridReferencePrecision == 100) {
-          decreaseGridPrecision(outputGridRef, 1000)
-        }
-        else if (gridReferencePrecision == 1000) {
-          decreaseGridPrecision(outputGridRef, 2000)
-        }
-        else if (gridReferencePrecision == 2000) {
-          decreaseGridPrecision(outputGridRef, 10000 )
-        }
-        else {
-          throw new RuntimeException("Current grid reference has an invalid precision")
-        }
-
-      Option(new BritishGridSquare(parentGridReference))
-    }
-  }
-
-  private def decreaseGridPrecision(gridRef: String, targetPrecision: Int) : String = {
-    //If targetPrecision is 2000 decrease to DINTY grid ref
-    if (targetPrecision == 2000) {
-      computeDintyFromGridRef(gridRef)
-    }
-    //Else reduce to target grid ref
-    else if (gridRef.matches(GridRefPatterns.ukDintyGridRef) && targetPrecision == 10000){
-      //can only reduce this to 10000m
-      gridRef.substring(0,4)
-    }
-    else if (targetPrecision == 100){
-      trimGridDigits(gridRef, 6)
-    }
-    else if (targetPrecision == 1000){
-      trimGridDigits(gridRef, 4)
-    }
-    else if (targetPrecision == 10000) {
-      trimGridDigits(gridRef, 2)
-    }
-    else
-    {
-      throw new IllegalArgumentException("Invalid target precision")
-    }
-  }
+  def getParentGridRef = None
 
   private def getSixFigGridRef(gridRef: String)= {
 
     val numerals =
-      if (gridRef.matches(GridRefPatterns.ukDintyGridRef)) {
-        //eg TL32C
+      if (gridRef.matches(GridRefPatterns.channelIslandsDintyGridRef)) {
+        //eg WA32C
         //gives 32C
         val numericPart = getNumeralsFromGridRef(gridRef)
         //gives C
@@ -168,6 +122,31 @@ class BritishGridSquare(gridRef : String, precision: Int = 0) extends GridSquare
     }
   }
 
+  private def decreaseGridPrecision(gridRef: String, targetPrecision: Int) : String = {
+    //If targetPrecision is 2000 decrease to DINTY grid ref
+    if (targetPrecision == 2000) {
+      computeDintyFromGridRef(gridRef)
+    }
+    //Else reduce to target grid ref
+    else if (gridRef.matches(GridRefPatterns.channelIslandsDintyGridRef) && targetPrecision == 10000){
+      //can only reduce this to 10000m
+      gridRef.substring(0,4)
+    }
+    else if (targetPrecision == 100){
+      trimGridDigits(gridRef, 6)
+    }
+    else if (targetPrecision == 1000){
+      trimGridDigits(gridRef, 4)
+    }
+    else if (targetPrecision == 10000) {
+      trimGridDigits(gridRef, 2)
+    }
+    else
+    {
+      throw new IllegalArgumentException("Invalid target precision")
+    }
+  }
+
   private def trimGridDigits(gridRefString: String, maxDigits: Int) = {
     var numericPart = getNumeralsFromGridRef(gridRef)
     var parts = numericPart.splitAt(numericPart.length / 2)
@@ -179,12 +158,12 @@ class BritishGridSquare(gridRef : String, precision: Int = 0) extends GridSquare
   }
 
   private def computeDintyFromGridRef(gridRef: String) = {
-    if (gridRef.matches(GridRefPatterns.ukDintyGridRef)) {
+    if (gridRef.matches(GridRefPatterns.channelIslandsDintyGridRef)) {
       //already a DINTY grid ref
       gridRef
     }
     else {
-      //eg gridRef TL234369
+      //eg gridRef WA234369
       //gives 234369
       val numericPart = getNumeralsFromGridRef(gridRef) //gives 234369
       //gives (234,369)
@@ -196,27 +175,27 @@ class BritishGridSquare(gridRef : String, precision: Int = 0) extends GridSquare
       //gives I (2, 6)
       val dintyLetter = getDintyLeter(dintyEasting, dintyNorthing)
 
-      //gives TL
+      //gives WA
       val gridLetters = getLettersFromGridRef(gridRef)
       //gives 2
       val easting = numericComponents._1.substring(0,1)
       //gives 3
       val northing = numericComponents._2.substring(0,1)
 
-      //TL23I
+      //WA23I
       gridLetters + easting + northing + dintyLetter
     }
   }
 
   //Returns the grid reference precision in meters
   private def getPrecision(gridReference : String) = {
-    if (gridReference.matches("""^[HNOST]$""")) {
+    if (gridReference.matches("""^W$""")) {
       500000
     }
-    else if (gridReference.matches("""^[HNOST][A-Z]$""")) {
+    else if (gridReference.matches("""^W[AV]$""")) {
       100000
     }
-    else if (gridReference.matches(GridRefPatterns.ukDintyGridRef)) {
+    else if (gridReference.matches(GridRefPatterns.channelIslandsDintyGridRef)) {
       2000
     }
     else {
