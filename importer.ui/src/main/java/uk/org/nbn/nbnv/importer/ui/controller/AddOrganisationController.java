@@ -73,8 +73,6 @@ public class AddOrganisationController {
                 model.getOrganisation().setLogo(logoPrefix + generateBase64EncodedImage(bi, maxLogoWidth, maxLogoHeight, model));
                 model.getOrganisation().setLogoSmall(logoPrefix + generateBase64EncodedImage(bi, maxLogoSmallWidth, maxLogoSmallHeight, model));
             } else {
-                model.getOrganisation().setLogo(logoDefault);
-                model.getOrganisation().setLogoSmall(logoSmallDefault);
                 model.setImageError("No Valid Image Selected");
             }
         } catch (IOException ex) {
@@ -96,22 +94,13 @@ public class AddOrganisationController {
             }
             return new ModelAndView("addOrganisation", "model", model);
         }
-        
-        if (model.getOrganisation().getLogo().trim().equals("")) {
-            model.getOrganisation().setLogo(logoDefault);
-            model.getOrganisation().setLogoSmall(logoSmallDefault);
-            
-            model.setImageError("No Valid Logo Image Selected, setting to default");
-            
-            return new ModelAndView("addOrganisation", "model", model);
-        }
-        
+
         // Write validated organisation to the database
         EntityManager em = DatabaseConnection.getInstance().createEntityManager();
         em.getTransaction().begin();
         em.persist(model.getOrganisation());
         em.getTransaction().commit();            
-
+        
         // Return to metadata input form, should probably find a way of auto-selecting the new organisation
         return new ModelAndView("redirect:/metadata.html", "model", new MetadataForm());        
     }
