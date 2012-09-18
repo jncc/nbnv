@@ -4,7 +4,7 @@ import uk.org.nbn.nbnv.importer.testing.BaseFunSuite
 import org.mockito.Mockito._
 
 class BritishGridSquareSuite extends BaseFunSuite {
-  val knownGridRef_1m = "NN 16634 71237"
+  val knownGridRef_1m = "NN1663471237"
   val knownGridRef_10m = "NN16637123"
   val knownGridRef_100m = "NN166712"
   val knownGridRef_1000m = "NN1671"
