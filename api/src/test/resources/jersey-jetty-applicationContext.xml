@@ -11,7 +11,10 @@
             http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
             http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-3.1.xsd
             http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
-    
+  
+    <!-- Load the properites -->
+    <import resource="classpath:app-properties.xml"/>
+      
     <!--Create a jetty server running off the web.xml-->
     <bean id="JettyServer" class="org.mortbay.jetty.Server" init-method="start" destroy-method="stop">
         <property name="connectors"> 

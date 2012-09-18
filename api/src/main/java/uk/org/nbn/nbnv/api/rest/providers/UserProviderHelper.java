@@ -1,13 +1,16 @@
 
 package uk.org.nbn.nbnv.api.rest.providers;
 
+import java.util.Properties;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.binary.Hex;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.org.nbn.nbnv.api.authentication.ExpiredTokenException;
@@ -35,11 +38,12 @@ public class UserProviderHelper {
     
     @Autowired private TokenAuthenticator tokenAuth;
     @Autowired private UserResource userResource;
+    @Autowired private Properties properties;
     
     public User getValue(HttpHeaders r, UriInfo pathInfo, boolean allowPublic)  {
         try {
             MultivaluedMap<String, String> query = pathInfo.getQueryParameters();
-            Cookie cookie = r.getCookies().get(UserResource.TOKEN_COOKIE_KEY);
+            Cookie cookie = r.getCookies().get(properties.getProperty("sso_token_key"));
             if(query.containsKey(USERNAME_KEY)) {
                 return performUserHashLogin(query);
             }
@@ -63,7 +67,7 @@ public class UserProviderHelper {
     private User performUserHashLogin(MultivaluedMap<String, String> query) throws InvalidTokenException, ExpiredTokenException {
         try {
             if(query.containsKey(MD5_PASSWORD_HASH_KEY)) {
-                byte[] md5Password = Base64.decodeBase64(query.getFirst(MD5_PASSWORD_HASH_KEY));
+                byte[] md5Password = Hex.decodeHex(query.getFirst(MD5_PASSWORD_HASH_KEY).toCharArray());
                 return tokenAuth.getUser(tokenAuth.generateToken(
                     query.getFirst(USERNAME_KEY), md5Password, MD5_PASSWORD_HASH_TTL));
             }
@@ -72,7 +76,9 @@ public class UserProviderHelper {
             }
         } catch (InvalidCredentialsException ice) {
             throw new WebApplicationException(ice, Response.Status.UNAUTHORIZED);
-        }        
+        } catch (DecoderException de) {
+            throw new WebApplicationException(de, Response.Status.BAD_REQUEST);
+        }
     }
     
     private WebApplicationException createWebApplicationExceptionFromException(Exception e) {

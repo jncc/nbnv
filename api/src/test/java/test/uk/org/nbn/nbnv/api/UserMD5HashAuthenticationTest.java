@@ -9,6 +9,7 @@ import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.NewCookie;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.binary.Hex;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,13 +41,13 @@ public class UserMD5HashAuthenticationTest {
         String username = "tester";
         String password = "password";
         byte[] md5PasswordByes = md5Digest.digest(password.getBytes());
-        String md5Password64 = Base64.encodeBase64URLSafeString(md5PasswordByes);
+        String md5PasswordHex = Hex.encodeHexString(md5PasswordByes);
         
         //when
         User user = resource
             .path("user")
             .queryParam("username", username)
-            .queryParam("userkey", md5Password64)
+            .queryParam("userkey", md5PasswordHex)
             .accept(MediaType.APPLICATION_JSON)
             .get(User.class);
         
@@ -60,13 +61,13 @@ public class UserMD5HashAuthenticationTest {
         String username = "tester";
         String password = "gibber";
         byte[] md5PasswordByes = md5Digest.digest(password.getBytes());
-        String md5Password64 = Base64.encodeBase64URLSafeString(md5PasswordByes);
+        String md5PasswordHex = Hex.encodeHexString(md5PasswordByes);
         
         //when
         Status status = resource
             .path("user")
             .queryParam("username", username)
-            .queryParam("userkey", md5Password64)
+            .queryParam("userkey", md5PasswordHex)
             .head()
             .getClientResponseStatus();
         
@@ -96,7 +97,7 @@ public class UserMD5HashAuthenticationTest {
         String username = "tester";
         String password = "password";
         byte[] md5PasswordByes = md5Digest.digest(password.getBytes());
-        String md5Password64 = Base64.encodeBase64URLSafeString(md5PasswordByes);
+        String md5PasswordHex = Hex.encodeHexString(md5PasswordByes);
         
         String cookieUsername = "tester2";
         String cookiepassword = "password";
@@ -114,7 +115,7 @@ public class UserMD5HashAuthenticationTest {
         User user = addCookies(
                 resource.path("user")
                 .queryParam("username", username)
-                .queryParam("userkey", md5Password64), cookies)
+                .queryParam("userkey", md5PasswordHex), cookies)
                 .accept(MediaType.APPLICATION_JSON)
                 .get(User.class);
         
