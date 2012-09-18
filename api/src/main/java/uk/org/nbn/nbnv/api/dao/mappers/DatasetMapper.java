@@ -31,11 +31,9 @@ public interface DatasetMapper {
     })
     TaxonDataset selectTaxonDatasetByID(String datasetKey);
 
-    //TODO this needs turning into a warehouse schema bound view when it is stable
-    @Select("select year(startDate) year, count(*) recordCount from TaxonObservationData where datasetKey = #{datasetKey} group by year(startDate) order by year(startDate)")
+    @Select("SELECT year(startDate) year, COUNT_BIG(*) recordCount FROM TaxonObservationData WHERE datasetKey = #{datasetKey} AND fullVersion = 1 GROUP BY datasetKey, year(startDate) ORDER BY year")
     List<YearStats> selectRecordsPerYear(String datasetKey);
     
-    //TODO this needs turning into a warehouse schema bound view when it is stable
     @Select("SELECT * FROM DatasetDateTypeRecordCountData WHERE datasetKey = #{datasetKey}")
     List<DateTypeStats> selectRecordCountPerDateTypeByDatasetKey(String datasetKey);
     
