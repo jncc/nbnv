@@ -117,7 +117,7 @@ class BritishGridSquareSuite extends BaseFunSuite {
     bgr.gridReference should be (knownGridRef_10000m)
   }
 
-  //todo: more testing required in this area
+  //todo: test outputs for all other grid resolutions
   test("should give WKT for 100m grid square") {
     val bgr = new BritishGridSquare(knownGridRef_100m)
 

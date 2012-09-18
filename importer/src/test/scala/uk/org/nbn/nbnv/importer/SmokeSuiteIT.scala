@@ -1,12 +1,14 @@
 package uk.org.nbn.nbnv.importer
 
 import data.{QueryCache, Repository, KeyGenerator}
+import injection.ImporterModule
 import testing.BaseFunSuite
 import utility.ResourceLoader
 import uk.org.nbn.nbnv.PersistenceUtility
 import org.mockito.Mockito._
 import java.io.{File, InputStream}
 import org.apache.log4j.Logger
+import com.google.inject.Guice
 
 /// This is an end-to-end test suite which requires the database.
 
@@ -34,5 +36,22 @@ class SmokeSuiteIT extends BaseFunSuite with ResourceLoader {
 
     val importer = Importer.createImporter(options)
     importer.run()
+  }
+
+  ignore("should blah") {
+
+    val tempDir = ".\\temp"
+    new File(tempDir).mkdirs()
+    val archivePath = resource("/archives/valid.zip")
+
+    val options = Options(archivePath = archivePath.getFile, tempDir = tempDir, whatIf = true)
+
+    val injector = Guice.createInjector(new ImporterModule(options))
+    val repo = injector.getInstance(classOf[Repository])
+
+    repo.getGridSquareFeature("HY540119") match {
+      case Some(f) => println(f.getWkt)
+      case None => fail()
+    }
   }
 }

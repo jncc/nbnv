@@ -48,9 +48,9 @@ class NbnRecord(record: StarRecord) {
   def determiner =      record.core.value(DwcTerm.identifiedBy)
   def eventDateRaw =    record.core.value(DwcTerm.eventDate)
   def eventDate =       format.parse(eventDateRaw)
-  def east =            record.core.value(DwcTerm.verbatimLongitude)
-  def north =           record.core.value(DwcTerm.verbatimLatitude)
-  def srs =             record.core.value(DwcTerm.verbatimSRS)
+  def east =            parseOptional(record.core.value(DwcTerm.verbatimLongitude))
+  def north =           parseOptional(record.core.value(DwcTerm.verbatimLatitude))
+  def srs =             parseOptional(record.core.value(DwcTerm.verbatimSRS))
   def attributes =      attributeMap
 
   def startDateRaw           = extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateStart")
@@ -61,11 +61,16 @@ class NbnRecord(record: StarRecord) {
   def sensitiveOccurrenceRaw = extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/sensitiveOccurrence")
   def sensitiveOccurrence    = parseSensitiveOccurrence(sensitiveOccurrenceRaw)
 
-  def gridReferenceType      = extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/gridReferenceType")
-  def gridReference          = extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/gridReference")
+  def gridReferenceType      = parseOptional(extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/gridReferenceType"))
+  def gridReference          = parseOptional(extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/gridReference"))
   def gridReferencePrecision = parseGridRefPrecision(gridReferencePrecisionRaw)
   def gridReferencePrecisionRaw = extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/gridReferencePrecisionRaw")
-  def featureKey             = extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/featureKey")
+  def featureKey             = parseOptional(extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/featureKey"))
+
+  def parseOptional(value: String) = {
+    // return Some(value) if the string is not null or empty, otherwise None
+    Option(value).filter(_.trim.nonEmpty)
+  }
 
   def parseGridRefPrecision(precision: String) = {
     if (precision == null || precision.isEmpty) {
