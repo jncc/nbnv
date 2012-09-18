@@ -47,4 +47,6 @@ public interface DatasetAdministratorMapper {
     })
     DatasetAdministrator selectByUserAndDataset(@Param("userKey") int userKey, @Param("datasetKey") String datasetKey);
 
+    @Select("SELECT COUNT(*) FROM DatasetAdministrator WHERE userKey = #{userKey} AND datasetKey = #{datasetKey}")
+    boolean isUserDatasetAdministrator(@Param("userKey") int userKey, @Param("datasetKey") String datasetKey);
 }

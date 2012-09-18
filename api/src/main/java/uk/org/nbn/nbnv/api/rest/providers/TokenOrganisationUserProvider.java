@@ -22,7 +22,6 @@ import uk.org.nbn.nbnv.api.model.OrganisationMembership;
 import uk.org.nbn.nbnv.api.model.OrganisationMembership.Role;
 import uk.org.nbn.nbnv.api.model.User;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenOrganisationUser;
-import uk.org.nbn.nbnv.api.rest.security.UserProviderHelper;
 
 /**
  * The following Injectable Provider will produce users who have been checked for

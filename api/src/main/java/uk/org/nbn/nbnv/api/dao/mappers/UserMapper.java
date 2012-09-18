@@ -16,6 +16,6 @@ public interface UserMapper {
     @Select("SELECT * from UserData WHERE id = #{id}")
     public User getUser(@Param("id") int id);
     
-    @Select("SELECT u.* FROM UserData u INNER JOIN SysAdminUserData sa ON sa.userKey = u.id WHERE u.id = #{id}")
-    public User getSysAdminUser(@Param("id") int id);
+    @Select("SELECT COUNT(*) FROM UserRoleSystemAdministratorData WHERE userKey = #{id}")
+    public boolean isUserSystemAdministrator(@Param("id") int id);
 }

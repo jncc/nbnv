@@ -1,5 +1,5 @@
 
-package uk.org.nbn.nbnv.api.rest.security;
+package uk.org.nbn.nbnv.api.rest.providers;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Cookie;

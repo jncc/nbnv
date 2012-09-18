@@ -35,7 +35,7 @@ import uk.org.nbn.nbnv.importer.ui.model.MetadataForm;
 import uk.org.nbn.nbnv.importer.ui.util.DatabaseConnection;
 import uk.org.nbn.nbnv.importer.ui.validators.AddOrganisationFormValidator;
 import uk.org.nbn.nbnv.importer.ui.validators.OrganisationValidator;
-
+import org.imgscalr.Scalr;
 
 /**
  *
@@ -73,8 +73,6 @@ public class AddOrganisationController {
                 model.getOrganisation().setLogo(logoPrefix + generateBase64EncodedImage(bi, maxLogoWidth, maxLogoHeight, model));
                 model.getOrganisation().setLogoSmall(logoPrefix + generateBase64EncodedImage(bi, maxLogoSmallWidth, maxLogoSmallHeight, model));
             } else {
-                model.getOrganisation().setLogo(logoDefault);
-                model.getOrganisation().setLogoSmall(logoSmallDefault);
                 model.setImageError("No Valid Image Selected");
             }
         } catch (IOException ex) {
@@ -96,22 +94,13 @@ public class AddOrganisationController {
             }
             return new ModelAndView("addOrganisation", "model", model);
         }
-        
-        if (model.getOrganisation().getLogo().trim().equals("")) {
-            model.getOrganisation().setLogo(logoDefault);
-            model.getOrganisation().setLogoSmall(logoSmallDefault);
-            
-            model.setImageError("No Valid Logo Image Selected, setting to default");
-            
-            return new ModelAndView("addOrganisation", "model", model);
-        }
-        
+
         // Write validated organisation to the database
         EntityManager em = DatabaseConnection.getInstance().createEntityManager();
         em.getTransaction().begin();
         em.persist(model.getOrganisation());
         em.getTransaction().commit();            
-
+        
         // Return to metadata input form, should probably find a way of auto-selecting the new organisation
         return new ModelAndView("redirect:/metadata.html", "model", new MetadataForm());        
     }
@@ -124,58 +113,7 @@ public class AddOrganisationController {
     // ********************************************************************
     // Image Manipulation functions for logo resizing
     // ********************************************************************
-    
-    /**
-     * Figure out the new size of a supplied image, shrinks or grows the 
-     * supplied image giving the new width / height value given the bounding
-     * box and width / height parameters
-     * 
-     * @param height The height of the supplied image
-     * @param width The width of the supplied image
-     * @param maxHeight The height of the bounding box
-     * @param maxWidth The width of the bounding box
-     * @return A Size variable containing a height and width for the new image 
-     */
-    private Size fitBoundingBox(int height, int width, int maxHeight, int maxWidth) {
-        int newHeight = height;
-        int newWidth = width;
-        
-        float aspectRatio = (float)width / (float)height;
-        
-        if (newWidth > maxWidth) {
-            newWidth = maxWidth;
-            newHeight = (int) (newWidth / aspectRatio);
-        }
-        
-        if (newHeight > maxHeight) {
-            newHeight = maxHeight;
-            newWidth = (int) (newHeight * aspectRatio);
-        }
-        
-        return new Size(newHeight, newWidth);
-    }
-    
-    /**
-     * Resize a given image to the given sizes and return that image
-     * 
-     * @param originalImage The Original image to process
-     * @param scaledWidth The new image width
-     * @param scaledHeight The new image height
-     * @param preserveAlpha If we should preserve the alpha channel (which we should)
-     * @return 
-     */
-    private BufferedImage createResizedCopy(Image originalImage, int scaledWidth, int scaledHeight, boolean preserveAlpha) {
-        int imageType = preserveAlpha ? BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB;
-        BufferedImage scaledBI = new BufferedImage(scaledWidth, scaledHeight, imageType);
-        Graphics2D g = scaledBI.createGraphics();
-        if (preserveAlpha) {
-                g.setComposite(AlphaComposite.Src);
-        }
-        g.drawImage(originalImage, 0, 0, scaledWidth, scaledHeight, null); 
-        g.dispose();
-        return scaledBI;
-    }        
-        
+
     /**
      * Generate a base64 encoded string form of any given image, given a max 
      * height / width, probably should do this using jQuery or some image library
@@ -189,8 +127,7 @@ public class AddOrganisationController {
      */
     private String generateBase64EncodedImage(BufferedImage bi, int maxWidth, int maxHeight, AddOrganisationForm model) {
         try {
-            Size size = fitBoundingBox(bi.getHeight(), bi.getWidth(), maxHeight, maxWidth);
-            BufferedImage re = createResizedCopy(bi, size.getWidth(), size.getHeight(), true);
+            BufferedImage re = Scalr.resize(bi, maxWidth, Scalr.OP_ANTIALIAS);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             
             ImageIO.write(re, outputType, baos );
@@ -202,35 +139,9 @@ public class AddOrganisationController {
             
         } catch (IOException ex) {
             Logger.getLogger(AddOrganisationController.class.getName()).log(Level.SEVERE, null, ex);
-            model.addError("Error Processing image");
+            model.setImageError("Error Processing image");
         }
         
         return "";
     }
-}
-
-class Size {
-    private int height;
-    private int width;
-    
-    public Size(int height, int width) {
-        this.height = height;
-        this.width = width;
-    }
-    
-    public int getHeight() {
-        return height;
-    }
-
-    public void setHeight(int height) {
-        this.height = height;
-    }
-
-    public int getWidth() {
-        return width;
-    }
-
-    public void setWidth(int width) {
-        this.width = width;
-    }    
 }

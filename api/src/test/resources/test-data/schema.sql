@@ -138,11 +138,8 @@ CREATE TABLE UserTokenAuthenticationData(
 	password_md5_sha1 varbinary(8000) NULL,
 	FOREIGN KEY (id) REFERENCES UserData(id));
 
-CREATE TABLE SysAdminUserData(
-        userKey int NOT NULL,
-        username varchar(40) NOT NULL,
-	password_sha1 varbinary(8000) NULL,
-        FOREIGN KEY (userKey) REFERENCES UserData(id));
+CREATE TABLE UserRoleSystemAdministratorData(
+        userKey int NOT NULL);
 
 CREATE TABLE OrganisationMembershipData(
         userKey int NOT NULL,

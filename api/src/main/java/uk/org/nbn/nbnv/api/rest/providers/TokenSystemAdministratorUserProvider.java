@@ -15,16 +15,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.org.nbn.nbnv.api.authentication.ExpiredTokenException;
 import uk.org.nbn.nbnv.api.authentication.InvalidTokenException;
+import uk.org.nbn.nbnv.api.dao.mappers.UserMapper;
 import uk.org.nbn.nbnv.api.model.User;
+import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenSystemAdministratorUser;
 
 /**
- * Create a provider which will give us access to Users in jersey methods
+ * Create a provider which will give us access to Users in jersey methods who are
+ * System Administrators
  * @author Chris Johnson
  */
 @Provider
 @Component
-public class TokenUserProvider implements InjectableProvider<TokenUser, Type> {
-    
+public class TokenSystemAdministratorUserProvider implements InjectableProvider<TokenSystemAdministratorUser, Type> {
+    @Autowired private UserMapper userMapper;
     @Autowired private UserProviderHelper userObtainer;
     @Context private HttpHeaders r;
     
@@ -37,7 +40,7 @@ public class TokenUserProvider implements InjectableProvider<TokenUser, Type> {
     }
     
     @Override
-    public Injectable<User> getInjectable(ComponentContext cc, TokenUser a, Type c) {
+    public Injectable<User> getInjectable(ComponentContext cc, TokenSystemAdministratorUser a, Type c) {
         if (c.equals(User.class)) {
             return new UserInjector(a);
         }
@@ -45,36 +48,34 @@ public class TokenUserProvider implements InjectableProvider<TokenUser, Type> {
     }
 
     private class UserInjector implements Injectable<User> {
-        private final TokenUser userAnnot;
+        private final TokenSystemAdministratorUser userAnnot;
         
-        private UserInjector(TokenUser userAnnot) {
+        private UserInjector(TokenSystemAdministratorUser userAnnot) {
             this.userAnnot = userAnnot;
         }
         
         /**
-         * The following method will return the current requests user. If no 
-         * user is logged in and the TokenUser annotation allows public access
-         * then a public user will be returned. If suppression of exceptions is
-         * defined in the exception then a public user will be returned in those
-         * cases.
+         * The following method will return the current requests user. Who has
+         * the System Administrator role
          * @return The user for the current context
          * @throws WebApplicationException An unauthorised exception if a logged
          *  in or public user can not be returned.
          */
         @Override public User getValue() {
             try {
-                return userObtainer.getValue(r, userAnnot.allowPublic());
+                User loggedInUser = userObtainer.getValue(r, false);
+                if(userMapper.isUserSystemAdministrator(loggedInUser.getId())) {
+                    return loggedInUser;
+                }
+                else {
+                    throw new WebApplicationException(Response.Status.FORBIDDEN);
+                }
             } 
             catch (InvalidTokenException ite) {
-                if(!(userAnnot.suppressInvalidToken() && userAnnot.allowPublic())) {
-                    throw new WebApplicationException(ite, Response.Status.UNAUTHORIZED);
-                }
+                throw new WebApplicationException(ite, Response.Status.UNAUTHORIZED);
             } catch (ExpiredTokenException ete) {
-                if(!(userAnnot.suppressTokenExpiration() && userAnnot.allowPublic())) {
-                    throw new WebApplicationException(ete, Response.Status.UNAUTHORIZED);
-                }
+                throw new WebApplicationException(ete, Response.Status.UNAUTHORIZED);
             }
-            return User.PUBLIC_USER;
         }
     }
 }

@@ -19,7 +19,6 @@ import uk.org.nbn.nbnv.api.dao.mappers.DatasetAdministratorMapper;
 import uk.org.nbn.nbnv.api.model.DatasetAdministrator;
 import uk.org.nbn.nbnv.api.model.User;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenDatasetAdminUser;
-import uk.org.nbn.nbnv.api.rest.security.UserProviderHelper;
 
 /**
  * The following Injectable Provider will produce users who have been checked for
@@ -67,10 +66,9 @@ public class TokenDatasetAdminUserProvider implements InjectableProvider<TokenDa
             try {
                 User user = userObtainer.getValue(headers, false); //get the logged in user
                 String datasetKey = request.getPathParameters().getFirst(userAnnot.path());
-                DatasetAdministrator datasetAdministrator = datasetAdministratorMapper.selectByUserAndDataset(user.getId(), datasetKey);
                 
-                if(datasetAdministrator != null) {
-                    return datasetAdministrator.getUser();
+                if(datasetAdministratorMapper.isUserDatasetAdministrator(user.getId(), datasetKey)) {
+                    return user;
                 }
                 else {
                     throw new WebApplicationException(Response.Status.FORBIDDEN);
