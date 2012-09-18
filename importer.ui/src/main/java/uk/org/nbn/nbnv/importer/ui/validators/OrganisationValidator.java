@@ -4,10 +4,13 @@
  */
 package uk.org.nbn.nbnv.importer.ui.validators;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.regex.Pattern;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import org.springframework.validation.Errors;
+import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 import uk.org.nbn.nbnv.importer.ui.util.DatabaseConnection;
 import uk.org.nbn.nbnv.jpa.nbncore.Organisation;
@@ -26,9 +29,11 @@ public class OrganisationValidator implements Validator {
     @Override
     public void validate(Object o, Errors errors) {
         Organisation org = (Organisation) o;
+        Pattern pattern = null;
         
         // Organisation Name Validators
         if (org.getOrganisationName().trim().isEmpty()) {
+            // Required
             errors.rejectValue("organisationName", "organisationName.required");
         } else {
             // Check Organisation Name does not exist already
@@ -41,49 +46,65 @@ public class OrganisationValidator implements Validator {
             }
         }
         
-        
         // Abbreviation Validators
-        // None at present
+        // None required, optional input parameter
         
-        // Address Validators
-        // None at present
-        
-        // Allow Public Access Validators
-        // None Needed - Set to false by default
-        
-        // Email Validators
-        Pattern pattern = Pattern.compile("^([0-9a-zA-Z]([-.\\w]*[0-9a-zA-Z])*@([0-9a-zA-Z][-\\w]*[0-9a-zA-Z]\\.)+[a-zA-Z]{2,9})$");
-        if (!pattern.matcher(org.getContactEmail()).matches()) {
-            errors.rejectValue("contactEmail", "contactEmail.invalid");
-        }
+        // Summary Validator
+        // Required
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "summary", "summary.required");
         
         // Name Validators
-        // None Needed
+        // Required
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "contactName", "contactName.required");
         
-        // Logo Validator
-        // None Needed
-        
-        // Phone Number Validator
-        pattern = Pattern.compile("^[0-9]{0,14}$");
-        if (!pattern.matcher(org.getPhone()).matches()) {
-            errors.rejectValue("phone", "phone.invalid");
+        // Email Validators
+        // Required, should match a general pattern of an email address
+        if (org.getContactEmail().trim().isEmpty()) {
+            errors.rejectValue("contactEmail", "contactEmail.required");
+        } else {
+            pattern = Pattern.compile("^([0-9a-zA-Z]([-.\\w]*[0-9a-zA-Z])*@([0-9a-zA-Z][-\\w]*[0-9a-zA-Z]\\.)+[a-zA-Z]{2,9})$");
+            if (!pattern.matcher(org.getContactEmail()).matches()) {
+                errors.rejectValue("contactEmail", "contactEmail.invalid");
+            }
         }
         
+        // Address Validators
+        // TODO: Required as per Metada Form / Paul concerned about DPA so left as optional
+        
         // UK Postcode Validator
+        // Required 
         // TODO: Broken
         //pattern = Pattern.compile("^([A-PR-UWYZ0-9][A-HK-Y0-9][AEHMNPRTVXY0-9]?[ABEHMNPRVWXY0-9]? {1,2}[0-9][ABD-HJLN-UW-Z]{2}|GIR 0AA)$");
         //if (!pattern.matcher(org.getPostcode()).matches()) {
         //     errors.rejectValue("postcode", "postcode.invalid");
-        //}
+        //}        
         
-        // Summary Validator
-        // None Needed
+        // Phone Number Validator
+        // Required
+        if (org.getPhone().trim().equals("")) {
+            errors.rejectValue("phone", "phone.required");
+        } else {
+            pattern = Pattern.compile("^([\\+][0-9]{1,3}([ \\.\\-])?)?([\\(]{1}[0-9]{3}[\\)])?([0-9 \\.\\-]{1,32})((x|ext|extension)?[0-9]{1,4}?)$");
+            if (!pattern.matcher(org.getPhone()).matches()) {
+                errors.rejectValue("phone", "phone.invalid");
+            }        
+        }
         
         // Website Validator
-        // Probably need, but uncertain if we actually do
+        // Not required, but if exists we should validate
+        if (!org.getWebsite().trim().equals("")) {
+            try {
+                URL url = new URL(org.getWebsite());
+            } catch (MalformedURLException ex) {
+                errors.rejectValue("website", "website.invalid");
+            }
+        }
         
-        // Combo Validators
-        // i.e. Must have at least a contact address OR phone number
+        // Logo Validator
+        // None required, optional input parameter
+        
+        // Allow Public Access Validators
+        // None Needed - Set to false by default
     }
     
 }

@@ -22,7 +22,6 @@ import uk.org.nbn.nbnv.api.model.OrganisationMembership;
 import uk.org.nbn.nbnv.api.model.OrganisationMembership.Role;
 import uk.org.nbn.nbnv.api.model.User;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenOrganisationUser;
-import uk.org.nbn.nbnv.api.rest.security.UserProviderHelper;
 
 /**
  * The following Injectable Provider will produce users who have been checked for
@@ -69,21 +68,15 @@ public class TokenOrganisationUserProvider implements InjectableProvider<TokenOr
          * user is not a member or user does not have the valid membership role.
          */
         @Override public User getValue() {
-            try {
-                User user = userObtainer.getValue(headers, false); //get the logged in user
-                EnumSet<Role> requiredRoles = EnumSet.copyOf(Arrays.asList(userAnnot.roles()));
-                int organisationID = Integer.parseInt(request.getPathParameters().getFirst(userAnnot.path()));
-                OrganisationMembership membership = organisationMembershipMapper.selectByUserAndOrganisation(user.getId(), organisationID);
-                if(membership != null && requiredRoles.contains(membership.getRole())) {
-                    return membership.getUser();
-                }
-                else {
-                    throw new WebApplicationException(Response.Status.FORBIDDEN);
-                }
-            } catch (InvalidTokenException ite) {
-                throw new WebApplicationException(ite, Response.Status.UNAUTHORIZED);
-            } catch (ExpiredTokenException ete) {
-                throw new WebApplicationException(ete, Response.Status.UNAUTHORIZED);
+            User user = userObtainer.getValue(headers, request, false); //get the logged in user
+            EnumSet<Role> requiredRoles = EnumSet.copyOf(Arrays.asList(userAnnot.roles()));
+            int organisationID = Integer.parseInt(request.getPathParameters().getFirst(userAnnot.path()));
+            OrganisationMembership membership = organisationMembershipMapper.selectByUserAndOrganisation(user.getId(), organisationID);
+            if(membership != null && requiredRoles.contains(membership.getRole())) {
+                return membership.getUser();
+            }
+            else {
+                throw new WebApplicationException(Response.Status.FORBIDDEN);
             }
         }
     }

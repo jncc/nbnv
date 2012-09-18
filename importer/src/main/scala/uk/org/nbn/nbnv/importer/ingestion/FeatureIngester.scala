@@ -2,23 +2,23 @@ package uk.org.nbn.nbnv.importer.ingestion
 
 import uk.org.nbn.nbnv.importer.records.NbnRecord
 import uk.org.nbn.nbnv.importer.ImportFailedException
-import uk.org.nbn.nbnv.jpa.nbncore.{Dataset, Feature}
+import uk.org.nbn.nbnv.jpa.nbncore.Feature
 import com.google.inject.Inject
 import uk.org.nbn.nbnv.importer.data.Repository
 import uk.org.nbn.nbnv.importer.spatial.GridSquareFactory
 
 class FeatureIngester @Inject()(repo: Repository, gridSquareFactory: GridSquareFactory) {
-  def getFeature(record: NbnRecord) : Feature = {
 
+  def ensureFeature(record: NbnRecord) : Feature = {
 
-    if(record.gridReference != null && record.gridReference.isEmpty == false) {
-      getFeatureByGridRef(record.gridReference, record.gridReferenceType, record.gridReferencePrecision)
+    if (record.gridReference.isDefined) {
+        getFeatureByGridRef(record.gridReference.get, record.gridReferenceType.get, record.gridReferencePrecision)
     }
-    else if (record.featureKey != null && record.featureKey.isEmpty == false ) {
-      getFeatureByFeatureKey(record.featureKey)
+    else if (record.featureKey.isDefined) {
+        getFeatureByFeatureKey(record.featureKey.get)
     }
-    // No need to check the other coordiante elements - the validator will have done this.
-    else if (record.east != null && record.east.isEmpty == false) {
+    else if (record.east.isDefined) {
+      // no need to check the other coordinate elements - the validator will have done this
       //todo: wire this up to getFeatureByCoord
       new Feature()
     }
@@ -30,16 +30,21 @@ class FeatureIngester @Inject()(repo: Repository, gridSquareFactory: GridSquareF
 
   private def getFeatureByGridRef(gridRef: String, gridReferenceType: String = "", gridReferencePrecision: Int = 0) = {
 
-    var gridSquare = gridSquareFactory.getGridSquare(gridRef, gridReferenceType, gridReferencePrecision)
+    // this doesn't go to the db - just calculates stuff i need
+    val gridSquare = gridSquareFactory.getGridSquare(gridRef, gridReferenceType, gridReferencePrecision)
 
-    var feature = repo.getFeatureByGridRef(gridSquare.gridReference)
+    // if there's a feature already, that also means all the parents should also be in there
+    // (the importer will always create all the parents)
+    repo.getGridSquareFeature(gridSquare.gridReference) match {
+      case Some(feature) => {
+        feature
+      }
+      case None => {
+        // if it doesn't exist, create it and then, recursively, its parents
 
-    if (feature == null) {
-      //todo: use the data from gridSquare to create feature.
-      feature = new Feature()
+        new Feature
+      }
     }
-
-    feature
   }
 
 

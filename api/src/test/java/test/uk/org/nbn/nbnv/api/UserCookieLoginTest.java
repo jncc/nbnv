@@ -1,5 +1,7 @@
 package test.uk.org.nbn.nbnv.api;
 
+import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.ClientResponse.Status;
 import uk.org.nbn.nbnv.api.rest.resources.UserResource;
 import java.util.Arrays;
 import javax.ws.rs.core.Cookie;
@@ -56,12 +58,13 @@ public class UserCookieLoginTest {
         Cookie invalidCookie = new Cookie(UserResource.TOKEN_COOKIE_KEY, "Giberish");
         
         //when
-        User user = addCookies(resource.path("user"), Arrays.asList(invalidCookie))
+        Status statusResponse = addCookies(resource.path("user"), Arrays.asList(invalidCookie))
             .accept(MediaType.APPLICATION_JSON)
-            .get(User.class);
-            
-       //then
-        assertEquals("The username was invalid", User.PUBLIC_USER, user);
+            .head()
+            .getClientResponseStatus();
+        
+        //then
+        assertEquals("The forbidden status was expected", Status.FORBIDDEN, statusResponse);
     }
     
     @Test
@@ -85,17 +88,17 @@ public class UserCookieLoginTest {
         String password = "password";
         
         //when
-        int status = resource
+        Status status = resource
             .path("user")
             .path("login")
             .queryParam("username", username)
             .queryParam("password", password)
             .accept(MediaType.APPLICATION_JSON)
             .head()
-            .getStatus();
+            .getClientResponseStatus();
         
         //then
-        assertEquals("Expected unauthorised exception", 401, status);          
+        assertEquals("Expected unauthorised exception", Status.UNAUTHORIZED, status);          
     }
     
     @Test

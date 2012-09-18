@@ -19,7 +19,6 @@ import uk.org.nbn.nbnv.api.dao.mappers.DatasetAdministratorMapper;
 import uk.org.nbn.nbnv.api.model.DatasetAdministrator;
 import uk.org.nbn.nbnv.api.model.User;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenDatasetAdminUser;
-import uk.org.nbn.nbnv.api.rest.security.UserProviderHelper;
 
 /**
  * The following Injectable Provider will produce users who have been checked for
@@ -64,21 +63,14 @@ public class TokenDatasetAdminUserProvider implements InjectableProvider<TokenDa
          * user is not an administrator of the specified dataset.
          */
         @Override public User getValue() {
-            try {
-                User user = userObtainer.getValue(headers, false); //get the logged in user
-                String datasetKey = request.getPathParameters().getFirst(userAnnot.path());
-                DatasetAdministrator datasetAdministrator = datasetAdministratorMapper.selectByUserAndDataset(user.getId(), datasetKey);
-                
-                if(datasetAdministrator != null) {
-                    return datasetAdministrator.getUser();
-                }
-                else {
-                    throw new WebApplicationException(Response.Status.FORBIDDEN);
-                }
-            } catch (InvalidTokenException ite) {
-                throw new WebApplicationException(ite, Response.Status.UNAUTHORIZED);
-            } catch (ExpiredTokenException ete) {
-                throw new WebApplicationException(ete, Response.Status.UNAUTHORIZED);
+            User user = userObtainer.getValue(headers, request, false); //get the logged in user
+            String datasetKey = request.getPathParameters().getFirst(userAnnot.path());
+
+            if(datasetAdministratorMapper.isUserDatasetAdministrator(user.getId(), datasetKey)) {
+                return user;
+            }
+            else {
+                throw new WebApplicationException(Response.Status.FORBIDDEN);
             }
         }
     }

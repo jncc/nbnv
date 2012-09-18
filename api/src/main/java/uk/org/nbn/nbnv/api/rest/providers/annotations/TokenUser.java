@@ -9,10 +9,8 @@ import java.lang.annotation.Target;
  * Annotation which is to be used in jersey methods to obtain a user
  * @author Chris Johnson
  */
-@Target({ ElementType.PARAMETER, ElementType.METHOD, ElementType.FIELD })
+@Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface TokenUser {
     boolean allowPublic() default true;
-    boolean suppressTokenExpiration() default true;
-    boolean suppressInvalidToken() default true;
 }
