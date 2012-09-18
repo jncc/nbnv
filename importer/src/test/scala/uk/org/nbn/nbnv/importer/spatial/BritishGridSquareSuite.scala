@@ -4,6 +4,7 @@ import uk.org.nbn.nbnv.importer.testing.BaseFunSuite
 import org.mockito.Mockito._
 
 class BritishGridSquareSuite extends BaseFunSuite {
+  val knownGridRef_1m = "NN1663471237"
   val knownGridRef_10m = "NN16637123"
   val knownGridRef_100m = "NN166712"
   val knownGridRef_1000m = "NN1671"
@@ -22,10 +23,18 @@ class BritishGridSquareSuite extends BaseFunSuite {
     bgr.gridReference should be (knownGridRef_100m)
   }
 
-  test("10m grid ref should be blured to 100m grid") {
+  test("1m grid ref should be blured to 100m grid automatically") {
+    val bgr = new BritishGridSquare(knownGridRef_1m)
+
+    bgr.gridReference should be (knownGridRef_100m)
+    bgr.gridReferencePrecision should be (100)
+  }
+
+  test("10m grid ref should be blured to 100m grid automatically") {
     val bgr = new BritishGridSquare(knownGridRef_10m)
 
     bgr.gridReference should be (knownGridRef_100m)
+    bgr.gridReferencePrecision should be (100)
   }
 
   test("100m grid ref should have precision = 100") {
