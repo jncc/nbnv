@@ -29,7 +29,7 @@ public class OrganisationValidator implements Validator {
     @Override
     public void validate(Object o, Errors errors) {
         Organisation org = (Organisation) o;
-        Pattern pattern = null;
+        Pattern pattern;
         
         // Organisation Name Validators
         if (org.getOrganisationName().trim().isEmpty()) {
