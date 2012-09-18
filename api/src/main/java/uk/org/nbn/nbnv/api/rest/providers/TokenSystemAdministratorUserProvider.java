@@ -1,6 +1,5 @@
 package uk.org.nbn.nbnv.api.rest.providers;
 
-import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
 import com.sun.jersey.core.spi.component.ComponentContext;
 import com.sun.jersey.core.spi.component.ComponentScope;
 import com.sun.jersey.spi.inject.Injectable;
@@ -10,6 +9,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.Provider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -30,7 +30,7 @@ public class TokenSystemAdministratorUserProvider implements InjectableProvider<
     @Autowired private UserMapper userMapper;
     @Autowired private UserProviderHelper userObtainer;
     @Context private HttpHeaders r;
-    
+    @Context private UriInfo request;
 
     /**
      * A new Injectable is instantiated per request
@@ -62,19 +62,12 @@ public class TokenSystemAdministratorUserProvider implements InjectableProvider<
          *  in or public user can not be returned.
          */
         @Override public User getValue() {
-            try {
-                User loggedInUser = userObtainer.getValue(r, false);
-                if(userMapper.isUserSystemAdministrator(loggedInUser.getId())) {
-                    return loggedInUser;
-                }
-                else {
-                    throw new WebApplicationException(Response.Status.FORBIDDEN);
-                }
-            } 
-            catch (InvalidTokenException ite) {
-                throw new WebApplicationException(ite, Response.Status.UNAUTHORIZED);
-            } catch (ExpiredTokenException ete) {
-                throw new WebApplicationException(ete, Response.Status.UNAUTHORIZED);
+            User loggedInUser = userObtainer.getValue(r, request, false);
+            if(userMapper.isUserSystemAdministrator(loggedInUser.getId())) {
+                return loggedInUser;
+            }
+            else {
+                throw new WebApplicationException(Response.Status.FORBIDDEN);
             }
         }
     }

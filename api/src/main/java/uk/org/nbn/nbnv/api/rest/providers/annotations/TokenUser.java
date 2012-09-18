@@ -13,6 +13,4 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface TokenUser {
     boolean allowPublic() default true;
-    boolean suppressTokenExpiration() default true;
-    boolean suppressInvalidToken() default true;
 }
