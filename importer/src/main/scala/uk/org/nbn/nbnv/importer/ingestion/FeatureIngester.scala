@@ -19,12 +19,14 @@ class FeatureIngester @Inject()(repo: Repository, gridSquareFactory: GridSquareF
     }
     // No need to check the other coordiante elements - the validator will have done this.
     else if (record.east != null && record.east.isEmpty == false) {
+      //todo: wire this up to getFeatureByCoord
       new Feature()
     }
     else {
       throw new ImportFailedException("No feature specified.")
     }
   }
+
 
   private def getFeatureByGridRef(gridRef: String, gridReferenceType: String = "", gridReferencePrecision: Int = 0) = {
 
@@ -43,7 +45,7 @@ class FeatureIngester @Inject()(repo: Repository, gridSquareFactory: GridSquareF
 
 
   private def getFeatureByFeatureKey(featureKey : String) = {
-
+    //todo: Get feature by id
     new Feature()
     //split feature key - first 8 char = dataset key , remainder = SiteBoundary.providerKey
     //Retreive feature by dataset and provider key from site boundary
