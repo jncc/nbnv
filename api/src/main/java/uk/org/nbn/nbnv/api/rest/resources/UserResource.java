@@ -15,9 +15,9 @@ import org.springframework.stereotype.Component;
 import uk.org.nbn.nbnv.api.authentication.InvalidCredentialsException;
 import uk.org.nbn.nbnv.api.authentication.Token;
 import uk.org.nbn.nbnv.api.authentication.TokenAuthenticator;
+import uk.org.nbn.nbnv.api.dao.mappers.UserMapper;
 import uk.org.nbn.nbnv.api.model.User;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
-import uk.org.nbn.nbnv.api.dao.mappers.UserMapper;
 
 /**
  *
@@ -49,8 +49,8 @@ public class UserResource {
     @Path("/login")
     @Produces(MediaType.APPLICATION_JSON)
     public Response createTokenCookie(
-            @QueryParam("username") String username, 
-            @QueryParam("password")String password
+            @QueryParam("username")  String username, 
+            @QueryParam("password") String password
         ) throws InvalidCredentialsException {
         Token token = tokenAuth.generateToken(username, password, tokenTTL);
         return Response.ok("success")
