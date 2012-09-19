@@ -12,7 +12,7 @@ import java.util.logging.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 import uk.org.nbn.nbnv.importer.ui.convert.BadDataException;
-import uk.org.nbn.nbnv.importer.ui.convert.ConverterStep;
+import uk.org.nbn.nbnv.importer.ui.convert.PreStep;
 import uk.org.nbn.nbnv.importer.ui.parser.ColumnMapping;
 import uk.org.nbn.nbnv.importer.ui.parser.DarwinCoreField;
 
@@ -20,23 +20,31 @@ import uk.org.nbn.nbnv.importer.ui.parser.DarwinCoreField;
  *
  * @author Paul Gilbertson
  */
-public class AttributeConcatenation {
+public class AttributeConcatenation extends PreStep {
     private Map<Integer, String> columnList = new HashMap<Integer, String>();
 
+    public AttributeConcatenation() {
+        super();
+        this.setPersist(true);
+    }
+    
+    @Override
     public String getName() {
         return "Concatenate attributes";
     }
 
+    @Override
     public boolean isStepNeeded(List<ColumnMapping> columns) {
         for (ColumnMapping cm : columns) {
             if (cm.getField() == DarwinCoreField.ATTRIBUTE) {
                 columnList.put(cm.getColumnNumber(), cm.getColumnLabel());
             }
         }
-        
-        return columnList.size() > 0;
+
+        return super.isStepNeeded(columnList.size() > 0);
     }
 
+    @Override
     public void modifyHeader(List<ColumnMapping> columns) {
         int highestColumn = -1;
         
@@ -48,6 +56,7 @@ public class AttributeConcatenation {
         columns.add(col);
     }
 
+    @Override
     public void modifyRow(List<String> row) throws BadDataException {
         JSONObject obj = new JSONObject();
         

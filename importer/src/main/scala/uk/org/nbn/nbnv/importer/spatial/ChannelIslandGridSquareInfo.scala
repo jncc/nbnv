@@ -5,7 +5,7 @@ import math._
 import uk.org.nbn.nbnv.importer.ImportFailedException
 import uk.me.jstott.jcoord.OSRef
 
-class ChannelIslandGridSquareInfo(gridRef: String, precision: Int) extends GridSquareInfo {
+class ChannelIslandGridSquareInfo(gridRef: String, precision: Int = 0) extends GridSquareInfo {
 
   //Check grid ref is uk grid ref
   if (gridRef.matches(GridRefPatterns.channelIslandsGridRef) == false
@@ -42,85 +42,33 @@ class ChannelIslandGridSquareInfo(gridRef: String, precision: Int) extends GridS
 
   def gridReferencePrecision = getPrecision(outputGridRef)
 
-  def wgs84Polygon = {
-    val gridSize =
-      if (outputGridRef.matches(GridRefPatterns.ukDintyGridRef)) {
-        2000
-      }
-      else {
-        //apart from DINTY each grid is divided into 10 subdivisions
-        gridReferencePrecision * 10
-      }
+  //todo: Implement wgs84Polygon
+  def wgs84Polygon = null
 
-    val paddedGridRef = getSixFigGridRef(outputGridRef)
-
-    //bottom left co-ordinate
-    val blRef = new OSRef(paddedGridRef)
-    //bottom Right coordiante
-    val brRef = new OSRef(blRef.getEasting + gridSize, blRef.getNorthing)
-    //top left coordiante
-    val tlRef = new OSRef(blRef.getEasting, blRef.getNorthing + gridSize)
-    //top right coordinate
-    val trRef = new OSRef(blRef.getEasting + gridSize, blRef.getNorthing + gridSize)
-
-    //Get lat long in OSGB36
-    //bottom left coordinate
-    val bl = blRef.toLatLng
-    //bottom right coordinate
-    val br = brRef.toLatLng
-    //top left coordinate
-    val tl = tlRef.toLatLng
-    //top right coordinate
-    val tr = trRef.toLatLng
-
-    //Reproject to WGS84
-    bl.toWGS84
-    br.toWGS84
-    tl.toWGS84
-    tr.toWGS84
-
-    //Compose and return WKT
-    "POLYGON((" + bl.getLongitude + " " + bl.getLatitude + ", " +
-      tl.getLongitude + " " + tl.getLatitude + ", " +
-      tr.getLongitude + " " + tr.getLatitude + ", " +
-      br.getLongitude + " " + br.getLatitude + ", " +
-      bl.getLongitude + " " + bl.getLatitude + "))"
-  }
-
-  def getParentGridRef = None
-
-  private def getSixFigGridRef(gridRef: String)= {
-
-    val numerals =
-      if (gridRef.matches(GridRefPatterns.channelIslandsDintyGridRef)) {
-        //eg WA32C
-        //gives 32C
-        val numericPart = getNumeralsFromGridRef(gridRef)
-        //gives C
-        val dintyLetter = numericPart.substring(2,3)
-        //gives (0,4)
-        val coordinates = dintyGridByLetter(dintyLetter)
-        //gives (3,2)
-        val numericParts = numericPart.substring(0,2).splitAt(1)
-        //gives 3024
-        numericParts._1 + coordinates._1 + numericParts._2 + coordinates._2
-      }
-      else {
-        getNumeralsFromGridRef(gridRef)
-      }
-
-    if (numerals.length == 6) {
-      gridRef
+  def getParentGridRef: Option[ChannelIslandGridSquareInfo] = {
+    if (gridReferencePrecision == 10000) {
+      None
     }
     else {
-      val numericParts = numerals.splitAt(numerals.length / 2)
-      val padLength = (6 - numerals.length) / 2
-      val padString = "0" * padLength
-      val letters = getLettersFromGridRef(gridRef)
+      //get parent grid reference
+      val parentGridReference =
+        if (gridReferencePrecision == 100) {
+          decreaseGridPrecision(outputGridRef, 1000)
+        }
+        else if (gridReferencePrecision == 1000) {
+          decreaseGridPrecision(outputGridRef, 2000)
+        }
+        else if (gridReferencePrecision == 2000) {
+          decreaseGridPrecision(outputGridRef, 10000 )
+        }
+        else {
+          throw new RuntimeException("Current grid reference has an invalid precision")
+        }
 
-      letters + numericParts._1 + padString + numericParts._2 + padString
+      Option(new ChannelIslandGridSquareInfo(parentGridReference))
     }
   }
+
 
   private def decreaseGridPrecision(gridRef: String, targetPrecision: Int) : String = {
     //If targetPrecision is 2000 decrease to DINTY grid ref
