@@ -12,19 +12,16 @@ class Repository @Inject()(log: Logger, em: EntityManager, cache: QueryCache) ex
 
   def getGridSquareFeature(gridRef: String) = {
 
-    val q = "select f from Feature f join f.gridSquareCollection s where s.gridRef = :gridRef"
+    val q = "select f, s from Feature f join f.gridSquareCollection s where s.gridRef = :gridRef"
 
-//    select f.*
-//    from GridSquare s
-//    inner join Feature f on s.featureId = f.featureId
-//    where s.gridRef = 'HY540119'
-
-    cacheSome(q, gridRef) {
+    val f = cacheSome(q, gridRef) {
 
       val query = em.createQuery(q, classOf[Feature])
       query.setParameter("gridRef", gridRef)
       query.getSingleOrNone
     }
+
+    Some((f.get, new GridSquare))
   }
 
   // todo: wot's this for? and does it need caching?
