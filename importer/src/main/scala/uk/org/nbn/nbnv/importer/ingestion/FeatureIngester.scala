@@ -5,10 +5,10 @@ import uk.org.nbn.nbnv.importer.ImportFailedException
 import uk.org.nbn.nbnv.jpa.nbncore.Feature
 import com.google.inject.Inject
 import uk.org.nbn.nbnv.importer.data.Repository
-import uk.org.nbn.nbnv.importer.spatial.{GridSquareInfo, GridSquareFactory}
+import uk.org.nbn.nbnv.importer.spatial.{GridSquareInfo, GridSquareInfoFactory}
 import javax.persistence.EntityManager
 
-class FeatureIngester @Inject()(em: EntityManager, repo: Repository, gridSquareFactory: GridSquareFactory) {
+class FeatureIngester @Inject()(em: EntityManager, repo: Repository, gridSquareInfoFactory: GridSquareInfoFactory) {
 
   def ensureFeature(record: NbnRecord) : Feature = {
 
@@ -61,7 +61,7 @@ class FeatureIngester @Inject()(em: EntityManager, repo: Repository, gridSquareF
       }
     }
 
-    val info = gridSquareFactory.getGridSquare(gridRef, gridReferenceType, gridReferencePrecision)
+    val info = gridSquareInfoFactory.getGridSquare(gridRef, gridReferenceType, gridReferencePrecision)
     ensure(info)._1
   }
 
