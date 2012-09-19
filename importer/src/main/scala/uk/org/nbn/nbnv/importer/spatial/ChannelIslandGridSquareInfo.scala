@@ -5,7 +5,7 @@ import math._
 import uk.org.nbn.nbnv.importer.ImportFailedException
 import uk.me.jstott.jcoord.OSRef
 
-class ChannelIslandGridSquareInfo(gridRef: String, precision: Int) extends GridSquareInfo {
+class ChannelIslandGridSquareInfo(gridRef: String, precision: Int = 0) extends GridSquareInfo {
 
   //Check grid ref is uk grid ref
   if (gridRef.matches(GridRefPatterns.channelIslandsGridRef) == false
@@ -42,9 +42,32 @@ class ChannelIslandGridSquareInfo(gridRef: String, precision: Int) extends GridS
 
   def gridReferencePrecision = getPrecision(outputGridRef)
 
+  //todo: Implement wgs84Polygon
   def wgs84Polygon = null
 
-  def getParentGridRef = None
+  def getParentGridRef: Option[ChannelIslandGridSquareInfo] = {
+    if (gridReferencePrecision == 10000) {
+      None
+    }
+    else {
+      //get parent grid reference
+      val parentGridReference =
+        if (gridReferencePrecision == 100) {
+          decreaseGridPrecision(outputGridRef, 1000)
+        }
+        else if (gridReferencePrecision == 1000) {
+          decreaseGridPrecision(outputGridRef, 2000)
+        }
+        else if (gridReferencePrecision == 2000) {
+          decreaseGridPrecision(outputGridRef, 10000 )
+        }
+        else {
+          throw new RuntimeException("Current grid reference has an invalid precision")
+        }
+
+      Option(new ChannelIslandGridSquareInfo(parentGridReference))
+    }
+  }
 
 
   private def decreaseGridPrecision(gridRef: String, targetPrecision: Int) : String = {
