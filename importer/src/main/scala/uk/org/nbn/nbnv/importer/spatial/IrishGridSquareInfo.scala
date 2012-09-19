@@ -74,7 +74,7 @@ class IrishGridSquareInfo(gridRef: String, precision: Int = 0) extends GridSquar
     //Else reduce to target grid ref
     else if (gridRef.matches(GridRefPatterns.irishDintyGrid) && targetPrecision == 10000){
       //can only reduce this to 10000m
-      gridRef.substring(0,4)
+      gridRef.substring(0,3)
     }
     else if (targetPrecision == 100){
       trimGridDigits(gridRef, 6)
