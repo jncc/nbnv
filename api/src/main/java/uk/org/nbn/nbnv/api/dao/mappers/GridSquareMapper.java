@@ -14,8 +14,13 @@ import uk.org.nbn.nbnv.api.model.GridSquare;
  */
 public interface GridSquareMapper {    
     @Select("SELECT * FROM GridSquareFeatureData WHERE label = #{gridSquare}")
-    @Results(value = {
-        @Result(property="boundingBox", column="featureID", javaType=BoundingBox.class, one=@One(select="uk.org.nbn.nbnv.api.dao.mappers.BoundingBoxMapper.getBoundingBoxForGridSquare")),
-    })
+    @Results(
+        @Result(
+            property="boundingBox", 
+            column="featureID", 
+            javaType=BoundingBox.class, 
+            one=@One(select="uk.org.nbn.nbnv.api.dao.mappers.BoundingBoxMapper.getBoundingBoxForGridSquare")
+        )
+    )
     GridSquare getGridSquare(@Param("gridSquare") String gridSquare);
 }
