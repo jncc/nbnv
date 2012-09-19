@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans 
+                    http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    
+<!--Read in the gis properties file using the NBN Properties reader and use as a bean-->
+    <bean id="properties" factory-method="getEffectiveProperties" class="uk.gov.nbn.data.properties.PropertiesReader">
+        <constructor-arg value="api.properties"/>
+    </bean>
+    
+<!--Use above properties file in this spring.xml-->
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="properties" ref="properties"/>
+    </bean> 
+</beans>

@@ -1,5 +1,6 @@
 package uk.org.nbn.nbnv.api.rest.resources;
 
+import java.util.Properties;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -14,9 +15,9 @@ import org.springframework.stereotype.Component;
 import uk.org.nbn.nbnv.api.authentication.InvalidCredentialsException;
 import uk.org.nbn.nbnv.api.authentication.Token;
 import uk.org.nbn.nbnv.api.authentication.TokenAuthenticator;
+import uk.org.nbn.nbnv.api.dao.mappers.UserMapper;
 import uk.org.nbn.nbnv.api.model.User;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
-import uk.org.nbn.nbnv.api.dao.mappers.UserMapper;
 
 /**
  *
@@ -24,13 +25,19 @@ import uk.org.nbn.nbnv.api.dao.mappers.UserMapper;
  */
 @Component
 @Path("/user")
-public class UserResource {
-    private static final int DEFAULT_TOKEN_TTL = 2 * 7 * 24 * 60 * 60 * 1000;//2 weeks
-    public static final String TOKEN_COOKIE_KEY = "nbn.token_key";
-    public static final String SSO_DOMAIN_KEY = ".nerc-lancaster.ac.uk";
+public class UserResource {  
+    private final int tokenTTL;
+    private final String tokenCookieKey;
+    private final String domain;
     
     @Autowired TokenAuthenticator tokenAuth;
     @Autowired UserMapper userMapper;
+    
+    @Autowired public UserResource(Properties properties) {
+        tokenTTL = Integer.parseInt(properties.getProperty("sso_token_default_ttl"));
+        tokenCookieKey = properties.getProperty("sso_token_key");
+        domain = properties.getProperty("sso_token_domain");
+    }
     
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -42,16 +49,16 @@ public class UserResource {
     @Path("/login")
     @Produces(MediaType.APPLICATION_JSON)
     public Response createTokenCookie(
-            @QueryParam("username") String username, 
-            @QueryParam("password")String password
+            @QueryParam("username")  String username, 
+            @QueryParam("password") String password
         ) throws InvalidCredentialsException {
-        Token token = tokenAuth.generateToken(username, password, DEFAULT_TOKEN_TTL);
+        Token token = tokenAuth.generateToken(username, password, tokenTTL);
         return Response.ok("success")
            .cookie(new NewCookie(
-                TOKEN_COOKIE_KEY, 
+                tokenCookieKey, 
                 Base64.encodeBase64URLSafeString(token.getBytes()),
-                "/", SSO_DOMAIN_KEY, "authentication token",
-                DEFAULT_TOKEN_TTL/1000, false
+                "/", domain, "authentication token",
+                tokenTTL/1000, false
             ))
            .build();
     }
@@ -61,7 +68,7 @@ public class UserResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response destroyTokenCookie() {
         return Response.ok("loggedout")
-            .cookie(new NewCookie(TOKEN_COOKIE_KEY, null, "/", SSO_DOMAIN_KEY, null, 0 , false))
+            .cookie(new NewCookie(tokenCookieKey, null, "/", domain, null, 0 , false))
             .build();
     }
     

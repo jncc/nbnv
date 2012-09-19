@@ -3,7 +3,7 @@ package uk.org.nbn.nbnv.importer.spatial
 import uk.org.nbn.nbnv.importer.ImportFailedException
 
 class GridSquareFactory {
-  def getGridSquare(gridRef: String, gridReferenceType: String = "", gridReferencePrecision: Int = 0) : GridSquare = {
+  def getGridSquare(gridRef: String, gridReferenceType: String = "", gridReferencePrecision: Int = 0) : GridSquareInfo = {
 
 
     val gridType = if (gridReferenceType.isEmpty) {
@@ -14,15 +14,15 @@ class GridSquareFactory {
                     }
 
     gridType match {
-      case "OSGB36" =>  new BritishGridSquare(gridRef, gridReferencePrecision)
-      case "OSGB" =>  new BritishGridSquare(gridRef, gridReferencePrecision)
-      case "BNG"  =>  new BritishGridSquare(gridRef, gridReferencePrecision)
-      case "OSI"  =>  new IrishGridSquare(gridRef, gridReferencePrecision)
-      case "OSNI" =>  new IrishGridSquare(gridRef, gridReferencePrecision)
-      case "ING" =>  new IrishGridSquare(gridRef, gridReferencePrecision)
-      case "ED50" =>  new ChannelIslandGridSquare(gridRef, gridReferencePrecision)
-      case "UTM"  =>  new ChannelIslandGridSquare(gridRef, gridReferencePrecision)
-      case "CI"  =>  new ChannelIslandGridSquare(gridRef, gridReferencePrecision)
+      case "OSGB36" =>  new BritishGridSquareInfo(gridRef, gridReferencePrecision)
+      case "OSGB" =>  new BritishGridSquareInfo(gridRef, gridReferencePrecision)
+      case "BNG"  =>  new BritishGridSquareInfo(gridRef, gridReferencePrecision)
+      case "OSI"  =>  new IrishGridSquareInfo(gridRef, gridReferencePrecision)
+      case "OSNI" =>  new IrishGridSquareInfo(gridRef, gridReferencePrecision)
+      case "ING" =>  new IrishGridSquareInfo(gridRef, gridReferencePrecision)
+      case "ED50" =>  new ChannelIslandGridSquareInfo(gridRef, gridReferencePrecision)
+      case "UTM"  =>  new ChannelIslandGridSquareInfo(gridRef, gridReferencePrecision)
+      case "CI"  =>  new ChannelIslandGridSquareInfo(gridRef, gridReferencePrecision)
       case _      =>  throw new ImportFailedException("Unknown grid reference type '%s'".format(gridType))
     }
   }
@@ -30,14 +30,19 @@ class GridSquareFactory {
   private def getGridRefType(gridRef: String) = {
     //Case insensitve (?i) regex to match each grid ref
     val channelIslandsGridRef = GridRefPatterns.channelIslandsGridRef.r
+    val channelIslandsDintyGridRef = GridRefPatterns.channelIslandsDintyGridRef.r
     val ukGridRef = GridRefPatterns.ukGridRef.r
     val ukDintyGridRef = GridRefPatterns.ukDintyGridRef.r
     val irishGridRef =  GridRefPatterns.irishGridRef.r
+    val irishDintyGridRef = GridRefPatterns.irishDintyGrid.r
 
     gridRef match {
       case channelIslandsGridRef() => "ED50"
+      case channelIslandsDintyGridRef() => "ED50"
       case ukGridRef() => "OSGB36"
+      case ukDintyGridRef() => "OSGB36"
       case irishGridRef() => "OSNI"
+      case irishDintyGridRef() => "OSNI"
       case _ => throw new ImportFailedException("Grid refernce type cannot be determined from grid ref '%s'".format(gridRef))
     }
   }

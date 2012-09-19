@@ -5,7 +5,7 @@ import uk.org.nbn.nbnv.importer.ImportFailedException
 import uk.org.nbn.nbnv.jpa.nbncore.Feature
 import com.google.inject.Inject
 import uk.org.nbn.nbnv.importer.data.Repository
-import uk.org.nbn.nbnv.importer.spatial.{GridSquare, GridSquareFactory}
+import uk.org.nbn.nbnv.importer.spatial.{GridSquareInfo, GridSquareFactory}
 import javax.persistence.EntityManager
 
 class FeatureIngester @Inject()(em: EntityManager, repo: Repository, gridSquareFactory: GridSquareFactory) {
@@ -20,7 +20,8 @@ class FeatureIngester @Inject()(em: EntityManager, repo: Repository, gridSquareF
     }
     else if (record.east.isDefined) {
       // no need to check the other coordinate elements - the validator will have done this
-      new Feature() // todo
+      // todo: wire this up to getFeatureByCoord
+      new Feature()
     }
     else {
       throw new ImportFailedException("No feature specified.")
@@ -30,7 +31,7 @@ class FeatureIngester @Inject()(em: EntityManager, repo: Repository, gridSquareF
   private def ensureGridRefFeature(gridRef: String, gridReferenceType: String, gridReferencePrecision: Int) = {
 
     // ensures that the Feature corresponding to the GridSquareInfo, and all its parents, exist
-    def ensure(info: GridSquare) : (Feature, uk.org.nbn.nbnv.jpa.nbncore.GridSquare) = {
+    def ensure(info: GridSquareInfo) : (Feature, uk.org.nbn.nbnv.jpa.nbncore.GridSquare) = {
 
       // if there's a feature already, all necessary parents should already exist, so just return it
       repo.getGridSquareFeature(info.gridReference).getOrElse {
@@ -65,7 +66,7 @@ class FeatureIngester @Inject()(em: EntityManager, repo: Repository, gridSquareF
   }
 
   private def getFeatureByFeatureKey(featureKey : String) = {
-
+    //todo: Get feature by id
     new Feature()
     //split feature key - first 8 char = dataset key , remainder = SiteBoundary.providerKey
     //Retreive feature by dataset and provider key from site boundary

@@ -16,12 +16,16 @@
                     http://www.springframework.org/schema/task/spring-task-3.0.xsd
                     http://www.springframework.org/schema/security
                     http://www.springframework.org/schema/security/spring-security-3.0.3.xsd">
+
+<!-- Load the properites -->
+    <import resource="classpath:app-properties.xml"/>
+
 <!-- Configures the @Controller programming model -->
     <mvc:annotation-driven />
     
 <!-- Configures the @Service programming model -->
     <task:annotation-driven />
-
+    
 <!-- Scans the classpath of this application for @Components to deploy as beans -->
     <context:component-scan base-package="uk.org.nbn.nbnv.api" /> 
     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">

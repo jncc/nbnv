@@ -8,7 +8,7 @@ INSERT INTO DesignationCategoryData ( designationCategoryID , label , descriptio
 INSERT INTO DesignationCategoryData ( designationCategoryID , label , description , sortOrder ) VALUES (100, N'Embedded Record', N'Embedded Record test', 7);
 
 -- ----------------
---Create a single user "tester" with an id of 43
+--Create a single user "tester" with an id of 44
 INSERT INTO UserData (
     id, forename, surname, username, email, registrationDate, phone
 ) VALUES (

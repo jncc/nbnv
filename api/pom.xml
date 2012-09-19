@@ -27,6 +27,12 @@
             <artifactId>nbnv-api-model</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <!--NBN Gateway Properties Reader-->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>nbnv-properties</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         
         <!-- Spring 3 dependencies -->
         <dependency>

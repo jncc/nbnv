@@ -1,16 +1,14 @@
 package uk.org.nbn.nbnv.importer.spatial
 
-import uk.me.jstott.jcoord.OSRef
+import math._
 import uk.org.nbn.nbnv.importer.ImportFailedException
-import scala.math._
-import uk.me.jstott.jcoord.datum.WGS84Datum
 
-class BritishGridSquare(gridRef : String, precision: Int = 0) extends GridSquare {
+class IrishGridSquareInfo(gridRef: String, precision: Int = 0) extends GridSquareInfo {
 
   //Check grid ref is uk grid ref
-  if (gridRef.matches(GridRefPatterns.ukGridRef) == false
-    && gridRef.matches(GridRefPatterns.ukDintyGridRef)  == false)
-    throw new IllegalArgumentException("Grid reference '%s' is not a valid uk grid reference".format(gridRef))
+  if (gridRef.matches(GridRefPatterns.irishGridRef) == false
+    && gridRef.matches(GridRefPatterns.irishDintyGrid)  == false)
+    throw new IllegalArgumentException("Grid reference '%s' is not a valid Irish grid reference".format(gridRef))
 
   //Check grid ref is not below minimum preciesion
   val currentPrecision = getPrecision(gridRef)
@@ -36,57 +34,15 @@ class BritishGridSquare(gridRef : String, precision: Int = 0) extends GridSquare
     }
   }
 
-  def projection = "OSGB36"
+  def projection =  "OSNI"
 
   def gridReference = outputGridRef
 
   def gridReferencePrecision = getPrecision(outputGridRef)
 
-  def wgs84Polygon = {
-    val gridSize =
-      if (outputGridRef.matches(GridRefPatterns.ukDintyGridRef)) {
-        2000
-      }
-      else {
-        //apart from DINTY each grid is divided into 10 subdivisions
-        gridReferencePrecision * 10
-      }
+  def wgs84Polygon = null
 
-    val paddedGridRef = getSixFigGridRef(outputGridRef)
-    //bottom left co-ordinate
-    val blRef = new OSRef(paddedGridRef)
-    //bottom Right coordiante
-    val brRef = new OSRef(blRef.getEasting + gridSize, blRef.getNorthing)
-    //top left coordiante
-    val tlRef = new OSRef(blRef.getEasting, blRef.getNorthing + gridSize)
-    //top right coordinate
-    val trRef = new OSRef(blRef.getEasting + gridSize, blRef.getNorthing + gridSize)
-
-    //Get lat long in OSGB36
-    //bottom left coordinate
-    val bl = blRef.toLatLng
-    //bottom right coordinate
-    val br = brRef.toLatLng
-    //top left coordinate
-    val tl = tlRef.toLatLng
-    //top right coordinate
-    val tr = trRef.toLatLng
-
-    //Reproject to WGS84
-    bl.toWGS84
-    br.toWGS84
-    tl.toWGS84
-    tr.toWGS84
-
-    //Compose and return WKT
-    "POLYGON((" + bl.getLongitude + " " + bl.getLatitude + ", " +
-      tl.getLongitude + " " + tl.getLatitude + ", " +
-      tr.getLongitude + " " + tr.getLatitude + ", " +
-      br.getLongitude + " " + br.getLatitude + ", " +
-      bl.getLongitude + " " + bl.getLatitude + "))"
-  }
-
-  def getParentGridRef: Option[BritishGridSquare] = {
+  def getParentGridRef: Option[IrishGridSquareInfo] = {
     if (gridReferencePrecision == 10000) {
       None
     }
@@ -106,7 +62,7 @@ class BritishGridSquare(gridRef : String, precision: Int = 0) extends GridSquare
           throw new RuntimeException("Current grid reference has an invalid precision")
         }
 
-      Option(new BritishGridSquare(parentGridReference))
+      Option(new IrishGridSquareInfo(parentGridReference))
     }
   }
 
@@ -116,9 +72,9 @@ class BritishGridSquare(gridRef : String, precision: Int = 0) extends GridSquare
       computeDintyFromGridRef(gridRef)
     }
     //Else reduce to target grid ref
-    else if (gridRef.matches(GridRefPatterns.ukDintyGridRef) && targetPrecision == 10000){
+    else if (gridRef.matches(GridRefPatterns.irishDintyGrid) && targetPrecision == 10000){
       //can only reduce this to 10000m
-      gridRef.substring(0,4)
+      gridRef.substring(0,3)
     }
     else if (targetPrecision == 100){
       trimGridDigits(gridRef, 6)
@@ -135,39 +91,6 @@ class BritishGridSquare(gridRef : String, precision: Int = 0) extends GridSquare
     }
   }
 
-  private def getSixFigGridRef(gridRef: String)= {
-
-    val numerals =
-      if (gridRef.matches(GridRefPatterns.ukDintyGridRef)) {
-        //eg TL32C
-        //gives 32C
-        val numericPart = getNumeralsFromGridRef(gridRef)
-        //gives C
-        val dintyLetter = numericPart.substring(2,3)
-        //gives (0,4)
-        val coordinates = dintyGridByLetter(dintyLetter)
-        //gives (3,2)
-        val numericParts = numericPart.substring(0,2).splitAt(1)
-        //gives 3024
-        numericParts._1 + coordinates._1 + numericParts._2 + coordinates._2
-      }
-      else {
-        getNumeralsFromGridRef(gridRef)
-      }
-
-    if (numerals.length == 6) {
-      gridRef
-    }
-    else {
-      val numericParts = numerals.splitAt(numerals.length / 2)
-      val padLength = (6 - numerals.length) / 2
-      val padString = "0" * padLength
-      val letters = getLettersFromGridRef(gridRef)
-
-      letters + numericParts._1 + padString + numericParts._2 + padString
-    }
-  }
-
   private def trimGridDigits(gridRefString: String, maxDigits: Int) = {
     var numericPart = getNumeralsFromGridRef(gridRef)
     var parts = numericPart.splitAt(numericPart.length / 2)
@@ -179,12 +102,12 @@ class BritishGridSquare(gridRef : String, precision: Int = 0) extends GridSquare
   }
 
   private def computeDintyFromGridRef(gridRef: String) = {
-    if (gridRef.matches(GridRefPatterns.ukDintyGridRef)) {
+    if (gridRef.matches(GridRefPatterns.irishDintyGrid)) {
       //already a DINTY grid ref
       gridRef
     }
     else {
-      //eg gridRef TL234369
+      //eg gridRef A234369
       //gives 234369
       val numericPart = getNumeralsFromGridRef(gridRef) //gives 234369
       //gives (234,369)
@@ -196,27 +119,24 @@ class BritishGridSquare(gridRef : String, precision: Int = 0) extends GridSquare
       //gives I (2, 6)
       val dintyLetter = getDintyLeter(dintyEasting, dintyNorthing)
 
-      //gives TL
+      //gives A
       val gridLetters = getLettersFromGridRef(gridRef)
       //gives 2
       val easting = numericComponents._1.substring(0,1)
       //gives 3
       val northing = numericComponents._2.substring(0,1)
 
-      //TL23I
+      //A23I
       gridLetters + easting + northing + dintyLetter
     }
   }
 
   //Returns the grid reference precision in meters
   private def getPrecision(gridReference : String) = {
-    if (gridReference.matches("""^[HNOST]$""")) {
-      500000
-    }
-    else if (gridReference.matches("""^[HNOST][A-Z]$""")) {
+    if (gridReference.matches("""^[A-HJ-Z]$""")) {
       100000
     }
-    else if (gridReference.matches(GridRefPatterns.ukDintyGridRef)) {
+    else if (gridReference.matches(GridRefPatterns.irishDintyGrid)) {
       2000
     }
     else {
@@ -227,10 +147,10 @@ class BritishGridSquare(gridRef : String, precision: Int = 0) extends GridSquare
   }
 
   private def getLettersFromGridRef(gridRef : String) = {
-    gridRef.substring(0,2)
+    gridRef.substring(0,1)
   }
 
   private def getNumeralsFromGridRef(gridRef : String) = {
-    gridRef.substring(2, gridRef.length)
+    gridRef.substring(1, gridRef.length)
   }
 }
