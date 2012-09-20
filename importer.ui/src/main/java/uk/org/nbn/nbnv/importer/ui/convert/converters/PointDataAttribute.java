@@ -6,7 +6,7 @@ package uk.org.nbn.nbnv.importer.ui.convert.converters;
 
 import java.util.List;
 import uk.org.nbn.nbnv.importer.ui.convert.BadDataException;
-import uk.org.nbn.nbnv.importer.ui.convert.ConverterStep;
+import uk.org.nbn.nbnv.importer.ui.convert.DependentStep;
 import uk.org.nbn.nbnv.importer.ui.parser.ColumnMapping;
 import uk.org.nbn.nbnv.importer.ui.parser.DarwinCoreField;
 
@@ -14,11 +14,15 @@ import uk.org.nbn.nbnv.importer.ui.parser.DarwinCoreField;
  *
  * @author Paul Gilbertson
  */
-public class PointDataAttribute implements ConverterStep {
+public class PointDataAttribute extends DependentStep {
 
     private int eastColumn = -1;
     private int northColumn = -1;
     private int srsColumn = -1;
+    
+    public PointDataAttribute() {
+        super(DependentStep.ADD_COLUMNS);
+    }
 
     @Override
     public String getName() {

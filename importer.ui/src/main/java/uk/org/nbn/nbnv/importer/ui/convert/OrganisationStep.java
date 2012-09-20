@@ -11,10 +11,11 @@ import uk.org.nbn.nbnv.importer.ui.parser.ColumnMapping;
  *
  * @author Matt Debont
  */
-public class OrganisationStep extends DependentStep {
+public abstract class OrganisationStep extends DependentStep {
     private String orgGroup;
     
-    public OrganisationStep (String orgGroup) {
+    public OrganisationStep (String orgGroup, int modifier) {
+        super(modifier);
         this.orgGroup = orgGroup;
     }
     

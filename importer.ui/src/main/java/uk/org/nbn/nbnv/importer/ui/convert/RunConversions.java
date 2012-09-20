@@ -33,19 +33,15 @@ public class RunConversions {
     private List<ConverterStep> steps;
     private List<ColumnMapping> mappings;
     private NXFParser nxfParser;
-    
-    private static final Set<Class> classes = new HashSet<Class>(Arrays.asList(new Class[] {ConverterStep.class, DependentStep.class, OrganisationStep.class, PreStep.class}));
 
     public RunConversions(File in) throws IOException {
         this.nxfParser = new NXFParser(in);
     }
 
-    private List<ConverterStep> getSteps(List<ColumnMapping> mappings) {
+    private List<ConverterStep> getSteps(List<ColumnMapping> mappings) throws UnsatisfiableDependencyError {
         setSteps(new ArrayList<ConverterStep>());
 
         Reflections reflections = new Reflections("uk.org.nbn.nbnv.importer.ui.convert.converters");
-        
-        setSteps(getPreSteps(mappings, reflections));
         
         Set<Class<? extends ConverterStep>> converters = reflections.getSubTypesOf(ConverterStep.class);
 
@@ -63,61 +59,27 @@ public class RunConversions {
         }
         
         setSteps(getDepSteps(mappings, reflections));
-        
-        setSteps(getPostSteps(mappings, reflections));
 
         return getSteps();
     }
-    
-    private List<ConverterStep> getPostSteps(List<ColumnMapping> mappings, Reflections reflections) {
-        
-        Set<Class<? extends PostStep>> postConverters = reflections.getSubTypesOf(PostStep.class);
-        
-        for (Class<? extends PostStep> stepClass: postConverters) {
-            try {
-                ConverterStep step = stepClass.newInstance();
-                if (step.isStepNeeded(mappings)) {
-                    getSteps().add(step);
-                }
-            } catch (InstantiationException ex) {
-                Logger.getLogger(RunConversions.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IllegalAccessException ex) {
-                Logger.getLogger(RunConversions.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-        
-        return getSteps();
-    }
-    
-    private List<ConverterStep> getPreSteps(List<ColumnMapping> mappings, Reflections reflections) {
-        
-        Set<Class<? extends PreStep>> preConverters = reflections.getSubTypesOf(PreStep.class);
-        
-        for (Class<? extends PreStep> stepClass: preConverters) {
-            try {
-                ConverterStep step = stepClass.newInstance();
-                if (step.isStepNeeded(mappings)) {
-                    getSteps().add(step);
-                }
-            } catch (InstantiationException ex) {
-                Logger.getLogger(RunConversions.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IllegalAccessException ex) {
-                Logger.getLogger(RunConversions.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-        
-        return getSteps();
-    }
 
-    private List<ConverterStep> getDepSteps(List<ColumnMapping> mappings, Reflections reflections) {
+    private List<ConverterStep> getDepSteps(List<ColumnMapping> mappings, Reflections reflections) throws UnsatisfiableDependencyError {
         ArrayList<DependentStep> depSteps = new ArrayList<DependentStep>();
+        ArrayList<DependentStep> preSteps = new ArrayList<DependentStep>();
+        ArrayList<DependentStep> postSteps = new ArrayList<DependentStep>();
         
         Set<Class<? extends DependentStep>> depConverters = reflections.getSubTypesOf(DependentStep.class);
         for (Class<? extends DependentStep> stepClass: depConverters) {
             try {
                 DependentStep step = stepClass.newInstance();
                 if (step.isStepNeeded(mappings)) {
-                    depSteps.add(step);
+                    if ((step.getModifier() & DependentStep.RUN_FIRST) != 0) {
+                        preSteps.add(step);
+                    } else if ((step.getModifier() & DependentStep.INSERT_COLUMN) != 0) {
+                        postSteps.add(step);
+                    } else {
+                        depSteps.add(step);
+                    }
                 }
             } catch (InstantiationException ex) {
                 Logger.getLogger(RunConversions.class.getName()).log(Level.SEVERE, null, ex);
@@ -126,19 +88,23 @@ public class RunConversions {
             }
         }
         
-        Set<Class<? extends OrganisationStep>> orgConverters = reflections.getSubTypesOf(OrganisationStep.class);
+//        Set<Class<? extends OrganisationStep>> orgConverters = reflections.getSubTypesOf(OrganisationStep.class);
+//        
+//        for (Class<? extends OrganisationStep> stepClass: orgConverters) {
+//            try {
+//                DependentStep step = stepClass.newInstance();
+//                if (step.isStepNeeded(mappings)) {
+//                    depSteps.add(step);
+//                }
+//            } catch (InstantiationException ex) {
+//                Logger.getLogger(RunConversions.class.getName()).log(Level.SEVERE, null, ex);
+//            } catch (IllegalAccessException ex) {
+//                Logger.getLogger(RunConversions.class.getName()).log(Level.SEVERE, null, ex);
+//            }
+//        }
         
-        for (Class<? extends OrganisationStep> stepClass: orgConverters) {
-            try {
-                DependentStep step = stepClass.newInstance();
-                if (step.isStepNeeded(mappings)) {
-                    depSteps.add(step);
-                }
-            } catch (InstantiationException ex) {
-                Logger.getLogger(RunConversions.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IllegalAccessException ex) {
-                Logger.getLogger(RunConversions.class.getName()).log(Level.SEVERE, null, ex);
-            }
+        for (DependentStep preStep : preSteps) {
+            getSteps().add(0, preStep);
         }
         
         boolean actionPerformed;
@@ -149,30 +115,78 @@ public class RunConversions {
             actionPerformed = false;
             ArrayList<ConverterStep> stepsToAdd = new ArrayList<ConverterStep>();
             
-            for (ConverterStep step : getSteps()) {
-                ListIterator<DependentStep> dSteps = depSteps.listIterator();
-                while(dSteps.hasNext()) {
-                    DependentStep propStep = dSteps.next();
-                    propStep.satisfyDependency(step.getClass());
+            for (ConverterStep cStep : getSteps()) {
+                
+                ListIterator<DependentStep> dStepsIterator = depSteps.listIterator();
+                
+                while (dStepsIterator.hasNext()) {
+                    DependentStep dStep = dStepsIterator.next();
                     
-                    if (propStep.getDependency().isEmpty()) {
-                        stepsToAdd.add(propStep);
-                        dSteps.remove();
+                    if ((dStep.satisfyDependency(cStep.getClass())) || dStep.getDependency().isEmpty()) {
+                        stepsToAdd.add(dStep);
+                        dStepsIterator.remove();
                         actionPerformed = true;
                     }
                 }
             }
             
-            getSteps().addAll(stepsToAdd);
-            
             if (!actionPerformed) {
-                System.err.println("Remaining Dependent Steps to be allocated include;");
-                for (DependentStep errSteps : depSteps) {
-                    System.err.println(errSteps.getClass().toString());
+                
+                boolean dStepChecked;
+                
+                ListIterator<DependentStep> dStepIterator = depSteps.listIterator();
+                
+                while(dStepIterator.hasNext()) {
+                    DependentStep dStep = dStepIterator.next();
+                    
+                    dStepChecked = false;
+                    // Check if dependency is in depList
+                    for (DependentStep checkDep : depSteps) {
+                        if (dStep.checkDependency(checkDep.getClass())) {
+                            dStepChecked = true;
+                        }
+                    }
+
+                    if (!dStepChecked) {
+                        // Check if dependency is in postList
+                        for (int i = 0; i < postSteps.size(); i++) {
+                            DependentStep postStep = postSteps.get(i);
+                            if (dStep.satisfyDependency(postStep.getClass()) && dStep.getDependency().isEmpty()) {
+                                postSteps.add(i + 1, dStep);
+                                dStepIterator.remove();
+                                dStepChecked = true;
+                                actionPerformed = true;
+                                break;
+                            }
+                        }
+                        
+                        if (!dStepChecked) {
+                            getSteps().add(dStep);
+                            actionPerformed = true;
+                        }
+                    }
+                } 
+                
+                if (!actionPerformed) {
+                    // Locked up, dependencies are seriously screwed up for some 
+                    // reason
+                    if (depSteps.size() > 1) {
+                        String depFails = " - ";
+                        for(DependentStep step : depSteps) {
+                            depFails = depFails + step.getClass().getCanonicalName() + " - ";
+                        }
+                        throw new UnsatisfiableDependencyError("Could not satisfy a dependency on multiple steps " + 
+                                depFails);
+                    } else {
+                        throw new UnsatisfiableDependencyError("Could not satsify a dependency on step " + depSteps.get(0).getName());
+                    }
                 }
-                throw new UnsatisfiedLinkError("Dependency Structure for Converter Steps is not satisfiable, please check your dependencies!");
+            } else {
+                getSteps().addAll(stepsToAdd);
             }
         }
+        
+        getSteps().addAll(postSteps);
         
         return getSteps();
     }    
@@ -224,6 +238,8 @@ public class RunConversions {
             errors.addAll(mw.createMetaFile(mappings, meta));
         } catch (IOException ex) {
             errors.add("IOException: " + ex.getMessage());
+        } catch(UnsatisfiableDependencyError ex) {
+            errors.add("UnsatsifiableDependencyError: " + ex.getMessage());
         } finally {
             if (w != null) {
                 w.close();
