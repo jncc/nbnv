@@ -28,6 +28,7 @@ public class TaxonObservationProvider {
         createSelectQuery(params);
         INNER_JOIN("TaxonData td ON o.taxonVersionKey = td.taxonVersionKey");
         INNER_JOIN("TaxonOutputGroupData togd ON td.outputGroupKey = togd.taxonGroupKey");
+        ORDER_BY("taxonGroupName");
         return SQL();
     }
     
@@ -38,6 +39,7 @@ public class TaxonObservationProvider {
         if ("".equals((String) params.get("taxonOutputGroup"))) {
             INNER_JOIN("TaxonData td ON td.taxonVersionKey = o.pTaxonVersionKey");
         }
+        ORDER_BY("name");
         return SQL();
     }
     

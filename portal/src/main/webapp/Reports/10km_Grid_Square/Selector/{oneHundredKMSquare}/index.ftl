@@ -11,7 +11,7 @@
             <map name="tenKmSelector">
                 <#list 0..9 as x>
                     <#list 0..9 as y>
-                        <area alt="" shape="rect" coords="${x*50},${y*50},${(x+1)*50},${(y+1)*50}" href="/Reports/10km_Grid_Square/${URLParameters.oneHundredKMSquare}${x}${-(y-9)}"/>
+                        <area alt="" shape="rect" coords="${x*50},${y*50},${(x+1)*50},${(y+1)*50}" href="/Reports/10km_Grid_Square/${URLParameters.oneHundredKMSquare}${x}${-(y-9)}/Groups"/>
                     </#list>
                 </#list>
             </map>

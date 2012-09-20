@@ -1,9 +1,9 @@
 package uk.org.nbn.nbnv.importer.spatial
 
-import uk.org.nbn.nbnv.importer.ImportFailedException
 import math._
 import uk.org.nbn.nbnv.importer.ImportFailedException
-import uk.me.jstott.jcoord.OSRef
+import org.geotools.referencing.CRS
+
 
 class ChannelIslandGridSquareInfo(gridRef: String, precision: Int = 0) extends GridSquareInfo {
 
@@ -42,8 +42,75 @@ class ChannelIslandGridSquareInfo(gridRef: String, precision: Int = 0) extends G
 
   def gridReferencePrecision = getPrecision(outputGridRef)
 
+  //todo: Implement source polygon
+  def sourcePolygon = null
+
   //todo: Implement wgs84Polygon
-  def wgs84Polygon = null
+  def wgs84Polygon = {
+    val eastingNorthing = getEastingNorthing(outputGridRef)
+
+    val ed50crs = CRS.decode("EPSG:23030") //ED50
+    val wgs84crs = CRS.decode("EPSG:4326") //WGS84
+
+
+    //something like this
+
+
+
+
+    //todo : Get rid of this null return
+    null
+  }
+
+  //WV 59500  47500
+  //E = 559500
+  //N = 5447500
+  private def getEastingNorthing(gridRef: String) = {
+    //Bottom Left corner of the grid squares
+    val WAbl= (500000,5500000)
+    val WVbl = (500000,5400000)
+
+    val g = getTenFigGridRef(gridRef)
+    val numerals = getNumeralsFromGridRef(g).splitAt(5)
+
+    getLettersFromGridRef(g) match {
+      case "WA" => (WAbl._1 + numerals._1.toInt, WAbl._2 + numerals._2.toInt)
+      case "WV" => (WVbl._1 + numerals._1.toInt, WVbl._2 + numerals._2.toInt)
+    }
+  }
+
+  private def getTenFigGridRef(gridRef: String)= {
+
+    val numerals =
+      if (gridRef.matches(GridRefPatterns.channelIslandsDintyGridRef)) {
+        //eg TL32C
+        //gives 32C
+        val numericPart = getNumeralsFromGridRef(gridRef)
+        //gives C
+        val dintyLetter = numericPart.substring(2,3)
+        //gives (0,4)
+        val coordinates = dintyGridByLetter(dintyLetter)
+        //gives (3,2)
+        val numericParts = numericPart.substring(0,2).splitAt(1)
+        //gives 3024
+        numericParts._1 + coordinates._1 + numericParts._2 + coordinates._2
+      }
+      else {
+        getNumeralsFromGridRef(gridRef)
+      }
+
+    if (numerals.length == 10) {
+      gridRef
+    }
+    else {
+      val numericParts = numerals.splitAt(numerals.length / 2)
+      val padLength = (10 - numerals.length) / 2
+      val padString = "0" * padLength
+      val letters = getLettersFromGridRef(gridRef)
+
+      letters + numericParts._1 + padString + numericParts._2 + padString
+    }
+  }
 
   def getParentGridRef: Option[ChannelIslandGridSquareInfo] = {
     if (gridReferencePrecision == 10000) {
