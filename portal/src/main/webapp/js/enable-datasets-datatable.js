@@ -10,6 +10,7 @@
             "iDisplayLength": 25,
             "bSortClasses": false,
             "sPaginationType": "full_numbers",
+            "aLengthMenu": [[10,25,50,100,-1],[10,25,50,100,"All"]],
             "aoColumnDefs": [
                 {"bVisible": false, "aTargets": [1]},
                 {"sWidth": "5%", "aTargets": [3]},

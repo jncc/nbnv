@@ -19,7 +19,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
 import uk.org.nbn.nbnv.api.dao.mappers.TaxonObservationMapper;
+import uk.org.nbn.nbnv.api.model.Taxon;
 import uk.org.nbn.nbnv.api.model.TaxonObservation;
+import uk.org.nbn.nbnv.api.model.TaxonOutputGroup;
 import uk.org.nbn.nbnv.api.model.User;
 
 /**
@@ -90,4 +92,65 @@ public class TaxonObservationResource {
 
         return observationMapper.selectByFilter(user.getId(), startYear, endYear, datasets, taxa, overlaps, within, sensitive, designation, taxonOutputGroup, gridRef);
     }
+    
+    @GET
+    @Path("/species")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Taxon> getObservationSpeciesByFilter(
+            @TokenUser() User user
+            , @QueryParam("startYear") @DefaultValue("-1") int startYear
+            , @QueryParam("endYear") @DefaultValue("-1") int endYear
+            , @QueryParam("datasetKey") @DefaultValue("") String datasetKey
+            , @QueryParam("ptvk") @DefaultValue("") String ptvk
+            , @QueryParam("overlapSite") @DefaultValue("-1") Integer overlaps
+            , @QueryParam("withinSite") @DefaultValue("-1") Integer within
+            , @QueryParam("sensitive") @DefaultValue("1") Boolean sensitive
+            , @QueryParam("designation") @DefaultValue("") String designation
+            , @QueryParam("taxonOutputGroup") @DefaultValue("") String taxonOutputGroup
+            , @QueryParam("gridRef") @DefaultValue("") String gridRef) {
+        //TODO: squareBlurring(?)
+        List<String> datasets = null;
+        List<String> taxa = null;
+
+        if (!"".equalsIgnoreCase(datasetKey)) {
+            datasets = Arrays.asList(datasetKey.split(","));
+        }
+
+        if (!"".equalsIgnoreCase(ptvk)) {
+            taxa = Arrays.asList(ptvk.split(","));
+        }
+
+        return observationMapper.selectObservationSpeciesByFilter(user.getId(), startYear, endYear, datasets, taxa, overlaps, within, sensitive, designation, taxonOutputGroup, gridRef);
+    }
+    
+    @GET
+    @Path("/groups")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<TaxonOutputGroup> getObservationGroupsByFilter(
+            @TokenUser() User user
+            , @QueryParam("startYear") @DefaultValue("-1") int startYear
+            , @QueryParam("endYear") @DefaultValue("-1") int endYear
+            , @QueryParam("datasetKey") @DefaultValue("") String datasetKey
+            , @QueryParam("ptvk") @DefaultValue("") String ptvk
+            , @QueryParam("overlapSite") @DefaultValue("-1") Integer overlaps
+            , @QueryParam("withinSite") @DefaultValue("-1") Integer within
+            , @QueryParam("sensitive") @DefaultValue("1") Boolean sensitive
+            , @QueryParam("designation") @DefaultValue("") String designation
+            , @QueryParam("taxonOutputGroup") @DefaultValue("") String taxonOutputGroup
+            , @QueryParam("gridRef") @DefaultValue("") String gridRef) {
+        //TODO: squareBlurring(?)
+        List<String> datasets = null;
+        List<String> taxa = null;
+
+        if (!"".equalsIgnoreCase(datasetKey)) {
+            datasets = Arrays.asList(datasetKey.split(","));
+        }
+
+        if (!"".equalsIgnoreCase(ptvk)) {
+            taxa = Arrays.asList(ptvk.split(","));
+        }
+
+        return observationMapper.selectObservationGroupsByFilter(user.getId(), startYear, endYear, datasets, taxa, overlaps, within, sensitive, designation, taxonOutputGroup, gridRef);
+    }
+
 }

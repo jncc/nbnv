@@ -49,6 +49,14 @@
         <url-pattern>/*</url-pattern>
     </filter-mapping>
     <filter>
+        <filter-name>PowerlessRemoteAPIExceptionFilter</filter-name>
+        <filter-class>uk.gov.nbn.data.powerless.PowerlessJSONReaderStatusExceptionFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>PowerlessRemoteAPIExceptionFilter</filter-name>
+        <url-pattern>*.ftl</url-pattern>
+    </filter-mapping>
+    <filter>
         <filter-name>PowerlessTemplateExceptionFilter</filter-name>
         <filter-class>uk.gov.nbn.data.powerless.PowerlessTemplateExceptionFilter</filter-class>
     </filter>
@@ -62,18 +70,21 @@
     </servlet-mapping>
     <!--Define custom error pages -->
     <error-page>
-        <error-code>404</error-code>
-        <location>/WEB-INF/unavailable-pages/404.ftl</location>
+        <error-code>401</error-code>
+        <location>/WEB-INF/unavailable-pages/401.ftl</location>
     </error-page>
     <error-page>
-        <exception-type>java.io.FileNotFoundException</exception-type>
-        <location>/WEB-INF/unavailable-pages/data-service-not-responding.ftl</location>
+        <error-code>404</error-code>
+        <location>/WEB-INF/unavailable-pages/404.ftl</location>
     </error-page>
     <error-page>
         <error-code>500</error-code>
         <location>/WEB-INF/unavailable-pages/500.ftl</location>
     </error-page>
-    
+    <error-page>
+        <exception-type>java.io.FileNotFoundException</exception-type>
+        <location>/WEB-INF/unavailable-pages/data-service-not-responding.ftl</location>
+    </error-page>
     <!--Define Custom controller servlets-->
     <servlet>
         <servlet-name>SSO_Controller</servlet-name>
@@ -83,7 +94,6 @@
         <servlet-name>SSO_Controller</servlet-name>
         <url-pattern>/SSO_Controller</url-pattern>
     </servlet-mapping>
-    
     <servlet>
         <servlet-name>Logout_Controller</servlet-name>
         <servlet-class>uk.gov.nbn.data.portal.controllers.LogoutController</servlet-class>

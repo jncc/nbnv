@@ -42,6 +42,7 @@
             "bJQueryUI": true,
             "iDisplayLength": 25,
             "sPaginationType": "full_numbers",
+            "aLengthMenu": [[10,25,50,100,-1],[10,25,50,100,"All"]],
             "aoColumnDefs": [
                 {"bVisible": false, "aTargets": [1]},
                 {"sWidth": "7%", "sClass": "nbn-align-right .nbn-datatable-generic", "aTargets": [2]},
@@ -161,6 +162,7 @@
         $('#' + elementForRender).dataTable({
             "bJQueryUI": true,
             "iDisplayLength": 25,
+            "aLengthMenu": [[10,25,50,100,-1],[10,25,50,100,"All"]],
             "aoColumnDefs": [
                 {
                     "aTargets": [1],

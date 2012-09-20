@@ -6,7 +6,7 @@ package uk.org.nbn.nbnv.importer.ui.convert.converters;
 
 import java.util.List;
 import uk.org.nbn.nbnv.importer.ui.convert.BadDataException;
-import uk.org.nbn.nbnv.importer.ui.convert.ConverterStep;
+import uk.org.nbn.nbnv.importer.ui.convert.PostStep;
 import uk.org.nbn.nbnv.importer.ui.parser.ColumnMapping;
 import uk.org.nbn.nbnv.importer.ui.parser.DarwinCoreField;
 
@@ -14,7 +14,7 @@ import uk.org.nbn.nbnv.importer.ui.parser.DarwinCoreField;
  *
  * @author Paul Gilbertson
  */
-public class MissingID implements ConverterStep {
+public class MissingID extends PostStep {
     private int count = 1;
     
     @Override
@@ -40,6 +40,14 @@ public class MissingID implements ConverterStep {
 
         ColumnMapping cm = new ColumnMapping(0, "OccurrenceID", DarwinCoreField.OCCURRENCEID);
         columns.add(0, cm);
+//        int highestColumn = -1;
+//        
+//        for (ColumnMapping cm : columns) {
+//            highestColumn = cm.getColumnNumber() > highestColumn ? cm.getColumnNumber() : highestColumn;
+//        }
+//        
+//        ColumnMapping col = new ColumnMapping(highestColumn + 1, "OccurrenceID", DarwinCoreField.OCCURRENCEID);
+//        columns.add(col);
     }
 
     @Override

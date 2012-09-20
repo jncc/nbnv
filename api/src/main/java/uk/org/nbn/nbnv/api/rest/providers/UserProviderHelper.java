@@ -84,7 +84,7 @@ public class UserProviderHelper {
     private WebApplicationException createWebApplicationExceptionFromException(Exception e) {
         return new WebApplicationException(e, Response
             .fromResponse(userResource.destroyTokenCookie())
-            .status(Response.Status.FORBIDDEN)
+            .status(Response.Status.UNAUTHORIZED)
             .build()
         );
     }
