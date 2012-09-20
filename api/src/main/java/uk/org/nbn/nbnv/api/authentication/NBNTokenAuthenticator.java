@@ -51,7 +51,7 @@ public class NBNTokenAuthenticator implements TokenAuthenticator {
         this.random = new SecureRandom();
         this.keyCheckValue = randomBytes(KEY_CHECK_VALUE_SIZE);
     }
-
+    
     /**
      * The following method supports the generation of tokens for username and 
      * password pairs
