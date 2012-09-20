@@ -40,6 +40,10 @@ class IrishGridSquareInfo(gridRef: String, precision: Int = 0) extends GridSquar
 
   def gridReferencePrecision = getPrecision(outputGridRef)
 
+  //todo: implement souce polygon
+  def sourcePolygon = null
+
+  //todo: implement wgs84polygon
   def wgs84Polygon = null
 
   def getParentGridRef: Option[IrishGridSquareInfo] = {

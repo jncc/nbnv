@@ -42,18 +42,29 @@ class ChannelIslandGridSquareInfo(gridRef: String, precision: Int = 0) extends G
 
   def gridReferencePrecision = getPrecision(outputGridRef)
 
+  //todo: Implement source polygon
+  def sourcePolygon = null
+
   //todo: Implement wgs84Polygon
   def wgs84Polygon = {
     val eastingNorthing = getEastingNorthing(outputGridRef)
 
     val ed50crs = CRS.decode("EPSG:23030") //ED50
     val wgs84crs = CRS.decode("EPSG:4326") //WGS84
-    
+
+
+    //something like this
+
+
+
 
     //todo : Get rid of this null return
     null
   }
 
+  //WV 59500  47500
+  //E = 559500
+  //N = 5447500
   private def getEastingNorthing(gridRef: String) = {
     //Bottom Left corner of the grid squares
     val WAbl= (500000,5500000)
