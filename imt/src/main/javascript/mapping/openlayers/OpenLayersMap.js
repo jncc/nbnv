@@ -164,13 +164,13 @@ nbn.mapping.openlayers.OpenLayersMap = function(options, interactiveMap) {
 		_me.addBaseLayerType(new nbn.mapping.openlayers.OpenLayersBingLayer({type : 'Hybrid'}));
 		_me.addBaseLayerType(new nbn.mapping.openlayers.OpenLayersBingLayer({type : 'Aerial'}));
 		_me.addBaseLayerType((function() {
-			var customOutlineLayer = new nbn.layer.ArcGISMap(nbn.util.ServerGeneratedLoadTimeConstants.gisServers, "arcgis/rest/services/general/CoastsAndVCs/MapServer/export",_me, {
+			var customOutlineLayer = new nbn.layer.ArcGISMap(nbn.util.ServerGeneratedLoadTimeConstants.gisServers, "SiteBoundaryDatasets",_me, {
 				isBaseLayer: true,
 				name: 'Outline',
 				resolutions: EPSG_27700_RESOLUTIONS
 			});
 			var _filter = new nbn.layer.ArcGisMapFilter();
-			_filter.setFilter({	visibleLayers:['0','1','2']	});
+			_filter.setFilter({	visibleLayers:['SB000002']	});
 			customOutlineLayer.layer.projection = new OpenLayers.Projection("EPSG:27700"); //projection the layer should be added in
 			customOutlineLayer.addLayerFilter(_filter);
 			return new nbn.layer.BaseLayer(customOutlineLayer);
