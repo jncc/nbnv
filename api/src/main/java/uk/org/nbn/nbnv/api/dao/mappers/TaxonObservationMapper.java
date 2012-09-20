@@ -12,6 +12,7 @@ import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.SelectProvider;
 import uk.org.nbn.nbnv.api.dao.mappers.providers.TaxonObservationProvider;
+import uk.org.nbn.nbnv.api.model.Dataset;
 import uk.org.nbn.nbnv.api.model.Taxon;
 import uk.org.nbn.nbnv.api.model.TaxonObservation;
 import uk.org.nbn.nbnv.api.model.TaxonOutputGroup;
@@ -30,8 +31,8 @@ public interface TaxonObservationMapper {
     @Select("SELECT * FROM UserTaxonObservationData WHERE pTaxonVersionKey = #{id} AND userKey = #{userKey}")
     public List<TaxonObservation> selectByPTVK(@Param("id") String id, @Param("userKey") int userKey);
     
-    @SelectProvider(type=TaxonObservationProvider.class, method="filteredSelect")
-    public List<TaxonObservation> selectByFilter(
+    @SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectRecords")
+    public List<TaxonObservation> selectObservationRecordsByFilter(
             @Param("userKey") int userKey
             , @Param("startYear") Integer startYear
             , @Param("endYear") Integer endYear
@@ -60,6 +61,20 @@ public interface TaxonObservationMapper {
     
     @SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectGroups")
     public List<TaxonOutputGroup> selectObservationGroupsByFilter(
+            @Param("userKey") int userKey
+            , @Param("startYear") Integer startYear
+            , @Param("endYear") Integer endYear
+            , @Param("datasetKey") List<String> datasetKey
+            , @Param("ptvk") List<String> ptvk
+            , @Param("overlaps") Integer overlaps
+            , @Param("within") Integer within
+            , @Param("sensitive") Boolean sensitive
+            , @Param("designation") String designation
+            , @Param("taxonOutputGroup") String taxonOutputGroup
+            , @Param("gridRef") String gridRef);
+    
+    @SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectDatasets")
+    public List<Dataset> selectObservationDatasetsByFilter(
             @Param("userKey") int userKey
             , @Param("startYear") Integer startYear
             , @Param("endYear") Integer endYear

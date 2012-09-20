@@ -15,7 +15,7 @@ import org.springframework.util.StringUtils;
  */
 public class TaxonObservationProvider {
 
-    public String filteredSelect(Map<String, Object> params) {
+    public String filteredSelectRecords(Map<String, Object> params) {
         BEGIN();
         SELECT("*");
         createSelectQuery(params);
@@ -40,6 +40,14 @@ public class TaxonObservationProvider {
             INNER_JOIN("TaxonData td ON td.taxonVersionKey = o.pTaxonVersionKey");
         }
         ORDER_BY("name");
+        return SQL();
+    }
+    
+    public String filteredSelectDatasets(Map<String, Object> params){
+        BEGIN();
+        SELECT("DISTINCT d.*");
+        createSelectQuery(params);
+        INNER_JOIN("DatasetData d ON o.datasetKey = d.datasetKey");
         return SQL();
     }
     
