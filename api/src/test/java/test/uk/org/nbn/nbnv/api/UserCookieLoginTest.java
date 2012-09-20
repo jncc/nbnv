@@ -67,7 +67,7 @@ public class UserCookieLoginTest {
             .getClientResponseStatus();
         
         //then
-        assertEquals("The forbidden status was expected", Status.FORBIDDEN, statusResponse);
+        assertEquals("The forbidden status was expected", Status.UNAUTHORIZED, statusResponse);
     }
     
     @Test
