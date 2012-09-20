@@ -23,7 +23,8 @@ public class GridSquareResource {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public GridSquare getGridSquare(@PathParam("id") String gridSquare){
+    public GridSquare getGridSquare(@PathParam("id") String gridSquare) {
+        
         return gridSquareMapper.getGridSquare(gridSquare);
     }
 }

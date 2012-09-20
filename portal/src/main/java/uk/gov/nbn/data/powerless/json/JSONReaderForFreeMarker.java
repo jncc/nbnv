@@ -44,19 +44,19 @@ public class JSONReaderForFreeMarker {
         return readAndClose(jsonReader);
     }  
     
-    public TemplateModel readURL(String url) throws TemplateException, IOException, JSONException {
+    public TemplateModel readURL(String url) throws TemplateException, IOException, JSONException, JSONReaderStatusException {
         return readURL(url, new HashMap<String, Object>());
     }
     
-    public TemplateModel readURL(String url, Map<String, Object> data) throws TemplateException, IOException, JSONException {
+    public TemplateModel readURL(String url, Map<String, Object> data) throws TemplateException, IOException, JSONException, JSONReaderStatusException {
         return readURL(url, "GET", data);
     }
     
-    public TemplateModel readURL(String url, String requestType, Map<String,Object> data) throws TemplateException, IOException, JSONException {
+    public TemplateModel readURL(String url, String requestType, Map<String,Object> data) throws TemplateException, IOException, JSONException, JSONReaderStatusException {
         TraditionalHttpRequestParameterIterable wrappedData = new TraditionalHttpRequestParameterIterable(data);
         if(requestType.equals("GET")) {
             URL toCall = new URL(url + (data.isEmpty() ? "" : (((url.contains("?") ? '&' : '?') + wrappedData.getEncodedParameters() )))); //form url
-            return readAndClose(new InputStreamReader(passthrough.openConnection(toCall).getInputStream()));
+            return readAndClose(passthrough.openConnection(toCall));
         }
         else { //assuming post for now
             HttpURLConnection conn = passthrough.openConnection(new URL(url));
@@ -67,15 +67,13 @@ public class JSONReaderForFreeMarker {
             try {
                 wrappedData.writeEncodedParameters(wr); //write the map in url encoded form
                 wr.flush();
-                return readAndClose(new InputStreamReader(conn.getInputStream()));
+                return readAndClose(conn);
             }
             finally {
                 wr.close();
             }
         }
     }
-    
-    
     
     private TemplateModel readAndClose(Reader in) throws IOException, TemplateModelException, JSONException {
         try {
@@ -84,5 +82,9 @@ public class JSONReaderForFreeMarker {
         finally {
             in.close();
         }
+    }
+    
+    private TemplateModel readAndClose(HttpURLConnection conn) throws IOException, TemplateModelException, JSONException, JSONReaderStatusException {
+        return readAndClose(new InputStreamReader(passthrough.getInputStream(conn)));
     }
 }
