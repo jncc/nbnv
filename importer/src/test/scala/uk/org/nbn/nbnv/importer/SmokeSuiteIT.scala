@@ -38,20 +38,20 @@ class SmokeSuiteIT extends BaseFunSuite with ResourceLoader {
     importer.run()
   }
 
-  ignore("should blah") {
-
-    val tempDir = ".\\temp"
-    new File(tempDir).mkdirs()
-    val archivePath = resource("/archives/valid.zip")
-
-    val options = Options(archivePath = archivePath.getFile, tempDir = tempDir, whatIf = true)
-
-    val injector = Guice.createInjector(new ImporterModule(options))
-    val repo = injector.getInstance(classOf[Repository])
-
-    repo.getGridSquareFeature("HY540119") match {
-      case Some(f) => println(f.getWkt)
-      case None => fail()
-    }
-  }
+//  ignore("should blah") {
+//
+//    val tempDir = ".\\temp"
+//    new File(tempDir).mkdirs()
+//    val archivePath = resource("/archives/valid.zip")
+//
+//    val options = Options(archivePath = archivePath.getFile, tempDir = tempDir, whatIf = true)
+//
+//    val injector = Guice.createInjector(new ImporterModule(options))
+//    val repo = injector.getInstance(classOf[Repository])
+//
+//    repo.getGridSquareFeature("HY540119") match {
+//      case Some(f) => println(f.getWkt)
+//      case None => fail()
+//    }
+//  }
 }

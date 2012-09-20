@@ -2,7 +2,7 @@ package uk.org.nbn.nbnv.importer.spatial
 
 import uk.org.nbn.nbnv.importer.ImportFailedException
 
-class GridSquareFactory {
+class GridSquareInfoFactory {
   def getGridSquare(gridRef: String, gridReferenceType: String = "", gridReferencePrecision: Int = 0) : GridSquareInfo = {
 
 

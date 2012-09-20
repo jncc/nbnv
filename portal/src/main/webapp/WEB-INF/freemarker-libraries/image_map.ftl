@@ -64,11 +64,11 @@
     <map name="hundredKmSelector">
         <#list gridSquareRows as gridSquareRow>
             <#list gridSquareRow?reverse as gridSquare>
-                <area alt="${gridSquare}" shape="rect" data-maphilight='${_data_maphilight(selected==gridSquare)}' coords="${bng.x[gridSquare_index]},${bng.y[gridSquareRow_index]},${bng.x[gridSquare_index+1]},${bng.y[gridSquareRow_index+1]}" href="/Site_Report/${gridSquare}"/>
+                <area alt="${gridSquare}" shape="rect" data-maphilight='${_data_maphilight(selected==gridSquare)}' coords="${bng.x[gridSquare_index]},${bng.y[gridSquareRow_index]},${bng.x[gridSquare_index+1]},${bng.y[gridSquareRow_index+1]}" href="/Reports/10km_Grid_Square/Selector/${gridSquare}"/>
             </#list>
         </#list>
         <#list nonSquareGridSquares?keys as poly>
-            <area alt="${poly}" shape="poly" data-maphilight='${_data_maphilight(selected==poly)}' coords="${nonSquareGridSquares[poly]}" href="/Site_Report/${poly}"/>
+            <area alt="${poly}" shape="poly" data-maphilight='${_data_maphilight(selected==poly)}' coords="${nonSquareGridSquares[poly]}" href="/Reports/10km_Grid_Square/Selector/${poly}"/>
         </#list>
     </map>
 </#macro>

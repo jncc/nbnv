@@ -18,6 +18,31 @@ public class TaxonObservationProvider {
     public String filteredSelect(Map<String, Object> params) {
         BEGIN();
         SELECT("*");
+        createSelectQuery(params);
+        return SQL();
+    }
+    
+    public String filteredSelectGroups(Map<String, Object> params) {
+        BEGIN();
+        SELECT("DISTINCT taxonGroupKey, sortOrder, taxonGroupName, descriptor, parent");
+        createSelectQuery(params);
+        INNER_JOIN("TaxonData td ON o.taxonVersionKey = td.taxonVersionKey");
+        INNER_JOIN("TaxonOutputGroupData togd ON td.outputGroupKey = togd.taxonGroupKey");
+        return SQL();
+    }
+    
+    public String filteredSelectSpecies(Map<String, Object> params) {
+        BEGIN();
+        SELECT("DISTINCT td.taxonVersionKey, prefnameTaxonVersionKey, name, authority, lang");
+        createSelectQuery(params);
+        if ("".equals((String) params.get("taxonOutputGroup"))) {
+            INNER_JOIN("TaxonData td ON td.taxonVersionKey = o.pTaxonVersionKey");
+        }
+        return SQL();
+    }
+    
+    private void createSelectQuery(Map<String, Object> params) {
+
         FROM("UserTaxonObservationData o");
         WHERE("userKey = #{userKey}");
 
@@ -66,10 +91,7 @@ public class TaxonObservationProvider {
             INNER_JOIN("TaxonData td ON td.taxonVersionKey = o.pTaxonVersionKey");
             WHERE("td.outputGroupKey =  #{taxonOutputGroup}");
         }
-        
-        return SQL();
     }
-
     private String datasetListToCommaList(List<String> list) {
         for (String d : list) {
             if (!d.matches("[A-Z0-9]{8}")) {

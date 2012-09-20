@@ -5,21 +5,22 @@ import uk.org.nbn.nbnv.importer.ImportFailedException
 import uk.org.nbn.nbnv.jpa.nbncore.Feature
 import com.google.inject.Inject
 import uk.org.nbn.nbnv.importer.data.Repository
-import uk.org.nbn.nbnv.importer.spatial.GridSquareFactory
+import uk.org.nbn.nbnv.importer.spatial.{GridSquareInfo, GridSquareInfoFactory}
+import javax.persistence.EntityManager
 
-class FeatureIngester @Inject()(repo: Repository, gridSquareFactory: GridSquareFactory) {
+class FeatureIngester @Inject()(em: EntityManager, repo: Repository, gridSquareInfoFactory: GridSquareInfoFactory) {
 
   def ensureFeature(record: NbnRecord) : Feature = {
 
     if (record.gridReference.isDefined) {
-        getFeatureByGridRef(record.gridReference.get, record.gridReferenceType.get, record.gridReferencePrecision)
+        ensureGridRefFeature(record.gridReference.get, record.gridReferenceType.get, record.gridReferencePrecision)
     }
     else if (record.featureKey.isDefined) {
         getFeatureByFeatureKey(record.featureKey.get)
     }
     else if (record.east.isDefined) {
       // no need to check the other coordinate elements - the validator will have done this
-      //todo: wire this up to getFeatureByCoord
+      // todo: wire this up to getFeatureByCoord
       new Feature()
     }
     else {
@@ -27,27 +28,42 @@ class FeatureIngester @Inject()(repo: Repository, gridSquareFactory: GridSquareF
     }
   }
 
+  private def ensureGridRefFeature(gridRef: String, gridReferenceType: String, gridReferencePrecision: Int) = {
 
-  private def getFeatureByGridRef(gridRef: String, gridReferenceType: String = "", gridReferencePrecision: Int = 0) = {
+    // ensures that the Feature corresponding to the GridSquareInfo, and all its parents, exist
+    def ensure(info: GridSquareInfo) : (Feature, uk.org.nbn.nbnv.jpa.nbncore.GridSquare) = {
 
-    // this doesn't go to the db - just calculates stuff i need
-    val gridSquare = gridSquareFactory.getGridSquare(gridRef, gridReferenceType, gridReferencePrecision)
+      // if there's a feature already, all necessary parents should already exist, so just return it
+      repo.getGridSquareFeature(info.gridReference).getOrElse {
 
-    // if there's a feature already, that also means all the parents should also be in there
-    // (the importer will always create all the parents)
-    repo.getGridSquareFeature(gridSquare.gridReference) match {
-      case Some(feature) => {
-        feature
-      }
-      case None => {
-        // if it doesn't exist, create it and then, recursively, its parents
+        // create, persist, and recurse for all necessary parents
 
-        new Feature
+        // the feature doesn't exist, so we need to create it
+        val f = new Feature
+        f.setWkt(info.wgs84Polygon)
+        // call a procedure to generate geom from wkt - see usp_SpatialLocation_AddLocation in the bars db. don't worry about the STIsValid stuff; it will always be valid because were generating the WKT ourselfes
+        // the second argument from STGeomFromText is the spatial reference id. bars uses osgb 277000 NBN uses WSG84.
+        // ...
+        em.persist(f)
+        val s = new uk.org.nbn.nbnv.jpa.nbncore.GridSquare
+        s.setFeatureID(f)
+        s.setGridRef(gridRef)
+//        s.setProjectionID()
+//        s.setResolutionID()
+
+        // don't need to do anything if no parent, because we're at the topmost
+        info.getParentGridRef map { parentInfo =>
+          val (_, parentSquare) = ensure(parentInfo)
+          s.setParentSquare(parentSquare)
+        }
+        em.persist(s)
+        (f, s)
       }
     }
+
+    val info = gridSquareInfoFactory.getGridSquare(gridRef, gridReferenceType, gridReferencePrecision)
+    ensure(info)._1
   }
-
-
 
   private def getFeatureByFeatureKey(featureKey : String) = {
     //todo: Get feature by id
