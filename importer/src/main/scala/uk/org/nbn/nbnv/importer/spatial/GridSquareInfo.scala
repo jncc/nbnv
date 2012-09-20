@@ -7,6 +7,7 @@ trait GridSquareInfo {
   def gridReference : String
   def gridReferencePrecision : Int
   def wgs84Polygon : String
+  def sourcePolygon : String
   def getParentGridRef : Option[GridSquareInfo]
 
   protected val dintyGridByCoord = Map (

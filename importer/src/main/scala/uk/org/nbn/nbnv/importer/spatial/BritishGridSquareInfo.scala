@@ -42,6 +42,9 @@ class BritishGridSquareInfo(gridRef : String, precision: Int = 0) extends GridSq
 
   def gridReferencePrecision = getPrecision(outputGridRef)
 
+  //todo: implement soucePolygon
+  def sourcePolygon = null
+
   def wgs84Polygon = {
     val gridSize =
       if (outputGridRef.matches(GridRefPatterns.ukDintyGridRef)) {

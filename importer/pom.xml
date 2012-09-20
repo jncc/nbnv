@@ -15,6 +15,11 @@
 
     <name>${project.artifactId}-${project.version}</name>
 
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <geotools2.version>2.4.5</geotools2.version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>uk.org.nbn</groupId>
@@ -58,6 +63,17 @@
             <artifactId>jcoord</artifactId>
             <version>1.1-b</version>
         </dependency>
+        <dependency>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt2-epsg-hsql</artifactId>
+            <version>${geotools2.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt2-referencing</artifactId>
+            <version>${geotools2.version}</version>
+        </dependency>
+
     </dependencies>
 
     <build>
