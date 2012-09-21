@@ -16,12 +16,33 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class OrganisationGroupXMLParser extends DefaultHandler {
 
-    private boolean orgGroup = false;
-    private boolean org = false;
+    private static OrganisationGroupXMLParser organisationGroupXMLParser;
+    private boolean run = false;
     private List<List<Integer>> groups;
     private List<Integer> groupID;
     private List<Integer> group;
+    
+    
+    private OrganisationGroupXMLParser() {
+        
+    }
+    
+    public static OrganisationGroupXMLParser getInstance() {
+        if (organisationGroupXMLParser == null) {
+            organisationGroupXMLParser = new OrganisationGroupXMLParser();
+        }
+        return organisationGroupXMLParser;
+    }
 
+    public boolean hasBeenRun() {
+        return run;
+    }
+    
+    public void parserRun() {
+        run = true;
+    }
+    
+    
     @Override
     public void startDocument() throws SAXException {
         groups = new ArrayList<List<Integer>>();
