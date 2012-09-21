@@ -1,10 +1,13 @@
 package uk.gov.nbn.data.gis.processor;
 
-import edu.umn.gis.mapscript.OWSRequest;
-import edu.umn.gis.mapscript.mapscript;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.util.Arrays;
-import java.util.Map;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -12,6 +15,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.io.IOUtils;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 /**
@@ -39,17 +43,14 @@ public class MapServerServlet extends HttpServlet {
             
             ServletOutputStream out = response.getOutputStream();
             try {
-                mapscript.msConnPoolCloseUnreferenced(); //clear all the connections to avoid any issues with connection pooling
-                mapscript.msIO_installStdoutToBuffer(); //buffer the bytes of the map script
-
-                int owsResult = mapMethod.createMapObject(request).OWSDispatch( createMapRequest(request) );
-                if( owsResult != 0 ) {
-                    throw new ServletException("OWSDispatch failed. (expect 0): " + owsResult);
-                }
-
-                response.setContentType(mapscript.msIO_stripStdoutBufferContentType()); //pass the content type
-
-                out.write(mapscript.msIO_getStdoutBufferBytes()); //output the bytes to the end user
+                File toSubmitToMapServer = mapMethod.createMapObject(request);
+                URL mapServerURL = new URL("http://localhost/fcgi-bin/mapserv.exe?map=" + URLEncoder.encode(toSubmitToMapServer.getAbsolutePath().replace('\\', '/')) + '&' + request.getQueryString());
+                HttpURLConnection openConnection = (HttpURLConnection)mapServerURL.openConnection();
+                response.setContentType(openConnection.getContentType());    
+                InputStream in = openConnection.getInputStream();
+                IOUtils.copy(in, out);
+                in.close();
+                toSubmitToMapServer.delete();
             }
             catch(Throwable mapEx) {
                 mapEx.printStackTrace();
@@ -66,19 +67,5 @@ public class MapServerServlet extends HttpServlet {
         catch(MapServiceUndefinedException msue) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND, "Could not find: " + Arrays.toString(request.getPathInfo().substring(1).split("/")));
         }
-    }
-    
-    
-    private static OWSRequest createMapRequest(HttpServletRequest request) {
-        OWSRequest toReturn = new OWSRequest();
-        Map<String, String[]> parameterMap = request.getParameterMap();
-        for(Map.Entry<String, String[]> currParam : parameterMap.entrySet()) {
-            if(!currParam.getKey().equalsIgnoreCase("SLD") && !currParam.getKey().equalsIgnoreCase("SLD_BODY")) {
-                for(String currValue : currParam.getValue()) {
-                    toReturn.setParameter(currParam.getKey(), currValue);
-                }
-            }
-        }
-        return toReturn;
     }
 }

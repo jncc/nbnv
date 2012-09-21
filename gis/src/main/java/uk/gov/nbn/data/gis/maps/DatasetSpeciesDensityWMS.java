@@ -1,7 +1,13 @@
 package uk.gov.nbn.data.gis.maps;
 
-import edu.umn.gis.mapscript.layerObj;
-import edu.umn.gis.mapscript.mapObj;
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
+import java.util.HashMap;
 import org.springframework.stereotype.Component;
 import uk.gov.nbn.data.gis.processor.MapObject;
 import uk.gov.nbn.data.gis.processor.MapService;
@@ -40,21 +46,34 @@ public class DatasetSpeciesDensityWMS {
         + ") AS foo USING UNIQUE label USING SRID=4326";
     
     @MapObject("{datasetKey}")
-    public mapObj getTaxonMap(
+    public File getTaxonMap(
             @MapFile("DatasetSpeciesDensityWMS.map") String mapFile,
-            User user,
-            @QueryParam(key="startyear", validation="[0-9]{4}") String startYear,
-            @QueryParam(key="endyear", validation="[0-9]{4}") String endYear,
-            @PathParam(key="datasetKey", validation="^[A-Z0-9]{8}$") String key) {
+            final User user,
+            @QueryParam(key="startyear", validation="[0-9]{4}") final String startYear,
+            @QueryParam(key="endyear", validation="[0-9]{4}") final String endYear,
+            @PathParam(key="datasetKey", validation="^[A-Z0-9]{8}$") final String key) throws IOException, TemplateException {
         
-        mapObj toReturn = new mapObj(mapFile);
-        for(int i=0; i<toReturn.getNumlayers(); i++) {
-            layerObj layer = toReturn.getLayer(i);
-            layer.setData(String.format(QUERY, key, user.getId(), 
-                MapHelper.createStartYearSegment(startYear),
-                MapHelper.createEndYearSegment(endYear),
-                i+1)); //resolution id
-        }
-        return toReturn;
+        HashMap<String, Object> data = new HashMap<String, Object>();
+        data.put("layerGenerator", new ResolutionDataGenerator() {
+                @Override
+                public String getData(int resolution) {
+                    return String.format(QUERY, key, user.getId(), 
+                        MapHelper.createStartYearSegment(startYear),
+                        MapHelper.createEndYearSegment(endYear),
+                        resolution);
+                }
+        });
+        Configuration cfg = new Configuration();
+        File parentFile = new File(mapFile).getParentFile();
+        cfg.setDirectoryForTemplateLoading(new File(mapFile).getParentFile());
+        Template template = cfg.getTemplate("DatasetSpeciesDensityWMS.map");
+        // File output
+        File file = File.createTempFile("tempMap", ".map", parentFile);
+        Writer out = new FileWriter (file);
+        
+        template.process(data, out);
+        out.flush();
+        out.close();
+        return file;
     }
 }

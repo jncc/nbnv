@@ -31,7 +31,7 @@
             <bean class="uk.gov.nbn.data.gis.config.JerseyClientConfig"/>
         </constructor-arg>
     </bean>
-    <bean id="resource" factory-bean="client" factory-method="resource">
+    <bean id="api" factory-bean="client" factory-method="resource">
         <constructor-arg value="${api}"/>
     </bean>
 </beans>

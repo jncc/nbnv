@@ -1,3 +1,4 @@
+[#ftl]
 MAP
   IMAGETYPE                                             PNG
   EXTENT                                                0 0 800000 800000
@@ -19,4 +20,32 @@ MAP
   PROJECTION
     "init=epsg:27700"
   END
+
+[#list siteBoundaries as dataset]
+  LAYER
+    NAME                                                "${dataset.datasetKey}"
+    TYPE                                                POLYGON
+    STATUS                                              OFF
+    CONNECTIONTYPE                                      PLUGIN
+    PLUGIN                                              "msplugin_mssql2008.dll"
+    CONNECTION                                          "Server=NBNSQL-B;Database=NBNWarehouse;uid=NBNImporter;pwd=Ecowaswashere9;Integrated Security=True"
+    PROCESSING                                          "CLOSE_CONNECTION=DEFER"
+
+    DATA                                                "geom from (SELECT geom, sbfd.featureID FROM SiteBoundaryFeatureData sbfd INNER JOIN SiteBoundaryData sbd ON sbd.featureID = sbfd.featureID WHERE siteBoundaryDatasetKey = '${dataset.datasetKey}') AS foo USING UNIQUE featureID USING SRID=4326"
+
+    PROJECTION
+      "init=epsg:4326"
+    END
+        
+    CLASS
+      NAME                                              "default"
+          
+      STYLE
+        COLOR                                           255 255 0
+        OUTLINECOLOR                                    0 0 0
+        WIDTH                                           0.5
+      END
+    END
+  END
+[/#list]
 END

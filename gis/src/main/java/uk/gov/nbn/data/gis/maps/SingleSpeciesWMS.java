@@ -1,7 +1,13 @@
 package uk.gov.nbn.data.gis.maps;
 
-import edu.umn.gis.mapscript.layerObj;
-import edu.umn.gis.mapscript.mapObj;
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
+import java.util.HashMap;
 import java.util.List;
 import org.springframework.stereotype.Component;
 import uk.gov.nbn.data.gis.processor.MapObject;
@@ -38,24 +44,37 @@ public class SingleSpeciesWMS {
         + ") AS foo USING UNIQUE observationID USING SRID=4326";
     
     @MapObject("{taxonVersionKey}")
-    public mapObj getTaxonMap(
+    public File getTaxonMap(
             @MapFile("SingleSpeciesWMS.map") String mapFile,
-            User user,
-            @PathParam(key="taxonVersionKey", validation="^[A-Z]{6}[0-9]{10}$") String key,
-            @QueryParam(key="datasets", validation="^[A-Z0-9]{8}$") List<String> datasetKeys,
-            @QueryParam(key="startyear", validation="[0-9]{4}") String startYear,
-            @QueryParam(key="endyear", validation="[0-9]{4}") String endYear
-            ) {
+            final User user,
+            @PathParam(key="taxonVersionKey", validation="^[A-Z]{6}[0-9]{10}$") final String key,
+            @QueryParam(key="datasets", validation="^[A-Z0-9]{8}$") final List<String> datasetKeys,
+            @QueryParam(key="startyear", validation="[0-9]{4}") final String startYear,
+            @QueryParam(key="endyear", validation="[0-9]{4}") final String endYear
+            ) throws IOException, TemplateException {
         
-        mapObj toReturn = new mapObj(mapFile);
-        for(int i=0; i<toReturn.getNumlayers(); i++) {
-            layerObj layer = toReturn.getLayer(i);
-            layer.setData(String.format(QUERY, key, user.getId(), i+1, 
-                MapHelper.createInDatasetsSegment(datasetKeys),
-                MapHelper.createStartYearSegment(startYear),
-                MapHelper.createEndYearSegment(endYear)));
-        }
-        return toReturn;
+        
+        HashMap<String, Object> data = new HashMap<String, Object>();
+        data.put("layerGenerator", new ResolutionDataGenerator() {
+                @Override
+                public String getData(int resolution) {
+                    return String.format(QUERY, key, user.getId(), resolution, 
+                        MapHelper.createInDatasetsSegment(datasetKeys),
+                        MapHelper.createStartYearSegment(startYear),
+                        MapHelper.createEndYearSegment(endYear));
+                }
+        });
+        Configuration cfg = new Configuration();
+        File parentFile = new File(mapFile).getParentFile();
+        cfg.setDirectoryForTemplateLoading(new File(mapFile).getParentFile());
+        Template template = cfg.getTemplate("SingleSpeciesWMS.map");
+        // File output
+        File file = File.createTempFile("tempMap", ".map", parentFile);
+        Writer out = new FileWriter (file);
+        
+        template.process(data, out);
+        out.flush();
+        out.close();
+        return file;
     }
-    
 }

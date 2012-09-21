@@ -27,6 +27,7 @@ MAP
     CONNECTIONTYPE                                      PLUGIN
     PLUGIN                                              "msplugin_mssql2008.dll"
     CONNECTION                                          "Server=NBNSQL-B;Database=NBNWarehouse;uid=NBNImporter;pwd=Ecowaswashere9;Integrated Security=True"
+    DATA                                                "${layerGenerator.getData(4)}"
 
     METADATA
       "wms_title"                                       "3"
@@ -199,6 +200,7 @@ MAP
     CONNECTIONTYPE                                      PLUGIN
     PLUGIN                                              "msplugin_mssql2008.dll"
     CONNECTION                                          "Server=NBNSQL-B;Database=NBNWarehouse;uid=NBNImporter;pwd=Ecowaswashere9;Integrated Security=True"
+    DATA                                                "${layerGenerator.getData(3)}"
 
     METADATA
       "wms_title"                                       "2"
@@ -371,6 +373,7 @@ MAP
     CONNECTIONTYPE                                      PLUGIN
     PLUGIN                                              "msplugin_mssql2008.dll"
     CONNECTION                                          "Server=NBNSQL-B;Database=NBNWarehouse;uid=NBNImporter;pwd=Ecowaswashere9;Integrated Security=True"
+    DATA                                                "${layerGenerator.getData(2)}"
 
     METADATA
       "wms_title"                                       "1"
@@ -543,7 +546,7 @@ MAP
     CONNECTIONTYPE                                      PLUGIN
     PLUGIN                                              "msplugin_mssql2008.dll"
     CONNECTION                                          "Server=NBNSQL-B;Database=NBNWarehouse;uid=NBNImporter;pwd=Ecowaswashere9;Integrated Security=True"
-
+    DATA                                                "${layerGenerator.getData(1)}"
     METADATA
       "wms_title"                                       "0"
       'default_userKey'                                 '0'

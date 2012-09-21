@@ -2,7 +2,14 @@ package uk.gov.nbn.data.gis.maps;
 
 import com.sun.jersey.api.client.GenericType;
 import com.sun.jersey.api.client.WebResource;
-import edu.umn.gis.mapscript.*;
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 import javax.ws.rs.core.MediaType;
@@ -33,36 +40,25 @@ public class SiteBoundaryDatasetsWMS {
         + ") AS foo USING UNIQUE featureID USING SRID=4326";
     
     @MapObject
-    public mapObj getTaxonMap(@MapFile("SiteBoundaryDatasetsWMS.map") String mapFile){
-        mapObj toReturn = new mapObj(mapFile);
-        for(SiteBoundaryDataset currSiteBoundaryDataset : dataApi
+    public File getTaxonMap(@MapFile("SiteBoundaryDatasetsWMS.map") String mapFile) throws IOException, TemplateException{
+        List<SiteBoundaryDataset> datasets = dataApi
                         .path("siteBoundaryDatasets")
-                        .accept(MediaType.APPLICATION_JSON)
-                        .get(new GenericType<List<SiteBoundaryDataset>>() { })) {
-            createLayer(currSiteBoundaryDataset.getDatasetKey(), toReturn);
-        }
-        return toReturn;
+                        .accept(MediaType.APPLICATION_JSON) 
+                        .get(new GenericType<List<SiteBoundaryDataset>>() { });
+        
+        HashMap<String, Object> data = new HashMap<String, Object>();
+        data.put("siteBoundaries", datasets);
+        Configuration cfg = new Configuration();
+        File parentFile = new File(mapFile).getParentFile();
+        cfg.setDirectoryForTemplateLoading(new File(mapFile).getParentFile());
+        Template template = cfg.getTemplate("SiteBoundaryDatasetsWMS.map");
+        // File output
+        File file = File.createTempFile("tempMap", ".map", parentFile);
+        Writer out = new FileWriter (file);
+        
+        template.process(data, out);
+        out.flush();
+        out.close();
+        return file;
     }
-    
-    private void createLayer(String datasetKey, mapObj toAddTo) {
-        layerObj toReturn = new layerObj(toAddTo);
-        toReturn.setName(datasetKey);
-        toReturn.setType(MS_LAYER_TYPE.MS_LAYER_POLYGON);
-        toReturn.setStatus(mapscriptConstants.MS_OFF);
-        toReturn.setPlugin_library("msplugin_mssql2008.dll");
-        toReturn.setConnectiontype(MS_CONNECTION_TYPE.MS_PLUGIN);
-        toReturn.setConnection(properties.getProperty("spatialConnection"));
-        toReturn.setData(String.format(DATA, datasetKey));
-        toReturn.setProjection("init=epsg:4326");
-        addDefaultClass(toReturn);
-    }
-    
-    private static void addDefaultClass(layerObj toAddClassTo) {
-        classObj stylingClass = new classObj(toAddClassTo);
-        stylingClass.setName("default");
-        styleObj stylingObj = new styleObj(stylingClass);
-        stylingObj.setColor(new colorObj(255,255,0, 1));
-        stylingObj.setOutlinecolor(new colorObj(0,0,0, 1));
-        stylingObj.setWidth(0.5);
-    } 
 }
