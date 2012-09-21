@@ -1,17 +1,10 @@
 package uk.gov.nbn.data.gis.maps;
 
-import freemarker.template.Configuration;
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
 import java.util.HashMap;
+import java.util.Map;
 import org.springframework.stereotype.Component;
 import uk.gov.nbn.data.gis.processor.MapObject;
 import uk.gov.nbn.data.gis.processor.MapService;
-import uk.gov.nbn.data.gis.providers.annotations.MapFile;
 import uk.gov.nbn.data.gis.providers.annotations.PathParam;
 import uk.gov.nbn.data.gis.providers.annotations.QueryParam;
 import uk.org.nbn.nbnv.api.model.User;
@@ -45,13 +38,12 @@ public class DatasetSpeciesDensityWMS {
             + "WHERE resolutionID = %d"
         + ") AS foo USING UNIQUE label USING SRID=4326";
     
-    @MapObject("{datasetKey}")
-    public File getTaxonMap(
-            @MapFile("DatasetSpeciesDensityWMS.map") String mapFile,
+    @MapObject(path="{datasetKey}", map="DatasetSpeciesDensityWMS.map")
+    public Map<String,Object> getDatasetMapModel(
             final User user,
             @QueryParam(key="startyear", validation="[0-9]{4}") final String startYear,
             @QueryParam(key="endyear", validation="[0-9]{4}") final String endYear,
-            @PathParam(key="datasetKey", validation="^[A-Z0-9]{8}$") final String key) throws IOException, TemplateException {
+            @PathParam(key="datasetKey", validation="^[A-Z0-9]{8}$") final String key) {
         
         HashMap<String, Object> data = new HashMap<String, Object>();
         data.put("layerGenerator", new ResolutionDataGenerator() {
@@ -63,17 +55,6 @@ public class DatasetSpeciesDensityWMS {
                         resolution);
                 }
         });
-        Configuration cfg = new Configuration();
-        File parentFile = new File(mapFile).getParentFile();
-        cfg.setDirectoryForTemplateLoading(new File(mapFile).getParentFile());
-        Template template = cfg.getTemplate("DatasetSpeciesDensityWMS.map");
-        // File output
-        File file = File.createTempFile("tempMap", ".map", parentFile);
-        Writer out = new FileWriter (file);
-        
-        template.process(data, out);
-        out.flush();
-        out.close();
-        return file;
+        return data;
     }
 }

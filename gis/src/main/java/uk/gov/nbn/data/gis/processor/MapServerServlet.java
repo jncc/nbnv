@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLEncoder;
 import java.util.Arrays;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -31,9 +29,15 @@ public class MapServerServlet extends HttpServlet {
         super.init(config);        
         ServletContext servletContext = config.getServletContext();
         serviceFactory = WebApplicationContextUtils
-            .getWebApplicationContext(servletContext)
-            .getAutowireCapableBeanFactory()
-            .getBean(MapServiceMethodFactory.class);
+                .getWebApplicationContext(servletContext)
+                .getAutowireCapableBeanFactory()
+                .getBean(MapServiceMethodFactory.class);
+
+        try {
+            serviceFactory.setMapTemplateDirectory(new File(config.getServletContext().getRealPath("WEB-INF\\maps")));
+        } catch(IOException io) {
+            throw new ServletException(io);
+        }
     }
     
     @Override protected void doGet(HttpServletRequest request, 
@@ -43,14 +47,18 @@ public class MapServerServlet extends HttpServlet {
             
             ServletOutputStream out = response.getOutputStream();
             try {
-                File toSubmitToMapServer = mapMethod.createMapObject(request);
-                URL mapServerURL = new URL("http://localhost/fcgi-bin/mapserv.exe?map=" + URLEncoder.encode(toSubmitToMapServer.getAbsolutePath().replace('\\', '/')) + '&' + request.getQueryString());
-                HttpURLConnection openConnection = (HttpURLConnection)mapServerURL.openConnection();
-                response.setContentType(openConnection.getContentType());    
-                InputStream in = openConnection.getInputStream();
-                IOUtils.copy(in, out);
-                in.close();
-                toSubmitToMapServer.delete();
+                File toSubmitToMapServer = mapMethod.getMapFile(request);
+                try {
+                    URL mapServerURL = serviceFactory.getMapServiceURL(toSubmitToMapServer, request.getQueryString());
+                    HttpURLConnection openConnection = (HttpURLConnection)mapServerURL.openConnection();
+                    response.setContentType(openConnection.getContentType());    
+                    InputStream in = openConnection.getInputStream();
+                    IOUtils.copy(in, out);
+                    in.close();
+                }
+                finally {
+                    toSubmitToMapServer.delete();
+                }
             }
             catch(Throwable mapEx) {
                 mapEx.printStackTrace();
