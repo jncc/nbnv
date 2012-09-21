@@ -73,8 +73,10 @@ public class MapServerServlet extends HttpServlet {
         OWSRequest toReturn = new OWSRequest();
         Map<String, String[]> parameterMap = request.getParameterMap();
         for(Map.Entry<String, String[]> currParam : parameterMap.entrySet()) {
-            for(String currValue : currParam.getValue()) {
-                toReturn.setParameter(currParam.getKey(), currValue);
+            if(!currParam.getKey().equalsIgnoreCase("SLD") && !currParam.getKey().equalsIgnoreCase("SLD_BODY")) {
+                for(String currValue : currParam.getValue()) {
+                    toReturn.setParameter(currParam.getKey(), currValue);
+                }
             }
         }
         return toReturn;
