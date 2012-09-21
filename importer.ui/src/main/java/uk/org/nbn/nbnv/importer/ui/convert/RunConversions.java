@@ -10,20 +10,24 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 import org.reflections.Reflections;
 import org.springframework.util.StringUtils;
+import org.xml.sax.SAXException;
 import uk.org.nbn.nbnv.importer.ui.meta.MetaWriter;
 import uk.org.nbn.nbnv.importer.ui.parser.ColumnMapping;
 import uk.org.nbn.nbnv.importer.ui.parser.DarwinCoreField;
 import uk.org.nbn.nbnv.importer.ui.parser.NXFParser;
+import uk.org.nbn.nbnv.importer.ui.util.OrganisationGroupXMLParser;
+import uk.org.nbn.nbnv.importer.ui.util.UnsatisfiableDependencyError;
 
 /**
  *
@@ -33,19 +37,31 @@ public class RunConversions {
     private List<ConverterStep> steps;
     private List<ColumnMapping> mappings;
     private NXFParser nxfParser;
-    
-    private static final Set<Class> classes = new HashSet<Class>(Arrays.asList(new Class[] {ConverterStep.class, DependentStep.class, OrganisationStep.class, PreStep.class}));
+    private int organisation;
 
-    public RunConversions(File in) throws IOException {
+    /**
+     * Simple Constructor for RunConversions class
+     * 
+     * @param in Input file to the nxfParser, reads a data file
+     * @param organisation Optional input to determine if organisational dependent steps need to run
+     * @throws IOException 
+     */
+    public RunConversions(File in, int organisation) throws IOException {
         this.nxfParser = new NXFParser(in);
+        this.organisation = organisation;
     }
 
-    private List<ConverterStep> getSteps(List<ColumnMapping> mappings) {
+    /**
+     * Grab the steps we think are needed for a given input
+     * 
+     * @param mappings
+     * @return
+     * @throws UnsatisfiableDependencyError 
+     */
+    private List<ConverterStep> getSteps(List<ColumnMapping> mappings) throws UnsatisfiableDependencyError {
         setSteps(new ArrayList<ConverterStep>());
 
         Reflections reflections = new Reflections("uk.org.nbn.nbnv.importer.ui.convert.converters");
-        
-        setSteps(getPreSteps(mappings, reflections));
         
         Set<Class<? extends ConverterStep>> converters = reflections.getSubTypesOf(ConverterStep.class);
 
@@ -63,116 +79,194 @@ public class RunConversions {
         }
         
         setSteps(getDepSteps(mappings, reflections));
-        
-        setSteps(getPostSteps(mappings, reflections));
 
         return getSteps();
     }
-    
-    private List<ConverterStep> getPostSteps(List<ColumnMapping> mappings, Reflections reflections) {
-        
-        Set<Class<? extends PostStep>> postConverters = reflections.getSubTypesOf(PostStep.class);
-        
-        for (Class<? extends PostStep> stepClass: postConverters) {
-            try {
-                ConverterStep step = stepClass.newInstance();
-                if (step.isStepNeeded(mappings)) {
-                    getSteps().add(step);
-                }
-            } catch (InstantiationException ex) {
-                Logger.getLogger(RunConversions.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IllegalAccessException ex) {
-                Logger.getLogger(RunConversions.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-        
-        return getSteps();
-    }
-    
-    private List<ConverterStep> getPreSteps(List<ColumnMapping> mappings, Reflections reflections) {
-        
-        Set<Class<? extends PreStep>> preConverters = reflections.getSubTypesOf(PreStep.class);
-        
-        for (Class<? extends PreStep> stepClass: preConverters) {
-            try {
-                ConverterStep step = stepClass.newInstance();
-                if (step.isStepNeeded(mappings)) {
-                    getSteps().add(step);
-                }
-            } catch (InstantiationException ex) {
-                Logger.getLogger(RunConversions.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IllegalAccessException ex) {
-                Logger.getLogger(RunConversions.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-        
-        return getSteps();
-    }
 
-    private List<ConverterStep> getDepSteps(List<ColumnMapping> mappings, Reflections reflections) {
+    /**
+     * Grab the steps with some sort of dependency, restriction or similar may
+     * be involved
+     * 
+     * @param mappings
+     * @param reflections
+     * @return
+     * @throws UnsatisfiableDependencyError 
+     */
+    private List<ConverterStep> getDepSteps(List<ColumnMapping> mappings, Reflections reflections) throws UnsatisfiableDependencyError {
+        // Stores regular steps with some form of dependency or restrictions
         ArrayList<DependentStep> depSteps = new ArrayList<DependentStep>();
+        // Stores steps which we want to run first
+        ArrayList<ConverterStep> preSteps = new ArrayList<ConverterStep>();
+        // Stores steps which we should run after all others
+        ArrayList<DependentStep> postSteps = new ArrayList<DependentStep>();
         
+        // Get all dependent steps and coarsely sort them into the arrays above
         Set<Class<? extends DependentStep>> depConverters = reflections.getSubTypesOf(DependentStep.class);
         for (Class<? extends DependentStep> stepClass: depConverters) {
             try {
                 DependentStep step = stepClass.newInstance();
                 if (step.isStepNeeded(mappings)) {
-                    depSteps.add(step);
+                    if ((step.getModifier() & DependentStep.RUN_FIRST) != 0) {
+                        preSteps.add(step);
+                    } else if ((step.getModifier() & DependentStep.INSERT_COLUMN) != 0) {
+                        postSteps.add(step);
+                    } else {
+                        depSteps.add(step);
+                    }
                 }
             } catch (InstantiationException ex) {
                 Logger.getLogger(RunConversions.class.getName()).log(Level.SEVERE, null, ex);
             } catch (IllegalAccessException ex) {
                 Logger.getLogger(RunConversions.class.getName()).log(Level.SEVERE, null, ex);
             }
-        }
+        }   
         
-        Set<Class<? extends OrganisationStep>> orgConverters = reflections.getSubTypesOf(OrganisationStep.class);
-        
-        for (Class<? extends OrganisationStep> stepClass: orgConverters) {
-            try {
-                DependentStep step = stepClass.newInstance();
-                if (step.isStepNeeded(mappings)) {
-                    depSteps.add(step);
-                }
-            } catch (InstantiationException ex) {
-                Logger.getLogger(RunConversions.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IllegalAccessException ex) {
-                Logger.getLogger(RunConversions.class.getName()).log(Level.SEVERE, null, ex);
+        // Grab the dependencies from the OrganisationStepProvider.xml if we 
+        // haven't already then process any organisational step dependencies
+        try {
+            // Singleton which tells us this step has been run if it has. so 
+            // we aren't continuously runnig the thing
+            OrganisationGroupXMLParser handler = OrganisationGroupXMLParser.getInstance();
+            
+            // If we haven't run the parser yet then run it and mark it as run
+            if (handler.hasBeenRun()) {
+                SAXParserFactory saxFactory = SAXParserFactory.newInstance();
+                SAXParser saxParser = saxFactory.newSAXParser();
+
+                saxParser.parse(getClass().getClassLoader().getResourceAsStream("OrganisationStepProvider.xml"), handler);
+                handler.parserRun();
             }
+            
+            // Get all Dependent Steps which are dependent on organisations as 
+            // well
+            Set<Class<? extends OrganisationStep>> orgConverters = reflections.getSubTypesOf(OrganisationStep.class);
+
+            for (Class<? extends OrganisationStep> stepClass: orgConverters) {
+                try {
+                    OrganisationStep step = stepClass.newInstance();
+                    if (step.isStepNeeded(mappings, handler.getGroups(organisation))) {   
+                        depSteps.add(step);
+                    }
+                } catch (InstantiationException ex) {
+                    Logger.getLogger(RunConversions.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (IllegalAccessException ex) {
+                    Logger.getLogger(RunConversions.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }            
+            
+        } catch (IOException ex) {
+            Logger.getLogger(RunConversions.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ParserConfigurationException ex) {
+            Logger.getLogger(RunConversions.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SAXException ex) {
+            Logger.getLogger(RunConversions.class.getName()).log(Level.SEVERE, null, ex);
         }
+
+        // Add all Pre-Steps to the beginning of the 
+        preSteps.addAll(getSteps());
+        setSteps(preSteps);
         
+        // Infinite loop preventer flag
         boolean actionPerformed;
         
-        // TODO Need to fix infinite loop case!
+        // While we have dependent steps still waiting to be queued
         while (!depSteps.isEmpty()) {
             
+            // Infinite loop preventer flag set to false to mark new stage of
+            // actions
             actionPerformed = false;
-            ArrayList<ConverterStep> stepsToAdd = new ArrayList<ConverterStep>();
+            // Storage list for steps to be added as we are iterating
+            List<ConverterStep> stepsToAdd = new ArrayList<ConverterStep>();
             
-            for (ConverterStep step : getSteps()) {
-                ListIterator<DependentStep> dSteps = depSteps.listIterator();
-                while(dSteps.hasNext()) {
-                    DependentStep propStep = dSteps.next();
-                    propStep.satisfyDependency(step.getClass());
+            // For each step we have already in the queue
+            for (ConverterStep cStep : getSteps()) {
+                
+                // See if this step satisfies a dependency, if so check if any
+                // remain for this dependent step adding it to the stepsToAdd List
+                // if none do
+                ListIterator<DependentStep> dStepsIterator = depSteps.listIterator();
+                while (dStepsIterator.hasNext()) {
+                    DependentStep dStep = dStepsIterator.next();
                     
-                    if (propStep.getDependency().isEmpty()) {
-                        stepsToAdd.add(propStep);
-                        dSteps.remove();
+                    if ((dStep.satisfyDependency(cStep.getClass())) || dStep.getDependency().isEmpty()) {
+                        stepsToAdd.add(dStep);
+                        dStepsIterator.remove();
+                        // We did an action in this round \o/
                         actionPerformed = true;
                     }
                 }
             }
             
-            getSteps().addAll(stepsToAdd);
-            
+            // If no actions where performed
             if (!actionPerformed) {
-                System.err.println("Remaining Dependent Steps to be allocated include;");
-                for (DependentStep errSteps : depSteps) {
-                    System.err.println(errSteps.getClass().toString());
+                
+                boolean dStepChecked;
+                
+                // Attempt to queue this dependency by checking if its dependency
+                // is even being run / exists in the dependency list / exists in
+                // the post steps
+                ListIterator<DependentStep> dStepIterator = depSteps.listIterator();
+                while(dStepIterator.hasNext()) {
+                    DependentStep dStep = dStepIterator.next();
+                    
+                    dStepChecked = false;
+                    // Check if dependency is in depList, action stalls until no
+                    // further action is possible
+                    for (DependentStep checkDep : depSteps) {
+                        if (dStep.checkDependency(checkDep.getClass())) {
+                            dStepChecked = true;
+                        }
+                    }
+
+                    // If dependency is not in the current dependency list, check
+                    // other places for it adding it if no obstruction
+                    if (!dStepChecked) {
+                        // Check if dependency is in postList
+                        for (int i = 0; i < postSteps.size(); i++) {
+                            DependentStep postStep = postSteps.get(i);
+                            if (dStep.satisfyDependency(postStep.getClass()) && dStep.getDependency().isEmpty()) {
+                                postSteps.add(i + 1, dStep);
+                                dStepIterator.remove();
+                                dStepChecked = true;
+                                actionPerformed = true;
+                                break;
+                            }
+                        }
+                        
+                        // If its not anywhere then we can probably add it here
+                        // if you want a hard dependency then add the dependency
+                        // to the steps needed!
+                        if (!dStepChecked) {
+                            getSteps().add(dStep);
+                            actionPerformed = true;
+                        }
+                    }
+                } 
+                
+                // If we still haven't done something by the end of the loop something
+                // is horribly wrong and we need to re-think our dependencies again!
+                if (!actionPerformed) {
+                    // Locked up, dependencies are seriously screwed up for some 
+                    // reason
+                    if (depSteps.size() > 1) {
+                        String depFails = " - ";
+                        for(DependentStep step : depSteps) {
+                            depFails = depFails + step.getClass().getCanonicalName() + " - ";
+                        }
+                        throw new UnsatisfiableDependencyError("Could not satisfy a dependency on multiple steps " + 
+                                depFails);
+                    } else {
+                        throw new UnsatisfiableDependencyError("Could not satsify a dependency on step " + depSteps.get(0).getName());
+                    }
                 }
-                throw new UnsatisfiedLinkError("Dependency Structure for Converter Steps is not satisfiable, please check your dependencies!");
+            } else {
+                // Add all currently satisfied dependencies in this round
+                getSteps().addAll(stepsToAdd);
             }
         }
+        
+        // Add our poststeps to the mix 
+        getSteps().addAll(postSteps);
         
         return getSteps();
     }    
@@ -224,6 +318,8 @@ public class RunConversions {
             errors.addAll(mw.createMetaFile(mappings, meta));
         } catch (IOException ex) {
             errors.add("IOException: " + ex.getMessage());
+        } catch(UnsatisfiableDependencyError ex) {
+            errors.add("UnsatsifiableDependencyError: " + ex.getMessage());
         } finally {
             if (w != null) {
                 w.close();

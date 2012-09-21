@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 @Scope(value="session", proxyMode= ScopedProxyMode.TARGET_CLASS)
 public class SessionData {
     private String metadata;
+    private int organisationID;
 
     /**
      * @return the metadata
@@ -29,5 +30,13 @@ public class SessionData {
      */
     public void setMetadata(String metadata) {
         this.metadata = metadata;
+    }
+
+    public int getOrganisationID() {
+        return organisationID;
+    }
+
+    public void setOrganisationID(int organisationID) {
+        this.organisationID = organisationID;
     }
 }

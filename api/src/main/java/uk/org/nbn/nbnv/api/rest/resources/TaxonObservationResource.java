@@ -74,7 +74,7 @@ public class TaxonObservationResource {
     @GET
     @Path("/species")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Taxon> getObservationSpeciesByFilter(
+    public List<TaxonWithQueryStats> getObservationSpeciesByFilter(
             @TokenUser() User user, @QueryParam("startYear") @DefaultValue("-1") int startYear, @QueryParam("endYear") @DefaultValue("-1") int endYear, @QueryParam("datasetKey") @DefaultValue("") String datasetKey, @QueryParam("ptvk") @DefaultValue("") String ptvk, @QueryParam("overlapSite") @DefaultValue("-1") Integer overlaps, @QueryParam("withinSite") @DefaultValue("-1") Integer within, @QueryParam("sensitive") @DefaultValue("1") Boolean sensitive, @QueryParam("designation") @DefaultValue("") String designation, @QueryParam("taxonOutputGroup") @DefaultValue("") String taxonOutputGroup, @QueryParam("gridRef") @DefaultValue("") String gridRef) {
         //TODO: squareBlurring(?)
         List<String> datasets = parseCsv(datasetKey);
@@ -85,7 +85,7 @@ public class TaxonObservationResource {
     @GET
     @Path("/groups")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<TaxonOutputGroup> getObservationGroupsByFilter(
+    public List<TaxonOutputGroupWithQueryStats> getObservationGroupsByFilter(
             @TokenUser() User user, @QueryParam("startYear") @DefaultValue("-1") int startYear, @QueryParam("endYear") @DefaultValue("-1") int endYear, @QueryParam("datasetKey") @DefaultValue("") String datasetKey, @QueryParam("ptvk") @DefaultValue("") String ptvk, @QueryParam("overlapSite") @DefaultValue("-1") Integer overlaps, @QueryParam("withinSite") @DefaultValue("-1") Integer within, @QueryParam("sensitive") @DefaultValue("1") Boolean sensitive, @QueryParam("designation") @DefaultValue("") String designation, @QueryParam("taxonOutputGroup") @DefaultValue("") String taxonOutputGroup, @QueryParam("gridRef") @DefaultValue("") String gridRef) {
         //TODO: squareBlurring(?)
         List<String> datasets = parseCsv(datasetKey);
@@ -96,7 +96,7 @@ public class TaxonObservationResource {
     @GET
     @Path("/datasets")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Dataset> getObservationDatasetsByFilter(
+    public List<DatasetWithQueryStats> getObservationDatasetsByFilter(
             @TokenUser() User user, @QueryParam("startYear") @DefaultValue("-1") int startYear, @QueryParam("endYear") @DefaultValue("-1") int endYear, @QueryParam("datasetKey") @DefaultValue("") String datasetKey, @QueryParam("ptvk") @DefaultValue("") String ptvk, @QueryParam("overlapSite") @DefaultValue("-1") Integer overlaps, @QueryParam("withinSite") @DefaultValue("-1") Integer within, @QueryParam("sensitive") @DefaultValue("1") Boolean sensitive, @QueryParam("designation") @DefaultValue("") String designation, @QueryParam("taxonOutputGroup") @DefaultValue("") String taxonOutputGroup, @QueryParam("gridRef") @DefaultValue("") String gridRef) {
         //TODO: squareBlurring(?)
         List<String> datasets = parseCsv(datasetKey);

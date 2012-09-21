@@ -12,12 +12,23 @@ import uk.org.nbn.nbnv.importer.ui.parser.ColumnMapping;
  *
  * @author Matt Debont
  */
-public class DependentStep implements ConverterStep {
+public abstract class DependentStep implements ConverterStep {
     private List<Class> dependsOn;
+    private boolean inviable = false;
+    private boolean isFirstCheck = true;
+    private boolean stepPersists = false;
     private int modifier;
     
-    public DependentStep() {
-        dependsOn = new ArrayList<Class>();
+    public static final int ADD_COLUMN = 1;
+    public static final int ADD_COLUMNS = 2;
+    public static final int INSERT_COLUMN = 4;
+    public static final int PERSIST = 8;
+    public static final int RUN_FIRST = 16;
+    public static final int RUN_LAST = 32;
+    
+    public DependentStep(int modifier) {
+        this.modifier = modifier;
+        this.dependsOn = new ArrayList<Class>();
     }
     
     public void addDependency(Class dependency) {
@@ -32,6 +43,10 @@ public class DependentStep implements ConverterStep {
         return dependsOn.remove(dependency);
     }
     
+    public boolean checkDependency(Class dependency) {
+        return dependsOn.contains(dependency);
+    }
+    
     public int getModifier() {
         return modifier;
     }
@@ -39,24 +54,32 @@ public class DependentStep implements ConverterStep {
     public void setModifier(int modifier) {
         this.modifier = modifier;
     }
+
+    public boolean isInviable() {
+        return inviable;
+    }
+
+    public void setInviable(boolean inviable) {
+        this.inviable = inviable;
+    }
+    
+    public boolean peristanceCheck(boolean check) {
+        if ((modifier & PERSIST) > 0) {
+            if (isFirstCheck) {
+                isFirstCheck = false;
+                stepPersists = check;
+            }    
+            return stepPersists;
+        }
+        return false;
+    }
     
     @Override
-    public String getName() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
+    public abstract String getName();
     @Override
-    public boolean isStepNeeded(List<ColumnMapping> columns) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
+    public abstract boolean isStepNeeded(List<ColumnMapping> columns);
     @Override
-    public void modifyHeader(List<ColumnMapping> columns) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
+    public abstract void modifyHeader(List<ColumnMapping> columns);
     @Override
-    public void modifyRow(List<String> row) throws BadDataException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+    public abstract void modifyRow(List<String> row) throws BadDataException;    
 }

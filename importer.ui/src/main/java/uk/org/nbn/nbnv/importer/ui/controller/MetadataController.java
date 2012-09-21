@@ -11,14 +11,12 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.validation.Valid;
 import org.apache.poi.hwpf.HWPFDocument;
-import org.reflections.Reflections;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -30,9 +28,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-import uk.org.nbn.nbnv.importer.ui.convert.ConverterStep;
-import uk.org.nbn.nbnv.importer.ui.convert.DependentStep;
-import uk.org.nbn.nbnv.importer.ui.convert.RunConversions;
 import uk.org.nbn.nbnv.importer.ui.metadata.MetadataWriter;
 import uk.org.nbn.nbnv.importer.ui.model.Metadata;
 import uk.org.nbn.nbnv.importer.ui.model.MetadataForm;
@@ -96,6 +91,7 @@ public class MetadataController {
             mw.datasetToEML(model.getMetadata());
             
             session.setMetadata(metadataFile.getAbsolutePath());
+            session.setOrganisationID(model.getMetadata().getOrganisationID());
             
             return new ModelAndView("upload");
         } catch (Exception ex) {
