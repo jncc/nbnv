@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package uk.org.nbn.nbnv.api.dao.mappers.providers;
 
 import java.util.List;
@@ -24,30 +20,26 @@ public class TaxonObservationProvider {
     
     public String filteredSelectGroups(Map<String, Object> params) {
         BEGIN();
-        SELECT("DISTINCT taxonGroupKey, sortOrder, taxonGroupName, descriptor, parent");
+        SELECT("outputGroupKey, COUNT(DISTINCT td.taxonVersionKey) querySpecificSpeciesCount");
         createSelectQuery(params);
         INNER_JOIN("TaxonData td ON o.taxonVersionKey = td.taxonVersionKey");
-        INNER_JOIN("TaxonOutputGroupData togd ON td.outputGroupKey = togd.taxonGroupKey");
-        ORDER_BY("taxonGroupName");
+        GROUP_BY("outputGroupKey");
         return SQL();
     }
     
     public String filteredSelectSpecies(Map<String, Object> params) {
         BEGIN();
-        SELECT("DISTINCT td.taxonVersionKey, prefnameTaxonVersionKey, name, authority, lang");
+        SELECT("o.taxonVersionKey, COUNT(*) querySpecificObservationCount");
         createSelectQuery(params);
-        if ("".equals((String) params.get("taxonOutputGroup"))) {
-            INNER_JOIN("TaxonData td ON td.taxonVersionKey = o.pTaxonVersionKey");
-        }
-        ORDER_BY("name");
+        GROUP_BY("o.taxonVersionKey");
         return SQL();
     }
     
     public String filteredSelectDatasets(Map<String, Object> params){
         BEGIN();
-        SELECT("DISTINCT d.*");
+        SELECT("datasetKey, COUNT(*) querySpecificObservationCount");
         createSelectQuery(params);
-        INNER_JOIN("DatasetData d ON o.datasetKey = d.datasetKey");
+        GROUP_BY("datasetKey");
         return SQL();
     }
     

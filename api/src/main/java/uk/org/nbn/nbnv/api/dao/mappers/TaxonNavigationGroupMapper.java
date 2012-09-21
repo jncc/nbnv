@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package uk.org.nbn.nbnv.api.dao.mappers;
 
 import java.util.List;
@@ -14,10 +10,6 @@ import org.apache.ibatis.session.RowBounds;
 import uk.org.nbn.nbnv.api.model.Taxon;
 import uk.org.nbn.nbnv.api.model.TaxonNavigationGroup;
 
-/**
- *
- * @author Administrator
- */
 public interface TaxonNavigationGroupMapper {   
     @Select("SELECT * FROM TaxonGroupData WHERE parent is NULL")
     @Results({ 
