@@ -4,6 +4,7 @@
  */
 package uk.org.nbn.nbnv.importer.ui.convert;
 
+import uk.org.nbn.nbnv.importer.ui.util.UnsatisfiableDependencyError;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -16,20 +17,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import org.reflections.Reflections;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
 import uk.org.nbn.nbnv.importer.ui.meta.MetaWriter;
 import uk.org.nbn.nbnv.importer.ui.model.SessionData;
 import uk.org.nbn.nbnv.importer.ui.parser.ColumnMapping;
@@ -45,12 +39,11 @@ public class RunConversions {
     private List<ConverterStep> steps;
     private List<ColumnMapping> mappings;
     private NXFParser nxfParser;
-    
-    @Autowired
-    private SessionData session;
+    private int organisation;
 
-    public RunConversions(File in) throws IOException {
+    public RunConversions(File in, int organisation) throws IOException {
         this.nxfParser = new NXFParser(in);
+        this.organisation = organisation;
     }
 
     private List<ConverterStep> getSteps(List<ColumnMapping> mappings) throws UnsatisfiableDependencyError {
@@ -117,7 +110,7 @@ public class RunConversions {
             for (Class<? extends OrganisationStep> stepClass: orgConverters) {
                 try {
                     OrganisationStep step = stepClass.newInstance();
-                    if (step.isStepNeeded(mappings, handler.getGroups(session.getOrganisationID()))) {   
+                    if (step.isStepNeeded(mappings, handler.getGroups(organisation))) {   
                         depSteps.add(step);
                     }
                 } catch (InstantiationException ex) {

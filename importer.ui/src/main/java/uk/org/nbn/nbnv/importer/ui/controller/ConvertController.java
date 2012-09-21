@@ -38,7 +38,7 @@ public class ConvertController {
             ConvertResults model = new ConvertResults();
             
             File in = new File(args.get("filename"));
-            RunConversions rc = new RunConversions(in);
+            RunConversions rc = new RunConversions(in, session.getOrganisationID());
             
             File out = File.createTempFile("nbnimporter", "processed.tab");
             File meta = File.createTempFile("nbnimporter", "meta.xml");
