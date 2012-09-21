@@ -4,6 +4,7 @@
  */
 package uk.org.nbn.nbnv.importer.ui.convert;
 
+import java.util.ArrayList;
 import java.util.List;
 import uk.org.nbn.nbnv.importer.ui.parser.ColumnMapping;
 
@@ -12,21 +13,24 @@ import uk.org.nbn.nbnv.importer.ui.parser.ColumnMapping;
  * @author Matt Debont
  */
 public abstract class OrganisationStep extends DependentStep {
-    private String orgGroup;
+    private int orgGroup;
     
-    public OrganisationStep (String orgGroup, int modifier) {
+    public OrganisationStep (int orgGroup, int modifier) {
         super(modifier);
         this.orgGroup = orgGroup;
     }
     
-    public String getOrganisationName() {
+    public int getOrganisationName() {
         return orgGroup;
     }
     
-    public boolean isStepNeeded(List<ColumnMapping> columns, String orgGroup) {
-        if (orgGroup.equalsIgnoreCase(this.orgGroup)) {
-            return isStepNeeded(columns);
+    public boolean isStepNeeded(List<ColumnMapping> columns, List<Integer> groups) {
+        for(int groupID : groups) {
+            if (groupID == orgGroup) {
+                return isStepNeeded(columns);
+            }
         }
+        
         return false;
     }
 }

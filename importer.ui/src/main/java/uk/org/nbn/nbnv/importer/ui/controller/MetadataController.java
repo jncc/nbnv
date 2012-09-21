@@ -91,6 +91,7 @@ public class MetadataController {
             mw.datasetToEML(model.getMetadata());
             
             session.setMetadata(metadataFile.getAbsolutePath());
+            session.setOrganisationID(model.getMetadata().getOrganisationID());
             
             return new ModelAndView("upload");
         } catch (Exception ex) {

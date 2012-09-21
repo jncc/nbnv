@@ -10,20 +10,32 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 import org.reflections.Reflections;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 import uk.org.nbn.nbnv.importer.ui.meta.MetaWriter;
+import uk.org.nbn.nbnv.importer.ui.model.SessionData;
 import uk.org.nbn.nbnv.importer.ui.parser.ColumnMapping;
 import uk.org.nbn.nbnv.importer.ui.parser.DarwinCoreField;
 import uk.org.nbn.nbnv.importer.ui.parser.NXFParser;
+import uk.org.nbn.nbnv.importer.ui.util.OrganisationGroupXMLParser;
 
 /**
  *
@@ -33,6 +45,9 @@ public class RunConversions {
     private List<ConverterStep> steps;
     private List<ColumnMapping> mappings;
     private NXFParser nxfParser;
+    
+    @Autowired
+    private SessionData session;
 
     public RunConversions(File in) throws IOException {
         this.nxfParser = new NXFParser(in);
@@ -86,22 +101,41 @@ public class RunConversions {
             } catch (IllegalAccessException ex) {
                 Logger.getLogger(RunConversions.class.getName()).log(Level.SEVERE, null, ex);
             }
+        }   
+        
+        try {
+            
+            SAXParserFactory saxFactory = SAXParserFactory.newInstance();
+            SAXParser saxParser = saxFactory.newSAXParser();
+            
+            OrganisationGroupXMLParser handler = new OrganisationGroupXMLParser();
+            
+            saxParser.parse(getClass().getClassLoader().getResourceAsStream("OrganisationStepProvider.xml"), handler);
+            
+            Set<Class<? extends OrganisationStep>> orgConverters = reflections.getSubTypesOf(OrganisationStep.class);
+
+            for (Class<? extends OrganisationStep> stepClass: orgConverters) {
+                try {
+                    OrganisationStep step = stepClass.newInstance();
+                    if (step.isStepNeeded(mappings, handler.getGroups(session.getOrganisationID()))) {   
+                        depSteps.add(step);
+                    }
+                } catch (InstantiationException ex) {
+                    Logger.getLogger(RunConversions.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (IllegalAccessException ex) {
+                    Logger.getLogger(RunConversions.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }            
+            
+        } catch (IOException ex) {
+            
+        } catch (ParserConfigurationException ex) {
+            
+        } catch (SAXException ex) {
+            
         }
         
-//        Set<Class<? extends OrganisationStep>> orgConverters = reflections.getSubTypesOf(OrganisationStep.class);
-//        
-//        for (Class<? extends OrganisationStep> stepClass: orgConverters) {
-//            try {
-//                DependentStep step = stepClass.newInstance();
-//                if (step.isStepNeeded(mappings)) {
-//                    depSteps.add(step);
-//                }
-//            } catch (InstantiationException ex) {
-//                Logger.getLogger(RunConversions.class.getName()).log(Level.SEVERE, null, ex);
-//            } catch (IllegalAccessException ex) {
-//                Logger.getLogger(RunConversions.class.getName()).log(Level.SEVERE, null, ex);
-//            }
-//        }
+
         
         for (DependentStep preStep : preSteps) {
             getSteps().add(0, preStep);
