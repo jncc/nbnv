@@ -30,7 +30,7 @@ $.namespace("nbn.mapping.InteractiveMappingClient", function(toDrawTo, options) 
 
 	$.extend(this,
 		new nbn.util.ObservableCollection('NBNMapLayer'),
-		new nbn.util.user.CookieLoginable()
+		new nbn.util.user.Loginable()
 	); //extend an observable collection
 	
 	/*CONSTRUCT THE NBN INTERACTIVE MAPPER*/

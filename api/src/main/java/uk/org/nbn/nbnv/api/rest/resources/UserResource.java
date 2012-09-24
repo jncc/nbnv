@@ -3,6 +3,8 @@ package uk.org.nbn.nbnv.api.rest.resources;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -12,11 +14,12 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
-import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.org.nbn.nbnv.api.authentication.ExpiredTokenException;
 import uk.org.nbn.nbnv.api.authentication.InvalidCredentialsException;
+import uk.org.nbn.nbnv.api.authentication.InvalidTokenException;
 import uk.org.nbn.nbnv.api.authentication.Token;
 import uk.org.nbn.nbnv.api.authentication.TokenAuthenticator;
 import uk.org.nbn.nbnv.api.dao.mappers.UserAuthenticationMapper;
@@ -62,9 +65,15 @@ public class UserResource {
     public Response createTokenCookie(
             @QueryParam("username")  String username, 
             @QueryParam("password") String password
-        ) throws InvalidCredentialsException {
+        ) throws InvalidCredentialsException, InvalidTokenException, ExpiredTokenException {
         Token token = tokenAuth.generateToken(username, password, tokenTTL);
-        return Response.ok("success")
+        
+        Map<String, Object> toReturn = new HashMap<String, Object>();
+        toReturn.put("success", true);
+        toReturn.put("user", tokenAuth.getUser(token));
+        toReturn.put("token", token.getBytes());
+        
+        return Response.ok(toReturn)
            .cookie(new NewCookie(
                 tokenCookieKey, 
                 Base64.encodeBase64URLSafeString(token.getBytes()),
@@ -92,7 +101,11 @@ public class UserResource {
     @Path("/logout")
     @Produces(MediaType.APPLICATION_JSON)
     public Response destroyTokenCookie() {
-        return Response.ok("loggedout")
+        Map<String,Object> toReturn = new HashMap<String, Object>();
+        toReturn.put("success", true);
+        toReturn.put("user", User.PUBLIC_USER);
+        
+        return Response.ok(toReturn)
             .cookie(new NewCookie(tokenCookieKey, null, "/", domain, null, 0 , false))
             .build();
     }

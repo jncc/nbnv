@@ -24,7 +24,13 @@
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
             <version>20090211</version>
-        </dependency>        
+        </dependency> 
+        <!--NBN Gateway Properties Reader-->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>nbnv-properties</artifactId>
+            <version>${project.version}</version>
+        </dependency>       
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
@@ -78,7 +84,6 @@
                                 <include>util/HashedObservableCollection.js</include>
                                 <include>util/PropagatingObservableCollection.js</include>
                                 <include>util/user/Loginable.js</include>
-                                <include>util/user/CookieLoginable.js</include>
                                 <include>util/GoogleAnalytics.js</include> <!-- Import for Google Analytics -->
                                 <include>widgets/copyrightControllerWidget.js</include>
                                 <include>widgets/treewidget.js</include>

@@ -1,13 +1,13 @@
 package nbn.webmapping.json.loadtime;
 
+import java.io.IOException;
 import java.util.Calendar;
 import javax.servlet.http.HttpServletRequest;
-import nbn.common.util.properties.ServerSpecificProperties;
 import nbn.webmapping.json.bridge.CalendarToJSONObjectBridge;
 import nbn.webmapping.json.bridge.ContextToJSONObjectBridge;
-import nbn.webmapping.json.bridge.PathToProtocolSpecifiedStringBridge;
 import org.json.JSONException;
 import org.json.JSONObject;
+import uk.gov.nbn.data.properties.PropertiesReader;
 /**
  *
  * @author Christopher Johnson
@@ -16,15 +16,15 @@ import org.json.JSONObject;
  * the output of this class.
  */
 public class ServerGeneratedLoadTimeConstantsGenerator {
-    public static JSONObject getConstants(HttpServletRequest context) throws JSONException {
-        JSONObject toReturn = new JSONObject();
+    private static final String IMT_PROPERTIES_FILE = "imt.properties";
+    public static JSONObject getConstants(HttpServletRequest context) throws JSONException, IOException {
+        JSONObject toReturn = new JSONObject(PropertiesReader.getEffectiveProperties(IMT_PROPERTIES_FILE));
         toReturn.put("date",new CalendarToJSONObjectBridge().convert(Calendar.getInstance()));
-		toReturn.put("context",new ContextToJSONObjectBridge().convert(context));
-        toReturn.put("gisServers", new PathToProtocolSpecifiedStringBridge("http").convert("staging.testnbn.net/gis"));
+        toReturn.put("context",new ContextToJSONObjectBridge().convert(context));
         return toReturn;
     }
 
-    public static String getConstantsAsJSONString(HttpServletRequest context) throws JSONException {
+    public static String getConstantsAsJSONString(HttpServletRequest context) throws JSONException, IOException {
         return getConstants(context).toString();
     }
 }

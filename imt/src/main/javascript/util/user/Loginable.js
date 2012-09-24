@@ -8,34 +8,44 @@
 *	jquery
 */
 
-window.nbn = window.nbn || {};
-nbn.util = nbn.util || {};
-nbn.util.user = nbn.util.user || {};
-
-nbn.util.user.Loginable = function() {
-	var userAttribute = new nbn.util.ObservableAttribute('User');
-	$.extend(this, userAttribute); //make this extend a user attribute
-	delete this.setUser; //remove the set user method
-	this.doUserLogin = function(username, passhash, callback) {
-        $.getJSON('LoginServlet?username=' + username + '&userkey=' + passhash, function(result) {
-			if (result.success) {
-				userAttribute.setUser({
-					userID: result.userid,
-					username: username,
-					passhash: passhash,
-					fullname: result.name
-				});
-			}
-			if($.isFunction(callback))
-				callback(result); //notify callbacks
-		});
+$.namespace("nbn.util.user.Loginable", function() {
+    var userAttribute = new nbn.util.ObservableAttribute('User');
+    $.extend(this, userAttribute); //make this extend a user attribute
+    delete this.setUser; //remove the set user method
+    
+    //Check with the data api to see if a user is already logged in
+    $.getJSON('http://localhost:8084/api/user', function(user) {
+        if (user.id !== 0) {
+            userAttribute.setUser({
+                userID: user.id,
+                username: user.username,
+                fullname: user.forename + ' ' + user.surname
+            });
+        }
+    });
+    
+    this.doUserLogin = function(username, password, callback) {
+        $.getJSON('http://localhost:8084/api/user/login?username=' + username + '&password=' + password, function(result) {
+            var user = result.user;
+            if (result.success) {
+                userAttribute.setUser({
+                    userID: user.id,
+                    username: user.username,
+                    fullname: user.forename + ' ' + user.surname
+                });
+            }
+            if($.isFunction(callback))
+                callback(result); //notify callbacks
+        });
     };
 	
-	this.isUserLoggedIn = function() {
-		return userAttribute.getUser() & true;
-	};
-	
-	this.doUserLogout = function() {
-		userAttribute.setUser(undefined);
-	};
-};
+    this.isUserLoggedIn = function() {
+        return userAttribute.getUser() & true;
+    };
+
+    this.doUserLogout = function() {
+        $.getJSON('http://localhost:8084/api/user/logout', function() {
+            userAttribute.setUser(undefined);
+        });
+    };
+});

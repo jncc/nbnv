@@ -163,18 +163,16 @@ nbn.mapping.openlayers.OpenLayersMap = function(options, interactiveMap) {
 		_me.addBaseLayerType(new nbn.mapping.openlayers.OpenLayersBingLayer({type : 'Shaded'}));
 		_me.addBaseLayerType(new nbn.mapping.openlayers.OpenLayersBingLayer({type : 'Hybrid'}));
 		_me.addBaseLayerType(new nbn.mapping.openlayers.OpenLayersBingLayer({type : 'Aerial'}));
-		_me.addBaseLayerType((function() {
-			var customOutlineLayer = new nbn.layer.ArcGISMap(nbn.util.ServerGeneratedLoadTimeConstants.gisServers, "SiteBoundaryDatasets",_me, {
-				isBaseLayer: true,
-				name: 'Outline',
-				resolutions: EPSG_27700_RESOLUTIONS
-			});
-			var _filter = new nbn.layer.ArcGisMapFilter();
-			_filter.setFilter({	visibleLayers:['SB000002']	});
-			customOutlineLayer.layer.projection = new OpenLayers.Projection("EPSG:27700"); //projection the layer should be added in
-			customOutlineLayer.addLayerFilter(_filter);
-			return new nbn.layer.BaseLayer(customOutlineLayer);
-		})());
+                _me.addBaseLayerType(new nbn.layer.BaseLayer(new nbn.mapping.openlayers.OpenLayersLayer(
+				new OpenLayers.Layer.WMS("Outline", nbn.util.ServerGeneratedLoadTimeConstants.gisServers + "SiteBoundaryDatasets", {
+					layers: "SB000002", 
+					format:"image/png"}, {
+					isBaseLayer:true, 
+					projection:new OpenLayers.Projection("EPSG:27700"), 
+					resolutions: EPSG_27700_RESOLUTIONS
+				}),{ name: 'Outline' } //name displayed in the selection boxes
+			),{ id:'Outline' })//ID which will be used in getMapURL
+		);
 		_me.addBaseLayerType(new nbn.layer.BaseLayer(new nbn.mapping.openlayers.OpenLayersLayer(
 				new OpenLayers.Layer.WMS("OS Map", nbn.util.ServerGeneratedLoadTimeConstants.gisServers + "OS-Modern", {
 					layers: "MiniScale-NoGrid,OS250k,OS50k,OS25k", 
