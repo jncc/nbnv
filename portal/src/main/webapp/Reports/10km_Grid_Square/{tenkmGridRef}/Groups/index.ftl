@@ -4,11 +4,12 @@
 
 <@template.master title="10km report for tenkmGridRef">
     <h1>10km Square ${URLParameters.tenkmGridRef}</h1>
-    <div>
+
+    <div class="nbn-report-data-container">
         <table class="nbn-simple-table">
-            <tr><th>Species groups</th></tr>
+            <tr><th class="nbn-th-left nbn-th-right">Species groups for ${tenkmGridRef} (number of species)</th></tr>
             <#list metaTaxonOutputGroups as metaTaxonOutputGroup>
-                <tr><td><a href="../${tenkmGridRef}/Species?taxonOutputGroup=${metaTaxonOutputGroup.taxonGroupKey}">${metaTaxonOutputGroup.taxonOutputGroup.taxonGroupName}</a>(${metaTaxonOutputGroup.querySpecificSpeciesCount} species)</td></tr>
+                <tr><td class="nbn-td-left nbn-td-right"><a href="../${tenkmGridRef}/Species?taxonOutputGroup=${metaTaxonOutputGroup.taxonGroupKey}">${metaTaxonOutputGroup.taxonOutputGroup.taxonGroupName}</a>(${metaTaxonOutputGroup.querySpecificSpeciesCount})</td></tr>
             </#list>
         </table>
     </div>
