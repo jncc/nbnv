@@ -4,9 +4,6 @@
  */
 package uk.org.nbn.nbnv.importer.ui.controller;
 
-import java.awt.AlphaComposite;
-import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -99,8 +96,12 @@ public class AddOrganisationController {
         EntityManager em = DatabaseConnection.getInstance().createEntityManager();
         em.getTransaction().begin();
         em.persist(model.getOrganisation());
-        em.getTransaction().commit();            
+        em.getTransaction().commit();      
         
+        MetadataForm metadataForm = new MetadataForm();
+        metadataForm.setOrganisationList(em.createNamedQuery("Organisation.findAll").getResultList());
+        metadataForm.getMetadata().setOrganisationID(model.getOrganisation().getOrganisationID());
+
         // Return to metadata input form, should probably find a way of auto-selecting the new organisation
         return new ModelAndView("redirect:/metadata.html", "model", new MetadataForm());        
     }

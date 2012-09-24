@@ -9,14 +9,21 @@ import java.io.IOException;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Locale;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.validation.Valid;
 import org.apache.poi.hwpf.HWPFDocument;
+import org.apache.poi.hwpf.extractor.WordExtractor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -34,6 +41,7 @@ import uk.org.nbn.nbnv.importer.ui.model.MetadataForm;
 import uk.org.nbn.nbnv.importer.ui.model.SessionData;
 import uk.org.nbn.nbnv.importer.ui.model.UploadItem;
 import uk.org.nbn.nbnv.importer.ui.util.DatabaseConnection;
+import uk.org.nbn.nbnv.importer.ui.util.POIImportError;
 import uk.org.nbn.nbnv.importer.ui.validators.MetadataFormValidator;
 import uk.org.nbn.nbnv.importer.ui.validators.MetadataValidator;
 import uk.org.nbn.nbnv.jpa.nbncore.Organisation;
@@ -45,6 +53,41 @@ import uk.org.nbn.nbnv.jpa.nbncore.Organisation;
 @Controller
 public class MetadataController {
     @Autowired SessionData session;
+    
+    // Limit for wandering up the string list looking for a valid input
+    // descriptor contained in the valid stringSet
+    private static final int WANDER_MAX = 3;
+    
+    private static final String[] stringsHWPF = {
+        "Abbreviation", "Access Constraint", "Additional Information", 
+        "Confidence in the Data", "Contact email", "Contact name", 
+        "Data Provider Name", "Description", "Email Address", 
+        "Geographical Coverage", "Methods of Data Capture", "Name", 
+        "Organisation Logo", "Organisation Description", "Postal Address", 
+        "Postcode", "Purpose of Data Capture", "Record Attributes", 
+        "Recorder Names", "Set Geographic Resolution", "Title", "Telephone Number", 
+        "Telephone* Number", "Temporal Coverage", "Use Constraint", "Website"
+    };
+    
+    private static final String[] stringsSpecialAtt = {
+        "Set Geographic Resolution*", 
+        "Name *", 
+        "Record Attributes", 
+        "Recorder Names"
+    };
+    
+    private static final String[] operators = {
+        "FORMTEXT", "FORMCHECKBOX"
+    };
+    
+    // Catch some of the annoying cases where inputs are followed by
+    // paragraphs of text, as we are using \r\n to seperate out the 
+    // inputs
+    private String[] longDescriptions = {
+        "Access Constraint", "Confidence in the Data", "Description", 
+        "Geographical Coverage", "Methods of Data Capture", 
+        "Temporal Coverage", "Title"
+    };
     
     @RequestMapping(value="/metadata.html", method = RequestMethod.GET)
     public ModelAndView metadata() {  
@@ -128,13 +171,116 @@ public class MetadataController {
             //uploadItem.getFileData().transferTo(dFile);
             
             HWPFDocument doc = new HWPFDocument(uploadItem.getFileData().getInputStream());
-            messages.add("Word document parsing not implemented yet");
+            WordExtractor ext = new WordExtractor(doc);
+            String[] strs = ext.getParagraphText();
+            
+            Map<String, String> testMap = new HashMap<String, String>();
+            HashSet<String> stringSet = new HashSet<String>(Arrays.asList(stringsHWPF));
+            HashSet<String> longDesc = new HashSet<String>(Arrays.asList(longDescriptions));
+            
+            List<String> strList = Arrays.asList(strs);
+            
+            String desc, str = "", field;
+            
+            ListIterator<String> strIt = strList.listIterator();
+            while (strIt.hasNext()) {
+                // Store previous string as possible descriptor
+
+                desc = str.trim().replaceAll("\\*$", "");
+                // Store cursor for descriptor
+                int descCursor = strIt.previousIndex();
+                // Get the next string in the iterator
+                String origStr = strIt.next();
+                str = origStr;
+                
+                // If the str is a FORMTEXT input then we have an input
+                // field
+                if (str.contains("FORMTEXT")) {                    
+                    // Store cursor index for next val
+                    int cursor = strIt.nextIndex();
+
+                    str = str.replaceAll("^.*FORMTEXT", "").trim();
+                    // Copy over to handle multi-line inputs
+                    field = str;
+                    
+                    // Grab multi-line inputs
+                    boolean endOfField = false;
+                    while(!endOfField) {
+                        str = strIt.next();
+                        if (str.contains("\r\n")) {
+                            field = field + "\n\n" + str.trim();
+                        } else {
+                            endOfField = true;
+                        }
+                    }    
+                    
+                    if (!stringSet.contains(desc.trim())) {
+                        // Search back a few entries to see if it just
+                        // got lost somewhere
+                        strIt = strList.listIterator(descCursor);
+                        boolean foundDesc = false;
+                        int count = 0;
+                        while (count < WANDER_MAX && !foundDesc) {
+                            desc = strIt.previous().trim().replaceAll("\\*$", "");
+                            if (stringSet.contains(desc.trim())) {
+                                foundDesc = true;
+                            }
+                            count++;
+                        }
+                        
+                        if (!foundDesc) {
+                            // Haven't found a valid descriptor so we need
+                            // to check our exceptions list
+                            System.out.println(origStr);
+                            if (origStr.contains("I read and understood the NBN Gateway Data Provider Agreement and agree, on behalf of the data provider named in section A, to submit the dataset described in section D to the NBN Trust under this agreement.")) {
+                                // Not invalid just the declaration, do some processing here
+                            } else {
+                                // No exceptions found We have an odity
+                                throw new POIImportError("Found an input field with an unknown name input was: " + str);
+                            }
+                        }
+                    }
+                    
+                    if (longDesc.contains(desc.trim())) {
+                        field = field.replaceAll("\n.*$", "");
+                        
+                        // Oddities and annoyances
+                        if (desc.trim().equals("Geographical Coverage")) {
+                            field = field.replaceAll("\n.*\n.*$", "");
+                        }
+                    }
+                    
+                    testMap.put(desc, field);
+
+                    // Reset iterator to the correct place
+                    strIt = strList.listIterator(cursor);
+                }
+            }
+            
+            Metadata meta = new Metadata();
+            
+            meta.setAccess(testMap.get("Access Constraint"));
+            meta.setDescription(testMap.get("Description"));
+            meta.setGeographic(testMap.get("Geographical Coverage"));
+            meta.setInfo(testMap.get("Additional Information"));
+            meta.setMethods(testMap.get("Methods of Data Capture"));
+            meta.setPurpose(testMap.get("Purpose of Data Capture"));
+            meta.setQuality(testMap.get("Confidence in the Data"));
+            meta.setTemporal(testMap.get("Temporal Coverage"));
+            meta.setTitle(testMap.get("Title"));
+            meta.setUse(testMap.get("Use Constraint"));
+
+            model.setMetadata(meta);
             
         } catch (IOException ex) {
             messages.add("EXCEPTION: Parse exception: " + ex.getMessage());
+        } catch (POIImportError ex) {
+            messages.add("EXCEPTION: POI Word Parsing exception: " + ex.getMessage());
         }
-
-        return new ModelAndView("debug", "messages", messages);
+        
+        
+        
+        return new ModelAndView("metadataForm", "model", model);
     }
     
     @InitBinder("model")
