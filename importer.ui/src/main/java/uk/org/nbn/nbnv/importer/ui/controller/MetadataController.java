@@ -80,14 +80,7 @@ public class MetadataController {
         "FORMTEXT", "FORMCHECKBOX"
     };
     
-    // Catch some of the annoying cases where inputs are followed by
-    // paragraphs of text, as we are using \r\n to seperate out the 
-    // inputs
-    private String[] longDescriptions = {
-        "Access Constraint", "Confidence in the Data", "Description", 
-        "Geographical Coverage", "Methods of Data Capture", 
-        "Temporal Coverage", "Title"
-    };
+
     
     @RequestMapping(value="/metadata.html", method = RequestMethod.GET)
     public ModelAndView metadata() {  
@@ -159,24 +152,31 @@ public class MetadataController {
         }
 
         List<String> messages = new ArrayList<String>();
-        messages.add("Original File name: " + uploadItem.getFileData().getOriginalFilename());
-        messages.add("File size: " + Long.toString(uploadItem.getFileData().getSize()));
-        messages.add("Content Type: " + uploadItem.getFileData().getContentType());
-        messages.add("Storage description: " + uploadItem.getFileData().getStorageDescription());
+//        messages.add("Original File name: " + uploadItem.getFileData().getOriginalFilename());
+//        messages.add("File size: " + Long.toString(uploadItem.getFileData().getSize()));
+//        messages.add("Content Type: " + uploadItem.getFileData().getContentType());
+//        messages.add("Storage description: " + uploadItem.getFileData().getStorageDescription());
 
         
-        try {
-            //File dFile = File.createTempFile("nbnimporter", "metadata.doc");
-            //messages.add("Storage location: " + dFile.getAbsolutePath());
-            //uploadItem.getFileData().transferTo(dFile);
-            
+        try {           
             HWPFDocument doc = new HWPFDocument(uploadItem.getFileData().getInputStream());
             WordExtractor ext = new WordExtractor(doc);
             String[] strs = ext.getParagraphText();
             
+            // Catch some of the annoying cases where inputs are followed by
+            // paragraphs of text, as we are using \r\n to seperate out the 
+            // inputs
+            Map<String, Integer> longDescCutter = new HashMap<String, Integer>();
+            longDescCutter.put("Access Constraint", 15);
+            longDescCutter.put("Confidence in the Data", 1);
+            longDescCutter.put("Description", 1);
+            longDescCutter.put("Geographical Coverage", 3);
+            longDescCutter.put("Methods of Data Capture", 1);
+            longDescCutter.put("Temporal Coverage", 5);
+            longDescCutter.put("Title", 1);
+            
             Map<String, String> testMap = new HashMap<String, String>();
             HashSet<String> stringSet = new HashSet<String>(Arrays.asList(stringsHWPF));
-            HashSet<String> longDesc = new HashSet<String>(Arrays.asList(longDescriptions));
             
             List<String> strList = Arrays.asList(strs);
             
@@ -231,22 +231,20 @@ public class MetadataController {
                         if (!foundDesc) {
                             // Haven't found a valid descriptor so we need
                             // to check our exceptions list
-                            System.out.println(origStr);
                             if (origStr.contains("I read and understood the NBN Gateway Data Provider Agreement and agree, on behalf of the data provider named in section A, to submit the dataset described in section D to the NBN Trust under this agreement.")) {
                                 // Not invalid just the declaration, do some processing here
                             } else {
                                 // No exceptions found We have an odity
-                                throw new POIImportError("Found an input field with an unknown name input was: " + str);
+                                throw new POIImportError("Found an input field with an unknown name input was: " + origStr);
                             }
                         }
                     }
                     
-                    if (longDesc.contains(desc.trim())) {
-                        field = field.replaceAll("\n.*$", "");
-                        
-                        // Oddities and annoyances
-                        if (desc.trim().equals("Geographical Coverage")) {
-                            field = field.replaceAll("\n.*\n.*$", "");
+                    // Deal with cases where the descriptions getted tagged
+                    // from the metadata 
+                    if (longDescCutter.get(desc.trim()) != null && longDescCutter.get(desc.trim()) > 0) {
+                        for (int i = 0; i < longDescCutter.get(desc.trim()); i++) {
+                            field = field.replaceAll("\n.*$", "");
                         }
                     }
                     
