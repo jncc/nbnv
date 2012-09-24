@@ -20,7 +20,7 @@ public class ServerGeneratedLoadTimeConstantsGenerator {
         JSONObject toReturn = new JSONObject();
         toReturn.put("date",new CalendarToJSONObjectBridge().convert(Calendar.getInstance()));
 		toReturn.put("context",new ContextToJSONObjectBridge().convert(context));
-        toReturn.put("gisServers", new PathToProtocolSpecifiedStringBridge("http").convert("localhost:8084/nbnv-gis-0.1-SNAPSHOT"));
+        toReturn.put("gisServers", new PathToProtocolSpecifiedStringBridge("http").convert("staging.testnbn.net/gis"));
         return toReturn;
     }
 
