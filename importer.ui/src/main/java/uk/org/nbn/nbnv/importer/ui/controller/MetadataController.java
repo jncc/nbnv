@@ -18,7 +18,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Pattern;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.validation.Valid;
@@ -58,17 +57,47 @@ public class MetadataController {
     // descriptor contained in the valid stringSet
     private static final int WANDER_MAX = 3;
     
+    // Organisation Descriptors
+    private static final String ORG_ABBREVIATION = "Abbreviation";
+    private static final String ORG_EMAIL = "Contact email";
+    private static final String ORG_CONTACT_NAME = "Contact name";
+    private static final String ORG_NAME = "Data Provider Name";
+    private static final String ORG_LOGO = "Organisation Logo";
+    private static final String ORG_DESC = "Organisation Description";
+    private static final String ORG_ADDRESS = "Postal Address";
+    private static final String ORG_POSTCODE = "Postcode";
+    private static final String ORG_PHONE = "Telephone* Number";
+    private static final String ORG_WEBSITE = "Website";
+    
+    // Metadata Descriptors
+    private static final String META_ACCESS_CONSTRAINT = "Access Constraint";
+    private static final String META_ADDITIONAL_INFO = "Additional Information";
+    private static final String META_DATA_CONFIDENCE = "Confidence in the Data";
+    private static final String META_DESC = "Description";
+    private static final String META_EMAIL = "Email Address";
+    private static final String META_GEOCOVER = "Geographical Coverage";
+    private static final String META_CAPTURE_METHOD = "Methods of Data Capture";
+    private static final String META_NAME = "Name";
+    private static final String META_PURPOSE = "Purpose of Data Capture";
+    private static final String META_RECORD_ATT = "Record Attributes";
+    private static final String META_RECORDERS = "Recorder Names";
+    private static final String META_SET_GEORES = "Set Geographic Resolution";
+    private static final String META_TITLE = "Title";
+    private static final String META_CONTACT_PHONE = "Telephone Number";
+    private static final String META_TEMPORAL = "Temporal Coverage";
+    private static final String META_USE_CONSTRAINT = "Use Constraint";    
+    
     private static final String[] stringsHWPF = {
-        "Abbreviation", "Access Constraint", "Additional Information", 
-        "Confidence in the Data", "Contact email", "Contact name", 
-        "Data Provider Name", "Description", "Email Address", 
-        "Geographical Coverage", "Methods of Data Capture", "Name", 
-        "Organisation Logo", "Organisation Description", "Postal Address", 
-        "Postcode", "Purpose of Data Capture", "Record Attributes", 
-        "Recorder Names", "Set Geographic Resolution", "Title", "Telephone Number", 
-        "Telephone* Number", "Temporal Coverage", "Use Constraint", "Website"
+        ORG_ABBREVIATION, ORG_ADDRESS, ORG_CONTACT_NAME, ORG_DESC, 
+        ORG_EMAIL, ORG_LOGO, ORG_NAME, ORG_PHONE, ORG_POSTCODE, 
+        ORG_WEBSITE, META_ACCESS_CONSTRAINT, META_ADDITIONAL_INFO, 
+        META_CAPTURE_METHOD, META_CONTACT_PHONE, META_DATA_CONFIDENCE,
+        META_DESC, META_EMAIL, META_GEOCOVER, META_NAME, META_PURPOSE,
+        META_RECORDERS, META_RECORD_ATT, META_SET_GEORES, META_TEMPORAL,
+        META_TITLE, META_USE_CONSTRAINT
     };
     
+    // NEED TO FIND A WAY TO DEAL WITH CHECKBOXES!
     private static final String[] stringsSpecialAtt = {
         "Set Geographic Resolution*", 
         "Name *", 
@@ -76,10 +105,13 @@ public class MetadataController {
         "Recorder Names"
     };
     
-    private static final String[] operators = {
-        "FORMTEXT", "FORMCHECKBOX"
-    };
+    // Input form elements for Word doc
+    private static final String INPUT_FORMTEXT = "FORMTEXT";
+    private static final String INPUT_FORMCHECKBOX = "FORMCHECKBOX";
     
+    public MetadataController() {
+
+    }
 
     
     @RequestMapping(value="/metadata.html", method = RequestMethod.GET)
@@ -90,7 +122,7 @@ public class MetadataController {
     }
 
     @RequestMapping(value="/metadataProcess.html", method = RequestMethod.POST, params="addOrganisation")
-    public ModelAndView addOrganisation(Metadata metadata, BindingResult result) {
+    public ModelAndView addOrganisation(MetadataForm model, BindingResult result) {
         return new ModelAndView("redirect:/addOrganisation.html");
     }    
     
@@ -152,11 +184,6 @@ public class MetadataController {
         }
 
         List<String> messages = new ArrayList<String>();
-//        messages.add("Original File name: " + uploadItem.getFileData().getOriginalFilename());
-//        messages.add("File size: " + Long.toString(uploadItem.getFileData().getSize()));
-//        messages.add("Content Type: " + uploadItem.getFileData().getContentType());
-//        messages.add("Storage description: " + uploadItem.getFileData().getStorageDescription());
-
         
         try {           
             HWPFDocument doc = new HWPFDocument(uploadItem.getFileData().getInputStream());
@@ -167,13 +194,13 @@ public class MetadataController {
             // paragraphs of text, as we are using \r\n to seperate out the 
             // inputs
             Map<String, Integer> longDescCutter = new HashMap<String, Integer>();
-            longDescCutter.put("Access Constraint", 15);
-            longDescCutter.put("Confidence in the Data", 1);
-            longDescCutter.put("Description", 1);
-            longDescCutter.put("Geographical Coverage", 3);
-            longDescCutter.put("Methods of Data Capture", 1);
-            longDescCutter.put("Temporal Coverage", 5);
-            longDescCutter.put("Title", 1);
+            longDescCutter.put(META_ACCESS_CONSTRAINT, 15);
+            longDescCutter.put(META_DATA_CONFIDENCE, 1);
+            longDescCutter.put(META_DESC, 1);
+            longDescCutter.put(META_GEOCOVER, 3);
+            longDescCutter.put(META_CAPTURE_METHOD, 1);
+            longDescCutter.put(META_TEMPORAL, 5);
+            longDescCutter.put(META_TITLE, 1);
             
             Map<String, String> testMap = new HashMap<String, String>();
             HashSet<String> stringSet = new HashSet<String>(Arrays.asList(stringsHWPF));
@@ -186,20 +213,25 @@ public class MetadataController {
             while (strIt.hasNext()) {
                 // Store previous string as possible descriptor
 
+                // Remove stars at end of descriptors if they are there
                 desc = str.trim().replaceAll("\\*$", "");
+                
                 // Store cursor for descriptor
                 int descCursor = strIt.previousIndex();
+                
                 // Get the next string in the iterator
                 String origStr = strIt.next();
+                // Keep original string for error processing and exception
+                // handling
                 str = origStr;
                 
                 // If the str is a FORMTEXT input then we have an input
                 // field
-                if (str.contains("FORMTEXT")) {                    
+                if (str.contains(INPUT_FORMTEXT)) {                    
                     // Store cursor index for next val
                     int cursor = strIt.nextIndex();
 
-                    str = str.replaceAll("^.*FORMTEXT", "").trim();
+                    str = str.replaceAll("^.*" + INPUT_FORMTEXT, "").trim();
                     // Copy over to handle multi-line inputs
                     field = str;
                     
@@ -257,16 +289,34 @@ public class MetadataController {
             
             Metadata meta = new Metadata();
             
-            meta.setAccess(testMap.get("Access Constraint"));
-            meta.setDescription(testMap.get("Description"));
-            meta.setGeographic(testMap.get("Geographical Coverage"));
-            meta.setInfo(testMap.get("Additional Information"));
-            meta.setMethods(testMap.get("Methods of Data Capture"));
-            meta.setPurpose(testMap.get("Purpose of Data Capture"));
-            meta.setQuality(testMap.get("Confidence in the Data"));
-            meta.setTemporal(testMap.get("Temporal Coverage"));
-            meta.setTitle(testMap.get("Title"));
-            meta.setUse(testMap.get("Use Constraint"));
+            meta.setAccess(testMap.get(META_ACCESS_CONSTRAINT));
+            meta.setDescription(testMap.get(META_DESC));
+            meta.setGeographic(testMap.get(META_GEOCOVER));
+            meta.setInfo(testMap.get(META_ADDITIONAL_INFO));
+            meta.setMethods(testMap.get(META_CAPTURE_METHOD));
+            meta.setPurpose(testMap.get(META_PURPOSE));
+            meta.setQuality(testMap.get(META_DATA_CONFIDENCE));
+            meta.setTemporal(testMap.get(META_TEMPORAL));
+            meta.setTitle(testMap.get(META_TITLE));
+            meta.setUse(testMap.get(META_USE_CONSTRAINT));
+            
+            boolean addOrg = false;
+            
+            if (addOrg) {
+                Organisation newOrg = new Organisation();
+                newOrg.setAbbreviation(testMap.get(ORG_ABBREVIATION));
+                newOrg.setAddress(testMap.get(ORG_ADDRESS));
+                newOrg.setAllowPublicRegistration(false);
+                newOrg.setContactEmail(testMap.get(ORG_EMAIL));
+                newOrg.setContactName(testMap.get(ORG_CONTACT_NAME));
+                newOrg.setLogo(testMap.get(ORG_LOGO)); // Need to figure out how to import logos
+                newOrg.setLogoSmall(testMap.get(ORG_LOGO)); // Need to figure out how to import logos
+                newOrg.setOrganisationName(ORG_NAME);
+                newOrg.setPhone(testMap.get(ORG_PHONE));
+                newOrg.setPostcode(testMap.get(ORG_POSTCODE));
+                newOrg.setSummary(testMap.get(ORG_DESC));
+                newOrg.setWebsite(testMap.get(ORG_WEBSITE));
+            }
 
             model.setMetadata(meta);
             
@@ -276,7 +326,8 @@ public class MetadataController {
             messages.add("EXCEPTION: POI Word Parsing exception: " + ex.getMessage());
         }
         
-        
+        // Return error messages to the interface as well as the data
+        model.setErrors(messages);
         
         return new ModelAndView("metadataForm", "model", model);
     }
