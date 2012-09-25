@@ -122,21 +122,47 @@ body {
         font-style: italic; 
     }
 
-    .nbn-simple-table{
-        $padding: 3px;
+    .nbn-report-data-container{
+        width: 30%;
+    }
+
+    table.nbn-simple-table{
+        $padding: 5px !important;
         font-family: Arial,Helvetica,Sans-serif;
-        padding: 1px;
         width: 100%;
-        th {
-            font-weight: bold;
+        border-collapse: separate;
+        border-bottom: 1px solid $majorColour;
+        margin-bottom: 20px;
+        th{
+            padding: $padding;
+            color: white;
             width: 25%;
             padding: $padding;
+            background-color: $majorColour;
         }
         td{
             padding: $padding;
         }
     }
-    
+
+    th.nbn-th-left {
+        border-top-left-radius: 5px;
+        -moz-border-top-left-radius: 5px;
+    }
+
+    th.nbn-th-right {
+        border-top-right-radius: 5px;
+        -moz-border-top-right-radius: 5px;
+    }
+
+    td.nbn-td-left {
+            border-left: 1px solid $majorColour;
+    }
+
+    td.nbn-td-right {
+        border-right: 1px solid $majorColour;
+    }
+
     .nbn-dataset-table{
         $padding: 3px;
         font-family: Arial,Helvetica,Sans-serif;

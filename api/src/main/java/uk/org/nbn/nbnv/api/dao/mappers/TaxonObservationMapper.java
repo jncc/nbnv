@@ -84,9 +84,10 @@ public interface TaxonObservationMapper {
             , @Param("taxonOutputGroup") String taxonOutputGroup
             , @Param("gridRef") String gridRef);
     
-    @SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectDatasets")
+//    @SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectDatasets")
+    @SelectProvider(type=TaxonObservationProvider.class, method="testProviderAndDatasets")
     @Results(value = {
-        @Result(property="dataset", column="datasetKey", javaType=Dataset.class, one=@One(select="uk.org.nbn.nbnv.api.dao.mappers.DatasetMapper.selectByDatasetKey")),
+        @Result(property="dataset", column="datasetKey", javaType=Dataset.class, one=@One(select="uk.org.nbn.nbnv.api.dao.mappers.DatasetMapper.selectByIDProviderNotInstantiated")),
         @Result(property="datasetKey", column="datasetKey")
     })
     public List<DatasetWithQueryStats> selectObservationDatasetsByFilter(

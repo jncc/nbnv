@@ -1,6 +1,6 @@
 package uk.org.nbn.nbnv.api.model;
 
-public class DatasetWithQueryStats{
+public class DatasetWithQueryStats implements Comparable<DatasetWithQueryStats>{
     
     private String datasetKey;
     private int querySpecificObservationCount;
@@ -37,5 +37,11 @@ public class DatasetWithQueryStats{
     public void setDataset(Dataset dataset) {
         this.dataset = dataset;
     }
+    
+    @Override
+    public int compareTo(DatasetWithQueryStats that) {
+        return this.dataset.getName().compareTo(that.dataset.getName());
+    }
+
     
 }

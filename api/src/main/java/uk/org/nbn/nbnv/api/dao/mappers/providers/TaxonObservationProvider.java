@@ -43,6 +43,13 @@ public class TaxonObservationProvider {
         return SQL();
     }
     
+    public String testProviderAndDatasets(Map<String, Object> params){
+        BEGIN();
+        SELECT("top 100 datasetKey, CAST(CRYPT_GEN_RANDOM(1) AS INT) querySpecificObservationCount");
+        FROM("DatasetData");
+        return SQL();
+    }
+    
     private void createSelectQuery(Map<String, Object> params) {
 
         FROM("UserTaxonObservationData o");
