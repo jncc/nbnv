@@ -126,8 +126,8 @@ body {
         width: 30%;
     }
 
-    .nbn-simple-table{
-        $padding: 3px !important;
+    table.nbn-simple-table{
+        $padding: 5px !important;
         font-family: Arial,Helvetica,Sans-serif;
         width: 100%;
         border-collapse: separate;
@@ -145,21 +145,21 @@ body {
         }
     }
 
-    .nbn-th-left {
+    th.nbn-th-left {
         border-top-left-radius: 5px;
         -moz-border-top-left-radius: 5px;
     }
 
-    .nbn-th-right {
+    th.nbn-th-right {
         border-top-right-radius: 5px;
         -moz-border-top-right-radius: 5px;
     }
 
-    .nbn-td-left {
+    td.nbn-td-left {
             border-left: 1px solid $majorColour;
     }
 
-    .nbn-td-right {
+    td.nbn-td-right {
         border-right: 1px solid $majorColour;
     }
 

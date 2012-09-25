@@ -6,6 +6,9 @@ package uk.org.nbn.nbnv.api.rest.resources;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -17,6 +20,8 @@ import javax.ws.rs.core.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+import uk.org.nbn.nbnv.api.dao.mappers.DatasetMapper;
+import uk.org.nbn.nbnv.api.dao.mappers.OrganisationMapper;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
 import uk.org.nbn.nbnv.api.dao.mappers.TaxonObservationMapper;
 import uk.org.nbn.nbnv.api.model.*;
@@ -31,6 +36,8 @@ public class TaxonObservationResource {
 
     @Autowired
     TaxonObservationMapper observationMapper;
+    @Autowired
+    OrganisationMapper organisationMapper;
 
     @GET
     @Path("/{id : \\d+}")
@@ -104,6 +111,20 @@ public class TaxonObservationResource {
         return observationMapper.selectObservationDatasetsByFilter(user.getId(), startYear, endYear, datasets, taxa, overlaps, within, sensitive, designation, taxonOutputGroup, gridRef);
     }
 
+    @GET
+    @Path("/providers")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<ProviderWithQueryStats> getObservationProvidersByFilter(
+            @TokenUser() User user, @QueryParam("startYear") @DefaultValue("-1") int startYear, @QueryParam("endYear") @DefaultValue("-1") int endYear, @QueryParam("datasetKey") @DefaultValue("") String datasetKey, @QueryParam("ptvk") @DefaultValue("") String ptvk, @QueryParam("overlapSite") @DefaultValue("-1") Integer overlaps, @QueryParam("withinSite") @DefaultValue("-1") Integer within, @QueryParam("sensitive") @DefaultValue("1") Boolean sensitive, @QueryParam("designation") @DefaultValue("") String designation, @QueryParam("taxonOutputGroup") @DefaultValue("") String taxonOutputGroup, @QueryParam("gridRef") @DefaultValue("") String gridRef) {
+
+        //TODO: squareBlurring(?)
+        List<String> datasets = parseCsv(datasetKey);
+        List<String> taxa = parseCsv(ptvk);
+        List<DatasetWithQueryStats> datasetsWithQueryStats = observationMapper.selectObservationDatasetsByFilter(user.getId(), startYear, endYear, datasets, taxa, overlaps, within, sensitive, designation, taxonOutputGroup, gridRef);
+
+        return groupDatasetsByProvider(datasetsWithQueryStats);
+    }
+
     private List<String> parseCsv(String csv) {
         List<String> toReturn = null;
         if (!"".equalsIgnoreCase(csv)) {
@@ -112,4 +133,44 @@ public class TaxonObservationResource {
         return toReturn;
     }
 
+    private List<ProviderWithQueryStats> groupDatasetsByProvider(List<DatasetWithQueryStats> datasetsWithQueryStats) {
+        HashMap<Integer, ProviderWithQueryStats> providers = new HashMap<Integer, ProviderWithQueryStats>();
+        for (DatasetWithQueryStats datasetWithQueryStats : datasetsWithQueryStats) {
+            Integer providerKey = datasetWithQueryStats.getDataset().getOrganisationID();
+            if (providers.containsKey(providerKey)) {
+                appendDatasetToProvider(providers, datasetWithQueryStats);
+            } else {
+                providers.put(providerKey, getNewProviderWithQueryStats(datasetWithQueryStats));
+            }
+        }
+        List<ProviderWithQueryStats> toReturn = new ArrayList<ProviderWithQueryStats>(providers.values());
+        sortByProviderAndDataset(toReturn);
+        return toReturn;
+    }
+
+    private ProviderWithQueryStats getNewProviderWithQueryStats(DatasetWithQueryStats datasetWithQueryStats) {
+        int organisationID = datasetWithQueryStats.getDataset().getOrganisationID();
+        List<DatasetWithQueryStats> datasets = new ArrayList<DatasetWithQueryStats>();
+        datasets.add(datasetWithQueryStats);
+
+        ProviderWithQueryStats toReturn = new ProviderWithQueryStats();
+        toReturn.setOrganisationID(organisationID);
+        toReturn.setQuerySpecificObservationCount(datasetWithQueryStats.getQuerySpecificObservationCount());
+        toReturn.setOrganisation(organisationMapper.selectByID(organisationID));
+        toReturn.setDatasetsWithQueryStats(datasets);
+        return toReturn;
+    }
+
+    private void appendDatasetToProvider(HashMap<Integer, ProviderWithQueryStats> providers, DatasetWithQueryStats datasetWithQueryStats) {
+        ProviderWithQueryStats provider = providers.get(datasetWithQueryStats.getDataset().getOrganisationID());
+        provider.setQuerySpecificObservationCount(provider.getQuerySpecificObservationCount() + datasetWithQueryStats.getQuerySpecificObservationCount());
+        provider.getDatasetsWithQueryStats().add(datasetWithQueryStats);
+    }
+    
+    private void sortByProviderAndDataset(List<ProviderWithQueryStats> providersToSort){
+        Collections.sort(providersToSort,Collections.reverseOrder());
+        for(ProviderWithQueryStats providerWithQueryStats : providersToSort){
+            Collections.sort(providerWithQueryStats.getDatasetsWithQueryStats());
+        }
+    }
 }
