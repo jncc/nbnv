@@ -17,7 +17,7 @@
 }
 
 /* START STYLING TREE WIDGET */
-.nbn-treewidget{
+.nbn-treewidget .dynatree-container {
     height: 200px;
     border-color: #47C0D7;
     border-style: solid;

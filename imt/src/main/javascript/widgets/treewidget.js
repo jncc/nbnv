@@ -7,10 +7,8 @@
 * @dependencies	:-
 *   jquery.ui.core.js
 *   jquery.ui.widget.js	
-*	dhtmlxcommon.js
-*	dhtmlxtree.js
-*	dhtmlxtree_json.js
-*	dhtmlxtree_xw.js
+*   dynatree.js 1.2.1
+*   json2.js
 * @abilities	:- A tree widget provides two event listeners:
 *	(selection) a selection listener which will notify of the current set of elements have been selected.
 *	(selected) a seleted listener which will notify that a new element has been selected.
@@ -19,183 +17,142 @@
 
 (function( $, undefined ) {
     $.widget( "ui.nbn_treewidget", {
-		options: {
-			treeRoot: 0,
-			allowMultipleSelection: 'checkbox',
-			loadingText: 'Loading...'
-		},
+        options: {
+            treeRoot: 0,
+            allowMultipleSelection: 'checkbox',
+            loadingText: 'Loading...',
+            dataFilter : function(data) { return data; }
+        },
 		
-		_createTree: function() {
-			var _me = this; //store a reference to me
-			this._treeRepresentation = new dhtmlXTreeObject(_me._treeContainer[0], "100%", "100%", this.options.treeRoot); //creat the tree
-			this._treeRepresentation.setSkin('dhx_skyblue');
-			this._treeRepresentation.setImagePath("js/tree/codebase/imgs/csh_bluebooks/");
-			this._treeRepresentation.setXMLAutoLoading(this.options.urlOfDescriptionFile);
-			
-			this._isTreeLoaded = false; //hold a flag to see if the tree has been loaded
-			this._treeRepresentation.loadJSON(this.options.urlOfDescriptionFile, function() {
-				_me._isTreeLoaded = true; //the tree has now loaded and is suitable for state saves
-				_me._trigger("loaded");
-			});
-			
-			this._treeRepresentation.setDataMode("JSON");
+        _create: function() {
+            var _me = this;
+            this.element.addClass( "nbn-treewidget" ); //set the class of the nbn-treewidget       
+            this.element.append(this._treeRepresentation = $('<div>').dynatree({
+                 checkbox: true,
+                 selectMode: 1,
+                 initAjax:{
+                    url: _me.options.urlOfDescriptionFile,
+                    dataFilter : function(data) {
+                        //convert the data that came in and present it as a object 
+                        //that dynatree can cope with. Use the dataFilterFunction 
+                        //to transform the object in nessersary
+                        return JSON.stringify($.map($.parseJSON(data), _me.options.dataFilter));
+                    }
+                },
+                onSelect : function(flag, dtnode) {
+                    if(!dtnode.hasChildren()) {
+                        _me._trigger("selected", 0, dtnode.data.key);
+                    }
+                }, 
+                
+                 classNames: {checkbox: "dynatree-radio"}
+             }));
+            
+            this._tree = this._treeRepresentation.dynatree("getTree");
+            if(this.options.selectDeselect === true)
+                this.addSelectDeselect();
+        },
+		
+        getState: function() {
+            console.log(["getState", arguments]); 
+        },
+		
+        setState: function(stateToLoad) {
+            console.log(["setState", arguments]); 
+        },
 
-			if(this.options.allowMultipleSelection === 'checkbox') {
-				this._treeRepresentation.enableCheckBoxes(true, true); //set to either enable multi select or single
-				this._treeRepresentation.enableThreeStateCheckboxes(true);
-			}
-			else if (this.options.allowMultipleSelection === 'radio') {
-				this._treeRepresentation.enableRadioButtons(true);
-				this._treeRepresentation.enableSingleRadioMode(true, 0);
-			}
-			else if (this.options.allowMultipleSelection === 'none') {
-				this._treeRepresentation.attachEvent('onSelect', function(id) {
-					var dhtmlTreeNode = _me._parseDHTMLTreeID(id); //I only want to notify if the new id selected was that of a child
-					if(dhtmlTreeNode.isChild)
-						_me._trigger("selected",0, [dhtmlTreeNode.id]); //expected response is array, return array
-				});
-			}
-
-			this._treeRepresentation.attachEvent('onCheck', function(id) {
-				_me._trigger("selected", 0, id); //add a listener which will notify the latest addition, will notify of parents and children
-
-				if(_me.options.allowMultipleSelection === 'checkbox') //deal with multiple selection listener
-					_me._trigger("childrenSelectionListener",0,_me.getAllChildrenChecked());
-				else if (_me.options.allowMultipleSelection === 'radio') { //deal with single selection listener
-					var dhtmlTreeNode = _me._parseDHTMLTreeID(id); //I only want to notify if the new id selected was that of a child
-					if(dhtmlTreeNode.isChild) {
-						if (_me._treeRepresentation.isItemChecked(id))
-							_me._trigger("childrenSelectionListener",0, [dhtmlTreeNode.id]); //expected response is array, return array
-						else
-							_me._trigger("childrenSelectionListener",0, []); //expected response is array, return array
-					}
-				}
-			});
-			
-			this._treeRepresentation.setSerializationLevel(true,true);
-			this._treeRepresentation.enableLoadingItem(this.options.loadingText);
-		},
+        setUrlOfDescriptionFile : function(newUrl) {
+            console.log(["setUrlOfDescriptionFile", arguments]); 	
+        },
 		
-		_create: function() {
-			this.element.append(this._treeContainer = $('<div>')
-				.addClass( "nbn-treewidget" ) //set the class of the nbn-treewidget
-			);
-			this._createTree();
-			if(this.options.selectDeselect === true)
-				this.addSelectDeselect();
-		},
+        getChildText : function(id) {
+           console.log(["getChildText", arguments]); 
+        },
 		
-		getState: function() {
-			if(this._isTreeLoaded) 
-				return $.parseJSON(this._treeRepresentation.serializeTreeToJSON());
-			else
-				return false;
-		},
+        getChildUserData : function(id, wantedData) {
+            return this._tree.getNodeByKey(id).data[wantedData];
+        },
 		
-		setState: function(stateToLoad) {
-			if(stateToLoad) {
-				this._treeRepresentation.deleteChildItems(this.options.treeRoot);
-				this._treeRepresentation.loadJSONObject(stateToLoad);
-			}
-		},
-
-		setUrlOfDescriptionFile : function(newUrl) {
-			this.options.urlOfDescriptionFile = newUrl;
-			this._treeRepresentation.destructor(); //call the tree destruction function
-			this._createTree();
-		},
+        getUserDataForAllChildrenChecked: function(wantedUserData) {
+	    var _me = this;
+            return $.map(this.getAllChildrenChecked(), function(child) {
+                return _me.getChildUserData(child, wantedUserData);
+            });
+        },
 		
-		getChildText : function(id) {
-			return this._treeRepresentation.getItemText('C' + id);
-		},
+        getAllChildrenChecked: function() { //this function will remove all the parent ids from the CSV and return a selected element array
+            return this._getAllChildrenIDs(true);
+        },
 		
-		getChildUserData : function(id, wantedData) {
-			return this._treeRepresentation.getUserData('C' + id, wantedData);
-		},
-		
-		getUserDataForAllChildrenChecked: function(wantedUserData) {
-			var selectedChildren = this.getAllChildrenChecked();
-			var toReturn = new Array();
-			for(var currChild in selectedChildren)
-				toReturn[toReturn.length] = this.getChildUserData(selectedChildren[currChild], wantedUserData); //this will convert the node to a child node ('C')
-			return toReturn;
-		},
-
-		_nodeStringListToChildList : function(nodeListString) {
-			var checkedTreeIDs = nodeListString.toString().split(','); //convert to string just incase it is a nubmer split the array around the comma
-			var toReturn = [];
-			for(var i=0; i<checkedTreeIDs.length; i++) {
-				var checkedTreeID = this._parseDHTMLTreeID(checkedTreeIDs[i]);
-				if(checkedTreeID.isChild)
-					toReturn.push(checkedTreeID.id);
-			}
-			return toReturn;
-		},
-		
-		getAllChildrenChecked: function() { //this function will remove all the parent ids from the CSV and return a selected element array
-			return this._nodeStringListToChildList(this._treeRepresentation.getAllChecked());
-		},
-		
-		getAllChildrenUnchecked: function() {
-			return this._nodeStringListToChildList(this._treeRepresentation.getAllUnchecked());
-		},
+        getAllChildrenUnchecked: function() {
+            return this._getAllChildrenIDs(false);
+        },
+        
+        _getAllChildrenIDs: function(checked) {
+            return $.map(this._getAllChildrenNodes(checked), function(node) {
+                return node.data.key;
+            });
+        },
+        
+        _getAllChildrenNodes: function(checked) {
+            var toReturn = [];
+            $.each(this._tree.getRoot().getChildren(), function(i, node) {
+                if(!node.hasChildren() && node.isSelected() === checked) {
+                    toReturn.push(node);
+                }
+            });
+            return toReturn;
+        },
 	
-		isFullyChecked: function() {
-			return this.getAllChildrenUnchecked().length === 0;
-		},
+        isFullyChecked: function() {
+            return this._tree.count() === this._tree.getSelectedNodes().length;
+        },
 		
-		_checkAllWithValue: function(toCheck) {
-			var checkedTreeIDs = ((toCheck) ? this._treeRepresentation.getAllUnchecked() : this._treeRepresentation.getAllChecked()).toString().split(','); //convert to string just incase it is a nubmer split the array around the comma
-			for(var i=0; i<checkedTreeIDs.length; i++)
-				this._treeRepresentation.setCheck(checkedTreeIDs[i], toCheck);
-			this._trigger("childrenSelectionListener",0,this.getAllChildrenChecked()); //notify of check change
-		},
+        _checkAllWithValue: function(toCheck) {
+            $.each(this._getAllChildrenNodes(!toCheck), function(i, node) {
+                node.select(toCheck);
+            });
+            
+            this._trigger("childrenSelectionListener", 0, this.getAllChildrenChecked()); //notify of check change
+        },
 		
-		_createCheckAllButton: function(check, name) {
-			var _me = this;
-			return $('<button>')
-				.button({
-					label: name
-				})
-				.click(function() {
-					_me._checkAllWithValue(check); 
-				});
-		},
+        _createCheckAllButton: function(check, name) {
+            var _me = this;
+            return $('<button>')
+            .button({
+                label: name
+            })
+            .click(function() {
+                _me._checkAllWithValue(check); 
+            });
+        },
 		
-		addSelectDeselect: function() {
-			this.element.append(this._createCheckAllButton(true, 'Select All'));
-			this.element.append(this._createCheckAllButton(false, 'Deselect All'));
-		},
+        addSelectDeselect: function() {
+            this.element.append(this._createCheckAllButton(true, 'Select All'));
+            this.element.append(this._createCheckAllButton(false, 'Deselect All'));
+        },
 		
-		checkAll: function() {
-			this._checkAllWithValue(true);
-		},
+        checkAll: function() {
+            this._checkAllWithValue(true);
+        },
 		
-		unCheckAll: function() {
-			this._checkAllWithValue(false);
-		},
+        unCheckAll: function() {
+            this._checkAllWithValue(false);
+        },
 
-		_parseDHTMLTreeID: function(idToParse) {
-			return {
-				isChild: idToParse.charAt(0) == 'C',
-				id: idToParse.substring(1)
-			};
-		},
 
-		destroy: function() {
-			this.element.removeClass( "nbn-treewidget" ); //remove the appended class
-			this._treeRepresentation.destructor(); //call the tree destruction function
-			this._treeContainer.remove();
-			$.Widget.prototype.destroy.apply( this, arguments );
-		},
+        destroy: function() {
+            this.element.removeClass( "nbn-treewidget" ); //remove the appended class	
+            $.Widget.prototype.destroy.apply( this, arguments );
+        },
 
-		setItemStyle: function(itemId, style) {
-			this._treeRepresentation.setItemStyle(itemId, style);
-		}
-	});
+        setItemStyle: function(itemId, style) {
+			
+        }
+    });
 
     $.extend( $.ui.nbn_treewidget, {
-		version: "@VERSION"
+        version: "@VERSION"
     });
 
 })( jQuery );

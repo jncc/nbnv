@@ -11,8 +11,14 @@ nbn.mapping.construction.WidgetOptionsCreator.prototype.createNBNBoundaryLayer =
         var _boundaryDialog = $('<div>').nbn_renderableControlDialog({
             renderableControl: new function() {
                 var content = $('<div>').nbn_treewidget({
-                    urlOfDescriptionFile : 'TreeWidgetGenerator?type=s',
-                    allowMultipleSelection: 'radio'
+                    urlOfDescriptionFile : nbn.util.ServerGeneratedLoadTimeConstants.data_api + "/siteBoundaryDatasets",
+                    allowMultipleSelection: 'radio',
+                    dataFilter : function(sb) {
+                        return { 
+                            title: sb.name,
+                            datasetKey: sb.datasetKey
+                        };
+                    }
                 });
 
                 this.apply = function() {

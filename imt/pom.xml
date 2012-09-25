@@ -58,6 +58,7 @@
                             <output>${project.build.directory}/${project.build.finalName}/js/InteractiveMappingClient.js</output>
                             <inputDir>${basedir}/src/main/javascript/</inputDir>
                             <includes>
+                                <include>json2.js</include>
                                 <include>jquery/jquery.namespace.js</include>
                                 <include>jquery/jquery.tipTip.js</include>
                                 <include>jquery/jquery.md5.js</include>
@@ -68,6 +69,7 @@
                                 <include>jquery/jquery-cssExpressions.js</include>
                                 <include>jquery/jquery-conflictingAbsolutePositionsFix.js</include>
                                 <include>jquery/jquery-maxHeightFix.js</include>
+                                <include>jquery/jquery.dynatree.js</include>
                                 <include>layout/StaticGridLayoutManager.js</include>
                                 <include>util/Observable.js</include>
                                 <include>util/loading/ImagePreLoader.js</include>
@@ -106,11 +108,6 @@
                                 <include>widgets/baseLayerIconWidget.js</include>
                                 <include>widgets/currentBaseLayerIndicatorWidget.js</include>
                                 <include>widgets/baseLayerSelectorWidget.js</include>
-                                <include>tree/codebase/dhtmlxcommon.js</include>
-                                <include>tree/codebase/dhtmlxtree.js</include>
-                                <include>tree/codebase/ext/dhtmlxtree_json.js</include>
-                                <include>tree/codebase/ext/dhtmlxtree_xw.js</include>
-                                <include>tree/codebase/ext/dhtmlxtree_lf.js</include>
                                 <include>layer/picker/SiteBoundaryPicker.js</include>
                                 <include>layer/picker/HabitatPicker.js</include>
                                 <include>layer/picker/SpeciesLayerPicker.js</include>
@@ -163,8 +160,8 @@
                                 <include>css/picker.css</include>
                                 <include>css/layout.css</include>
                                 <include>css/layout-IE7fix.css</include>
-                                <include>js/tree/codebase/dhtmlxtree.css</include>
                                 <include>css/jquery/tipTip.css</include>
+                                <include>css/jquery/ui.dynatree.css</include>
                                 <include>css/widgets-openLayers.css</include> <!--Custom styling for the openlayers interals-->
                             </includes>
                         </aggregation>
