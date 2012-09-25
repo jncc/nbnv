@@ -21,7 +21,7 @@ MAP
   END
 
   LAYER
-    NAME                                                "10km"
+    NAME                                                "Grid-10km"
     TYPE                                                POLYGON
     STATUS                                              OFF
     CONNECTIONTYPE                                      PLUGIN
@@ -31,7 +31,7 @@ MAP
     PROCESSING                                          "CLOSE_CONNECTION=DEFER"
 
     METADATA
-      "wms_title"                                       "10km"
+      "wms_title"                                       "Grid-10km"
     END
 
     PROJECTION
@@ -194,7 +194,7 @@ MAP
   END
 
   LAYER
-    NAME                                                "2km"
+    NAME                                                "Grid-2km"
     TYPE                                                POLYGON
     STATUS                                              OFF
     CONNECTIONTYPE                                      PLUGIN
@@ -204,7 +204,7 @@ MAP
     PROCESSING                                          "CLOSE_CONNECTION=DEFER"
 
     METADATA
-      "wms_title"                                       "2km"
+      "wms_title"                                       "Grid-2km"
     END
 
     PROJECTION
@@ -367,7 +367,7 @@ MAP
   END
 
   LAYER
-    NAME                                                "1km"
+    NAME                                                "Grid-1km"
     TYPE                                                POLYGON
     STATUS                                              OFF
     CONNECTIONTYPE                                      PLUGIN
@@ -377,7 +377,7 @@ MAP
     PROCESSING                                          "CLOSE_CONNECTION=DEFER"
 
     METADATA
-      "wms_title"                                       "1km"
+      "wms_title"                                       "Grid-1km"
     END
 
     PROJECTION
@@ -540,7 +540,7 @@ MAP
   END
   
   LAYER
-    NAME                                                "100m"
+    NAME                                                "Grid-100m"
     TYPE                                                POLYGON
     STATUS                                              OFF
     CONNECTIONTYPE                                      PLUGIN
@@ -550,7 +550,7 @@ MAP
     PROCESSING                                          "CLOSE_CONNECTION=DEFER"
 
     METADATA
-      "wms_title"                                       "100m"
+      "wms_title"                                       "Grid-100m"
     END
 
     PROJECTION

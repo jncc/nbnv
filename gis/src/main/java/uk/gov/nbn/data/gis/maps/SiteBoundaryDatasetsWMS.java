@@ -40,6 +40,7 @@ public class SiteBoundaryDatasetsWMS {
                         .get(new GenericType<List<SiteBoundaryDataset>>() { });
         
         HashMap<String, Object> data = new HashMap<String, Object>();
+        data.put("properties", properties);
         data.put("siteBoundaries", datasets);
         return data;
     }
