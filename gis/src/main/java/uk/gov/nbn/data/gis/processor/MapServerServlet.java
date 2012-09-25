@@ -3,6 +3,7 @@ package uk.gov.nbn.data.gis.processor;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Arrays;
@@ -59,6 +60,9 @@ public class MapServerServlet extends HttpServlet {
                 finally {
                     toSubmitToMapServer.delete();
                 }
+            }
+            catch(InvocationTargetException ite) {
+                ite.getTargetException().printStackTrace();
             }
             catch(Throwable mapEx) {
                 mapEx.printStackTrace();
