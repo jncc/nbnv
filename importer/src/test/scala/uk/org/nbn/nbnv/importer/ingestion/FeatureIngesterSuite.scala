@@ -1,22 +1,17 @@
 package uk.org.nbn.nbnv.importer.ingestion
 
-import uk.org.nbn.nbnv.importer.testing.BaseFunSuite
-import uk.org.nbn.nbnv.metadata.Metadata
+import uk.org.nbn.nbnv.importer.testing.{FakePersistenceTrackingEntityManager, BaseFunSuite}
 import org.mockito.Mockito._
+import org.mockito.Matchers._
 import javax.persistence.EntityManager
-import uk.org.nbn.nbnv.importer.data.{Repository}
-import org.apache.log4j.Logger
+import uk.org.nbn.nbnv.importer.data.Repository
 import uk.org.nbn.nbnv.importer.spatial.{GridSquareInfo, GridSquareInfoFactory}
 import uk.org.nbn.nbnv.importer.records.NbnRecord
 import uk.org.nbn.nbnv.jpa.nbncore.{GridSquare, Feature}
 
 class FeatureIngesterSuite extends BaseFunSuite {
 
-//  test("a new grid square hierarchy should be created") {
-  test("an existing grid square feature should be returned without ceremony") {
-
-    // arrange
-
+  def fixture = new {
     val gridRef = "ABCDEF"
     val gridReferenceType = "OSGBTEST"
     val gridReferencePrecision = 12345
@@ -32,24 +27,47 @@ class FeatureIngesterSuite extends BaseFunSuite {
     when(record.gridReferenceType).thenReturn(Some(gridReferenceType))
     when(record.gridReferencePrecision).thenReturn(gridReferencePrecision)
 
-    val em = mock[EntityManager]
-
-    val feature = mock[Feature]
-    val gridSquare = mock[GridSquare]
-
     val repo = mock[Repository]
-    when(repo.getGridSquareFeature(gridRef)).thenReturn(Some((feature, gridSquare)))
+    val em = mock[EntityManager]
+  }
+
+  test("an existing grid square feature should just be returned") {
+
+    // arrange
+    val f = fixture
+    val feature = mock[Feature]
+    when(f.repo.getGridSquareFeature(f.gridRef)).thenReturn(Some((feature, mock[GridSquare])))
 
     // act
-    val ingester = new FeatureIngester(em, repo, gridSquareInfoFactory)
-    val result = ingester.ensureFeature(record)
+    val ingester = new FeatureIngester(f.em, f.repo, f.gridSquareInfoFactory)
+    val result = ingester.ensureFeature(f.record)
 
     // assert
     result should be (feature)
-//    // assert - that the entity manager was not called with the retrieved dataset
-//    verify(em, never()).persist(dataset)
-//    // assert - that a property was set
-//    result.getDatasetKey should be (metadata.datasetKey)
   }
 
+  test("a new grid square feature that should have a parent should create a grid square hierarchy") {
+
+    // arrange
+    val f = fixture
+    when(f.repo.getGridSquareFeature(anyString)).thenReturn(None)
+    val parentInfo = mock[GridSquareInfo]
+    val grandparentInfo = mock[GridSquareInfo]
+    when(parentInfo.gridReference).thenReturn("PARENT")
+    when(grandparentInfo.gridReference).thenReturn("GRANDPARENT")
+    when(f.gridSquareInfo.getParentGridRef).thenReturn(Some(parentInfo))
+    when(parentInfo.getParentGridRef).thenReturn(Some(grandparentInfo))
+    when(grandparentInfo.getParentGridRef).thenReturn(None)
+
+    val em = new FakePersistenceTrackingEntityManager
+
+    // act
+    val ingester = new FeatureIngester(em, f.repo, f.gridSquareInfoFactory)
+    ingester.ensureFeature(f.record)
+
+    // assert
+    val persistedGridSquares = em.buffer collect { case gs: GridSquare => gs.getGridRef }
+    persistedGridSquares should equal (List("GRANDPARENT", "PARENT", "ABCDEF"))
+  }
 }
+
