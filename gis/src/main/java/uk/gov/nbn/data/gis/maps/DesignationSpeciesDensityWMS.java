@@ -3,6 +3,8 @@ package uk.gov.nbn.data.gis.maps;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.nbn.data.gis.processor.MapObject;
 import uk.gov.nbn.data.gis.processor.MapService;
@@ -42,7 +44,8 @@ public class DesignationSpeciesDensityWMS {
             + "WHERE resolutionID = %d "
         + ") AS foo USING UNIQUE label USING SRID=4326";
     
- 
+    @Autowired Properties properties;
+     
     @MapObject(path = "{designationKey}", map = "DesignationSpeciesDensityWMS.map")
     public Map<String, Object> getDesignationMapModel(
             final User user,
@@ -52,6 +55,7 @@ public class DesignationSpeciesDensityWMS {
             @PathParam(key="designationKey", validation="^[A-Z0-9.()/_\\-]+$") final String key) {
         
         HashMap<String, Object> data = new HashMap<String, Object>();
+        data.put("properties", properties);
         data.put("layerGenerator", new ResolutionDataGenerator() {
                 @Override
                 public String getData(int resolution) {

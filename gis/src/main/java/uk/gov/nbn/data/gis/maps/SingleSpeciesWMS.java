@@ -3,6 +3,8 @@ package uk.gov.nbn.data.gis.maps;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.nbn.data.gis.processor.MapObject;
 import uk.gov.nbn.data.gis.processor.MapService;
@@ -36,6 +38,8 @@ public class SingleSpeciesWMS {
             + "%s " //place for end year filter
         + ") AS foo USING UNIQUE observationID USING SRID=4326";
     
+    @Autowired Properties properties;
+    
     @MapObject(path="{taxonVersionKey}", map="SingleSpeciesWMS.map")
     public Map<String, Object> getSingleSpeciesModel(
             final User user,
@@ -47,6 +51,7 @@ public class SingleSpeciesWMS {
         
         
         HashMap<String, Object> data = new HashMap<String, Object>();
+        data.put("properties", properties);
         data.put("layerGenerator", new ResolutionDataGenerator() {
                 @Override
                 public String getData(int resolution) {

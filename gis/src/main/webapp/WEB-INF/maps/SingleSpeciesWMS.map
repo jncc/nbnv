@@ -26,7 +26,7 @@ MAP
     STATUS                                              OFF
     CONNECTIONTYPE                                      PLUGIN
     PLUGIN                                              "msplugin_mssql2008.dll"
-    CONNECTION                                          "Server=NBNSQL-B;Database=NBNWarehouse;uid=NBNImporter;pwd=Ecowaswashere9;Integrated Security=True"
+    CONNECTION                                          "${properties.spatialConnection}"
     DATA                                                "${layerGenerator.getData(1)}"
 
     METADATA
@@ -54,7 +54,7 @@ MAP
     STATUS                                              OFF
     CONNECTIONTYPE                                      PLUGIN
     PLUGIN                                              "msplugin_mssql2008.dll"
-    CONNECTION                                          "Server=NBNSQL-B;Database=NBNWarehouse;uid=NBNImporter;pwd=Ecowaswashere9;Integrated Security=True"
+    CONNECTION                                          "${properties.spatialConnection}"
     DATA                                                "${layerGenerator.getData(2)}"
 
     METADATA
@@ -82,7 +82,7 @@ MAP
     STATUS                                              OFF
     CONNECTIONTYPE                                      PLUGIN
     PLUGIN                                              "msplugin_mssql2008.dll"
-    CONNECTION                                          "Server=NBNSQL-B;Database=NBNWarehouse;uid=NBNImporter;pwd=Ecowaswashere9;Integrated Security=True"
+    CONNECTION                                          "${properties.spatialConnection}"
     DATA                                                "${layerGenerator.getData(3)}"
 
     METADATA
@@ -110,7 +110,7 @@ MAP
     STATUS                                              OFF
     CONNECTIONTYPE                                      PLUGIN
     PLUGIN                                              "msplugin_mssql2008.dll"
-    CONNECTION                                          "Server=NBNSQL-B;Database=NBNWarehouse;uid=NBNImporter;pwd=Ecowaswashere9;Integrated Security=True"
+    CONNECTION                                          "${properties.spatialConnection}"
     DATA                                                "${layerGenerator.getData(4)}"
 
     METADATA
