@@ -10,18 +10,16 @@ import uk.org.nbn.nbnv.importer.ImportFailedException
 
 class Repository @Inject()(log: Logger, em: EntityManager, cache: QueryCache) extends ControlAbstractions {
 
-  def getGridSquareFeature(gridRef: String) = {
+  def getGridSquareFeature(gridRef: String): Option[(Feature, GridSquare)] = {
 
     val q = "select f, s from Feature f join f.gridSquareCollection s where s.gridRef = :gridRef"
 
-    val f = cacheSome(q, gridRef) {
+    cacheSome(q, gridRef) {
 
-      val query = em.createQuery(q, classOf[Feature])
+      val query = em.createQuery(q)
       query.setParameter("gridRef", gridRef)
-      query.getSingleOrNone
+      query.getSingleOrNone collect { case Array(f: Feature, s: GridSquare) => (f, s) }
     }
-
-    Option((f.get, new GridSquare)) // todo!
   }
 
   // todo: wot's this for? and does it need caching?

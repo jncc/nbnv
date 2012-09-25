@@ -1,6 +1,6 @@
 package uk.org.nbn.nbnv.importer.data
 
-import javax.persistence.{EntityManager, NonUniqueResultException, TypedQuery}
+import javax.persistence.{Query, EntityManager, NonUniqueResultException, TypedQuery}
 import scala.collection.JavaConversions._
 
 object Implicits extends ControlAbstractions {
@@ -42,6 +42,33 @@ object Implicits extends ControlAbstractions {
     }
 
     def getFirstOrNone : Option[T] = {
+
+      val results = q.setMaxResults(1).getResultList
+
+      if (results.isEmpty)
+        None
+      else
+        Some(results.head)
+    }
+  }
+
+  implicit def query2RichQuery(q: Query) = new RichQuery(q)
+
+  class RichQuery(q: Query) {
+
+    def getSingleOrNone : Option[Any] = {
+
+      val results = q.setMaxResults(2).getResultList
+
+      if (results.isEmpty)
+        None
+      else if (results.size == 1)
+        Some(results.head)
+      else
+        throw new NonUniqueResultException("The sequence contains more than one element.")
+    }
+
+    def getFirstOrNone : Option[Any] = {
 
       val results = q.setMaxResults(1).getResultList
 
