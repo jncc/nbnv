@@ -64,15 +64,10 @@ public class MapServerServlet extends HttpServlet {
                 }
             }
             catch(InvocationTargetException ite) {
-                ite.getTargetException().printStackTrace();
+                handleMapServiceException(ite.getTargetException(), response);
             }
             catch(Throwable mapEx) {
-                mapEx.printStackTrace();
-                out.write("An error occured ".getBytes());
-                out.write(mapEx.getClass().getName().getBytes());
-                if(mapEx.getMessage() !=null) {
-                    out.write(mapEx.getMessage().getBytes());
-                }
+                throw new ServletException(mapEx);
             }
             finally {
                 out.close();
@@ -80,6 +75,13 @@ public class MapServerServlet extends HttpServlet {
         }
         catch(MapServiceUndefinedException msue) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND, "Could not find: " + Arrays.toString(request.getPathInfo().substring(1).split("/")));
+        }
+    }
+    
+    /*Handle execptions which were thrown during the construction of map services*/
+    private static void handleMapServiceException(Throwable e, HttpServletResponse response) throws IOException {
+        if(e instanceof IllegalArgumentException) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getCause().getMessage());
         }
     }
 }
