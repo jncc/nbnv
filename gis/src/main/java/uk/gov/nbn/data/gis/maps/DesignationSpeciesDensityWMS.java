@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Properties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.gov.nbn.data.gis.processor.MapFileModel;
 import uk.gov.nbn.data.gis.processor.MapObject;
 import uk.gov.nbn.data.gis.processor.MapService;
 import uk.gov.nbn.data.gis.providers.annotations.PathParam;
@@ -46,8 +47,8 @@ public class DesignationSpeciesDensityWMS {
     
     @Autowired Properties properties;
      
-    @MapObject(path = "{designationKey}", map = "DesignationSpeciesDensityWMS.map")
-    public Map<String, Object> getDesignationMapModel(
+    @MapObject("{designationKey}")
+    public MapFileModel getDesignationMapModel(
             final User user,
             @QueryParam(key="datasets", validation="^[A-Z0-9]{8}$") final List<String> datasetKeys,
             @QueryParam(key="startyear", validation="[0-9]{4}") final String startYear,
@@ -66,6 +67,6 @@ public class DesignationSpeciesDensityWMS {
                         resolution);
                 }
         });
-        return data;
+        return new MapFileModel("DesignationSpeciesDensityWMS.map", data);
     }
 }

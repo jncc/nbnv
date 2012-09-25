@@ -2,10 +2,10 @@ package uk.gov.nbn.data.gis.maps;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.gov.nbn.data.gis.processor.MapFileModel;
 import uk.gov.nbn.data.gis.processor.MapObject;
 import uk.gov.nbn.data.gis.processor.MapService;
 import uk.gov.nbn.data.gis.providers.annotations.PathParam;
@@ -40,8 +40,8 @@ public class SingleSpeciesWMS {
     
     @Autowired Properties properties;
     
-    @MapObject(path="{taxonVersionKey}", map="SingleSpeciesWMS.map")
-    public Map<String, Object> getSingleSpeciesModel(
+    @MapObject("{taxonVersionKey}")
+    public MapFileModel getSingleSpeciesModel(
             final User user,
             @PathParam(key="taxonVersionKey", validation="^[A-Z]{6}[0-9]{10}$") final String key,
             @QueryParam(key="datasets", validation="^[A-Z0-9]{8}$") final List<String> datasetKeys,
@@ -61,6 +61,6 @@ public class SingleSpeciesWMS {
                         MapHelper.createEndYearSegment(endYear));
                 }
         });
-        return data;
+        return new MapFileModel("SingleSpeciesWMS.map",data);
     }
 }

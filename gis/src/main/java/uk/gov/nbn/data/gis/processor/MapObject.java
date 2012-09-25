@@ -12,8 +12,7 @@ import java.lang.annotation.Target;
 @Target({ ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface MapObject {
-    String map();
-    String path() default "";  //The path from the MapService to register this 
+    String value() default "";  //The path from the MapService to register this 
                                 //method to. Default is to register to the 
                                 //map services path
 }

@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 /**
@@ -25,17 +26,18 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 public class MapServerServlet extends HttpServlet {
     
     MapServiceMethodFactory serviceFactory;
+    MapFileGenerator mapFileGenerator;
     
     @Override public void init(ServletConfig config) throws ServletException {
         super.init(config);        
         ServletContext servletContext = config.getServletContext();
-        serviceFactory = WebApplicationContextUtils
-                .getWebApplicationContext(servletContext)
-                .getAutowireCapableBeanFactory()
-                .getBean(MapServiceMethodFactory.class);
-
+        AutowireCapableBeanFactory beanFactory = WebApplicationContextUtils
+                                    .getWebApplicationContext(servletContext)
+                                    .getAutowireCapableBeanFactory();
+        serviceFactory = beanFactory.getBean(MapServiceMethodFactory.class);
+        mapFileGenerator = beanFactory.getBean(MapFileGenerator.class);
         try {
-            serviceFactory.setMapTemplateDirectory(new File(config.getServletContext().getRealPath("WEB-INF\\maps")));
+            mapFileGenerator.setMapTemplateDirectory(new File(config.getServletContext().getRealPath("WEB-INF\\maps")));
         } catch(IOException io) {
             throw new ServletException(io);
         }
@@ -48,7 +50,7 @@ public class MapServerServlet extends HttpServlet {
             
             ServletOutputStream out = response.getOutputStream();
             try {
-                File toSubmitToMapServer = mapMethod.getMapFile(request);
+                File toSubmitToMapServer = mapFileGenerator.getMapFile(request, mapMethod);
                 try {
                     URL mapServerURL = serviceFactory.getMapServiceURL(toSubmitToMapServer, request.getQueryString());
                     HttpURLConnection openConnection = (HttpURLConnection)mapServerURL.openConnection();

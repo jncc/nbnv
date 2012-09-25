@@ -9,6 +9,7 @@ import java.util.Properties;
 import javax.ws.rs.core.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.gov.nbn.data.gis.processor.MapFileModel;
 import uk.gov.nbn.data.gis.processor.MapObject;
 import uk.gov.nbn.data.gis.processor.MapService;
 import uk.org.nbn.nbnv.api.model.SiteBoundaryDataset;
@@ -32,8 +33,8 @@ public class SiteBoundaryDatasetsWMS {
             + "WHERE siteBoundaryDatasetKey = '%s'"
         + ") AS foo USING UNIQUE featureID USING SRID=4326";
     
-    @MapObject(map="SiteBoundaryDatasetsWMS.map")
-    public Map<String, Object> getSiteBoundariesModel() {
+    @MapObject
+    public MapFileModel getSiteBoundariesModel() {
         List<SiteBoundaryDataset> datasets = dataApi
                         .path("siteBoundaryDatasets")
                         .accept(MediaType.APPLICATION_JSON) 
@@ -42,6 +43,6 @@ public class SiteBoundaryDatasetsWMS {
         HashMap<String, Object> data = new HashMap<String, Object>();
         data.put("properties", properties);
         data.put("siteBoundaries", datasets);
-        return data;
+        return new MapFileModel("SiteBoundaryDatasetsWMS.map",data);
     }
 }
