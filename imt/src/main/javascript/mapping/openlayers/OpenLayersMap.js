@@ -168,8 +168,7 @@ nbn.mapping.openlayers.OpenLayersMap = function(options, interactiveMap) {
 					layers: "SB000002", 
 					format:"image/png"}, {
 					isBaseLayer:true, 
-					projection:new OpenLayers.Projection("EPSG:27700"), 
-					resolutions: EPSG_27700_RESOLUTIONS
+					projection:new OpenLayers.Projection("EPSG:4326")
 				}),{ name: 'Outline' } //name displayed in the selection boxes
 			),{ id:'Outline' })//ID which will be used in getMapURL
 		);

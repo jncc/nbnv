@@ -14,7 +14,7 @@ $.namespace("nbn.util.user.Loginable", function() {
     delete this.setUser; //remove the set user method
     
     //Check with the data api to see if a user is already logged in
-    $.getJSON('http://localhost:8084/api/user', function(user) {
+    $.getJSON(nbn.util.ServerGeneratedLoadTimeConstants.data_api + '/user', function(user) {
         if (user.id !== 0) {
             userAttribute.setUser({
                 userID: user.id,
@@ -25,7 +25,7 @@ $.namespace("nbn.util.user.Loginable", function() {
     });
     
     this.doUserLogin = function(username, password, callback) {
-        $.getJSON('http://localhost:8084/api/user/login?username=' + username + '&password=' + password, function(result) {
+        $.getJSON(nbn.util.ServerGeneratedLoadTimeConstants.data_api + '/user/login?username=' + username + '&password=' + password, function(result) {
             var user = result.user;
             if (result.success) {
                 userAttribute.setUser({
@@ -44,7 +44,7 @@ $.namespace("nbn.util.user.Loginable", function() {
     };
 
     this.doUserLogout = function() {
-        $.getJSON('http://localhost:8084/api/user/logout', function() {
+        $.getJSON(nbn.util.ServerGeneratedLoadTimeConstants.data_api + '/user/logout', function() {
             userAttribute.setUser(undefined);
         });
     };
