@@ -41,7 +41,7 @@
                 },
                 onSelect : function(flag, dtnode) {
                     if(!dtnode.hasChildren()) {
-                        _me._trigger("selected", 0, dtnode.data.key);
+                        _me._trigger("selected", 0, dtnode.data);
                     }
                 }, 
                 

@@ -23,7 +23,7 @@ nbn.mapping.construction.WidgetOptionsCreator = function(interactiveMapper){
 	};
 	
     var _createZoomFilters = function() {
-		return [_createNamedFilter('10km', '3'),_createNamedFilter('2km', '2'),_createNamedFilter('1km', '1'),_createNamedFilter('100m', '0'),{
+		return [_createNamedFilter('10km', '10km'),_createNamedFilter('2km', '2km'),_createNamedFilter('1km', '1km'),_createNamedFilter('100m', '100m'),{
                 name: 'Default',
                 filter: function() {
                     var zoomFilter = new nbn.layer.SwitchableArcGisMapFilter(true);
@@ -32,13 +32,13 @@ nbn.mapping.construction.WidgetOptionsCreator = function(interactiveMapper){
                     var oneKAppear = 10;
                     var twoKAppear = 8;
                     if((zoom >= twoKAppear ) && (zoom < oneKAppear))
-                        return {visibleLayers: ['2']}
+                        return {visibleLayers: ['2km']}
                     else if((zoom >= oneKAppear) && (zoom < hundredMAppear))
-                        return {visibleLayers: ['1']}
+                        return {visibleLayers: ['1km']}
                     else if(zoom >= hundredMAppear)
-                        return {visibleLayers: ['0']}
+                        return {visibleLayers: ['100m']}
                     else
-                        return {visibleLayers: ['3']}
+                        return {visibleLayers: ['10km']}
                     });
                     return zoomFilter;
                 }()
@@ -315,14 +315,12 @@ nbn.mapping.construction.WidgetOptionsCreator = function(interactiveMapper){
                     });
 
             var _singleDatasetSelectionTree = $('<div>').nbn_treewidget({
-                    urlOfDescriptionFile : 'TreeWidgetGenerator?type=ds',
+                    urlOfDescriptionFile : nbn.util.ServerGeneratedLoadTimeConstants.data_api + "/datasets",
+                    dataFilter: function(dataset) {
+                        return $.extend({ title : dataset.name }, dataset);
+                    },
                     allowMultipleSelection: 'none',
-                    selected: function(event, selected) {
-                                    _setSelectedDataset({
-                                            datasetKey: selected,
-                                            name: $(this).nbn_treewidget('getChildUserData', selected, 'name')
-                                    });
-                            }
+                    selected: function(event, selected) { _setSelectedDataset(selected); }
                     });
 			
             var _content = $('<div>')

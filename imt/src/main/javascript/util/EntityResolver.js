@@ -13,22 +13,22 @@ $.namespace("nbn.util.EntityResolver", new function() {
             return $.getJSON(nbn.util.ServerGeneratedLoadTimeConstants.data_api + "/siteBoundaryDatasets/" + id, callback);
         },
         habitats : function(id, callback) {
-            throw new "Entity resolver not complete for habitats"
+            throw "Entity resolver not complete for habitats";
         },
         dataset : function(id, callback) {
-            throw new "Entity resolver not complete for dataset"
+            throw "Entity resolver not complete for dataset";
         },
         datasets : function(id, callback) {
-            throw new "Entity resolver not complete for datasets"
+            throw "Entity resolver not complete for datasets";
         },
         designation : function(id, callback) {
-            throw new "Entity resolver not complete for designation"
+            throw "Entity resolver not complete for designation";
         },
         datasetWithMetadata: function(id, callback) {
-            throw new "Entity resolver not complete for datasetWithMetadata"
+            return $.getJSON(nbn.util.ServerGeneratedLoadTimeConstants.data_api + "/dataset/" + id, callback);
         },
-        datasetsWithMetadata: function(id, callback) {
-            throw new "Entity resolver not complete for datasetsWithMetadata"
+        datasetsWithoutMetadata: function(id, callback) {
+            return $.getJSON(nbn.util.ServerGeneratedLoadTimeConstants.data_api + "/dataset/" + id, callback);
         }
     };
     this.resolve = function(data, callback) {
