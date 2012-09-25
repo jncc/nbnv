@@ -255,6 +255,23 @@ CREATE TABLE [dbo].[Dataset](
 	[metadataLastEdited] [datetime] NOT NULL,
 );
 
+------------------------------
+
+CREATE TABLE [dbo].[DatasetKeyword](
+	[datasetKey] [char](8) NOT NULL REFERENCES [Dataset] ([key]) ON UPDATE CASCADE ON DELETE CASCADE,
+	[keyword] [varchar](200) NOT NULL,
+	[thesaurus] [varchar](500) NOT NULL,
+	PRIMARY KEY ([datasetKey] ASC, [keyword] ASC, [thesaurus] ASC)
+);
+
+------------------------------
+
+CREATE TABLE [dbo].[DatasetAdministrator](
+	[userID] [int] NOT NULL REFERENCES [User] ([id]),
+	[datasetKey] [char](8) NOT NULL REFERENCES [Dataset] ([key]),
+	PRIMARY KEY ([userID] ASC, [datasetKey] ASC)
+);
+
 /*
  *
  * Feature and Geometry
@@ -506,8 +523,6 @@ GO
 
 CREATE TABLE [dbo].[HabitatDataset](
 	[datasetKey] [char](8) NOT NULL PRIMARY KEY REFERENCES [Dataset] ([key]) ON UPDATE CASCADE ON DELETE CASCADE,
-	[geoLayerName] [varchar](50) NULL,
-	[gisLayerID] [int] NULL,
 );
 
 
@@ -536,8 +551,6 @@ CREATE TABLE [dbo].[SiteBoundaryType](
 
 CREATE TABLE [dbo].[SiteBoundaryDataset](
 	[datasetKey] [char](8) NOT NULL PRIMARY KEY REFERENCES [Dataset] ([key]) ON UPDATE CASCADE ON DELETE CASCADE,
-	[geoLayerName] [varchar](100) NOT NULL,
-	[gisLayerID] [int] NULL,
 	[siteBoundaryCategory] [int] NOT NULL REFERENCES [SiteBoundaryCategory] ([id]),
 	[siteBoundaryType] [int] NOT NULL REFERENCES [SiteBoundaryType] ([id]),
 	[nameField] [varchar](100) NOT NULL,
@@ -887,6 +900,113 @@ INSERT INTO [dbo].[AttributeStorageType] VALUES
 (1, 'enumeration'),
 (2, 'free text');
 
+------------------------------
+
+CREATE TABLE [dbo].[GatewayAttribute](
+	[id] [int] IDENTITY(0,1) NOT NULL PRIMARY KEY,
+	[label] [varchar](50) NOT NULL UNIQUE,
+	[description] [varchar](max) NOT NULL,
+	[storageTypeID] [int] NOT NULL REFERENCES AttributeStorageType ([id]),
+);
+
+------------------------------
+
+CREATE TABLE [dbo].[GatewayAttributeEnumeration](
+	[gatewayAttributeID] [int] NOT NULL REFERENCES [GatewayAttribute] ([id]),
+	[enumValue] [int] NOT NULL,
+	[label] [varchar](50) NOT NULL,
+	[description] [varchar](max) NULL,
+	PRIMARY KEY ([gatewayAttributeID] ASC, [enumValue] ASC),
+	UNIQUE ([gatewayAttributeID], [label])
+);
+
+------------------------------
+
+CREATE TABLE [dbo].[Attribute](
+	[id] [int] IDENTITY(0,1) NOT NULL PRIMARY KEY,
+	[label] [varchar](50) NOT NULL,
+	[description] [varchar](max) NOT NULL,
+	[storageLevelID] [int] NOT NULL REFERENCES [AttributeStorageLevel] ([id]),
+	[storageTypeID] [int] NOT NULL REFERENCES [AttributeStorageType] ([id]),
+	[gatewayAttributeID] [int] NULL REFERENCES [GatewayAttribute] ([id]),
+);
+
+------------------------------
+
+CREATE TABLE [dbo].[AttributeEnumeration](
+	[attributeID] [int] NOT NULL REFERENCES [Attribute] ([id]),
+	[enumValue] [int] NOT NULL,
+	[label] [varchar](50) NOT NULL,
+	[description] [varchar](max) NULL,
+	PRIMARY KEY ([attributeID] ASC, [enumValue] ASC),
+	UNIQUE ([attributeID], [label])
+);
+
+------------------------------
+
+CREATE TABLE [dbo].[DatasetAttribute](
+	[datasetKey] [char](8) NOT NULL REFERENCES [Dataset] ([key]),
+	[attributeID] [int] NOT NULL REFERENCES [Attribute] ([id]),
+	[decimalValue] [decimal](18, 0) NULL,
+	[enumValue] [int] NULL,
+	[textValue] [varchar](255) NULL,
+	PRIMARY KEY ([datasetKey] ASC, [attributeID] ASC)
+);
+
+-----------------------------
+
+CREATE TABLE [dbo].[TaxonAttribute](
+	[taxonVersionKey] [char](16) NOT NULL REFERENCES [Taxon] ([taxonVersionKey]),
+	[attributeID] [int] NOT NULL REFERENCES [Attribute] ([id]),
+	[decimalValue] [decimal](18, 0) NULL,
+	[enumValue] [int] NULL,
+	[textValue] [varchar](255) NULL,
+	PRIMARY KEY ([taxonVersionKey] ASC, [attributeID] ASC)
+);
+
+----------------------------
+
+CREATE TABLE [dbo].[SiteBoundaryAttribute](
+	[featureID] [int] NOT NULL REFERENCES [SiteBoundary] ([featureID]),
+	[attributeID] [int] NOT NULL REFERENCES [Attribute] ([id]),
+	[decimalValue] [decimal](18, 0) NULL,
+	[enumValue] [int] NULL,
+	[textValue] [varchar](255) NULL,
+	PRIMARY KEY ([featureID] ASC, [attributeID] ASC)
+);
+
+----------------------------
+
+CREATE TABLE [dbo].[SurveyAttribute](
+	[surveyID] [int] NOT NULL REFERENCES [Survey] ([id]),
+	[attributeID] [int] NOT NULL REFERENCES [Attribute] ([id]),
+	[decimalValue] [decimal](18, 0) NULL,
+	[enumValue] [int] NULL,
+	[textValue] [varchar](255) NULL,
+	PRIMARY KEY ([surveyID] ASC, [attributeID] ASC)
+);
+
+----------------------------
+
+CREATE TABLE [dbo].[SampleAttribute](
+	[sampleID] [int] NOT NULL REFERENCES [Sample] ([id]),
+	[attributeID] [int] NOT NULL REFERENCES [Attribute] ([id]),
+	[decimalValue] [decimal](18, 0) NULL,
+	[enumValue] [int] NULL,
+	[textValue] [varchar](255) NULL,
+	PRIMARY KEY ([sampleID] ASC, [attributeID] ASC)
+);
+
+---------------------------
+
+CREATE TABLE [dbo].[TaxonObservationAttribute](
+	[observationID] [int] NOT NULL REFERENCES [TaxonObservation] ([id]),
+	[attributeID] [int] NOT NULL REFERENCES [Attribute] ([id]),
+	[decimalValue] [decimal](18, 0) NULL,
+	[enumValue] [int] NULL,
+	[textValue] [varchar](255) NULL,
+	PRIMARY KEY ([observationID] ASC, [attributeID] ASC)
+);
 
 /*
  *
@@ -1045,6 +1165,27 @@ AS
 BEGIN
 	exec sp_startpublication_snapshot
 		@publication = N'Warehouse'	
+END
+
+GO
+
+/*
+ *
+ * Utility Stored Procedures
+ *
+ */
+
+CREATE PROCEDURE [dbo].[usp_test_DatasetsMissingSubtypeEntry]
+AS
+BEGIN
+	SELECT d.[key], 'Taxon' AS datasetType FROM Dataset d
+	WHERE d.datasetTypeKey = 'T' AND d.[key] NOT IN (SELECT td.datasetKey FROM TaxonDataset td)
+	UNION ALL
+	SELECT d.[key], 'Habitat' AS datasetType FROM Dataset d
+	WHERE d.datasetTypeKey = 'H' AND d.[key] NOT IN (SELECT td.datasetKey FROM HabitatDataset td)
+	UNION ALL
+	SELECT d.[key], 'SiteBoundary' AS datasetType FROM Dataset d
+	WHERE d.datasetTypeKey = 'A' AND d.[key] NOT IN (SELECT td.datasetKey FROM SiteBoundaryDataset td)
 END
 
 GO
