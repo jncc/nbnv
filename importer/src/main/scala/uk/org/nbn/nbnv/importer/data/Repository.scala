@@ -87,7 +87,7 @@ class Repository @Inject()(log: Logger, em: EntityManager, cache: QueryCache) ex
     }
   }
 
-  def getTaxonObservation(key: String, sample: Sample): Option[TaxonObservation] = {
+  def getTaxonObservation(key: String, sample: Sample) = {
 
     val q = "select o from TaxonObservation o where o.observationKey = :key and o.sampleID = :sample "
 
@@ -97,7 +97,7 @@ class Repository @Inject()(log: Logger, em: EntityManager, cache: QueryCache) ex
       .getSingleOrNone
   }
 
-  def getOrganisation(name: String): Organisation = {
+  def getOrganisation(name: String) = {
 
     val q = "select o from Organisation o where o.organisationName = :name "
 
@@ -106,9 +106,33 @@ class Repository @Inject()(log: Logger, em: EntityManager, cache: QueryCache) ex
       val query = em.createQuery(q, classOf[Organisation])
       query.setParameter("name", name)
 
-      expectSingleResult(name) {
-        query.getResultList
-      }
+      expectSingleResult(name) { query.getResultList }
+    }
+  }
+
+  def getProjection(label: String) = {
+
+    val q = "select p from Projection p where p.label = :label "
+
+    cacheSingle(q, label) {
+
+      val query = em.createQuery(q, classOf[Projection])
+      query.setParameter("label", label)
+
+      expectSingleResult(label) { query.getResultList }
+    }
+  }
+
+  def getResolution(accuracy: Int) = {
+
+    val q = "select r from Resolution r where r.accuracy = :accuracy "
+
+    cacheSingle(q, accuracy.toString) {
+
+      val query = em.createQuery(q, classOf[Resolution])
+      query.setParameter("accuracy", accuracy)
+
+      expectSingleResult(accuracy) { query.getResultList }
     }
   }
 
