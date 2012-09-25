@@ -7,26 +7,54 @@
 * @dependencies	:-
 *	jquery
 */
-window.nbn = window.nbn || {};
-nbn.util = nbn.util || {};
+$.namespace("nbn.util.EntityResolver", new function() {
+    var dataResolvers = {
+        boundary : function(id, callback) {
+            return $.getJSON(nbn.util.ServerGeneratedLoadTimeConstants.data_api + "/siteBoundaryDatasets/" + id, callback);
+        },
+        habitats : function(id, callback) {
+            throw "Entity resolver not complete for habitats";
+        },
+        dataset : function(id, callback) {
+            throw "Entity resolver not complete for dataset";
+        },
+        datasets : function(id, callback) {
+            throw "Entity resolver not complete for datasets";
+        },
+        designation : function(id, callback) {
+            throw "Entity resolver not complete for designation";
+        },
+        datasetWithMetadata: function(id, callback) {
+            return $.getJSON(nbn.util.ServerGeneratedLoadTimeConstants.data_api + "/dataset/" + id, callback);
+        },
+        datasetsWithoutMetadata: function(id, callback) {
+            return $.getJSON(nbn.util.ServerGeneratedLoadTimeConstants.data_api + "/dataset/" + id, callback);
+        }
+    };
+    this.resolve = function(data, callback) {
+        var dataTypesToResolve = [], dataToResolve = {}, ajaxResponses;
+        
+        for(var i in data) {//go through each of the properties and check if they are strings, if they are resolve them using the JSON Name servlet
+            if(typeof data[i] === "string") {
+                dataToResolve[i] = data[i];
+                dataTypesToResolve.push(i);
+            }
+        }
 
-nbn.util.EntityResolver = new function() {
-	this.resolve = function(data, callback) {
-		var resolveNeeded = false;
-		var dataToResolve = {};
-		for(var i in data) {//go through each of the properties and check if they are strings, if they are resolve them using the JSON Name servlet
-			if(typeof data[i] === "string") {
-				dataToResolve[i] = data[i];
-				resolveNeeded = true;
-			}
-		}
-		
-		if(resolveNeeded) {
-			_previousNameResolvingRequest = $.getJSON('EntityResolver', dataToResolve, function(resolvedData) {
-				callback($.extend(data,resolvedData));
-			});
-		}
-		else
-			callback(data);
-	};
-}
+        if(dataTypesToResolve.length) {
+            //go through the object of data to resolve and resolve all of them. 
+            //Keep a handle on the jqXHR to pass to the when function
+            ajaxResponses = $.map(dataTypesToResolve, function(type) {     
+                //execute the resolution function. Store the result in the data 
+                //object which was passed into this function
+                return dataResolvers[type](dataToResolve[type], function(result) { data[type] = result; });
+            });
+            
+            $.when.apply(this, ajaxResponses).done(function() {
+                callback(data);
+            });
+        }
+        else
+            callback(data);
+    };
+});

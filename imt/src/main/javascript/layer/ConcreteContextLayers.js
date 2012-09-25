@@ -19,7 +19,7 @@ nbn.layer = nbn.layer || {};
 	}
 	
 	nbn.layer.BoundaryLayer = function(hosts, googleMap, options) {	
-		$.extend(this, new nbn.layer.ResolvingVisibleContextLayer('Boundary', 'boundary', obtainElementDatasetKey, hosts, 'arcgis/rest/services/siteBoundary/siteBoundaries/MapServer', googleMap, options)); //extend the layer
+		$.extend(this, new nbn.layer.ResolvingVisibleContextLayer('Boundary', 'boundary', obtainElementDatasetKey, hosts, 'SiteBoundaryDatasets', googleMap, options)); //extend the layer
 	};
 	
 	nbn.layer.HabitatLayer = function(hosts, googleMap, options) {	

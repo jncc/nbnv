@@ -113,48 +113,6 @@ INSERT INTO [dbo].[DownloadLogPurpose] VALUES
 (6, 'Statutory work'),
 (7, 'Data provision and interpretation services');
 
-------------------------------
-
-CREATE TABLE [dbo].[DateType](
-	[key] [varchar](2) NOT NULL PRIMARY KEY,
-	[label] [varchar](50) NOT NULL,
-);
-
-INSERT INTO [dbo].[DateType] VALUES
-('<D', 'Before Date'),
-('<Y', 'Before Year'),
-('>D', 'After Date'),
-('>Y', 'After Year'),
-('B', 'Unknown'),
-('C', 'Circa'),
-('D', 'Day'),
-('DD', 'Day Range'),
-('M', 'Month'),
-('MM', 'Month Range'),
-('ND', 'No date'),
-('O', 'Month'),
-('OO', 'Month Range'),
-('P', 'Publication Date'),
-('R', 'Unknown'),
-('U', 'Unknown'),
-('XX', 'Unknown'),
-('Y', 'Year'),
-('-Y', 'Before Year'),
-('Y-', 'After Year'),
-('YY', 'Year Range');
-
-------------------------------
-
-CREATE TABLE [dbo].[AttributeStorageType](
-	[id] [int] NOT NULL PRIMARY KEY,
-	[label] [varchar](11) NOT NULL UNIQUE,
-);
-
-INSERT INTO [dbo].[AttributeStorageType] VALUES
-(0, 'decimal'),
-(1, 'enumeration'),
-(2, 'free text');
-
 /*
  *
  * Organisation
@@ -183,11 +141,24 @@ CREATE TABLE [dbo].[Organisation](
  *
  */
 
+CREATE TABLE [dbo].[UserType](
+	[id] [int] NOT NULL PRIMARY KEY,
+	[label] [varchar](100) NOT NULL UNIQUE
+);
+
+INSERT INTO [UserType] VALUES 
+(0, 'public'),
+(1, 'user'),
+(2, 'admin');
+
+------------------------------
+
 CREATE TABLE [dbo].[User](
 	[id] [int] IDENTITY(0,1) NOT NULL PRIMARY KEY,
 	[username] [varchar](40) NOT NULL UNIQUE,
 	[password_sha1] [varbinary](8000) NOT NULL,
 	[password_md5_sha1] [varbinary](8000) NOT NULL,
+	[userTypeID] [int] NOT NULL REFERENCES [UserType] ([id]),
 	[forename] [varchar](25) NOT NULL,
 	[surname] [varchar](25) NOT NULL,
 	[phone] [varchar](15) NULL,
@@ -204,8 +175,8 @@ CREATE TABLE [dbo].[User](
 	[lastLoggedIn] [datetime] NULL,
 );
 
-INSERT INTO [User] (englishNameOrder, lastLoggedIn, forename, surname, username, email, registrationDate, phone, allowEmailAlerts, invalidEmail, active, activationKey, subscribedToNBNMarketting, bannedFromValidation, subscribedToAdminMails, password_sha1, password_md5_sha1) VALUES
-(0, NULL, '', '', 'public', 'public@data.nbn.org.uk', '2012-02-02 14:40:53.427', NULL, 1, 0, 0, '000000000000', 0, 1, 1, 0x00000000, 0x00000000);
+INSERT INTO [User] (englishNameOrder, lastLoggedIn, forename, surname, username, email, registrationDate, phone, allowEmailAlerts, invalidEmail, active, activationKey, subscribedToNBNMarketting, bannedFromValidation, subscribedToAdminMails, password_sha1, password_md5_sha1, userTypeID) VALUES
+(0, NULL, '', '', 'public', 'public@data.nbn.org.uk', CURRENT_TIMESTAMP, NULL, 1, 0, 0, '000000000000', 0, 1, 1, 0x00000000, 0x00000000, 0);
 
 ------------------------------
 
@@ -282,6 +253,23 @@ CREATE TABLE [dbo].[Dataset](
 	[updateFrequencyCode] [char](3) NOT NULL REFERENCES [DatasetUpdateFrequency] ([code]),
 	[dateUploaded] [datetime] NOT NULL,
 	[metadataLastEdited] [datetime] NOT NULL,
+);
+
+------------------------------
+
+CREATE TABLE [dbo].[DatasetKeyword](
+	[datasetKey] [char](8) NOT NULL REFERENCES [Dataset] ([key]) ON UPDATE CASCADE ON DELETE CASCADE,
+	[keyword] [varchar](200) NOT NULL,
+	[thesaurus] [varchar](500) NOT NULL,
+	PRIMARY KEY ([datasetKey] ASC, [keyword] ASC, [thesaurus] ASC)
+);
+
+------------------------------
+
+CREATE TABLE [dbo].[DatasetAdministrator](
+	[userID] [int] NOT NULL REFERENCES [User] ([id]),
+	[datasetKey] [char](8) NOT NULL REFERENCES [Dataset] ([key]),
+	PRIMARY KEY ([userID] ASC, [datasetKey] ASC)
 );
 
 /*
@@ -535,8 +523,6 @@ GO
 
 CREATE TABLE [dbo].[HabitatDataset](
 	[datasetKey] [char](8) NOT NULL PRIMARY KEY REFERENCES [Dataset] ([key]) ON UPDATE CASCADE ON DELETE CASCADE,
-	[geoLayerName] [varchar](50) NULL,
-	[gisLayerID] [int] NULL,
 );
 
 
@@ -565,8 +551,6 @@ CREATE TABLE [dbo].[SiteBoundaryType](
 
 CREATE TABLE [dbo].[SiteBoundaryDataset](
 	[datasetKey] [char](8) NOT NULL PRIMARY KEY REFERENCES [Dataset] ([key]) ON UPDATE CASCADE ON DELETE CASCADE,
-	[geoLayerName] [varchar](100) NOT NULL,
-	[gisLayerID] [int] NULL,
 	[siteBoundaryCategory] [int] NOT NULL REFERENCES [SiteBoundaryCategory] ([id]),
 	[siteBoundaryType] [int] NOT NULL REFERENCES [SiteBoundaryType] ([id]),
 	[nameField] [varchar](100) NOT NULL,
@@ -629,6 +613,23 @@ CREATE TABLE [dbo].[TaxonVersionForm](
 	[sortOrder] [int] NOT NULL UNIQUE,
 );
 
+INSERT INTO [TaxonVersionForm] VALUES
+('W', 'Well-formed', 1),
+('U', 'Unverified', 2),
+('I', 'Ill-formed', 3);
+
+------------------------------
+
+CREATE TABLE [dbo].[TaxonNameStatus](
+	[key] [char](1) NOT NULL PRIMARY KEY,
+	[description] [varchar](50) NULL,
+);
+
+INSERT INTO [TaxonNameStatus] VALUES
+('R', 'Recommended'),
+('S', 'Synonym'),
+('U', 'Undetermined');
+
 ------------------------------
 
 CREATE TABLE [dbo].[Organism](
@@ -651,16 +652,56 @@ CREATE TABLE [dbo].[TaxonGroup](
 
 CREATE TABLE [dbo].[Taxon](
 	[taxonVersionKey] [char](16) NOT NULL PRIMARY KEY,
-	[pTaxonVersionKey] [char](16) NULL REFERENCES [Taxon] ([taxonVersionKey]),
+	[pTaxonVersionKey] [char](16) NOT NULL REFERENCES [Taxon] ([taxonVersionKey]),
 	[organismKey] [char](16) NOT NULL REFERENCES [Organism] ([key]),
-	[scientificName] [varchar](85) NULL,
+	[name] [varchar](85) NULL,
 	[authority] [varchar](80) NULL,
 	[languageKey] [char](2) NOT NULL REFERENCES [Language] ([key]),
-	[commonName] [varchar](85) NULL,
-	[taxonRankID] [int] NULL REFERENCES [TaxonRank] ([id]),
-	[taxonVersionFormKey] [char](1) REFERENCES [TaxonVersionForm] ([key]),
+	[commonNameTaxonVersionKey] [char](16) NULL REFERENCES [Taxon] ([taxonVersionKey]),
+	[taxonCode] [varchar](5) NULL UNIQUE,
+	[taxonRankID] [int] NOT NULL REFERENCES [TaxonRank] ([id]),
+	[taxonNameStatusKey] [char](1) NOT NULL REFERENCES [TaxonNameStatus] ([key]),
+	[taxonVersionFormKey] [char](1)  NOT NULL REFERENCES [TaxonVersionForm] ([key]),
 	[taxonOutputGroupKey] [char](16) NULL REFERENCES [TaxonGroup] ([key]),
 	[taxonNavigationGroupKey] [char](16) NULL REFERENCES [TaxonGroup] ([key]),
+);
+
+/*
+ *
+ * Taxon Designation
+ *
+ */
+
+CREATE TABLE [dbo].[DesignationCategory](
+	[id] [int] IDENTITY(0,1) NOT NULL PRIMARY KEY,
+	[label] [varchar](50) NOT NULL UNIQUE,
+	[description] [varchar](max) NULL,
+	[sortOrder] [int] NOT NULL,
+);
+
+------------------------------
+
+CREATE TABLE [dbo].[Designation](
+	[id] [int] IDENTITY(0,1) NOT NULL PRIMARY KEY,
+	[name] [varchar](8000) NOT NULL,
+	[label] [varchar](50) NOT NULL UNIQUE,
+	[code] [varchar](100) NOT NULL UNIQUE,
+	[designationCategoryID] [int] NOT NULL REFERENCES [DesignationCategory] ([id]),
+	[description] [varchar](max) NULL,
+	[geographicalConstraint] [varchar](max) NULL,
+	[featureID] [int] NULL REFERENCES [Feature] ([id]),
+);
+
+------------------------------
+
+CREATE TABLE [dbo].[TaxonDesignation](
+	[taxonVersionKey] [char](16) NOT NULL REFERENCES [Taxon] ([taxonVersionKey]),
+	[designationID] [int] NOT NULL REFERENCES [Designation] ([id]),
+	[startDate] [datetime] NULL,
+	[endDate] [datetime] NULL,
+	[source] [varchar](max) NULL,
+	[statusConstraint] [varchar](max) NULL,
+	PRIMARY KEY ([taxonVersionKey] ASC, [designationID] ASC)
 );
 
 /*
@@ -671,11 +712,480 @@ CREATE TABLE [dbo].[Taxon](
 
 CREATE TABLE [dbo].[TaxonDataset](
 	[datasetKey] [char](8) NOT NULL PRIMARY KEY REFERENCES [Dataset] ([key]) ON UPDATE CASCADE ON DELETE CASCADE,
-	[maxResolutionID] [int] NOT NULL REFERENCES [Resolution] ([id]),
 	[publicResolutionID] [int] NOT NULL REFERENCES [Resolution] ([id]),
 	[allowRecordValidation] [bit] NOT NULL,
 );
 
 ------------------------------
 
+CREATE TABLE [dbo].[Survey](
+	[id] [int] IDENTITY(0,1) NOT NULL PRIMARY KEY,
+	[datasetKey] [char](8) NOT NULL REFERENCES [TaxonDataset] ([datasetKey]),
+	[providerKey] [varchar](100) NULL,
+	[title] [varchar](200) NULL,
+	[description] [varchar](max) NULL,
+	[geographicalCoverage] [varchar](max) NULL,
+	[temporalCoverage] [varchar](max) NULL
+);
 
+------------------------------
+
+CREATE TABLE [dbo].[Sample](
+	[id] [int] IDENTITY(0,1) NOT NULL PRIMARY KEY,
+	[surveyID] [int] NOT NULL REFERENCES [Survey] ([id]),
+	[providerKey] [varchar](100) NULL,
+	[title] [varchar](200) NULL,
+	[description] [varchar](max) NULL,
+	[geographicalCoverage] [varchar](max) NULL,
+	[temporalCoverage] [varchar](max) NULL
+);
+
+------------------------------
+
+CREATE TABLE [dbo].[DateType](
+	[key] [varchar](2) NOT NULL PRIMARY KEY,
+	[label] [varchar](50) NOT NULL,
+);
+
+INSERT INTO [dbo].[DateType] VALUES
+('<D', 'Before Date'),
+('<Y', 'Before Year'),
+('>D', 'After Date'),
+('>Y', 'After Year'),
+('B', 'Unknown'),
+('C', 'Circa'),
+('D', 'Day'),
+('DD', 'Day Range'),
+('M', 'Month'),
+('MM', 'Month Range'),
+('ND', 'No date'),
+('O', 'Month'),
+('OO', 'Month Range'),
+('P', 'Publication Date'),
+('R', 'Unknown'),
+('U', 'Unknown'),
+('XX', 'Unknown'),
+('Y', 'Year'),
+('-Y', 'Before Year'),
+('Y-', 'After Year'),
+('YY', 'Year Range');
+
+------------------------------
+
+CREATE TABLE [dbo].[Recorder](
+	[id] [int] IDENTITY(0,1) NOT NULL PRIMARY KEY,
+	[name] [varchar](140) NOT NULL,
+);
+
+------------------------------
+
+CREATE TABLE [dbo].[Site](
+	[id] [int] IDENTITY(0,1) NOT NULL PRIMARY KEY,
+	[datasetKey] [char](8) NOT NULL REFERENCES [Dataset] ([key]),
+	[name] [varchar](200) NOT NULL,
+	[providerKey] [varchar](100) NULL,
+);
+
+SET ANSI_PADDING OFF;
+
+CREATE NONCLUSTERED INDEX [idx_Site_id-providerKey-name] ON [dbo].[Site] 
+(
+	[id] ASC,
+	[providerKey] ASC,
+	[name] ASC
+);
+
+SET ANSI_PADDING ON;
+
+------------------------------
+
+CREATE TABLE [dbo].[TaxonObservation](
+	[id] [int] IDENTITY(0,1) NOT NULL PRIMARY KEY,
+	[sampleID] [int] NOT NULL REFERENCES [Sample] ([id]),
+	[providerKey] [varchar](100) NOT NULL,
+	[taxonVersionKey] [char](16) NOT NULL REFERENCES [Taxon] ([taxonVersionKey]),
+	[dateStart] [date] NULL,
+	[dateEnd] [date] NULL,
+	[dateTypeKey] [varchar](2) NOT NULL REFERENCES [DateType] ([key]),
+	[siteID] [int] NULL REFERENCES [Site] ([id]),
+	[featureID] [int] NOT NULL REFERENCES [Feature] ([id]),
+	[absenceRecord] [bit] NOT NULL,
+	[sensitiveRecord] [bit] NOT NULL,
+	[recorderID] [int] NULL REFERENCES [Recorder] ([id]),
+	[determinerID] [int] NULL REFERENCES [Recorder] ([id])
+);
+
+SET ANSI_PADDING OFF;
+
+CREATE NONCLUSTERED INDEX [idx_TaxonObservation_sampleID-id-featureID-TVK] ON [dbo].[TaxonObservation] 
+(
+	[sampleID] ASC,
+	[id] ASC,
+	[featureID] ASC,
+	[taxonVersionKey] ASC
+);
+
+CREATE NONCLUSTERED INDEX [idx_TaxonObservation_sampleID-providerKey] ON [dbo].[TaxonObservation] 
+(
+	[sampleID] ASC,
+	[providerKey] ASC
+);
+
+CREATE NONCLUSTERED INDEX [idx_TaxonObservation_taxonVersionKey] ON [dbo].[TaxonObservation] 
+(
+	[taxonVersionKey] ASC
+) INCLUDE ( 
+	[siteID]
+);
+
+SET ANSI_PADDING ON;
+
+------------------------------
+
+CREATE TABLE [dbo].[TaxonObservationPublic](
+	[taxonObservationID] [int] NOT NULL PRIMARY KEY REFERENCES [TaxonObservation] ([id]) ON UPDATE CASCADE ON DELETE CASCADE,
+	[siteID] [int] NULL,
+	[featureID] [int] NOT NULL,
+	[recorderID] [int] NULL,
+	[determinerID] [int] NULL,
+);
+
+/*
+ *
+ * Taxon Observation Access
+ *
+ */
+
+CREATE TABLE [dbo].[UserTaxonObservationAccess](
+	[userID] [int] NOT NULL REFERENCES [User] ([id]) ON UPDATE CASCADE ON DELETE CASCADE,
+	[observationID] [int] NOT NULL REFERENCES [TaxonObservation] ([id]) ON UPDATE CASCADE ON DELETE CASCADE,
+	PRIMARY KEY ([userID] ASC, [observationID] ASC)
+);
+
+------------------------------
+
+CREATE TABLE [dbo].[OrganisationTaxonObservationAccess](
+	[organisationID] [int] NOT NULL REFERENCES [Organisation] ([id]) ON UPDATE CASCADE ON DELETE CASCADE,
+	[observationID] [int] NOT NULL REFERENCES [TaxonObservation] ([id]) ON UPDATE CASCADE ON DELETE CASCADE,
+	PRIMARY KEY ([organisationID] ASC, [observationID] ASC)
+);
+
+/*
+ *
+ * Attributes
+ *
+ */
+
+CREATE TABLE [dbo].[AttributeStorageLevel](
+	[id] [int] NOT NULL PRIMARY KEY,
+	[label] [varchar](12) NOT NULL UNIQUE,
+);
+
+INSERT INTO [AttributeStorageLevel] VALUES
+(1, 'dataset'),
+(2, 'survey'),
+(3, 'sample'),
+(4, 'observation'),
+(5, 'boundary');
+
+------------------------------
+
+CREATE TABLE [dbo].[AttributeStorageType](
+	[id] [int] NOT NULL PRIMARY KEY,
+	[label] [varchar](11) NOT NULL UNIQUE,
+);
+
+INSERT INTO [dbo].[AttributeStorageType] VALUES
+(0, 'decimal'),
+(1, 'enumeration'),
+(2, 'free text');
+
+------------------------------
+
+CREATE TABLE [dbo].[GatewayAttribute](
+	[id] [int] IDENTITY(0,1) NOT NULL PRIMARY KEY,
+	[label] [varchar](50) NOT NULL UNIQUE,
+	[description] [varchar](max) NOT NULL,
+	[storageTypeID] [int] NOT NULL REFERENCES AttributeStorageType ([id]),
+);
+
+------------------------------
+
+CREATE TABLE [dbo].[GatewayAttributeEnumeration](
+	[gatewayAttributeID] [int] NOT NULL REFERENCES [GatewayAttribute] ([id]),
+	[enumValue] [int] NOT NULL,
+	[label] [varchar](50) NOT NULL,
+	[description] [varchar](max) NULL,
+	PRIMARY KEY ([gatewayAttributeID] ASC, [enumValue] ASC),
+	UNIQUE ([gatewayAttributeID], [label])
+);
+
+------------------------------
+
+CREATE TABLE [dbo].[Attribute](
+	[id] [int] IDENTITY(0,1) NOT NULL PRIMARY KEY,
+	[label] [varchar](50) NOT NULL,
+	[description] [varchar](max) NOT NULL,
+	[storageLevelID] [int] NOT NULL REFERENCES [AttributeStorageLevel] ([id]),
+	[storageTypeID] [int] NOT NULL REFERENCES [AttributeStorageType] ([id]),
+	[gatewayAttributeID] [int] NULL REFERENCES [GatewayAttribute] ([id]),
+);
+
+------------------------------
+
+CREATE TABLE [dbo].[AttributeEnumeration](
+	[attributeID] [int] NOT NULL REFERENCES [Attribute] ([id]),
+	[enumValue] [int] NOT NULL,
+	[label] [varchar](50) NOT NULL,
+	[description] [varchar](max) NULL,
+	PRIMARY KEY ([attributeID] ASC, [enumValue] ASC),
+	UNIQUE ([attributeID], [label])
+);
+
+------------------------------
+
+CREATE TABLE [dbo].[DatasetAttribute](
+	[datasetKey] [char](8) NOT NULL REFERENCES [Dataset] ([key]),
+	[attributeID] [int] NOT NULL REFERENCES [Attribute] ([id]),
+	[decimalValue] [decimal](18, 0) NULL,
+	[enumValue] [int] NULL,
+	[textValue] [varchar](255) NULL,
+	PRIMARY KEY ([datasetKey] ASC, [attributeID] ASC)
+);
+
+-----------------------------
+
+CREATE TABLE [dbo].[TaxonAttribute](
+	[taxonVersionKey] [char](16) NOT NULL REFERENCES [Taxon] ([taxonVersionKey]),
+	[attributeID] [int] NOT NULL REFERENCES [Attribute] ([id]),
+	[decimalValue] [decimal](18, 0) NULL,
+	[enumValue] [int] NULL,
+	[textValue] [varchar](255) NULL,
+	PRIMARY KEY ([taxonVersionKey] ASC, [attributeID] ASC)
+);
+
+----------------------------
+
+CREATE TABLE [dbo].[SiteBoundaryAttribute](
+	[featureID] [int] NOT NULL REFERENCES [SiteBoundary] ([featureID]),
+	[attributeID] [int] NOT NULL REFERENCES [Attribute] ([id]),
+	[decimalValue] [decimal](18, 0) NULL,
+	[enumValue] [int] NULL,
+	[textValue] [varchar](255) NULL,
+	PRIMARY KEY ([featureID] ASC, [attributeID] ASC)
+);
+
+----------------------------
+
+CREATE TABLE [dbo].[SurveyAttribute](
+	[surveyID] [int] NOT NULL REFERENCES [Survey] ([id]),
+	[attributeID] [int] NOT NULL REFERENCES [Attribute] ([id]),
+	[decimalValue] [decimal](18, 0) NULL,
+	[enumValue] [int] NULL,
+	[textValue] [varchar](255) NULL,
+	PRIMARY KEY ([surveyID] ASC, [attributeID] ASC)
+);
+
+----------------------------
+
+CREATE TABLE [dbo].[SampleAttribute](
+	[sampleID] [int] NOT NULL REFERENCES [Sample] ([id]),
+	[attributeID] [int] NOT NULL REFERENCES [Attribute] ([id]),
+	[decimalValue] [decimal](18, 0) NULL,
+	[enumValue] [int] NULL,
+	[textValue] [varchar](255) NULL,
+	PRIMARY KEY ([sampleID] ASC, [attributeID] ASC)
+);
+
+---------------------------
+
+CREATE TABLE [dbo].[TaxonObservationAttribute](
+	[observationID] [int] NOT NULL REFERENCES [TaxonObservation] ([id]),
+	[attributeID] [int] NOT NULL REFERENCES [Attribute] ([id]),
+	[decimalValue] [decimal](18, 0) NULL,
+	[enumValue] [int] NULL,
+	[textValue] [varchar](255) NULL,
+	PRIMARY KEY ([observationID] ASC, [attributeID] ASC)
+);
+
+/*
+ *
+ * Replication Stored Procedures
+ *
+ */
+
+SET ANSI_NULLS ON;
+SET QUOTED_IDENTIFIER ON;
+
+GO
+
+CREATE PROCEDURE [dbo].[usp_repl_AddSubscriber]
+	@subscriberHost varchar(255)
+	, @subscriberDB varchar(255)
+AS
+BEGIN
+	EXEC sp_addsubscription 
+		@publication = N'Warehouse'
+		, @subscriber = @subscriberHost
+		, @destination_db = @subscriberDB
+		, @subscription_type = N'Push'
+		, @sync_type = N'automatic'
+		, @article = N'all'
+		, @update_mode = N'read only'
+		, @subscriber_type = 0
+
+	EXEC sp_addpushsubscription_agent 
+		@publication = N'Warehouse'
+		, @subscriber = @subscriberHost
+		, @subscriber_db = @subscriberDB
+		, @job_login = N'NBNGATEWAY\replagent'
+		, @job_password = N'TentSmokeSurroundedTime2012'
+		, @subscriber_security_mode = 1
+		, @frequency_type = 64
+		, @frequency_interval = 0
+		, @frequency_relative_interval = 0
+		, @frequency_recurrence_factor = 0
+		, @frequency_subday = 0
+		, @frequency_subday_interval = 0
+		, @active_start_time_of_day = 0
+		, @active_end_time_of_day = 235959
+		, @active_start_date = 20120821
+		, @active_end_date = 99991231
+		, @enabled_for_syncmgr = N'False'
+		, @dts_package_location = N'Distributor'
+END
+
+GO
+
+------------------------------
+
+CREATE PROCEDURE [dbo].[usp_dev_DropFromPublication]
+	@article varchar(200)
+AS
+BEGIN
+	exec sp_dropsubscription 
+		@publication = N'Warehouse'
+		, @article = @article
+		, @subscriber = N'all'
+		, @destination_db = N'all'
+		
+	exec sp_droparticle 
+		@publication = N'Warehouse'
+		, @article = @article
+		, @force_invalidate_snapshot = 1
+END
+
+GO
+
+------------------------------
+
+CREATE PROCEDURE [dbo].[usp_dev_AddViewToPublicationAsView]
+	@view varchar(200)
+AS
+BEGIN
+	exec sp_addarticle 
+		@publication = N'Warehouse'
+		, @article = @view
+		, @source_owner = N'dbo'
+		, @source_object = @view
+		, @type = N'indexed view schema only'
+		, @description = N''
+		, @creation_script = N''
+		, @pre_creation_cmd = N'drop'
+		, @schema_option = 0x0000000008000051
+		, @identityrangemanagementoption = N'none'
+		, @destination_table = @view
+		, @destination_owner = N'dbo'
+		, @status = 16
+		, @vertical_partition = N'false'
+		, @ins_cmd = N'SQL', @del_cmd = N'SQL', @upd_cmd = N'SQL'
+		, @force_invalidate_snapshot = 1
+END
+
+GO
+
+------------------------------
+
+CREATE PROCEDURE [dbo].[usp_dev_AddViewToPublication]
+	@view varchar(200)
+AS
+BEGIN
+	exec sp_addarticle 
+		@publication = N'Warehouse'
+		, @article = @view
+		, @source_owner = N'dbo'
+		, @source_object = @view
+		, @type = N'indexed view logbased'
+		, @description = N''
+		, @creation_script = N''
+		, @pre_creation_cmd = N'drop'
+		, @schema_option = 0x0000000008000051
+		, @identityrangemanagementoption = N'none'
+		, @destination_table = @view
+		, @destination_owner = N'dbo'
+		, @status = 16
+		, @vertical_partition = N'false'
+		, @ins_cmd = N'SQL', @del_cmd = N'SQL', @upd_cmd = N'SQL'
+		, @force_invalidate_snapshot = 1
+END
+
+GO
+
+------------------------------
+
+CREATE PROCEDURE [dbo].[usp_dev_AddTableToPublication]
+	@view varchar(200)
+AS
+BEGIN
+	exec sp_addarticle 
+		@publication = N'Warehouse'
+		, @article = @view
+		, @source_owner = N'dbo'
+		, @source_object = @view
+		, @type = N'logbased'
+		, @description = N''
+		, @creation_script = N''
+		, @pre_creation_cmd = N'drop'
+		, @schema_option = 0x0000000008000051
+		, @identityrangemanagementoption = N'none'
+		, @destination_table = @view
+		, @destination_owner = N'dbo'
+		, @status = 16
+		, @vertical_partition = N'false'
+		, @ins_cmd = N'SQL', @del_cmd = N'SQL', @upd_cmd = N'SQL'
+		, @force_invalidate_snapshot = 1
+END
+
+GO
+
+------------------------------
+
+CREATE PROCEDURE [dbo].[usp_dev_SnapshotPublication]
+AS
+BEGIN
+	exec sp_startpublication_snapshot
+		@publication = N'Warehouse'	
+END
+
+GO
+
+/*
+ *
+ * Utility Stored Procedures
+ *
+ */
+
+CREATE PROCEDURE [dbo].[usp_test_DatasetsMissingSubtypeEntry]
+AS
+BEGIN
+	SELECT d.[key], 'Taxon' AS datasetType FROM Dataset d
+	WHERE d.datasetTypeKey = 'T' AND d.[key] NOT IN (SELECT td.datasetKey FROM TaxonDataset td)
+	UNION ALL
+	SELECT d.[key], 'Habitat' AS datasetType FROM Dataset d
+	WHERE d.datasetTypeKey = 'H' AND d.[key] NOT IN (SELECT td.datasetKey FROM HabitatDataset td)
+	UNION ALL
+	SELECT d.[key], 'SiteBoundary' AS datasetType FROM Dataset d
+	WHERE d.datasetTypeKey = 'A' AND d.[key] NOT IN (SELECT td.datasetKey FROM SiteBoundaryDataset td)
+END
+
+GO

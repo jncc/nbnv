@@ -21,17 +21,16 @@ MAP
   END
 
   LAYER
-    NAME                                                "3"
+    NAME                                                "10km"
     TYPE                                                POLYGON
     STATUS                                              OFF
     CONNECTIONTYPE                                      PLUGIN
     PLUGIN                                              "msplugin_mssql2008.dll"
     CONNECTION                                          "Server=NBNSQL-B;Database=NBNWarehouse;uid=NBNImporter;pwd=Ecowaswashere9;Integrated Security=True"
-    DATA                                                "${layerGenerator.getData(4)}"
+    DATA                                                "${layerGenerator.getData(1)}"
 
     METADATA
-      "wms_title"                                       "3"
-      'default_userKey'                                 '0'
+      "wms_title"                                       "10km"
     END
 
     PROJECTION
@@ -50,17 +49,16 @@ MAP
   END
 
   LAYER
-    NAME                                                "2"
+    NAME                                                "2km"
     TYPE                                                POLYGON
     STATUS                                              OFF
     CONNECTIONTYPE                                      PLUGIN
     PLUGIN                                              "msplugin_mssql2008.dll"
     CONNECTION                                          "Server=NBNSQL-B;Database=NBNWarehouse;uid=NBNImporter;pwd=Ecowaswashere9;Integrated Security=True"
-    DATA                                                "${layerGenerator.getData(3)}"
+    DATA                                                "${layerGenerator.getData(2)}"
 
     METADATA
-      "wms_title"                                       "2"
-      'default_userKey'                                 '0'
+      "wms_title"                                       "2km"
     END
 
     PROJECTION
@@ -79,17 +77,16 @@ MAP
   END
 
   LAYER
-    NAME                                                "1"
+    NAME                                                "1km"
     TYPE                                                POLYGON
     STATUS                                              OFF
     CONNECTIONTYPE                                      PLUGIN
     PLUGIN                                              "msplugin_mssql2008.dll"
     CONNECTION                                          "Server=NBNSQL-B;Database=NBNWarehouse;uid=NBNImporter;pwd=Ecowaswashere9;Integrated Security=True"
-    DATA                                                "${layerGenerator.getData(2)}"
+    DATA                                                "${layerGenerator.getData(3)}"
 
     METADATA
-      "wms_title"                                       "1"
-      'default_userKey'                                 '0'
+      "wms_title"                                       "1km"
     END
 
     PROJECTION
@@ -108,17 +105,16 @@ MAP
   END
 
   LAYER
-    NAME                                                "0"
+    NAME                                                "100m"
     TYPE                                                POLYGON
     STATUS                                              OFF
     CONNECTIONTYPE                                      PLUGIN
     PLUGIN                                              "msplugin_mssql2008.dll"
     CONNECTION                                          "Server=NBNSQL-B;Database=NBNWarehouse;uid=NBNImporter;pwd=Ecowaswashere9;Integrated Security=True"
-    DATA                                                "${layerGenerator.getData(1)}"
+    DATA                                                "${layerGenerator.getData(4)}"
 
     METADATA
-      "wms_title"                                       "0"
-      'default_userKey'                                 '0'
+      "wms_title"                                       "100m"
     END
     
     PROJECTION

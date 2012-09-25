@@ -2,21 +2,25 @@ package uk.org.nbn.nbnv.importer.ingestion
 
 import uk.org.nbn.nbnv.importer.records.NbnRecord
 import uk.org.nbn.nbnv.importer.ImportFailedException
-import uk.org.nbn.nbnv.jpa.nbncore.Feature
+import uk.org.nbn.nbnv.jpa.nbncore.{GridSquare, Feature}
 import com.google.inject.Inject
 import uk.org.nbn.nbnv.importer.data.Repository
 import uk.org.nbn.nbnv.importer.spatial.{GridSquareInfo, GridSquareInfoFactory}
-import javax.persistence.EntityManager
+import javax.persistence.{FlushModeType, LockModeType, EntityManager}
+import javax.persistence.criteria.CriteriaQuery
+import java.util
+import sun.reflect.generics.reflectiveObjects.NotImplementedException
+import collection.mutable.ArrayBuffer
 
 class FeatureIngester @Inject()(em: EntityManager, repo: Repository, gridSquareInfoFactory: GridSquareInfoFactory) {
 
   def ensureFeature(record: NbnRecord) : Feature = {
 
     if (record.gridReference.isDefined) {
-        ensureGridRefFeature(record.gridReference.get, record.gridReferenceType.get, record.gridReferencePrecision)
+      ensureGridRefFeature(record.gridReference.get, record.gridReferenceType.get, record.gridReferencePrecision)
     }
     else if (record.featureKey.isDefined) {
-        getFeatureByFeatureKey(record.featureKey.get)
+      getFeatureByFeatureKey(record.featureKey.get)
     }
     else if (record.east.isDefined) {
       // no need to check the other coordinate elements - the validator will have done this
@@ -30,13 +34,13 @@ class FeatureIngester @Inject()(em: EntityManager, repo: Repository, gridSquareI
 
   private def ensureGridRefFeature(gridRef: String, gridReferenceType: String, gridReferencePrecision: Int) = {
 
-    // ensures that the Feature corresponding to the GridSquareInfo, and all its parents, exist
-    def ensure(info: GridSquareInfo) : (Feature, uk.org.nbn.nbnv.jpa.nbncore.GridSquare) = {
+    // ensures that the Grid Feature corresponding to the GridSquareInfo, and all its parents, exist
+    def ensure(info: GridSquareInfo) : (Feature, GridSquare) = {
+
+      val x = info.gridReference
 
       // if there's a feature already, all necessary parents should already exist, so just return it
       repo.getGridSquareFeature(info.gridReference).getOrElse {
-
-        // create, persist, and recurse for all necessary parents
 
         // the feature doesn't exist, so we need to create it
         val f = new Feature
@@ -45,23 +49,30 @@ class FeatureIngester @Inject()(em: EntityManager, repo: Repository, gridSquareI
         // the second argument from STGeomFromText is the spatial reference id. bars uses osgb 277000 NBN uses WSG84.
         // ...
         em.persist(f)
-        val s = new uk.org.nbn.nbnv.jpa.nbncore.GridSquare
-        s.setFeatureID(f)
-        s.setGridRef(gridRef)
-//        s.setProjectionID()
-//        s.setResolutionID()
+        val gs = new GridSquare
+        gs.setFeatureID(f)
+        gs.setGridRef(info.gridReference)
+//      gs.setProjectionID()
+//      gs.setResolutionID()
 
         // don't need to do anything if no parent, because we're at the topmost
-        info.getParentGridRef map { parentInfo =>
-          val (_, parentSquare) = ensure(parentInfo)
-          s.setParentSquare(parentSquare)
+        info.getParentGridRef match {
+          case Some(parentInfo) => {
+            val (_, parentSquare) = ensure(parentInfo)
+            gs.setParentSquare(parentSquare)
+          }
+          case None => ()
         }
-        em.persist(s)
-        (f, s)
+
+        em.persist(gs)
+        (f, gs)
       }
     }
 
+    // a GridSquareInfo object can compute all the info we need about a grid square
     val info = gridSquareInfoFactory.getGridSquare(gridRef, gridReferenceType, gridReferencePrecision)
+
+    // ensure that the (Feature, GridSquare) pair exists and return the feature
     ensure(info)._1
   }
 
@@ -74,8 +85,9 @@ class FeatureIngester @Inject()(em: EntityManager, repo: Repository, gridSquareI
   }
 
   private def getFeatureByCoordinate(easting: Int, northing: Int, spatailReferenceSystem: Int, gridReferencePrecision: Int = 0) = {
-     //Get nearest grid square at 100m or at the grid reference resolution specified.
+    //Get nearest grid square at 100m or at the grid reference resolution specified.
 
     new Feature()
   }
 }
+
