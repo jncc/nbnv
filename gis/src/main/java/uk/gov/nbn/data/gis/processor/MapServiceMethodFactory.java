@@ -89,11 +89,11 @@ public class MapServiceMethodFactory {
     private MapServicePart getMapCreatingMethods() {
         MapServicePart rootNode = new MapServicePart(null, "");         
         
-        for(Object mapServiceInstance : context.getBeansWithAnnotation(MapService.class).values()) {
+        for(Object mapServiceInstance : context.getBeansWithAnnotation(MapContainer.class).values()) {
             Class<?> currClass = mapServiceInstance.getClass();
-            MapService classAnnot = currClass.getAnnotation(MapService.class);
+            MapContainer classAnnot = currClass.getAnnotation(MapContainer.class);
             for(Method currMethod : currClass.getMethods()) {
-                MapObject mapService = currMethod.getAnnotation(MapObject.class);
+                MapService mapService = currMethod.getAnnotation(MapService.class);
                 if(mapService != null) {
                     //combine all of the parts together to create a path
                     String mapServiceFullName = classAnnot.value() + "/" + mapService.value();

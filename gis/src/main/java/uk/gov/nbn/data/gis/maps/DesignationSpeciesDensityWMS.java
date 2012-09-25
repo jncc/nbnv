@@ -7,8 +7,8 @@ import java.util.Properties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.nbn.data.gis.processor.MapFileModel;
-import uk.gov.nbn.data.gis.processor.MapObject;
 import uk.gov.nbn.data.gis.processor.MapService;
+import uk.gov.nbn.data.gis.processor.MapContainer;
 import uk.gov.nbn.data.gis.providers.annotations.PathParam;
 import uk.gov.nbn.data.gis.providers.annotations.QueryParam;
 import uk.org.nbn.nbnv.api.model.User;
@@ -24,7 +24,7 @@ import uk.org.nbn.nbnv.api.model.User;
  * @author Christopher Johnson
  */
 @Component
-@MapService("DesignationSpeciesDensity")
+@MapContainer("DesignationSpeciesDensity")
 public class DesignationSpeciesDensityWMS {
     private static final String QUERY = "geom from ("
             + "SELECT geom, species, label "
@@ -47,7 +47,7 @@ public class DesignationSpeciesDensityWMS {
     
     @Autowired Properties properties;
      
-    @MapObject("{designationKey}")
+    @MapService("{designationKey}")
     public MapFileModel getDesignationMapModel(
             final User user,
             @QueryParam(key="datasets", validation="^[A-Z0-9]{8}$") final List<String> datasetKeys,
