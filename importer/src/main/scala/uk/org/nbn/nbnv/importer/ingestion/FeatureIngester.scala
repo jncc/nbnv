@@ -6,7 +6,11 @@ import uk.org.nbn.nbnv.jpa.nbncore.{GridSquare, Feature}
 import com.google.inject.Inject
 import uk.org.nbn.nbnv.importer.data.Repository
 import uk.org.nbn.nbnv.importer.spatial.{GridSquareInfo, GridSquareInfoFactory}
-import javax.persistence.EntityManager
+import javax.persistence.{FlushModeType, LockModeType, EntityManager}
+import javax.persistence.criteria.CriteriaQuery
+import java.util
+import sun.reflect.generics.reflectiveObjects.NotImplementedException
+import collection.mutable.ArrayBuffer
 
 class FeatureIngester @Inject()(em: EntityManager, repo: Repository, gridSquareInfoFactory: GridSquareInfoFactory) {
 
@@ -33,6 +37,8 @@ class FeatureIngester @Inject()(em: EntityManager, repo: Repository, gridSquareI
     // ensures that the Grid Feature corresponding to the GridSquareInfo, and all its parents, exist
     def ensure(info: GridSquareInfo) : (Feature, GridSquare) = {
 
+      val x = info.gridReference
+
       // if there's a feature already, all necessary parents should already exist, so just return it
       repo.getGridSquareFeature(info.gridReference).getOrElse {
 
@@ -45,16 +51,11 @@ class FeatureIngester @Inject()(em: EntityManager, repo: Repository, gridSquareI
         em.persist(f)
         val gs = new GridSquare
         gs.setFeatureID(f)
-        gs.setGridRef(gridRef)
+        gs.setGridRef(info.gridReference)
 //      gs.setProjectionID()
 //      gs.setResolutionID()
 
-// don't need to do anything if no parent, because we're at the topmost
-//        info.getParentGridRef map { parentInfo =>
-//          val (_, parentSquare) = ensure(parentInfo)
-//          gs.setParentSquare(parentSquare)
-//        }
-
+        // don't need to do anything if no parent, because we're at the topmost
         info.getParentGridRef match {
           case Some(parentInfo) => {
             val (_, parentSquare) = ensure(parentInfo)
@@ -89,3 +90,4 @@ class FeatureIngester @Inject()(em: EntityManager, repo: Repository, gridSquareI
     new Feature()
   }
 }
+

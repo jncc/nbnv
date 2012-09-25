@@ -1,11 +1,10 @@
 package uk.org.nbn.nbnv.importer.ingestion
 
-import uk.org.nbn.nbnv.importer.testing.BaseFunSuite
-import uk.org.nbn.nbnv.metadata.Metadata
+import uk.org.nbn.nbnv.importer.testing.{FakePersistenceTrackingEntityManager, BaseFunSuite}
 import org.mockito.Mockito._
+import org.mockito.Matchers._
 import javax.persistence.EntityManager
-import uk.org.nbn.nbnv.importer.data.{Repository}
-import org.apache.log4j.Logger
+import uk.org.nbn.nbnv.importer.data.Repository
 import uk.org.nbn.nbnv.importer.spatial.{GridSquareInfo, GridSquareInfoFactory}
 import uk.org.nbn.nbnv.importer.records.NbnRecord
 import uk.org.nbn.nbnv.jpa.nbncore.{GridSquare, Feature}
@@ -47,5 +46,28 @@ class FeatureIngesterSuite extends BaseFunSuite {
     result should be (feature)
   }
 
-  //  test("a new grid square hierarchy should be created") {
+  test("a new grid square feature that should have a parent should create a grid square hierarchy") {
+
+    // arrange
+    val f = fixture
+    when(f.repo.getGridSquareFeature(anyString)).thenReturn(None)
+    val parentInfo = mock[GridSquareInfo]
+    val grandparentInfo = mock[GridSquareInfo]
+    when(parentInfo.gridReference).thenReturn("PARENT")
+    when(grandparentInfo.gridReference).thenReturn("GRANDPARENT")
+    when(f.gridSquareInfo.getParentGridRef).thenReturn(Some(parentInfo))
+    when(parentInfo.getParentGridRef).thenReturn(Some(grandparentInfo))
+    when(grandparentInfo.getParentGridRef).thenReturn(None)
+
+    val em = new FakePersistenceTrackingEntityManager
+
+    // act
+    val ingester = new FeatureIngester(em, f.repo, f.gridSquareInfoFactory)
+    ingester.ensureFeature(f.record)
+
+    // assert
+    val persistedGridSquares = em.buffer collect { case gs: GridSquare => gs.getGridRef }
+    persistedGridSquares should equal (List("GRANDPARENT", "PARENT", "ABCDEF"))
+  }
 }
+

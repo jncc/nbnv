@@ -21,7 +21,7 @@ class Repository @Inject()(log: Logger, em: EntityManager, cache: QueryCache) ex
       query.getSingleOrNone
     }
 
-    Some((f.get, new GridSquare))
+    Option((f.get, new GridSquare)) // todo!
   }
 
   // todo: wot's this for? and does it need caching?
