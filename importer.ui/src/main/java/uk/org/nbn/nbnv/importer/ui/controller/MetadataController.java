@@ -16,14 +16,18 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.extractor.WordExtractor;
+import org.reflections.Reflections;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -35,6 +39,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import uk.org.nbn.nbnv.importer.ui.convert.ConverterStep;
+import uk.org.nbn.nbnv.importer.ui.convert.RunConversions;
 import uk.org.nbn.nbnv.importer.ui.metadata.MetadataWriter;
 import uk.org.nbn.nbnv.importer.ui.model.Metadata;
 import uk.org.nbn.nbnv.importer.ui.model.MetadataForm;
@@ -42,6 +48,7 @@ import uk.org.nbn.nbnv.importer.ui.model.SessionData;
 import uk.org.nbn.nbnv.importer.ui.model.UploadItem;
 import uk.org.nbn.nbnv.importer.ui.util.DatabaseConnection;
 import uk.org.nbn.nbnv.importer.ui.util.POIImportError;
+import uk.org.nbn.nbnv.importer.ui.util.wordImporter.WordImporter;
 import uk.org.nbn.nbnv.importer.ui.validators.MetadataFormValidator;
 import uk.org.nbn.nbnv.importer.ui.validators.MetadataValidator;
 import uk.org.nbn.nbnv.jpa.nbncore.Organisation;
@@ -54,50 +61,6 @@ import uk.org.nbn.nbnv.jpa.nbncore.Organisation;
 public class MetadataController {
     @Autowired SessionData session;
     
-    // Limit for wandering up the string list looking for a valid input
-    // descriptor contained in the valid stringSet
-    private static final int WANDER_MAX = 3;
-    
-    // Organisation Descriptors
-    private static final String ORG_ABBREVIATION = "Abbreviation";
-    private static final String ORG_EMAIL = "Contact email";
-    private static final String ORG_CONTACT_NAME = "Contact name";
-    private static final String ORG_NAME = "Data Provider Name";
-    private static final String ORG_LOGO = "Organisation Logo";
-    private static final String ORG_DESC = "Organisation Description";
-    private static final String ORG_ADDRESS = "Postal Address";
-    private static final String ORG_POSTCODE = "Postcode";
-    private static final String ORG_PHONE = "Telephone* Number";
-    private static final String ORG_WEBSITE = "Website";
-    
-    // Metadata Descriptors
-    private static final String META_ACCESS_CONSTRAINT = "Access Constraint";
-    private static final String META_ADDITIONAL_INFO = "Additional Information";
-    private static final String META_DATA_CONFIDENCE = "Confidence in the Data";
-    private static final String META_DESC = "Description";
-    private static final String META_EMAIL = "Email Address";
-    private static final String META_GEOCOVER = "Geographical Coverage";
-    private static final String META_CAPTURE_METHOD = "Methods of Data Capture";
-    private static final String META_NAME = "Name";
-    private static final String META_PURPOSE = "Purpose of Data Capture";
-    private static final String META_RECORD_ATT = "Record Attributes";
-    private static final String META_RECORDERS = "Recorder Names";
-    private static final String META_SET_GEORES = "Set Geographic Resolution";
-    private static final String META_TITLE = "Title";
-    private static final String META_CONTACT_PHONE = "Telephone Number";
-    private static final String META_TEMPORAL = "Temporal Coverage";
-    private static final String META_USE_CONSTRAINT = "Use Constraint";    
-    
-    private static final String[] stringsHWPF = {
-        ORG_ABBREVIATION, ORG_ADDRESS, ORG_CONTACT_NAME, ORG_DESC, 
-        ORG_EMAIL, ORG_LOGO, ORG_NAME, ORG_PHONE, ORG_POSTCODE, 
-        ORG_WEBSITE, META_ACCESS_CONSTRAINT, META_ADDITIONAL_INFO, 
-        META_CAPTURE_METHOD, META_CONTACT_PHONE, META_DATA_CONFIDENCE,
-        META_DESC, META_EMAIL, META_GEOCOVER, META_NAME, META_PURPOSE,
-        META_RECORDERS, META_RECORD_ATT, META_SET_GEORES, META_TEMPORAL,
-        META_TITLE, META_USE_CONSTRAINT
-    };
-    
     // NEED TO FIND A WAY TO DEAL WITH CHECKBOXES!
     private static final String[] stringsSpecialAtt = {
         "Set Geographic Resolution*", 
@@ -106,9 +69,7 @@ public class MetadataController {
         "Recorder Names"
     };
     
-    // Input form elements for Word doc
-    private static final String INPUT_TEXT = "FORMTEXT";
-    private static final String INPUT_CHECKBOX = "FORMCHECKBOX";
+
 
     @RequestMapping(value="/metadata.html", method = RequestMethod.GET)
     public ModelAndView metadata() {  
@@ -183,6 +144,26 @@ public class MetadataController {
         return new ModelAndView("redirect:/metadata.html");
     }
 
+    private WordImporter getDocumentImporter(int major, int minor) {
+        Reflections reflections = new Reflections("uk.org.nbn.nbnv.importer.ui.util.wordImporter");
+        
+        Set<Class<? extends WordImporter>> importers = reflections.getSubTypesOf(WordImporter.class);
+            
+        for (Class<? extends WordImporter> importer : importers) {
+            try {
+                WordImporter instance = importer.newInstance();    
+                if (instance.supports(major, minor)) {
+                    return instance;
+                }
+            } catch (InstantiationException ex) {
+                Logger.getLogger(RunConversions.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IllegalAccessException ex) {
+                Logger.getLogger(RunConversions.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return null;
+    }
+    
     @RequestMapping(value="/metadata.html", method = RequestMethod.POST)
     public ModelAndView uploadFile(UploadItem uploadItem, BindingResult result) {
         MetadataForm model = new MetadataForm();
@@ -206,118 +187,57 @@ public class MetadataController {
             // Catch some of the annoying cases where inputs are followed by
             // paragraphs of text, as we are using \r\n to seperate out the 
             // inputs
-            Map<String, Integer> longDescCutter = new HashMap<String, Integer>();
-            longDescCutter.put(META_ACCESS_CONSTRAINT, 15);
-            longDescCutter.put(META_DATA_CONFIDENCE, 1);
-            longDescCutter.put(META_DESC, 1);
-            longDescCutter.put(META_GEOCOVER, 3);
-            longDescCutter.put(META_CAPTURE_METHOD, 1);
-            longDescCutter.put(META_TEMPORAL, 5);
-            longDescCutter.put(META_TITLE, 1);
-            
-            Map<String, String> testMap = new HashMap<String, String>();
-            HashSet<String> stringSet = new HashSet<String>(Arrays.asList(stringsHWPF));
-            
+
             List<String> strList = Arrays.asList(strs);
-            
-            String desc, str = "", field;
-            
             ListIterator<String> strIt = strList.listIterator();
-            while (strIt.hasNext()) {
-                // Store previous string as possible descriptor
+            
+            // Check the version number of the document to make sure we 
+            // can read it
+            Float version = null;
+            WordImporter importer = null;
+            while(strIt.hasNext() && version == null) {
+                try {
+                    String str = strIt.next();
+                    if (str.startsWith("Version ")) {
+                        Pattern pat;
+                        pat = Pattern.compile("([0-9]+)\\.([0-9]+)");
+                        Matcher matcher = pat.matcher(str);
+                        if (matcher.find()) {
+                            int major = Integer.parseInt(matcher.group(1));
+                            int minor = Integer.parseInt(matcher.group(2));
 
-                // Remove stars at end of descriptors if they are there
-                desc = str.trim().replaceAll("\\*$", "");
-                
-                // Store cursor for descriptor
-                int descCursor = strIt.previousIndex();
-                
-                // Get the next string in the iterator
-                String origStr = strIt.next();
-                // Keep original string for error processing and exception
-                // handling
-                str = origStr;
-                
-                // If the str is a FORMTEXT input then we have an input
-                // field
-                if (str.contains(INPUT_TEXT)) {                    
-                    // Store cursor index for next val
-                    int cursor = strIt.nextIndex();
+                            version = Float.parseFloat(Integer.toString(major) + "." + Integer.toString(minor));
 
-                    str = str.replaceAll("^.*" + INPUT_TEXT, "").trim();
-                    // Copy over to handle multi-line inputs
-                    field = str;
-                    
-                    // Grab multi-line inputs, might sometimes get, more
-                    // than we bargined for, so need to fix these as they
-                    // crop up
-                    boolean endOfField = false;
-                    while(!endOfField) {
-                        str = strIt.next();
-                        if (str.contains("\r\n")) {
-                            field = field + "\n\n" + str.trim();
-                        } else {
-                            endOfField = true;
-                        }
-                    }    
-                    
-                    if (!stringSet.contains(desc.trim())) {
-                        // Search back a few entries to see if it just
-                        // got lost somewhere
-                        strIt = strList.listIterator(descCursor);
-                        boolean foundDesc = false;
-                        int count = 0;
-                        while (count < WANDER_MAX && !foundDesc) {
-                            desc = strIt.previous().trim().replaceAll("\\*$", "");
-                            if (stringSet.contains(desc.trim())) {
-                                foundDesc = true;
-                            }
-                            count++;
-                        }
-                        
-                        if (!foundDesc) {
-                            // Haven't found a valid descriptor so we need
-                            // to check our exceptions list
-                            if (origStr.contains("I read and understood the NBN Gateway Data Provider Agreement and agree, on behalf of the data provider named in section A, to submit the dataset described in section D to the NBN Trust under this agreement.")) {
-                                // Not invalid just the declaration, do some processing here
-                            } else {
-                                // No exceptions found We have an odity
-                                throw new POIImportError("Found an input field with an unknown name input was: " + origStr);
+                            importer = getDocumentImporter(major, minor);
+
+                            if (importer == null) {
+                               throw new POIImportError("We do not currently support Version " + version + " of the Metadata Import Word Document");
                             }
                         }
                     }
-                    
-                    // Deal with cases where the descriptions getted tagged
-                    // from the metadata 
-                    if (longDescCutter.get(desc.trim()) != null && longDescCutter.get(desc.trim()) > 0) {
-                        for (int i = 0; i < longDescCutter.get(desc.trim()); i++) {
-                            field = field.replaceAll("\n.*$", "");
-                        }
-                    }
-                    
-                    testMap.put(desc, field);
-
-                    // Reset iterator to the correct place
-                    strIt = strList.listIterator(cursor);
+                } catch (NumberFormatException ex) {
+                    throw new POIImportError("Could not find a valid version number, are you sure this is a metadata import form?");
                 }
             }
+
+            Map<String, String> mappings = importer.parseDocument(strList, strIt, new HashMap<String, String>());
             
             Metadata meta = new Metadata();
             
-            meta.setAccess(testMap.get(META_ACCESS_CONSTRAINT));
-            meta.setDescription(testMap.get(META_DESC));
-            meta.setGeographic(testMap.get(META_GEOCOVER));
-            meta.setInfo(testMap.get(META_ADDITIONAL_INFO));
-            meta.setMethods(testMap.get(META_CAPTURE_METHOD));
-            meta.setPurpose(testMap.get(META_PURPOSE));
-            meta.setQuality(testMap.get(META_DATA_CONFIDENCE));
-            meta.setTemporal(testMap.get(META_TEMPORAL));
-            meta.setTitle(testMap.get(META_TITLE));
-            meta.setUse(testMap.get(META_USE_CONSTRAINT));
+            meta.setAccess(mappings.get(importer.META_ACCESS_CONSTRAINT));
+            meta.setDescription(mappings.get(importer.META_DESC));
+            meta.setGeographic(mappings.get(importer.META_GEOCOVER));
+            meta.setInfo(mappings.get(importer.META_ADDITIONAL_INFO));
+            meta.setMethods(mappings.get(importer.META_CAPTURE_METHOD));
+            meta.setPurpose(mappings.get(importer.META_PURPOSE));
+            meta.setQuality(mappings.get(importer.META_DATA_CONFIDENCE));
+            meta.setTemporal(mappings.get(importer.META_TEMPORAL));
+            meta.setTitle(mappings.get(importer.META_TITLE));
+            meta.setUse(mappings.get(importer.META_USE_CONSTRAINT));
             
             boolean addOrg = true;
             for (Organisation org : model.getOrganisationList()) {
-                if (org.getOrganisationName().equals(testMap.get(ORG_NAME))) {
+                if (org.getOrganisationName().equals(mappings.get(importer.ORG_NAME))) {
                     model.getMetadata().setOrganisationID(org.getOrganisationID());
                     addOrg = false;
                 }
@@ -327,18 +247,18 @@ public class MetadataController {
             
             if (addOrg) {
                 Organisation newOrg = new Organisation();
-                newOrg.setAbbreviation(testMap.get(ORG_ABBREVIATION));
-                newOrg.setAddress(testMap.get(ORG_ADDRESS));
+                newOrg.setAbbreviation(mappings.get(importer.ORG_ABBREVIATION));
+                newOrg.setAddress(mappings.get(importer.ORG_ADDRESS));
                 newOrg.setAllowPublicRegistration(false);
-                newOrg.setContactEmail(testMap.get(ORG_EMAIL));
-                newOrg.setContactName(testMap.get(ORG_CONTACT_NAME));
-                newOrg.setLogo(testMap.get(ORG_LOGO)); // Need to figure out how to import logos
-                newOrg.setLogoSmall(testMap.get(ORG_LOGO)); // Need to figure out how to import logos
-                newOrg.setOrganisationName(testMap.get(ORG_NAME));
-                newOrg.setPhone(testMap.get(ORG_PHONE));
-                newOrg.setPostcode(testMap.get(ORG_POSTCODE));
-                newOrg.setSummary(testMap.get(ORG_DESC));
-                newOrg.setWebsite(testMap.get(ORG_WEBSITE));
+                newOrg.setContactEmail(mappings.get(importer.ORG_EMAIL));
+                newOrg.setContactName(mappings.get(importer.ORG_CONTACT_NAME));
+                newOrg.setLogo(mappings.get(importer.ORG_LOGO)); // Need to figure out how to import logos
+                newOrg.setLogoSmall(mappings.get(importer.ORG_LOGO)); // Need to figure out how to import logos
+                newOrg.setOrganisationName(mappings.get(importer.ORG_NAME));
+                newOrg.setPhone(mappings.get(importer.ORG_PHONE));
+                newOrg.setPostcode(mappings.get(importer.ORG_POSTCODE));
+                newOrg.setSummary(mappings.get(importer.ORG_DESC));
+                newOrg.setWebsite(mappings.get(importer.ORG_WEBSITE));
                 
                 ModelAndView mv = new ModelAndView("forward:/addOrganisation.html");
                 mv.addObject("metadataForm", model);
