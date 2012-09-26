@@ -238,7 +238,7 @@ public class MetadataController {
             boolean addOrg = true;
             for (Organisation org : model.getOrganisationList()) {
                 if (org.getOrganisationName().equals(mappings.get(importer.ORG_NAME))) {
-                    model.getMetadata().setOrganisationID(org.getOrganisationID());
+                    meta.setOrganisationID(org.getOrganisationID());
                     addOrg = false;
                 }
             }

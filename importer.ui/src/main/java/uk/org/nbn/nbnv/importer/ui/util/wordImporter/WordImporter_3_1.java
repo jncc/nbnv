@@ -121,6 +121,8 @@ public class WordImporter_3_1 implements WordImporter {
 
                 // Reset iterator to the correct place
                 strIt = strList.listIterator(cursor);
+            } if (str.contains(INPUT_CHECKBOX)) {
+                str = str + "";
             }
         }
         

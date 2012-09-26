@@ -72,7 +72,9 @@ public class AddOrganisationController {
     @RequestMapping(value = "/addOrganisation.html", method = RequestMethod.POST)
     public ModelAndView addOrganisationWithMetaFollow(HttpServletRequest request) {     
         AddOrganisationForm model = new AddOrganisationForm();
-        model.setOrgagnisation((Organisation) request.getAttribute("newOrganisation"));
+        if (request.getAttribute("newOrganisation") != null) {
+            model.setOrgagnisation((Organisation) request.getAttribute("newOrganisation"));
+        }
         model.setMetadataForm((MetadataForm) request.getAttribute("metadataForm"));
         
         return new ModelAndView("addOrganisation", "model", model);
