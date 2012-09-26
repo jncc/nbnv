@@ -20,6 +20,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.extractor.WordExtractor;
@@ -106,26 +107,26 @@ public class MetadataController {
     };
     
     // Input form elements for Word doc
-    private static final String INPUT_FORMTEXT = "FORMTEXT";
-    private static final String INPUT_FORMCHECKBOX = "FORMCHECKBOX";
-    
-    public MetadataController() {
+    private static final String INPUT_TEXT = "FORMTEXT";
+    private static final String INPUT_CHECKBOX = "FORMCHECKBOX";
 
-    }
-
-    
     @RequestMapping(value="/metadata.html", method = RequestMethod.GET)
     public ModelAndView metadata() {  
         MetadataForm model = new MetadataForm();
         model.setOrganisationList(getOrgList());
         return new ModelAndView("metadataForm", "model", model);
     }
+    
+    @RequestMapping(value="/metadataProcess.html", method = RequestMethod.GET)
+    public ModelAndView metadataProcessGet() {  
+        return new ModelAndView("redirect:/metadata.html");
+    }
 
     @RequestMapping(value="/metadataProcess.html", method = RequestMethod.POST, params="addOrganisation")
     public ModelAndView addOrganisation(MetadataForm model, BindingResult result) {
-        return new ModelAndView("redirect:/addOrganisation.html");
+        return new ModelAndView("forward:/addOrganisation.html", "metadataForm", model);
     }    
-    
+
     @RequestMapping(value="/metadataProcess.html", method = RequestMethod.POST, params="submit")
     public ModelAndView uploadFile(@ModelAttribute("model") @Valid MetadataForm model, BindingResult result, @RequestParam("organisationID") String organisationID) {
 
@@ -168,6 +169,18 @@ public class MetadataController {
         }
 
         return new ModelAndView("metadataForm", "model", model);
+    }
+    
+    @RequestMapping(value="/metadataProcessView.html", method = RequestMethod.POST) 
+    public ModelAndView returnViewData (MetadataForm model, BindingResult result, HttpServletRequest request) {
+        MetadataForm input = (MetadataForm) request.getAttribute("model");
+        input.setOrganisationList(getOrgList());
+        return new ModelAndView("metadataForm", "model", input);
+    }
+    
+    @RequestMapping(value="/metadataProcessView.html", method = RequestMethod.GET) 
+    public ModelAndView returnViewData () {
+        return new ModelAndView("redirect:/metadata.html");
     }
 
     @RequestMapping(value="/metadata.html", method = RequestMethod.POST)
@@ -227,15 +240,17 @@ public class MetadataController {
                 
                 // If the str is a FORMTEXT input then we have an input
                 // field
-                if (str.contains(INPUT_FORMTEXT)) {                    
+                if (str.contains(INPUT_TEXT)) {                    
                     // Store cursor index for next val
                     int cursor = strIt.nextIndex();
 
-                    str = str.replaceAll("^.*" + INPUT_FORMTEXT, "").trim();
+                    str = str.replaceAll("^.*" + INPUT_TEXT, "").trim();
                     // Copy over to handle multi-line inputs
                     field = str;
                     
-                    // Grab multi-line inputs
+                    // Grab multi-line inputs, might sometimes get, more
+                    // than we bargined for, so need to fix these as they
+                    // crop up
                     boolean endOfField = false;
                     while(!endOfField) {
                         str = strIt.next();
@@ -300,7 +315,15 @@ public class MetadataController {
             meta.setTitle(testMap.get(META_TITLE));
             meta.setUse(testMap.get(META_USE_CONSTRAINT));
             
-            boolean addOrg = false;
+            boolean addOrg = true;
+            for (Organisation org : model.getOrganisationList()) {
+                if (org.getOrganisationName().equals(testMap.get(ORG_NAME))) {
+                    model.getMetadata().setOrganisationID(org.getOrganisationID());
+                    addOrg = false;
+                }
+            }
+            
+            model.setMetadata(meta);
             
             if (addOrg) {
                 Organisation newOrg = new Organisation();
@@ -311,14 +334,17 @@ public class MetadataController {
                 newOrg.setContactName(testMap.get(ORG_CONTACT_NAME));
                 newOrg.setLogo(testMap.get(ORG_LOGO)); // Need to figure out how to import logos
                 newOrg.setLogoSmall(testMap.get(ORG_LOGO)); // Need to figure out how to import logos
-                newOrg.setOrganisationName(ORG_NAME);
+                newOrg.setOrganisationName(testMap.get(ORG_NAME));
                 newOrg.setPhone(testMap.get(ORG_PHONE));
                 newOrg.setPostcode(testMap.get(ORG_POSTCODE));
                 newOrg.setSummary(testMap.get(ORG_DESC));
                 newOrg.setWebsite(testMap.get(ORG_WEBSITE));
+                
+                ModelAndView mv = new ModelAndView("forward:/addOrganisation.html");
+                mv.addObject("metadataForm", model);
+                mv.addObject("newOrganisation", newOrg);
+                return mv;
             }
-
-            model.setMetadata(meta);
             
         } catch (IOException ex) {
             messages.add("EXCEPTION: Parse exception: " + ex.getMessage());
