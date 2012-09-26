@@ -75,7 +75,7 @@ public class TaxonObservationResource {
         //TODO: squareBlurring(?)
         List<String> datasets = parseCsv(datasetKey);
         List<String> taxa = parseCsv(ptvk);
-        return observationMapper.selectObservationRecordsByFilter(user.getId(), startYear, endYear, datasets, taxa, overlaps, within, sensitive, designation, taxonOutputGroup, gridRef);
+        return observationMapper.selectObservationRecordsByFilter(user, startYear, endYear, datasets, taxa, overlaps, within, sensitive, designation, taxonOutputGroup, gridRef);
     }
 
     @GET
@@ -86,7 +86,7 @@ public class TaxonObservationResource {
         //TODO: squareBlurring(?)
         List<String> datasets = parseCsv(datasetKey);
         List<String> taxa = parseCsv(ptvk);
-        return observationMapper.selectObservationSpeciesByFilter(user.getId(), startYear, endYear, datasets, taxa, overlaps, within, sensitive, designation, taxonOutputGroup, gridRef);
+        return observationMapper.selectObservationSpeciesByFilter(user, startYear, endYear, datasets, taxa, overlaps, within, sensitive, designation, taxonOutputGroup, gridRef);
     }
 
     @GET
@@ -97,7 +97,7 @@ public class TaxonObservationResource {
         //TODO: squareBlurring(?)
         List<String> datasets = parseCsv(datasetKey);
         List<String> taxa = parseCsv(ptvk);
-        return observationMapper.selectObservationGroupsByFilter(user.getId(), startYear, endYear, datasets, taxa, overlaps, within, sensitive, designation, taxonOutputGroup, gridRef);
+        return observationMapper.selectObservationGroupsByFilter(user, startYear, endYear, datasets, taxa, overlaps, within, sensitive, designation, taxonOutputGroup, gridRef);
     }
 
     @GET
@@ -108,7 +108,7 @@ public class TaxonObservationResource {
         //TODO: squareBlurring(?)
         List<String> datasets = parseCsv(datasetKey);
         List<String> taxa = parseCsv(ptvk);
-        return observationMapper.selectObservationDatasetsByFilter(user.getId(), startYear, endYear, datasets, taxa, overlaps, within, sensitive, designation, taxonOutputGroup, gridRef);
+        return observationMapper.selectObservationDatasetsByFilter(user, startYear, endYear, datasets, taxa, overlaps, within, sensitive, designation, taxonOutputGroup, gridRef);
     }
 
     @GET
@@ -120,7 +120,7 @@ public class TaxonObservationResource {
         //TODO: squareBlurring(?)
         List<String> datasets = parseCsv(datasetKey);
         List<String> taxa = parseCsv(ptvk);
-        List<DatasetWithQueryStats> datasetsWithQueryStats = observationMapper.selectObservationDatasetsByFilter(user.getId(), startYear, endYear, datasets, taxa, overlaps, within, sensitive, designation, taxonOutputGroup, gridRef);
+        List<DatasetWithQueryStats> datasetsWithQueryStats = observationMapper.selectObservationDatasetsByFilter(user, startYear, endYear, datasets, taxa, overlaps, within, sensitive, designation, taxonOutputGroup, gridRef);
 
         return groupDatasetsByProvider(datasetsWithQueryStats);
     }

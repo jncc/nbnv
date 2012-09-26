@@ -393,7 +393,10 @@ nbn.mapping.construction.WidgetOptionsCreator = function(interactiveMapper){
             });
 
             var _designationTree = $('<div>').nbn_treewidget({
-                    urlOfDescriptionFile : 'TreeWidgetGenerator?type=d',
+                    urlOfDescriptionFile : nbn.util.ServerGeneratedLoadTimeConstants.data_api + "/designations",
+                    dataFilter: function(designation) {
+                        return $.extend({ title : designation.name }, designation);
+                    },
                     allowMultipleSelection: 'none',
                     selected: function(event, selected) {
                             _setSelectedDesignation({

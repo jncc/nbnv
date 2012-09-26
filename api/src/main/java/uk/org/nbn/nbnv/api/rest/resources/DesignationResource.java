@@ -5,14 +5,18 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.org.nbn.nbnv.api.dao.mappers.DatasetMapper;
 import uk.org.nbn.nbnv.api.dao.mappers.DesignationCategoryMapper;
 import uk.org.nbn.nbnv.api.dao.mappers.DesignationMapper;
 import uk.org.nbn.nbnv.api.dao.mappers.TaxonMapper;
 import uk.org.nbn.nbnv.api.dao.mappers.TaxonNavigationGroupMapper;
+import uk.org.nbn.nbnv.api.model.Dataset;
 import uk.org.nbn.nbnv.api.model.Designation;
 import uk.org.nbn.nbnv.api.model.DesignationCategory;
 import uk.org.nbn.nbnv.api.model.Taxon;
 import uk.org.nbn.nbnv.api.model.TaxonNavigationGroup;
+import uk.org.nbn.nbnv.api.model.User;
+import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
 
 @Component
 @Path("/designations")
@@ -20,6 +24,7 @@ public class DesignationResource {
     @Autowired DesignationCategoryMapper designationCategoryMapper;
     @Autowired DesignationMapper designationMapper;
     @Autowired TaxonMapper taxonMapper;
+    @Autowired DatasetMapper datasetMapper;
     @Autowired TaxonNavigationGroupMapper taxonNavigationGroupMapper;
 	
     @GET
@@ -41,6 +46,14 @@ public class DesignationResource {
     public DesignationCategory getDesignationCategory(@PathParam("id") int id) {
         return designationCategoryMapper.selectByDesignationID(id);
     }
+    
+    @GET
+    @Path("/{id}/datasets")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Dataset> getDesignationDatasets(@TokenUser User user, @PathParam("id") String designation) {
+        return datasetMapper.selectDatasetsInDesignationViewableByUser(user, designation);
+    }
+    
     @GET
     @Path("/{id}/species")
     @Produces(MediaType.APPLICATION_JSON)
