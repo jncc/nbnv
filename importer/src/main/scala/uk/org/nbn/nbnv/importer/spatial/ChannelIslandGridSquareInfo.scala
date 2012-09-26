@@ -46,37 +46,21 @@ class ChannelIslandGridSquareInfo(gridRef: String, precision: Int = 0) extends G
 
   def getLowerPrecisionGridRef(precision: Int) = new ChannelIslandGridSquareInfo(outputGridRef, precision)
 
-  //todo: Implement source polygon
-  def sourcePolygon = null
+  def sourceProjectionPolygon = {
+    val gridSize = gridReferencePrecision
+
+    val (easting, northing) = getEastingNorthing(outputGridRef)
+
+    getPolygonFromGridSquareOrigin(easting, northing, gridSize)
+  }
 
   def wgs84Polygon = {
 
     val gridSize = gridReferencePrecision
 
-    //compute the coordinates of the four corners of the grid square
     val (easting, northing) = getEastingNorthing(outputGridRef)
-    val blGdp = new GeneralDirectPosition(easting, northing)
-    val brGdp = new GeneralDirectPosition(easting + gridSize, northing)
-    val tlGdp = new GeneralDirectPosition(easting, northing + gridSize)
-    val trGdp = new GeneralDirectPosition(easting + gridSize, northing + gridSize)
 
-    //Get the ED50 to WGS84 transformation operation
-    val crsFac = ReferencingFactoryFinder.getCRSAuthorityFactory("EPSG",null)
-    val wgs84crs = crsFac.createCoordinateReferenceSystem("4326")
-    val ed50crs = crsFac.createCoordinateReferenceSystem("23030")
-    val transformer = new DefaultCoordinateOperationFactory().createOperation(ed50crs, wgs84crs).getMathTransform
-
-    //Get the coordinates in WGS84 lat lng
-    val bl = transformer.transform(blGdp, blGdp).getCoordinates
-    val br = transformer.transform(brGdp, brGdp).getCoordinates
-    val tl = transformer.transform(tlGdp, tlGdp).getCoordinates
-    val tr = transformer.transform(trGdp, trGdp).getCoordinates
-
-    "POLYGON((" + bl(0) + " " + bl(1) + ", " +
-      tl(0) + " " + tl(1) + ", " +
-      tr(0) + " " + tr(1) + ", " +
-      br(0) + " " + br(1) + ", " +
-      bl(0) + " " + bl(1) + "))"
+    getWGS84PolygonFromGridSquareOrigin(easting, northing, gridSize, "23030")
   }
 
   //WV 59500  47500

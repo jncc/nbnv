@@ -158,31 +158,31 @@ class ChannelIslandGridSquareInfoSuite extends BaseFunSuite {
     cigr.getParentGridRef should be (None)
   }
 
-  test("should give WKT for 100m grid square") {
+  test("should give WKT for 100m grid square in WGS84") {
     val cigr = new ChannelIslandGridSquareInfo(knownGridRef_100m)
 
     cigr.wgs84Polygon matches (TestResources.polygonWKTRegex)
   }
 
-  test("should give WKT for 1000m grid square") {
+  test("should give WKT for 1000m grid square in WGS84") {
     val cigr = new ChannelIslandGridSquareInfo(knownGridRef_1000m)
 
     cigr.wgs84Polygon matches (TestResources.polygonWKTRegex)
   }
 
-  test("should give WKT for 2000m grid square") {
+  test("should give WKT for 2000m grid square in WGS84") {
     val cigr = new ChannelIslandGridSquareInfo(knownGridRef_2000m)
 
     cigr.wgs84Polygon matches (TestResources.polygonWKTRegex)
   }
 
-  test("should give WKT for 10000m grid square") {
+  test("should give WKT for 10000m grid square in WGS84") {
     val cigr = new ChannelIslandGridSquareInfo(knownGridRef_10000m)
 
     cigr.wgs84Polygon matches (TestResources.polygonWKTRegex)
   }
 
-  test("should give 100m grid ref at 2000m") {
+  test("should compute 2000m grid ref from 100m grid ref") {
     val cigr = new ChannelIslandGridSquareInfo(knownGridRef_100m)
 
     val lowerCigr = cigr.getLowerPrecisionGridRef(2000)
@@ -190,5 +190,29 @@ class ChannelIslandGridSquareInfoSuite extends BaseFunSuite {
     lowerCigr should not be (null)
     lowerCigr.gridReference should be (knownGridRef_2000m)
     lowerCigr.gridReferencePrecision should be (2000)
+  }
+
+  test("should give WKT for 100m grid square") {
+    val cigr = new ChannelIslandGridSquareInfo(knownGridRef_100m)
+
+    cigr.sourceProjectionPolygon matches (TestResources.polygonWKTRegex)
+  }
+
+  test("should give WKT for 1000m grid square") {
+    val cigr = new ChannelIslandGridSquareInfo(knownGridRef_1000m)
+
+    cigr.sourceProjectionPolygon matches (TestResources.polygonWKTRegex)
+  }
+
+  test("should give WKT for 2000m grid square") {
+    val cigr = new ChannelIslandGridSquareInfo(knownGridRef_2000m)
+
+    cigr.sourceProjectionPolygon matches (TestResources.polygonWKTRegex)
+  }
+
+  test("should give WKT for 10000m grid square") {
+    val cigr = new ChannelIslandGridSquareInfo(knownGridRef_10000m)
+
+    cigr.sourceProjectionPolygon matches (TestResources.polygonWKTRegex)
   }
 }

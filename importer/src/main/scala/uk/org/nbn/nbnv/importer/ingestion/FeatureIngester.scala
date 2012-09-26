@@ -31,8 +31,6 @@ class FeatureIngester @Inject()(log: Logger, em: EntityManager, repo: Repository
 
   def ensureGridRefFeature(gridRef: String, gridReferenceType: String, gridReferencePrecision: Int) = {
 
-    em.getTransaction.begin()
-
     // ensures that the Grid Feature corresponding to the GridSquareInfo, and all its parents, exist
     def ensure(info: GridSquareInfo) : (Feature, GridSquare) = {
 
@@ -78,10 +76,7 @@ class FeatureIngester @Inject()(log: Logger, em: EntityManager, repo: Repository
     val info = gridSquareInfoFactory.getGridSquare(gridRef, gridReferenceType, gridReferencePrecision)
 
     // ensure that the (Feature, GridSquare) pair exists and return the feature
-    val ret = ensure(info)._1
-
-    em.getTransaction.commit()
-    ret
+    ensure(info)._1
   }
 
 

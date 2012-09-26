@@ -4,6 +4,9 @@
  */
 package uk.org.nbn.nbnv.jpa.nbncore;
 
+import org.eclipse.persistence.annotations.IdValidation;
+import org.eclipse.persistence.annotations.PrimaryKey;
+
 import java.io.Serializable;
 import java.util.Collection;
 import javax.persistence.*;
@@ -23,6 +26,7 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Resolution.findByLabel", query = "SELECT r FROM Resolution r WHERE r.label = :label"),
     @NamedQuery(name = "Resolution.findByAccuracy", query = "SELECT r FROM Resolution r WHERE r.accuracy = :accuracy"),
     @NamedQuery(name = "Resolution.findByArea", query = "SELECT r FROM Resolution r WHERE r.area = :area")})
+    @PrimaryKey(validation = IdValidation.NONE) // due to some negative PKs!
 public class Resolution implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "resolutionID")
     private Collection<GridSquare> gridSquareCollection;
