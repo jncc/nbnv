@@ -1,6 +1,7 @@
 package uk.org.nbn.nbnv.importer
 
 import data.{QueryCache, Repository, KeyGenerator}
+import ingestion.FeatureIngester
 import injection.ImporterModule
 import testing.BaseFunSuite
 import utility.ResourceLoader
@@ -38,20 +39,36 @@ class SmokeSuiteIT extends BaseFunSuite with ResourceLoader {
     importer.run()
   }
 
-//  ignore("should blah") {
-//
-//    val tempDir = ".\\temp"
-//    new File(tempDir).mkdirs()
-//    val archivePath = resource("/archives/valid.zip")
-//
-//    val options = Options(archivePath = archivePath.getFile, tempDir = tempDir, whatIf = true)
-//
-//    val injector = Guice.createInjector(new ImporterModule(options))
-//    val repo = injector.getInstance(classOf[Repository])
-//
-//    repo.getGridSquareFeature("HY540119") match {
-//      case Some(f) => println(f.getWkt)
-//      case None => fail()
-//    }
-//  }
+
+  ignore("run a query") {
+  
+    val tempDir = ".\\temp"
+    new File(tempDir).mkdirs()
+      val archivePath = resource("/archives/valid.zip")
+
+      val options = Options(archivePath = archivePath.getFile, tempDir = tempDir, whatIf = true)
+
+      val injector = Guice.createInjector(new ImporterModule(options))
+      val repo = injector.getInstance(classOf[Repository])
+
+      repo.getGridSquareFeature("HY540119") match {
+        case Some((f, gs)) => println(f.getWkt + " ||| " + gs.getGridRef)
+        case None => { println("failing"); fail() }
+      }
+  }
+
+  ignore("should blah") {
+
+    val tempDir = ".\\temp"
+    new File(tempDir).mkdirs()
+    val archivePath = resource("/archives/valid.zip")
+
+    val options = Options(archivePath = archivePath.getFile, tempDir = tempDir, whatIf = true)
+
+    val injector = Guice.createInjector(new ImporterModule(options))
+
+    val ingester = injector.getInstance(classOf[FeatureIngester])
+
+    ingester.ensureGridRefFeature("NN166712", "OSGB", 100)
+  }
 }

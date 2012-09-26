@@ -46,14 +46,7 @@ class BritishGridSquareInfo(gridRef : String, precision: Int = 0) extends GridSq
   def sourcePolygon = null
 
   def wgs84Polygon = {
-    val gridSize =
-      if (outputGridRef.matches(GridRefPatterns.ukDintyGridRef)) {
-        2000
-      }
-      else {
-        //apart from DINTY each grid is divided into 10 subdivisions
-        gridReferencePrecision * 10
-      }
+    val gridSize = gridReferencePrecision
 
     val paddedGridRef = getSixFigGridRef(outputGridRef)
     //bottom left co-ordinate

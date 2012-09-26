@@ -26,8 +26,7 @@ class RecordIngester @Inject()(log: Logger,
     em.flush() // to get survey key for sample caching
     val sample = sampleIngester.upsertSample(record.sampleKey, survey)
     val site = siteIngester.upsertSite(record.siteKey, record.siteName, dataset.getDataset)
-    // todo: TaxonObservation needs a feature - need to get c# code from paul
-    val feature = repo.getFeature(1)
+    val feature = repo.getFeature(1) // todo: featureIngester.ensureFeature(record)
     val taxon = repo.getTaxon(record.taxonVersionKey)
     val dateType = repo.getDateType(record.dateType)
     val determiner = recorderIngester.ensureRecorder(record.determiner)
