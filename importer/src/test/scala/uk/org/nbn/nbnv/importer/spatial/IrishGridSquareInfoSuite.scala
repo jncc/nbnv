@@ -158,5 +158,15 @@ class IrishGridSquareInfoSuite extends BaseFunSuite {
     igr.getParentGridRef should be (None)
   }
 
+  test("should give 100m grid ref at 2000m") {
+    val igr = new IrishGridSquareInfo(knownGridRef_100m)
+
+    val lowerIgr = igr.getLowerPrecisionGridRef(2000)
+
+    lowerIgr should not be (null)
+    lowerIgr.gridReference should be (knownGridRef_2000m)
+    lowerIgr.gridReferencePrecision should be (2000)
+  }
+
   //todo: test wsg84Polygon
 }

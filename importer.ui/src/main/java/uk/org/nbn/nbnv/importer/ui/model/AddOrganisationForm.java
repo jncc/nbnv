@@ -20,6 +20,8 @@ public class AddOrganisationForm {
     private List<String> errors;
     private String imageError = "";
     private CommonsMultipartFile imageData;
+    
+    private MetadataForm metadataForm;
 
     public AddOrganisationForm () {
         this.organisation = new Organisation();
@@ -87,4 +89,12 @@ public class AddOrganisationForm {
     public void setImageError(String imageError) {
         this.imageError = imageError;
     }    
+
+    public MetadataForm getMetadataForm() {
+        return metadataForm;
+    }
+
+    public void setMetadataForm(MetadataForm metadataForm) {
+        this.metadataForm = metadataForm;
+    }
 }
