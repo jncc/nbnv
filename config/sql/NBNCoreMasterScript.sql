@@ -87,31 +87,8 @@ ALTER DATABASE [NBNCore] SET DB_CHAINING OFF
 GO
 EXEC sys.sp_db_vardecimal_storage_format N'NBNCore', N'ON'
 GO
-
-/*
- * 
- * Enumeration and Vocabulary Tables
- *
- */
-
 USE [NBNCore]
 GO
--------------------------------
-
-CREATE TABLE [dbo].[DownloadLogPurpose](
-	[id] [int] NOT NULL PRIMARY KEY,
-	[label] [varchar](50) NOT NULL UNIQUE,
-);
-
-INSERT INTO [dbo].[DownloadLogPurpose] VALUES 
-(0, 'Private use'),
-(1, 'Education purposes'),
-(2, 'Research'),
-(3, 'Media'),
-(4, 'Conservation NGO work'),
-(5, 'Commercial and consultancy work'),
-(6, 'Statutory work'),
-(7, 'Data provision and interpretation services');
 
 /*
  *
@@ -1006,6 +983,141 @@ CREATE TABLE [dbo].[TaxonObservationAttribute](
 	[enumValue] [int] NULL,
 	[textValue] [varchar](255) NULL,
 	PRIMARY KEY ([observationID] ASC, [attributeID] ASC)
+);
+
+/*
+ *
+ * Taxon Observation Filters
+ *
+ */
+
+
+CREATE TABLE [dbo].[TaxonObservationFilter](
+	[id] [int] IDENTITY(0,1) PRIMARY KEY NOT NULL,
+	[filterJSON] [varchar](max) NOT NULL,
+	[filterText] [varchar](max) NOT NULL
+);
+
+---------------------------
+
+CREATE TABLE [dbo].[TaxonObservationFilterElementType](
+	[id] [int] NOT NULL PRIMARY KEY,
+	[label] [varchar](50) NOT NULL UNIQUE
+);
+
+INSERT INTO [TaxonObservationFilterElementType] VALUES
+(0, 'Dataset'),
+(1, 'Taxon'),
+(2, 'Sensitive'),
+(3, 'Site Boundary'),
+(4, 'Date');
+
+---------------------------
+
+CREATE TABLE [dbo].[TaxonObservationFilterElement](
+	[id] [int] IDENTITY(0,1) NOT NULL PRIMARY KEY,
+	[filterID] [int] NOT NULL REFERENCES [TaxonObservationFilter] ([id]),
+	[filterElementTypeID] [int] NOT NULL REFERENCES [TaxonObservationFilterElementType] ([id]),
+	[filterDatasetKey] [char](8) NULL REFERENCES [TaxonDataset] ([datasetKey]),
+	[filterTaxon] [char](16) NULL REFERENCES [Taxon] ([taxonVersionKey]),
+	[filterSensitive] [int] NULL,
+	[filterSiteBoundary] [int] NULL REFERENCES [SiteBoundary] ([featureID]),
+	[filterSiteBoundaryMatch] [int] NULL,
+	[filterDateStart] [date] NULL,
+	[filterDateEnd] [date] NULL,
+);
+
+---------------------------
+
+CREATE TABLE [dbo].[AccessRequestRole] (
+	[id] [int] NOT NULL PRIMARY KEY,
+	[label] [varchar](50) NOT NULL UNIQUE
+);
+
+---------------------------
+
+CREATE TABLE [dbo].[AccessRequestType] (
+	[id] [int] NOT NULL PRIMARY KEY,
+	[label] [varchar](50) NOT NULL UNIQUE
+);
+
+---------------------------
+
+CREATE TABLE [dbo].[AccessRequestResponseType] (
+	[id] [int] NOT NULL PRIMARY KEY,
+	[label] [varchar](50) NOT NULL UNIQUE
+);
+
+---------------------------
+
+CREATE TABLE [dbo].[UserAccessRequest](
+	[filterID] [int] NOT NULL PRIMARY KEY REFERENCES [TaxonObservationFilter] ([id]),
+	[userID] [int] NOT NULL REFERENCES [User] ([id]),
+	[requestRoleID] [int] NOT NULL REFERENCES [AccessRequestRole] ([id]),
+	[requestTypeID] [int] NOT NULL REFERENCES [AccessRequestType] ([id]),
+	[requestReason] [varchar](max) NOT NULL,
+	[requestDate] [datetime] NOT NULL,
+	[responseTypeID] [int] NULL REFERENCES [AccessRequestResponseType] ([id]),
+	[responseReason] [varchar](max) NULL,
+	[responseDate] [datetime] NULL,
+	[accessExpires] [date] NULL
+);
+
+---------------------------
+
+CREATE TABLE [dbo].[OrganisationAccessRequest](
+	[filterID] [int] NOT NULL PRIMARY KEY REFERENCES [TaxonObservationFilter] ([id]),
+	[organisationID] [int] NOT NULL REFERENCES [Organisation] ([id]),
+	[requestRoleID] [int] NOT NULL REFERENCES [AccessRequestRole] ([id]),
+	[requestTypeID] [int] NOT NULL REFERENCES [AccessRequestType] ([id]),
+	[requestReason] [varchar](max) NOT NULL,
+	[requestDate] [datetime] NOT NULL,
+	[responseTypeID] [int] NULL REFERENCES [AccessRequestResponseType] ([id]),
+	[responseReason] [varchar](max) NULL,
+	[responseDate] [datetime] NULL,
+	[accessExpires] [date] NULL
+);
+
+/*
+ *
+ * Download Log
+ *
+ */
+
+CREATE TABLE [dbo].[TaxonObservationDownloadPurpose](
+	[id] [int] NOT NULL PRIMARY KEY,
+	[label] [varchar](50) NOT NULL UNIQUE,
+);
+
+INSERT INTO [dbo].[TaxonObservationDownloadPurpose] VALUES 
+(0, 'Private use'),
+(1, 'Education purposes'),
+(2, 'Research'),
+(3, 'Media'),
+(4, 'Conservation NGO work'),
+(5, 'Commercial and consultancy work'),
+(6, 'Statutory work'),
+(7, 'Data provision and interpretation services');
+
+-------------------------------
+
+CREATE TABLE [dbo].[TaxonObservationDownload](
+	[filterID] [int] NOT NULL PRIMARY KEY REFERENCES [TaxonObservationFilter] ([id]),
+	[purposeID] [int] NOT NULL REFERENCES [TaxonObservationDownloadPurpose] ([id]),
+	[reason] [varchar](max) NOT NULL,
+	[downloadTime] [datetime] NOT NULL,
+	[userID] [int] NULL REFERENCES [User] ([id]),
+	[userForOrganisation] [varchar](max) NULL,
+	[organisationID] [int] NULL REFERENCES [Organisation] ([id]),
+);
+
+-------------------------------
+
+CREATE TABLE [dbo].[TaxonObservationDownloadStatistics](
+	[filterID] [int] NOT NULL REFERENCES [TaxonObservationDownload] ([filterID]),
+	[datasetKey] [char](8) NOT NULL REFERENCES [TaxonDataset] ([datasetKey]),
+	[recordCount] [int] NOT NULL,
+	PRIMARY KEY ([filterID] ASC, [datasetKey] ASC)
 );
 
 /*
