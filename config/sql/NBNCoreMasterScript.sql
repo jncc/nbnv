@@ -108,8 +108,8 @@ CREATE TABLE [dbo].[Organisation](
 	[contactName] [varchar](120) NULL,
 	[contactEmail] [varchar](100) NULL,
 	[allowPublicRegistration] [bit] NOT NULL,
-	[logoSmall] [varchar](max) NULL,
-	[logo] [varchar](max) NULL,
+	[logoSmall] [varbinary](max) NULL,
+	[logo] [varbinary](max) NULL,
 );
 
 /*
