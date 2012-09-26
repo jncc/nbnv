@@ -10,7 +10,7 @@ trait GridSquareInfo {
   def gridReference : String
   def gridReferencePrecision : Int
   def wgs84Polygon : String
-  def sourcePolygon : String
+  def sourceProjectionPolygon : String
   def getParentGridRef : Option[GridSquareInfo]
   def getLowerPrecisionGridRef(precision: Int) : GridSquareInfo
 
@@ -48,6 +48,19 @@ trait GridSquareInfo {
     else {
       throw new ImportFailedException("Bad precision entry > 10000 : %s".format(precision))
     }
+  }
+
+  protected def getPolygonFromGridPoint(easting: Int, northing: Int, gridSize: Int) = {
+    val bl = (easting, northing)
+    val br = (easting + gridSize, northing)
+    val tl = (easting, northing + gridSize)
+    val tr = (easting + gridSize, northing + gridSize)
+
+    "POLYGON((" + bl._1 + " " + bl._2 + ", " +
+      tl._1 + " " + tl._2 + ", " +
+      tr._1 + " " + tr._2 + ", " +
+      br._1 + " " + br._2 + ", " +
+      bl._1 + " " + bl._2 + "))"
   }
 
   protected def getWGS84PolygonFromGridPoint(easting: Int, northing: Int, gridSize: Int, epsgCode: String) = {

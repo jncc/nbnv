@@ -51,7 +51,7 @@ class IrishGridSquareInfo(gridRef: String, precision: Int = 0) extends GridSquar
   def getLowerPrecisionGridRef(precision: Int) = new IrishGridSquareInfo(outputGridRef, precision)
 
   //todo: implement source polygon
-  def sourcePolygon = null
+  def sourceProjectionPolygon = null
 
   def wgs84Polygon = {
     val gridRef = getTenFigGridRef(outputGridRef)

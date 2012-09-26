@@ -117,25 +117,25 @@ class BritishGridSquareInfoSuite extends BaseFunSuite {
     bgr.gridReference should be (knownGridRef_10000m)
   }
 
-  test("should give WKT for 100m grid square") {
+  test("should give WKT for 100m grid square in WGS84") {
     val bgr = new BritishGridSquareInfo(knownGridRef_100m)
 
     bgr.wgs84Polygon matches (TestResources.polygonWKTRegex)
   }
 
-  test("should give WKT for 1000m grid square") {
+  test("should give WKT for 1000m grid square in WGS84") {
     val bgr = new BritishGridSquareInfo(knownGridRef_1000m)
 
     bgr.wgs84Polygon matches (TestResources.polygonWKTRegex)
   }
 
-  test("should give WKT for 2000m grid square") {
+  test("should give WKT for 2000m grid square in WGS84") {
     val bgr = new BritishGridSquareInfo(knownGridRef_2000m)
 
     bgr.wgs84Polygon matches (TestResources.polygonWKTRegex)
   }
 
-  test("should give WKT for 10000m grid square") {
+  test("should give WKT for 10000m grid square in WGS84") {
     val bgr = new BritishGridSquareInfo(knownGridRef_10000m)
 
     bgr.wgs84Polygon matches (TestResources.polygonWKTRegex)
@@ -191,5 +191,29 @@ class BritishGridSquareInfoSuite extends BaseFunSuite {
     lowerBgr should not be (null)
     lowerBgr.gridReference should be (knownGridRef_2000m)
     lowerBgr.gridReferencePrecision should be (2000)
+  }
+
+  test("should give WKT for 100m grid square") {
+    val bgr = new BritishGridSquareInfo(knownGridRef_100m)
+
+    bgr.sourceProjectionPolygon matches (TestResources.polygonWKTRegex)
+  }
+
+  test("should give WKT for 1000m grid square") {
+    val bgr = new BritishGridSquareInfo(knownGridRef_1000m)
+
+    bgr.sourceProjectionPolygon matches (TestResources.polygonWKTRegex)
+  }
+
+  test("should give WKT for 2000m grid square") {
+    val bgr = new BritishGridSquareInfo(knownGridRef_2000m)
+
+    bgr.sourceProjectionPolygon matches (TestResources.polygonWKTRegex)
+  }
+
+  test("should give WKT for 10000m grid square") {
+    val bgr = new BritishGridSquareInfo(knownGridRef_10000m)
+
+    bgr.sourceProjectionPolygon matches (TestResources.polygonWKTRegex)
   }
 }

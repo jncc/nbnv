@@ -44,8 +44,15 @@ class BritishGridSquareInfo(gridRef : String, precision: Int = 0) extends GridSq
 
   def getLowerPrecisionGridRef(precision: Int) = new BritishGridSquareInfo(outputGridRef, precision)
 
-  //todo: implement soucePolygon
-  def sourcePolygon = null
+  def sourceProjectionPolygon = {
+    val gridSize = gridReferencePrecision
+
+    val paddedGridRef = getSixFigGridRef(outputGridRef)
+
+    val gridRef = new OSRef(paddedGridRef)
+
+    getPolygonFromGridPoint(gridRef.getEasting.toInt, gridRef.getNorthing.toInt, gridSize)
+  }
 
   def wgs84Polygon = {
     val gridSize = gridReferencePrecision
