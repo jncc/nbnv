@@ -97,7 +97,7 @@ GO
  */
 
 CREATE TABLE [dbo].[Organisation](
-	[id] [int] IDENTITY(0,1) NOT NULL PRIMARY KEY,
+	[id] [int] IDENTITY(1,1) NOT NULL PRIMARY KEY,
 	[name] [varchar](200) NOT NULL UNIQUE,
 	[abbreviation] [varchar](10) NULL UNIQUE,
 	[summary] [varchar](max) NULL,
@@ -124,14 +124,14 @@ CREATE TABLE [dbo].[UserType](
 );
 
 INSERT INTO [UserType] VALUES 
-(0, 'public'),
-(1, 'user'),
-(2, 'admin');
+(1, 'public'),
+(2, 'user'),
+(3, 'admin');
 
 ------------------------------
 
 CREATE TABLE [dbo].[User](
-	[id] [int] IDENTITY(0,1) NOT NULL PRIMARY KEY,
+	[id] [int] IDENTITY(1,1) NOT NULL PRIMARY KEY,
 	[username] [varchar](40) NOT NULL UNIQUE,
 	[password_sha1] [varbinary](8000) NOT NULL,
 	[password_md5_sha1] [varbinary](8000) NOT NULL,
@@ -153,7 +153,7 @@ CREATE TABLE [dbo].[User](
 );
 
 INSERT INTO [User] (englishNameOrder, lastLoggedIn, forename, surname, username, email, registrationDate, phone, allowEmailAlerts, invalidEmail, active, activationKey, subscribedToNBNMarketting, bannedFromValidation, subscribedToAdminMails, password_sha1, password_md5_sha1, userTypeID) VALUES
-(0, NULL, '', '', 'public', 'public@data.nbn.org.uk', CURRENT_TIMESTAMP, NULL, 1, 0, 0, '000000000000', 0, 1, 1, 0x00000000, 0x00000000, 0);
+(0, NULL, '', '', 'public', 'public@data.nbn.org.uk', CURRENT_TIMESTAMP, NULL, 1, 0, 0, '000000000000', 0, 1, 1, 0x00000000, 0x00000000, 1);
 
 ------------------------------
 
@@ -163,9 +163,9 @@ CREATE TABLE [dbo].[UserOrganisationRole](
 );
 
 INSERT INTO [UserOrganisationRole] VALUES
-(0, 'member'),
-(1, 'administrator'),
-(2, 'lead');
+(1, 'member'),
+(2, 'administrator'),
+(3, 'lead');
 
 ------------------------------
 
@@ -256,7 +256,7 @@ CREATE TABLE [dbo].[DatasetAdministrator](
  */
 
 CREATE TABLE [dbo].[Feature](
-	[id] [int] IDENTITY(0,1) NOT NULL PRIMARY KEY,
+	[id] [int] IDENTITY(1,1) NOT NULL PRIMARY KEY,
 	[geom] [geometry] NOT NULL,
 );
 
@@ -414,10 +414,10 @@ CREATE TABLE [dbo].[Projection](
 );
 
 INSERT INTO [dbo].[Projection] VALUES
-(0, 4326, 'WGS84'),
 (1, 27700, 'OSGB36'),
 (2, 29903, 'OSNI'),
-(3, 23030, 'ED50');
+(3, 23030, 'ED50'),
+(4, 4326, 'WGS84');
 
 ------------------------------
 
@@ -650,7 +650,7 @@ CREATE TABLE [dbo].[Taxon](
  */
 
 CREATE TABLE [dbo].[DesignationCategory](
-	[id] [int] IDENTITY(0,1) NOT NULL PRIMARY KEY,
+	[id] [int] IDENTITY(1,1) NOT NULL PRIMARY KEY,
 	[label] [varchar](50) NOT NULL UNIQUE,
 	[description] [varchar](max) NULL,
 	[sortOrder] [int] NOT NULL,
@@ -659,7 +659,7 @@ CREATE TABLE [dbo].[DesignationCategory](
 ------------------------------
 
 CREATE TABLE [dbo].[Designation](
-	[id] [int] IDENTITY(0,1) NOT NULL PRIMARY KEY,
+	[id] [int] IDENTITY(1,1) NOT NULL PRIMARY KEY,
 	[name] [varchar](8000) NOT NULL,
 	[label] [varchar](50) NOT NULL UNIQUE,
 	[code] [varchar](100) NOT NULL UNIQUE,
@@ -696,7 +696,7 @@ CREATE TABLE [dbo].[TaxonDataset](
 ------------------------------
 
 CREATE TABLE [dbo].[Survey](
-	[id] [int] IDENTITY(0,1) NOT NULL PRIMARY KEY,
+	[id] [int] IDENTITY(1,1) NOT NULL PRIMARY KEY,
 	[datasetKey] [char](8) NOT NULL REFERENCES [TaxonDataset] ([datasetKey]),
 	[providerKey] [varchar](100) NULL,
 	[title] [varchar](200) NULL,
@@ -708,7 +708,7 @@ CREATE TABLE [dbo].[Survey](
 ------------------------------
 
 CREATE TABLE [dbo].[Sample](
-	[id] [int] IDENTITY(0,1) NOT NULL PRIMARY KEY,
+	[id] [int] IDENTITY(1,1) NOT NULL PRIMARY KEY,
 	[surveyID] [int] NOT NULL REFERENCES [Survey] ([id]),
 	[providerKey] [varchar](100) NULL,
 	[title] [varchar](200) NULL,
@@ -750,14 +750,14 @@ INSERT INTO [dbo].[DateType] VALUES
 ------------------------------
 
 CREATE TABLE [dbo].[Recorder](
-	[id] [int] IDENTITY(0,1) NOT NULL PRIMARY KEY,
+	[id] [int] IDENTITY(1,1) NOT NULL PRIMARY KEY,
 	[name] [varchar](140) NOT NULL,
 );
 
 ------------------------------
 
 CREATE TABLE [dbo].[Site](
-	[id] [int] IDENTITY(0,1) NOT NULL PRIMARY KEY,
+	[id] [int] IDENTITY(1,1) NOT NULL PRIMARY KEY,
 	[datasetKey] [char](8) NOT NULL REFERENCES [Dataset] ([key]),
 	[name] [varchar](200) NOT NULL,
 	[providerKey] [varchar](100) NULL,
@@ -777,7 +777,7 @@ SET ANSI_PADDING ON;
 ------------------------------
 
 CREATE TABLE [dbo].[TaxonObservation](
-	[id] [int] IDENTITY(0,1) NOT NULL PRIMARY KEY,
+	[id] [int] IDENTITY(1,1) NOT NULL PRIMARY KEY,
 	[sampleID] [int] NOT NULL REFERENCES [Sample] ([id]),
 	[providerKey] [varchar](100) NOT NULL,
 	[taxonVersionKey] [char](16) NOT NULL REFERENCES [Taxon] ([taxonVersionKey]),
@@ -873,14 +873,14 @@ CREATE TABLE [dbo].[AttributeStorageType](
 );
 
 INSERT INTO [dbo].[AttributeStorageType] VALUES
-(0, 'decimal'),
-(1, 'enumeration'),
-(2, 'free text');
+(1, 'decimal'),
+(2, 'enumeration'),
+(3, 'free text');
 
 ------------------------------
 
 CREATE TABLE [dbo].[GatewayAttribute](
-	[id] [int] IDENTITY(0,1) NOT NULL PRIMARY KEY,
+	[id] [int] IDENTITY(1,1) NOT NULL PRIMARY KEY,
 	[label] [varchar](50) NOT NULL UNIQUE,
 	[description] [varchar](max) NOT NULL,
 	[storageTypeID] [int] NOT NULL REFERENCES AttributeStorageType ([id]),
@@ -900,7 +900,7 @@ CREATE TABLE [dbo].[GatewayAttributeEnumeration](
 ------------------------------
 
 CREATE TABLE [dbo].[Attribute](
-	[id] [int] IDENTITY(0,1) NOT NULL PRIMARY KEY,
+	[id] [int] IDENTITY(1,1) NOT NULL PRIMARY KEY,
 	[label] [varchar](50) NOT NULL,
 	[description] [varchar](max) NOT NULL,
 	[storageLevelID] [int] NOT NULL REFERENCES [AttributeStorageLevel] ([id]),
@@ -993,7 +993,7 @@ CREATE TABLE [dbo].[TaxonObservationAttribute](
 
 
 CREATE TABLE [dbo].[TaxonObservationFilter](
-	[id] [int] IDENTITY(0,1) PRIMARY KEY NOT NULL,
+	[id] [int] IDENTITY(1,1) PRIMARY KEY NOT NULL,
 	[filterJSON] [varchar](max) NOT NULL,
 	[filterText] [varchar](max) NOT NULL
 );
@@ -1006,16 +1006,16 @@ CREATE TABLE [dbo].[TaxonObservationFilterElementType](
 );
 
 INSERT INTO [TaxonObservationFilterElementType] VALUES
-(0, 'Dataset'),
-(1, 'Taxon'),
-(2, 'Sensitive'),
-(3, 'Site Boundary'),
-(4, 'Date');
+(1, 'Dataset'),
+(2, 'Taxon'),
+(3, 'Sensitive'),
+(4, 'Site Boundary'),
+(5, 'Date');
 
 ---------------------------
 
 CREATE TABLE [dbo].[TaxonObservationFilterElement](
-	[id] [int] IDENTITY(0,1) NOT NULL PRIMARY KEY,
+	[id] [int] IDENTITY(1,1) NOT NULL PRIMARY KEY,
 	[filterID] [int] NOT NULL REFERENCES [TaxonObservationFilter] ([id]),
 	[filterElementTypeID] [int] NOT NULL REFERENCES [TaxonObservationFilterElementType] ([id]),
 	[filterDatasetKey] [char](8) NULL REFERENCES [TaxonDataset] ([datasetKey]),
@@ -1090,14 +1090,14 @@ CREATE TABLE [dbo].[TaxonObservationDownloadPurpose](
 );
 
 INSERT INTO [dbo].[TaxonObservationDownloadPurpose] VALUES 
-(0, 'Private use'),
 (1, 'Education purposes'),
 (2, 'Research'),
 (3, 'Media'),
 (4, 'Conservation NGO work'),
 (5, 'Commercial and consultancy work'),
 (6, 'Statutory work'),
-(7, 'Data provision and interpretation services');
+(7, 'Data provision and interpretation services'),
+(8, 'Private use');
 
 -------------------------------
 
@@ -1119,6 +1119,32 @@ CREATE TABLE [dbo].[TaxonObservationDownloadStatistics](
 	[recordCount] [int] NOT NULL,
 	PRIMARY KEY ([filterID] ASC, [datasetKey] ASC)
 );
+
+/*
+ *
+ * Utility Stored Procedures
+ *
+ */
+
+SET ANSI_NULLS ON;
+SET QUOTED_IDENTIFIER ON;
+
+GO
+
+CREATE PROCEDURE [dbo].[usp_test_DatasetsMissingSubtypeEntry]
+AS
+BEGIN
+	SELECT d.[key], 'Taxon' AS datasetType FROM Dataset d
+	WHERE d.datasetTypeKey = 'T' AND d.[key] NOT IN (SELECT td.datasetKey FROM TaxonDataset td)
+	UNION ALL
+	SELECT d.[key], 'Habitat' AS datasetType FROM Dataset d
+	WHERE d.datasetTypeKey = 'H' AND d.[key] NOT IN (SELECT td.datasetKey FROM HabitatDataset td)
+	UNION ALL
+	SELECT d.[key], 'SiteBoundary' AS datasetType FROM Dataset d
+	WHERE d.datasetTypeKey = 'A' AND d.[key] NOT IN (SELECT td.datasetKey FROM SiteBoundaryDataset td)
+END
+
+GO
 
 /*
  *
@@ -1281,23 +1307,3 @@ END
 
 GO
 
-/*
- *
- * Utility Stored Procedures
- *
- */
-
-CREATE PROCEDURE [dbo].[usp_test_DatasetsMissingSubtypeEntry]
-AS
-BEGIN
-	SELECT d.[key], 'Taxon' AS datasetType FROM Dataset d
-	WHERE d.datasetTypeKey = 'T' AND d.[key] NOT IN (SELECT td.datasetKey FROM TaxonDataset td)
-	UNION ALL
-	SELECT d.[key], 'Habitat' AS datasetType FROM Dataset d
-	WHERE d.datasetTypeKey = 'H' AND d.[key] NOT IN (SELECT td.datasetKey FROM HabitatDataset td)
-	UNION ALL
-	SELECT d.[key], 'SiteBoundary' AS datasetType FROM Dataset d
-	WHERE d.datasetTypeKey = 'A' AND d.[key] NOT IN (SELECT td.datasetKey FROM SiteBoundaryDataset td)
-END
-
-GO
