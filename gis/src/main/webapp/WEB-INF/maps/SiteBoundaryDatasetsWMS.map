@@ -31,7 +31,13 @@ MAP
             CONNECTION                                          "${properties.spatialConnection}"
             PROCESSING                                          "CLOSE_CONNECTION=DEFER"
 
-            DATA                                                "geom from (SELECT geom, sbfd.featureID FROM SiteBoundaryFeatureData sbfd INNER JOIN SiteBoundaryData sbd ON sbd.featureID = sbfd.featureID WHERE siteBoundaryDatasetKey = '${dataset.datasetKey}') AS foo USING UNIQUE featureID USING SRID=4326"
+            DATA                        "geom from (
+                                            SELECT geom, sbfd.featureID 
+                                            FROM SiteBoundaryFeatureData AS sbfd 
+                                                WITH(INDEX(sidx_SiteBoundaryFeatureData_geom)) 
+                                            INNER JOIN SiteBoundaryData sbd ON sbd.featureID = sbfd.featureID 
+                                            WHERE siteBoundaryDatasetKey = '${dataset.datasetKey}'
+                                        ) AS foo USING UNIQUE featureID USING SRID=4326"
 
             PROJECTION
                 "init=epsg:4326"
