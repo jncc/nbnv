@@ -52,36 +52,10 @@ class BritishGridSquareInfo(gridRef : String, precision: Int = 0) extends GridSq
 
     val paddedGridRef = getSixFigGridRef(outputGridRef)
     //bottom left co-ordinate
-    val blRef = new OSRef(paddedGridRef)
-    //bottom Right coordiante
-    val brRef = new OSRef(blRef.getEasting + gridSize, blRef.getNorthing)
-    //top left coordiante
-    val tlRef = new OSRef(blRef.getEasting, blRef.getNorthing + gridSize)
-    //top right coordinate
-    val trRef = new OSRef(blRef.getEasting + gridSize, blRef.getNorthing + gridSize)
+    val gridRef = new OSRef(paddedGridRef)
 
-    //Get lat long in OSGB36
-    //bottom left coordinate
-    val bl = blRef.toLatLng
-    //bottom right coordinate
-    val br = brRef.toLatLng
-    //top left coordinate
-    val tl = tlRef.toLatLng
-    //top right coordinate
-    val tr = trRef.toLatLng
+    getWGS84PolygonFromGridPoint(gridRef.getEasting.toInt, gridRef.getNorthing.toInt, gridSize, "27700")
 
-    //Reproject to WGS84
-    bl.toWGS84
-    br.toWGS84
-    tl.toWGS84
-    tr.toWGS84
-
-    //Compose and return WKT
-    "POLYGON((" + bl.getLongitude + " " + bl.getLatitude + ", " +
-      tl.getLongitude + " " + tl.getLatitude + ", " +
-      tr.getLongitude + " " + tr.getLatitude + ", " +
-      br.getLongitude + " " + br.getLatitude + ", " +
-      bl.getLongitude + " " + bl.getLatitude + "))"
   }
 
   def getParentGridRef: Option[BritishGridSquareInfo] = {
