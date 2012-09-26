@@ -18,7 +18,7 @@ class BritishGridSquareInfo(gridRef : String, precision: Int = 0) extends GridSq
   if (currentPrecision > 10000) throw new IllegalArgumentException("Grid reference precision must be 10Km or higher")
 
   //Normalise the precision to one of the allowable values
-  val normalisedPrecision = if (precision != 0) normalisePrecision(precision) else 0
+  val normalisedPrecision = if (precision != 0) getNormalisedPrecision(precision) else 0
 
   val outputGridRef = {
 
@@ -42,18 +42,13 @@ class BritishGridSquareInfo(gridRef : String, precision: Int = 0) extends GridSq
 
   def gridReferencePrecision = getPrecision(outputGridRef)
 
+  def getLowerPrecisionGridRef(precision: Int) = new BritishGridSquareInfo(outputGridRef, precision)
+
   //todo: implement soucePolygon
   def sourcePolygon = null
 
   def wgs84Polygon = {
-    val gridSize =
-      if (outputGridRef.matches(GridRefPatterns.ukDintyGridRef)) {
-        2000
-      }
-      else {
-        //apart from DINTY each grid is divided into 10 subdivisions
-        gridReferencePrecision * 10
-      }
+    val gridSize = gridReferencePrecision
 
     val paddedGridRef = getSixFigGridRef(outputGridRef)
     //bottom left co-ordinate

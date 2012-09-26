@@ -2,10 +2,12 @@ package uk.gov.nbn.data.gis.maps;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Properties;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import uk.gov.nbn.data.gis.processor.MapObject;
+import uk.gov.nbn.data.gis.processor.MapFileModel;
 import uk.gov.nbn.data.gis.processor.MapService;
+import uk.gov.nbn.data.gis.processor.MapContainer;
 import uk.gov.nbn.data.gis.providers.annotations.PathParam;
 import uk.gov.nbn.data.gis.providers.annotations.QueryParam;
 import uk.org.nbn.nbnv.api.model.User;
@@ -21,7 +23,7 @@ import uk.org.nbn.nbnv.api.model.User;
  * @author Christopher Johnson
  */
 @Component
-@MapService("SingleSpecies")
+@MapContainer("SingleSpecies")
 public class SingleSpeciesWMS {
     private static final String QUERY = "geom from ("
             + "SELECT f.geom, o.observationID, f.label "
@@ -36,8 +38,10 @@ public class SingleSpeciesWMS {
             + "%s " //place for end year filter
         + ") AS foo USING UNIQUE observationID USING SRID=4326";
     
-    @MapObject(path="{taxonVersionKey}", map="SingleSpeciesWMS.map")
-    public Map<String, Object> getSingleSpeciesModel(
+    @Autowired Properties properties;
+    
+    @MapService("{taxonVersionKey}")
+    public MapFileModel getSingleSpeciesModel(
             final User user,
             @PathParam(key="taxonVersionKey", validation="^[A-Z]{6}[0-9]{10}$") final String key,
             @QueryParam(key="datasets", validation="^[A-Z0-9]{8}$") final List<String> datasetKeys,
@@ -47,6 +51,7 @@ public class SingleSpeciesWMS {
         
         
         HashMap<String, Object> data = new HashMap<String, Object>();
+        data.put("properties", properties);
         data.put("layerGenerator", new ResolutionDataGenerator() {
                 @Override
                 public String getData(int resolution) {
@@ -56,6 +61,6 @@ public class SingleSpeciesWMS {
                         MapHelper.createEndYearSegment(endYear));
                 }
         });
-        return data;
+        return new MapFileModel("SingleSpeciesWMS.map",data);
     }
 }

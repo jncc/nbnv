@@ -2,7 +2,9 @@ package uk.org.nbn.nbnv.importer.spatial
 
 import math._
 import uk.org.nbn.nbnv.importer.ImportFailedException
-import org.geotools.referencing.CRS
+import org.geotools.referencing.{ReferencingFactoryFinder, CRS}
+import org.geotools.referencing.operation.DefaultCoordinateOperationFactory
+import org.geotools.geometry.GeneralDirectPosition
 
 
 class ChannelIslandGridSquareInfo(gridRef: String, precision: Int = 0) extends GridSquareInfo {
@@ -18,7 +20,7 @@ class ChannelIslandGridSquareInfo(gridRef: String, precision: Int = 0) extends G
   if (currentPrecision > 10000) throw new IllegalArgumentException("Grid reference precision must be 10Km or higher")
 
   //Normalise the precision to one of the allowable values
-  val normalisedPrecision = if (precision != 0) normalisePrecision(precision) else 0
+  val normalisedPrecision = if (precision != 0) getNormalisedPrecision(precision) else 0
 
   val outputGridRef = {
 
@@ -42,24 +44,39 @@ class ChannelIslandGridSquareInfo(gridRef: String, precision: Int = 0) extends G
 
   def gridReferencePrecision = getPrecision(outputGridRef)
 
+  def getLowerPrecisionGridRef(precision: Int) = new ChannelIslandGridSquareInfo(outputGridRef, precision)
+
   //todo: Implement source polygon
   def sourcePolygon = null
 
-  //todo: Implement wgs84Polygon
   def wgs84Polygon = {
-    val eastingNorthing = getEastingNorthing(outputGridRef)
 
-    val ed50crs = CRS.decode("EPSG:23030") //ED50
-    val wgs84crs = CRS.decode("EPSG:4326") //WGS84
+    val gridSize = gridReferencePrecision
 
+    //compute the coordinates of the four corners of the grid square
+    val (easting, northing) = getEastingNorthing(outputGridRef)
+    val blGdp = new GeneralDirectPosition(easting, northing)
+    val brGdp = new GeneralDirectPosition(easting + gridSize, northing)
+    val tlGdp = new GeneralDirectPosition(easting, northing + gridSize)
+    val trGdp = new GeneralDirectPosition(easting + gridSize, northing + gridSize)
 
-    //something like this
+    //Get the ED50 to WGS84 transformation operation
+    val crsFac = ReferencingFactoryFinder.getCRSAuthorityFactory("EPSG",null)
+    val wgs84crs = crsFac.createCoordinateReferenceSystem("4326")
+    val ed50crs = crsFac.createCoordinateReferenceSystem("23030")
+    val transformer = new DefaultCoordinateOperationFactory().createOperation(ed50crs, wgs84crs).getMathTransform
 
+    //Get the coordinates in WGS84 lat lng
+    val bl = transformer.transform(blGdp, blGdp).getCoordinates
+    val br = transformer.transform(brGdp, brGdp).getCoordinates
+    val tl = transformer.transform(tlGdp, tlGdp).getCoordinates
+    val tr = transformer.transform(trGdp, trGdp).getCoordinates
 
-
-
-    //todo : Get rid of this null return
-    null
+    "POLYGON((" + bl(0) + " " + bl(1) + ", " +
+      tl(0) + " " + tl(1) + ", " +
+      tr(0) + " " + tr(1) + ", " +
+      br(0) + " " + br(1) + ", " +
+      bl(0) + " " + bl(1) + "))"
   }
 
   //WV 59500  47500

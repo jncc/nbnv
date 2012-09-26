@@ -6,12 +6,13 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * The following annotation can be applied to classes which can then be scanned
- * and registered as services which provide maps
+ * A method annotation which registers a map service to a given path
  * @author Christopher Johnson
  */
-@Target({ ElementType.TYPE })
+@Target({ ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface MapService {
-    String value(); //The path to register this map service to
+    String value() default "";  //The path from the MapService to register this 
+                                //method to. Default is to register to the 
+                                //map services path
 }

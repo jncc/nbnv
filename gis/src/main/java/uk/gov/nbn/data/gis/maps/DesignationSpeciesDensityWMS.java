@@ -3,9 +3,12 @@ package uk.gov.nbn.data.gis.maps;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import uk.gov.nbn.data.gis.processor.MapObject;
+import uk.gov.nbn.data.gis.processor.MapFileModel;
 import uk.gov.nbn.data.gis.processor.MapService;
+import uk.gov.nbn.data.gis.processor.MapContainer;
 import uk.gov.nbn.data.gis.providers.annotations.PathParam;
 import uk.gov.nbn.data.gis.providers.annotations.QueryParam;
 import uk.org.nbn.nbnv.api.model.User;
@@ -21,7 +24,7 @@ import uk.org.nbn.nbnv.api.model.User;
  * @author Christopher Johnson
  */
 @Component
-@MapService("DesignationSpeciesDensity")
+@MapContainer("DesignationSpeciesDensity")
 public class DesignationSpeciesDensityWMS {
     private static final String QUERY = "geom from ("
             + "SELECT geom, species, label "
@@ -42,9 +45,10 @@ public class DesignationSpeciesDensityWMS {
             + "WHERE resolutionID = %d "
         + ") AS foo USING UNIQUE label USING SRID=4326";
     
- 
-    @MapObject(path = "{designationKey}", map = "DesignationSpeciesDensityWMS.map")
-    public Map<String, Object> getDesignationMapModel(
+    @Autowired Properties properties;
+     
+    @MapService("{designationKey}")
+    public MapFileModel getDesignationMapModel(
             final User user,
             @QueryParam(key="datasets", validation="^[A-Z0-9]{8}$") final List<String> datasetKeys,
             @QueryParam(key="startyear", validation="[0-9]{4}") final String startYear,
@@ -52,6 +56,7 @@ public class DesignationSpeciesDensityWMS {
             @PathParam(key="designationKey", validation="^[A-Z0-9.()/_\\-]+$") final String key) {
         
         HashMap<String, Object> data = new HashMap<String, Object>();
+        data.put("properties", properties);
         data.put("layerGenerator", new ResolutionDataGenerator() {
                 @Override
                 public String getData(int resolution) {
@@ -62,6 +67,6 @@ public class DesignationSpeciesDensityWMS {
                         resolution);
                 }
         });
-        return data;
+        return new MapFileModel("DesignationSpeciesDensityWMS.map", data);
     }
 }

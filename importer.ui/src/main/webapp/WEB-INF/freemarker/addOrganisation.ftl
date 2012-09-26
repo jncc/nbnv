@@ -82,6 +82,20 @@
                 </p>
 
                 <p>
+                    <@spring.formHiddenInput "model.metadataForm.metadata.title" "length='5000'"/>
+                    <@spring.formHiddenInput "model.metadataForm.metadata.description" "length='5000'"/>
+                    <@spring.formHiddenInput "model.metadataForm.metadata.methods" "length='5000'"/>
+                    <@spring.formHiddenInput "model.metadataForm.metadata.purpose" "length='5000'"/>
+                    <@spring.formHiddenInput "model.metadataForm.metadata.geographic" "length='5000'"/>
+                    <@spring.formHiddenInput "model.metadataForm.metadata.temporal" "length='5000'"/>
+                    <@spring.formHiddenInput "model.metadataForm.metadata.quality" "length='5000'"/>
+                    <@spring.formHiddenInput "model.metadataForm.metadata.info" "length='5000'"/>
+                    <@spring.formHiddenInput "model.metadataForm.metadata.access" "length='5000'"/>
+                    <@spring.formHiddenInput "model.metadataForm.metadata.use" "length='5000'"/>
+                    <@spring.formHiddenInput "model.metadataForm.metadata.organisationID" "length='100'"/>
+                </p>
+
+                <p>
                     <input type="submit" name="submit" value="Submit" />
                 </p>
             </fieldset>

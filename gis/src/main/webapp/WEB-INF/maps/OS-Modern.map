@@ -24,7 +24,7 @@ MAP
       "wms_title"     "OS-Modern"  ##required
       "wms_onlineresource" "http://nbnweb-2.nerc-lancaster.ac.uk/mapserver/OS-Modern?"   ##required
       "wms_srs"       "EPSG:27700"  ##recommended
-      "wms_enable_request" "*"   ##necessary
+      "wms_enable_request" "GetMap"   ##necessary
     END
   END
 

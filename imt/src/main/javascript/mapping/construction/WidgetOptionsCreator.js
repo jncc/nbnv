@@ -23,7 +23,7 @@ nbn.mapping.construction.WidgetOptionsCreator = function(interactiveMapper){
 	};
 	
     var _createZoomFilters = function() {
-		return [_createNamedFilter('10km', '10km'),_createNamedFilter('2km', '2km'),_createNamedFilter('1km', '1km'),_createNamedFilter('100m', '100m'),{
+		return [_createNamedFilter('10km', 'Grid-10km'),_createNamedFilter('2km', 'Grid-2km'),_createNamedFilter('1km', 'Grid-1km'),_createNamedFilter('100m', 'Grid-100m'),{
                 name: 'Default',
                 filter: function() {
                     var zoomFilter = new nbn.layer.SwitchableArcGisMapFilter(true);
@@ -32,13 +32,13 @@ nbn.mapping.construction.WidgetOptionsCreator = function(interactiveMapper){
                     var oneKAppear = 10;
                     var twoKAppear = 8;
                     if((zoom >= twoKAppear ) && (zoom < oneKAppear))
-                        return {visibleLayers: ['2km']}
+                        return {visibleLayers: ['Grid-2km']}
                     else if((zoom >= oneKAppear) && (zoom < hundredMAppear))
-                        return {visibleLayers: ['1km']}
+                        return {visibleLayers: ['Grid-1km']}
                     else if(zoom >= hundredMAppear)
-                        return {visibleLayers: ['100m']}
+                        return {visibleLayers: ['Grid-100m']}
                     else
-                        return {visibleLayers: ['10km']}
+                        return {visibleLayers: ['Grid-10km']}
                     });
                     return zoomFilter;
                 }()

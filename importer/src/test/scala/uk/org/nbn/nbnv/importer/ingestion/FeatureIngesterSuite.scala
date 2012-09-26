@@ -46,7 +46,7 @@ class FeatureIngesterSuite extends BaseFunSuite {
     result should be (feature)
   }
 
-  test("a new grid square feature that should have a parent should create a grid square hierarchy") {
+  test("a new grid square feature that should have a parent should persist a grid square hierarchy") {
 
     // arrange
     val f = fixture
@@ -69,5 +69,21 @@ class FeatureIngesterSuite extends BaseFunSuite {
     val persistedGridSquares = em.buffer collect { case gs: GridSquare => gs.getGridRef }
     persistedGridSquares should equal (List("GRANDPARENT", "PARENT", "ABCDEF"))
   }
+
+  test("a new grid square feature that shouldn't have a parent shouldn't persist a grid square hierarchy") {
+
+    // arrange
+    val f = fixture
+    when(f.repo.getGridSquareFeature(anyString)).thenReturn(None)
+    when(f.gridSquareInfo.getParentGridRef).thenReturn(None)
+
+    // act
+    val ingester = new FeatureIngester(f.em, f.repo, f.gridSquareInfoFactory)
+    ingester.ensureFeature(f.record)
+
+    // assert - that exactly one GridSquare should be persisted
+    verify(f.em, times(1)).persist(isA(classOf[GridSquare]))
+  }
+
 }
 
