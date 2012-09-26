@@ -117,12 +117,29 @@ class BritishGridSquareInfoSuite extends BaseFunSuite {
     bgr.gridReference should be (knownGridRef_10000m)
   }
 
-  //todo: test outputs for all other grid resolutions
-//  test("should give WKT for 100m grid square") {
-//    val bgr = new BritishGridSquareInfo(knownGridRef_100m)
-//
-//    bgr.wgs84Polygon isInstanceOf[String]
-//  }
+  test("should give WKT for 100m grid square") {
+    val bgr = new BritishGridSquareInfo(knownGridRef_100m)
+
+    bgr.wgs84Polygon matches (TestResources.polygonWKTRegex)
+  }
+
+  test("should give WKT for 1000m grid square") {
+    val bgr = new BritishGridSquareInfo(knownGridRef_1000m)
+
+    bgr.wgs84Polygon matches (TestResources.polygonWKTRegex)
+  }
+
+  test("should give WKT for 2000m grid square") {
+    val bgr = new BritishGridSquareInfo(knownGridRef_2000m)
+
+    bgr.wgs84Polygon matches (TestResources.polygonWKTRegex)
+  }
+
+  test("should give WKT for 10000m grid square") {
+    val bgr = new BritishGridSquareInfo(knownGridRef_10000m)
+
+    bgr.wgs84Polygon matches (TestResources.polygonWKTRegex)
+  }
 
   test("should give 1000m grid square as parent of 100m") {
     val bgr = new BritishGridSquareInfo(knownGridRef_100m)

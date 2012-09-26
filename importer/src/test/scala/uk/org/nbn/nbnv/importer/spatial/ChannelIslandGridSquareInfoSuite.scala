@@ -158,5 +158,31 @@ class ChannelIslandGridSquareInfoSuite extends BaseFunSuite {
     cigr.getParentGridRef should be (None)
   }
 
-  //todo: test wsg84polygon output
+  test("should give WKT for 100m grid square") {
+    val cigr = new ChannelIslandGridSquareInfo(knownGridRef_100m)
+
+    println(cigr.wgs84Polygon)
+    cigr.wgs84Polygon matches (TestResources.polygonWKTRegex)
+  }
+
+  test("should give WKT for 1000m grid square") {
+    val cigr = new ChannelIslandGridSquareInfo(knownGridRef_1000m)
+
+    println(cigr.wgs84Polygon)
+    cigr.wgs84Polygon matches (TestResources.polygonWKTRegex)
+  }
+
+  test("should give WKT for 2000m grid square") {
+    val cigr = new ChannelIslandGridSquareInfo(knownGridRef_2000m)
+
+    println(cigr.wgs84Polygon)
+    cigr.wgs84Polygon matches (TestResources.polygonWKTRegex)
+  }
+
+  test("should give WKT for 10000m grid square") {
+    val cigr = new ChannelIslandGridSquareInfo(knownGridRef_10000m)
+
+    println(cigr.wgs84Polygon)
+    cigr.wgs84Polygon matches (TestResources.polygonWKTRegex)
+  }
 }
