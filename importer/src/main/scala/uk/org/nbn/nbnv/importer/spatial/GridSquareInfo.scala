@@ -9,6 +9,7 @@ trait GridSquareInfo {
   def wgs84Polygon : String
   def sourcePolygon : String
   def getParentGridRef : Option[GridSquareInfo]
+  def getLowerPrecisionGridRef(precision: Int) : GridSquareInfo
 
   protected val dintyGridByCoord = Map (
     (0,8) -> "E", (2,8) -> "J", (4,8) -> "P", (6,8) -> "U", (8,8) -> "Z",
@@ -28,7 +29,7 @@ trait GridSquareInfo {
   }
 
 
-  protected def normalisePrecision(precision : Int) = {
+  protected def getNormalisedPrecision(precision : Int) = {
     if (precision <= 100) {
       100
     }

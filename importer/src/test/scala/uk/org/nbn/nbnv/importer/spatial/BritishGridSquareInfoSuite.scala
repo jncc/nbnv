@@ -182,4 +182,14 @@ class BritishGridSquareInfoSuite extends BaseFunSuite {
 
     bgr.getParentGridRef should be (None)
   }
+
+  test("should give 100m grid ref at 2000m") {
+    val bgr = new BritishGridSquareInfo(knownGridRef_100m)
+
+    val lowerBgr = bgr.getLowerPrecisionGridRef(2000)
+
+    lowerBgr should not be (null)
+    lowerBgr.gridReference should be (knownGridRef_2000m)
+    lowerBgr.gridReferencePrecision should be (2000)
+  }
 }

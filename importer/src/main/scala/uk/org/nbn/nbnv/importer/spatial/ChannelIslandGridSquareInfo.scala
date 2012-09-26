@@ -20,7 +20,7 @@ class ChannelIslandGridSquareInfo(gridRef: String, precision: Int = 0) extends G
   if (currentPrecision > 10000) throw new IllegalArgumentException("Grid reference precision must be 10Km or higher")
 
   //Normalise the precision to one of the allowable values
-  val normalisedPrecision = if (precision != 0) normalisePrecision(precision) else 0
+  val normalisedPrecision = if (precision != 0) getNormalisedPrecision(precision) else 0
 
   val outputGridRef = {
 
@@ -44,10 +44,11 @@ class ChannelIslandGridSquareInfo(gridRef: String, precision: Int = 0) extends G
 
   def gridReferencePrecision = getPrecision(outputGridRef)
 
+  def getLowerPrecisionGridRef(precision: Int) = new ChannelIslandGridSquareInfo(outputGridRef, precision)
+
   //todo: Implement source polygon
   def sourcePolygon = null
 
-  //todo: Implement wgs84Polygon
   def wgs84Polygon = {
 
     val gridSize = gridReferencePrecision

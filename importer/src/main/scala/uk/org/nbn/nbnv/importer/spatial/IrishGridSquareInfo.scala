@@ -5,6 +5,10 @@ import uk.org.nbn.nbnv.importer.ImportFailedException
 
 class IrishGridSquareInfo(gridRef: String, precision: Int = 0) extends GridSquareInfo {
 
+//  val IrishGrid = Map (
+//    (0,400000) -> "A", ()
+//  )
+
   //Check grid ref is uk grid ref
   if (gridRef.matches(GridRefPatterns.irishGridRef) == false
     && gridRef.matches(GridRefPatterns.irishDintyGrid)  == false)
@@ -16,7 +20,7 @@ class IrishGridSquareInfo(gridRef: String, precision: Int = 0) extends GridSquar
   if (currentPrecision > 10000) throw new IllegalArgumentException("Grid reference precision must be 10Km or higher")
 
   //Normalise the precision to one of the allowable values
-  val normalisedPrecision = if (precision != 0) normalisePrecision(precision) else 0
+  val normalisedPrecision = if (precision != 0) getNormalisedPrecision(precision) else 0
 
   val outputGridRef = {
 
@@ -40,7 +44,9 @@ class IrishGridSquareInfo(gridRef: String, precision: Int = 0) extends GridSquar
 
   def gridReferencePrecision = getPrecision(outputGridRef)
 
-  //todo: implement souce polygon
+  def getLowerPrecisionGridRef(precision: Int) = new IrishGridSquareInfo(outputGridRef, precision)
+
+  //todo: implement source polygon
   def sourcePolygon = null
 
   //todo: implement wgs84polygon

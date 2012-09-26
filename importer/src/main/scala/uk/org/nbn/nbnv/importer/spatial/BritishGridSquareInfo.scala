@@ -18,7 +18,7 @@ class BritishGridSquareInfo(gridRef : String, precision: Int = 0) extends GridSq
   if (currentPrecision > 10000) throw new IllegalArgumentException("Grid reference precision must be 10Km or higher")
 
   //Normalise the precision to one of the allowable values
-  val normalisedPrecision = if (precision != 0) normalisePrecision(precision) else 0
+  val normalisedPrecision = if (precision != 0) getNormalisedPrecision(precision) else 0
 
   val outputGridRef = {
 
@@ -41,6 +41,8 @@ class BritishGridSquareInfo(gridRef : String, precision: Int = 0) extends GridSq
   def gridReference = outputGridRef
 
   def gridReferencePrecision = getPrecision(outputGridRef)
+
+  def getLowerPrecisionGridRef(precision: Int) = new BritishGridSquareInfo(outputGridRef, precision)
 
   //todo: implement soucePolygon
   def sourcePolygon = null
