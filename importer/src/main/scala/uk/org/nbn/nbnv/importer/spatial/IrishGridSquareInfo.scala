@@ -5,9 +5,13 @@ import uk.org.nbn.nbnv.importer.ImportFailedException
 
 class IrishGridSquareInfo(gridRef: String, precision: Int = 0) extends GridSquareInfo {
 
-//  val IrishGrid = Map (
-//    (0,400000) -> "A", ()
-//  )
+  val IrishGrid = Map (
+    "A" -> (0,4), "B" -> (1,4), "C" -> (2,4), "D" -> (3,4), "E" -> (4,4),
+    "F" -> (0,3), "G" -> (1,3), "H" -> (2,3), "J" -> (3,3), "K" -> (4,3),
+    "L" -> (0,2), "M" -> (1,2), "N" -> (2,2), "O" -> (3,2), "P" -> (4,2),
+    "Q" -> (0,1), "R" -> (1,1), "S" -> (2,1), "T" -> (3,1), "U" -> (4,1),
+    "V" -> (0,0), "W" -> (1,0), "X" -> (2,0), "Y" -> (3,0), "Z" -> (4,0)
+  )
 
   //Check grid ref is uk grid ref
   if (gridRef.matches(GridRefPatterns.irishGridRef) == false
