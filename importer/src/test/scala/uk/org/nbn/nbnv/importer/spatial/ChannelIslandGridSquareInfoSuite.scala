@@ -182,7 +182,7 @@ class ChannelIslandGridSquareInfoSuite extends BaseFunSuite {
     cigr.wgs84Polygon matches (TestResources.polygonWKTRegex)
   }
 
-  test("should give 100m grid ref at 2000m") {
+  test("should compute 2000m grid ref from 100m grid ref") {
     val cigr = new ChannelIslandGridSquareInfo(knownGridRef_100m)
 
     val lowerCigr = cigr.getLowerPrecisionGridRef(2000)

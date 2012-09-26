@@ -5,7 +5,7 @@ import uk.org.nbn.nbnv.importer.ImportFailedException
 
 class IrishGridSquareInfo(gridRef: String, precision: Int = 0) extends GridSquareInfo {
 
-  val IrishGrid = Map (
+  val irishGridByLetter = Map (
     "A" -> (0,4), "B" -> (1,4), "C" -> (2,4), "D" -> (3,4), "E" -> (4,4),
     "F" -> (0,3), "G" -> (1,3), "H" -> (2,3), "J" -> (3,3), "K" -> (4,3),
     "L" -> (0,2), "M" -> (1,2), "N" -> (2,2), "O" -> (3,2), "P" -> (4,2),
@@ -53,8 +53,14 @@ class IrishGridSquareInfo(gridRef: String, precision: Int = 0) extends GridSquar
   //todo: implement source polygon
   def sourcePolygon = null
 
-  //todo: implement wgs84polygon
-  def wgs84Polygon = null
+  def wgs84Polygon = {
+    val gridRef = getTenFigGridRef(outputGridRef)
+    val (easting, northing) = getEastingNorthing(gridRef)
+
+    val gridSize = gridReferencePrecision
+
+    getWGS84PolygonFromGridPoint(easting, northing, gridSize, "29903")
+  }
 
   def getParentGridRef: Option[IrishGridSquareInfo] = {
     if (gridReferencePrecision == 10000) {
@@ -78,6 +84,47 @@ class IrishGridSquareInfo(gridRef: String, precision: Int = 0) extends GridSquar
 
       Option(new IrishGridSquareInfo(parentGridReference))
     }
+  }
+
+  private def getTenFigGridRef(gridRef: String)= {
+
+    val numerals =
+      if (gridRef.matches(GridRefPatterns.irishDintyGrid)) {
+        //eg TL32C
+        //gives 32C
+        val numericPart = getNumeralsFromGridRef(gridRef)
+        //gives C
+        val dintyLetter = numericPart.substring(2,3)
+        //gives (0,4)
+        val coordinates = dintyGridByLetter(dintyLetter)
+        //gives (3,2)
+        val numericParts = numericPart.substring(0,2).splitAt(1)
+        //gives 3024
+        numericParts._1 + coordinates._1 + numericParts._2 + coordinates._2
+      }
+      else {
+        getNumeralsFromGridRef(gridRef)
+      }
+
+    if (numerals.length == 10) {
+      gridRef
+    }
+    else {
+      val numericParts = numerals.splitAt(numerals.length / 2)
+      val padLength = (10 - numerals.length) / 2
+      val padString = "0" * padLength
+      val letters = getLetterFromGridRef(gridRef)
+
+      letters + numericParts._1 + padString + numericParts._2 + padString
+    }
+  }
+
+  private def getEastingNorthing(gridRef: String) = {
+    val (x, y) = irishGridByLetter(getLetterFromGridRef(gridRef))
+    val numerals = getNumeralsFromGridRef(gridRef)
+    val (e, n) = numerals.splitAt(numerals.length / 2)
+
+    (x * 100000 + e.toInt, y * 100000 + n.toInt)
   }
 
   private def decreaseGridPrecision(gridRef: String, targetPrecision: Int) : String = {
@@ -110,7 +157,7 @@ class IrishGridSquareInfo(gridRef: String, precision: Int = 0) extends GridSquar
     var parts = numericPart.splitAt(numericPart.length / 2)
     var easting = parts._1.substring(0, maxDigits / 2)
     var northing = parts._2.substring(0, maxDigits / 2)
-    var gridLetters = getLettersFromGridRef(gridRef)
+    var gridLetters = getLetterFromGridRef(gridRef)
 
     gridLetters + easting + northing
   }
@@ -134,7 +181,7 @@ class IrishGridSquareInfo(gridRef: String, precision: Int = 0) extends GridSquar
       val dintyLetter = getDintyLeter(dintyEasting, dintyNorthing)
 
       //gives A
-      val gridLetters = getLettersFromGridRef(gridRef)
+      val gridLetters = getLetterFromGridRef(gridRef)
       //gives 2
       val easting = numericComponents._1.substring(0,1)
       //gives 3
@@ -160,7 +207,7 @@ class IrishGridSquareInfo(gridRef: String, precision: Int = 0) extends GridSquar
     }
   }
 
-  private def getLettersFromGridRef(gridRef : String) = {
+  private def getLetterFromGridRef(gridRef : String) = {
     gridRef.substring(0,1)
   }
 

@@ -1,6 +1,9 @@
 package uk.org.nbn.nbnv.importer.spatial
 
 import uk.org.nbn.nbnv.importer.ImportFailedException
+import org.geotools.geometry.GeneralDirectPosition
+import org.geotools.referencing.ReferencingFactoryFinder
+import org.geotools.referencing.operation.DefaultCoordinateOperationFactory
 
 trait GridSquareInfo {
   def projection : String
@@ -45,6 +48,31 @@ trait GridSquareInfo {
     else {
       throw new ImportFailedException("Bad precision entry > 10000 : %s".format(precision))
     }
+  }
+
+  protected def getWGS84PolygonFromGridPoint(easting: Int, northing: Int, gridSize: Int, epsgCode: String) = {
+    val blGdp = new GeneralDirectPosition(easting, northing)
+    val brGdp = new GeneralDirectPosition(easting + gridSize, northing)
+    val tlGdp = new GeneralDirectPosition(easting, northing + gridSize)
+    val trGdp = new GeneralDirectPosition(easting + gridSize, northing + gridSize)
+
+    //Get the Source CRS to WGS84 transformation operation
+    val crsFac = ReferencingFactoryFinder.getCRSAuthorityFactory("EPSG",null)
+    val wgs84crs = crsFac.createCoordinateReferenceSystem("4326")
+    val SourceCrs = crsFac.createCoordinateReferenceSystem(epsgCode)
+    val transformer = new DefaultCoordinateOperationFactory().createOperation(SourceCrs, wgs84crs).getMathTransform
+
+    //Get the coordinates in WGS84 lat lng
+    val bl = transformer.transform(blGdp, blGdp).getCoordinates
+    val br = transformer.transform(brGdp, brGdp).getCoordinates
+    val tl = transformer.transform(tlGdp, tlGdp).getCoordinates
+    val tr = transformer.transform(trGdp, trGdp).getCoordinates
+
+    "POLYGON((" + bl(0) + " " + bl(1) + ", " +
+      tl(0) + " " + tl(1) + ", " +
+      tr(0) + " " + tr(1) + ", " +
+      br(0) + " " + br(1) + ", " +
+      bl(0) + " " + bl(1) + "))"
   }
 
 

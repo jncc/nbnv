@@ -158,7 +158,31 @@ class IrishGridSquareInfoSuite extends BaseFunSuite {
     igr.getParentGridRef should be (None)
   }
 
-  test("should give 100m grid ref at 2000m") {
+  test("should give WKT for 100m grid square") {
+    val igr = new IrishGridSquareInfo(knownGridRef_100m)
+
+    igr.wgs84Polygon matches (TestResources.polygonWKTRegex)
+  }
+
+  test("should give WKT for 1000m grid square") {
+    val igr = new IrishGridSquareInfo(knownGridRef_1000m)
+
+    igr.wgs84Polygon matches (TestResources.polygonWKTRegex)
+  }
+
+  test("should give WKT for 2000m grid square") {
+    val igr = new IrishGridSquareInfo(knownGridRef_2000m)
+
+    igr.wgs84Polygon matches (TestResources.polygonWKTRegex)
+  }
+
+  test("should give WKT for 10000m grid square") {
+    val igr = new IrishGridSquareInfo(knownGridRef_10000m)
+
+    igr.wgs84Polygon matches (TestResources.polygonWKTRegex)
+  }
+  
+  test("should compute 2000m grid ref from 100m grid ref") {
     val igr = new IrishGridSquareInfo(knownGridRef_100m)
 
     val lowerIgr = igr.getLowerPrecisionGridRef(2000)
