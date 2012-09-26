@@ -7,7 +7,7 @@
     <h1>10km Square ${tenkmGridRef}</h1>
 
     <div class="nbn-report-data-container">
-        <table class="nbn-simple-table">
+        <table class="nbn-coloured-table">
         <tr><th class="nbn-th-left nbn-th-right">Species recorded in ${tenkmGridRef} (number of records)</th></tr>
         <#list taxaWithQueryStats as taxonWithQueryStats>
             <tr><td class="nbn-td-left nbn-td-right"><a href="../${tenkmGridRef}/Observations?ptvk=${taxonWithQueryStats.taxon.prefnameTaxonVersionKey}">${taxonWithQueryStats.taxon.name}</a> (${taxonWithQueryStats.querySpecificObservationCount})</td></tr>

@@ -94,7 +94,11 @@ public class OrganisationValidator implements Validator {
         // Not required, but if exists we should validate
         if (!org.getWebsite().trim().equals("")) {
             try {
-                URL url = new URL(org.getWebsite());
+                String uri = org.getWebsite();
+                if (!(uri.startsWith("http://") || uri.startsWith("https://"))) {
+                    uri = "http://" + uri;
+                } 
+                URL url = new URL(uri);
             } catch (MalformedURLException ex) {
                 errors.rejectValue("website", "website.invalid");
             }

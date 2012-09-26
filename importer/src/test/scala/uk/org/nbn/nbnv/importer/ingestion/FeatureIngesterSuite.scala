@@ -8,6 +8,7 @@ import uk.org.nbn.nbnv.importer.data.Repository
 import uk.org.nbn.nbnv.importer.spatial.{GridSquareInfo, GridSquareInfoFactory}
 import uk.org.nbn.nbnv.importer.records.NbnRecord
 import uk.org.nbn.nbnv.jpa.nbncore.{GridSquare, Feature}
+import org.apache.log4j.Logger
 
 class FeatureIngesterSuite extends BaseFunSuite {
 
@@ -29,6 +30,7 @@ class FeatureIngesterSuite extends BaseFunSuite {
 
     val repo = mock[Repository]
     val em = mock[EntityManager]
+    val log = mock[Logger]
   }
 
   test("an existing grid square feature should just be returned") {
@@ -39,7 +41,7 @@ class FeatureIngesterSuite extends BaseFunSuite {
     when(f.repo.getGridSquareFeature(f.gridRef)).thenReturn(Some((feature, mock[GridSquare])))
 
     // act
-    val ingester = new FeatureIngester(f.em, f.repo, f.gridSquareInfoFactory)
+    val ingester = new FeatureIngester(f.log, f.em, f.repo, f.gridSquareInfoFactory)
     val result = ingester.ensureFeature(f.record)
 
     // assert
@@ -62,7 +64,7 @@ class FeatureIngesterSuite extends BaseFunSuite {
     val em = new FakePersistenceTrackingEntityManager
 
     // act
-    val ingester = new FeatureIngester(em, f.repo, f.gridSquareInfoFactory)
+    val ingester = new FeatureIngester(f.log, em, f.repo, f.gridSquareInfoFactory)
     ingester.ensureFeature(f.record)
 
     // assert
@@ -78,7 +80,7 @@ class FeatureIngesterSuite extends BaseFunSuite {
     when(f.gridSquareInfo.getParentGridRef).thenReturn(None)
 
     // act
-    val ingester = new FeatureIngester(f.em, f.repo, f.gridSquareInfoFactory)
+    val ingester = new FeatureIngester(f.log, f.em, f.repo, f.gridSquareInfoFactory)
     ingester.ensureFeature(f.record)
 
     // assert - that exactly one GridSquare should be persisted

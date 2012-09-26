@@ -9,14 +9,25 @@ import java.io.IOException;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import org.apache.poi.hwpf.HWPFDocument;
+import org.apache.poi.hwpf.extractor.WordExtractor;
+import org.reflections.Reflections;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -28,12 +39,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import uk.org.nbn.nbnv.importer.ui.convert.ConverterStep;
+import uk.org.nbn.nbnv.importer.ui.convert.RunConversions;
 import uk.org.nbn.nbnv.importer.ui.metadata.MetadataWriter;
 import uk.org.nbn.nbnv.importer.ui.model.Metadata;
 import uk.org.nbn.nbnv.importer.ui.model.MetadataForm;
 import uk.org.nbn.nbnv.importer.ui.model.SessionData;
 import uk.org.nbn.nbnv.importer.ui.model.UploadItem;
 import uk.org.nbn.nbnv.importer.ui.util.DatabaseConnection;
+import uk.org.nbn.nbnv.importer.ui.util.POIImportError;
+import uk.org.nbn.nbnv.importer.ui.util.wordImporter.WordImporter;
 import uk.org.nbn.nbnv.importer.ui.validators.MetadataFormValidator;
 import uk.org.nbn.nbnv.importer.ui.validators.MetadataValidator;
 import uk.org.nbn.nbnv.jpa.nbncore.Organisation;
@@ -46,18 +61,33 @@ import uk.org.nbn.nbnv.jpa.nbncore.Organisation;
 public class MetadataController {
     @Autowired SessionData session;
     
+    // NEED TO FIND A WAY TO DEAL WITH CHECKBOXES!
+    private static final String[] stringsSpecialAtt = {
+        "Set Geographic Resolution*", 
+        "Name *", 
+        "Record Attributes", 
+        "Recorder Names"
+    };
+    
+
+
     @RequestMapping(value="/metadata.html", method = RequestMethod.GET)
     public ModelAndView metadata() {  
         MetadataForm model = new MetadataForm();
         model.setOrganisationList(getOrgList());
         return new ModelAndView("metadataForm", "model", model);
     }
+    
+    @RequestMapping(value="/metadataProcess.html", method = RequestMethod.GET)
+    public ModelAndView metadataProcessGet() {  
+        return new ModelAndView("redirect:/metadata.html");
+    }
 
     @RequestMapping(value="/metadataProcess.html", method = RequestMethod.POST, params="addOrganisation")
-    public ModelAndView addOrganisation(Metadata metadata, BindingResult result) {
-        return new ModelAndView("redirect:/addOrganisation.html");
+    public ModelAndView addOrganisation(MetadataForm model, BindingResult result) {
+        return new ModelAndView("forward:/addOrganisation.html", "metadataForm", model);
     }    
-    
+
     @RequestMapping(value="/metadataProcess.html", method = RequestMethod.POST, params="submit")
     public ModelAndView uploadFile(@ModelAttribute("model") @Valid MetadataForm model, BindingResult result, @RequestParam("organisationID") String organisationID) {
 
@@ -101,7 +131,39 @@ public class MetadataController {
 
         return new ModelAndView("metadataForm", "model", model);
     }
+    
+    @RequestMapping(value="/metadataProcessView.html", method = RequestMethod.POST) 
+    public ModelAndView returnViewData (MetadataForm model, BindingResult result, HttpServletRequest request) {
+        MetadataForm input = (MetadataForm) request.getAttribute("model");
+        input.setOrganisationList(getOrgList());
+        return new ModelAndView("metadataForm", "model", input);
+    }
+    
+    @RequestMapping(value="/metadataProcessView.html", method = RequestMethod.GET) 
+    public ModelAndView returnViewData () {
+        return new ModelAndView("redirect:/metadata.html");
+    }
 
+    private WordImporter getDocumentImporter(int major, int minor) {
+        Reflections reflections = new Reflections("uk.org.nbn.nbnv.importer.ui.util.wordImporter");
+        
+        Set<Class<? extends WordImporter>> importers = reflections.getSubTypesOf(WordImporter.class);
+            
+        for (Class<? extends WordImporter> importer : importers) {
+            try {
+                WordImporter instance = importer.newInstance();    
+                if (instance.supports(major, minor)) {
+                    return instance;
+                }
+            } catch (InstantiationException ex) {
+                Logger.getLogger(RunConversions.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IllegalAccessException ex) {
+                Logger.getLogger(RunConversions.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return null;
+    }
+    
     @RequestMapping(value="/metadata.html", method = RequestMethod.POST)
     public ModelAndView uploadFile(UploadItem uploadItem, BindingResult result) {
         MetadataForm model = new MetadataForm();
@@ -116,25 +178,104 @@ public class MetadataController {
         }
 
         List<String> messages = new ArrayList<String>();
-        messages.add("Original File name: " + uploadItem.getFileData().getOriginalFilename());
-        messages.add("File size: " + Long.toString(uploadItem.getFileData().getSize()));
-        messages.add("Content Type: " + uploadItem.getFileData().getContentType());
-        messages.add("Storage description: " + uploadItem.getFileData().getStorageDescription());
-
         
-        try {
-            //File dFile = File.createTempFile("nbnimporter", "metadata.doc");
-            //messages.add("Storage location: " + dFile.getAbsolutePath());
-            //uploadItem.getFileData().transferTo(dFile);
-            
+        try {           
             HWPFDocument doc = new HWPFDocument(uploadItem.getFileData().getInputStream());
-            messages.add("Word document parsing not implemented yet");
+            WordExtractor ext = new WordExtractor(doc);
+            String[] strs = ext.getParagraphText();
+            
+            // Catch some of the annoying cases where inputs are followed by
+            // paragraphs of text, as we are using \r\n to seperate out the 
+            // inputs
+
+            List<String> strList = Arrays.asList(strs);
+            ListIterator<String> strIt = strList.listIterator();
+            
+            // Check the version number of the document to make sure we 
+            // can read it
+            Float version = null;
+            WordImporter importer = null;
+            while(strIt.hasNext() && version == null) {
+                try {
+                    String str = strIt.next();
+                    if (str.startsWith("Version ")) {
+                        Pattern pat;
+                        pat = Pattern.compile("([0-9]+)\\.([0-9]+)");
+                        Matcher matcher = pat.matcher(str);
+                        if (matcher.find()) {
+                            int major = Integer.parseInt(matcher.group(1));
+                            int minor = Integer.parseInt(matcher.group(2));
+
+                            version = Float.parseFloat(Integer.toString(major) + "." + Integer.toString(minor));
+
+                            importer = getDocumentImporter(major, minor);
+
+                            if (importer == null) {
+                               throw new POIImportError("We do not currently support Version " + version + " of the Metadata Import Word Document");
+                            }
+                        }
+                    }
+                } catch (NumberFormatException ex) {
+                    throw new POIImportError("Could not find a valid version number, are you sure this is a metadata import form?");
+                }
+            }
+
+            Map<String, String> mappings = importer.parseDocument(strList, strIt, new HashMap<String, String>());
+            
+            Metadata meta = new Metadata();
+            
+            meta.setAccess(mappings.get(importer.META_ACCESS_CONSTRAINT));
+            meta.setDescription(mappings.get(importer.META_DESC));
+            meta.setGeographic(mappings.get(importer.META_GEOCOVER));
+            meta.setInfo(mappings.get(importer.META_ADDITIONAL_INFO));
+            meta.setMethods(mappings.get(importer.META_CAPTURE_METHOD));
+            meta.setPurpose(mappings.get(importer.META_PURPOSE));
+            meta.setQuality(mappings.get(importer.META_DATA_CONFIDENCE));
+            meta.setTemporal(mappings.get(importer.META_TEMPORAL));
+            meta.setTitle(mappings.get(importer.META_TITLE));
+            meta.setUse(mappings.get(importer.META_USE_CONSTRAINT));
+            
+            boolean addOrg = true;
+            for (Organisation org : model.getOrganisationList()) {
+                if (org.getOrganisationName().equals(mappings.get(importer.ORG_NAME))) {
+                    meta.setOrganisationID(org.getOrganisationID());
+                    addOrg = false;
+                }
+            }
+            
+            model.setMetadata(meta);
+            
+            if (addOrg) {
+                Organisation newOrg = new Organisation();
+                newOrg.setAbbreviation(mappings.get(importer.ORG_ABBREVIATION));
+                newOrg.setAddress(mappings.get(importer.ORG_ADDRESS));
+                newOrg.setAllowPublicRegistration(false);
+                newOrg.setContactEmail(mappings.get(importer.ORG_EMAIL));
+                newOrg.setContactName(mappings.get(importer.ORG_CONTACT_NAME));
+                newOrg.setLogo(mappings.get(importer.ORG_LOGO)); // Need to figure out how to import logos
+                newOrg.setLogoSmall(mappings.get(importer.ORG_LOGO)); // Need to figure out how to import logos
+                newOrg.setOrganisationName(mappings.get(importer.ORG_NAME));
+                newOrg.setPhone(mappings.get(importer.ORG_PHONE));
+                newOrg.setPostcode(mappings.get(importer.ORG_POSTCODE));
+                newOrg.setSummary(mappings.get(importer.ORG_DESC));
+                newOrg.setWebsite(mappings.get(importer.ORG_WEBSITE));
+                
+                ModelAndView mv = new ModelAndView("forward:/addOrganisation.html");
+                mv.addObject("metadataForm", model);
+                mv.addObject("newOrganisation", newOrg);
+                return mv;
+            }
             
         } catch (IOException ex) {
             messages.add("EXCEPTION: Parse exception: " + ex.getMessage());
+        } catch (POIImportError ex) {
+            messages.add("EXCEPTION: POI Word Parsing exception: " + ex.getMessage());
         }
-
-        return new ModelAndView("debug", "messages", messages);
+        
+        // Return error messages to the interface as well as the data
+        model.setErrors(messages);
+        
+        return new ModelAndView("metadataForm", "model", model);
     }
     
     @InitBinder("model")

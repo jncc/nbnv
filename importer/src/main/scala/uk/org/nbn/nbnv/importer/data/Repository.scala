@@ -10,18 +10,6 @@ import uk.org.nbn.nbnv.importer.ImportFailedException
 
 class Repository @Inject()(log: Logger, em: EntityManager, cache: QueryCache) extends ControlAbstractions {
 
-  def getGridSquareFeature(gridRef: String): Option[(Feature, GridSquare)] = {
-
-    val q = "select f, s from Feature f join f.gridSquareCollection s where s.gridRef = :gridRef"
-
-    cacheSome(q, gridRef) {
-
-      val query = em.createQuery(q)
-      query.setParameter("gridRef", gridRef)
-      query.getSingleOrNone collect { case Array(f: Feature, s: GridSquare) => (f, s) }
-    }
-  }
-
   // todo: wot's this for? and does it need caching?
   def confirmTaxonVersionKey(taxonVersionKey: String): Boolean = {
     val query = em.createQuery("SELECT t FROM Taxon t WHERE t.taxonVersionKey = :tvk", classOf[Taxon])
@@ -40,6 +28,18 @@ class Repository @Inject()(log: Logger, em: EntityManager, cache: QueryCache) ex
       query.setParameter("label", attributeLabel)
       query.setParameter("dataset", taxonDataset)
       query.getFirstOrNone
+    }
+  }
+
+  def getGridSquareFeature(gridRef: String): Option[(Feature, GridSquare)] = {
+
+    val q = "select f, s from Feature f join f.gridSquareCollection s where s.gridRef = :gridRef"
+
+    cacheSome(q, gridRef) {
+
+      val query = em.createQuery(q)
+      query.setParameter("gridRef", gridRef)
+      query.getSingleOrNone collect { case Array(f: Feature, s: GridSquare) => (f, s) }
     }
   }
 

@@ -19,6 +19,7 @@ import uk.org.nbn.nbnv.api.model.TaxonObservation;
 import uk.org.nbn.nbnv.api.model.TaxonOutputGroup;
 import uk.org.nbn.nbnv.api.model.TaxonOutputGroupWithQueryStats;
 import uk.org.nbn.nbnv.api.model.TaxonWithQueryStats;
+import uk.org.nbn.nbnv.api.model.User;
 
 /**
  *
@@ -36,7 +37,7 @@ public interface TaxonObservationMapper {
     
     @SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectRecords")
     public List<TaxonObservation> selectObservationRecordsByFilter(
-            @Param("userKey") int userKey
+            @Param("user") User user
             , @Param("startYear") Integer startYear
             , @Param("endYear") Integer endYear
             , @Param("datasetKey") List<String> datasetKey
@@ -54,7 +55,7 @@ public interface TaxonObservationMapper {
         @Result(property="taxonVersionKey", column="taxonVersionKey")
     })
     public List<TaxonWithQueryStats> selectObservationSpeciesByFilter(
-            @Param("userKey") int userKey
+            @Param("user") User user
             , @Param("startYear") Integer startYear
             , @Param("endYear") Integer endYear
             , @Param("datasetKey") List<String> datasetKey
@@ -72,7 +73,7 @@ public interface TaxonObservationMapper {
         @Result(property="taxonGroupKey", column="outputGroupKey")
     })
     public List<TaxonOutputGroupWithQueryStats> selectObservationGroupsByFilter(
-            @Param("userKey") int userKey
+            @Param("user") User user
             , @Param("startYear") Integer startYear
             , @Param("endYear") Integer endYear
             , @Param("datasetKey") List<String> datasetKey
@@ -91,7 +92,7 @@ public interface TaxonObservationMapper {
         @Result(property="datasetKey", column="datasetKey")
     })
     public List<DatasetWithQueryStats> selectObservationDatasetsByFilter(
-            @Param("userKey") int userKey
+            @Param("user") User user
             , @Param("startYear") Integer startYear
             , @Param("endYear") Integer endYear
             , @Param("datasetKey") List<String> datasetKey
