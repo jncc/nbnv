@@ -6,7 +6,7 @@
     <h1>10km Square ${URLParameters.tenkmGridRef}</h1>
 
     <div class="nbn-report-data-container">
-        <table class="nbn-simple-table">
+        <table class="nbn-coloured-table">
             <tr><th class="nbn-th-left nbn-th-right">Species groups for ${tenkmGridRef} (number of species)</th></tr>
             <#list taxonOutputGroupsWithQueryStats as taxonOutputGroupWithQueryStats>
                 <tr><td class="nbn-td-left nbn-td-right"><a href="../${tenkmGridRef}/Species?taxonOutputGroup=${taxonOutputGroupWithQueryStats.taxonGroupKey}">${taxonOutputGroupWithQueryStats.taxonOutputGroup.taxonGroupName}</a>(${taxonOutputGroupWithQueryStats.querySpecificSpeciesCount})</td></tr>

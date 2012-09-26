@@ -127,7 +127,7 @@ body {
     }
 
     table.nbn-simple-table{
-        $padding: 5px !important;
+        $padding: 1px;
         font-family: Arial,Helvetica,Sans-serif;
         width: 100%;
         border-collapse: separate;
@@ -135,13 +135,18 @@ body {
         margin-bottom: 20px;
         th{
             padding: $padding;
-            color: white;
-            width: 25%;
-            padding: $padding;
-            background-color: $majorColour;
         }
         td{
             padding: $padding;
+        }
+    }
+    
+    table.nbn-coloured-table{
+        @extend table.nbn-simple-table;
+        th{
+            color: white;
+            background-color: $majorColour;
+            padding: 5px;
         }
     }
 
@@ -161,6 +166,22 @@ body {
 
     td.nbn-td-right {
         border-right: 1px solid $majorColour;
+    }
+
+    tr.nbn-emphasise-row {
+        background-color: $minorToMediumGrey;
+        font-weight: bold;
+        a {
+            font-weight: bold;
+        }
+    }
+
+    tr.nbn-de-emphasise-row {
+        font-size: 0.9em;
+    }
+
+    tr.nbn-provider-row {
+        background-color: $minorToMediumGrey;
     }
 
     .nbn-dataset-table{
@@ -245,6 +266,11 @@ body {
     #nbn-provider-logo{
         float: left;
         margin-right: 10px;
+    }
+
+    .nbn-provider-table-logo{
+        max-width: 25px;
+        max-height: 25px;
     }
 
 }
