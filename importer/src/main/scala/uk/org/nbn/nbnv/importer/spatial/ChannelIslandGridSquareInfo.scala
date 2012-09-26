@@ -46,8 +46,13 @@ class ChannelIslandGridSquareInfo(gridRef: String, precision: Int = 0) extends G
 
   def getLowerPrecisionGridRef(precision: Int) = new ChannelIslandGridSquareInfo(outputGridRef, precision)
 
-  //todo: Implement source polygon
-  def sourceProjectionPolygon = null
+  def sourceProjectionPolygon = {
+    val gridSize = gridReferencePrecision
+
+    val (easting, northing) = getEastingNorthing(outputGridRef)
+
+    getPolygonFromGridPoint(easting, northing, gridSize)
+  }
 
   def wgs84Polygon = {
 

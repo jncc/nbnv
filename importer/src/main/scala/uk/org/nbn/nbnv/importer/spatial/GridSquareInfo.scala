@@ -87,7 +87,4 @@ trait GridSquareInfo {
       br(0) + " " + br(1) + ", " +
       bl(0) + " " + bl(1) + "))"
   }
-
-
-
 }
