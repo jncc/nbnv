@@ -51,7 +51,7 @@ class BritishGridSquareInfo(gridRef : String, precision: Int = 0) extends GridSq
 
     val gridRef = new OSRef(paddedGridRef)
 
-    getPolygonFromGridPoint(gridRef.getEasting.toInt, gridRef.getNorthing.toInt, gridSize)
+    getPolygonFromGridSquareOrigin(gridRef.getEasting.toInt, gridRef.getNorthing.toInt, gridSize)
   }
 
   def wgs84Polygon = {
@@ -61,7 +61,7 @@ class BritishGridSquareInfo(gridRef : String, precision: Int = 0) extends GridSq
     //bottom left co-ordinate
     val gridRef = new OSRef(paddedGridRef)
 
-    getWGS84PolygonFromGridPoint(gridRef.getEasting.toInt, gridRef.getNorthing.toInt, gridSize, "27700")
+    getWGS84PolygonFromGridSquareOrigin(gridRef.getEasting.toInt, gridRef.getNorthing.toInt, gridSize, "27700")
 
   }
 

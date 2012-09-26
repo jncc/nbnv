@@ -50,7 +50,7 @@ trait GridSquareInfo {
     }
   }
 
-  protected def getPolygonFromGridPoint(easting: Int, northing: Int, gridSize: Int) = {
+  protected def getPolygonFromGridSquareOrigin(easting: Int, northing: Int, gridSize: Int) = {
     val bl = (easting, northing)
     val br = (easting + gridSize, northing)
     val tl = (easting, northing + gridSize)
@@ -63,7 +63,7 @@ trait GridSquareInfo {
       bl._1 + " " + bl._2 + "))"
   }
 
-  protected def getWGS84PolygonFromGridPoint(easting: Int, northing: Int, gridSize: Int, epsgCode: String) = {
+  protected def getWGS84PolygonFromGridSquareOrigin(easting: Int, northing: Int, gridSize: Int, epsgCode: String) = {
     val blGdp = new GeneralDirectPosition(easting, northing)
     val brGdp = new GeneralDirectPosition(easting + gridSize, northing)
     val tlGdp = new GeneralDirectPosition(easting, northing + gridSize)

@@ -158,25 +158,25 @@ class IrishGridSquareInfoSuite extends BaseFunSuite {
     igr.getParentGridRef should be (None)
   }
 
-  test("should give WKT for 100m grid square") {
+  test("should give WKT for 100m grid square in WGS84") {
     val igr = new IrishGridSquareInfo(knownGridRef_100m)
 
     igr.wgs84Polygon matches (TestResources.polygonWKTRegex)
   }
 
-  test("should give WKT for 1000m grid square") {
+  test("should give WKT for 1000m grid square in WGS84") {
     val igr = new IrishGridSquareInfo(knownGridRef_1000m)
 
     igr.wgs84Polygon matches (TestResources.polygonWKTRegex)
   }
 
-  test("should give WKT for 2000m grid square") {
+  test("should give WKT for 2000m grid square in WGS84") {
     val igr = new IrishGridSquareInfo(knownGridRef_2000m)
 
     igr.wgs84Polygon matches (TestResources.polygonWKTRegex)
   }
 
-  test("should give WKT for 10000m grid square") {
+  test("should give WKT for 10000m grid square in WGS84") {
     val igr = new IrishGridSquareInfo(knownGridRef_10000m)
 
     igr.wgs84Polygon matches (TestResources.polygonWKTRegex)
@@ -192,5 +192,27 @@ class IrishGridSquareInfoSuite extends BaseFunSuite {
     lowerIgr.gridReferencePrecision should be (2000)
   }
 
-  //todo: test wsg84Polygon
+  test("should give WKT for 100m grid square") {
+    val igr = new IrishGridSquareInfo(knownGridRef_100m)
+
+    igr.sourceProjectionPolygon matches (TestResources.polygonWKTRegex)
+  }
+
+  test("should give WKT for 1000m grid square") {
+    val igr = new IrishGridSquareInfo(knownGridRef_1000m)
+
+    igr.sourceProjectionPolygon matches (TestResources.polygonWKTRegex)
+  }
+
+  test("should give WKT for 2000m grid square") {
+    val igr = new IrishGridSquareInfo(knownGridRef_2000m)
+
+    igr.sourceProjectionPolygon matches (TestResources.polygonWKTRegex)
+  }
+
+  test("should give WKT for 10000m grid square") {
+    val igr = new IrishGridSquareInfo(knownGridRef_10000m)
+
+    igr.sourceProjectionPolygon matches (TestResources.polygonWKTRegex)
+  }
 }

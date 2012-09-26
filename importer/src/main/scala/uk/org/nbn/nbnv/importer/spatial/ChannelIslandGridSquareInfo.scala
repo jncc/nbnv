@@ -51,17 +51,16 @@ class ChannelIslandGridSquareInfo(gridRef: String, precision: Int = 0) extends G
 
     val (easting, northing) = getEastingNorthing(outputGridRef)
 
-    getPolygonFromGridPoint(easting, northing, gridSize)
+    getPolygonFromGridSquareOrigin(easting, northing, gridSize)
   }
 
   def wgs84Polygon = {
 
     val gridSize = gridReferencePrecision
 
-    //compute the coordinates of the four corners of the grid square
     val (easting, northing) = getEastingNorthing(outputGridRef)
 
-    getWGS84PolygonFromGridPoint(easting, northing, gridSize, "23030")
+    getWGS84PolygonFromGridSquareOrigin(easting, northing, gridSize, "23030")
   }
 
   //WV 59500  47500

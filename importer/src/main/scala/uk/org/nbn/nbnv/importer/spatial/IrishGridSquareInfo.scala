@@ -50,16 +50,21 @@ class IrishGridSquareInfo(gridRef: String, precision: Int = 0) extends GridSquar
 
   def getLowerPrecisionGridRef(precision: Int) = new IrishGridSquareInfo(outputGridRef, precision)
 
-  //todo: implement source polygon
-  def sourceProjectionPolygon = null
-
-  def wgs84Polygon = {
-    val gridRef = getTenFigGridRef(outputGridRef)
-    val (easting, northing) = getEastingNorthing(gridRef)
+  def sourceProjectionPolygon = {
+    val (easting, northing) = getEastingNorthing(outputGridRef)
 
     val gridSize = gridReferencePrecision
 
-    getWGS84PolygonFromGridPoint(easting, northing, gridSize, "29903")
+    getPolygonFromGridSquareOrigin(easting, northing, gridSize)
+  }
+
+  def wgs84Polygon = {
+
+    val (easting, northing) = getEastingNorthing(outputGridRef)
+
+    val gridSize = gridReferencePrecision
+
+    getWGS84PolygonFromGridSquareOrigin(easting, northing, gridSize, "29903")
   }
 
   def getParentGridRef: Option[IrishGridSquareInfo] = {
@@ -120,9 +125,10 @@ class IrishGridSquareInfo(gridRef: String, precision: Int = 0) extends GridSquar
   }
 
   private def getEastingNorthing(gridRef: String) = {
-    val (x, y) = irishGridByLetter(getLetterFromGridRef(gridRef))
-    val numerals = getNumeralsFromGridRef(gridRef)
-    val (e, n) = numerals.splitAt(numerals.length / 2)
+    val g = getTenFigGridRef(gridRef)
+
+    val (x, y) = irishGridByLetter(getLetterFromGridRef(g))
+    val (e, n) = getNumeralsFromGridRef(g).splitAt(5)
 
     (x * 100000 + e.toInt, y * 100000 + n.toInt)
   }
