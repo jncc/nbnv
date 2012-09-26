@@ -6,13 +6,10 @@ import uk.org.nbn.nbnv.jpa.nbncore.{GridSquare, Feature}
 import com.google.inject.Inject
 import uk.org.nbn.nbnv.importer.data.Repository
 import uk.org.nbn.nbnv.importer.spatial.{GridSquareInfo, GridSquareInfoFactory}
-import javax.persistence.{FlushModeType, LockModeType, EntityManager}
-import javax.persistence.criteria.CriteriaQuery
-import java.util
-import sun.reflect.generics.reflectiveObjects.NotImplementedException
-import collection.mutable.ArrayBuffer
+import javax.persistence.EntityManager
+import org.apache.log4j.Logger
 
-class FeatureIngester @Inject()(em: EntityManager, repo: Repository, gridSquareInfoFactory: GridSquareInfoFactory) {
+class FeatureIngester @Inject()(log: Logger, em: EntityManager, repo: Repository, gridSquareInfoFactory: GridSquareInfoFactory) {
 
   def ensureFeature(record: NbnRecord) : Feature = {
 
@@ -34,10 +31,10 @@ class FeatureIngester @Inject()(em: EntityManager, repo: Repository, gridSquareI
 
   def ensureGridRefFeature(gridRef: String, gridReferenceType: String, gridReferencePrecision: Int) = {
 
+    em.getTransaction.begin()
+
     // ensures that the Grid Feature corresponding to the GridSquareInfo, and all its parents, exist
     def ensure(info: GridSquareInfo) : (Feature, GridSquare) = {
-
-      val x = info.gridReference
 
       // if there's a feature already, all necessary parents should already exist, so just return it
       repo.getGridSquareFeature(info.gridReference).getOrElse {
@@ -47,17 +44,23 @@ class FeatureIngester @Inject()(em: EntityManager, repo: Repository, gridSquareI
         f.setWkt(info.wgs84Polygon)
         // call a procedure to generate geom from wkt - see usp_SpatialLocation_AddLocation in the bars db. don't worry about the STIsValid stuff; it will always be valid because were generating the WKT ourselfes
         // the second argument from STGeomFromText is the spatial reference id. bars uses osgb 277000 NBN uses WSG84.
-        // ...
+        // ... todo
+        f.setGeom(hex2Bytes("0xE610000001040500000025188E8301E6F0BF28D6E355FD944A4073EB1E5CE1DFF0BFAC4168F2FC944A400F37C3A7CCDFF0BF3EF4D3651A954A40AEC794D7ECE5F0BF8D5C50C91A954A4025188E8301E6F0BF28D6E355FD944A4001000000020000000001000000FFFFFFFF0000000003"))
         em.persist(f)
+
         val gs = new GridSquare
         gs.setFeatureID(f)
         gs.setGridRef(info.gridReference)
+
+        // set the projection
         val p = repo.getProjection(info.projection)
         gs.setProjectionID(p)
+
+        // set the resolution
         val r = repo.getResolution(info.gridReferencePrecision)
         gs.setResolutionID(r)
 
-        // don't need to do anything if no parent, because we're at the topmost
+        // if square should have a parent, ensure that it does, and set it
         info.getParentGridRef match {
           case Some(parentInfo) => {
             val (_, parentSquare) = ensure(parentInfo)
@@ -75,8 +78,19 @@ class FeatureIngester @Inject()(em: EntityManager, repo: Repository, gridSquareI
     val info = gridSquareInfoFactory.getGridSquare(gridRef, gridReferenceType, gridReferencePrecision)
 
     // ensure that the (Feature, GridSquare) pair exists and return the feature
-    ensure(info)._1
+    val ret = ensure(info)._1
+
+    em.getTransaction.commit()
+    ret
   }
+
+
+  def hex2Bytes( hex: String ): Array[Byte] = {
+    (for { i <- 0 to hex.length-1 by 2 if i > 0 || !hex.startsWith( "0x" )}
+    yield hex.substring( i, i+2 ))
+      .map( Integer.parseInt( _, 16 ).toByte ).toArray
+  }
+
 
   private def getFeatureByFeatureKey(featureKey : String) = {
     //todo: Get feature by id
