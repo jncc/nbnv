@@ -7,6 +7,18 @@ import org.geotools.referencing.operation.DefaultCoordinateOperationFactory
 
 abstract class GridSquareInfo(gridRef : String, precision: Int = 0) {
 
+  def projection : String
+  def wgs84Polygon : String
+  def sourceProjectionPolygon : String
+  def getParentGridSquareInfo : Option[GridSquareInfo]
+  def getLowerPrecisionGridSquareInfo(precision: Int) : GridSquareInfo
+
+  protected def getLettersFromGridRef(gridRef: String) : String
+  protected def getNumeralsFromGridRef(gridRef: String) : String
+  protected def getDintyRegex : String
+  protected def getPrecision(gridReference : String) : Int
+  protected def checkGridRef
+
   val dintyGridByCoord = Map (
     (0,8) -> "E", (2,8) -> "J", (4,8) -> "P", (6,8) -> "U", (8,8) -> "Z",
     (0,6) -> "D", (2,6) -> "I", (4,6) -> "N", (6,6) -> "T", (8,6) -> "Y",
@@ -46,20 +58,6 @@ abstract class GridSquareInfo(gridRef : String, precision: Int = 0) {
 
   def gridReference = outputGridRef
   def gridReferencePrecision = getPrecision(outputGridRef)
-
-  def projection : String
-  def wgs84Polygon : String
-  def sourceProjectionPolygon : String
-  def getParentGridRef : Option[GridSquareInfo]
-  def getLowerPrecisionGridRef(precision: Int) : GridSquareInfo
-
-  protected def getLettersFromGridRef(gridRef: String) : String
-  protected def getNumeralsFromGridRef(gridRef: String) : String
-  protected def getDintyRegex : String
-  protected def getPrecision(gridReference : String) : Int
-  protected def checkGridRef
-
-
 
   protected def getDintyLeter(easting: Int, northing: Int) = {
     val dintyEasting = easting - (easting % 2)

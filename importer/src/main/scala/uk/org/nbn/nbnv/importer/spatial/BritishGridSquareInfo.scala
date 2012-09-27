@@ -20,7 +20,7 @@ class BritishGridSquareInfo(gridRef : String, precision: Int = 0) extends GridSq
 
   def projection = "OSGB36"
 
-  def getLowerPrecisionGridRef(precision: Int) = new BritishGridSquareInfo(outputGridRef, precision)
+  def getLowerPrecisionGridSquareInfo(precision: Int) = new BritishGridSquareInfo(outputGridRef, precision)
 
   def sourceProjectionPolygon = {
     val gridSize = gridReferencePrecision
@@ -38,7 +38,7 @@ class BritishGridSquareInfo(gridRef : String, precision: Int = 0) extends GridSq
     getWGS84PolygonFromGridSquareOrigin(easting, northing, gridSize, "27700")
   }
 
-  def getParentGridRef: Option[BritishGridSquareInfo] = {
+  def getParentGridSquareInfo: Option[BritishGridSquareInfo] = {
     if (gridReferencePrecision == 10000) {
       None
     }

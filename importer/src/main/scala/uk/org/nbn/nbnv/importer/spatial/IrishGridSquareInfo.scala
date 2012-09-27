@@ -15,7 +15,7 @@ class IrishGridSquareInfo(gridRef: String, precision: Int = 0) extends GridSquar
 
   def projection =  "OSNI"
 
-  def getLowerPrecisionGridRef(precision: Int) = new IrishGridSquareInfo(outputGridRef, precision)
+  def getLowerPrecisionGridSquareInfo(precision: Int) = new IrishGridSquareInfo(outputGridRef, precision)
 
   def sourceProjectionPolygon = {
     val (easting, northing) = getEastingNorthing(outputGridRef)
@@ -34,7 +34,7 @@ class IrishGridSquareInfo(gridRef: String, precision: Int = 0) extends GridSquar
     getWGS84PolygonFromGridSquareOrigin(easting, northing, gridSize, "29903")
   }
 
-  def getParentGridRef: Option[IrishGridSquareInfo] = {
+  def getParentGridSquareInfo: Option[IrishGridSquareInfo] = {
     if (gridReferencePrecision == 10000) {
       None
     }

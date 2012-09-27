@@ -7,7 +7,7 @@ class ChannelIslandGridSquareInfo(gridRef: String, precision: Int = 0) extends G
 
   def projection =  "ED50"
 
-  def getLowerPrecisionGridRef(precision: Int) = new ChannelIslandGridSquareInfo(outputGridRef, precision)
+  def getLowerPrecisionGridSquareInfo(precision: Int) = new ChannelIslandGridSquareInfo(outputGridRef, precision)
 
   def sourceProjectionPolygon = {
     val gridSize = gridReferencePrecision
@@ -43,7 +43,7 @@ class ChannelIslandGridSquareInfo(gridRef: String, precision: Int = 0) extends G
     }
   }
 
-  def getParentGridRef: Option[ChannelIslandGridSquareInfo] = {
+  def getParentGridSquareInfo: Option[ChannelIslandGridSquareInfo] = {
     if (gridReferencePrecision == 10000) {
       None
     }
