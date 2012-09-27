@@ -24,10 +24,9 @@
             dataFilter : function(data) { return data; }
         },
 		
-        _create: function() {
+        _createTree: function() {
             var _me = this;
-            this.element.addClass( "nbn-treewidget" ); //set the class of the nbn-treewidget       
-            this.element.append(this._treeRepresentation = $('<div>').dynatree({
+            this.element.prepend(this._treeRepresentation = $('<div>').dynatree({
                  checkbox: true,
                  selectMode: 1,
                  initAjax:{
@@ -39,6 +38,16 @@
                         return JSON.stringify($.map($.parseJSON(data), _me.options.dataFilter));
                     }
                 },
+                onLazyRead: function(node) {
+                    $.getJSON(nbn.util.ServerGeneratedLoadTimeConstants.data_api + "/taxa", {
+                            rows: 2147483647, category: node.data.id
+                        }, function(solr) {
+                            node.setLazyNodeStatus(DTNodeStatus_Ok);
+                            $.each(solr.results, function(i, result) {
+                               node.addChild($.extend({title: result.name}, result)); 
+                            });
+                    });
+                },
                 onSelect : function(flag, dtnode) {
                     if(!dtnode.hasChildren()) {
                         _me._trigger("selected", 0, dtnode.data);
@@ -47,8 +56,12 @@
                 
                  classNames: {checkbox: "dynatree-radio"}
              }));
-            
-            this._tree = this._treeRepresentation.dynatree("getTree");
+             this._tree = this._treeRepresentation.dynatree("getTree");
+        }, 
+        
+        _create: function() {
+            this.element.addClass( "nbn-treewidget" ); //set the class of the nbn-treewidget       
+            this._createTree();
             if(this.options.selectDeselect === true)
                 this.addSelectDeselect();
         },
@@ -62,7 +75,9 @@
         },
 
         setUrlOfDescriptionFile : function(newUrl) {
-            console.log(["setUrlOfDescriptionFile", arguments]); 	
+            this.options.urlOfDescriptionFile = newUrl;
+            this._treeRepresentation.remove();
+            this._createTree();
         },
 		
         getChildText : function(id) {

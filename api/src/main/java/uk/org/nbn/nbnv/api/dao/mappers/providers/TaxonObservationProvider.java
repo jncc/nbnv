@@ -43,6 +43,16 @@ public class TaxonObservationProvider {
         return SQL();
     }
     
+    public String filteredSelectDatasetsProviderNotInstantiated(Map<String, Object> params) {
+        BEGIN();
+        SELECT("DISTINCT o.datasetKey, dd.*");
+        createSelectQuery(params);
+        INNER_JOIN("DatasetData dd ON dd.datasetKey = o.datasetKey");
+        String toReturn = SQL();
+        System.out.println(toReturn);
+        return toReturn;
+    }
+    
     public String testProviderAndDatasets(Map<String, Object> params){
         BEGIN();
         SELECT("top 100 datasetKey, CAST(CRYPT_GEN_RANDOM(1) AS INT) querySpecificObservationCount");
@@ -53,50 +63,55 @@ public class TaxonObservationProvider {
     private void createSelectQuery(Map<String, Object> params) {
 
         FROM("UserTaxonObservationData o");
-        WHERE("userKey = #{userKey}");
+        WHERE("userKey = #{user.id}");
 
-        if ((Integer) params.get("startYear") > -1) {
+        if (params.containsKey("startYear") && (Integer) params.get("startYear") > -1) {
             WHERE("YEAR(endDate) >= #{startYear}");
         }
 
-        if ((Integer) params.get("endYear") > -1) {
+        if (params.containsKey("endYear") && (Integer) params.get("endYear") > -1) {
             WHERE("YEAR(startDate) <= #{endYear}");
         }
 
-        if (params.get("datasetKey") != null && ((List<String>)params.get("datasetKey")).size() > 0) {
+        if (params.containsKey("datasetKey") && params.get("datasetKey") != null) {
             WHERE("datasetKey IN " + datasetListToCommaList((List<String>) params.get("datasetKey")));
         }
 
-        if (params.get("ptvk") != null  && ((List<String>)params.get("ptvk")).size() > 0) {
-            WHERE("pTaxonVersionKey IN " + taxaListToCommaList((List<String>) params.get("ptvk")));
+        if (params.containsKey("ptvk") && params.get("ptvk") != null) {
+            if(params.get("ptvk") instanceof List) {
+                WHERE("pTaxonVersionKey IN " + taxaListToCommaList((List<String>) params.get("ptvk")));
+            }
+            else {
+                WHERE("pTaxonVersionKey = '" + params.get("ptvk") + "'");
+            }
         }
 
-        if ((Integer) params.get("overlaps") > -1) {
+        if (params.containsKey("overlaps") && (Integer) params.get("overlaps") > -1) {
             INNER_JOIN("FeatureOverlaps fo ON fo.overlappedFeatureID = o.featureID");
             WHERE("fo.parentFeatureID = #{overlaps}");
         }
 
-        if ((Integer) params.get("within") > -1) {
+        if (params.containsKey("within") && (Integer) params.get("within") > -1) {
             INNER_JOIN("FeatureContains fc ON fc.containedFeatureID = o.featureID");
             WHERE("fc.parentFeatureID = #{within}");
         }
 
-        if (!(Boolean) params.get("sensitive")) {
+        if (params.containsKey("sensitive") && !(Boolean) params.get("sensitive")) {
             WHERE("sensitive = #{sensitive}");
         }
             
-        if (!"".equals((String) params.get("designation"))) {
+        if (params.containsKey("designation") && !"".equals((String) params.get("designation"))) {
             INNER_JOIN("DesignationTaxonData dtd ON dtd.pTaxonVersionKey = o.pTaxonVersionKey");
             WHERE("dtd.code = #{designation}");
         }
         
-        if (!"".equals((String) params.get("gridRef"))) {
+        if (params.containsKey("gridRef") && !"".equals((String) params.get("gridRef"))) {
             INNER_JOIN("GridTree gt ON gt.featureID = o.featureID");
             INNER_JOIN("GridSquareFeatureData gsfd ON gsfd.featureID = gt.parentFeatureID");
             WHERE("gsfd.label = #{gridRef}");
         }
         
-        if (!"".equals((String) params.get("taxonOutputGroup"))) {
+        if (params.containsKey("taxonOutputGroup") && !"".equals((String) params.get("taxonOutputGroup"))) {
             INNER_JOIN("TaxonData td ON td.taxonVersionKey = o.pTaxonVersionKey");
             WHERE("td.outputGroupKey =  #{taxonOutputGroup}");
         }

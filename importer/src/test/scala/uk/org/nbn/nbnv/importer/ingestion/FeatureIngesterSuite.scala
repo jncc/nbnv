@@ -8,6 +8,7 @@ import uk.org.nbn.nbnv.importer.data.Repository
 import uk.org.nbn.nbnv.importer.spatial.{GridSquareInfo, GridSquareInfoFactory}
 import uk.org.nbn.nbnv.importer.records.NbnRecord
 import uk.org.nbn.nbnv.jpa.nbncore.{GridSquare, Feature}
+import org.apache.log4j.Logger
 
 class FeatureIngesterSuite extends BaseFunSuite {
 
@@ -29,6 +30,7 @@ class FeatureIngesterSuite extends BaseFunSuite {
 
     val repo = mock[Repository]
     val em = mock[EntityManager]
+    val log = mock[Logger]
   }
 
   test("an existing grid square feature should just be returned") {
@@ -39,7 +41,7 @@ class FeatureIngesterSuite extends BaseFunSuite {
     when(f.repo.getGridSquareFeature(f.gridRef)).thenReturn(Some((feature, mock[GridSquare])))
 
     // act
-    val ingester = new FeatureIngester(f.em, f.repo, f.gridSquareInfoFactory)
+    val ingester = new FeatureIngester(f.log, f.em, f.repo, f.gridSquareInfoFactory)
     val result = ingester.ensureFeature(f.record)
 
     // assert
@@ -55,14 +57,14 @@ class FeatureIngesterSuite extends BaseFunSuite {
     val grandparentInfo = mock[GridSquareInfo]
     when(parentInfo.gridReference).thenReturn("PARENT")
     when(grandparentInfo.gridReference).thenReturn("GRANDPARENT")
-    when(f.gridSquareInfo.getParentGridRef).thenReturn(Some(parentInfo))
-    when(parentInfo.getParentGridRef).thenReturn(Some(grandparentInfo))
-    when(grandparentInfo.getParentGridRef).thenReturn(None)
+    when(f.gridSquareInfo.getParentGridSquareInfo).thenReturn(Some(parentInfo))
+    when(parentInfo.getParentGridSquareInfo).thenReturn(Some(grandparentInfo))
+    when(grandparentInfo.getParentGridSquareInfo).thenReturn(None)
 
     val em = new FakePersistenceTrackingEntityManager
 
     // act
-    val ingester = new FeatureIngester(em, f.repo, f.gridSquareInfoFactory)
+    val ingester = new FeatureIngester(f.log, em, f.repo, f.gridSquareInfoFactory)
     ingester.ensureFeature(f.record)
 
     // assert
@@ -75,10 +77,10 @@ class FeatureIngesterSuite extends BaseFunSuite {
     // arrange
     val f = fixture
     when(f.repo.getGridSquareFeature(anyString)).thenReturn(None)
-    when(f.gridSquareInfo.getParentGridRef).thenReturn(None)
+    when(f.gridSquareInfo.getParentGridSquareInfo).thenReturn(None)
 
     // act
-    val ingester = new FeatureIngester(f.em, f.repo, f.gridSquareInfoFactory)
+    val ingester = new FeatureIngester(f.log, f.em, f.repo, f.gridSquareInfoFactory)
     ingester.ensureFeature(f.record)
 
     // assert - that exactly one GridSquare should be persisted

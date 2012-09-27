@@ -117,25 +117,25 @@ class BritishGridSquareInfoSuite extends BaseFunSuite {
     bgr.gridReference should be (knownGridRef_10000m)
   }
 
-  test("should give WKT for 100m grid square") {
+  test("should give WKT for 100m grid square in WGS84") {
     val bgr = new BritishGridSquareInfo(knownGridRef_100m)
 
     bgr.wgs84Polygon matches (TestResources.polygonWKTRegex)
   }
 
-  test("should give WKT for 1000m grid square") {
+  test("should give WKT for 1000m grid square in WGS84") {
     val bgr = new BritishGridSquareInfo(knownGridRef_1000m)
 
     bgr.wgs84Polygon matches (TestResources.polygonWKTRegex)
   }
 
-  test("should give WKT for 2000m grid square") {
+  test("should give WKT for 2000m grid square in WGS84") {
     val bgr = new BritishGridSquareInfo(knownGridRef_2000m)
 
     bgr.wgs84Polygon matches (TestResources.polygonWKTRegex)
   }
 
-  test("should give WKT for 10000m grid square") {
+  test("should give WKT for 10000m grid square in WGS84") {
     val bgr = new BritishGridSquareInfo(knownGridRef_10000m)
 
     bgr.wgs84Polygon matches (TestResources.polygonWKTRegex)
@@ -144,7 +144,7 @@ class BritishGridSquareInfoSuite extends BaseFunSuite {
   test("should give 1000m grid square as parent of 100m") {
     val bgr = new BritishGridSquareInfo(knownGridRef_100m)
 
-    bgr.getParentGridRef match {
+    bgr.getParentGridSquareInfo match {
       case Some(parent) => {
         parent.gridReference should be (knownGridRef_1000m)
         parent.gridReferencePrecision should be (1000)
@@ -156,7 +156,7 @@ class BritishGridSquareInfoSuite extends BaseFunSuite {
   test("should give 2000m grid square as parent of 1000m") {
     val bgr = new BritishGridSquareInfo(knownGridRef_1000m)
 
-    bgr.getParentGridRef match {
+    bgr.getParentGridSquareInfo match {
       case Some(parent) => {
         parent.gridReference should be (knownGridRef_2000m)
         parent.gridReferencePrecision should be (2000)
@@ -168,7 +168,7 @@ class BritishGridSquareInfoSuite extends BaseFunSuite {
   test("should give 10000m grid square as parent of 2000m") {
     val bgr = new BritishGridSquareInfo(knownGridRef_2000m)
 
-    bgr.getParentGridRef match {
+    bgr.getParentGridSquareInfo match {
       case Some(parent) => {
         parent.gridReference should be (knownGridRef_10000m)
         parent.gridReferencePrecision should be (10000)
@@ -180,16 +180,40 @@ class BritishGridSquareInfoSuite extends BaseFunSuite {
   test("should be no parent of 10000m grid square") {
     val bgr = new BritishGridSquareInfo(knownGridRef_10000m)
 
-    bgr.getParentGridRef should be (None)
+    bgr.getParentGridSquareInfo should be (None)
   }
 
   test("should give 100m grid ref at 2000m") {
     val bgr = new BritishGridSquareInfo(knownGridRef_100m)
 
-    val lowerBgr = bgr.getLowerPrecisionGridRef(2000)
+    val lowerBgr = bgr.getLowerPrecisionGridSquareInfo(2000)
 
     lowerBgr should not be (null)
     lowerBgr.gridReference should be (knownGridRef_2000m)
     lowerBgr.gridReferencePrecision should be (2000)
+  }
+
+  test("should give WKT for 100m grid square") {
+    val bgr = new BritishGridSquareInfo(knownGridRef_100m)
+
+    bgr.sourceProjectionPolygon matches (TestResources.polygonWKTRegex)
+  }
+
+  test("should give WKT for 1000m grid square") {
+    val bgr = new BritishGridSquareInfo(knownGridRef_1000m)
+
+    bgr.sourceProjectionPolygon matches (TestResources.polygonWKTRegex)
+  }
+
+  test("should give WKT for 2000m grid square") {
+    val bgr = new BritishGridSquareInfo(knownGridRef_2000m)
+
+    bgr.sourceProjectionPolygon matches (TestResources.polygonWKTRegex)
+  }
+
+  test("should give WKT for 10000m grid square") {
+    val bgr = new BritishGridSquareInfo(knownGridRef_10000m)
+
+    bgr.sourceProjectionPolygon matches (TestResources.polygonWKTRegex)
   }
 }

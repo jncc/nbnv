@@ -16,21 +16,19 @@ $.namespace("nbn.util.EntityResolver", new function() {
             throw "Entity resolver not complete for habitats";
         },
         dataset : function(id, callback) {
-            throw "Entity resolver not complete for dataset";
+            return $.getJSON(nbn.util.ServerGeneratedLoadTimeConstants.data_api + "/datasets/" + id, callback);
         },
         datasets : function(id, callback) {
             throw "Entity resolver not complete for datasets";
         },
         designation : function(id, callback) {
-            throw "Entity resolver not complete for designation";
-        },
-        datasetWithMetadata: function(id, callback) {
-            return $.getJSON(nbn.util.ServerGeneratedLoadTimeConstants.data_api + "/dataset/" + id, callback);
-        },
-        datasetsWithoutMetadata: function(id, callback) {
-            return $.getJSON(nbn.util.ServerGeneratedLoadTimeConstants.data_api + "/dataset/" + id, callback);
+            return $.getJSON(nbn.util.ServerGeneratedLoadTimeConstants.data_api + "/designations/" + id, callback);
         }
     };
+    //The data api does not filter out requests for metadata. Reuse the respective method
+    dataResolvers.datasetWithMetadata = dataResolvers.dataset;
+    dataResolvers.datasetsWithMetadata = dataResolvers.datasets;
+    
     this.resolve = function(data, callback) {
         var dataTypesToResolve = [], dataToResolve = {}, ajaxResponses;
         

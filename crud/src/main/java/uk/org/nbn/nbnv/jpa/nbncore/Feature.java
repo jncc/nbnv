@@ -36,6 +36,7 @@ public class Feature implements Serializable {
     @Id
     @Basic(optional = false)
     @Column(name = "featureID")
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Integer featureID;
     @Basic(optional = false)
     @Column(name = "wkt")

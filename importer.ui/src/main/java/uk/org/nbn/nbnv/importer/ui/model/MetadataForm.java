@@ -17,6 +17,9 @@ public class MetadataForm {
     private boolean processed = false;
     private List<String> errors = new ArrayList<String>();
     private List<Organisation> organisationList;
+    private String defaultName;
+    private String defaultPhone;
+    private String defaultEmail;
 
     /**
      * @return the metadata
@@ -72,5 +75,29 @@ public class MetadataForm {
      */
     public void setOrganisationList(List<Organisation> organisationList) {
         this.organisationList = organisationList;
+    }
+
+    public String getDefaultName() {
+        return defaultName;
+    }
+
+    public void setDefaultName(String defaultName) {
+        this.defaultName = defaultName;
+    }
+
+    public String getDefaultPhone() {
+        return defaultPhone;
+    }
+
+    public void setDefaultPhone(String defaultPhone) {
+        this.defaultPhone = defaultPhone;
+    }
+
+    public String getDefaultEmail() {
+        return defaultEmail;
+    }
+
+    public void setDefaultEmail(String defaultEmail) {
+        this.defaultEmail = defaultEmail;
     }
 }
