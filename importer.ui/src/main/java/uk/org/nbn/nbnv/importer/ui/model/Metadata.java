@@ -19,6 +19,13 @@ public class Metadata {
     private String info = "";
     private String use = "";
     private String access = "";
+    private String datasetAdminName = "";
+    private String datasetAdminPhone = "";
+    private String datasetAdminEmail = "";
+    private String geographicalRes = "10km^2";
+    private String recordAtts = "N/A";
+    private String recorderNames = "N/A";
+    private int datasetAdminID = -1;
     private int organisationID = -1;
 
     /**
@@ -174,5 +181,60 @@ public class Metadata {
     public void setOrganisationID(int organisationID) {
         this.organisationID = organisationID;
     }
-    
+
+    public String getDatasetAdminName() {
+        return datasetAdminName;
+    }
+
+    public void setDatasetAdminName(String datasetAdminName) {
+        this.datasetAdminName = datasetAdminName;
+    }
+
+    public String getDatasetAdminPhone() {
+        return datasetAdminPhone;
+    }
+
+    public void setDatasetAdminPhone(String datasetAdminPhone) {
+        this.datasetAdminPhone = datasetAdminPhone;
+    }
+
+    public String getDatasetAdminEmail() {
+        return datasetAdminEmail;
+    }
+
+    public void setDatasetAdminEmail(String datasetAdminEmail) {
+        this.datasetAdminEmail = datasetAdminEmail;
+    }
+
+    public int getDatasetAdminID() {
+        return datasetAdminID;
+    }
+
+    public void setDatasetAdminID(int datasetAdminID) {
+        this.datasetAdminID = datasetAdminID;
+    }
+
+    public String getGeographicalRes() {
+        return geographicalRes;
+    }
+
+    public void setGeographicalRes(String geographicalRes) {
+        this.geographicalRes = geographicalRes;
+    }
+
+    public String getRecordAtts() {
+        return recordAtts;
+    }
+
+    public void setRecordAtts(String recordAtts) {
+        this.recordAtts = recordAtts;
+    }
+
+    public String getRecorderNames() {
+        return recorderNames;
+    }
+
+    public void setRecorderNames(String recorderNames) {
+        this.recorderNames = recorderNames;
+    }
 }
