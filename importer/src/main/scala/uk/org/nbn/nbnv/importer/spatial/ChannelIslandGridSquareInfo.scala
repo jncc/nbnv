@@ -158,27 +158,12 @@ class ChannelIslandGridSquareInfo(gridRef: String, precision: Int = 0) extends G
       gridRef
     }
     else {
-      //eg gridRef WA234369
-      //gives 234369
-      val numericPart = getNumeralsFromGridRef(gridRef) //gives 234369
-      //gives (234,369)
-      val numericComponents = numericPart.splitAt(numericPart.length / 2)
-      //gives 3
-      val dintyEasting = numericComponents._1.substring(1,2).toInt
-      //gives 6
-      val dintyNorthing = numericComponents._2.substring(1,2).toInt
-      //gives I (2, 6)
-      val dintyLetter = getDintyLeter(dintyEasting, dintyNorthing)
+      val numericPart = getNumeralsFromGridRef(gridRef)
 
-      //gives WA
       val gridLetters = getLettersFromGridRef(gridRef)
-      //gives 2
-      val easting = numericComponents._1.substring(0,1)
-      //gives 3
-      val northing = numericComponents._2.substring(0,1)
+      val dintyPart = computeDinty(numericPart)
 
-      //WA23I
-      gridLetters + easting + northing + dintyLetter
+      gridLetters + dintyPart
     }
   }
 

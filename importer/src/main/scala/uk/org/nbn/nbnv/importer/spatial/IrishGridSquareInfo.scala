@@ -157,27 +157,12 @@ class IrishGridSquareInfo(gridRef: String, precision: Int = 0) extends GridSquar
       gridRef
     }
     else {
-      //eg gridRef A234369
-      //gives 234369
-      val numericPart = getNumeralsFromGridRef(gridRef) //gives 234369
-      //gives (234,369)
-      val numericComponents = numericPart.splitAt(numericPart.length / 2)
-      //gives 3
-      val dintyEasting = numericComponents._1.substring(1,2).toInt
-      //gives 6
-      val dintyNorthing = numericComponents._2.substring(1,2).toInt
-      //gives I (2, 6)
-      val dintyLetter = getDintyLeter(dintyEasting, dintyNorthing)
+      val numericPart = getNumeralsFromGridRef(gridRef)
 
-      //gives A
-      val gridLetters = getLetterFromGridRef(gridRef)
-      //gives 2
-      val easting = numericComponents._1.substring(0,1)
-      //gives 3
-      val northing = numericComponents._2.substring(0,1)
+      val gridLetter = getLetterFromGridRef(gridRef)
+      val dintyPart = computeDinty(numericPart)
 
-      //A23I
-      gridLetters + easting + northing + dintyLetter
+      gridLetter + dintyPart
     }
   }
 
