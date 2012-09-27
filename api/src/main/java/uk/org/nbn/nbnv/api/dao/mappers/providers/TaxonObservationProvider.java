@@ -63,11 +63,11 @@ public class TaxonObservationProvider {
             WHERE("YEAR(startDate) <= #{endYear}");
         }
 
-        if (params.get("datasetKey") != null) {
+        if (params.get("datasetKey") != null && ((List<String>)params.get("datasetKey")).size() > 0) {
             WHERE("datasetKey IN " + datasetListToCommaList((List<String>) params.get("datasetKey")));
         }
 
-        if (params.get("ptvk") != null) {
+        if (params.get("ptvk") != null  && ((List<String>)params.get("ptvk")).size() > 0) {
             WHERE("pTaxonVersionKey IN " + taxaListToCommaList((List<String>) params.get("ptvk")));
         }
 

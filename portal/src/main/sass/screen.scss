@@ -124,20 +124,22 @@ body {
 
     .nbn-report-data-container{
         width: 30%;
+        margin: auto;
+        display: inline-block;
+        vertical-align: top;
     }
 
     table.nbn-simple-table{
-        $padding: 1px;
         font-family: Arial,Helvetica,Sans-serif;
         width: 100%;
         border-collapse: separate;
         border-bottom: 1px solid $majorColour;
         margin-bottom: 20px;
         th{
-            padding: $padding;
+            padding: 1px;
         }
         td{
-            padding: $padding;
+            padding: 3px !important;
         }
     }
     
@@ -271,6 +273,18 @@ body {
     .nbn-provider-table-logo{
         max-width: 25px;
         max-height: 25px;
+    }
+
+    .nbn-year-input{
+        width: 3em;
+    }
+
+    .nbn-filter-name{
+        font-weight: bold;
+    }
+
+    .nbn-designation-dropdown{
+        width: 15em;
     }
 
 }
