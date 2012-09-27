@@ -73,7 +73,7 @@ public class TaxonObservationResource {
     public List<TaxonObservation> getObservationsByFilter(
             @TokenUser() User user, @QueryParam("startYear") @DefaultValue("-1") int startYear, @QueryParam("endYear") @DefaultValue("-1") int endYear, @QueryParam("datasetKey") @DefaultValue("") List<String> datasetKeys, @QueryParam("ptvk") @DefaultValue("") List<String> taxa, @QueryParam("overlapSite") @DefaultValue("-1") Integer overlaps, @QueryParam("withinSite") @DefaultValue("-1") Integer within, @QueryParam("sensitive") @DefaultValue("1") Boolean sensitive, @QueryParam("designation") @DefaultValue("") String designation, @QueryParam("taxonOutputGroup") @DefaultValue("") String taxonOutputGroup, @QueryParam("gridRef") @DefaultValue("") String gridRef) {
         //TODO: squareBlurring(?)
-        return observationMapper.selectObservationRecordsByFilter(user.getId(), startYear, endYear, datasetKeys, taxa, overlaps, within, sensitive, designation, taxonOutputGroup, gridRef);
+        return observationMapper.selectObservationRecordsByFilter(user, startYear, endYear, datasetKeys, taxa, overlaps, within, sensitive, designation, taxonOutputGroup, gridRef);
     }
 
     @GET
@@ -82,7 +82,7 @@ public class TaxonObservationResource {
     public List<TaxonWithQueryStats> getObservationSpeciesByFilter(
             @TokenUser() User user, @QueryParam("startYear") @DefaultValue("-1") int startYear, @QueryParam("endYear") @DefaultValue("-1") int endYear, @QueryParam("datasetKey") @DefaultValue("") List<String> datasetKeys, @QueryParam("ptvk") @DefaultValue("") List<String> taxa, @QueryParam("overlapSite") @DefaultValue("-1") Integer overlaps, @QueryParam("withinSite") @DefaultValue("-1") Integer within, @QueryParam("sensitive") @DefaultValue("1") Boolean sensitive, @QueryParam("designation") @DefaultValue("") String designation, @QueryParam("taxonOutputGroup") @DefaultValue("") String taxonOutputGroup, @QueryParam("gridRef") @DefaultValue("") String gridRef) {
         //TODO: squareBlurring(?)
-        return observationMapper.selectObservationSpeciesByFilter(user.getId(), startYear, endYear, datasetKeys, taxa, overlaps, within, sensitive, designation, taxonOutputGroup, gridRef);
+        return observationMapper.selectObservationSpeciesByFilter(user, startYear, endYear, datasetKeys, taxa, overlaps, within, sensitive, designation, taxonOutputGroup, gridRef);
     }
 
     @GET
@@ -91,7 +91,7 @@ public class TaxonObservationResource {
     public List<TaxonOutputGroupWithQueryStats> getObservationGroupsByFilter(
             @TokenUser() User user, @QueryParam("startYear") @DefaultValue("-1") int startYear, @QueryParam("endYear") @DefaultValue("-1") int endYear, @QueryParam("datasetKey") List<String> datasetKeys, @QueryParam("ptvk") List<String> taxa, @QueryParam("overlapSite") @DefaultValue("-1") Integer overlaps, @QueryParam("withinSite") @DefaultValue("-1") Integer within, @QueryParam("sensitive") @DefaultValue("1") Boolean sensitive, @QueryParam("designation") @DefaultValue("") String designation, @QueryParam("taxonOutputGroup") @DefaultValue("") String taxonOutputGroup, @QueryParam("gridRef") @DefaultValue("") String gridRef) {
         //TODO: squareBlurring(?)
-        return observationMapper.selectObservationGroupsByFilter(user.getId(), startYear, endYear, datasetKeys, taxa, overlaps, within, sensitive, designation, taxonOutputGroup, gridRef);
+        return observationMapper.selectObservationGroupsByFilter(user, startYear, endYear, datasetKeys, taxa, overlaps, within, sensitive, designation, taxonOutputGroup, gridRef);
     }
 
     @GET
@@ -100,7 +100,7 @@ public class TaxonObservationResource {
     public List<DatasetWithQueryStats> getObservationDatasetsByFilter(
             @TokenUser() User user, @QueryParam("startYear") @DefaultValue("-1") int startYear, @QueryParam("endYear") @DefaultValue("-1") int endYear, @QueryParam("datasetKey") @DefaultValue("") List<String> datasetKeys, @QueryParam("ptvk") @DefaultValue("") List<String> taxa, @QueryParam("overlapSite") @DefaultValue("-1") Integer overlaps, @QueryParam("withinSite") @DefaultValue("-1") Integer within, @QueryParam("sensitive") @DefaultValue("1") Boolean sensitive, @QueryParam("designation") @DefaultValue("") String designation, @QueryParam("taxonOutputGroup") @DefaultValue("") String taxonOutputGroup, @QueryParam("gridRef") @DefaultValue("") String gridRef) {
         //TODO: squareBlurring(?)
-        return observationMapper.selectObservationDatasetsByFilter(user.getId(), startYear, endYear, datasetKeys, taxa, overlaps, within, sensitive, designation, taxonOutputGroup, gridRef);
+        return observationMapper.selectObservationDatasetsByFilter(user, startYear, endYear, datasetKeys, taxa, overlaps, within, sensitive, designation, taxonOutputGroup, gridRef);
     }
 
     @GET
@@ -110,7 +110,7 @@ public class TaxonObservationResource {
             @TokenUser() User user, @QueryParam("startYear") @DefaultValue("-1") int startYear, @QueryParam("endYear") @DefaultValue("-1") int endYear, @QueryParam("datasetKey") @DefaultValue("") List<String> datasetKeys, @QueryParam("ptvk") @DefaultValue("") List<String> taxa, @QueryParam("overlapSite") @DefaultValue("-1") Integer overlaps, @QueryParam("withinSite") @DefaultValue("-1") Integer within, @QueryParam("sensitive") @DefaultValue("1") Boolean sensitive, @QueryParam("designation") @DefaultValue("") String designation, @QueryParam("taxonOutputGroup") @DefaultValue("") String taxonOutputGroup, @QueryParam("gridRef") @DefaultValue("") String gridRef) {
 
         //TODO: squareBlurring(?)
-        List<DatasetWithQueryStats> datasetsWithQueryStats = observationMapper.selectObservationDatasetsByFilter(user.getId(), startYear, endYear, datasetKeys, taxa, overlaps, within, sensitive, designation, taxonOutputGroup, gridRef);
+        List<DatasetWithQueryStats> datasetsWithQueryStats = observationMapper.selectObservationDatasetsByFilter(user, startYear, endYear, datasetKeys, taxa, overlaps, within, sensitive, designation, taxonOutputGroup, gridRef);
 
         return groupDatasetsByProvider(datasetsWithQueryStats);
     }
