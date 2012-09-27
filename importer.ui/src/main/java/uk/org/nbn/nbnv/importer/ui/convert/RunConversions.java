@@ -129,7 +129,7 @@ public class RunConversions {
             OrganisationGroupXMLParser handler = OrganisationGroupXMLParser.getInstance();
             
             // If we haven't run the parser yet then run it and mark it as run
-            if (handler.hasBeenRun()) {
+            if (!handler.hasBeenRun()) {
                 SAXParserFactory saxFactory = SAXParserFactory.newInstance();
                 SAXParser saxParser = saxFactory.newSAXParser();
 
