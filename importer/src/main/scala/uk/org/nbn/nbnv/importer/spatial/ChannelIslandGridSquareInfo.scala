@@ -3,42 +3,9 @@ package uk.org.nbn.nbnv.importer.spatial
 import math._
 import uk.org.nbn.nbnv.importer.ImportFailedException
 
-class ChannelIslandGridSquareInfo(gridRef: String, precision: Int = 0) extends GridSquareInfo {
-
-  //Check grid ref is uk grid ref
-  if (gridRef.matches(GridRefPatterns.channelIslandsGridRef) == false
-    && gridRef.matches(GridRefPatterns.channelIslandsDintyGridRef)  == false)
-    throw new IllegalArgumentException("Grid reference '%s' is not a valid Channel Islands grid reference".format(gridRef))
-
-  //Check grid ref is not below minimum preciesion
-  val currentPrecision = getPrecision(gridRef)
-
-  if (currentPrecision > 10000) throw new IllegalArgumentException("Grid reference precision must be 10Km or higher")
-
-  //Normalise the precision to one of the allowable values
-  val normalisedPrecision = if (precision != 0) getNormalisedPrecision(precision) else 0
-
-  val outputGridRef = {
-
-    if (normalisedPrecision > 0 &&  normalisedPrecision < currentPrecision) {
-      throw ImportFailedException("Normailised precsion '%s' is greater then grid ref '%s' precision".format(normalisedPrecision, gridRef))
-    }
-    else if (normalisedPrecision > 0 && normalisedPrecision > currentPrecision) {
-      decreaseGridPrecision(gridRef,normalisedPrecision)
-    }
-    else if (currentPrecision < 100) {
-      decreaseGridPrecision(gridRef, 100)
-    }
-    else {
-      gridRef
-    }
-  }
+class ChannelIslandGridSquareInfo(gridRef: String, precision: Int = 0) extends GridSquareInfo(gridRef, precision) {
 
   def projection =  "ED50"
-
-  def gridReference = outputGridRef
-
-  def gridReferencePrecision = getPrecision(outputGridRef)
 
   def getLowerPrecisionGridRef(precision: Int) = new ChannelIslandGridSquareInfo(outputGridRef, precision)
 
@@ -100,8 +67,15 @@ class ChannelIslandGridSquareInfo(gridRef: String, precision: Int = 0) extends G
     }
   }
 
+  //Check grid ref is uk grid ref
+  protected def checkGridRef {
+    if (gridRef.matches(GridRefPatterns.channelIslandsGridRef) == false
+      && gridRef.matches(GridRefPatterns.channelIslandsDintyGridRef)  == false)
+      throw new IllegalArgumentException("Grid reference '%s' is not a valid Channel Islands grid reference".format(gridRef))
+  }
+
   //Returns the grid reference precision in meters
-  private def getPrecision(gridReference : String) = {
+  protected def getPrecision(gridReference : String) = {
     if (gridReference.matches("""^W$""")) {
       500000
     }

@@ -3,7 +3,7 @@ package uk.org.nbn.nbnv.importer.spatial
 import uk.org.nbn.nbnv.importer.ImportFailedException
 import scala.math._
 
-class BritishGridSquareInfo(gridRef : String, precision: Int = 0) extends GridSquareInfo {
+class BritishGridSquareInfo(gridRef : String, precision: Int = 0) extends GridSquareInfo(gridRef, precision) {
   val majorBritishGridByLetter = Map (
     "H" -> (0,10), "J" -> (5,10),
     "N" -> (0,5), "0" -> (5,5),
@@ -18,40 +18,7 @@ class BritishGridSquareInfo(gridRef : String, precision: Int = 0) extends GridSq
     "V" -> (0,0), "W" -> (1,0), "X" -> (2,0), "Y" -> (3,0), "Z" -> (4,0)
   )
 
-  //Check grid ref is uk grid ref
-  if (gridRef.matches(GridRefPatterns.ukGridRef) == false
-    && gridRef.matches(GridRefPatterns.ukDintyGridRef)  == false)
-    throw new IllegalArgumentException("Grid reference '%s' is not a valid uk grid reference".format(gridRef))
-
-  //Check grid ref is not below minimum preciesion
-  val currentPrecision = getPrecision(gridRef)
-
-  if (currentPrecision > 10000) throw new IllegalArgumentException("Grid reference precision must be 10Km or higher")
-
-  //Normalise the precision to one of the allowable values
-  val normalisedPrecision = if (precision != 0) getNormalisedPrecision(precision) else 0
-
-  val outputGridRef = {
-
-    if (normalisedPrecision > 0 &&  normalisedPrecision < currentPrecision) {
-      throw ImportFailedException("Normailised precsion '%s' is greater then grid ref '%s' precision".format(normalisedPrecision, gridRef))
-    }
-    else if (normalisedPrecision > 0 && normalisedPrecision > currentPrecision) {
-      decreaseGridPrecision(gridRef,normalisedPrecision)
-    }
-    else if (currentPrecision < 100) {
-      decreaseGridPrecision(gridRef, 100)
-    }
-    else {
-      gridRef
-    }
-  }
-
   def projection = "OSGB36"
-
-  def gridReference = outputGridRef
-
-  def gridReferencePrecision = getPrecision(outputGridRef)
 
   def getLowerPrecisionGridRef(precision: Int) = new BritishGridSquareInfo(outputGridRef, precision)
 
@@ -95,6 +62,12 @@ class BritishGridSquareInfo(gridRef : String, precision: Int = 0) extends GridSq
     }
   }
 
+  protected def checkGridRef {
+    if (gridRef.matches(GridRefPatterns.ukGridRef) == false
+      && gridRef.matches(GridRefPatterns.ukDintyGridRef)  == false)
+      throw new IllegalArgumentException("Grid reference '%s' is not a valid uk grid reference".format(gridRef))
+  }
+
   protected def getDintyRegex = GridRefPatterns.ukDintyGridRef
 
   private def getEastingNorthing(gridRef: String) = {
@@ -113,7 +86,7 @@ class BritishGridSquareInfo(gridRef : String, precision: Int = 0) extends GridSq
   }
 
   //Returns the grid reference precision in meters
-  private def getPrecision(gridReference : String) = {
+  protected def getPrecision(gridReference : String) = {
     if (gridReference.matches("""^[HNOST]$""")) {
       500000
     }

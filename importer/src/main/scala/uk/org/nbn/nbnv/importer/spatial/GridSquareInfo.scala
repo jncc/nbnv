@@ -5,10 +5,49 @@ import org.geotools.geometry.GeneralDirectPosition
 import org.geotools.referencing.ReferencingFactoryFinder
 import org.geotools.referencing.operation.DefaultCoordinateOperationFactory
 
-trait GridSquareInfo {
+abstract class GridSquareInfo(gridRef : String, precision: Int = 0) {
+
+  val dintyGridByCoord = Map (
+    (0,8) -> "E", (2,8) -> "J", (4,8) -> "P", (6,8) -> "U", (8,8) -> "Z",
+    (0,6) -> "D", (2,6) -> "I", (4,6) -> "N", (6,6) -> "T", (8,6) -> "Y",
+    (0,4) -> "C", (2,4) -> "H", (4,4) -> "M", (6,4) -> "S", (8,4) -> "X",
+    (0,2) -> "B", (2,2) -> "G", (4,2) -> "L", (6,2) -> "R", (8,2) -> "W",
+    (0,0) -> "A", (2,0) -> "F", (4,0) -> "K", (6,0) -> "Q", (8,0) -> "V"
+  )
+
+  val dintyGridByLetter = dintyGridByCoord map {_.swap}
+
+  //Check grid ref is uk grid ref
+  checkGridRef
+
+  //Check grid ref is not below minimum precision
+  val currentPrecision = getPrecision(gridRef)
+
+  if (currentPrecision > 10000) throw new IllegalArgumentException("Grid reference precision must be 10Km or higher")
+
+  //Normalise the precision to one of the allowable values
+  val normalisedPrecision = if (precision != 0) getNormalisedPrecision(precision) else 0
+
+  val outputGridRef = {
+
+    if (normalisedPrecision > 0 &&  normalisedPrecision < currentPrecision) {
+      throw ImportFailedException("Normailised precsion '%s' is greater then grid ref '%s' precision".format(normalisedPrecision, gridRef))
+    }
+    else if (normalisedPrecision > 0 && normalisedPrecision > currentPrecision) {
+      decreaseGridPrecision(gridRef,normalisedPrecision)
+    }
+    else if (currentPrecision < 100) {
+      decreaseGridPrecision(gridRef, 100)
+    }
+    else {
+      gridRef
+    }
+  }
+
+  def gridReference = outputGridRef
+  def gridReferencePrecision = getPrecision(outputGridRef)
+
   def projection : String
-  def gridReference : String
-  def gridReferencePrecision : Int
   def wgs84Polygon : String
   def sourceProjectionPolygon : String
   def getParentGridRef : Option[GridSquareInfo]
@@ -17,16 +56,10 @@ trait GridSquareInfo {
   protected def getLettersFromGridRef(gridRef: String) : String
   protected def getNumeralsFromGridRef(gridRef: String) : String
   protected def getDintyRegex : String
+  protected def getPrecision(gridReference : String) : Int
+  protected def checkGridRef
 
-  protected val dintyGridByCoord = Map (
-    (0,8) -> "E", (2,8) -> "J", (4,8) -> "P", (6,8) -> "U", (8,8) -> "Z",
-    (0,6) -> "D", (2,6) -> "I", (4,6) -> "N", (6,6) -> "T", (8,6) -> "Y",
-    (0,4) -> "C", (2,4) -> "H", (4,4) -> "M", (6,4) -> "S", (8,4) -> "X",
-    (0,2) -> "B", (2,2) -> "G", (4,2) -> "L", (6,2) -> "R", (8,2) -> "W",
-    (0,0) -> "A", (2,0) -> "F", (4,0) -> "K", (6,0) -> "Q", (8,0) -> "V"
-  )
 
-  protected val dintyGridByLetter = dintyGridByCoord map {_.swap}
 
   protected def getDintyLeter(easting: Int, northing: Int) = {
     val dintyEasting = easting - (easting % 2)
@@ -112,9 +145,6 @@ trait GridSquareInfo {
       gridLetters + easting + northing + dintyLetter
     }
   }
-
-
-
 
   protected def padNumericPart(numericPart: String, padTo: Int) = {
     if (numericPart.length == padTo) {

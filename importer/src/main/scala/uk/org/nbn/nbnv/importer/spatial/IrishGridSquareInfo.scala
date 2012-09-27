@@ -3,7 +3,7 @@ package uk.org.nbn.nbnv.importer.spatial
 import math._
 import uk.org.nbn.nbnv.importer.ImportFailedException
 
-class IrishGridSquareInfo(gridRef: String, precision: Int = 0) extends GridSquareInfo {
+class IrishGridSquareInfo(gridRef: String, precision: Int = 0) extends GridSquareInfo(gridRef, precision) {
 
   val irishGridByLetter = Map (
     "A" -> (0,4), "B" -> (1,4), "C" -> (2,4), "D" -> (3,4), "E" -> (4,4),
@@ -13,40 +13,7 @@ class IrishGridSquareInfo(gridRef: String, precision: Int = 0) extends GridSquar
     "V" -> (0,0), "W" -> (1,0), "X" -> (2,0), "Y" -> (3,0), "Z" -> (4,0)
   )
 
-  //Check grid ref is uk grid ref
-  if (gridRef.matches(GridRefPatterns.irishGridRef) == false
-    && gridRef.matches(GridRefPatterns.irishDintyGrid)  == false)
-    throw new IllegalArgumentException("Grid reference '%s' is not a valid Irish grid reference".format(gridRef))
-
-  //Check grid ref is not below minimum preciesion
-  val currentPrecision = getPrecision(gridRef)
-
-  if (currentPrecision > 10000) throw new IllegalArgumentException("Grid reference precision must be 10Km or higher")
-
-  //Normalise the precision to one of the allowable values
-  val normalisedPrecision = if (precision != 0) getNormalisedPrecision(precision) else 0
-
-  val outputGridRef = {
-
-    if (normalisedPrecision > 0 &&  normalisedPrecision < currentPrecision) {
-      throw ImportFailedException("Normailised precsion '%s' is greater then grid ref '%s' precision".format(normalisedPrecision, gridRef))
-    }
-    else if (normalisedPrecision > 0 && normalisedPrecision > currentPrecision) {
-      decreaseGridPrecision(gridRef,normalisedPrecision)
-    }
-    else if (currentPrecision < 100) {
-      decreaseGridPrecision(gridRef, 100)
-    }
-    else {
-      gridRef
-    }
-  }
-
   def projection =  "OSNI"
-
-  def gridReference = outputGridRef
-
-  def gridReferencePrecision = getPrecision(outputGridRef)
 
   def getLowerPrecisionGridRef(precision: Int) = new IrishGridSquareInfo(outputGridRef, precision)
 
@@ -91,6 +58,12 @@ class IrishGridSquareInfo(gridRef: String, precision: Int = 0) extends GridSquar
     }
   }
 
+  protected def checkGridRef {
+    if (gridRef.matches(GridRefPatterns.irishGridRef) == false
+      && gridRef.matches(GridRefPatterns.irishDintyGrid)  == false)
+      throw new IllegalArgumentException("Grid reference '%s' is not a valid Irish grid reference".format(gridRef))
+  }
+
   private def getEastingNorthing(gridRef: String) = {
     val g = getTenFigGridRef(gridRef)
 
@@ -101,7 +74,7 @@ class IrishGridSquareInfo(gridRef: String, precision: Int = 0) extends GridSquar
   }
 
   //Returns the grid reference precision in meters
-  private def getPrecision(gridReference : String) = {
+  protected def getPrecision(gridReference : String) = {
     if (gridReference.matches("""^[A-HJ-Z]$""")) {
       100000
     }
