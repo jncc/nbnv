@@ -95,33 +95,16 @@ class IrishGridSquareInfo(gridRef: String, precision: Int = 0) extends GridSquar
 
     val numerals =
       if (gridRef.matches(GridRefPatterns.irishDintyGrid)) {
-        //eg TL32C
-        //gives 32C
         val numericPart = getNumeralsFromGridRef(gridRef)
-        //gives C
-        val dintyLetter = numericPart.substring(2,3)
-        //gives (0,4)
-        val coordinates = dintyGridByLetter(dintyLetter)
-        //gives (3,2)
-        val numericParts = numericPart.substring(0,2).splitAt(1)
-        //gives 3024
-        numericParts._1 + coordinates._1 + numericParts._2 + coordinates._2
+        expandDinty(numericPart)
       }
       else {
         getNumeralsFromGridRef(gridRef)
       }
 
-    if (numerals.length == 10) {
-      gridRef
-    }
-    else {
-      val numericParts = numerals.splitAt(numerals.length / 2)
-      val padLength = (10 - numerals.length) / 2
-      val padString = "0" * padLength
-      val letters = getLetterFromGridRef(gridRef)
+    val letter = getLetterFromGridRef(gridRef)
 
-      letters + numericParts._1 + padString + numericParts._2 + padString
-    }
+    letter + padNumericPart(numerals, 10)
   }
 
   private def getEastingNorthing(gridRef: String) = {

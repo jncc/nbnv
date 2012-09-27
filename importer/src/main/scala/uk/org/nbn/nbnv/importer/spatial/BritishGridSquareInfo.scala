@@ -1,11 +1,22 @@
 package uk.org.nbn.nbnv.importer.spatial
 
-import uk.me.jstott.jcoord.OSRef
 import uk.org.nbn.nbnv.importer.ImportFailedException
 import scala.math._
-import uk.me.jstott.jcoord.datum.WGS84Datum
 
 class BritishGridSquareInfo(gridRef : String, precision: Int = 0) extends GridSquareInfo {
+  val majorBritishGridByLetter = Map (
+    "H" -> (0,10), "J" -> (5,10),
+    "N" -> (0,5), "0" -> (5,5),
+    "S" -> (0,0), "T" -> (0,5)
+  )
+
+  val minorBritishGridByLetter = Map (
+    "A" -> (0,4), "B" -> (1,4), "C" -> (2,4), "D" -> (3,4), "E" -> (4,4),
+    "F" -> (0,3), "G" -> (1,3), "H" -> (2,3), "J" -> (3,3), "K" -> (4,3),
+    "L" -> (0,2), "M" -> (1,2), "N" -> (2,2), "O" -> (3,2), "P" -> (4,2),
+    "Q" -> (0,1), "R" -> (1,1), "S" -> (2,1), "T" -> (3,1), "U" -> (4,1),
+    "V" -> (0,0), "W" -> (1,0), "X" -> (2,0), "Y" -> (3,0), "Z" -> (4,0)
+  )
 
   //Check grid ref is uk grid ref
   if (gridRef.matches(GridRefPatterns.ukGridRef) == false
@@ -47,22 +58,17 @@ class BritishGridSquareInfo(gridRef : String, precision: Int = 0) extends GridSq
   def sourceProjectionPolygon = {
     val gridSize = gridReferencePrecision
 
-    val paddedGridRef = getSixFigGridRef(outputGridRef)
+    val (easting, northing) = getEastingNorthing(gridRef)
 
-    val gridRef = new OSRef(paddedGridRef)
-
-    getPolygonFromGridSquareOrigin(gridRef.getEasting.toInt, gridRef.getNorthing.toInt, gridSize)
+    getPolygonFromGridSquareOrigin(easting, northing, gridSize)
   }
 
   def wgs84Polygon = {
     val gridSize = gridReferencePrecision
 
-    val paddedGridRef = getSixFigGridRef(outputGridRef)
-    //bottom left co-ordinate
-    val gridRef = new OSRef(paddedGridRef)
+    val (easting, northing) = getEastingNorthing(gridRef)
 
-    getWGS84PolygonFromGridSquareOrigin(gridRef.getEasting.toInt, gridRef.getNorthing.toInt, gridSize, "27700")
-
+    getWGS84PolygonFromGridSquareOrigin(easting, northing, gridSize, "27700")
   }
 
   def getParentGridRef: Option[BritishGridSquareInfo] = {
@@ -87,6 +93,21 @@ class BritishGridSquareInfo(gridRef : String, precision: Int = 0) extends GridSq
 
       Option(new BritishGridSquareInfo(parentGridReference))
     }
+  }
+
+  private def getEastingNorthing(gridRef: String) = {
+    val g = getTenFigGridRef(gridRef)
+
+    val (majorLetter, minorLetter) = getLettersFromGridRef(g).splitAt(1)
+    val (majX, majY) = majorBritishGridByLetter(majorLetter)
+    val (mnrX, mnrY) = minorBritishGridByLetter(minorLetter)
+
+    val (e,n) = getNumeralsFromGridRef(g).splitAt(5)
+
+    val easting = (majX + mnrX) * 100000 + e.toInt
+    val northing = (majY + mnrY) * 100000 + n.toInt
+
+    (easting, northing)
   }
 
   private def decreaseGridPrecision(gridRef: String, targetPrecision: Int) : String = {
@@ -114,37 +135,20 @@ class BritishGridSquareInfo(gridRef : String, precision: Int = 0) extends GridSq
     }
   }
 
-  private def getSixFigGridRef(gridRef: String)= {
+  private def getTenFigGridRef(gridRef: String)= {
 
     val numerals =
       if (gridRef.matches(GridRefPatterns.ukDintyGridRef)) {
-        //eg TL32C
-        //gives 32C
         val numericPart = getNumeralsFromGridRef(gridRef)
-        //gives C
-        val dintyLetter = numericPart.substring(2,3)
-        //gives (0,4)
-        val coordinates = dintyGridByLetter(dintyLetter)
-        //gives (3,2)
-        val numericParts = numericPart.substring(0,2).splitAt(1)
-        //gives 3024
-        numericParts._1 + coordinates._1 + numericParts._2 + coordinates._2
+        expandDinty(numericPart)
       }
       else {
         getNumeralsFromGridRef(gridRef)
       }
 
-    if (numerals.length == 6) {
-      gridRef
-    }
-    else {
-      val numericParts = numerals.splitAt(numerals.length / 2)
-      val padLength = (6 - numerals.length) / 2
-      val padString = "0" * padLength
-      val letters = getLettersFromGridRef(gridRef)
+    val letters = getLettersFromGridRef(gridRef)
 
-      letters + numericParts._1 + padString + numericParts._2 + padString
-    }
+    letters + padNumericPart(numerals, 10)
   }
 
   private def trimGridDigits(gridRefString: String, maxDigits: Int) = {

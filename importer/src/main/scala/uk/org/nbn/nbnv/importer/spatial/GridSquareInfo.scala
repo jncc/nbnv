@@ -31,6 +31,31 @@ trait GridSquareInfo {
     dintyGridByCoord(dintyEasting, dintyNorthing)
   }
 
+  protected def padNumericPart(numericPart: String, padTo: Int) = {
+    if (numericPart.length == padTo) {
+      numericPart
+    }
+    else {
+      val numericParts = numericPart.splitAt(numericPart.length / 2)
+      val padLength = (padTo - numericPart.length) / 2
+      val padString = "0" * padLength
+
+      numericParts._1 + padString + numericParts._2 + padString
+    }
+  }
+
+  protected def expandDinty(numericPart: String) = {
+    //eg 32C
+    //gives C
+    val dintyLetter = numericPart.substring(2,3)
+    //gives (0,4)
+    val coordinates = dintyGridByLetter(dintyLetter)
+    //gives (3,2)
+    val numericParts = numericPart.substring(0,2).splitAt(1)
+    //gives 3024
+    numericParts._1 + coordinates._1 + numericParts._2 + coordinates._2
+  }
+
 
   protected def getNormalisedPrecision(precision : Int) = {
     if (precision <= 100) {
