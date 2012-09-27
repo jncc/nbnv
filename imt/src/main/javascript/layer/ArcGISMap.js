@@ -62,10 +62,18 @@ nbn.layer.ArcGISMap = function(mapHosts, mapService, map, options) {
 			throw "I can not construct a valid url as either a map service or host has not been defined. Therefore an " + typeOfCall + " call can not be performed";
 	};
 	
-	function createLegendURL() {
-		var urlParams = $.extend({}, _me.getCurrentFilters(), { callback:'?', f:'pjson', layers: _me.getCurrentVisibleLayers().join(',')});
-		return encodeURI(
-			_me.getHostsNextElement() + _me.getMapService() + '/legend' + 
+	function createLegendURL(layer) {
+		var urlParams = $.extend({
+                   SERVICE: 'WMS',
+                   VERSION: '1.1.1',
+                   REQUEST:'GetLegendGraphic',
+                   LAYER:layer,
+                   TRANSPARENT:'true',
+                   FORMAT:'image/png'
+                }, _me.getCurrentFilters());
+                
+                return encodeURI(
+			_me.getHostsNextElement() + _me.getMapService() +
 			nbn.util.ArrayTools.joinAndPrepend(nbn.util.ArrayTools.fromObject(urlParams),'&', '?') 
 		);
 	}
@@ -77,7 +85,7 @@ nbn.layer.ArcGISMap = function(mapHosts, mapService, map, options) {
 	
 	this.getLegend = function(callback) {
 		_checkIfInPositionToMakeACall('legend');
-		return $.getJSON(createLegendURL(), callback);
+		return $.map(this.getCurrentVisibleLayers(), createLegendURL);
 	};
 
 	$.extend(this,

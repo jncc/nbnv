@@ -195,7 +195,7 @@ nbn.mapping.construction.WidgetOptionsCreator = function(interactiveMapper){
             var _setSelectedSpecies = function(selection) {
                     if(_selectedSpecies = selection) {//save the species selection
                             var currUser = interactiveMapper.getUser();//get the current user
-                            _singleSpeciesDatasetSelectionTree.nbn_treewidget('setUrlOfDescriptionFile','TreeWidgetGenerator?type=spd&tvk=' + _selectedSpecies.taxonVersionKey + '&user=' + ((currUser) ? currUser.userID : 0));
+                            _singleSpeciesDatasetSelectionTree.nbn_treewidget('setUrlOfDescriptionFile',nbn.util.ServerGeneratedLoadTimeConstants.data_api + "/taxa/" + _selectedSpecies.taxonVersionKey.taxonVersionKey + "/datasets");
                             _datasetSelectionBox.show(); //show the selection box
                     }
                     _selectedDatasets=[];
@@ -257,16 +257,19 @@ nbn.mapping.construction.WidgetOptionsCreator = function(interactiveMapper){
                     allowMultipleSelection: 'none',
                     selected: function(event, selected) {
                             _setSelectedSpecies({
-                                    taxonVersionKey: selected,
+                                    taxonVersionKey: selected.taxonVersionKey,
                                     name: $(this).nbn_treewidget('getChildText', selected)
                             });
                     }
             });
 
             _singleSpeciesDatasetSelectionTree = $('<div>').nbn_treewidget({
-                    urlOfDescriptionFile : 'TreeWidgetGenerator?type=spd&tvk=NBNSYS0000005629&user=0',
+                    urlOfDescriptionFile : nbn.util.ServerGeneratedLoadTimeConstants.data_api + "/taxa/NBNSYS0000005629/datasets",
                     allowMultipleSelection: 'checkbox',
                     selectDeselect: true,
+                    dataFilter: function(dataset) {
+                        return $.extend({ title : dataset.name }, dataset);
+                    },
                     childrenSelectionListener: function(event, selected) {
                         _setSelectedSpeciesDatasets(selected);
                     },

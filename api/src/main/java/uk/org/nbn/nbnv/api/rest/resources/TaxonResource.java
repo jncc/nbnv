@@ -10,7 +10,11 @@ import org.apache.solr.client.solrj.SolrServerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.org.nbn.nbnv.api.dao.mappers.TaxonMapper;
+import uk.org.nbn.nbnv.api.dao.mappers.DatasetMapper;
+import uk.org.nbn.nbnv.api.model.Dataset;
 import uk.org.nbn.nbnv.api.model.Taxon;
+import uk.org.nbn.nbnv.api.model.User;
+import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
 import uk.org.nbn.nbnv.api.solr.SolrResponse;
 
 @Component
@@ -18,12 +22,20 @@ import uk.org.nbn.nbnv.api.solr.SolrResponse;
 public class TaxonResource {
     @Autowired SolrServer solrServer;
     @Autowired TaxonMapper taxonMapper;
+    @Autowired DatasetMapper datasetMapper;
     
     @GET
     @Produces(MediaType.APPLICATION_JSON) 
     @Path("{taxonVersionKey}")
     public Taxon getTaxon(@PathParam("taxonVersionKey") String taxonVersionKey) {
         return taxonMapper.getTaxon(taxonVersionKey);
+    }
+    
+    @GET
+    @Produces(MediaType.APPLICATION_JSON) 
+    @Path("/{taxonVersionKey}/datasets")
+    public List<Dataset> getDatasetListForTaxonViewableByUser(@TokenUser User user, @PathParam("taxonVersionKey") String taxonVersionKey) {
+        return datasetMapper.selectDatasetsForTaxonViewableByUser(user, taxonVersionKey);
     }
     
     @GET
