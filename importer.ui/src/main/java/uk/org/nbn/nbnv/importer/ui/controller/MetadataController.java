@@ -6,7 +6,6 @@ package uk.org.nbn.nbnv.importer.ui.controller;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.annotation.Annotation;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -25,14 +24,12 @@ import java.util.regex.Pattern;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.extractor.WordExtractor;
 import org.reflections.Reflections;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ObjectError;
@@ -43,9 +40,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.AbstractFormController;
-import org.springframework.web.servlet.mvc.AbstractWizardFormController;
-import org.springframework.web.servlet.mvc.SimpleFormController;
 import uk.org.nbn.nbnv.importer.ui.convert.RunConversions;
 import uk.org.nbn.nbnv.importer.ui.metadata.MetadataWriter;
 import uk.org.nbn.nbnv.importer.ui.model.Metadata;
@@ -58,7 +52,6 @@ import uk.org.nbn.nbnv.importer.ui.util.wordImporter.WordImporter;
 import uk.org.nbn.nbnv.importer.ui.validators.MetadataFormValidator;
 import uk.org.nbn.nbnv.importer.ui.validators.MetadataValidator;
 import uk.org.nbn.nbnv.jpa.nbncore.Organisation;
-import uk.org.nbn.nbnv.jpa.nbncore.UserData;
 
 /**
  *
