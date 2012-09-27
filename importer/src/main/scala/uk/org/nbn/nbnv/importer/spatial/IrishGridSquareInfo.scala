@@ -91,79 +91,13 @@ class IrishGridSquareInfo(gridRef: String, precision: Int = 0) extends GridSquar
     }
   }
 
-  private def getTenFigGridRef(gridRef: String)= {
-
-    val numerals =
-      if (gridRef.matches(GridRefPatterns.irishDintyGrid)) {
-        val numericPart = getNumeralsFromGridRef(gridRef)
-        expandDinty(numericPart)
-      }
-      else {
-        getNumeralsFromGridRef(gridRef)
-      }
-
-    val letter = getLetterFromGridRef(gridRef)
-
-    letter + padNumericPart(numerals, 10)
-  }
-
   private def getEastingNorthing(gridRef: String) = {
     val g = getTenFigGridRef(gridRef)
 
-    val (x, y) = irishGridByLetter(getLetterFromGridRef(g))
+    val (x, y) = irishGridByLetter(getLettersFromGridRef(g))
     val (e, n) = getNumeralsFromGridRef(g).splitAt(5)
 
     (x * 100000 + e.toInt, y * 100000 + n.toInt)
-  }
-
-  private def decreaseGridPrecision(gridRef: String, targetPrecision: Int) : String = {
-    //If targetPrecision is 2000 decrease to DINTY grid ref
-    if (targetPrecision == 2000) {
-      computeDintyFromGridRef(gridRef)
-    }
-    //Else reduce to target grid ref
-    else if (gridRef.matches(GridRefPatterns.irishDintyGrid) && targetPrecision == 10000){
-      //can only reduce this to 10000m
-      gridRef.substring(0,3)
-    }
-    else if (targetPrecision == 100){
-      trimGridDigits(gridRef, 6)
-    }
-    else if (targetPrecision == 1000){
-      trimGridDigits(gridRef, 4)
-    }
-    else if (targetPrecision == 10000) {
-      trimGridDigits(gridRef, 2)
-    }
-    else
-    {
-      throw new IllegalArgumentException("Invalid target precision")
-    }
-  }
-
-  private def trimGridDigits(gridRefString: String, maxDigits: Int) = {
-    var numericPart = getNumeralsFromGridRef(gridRef)
-    var parts = numericPart.splitAt(numericPart.length / 2)
-    var easting = parts._1.substring(0, maxDigits / 2)
-    var northing = parts._2.substring(0, maxDigits / 2)
-    var gridLetters = getLetterFromGridRef(gridRef)
-
-    gridLetters + easting + northing
-  }
-
-  private def computeDintyFromGridRef(gridRef: String) = {
-    if (gridRef.matches(GridRefPatterns.irishDintyGrid)) {
-      //already a DINTY grid ref
-      gridRef
-    }
-    else {
-      val numericPart = getNumeralsFromGridRef(gridRef)
-
-      val gridLetter = getLetterFromGridRef(gridRef)
-      val dintyPart = computeDinty(numericPart)
-
-      gridLetter + dintyPart
-    }
   }
 
   //Returns the grid reference precision in meters
@@ -171,7 +105,7 @@ class IrishGridSquareInfo(gridRef: String, precision: Int = 0) extends GridSquar
     if (gridReference.matches("""^[A-HJ-Z]$""")) {
       100000
     }
-    else if (gridReference.matches(GridRefPatterns.irishDintyGrid)) {
+    else if (gridReference.matches(getDintyRegex)) {
       2000
     }
     else {
@@ -181,11 +115,13 @@ class IrishGridSquareInfo(gridRef: String, precision: Int = 0) extends GridSquar
     }
   }
 
-  private def getLetterFromGridRef(gridRef : String) = {
+  protected def getLettersFromGridRef(gridRef : String) = {
     gridRef.substring(0,1)
   }
 
-  private def getNumeralsFromGridRef(gridRef : String) = {
+  protected def getNumeralsFromGridRef(gridRef : String) = {
     gridRef.substring(1, gridRef.length)
   }
+
+  protected def getDintyRegex = GridRefPatterns.irishDintyGrid
 }

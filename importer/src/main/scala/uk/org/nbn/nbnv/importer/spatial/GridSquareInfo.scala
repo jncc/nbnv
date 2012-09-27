@@ -14,6 +14,10 @@ trait GridSquareInfo {
   def getParentGridRef : Option[GridSquareInfo]
   def getLowerPrecisionGridRef(precision: Int) : GridSquareInfo
 
+  protected def getLettersFromGridRef(gridRef: String) : String
+  protected def getNumeralsFromGridRef(gridRef: String) : String
+  protected def getDintyRegex : String
+
   protected val dintyGridByCoord = Map (
     (0,8) -> "E", (2,8) -> "J", (4,8) -> "P", (6,8) -> "U", (8,8) -> "Z",
     (0,6) -> "D", (2,6) -> "I", (4,6) -> "N", (6,6) -> "T", (8,6) -> "Y",
@@ -31,25 +35,85 @@ trait GridSquareInfo {
     dintyGridByCoord(dintyEasting, dintyNorthing)
   }
 
-  protected def computeDinty(numericPart: String) = {
-    //eg 234369
-    //gives (234,369)
-    val numericComponents = numericPart.splitAt(numericPart.length / 2)
-    //gives 3
-    val dintyEasting = numericComponents._1.substring(1,2).toInt
-    //gives 6
-    val dintyNorthing = numericComponents._2.substring(1,2).toInt
-    //gives I (2, 6)
-    val dintyLetter = getDintyLeter(dintyEasting, dintyNorthing)
-    //gives 2
-    val easting = numericComponents._1.substring(0,1)
-    //gives 3
-    val northing = numericComponents._2.substring(0,1)
+  protected def trimGridDigits(gridRef: String, maxDigits: Int) = {
+    var numericPart = getNumeralsFromGridRef(gridRef)
+    var parts = numericPart.splitAt(numericPart.length / 2)
+    var easting = parts._1.substring(0, maxDigits / 2)
+    var northing = parts._2.substring(0, maxDigits / 2)
+    var gridLetters = getLettersFromGridRef(gridRef)
 
-    //gives 23I
-    easting + northing + dintyLetter
-
+    gridLetters + easting + northing
   }
+
+  protected def decreaseGridPrecision(gridRef: String, targetPrecision: Int) : String = {
+    //If targetPrecision is 2000 decrease to DINTY grid ref
+    if (targetPrecision == 2000) {
+      computeDintyFromGridRef(gridRef)
+    }
+    //Else reduce to target grid ref
+    else if (gridRef.matches(getDintyRegex) && targetPrecision == 10000){
+      val gridLetters = getLettersFromGridRef(gridRef)
+      val numericPart = getNumeralsFromGridRef(gridRef)
+      gridLetters + numericPart.substring(0,2)
+    }
+    else if (targetPrecision == 100){
+      trimGridDigits(gridRef, 6)
+    }
+    else if (targetPrecision == 1000){
+      trimGridDigits(gridRef, 4)
+    }
+    else if (targetPrecision == 10000) {
+      trimGridDigits(gridRef, 2)
+    }
+    else
+    {
+      throw new IllegalArgumentException("Invalid target precision")
+    }
+  }
+
+  protected def getTenFigGridRef(gridRef: String)= {
+
+    val numerals =
+      if (gridRef.matches(getDintyRegex)) {
+        val numericPart = getNumeralsFromGridRef(gridRef)
+        expandDinty(numericPart)
+      }
+      else {
+        getNumeralsFromGridRef(gridRef)
+      }
+
+    val letters = getLettersFromGridRef(gridRef)
+
+    letters + padNumericPart(numerals, 10)
+  }
+
+  protected def computeDintyFromGridRef(gridRef: String) = {
+    if (gridRef.matches(getDintyRegex)) {
+      //already a DINTY grid ref
+      gridRef
+    }
+    else {
+      val numericPart = getNumeralsFromGridRef(gridRef)
+      val numericComponents = numericPart.splitAt(numericPart.length / 2)
+      //gives 3
+      val dintyEasting = numericComponents._1.substring(1,2).toInt
+      //gives 6
+      val dintyNorthing = numericComponents._2.substring(1,2).toInt
+      //gives I (2, 6)
+      val dintyLetter = getDintyLeter(dintyEasting, dintyNorthing)
+      //gives 2
+      val easting = numericComponents._1.substring(0,1)
+      //gives 3
+      val northing = numericComponents._2.substring(0,1)
+
+      val gridLetters = getLettersFromGridRef(gridRef)
+
+      //gives 23I
+      gridLetters + easting + northing + dintyLetter
+    }
+  }
+
+
 
 
   protected def padNumericPart(numericPart: String, padTo: Int) = {

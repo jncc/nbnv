@@ -95,6 +95,8 @@ class BritishGridSquareInfo(gridRef : String, precision: Int = 0) extends GridSq
     }
   }
 
+  protected def getDintyRegex = GridRefPatterns.ukDintyGridRef
+
   private def getEastingNorthing(gridRef: String) = {
     val g = getTenFigGridRef(gridRef)
 
@@ -110,72 +112,6 @@ class BritishGridSquareInfo(gridRef : String, precision: Int = 0) extends GridSq
     (easting, northing)
   }
 
-  private def decreaseGridPrecision(gridRef: String, targetPrecision: Int) : String = {
-    //If targetPrecision is 2000 decrease to DINTY grid ref
-    if (targetPrecision == 2000) {
-      computeDintyFromGridRef(gridRef)
-    }
-    //Else reduce to target grid ref
-    else if (gridRef.matches(GridRefPatterns.ukDintyGridRef) && targetPrecision == 10000){
-      //can only reduce this to 10000m
-      gridRef.substring(0,4)
-    }
-    else if (targetPrecision == 100){
-      trimGridDigits(gridRef, 6)
-    }
-    else if (targetPrecision == 1000){
-      trimGridDigits(gridRef, 4)
-    }
-    else if (targetPrecision == 10000) {
-      trimGridDigits(gridRef, 2)
-    }
-    else
-    {
-      throw new IllegalArgumentException("Invalid target precision")
-    }
-  }
-
-  private def getTenFigGridRef(gridRef: String)= {
-
-    val numerals =
-      if (gridRef.matches(GridRefPatterns.ukDintyGridRef)) {
-        val numericPart = getNumeralsFromGridRef(gridRef)
-        expandDinty(numericPart)
-      }
-      else {
-        getNumeralsFromGridRef(gridRef)
-      }
-
-    val letters = getLettersFromGridRef(gridRef)
-
-    letters + padNumericPart(numerals, 10)
-  }
-
-  private def trimGridDigits(gridRefString: String, maxDigits: Int) = {
-    var numericPart = getNumeralsFromGridRef(gridRef)
-    var parts = numericPart.splitAt(numericPart.length / 2)
-    var easting = parts._1.substring(0, maxDigits / 2)
-    var northing = parts._2.substring(0, maxDigits / 2)
-    var gridLetters = getLettersFromGridRef(gridRef)
-
-    gridLetters + easting + northing
-  }
-
-  private def computeDintyFromGridRef(gridRef: String) = {
-    if (gridRef.matches(GridRefPatterns.ukDintyGridRef)) {
-      //already a DINTY grid ref
-      gridRef
-    }
-    else {
-      val numericPart = getNumeralsFromGridRef(gridRef)
-
-      val gridLetters = getLettersFromGridRef(gridRef)
-      val dintyPart = computeDinty(numericPart)
-
-      gridLetters + dintyPart
-    }
-  }
-
   //Returns the grid reference precision in meters
   private def getPrecision(gridReference : String) = {
     if (gridReference.matches("""^[HNOST]$""")) {
@@ -184,7 +120,7 @@ class BritishGridSquareInfo(gridRef : String, precision: Int = 0) extends GridSq
     else if (gridReference.matches("""^[HNOST][A-Z]$""")) {
       100000
     }
-    else if (gridReference.matches(GridRefPatterns.ukDintyGridRef)) {
+    else if (gridReference.matches(getDintyRegex)) {
       2000
     }
     else {
@@ -194,11 +130,11 @@ class BritishGridSquareInfo(gridRef : String, precision: Int = 0) extends GridSq
     }
   }
 
-  private def getLettersFromGridRef(gridRef : String) = {
+  protected def getLettersFromGridRef(gridRef : String) = {
     gridRef.substring(0,2)
   }
 
-  private def getNumeralsFromGridRef(gridRef : String) = {
+  protected def getNumeralsFromGridRef(gridRef : String) = {
     gridRef.substring(2, gridRef.length)
   }
 }
