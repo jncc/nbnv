@@ -74,7 +74,7 @@ CREATE VIEW [dbo].[TaxonNavigationGroupTaxonCount] WITH SCHEMABINDING AS (
 		FROM [dbo].[Taxon] t
 		INNER JOIN [dbo].[TaxonGroup] tg ON tg.[key] = t.taxonNavigationGroupKey
 		WHERE t.pTaxonVersionKey = t.taxonVersionKey
-			AND t.taxonNavigationGroupKey IS NOT NULL
+		AND t.taxonNavigationGroupKey IS NOT NULL
 		GROUP BY tg.[key]
 );
 
@@ -174,6 +174,29 @@ CREATE UNIQUE CLUSTERED INDEX [cidx_OrganisationData_organisationID] ON [dbo].[O
 GO
 
 --EXEC usp_dev_AddViewToPublication 'OrganisationData';
+
+GO
+
+CREATE VIEW [dbo].[OrganisationMembershipData] WITH SCHEMABINDING AS (
+	SELECT
+		uom.userID 
+		, uom.organisationID
+		, uor.label AS [role]
+	FROM [dbo].[UserOrganisationMembership] uom
+	INNER JOIN [dbo].[UserOrganisationRole] uor ON uor.id = uom.organisationRoleID 
+);
+
+GO
+
+CREATE UNIQUE CLUSTERED INDEX [cidx_OrganisationMembershipData_userKey-organisationID] ON [dbo].[OrganisationMembershipData] 
+(
+	[userID] ASC,
+	[organisationID] ASC
+);
+
+GO
+
+--EXEC usp_dev_AddViewToPublication 'OrganisationMembershipData';
 
 GO
 
@@ -498,6 +521,12 @@ GO
 
 GO
 
+/*
+ *
+ * Dataset Views
+ *
+ */
+
 CREATE VIEW [dbo].[DatasetData] WITH SCHEMABINDING AS (
 	SELECT
 		d.[key]
@@ -565,3 +594,646 @@ GO
 --EXEC usp_dev_AddViewToPublication 'SiteBoundaryDatasetData'
 
 GO
+
+CREATE VIEW [dbo].[TaxonDatasetData] WITH SCHEMABINDING AS (
+	SELECT 
+		su.datasetKey
+		, COUNT_BIG(*) AS recordCount
+	FROM [dbo].[TaxonObservation] tob 
+	INNER JOIN [dbo].[Sample] sa on tob.sampleID = sa.id
+	INNER JOIN [dbo].[Survey] su ON sa.surveyID = su.id
+	INNER JOIN [dbo].[Taxon] t on tob.taxonVersionKey = t.taxonVersionKey
+	GROUP BY su.datasetKey
+);
+
+GO
+
+CREATE UNIQUE CLUSTERED INDEX [cidx_TaxonDatasetData_datasetKey] ON [dbo].[TaxonDatasetData] 
+(
+	[datasetKey] ASC
+);
+
+GO
+
+--EXEC usp_dev_AddViewToPublication 'TaxonDatasetData'
+
+GO
+
+CREATE VIEW [dbo].[DatasetDateTypeRecordCountData] WITH SCHEMABINDING AS (
+	SELECT 
+		su.datasetKey
+		, dt.label AS dateTypeName
+		, COUNT_BIG(*) AS recordCount 
+	FROM [dbo].[Survey] su 
+	INNER JOIN [dbo].[Sample] sa ON su.id = sa.surveyID 
+	INNER JOIN [dbo].[TaxonObservation] tob ON sa.id = tob.sampleID 
+	INNER JOIN [dbo].[DateType] dt ON dt.[key] = tob.dateTypeKey 
+	GROUP BY su.datasetKey, dt.label
+);
+
+GO
+
+CREATE UNIQUE CLUSTERED INDEX [cidx_DatasetDateTypeRecordCountData_datasetKey-dateTypeName] ON [dbo].[DatasetDateTypeRecordCountData] 
+(
+	[datasetKey] ASC,
+	[dateTypeName] ASC
+);
+
+GO
+
+--EXEC usp_dev_AddViewToPublication 'DatasetDateTypeRecordCountData'
+
+GO
+
+CREATE VIEW [dbo].[DatasetYearRecordCountData] WITH SCHEMABINDING AS (
+	SELECT 
+		su.datasetKey
+		, YEAR(tob.dateStart) AS [year]
+		, COUNT_BIG(*) AS recordCount
+	FROM [dbo].[Survey] su 
+	INNER JOIN [dbo].[Sample] sa ON su.id = sa.surveyID 
+	INNER JOIN [dbo].[TaxonObservation] tob ON sa.id = tob.sampleID 
+	WHERE tob.dateStart IS NOT NULL
+	GROUP BY su.datasetKey, YEAR(tob.dateStart)
+);
+
+GO
+
+CREATE UNIQUE CLUSTERED INDEX [cidx_DatasetYearRecordCountData_datasetKey] ON [dbo].[DatasetYearRecordCountData] 
+(
+	[datasetKey] ASC,
+	[year] ASC
+);
+
+GO
+
+--EXEC usp_dev_AddViewToPublication 'DatasetYearRecordCountData'
+
+GO
+
+/*
+ *
+ * Taxon Observation Views
+ *
+ */
+
+CREATE VIEW [dbo].[RecorderData] WITH SCHEMABINDING AS (
+	SELECT
+		r.id
+		, r.name
+	FROM [dbo].[Recorder] r
+);
+
+GO
+
+CREATE UNIQUE CLUSTERED INDEX [cidx_RecorderData_id] ON [dbo].[RecorderData] 
+(
+	[id] ASC
+);
+
+GO
+
+--EXEC usp_dev_AddViewToPublication 'RecorderData'
+
+GO
+
+CREATE VIEW [dbo].[SiteData] WITH SCHEMABINDING AS (
+	SELECT
+		si.id
+		, si.name
+		, si.providerKey
+	FROM [dbo].[Site] si
+);
+
+GO
+
+CREATE UNIQUE CLUSTERED INDEX [cidx_SiteData_id] ON [dbo].[SiteData] 
+(
+	[id] ASC
+);
+
+GO
+
+--EXEC usp_dev_AddViewToPublication 'SiteData'
+
+GO
+
+CREATE VIEW [dbo].[AttributeData] WITH SCHEMABINDING AS (
+	SELECT 
+		a.id
+		, a.label
+		, a.[description]
+	FROM [dbo].[Attribute] a 
+);
+
+GO
+
+CREATE UNIQUE CLUSTERED INDEX [cidx_AttributeData_id] ON [dbo].[AttributeData] 
+(
+	[id] ASC
+);
+
+GO
+
+--EXEC usp_dev_AddViewToPublication 'AttributeData'
+
+GO
+
+CREATE VIEW [dbo].[SurveyData] WITH SCHEMABINDING AS (
+	SELECT 
+		su.id 
+		, su.datasetKey
+		, su.providerKey 
+		, su.title
+		, su.[description]
+		, su.geographicalCoverage
+		, su.temporalCoverage
+	FROM [dbo].[Survey] su
+);
+
+GO
+
+CREATE UNIQUE CLUSTERED INDEX [cidx_SurveyData_datasetKey-id] ON [dbo].[SurveyData] 
+(
+	[datasetKey] ASC,
+	[id] ASC
+);
+
+GO
+
+--EXEC usp_dev_AddViewToPublication 'SurveyData'
+
+GO
+
+CREATE VIEW [dbo].[SampleData] WITH SCHEMABINDING AS (
+    SELECT
+        s.id
+		, s.providerKey 
+		, s.surveyID
+		, s.[description]
+		, s.geographicalCoverage
+		, s.temporalCoverage
+    FROM [dbo].[Sample] s
+);
+
+GO
+
+CREATE UNIQUE CLUSTERED INDEX [cidx_SampleData_id] ON [dbo].[SampleData] 
+(
+	[id] ASC
+);
+
+GO
+
+--EXEC usp_dev_AddViewToPublication 'SampleData'
+
+GO
+
+CREATE VIEW [dbo].[TaxonObservationAttributeData] WITH SCHEMABINDING AS (
+	SELECT 
+		toa.observationID
+		, toa.attributeID
+		, toa.textValue
+	FROM [dbo].[TaxonObservationAttribute] toa 
+);
+
+GO
+
+CREATE UNIQUE CLUSTERED INDEX [cidx_TaxonObservationAttributeData_obsId_attributeID] ON [dbo].[TaxonObservationAttributeData] 
+(
+	[observationID] ASC,
+	[attributeID] ASC
+);
+
+GO
+
+--EXEC usp_dev_AddViewToPublication 'TaxonObservationAttributeData'
+
+GO
+
+CREATE VIEW [dbo].[TaxonObservationDataPublic] WITH SCHEMABINDING AS (
+	SELECT 
+		tob.id
+        , d.[key] AS datasetKey
+        , su.providerKey AS surveyKey
+        , sa.providerKey AS sampleKey
+        , tob.providerKey AS observationKey
+        , obs.siteID 
+        , obs.featureID
+        , tob.taxonVersionKey
+        , t.pTaxonVersionKey
+        , tob.dateStart AS startDate
+        , tob.dateEnd AS endDate
+        , tob.dateTypeKey
+        , obs.recorderID 
+        , obs.determinerID 
+        , tob.sensitiveRecord AS sensitive
+        , tob.absenceRecord AS absence
+	FROM [dbo].[TaxonObservationPublic] obs 
+	INNER JOIN [dbo].[TaxonObservation] tob ON tob.id = obs.taxonObservationID 
+	INNER JOIN [dbo].[Taxon] t ON t.taxonVersionKey = tob.taxonVersionKey 
+	INNER JOIN [dbo].[Sample] sa ON sa.id = tob.sampleID
+	INNER JOIN [dbo].[Survey] su ON su.id = sa.surveyID
+    INNER JOIN [dbo].[Dataset] d ON d.[key] = su.datasetKey
+);
+
+GO
+
+CREATE UNIQUE CLUSTERED INDEX [cidx_TaxonObservationDataPublic_id] ON [dbo].[TaxonObservationDataPublic] 
+(
+	[id] ASC
+);
+
+GO
+
+--EXEC usp_dev_AddViewToPublication 'TaxonObservationDataPublic'
+
+GO
+
+CREATE VIEW [dbo].[TaxonObservationDataEnhanced] WITH SCHEMABINDING AS (
+	SELECT 
+		obs.id
+        , d.[key] AS datasetKey
+        , su.providerKey AS surveyKey
+        , sa.providerKey AS sampleKey
+        , obs.providerKey AS observationKey
+        , obs.siteID 
+        , obs.featureID
+        , obs.taxonVersionKey
+        , t.pTaxonVersionKey
+        , obs.dateStart AS startDate
+        , obs.dateEnd AS endDate
+        , obs.dateTypeKey
+        , obs.recorderID 
+        , obs.determinerID 
+        , obs.sensitiveRecord AS sensitive
+        , obs.absenceRecord AS absence
+	FROM [dbo].[TaxonObservation] obs 
+	INNER JOIN [dbo].[Taxon] t ON t.taxonVersionKey = obs.taxonVersionKey
+	INNER JOIN [dbo].[Sample] sa ON sa.id = obs.sampleID
+	INNER JOIN [dbo].[Survey] su ON su.id = sa.surveyID
+    INNER JOIN [dbo].[Dataset] d ON d.[key] = su.datasetKey
+);
+
+GO
+
+CREATE UNIQUE CLUSTERED INDEX [cidx_TaxonObservationDataEnhanced_id] ON [dbo].[TaxonObservationDataEnhanced] 
+(
+	[id] ASC
+);
+
+GO
+
+--EXEC usp_dev_AddViewToPublication 'TaxonObservationDataEnhanced'
+
+GO
+
+CREATE VIEW [dbo].[TaxonObservationData] WITH SCHEMABINDING AS (
+	SELECT 
+        obs.id
+        , 1 AS fullVersion
+        , obs.datasetKey
+        , obs.surveyKey
+        , obs.sampleKey
+        , obs.observationKey
+        , si.providerKey AS siteKey
+        , si.name AS siteName
+        , obs.featureID
+        , gs.label AS gridRef
+        , sb.providerKey AS polygonKey
+        , gs.originalProjection
+        , obs.taxonVersionKey
+        , obs.pTaxonVersionKey
+        , pt.name AS pTaxonName
+        , pt.authority AS pTaxonAuthority
+        , obs.startDate
+        , obs.endDate
+        , obs.dateTypeKey
+        , rr.name AS recorder
+        , rd.name AS determiner
+        , obs.sensitive
+        , obs.absence
+    FROM [dbo].[TaxonObservationDataEnhanced] obs 
+    INNER JOIN [dbo].[TaxonData] pt ON pt.taxonVersionKey = obs.pTaxonVersionKey
+    LEFT JOIN [dbo].[GridSquareFeatureData] gs ON gs.id  = obs.featureID
+    LEFT JOIN [dbo].[SiteBoundaryData] sb ON sb.featureID = obs.featureID
+    LEFT JOIN [dbo].[SiteData] si ON si.id = obs.siteID
+    LEFT JOIN [dbo].[RecorderData] rr ON rr.id = obs.recorderID
+    LEFT JOIN [dbo].[RecorderData] rd ON rd.id = obs.determinerID
+	UNION ALL
+	SELECT 
+        obs.id
+        , 0 AS fullVersion
+        , obs.datasetKey
+        , obs.surveyKey
+        , obs.sampleKey
+        , obs.observationKey
+        , si.providerKey AS siteKey
+        , si.name
+        , obs.featureID
+        , gs.label AS gridRef
+        , sb.providerKey AS polygonKey
+        , gs.originalProjection 
+        , obs.taxonVersionKey
+        , obs.pTaxonVersionKey
+        , pt.name AS pTaxonName
+        , pt.authority AS pTaxonAuthority
+        , obs.startDate
+        , obs.endDate
+        , obs.dateTypeKey
+        , rr.name AS recorder
+        , rd.name AS determiner
+        , obs.sensitive
+        , obs.absence
+    FROM [dbo].[TaxonObservationDataPublic] obs 
+    INNER JOIN [dbo].[TaxonData] pt ON pt.taxonVersionKey = obs.pTaxonVersionKey
+    LEFT JOIN [dbo].[GridSquareFeatureData] gs ON gs.id = obs.featureID
+    LEFT JOIN [dbo].[SiteBoundaryData] sb ON sb.featureID = obs.featureID
+    LEFT JOIN [dbo].[SiteData] si ON si.id = obs.siteID
+    LEFT JOIN [dbo].[RecorderData] rr ON rr.id = obs.recorderID
+    LEFT JOIN [dbo].[RecorderData] rd ON rd.id = obs.determinerID
+);
+
+GO
+
+--EXEC usp_dev_AddViewToPublicationAsView 'TaxonObservationData'
+
+GO
+
+--EXEC usp_dev_AddTableToPublication 'UserTaxonObservationAccess'
+
+GO
+
+--EXEC usp_dev_AddTableToPublication 'OrganisationTaxonObservationAccess'
+
+GO
+
+CREATE VIEW [dbo].[UserTaxonObservationID] WITH SCHEMABINDING AS (
+	SELECT 
+		ua.userID
+		, ua.observationID
+	FROM [dbo].[UserTaxonObservationAccess] ua
+	UNION ALL
+	SELECT
+		omd.userID
+		, oa.observationID 
+	FROM [dbo].[OrganisationMembershipData] omd
+	INNER JOIN [dbo].[OrganisationTaxonObservationAccess] oa ON oa.organisationID = omd.organisationID 
+);
+
+GO
+
+--EXEC usp_dev_AddViewToPublicationAsView 'UserTaxonObservationID'
+
+GO
+
+CREATE VIEW [dbo].[OrganisationTaxonObservationID] WITH SCHEMABINDING AS (
+	SELECT 
+		oa.organisationID 
+		, oa.observationID
+	FROM [dbo].[OrganisationTaxonObservationAccess] oa
+);
+
+GO
+
+--EXEC usp_dev_AddViewToPublicationAsView 'OrganisationTaxonObservationID'
+
+GO
+
+CREATE VIEW [dbo].[OrganisationPublicTaxonObservationID] WITH SCHEMABINDING AS (
+	SELECT 
+		org.id AS organisationID
+		, o.id AS observationID
+	FROM [dbo].[OrganisationData] org
+	CROSS JOIN [dbo].[TaxonObservationDataPublic] o
+	WHERE o.id NOT IN (
+		SELECT 
+			oa.observationID 
+		FROM [dbo].[OrganisationTaxonObservationAccess] oa
+		WHERE oa.organisationID = org.id
+	)
+);
+
+GO
+
+--EXEC usp_dev_AddViewToPublicationAsView 'OrganisationPublicTaxonObservationID'
+
+GO
+
+CREATE VIEW [dbo].[UserPublicTaxonObservationID] WITH SCHEMABINDING AS (
+	SELECT 
+		u.id AS userID
+		, o.id AS observationID
+	FROM [dbo].[UserData] u
+	CROSS JOIN [dbo].[TaxonObservationDataPublic] o
+	WHERE o.id NOT IN (
+		SELECT 
+			uoi.observationID 
+		FROM [dbo].[UserTaxonObservationID] uoi
+		WHERE uoi.userID = u.id
+	)
+);
+
+GO
+
+--EXEC usp_dev_AddViewToPublicationAsView 'UserPublicTaxonObservationID'
+
+GO
+
+/****** Object:  View [dbo].[UserTaxonObservationData]    Script Date: 09/19/2012 09:38:15 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE VIEW [dbo].[UserTaxonObservationData] WITH SCHEMABINDING AS (
+	SELECT 
+		vupoi.userID
+		, obs.id AS observationID
+		, obs.fullVersion
+		, obs.datasetKey
+		, obs.surveyKey
+		, obs.sampleKey
+		, obs.observationKey
+		, obs.siteKey
+		, obs.siteName
+		, obs.featureID
+		, obs.gridRef
+		, obs.polygonKey
+		, obs.originalProjection
+		, obs.taxonVersionKey
+		, obs.pTaxonVersionKey
+		, obs.pTaxonName
+		, obs.pTaxonAuthority
+		, obs.startDate
+		, obs.endDate
+		, obs.dateTypeKey
+		, obs.recorder
+		, obs.determiner
+		, obs.sensitive
+		, obs.absence
+	FROM [dbo].[TaxonObservationData] obs
+	INNER JOIN [dbo].[UserPublicTaxonObservationID] vupoi ON vupoi.observationID = obs.id 
+	WHERE obs.fullVersion = 0
+	UNION ALL
+	SELECT 
+		vuoi.userID
+		, obs.id AS observationID
+		, obs.fullVersion
+		, obs.datasetKey
+		, obs.surveyKey
+		, obs.sampleKey
+		, obs.observationKey
+		, obs.siteKey
+		, obs.siteName
+		, obs.featureID
+		, obs.gridRef
+		, obs.polygonKey
+		, obs.originalProjection 
+		, obs.taxonVersionKey
+		, obs.pTaxonVersionKey
+		, obs.pTaxonName
+		, obs.pTaxonAuthority
+		, obs.startDate
+		, obs.endDate
+		, obs.dateTypeKey 
+		, obs.recorder
+		, obs.determiner
+		, obs.sensitive
+		, obs.absence
+	FROM [dbo].[TaxonObservationData] obs
+	INNER JOIN [dbo].[UserTaxonObservationID] vuoi ON vuoi.observationID = obs.id
+	WHERE obs.fullVersion = 1
+);
+
+GO
+
+--EXEC usp_dev_AddViewToPublicationAsView 'UserTaxonObservationData'
+
+GO
+
+CREATE VIEW [dbo].[OrganisationTaxonObservationData] WITH SCHEMABINDING AS (
+	SELECT 
+		vopoi.organisationID
+		, obs.id AS observationID
+		, obs.fullVersion
+		, obs.datasetKey
+		, obs.surveyKey
+		, obs.sampleKey
+		, obs.observationKey
+		, obs.siteKey
+		, obs.siteName
+		, obs.featureID
+		, obs.gridRef
+		, obs.polygonKey
+		, obs.originalProjection 
+		, obs.taxonVersionKey
+		, obs.pTaxonVersionKey
+		, obs.pTaxonName
+		, obs.pTaxonAuthority
+		, obs.startDate
+		, obs.endDate
+		, obs.dateTypeKey 
+		, obs.recorder
+		, obs.determiner
+		, obs.sensitive
+		, obs.absence
+	FROM [dbo].[TaxonObservationData] obs
+	INNER JOIN [dbo].[OrganisationPublicTaxonObservationID] vopoi ON vopoi.observationID = obs.id
+	WHERE obs.fullVersion = 0
+	UNION ALL
+	SELECT 
+		vooi.organisationID
+		, obs.id AS observationID
+		, obs.fullVersion
+		, obs.datasetKey
+		, obs.surveyKey
+		, obs.sampleKey
+		, obs.observationKey
+		, obs.siteKey
+		, obs.siteName
+		, obs.featureID
+		, obs.gridRef
+		, obs.polygonKey
+		, obs.originalProjection 
+		, obs.taxonVersionKey
+		, obs.pTaxonVersionKey
+		, obs.pTaxonName
+		, obs.pTaxonAuthority
+		, obs.startDate
+		, obs.endDate
+		, obs.dateTypeKey
+		, obs.recorder
+		, obs.determiner
+		, obs.sensitive
+		, obs.absence
+	FROM [dbo].[TaxonObservationData] obs
+	INNER JOIN [dbo].[OrganisationTaxonObservationID] vooi ON vooi.observationID = obs.id
+	WHERE obs.fullVersion = 1
+);
+
+GO
+
+--EXEC usp_dev_AddViewToPublicationAsView 'OrganisationTaxonObservationData'
+
+GO
+
+CREATE VIEW [dbo].[TaxonDatasetTaxonData] WITH SCHEMABINDING AS (
+	SELECT 
+		tode.datasetKey 
+		, tode.pTaxonVersionKey
+		, COUNT_BIG(*) AS observationCount
+	FROM [dbo].[TaxonObservationDataEnhanced] tode
+	GROUP BY tode.datasetKey, tode.pTaxonVersionKey 
+);
+
+GO
+
+--EXEC usp_dev_AddViewToPublicationAsView 'TaxonDatasetTaxonData'
+
+GO
+
+CREATE VIEW [dbo].[SurveySpeciesRecordCountData] WITH SCHEMABINDING AS (
+	SELECT 
+		a.datasetKey
+		, a.id
+		, a.providerKey 
+		, a.title
+		, a.[description]
+		, a.geographicalCoverage
+		, a.temporalCoverage
+		, b.speciesCount
+		, b.sampleCount
+		, b.recordCount 
+	FROM [dbo].[SurveyData] a 
+	INNER JOIN (
+		SELECT 
+			obs.datasetKey
+			, obs.surveyKey
+			, COUNT_BIG(DISTINCT obs.pTaxonVersionKey) AS speciesCount
+			, COUNT_BIG(DISTINCT obs.sampleKey) AS sampleCount
+			, COUNT_BIG(DISTINCT obs.id) AS recordCount 
+		FROM [dbo].[TaxonObservationDataEnhanced] obs
+		GROUP BY obs.datasetKey, obs.surveyKey
+	) b ON a.providerKey = b.surveyKey AND a.datasetKey = b.datasetKey
+);
+
+GO
+
+--EXEC usp_dev_AddViewToPublicationAsView 'SurveySpeciesRecordCountData'
+
+GO
+
+CREATE VIEW [dbo].[DatasetAttributeData] WITH SCHEMABINDING AS (
+	SELECT DISTINCT 
+		tod.datasetKey
+		, ad.id AS attributeID
+		, ad.label
+		, ad.[description]
+	FROM [dbo].[TaxonObservationDataEnhanced] tod
+	INNER JOIN [dbo].[TaxonObservationAttributeData] toad ON tod.id = toad.observationID
+	INNER JOIN [dbo].[AttributeData] ad ON toad.attributeID = ad.id
+);
+
+GO
+
+--EXEC usp_dev_AddViewToPublicationAsView 'DatasetAttributeData'

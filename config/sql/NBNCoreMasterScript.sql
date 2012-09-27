@@ -1307,3 +1307,120 @@ END
 
 GO
 
+/*******************************************************************************************************************************************/
+
+/* Obselete Code */
+
+/*
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE FUNCTION [dbo].[ApplyFilter]
+(
+        @requestID int
+        , @userID int = 0
+)
+RETURNS @result TABLE (observationID int)
+AS
+BEGIN
+        DECLARE #filters CURSOR FOR
+                SELECT DISTINCT uaf.filterType FROM RecordFilters uaf WHERE uaf.requestID = @requestID AND uaf.filterType > 1
+        DECLARE @filterType int
+        DECLARE @sensitiveType int
+        DECLARE @matchType bit
+                
+        DECLARE @records TABLE (observationID int)
+        DECLARE @tRecords TABLE (observationID int)
+        
+        
+        SELECT @sensitiveType = uaf.filterSensitive FROM RecordFilters uaf WHERE uaf.requestID = @requestID AND uaf.filterType = 1
+
+		IF (@sensitiveType = 0)
+		BEGIN
+			INSERT INTO @records    
+					SELECT fr.observationID FROM vw_UserTaxonObservation fr 
+					INNER JOIN RecordFilters uaf ON uaf.datasetKey = fr.datasetKey AND uaf.filterType = 0
+					WHERE uaf.requestID = @requestID AND fr.userKey = @userID AND fr.sensitiveRecord = 0
+		END
+		ELSE IF (@sensitiveType = 1)
+		BEGIN
+			INSERT INTO @records    
+					SELECT fr.observationID FROM vw_UserTaxonObservation fr 
+					INNER JOIN RecordFilters uaf ON uaf.datasetKey = fr.datasetKey AND uaf.filterType = 0
+					WHERE uaf.requestID = @requestID AND fr.userKey = @userID AND fr.sensitiveRecord = 1
+		END
+		ELSE IF (@sensitiveType = 2)
+		BEGIN
+			INSERT INTO @records    
+					SELECT fr.observationID FROM vw_UserTaxonObservation fr 
+					INNER JOIN RecordFilters uaf ON uaf.datasetKey = fr.datasetKey AND uaf.filterType = 0
+					WHERE uaf.requestID = @requestID AND fr.userKey = @userID
+		END
+
+        OPEN #filters
+        
+        FETCH NEXT FROM #filters INTO @filterType
+        
+        WHILE @@FETCH_STATUS = 0
+        BEGIN
+                DELETE FROM @tRecords
+                
+                IF @filterType = 2
+                BEGIN
+                        INSERT INTO @tRecords
+                                SELECT fr.observationID FROM vw_UserTaxonObservation fr 
+                                INNER JOIN RecordFilters uaf ON uaf.filterTaxon = fr.taxonVersionKey AND uaf.filterType = 2
+                                INNER JOIN @records r ON r.observationID = fr.observationID
+                                WHERE uaf.requestID = @requestID AND fr.userKey = @userID
+                END
+                ELSE IF @filterType = 3
+                BEGIN
+                        INSERT INTO @tRecords
+                                SELECT fr.observationID FROM vw_UserTaxonObservation fr 
+                                INNER JOIN RecordFilters uaf ON (uaf.filterDateStart <= fr.dateEnd AND uaf.filterDateEnd >= fr.dateStart) AND uaf.filterType = 3
+                                INNER JOIN @records r ON r.observationID = fr.observationID
+                                WHERE uaf.requestID = @requestID AND fr.userKey = @userID                       
+                END
+                ELSE IF @filterType = 4
+                BEGIN
+                        INSERT INTO @tRecords
+                                SELECT fr.observationID FROM vw_UserTaxonObservation fr 
+                                INNER JOIN [NBNWarehouse].dbo.SiteContains sc ON sc.gridFeatureID = fr.featureID                                
+                                INNER JOIN RecordFilters uaf ON sc.siteFeatureID = uaf.filterSiteBoundary AND uaf.filterType = 4 AND uaf.filterSiteBoundaryMatch = 1
+                                INNER JOIN @records r ON r.observationID = fr.observationID
+                                WHERE uaf.requestID = @requestID AND fr.userKey = @userID                       
+
+                        INSERT INTO @tRecords
+                                SELECT fr.observationID FROM vw_UserTaxonObservation fr 
+                                INNER JOIN [NBNWarehouse].dbo.SiteOverlaps sc ON sc.gridFeatureID = fr.featureID                                
+                                INNER JOIN RecordFilters uaf ON sc.siteFeatureID = uaf.filterSiteBoundary AND uaf.filterType = 4 AND uaf.filterSiteBoundaryMatch = 0
+                                INNER JOIN @records r ON r.observationID = fr.observationID
+                                WHERE uaf.requestID = @requestID AND fr.userKey = @userID                       
+                END
+                ELSE
+                BEGIN
+                        INSERT INTO @tRecords
+                                SELECT r.observationID FROM @records r
+                END
+                
+                DELETE FROM @records
+                
+                INSERT INTO @records
+                        SELECT DISTINCT r.observationID FROM @tRecords r
+
+                FETCH NEXT FROM #filters INTO @filterType
+        END
+        
+        CLOSE #filters
+        DEALLOCATE #filters     
+        
+        INSERT INTO @result
+                SELECT * FROM @records
+                
+        RETURN
+END
+GO
+
+*/
