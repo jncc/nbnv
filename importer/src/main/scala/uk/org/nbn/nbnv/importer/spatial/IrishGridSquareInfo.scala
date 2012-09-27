@@ -15,47 +15,10 @@ class IrishGridSquareInfo(gridRef: String, precision: Int = 0) extends GridSquar
 
   def projection =  "OSNI"
 
-  def getLowerPrecisionGridSquareInfo(precision: Int) = new IrishGridSquareInfo(outputGridRef, precision)
+  def epsgCode = "29903"
 
-  def sourceProjectionPolygon = {
-    val (easting, northing) = getEastingNorthing(outputGridRef)
-
-    val gridSize = gridReferencePrecision
-
-    getPolygonFromGridSquareOrigin(easting, northing, gridSize)
-  }
-
-  def wgs84Polygon = {
-
-    val (easting, northing) = getEastingNorthing(outputGridRef)
-
-    val gridSize = gridReferencePrecision
-
-    getWGS84PolygonFromGridSquareOrigin(easting, northing, gridSize, "29903")
-  }
-
-  def getParentGridSquareInfo: Option[IrishGridSquareInfo] = {
-    if (gridReferencePrecision == 10000) {
-      None
-    }
-    else {
-      //get parent grid reference
-      val parentGridReference =
-        if (gridReferencePrecision == 100) {
-          decreaseGridPrecision(outputGridRef, 1000)
-        }
-        else if (gridReferencePrecision == 1000) {
-          decreaseGridPrecision(outputGridRef, 2000)
-        }
-        else if (gridReferencePrecision == 2000) {
-          decreaseGridPrecision(outputGridRef, 10000 )
-        }
-        else {
-          throw new RuntimeException("Current grid reference has an invalid precision")
-        }
-
-      Option(new IrishGridSquareInfo(parentGridReference))
-    }
+  protected def create(gridRef: String, precision: Int = 0) = {
+    new IrishGridSquareInfo(gridRef, precision)
   }
 
   protected def checkGridRef {
@@ -64,7 +27,7 @@ class IrishGridSquareInfo(gridRef: String, precision: Int = 0) extends GridSquar
       throw new IllegalArgumentException("Grid reference '%s' is not a valid Irish grid reference".format(gridRef))
   }
 
-  private def getEastingNorthing(gridRef: String) = {
+  protected def getEastingNorthing(gridRef: String) = {
     val g = getTenFigGridRef(gridRef)
 
     val (x, y) = irishGridByLetter(getLettersFromGridRef(g))

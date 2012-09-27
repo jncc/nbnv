@@ -1,35 +1,14 @@
 package uk.org.nbn.nbnv.importer.spatial
 
 import math._
-import uk.org.nbn.nbnv.importer.ImportFailedException
 
 class ChannelIslandGridSquareInfo(gridRef: String, precision: Int = 0) extends GridSquareInfo(gridRef, precision) {
 
   def projection =  "ED50"
 
-  def getLowerPrecisionGridSquareInfo(precision: Int) = new ChannelIslandGridSquareInfo(outputGridRef, precision)
+  def epsgCode = "23030"
 
-  def sourceProjectionPolygon = {
-    val gridSize = gridReferencePrecision
-
-    val (easting, northing) = getEastingNorthing(outputGridRef)
-
-    getPolygonFromGridSquareOrigin(easting, northing, gridSize)
-  }
-
-  def wgs84Polygon = {
-
-    val gridSize = gridReferencePrecision
-
-    val (easting, northing) = getEastingNorthing(outputGridRef)
-
-    getWGS84PolygonFromGridSquareOrigin(easting, northing, gridSize, "23030")
-  }
-
-  //WV 59500  47500
-  //E = 559500
-  //N = 5447500
-  private def getEastingNorthing(gridRef: String) = {
+  protected def getEastingNorthing(gridRef: String) = {
     //Bottom Left corner of the grid squares
     val WAbl= (500000,5500000)
     val WVbl = (500000,5400000)
@@ -43,28 +22,8 @@ class ChannelIslandGridSquareInfo(gridRef: String, precision: Int = 0) extends G
     }
   }
 
-  def getParentGridSquareInfo: Option[ChannelIslandGridSquareInfo] = {
-    if (gridReferencePrecision == 10000) {
-      None
-    }
-    else {
-      //get parent grid reference
-      val parentGridReference =
-        if (gridReferencePrecision == 100) {
-          decreaseGridPrecision(outputGridRef, 1000)
-        }
-        else if (gridReferencePrecision == 1000) {
-          decreaseGridPrecision(outputGridRef, 2000)
-        }
-        else if (gridReferencePrecision == 2000) {
-          decreaseGridPrecision(outputGridRef, 10000 )
-        }
-        else {
-          throw new RuntimeException("Current grid reference has an invalid precision")
-        }
-
-      Option(new ChannelIslandGridSquareInfo(parentGridReference))
-    }
+  protected def create(gridRef: String, precision: Int = 0) = {
+    new ChannelIslandGridSquareInfo(gridRef, precision)
   }
 
   //Check grid ref is uk grid ref

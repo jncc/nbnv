@@ -4,20 +4,20 @@ import uk.org.nbn.nbnv.importer.ImportFailedException
 import org.geotools.geometry.GeneralDirectPosition
 import org.geotools.referencing.ReferencingFactoryFinder
 import org.geotools.referencing.operation.DefaultCoordinateOperationFactory
+import javax.persistence.criteria.CriteriaBuilder.Case
 
 abstract class GridSquareInfo(gridRef : String, precision: Int = 0) {
 
   def projection : String
-  def wgs84Polygon : String
-  def sourceProjectionPolygon : String
-  def getParentGridSquareInfo : Option[GridSquareInfo]
-  def getLowerPrecisionGridSquareInfo(precision: Int) : GridSquareInfo
+  def epsgCode : String
 
   protected def getLettersFromGridRef(gridRef: String) : String
   protected def getNumeralsFromGridRef(gridRef: String) : String
   protected def getDintyRegex : String
   protected def getPrecision(gridReference : String) : Int
   protected def checkGridRef
+  protected def create(gridRef: String, precision: Int = 0) : GridSquareInfo
+  protected def getEastingNorthing(gridRef: String) : (Int, Int)
 
   val dintyGridByCoord = Map (
     (0,8) -> "E", (2,8) -> "J", (4,8) -> "P", (6,8) -> "U", (8,8) -> "Z",
@@ -57,16 +57,63 @@ abstract class GridSquareInfo(gridRef : String, precision: Int = 0) {
   }
 
   def gridReference = outputGridRef
+
   def gridReferencePrecision = getPrecision(outputGridRef)
 
-  protected def getDintyLeter(easting: Int, northing: Int) = {
+  def getParentGridSquareInfo: Option[GridSquareInfo] = {
+    val parentGridRef = getParentGridRef
+    if (parentGridRef.isEmpty) {
+      None
+    }
+    else {
+      Some(create(parentGridRef))
+    }
+  }
+
+  def getLowerPrecisionGridSquareInfo(precision: Int) = {
+    create(outputGridRef, precision)
+  }
+
+  def sourceProjectionPolygon = {
+    val (easting, northing) = getEastingNorthing(outputGridRef)
+
+    val gridSize = gridReferencePrecision
+
+    getPolygonFromGridSquareOrigin(easting, northing, gridSize)
+  }
+
+  def wgs84Polygon = {
+    val (easting, northing) = getEastingNorthing(outputGridRef)
+
+    val gridSize = gridReferencePrecision
+
+    getWGS84PolygonFromGridSquareOrigin(easting, northing, gridSize, epsgCode)
+  }
+
+  protected def getTenFigGridRef(gridRef: String)= {
+
+    val numerals =
+      if (gridRef.matches(getDintyRegex)) {
+        val numericPart = getNumeralsFromGridRef(gridRef)
+        expandDinty(numericPart)
+      }
+      else {
+        getNumeralsFromGridRef(gridRef)
+      }
+
+    val letters = getLettersFromGridRef(gridRef)
+
+    letters + padNumericPart(numerals, 10)
+  }
+
+  private def getDintyLeter(easting: Int, northing: Int) = {
     val dintyEasting = easting - (easting % 2)
     val dintyNorthing = northing - (northing % 2)
 
     dintyGridByCoord(dintyEasting, dintyNorthing)
   }
 
-  protected def trimGridDigits(gridRef: String, maxDigits: Int) = {
+  private def trimGridDigits(gridRef: String, maxDigits: Int) = {
     var numericPart = getNumeralsFromGridRef(gridRef)
     var parts = numericPart.splitAt(numericPart.length / 2)
     var easting = parts._1.substring(0, maxDigits / 2)
@@ -76,7 +123,7 @@ abstract class GridSquareInfo(gridRef : String, precision: Int = 0) {
     gridLetters + easting + northing
   }
 
-  protected def decreaseGridPrecision(gridRef: String, targetPrecision: Int) : String = {
+  private def decreaseGridPrecision(gridRef: String, targetPrecision: Int) : String = {
     //If targetPrecision is 2000 decrease to DINTY grid ref
     if (targetPrecision == 2000) {
       computeDintyFromGridRef(gridRef)
@@ -102,23 +149,7 @@ abstract class GridSquareInfo(gridRef : String, precision: Int = 0) {
     }
   }
 
-  protected def getTenFigGridRef(gridRef: String)= {
-
-    val numerals =
-      if (gridRef.matches(getDintyRegex)) {
-        val numericPart = getNumeralsFromGridRef(gridRef)
-        expandDinty(numericPart)
-      }
-      else {
-        getNumeralsFromGridRef(gridRef)
-      }
-
-    val letters = getLettersFromGridRef(gridRef)
-
-    letters + padNumericPart(numerals, 10)
-  }
-
-  protected def computeDintyFromGridRef(gridRef: String) = {
+  private def computeDintyFromGridRef(gridRef: String) = {
     if (gridRef.matches(getDintyRegex)) {
       //already a DINTY grid ref
       gridRef
@@ -144,7 +175,7 @@ abstract class GridSquareInfo(gridRef : String, precision: Int = 0) {
     }
   }
 
-  protected def padNumericPart(numericPart: String, padTo: Int) = {
+  private def padNumericPart(numericPart: String, padTo: Int) = {
     if (numericPart.length == padTo) {
       numericPart
     }
@@ -157,7 +188,27 @@ abstract class GridSquareInfo(gridRef : String, precision: Int = 0) {
     }
   }
 
-  protected def expandDinty(numericPart: String) = {
+  private def getParentGridRef = {
+    if (gridReferencePrecision == 10000) {
+      ""
+    }
+    else {
+      if (gridReferencePrecision == 100) {
+        decreaseGridPrecision(outputGridRef, 1000)
+      }
+      else if (gridReferencePrecision == 1000) {
+        decreaseGridPrecision(outputGridRef, 2000)
+      }
+      else if (gridReferencePrecision == 2000) {
+        decreaseGridPrecision(outputGridRef, 10000 )
+      }
+      else {
+        throw new RuntimeException("Current grid reference has an invalid precision")
+      }
+    }
+  }
+
+  private def expandDinty(numericPart: String) = {
     //eg 32C
     //gives C
     val dintyLetter = numericPart.substring(2,3)
@@ -170,7 +221,7 @@ abstract class GridSquareInfo(gridRef : String, precision: Int = 0) {
   }
 
 
-  protected def getNormalisedPrecision(precision : Int) = {
+  private def getNormalisedPrecision(precision : Int) = {
     if (precision <= 100) {
       100
     }
@@ -188,7 +239,7 @@ abstract class GridSquareInfo(gridRef : String, precision: Int = 0) {
     }
   }
 
-  protected def getPolygonFromGridSquareOrigin(easting: Int, northing: Int, gridSize: Int) = {
+  private def getPolygonFromGridSquareOrigin(easting: Int, northing: Int, gridSize: Int) = {
     val bl = (easting, northing)
     val br = (easting + gridSize, northing)
     val tl = (easting, northing + gridSize)
@@ -201,7 +252,7 @@ abstract class GridSquareInfo(gridRef : String, precision: Int = 0) {
       bl._1 + " " + bl._2 + "))"
   }
 
-  protected def getWGS84PolygonFromGridSquareOrigin(easting: Int, northing: Int, gridSize: Int, epsgCode: String) = {
+  private def getWGS84PolygonFromGridSquareOrigin(easting: Int, northing: Int, gridSize: Int, epsgCode: String) = {
     val blGdp = new GeneralDirectPosition(easting, northing)
     val brGdp = new GeneralDirectPosition(easting + gridSize, northing)
     val tlGdp = new GeneralDirectPosition(easting, northing + gridSize)

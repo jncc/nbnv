@@ -16,6 +16,12 @@ class IrishGridSquareInfoSuite extends BaseFunSuite {
     igr.projection should be ("OSNI")
   }
 
+  test("should identify EPSG code as 29903") {
+    val igr = new IrishGridSquareInfo(knownGridRef_100m)
+
+    igr.epsgCode should be ("29903")
+  }
+
   test("should output an unblurred grid referce") {
     val igr = new IrishGridSquareInfo(knownGridRef_100m)
 

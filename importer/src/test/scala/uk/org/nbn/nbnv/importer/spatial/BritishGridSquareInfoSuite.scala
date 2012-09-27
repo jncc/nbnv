@@ -17,6 +17,12 @@ class BritishGridSquareInfoSuite extends BaseFunSuite {
     bgr.projection should be ("OSGB36")
   }
 
+  test("should identify EPSG code as 27700") {
+    val bgr = new BritishGridSquareInfo(knownGridRef_100m)
+
+    bgr.epsgCode should be ("27700")
+  }
+
   test("should output an unblurred grid referce") {
     val bgr = new BritishGridSquareInfo(knownGridRef_100m)
 
