@@ -8,8 +8,6 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
@@ -63,13 +61,13 @@ public class AddOrganisationController {
         return mv;
     }
     
-    @RequestMapping(value = "/addOrganisation.html", method = RequestMethod.GET)
+    @RequestMapping(value = "/organisation.html", method = RequestMethod.GET)
     public ModelAndView addOrganisation() {       
         AddOrganisationForm model = new AddOrganisationForm();
         return new ModelAndView("addOrganisation", "model", model);
     }
     
-    @RequestMapping(value = "/addOrganisation.html", method = RequestMethod.POST)
+    @RequestMapping(value = "/organisation.html", method = RequestMethod.POST)
     public ModelAndView addOrganisationWithMetaFollow(HttpServletRequest request) {     
         AddOrganisationForm model = new AddOrganisationForm();
         if (request.getAttribute("newOrganisation") != null) {
@@ -80,7 +78,7 @@ public class AddOrganisationController {
         return new ModelAndView("addOrganisation", "model", model);
     }
     
-    @RequestMapping(value="/addOrganisationProcess.html", method=RequestMethod.POST, params="addImage") 
+    @RequestMapping(value="/organisationProcess.html", method=RequestMethod.POST, params="addImage") 
     public ModelAndView addImage(HttpServletRequest request, AddOrganisationForm model, BindingResult result, @RequestParam("imageData") CommonsMultipartFile imageData) {
 
         String logoPrefix = "data:" + imageData.getContentType().toString() + ";base64,";
@@ -103,7 +101,7 @@ public class AddOrganisationController {
         return new ModelAndView("addOrganisation", "model", model);
     }
     
-    @RequestMapping(value="/addOrganisationProcess.html", method=RequestMethod.POST, params="submit")
+    @RequestMapping(value="/organisationProcess.html", method=RequestMethod.POST, params="submit")
     public ModelAndView processNewOrganisation(HttpServletRequest request, @ModelAttribute("model") @Valid AddOrganisationForm model, BindingResult result) {    
         // If we have errors, pass them back to the user, keeping any inputs in 
         // place, need to improve so that errors are displayed next to the
@@ -125,7 +123,7 @@ public class AddOrganisationController {
         model.getMetadataForm().getMetadata().setOrganisationID(model.getOrganisation().getOrganisationID());
 
         // Return to metadata input form, should probably find a way of auto-selecting the new organisation
-        return new ModelAndView("forward:/metadataProcessView.html", "model", model.getMetadataForm());
+        return new ModelAndView("forward:/metadataView.html", "model", model.getMetadataForm());
     }
     
     @InitBinder("model")

@@ -13,16 +13,9 @@ import uk.org.nbn.nbnv.importer.ui.util.POIImportError;
  *
  * @author Matt Debont
  */
-public interface WordImporter {  
+public interface WordImporter {      
     
-    public static final int MAJOR = 3;
-    public static final int MINOR = 1;
-    
-    // Limit for wandering up the string list looking for a valid input
-    // descriptor contained in the valid stringSet
-    public static final int WANDER_MAX = 3;
-    
-    // Organisation Descriptors
+    // Default Organisation Descriptors
     public static final String ORG_ABBREVIATION = "Abbreviation";
     public static final String ORG_EMAIL = "Contact email";
     public static final String ORG_CONTACT_NAME = "Contact name";
@@ -34,7 +27,7 @@ public interface WordImporter {
     public static final String ORG_PHONE = "Telephone* Number";
     public static final String ORG_WEBSITE = "Website";
     
-    // Metadata Descriptors
+    // Default Metadata Descriptors
     public static final String META_ACCESS_CONSTRAINT = "Access Constraint";
     public static final String META_ADDITIONAL_INFO = "Additional Information";
     public static final String META_DATA_CONFIDENCE = "Confidence in the Data";
@@ -52,6 +45,7 @@ public interface WordImporter {
     public static final String META_TEMPORAL = "Temporal Coverage";
     public static final String META_USE_CONSTRAINT = "Use Constraint";   
     
+    // Default descriptors that we are searching for 
     public static final String[] stringsHWPF = {
         ORG_ABBREVIATION, ORG_ADDRESS, ORG_CONTACT_NAME, ORG_DESC, 
         ORG_EMAIL, ORG_LOGO, ORG_NAME, ORG_PHONE, ORG_POSTCODE, 
@@ -62,10 +56,11 @@ public interface WordImporter {
         META_TITLE, META_USE_CONSTRAINT
     };  
     
-    // Input form elements for Word doc
+    // Default Input form elements for Word doc
     public static final String INPUT_TEXT = "FORMTEXT";
     public static final String INPUT_CHECKBOX = "FORMCHECKBOX";    
     
     public Map<String, String> parseDocument(List<String> strList, ListIterator<String> strIt, Map<String, String> mappings) throws POIImportError;
     public boolean supports(int major, int minor);
+    public List<String> getDefaultMessages();
 }

@@ -19,6 +19,13 @@ public class Metadata {
     private String info = "";
     private String use = "";
     private String access = "";
+    private String datasetAdminName = "";
+    private String datasetAdminPhone = "";
+    private String datasetAdminEmail = "";
+    private String geographicalRes = "10km2";
+    private String recordAtts = "N/A";
+    private String recorderNames = "N/A";
+    private int datasetAdminID = -1;
     private int organisationID = -1;
 
     /**
@@ -32,7 +39,11 @@ public class Metadata {
      * @param title the title to set
      */
     public void setTitle(String title) {
-        this.title = title;
+        if (title != null) {
+            this.title = title.trim();
+        } else {
+            this.title = "";
+        }
     }
 
     /**
@@ -46,7 +57,11 @@ public class Metadata {
      * @param description the description to set
      */
     public void setDescription(String description) {
-        this.description = description;
+        if (description != null) {
+            this.description = description.trim();
+        } else {
+            this.description = "";
+        }
     }
 
     /**
@@ -60,7 +75,11 @@ public class Metadata {
      * @param methods the methods to set
      */
     public void setMethods(String methods) {
-        this.methods = methods;
+        if (methods != null) {
+            this.methods = methods.trim();
+        } else {
+            this.methods = "";
+        }
     }
 
     /**
@@ -74,7 +93,11 @@ public class Metadata {
      * @param purpose the purpose to set
      */
     public void setPurpose(String purpose) {
-        this.purpose = purpose;
+        if (purpose != null) {
+            this.purpose = purpose.trim();
+        } else {
+            this.purpose = "";
+        }
     }
 
     /**
@@ -88,7 +111,11 @@ public class Metadata {
      * @param geographic the geographic to set
      */
     public void setGeographic(String geographic) {
-        this.geographic = geographic;
+        if (geographic != null) {
+            this.geographic = geographic.trim();
+        } else {
+            this.geographic = "";
+        }
     }
 
     /**
@@ -102,7 +129,11 @@ public class Metadata {
      * @param temporal the temporal to set
      */
     public void setTemporal(String temporal) {
-        this.temporal = temporal;
+        if (temporal != null) {
+            this.temporal = temporal.trim();
+        } else {
+            this.temporal = "";
+        }
     }
 
     /**
@@ -116,7 +147,11 @@ public class Metadata {
      * @param quality the quality to set
      */
     public void setQuality(String quality) {
-        this.quality = quality;
+        if (quality != null) {
+            this.quality = quality.trim();
+        } else {
+            this.quality = "";
+        }
     }
 
     /**
@@ -130,7 +165,11 @@ public class Metadata {
      * @param info the info to set
      */
     public void setInfo(String info) {
-        this.info = info;
+        if (info != null) {
+            this.info = info.trim();
+        } else {
+            this.info = "";
+        }
     }
 
     /**
@@ -144,7 +183,11 @@ public class Metadata {
      * @param use the use to set
      */
     public void setUse(String use) {
-        this.use = use;
+        if (use != null) {
+            this.use = use.trim();
+        } else {
+            this.use = "";
+        }
     }
 
     /**
@@ -158,7 +201,11 @@ public class Metadata {
      * @param access the access to set
      */
     public void setAccess(String access) {
-        this.access = access;
+        if (access != null) {
+            this.access = access.trim();
+        } else {
+            this.access = "";
+        }
     }
 
     /**
@@ -174,5 +221,72 @@ public class Metadata {
     public void setOrganisationID(int organisationID) {
         this.organisationID = organisationID;
     }
-    
+
+    public String getDatasetAdminName() {
+        return datasetAdminName;
+    }
+
+    public void setDatasetAdminName(String datasetAdminName) {
+        if (datasetAdminName != null) {
+            this.datasetAdminName = datasetAdminName.trim();
+        } else {
+            this.datasetAdminName = "";
+        }
+    }
+
+    public String getDatasetAdminPhone() {
+        return datasetAdminPhone;
+    }
+
+    public void setDatasetAdminPhone(String datasetAdminPhone) {
+        if (datasetAdminPhone != null) {
+            this.datasetAdminPhone = datasetAdminPhone.trim();
+        } else {
+            this.datasetAdminPhone = "";
+        }
+    }
+
+    public String getDatasetAdminEmail() {
+        return datasetAdminEmail;
+    }
+
+    public void setDatasetAdminEmail(String datasetAdminEmail) {
+        if (datasetAdminEmail != null) {
+            this.datasetAdminEmail = datasetAdminEmail.trim();
+        } else {
+            this.datasetAdminEmail = "";
+        }
+    }
+
+    public int getDatasetAdminID() {
+        return datasetAdminID;
+    }
+
+    public void setDatasetAdminID(int datasetAdminID) {
+        this.datasetAdminID = datasetAdminID;
+    }
+
+    public String getGeographicalRes() {
+        return geographicalRes;
+    }
+
+    public void setGeographicalRes(String geographicalRes) {
+        this.geographicalRes = geographicalRes;
+    }
+
+    public String getRecordAtts() {
+        return recordAtts;
+    }
+
+    public void setRecordAtts(String recordAtts) {
+        this.recordAtts = recordAtts;
+    }
+
+    public String getRecorderNames() {
+        return recorderNames;
+    }
+
+    public void setRecorderNames(String recorderNames) {
+        this.recorderNames = recorderNames;
+    }
 }

@@ -2,23 +2,30 @@
 <html>
     <head>
         <title>Metadata Entry</title>
-        <link rel="stylesheet" type="text/css" href="importer.css" />
+        <link rel="stylesheet" type="text/css" href="/importer/importer.css" />
     </head>
     <body>
-        <#if !model.processed>
-            <form method="post" enctype="multipart/form-data">
-                <fieldset>
-                    <legend>Upload Metadata Form</legend>
-                    <p>
-                        <span class="formlabel"><label for="fileData" path="fileData">Form</label></span>
-                        <span class="formfield"><input path="fileData" type="file" id="fileData" name="fileData"/></span>
-                    </p>
-                    <p>
-                        <input type="submit" />
-                    </p>
-                </fieldset>
-            </form>
-        </#if>
+        <form method="post" enctype="multipart/form-data">
+            <fieldset>
+                <legend>Upload Metadata Form</legend>
+                <p>
+                    <span class="formlabel"><label for="fileData" path="fileData">Form</label></span>
+                    <span class="formfield"><input path="fileData" type="file" id="fileData" name="fileData"/></span>
+                </p>
+                <p>
+                    <input type="submit" />
+                </p>
+            </fieldset>
+            <#if model.errors?has_content>
+                <div class="errors">
+                    <ul>
+                        <#list model.errors as error>
+                            <li>${error}</li>
+                        </#list>
+                    </ul>
+                </div>
+            </#if>
+        </form>
         <form method="post" enctype="multipart/form-data" action="metadataProcess.html">
             <fieldset>
                 <legend>Dataset Metadata</legend>
@@ -83,6 +90,53 @@
                     <@spring.formTextarea "model.metadata.access" "class='wide' rows='6' cols='60'"/>
                     <@spring.showErrors "" "error" />
                 </p>
+
+                <fieldset>
+                    <legend>Dataset Administrator Details</legend>
+                    <p>
+                        <span class="formlabel"><label for="datasetAdminName" path="metadata">Name</label></span>
+                        <@spring.formInput "model.metadata.datasetAdminName" "class='wide' length='200'" />
+                        <@spring.showErrors "" "error" />
+                        <#if model.defaultName?has_content><span class="error">${model.defaultName}</span></#if>
+                    </p>
+
+                    <p>
+                        <span class="formlabel"><label for="datasetAdminPhone" path="metadata">Phone Number</label></span>
+                        <@spring.formInput "model.metadata.datasetAdminPhone" "class='wide' length='200'" />
+                        <@spring.showErrors "" "error" />
+                        <#if model.defaultPhone?has_content><span class="error">${model.defaultPhone}</span></#if>
+                    </p>
+
+                    <p>
+                        <span class="formlabel"><label for="datasetAdminEmail" path="metadata">E-mail Address</label></span>
+                        <@spring.formInput "model.metadata.datasetAdminEmail" "class='wide' length='200'" />
+                        <@spring.showErrors "" "error" />
+                        <#if model.defaultEmail?has_content><span class="error">${model.defaultEmail}</span></#if>
+                    </p>
+
+                    <@spring.formHiddenInput "model.metadata.datasetAdminID" "length='100'"/>
+                </fieldset>
+
+                <fieldset>
+                    <legend>Level of Public Access</legend>
+                    <br />
+                    <span class="formlabel">Maximum Public Geographic Resolution</span>
+                    <span class="formfield">
+                        <@spring.formRadioButtons 'model.metadata.geographicalRes', referenceData.geoMap, ' ' />
+                        <@spring.showErrors "" "error" />
+                    </span> <br /> <br />
+                    <span class="formlabel">Record Attributes</span>
+                    <span class="formfield">
+                        <@spring.formRadioButtons 'model.metadata.recordAtts', referenceData.recAtts, ' ' />
+                        <@spring.showErrors "" "error" />
+                    </span> <br /> <br />
+                    <span class="formlabel">Can user see Recorder Names?</span>
+                    <span class="formfield">
+                        <@spring.formRadioButtons 'model.metadata.recorderNames', referenceData.recNames, ' ' />
+                        <@spring.showErrors "" "error" />
+                    </span> <br /> <br />
+
+                </fieldset>                
 
                 <p>
                     <input type="submit" name="submit" value="submit" />

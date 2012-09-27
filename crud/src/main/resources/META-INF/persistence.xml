@@ -30,6 +30,8 @@
     <class>uk.org.nbn.nbnv.jpa.nbncore.GridSquare</class>
     <class>uk.org.nbn.nbnv.jpa.nbncore.SiteBoundary</class>
     <class>uk.org.nbn.nbnv.jpa.nbncore.SiteBoundaryType</class>
+    <class>uk.org.nbn.nbnv.jpa.nbncore.UserData</class>
+    <shared-cache-mode>ENABLE_SELECTIVE</shared-cache-mode>
     <properties>
       <property name="javax.persistence.jdbc.driver" value="com.microsoft.sqlserver.jdbc.SQLServerDriver"/>
     </properties>
