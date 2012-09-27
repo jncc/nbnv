@@ -40,6 +40,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import sun.org.mozilla.javascript.internal.ImporterTopLevel;
 import uk.org.nbn.nbnv.importer.ui.convert.RunConversions;
 import uk.org.nbn.nbnv.importer.ui.metadata.MetadataWriter;
 import uk.org.nbn.nbnv.importer.ui.model.Metadata;
@@ -78,7 +79,6 @@ public class MetadataController {
         if (result.hasErrors()) {
             for (ObjectError error : result.getAllErrors()) {
                 Logger.getLogger(UploadController.class.getName()).log(Level.WARNING, "Error ({0}): {1}", new Object[]{error.getCode(), error.getDefaultMessage()});
-                model.getErrors().add(error.getDefaultMessage());
             }           
             return new ModelAndView("metadataForm", "model", model);
         }
@@ -127,7 +127,7 @@ public class MetadataController {
             }
 
             Map<String, String> mappings = importer.parseDocument(strList, strIt, new HashMap<String, String>());
-            
+            messages.addAll(importer.getDefaultMessages());
             Metadata meta = new Metadata();
             
             meta.setAccess(mappings.get(importer.META_ACCESS_CONSTRAINT));
@@ -144,37 +144,38 @@ public class MetadataController {
             meta.setDatasetAdminPhone(mappings.get(importer.META_CONTACT_PHONE));
             meta.setDatasetAdminEmail(mappings.get(importer.META_EMAIL));
             
-            boolean addOrg = true;
-            for (Organisation org : model.getOrganisationList()) {
-                if (org.getOrganisationName().equals(mappings.get(importer.ORG_NAME))) {
-                    meta.setOrganisationID(org.getOrganisationID());
-                    addOrg = false;
-                }
-            }
-            
-            
-            
             model.setMetadata(meta);
             
-            if (addOrg) {
-                Organisation newOrg = new Organisation();
-                newOrg.setAbbreviation(mappings.get(importer.ORG_ABBREVIATION));
-                newOrg.setAddress(mappings.get(importer.ORG_ADDRESS));
-                newOrg.setAllowPublicRegistration(false);
-                newOrg.setContactEmail(mappings.get(importer.ORG_EMAIL));
-                newOrg.setContactName(mappings.get(importer.ORG_CONTACT_NAME));
-                newOrg.setLogo(mappings.get(importer.ORG_LOGO)); // Need to figure out how to import logos
-                newOrg.setLogoSmall(mappings.get(importer.ORG_LOGO)); // Need to figure out how to import logos
-                newOrg.setOrganisationName(mappings.get(importer.ORG_NAME));
-                newOrg.setPhone(mappings.get(importer.ORG_PHONE));
-                newOrg.setPostcode(mappings.get(importer.ORG_POSTCODE));
-                newOrg.setSummary(mappings.get(importer.ORG_DESC));
-                newOrg.setWebsite(mappings.get(importer.ORG_WEBSITE));
-                
-                ModelAndView mv = new ModelAndView("forward:/organisation/add.html");
-                mv.addObject("metadataForm", model);
-                mv.addObject("newOrganisation", newOrg);
-                return mv;
+            if (!((mappings.get(importer.ORG_NAME) == null || mappings.get(importer.ORG_NAME).trim().isEmpty()))) {
+                for (Organisation org : model.getOrganisationList()) {
+                    if (org.getOrganisationName().equals(mappings.get(importer.ORG_NAME))) {
+                        meta.setOrganisationID(org.getOrganisationID());
+                        break;
+                    }
+                }
+
+                if (meta.getOrganisationID() == -1) {
+                    Organisation newOrg = new Organisation();
+                    newOrg.setAbbreviation(mappings.get(importer.ORG_ABBREVIATION));
+                    newOrg.setAddress(mappings.get(importer.ORG_ADDRESS));
+                    newOrg.setAllowPublicRegistration(false);
+                    newOrg.setContactEmail(mappings.get(importer.ORG_EMAIL));
+                    newOrg.setContactName(mappings.get(importer.ORG_CONTACT_NAME));
+                    newOrg.setLogo(mappings.get(importer.ORG_LOGO)); // Need to figure out how to import logos
+                    newOrg.setLogoSmall(mappings.get(importer.ORG_LOGO)); // Need to figure out how to import logos
+                    newOrg.setOrganisationName(mappings.get(importer.ORG_NAME));
+                    newOrg.setPhone(mappings.get(importer.ORG_PHONE));
+                    newOrg.setPostcode(mappings.get(importer.ORG_POSTCODE));
+                    newOrg.setSummary(mappings.get(importer.ORG_DESC));
+                    newOrg.setWebsite(mappings.get(importer.ORG_WEBSITE));
+
+                    ModelAndView mv = new ModelAndView("forward:/organisation/add.html");
+                    mv.addObject("metadataForm", model);
+                    mv.addObject("newOrganisation", newOrg);
+                    return mv;
+                }
+            } else { 
+                messages.add("Could not detect Organisation, please select it from the list below or add manually");
             }
             
         } catch (IOException ex) {
@@ -219,7 +220,7 @@ public class MetadataController {
             model.getMetadata().setOrganisationID(nf.parse(organisationID).intValue());
         } catch (ParseException ex) {
             Logger.getLogger(UploadController.class.getName()).log(Level.SEVERE, "Error ({0}): {1}", new Object[]{"ParsingError", "Could Not Parse Selected Organisation ID"});
-            model.getErrors().add("Could Not Parse Selected Organisation ID");
+            model.getErrors().add("SEVERE: Could Not Parse Selected Organisation ID");
             
             return new ModelAndView("metadataForm", "model", model);
         }
@@ -227,7 +228,9 @@ public class MetadataController {
         if (result.hasErrors()) {
             for (ObjectError error : result.getAllErrors()) {
                 Logger.getLogger(UploadController.class.getName()).log(Level.WARNING, "Error ({0}): {1}", new Object[]{error.getCode(), error.getDefaultMessage()});
-                model.getErrors().add(error.getDefaultMessage());
+                if (error.getDefaultMessage() != null) {
+                    model.getErrors().add(error.getDefaultMessage());
+                }
             }
             
             model.setOrganisationList(getOrgList());
@@ -293,20 +296,20 @@ public class MetadataController {
     @ModelAttribute("referenceData")
     protected Map referenceData(HttpServletRequest request, Object command, Errors errors) throws Exception {
         Map<String, String> geoMap = new LinkedHashMap<String, String>();
-        geoMap.put("full","Full");
-        geoMap.put("1","1km^2");
-        geoMap.put("2","2km^2");
-        geoMap.put("10","10km^2");
+        geoMap.put("Full","Full");
+        geoMap.put("1km2","1km\u00B2 ");
+        geoMap.put("2km2","2km\u00B2");
+        geoMap.put("10km2","10km\u00B2");
         
         Map<String, String> recAtts = new LinkedHashMap<String, String>();
-        recAtts.put("yes","Yes");
-        recAtts.put("no","No");
-        recAtts.put("na","N/A");
+        recAtts.put("Yes","Yes");
+        recAtts.put("No","No");
+        recAtts.put("N/A","N/A");
         
         Map<String, String> recNames = new LinkedHashMap<String, String>();
-        recNames.put("yes","Yes");
-        recNames.put("no","No");
-        recNames.put("na","N/A");
+        recNames.put("Yes","Yes");
+        recNames.put("No","No");
+        recNames.put("N/A","N/A");
         
         Map<String, Object> ref = new HashMap<String, Object>();
         ref.put("geoMap", geoMap);

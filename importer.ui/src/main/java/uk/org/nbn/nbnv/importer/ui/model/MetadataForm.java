@@ -13,13 +13,16 @@ import uk.org.nbn.nbnv.jpa.nbncore.Organisation;
  * @author Paul Gilbertson
  */
 public class MetadataForm {
-    private Metadata metadata = new Metadata();
-    private boolean processed = false;
-    private List<String> errors = new ArrayList<String>();
+    private Metadata metadata;
+    private boolean processed;
+    private List<String> errors;
     private List<Organisation> organisationList;
-    private String defaultName;
-    private String defaultPhone;
-    private String defaultEmail;
+    
+    public MetadataForm() {
+        this.metadata = new Metadata();
+        this.processed = false;
+        this.errors = new ArrayList<String>();
+    }
 
     /**
      * @return the metadata
@@ -46,7 +49,11 @@ public class MetadataForm {
      * @param errors the errors to set
      */
     public void setErrors(List<String> errors) {
-        this.errors = errors;
+        if (errors != null) {
+            this.errors = errors;
+        } else {
+            this.errors = new ArrayList<String>();
+        }
     }
 
     /**
@@ -75,29 +82,5 @@ public class MetadataForm {
      */
     public void setOrganisationList(List<Organisation> organisationList) {
         this.organisationList = organisationList;
-    }
-
-    public String getDefaultName() {
-        return defaultName;
-    }
-
-    public void setDefaultName(String defaultName) {
-        this.defaultName = defaultName;
-    }
-
-    public String getDefaultPhone() {
-        return defaultPhone;
-    }
-
-    public void setDefaultPhone(String defaultPhone) {
-        this.defaultPhone = defaultPhone;
-    }
-
-    public String getDefaultEmail() {
-        return defaultEmail;
-    }
-
-    public void setDefaultEmail(String defaultEmail) {
-        this.defaultEmail = defaultEmail;
     }
 }

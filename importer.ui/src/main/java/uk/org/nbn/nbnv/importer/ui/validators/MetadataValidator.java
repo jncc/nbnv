@@ -48,7 +48,7 @@ public class MetadataValidator implements Validator {
             errors.rejectValue("datasetAdminEmail", "datasetAdminEmail.notFound");
         }
         
-        if (meta.getGeographicalRes().equals("full")) {
+        if (meta.getGeographicalRes().equals("Full")) {
             if (meta.getRecordAtts().trim().isEmpty() || meta.getRecordAtts() == null) {
                 errors.rejectValue("recordAtts", "record.geoResFull");
             }
@@ -56,11 +56,11 @@ public class MetadataValidator implements Validator {
                 errors.rejectValue("recorderNames", "record.geoResFull");
             }
         } else {
-            if (meta.getRecordAtts().equals("yes")) {
-                errors.rejectValue("recordAtts", "");
+            if (meta.getRecordAtts().equals("Yes")) {
+                errors.rejectValue("recordAtts", "record.geoResNotFull");
             }
-            if (meta.getRecorderNames().equals("yes")) {
-                errors.rejectValue("recorderNames", "record.getResNotFull");
+            if (meta.getRecorderNames().equals("Yes")) {
+                errors.rejectValue("recorderNames", "record.geoResNotFull");
             }            
         }
     }

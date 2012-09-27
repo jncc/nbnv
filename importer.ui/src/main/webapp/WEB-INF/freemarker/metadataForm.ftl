@@ -5,20 +5,27 @@
         <link rel="stylesheet" type="text/css" href="/importer/importer.css" />
     </head>
     <body>
-        <#if !model.processed>
-            <form method="post" enctype="multipart/form-data">
-                <fieldset>
-                    <legend>Upload Metadata Form</legend>
-                    <p>
-                        <span class="formlabel"><label for="fileData" path="fileData">Form</label></span>
-                        <span class="formfield"><input path="fileData" type="file" id="fileData" name="fileData"/></span>
-                    </p>
-                    <p>
-                        <input type="submit" />
-                    </p>
-                </fieldset>
-            </form>
-        </#if>
+        <form method="post" enctype="multipart/form-data">
+            <fieldset>
+                <legend>Upload Metadata Form</legend>
+                <p>
+                    <span class="formlabel"><label for="fileData" path="fileData">Form</label></span>
+                    <span class="formfield"><input path="fileData" type="file" id="fileData" name="fileData"/></span>
+                </p>
+                <p>
+                    <input type="submit" />
+                </p>
+            </fieldset>
+            <#if model.errors?has_content>
+                <div class="errors">
+                    <ul>
+                        <#list model.errors as error>
+                            <li>${error}</li>
+                        </#list>
+                    </ul>
+                </div>
+            </#if>
+        </form>
         <form method="post" enctype="multipart/form-data" action="metadataProcess.html">
             <fieldset>
                 <legend>Dataset Metadata</legend>
@@ -112,22 +119,22 @@
 
                 <fieldset>
                     <legend>Level of Public Access</legend>
-                    
+                    <br />
                     <span class="formlabel">Maximum Public Geographic Resolution</span>
                     <span class="formfield">
-                        <@spring.formRadioButtons 'model.metadata.geographicalRes', referenceData.geoMap, '  ' />
+                        <@spring.formRadioButtons 'model.metadata.geographicalRes', referenceData.geoMap, ' ' />
                         <@spring.showErrors "" "error" />
-                    </span> <br />
+                    </span> <br /> <br />
                     <span class="formlabel">Record Attributes</span>
                     <span class="formfield">
-                        <@spring.formRadioButtons 'model.metadata.recordAtts', referenceData.recAtts, '   ' />
+                        <@spring.formRadioButtons 'model.metadata.recordAtts', referenceData.recAtts, ' ' />
                         <@spring.showErrors "" "error" />
-                    </span> <br />
+                    </span> <br /> <br />
                     <span class="formlabel">Can user see Recorder Names?</span>
                     <span class="formfield">
-                        <@spring.formRadioButtons 'model.metadata.recorderNames', referenceData.recNames, '   ' />
+                        <@spring.formRadioButtons 'model.metadata.recorderNames', referenceData.recNames, ' ' />
                         <@spring.showErrors "" "error" />
-                    </span> <br />
+                    </span> <br /> <br />
 
                 </fieldset>                
 

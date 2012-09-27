@@ -43,7 +43,7 @@ public class WordImporter_3_1 implements WordImporter {
         stringSet = new HashSet<String>(Arrays.asList(stringsHWPF));
         
         defaultMessages = new ArrayList<String>();
-        defaultMessages.add("Checkboxes for level of public access could not be imported, please select them");
+        defaultMessages.add("Checkboxes for level of public access could not be imported, please select them manually");
         
     }
     
@@ -97,7 +97,7 @@ public class WordImporter_3_1 implements WordImporter {
                     boolean foundDesc = false;
                     int count = 0;
                     while (count < WANDER_MAX && !foundDesc) {
-                        desc = strIt.previous().trim().replaceAll("\\*$", "");
+                        desc = strIt.previous().replaceAll("\\*$", "").trim();
                         if (stringSet.contains(desc.trim())) {
                             foundDesc = true;
                         }
