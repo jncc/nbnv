@@ -48,7 +48,9 @@ public class TaxonObservationProvider {
         SELECT("DISTINCT o.datasetKey, dd.*");
         createSelectQuery(params);
         INNER_JOIN("DatasetData dd ON dd.datasetKey = o.datasetKey");
-        return SQL();
+        String toReturn = SQL();
+        System.out.println(toReturn);
+        return toReturn;
     }
     
     public String testProviderAndDatasets(Map<String, Object> params){
@@ -76,7 +78,12 @@ public class TaxonObservationProvider {
         }
 
         if (params.containsKey("ptvk") && params.get("ptvk") != null) {
-            WHERE("pTaxonVersionKey IN " + taxaListToCommaList((List<String>) params.get("ptvk")));
+            if(params.get("ptvk") instanceof List) {
+                WHERE("pTaxonVersionKey IN " + taxaListToCommaList((List<String>) params.get("ptvk")));
+            }
+            else {
+                WHERE("pTaxonVersionKey = '" + params.get("ptvk") + "'");
+            }
         }
 
         if (params.containsKey("overlaps") && (Integer) params.get("overlaps") > -1) {

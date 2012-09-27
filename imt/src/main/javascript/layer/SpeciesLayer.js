@@ -90,9 +90,9 @@ nbn.layer.SpeciesLayer = function(hosts, googleMap, options) {
 				}, function(data) {
 					_setDatasets(data.datasets);
 					_abundanceFilter.setEnabled(false);
-					_constructionFilterParams = {designation: data.designation.designationKey};
-					additionalFilterParams = {desig: data.designation.designationKey};
-					_arcGisMap.setMapService('DesignationSpeciesDensity/' + data.designation.designationKey);
+					_constructionFilterParams = {designation: data.designation.code};
+					additionalFilterParams = {desig: data.designation.code};
+					_arcGisMap.setMapService('DesignationSpeciesDensity/' + data.designation.code);
 					_descriptionAttribute.setDescription('Designation Map for ' + data.designation.name + _createDatasetFilteringSummary(data.datasets));
 					_layerParameters.setLayerParameters(data);
 			});

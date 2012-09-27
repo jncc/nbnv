@@ -49,4 +49,7 @@ public interface DatasetMapper {
 
     @SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectDatasetsProviderNotInstantiated")
     List<Dataset> selectDatasetsInDesignationViewableByUser(@Param("user") User user, @Param("designation") String designationKey);
+    
+    @SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectDatasetsProviderNotInstantiated")
+    List<Dataset> selectDatasetsForTaxonViewableByUser(@Param("user") User user, @Param("ptvk") String pTaxonVersionKey);
 }

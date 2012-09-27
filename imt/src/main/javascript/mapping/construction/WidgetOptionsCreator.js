@@ -195,7 +195,7 @@ nbn.mapping.construction.WidgetOptionsCreator = function(interactiveMapper){
             var _setSelectedSpecies = function(selection) {
                     if(_selectedSpecies = selection) {//save the species selection
                             var currUser = interactiveMapper.getUser();//get the current user
-                            _singleSpeciesDatasetSelectionTree.nbn_treewidget('setUrlOfDescriptionFile','TreeWidgetGenerator?type=spd&tvk=' + _selectedSpecies.taxonVersionKey + '&user=' + ((currUser) ? currUser.userID : 0));
+                            _singleSpeciesDatasetSelectionTree.nbn_treewidget('setUrlOfDescriptionFile',nbn.util.ServerGeneratedLoadTimeConstants.data_api + "/taxa/" + _selectedSpecies.taxonVersionKey.taxonVersionKey + "/datasets");
                             _datasetSelectionBox.show(); //show the selection box
                     }
                     _selectedDatasets=[];
@@ -233,21 +233,43 @@ nbn.mapping.construction.WidgetOptionsCreator = function(interactiveMapper){
                             .appendTo(ul);
             };
 
+            
             var _speciesTree = $('<div>').nbn_treewidget({
-                    urlOfDescriptionFile : 'TreeWidgetGenerator?type=sp',
+                    urlOfDescriptionFile : nbn.util.ServerGeneratedLoadTimeConstants.data_api + "/taxonNavigationGroups",
+                    dataFilter: function(taxonNavGroup) {
+                        function transformTaxonNavGroup(taxonNavGroup) {
+                            var base = { 
+                                title : taxonNavGroup.name,
+                                unselectable: true, 
+                                isLazy: true,hideCheckbox: false
+                            };
+                            if(taxonNavGroup.children) {
+                                return $.extend(base, taxonNavGroup, {
+                                    children : $.map(taxonNavGroup.children, transformTaxonNavGroup)
+                                });
+                            }
+                            else {
+                                return $.extend(base, taxonNavGroup);
+                            }
+                        }
+                        return transformTaxonNavGroup(taxonNavGroup);
+                    },
                     allowMultipleSelection: 'none',
                     selected: function(event, selected) {
                             _setSelectedSpecies({
-                                    taxonVersionKey: selected,
+                                    taxonVersionKey: selected.taxonVersionKey,
                                     name: $(this).nbn_treewidget('getChildText', selected)
                             });
                     }
             });
 
             _singleSpeciesDatasetSelectionTree = $('<div>').nbn_treewidget({
-                    urlOfDescriptionFile : 'TreeWidgetGenerator?type=spd&tvk=NBNSYS0000005629&user=0',
+                    urlOfDescriptionFile : nbn.util.ServerGeneratedLoadTimeConstants.data_api + "/taxa/NBNSYS0000005629/datasets",
                     allowMultipleSelection: 'checkbox',
                     selectDeselect: true,
+                    dataFilter: function(dataset) {
+                        return $.extend({ title : dataset.name }, dataset);
+                    },
                     childrenSelectionListener: function(event, selected) {
                         _setSelectedSpeciesDatasets(selected);
                     },
@@ -360,7 +382,7 @@ nbn.mapping.construction.WidgetOptionsCreator = function(interactiveMapper){
             var _setSelectedDesignation = function(selection) {
                     if(_selectedDesignation = selection) {//save the species selection
                             var currUser = interactiveMapper.getUser();//get the current user
-                            _designationDatasetsTree.nbn_treewidget('setUrlOfDescriptionFile','TreeWidgetGenerator?type=dd&desig=' + _selectedDesignation.designationKey + '&user=' + ((currUser) ? currUser.userID : 0));
+                            _designationDatasetsTree.nbn_treewidget('setUrlOfDescriptionFile',nbn.util.ServerGeneratedLoadTimeConstants.data_api + "/designations/" + _selectedDesignation.designationKey.code + "/datasets");
                             _datasetSelectionBox.show();
                     }
                     _selectedDatasets=[];
@@ -381,7 +403,10 @@ nbn.mapping.construction.WidgetOptionsCreator = function(interactiveMapper){
             };
 
             _designationDatasetsTree = $('<div>').nbn_treewidget({
-                    urlOfDescriptionFile : 'TreeWidgetGenerator?type=dd&desig=BIRDSDIR-A1&user=0',
+                    urlOfDescriptionFile : nbn.util.ServerGeneratedLoadTimeConstants.data_api + "/designations/BIRDSDIR-A1/datasets",
+                    dataFilter: function(designation) {
+                        return $.extend({ title : designation.name }, designation);
+                    },
                     allowMultipleSelection: 'checkbox',
                     selectDeselect: true,
                     childrenSelectionListener: function(event, selected) {
@@ -428,7 +453,7 @@ nbn.mapping.construction.WidgetOptionsCreator = function(interactiveMapper){
             };
 
             this.apply = function() {
-                    layer.setMode(layer.Modes.DESIGNATION,_selectedDesignation, _selectedDatasets);
+                    layer.setMode(layer.Modes.DESIGNATION,_selectedDesignation.designationKey, _selectedDatasets);
             };
 
             this.getState = function() {
