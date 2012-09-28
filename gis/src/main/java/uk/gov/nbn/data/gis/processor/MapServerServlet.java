@@ -25,7 +25,7 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
  */
 public class MapServerServlet extends HttpServlet {
     
-    MapServiceMethodFactory serviceFactory;
+    MapServerRequestProcessor processor;
     MapFileGenerator mapFileGenerator;
     
     @Override public void init(ServletConfig config) throws ServletException {
@@ -34,7 +34,7 @@ public class MapServerServlet extends HttpServlet {
         AutowireCapableBeanFactory beanFactory = WebApplicationContextUtils
                                     .getWebApplicationContext(servletContext)
                                     .getAutowireCapableBeanFactory();
-        serviceFactory = beanFactory.getBean(MapServiceMethodFactory.class);
+        processor = beanFactory.getBean(MapServerRequestProcessor.class);
         mapFileGenerator = beanFactory.getBean(MapFileGenerator.class);
         try {
             mapFileGenerator.setMapTemplateDirectory(new File(config.getServletContext().getRealPath("WEB-INF\\maps")));
@@ -45,43 +45,11 @@ public class MapServerServlet extends HttpServlet {
     
     @Override protected void doGet(HttpServletRequest request, 
             HttpServletResponse response) throws ServletException, IOException {
-        try {
-            MapServiceMethod mapMethod = serviceFactory.getMatchingPart(request.getPathInfo());
-            
-            ServletOutputStream out = response.getOutputStream();
-            try {
-                File toSubmitToMapServer = mapFileGenerator.getMapFile(request, mapMethod);
-                try {
-                    URL mapServerURL = serviceFactory.getMapServiceURL(toSubmitToMapServer, request.getQueryString());
-                    HttpURLConnection openConnection = (HttpURLConnection)mapServerURL.openConnection();
-                    response.setContentType(openConnection.getContentType());    
-                    InputStream in = openConnection.getInputStream();
-                    IOUtils.copy(in, out);
-                    in.close();
-                }
-                finally {
-                    toSubmitToMapServer.delete();
-                }
-            }
-            catch(InvocationTargetException ite) {
-                handleMapServiceException(ite.getTargetException(), response);
-            }
-            catch(Throwable mapEx) {
-                throw new ServletException(mapEx);
-            }
-            finally {
-                out.close();
-            }
-        }
-        catch(MapServiceUndefinedException msue) {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND, "Could not find: " + Arrays.toString(request.getPathInfo().substring(1).split("/")));
-        }
+        processor.processRequest(request, response);
     }
     
-    /*Handle execptions which were thrown during the construction of map services*/
-    private static void handleMapServiceException(Throwable e, HttpServletResponse response) throws IOException {
-        if(e instanceof IllegalArgumentException) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getCause().getMessage());
-        }
+    @Override protected void doPost(HttpServletRequest request, 
+            HttpServletResponse response) throws ServletException, IOException {
+        processor.processRequest(request, response);
     }
 }

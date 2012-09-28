@@ -6,6 +6,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.*;
+import java.util.Map.Entry;
 import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -27,14 +28,27 @@ public class MapServiceMethodFactory {
         rootMapService = getMapCreatingMethods();
     }
     
-    public URL getMapServiceURL(File mapFile, String query) throws MalformedURLException {
+    public URL getMapServiceURL(File mapFile, Map<String, String[]> query) throws MalformedURLException {
         StringBuilder toReturn = new StringBuilder(properties.getProperty("mapserver"))
-                .append("?map=")
-                .append(URLEncoder.encode(mapFile.getAbsolutePath()));
-        if(query != null) {
-            toReturn.append("&").append(query);
-        }
+                .append("?").append(getMapServerRequest(mapFile, query));
         return new URL(toReturn.toString());
+    }
+    
+    private static String getMapServerRequest(File mapFile, Map<String, String[]> query) {
+        Map<String, String[]> modifiedQuery = new HashMap<String, String[]>(query);
+        modifiedQuery.put("map", new String[] {URLEncoder.encode(mapFile.getAbsolutePath())});
+        return getQueryFromMap(modifiedQuery);
+    }
+    
+    private static String getQueryFromMap(Map<String, String[]> query) {
+        StringBuilder toReturn = new StringBuilder();
+        
+        for(Entry<String, String[]> entry : query.entrySet()) {
+            for(String currValue : entry.getValue()) {
+                toReturn.append(entry.getKey()).append("=").append(currValue).append("&");
+            }
+        }
+        return toReturn.substring(0, toReturn.length()-1);
     }
     
     /**

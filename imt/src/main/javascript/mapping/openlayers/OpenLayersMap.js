@@ -63,8 +63,7 @@ nbn.mapping.openlayers.OpenLayersMap = function(options, interactiveMap) {
 		var pickerController = new nbn.layer.picker.PickerInfoWindow(this, nbnLayers); //create the picker window
 		var clickHandler = new OpenLayers.Handler.Click({ 'map': _map },{
 			'click': function(event) {
-				var lonlat = _map.getLonLatFromPixel(event.xy);
-				pickerController.createOrUpdateInfoWindowIfApplicable(lonlat);
+				pickerController.createOrUpdateInfoWindowIfApplicable(event.xy);
 			}}
 		);
 		clickHandler.activate();
@@ -95,7 +94,7 @@ nbn.mapping.openlayers.OpenLayersMap = function(options, interactiveMap) {
 	this.showPickingDialogMapDialog = function(containerDiv,position) {
 		this.closePickingDialogMapDialog(); //close the picking dialog if it is open
 		var measurements = containerDiv.measure();
-		_infoWindow = new OpenLayers.Popup.FramedCloud("_infoWindow", position, new OpenLayers.Size(300,300), '<div style="width: ' + measurements.outerWidth + 'px; height: ' + measurements.outerHeight + 'px;" id="picker_100">', undefined, true);
+		_infoWindow = new OpenLayers.Popup.FramedCloud("_infoWindow", _map.getLonLatFromPixel(position), new OpenLayers.Size(300,300), '<div style="width: ' + measurements.outerWidth + 'px; height: ' + measurements.outerHeight + 'px;" id="picker_100">', undefined, true);
 
 		_map.addPopup(_infoWindow);
 		$('#picker_100').empty().append(containerDiv);
