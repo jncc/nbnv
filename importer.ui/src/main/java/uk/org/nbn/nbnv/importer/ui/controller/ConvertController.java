@@ -11,7 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,25 +26,24 @@ import uk.org.nbn.nbnv.importer.ui.convert.RunConversions;
 import uk.org.nbn.nbnv.importer.ui.metadata.MetadataWriter;
 import uk.org.nbn.nbnv.importer.ui.model.ConvertResults;
 import uk.org.nbn.nbnv.importer.ui.model.MetadataForm;
-import uk.org.nbn.nbnv.importer.ui.model.SessionData;
+import uk.org.nbn.nbnv.importer.ui.util.DatabaseConnection;
+import uk.org.nbn.nbnv.jpa.nbncore.Organisation;
 
 /**
  *
  * @author Paul Gilbertson
  */
 @Controller
-@SessionAttributes("model")
+@SessionAttributes({"model", "org"})
 @RequestMapping("/compile.html")
-public class ConvertController {
-    @Autowired SessionData session;
-    
+public class ConvertController {   
     @RequestMapping(method= RequestMethod.POST)
-    public ModelAndView compile(@RequestParam Map<String, String> args, @ModelAttribute("model") MetadataForm metadataForm) {
+    public ModelAndView compile(@RequestParam Map<String, String> args, @ModelAttribute("model") MetadataForm metadataForm, @ModelAttribute("org") Organisation organisation) {
         try {
             ConvertResults model = new ConvertResults();
             
             File in = new File(args.get("filename"));
-            RunConversions rc = new RunConversions(in, session.getOrganisationID(), metadataForm);
+            RunConversions rc = new RunConversions(in, organisation.getOrganisationID(), metadataForm);
             
             File out = File.createTempFile("nbnimporter", "processed.tab");
             File meta = File.createTempFile("nbnimporter", "meta.xml");
@@ -52,8 +52,14 @@ public class ConvertController {
                         
             List<String> errors = rc.run(out, meta, args);
             
+            EntityManager em = DatabaseConnection.getInstance().createEntityManager();
+            Query q = em.createNamedQuery("Organisation.findByOrganisationID");
+            q.setParameter("organisationID", organisation.getOrganisationID());
+            List orgs = q.getResultList();
+            Organisation org = (Organisation) q.getSingleResult();
+            
             MetadataWriter mw = new MetadataWriter(metadata);
-            mw.datasetToEML(metadataForm.getMetadata(), rc.getStartDate(), rc.getEndDate());
+            mw.datasetToEML(metadataForm.getMetadata(), org, rc.getStartDate(), rc.getEndDate());
             
             ArchiveWriter aw = new ArchiveWriter();
             errors.addAll(aw.createArchive(out, meta, metadata, archive));

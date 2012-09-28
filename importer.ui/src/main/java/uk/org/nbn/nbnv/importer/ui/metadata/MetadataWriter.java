@@ -34,7 +34,7 @@ public class MetadataWriter {
         this.metadata = metadata;
     }
     
-    public String datasetToEML(Metadata ds, Date startDate, Date endDate) throws Exception {
+    public String datasetToEML(Metadata ds, Organisation org, Date startDate, Date endDate) throws Exception {
         BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(metadata)));
 
         DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
@@ -68,7 +68,7 @@ public class MetadataWriter {
         dataset.appendChild(title);
 
         dataset.appendChild(createCreatorNode(doc, ds));
-        dataset.appendChild(createMetadataProviderNode(doc, ds));
+        dataset.appendChild(createMetadataProviderNode(doc, ds, org));
 
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
         Element pubDate = doc.createElement("pubDate");
@@ -125,7 +125,7 @@ public class MetadataWriter {
         return creator;
     }
     
-    private Element createMetadataProviderNode(Document doc, Metadata ds) {
+    private Element createMetadataProviderNode(Document doc, Metadata ds, Organisation org) {
         Element creator = doc.createElement("metadataProvider");
 
         String forename, surname;
@@ -140,7 +140,7 @@ public class MetadataWriter {
         creator.appendChild(createNameNode(doc, forename, surname));
 
         Element organisation = doc.createElement("organizationName");
-        organisation.setTextContent(ds.getOrganisationName()); 
+        organisation.setTextContent(org.getOrganisationName()); 
         creator.appendChild(organisation);
 
         Element email = doc.createElement("electronicMailAddress");
@@ -148,7 +148,7 @@ public class MetadataWriter {
         creator.appendChild(email);
 
         Element url = doc.createElement("onlineUrl");
-        url.setTextContent(ds.getOrganisationWebsite());
+        url.setTextContent(org.getWebsite());
         creator.appendChild(url);
 
         return creator;
