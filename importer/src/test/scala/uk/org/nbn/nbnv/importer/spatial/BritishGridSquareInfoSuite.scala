@@ -189,7 +189,7 @@ class BritishGridSquareInfoSuite extends BaseFunSuite {
     bgr.getParentGridSquareInfo should be (None)
   }
 
-  test("should give 100m grid ref at 2000m") {
+  test("should compute 2000m grid ref from 100m grid ref") {
     val bgr = new BritishGridSquareInfo(knownGridRef_100m)
 
     val lowerBgr = bgr.getLowerPrecisionGridSquareInfo(2000)
@@ -197,6 +197,32 @@ class BritishGridSquareInfoSuite extends BaseFunSuite {
     lowerBgr should not be (null)
     lowerBgr.gridReference should be (knownGridRef_2000m)
     lowerBgr.gridReferencePrecision should be (2000)
+  }
+
+  test("should compute 10000m grid ref from 1000m grid ref") {
+    val bgr = new BritishGridSquareInfo(knownGridRef_1000m)
+
+    val lowerBgr = bgr.getLowerPrecisionGridSquareInfo(10000)
+
+    lowerBgr should not be (null)
+    lowerBgr.gridReference should be (knownGridRef_10000m)
+    lowerBgr.gridReferencePrecision should be (10000)
+  }
+
+  test("should return same grid square if requested precision is lower") {
+    val bgr = new BritishGridSquareInfo(knownGridRef_1000m)
+
+    val lowerBgr = bgr.getLowerPrecisionGridSquareInfo(100)
+
+    lowerBgr should be (bgr)
+  }
+
+  test("should return same grid square if requested precision is the same") {
+    val bgr = new BritishGridSquareInfo(knownGridRef_1000m)
+
+    val lowerBgr = bgr.getLowerPrecisionGridSquareInfo(1000)
+
+    lowerBgr should be (bgr)
   }
 
   test("should give WKT for 100m grid square") {

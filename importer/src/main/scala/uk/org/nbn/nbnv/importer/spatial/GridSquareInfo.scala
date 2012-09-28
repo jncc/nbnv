@@ -71,7 +71,7 @@ abstract class GridSquareInfo(gridRef : String, precision: Int = 0) {
   }
 
   def getLowerPrecisionGridSquareInfo(precision: Int) = {
-    if (precision < gridReferencePrecision) {
+    if (precision <= gridReferencePrecision) {
       this
     }
     else {

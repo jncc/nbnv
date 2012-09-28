@@ -198,6 +198,32 @@ class ChannelIslandGridSquareInfoSuite extends BaseFunSuite {
     lowerCigr.gridReferencePrecision should be (2000)
   }
 
+  test("should compute 10000m grid ref from 1000m grid ref") {
+    val cigr = new ChannelIslandGridSquareInfo(knownGridRef_1000m)
+
+    val lowerCigr = cigr.getLowerPrecisionGridSquareInfo(10000)
+
+    lowerCigr should not be (null)
+    lowerCigr.gridReference should be (knownGridRef_10000m)
+    lowerCigr.gridReferencePrecision should be (10000)
+  }
+
+  test("should return same grid square if requested precision is lower") {
+    val cigr = new ChannelIslandGridSquareInfo(knownGridRef_1000m)
+
+    val lowerCigr = cigr.getLowerPrecisionGridSquareInfo(100)
+
+    lowerCigr should be (cigr)
+  }
+
+  test("should return same grid square if requested precision is the same") {
+    val cigr = new ChannelIslandGridSquareInfo(knownGridRef_1000m)
+
+    val lowerCigr = cigr.getLowerPrecisionGridSquareInfo(1000)
+
+    lowerCigr should be (cigr)
+  }
+
   test("should give WKT for 100m grid square") {
     val cigr = new ChannelIslandGridSquareInfo(knownGridRef_100m)
 
