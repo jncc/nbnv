@@ -29,7 +29,7 @@ abstract class GridSquareInfo(gridRef : String, precision: Int = 0) {
 
   val dintyGridByLetter = dintyGridByCoord map {_.swap}
 
-  //Check grid ref is uk grid ref
+  //Check grid ref
   checkGridRef
 
   //Check grid ref is not below minimum precision
@@ -71,7 +71,12 @@ abstract class GridSquareInfo(gridRef : String, precision: Int = 0) {
   }
 
   def getLowerPrecisionGridSquareInfo(precision: Int) = {
-    create(outputGridRef, precision)
+    if (precision < gridReferencePrecision) {
+      this
+    }
+    else {
+      create(outputGridRef, precision)
+    }
   }
 
   def sourceProjectionPolygon = {
@@ -203,7 +208,7 @@ abstract class GridSquareInfo(gridRef : String, precision: Int = 0) {
         decreaseGridPrecision(outputGridRef, 10000 )
       }
       else {
-        throw new RuntimeException("Current grid reference has an invalid precision")
+        throw new ImportFailedException("Current grid reference has an invalid precision")
       }
     }
   }

@@ -3,6 +3,8 @@ package uk.org.nbn.nbnv.importer.spatial
 import uk.org.nbn.nbnv.importer.ImportFailedException
 
 class GridSquareInfoFactory {
+
+  //todo: rename to getGridSquareByRef
   def getGridSquare(gridRef: String, gridReferenceType: String = "", gridReferencePrecision: Int = 0) : GridSquareInfo = {
 
 
@@ -26,6 +28,11 @@ class GridSquareInfoFactory {
       case _      =>  throw new ImportFailedException("Unknown grid reference type '%s'".format(gridType))
     }
   }
+
+  //todo: implement getGridSquareByPoint
+  //  Point will by either en or latlng
+  //  Will have to determine if point is in british or irish grid.
+  //  Return closes 100 m grid square.
 
   private def getGridRefType(gridRef: String) = {
     //Case insensitve (?i) regex to match each grid ref
