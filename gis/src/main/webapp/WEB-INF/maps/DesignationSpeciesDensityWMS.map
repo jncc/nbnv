@@ -28,9 +28,11 @@ MAP
     PLUGIN                                              "msplugin_mssql2008.dll"
     CONNECTION                                          "${properties.spatialConnection}"
     DATA                                                "${layerGenerator.getData(1)}"
+    TEMPLATE                                            "dummy.txt"
 
     METADATA
       "wms_title"                                       "Grid-10km"
+      "wms_include_items"                               "all"
     END
 
     PROJECTION
@@ -200,9 +202,11 @@ MAP
     PLUGIN                                              "msplugin_mssql2008.dll"
     CONNECTION                                          "${properties.spatialConnection}"
     DATA                                                "${layerGenerator.getData(2)}"
+    TEMPLATE                                            "dummy.txt"
 
     METADATA
       "wms_title"                                       "Grid-2km"
+      "wms_include_items"                               "all"
     END
 
     PROJECTION
@@ -372,9 +376,11 @@ MAP
     PLUGIN                                              "msplugin_mssql2008.dll"
     CONNECTION                                          "${properties.spatialConnection}"
     DATA                                                "${layerGenerator.getData(3)}"
+    TEMPLATE                                            "dummy.txt"
 
     METADATA
       "wms_title"                                       "Grid-1km"
+      "wms_include_items"                               "all"
     END
 
     PROJECTION
@@ -544,8 +550,11 @@ MAP
     PLUGIN                                              "msplugin_mssql2008.dll"
     CONNECTION                                          "${properties.spatialConnection}"
     DATA                                                "${layerGenerator.getData(4)}"
+    TEMPLATE                                            "dummy.txt"
+
     METADATA
       "wms_title"                                       "Grid-100m"
+      "wms_include_items"                               "all"
     END
 
     PROJECTION

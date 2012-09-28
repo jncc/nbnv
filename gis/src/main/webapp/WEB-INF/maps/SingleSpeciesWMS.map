@@ -37,9 +37,11 @@ MAP
             PLUGIN                                              "msplugin_mssql2008.dll"
             CONNECTION                                          "${properties.spatialConnection}"
             DATA                                                "${layerGenerator.getData(layer.resolution)}"
+            TEMPLATE                                            "dummy.txt"
 
             METADATA
                 "wms_title"                                       "${layer.name}"
+                "wms_include_items"                               "all"
             END
 
             PROJECTION
