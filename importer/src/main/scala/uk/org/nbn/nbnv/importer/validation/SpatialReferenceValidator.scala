@@ -14,7 +14,7 @@ class SpatialReferenceValidator {
 
     if (r1.level == ResultLevel.DEBUG){
       if (record.gridReference.isDefined) {
-        //todo: valdiate grid ref
+
       }
       else if (record.featureKey.isDefined) {
         //todo: validate feature key
