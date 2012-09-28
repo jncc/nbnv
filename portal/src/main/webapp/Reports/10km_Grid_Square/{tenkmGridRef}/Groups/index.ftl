@@ -2,10 +2,11 @@
 <#assign taxonOutputGroupsWithQueryStats=json.readURL("${api}/taxonObservations/groups?gridRef=${tenkmGridRef}",RequestParameters)>
 <#assign providersWithQueryStats=json.readURL("${api}/taxonObservations/providers?gridRef=${tenkmGridRef}",RequestParameters)>
 
-<@template.master title="10km report for tenkmGridRef" javascripts=["/js/update_filter_text.js"]>
+<@template.master title="10km report for tenkmGridRef" javascripts=["/js/site-report-form-validation.js"]>
     <h1>Species groups with records for 10km Square ${URLParameters.tenkmGridRef}</h1>
 
     <form action="" method="post">
+    <input type="hidden" name="test" value="yo">
 
     <@report_utils.site_report_filters requestParameters=RequestParameters/>
 
@@ -19,7 +20,7 @@
         </table>
     </div>
         
-    <@report_utils.dataset_table providersWithQueryStats=providersWithQueryStats/>
+    <@report_utils.dataset_table providersWithQueryStats=providersWithQueryStats requestParameters=RequestParameters/>
 
     </form>
 

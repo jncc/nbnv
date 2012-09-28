@@ -6,7 +6,7 @@
 <@template.master title="10km report for ${tenkmGridRef}">
     <h1>Species with records for 10km Square ${tenkmGridRef}</h1>
 
-    <@report_utils.site_report_filters/>
+    <@report_utils.site_report_filters requestParameters=RequestParameters/>
 
     <div class="nbn-report-data-container">
         <table class="nbn-coloured-table">
@@ -17,6 +17,6 @@
         </table>
     </div>
 
-    <@report_utils.dataset_table providersWithQueryStats=providersWithQueryStats/>
+    <@report_utils.dataset_table providersWithQueryStats=providersWithQueryStats requestParameters=RequestParameters/>
 
 </@template.master>
