@@ -95,13 +95,12 @@ class Repository @Inject()(log: Logger, em: EntityManager, cache: QueryCache) ex
       .getSingleOrNone
   }
 
-  def getTaxonObservationPublic(key: String, sample: Sample) = {
+  def getTaxonObservationPublic(observationId: Int) = {
 
-    val q = "select o from TaxonObservationPublic o where o.observationKey = :key and o.sampleID = :sample "
+    val q = "select o from TaxonObservationPublic o where o.observationID = :observationId "
 
     em.createQuery(q, classOf[TaxonObservationPublic])
-      .setParameter("key", key)
-      .setParameter("sample", sample)
+      .setParameter("observationId", observationId)
       .getSingleOrNone
   }
 

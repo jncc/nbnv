@@ -65,6 +65,6 @@ class RecordIngester @Inject()(log: Logger,
     }
 
     attributeIngester.ingestAttributes(record, observation, dataset)
-    publicIngester.ingestPublic(record, sample, metadata)
+    publicIngester.ingestPublic(observation, sample, metadata)
   }
 }
