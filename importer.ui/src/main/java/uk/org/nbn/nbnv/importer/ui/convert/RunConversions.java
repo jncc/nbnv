@@ -11,7 +11,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.ListIterator;
@@ -26,6 +28,7 @@ import org.reflections.Reflections;
 import org.springframework.util.StringUtils;
 import org.xml.sax.SAXException;
 import uk.org.nbn.nbnv.importer.ui.meta.MetaWriter;
+import uk.org.nbn.nbnv.importer.ui.model.MetadataForm;
 import uk.org.nbn.nbnv.importer.ui.parser.ColumnMapping;
 import uk.org.nbn.nbnv.importer.ui.parser.DarwinCoreField;
 import uk.org.nbn.nbnv.importer.ui.parser.NXFParser;
@@ -41,6 +44,7 @@ public class RunConversions {
     private List<ColumnMapping> mappings;
     private NXFParser nxfParser;
     private int organisation;
+    private MetadataForm metadataForm;
     
     private int startDateCol = -1;
     private Date startDate = new Date();
@@ -54,9 +58,16 @@ public class RunConversions {
      * @param organisation Optional input to determine if organisational dependent steps need to run
      * @throws IOException 
      */
-    public RunConversions(File in, int organisation) throws IOException {
+    public RunConversions(File in, int organisation, MetadataForm metadataForm) throws IOException {
         this.nxfParser = new NXFParser(in);
         this.organisation = organisation;
+        this.metadataForm = metadataForm;
+        DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+        try {
+            endDate = df.parse("01/01/1900");
+        } catch(ParseException ex) {
+            endDate = new Date(0);
+        }
     }
 
     /**
@@ -314,12 +325,12 @@ public class RunConversions {
             List<String> row;
             while ((row = nxfParser.readDataLine()) != null) {
                 try {
-                    modifyRow(getSteps(), row);
                     updateStartEndDates(row);
+                    modifyRow(getSteps(), row);
                 } catch (BadDataException ex) {
                     errors.add("Bad Data: " + ex.getMessage());
                 } catch (ParseException ex) {
-                    errors.add("Errors Parsing Date fields: " + ex.getMessage());
+                    errors.add("Error Parsing Date fields: " + ex.getMessage());
                 }
                 w.write(StringUtils.collectionToDelimitedString(row, "\t"));
                 w.newLine();
@@ -340,17 +351,26 @@ public class RunConversions {
     }
     
     private void updateStartEndDates(List<String> row) throws ParseException {
+        DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
         if (startDateCol >= 0 && endDateCol >= 0) {
-            Date currStart = DateFormat.getDateInstance().parse(row.get(startDateCol));
+            Date currStart = df.parse(row.get(startDateCol));
             if (startDate.after(currStart)) {
                 startDate = currStart;
             }
             
-            Date currEnd = DateFormat.getDateInstance().parse(row.get(endDateCol));
+            Date currEnd = df.parse(row.get(endDateCol));
             if (endDate.before(currEnd)) {
                 endDate = currEnd;
             }
         }
+    }
+    
+    public Date getStartDate() {
+        return startDate;
+    }
+    
+    public Date getEndDate() {
+        return endDate;
     }
 
     private void getMappings(Map<String, String> args) throws IOException, FileNotFoundException {

@@ -231,24 +231,7 @@ public class MetadataController {
             return new ModelAndView("metadataForm", "model", model);
         }
 
-
-        try {
-            File metadataFile = File.createTempFile("nbnimporter", "metadata.xml");
-            MetadataWriter mw = new MetadataWriter(metadataFile);
-            mw.datasetToEML(model.getMetadata());
-            
-            session.setMetadata(metadataFile.getAbsolutePath());
-            session.setOrganisationID(model.getMetadata().getOrganisationID());
-            
-            
-        } catch (Exception ex) {
-            Logger.getLogger(MetadataController.class.getName()).log(Level.SEVERE, null, ex);
-            model.getErrors().add(ex.getMessage());
-        }
-        
-        return new ModelAndView("forward:/upload", "model", model);
-
-        //return new ModelAndView("metadataForm", "model", model);
+        return new ModelAndView("redirect:/upload.html", "model", model);
     }
      
     @RequestMapping(value="/metadataView.html", method = RequestMethod.GET) 
@@ -311,11 +294,4 @@ public class MetadataController {
         
         return ref;
     }    
-    
-    private List<Organisation> getOrgList() {
-        EntityManager em = DatabaseConnection.getInstance().createEntityManager();
-        
-        Query q = em.createNamedQuery("Organisation.findAll");
-        return q.getResultList();
-    }
 }
