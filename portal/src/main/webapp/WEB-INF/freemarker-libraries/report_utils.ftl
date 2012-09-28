@@ -20,8 +20,8 @@
 </#macro>
 
 <#macro site_report_filters requestParameters>
+    <#assign designationName="Nada">
     <#if requestParameters.designation?has_content>
-        <#assign designation=json.readURL("${api}/designations/${requestParameters.designation[0]}")>
     </#if>
     <#assign startYear=requestParameters.startYear?has_content?string(requestParameters.startYear[0]!"","1600")>
     <#assign endYear=requestParameters.endYear?has_content?string(requestParameters.endYear[0]!"",.now?string("yyyy"))>
@@ -34,7 +34,7 @@
                 </th>
             </tr>
             <tr>
-                <td class="nbn-td-left nbn-filter-name">Designation:</td><td class="nbn-td-right">None</td>
+                <td class="nbn-td-left nbn-filter-name">Designation:</td><td class="nbn-td-right">${designationName}</td>
             </tr>
             <tr>
                 <td class="nbn-td-left nbn-filter-name">Year range:</td><td class="nbn-td-right">1600 to 2012</td>
