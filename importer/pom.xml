@@ -59,11 +59,6 @@
 		  <artifactId>log4j</artifactId>
 		</dependency>
         <dependency>
-            <groupId>uk.me.jstott</groupId>
-            <artifactId>jcoord</artifactId>
-            <version>1.1-b</version>
-        </dependency>
-        <dependency>
             <groupId>org.geotools</groupId>
             <artifactId>gt2-epsg-hsql</artifactId>
             <version>${geotools2.version}</version>

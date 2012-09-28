@@ -57,9 +57,9 @@ class FeatureIngesterSuite extends BaseFunSuite {
     val grandparentInfo = mock[GridSquareInfo]
     when(parentInfo.gridReference).thenReturn("PARENT")
     when(grandparentInfo.gridReference).thenReturn("GRANDPARENT")
-    when(f.gridSquareInfo.getParentGridRef).thenReturn(Some(parentInfo))
-    when(parentInfo.getParentGridRef).thenReturn(Some(grandparentInfo))
-    when(grandparentInfo.getParentGridRef).thenReturn(None)
+    when(f.gridSquareInfo.getParentGridSquareInfo).thenReturn(Some(parentInfo))
+    when(parentInfo.getParentGridSquareInfo).thenReturn(Some(grandparentInfo))
+    when(grandparentInfo.getParentGridSquareInfo).thenReturn(None)
 
     val em = new FakePersistenceTrackingEntityManager
 
@@ -77,7 +77,7 @@ class FeatureIngesterSuite extends BaseFunSuite {
     // arrange
     val f = fixture
     when(f.repo.getGridSquareFeature(anyString)).thenReturn(None)
-    when(f.gridSquareInfo.getParentGridRef).thenReturn(None)
+    when(f.gridSquareInfo.getParentGridSquareInfo).thenReturn(None)
 
     // act
     val ingester = new FeatureIngester(f.log, f.em, f.repo, f.gridSquareInfoFactory)

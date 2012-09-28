@@ -4,19 +4,29 @@
  */
 package uk.org.nbn.nbnv.importer.ui.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+import uk.org.nbn.nbnv.importer.ui.util.DatabaseConnection;
 import uk.org.nbn.nbnv.jpa.nbncore.Organisation;
 
 /**
  *
  * @author Paul Gilbertson
  */
-public class MetadataForm {
-    private Metadata metadata = new Metadata();
-    private boolean processed = false;
-    private List<String> errors = new ArrayList<String>();
+public class MetadataForm implements Serializable {
+    private Metadata metadata;
+    private boolean storedOrg;
+    private List<String> errors;
     private List<Organisation> organisationList;
+    
+    public MetadataForm() {
+        this.metadata = new Metadata();
+        this.storedOrg = false;
+        this.errors = new ArrayList<String>();
+    }
 
     /**
      * @return the metadata
@@ -43,21 +53,25 @@ public class MetadataForm {
      * @param errors the errors to set
      */
     public void setErrors(List<String> errors) {
-        this.errors = errors;
+        if (errors != null) {
+            this.errors = errors;
+        } else {
+            this.errors = new ArrayList<String>();
+        }
     }
 
     /**
      * @return the processed
      */
-    public boolean isProcessed() {
-        return processed;
+    public boolean hasStoredOrg() {
+        return storedOrg;
     }
 
     /**
      * @param processed the processed to set
      */
-    public void setProcessed(boolean processed) {
-        this.processed = processed;
+    public void setStoredOrg(boolean storedOrg) {
+        this.storedOrg = storedOrg;
     }
 
     /**
@@ -72,5 +86,12 @@ public class MetadataForm {
      */
     public void setOrganisationList(List<Organisation> organisationList) {
         this.organisationList = organisationList;
+    }
+    
+    public void updateOrganisationList() {
+        EntityManager em = DatabaseConnection.getInstance().createEntityManager();
+        
+        Query q = em.createNamedQuery("Organisation.findAll");
+        setOrganisationList(q.getResultList());
     }
 }

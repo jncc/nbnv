@@ -8,8 +8,6 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
@@ -36,6 +34,7 @@ import uk.org.nbn.nbnv.importer.ui.util.DatabaseConnection;
 import uk.org.nbn.nbnv.importer.ui.validators.AddOrganisationFormValidator;
 import uk.org.nbn.nbnv.importer.ui.validators.OrganisationValidator;
 import org.imgscalr.Scalr;
+import org.springframework.web.bind.annotation.SessionAttributes;
 import uk.org.nbn.nbnv.jpa.nbncore.Organisation;
 
 /**
@@ -43,6 +42,7 @@ import uk.org.nbn.nbnv.jpa.nbncore.Organisation;
  * @author Matt Debont
  */
 @Controller
+@SessionAttributes({"model", "org"})
 public class AddOrganisationController {
     @Autowired SessionData sessionData;
     
@@ -63,25 +63,17 @@ public class AddOrganisationController {
         return mv;
     }
     
-    @RequestMapping(value = "/addOrganisation.html", method = RequestMethod.GET)
-    public ModelAndView addOrganisation() {       
-        AddOrganisationForm model = new AddOrganisationForm();
-        return new ModelAndView("addOrganisation", "model", model);
-    }
-    
-    @RequestMapping(value = "/addOrganisation.html", method = RequestMethod.POST)
-    public ModelAndView addOrganisationWithMetaFollow(HttpServletRequest request) {     
-        AddOrganisationForm model = new AddOrganisationForm();
-        if (request.getAttribute("newOrganisation") != null) {
-            model.setOrgagnisation((Organisation) request.getAttribute("newOrganisation"));
+    @RequestMapping(value = "/organisation.html", method = RequestMethod.GET)
+    public ModelAndView addOrganisation(@ModelAttribute("model") MetadataForm metadataForm, @ModelAttribute("org") Organisation org) {       
+        AddOrganisationForm orgForm = new AddOrganisationForm();
+        if (metadataForm.hasStoredOrg()) {
+            orgForm.setOrgagnisation(org);
         }
-        model.setMetadataForm((MetadataForm) request.getAttribute("metadataForm"));
-        
-        return new ModelAndView("addOrganisation", "model", model);
+        return new ModelAndView("addOrganisation", "orgForm", orgForm);
     }
     
-    @RequestMapping(value="/addOrganisationProcess.html", method=RequestMethod.POST, params="addImage") 
-    public ModelAndView addImage(HttpServletRequest request, AddOrganisationForm model, BindingResult result, @RequestParam("imageData") CommonsMultipartFile imageData) {
+    @RequestMapping(value="/organisationProcess.html", method=RequestMethod.POST, params="addImage") 
+    public ModelAndView addImage(HttpServletRequest request, AddOrganisationForm orgForm, BindingResult result, @RequestParam("imageData") CommonsMultipartFile imageData) {
 
         String logoPrefix = "data:" + imageData.getContentType().toString() + ";base64,";
 
@@ -90,21 +82,21 @@ public class AddOrganisationController {
                 ByteArrayInputStream is = new ByteArrayInputStream(imageData.getBytes());
                 BufferedImage bi = ImageIO.read(is);
 
-                model.getOrganisation().setLogo(logoPrefix + generateBase64EncodedImage(bi, maxLogoWidth, maxLogoHeight, model));
-                model.getOrganisation().setLogoSmall(logoPrefix + generateBase64EncodedImage(bi, maxLogoSmallWidth, maxLogoSmallHeight, model));
+                orgForm.getOrganisation().setLogo(logoPrefix + generateBase64EncodedImage(bi, maxLogoWidth, maxLogoHeight, orgForm));
+                orgForm.getOrganisation().setLogoSmall(logoPrefix + generateBase64EncodedImage(bi, maxLogoSmallWidth, maxLogoSmallHeight, orgForm));
             } else {
-                model.setImageError("No Valid Image Selected");
+                orgForm.setImageError("No Valid Image Selected");
             }
         } catch (IOException ex) {
             Logger.getLogger(AddOrganisationController.class.getName()).log(Level.SEVERE, "Error Processing image", ex);
-            model.setImageError("Error Processing image");
+            orgForm.setImageError("Error Processing image");
         }
 
-        return new ModelAndView("addOrganisation", "model", model);
+        return new ModelAndView("addOrganisation", "orgForm", orgForm);
     }
     
-    @RequestMapping(value="/addOrganisationProcess.html", method=RequestMethod.POST, params="submit")
-    public ModelAndView processNewOrganisation(HttpServletRequest request, @ModelAttribute("model") @Valid AddOrganisationForm model, BindingResult result) {    
+    @RequestMapping(value="/organisationProcess.html", method=RequestMethod.POST, params="submit")
+    public ModelAndView processNewOrganisation(@ModelAttribute("model") MetadataForm metadataForm, @ModelAttribute("org") Organisation org, HttpServletRequest request, @ModelAttribute("orgForm") @Valid AddOrganisationForm orgForm, BindingResult result) {    
         // If we have errors, pass them back to the user, keeping any inputs in 
         // place, need to improve so that errors are displayed next to the
         // correct inputs
@@ -113,22 +105,25 @@ public class AddOrganisationController {
                 Logger.getLogger(UploadController.class.getName()).log(Level.WARNING, "Error ({0}): {1}", new Object[]{error.getCode(), error.getDefaultMessage()});
             }
             
-            return new ModelAndView("addOrganisation", "model", model);
+            return new ModelAndView("addOrganisation", "orgForm", orgForm);
         }
+        
+        org = new Organisation();
+        metadataForm.setStoredOrg(false);
 
         // Write validated organisation to the database
         EntityManager em = DatabaseConnection.getInstance().createEntityManager();
         em.getTransaction().begin();
-        em.persist(model.getOrganisation());
+        em.persist(orgForm.getOrganisation());
         em.getTransaction().commit();      
         
-        model.getMetadataForm().getMetadata().setOrganisationID(model.getOrganisation().getOrganisationID());
+        metadataForm.getMetadata().setOrganisationID(orgForm.getOrganisation().getOrganisationID());
+        metadataForm.updateOrganisationList();
 
-        // Return to metadata input form, should probably find a way of auto-selecting the new organisation
-        return new ModelAndView("forward:/metadataProcessView.html", "model", model.getMetadataForm());
+        return new ModelAndView("redirect:/metadataView.html", "model", metadataForm);
     }
     
-    @InitBinder("model")
+    @InitBinder("orgForm")
     protected void initBinder(WebDataBinder binder) {
         binder.setValidator(new AddOrganisationFormValidator(new OrganisationValidator()));
     }

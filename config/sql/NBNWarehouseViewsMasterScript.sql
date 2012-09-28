@@ -561,7 +561,7 @@ CREATE UNIQUE CLUSTERED INDEX [cidx_DatasetData_datasetKey] ON [dbo].[DatasetDat
 
 GO
 
---EXEC usp_dev_AddViewToPublicationAsView 'DatasetData';
+--EXEC usp_dev_AddViewToPublication 'DatasetData';
 
 GO
 

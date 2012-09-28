@@ -59,7 +59,7 @@ class FeatureIngester @Inject()(log: Logger, em: EntityManager, repo: Repository
         gs.setResolutionID(r)
 
         // if square should have a parent, ensure that it does, and set it
-        info.getParentGridRef match {
+        info.getParentGridSquareInfo match {
           case Some(parentInfo) => {
             val (_, parentSquare) = ensure(parentInfo)
             gs.setParentSquare(parentSquare)

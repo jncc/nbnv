@@ -16,6 +16,12 @@ class IrishGridSquareInfoSuite extends BaseFunSuite {
     igr.projection should be ("OSNI")
   }
 
+  test("should identify EPSG code as 29903") {
+    val igr = new IrishGridSquareInfo(knownGridRef_100m)
+
+    igr.epsgCode should be ("29903")
+  }
+
   test("should output an unblurred grid referce") {
     val igr = new IrishGridSquareInfo(knownGridRef_100m)
 
@@ -119,7 +125,7 @@ class IrishGridSquareInfoSuite extends BaseFunSuite {
   test("should give 1000m grid square as parent of 100m") {
     val igr = new IrishGridSquareInfo(knownGridRef_100m)
 
-    igr.getParentGridRef match {
+    igr.getParentGridSquareInfo match {
       case Some(parent) => {
         parent.gridReference should be (knownGridRef_1000m)
         parent.gridReferencePrecision should be (1000)
@@ -131,7 +137,7 @@ class IrishGridSquareInfoSuite extends BaseFunSuite {
   test("should give 2000m grid square as parent of 1000m") {
     val igr = new IrishGridSquareInfo(knownGridRef_1000m)
 
-    igr.getParentGridRef match {
+    igr.getParentGridSquareInfo match {
       case Some(parent) => {
         parent.gridReference should be (knownGridRef_2000m)
         parent.gridReferencePrecision should be (2000)
@@ -143,7 +149,7 @@ class IrishGridSquareInfoSuite extends BaseFunSuite {
   test("should give 10000m grid square as parent of 2000m") {
     val igr = new IrishGridSquareInfo(knownGridRef_2000m)
 
-    igr.getParentGridRef match {
+    igr.getParentGridSquareInfo match {
       case Some(parent) => {
         parent.gridReference should be (knownGridRef_10000m)
         parent.gridReferencePrecision should be (10000)
@@ -155,7 +161,7 @@ class IrishGridSquareInfoSuite extends BaseFunSuite {
   test("should be no parent of 10000m grid square") {
     val igr = new IrishGridSquareInfo(knownGridRef_10000m)
 
-    igr.getParentGridRef should be (None)
+    igr.getParentGridSquareInfo should be (None)
   }
 
   test("should give WKT for 100m grid square in WGS84") {
@@ -185,11 +191,37 @@ class IrishGridSquareInfoSuite extends BaseFunSuite {
   test("should compute 2000m grid ref from 100m grid ref") {
     val igr = new IrishGridSquareInfo(knownGridRef_100m)
 
-    val lowerIgr = igr.getLowerPrecisionGridRef(2000)
+    val lowerIgr = igr.getLowerPrecisionGridSquareInfo(2000)
 
     lowerIgr should not be (null)
     lowerIgr.gridReference should be (knownGridRef_2000m)
     lowerIgr.gridReferencePrecision should be (2000)
+  }
+
+  test("should compute 10000m grid ref from 1000m grid ref") {
+    val igr = new IrishGridSquareInfo(knownGridRef_1000m)
+
+    val lowerIgr = igr.getLowerPrecisionGridSquareInfo(10000)
+
+    lowerIgr should not be (null)
+    lowerIgr.gridReference should be (knownGridRef_10000m)
+    lowerIgr.gridReferencePrecision should be (10000)
+  }
+
+  test("should return same grid square if requested precision is lower") {
+    val Igr = new IrishGridSquareInfo(knownGridRef_1000m)
+
+    val lowerIgr = Igr.getLowerPrecisionGridSquareInfo(100)
+
+    lowerIgr should be (Igr)
+  }
+
+  test("should return same grid square if requested precision is the same") {
+    val Igr = new IrishGridSquareInfo(knownGridRef_1000m)
+
+    val lowerIgr = Igr.getLowerPrecisionGridSquareInfo(1000)
+
+    lowerIgr should be (Igr)
   }
 
   test("should give WKT for 100m grid square") {

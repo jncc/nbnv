@@ -16,7 +16,6 @@ GO
 --------------------------------
 
 CREATE DATABASE [NBNCore]
- CONTAINMENT = NONE
  ON  PRIMARY 
 ( NAME = N'NBNCore', FILENAME = N'd:\Program Files\Microsoft SQL Server\MSSQL11.MSSQLSERVER\MSSQL\DATA\NBNCoreNew.mdf' , MAXSIZE = UNLIMITED, FILEGROWTH = 1024KB )
  LOG ON 
@@ -99,7 +98,7 @@ GO
 CREATE TABLE [dbo].[Organisation](
 	[id] [int] IDENTITY(1,1) NOT NULL PRIMARY KEY,
 	[name] [varchar](200) NOT NULL UNIQUE,
-	[abbreviation] [varchar](10) NULL UNIQUE,
+	[abbreviation] [varchar](10) NULL,
 	[summary] [varchar](max) NULL,
 	[address] [varchar](200) NULL,
 	[postcode] [varchar](10) NULL,
