@@ -20,19 +20,18 @@ class PublicIngester @Inject()(log: Logger, em: EntityManager, repo: Repository,
       p.setSampleID(o.getSampleID)
       p.setObservationKey(o.getObservationKey)
 
-      // set the siteID to that of the observation, or leave it null
-      // if (metadata.siteIsPublic) {
-      //   p.setSiteID(o.getSiteID)
-      // }
+      // set the site to that of the observation, or set it null
+      // val site = if (metadata.siteIsPublic) o.getSiteID else null
+      // p.setSiteID(site)
       //
-      // set the recorder & determiner IDs to those of the observation, or leave them null
-      // if (metadata.recorderAndDeterminerArePublic) {
-      //   p.setDeterminerID(o.getDeterminerID)
-      //   p.setRecorderID(o.getRecorderID)
-      // }
+      // set the recorder & determiner to those of the observation, or set them null
+      // val recorder = if (metadata.recorderAndDeterminerArePublic) o.getRecorderID else null
+      // val determiner = if (metadata.recorderAndDeterminerArePublic) o.getDeterminerID else null
+      // p.setRecorderID(recorder)
+      // p.setDeterminerID(determiner)
       //
-      // fix up the feature ID
-//         p.setFeatureID(feature)
+      // set the feature to a potentially parent grid square feature
+      // p.setFeatureID(feature)
     }
 
     repo.getTaxonObservationPublic(o.getObservationID) match {
@@ -54,7 +53,7 @@ class PublicIngester @Inject()(log: Logger, em: EntityManager, repo: Repository,
           update(p)
           em.persist(p)
         // } else {
-          log.info("Not creating public record...")
+          log.info("Not creating public record.")
         // }
       }
     }
