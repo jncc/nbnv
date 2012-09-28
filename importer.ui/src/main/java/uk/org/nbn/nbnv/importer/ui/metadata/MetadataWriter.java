@@ -68,7 +68,7 @@ public class MetadataWriter {
         dataset.appendChild(title);
 
         dataset.appendChild(createCreatorNode(doc, ds));
-        dataset.appendChild(createMetadataProviderNode(doc));
+        dataset.appendChild(createMetadataProviderNode(doc, ds));
 
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
         Element pubDate = doc.createElement("pubDate");
@@ -125,21 +125,30 @@ public class MetadataWriter {
         return creator;
     }
     
-    private Element createMetadataProviderNode(Document doc) {
+    private Element createMetadataProviderNode(Document doc, Metadata ds) {
         Element creator = doc.createElement("metadataProvider");
 
-        creator.appendChild(createNameNode(doc, "Paul", "Gilbertson"));
+        String forename, surname;
+        if (ds.getDatasetAdminName().indexOf(" ") != -1) {
+            forename = ds.getDatasetAdminName().substring(0, ds.getDatasetAdminName().lastIndexOf(" "));
+            surname = ds.getDatasetAdminName().substring(ds.getDatasetAdminName().lastIndexOf(" "), ds.getDatasetAdminName().length() - 1);
+        } else {
+            forename = ds.getDatasetAdminName();
+            surname = ds.getDatasetAdminName();
+        }
+        
+        creator.appendChild(createNameNode(doc, forename, surname));
 
         Element organisation = doc.createElement("organizationName");
-        organisation.setTextContent("National Biodiversity Network");
+        organisation.setTextContent(ds.getOrganisationName()); 
         creator.appendChild(organisation);
 
         Element email = doc.createElement("electronicMailAddress");
-        email.setTextContent("paulbe@ceh.ac.uk");
+        email.setTextContent(ds.getDatasetAdminEmail());
         creator.appendChild(email);
 
         Element url = doc.createElement("onlineUrl");
-        url.setTextContent("http://data.nbn.org.uk/");
+        url.setTextContent(ds.getOrganisationWebsite());
         creator.appendChild(url);
 
         return creator;
