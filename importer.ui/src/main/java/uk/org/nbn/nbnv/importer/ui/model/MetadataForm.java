@@ -13,10 +13,16 @@ import uk.org.nbn.nbnv.jpa.nbncore.Organisation;
  * @author Paul Gilbertson
  */
 public class MetadataForm {
-    private Metadata metadata = new Metadata();
-    private boolean processed = false;
-    private List<String> errors = new ArrayList<String>();
+    private Metadata metadata;
+    private boolean processed;
+    private List<String> errors;
     private List<Organisation> organisationList;
+    
+    public MetadataForm() {
+        this.metadata = new Metadata();
+        this.processed = false;
+        this.errors = new ArrayList<String>();
+    }
 
     /**
      * @return the metadata
@@ -43,7 +49,11 @@ public class MetadataForm {
      * @param errors the errors to set
      */
     public void setErrors(List<String> errors) {
-        this.errors = errors;
+        if (errors != null) {
+            this.errors = errors;
+        } else {
+            this.errors = new ArrayList<String>();
+        }
     }
 
     /**

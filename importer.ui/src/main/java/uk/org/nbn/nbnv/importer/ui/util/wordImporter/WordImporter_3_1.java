@@ -4,6 +4,7 @@
  */
 package uk.org.nbn.nbnv.importer.ui.util.wordImporter;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -27,6 +28,8 @@ public class WordImporter_3_1 implements WordImporter {
     private Map<String, Integer> longDescCutter;
     private HashSet<String> stringSet;
     
+    private List<String> defaultMessages;
+    
     public WordImporter_3_1() {
         longDescCutter = new HashMap<String, Integer>();
         longDescCutter.put(META_ACCESS_CONSTRAINT, 15);
@@ -38,6 +41,10 @@ public class WordImporter_3_1 implements WordImporter {
         longDescCutter.put(META_TITLE, 1);
         
         stringSet = new HashSet<String>(Arrays.asList(stringsHWPF));
+        
+        defaultMessages = new ArrayList<String>();
+        defaultMessages.add("Checkboxes for level of public access could not be imported, please select them manually");
+        
     }
     
     
@@ -90,7 +97,7 @@ public class WordImporter_3_1 implements WordImporter {
                     boolean foundDesc = false;
                     int count = 0;
                     while (count < WANDER_MAX && !foundDesc) {
-                        desc = strIt.previous().trim().replaceAll("\\*$", "");
+                        desc = strIt.previous().replaceAll("\\*$", "").trim();
                         if (stringSet.contains(desc.trim())) {
                             foundDesc = true;
                         }
@@ -121,8 +128,6 @@ public class WordImporter_3_1 implements WordImporter {
 
                 // Reset iterator to the correct place
                 strIt = strList.listIterator(cursor);
-            } if (str.contains(INPUT_CHECKBOX)) {
-                str = str + "";
             }
         }
         
@@ -135,6 +140,10 @@ public class WordImporter_3_1 implements WordImporter {
             return true;
         }
         return false;
+    }
+    
+    public List<String> getDefaultMessages() {
+        return defaultMessages;
     }
     
 }

@@ -16,6 +16,12 @@ class ChannelIslandGridSquareInfoSuite extends BaseFunSuite {
     cigr.projection should be ("ED50")
   }
 
+  test("shold identify EPSG code as 23030") {
+    val cigr = new ChannelIslandGridSquareInfo(knownGridRef_100m)
+
+    cigr.epsgCode should be ("23030")
+  }
+
   test("should output an unblurred grid referce") {
     val cigr = new ChannelIslandGridSquareInfo(knownGridRef_100m)
 
@@ -119,7 +125,7 @@ class ChannelIslandGridSquareInfoSuite extends BaseFunSuite {
   test("should give 1000m grid square as parent of 100m") {
     val cigr = new ChannelIslandGridSquareInfo(knownGridRef_100m)
 
-    cigr.getParentGridRef match {
+    cigr.getParentGridSquareInfo match {
       case Some(parent) => {
         parent.gridReference should be (knownGridRef_1000m)
         parent.gridReferencePrecision should be (1000)
@@ -131,7 +137,7 @@ class ChannelIslandGridSquareInfoSuite extends BaseFunSuite {
   test("should give 2000m grid square as parent of 1000m") {
     val cigr = new ChannelIslandGridSquareInfo(knownGridRef_1000m)
 
-    cigr.getParentGridRef match {
+    cigr.getParentGridSquareInfo match {
       case Some(parent) => {
         parent.gridReference should be (knownGridRef_2000m)
         parent.gridReferencePrecision should be (2000)
@@ -143,7 +149,7 @@ class ChannelIslandGridSquareInfoSuite extends BaseFunSuite {
   test("should give 10000m grid square as parent of 2000m") {
     val cigr = new ChannelIslandGridSquareInfo(knownGridRef_2000m)
 
-    cigr.getParentGridRef match {
+    cigr.getParentGridSquareInfo match {
       case Some(parent) => {
         parent.gridReference should be (knownGridRef_10000m)
         parent.gridReferencePrecision should be (10000)
@@ -155,7 +161,7 @@ class ChannelIslandGridSquareInfoSuite extends BaseFunSuite {
   test("should be no parent of 10000m grid square") {
     val cigr = new ChannelIslandGridSquareInfo(knownGridRef_10000m)
 
-    cigr.getParentGridRef should be (None)
+    cigr.getParentGridSquareInfo should be (None)
   }
 
   test("should give WKT for 100m grid square in WGS84") {
@@ -185,7 +191,7 @@ class ChannelIslandGridSquareInfoSuite extends BaseFunSuite {
   test("should compute 2000m grid ref from 100m grid ref") {
     val cigr = new ChannelIslandGridSquareInfo(knownGridRef_100m)
 
-    val lowerCigr = cigr.getLowerPrecisionGridRef(2000)
+    val lowerCigr = cigr.getLowerPrecisionGridSquareInfo(2000)
 
     lowerCigr should not be (null)
     lowerCigr.gridReference should be (knownGridRef_2000m)
