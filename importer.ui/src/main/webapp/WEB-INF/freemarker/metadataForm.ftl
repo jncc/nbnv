@@ -26,7 +26,7 @@
                 </div>
             </#if>
         </form>
-        <form method="post" enctype="multipart/form-data" action="/metadataProcess.html">
+        <form method="post" enctype="multipart/form-data" action="metadataProcess.html">
             <fieldset>
                 <legend>Dataset Metadata</legend>
                 <p>

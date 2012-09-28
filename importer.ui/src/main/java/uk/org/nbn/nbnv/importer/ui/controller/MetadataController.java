@@ -199,16 +199,7 @@ public class MetadataController {
     @RequestMapping(value="/metadataProcess.html", method = RequestMethod.POST, params="addOrganisation")
     public ModelAndView addOrganisation(@ModelAttribute("model") MetadataForm model, BindingResult result) {
         model.setStoredOrg(false);
-        return new ModelAndView("organisation.html");
-    }    
-    
-    private Organisation getOrganisationByID(int organisationID, List<Organisation> organisations) {
-        for (Organisation org : organisations) {
-            if (org.getOrganisationID() == organisationID) {
-                return org;
-            }
-        }
-        return null;
+        return new ModelAndView("redirect:/organisation.html");
     }
 
     @RequestMapping(value="/metadataProcess.html", method = RequestMethod.POST, params="submit")
