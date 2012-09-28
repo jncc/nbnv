@@ -31,7 +31,7 @@ class Ingester @Inject()(options: Options,
 
       // upsert records
       for (record <- archive.iteratorRaw) {
-        recordIngester.upsertRecord(new NbnRecord(record), dataset)
+        recordIngester.upsertRecord(new NbnRecord(record), dataset, metadata)
         em.flush()
       }
 

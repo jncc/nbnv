@@ -7,6 +7,7 @@ import org.apache.log4j.Logger
 import uk.org.nbn.nbnv.importer.records.NbnRecord
 import uk.org.nbn.nbnv.importer.data.Repository
 import com.google.inject.Inject
+import uk.org.nbn.nbnv.metadata.Metadata
 
 class RecordIngester @Inject()(log: Logger,
                                em: EntityManager,
@@ -16,9 +17,10 @@ class RecordIngester @Inject()(log: Logger,
                                recorderIngester: RecorderIngester,
                                attributeIngester: AttributeIngester,
                                featureIngester: FeatureIngester,
+                               publicIngester: PublicIngester,
                                repo: Repository) {
 
-  def upsertRecord(record: NbnRecord, dataset: TaxonDataset) {
+  def upsertRecord(record: NbnRecord, dataset: TaxonDataset, metadata: Metadata) {
 
     log.info("Upserting record %s".format(record.key))
 
@@ -63,5 +65,6 @@ class RecordIngester @Inject()(log: Logger,
     }
 
     attributeIngester.ingestAttributes(record, observation, dataset)
+    publicIngester.ingestPublic(record, sample, metadata)
   }
 }
