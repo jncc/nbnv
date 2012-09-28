@@ -20,6 +20,9 @@
 </#macro>
 
 <#macro site_report_filters requestParameters>
+    <#if requestParameters.designation?has_content>
+        <#assign designation=json.readURL("${api}/designations/${requestParameters.designation[0]}")>
+    </#if>
     <#assign startYear=requestParameters.startYear?has_content?string(requestParameters.startYear[0]!"","1600")>
     <#assign endYear=requestParameters.endYear?has_content?string(requestParameters.endYear[0]!"",.now?string("yyyy"))>
     <#assign designations=json.readURL("${api}/designations")>
