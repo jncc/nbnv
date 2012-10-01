@@ -42,7 +42,7 @@ public class DesignationCategoryResource {
     @GET
     @Path("/{id}/designations/{designationId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Designation getDesignationByCategoryIDAndID(@PathParam("id") int id, @PathParam("designationId") int designationId) { 
+    public Designation getDesignationByCategoryIDAndID(@PathParam("id") int id, @PathParam("designationId") String designationId) { 
         return desig.selectByIDAndCategoryID(designationId, id);
     }
 }

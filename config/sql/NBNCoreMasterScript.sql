@@ -610,7 +610,7 @@ INSERT INTO [TaxonNameStatus] VALUES
 
 CREATE TABLE [dbo].[Organism](
 	[key] [char](16) NOT NULL PRIMARY KEY,
-	[parentOrganismKey] [char](16) NOT NULL REFERENCES [Organism] ([key])
+	[parentOrganismKey] [char](16) NULL REFERENCES [Organism] ([key])
 );
 
 ------------------------------

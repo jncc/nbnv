@@ -27,8 +27,6 @@ public class Metadata implements Serializable {
     private String geographicalRes = "10km2";
     private String recordAtts = "N/A";
     private String recorderNames = "N/A";
-    private String organisationName = "";
-    private String organisationWebsite = "";
     private int datasetAdminID = -1;
     private int organisationID = -1;
 
@@ -292,21 +290,5 @@ public class Metadata implements Serializable {
 
     public void setRecorderNames(String recorderNames) {
         this.recorderNames = recorderNames;
-    }
-
-    public String getOrganisationName() {
-        return organisationName;
-    }
-
-    public void setOrganisationName(String organisationName) {
-        this.organisationName = organisationName;
-    }
-
-    public String getOrganisationWebsite() {
-        return organisationWebsite;
-    }
-
-    public void setOrganisationWebsite(String organisationWebsite) {
-        this.organisationWebsite = organisationWebsite;
     }
 }

@@ -9,7 +9,8 @@
             <#assign datasetsWithQueryStats=providerWithQueryStats.datasetsWithQueryStats>
             <#list datasetsWithQueryStats as datasetWithQueryStats>
                 <tr class="nbn-de-emphasise-row">
-                    <td class="nbn-td-left" ><input type="checkbox"></td>
+                    <#assign checked = requestParameters.datasetKey?seq_contains(datasetWithQueryStats.datasetKey)?string("checked","")>
+                    <td class="nbn-td-left" ><input type="checkbox" name="datasetKey" value="${datasetWithQueryStats.datasetKey}" ${checked}></td>
                     <td><a href="/Datasets/${datasetWithQueryStats.datasetKey}">${datasetWithQueryStats.dataset.name}</a> (${datasetWithQueryStats.querySpecificObservationCount})</td>
                     <td  class="nbn-td-right" >Access to this dataset Fusce in leo massa, nec ullamcorper dui. Aliquam auctor iaculis sapien, et scelerisque mi iaculis in. Donec nibh libero, aliquet vitae cursus in, mattis vel augue. Nulla facilisi. Aenean porttitor.</td>
                 </tr>
@@ -18,7 +19,12 @@
     </table>
 </#macro>
 
-<#macro site_report_filters>
+<#macro site_report_filters requestParameters>
+    <#assign designationName="Nada">
+    <#if requestParameters.designation?has_content>
+    </#if>
+    <#assign startYear=requestParameters.startYear?has_content?string(requestParameters.startYear[0]!"","1600")>
+    <#assign endYear=requestParameters.endYear?has_content?string(requestParameters.endYear[0]!"",.now?string("yyyy"))>
     <#assign designations=json.readURL("${api}/designations")>
     <div class="nbn-report-data-container">
         <table class="nbn-coloured-table">
@@ -28,10 +34,10 @@
                 </th>
             </tr>
             <tr>
-                <td class="nbn-td-left nbn-filter-name">Designation:</td><td class="nbn-td-right">MCZ Species of Conservation Importance</td>
+                <td class="nbn-td-left nbn-filter-name">Designation:</td><td class="nbn-td-right">${designationName}</td>
             </tr>
             <tr>
-                <td class="nbn-td-left nbn-filter-name">Year range:</td><td class="nbn-td-right">from 1600 to 2012</td>
+                <td class="nbn-td-left nbn-filter-name">Year range:</td><td class="nbn-td-right">1600 to 2012</td>
             </tr>
             <tr>
                 <td class="nbn-td-left nbn-filter-name">Datasets:</td><td class="nbn-td-right">all available</td>
@@ -44,18 +50,19 @@
             <tr>
                 <td class="nbn-td-left nbn-filter-name">Designation: </td>
                 <td class="nbn-td-right">
-                            <select name="desig" id="desig" class="nbn-designation-dropdown">
-                                <option selected="selected" value="-1">None selected</option>
-                                <#list designations as designation>
-                                    <option value="${designation.designationID}">${designation.name}</option>
-                                </#list>
-                            </select><br/>
+                    <select name="designation" id="designation" class="nbn-designation-dropdown">
+                        <option selected="selected" value="">None selected</option>
+                        <#list designations as designation>
+                            <#assign selected = requestParameters.designation?seq_contains(designation.code)?string("selected","")>
+                            <option value="${designation.code}" ${selected}>${designation.name}</option>
+                        </#list>
+                    </select><br/>
                 </td>
             </tr>
             <tr>
                 <td class="nbn-td-left nbn-filter-name">Year range:</td>
-                <td class="nbn-td-right">from <input id="startyear" type="textbox" value="1600" class="nbn-year-input"/>
-                                         to <input id="endyear" type="textbox" value="2010" class="nbn-year-input"/></td>
+                <td class="nbn-td-right"><input name="startYear" id="startYear" type="textbox" value="${startYear}" class="nbn-year-input"/>
+                                         to <input name="endYear" id="endYear" type="textbox" value="${endYear}" class="nbn-year-input"/></td>
             </tr>
             <tr>
                 <td class="nbn-td-left nbn-filter-name">Datasets:</td><td class="nbn-td-right">Use dataset table below</td>
