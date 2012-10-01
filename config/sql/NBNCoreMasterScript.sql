@@ -634,12 +634,19 @@ CREATE TABLE [dbo].[Taxon](
 	[authority] [varchar](80) NULL,
 	[languageKey] [char](2) NOT NULL REFERENCES [Language] ([key]),
 	[commonNameTaxonVersionKey] [char](16) NULL REFERENCES [Taxon] ([taxonVersionKey]),
-	[taxonCode] [varchar](5) NULL UNIQUE,
+	[taxonCode] [varchar](5) NULL,
 	[taxonRankID] [int] NOT NULL REFERENCES [TaxonRank] ([id]),
 	[taxonNameStatusKey] [char](1) NOT NULL REFERENCES [TaxonNameStatus] ([key]),
 	[taxonVersionFormKey] [char](1)  NOT NULL REFERENCES [TaxonVersionForm] ([key]),
-	[taxonOutputGroupKey] [char](16) NULL REFERENCES [TaxonGroup] ([key]),
-	[taxonNavigationGroupKey] [char](16) NULL REFERENCES [TaxonGroup] ([key]),
+	[taxonOutputGroupKey] [char](16) NULL REFERENCES [TaxonGroup] ([key])
+);
+
+------------------------------
+
+CREATE TABLE [dbo].[TaxonNavigation](
+	[taxonVersionKey] [char](16) NOT NULL REFERENCES [Taxon] ([taxonVersionKey]),
+	[taxonNavigationGroupKey] [char](16) NOT NULL REFERENCES [TaxonGroup] ([key]),
+	PRIMARY KEY ([taxonVersionKey] ASC, [taxonNavigationGroupKey] ASC)
 );
 
 /*

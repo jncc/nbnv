@@ -67,15 +67,35 @@ GO
 
 GO
 
+CREATE VIEW [dbo].[TaxonNavigationData] WITH SCHEMABINDING AS (
+	SELECT 
+		tn.[taxonVersionKey]
+		, tn.[taxonNavigationGroupKey]
+	FROM [dbo].[TaxonNavigation] tn
+);
+
+GO
+
+CREATE UNIQUE CLUSTERED INDEX [cidx_TaxonNavigationData_taxonVersionKey-taxonNavigationGroupKey] ON [dbo].[TaxonNavigationData] 
+(
+	[taxonVersionKey] ASC
+	, [taxonNavigationGroupKey] ASC
+);
+
+GO
+
+--EXEC usp_dev_AddViewToPublication 'TaxonNavigationData';
+
+GO
+
 CREATE VIEW [dbo].[TaxonNavigationGroupTaxonCount] WITH SCHEMABINDING AS (
 		SELECT 
-			tg.[key] AS taxonNavigationGroupKey
+			tn.[taxonNavigationGroupKey]
 			, COUNT_BIG(*) AS taxonCount
 		FROM [dbo].[Taxon] t
-		INNER JOIN [dbo].[TaxonGroup] tg ON tg.[key] = t.taxonNavigationGroupKey
+		INNER JOIN [dbo].[TaxonNavigation] tn ON tn.[taxonVersionKey] = t.taxonVersionKey
 		WHERE t.pTaxonVersionKey = t.taxonVersionKey
-		AND t.taxonNavigationGroupKey IS NOT NULL
-		GROUP BY tg.[key]
+		GROUP BY tn.[taxonNavigationGroupKey]
 );
 
 GO
@@ -369,7 +389,6 @@ CREATE VIEW [dbo].[TaxonData] WITH SCHEMABINDING AS (
 		, t.authority
 		, t.languageKey
 		, t.taxonOutputGroupKey
-		, t.taxonNavigationGroupKey
 	FROM [dbo].[Taxon] t
 );
 
@@ -480,7 +499,8 @@ CREATE VIEW [dbo].[DesignationTaxonNavigationGroupData] WITH SCHEMABINDING AS (
 		, COUNT(DISTINCT t.pTaxonVersionKey) numSpecies
 	FROM [dbo].[DesignationTaxonData] dtd 
 	INNER JOIN [dbo].[TaxonData] t ON dtd.pTaxonVersionKey = t.taxonVersionKey 
-	INNER JOIN [dbo].[TaxonNavigationGroupData] tngd ON t.taxonNavigationGroupKey = tngd.[key]  
+	INNER JOIN [dbo].[TaxonNavigationData] tn ON tn.taxonVersionKey = t.pTaxonVersionKey 
+	INNER JOIN [dbo].[TaxonNavigationGroupData] tngd ON tn.taxonNavigationGroupKey = tngd.[key]  
 	WHERE tngd.parentTaxonGroupKey IS NULL 
 	GROUP BY dtd.designationID, tngd.[key], tngd.sortOrder, tngd.name, tngd.[description], tngd.parentTaxonGroupKey 
 	UNION ALL 
@@ -495,7 +515,8 @@ CREATE VIEW [dbo].[DesignationTaxonNavigationGroupData] WITH SCHEMABINDING AS (
 		, COUNT(DISTINCT t.pTaxonVersionKey) numSpecies
 	FROM [dbo].[DesignationTaxonData] dtd 
 	INNER JOIN [dbo].[TaxonData] t ON dtd.pTaxonVersionKey = t.taxonVersionKey 
-	INNER JOIN [dbo].[TaxonNavigationGroupData] tngdp ON t.taxonNavigationGroupKey = tngdp.[key]  
+	INNER JOIN [dbo].[TaxonNavigationData] tn ON tn.taxonVersionKey = t.pTaxonVersionKey 
+	INNER JOIN [dbo].[TaxonNavigationGroupData] tngdp ON tn.taxonNavigationGroupKey = tngdp.[key]  
 	INNER JOIN [dbo].[TaxonNavigationGroupData] tngd ON tngd.[key] = tngdp.parentTaxonGroupKey 
 	GROUP BY dtd.designationID, tngd.[key], tngd.sortOrder, tngd.name, tngd.[description], tngd.parentTaxonGroupKey 
 	UNION ALL
@@ -510,7 +531,8 @@ CREATE VIEW [dbo].[DesignationTaxonNavigationGroupData] WITH SCHEMABINDING AS (
 		, COUNT(DISTINCT t.pTaxonVersionKey) numSpecies
 	FROM [dbo].[DesignationTaxonData] dtd 
 	INNER JOIN [dbo].[TaxonData] t ON dtd.pTaxonVersionKey = t.taxonVersionKey 
-	INNER JOIN [dbo].[TaxonNavigationGroupData] tngd ON t.taxonNavigationGroupKey = tngd.[key]  
+	INNER JOIN [dbo].[TaxonNavigationData] tn ON tn.taxonVersionKey = t.pTaxonVersionKey 
+	INNER JOIN [dbo].[TaxonNavigationGroupData] tngd ON tn.taxonNavigationGroupKey = tngd.[key]  
 	WHERE tngd.parentTaxonGroupKey IS NOT NULL 
 	GROUP BY dtd.designationID, tngd.[key], tngd.sortOrder, tngd.name, tngd.[description], tngd.parentTaxonGroupKey 
 );
@@ -648,13 +670,13 @@ GO
 CREATE VIEW [dbo].[DatasetYearRecordCountData] WITH SCHEMABINDING AS (
 	SELECT 
 		su.datasetKey
-		, YEAR(tob.dateStart) AS [year]
+		, ISNULL(YEAR(tob.dateStart), 0) AS [year]
 		, COUNT_BIG(*) AS recordCount
 	FROM [dbo].[Survey] su 
 	INNER JOIN [dbo].[Sample] sa ON su.id = sa.surveyID 
 	INNER JOIN [dbo].[TaxonObservation] tob ON sa.id = tob.sampleID 
 	WHERE tob.dateStart IS NOT NULL
-	GROUP BY su.datasetKey, YEAR(tob.dateStart)
+	GROUP BY su.datasetKey, ISNULL(YEAR(tob.dateStart), 0)
 );
 
 GO
