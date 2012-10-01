@@ -212,20 +212,20 @@ public class MetadataWriter {
         desc.setTextContent(ds.getGeographic());
         coverage.appendChild(desc);
 
-//        Element bound = doc.createElement("boundingCoordinates");
-//        Element wbound = doc.createElement("westBoundingCoordinate");
-//        wbound.setTextContent(String.valueOf(-10));
-//        Element ebound = doc.createElement("eastBoundingCoordinate");
-//        ebound.setTextContent(String.valueOf(10));
-//        Element nbound = doc.createElement("northBoundingCoordinate");
-//        nbound.setTextContent(String.valueOf(75));
-//        Element sbound = doc.createElement("southBoundingCoordinate");
-//        sbound.setTextContent(String.valueOf(45));
-//        bound.appendChild(wbound);
-//        bound.appendChild(ebound);
-//        bound.appendChild(nbound);
-//        bound.appendChild(sbound);
-//        coverage.appendChild(bound);
+        Element bound = doc.createElement("boundingCoordinates");
+        Element wbound = doc.createElement("westBoundingCoordinate");
+        wbound.setTextContent(String.valueOf(-10));
+        Element ebound = doc.createElement("eastBoundingCoordinate");
+        ebound.setTextContent(String.valueOf(10));
+        Element nbound = doc.createElement("northBoundingCoordinate");
+        nbound.setTextContent(String.valueOf(75));
+        Element sbound = doc.createElement("southBoundingCoordinate");
+        sbound.setTextContent(String.valueOf(45));
+        bound.appendChild(wbound);
+        bound.appendChild(ebound);
+        bound.appendChild(nbound);
+        bound.appendChild(sbound);
+        coverage.appendChild(bound);
 
         return coverage;
     }
