@@ -6,17 +6,7 @@ package uk.org.nbn.nbnv.jpa.nbncore;
 
 import java.io.Serializable;
 import java.util.Date;
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -38,7 +28,7 @@ public class TaxonObservationFilterElement implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
-    @NotNull
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
     @Column(name = "filterSensitive")
