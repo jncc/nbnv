@@ -5,190 +5,117 @@
 package uk.org.nbn.nbnv.jpa.nbncore;
 
 import java.io.Serializable;
-import java.util.Date;
-import javax.persistence.*;
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author Administrator
+ * @author Paul Gilbertson
  */
 @Entity
 @Table(name = "TaxonObservationPublic")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "TaxonObservationPublic.findAll", query = "SELECT t FROM TaxonObservationPublic t"),
-    @NamedQuery(name = "TaxonObservationPublic.findByObservationID", query = "SELECT t FROM TaxonObservationPublic t WHERE t.observationID = :observationID"),
-    @NamedQuery(name = "TaxonObservationPublic.findByObservationKey", query = "SELECT t FROM TaxonObservationPublic t WHERE t.observationKey = :observationKey"),
-    @NamedQuery(name = "TaxonObservationPublic.findByDateStart", query = "SELECT t FROM TaxonObservationPublic t WHERE t.dateStart = :dateStart"),
-    @NamedQuery(name = "TaxonObservationPublic.findByDateEnd", query = "SELECT t FROM TaxonObservationPublic t WHERE t.dateEnd = :dateEnd"),
-    @NamedQuery(name = "TaxonObservationPublic.findByAbsenceRecord", query = "SELECT t FROM TaxonObservationPublic t WHERE t.absenceRecord = :absenceRecord"),
-    @NamedQuery(name = "TaxonObservationPublic.findBySensitiveRecord", query = "SELECT t FROM TaxonObservationPublic t WHERE t.sensitiveRecord = :sensitiveRecord")})
+    @NamedQuery(name = "TaxonObservationPublic.findByTaxonObservationID", query = "SELECT t FROM TaxonObservationPublic t WHERE t.taxonObservationID = :taxonObservationID"),
+    @NamedQuery(name = "TaxonObservationPublic.findBySiteID", query = "SELECT t FROM TaxonObservationPublic t WHERE t.siteID = :siteID"),
+    @NamedQuery(name = "TaxonObservationPublic.findByFeatureID", query = "SELECT t FROM TaxonObservationPublic t WHERE t.featureID = :featureID"),
+    @NamedQuery(name = "TaxonObservationPublic.findByRecorderID", query = "SELECT t FROM TaxonObservationPublic t WHERE t.recorderID = :recorderID"),
+    @NamedQuery(name = "TaxonObservationPublic.findByDeterminerID", query = "SELECT t FROM TaxonObservationPublic t WHERE t.determinerID = :determinerID")})
 public class TaxonObservationPublic implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
-    @Column(name = "observationID")
-    private Integer observationID;
+    @NotNull
+    @Column(name = "taxonObservationID")
+    private Integer taxonObservationID;
+    @Column(name = "siteID")
+    private Integer siteID;
     @Basic(optional = false)
-    @Column(name = "observationKey")
-    private String observationKey;
-    @Column(name = "dateStart")
-    @Temporal(TemporalType.DATE)
-    private Date dateStart;
-    @Column(name = "dateEnd")
-    @Temporal(TemporalType.DATE)
-    private Date dateEnd;
-    @Basic(optional = false)
-    @Column(name = "absenceRecord")
-    private boolean absenceRecord;
-    @Basic(optional = false)
-    @Column(name = "sensitiveRecord")
-    private boolean sensitiveRecord;
-    @JoinColumn(name = "taxonVersionKey", referencedColumnName = "taxonVersionKey")
-    @ManyToOne(optional = false)
-    private Taxon taxonVersionKey;
-    @JoinColumn(name = "siteID", referencedColumnName = "siteID")
-    @ManyToOne
-    private Site siteID;
-    @JoinColumn(name = "sampleID", referencedColumnName = "sampleID")
-    @ManyToOne(optional = false)
-    private Sample sampleID;
-    @JoinColumn(name = "determinerID", referencedColumnName = "recorderID")
-    @ManyToOne
-    private Recorder determinerID;
-    @JoinColumn(name = "recorderID", referencedColumnName = "recorderID")
-    @ManyToOne
-    private Recorder recorderID;
-    @JoinColumn(name = "featureID", referencedColumnName = "featureID")
-    @ManyToOne(optional = false)
-    private Feature featureID;
-    @JoinColumn(name = "dateType", referencedColumnName = "dateTypeKey")
-    @ManyToOne(optional = false)
-    private DateType dateType;
+    @NotNull
+    @Column(name = "featureID")
+    private int featureID;
+    @Column(name = "recorderID")
+    private Integer recorderID;
+    @Column(name = "determinerID")
+    private Integer determinerID;
+    @JoinColumn(name = "taxonObservationID", referencedColumnName = "id", insertable = false, updatable = false)
+    @OneToOne(optional = false)
+    private TaxonObservation taxonObservation;
 
     public TaxonObservationPublic() {
     }
 
-    public TaxonObservationPublic(Integer observationID) {
-        this.observationID = observationID;
+    public TaxonObservationPublic(Integer taxonObservationID) {
+        this.taxonObservationID = taxonObservationID;
     }
 
-    public TaxonObservationPublic(Integer observationID, String observationKey, boolean absenceRecord, boolean sensitiveRecord) {
-        this.observationID = observationID;
-        this.observationKey = observationKey;
-        this.absenceRecord = absenceRecord;
-        this.sensitiveRecord = sensitiveRecord;
-    }
-
-    public Integer getObservationID() {
-        return observationID;
-    }
-
-    public void setObservationID(Integer observationID) {
-        this.observationID = observationID;
-    }
-
-    public String getObservationKey() {
-        return observationKey;
-    }
-
-    public void setObservationKey(String observationKey) {
-        this.observationKey = observationKey;
-    }
-
-    public Date getDateStart() {
-        return dateStart;
-    }
-
-    public void setDateStart(Date dateStart) {
-        this.dateStart = dateStart;
-    }
-
-    public Date getDateEnd() {
-        return dateEnd;
-    }
-
-    public void setDateEnd(Date dateEnd) {
-        this.dateEnd = dateEnd;
-    }
-
-    public boolean getAbsenceRecord() {
-        return absenceRecord;
-    }
-
-    public void setAbsenceRecord(boolean absenceRecord) {
-        this.absenceRecord = absenceRecord;
-    }
-
-    public boolean getSensitiveRecord() {
-        return sensitiveRecord;
-    }
-
-    public void setSensitiveRecord(boolean sensitiveRecord) {
-        this.sensitiveRecord = sensitiveRecord;
-    }
-
-    public Taxon getTaxonVersionKey() {
-        return taxonVersionKey;
-    }
-
-    public void setTaxonVersionKey(Taxon taxonVersionKey) {
-        this.taxonVersionKey = taxonVersionKey;
-    }
-
-    public Site getSiteID() {
-        return siteID;
-    }
-
-    public void setSiteID(Site siteID) {
-        this.siteID = siteID;
-    }
-
-    public Sample getSampleID() {
-        return sampleID;
-    }
-
-    public void setSampleID(Sample sampleID) {
-        this.sampleID = sampleID;
-    }
-
-    public Recorder getDeterminerID() {
-        return determinerID;
-    }
-
-    public void setDeterminerID(Recorder determinerID) {
-        this.determinerID = determinerID;
-    }
-
-    public Recorder getRecorderID() {
-        return recorderID;
-    }
-
-    public void setRecorderID(Recorder recorderID) {
-        this.recorderID = recorderID;
-    }
-
-    public Feature getFeatureID() {
-        return featureID;
-    }
-
-    public void setFeatureID(Feature featureID) {
+    public TaxonObservationPublic(Integer taxonObservationID, int featureID) {
+        this.taxonObservationID = taxonObservationID;
         this.featureID = featureID;
     }
 
-    public DateType getDateType() {
-        return dateType;
+    public Integer getTaxonObservationID() {
+        return taxonObservationID;
     }
 
-    public void setDateType(DateType dateType) {
-        this.dateType = dateType;
+    public void setTaxonObservationID(Integer taxonObservationID) {
+        this.taxonObservationID = taxonObservationID;
+    }
+
+    public Integer getSiteID() {
+        return siteID;
+    }
+
+    public void setSiteID(Integer siteID) {
+        this.siteID = siteID;
+    }
+
+    public int getFeatureID() {
+        return featureID;
+    }
+
+    public void setFeatureID(int featureID) {
+        this.featureID = featureID;
+    }
+
+    public Integer getRecorderID() {
+        return recorderID;
+    }
+
+    public void setRecorderID(Integer recorderID) {
+        this.recorderID = recorderID;
+    }
+
+    public Integer getDeterminerID() {
+        return determinerID;
+    }
+
+    public void setDeterminerID(Integer determinerID) {
+        this.determinerID = determinerID;
+    }
+
+    public TaxonObservation getTaxonObservation() {
+        return taxonObservation;
+    }
+
+    public void setTaxonObservation(TaxonObservation taxonObservation) {
+        this.taxonObservation = taxonObservation;
     }
 
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (observationID != null ? observationID.hashCode() : 0);
+        hash += (taxonObservationID != null ? taxonObservationID.hashCode() : 0);
         return hash;
     }
 
@@ -199,7 +126,7 @@ public class TaxonObservationPublic implements Serializable {
             return false;
         }
         TaxonObservationPublic other = (TaxonObservationPublic) object;
-        if ((this.observationID == null && other.observationID != null) || (this.observationID != null && !this.observationID.equals(other.observationID))) {
+        if ((this.taxonObservationID == null && other.taxonObservationID != null) || (this.taxonObservationID != null && !this.taxonObservationID.equals(other.taxonObservationID))) {
             return false;
         }
         return true;
@@ -207,7 +134,7 @@ public class TaxonObservationPublic implements Serializable {
 
     @Override
     public String toString() {
-        return "uk.org.nbn.nbnv.jpa.nbncore.TaxonObservationPublic[ observationID=" + observationID + " ]";
+        return "uk.org.nbn.nbnv.jpa.nbncore.TaxonObservationPublic[ taxonObservationID=" + taxonObservationID + " ]";
     }
     
 }

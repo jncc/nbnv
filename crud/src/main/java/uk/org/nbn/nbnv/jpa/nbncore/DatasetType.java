@@ -6,28 +6,41 @@ package uk.org.nbn.nbnv.jpa.nbncore;
 
 import java.io.Serializable;
 import java.util.Collection;
-import javax.persistence.*;
+import javax.persistence.Basic;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author Administrator
+ * @author Paul Gilbertson
  */
 @Entity
 @Table(name = "DatasetType")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "DatasetType.findAll", query = "SELECT d FROM DatasetType d"),
-    @NamedQuery(name = "DatasetType.findByDatasetTypeKey", query = "SELECT d FROM DatasetType d WHERE d.datasetTypeKey = :datasetTypeKey"),
+    @NamedQuery(name = "DatasetType.findByKey", query = "SELECT d FROM DatasetType d WHERE d.key = :key"),
     @NamedQuery(name = "DatasetType.findByLabel", query = "SELECT d FROM DatasetType d WHERE d.label = :label")})
 public class DatasetType implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
-    @Column(name = "datasetTypeKey")
-    private Character datasetTypeKey;
+    @NotNull
+    @Column(name = "key")
+    private Character key;
     @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 20)
     @Column(name = "label")
     private String label;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "datasetTypeKey")
@@ -36,21 +49,21 @@ public class DatasetType implements Serializable {
     public DatasetType() {
     }
 
-    public DatasetType(Character datasetTypeKey) {
-        this.datasetTypeKey = datasetTypeKey;
+    public DatasetType(Character key) {
+        this.key = key;
     }
 
-    public DatasetType(Character datasetTypeKey, String label) {
-        this.datasetTypeKey = datasetTypeKey;
+    public DatasetType(Character key, String label) {
+        this.key = key;
         this.label = label;
     }
 
-    public Character getDatasetTypeKey() {
-        return datasetTypeKey;
+    public Character getKey() {
+        return key;
     }
 
-    public void setDatasetTypeKey(Character datasetTypeKey) {
-        this.datasetTypeKey = datasetTypeKey;
+    public void setKey(Character key) {
+        this.key = key;
     }
 
     public String getLabel() {
@@ -73,7 +86,7 @@ public class DatasetType implements Serializable {
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (datasetTypeKey != null ? datasetTypeKey.hashCode() : 0);
+        hash += (key != null ? key.hashCode() : 0);
         return hash;
     }
 
@@ -84,7 +97,7 @@ public class DatasetType implements Serializable {
             return false;
         }
         DatasetType other = (DatasetType) object;
-        if ((this.datasetTypeKey == null && other.datasetTypeKey != null) || (this.datasetTypeKey != null && !this.datasetTypeKey.equals(other.datasetTypeKey))) {
+        if ((this.key == null && other.key != null) || (this.key != null && !this.key.equals(other.key))) {
             return false;
         }
         return true;
@@ -92,7 +105,7 @@ public class DatasetType implements Serializable {
 
     @Override
     public String toString() {
-        return "uk.org.nbn.nbnv.jpa.nbncore.DatasetType[ datasetTypeKey=" + datasetTypeKey + " ]";
+        return "uk.org.nbn.nbnv.jpa.nbncore.DatasetType[ key=" + key + " ]";
     }
     
 }

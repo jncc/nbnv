@@ -29,7 +29,7 @@ import javax.xml.bind.annotation.XmlTransient;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Projection.findAll", query = "SELECT p FROM Projection p"),
-    @NamedQuery(name = "Projection.findByProjectionID", query = "SELECT p FROM Projection p WHERE p.projectionID = :projectionID"),
+    @NamedQuery(name = "Projection.findById", query = "SELECT p FROM Projection p WHERE p.id = :id"),
     @NamedQuery(name = "Projection.findBySrcSRID", query = "SELECT p FROM Projection p WHERE p.srcSRID = :srcSRID"),
     @NamedQuery(name = "Projection.findByLabel", query = "SELECT p FROM Projection p WHERE p.label = :label")})
 public class Projection implements Serializable {
@@ -37,8 +37,8 @@ public class Projection implements Serializable {
     @Id
     @Basic(optional = false)
     @NotNull
-    @Column(name = "projectionID")
-    private Integer projectionID;
+    @Column(name = "id")
+    private Integer id;
     @Basic(optional = false)
     @NotNull
     @Column(name = "srcSRID")
@@ -48,30 +48,30 @@ public class Projection implements Serializable {
     @Size(min = 1, max = 50)
     @Column(name = "label")
     private String label;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "projection")
-    private Collection<SiteBoundaryDataset> siteBoundaryDatasetCollection;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "projectionID")
+    private Collection<SiteBoundary> siteBoundaryCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "projectionID")
     private Collection<GridSquare> gridSquareCollection;
 
     public Projection() {
     }
 
-    public Projection(Integer projectionID) {
-        this.projectionID = projectionID;
+    public Projection(Integer id) {
+        this.id = id;
     }
 
-    public Projection(Integer projectionID, int srcSRID, String label) {
-        this.projectionID = projectionID;
+    public Projection(Integer id, int srcSRID, String label) {
+        this.id = id;
         this.srcSRID = srcSRID;
         this.label = label;
     }
 
-    public Integer getProjectionID() {
-        return projectionID;
+    public Integer getId() {
+        return id;
     }
 
-    public void setProjectionID(Integer projectionID) {
-        this.projectionID = projectionID;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public int getSrcSRID() {
@@ -91,12 +91,12 @@ public class Projection implements Serializable {
     }
 
     @XmlTransient
-    public Collection<SiteBoundaryDataset> getSiteBoundaryDatasetCollection() {
-        return siteBoundaryDatasetCollection;
+    public Collection<SiteBoundary> getSiteBoundaryCollection() {
+        return siteBoundaryCollection;
     }
 
-    public void setSiteBoundaryDatasetCollection(Collection<SiteBoundaryDataset> siteBoundaryDatasetCollection) {
-        this.siteBoundaryDatasetCollection = siteBoundaryDatasetCollection;
+    public void setSiteBoundaryCollection(Collection<SiteBoundary> siteBoundaryCollection) {
+        this.siteBoundaryCollection = siteBoundaryCollection;
     }
 
     @XmlTransient
@@ -111,7 +111,7 @@ public class Projection implements Serializable {
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (projectionID != null ? projectionID.hashCode() : 0);
+        hash += (id != null ? id.hashCode() : 0);
         return hash;
     }
 
@@ -122,7 +122,7 @@ public class Projection implements Serializable {
             return false;
         }
         Projection other = (Projection) object;
-        if ((this.projectionID == null && other.projectionID != null) || (this.projectionID != null && !this.projectionID.equals(other.projectionID))) {
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
         return true;
@@ -130,7 +130,7 @@ public class Projection implements Serializable {
 
     @Override
     public String toString() {
-        return "uk.org.nbn.nbnv.jpa.nbncore.Projection[ projectionID=" + projectionID + " ]";
+        return "uk.org.nbn.nbnv.jpa.nbncore.Projection[ id=" + id + " ]";
     }
     
 }

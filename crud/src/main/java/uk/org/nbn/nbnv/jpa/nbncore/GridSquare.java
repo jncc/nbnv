@@ -11,6 +11,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -39,18 +40,23 @@ public class GridSquare implements Serializable {
     @Size(min = 1, max = 12)
     @Column(name = "gridRef")
     private String gridRef;
-    @JoinColumn(name = "resolutionID", referencedColumnName = "resolutionID")
+    @Basic(optional = false)
+    @NotNull
+    @Lob
+    @Column(name = "geom")
+    private byte[] geom;
+    @JoinColumn(name = "resolutionID", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Resolution resolutionID;
-    @JoinColumn(name = "projectionID", referencedColumnName = "projectionID")
+    @JoinColumn(name = "projectionID", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Projection projectionID;
-    @OneToMany(mappedBy = "parentSquare")
+    @OneToMany(mappedBy = "parentSquareGridRef")
     private Collection<GridSquare> gridSquareCollection;
-    @JoinColumn(name = "parentSquare", referencedColumnName = "gridRef")
+    @JoinColumn(name = "parentSquareGridRef", referencedColumnName = "gridRef")
     @ManyToOne
-    private GridSquare parentSquare;
-    @JoinColumn(name = "featureID", referencedColumnName = "featureID")
+    private GridSquare parentSquareGridRef;
+    @JoinColumn(name = "featureID", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Feature featureID;
 
@@ -61,12 +67,25 @@ public class GridSquare implements Serializable {
         this.gridRef = gridRef;
     }
 
+    public GridSquare(String gridRef, byte[] geom) {
+        this.gridRef = gridRef;
+        this.geom = geom;
+    }
+
     public String getGridRef() {
         return gridRef;
     }
 
     public void setGridRef(String gridRef) {
         this.gridRef = gridRef;
+    }
+
+    public byte[] getGeom() {
+        return geom;
+    }
+
+    public void setGeom(byte[] geom) {
+        this.geom = geom;
     }
 
     public Resolution getResolutionID() {
@@ -94,12 +113,12 @@ public class GridSquare implements Serializable {
         this.gridSquareCollection = gridSquareCollection;
     }
 
-    public GridSquare getParentSquare() {
-        return parentSquare;
+    public GridSquare getParentSquareGridRef() {
+        return parentSquareGridRef;
     }
 
-    public void setParentSquare(GridSquare parentSquare) {
-        this.parentSquare = parentSquare;
+    public void setParentSquareGridRef(GridSquare parentSquareGridRef) {
+        this.parentSquareGridRef = parentSquareGridRef;
     }
 
     public Feature getFeatureID() {

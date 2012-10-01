@@ -6,81 +6,80 @@ package uk.org.nbn.nbnv.jpa.nbncore;
 
 import java.io.Serializable;
 import java.util.Collection;
-import javax.persistence.*;
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author Administrator
+ * @author Paul Gilbertson
  */
 @Entity
 @Table(name = "Site")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Site.findAll", query = "SELECT s FROM Site s"),
-    @NamedQuery(name = "Site.findBySiteID", query = "SELECT s FROM Site s WHERE s.siteID = :siteID"),
-    @NamedQuery(name = "Site.findBySiteKey", query = "SELECT s FROM Site s WHERE s.siteKey = :siteKey"),
-    @NamedQuery(name = "Site.findBySiteName", query = "SELECT s FROM Site s WHERE s.siteName = :siteName"),
+    @NamedQuery(name = "Site.findById", query = "SELECT s FROM Site s WHERE s.id = :id"),
+    @NamedQuery(name = "Site.findByName", query = "SELECT s FROM Site s WHERE s.name = :name"),
     @NamedQuery(name = "Site.findByProviderKey", query = "SELECT s FROM Site s WHERE s.providerKey = :providerKey")})
 public class Site implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
-    @Column(name = "siteID")
-    private Integer siteID;
+    @NotNull
+    @Column(name = "id")
+    private Integer id;
     @Basic(optional = false)
-    @Column(name = "siteKey")
-    private String siteKey;
-    @Basic(optional = false)
-    @Column(name = "siteName")
-    private String siteName;
+    @NotNull
+    @Size(min = 1, max = 200)
+    @Column(name = "name")
+    private String name;
+    @Size(max = 100)
     @Column(name = "providerKey")
     private String providerKey;
-    @JoinColumn(name = "datasetKey", referencedColumnName = "datasetKey")
+    @OneToMany(mappedBy = "siteID")
+    private Collection<TaxonObservation> taxonObservationCollection;
+    @JoinColumn(name = "datasetKey", referencedColumnName = "key")
     @ManyToOne(optional = false)
     private Dataset datasetKey;
-    @OneToMany(mappedBy = "siteID")
-    private Collection<TaxonObservationPublic> taxonObservationPublicCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "siteID")
-    private Collection<TaxonObservation> taxonObservationCollection;
 
     public Site() {
     }
 
-    public Site(Integer siteID) {
-        this.siteID = siteID;
+    public Site(Integer id) {
+        this.id = id;
     }
 
-    public Site(Integer siteID, String siteKey, String siteName) {
-        this.siteID = siteID;
-        this.siteKey = siteKey;
-        this.siteName = siteName;
+    public Site(Integer id, String name) {
+        this.id = id;
+        this.name = name;
     }
 
-    public Integer getSiteID() {
-        return siteID;
+    public Integer getId() {
+        return id;
     }
 
-    public void setSiteID(Integer siteID) {
-        this.siteID = siteID;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
-    public String getSiteKey() {
-        return siteKey;
+    public String getName() {
+        return name;
     }
 
-    public void setSiteKey(String siteKey) {
-        this.siteKey = siteKey;
-    }
-
-    public String getSiteName() {
-        return siteName;
-    }
-
-    public void setSiteName(String siteName) {
-        this.siteName = siteName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getProviderKey() {
@@ -89,24 +88,6 @@ public class Site implements Serializable {
 
     public void setProviderKey(String providerKey) {
         this.providerKey = providerKey;
-    }
-
-    public Dataset getDatasetKey() {
-        return datasetKey;
-    }
-
-    public void setDatasetKey(Dataset datasetKey) {
-        this.datasetKey = datasetKey;
-    }
-
-
-    @XmlTransient
-    public Collection<TaxonObservationPublic> getTaxonObservationPublicCollection() {
-        return taxonObservationPublicCollection;
-    }
-
-    public void setTaxonObservationPublicCollection(Collection<TaxonObservationPublic> taxonObservationPublicCollection) {
-        this.taxonObservationPublicCollection = taxonObservationPublicCollection;
     }
 
     @XmlTransient
@@ -118,10 +99,18 @@ public class Site implements Serializable {
         this.taxonObservationCollection = taxonObservationCollection;
     }
 
+    public Dataset getDatasetKey() {
+        return datasetKey;
+    }
+
+    public void setDatasetKey(Dataset datasetKey) {
+        this.datasetKey = datasetKey;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (siteID != null ? siteID.hashCode() : 0);
+        hash += (id != null ? id.hashCode() : 0);
         return hash;
     }
 
@@ -132,7 +121,7 @@ public class Site implements Serializable {
             return false;
         }
         Site other = (Site) object;
-        if ((this.siteID == null && other.siteID != null) || (this.siteID != null && !this.siteID.equals(other.siteID))) {
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
         return true;
@@ -140,7 +129,7 @@ public class Site implements Serializable {
 
     @Override
     public String toString() {
-        return "uk.org.nbn.nbnv.jpa.nbncore.Site[ siteID=" + siteID + " ]";
+        return "uk.org.nbn.nbnv.jpa.nbncore.Site[ id=" + id + " ]";
     }
     
 }

@@ -6,7 +6,17 @@ package uk.org.nbn.nbnv.jpa.nbncore;
 
 import java.io.Serializable;
 import java.util.Collection;
-import javax.persistence.*;
+import javax.persistence.Basic;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -14,23 +24,23 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author Administrator
+ * @author Paul Gilbertson
  */
 @Entity
 @Table(name = "Attribute")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Attribute.findAll", query = "SELECT a FROM Attribute a"),
-    @NamedQuery(name = "Attribute.findByAttributeID", query = "SELECT a FROM Attribute a WHERE a.attributeID = :attributeID"),
+    @NamedQuery(name = "Attribute.findById", query = "SELECT a FROM Attribute a WHERE a.id = :id"),
     @NamedQuery(name = "Attribute.findByLabel", query = "SELECT a FROM Attribute a WHERE a.label = :label"),
     @NamedQuery(name = "Attribute.findByDescription", query = "SELECT a FROM Attribute a WHERE a.description = :description")})
 public class Attribute implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
-    @Column(name = "attributeID")
-    private Integer attributeID;
+    @NotNull
+    @Column(name = "id")
+    private Integer id;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 50)
@@ -44,36 +54,46 @@ public class Attribute implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "attribute")
     private Collection<TaxonObservationAttribute> taxonObservationAttributeCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "attribute")
-    private Collection<AttributeEnumeration> attributeEnumerationCollection;
-    @JoinColumn(name = "storageLevelID", referencedColumnName = "storageLevelID")
-    @ManyToOne(optional = false)
-    private StorageLevel storageLevelID;
-    @JoinColumn(name = "gatewayAttributeID", referencedColumnName = "gatewayAttributeID")
+    private Collection<TaxonAttribute> taxonAttributeCollection;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "attribute")
+    private Collection<SiteBoundaryAttribute> siteBoundaryAttributeCollection;
+    @JoinColumn(name = "gatewayAttributeID", referencedColumnName = "id")
     @ManyToOne
     private GatewayAttribute gatewayAttributeID;
-    @JoinColumn(name = "storageTypeID", referencedColumnName = "attributeStorageTypeID")
+    @JoinColumn(name = "storageTypeID", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private AttributeStorageType storageTypeID;
+    @JoinColumn(name = "storageLevelID", referencedColumnName = "id")
+    @ManyToOne(optional = false)
+    private AttributeStorageLevel storageLevelID;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "attribute")
+    private Collection<DatasetAttribute> datasetAttributeCollection;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "attribute")
+    private Collection<SampleAttribute> sampleAttributeCollection;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "attribute")
+    private Collection<SurveyAttribute> surveyAttributeCollection;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "attribute")
+    private Collection<AttributeEnumeration> attributeEnumerationCollection;
 
     public Attribute() {
     }
 
-    public Attribute(Integer attributeID) {
-        this.attributeID = attributeID;
+    public Attribute(Integer id) {
+        this.id = id;
     }
 
-    public Attribute(Integer attributeID, String label, String description) {
-        this.attributeID = attributeID;
+    public Attribute(Integer id, String label, String description) {
+        this.id = id;
         this.label = label;
         this.description = description;
     }
 
-    public Integer getAttributeID() {
-        return attributeID;
+    public Integer getId() {
+        return id;
     }
 
-    public void setAttributeID(Integer attributeID) {
-        this.attributeID = attributeID;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getLabel() {
@@ -102,20 +122,21 @@ public class Attribute implements Serializable {
     }
 
     @XmlTransient
-    public Collection<AttributeEnumeration> getAttributeEnumerationCollection() {
-        return attributeEnumerationCollection;
+    public Collection<TaxonAttribute> getTaxonAttributeCollection() {
+        return taxonAttributeCollection;
     }
 
-    public void setAttributeEnumerationCollection(Collection<AttributeEnumeration> attributeEnumerationCollection) {
-        this.attributeEnumerationCollection = attributeEnumerationCollection;
+    public void setTaxonAttributeCollection(Collection<TaxonAttribute> taxonAttributeCollection) {
+        this.taxonAttributeCollection = taxonAttributeCollection;
     }
 
-    public StorageLevel getStorageLevelID() {
-        return storageLevelID;
+    @XmlTransient
+    public Collection<SiteBoundaryAttribute> getSiteBoundaryAttributeCollection() {
+        return siteBoundaryAttributeCollection;
     }
 
-    public void setStorageLevelID(StorageLevel storageLevelID) {
-        this.storageLevelID = storageLevelID;
+    public void setSiteBoundaryAttributeCollection(Collection<SiteBoundaryAttribute> siteBoundaryAttributeCollection) {
+        this.siteBoundaryAttributeCollection = siteBoundaryAttributeCollection;
     }
 
     public GatewayAttribute getGatewayAttributeID() {
@@ -134,10 +155,54 @@ public class Attribute implements Serializable {
         this.storageTypeID = storageTypeID;
     }
 
+    public AttributeStorageLevel getStorageLevelID() {
+        return storageLevelID;
+    }
+
+    public void setStorageLevelID(AttributeStorageLevel storageLevelID) {
+        this.storageLevelID = storageLevelID;
+    }
+
+    @XmlTransient
+    public Collection<DatasetAttribute> getDatasetAttributeCollection() {
+        return datasetAttributeCollection;
+    }
+
+    public void setDatasetAttributeCollection(Collection<DatasetAttribute> datasetAttributeCollection) {
+        this.datasetAttributeCollection = datasetAttributeCollection;
+    }
+
+    @XmlTransient
+    public Collection<SampleAttribute> getSampleAttributeCollection() {
+        return sampleAttributeCollection;
+    }
+
+    public void setSampleAttributeCollection(Collection<SampleAttribute> sampleAttributeCollection) {
+        this.sampleAttributeCollection = sampleAttributeCollection;
+    }
+
+    @XmlTransient
+    public Collection<SurveyAttribute> getSurveyAttributeCollection() {
+        return surveyAttributeCollection;
+    }
+
+    public void setSurveyAttributeCollection(Collection<SurveyAttribute> surveyAttributeCollection) {
+        this.surveyAttributeCollection = surveyAttributeCollection;
+    }
+
+    @XmlTransient
+    public Collection<AttributeEnumeration> getAttributeEnumerationCollection() {
+        return attributeEnumerationCollection;
+    }
+
+    public void setAttributeEnumerationCollection(Collection<AttributeEnumeration> attributeEnumerationCollection) {
+        this.attributeEnumerationCollection = attributeEnumerationCollection;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (attributeID != null ? attributeID.hashCode() : 0);
+        hash += (id != null ? id.hashCode() : 0);
         return hash;
     }
 
@@ -148,7 +213,7 @@ public class Attribute implements Serializable {
             return false;
         }
         Attribute other = (Attribute) object;
-        if ((this.attributeID == null && other.attributeID != null) || (this.attributeID != null && !this.attributeID.equals(other.attributeID))) {
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
         return true;
@@ -156,7 +221,7 @@ public class Attribute implements Serializable {
 
     @Override
     public String toString() {
-        return "uk.org.nbn.nbnv.jpa.nbncore.Attribute[ attributeID=" + attributeID + " ]";
+        return "uk.org.nbn.nbnv.jpa.nbncore.Attribute[ id=" + id + " ]";
     }
     
 }
