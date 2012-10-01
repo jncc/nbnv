@@ -20,9 +20,6 @@
 </#macro>
 
 <#macro site_report_filters requestParameters>
-    <#assign designationName="Nada">
-    <#if requestParameters.designation?has_content>
-    </#if>
     <#assign startYear=requestParameters.startYear?has_content?string(requestParameters.startYear[0]!"","1600")>
     <#assign endYear=requestParameters.endYear?has_content?string(requestParameters.endYear[0]!"",.now?string("yyyy"))>
     <#assign designations=json.readURL("${api}/designations")>
@@ -34,13 +31,13 @@
                 </th>
             </tr>
             <tr>
-                <td class="nbn-td-left nbn-filter-name">Designation:</td><td class="nbn-td-right">${designationName}</td>
+                <td class="nbn-td-left nbn-filter-name">Designation:</td><td class="nbn-td-right"><@designationText requestParameters=requestParameters/></td>
             </tr>
             <tr>
-                <td class="nbn-td-left nbn-filter-name">Year range:</td><td class="nbn-td-right">1600 to 2012</td>
+                <td class="nbn-td-left nbn-filter-name">Year range:</td><td class="nbn-td-right">${startYear} to ${endYear}</td>
             </tr>
             <tr>
-                <td class="nbn-td-left nbn-filter-name">Datasets:</td><td class="nbn-td-right">all available</td>
+                <td class="nbn-td-left nbn-filter-name">Datasets:</td><td class="nbn-td-right"><@datasetText requestParameters=requestParameters/></td>
             </tr>
             <tr>
                 <th class="nbn-td-left nbn-td-right" colspan="2">
@@ -73,4 +70,21 @@
             </tr>
         </table>
     </div>
+</#macro>
+
+<#macro designationText requestParameters>
+    <#assign designationText="none selected">
+    <#if requestParameters.designation?has_content && requestParameters.designation[0] != "">
+        <#assign designation=json.readURL("${api}/designations/${requestParameters.designation[0]}")>
+        <#assign designationText="<a href=\"/Designations/${designation.code}\">${designation.name}</a>">
+    </#if>
+    ${designationText}
+</#macro>
+
+<#macro datasetText requestParameters>
+    <#assign datasetText="all available">
+    <#if requestParameters.datasetKey?has_content>
+        <#assign datasetText=requestParameters.datasetKey?size + " datasets selected">
+    </#if>
+    ${datasetText}
 </#macro>

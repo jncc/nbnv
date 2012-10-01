@@ -6,7 +6,6 @@
     <h1>Species groups with records for 10km Square ${URLParameters.tenkmGridRef}</h1>
 
     <form action="" method="post">
-    <input type="hidden" name="test" value="yo">
 
     <@report_utils.site_report_filters requestParameters=RequestParameters/>
 
