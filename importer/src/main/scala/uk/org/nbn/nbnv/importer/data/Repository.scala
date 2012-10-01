@@ -145,7 +145,7 @@ class Repository @Inject()(log: Logger, em: EntityManager, cache: QueryCache) ex
 
   def getFirstRecorder(name: String) = {
 
-    val q = "select r from Recorder r where r.recorderName = :name "
+    val q = "select r from Recorder r where r.name = :name "
 
     cacheSome("getFirstRecorder", name) {
 
@@ -155,14 +155,14 @@ class Repository @Inject()(log: Logger, em: EntityManager, cache: QueryCache) ex
     }
   }
 
-  def getSite(siteKey: String, dataset: Dataset) = {
+  def getSite(providerKey: String, dataset: Dataset) = {
 
-    val q = "select s from Site s where s.siteKey = :siteKey and s.datasetKey = :dataset "
+    val q = "select s from Site s where s.providerKey = :providerKey and s.datasetKey = :dataset "
 
-    cacheSome(q, siteKey, dataset.getDatasetKey) {
+    cacheSome(q, providerKey, dataset.getKey) {
 
       val query = em.createQuery(q, classOf[Site])
-      query.setParameter("siteKey", siteKey)
+      query.setParameter("providerKey", providerKey)
       query.setParameter("dataset", dataset)
 
       query.getSingleOrNone
@@ -180,12 +180,12 @@ class Repository @Inject()(log: Logger, em: EntityManager, cache: QueryCache) ex
 
   def getSample(key: String, survey: Survey) = {
 
-    val q = "SELECT s FROM Sample s WHERE s.sampleKey=:sampleKey AND s.surveyID = :surveyID"
+    val q = "SELECT s FROM Sample s WHERE s.providerKey=:providerKey AND s.surveyID = :surveyID"
 
-    cacheSome(q, key, survey.getSurveyID.toString) {
+    cacheSome(q, key, survey.getId.toString) {
 
       em.createQuery(q, classOf[Sample])
-        .setParameter("sampleKey", key)
+        .setParameter("providerKey", key)
         .setParameter("surveyID", survey)
         .getSingleOrNone
     }

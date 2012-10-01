@@ -17,8 +17,9 @@ class PublicIngester @Inject()(log: Logger, em: EntityManager, repo: Repository,
     def update(p: TaxonObservationPublic) {
 
       // set the fields which are always the same in the public record
-      p.setSampleID(o.getSampleID)
-      p.setObservationKey(o.getObservationKey)
+      //p.setSampleID(o.getSampleID) - gone
+
+      p.setTaxonObservationID(o.getId)
 
       // set the site to that of the observation, or set it null
       // val site = if (metadata.siteIsPublic) o.getSiteID else null
@@ -34,7 +35,7 @@ class PublicIngester @Inject()(log: Logger, em: EntityManager, repo: Repository,
       // p.setFeatureID(feature)
     }
 
-    repo.getTaxonObservationPublic(o.getObservationID) match {
+    repo.getTaxonObservationPublic(o.getId) match {
       case Some(p) => {
         // delete the public record if it's now sensitive
         // if (metadata.isSensitive) {

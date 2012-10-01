@@ -16,8 +16,8 @@ class SiteIngester @Inject()(em: EntityManager, repository: Repository){
         case Some(s) => Some(s)
         case None => {
           val s = new Site()
-          s.setSiteKey(siteKey)
-          s.setSiteName(siteName)
+          s.setProviderKey(siteKey)
+          s.setName(siteName)
           s.setDatasetKey(dataset)
           em.persist(s)
           Some(s)
