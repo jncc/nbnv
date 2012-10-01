@@ -45,12 +45,12 @@ class Repository @Inject()(log: Logger, em: EntityManager, cache: QueryCache) ex
 
   def getSurvey(surveyKey: String, dataset: TaxonDataset) = {
 
-    val q = "SELECT s FROM Survey s WHERE s.surveyKey = :surveyKey AND s.datasetKey = :datasetKey"
+    val q = "SELECT s FROM Survey s WHERE s.providerKey = :providerKey AND s.datasetKey = :datasetKey"
 
     cacheSome(q, surveyKey, dataset.getDatasetKey) {
 
       val query = em.createQuery(q, classOf[Survey])
-      query.setParameter("surveyKey", surveyKey)
+      query.setParameter("providerKey", surveyKey)
       query.setParameter("datasetKey", dataset)
 
       query.getSingleOrNone
@@ -87,7 +87,7 @@ class Repository @Inject()(log: Logger, em: EntityManager, cache: QueryCache) ex
 
   def getTaxonObservation(key: String, sample: Sample) = {
 
-    val q = "select o from TaxonObservation o where o.observationKey = :key and o.sampleID = :sample "
+    val q = "select o from TaxonObservation o where o.providerKey = :key and o.sampleID = :sample "
 
     em.createQuery(q, classOf[TaxonObservation])
       .setParameter("key", key)
@@ -97,7 +97,7 @@ class Repository @Inject()(log: Logger, em: EntityManager, cache: QueryCache) ex
 
   def getTaxonObservationPublic(observationId: Int) = {
 
-    val q = "select o from TaxonObservationPublic o where o.observationID = :observationId "
+    val q = "select o from TaxonObservationPublic o where o.taxonObservationID = :observationId "
 
     em.createQuery(q, classOf[TaxonObservationPublic])
       .setParameter("observationId", observationId)
@@ -106,7 +106,7 @@ class Repository @Inject()(log: Logger, em: EntityManager, cache: QueryCache) ex
 
   def getOrganisation(name: String) = {
 
-    val q = "select o from Organisation o where o.organisationName = :name "
+    val q = "select o from Organisation o where o.name = :name "
 
     cacheSingle(q, name) {
 
@@ -171,9 +171,7 @@ class Repository @Inject()(log: Logger, em: EntityManager, cache: QueryCache) ex
 
   def getLatestDatasetKey = {
 
-    val q = "select d.datasetKey from Dataset d " +
-      "where d.datasetKey like 'GA%' " +
-      "order by d.datasetKey desc"
+    val q = "select d.key from Dataset d where d.key like 'GA%' order by d.key desc"
 
     em.createQuery(q, classOf[String]).setMaxResults(1).getFirstOrNone
   }
