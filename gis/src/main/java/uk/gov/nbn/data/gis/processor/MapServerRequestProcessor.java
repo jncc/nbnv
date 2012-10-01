@@ -1,5 +1,6 @@
 package uk.gov.nbn.data.gis.processor;
 
+import uk.gov.nbn.data.gis.processor.atlas.AtlasGradeProcessor;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -8,6 +9,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletException;
@@ -60,13 +62,13 @@ public class MapServerRequestProcessor {
                 try {
                     InputStream in;
                     Interceptor interceptor = getInterceptor(request.getParameterMap());
-                    if(interceptor != null) { //perform interception
+                    if(interceptor != null) { //perform interception (TODO consider if interception is the correct thing to be doing)
                         Response toReturn = interceptor.intercepts(toSubmitToMapServer, request.getParameterMap());
                         response.setContentType(toReturn.getContentType()); 
                         in = toReturn.getResponse();
                     }
                     else {
-                        URL mapServerURL = serviceFactory.getMapServiceURL(toSubmitToMapServer, request.getParameterMap());
+                        URL mapServerURL = serviceFactory.getMapServiceURL(toSubmitToMapServer, getMapServerRequest(mapMethod,request.getParameterMap()));
                         HttpURLConnection openConnection = (HttpURLConnection)mapServerURL.openConnection();
                         response.setContentType(openConnection.getContentType()); 
                         in = openConnection.getInputStream();
@@ -90,6 +92,19 @@ public class MapServerRequestProcessor {
         }
         catch(MapServiceUndefinedException msue) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND, "Could not find: " + Arrays.toString(request.getPathInfo().substring(1).split("/")));
+        }
+    }
+    
+    private Map<String, String[]> getMapServerRequest(MapServiceMethod mapMethod, Map<String, String[]> requestParams) {
+        if(mapMethod.isAtlasGrade()) {
+            Map<String, String[]> toReturn = new HashMap<String, String[]>(requestParams);
+            for(AtlasGradeProcessor currProcessor : mapMethod.getAtlasGradeProcessors()) {
+                toReturn.putAll(currProcessor.processRequestParameters(mapMethod, requestParams));
+            }
+            return toReturn;
+        }
+        else {
+            return requestParams;
         }
     }
     

@@ -1,13 +1,16 @@
 package uk.gov.nbn.data.gis.processor;
 
+import uk.gov.nbn.data.gis.processor.atlas.AtlasGradeProcessor;
 import freemarker.template.TemplateException;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
+import uk.gov.nbn.data.gis.processor.atlas.EnableAtlasGrade;
 
 /**
  * The following class represents a qualified map service method for a real path
@@ -15,18 +18,27 @@ import javax.servlet.http.HttpServletRequest;
  * @author Christopher Johnson
  */
 public class MapServiceMethod {
-    private final Method method;
     private final Map<String,String> variableNamesMap;
     private final ProviderFactory providerFactory;
-    private final Object instance;
+    private final MapServicePart part;
     
     MapServiceMethod(MapServicePart part, String[] requestParts, ProviderFactory providerFactory) {
-        this.instance = part.getMapServiceInstance();
-        this.method = part.getAssociatedMethod();
+        this.part = part;
         this.providerFactory = providerFactory;
         this.variableNamesMap = part.getVariableParameterMappings(requestParts);
     }
    
+    public boolean isAtlasGrade() {
+        return part.isAtlasGrade();
+    }
+    
+    public EnableAtlasGrade getAtlasGradeAnnotation() {
+        return part.getAtlasGradeAnnotation();
+    }
+    
+    public List<AtlasGradeProcessor> getAtlasGradeProcessors() {
+        return part.getAtlasGradeProcessors();
+    }
     /**
      * Obtains the map object model for a given request
      * @param request
@@ -37,6 +49,7 @@ public class MapServiceMethod {
      * @throws ProviderException 
      */
     MapFileModel createMapModel(HttpServletRequest request) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, ProviderException, IOException, TemplateException {
+        Method method = part.getAssociatedMethod();
         Class<?>[] parameterTypes = method.getParameterTypes();
         Annotation[][] parameterAnnotations = method.getParameterAnnotations();
         
@@ -45,7 +58,7 @@ public class MapServiceMethod {
             parameters[i] = providerFactory.getProvidedForParameter(this, request, parameterTypes[i], Arrays.asList(parameterAnnotations[i]));
         }
         
-        return (MapFileModel)method.invoke(instance, parameters);
+        return (MapFileModel)method.invoke(part.getMapServiceInstance(), parameters);
     }
     
     /**
