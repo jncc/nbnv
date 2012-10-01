@@ -5,7 +5,7 @@ import uk.org.nbn.nbnv.importer.ImportFailedException
 class GridSquareInfoFactory {
 
   //todo: rename to getGridSquareByRef
-  def getGridSquare(gridRef: String, gridReferenceType: String = "", gridReferencePrecision: Int = 0) : GridSquareInfo = {
+  def getGridSquareByGridRef(gridRef: String, gridReferenceType: String = "", gridReferencePrecision: Int = 0) : GridSquareInfo = {
 
 
     val gridType = if (gridReferenceType.isEmpty) {

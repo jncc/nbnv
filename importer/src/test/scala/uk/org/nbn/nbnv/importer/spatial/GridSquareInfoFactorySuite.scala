@@ -7,7 +7,7 @@ class GridSquareInfoFactorySuite extends BaseFunSuite{
     val gridRef = "A166712"
 
     val fac = new GridSquareInfoFactory()
-    val gri = fac.getGridSquare(gridRef)
+    val gri = fac.getGridSquareByGridRef(gridRef)
 
     gri.projection should be ("OSNI")
   }
@@ -16,7 +16,7 @@ class GridSquareInfoFactorySuite extends BaseFunSuite{
     val gridRef = "A17Q"
 
     val fac = new GridSquareInfoFactory()
-    val gri = fac.getGridSquare(gridRef)
+    val gri = fac.getGridSquareByGridRef(gridRef)
 
     gri.projection should be ("OSNI")
   }
@@ -25,7 +25,7 @@ class GridSquareInfoFactorySuite extends BaseFunSuite{
     val gridRef = "NN166712"
 
     val fac = new GridSquareInfoFactory()
-    val gri = fac.getGridSquare(gridRef)
+    val gri = fac.getGridSquareByGridRef(gridRef)
 
     gri.projection should be ("OSGB36")
   }
@@ -33,7 +33,7 @@ class GridSquareInfoFactorySuite extends BaseFunSuite{
     val gridRef = "NN17Q"
 
     val fac = new GridSquareInfoFactory()
-    val gri = fac.getGridSquare(gridRef)
+    val gri = fac.getGridSquareByGridRef(gridRef)
 
     gri.projection should be ("OSGB36")
   }
@@ -42,7 +42,7 @@ class GridSquareInfoFactorySuite extends BaseFunSuite{
     val gridRef = "WV166712"
 
     val fac = new GridSquareInfoFactory()
-    val gri = fac.getGridSquare(gridRef)
+    val gri = fac.getGridSquareByGridRef(gridRef)
 
     gri.projection should be ("ED50")
   }
@@ -51,7 +51,7 @@ class GridSquareInfoFactorySuite extends BaseFunSuite{
     val gridRef = "WV17Q"
 
     val fac = new GridSquareInfoFactory()
-    val gri = fac.getGridSquare(gridRef)
+    val gri = fac.getGridSquareByGridRef(gridRef)
 
     gri.projection should be ("ED50")
   }

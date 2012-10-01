@@ -73,7 +73,7 @@ class FeatureIngester @Inject()(log: Logger, em: EntityManager, repo: Repository
     }
 
     // a GridSquareInfo object can compute all the info we need about a grid square
-    val info = gridSquareInfoFactory.getGridSquare(gridRef, gridReferenceType, gridReferencePrecision)
+    val info = gridSquareInfoFactory.getGridSquareByGridRef(gridRef, gridReferenceType, gridReferencePrecision)
 
     // ensure that the (Feature, GridSquare) pair exists and return the feature
     ensure(info)._1
