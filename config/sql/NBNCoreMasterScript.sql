@@ -440,6 +440,47 @@ CREATE SPATIAL INDEX [sidx_GridSquare_geom] ON [dbo].[GridSquare] (
 SET ANSI_PADDING OFF; 
 
 ------------------------------
+GO
+
+-- =============================================
+-- Author:		Paul Gilbertson
+-- Create date: 20120118
+-- Description:	Creates a Feature from WKT
+-- =============================================
+CREATE PROCEDURE [dbo].[import_UpdateGridSquare]
+	@featureID INT,
+	@wkt VARCHAR(MAX)
+AS
+BEGIN
+	UPDATE GridSquare SET geom = geometry::STGeomFromText(@wkt, 4326) WHERE featureID = @featureID
+END
+
+GO
+
+------------------------------
+
+GO
+
+-- =============================================
+-- Author:		Paul Gilbertson
+-- Create date: 20120118
+-- Description:	Creates a Feature from WKT
+-- =============================================
+CREATE PROCEDURE [dbo].[import_CreateGridSquare]
+	@featureID INT
+	, @gridRef VARCHAR(12)
+	, @parentSquareGridRef VARCHAR(12)
+	, @projectionID INT
+	, @resolutionID INT
+	, @wkt VARCHAR(MAX)
+AS
+BEGIN
+	INSERT INTO GridSquare (featureID, gridRef, parentSquareGridRef, projectionID, resolutionID, geom) VALUES (@featureID, @gridRef, @parentSquareGridRef, @projectionID, @resolutionID, geometry::STGeomFromText(@wkt, 4326))
+END
+
+GO
+
+------------------------------
 
 CREATE TABLE [dbo].[GridTree](
 	[featureID] [int] NOT NULL REFERENCES [Feature] ([id]),
@@ -630,7 +671,7 @@ CREATE TABLE [dbo].[Taxon](
 	[taxonVersionKey] [char](16) NOT NULL PRIMARY KEY,
 	[pTaxonVersionKey] [char](16) NOT NULL REFERENCES [Taxon] ([taxonVersionKey]),
 	[organismKey] [char](16) NOT NULL REFERENCES [Organism] ([key]),
-	[name] [varchar](85) NULL,
+	[name] [varchar](181) NOT NULL,
 	[authority] [varchar](80) NULL,
 	[languageKey] [char](2) NOT NULL REFERENCES [Language] ([key]),
 	[commonNameTaxonVersionKey] [char](16) NULL REFERENCES [Taxon] ([taxonVersionKey]),
