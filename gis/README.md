@@ -1,43 +1,35 @@
 # Running the GIS Application
 
-The GIS application utilises MapServers MapScript in order
+The GIS application utilises MapServers CGI application in order
 to create customised GIS maps which dynamically change. A 
-result of this is that the web container that you which to
-deploy this application to must be MapScript enabled. 
+result of this is that the web container must be able to access
+the MapServer CGI application on the localhost. This is because
+the GIS application dynamically creates map files which are 
+referenced by path by the CGI application
 
-Below documents how to install MapScript and MapServer along
-side a tomcat instance to create a web container which this
+Below documents how to install MapServer along side a tomcat 
+instance to create a web container which this
 appliation can be deployed to.
 
-# Obtaining a MapServer Distribution for your JVM
+# Obtaining a MapServer Distribution
 
-First obtain a binary distribution of MapServer which matches
-the word size which your JVM is running off. At the time of 
-writting, the x64 distribution which this application was 
-developed against can be found [here](http://www.gisinternals.com/sdk/PackageList.aspx?file=release-1600-x64-gdal-1-9-1-mapserver-6-0-3.zip)
+First obtain a binary distribution of MapServer the word size is
+independant from your JVM as the application runs in a seperate
+process. For a out of the box configured MapServer, we recommend
+[MapServer for Windows - MS4W](http://www.maptools.org/ms4w/)
 
-# Installing MapServer to be used by Tomcat
+# Installing MS4W to be used by the GIS application
+1. Install the distribution remembering to register the appache 
+installation to a port restricted to the localhost (i.e. Not port 80)
 
-1. Extract the distribution to a path (e.g. C:\MapServer\). We
-will refer to this path as $MAPSERVER$ from now on.
+2. Configure your server specific GIS properties file to point to 
+the installation. The default value is configured in gis.properties.
+(See the Properties project on how to create a server specific version)
 
-2. Add $MAPSERVER$\bin to the PATH System Enviroment variable
+3. Install FastCGI (Recommended)
+The following documents how to install [FastCGI](http://www.maptools.org/ms4w/index.phtml?page=README_INSTALL.html#f-fastcgi)
 
-3. If you which to use any plugins, ensure that these are also
-on the PATH System Enviroment Variable. At the time of writing
-this application uses the msplugin_mssql2008.dll. To use this
-add $MAPSERVER$\bin\ms\plugins\mssql2008 to the PATH variable
-
-4. Create a new System Enviroment Variable named PROJ_LIB
-set its value to $MAPSERVER$\bin\proj\SHARE
-
-5. Copy the mapscript.jar from $MAPSERVER$\bin\ms\java to your
-web containers shared lib folder. In the case of tomcat this is
-$TOMCAT_HOME$\lib
-
-6. Copy the mapscript.dll from $MAPSERVER$\bin\ms\java to your
-web containers shared bin folder. In the case of tomcat this is
-$TOMCAT_HOME$\bin
-
-7. Restart tomcat. This application will now run inside your 
-tomcat instance.
+4. If you which to use any plugins, ensure that these are on the 
+PATH System Enviroment Variable. At the time of writing this 
+application uses the msplugin_mssql2008.dll. To use this add 
+$MAPSERVER$\Apache\specialplugins to the PATH variable
