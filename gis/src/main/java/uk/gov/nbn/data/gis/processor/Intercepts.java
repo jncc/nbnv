@@ -12,6 +12,8 @@ import java.lang.annotation.Target;
  * @see Intercepts
  * @author Christopher Johnson
  */
-@Target({ ElementType.TYPE })
+@Target({ ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Interceptor {}
+public @interface Intercepts {
+    MapServiceMethod.Type[] value();
+}

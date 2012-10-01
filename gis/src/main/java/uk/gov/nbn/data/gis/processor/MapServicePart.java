@@ -1,13 +1,11 @@
 package uk.gov.nbn.data.gis.processor;
 
-import uk.gov.nbn.data.gis.processor.atlas.AtlasGrade;
-import uk.gov.nbn.data.gis.processor.atlas.AtlasGradeProcessor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import uk.gov.nbn.data.gis.processor.atlas.EnableAtlasGrade;
+import uk.gov.nbn.data.gis.processor.MapServiceMethod.Type;
 
 /**
  * The following is a utility class which helps to build up map service names
@@ -20,18 +18,26 @@ class MapServicePart {
     private final Object instance;
     private MapServicePart parent;
     private Method associatedMethod;
-    private EnableAtlasGrade atlasGrade;
-    private List<AtlasGradeProcessor> atlasGradeProcessors;
+    private Type mapServiceType;
 
     MapServicePart(Object instance, String name) {
         this.instance = instance;
         this.name = name;
         this.isVariable = name.startsWith("{") && name.endsWith("}");
         this.children = new ArrayList<MapServicePart>();
+        this.mapServiceType = Type.STANDARD;
     }
 
     public String getName() {
         return name;
+    }
+    
+    public void setMapServiceType(Type mapServiceType) {
+        this.mapServiceType = mapServiceType;
+    }
+    
+    public Type getMapServiceType() {
+        return mapServiceType;
     }
     
     public Method getAssociatedMethod() {
@@ -45,27 +51,6 @@ class MapServicePart {
                     + " and " + associatedMethod);
         }
         this.associatedMethod = associatedMethod;
-    }
-    
-    
-    public void setAtlasGradeProcessors(List<AtlasGradeProcessor> atlasGradeProcessors) {
-        this.atlasGradeProcessors = atlasGradeProcessors;
-    }
-    
-    public void setAtlasGradeAnnotation(EnableAtlasGrade atlasGrade) {
-        this.atlasGrade = atlasGrade;
-    }
-    
-    public List<AtlasGradeProcessor> getAtlasGradeProcessors() {
-        return atlasGradeProcessors;
-    }
-        
-    public boolean isAtlasGrade() {
-        return this.atlasGrade != null;
-    }
-    
-    public EnableAtlasGrade getAtlasGradeAnnotation() {
-        return this.atlasGrade;
     }
 
     public boolean hasMethod() {
@@ -116,4 +101,6 @@ class MapServicePart {
     Object getMapServiceInstance() {
         return instance;
     }
+
+    
 }

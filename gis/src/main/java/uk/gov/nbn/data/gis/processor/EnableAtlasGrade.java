@@ -1,4 +1,4 @@
-package uk.gov.nbn.data.gis.processor.atlas;
+package uk.gov.nbn.data.gis.processor;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

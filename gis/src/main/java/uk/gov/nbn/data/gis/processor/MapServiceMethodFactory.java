@@ -1,7 +1,5 @@
 package uk.gov.nbn.data.gis.processor;
 
-import uk.gov.nbn.data.gis.processor.atlas.AtlasGrade;
-import uk.gov.nbn.data.gis.processor.atlas.AtlasGradeProcessor;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
@@ -13,8 +11,7 @@ import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
-import uk.gov.nbn.data.gis.processor.atlas.EnableAtlasGrade;
-import uk.gov.nbn.data.gis.processor.atlas.Type;
+import uk.gov.nbn.data.gis.processor.MapServiceMethod.Type;
 
 /**
  * The following is a factory for obtaining a MapServiceMethod for a given 
@@ -27,10 +24,8 @@ public class MapServiceMethodFactory {
     @Autowired Properties properties;
     @Autowired ProviderFactory providerFactory;
     private MapServicePart rootMapService;
-    private Map<Type, List<AtlasGradeProcessor>> atlasGradeProcessors;
     
     @PostConstruct public void init() {
-        atlasGradeProcessors = getAtlasGradeProcessors();
         rootMapService = getMapCreatingMethods();
     }
     
@@ -104,30 +99,7 @@ public class MapServiceMethodFactory {
             return null; //failed to find anything
         }
     }
-    
-    /* Build a hash map of a list of atlas grade processors against the resources they respond on*/
-    private Map<Type, List<AtlasGradeProcessor>> getAtlasGradeProcessors() {
-        Map<Type, List<AtlasGradeProcessor>> toReturn = new EnumMap<Type, List<AtlasGradeProcessor>>(Type.class);
-        for(AtlasGradeProcessor processor : context.getBeansOfType(AtlasGradeProcessor.class).values()) {
-            AtlasGrade atlasGradeProcessorAnnotation = processor.getClass().getAnnotation(AtlasGrade.class);
-            if(atlasGradeProcessorAnnotation == null) {
-                throw new IllegalArgumentException("Expected to find AtlasGrade annotation on the atlas grade processor " + processor);
-            }
-            for(Type atlasGradeType : atlasGradeProcessorAnnotation.value()) {
-                getAtlasProcessorListOrCreate(toReturn, atlasGradeType).add(processor);
-            }
-        }
-        return toReturn;
-    }
-    
-    
-    private static List<AtlasGradeProcessor> getAtlasProcessorListOrCreate(Map<Type, List<AtlasGradeProcessor>> toFindIn, Type name) {
-        if(!toFindIn.containsKey(name)) {
-            toFindIn.put(name, new ArrayList<AtlasGradeProcessor>());
-        }
-        return toFindIn.get(name);
-    }
-             
+                
     /* Load and all of the maps and return the root mapservicepart */
     private MapServicePart getMapCreatingMethods() {
         MapServicePart rootNode = new MapServicePart(null, "");         
@@ -152,11 +124,10 @@ public class MapServiceMethodFactory {
                     //register atlasgrade functionality
                     EnableAtlasGrade atlasGradeAnnotation = currMethod.getAnnotation(EnableAtlasGrade.class);
                     if(atlasGradeAnnotation != null) {
-                        for(Type atlasGradeResource : atlasGradeProcessors.keySet()) {
-                            MapServicePart atlasGradeMapServicePart = getPathPartOrCreate(mapServiceInstance, atlasGradeResource.getRequest(), pathPartOrCreate);
+                        for(Type mapServiceType : EnumSet.complementOf(EnumSet.of(Type.STANDARD))) {
+                            MapServicePart atlasGradeMapServicePart = getPathPartOrCreate(mapServiceInstance, mapServiceType.getRequest(), pathPartOrCreate);
                             atlasGradeMapServicePart.setAssociatedMethod(currMethod);
-                            atlasGradeMapServicePart.setAtlasGradeAnnotation(atlasGradeAnnotation);
-                            atlasGradeMapServicePart.setAtlasGradeProcessors(getAtlasProcessorListOrCreate(atlasGradeProcessors, atlasGradeResource));
+                            atlasGradeMapServicePart.setMapServiceType(mapServiceType);
                         }
                     }
                 }

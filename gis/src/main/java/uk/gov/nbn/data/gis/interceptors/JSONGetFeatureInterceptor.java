@@ -5,11 +5,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.io.IOUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -17,7 +17,10 @@ import org.json.XML;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.nbn.data.gis.processor.Interceptor;
+import uk.gov.nbn.data.gis.processor.Intercepts;
+import uk.gov.nbn.data.gis.processor.MapServiceMethod.Type;
 import uk.gov.nbn.data.gis.processor.MapServiceMethodFactory;
+import uk.gov.nbn.data.gis.processor.Response;
 
 /**
  * The following interceptor enables JSONP and JSON requests for getfeatureinfo 
@@ -25,19 +28,23 @@ import uk.gov.nbn.data.gis.processor.MapServiceMethodFactory;
  * @author Christopher Johnson
  */
 @Component
-public class JSONGetFeatureInterceptor implements Interceptor {
+@Interceptor
+public class JSONGetFeatureInterceptor {
     private static final String JSONP_CALLBACK_PARAMETER = "callback";    
     @Autowired MapServiceMethodFactory serviceFactory;
     
-    @Override
     public boolean intercepts(Map<String, String[]> query) {
         return 
             mapContainsKeyValue(query, "REQUEST", "GetFeatureInfo") &&
             mapContainsKeyValue(query, "INFO_FORMAT", "application/json");
     }
 
-    @Override
-    public Response intercepts(File mapFile, Map<String, String[]> query) {
+    @Intercepts(Type.STANDARD)
+    public Response intercepts(File mapFile, HttpServletRequest request) {
+        Map<String, String[]> query = request.getParameterMap();
+        if(!intercepts(query)) {
+            return null;
+        }
         try {
             JSONObject toReturn = obtainJSONObjectFeatureInfo(mapFile, query);
             
@@ -70,8 +77,8 @@ public class JSONGetFeatureInterceptor implements Interceptor {
         finally {
             in.close();
         }
-        
     }
+    
     private static boolean mapContainsKeyValue(Map<String, String[]> query, String key, String value) {
         return query.containsKey(key) && Arrays.asList(query.get(key)).contains(value);
     }

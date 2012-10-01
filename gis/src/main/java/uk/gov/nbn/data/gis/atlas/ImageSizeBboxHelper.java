@@ -2,15 +2,15 @@ package uk.gov.nbn.data.gis.atlas;
 
 import java.util.HashMap;
 import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Component;
-import uk.gov.nbn.data.gis.processor.MapServiceMethod;
-import uk.gov.nbn.data.gis.processor.atlas.AtlasGrade;
-import uk.gov.nbn.data.gis.processor.atlas.AtlasGradeProcessor;
-import uk.gov.nbn.data.gis.processor.atlas.Type;
+import uk.gov.nbn.data.gis.processor.Interceptor;
+import uk.gov.nbn.data.gis.processor.Intercepts;
+import uk.gov.nbn.data.gis.processor.MapServiceMethod.Type;
 
 @Component
-@AtlasGrade({Type.MAP })
-public class ImageSizeBboxHelper implements AtlasGradeProcessor{
+@Interceptor
+public class ImageSizeBboxHelper {
     //This is a good zoom to include Ireland and a bit of the North Sea
     private static final int BBOX_BOTTOM = -50000;
     private static final int BBOX_LEFT = -250000;
@@ -19,10 +19,10 @@ public class ImageSizeBboxHelper implements AtlasGradeProcessor{
     private static final int DEFAULT_IMAGE_SIZE = 10;
     private static final String PARAMETER_KEY_IMAGE_SIZE = "imagesize";
 
-    @Override
-    public Map<String, String[]> processRequestParameters(MapServiceMethod method, Map<String, String[]> query) {
+    @Intercepts(Type.MAP)
+    public Map<String, String[]> processRequestParameters(HttpServletRequest request) {
         Map<String, String[]> toReturn = new HashMap<String,String[]>();
-        int imageSize = getImageSize(query);
+        int imageSize = getImageSize(request.getParameterMap());
         
         toReturn.put("BBOX", new String[] {
             new StringBuilder()
