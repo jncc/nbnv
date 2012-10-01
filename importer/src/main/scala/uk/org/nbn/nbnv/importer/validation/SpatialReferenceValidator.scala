@@ -14,7 +14,8 @@ class SpatialReferenceValidator {
 
     if (r1.level == ResultLevel.DEBUG){
       if (record.gridReference.isDefined) {
-
+        val grv = new GridReferenceValidator
+        resultList.appendAll(grv.validate(record))
       }
       else if (record.featureKey.isDefined) {
         //todo: validate feature key
