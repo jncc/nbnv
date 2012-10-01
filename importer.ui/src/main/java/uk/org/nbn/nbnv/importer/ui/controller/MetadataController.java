@@ -4,32 +4,25 @@
  */
 package uk.org.nbn.nbnv.importer.ui.controller;
 
-import java.io.File;
 import java.io.IOException;
-import java.text.NumberFormat;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.extractor.WordExtractor;
 import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.reflections.Reflections;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
@@ -43,12 +36,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
 import uk.org.nbn.nbnv.importer.ui.convert.RunConversions;
-import uk.org.nbn.nbnv.importer.ui.metadata.MetadataWriter;
 import uk.org.nbn.nbnv.importer.ui.model.Metadata;
 import uk.org.nbn.nbnv.importer.ui.model.MetadataForm;
-import uk.org.nbn.nbnv.importer.ui.model.SessionData;
 import uk.org.nbn.nbnv.importer.ui.model.UploadItem;
-import uk.org.nbn.nbnv.importer.ui.util.DatabaseConnection;
 import uk.org.nbn.nbnv.importer.ui.util.POIImportError;
 import uk.org.nbn.nbnv.importer.ui.util.wordImporter.WordImporter;
 import uk.org.nbn.nbnv.importer.ui.validators.MetadataFormValidator;
@@ -62,7 +52,6 @@ import uk.org.nbn.nbnv.jpa.nbncore.Organisation;
 @Controller
 @SessionAttributes({"model", "org"})
 public class MetadataController {
-    @Autowired SessionData session;
     
     @RequestMapping(value="/metadata.html", method = RequestMethod.GET)
     public ModelAndView metadata() {  
@@ -203,20 +192,9 @@ public class MetadataController {
     }
 
     @RequestMapping(value="/metadataProcess.html", method = RequestMethod.POST, params="submit")
-    public ModelAndView uploadFile(@ModelAttribute("model") @Valid MetadataForm model, BindingResult result, @RequestParam("organisationID") String organisationID) {
+    public ModelAndView uploadFile(@ModelAttribute("org") Organisation organisation, @ModelAttribute("model") @Valid MetadataForm model, BindingResult result, @RequestParam("organisationID") String organisationID) {
 
-        // Quick fix to grab the ID of the organisation and push it in to the 
-        // model for processing or return to user to ensure correct option is 
-        // re-selected 
-        try {
-            NumberFormat nf = NumberFormat.getInstance(Locale.getDefault());
-            model.getMetadata().setOrganisationID(nf.parse(organisationID).intValue());
-        } catch (ParseException ex) {
-            Logger.getLogger(UploadController.class.getName()).log(Level.SEVERE, "Error ({0}): {1}", new Object[]{"ParsingError", "Could Not Parse Selected Organisation ID"});
-            model.getErrors().add("SEVERE: Could Not Parse Selected Organisation ID");
-            
-            return new ModelAndView("metadataForm", "model", model);
-        }
+        model.getMetadata().setOrganisationID(Integer.parseInt(organisationID));
         
         if (result.hasErrors()) {
             for (ObjectError error : result.getAllErrors()) {
@@ -230,25 +208,10 @@ public class MetadataController {
             
             return new ModelAndView("metadataForm", "model", model);
         }
-
-
-        try {
-            File metadataFile = File.createTempFile("nbnimporter", "metadata.xml");
-            MetadataWriter mw = new MetadataWriter(metadataFile);
-            mw.datasetToEML(model.getMetadata());
-            
-            session.setMetadata(metadataFile.getAbsolutePath());
-            session.setOrganisationID(model.getMetadata().getOrganisationID());
-            
-            
-        } catch (Exception ex) {
-            Logger.getLogger(MetadataController.class.getName()).log(Level.SEVERE, null, ex);
-            model.getErrors().add(ex.getMessage());
-        }
         
-        return new ModelAndView("forward:/upload", "model", model);
+        organisation = getOrganisationByID(model.getMetadata().getOrganisationID(), model.getOrganisationList());
 
-        //return new ModelAndView("metadataForm", "model", model);
+        return new ModelAndView("redirect:/upload.html", "model", model);
     }
      
     @RequestMapping(value="/metadataView.html", method = RequestMethod.GET) 
@@ -289,20 +252,20 @@ public class MetadataController {
     @ModelAttribute("referenceData")
     protected Map referenceData(HttpServletRequest request, Object command, Errors errors) throws Exception {
         Map<String, String> geoMap = new LinkedHashMap<String, String>();
-        geoMap.put("Full","Full");
-        geoMap.put("1km2","1km\u00B2 ");
-        geoMap.put("2km2","2km\u00B2");
-        geoMap.put("10km2","10km\u00B2");
+        geoMap.put("full","Full");
+        geoMap.put("1","1km\u00B2 ");
+        geoMap.put("2","2km\u00B2");
+        geoMap.put("10","10km\u00B2");
         
         Map<String, String> recAtts = new LinkedHashMap<String, String>();
-        recAtts.put("Yes","Yes");
-        recAtts.put("No","No");
-        recAtts.put("N/A","N/A");
+        recAtts.put("y","Yes");
+        recAtts.put("n","No");
+        recAtts.put("na","N/A");
         
         Map<String, String> recNames = new LinkedHashMap<String, String>();
-        recNames.put("Yes","Yes");
-        recNames.put("No","No");
-        recNames.put("N/A","N/A");
+        recNames.put("y","Yes");
+        recNames.put("n","No");
+        recNames.put("na","N/A");
         
         Map<String, Object> ref = new HashMap<String, Object>();
         ref.put("geoMap", geoMap);
@@ -312,10 +275,12 @@ public class MetadataController {
         return ref;
     }    
     
-    private List<Organisation> getOrgList() {
-        EntityManager em = DatabaseConnection.getInstance().createEntityManager();
-        
-        Query q = em.createNamedQuery("Organisation.findAll");
-        return q.getResultList();
+    private Organisation getOrganisationByID(int id, List<Organisation> orgs) {
+        for (Organisation org : orgs) {
+            if (org.getOrganisationID() == id) {
+                return org;
+            }
+        }
+        return null;
     }
 }

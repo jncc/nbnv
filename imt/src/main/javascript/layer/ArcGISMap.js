@@ -39,21 +39,26 @@ nbn.layer.ArcGISMap = function(mapHosts, mapService, map, options) {
 		currVisLayers.setCurrentVisibleLayers(nbn.util.ArrayTools.uniqueFlatten(arrOfVisibleLayers));
 	};
 	
-	var _createIdentifyURL = function(latLng) {
-		var boundedBox = map.getViewportBBox();
+	var _createIdentifyURL = function(xy) {
 		var mapDiv = map.getViewportDimensions();
 		var bboxSR = _me.getCurrentProjection().latLngEPSG;
-		return encodeURI(
-			_me.getHostsNextElement() + _me.getMapService() + '/identify?geometry={' +
-			'x:' + latLng.lon +
-			',y:' + latLng.lat + ',spatialReference:{wkid:' + bboxSR + '}}&geometryType=esriGeometryPoint&mapExtent={' +
-			'xmin:' + boundedBox.xmin +
-			',ymin:' + boundedBox.ymin +
-			',xmax:' + boundedBox.xmax +
-			',ymax:' + boundedBox.ymax + ',spatialReference:{wkid:' + bboxSR + '}}' +
-			'&tolerance=' + _me.getIdentify() + '&sr=' + bboxSR + '&imageDisplay=' + mapDiv.width + ',' + mapDiv.height + ',96' +
-			nbn.util.ArrayTools.joinAndPrepend(nbn.util.ArrayTools.fromObject(_me.getCurrentFilters()),'&') +
-			'&layers=all:' + _me.getCurrentVisibleLayers().join(',') +'&returnGeometry=false&f=json&callback=?'
+                var urlParams = {
+                    REQUEST : "GetFeatureInfo",
+                    VERSION : "1.3.0",
+                    CRS : "EPSG:" + bboxSR,
+                    QUERY_LAYERS : _me.getCurrentVisibleLayers().join(','),
+                    LAYERS : _me.getCurrentVisibleLayers().join(','),
+                    X: xy.x,
+                    Y: xy.y,
+                    HEIGHT: mapDiv.height,
+                    WIDTH: mapDiv.width,
+                    BBOX: map.getUnderlyingMap().getExtent().toBBOX(),
+                    INFO_FORMAT:"application/json",
+                    callback: "?"
+                };
+                return encodeURI(
+			_me.getHostsNextElement() + _me.getMapService() +
+			nbn.util.ArrayTools.joinAndPrepend(nbn.util.ArrayTools.fromObject(urlParams),'&', '?') 
 		);
 	};
 	
@@ -78,12 +83,15 @@ nbn.layer.ArcGISMap = function(mapHosts, mapService, map, options) {
 		);
 	}
 	
-	this.identifyFeature = function(latLng, callback) { //call the identification server
+	this.identifyFeature = function(xy, callback) { //call the identification server
 		_checkIfInPositionToMakeACall('identify');
-		return $.getJSON(_createIdentifyURL(latLng), callback);
+		return $.getJSON(_createIdentifyURL(xy), function() {
+                    console.log("TODO  pass the identify result to the picker");
+                    callback({results:[]});
+                });
 	};
 	
-	this.getLegend = function(callback) {
+	this.getLegend = function() {
 		_checkIfInPositionToMakeACall('legend');
 		return $.map(this.getCurrentVisibleLayers(), createLegendURL);
 	};

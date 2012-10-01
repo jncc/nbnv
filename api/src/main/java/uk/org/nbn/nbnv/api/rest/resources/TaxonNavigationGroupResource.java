@@ -37,9 +37,9 @@ public class TaxonNavigationGroupResource {
     @GET
     @Path("/topLevels")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<TaxonNavigationGroup> getTopLevelTaxonNavigationGroups(@QueryParam("designationId") int designationId) {
-        if (designationId != 0) {
-            return mapper.getTopLevelssByDesignationID(designationId);
+    public List<TaxonNavigationGroup> getTopLevelTaxonNavigationGroups(@QueryParam("designationId") String designationId) {
+        if (designationId != null) {
+            return mapper.getTopLevelsByDesignationID(designationId);
         } else {
             return mapper.getTopLevels();
         }
@@ -48,8 +48,8 @@ public class TaxonNavigationGroupResource {
     @GET
     @Path("/topLevels/designations/{designationId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<TaxonNavigationGroup> getTopLevelTaxonNavigationGroupsByDesignation(@PathParam("designationId") int id) {
-        return mapper.getTopLevelssByDesignationID(id);
+    public List<TaxonNavigationGroup> getTopLevelTaxonNavigationGroupsByDesignation(@PathParam("designationId") String id) {
+        return mapper.getTopLevelsByDesignationID(id);
     }
 
     @GET

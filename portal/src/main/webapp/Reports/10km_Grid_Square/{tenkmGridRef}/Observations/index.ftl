@@ -11,6 +11,6 @@
     </#list>
     </table>
     
-    <@report_utils.dataset_table providersWithQueryStats=providersWithQueryStats/>
+    <@report_utils.dataset_table providersWithQueryStats=providersWithQueryStats requestParameters=RequestParameters/>
 
 </@template.master>

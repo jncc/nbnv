@@ -14,12 +14,10 @@ import javax.imageio.ImageIO;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
-import uk.org.nbn.nbnv.importer.ui.model.SessionData;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.WebDataBinder;
@@ -44,7 +42,6 @@ import uk.org.nbn.nbnv.jpa.nbncore.Organisation;
 @Controller
 @SessionAttributes({"model", "org"})
 public class AddOrganisationController {
-    @Autowired SessionData sessionData;
     
     private static final int maxLogoWidth = 150;
     private static final int maxLogoHeight = 150;

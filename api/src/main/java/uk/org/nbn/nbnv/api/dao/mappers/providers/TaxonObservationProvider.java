@@ -48,9 +48,7 @@ public class TaxonObservationProvider {
         SELECT("DISTINCT o.datasetKey, dd.*");
         createSelectQuery(params);
         INNER_JOIN("DatasetData dd ON dd.datasetKey = o.datasetKey");
-        String toReturn = SQL();
-        System.out.println(toReturn);
-        return toReturn;
+        return SQL();
     }
     
     public String testProviderAndDatasets(Map<String, Object> params){
@@ -74,16 +72,20 @@ public class TaxonObservationProvider {
         }
 
         if (params.containsKey("datasetKey") && params.get("datasetKey") != null) {
-            if(params.get("datasetKey") instanceof List && ((List<String>)params.get("datasetKey")).size() > 0){
-                WHERE("datasetKey IN " + datasetListToCommaList((List<String>) params.get("datasetKey")));
+            if(params.get("datasetKey") instanceof List){
+                if(((List<String>)params.get("datasetKey")).size() > 0){
+                    WHERE("datasetKey IN " + datasetListToCommaList((List<String>) params.get("datasetKey")));
+                }
             }else{
                 WHERE("datasetKey = '" + params.get("datasetKey") + "'");
             }
         }
 
         if (params.containsKey("ptvk") && params.get("ptvk") != null) {
-            if(params.get("ptvk") instanceof List && ((List<String>)params.get("ptvk")).size() > 0) {
-                WHERE("pTaxonVersionKey IN " + taxaListToCommaList((List<String>) params.get("ptvk")));
+            if(params.get("ptvk") instanceof List){
+                if(((List<String>)params.get("ptvk")).size() > 0){
+                    WHERE("pTaxonVersionKey IN " + taxaListToCommaList((List<String>) params.get("ptvk")));
+                }
             }
             else {
                 WHERE("pTaxonVersionKey = '" + params.get("ptvk") + "'");
