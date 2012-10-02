@@ -7,90 +7,119 @@ package uk.org.nbn.nbnv.jpa.nbncore;
 import java.io.Serializable;
 import java.util.Collection;
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author Administrator
+ * @author Paul Gilbertson
  */
 @Entity
 @Table(name = "Organisation")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Organisation.findAll", query = "SELECT o FROM Organisation o"),
-    @NamedQuery(name = "Organisation.findByOrganisationID", query = "SELECT o FROM Organisation o WHERE o.organisationID = :organisationID"),
-    @NamedQuery(name = "Organisation.findByAllowPublicRegistration", query = "SELECT o FROM Organisation o WHERE o.allowPublicRegistration = :allowPublicRegistration"),
+    @NamedQuery(name = "Organisation.findById", query = "SELECT o FROM Organisation o WHERE o.id = :id"),
+    @NamedQuery(name = "Organisation.findByName", query = "SELECT o FROM Organisation o WHERE o.name = :name"),
     @NamedQuery(name = "Organisation.findByAbbreviation", query = "SELECT o FROM Organisation o WHERE o.abbreviation = :abbreviation"),
-    @NamedQuery(name = "Organisation.findByPostcode", query = "SELECT o FROM Organisation o WHERE o.postcode = :postcode"),
-    @NamedQuery(name = "Organisation.findByWebsite", query = "SELECT o FROM Organisation o WHERE o.website = :website"),
-    @NamedQuery(name = "Organisation.findByContactEmail", query = "SELECT o FROM Organisation o WHERE o.contactEmail = :contactEmail"),
-    @NamedQuery(name = "Organisation.findByOrganisationName", query = "SELECT o FROM Organisation o WHERE o.organisationName = :organisationName"),
-    @NamedQuery(name = "Organisation.findByContactName", query = "SELECT o FROM Organisation o WHERE o.contactName = :contactName"),
-    @NamedQuery(name = "Organisation.findByAddress", query = "SELECT o FROM Organisation o WHERE o.address = :address"),
     @NamedQuery(name = "Organisation.findBySummary", query = "SELECT o FROM Organisation o WHERE o.summary = :summary"),
-    @NamedQuery(name = "Organisation.findByPhone", query = "SELECT o FROM Organisation o WHERE o.phone = :phone")})
+    @NamedQuery(name = "Organisation.findByAddress", query = "SELECT o FROM Organisation o WHERE o.address = :address"),
+    @NamedQuery(name = "Organisation.findByPostcode", query = "SELECT o FROM Organisation o WHERE o.postcode = :postcode"),
+    @NamedQuery(name = "Organisation.findByPhone", query = "SELECT o FROM Organisation o WHERE o.phone = :phone"),
+    @NamedQuery(name = "Organisation.findByWebsite", query = "SELECT o FROM Organisation o WHERE o.website = :website"),
+    @NamedQuery(name = "Organisation.findByContactName", query = "SELECT o FROM Organisation o WHERE o.contactName = :contactName"),
+    @NamedQuery(name = "Organisation.findByContactEmail", query = "SELECT o FROM Organisation o WHERE o.contactEmail = :contactEmail"),
+    @NamedQuery(name = "Organisation.findByAllowPublicRegistration", query = "SELECT o FROM Organisation o WHERE o.allowPublicRegistration = :allowPublicRegistration")})
 public class Organisation implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
-    @GeneratedValue(strategy = GenerationType.IDENTITY) 
-    @Column(name = "organisationID")
-    private Integer organisationID;
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Integer id;
     @Basic(optional = false)
-    @Column(name = "allowPublicRegistration")
-    private boolean allowPublicRegistration;
+    @NotNull
+    @Size(min = 1, max = 200)
+    @Column(name = "name")
+    private String name;
+    @Size(max = 10)
     @Column(name = "abbreviation")
     private String abbreviation;
-    @Column(name = "postcode")
-    private String postcode;
-    @Column(name = "website")
-    private String website;
-    @Column(name = "contactEmail")
-    private String contactEmail;
-    @Column(name = "organisationName")
-    private String organisationName;
-    @Column(name = "contactName")
-    private String contactName;
-    @Column(name = "address")
-    private String address;
-    @Column(name = "logo")
-    private String logo;
-    @Column(name = "logoSmall")
-    private String logoSmall;
+    @Size(max = 2147483647)
     @Column(name = "summary")
     private String summary;
+    @Size(max = 200)
+    @Column(name = "address")
+    private String address;
+    @Size(max = 10)
+    @Column(name = "postcode")
+    private String postcode;
+    // @Pattern(regexp="^\\(?(\\d{3})\\)?[- ]?(\\d{3})[- ]?(\\d{4})$", message="Invalid phone/fax format, should be as xxx-xxx-xxxx")//if the field contains phone or fax number consider using this annotation to enforce field validation
+    @Size(max = 50)
     @Column(name = "phone")
     private String phone;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "datasetProvider")
+    @Size(max = 100)
+    @Column(name = "website")
+    private String website;
+    @Size(max = 120)
+    @Column(name = "contactName")
+    private String contactName;
+    @Size(max = 100)
+    @Column(name = "contactEmail")
+    private String contactEmail;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "allowPublicRegistration")
+    private boolean allowPublicRegistration;
+    @Lob
+    @Column(name = "logoSmall")
+    private byte[] logoSmall;
+    @Lob
+    @Column(name = "logo")
+    private byte[] logo;
+    @JoinTable(name = "OrganisationTaxonObservationAccess", joinColumns = {
+        @JoinColumn(name = "organisationID", referencedColumnName = "id")}, inverseJoinColumns = {
+        @JoinColumn(name = "observationID", referencedColumnName = "id")})
+    @ManyToMany
+    private Collection<TaxonObservation> taxonObservationCollection;
+    @OneToMany(mappedBy = "organisationID")
+    private Collection<TaxonObservationDownload> taxonObservationDownloadCollection;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "organisationID")
+    private Collection<OrganisationAccessRequest> organisationAccessRequestCollection;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "providerOrganisationKey")
     private Collection<Dataset> datasetCollection;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "organisation")
+    private Collection<UserOrganisationMembership> userOrganisationMembershipCollection;
 
     public Organisation() {
     }
 
-    public Organisation(Integer organisationID) {
-        this.organisationID = organisationID;
+    public Organisation(Integer id) {
+        this.id = id;
     }
 
-    public Organisation(Integer organisationID, boolean allowPublicRegistration) {
-        this.organisationID = organisationID;
+    public Organisation(Integer id, String name, boolean allowPublicRegistration) {
+        this.id = id;
+        this.name = name;
         this.allowPublicRegistration = allowPublicRegistration;
     }
 
-    public Integer getOrganisationID() {
-        return organisationID;
+    public Integer getId() {
+        return id;
     }
 
-    public void setOrganisationID(Integer organisationID) {
-        this.organisationID = organisationID;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
-    public boolean getAllowPublicRegistration() {
-        return allowPublicRegistration;
+    public String getName() {
+        return name;
     }
 
-    public void setAllowPublicRegistration(boolean allowPublicRegistration) {
-        this.allowPublicRegistration = allowPublicRegistration;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getAbbreviation() {
@@ -101,44 +130,12 @@ public class Organisation implements Serializable {
         this.abbreviation = abbreviation;
     }
 
-    public String getPostcode() {
-        return postcode;
+    public String getSummary() {
+        return summary;
     }
 
-    public void setPostcode(String postcode) {
-        this.postcode = postcode;
-    }
-
-    public String getWebsite() {
-        return website;
-    }
-
-    public void setWebsite(String website) {
-        this.website = website;
-    }
-
-    public String getContactEmail() {
-        return contactEmail;
-    }
-
-    public void setContactEmail(String contactEmail) {
-        this.contactEmail = contactEmail;
-    }
-
-    public String getOrganisationName() {
-        return organisationName;
-    }
-
-    public void setOrganisationName(String organisationName) {
-        this.organisationName = organisationName;
-    }
-
-    public String getContactName() {
-        return contactName;
-    }
-
-    public void setContactName(String contactName) {
-        this.contactName = contactName;
+    public void setSummary(String summary) {
+        this.summary = summary;
     }
 
     public String getAddress() {
@@ -149,28 +146,12 @@ public class Organisation implements Serializable {
         this.address = address;
     }
 
-    public String getLogo() {
-        return logo;
+    public String getPostcode() {
+        return postcode;
     }
 
-    public void setLogo(String logo) {
-        this.logo = logo;
-    }
-
-    public String getLogoSmall() {
-        return logoSmall;
-    }
-
-    public void setLogoSmall(String logoSmall) {
-        this.logoSmall = logoSmall;
-    }
-
-    public String getSummary() {
-        return summary;
-    }
-
-    public void setSummary(String summary) {
-        this.summary = summary;
+    public void setPostcode(String postcode) {
+        this.postcode = postcode;
     }
 
     public String getPhone() {
@@ -179,6 +160,81 @@ public class Organisation implements Serializable {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public String getWebsite() {
+        return website;
+    }
+
+    public void setWebsite(String website) {
+        this.website = website;
+    }
+
+    public String getContactName() {
+        return contactName;
+    }
+
+    public void setContactName(String contactName) {
+        this.contactName = contactName;
+    }
+
+    public String getContactEmail() {
+        return contactEmail;
+    }
+
+    public void setContactEmail(String contactEmail) {
+        this.contactEmail = contactEmail;
+    }
+
+    public boolean getAllowPublicRegistration() {
+        return allowPublicRegistration;
+    }
+
+    public void setAllowPublicRegistration(boolean allowPublicRegistration) {
+        this.allowPublicRegistration = allowPublicRegistration;
+    }
+
+    public byte[] getLogoSmall() {
+        return logoSmall;
+    }
+
+    public void setLogoSmall(byte[] logoSmall) {
+        this.logoSmall = logoSmall;
+    }
+
+    public byte[] getLogo() {
+        return logo;
+    }
+
+    public void setLogo(byte[] logo) {
+        this.logo = logo;
+    }
+
+    @XmlTransient
+    public Collection<TaxonObservation> getTaxonObservationCollection() {
+        return taxonObservationCollection;
+    }
+
+    public void setTaxonObservationCollection(Collection<TaxonObservation> taxonObservationCollection) {
+        this.taxonObservationCollection = taxonObservationCollection;
+    }
+
+    @XmlTransient
+    public Collection<TaxonObservationDownload> getTaxonObservationDownloadCollection() {
+        return taxonObservationDownloadCollection;
+    }
+
+    public void setTaxonObservationDownloadCollection(Collection<TaxonObservationDownload> taxonObservationDownloadCollection) {
+        this.taxonObservationDownloadCollection = taxonObservationDownloadCollection;
+    }
+
+    @XmlTransient
+    public Collection<OrganisationAccessRequest> getOrganisationAccessRequestCollection() {
+        return organisationAccessRequestCollection;
+    }
+
+    public void setOrganisationAccessRequestCollection(Collection<OrganisationAccessRequest> organisationAccessRequestCollection) {
+        this.organisationAccessRequestCollection = organisationAccessRequestCollection;
     }
 
     @XmlTransient
@@ -190,10 +246,19 @@ public class Organisation implements Serializable {
         this.datasetCollection = datasetCollection;
     }
 
+    @XmlTransient
+    public Collection<UserOrganisationMembership> getUserOrganisationMembershipCollection() {
+        return userOrganisationMembershipCollection;
+    }
+
+    public void setUserOrganisationMembershipCollection(Collection<UserOrganisationMembership> userOrganisationMembershipCollection) {
+        this.userOrganisationMembershipCollection = userOrganisationMembershipCollection;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (organisationID != null ? organisationID.hashCode() : 0);
+        hash += (id != null ? id.hashCode() : 0);
         return hash;
     }
 
@@ -204,7 +269,7 @@ public class Organisation implements Serializable {
             return false;
         }
         Organisation other = (Organisation) object;
-        if ((this.organisationID == null && other.organisationID != null) || (this.organisationID != null && !this.organisationID.equals(other.organisationID))) {
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
         return true;
@@ -212,7 +277,7 @@ public class Organisation implements Serializable {
 
     @Override
     public String toString() {
-        return "uk.org.nbn.nbnv.jpa.nbncore.Organisation[ organisationID=" + organisationID + " ]";
+        return "uk.org.nbn.nbnv.jpa.nbncore.Organisation[ id=" + id + " ]";
     }
     
 }

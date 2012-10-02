@@ -6,7 +6,17 @@ package uk.org.nbn.nbnv.jpa.nbncore;
 
 import java.io.Serializable;
 import java.util.Collection;
-import javax.persistence.*;
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -14,66 +24,82 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author Administrator
+ * @author Paul Gilbertson
  */
 @Entity
 @Table(name = "TaxonGroup")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "TaxonGroup.findAll", query = "SELECT t FROM TaxonGroup t"),
-    @NamedQuery(name = "TaxonGroup.findByTaxonGroupKey", query = "SELECT t FROM TaxonGroup t WHERE t.taxonGroupKey = :taxonGroupKey"),
+    @NamedQuery(name = "TaxonGroup.findByKey", query = "SELECT t FROM TaxonGroup t WHERE t.key = :key"),
+    @NamedQuery(name = "TaxonGroup.findByName", query = "SELECT t FROM TaxonGroup t WHERE t.name = :name"),
+    @NamedQuery(name = "TaxonGroup.findByDescription", query = "SELECT t FROM TaxonGroup t WHERE t.description = :description"),
     @NamedQuery(name = "TaxonGroup.findBySortOrder", query = "SELECT t FROM TaxonGroup t WHERE t.sortOrder = :sortOrder"),
-    @NamedQuery(name = "TaxonGroup.findByOutputFlag", query = "SELECT t FROM TaxonGroup t WHERE t.outputFlag = :outputFlag"),
-    @NamedQuery(name = "TaxonGroup.findByTaxonGroupName", query = "SELECT t FROM TaxonGroup t WHERE t.taxonGroupName = :taxonGroupName"),
-    @NamedQuery(name = "TaxonGroup.findByDescriptor", query = "SELECT t FROM TaxonGroup t WHERE t.descriptor = :descriptor")})
+    @NamedQuery(name = "TaxonGroup.findByOutputFlag", query = "SELECT t FROM TaxonGroup t WHERE t.outputFlag = :outputFlag")})
 public class TaxonGroup implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 16)
-    @Column(name = "taxonGroupKey")
-    private String taxonGroupKey;
+    @Column(name = "key")
+    private String key;
+    @Size(max = 50)
+    @Column(name = "name")
+    private String name;
+    @Size(max = 65)
+    @Column(name = "description")
+    private String description;
     @Column(name = "sortOrder")
     private Integer sortOrder;
     @Basic(optional = false)
     @NotNull
     @Column(name = "outputFlag")
     private boolean outputFlag;
-    @Size(max = 50)
-    @Column(name = "taxonGroupName")
-    private String taxonGroupName;
-    @Size(max = 65)
-    @Column(name = "descriptor")
-    private String descriptor;
-    @OneToMany(mappedBy = "parent")
-    private Collection<TaxonGroup> taxonGroupCollection;
-    @JoinColumn(name = "parent", referencedColumnName = "taxonGroupKey")
-    @ManyToOne
-    private TaxonGroup parent;
-    @OneToMany(mappedBy = "taxonNavigationGroupKey")
+    @ManyToMany(mappedBy = "taxonGroupCollection")
     private Collection<Taxon> taxonCollection;
     @OneToMany(mappedBy = "taxonOutputGroupKey")
     private Collection<Taxon> taxonCollection1;
+    @OneToMany(mappedBy = "parentTaxonGroupKey")
+    private Collection<TaxonGroup> taxonGroupCollection;
+    @JoinColumn(name = "parentTaxonGroupKey", referencedColumnName = "key")
+    @ManyToOne
+    private TaxonGroup parentTaxonGroupKey;
 
     public TaxonGroup() {
     }
 
-    public TaxonGroup(String taxonGroupKey) {
-        this.taxonGroupKey = taxonGroupKey;
+    public TaxonGroup(String key) {
+        this.key = key;
     }
 
-    public TaxonGroup(String taxonGroupKey, boolean outputFlag) {
-        this.taxonGroupKey = taxonGroupKey;
+    public TaxonGroup(String key, boolean outputFlag) {
+        this.key = key;
         this.outputFlag = outputFlag;
     }
 
-    public String getTaxonGroupKey() {
-        return taxonGroupKey;
+    public String getKey() {
+        return key;
     }
 
-    public void setTaxonGroupKey(String taxonGroupKey) {
-        this.taxonGroupKey = taxonGroupKey;
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public Integer getSortOrder() {
@@ -90,39 +116,6 @@ public class TaxonGroup implements Serializable {
 
     public void setOutputFlag(boolean outputFlag) {
         this.outputFlag = outputFlag;
-    }
-
-    public String getTaxonGroupName() {
-        return taxonGroupName;
-    }
-
-    public void setTaxonGroupName(String taxonGroupName) {
-        this.taxonGroupName = taxonGroupName;
-    }
-
-    public String getDescriptor() {
-        return descriptor;
-    }
-
-    public void setDescriptor(String descriptor) {
-        this.descriptor = descriptor;
-    }
-
-    @XmlTransient
-    public Collection<TaxonGroup> getTaxonGroupCollection() {
-        return taxonGroupCollection;
-    }
-
-    public void setTaxonGroupCollection(Collection<TaxonGroup> taxonGroupCollection) {
-        this.taxonGroupCollection = taxonGroupCollection;
-    }
-
-    public TaxonGroup getParent() {
-        return parent;
-    }
-
-    public void setParent(TaxonGroup parent) {
-        this.parent = parent;
     }
 
     @XmlTransient
@@ -143,10 +136,27 @@ public class TaxonGroup implements Serializable {
         this.taxonCollection1 = taxonCollection1;
     }
 
+    @XmlTransient
+    public Collection<TaxonGroup> getTaxonGroupCollection() {
+        return taxonGroupCollection;
+    }
+
+    public void setTaxonGroupCollection(Collection<TaxonGroup> taxonGroupCollection) {
+        this.taxonGroupCollection = taxonGroupCollection;
+    }
+
+    public TaxonGroup getParentTaxonGroupKey() {
+        return parentTaxonGroupKey;
+    }
+
+    public void setParentTaxonGroupKey(TaxonGroup parentTaxonGroupKey) {
+        this.parentTaxonGroupKey = parentTaxonGroupKey;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (taxonGroupKey != null ? taxonGroupKey.hashCode() : 0);
+        hash += (key != null ? key.hashCode() : 0);
         return hash;
     }
 
@@ -157,7 +167,7 @@ public class TaxonGroup implements Serializable {
             return false;
         }
         TaxonGroup other = (TaxonGroup) object;
-        if ((this.taxonGroupKey == null && other.taxonGroupKey != null) || (this.taxonGroupKey != null && !this.taxonGroupKey.equals(other.taxonGroupKey))) {
+        if ((this.key == null && other.key != null) || (this.key != null && !this.key.equals(other.key))) {
             return false;
         }
         return true;
@@ -165,7 +175,7 @@ public class TaxonGroup implements Serializable {
 
     @Override
     public String toString() {
-        return "uk.org.nbn.nbnv.jpa.nbncore.TaxonGroup[ taxonGroupKey=" + taxonGroupKey + " ]";
+        return "uk.org.nbn.nbnv.jpa.nbncore.TaxonGroup[ key=" + key + " ]";
     }
     
 }

@@ -4,67 +4,74 @@
  */
 package uk.org.nbn.nbnv.jpa.nbncore;
 
-import org.eclipse.persistence.annotations.IdValidation;
-import org.eclipse.persistence.annotations.PrimaryKey;
-
 import java.io.Serializable;
 import java.util.Collection;
-import javax.persistence.*;
+import javax.persistence.Basic;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author Administrator
+ * @author Paul Gilbertson
  */
 @Entity
 @Table(name = "Resolution")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Resolution.findAll", query = "SELECT r FROM Resolution r"),
-    @NamedQuery(name = "Resolution.findByResolutionID", query = "SELECT r FROM Resolution r WHERE r.resolutionID = :resolutionID"),
+    @NamedQuery(name = "Resolution.findById", query = "SELECT r FROM Resolution r WHERE r.id = :id"),
     @NamedQuery(name = "Resolution.findByLabel", query = "SELECT r FROM Resolution r WHERE r.label = :label"),
     @NamedQuery(name = "Resolution.findByAccuracy", query = "SELECT r FROM Resolution r WHERE r.accuracy = :accuracy"),
     @NamedQuery(name = "Resolution.findByArea", query = "SELECT r FROM Resolution r WHERE r.area = :area")})
-    @PrimaryKey(validation = IdValidation.NONE) // due to some negative PKs!
 public class Resolution implements Serializable {
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "resolutionID")
-    private Collection<GridSquare> gridSquareCollection;
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
-    @Column(name = "resolutionID")
-    private Short resolutionID;
+    @NotNull
+    @Column(name = "id")
+    private Integer id;
     @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 20)
     @Column(name = "label")
     private String label;
     @Column(name = "accuracy")
     private Integer accuracy;
     @Column(name = "area")
     private Integer area;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "publicResolution")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "publicResolutionID")
     private Collection<TaxonDataset> taxonDatasetCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "maxResolution")
-    private Collection<TaxonDataset> taxonDatasetCollection1;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "resolutionID")
+    private Collection<GridSquare> gridSquareCollection;
 
     public Resolution() {
     }
 
-    public Resolution(Short resolutionID) {
-        this.resolutionID = resolutionID;
+    public Resolution(Integer id) {
+        this.id = id;
     }
 
-    public Resolution(Short resolutionID, String label) {
-        this.resolutionID = resolutionID;
+    public Resolution(Integer id, String label) {
+        this.id = id;
         this.label = label;
     }
 
-    public Short getResolutionID() {
-        return resolutionID;
+    public Integer getId() {
+        return id;
     }
 
-    public void setResolutionID(Short resolutionID) {
-        this.resolutionID = resolutionID;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getLabel() {
@@ -101,18 +108,18 @@ public class Resolution implements Serializable {
     }
 
     @XmlTransient
-    public Collection<TaxonDataset> getTaxonDatasetCollection1() {
-        return taxonDatasetCollection1;
+    public Collection<GridSquare> getGridSquareCollection() {
+        return gridSquareCollection;
     }
 
-    public void setTaxonDatasetCollection1(Collection<TaxonDataset> taxonDatasetCollection1) {
-        this.taxonDatasetCollection1 = taxonDatasetCollection1;
+    public void setGridSquareCollection(Collection<GridSquare> gridSquareCollection) {
+        this.gridSquareCollection = gridSquareCollection;
     }
 
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (resolutionID != null ? resolutionID.hashCode() : 0);
+        hash += (id != null ? id.hashCode() : 0);
         return hash;
     }
 
@@ -123,7 +130,7 @@ public class Resolution implements Serializable {
             return false;
         }
         Resolution other = (Resolution) object;
-        if ((this.resolutionID == null && other.resolutionID != null) || (this.resolutionID != null && !this.resolutionID.equals(other.resolutionID))) {
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
         return true;
@@ -131,16 +138,7 @@ public class Resolution implements Serializable {
 
     @Override
     public String toString() {
-        return "uk.org.nbn.nbnv.jpa.nbncore.Resolution[ resolutionID=" + resolutionID + " ]";
-    }
-
-    @XmlTransient
-    public Collection<GridSquare> getGridSquareCollection() {
-        return gridSquareCollection;
-    }
-
-    public void setGridSquareCollection(Collection<GridSquare> gridSquareCollection) {
-        this.gridSquareCollection = gridSquareCollection;
+        return "uk.org.nbn.nbnv.jpa.nbncore.Resolution[ id=" + id + " ]";
     }
     
 }

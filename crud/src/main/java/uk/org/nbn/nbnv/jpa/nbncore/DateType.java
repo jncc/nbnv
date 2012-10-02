@@ -6,53 +6,65 @@ package uk.org.nbn.nbnv.jpa.nbncore;
 
 import java.io.Serializable;
 import java.util.Collection;
-import javax.persistence.*;
+import javax.persistence.Basic;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author Administrator
+ * @author Paul Gilbertson
  */
 @Entity
 @Table(name = "DateType")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "DateType.findAll", query = "SELECT d FROM DateType d"),
-    @NamedQuery(name = "DateType.findByDateTypeKey", query = "SELECT d FROM DateType d WHERE d.dateTypeKey = :dateTypeKey"),
+    @NamedQuery(name = "DateType.findByKey", query = "SELECT d FROM DateType d WHERE d.key = :key"),
     @NamedQuery(name = "DateType.findByLabel", query = "SELECT d FROM DateType d WHERE d.label = :label")})
 public class DateType implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
-    @Column(name = "dateTypeKey")
-    private String dateTypeKey;
+    @NotNull
+    @Size(min = 1, max = 2)
+    @Column(name = "key")
+    private String key;
     @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 50)
     @Column(name = "label")
     private String label;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "dateType")
-    private Collection<TaxonObservationPublic> taxonObservationPublicCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "dateType")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "dateTypeKey")
     private Collection<TaxonObservation> taxonObservationCollection;
 
     public DateType() {
     }
 
-    public DateType(String dateTypeKey) {
-        this.dateTypeKey = dateTypeKey;
+    public DateType(String key) {
+        this.key = key;
     }
 
-    public DateType(String dateTypeKey, String label) {
-        this.dateTypeKey = dateTypeKey;
+    public DateType(String key, String label) {
+        this.key = key;
         this.label = label;
     }
 
-    public String getDateTypeKey() {
-        return dateTypeKey;
+    public String getKey() {
+        return key;
     }
 
-    public void setDateTypeKey(String dateTypeKey) {
-        this.dateTypeKey = dateTypeKey;
+    public void setKey(String key) {
+        this.key = key;
     }
 
     public String getLabel() {
@@ -61,15 +73,6 @@ public class DateType implements Serializable {
 
     public void setLabel(String label) {
         this.label = label;
-    }
-
-    @XmlTransient
-    public Collection<TaxonObservationPublic> getTaxonObservationPublicCollection() {
-        return taxonObservationPublicCollection;
-    }
-
-    public void setTaxonObservationPublicCollection(Collection<TaxonObservationPublic> taxonObservationPublicCollection) {
-        this.taxonObservationPublicCollection = taxonObservationPublicCollection;
     }
 
     @XmlTransient
@@ -84,7 +87,7 @@ public class DateType implements Serializable {
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (dateTypeKey != null ? dateTypeKey.hashCode() : 0);
+        hash += (key != null ? key.hashCode() : 0);
         return hash;
     }
 
@@ -95,7 +98,7 @@ public class DateType implements Serializable {
             return false;
         }
         DateType other = (DateType) object;
-        if ((this.dateTypeKey == null && other.dateTypeKey != null) || (this.dateTypeKey != null && !this.dateTypeKey.equals(other.dateTypeKey))) {
+        if ((this.key == null && other.key != null) || (this.key != null && !this.key.equals(other.key))) {
             return false;
         }
         return true;
@@ -103,7 +106,7 @@ public class DateType implements Serializable {
 
     @Override
     public String toString() {
-        return "uk.org.nbn.nbnv.jpa.nbncore.DateType[ dateTypeKey=" + dateTypeKey + " ]";
+        return "uk.org.nbn.nbnv.jpa.nbncore.DateType[ key=" + key + " ]";
     }
     
 }

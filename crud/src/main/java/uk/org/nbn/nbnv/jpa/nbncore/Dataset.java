@@ -7,26 +7,40 @@ package uk.org.nbn.nbnv.jpa.nbncore;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
-import javax.persistence.*;
+import javax.persistence.Basic;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.validation.constraints.*;
 import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author Administrator
+ * @author Paul Gilbertson
  */
 @Entity
 @Table(name = "Dataset")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Dataset.findAll", query = "SELECT d FROM Dataset d"),
-    @NamedQuery(name = "Dataset.findByDatasetKey", query = "SELECT d FROM Dataset d WHERE d.datasetKey = :datasetKey"),
-    @NamedQuery(name = "Dataset.findByConditionsAccepted", query = "SELECT d FROM Dataset d WHERE d.conditionsAccepted = :conditionsAccepted"),
-    @NamedQuery(name = "Dataset.findByDateUploaded", query = "SELECT d FROM Dataset d WHERE d.dateUploaded = :dateUploaded"),
-    @NamedQuery(name = "Dataset.findByMetadataLastEdited", query = "SELECT d FROM Dataset d WHERE d.metadataLastEdited = :metadataLastEdited"),
+    @NamedQuery(name = "Dataset.findByKey", query = "SELECT d FROM Dataset d WHERE d.key = :key"),
+    @NamedQuery(name = "Dataset.findByTitle", query = "SELECT d FROM Dataset d WHERE d.title = :title"),
+    @NamedQuery(name = "Dataset.findByDescription", query = "SELECT d FROM Dataset d WHERE d.description = :description"),
     @NamedQuery(name = "Dataset.findByProviderKey", query = "SELECT d FROM Dataset d WHERE d.providerKey = :providerKey"),
-    @NamedQuery(name = "Dataset.findByDatasetTitle", query = "SELECT d FROM Dataset d WHERE d.datasetTitle = :datasetTitle"),
     @NamedQuery(name = "Dataset.findByDataCaptureMethod", query = "SELECT d FROM Dataset d WHERE d.dataCaptureMethod = :dataCaptureMethod"),
     @NamedQuery(name = "Dataset.findByPurpose", query = "SELECT d FROM Dataset d WHERE d.purpose = :purpose"),
     @NamedQuery(name = "Dataset.findByGeographicalCoverage", query = "SELECT d FROM Dataset d WHERE d.geographicalCoverage = :geographicalCoverage"),
@@ -35,10 +49,51 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Dataset.findByAdditionalInformation", query = "SELECT d FROM Dataset d WHERE d.additionalInformation = :additionalInformation"),
     @NamedQuery(name = "Dataset.findByAccessConstraints", query = "SELECT d FROM Dataset d WHERE d.accessConstraints = :accessConstraints"),
     @NamedQuery(name = "Dataset.findByUseConstraints", query = "SELECT d FROM Dataset d WHERE d.useConstraints = :useConstraints"),
-    @NamedQuery(name = "Dataset.findByDescription", query = "SELECT d FROM Dataset d WHERE d.description = :description")})
+    @NamedQuery(name = "Dataset.findByDateUploaded", query = "SELECT d FROM Dataset d WHERE d.dateUploaded = :dateUploaded"),
+    @NamedQuery(name = "Dataset.findByMetadataLastEdited", query = "SELECT d FROM Dataset d WHERE d.metadataLastEdited = :metadataLastEdited")})
 public class Dataset implements Serializable {
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "dataset")
-    private SiteBoundaryDataset siteBoundaryDataset;
+    private static final long serialVersionUID = 1L;
+    @Id
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 8)
+    @Column(name = "key")
+    private String key;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 200)
+    @Column(name = "title")
+    private String title;
+    @Size(max = 2147483647)
+    @Column(name = "description")
+    private String description;
+    @Size(max = 500)
+    @Column(name = "providerKey")
+    private String providerKey;
+    @Size(max = 2147483647)
+    @Column(name = "dataCaptureMethod")
+    private String dataCaptureMethod;
+    @Size(max = 2147483647)
+    @Column(name = "purpose")
+    private String purpose;
+    @Size(max = 2147483647)
+    @Column(name = "geographicalCoverage")
+    private String geographicalCoverage;
+    @Size(max = 2147483647)
+    @Column(name = "temporalCoverage")
+    private String temporalCoverage;
+    @Size(max = 2147483647)
+    @Column(name = "dataQuality")
+    private String dataQuality;
+    @Size(max = 2147483647)
+    @Column(name = "additionalInformation")
+    private String additionalInformation;
+    @Size(max = 2147483647)
+    @Column(name = "accessConstraints")
+    private String accessConstraints;
+    @Size(max = 2147483647)
+    @Column(name = "useConstraints")
+    private String useConstraints;
     @Basic(optional = false)
     @NotNull
     @Column(name = "dateUploaded")
@@ -49,81 +104,69 @@ public class Dataset implements Serializable {
     @Column(name = "metadataLastEdited")
     @Temporal(TemporalType.TIMESTAMP)
     private Date metadataLastEdited;
-    private static final long serialVersionUID = 1L;
-    @Id
-    @Basic(optional = false)
-    @Column(name = "datasetKey")
-    @Size(min = 8, max = 8, message = "Dataset Key needs to be eight characters long")
-    private String datasetKey;
-    @Basic(optional = false)
-    @Column(name = "conditionsAccepted")
-    private boolean conditionsAccepted;
-    @Column(name = "providerKey")
-    private String providerKey;
-    @Basic(optional = false)
-    @Column(name = "datasetTitle")
-    private String datasetTitle;
-    @Column(name = "dataCaptureMethod")
-    private String dataCaptureMethod;
-    @Column(name = "purpose")
-    private String purpose;
-    @Column(name = "geographicalCoverage")
-    private String geographicalCoverage;
-    @Column(name = "temporalCoverage")
-    private String temporalCoverage;
-    @Column(name = "dataQuality")
-    private String dataQuality;
-    @Column(name = "additionalInformation")
-    private String additionalInformation;
-    @Column(name = "accessConstraints")
-    private String accessConstraints;
-    @Column(name = "useConstraints")
-    private String useConstraints;
-    @Column(name = "description")
-    private String description;
-    @JoinColumn(name = "datasetProvider", referencedColumnName = "organisationID")
-    @ManyToOne(optional = false)
-    private Organisation datasetProvider;
-    @JoinColumn(name = "updateFrequency", referencedColumnName = "code")
-    @ManyToOne(optional = false)
-    private DatasetUpdateFrequency updateFrequency;
-    @JoinColumn(name = "datasetTypeKey", referencedColumnName = "datasetTypeKey")
-    @ManyToOne(optional = false)
-    private DatasetType datasetTypeKey;
+    @JoinTable(name = "DatasetAdministrator", joinColumns = {
+        @JoinColumn(name = "datasetKey", referencedColumnName = "key")}, inverseJoinColumns = {
+        @JoinColumn(name = "userID", referencedColumnName = "id")})
+    @ManyToMany
+    private Collection<User> userCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "datasetKey")
     private Collection<Site> siteCollection;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "dataset")
+    private Collection<DatasetKeyword> datasetKeywordCollection;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "dataset")
     private TaxonDataset taxonDataset;
+    @JoinColumn(name = "providerOrganisationKey", referencedColumnName = "id")
+    @ManyToOne(optional = false)
+    private Organisation providerOrganisationKey;
+    @JoinColumn(name = "updateFrequencyCode", referencedColumnName = "code")
+    @ManyToOne(optional = false)
+    private DatasetUpdateFrequency updateFrequencyCode;
+    @JoinColumn(name = "datasetTypeKey", referencedColumnName = "key")
+    @ManyToOne(optional = false)
+    private DatasetType datasetTypeKey;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "dataset")
+    private Collection<DatasetAttribute> datasetAttributeCollection;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "dataset")
+    private HabitatDataset habitatDataset;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "dataset")
+    private SiteBoundaryDataset siteBoundaryDataset;
 
     public Dataset() {
     }
 
-    public Dataset(String datasetKey) {
-        this.datasetKey = datasetKey;
+    public Dataset(String key) {
+        this.key = key;
     }
 
-    public Dataset(String datasetKey, boolean conditionsAccepted, Date dateUploaded, Date metadataLastEdited, String datasetTitle) {
-        this.datasetKey = datasetKey;
-        this.conditionsAccepted = conditionsAccepted;
+    public Dataset(String key, String title, Date dateUploaded, Date metadataLastEdited) {
+        this.key = key;
+        this.title = title;
         this.dateUploaded = dateUploaded;
         this.metadataLastEdited = metadataLastEdited;
-        this.datasetTitle = datasetTitle;
     }
 
-    public String getDatasetKey() {
-        return datasetKey;
+    public String getKey() {
+        return key;
     }
 
-    public void setDatasetKey(String datasetKey) {
-        this.datasetKey = datasetKey;
+    public void setKey(String key) {
+        this.key = key;
     }
 
-    public boolean getConditionsAccepted() {
-        return conditionsAccepted;
+    public String getTitle() {
+        return title;
     }
 
-    public void setConditionsAccepted(boolean conditionsAccepted) {
-        this.conditionsAccepted = conditionsAccepted;
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getProviderKey() {
@@ -132,14 +175,6 @@ public class Dataset implements Serializable {
 
     public void setProviderKey(String providerKey) {
         this.providerKey = providerKey;
-    }
-
-    public String getDatasetTitle() {
-        return datasetTitle;
-    }
-
-    public void setDatasetTitle(String datasetTitle) {
-        this.datasetTitle = datasetTitle;
     }
 
     public String getDataCaptureMethod() {
@@ -206,80 +241,6 @@ public class Dataset implements Serializable {
         this.useConstraints = useConstraints;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Organisation getDatasetProvider() {
-        return datasetProvider;
-    }
-
-    public void setDatasetProvider(Organisation datasetProvider) {
-        this.datasetProvider = datasetProvider;
-    }
-
-    public DatasetUpdateFrequency getUpdateFrequency() {
-        return updateFrequency;
-    }
-
-    public void setUpdateFrequency(DatasetUpdateFrequency updateFrequency) {
-        this.updateFrequency = updateFrequency;
-    }
-
-    public DatasetType getDatasetTypeKey() {
-        return datasetTypeKey;
-    }
-
-    public void setDatasetTypeKey(DatasetType datasetTypeKey) {
-        this.datasetTypeKey = datasetTypeKey;
-    }
-
-    @XmlTransient
-    public Collection<Site> getSiteCollection() {
-        return siteCollection;
-    }
-
-    public void setSiteCollection(Collection<Site> siteCollection) {
-        this.siteCollection = siteCollection;
-    }
-
-    public TaxonDataset getTaxonDataset() {
-        return taxonDataset;
-    }
-
-    public void setTaxonDataset(TaxonDataset taxonDataset) {
-        this.taxonDataset = taxonDataset;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (datasetKey != null ? datasetKey.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Dataset)) {
-            return false;
-        }
-        Dataset other = (Dataset) object;
-        if ((this.datasetKey == null && other.datasetKey != null) || (this.datasetKey != null && !this.datasetKey.equals(other.datasetKey))) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public String toString() {
-        return "uk.org.nbn.nbnv.jpa.nbncore.Dataset[ datasetKey=" + datasetKey + " ]";
-    }
-
     public Date getDateUploaded() {
         return dateUploaded;
     }
@@ -296,12 +257,113 @@ public class Dataset implements Serializable {
         this.metadataLastEdited = metadataLastEdited;
     }
 
+    @XmlTransient
+    public Collection<User> getUserCollection() {
+        return userCollection;
+    }
+
+    public void setUserCollection(Collection<User> userCollection) {
+        this.userCollection = userCollection;
+    }
+
+    @XmlTransient
+    public Collection<Site> getSiteCollection() {
+        return siteCollection;
+    }
+
+    public void setSiteCollection(Collection<Site> siteCollection) {
+        this.siteCollection = siteCollection;
+    }
+
+    @XmlTransient
+    public Collection<DatasetKeyword> getDatasetKeywordCollection() {
+        return datasetKeywordCollection;
+    }
+
+    public void setDatasetKeywordCollection(Collection<DatasetKeyword> datasetKeywordCollection) {
+        this.datasetKeywordCollection = datasetKeywordCollection;
+    }
+
+    public TaxonDataset getTaxonDataset() {
+        return taxonDataset;
+    }
+
+    public void setTaxonDataset(TaxonDataset taxonDataset) {
+        this.taxonDataset = taxonDataset;
+    }
+
+    public Organisation getProviderOrganisationKey() {
+        return providerOrganisationKey;
+    }
+
+    public void setProviderOrganisationKey(Organisation providerOrganisationKey) {
+        this.providerOrganisationKey = providerOrganisationKey;
+    }
+
+    public DatasetUpdateFrequency getUpdateFrequencyCode() {
+        return updateFrequencyCode;
+    }
+
+    public void setUpdateFrequencyCode(DatasetUpdateFrequency updateFrequencyCode) {
+        this.updateFrequencyCode = updateFrequencyCode;
+    }
+
+    public DatasetType getDatasetTypeKey() {
+        return datasetTypeKey;
+    }
+
+    public void setDatasetTypeKey(DatasetType datasetTypeKey) {
+        this.datasetTypeKey = datasetTypeKey;
+    }
+
+    @XmlTransient
+    public Collection<DatasetAttribute> getDatasetAttributeCollection() {
+        return datasetAttributeCollection;
+    }
+
+    public void setDatasetAttributeCollection(Collection<DatasetAttribute> datasetAttributeCollection) {
+        this.datasetAttributeCollection = datasetAttributeCollection;
+    }
+
+    public HabitatDataset getHabitatDataset() {
+        return habitatDataset;
+    }
+
+    public void setHabitatDataset(HabitatDataset habitatDataset) {
+        this.habitatDataset = habitatDataset;
+    }
+
     public SiteBoundaryDataset getSiteBoundaryDataset() {
         return siteBoundaryDataset;
     }
 
     public void setSiteBoundaryDataset(SiteBoundaryDataset siteBoundaryDataset) {
         this.siteBoundaryDataset = siteBoundaryDataset;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 0;
+        hash += (key != null ? key.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the id fields are not set
+        if (!(object instanceof Dataset)) {
+            return false;
+        }
+        Dataset other = (Dataset) object;
+        if ((this.key == null && other.key != null) || (this.key != null && !this.key.equals(other.key))) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "uk.org.nbn.nbnv.jpa.nbncore.Dataset[ key=" + key + " ]";
     }
     
 }

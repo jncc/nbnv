@@ -5,13 +5,20 @@
 package uk.org.nbn.nbnv.jpa.nbncore;
 
 import java.io.Serializable;
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author Administrator
+ * @author Paul Gilbertson
  */
 @Entity
 @Table(name = "TaxonObservationAttribute")
@@ -31,13 +38,13 @@ public class TaxonObservationAttribute implements Serializable {
     private Long decimalValue;
     @Column(name = "enumValue")
     private Integer enumValue;
-    @Size(max = 200)
+    @Size(max = 255)
     @Column(name = "textValue")
     private String textValue;
-    @JoinColumn(name = "observationID", referencedColumnName = "observationID", insertable = false, updatable = false)
+    @JoinColumn(name = "observationID", referencedColumnName = "id", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private TaxonObservation taxonObservation;
-    @JoinColumn(name = "attributeID", referencedColumnName = "attributeID", insertable = false, updatable = false)
+    @JoinColumn(name = "attributeID", referencedColumnName = "id", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private Attribute attribute;
 

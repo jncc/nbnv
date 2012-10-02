@@ -7,20 +7,23 @@ package uk.org.nbn.nbnv.jpa.nbncore;
 import java.io.Serializable;
 import java.util.Collection;
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author Administrator
+ * @author Paul Gilbertson
  */
 @Entity
 @Table(name = "Sample")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Sample.findAll", query = "SELECT s FROM Sample s"),
-    @NamedQuery(name = "Sample.findBySampleID", query = "SELECT s FROM Sample s WHERE s.sampleID = :sampleID"),
-    @NamedQuery(name = "Sample.findBySampleKey", query = "SELECT s FROM Sample s WHERE s.sampleKey = :sampleKey"),
+    @NamedQuery(name = "Sample.findById", query = "SELECT s FROM Sample s WHERE s.id = :id"),
+    @NamedQuery(name = "Sample.findByProviderKey", query = "SELECT s FROM Sample s WHERE s.providerKey = :providerKey"),
+    @NamedQuery(name = "Sample.findByTitle", query = "SELECT s FROM Sample s WHERE s.title = :title"),
     @NamedQuery(name = "Sample.findByDescription", query = "SELECT s FROM Sample s WHERE s.description = :description"),
     @NamedQuery(name = "Sample.findByGeographicalCoverage", query = "SELECT s FROM Sample s WHERE s.geographicalCoverage = :geographicalCoverage"),
     @NamedQuery(name = "Sample.findByTemporalCoverage", query = "SELECT s FROM Sample s WHERE s.temporalCoverage = :temporalCoverage")})
@@ -29,55 +32,60 @@ public class Sample implements Serializable {
     @Id
     @Basic(optional = false)
     @GeneratedValue(strategy=GenerationType.IDENTITY)
-    @Column(name = "sampleID")
-    private Integer sampleID;
-    @Basic(optional = false)
-    @Column(name = "sampleKey")
-    private String sampleKey;
+    @Column(name = "id")
+    private Integer id;
+    @Size(max = 100)
+    @Column(name = "providerKey")
+    private String providerKey;
+    @Size(max = 200)
+    @Column(name = "title")
+    private String title;
+    @Size(max = 2147483647)
     @Column(name = "description")
     private String description;
+    @Size(max = 2147483647)
     @Column(name = "geographicalCoverage")
     private String geographicalCoverage;
+    @Size(max = 2147483647)
     @Column(name = "temporalCoverage")
     private String temporalCoverage;
-    @JoinColumn(name = "surveyID", referencedColumnName = "surveyID")
-    @ManyToOne(optional = false)
-    private Survey surveyID;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "sampleID")
-    private Collection<TaxonObservationPublic> taxonObservationPublicCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "sampleID")
     private Collection<TaxonObservation> taxonObservationCollection;
+    @JoinColumn(name = "surveyID", referencedColumnName = "id")
+    @ManyToOne(optional = false)
+    private Survey surveyID;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "sample")
+    private Collection<SampleAttribute> sampleAttributeCollection;
 
     public Sample() {
     }
 
-    public Sample(Integer sampleID) {
-        this.sampleID = sampleID;
+    public Sample(Integer id) {
+        this.id = id;
     }
 
-    public Sample(Integer sampleID, String sampleKey) {
-        this.sampleID = sampleID;
-        this.sampleKey = sampleKey;
-    }
-    
-    public Sample(String sampleKey) {
-        this.sampleKey = sampleKey;
+    public Integer getId() {
+        return id;
     }
 
-    public Integer getSampleID() {
-        return sampleID;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
-    public void setSampleID(Integer sampleID) {
-        this.sampleID = sampleID;
+    public String getProviderKey() {
+        return providerKey;
     }
 
-    public String getSampleKey() {
-        return sampleKey;
+    public void setProviderKey(String providerKey) {
+        this.providerKey = providerKey;
     }
 
-    public void setSampleKey(String sampleKey) {
-        this.sampleKey = sampleKey;
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getDescription() {
@@ -104,23 +112,6 @@ public class Sample implements Serializable {
         this.temporalCoverage = temporalCoverage;
     }
 
-    public Survey getSurveyID() {
-        return surveyID;
-    }
-
-    public void setSurveyID(Survey surveyID) {
-        this.surveyID = surveyID;
-    }
-
-    @XmlTransient
-    public Collection<TaxonObservationPublic> getTaxonObservationPublicCollection() {
-        return taxonObservationPublicCollection;
-    }
-
-    public void setTaxonObservationPublicCollection(Collection<TaxonObservationPublic> taxonObservationPublicCollection) {
-        this.taxonObservationPublicCollection = taxonObservationPublicCollection;
-    }
-
     @XmlTransient
     public Collection<TaxonObservation> getTaxonObservationCollection() {
         return taxonObservationCollection;
@@ -130,10 +121,27 @@ public class Sample implements Serializable {
         this.taxonObservationCollection = taxonObservationCollection;
     }
 
+    public Survey getSurveyID() {
+        return surveyID;
+    }
+
+    public void setSurveyID(Survey surveyID) {
+        this.surveyID = surveyID;
+    }
+
+    @XmlTransient
+    public Collection<SampleAttribute> getSampleAttributeCollection() {
+        return sampleAttributeCollection;
+    }
+
+    public void setSampleAttributeCollection(Collection<SampleAttribute> sampleAttributeCollection) {
+        this.sampleAttributeCollection = sampleAttributeCollection;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (sampleID != null ? sampleID.hashCode() : 0);
+        hash += (id != null ? id.hashCode() : 0);
         return hash;
     }
 
@@ -144,7 +152,7 @@ public class Sample implements Serializable {
             return false;
         }
         Sample other = (Sample) object;
-        if ((this.sampleID == null && other.sampleID != null) || (this.sampleID != null && !this.sampleID.equals(other.sampleID))) {
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
         return true;
@@ -152,7 +160,7 @@ public class Sample implements Serializable {
 
     @Override
     public String toString() {
-        return "uk.org.nbn.nbnv.jpa.nbncore.Sample[ sampleID=" + sampleID + " ]";
+        return "uk.org.nbn.nbnv.jpa.nbncore.Sample[ id=" + id + " ]";
     }
     
 }

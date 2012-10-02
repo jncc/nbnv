@@ -33,9 +33,7 @@ import javax.xml.bind.annotation.XmlTransient;
 @NamedQueries({
     @NamedQuery(name = "SiteBoundaryDataset.findAll", query = "SELECT s FROM SiteBoundaryDataset s"),
     @NamedQuery(name = "SiteBoundaryDataset.findByDatasetKey", query = "SELECT s FROM SiteBoundaryDataset s WHERE s.datasetKey = :datasetKey"),
-    @NamedQuery(name = "SiteBoundaryDataset.findByGeoLayerName", query = "SELECT s FROM SiteBoundaryDataset s WHERE s.geoLayerName = :geoLayerName"),
-    @NamedQuery(name = "SiteBoundaryDataset.findByNameField", query = "SELECT s FROM SiteBoundaryDataset s WHERE s.nameField = :nameField"),
-    @NamedQuery(name = "SiteBoundaryDataset.findByGisLayerID", query = "SELECT s FROM SiteBoundaryDataset s WHERE s.gisLayerID = :gisLayerID")})
+    @NamedQuery(name = "SiteBoundaryDataset.findByNameField", query = "SELECT s FROM SiteBoundaryDataset s WHERE s.nameField = :nameField")})
 public class SiteBoundaryDataset implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -47,26 +45,19 @@ public class SiteBoundaryDataset implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 100)
-    @Column(name = "geoLayerName")
-    private String geoLayerName;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 100)
     @Column(name = "nameField")
     private String nameField;
-    @Column(name = "gisLayerID")
-    private Integer gisLayerID;
-    @JoinColumn(name = "siteBoundaryCategory", referencedColumnName = "siteBoundaryTypeID")
-    @ManyToOne(optional = false)
-    private SiteBoundaryType siteBoundaryCategory;
-    @JoinColumn(name = "projection", referencedColumnName = "projectionID")
-    @ManyToOne(optional = false)
-    private Projection projection;
-    @JoinColumn(name = "datasetKey", referencedColumnName = "datasetKey", insertable = false, updatable = false)
-    @OneToOne(optional = false)
-    private Dataset dataset;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "siteBoundaryDataset")
     private Collection<SiteBoundary> siteBoundaryCollection;
+    @JoinColumn(name = "siteBoundaryType", referencedColumnName = "id")
+    @ManyToOne(optional = false)
+    private SiteBoundaryType siteBoundaryType;
+    @JoinColumn(name = "siteBoundaryCategory", referencedColumnName = "id")
+    @ManyToOne(optional = false)
+    private SiteBoundaryCategory siteBoundaryCategory;
+    @JoinColumn(name = "datasetKey", referencedColumnName = "key", insertable = false, updatable = false)
+    @OneToOne(optional = false)
+    private Dataset dataset;
 
     public SiteBoundaryDataset() {
     }
@@ -75,9 +66,8 @@ public class SiteBoundaryDataset implements Serializable {
         this.datasetKey = datasetKey;
     }
 
-    public SiteBoundaryDataset(String datasetKey, String geoLayerName, String nameField) {
+    public SiteBoundaryDataset(String datasetKey, String nameField) {
         this.datasetKey = datasetKey;
-        this.geoLayerName = geoLayerName;
         this.nameField = nameField;
     }
 
@@ -89,52 +79,12 @@ public class SiteBoundaryDataset implements Serializable {
         this.datasetKey = datasetKey;
     }
 
-    public String getGeoLayerName() {
-        return geoLayerName;
-    }
-
-    public void setGeoLayerName(String geoLayerName) {
-        this.geoLayerName = geoLayerName;
-    }
-
     public String getNameField() {
         return nameField;
     }
 
     public void setNameField(String nameField) {
         this.nameField = nameField;
-    }
-
-    public Integer getGisLayerID() {
-        return gisLayerID;
-    }
-
-    public void setGisLayerID(Integer gisLayerID) {
-        this.gisLayerID = gisLayerID;
-    }
-
-    public SiteBoundaryType getSiteBoundaryCategory() {
-        return siteBoundaryCategory;
-    }
-
-    public void setSiteBoundaryCategory(SiteBoundaryType siteBoundaryCategory) {
-        this.siteBoundaryCategory = siteBoundaryCategory;
-    }
-
-    public Projection getProjection() {
-        return projection;
-    }
-
-    public void setProjection(Projection projection) {
-        this.projection = projection;
-    }
-
-    public Dataset getDataset() {
-        return dataset;
-    }
-
-    public void setDataset(Dataset dataset) {
-        this.dataset = dataset;
     }
 
     @XmlTransient
@@ -144,6 +94,30 @@ public class SiteBoundaryDataset implements Serializable {
 
     public void setSiteBoundaryCollection(Collection<SiteBoundary> siteBoundaryCollection) {
         this.siteBoundaryCollection = siteBoundaryCollection;
+    }
+
+    public SiteBoundaryType getSiteBoundaryType() {
+        return siteBoundaryType;
+    }
+
+    public void setSiteBoundaryType(SiteBoundaryType siteBoundaryType) {
+        this.siteBoundaryType = siteBoundaryType;
+    }
+
+    public SiteBoundaryCategory getSiteBoundaryCategory() {
+        return siteBoundaryCategory;
+    }
+
+    public void setSiteBoundaryCategory(SiteBoundaryCategory siteBoundaryCategory) {
+        this.siteBoundaryCategory = siteBoundaryCategory;
+    }
+
+    public Dataset getDataset() {
+        return dataset;
+    }
+
+    public void setDataset(Dataset dataset) {
+        this.dataset = dataset;
     }
 
     @Override
