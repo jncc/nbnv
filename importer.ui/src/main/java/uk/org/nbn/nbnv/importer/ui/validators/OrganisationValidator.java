@@ -32,14 +32,14 @@ public class OrganisationValidator implements Validator {
         Pattern pattern;
         
         // Organisation Name Validators
-        if (org.getOrganisationName().trim().isEmpty()) {
+        if (org.getName().trim().isEmpty()) {
             // Required
             errors.rejectValue("organisationName", "organisationName.required");
         } else {
             // Check Organisation Name does not exist already
             EntityManager em = DatabaseConnection.getInstance().createEntityManager();
-            Query q = em.createNamedQuery("Organisation.findByOrganisationName");
-            q.setParameter("organisationName", org.getOrganisationName());
+            Query q = em.createNamedQuery("Organisation.findByName");
+            q.setParameter("name", org.getName());
 
             if (!q.getResultList().isEmpty()) {
                 errors.rejectValue("organisationName", "organisationName.exists");

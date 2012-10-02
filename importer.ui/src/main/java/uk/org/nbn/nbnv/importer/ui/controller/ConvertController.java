@@ -43,7 +43,7 @@ public class ConvertController {
             ConvertResults model = new ConvertResults();
             
             File in = new File(args.get("filename"));
-            RunConversions rc = new RunConversions(in, organisation.getOrganisationID(), metadataForm);
+            RunConversions rc = new RunConversions(in, organisation.getId(), metadataForm);
             
             File out = File.createTempFile("nbnimporter", "processed.tab");
             File meta = File.createTempFile("nbnimporter", "meta.xml");
@@ -53,9 +53,8 @@ public class ConvertController {
             List<String> errors = rc.run(out, meta, args);
             
             EntityManager em = DatabaseConnection.getInstance().createEntityManager();
-            Query q = em.createNamedQuery("Organisation.findByOrganisationID");
-            q.setParameter("organisationID", organisation.getOrganisationID());
-            List orgs = q.getResultList();
+            Query q = em.createNamedQuery("Organisation.findById");
+            q.setParameter("organisationID", organisation.getId());
             Organisation org = (Organisation) q.getSingleResult();
             
             MetadataWriter mw = new MetadataWriter(metadata);

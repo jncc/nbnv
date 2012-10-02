@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import org.eclipse.persistence.internal.jpa.JPAQuery;
 import uk.org.nbn.nbnv.importer.ui.util.DatabaseConnection;
 import uk.org.nbn.nbnv.jpa.nbncore.Organisation;
 

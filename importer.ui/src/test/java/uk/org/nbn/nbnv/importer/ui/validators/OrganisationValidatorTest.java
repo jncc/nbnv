@@ -65,10 +65,10 @@ public class OrganisationValidatorTest {
 //        o.setAddress("");
 //        o.setAllowPublicRegistration(true);
 //        o.setContactEmail("");
-//        o.setLogo("");
-//        o.setLogoSmall("");
-//        o.setOrganisationID(1);
-//        o.setOrganisationName("");
+//        o.setLogo(null);
+//        o.setLogoSmall(null);
+//        o.setId(1);
+//        o.setName("");
 //        o.setPhone("");
 //        o.setPostcode("");
 //        o.setSummary("");
@@ -109,7 +109,7 @@ public class OrganisationValidatorTest {
 //        assertNotNull(errors.getFieldError("summary"));
 //        assertEquals(errors.getFieldError("summary").getCode(), "summary.required");
 //        
-//        o.setOrganisationName("Very Unique Society of Testing Initiatives");
+//        o.setName("Very Unique Society of Testing Initiatives");
 //        o.setContactName("I. A.M. Real");
 //        o.setContactEmail("test@test.co.uk");
 //        o.setPhone("04442 214445");
@@ -118,16 +118,16 @@ public class OrganisationValidatorTest {
 //        o.setSummary("This is a real summary of an important and most importantly real organisation");
 //        
 //        // Organisation should not already exist TODO: causes build failure on the build server
-////        o.setOrganisationName("Conchological Society of Great Britain & Ireland");
-////        errors = new BeanPropertyBindingResult(o, "o");
-////        instance.validate(o, errors);
-////        
-////        assertTrue(errors.hasErrors());
-////        
-////        assertNotNull(errors.getFieldError("organisationName"));
-////        assertEquals(errors.getFieldError("organisationName").getCode(), "organisationName.exists");
+//        o.setName("Conchological Society of Great Britain & Ireland");
+//        errors = new BeanPropertyBindingResult(o, "o");
+//        instance.validate(o, errors);
 //        
-//        o.setOrganisationName("Very Unique Society of Testing Initiatives");
+//        assertTrue(errors.hasErrors());
+//        
+//        assertNotNull(errors.getFieldError("organisationName"));
+//        assertEquals(errors.getFieldError("organisationName").getCode(), "organisationName.exists");
+//        
+//        o.setName("Very Unique Society of Testing Initiatives");
 //        
 //        // Email should be of a correct format
 //        o.setContactEmail("incorrectemail");
@@ -174,25 +174,26 @@ public class OrganisationValidatorTest {
 //        instance.validate(o, errors);
 //        
 //        assertTrue(!errors.hasErrors());
+//        
 //        errors = new BeanPropertyBindingResult(o, "o");
 //        instance.validate(o, errors);
 //        
 //        assertTrue(!errors.hasErrors());
-//        
-//        // Postcode Validator
-//        // TODO:
-//        
-//        // Valid Organisation Valid?
-//        
-//        
-//        
-////        for (FieldError error : errors.getFieldErrors()) {
-////            System.out.print(error.getField() + " = ");
-////            for (String code : error.getCodes()) {
-////                System.out.print(code + " ");
-////            }
-////            System.out.println();
-////        }        
+        
+        // Postcode Validator
+        // TODO:
+        
+        // Valid Organisation Valid?
+        
+        
+        
+//        for (FieldError error : errors.getFieldErrors()) {
+//            System.out.print(error.getField() + " = ");
+//            for (String code : error.getCodes()) {
+//                System.out.print(code + " ");
+//            }
+//            System.out.println();
+//        }        
         
     }
 }

@@ -116,7 +116,7 @@ public class MetadataWriter {
         
         Element creator = doc.createElement("creator");
         Element organisation = doc.createElement("organizationName");
-        organisation.setTextContent(org.getOrganisationName());
+        organisation.setTextContent(org.getName());
         creator.appendChild(organisation);
         Element email = doc.createElement("electronicMailAddress");
         email.setTextContent(org.getContactEmail());
@@ -140,7 +140,7 @@ public class MetadataWriter {
         creator.appendChild(createNameNode(doc, forename, surname));
 
         Element organisation = doc.createElement("organizationName");
-        organisation.setTextContent(org.getOrganisationName()); 
+        organisation.setTextContent(org.getName()); 
         creator.appendChild(organisation);
 
         Element email = doc.createElement("electronicMailAddress");
@@ -150,6 +150,10 @@ public class MetadataWriter {
         Element url = doc.createElement("onlineUrl");
         url.setTextContent(org.getWebsite());
         creator.appendChild(url);
+        
+        Element id = doc.createElement("userId");
+        id.setTextContent(Integer.toString(ds.getDatasetAdminID()));
+        creator.appendChild(id);
 
         return creator;
     }
