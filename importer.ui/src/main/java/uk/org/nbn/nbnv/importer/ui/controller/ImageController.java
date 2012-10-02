@@ -46,9 +46,9 @@ public class ImageController {
         return null;
     }
     
-    @RequestMapping(value="/imageBase/{id}")
-    public byte[] getImgBase64(@PathVariable String id) {
-        Base64 in = new Base64(true);
-        return in.decode(id);
-    }
+//    @RequestMapping(value="/imageBase/{id}")
+//    public byte[] getImgBase64(@PathVariable String id) {
+//        Base64 in = new Base64(true);
+//        return in.decode(id);
+//    }
 }
