@@ -98,6 +98,10 @@ class FeatureIngester @Inject()(log: Logger, em: EntityManager, repo: Repository
   private def getFeatureByCoordinate(easting: Int, northing: Int, spatailReferenceSystem: Int, gridReferencePrecision: Int = 0) = {
     //Get nearest grid square at 100m or at the grid reference resolution specified.
 
+    // there will be a new method on the factory to get a gridsquare by point
+    // then i need to call the gridsquare ensure method to make sure that the square(s) exist
+//    need to resolve a point (coord) to nearest gridsquare
+//      not expecting points in channel islands
     new Feature()
   }
 }

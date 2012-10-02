@@ -36,6 +36,7 @@ class MetadataParser {
       val additionalInformation = getAdditionalData("Additional Information:")
       val siteIsPublic = true // todo
       val recorderAndDeterminerArePublic = true // todo
+      val publicPrecision = 2000 // todo. expecting this to always be specified
     }
 
   }
