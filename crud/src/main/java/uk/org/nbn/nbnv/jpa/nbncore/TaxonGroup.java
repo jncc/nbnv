@@ -42,7 +42,7 @@ public class TaxonGroup implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 16)
-    @Column(name = "key")
+    @Column(name = "\"key\"")
     private String key;
     @Size(max = 50)
     @Column(name = "name")

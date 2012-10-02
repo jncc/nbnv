@@ -38,7 +38,7 @@ public class Organism implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 16)
-    @Column(name = "key")
+    @Column(name = "\"key\"")
     private String key;
     @OneToMany(mappedBy = "parentOrganismKey")
     private Collection<Organism> organismCollection;
