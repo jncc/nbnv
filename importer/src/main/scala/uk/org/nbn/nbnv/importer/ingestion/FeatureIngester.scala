@@ -29,7 +29,7 @@ class FeatureIngester @Inject()(log: Logger, em: EntityManager, repo: Repository
     }
   }
 
-  def ensureGridRefFeature(gridRef: String, gridReferenceType: String, gridReferencePrecision: Int) = {
+  def ensureGridRefFeature(gridRef: String, gridReferenceType: String = "", gridReferencePrecision: Int = 0) = {
 
     // ensures that the Grid Feature corresponding to the GridSquareInfo, and all its parents, exist
     def ensure(info: GridSquareInfo) : (Feature, GridSquare) = {
