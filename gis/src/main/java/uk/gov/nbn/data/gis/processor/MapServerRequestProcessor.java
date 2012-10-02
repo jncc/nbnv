@@ -3,53 +3,33 @@ package uk.gov.nbn.data.gis.processor;
 import freemarker.template.TemplateException;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Arrays;
-import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
+import java.net.URLEncoder;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 /**
- * The following class is responsible for handling requests which come into a
- * servlet and processing them to ultimately send the client some results.
+ * The following class is responsible for requesting maps from an underlying
+ * MapServer. This is the class which will ultimately push a request to a map server
+ * and return its response in a response object.
  * 
- * This class is merely a helper for a servlet class, but has been decoupled 
- * from a servlet instance for greater integration with spring
+ * Under the hood. All requests which go to the map server utilise post requests.
+ * This allows (practically) unlimited size modifications of the query
  * @author Christopher Johnson
  */
 @Component
 public class MapServerRequestProcessor {
-    @Autowired ApplicationContext context;
-    @Autowired MapServiceMethodFactory serviceFactory;
-    @Autowired InterceptorFactory interceptorFactory;
+    private static final String URL_PARAMETER_ENCODING = "UTF-8";
     @Autowired MapFileGenerator mapFileGenerator;
-    
-    public void processRequest(HttpServletRequest request, 
-            HttpServletResponse servletResponse) throws ServletException, IOException {
-        try {
-            MapServiceMethod mapMethod = serviceFactory.getMatchingPart(request.getPathInfo());
-            Response interceptedResponse = interceptorFactory.getResponse(mapMethod, request);
-            servletResponse.setContentType(interceptedResponse.getContentType());
-            copyAndClose(interceptedResponse.getResponse(), servletResponse);
-        }
-        catch(MapServiceUndefinedException msue) {
-            servletResponse.sendError(HttpServletResponse.SC_NOT_FOUND, "Could not find: " + Arrays.toString(request.getPathInfo().substring(1).split("/")));
-        }
-        catch(InvocationTargetException ite) {
-            handleMapServiceException(ite.getTargetException(), servletResponse);
-        }
-        catch(Throwable mapEx) {
-            throw new ServletException(mapEx);
-        }
-    }
+    @Autowired Properties properties;
     
     /**
      * The following method will obtain a mapping response for the given map 
@@ -66,40 +46,44 @@ public class MapServerRequestProcessor {
      * @throws TemplateException 
      */
     public Response getResponse(MapServiceMethod mapMethod, HttpServletRequest request) throws IllegalAccessException, IllegalArgumentException, IOException, InvocationTargetException, ProviderException, TemplateException {
-        File toSubmitToMapServer = mapFileGenerator.getMapFile(request, mapMethod);
+        File mapFile = mapFileGenerator.getMapFile(request, mapMethod);
         try {
-            URL mapServerURL = serviceFactory.getMapServiceURL(toSubmitToMapServer, request);
-            HttpURLConnection openConnection = (HttpURLConnection)mapServerURL.openConnection();
-            return new Response(openConnection.getContentType(),openConnection.getInputStream());
+            URL mapServerURL = new URL(properties.getProperty("mapserver"));
+            HttpURLConnection conn = (HttpURLConnection)mapServerURL.openConnection();
+            conn.setDoOutput(true);
+            String requestToPost = getQueryFromMap(getMapServerRequest(mapFile, request));
+            OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+            try {
+                wr.write(requestToPost);
+                wr.flush();
+            }
+            finally {
+                wr.close();
+            }
+            return new Response(conn.getContentType(),conn.getInputStream());
         }
         finally {
-            toSubmitToMapServer.delete();
+            mapFile.delete();
         }
     }
     
-    /*Handle execptions which were thrown during the construction of map services*/
-    private static void handleMapServiceException(Throwable e, HttpServletResponse response) throws IOException {
-        if(e instanceof IllegalArgumentException) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getCause().getMessage());
-        }
-        else {
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getCause().getMessage());
-        }
-    }  
+    private static Map<String, String[]> getMapServerRequest(File mapFile, HttpServletRequest request) {
+        Map<String, String[]> modifiedQuery = new HashMap<String, String[]>(request.getParameterMap());
+        modifiedQuery.put("map", new String[] {mapFile.getAbsolutePath()});
+        return modifiedQuery;
+    }
     
-    private static void copyAndClose(InputStream in, HttpServletResponse response) throws IOException {
-        ServletOutputStream out = response.getOutputStream();
-        try {
-            try {
-                IOUtils.copy(in, out);
-                in.close();
-            }
-            finally {
-                in.close();
+    private static String getQueryFromMap(Map<String, String[]> query) throws UnsupportedEncodingException {
+        StringBuilder toReturn = new StringBuilder();
+        
+        for(Map.Entry<String, String[]> entry : query.entrySet()) {
+            for(String currValue : entry.getValue()) {
+                toReturn.append(URLEncoder.encode(entry.getKey(), URL_PARAMETER_ENCODING))
+                        .append("=")
+                        .append(URLEncoder.encode(currValue, URL_PARAMETER_ENCODING))
+                        .append("&");
             }
         }
-        finally {
-            out.close();
-        }
+        return toReturn.substring(0, toReturn.length()-1);
     }
 }

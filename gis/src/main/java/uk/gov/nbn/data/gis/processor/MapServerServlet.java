@@ -25,7 +25,7 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
  */
 public class MapServerServlet extends HttpServlet {
     
-    MapServerRequestProcessor processor;
+    MapServerServletHelper processor;
     MapFileGenerator mapFileGenerator;
     
     @Override public void init(ServletConfig config) throws ServletException {
@@ -34,7 +34,7 @@ public class MapServerServlet extends HttpServlet {
         AutowireCapableBeanFactory beanFactory = WebApplicationContextUtils
                                     .getWebApplicationContext(servletContext)
                                     .getAutowireCapableBeanFactory();
-        processor = beanFactory.getBean(MapServerRequestProcessor.class);
+        processor = beanFactory.getBean(MapServerServletHelper.class);
         mapFileGenerator = beanFactory.getBean(MapFileGenerator.class);
         try {
             mapFileGenerator.setMapTemplateDirectory(new File(config.getServletContext().getRealPath("WEB-INF\\maps")));

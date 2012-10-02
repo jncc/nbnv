@@ -14,12 +14,12 @@ import org.json.JSONObject;
 import org.json.XML;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.gov.nbn.data.gis.processor.InterceptedHttpServletRequest;
 import uk.gov.nbn.data.gis.processor.Interceptor;
 import uk.gov.nbn.data.gis.processor.Intercepts;
 import uk.gov.nbn.data.gis.processor.MapServerRequestProcessor;
 import uk.gov.nbn.data.gis.processor.MapServiceMethod;
 import uk.gov.nbn.data.gis.processor.MapServiceMethod.Type;
-import uk.gov.nbn.data.gis.processor.InterceptedHttpServletRequest;
 import uk.gov.nbn.data.gis.processor.ProviderException;
 import uk.gov.nbn.data.gis.processor.Response;
 

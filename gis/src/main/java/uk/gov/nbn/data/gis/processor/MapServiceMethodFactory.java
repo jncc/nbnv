@@ -1,14 +1,8 @@
 package uk.gov.nbn.data.gis.processor;
 
-import java.io.File;
 import java.lang.reflect.Method;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLEncoder;
 import java.util.*;
-import java.util.Map.Entry;
 import javax.annotation.PostConstruct;
-import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -22,35 +16,11 @@ import uk.gov.nbn.data.gis.processor.MapServiceMethod.Type;
 @Component
 public class MapServiceMethodFactory {
     @Autowired ApplicationContext context;
-    @Autowired Properties properties;
     @Autowired ProviderFactory providerFactory;
     private MapServicePart rootMapService;
     
     @PostConstruct public void init() {
         rootMapService = getMapCreatingMethods();
-    }
-    
-    public URL getMapServiceURL(File mapFile, HttpServletRequest request) throws MalformedURLException {
-        StringBuilder toReturn = new StringBuilder(properties.getProperty("mapserver"))
-                .append("?").append(getMapServerRequest(mapFile, request));
-        return new URL(toReturn.toString());
-    }
-    
-    private static String getMapServerRequest(File mapFile, HttpServletRequest request) {
-        Map<String, String[]> modifiedQuery = new HashMap<String, String[]>(request.getParameterMap());
-        modifiedQuery.put("map", new String[] {URLEncoder.encode(mapFile.getAbsolutePath())});
-        return getQueryFromMap(modifiedQuery);
-    }
-    
-    private static String getQueryFromMap(Map<String, String[]> query) {
-        StringBuilder toReturn = new StringBuilder();
-        
-        for(Entry<String, String[]> entry : query.entrySet()) {
-            for(String currValue : entry.getValue()) {
-                toReturn.append(entry.getKey()).append("=").append(currValue).append("&");
-            }
-        }
-        return toReturn.substring(0, toReturn.length()-1);
     }
     
     /**
