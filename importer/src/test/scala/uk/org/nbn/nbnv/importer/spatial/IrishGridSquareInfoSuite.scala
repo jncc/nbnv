@@ -198,6 +198,32 @@ class IrishGridSquareInfoSuite extends BaseFunSuite {
     lowerIgr.gridReferencePrecision should be (2000)
   }
 
+  test("should compute 10000m grid ref from 1000m grid ref") {
+    val igr = new IrishGridSquareInfo(knownGridRef_1000m)
+
+    val lowerIgr = igr.getLowerPrecisionGridSquareInfo(10000)
+
+    lowerIgr should not be (null)
+    lowerIgr.gridReference should be (knownGridRef_10000m)
+    lowerIgr.gridReferencePrecision should be (10000)
+  }
+
+  test("should return same grid square if requested precision is lower") {
+    val Igr = new IrishGridSquareInfo(knownGridRef_1000m)
+
+    val lowerIgr = Igr.getLowerPrecisionGridSquareInfo(100)
+
+    lowerIgr should be (Igr)
+  }
+
+  test("should return same grid square if requested precision is the same") {
+    val Igr = new IrishGridSquareInfo(knownGridRef_1000m)
+
+    val lowerIgr = Igr.getLowerPrecisionGridSquareInfo(1000)
+
+    lowerIgr should be (Igr)
+  }
+
   test("should give WKT for 100m grid square") {
     val igr = new IrishGridSquareInfo(knownGridRef_100m)
 

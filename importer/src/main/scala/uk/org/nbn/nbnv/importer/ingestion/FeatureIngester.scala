@@ -39,7 +39,8 @@ class FeatureIngester @Inject()(log: Logger, em: EntityManager, repo: Repository
 
         // the feature doesn't exist, so we need to create it
         val f = new Feature
-        f.setWkt(info.wgs84Polygon)
+        //todo : wkt go bye bye
+//        f.setWkt(info.wgs84Polygon)
         // call a procedure to generate geom from wkt - see usp_SpatialLocation_AddLocation in the bars db. don't worry about the STIsValid stuff; it will always be valid because were generating the WKT ourselfes
         // the second argument from STGeomFromText is the spatial reference id. bars uses osgb 277000 NBN uses WSG84.
         // ... todo
@@ -62,7 +63,7 @@ class FeatureIngester @Inject()(log: Logger, em: EntityManager, repo: Repository
         info.getParentGridSquareInfo match {
           case Some(parentInfo) => {
             val (_, parentSquare) = ensure(parentInfo)
-            gs.setParentSquare(parentSquare)
+            gs.setParentSquareGridRef(parentSquare)
           }
           case None => ()
         }
@@ -73,7 +74,7 @@ class FeatureIngester @Inject()(log: Logger, em: EntityManager, repo: Repository
     }
 
     // a GridSquareInfo object can compute all the info we need about a grid square
-    val info = gridSquareInfoFactory.getGridSquare(gridRef, gridReferenceType, gridReferencePrecision)
+    val info = gridSquareInfoFactory.getGridSquareByGridRef(gridRef, gridReferenceType, gridReferencePrecision)
 
     // ensure that the (Feature, GridSquare) pair exists and return the feature
     ensure(info)._1

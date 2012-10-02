@@ -25,8 +25,8 @@ class AttributeIngester @Inject()(log: Logger,
 
       val toa = new TaxonObservationAttribute()
       val pk = new TaxonObservationAttributePK()
-      pk.setAttributeID(attribute.getAttributeID)
-      pk.setObservationID(observation.getObservationID)
+      pk.setAttributeID(attribute.getId)
+      pk.setObservationID(observation.getId)
       toa.setTaxonObservationAttributePK(pk)
       toa.setTextValue(value)
 
@@ -40,7 +40,7 @@ class AttributeIngester @Inject()(log: Logger,
         case Some(a) => a
         case None => {
 
-          val storageLevel = em.find(classOf[StorageLevel], 4) //observation
+          val storageLevel = em.find(classOf[AttributeStorageLevel], 4) //observation
           val storageType = em.find(classOf[AttributeStorageType], 3) //for now all attributes are free text
 
           val a = new Attribute()

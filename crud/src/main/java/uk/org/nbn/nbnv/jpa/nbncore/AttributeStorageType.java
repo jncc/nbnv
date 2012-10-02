@@ -6,7 +6,15 @@ package uk.org.nbn.nbnv.jpa.nbncore;
 
 import java.io.Serializable;
 import java.util.Collection;
-import javax.persistence.*;
+import javax.persistence.Basic;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -14,22 +22,22 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author Administrator
+ * @author Paul Gilbertson
  */
 @Entity
 @Table(name = "AttributeStorageType")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "AttributeStorageType.findAll", query = "SELECT a FROM AttributeStorageType a"),
-    @NamedQuery(name = "AttributeStorageType.findByAttributeStorageTypeID", query = "SELECT a FROM AttributeStorageType a WHERE a.attributeStorageTypeID = :attributeStorageTypeID"),
+    @NamedQuery(name = "AttributeStorageType.findById", query = "SELECT a FROM AttributeStorageType a WHERE a.id = :id"),
     @NamedQuery(name = "AttributeStorageType.findByLabel", query = "SELECT a FROM AttributeStorageType a WHERE a.label = :label")})
 public class AttributeStorageType implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
     @NotNull
-    @Column(name = "attributeStorageTypeID")
-    private Integer attributeStorageTypeID;
+    @Column(name = "id")
+    private Integer id;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 11)
@@ -43,21 +51,21 @@ public class AttributeStorageType implements Serializable {
     public AttributeStorageType() {
     }
 
-    public AttributeStorageType(Integer attributeStorageTypeID) {
-        this.attributeStorageTypeID = attributeStorageTypeID;
+    public AttributeStorageType(Integer id) {
+        this.id = id;
     }
 
-    public AttributeStorageType(Integer attributeStorageTypeID, String label) {
-        this.attributeStorageTypeID = attributeStorageTypeID;
+    public AttributeStorageType(Integer id, String label) {
+        this.id = id;
         this.label = label;
     }
 
-    public Integer getAttributeStorageTypeID() {
-        return attributeStorageTypeID;
+    public Integer getId() {
+        return id;
     }
 
-    public void setAttributeStorageTypeID(Integer attributeStorageTypeID) {
-        this.attributeStorageTypeID = attributeStorageTypeID;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getLabel() {
@@ -89,7 +97,7 @@ public class AttributeStorageType implements Serializable {
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (attributeStorageTypeID != null ? attributeStorageTypeID.hashCode() : 0);
+        hash += (id != null ? id.hashCode() : 0);
         return hash;
     }
 
@@ -100,7 +108,7 @@ public class AttributeStorageType implements Serializable {
             return false;
         }
         AttributeStorageType other = (AttributeStorageType) object;
-        if ((this.attributeStorageTypeID == null && other.attributeStorageTypeID != null) || (this.attributeStorageTypeID != null && !this.attributeStorageTypeID.equals(other.attributeStorageTypeID))) {
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
         return true;
@@ -108,7 +116,7 @@ public class AttributeStorageType implements Serializable {
 
     @Override
     public String toString() {
-        return "uk.org.nbn.nbnv.jpa.nbncore.AttributeStorageType[ attributeStorageTypeID=" + attributeStorageTypeID + " ]";
+        return "uk.org.nbn.nbnv.jpa.nbncore.AttributeStorageType[ id=" + id + " ]";
     }
     
 }

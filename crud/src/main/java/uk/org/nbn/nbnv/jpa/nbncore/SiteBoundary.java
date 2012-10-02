@@ -5,15 +5,19 @@
 package uk.org.nbn.nbnv.jpa.nbncore;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Date;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -21,6 +25,7 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -32,10 +37,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 @NamedQueries({
     @NamedQuery(name = "SiteBoundary.findAll", query = "SELECT s FROM SiteBoundary s"),
     @NamedQuery(name = "SiteBoundary.findByFeatureID", query = "SELECT s FROM SiteBoundary s WHERE s.featureID = :featureID"),
-    @NamedQuery(name = "SiteBoundary.findBySiteBoundaryName", query = "SELECT s FROM SiteBoundary s WHERE s.siteBoundaryName = :siteBoundaryName"),
+    @NamedQuery(name = "SiteBoundary.findByName", query = "SELECT s FROM SiteBoundary s WHERE s.name = :name"),
+    @NamedQuery(name = "SiteBoundary.findByDescription", query = "SELECT s FROM SiteBoundary s WHERE s.description = :description"),
     @NamedQuery(name = "SiteBoundary.findByProviderKey", query = "SELECT s FROM SiteBoundary s WHERE s.providerKey = :providerKey"),
-    @NamedQuery(name = "SiteBoundary.findByUploadDate", query = "SELECT s FROM SiteBoundary s WHERE s.uploadDate = :uploadDate"),
-    @NamedQuery(name = "SiteBoundary.findByDescription", query = "SELECT s FROM SiteBoundary s WHERE s.description = :description")})
+    @NamedQuery(name = "SiteBoundary.findByUploadDate", query = "SELECT s FROM SiteBoundary s WHERE s.uploadDate = :uploadDate")})
 public class SiteBoundary implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -46,8 +51,11 @@ public class SiteBoundary implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 200)
-    @Column(name = "siteBoundaryName")
-    private String siteBoundaryName;
+    @Column(name = "name")
+    private String name;
+    @Size(max = 2147483647)
+    @Column(name = "description")
+    private String description;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 100)
@@ -55,18 +63,27 @@ public class SiteBoundary implements Serializable {
     private String providerKey;
     @Basic(optional = false)
     @NotNull
+    @Lob
+    @Column(name = "geom")
+    private byte[] geom;
+    @Basic(optional = false)
+    @NotNull
     @Column(name = "uploadDate")
     @Temporal(TemporalType.TIMESTAMP)
     private Date uploadDate;
-    @Size(max = 2147483647)
-    @Column(name = "description")
-    private String description;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "siteBoundary")
+    private Collection<SiteBoundaryAttribute> siteBoundaryAttributeCollection;
     @JoinColumn(name = "siteBoundaryDataset", referencedColumnName = "datasetKey")
     @ManyToOne(optional = false)
     private SiteBoundaryDataset siteBoundaryDataset;
-    @JoinColumn(name = "featureID", referencedColumnName = "featureID", insertable = false, updatable = false)
+    @JoinColumn(name = "projectionID", referencedColumnName = "id")
+    @ManyToOne(optional = false)
+    private Projection projectionID;
+    @JoinColumn(name = "featureID", referencedColumnName = "id", insertable = false, updatable = false)
     @OneToOne(optional = false)
     private Feature feature;
+    @OneToMany(mappedBy = "filterSiteBoundary")
+    private Collection<TaxonObservationFilterElement> taxonObservationFilterElementCollection;
 
     public SiteBoundary() {
     }
@@ -75,10 +92,11 @@ public class SiteBoundary implements Serializable {
         this.featureID = featureID;
     }
 
-    public SiteBoundary(Integer featureID, String siteBoundaryName, String providerKey, Date uploadDate) {
+    public SiteBoundary(Integer featureID, String name, String providerKey, byte[] geom, Date uploadDate) {
         this.featureID = featureID;
-        this.siteBoundaryName = siteBoundaryName;
+        this.name = name;
         this.providerKey = providerKey;
+        this.geom = geom;
         this.uploadDate = uploadDate;
     }
 
@@ -90,28 +108,12 @@ public class SiteBoundary implements Serializable {
         this.featureID = featureID;
     }
 
-    public String getSiteBoundaryName() {
-        return siteBoundaryName;
+    public String getName() {
+        return name;
     }
 
-    public void setSiteBoundaryName(String siteBoundaryName) {
-        this.siteBoundaryName = siteBoundaryName;
-    }
-
-    public String getProviderKey() {
-        return providerKey;
-    }
-
-    public void setProviderKey(String providerKey) {
-        this.providerKey = providerKey;
-    }
-
-    public Date getUploadDate() {
-        return uploadDate;
-    }
-
-    public void setUploadDate(Date uploadDate) {
-        this.uploadDate = uploadDate;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getDescription() {
@@ -122,6 +124,39 @@ public class SiteBoundary implements Serializable {
         this.description = description;
     }
 
+    public String getProviderKey() {
+        return providerKey;
+    }
+
+    public void setProviderKey(String providerKey) {
+        this.providerKey = providerKey;
+    }
+
+    public byte[] getGeom() {
+        return geom;
+    }
+
+    public void setGeom(byte[] geom) {
+        this.geom = geom;
+    }
+
+    public Date getUploadDate() {
+        return uploadDate;
+    }
+
+    public void setUploadDate(Date uploadDate) {
+        this.uploadDate = uploadDate;
+    }
+
+    @XmlTransient
+    public Collection<SiteBoundaryAttribute> getSiteBoundaryAttributeCollection() {
+        return siteBoundaryAttributeCollection;
+    }
+
+    public void setSiteBoundaryAttributeCollection(Collection<SiteBoundaryAttribute> siteBoundaryAttributeCollection) {
+        this.siteBoundaryAttributeCollection = siteBoundaryAttributeCollection;
+    }
+
     public SiteBoundaryDataset getSiteBoundaryDataset() {
         return siteBoundaryDataset;
     }
@@ -130,12 +165,29 @@ public class SiteBoundary implements Serializable {
         this.siteBoundaryDataset = siteBoundaryDataset;
     }
 
+    public Projection getProjectionID() {
+        return projectionID;
+    }
+
+    public void setProjectionID(Projection projectionID) {
+        this.projectionID = projectionID;
+    }
+
     public Feature getFeature() {
         return feature;
     }
 
     public void setFeature(Feature feature) {
         this.feature = feature;
+    }
+
+    @XmlTransient
+    public Collection<TaxonObservationFilterElement> getTaxonObservationFilterElementCollection() {
+        return taxonObservationFilterElementCollection;
+    }
+
+    public void setTaxonObservationFilterElementCollection(Collection<TaxonObservationFilterElement> taxonObservationFilterElementCollection) {
+        this.taxonObservationFilterElementCollection = taxonObservationFilterElementCollection;
     }
 
     @Override

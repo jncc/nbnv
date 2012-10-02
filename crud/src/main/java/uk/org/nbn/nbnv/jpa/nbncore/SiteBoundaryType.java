@@ -31,7 +31,7 @@ import javax.xml.bind.annotation.XmlTransient;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "SiteBoundaryType.findAll", query = "SELECT s FROM SiteBoundaryType s"),
-    @NamedQuery(name = "SiteBoundaryType.findBySiteBoundaryTypeID", query = "SELECT s FROM SiteBoundaryType s WHERE s.siteBoundaryTypeID = :siteBoundaryTypeID"),
+    @NamedQuery(name = "SiteBoundaryType.findById", query = "SELECT s FROM SiteBoundaryType s WHERE s.id = :id"),
     @NamedQuery(name = "SiteBoundaryType.findBySiteTypeName", query = "SELECT s FROM SiteBoundaryType s WHERE s.siteTypeName = :siteTypeName"),
     @NamedQuery(name = "SiteBoundaryType.findBySiteTypeCode", query = "SELECT s FROM SiteBoundaryType s WHERE s.siteTypeCode = :siteTypeCode"),
     @NamedQuery(name = "SiteBoundaryType.findByXmlEnumValue", query = "SELECT s FROM SiteBoundaryType s WHERE s.xmlEnumValue = :xmlEnumValue")})
@@ -40,8 +40,8 @@ public class SiteBoundaryType implements Serializable {
     @Id
     @Basic(optional = false)
     @NotNull
-    @Column(name = "siteBoundaryTypeID")
-    private Integer siteBoundaryTypeID;
+    @Column(name = "id")
+    private Integer id;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 100)
@@ -53,32 +53,32 @@ public class SiteBoundaryType implements Serializable {
     @Size(max = 100)
     @Column(name = "xmlEnumValue")
     private String xmlEnumValue;
-    @OneToMany(mappedBy = "parentTypeID")
+    @OneToMany(mappedBy = "parentID")
     private Collection<SiteBoundaryType> siteBoundaryTypeCollection;
-    @JoinColumn(name = "parentTypeID", referencedColumnName = "siteBoundaryTypeID")
+    @JoinColumn(name = "parentID", referencedColumnName = "id")
     @ManyToOne
-    private SiteBoundaryType parentTypeID;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "siteBoundaryCategory")
+    private SiteBoundaryType parentID;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "siteBoundaryType")
     private Collection<SiteBoundaryDataset> siteBoundaryDatasetCollection;
 
     public SiteBoundaryType() {
     }
 
-    public SiteBoundaryType(Integer siteBoundaryTypeID) {
-        this.siteBoundaryTypeID = siteBoundaryTypeID;
+    public SiteBoundaryType(Integer id) {
+        this.id = id;
     }
 
-    public SiteBoundaryType(Integer siteBoundaryTypeID, String siteTypeName) {
-        this.siteBoundaryTypeID = siteBoundaryTypeID;
+    public SiteBoundaryType(Integer id, String siteTypeName) {
+        this.id = id;
         this.siteTypeName = siteTypeName;
     }
 
-    public Integer getSiteBoundaryTypeID() {
-        return siteBoundaryTypeID;
+    public Integer getId() {
+        return id;
     }
 
-    public void setSiteBoundaryTypeID(Integer siteBoundaryTypeID) {
-        this.siteBoundaryTypeID = siteBoundaryTypeID;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getSiteTypeName() {
@@ -114,12 +114,12 @@ public class SiteBoundaryType implements Serializable {
         this.siteBoundaryTypeCollection = siteBoundaryTypeCollection;
     }
 
-    public SiteBoundaryType getParentTypeID() {
-        return parentTypeID;
+    public SiteBoundaryType getParentID() {
+        return parentID;
     }
 
-    public void setParentTypeID(SiteBoundaryType parentTypeID) {
-        this.parentTypeID = parentTypeID;
+    public void setParentID(SiteBoundaryType parentID) {
+        this.parentID = parentID;
     }
 
     @XmlTransient
@@ -134,7 +134,7 @@ public class SiteBoundaryType implements Serializable {
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (siteBoundaryTypeID != null ? siteBoundaryTypeID.hashCode() : 0);
+        hash += (id != null ? id.hashCode() : 0);
         return hash;
     }
 
@@ -145,7 +145,7 @@ public class SiteBoundaryType implements Serializable {
             return false;
         }
         SiteBoundaryType other = (SiteBoundaryType) object;
-        if ((this.siteBoundaryTypeID == null && other.siteBoundaryTypeID != null) || (this.siteBoundaryTypeID != null && !this.siteBoundaryTypeID.equals(other.siteBoundaryTypeID))) {
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
         return true;
@@ -153,7 +153,7 @@ public class SiteBoundaryType implements Serializable {
 
     @Override
     public String toString() {
-        return "uk.org.nbn.nbnv.jpa.nbncore.SiteBoundaryType[ siteBoundaryTypeID=" + siteBoundaryTypeID + " ]";
+        return "uk.org.nbn.nbnv.jpa.nbncore.SiteBoundaryType[ id=" + id + " ]";
     }
     
 }

@@ -30,6 +30,7 @@ MAP
             PLUGIN                                              "msplugin_mssql2008.dll"
             CONNECTION                                          "${properties.spatialConnection}"
             PROCESSING                                          "CLOSE_CONNECTION=DEFER"
+            TEMPLATE                                            "dummy.txt"
 
             DATA                        "geom from (
                                             SELECT geom, sbfd.featureID 
@@ -38,6 +39,11 @@ MAP
                                             INNER JOIN SiteBoundaryData sbd ON sbd.featureID = sbfd.featureID 
                                             WHERE siteBoundaryDatasetKey = '${dataset.datasetKey}'
                                         ) AS foo USING UNIQUE featureID USING SRID=4326"
+
+            METADATA
+                "wms_title"                                       "${dataset.datasetKey}"
+                "wms_include_items"                               "all"
+            END
 
             PROJECTION
                 "init=epsg:4326"

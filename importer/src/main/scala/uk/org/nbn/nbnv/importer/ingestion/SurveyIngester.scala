@@ -14,7 +14,7 @@ class SurveyIngester @Inject()(entityManager: EntityManager, repository: Reposit
     val key = if (surveyKey == "") "1" else surveyKey
 
     def update(s: Survey) {
-      s.setSurveyKey(key)
+      s.setProviderKey(key)
       s.setTitle(key)
       s.setDatasetKey(dataset)
     }

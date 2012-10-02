@@ -34,7 +34,7 @@ public class MetadataWriter {
         this.metadata = metadata;
     }
     
-    public String datasetToEML(Metadata ds) throws Exception {
+    public String datasetToEML(Metadata ds, Organisation org, Date startDate, Date endDate) throws Exception {
         BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(metadata)));
 
         DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
@@ -68,7 +68,7 @@ public class MetadataWriter {
         dataset.appendChild(title);
 
         dataset.appendChild(createCreatorNode(doc, ds));
-        dataset.appendChild(createMetadataProviderNode(doc));
+        dataset.appendChild(createMetadataProviderNode(doc, ds, org));
 
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
         Element pubDate = doc.createElement("pubDate");
@@ -82,7 +82,7 @@ public class MetadataWriter {
         dataset.appendChild(createAbstractNode(doc, ds));
         //dataset.appendChild(createKeywordNode(doc));
         dataset.appendChild(createIntRightsNode(doc, ds));
-        dataset.appendChild(createCoverageNode(doc, ds));
+        dataset.appendChild(createCoverageNode(doc, ds, startDate, endDate));
         dataset.appendChild(createPurposeNode(doc, ds));
         //dataset.appendChild(createContactNode(doc, ds));
         dataset.appendChild(createMethodsNode(doc, ds));
@@ -125,21 +125,30 @@ public class MetadataWriter {
         return creator;
     }
     
-    private Element createMetadataProviderNode(Document doc) {
+    private Element createMetadataProviderNode(Document doc, Metadata ds, Organisation org) {
         Element creator = doc.createElement("metadataProvider");
 
-        creator.appendChild(createNameNode(doc, "Paul", "Gilbertson"));
+        String forename, surname;
+        if (ds.getDatasetAdminName().indexOf(" ") != -1) {
+            forename = ds.getDatasetAdminName().substring(0, ds.getDatasetAdminName().lastIndexOf(" "));
+            surname = ds.getDatasetAdminName().substring(ds.getDatasetAdminName().lastIndexOf(" ") + 1, ds.getDatasetAdminName().length());
+        } else {
+            forename = "";
+            surname = ds.getDatasetAdminName();
+        }
+        
+        creator.appendChild(createNameNode(doc, forename, surname));
 
         Element organisation = doc.createElement("organizationName");
-        organisation.setTextContent("National Biodiversity Network");
+        organisation.setTextContent(org.getOrganisationName()); 
         creator.appendChild(organisation);
 
         Element email = doc.createElement("electronicMailAddress");
-        email.setTextContent("paulbe@ceh.ac.uk");
+        email.setTextContent(ds.getDatasetAdminEmail());
         creator.appendChild(email);
 
         Element url = doc.createElement("onlineUrl");
-        url.setTextContent("http://data.nbn.org.uk/");
+        url.setTextContent(org.getWebsite());
         creator.appendChild(url);
 
         return creator;
@@ -189,10 +198,10 @@ public class MetadataWriter {
         return ir;
     }
 
-    private Element createCoverageNode(Document doc, Metadata ds) {
+    private Element createCoverageNode(Document doc, Metadata ds, Date startDate, Date endDate) {
         Element coverage = doc.createElement("coverage");
         coverage.appendChild(createGeographicCoverageNode(doc, ds));
-        coverage.appendChild(createTemporalCoverageNode(doc));
+        coverage.appendChild(createTemporalCoverageNode(doc, startDate, endDate));
 
         return coverage;
     }
@@ -221,17 +230,14 @@ public class MetadataWriter {
         return coverage;
     }
 
-    private Element createTemporalCoverageNode(Document doc) {
-        Calendar early = Calendar.getInstance();
-        early.set(1600, 1, 1);
-        
+    private Element createTemporalCoverageNode(Document doc, Date startDate, Date endDate) {        
         Element tc = doc.createElement("temporalCoverage");
         Element rod = doc.createElement("rangeOfDates");
         Element begin = doc.createElement("beginDate");
-        begin.appendChild(formatCalendarDate(doc, early.getTime()));
+        begin.appendChild(formatCalendarDate(doc, startDate));
         rod.appendChild(begin);
         Element end = doc.createElement("endDate");
-        end.appendChild(formatCalendarDate(doc, new Date()));
+        end.appendChild(formatCalendarDate(doc, endDate));
         rod.appendChild(end);
         tc.appendChild(rod);
         return tc;
@@ -296,7 +302,10 @@ public class MetadataWriter {
 
     private Element createInfoNode(Document doc, Metadata ds) {
         Element ir = doc.createElement("additionalInfo");
-        ir.appendChild(formatParaTag(doc, "Additional Information: " + ds.getInfo()));
+        ir.appendChild(formatParaTag(doc, "Public Access: " + ds.getGeographicalRes() + 
+                "\nRecorder Names: " + ds.getRecorderNames() + 
+                "\nRecord Attributes: " + ds.getRecordAtts() + 
+                "\nAdditional Information: " + ds.getInfo()));
         return ir;
     }
 }

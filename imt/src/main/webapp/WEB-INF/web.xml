@@ -10,10 +10,6 @@
         <servlet-class>nbn.webmapping.json.search.taxon.AutoCompleteTaxonSearchJSON</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>TreeWidgetGenerator</servlet-name>
-        <servlet-class>nbn.webmapping.json.treewidget.servlet.DHTMLXTreeWidgetGeneratorServlet</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>OrganisationAcknowledgementServlet</servlet-name>
         <servlet-class>nbn.webmapping.json.metadata.acknowledgement.OrganisationAcknowledgementServlet</servlet-class>
     </servlet>
@@ -56,10 +52,6 @@
     <servlet-mapping>
         <servlet-name>TaxonSearch</servlet-name>
         <url-pattern>/TaxonSearch</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>TreeWidgetGenerator</servlet-name>
-        <url-pattern>/TreeWidgetGenerator</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>OrganisationAcknowledgementServlet</servlet-name>

@@ -1,6 +1,6 @@
 package uk.org.nbn.nbnv.api.model;
 
-public class TaxonWithQueryStats {
+public class TaxonWithQueryStats implements Comparable<TaxonWithQueryStats>{
     
     private String taxonVersionKey;
     private int querySpecificObservationCount;
@@ -36,6 +36,11 @@ public class TaxonWithQueryStats {
 
     public void setTaxon(Taxon taxon) {
         this.taxon = taxon;
+    }
+
+    @Override
+    public int compareTo(TaxonWithQueryStats that) {
+        return this.taxon.compareTo(that.taxon);
     }
     
 }

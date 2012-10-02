@@ -13,7 +13,7 @@ class RecorderIngester @Inject()(em: EntityManager, repo: Repository) {
       case Some(r) => r
       case None => {
         val r = new Recorder()
-        r.setRecorderName(name)
+        r.setName(name)
         em.persist(r)
         r
       }

@@ -6,13 +6,23 @@ package uk.org.nbn.nbnv.jpa.nbncore;
 
 import java.io.Serializable;
 import java.util.Collection;
-import javax.persistence.*;
+import javax.persistence.Basic;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author Administrator
+ * @author Paul Gilbertson
  */
 @Entity
 @Table(name = "DatasetUpdateFrequency")
@@ -25,12 +35,16 @@ public class DatasetUpdateFrequency implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 3)
     @Column(name = "code")
     private String code;
     @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 12)
     @Column(name = "label")
     private String label;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "updateFrequency")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "updateFrequencyCode")
     private Collection<Dataset> datasetCollection;
 
     public DatasetUpdateFrequency() {

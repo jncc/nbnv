@@ -10,7 +10,7 @@ class ChannelIslandGridSquareInfo(gridRef: String, precision: Int = 0) extends G
 
   protected def getEastingNorthing(gridRef: String) = {
     //Bottom Left corner of the grid squares
-    val WAbl= (500000,5500000)
+    val WAbl = (500000,5500000)
     val WVbl = (500000,5400000)
 
     val g = getTenFigGridRef(gridRef)

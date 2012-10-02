@@ -6,7 +6,15 @@ package uk.org.nbn.nbnv.jpa.nbncore;
 
 import java.io.Serializable;
 import java.util.Collection;
-import javax.persistence.*;
+import javax.persistence.Basic;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -14,22 +22,22 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author Administrator
+ * @author Paul Gilbertson
  */
 @Entity
-@Table(name = "StorageLevel")
+@Table(name = "AttributeStorageLevel")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "StorageLevel.findAll", query = "SELECT s FROM StorageLevel s"),
-    @NamedQuery(name = "StorageLevel.findByStorageLevelID", query = "SELECT s FROM StorageLevel s WHERE s.storageLevelID = :storageLevelID"),
-    @NamedQuery(name = "StorageLevel.findByLabel", query = "SELECT s FROM StorageLevel s WHERE s.label = :label")})
-public class StorageLevel implements Serializable {
+    @NamedQuery(name = "AttributeStorageLevel.findAll", query = "SELECT a FROM AttributeStorageLevel a"),
+    @NamedQuery(name = "AttributeStorageLevel.findById", query = "SELECT a FROM AttributeStorageLevel a WHERE a.id = :id"),
+    @NamedQuery(name = "AttributeStorageLevel.findByLabel", query = "SELECT a FROM AttributeStorageLevel a WHERE a.label = :label")})
+public class AttributeStorageLevel implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
     @NotNull
-    @Column(name = "storageLevelID")
-    private Integer storageLevelID;
+    @Column(name = "id")
+    private Integer id;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 12)
@@ -38,24 +46,24 @@ public class StorageLevel implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "storageLevelID")
     private Collection<Attribute> attributeCollection;
 
-    public StorageLevel() {
+    public AttributeStorageLevel() {
     }
 
-    public StorageLevel(Integer storageLevelID) {
-        this.storageLevelID = storageLevelID;
+    public AttributeStorageLevel(Integer id) {
+        this.id = id;
     }
 
-    public StorageLevel(Integer storageLevelID, String label) {
-        this.storageLevelID = storageLevelID;
+    public AttributeStorageLevel(Integer id, String label) {
+        this.id = id;
         this.label = label;
     }
 
-    public Integer getStorageLevelID() {
-        return storageLevelID;
+    public Integer getId() {
+        return id;
     }
 
-    public void setStorageLevelID(Integer storageLevelID) {
-        this.storageLevelID = storageLevelID;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getLabel() {
@@ -78,18 +86,18 @@ public class StorageLevel implements Serializable {
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (storageLevelID != null ? storageLevelID.hashCode() : 0);
+        hash += (id != null ? id.hashCode() : 0);
         return hash;
     }
 
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof StorageLevel)) {
+        if (!(object instanceof AttributeStorageLevel)) {
             return false;
         }
-        StorageLevel other = (StorageLevel) object;
-        if ((this.storageLevelID == null && other.storageLevelID != null) || (this.storageLevelID != null && !this.storageLevelID.equals(other.storageLevelID))) {
+        AttributeStorageLevel other = (AttributeStorageLevel) object;
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
         return true;
@@ -97,7 +105,7 @@ public class StorageLevel implements Serializable {
 
     @Override
     public String toString() {
-        return "uk.org.nbn.nbnv.jpa.nbncore.StorageLevel[ storageLevelID=" + storageLevelID + " ]";
+        return "uk.org.nbn.nbnv.jpa.nbncore.AttributeStorageLevel[ id=" + id + " ]";
     }
     
 }

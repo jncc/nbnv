@@ -4,11 +4,13 @@
  */
 package uk.org.nbn.nbnv.importer.ui.model;
 
+import java.io.Serializable;
+
 /**
  *
  * @author Paul Gilbertson
  */
-public class Metadata {
+public class Metadata implements Serializable {
     private String title = "";
     private String description = "";
     private String methods = "";
@@ -22,9 +24,9 @@ public class Metadata {
     private String datasetAdminName = "";
     private String datasetAdminPhone = "";
     private String datasetAdminEmail = "";
-    private String geographicalRes = "10km2";
-    private String recordAtts = "N/A";
-    private String recorderNames = "N/A";
+    private String geographicalRes = "10";
+    private String recordAtts = "na";
+    private String recorderNames = "na";
     private int datasetAdminID = -1;
     private int organisationID = -1;
 

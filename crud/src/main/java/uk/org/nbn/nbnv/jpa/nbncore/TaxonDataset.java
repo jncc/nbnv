@@ -6,13 +6,26 @@ package uk.org.nbn.nbnv.jpa.nbncore;
 
 import java.io.Serializable;
 import java.util.Collection;
-import javax.persistence.*;
+import javax.persistence.Basic;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author Administrator
+ * @author Paul Gilbertson
  */
 @Entity
 @Table(name = "TaxonDataset")
@@ -20,31 +33,31 @@ import javax.xml.bind.annotation.XmlTransient;
 @NamedQueries({
     @NamedQuery(name = "TaxonDataset.findAll", query = "SELECT t FROM TaxonDataset t"),
     @NamedQuery(name = "TaxonDataset.findByDatasetKey", query = "SELECT t FROM TaxonDataset t WHERE t.datasetKey = :datasetKey"),
-    @NamedQuery(name = "TaxonDataset.findByAllowRecordValidation", query = "SELECT t FROM TaxonDataset t WHERE t.allowRecordValidation = :allowRecordValidation"),
-    @NamedQuery(name = "TaxonDataset.findByRecordCount", query = "SELECT t FROM TaxonDataset t WHERE t.recordCount = :recordCount")})
+    @NamedQuery(name = "TaxonDataset.findByAllowRecordValidation", query = "SELECT t FROM TaxonDataset t WHERE t.allowRecordValidation = :allowRecordValidation")})
 public class TaxonDataset implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 8)
     @Column(name = "datasetKey")
     private String datasetKey;
     @Basic(optional = false)
+    @NotNull
     @Column(name = "allowRecordValidation")
     private boolean allowRecordValidation;
-    @Basic(optional = false)
-    @Column(name = "recordCount")
-    private int recordCount;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "datasetKey")
-    private Collection<Survey> surveyCollection;
-    @JoinColumn(name = "publicResolution", referencedColumnName = "resolutionID")
+    @JoinColumn(name = "publicResolutionID", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    private Resolution publicResolution;
-    @JoinColumn(name = "maxResolution", referencedColumnName = "resolutionID")
-    @ManyToOne(optional = false)
-    private Resolution maxResolution;
-    @JoinColumn(name = "datasetKey", referencedColumnName = "datasetKey", insertable = false, updatable = false)
+    private Resolution publicResolutionID;
+    @JoinColumn(name = "datasetKey", referencedColumnName = "key", insertable = false, updatable = false)
     @OneToOne(optional = false)
     private Dataset dataset;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "taxonDataset")
+    private Collection<TaxonObservationDownloadStatistics> taxonObservationDownloadStatisticsCollection;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "datasetKey")
+    private Collection<Survey> surveyCollection;
+    @OneToMany(mappedBy = "filterDatasetKey")
+    private Collection<TaxonObservationFilterElement> taxonObservationFilterElementCollection;
 
     public TaxonDataset() {
     }
@@ -53,10 +66,9 @@ public class TaxonDataset implements Serializable {
         this.datasetKey = datasetKey;
     }
 
-    public TaxonDataset(String datasetKey, boolean allowRecordValidation, int recordCount) {
+    public TaxonDataset(String datasetKey, boolean allowRecordValidation) {
         this.datasetKey = datasetKey;
         this.allowRecordValidation = allowRecordValidation;
-        this.recordCount = recordCount;
     }
 
     public String getDatasetKey() {
@@ -75,12 +87,29 @@ public class TaxonDataset implements Serializable {
         this.allowRecordValidation = allowRecordValidation;
     }
 
-    public int getRecordCount() {
-        return recordCount;
+    public Resolution getPublicResolutionID() {
+        return publicResolutionID;
     }
 
-    public void setRecordCount(int recordCount) {
-        this.recordCount = recordCount;
+    public void setPublicResolutionID(Resolution publicResolutionID) {
+        this.publicResolutionID = publicResolutionID;
+    }
+
+    public Dataset getDataset() {
+        return dataset;
+    }
+
+    public void setDataset(Dataset dataset) {
+        this.dataset = dataset;
+    }
+
+    @XmlTransient
+    public Collection<TaxonObservationDownloadStatistics> getTaxonObservationDownloadStatisticsCollection() {
+        return taxonObservationDownloadStatisticsCollection;
+    }
+
+    public void setTaxonObservationDownloadStatisticsCollection(Collection<TaxonObservationDownloadStatistics> taxonObservationDownloadStatisticsCollection) {
+        this.taxonObservationDownloadStatisticsCollection = taxonObservationDownloadStatisticsCollection;
     }
 
     @XmlTransient
@@ -92,28 +121,13 @@ public class TaxonDataset implements Serializable {
         this.surveyCollection = surveyCollection;
     }
 
-    public Resolution getPublicResolution() {
-        return publicResolution;
+    @XmlTransient
+    public Collection<TaxonObservationFilterElement> getTaxonObservationFilterElementCollection() {
+        return taxonObservationFilterElementCollection;
     }
 
-    public void setPublicResolution(Resolution publicResolution) {
-        this.publicResolution = publicResolution;
-    }
-
-    public Resolution getMaxResolution() {
-        return maxResolution;
-    }
-
-    public void setMaxResolution(Resolution maxResolution) {
-        this.maxResolution = maxResolution;
-    }
-
-    public Dataset getDataset() {
-        return dataset;
-    }
-
-    public void setDataset(Dataset dataset) {
-        this.dataset = dataset;
+    public void setTaxonObservationFilterElementCollection(Collection<TaxonObservationFilterElement> taxonObservationFilterElementCollection) {
+        this.taxonObservationFilterElementCollection = taxonObservationFilterElementCollection;
     }
 
     @Override

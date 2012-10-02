@@ -38,7 +38,7 @@ public interface DatasetMapper {
     })
     TaxonDataset selectTaxonDatasetByID(String datasetKey);
 
-    @Select("SELECT year(startDate) year, COUNT_BIG(*) recordCount FROM TaxonObservationData WHERE datasetKey = #{datasetKey} AND fullVersion = 1 GROUP BY datasetKey, year(startDate) ORDER BY year")
+    @Select("SELECT year(startDate) year, COUNT_BIG(*) recordCount FROM TaxonObservationData WHERE datasetKey = #{datasetKey} AND fullVersion = 1 AND YEAR(startDate) <> 0 GROUP BY datasetKey, year(startDate) ORDER BY year")
     List<YearStats> selectRecordsPerYear(String datasetKey);
     
     @Select("SELECT * FROM DatasetDateTypeRecordCountData WHERE datasetKey = #{datasetKey}")

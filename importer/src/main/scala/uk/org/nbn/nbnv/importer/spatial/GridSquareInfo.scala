@@ -4,7 +4,6 @@ import uk.org.nbn.nbnv.importer.ImportFailedException
 import org.geotools.geometry.GeneralDirectPosition
 import org.geotools.referencing.ReferencingFactoryFinder
 import org.geotools.referencing.operation.DefaultCoordinateOperationFactory
-import javax.persistence.criteria.CriteriaBuilder.Case
 
 abstract class GridSquareInfo(gridRef : String, precision: Int = 0) {
 
@@ -29,7 +28,7 @@ abstract class GridSquareInfo(gridRef : String, precision: Int = 0) {
 
   val dintyGridByLetter = dintyGridByCoord map {_.swap}
 
-  //Check grid ref is uk grid ref
+  //Check grid ref
   checkGridRef
 
   //Check grid ref is not below minimum precision
@@ -46,13 +45,13 @@ abstract class GridSquareInfo(gridRef : String, precision: Int = 0) {
       throw ImportFailedException("Normailised precsion '%s' is greater then grid ref '%s' precision".format(normalisedPrecision, gridRef))
     }
     else if (normalisedPrecision > 0 && normalisedPrecision > currentPrecision) {
-      decreaseGridPrecision(gridRef,normalisedPrecision)
+      decreaseGridPrecision(gridRef.toUpperCase,normalisedPrecision)
     }
     else if (currentPrecision < 100) {
-      decreaseGridPrecision(gridRef, 100)
+      decreaseGridPrecision(gridRef.toUpperCase, 100)
     }
     else {
-      gridRef
+      gridRef.toUpperCase
     }
   }
 
@@ -71,7 +70,12 @@ abstract class GridSquareInfo(gridRef : String, precision: Int = 0) {
   }
 
   def getLowerPrecisionGridSquareInfo(precision: Int) = {
-    create(outputGridRef, precision)
+    if (precision <= gridReferencePrecision) {
+      this
+    }
+    else {
+      create(outputGridRef, precision)
+    }
   }
 
   def sourceProjectionPolygon = {
@@ -203,7 +207,7 @@ abstract class GridSquareInfo(gridRef : String, precision: Int = 0) {
         decreaseGridPrecision(outputGridRef, 10000 )
       }
       else {
-        throw new RuntimeException("Current grid reference has an invalid precision")
+        throw new ImportFailedException("Current grid reference has an invalid precision")
       }
     }
   }

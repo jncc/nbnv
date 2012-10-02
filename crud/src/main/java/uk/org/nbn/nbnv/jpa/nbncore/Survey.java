@@ -7,20 +7,22 @@ package uk.org.nbn.nbnv.jpa.nbncore;
 import java.io.Serializable;
 import java.util.Collection;
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author Administrator
+ * @author Paul Gilbertson
  */
 @Entity
 @Table(name = "Survey")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Survey.findAll", query = "SELECT s FROM Survey s"),
-    @NamedQuery(name = "Survey.findBySurveyID", query = "SELECT s FROM Survey s WHERE s.surveyID = :surveyID"),
-    @NamedQuery(name = "Survey.findBySurveyKey", query = "SELECT s FROM Survey s WHERE s.surveyKey = :surveyKey"),
+    @NamedQuery(name = "Survey.findById", query = "SELECT s FROM Survey s WHERE s.id = :id"),
+    @NamedQuery(name = "Survey.findByProviderKey", query = "SELECT s FROM Survey s WHERE s.providerKey = :providerKey"),
     @NamedQuery(name = "Survey.findByTitle", query = "SELECT s FROM Survey s WHERE s.title = :title"),
     @NamedQuery(name = "Survey.findByDescription", query = "SELECT s FROM Survey s WHERE s.description = :description"),
     @NamedQuery(name = "Survey.findByGeographicalCoverage", query = "SELECT s FROM Survey s WHERE s.geographicalCoverage = :geographicalCoverage"),
@@ -30,58 +32,52 @@ public class Survey implements Serializable {
     @Id
     @Basic(optional = false)
     @GeneratedValue(strategy=GenerationType.IDENTITY)
-    @Column(name = "surveyID")
-    private Integer surveyID;
-    @Basic(optional = false)
-    @Column(name = "surveyKey")
-    private String surveyKey;
-    @Basic(optional = false)
+    @Column(name = "id")
+    private Integer id;
+    @Size(max = 100)
+    @Column(name = "providerKey")
+    private String providerKey;
+    @Size(max = 200)
     @Column(name = "title")
     private String title;
+    @Size(max = 2147483647)
     @Column(name = "description")
     private String description;
+    @Size(max = 2147483647)
     @Column(name = "geographicalCoverage")
     private String geographicalCoverage;
+    @Size(max = 2147483647)
     @Column(name = "temporalCoverage")
     private String temporalCoverage;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "surveyID")
+    private Collection<Sample> sampleCollection;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "survey")
+    private Collection<SurveyAttribute> surveyAttributeCollection;
     @JoinColumn(name = "datasetKey", referencedColumnName = "datasetKey")
     @ManyToOne(optional = false)
     private TaxonDataset datasetKey;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "surveyID")
-    private Collection<Sample> sampleCollection;
 
     public Survey() {
     }
 
-    public Survey(Integer surveyID) {
-        this.surveyID = surveyID;
+    public Survey(Integer id) {
+        this.id = id;
     }
 
-    public Survey(Integer surveyID, String surveyKey, String title) {
-        this.surveyID = surveyID;
-        this.surveyKey = surveyKey;
-        this.title = title;
-    }
-    
-    public Survey(String surveyKey, String title) {
-        this.surveyKey = surveyKey;
-        this.title = title;
+    public Integer getId() {
+        return id;
     }
 
-    public Integer getSurveyID() {
-        return surveyID;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
-    public void setSurveyID(Integer surveyID) {
-        this.surveyID = surveyID;
+    public String getProviderKey() {
+        return providerKey;
     }
 
-    public String getSurveyKey() {
-        return surveyKey;
-    }
-
-    public void setSurveyKey(String surveyKey) {
-        this.surveyKey = surveyKey;
+    public void setProviderKey(String providerKey) {
+        this.providerKey = providerKey;
     }
 
     public String getTitle() {
@@ -116,14 +112,6 @@ public class Survey implements Serializable {
         this.temporalCoverage = temporalCoverage;
     }
 
-    public TaxonDataset getDatasetKey() {
-        return datasetKey;
-    }
-
-    public void setDatasetKey(TaxonDataset datasetKey) {
-        this.datasetKey = datasetKey;
-    }
-
     @XmlTransient
     public Collection<Sample> getSampleCollection() {
         return sampleCollection;
@@ -133,10 +121,27 @@ public class Survey implements Serializable {
         this.sampleCollection = sampleCollection;
     }
 
+    @XmlTransient
+    public Collection<SurveyAttribute> getSurveyAttributeCollection() {
+        return surveyAttributeCollection;
+    }
+
+    public void setSurveyAttributeCollection(Collection<SurveyAttribute> surveyAttributeCollection) {
+        this.surveyAttributeCollection = surveyAttributeCollection;
+    }
+
+    public TaxonDataset getDatasetKey() {
+        return datasetKey;
+    }
+
+    public void setDatasetKey(TaxonDataset datasetKey) {
+        this.datasetKey = datasetKey;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (surveyID != null ? surveyID.hashCode() : 0);
+        hash += (id != null ? id.hashCode() : 0);
         return hash;
     }
 
@@ -147,7 +152,7 @@ public class Survey implements Serializable {
             return false;
         }
         Survey other = (Survey) object;
-        if ((this.surveyID == null && other.surveyID != null) || (this.surveyID != null && !this.surveyID.equals(other.surveyID))) {
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
         return true;
@@ -155,7 +160,7 @@ public class Survey implements Serializable {
 
     @Override
     public String toString() {
-        return "uk.org.nbn.nbnv.jpa.nbncore.Survey[ surveyID=" + surveyID + " ]";
+        return "uk.org.nbn.nbnv.jpa.nbncore.Survey[ id=" + id + " ]";
     }
     
 }

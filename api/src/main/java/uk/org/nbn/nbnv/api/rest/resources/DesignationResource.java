@@ -36,14 +36,14 @@ public class DesignationResource {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Designation getDesignation(@PathParam("id") int id) {
+    public Designation getDesignation(@PathParam("id") String id) {
         return designationMapper.selectByID(id); 
     }
 
     @GET
     @Path("/{id}/designationCategories")
     @Produces(MediaType.APPLICATION_JSON)
-    public DesignationCategory getDesignationCategory(@PathParam("id") int id) {
+    public DesignationCategory getDesignationCategory(@PathParam("id") String id) {
         return designationCategoryMapper.selectByDesignationID(id);
     }
     
@@ -57,7 +57,7 @@ public class DesignationResource {
     @GET
     @Path("/{id}/species")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Taxon> getSpeciesByDesignationAndTaxonNavigationGroup(@PathParam("id") int id, @QueryParam("taxonNavigationGroupId") String taxonNavigationGroupId) {
+    public List<Taxon> getSpeciesByDesignationAndTaxonNavigationGroup(@PathParam("id") String id, @QueryParam("taxonNavigationGroupId") String taxonNavigationGroupId) {
         if(taxonNavigationGroupId != null){
             return taxonMapper.selectByDesignationAndTaxonNavigationGroup(id, taxonNavigationGroupId);
         }else{
@@ -68,7 +68,7 @@ public class DesignationResource {
     @GET
     @Path("{id}/taxonNavigationGroups/{taxonNavigationGroupId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public TaxonNavigationGroup getTaxonNavigationGroupByDesignation(@PathParam("id") int id, @PathParam("taxonNavigationGroupId") String taxonNavigationGroupId){
+    public TaxonNavigationGroup getTaxonNavigationGroupByDesignation(@PathParam("id") String id, @PathParam("taxonNavigationGroupId") String taxonNavigationGroupId){
         TaxonNavigationGroup toReturn = taxonNavigationGroupMapper.getTaxonNavigationGroup(taxonNavigationGroupId);
         toReturn.setChildren(taxonNavigationGroupMapper.getChildrenByDesignation(taxonNavigationGroupId, id));
         return toReturn;

@@ -16,7 +16,6 @@ GO
 --------------------------------
 
 CREATE DATABASE [NBNCore]
- CONTAINMENT = NONE
  ON  PRIMARY 
 ( NAME = N'NBNCore', FILENAME = N'd:\Program Files\Microsoft SQL Server\MSSQL11.MSSQLSERVER\MSSQL\DATA\NBNCoreNew.mdf' , MAXSIZE = UNLIMITED, FILEGROWTH = 1024KB )
  LOG ON 
@@ -99,7 +98,7 @@ GO
 CREATE TABLE [dbo].[Organisation](
 	[id] [int] IDENTITY(1,1) NOT NULL PRIMARY KEY,
 	[name] [varchar](200) NOT NULL UNIQUE,
-	[abbreviation] [varchar](10) NULL UNIQUE,
+	[abbreviation] [varchar](10) NULL,
 	[summary] [varchar](max) NULL,
 	[address] [varchar](200) NULL,
 	[postcode] [varchar](10) NULL,
@@ -441,6 +440,47 @@ CREATE SPATIAL INDEX [sidx_GridSquare_geom] ON [dbo].[GridSquare] (
 SET ANSI_PADDING OFF; 
 
 ------------------------------
+GO
+
+-- =============================================
+-- Author:		Paul Gilbertson
+-- Create date: 20120118
+-- Description:	Creates a Feature from WKT
+-- =============================================
+CREATE PROCEDURE [dbo].[import_UpdateGridSquare]
+	@featureID INT,
+	@wkt VARCHAR(MAX)
+AS
+BEGIN
+	UPDATE GridSquare SET geom = geometry::STGeomFromText(@wkt, 4326) WHERE featureID = @featureID
+END
+
+GO
+
+------------------------------
+
+GO
+
+-- =============================================
+-- Author:		Paul Gilbertson
+-- Create date: 20120118
+-- Description:	Creates a Feature from WKT
+-- =============================================
+CREATE PROCEDURE [dbo].[import_CreateGridSquare]
+	@featureID INT
+	, @gridRef VARCHAR(12)
+	, @parentSquareGridRef VARCHAR(12)
+	, @projectionID INT
+	, @resolutionID INT
+	, @wkt VARCHAR(MAX)
+AS
+BEGIN
+	INSERT INTO GridSquare (featureID, gridRef, parentSquareGridRef, projectionID, resolutionID, geom) VALUES (@featureID, @gridRef, @parentSquareGridRef, @projectionID, @resolutionID, geometry::STGeomFromText(@wkt, 4326))
+END
+
+GO
+
+------------------------------
 
 CREATE TABLE [dbo].[GridTree](
 	[featureID] [int] NOT NULL REFERENCES [Feature] ([id]),
@@ -611,7 +651,7 @@ INSERT INTO [TaxonNameStatus] VALUES
 
 CREATE TABLE [dbo].[Organism](
 	[key] [char](16) NOT NULL PRIMARY KEY,
-	[parentOrganismKey] [char](16) NOT NULL REFERENCES [Organism] ([key])
+	[parentOrganismKey] [char](16) NULL REFERENCES [Organism] ([key])
 );
 
 ------------------------------
@@ -631,16 +671,23 @@ CREATE TABLE [dbo].[Taxon](
 	[taxonVersionKey] [char](16) NOT NULL PRIMARY KEY,
 	[pTaxonVersionKey] [char](16) NOT NULL REFERENCES [Taxon] ([taxonVersionKey]),
 	[organismKey] [char](16) NOT NULL REFERENCES [Organism] ([key]),
-	[name] [varchar](85) NULL,
+	[name] [varchar](181) NOT NULL,
 	[authority] [varchar](80) NULL,
 	[languageKey] [char](2) NOT NULL REFERENCES [Language] ([key]),
 	[commonNameTaxonVersionKey] [char](16) NULL REFERENCES [Taxon] ([taxonVersionKey]),
-	[taxonCode] [varchar](5) NULL UNIQUE,
+	[taxonCode] [varchar](5) NULL,
 	[taxonRankID] [int] NOT NULL REFERENCES [TaxonRank] ([id]),
 	[taxonNameStatusKey] [char](1) NOT NULL REFERENCES [TaxonNameStatus] ([key]),
 	[taxonVersionFormKey] [char](1)  NOT NULL REFERENCES [TaxonVersionForm] ([key]),
-	[taxonOutputGroupKey] [char](16) NULL REFERENCES [TaxonGroup] ([key]),
-	[taxonNavigationGroupKey] [char](16) NULL REFERENCES [TaxonGroup] ([key]),
+	[taxonOutputGroupKey] [char](16) NULL REFERENCES [TaxonGroup] ([key])
+);
+
+------------------------------
+
+CREATE TABLE [dbo].[TaxonNavigation](
+	[taxonVersionKey] [char](16) NOT NULL REFERENCES [Taxon] ([taxonVersionKey]),
+	[taxonNavigationGroupKey] [char](16) NOT NULL REFERENCES [TaxonGroup] ([key]),
+	PRIMARY KEY ([taxonVersionKey] ASC, [taxonNavigationGroupKey] ASC)
 );
 
 /*

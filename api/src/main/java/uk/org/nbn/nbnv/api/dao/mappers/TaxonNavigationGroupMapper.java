@@ -34,9 +34,9 @@ public interface TaxonNavigationGroupMapper {
     @Select("SELECT * FROM TaxonData WHERE outputGroupKey = #{taxonGroupKey}")
     List<Taxon> getTaxa(@Param("taxonGroupKey") String taxonGroupKey, RowBounds bounds);
     
-    @Select("SELECT * from DesignationTaxonNavigationGroupData WHERE designationID = #{id} AND parent IS NULL ORDER BY sortOrder ASC")
-    List<TaxonNavigationGroup> getTopLevelssByDesignationID(int id);
+    @Select("SELECT dtngd.* from DesignationTaxonNavigationGroupData  dtngd INNER JOIN DesignationData dd ON dtngd.designationID = dd.designationID WHERE code = #{id} AND parent IS NULL ORDER BY sortOrder ASC")
+    List<TaxonNavigationGroup> getTopLevelsByDesignationID(String id);
     
-    @Select("SELECT * from DesignationTaxonNavigationGroupData WHERE designationID = #{designationId} AND parent = #{taxonNavigationGroupId} ORDER BY sortOrder ASC")
-    List<TaxonNavigationGroup> getChildrenByDesignation(@Param("taxonNavigationGroupId") String taxonNavigationGroupId, @Param("designationId") int designationId);
+    @Select("SELECT dtngd.* FROM DesignationTaxonNavigationGroupData dtngd INNER JOIN DesignationData dd ON dtngd.designationID = dd.designationID WHERE code = #{designationId} AND parent = #{taxonNavigationGroupId} ORDER BY sortOrder ASC")
+    List<TaxonNavigationGroup> getChildrenByDesignation(@Param("taxonNavigationGroupId") String taxonNavigationGroupId, @Param("designationId") String designationId);
 }
