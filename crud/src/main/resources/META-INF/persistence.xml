@@ -31,6 +31,39 @@
     <class>uk.org.nbn.nbnv.jpa.nbncore.SiteBoundary</class>
     <class>uk.org.nbn.nbnv.jpa.nbncore.SiteBoundaryType</class>
     <class>uk.org.nbn.nbnv.jpa.nbncore.UserData</class>
+    <class>uk.org.nbn.nbnv.jpa.nbncore.Organism</class>
+    <class>uk.org.nbn.nbnv.jpa.nbncore.SiteBoundaryCategory</class>
+    <class>uk.org.nbn.nbnv.jpa.nbncore.TaxonVersionForm</class>
+    <class>uk.org.nbn.nbnv.jpa.nbncore.Language</class>
+    <class>uk.org.nbn.nbnv.jpa.nbncore.AttributeStorageLevel</class>
+    <class>uk.org.nbn.nbnv.jpa.nbncore.TaxonNameStatus</class>
+    <class>uk.org.nbn.nbnv.jpa.nbncore.TaxonRank</class>
+    <class>uk.org.nbn.nbnv.jpa.nbncore.TaxonObservationFilterElement</class>
+    <class>uk.org.nbn.nbnv.jpa.nbncore.UserOrganisationRole</class>
+    <class>uk.org.nbn.nbnv.jpa.nbncore.AccessRequestType</class>
+    <class>uk.org.nbn.nbnv.jpa.nbncore.TaxonObservationDownload</class>
+    <class>uk.org.nbn.nbnv.jpa.nbncore.OrganisationAccessRequest</class>
+    <class>uk.org.nbn.nbnv.jpa.nbncore.TaxonObservationDownloadPurpose</class>
+    <class>uk.org.nbn.nbnv.jpa.nbncore.DatasetAttribute</class>
+    <class>uk.org.nbn.nbnv.jpa.nbncore.UserOrganisationMembership</class>
+    <class>uk.org.nbn.nbnv.jpa.nbncore.UserType</class>
+    <class>uk.org.nbn.nbnv.jpa.nbncore.SampleAttribute</class>
+    <class>uk.org.nbn.nbnv.jpa.nbncore.SurveyAttribute</class>
+    <class>uk.org.nbn.nbnv.jpa.nbncore.AccessRequestResponseType</class>
+    <class>uk.org.nbn.nbnv.jpa.nbncore.TaxonObservationFilter</class>
+    <class>uk.org.nbn.nbnv.jpa.nbncore.TaxonObservationDownloadStatistics</class>
+    <class>uk.org.nbn.nbnv.jpa.nbncore.SiteBoundaryAttribute</class>
+    <class>uk.org.nbn.nbnv.jpa.nbncore.User</class>
+    <class>uk.org.nbn.nbnv.jpa.nbncore.DesignationCategory</class>
+    <class>uk.org.nbn.nbnv.jpa.nbncore.TaxonDesignation</class>
+    <class>uk.org.nbn.nbnv.jpa.nbncore.AccessRequestRole</class>
+    <class>uk.org.nbn.nbnv.jpa.nbncore.DatasetKeyword</class>
+    <class>uk.org.nbn.nbnv.jpa.nbncore.HabitatDataset</class>
+    <class>uk.org.nbn.nbnv.jpa.nbncore.TaxonObservationFilterElementType</class>
+    <class>uk.org.nbn.nbnv.jpa.nbncore.GatewayAttributeEnumeration</class>
+    <class>uk.org.nbn.nbnv.jpa.nbncore.UserAccessRequest</class>
+    <class>uk.org.nbn.nbnv.jpa.nbncore.TaxonAttribute</class>
+    <class>uk.org.nbn.nbnv.jpa.nbncore.Designation</class>
     <shared-cache-mode>ENABLE_SELECTIVE</shared-cache-mode>
     <properties>
       <property name="javax.persistence.jdbc.driver" value="com.microsoft.sqlserver.jdbc.SQLServerDriver"/>

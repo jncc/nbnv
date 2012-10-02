@@ -302,7 +302,10 @@ public class MetadataWriter {
 
     private Element createInfoNode(Document doc, Metadata ds) {
         Element ir = doc.createElement("additionalInfo");
-        ir.appendChild(formatParaTag(doc, "Additional Information: " + ds.getInfo()));
+        ir.appendChild(formatParaTag(doc, "Public Access: " + ds.getGeographicalRes() + 
+                "\nRecorder Names: " + ds.getRecorderNames() + 
+                "\nRecord Attributes: " + ds.getRecordAtts() + 
+                "\nAdditional Information: " + ds.getInfo()));
         return ir;
     }
 }

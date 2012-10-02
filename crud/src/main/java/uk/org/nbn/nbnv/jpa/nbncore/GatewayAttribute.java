@@ -14,23 +14,23 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author Administrator
+ * @author Paul Gilbertson
  */
 @Entity
 @Table(name = "GatewayAttribute")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "GatewayAttribute.findAll", query = "SELECT g FROM GatewayAttribute g"),
-    @NamedQuery(name = "GatewayAttribute.findByGatewayAttributeID", query = "SELECT g FROM GatewayAttribute g WHERE g.gatewayAttributeID = :gatewayAttributeID"),
+    @NamedQuery(name = "GatewayAttribute.findById", query = "SELECT g FROM GatewayAttribute g WHERE g.id = :id"),
     @NamedQuery(name = "GatewayAttribute.findByLabel", query = "SELECT g FROM GatewayAttribute g WHERE g.label = :label"),
     @NamedQuery(name = "GatewayAttribute.findByDescription", query = "SELECT g FROM GatewayAttribute g WHERE g.description = :description")})
 public class GatewayAttribute implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
-    @NotNull
-    @Column(name = "gatewayAttributeID")
-    private Integer gatewayAttributeID;
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Integer id;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 50)
@@ -41,31 +41,33 @@ public class GatewayAttribute implements Serializable {
     @Size(min = 1, max = 2147483647)
     @Column(name = "description")
     private String description;
-    @JoinColumn(name = "storageTypeID", referencedColumnName = "attributeStorageTypeID")
+    @JoinColumn(name = "storageTypeID", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private AttributeStorageType storageTypeID;
     @OneToMany(mappedBy = "gatewayAttributeID")
     private Collection<Attribute> attributeCollection;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "gatewayAttribute")
+    private Collection<GatewayAttributeEnumeration> gatewayAttributeEnumerationCollection;
 
     public GatewayAttribute() {
     }
 
-    public GatewayAttribute(Integer gatewayAttributeID) {
-        this.gatewayAttributeID = gatewayAttributeID;
+    public GatewayAttribute(Integer id) {
+        this.id = id;
     }
 
-    public GatewayAttribute(Integer gatewayAttributeID, String label, String description) {
-        this.gatewayAttributeID = gatewayAttributeID;
+    public GatewayAttribute(Integer id, String label, String description) {
+        this.id = id;
         this.label = label;
         this.description = description;
     }
 
-    public Integer getGatewayAttributeID() {
-        return gatewayAttributeID;
+    public Integer getId() {
+        return id;
     }
 
-    public void setGatewayAttributeID(Integer gatewayAttributeID) {
-        this.gatewayAttributeID = gatewayAttributeID;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getLabel() {
@@ -101,10 +103,19 @@ public class GatewayAttribute implements Serializable {
         this.attributeCollection = attributeCollection;
     }
 
+    @XmlTransient
+    public Collection<GatewayAttributeEnumeration> getGatewayAttributeEnumerationCollection() {
+        return gatewayAttributeEnumerationCollection;
+    }
+
+    public void setGatewayAttributeEnumerationCollection(Collection<GatewayAttributeEnumeration> gatewayAttributeEnumerationCollection) {
+        this.gatewayAttributeEnumerationCollection = gatewayAttributeEnumerationCollection;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (gatewayAttributeID != null ? gatewayAttributeID.hashCode() : 0);
+        hash += (id != null ? id.hashCode() : 0);
         return hash;
     }
 
@@ -115,7 +126,7 @@ public class GatewayAttribute implements Serializable {
             return false;
         }
         GatewayAttribute other = (GatewayAttribute) object;
-        if ((this.gatewayAttributeID == null && other.gatewayAttributeID != null) || (this.gatewayAttributeID != null && !this.gatewayAttributeID.equals(other.gatewayAttributeID))) {
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
         return true;
@@ -123,7 +134,7 @@ public class GatewayAttribute implements Serializable {
 
     @Override
     public String toString() {
-        return "uk.org.nbn.nbnv.jpa.nbncore.GatewayAttribute[ gatewayAttributeID=" + gatewayAttributeID + " ]";
+        return "uk.org.nbn.nbnv.jpa.nbncore.GatewayAttribute[ id=" + id + " ]";
     }
     
 }

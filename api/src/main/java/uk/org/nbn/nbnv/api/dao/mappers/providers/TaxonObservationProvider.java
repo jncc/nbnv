@@ -73,7 +73,8 @@ public class TaxonObservationProvider {
 
         if (params.containsKey("datasetKey") && params.get("datasetKey") != null) {
             if(params.get("datasetKey") instanceof List){
-                if(((List<String>)params.get("datasetKey")).size() > 0){
+                List<String> datasetArgs = (List<String>)params.get("datasetKey");
+                if(datasetArgs.size() > 0 && !"".equals(datasetArgs.get(0))){
                     WHERE("datasetKey IN " + datasetListToCommaList((List<String>) params.get("datasetKey")));
                 }
             }else{
@@ -83,11 +84,11 @@ public class TaxonObservationProvider {
 
         if (params.containsKey("ptvk") && params.get("ptvk") != null) {
             if(params.get("ptvk") instanceof List){
-                if(((List<String>)params.get("ptvk")).size() > 0){
+                List<String> ptvkArgs = (List<String>)params.get("ptvk");
+                if(ptvkArgs.size() > 0 && !"".equals(ptvkArgs.get(0))){
                     WHERE("pTaxonVersionKey IN " + taxaListToCommaList((List<String>) params.get("ptvk")));
                 }
-            }
-            else {
+            }else{
                 WHERE("pTaxonVersionKey = '" + params.get("ptvk") + "'");
             }
         }
@@ -141,4 +142,5 @@ public class TaxonObservationProvider {
 
         return "('" + StringUtils.collectionToDelimitedString(list, "','") + "')";
     }
+    
 }

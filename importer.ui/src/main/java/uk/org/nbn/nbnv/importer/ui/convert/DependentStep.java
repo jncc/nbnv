@@ -23,8 +23,9 @@ public abstract class DependentStep implements ConverterStep {
     public static final int ADD_COLUMNS = 2;
     public static final int INSERT_COLUMN = 4;
     public static final int PERSIST = 8;
-    public static final int RUN_FIRST = 16;
-    public static final int RUN_LAST = 32;
+    public static final int MODIFY = 16;
+    public static final int RUN_FIRST = 32;
+    public static final int RUN_LAST = 64;
     
     public DependentStep(int modifier) {
         this.modifier = modifier;

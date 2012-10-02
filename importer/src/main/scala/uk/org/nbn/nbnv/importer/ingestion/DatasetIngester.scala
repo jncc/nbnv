@@ -62,7 +62,7 @@ class DatasetIngester @Inject()(log: Logger,
 
   def modifyDataset(d: Dataset, m: Metadata) = {
 
-    val provider = repository.getOrganisation(m.datasetProviderName)
+    val providerOrganisation = repository.getOrganisation(m.datasetProviderName)
     val datasetUpdateFrequency = em.getReference(classOf[DatasetUpdateFrequency], "012")
     val datasetType = em.getReference(classOf[DatasetType], 'T')
 
@@ -77,7 +77,7 @@ class DatasetIngester @Inject()(log: Logger,
     setMetadata(m.dataCaptureMethod, d.getDataCaptureMethod, d.setDataCaptureMethod)
     setMetadata(m.accessConstraints, d.getAccessConstraints, d.setAccessConstraints)
     setMetadata(m.dataQuality, d.getDataQuality, d.setDataQuality)
-    setMetadata(m.datasetTitle, d.getDatasetTitle, d.setDatasetTitle)
+    setMetadata(m.datasetTitle, d.getTitle, d.setTitle)
     setMetadata(m.description, d.getDescription, d.setDescription)
     setMetadata(m.geographicCoverage, d.getGeographicalCoverage, d.setGeographicalCoverage)
     setMetadata(m.purpose, d.getPurpose, d.setPurpose)
@@ -85,10 +85,10 @@ class DatasetIngester @Inject()(log: Logger,
     setMetadata(m.additionalInformation, d.getAdditionalInformation, d.setAdditionalInformation)
     setMetadata(m.temporalCoverage, d.getTemporalCoverage, d.setTemporalCoverage)
 
-    d.setDatasetProvider(provider) // not metadata
+    d.setProviderOrganisationKey(providerOrganisation) // not metadata
     d.setDatasetTypeKey(datasetType) // never changes, always 'T'
     d.setDateUploaded(Clock.nowUtc) // eventDate of this import
-    d.setUpdateFrequency(datasetUpdateFrequency) // never changes, always '012'
+    d.setUpdateFrequencyCode(datasetUpdateFrequency) // never changes, always '012'
 
     if (metadataChanged)
       d.setMetadataLastEdited(Clock.nowUtc)
@@ -102,8 +102,7 @@ class DatasetIngester @Inject()(log: Logger,
   private def modifyTaxonDataset(td: TaxonDataset, m: Metadata) {
 
     val resolution = em.getReference(classOf[Resolution], 1.toShort)
-    td.setPublicResolution(resolution) // column will be deleted
-    td.setMaxResolution(resolution)    // column will be deleted
+    td.setPublicResolutionID(resolution) // column will be deleted
 
     // default .. to be read from extra metadata.
     // ...could be more columns like this

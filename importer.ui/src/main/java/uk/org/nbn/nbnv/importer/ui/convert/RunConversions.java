@@ -327,11 +327,13 @@ public class RunConversions {
                 try {
                     updateStartEndDates(row);
                     modifyRow(getSteps(), row);
+                } catch (AmbiguousDataException ex) { 
+                    errors.add("Ambiguous Data: " + ex.getMessage());
                 } catch (BadDataException ex) {
                     errors.add("Bad Data: " + ex.getMessage());
                 } catch (ParseException ex) {
                     errors.add("Error Parsing Date fields: " + ex.getMessage());
-                }
+                } 
                 w.write(StringUtils.collectionToDelimitedString(row, "\t"));
                 w.newLine();
             }

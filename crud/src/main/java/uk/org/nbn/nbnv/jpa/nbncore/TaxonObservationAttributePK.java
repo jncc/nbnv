@@ -12,7 +12,7 @@ import javax.validation.constraints.NotNull;
 
 /**
  *
- * @author Administrator
+ * @author Paul Gilbertson
  */
 @Embeddable
 public class TaxonObservationAttributePK implements Serializable {
