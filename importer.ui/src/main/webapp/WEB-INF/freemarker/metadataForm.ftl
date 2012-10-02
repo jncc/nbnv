@@ -39,7 +39,7 @@
                     <span class="formfield">
                         <select path="metadata" name="organisationID" id="organisationID">
                             <#list model.organisationList as org>
-                                <option value="${org.organisationID}" <#if model.metadata.organisationID==org.organisationID>selected="selected"</#if>>${org.organisationName}</option>
+                                <option value="${org.id}" <#if model.metadata.organisationID==org.id>selected="selected"</#if>>${org.name}</option>
                             </#list>
                         </select>
                     </span>

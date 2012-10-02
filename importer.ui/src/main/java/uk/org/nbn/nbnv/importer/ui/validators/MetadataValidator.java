@@ -12,7 +12,7 @@ import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 import uk.org.nbn.nbnv.importer.ui.model.Metadata;
 import uk.org.nbn.nbnv.importer.ui.util.DatabaseConnection;
-import uk.org.nbn.nbnv.jpa.nbncore.UserData;
+import uk.org.nbn.nbnv.jpa.nbncore.User;
 
 /**
  *
@@ -37,12 +37,12 @@ public class MetadataValidator implements Validator {
         Metadata meta = (Metadata) o;
         
         EntityManager em = DatabaseConnection.getInstance().createEntityManager();
-        Query q = em.createNamedQuery("UserData.findByEmail");
+        Query q = em.createNamedQuery("User.findByEmail");
         q.setParameter("email", meta.getDatasetAdminEmail());
         
         List res = q.getResultList();
         if (res.size() == 1) {
-            UserData user = (UserData) res.get(0);
+            User user = (User) res.get(0);
             meta.setDatasetAdminID(user.getId());
         } else {
             errors.rejectValue("datasetAdminEmail", "datasetAdminEmail.notFound");

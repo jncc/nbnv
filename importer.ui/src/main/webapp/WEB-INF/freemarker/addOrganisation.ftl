@@ -10,7 +10,7 @@
                 <legend>Add A New Organisation</legend>
                 <p>
                     <span class="formlabel"><label for="organisationName" path="organisation">Organisation Name</label></span>
-                    <span class="formfield"><@spring.formInput "orgForm.organisation.organisationName" "class='wide' length='200'"/></span>
+                    <span class="formfield"><@spring.formInput "orgForm.organisation.name" "class='wide' length='200'"/></span>
                     <@spring.showErrors "" "error" />
                 </p>    
                 <p>
@@ -53,15 +53,15 @@
                     <span class="formlabel"><label for="logo" path="organisation">Logo</label></span>
 
                     <span class="formfield">
-                        <@spring.bind "orgForm.organisation.logo" />
+                        <@spring.bind "orgForm.logo" />
                         <img alt="" src="${spring.status.value?default("")}"/>
 
-                        <@spring.formHiddenInput "orgForm.organisation.logo" "class='wide' length='1000'"/>
+                        <@spring.formHiddenInput "orgForm.logoBase64" "class='wide' length='1000'"/>
 
-                        <@spring.bind "orgForm.organisation.logoSmall" />
+                        <@spring.bind "orgForm.logoSmall" />
                         <img alt="" src="${spring.status.value?default("")}"  />
 
-                        <@spring.formHiddenInput "orgForm.organisation.logoSmall" "class='wide' length='1000'"/>
+                        <@spring.formHiddenInput "orgForm.logoSmallBase64" "class='wide' length='1000'"/>
 
                         <input path="imageData" type="file" name="imageData" value="imageData" />                        
                         <input type="submit" name="addImage" value="Upload Image" />

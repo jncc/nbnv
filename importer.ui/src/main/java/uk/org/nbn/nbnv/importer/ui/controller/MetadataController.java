@@ -137,8 +137,8 @@ public class MetadataController {
             
             if (!((mappings.get(importer.ORG_NAME) == null || mappings.get(importer.ORG_NAME).trim().isEmpty()))) {
                 for (Organisation org : model.getOrganisationList()) {
-                    if (org.getOrganisationName().equals(mappings.get(importer.ORG_NAME))) {
-                        meta.setOrganisationID(org.getOrganisationID());
+                    if (org.getName().equals(mappings.get(importer.ORG_NAME))) {
+                        meta.setOrganisationID(org.getId());
                         break;
                     }
                 }
@@ -150,9 +150,9 @@ public class MetadataController {
                     organisation.setAllowPublicRegistration(false);
                     organisation.setContactEmail(mappings.get(importer.ORG_EMAIL));
                     organisation.setContactName(mappings.get(importer.ORG_CONTACT_NAME));
-                    organisation.setLogo(mappings.get(importer.ORG_LOGO)); // Need to figure out how to import logos
-                    organisation.setLogoSmall(mappings.get(importer.ORG_LOGO)); // Need to figure out how to import logos
-                    organisation.setOrganisationName(mappings.get(importer.ORG_NAME));
+                    //organisation.setLogo(mappings.get(importer.ORG_LOGO)); // Need to figure out how to import logos
+                    //organisation.setLogoSmall(mappings.get(importer.ORG_LOGO)); // Need to figure out how to import logos
+                    organisation.setName(mappings.get(importer.ORG_NAME));
                     organisation.setPhone(mappings.get(importer.ORG_PHONE));
                     organisation.setPostcode(mappings.get(importer.ORG_POSTCODE));
                     organisation.setSummary(mappings.get(importer.ORG_DESC));
@@ -277,7 +277,7 @@ public class MetadataController {
     
     private Organisation getOrganisationByID(int id, List<Organisation> orgs) {
         for (Organisation org : orgs) {
-            if (org.getOrganisationID() == id) {
+            if (org.getId() == id) {
                 return org;
             }
         }

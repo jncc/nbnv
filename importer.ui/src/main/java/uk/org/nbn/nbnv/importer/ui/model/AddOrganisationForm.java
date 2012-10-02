@@ -20,6 +20,11 @@ public class AddOrganisationForm {
     private List<String> errors;
     private String imageError = "";
     private CommonsMultipartFile imageData;
+    
+    private String logoBase64 = "";
+    private String logoSmallBase64 = "";
+    private String logo = "";
+    private String logoSmall = "";
 
     public AddOrganisationForm () {
         this.organisation = new Organisation();
@@ -29,9 +34,9 @@ public class AddOrganisationForm {
         this.organisation.setAllowPublicRegistration(false);
         this.organisation.setContactEmail("");
         this.organisation.setContactName("");
-        this.organisation.setLogo("");
-        this.organisation.setLogoSmall("");
-        this.organisation.setOrganisationName("");
+        this.organisation.setLogo(null);
+        this.organisation.setLogoSmall(null);
+        this.organisation.setName("");
         this.organisation.setPhone("");
         this.organisation.setPostcode("");
         this.organisation.setSummary("");
@@ -87,4 +92,36 @@ public class AddOrganisationForm {
     public void setImageError(String imageError) {
         this.imageError = imageError;
     }    
+
+    public String getLogoBase64() {
+        return logoBase64;
+    }
+
+    public void setLogoBase64(String logoBase64) {
+        this.logoBase64 = logoBase64;
+    }
+
+    public String getLogoSmallBase64() {
+        return logoSmallBase64;
+    }
+
+    public void setLogoSmallBase64(String logoSmallBase64) {
+        this.logoSmallBase64 = logoSmallBase64;
+    }
+
+    public String getLogo() {
+        return logo;
+    }
+
+    public void setLogo(String logo) {
+        this.logo = logo;
+    }
+
+    public String getLogoSmall() {
+        return logoSmall;
+    }
+
+    public void setLogoSmall(String logoSmall) {
+        this.logoSmall = logoSmall;
+    }
 }
