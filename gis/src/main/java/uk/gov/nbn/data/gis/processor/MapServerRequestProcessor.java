@@ -51,6 +51,20 @@ public class MapServerRequestProcessor {
         }
     }
     
+    /**
+     * The following method will obtain a mapping response for the given map 
+     * service method and request. If you need to modify the details of the request
+     * either use a @see InterceptedHttpServletRequest or the InterceptorFactory
+     * @param mapMethod The method to process
+     * @param request The request to execute
+     * @return A Response containing the mime type and InputStream of the data to read
+     * @throws IllegalAccessException
+     * @throws IllegalArgumentException
+     * @throws IOException
+     * @throws InvocationTargetException
+     * @throws ProviderException
+     * @throws TemplateException 
+     */
     public Response getResponse(MapServiceMethod mapMethod, HttpServletRequest request) throws IllegalAccessException, IllegalArgumentException, IOException, InvocationTargetException, ProviderException, TemplateException {
         File toSubmitToMapServer = mapFileGenerator.getMapFile(request, mapMethod);
         try {
@@ -67,6 +81,9 @@ public class MapServerRequestProcessor {
     private static void handleMapServiceException(Throwable e, HttpServletResponse response) throws IOException {
         if(e instanceof IllegalArgumentException) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getCause().getMessage());
+        }
+        else {
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getCause().getMessage());
         }
     }  
     
