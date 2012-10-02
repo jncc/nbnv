@@ -1,4 +1,4 @@
-package uk.gov.nbn.data.gis.atlas;
+package uk.gov.nbn.data.gis.interceptors;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,7 +15,7 @@ import uk.gov.nbn.data.gis.processor.MapServiceMethod;
  */
 @Component
 @Interceptor
-public class WMSLegendRequestAtlasGradeProcessor {
+public class AtlasGradeLegendInterceptor {
 
     @Intercepts(MapServiceMethod.Type.LEGEND)
     public Map<String, String[]> processRequestParameters(AtlasGrade annotation) {

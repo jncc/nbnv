@@ -1,4 +1,4 @@
-package uk.gov.nbn.data.gis.atlas;
+package uk.gov.nbn.data.gis.interceptors;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,7 +10,7 @@ import uk.gov.nbn.data.gis.processor.MapServiceMethod.Type;
 
 @Component
 @Interceptor
-public class ImageSizeBboxHelper {
+public class AtlasGradeMapViewportInterceptor {
     //This is a good zoom to include Ireland and a bit of the North Sea
     private static final int BBOX_BOTTOM = -50000;
     private static final int BBOX_LEFT = -250000;
