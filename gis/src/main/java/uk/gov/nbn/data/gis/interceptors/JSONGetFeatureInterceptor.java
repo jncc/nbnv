@@ -1,15 +1,13 @@
 package uk.gov.nbn.data.gis.interceptors;
 
+import freemarker.template.TemplateException;
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.io.IOUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -17,7 +15,13 @@ import org.json.XML;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.nbn.data.gis.processor.Interceptor;
-import uk.gov.nbn.data.gis.processor.MapServiceMethodFactory;
+import uk.gov.nbn.data.gis.processor.Intercepts;
+import uk.gov.nbn.data.gis.processor.MapServerRequestProcessor;
+import uk.gov.nbn.data.gis.processor.MapServiceMethod;
+import uk.gov.nbn.data.gis.processor.MapServiceMethod.Type;
+import uk.gov.nbn.data.gis.processor.InterceptedHttpServletRequest;
+import uk.gov.nbn.data.gis.processor.ProviderException;
+import uk.gov.nbn.data.gis.processor.Response;
 
 /**
  * The following interceptor enables JSONP and JSON requests for getfeatureinfo 
@@ -25,26 +29,27 @@ import uk.gov.nbn.data.gis.processor.MapServiceMethodFactory;
  * @author Christopher Johnson
  */
 @Component
-public class JSONGetFeatureInterceptor implements Interceptor {
+@Interceptor
+public class JSONGetFeatureInterceptor {
     private static final String JSONP_CALLBACK_PARAMETER = "callback";    
-    @Autowired MapServiceMethodFactory serviceFactory;
+    @Autowired MapServerRequestProcessor requestProcessor;
     
-    @Override
-    public boolean intercepts(Map<String, String[]> query) {
+    private static boolean isToInterceptQuery(Map<String, String[]> query) {
         return 
             mapContainsKeyValue(query, "REQUEST", "GetFeatureInfo") &&
             mapContainsKeyValue(query, "INFO_FORMAT", "application/json");
     }
 
-    @Override
-    public Response intercepts(File mapFile, Map<String, String[]> query) {
-        try {
-            JSONObject toReturn = obtainJSONObjectFeatureInfo(mapFile, query);
-            
+    @Intercepts(Type.STANDARD)
+    public Response intercepts(MapServiceMethod method, HttpServletRequest request) throws IllegalAccessException, IllegalArgumentException, IOException, InvocationTargetException, ProviderException, TemplateException, JSONException {
+        Map<String, String[]> query = request.getParameterMap();
+        if(isToInterceptQuery(request.getParameterMap())) {
+            JSONObject toReturn = obtainJSONObjectFeatureInfo(method, request);
+
             if(query.containsKey(JSONP_CALLBACK_PARAMETER)){ 
                return new Response("application/javascript", 
                     new ByteArrayInputStream(
-                       new StringBuilder(query.get(JSONP_CALLBACK_PARAMETER)[0])
+                       new StringBuilder(request.getParameter(JSONP_CALLBACK_PARAMETER))
                             .append("(").append(toReturn.toString()).append(");")
                        .toString().getBytes()
                     )); 
@@ -52,26 +57,25 @@ public class JSONGetFeatureInterceptor implements Interceptor {
             else { 
                 return new Response("application/json", new ByteArrayInputStream(toReturn.toString().getBytes()));
             }
-        } catch (Throwable ex) {
-            throw new RuntimeException(ex);
+        }
+        else {
+            return null;
         }
     }
     
-    private JSONObject obtainJSONObjectFeatureInfo(File mapFile, Map<String, String[]> query) throws IOException, JSONException {
-        Map<String, String[]> newQuery = new HashMap<String, String[]>(query);
-        newQuery.put("INFO_FORMAT", new String[]{"gml"});
+    private JSONObject obtainJSONObjectFeatureInfo(MapServiceMethod mapMethod, HttpServletRequest request) throws IllegalAccessException, IllegalArgumentException, IOException, InvocationTargetException, ProviderException, TemplateException, JSONException{
+        InterceptedHttpServletRequest manipRequest = new InterceptedHttpServletRequest(request);
+        manipRequest.setParameterValues("INFO_FORMAT", new String[]{"gml"});
+        InputStream in = requestProcessor.getResponse(mapMethod, manipRequest).getResponse();
         
-        URL mapServerURL = serviceFactory.getMapServiceURL(mapFile, newQuery);
-        HttpURLConnection openConnection = (HttpURLConnection)mapServerURL.openConnection();
-        InputStream in = openConnection.getInputStream();
         try {
             return XML.toJSONObject(IOUtils.toString(in));
         }
         finally {
             in.close();
         }
-        
     }
+    
     private static boolean mapContainsKeyValue(Map<String, String[]> query, String key, String value) {
         return query.containsKey(key) && Arrays.asList(query.get(key)).contains(value);
     }

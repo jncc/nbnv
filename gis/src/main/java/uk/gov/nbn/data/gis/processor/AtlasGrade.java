@@ -6,12 +6,13 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * The following annotation represents that this object is capable of intercepting
- * map requests and modifying them.
- * 
- * @see Intercepts
+ * A method annotation which registers a map service method as being atlas grade
+ * capable
  * @author Christopher Johnson
  */
-@Target({ ElementType.TYPE })
+@Target({ ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Interceptor {}
+public @interface AtlasGrade {
+    String[] layers();
+}
+

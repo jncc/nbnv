@@ -2,10 +2,8 @@ package uk.gov.nbn.data.gis.processor;
 
 import freemarker.template.TemplateException;
 import java.io.IOException;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
@@ -15,18 +13,29 @@ import javax.servlet.http.HttpServletRequest;
  * @author Christopher Johnson
  */
 public class MapServiceMethod {
-    private final Method method;
     private final Map<String,String> variableNamesMap;
     private final ProviderFactory providerFactory;
-    private final Object instance;
+    private final MapServicePart part;
     
+    public enum Type {
+        STANDARD(null), LEGEND("legend"), MAP("map"), ACKNOWLEDGMENT("acknowledgement");
+        private String request;
+
+        private Type(String request) {
+            this.request = request;
+        }
+
+        public String getRequest() {
+            return request;
+        }
+    }
+
     MapServiceMethod(MapServicePart part, String[] requestParts, ProviderFactory providerFactory) {
-        this.instance = part.getMapServiceInstance();
-        this.method = part.getAssociatedMethod();
+        this.part = part;
         this.providerFactory = providerFactory;
         this.variableNamesMap = part.getVariableParameterMappings(requestParts);
     }
-   
+
     /**
      * Obtains the map object model for a given request
      * @param request
@@ -37,15 +46,18 @@ public class MapServiceMethod {
      * @throws ProviderException 
      */
     MapFileModel createMapModel(HttpServletRequest request) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, ProviderException, IOException, TemplateException {
-        Class<?>[] parameterTypes = method.getParameterTypes();
-        Annotation[][] parameterAnnotations = method.getParameterAnnotations();
-        
-        Object[] parameters = new Object[parameterTypes.length];
-        for(int i=0; i<parameters.length; i++) {
-            parameters[i] = providerFactory.getProvidedForParameter(this, request, parameterTypes[i], Arrays.asList(parameterAnnotations[i]));
-        }
-        
-        return (MapFileModel)method.invoke(instance, parameters);
+        return (MapFileModel)providerFactory.provideForMethodAndExecute(
+                part.getMapServiceInstance(), 
+                part.getAssociatedMethod(), 
+                this, request);
+    }
+    
+    public Method getUnderlyingMapMethod() {
+        return part.getAssociatedMethod();
+    }
+    
+    public Type getType() {
+        return part.getMapServiceType();
     }
     
     /**

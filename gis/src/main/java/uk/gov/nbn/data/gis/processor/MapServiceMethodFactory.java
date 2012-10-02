@@ -8,9 +8,11 @@ import java.net.URLEncoder;
 import java.util.*;
 import java.util.Map.Entry;
 import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
+import uk.gov.nbn.data.gis.processor.MapServiceMethod.Type;
 
 /**
  * The following is a factory for obtaining a MapServiceMethod for a given 
@@ -28,14 +30,14 @@ public class MapServiceMethodFactory {
         rootMapService = getMapCreatingMethods();
     }
     
-    public URL getMapServiceURL(File mapFile, Map<String, String[]> query) throws MalformedURLException {
+    public URL getMapServiceURL(File mapFile, HttpServletRequest request) throws MalformedURLException {
         StringBuilder toReturn = new StringBuilder(properties.getProperty("mapserver"))
-                .append("?").append(getMapServerRequest(mapFile, query));
+                .append("?").append(getMapServerRequest(mapFile, request));
         return new URL(toReturn.toString());
     }
     
-    private static String getMapServerRequest(File mapFile, Map<String, String[]> query) {
-        Map<String, String[]> modifiedQuery = new HashMap<String, String[]>(query);
+    private static String getMapServerRequest(File mapFile, HttpServletRequest request) {
+        Map<String, String[]> modifiedQuery = new HashMap<String, String[]>(request.getParameterMap());
         modifiedQuery.put("map", new String[] {URLEncoder.encode(mapFile.getAbsolutePath())});
         return getQueryFromMap(modifiedQuery);
     }
@@ -77,7 +79,6 @@ public class MapServiceMethodFactory {
         }
     }
     
-    
     /**
      * Recurse from the root for the specified path
      * @param from
@@ -98,7 +99,7 @@ public class MapServiceMethodFactory {
             return null; //failed to find anything
         }
     }
-             
+                
     /* Load and all of the maps and return the root mapservicepart */
     private MapServicePart getMapCreatingMethods() {
         MapServicePart rootNode = new MapServicePart(null, "");         
@@ -119,6 +120,16 @@ public class MapServiceMethodFactory {
                         pathPartOrCreate = getPathPartOrCreate(mapServiceInstance, partNameIterator.next(), pathPartOrCreate);
                     }
                     pathPartOrCreate.setAssociatedMethod(currMethod);
+                    
+                    //register atlasgrade functionality
+                    AtlasGrade atlasGradeAnnotation = currMethod.getAnnotation(AtlasGrade.class);
+                    if(atlasGradeAnnotation != null) {
+                        for(Type mapServiceType : EnumSet.complementOf(EnumSet.of(Type.STANDARD))) {
+                            MapServicePart atlasGradeMapServicePart = getPathPartOrCreate(mapServiceInstance, mapServiceType.getRequest(), pathPartOrCreate);
+                            atlasGradeMapServicePart.setAssociatedMethod(currMethod);
+                            atlasGradeMapServicePart.setMapServiceType(mapServiceType);
+                        }
+                    }
                 }
             }
         }
