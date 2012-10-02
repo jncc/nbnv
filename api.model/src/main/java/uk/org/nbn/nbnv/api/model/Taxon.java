@@ -1,6 +1,6 @@
 package uk.org.nbn.nbnv.api.model;
 
-public class Taxon {
+public class Taxon implements Comparable<Taxon>{
     
     private String taxonVersionKey;
     private String prefnameTaxonVersionKey;
@@ -87,5 +87,10 @@ public class Taxon {
 
     public void setOutputGroupName(String outputGroupName) {
         this.outputGroupName = outputGroupName;
+    }
+
+    @Override
+    public int compareTo(Taxon that) {
+        return this.name.compareTo(that.name);
     }
 }

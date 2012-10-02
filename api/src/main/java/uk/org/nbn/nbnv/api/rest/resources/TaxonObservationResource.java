@@ -101,7 +101,9 @@ public class TaxonObservationResource {
             @QueryParam("taxonOutputGroup") @DefaultValue("") String taxonOutputGroup, 
             @QueryParam("gridRef") @DefaultValue("") String gridRef) {
         //TODO: squareBlurring(?)
-        return observationMapper.selectObservationSpeciesByFilter(user, startYear, endYear, datasetKeys, taxa, overlaps, within, sensitive, designation, taxonOutputGroup, gridRef);
+        List<TaxonWithQueryStats> toReturn = observationMapper.selectObservationSpeciesByFilter(user, startYear, endYear, datasetKeys, taxa, overlaps, within, sensitive, designation, taxonOutputGroup, gridRef);
+        Collections.sort(toReturn);
+        return toReturn;
     }
 
     @GET
