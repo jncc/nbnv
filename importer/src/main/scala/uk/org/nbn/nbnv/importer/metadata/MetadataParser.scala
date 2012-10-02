@@ -11,7 +11,7 @@ class MetadataParser {
       .text.replace("Access Constraints:", "")
       .split("Use Constraints:")
 
-    //gets data from the additionalInfo elements. Specific data is identified in the text of the element
+    // gets data from the additionalInfo elements. Specific data is identified in the text of the element
     // by an identifier such as Temporal Coverage:
     def getAdditionalData(identifier: String) = {
       val additionalInfoNodes = dataset \ "additionalInfo" \ "para"
@@ -34,6 +34,9 @@ class MetadataParser {
       val dataQuality = (dataset \ "methods" \ "qualityControl" \ "description" \ "para" ).text.trim
       val temporalCoverage = getAdditionalData("Temporal Coverage:")
       val additionalInformation = getAdditionalData("Additional Information:")
+      val siteIsPublic = true // todo
+      val recorderAndDeterminerArePublic = true // todo
+      val publicPrecision = 2000 // todo. expecting this to always be specified
     }
 
   }

@@ -43,6 +43,18 @@ class Repository @Inject()(log: Logger, em: EntityManager, cache: QueryCache) ex
     }
   }
 
+  def getGridSquareFeature(featureID: Int): Option[(Feature, GridSquare)] = {
+
+    val q = "select f, s from Feature f join f.gridSquareCollection s where f.featureID = :featureID"
+
+    cacheSome(q, featureID.toString) {
+
+      val query = em.createQuery(q)
+      query.setParameter("featureID", featureID)
+      query.getSingleOrNone collect { case Array(f: Feature, s: GridSquare) => (f, s) }
+    }
+  }
+
   def getSurvey(surveyKey: String, dataset: TaxonDataset) = {
 
     val q = "SELECT s FROM Survey s WHERE s.providerKey = :providerKey AND s.datasetKey = :datasetKey"
