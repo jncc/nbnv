@@ -3,6 +3,8 @@ package uk.gov.nbn.data.gis.atlas;
 import java.util.HashMap;
 import java.util.Map;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
+import uk.gov.nbn.data.gis.processor.AtlasGrade;
 import uk.gov.nbn.data.gis.processor.Interceptor;
 import uk.gov.nbn.data.gis.processor.Intercepts;
 import uk.gov.nbn.data.gis.processor.MapServiceMethod;
@@ -16,16 +18,16 @@ import uk.gov.nbn.data.gis.processor.MapServiceMethod;
 public class WMSLegendRequestAtlasGradeProcessor {
 
     @Intercepts(MapServiceMethod.Type.LEGEND)
-    public Map<String, String[]> processRequestParameters() {
+    public Map<String, String[]> processRequestParameters(AtlasGrade annotation) {
         Map<String, String[]> toReturn = new HashMap<String, String[]>();
         toReturn.put("SERVICE", new String[]{"WMS"});
         toReturn.put("VERSION", new String[]{"1.1.1"});
         toReturn.put("REQUEST", new String[]{"GetLegendGraphic"});
         toReturn.put("TRANSPARENT", new String[]{"true"});
         toReturn.put("FORMAT", new String[]{"image/png"});
-//        toReturn.put("LAYER", new String[]{
-//            StringUtils.arrayToCommaDelimitedString(method.getAtlasGradeAnnotation().layers())
-//        });
+        toReturn.put("LAYER", new String[]{
+            StringUtils.arrayToCommaDelimitedString(annotation.layers())
+        });
         return toReturn;
     }
 }

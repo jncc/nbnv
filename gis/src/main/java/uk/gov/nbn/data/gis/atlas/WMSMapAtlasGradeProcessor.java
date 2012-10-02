@@ -26,7 +26,7 @@ public class WMSMapAtlasGradeProcessor {
     }
     
     @Intercepts(Type.MAP)
-    public Map<String, String[]> processRequestParameters(MapServiceMethod method, HttpServletRequest request) {
+    public Map<String, String[]> processRequestParameters(HttpServletRequest request) {
         Map<String, String[]> toReturn = new HashMap<String, String[]>();
         toReturn.put("SERVICE", new String[]{"WMS"});
         toReturn.put("VERSION", new String[]{"1.1.1"});

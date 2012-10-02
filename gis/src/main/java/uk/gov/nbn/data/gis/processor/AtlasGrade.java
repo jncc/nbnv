@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
  */
 @Target({ ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
-public @interface EnableAtlasGrade {
+public @interface AtlasGrade {
     String[] layers();
 }
 

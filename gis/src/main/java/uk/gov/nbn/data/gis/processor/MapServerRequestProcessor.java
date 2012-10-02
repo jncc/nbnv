@@ -1,9 +1,12 @@
 package uk.gov.nbn.data.gis.processor;
 
+import freemarker.template.TemplateException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Arrays;
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -26,23 +29,16 @@ import org.springframework.stereotype.Component;
 public class MapServerRequestProcessor {
     @Autowired ApplicationContext context;
     @Autowired MapServiceMethodFactory serviceFactory;
-    @Autowired MapFileGenerator mapFileGenerator;
     @Autowired InterceptorFactory interceptorFactory;
+    @Autowired MapFileGenerator mapFileGenerator;
     
     public void processRequest(HttpServletRequest request, 
             HttpServletResponse servletResponse) throws ServletException, IOException {
         try {
             MapServiceMethod mapMethod = serviceFactory.getMatchingPart(request.getPathInfo());
-            
-            File toSubmitToMapServer = mapFileGenerator.getMapFile(request, mapMethod);
-            try {
-                Response interceptedResponse = interceptorFactory.getResponse(toSubmitToMapServer, mapMethod, request);
-                servletResponse.setContentType(interceptedResponse.getContentType());
-                copyAndClose(interceptedResponse.getResponse(), servletResponse);
-            }
-            finally {
-                toSubmitToMapServer.delete();
-            }
+            Response interceptedResponse = interceptorFactory.getResponse(mapMethod, request);
+            servletResponse.setContentType(interceptedResponse.getContentType());
+            copyAndClose(interceptedResponse.getResponse(), servletResponse);
         }
         catch(MapServiceUndefinedException msue) {
             servletResponse.sendError(HttpServletResponse.SC_NOT_FOUND, "Could not find: " + Arrays.toString(request.getPathInfo().substring(1).split("/")));
@@ -52,6 +48,18 @@ public class MapServerRequestProcessor {
         }
         catch(Throwable mapEx) {
             throw new ServletException(mapEx);
+        }
+    }
+    
+    public Response getResponse(MapServiceMethod mapMethod, HttpServletRequest request) throws IllegalAccessException, IllegalArgumentException, IOException, InvocationTargetException, ProviderException, TemplateException {
+        File toSubmitToMapServer = mapFileGenerator.getMapFile(request, mapMethod);
+        try {
+            URL mapServerURL = serviceFactory.getMapServiceURL(toSubmitToMapServer, request);
+            HttpURLConnection openConnection = (HttpURLConnection)mapServerURL.openConnection();
+            return new Response(openConnection.getContentType(),openConnection.getInputStream());
+        }
+        finally {
+            toSubmitToMapServer.delete();
         }
     }
     
@@ -76,6 +84,5 @@ public class MapServerRequestProcessor {
         finally {
             out.close();
         }
-        
     }
 }

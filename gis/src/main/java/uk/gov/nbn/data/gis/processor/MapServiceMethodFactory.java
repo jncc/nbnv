@@ -8,6 +8,7 @@ import java.net.URLEncoder;
 import java.util.*;
 import java.util.Map.Entry;
 import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -29,14 +30,14 @@ public class MapServiceMethodFactory {
         rootMapService = getMapCreatingMethods();
     }
     
-    public URL getMapServiceURL(File mapFile, Map<String, String[]> query) throws MalformedURLException {
+    public URL getMapServiceURL(File mapFile, HttpServletRequest request) throws MalformedURLException {
         StringBuilder toReturn = new StringBuilder(properties.getProperty("mapserver"))
-                .append("?").append(getMapServerRequest(mapFile, query));
+                .append("?").append(getMapServerRequest(mapFile, request));
         return new URL(toReturn.toString());
     }
     
-    private static String getMapServerRequest(File mapFile, Map<String, String[]> query) {
-        Map<String, String[]> modifiedQuery = new HashMap<String, String[]>(query);
+    private static String getMapServerRequest(File mapFile, HttpServletRequest request) {
+        Map<String, String[]> modifiedQuery = new HashMap<String, String[]>(request.getParameterMap());
         modifiedQuery.put("map", new String[] {URLEncoder.encode(mapFile.getAbsolutePath())});
         return getQueryFromMap(modifiedQuery);
     }
@@ -77,7 +78,6 @@ public class MapServiceMethodFactory {
             throw new MapServiceUndefinedException("There is no MapServicePart which matches the path supplied");
         }
     }
-    
     
     /**
      * Recurse from the root for the specified path
@@ -122,7 +122,7 @@ public class MapServiceMethodFactory {
                     pathPartOrCreate.setAssociatedMethod(currMethod);
                     
                     //register atlasgrade functionality
-                    EnableAtlasGrade atlasGradeAnnotation = currMethod.getAnnotation(EnableAtlasGrade.class);
+                    AtlasGrade atlasGradeAnnotation = currMethod.getAnnotation(AtlasGrade.class);
                     if(atlasGradeAnnotation != null) {
                         for(Type mapServiceType : EnumSet.complementOf(EnumSet.of(Type.STANDARD))) {
                             MapServicePart atlasGradeMapServicePart = getPathPartOrCreate(mapServiceInstance, mapServiceType.getRequest(), pathPartOrCreate);

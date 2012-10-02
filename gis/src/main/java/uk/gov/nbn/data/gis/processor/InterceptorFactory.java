@@ -1,17 +1,16 @@
 package uk.gov.nbn.data.gis.processor;
 
-import java.io.File;
+import freemarker.template.TemplateException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -26,6 +25,7 @@ public class InterceptorFactory {
     @Autowired ApplicationContext context;
     @Autowired ProviderFactory providerFactory;
     @Autowired MapServiceMethodFactory serviceFactory;
+    @Autowired MapServerRequestProcessor requestProcessor;
     
     private EnumMap<Type, Map<Method, Object>> responseManipulatingInterceptors;
     private EnumMap<Type, Map<Method, Object>> queryManipulatingInterceptors;
@@ -56,7 +56,7 @@ public class InterceptorFactory {
         }
     }
     
-    public Response getResponse(File mapFile, MapServiceMethod mapMethod, HttpServletRequest request) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, ProviderException, IOException {
+    public Response getResponse(MapServiceMethod mapMethod, HttpServletRequest request) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, ProviderException, IOException, TemplateException {
         for(Entry<Method, Object> queryInterceptor : responseManipulatingInterceptors.get(mapMethod.getType()).entrySet()) {
             Response response = (Response)providerFactory.provideForMethodAndExecute(
                                                             queryInterceptor.getValue(), 
@@ -66,19 +66,17 @@ public class InterceptorFactory {
                 return response;
             }
         }
-        URL mapServerURL = serviceFactory.getMapServiceURL(mapFile, getMapServerRequest(mapMethod, request));
-        HttpURLConnection openConnection = (HttpURLConnection)mapServerURL.openConnection();
-        return new Response(openConnection.getContentType(),openConnection.getInputStream());
+        return requestProcessor.getResponse(mapMethod, getInterceptedRequest(mapMethod, request)); //drop into a non intercepted response
     }
     
-    private Map<String, String[]> getMapServerRequest(MapServiceMethod mapMethod, HttpServletRequest request) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, ProviderException {
-        Map<String, String[]> toReturn = new HashMap<String, String[]>(request.getParameterMap());
+    public InterceptedHttpServletRequest getInterceptedRequest(MapServiceMethod mapMethod, HttpServletRequest request) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, ProviderException {
+        InterceptedHttpServletRequest toReturn = new InterceptedHttpServletRequest(request);
         for(Entry<Method, Object> queryInterceptor : queryManipulatingInterceptors.get(mapMethod.getType()).entrySet()) {
             Object partialQueryMap = providerFactory.provideForMethodAndExecute(
                                                             queryInterceptor.getValue(), 
                                                             queryInterceptor.getKey(), 
                                                             mapMethod, request);
-            toReturn.putAll((Map<String, String[]>)partialQueryMap);
+            toReturn.putAllParameters((Map<String, String[]>)partialQueryMap);
         }
         return toReturn;
     }

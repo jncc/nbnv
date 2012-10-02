@@ -3,6 +3,7 @@ package uk.gov.nbn.data.gis.processor;
 import freemarker.template.TemplateException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
@@ -49,6 +50,10 @@ public class MapServiceMethod {
                 part.getMapServiceInstance(), 
                 part.getAssociatedMethod(), 
                 this, request);
+    }
+    
+    public Method getUnderlyingMapMethod() {
+        return part.getAssociatedMethod();
     }
     
     public Type getType() {

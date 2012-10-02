@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import uk.gov.nbn.data.gis.processor.MapFileModel;
 import uk.gov.nbn.data.gis.processor.MapService;
 import uk.gov.nbn.data.gis.processor.MapContainer;
-import uk.gov.nbn.data.gis.processor.EnableAtlasGrade;
+import uk.gov.nbn.data.gis.processor.AtlasGrade;
 import uk.gov.nbn.data.gis.providers.annotations.PathParam;
 import uk.gov.nbn.data.gis.providers.annotations.QueryParam;
 import uk.org.nbn.nbnv.api.model.User;
@@ -42,7 +42,7 @@ public class SingleSpeciesWMS {
     @Autowired Properties properties;
     
     @MapService("{taxonVersionKey}")
-    @EnableAtlasGrade(
+    @AtlasGrade(
         layers="Grid-10km"
     )
     public MapFileModel getSingleSpeciesModel(
