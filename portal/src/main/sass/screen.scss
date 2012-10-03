@@ -149,6 +149,16 @@ body {
             color: white;
             background-color: $majorColour;
             padding: 5px;
+            a{
+                color: white;
+            }
+        }
+    }
+    
+    table.nbn-observations-table{
+        @extend table.nbn-coloured-table;
+        th{
+            padding: 2px;
         }
     }
 

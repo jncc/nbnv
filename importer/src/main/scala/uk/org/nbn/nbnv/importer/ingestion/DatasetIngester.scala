@@ -101,7 +101,9 @@ class DatasetIngester @Inject()(log: Logger,
 
   private def modifyTaxonDataset(td: TaxonDataset, m: Metadata) {
 
-    val resolution = em.getReference(classOf[Resolution], 1.toShort)
+
+    val resolution = repository.getResolution(m.publicPrecision)
+
     td.setPublicResolutionID(resolution) // column will be deleted
 
     // default .. to be read from extra metadata.

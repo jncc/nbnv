@@ -36,7 +36,7 @@ public class TaxonNameStatus implements Serializable {
     @Id
     @Basic(optional = false)
     @NotNull
-    @Column(name = "key")
+    @Column(name = "\"key\"")
     private Character key;
     @Size(max = 50)
     @Column(name = "description")

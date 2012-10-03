@@ -7,8 +7,16 @@ import uk.org.nbn.nbnv.importer.data.Implicits._
 import com.google.inject.Inject
 import org.apache.log4j.Logger
 import uk.org.nbn.nbnv.importer.ImportFailedException
+import uk.org.nbn.nbnv.FeatureFactory
+
 
 class Repository @Inject()(log: Logger, em: EntityManager, cache: QueryCache) extends ControlAbstractions {
+
+  def createFeature(wkt: String) = {
+    val factory = new FeatureFactory(em)
+    factory.createFeature(wkt);
+  }
+
 
   // todo: wot's this for? and does it need caching?
   def confirmTaxonVersionKey(taxonVersionKey: String): Boolean = {

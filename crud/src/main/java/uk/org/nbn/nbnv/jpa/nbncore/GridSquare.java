@@ -40,17 +40,9 @@ public class GridSquare implements Serializable {
     @Size(min = 1, max = 12)
     @Column(name = "gridRef")
     private String gridRef;
-    @Basic(optional = false)
-    @NotNull
-    @Lob
-    @Column(name = "geom")
-    private byte[] geom;
     @JoinColumn(name = "resolutionID", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Resolution resolutionID;
-    @JoinColumn(name = "projectionID", referencedColumnName = "id")
-    @ManyToOne(optional = false)
-    private Projection projectionID;
     @OneToMany(mappedBy = "parentSquareGridRef")
     private Collection<GridSquare> gridSquareCollection;
     @JoinColumn(name = "parentSquareGridRef", referencedColumnName = "gridRef")
@@ -59,17 +51,20 @@ public class GridSquare implements Serializable {
     @JoinColumn(name = "featureID", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Feature featureID;
+    @Basic(optional = false)
+    @NotNull
+    @Lob
+    @Column(name = "originalGeom")
+    private byte[] originalGeom;
+    @JoinColumn(name = "originalProjectionID", referencedColumnName = "id")
+    @ManyToOne(optional = false)
+    private Projection originalProjectionID;
 
     public GridSquare() {
     }
 
     public GridSquare(String gridRef) {
         this.gridRef = gridRef;
-    }
-
-    public GridSquare(String gridRef, byte[] geom) {
-        this.gridRef = gridRef;
-        this.geom = geom;
     }
 
     public String getGridRef() {
@@ -80,28 +75,12 @@ public class GridSquare implements Serializable {
         this.gridRef = gridRef;
     }
 
-    public byte[] getGeom() {
-        return geom;
-    }
-
-    public void setGeom(byte[] geom) {
-        this.geom = geom;
-    }
-
     public Resolution getResolutionID() {
         return resolutionID;
     }
 
     public void setResolutionID(Resolution resolutionID) {
         this.resolutionID = resolutionID;
-    }
-
-    public Projection getProjectionID() {
-        return projectionID;
-    }
-
-    public void setProjectionID(Projection projectionID) {
-        this.projectionID = projectionID;
     }
 
     @XmlTransient
@@ -152,6 +131,22 @@ public class GridSquare implements Serializable {
     @Override
     public String toString() {
         return "uk.org.nbn.nbnv.jpa.nbncore.GridSquare[ gridRef=" + gridRef + " ]";
+    }
+
+    public byte[] getOriginalGeom() {
+        return originalGeom;
+    }
+
+    public void setOriginalGeom(byte[] originalGeom) {
+        this.originalGeom = originalGeom;
+    }
+
+    public Projection getOriginalProjectionID() {
+        return originalProjectionID;
+    }
+
+    public void setOriginalProjectionID(Projection originalProjectionID) {
+        this.originalProjectionID = originalProjectionID;
     }
     
 }

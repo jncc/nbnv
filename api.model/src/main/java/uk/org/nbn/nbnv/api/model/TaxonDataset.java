@@ -12,6 +12,7 @@ public class TaxonDataset extends Dataset{
     private List<YearStats> recordsPerYear;
     private List<DateTypeStats> dateTypeStats;
     private List<Survey> surveys;
+    private List<TaxonObservation> observations;
     
     public TaxonDataset(){}
     
@@ -106,5 +107,13 @@ public class TaxonDataset extends Dataset{
 
     public void setSpeciesCount(int speciesCount) {
         this.speciesCount = speciesCount;
+    }
+
+    public List<TaxonObservation> getObservations() {
+        return observations;
+    }
+
+    public void setObservations(List<TaxonObservation> observations) {
+        this.observations = observations;
     }
 }

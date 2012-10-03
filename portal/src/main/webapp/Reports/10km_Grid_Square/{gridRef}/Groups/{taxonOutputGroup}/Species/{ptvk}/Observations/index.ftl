@@ -1,29 +1,45 @@
 <#assign tenkmGridRef=URLParameters.gridRef>
 <#assign requestParametersExtended = RequestParameters + {"gridRef":[tenkmGridRef],"ptvk":[URLParameters.ptvk]}>
-<#assign records=json.readURL("${api}/taxonObservations",requestParametersExtended)>
+<#assign datasets=json.readURL("${api}/taxonObservations/datasets/observations",requestParametersExtended)>
 <#assign taxon=json.readURL("${api}/taxa/${URLParameters.ptvk}")>
 
 <@template.master title="10km report for ${tenkmGridRef}">
-    <h1>Records for <@taxon_utils.short_name taxon=taxon/> in ${tenkmGridRef}</h1>
-    <table class="nbn-coloured-table">
-    <tr>
-        <th class="nbn-th-left">Site name</th>
-        <th>Gridref</th>
-        <th>Date accuracy</th>
-        <th>Date type</th>
-        <th>Sensitive</th>
-        <th class="nbn-th-right">Absence</th>
-    </tr>
-    <#list records as record>
-        <tr>
-            <td class="nbn-td-left">${record.siteName!"N/A"}</td>
-            <td>${record.gridRef}</td>
-            <td>${record.startDate} to ${record.endDate}</td>
-            <td>${record.dateType}</td>
-            <td>${record.sensitive?string}</td>
-            <td class="nbn-td-right">${record.absence?string}</td>
-        </tr>
+    <h1>Records for <@taxon_utils.short_name taxon=taxon/> in ${tenkmGridRef} from <@report_utils.yearRangeText requestParameters=RequestParameters/></h1>
+
+    <#list datasets as dataset>
+        <#assign provider=json.readURL("${api}/organisations/${dataset.organisationID}")>
+        <table class="nbn-coloured-table">
+            <tr>
+                <th colspan="2" class="nbn-th-left">Dataset:</th>
+                <th colspan="4" class="nbn-th-right"><a href="/Datasets/${dataset.datasetKey}">${dataset.name}</a></th>
+            </tr>
+            <tr>
+                <th colspan="2" class="nbn-td-left">Provider:</th>
+                <th colspan="4" class="nbn-td-right"><a href="/Organisations/${provider.organisationID}">${provider.name}</a></th>
+            </tr>
+            <tr>
+                <th colspan="2" class="nbn-td-left">Your access:</th>
+                <th colspan="4" class="nbn-td-right">Access to this dataset Fusce in leo massa, nec ullamcorper dui. Aliquam auctor iaculis sapien, et scelerisque mi iaculis in. Donec nibh libero, aliquet vitae cursus in, mattis vel augue. Nulla facilisi. Aenean porttitor.</a></th>
+            </tr>
+            <tr class="nbn-emphasise-row">
+                <td class="nbn-td-left">Site name</td>
+                <td>Gridref</td>
+                <td>Date accuracy</td>
+                <td>Date type</td>
+                <td>Sensitive</td>
+                <td class="nbn-td-right">Absence</td>
+            </tr>
+            <#list dataset.observations as observation>
+                <tr>
+                    <td class="nbn-td-left">${observation.siteName!"N/A"}</td>
+                    <td>${observation.gridRef}</td>
+                    <td>${observation.startDate} to ${observation.endDate}</td>
+                    <td>${observation.dateType}</td>
+                    <td>${observation.sensitive?string}</td>
+                    <td class="nbn-td-right">${observation.absence?string}</td>
+                </tr>
+            </#list>
+        </table>
     </#list>
-    </table>
     
 </@template.master>

@@ -38,6 +38,8 @@ public class TaxonObservationResource {
     TaxonObservationMapper observationMapper;
     @Autowired
     OrganisationMapper organisationMapper;
+    @Autowired
+    DatasetMapper datasetMapper;
 
     @GET
     @Path("/{id : \\d+}")
@@ -144,6 +146,26 @@ public class TaxonObservationResource {
     }
 
     @GET
+    @Path("/datasets/observations")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<TaxonDataset> getDatasetsWithObservationsByFilter(
+            @TokenUser() User user, @QueryParam("startYear") @DefaultValue("-1") int startYear, 
+            @QueryParam("endYear") @DefaultValue("-1") int endYear, 
+            @QueryParam("datasetKey") @DefaultValue("") List<String> datasetKeys, 
+            @QueryParam("ptvk") @DefaultValue("") List<String> taxa, 
+            @QueryParam("overlapSite") @DefaultValue("-1") Integer overlaps, 
+            @QueryParam("withinSite") @DefaultValue("-1") Integer within, 
+            @QueryParam("sensitive") @DefaultValue("1") Boolean sensitive, 
+            @QueryParam("designation") @DefaultValue("") String designation, 
+            @QueryParam("taxonOutputGroup") @DefaultValue("") String taxonOutputGroup, 
+            @QueryParam("gridRef") @DefaultValue("") String gridRef) {
+        //TODO: squareBlurring(?)
+        List<TaxonObservation> taxonObservationsOrderedByDataset = observationMapper.selectObservationsByFilterOrderedByDataset(user, startYear, endYear, datasetKeys, taxa, overlaps, within, sensitive, designation, taxonOutputGroup, gridRef);
+        return getDatasetsWithObservations(taxonObservationsOrderedByDataset);
+//        return taxonObservationsOrderedByDataset;
+    }
+
+    @GET
     @Path("/providers")
     @Produces(MediaType.APPLICATION_JSON)
     public List<ProviderWithQueryStats> getObservationProvidersByFilter(
@@ -157,7 +179,6 @@ public class TaxonObservationResource {
             @QueryParam("designation") @DefaultValue("") String designation, 
             @QueryParam("taxonOutputGroup") @DefaultValue("") String taxonOutputGroup, 
             @QueryParam("gridRef") @DefaultValue("") String gridRef) {
-
         //TODO: squareBlurring(?)
         List<DatasetWithQueryStats> datasetsWithQueryStats = observationMapper.selectObservationDatasetsByFilter(user, startYear, endYear, datasetKeys, taxa, overlaps, within, sensitive, designation, taxonOutputGroup, gridRef);
 
@@ -204,4 +225,38 @@ public class TaxonObservationResource {
             Collections.sort(providerWithQueryStats.getDatasetsWithQueryStats());
         }
     }
+
+    /*
+     * This takes a list of observations in dataset order and returns a list
+     * of datasets with their observations
+     */
+    private List<TaxonDataset>getDatasetsWithObservations(List<TaxonObservation> taxonObservationsOrderedByDataset){
+        List<TaxonDataset> toReturn = new ArrayList<TaxonDataset>();
+        List<TaxonObservation> taxonObservationsForDataset = null;
+        String currentDatasetKey = "";
+        String previousDatasetKey = "";
+        for(TaxonObservation taxonObservation : taxonObservationsOrderedByDataset){
+            currentDatasetKey = taxonObservation.getDatasetKey();
+            if(currentDatasetKey.equals(previousDatasetKey)){
+                taxonObservationsForDataset.add(taxonObservation);
+            }else{
+                if(!"".equals(previousDatasetKey)){
+                    appendTaxonDataset(taxonObservationsForDataset, previousDatasetKey, toReturn);
+                }
+                taxonObservationsForDataset = new ArrayList<TaxonObservation>();
+                taxonObservationsForDataset.add(taxonObservation);
+            }
+            previousDatasetKey = currentDatasetKey;
+        }
+        appendTaxonDataset(taxonObservationsForDataset, currentDatasetKey, toReturn);
+        return toReturn;
+    }
+    
+    private void appendTaxonDataset(List<TaxonObservation> taxonObservations, String taxonDatasetKey, List<TaxonDataset> taxonDatasets){
+        TaxonDataset taxonDataset = datasetMapper.selectTaxonDatasetByID(taxonDatasetKey);
+        taxonDataset.setObservations(taxonObservations);
+        taxonDatasets.add(taxonDataset);
+    }
+    
+    
 }

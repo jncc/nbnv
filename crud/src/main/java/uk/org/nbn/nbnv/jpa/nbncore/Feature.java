@@ -4,6 +4,10 @@
  */
 package uk.org.nbn.nbnv.jpa.nbncore;
 
+import org.eclipse.persistence.annotations.Direction;
+import org.eclipse.persistence.annotations.NamedStoredProcedureQuery;
+import org.eclipse.persistence.annotations.StoredProcedureParameter;
+
 import java.io.Serializable;
 import java.util.Collection;
 import javax.persistence.*;
@@ -22,17 +26,19 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Feature.findAll", query = "SELECT f FROM Feature f"),
     @NamedQuery(name = "Feature.findById", query = "SELECT f FROM Feature f WHERE f.id = :id")})
 public class Feature implements Serializable {
+    @Basic(optional = false)
+    @NotNull
+    @Lob
+    @Column(name = "geom")
+    private byte[] geom;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "featureID")
+    private Collection<TaxonObservationPublic> taxonObservationPublicCollection;
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
-    @Basic(optional = false)
-    @NotNull
-    @Lob
-    @Column(name = "geom")
-    private byte[] geom;
     @JoinTable(name = "FeatureOverlaps", joinColumns = {
         @JoinColumn(name = "featureID", referencedColumnName = "id")}, inverseJoinColumns = {
         @JoinColumn(name = "overlappedFeatureID", referencedColumnName = "id")})
@@ -81,14 +87,6 @@ public class Feature implements Serializable {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public byte[] getGeom() {
-        return geom;
-    }
-
-    public void setGeom(byte[] geom) {
-        this.geom = geom;
     }
 
     @XmlTransient
@@ -203,6 +201,23 @@ public class Feature implements Serializable {
     @Override
     public String toString() {
         return "uk.org.nbn.nbnv.jpa.nbncore.Feature[ id=" + id + " ]";
+    }
+
+    public byte[] getGeom() {
+        return geom;
+    }
+
+    public void setGeom(byte[] geom) {
+        this.geom = geom;
+    }
+
+    @XmlTransient
+    public Collection<TaxonObservationPublic> getTaxonObservationPublicCollection() {
+        return taxonObservationPublicCollection;
+    }
+
+    public void setTaxonObservationPublicCollection(Collection<TaxonObservationPublic> taxonObservationPublicCollection) {
+        this.taxonObservationPublicCollection = taxonObservationPublicCollection;
     }
     
 }
