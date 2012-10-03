@@ -1,11 +1,13 @@
 package uk.org.nbn.nbnv.importer.grin
 
+import scala.collection.JavaConversions._
 import com.google.inject.{Inject, Guice}
 import injection.GuiceModule
 import uk.org.nbn.nbnv.importer.ingestion.FeatureIngester
 import javax.persistence.{EntityTransaction, EntityManager}
 import io.Source
 import org.apache.log4j.Logger
+import javax.validation.ConstraintViolationException
 
 object Program {
 
@@ -44,7 +46,7 @@ class Program @Inject() (log: Logger, options: Options, em: EntityManager, inges
         ref = line.trim
         if !ref.isEmpty
       } {
-        log.info("ingesting gridref '%s'".format(ref))
+        log.info("Importing grid ref '%s'".format(ref))
         ingester.ensureGridRefFeature(ref)
       }
     }
@@ -67,6 +69,12 @@ class Program @Inject() (log: Logger, options: Options, em: EntityManager, inges
       }
     }
     catch {
+      case e: ConstraintViolationException => {
+        for (v <- e.getConstraintViolations) {
+          log.info(v.getPropertyPath + v.getMessage)
+        }
+        throw e
+      }
       case e: Throwable => {
         if (t != null && t.isActive) t.rollback()
         throw (e)
