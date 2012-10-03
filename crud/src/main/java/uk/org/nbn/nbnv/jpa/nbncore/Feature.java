@@ -4,6 +4,10 @@
  */
 package uk.org.nbn.nbnv.jpa.nbncore;
 
+import org.eclipse.persistence.annotations.Direction;
+import org.eclipse.persistence.annotations.NamedStoredProcedureQuery;
+import org.eclipse.persistence.annotations.StoredProcedureParameter;
+
 import java.io.Serializable;
 import java.util.Collection;
 import javax.persistence.*;

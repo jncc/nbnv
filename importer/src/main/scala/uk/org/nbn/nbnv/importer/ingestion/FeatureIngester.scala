@@ -40,17 +40,15 @@ class FeatureIngester @Inject()(log: Logger, em: EntityManager, repo: Repository
         log.debug("Creating grid ref '%s'.".format(info.gridReference))
 
         // the feature doesn't exist, so we need to create it
-        val f = new Feature
+        val f = repo.createFeature(info.wgs84Polygon)
         // ... todo
-        val tempGeom = hex2Bytes("0xE610000001040500000025188E8301E6F0BF28D6E355FD944A4073EB1E5CE1DFF0BFAC4168F2FC944A400F37C3A7CCDFF0BF3EF4D3651A954A40AEC794D7ECE5F0BF8D5C50C91A954A4025188E8301E6F0BF28D6E355FD944A4001000000020000000001000000FFFFFFFF0000000003")
-        f.setGeom(tempGeom) // in wgs84
-        log.debug("Persisting feature '%s'...".format(info.gridReference))
-        em.persist(f)
+//        f.setGeom(hex2Bytes("0xE610000001040500000025188E8301E6F0BF28D6E355FD944A4073EB1E5CE1DFF0BFAC4168F2FC944A400F37C3A7CCDFF0BF3EF4D3651A954A40AEC794D7ECE5F0BF8D5C50C91A954A4025188E8301E6F0BF28D6E355FD944A4001000000020000000001000000FFFFFFFF0000000003"))
+//        em.persist(f)
 
         val gs = new GridSquare
         gs.setFeatureID(f)
         gs.setGridRef(info.gridReference)
-        gs.setGeom(tempGeom)
+        //gs.setGeom(tempGeom)
 
         // set the projection
         val p = repo.getProjection(info.projection)
