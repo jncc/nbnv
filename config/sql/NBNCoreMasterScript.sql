@@ -692,6 +692,22 @@ CREATE TABLE [dbo].[Taxon](
 
 ------------------------------
 
+CREATE TABLE [dbo].[TaxonAggregate] (
+	[aggregateTaxonVersionKey] [char](16) NOT NULL REFERENCES [Taxon] ([taxonVersionKey]),
+	[componentTaxonVersionKey] [char](16) NOT NULL REFERENCES [Taxon] ([taxonVersionKey]),
+	PRIMARY KEY ([aggregateTaxonVersionKey], [componentTaxonVersionKey])
+);
+
+------------------------------
+
+CREATE TABLE [dbo].[RecordingEntity] (
+	[recordedName] [varchar](255) NOT NULL PRIMARY KEY,
+	[taxonVersionKey] [char](16) NOT NULL REFERENCES [Taxon] ([taxonVersionKey]),
+	[dangerous] [bit] NOT NULL
+);
+
+------------------------------
+
 CREATE TABLE [dbo].[TaxonNavigation](
 	[taxonVersionKey] [char](16) NOT NULL REFERENCES [Taxon] ([taxonVersionKey]),
 	[taxonNavigationGroupKey] [char](16) NOT NULL REFERENCES [TaxonGroup] ([key]),
@@ -1359,6 +1375,16 @@ BEGIN
 	exec sp_startpublication_snapshot
 		@publication = N'Warehouse'	
 END
+
+GO
+
+------------------------------
+
+CREATE USER [NBNImporter] FOR LOGIN [NBNImporter]
+
+GO
+
+ALTER USER [NBNImporter] WITH DEFAULT_SCHEMA=[dbo]
 
 GO
 

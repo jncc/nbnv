@@ -4,21 +4,21 @@
 <#assign taxon=json.readURL("${api}/taxa/${URLParameters.ptvk}")>
 
 <@template.master title="10km report for ${tenkmGridRef}">
-    <h1>Records for <@taxon_utils.short_name taxon=taxon/> in ${tenkmGridRef}</h1>
+    <h1>Records for <@taxon_utils.short_name taxon=taxon/> in ${tenkmGridRef} from <@report_utils.yearRangeText requestParameters=RequestParameters/></h1>
 
     <#list datasets as dataset>
         <#assign provider=json.readURL("${api}/organisations/${dataset.organisationID}")>
         <table class="nbn-coloured-table">
             <tr>
-                <th colspan="2" class="nbn-th-left"><h4>Dataset:</h4></th>
+                <th colspan="2" class="nbn-th-left">Dataset:</th>
                 <th colspan="4" class="nbn-th-right"><a href="/Datasets/${dataset.datasetKey}">${dataset.name}</a></th>
             </tr>
             <tr>
-                <th colspan="2" class="nbn-td-left"><h4>Provider:</h4></th>
+                <th colspan="2" class="nbn-td-left">Provider:</th>
                 <th colspan="4" class="nbn-td-right"><a href="/Organisations/${provider.organisationID}">${provider.name}</a></th>
             </tr>
             <tr>
-                <th colspan="2" class="nbn-td-left"><h4>Your access:</h4></th>
+                <th colspan="2" class="nbn-td-left">Your access:</th>
                 <th colspan="4" class="nbn-td-right">Access to this dataset Fusce in leo massa, nec ullamcorper dui. Aliquam auctor iaculis sapien, et scelerisque mi iaculis in. Donec nibh libero, aliquet vitae cursus in, mattis vel augue. Nulla facilisi. Aenean porttitor.</a></th>
             </tr>
             <tr class="nbn-emphasise-row">

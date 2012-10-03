@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package uk.org.nbn.nbnv.importer.ui.controller;
 
 import java.io.IOException;
@@ -55,21 +51,21 @@ public class MetadataController {
     
     @RequestMapping(value="/metadata.html", method = RequestMethod.GET)
     public ModelAndView metadata() {  
-        MetadataForm model = new MetadataForm();
-        model.updateOrganisationList();
-        ModelAndView mv = new ModelAndView("metadataForm", "metadataForm", model);
+        MetadataForm metadataForm = new MetadataForm();
+        metadataForm.updateOrganisationList();
+        ModelAndView mv = new ModelAndView("metadataForm", "metadataForm", metadataForm);
         mv.addObject("org", new Organisation());
         return mv;
     }
     
     @RequestMapping(value="/metadata.html", method = RequestMethod.POST)
     @SuppressWarnings("static-access")
-    public ModelAndView uploadFile(@ModelAttribute("metadataForm") MetadataForm model, @ModelAttribute("org") Organisation organisation, UploadItem uploadItem, BindingResult result) {
+    public ModelAndView uploadFile(@ModelAttribute("metadataForm") MetadataForm metadataForm, @ModelAttribute("org") Organisation organisation, UploadItem uploadItem, BindingResult result) {
         if (result.hasErrors()) {
             for (ObjectError error : result.getAllErrors()) {
                 Logger.getLogger(UploadController.class.getName()).log(Level.WARNING, "Error ({0}): {1}", new Object[]{error.getCode(), error.getDefaultMessage()});
             }           
-            return new ModelAndView("metadataForm", "metadataForm", model);
+            return new ModelAndView("metadataForm", "metadataForm", metadataForm);
         }
 
         List<String> messages = new ArrayList<String>();
@@ -133,10 +129,10 @@ public class MetadataController {
             meta.setDatasetAdminPhone(mappings.get(importer.META_CONTACT_PHONE));
             meta.setDatasetAdminEmail(mappings.get(importer.META_EMAIL));
             
-            model.setMetadata(meta);
+            metadataForm.setMetadata(meta);
             
             if (!((mappings.get(importer.ORG_NAME) == null || mappings.get(importer.ORG_NAME).trim().isEmpty()))) {
-                for (Organisation org : model.getOrganisationList()) {
+                for (Organisation org : metadataForm.getOrganisationList()) {
                     if (org.getName().equals(mappings.get(importer.ORG_NAME))) {
                         meta.setOrganisationID(org.getId());
                         break;
@@ -158,7 +154,7 @@ public class MetadataController {
                     organisation.setSummary(mappings.get(importer.ORG_DESC));
                     organisation.setWebsite(mappings.get(importer.ORG_WEBSITE));
                     
-                    model.setStoredOrg(true);
+                    metadataForm.setStoredOrg(true);
 
                     return new ModelAndView("redirect:/organisation.html", "org", organisation);
                 }
@@ -175,9 +171,9 @@ public class MetadataController {
         }
         
         // Return error messages to the interface as well as the data
-        model.setErrors(messages);
+        metadataForm.setErrors(messages);
         
-        return new ModelAndView("metadataForm", "metadataForm", model);
+        return new ModelAndView("metadataForm", "metadataForm", metadataForm);
     }
     
     @RequestMapping(value="/metadataProcess.html", method = RequestMethod.GET)
@@ -186,45 +182,45 @@ public class MetadataController {
     }
 
     @RequestMapping(value="/metadataProcess.html", method = RequestMethod.POST, params="addOrganisation")
-    public ModelAndView addOrganisation(@ModelAttribute("metadataForm") MetadataForm model, BindingResult result) {
-        model.setStoredOrg(false);
+    public ModelAndView addOrganisation(@ModelAttribute("metadataForm") MetadataForm metadataForm, BindingResult result) {
+        metadataForm.setStoredOrg(false);
         return new ModelAndView("redirect:/organisation.html");
     }
 
     @RequestMapping(value="/metadataProcess.html", method = RequestMethod.POST, params="submit")
-    public ModelAndView uploadFile(@ModelAttribute("org") Organisation organisation, @ModelAttribute("metadataForm") @Valid MetadataForm model, BindingResult result, @RequestParam("organisationID") String organisationID) {
+    public ModelAndView uploadFile(@ModelAttribute("org") Organisation organisation, @ModelAttribute("metadataForm") @Valid MetadataForm metadataForm, BindingResult result, @RequestParam("organisationID") String organisationID) {
 
-        model.getMetadata().setOrganisationID(Integer.parseInt(organisationID));
+        metadataForm.getMetadata().setOrganisationID(Integer.parseInt(organisationID));
         
         if (result.hasErrors()) {
             for (ObjectError error : result.getAllErrors()) {
                 Logger.getLogger(UploadController.class.getName()).log(Level.WARNING, "Error ({0}): {1}", new Object[]{error.getCode(), error.getDefaultMessage()});
                 if (error.getDefaultMessage() != null) {
-                    model.getErrors().add(error.getDefaultMessage());
+                    metadataForm.getErrors().add(error.getDefaultMessage());
                 }
             }
             
-            model.updateOrganisationList();
+            metadataForm.updateOrganisationList();
             
-            return new ModelAndView("metadataForm", "metadataForm", model);
+            return new ModelAndView("metadataForm", "metadataForm", metadataForm);
         }
         
-        organisation = getOrganisationByID(model.getMetadata().getOrganisationID(), model.getOrganisationList());
+        organisation = getOrganisationByID(metadataForm.getMetadata().getOrganisationID(), metadataForm.getOrganisationList());
 
-        ModelAndView mv = new ModelAndView("redirect:/upload.html", "metadataForm", model);
+        ModelAndView mv = new ModelAndView("redirect:/upload.html", "metadataForm", metadataForm);
         mv.addObject("org", organisation);
         
         return mv;
     }
      
     @RequestMapping(value="/metadataView.html", method = RequestMethod.GET) 
-    public ModelAndView returnViewData (@ModelAttribute("metadataForm") MetadataForm model) {
-        return new ModelAndView("metadataForm", "metadataForm", model);
+    public ModelAndView returnViewData (@ModelAttribute("metadataForm") MetadataForm metaDataForm) {
+        return new ModelAndView("metadataForm", "metadataForm", metaDataForm);
     }
     
     @RequestMapping(value="/metadataView.html", method = RequestMethod.POST) 
-    public ModelAndView returnViewDataPost (@ModelAttribute("metadataForm") MetadataForm model, @ModelAttribute("org") Organisation organisation, UploadItem uploadItem, BindingResult result) {
-        return uploadFile(model, organisation, uploadItem, result);
+    public ModelAndView returnViewDataPost (@ModelAttribute("metadataForm") MetadataForm metadataForm, @ModelAttribute("org") Organisation organisation, UploadItem uploadItem, BindingResult result) {
+        return uploadFile(metadataForm, organisation, uploadItem, result);
     }
 
     private WordImporter getDocumentImporter(int major, int minor) {
