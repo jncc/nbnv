@@ -57,7 +57,7 @@ public class Dataset implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 8)
-    @Column(name = "key")
+    @Column(name = "\"key\"")
     private String key;
     @Basic(optional = false)
     @NotNull

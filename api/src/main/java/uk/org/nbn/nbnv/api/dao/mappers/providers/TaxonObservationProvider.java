@@ -17,6 +17,27 @@ public class TaxonObservationProvider {
         createSelectQuery(params);
         return SQL();
     }
+
+    public String filteredSelectRecordsOrderedByDataset(Map<String, Object> params) {
+        BEGIN();
+        SELECT("*");
+        createSelectQuery(params);
+        ORDER_BY("datasetKey");
+        return SQL();
+    }
+
+    public String testFilteredSelectRecordsOrderedByDataset(Map<String, Object> params) {
+        BEGIN();
+        SELECT("observationID, fullVersion, 'BRCCARA0' datasetKey, surveyKey, sampleKey, observationKey, siteKey, siteName, o.featureID, gridRef, polygonKey, o.projection, taxonVersionKey, pTaxonVersionKey, pTaxonName, pTaxonAuthority, startDate, endDate, dateType, recorder, determiner, sensitive, absence");
+        createSelectQuery(params);
+        String toReturn = SQL();
+        toReturn += " UNION ALL ";
+        BEGIN();
+        SELECT("observationID, fullVersion, 'TESTDS01' datasetKey, surveyKey, sampleKey, observationKey, siteKey, siteName, o.featureID, gridRef, polygonKey, o.projection, taxonVersionKey, pTaxonVersionKey, pTaxonName, pTaxonAuthority, startDate, endDate, dateType, recorder, determiner, sensitive, absence");
+        createSelectQuery(params);
+        toReturn += SQL();
+        return toReturn;
+    }
     
     public String filteredSelectGroups(Map<String, Object> params) {
         BEGIN();

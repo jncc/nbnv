@@ -36,7 +36,7 @@ public class DatasetType implements Serializable {
     @Id
     @Basic(optional = false)
     @NotNull
-    @Column(name = "key")
+    @Column(name = "\"key\"")
     private Character key;
     @Basic(optional = false)
     @NotNull

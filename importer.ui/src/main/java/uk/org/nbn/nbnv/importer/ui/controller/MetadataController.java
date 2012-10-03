@@ -50,7 +50,7 @@ import uk.org.nbn.nbnv.jpa.nbncore.Organisation;
  * @author Paul Gilbertson
  */
 @Controller
-@SessionAttributes({"model", "org"})
+@SessionAttributes({"model", "org", "logo", "logoSmall"})
 public class MetadataController {
     
     @RequestMapping(value="/metadata.html", method = RequestMethod.GET)
@@ -59,6 +59,8 @@ public class MetadataController {
         model.updateOrganisationList();
         ModelAndView mv = new ModelAndView("metadataForm", "model", model);
         mv.addObject("org", new Organisation());
+        mv.addObject("logo", "");
+        mv.addObject("logoSmall", "");
         return mv;
     }
     
