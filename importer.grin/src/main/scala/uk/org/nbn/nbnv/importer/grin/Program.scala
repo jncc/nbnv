@@ -1,6 +1,6 @@
 package uk.org.nbn.nbnv.importer.grin
 
-import com.google.inject.Guice
+import com.google.inject.{Inject, Guice}
 import injection.GuiceModule
 import uk.org.nbn.nbnv.importer.ingestion.FeatureIngester
 import javax.persistence.{EntityTransaction, EntityManager}
@@ -31,23 +31,33 @@ object Program {
   }
 }
 
-class Program (log: Logger, options: Options, em: EntityManager, ingester: FeatureIngester) {
+class Program @Inject() (log: Logger, options: Options, em: EntityManager, ingester: FeatureIngester) {
 
   def run() {
 
-
     val t = em.getTransaction
 
-    withEntityTransaction(t) {
+    withTransaction(t, options.whatIf) {
 
-      t.begin()
-
-      for (line <- Source.fromFile(options.dataPath).getLines.take(10)) {
-        val gridRef = line.trim
-        ingester.ensureGridRefFeature(gridRef)
+      for {
+        line <- Source.fromFile(options.dataPath).getLines().take(10)
+        ref = line.trim
+        if !ref.isEmpty
+      } {
+        log.info("ingesting gridref '%s'".format(ref))
+        ingester.ensureGridRefFeature(ref)
       }
+    }
+  }
 
-      if (options.whatIf) {
+  def withTransaction(t: EntityTransaction, whatIf: Boolean)(f: => Unit) {
+
+    t.begin()
+
+    try {
+      f
+
+      if (whatIf) {
         log.info("Rolling back transaction (whatIf=true)")
         t.rollback()
       }
@@ -55,12 +65,6 @@ class Program (log: Logger, options: Options, em: EntityManager, ingester: Featu
         log.info("Committing transaction")
         t.commit()
       }
-    }
-  }
-
-  def withEntityTransaction(t: EntityTransaction)(f: => Unit) {
-    try {
-      f
     }
     catch {
       case e: Throwable => {
@@ -72,5 +76,6 @@ class Program (log: Logger, options: Options, em: EntityManager, ingester: Featu
       em.close()
     }
   }
+
 }
 
