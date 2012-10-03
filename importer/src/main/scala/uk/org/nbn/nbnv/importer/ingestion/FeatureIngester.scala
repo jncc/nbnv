@@ -52,7 +52,7 @@ class FeatureIngester @Inject()(log: Logger, em: EntityManager, repo: Repository
 
         // set the projection
         val p = repo.getProjection(info.projection)
-        gs.setProjectionID(p)
+//        gs.setProjectionID(p)
 
         // set the resolution
         val r = repo.getResolution(info.gridReferencePrecision)
