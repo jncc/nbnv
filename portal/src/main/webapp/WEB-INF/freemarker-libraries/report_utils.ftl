@@ -34,7 +34,7 @@
                 <td class="nbn-td-left nbn-filter-name">Designation:</td><td class="nbn-td-right"><@designationText requestParameters=requestParameters/></td>
             </tr>
             <tr>
-                <td class="nbn-td-left nbn-filter-name">Year range:</td><td class="nbn-td-right">${startYear} to ${endYear}</td>
+                <td class="nbn-td-left nbn-filter-name">Year range:</td><td class="nbn-td-right"><@yearRangeText requestParameters=requestParameters/></td>
             </tr>
             <tr>
                 <td class="nbn-td-left nbn-filter-name">Datasets:</td><td class="nbn-td-right"><@datasetText requestParameters=requestParameters/></td>
@@ -87,4 +87,10 @@
         <#assign datasetText=requestParameters.datasetKey?size + " datasets selected">
     </#if>
     ${datasetText}
+</#macro>
+
+<#macro yearRangeText requestParameters>
+    <#assign startYear=requestParameters.startYear?has_content?string(requestParameters.startYear[0]!"","1600")>
+    <#assign endYear=requestParameters.endYear?has_content?string(requestParameters.endYear[0]!"",.now?string("yyyy"))>
+    ${startYear} to ${endYear}
 </#macro>

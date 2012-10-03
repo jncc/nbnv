@@ -152,11 +152,13 @@ body {
             a{
                 color: white;
             }
-            h4{
-                font-weight: bold;
-                font-size: 1em;
-                color: white;
-            }
+        }
+    }
+    
+    table.nbn-observations-table{
+        @extend table.nbn-coloured-table;
+        th{
+            padding: 2px;
         }
     }
 
