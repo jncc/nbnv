@@ -29,27 +29,28 @@ class FeatureIngester @Inject()(log: Logger, em: EntityManager, repo: Repository
     }
   }
 
-  def ensureGridRefFeature(gridRef: String, gridReferenceType: String, gridReferencePrecision: Int) = {
+  def ensureGridRefFeature(gridRef: String, gridReferenceType: String = "", gridReferencePrecision: Int = 0) = {
 
     // ensures that the Grid Feature corresponding to the GridSquareInfo, and all its parents, exist
     def ensure(info: GridSquareInfo) : (Feature, GridSquare) = {
 
       // if there's a feature already, all necessary parents should already exist, so just return it
-      repo.getGridSquareFeature(info.gridReference).getOrElse {
+      repo.getGridSquareFeature(info.gridReference) getOrElse {
+
+        log.debug("Creating grid ref '%s'.".format(info.gridReference))
 
         // the feature doesn't exist, so we need to create it
         val f = new Feature
-        //todo : wkt go bye bye
-//        f.setWkt(info.wgs84Polygon)
-        // call a procedure to generate geom from wkt - see usp_SpatialLocation_AddLocation in the bars db. don't worry about the STIsValid stuff; it will always be valid because were generating the WKT ourselfes
-        // the second argument from STGeomFromText is the spatial reference id. bars uses osgb 277000 NBN uses WSG84.
         // ... todo
-        f.setGeom(hex2Bytes("0xE610000001040500000025188E8301E6F0BF28D6E355FD944A4073EB1E5CE1DFF0BFAC4168F2FC944A400F37C3A7CCDFF0BF3EF4D3651A954A40AEC794D7ECE5F0BF8D5C50C91A954A4025188E8301E6F0BF28D6E355FD944A4001000000020000000001000000FFFFFFFF0000000003"))
+        val tempGeom = hex2Bytes("0xE610000001040500000025188E8301E6F0BF28D6E355FD944A4073EB1E5CE1DFF0BFAC4168F2FC944A400F37C3A7CCDFF0BF3EF4D3651A954A40AEC794D7ECE5F0BF8D5C50C91A954A4025188E8301E6F0BF28D6E355FD944A4001000000020000000001000000FFFFFFFF0000000003")
+        f.setGeom(tempGeom) // in wgs84
+        log.debug("Persisting feature '%s'...".format(info.gridReference))
         em.persist(f)
 
         val gs = new GridSquare
         gs.setFeatureID(f)
         gs.setGridRef(info.gridReference)
+        gs.setGeom(tempGeom)
 
         // set the projection
         val p = repo.getProjection(info.projection)
@@ -67,7 +68,7 @@ class FeatureIngester @Inject()(log: Logger, em: EntityManager, repo: Repository
           }
           case None => ()
         }
-
+        log.debug("Persisting gridsquare '%s'...".format(info.gridReference))
         em.persist(gs)
         (f, gs)
       }

@@ -16,10 +16,10 @@
                     <input type="submit" />
                 </p>
             </fieldset>
-            <#if model.errors?has_content>
+            <#if metadataForm.errors?has_content>
                 <div class="errors">
                     <ul>
-                        <#list model.errors as error>
+                        <#list metadataForm.errors as error>
                             <li>${error}</li>
                         </#list>
                     </ul>
@@ -31,15 +31,15 @@
                 <legend>Dataset Metadata</legend>
                 <p>
                     <span class="formlabel"><label for="title" path="metadata">Title</label></span>
-                    <@spring.formInput "model.metadata.title" "class='wide' length='200'"/>
+                    <@spring.formInput "metadataForm.metadata.title" "class='wide' length='200'"/>
                     <@spring.showErrors "" "error" />
                 </p>
                 <p>
                     <span class="formlabel"><label for="organisationID" path="metadata">Organisation</label></span>
                     <span class="formfield">
                         <select path="metadata" name="organisationID" id="organisationID">
-                            <#list model.organisationList as org>
-                                <option value="${org.id}" <#if model.metadata.organisationID==org.id>selected="selected"</#if>>${org.name}</option>
+                            <#list metadataForm.organisationList as org>
+                                <option value="${org.id}" <#if metadataForm.metadata.organisationID==org.id>selected="selected"</#if>>${org.name}</option>
                             </#list>
                         </select>
                     </span>
@@ -47,47 +47,47 @@
                 </p>
                 <p>
                     <span class="formlabel"><label for="description" path="metadata">Description</label></span>
-                    <@spring.formTextarea "model.metadata.description" "class='wide' rows='6' cols='60'"/>
+                    <@spring.formTextarea "metadataForm.metadata.description" "class='wide' rows='6' cols='60'"/>
                     <@spring.showErrors "" "error" />
                 </p>
                 <p>
                     <span class="formlabel"><label for="methods" path="metadata">Methods of Data Capture</label></span>
-                    <@spring.formTextarea "model.metadata.methods" "class='wide' rows='6' cols='60'"/>
+                    <@spring.formTextarea "metadataForm.metadata.methods" "class='wide' rows='6' cols='60'"/>
                     <@spring.showErrors "" "error" />
                 </p>
                 <p>
                     <span class="formlabel"><label for="purpose" path="metadata">Purpose of Data Capture</label></span>
-                    <@spring.formTextarea "model.metadata.purpose" "class='wide' rows='6' cols='60'"/>
+                    <@spring.formTextarea "metadataForm.metadata.purpose" "class='wide' rows='6' cols='60'"/>
                     <@spring.showErrors "" "error" />
                 </p>
                 <p>
                     <span class="formlabel"><label for="geographic" path="metadata">Geographical Coverage</label></span>
-                    <@spring.formTextarea "model.metadata.geographic" "class='wide' rows='6' cols='60'"/>
+                    <@spring.formTextarea "metadataForm.metadata.geographic" "class='wide' rows='6' cols='60'"/>
                     <@spring.showErrors "" "error" />
                 </p>
                 <p>
                     <span class="formlabel"><label for="temporal" path="metadata">Temporal Coverage</label></span>
-                    <@spring.formTextarea "model.metadata.temporal" "class='wide' rows='6' cols='60'"/>
+                    <@spring.formTextarea "metadataForm.metadata.temporal" "class='wide' rows='6' cols='60'"/>
                     <@spring.showErrors "" "error" />
                 </p>
                 <p>
                     <span class="formlabel"><label for="quality" path="metadata">Data Quality</label></span>
-                    <@spring.formTextarea "model.metadata.quality" "class='wide' rows='6' cols='60'"/>
+                    <@spring.formTextarea "metadataForm.metadata.quality" "class='wide' rows='6' cols='60'"/>
                     <@spring.showErrors "" "error" />
                 </p>
                 <p>
                     <span class="formlabel"><label for="info" path="metadata">Additional Information</label></span>
-                    <@spring.formTextarea "model.metadata.info" "class='wide' rows='6' cols='60'"/>
+                    <@spring.formTextarea "metadataForm.metadata.info" "class='wide' rows='6' cols='60'"/>
                     <@spring.showErrors "" "error" />
                 </p>
                 <p>
                     <span class="formlabel"><label for="use" path="metadata">Use Constraints</label></span>
-                    <@spring.formTextarea "model.metadata.use" "class='wide' rows='6' cols='60'"/>
+                    <@spring.formTextarea "metadataForm.metadata.use" "class='wide' rows='6' cols='60'"/>
                     <@spring.showErrors "" "error" />
                 </p>
                 <p>
                     <span class="formlabel"><label for="access" path="metadata">Access Constraints</label></span>
-                    <@spring.formTextarea "model.metadata.access" "class='wide' rows='6' cols='60'"/>
+                    <@spring.formTextarea "metadataForm.metadata.access" "class='wide' rows='6' cols='60'"/>
                     <@spring.showErrors "" "error" />
                 </p>
 
@@ -95,26 +95,26 @@
                     <legend>Dataset Administrator Details</legend>
                     <p>
                         <span class="formlabel"><label for="datasetAdminName" path="metadata">Name</label></span>
-                        <@spring.formInput "model.metadata.datasetAdminName" "class='wide' length='200'" />
+                        <@spring.formInput "metadataForm.metadata.datasetAdminName" "class='wide' length='200'" />
                         <@spring.showErrors "" "error" />
-                        <#if model.defaultName?has_content><span class="error">${model.defaultName}</span></#if>
+                        <#if metadataForm.defaultName?has_content><span class="error">${metadataForm.defaultName}</span></#if>
                     </p>
 
                     <p>
                         <span class="formlabel"><label for="datasetAdminPhone" path="metadata">Phone Number</label></span>
-                        <@spring.formInput "model.metadata.datasetAdminPhone" "class='wide' length='200'" />
+                        <@spring.formInput "metadataForm.metadata.datasetAdminPhone" "class='wide' length='200'" />
                         <@spring.showErrors "" "error" />
-                        <#if model.defaultPhone?has_content><span class="error">${model.defaultPhone}</span></#if>
+                        <#if metadataForm.defaultPhone?has_content><span class="error">${metadataForm.defaultPhone}</span></#if>
                     </p>
 
                     <p>
                         <span class="formlabel"><label for="datasetAdminEmail" path="metadata">E-mail Address</label></span>
-                        <@spring.formInput "model.metadata.datasetAdminEmail" "class='wide' length='200'" />
+                        <@spring.formInput "metadataForm.metadata.datasetAdminEmail" "class='wide' length='200'" />
                         <@spring.showErrors "" "error" />
-                        <#if model.defaultEmail?has_content><span class="error">${model.defaultEmail}</span></#if>
+                        <#if metadataForm.defaultEmail?has_content><span class="error">${metadataForm.defaultEmail}</span></#if>
                     </p>
 
-                    <@spring.formHiddenInput "model.metadata.datasetAdminID" "length='100'"/>
+                    <@spring.formHiddenInput "metadataForm.metadata.datasetAdminID" "length='100'"/>
                 </fieldset>
 
                 <fieldset>
@@ -122,17 +122,17 @@
                     <br />
                     <span class="formlabel">Maximum Public Geographic Resolution</span>
                     <span class="formfield">
-                        <@spring.formRadioButtons 'model.metadata.geographicalRes', referenceData.geoMap, ' ' />
+                        <@spring.formRadioButtons 'metadataForm.metadata.geographicalRes', referenceData.geoMap, ' ' />
                         <@spring.showErrors "" "error" />
                     </span> <br /> <br />
                     <span class="formlabel">Record Attributes</span>
                     <span class="formfield">
-                        <@spring.formRadioButtons 'model.metadata.recordAtts', referenceData.recAtts, ' ' />
+                        <@spring.formRadioButtons 'metadataForm.metadata.recordAtts', referenceData.recAtts, ' ' />
                         <@spring.showErrors "" "error" />
                     </span> <br /> <br />
                     <span class="formlabel">Can user see Recorder Names?</span>
                     <span class="formfield">
-                        <@spring.formRadioButtons 'model.metadata.recorderNames', referenceData.recNames, ' ' />
+                        <@spring.formRadioButtons 'metadataForm.metadata.recorderNames', referenceData.recNames, ' ' />
                         <@spring.showErrors "" "error" />
                     </span> <br /> <br />
 

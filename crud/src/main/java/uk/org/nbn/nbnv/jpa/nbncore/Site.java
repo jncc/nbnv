@@ -25,6 +25,8 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Site.findByName", query = "SELECT s FROM Site s WHERE s.name = :name"),
     @NamedQuery(name = "Site.findByProviderKey", query = "SELECT s FROM Site s WHERE s.providerKey = :providerKey")})
 public class Site implements Serializable {
+    @OneToMany(mappedBy = "siteID")
+    private Collection<TaxonObservationPublic> taxonObservationPublicCollection;
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
@@ -121,6 +123,15 @@ public class Site implements Serializable {
     @Override
     public String toString() {
         return "uk.org.nbn.nbnv.jpa.nbncore.Site[ id=" + id + " ]";
+    }
+
+    @XmlTransient
+    public Collection<TaxonObservationPublic> getTaxonObservationPublicCollection() {
+        return taxonObservationPublicCollection;
+    }
+
+    public void setTaxonObservationPublicCollection(Collection<TaxonObservationPublic> taxonObservationPublicCollection) {
+        this.taxonObservationPublicCollection = taxonObservationPublicCollection;
     }
     
 }

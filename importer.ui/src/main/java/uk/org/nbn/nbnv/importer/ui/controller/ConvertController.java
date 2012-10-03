@@ -13,6 +13,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,11 +35,13 @@ import uk.org.nbn.nbnv.jpa.nbncore.Organisation;
  * @author Paul Gilbertson
  */
 @Controller
-@SessionAttributes({"model", "org"})
+@SessionAttributes({"metadataForm", "org"})
 @RequestMapping("/compile.html")
 public class ConvertController {   
     @RequestMapping(method= RequestMethod.POST)
-    public ModelAndView compile(@RequestParam Map<String, String> args, @ModelAttribute("model") MetadataForm metadataForm, @ModelAttribute("org") Organisation organisation) {
+    public ModelAndView compile(@RequestParam Map<String, String> args, HttpServletRequest request,  
+                                @ModelAttribute("metadataForm") MetadataForm metadataForm, 
+                                @ModelAttribute("org") Organisation organisation) {
         try {
             ConvertResults model = new ConvertResults();
             
@@ -54,7 +57,7 @@ public class ConvertController {
             
             EntityManager em = DatabaseConnection.getInstance().createEntityManager();
             Query q = em.createNamedQuery("Organisation.findById");
-            q.setParameter("organisationID", organisation.getId());
+            q.setParameter("id", organisation.getId());
             Organisation org = (Organisation) q.getSingleResult();
             
             MetadataWriter mw = new MetadataWriter(metadata);

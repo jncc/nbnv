@@ -53,15 +53,8 @@
                     <span class="formlabel"><label for="logo" path="organisation">Logo</label></span>
 
                     <span class="formfield">
-                        <@spring.bind "orgForm.logo" />
-                        <img alt="" src="${spring.status.value?default("")}"/>
-
-                        <@spring.formHiddenInput "orgForm.logoBase64" "class='wide' length='1000'"/>
-
-                        <@spring.bind "orgForm.logoSmall" />
-                        <img alt="" src="${spring.status.value?default("")}"  />
-
-                        <@spring.formHiddenInput "orgForm.logoSmallBase64" "class='wide' length='1000'"/>
+                        <img alt="" src="imageBase/large.html"/>
+                        <img alt="" src="imageBase/small.html"  />
 
                         <input path="imageData" type="file" name="imageData" value="imageData" />                        
                         <input type="submit" name="addImage" value="Upload Image" />

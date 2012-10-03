@@ -50,26 +50,26 @@ import uk.org.nbn.nbnv.jpa.nbncore.Organisation;
  * @author Paul Gilbertson
  */
 @Controller
-@SessionAttributes({"model", "org"})
+@SessionAttributes({"metadataForm", "org"})
 public class MetadataController {
     
     @RequestMapping(value="/metadata.html", method = RequestMethod.GET)
     public ModelAndView metadata() {  
         MetadataForm model = new MetadataForm();
         model.updateOrganisationList();
-        ModelAndView mv = new ModelAndView("metadataForm", "model", model);
+        ModelAndView mv = new ModelAndView("metadataForm", "metadataForm", model);
         mv.addObject("org", new Organisation());
         return mv;
     }
     
     @RequestMapping(value="/metadata.html", method = RequestMethod.POST)
     @SuppressWarnings("static-access")
-    public ModelAndView uploadFile(@ModelAttribute("model") MetadataForm model, @ModelAttribute("org") Organisation organisation, UploadItem uploadItem, BindingResult result) {
+    public ModelAndView uploadFile(@ModelAttribute("metadataForm") MetadataForm model, @ModelAttribute("org") Organisation organisation, UploadItem uploadItem, BindingResult result) {
         if (result.hasErrors()) {
             for (ObjectError error : result.getAllErrors()) {
                 Logger.getLogger(UploadController.class.getName()).log(Level.WARNING, "Error ({0}): {1}", new Object[]{error.getCode(), error.getDefaultMessage()});
             }           
-            return new ModelAndView("metadataForm", "model", model);
+            return new ModelAndView("metadataForm", "metadataForm", model);
         }
 
         List<String> messages = new ArrayList<String>();
@@ -177,7 +177,7 @@ public class MetadataController {
         // Return error messages to the interface as well as the data
         model.setErrors(messages);
         
-        return new ModelAndView("metadataForm", "model", model);
+        return new ModelAndView("metadataForm", "metadataForm", model);
     }
     
     @RequestMapping(value="/metadataProcess.html", method = RequestMethod.GET)
@@ -186,13 +186,13 @@ public class MetadataController {
     }
 
     @RequestMapping(value="/metadataProcess.html", method = RequestMethod.POST, params="addOrganisation")
-    public ModelAndView addOrganisation(@ModelAttribute("model") MetadataForm model, BindingResult result) {
+    public ModelAndView addOrganisation(@ModelAttribute("metadataForm") MetadataForm model, BindingResult result) {
         model.setStoredOrg(false);
         return new ModelAndView("redirect:/organisation.html");
     }
 
     @RequestMapping(value="/metadataProcess.html", method = RequestMethod.POST, params="submit")
-    public ModelAndView uploadFile(@ModelAttribute("org") Organisation organisation, @ModelAttribute("model") @Valid MetadataForm model, BindingResult result, @RequestParam("organisationID") String organisationID) {
+    public ModelAndView uploadFile(@ModelAttribute("org") Organisation organisation, @ModelAttribute("metadataForm") @Valid MetadataForm model, BindingResult result, @RequestParam("organisationID") String organisationID) {
 
         model.getMetadata().setOrganisationID(Integer.parseInt(organisationID));
         
@@ -206,21 +206,24 @@ public class MetadataController {
             
             model.updateOrganisationList();
             
-            return new ModelAndView("metadataForm", "model", model);
+            return new ModelAndView("metadataForm", "metadataForm", model);
         }
         
         organisation = getOrganisationByID(model.getMetadata().getOrganisationID(), model.getOrganisationList());
 
-        return new ModelAndView("redirect:/upload.html", "model", model);
+        ModelAndView mv = new ModelAndView("redirect:/upload.html", "metadataForm", model);
+        mv.addObject("org", organisation);
+        
+        return mv;
     }
      
     @RequestMapping(value="/metadataView.html", method = RequestMethod.GET) 
-    public ModelAndView returnViewData (@ModelAttribute("model") MetadataForm model) {
-        return new ModelAndView("metadataForm", "model", model);
+    public ModelAndView returnViewData (@ModelAttribute("metadataForm") MetadataForm model) {
+        return new ModelAndView("metadataForm", "metadataForm", model);
     }
     
     @RequestMapping(value="/metadataView.html", method = RequestMethod.POST) 
-    public ModelAndView returnViewDataPost (@ModelAttribute("model") MetadataForm model, @ModelAttribute("org") Organisation organisation, UploadItem uploadItem, BindingResult result) {
+    public ModelAndView returnViewDataPost (@ModelAttribute("metadataForm") MetadataForm model, @ModelAttribute("org") Organisation organisation, UploadItem uploadItem, BindingResult result) {
         return uploadFile(model, organisation, uploadItem, result);
     }
 
@@ -244,7 +247,7 @@ public class MetadataController {
         return null;
     }
     
-    @InitBinder("model")
+    @InitBinder("metadataForm")
     protected void initBinder(WebDataBinder binder) {
         binder.setValidator(new MetadataFormValidator(new MetadataValidator()));
     }    
