@@ -51,10 +51,10 @@ public class MapServerServletHelper {
     /*Handle execptions which were thrown during the construction of map services*/
     private static void handleMapServiceException(Throwable e, HttpServletResponse response) throws IOException {
         if(e instanceof IllegalArgumentException) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getCause().getMessage());
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
         }
         else {
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getCause().getMessage());
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }  
     
