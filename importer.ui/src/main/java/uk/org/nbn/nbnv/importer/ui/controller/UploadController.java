@@ -14,20 +14,24 @@ import java.util.logging.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
+import uk.org.nbn.nbnv.importer.ui.model.MetadataForm;
 import uk.org.nbn.nbnv.importer.ui.model.UploadItem;
 import uk.org.nbn.nbnv.importer.ui.model.UploadItemResults;
 import uk.org.nbn.nbnv.importer.ui.parser.DarwinCoreField;
 import uk.org.nbn.nbnv.importer.ui.parser.NXFParser;
+import uk.org.nbn.nbnv.jpa.nbncore.Organisation;
 
 /**
  *
  * @author Administrator
  */
 @Controller
+@SessionAttributes({"metadataForm", "org"})
 @RequestMapping(value = "/upload.html")
 public class UploadController {
     @RequestMapping(method = RequestMethod.GET)
@@ -36,7 +40,7 @@ public class UploadController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public ModelAndView uploadFile(UploadItem uploadItem, BindingResult result) {
+    public ModelAndView uploadFile(UploadItem uploadItem, BindingResult result, @ModelAttribute("metadataForm") MetadataForm meta, @ModelAttribute("org") Organisation org) {
         if (result.hasErrors()) {
             for (ObjectError error : result.getAllErrors()) {
                 Logger.getLogger(UploadController.class.getName()).log(Level.WARNING, "Error ({0}): {1}", new Object[]{error.getCode(), error.getDefaultMessage()});
@@ -71,7 +75,10 @@ public class UploadController {
         model.setResults(messages);
         model.setFields(Arrays.asList(DarwinCoreField.values()));
         
-        return new ModelAndView("uploadSuccess", "model", model);
+        ModelAndView mv = new ModelAndView("uploadSuccess", "model", model);
+        mv.addObject("metadataForm", meta);
+        mv.addObject("org", org);
+        
+        return mv;
     }
-
 }
