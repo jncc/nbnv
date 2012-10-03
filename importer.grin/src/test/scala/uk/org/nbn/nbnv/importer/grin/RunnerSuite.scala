@@ -12,7 +12,7 @@ import uk.org.nbn.nbnv.importer.grin.Options
 class RunnerSuite extends FunSuite with ShouldMatchers with MockitoSugar with ResourceLoader {
 
   // change this from "ignore" to "test" to run
-  test("run the grid importer") {
+  ignore("run the grid importer") {
 
     val dataPath = resource("/gridrefs.csv")
 
