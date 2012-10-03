@@ -63,6 +63,23 @@ class Repository @Inject()(log: Logger, em: EntityManager, cache: QueryCache) ex
     }
   }
 
+  def getSiteBoundaryFeature(siteBoundaryDataset: String, providerKey: String) = {
+
+    // todo: this is a guess until the crud layer is fixed
+    val q = "select f, b from Feature f join f.siteBoundaryCollection b where b.siteBoundaryDataset = :siteBoundaryDataset and b.providerKey = :providerKey "
+
+    cacheSingle(q, siteBoundaryDataset, providerKey) {
+
+      val query = em.createQuery(q)
+      query.setParameter("siteBoundaryDataset", siteBoundaryDataset)
+      query.setParameter("providerKey", providerKey)
+
+      expectSingleResult(siteBoundaryDataset + providerKey) {
+        query.getResultList map { case Array(f: Feature, b: SiteBoundary) => (f, b) }
+      }
+    }
+  }
+
   def getSurvey(surveyKey: String, dataset: TaxonDataset) = {
 
     val q = "SELECT s FROM Survey s WHERE s.providerKey = :providerKey AND s.datasetKey = :datasetKey"

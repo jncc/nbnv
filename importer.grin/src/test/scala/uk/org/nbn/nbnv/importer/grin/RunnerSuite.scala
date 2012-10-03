@@ -6,7 +6,6 @@ import org.scalatest.junit.JUnitRunner
 import org.scalatest.mock.MockitoSugar
 import org.scalatest.matchers.ShouldMatchers
 import org.scalatest.FunSuite
-import uk.org.nbn.nbnv.importer.grin.Options
 import uk.org.nbn.nbnv.PersistenceUtility
 import uk.org.nbn.nbnv.importer.Settings
 import uk.org.nbn.nbnv.importer.data.{QueryCache, Repository}
