@@ -327,6 +327,7 @@ BEGIN
 		, i.id
 	FROM inserted i
 	INNER JOIN [Feature] f on f.geom.STContains(i.geom) = 1
+	WHERE f.id != i.id
 
 	DELETE FROM [FeatureOverlaps] 
 	WHERE featureID IN (SELECT id FROM deleted) 
@@ -345,6 +346,7 @@ BEGIN
 		, i.id
 	FROM inserted i
 	INNER JOIN [Feature] f on f.geom.STIntersects(i.geom) = 1
+	WHERE f.id != i.id
 END
 
 GO
@@ -868,10 +870,10 @@ SET ANSI_PADDING ON;
 
 CREATE TABLE [dbo].[TaxonObservationPublic](
 	[taxonObservationID] [int] NOT NULL PRIMARY KEY REFERENCES [TaxonObservation] ([id]) ON UPDATE CASCADE ON DELETE CASCADE,
-	[siteID] [int] NULL,
-	[featureID] [int] NOT NULL,
-	[recorderID] [int] NULL,
-	[determinerID] [int] NULL,
+	[siteID] [int] NULL REFERENCES [Site] ([id]),
+	[featureID] [int] NOT NULL REFERENCES [Feature] ([id]),
+	[recorderID] [int] NULL REFERENCES [Recorder] ([id]),
+	[determinerID] [int] NULL REFERENCES [Recorder] ([id]),
 );
 
 /*

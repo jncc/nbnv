@@ -24,6 +24,10 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Recorder.findById", query = "SELECT r FROM Recorder r WHERE r.id = :id"),
     @NamedQuery(name = "Recorder.findByName", query = "SELECT r FROM Recorder r WHERE r.name = :name")})
 public class Recorder implements Serializable {
+    @OneToMany(mappedBy = "determinerID")
+    private Collection<TaxonObservationPublic> taxonObservationPublicCollection;
+    @OneToMany(mappedBy = "recorderID")
+    private Collection<TaxonObservationPublic> taxonObservationPublicCollection1;
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
@@ -109,6 +113,24 @@ public class Recorder implements Serializable {
     @Override
     public String toString() {
         return "uk.org.nbn.nbnv.jpa.nbncore.Recorder[ id=" + id + " ]";
+    }
+
+    @XmlTransient
+    public Collection<TaxonObservationPublic> getTaxonObservationPublicCollection() {
+        return taxonObservationPublicCollection;
+    }
+
+    public void setTaxonObservationPublicCollection(Collection<TaxonObservationPublic> taxonObservationPublicCollection) {
+        this.taxonObservationPublicCollection = taxonObservationPublicCollection;
+    }
+
+    @XmlTransient
+    public Collection<TaxonObservationPublic> getTaxonObservationPublicCollection1() {
+        return taxonObservationPublicCollection1;
+    }
+
+    public void setTaxonObservationPublicCollection1(Collection<TaxonObservationPublic> taxonObservationPublicCollection1) {
+        this.taxonObservationPublicCollection1 = taxonObservationPublicCollection1;
     }
     
 }
