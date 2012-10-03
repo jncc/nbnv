@@ -33,6 +33,14 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "GridSquare.findAll", query = "SELECT g FROM GridSquare g"),
     @NamedQuery(name = "GridSquare.findByGridRef", query = "SELECT g FROM GridSquare g WHERE g.gridRef = :gridRef")})
 public class GridSquare implements Serializable {
+    @Basic(optional = false)
+    @NotNull
+    @Lob
+    @Column(name = "originalGeom")
+    private byte[] originalGeom;
+    @JoinColumn(name = "originalProjectionID", referencedColumnName = "id")
+    @ManyToOne(optional = false)
+    private Projection originalProjectionID;
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
@@ -152,6 +160,22 @@ public class GridSquare implements Serializable {
     @Override
     public String toString() {
         return "uk.org.nbn.nbnv.jpa.nbncore.GridSquare[ gridRef=" + gridRef + " ]";
+    }
+
+    public byte[] getOriginalGeom() {
+        return originalGeom;
+    }
+
+    public void setOriginalGeom(byte[] originalGeom) {
+        this.originalGeom = originalGeom;
+    }
+
+    public Projection getOriginalProjectionID() {
+        return originalProjectionID;
+    }
+
+    public void setOriginalProjectionID(Projection originalProjectionID) {
+        this.originalProjectionID = originalProjectionID;
     }
     
 }

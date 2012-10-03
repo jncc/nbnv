@@ -427,14 +427,14 @@ CREATE TABLE [dbo].[GridSquare](
 	[featureID] [int] NOT NULL REFERENCES [Feature] ([id]) ON UPDATE CASCADE ON DELETE CASCADE,
 	[resolutionID] [int] NOT NULL REFERENCES [Resolution] ([id]),
 	[parentSquareGridRef] [varchar](12) NULL REFERENCES [GridSquare] ([gridRef]),
-	[projectionID] [int] NOT NULL REFERENCES [Projection] ([id]),
-	[geom] [geometry] NOT NULL
+	[originalProjectionID] [int] NOT NULL REFERENCES [Projection] ([id]),
+	[originalGeom] [geometry] NOT NULL
 );
 
 SET ANSI_PADDING ON; 
 
-CREATE SPATIAL INDEX [sidx_GridSquare_geom] ON [dbo].[GridSquare] (
-	[geom]
+CREATE SPATIAL INDEX [sidx_GridSquare_originalGeom] ON [dbo].[GridSquare] (
+	[originalGeom]
 ) USING GEOMETRY_GRID WITH (
 	BOUNDING_BOX =(-11, 49, 3, 63), GRIDS =(LEVEL_1 = MEDIUM,LEVEL_2 = MEDIUM,LEVEL_3 = MEDIUM,LEVEL_4 = MEDIUM), CELLS_PER_OBJECT = 16, PAD_INDEX  = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON
 );
@@ -454,7 +454,10 @@ CREATE PROCEDURE [dbo].[import_UpdateGridSquare]
 	@wkt VARCHAR(MAX)
 AS
 BEGIN
-	UPDATE GridSquare SET geom = geometry::STGeomFromText(@wkt, 4326) WHERE featureID = @featureID
+	DECLARE @srid INT
+	SELECT @srid = srcSRID FROM Projection p INNER JOIN GridSquare gs ON gs.originalProjectionID = p.id WHERE gs.featureID = @featureID 
+
+	UPDATE GridSquare SET originalGeom = geometry::STGeomFromText(@wkt, @srid) WHERE featureID = @featureID
 END
 
 GO
@@ -472,12 +475,15 @@ CREATE PROCEDURE [dbo].[import_CreateGridSquare]
 	@featureID INT
 	, @gridRef VARCHAR(12)
 	, @parentSquareGridRef VARCHAR(12)
-	, @projectionID INT
 	, @resolutionID INT
+	, @projectionID INT
 	, @wkt VARCHAR(MAX)
 AS
 BEGIN
-	INSERT INTO GridSquare (featureID, gridRef, parentSquareGridRef, projectionID, resolutionID, geom) VALUES (@featureID, @gridRef, @parentSquareGridRef, @projectionID, @resolutionID, geometry::STGeomFromText(@wkt, 4326))
+	DECLARE @srid INT
+	SELECT @srid = srcSRID FROM Projection WHERE id = @projectionID 
+
+	INSERT INTO GridSquare (featureID, gridRef, parentSquareGridRef, resolutionID, originalProjectionID, originalGeom) VALUES (@featureID, @gridRef, @parentSquareGridRef, @resolutionID, @projectionID, geometry::STGeomFromText(@wkt, @srid))
 END
 
 GO
@@ -583,15 +589,15 @@ CREATE TABLE [dbo].[SiteBoundary](
 	[description] [varchar](max) NULL,
 	[providerKey] [varchar](100) NOT NULL,
 	[siteBoundaryDataset] [char](8) NOT NULL REFERENCES [SiteBoundaryDataset] ([datasetKey]),
-	[projectionID] [int] NOT NULL REFERENCES [Projection] ([id]),
-	[geom] [geometry] NOT NULL,
+	[originalProjectionID] [int] NOT NULL REFERENCES [Projection] ([id]),
+	[originalGeom] [geometry] NOT NULL,
 	[uploadDate] [datetime] NOT NULL
 );
 
 SET ANSI_PADDING ON; 
 
-CREATE SPATIAL INDEX [sidx_SiteBoundary_geom] ON [dbo].[SiteBoundary] (
-	[geom]
+CREATE SPATIAL INDEX [sidx_SiteBoundary_originalGeom] ON [dbo].[SiteBoundary] (
+	[originalGeom]
 ) USING GEOMETRY_GRID WITH (
 	BOUNDING_BOX =(-11, 49, 3, 63), GRIDS =(LEVEL_1 = MEDIUM,LEVEL_2 = MEDIUM,LEVEL_3 = MEDIUM,LEVEL_4 = MEDIUM), CELLS_PER_OBJECT = 16, PAD_INDEX  = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON
 );

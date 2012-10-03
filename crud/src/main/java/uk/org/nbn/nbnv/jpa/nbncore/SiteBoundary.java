@@ -42,6 +42,14 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "SiteBoundary.findByProviderKey", query = "SELECT s FROM SiteBoundary s WHERE s.providerKey = :providerKey"),
     @NamedQuery(name = "SiteBoundary.findByUploadDate", query = "SELECT s FROM SiteBoundary s WHERE s.uploadDate = :uploadDate")})
 public class SiteBoundary implements Serializable {
+    @Basic(optional = false)
+    @NotNull
+    @Lob
+    @Column(name = "originalGeom")
+    private byte[] originalGeom;
+    @JoinColumn(name = "originalProjectionID", referencedColumnName = "id")
+    @ManyToOne(optional = false)
+    private Projection originalProjectionID;
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
@@ -213,6 +221,22 @@ public class SiteBoundary implements Serializable {
     @Override
     public String toString() {
         return "uk.org.nbn.nbnv.jpa.nbncore.SiteBoundary[ featureID=" + featureID + " ]";
+    }
+
+    public byte[] getOriginalGeom() {
+        return originalGeom;
+    }
+
+    public void setOriginalGeom(byte[] originalGeom) {
+        this.originalGeom = originalGeom;
+    }
+
+    public Projection getOriginalProjectionID() {
+        return originalProjectionID;
+    }
+
+    public void setOriginalProjectionID(Projection originalProjectionID) {
+        this.originalProjectionID = originalProjectionID;
     }
     
 }
