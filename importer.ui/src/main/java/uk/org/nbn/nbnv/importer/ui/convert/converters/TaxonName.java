@@ -16,6 +16,7 @@ import uk.org.nbn.nbnv.importer.ui.convert.DependentStep;
 import uk.org.nbn.nbnv.importer.ui.parser.ColumnMapping;
 import uk.org.nbn.nbnv.importer.ui.parser.DarwinCoreField;
 import uk.org.nbn.nbnv.importer.ui.util.DatabaseConnection;
+import uk.org.nbn.nbnv.jpa.nbncore.Taxon;
 
 /**
  *
@@ -26,13 +27,13 @@ public class TaxonName extends DependentStep {
     private static final String matchString = "(species|taxon(?!version))([a-z]+)?((\\s|_)?(name|id)?)";
     private ColumnMapping column;
     private Pattern pattern;
-    private Map<String, List<String>> lookup;
+    private Map<String, String> lookup;
     
     public TaxonName() {
         super(DependentStep.MODIFY & DependentStep.ADD_COLUMN);
         
         this.pattern = Pattern.compile(matchString, Pattern.CASE_INSENSITIVE);
-        this.lookup = new HashMap<String, List<String>>();
+        this.lookup = new HashMap<String, String>();
     }
     
     @Override
@@ -58,7 +59,7 @@ public class TaxonName extends DependentStep {
     public void modifyHeader(List<ColumnMapping> columns) {
         for (ColumnMapping cm : columns) {
             if (cm == this.column) {
-                columns.set(cm.getColumnNumber(), new ColumnMapping(cm.getColumnNumber(), DarwinCoreField.TAXONID.getTerm(), DarwinCoreField.TAXONID));
+                columns.set(cm.getColumnNumber(), new ColumnMapping(cm.getColumnNumber(), "TaxonVersionKey", DarwinCoreField.TAXONID));
                 return;
             }
         }
@@ -74,29 +75,33 @@ public class TaxonName extends DependentStep {
         // use the stored value in the lookup tables
         if (!lookup.containsKey(origVal)) {
             EntityManager em = DatabaseConnection.getInstance().createEntityManager();
-            Query q = em.createNamedQuery("Taxon.findByTaxonName");
+            Query q = em.createNamedQuery("Taxon.findByName");
             q.setParameter("name", origVal);            
             
-            List<String> results = q.getResultList();
+            List<Taxon> results = q.getResultList();
             
             if (results.size() == 1) {
-                lookup.put(origVal, results);
+                lookup.put(origVal, results.get(0).getTaxonVersionKey());
             } else {
-                // TODO Do Fuzzy search 
-                // If we find a return with more than one return then we have to return an ambiguous data exception
-                //throw new AmbiguousDataException();
                 
-                List<String> res = new LinkedList<String>();
-                res.add(origVal);
-                lookup.put(origVal, res);
+                // More than one result came back try and get the Preferred TaxonVersionKey
+                boolean foundParent = false;
+                Taxon current = (Taxon) results.get(0);
+                while (!foundParent) {
+                    if (current.getPTaxonVersionKey() == current) {
+                        foundParent = true;
+                    } else {
+                        current = current.getPTaxonVersionKey();
+                    }
+                }
                 
-                throw new BadDataException("Could not find a Preferred Taxon Version Key for:" + origVal);
+                lookup.put(origVal, current.getTaxonVersionKey());
             }            
         }
         
         // Push Original Value to Attributes        
         
         // Put in lookupvalue, may be an error value we will handle this later on
-        row.set(this.column.getColumnNumber(), lookup.get(origVal).get(0));
+        row.set(this.column.getColumnNumber(), lookup.get(origVal));
     }
 }
