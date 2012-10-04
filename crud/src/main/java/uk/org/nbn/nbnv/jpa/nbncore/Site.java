@@ -25,12 +25,10 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Site.findByName", query = "SELECT s FROM Site s WHERE s.name = :name"),
     @NamedQuery(name = "Site.findByProviderKey", query = "SELECT s FROM Site s WHERE s.providerKey = :providerKey")})
 public class Site implements Serializable {
-    @OneToMany(mappedBy = "siteID")
-    private Collection<TaxonObservationPublic> taxonObservationPublicCollection;
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
     @Basic(optional = false)
@@ -41,11 +39,13 @@ public class Site implements Serializable {
     @Size(max = 100)
     @Column(name = "providerKey")
     private String providerKey;
-    @OneToMany(mappedBy = "siteID")
+    @OneToMany(mappedBy = "site")
+    private Collection<TaxonObservationPublic> taxonObservationPublicCollection;
+    @OneToMany(mappedBy = "site")
     private Collection<TaxonObservation> taxonObservationCollection;
     @JoinColumn(name = "datasetKey", referencedColumnName = "key")
     @ManyToOne(optional = false)
-    private Dataset datasetKey;
+    private Dataset dataset;
 
     public Site() {
     }
@@ -84,6 +84,15 @@ public class Site implements Serializable {
     }
 
     @XmlTransient
+    public Collection<TaxonObservationPublic> getTaxonObservationPublicCollection() {
+        return taxonObservationPublicCollection;
+    }
+
+    public void setTaxonObservationPublicCollection(Collection<TaxonObservationPublic> taxonObservationPublicCollection) {
+        this.taxonObservationPublicCollection = taxonObservationPublicCollection;
+    }
+
+    @XmlTransient
     public Collection<TaxonObservation> getTaxonObservationCollection() {
         return taxonObservationCollection;
     }
@@ -92,12 +101,12 @@ public class Site implements Serializable {
         this.taxonObservationCollection = taxonObservationCollection;
     }
 
-    public Dataset getDatasetKey() {
-        return datasetKey;
+    public Dataset getDataset() {
+        return dataset;
     }
 
-    public void setDatasetKey(Dataset datasetKey) {
-        this.datasetKey = datasetKey;
+    public void setDataset(Dataset dataset) {
+        this.dataset = dataset;
     }
 
     @Override
@@ -123,15 +132,6 @@ public class Site implements Serializable {
     @Override
     public String toString() {
         return "uk.org.nbn.nbnv.jpa.nbncore.Site[ id=" + id + " ]";
-    }
-
-    @XmlTransient
-    public Collection<TaxonObservationPublic> getTaxonObservationPublicCollection() {
-        return taxonObservationPublicCollection;
-    }
-
-    public void setTaxonObservationPublicCollection(Collection<TaxonObservationPublic> taxonObservationPublicCollection) {
-        this.taxonObservationPublicCollection = taxonObservationPublicCollection;
     }
     
 }

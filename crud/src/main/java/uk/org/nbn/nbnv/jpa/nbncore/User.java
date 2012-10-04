@@ -125,10 +125,10 @@ public class User implements Serializable {
     private Collection<Dataset> datasetCollection;
     @JoinColumn(name = "userTypeID", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    private UserType userTypeID;
-    @OneToMany(mappedBy = "userID")
+    private UserType userType;
+    @OneToMany(mappedBy = "user")
     private Collection<TaxonObservationDownload> taxonObservationDownloadCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "userID")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
     private Collection<UserAccessRequest> userAccessRequestCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
     private Collection<UserOrganisationMembership> userOrganisationMembershipCollection;
@@ -320,12 +320,12 @@ public class User implements Serializable {
         this.datasetCollection = datasetCollection;
     }
 
-    public UserType getUserTypeID() {
-        return userTypeID;
+    public UserType getUserType() {
+        return userType;
     }
 
-    public void setUserTypeID(UserType userTypeID) {
-        this.userTypeID = userTypeID;
+    public void setUserType(UserType userType) {
+        this.userType = userType;
     }
 
     @XmlTransient

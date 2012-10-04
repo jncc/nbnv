@@ -36,7 +36,7 @@ public class Organisation implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
     @Basic(optional = false)
@@ -84,11 +84,11 @@ public class Organisation implements Serializable {
         @JoinColumn(name = "observationID", referencedColumnName = "id")})
     @ManyToMany
     private Collection<TaxonObservation> taxonObservationCollection;
-    @OneToMany(mappedBy = "organisationID")
+    @OneToMany(mappedBy = "organisation")
     private Collection<TaxonObservationDownload> taxonObservationDownloadCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "organisationID")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "organisation")
     private Collection<OrganisationAccessRequest> organisationAccessRequestCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "providerOrganisationKey")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "organisation")
     private Collection<Dataset> datasetCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "organisation")
     private Collection<UserOrganisationMembership> userOrganisationMembershipCollection;

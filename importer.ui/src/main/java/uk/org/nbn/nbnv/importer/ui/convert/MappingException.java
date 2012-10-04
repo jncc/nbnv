@@ -8,33 +8,32 @@ package uk.org.nbn.nbnv.importer.ui.convert;
  *
  * @author Matt Debont
  */
-public class AmbiguousDataException extends BadDataException {
+public class MappingException extends BadDataException {
     
     /**
      * Creates a new instance of
-     * <code>AmbiguousDataException</code> without detail message.
+     * <code>MappingException</code> without detail message.
      */
-    public AmbiguousDataException() {
+    public MappingException() {
     }
 
     /**
      * Constructs an instance of
-     * <code>AmbiguousDataException</code> with the specified detail message.
+     * <code>MappingException</code> with the specified detail message.
      *
      * @param msg the detail message.
      */
-    public AmbiguousDataException(String msg) {
+    public MappingException(String msg) {
         super(msg);
     }
     
     /**
      * Constructs an instance of
-     * <code>AmbiguousDataException</code> with the specified inner exception.
+     * <code>MappingException</code> with the specified inner exception.
      *
      * @param ex the inner exception.
      */
-    public AmbiguousDataException(Exception ex) {
+    public MappingException(Exception ex) {
         super(ex);
     }    
-    
 }

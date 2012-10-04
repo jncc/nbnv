@@ -61,16 +61,16 @@ public class TaxonObservationDownload implements Serializable {
     private String userForOrganisation;
     @JoinColumn(name = "userID", referencedColumnName = "id")
     @ManyToOne
-    private User userID;
+    private User user;
     @JoinColumn(name = "filterID", referencedColumnName = "id", insertable = false, updatable = false)
     @OneToOne(optional = false)
     private TaxonObservationFilter taxonObservationFilter;
     @JoinColumn(name = "purposeID", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    private TaxonObservationDownloadPurpose purposeID;
+    private TaxonObservationDownloadPurpose taxonObservationDownloadPurpose;
     @JoinColumn(name = "organisationID", referencedColumnName = "id")
     @ManyToOne
-    private Organisation organisationID;
+    private Organisation organisation;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "taxonObservationDownload")
     private Collection<TaxonObservationDownloadStatistics> taxonObservationDownloadStatisticsCollection;
 
@@ -119,12 +119,12 @@ public class TaxonObservationDownload implements Serializable {
         this.userForOrganisation = userForOrganisation;
     }
 
-    public User getUserID() {
-        return userID;
+    public User getUser() {
+        return user;
     }
 
-    public void setUserID(User userID) {
-        this.userID = userID;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public TaxonObservationFilter getTaxonObservationFilter() {
@@ -135,20 +135,20 @@ public class TaxonObservationDownload implements Serializable {
         this.taxonObservationFilter = taxonObservationFilter;
     }
 
-    public TaxonObservationDownloadPurpose getPurposeID() {
-        return purposeID;
+    public TaxonObservationDownloadPurpose getTaxonObservationDownloadPurpose() {
+        return taxonObservationDownloadPurpose;
     }
 
-    public void setPurposeID(TaxonObservationDownloadPurpose purposeID) {
-        this.purposeID = purposeID;
+    public void setTaxonObservationDownloadPurpose(TaxonObservationDownloadPurpose taxonObservationDownloadPurpose) {
+        this.taxonObservationDownloadPurpose = taxonObservationDownloadPurpose;
     }
 
-    public Organisation getOrganisationID() {
-        return organisationID;
+    public Organisation getOrganisation() {
+        return organisation;
     }
 
-    public void setOrganisationID(Organisation organisationID) {
-        this.organisationID = organisationID;
+    public void setOrganisation(Organisation organisation) {
+        this.organisation = organisation;
     }
 
     @XmlTransient

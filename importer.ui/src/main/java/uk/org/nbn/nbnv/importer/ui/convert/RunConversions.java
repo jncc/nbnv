@@ -127,7 +127,7 @@ public class RunConversions {
                     if ((step.getModifier() & DependentStep.RUN_FIRST) != 0) {
                         preSteps.add(step);
                     } else if ((step.getModifier() & DependentStep.INSERT_COLUMN) != 0) {
-                        postSteps.add(step);
+                        preSteps.add(0, step);
                     } else {
                         depSteps.add(step);
                     }
@@ -301,6 +301,12 @@ public class RunConversions {
         }
     }
 
+    private void checkMappings(List<ConverterStep> steps, List<ColumnMapping> mappings) throws MappingException {
+        for (ConverterStep step : steps) {
+            step.checkMappings(mappings);
+        }
+    }
+    
     public List<String> run(File out, File meta, Map<String, String> args) throws IOException {
         List<String> errors = new ArrayList<String>();
         BufferedWriter w = null;
@@ -311,6 +317,7 @@ public class RunConversions {
             getMappings(args);
             getSteps(mappings);
             modifyColumns(getSteps(), mappings);
+            checkMappings(getSteps(), mappings);
             
             List<String> columnNames = new ArrayList<String>();
 
@@ -339,6 +346,8 @@ public class RunConversions {
 
             MetaWriter mw = new MetaWriter();
             errors.addAll(mw.createMetaFile(mappings, meta));
+        } catch (MappingException ex) {
+            errors.add("MappingException: " + ex.getMessage());
         } catch (IOException ex) {
             errors.add("IOException: " + ex.getMessage());
         } catch(UnsatisfiableDependencyError ex) {

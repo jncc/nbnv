@@ -68,16 +68,16 @@ public class OrganisationAccessRequest implements Serializable {
     private TaxonObservationFilter taxonObservationFilter;
     @JoinColumn(name = "organisationID", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    private Organisation organisationID;
+    private Organisation organisation;
     @JoinColumn(name = "requestTypeID", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    private AccessRequestType requestTypeID;
+    private AccessRequestType accessRequestType;
     @JoinColumn(name = "requestRoleID", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    private AccessRequestRole requestRoleID;
+    private AccessRequestRole accessRequestRole;
     @JoinColumn(name = "responseTypeID", referencedColumnName = "id")
     @ManyToOne
-    private AccessRequestResponseType responseTypeID;
+    private AccessRequestResponseType accessRequestResponseType;
 
     public OrganisationAccessRequest() {
     }
@@ -148,36 +148,36 @@ public class OrganisationAccessRequest implements Serializable {
         this.taxonObservationFilter = taxonObservationFilter;
     }
 
-    public Organisation getOrganisationID() {
-        return organisationID;
+    public Organisation getOrganisation() {
+        return organisation;
     }
 
-    public void setOrganisationID(Organisation organisationID) {
-        this.organisationID = organisationID;
+    public void setOrganisation(Organisation organisation) {
+        this.organisation = organisation;
     }
 
-    public AccessRequestType getRequestTypeID() {
-        return requestTypeID;
+    public AccessRequestType getAccessRequestType() {
+        return accessRequestType;
     }
 
-    public void setRequestTypeID(AccessRequestType requestTypeID) {
-        this.requestTypeID = requestTypeID;
+    public void setAccessRequestType(AccessRequestType accessRequestType) {
+        this.accessRequestType = accessRequestType;
     }
 
-    public AccessRequestRole getRequestRoleID() {
-        return requestRoleID;
+    public AccessRequestRole getAccessRequestRole() {
+        return accessRequestRole;
     }
 
-    public void setRequestRoleID(AccessRequestRole requestRoleID) {
-        this.requestRoleID = requestRoleID;
+    public void setAccessRequestRole(AccessRequestRole accessRequestRole) {
+        this.accessRequestRole = accessRequestRole;
     }
 
-    public AccessRequestResponseType getResponseTypeID() {
-        return responseTypeID;
+    public AccessRequestResponseType getAccessRequestResponseType() {
+        return accessRequestResponseType;
     }
 
-    public void setResponseTypeID(AccessRequestResponseType responseTypeID) {
-        this.responseTypeID = responseTypeID;
+    public void setAccessRequestResponseType(AccessRequestResponseType accessRequestResponseType) {
+        this.accessRequestResponseType = accessRequestResponseType;
     }
 
     @Override

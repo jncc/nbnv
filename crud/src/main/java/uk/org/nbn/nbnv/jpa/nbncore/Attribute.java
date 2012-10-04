@@ -49,13 +49,13 @@ public class Attribute implements Serializable {
     private Collection<SiteBoundaryAttribute> siteBoundaryAttributeCollection;
     @JoinColumn(name = "gatewayAttributeID", referencedColumnName = "id")
     @ManyToOne
-    private GatewayAttribute gatewayAttributeID;
+    private GatewayAttribute gatewayAttribute;
     @JoinColumn(name = "storageTypeID", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    private AttributeStorageType storageTypeID;
+    private AttributeStorageType attributeStorageType;
     @JoinColumn(name = "storageLevelID", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    private AttributeStorageLevel storageLevelID;
+    private AttributeStorageLevel attributeStorageLevel;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "attribute")
     private Collection<DatasetAttribute> datasetAttributeCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "attribute")
@@ -129,28 +129,28 @@ public class Attribute implements Serializable {
         this.siteBoundaryAttributeCollection = siteBoundaryAttributeCollection;
     }
 
-    public GatewayAttribute getGatewayAttributeID() {
-        return gatewayAttributeID;
+    public GatewayAttribute getGatewayAttribute() {
+        return gatewayAttribute;
     }
 
-    public void setGatewayAttributeID(GatewayAttribute gatewayAttributeID) {
-        this.gatewayAttributeID = gatewayAttributeID;
+    public void setGatewayAttribute(GatewayAttribute gatewayAttribute) {
+        this.gatewayAttribute = gatewayAttribute;
     }
 
-    public AttributeStorageType getStorageTypeID() {
-        return storageTypeID;
+    public AttributeStorageType getAttributeStorageType() {
+        return attributeStorageType;
     }
 
-    public void setStorageTypeID(AttributeStorageType storageTypeID) {
-        this.storageTypeID = storageTypeID;
+    public void setAttributeStorageType(AttributeStorageType attributeStorageType) {
+        this.attributeStorageType = attributeStorageType;
     }
 
-    public AttributeStorageLevel getStorageLevelID() {
-        return storageLevelID;
+    public AttributeStorageLevel getAttributeStorageLevel() {
+        return attributeStorageLevel;
     }
 
-    public void setStorageLevelID(AttributeStorageLevel storageLevelID) {
-        this.storageLevelID = storageLevelID;
+    public void setAttributeStorageLevel(AttributeStorageLevel attributeStorageLevel) {
+        this.attributeStorageLevel = attributeStorageLevel;
     }
 
     @XmlTransient

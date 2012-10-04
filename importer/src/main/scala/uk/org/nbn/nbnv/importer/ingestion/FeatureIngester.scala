@@ -17,7 +17,7 @@ class FeatureIngester @Inject()(log: Logger, em: EntityManager, repo: Repository
       ensureGridRefFeature(record.gridReference.get, record.gridReferenceType.get, record.gridReferencePrecision)
     }
     else if (record.featureKey.isDefined) {
-      getFeatureByFeatureKey(record.featureKey.get)
+      ensureSiteBoundaryFeature(record.featureKey.get)
     }
     else if (record.east.isDefined) {
       // no need to check the other coordinate elements - the validator will have done this
@@ -46,7 +46,7 @@ class FeatureIngester @Inject()(log: Logger, em: EntityManager, repo: Repository
 //        em.persist(f)
 
         val gs = new GridSquare
-        gs.setFeatureID(f)
+        gs.setFeature(f)
         gs.setGridRef(info.gridReference)
         //gs.setGeom(tempGeom)
 
@@ -56,13 +56,13 @@ class FeatureIngester @Inject()(log: Logger, em: EntityManager, repo: Repository
 
         // set the resolution
         val r = repo.getResolution(info.gridReferencePrecision)
-        gs.setResolutionID(r)
+        gs.setResolution(r)
 
         // if square should have a parent, ensure that it does, and set it
         info.getParentGridSquareInfo match {
           case Some(parentInfo) => {
             val (_, parentSquare) = ensure(parentInfo)
-            gs.setParentSquareGridRef(parentSquare)
+            gs.setGridSquare(parentSquare)
           }
           case None => ()
         }
@@ -86,13 +86,14 @@ class FeatureIngester @Inject()(log: Logger, em: EntityManager, repo: Repository
       .map( Integer.parseInt( _, 16 ).toByte ).toArray
   }
 
+  private def ensureSiteBoundaryFeature(featureKey : String) = {
 
-  private def getFeatureByFeatureKey(featureKey : String) = {
-    //todo: Get feature by id
-    new Feature()
-    //split feature key - first 8 char = dataset key , remainder = SiteBoundary.providerKey
-    //Retreive feature by dataset and provider key from site boundary
-    //throw exception if not retreived.
+    // feature key - first 8 chars are the siteBoundaryDataset; remaining are the providerKey
+    val siteBoundaryDataset = featureKey.substring(0, 8)
+    val providerKey = featureKey.substring(8)
+
+    // throws if the (Feature, SiteBoundary) pair doesn't exist
+    repo.getSiteBoundaryFeature(siteBoundaryDataset, providerKey)._1
   }
 
   private def getFeatureByCoordinate(easting: Int, northing: Int, spatailReferenceSystem: Int, gridReferencePrecision: Int = 0) = {

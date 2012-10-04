@@ -88,7 +88,7 @@ public class MetadataController {
             WordImporter importer = null;
             while(strIt.hasNext() && version == null) {
                 try {
-                    String str = strIt.next();
+                    String str = strIt.next().trim();
                     if (str.startsWith("Version ")) {
                         Pattern pat;
                         pat = Pattern.compile("([0-9]+)\\.([0-9]+)");
@@ -109,6 +109,10 @@ public class MetadataController {
                 } catch (NumberFormatException ex) {
                     throw new POIImportError("Could not find a valid version number, are you sure this is a metadata import form?");
                 }
+            }
+            
+            if (version == null && importer == null) {
+                throw new POIImportError("Could not find a version number in the document are you sure this is a metadata import form?");
             }
 
             Map<String, String> mappings = importer.parseDocument(strList, strIt, new HashMap<String, String>());

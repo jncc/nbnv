@@ -31,7 +31,7 @@ public class Sample implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
     @Size(max = 100)
@@ -49,11 +49,11 @@ public class Sample implements Serializable {
     @Size(max = 2147483647)
     @Column(name = "temporalCoverage")
     private String temporalCoverage;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "sampleID")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "sample")
     private Collection<TaxonObservation> taxonObservationCollection;
     @JoinColumn(name = "surveyID", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    private Survey surveyID;
+    private Survey survey;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "sample")
     private Collection<SampleAttribute> sampleAttributeCollection;
 
@@ -121,12 +121,12 @@ public class Sample implements Serializable {
         this.taxonObservationCollection = taxonObservationCollection;
     }
 
-    public Survey getSurveyID() {
-        return surveyID;
+    public Survey getSurvey() {
+        return survey;
     }
 
-    public void setSurveyID(Survey surveyID) {
-        this.surveyID = surveyID;
+    public void setSurvey(Survey survey) {
+        this.survey = survey;
     }
 
     @XmlTransient

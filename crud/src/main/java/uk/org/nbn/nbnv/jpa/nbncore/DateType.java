@@ -44,7 +44,7 @@ public class DateType implements Serializable {
     @Size(min = 1, max = 50)
     @Column(name = "label")
     private String label;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "dateTypeKey")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "dateType")
     private Collection<TaxonObservation> taxonObservationCollection;
 
     public DateType() {

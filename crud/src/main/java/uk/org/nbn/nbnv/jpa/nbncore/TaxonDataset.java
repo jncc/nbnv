@@ -48,15 +48,15 @@ public class TaxonDataset implements Serializable {
     private boolean allowRecordValidation;
     @JoinColumn(name = "publicResolutionID", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    private Resolution publicResolutionID;
+    private Resolution resolution;
     @JoinColumn(name = "datasetKey", referencedColumnName = "key", insertable = false, updatable = false)
     @OneToOne(optional = false)
     private Dataset dataset;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "taxonDataset")
     private Collection<TaxonObservationDownloadStatistics> taxonObservationDownloadStatisticsCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "datasetKey")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "taxonDataset")
     private Collection<Survey> surveyCollection;
-    @OneToMany(mappedBy = "filterDatasetKey")
+    @OneToMany(mappedBy = "taxonDataset")
     private Collection<TaxonObservationFilterElement> taxonObservationFilterElementCollection;
 
     public TaxonDataset() {
@@ -87,12 +87,12 @@ public class TaxonDataset implements Serializable {
         this.allowRecordValidation = allowRecordValidation;
     }
 
-    public Resolution getPublicResolutionID() {
-        return publicResolutionID;
+    public Resolution getResolution() {
+        return resolution;
     }
 
-    public void setPublicResolutionID(Resolution publicResolutionID) {
-        this.publicResolutionID = publicResolutionID;
+    public void setResolution(Resolution resolution) {
+        this.resolution = resolution;
     }
 
     public Dataset getDataset() {

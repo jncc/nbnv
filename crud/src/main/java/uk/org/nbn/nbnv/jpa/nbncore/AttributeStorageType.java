@@ -43,9 +43,9 @@ public class AttributeStorageType implements Serializable {
     @Size(min = 1, max = 11)
     @Column(name = "label")
     private String label;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "storageTypeID")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "attributeStorageType")
     private Collection<GatewayAttribute> gatewayAttributeCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "storageTypeID")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "attributeStorageType")
     private Collection<Attribute> attributeCollection;
 
     public AttributeStorageType() {

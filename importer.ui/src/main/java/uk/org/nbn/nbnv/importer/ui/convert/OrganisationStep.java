@@ -4,7 +4,6 @@
  */
 package uk.org.nbn.nbnv.importer.ui.convert;
 
-import java.util.ArrayList;
 import java.util.List;
 import uk.org.nbn.nbnv.importer.ui.parser.ColumnMapping;
 
@@ -33,4 +32,15 @@ public abstract class OrganisationStep extends DependentStep {
         
         return false;
     }
+    
+    @Override
+    public abstract String getName();
+    @Override
+    public abstract boolean isStepNeeded(List<ColumnMapping> columns);
+    @Override
+    public abstract void modifyHeader(List<ColumnMapping> columns);
+    @Override
+    public abstract void modifyRow(List<String> row) throws BadDataException; 
+    @Override
+    public abstract void checkMappings(List<ColumnMapping> columns) throws MappingException;    
 }

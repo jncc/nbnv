@@ -18,7 +18,7 @@ class SiteIngester @Inject()(em: EntityManager, repository: Repository){
           val s = new Site()
           s.setProviderKey(siteKey)
           s.setName(siteName)
-          s.setDatasetKey(dataset)
+          s.setDataset(dataset)
           em.persist(s)
           Some(s)
         }

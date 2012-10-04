@@ -11,6 +11,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import uk.org.nbn.nbnv.importer.ui.convert.BadDataException;
 import uk.org.nbn.nbnv.importer.ui.convert.ConverterStep;
+import uk.org.nbn.nbnv.importer.ui.convert.MappingException;
 import uk.org.nbn.nbnv.importer.ui.parser.ColumnMapping;
 import uk.org.nbn.nbnv.importer.ui.util.DatabaseConnection;
 import uk.org.nbn.nbnv.jpa.nbncore.Taxon;
@@ -74,4 +75,10 @@ public class PreferredTaxonVersionKey implements ConverterStep {
         }
     }
     
+    @Override
+    public void checkMappings(List<ColumnMapping> mappings) throws MappingException {
+        if (!isStepNeeded(mappings)) {
+            throw new MappingException("Could not find necessary columns again for step: " + this.getClass().getName() + " - " + getName());
+        }
+    }
 }

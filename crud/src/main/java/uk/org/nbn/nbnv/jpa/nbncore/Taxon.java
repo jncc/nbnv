@@ -45,7 +45,9 @@ public class Taxon implements Serializable {
     @Size(min = 1, max = 16)
     @Column(name = "taxonVersionKey")
     private String taxonVersionKey;
-    @Size(max = 85)
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 181)
     @Column(name = "name")
     private String name;
     @Size(max = 80)
@@ -59,41 +61,50 @@ public class Taxon implements Serializable {
         @JoinColumn(name = "taxonNavigationGroupKey", referencedColumnName = "key")})
     @ManyToMany
     private Collection<TaxonGroup> taxonGroupCollection;
+    @JoinTable(name = "TaxonAggregate", joinColumns = {
+        @JoinColumn(name = "aggregateTaxonVersionKey", referencedColumnName = "taxonVersionKey")}, inverseJoinColumns = {
+        @JoinColumn(name = "componentTaxonVersionKey", referencedColumnName = "taxonVersionKey")})
+    @ManyToMany
+    private Collection<Taxon> taxonCollection;
+    @ManyToMany(mappedBy = "taxonCollection")
+    private Collection<Taxon> taxonCollection1;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "taxon")
     private Collection<TaxonDesignation> taxonDesignationCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "taxon")
     private Collection<TaxonAttribute> taxonAttributeCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "taxonVersionKey")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "taxon")
     private Collection<TaxonObservation> taxonObservationCollection;
     @JoinColumn(name = "taxonVersionFormKey", referencedColumnName = "key")
     @ManyToOne(optional = false)
-    private TaxonVersionForm taxonVersionFormKey;
+    private TaxonVersionForm taxonVersionForm;
     @JoinColumn(name = "taxonRankID", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    private TaxonRank taxonRankID;
+    private TaxonRank taxonRank;
     @JoinColumn(name = "taxonNameStatusKey", referencedColumnName = "key")
     @ManyToOne(optional = false)
-    private TaxonNameStatus taxonNameStatusKey;
+    private TaxonNameStatus taxonNameStatus;
     @JoinColumn(name = "taxonOutputGroupKey", referencedColumnName = "key")
     @ManyToOne
-    private TaxonGroup taxonOutputGroupKey;
+    private TaxonGroup taxonGroup;
     @OneToMany(mappedBy = "commonNameTaxonVersionKey")
-    private Collection<Taxon> taxonCollection;
+    private Collection<Taxon> taxonCollection2;
     @JoinColumn(name = "commonNameTaxonVersionKey", referencedColumnName = "taxonVersionKey")
     @ManyToOne
     private Taxon commonNameTaxonVersionKey;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "pTaxonVersionKey")
-    private Collection<Taxon> taxonCollection1;
+    private Collection<Taxon> taxonCollection3;
     @JoinColumn(name = "pTaxonVersionKey", referencedColumnName = "taxonVersionKey")
     @ManyToOne(optional = false)
     private Taxon pTaxonVersionKey;
     @JoinColumn(name = "organismKey", referencedColumnName = "key")
     @ManyToOne(optional = false)
-    private Organism organismKey;
+    private Organism organism;
     @JoinColumn(name = "languageKey", referencedColumnName = "key")
     @ManyToOne(optional = false)
-    private Language languageKey;
-    @OneToMany(mappedBy = "filterTaxon")
+    private Language language;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "taxon")
+    private Collection<RecordingEntity> recordingEntityCollection;
+    @OneToMany(mappedBy = "taxon")
     private Collection<TaxonObservationFilterElement> taxonObservationFilterElementCollection;
 
     public Taxon() {
@@ -101,6 +112,11 @@ public class Taxon implements Serializable {
 
     public Taxon(String taxonVersionKey) {
         this.taxonVersionKey = taxonVersionKey;
+    }
+
+    public Taxon(String taxonVersionKey, String name) {
+        this.taxonVersionKey = taxonVersionKey;
+        this.name = name;
     }
 
     public String getTaxonVersionKey() {
@@ -145,6 +161,24 @@ public class Taxon implements Serializable {
     }
 
     @XmlTransient
+    public Collection<Taxon> getTaxonCollection() {
+        return taxonCollection;
+    }
+
+    public void setTaxonCollection(Collection<Taxon> taxonCollection) {
+        this.taxonCollection = taxonCollection;
+    }
+
+    @XmlTransient
+    public Collection<Taxon> getTaxonCollection1() {
+        return taxonCollection1;
+    }
+
+    public void setTaxonCollection1(Collection<Taxon> taxonCollection1) {
+        this.taxonCollection1 = taxonCollection1;
+    }
+
+    @XmlTransient
     public Collection<TaxonDesignation> getTaxonDesignationCollection() {
         return taxonDesignationCollection;
     }
@@ -171,45 +205,45 @@ public class Taxon implements Serializable {
         this.taxonObservationCollection = taxonObservationCollection;
     }
 
-    public TaxonVersionForm getTaxonVersionFormKey() {
-        return taxonVersionFormKey;
+    public TaxonVersionForm getTaxonVersionForm() {
+        return taxonVersionForm;
     }
 
-    public void setTaxonVersionFormKey(TaxonVersionForm taxonVersionFormKey) {
-        this.taxonVersionFormKey = taxonVersionFormKey;
+    public void setTaxonVersionForm(TaxonVersionForm taxonVersionForm) {
+        this.taxonVersionForm = taxonVersionForm;
     }
 
-    public TaxonRank getTaxonRankID() {
-        return taxonRankID;
+    public TaxonRank getTaxonRank() {
+        return taxonRank;
     }
 
-    public void setTaxonRankID(TaxonRank taxonRankID) {
-        this.taxonRankID = taxonRankID;
+    public void setTaxonRank(TaxonRank taxonRank) {
+        this.taxonRank = taxonRank;
     }
 
-    public TaxonNameStatus getTaxonNameStatusKey() {
-        return taxonNameStatusKey;
+    public TaxonNameStatus getTaxonNameStatus() {
+        return taxonNameStatus;
     }
 
-    public void setTaxonNameStatusKey(TaxonNameStatus taxonNameStatusKey) {
-        this.taxonNameStatusKey = taxonNameStatusKey;
+    public void setTaxonNameStatus(TaxonNameStatus taxonNameStatus) {
+        this.taxonNameStatus = taxonNameStatus;
     }
 
-    public TaxonGroup getTaxonOutputGroupKey() {
-        return taxonOutputGroupKey;
+    public TaxonGroup getTaxonGroup() {
+        return taxonGroup;
     }
 
-    public void setTaxonOutputGroupKey(TaxonGroup taxonOutputGroupKey) {
-        this.taxonOutputGroupKey = taxonOutputGroupKey;
+    public void setTaxonGroup(TaxonGroup taxonGroup) {
+        this.taxonGroup = taxonGroup;
     }
 
     @XmlTransient
-    public Collection<Taxon> getTaxonCollection() {
-        return taxonCollection;
+    public Collection<Taxon> getTaxonCollection2() {
+        return taxonCollection2;
     }
 
-    public void setTaxonCollection(Collection<Taxon> taxonCollection) {
-        this.taxonCollection = taxonCollection;
+    public void setTaxonCollection2(Collection<Taxon> taxonCollection2) {
+        this.taxonCollection2 = taxonCollection2;
     }
 
     public Taxon getCommonNameTaxonVersionKey() {
@@ -221,12 +255,12 @@ public class Taxon implements Serializable {
     }
 
     @XmlTransient
-    public Collection<Taxon> getTaxonCollection1() {
-        return taxonCollection1;
+    public Collection<Taxon> getTaxonCollection3() {
+        return taxonCollection3;
     }
 
-    public void setTaxonCollection1(Collection<Taxon> taxonCollection1) {
-        this.taxonCollection1 = taxonCollection1;
+    public void setTaxonCollection3(Collection<Taxon> taxonCollection3) {
+        this.taxonCollection3 = taxonCollection3;
     }
 
     public Taxon getPTaxonVersionKey() {
@@ -237,20 +271,29 @@ public class Taxon implements Serializable {
         this.pTaxonVersionKey = pTaxonVersionKey;
     }
 
-    public Organism getOrganismKey() {
-        return organismKey;
+    public Organism getOrganism() {
+        return organism;
     }
 
-    public void setOrganismKey(Organism organismKey) {
-        this.organismKey = organismKey;
+    public void setOrganism(Organism organism) {
+        this.organism = organism;
     }
 
-    public Language getLanguageKey() {
-        return languageKey;
+    public Language getLanguage() {
+        return language;
     }
 
-    public void setLanguageKey(Language languageKey) {
-        this.languageKey = languageKey;
+    public void setLanguage(Language language) {
+        this.language = language;
+    }
+
+    @XmlTransient
+    public Collection<RecordingEntity> getRecordingEntityCollection() {
+        return recordingEntityCollection;
+    }
+
+    public void setRecordingEntityCollection(Collection<RecordingEntity> recordingEntityCollection) {
+        this.recordingEntityCollection = recordingEntityCollection;
     }
 
     @XmlTransient

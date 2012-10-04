@@ -28,7 +28,7 @@ public class GatewayAttribute implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
     @Basic(optional = false)
@@ -43,8 +43,8 @@ public class GatewayAttribute implements Serializable {
     private String description;
     @JoinColumn(name = "storageTypeID", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    private AttributeStorageType storageTypeID;
-    @OneToMany(mappedBy = "gatewayAttributeID")
+    private AttributeStorageType attributeStorageType;
+    @OneToMany(mappedBy = "gatewayAttribute")
     private Collection<Attribute> attributeCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "gatewayAttribute")
     private Collection<GatewayAttributeEnumeration> gatewayAttributeEnumerationCollection;
@@ -86,12 +86,12 @@ public class GatewayAttribute implements Serializable {
         this.description = description;
     }
 
-    public AttributeStorageType getStorageTypeID() {
-        return storageTypeID;
+    public AttributeStorageType getAttributeStorageType() {
+        return attributeStorageType;
     }
 
-    public void setStorageTypeID(AttributeStorageType storageTypeID) {
-        this.storageTypeID = storageTypeID;
+    public void setAttributeStorageType(AttributeStorageType attributeStorageType) {
+        this.attributeStorageType = attributeStorageType;
     }
 
     @XmlTransient

@@ -13,6 +13,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import uk.org.nbn.nbnv.importer.ui.convert.BadDataException;
 import uk.org.nbn.nbnv.importer.ui.convert.DependentStep;
+import uk.org.nbn.nbnv.importer.ui.convert.MappingException;
 import uk.org.nbn.nbnv.importer.ui.parser.ColumnMapping;
 import uk.org.nbn.nbnv.importer.ui.parser.DarwinCoreField;
 
@@ -21,10 +22,10 @@ import uk.org.nbn.nbnv.importer.ui.parser.DarwinCoreField;
  * @author Paul Gilbertson
  */
 public class AttributeConcatenation extends DependentStep {
-    private Map<Integer, String> columnList = new HashMap<Integer, String>();
+    private Map<Integer, String> columnList;
 
     public AttributeConcatenation() {
-        super(DependentStep.ADD_COLUMNS ^ DependentStep.PERSIST ^ DependentStep.RUN_FIRST);
+        super(DependentStep.ADD_COLUMNS ^ DependentStep.RUN_FIRST);
     }
     
     @Override
@@ -34,13 +35,15 @@ public class AttributeConcatenation extends DependentStep {
 
     @Override
     public boolean isStepNeeded(List<ColumnMapping> columns) {
+        columnList = new HashMap<Integer, String>();
+        
         for (ColumnMapping cm : columns) {
             if (cm.getField() == DarwinCoreField.ATTRIBUTE) {
                 columnList.put(cm.getColumnNumber(), cm.getColumnLabel());
             }
         }
         
-        return this.peristanceCheck(columnList.size() > 0);
+        return columnList.size() > 0;
     }
 
     @Override
@@ -71,4 +74,10 @@ public class AttributeConcatenation extends DependentStep {
         row.add(obj.toString());
     }
     
+    @Override
+    public void checkMappings(List<ColumnMapping> mappings) throws MappingException {
+        if (!isStepNeeded(mappings)) {
+            throw new MappingException("Could not find necessary columns again for step: " + this.getClass().getName() + " - " + getName());
+        }
+    }
 }

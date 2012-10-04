@@ -24,7 +24,7 @@ class SampleIngester  @Inject()(em: EntityManager, repository: Repository) {
       case None => {
         val s = new Sample()
         s.setProviderKey(key)
-        s.setSurveyID(survey)
+        s.setSurvey(survey)
         em.persist(s)
         s
       }

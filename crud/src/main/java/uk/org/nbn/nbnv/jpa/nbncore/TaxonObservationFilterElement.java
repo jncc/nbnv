@@ -6,7 +6,17 @@ package uk.org.nbn.nbnv.jpa.nbncore;
 
 import java.io.Serializable;
 import java.util.Date;
-import javax.persistence.*;
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -28,7 +38,7 @@ public class TaxonObservationFilterElement implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @NotNull
     @Column(name = "id")
     private Integer id;
     @Column(name = "filterSensitive")
@@ -43,19 +53,19 @@ public class TaxonObservationFilterElement implements Serializable {
     private Date filterDateEnd;
     @JoinColumn(name = "filterElementTypeID", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    private TaxonObservationFilterElementType filterElementTypeID;
+    private TaxonObservationFilterElementType taxonObservationFilterElementType;
     @JoinColumn(name = "filterID", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    private TaxonObservationFilter filterID;
+    private TaxonObservationFilter taxonObservationFilter;
     @JoinColumn(name = "filterDatasetKey", referencedColumnName = "datasetKey")
     @ManyToOne
-    private TaxonDataset filterDatasetKey;
+    private TaxonDataset taxonDataset;
     @JoinColumn(name = "filterTaxon", referencedColumnName = "taxonVersionKey")
     @ManyToOne
-    private Taxon filterTaxon;
+    private Taxon taxon;
     @JoinColumn(name = "filterSiteBoundary", referencedColumnName = "featureID")
     @ManyToOne
-    private SiteBoundary filterSiteBoundary;
+    private SiteBoundary siteBoundary;
 
     public TaxonObservationFilterElement() {
     }
@@ -104,44 +114,44 @@ public class TaxonObservationFilterElement implements Serializable {
         this.filterDateEnd = filterDateEnd;
     }
 
-    public TaxonObservationFilterElementType getFilterElementTypeID() {
-        return filterElementTypeID;
+    public TaxonObservationFilterElementType getTaxonObservationFilterElementType() {
+        return taxonObservationFilterElementType;
     }
 
-    public void setFilterElementTypeID(TaxonObservationFilterElementType filterElementTypeID) {
-        this.filterElementTypeID = filterElementTypeID;
+    public void setTaxonObservationFilterElementType(TaxonObservationFilterElementType taxonObservationFilterElementType) {
+        this.taxonObservationFilterElementType = taxonObservationFilterElementType;
     }
 
-    public TaxonObservationFilter getFilterID() {
-        return filterID;
+    public TaxonObservationFilter getTaxonObservationFilter() {
+        return taxonObservationFilter;
     }
 
-    public void setFilterID(TaxonObservationFilter filterID) {
-        this.filterID = filterID;
+    public void setTaxonObservationFilter(TaxonObservationFilter taxonObservationFilter) {
+        this.taxonObservationFilter = taxonObservationFilter;
     }
 
-    public TaxonDataset getFilterDatasetKey() {
-        return filterDatasetKey;
+    public TaxonDataset getTaxonDataset() {
+        return taxonDataset;
     }
 
-    public void setFilterDatasetKey(TaxonDataset filterDatasetKey) {
-        this.filterDatasetKey = filterDatasetKey;
+    public void setTaxonDataset(TaxonDataset taxonDataset) {
+        this.taxonDataset = taxonDataset;
     }
 
-    public Taxon getFilterTaxon() {
-        return filterTaxon;
+    public Taxon getTaxon() {
+        return taxon;
     }
 
-    public void setFilterTaxon(Taxon filterTaxon) {
-        this.filterTaxon = filterTaxon;
+    public void setTaxon(Taxon taxon) {
+        this.taxon = taxon;
     }
 
-    public SiteBoundary getFilterSiteBoundary() {
-        return filterSiteBoundary;
+    public SiteBoundary getSiteBoundary() {
+        return siteBoundary;
     }
 
-    public void setFilterSiteBoundary(SiteBoundary filterSiteBoundary) {
-        this.filterSiteBoundary = filterSiteBoundary;
+    public void setSiteBoundary(SiteBoundary siteBoundary) {
+        this.siteBoundary = siteBoundary;
     }
 
     @Override

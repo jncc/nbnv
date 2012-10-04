@@ -43,9 +43,9 @@ public class AccessRequestType implements Serializable {
     @Size(min = 1, max = 50)
     @Column(name = "label")
     private String label;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "requestTypeID")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "accessRequestType")
     private Collection<UserAccessRequest> userAccessRequestCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "requestTypeID")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "accessRequestType")
     private Collection<OrganisationAccessRequest> organisationAccessRequestCollection;
 
     public AccessRequestType() {

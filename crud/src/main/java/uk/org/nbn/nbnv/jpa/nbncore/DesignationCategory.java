@@ -29,7 +29,7 @@ public class DesignationCategory implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
     @Basic(optional = false)
@@ -44,7 +44,7 @@ public class DesignationCategory implements Serializable {
     @NotNull
     @Column(name = "sortOrder")
     private int sortOrder;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "designationCategoryID")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "designationCategory")
     private Collection<Designation> designationCollection;
 
     public DesignationCategory() {

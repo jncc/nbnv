@@ -16,4 +16,5 @@ public interface ConverterStep {
     public boolean isStepNeeded(List<ColumnMapping> columns);
     public void modifyHeader(List<ColumnMapping> columns);
     public void modifyRow(List<String> row) throws BadDataException;
+    public void checkMappings(List<ColumnMapping> columns) throws MappingException;
 }
