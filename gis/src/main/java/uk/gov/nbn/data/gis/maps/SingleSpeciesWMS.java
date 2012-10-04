@@ -50,7 +50,8 @@ public class SingleSpeciesWMS {
             @Layer(layer="Grid-2km", resolution=Resolution.TWOKM),
             @Layer(layer="Grid-1km", resolution=Resolution.ONEKM),
             @Layer(layer="Grid-100m", resolution=Resolution.ONEHUNDERD)
-        }
+        },
+        backgrounds = "MiniScale-Relief1"
     )
     public MapFileModel getSingleSpeciesModel(
             final User user,

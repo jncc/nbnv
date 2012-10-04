@@ -43,6 +43,8 @@ public @interface AtlasGrade {
     }
 
     Layer[] layers();
+    String[] backgrounds() default {};
+    String[] defaultBackgrounds() default {};
     String epsgCode() default "EPSG:27700";
     int[] defaultExtent() default {-250000, -50000, 750000, 1300000};
     Resolution defaultResolution() default Resolution.TENKM;
