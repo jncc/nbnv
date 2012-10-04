@@ -11,10 +11,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.Lob;
-import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -35,38 +32,17 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Feature.findAll", query = "SELECT f FROM Feature f"),
     @NamedQuery(name = "Feature.findById", query = "SELECT f FROM Feature f WHERE f.id = :id")})
 public class Feature implements Serializable {
+    @Basic(optional = false)
+    @NotNull
+    @Lob
+    @Column(name = "geom")
+    private byte[] geom;
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
     @NotNull
     @Column(name = "id")
     private Integer id;
-    @Basic(optional = false)
-    @NotNull
-    @Lob
-    @Column(name = "geom")
-    private byte[] geom;
-    @JoinTable(name = "FeatureOverlaps", joinColumns = {
-        @JoinColumn(name = "featureID", referencedColumnName = "id")}, inverseJoinColumns = {
-        @JoinColumn(name = "overlappedFeatureID", referencedColumnName = "id")})
-    @ManyToMany
-    private Collection<Feature> featureCollection;
-    @ManyToMany(mappedBy = "featureCollection")
-    private Collection<Feature> featureCollection1;
-    @JoinTable(name = "GridTree", joinColumns = {
-        @JoinColumn(name = "featureID", referencedColumnName = "id")}, inverseJoinColumns = {
-        @JoinColumn(name = "parentFeatureID", referencedColumnName = "id")})
-    @ManyToMany
-    private Collection<Feature> featureCollection2;
-    @ManyToMany(mappedBy = "featureCollection2")
-    private Collection<Feature> featureCollection3;
-    @JoinTable(name = "FeatureContains", joinColumns = {
-        @JoinColumn(name = "featureID", referencedColumnName = "id")}, inverseJoinColumns = {
-        @JoinColumn(name = "containedFeatureID", referencedColumnName = "id")})
-    @ManyToMany
-    private Collection<Feature> featureCollection4;
-    @ManyToMany(mappedBy = "featureCollection4")
-    private Collection<Feature> featureCollection5;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "feature")
     private Collection<TaxonObservationPublic> taxonObservationPublicCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "feature")
@@ -96,68 +72,6 @@ public class Feature implements Serializable {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public byte[] getGeom() {
-        return geom;
-    }
-
-    public void setGeom(byte[] geom) {
-        this.geom = geom;
-    }
-
-    @XmlTransient
-    public Collection<Feature> getFeatureCollection() {
-        return featureCollection;
-    }
-
-    public void setFeatureCollection(Collection<Feature> featureCollection) {
-        this.featureCollection = featureCollection;
-    }
-
-    @XmlTransient
-    public Collection<Feature> getFeatureCollection1() {
-        return featureCollection1;
-    }
-
-    public void setFeatureCollection1(Collection<Feature> featureCollection1) {
-        this.featureCollection1 = featureCollection1;
-    }
-
-    @XmlTransient
-    public Collection<Feature> getFeatureCollection2() {
-        return featureCollection2;
-    }
-
-    public void setFeatureCollection2(Collection<Feature> featureCollection2) {
-        this.featureCollection2 = featureCollection2;
-    }
-
-    @XmlTransient
-    public Collection<Feature> getFeatureCollection3() {
-        return featureCollection3;
-    }
-
-    public void setFeatureCollection3(Collection<Feature> featureCollection3) {
-        this.featureCollection3 = featureCollection3;
-    }
-
-    @XmlTransient
-    public Collection<Feature> getFeatureCollection4() {
-        return featureCollection4;
-    }
-
-    public void setFeatureCollection4(Collection<Feature> featureCollection4) {
-        this.featureCollection4 = featureCollection4;
-    }
-
-    @XmlTransient
-    public Collection<Feature> getFeatureCollection5() {
-        return featureCollection5;
-    }
-
-    public void setFeatureCollection5(Collection<Feature> featureCollection5) {
-        this.featureCollection5 = featureCollection5;
     }
 
     @XmlTransient
@@ -227,6 +141,14 @@ public class Feature implements Serializable {
     @Override
     public String toString() {
         return "uk.org.nbn.nbnv.jpa.nbncore.Feature[ id=" + id + " ]";
+    }
+
+    public byte[] getGeom() {
+        return geom;
+    }
+
+    public void setGeom(byte[] geom) {
+        this.geom = geom;
     }
     
 }
