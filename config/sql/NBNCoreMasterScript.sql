@@ -469,7 +469,7 @@ GO
 
 -- =============================================
 -- Author:		Paul Gilbertson
--- Create date: 20120118
+-- Create date: 20121004
 -- Description:	Creates a Feature from WKT
 -- =============================================
 CREATE PROCEDURE [dbo].[import_CreateGridSquare]
@@ -478,15 +478,12 @@ CREATE PROCEDURE [dbo].[import_CreateGridSquare]
 	, @resolutionID INT
 	, @projectionID INT
 	, @wkt VARCHAR(MAX)
-	, @gridSquareId INT OUT
 AS
 BEGIN
 	DECLARE @srid INT
 	SET  @srid = (SELECT srcSRID FROM Projection WHERE id = @projectionID)
 
-	INSERT INTO GridSquare (featureID, gridRef, resolutionID, originalProjectionID, originalGeom) VALUES (@featureID, @gridRef, @resolutionID, @projectionID, geometry::STGeomFromText(@wkt, @srid))
-	
-	SET @gridSquareId = SCOPE_IDENTITY();
+	INSERT INTO GridSquare (featureID, gridRef, resolutionID, originalProjectionID, originalGeom) VALUES (@featureID, @gridRef, @resolutionID, @projectionID, geometry::STGeomFromText(@wkt, @srid))	
 END
 
 GO
