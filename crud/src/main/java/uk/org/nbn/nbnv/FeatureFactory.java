@@ -66,5 +66,50 @@ public class FeatureFactory {
         return feature;
     }
 
+//    @featureID INT
+//    , @gridRef VARCHAR(12)
+//    , @resolutionID INT
+//    , @projectionID INT
+//    , @wkt VARCHAR(MAX)
+//    , @gridSquareId INT OUT
 
+    public GridSquare createGridSquare(String gridRef, Resolution resolution, Projection projection, String wkt, Feature wgs84Feature) {
+        StoredProcedureCall spcall = new StoredProcedureCall();
+        spcall.setProcedureName("import_CreateGridSquare");
+
+        spcall.addNamedArgument("gridRef", "gridRef");
+        spcall.addNamedArgument("resolutionID", "resolutionID");
+        spcall.addNamedArgument("projectionID", "projectionID");
+        spcall.addNamedArgument("wkt", "wkt");
+        spcall.addNamedArgument("featureID", "featureID");
+
+        spcall.addNamedOutputArgument(
+                "gridSquareId",      // procedure parameter name
+                "gridSquareId",      // out argument field name
+                Integer.class  // Java type corresponding to type returned by procedure
+        );
+
+        ValueReadQuery query = new ValueReadQuery();
+        query.setCall(spcall);
+        query.addArgument("gridRef");
+        query.addArgument("resolutionID");
+        query.addArgument("projectionID");
+        query.addArgument("wkt");
+        query.addArgument("featureID");
+
+        List arguments = new ArrayList();
+        arguments.add(gridRef);
+        arguments.add(resolution.getId());
+        arguments.add(projection.getId());
+        arguments.add(wkt);
+        arguments.add(wgs84Feature.getId());
+
+        Session session = ((EntityManagerImpl) _em).getActiveSession();
+
+        Integer gridSquareId = (Integer) session.executeQuery(query, arguments);
+
+        GridSquare gridSquare =  _em.find(GridSquare.class, gridSquareId);
+
+        return gridSquare;
+    }
 }

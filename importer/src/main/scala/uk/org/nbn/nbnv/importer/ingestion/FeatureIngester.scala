@@ -41,22 +41,9 @@ class FeatureIngester @Inject()(log: Logger, em: EntityManager, repo: Repository
 
         // the feature doesn't exist, so we need to create it
         val f = repo.createFeature(info.wgs84Polygon)
-        // ... todo
-//        f.setGeom(hex2Bytes("0xE610000001040500000025188E8301E6F0BF28D6E355FD944A4073EB1E5CE1DFF0BFAC4168F2FC944A400F37C3A7CCDFF0BF3EF4D3651A954A40AEC794D7ECE5F0BF8D5C50C91A954A4025188E8301E6F0BF28D6E355FD944A4001000000020000000001000000FFFFFFFF0000000003"))
-//        em.persist(f)
-
-        val gs = new GridSquare
-        gs.setFeature(f)
-        gs.setGridRef(info.gridReference)
-        //gs.setGeom(tempGeom)
-
-        // set the projection
-        val p = repo.getProjection(info.projection)
-//        gs.setProjectionID(p)
-
-        // set the resolution
-        val r = repo.getResolution(info.gridReferencePrecision)
-        gs.setResolution(r)
+        val projection = repo.getProjection(info.projection)
+        val resolution = repo.getResolution(info.gridReferencePrecision)
+        val gs = repo.createGridRef(f, info.gridReference, resolution, projection, info.sourceProjectionPolygon)
 
         // if square should have a parent, ensure that it does, and set it
         info.getParentGridSquareInfo match {
