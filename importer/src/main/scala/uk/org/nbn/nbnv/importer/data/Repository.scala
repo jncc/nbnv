@@ -13,12 +13,18 @@ import uk.org.nbn.nbnv.FeatureFactory
 class Repository @Inject()(log: Logger, em: EntityManager, cache: QueryCache) extends ControlAbstractions {
 
   def createFeature(wkt: String) = {
+
     val factory = new FeatureFactory(em)
     factory.createFeature(wkt);
   }
 
+  def createGridRef(feature: Feature, gridRef: String , resolution: Resolution , projection: Projection , wkt: String ) : GridSquare = {
+    //todo calls feature factory to get grid square
 
-  // todo: wot's this for? and does it need caching?
+    null
+  }
+
+
   def confirmTaxonVersionKey(taxonVersionKey: String): Boolean = {
     val query = em.createQuery("SELECT t FROM Taxon t WHERE t.taxonVersionKey = :tvk", classOf[Taxon])
     query.setParameter("tvk", taxonVersionKey)
