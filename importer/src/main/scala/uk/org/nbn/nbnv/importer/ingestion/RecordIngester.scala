@@ -30,7 +30,7 @@ class RecordIngester @Inject()(log: Logger,
     val site = siteIngester.upsertSite(record.siteKey, record.siteName, dataset.getDataset)
     val feature = featureIngester.ensureFeature(record) // todo: featureIngester.ensureFeature(record)
     val taxon = repo.getTaxon(record.taxonVersionKey)
-    val dateTypeKey = repo.getDateType(record.dateType)
+    val dateType = repo.getDateType(record.dateType)
     val determiner = recorderIngester.ensureRecorder(record.determiner)
     val recorder = recorderIngester.ensureRecorder(record.recorder)
 
@@ -39,15 +39,15 @@ class RecordIngester @Inject()(log: Logger,
       o.setAbsenceRecord(record.absence)
       o.setDateStart(record.startDate)
       o.setDateEnd(record.endDate)
-      o.setDateTypeKey(dateTypeKey)
-      o.setDeterminerID(determiner)
-      o.setFeatureID(feature)
+      o.setDateType(dateType)
+      o.setRecorder(determiner)
+      o.setFeature(feature)
       o.setProviderKey(record.key)
-      o.setRecorderID(recorder)
-      o.setSampleID(sample)
+      o.setRecorder(recorder)
+      o.setSample(sample)
       o.setSensitiveRecord(record.sensitiveOccurrence)
-      o.setSiteID(site.orNull)
-      o.setTaxonVersionKey(taxon)
+      o.setSite(site.orNull)
+      o.setTaxon(taxon)
     }
 
     val observation = repo.getTaxonObservation(record.key, sample) match {

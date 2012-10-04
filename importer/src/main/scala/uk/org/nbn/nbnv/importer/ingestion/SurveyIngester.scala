@@ -16,7 +16,7 @@ class SurveyIngester @Inject()(entityManager: EntityManager, repository: Reposit
     def update(s: Survey) {
       s.setProviderKey(key)
       s.setTitle(key)
-      s.setDatasetKey(dataset)
+      s.setTaxonDataset(dataset)
     }
 
     val survey = repository.getSurvey(key, dataset)

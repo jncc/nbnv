@@ -46,7 +46,7 @@ class FeatureIngester @Inject()(log: Logger, em: EntityManager, repo: Repository
 //        em.persist(f)
 
         val gs = new GridSquare
-        gs.setFeatureID(f)
+        gs.setFeature(f)
         gs.setGridRef(info.gridReference)
         //gs.setGeom(tempGeom)
 
@@ -56,13 +56,13 @@ class FeatureIngester @Inject()(log: Logger, em: EntityManager, repo: Repository
 
         // set the resolution
         val r = repo.getResolution(info.gridReferencePrecision)
-        gs.setResolutionID(r)
+        gs.setResolution(r)
 
         // if square should have a parent, ensure that it does, and set it
         info.getParentGridSquareInfo match {
           case Some(parentInfo) => {
             val (_, parentSquare) = ensure(parentInfo)
-            gs.setParentSquareGridRef(parentSquare)
+            gs.setGridSquare(parentSquare)
           }
           case None => ()
         }

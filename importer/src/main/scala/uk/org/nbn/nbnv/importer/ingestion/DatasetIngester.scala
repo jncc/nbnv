@@ -85,10 +85,10 @@ class DatasetIngester @Inject()(log: Logger,
     setMetadata(m.additionalInformation, d.getAdditionalInformation, d.setAdditionalInformation)
     setMetadata(m.temporalCoverage, d.getTemporalCoverage, d.setTemporalCoverage)
 
-    d.setProviderOrganisationKey(providerOrganisation) // not metadata
-    d.setDatasetTypeKey(datasetType) // never changes, always 'T'
+    d.setOrganisation(providerOrganisation) // not metadata
+    d.setDatasetType(datasetType) // never changes, always 'T'
     d.setDateUploaded(Clock.nowUtc) // eventDate of this import
-    d.setUpdateFrequencyCode(datasetUpdateFrequency) // never changes, always '012'
+    d.setDatasetUpdateFrequency(datasetUpdateFrequency) // never changes, always '012'
 
     if (metadataChanged)
       d.setMetadataLastEdited(Clock.nowUtc)
@@ -104,7 +104,7 @@ class DatasetIngester @Inject()(log: Logger,
 
     val resolution = repository.getResolution(m.publicPrecision)
 
-    td.setPublicResolutionID(resolution) // column will be deleted
+    td.setResolution(resolution)
 
     // default .. to be read from extra metadata.
     // ...could be more columns like this

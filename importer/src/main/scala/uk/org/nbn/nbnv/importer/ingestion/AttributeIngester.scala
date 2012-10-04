@@ -46,8 +46,8 @@ class AttributeIngester @Inject()(log: Logger,
           val a = new Attribute()
           a.setLabel(attributeLabel)
           a.setDescription(attributeLabel)
-          a.setStorageLevelID(storageLevel)
-          a.setStorageTypeID(storageType)
+          a.setAttributeStorageLevel(storageLevel)
+          a.setAttributeStorageType(storageType)
 
           em.persist(a)
           em.flush()
