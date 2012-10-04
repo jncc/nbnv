@@ -6,6 +6,7 @@ package uk.org.nbn.nbnv.jpa.nbncore;
 
 import java.io.Serializable;
 import java.util.Collection;
+import javax.persistence.*;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -40,7 +41,7 @@ public class Feature implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
-    @NotNull
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "feature")
