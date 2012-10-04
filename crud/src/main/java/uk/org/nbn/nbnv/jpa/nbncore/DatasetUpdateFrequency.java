@@ -44,7 +44,7 @@ public class DatasetUpdateFrequency implements Serializable {
     @Size(min = 1, max = 12)
     @Column(name = "label")
     private String label;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "updateFrequencyCode")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "datasetUpdateFrequency")
     private Collection<Dataset> datasetCollection;
 
     public DatasetUpdateFrequency() {

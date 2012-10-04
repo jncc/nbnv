@@ -7,7 +7,21 @@ package uk.org.nbn.nbnv.jpa.nbncore;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
-import javax.persistence.*;
+import javax.persistence.Basic;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -42,7 +56,7 @@ public class User implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @NotNull
     @Column(name = "id")
     private Integer id;
     @Basic(optional = false)
@@ -125,10 +139,10 @@ public class User implements Serializable {
     private Collection<Dataset> datasetCollection;
     @JoinColumn(name = "userTypeID", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    private UserType userTypeID;
-    @OneToMany(mappedBy = "userID")
+    private UserType userType;
+    @OneToMany(mappedBy = "user")
     private Collection<TaxonObservationDownload> taxonObservationDownloadCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "userID")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
     private Collection<UserAccessRequest> userAccessRequestCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
     private Collection<UserOrganisationMembership> userOrganisationMembershipCollection;
@@ -320,12 +334,12 @@ public class User implements Serializable {
         this.datasetCollection = datasetCollection;
     }
 
-    public UserType getUserTypeID() {
-        return userTypeID;
+    public UserType getUserType() {
+        return userType;
     }
 
-    public void setUserTypeID(UserType userTypeID) {
-        this.userTypeID = userTypeID;
+    public void setUserType(UserType userType) {
+        this.userType = userType;
     }
 
     @XmlTransient

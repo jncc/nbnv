@@ -9,6 +9,8 @@ import uk.gov.nbn.data.gis.processor.MapFileModel;
 import uk.gov.nbn.data.gis.processor.MapService;
 import uk.gov.nbn.data.gis.processor.MapContainer;
 import uk.gov.nbn.data.gis.processor.AtlasGrade;
+import uk.gov.nbn.data.gis.processor.AtlasGrade.Layer;
+import uk.gov.nbn.data.gis.processor.AtlasGrade.Resolution;
 import uk.gov.nbn.data.gis.providers.annotations.PathParam;
 import uk.gov.nbn.data.gis.providers.annotations.QueryParam;
 import uk.org.nbn.nbnv.api.model.User;
@@ -43,7 +45,12 @@ public class SingleSpeciesWMS {
     
     @MapService("{taxonVersionKey}")
     @AtlasGrade(
-        layers="Grid-10km"
+        layers={
+            @Layer(layer="Grid-10km", resolution=Resolution.TENKM),
+            @Layer(layer="Grid-2km", resolution=Resolution.TWOKM),
+            @Layer(layer="Grid-1km", resolution=Resolution.ONEKM),
+            @Layer(layer="Grid-100m", resolution=Resolution.ONEHUNDERD)
+        }
     )
     public MapFileModel getSingleSpeciesModel(
             final User user,

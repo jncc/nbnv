@@ -43,7 +43,7 @@ public class DatasetType implements Serializable {
     @Size(min = 1, max = 20)
     @Column(name = "label")
     private String label;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "datasetTypeKey")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "datasetType")
     private Collection<Dataset> datasetCollection;
 
     public DatasetType() {

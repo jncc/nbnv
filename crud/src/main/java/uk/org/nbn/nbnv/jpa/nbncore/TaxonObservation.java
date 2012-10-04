@@ -7,7 +7,22 @@ package uk.org.nbn.nbnv.jpa.nbncore;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
-import javax.persistence.*;
+import javax.persistence.Basic;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -32,7 +47,7 @@ public class TaxonObservation implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @NotNull
     @Column(name = "id")
     private Integer id;
     @Basic(optional = false)
@@ -67,25 +82,25 @@ public class TaxonObservation implements Serializable {
     private TaxonObservationPublic taxonObservationPublic;
     @JoinColumn(name = "taxonVersionKey", referencedColumnName = "taxonVersionKey")
     @ManyToOne(optional = false)
-    private Taxon taxonVersionKey;
+    private Taxon taxon;
     @JoinColumn(name = "siteID", referencedColumnName = "id")
     @ManyToOne
-    private Site siteID;
+    private Site site;
     @JoinColumn(name = "sampleID", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    private Sample sampleID;
+    private Sample sample;
     @JoinColumn(name = "determinerID", referencedColumnName = "id")
     @ManyToOne
-    private Recorder determinerID;
+    private Recorder recorder;
     @JoinColumn(name = "recorderID", referencedColumnName = "id")
     @ManyToOne
-    private Recorder recorderID;
+    private Recorder recorder1;
     @JoinColumn(name = "featureID", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    private Feature featureID;
+    private Feature feature;
     @JoinColumn(name = "dateTypeKey", referencedColumnName = "key")
     @ManyToOne(optional = false)
-    private DateType dateTypeKey;
+    private DateType dateType;
 
     public TaxonObservation() {
     }
@@ -184,60 +199,60 @@ public class TaxonObservation implements Serializable {
         this.taxonObservationPublic = taxonObservationPublic;
     }
 
-    public Taxon getTaxonVersionKey() {
-        return taxonVersionKey;
+    public Taxon getTaxon() {
+        return taxon;
     }
 
-    public void setTaxonVersionKey(Taxon taxonVersionKey) {
-        this.taxonVersionKey = taxonVersionKey;
+    public void setTaxon(Taxon taxon) {
+        this.taxon = taxon;
     }
 
-    public Site getSiteID() {
-        return siteID;
+    public Site getSite() {
+        return site;
     }
 
-    public void setSiteID(Site siteID) {
-        this.siteID = siteID;
+    public void setSite(Site site) {
+        this.site = site;
     }
 
-    public Sample getSampleID() {
-        return sampleID;
+    public Sample getSample() {
+        return sample;
     }
 
-    public void setSampleID(Sample sampleID) {
-        this.sampleID = sampleID;
+    public void setSample(Sample sample) {
+        this.sample = sample;
     }
 
-    public Recorder getDeterminerID() {
-        return determinerID;
+    public Recorder getRecorder() {
+        return recorder;
     }
 
-    public void setDeterminerID(Recorder determinerID) {
-        this.determinerID = determinerID;
+    public void setRecorder(Recorder recorder) {
+        this.recorder = recorder;
     }
 
-    public Recorder getRecorderID() {
-        return recorderID;
+    public Recorder getRecorder1() {
+        return recorder1;
     }
 
-    public void setRecorderID(Recorder recorderID) {
-        this.recorderID = recorderID;
+    public void setRecorder1(Recorder recorder1) {
+        this.recorder1 = recorder1;
     }
 
-    public Feature getFeatureID() {
-        return featureID;
+    public Feature getFeature() {
+        return feature;
     }
 
-    public void setFeatureID(Feature featureID) {
-        this.featureID = featureID;
+    public void setFeature(Feature feature) {
+        this.feature = feature;
     }
 
-    public DateType getDateTypeKey() {
-        return dateTypeKey;
+    public DateType getDateType() {
+        return dateType;
     }
 
-    public void setDateTypeKey(DateType dateTypeKey) {
-        this.dateTypeKey = dateTypeKey;
+    public void setDateType(DateType dateType) {
+        this.dateType = dateType;
     }
 
     @Override

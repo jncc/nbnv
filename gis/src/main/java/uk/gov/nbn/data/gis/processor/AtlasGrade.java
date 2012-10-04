@@ -13,6 +13,38 @@ import java.lang.annotation.Target;
 @Target({ ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface AtlasGrade {
-    String[] layers();
+    enum Resolution {
+        TENKM("10km", 10000), TWOKM("2km", 2000),ONEKM("1km", 1000),ONEHUNDERD("100m", 100);
+        private String paramValue;
+        private int metres;
+        
+        private Resolution(String paramValue, int metres) {
+            this.paramValue = paramValue;
+            this.metres = metres;
+        }
+        
+        public int getResolutionInMetres() {
+            return metres;
+        }
+        
+        public static Resolution getResolutionFromParamValue(String paramValue) {
+            for(Resolution currRes : values()) {
+                if(currRes.paramValue.equals(paramValue)) {
+                    return currRes;
+                }
+            }
+            throw new IllegalArgumentException("There is no resolution which relates to " + paramValue);
+        }
+    }
+    
+    @interface Layer {
+        String layer();
+        Resolution resolution();
+    }
+
+    Layer[] layers();
+    String epsgCode() default "EPSG:27700";
+    int[] defaultExtent() default {-250000, -50000, 750000, 1300000};
+    Resolution defaultResolution() default Resolution.TENKM;
 }
 

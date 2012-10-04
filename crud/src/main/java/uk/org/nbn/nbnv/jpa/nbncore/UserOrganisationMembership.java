@@ -31,7 +31,7 @@ public class UserOrganisationMembership implements Serializable {
     protected UserOrganisationMembershipPK userOrganisationMembershipPK;
     @JoinColumn(name = "organisationRoleID", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    private UserOrganisationRole organisationRoleID;
+    private UserOrganisationRole userOrganisationRole;
     @JoinColumn(name = "userID", referencedColumnName = "id", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private User user;
@@ -58,12 +58,12 @@ public class UserOrganisationMembership implements Serializable {
         this.userOrganisationMembershipPK = userOrganisationMembershipPK;
     }
 
-    public UserOrganisationRole getOrganisationRoleID() {
-        return organisationRoleID;
+    public UserOrganisationRole getUserOrganisationRole() {
+        return userOrganisationRole;
     }
 
-    public void setOrganisationRoleID(UserOrganisationRole organisationRoleID) {
-        this.organisationRoleID = organisationRoleID;
+    public void setUserOrganisationRole(UserOrganisationRole userOrganisationRole) {
+        this.userOrganisationRole = userOrganisationRole;
     }
 
     public User getUser() {

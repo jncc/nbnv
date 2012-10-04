@@ -43,7 +43,7 @@ public class AttributeStorageLevel implements Serializable {
     @Size(min = 1, max = 12)
     @Column(name = "label")
     private String label;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "storageLevelID")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "attributeStorageLevel")
     private Collection<Attribute> attributeCollection;
 
     public AttributeStorageLevel() {

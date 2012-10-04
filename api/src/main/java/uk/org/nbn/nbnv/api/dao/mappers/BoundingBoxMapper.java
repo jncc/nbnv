@@ -13,8 +13,19 @@ public interface BoundingBoxMapper {
                 "MIN(geom.STEnvelope().STPointN(1).STX) as minX, " + 
                 "MIN(geom.STEnvelope().STPointN(1).STY) as minY, " + 
                 "MAX(geom.STEnvelope().STPointN(3).STX) as maxX, " + 
-                "MAX(geom.STEnvelope().STPointN(3).STY) as maxY " + 
-            "FROM GridSquareFeatureData " + 
+                "MAX(geom.STEnvelope().STPointN(3).STY) as maxY, " +
+                "'EPSG:4326' as epsgCode " + 
+            "FROM FeatureData " + 
             "WHERE featureID = #{id}")
-    BoundingBox getBoundingBoxForGridSquare(int id);
+    BoundingBox getWorldBoundingBox(int id);
+    
+    @Select("SELECT " + 
+                "MIN(geom.STEnvelope().STPointN(1).STX) as minX, " + 
+                "MIN(geom.STEnvelope().STPointN(1).STY) as minY, " + 
+                "MAX(geom.STEnvelope().STPointN(3).STX) as maxX, " + 
+                "MAX(geom.STEnvelope().STPointN(3).STY) as maxY, " +
+                "'EPSG:4326' as epsgCode " + 
+            "FROM FeatureData " + 
+            "WHERE featureID = #{id}")
+    BoundingBox getNativeBoundingBox(int id);
 }

@@ -40,31 +40,36 @@ public class GridSquare implements Serializable {
     @Size(min = 1, max = 12)
     @Column(name = "gridRef")
     private String gridRef;
-    @JoinColumn(name = "resolutionID", referencedColumnName = "id")
-    @ManyToOne(optional = false)
-    private Resolution resolutionID;
-    @OneToMany(mappedBy = "parentSquareGridRef")
-    private Collection<GridSquare> gridSquareCollection;
-    @JoinColumn(name = "parentSquareGridRef", referencedColumnName = "gridRef")
-    @ManyToOne
-    private GridSquare parentSquareGridRef;
-    @JoinColumn(name = "featureID", referencedColumnName = "id")
-    @ManyToOne(optional = false)
-    private Feature featureID;
     @Basic(optional = false)
     @NotNull
     @Lob
     @Column(name = "originalGeom")
     private byte[] originalGeom;
+    @JoinColumn(name = "resolutionID", referencedColumnName = "id")
+    @ManyToOne(optional = false)
+    private Resolution resolution;
     @JoinColumn(name = "originalProjectionID", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    private Projection originalProjectionID;
+    private Projection projection;
+    @OneToMany(mappedBy = "gridSquare")
+    private Collection<GridSquare> gridSquareCollection;
+    @JoinColumn(name = "parentSquareGridRef", referencedColumnName = "gridRef")
+    @ManyToOne
+    private GridSquare gridSquare;
+    @JoinColumn(name = "featureID", referencedColumnName = "id")
+    @ManyToOne(optional = false)
+    private Feature feature;
 
     public GridSquare() {
     }
 
     public GridSquare(String gridRef) {
         this.gridRef = gridRef;
+    }
+
+    public GridSquare(String gridRef, byte[] originalGeom) {
+        this.gridRef = gridRef;
+        this.originalGeom = originalGeom;
     }
 
     public String getGridRef() {
@@ -75,12 +80,28 @@ public class GridSquare implements Serializable {
         this.gridRef = gridRef;
     }
 
-    public Resolution getResolutionID() {
-        return resolutionID;
+    public byte[] getOriginalGeom() {
+        return originalGeom;
     }
 
-    public void setResolutionID(Resolution resolutionID) {
-        this.resolutionID = resolutionID;
+    public void setOriginalGeom(byte[] originalGeom) {
+        this.originalGeom = originalGeom;
+    }
+
+    public Resolution getResolution() {
+        return resolution;
+    }
+
+    public void setResolution(Resolution resolution) {
+        this.resolution = resolution;
+    }
+
+    public Projection getProjection() {
+        return projection;
+    }
+
+    public void setProjection(Projection projection) {
+        this.projection = projection;
     }
 
     @XmlTransient
@@ -92,20 +113,20 @@ public class GridSquare implements Serializable {
         this.gridSquareCollection = gridSquareCollection;
     }
 
-    public GridSquare getParentSquareGridRef() {
-        return parentSquareGridRef;
+    public GridSquare getGridSquare() {
+        return gridSquare;
     }
 
-    public void setParentSquareGridRef(GridSquare parentSquareGridRef) {
-        this.parentSquareGridRef = parentSquareGridRef;
+    public void setGridSquare(GridSquare gridSquare) {
+        this.gridSquare = gridSquare;
     }
 
-    public Feature getFeatureID() {
-        return featureID;
+    public Feature getFeature() {
+        return feature;
     }
 
-    public void setFeatureID(Feature featureID) {
-        this.featureID = featureID;
+    public void setFeature(Feature feature) {
+        this.feature = feature;
     }
 
     @Override
@@ -131,22 +152,6 @@ public class GridSquare implements Serializable {
     @Override
     public String toString() {
         return "uk.org.nbn.nbnv.jpa.nbncore.GridSquare[ gridRef=" + gridRef + " ]";
-    }
-
-    public byte[] getOriginalGeom() {
-        return originalGeom;
-    }
-
-    public void setOriginalGeom(byte[] originalGeom) {
-        this.originalGeom = originalGeom;
-    }
-
-    public Projection getOriginalProjectionID() {
-        return originalProjectionID;
-    }
-
-    public void setOriginalProjectionID(Projection originalProjectionID) {
-        this.originalProjectionID = originalProjectionID;
     }
     
 }

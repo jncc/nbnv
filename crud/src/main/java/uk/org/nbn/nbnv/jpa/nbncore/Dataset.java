@@ -109,7 +109,7 @@ public class Dataset implements Serializable {
         @JoinColumn(name = "userID", referencedColumnName = "id")})
     @ManyToMany
     private Collection<User> userCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "datasetKey")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "dataset")
     private Collection<Site> siteCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "dataset")
     private Collection<DatasetKeyword> datasetKeywordCollection;
@@ -117,13 +117,13 @@ public class Dataset implements Serializable {
     private TaxonDataset taxonDataset;
     @JoinColumn(name = "providerOrganisationKey", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    private Organisation providerOrganisationKey;
+    private Organisation organisation;
     @JoinColumn(name = "updateFrequencyCode", referencedColumnName = "code")
     @ManyToOne(optional = false)
-    private DatasetUpdateFrequency updateFrequencyCode;
+    private DatasetUpdateFrequency datasetUpdateFrequency;
     @JoinColumn(name = "datasetTypeKey", referencedColumnName = "key")
     @ManyToOne(optional = false)
-    private DatasetType datasetTypeKey;
+    private DatasetType datasetType;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "dataset")
     private Collection<DatasetAttribute> datasetAttributeCollection;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "dataset")
@@ -292,28 +292,28 @@ public class Dataset implements Serializable {
         this.taxonDataset = taxonDataset;
     }
 
-    public Organisation getProviderOrganisationKey() {
-        return providerOrganisationKey;
+    public Organisation getOrganisation() {
+        return organisation;
     }
 
-    public void setProviderOrganisationKey(Organisation providerOrganisationKey) {
-        this.providerOrganisationKey = providerOrganisationKey;
+    public void setOrganisation(Organisation organisation) {
+        this.organisation = organisation;
     }
 
-    public DatasetUpdateFrequency getUpdateFrequencyCode() {
-        return updateFrequencyCode;
+    public DatasetUpdateFrequency getDatasetUpdateFrequency() {
+        return datasetUpdateFrequency;
     }
 
-    public void setUpdateFrequencyCode(DatasetUpdateFrequency updateFrequencyCode) {
-        this.updateFrequencyCode = updateFrequencyCode;
+    public void setDatasetUpdateFrequency(DatasetUpdateFrequency datasetUpdateFrequency) {
+        this.datasetUpdateFrequency = datasetUpdateFrequency;
     }
 
-    public DatasetType getDatasetTypeKey() {
-        return datasetTypeKey;
+    public DatasetType getDatasetType() {
+        return datasetType;
     }
 
-    public void setDatasetTypeKey(DatasetType datasetTypeKey) {
-        this.datasetTypeKey = datasetTypeKey;
+    public void setDatasetType(DatasetType datasetType) {
+        this.datasetType = datasetType;
     }
 
     @XmlTransient

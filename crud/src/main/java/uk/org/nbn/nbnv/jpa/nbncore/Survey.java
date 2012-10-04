@@ -6,7 +6,17 @@ package uk.org.nbn.nbnv.jpa.nbncore;
 
 import java.io.Serializable;
 import java.util.Collection;
-import javax.persistence.*;
+import javax.persistence.Basic;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -31,7 +41,7 @@ public class Survey implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @NotNull
     @Column(name = "id")
     private Integer id;
     @Size(max = 100)
@@ -49,13 +59,13 @@ public class Survey implements Serializable {
     @Size(max = 2147483647)
     @Column(name = "temporalCoverage")
     private String temporalCoverage;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "surveyID")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "survey")
     private Collection<Sample> sampleCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "survey")
     private Collection<SurveyAttribute> surveyAttributeCollection;
     @JoinColumn(name = "datasetKey", referencedColumnName = "datasetKey")
     @ManyToOne(optional = false)
-    private TaxonDataset datasetKey;
+    private TaxonDataset taxonDataset;
 
     public Survey() {
     }
@@ -130,12 +140,12 @@ public class Survey implements Serializable {
         this.surveyAttributeCollection = surveyAttributeCollection;
     }
 
-    public TaxonDataset getDatasetKey() {
-        return datasetKey;
+    public TaxonDataset getTaxonDataset() {
+        return taxonDataset;
     }
 
-    public void setDatasetKey(TaxonDataset datasetKey) {
-        this.datasetKey = datasetKey;
+    public void setTaxonDataset(TaxonDataset taxonDataset) {
+        this.taxonDataset = taxonDataset;
     }
 
     @Override
