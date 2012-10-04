@@ -48,9 +48,9 @@ public class Projection implements Serializable {
     @Size(min = 1, max = 50)
     @Column(name = "label")
     private String label;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "originalProjectionID")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "projection")
     private Collection<SiteBoundary> siteBoundaryCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "originalProjectionID")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "projection")
     private Collection<GridSquare> gridSquareCollection;
 
     public Projection() {

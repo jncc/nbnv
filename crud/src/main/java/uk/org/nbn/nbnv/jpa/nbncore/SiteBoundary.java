@@ -63,26 +63,26 @@ public class SiteBoundary implements Serializable {
     private String providerKey;
     @Basic(optional = false)
     @NotNull
-    @Column(name = "uploadDate")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date uploadDate;
-    @Basic(optional = false)
-    @NotNull
     @Lob
     @Column(name = "originalGeom")
     private byte[] originalGeom;
-    @JoinColumn(name = "originalProjectionID", referencedColumnName = "id")
-    @ManyToOne(optional = false)
-    private Projection originalProjectionID;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "uploadDate")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date uploadDate;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "siteBoundary")
     private Collection<SiteBoundaryAttribute> siteBoundaryAttributeCollection;
     @JoinColumn(name = "siteBoundaryDataset", referencedColumnName = "datasetKey")
     @ManyToOne(optional = false)
     private SiteBoundaryDataset siteBoundaryDataset;
+    @JoinColumn(name = "originalProjectionID", referencedColumnName = "id")
+    @ManyToOne(optional = false)
+    private Projection projection;
     @JoinColumn(name = "featureID", referencedColumnName = "id", insertable = false, updatable = false)
     @OneToOne(optional = false)
     private Feature feature;
-    @OneToMany(mappedBy = "filterSiteBoundary")
+    @OneToMany(mappedBy = "siteBoundary")
     private Collection<TaxonObservationFilterElement> taxonObservationFilterElementCollection;
 
     public SiteBoundary() {
@@ -92,10 +92,11 @@ public class SiteBoundary implements Serializable {
         this.featureID = featureID;
     }
 
-    public SiteBoundary(Integer featureID, String name, String providerKey, Date uploadDate) {
+    public SiteBoundary(Integer featureID, String name, String providerKey, byte[] originalGeom, Date uploadDate) {
         this.featureID = featureID;
         this.name = name;
         this.providerKey = providerKey;
+        this.originalGeom = originalGeom;
         this.uploadDate = uploadDate;
     }
 
@@ -131,6 +132,14 @@ public class SiteBoundary implements Serializable {
         this.providerKey = providerKey;
     }
 
+    public byte[] getOriginalGeom() {
+        return originalGeom;
+    }
+
+    public void setOriginalGeom(byte[] originalGeom) {
+        this.originalGeom = originalGeom;
+    }
+
     public Date getUploadDate() {
         return uploadDate;
     }
@@ -154,6 +163,14 @@ public class SiteBoundary implements Serializable {
 
     public void setSiteBoundaryDataset(SiteBoundaryDataset siteBoundaryDataset) {
         this.siteBoundaryDataset = siteBoundaryDataset;
+    }
+
+    public Projection getProjection() {
+        return projection;
+    }
+
+    public void setProjection(Projection projection) {
+        this.projection = projection;
     }
 
     public Feature getFeature() {
@@ -196,22 +213,6 @@ public class SiteBoundary implements Serializable {
     @Override
     public String toString() {
         return "uk.org.nbn.nbnv.jpa.nbncore.SiteBoundary[ featureID=" + featureID + " ]";
-    }
-
-    public byte[] getOriginalGeom() {
-        return originalGeom;
-    }
-
-    public void setOriginalGeom(byte[] originalGeom) {
-        this.originalGeom = originalGeom;
-    }
-
-    public Projection getOriginalProjectionID() {
-        return originalProjectionID;
-    }
-
-    public void setOriginalProjectionID(Projection originalProjectionID) {
-        this.originalProjectionID = originalProjectionID;
     }
     
 }

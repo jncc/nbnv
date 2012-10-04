@@ -49,9 +49,9 @@ public class Resolution implements Serializable {
     private Integer accuracy;
     @Column(name = "area")
     private Integer area;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "publicResolutionID")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "resolution")
     private Collection<TaxonDataset> taxonDatasetCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "resolutionID")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "resolution")
     private Collection<GridSquare> gridSquareCollection;
 
     public Resolution() {

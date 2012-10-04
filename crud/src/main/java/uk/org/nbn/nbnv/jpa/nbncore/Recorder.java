@@ -6,7 +6,14 @@ package uk.org.nbn.nbnv.jpa.nbncore;
 
 import java.io.Serializable;
 import java.util.Collection;
-import javax.persistence.*;
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -24,14 +31,10 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Recorder.findById", query = "SELECT r FROM Recorder r WHERE r.id = :id"),
     @NamedQuery(name = "Recorder.findByName", query = "SELECT r FROM Recorder r WHERE r.name = :name")})
 public class Recorder implements Serializable {
-    @OneToMany(mappedBy = "determinerID")
-    private Collection<TaxonObservationPublic> taxonObservationPublicCollection;
-    @OneToMany(mappedBy = "recorderID")
-    private Collection<TaxonObservationPublic> taxonObservationPublicCollection1;
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @NotNull
     @Column(name = "id")
     private Integer id;
     @Basic(optional = false)
@@ -39,9 +42,13 @@ public class Recorder implements Serializable {
     @Size(min = 1, max = 140)
     @Column(name = "name")
     private String name;
-    @OneToMany(mappedBy = "determinerID")
+    @OneToMany(mappedBy = "recorder")
+    private Collection<TaxonObservationPublic> taxonObservationPublicCollection;
+    @OneToMany(mappedBy = "recorder1")
+    private Collection<TaxonObservationPublic> taxonObservationPublicCollection1;
+    @OneToMany(mappedBy = "recorder")
     private Collection<TaxonObservation> taxonObservationCollection;
-    @OneToMany(mappedBy = "recorderID")
+    @OneToMany(mappedBy = "recorder1")
     private Collection<TaxonObservation> taxonObservationCollection1;
 
     public Recorder() {
@@ -70,6 +77,24 @@ public class Recorder implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @XmlTransient
+    public Collection<TaxonObservationPublic> getTaxonObservationPublicCollection() {
+        return taxonObservationPublicCollection;
+    }
+
+    public void setTaxonObservationPublicCollection(Collection<TaxonObservationPublic> taxonObservationPublicCollection) {
+        this.taxonObservationPublicCollection = taxonObservationPublicCollection;
+    }
+
+    @XmlTransient
+    public Collection<TaxonObservationPublic> getTaxonObservationPublicCollection1() {
+        return taxonObservationPublicCollection1;
+    }
+
+    public void setTaxonObservationPublicCollection1(Collection<TaxonObservationPublic> taxonObservationPublicCollection1) {
+        this.taxonObservationPublicCollection1 = taxonObservationPublicCollection1;
     }
 
     @XmlTransient
@@ -113,24 +138,6 @@ public class Recorder implements Serializable {
     @Override
     public String toString() {
         return "uk.org.nbn.nbnv.jpa.nbncore.Recorder[ id=" + id + " ]";
-    }
-
-    @XmlTransient
-    public Collection<TaxonObservationPublic> getTaxonObservationPublicCollection() {
-        return taxonObservationPublicCollection;
-    }
-
-    public void setTaxonObservationPublicCollection(Collection<TaxonObservationPublic> taxonObservationPublicCollection) {
-        this.taxonObservationPublicCollection = taxonObservationPublicCollection;
-    }
-
-    @XmlTransient
-    public Collection<TaxonObservationPublic> getTaxonObservationPublicCollection1() {
-        return taxonObservationPublicCollection1;
-    }
-
-    public void setTaxonObservationPublicCollection1(Collection<TaxonObservationPublic> taxonObservationPublicCollection1) {
-        this.taxonObservationPublicCollection1 = taxonObservationPublicCollection1;
     }
     
 }

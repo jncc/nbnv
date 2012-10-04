@@ -1,63 +1,133 @@
 package uk.gov.nbn.data.gis.interceptors;
 
+import com.sun.jersey.api.client.WebResource;
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
-import javax.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.gov.nbn.data.gis.processor.AtlasGrade;
+import uk.gov.nbn.data.gis.processor.AtlasGrade.Resolution;
 import uk.gov.nbn.data.gis.processor.Interceptor;
 import uk.gov.nbn.data.gis.processor.Intercepts;
 import uk.gov.nbn.data.gis.processor.MapServiceMethod.Type;
+import uk.gov.nbn.data.gis.providers.annotations.DefaultValue;
+import uk.gov.nbn.data.gis.providers.annotations.QueryParam;
+import uk.org.nbn.nbnv.api.model.BoundingBox;
+import uk.org.nbn.nbnv.api.model.Feature;
 
 @Component
 @Interceptor
 public class AtlasGradeMapViewportInterceptor {
-    //This is a good zoom to include Ireland and a bit of the North Sea
-    private static final int BBOX_BOTTOM = -50000;
-    private static final int BBOX_LEFT = -250000;
-    private static final int BBOX_TOP = 1300000;
-    private static final int BBOX_RIGHT = 750000;
-    private static final int DEFAULT_IMAGE_SIZE = 10;
-    private static final String PARAMETER_KEY_IMAGE_SIZE = "imagesize";
+    private static int MINX = 0, MINY = 1, MAXX = 2, MAXY=3; //definition of where bbox values live
+    private static int MAP_SERVER_IMAGE_MAXIMUM_DIMENSION_VALUE = 2048;
+    private static int ZOOM_LEVELS = 15;
 
+    @Autowired WebResource resource;
+    
     @Intercepts(Type.MAP)
-    public Map<String, String[]> processRequestParameters(HttpServletRequest request) {
+    public Map<String, String[]> processRequestParameters(
+                    AtlasGrade atlasGradeProperties, 
+                    @QueryParam(key="imagesize", validation="1[0-5]|[1-9]") @DefaultValue("10") String imagesizeStr,
+                    @QueryParam(key="resolution") String resolutionStr,
+                    @QueryParam(key="feature") String featureId) {
         Map<String, String[]> toReturn = new HashMap<String,String[]>();
-        int imageSize = getImageSize(request.getParameterMap());
+        AtlasGrade.Layer layer = getResolution(resolutionStr, atlasGradeProperties);
+        int imageSize = Integer.parseInt(imagesizeStr), resolution = layer.resolution().getResolutionInMetres();
+        BoundingBox featureToFocusOn = getFeatureToFocusOn(featureId, atlasGradeProperties);
+        int[] griddedBBox = getFeatureBoundingBoxFixedToGrid(featureToFocusOn, resolution);
         
+        int amountOfSquaresX = getAmountOfSquaresInDimension(griddedBBox[MAXX], griddedBBox[MINX], resolution);
+        int amountOfSquaresY = getAmountOfSquaresInDimension(griddedBBox[MAXY], griddedBBox[MINY], resolution);
+        
+        int amountOfPixelsForGrid = Math.min(   getMaximumPixelsForGridSquare(amountOfSquaresX, imageSize),
+                                                getMaximumPixelsForGridSquare(amountOfSquaresY, imageSize));
+        toReturn.put("LAYERS",  new String[]{ layer.layer() });
+        toReturn.put("SRS",     new String[]{ featureToFocusOn.getEpsgCode() });
+        toReturn.put("HEIGHT",  new String[]{ Integer.toString(amountOfPixelsForGrid * amountOfSquaresY) });
+        toReturn.put("WIDTH",   new String[]{ Integer.toString(amountOfPixelsForGrid * amountOfSquaresX) });
         toReturn.put("BBOX", new String[] {
             new StringBuilder()
-                .append(BBOX_LEFT).append(",")
-                .append(BBOX_BOTTOM).append(",")
-                .append(BBOX_RIGHT).append(",")
-                .append(BBOX_TOP).toString()
+                .append(Integer.toString(griddedBBox[MINX])).append(",")
+                .append(Integer.toString(griddedBBox[MINY])).append(",")
+                .append(Integer.toString(griddedBBox[MAXX])).append(",")
+                .append(Integer.toString(griddedBBox[MAXY])).toString()
         });
-        toReturn.put("HEIGHT", new String[] {Integer.toString(getImageHeight(imageSize))});
-        toReturn.put("WIDTH", new String[] {Integer.toString(getImageWidth(imageSize))});
-        toReturn.put("SRS", new String[]{"EPSG:27700"});
         return toReturn;
     }
     
-    public static int getImageWidth(int imageSize){
-        return imageSize * getBboxWidth()/10000;
-    }
-
-    public static int getImageHeight(int imageSize){
-        return imageSize * getBboxHeight()/10000;
-    }
-
-    private static int getBboxWidth(){
-        return BBOX_RIGHT - BBOX_LEFT;
-    }
-
-    private static int getBboxHeight(){
-        return BBOX_TOP - BBOX_BOTTOM;
+    private AtlasGrade.Layer getResolution(String resolution, AtlasGrade atlasGradeProperties) {
+        //Work out which resolution to use. Either one requested or this AtlasGrade maps default
+        Resolution resolutionToUse = (resolution != null) ? 
+                                            Resolution.getResolutionFromParamValue(resolution) : 
+                                            atlasGradeProperties.defaultResolution();
+        //Find the layer which corresponds to this resolution
+        for(AtlasGrade.Layer currLayer : atlasGradeProperties.layers()) {
+            if(resolutionToUse.equals(currLayer.resolution())) {
+                return currLayer;
+            }
+        }
+        throw new IllegalArgumentException("This map service does not support the resolution " + resolutionToUse);
     }
     
-    private static int getImageSize(Map<String, String[]> query) {
-        if(!query.containsKey(PARAMETER_KEY_IMAGE_SIZE)){
-            return DEFAULT_IMAGE_SIZE;
-        }else{
-            return Integer.parseInt(query.get(PARAMETER_KEY_IMAGE_SIZE)[0]);
+    private BoundingBox getFeatureToFocusOn(String featureId, AtlasGrade atlasGradeProperties) {
+        if(featureId != null) {
+            //Interact with the data api to find the bounding box which should be 
+            //used for the viewport from the passed in feature
+            return resource
+                    .path("features")
+                    .path(featureId)
+                    .get(Feature.class)
+                    .getNativeBoundingBox();
         }
+        else {
+            //No feature has been defined. Zoom to the bounding box as specfied 
+            //in the atlas grade map annotation
+            int[] defaultExtent = atlasGradeProperties.defaultExtent();
+            return new BoundingBox(atlasGradeProperties.epsgCode(), 
+                    BigDecimal.valueOf(defaultExtent[MINX]),
+                    BigDecimal.valueOf(defaultExtent[MINY]),
+                    BigDecimal.valueOf(defaultExtent[MAXX]),
+                    BigDecimal.valueOf(defaultExtent[MAXY]));
+        }
+    }
+    
+    private static int[] getFeatureBoundingBoxFixedToGrid(BoundingBox featureBox, int resolution) {
+        int minX = featureBox.getMinX().intValue(), 
+            minY = featureBox.getMinY().intValue(),
+            maxX = featureBox.getMaxX().intValue(),
+            maxY = featureBox.getMaxY().intValue();
+        //Calculate the gridded bounding box which the passed in feature fully sits in
+        return new int[]{
+            minX - modulo(minX, resolution),
+            minY - modulo(minY, resolution),
+            maxX - modulo(maxX, -resolution),
+            maxY - modulo(maxY, -resolution)
+        };
+    }
+    
+    private static int getAmountOfSquaresInDimension(int viewportDimensionMin, int viewportDimensionMax, int resolution) {
+        return Math.abs(viewportDimensionMin - viewportDimensionMax)/resolution;
+    }
+    
+    private static int getMaximumPixelsForGridSquare(int gridSquares, int imageSize) {      
+        int pixelsForGridSquare =   (MAP_SERVER_IMAGE_MAXIMUM_DIMENSION_VALUE * imageSize)
+                                                            /
+                                    (ZOOM_LEVELS * gridSquares);
+        
+        if(pixelsForGridSquare == 0) {
+            throw new IllegalArgumentException("It is not possible to create an image for the given parameters.");
+        }
+        return pixelsForGridSquare;
+    }
+    
+    /** The following is an implementation of modulo based around javas 
+     * remainder operation **/
+    private static int modulo(int i, int j) {
+        int rem = i % j;
+        if ((j < 0 && rem > 0) || (j > 0 && rem < 0)) {
+            return rem + j;
+        }
+        return rem;
     }
 }

@@ -58,13 +58,13 @@ public class TaxonGroup implements Serializable {
     private boolean outputFlag;
     @ManyToMany(mappedBy = "taxonGroupCollection")
     private Collection<Taxon> taxonCollection;
-    @OneToMany(mappedBy = "taxonOutputGroupKey")
+    @OneToMany(mappedBy = "taxonGroup")
     private Collection<Taxon> taxonCollection1;
-    @OneToMany(mappedBy = "parentTaxonGroupKey")
+    @OneToMany(mappedBy = "taxonGroup")
     private Collection<TaxonGroup> taxonGroupCollection;
     @JoinColumn(name = "parentTaxonGroupKey", referencedColumnName = "key")
     @ManyToOne
-    private TaxonGroup parentTaxonGroupKey;
+    private TaxonGroup taxonGroup;
 
     public TaxonGroup() {
     }
@@ -145,12 +145,12 @@ public class TaxonGroup implements Serializable {
         this.taxonGroupCollection = taxonGroupCollection;
     }
 
-    public TaxonGroup getParentTaxonGroupKey() {
-        return parentTaxonGroupKey;
+    public TaxonGroup getTaxonGroup() {
+        return taxonGroup;
     }
 
-    public void setParentTaxonGroupKey(TaxonGroup parentTaxonGroupKey) {
-        this.parentTaxonGroupKey = parentTaxonGroupKey;
+    public void setTaxonGroup(TaxonGroup taxonGroup) {
+        this.taxonGroup = taxonGroup;
     }
 
     @Override

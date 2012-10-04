@@ -10,6 +10,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
@@ -26,11 +27,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "TaxonObservationPublic.findAll", query = "SELECT t FROM TaxonObservationPublic t"),
-    @NamedQuery(name = "TaxonObservationPublic.findByTaxonObservationID", query = "SELECT t FROM TaxonObservationPublic t WHERE t.taxonObservationID = :taxonObservationID"),
-    @NamedQuery(name = "TaxonObservationPublic.findBySiteID", query = "SELECT t FROM TaxonObservationPublic t WHERE t.siteID = :siteID"),
-    @NamedQuery(name = "TaxonObservationPublic.findByFeatureID", query = "SELECT t FROM TaxonObservationPublic t WHERE t.featureID = :featureID"),
-    @NamedQuery(name = "TaxonObservationPublic.findByRecorderID", query = "SELECT t FROM TaxonObservationPublic t WHERE t.recorderID = :recorderID"),
-    @NamedQuery(name = "TaxonObservationPublic.findByDeterminerID", query = "SELECT t FROM TaxonObservationPublic t WHERE t.determinerID = :determinerID")})
+    @NamedQuery(name = "TaxonObservationPublic.findByTaxonObservationID", query = "SELECT t FROM TaxonObservationPublic t WHERE t.taxonObservationID = :taxonObservationID")})
 public class TaxonObservationPublic implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -38,30 +35,27 @@ public class TaxonObservationPublic implements Serializable {
     @NotNull
     @Column(name = "taxonObservationID")
     private Integer taxonObservationID;
-    @Column(name = "siteID")
-    private Integer siteID;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "featureID")
-    private int featureID;
-    @Column(name = "recorderID")
-    private Integer recorderID;
-    @Column(name = "determinerID")
-    private Integer determinerID;
     @JoinColumn(name = "taxonObservationID", referencedColumnName = "id", insertable = false, updatable = false)
     @OneToOne(optional = false)
     private TaxonObservation taxonObservation;
+    @JoinColumn(name = "siteID", referencedColumnName = "id")
+    @ManyToOne
+    private Site site;
+    @JoinColumn(name = "determinerID", referencedColumnName = "id")
+    @ManyToOne
+    private Recorder recorder;
+    @JoinColumn(name = "recorderID", referencedColumnName = "id")
+    @ManyToOne
+    private Recorder recorder1;
+    @JoinColumn(name = "featureID", referencedColumnName = "id")
+    @ManyToOne(optional = false)
+    private Feature feature;
 
     public TaxonObservationPublic() {
     }
 
     public TaxonObservationPublic(Integer taxonObservationID) {
         this.taxonObservationID = taxonObservationID;
-    }
-
-    public TaxonObservationPublic(Integer taxonObservationID, int featureID) {
-        this.taxonObservationID = taxonObservationID;
-        this.featureID = featureID;
     }
 
     public Integer getTaxonObservationID() {
@@ -72,44 +66,44 @@ public class TaxonObservationPublic implements Serializable {
         this.taxonObservationID = taxonObservationID;
     }
 
-    public Integer getSiteID() {
-        return siteID;
-    }
-
-    public void setSiteID(Integer siteID) {
-        this.siteID = siteID;
-    }
-
-    public int getFeatureID() {
-        return featureID;
-    }
-
-    public void setFeatureID(int featureID) {
-        this.featureID = featureID;
-    }
-
-    public Integer getRecorderID() {
-        return recorderID;
-    }
-
-    public void setRecorderID(Integer recorderID) {
-        this.recorderID = recorderID;
-    }
-
-    public Integer getDeterminerID() {
-        return determinerID;
-    }
-
-    public void setDeterminerID(Integer determinerID) {
-        this.determinerID = determinerID;
-    }
-
     public TaxonObservation getTaxonObservation() {
         return taxonObservation;
     }
 
     public void setTaxonObservation(TaxonObservation taxonObservation) {
         this.taxonObservation = taxonObservation;
+    }
+
+    public Site getSite() {
+        return site;
+    }
+
+    public void setSite(Site site) {
+        this.site = site;
+    }
+
+    public Recorder getRecorder() {
+        return recorder;
+    }
+
+    public void setRecorder(Recorder recorder) {
+        this.recorder = recorder;
+    }
+
+    public Recorder getRecorder1() {
+        return recorder1;
+    }
+
+    public void setRecorder1(Recorder recorder1) {
+        this.recorder1 = recorder1;
+    }
+
+    public Feature getFeature() {
+        return feature;
+    }
+
+    public void setFeature(Feature feature) {
+        this.feature = feature;
     }
 
     @Override

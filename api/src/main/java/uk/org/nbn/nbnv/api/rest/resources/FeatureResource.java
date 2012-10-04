@@ -7,8 +7,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import uk.org.nbn.nbnv.api.dao.mappers.GridSquareMapper;
-import uk.org.nbn.nbnv.api.model.GridSquare;
+import uk.org.nbn.nbnv.api.dao.mappers.FeatureMapper;
+import uk.org.nbn.nbnv.api.model.Feature;
 
 /**
  * A jersey resource which provides bounding boxes for certain features on the 
@@ -16,15 +16,14 @@ import uk.org.nbn.nbnv.api.model.GridSquare;
  * @author Christopher Johnson
  */
 @Component
-@Path("/gridSquares")
-public class GridSquareResource {
-    @Autowired GridSquareMapper gridSquareMapper;
+@Path("/features")
+public class FeatureResource {
+    @Autowired FeatureMapper featureMapper;
     
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public GridSquare getGridSquare(@PathParam("id") String gridSquare) {
-        
-        return gridSquareMapper.getGridSquare(gridSquare);
+    public Feature getFeature(@PathParam("id") int featureId) {
+        return featureMapper.getFeature(featureId);
     }
 }

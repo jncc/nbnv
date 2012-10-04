@@ -43,7 +43,7 @@ public class TaxonObservationDownloadPurpose implements Serializable {
     @Size(min = 1, max = 50)
     @Column(name = "label")
     private String label;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "purposeID")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "taxonObservationDownloadPurpose")
     private Collection<TaxonObservationDownload> taxonObservationDownloadCollection;
 
     public TaxonObservationDownloadPurpose() {

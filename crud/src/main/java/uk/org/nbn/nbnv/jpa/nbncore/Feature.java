@@ -4,13 +4,22 @@
  */
 package uk.org.nbn.nbnv.jpa.nbncore;
 
-import org.eclipse.persistence.annotations.Direction;
-import org.eclipse.persistence.annotations.NamedStoredProcedureQuery;
-import org.eclipse.persistence.annotations.StoredProcedureParameter;
-
 import java.io.Serializable;
 import java.util.Collection;
-import javax.persistence.*;
+import javax.persistence.Basic;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.Lob;
+import javax.persistence.ManyToMany;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
@@ -26,19 +35,17 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Feature.findAll", query = "SELECT f FROM Feature f"),
     @NamedQuery(name = "Feature.findById", query = "SELECT f FROM Feature f WHERE f.id = :id")})
 public class Feature implements Serializable {
+    private static final long serialVersionUID = 1L;
+    @Id
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "id")
+    private Integer id;
     @Basic(optional = false)
     @NotNull
     @Lob
     @Column(name = "geom")
     private byte[] geom;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "featureID")
-    private Collection<TaxonObservationPublic> taxonObservationPublicCollection;
-    private static final long serialVersionUID = 1L;
-    @Id
-    @Basic(optional = false)
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Integer id;
     @JoinTable(name = "FeatureOverlaps", joinColumns = {
         @JoinColumn(name = "featureID", referencedColumnName = "id")}, inverseJoinColumns = {
         @JoinColumn(name = "overlappedFeatureID", referencedColumnName = "id")})
@@ -60,13 +67,15 @@ public class Feature implements Serializable {
     private Collection<Feature> featureCollection4;
     @ManyToMany(mappedBy = "featureCollection4")
     private Collection<Feature> featureCollection5;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "featureID")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "feature")
+    private Collection<TaxonObservationPublic> taxonObservationPublicCollection;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "feature")
     private Collection<TaxonObservation> taxonObservationCollection;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "feature")
     private SiteBoundary siteBoundary;
-    @OneToMany(mappedBy = "featureID")
+    @OneToMany(mappedBy = "feature")
     private Collection<Designation> designationCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "featureID")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "feature")
     private Collection<GridSquare> gridSquareCollection;
 
     public Feature() {
@@ -87,6 +96,14 @@ public class Feature implements Serializable {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public byte[] getGeom() {
+        return geom;
+    }
+
+    public void setGeom(byte[] geom) {
+        this.geom = geom;
     }
 
     @XmlTransient
@@ -141,6 +158,15 @@ public class Feature implements Serializable {
 
     public void setFeatureCollection5(Collection<Feature> featureCollection5) {
         this.featureCollection5 = featureCollection5;
+    }
+
+    @XmlTransient
+    public Collection<TaxonObservationPublic> getTaxonObservationPublicCollection() {
+        return taxonObservationPublicCollection;
+    }
+
+    public void setTaxonObservationPublicCollection(Collection<TaxonObservationPublic> taxonObservationPublicCollection) {
+        this.taxonObservationPublicCollection = taxonObservationPublicCollection;
     }
 
     @XmlTransient
@@ -201,23 +227,6 @@ public class Feature implements Serializable {
     @Override
     public String toString() {
         return "uk.org.nbn.nbnv.jpa.nbncore.Feature[ id=" + id + " ]";
-    }
-
-    public byte[] getGeom() {
-        return geom;
-    }
-
-    public void setGeom(byte[] geom) {
-        this.geom = geom;
-    }
-
-    @XmlTransient
-    public Collection<TaxonObservationPublic> getTaxonObservationPublicCollection() {
-        return taxonObservationPublicCollection;
-    }
-
-    public void setTaxonObservationPublicCollection(Collection<TaxonObservationPublic> taxonObservationPublicCollection) {
-        this.taxonObservationPublicCollection = taxonObservationPublicCollection;
     }
     
 }

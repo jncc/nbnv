@@ -40,12 +40,12 @@ public class Organism implements Serializable {
     @Size(min = 1, max = 16)
     @Column(name = "\"key\"")
     private String key;
-    @OneToMany(mappedBy = "parentOrganismKey")
+    @OneToMany(mappedBy = "organism")
     private Collection<Organism> organismCollection;
     @JoinColumn(name = "parentOrganismKey", referencedColumnName = "key")
     @ManyToOne
-    private Organism parentOrganismKey;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "organismKey")
+    private Organism organism;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "organism")
     private Collection<Taxon> taxonCollection;
 
     public Organism() {
@@ -72,12 +72,12 @@ public class Organism implements Serializable {
         this.organismCollection = organismCollection;
     }
 
-    public Organism getParentOrganismKey() {
-        return parentOrganismKey;
+    public Organism getOrganism() {
+        return organism;
     }
 
-    public void setParentOrganismKey(Organism parentOrganismKey) {
-        this.parentOrganismKey = parentOrganismKey;
+    public void setOrganism(Organism organism) {
+        this.organism = organism;
     }
 
     @XmlTransient
