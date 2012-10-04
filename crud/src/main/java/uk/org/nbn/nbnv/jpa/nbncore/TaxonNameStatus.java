@@ -41,7 +41,7 @@ public class TaxonNameStatus implements Serializable {
     @Size(max = 50)
     @Column(name = "description")
     private String description;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "taxonNameStatusKey")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "taxonNameStatus")
     private Collection<Taxon> taxonCollection;
 
     public TaxonNameStatus() {

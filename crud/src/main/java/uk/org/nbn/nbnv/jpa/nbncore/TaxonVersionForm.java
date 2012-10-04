@@ -46,7 +46,7 @@ public class TaxonVersionForm implements Serializable {
     @NotNull
     @Column(name = "sortOrder")
     private int sortOrder;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "taxonVersionFormKey")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "taxonVersionForm")
     private Collection<Taxon> taxonCollection;
 
     public TaxonVersionForm() {

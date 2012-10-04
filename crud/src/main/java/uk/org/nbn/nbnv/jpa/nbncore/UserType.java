@@ -43,7 +43,7 @@ public class UserType implements Serializable {
     @Size(min = 1, max = 100)
     @Column(name = "label")
     private String label;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "userTypeID")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "userType")
     private Collection<User> userCollection;
 
     public UserType() {

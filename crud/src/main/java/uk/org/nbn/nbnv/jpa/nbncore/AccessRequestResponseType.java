@@ -42,9 +42,9 @@ public class AccessRequestResponseType implements Serializable {
     @Size(min = 1, max = 50)
     @Column(name = "label")
     private String label;
-    @OneToMany(mappedBy = "responseTypeID")
+    @OneToMany(mappedBy = "accessRequestResponseType")
     private Collection<UserAccessRequest> userAccessRequestCollection;
-    @OneToMany(mappedBy = "responseTypeID")
+    @OneToMany(mappedBy = "accessRequestResponseType")
     private Collection<OrganisationAccessRequest> organisationAccessRequestCollection;
 
     public AccessRequestResponseType() {

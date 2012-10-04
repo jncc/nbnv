@@ -43,7 +43,7 @@ public class RecordingEntity implements Serializable {
     private boolean dangerous;
     @JoinColumn(name = "taxonVersionKey", referencedColumnName = "taxonVersionKey")
     @ManyToOne(optional = false)
-    private Taxon taxonVersionKey;
+    private Taxon taxon;
 
     public RecordingEntity() {
     }
@@ -73,12 +73,12 @@ public class RecordingEntity implements Serializable {
         this.dangerous = dangerous;
     }
 
-    public Taxon getTaxonVersionKey() {
-        return taxonVersionKey;
+    public Taxon getTaxon() {
+        return taxon;
     }
 
-    public void setTaxonVersionKey(Taxon taxonVersionKey) {
-        this.taxonVersionKey = taxonVersionKey;
+    public void setTaxon(Taxon taxon) {
+        this.taxon = taxon;
     }
 
     @Override

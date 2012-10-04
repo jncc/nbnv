@@ -43,7 +43,7 @@ public class TaxonObservationFilterElementType implements Serializable {
     @Size(min = 1, max = 50)
     @Column(name = "label")
     private String label;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "filterElementTypeID")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "taxonObservationFilterElementType")
     private Collection<TaxonObservationFilterElement> taxonObservationFilterElementCollection;
 
     public TaxonObservationFilterElementType() {

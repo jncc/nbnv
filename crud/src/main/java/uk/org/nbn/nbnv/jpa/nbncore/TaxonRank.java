@@ -48,7 +48,7 @@ public class TaxonRank implements Serializable {
     @NotNull
     @Column(name = "level")
     private int level;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "taxonRankID")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "taxonRank")
     private Collection<Taxon> taxonCollection;
 
     public TaxonRank() {

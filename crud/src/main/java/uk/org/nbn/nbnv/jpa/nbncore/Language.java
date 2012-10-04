@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.XmlTransient;
  * @author Paul Gilbertson
  */
 @Entity
-@Table(name = "Language")
+@Table(name = "\"Language\"")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Language.findAll", query = "SELECT l FROM Language l"),
@@ -49,7 +49,7 @@ public class Language implements Serializable {
     @NotNull
     @Column(name = "sortOrder")
     private int sortOrder;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "languageKey")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "language")
     private Collection<Taxon> taxonCollection;
 
     public Language() {

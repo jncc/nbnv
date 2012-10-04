@@ -6,7 +6,17 @@ package uk.org.nbn.nbnv.jpa.nbncore;
 
 import java.io.Serializable;
 import java.util.Collection;
-import javax.persistence.*;
+import javax.persistence.Basic;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -31,7 +41,7 @@ public class Designation implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @NotNull
     @Column(name = "id")
     private Integer id;
     @Basic(optional = false)
@@ -59,10 +69,10 @@ public class Designation implements Serializable {
     private Collection<TaxonDesignation> taxonDesignationCollection;
     @JoinColumn(name = "featureID", referencedColumnName = "id")
     @ManyToOne
-    private Feature featureID;
+    private Feature feature;
     @JoinColumn(name = "designationCategoryID", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    private DesignationCategory designationCategoryID;
+    private DesignationCategory designationCategory;
 
     public Designation() {
     }
@@ -135,20 +145,20 @@ public class Designation implements Serializable {
         this.taxonDesignationCollection = taxonDesignationCollection;
     }
 
-    public Feature getFeatureID() {
-        return featureID;
+    public Feature getFeature() {
+        return feature;
     }
 
-    public void setFeatureID(Feature featureID) {
-        this.featureID = featureID;
+    public void setFeature(Feature feature) {
+        this.feature = feature;
     }
 
-    public DesignationCategory getDesignationCategoryID() {
-        return designationCategoryID;
+    public DesignationCategory getDesignationCategory() {
+        return designationCategory;
     }
 
-    public void setDesignationCategoryID(DesignationCategory designationCategoryID) {
-        this.designationCategoryID = designationCategoryID;
+    public void setDesignationCategory(DesignationCategory designationCategory) {
+        this.designationCategory = designationCategory;
     }
 
     @Override

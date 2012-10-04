@@ -53,11 +53,11 @@ public class SiteBoundaryType implements Serializable {
     @Size(max = 100)
     @Column(name = "xmlEnumValue")
     private String xmlEnumValue;
-    @OneToMany(mappedBy = "parentID")
+    @OneToMany(mappedBy = "siteBoundaryType")
     private Collection<SiteBoundaryType> siteBoundaryTypeCollection;
     @JoinColumn(name = "parentID", referencedColumnName = "id")
     @ManyToOne
-    private SiteBoundaryType parentID;
+    private SiteBoundaryType siteBoundaryType;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "siteBoundaryType")
     private Collection<SiteBoundaryDataset> siteBoundaryDatasetCollection;
 
@@ -114,12 +114,12 @@ public class SiteBoundaryType implements Serializable {
         this.siteBoundaryTypeCollection = siteBoundaryTypeCollection;
     }
 
-    public SiteBoundaryType getParentID() {
-        return parentID;
+    public SiteBoundaryType getSiteBoundaryType() {
+        return siteBoundaryType;
     }
 
-    public void setParentID(SiteBoundaryType parentID) {
-        this.parentID = parentID;
+    public void setSiteBoundaryType(SiteBoundaryType siteBoundaryType) {
+        this.siteBoundaryType = siteBoundaryType;
     }
 
     @XmlTransient

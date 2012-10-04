@@ -43,7 +43,7 @@ public class UserOrganisationRole implements Serializable {
     @Size(min = 1, max = 50)
     @Column(name = "label")
     private String label;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "organisationRoleID")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "userOrganisationRole")
     private Collection<UserOrganisationMembership> userOrganisationMembershipCollection;
 
     public UserOrganisationRole() {
