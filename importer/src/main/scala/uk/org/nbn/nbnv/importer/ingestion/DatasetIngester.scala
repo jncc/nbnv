@@ -104,7 +104,7 @@ class DatasetIngester @Inject()(log: Logger,
 
     val resolution = repository.getResolution(m.publicPrecision)
 
-    td.setResolution(resolution)
+    td.setPublicResolution(resolution)
 
     // default .. to be read from extra metadata.
     // ...could be more columns like this

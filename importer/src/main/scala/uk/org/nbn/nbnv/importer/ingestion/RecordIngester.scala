@@ -28,7 +28,7 @@ class RecordIngester @Inject()(log: Logger,
     em.flush() // to get survey key for sample caching
     val sample = sampleIngester.upsertSample(record.sampleKey, survey)
     val site = siteIngester.upsertSite(record.siteKey, record.siteName, dataset.getDataset)
-    val feature = featureIngester.ensureFeature(record) // todo: featureIngester.ensureFeature(record)
+    val feature = featureIngester.ensureFeature(record)
     val taxon = repo.getTaxon(record.taxonVersionKey)
     val dateType = repo.getDateType(record.dateType)
     val determiner = recorderIngester.ensureRecorder(record.determiner)
@@ -40,7 +40,7 @@ class RecordIngester @Inject()(log: Logger,
       o.setDateStart(record.startDate)
       o.setDateEnd(record.endDate)
       o.setDateType(dateType)
-      o.setRecorder(determiner)
+      o.setDeterminer(determiner)
       o.setFeature(feature)
       o.setProviderKey(record.key)
       o.setRecorder(recorder)

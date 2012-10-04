@@ -1,7 +1,7 @@
 package uk.org.nbn.nbnv.importer.data
 
 import scala.collection.JavaConversions._
-import javax.persistence.{TypedQuery, EntityManager}
+import javax.persistence.EntityManager
 import uk.org.nbn.nbnv.jpa.nbncore._
 import uk.org.nbn.nbnv.importer.data.Implicits._
 import com.google.inject.Inject
@@ -13,12 +13,18 @@ import uk.org.nbn.nbnv.FeatureFactory
 class Repository @Inject()(log: Logger, em: EntityManager, cache: QueryCache) extends ControlAbstractions {
 
   def createFeature(wkt: String) = {
+
     val factory = new FeatureFactory(em)
     factory.createFeature(wkt);
   }
 
+  def createGridRef(feature: Feature, gridRef: String , resolution: Resolution , projection: Projection , wkt: String ) : GridSquare = {
+    //todo calls feature factory to get grid square
 
-  // todo: wot's this for? and does it need caching?
+    null
+  }
+
+
   def confirmTaxonVersionKey(taxonVersionKey: String): Boolean = {
     val query = em.createQuery("SELECT t FROM Taxon t WHERE t.taxonVersionKey = :tvk", classOf[Taxon])
     query.setParameter("tvk", taxonVersionKey)
@@ -28,7 +34,7 @@ class Repository @Inject()(log: Logger, em: EntityManager, cache: QueryCache) ex
 
   def getAttribute(attributeLabel: String, taxonDataset: TaxonDataset) = {
 
-    val q = "select a from Attribute a join a.taxonObservationAttributeCollection toa join toa.taxonObservation to join to.sampleID s join s.surveyID sv where a.label = :label and sv.datasetKey = :dataset";
+    val q = "select a from Attribute a join a.taxonObservationAttributeCollection toa join toa.taxonObservation to join to.sample s join s.survey sv where a.label = :label and sv.taxonDataset = :dataset"
 
     cacheSome(q, attributeLabel, taxonDataset.getDatasetKey) {
 
@@ -53,7 +59,7 @@ class Repository @Inject()(log: Logger, em: EntityManager, cache: QueryCache) ex
 
   def getGridSquareFeature(featureID: Int): Option[(Feature, GridSquare)] = {
 
-    val q = "select f, s from Feature f join f.gridSquareCollection s where f.featureID = :featureID"
+    val q = "select f, s from Feature f join f.gridSquareCollection s where f.id = :featureID"
 
     cacheSome(q, featureID.toString) {
 
@@ -65,8 +71,7 @@ class Repository @Inject()(log: Logger, em: EntityManager, cache: QueryCache) ex
 
   def getSiteBoundaryFeature(siteBoundaryDataset: String, providerKey: String) = {
 
-    // todo: this is a guess until the crud layer is fixed
-    val q = "select f, b from Feature f join f.siteBoundaryCollection b where b.siteBoundaryDataset = :siteBoundaryDataset and b.providerKey = :providerKey "
+    val q = "select f, b from Feature f join f.siteBoundary b where b.siteBoundaryDataset = :siteBoundaryDataset and b.providerKey = :providerKey "
 
     cacheSingle(q, siteBoundaryDataset, providerKey) {
 
@@ -80,24 +85,24 @@ class Repository @Inject()(log: Logger, em: EntityManager, cache: QueryCache) ex
     }
   }
 
-  def getSurvey(surveyKey: String, dataset: TaxonDataset) = {
+  def getSurvey(surveyKey: String, taxonDataset: TaxonDataset) = {
 
-    val q = "SELECT s FROM Survey s WHERE s.providerKey = :providerKey AND s.datasetKey = :datasetKey"
+    val q = "SELECT s FROM Survey s WHERE s.providerKey = :providerKey AND s.taxonDataset = :taxonDataset"
 
-    cacheSome(q, surveyKey, dataset.getDatasetKey) {
+    cacheSome(q, surveyKey, taxonDataset.getDatasetKey) {
 
       val query = em.createQuery(q, classOf[Survey])
       query.setParameter("providerKey", surveyKey)
-      query.setParameter("datasetKey", dataset)
+      query.setParameter("taxonDataset", taxonDataset)
 
       query.getSingleOrNone
     }
   }
 
-  def getDateType(t: String) = {
+  def getDateType(key: String) = {
 
-    cacheSingle("getDateType", t) {
-      em.findSingle(classOf[DateType], t)
+    cacheSingle("getDateType", key) {
+      em.findSingle(classOf[DateType], key)
     }
   }
 
@@ -124,7 +129,7 @@ class Repository @Inject()(log: Logger, em: EntityManager, cache: QueryCache) ex
 
   def getTaxonObservation(key: String, sample: Sample) = {
 
-    val q = "select o from TaxonObservation o where o.providerKey = :key and o.sampleID = :sample "
+    val q = "select o from TaxonObservation o where o.providerKey = :key and o.sample = :sample "
 
     em.createQuery(q, classOf[TaxonObservation])
       .setParameter("key", key)
@@ -194,7 +199,7 @@ class Repository @Inject()(log: Logger, em: EntityManager, cache: QueryCache) ex
 
   def getSite(providerKey: String, dataset: Dataset) = {
 
-    val q = "select s from Site s where s.providerKey = :providerKey and s.datasetKey = :dataset "
+    val q = "select s from Site s where s.providerKey = :providerKey and s.dataset = :dataset "
 
     cacheSome(q, providerKey, dataset.getKey) {
 
@@ -213,15 +218,15 @@ class Repository @Inject()(log: Logger, em: EntityManager, cache: QueryCache) ex
     em.createQuery(q, classOf[String]).setMaxResults(1).getFirstOrNone
   }
 
-  def getSample(key: String, survey: Survey) = {
+  def getSample(providerKey: String, survey: Survey) = {
 
-    val q = "SELECT s FROM Sample s WHERE s.providerKey=:providerKey AND s.surveyID = :surveyID"
+    val q = "SELECT s FROM Sample s WHERE s.providerKey=:providerKey AND s.survey = :survey"
 
-    cacheSome(q, key, survey.getId.toString) {
+    cacheSome(q, providerKey, survey.getId.toString) {
 
       em.createQuery(q, classOf[Sample])
-        .setParameter("providerKey", key)
-        .setParameter("surveyID", survey)
+        .setParameter("providerKey", providerKey)
+        .setParameter("survey", survey)
         .getSingleOrNone
     }
   }

@@ -62,7 +62,7 @@ class FeatureIngester @Inject()(log: Logger, em: EntityManager, repo: Repository
         info.getParentGridSquareInfo match {
           case Some(parentInfo) => {
             val (_, parentSquare) = ensure(parentInfo)
-            gs.setGridSquare(parentSquare)
+            gs.setParentGridSquare(parentSquare)
           }
           case None => ()
         }

@@ -87,11 +87,13 @@ public class TaxonDataset implements Serializable {
         this.allowRecordValidation = allowRecordValidation;
     }
 
-    public Resolution getResolution() {
+    // manually renamed to *public* resolution for clarity
+
+    public Resolution getPublicResolution() {
         return resolution;
     }
 
-    public void setResolution(Resolution resolution) {
+    public void setPublicResolution(Resolution resolution) {
         this.resolution = resolution;
     }
 
