@@ -7,7 +7,6 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.nbn.data.gis.processor.AtlasGrade;
-import uk.gov.nbn.data.gis.processor.AtlasGrade.Resolution;
 import uk.gov.nbn.data.gis.processor.Interceptor;
 import uk.gov.nbn.data.gis.processor.Intercepts;
 import uk.gov.nbn.data.gis.processor.MapServiceMethod.Type;
@@ -28,11 +27,10 @@ public class AtlasGradeMapViewportInterceptor {
     @Intercepts(Type.MAP)
     public Map<String, String[]> processRequestParameters(
                     AtlasGrade atlasGradeProperties, 
+                    AtlasGrade.Layer layer,
                     @QueryParam(key="imagesize", validation="1[0-5]|[1-9]") @DefaultValue("10") String imagesizeStr,
-                    @QueryParam(key="resolution") String resolutionStr,
                     @QueryParam(key="feature") String featureId) {
         Map<String, String[]> toReturn = new HashMap<String,String[]>();
-        AtlasGrade.Layer layer = AtlasGradeHelper.getResolution(resolutionStr, atlasGradeProperties);
         int imageSize = Integer.parseInt(imagesizeStr), resolution = layer.resolution().getResolutionInMetres();
         BoundingBox featureToFocusOn = getFeatureToFocusOn(featureId, atlasGradeProperties);
         int[] griddedBBox = getFeatureBoundingBoxFixedToGrid(featureToFocusOn, resolution);
@@ -42,7 +40,6 @@ public class AtlasGradeMapViewportInterceptor {
         
         int amountOfPixelsForGrid = Math.min(   getMaximumPixelsForGridSquare(amountOfSquaresX, imageSize),
                                                 getMaximumPixelsForGridSquare(amountOfSquaresY, imageSize));
-        toReturn.put("LAYERS",  new String[]{ layer.layer() });
         toReturn.put("SRS",     new String[]{ featureToFocusOn.getEpsgCode() });
         toReturn.put("HEIGHT",  new String[]{ Integer.toString(amountOfPixelsForGrid * amountOfSquaresY) });
         toReturn.put("WIDTH",   new String[]{ Integer.toString(amountOfPixelsForGrid * amountOfSquaresX) });
