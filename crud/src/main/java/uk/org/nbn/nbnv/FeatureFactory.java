@@ -3,6 +3,7 @@ package uk.org.nbn.nbnv;
 import org.eclipse.persistence.internal.jpa.EntityManagerImpl;
 import org.eclipse.persistence.queries.DataModifyQuery;
 import org.eclipse.persistence.queries.StoredProcedureCall;
+import org.eclipse.persistence.queries.ValueReadQuery;
 import org.eclipse.persistence.sessions.Session;
 import uk.org.nbn.nbnv.jpa.nbncore.Feature;
 
@@ -10,7 +11,12 @@ import javax.persistence.EntityManager;
 import org.eclipse.persistence.annotations.StoredProcedureParameter;
 import org.eclipse.persistence.annotations.NamedStoredProcedureQuery;
 import org.eclipse.persistence.annotations.Direction;
+import uk.org.nbn.nbnv.jpa.nbncore.GridSquare;
+import uk.org.nbn.nbnv.jpa.nbncore.Projection;
+import uk.org.nbn.nbnv.jpa.nbncore.Resolution;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 /**
@@ -36,7 +42,7 @@ public class FeatureFactory {
 //    )
     public Feature createFeature(String wgs84Wkt) {
         StoredProcedureCall spcall = new StoredProcedureCall();
-        spcall.setProcedureName("CREATE_FEATURE_PROCEDURE");
+        spcall.setProcedureName("import_CreateFeature");
         spcall.addNamedArgument("wkt", "wgs84wkt");
         spcall.addNamedOutputArgument(
                 "FeatureId",      // procedure parameter name
@@ -44,11 +50,11 @@ public class FeatureFactory {
                 Integer.class  // Java type corresponding to type returned by procedure
         );
 
-        DataModifyQuery query = new DataModifyQuery();
+        ValueReadQuery query = new ValueReadQuery();
         query.setCall(spcall);
         query.addArgument("wgs84wkt");   // input
 
-        Vector arguments = new Vector();
+        List arguments = new ArrayList();
         arguments.add(wgs84Wkt);
 
         Session session = ((EntityManagerImpl) _em).getActiveSession();
@@ -59,4 +65,6 @@ public class FeatureFactory {
 
         return feature;
     }
+
+
 }
