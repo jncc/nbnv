@@ -83,13 +83,7 @@ public class FeatureFactory {
         spcall.addNamedArgument("wkt", "wkt");
         spcall.addNamedArgument("featureID", "featureID");
 
-        spcall.addNamedOutputArgument(
-                "gridSquareId",      // procedure parameter name
-                "gridSquareId",      // out argument field name
-                Integer.class  // Java type corresponding to type returned by procedure
-        );
-
-        ValueReadQuery query = new ValueReadQuery();
+        DataModifyQuery query = new DataModifyQuery();
         query.setCall(spcall);
         query.addArgument("gridRef");
         query.addArgument("resolutionID");
@@ -97,7 +91,7 @@ public class FeatureFactory {
         query.addArgument("wkt");
         query.addArgument("featureID");
 
-        List arguments = new ArrayList();
+        Vector arguments = new Vector();
         arguments.add(gridRef);
         arguments.add(resolution.getId());
         arguments.add(projection.getId());
@@ -106,9 +100,9 @@ public class FeatureFactory {
 
         Session session = ((EntityManagerImpl) _em).getActiveSession();
 
-        Integer gridSquareId = (Integer) session.executeQuery(query, arguments);
+        session.executeQuery(query, arguments);
 
-        GridSquare gridSquare =  _em.find(GridSquare.class, gridSquareId);
+        GridSquare gridSquare =  _em.find(GridSquare.class, gridRef);
 
         return gridSquare;
     }
