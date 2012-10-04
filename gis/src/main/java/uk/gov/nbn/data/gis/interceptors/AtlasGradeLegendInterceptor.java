@@ -3,11 +3,11 @@ package uk.gov.nbn.data.gis.interceptors;
 import java.util.HashMap;
 import java.util.Map;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 import uk.gov.nbn.data.gis.processor.AtlasGrade;
 import uk.gov.nbn.data.gis.processor.Interceptor;
 import uk.gov.nbn.data.gis.processor.Intercepts;
 import uk.gov.nbn.data.gis.processor.MapServiceMethod;
+import uk.gov.nbn.data.gis.providers.annotations.QueryParam;
 
 /**
  *
@@ -18,7 +18,9 @@ import uk.gov.nbn.data.gis.processor.MapServiceMethod;
 public class AtlasGradeLegendInterceptor {
 
     @Intercepts(MapServiceMethod.Type.LEGEND)
-    public Map<String, String[]> processRequestParameters(AtlasGrade annotation) {
+    public Map<String, String[]> processRequestParameters(
+                AtlasGrade atlasGradeProperties, 
+                @QueryParam(key="resolution") String resolutionStr) {
         Map<String, String[]> toReturn = new HashMap<String, String[]>();
         toReturn.put("SERVICE", new String[]{"WMS"});
         toReturn.put("VERSION", new String[]{"1.1.1"});
@@ -26,7 +28,7 @@ public class AtlasGradeLegendInterceptor {
         toReturn.put("TRANSPARENT", new String[]{"true"});
         toReturn.put("FORMAT", new String[]{"image/png"});
         toReturn.put("LAYER", new String[]{
-            StringUtils.arrayToCommaDelimitedString(annotation.layers())
+            AtlasGradeHelper.getResolution(resolutionStr, atlasGradeProperties).layer()
         });
         return toReturn;
     }

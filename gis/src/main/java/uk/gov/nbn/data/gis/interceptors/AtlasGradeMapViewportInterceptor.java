@@ -32,7 +32,7 @@ public class AtlasGradeMapViewportInterceptor {
                     @QueryParam(key="resolution") String resolutionStr,
                     @QueryParam(key="feature") String featureId) {
         Map<String, String[]> toReturn = new HashMap<String,String[]>();
-        AtlasGrade.Layer layer = getResolution(resolutionStr, atlasGradeProperties);
+        AtlasGrade.Layer layer = AtlasGradeHelper.getResolution(resolutionStr, atlasGradeProperties);
         int imageSize = Integer.parseInt(imagesizeStr), resolution = layer.resolution().getResolutionInMetres();
         BoundingBox featureToFocusOn = getFeatureToFocusOn(featureId, atlasGradeProperties);
         int[] griddedBBox = getFeatureBoundingBoxFixedToGrid(featureToFocusOn, resolution);
@@ -54,20 +54,6 @@ public class AtlasGradeMapViewportInterceptor {
                 .append(Integer.toString(griddedBBox[MAXY])).toString()
         });
         return toReturn;
-    }
-    
-    private AtlasGrade.Layer getResolution(String resolution, AtlasGrade atlasGradeProperties) {
-        //Work out which resolution to use. Either one requested or this AtlasGrade maps default
-        Resolution resolutionToUse = (resolution != null) ? 
-                                            Resolution.getResolutionFromParamValue(resolution) : 
-                                            atlasGradeProperties.defaultResolution();
-        //Find the layer which corresponds to this resolution
-        for(AtlasGrade.Layer currLayer : atlasGradeProperties.layers()) {
-            if(resolutionToUse.equals(currLayer.resolution())) {
-                return currLayer;
-            }
-        }
-        throw new IllegalArgumentException("This map service does not support the resolution " + resolutionToUse);
     }
     
     private BoundingBox getFeatureToFocusOn(String featureId, AtlasGrade atlasGradeProperties) {
