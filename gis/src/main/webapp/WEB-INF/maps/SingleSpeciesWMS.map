@@ -27,19 +27,6 @@ MAP
     PROJECTION
         "init=epsg:27700"
     END
-LAYER
-    NAME "MiniScale-Relief1"
-    METADATA
-      "wms_title"    "Ordnance Survey MiniScale - Relief 1 (Modern)"   ##required
-    END
-    TYPE RASTER
-    STATUS ON
-    DATA "${properties.ordnanceSurveyMapDataLocation}\MiniScale\raster\MiniScale_(with_relief1)_R13.tif"
-    PROJECTION
-      "init=epsg:27700"   ##recommended
-    END
-
-  END # Layer
 
     [#list layers as layer]
         LAYER
