@@ -19,9 +19,8 @@ class Repository @Inject()(log: Logger, em: EntityManager, cache: QueryCache) ex
   }
 
   def createGridRef(feature: Feature, gridRef: String , resolution: Resolution , projection: Projection , wkt: String ) : GridSquare = {
-    //todo calls feature factory to get grid square
-
-    null
+    val factory = new FeatureFactory(em)
+    factory.createGridSquare(gridRef, resolution, projection,wkt, feature)
   }
 
 
