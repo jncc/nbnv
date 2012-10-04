@@ -11,8 +11,10 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import uk.org.nbn.nbnv.importer.ui.convert.AmbiguousDataException;
 import uk.org.nbn.nbnv.importer.ui.convert.BadDataException;
 import uk.org.nbn.nbnv.importer.ui.convert.DependentStep;
+import uk.org.nbn.nbnv.importer.ui.convert.MappingException;
 import uk.org.nbn.nbnv.importer.ui.parser.ColumnMapping;
 import uk.org.nbn.nbnv.importer.ui.parser.DarwinCoreField;
 import uk.org.nbn.nbnv.importer.ui.util.DatabaseConnection;
@@ -30,7 +32,7 @@ public class TaxonName extends DependentStep {
     private Map<String, String> lookup;
     
     public TaxonName() {
-        super(DependentStep.MODIFY & DependentStep.ADD_COLUMN);
+        super(DependentStep.MODIFY);
         
         this.pattern = Pattern.compile(matchString, Pattern.CASE_INSENSITIVE);
         this.lookup = new HashMap<String, String>();
@@ -81,27 +83,36 @@ public class TaxonName extends DependentStep {
             List<Taxon> results = q.getResultList();
             
             if (results.size() == 1) {
-                lookup.put(origVal, results.get(0).getTaxonVersionKey());
+                lookup.put(origVal, results.get(0).getPTaxonVersionKey().getTaxonVersionKey());
             } else {
                 
-                // More than one result came back try and get the Preferred TaxonVersionKey
-                boolean foundParent = false;
-                Taxon current = (Taxon) results.get(0);
-                while (!foundParent) {
-                    if (current.getPTaxonVersionKey() == current) {
-                        foundParent = true;
-                    } else {
-                        current = current.getPTaxonVersionKey();
+                String pTVK = results.get(0).getPTaxonVersionKey().getTaxonVersionKey();
+                for (Taxon taxon : results) {
+                    if (!taxon.getPTaxonVersionKey().getTaxonVersionKey().equals(pTVK)) {
+                        throw new AmbiguousDataException("Found Multiple Prefered TaxonVersionKeys in result set");
                     }
                 }
                 
-                lookup.put(origVal, current.getTaxonVersionKey());
+                lookup.put(origVal, pTVK);
             }            
         }
         
-        // Push Original Value to Attributes        
-        
-        // Put in lookupvalue, may be an error value we will handle this later on
         row.set(this.column.getColumnNumber(), lookup.get(origVal));
     }
+    
+    @Override
+    public void checkMappings(List<ColumnMapping> mappings) throws MappingException {
+        boolean foundCol = false;
+        
+        for (ColumnMapping cm : mappings) {
+            if (cm.getColumnLabel().equals("TaxonVersionKey")) {
+                this.column = cm;
+                foundCol = true;
+            }
+        }
+        
+        if (!foundCol) {
+            throw new MappingException("Could not find necessary columns again for step: " + this.getClass().getName() + " - " + getName());
+        }
+    }    
 }

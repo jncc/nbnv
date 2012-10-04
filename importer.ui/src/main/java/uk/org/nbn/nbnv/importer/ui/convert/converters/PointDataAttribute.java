@@ -7,6 +7,7 @@ package uk.org.nbn.nbnv.importer.ui.convert.converters;
 import java.util.List;
 import uk.org.nbn.nbnv.importer.ui.convert.BadDataException;
 import uk.org.nbn.nbnv.importer.ui.convert.DependentStep;
+import uk.org.nbn.nbnv.importer.ui.convert.MappingException;
 import uk.org.nbn.nbnv.importer.ui.parser.ColumnMapping;
 import uk.org.nbn.nbnv.importer.ui.parser.DarwinCoreField;
 
@@ -66,5 +67,12 @@ public class PointDataAttribute extends DependentStep {
         row.add(row.get(eastColumn));
         row.add(row.get(northColumn));
         row.add(row.get(srsColumn));
+    }
+    
+    @Override
+    public void checkMappings(List<ColumnMapping> mappings) throws MappingException {
+        if (!isStepNeeded(mappings)) {
+            throw new MappingException("Could not find necessary columns again for step: " + this.getClass().getName() + " - " + getName());
+        }
     }
 }

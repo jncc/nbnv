@@ -46,7 +46,7 @@ import uk.org.nbn.nbnv.jpa.nbncore.Organisation;
  * @author Matt Debont
  */
 @Controller
-@SessionAttributes({"model", "org"})
+@SessionAttributes({"metadataForm", "org"})
 public class AddOrganisationController {
     
     private static final int maxLogoWidth = 150;
@@ -57,7 +57,7 @@ public class AddOrganisationController {
     private static final String logoSmallDefault = "iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAadEVYdFNvZnR3YXJlAFBhaW50Lk5FVCB2My41LjEwMPRyoQAAAf5JREFUWEftl7tqAkEUhk2RIkXIe+QJUgZS5hnyEOlTuPECWigIClFUiIg2CqJsomhnoWijiNgYIqjFolFWlCxeTs4McVlD1L25SMjAj+yszP+dM+fMMibTsQyz2XyGukORwRxQD7j2NepEjB0fTlEvqE8UGCAePe6lAFc4IRhgLA3uXQpwa7A5Afn4OwAMw4DL5QKfzwd2u11uDWnLgM1mg3g8DvV6HSaTCSyXSyBjNptBOp2WA6EOwGKxQDabBZ7nqeFqtYLhcAi1Wg2KxSKMRiM6F41G90EoB/B4PNDv90VjEn0gEACyBesiTqVS9H2r1dIfoNPp0MV7vR74/f5fDUql0uEAQqEQZDIZsFqtv5onEglYLBZ0CyKRiP4Z2HZWECCy/8SYKJfL7TPX7xwIh8PAcRxNuyAIkEwm5ZhrB3A6nVCtVsX263a74PV65ZprAyDm4/GYRj2fz6FQKGytix1HvPI2XC8WDAap+XQ6VRq1NEPqAdxuN632ZrOpJOU//6segGSCtKOMVtsFqA1Ah8+3OgBy7MZiMcjn8+BwOIzfApZlaQGSUalUjAdot9siQLlcNh6ApH8wGECj0QByHmioBXU1oMFQ3zbUAeQ/AxsZuNEhpUoLkpPeCy4Q4M1AiDl6PW3ci3HiEvX8fUd8xd9DicW1H1HnR3Ex/wLD9+JphYFTDAAAAABJRU5ErkJggg==";
     
     @RequestMapping(value = "/organisation.html", method = RequestMethod.GET)
-    public ModelAndView addOrganisation(@ModelAttribute("model") MetadataForm metadataForm, @ModelAttribute("org") Organisation org) {       
+    public ModelAndView addOrganisation(@ModelAttribute("metadataForm") MetadataForm metadataForm, @ModelAttribute("org") Organisation org) {       
         AddOrganisationForm orgForm = new AddOrganisationForm();
         if (metadataForm.hasStoredOrg()) {
             orgForm.setOrgagnisation(org);
@@ -98,7 +98,7 @@ public class AddOrganisationController {
     }
     
     @RequestMapping(value="/organisationProcess.html", method=RequestMethod.POST, params="submit")
-    public ModelAndView processNewOrganisation(@ModelAttribute("model") MetadataForm metadataForm, @ModelAttribute("org") Organisation org, HttpServletRequest request, @ModelAttribute("orgForm") @Valid AddOrganisationForm orgForm, BindingResult result) {    
+    public ModelAndView processNewOrganisation(@ModelAttribute("metadataForm") MetadataForm metadataForm, @ModelAttribute("org") Organisation org, HttpServletRequest request, @ModelAttribute("orgForm") @Valid AddOrganisationForm orgForm, BindingResult result) {    
         // If we have errors, pass them back to the user, keeping any inputs in 
         // place, need to improve so that errors are displayed next to the
         // correct inputs
@@ -126,7 +126,7 @@ public class AddOrganisationController {
         metadataForm.getMetadata().setOrganisationID(orgForm.getOrganisation().getId());
         metadataForm.updateOrganisationList();
 
-        return new ModelAndView("redirect:/metadataView.html", "model", metadataForm);
+        return new ModelAndView("redirect:/metadataView.html", "metadataForm", metadataForm);
     }
     
     @RequestMapping(value="/imageBase/{type}")

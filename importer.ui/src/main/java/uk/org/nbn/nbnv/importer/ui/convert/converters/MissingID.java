@@ -52,4 +52,8 @@ public class MissingID extends DependentStep {
         count++;
     }
     
+    @Override
+    public void checkMappings(List<ColumnMapping> mappings) {
+        // No mappings need to be checked, we only insert a column
+    }
 }

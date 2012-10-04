@@ -86,16 +86,16 @@ public class Taxon implements Serializable {
     @JoinColumn(name = "taxonOutputGroupKey", referencedColumnName = "key")
     @ManyToOne
     private TaxonGroup taxonGroup;
-    @OneToMany(mappedBy = "taxon")
+    @OneToMany(mappedBy = "commonNameTaxonVersionKey")
     private Collection<Taxon> taxonCollection2;
     @JoinColumn(name = "commonNameTaxonVersionKey", referencedColumnName = "taxonVersionKey")
     @ManyToOne
-    private Taxon taxon;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "taxon1")
+    private Taxon commonNameTaxonVersionKey;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "pTaxonVersionKey")
     private Collection<Taxon> taxonCollection3;
     @JoinColumn(name = "pTaxonVersionKey", referencedColumnName = "taxonVersionKey")
     @ManyToOne(optional = false)
-    private Taxon taxon1;
+    private Taxon pTaxonVersionKey;
     @JoinColumn(name = "organismKey", referencedColumnName = "key")
     @ManyToOne(optional = false)
     private Organism organism;
@@ -246,12 +246,12 @@ public class Taxon implements Serializable {
         this.taxonCollection2 = taxonCollection2;
     }
 
-    public Taxon getTaxon() {
-        return taxon;
+    public Taxon getCommonNameTaxonVersionKey() {
+        return commonNameTaxonVersionKey;
     }
 
-    public void setTaxon(Taxon taxon) {
-        this.taxon = taxon;
+    public void setCommonNameTaxonVersionKey(Taxon commonNameTaxonVersionKey) {
+        this.commonNameTaxonVersionKey = commonNameTaxonVersionKey;
     }
 
     @XmlTransient
@@ -263,12 +263,12 @@ public class Taxon implements Serializable {
         this.taxonCollection3 = taxonCollection3;
     }
 
-    public Taxon getTaxon1() {
-        return taxon1;
+    public Taxon getPTaxonVersionKey() {
+        return pTaxonVersionKey;
     }
 
-    public void setTaxon1(Taxon taxon1) {
-        this.taxon1 = taxon1;
+    public void setPTaxonVersionKey(Taxon pTaxonVersionKey) {
+        this.pTaxonVersionKey = pTaxonVersionKey;
     }
 
     public Organism getOrganism() {
