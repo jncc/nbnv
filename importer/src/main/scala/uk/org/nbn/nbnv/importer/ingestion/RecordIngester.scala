@@ -40,7 +40,7 @@ class RecordIngester @Inject()(log: Logger,
       o.setDateStart(record.startDate)
       o.setDateEnd(record.endDate)
       o.setDateType(dateType)
-      o.setRecorder(determiner)
+      o.setDeterminer(determiner)
       o.setFeature(feature)
       o.setProviderKey(record.key)
       o.setRecorder(recorder)

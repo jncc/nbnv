@@ -113,11 +113,13 @@ public class GridSquare implements Serializable {
         this.gridSquareCollection = gridSquareCollection;
     }
 
-    public GridSquare getGridSquare() {
+    // manually renamed to *parent* gridsquare for clarity
+
+    public GridSquare getParentGridSquare() {
         return gridSquare;
     }
 
-    public void setGridSquare(GridSquare gridSquare) {
+    public void setParentGridSquare(GridSquare gridSquare) {
         this.gridSquare = gridSquare;
     }
 
