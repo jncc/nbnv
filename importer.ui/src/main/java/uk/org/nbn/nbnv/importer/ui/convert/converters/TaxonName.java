@@ -13,6 +13,7 @@ import uk.org.nbn.nbnv.importer.ui.convert.MappingException;
 import uk.org.nbn.nbnv.importer.ui.parser.ColumnMapping;
 import uk.org.nbn.nbnv.importer.ui.parser.DarwinCoreField;
 import uk.org.nbn.nbnv.importer.ui.util.DatabaseConnection;
+import uk.org.nbn.nbnv.jpa.nbncore.RecordingEntity;
 import uk.org.nbn.nbnv.jpa.nbncore.Taxon;
 
 /**
@@ -74,17 +75,42 @@ public class TaxonName extends ConverterStep {
             
             if (results.size() == 1) {
                 lookup.put(origVal, results.get(0).getPTaxonVersionKey().getTaxonVersionKey());
-            } else {
+            } else if (results.size() > 1) {
                 
                 String pTVK = results.get(0).getPTaxonVersionKey().getTaxonVersionKey();
                 for (Taxon taxon : results) {
                     if (!taxon.getPTaxonVersionKey().getTaxonVersionKey().equals(pTVK)) {
-                        throw new AmbiguousDataException("Found Multiple Prefered TaxonVersionKeys in result set");
+                        throw new AmbiguousDataException("Found Multiple Prefered TaxonVersionKeys in result set, possible dangerous name?");
                     }
                 }
                 
                 lookup.put(origVal, pTVK);
-            }            
+            } else {
+                // Check RecordingEntity Tables for a translation
+                q = em.createNamedQuery("RecordingEntity.findByRecordedName");
+                q.setParameter("name", origVal);
+                
+                List<RecordingEntity> res = q.getResultList();
+                
+                if (res.size() == 1) {
+                    lookup.put(origVal, res.get(0).getTaxon().getPTaxonVersionKey().getTaxonVersionKey());
+                } else if (results.size() > 1) {               
+                    String pTVK = res.get(0).getTaxon().getPTaxonVersionKey().getTaxonVersionKey();
+                    for (RecordingEntity recordingEntity : res) {
+                        if (!recordingEntity.getTaxon().getPTaxonVersionKey().getTaxonVersionKey().equals(pTVK)) {
+                            throw new AmbiguousDataException("Found Multiple Prefered TaxonVersionKeys in result set, possible dangerous name? - " + recordingEntity.getRecordedName());
+                        }
+                        if (recordingEntity.getDangerous()) {
+                            throw new BadDataException("Found record, but it is marked as dangerous: " + recordingEntity.getRecordedName());
+                        }
+                    }
+                    
+                    lookup.put(origVal, pTVK);
+                    
+                } else {
+                    throw new BadDataException("Could not find a valid tansformation as a valid scientific name, common name or other recording entitiy");
+                }
+            }
         }
         
         row.set(column, lookup.get(origVal));
