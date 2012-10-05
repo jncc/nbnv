@@ -235,9 +235,11 @@ public class RunConversions {
                 while (depStepIterator.hasNext()) {
                     ConverterStep depStep = depStepIterator.next();
                     depStep.satisfyDependency(step.getClass());
+                    // Get the minimum position that this step can exist at
+                    depStep.setMinimumPos(orderedSteps.indexOf(step) + 1);
                     
                     if (!depStep.hasDependency()) {
-                        orderedSteps.add(orderedSteps.indexOf(step) + 1,depStep);
+                        orderedSteps.add(depStep.getMinimumPos(), depStep);
                         depStepIterator.remove();
                         depStepAdded = true;
                         postStepIndex++;
@@ -260,7 +262,10 @@ public class RunConversions {
                     }
                     
                     if (!exists) {
-                        orderedSteps.add(postStepIndex + 1, depStep);
+                        // If dependencies dont exist and are soft then put step either at the 
+                        // minimum position defined or the postStepIndex (so either at postStepIndex
+                        // or after)
+                        orderedSteps.add(Math.max(depStep.getMinimumPos(), postStepIndex + 1), depStep);
                         postStepIndex++;
                         depStepAdded = true;
                         depStepIterator.remove();

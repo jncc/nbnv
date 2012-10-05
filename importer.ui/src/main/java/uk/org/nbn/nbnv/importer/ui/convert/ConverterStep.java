@@ -19,6 +19,7 @@ public abstract class ConverterStep {
     protected int modifier = 0;
     protected List<Class> dependsOn;
     protected boolean soft = true;
+    protected int minimumPos = -1;
     
     public ConverterStep(int modifier) {
         this.modifier = modifier;
@@ -59,6 +60,14 @@ public abstract class ConverterStep {
     
     public void setSoft(boolean soft) {
         this.soft = soft;
+    }
+
+    public int getMinimumPos() {
+        return minimumPos;
+    }
+
+    public void setMinimumPos(int minimumPos) {
+        this.minimumPos = minimumPos;
     }
     
     public abstract String getName();
