@@ -27,11 +27,11 @@ public class AtlasGradeMapViewportInterceptor {
     @Intercepts(Type.MAP)
     public Map<String, String[]> processRequestParameters(
                     AtlasGrade atlasGradeProperties, 
-                    AtlasGrade.Layer layer,
+                    AtlasGrade.GridLayer layer,
                     @QueryParam(key="imagesize", validation="1[0-5]|[1-9]") @DefaultValue("10") String imagesizeStr,
                     @QueryParam(key="feature") String featureId) {
         Map<String, String[]> toReturn = new HashMap<String,String[]>();
-        int imageSize = Integer.parseInt(imagesizeStr), resolution = layer.resolution().getResolutionInMetres();
+        int imageSize = Integer.parseInt(imagesizeStr), resolution = layer.resolution();
         BoundingBox featureToFocusOn = getFeatureToFocusOn(featureId, atlasGradeProperties);
         int[] griddedBBox = getFeatureBoundingBoxFixedToGrid(featureToFocusOn, resolution);
         

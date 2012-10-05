@@ -1,11 +1,23 @@
 [#ftl]
-[#assign layers=[
-    {"resolution": 1,     "name": "Grid-10km",   "fillColour": "255 255 0"  },
-    {"resolution": 2,     "name": "Grid-2km",    "fillColour": "0 255 0"    },
-    {"resolution": 3,     "name": "Grid-1km",    "fillColour": "0 255 255"  },
-    {"resolution": 4,     "name": "Grid-100m",   "fillColour": "255 0 0"    }
-]]
+[#import "backgrounds.ftl" as backgrounds]
 
+[#assign layers={
+    "Grid-10km" :   {"resolution": 1, "fillColour": "255 255 0"  },
+    "Grid-2km"  :   {"resolution": 2, "fillColour": "0 255 0"    },
+    "Grid-1km"  :   {"resolution": 3, "fillColour": "0 255 255"  },
+    "Grid-100m" :   {"resolution": 4, "fillColour": "255 0 0"    }
+}]
+
+[#assign union_layers={
+    "Grid-10km-2km" : ["Grid-10km", "Grid-2km"],
+    "Grid-10km-1km" : ["Grid-10km", "Grid-2km", "Grid-1km"],
+    "Grid-10km-100m": ["Grid-10km", "Grid-2km", "Grid-1km", "Grid-100m"],
+    "Grid-2km-1km"  : ["Grid-2km", "Grid-1km"],
+    "Grid-2km-100m" : ["Grid-2km", "Grid-1km", "Grid-100m"],
+    "Grid-1km-100m" : ["Grid-1km", "Grid-100m"]
+}]
+
+[#macro join list separator=","][#list list as element]${element}[#if element_has_next]${separator}[/#if][/#list][/#macro]
 MAP
     IMAGETYPE                                             PNG
     EXTENT                                                0 0 800000 800000
@@ -27,20 +39,60 @@ MAP
     PROJECTION
         "init=epsg:27700"
     END
+    
+    [@backgrounds.os location=properties.ordnanceSurveyMapDataLocation requires=union_layers?keys + layers?keys/]
+    
+    [#if featureID??]
+        [@backgrounds.selectedFeature featureID=featureID/]
+    [/#if]
 
-    [#list layers as layer]
+    [#list union_layers?keys as union_layer_name]
         LAYER
-            NAME                                                "${layer.name}"
+            NAME "${union_layer_name}"
+            TYPE POLYGON
+            STATUS ON
+            CONNECTIONTYPE UNION
+            CONNECTION "[@join union_layers[union_layer_name]/]"
+            STYLEITEM "AUTO"
+            # Define an empty class that will be filled at runtime from the color and
+            # styles read from each source layer.
+
+
+            PROJECTION
+                "init=epsg:27700"
+            END
+
+            METADATA
+                "wms_title"                                       "BOB"
+                "wms_include_items"                               "all"
+            END
+
+            [#list union_layers[union_layer_name] as style_layer]
+                CLASS
+                    NAME                                              "${style_layer} std"
+                    STYLE
+                        COLOR                                           ${layers[style_layer].fillColour}
+                        OUTLINECOLOR                                    0 0 0
+                        WIDTH                                           0.5
+                    END
+                END
+            [/#list]
+        END
+    [/#list]
+
+    [#list layers?keys as layer_name]
+        LAYER
+            NAME                                                "${layer_name}"
             TYPE                                                POLYGON
             STATUS                                              OFF
             CONNECTIONTYPE                                      PLUGIN
             PLUGIN                                              "msplugin_mssql2008.dll"
             CONNECTION                                          "${properties.spatialConnection}"
-            DATA                                                "${layerGenerator.getData(layer.resolution)}"
+            DATA                                                "${layerGenerator.getData(layers[layer_name].resolution)}"
             TEMPLATE                                            "dummy.txt"
 
             METADATA
-                "wms_title"                                       "${layer.name}"
+                "wms_title"                                       "${layer_name}"
                 "wms_include_items"                               "all"
             END
 
@@ -49,9 +101,9 @@ MAP
             END
 
             CLASS
-                NAME                                              "10km std"
+                NAME                                              "${layer_name} std"
                 STYLE
-                    COLOR                                           ${layer.fillColour}
+                    COLOR                                           ${layers[layer_name].fillColour}
                     OUTLINECOLOR                                    0 0 0
                     WIDTH                                           0.5
                 END

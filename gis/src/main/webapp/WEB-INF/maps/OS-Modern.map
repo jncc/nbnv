@@ -1,3 +1,6 @@
+[#ftl]
+[#import "backgrounds.ftl" as backgrounds]
+
 MAP
   NAME "OS-Modern"
   STATUS ON
@@ -36,20 +39,7 @@ MAP
   # Start of layer definitions
   #
 
-  LAYER
-    NAME "MiniScale-NoGrid"
-    METADATA
-      "wms_title"    "Ordnance Survey MiniScale - No Grid (Modern)"   ##required
-    END
-    TYPE RASTER
-    STATUS ON
-    DATA "${ordnanceSurveyMapDataLocation}\MiniScale\raster\MiniScale_(no_grid)_R13.tif"
-    PROJECTION
-      "init=epsg:27700"   ##recommended
-    END
-
-    MINSCALEDENOM 150000   ##Scale Dependancy
-  END # Layer
+  [@backgrounds.os location=ordnanceSurveyMapDataLocation requires=[]/]
 
   LAYER
     NAME "MiniScale-Grid"
@@ -94,40 +84,6 @@ MAP
     END
 
     MINSCALEDENOM 150000   ##Scale Dependancy
-  END # Layer
-
-  LAYER
-    NAME "OS250k"
-    METADATA
-      "wms_title"    "Ordnance Survey 1:250000 Scale Colour Raster (Modern)"   ##required
-    END
-    TYPE RASTER
-    STATUS ON
-    TILEINDEX "${ordnanceSurveyMapDataLocation}\250k\index.shp"
-    TILEITEM "Location"
-    PROJECTION
-      "init=epsg:27700"   ##recommended
-    END
-
-    MINSCALEDENOM 35000   ##Scale Dependancy
-    MAXSCALEDENOM 150000
-  END # Layer
-
-  LAYER
-    NAME "OS50k"
-    METADATA
-      "wms_title"    "Ordnance Survey 1:50000 Scale Colour Raster (Modern)"   ##required
-    END
-    TYPE RASTER
-    STATUS ON
-    TILEINDEX "${ordnanceSurveyMapDataLocation}\50k\index.shp"
-    TILEITEM "Location"
-    PROJECTION
-      "init=epsg:27700"   ##recommended
-    END
-
-    MINSCALEDENOM 15000   ##Scale Dependancy
-    MAXSCALEDENOM 35000
   END # Layer
 
   LAYER

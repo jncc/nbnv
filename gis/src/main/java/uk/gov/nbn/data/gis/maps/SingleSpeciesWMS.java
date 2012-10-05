@@ -10,6 +10,7 @@ import uk.gov.nbn.data.gis.processor.MapService;
 import uk.gov.nbn.data.gis.processor.MapContainer;
 import uk.gov.nbn.data.gis.processor.AtlasGrade;
 import uk.gov.nbn.data.gis.processor.AtlasGrade.Layer;
+import uk.gov.nbn.data.gis.processor.AtlasGrade.GridLayer;
 import uk.gov.nbn.data.gis.processor.AtlasGrade.Resolution;
 import uk.gov.nbn.data.gis.providers.annotations.PathParam;
 import uk.gov.nbn.data.gis.providers.annotations.QueryParam;
@@ -40,28 +41,38 @@ public class SingleSpeciesWMS {
             + "%s " //place for start year filter
             + "%s " //place for end year filter
         + ") AS foo USING UNIQUE observationID USING SRID=4326";
-    
     @Autowired Properties properties;
     
     @MapService("{taxonVersionKey}")
     @AtlasGrade(
         layers={
-            @Layer(layer="Grid-10km", resolution=Resolution.TENKM),
-            @Layer(layer="Grid-2km", resolution=Resolution.TWOKM),
-            @Layer(layer="Grid-1km", resolution=Resolution.ONEKM),
-            @Layer(layer="Grid-100m", resolution=Resolution.ONEHUNDERD)
-        }
+            @GridLayer(name="10km",     layer="Grid-10km",      resolution=Resolution.TEN_KM),
+            @GridLayer(name="10km-2km", layer="Grid-10km-2km",  resolution=Resolution.TEN_KM),
+            @GridLayer(name="10km-1km", layer="Grid-10km-1km",  resolution=Resolution.TEN_KM),
+            @GridLayer(name="10km-100m",layer="Grid-10km-100m", resolution=Resolution.TEN_KM),
+            @GridLayer(name="2km",      layer="Grid-2km",       resolution=Resolution.TWO_KM),
+            @GridLayer(name="2km-1km",  layer="Grid-2km-1km",   resolution=Resolution.TWO_KM),
+            @GridLayer(name="2km-100m", layer="Grid-2km-100m",  resolution=Resolution.TWO_KM),
+            @GridLayer(name="1km",      layer="Grid-1km",       resolution=Resolution.ONE_KM),
+            @GridLayer(name="1km-100m", layer="Grid-1km-100m",  resolution=Resolution.ONE_KM),
+            @GridLayer(name="100m",     layer="Grid-100m",      resolution=Resolution.ONE_HUNDRED_METERS)
+        },
+        defaultLayer="10km",
+        backgrounds=@Layer(name="os", layer="OS-Scale-Dependant" ),
+        overlays=@Layer(name="feature", layer="Selected-Feature" )
     )
     public MapFileModel getSingleSpeciesModel(
             final User user,
             @PathParam(key="taxonVersionKey", validation="^[A-Z]{6}[0-9]{10}$") final String key,
             @QueryParam(key="datasets", validation="^[A-Z0-9]{8}$") final List<String> datasetKeys,
             @QueryParam(key="startyear", validation="[0-9]{4}") final String startYear,
-            @QueryParam(key="endyear", validation="[0-9]{4}") final String endYear
+            @QueryParam(key="endyear", validation="[0-9]{4}") final String endYear,
+            @QueryParam(key="feature", validation="[0-9]*") String featureID
             ) {
         
         
         HashMap<String, Object> data = new HashMap<String, Object>();
+        data.put("featureID", featureID);
         data.put("properties", properties);
         data.put("layerGenerator", new ResolutionDataGenerator() {
                 @Override

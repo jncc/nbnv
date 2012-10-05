@@ -20,22 +20,20 @@ public class AtlasGradeLayerProvider implements Provider {
     
     @Override
     public boolean isProviderFor(Class<?> clazz, MapServiceMethod method, HttpServletRequest request, List<Annotation> annotations) {
-        return clazz.equals(AtlasGrade.Layer.class);
+        return clazz.equals(AtlasGrade.GridLayer.class);
     }
 
     @Override
-    public AtlasGrade.Layer provide(Class<?> clazz, MapServiceMethod method, HttpServletRequest request, List<Annotation> annotations) {
+    public AtlasGrade.GridLayer provide(Class<?> clazz, MapServiceMethod method, HttpServletRequest request, List<Annotation> annotations) {
         return getResolution(request.getParameter("resolution"), atlasGradeProvider.provide(clazz, method, request, annotations));
     }
     
-    public static AtlasGrade.Layer getResolution(String resolution, AtlasGrade atlasGradeProperties) {
-        //Work out which resolution to use. Either one requested or this AtlasGrade maps default
-        AtlasGrade.Resolution resolutionToUse = (resolution != null) ? 
-                                            AtlasGrade.Resolution.getResolutionFromParamValue(resolution) : 
-                                            atlasGradeProperties.defaultResolution();
+    public static AtlasGrade.GridLayer getResolution(String resolution, AtlasGrade atlasGradeProperties) {
+        //Work out which layer to use. Either one requested or this AtlasGrade maps default
+        String resolutionToUse = (resolution != null) ? resolution : atlasGradeProperties.defaultLayer();
         //Find the layer which corresponds to this resolution
-        for(AtlasGrade.Layer currLayer : atlasGradeProperties.layers()) {
-            if(resolutionToUse.equals(currLayer.resolution())) {
+        for(AtlasGrade.GridLayer currLayer : atlasGradeProperties.layers()) {
+            if(resolutionToUse.equals(currLayer.name())) {
                 return currLayer;
             }
         }
