@@ -12,7 +12,7 @@ import java.util.logging.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 import uk.org.nbn.nbnv.importer.ui.convert.BadDataException;
-import uk.org.nbn.nbnv.importer.ui.convert.DependentStep;
+import uk.org.nbn.nbnv.importer.ui.convert.ConverterStep;
 import uk.org.nbn.nbnv.importer.ui.convert.MappingException;
 import uk.org.nbn.nbnv.importer.ui.parser.ColumnMapping;
 import uk.org.nbn.nbnv.importer.ui.parser.DarwinCoreField;
@@ -21,11 +21,11 @@ import uk.org.nbn.nbnv.importer.ui.parser.DarwinCoreField;
  *
  * @author Paul Gilbertson
  */
-public class AttributeConcatenation extends DependentStep {
+public class AttributeConcatenation extends ConverterStep {
     private Map<Integer, String> columnList;
 
     public AttributeConcatenation() {
-        super(DependentStep.ADD_COLUMNS ^ DependentStep.RUN_FIRST);
+        super(ConverterStep.ADD_COLUMNS ^ ConverterStep.RUN_FIRST);
     }
     
     @Override

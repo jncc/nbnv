@@ -15,8 +15,12 @@ import uk.org.nbn.nbnv.importer.ui.parser.DarwinCoreField;
  *
  * @author Paul Gilbertson
  */
-public class SensitiveBoolean implements ConverterStep {
+public class SensitiveBoolean extends ConverterStep {
     private int column;
+    
+    public SensitiveBoolean() {
+        super(ConverterStep.MODIFY);
+    }
 
     @Override
     public String getName() {
