@@ -66,13 +66,6 @@ class FeatureIngester @Inject()(log: Logger, em: EntityManager, repo: Repository
     ensure(info)._1
   }
 
-
-  def hex2Bytes( hex: String ): Array[Byte] = {
-    (for { i <- 0 to hex.length-1 by 2 if i > 0 || !hex.startsWith( "0x" )}
-    yield hex.substring( i, i+2 ))
-      .map( Integer.parseInt( _, 16 ).toByte ).toArray
-  }
-
   private def ensureSiteBoundaryFeature(featureKey : String) = {
 
     // feature key - first 8 chars are the siteBoundaryDataset; remaining are the providerKey

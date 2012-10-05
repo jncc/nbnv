@@ -28,7 +28,7 @@ class SmokeSuiteIT extends BaseFunSuite with ResourceLoader {
   }
 
   //todo: fix
-  ignore("should import a valid archive") {
+  test("should import a valid archive") {
 
     val tempDir = ".\\temp"
     new File(tempDir).mkdirs()
