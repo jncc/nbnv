@@ -58,18 +58,21 @@ public class SingleSpeciesWMS {
             @GridLayer(name="100m",     layer="Grid-100m",      resolution=Resolution.ONE_HUNDRED_METERS)
         },
         defaultLayer="10km",
-        backgrounds={@Layer(name="os", layer="OS-Scale-Dependant" ) }   
+        backgrounds={@Layer(name="os", layer="OS-Scale-Dependant" ) },
+        overlays=@Layer(name="feature", layer="Selected-Feature" )
     )
     public MapFileModel getSingleSpeciesModel(
             final User user,
             @PathParam(key="taxonVersionKey", validation="^[A-Z]{6}[0-9]{10}$") final String key,
             @QueryParam(key="datasets", validation="^[A-Z0-9]{8}$") final List<String> datasetKeys,
             @QueryParam(key="startyear", validation="[0-9]{4}") final String startYear,
-            @QueryParam(key="endyear", validation="[0-9]{4}") final String endYear
+            @QueryParam(key="endyear", validation="[0-9]{4}") final String endYear,
+            @QueryParam(key="feature", validation="[0-9]*") String featureID
             ) {
         
         
         HashMap<String, Object> data = new HashMap<String, Object>();
+        data.put("featureID", featureID);
         data.put("properties", properties);
         data.put("layerGenerator", new ResolutionDataGenerator() {
                 @Override
