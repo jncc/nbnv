@@ -84,9 +84,10 @@ public class RunConversions {
             List<ConverterStep> depSteps, ConverterStep step) {
         if (step.hasDependency()) {
             depSteps.add(step);
-        } else if (((step.getModifier() & ConverterStep.RUN_FIRST) > 0)
-                || ((step.getModifier() & ConverterStep.INSERT_COLUMN) > 0)) {
+        } else if (((step.getModifier() & ConverterStep.RUN_FIRST) > 0)) {
             preSteps.add(step);
+        } else if ((step.getModifier() & ConverterStep.INSERT_COLUMN) > 0) {
+            currSteps.add(0, step);
         } else {
             currSteps.add(step);
         }
@@ -142,7 +143,10 @@ public class RunConversions {
      * 
      * @param mappings
      * @param reflections
-     * @return
+     * @param preSteps
+     * @param currSteps
+     * @param postSteps
+     * @param depSteps 
      */
     private void getOrgSteps(List<ColumnMapping> mappings, 
             Reflections reflections, List<ConverterStep> preSteps, 
@@ -191,6 +195,17 @@ public class RunConversions {
         }
     }
     
+    /**
+     * Sort the lists of steps into one list with satisfied dependencies if possible
+     * if not throws an error to let you know something is very wrong here
+     * 
+     * @param preSteps Steps which should run before anything else
+     * @param currSteps Steps which run order doesn't really matter
+     * @param postSteps Steps which should be run after anything else
+     * @param depSteps Steps which are directly dependent on other steps (hard or soft dependencies included)
+     * @return An ordered list of steps which should work correctly
+     * @throws UnsatisfiableDependencyError 
+     */
     private List<ConverterStep> sortSteps(List<ConverterStep> preSteps, 
             List<ConverterStep> currSteps, List<ConverterStep> postSteps, 
             List<ConverterStep> depSteps) throws UnsatisfiableDependencyError {
@@ -247,6 +262,7 @@ public class RunConversions {
                     if (!exists) {
                         orderedSteps.add(postStepIndex + 1, depStep);
                         postStepIndex++;
+                        depStepAdded = true;
                         depStepIterator.remove();
                     }
                 }
