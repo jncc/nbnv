@@ -8,6 +8,7 @@ import java.util.Map;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import uk.gov.nbn.data.gis.processor.AtlasGrade;
+import uk.gov.nbn.data.gis.processor.AtlasGrade.Layer;
 import uk.gov.nbn.data.gis.processor.Interceptor;
 import uk.gov.nbn.data.gis.processor.Intercepts;
 import uk.gov.nbn.data.gis.processor.MapServiceMethod.Type;
@@ -27,30 +28,49 @@ public class AtlasGradeMapLayersInterceptor {
     public Map<String, String[]> processRequestParameters(
             AtlasGrade atlasGradeProperties,
             @QueryParam(key="background") List<String> requestedBackgroundLayers,
-            AtlasGrade.Layer layer) {
+            @QueryParam(key="overlay") List<String> requestedOverlayLayers,
+            AtlasGrade.GridLayer layer) {
         Map<String, String[]> toReturn = new HashMap<String,String[]>();
         
-        List<String> layersToRequest = new ArrayList<String>(
-                getBackgroundLayersToRequest(atlasGradeProperties, requestedBackgroundLayers));       
+        List<String> layersToRequest = new ArrayList<String>();
+        
+        layersToRequest.addAll(getLayersToRequest(requestedBackgroundLayers, atlasGradeProperties.backgrounds(), atlasGradeProperties.defaultBackgrounds()));
         layersToRequest.add(layer.layer()); //add the resolution layer
+        layersToRequest.addAll(getLayersToRequest(requestedOverlayLayers, atlasGradeProperties.overlays(), atlasGradeProperties.defaultOverlays()));
         
         toReturn.put("LAYERS",  new String[]{ StringUtils.collectionToCommaDelimitedString(layersToRequest) });
         return toReturn;
     }
     
-    private List<String> getBackgroundLayersToRequest(AtlasGrade atlasGradeProperties, List<String> requestedBackgroundLayers) {
-        List<String> supportedBackgroundLayers = Arrays.asList(atlasGradeProperties.backgrounds()); //get the valid background layers as a list
+    private List<String> getLayersToRequest(List<String> requestedBackgroundLayers, Layer[] validLayers, String[] defaultLayers) {
+        List<Layer> supportedBackgroundLayers = Arrays.asList(validLayers); //get the valid background layers as a list
         List<String> backgroundLayers = (requestedBackgroundLayers != null)     //get the requested background layers
                 ? requestedBackgroundLayers 
-                : Arrays.asList(atlasGradeProperties.defaultBackgrounds()); 
+                : Arrays.asList(defaultLayers); 
         
+        List<Layer> toReturn = new ArrayList<Layer>();
         //check the requested list is valid
         for(String currRequestedLayer : backgroundLayers) {
-            if(!supportedBackgroundLayers.contains(currRequestedLayer)) {
-                throw new IllegalArgumentException("The background layer " + currRequestedLayer + 
-                        " was requested but is not valid. Valid layers are " + supportedBackgroundLayers);
-            }
+            toReturn.add(getBackground(currRequestedLayer, supportedBackgroundLayers));
         }   
-        return backgroundLayers;
+        return getWMSLayersFromLayerList(toReturn);
     }
+    
+    private static Layer getBackground(String name, List<Layer> toFindIn) {
+        for(Layer currBackground : toFindIn) {
+            if(currBackground.name().equals(name)) {
+                return currBackground;
+            }
+        }
+        throw new IllegalArgumentException("The background layer " + name + 
+                        " was requested but is not valid.");
+    }
+    
+    private static List<String> getWMSLayersFromLayerList(List<Layer> layerList) {
+        List<String> toReturn = new ArrayList<String>();
+        for(Layer currBackground : layerList) {
+            toReturn.add(currBackground.layer());
+        }
+        return toReturn;
+    } 
 }

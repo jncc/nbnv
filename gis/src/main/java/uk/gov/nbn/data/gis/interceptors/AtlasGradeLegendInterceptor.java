@@ -17,7 +17,7 @@ import uk.gov.nbn.data.gis.processor.MapServiceMethod;
 public class AtlasGradeLegendInterceptor {
 
     @Intercepts(MapServiceMethod.Type.LEGEND)
-    public Map<String, String[]> processRequestParameters(AtlasGrade.Layer layer) {
+    public Map<String, String[]> processRequestParameters(AtlasGrade.GridLayer layer) {
         Map<String, String[]> toReturn = new HashMap<String, String[]>();
         toReturn.put("SERVICE", new String[]{"WMS"});
         toReturn.put("VERSION", new String[]{"1.1.1"});
