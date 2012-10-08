@@ -55,7 +55,7 @@ public class TaxonName extends ConverterStep {
 
     @Override
     public void modifyHeader(List<ColumnMapping> columns) {    
-        columns.set(column, new ColumnMapping(columns.size(), "TaxonVersionKey", DarwinCoreField.TAXONID));
+        columns.set(column, new ColumnMapping(column, "TaxonVersionKey", DarwinCoreField.TAXONID));
     }
 
     @Override
