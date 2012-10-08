@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import static org.apache.ibatis.jdbc.SelectBuilder.*;
 import org.springframework.util.StringUtils;
+import uk.org.nbn.nbnv.api.rest.resources.TaxonObservationResource;
 
 /**
  *
@@ -113,17 +114,21 @@ public class TaxonObservationProvider {
                 WHERE("pTaxonVersionKey = '" + params.get("ptvk") + "'");
             }
         }
-
-        if (params.containsKey("overlaps") && (Integer) params.get("overlaps") > -1) {
-            INNER_JOIN("FeatureOverlaps fo ON fo.overlappedFeatureID = o.featureID");
-            WHERE("fo.parentFeatureID = #{overlaps}");
+        
+        if(params.containsKey("featureID") && (Integer)params.get("featureID") > -1){
+            String spatialRelationship = TaxonObservationResource.SPATIAL_RELATIONSHIP_DEFAULT;
+            if(params.containsKey("spatialRelationship") && params.get("spatialRelationship") != null){
+                spatialRelationship = (String)params.get("spatialRelationship");
+            }
+            if(TaxonObservationResource.SPATIAL_RELATIONSHIP_WITHIN.equals(spatialRelationship)){
+                INNER_JOIN("FeatureContains fc ON fc.containedFeatureID = o.featureID");
+                WHERE("fc.parentFeatureID = #{featureID}");
+            }else{
+                INNER_JOIN("FeatureOverlaps fo ON fo.overlappedFeatureID = o.featureID");
+                WHERE("fo.parentFeatureID = #{featureID}");
+            }
         }
-
-        if (params.containsKey("within") && (Integer) params.get("within") > -1) {
-            INNER_JOIN("FeatureContains fc ON fc.containedFeatureID = o.featureID");
-            WHERE("fc.parentFeatureID = #{within}");
-        }
-
+        
         if (params.containsKey("sensitive") && !(Boolean) params.get("sensitive")) {
             WHERE("sensitive = #{sensitive}");
         }

@@ -1,12 +1,13 @@
-<#assign tenkmGridRef=URLParameters.gridRef>
-<#assign requestParametersExtended = RequestParameters + {"gridRef":[tenkmGridRef],"ptvk":[URLParameters.ptvk]}>
+<#assign featureID=URLParameters.featureID>
+<#assign requestParametersExtended = RequestParameters + {"featureID":[featureID],"ptvk":[URLParameters.ptvk]}>
 <#assign datasets=json.readURL("${api}/taxonObservations/datasets/observations",requestParametersExtended)>
 <#assign taxon=json.readURL("${api}/taxa/${URLParameters.ptvk}")>
+<#assign site=json.readURL("${api}/features/${featureID}")>
 
-<@template.master title="10km report for ${tenkmGridRef}">
-    <h1>Records for <@taxon_utils.short_name taxon=taxon/> in the 10km square ${tenkmGridRef} from <@report_utils.yearRangeText requestParameters=RequestParameters/></h1>
+<@template.master title="Site report for ${featureID}">
+    <h1>Records for <@taxon_utils.short_name taxon=taxon/> in '${site.label}' from <@report_utils.yearRangeText requestParameters=RequestParameters/></h1>
 
-    <@report_utils.site_report_filters requestParameters=RequestParameters args={"taxon":taxon} location=tenkmGridRef/>
+    <@report_utils.site_report_filters requestParameters=RequestParameters args={"taxon":taxon} location=site.label/>
 
     <#list datasets as dataset>
         <#assign provider=json.readURL("${api}/organisations/${dataset.organisationID}")>
