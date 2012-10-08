@@ -1,13 +1,17 @@
 package uk.org.nbn.nbnv.importer.spatial
 
 import scala.math._
+import uk.org.nbn.nbnv.importer.ImportFailedException
 
-class BritishGridSquareInfo(gridRef : String, precision: Int = 0) extends GridSquareInfo(gridRef, precision) {
+object BritishGridSquareInfo {
+
   val majorBritishGridByLetter = Map (
     "H" -> (0,10), "J" -> (5,10),
     "N" -> (0,5), "0" -> (5,5),
-    "S" -> (0,0), "T" -> (0,5)
+    "S" -> (0,0), "T" -> (5,0)
   )
+
+  val majorBritishGridByCoord = majorBritishGridByLetter map {_.swap}
 
   val minorBritishGridByLetter = Map (
     "A" -> (0,4), "B" -> (1,4), "C" -> (2,4), "D" -> (3,4), "E" -> (4,4),
@@ -17,9 +21,71 @@ class BritishGridSquareInfo(gridRef : String, precision: Int = 0) extends GridSq
     "V" -> (0,0), "W" -> (1,0), "X" -> (2,0), "Y" -> (3,0), "Z" -> (4,0)
   )
 
+  val minorBritishGridByCoord = minorBritishGridByLetter map {_.swap}
+
+  def apply(east: Int, north: Int) : BritishGridSquareInfo = {
+    BritishGridSquareInfo(east, north,0)
+  }
+
+  def apply(east: Int, north: Int, precision: Int) : BritishGridSquareInfo = {
+
+    //Compute 100K grid square co-ordinate
+    val sqX = (east - (east % 100000)) / 100000
+    val sqY = (north - (north % 100000)) / 100000
+
+    //Derive major (500K) grid letter
+    val majX = sqX - (sqX % 5)
+    val majY = sqY - (sqY % 5)
+
+    if (majorBritishGridByCoord.get(majX, majY).isEmpty) throw new ImportFailedException("The easing and northing (%s,%s) are not within the british grid".format(east,north))
+
+    val majLetter = majorBritishGridByCoord(majX, majY)
+
+    //Determine minor (100K sub grid) grid letter
+    val minX = sqX - majX
+    val minY = sqY - majY
+
+    val minLetter = minorBritishGridByCoord(minX, minY)
+
+    if (minorBritishGridByCoord.get(minX, minY).isEmpty) throw new ImportFailedException("The easing and northing (%s,%s) are not within the british grid".format(east,north))
+
+    val eastPart = east - sqX
+    val northPart = north - sqY
+
+    val gridRef = majLetter + minLetter + eastPart.toString + northPart.toString
+
+    new BritishGridSquareInfo(gridRef, precision)
+  }
+
+  def apply(gridRef : String) = {
+    new BritishGridSquareInfo(gridRef)
+  }
+
+  def apply(gridRef : String, precision : Int) = {
+    new BritishGridSquareInfo(gridRef, precision)
+  }
+}
+
+class BritishGridSquareInfo(gridRef : String, precision: Int = 0) extends GridSquareInfo(gridRef, precision) {
+
   def projection = "OSGB36"
 
   def epsgCode = "27700"
+
+  def getEastingNorthing = {
+    val g = getTenFigGridRef(outputGridRef)
+
+    val (majorLetter, minorLetter) = getLettersFromGridRef(g).splitAt(1)
+    val (majX, majY) = BritishGridSquareInfo.majorBritishGridByLetter(majorLetter)
+    val (mnrX, mnrY) = BritishGridSquareInfo.minorBritishGridByLetter(minorLetter)
+
+    val (e,n) = getNumeralsFromGridRef(g).splitAt(5)
+
+    val easting = (majX + mnrX)  * 100000 + e.toInt
+    val northing = (majY + mnrY) * 100000 + n.toInt
+
+    (easting, northing)
+  }
 
   protected def create(gridRef: String, precision: Int = 0) = {
     new BritishGridSquareInfo(gridRef, precision)
@@ -33,20 +99,7 @@ class BritishGridSquareInfo(gridRef : String, precision: Int = 0) extends GridSq
 
   protected def getDintyRegex = GridRefPatterns.ukDintyGridRef
 
-  protected def getEastingNorthing(gridRef: String) = {
-    val g = getTenFigGridRef(gridRef)
 
-    val (majorLetter, minorLetter) = getLettersFromGridRef(g).splitAt(1)
-    val (majX, majY) = majorBritishGridByLetter(majorLetter)
-    val (mnrX, mnrY) = minorBritishGridByLetter(minorLetter)
-
-    val (e,n) = getNumeralsFromGridRef(g).splitAt(5)
-
-    val easting = (majX + mnrX) * 100000 + e.toInt
-    val northing = (majY + mnrY) * 100000 + n.toInt
-
-    (easting, northing)
-  }
 
   //Returns the grid reference precision in meters
   protected def getPrecision(gridReference : String) = {
@@ -73,4 +126,5 @@ class BritishGridSquareInfo(gridRef : String, precision: Int = 0) extends GridSq
   protected def getNumeralsFromGridRef(gridRef : String) = {
     gridRef.substring(2, gridRef.length)
   }
+
 }

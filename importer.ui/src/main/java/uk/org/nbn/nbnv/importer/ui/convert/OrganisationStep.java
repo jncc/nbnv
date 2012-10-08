@@ -11,7 +11,7 @@ import uk.org.nbn.nbnv.importer.ui.parser.ColumnMapping;
  *
  * @author Matt Debont
  */
-public abstract class OrganisationStep extends DependentStep {
+public abstract class OrganisationStep extends ConverterStep {
     private int orgGroup;
     
     public OrganisationStep (int orgGroup, int modifier) {

@@ -14,8 +14,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
@@ -68,7 +68,31 @@ public class RunConversions {
             endDate = new Date(0);
         }
     }
-
+    
+    /**
+     * File the provided step in the proper list according to its action and 
+     * dependencies, for easier sorting later on
+     * 
+     * @param preSteps 
+     * @param currSteps
+     * @param postSteps
+     * @param depSteps
+     * @param step 
+     */
+    private void fileStep (List<ConverterStep> preSteps, 
+            List<ConverterStep> currSteps, List<ConverterStep> postSteps, 
+            List<ConverterStep> depSteps, ConverterStep step) {
+        if (step.hasDependency()) {
+            depSteps.add(step);
+        } else if (((step.getModifier() & ConverterStep.RUN_FIRST) > 0)) {
+            preSteps.add(step);
+        } else if ((step.getModifier() & ConverterStep.INSERT_COLUMN) > 0) {
+            currSteps.add(0, step);
+        } else {
+            currSteps.add(step);
+        }
+    }
+    
     /**
      * Grab the steps we think are needed for a given input
      * 
@@ -78,6 +102,15 @@ public class RunConversions {
      */
     private List<ConverterStep> getSteps(List<ColumnMapping> mappings) throws UnsatisfiableDependencyError {
         setSteps(new ArrayList<ConverterStep>());
+        
+        // Pre Steps
+        List<ConverterStep> preSteps = new ArrayList<ConverterStep>();
+        // Regular Steps
+        List<ConverterStep> currSteps = new ArrayList<ConverterStep>();
+        // Post Steps
+        List<ConverterStep> postSteps = new ArrayList<ConverterStep>();
+        // Unsorted Dependencies
+        List<ConverterStep> depSteps = new ArrayList<ConverterStep>();
 
         Reflections reflections = new Reflections("uk.org.nbn.nbnv.importer.ui.convert.converters");
         
@@ -87,7 +120,7 @@ public class RunConversions {
             try {
                 ConverterStep step = stepClass.newInstance();
                 if (step.isStepNeeded(mappings)) {
-                    getSteps().add(step);
+                    fileStep(preSteps, currSteps, postSteps, depSteps, step);
                 }
             } catch (InstantiationException ex) {
                 Logger.getLogger(RunConversions.class.getName()).log(Level.SEVERE, null, ex);
@@ -96,8 +129,11 @@ public class RunConversions {
             }
         }
         
-        setSteps(getDepSteps(mappings, reflections));
-
+        // Add any organisation required steps to the mix
+        getOrgSteps(mappings, reflections, preSteps, currSteps, postSteps, depSteps);
+        // Sort steps if necessary
+        setSteps(sortSteps(preSteps, currSteps, postSteps, depSteps));
+        
         return getSteps();
     }
 
@@ -107,37 +143,15 @@ public class RunConversions {
      * 
      * @param mappings
      * @param reflections
-     * @return
-     * @throws UnsatisfiableDependencyError 
+     * @param preSteps
+     * @param currSteps
+     * @param postSteps
+     * @param depSteps 
      */
-    private List<ConverterStep> getDepSteps(List<ColumnMapping> mappings, Reflections reflections) throws UnsatisfiableDependencyError {
-        // Stores regular steps with some form of dependency or restrictions
-        ArrayList<DependentStep> depSteps = new ArrayList<DependentStep>();
-        // Stores steps which we want to run first
-        ArrayList<ConverterStep> preSteps = new ArrayList<ConverterStep>();
-        // Stores steps which we should run after all others
-        ArrayList<DependentStep> postSteps = new ArrayList<DependentStep>();
-        
-        // Get all dependent steps and coarsely sort them into the arrays above
-        Set<Class<? extends DependentStep>> depConverters = reflections.getSubTypesOf(DependentStep.class);
-        for (Class<? extends DependentStep> stepClass: depConverters) {
-            try {
-                DependentStep step = stepClass.newInstance();
-                if (step.isStepNeeded(mappings)) {
-                    if ((step.getModifier() & DependentStep.RUN_FIRST) != 0) {
-                        preSteps.add(step);
-                    } else if ((step.getModifier() & DependentStep.INSERT_COLUMN) != 0) {
-                        preSteps.add(0, step);
-                    } else {
-                        depSteps.add(step);
-                    }
-                }
-            } catch (InstantiationException ex) {
-                Logger.getLogger(RunConversions.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IllegalAccessException ex) {
-                Logger.getLogger(RunConversions.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }   
+    private void getOrgSteps(List<ColumnMapping> mappings, 
+            Reflections reflections, List<ConverterStep> preSteps, 
+            List<ConverterStep> currSteps, List<ConverterStep> postSteps, 
+            List<ConverterStep> depSteps) {
         
         // Grab the dependencies from the OrganisationStepProvider.xml if we 
         // haven't already then process any organisational step dependencies
@@ -163,7 +177,7 @@ public class RunConversions {
                 try {
                     OrganisationStep step = stepClass.newInstance();
                     if (step.isStepNeeded(mappings, handler.getGroups(organisation))) {   
-                        depSteps.add(step);
+                        fileStep(preSteps, currSteps, postSteps, depSteps, step);
                     }
                 } catch (InstantiationException ex) {
                     Logger.getLogger(RunConversions.class.getName()).log(Level.SEVERE, null, ex);
@@ -179,114 +193,102 @@ public class RunConversions {
         } catch (SAXException ex) {
             Logger.getLogger(RunConversions.class.getName()).log(Level.SEVERE, null, ex);
         }
-
-        // Add all Pre-Steps to the beginning of the 
-        preSteps.addAll(getSteps());
-        setSteps(preSteps);
+    }
+    
+    /**
+     * Sort the lists of steps into one list with satisfied dependencies if possible
+     * if not throws an error to let you know something is very wrong here
+     * 
+     * @param preSteps Steps which should run before anything else
+     * @param currSteps Steps which run order doesn't really matter
+     * @param postSteps Steps which should be run after anything else
+     * @param depSteps Steps which are directly dependent on other steps (hard or soft dependencies included)
+     * @return An ordered list of steps which should work correctly
+     * @throws UnsatisfiableDependencyError 
+     */
+    private List<ConverterStep> sortSteps(List<ConverterStep> preSteps, 
+            List<ConverterStep> currSteps, List<ConverterStep> postSteps, 
+            List<ConverterStep> depSteps) throws UnsatisfiableDependencyError {
         
-        // Infinite loop preventer flag
-        boolean actionPerformed;
+        List<ConverterStep> orderedSteps = new ArrayList<ConverterStep>();
         
-        // While we have dependent steps still waiting to be queued
+        // Add our pre-steps and normal steps to the mix so we can start 
+        // processing dependencies
+        orderedSteps.addAll(preSteps);
+        orderedSteps.addAll(currSteps);
+        
+        // Everything after postStepIndex is a postStep
+        int postStepIndex = orderedSteps.size() - 1;
+        orderedSteps.addAll(postSteps);
+        
+        
+        // While we haven't scheduled all dependent steps
         while (!depSteps.isEmpty()) {
             
-            // Infinite loop preventer flag set to false to mark new stage of
-            // actions
-            actionPerformed = false;
-            // Storage list for steps to be added as we are iterating
-            List<ConverterStep> stepsToAdd = new ArrayList<ConverterStep>();
+            List<ConverterStep> copyOfOrderedSteps = new ArrayList<ConverterStep>();
+            copyOfOrderedSteps.addAll(orderedSteps);
             
-            // For each step we have already in the queue
-            for (ConverterStep cStep : getSteps()) {
-                
-                // See if this step satisfies a dependency, if so check if any
-                // remain for this dependent step adding it to the stepsToAdd List
-                // if none do
-                ListIterator<DependentStep> dStepsIterator = depSteps.listIterator();
-                while (dStepsIterator.hasNext()) {
-                    DependentStep dStep = dStepsIterator.next();
+            boolean depStepAdded = false;
+            
+            for (ConverterStep step : copyOfOrderedSteps) {
+                Iterator<ConverterStep> depStepIterator = depSteps.iterator();
+                while (depStepIterator.hasNext()) {
+                    ConverterStep depStep = depStepIterator.next();
+                    depStep.satisfyDependency(step.getClass());
+                    // Get the minimum position that this step can exist at
+                    depStep.setMinimumPos(orderedSteps.indexOf(step) + 1);
                     
-                    if ((dStep.satisfyDependency(cStep.getClass())) || dStep.getDependency().isEmpty()) {
-                        stepsToAdd.add(dStep);
-                        dStepsIterator.remove();
-                        // We did an action in this round \o/
-                        actionPerformed = true;
+                    if (!depStep.hasDependency()) {
+                        orderedSteps.add(depStep.getMinimumPos(), depStep);
+                        depStepIterator.remove();
+                        depStepAdded = true;
+                        postStepIndex++;
                     }
                 }
             }
             
-            // If no actions where performed
-            if (!actionPerformed) {
-                
-                boolean dStepChecked;
-                
-                // Attempt to queue this dependency by checking if its dependency
-                // is even being run / exists in the dependency list / exists in
-                // the post steps
-                ListIterator<DependentStep> dStepIterator = depSteps.listIterator();
-                while(dStepIterator.hasNext()) {
-                    DependentStep dStep = dStepIterator.next();
+            // Check if dependecy is soft 
+            Iterator<ConverterStep> depStepIterator = depSteps.iterator();
+            while (depStepIterator.hasNext()) {
+                ConverterStep depStep = depStepIterator.next();
+                if (depStep.soft) {
                     
-                    dStepChecked = false;
-                    // Check if dependency is in depList, action stalls until no
-                    // further action is possible
-                    for (DependentStep checkDep : depSteps) {
-                        if (dStep.checkDependency(checkDep.getClass())) {
-                            dStepChecked = true;
+                    boolean exists = false;
+                    
+                    for (ConverterStep cStep : depSteps) {
+                        if (depStep.checkDependency(cStep.getClass())) {
+                            exists = true;
                         }
                     }
-
-                    // If dependency is not in the current dependency list, check
-                    // other places for it adding it if no obstruction
-                    if (!dStepChecked) {
-                        // Check if dependency is in postList
-                        for (int i = 0; i < postSteps.size(); i++) {
-                            DependentStep postStep = postSteps.get(i);
-                            if (dStep.satisfyDependency(postStep.getClass()) && dStep.getDependency().isEmpty()) {
-                                postSteps.add(i + 1, dStep);
-                                dStepIterator.remove();
-                                dStepChecked = true;
-                                actionPerformed = true;
-                                break;
-                            }
-                        }
-                        
-                        // If its not anywhere then we can probably add it here
-                        // if you want a hard dependency then add the dependency
-                        // to the steps needed!
-                        if (!dStepChecked) {
-                            getSteps().add(dStep);
-                            actionPerformed = true;
-                        }
-                    }
-                } 
-                
-                // If we still haven't done something by the end of the loop something
-                // is horribly wrong and we need to re-think our dependencies again!
-                if (!actionPerformed) {
-                    // Locked up, dependencies are seriously screwed up for some 
-                    // reason
-                    if (depSteps.size() > 1) {
-                        String depFails = " - ";
-                        for(DependentStep step : depSteps) {
-                            depFails = depFails + step.getClass().getCanonicalName() + " - ";
-                        }
-                        throw new UnsatisfiableDependencyError("Could not satisfy a dependency on multiple steps " + 
-                                depFails);
-                    } else {
-                        throw new UnsatisfiableDependencyError("Could not satsify a dependency on step " + depSteps.get(0).getName());
+                    
+                    if (!exists) {
+                        // If dependencies dont exist and are soft then put step either at the 
+                        // minimum position defined or the postStepIndex (so either at postStepIndex
+                        // or after)
+                        orderedSteps.add(Math.max(depStep.getMinimumPos(), postStepIndex + 1), depStep);
+                        postStepIndex++;
+                        depStepAdded = true;
+                        depStepIterator.remove();
                     }
                 }
-            } else {
-                // Add all currently satisfied dependencies in this round
-                getSteps().addAll(stepsToAdd);
+            }
+            
+            // If we have been blocked then we need to bow out gracefully
+            if (!depStepAdded) {
+                if (depSteps.size() > 1) {
+                    String depFails = " - ";
+                    for (ConverterStep step : depSteps) {
+                        depFails = depFails + step.getClass().getCanonicalName() + " - ";
+                    }
+                    throw new UnsatisfiableDependencyError("Could not satisfy a dependency on multiple steps "
+                            + depFails);
+                } else {
+                    throw new UnsatisfiableDependencyError("Could not satsify a dependency on step " + depSteps.get(0).getName());
+                }
             }
         }
         
-        // Add our poststeps to the mix 
-        getSteps().addAll(postSteps);
-        
-        return getSteps();
+        return orderedSteps;
     }    
 
     private void modifyColumns(List<ConverterStep> steps, List<ColumnMapping> mappings) {
@@ -315,9 +317,8 @@ public class RunConversions {
             w = new BufferedWriter(new FileWriter(out));
 
             getMappings(args);
-            getSteps(mappings);
+            getSteps(mappings);           
             modifyColumns(getSteps(), mappings);
-            checkMappings(getSteps(), mappings);
             
             List<String> columnNames = new ArrayList<String>();
 
@@ -346,8 +347,8 @@ public class RunConversions {
 
             MetaWriter mw = new MetaWriter();
             errors.addAll(mw.createMetaFile(mappings, meta));
-        } catch (MappingException ex) {
-            errors.add("MappingException: " + ex.getMessage());
+//        } catch (MappingException ex) {
+//            errors.add("MappingException: " + ex.getMessage());
         } catch (IOException ex) {
             errors.add("IOException: " + ex.getMessage());
         } catch(UnsatisfiableDependencyError ex) {

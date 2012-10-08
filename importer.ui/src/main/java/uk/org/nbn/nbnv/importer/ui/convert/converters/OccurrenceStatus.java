@@ -15,8 +15,12 @@ import uk.org.nbn.nbnv.importer.ui.parser.DarwinCoreField;
  *
  * @author Paul Gilbertson
  */
-public class OccurrenceStatus implements ConverterStep {
+public class OccurrenceStatus extends ConverterStep {
     private int column;
+    
+    public OccurrenceStatus() {
+        super(ConverterStep.MODIFY);
+    }
 
     @Override
     public String getName() {

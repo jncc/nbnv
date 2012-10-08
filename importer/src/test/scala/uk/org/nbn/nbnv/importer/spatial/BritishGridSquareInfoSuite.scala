@@ -248,4 +248,12 @@ class BritishGridSquareInfoSuite extends BaseFunSuite {
 
     bgr.sourceProjectionPolygon matches (TestResources.polygonWKTRegex)
   }
+
+  test("should give correct easting and northing for grid ref TQ24") {
+    val bgr = BritishGridSquareInfo("TQ24")
+    val (easting, northing) = bgr.getEastingNorthing
+
+    easting should be (520000)
+    northing should be (140000)
+  }
 }

@@ -33,6 +33,20 @@ import uk.org.nbn.nbnv.api.model.*;
 @Component
 @Path("/taxonObservations")
 public class TaxonObservationResource {
+    
+    public static final String SPATIAL_RELATIONSHIP_WITHIN = "within";
+    public static final String SPATIAL_RELATIONSHIP_OVERLAP = "overlap";
+    public static final String SPATIAL_RELATIONSHIP_DEFAULT = SPATIAL_RELATIONSHIP_OVERLAP;
+
+    private final String defaultStartYear = "-1";
+    private final String defaultEndYear = "-1";
+    private final String defaultDatasetKey = "";
+    private final String defaultTaxa = "";
+    private final String defaultSensitive = "1";
+    private final String defaultDesignation = "";
+    private final String defaultTaxonOutputGroup = "";
+    private final String defaultGridRef = "";
+    private final String defaultFeatureID = "-1";
 
     @Autowired
     TaxonObservationMapper observationMapper;
@@ -73,18 +87,19 @@ public class TaxonObservationResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public List<TaxonObservation> getObservationsByFilter(
-            @TokenUser() User user, @QueryParam("startYear") @DefaultValue("-1") int startYear, 
-            @QueryParam("endYear") @DefaultValue("-1") int endYear, 
-            @QueryParam("datasetKey") @DefaultValue("") List<String> datasetKeys, 
-            @QueryParam("ptvk") @DefaultValue("") List<String> taxa, 
-            @QueryParam("overlapSite") @DefaultValue("-1") Integer overlaps, 
-            @QueryParam("withinSite") @DefaultValue("-1") Integer within, 
-            @QueryParam("sensitive") @DefaultValue("1") Boolean sensitive, 
-            @QueryParam("designation") @DefaultValue("") String designation, 
-            @QueryParam("taxonOutputGroup") @DefaultValue("") String taxonOutputGroup, 
-            @QueryParam("gridRef") @DefaultValue("") String gridRef) {
+            @TokenUser() User user, 
+            @QueryParam("startYear") @DefaultValue(defaultStartYear) int startYear, 
+            @QueryParam("endYear") @DefaultValue(defaultEndYear) int endYear, 
+            @QueryParam("datasetKey") @DefaultValue(defaultDatasetKey) List<String> datasetKeys, 
+            @QueryParam("ptvk") @DefaultValue(defaultTaxa) List<String> taxa, 
+            @QueryParam("spatialRelationship") @DefaultValue(SPATIAL_RELATIONSHIP_DEFAULT) String spatialRelationship,
+            @QueryParam("featureID") @DefaultValue(defaultFeatureID) int featureID,
+            @QueryParam("sensitive") @DefaultValue(defaultSensitive) Boolean sensitive, 
+            @QueryParam("designation") @DefaultValue(defaultDesignation) String designation, 
+            @QueryParam("taxonOutputGroup") @DefaultValue(defaultTaxonOutputGroup) String taxonOutputGroup, 
+            @QueryParam("gridRef") @DefaultValue(defaultGridRef) String gridRef) {
         //TODO: squareBlurring(?)
-        return observationMapper.selectObservationRecordsByFilter(user, startYear, endYear, datasetKeys, taxa, overlaps, within, sensitive, designation, taxonOutputGroup, gridRef);
+        return observationMapper.selectObservationRecordsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef);
     }
 
     @GET
@@ -92,18 +107,18 @@ public class TaxonObservationResource {
     @Produces(MediaType.APPLICATION_JSON)
     public List<TaxonWithQueryStats> getObservationSpeciesByFilter(
             @TokenUser() User user, 
-            @QueryParam("startYear") @DefaultValue("-1") int startYear, 
-            @QueryParam("endYear") @DefaultValue("-1") int endYear, 
-            @QueryParam("datasetKey") List<String> datasetKeys, 
-            @QueryParam("ptvk") List<String> taxa, 
-            @QueryParam("overlapSite") @DefaultValue("-1") Integer overlaps, 
-            @QueryParam("withinSite") @DefaultValue("-1") Integer within, 
-            @QueryParam("sensitive") @DefaultValue("1") Boolean sensitive, 
-            @QueryParam("designation") @DefaultValue("") String designation, 
-            @QueryParam("taxonOutputGroup") @DefaultValue("") String taxonOutputGroup, 
-            @QueryParam("gridRef") @DefaultValue("") String gridRef) {
+            @QueryParam("startYear") @DefaultValue(defaultStartYear) int startYear, 
+            @QueryParam("endYear") @DefaultValue(defaultEndYear) int endYear, 
+            @QueryParam("datasetKey") @DefaultValue(defaultDatasetKey) List<String> datasetKeys, 
+            @QueryParam("ptvk") @DefaultValue(defaultTaxa) List<String> taxa, 
+            @QueryParam("spatialRelationship") @DefaultValue(SPATIAL_RELATIONSHIP_DEFAULT) String spatialRelationship, 
+            @QueryParam("featureID") @DefaultValue(defaultFeatureID) int featureID,
+            @QueryParam("sensitive") @DefaultValue(defaultSensitive) Boolean sensitive, 
+            @QueryParam("designation") @DefaultValue(defaultDesignation) String designation, 
+            @QueryParam("taxonOutputGroup") @DefaultValue(defaultTaxonOutputGroup) String taxonOutputGroup, 
+            @QueryParam("gridRef") @DefaultValue(defaultGridRef) String gridRef) {
         //TODO: squareBlurring(?)
-        List<TaxonWithQueryStats> toReturn = observationMapper.selectObservationSpeciesByFilter(user, startYear, endYear, datasetKeys, taxa, overlaps, within, sensitive, designation, taxonOutputGroup, gridRef);
+        List<TaxonWithQueryStats> toReturn = observationMapper.selectObservationSpeciesByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef);
         Collections.sort(toReturn);
         return toReturn;
     }
@@ -113,74 +128,76 @@ public class TaxonObservationResource {
     @Produces(MediaType.APPLICATION_JSON)
     public List<TaxonOutputGroupWithQueryStats> getObservationGroupsByFilter(
             @TokenUser() User user, 
-            @QueryParam("startYear") @DefaultValue("-1") int startYear, 
-            @QueryParam("endYear") @DefaultValue("-1") int endYear, 
-            @QueryParam("datasetKey") List<String> datasetKeys, 
-            @QueryParam("ptvk") List<String> taxa, 
-            @QueryParam("overlapSite") @DefaultValue("-1") Integer overlaps, 
-            @QueryParam("withinSite") @DefaultValue("-1") Integer within, 
-            @QueryParam("sensitive") @DefaultValue("1") Boolean sensitive, 
-            @QueryParam("designation") @DefaultValue("") String designation, 
-            @QueryParam("taxonOutputGroup") @DefaultValue("") String taxonOutputGroup, 
-            @QueryParam("gridRef") @DefaultValue("") String gridRef) {
+            @QueryParam("startYear") @DefaultValue(defaultStartYear) int startYear, 
+            @QueryParam("endYear") @DefaultValue(defaultEndYear) int endYear, 
+            @QueryParam("datasetKey") @DefaultValue(defaultDatasetKey) List<String> datasetKeys, 
+            @QueryParam("ptvk") @DefaultValue(defaultTaxa) List<String> taxa, 
+            @QueryParam("spatialRelationship") @DefaultValue(SPATIAL_RELATIONSHIP_DEFAULT) String spatialRelationship, 
+            @QueryParam("featureID") @DefaultValue(defaultFeatureID) int featureID,
+            @QueryParam("sensitive") @DefaultValue(defaultSensitive) Boolean sensitive, 
+            @QueryParam("designation") @DefaultValue(defaultDesignation) String designation, 
+            @QueryParam("taxonOutputGroup") @DefaultValue(defaultTaxonOutputGroup) String taxonOutputGroup, 
+            @QueryParam("gridRef") @DefaultValue(defaultGridRef) String gridRef) {
         //TODO: squareBlurring(?)
-        return observationMapper.selectObservationGroupsByFilter(user, startYear, endYear, datasetKeys, taxa, overlaps, within, sensitive, designation, taxonOutputGroup, gridRef);
+        return observationMapper.selectObservationGroupsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef);
     }
 
     @GET
     @Path("/datasets")
     @Produces(MediaType.APPLICATION_JSON)
     public List<DatasetWithQueryStats> getObservationDatasetsByFilter(
-            @TokenUser() User user, @QueryParam("startYear") @DefaultValue("-1") int startYear, 
-            @QueryParam("endYear") @DefaultValue("-1") int endYear, 
-            @QueryParam("datasetKey") @DefaultValue("") List<String> datasetKeys, 
-            @QueryParam("ptvk") @DefaultValue("") List<String> taxa, 
-            @QueryParam("overlapSite") @DefaultValue("-1") Integer overlaps, 
-            @QueryParam("withinSite") @DefaultValue("-1") Integer within, 
-            @QueryParam("sensitive") @DefaultValue("1") Boolean sensitive, 
-            @QueryParam("designation") @DefaultValue("") String designation, 
-            @QueryParam("taxonOutputGroup") @DefaultValue("") String taxonOutputGroup, 
-            @QueryParam("gridRef") @DefaultValue("") String gridRef) {
+            @TokenUser() User user, 
+            @QueryParam("startYear") @DefaultValue(defaultStartYear) int startYear, 
+            @QueryParam("endYear") @DefaultValue(defaultEndYear) int endYear, 
+            @QueryParam("datasetKey") @DefaultValue(defaultDatasetKey) List<String> datasetKeys, 
+            @QueryParam("ptvk") @DefaultValue(defaultTaxa) List<String> taxa, 
+            @QueryParam("spatialRelationship") @DefaultValue(SPATIAL_RELATIONSHIP_DEFAULT) String spatialRelationship, 
+            @QueryParam("featureID") @DefaultValue(defaultFeatureID) int featureID,
+            @QueryParam("sensitive") @DefaultValue(defaultSensitive) Boolean sensitive, 
+            @QueryParam("designation") @DefaultValue(defaultDesignation) String designation, 
+            @QueryParam("taxonOutputGroup") @DefaultValue(defaultTaxonOutputGroup) String taxonOutputGroup, 
+            @QueryParam("gridRef") @DefaultValue(defaultGridRef) String gridRef) {
         //TODO: squareBlurring(?)
-        return observationMapper.selectObservationDatasetsByFilter(user, startYear, endYear, datasetKeys, taxa, overlaps, within, sensitive, designation, taxonOutputGroup, gridRef);
+        return observationMapper.selectObservationDatasetsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef);
     }
 
     @GET
     @Path("/datasets/observations")
     @Produces(MediaType.APPLICATION_JSON)
     public List<TaxonDataset> getDatasetsWithObservationsByFilter(
-            @TokenUser() User user, @QueryParam("startYear") @DefaultValue("-1") int startYear, 
-            @QueryParam("endYear") @DefaultValue("-1") int endYear, 
-            @QueryParam("datasetKey") @DefaultValue("") List<String> datasetKeys, 
-            @QueryParam("ptvk") @DefaultValue("") List<String> taxa, 
-            @QueryParam("overlapSite") @DefaultValue("-1") Integer overlaps, 
-            @QueryParam("withinSite") @DefaultValue("-1") Integer within, 
-            @QueryParam("sensitive") @DefaultValue("1") Boolean sensitive, 
-            @QueryParam("designation") @DefaultValue("") String designation, 
-            @QueryParam("taxonOutputGroup") @DefaultValue("") String taxonOutputGroup, 
-            @QueryParam("gridRef") @DefaultValue("") String gridRef) {
+            @TokenUser() User user, 
+            @QueryParam("startYear") @DefaultValue(defaultStartYear) int startYear, 
+            @QueryParam("endYear") @DefaultValue(defaultEndYear) int endYear, 
+            @QueryParam("datasetKey") @DefaultValue(defaultDatasetKey) List<String> datasetKeys, 
+            @QueryParam("ptvk") @DefaultValue(defaultTaxa) List<String> taxa, 
+            @QueryParam("spatialRelationship") @DefaultValue(SPATIAL_RELATIONSHIP_DEFAULT) String spatialRelationship, 
+            @QueryParam("featureID") @DefaultValue(defaultFeatureID) int featureID,
+            @QueryParam("sensitive") @DefaultValue(defaultSensitive) Boolean sensitive, 
+            @QueryParam("designation") @DefaultValue(defaultDesignation) String designation, 
+            @QueryParam("taxonOutputGroup") @DefaultValue(defaultTaxonOutputGroup) String taxonOutputGroup, 
+            @QueryParam("gridRef") @DefaultValue(defaultGridRef) String gridRef) {
         //TODO: squareBlurring(?)
-        List<TaxonObservation> taxonObservationsOrderedByDataset = observationMapper.selectObservationsByFilterOrderedByDataset(user, startYear, endYear, datasetKeys, taxa, overlaps, within, sensitive, designation, taxonOutputGroup, gridRef);
+        List<TaxonObservation> taxonObservationsOrderedByDataset = observationMapper.selectObservationsByFilterOrderedByDataset(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef);
         return getDatasetsWithObservations(taxonObservationsOrderedByDataset);
-//        return taxonObservationsOrderedByDataset;
     }
 
     @GET
     @Path("/providers")
     @Produces(MediaType.APPLICATION_JSON)
     public List<ProviderWithQueryStats> getObservationProvidersByFilter(
-            @TokenUser() User user, @QueryParam("startYear") @DefaultValue("-1") int startYear, 
-            @QueryParam("endYear") @DefaultValue("-1") int endYear, 
-            @QueryParam("datasetKey") @DefaultValue("") List<String> datasetKeys, 
-            @QueryParam("ptvk") @DefaultValue("") List<String> taxa, 
-            @QueryParam("overlapSite") @DefaultValue("-1") Integer overlaps, 
-            @QueryParam("withinSite") @DefaultValue("-1") Integer within, 
-            @QueryParam("sensitive") @DefaultValue("1") Boolean sensitive, 
-            @QueryParam("designation") @DefaultValue("") String designation, 
-            @QueryParam("taxonOutputGroup") @DefaultValue("") String taxonOutputGroup, 
-            @QueryParam("gridRef") @DefaultValue("") String gridRef) {
+            @TokenUser() User user, 
+            @QueryParam("startYear") @DefaultValue(defaultStartYear) int startYear, 
+            @QueryParam("endYear") @DefaultValue(defaultEndYear) int endYear, 
+            @QueryParam("datasetKey") @DefaultValue(defaultDatasetKey) List<String> datasetKeys, 
+            @QueryParam("ptvk") @DefaultValue(defaultTaxa) List<String> taxa, 
+            @QueryParam("spatialRelationship") @DefaultValue(SPATIAL_RELATIONSHIP_DEFAULT) String spatialRelationship, 
+            @QueryParam("featureID") @DefaultValue(defaultFeatureID) int featureID,
+            @QueryParam("sensitive") @DefaultValue(defaultSensitive) Boolean sensitive, 
+            @QueryParam("designation") @DefaultValue(defaultDesignation) String designation, 
+            @QueryParam("taxonOutputGroup") @DefaultValue(defaultTaxonOutputGroup) String taxonOutputGroup, 
+            @QueryParam("gridRef") @DefaultValue(defaultGridRef) String gridRef) {
         //TODO: squareBlurring(?)
-        List<DatasetWithQueryStats> datasetsWithQueryStats = observationMapper.selectObservationDatasetsByFilter(user, startYear, endYear, datasetKeys, taxa, overlaps, within, sensitive, designation, taxonOutputGroup, gridRef);
+        List<DatasetWithQueryStats> datasetsWithQueryStats = observationMapper.selectObservationDatasetsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef);
 
         return groupDatasetsByProvider(datasetsWithQueryStats);
     }

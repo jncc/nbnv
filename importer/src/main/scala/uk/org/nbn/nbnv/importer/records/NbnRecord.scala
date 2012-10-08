@@ -48,8 +48,8 @@ class NbnRecord(record: StarRecord) {
   def determiner =      record.core.value(DwcTerm.identifiedBy)
   def eventDateRaw =    record.core.value(DwcTerm.eventDate)
   def eventDate =       format.parse(eventDateRaw)
-  def east =            parseOptional(record.core.value(DwcTerm.verbatimLongitude))
-  def north =           parseOptional(record.core.value(DwcTerm.verbatimLatitude))
+  def east =            parseOptional(record.core.value(DwcTerm.verbatimLongitude)) map { s => s.toDouble.toInt }
+  def north =           parseOptional(record.core.value(DwcTerm.verbatimLatitude)) map { s => s.toDouble.toInt }
   def srs =             parseOptional(record.core.value(DwcTerm.verbatimSRS))
   def attributes =      attributeMap
 
