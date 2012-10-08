@@ -9,6 +9,7 @@ abstract class GridSquareInfo(gridRef : String, precision: Int = 0) {
 
   def projection : String
   def epsgCode : String
+  def getEastingNorthing : (Int, Int)
 
   protected def getLettersFromGridRef(gridRef: String) : String
   protected def getNumeralsFromGridRef(gridRef: String) : String
@@ -16,7 +17,6 @@ abstract class GridSquareInfo(gridRef : String, precision: Int = 0) {
   protected def getPrecision(gridReference : String) : Int
   protected def checkGridRef
   protected def create(gridRef: String, precision: Int = 0) : GridSquareInfo
-  protected def getEastingNorthing(gridRef: String) : (Int, Int)
 
   val dintyGridByCoord = Map (
     (0,8) -> "E", (2,8) -> "J", (4,8) -> "P", (6,8) -> "U", (8,8) -> "Z",
@@ -79,7 +79,7 @@ abstract class GridSquareInfo(gridRef : String, precision: Int = 0) {
   }
 
   def sourceProjectionPolygon = {
-    val (easting, northing) = getEastingNorthing(outputGridRef)
+    val (easting, northing) = getEastingNorthing
 
     val gridSize = gridReferencePrecision
 
@@ -87,7 +87,7 @@ abstract class GridSquareInfo(gridRef : String, precision: Int = 0) {
   }
 
   def wgs84Polygon = {
-    val (easting, northing) = getEastingNorthing(outputGridRef)
+    val (easting, northing) = getEastingNorthing
 
     val gridSize = gridReferencePrecision
 

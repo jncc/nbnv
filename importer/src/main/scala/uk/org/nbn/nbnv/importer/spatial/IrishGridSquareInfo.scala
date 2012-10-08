@@ -37,6 +37,15 @@ class IrishGridSquareInfo(gridRef: String, precision: Int = 0) extends GridSquar
 
   def epsgCode = "29903"
 
+  def getEastingNorthing = {
+    val g = getTenFigGridRef(outputGridRef)
+
+    val (x, y) = IrishGridSquareInfo.irishGridByLetter(getLettersFromGridRef(g))
+    val (e, n) = getNumeralsFromGridRef(g).splitAt(5)
+
+    (x * 100000 + e.toInt, y * 100000 + n.toInt)
+  }
+
   protected def create(gridRef: String, precision: Int = 0) = {
     new IrishGridSquareInfo(gridRef, precision)
   }
@@ -47,14 +56,7 @@ class IrishGridSquareInfo(gridRef: String, precision: Int = 0) extends GridSquar
       throw new IllegalArgumentException("Grid reference '%s' is not a valid Irish grid reference".format(gridRef))
   }
 
-  protected def getEastingNorthing(gridRef: String) = {
-    val g = getTenFigGridRef(gridRef)
 
-    val (x, y) = IrishGridSquareInfo.irishGridByLetter(getLettersFromGridRef(g))
-    val (e, n) = getNumeralsFromGridRef(g).splitAt(5)
-
-    (x * 100000 + e.toInt, y * 100000 + n.toInt)
-  }
 
   //Returns the grid reference precision in meters
   protected def getPrecision(gridReference : String) = {

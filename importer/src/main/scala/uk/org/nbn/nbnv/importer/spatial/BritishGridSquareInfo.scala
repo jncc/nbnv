@@ -72,20 +72,8 @@ class BritishGridSquareInfo(gridRef : String, precision: Int = 0) extends GridSq
 
   def epsgCode = "27700"
 
-  protected def create(gridRef: String, precision: Int = 0) = {
-    new BritishGridSquareInfo(gridRef, precision)
-  }
-
-  protected def checkGridRef {
-    if (gridRef.matches(GridRefPatterns.ukGridRef) == false
-      && gridRef.matches(GridRefPatterns.ukDintyGridRef)  == false)
-      throw new IllegalArgumentException("Grid reference '%s' is not a valid uk grid reference".format(gridRef))
-  }
-
-  protected def getDintyRegex = GridRefPatterns.ukDintyGridRef
-
-  protected def getEastingNorthing(gridRef: String) = {
-    val g = getTenFigGridRef(gridRef)
+  def getEastingNorthing = {
+    val g = getTenFigGridRef(outputGridRef)
 
     val (majorLetter, minorLetter) = getLettersFromGridRef(g).splitAt(1)
     val (majX, majY) = BritishGridSquareInfo.majorBritishGridByLetter(majorLetter)
@@ -98,6 +86,20 @@ class BritishGridSquareInfo(gridRef : String, precision: Int = 0) extends GridSq
 
     (easting, northing)
   }
+
+  protected def create(gridRef: String, precision: Int = 0) = {
+    new BritishGridSquareInfo(gridRef, precision)
+  }
+
+  protected def checkGridRef {
+    if (gridRef.matches(GridRefPatterns.ukGridRef) == false
+      && gridRef.matches(GridRefPatterns.ukDintyGridRef)  == false)
+      throw new IllegalArgumentException("Grid reference '%s' is not a valid uk grid reference".format(gridRef))
+  }
+
+  protected def getDintyRegex = GridRefPatterns.ukDintyGridRef
+
+
 
   //Returns the grid reference precision in meters
   protected def getPrecision(gridReference : String) = {

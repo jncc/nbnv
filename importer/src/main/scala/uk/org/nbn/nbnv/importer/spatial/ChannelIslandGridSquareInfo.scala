@@ -8,12 +8,12 @@ class ChannelIslandGridSquareInfo(gridRef: String, precision: Int = 0) extends G
 
   def epsgCode = "23030"
 
-  protected def getEastingNorthing(gridRef: String) = {
+  def getEastingNorthing = {
     //Bottom Left corner of the grid squares
     val WAbl = (500000,5500000)
     val WVbl = (500000,5400000)
 
-    val g = getTenFigGridRef(gridRef)
+    val g = getTenFigGridRef(outputGridRef)
     val numerals = getNumeralsFromGridRef(g).splitAt(5)
 
     getLettersFromGridRef(g) match {
