@@ -20,10 +20,14 @@ import uk.org.nbn.nbnv.jpa.nbncore.Taxon;
  *
  * @author Matt Debont
  */
-public class PreferredTaxonVersionKey implements ConverterStep {
+public class PreferredTaxonVersionKey extends ConverterStep {
     private int columnNumber;
     private Map<String, String> lookup;
 
+    public PreferredTaxonVersionKey() {
+        super(ConverterStep.MODIFY);
+    }
+    
     @Override
     public String getName() {
         return "Ensure that the Preferred Taxon Version Key is used";

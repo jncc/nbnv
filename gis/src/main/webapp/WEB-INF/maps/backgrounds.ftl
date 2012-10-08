@@ -62,3 +62,40 @@
     MAXSCALEDENOM 35000
   END # Layer
 [/#macro]
+
+[#macro selectedFeature featureID]
+    LAYER
+        NAME                                                "Selected-Feature"
+        TYPE                                                POLYGON
+        STATUS                                              OFF
+        CONNECTIONTYPE                                      PLUGIN
+        PLUGIN                                              "msplugin_mssql2008.dll"
+        CONNECTION                                          "${properties.spatialConnection}"
+        PROCESSING                                          "CLOSE_CONNECTION=DEFER"
+
+        DATA                        "geom from (
+                                        SELECT featureID, geom
+                                        FROM FeatureData
+                                        WHERE featureID = '${featureID}'
+                                    ) AS foo USING UNIQUE featureID USING SRID=4326"
+
+        METADATA
+            "wms_title"                                       "Selected-Feature"
+            "wms_include_items"                               "all"
+        END
+
+        PROJECTION
+            "init=epsg:4326"
+        END
+
+        CLASS
+            NAME                                              "default"
+
+            STYLE
+                COLOR                                           255 255 255
+                OUTLINECOLOR                                    0 0 0
+                WIDTH                                           0.5
+            END
+        END
+    END
+[/#macro]
