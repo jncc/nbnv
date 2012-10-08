@@ -8,4 +8,8 @@ public class ProviderException extends Exception {
     public ProviderException(String msg) {
         super(msg);
     }
+
+    public ProviderException(String mess, Throwable cause) {
+        super(mess, cause);
+    }
 }

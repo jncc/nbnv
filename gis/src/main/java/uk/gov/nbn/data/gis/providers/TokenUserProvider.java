@@ -6,15 +6,17 @@ package uk.gov.nbn.data.gis.providers;
 
 import com.sun.jersey.api.client.WebResource;
 import java.lang.annotation.Annotation;
-import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.gov.nbn.data.gis.processor.Annotations;
 import uk.gov.nbn.data.gis.processor.MapServiceMethod;
 import uk.gov.nbn.data.gis.processor.Provider;
 import uk.gov.nbn.data.gis.processor.ProviderException;
+import uk.gov.nbn.data.gis.providers.annotations.QueryParam;
+import uk.gov.nbn.data.gis.providers.annotations.Utilises;
 import uk.org.nbn.nbnv.api.model.User;
 
 /**
@@ -23,20 +25,24 @@ import uk.org.nbn.nbnv.api.model.User;
  * @author Christopher Johnson
  */
 @Component
+@Utilises({
+    @QueryParam(key=TokenUserProvider.USERNAME_KEY),
+    @QueryParam(key=TokenUserProvider.MD5_PASSWORD_HASH_KEY)
+})
 public class TokenUserProvider implements Provider {
     private static final String AUTHENTICATION_ADDRESS = "user";
-    private static final String USERNAME_KEY = "username";
-    private static final String MD5_PASSWORD_HASH_KEY = "userkey";
+    public static final String USERNAME_KEY = "username";
+    public static final String MD5_PASSWORD_HASH_KEY = "userkey";
     
     @Autowired WebResource api;
 
     @Override
-    public boolean isProviderFor(Class<?> clazz, MapServiceMethod method, HttpServletRequest request, List<Annotation> annotations) {
+    public boolean isProviderFor(Class<?> clazz, Annotations annotations) {
         return clazz.equals(User.class);
     }
 
     @Override
-    public Object provide(Class<?> returnType, MapServiceMethod method, HttpServletRequest request, List<Annotation> annotations) throws ProviderException {
+    public Object provide(Class<?> returnType, MapServiceMethod method, HttpServletRequest request, Annotations annotations) throws ProviderException {
         return addUserkeyAndMD5Hash(api.path(AUTHENTICATION_ADDRESS),
             request)
             .header("Cookie", request.getHeader("Cookie"))

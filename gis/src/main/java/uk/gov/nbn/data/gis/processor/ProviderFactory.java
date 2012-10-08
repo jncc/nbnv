@@ -1,6 +1,5 @@
 package uk.gov.nbn.data.gis.processor;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
@@ -9,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
+import uk.gov.nbn.data.gis.processor.MethodArgumentFactory.Argument;
 
 /**
  * The following is a factory for obtaining a MapServiceMethod for a given 
@@ -18,6 +18,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class ProviderFactory {
     @Autowired ApplicationContext context;
+    @Autowired MethodArgumentFactory methodArgumentFactory;
+    
     private Collection<? extends Provider> providers;
     
     @PostConstruct public void init() {
@@ -25,33 +27,35 @@ public class ProviderFactory {
     }
 
     public Object provideForMethodAndExecute(Object instance, Method method, MapServiceMethod mapServiceMethod, HttpServletRequest request) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, ProviderException {
-        Class<?>[] parameterTypes = method.getParameterTypes();
-        Annotation[][] parameterAnnotations = method.getParameterAnnotations();
-        
-        Object[] parameters = new Object[parameterTypes.length];
+        Argument[] arguments = methodArgumentFactory.getArguments(method);
+        Object[] parameters = new Object[arguments.length];
         for(int i=0; i<parameters.length; i++) {
-            parameters[i] = getProvidedForParameter(mapServiceMethod, request, parameterTypes[i], Arrays.asList(parameterAnnotations[i]));
+            parameters[i] = getProviderFor(arguments[i]).provide(
+                                            arguments[i].getParameterType(), 
+                                            mapServiceMethod, 
+                                            request, 
+                                            arguments[i].getAnnotationMap());
         }
         
         return method.invoke(instance, parameters);
     }
     
     /**
-     * Resolves a MapServiceMethod parameter from one of the providers in the 
-     * providers package
+     * The following method will obtain a provider from those which are configured in spring
+     * which can cope with the given request
      * @param method
      * @param request
      * @param toReturn
      * @param paramAnnotations
-     * @return A instantiated Object from a provider in the provider class
-     * @throws ProviderException 
+     * @return A provider which can cope with the parameter
+     * @throws IllegalArgumentException If no provider exists
      */
-    Object getProvidedForParameter(MapServiceMethod method, HttpServletRequest request, Class<?> toReturn, List<Annotation> paramAnnotations) throws ProviderException {
+    public Provider getProviderFor(Argument argument) {
         for(Provider currProvider : providers) {
-            if(currProvider.isProviderFor(toReturn, method, request, paramAnnotations)) {
-                return currProvider.provide(toReturn, method, request, paramAnnotations);
+            if(currProvider.isProviderFor(argument.getParameterType(), argument.getAnnotationMap())) {
+                return currProvider;
             }
         }
-        return null; //can't find a matching parameter
+        throw new IllegalArgumentException("There is no provider configured which can provider for this argument");
     }
 }
