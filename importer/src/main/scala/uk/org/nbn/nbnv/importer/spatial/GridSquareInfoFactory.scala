@@ -11,9 +11,7 @@ class GridSquareInfoFactory {
       case "23030" => null
       case "29903" => null
       case _ => throw new ImportFailedException("Unknown spatial referene system '%s'".format(spatialReferenceSystem))
-  }
-
-    null
+     }
   }
 
 
@@ -32,9 +30,9 @@ class GridSquareInfoFactory {
       case "OSGB36" => BritishGridSquareInfo(gridRef, gridReferencePrecision)
       case "OSGB" =>  BritishGridSquareInfo(gridRef, gridReferencePrecision)
       case "BNG"  =>  BritishGridSquareInfo(gridRef, gridReferencePrecision)
-      case "OSI"  =>  new IrishGridSquareInfo(gridRef, gridReferencePrecision)
-      case "OSNI" =>  new IrishGridSquareInfo(gridRef, gridReferencePrecision)
-      case "ING" =>  new IrishGridSquareInfo(gridRef, gridReferencePrecision)
+      case "OSI"  =>  IrishGridSquareInfo(gridRef, gridReferencePrecision)
+      case "OSNI" =>  IrishGridSquareInfo(gridRef, gridReferencePrecision)
+      case "ING" =>  IrishGridSquareInfo(gridRef, gridReferencePrecision)
       case "ED50" =>  new ChannelIslandGridSquareInfo(gridRef, gridReferencePrecision)
       case "UTM"  =>  new ChannelIslandGridSquareInfo(gridRef, gridReferencePrecision)
       case "CI"  =>  new ChannelIslandGridSquareInfo(gridRef, gridReferencePrecision)

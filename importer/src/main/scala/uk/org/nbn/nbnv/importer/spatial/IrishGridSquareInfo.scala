@@ -3,8 +3,7 @@ package uk.org.nbn.nbnv.importer.spatial
 import math._
 import uk.org.nbn.nbnv.importer.ImportFailedException
 
-class IrishGridSquareInfo(gridRef: String, precision: Int = 0) extends GridSquareInfo(gridRef, precision) {
-
+object IrishGridSquareInfo {
   val irishGridByLetter = Map (
     "A" -> (0,4), "B" -> (1,4), "C" -> (2,4), "D" -> (3,4), "E" -> (4,4),
     "F" -> (0,3), "G" -> (1,3), "H" -> (2,3), "J" -> (3,3), "K" -> (4,3),
@@ -12,6 +11,27 @@ class IrishGridSquareInfo(gridRef: String, precision: Int = 0) extends GridSquar
     "Q" -> (0,1), "R" -> (1,1), "S" -> (2,1), "T" -> (3,1), "U" -> (4,1),
     "V" -> (0,0), "W" -> (1,0), "X" -> (2,0), "Y" -> (3,0), "Z" -> (4,0)
   )
+
+  val irishGridByCoord = irishGridByLetter map {_.swap}
+
+  def apply(gridRef: String) = {
+    new IrishGridSquareInfo(gridRef)
+  }
+
+  def apply(gridRef: String, precision: Int) = {
+    new IrishGridSquareInfo(gridRef, precision)
+  }
+
+  def apply(east: Int, north: Int, precision: Int) = {
+    //Compute 100K grid square co-ordinate
+    val sqX = (east - (east % 100000)) / 100000
+    val sqY = (north - (north % 100000)) / 100000
+
+    null
+  }
+}
+
+class IrishGridSquareInfo(gridRef: String, precision: Int = 0) extends GridSquareInfo(gridRef, precision) {
 
   def projection =  "OSNI"
 
@@ -30,7 +50,7 @@ class IrishGridSquareInfo(gridRef: String, precision: Int = 0) extends GridSquar
   protected def getEastingNorthing(gridRef: String) = {
     val g = getTenFigGridRef(gridRef)
 
-    val (x, y) = irishGridByLetter(getLettersFromGridRef(g))
+    val (x, y) = IrishGridSquareInfo.irishGridByLetter(getLettersFromGridRef(g))
     val (e, n) = getNumeralsFromGridRef(g).splitAt(5)
 
     (x * 100000 + e.toInt, y * 100000 + n.toInt)
