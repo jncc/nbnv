@@ -274,10 +274,10 @@ abstract class GridSquareInfo(gridRef : String, precision: Int = 0) {
     val tl = transformer.transform(tlGdp, tlGdp).getCoordinates
     val tr = transformer.transform(trGdp, trGdp).getCoordinates
 
-    "POLYGON((" + bl(0) + " " + bl(1) + ", " +
-      tl(0) + " " + tl(1) + ", " +
-      tr(0) + " " + tr(1) + ", " +
-      br(0) + " " + br(1) + ", " +
-      bl(0) + " " + bl(1) + "))"
+    "POLYGON((" + bl(1) + " " + bl(0) + ", " +
+      tl(1) + " " + tl(0) + ", " +
+      tr(1) + " " + tr(0) + ", " +
+      br(1) + " " + br(0) + ", " +
+      bl(1) + " " + bl(0) + "))"
   }
 }
