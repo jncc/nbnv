@@ -60,4 +60,5 @@ class ChannelIslandGridSquareInfo(gridRef: String, precision: Int = 0) extends G
   }
 
   protected def getDintyRegex = GridRefPatterns.channelIslandsDintyGridRef
+
 }

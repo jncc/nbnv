@@ -60,4 +60,5 @@ class IrishGridSquareInfo(gridRef: String, precision: Int = 0) extends GridSquar
   }
 
   protected def getDintyRegex = GridRefPatterns.irishDintyGrid
+
 }

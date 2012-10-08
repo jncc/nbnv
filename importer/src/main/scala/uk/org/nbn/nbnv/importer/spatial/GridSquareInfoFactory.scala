@@ -3,9 +3,22 @@ package uk.org.nbn.nbnv.importer.spatial
 import uk.org.nbn.nbnv.importer.ImportFailedException
 
 class GridSquareInfoFactory {
+  def getByCoordinate(east: Int, north: Int, spatialReferenceSystem: String, gridReferencePrecision: Int) : GridSquareInfo = {
+//    figure out what the hell this is
+//    Make a grid square of the appropriate type and rerun
+    spatialReferenceSystem match {
+      case "27700" => BritishGridSquareInfo(east, north, gridReferencePrecision)
+      case "23030" => null
+      case "29903" => null
+      case _ => throw new ImportFailedException("Unknown spatial referene system '%s'".format(spatialReferenceSystem))
+  }
+
+    null
+  }
+
 
   //todo: rename to getGridSquareByRef
-  def getGridSquareByGridRef(gridRef: String, gridReferenceType: String = "", gridReferencePrecision: Int = 0) : GridSquareInfo = {
+  def getByGridRef(gridRef: String, gridReferenceType: String = "", gridReferencePrecision: Int = 0) : GridSquareInfo = {
 
 
     val gridType = if (gridReferenceType.isEmpty) {
@@ -16,9 +29,9 @@ class GridSquareInfoFactory {
                     }
 
     gridType match {
-      case "OSGB36" =>  new BritishGridSquareInfo(gridRef, gridReferencePrecision)
-      case "OSGB" =>  new BritishGridSquareInfo(gridRef, gridReferencePrecision)
-      case "BNG"  =>  new BritishGridSquareInfo(gridRef, gridReferencePrecision)
+      case "OSGB36" => BritishGridSquareInfo(gridRef, gridReferencePrecision)
+      case "OSGB" =>  BritishGridSquareInfo(gridRef, gridReferencePrecision)
+      case "BNG"  =>  BritishGridSquareInfo(gridRef, gridReferencePrecision)
       case "OSI"  =>  new IrishGridSquareInfo(gridRef, gridReferencePrecision)
       case "OSNI" =>  new IrishGridSquareInfo(gridRef, gridReferencePrecision)
       case "ING" =>  new IrishGridSquareInfo(gridRef, gridReferencePrecision)

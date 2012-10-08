@@ -20,7 +20,7 @@ class FeatureIngesterSuite extends BaseFunSuite {
     val gridSquareInfo = mock[GridSquareInfo]
     when(gridSquareInfo.gridReference).thenReturn(gridRef)
     val gridSquareInfoFactory = mock[GridSquareInfoFactory]
-    when(gridSquareInfoFactory.getGridSquareByGridRef(gridRef, gridReferenceType, gridReferencePrecision))
+    when(gridSquareInfoFactory.getByGridRef(gridRef, gridReferenceType, gridReferencePrecision))
       .thenReturn(gridSquareInfo)
 
     val record = mock[NbnRecord]
