@@ -42,8 +42,8 @@ public interface TaxonObservationMapper {
             , @Param("endYear") Integer endYear
             , @Param("datasetKey") List<String> datasetKey
             , @Param("ptvk") List<String> ptvk
-            , @Param("overlaps") Integer overlaps
-            , @Param("within") Integer within
+            , @Param("spatialRelationship") String spatialRelationship
+            , @Param("featureID") Integer featureId
             , @Param("sensitive") Boolean sensitive
             , @Param("designation") String designation
             , @Param("taxonOutputGroup") String taxonOutputGroup
@@ -56,8 +56,8 @@ public interface TaxonObservationMapper {
             , @Param("endYear") Integer endYear
             , @Param("datasetKey") List<String> datasetKey
             , @Param("ptvk") List<String> ptvk
-            , @Param("overlaps") Integer overlaps
-            , @Param("within") Integer within
+            , @Param("spatialRelationship") String spatialRelationship
+            , @Param("featureID") Integer featureId
             , @Param("sensitive") Boolean sensitive
             , @Param("designation") String designation
             , @Param("taxonOutputGroup") String taxonOutputGroup
@@ -74,8 +74,8 @@ public interface TaxonObservationMapper {
             , @Param("endYear") Integer endYear
             , @Param("datasetKey") List<String> datasetKey
             , @Param("ptvk") List<String> ptvk
-            , @Param("overlaps") Integer overlaps
-            , @Param("within") Integer within
+            , @Param("spatialRelationship") String spatialRelationship
+            , @Param("featureID") Integer featureId
             , @Param("sensitive") Boolean sensitive
             , @Param("designation") String designation
             , @Param("taxonOutputGroup") String taxonOutputGroup
@@ -92,8 +92,8 @@ public interface TaxonObservationMapper {
             , @Param("endYear") Integer endYear
             , @Param("datasetKey") List<String> datasetKey
             , @Param("ptvk") List<String> ptvk
-            , @Param("overlaps") Integer overlaps
-            , @Param("within") Integer within
+            , @Param("spatialRelationship") String spatialRelationship
+            , @Param("featureID") Integer featureId
             , @Param("sensitive") Boolean sensitive
             , @Param("designation") String designation
             , @Param("taxonOutputGroup") String taxonOutputGroup
@@ -111,8 +111,8 @@ public interface TaxonObservationMapper {
             , @Param("endYear") Integer endYear
             , @Param("datasetKey") List<String> datasetKey
             , @Param("ptvk") List<String> ptvk
-            , @Param("overlaps") Integer overlaps
-            , @Param("within") Integer within
+            , @Param("spatialRelationship") String spatialRelationship
+            , @Param("featureID") Integer featureId
             , @Param("sensitive") Boolean sensitive
             , @Param("designation") String designation
             , @Param("taxonOutputGroup") String taxonOutputGroup

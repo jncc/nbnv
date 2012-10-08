@@ -4,11 +4,11 @@
 <#assign providersWithQueryStats=json.readURL("${api}/taxonObservations/providers",requestParametersExtended)>
 
 <@template.master title="10km report for tenkmGridRef" javascripts=["/js/site-report-form-validation.js"]>
-    <h1>Species groups with records for 10km Square ${tenkmGridRef}</h1>
+    <h1>Species groups with records for the 10km square ${tenkmGridRef} from <@report_utils.yearRangeText requestParameters=RequestParameters/></h1>
 
     <form action="" method="post">
 
-    <@report_utils.site_report_filters requestParameters=RequestParameters/>
+    <@report_utils.site_report_filters requestParameters=RequestParameters location=tenkmGridRef/>
 
     <div class="nbn-report-data-container">
 

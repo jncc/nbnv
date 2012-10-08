@@ -19,29 +19,49 @@
     </table>
 </#macro>
 
-<#macro site_report_filters requestParameters>
+<#macro site_report_filters location requestParameters args={}>
     <#assign startYear=requestParameters.startYear?has_content?string(requestParameters.startYear[0]!"","1600")>
     <#assign endYear=requestParameters.endYear?has_content?string(requestParameters.endYear[0]!"",.now?string("yyyy"))>
     <#assign designations=json.readURL("${api}/designations")>
     <div class="nbn-report-data-container">
+
         <table class="nbn-coloured-table">
             <tr>
                 <th class="nbn-th-left nbn-th-right" colspan="2">
-                    Current filter options
+                    Your current filters
                 </th>
             </tr>
             <tr>
-                <td class="nbn-td-left nbn-filter-name">Designation:</td><td class="nbn-td-right"><@designationText requestParameters=requestParameters/></td>
+                <td class="nbn-td-left nbn-filter-name">Location:</td>
+                <td class="nbn-td-right">${location}</td>
             </tr>
             <tr>
-                <td class="nbn-td-left nbn-filter-name">Year range:</td><td class="nbn-td-right"><@yearRangeText requestParameters=requestParameters/></td>
+                <td class="nbn-td-left nbn-filter-name">Designation:</td>
+                <td class="nbn-td-right"><@designationText requestParameters=requestParameters/></td>
             </tr>
             <tr>
-                <td class="nbn-td-left nbn-filter-name">Datasets:</td><td class="nbn-td-right"><@datasetText requestParameters=requestParameters/></td>
+                <td class="nbn-td-left nbn-filter-name">Year range:</td>
+                <td class="nbn-td-right"><@yearRangeText requestParameters=requestParameters/></td>
             </tr>
+            <tr>
+                <td class="nbn-td-left nbn-filter-name">Datasets:</td>
+                <td class="nbn-td-right"><@datasetText requestParameters=requestParameters/></td>
+            </tr>
+            <#if args.taxonOutputGroup??>
+                <tr>
+                    <td class="nbn-td-left nbn-filter-name">Species group:</td>
+                    <td class="nbn-td-right">${args.taxonOutputGroup.taxonGroupName?cap_first}</td>
+                </tr>
+            </#if>
+            <#if args.taxon??>
+                <tr>
+                    <td class="nbn-td-left nbn-filter-name">Species:</td>
+                    <td class="nbn-td-right">${args.taxon.name}</td>
+                </tr>
+            </#if>
             <tr>
                 <th class="nbn-td-left nbn-td-right" colspan="2">
-                    Change your filter options
+                    Change your filters
                 </th>
             </tr>
             <tr>
@@ -73,7 +93,7 @@
 </#macro>
 
 <#macro designationText requestParameters>
-    <#assign designationText="none selected">
+    <#assign designationText="None selected">
     <#if requestParameters.designation?has_content && requestParameters.designation[0] != "">
         <#assign designation=json.readURL("${api}/designations/${requestParameters.designation[0]}")>
         <#assign designationText="<a href=\"/Designations/${designation.code}\">${designation.name}</a>">
@@ -82,7 +102,7 @@
 </#macro>
 
 <#macro datasetText requestParameters>
-    <#assign datasetText="all available">
+    <#assign datasetText="All available">
     <#if requestParameters.datasetKey?has_content>
         <#assign datasetText=requestParameters.datasetKey?size + " datasets selected">
     </#if>
@@ -94,3 +114,4 @@
     <#assign endYear=requestParameters.endYear?has_content?string(requestParameters.endYear[0]!"",.now?string("yyyy"))>
     ${startYear} to ${endYear}
 </#macro>
+
