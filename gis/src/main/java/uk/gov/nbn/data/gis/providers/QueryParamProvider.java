@@ -1,12 +1,11 @@
 package uk.gov.nbn.data.gis.providers;
 
 import uk.gov.nbn.data.gis.providers.annotations.QueryParam;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Component;
+import uk.gov.nbn.data.gis.processor.Annotations;
 import uk.gov.nbn.data.gis.processor.MapServiceMethod;
 import uk.gov.nbn.data.gis.processor.Provider;
 import uk.gov.nbn.data.gis.processor.ProviderException;
@@ -23,14 +22,14 @@ import uk.gov.nbn.data.gis.providers.annotations.DefaultValue;
 public class QueryParamProvider implements Provider {
 
     @Override
-    public boolean isProviderFor(Class<?> clazz, MapServiceMethod method, HttpServletRequest request, List<Annotation> annotations) {
-        return getAnnotation(annotations, QueryParam.class) != null;
+    public boolean isProviderFor(Class<?> clazz, Annotations annotations) {
+        return annotations.containsKey(QueryParam.class);
     }
 
     @Override
-    public Object provide(Class<?> returnType, MapServiceMethod method, HttpServletRequest request, List<Annotation> annotations) throws ProviderException {
-        QueryParam paramAnnot = getAnnotation(annotations, QueryParam.class);
-        String toReturn = getParameter(request, paramAnnot.key(), getAnnotation(annotations, DefaultValue.class));
+    public Object provide(Class<?> returnType, MapServiceMethod method, HttpServletRequest request, Annotations annotations) throws ProviderException {
+        QueryParam paramAnnot = annotations.get(QueryParam.class);
+        String toReturn = getParameter(request, paramAnnot.key(), annotations.get(DefaultValue.class));
         if(toReturn != null) {
             if(returnType.equals(List.class)) {
                 return validateParameter(Arrays.asList(toReturn.split(",")), paramAnnot);
@@ -68,14 +67,5 @@ public class QueryParamProvider implements Provider {
             }
         }
         return toValidate;
-    }
-    
-    private static <A extends Annotation> A getAnnotation(List<Annotation> annotations, Class<A> type) {
-        for(Annotation currAnnotation : annotations) {
-            if(type.equals(currAnnotation.annotationType())) {
-                return (A)currAnnotation;
-            }
-        }
-        return null;
     }
 }

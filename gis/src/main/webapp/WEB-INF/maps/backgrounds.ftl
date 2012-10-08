@@ -94,7 +94,7 @@
             STYLE
                 COLOR                                           255 255 255
                 OUTLINECOLOR                                    0 0 0
-                WIDTH                                           0.5
+                WIDTH                                           1
             END
         END
     END

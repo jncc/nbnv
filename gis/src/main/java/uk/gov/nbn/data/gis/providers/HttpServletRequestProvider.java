@@ -1,9 +1,8 @@
 package uk.gov.nbn.data.gis.providers;
 
-import java.lang.annotation.Annotation;
-import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Component;
+import uk.gov.nbn.data.gis.processor.Annotations;
 import uk.gov.nbn.data.gis.processor.MapServiceMethod;
 import uk.gov.nbn.data.gis.processor.Provider;
 
@@ -15,12 +14,12 @@ import uk.gov.nbn.data.gis.processor.Provider;
 public class HttpServletRequestProvider implements Provider {
 
     @Override
-    public boolean isProviderFor(Class<?> clazz, MapServiceMethod method, HttpServletRequest request, List<Annotation> annotations) {
+    public boolean isProviderFor(Class<?> clazz, Annotations annotations) {
         return clazz.equals(HttpServletRequest.class);
     }
 
     @Override
-    public HttpServletRequest provide(Class<?> clazz, MapServiceMethod method, HttpServletRequest request, List<Annotation> annotations) {
+    public HttpServletRequest provide(Class<?> clazz, MapServiceMethod method, HttpServletRequest request, Annotations annotations) {
         return request;
     }
 }

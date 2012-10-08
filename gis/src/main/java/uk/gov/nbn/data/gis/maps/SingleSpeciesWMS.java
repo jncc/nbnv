@@ -14,6 +14,7 @@ import uk.gov.nbn.data.gis.processor.AtlasGrade.GridLayer;
 import uk.gov.nbn.data.gis.processor.AtlasGrade.Resolution;
 import uk.gov.nbn.data.gis.providers.annotations.PathParam;
 import uk.gov.nbn.data.gis.providers.annotations.QueryParam;
+import uk.gov.nbn.data.gis.providers.annotations.ServiceURL;
 import uk.org.nbn.nbnv.api.model.User;
 
 /**
@@ -63,6 +64,7 @@ public class SingleSpeciesWMS {
     )
     public MapFileModel getSingleSpeciesModel(
             final User user,
+            @ServiceURL String mapServiceURL,
             @PathParam(key="taxonVersionKey", validation="^[A-Z]{6}[0-9]{10}$") final String key,
             @QueryParam(key="datasets", validation="^[A-Z0-9]{8}$") final List<String> datasetKeys,
             @QueryParam(key="startyear", validation="[0-9]{4}") final String startYear,
@@ -72,6 +74,7 @@ public class SingleSpeciesWMS {
         
         
         HashMap<String, Object> data = new HashMap<String, Object>();
+        data.put("mapServiceURL", mapServiceURL);
         data.put("featureID", featureID);
         data.put("properties", properties);
         data.put("layerGenerator", new ResolutionDataGenerator() {
