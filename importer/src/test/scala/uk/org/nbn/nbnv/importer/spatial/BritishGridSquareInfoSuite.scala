@@ -256,4 +256,32 @@ class BritishGridSquareInfoSuite extends BaseFunSuite {
     easting should be (520000)
     northing should be (140000)
   }
+
+  test("should give correct grid ref for easting 408759 & norhting 424612")
+  {
+    val bgr = BritishGridSquareInfo(408759, 424612)
+
+    bgr.gridReference should be ("SE087246")
+  }
+
+  test("should give correct grid ref for easting 520814 & norhting 296511")
+  {
+    val bgr = BritishGridSquareInfo(520814, 296511)
+
+    bgr.gridReference should be ("TL208965")
+  }
+
+  test("should give correct grid ref for easting 259207 & norhting 665548")
+  {
+    val bgr = BritishGridSquareInfo(259207, 665548)
+
+    bgr.gridReference should be ("NS592655")
+  }
+
+  test("should give correct grid ref for easting 447275 & norhting 1141792")
+  {
+    val bgr = BritishGridSquareInfo(447275, 1141792)
+
+    bgr.gridReference should be ("HU472417")
+  }
 }
