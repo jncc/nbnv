@@ -30,8 +30,12 @@ object BritishGridSquareInfo {
   def apply(east: Int, north: Int, precision: Int) : BritishGridSquareInfo = {
 
     //Compute 100K grid square co-ordinate
-    val sqX = (east - (east % 100000)) / 100000
-    val sqY = (north - (north % 100000)) / 100000
+
+    val e100k = (east - (east % 100000))
+    val n100k = (north - (north % 100000))
+
+    val sqX = e100k / 100000
+    val sqY = n100k / 100000
 
     //Derive major (500K) grid letter
     val majX = sqX - (sqX % 5)
@@ -42,15 +46,16 @@ object BritishGridSquareInfo {
     val majLetter = majorBritishGridByCoord(majX, majY)
 
     //Determine minor (100K sub grid) grid letter
-    val minX = sqX - majX
-    val minY = sqY - majY
+    val mnrX = sqX - majX
+    val mnrY = sqY - majY
 
-    val minLetter = minorBritishGridByCoord(minX, minY)
+    val minLetter = minorBritishGridByCoord(mnrX, mnrY)
 
-    if (minorBritishGridByCoord.get(minX, minY).isEmpty) throw new ImportFailedException("The easing and northing (%s,%s) are not within the british grid".format(east,north))
+    if (minorBritishGridByCoord.get(mnrX, mnrY).isEmpty) throw new ImportFailedException("The easing and northing (%s,%s) are not within the british grid".format(east,north))
 
-    val eastPart = (east - sqX).toString
-    val northPart = (north - sqY).toString
+    val eastPart = "%05d".format(east - e100k)
+
+    val northPart = "%05d".format(north - n100k)
 
     val gridRef = majLetter + minLetter + eastPart + northPart
 

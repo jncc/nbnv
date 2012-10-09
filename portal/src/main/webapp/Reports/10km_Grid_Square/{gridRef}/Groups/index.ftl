@@ -3,12 +3,12 @@
 <#assign taxonOutputGroupsWithQueryStats=json.readURL("${api}/taxonObservations/groups",requestParametersExtended)>
 <#assign providersWithQueryStats=json.readURL("${api}/taxonObservations/providers",requestParametersExtended)>
 
-<@template.master title="10km report for tenkmGridRef" javascripts=["/js/site-report-form-validation.js"]>
+<@template.master title="10km report for tenkmGridRef" javascripts=["/js/site-report-form-validation.js","/js/jquery.dataset-selector-utils.js"]>
     <h1>Species groups with records for the 10km square ${tenkmGridRef} from <@report_utils.yearRangeText requestParameters=RequestParameters/></h1>
 
     <form action="" method="post">
 
-    <@report_utils.site_report_filters requestParameters=RequestParameters location=tenkmGridRef/>
+    <@report_utils.site_report_filters requestParameters=RequestParameters location=tenkmGridRef  isSiteBoundaryReport=false/>
 
     <div class="nbn-report-data-container">
 
