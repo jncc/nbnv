@@ -4,11 +4,11 @@
 <#assign taxon=json.readURL("${api}/taxa/${URLParameters.ptvk}")>
 <#assign site=json.readURL("${api}/features/${featureID}")>
 
-<@template.master title="Site report for ${featureID}">
+<@template.master title="Site report for ${featureID} javascripts=["/js/site-report-form-validation.js"]>
     <h1>Records for <@taxon_utils.short_name taxon=taxon/> in '${site.label}' from <@report_utils.yearRangeText requestParameters=RequestParameters/></h1>
-
-    <@report_utils.site_report_filters requestParameters=RequestParameters args={"taxon":taxon} location=site.label/>
-
+    <form action="" method="post" id="nbn-site-report-form">
+        <@report_utils.site_report_filters requestParameters=RequestParameters args={"taxon":taxon} location=site.label isSiteBoundaryReport=true/>
+    </form>
     <#list datasets as dataset>
         <#assign provider=json.readURL("${api}/organisations/${dataset.organisationID}")>
         <table class="nbn-coloured-table">
@@ -44,5 +44,4 @@
             </#list>
         </table>
     </#list>
-    
 </@template.master>
