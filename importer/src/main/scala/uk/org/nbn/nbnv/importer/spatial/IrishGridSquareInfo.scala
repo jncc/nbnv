@@ -14,11 +14,11 @@ object IrishGridSquareInfo {
 
   val irishGridByCoord = irishGridByLetter map {_.swap}
 
-  def apply(gridRef: String) = {
+  def apply(gridRef: String) : IrishGridSquareInfo = {
     new IrishGridSquareInfo(gridRef)
   }
 
-  def apply(gridRef: String, precision: Int) = {
+  def apply(gridRef: String, precision: Int) : IrishGridSquareInfo = {
     new IrishGridSquareInfo(gridRef, precision)
   }
 
