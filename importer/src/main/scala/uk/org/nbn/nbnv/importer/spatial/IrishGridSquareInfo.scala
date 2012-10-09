@@ -22,12 +22,25 @@ object IrishGridSquareInfo {
     new IrishGridSquareInfo(gridRef, precision)
   }
 
-  def apply(east: Int, north: Int, precision: Int) = {
-    //Compute 100K grid square co-ordinate
-    val sqX = (east - (east % 100000)) / 100000
-    val sqY = (north - (north % 100000)) / 100000
+  def apply(east: Int, north: Int) : IrishGridSquareInfo = {
+    IrishGridSquareInfo(east, north, 0)
+  }
 
-    null
+  def apply(east: Int, north: Int, precision: Int) : IrishGridSquareInfo = {
+    //Compute 100K grid square co-ordinate
+    val e = (east - (east % 100000)) / 100000
+    val n = (north - (north % 100000)) / 100000
+
+    if (irishGridByCoord.get(e,n).isEmpty) throw new ImportFailedException("The easing and northing (%s,%s) are not within the Irish grid".format(east,north))
+
+    val gridLetter = irishGridByCoord(e, n)
+
+    val eastPart = (east - e).toString
+    val northPart = (north - n).toString
+
+    val gridRef = gridLetter + eastPart + northPart
+
+    new IrishGridSquareInfo(gridRef, precision)
   }
 }
 
