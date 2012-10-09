@@ -76,7 +76,7 @@ class FeatureIngester @Inject()(log: Logger, em: EntityManager, repo: Repository
     repo.getSiteBoundaryFeature(siteBoundaryDataset, providerKey)._1
   }
 
-  private def ensureGridRefFeatureByCoordinate(easting: Int, northing: Int, spatialReferenceSystem: String, gridReferencePrecision: Int = 0) = {
+  private def ensureGridRefFeatureByCoordinate(easting: Double, northing: Double, spatialReferenceSystem: String, gridReferencePrecision: Int = 0) = {
     //Get nearest grid square at 100m or at the grid reference resolution specified.
 
     val info = gridSquareInfoFactory.getByCoordinate(easting, northing, spatialReferenceSystem, gridReferencePrecision)
