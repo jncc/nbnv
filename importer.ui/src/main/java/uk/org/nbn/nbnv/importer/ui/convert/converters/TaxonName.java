@@ -107,8 +107,24 @@ public class TaxonName extends ConverterStep {
                     
                     lookup.put(origVal, pTVK);
                     
-                } else {
-                    throw new BadDataException("Could not find a valid tansformation as a valid scientific name, common name or other recording entitiy");
+                } else if (origVal.length() == 16) {
+                    // Possible Taxon Version Key?
+                    q = em.createNamedQuery("Taxon.findByTaxonVersionKey");
+                    results = q.setParameter("taxonVersionKey", origVal).getResultList();
+                    
+                    if (res.size() == 1) {
+                        lookup.put(origVal, results.get(0).getPTaxonVersionKey().getTaxonVersionKey());
+                    } else if (res.size() > 1) {
+                        String pTVK = results.get(0).getPTaxonVersionKey().getTaxonVersionKey();
+                        for (Taxon taxon : results) {
+                            if (!pTVK.equals(taxon.getPTaxonVersionKey().getTaxonVersionKey())) {
+                                throw new AmbiguousDataException("Found more than one Preferred Taxon Version Key from an input which cannot be matched to a valid scientific name, common name, taxon verion key or any other recording entity - " + origVal);
+                            }
+                        }
+                    }
+                } else {    
+                    lookup.put(origVal, origVal);
+                    throw new BadDataException("Could not find a valid tansformation as a valid scientific name, common name or other recording entitiy - " + origVal);
                 }
             }
         }
