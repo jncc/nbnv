@@ -20,7 +20,7 @@ class Nbnv82Validator {
     else if (record.featureKey.isDefined) {
       success
     }
-    else if (record.east.isDefined && record.north.isDefined) {
+    else if (record.east.isDefined && record.north.isDefined && record.srs.isDefined) {
       success
     }
     else {
