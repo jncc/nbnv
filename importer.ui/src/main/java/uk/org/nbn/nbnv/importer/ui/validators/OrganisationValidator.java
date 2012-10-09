@@ -34,7 +34,7 @@ public class OrganisationValidator implements Validator {
         // Organisation Name Validators
         if (org.getName().trim().isEmpty()) {
             // Required
-            errors.rejectValue("organisationName", "organisationName.required");
+            errors.rejectValue("name", "organisationName.required");
         } else {
             // Check Organisation Name does not exist already
             EntityManager em = DatabaseConnection.getInstance().createEntityManager();
@@ -42,7 +42,7 @@ public class OrganisationValidator implements Validator {
             q.setParameter("name", org.getName());
 
             if (!q.getResultList().isEmpty()) {
-                errors.rejectValue("organisationName", "organisationName.exists");
+                errors.rejectValue("name", "organisationName.exists");
             }
         }
         
