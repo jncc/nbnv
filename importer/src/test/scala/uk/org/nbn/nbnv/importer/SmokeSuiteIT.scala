@@ -27,7 +27,6 @@ class SmokeSuiteIT extends BaseFunSuite with ResourceLoader {
     key should have length 8
   }
 
-  //todo: fix
   test("should import a valid archive") {
 
     val tempDir = ".\\temp"

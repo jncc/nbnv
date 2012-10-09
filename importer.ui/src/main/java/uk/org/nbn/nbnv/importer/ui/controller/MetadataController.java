@@ -115,8 +115,11 @@ public class MetadataController {
                 throw new POIImportError("Could not find a version number in the document are you sure this is a metadata import form?");
             }
 
-            Map<String, String> mappings = importer.parseDocument(strList, strIt, new HashMap<String, String>());
+            List<String> errors = new ArrayList<String>();
+            
+            Map<String, String> mappings = importer.parseDocument(strList, strIt, new HashMap<String, String>(), errors);
             messages.addAll(importer.getDefaultMessages());
+            messages.addAll(errors);
             Metadata meta = new Metadata();
             
             meta.setAccess(mappings.get(importer.META_ACCESS_CONSTRAINT));

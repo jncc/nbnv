@@ -25,7 +25,7 @@ object Options {
   val usage =
     """|
       |Usage:
-      |importer "C:\some\archive.zip" (specify a newline-delimited file of grid references)
+      |importer "C:\some\file.csv" (specify a newline-delimited file of grid references)
       |         [-logDir "C:\logs"]   (specify a log directory)
       |         [-whatIf]             (don't commit)
     """.stripMargin

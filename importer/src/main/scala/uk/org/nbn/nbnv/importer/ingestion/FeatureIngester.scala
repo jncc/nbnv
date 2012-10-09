@@ -19,8 +19,7 @@ class FeatureIngester @Inject()(log: Logger, em: EntityManager, repo: Repository
     else if (record.featureKey.isDefined) {
       ensureSiteBoundaryFeature(record.featureKey.get)
     }
-    else if (record.east.isDefined) {
-      // no need to check the other coordinate elements - the validator will have done this
+    else if (record.east.isDefined && record.north.isDefined && record.srs.isDefined) {
       // todo: wire this up to getFeatureByCoord
       ensureGridRefFeatureByCoordinate(record.east.get, record.north.get, record.srs.get, record.gridReferencePrecision)
 
