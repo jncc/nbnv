@@ -264,11 +264,29 @@ class BritishGridSquareInfoSuite extends BaseFunSuite {
     bgr.gridReference should be ("SE087246")
   }
 
+  test("should give correct easting northing for grid ref SE087246")
+  {
+    val bgr = BritishGridSquareInfo("SE087246")
+    val (easting, northing) = bgr.getEastingNorthing
+
+    easting should be (408700)
+    northing should be (424600)
+  }
+
   test("should give correct grid ref for easting 520814 & norhting 296511")
   {
     val bgr = BritishGridSquareInfo(520814, 296511)
 
     bgr.gridReference should be ("TL208965")
+  }
+
+  test("should give correct easting northing for grid ref TL208965")
+  {
+    val bgr = BritishGridSquareInfo("TL208965")
+    val (easting, northing) = bgr.getEastingNorthing
+
+    easting should be (520800)
+    northing should be (296500)
   }
 
   test("should give correct grid ref for easting 259207 & norhting 665548")
@@ -278,10 +296,28 @@ class BritishGridSquareInfoSuite extends BaseFunSuite {
     bgr.gridReference should be ("NS592655")
   }
 
+  test("should give correct easting northing for grid ref NS592655")
+  {
+    val bgr = BritishGridSquareInfo("NS592655")
+    val (easting, northing) = bgr.getEastingNorthing
+
+    easting should be (259200)
+    northing should be (665500)
+  }
+
   test("should give correct grid ref for easting 447275 & norhting 1141792")
   {
     val bgr = BritishGridSquareInfo(447275, 1141792)
 
     bgr.gridReference should be ("HU472417")
+  }
+
+  test("should give correct easting northing for grid ref HU472417")
+  {
+    val bgr = BritishGridSquareInfo("HU472417")
+    val (easting, northing) = bgr.getEastingNorthing
+
+    easting should be (447200)
+    northing should be (1141700)
   }
 }
