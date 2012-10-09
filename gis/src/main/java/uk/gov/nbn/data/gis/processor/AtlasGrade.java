@@ -20,7 +20,8 @@ public @interface AtlasGrade {
     @interface GridLayer {
         String name();
         String layer();
-        int resolution();
+        int snapToResolution();
+        int lcmResolution();
     }
     
     @interface Layer {
