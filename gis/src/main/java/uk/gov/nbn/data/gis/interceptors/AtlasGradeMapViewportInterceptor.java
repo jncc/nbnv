@@ -31,12 +31,12 @@ public class AtlasGradeMapViewportInterceptor {
                     @QueryParam(key="imagesize", validation="1[0-5]|[1-9]") @DefaultValue("10") String imagesizeStr,
                     @QueryParam(key="feature") String featureId) {
         Map<String, String[]> toReturn = new HashMap<String,String[]>();
-        int imageSize = Integer.parseInt(imagesizeStr), lcmResolution = layer.lcmResolution();
+        int imageSize = Integer.parseInt(imagesizeStr), resolution = layer.resolution();
         BoundingBox featureToFocusOn = getFeatureToFocusOn(featureId, atlasGradeProperties);
-        int[] griddedBBox = getFeatureBoundingBoxFixedToGrid(featureToFocusOn, layer.snapToResolution());
+        int[] griddedBBox = getFeatureBoundingBoxFixedToGrid(featureToFocusOn, layer.snapTo());
         
-        int amountOfSquaresX = getAmountOfSquaresInDimension(griddedBBox[MAXX], griddedBBox[MINX], lcmResolution);
-        int amountOfSquaresY = getAmountOfSquaresInDimension(griddedBBox[MAXY], griddedBBox[MINY], lcmResolution);
+        int amountOfSquaresX = getAmountOfSquaresInDimension(griddedBBox[MAXX], griddedBBox[MINX], resolution);
+        int amountOfSquaresY = getAmountOfSquaresInDimension(griddedBBox[MAXY], griddedBBox[MINY], resolution);
         
         int amountOfPixelsForGrid = Math.min(   getMaximumPixelsForGridSquare(amountOfSquaresX, imageSize),
                                                 getMaximumPixelsForGridSquare(amountOfSquaresY, imageSize));
