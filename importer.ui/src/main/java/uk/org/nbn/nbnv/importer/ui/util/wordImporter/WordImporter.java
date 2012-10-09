@@ -60,7 +60,7 @@ public interface WordImporter {
     public static final String INPUT_TEXT = "FORMTEXT";
     public static final String INPUT_CHECKBOX = "FORMCHECKBOX";    
     
-    public Map<String, String> parseDocument(List<String> strList, ListIterator<String> strIt, Map<String, String> mappings) throws POIImportError;
+    public Map<String, String> parseDocument(List<String> strList, ListIterator<String> strIt, Map<String, String> mappings, List<String> errors);
     public boolean supports(int major, int minor);
     public List<String> getDefaultMessages();
 }

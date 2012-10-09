@@ -1,6 +1,6 @@
 MAP
   IMAGETYPE                                             PNG
-  EXTENT                                                0 0 800000 800000
+  EXTENT                                                -180 -90 180 90
   SIZE                                                  2800 2800
   IMAGECOLOR                                            255 255 255
   FONTSET                                               "fonts/fontset"
@@ -17,7 +17,7 @@ MAP
   END
   
   PROJECTION
-    "init=epsg:27700"
+    "init=epsg:4326"
   END
 
   LAYER
@@ -29,6 +29,7 @@ MAP
     CONNECTION                                          "${properties.spatialConnection}"
     DATA                                                "${layerGenerator.getData(1)}"
     TEMPLATE                                            "dummy.txt"
+    EXTENT                                              -180 -90 180 90
 
     METADATA
       "wms_title"                                       "Grid-10km"
@@ -203,6 +204,7 @@ MAP
     CONNECTION                                          "${properties.spatialConnection}"
     DATA                                                "${layerGenerator.getData(2)}"
     TEMPLATE                                            "dummy.txt"
+    EXTENT                                              -180 -90 180 90
 
     METADATA
       "wms_title"                                       "Grid-2km"
@@ -377,6 +379,7 @@ MAP
     CONNECTION                                          "${properties.spatialConnection}"
     DATA                                                "${layerGenerator.getData(3)}"
     TEMPLATE                                            "dummy.txt"
+    EXTENT                                              -180 -90 180 90
 
     METADATA
       "wms_title"                                       "Grid-1km"
@@ -551,6 +554,7 @@ MAP
     CONNECTION                                          "${properties.spatialConnection}"
     DATA                                                "${layerGenerator.getData(4)}"
     TEMPLATE                                            "dummy.txt"
+    EXTENT                                              -180 -90 180 90
 
     METADATA
       "wms_title"                                       "Grid-100m"
