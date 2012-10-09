@@ -1,6 +1,39 @@
 package uk.org.nbn.nbnv.importer.spatial
 
 import math._
+import uk.org.nbn.nbnv.importer.ImportFailedException
+
+object ChannelIslandGridSquareInfo {
+  def apply(gridRef: String) : ChannelIslandGridSquareInfo = {
+    new ChannelIslandGridSquareInfo(gridRef)
+  }
+
+  def apply(gridRef: String, precision: Int) : ChannelIslandGridSquareInfo = {
+    new ChannelIslandGridSquareInfo(gridRef, precision)
+  }
+
+  def apply(east: Int, north: Int) : ChannelIslandGridSquareInfo = {
+    ChannelIslandGridSquareInfo(east, north, 0)
+  }
+
+  def apply(east: Int, north: Int, precision: Int) : ChannelIslandGridSquareInfo = {
+    val gridLetters =
+      north / 100000 match {
+        case 55 => "WA"
+        case 54 => "WV"
+        case _ => throw throw new ImportFailedException("The easing and northing (%s,%s) are not within the Channel Islands grid".format(east,north))
+      }
+
+    val eastPart = east - 500000
+    val northPart = gridLetters match {
+      case "WA" => (north - 5500000).toString
+      case "WV" => (north - 5400000).toString
+    }
+
+    val gridRef = gridLetters + eastPart + northPart
+    new ChannelIslandGridSquareInfo(gridRef, precision)
+  }
+}
 
 class ChannelIslandGridSquareInfo(gridRef: String, precision: Int = 0) extends GridSquareInfo(gridRef, precision) {
 
@@ -8,12 +41,12 @@ class ChannelIslandGridSquareInfo(gridRef: String, precision: Int = 0) extends G
 
   def epsgCode = "23030"
 
-  protected def getEastingNorthing(gridRef: String) = {
+  def getEastingNorthing = {
     //Bottom Left corner of the grid squares
     val WAbl = (500000,5500000)
     val WVbl = (500000,5400000)
 
-    val g = getTenFigGridRef(gridRef)
+    val g = getTenFigGridRef(outputGridRef)
     val numerals = getNumeralsFromGridRef(g).splitAt(5)
 
     getLettersFromGridRef(g) match {

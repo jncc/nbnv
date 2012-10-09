@@ -1,10 +1,9 @@
 package uk.gov.nbn.data.gis.providers;
 
-import java.lang.annotation.Annotation;
-import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.gov.nbn.data.gis.processor.Annotations;
 import uk.gov.nbn.data.gis.processor.AtlasGrade;
 import uk.gov.nbn.data.gis.processor.MapServiceMethod;
 import uk.gov.nbn.data.gis.processor.Provider;
@@ -19,12 +18,12 @@ public class AtlasGradeLayerProvider implements Provider {
     @Autowired AtlasGradeProvider atlasGradeProvider;
     
     @Override
-    public boolean isProviderFor(Class<?> clazz, MapServiceMethod method, HttpServletRequest request, List<Annotation> annotations) {
+    public boolean isProviderFor(Class<?> clazz, Annotations annotations) {
         return clazz.equals(AtlasGrade.GridLayer.class);
     }
 
     @Override
-    public AtlasGrade.GridLayer provide(Class<?> clazz, MapServiceMethod method, HttpServletRequest request, List<Annotation> annotations) {
+    public AtlasGrade.GridLayer provide(Class<?> clazz, MapServiceMethod method, HttpServletRequest request, Annotations annotations) {
         return getResolution(request.getParameter("resolution"), atlasGradeProvider.provide(clazz, method, request, annotations));
     }
     

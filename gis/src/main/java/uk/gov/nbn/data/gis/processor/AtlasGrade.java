@@ -20,6 +20,16 @@ public @interface AtlasGrade {
     @interface GridLayer {
         String name();
         String layer();
+        /**
+         * @return The resolution in metres which the grid layer should be snapped to.
+         */
+        int snapTo();
+        /**
+         * @return The resolution in metres which the grid layer should be rendered
+         * to to avoid distortion. If the layer represents multiple resolutions
+         * then this value should be the Greatest Common Divisor (GCD) of all the 
+         * layers. As a suggestion, use Euclidean algorithm to calculate this.
+         */
         int resolution();
     }
     

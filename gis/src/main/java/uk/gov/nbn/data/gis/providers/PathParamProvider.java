@@ -1,10 +1,9 @@
 package uk.gov.nbn.data.gis.providers;
 
 import uk.gov.nbn.data.gis.providers.annotations.PathParam;
-import java.lang.annotation.Annotation;
-import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Component;
+import uk.gov.nbn.data.gis.processor.Annotations;
 import uk.gov.nbn.data.gis.processor.MapServiceMethod;
 import uk.gov.nbn.data.gis.processor.Provider;
 import uk.gov.nbn.data.gis.processor.ProviderException;
@@ -18,13 +17,13 @@ import uk.gov.nbn.data.gis.processor.ProviderException;
 public class PathParamProvider implements Provider {
 
     @Override
-    public boolean isProviderFor(Class<?> clazz, MapServiceMethod method, HttpServletRequest request, List<Annotation> annotations) {
-        return getAnnotation(annotations) != null;
+    public boolean isProviderFor(Class<?> clazz, Annotations annotations) {
+        return annotations.containsKey(PathParam.class);
     }
 
     @Override
-    public String provide(Class<?> clazz, MapServiceMethod method, HttpServletRequest request, List<Annotation> annotations) throws ProviderException {
-        PathParam paramAnnot = getAnnotation(annotations);
+    public String provide(Class<?> clazz, MapServiceMethod method, HttpServletRequest request, Annotations annotations) throws ProviderException {
+        PathParam paramAnnot = annotations.get(PathParam.class);
         String toReturn = method.getVariableValue(paramAnnot.key());
         if(paramAnnot.validation().equals(PathParam.NO_VALIDATION) || toReturn.matches(paramAnnot.validation())) {
             return toReturn;
@@ -32,14 +31,5 @@ public class PathParamProvider implements Provider {
         else {
             throw new ProviderException("The param " + toReturn + " was not in the correct format");
         }
-    }
-    
-    private static PathParam getAnnotation(List<Annotation> annotations) {
-        for(Annotation currAnnotation : annotations) {
-            if(currAnnotation instanceof PathParam) {
-                return (PathParam)currAnnotation;
-            }
-        }
-        return null;
     }
 }

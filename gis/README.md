@@ -29,6 +29,10 @@ the installation. The default value is configured in gis.properties.
 3. Install FastCGI (Recommended)
 The following documents how to install [FastCGI](http://www.maptools.org/ms4w/index.phtml?page=README_INSTALL.html#f-fastcgi)
 
+At the time of writting, points 5, 7 (Default config of the gis 
+application assumes fcgi) and 8 are not applicable for the installation 
+of mapserver.
+
 4. If you which to use any plugins, ensure that these are on the 
 PATH System Enviroment Variable. At the time of writing this 
 application uses the msplugin_mssql2008.dll. To use this add 

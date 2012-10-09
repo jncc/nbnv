@@ -11,6 +11,7 @@ import uk.gov.nbn.data.gis.processor.MapService;
 import uk.gov.nbn.data.gis.processor.MapContainer;
 import uk.gov.nbn.data.gis.providers.annotations.PathParam;
 import uk.gov.nbn.data.gis.providers.annotations.QueryParam;
+import uk.gov.nbn.data.gis.providers.annotations.ServiceURL;
 import uk.org.nbn.nbnv.api.model.User;
 
 /**
@@ -50,12 +51,14 @@ public class DesignationSpeciesDensityWMS {
     @MapService("{designationKey}")
     public MapFileModel getDesignationMapModel(
             final User user,
+            @ServiceURL String mapServiceURL,
             @QueryParam(key="datasets", validation="^[A-Z0-9]{8}$") final List<String> datasetKeys,
             @QueryParam(key="startyear", validation="[0-9]{4}") final String startYear,
             @QueryParam(key="endyear", validation="[0-9]{4}") final String endYear,
             @PathParam(key="designationKey", validation="^[A-Z0-9.()/_\\-]+$") final String key) {
         
         HashMap<String, Object> data = new HashMap<String, Object>();
+        data.put("mapServiceURL", mapServiceURL);
         data.put("properties", properties);
         data.put("layerGenerator", new ResolutionDataGenerator() {
                 @Override

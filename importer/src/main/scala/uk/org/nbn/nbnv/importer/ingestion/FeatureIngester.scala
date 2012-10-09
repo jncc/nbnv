@@ -19,8 +19,7 @@ class FeatureIngester @Inject()(log: Logger, em: EntityManager, repo: Repository
     else if (record.featureKey.isDefined) {
       ensureSiteBoundaryFeature(record.featureKey.get)
     }
-    else if (record.east.isDefined) {
-      // no need to check the other coordinate elements - the validator will have done this
+    else if (record.east.isDefined && record.north.isDefined && record.srs.isDefined) {
       // todo: wire this up to getFeatureByCoord
       ensureGridRefFeatureByCoordinate(record.east.get, record.north.get, record.srs.get, record.gridReferencePrecision)
 
@@ -77,7 +76,7 @@ class FeatureIngester @Inject()(log: Logger, em: EntityManager, repo: Repository
     repo.getSiteBoundaryFeature(siteBoundaryDataset, providerKey)._1
   }
 
-  private def ensureGridRefFeatureByCoordinate(easting: Int, northing: Int, spatialReferenceSystem: String, gridReferencePrecision: Int = 0) = {
+  private def ensureGridRefFeatureByCoordinate(easting: Double, northing: Double, spatialReferenceSystem: String, gridReferencePrecision: Int = 0) = {
     //Get nearest grid square at 100m or at the grid reference resolution specified.
 
     val info = gridSquareInfoFactory.getByCoordinate(easting, northing, spatialReferenceSystem, gridReferencePrecision)

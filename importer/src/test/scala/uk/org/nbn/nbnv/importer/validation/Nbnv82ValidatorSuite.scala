@@ -10,6 +10,7 @@ class Nbnv82ValidatorSuite extends BaseFunSuite {
   test("Nbnv82 should validate if a grid ref is provided") {
     val record = mock[NbnRecord]
     when(record.gridReference).thenReturn(Some("NN166712"))
+    when(record.srs).thenReturn(None)
     when(record.featureKey).thenReturn(None)
     when(record.east).thenReturn(None)
     when(record.north).thenReturn(None)
@@ -23,8 +24,9 @@ class Nbnv82ValidatorSuite extends BaseFunSuite {
   test("Nbnv82 should validate if an easting and northing are provided") {
     val record = mock[NbnRecord]
 
-    when(record.east).thenReturn(Some(377562))
-    when(record.north).thenReturn(Some(6296480))
+    when(record.east).thenReturn(Some(377562.0))
+    when(record.north).thenReturn(Some(6296480.0))
+    when(record.srs).thenReturn(Some("27700"))
     when(record.gridReference).thenReturn(None)
     when(record.featureKey).thenReturn(None)
 
@@ -37,6 +39,7 @@ class Nbnv82ValidatorSuite extends BaseFunSuite {
   test("Nbnv82 should validate if a featureKey is provided") {
     val record = mock[NbnRecord]
     when(record.featureKey).thenReturn(Some("SB0003253"))
+    when(record.srs).thenReturn(None)
     when(record.east).thenReturn(None)
     when(record.north).thenReturn(None)
     when(record.gridReference).thenReturn(None)
@@ -50,6 +53,7 @@ class Nbnv82ValidatorSuite extends BaseFunSuite {
   test("Nbnv82 should not validate if no feature identifier is provided") {
     val record = mock[NbnRecord]
     when(record.featureKey).thenReturn(None)
+    when(record.srs).thenReturn(None)
     when(record.east).thenReturn(None)
     when(record.north).thenReturn(None)
     when(record.gridReference).thenReturn(None)

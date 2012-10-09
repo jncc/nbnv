@@ -1,13 +1,14 @@
 package uk.org.nbn.nbnv.importer.spatial
 
 import scala.math._
+import uk.org.nbn.nbnv.importer.ImportFailedException
 
 object BritishGridSquareInfo {
 
   val majorBritishGridByLetter = Map (
     "H" -> (0,10), "J" -> (5,10),
     "N" -> (0,5), "0" -> (5,5),
-    "S" -> (0,0), "T" -> (0,5)
+    "S" -> (0,0), "T" -> (5,0)
   )
 
   val majorBritishGridByCoord = majorBritishGridByLetter map {_.swap}
@@ -29,37 +30,46 @@ object BritishGridSquareInfo {
   def apply(east: Int, north: Int, precision: Int) : BritishGridSquareInfo = {
 
     //Compute 100K grid square co-ordinate
-    val sqX = (east - (east % 100000)) / 100000
-    val sqY = (north - (north % 100000)) / 100000
+
+    val e100k = (east - (east % 100000))
+    val n100k = (north - (north % 100000))
+
+    val sqX = e100k / 100000
+    val sqY = n100k / 100000
 
     //Derive major (500K) grid letter
     val majX = sqX - (sqX % 5)
     val majY = sqY - (sqY % 5)
 
-    val majLetter = majorBritishGridByCoord(majX, majY) // todo check this gets something else thow exception e,n out of range
+    if (majorBritishGridByCoord.get(majX, majY).isEmpty) throw new ImportFailedException("The easing and northing (%s,%s) are not within the british grid".format(east,north))
+
+    val majLetter = majorBritishGridByCoord(majX, majY)
 
     //Determine minor (100K sub grid) grid letter
-    val minX = sqX - majX
-    val minY = sqY - majY
+    val mnrX = sqX - majX
+    val mnrY = sqY - majY
 
-    val minLetter = minorBritishGridByCoord(minX, minY) // todo check this gets something else thow exception e,n out of range
+    val minLetter = minorBritishGridByCoord(mnrX, mnrY)
 
-    val e = east.toString
-    val n = north.toString
+    if (minorBritishGridByCoord.get(mnrX, mnrY).isEmpty) throw new ImportFailedException("The easing and northing (%s,%s) are not within the british grid".format(east,north))
 
-    val eastPart = e.substring(1, e.length)
-    val northPart = n.substring(1, n.length)
+    var eastPart = (east - e100k).toString
+    eastPart = "0" * (5 - eastPart.length) + eastPart
+
+    var northPart = (north - n100k).toString
+    northPart = "0" * (5 - northPart.length) + northPart
+
 
     val gridRef = majLetter + minLetter + eastPart + northPart
 
     new BritishGridSquareInfo(gridRef, precision)
   }
 
-  def apply(gridRef : String) = {
+  def apply(gridRef : String) : BritishGridSquareInfo = {
     new BritishGridSquareInfo(gridRef)
   }
 
-  def apply(gridRef : String, precision : Int) = {
+  def apply(gridRef : String, precision : Int) : BritishGridSquareInfo = {
     new BritishGridSquareInfo(gridRef, precision)
   }
 }
@@ -69,6 +79,21 @@ class BritishGridSquareInfo(gridRef : String, precision: Int = 0) extends GridSq
   def projection = "OSGB36"
 
   def epsgCode = "27700"
+
+  def getEastingNorthing = {
+    val g = getTenFigGridRef(outputGridRef)
+
+    val (majorLetter, minorLetter) = getLettersFromGridRef(g).splitAt(1)
+    val (majX, majY) = BritishGridSquareInfo.majorBritishGridByLetter(majorLetter)
+    val (mnrX, mnrY) = BritishGridSquareInfo.minorBritishGridByLetter(minorLetter)
+
+    val (e,n) = getNumeralsFromGridRef(g).splitAt(5)
+
+    val easting = (majX + mnrX)  * 100000 + e.toInt
+    val northing = (majY + mnrY) * 100000 + n.toInt
+
+    (easting, northing)
+  }
 
   protected def create(gridRef: String, precision: Int = 0) = {
     new BritishGridSquareInfo(gridRef, precision)
@@ -82,20 +107,7 @@ class BritishGridSquareInfo(gridRef : String, precision: Int = 0) extends GridSq
 
   protected def getDintyRegex = GridRefPatterns.ukDintyGridRef
 
-  protected def getEastingNorthing(gridRef: String) = {
-    val g = getTenFigGridRef(gridRef)
 
-    val (majorLetter, minorLetter) = getLettersFromGridRef(g).splitAt(1)
-    val (majX, majY) = BritishGridSquareInfo.majorBritishGridByLetter(majorLetter)
-    val (mnrX, mnrY) = BritishGridSquareInfo.minorBritishGridByLetter(minorLetter)
-
-    val (e,n) = getNumeralsFromGridRef(g).splitAt(5)
-
-    val easting = (majX + mnrX) * 100000 + e.toInt
-    val northing = (majY + mnrY) * 100000 + n.toInt
-
-    (easting, northing)
-  }
 
   //Returns the grid reference precision in meters
   protected def getPrecision(gridReference : String) = {
@@ -123,30 +135,4 @@ class BritishGridSquareInfo(gridRef : String, precision: Int = 0) extends GridSq
     gridRef.substring(2, gridRef.length)
   }
 
-  private def getGridRefFromEastingNorthing(east: Int, north: Int) : String = {
-
-    //Compute 100K grid square co-ordinate
-    val sqX = (east - (east % 100000)) / 100000
-    val sqY = (north - (north % 100000)) / 100000
-
-    //Derive major (500K) grid letter
-    val majX = sqX - (sqX % 5)
-    val majY = sqY - (sqY % 5)
-
-    val majLetter = BritishGridSquareInfo.majorBritishGridByCoord(majX, majY) // todo check this gets something else thow exception e,n out of range
-
-    //Determine minor (100K sub grid) grid letter
-    val minX = sqX - majX
-    val minY = sqY - majY
-
-    val minLetter = BritishGridSquareInfo.minorBritishGridByCoord(minX, minY) // todo check this gets something else thow exception e,n out of range
-
-    val e = east.toString
-    val n = north.toString
-
-    val eastPart = e.substring(1, e.length)
-    val northPart = n.substring(1, n.length)
-
-    majLetter + minLetter + eastPart + northPart
-  }
 }

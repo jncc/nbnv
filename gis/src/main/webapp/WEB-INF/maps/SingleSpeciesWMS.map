@@ -20,24 +20,24 @@
 [#macro join list separator=","][#list list as element]${element}[#if element_has_next]${separator}[/#if][/#list][/#macro]
 MAP
     IMAGETYPE                                             PNG
-    EXTENT                                                0 0 800000 800000
     SIZE                                                  2800 2800
     IMAGECOLOR                                            255 255 255
     FONTSET                                               "fonts/fontset"
+    EXTENT                                                -180 -90 180 90
 
     WEB
         IMAGEPATH                                           "/ms4w/tmp/ms_tmp/"
         IMAGEURL                                            "/ms_tmp/"
         METADATA
             "wms_title"                                       "Single Species Map"
-            "wms_onlineresource"                              "http://NBNImporter-a.nerc-lancaster.ac.uk/mapserver/SingleSpeciesWMS?"
+            "wms_onlineresource"                              "${mapServiceURL}"
             "wms_srs"                                         "EPSG:29903 EPSG:27700 EPSG:4326 EPSG:3857"
             "wms_enable_request"                              "*"
         END
     END
 
     PROJECTION
-        "init=epsg:27700"
+        "init=epsg:4326"
     END
     
     [@backgrounds.os location=properties.ordnanceSurveyMapDataLocation requires=union_layers?keys + layers?keys/]
@@ -54,16 +54,18 @@ MAP
             CONNECTIONTYPE UNION
             CONNECTION "[@join union_layers[union_layer_name]/]"
             STYLEITEM "AUTO"
+            EXTENT                                                -180 -90 180 90
+
             # Define an empty class that will be filled at runtime from the color and
             # styles read from each source layer.
 
 
             PROJECTION
-                "init=epsg:27700"
+                "init=epsg:4326"
             END
 
             METADATA
-                "wms_title"                                       "BOB"
+                "wms_title"                                       "${union_layer_name}"
                 "wms_include_items"                               "all"
             END
 
@@ -90,6 +92,7 @@ MAP
             CONNECTION                                          "${properties.spatialConnection}"
             DATA                                                "${layerGenerator.getData(layers[layer_name].resolution)}"
             TEMPLATE                                            "dummy.txt"
+            EXTENT                                              -180 -90 180 90
 
             METADATA
                 "wms_title"                                       "${layer_name}"

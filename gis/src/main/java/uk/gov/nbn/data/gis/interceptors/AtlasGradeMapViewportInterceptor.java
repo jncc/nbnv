@@ -33,7 +33,7 @@ public class AtlasGradeMapViewportInterceptor {
         Map<String, String[]> toReturn = new HashMap<String,String[]>();
         int imageSize = Integer.parseInt(imagesizeStr), resolution = layer.resolution();
         BoundingBox featureToFocusOn = getFeatureToFocusOn(featureId, atlasGradeProperties);
-        int[] griddedBBox = getFeatureBoundingBoxFixedToGrid(featureToFocusOn, resolution);
+        int[] griddedBBox = getFeatureBoundingBoxFixedToGrid(featureToFocusOn, layer.snapTo());
         
         int amountOfSquaresX = getAmountOfSquaresInDimension(griddedBBox[MAXX], griddedBBox[MINX], resolution);
         int amountOfSquaresY = getAmountOfSquaresInDimension(griddedBBox[MAXY], griddedBBox[MINY], resolution);

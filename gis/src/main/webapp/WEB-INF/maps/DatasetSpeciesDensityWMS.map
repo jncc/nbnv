@@ -1,6 +1,6 @@
 MAP
   IMAGETYPE                                             PNG
-  EXTENT                                                0 0 800000 800000
+  EXTENT                                                -180 -90 180 90
   SIZE                                                  2800 2800
   IMAGECOLOR                                            255 255 255
   FONTSET                                               "fonts/fontset"
@@ -9,15 +9,15 @@ MAP
     IMAGEPATH                                           "/ms4w/tmp/ms_tmp/"
     IMAGEURL                                            "/ms_tmp/"
     METADATA
-      "wms_title"                                       "Dataset Species Density Map"
-      "wms_onlineresource"                              "http://NBNImporter-a.nerc-lancaster.ac.uk/mapserver/DatasetSpeciesDensityWMS?"
-      "wms_srs"                                         "EPSG:29903 EPSG:27700 EPSG:4326 EPSG:3857"
-      "wms_enable_request"                              "*"
+        "wms_title"                                       "Dataset Species Density Map"
+        "wms_onlineresource"                              "${mapServiceURL}"
+        "wms_srs"                                         "EPSG:29903 EPSG:27700 EPSG:4326 EPSG:3857"
+        "wms_enable_request"                              "*"
     END
   END
   
   PROJECTION
-    "init=epsg:3857"
+    "init=epsg:4326"
   END
 
   LAYER
@@ -30,6 +30,7 @@ MAP
     DATA                                                "${layerGenerator.getData(1)}"
     PROCESSING                                          "CLOSE_CONNECTION=DEFER"
     TEMPLATE                                            "dummy.txt"
+    EXTENT                                              -180 -90 180 90
 
     METADATA
       "wms_title"                                       "Grid-10km"
@@ -205,6 +206,7 @@ MAP
     DATA                                                "${layerGenerator.getData(2)}"
     PROCESSING                                          "CLOSE_CONNECTION=DEFER"
     TEMPLATE                                            "dummy.txt"
+    EXTENT                                              -180 -90 180 90
 
     METADATA
       "wms_title"                                       "Grid-2km"
@@ -380,6 +382,7 @@ MAP
     DATA                                                "${layerGenerator.getData(3)}"
     PROCESSING                                          "CLOSE_CONNECTION=DEFER"
     TEMPLATE                                            "dummy.txt"
+    EXTENT                                              -180 -90 180 90
 
     METADATA
       "wms_title"                                       "Grid-1km"
@@ -555,6 +558,7 @@ MAP
     DATA                                                "${layerGenerator.getData(4)}"
     PROCESSING                                          "CLOSE_CONNECTION=DEFER"
     TEMPLATE                                            "dummy.txt"
+    EXTENT                                              -180 -90 180 90
 
     METADATA
       "wms_title"                                       "Grid-100m"
