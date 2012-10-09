@@ -2,6 +2,7 @@ package uk.gov.nbn.data.gis.interceptors;
 
 import com.sun.jersey.api.client.WebResource;
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,12 +32,13 @@ public class AtlasGradeMapViewportInterceptor {
                     @QueryParam(key="imagesize", validation="1[0-5]|[1-9]") @DefaultValue("10") String imagesizeStr,
                     @QueryParam(key="feature") String featureId) {
         Map<String, String[]> toReturn = new HashMap<String,String[]>();
-        int imageSize = Integer.parseInt(imagesizeStr), resolution = layer.resolution();
+        int[] orderedResolutions = getOrderedResolutions(layer.resolutions());
+        int imageSize = Integer.parseInt(imagesizeStr), gcd = gcd(orderedResolutions); //calculate the greatest common divisor for the resolution of the map
         BoundingBox featureToFocusOn = getFeatureToFocusOn(featureId, atlasGradeProperties);
-        int[] griddedBBox = getFeatureBoundingBoxFixedToGrid(featureToFocusOn, layer.snapTo());
+        int[] griddedBBox = getFeatureBoundingBoxFixedToGrid(featureToFocusOn, orderedResolutions[orderedResolutions.length-1]); //fix to the largest resolution used
         
-        int amountOfSquaresX = getAmountOfSquaresInDimension(griddedBBox[MAXX], griddedBBox[MINX], resolution);
-        int amountOfSquaresY = getAmountOfSquaresInDimension(griddedBBox[MAXY], griddedBBox[MINY], resolution);
+        int amountOfSquaresX = getAmountOfSquaresInDimension(griddedBBox[MAXX], griddedBBox[MINX], gcd);
+        int amountOfSquaresY = getAmountOfSquaresInDimension(griddedBBox[MAXY], griddedBBox[MINY], gcd);
         
         int amountOfPixelsForGrid = Math.min(   getMaximumPixelsForGridSquare(amountOfSquaresX, imageSize),
                                                 getMaximumPixelsForGridSquare(amountOfSquaresY, imageSize));
@@ -112,5 +114,43 @@ public class AtlasGradeMapViewportInterceptor {
             return rem + j;
         }
         return rem;
+    }
+    
+    /** Calculate the Greatest common divisor for an array of resolutions.
+     * @param values A sorted array of ints to find the greatest common divisor of. 
+     *  There must be at least one value in the array
+     * @return The greatest common divisor of the array of ints
+     **/
+    private static int gcd(int[] values) {
+        int i = 0, gcd = values[0];
+        while(++i < values.length) {
+            gcd = gcd(gcd, values[i]);
+        }
+        return gcd;
+    }
+    
+    /** 
+     * Calculates the greatest common divisor between two integers. Where a < b
+     * Using the Euclidean Algorithm.
+     */
+    private static int gcd(int a, int b) {
+        while(b != 0) {
+            int m = a % b;
+            a = b;
+            b = m;
+        }
+        return a;
+    }
+    
+    /** Simple method to validate and order the resolutions array */
+    private static int[] getOrderedResolutions(int[] resolutions) {
+        if(resolutions.length == 0) {
+            throw new IllegalArgumentException("At least resolution must be defined for the layer");
+        }
+        else {
+            int[] toReturn = Arrays.copyOf(resolutions, resolutions.length); //get the resolutions
+            Arrays.sort(toReturn); //sort the resolutions
+            return toReturn;
+        }
     }
 }
