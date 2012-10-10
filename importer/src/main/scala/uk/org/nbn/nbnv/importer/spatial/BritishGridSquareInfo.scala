@@ -7,7 +7,7 @@ object BritishGridSquareInfo {
 
   val majorBritishGridByLetter = Map (
     "H" -> (0,10), "J" -> (5,10),
-    "N" -> (0,5), "0" -> (5,5),
+    "N" -> (0,5), "O" -> (5,5),
     "S" -> (0,0), "T" -> (5,0)
   )
 
@@ -79,8 +79,6 @@ object BritishGridSquareInfo {
 
     BritishGridSquareInfo(easting, northing, precision)
   }
-
-
 }
 
 class BritishGridSquareInfo(gridRef : String, precision: Int = 0) extends GridSquareInfo(gridRef, precision) {

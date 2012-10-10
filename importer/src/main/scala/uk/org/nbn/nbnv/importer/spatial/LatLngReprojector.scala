@@ -17,6 +17,7 @@ class LatLngReprojector {
     //Get the coordinates in WGS84 lat lng
     val eastingNorthing = transformer.transform(latLngGdp, latLngGdp).getCoordinates
 
+    //floor the value to find the closest bottom left grid corner
     (eastingNorthing(0).floor.toInt, eastingNorthing(1).floor.toInt)
   }
 }
