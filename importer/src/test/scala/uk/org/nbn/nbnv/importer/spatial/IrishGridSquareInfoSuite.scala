@@ -299,5 +299,10 @@ class IrishGridSquareInfoSuite extends BaseFunSuite {
     northing should be (71400)
   }
 
+  test("should give correct grid ref for Lat 60.157057 lng -1.1515654") {
+    val igr = IrishGridSquareInfo(53.352140, -6.2505580)
+    igr.gridReference should be ("O165349")
+  }
+
 
 }

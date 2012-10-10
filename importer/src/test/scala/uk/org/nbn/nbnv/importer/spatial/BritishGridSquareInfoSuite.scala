@@ -320,4 +320,9 @@ class BritishGridSquareInfoSuite extends BaseFunSuite {
     easting should be (447200)
     northing should be (1141700)
   }
+
+  test("should give correct grid ref for Lat 60.157057 lng -1.1515654") {
+    val bgr = BritishGridSquareInfo(60.157942,-1.1501909)
+    bgr.gridReference should be ("HU472417")
+  }
 }

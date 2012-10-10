@@ -39,7 +39,7 @@ object ChannelIslandGridSquareInfo {
   }
 
   def apply(latitude : Double, longitude: Double, precision : Int) : ChannelIslandGridSquareInfo = {
-    val (easting, northing) = (new LatLngReprojector).Reproject(latitude, longitude, "23030")
+    val (easting, northing) = (new LatLngReprojector).reproject(latitude, longitude, "23030")
 
     ChannelIslandGridSquareInfo(easting, northing, precision)
   }

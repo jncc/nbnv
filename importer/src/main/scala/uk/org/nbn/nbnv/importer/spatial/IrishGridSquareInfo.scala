@@ -52,7 +52,7 @@ object IrishGridSquareInfo {
   }
 
   def apply(latitude : Double, longitude: Double, precision : Int) : IrishGridSquareInfo = {
-    val (easting, northing) = (new LatLngReprojector).Reproject(latitude, longitude, "29903")
+    val (easting, northing) = (new LatLngReprojector).reproject(latitude, longitude, "29903")
 
     IrishGridSquareInfo(easting, northing, precision)
   }
