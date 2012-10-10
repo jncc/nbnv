@@ -14,7 +14,7 @@
             <table class="nbn-coloured-table">
             <tr><th class="nbn-th-left nbn-th-right">Species recorded in... (number of records)</th></tr>
             <#list taxaWithQueryStats as taxonWithQueryStats>
-                <tr><td class="nbn-td-left nbn-td-right"><a href="/Reports/Sites/${featureID}/Groups/${taxonOutputGroupKey}/Species/${taxonWithQueryStats.taxon.prefnameTaxonVersionKey}/Observations"><@taxon_utils.short_name taxon=taxonWithQueryStats.taxon/></a> (${taxonWithQueryStats.querySpecificObservationCount})</td></tr>
+                <tr><td class="nbn-td-left nbn-td-right"><a href="/Reports/Sites/${featureID}/Groups/${taxonOutputGroupKey}/Species/${taxonWithQueryStats.taxon.prefnameTaxonVersionKey}/Observations${report_utils.getQueryParameterText(RequestParameters)}"><@taxon_utils.short_name taxon=taxonWithQueryStats.taxon/></a> (${taxonWithQueryStats.querySpecificObservationCount})</td></tr>
             </#list>
             </table>
         </div>

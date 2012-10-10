@@ -249,23 +249,25 @@ public class TaxonObservationResource {
      */
     private List<TaxonDataset>getDatasetsWithObservations(List<TaxonObservation> taxonObservationsOrderedByDataset){
         List<TaxonDataset> toReturn = new ArrayList<TaxonDataset>();
-        List<TaxonObservation> taxonObservationsForDataset = null;
-        String currentDatasetKey = "";
-        String previousDatasetKey = "";
-        for(TaxonObservation taxonObservation : taxonObservationsOrderedByDataset){
-            currentDatasetKey = taxonObservation.getDatasetKey();
-            if(currentDatasetKey.equals(previousDatasetKey)){
-                taxonObservationsForDataset.add(taxonObservation);
-            }else{
-                if(!"".equals(previousDatasetKey)){
-                    appendTaxonDataset(taxonObservationsForDataset, previousDatasetKey, toReturn);
+        if(taxonObservationsOrderedByDataset.size() > 0){
+            List<TaxonObservation> taxonObservationsForDataset = null;
+            String currentDatasetKey = "";
+            String previousDatasetKey = "";
+            for(TaxonObservation taxonObservation : taxonObservationsOrderedByDataset){
+                currentDatasetKey = taxonObservation.getDatasetKey();
+                if(currentDatasetKey.equals(previousDatasetKey)){
+                    taxonObservationsForDataset.add(taxonObservation);
+                }else{
+                    if(!"".equals(previousDatasetKey)){
+                        appendTaxonDataset(taxonObservationsForDataset, previousDatasetKey, toReturn);
+                    }
+                    taxonObservationsForDataset = new ArrayList<TaxonObservation>();
+                    taxonObservationsForDataset.add(taxonObservation);
                 }
-                taxonObservationsForDataset = new ArrayList<TaxonObservation>();
-                taxonObservationsForDataset.add(taxonObservation);
+                previousDatasetKey = currentDatasetKey;
             }
-            previousDatasetKey = currentDatasetKey;
+            appendTaxonDataset(taxonObservationsForDataset, currentDatasetKey, toReturn);
         }
-        appendTaxonDataset(taxonObservationsForDataset, currentDatasetKey, toReturn);
         return toReturn;
     }
     
@@ -275,5 +277,5 @@ public class TaxonObservationResource {
         taxonDatasets.add(taxonDataset);
     }
     
-    
+     
 }
