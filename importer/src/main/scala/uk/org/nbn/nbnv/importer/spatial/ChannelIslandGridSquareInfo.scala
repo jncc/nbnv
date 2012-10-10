@@ -33,6 +33,16 @@ object ChannelIslandGridSquareInfo {
     val gridRef = gridLetters + eastPart + northPart
     new ChannelIslandGridSquareInfo(gridRef, precision)
   }
+
+  def apply(latitude : Double, longitude: Double) : ChannelIslandGridSquareInfo = {
+    ChannelIslandGridSquareInfo(latitude, longitude, 0)
+  }
+
+  def apply(latitude : Double, longitude: Double, precision : Int) : ChannelIslandGridSquareInfo = {
+    val (easting, northing) = (new LatLngReprojector).Reproject(latitude, longitude, "23030")
+
+    ChannelIslandGridSquareInfo(easting, northing, precision)
+  }
 }
 
 class ChannelIslandGridSquareInfo(gridRef: String, precision: Int = 0) extends GridSquareInfo(gridRef, precision) {

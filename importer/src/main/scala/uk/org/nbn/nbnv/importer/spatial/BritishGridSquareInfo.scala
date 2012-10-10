@@ -69,6 +69,18 @@ object BritishGridSquareInfo {
   def apply(gridRef : String, precision : Int) : BritishGridSquareInfo = {
     new BritishGridSquareInfo(gridRef, precision)
   }
+
+  def apply(latitude : Double, longitude: Double) : BritishGridSquareInfo = {
+    BritishGridSquareInfo(latitude, longitude, 0)
+  }
+
+  def apply(latitude : Double, longitude: Double, precision : Int) : BritishGridSquareInfo = {
+    val (easting, northing) = (new LatLngReprojector).Reproject(latitude, longitude, "27700")
+
+    BritishGridSquareInfo(easting, northing, precision)
+  }
+
+
 }
 
 class BritishGridSquareInfo(gridRef : String, precision: Int = 0) extends GridSquareInfo(gridRef, precision) {
