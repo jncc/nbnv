@@ -1,10 +1,13 @@
 package uk.gov.nbn.data.gis.maps;
 
+import java.awt.Color;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.gov.nbn.data.gis.maps.ColourHelper.ColourRampGenerator;
 import uk.gov.nbn.data.gis.processor.MapFileModel;
 import uk.gov.nbn.data.gis.processor.MapService;
 import uk.gov.nbn.data.gis.processor.MapContainer;
@@ -25,6 +28,27 @@ import uk.org.nbn.nbnv.api.model.User;
 @Component
 @MapContainer("DatasetSpeciesDensity")
 public class DatasetSpeciesDensityWMS {
+    private static final String TEN_KM_LAYER_NAME = "Grid-10km";
+    private static final String TWO_KM_LAYER_NAME = "Grid-2km";
+    private static final String ONE_KM_LAYER_NAME = "Grid-1km";
+    private static final String ONE_HUNDRED_M_LAYER_NAME = "Grid-100m";
+        
+    private static final ColourRampGenerator COLOUR_RAMP;
+    
+    private static final Map<String, List<Bucket>> BUCKETS;
+    private static final String[] LAYERS;
+    
+    static {
+        BUCKETS = new HashMap<String, List<Bucket>>();
+        BUCKETS.put(TEN_KM_LAYER_NAME, Bucket.getOpenEndedBucketFromValues("SPECIES", 1,2,3,4,6,11,16,21,36,51,76,101,251,501));
+        BUCKETS.put(TWO_KM_LAYER_NAME, Bucket.getOpenEndedBucketFromValues("SPECIES", 1,2,3,4,5,6,8,11,16,21,26,31,51,101));
+        BUCKETS.put(ONE_KM_LAYER_NAME, Bucket.getOpenEndedBucketFromValues("SPECIES", 1,2,3,4,5,6,8,11,16,21,26,31,51,101));
+        BUCKETS.put(ONE_HUNDRED_M_LAYER_NAME, Bucket.getOpenEndedBucketFromValues("SPECIES", 1,2,3,4,5,6,7,8,9,10,11,16,21,51));
+        
+        COLOUR_RAMP = new ColourRampGenerator(new Color(255, 255, 128), new Color(107, 0, 0));
+        LAYERS = new String[]{TEN_KM_LAYER_NAME, TWO_KM_LAYER_NAME, ONE_KM_LAYER_NAME, ONE_HUNDRED_M_LAYER_NAME};
+    }
+    
     private static final String QUERY = "geom from ("
             + "SELECT geom, species, label "
             + "FROM ( "
@@ -54,6 +78,9 @@ public class DatasetSpeciesDensityWMS {
             @PathParam(key="datasetKey", validation="^[A-Z0-9]{8}$") final String key) {
         
         HashMap<String, Object> data = new HashMap<String, Object>();
+        data.put("layers", LAYERS);
+        data.put("colourRamp", COLOUR_RAMP);
+        data.put("buckets", BUCKETS);
         data.put("mapServiceURL", mapServiceURL);
         data.put("properties", properties);
         data.put("layerGenerator", new ResolutionDataGenerator() {
@@ -67,4 +94,5 @@ public class DatasetSpeciesDensityWMS {
         });
         return new MapFileModel("DatasetSpeciesDensityWMS.map", data);
     }
+    
 }
