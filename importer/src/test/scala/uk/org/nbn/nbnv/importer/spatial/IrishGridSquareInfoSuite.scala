@@ -247,4 +247,62 @@ class IrishGridSquareInfoSuite extends BaseFunSuite {
 
     igr.sourceProjectionPolygon matches (TestResources.polygonWKTRegex)
   }
+
+  test("should give correct grid ref for easting 333634 & northing 373505")
+  {
+    val igr = IrishGridSquareInfo(333634, 373505)
+
+    igr.gridReference should be ("J336735")
+  }
+
+  test("should give correct easting and northing for grid ref J336735")
+  {
+    val igr = IrishGridSquareInfo("J336735")
+
+    val (easting, northing) = igr.getEastingNorthing
+
+    easting should be (333600)
+    northing should be (373500)
+  }
+
+  test("should give correct grid ref for easting 316587 & northing 234932")
+  {
+    val igr = IrishGridSquareInfo(316587, 234932)
+
+    igr.gridReference should be ("O165349")
+  }
+
+  test("should give correct easting and northing for grid ref O165349")
+  {
+    val igr = IrishGridSquareInfo("O165349")
+
+    val (easting, northing) = igr.getEastingNorthing
+
+    easting should be (316500)
+    northing should be (234900)
+  }
+
+  test("should give correct grid ref for easting 91246 & northing 71413")
+  {
+    val igr = IrishGridSquareInfo(91246, 71413)
+
+    igr.gridReference should be ("V912714")
+  }
+
+  test("should give correct easting and northing for grid ref V912714")
+  {
+    val igr = IrishGridSquareInfo("V912714")
+
+    val (easting, northing) = igr.getEastingNorthing
+
+    easting should be (91200)
+    northing should be (71400)
+  }
+
+  test("should give correct grid ref for Lat 60.157057 lng -1.1515654") {
+    val igr = IrishGridSquareInfo(53.352140, -6.2505580)
+    igr.gridReference should be ("O165349")
+  }
+
+
 }

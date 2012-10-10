@@ -88,6 +88,9 @@ public class MetadataWriter {
         dataset.appendChild(createMethodsNode(doc, ds));
         dataset.appendChild(createTemporalNode(doc, ds));
         dataset.appendChild(createInfoNode(doc, ds));
+        dataset.appendChild(createPublicAccessResNode(doc, ds));
+        dataset.appendChild(createRecorderNameNode(doc, ds));
+        dataset.appendChild(createRecordAttsNode(doc, ds));
 
         TransformerFactory tfac = TransformerFactory.newInstance();
         Transformer trans = tfac.newTransformer();
@@ -102,6 +105,30 @@ public class MetadataWriter {
         out.close();
         return sw.toString();
     }
+
+    private Element createPublicAccessResNode(Document doc, Metadata ds) {
+        Element ir = doc.createElement("additionalInfo");
+        ir.appendChild(formatParaTag(doc, "Public Access: " + ds.getGeographicalRes()));
+        return ir;
+    }
+    
+    private Element createRecorderNameNode(Document doc, Metadata ds) {
+        Element ir = doc.createElement("additionalInfo");
+        if (ds.getRecorderNames().equals("null")) {
+            ds.setRecorderNames("false");
+        }
+        ir.appendChild(formatParaTag(doc, "Recorder Names: " + ds.getRecorderNames()));
+        return ir;
+    }    
+    
+    private Element createRecordAttsNode(Document doc, Metadata ds) {
+        Element ir = doc.createElement("additionalInfo");
+        if (ds.getRecordAtts().equals("null")) {
+            ds.setRecordAtts("false");
+        }
+        ir.appendChild(formatParaTag(doc, "Record Attributes: " + ds.getRecordAtts()));
+        return ir;
+    }      
 
     private Element formatParaTag(Document doc, String text) {
         Element para = doc.createElement("para");
@@ -306,10 +333,7 @@ public class MetadataWriter {
 
     private Element createInfoNode(Document doc, Metadata ds) {
         Element ir = doc.createElement("additionalInfo");
-        ir.appendChild(formatParaTag(doc, "Public Access: " + ds.getGeographicalRes() + 
-                "\nRecorder Names: " + ds.getRecorderNames() + 
-                "\nRecord Attributes: " + ds.getRecordAtts() + 
-                "\nAdditional Information: " + ds.getInfo()));
+        ir.appendChild(formatParaTag(doc, "Additional Information: " + ds.getInfo()));
         return ir;
     }
 }

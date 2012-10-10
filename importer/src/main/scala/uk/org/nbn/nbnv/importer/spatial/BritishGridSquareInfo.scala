@@ -49,16 +49,13 @@ object BritishGridSquareInfo {
     val mnrX = sqX - majX
     val mnrY = sqY - majY
 
-    val minLetter = minorBritishGridByCoord(mnrX, mnrY)
-
     if (minorBritishGridByCoord.get(mnrX, mnrY).isEmpty) throw new ImportFailedException("The easing and northing (%s,%s) are not within the british grid".format(east,north))
 
-    var eastPart = (east - e100k).toString
-    eastPart = "0" * (5 - eastPart.length) + eastPart
+    val minLetter = minorBritishGridByCoord(mnrX, mnrY)
 
-    var northPart = (north - n100k).toString
-    northPart = "0" * (5 - northPart.length) + northPart
+    val eastPart = "%05d".format(east - e100k)
 
+    val northPart = "%05d".format(north - n100k)
 
     val gridRef = majLetter + minLetter + eastPart + northPart
 
@@ -72,6 +69,18 @@ object BritishGridSquareInfo {
   def apply(gridRef : String, precision : Int) : BritishGridSquareInfo = {
     new BritishGridSquareInfo(gridRef, precision)
   }
+
+  def apply(latitude : Double, longitude: Double) : BritishGridSquareInfo = {
+    BritishGridSquareInfo(latitude, longitude, 0)
+  }
+
+  def apply(latitude : Double, longitude: Double, precision : Int) : BritishGridSquareInfo = {
+    val (easting, northing) = (new LatLngReprojector).reproject(latitude, longitude, "27700")
+
+    BritishGridSquareInfo(easting, northing, precision)
+  }
+
+
 }
 
 class BritishGridSquareInfo(gridRef : String, precision: Int = 0) extends GridSquareInfo(gridRef, precision) {

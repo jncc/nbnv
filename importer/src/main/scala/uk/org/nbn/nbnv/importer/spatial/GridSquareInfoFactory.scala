@@ -10,7 +10,7 @@ class GridSquareInfoFactory {
       case "27700" => BritishGridSquareInfo(east.toInt, north.toInt, gridReferencePrecision)
       case "23030" => IrishGridSquareInfo(east.toInt, north.toInt, gridReferencePrecision)
       case "29903" => ChannelIslandGridSquareInfo(east.toInt, north.toInt, gridReferencePrecision)
-      case "4326" => getGridFromWGS84(east, north)
+      case "4326" => getGridFromWGS84(east, north, gridReferencePrecision)
       case _ => throw new ImportFailedException("Unknown spatial referene system '%s'".format(spatialReferenceSystem))
      }
   }
@@ -51,7 +51,7 @@ class GridSquareInfoFactory {
 
   }
 
-  private def getGridFromWGS84(lat: Double, lng: Double) = {
+  private def getGridFromWGS84(lat: Double, lng: Double, precision: Int) = {
     //todo determine grid ref system from lat lng
     null
   }

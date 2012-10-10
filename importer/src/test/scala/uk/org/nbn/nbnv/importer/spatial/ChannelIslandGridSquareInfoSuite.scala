@@ -247,4 +247,24 @@ class ChannelIslandGridSquareInfoSuite extends BaseFunSuite {
 
     cigr.sourceProjectionPolygon matches (TestResources.polygonWKTRegex)
   }
+
+  //todo add some tests in for easting northing to grid ref conversion and back again from real
+  //values verrified externally
+
+  test("should give correct easting and norhting for WV1663471237") {
+    val cigr = ChannelIslandGridSquareInfo("WV1663471237")
+
+    val (easting, northing) = cigr.getEastingNorthing
+
+    easting should be (516600)
+    northing should be (5471200)
+  }
+
+  test("should give correct grid gref for easting 516600 & northing 5471200") {
+    val cigr = ChannelIslandGridSquareInfo(516600, 5471200)
+
+    cigr.gridReference should be ("WV166712")
+  }
+
+  //todo test latlong to grid ref.
 }
