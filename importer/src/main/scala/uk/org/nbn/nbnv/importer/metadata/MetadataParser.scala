@@ -15,7 +15,7 @@ class MetadataParser {
     // by an identifier such as Temporal Coverage:
     def getAdditionalData(identifier: String) = {
       val additionalInfoNodes = dataset \ "additionalInfo" \ "para"
-      additionalInfoNodes.find { _.text matches identifier + "(.*)" } match {
+      additionalInfoNodes.find { _.text.startsWith(identifier) } match {
         case Some(aiNode) => aiNode.text.replace(identifier, "").trim
         case None => ""
       }
@@ -34,9 +34,26 @@ class MetadataParser {
       val dataQuality = (dataset \ "methods" \ "qualityControl" \ "description" \ "para" ).text.trim
       val temporalCoverage = getAdditionalData("Temporal Coverage:")
       val additionalInformation = getAdditionalData("Additional Information:")
+
+      var prec = 10000
+      try {
+        prec = getAdditionalData("Public Access:").toInt
+      } catch {
+        case e: Exception => prec = 10000
+      }
+      val publicPrecision = prec
+
+      var radap = false
+      try {
+        radap = getAdditionalData("Recorder Names:").toBoolean
+      } catch {
+        case e: Exception => radap = false
+      }
+      val recorderAndDeterminerArePublic = radap
+
       val siteIsPublic = true // todo
-      val recorderAndDeterminerArePublic = true // todo
-      val publicPrecision = 2000 // todo. expecting this to always be specified
+
+
     }
 
   }

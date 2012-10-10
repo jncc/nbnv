@@ -258,20 +258,20 @@ public class MetadataController {
     @ModelAttribute("referenceData")
     protected Map referenceData(HttpServletRequest request, Object command, Errors errors) throws Exception {
         Map<String, String> geoMap = new LinkedHashMap<String, String>();
-        geoMap.put("full","Full");
-        geoMap.put("1","1km\u00B2 ");
-        geoMap.put("2","2km\u00B2");
-        geoMap.put("10","10km\u00B2");
+        geoMap.put("1","Full");
+        geoMap.put("1000","1km\u00B2 ");
+        geoMap.put("2000","2km\u00B2");
+        geoMap.put("10000","10km\u00B2");
         
         Map<String, String> recAtts = new LinkedHashMap<String, String>();
-        recAtts.put("y","Yes");
-        recAtts.put("n","No");
-        recAtts.put("na","N/A");
+        recAtts.put("true","Yes");
+        recAtts.put("false","No");
+        recAtts.put("null","N/A");
         
         Map<String, String> recNames = new LinkedHashMap<String, String>();
-        recNames.put("y","Yes");
-        recNames.put("n","No");
-        recNames.put("na","N/A");
+        recNames.put("true","Yes");
+        recNames.put("false","No");
+        recNames.put("null","N/A");
         
         Map<String, Object> ref = new HashMap<String, Object>();
         ref.put("geoMap", geoMap);

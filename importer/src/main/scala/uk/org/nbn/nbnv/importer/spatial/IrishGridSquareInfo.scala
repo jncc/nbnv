@@ -46,6 +46,16 @@ object IrishGridSquareInfo {
 
     new IrishGridSquareInfo(gridRef, precision)
   }
+
+  def apply(latitude : Double, longitude: Double) : IrishGridSquareInfo = {
+    IrishGridSquareInfo(latitude, longitude, 0)
+  }
+
+  def apply(latitude : Double, longitude: Double, precision : Int) : IrishGridSquareInfo = {
+    val (easting, northing) = (new LatLngReprojector).reproject(latitude, longitude, "29903")
+
+    IrishGridSquareInfo(easting, northing, precision)
+  }
 }
 
 class IrishGridSquareInfo(gridRef: String, precision: Int = 0) extends GridSquareInfo(gridRef, precision) {

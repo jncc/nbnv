@@ -12,7 +12,7 @@ import validation.Validator
 object Importer {
 
   /// The entry point to the console application.
-  def main(args: Array[String]) {
+  def main(args: Array[String]) : Unit = {
 
     Options.parse(args.toList) match {
       case OptionsSuccess(options) => {
