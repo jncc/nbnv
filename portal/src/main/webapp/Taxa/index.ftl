@@ -24,6 +24,6 @@ is not a finished product.
                     {"id":"En", "name":"Invalidly imported English"}
                 ]
         }]; result>
-        <@taxon_utils.short_name taxon=result/>
+        ${taxon_utils.getShortName(result)}
     </@search.search>
 </@template.master>

@@ -8,9 +8,10 @@
     </#if>
 </#macro>
 
-<#macro short_name taxon>
-    <span class="nbn-taxon-name">${taxon.name}</span>
+<#function getShortName taxon>
+    <#assign toReturn="<span class='nbn-taxon-name'>${taxon.name}</span>">
     <#if taxon.commonName?has_content>
-        ${taxon.commonName}
+        <#assign toReturn=toReturn + " " + taxon.commonName>
     </#if>
-</#macro>
+    <#return toReturn>
+</#function>

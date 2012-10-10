@@ -23,7 +23,7 @@
     </table>
 </#macro>
 
-<#macro site_report_filters location isSiteBoundaryReport requestParameters args={}>
+<#macro site_report_filters location requestParameters isSpatialRelationshipNeeded=true isDesignationNeeded=true isDatasetNeeded=true args={}>
     <#assign startYear=requestParameters.startYear?has_content?string(requestParameters.startYear[0]!"1600","1600")>
     <#assign endYear=requestParameters.endYear?has_content?string(requestParameters.endYear[0]!.now?string("yyyy"),.now?string("yyyy"))>
     <#assign spatialRelationship=requestParameters.spatialRelationship?has_content?string(requestParameters.spatialRelationship[0]!"overlap","overlap")>
@@ -42,18 +42,20 @@
             </tr>
             <tr>
                 <td class="nbn-td-left nbn-filter-name">Year range:</td>
-                <td class="nbn-td-right"><@yearRangeText requestParameters=requestParameters/></td>
+                <td class="nbn-td-right">${getYearRangeText(requestParameters)}</td>
             </tr>
-            <#if isSiteBoundaryReport>
+            <#if isSpatialRelationshipNeeded>
                 <tr>
                     <td class="nbn-td-left nbn-filter-name">Spatial relationship:</td>
                     <td class="nbn-td-right"><@spatialRelationshipText requestParameters=requestParameters/></td>
                 </tr>
             </#if>
-            <tr>
-                <td class="nbn-td-left nbn-filter-name">Designation:</td>
-                <td class="nbn-td-right"><@designationText requestParameters=requestParameters/></td>
-            </tr>
+            <#if isDesignationNeeded>
+                <tr>
+                    <td class="nbn-td-left nbn-filter-name">Designation:</td>
+                    <td class="nbn-td-right"><@designationText requestParameters=requestParameters/></td>
+                </tr>
+            </#if>
             <tr>
                 <td class="nbn-td-left nbn-filter-name">Datasets:</td>
                 <td class="nbn-td-right"><@datasetText requestParameters=requestParameters/></td>
@@ -80,7 +82,7 @@
                 <td class="nbn-td-right"><input name="startYear" id="startYear" type="textbox" value="${startYear}" class="nbn-year-input"/>
                                          to <input name="endYear" id="endYear" type="textbox" value="${endYear}" class="nbn-year-input"/></td>
             </tr>
-            <#if isSiteBoundaryReport>
+            <#if isSpatialRelationshipNeeded>
                 <tr>
                     <td class="nbn-td-left nbn-filter-name">Spatial relationship: </td>
                     <td class="nbn-td-right">
@@ -96,22 +98,26 @@
                     </td>
                 </tr>
             </#if>
-            <tr>
-                <td class="nbn-td-left nbn-filter-name">Designation: </td>
-                <td class="nbn-td-right">
-                    <select name="designation" id="designation" class="nbn-report-filter-dropdown">
-                        <option selected="selected" value="">None selected</option>
-                        <#list designations as designation>
-                            <#assign selected = requestParameters.designation?seq_contains(designation.code)?string("selected","")>
-                            <option value="${designation.code}" ${selected}>${designation.name}</option>
-                        </#list>
-                    </select><br/>
-                </td>
-            </tr>
-            <tr>
-                <td class="nbn-td-left nbn-filter-name">Datasets:</td>
-                <td class="nbn-td-right">Select from table below</td>
-            </tr>
+            <#if isDesignationNeeded>
+                <tr>
+                    <td class="nbn-td-left nbn-filter-name">Designation: </td>
+                    <td class="nbn-td-right">
+                        <select name="designation" id="designation" class="nbn-report-filter-dropdown">
+                            <option selected="selected" value="">None selected</option>
+                            <#list designations as designation>
+                                <#assign selected = requestParameters.designation?seq_contains(designation.code)?string("selected","")>
+                                <option value="${designation.code}" ${selected}>${designation.name}</option>
+                            </#list>
+                        </select><br/>
+                    </td>
+                </tr>
+            </#if>
+            <#if isDatasetNeeded>
+                <tr>
+                    <td class="nbn-td-left nbn-filter-name">Datasets:</td>
+                    <td class="nbn-td-right">Select from table below</td>
+                </tr>
+            </#if>
             <tr>
                 <td class="nbn-td-left"></td>
                 <td class="nbn-td-right"><input type="submit"/></td>
@@ -137,11 +143,11 @@
     ${datasetText}
 </#macro>
 
-<#macro yearRangeText requestParameters>
+<#function getYearRangeText requestParameters>
     <#assign startYear=requestParameters.startYear?has_content?string(requestParameters.startYear[0]!"1600","1600")>
     <#assign endYear=requestParameters.endYear?has_content?string(requestParameters.endYear[0]!.now?string("yyyy"),.now?string("yyyy"))>
-    ${startYear} to ${endYear}
-</#macro>
+    <#return startYear + " to " + endYear/>
+</#function>
 
 <#macro spatialRelationshipText requestParameters>
     <#assign spatialRelationshipText="Records within or partially overlapping the site">
