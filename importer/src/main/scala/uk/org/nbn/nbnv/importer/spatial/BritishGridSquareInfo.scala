@@ -49,9 +49,9 @@ object BritishGridSquareInfo {
     val mnrX = sqX - majX
     val mnrY = sqY - majY
 
-    val minLetter = minorBritishGridByCoord(mnrX, mnrY)
-
     if (minorBritishGridByCoord.get(mnrX, mnrY).isEmpty) throw new ImportFailedException("The easing and northing (%s,%s) are not within the british grid".format(east,north))
+
+    val minLetter = minorBritishGridByCoord(mnrX, mnrY)
 
     val eastPart = "%05d".format(east - e100k)
 
