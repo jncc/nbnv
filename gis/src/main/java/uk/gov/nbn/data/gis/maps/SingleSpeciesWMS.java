@@ -47,16 +47,16 @@ public class SingleSpeciesWMS {
     @MapService("{taxonVersionKey}")
     @AtlasGrade(
         layers={
-            @GridLayer(name="10km",     layer="Grid-10km",      snapTo=Resolution.TEN_KM, resolution=Resolution.TEN_KM),
-            @GridLayer(name="10km-2km", layer="Grid-10km-2km",  snapTo=Resolution.TEN_KM, resolution=Resolution.TWO_KM),
-            @GridLayer(name="10km-1km", layer="Grid-10km-1km",  snapTo=Resolution.TEN_KM, resolution=Resolution.ONE_KM),
-            @GridLayer(name="10km-100m",layer="Grid-10km-100m", snapTo=Resolution.TEN_KM, resolution=Resolution.ONE_HUNDRED_METERS),
-            @GridLayer(name="2km",      layer="Grid-2km",       snapTo=Resolution.TWO_KM, resolution=Resolution.TWO_KM),
-            @GridLayer(name="2km-1km",  layer="Grid-2km-1km",   snapTo=Resolution.TWO_KM, resolution=Resolution.ONE_KM),
-            @GridLayer(name="2km-100m", layer="Grid-2km-100m",  snapTo=Resolution.TWO_KM, resolution=Resolution.ONE_HUNDRED_METERS),
-            @GridLayer(name="1km",      layer="Grid-1km",       snapTo=Resolution.ONE_KM, resolution=Resolution.ONE_KM),
-            @GridLayer(name="1km-100m", layer="Grid-1km-100m",  snapTo=Resolution.ONE_KM, resolution=Resolution.ONE_HUNDRED_METERS),
-            @GridLayer(name="100m",     layer="Grid-100m",      snapTo=Resolution.ONE_HUNDRED_METERS, resolution=Resolution.ONE_HUNDRED_METERS)
+            @GridLayer(name="10km",     layer="Grid-10km",      resolutions=Resolution.TEN_KM),
+            @GridLayer(name="2km",      layer="Grid-2km",       resolutions=Resolution.TWO_KM),
+            @GridLayer(name="1km",      layer="Grid-1km",       resolutions=Resolution.ONE_KM),
+            @GridLayer(name="100m",     layer="Grid-100m",      resolutions=Resolution.ONE_HUNDRED_METERS),
+            @GridLayer(name="10km-2km", layer="Grid-10km-2km",  resolutions={Resolution.TEN_KM, Resolution.TWO_KM}),
+            @GridLayer(name="10km-1km", layer="Grid-10km-1km",  resolutions={Resolution.TEN_KM, Resolution.TWO_KM, Resolution.ONE_KM}),
+            @GridLayer(name="10km-100m",layer="Grid-10km-100m", resolutions={Resolution.TEN_KM, Resolution.TWO_KM, Resolution.ONE_KM, Resolution.ONE_HUNDRED_METERS}),
+            @GridLayer(name="2km-1km",  layer="Grid-2km-1km",   resolutions={Resolution.TWO_KM, Resolution.ONE_KM}),
+            @GridLayer(name="2km-100m", layer="Grid-2km-100m",  resolutions={Resolution.TWO_KM, Resolution.ONE_KM, Resolution.ONE_HUNDRED_METERS}),
+            @GridLayer(name="1km-100m", layer="Grid-1km-100m",  resolutions={Resolution.ONE_KM, Resolution.ONE_HUNDRED_METERS})
         },
         defaultLayer="10km",
         backgrounds=@Layer(name="os", layer="OS-Scale-Dependant" ),
