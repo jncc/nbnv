@@ -34,35 +34,30 @@ object Program {
 
   def create(options: Options) = {
 
-//    val injector = Guice.createInjector(new GuiceModule(options))
-//    injector.getInstance(classOf[Program])
+    val injector = Guice.createInjector(new GuiceModule(options))
+    injector.getInstance(classOf[Program])
 
-    Log.configure(options.logDir, "4MB", Level.INFO)
-    val log = Log.get()
-    new Program(log, options)
+//    Log.configure(options.logDir, "4MB", Level.INFO)
+//    val log = Log.get()
+//    new Program(log, options)
   }
 }
 
-class Program @Inject() (log: Logger, options: Options) { // , em: EntityManager, ingester: FeatureIngester
+class Program @Inject() (log: Logger, options: Options, em: EntityManager, ingester: FeatureIngester) {
 
   def run() {
 
-
     val watch = new Stopwatch().start()
 
-    val groupsOfRefs = (for {
-      line <- Source.fromFile(options.dataPath).getLines().drop(2000).take(5000)
+    val groups = (for {
+      line <- Source.fromFile(options.dataPath).getLines()
       ref = line.trim
       if !ref.isEmpty
     } yield ref).zipWithIndex.grouped(100)
 
-    for (g <- groupsOfRefs) {
+    for (g <- groups) {
 
-      val em = new PersistenceUtility().createEntityManagerFactory(Settings.map).createEntityManager
-      val repo = new Repository(log, em, new QueryCache(log))
       val t = em.getTransaction
-      val ingester = new FeatureIngester(log, em, repo, new GridSquareInfoFactory)
-
       withTransaction(t, options.whatIf) {
 
         for ((ref, i) <- g) {
@@ -71,6 +66,9 @@ class Program @Inject() (log: Logger, options: Options) { // , em: EntityManager
           log.info("Imported " + (i + 1) + " grid refs in " + watch.elapsedMillis() + "ms")
           log.info("Average speed is " + watch.elapsedMillis() / (i + 1) + "ms per grid ref")
         }
+        em.flush()
+        em.clear()
+
       }
     }
   }
@@ -93,6 +91,7 @@ class Program @Inject() (log: Logger, options: Options) { // , em: EntityManager
     }
     catch {
       case e: ConstraintViolationException => {
+        log.fatal("Unhandled exception!", e)
         for (v <- e.getConstraintViolations) {
           log.info(v.getPropertyPath + v.getMessage)
         }
@@ -100,6 +99,7 @@ class Program @Inject() (log: Logger, options: Options) { // , em: EntityManager
       }
       case e: Throwable => {
         if (t != null && t.isActive) t.rollback()
+        log.fatal("Unhandled exception!", e)
         throw (e)
       }
     }
