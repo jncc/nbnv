@@ -11,7 +11,7 @@ import uk.org.nbn.nbnv.importer.grin.Options
 class GuiceModule(options: Options) extends AbstractModule {
 
   val entityManager = new PersistenceUtility().createEntityManagerFactory(Settings.map).createEntityManager
-  Log.configure(options.logDir, "4MB", Level.ALL)
+  Log.configure(options.logDir, "4MB", Level.INFO)
 
   override def configure() {
     // kinda obvious why the cache should be a singleton...
