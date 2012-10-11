@@ -5,20 +5,22 @@ import com.google.inject.Inject
 import uk.org.nbn.nbnv.importer.data.Repository
 
 class GridSquareInfoFactory @Inject()(repo: Repository) {
-  def getByCoordinate(east: Double, north: Double, spatialReferenceSystem: String, gridReferencePrecision: Int) : GridSquareInfo = {
 
-    val srs = if (spatialReferenceSystem == "4326") repo.getSRSForLatLong(east, north) else spatialReferenceSystem
+  /// Returns None for WGS84 points that don't lie within any supported grid system.
+  def getByCoordinate(east: Double, north: Double, spatialReferenceSystem: String, gridReferencePrecision: Int) : Option[GridSquareInfo] = {
+
+    val srs = if (spatialReferenceSystem == "4326") repo.getSRSForLatLong(east, north) else Some(spatialReferenceSystem)
 
     srs match {
-      case "27700" => BritishGridSquareInfo(east.toInt, north.toInt, gridReferencePrecision)
-      case "23030" => IrishGridSquareInfo(east.toInt, north.toInt, gridReferencePrecision)
-      case "29903" => ChannelIslandGridSquareInfo(east.toInt, north.toInt, gridReferencePrecision)
+      case None => None
+      case Some("27700") => Some(BritishGridSquareInfo(east.toInt, north.toInt, gridReferencePrecision))
+      case Some("23030") => Some(IrishGridSquareInfo(east.toInt, north.toInt, gridReferencePrecision))
+      case Some("29903") => Some(ChannelIslandGridSquareInfo(east.toInt, north.toInt, gridReferencePrecision))
       case _ => throw new ImportFailedException("Unknown spatial referene system '%s'".format(spatialReferenceSystem))
-     }
+    }
   }
 
   def getByGridRef(gridRef: String, gridReferenceType: String = "", gridReferencePrecision: Int = 0) : GridSquareInfo = {
-
 
     val gridType = if (gridReferenceType.isEmpty) {
                       getGridRefType(gridRef)
