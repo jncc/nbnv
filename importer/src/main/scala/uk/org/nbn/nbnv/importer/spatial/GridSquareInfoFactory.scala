@@ -1,16 +1,18 @@
 package uk.org.nbn.nbnv.importer.spatial
 
 import uk.org.nbn.nbnv.importer.ImportFailedException
+import com.google.inject.Inject
+import uk.org.nbn.nbnv.importer.data.Repository
 
-class GridSquareInfoFactory {
+class GridSquareInfoFactory @Inject()(repo: Repository) {
   def getByCoordinate(east: Double, north: Double, spatialReferenceSystem: String, gridReferencePrecision: Int) : GridSquareInfo = {
-//    figure out what the hell this is
-//    Make a grid square of the appropriate type and rerun
-    spatialReferenceSystem match {
+
+    val srs = if (spatialReferenceSystem == "4326") repo.getSRSForLatLong(east, north) else spatialReferenceSystem
+
+    srs match {
       case "27700" => BritishGridSquareInfo(east.toInt, north.toInt, gridReferencePrecision)
       case "23030" => IrishGridSquareInfo(east.toInt, north.toInt, gridReferencePrecision)
       case "29903" => ChannelIslandGridSquareInfo(east.toInt, north.toInt, gridReferencePrecision)
-      case "4326" => getGridFromWGS84(east, north, gridReferencePrecision)
       case _ => throw new ImportFailedException("Unknown spatial referene system '%s'".format(spatialReferenceSystem))
      }
   }
@@ -49,11 +51,6 @@ class GridSquareInfoFactory {
     else if (gridRef.matches(GridRefPatterns.channelIslandsDintyGridRef)) "ED50"
     else throw new ImportFailedException("Grid refernce type cannot be determined from grid ref '%s'".format(gridRef))
 
-  }
-
-  private def getGridFromWGS84(lat: Double, lng: Double, precision: Int) = {
-    //todo determine grid ref system from lat lng
-    null
   }
 
 }

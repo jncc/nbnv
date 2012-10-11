@@ -7,10 +7,17 @@ import uk.org.nbn.nbnv.importer.data.Implicits._
 import com.google.inject.Inject
 import org.apache.log4j.Logger
 import uk.org.nbn.nbnv.importer.ImportFailedException
-import uk.org.nbn.nbnv.FeatureFactory
+import uk.org.nbn.nbnv.{SpatialQueries, FeatureFactory}
 
 
 class Repository @Inject()(log: Logger, em: EntityManager, cache: QueryCache) extends ControlAbstractions {
+
+  def getSRSForLatLong(lat: Double, lng: Double) = {
+    val queries = new SpatialQueries(em)
+    val wkt = "POINT(%s %s)".format(lng.toString, lat.toString)
+
+    queries.getGridProjectionForWGS84wkt(wkt)
+  }
 
   def createFeature(wkt: String) = {
 

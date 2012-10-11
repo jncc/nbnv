@@ -61,7 +61,7 @@ class Program @Inject() (log: Logger, options: Options) { // , em: EntityManager
       val em = new PersistenceUtility().createEntityManagerFactory(Settings.map).createEntityManager
       val repo = new Repository(log, em, new QueryCache(log))
       val t = em.getTransaction
-      val ingester = new FeatureIngester(log, em, repo, new GridSquareInfoFactory)
+      val ingester = new FeatureIngester(log, em, repo, new GridSquareInfoFactory(repo))
 
       withTransaction(t, options.whatIf) {
 

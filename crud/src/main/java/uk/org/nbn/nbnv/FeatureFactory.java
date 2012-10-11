@@ -57,7 +57,7 @@ public class FeatureFactory {
         List arguments = new ArrayList();
         arguments.add(wgs84Wkt);
 
-        Session session = ((EntityManagerImpl) _em).getActiveSession();
+        Session session = getSession();
 
         Integer featureId = (Integer) session.executeQuery(query, arguments);
 
@@ -98,12 +98,16 @@ public class FeatureFactory {
         arguments.add(wkt);
         arguments.add(wgs84Feature.getId());
 
-        Session session = ((EntityManagerImpl) _em).getActiveSession();
+        Session session = getSession();
 
         session.executeQuery(query, arguments);
 
         GridSquare gridSquare =  _em.find(GridSquare.class, gridRef);
 
         return gridSquare;
+    }
+
+    private Session getSession() {
+        return ((EntityManagerImpl) _em).getActiveSession();
     }
 }
