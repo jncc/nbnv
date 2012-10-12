@@ -9,7 +9,7 @@
 
   LAYER
     NAME "MiniScale-NoGrid"
-    GROUP "OS-Scale-Dependant"
+    GROUP "OS-Scale-Dependent"
     [#if requires?size != 0]REQUIRES "[@join requires/]"[/#if]
     METADATA
       "wms_title"    "Ordnance Survey MiniScale - No Grid (Modern)"   ##required
@@ -26,7 +26,7 @@
 
   LAYER
     NAME "OS250k"
-    GROUP "OS-Scale-Dependant"
+    GROUP "OS-Scale-Dependent"
     [#if requires?size != 0]REQUIRES "[@join requires/]"[/#if]
     METADATA
       "wms_title"    "Ordnance Survey 1:250000 Scale Colour Raster (Modern)"   ##required
@@ -45,7 +45,7 @@
 
   LAYER
     NAME "OS50k"
-    GROUP "OS-Scale-Dependant"
+    GROUP "OS-Scale-Dependent"
     [#if requires?size != 0]REQUIRES "[@join requires/]"[/#if]
     METADATA
       "wms_title"    "Ordnance Survey 1:50000 Scale Colour Raster (Modern)"   ##required
