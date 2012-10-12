@@ -2,6 +2,7 @@ package uk.org.nbn.nbnv.importer.utility
 
 import java.util
 import org.gbif.utils.file.ClosableIterator
+import scala.collection.JavaConversions._
 
 /**
  * Created with IntelliJ IDEA.
