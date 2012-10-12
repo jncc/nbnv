@@ -1402,11 +1402,44 @@ GO
 
 ------------------------------
 
+-- =============================================
+-- Author:  Felix Mason
+-- Create date: 12/10/2012
+-- Description: Gets the grid system that provides the
+-- most appropriate mapping context for a geometry.
+-- =============================================
+CREATE PROCEDURE [dbo].[import_getGridForWKT]
+	@wkt varchar(max)
+	, @projection varchar(50) OUT
+AS
+BEGIN
+	DECLARE @geom AS geometry
+	SET @geom = geometry::STGeomFromText(@wkt, 4326)
+ 
+	-- get the grid system with the highest priority.
+	SET @projection = (
+		SELECT TOP 1 
+			p.label
+		FROM [dbo].[Projection] p
+		INNER JOIN [dbo].[GridExtents] ge ON ge.projectionID = p.id
+		WHERE ge.geom.STIntersects(@geom) = 1
+		ORDER BY ge.[priority] desc
+	)
+END
+
+GO
+
+------------------------------
+
 CREATE USER [NBNImporter] FOR LOGIN [NBNImporter]
 
 GO
 
 ALTER USER [NBNImporter] WITH DEFAULT_SCHEMA=[dbo]
+
+GO
+
+GRANT EXECUTE ON [dbo].[import_getGridForWKT] TO [NBNImporter]
 
 GO
 
