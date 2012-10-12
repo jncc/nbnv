@@ -4,14 +4,13 @@ import uk.org.nbn.nbnv.metadata.Metadata
 import uk.org.nbn.nbnv.jpa.nbncore._
 import uk.org.nbn.nbnv.importer.utility._
 import javax.persistence.EntityManager
-import uk.org.nbn.nbnv.importer.data.{Repository, KeyGenerator}
+import uk.org.nbn.nbnv.importer.data.{Database, Repository, KeyGenerator}
 import org.apache.log4j.Logger
 import com.google.inject.Inject
 
 class DatasetIngester @Inject()(log: Logger,
-                                em: EntityManager,
-                                keyGenerator: KeyGenerator,
-                                repository: Repository) {
+                                db: Database,
+                                keyGenerator: KeyGenerator) {
 
   def upsertDataset(metadata: Metadata): TaxonDataset = {
 
@@ -38,13 +37,13 @@ class DatasetIngester @Inject()(log: Logger,
 
     val d = new Dataset(key)
     modifyDataset(d, metadata)
-    em.persist(d)
+    db.em.persist(d)
 
     // deal with the table-per-class inheritance model (TaxonDataset has-a Dataset)
     val td = new TaxonDataset(key)
     td.setDataset(d)
     modifyTaxonDataset(td, metadata)
-    em.persist(td)
+    db.em.persist(td)
 
     td
   }
@@ -53,7 +52,7 @@ class DatasetIngester @Inject()(log: Logger,
 
     log.info("Updating existing dataset " + metadata.datasetKey)
 
-    val td = repository.getTaxonDataset(metadata.datasetKey)
+    val td = db.repo.getTaxonDataset(metadata.datasetKey)
     modifyTaxonDataset(td, metadata)
     val d = td.getDataset
     modifyDataset(d, metadata)
@@ -62,9 +61,9 @@ class DatasetIngester @Inject()(log: Logger,
 
   def modifyDataset(d: Dataset, m: Metadata) = {
 
-    val providerOrganisation = repository.getOrganisation(m.datasetProviderName)
-    val datasetUpdateFrequency = em.getReference(classOf[DatasetUpdateFrequency], "012")
-    val datasetType = em.getReference(classOf[DatasetType], 'T')
+    val providerOrganisation = db.repo.getOrganisation(m.datasetProviderName)
+    val datasetUpdateFrequency = db.em.getReference(classOf[DatasetUpdateFrequency], "012")
+    val datasetType = db.em.getReference(classOf[DatasetType], 'T')
 
     // certain fields are metadata, and we have to record when any changes
     var metadataChanged = false
@@ -102,7 +101,7 @@ class DatasetIngester @Inject()(log: Logger,
   private def modifyTaxonDataset(td: TaxonDataset, m: Metadata) {
 
 
-    val resolution = repository.getResolution(m.publicPrecision)
+    val resolution = db.repo.getResolution(m.publicPrecision)
 
     td.setPublicResolution(resolution)
 

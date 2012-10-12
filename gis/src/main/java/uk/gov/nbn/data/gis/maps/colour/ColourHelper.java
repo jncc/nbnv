@@ -1,4 +1,4 @@
-package uk.gov.nbn.data.gis.maps;
+package uk.gov.nbn.data.gis.maps.colour;
 
 import java.awt.Color;
 

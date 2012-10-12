@@ -4,7 +4,7 @@ import uk.org.nbn.nbnv.importer.testing.{FakePersistenceTrackingEntityManager, B
 import org.mockito.Mockito._
 import org.mockito.Matchers._
 import javax.persistence.EntityManager
-import uk.org.nbn.nbnv.importer.data.Repository
+import uk.org.nbn.nbnv.importer.data.{QueryCache, Database, Repository}
 import uk.org.nbn.nbnv.importer.spatial.{GridSquareInfo, GridSquareInfoFactory}
 import uk.org.nbn.nbnv.importer.records.NbnRecord
 import uk.org.nbn.nbnv.jpa.nbncore.{GridSquare, Feature}
@@ -28,9 +28,11 @@ class FeatureIngesterSuite extends BaseFunSuite {
     when(record.gridReferenceType).thenReturn(Some(gridReferenceType))
     when(record.gridReferencePrecision).thenReturn(gridReferencePrecision)
 
+    val log = mock[Logger]
+
     val repo = mock[Repository]
     val em = mock[EntityManager]
-    val log = mock[Logger]
+    val db = new Database(em, repo, mock[QueryCache])
   }
 
   test("an existing grid square feature should just be returned") {
@@ -38,22 +40,22 @@ class FeatureIngesterSuite extends BaseFunSuite {
     // arrange
     val f = fixture
     val feature = mock[Feature]
-    when(f.repo.getGridSquareFeature(f.gridRef)).thenReturn(Some((feature, mock[GridSquare])))
+    when(f.db.repo.getGridSquareFeature(f.gridRef)).thenReturn(Some((feature, mock[GridSquare])))
 
     // act
-    val ingester = new FeatureIngester(f.log, f.em, f.repo, f.gridSquareInfoFactory)
+    val ingester = new FeatureIngester(f.log, f.db, f.gridSquareInfoFactory)
     val result = ingester.ensureFeature(f.record)
 
     // assert
     result should be (feature)
   }
 
-  // todo
+  // todo: this test was broken by the switch to using a sproc
   ignore("a new grid square feature that should have a parent should persist a grid square hierarchy") {
 
     // arrange
     val f = fixture
-    when(f.repo.getGridSquareFeature(anyString)).thenReturn(None)
+    when(f.db.repo.getGridSquareFeature(anyString)).thenReturn(None)
     val parentInfo = mock[GridSquareInfo]
     val grandparentInfo = mock[GridSquareInfo]
     when(parentInfo.gridReference).thenReturn("PARENT")
@@ -65,7 +67,7 @@ class FeatureIngesterSuite extends BaseFunSuite {
     val em = new FakePersistenceTrackingEntityManager
 
     // act
-    val ingester = new FeatureIngester(f.log, em, f.repo, f.gridSquareInfoFactory)
+    val ingester = new FeatureIngester(f.log, f.db, f.gridSquareInfoFactory)
     ingester.ensureFeature(f.record)
 
     // assert
@@ -73,7 +75,7 @@ class FeatureIngesterSuite extends BaseFunSuite {
     persistedGridSquares should equal (List("GRANDPARENT", "PARENT", "ABCDEF"))
   }
 
-  // todo
+  // todo: this test was broken by the switch to using a sproc
   ignore("a new grid square feature that shouldn't have a parent shouldn't persist a grid square hierarchy") {
 
     // arrange
@@ -82,7 +84,7 @@ class FeatureIngesterSuite extends BaseFunSuite {
     when(f.gridSquareInfo.getParentGridSquareInfo).thenReturn(None)
 
     // act
-    val ingester = new FeatureIngester(f.log, f.em, f.repo, f.gridSquareInfoFactory)
+    val ingester = new FeatureIngester(f.log, f.db, f.gridSquareInfoFactory)
     ingester.ensureFeature(f.record)
 
     // assert - that exactly one GridSquare should be persisted

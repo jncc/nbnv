@@ -542,6 +542,28 @@ GO
 
 /*
  *
+ * GridExtents
+ *
+ */
+
+CREATE TABLE GridExtents (
+	[id] [int] NOT NULL PRIMARY KEY,
+	[geom] [geometry] NOT NULL,
+	[projectionID] [int] NOT NULL REFERENCES [Projection] ([id]),
+	[priority] [int] NOT NULL UNIQUE
+);
+
+SET ANSI_PADDING ON; 
+
+CREATE SPATIAL INDEX [sidx_GridExtents_geom] ON [dbo].[GridExtents] (
+	[geom]
+) USING GEOMETRY_GRID WITH (
+	BOUNDING_BOX =(-15, 40, 8, 65), GRIDS =(LEVEL_1 = MEDIUM,LEVEL_2 = MEDIUM,LEVEL_3 = MEDIUM,LEVEL_4 = MEDIUM), CELLS_PER_OBJECT = 16, PAD_INDEX  = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON
+);
+
+SET ANSI_PADDING OFF; 
+/*
+ *
  * Habitat
  *
  */
@@ -1380,11 +1402,44 @@ GO
 
 ------------------------------
 
+-- =============================================
+-- Author:  Felix Mason
+-- Create date: 12/10/2012
+-- Description: Gets the grid system that provides the
+-- most appropriate mapping context for a geometry.
+-- =============================================
+CREATE PROCEDURE [dbo].[import_getGridForWKT]
+	@wkt varchar(max)
+	, @projection varchar(50) OUT
+AS
+BEGIN
+	DECLARE @geom AS geometry
+	SET @geom = geometry::STGeomFromText(@wkt, 4326)
+ 
+	-- get the grid system with the highest priority.
+	SET @projection = (
+		SELECT TOP 1 
+			p.srcSRID 
+		FROM [dbo].[Projection] p
+		INNER JOIN [dbo].[GridExtents] ge ON ge.projectionID = p.id
+		WHERE ge.geom.STIntersects(@geom) = 1
+		ORDER BY ge.[priority] desc
+	)
+END
+
+GO
+
+------------------------------
+
 CREATE USER [NBNImporter] FOR LOGIN [NBNImporter]
 
 GO
 
 ALTER USER [NBNImporter] WITH DEFAULT_SCHEMA=[dbo]
+
+GO
+
+GRANT EXECUTE TO [NBNImporter]
 
 GO
 

@@ -1,0 +1,93 @@
+[#ftl]
+[#import "backgrounds.ftl" as backgrounds]
+
+MAP
+    IMAGETYPE                                             PNG
+    SIZE                                                  600 600
+    IMAGECOLOR                                            255 255 255
+    FONTSET                                               "fonts/fontset"
+    EXTENT                                                330000 460000 450000 520000
+    WEB
+        IMAGEPATH                                           "/ms4w/tmp/ms_tmp/"
+        IMAGEURL                                            "/ms_tmp/"
+        METADATA
+            "wms_title"                                       "Site Report for ${featureID}"
+            "wms_onlineresource"                              "${mapServiceURL}"
+            "wms_srs"                                         "EPSG:29903 EPSG:27700 EPSG:4326 EPSG:3857"
+            "wms_enable_request"                              "*"
+        END
+    END
+
+    PROJECTION
+        "init=epsg:27700"
+    END
+    
+    [@backgrounds.os location=properties.ordnanceSurveyMapDataLocation requires=[]/]
+    
+    [@backgrounds.selectedFeature featureID=featureID spatialConnection=properties.spatialConnection/]
+
+    [#if taxonVersionKey??]
+        LAYER
+            NAME                                                "Records"
+            TYPE                                                POLYGON
+            STATUS                                              OFF
+            CONNECTIONTYPE                                      PLUGIN
+            PLUGIN                                              "msplugin_mssql2008.dll"
+            CONNECTION                                          "${properties.spatialConnection}"
+            PROCESSING                                          "CLOSE_CONNECTION=DEFER"
+            DATA                                                "${recordsData}"
+
+            OPACITY                                             60
+
+            METADATA
+                "wms_title"                                       "Records"
+                "wms_include_items"                               "all"
+            END
+
+            PROJECTION
+                "init=epsg:4326"
+            END
+
+            CLASS
+                NAME                                              "Grid 10km"
+                EXPRESSION                                        ([RESOLUTIONID] = 1)
+
+                STYLE
+                    COLOR                                           255 255 0
+                    OUTLINECOLOR                                    0 0 0
+                    WIDTH                                           1
+                END
+            END
+            CLASS
+                NAME                                              "Grid 2km"
+                EXPRESSION                                        ([RESOLUTIONID] = 2)
+
+                STYLE
+                    COLOR                                           0 255 0
+                    OUTLINECOLOR                                    0 0 0
+                    WIDTH                                           1
+                END
+            END
+            CLASS
+                NAME                                              "Grid 1km"
+                EXPRESSION                                        ([RESOLUTIONID] = 3)
+
+                STYLE
+                    COLOR                                           0 255 255
+                    OUTLINECOLOR                                    0 0 0
+                    WIDTH                                           1
+                END
+            END
+            CLASS
+                NAME                                              "Grid 100m"
+                EXPRESSION                                        ([RESOLUTIONID] = 4)
+
+                STYLE
+                    COLOR                                           255 0 0
+                    OUTLINECOLOR                                    0 0 0
+                    WIDTH                                           1
+                END
+            END
+        END
+    [/#if]
+END

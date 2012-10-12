@@ -2,11 +2,11 @@ package uk.org.nbn.nbnv.importer.data
 
 import com.google.inject.Inject
 
-class KeyGenerator @Inject()(repository: Repository) {
+class KeyGenerator @Inject()(db: Database) {
 
   def nextTaxonDatasetKey = {
 
-    val latest = repository.getLatestDatasetKey
+    val latest = db.repo.getLatestDatasetKey
 
     latest match {
       case Some(key) => {

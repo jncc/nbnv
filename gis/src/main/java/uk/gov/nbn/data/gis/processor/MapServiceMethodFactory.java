@@ -91,13 +91,13 @@ public class MapServiceMethodFactory {
                     }
                     pathPartOrCreate.setAssociatedMethod(currMethod);
                     
-                    //register atlasgrade functionality
-                    AtlasGrade atlasGradeAnnotation = currMethod.getAnnotation(AtlasGrade.class);
-                    if(atlasGradeAnnotation != null) {
+                    //register gridmap functionality
+                    GridMap gridMapProperties = currMethod.getAnnotation(GridMap.class);
+                    if(gridMapProperties != null) {
                         for(Type mapServiceType : EnumSet.complementOf(EnumSet.of(Type.STANDARD))) {
-                            MapServicePart atlasGradeMapServicePart = getPathPartOrCreate(mapServiceInstance, mapServiceType.getRequest(), pathPartOrCreate);
-                            atlasGradeMapServicePart.setAssociatedMethod(currMethod);
-                            atlasGradeMapServicePart.setMapServiceType(mapServiceType);
+                            MapServicePart gridMapServicePart = getPathPartOrCreate(mapServiceInstance, mapServiceType.getRequest(), pathPartOrCreate);
+                            gridMapServicePart.setAssociatedMethod(currMethod);
+                            gridMapServicePart.setMapServiceType(mapServiceType);
                         }
                     }
                 }
@@ -107,15 +107,15 @@ public class MapServiceMethodFactory {
     }
     
     private static MapServicePart getPathPartOrCreate(Object instance, String name, MapServicePart toFindIn) {
-        MapServicePart potentialNewPathPart = new MapServicePart(instance, name);
-        List<MapServicePart> list = toFindIn.getChildren();
-        int indexOfPathPart = list.indexOf(potentialNewPathPart);
-        if(indexOfPathPart != -1) {
-            return list.get(indexOfPathPart);
+        //look for a child which has the same name as the passed in name
+        for(MapServicePart currChild : toFindIn.getChildren()) {
+           if(name.equals(currChild.getName())) {
+               return currChild;
+           }
         }
-        else {
-            toFindIn.addChild(potentialNewPathPart);
-            return potentialNewPathPart;
-        }
+        //Could not find. Create a new one
+        MapServicePart newPathPart = new MapServicePart(instance, name);
+        toFindIn.addChild(newPathPart);
+        return newPathPart;
     }
 }

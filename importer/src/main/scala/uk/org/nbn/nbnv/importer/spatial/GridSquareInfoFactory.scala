@@ -2,21 +2,32 @@ package uk.org.nbn.nbnv.importer.spatial
 
 import uk.org.nbn.nbnv.importer.ImportFailedException
 import com.google.inject.Inject
-import uk.org.nbn.nbnv.importer.data.Repository
+import uk.org.nbn.nbnv.importer.data.Database
 
-class GridSquareInfoFactory @Inject()(repo: Repository) {
+class GridSquareInfoFactory @Inject()(db: Database) {
 
   /// Returns None for WGS84 points that don't lie within any supported grid system.
   def getByCoordinate(east: Double, north: Double, spatialReferenceSystem: String, gridReferencePrecision: Int) : Option[GridSquareInfo] = {
 
-    val srs = if (spatialReferenceSystem == "4326") repo.getSRSForLatLong(east, north) else Some(spatialReferenceSystem)
+    if (spatialReferenceSystem == "4326") {
+      val longitude = east
+      val latitude = north
+      val targetSrs = db.repo.getSRSForLatLong(longitude, latitude)
 
-    srs match {
+      targetSrs match {
       case None => None
-      case Some("27700") => Some(BritishGridSquareInfo(east.toInt, north.toInt, gridReferencePrecision))
-      case Some("23030") => Some(IrishGridSquareInfo(east.toInt, north.toInt, gridReferencePrecision))
-      case Some("29903") => Some(ChannelIslandGridSquareInfo(east.toInt, north.toInt, gridReferencePrecision))
-      case _ => throw new ImportFailedException("Unknown spatial referene system '%s'".format(spatialReferenceSystem))
+      case Some("27700") => Some(BritishGridSquareInfo(latitude, longitude, gridReferencePrecision))
+      case Some("23030") => Some(IrishGridSquareInfo(latitude, longitude, gridReferencePrecision))
+      case Some("29903") => Some(ChannelIslandGridSquareInfo(latitude, longitude, gridReferencePrecision))
+      }
+    }
+    else {
+      spatialReferenceSystem match {
+        case "27700" => Some(BritishGridSquareInfo(east.toInt, north.toInt, gridReferencePrecision))
+        case "23030" => Some(IrishGridSquareInfo(east.toInt, north.toInt, gridReferencePrecision))
+        case "29903" => Some(ChannelIslandGridSquareInfo(east.toInt, north.toInt, gridReferencePrecision))
+        case _ => throw new ImportFailedException("Unknown spatial referene system '%s'".format(spatialReferenceSystem))
+      }
     }
   }
 
