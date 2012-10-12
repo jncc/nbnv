@@ -42,39 +42,18 @@ class NbnRecordSuite extends BaseFunSuite with BeforeAndAfter {
     val starRec = mock[StarRecord]
     when(starRec.core()).thenReturn(rec)
 
-    val rec1 = mock[Record]
-    when(rec1.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateStart")).thenReturn("19/07/2001")
-
-    val rec1a = mock[Record]
-    when(rec1a.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateEnd")).thenReturn("19/07/2001")
-
-    val rec2 = mock[Record]
-    when(rec2.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateTypeCode")).thenReturn("D")
-
-    val rec3 = mock[Record]
-    when(rec3.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/sensitiveOccurrence")).thenReturn("false")
-
-    val rec4 = mock[Record]
-    when(rec4.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/gridReferenceType")).thenReturn("OSGB")
-
-    val rec5 = mock[Record]
-    when(rec5.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/gridReference")).thenReturn("SK632634")
-
-    val rec6 = mock[Record]
-    when(rec6.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/gridReferencePrecisionRaw")).thenReturn("100")
-
-    val rec7 = mock[Record]
-    when(rec7.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/featureKey")).thenReturn("")
+    val ext = mock[Record]
+    when(ext.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateStart")).thenReturn("19/07/2001")
+    when(ext.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateEnd")).thenReturn("19/07/2001")
+    when(ext.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateTypeCode")).thenReturn("D")
+    when(ext.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/sensitiveOccurrence")).thenReturn("false")
+    when(ext.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/gridReferenceType")).thenReturn("OSGB")
+    when(ext.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/gridReference")).thenReturn("SK632634")
+    when(ext.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/gridReferencePrecisionRaw")).thenReturn("100")
+    when(ext.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/featureKey")).thenReturn("")
 
     var recs = new util.LinkedList[Record]()
-    recs.add(rec1)
-    recs.add(rec1a)
-    recs.add(rec2)
-    recs.add(rec3)
-    recs.add(rec4)
-    recs.add(rec5)
-    recs.add(rec6)
-    recs.add(rec7)
+    recs.add(ext)
 
     when(starRec.extension(("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/nxfOccurrence"))).thenReturn(recs)
 
