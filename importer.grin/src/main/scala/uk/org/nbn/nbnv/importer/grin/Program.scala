@@ -6,14 +6,11 @@ import injection.GuiceModule
 import uk.org.nbn.nbnv.importer.ingestion.FeatureIngester
 import javax.persistence.{EntityTransaction, EntityManager}
 import io.Source
-import org.apache.log4j.{Level, Logger}
+import org.apache.log4j.Logger
 import javax.validation.ConstraintViolationException
 import com.google.common.base.Stopwatch
-import uk.org.nbn.nbnv.importer.logging.Log
-import uk.org.nbn.nbnv.PersistenceUtility
-import uk.org.nbn.nbnv.importer.Settings
 import uk.org.nbn.nbnv.importer.data.{QueryCache, Repository}
-import uk.org.nbn.nbnv.importer.spatial.{GridReferenceTypeMapper, GridSquareInfoFactory}
+import uk.org.nbn.nbnv.importer.spatial.GridSquareInfoFactory
 
 object Program {
 
@@ -59,7 +56,7 @@ class Program @Inject() (log: Logger, options: Options, em: EntityManager, inges
 
       val t = em.getTransaction
       val repo = new Repository(log, em, new QueryCache(log))
-      val ingester = new FeatureIngester(log, em, repo, new GridSquareInfoFactory(repo, new GridReferenceTypeMapper))
+      val ingester = new FeatureIngester(log, em, repo, new GridSquareInfoFactory(repo))
 
       withTransaction(t, options.whatIf) {
 

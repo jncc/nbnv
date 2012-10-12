@@ -4,7 +4,7 @@ import uk.org.nbn.nbnv.importer.ImportFailedException
 import com.google.inject.Inject
 import uk.org.nbn.nbnv.importer.data.Repository
 
-class GridSquareInfoFactory @Inject()(repo: Repository, grtMapper : GridReferenceTypeMapper) {
+class GridSquareInfoFactory @Inject()(repo: Repository) {
 
   /// Returns None for WGS84 points that don't lie within any supported grid system.
   def getByCoordinate(east: Double, north: Double, spatialReferenceSystem: String, gridReferencePrecision: Int) : Option[GridSquareInfo] = {
@@ -22,28 +22,26 @@ class GridSquareInfoFactory @Inject()(repo: Repository, grtMapper : GridReferenc
 
   def getByGridRef(gridRef: String, gridReferenceType: String = "", gridReferencePrecision: Int = 0) : GridSquareInfo = {
 
-    val gridType = if (gridReferenceType.isEmpty)
-                      getGridRefType(gridRef)
-                   else
-      grtMapper.get(gridReferenceType).getOrElse(
-        throw new ImportFailedException("Unknown grid reference type '%s'".format(gridReferenceType)))
+    val gridType = if (gridReferenceType.isEmpty) determineGridRefType(gridRef)
+                   else GridSystem(gridReferenceType)
 
     gridType match {
-      case "OSGB36" =>  BritishGridSquareInfo(gridRef, gridReferencePrecision)
-      case "OSNI" =>    IrishGridSquareInfo(gridRef, gridReferencePrecision)
-      case "ED50" =>    ChannelIslandGridSquareInfo(gridRef, gridReferencePrecision)
+      case BritishGrid => BritishGridSquareInfo(gridRef, gridReferencePrecision)
+      case IrishGrid   => IrishGridSquareInfo(gridRef, gridReferencePrecision)
+      case ChannelGrid => ChannelIslandGridSquareInfo(gridRef, gridReferencePrecision)
+      case UnknownGrid => throw new ImportFailedException("Unknown grid reference type '%s'".format(gridReferenceType))
     }
   }
 
-  private def getGridRefType(gridRef: String) = {
+  private def determineGridRefType(gridRef: String) = {
 
-    if (gridRef.matches(GridRefPatterns.ukGridRef)) "OSGB36"
-    else if (gridRef.matches(GridRefPatterns.ukDintyGridRef)) "OSGB36"
-    else if (gridRef.matches(GridRefPatterns.irishGridRef)) "OSNI"
-    else if (gridRef.matches(GridRefPatterns.irishDintyGrid)) "OSNI"
-    else if (gridRef.matches(GridRefPatterns.channelIslandsGridRef)) "ED50"
-    else if (gridRef.matches(GridRefPatterns.channelIslandsDintyGridRef)) "ED50"
-    else throw new ImportFailedException("Grid refernce type cannot be determined from grid ref '%s'".format(gridRef))
+    if (gridRef.matches(GridRefPatterns.ukGridRef)) BritishGrid
+    else if (gridRef.matches(GridRefPatterns.ukDintyGridRef)) BritishGrid
+    else if (gridRef.matches(GridRefPatterns.irishGridRef)) IrishGrid
+    else if (gridRef.matches(GridRefPatterns.irishDintyGrid)) IrishGrid
+    else if (gridRef.matches(GridRefPatterns.channelIslandsGridRef)) ChannelGrid
+    else if (gridRef.matches(GridRefPatterns.channelIslandsDintyGridRef)) ChannelGrid
+    else throw new ImportFailedException("Grid reference type cannot be determined from grid ref '%s'".format(gridRef))
 
   }
 

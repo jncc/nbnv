@@ -1,10 +1,11 @@
 package uk.org.nbn.nbnv.importer.validation
 
 import uk.org.nbn.nbnv.importer.fidelity.{ResultLevel, Result}
-import uk.org.nbn.nbnv.importer.spatial.{GridReferenceTypeMapper, GridRefPatterns}
-import com.google.inject.Inject
+import uk.org.nbn.nbnv.importer.spatial._
+import uk.org.nbn.nbnv.importer.spatial.BritishGrid
+import uk.org.nbn.nbnv.importer.spatial.IrishGrid
 
-class Nbnv159Validator (grtMapper: GridReferenceTypeMapper) {
+class Nbnv159Validator () {
   def validate(gridReference : String, gridReferenceType : Option[String], recordKey : String)  = {
 
     def success = {
@@ -25,24 +26,24 @@ class Nbnv159Validator (grtMapper: GridReferenceTypeMapper) {
 
     if(gridReferenceType.isDefined) {
 
-      grtMapper.get(gridReferenceType.get) match {
+      GridSystem(gridReferenceType.get) match {
 
-        case Some("OSGB36") => {
+        case BritishGrid => {
           if (gridReference.matches(GridRefPatterns.ukGridRef)
           || gridReference.matches(GridRefPatterns.ukDintyGridRef))
           success else fail
         }
-        case Some("OSNI") => {
+        case IrishGrid => {
           if (gridReference.matches(GridRefPatterns.irishGridRef)
             || gridReference.matches(GridRefPatterns.irishDintyGrid))
             success else fail
         }
-        case Some("ED50") => {
+        case ChannelGrid => {
           if (gridReference.matches(GridRefPatterns.channelIslandsGridRef)
             || gridReference.matches(GridRefPatterns.channelIslandsDintyGridRef))
             success else fail
         }
-        case None => {
+        case UnknownGrid => {
           new Result {
             def level = ResultLevel.ERROR
             def message = "Grid refernce type '%s' is not recognised".format(gridReferenceType.get)
