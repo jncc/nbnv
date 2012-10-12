@@ -23,7 +23,6 @@ MAP
     SIZE                                                  2800 2800
     IMAGECOLOR                                            255 255 255
     FONTSET                                               "fonts/fontset"
-    EXTENT                                                -180 -90 180 90
 
     WEB
         IMAGEPATH                                           "/ms4w/tmp/ms_tmp/"
@@ -37,7 +36,7 @@ MAP
     END
 
     PROJECTION
-        "init=epsg:4326"
+        "init=epsg:27700"
     END
     
     [@backgrounds.os location=properties.ordnanceSurveyMapDataLocation requires=union_layers?keys + layers?keys/]
@@ -92,7 +91,6 @@ MAP
             CONNECTION                                          "${properties.spatialConnection}"
             DATA                                                "${layerGenerator.getData(layers[layer_name].resolution)}"
             TEMPLATE                                            "dummy.txt"
-            EXTENT                                              -180 -90 180 90
 
             METADATA
                 "wms_title"                                       "${layer_name}"
@@ -100,7 +98,7 @@ MAP
             END
 
             PROJECTION
-                "init=epsg:4326"
+                "init=epsg:27700"
             END
 
             CLASS
