@@ -15,15 +15,15 @@ public class SpatialQueries {
         _em = em;
     }
 
-    public String getGridProjectionForWGS84wkt(String wkt) {
+    public Integer getGridProjectionForWGS84wkt(String wkt) {
 
         StoredProcedureCall spcall = new StoredProcedureCall();
-        spcall.setProcedureName("import_getGridProjectionForLatLng");
+        spcall.setProcedureName("import_getGridForWKT");
         spcall.addNamedArgument("wkt", "wkt");
         spcall.addNamedOutputArgument(
-                "srs",      // procedure parameter name
-                "srs",      // out argument field name
-                String.class  // Java type corresponding to type returned by procedure
+                "projection",      // procedure parameter name
+                "projection",      // out argument field name
+                Integer.class  // Java type corresponding to type returned by procedure
         );
 
         ValueReadQuery query = new ValueReadQuery();
@@ -35,9 +35,9 @@ public class SpatialQueries {
 
         Session session = getSession();
 
-        String srs = (String) session.executeQuery(query, arguments);
+        Integer projection = (Integer) session.executeQuery(query, arguments);
 
-        return srs;
+        return projection;
     }
 
     private Session getSession() {
