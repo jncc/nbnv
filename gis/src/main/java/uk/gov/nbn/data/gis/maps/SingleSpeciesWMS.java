@@ -73,7 +73,7 @@ public class SingleSpeciesWMS {
             @GridLayer(name="1km-100m", layer="Grid-1km-100m",  resolutions={Resolution.ONE_KM, Resolution.ONE_HUNDRED_METERS})
         },
         defaultLayer="10km",
-        backgrounds=@Layer(name="os", layer="OS-Scale-Dependant" ),
+        backgrounds=@Layer(name="os", layer="OS-Scale-Dependent" ),
         overlays=@Layer(name="feature", layer="Selected-Feature" )
     )
     public MapFileModel getSingleSpeciesModel(

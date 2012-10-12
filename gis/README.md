@@ -14,7 +14,7 @@ appliation can be deployed to.
 # Obtaining a MapServer Distribution
 
 First obtain a binary distribution of MapServer the word size is
-independant from your JVM as the application runs in a seperate
+independent from your JVM as the application runs in a seperate
 process. For a out of the box configured MapServer, we recommend
 [MapServer for Windows - MS4W](http://www.maptools.org/ms4w/)
 
