@@ -5,7 +5,6 @@ import java.util.Properties;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import uk.gov.nbn.data.gis.processor.AtlasGrade;
 import uk.gov.nbn.data.gis.processor.MapContainer;
 import uk.gov.nbn.data.gis.processor.MapFileModel;
 import uk.gov.nbn.data.gis.processor.MapService;
@@ -21,14 +20,6 @@ public class OSModernWMS {
     @Autowired Properties properties;
     
     @MapService
-    @AtlasGrade(
-        layers={
-            @AtlasGrade.GridLayer(name="1m",     layer="OS-Scale-Dependant",      resolutions=1000),
-        },
-        defaultLayer="1m",
-        backgrounds=@AtlasGrade.Layer(name="os", layer="OS-Scale-Dependant" ),
-        overlays=@AtlasGrade.Layer(name="feature", layer="Selected-Feature" )
-    )
     public MapFileModel getOSMapModel(@QueryParam(key="feature") String featureID, HttpServletRequest request) { 
         String referrer = request.getHeader("referer");
         if(referrer ==null || !referrer.startsWith(properties.getProperty("ordnanceSurveyAllowedReferrerPrefix"))) {
