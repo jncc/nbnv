@@ -34,7 +34,6 @@ import uk.gov.nbn.data.gis.providers.annotations.Utilises;
 public class ServiceURLProvider implements Provider {
     private static final String URL_ENCODING = "UTF-8";
     
-    @Autowired AtlasGradeProvider atlasGradeProvider;
     @Autowired MethodArgumentFactory methodArgumentFactory;
     @Autowired ProviderFactory providerFactory;
 

@@ -3,7 +3,7 @@ package uk.gov.nbn.data.gis.interceptors;
 import java.util.HashMap;
 import java.util.Map;
 import org.springframework.stereotype.Component;
-import uk.gov.nbn.data.gis.processor.AtlasGrade;
+import uk.gov.nbn.data.gis.processor.GridMap;
 import uk.gov.nbn.data.gis.processor.Interceptor;
 import uk.gov.nbn.data.gis.processor.Intercepts;
 import uk.gov.nbn.data.gis.processor.MapServiceMethod;
@@ -14,10 +14,10 @@ import uk.gov.nbn.data.gis.processor.MapServiceMethod;
  */
 @Component
 @Interceptor
-public class AtlasGradeLegendInterceptor {
+public class GridMapLegendInterceptor {
 
     @Intercepts(MapServiceMethod.Type.LEGEND)
-    public Map<String, String[]> processRequestParameters(AtlasGrade.GridLayer layer) {
+    public Map<String, String[]> processRequestParameters(GridMap.GridLayer layer) {
         Map<String, String[]> toReturn = new HashMap<String, String[]>();
         toReturn.put("SERVICE", new String[]{"WMS"});
         toReturn.put("VERSION", new String[]{"1.1.1"});

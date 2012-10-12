@@ -91,13 +91,13 @@ public class MapServiceMethodFactory {
                     }
                     pathPartOrCreate.setAssociatedMethod(currMethod);
                     
-                    //register atlasgrade functionality
-                    AtlasGrade atlasGradeAnnotation = currMethod.getAnnotation(AtlasGrade.class);
-                    if(atlasGradeAnnotation != null) {
+                    //register gridmap functionality
+                    GridMap gridMapProperties = currMethod.getAnnotation(GridMap.class);
+                    if(gridMapProperties != null) {
                         for(Type mapServiceType : EnumSet.complementOf(EnumSet.of(Type.STANDARD))) {
-                            MapServicePart atlasGradeMapServicePart = getPathPartOrCreate(mapServiceInstance, mapServiceType.getRequest(), pathPartOrCreate);
-                            atlasGradeMapServicePart.setAssociatedMethod(currMethod);
-                            atlasGradeMapServicePart.setMapServiceType(mapServiceType);
+                            MapServicePart gridMapServicePart = getPathPartOrCreate(mapServiceInstance, mapServiceType.getRequest(), pathPartOrCreate);
+                            gridMapServicePart.setAssociatedMethod(currMethod);
+                            gridMapServicePart.setMapServiceType(mapServiceType);
                         }
                     }
                 }
