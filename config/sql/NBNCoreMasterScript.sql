@@ -542,6 +542,28 @@ GO
 
 /*
  *
+ * GridExtents
+ *
+ */
+
+CREATE TABLE GridExtents (
+	[id] [int] NOT NULL PRIMARY KEY,
+	[geom] [geometry] NOT NULL,
+	[projectionID] [int] NOT NULL REFERENCES [Projection] ([id]),
+	[priority] [int] NOT NULL UNIQUE
+);
+
+SET ANSI_PADDING ON; 
+
+CREATE SPATIAL INDEX [sidx_GridExtents_geom] ON [dbo].[GridExtents] (
+	[geom]
+) USING GEOMETRY_GRID WITH (
+	BOUNDING_BOX =(-15, 40, 8, 65), GRIDS =(LEVEL_1 = MEDIUM,LEVEL_2 = MEDIUM,LEVEL_3 = MEDIUM,LEVEL_4 = MEDIUM), CELLS_PER_OBJECT = 16, PAD_INDEX  = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON
+);
+
+SET ANSI_PADDING OFF; 
+/*
+ *
  * Habitat
  *
  */
