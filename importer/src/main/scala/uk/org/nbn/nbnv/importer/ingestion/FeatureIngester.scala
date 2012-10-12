@@ -77,19 +77,19 @@ class FeatureIngester @Inject()(log: Logger, em: EntityManager, repo: Repository
   }
 
   private def ensureGridRefFeatureByCoordinate(easting: Double, northing: Double, spatialReferenceSystem: String, gridReferencePrecision: Int = 0) = {
-    //Get nearest grid square at 100m or at the grid reference resolution specified.
 
     val info = gridSquareInfoFactory.getByCoordinate(easting, northing, spatialReferenceSystem, gridReferencePrecision)
 
-    ensureGridSquareFeatureRecursive(info)._1
+    info match {
+      case Some(i) => ensureGridSquareFeatureRecursive(i)._1
+      case None => ensureWgs84PointFeature(easting, northing) // no corresponding square; just save the point
+    }
 
-    // there will be a new method on the factory to get a gridsquare by point
-    // then i need to call the gridsquare ensure method to make sure that the square(s) exist
-//    need to resolve a point (coord) to nearest gridsquare
-//      not expecting points in channel islands
+  }
 
-
-    new Feature()
+  private def ensureWgs84PointFeature(latitude: Double, longitude: Double) =  {
+    val wkt = "POINT(%s %s)".format(longitude, latitude)
+    repo.createFeature(wkt)
   }
 }
 

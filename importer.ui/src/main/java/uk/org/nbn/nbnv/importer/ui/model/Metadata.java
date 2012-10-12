@@ -24,9 +24,9 @@ public class Metadata implements Serializable {
     private String datasetAdminName = "";
     private String datasetAdminPhone = "";
     private String datasetAdminEmail = "";
-    private String geographicalRes = "10";
-    private String recordAtts = "na";
-    private String recorderNames = "na";
+    private String geographicalRes = "10000";
+    private String recordAtts = "null";
+    private String recorderNames = "null";
     private int datasetAdminID = -1;
     private int organisationID = -1;
 

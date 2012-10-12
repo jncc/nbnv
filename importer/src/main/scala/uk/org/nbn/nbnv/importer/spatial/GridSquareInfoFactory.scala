@@ -1,41 +1,37 @@
 package uk.org.nbn.nbnv.importer.spatial
 
 import uk.org.nbn.nbnv.importer.ImportFailedException
+import com.google.inject.Inject
+import uk.org.nbn.nbnv.importer.data.Repository
 
-class GridSquareInfoFactory {
-  def getByCoordinate(east: Double, north: Double, spatialReferenceSystem: String, gridReferencePrecision: Int) : GridSquareInfo = {
-//    figure out what the hell this is
-//    Make a grid square of the appropriate type and rerun
-    spatialReferenceSystem match {
-      case "27700" => BritishGridSquareInfo(east.toInt, north.toInt, gridReferencePrecision)
-      case "23030" => IrishGridSquareInfo(east.toInt, north.toInt, gridReferencePrecision)
-      case "29903" => ChannelIslandGridSquareInfo(east.toInt, north.toInt, gridReferencePrecision)
-      case "4326" => getGridFromWGS84(east, north, gridReferencePrecision)
+class GridSquareInfoFactory @Inject()(repo: Repository, grtMapper : GridReferenceTypeMapper) {
+
+  /// Returns None for WGS84 points that don't lie within any supported grid system.
+  def getByCoordinate(east: Double, north: Double, spatialReferenceSystem: String, gridReferencePrecision: Int) : Option[GridSquareInfo] = {
+
+    val srs = if (spatialReferenceSystem == "4326") repo.getSRSForLatLong(east, north) else Some(spatialReferenceSystem)
+
+    srs match {
+      case None => None
+      case Some("27700") => Some(BritishGridSquareInfo(east.toInt, north.toInt, gridReferencePrecision))
+      case Some("23030") => Some(IrishGridSquareInfo(east.toInt, north.toInt, gridReferencePrecision))
+      case Some("29903") => Some(ChannelIslandGridSquareInfo(east.toInt, north.toInt, gridReferencePrecision))
       case _ => throw new ImportFailedException("Unknown spatial referene system '%s'".format(spatialReferenceSystem))
-     }
+    }
   }
 
   def getByGridRef(gridRef: String, gridReferenceType: String = "", gridReferencePrecision: Int = 0) : GridSquareInfo = {
 
-
-    val gridType = if (gridReferenceType.isEmpty) {
+    val gridType = if (gridReferenceType.isEmpty)
                       getGridRefType(gridRef)
-                    }
-                    else {
-                      gridReferenceType
-                    }
+                   else
+      grtMapper.get(gridReferenceType).getOrElse(
+        throw new ImportFailedException("Unknown grid reference type '%s'".format(gridReferenceType)))
 
     gridType match {
       case "OSGB36" =>  BritishGridSquareInfo(gridRef, gridReferencePrecision)
-      case "OSGB" =>    BritishGridSquareInfo(gridRef, gridReferencePrecision)
-      case "BNG"  =>    BritishGridSquareInfo(gridRef, gridReferencePrecision)
-      case "OSI"  =>    IrishGridSquareInfo(gridRef, gridReferencePrecision)
       case "OSNI" =>    IrishGridSquareInfo(gridRef, gridReferencePrecision)
-      case "ING" =>     IrishGridSquareInfo(gridRef, gridReferencePrecision)
       case "ED50" =>    ChannelIslandGridSquareInfo(gridRef, gridReferencePrecision)
-      case "UTM"  =>    ChannelIslandGridSquareInfo(gridRef, gridReferencePrecision)
-      case "CI"  =>     ChannelIslandGridSquareInfo(gridRef, gridReferencePrecision)
-      case _      =>    throw new ImportFailedException("Unknown grid reference type '%s'".format(gridType))
     }
   }
 
@@ -49,11 +45,6 @@ class GridSquareInfoFactory {
     else if (gridRef.matches(GridRefPatterns.channelIslandsDintyGridRef)) "ED50"
     else throw new ImportFailedException("Grid refernce type cannot be determined from grid ref '%s'".format(gridRef))
 
-  }
-
-  private def getGridFromWGS84(lat: Double, lng: Double, precision: Int) = {
-    //todo determine grid ref system from lat lng
-    null
   }
 
 }
