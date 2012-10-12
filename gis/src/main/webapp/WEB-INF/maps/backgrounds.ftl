@@ -72,7 +72,7 @@
         PLUGIN                                              "msplugin_mssql2008.dll"
         CONNECTION                                          "${spatialConnection}"
         PROCESSING                                          "CLOSE_CONNECTION=DEFER"
-
+        OPACITY                                             60
         DATA                        "geom from (
                                         SELECT featureID, geom
                                         FROM FeatureData
@@ -92,9 +92,9 @@
             NAME                                              "default"
 
             STYLE
-                COLOR                                           255 255 255
+                COLOR                                           210 240 248
                 OUTLINECOLOR                                    0 0 0
-                WIDTH                                           1
+                WIDTH                                           3
             END
         END
     END
