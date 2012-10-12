@@ -1,7 +1,6 @@
 package uk.gov.nbn.data.gis.maps;
 
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,12 +31,12 @@ public class OSModernWMS {
     )
     public MapFileModel getOSMapModel(@QueryParam(key="feature") String featureID, HttpServletRequest request) { 
         String referrer = request.getHeader("referer");
-        /*if(referrer ==null || !referrer.startsWith(properties.getProperty("ordnanceSurveyAllowedReferrerPrefix"))) {
+        if(referrer ==null || !referrer.startsWith(properties.getProperty("ordnanceSurveyAllowedReferrerPrefix"))) {
             throw new IllegalArgumentException("The ordnance survey map is restricted to use within the gateway");
-        }*/
-        Map<String, Object> model = new HashMap<String, Object>();
-        model.put("properties", properties);
-        model.put("featureID", featureID);
-        return new MapFileModel("OS-Modern.map", model);
+        }
+        HashMap<String, Object> data = new HashMap<String, Object>();
+        data.put("properties", properties);
+        data.put("featureID", featureID);
+        return new MapFileModel("OS-Modern.map", data);
     }
 }
