@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Properties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.gov.nbn.data.gis.maps.MapHelper.ResolutionDataGenerator;
 import uk.gov.nbn.data.gis.processor.MapFileModel;
 import uk.gov.nbn.data.gis.processor.MapService;
 import uk.gov.nbn.data.gis.processor.MapContainer;

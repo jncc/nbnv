@@ -12,6 +12,13 @@ import java.util.List;
  * @author Chris Johnson
  */
 class MapHelper {
+    /**The following interface enables anonymous implementations for creating
+     * SQL Expressions in Map Server Templates
+     **/
+    interface ResolutionDataGenerator {
+        String getData(int resolution);
+    }
+    
     /**
      * @param startYear
      * @return A startyear filter for a given start year prefixed with AND for 
