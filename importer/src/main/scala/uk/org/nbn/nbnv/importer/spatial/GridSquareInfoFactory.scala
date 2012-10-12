@@ -2,14 +2,14 @@ package uk.org.nbn.nbnv.importer.spatial
 
 import uk.org.nbn.nbnv.importer.ImportFailedException
 import com.google.inject.Inject
-import uk.org.nbn.nbnv.importer.data.Repository
+import uk.org.nbn.nbnv.importer.data.{Database, Repository}
 
-class GridSquareInfoFactory @Inject()(repo: Repository) {
+class GridSquareInfoFactory @Inject()(db: Database) {
 
   /// Returns None for WGS84 points that don't lie within any supported grid system.
   def getByCoordinate(east: Double, north: Double, spatialReferenceSystem: String, gridReferencePrecision: Int) : Option[GridSquareInfo] = {
 
-    val srs = if (spatialReferenceSystem == "4326") repo.getSRSForLatLong(east, north) else Some(spatialReferenceSystem)
+    val srs = if (spatialReferenceSystem == "4326") db.repo.getSRSForLatLong(east, north) else Some(spatialReferenceSystem)
 
     srs match {
       case None => None

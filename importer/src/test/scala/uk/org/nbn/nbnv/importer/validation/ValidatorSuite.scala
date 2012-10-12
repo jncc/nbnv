@@ -8,8 +8,9 @@ import org.gbif.dwc.text.{ArchiveFile, Archive, StarRecord}
 import org.gbif.dwc.record.Record
 import java.util
 import org.apache.log4j.{Level, Logger}
-import uk.org.nbn.nbnv.importer.data.Repository
+import uk.org.nbn.nbnv.importer.data.{QueryCache, Database, Repository}
 import uk.org.nbn.nbnv.importer.logging.Log
+import javax.persistence.EntityManager
 
 class ValidatorSuite extends BaseFunSuite with BeforeAndAfter{
   var archive: Archive = _
@@ -77,9 +78,10 @@ class ValidatorSuite extends BaseFunSuite with BeforeAndAfter{
   test("Should Validate a couple of records - Set of 2 Records") {
     val repo = mock[Repository]
     when(repo.confirmTaxonVersionKey("NHMSYS0020528265")).thenReturn(true)
+    val db = new Database(mock[EntityManager], repo, mock[QueryCache])
     val log : Logger = Log.get()
     Log.configure(".", "2MB", Level.WARN)
-    val validator = new Validator(log, repo)
+    val validator = new Validator(log, db)
     validator.validate(archive)
   }
 

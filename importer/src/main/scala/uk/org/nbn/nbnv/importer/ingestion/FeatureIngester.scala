@@ -4,12 +4,12 @@ import uk.org.nbn.nbnv.importer.records.NbnRecord
 import uk.org.nbn.nbnv.importer.ImportFailedException
 import uk.org.nbn.nbnv.jpa.nbncore.{GridSquare, Feature}
 import com.google.inject.Inject
-import uk.org.nbn.nbnv.importer.data.Repository
+import uk.org.nbn.nbnv.importer.data.{Database, Repository}
 import uk.org.nbn.nbnv.importer.spatial.{GridSquareInfo, GridSquareInfoFactory}
 import javax.persistence.EntityManager
 import org.apache.log4j.Logger
 
-class FeatureIngester @Inject()(log: Logger, em: EntityManager, repo: Repository, gridSquareInfoFactory: GridSquareInfoFactory) {
+class FeatureIngester @Inject()(log: Logger, db: Database, gridSquareInfoFactory: GridSquareInfoFactory) {
 
   def ensureFeature(record: NbnRecord) : Feature = {
 
@@ -42,15 +42,15 @@ class FeatureIngester @Inject()(log: Logger, em: EntityManager, repo: Repository
   private def ensureGridSquareFeatureRecursive(info: GridSquareInfo) : (Feature, GridSquare) = {
 
     // if there's a feature already, all necessary parents should already exist, so just return it
-    repo.getGridSquareFeature(info.gridReference) getOrElse {
+    db.repo.getGridSquareFeature(info.gridReference) getOrElse {
 
       log.debug("Creating grid ref '%s'.".format(info.gridReference))
 
       // the feature doesn't exist, so we need to create it
-      val f = repo.createFeature(info.wgs84Polygon)
-      val projection = repo.getProjection(info.projection)
-      val resolution = repo.getResolution(info.gridReferencePrecision)
-      val gs = repo.createGridRef(f, info.gridReference, resolution, projection, info.sourceProjectionPolygon)
+      val f = db.repo.createFeature(info.wgs84Polygon)
+      val projection = db.repo.getProjection(info.projection)
+      val resolution = db.repo.getResolution(info.gridReferencePrecision)
+      val gs = db.repo.createGridRef(f, info.gridReference, resolution, projection, info.sourceProjectionPolygon)
 
       // if square should have a parent, ensure that it does, and set it
       info.getParentGridSquareInfo match {
@@ -61,7 +61,7 @@ class FeatureIngester @Inject()(log: Logger, em: EntityManager, repo: Repository
         case None => ()
       }
       log.debug("Persisting gridsquare '%s'...".format(info.gridReference))
-      em.persist(gs)
+      db.em.persist(gs)
       (f, gs)
     }
   }
@@ -73,7 +73,7 @@ class FeatureIngester @Inject()(log: Logger, em: EntityManager, repo: Repository
     val providerKey = featureKey.substring(8)
 
     // throws if the (Feature, SiteBoundary) pair doesn't exist
-    repo.getSiteBoundaryFeature(siteBoundaryDataset, providerKey)._1
+    db.repo.getSiteBoundaryFeature(siteBoundaryDataset, providerKey)._1
   }
 
   private def ensureGridRefFeatureByCoordinate(easting: Double, northing: Double, spatialReferenceSystem: String, gridReferencePrecision: Int = 0) = {
@@ -89,7 +89,7 @@ class FeatureIngester @Inject()(log: Logger, em: EntityManager, repo: Repository
 
   private def ensureWgs84PointFeature(latitude: Double, longitude: Double) =  {
     val wkt = "POINT(%s %s)".format(longitude, latitude)
-    repo.createFeature(wkt)
+    db.repo.createFeature(wkt)
   }
 }
 

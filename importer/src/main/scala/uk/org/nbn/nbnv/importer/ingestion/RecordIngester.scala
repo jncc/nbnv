@@ -5,32 +5,31 @@ import uk.org.nbn.nbnv.jpa.nbncore._
 import javax.persistence.EntityManager
 import org.apache.log4j.Logger
 import uk.org.nbn.nbnv.importer.records.NbnRecord
-import uk.org.nbn.nbnv.importer.data.Repository
+import uk.org.nbn.nbnv.importer.data.{Database, Repository}
 import com.google.inject.Inject
 import uk.org.nbn.nbnv.metadata.Metadata
 
 class RecordIngester @Inject()(log: Logger,
-                               em: EntityManager,
+                               db: Database,
                                surveyIngester: SurveyIngester,
                                sampleIngester: SampleIngester,
                                siteIngester: SiteIngester,
                                recorderIngester: RecorderIngester,
                                attributeIngester: AttributeIngester,
                                featureIngester: FeatureIngester,
-                               publicIngester: PublicIngester,
-                               repo: Repository) {
+                               publicIngester: PublicIngester) {
 
   def upsertRecord(record: NbnRecord, dataset: TaxonDataset, metadata: Metadata) {
 
     log.info("Upserting record %s".format(record.key))
 
     val survey = surveyIngester.upsertSurvey(record.surveyKey, dataset)
-    em.flush() // to get survey key for sample caching
+    db.em.flush() // to get survey key for sample caching
     val sample = sampleIngester.upsertSample(record.sampleKey, survey)
     val site = siteIngester.upsertSite(record.siteKey, record.siteName, dataset.getDataset)
     val feature = featureIngester.ensureFeature(record)
-    val taxon = repo.getTaxon(record.taxonVersionKey)
-    val dateType = repo.getDateType(record.dateType)
+    val taxon = db.repo.getTaxon(record.taxonVersionKey)
+    val dateType = db.repo.getDateType(record.dateType)
     val determiner = recorderIngester.ensureRecorder(record.determiner)
     val recorder = recorderIngester.ensureRecorder(record.recorder)
 
@@ -50,7 +49,7 @@ class RecordIngester @Inject()(log: Logger,
       o.setTaxon(taxon)
     }
 
-    val observation = repo.getTaxonObservation(record.key, sample) match {
+    val observation = db.repo.getTaxonObservation(record.key, sample) match {
       case Some(o) => {
         update(o)
         o
@@ -58,8 +57,8 @@ class RecordIngester @Inject()(log: Logger,
       case None => {
         val o = new TaxonObservation
         update(o)
-        em.persist(o)
-        em.flush()
+        db.em.persist(o)
+        db.em.flush()
         o
       }
     }

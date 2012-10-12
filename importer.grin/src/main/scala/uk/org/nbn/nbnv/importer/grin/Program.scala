@@ -9,7 +9,7 @@ import io.Source
 import org.apache.log4j.Logger
 import javax.validation.ConstraintViolationException
 import com.google.common.base.Stopwatch
-import uk.org.nbn.nbnv.importer.data.{QueryCache, Repository}
+import uk.org.nbn.nbnv.importer.data.{Database, QueryCache, Repository}
 import uk.org.nbn.nbnv.importer.spatial.GridSquareInfoFactory
 
 object Program {
@@ -40,7 +40,7 @@ object Program {
   }
 }
 
-class Program @Inject() (log: Logger, options: Options, em: EntityManager, ingester: FeatureIngester) {
+class Program @Inject() (log: Logger, options: Options, db: Database, ingester: FeatureIngester) {
 
   def run() {
 
@@ -54,9 +54,9 @@ class Program @Inject() (log: Logger, options: Options, em: EntityManager, inges
 
     for (g <- groups) {
 
-      val t = em.getTransaction
-      val repo = new Repository(log, em, new QueryCache(log))
-      val ingester = new FeatureIngester(log, em, repo, new GridSquareInfoFactory(repo))
+      val t = db.em.getTransaction
+
+      val ingester = new FeatureIngester(log, db, new GridSquareInfoFactory(db))
 
       withTransaction(t, options.whatIf) {
 
@@ -66,9 +66,7 @@ class Program @Inject() (log: Logger, options: Options, em: EntityManager, inges
           log.info("Imported " + (i + 1) + " grid refs in " + watch.elapsedMillis() + "ms")
           log.info("Average speed is " + watch.elapsedMillis() / (i + 1) + "ms per grid ref")
         }
-        em.flush()
-        em.clear()
-
+        db.reset()
       }
     }
   }
