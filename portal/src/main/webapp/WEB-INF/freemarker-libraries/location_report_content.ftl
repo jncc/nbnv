@@ -10,6 +10,7 @@
                 </#list>
             </table>
         </div>
+        <@report_utils.siteBoundaryImage locationName=locationName locationID=locationID/>
         <@report_utils.dataset_table providersWithQueryStats=providersWithQueryStats requestParameters=requestParameters/>
     </form>
 </#macro>
@@ -26,6 +27,7 @@
             </#list>
             </table>
         </div>
+        <@report_utils.siteBoundaryImage locationName=locationName locationID=locationID/>
         <@report_utils.dataset_table providersWithQueryStats=providersWithQueryStats requestParameters=RequestParameters/>
     </form>
 </#macro>
@@ -35,6 +37,7 @@
     <h1>${title}</h1>
     <form action="" method="post" id="${getSiteFormId()}">
         <@report_utils.site_report_filters requestParameters=requestParameters args={"taxon":taxon} location=locationName isSpatialRelationshipNeeded=false isDesignationNeeded=false isDatasetNeeded=false/>
+        <@report_utils.siteSpeciesImage locationName=locationName locationID=locationID ptvk=taxon.prefnameTaxonVersionKey/>
     </form>
     <#list datasets as dataset>
         <#assign provider=json.readURL("${api}/organisations/${dataset.organisationID}")>
