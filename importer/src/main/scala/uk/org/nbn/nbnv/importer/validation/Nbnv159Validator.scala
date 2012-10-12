@@ -25,7 +25,7 @@ class Nbnv159Validator (grtMapper: GridReferenceTypeMapper) {
 
     if(gridReferenceType.isDefined) {
 
-      grtMapper.map(gridReferenceType.get) match {
+      grtMapper.get(gridReferenceType.get) match {
 
         case Some("OSGB36") => {
           if (gridReference.matches(GridRefPatterns.ukGridRef)

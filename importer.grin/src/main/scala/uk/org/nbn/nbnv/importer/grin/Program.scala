@@ -13,7 +13,7 @@ import uk.org.nbn.nbnv.importer.logging.Log
 import uk.org.nbn.nbnv.PersistenceUtility
 import uk.org.nbn.nbnv.importer.Settings
 import uk.org.nbn.nbnv.importer.data.{QueryCache, Repository}
-import uk.org.nbn.nbnv.importer.spatial.GridSquareInfoFactory
+import uk.org.nbn.nbnv.importer.spatial.{GridReferenceTypeMapper, GridSquareInfoFactory}
 
 object Program {
 
@@ -61,7 +61,7 @@ class Program @Inject() (log: Logger, options: Options) { // , em: EntityManager
       val em = new PersistenceUtility().createEntityManagerFactory(Settings.map).createEntityManager
       val repo = new Repository(log, em, new QueryCache(log))
       val t = em.getTransaction
-      val ingester = new FeatureIngester(log, em, repo, new GridSquareInfoFactory(repo))
+      val ingester = new FeatureIngester(log, em, repo, new GridSquareInfoFactory(repo, new GridReferenceTypeMapper))
 
       withTransaction(t, options.whatIf) {
 

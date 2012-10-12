@@ -4,7 +4,7 @@ import uk.org.nbn.nbnv.importer.ImportFailedException
 import com.google.inject.Inject
 import uk.org.nbn.nbnv.importer.data.Repository
 
-class GridSquareInfoFactory @Inject()(repo: Repository) {
+class GridSquareInfoFactory @Inject()(repo: Repository, grtMapper : GridReferenceTypeMapper) {
 
   /// Returns None for WGS84 points that don't lie within any supported grid system.
   def getByCoordinate(east: Double, north: Double, spatialReferenceSystem: String, gridReferencePrecision: Int) : Option[GridSquareInfo] = {
@@ -22,24 +22,16 @@ class GridSquareInfoFactory @Inject()(repo: Repository) {
 
   def getByGridRef(gridRef: String, gridReferenceType: String = "", gridReferencePrecision: Int = 0) : GridSquareInfo = {
 
-    val gridType = if (gridReferenceType.isEmpty) {
+    val gridType = if (gridReferenceType.isEmpty)
                       getGridRefType(gridRef)
-                    }
-                    else {
-                      gridReferenceType
-                    }
+                   else
+      grtMapper.get(gridReferenceType).getOrElse(
+        throw new ImportFailedException("Unknown grid reference type '%s'".format(gridReferenceType)))
 
     gridType match {
       case "OSGB36" =>  BritishGridSquareInfo(gridRef, gridReferencePrecision)
-      case "OSGB" =>    BritishGridSquareInfo(gridRef, gridReferencePrecision)
-      case "BNG"  =>    BritishGridSquareInfo(gridRef, gridReferencePrecision)
-      case "OSI"  =>    IrishGridSquareInfo(gridRef, gridReferencePrecision)
       case "OSNI" =>    IrishGridSquareInfo(gridRef, gridReferencePrecision)
-      case "ING" =>     IrishGridSquareInfo(gridRef, gridReferencePrecision)
       case "ED50" =>    ChannelIslandGridSquareInfo(gridRef, gridReferencePrecision)
-      case "UTM"  =>    ChannelIslandGridSquareInfo(gridRef, gridReferencePrecision)
-      case "CI"  =>     ChannelIslandGridSquareInfo(gridRef, gridReferencePrecision)
-      case _      =>    throw new ImportFailedException("Unknown grid reference type '%s'".format(gridType))
     }
   }
 

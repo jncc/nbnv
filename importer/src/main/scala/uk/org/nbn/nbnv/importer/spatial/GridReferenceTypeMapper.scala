@@ -1,8 +1,8 @@
 package uk.org.nbn.nbnv.importer.spatial
 
 class GridReferenceTypeMapper {
-  def map(gridReferenceType: String) = {
-    gridReferenceType match {
+  def get(gridReferenceType: String) = {
+    gridReferenceType.toUpperCase match {
       case "OSGB36" =>  Option("OSGB36")
       case "OSGB" =>    Option("OSGB36")
       case "BNG"  =>    Option("OSGB36")
