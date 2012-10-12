@@ -3,7 +3,7 @@ package uk.org.nbn.nbnv.importer.ingestion
 import com.google.inject.Inject
 import org.apache.log4j.Logger
 import javax.persistence.EntityManager
-import uk.org.nbn.nbnv.importer.data.Repository
+import uk.org.nbn.nbnv.importer.data.{Database, Repository}
 import uk.org.nbn.nbnv.importer.spatial.GridSquareInfoFactory
 import uk.org.nbn.nbnv.metadata.Metadata
 import uk.org.nbn.nbnv.jpa.nbncore.{TaxonObservation, Sample, TaxonObservationPublic}
@@ -11,14 +11,14 @@ import uk.org.nbn.nbnv.jpa.nbncore.{TaxonObservation, Sample, TaxonObservationPu
 /// Creates, updates or deletes the TaxonObservationPublic record appropriately.
 
 class PublicIngester @Inject()(log: Logger,
-                               em: EntityManager,
-                               repo: Repository,
+                               db: Database,
                                gridSquareInfoFactory: GridSquareInfoFactory,
                                featureIngester: FeatureIngester) {
 
   def ingestPublic(o: TaxonObservation, sample: Sample, metadata: Metadata) {
 
     def update(p: TaxonObservationPublic) {
+
 
       // set the fields which are always the same in the public record
       //p.setObservationID(o.getObservationID)
@@ -52,12 +52,12 @@ class PublicIngester @Inject()(log: Logger,
       //}
     }
 
-    repo.getTaxonObservationPublic(o.getId) match {
+    db.repo.getTaxonObservationPublic(o.getId) match {
       case Some(p) => {
         // delete the public record if it's become sensitive
         if (o.getSensitiveRecord) {
           log.info("Deleting public record...")
-          em.remove(p)
+          db.em.remove(p)
         } else {
           log.info("Updating public record...")
           update(p)
@@ -71,7 +71,7 @@ class PublicIngester @Inject()(log: Logger,
           log.info("Creating public record...")
           val p = new TaxonObservationPublic
           update(p)
-          em.persist(p)
+          db.em.persist(p)
         }
       }
     }

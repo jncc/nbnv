@@ -1419,7 +1419,7 @@ BEGIN
 	-- get the grid system with the highest priority.
 	SET @projection = (
 		SELECT TOP 1 
-			p.label
+			p.srcSRID 
 		FROM [dbo].[Projection] p
 		INNER JOIN [dbo].[GridExtents] ge ON ge.projectionID = p.id
 		WHERE ge.geom.STIntersects(@geom) = 1
@@ -1439,7 +1439,7 @@ ALTER USER [NBNImporter] WITH DEFAULT_SCHEMA=[dbo]
 
 GO
 
-GRANT EXECUTE ON [dbo].[import_getGridForWKT] TO [NBNImporter]
+GRANT EXECUTE TO [NBNImporter]
 
 GO
 

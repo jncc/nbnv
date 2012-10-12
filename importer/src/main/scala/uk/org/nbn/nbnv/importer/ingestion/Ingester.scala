@@ -8,18 +8,19 @@ import uk.org.nbn.nbnv.metadata.Metadata
 import uk.org.nbn.nbnv.importer.Options
 import com.google.inject.Inject
 import org.apache.log4j.Logger
+import uk.org.nbn.nbnv.importer.data.Database
 
 /// Performs the interaction with the NBN core database.
 
 class Ingester @Inject()(options: Options,
                          log: Logger,
-                         em: EntityManager,
+                         db: Database,
                          datasetIngester: DatasetIngester,
                          recordIngester: RecordIngester) {
 
   def ingest(archive: Archive, metadata: Metadata) {
 
-    val t = em.getTransaction
+    val t = db.em.getTransaction
 
     withEntityTransaction(t) {
 
@@ -27,12 +28,12 @@ class Ingester @Inject()(options: Options,
 
       // upsert dataset
       val dataset = datasetIngester.upsertDataset(metadata)
-      em.flush()
+      db.reset()
 
       // upsert records
       for (record <- archive.iteratorRaw) {
         recordIngester.upsertRecord(new NbnRecord(record), dataset, metadata)
-        em.flush()
+        db.em.flush()
       }
 
       if (options.whatIf) {
@@ -57,7 +58,7 @@ class Ingester @Inject()(options: Options,
       }
     }
     finally {
-      em.close() // todo: when we have more entity managers, where best to do this? is it even necessary?
+      db.em.close()
     }
   }
 }

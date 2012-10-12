@@ -6,12 +6,10 @@ import javax.persistence.EntityManager
 import uk.org.nbn.nbnv.importer.records.NbnRecord
 import uk.org.nbn.nbnv.jpa.nbncore._
 import util.parsing.json.JSON
-import uk.org.nbn.nbnv.importer.data.Repository
+import uk.org.nbn.nbnv.importer.data.{Database, Repository}
 import scala.Some
 
-class AttributeIngester @Inject()(log: Logger,
-                                  em: EntityManager,
-                                  repo: Repository){
+class AttributeIngester @Inject()(log: Logger, db: Database){
 
 
   def ingestAttributes(record: NbnRecord, observation: TaxonObservation, dataset: TaxonDataset) {
@@ -30,18 +28,18 @@ class AttributeIngester @Inject()(log: Logger,
       toa.setTaxonObservationAttributePK(pk)
       toa.setTextValue(value)
 
-      em.persist(toa)
+      db.em.persist(toa)
     }
 
     def ensureAttribute(attributeLabel: String) = {
-      val attribute = repo.getAttribute(attributeLabel, dataset)
+      val attribute = db.repo.getAttribute(attributeLabel, dataset)
 
       attribute match {
         case Some(a) => a
         case None => {
 
-          val storageLevel = em.find(classOf[AttributeStorageLevel], 4) //observation
-          val storageType = em.find(classOf[AttributeStorageType], 3) //for now all attributes are free text
+          val storageLevel = db.em.find(classOf[AttributeStorageLevel], 4) //observation
+          val storageType = db.em.find(classOf[AttributeStorageType], 3) //for now all attributes are free text
 
           val a = new Attribute()
           a.setLabel(attributeLabel)
@@ -49,8 +47,8 @@ class AttributeIngester @Inject()(log: Logger,
           a.setAttributeStorageLevel(storageLevel)
           a.setAttributeStorageType(storageType)
 
-          em.persist(a)
-          em.flush()
+          db.em.persist(a)
+          db.em.flush()
           a
         }
       }

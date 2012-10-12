@@ -8,10 +8,11 @@ import org.gbif.utils.file.ClosableIterator
 import uk.org.nbn.nbnv.importer.testing.BaseFunSuite
 import uk.org.nbn.nbnv.importer.Options
 import org.apache.log4j.Logger
+import uk.org.nbn.nbnv.importer.data.{QueryCache, Repository, Database}
 
 class IngesterSuite extends BaseFunSuite {
 
-  trait ArrangeAndAct {
+  def fixture = new {
 
     // arrange
     val options = mock[Options]
@@ -29,23 +30,31 @@ class IngesterSuite extends BaseFunSuite {
     when(archive.iteratorRaw).thenReturn(iterator)
 
     val metadata = mock[Metadata]
+    val db = new Database(em, mock[Repository], mock[QueryCache])
 
-    // act
-    val ingester = new Ingester(options, mock[Logger], em, datasetIngester, recordIngester)
-    ingester.ingest(archive, metadata)
   }
 
   test("should begin transaction") {
-    new ArrangeAndAct {
-      // assert
-      verify(t).begin()
-    }
+
+    val f = fixture
+
+    // act
+    val ingester = new Ingester(f.options, mock[Logger], f.db, f.datasetIngester, f.recordIngester)
+    ingester.ingest(f.archive, f.metadata)
+
+    // assert
+    verify(f.t).begin()
   }
 
   test("should commit transaction") {
-    new ArrangeAndAct {
-      // assert
-      verify(t).commit()
-    }
+
+    val f = fixture
+
+    // act
+    val ingester = new Ingester(f.options, mock[Logger], f.db, f.datasetIngester, f.recordIngester)
+    ingester.ingest(f.archive, f.metadata)
+
+    // assert
+    verify(f.t).commit()
   }
 }

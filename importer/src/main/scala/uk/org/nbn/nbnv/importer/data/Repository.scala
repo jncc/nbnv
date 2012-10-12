@@ -10,13 +10,13 @@ import uk.org.nbn.nbnv.importer.ImportFailedException
 import uk.org.nbn.nbnv.{SpatialQueries, FeatureFactory}
 
 
-class Repository @Inject()(log: Logger, em: EntityManager, cache: QueryCache) extends ControlAbstractions {
+class Repository (log: Logger, em: EntityManager, cache: QueryCache) extends ControlAbstractions {
 
-  def getSRSForLatLong(lat: Double, lng: Double) = {
+  def getSRSForLatLong(lng: Double, lat: Double ) = {
     val queries = new SpatialQueries(em)
     val wkt = "POINT(%s %s)".format(lng.toString, lat.toString)
 
-    Option(queries.getGridProjectionForWGS84wkt(wkt))
+    Option(queries.getGridProjectionForWGS84wkt(wkt).toString)
   }
 
   def createFeature(wkt: String) = {
