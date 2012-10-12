@@ -43,7 +43,7 @@ MAP
     [@backgrounds.os location=properties.ordnanceSurveyMapDataLocation requires=union_layers?keys + layers?keys/]
     
     [#if featureID??]
-        [@backgrounds.selectedFeature featureID=featureID/]
+        [@backgrounds.selectedFeature featureID=featureID spatialConnection=properties.spatialConnection/]
     [/#if]
 
     [#list union_layers?keys as union_layer_name]
@@ -75,7 +75,7 @@ MAP
                     STYLE
                         COLOR                                           ${layers[style_layer].fillColour}
                         OUTLINECOLOR                                    0 0 0
-                        WIDTH                                           0.5
+                        WIDTH                                           1
                     END
                 END
             [/#list]
@@ -108,7 +108,7 @@ MAP
                 STYLE
                     COLOR                                           ${layers[layer_name].fillColour}
                     OUTLINECOLOR                                    0 0 0
-                    WIDTH                                           0.5
+                    WIDTH                                           1
                 END
             END
         END

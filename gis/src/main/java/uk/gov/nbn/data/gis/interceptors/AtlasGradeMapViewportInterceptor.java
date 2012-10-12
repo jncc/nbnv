@@ -145,7 +145,7 @@ public class AtlasGradeMapViewportInterceptor {
     /** Simple method to validate and order the resolutions array */
     private static int[] getOrderedResolutions(int[] resolutions) {
         if(resolutions.length == 0) {
-            throw new IllegalArgumentException("At least resolution must be defined for the layer");
+            throw new IllegalArgumentException("At least one resolution must be defined for the layer");
         }
         else {
             int[] toReturn = Arrays.copyOf(resolutions, resolutions.length); //get the resolutions

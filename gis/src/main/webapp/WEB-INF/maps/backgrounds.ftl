@@ -63,14 +63,14 @@
   END # Layer
 [/#macro]
 
-[#macro selectedFeature featureID]
+[#macro selectedFeature featureID spatialConnection]
     LAYER
         NAME                                                "Selected-Feature"
         TYPE                                                POLYGON
         STATUS                                              OFF
         CONNECTIONTYPE                                      PLUGIN
         PLUGIN                                              "msplugin_mssql2008.dll"
-        CONNECTION                                          "${properties.spatialConnection}"
+        CONNECTION                                          "${spatialConnection}"
         PROCESSING                                          "CLOSE_CONNECTION=DEFER"
 
         DATA                        "geom from (
