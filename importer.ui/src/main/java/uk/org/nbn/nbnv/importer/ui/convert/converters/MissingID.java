@@ -33,7 +33,7 @@ public class MissingID extends ConverterStep {
     @Override
     public boolean isStepNeeded(List<ColumnMapping> columns) {
         for (ColumnMapping cm : columns) {
-            if (cm.getField() == DarwinCoreField.OCCURRENCESTATUS) {
+            if (cm.getField() == DarwinCoreField.OCCURRENCEID) {
                 return false;
             }
         }
