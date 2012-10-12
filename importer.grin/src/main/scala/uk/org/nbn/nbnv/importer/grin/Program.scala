@@ -58,6 +58,9 @@ class Program @Inject() (log: Logger, options: Options, em: EntityManager, inges
     for (g <- groups) {
 
       val t = em.getTransaction
+      val repo = new Repository(log, em, new QueryCache(log))
+      val ingester = new FeatureIngester(log, em, repo, new GridSquareInfoFactory(repo))
+
       withTransaction(t, options.whatIf) {
 
         for ((ref, i) <- g) {
