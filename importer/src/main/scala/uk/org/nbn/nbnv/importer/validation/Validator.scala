@@ -75,6 +75,10 @@ class Validator @Inject()(log: Logger, repo: Repository){
       val r8 = v8.validate(nbnRecord)
       logResult(r8)
 
+      val srv = new SpatialReferenceValidator
+      val srvResults = srv.validate(nbnRecord)
+      for (result <- srvResults) logResult(result)
+
       //Validates each attribute and returns a set of results
       val oav = new ObservationAttributeValidator
       val oavResults = oav.validate(nbnRecord)
