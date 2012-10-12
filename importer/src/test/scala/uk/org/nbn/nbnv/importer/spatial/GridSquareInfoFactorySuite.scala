@@ -73,7 +73,7 @@ class GridSquareInfoFactorySuite extends BaseFunSuite{
     gri.projection should be ("ED50")
   }
 
-  test("should return gridref for correct grid reference type ") {
+  test("should return gridref for correct grid reference type") {
     val repo = mock[Repository]
     val gtm = mock[GridReferenceTypeMapper]
     when(gtm.get("BNG")).thenReturn(Some("OSGB36"))
