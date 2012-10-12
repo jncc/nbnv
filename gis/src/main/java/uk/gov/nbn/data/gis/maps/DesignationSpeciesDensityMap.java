@@ -30,7 +30,7 @@ import uk.org.nbn.nbnv.api.model.User;
  */
 @Component
 @MapContainer("DesignationSpeciesDensity")
-public class DesignationSpeciesDensityWMS {
+public class DesignationSpeciesDensityMap {
     private static final String TEN_KM_LAYER_NAME = "Grid-10km";
     private static final String TWO_KM_LAYER_NAME = "Grid-2km";
     private static final String ONE_KM_LAYER_NAME = "Grid-1km";
@@ -98,6 +98,6 @@ public class DesignationSpeciesDensityWMS {
                         resolution);
                 }
         });
-        return new MapFileModel("DesignationSpeciesDensityWMS.map", data);
+        return new MapFileModel("DesignationSpeciesDensity.map", data);
     }
 }

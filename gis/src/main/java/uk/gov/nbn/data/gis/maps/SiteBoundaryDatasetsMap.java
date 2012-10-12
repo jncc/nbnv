@@ -22,7 +22,7 @@ import uk.org.nbn.nbnv.api.model.SiteBoundaryDataset;
  */
 @Component
 @MapContainer("SiteBoundaryDatasets")
-public class SiteBoundaryDatasetsWMS {
+public class SiteBoundaryDatasetsMap {
     @Autowired Properties properties;
     @Autowired WebResource dataApi;
     
@@ -44,6 +44,6 @@ public class SiteBoundaryDatasetsWMS {
         data.put("mapServiceURL", mapServiceURL);
         data.put("properties", properties);
         data.put("siteBoundaries", datasets);
-        return new MapFileModel("SiteBoundaryDatasetsWMS.map",data);
+        return new MapFileModel("SiteBoundaryDatasets.map",data);
     }
 }

@@ -30,7 +30,7 @@ import uk.org.nbn.nbnv.api.model.User;
  */
 @Component
 @MapContainer("SingleSpecies")
-public class SingleSpeciesWMS {
+public class SingleSpeciesMap {
     private static final String QUERY = "geom from ("
             + "SELECT f.geom, o.observationID, f.label "
             + "FROM [dbo].[UserTaxonObservationData] o "
@@ -87,6 +87,6 @@ public class SingleSpeciesWMS {
                         MapHelper.createEndYearSegment(endYear));
                 }
         });
-        return new MapFileModel("SingleSpeciesWMS.map",data);
+        return new MapFileModel("SingleSpecies.map",data);
     }
 }

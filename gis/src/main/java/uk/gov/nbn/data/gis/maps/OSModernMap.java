@@ -14,7 +14,7 @@ import uk.gov.nbn.data.gis.processor.MapService;
  */
 @Component
 @MapContainer("OS-Modern")
-public class OSModernWMS { 
+public class OSModernMap { 
     @Autowired Properties properties;
     
     @MapService
