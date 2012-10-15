@@ -7,17 +7,30 @@ import org.gbif.dwc.terms.DwcTerm
 import org.gbif.dwc.text.{ArchiveFile, Archive, StarRecord}
 import org.gbif.dwc.record.Record
 import java.util
-import org.apache.log4j.{Level, Logger}
-import uk.org.nbn.nbnv.importer.data.{QueryCache, Database, Repository}
-import uk.org.nbn.nbnv.importer.logging.Log
-import javax.persistence.EntityManager
+import org.apache.log4j.Logger
+import uk.org.nbn.nbnv.importer.data.{Database, Repository}
+import scala.collection.JavaConversions._
+import uk.org.nbn.nbnv.importer.ImportFailedException
+import org.gbif.utils.file.ClosableIterator
+import uk.org.nbn.nbnv.importer.utility.extClosableIterator
 
 class ValidatorSuite extends BaseFunSuite with BeforeAndAfter{
   var archive: Archive = _
+  var starRec1: StarRecord = _
+  var coreArchive1: Record = _
+  var rec: Record = _
+  var rec2: Record = _
+  var recs: util.LinkedList[Record] = _
+  var recs2: util.LinkedList[Record] = _
+  var starRec2: StarRecord = _
+  var coreArchive2: Record = _
+  val repo = mock[Repository]
+  val db = mock[Database]
+  val log : Logger = mock[Logger]
 
   before {
-    val starRec1 = mock[StarRecord]
-    val coreArchive1 = mock[Record]
+    starRec1 = mock[StarRecord]
+    coreArchive1 = mock[Record]
     when(coreArchive1.value(DwcTerm.occurrenceID)).thenReturn("CI00000300000TNL")
     when(coreArchive1.value(DwcTerm.occurrenceStatus)).thenReturn("presence")
     when(coreArchive1.value(DwcTerm.collectionCode)).thenReturn("CI0000030000000A")
@@ -34,7 +47,7 @@ class ValidatorSuite extends BaseFunSuite with BeforeAndAfter{
     when(coreArchive1.value(DwcTerm.dynamicProperties)).thenReturn("{\"TaxonName\":\"Hippeutis complanatus\",\"Abundance\":\"\",\"Comment\":\"\",\"SampleMethod\":\"Field Observation\"}")
     when(starRec1.core()).thenReturn(coreArchive1)
 
-    var rec = mock[Record]
+    rec = mock[Record]
     when(rec.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateStart")).thenReturn("19/07/2001")
     when(rec.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateEnd")).thenReturn("19/07/2001")
     when(rec.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateTypeCode")).thenReturn("D")
@@ -42,13 +55,14 @@ class ValidatorSuite extends BaseFunSuite with BeforeAndAfter{
     when(rec.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/gridReferenceType")).thenReturn("OSGB")
     when(rec.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/gridReference")).thenReturn("SK632634")
     when(rec.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/gridReferencePrecisionRaw")).thenReturn("100")
+    when(rec.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/featureKey")).thenReturn(null)
 
-    var recs = new util.LinkedList[Record]()
+    recs = new util.LinkedList[Record]()
     recs.add(rec)
     when(starRec1.extension(("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/nxfOccurrence"))).thenReturn(recs)
 
-    val starRec2 = mock[StarRecord]
-    val coreArchive2 = mock[Record]
+    starRec2 = mock[StarRecord]
+    coreArchive2 = mock[Record]
     when(coreArchive2.value(DwcTerm.occurrenceID)).thenReturn("CI00000300000TNM")
     when(coreArchive2.value(DwcTerm.occurrenceStatus)).thenReturn("presence")
     when(coreArchive2.value(DwcTerm.collectionCode)).thenReturn("CI0000030000000A")
@@ -67,22 +81,19 @@ class ValidatorSuite extends BaseFunSuite with BeforeAndAfter{
 
     when(starRec2.extension(("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/nxfOccurrence"))).thenReturn(recs)
 
-    val r = starRec2.extension("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/nxfOccurrence")
-
     archive = mock[Archive]
-    val it = mock[org.gbif.utils.file.ClosableIterator[StarRecord]]
-    when(it.next).thenReturn(starRec1).thenReturn(starRec2)
-    when(archive.iteratorRaw).thenReturn(it)
-  }
 
-  test("Should Validate a couple of records - Set of 2 Records") {
-    val repo = mock[Repository]
+    val list = new util.ArrayList[StarRecord]
+    // Added twice as mocked objected wont recreate an iterator on the fly so the first option always gets gobbled up
+    // by the ArchiveHeadValidator :(
+    list.add(starRec1)
+    list.add(starRec1)
+    list.add(starRec2)
+
+    when(archive.iteratorRaw).thenReturn(new extClosableIterator[StarRecord](list))
+
+    when(db.repo).thenReturn(repo)
     when(repo.confirmTaxonVersionKey("NHMSYS0020528265")).thenReturn(true)
-    val db = new Database(mock[EntityManager], repo, mock[QueryCache])
-    val log : Logger = Log.get()
-    Log.configure(".", "2MB", Level.WARN)
-    val validator = new Validator(log, db)
-    validator.validate(archive)
   }
 
   test("Should validate a set of real records - Head Record Only") {
@@ -90,4 +101,91 @@ class ValidatorSuite extends BaseFunSuite with BeforeAndAfter{
     headVal.validate(archive)
   }
 
+  test("Should Validate a couple of records - Set of 2 Records") {
+    val validator = new Validator(log, db)
+    validator.validate(archive)
+  }
+
+  test("Should validate a valid record but error on a missing id") {
+    // Need to wait for a validation system for this to be available
+    when(coreArchive2.value(DwcTerm.occurrenceID)).thenReturn("")
+
+    val validator = new Validator(log, db)
+    val throws = intercept[ImportFailedException] {
+      validator.validate(archive)
+    }
+    throws should not be (null)
+  }
+
+  test("Should not validate a duplicated id") {
+    when(coreArchive2.value(DwcTerm.occurrenceID)).thenReturn("CI00000300000TNL")
+    val validator = new Validator(log, db)
+    val throws = intercept[ImportFailedException] {
+      validator.validate(archive)
+    }
+    throws should not be (null)
+  }
+
+  test("Should not validate an incorrect or missing location") {
+    when(rec.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/gridReference")).thenReturn(null)
+    when(rec.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/gridReferenceType")).thenReturn(null)
+    when(rec.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/gridReferencePrecisionRaw")).thenReturn(null)
+
+    val validator = new Validator(log, db)
+    val throws = intercept[ImportFailedException] {
+      validator.validate(archive)
+    }
+    throws should not be (null)
+  }
+
+  test("Should validate with a valid feature key") {
+    when(rec.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/gridReference")).thenReturn(null)
+    when(rec.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/gridReferenceType")).thenReturn(null)
+    when(rec.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/gridReferencePrecisionRaw")).thenReturn(null)
+
+    when(rec.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/featureKey")).thenReturn("1")
+
+    val validator = new Validator(log, db)
+    validator.validate(archive)
+  }
+
+  test("Should validate with a valid lat/long val") {
+    when(rec.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/gridReference")).thenReturn(null)
+    when(rec.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/gridReferenceType")).thenReturn(null)
+    when(rec.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/gridReferencePrecisionRaw")).thenReturn(null)
+
+    when(coreArchive1.value(DwcTerm.verbatimLongitude)).thenReturn("-0.22174100")
+    when(coreArchive1.value(DwcTerm.verbatimLatitude)).thenReturn("52.585667")
+    when(coreArchive1.value(DwcTerm.verbatimSRS)).thenReturn("4326")
+
+    when(coreArchive2.value(DwcTerm.verbatimLongitude)).thenReturn("-0.22174100")
+    when(coreArchive2.value(DwcTerm.verbatimLatitude)).thenReturn("52.585667")
+    when(coreArchive2.value(DwcTerm.verbatimSRS)).thenReturn("4326")
+
+    val validator = new Validator(log, db)
+    validator.validate(archive)
+  }
+
+  test("Should validate records with mixed valid locations") {
+    rec2 = mock[Record]
+    when(rec2.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateStart")).thenReturn("19/07/2001")
+    when(rec2.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateEnd")).thenReturn("19/07/2001")
+    when(rec2.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateTypeCode")).thenReturn("D")
+    when(rec2.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/sensitiveOccurrence")).thenReturn("false")
+    when(rec2.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/gridReferenceType")).thenReturn(null)
+    when(rec2.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/gridReference")).thenReturn(null)
+    when(rec2.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/gridReferencePrecisionRaw")).thenReturn(null)
+    when(rec2.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/featureKey")).thenReturn(null)
+
+    recs2 = new util.LinkedList[Record]
+    recs2.add(rec2)
+
+    when(starRec2.extension("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/nxfOccurrence")).thenReturn(recs2)
+    when(coreArchive2.value(DwcTerm.verbatimLongitude)).thenReturn("-0.22174100")
+    when(coreArchive2.value(DwcTerm.verbatimLatitude)).thenReturn("52.585667")
+    when(coreArchive2.value(DwcTerm.verbatimSRS)).thenReturn("4326")
+
+    val validator = new Validator(log, db)
+    validator.validate(archive)
+  }
 }

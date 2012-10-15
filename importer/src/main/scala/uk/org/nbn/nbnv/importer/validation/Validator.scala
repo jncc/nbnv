@@ -75,6 +75,10 @@ class Validator @Inject()(log: Logger, db: Database){
       val r8 = v8.validate(nbnRecord)
       logResult(r8)
 
+      val v9 = new Nbnv163Validator
+      val r9 = v9.validate(nbnRecord)
+      logResult(r9)
+
       val srv = new SpatialReferenceValidator
       val srvResults = srv.validate(nbnRecord)
       for (result <- srvResults) logResult(result)
