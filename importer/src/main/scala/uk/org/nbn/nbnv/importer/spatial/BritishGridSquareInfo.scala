@@ -68,7 +68,7 @@ class BritishGridSquareInfo(gridRef : String, precision: Int = 0) extends GridSq
 
   def projection = "OSGB36"
 
-  def epsgCode = "27700"
+  def epsgCode = BritishGridSquareInfo.getEpsgCode
 
   def getEastingNorthing = {
     val g = getTenFigGridRef(outputGridRef)

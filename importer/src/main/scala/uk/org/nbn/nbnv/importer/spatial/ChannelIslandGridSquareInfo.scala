@@ -34,7 +34,7 @@ class ChannelIslandGridSquareInfo(gridRef: String, precision: Int = 0) extends G
 
   def projection =  "ED50"
 
-  def epsgCode = "23030"
+  def epsgCode = ChannelIslandGridSquareInfo.getEpsgCode
 
   def getEastingNorthing = {
     //Bottom Left corner of the grid squares

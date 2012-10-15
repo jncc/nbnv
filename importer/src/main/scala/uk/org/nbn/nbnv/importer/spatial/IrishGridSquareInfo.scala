@@ -46,7 +46,7 @@ class IrishGridSquareInfo(gridRef: String, precision: Int = 0) extends GridSquar
 
   def projection =  "OSNI"
 
-  def epsgCode = "29903"
+  def epsgCode = IrishGridSquareInfo.getEpsgCode
 
   def getEastingNorthing = {
     val g = getTenFigGridRef(outputGridRef)

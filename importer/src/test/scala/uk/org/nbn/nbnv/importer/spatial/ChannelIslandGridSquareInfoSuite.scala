@@ -19,7 +19,7 @@ class ChannelIslandGridSquareInfoSuite extends BaseFunSuite {
   test("shold identify EPSG code as 23030") {
     val cigr = new ChannelIslandGridSquareInfo(knownGridRef_100m)
 
-    cigr.epsgCode should be ("23030")
+    cigr.epsgCode should be (23030)
   }
 
   test("should output an unblurred grid referce") {

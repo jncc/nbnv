@@ -8,7 +8,7 @@ import org.geotools.referencing.operation.DefaultCoordinateOperationFactory
 abstract class GridSquareInfo(gridRef : String, precision: Int = 0) {
 
   def projection : String
-  def epsgCode : String
+  def epsgCode : Int
   def getEastingNorthing : (Int, Int)
 
   protected def getLettersFromGridRef(gridRef: String) : String
@@ -256,7 +256,7 @@ abstract class GridSquareInfo(gridRef : String, precision: Int = 0) {
       bl._1 + " " + bl._2 + "))"
   }
 
-  private def getWGS84PolygonFromGridSquareOrigin(easting: Int, northing: Int, gridSize: Int, epsgCode: String) = {
+  private def getWGS84PolygonFromGridSquareOrigin(easting: Int, northing: Int, gridSize: Int, epsgCode: Int) = {
     val blGdp = new GeneralDirectPosition(easting, northing)
     val brGdp = new GeneralDirectPosition(easting + gridSize, northing)
     val tlGdp = new GeneralDirectPosition(easting, northing + gridSize)
@@ -265,7 +265,7 @@ abstract class GridSquareInfo(gridRef : String, precision: Int = 0) {
     //Get the Source CRS to WGS84 transformation operation
     val crsFac = ReferencingFactoryFinder.getCRSAuthorityFactory("EPSG",null)
     val wgs84crs = crsFac.createCoordinateReferenceSystem("4326")
-    val SourceCrs = crsFac.createCoordinateReferenceSystem(epsgCode)
+    val SourceCrs = crsFac.createCoordinateReferenceSystem(epsgCode.toString)
     val transformer = new DefaultCoordinateOperationFactory().createOperation(SourceCrs, wgs84crs).getMathTransform
 
     //Get the coordinates in WGS84 lat lng

@@ -20,7 +20,7 @@ class BritishGridSquareInfoSuite extends BaseFunSuite {
   test("should identify EPSG code as 27700") {
     val bgr = new BritishGridSquareInfo(knownGridRef_100m)
 
-    bgr.epsgCode should be ("27700")
+    bgr.epsgCode should be (27700)
   }
 
   test("should output an unblurred grid referce") {
