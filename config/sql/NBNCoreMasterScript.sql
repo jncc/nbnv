@@ -584,6 +584,12 @@ CREATE TABLE [dbo].[SiteBoundaryCategory](
 	[name] [varchar](max) NOT NULL,
 );
 
+INSERT INTO [dbo].[SiteBoundaryCategory] VALUES
+(1, 'Designated and Protected Areas'),
+(2, 'Local Wildlife Sites'),
+(3, 'Organisation Sites'),
+(4, 'Administrative and Landscape');
+
 ------------------------------
 
 CREATE TABLE [dbo].[SiteBoundaryType](

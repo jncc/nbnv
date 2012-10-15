@@ -271,3 +271,24 @@ SELECT
 	, nge.projection 
 	, nge.[priority]
 FROM [NBNSpatial].[dbo].[nationalgridextents] nge
+
+GO
+
+INSERT INTO [dbo].[SiteBoundaryType] (id, siteTypeName)
+SELECT
+	asla.asl1Key 
+	, asla.siteTypeName 
+FROM [NBNGatewayOrig].[dbo].[AdminSiteLevel1] asla
+
+GO
+
+INSERT INTO [dbo].[SiteBoundaryType] (id, parentID, siteTypeName, siteTypeCode, xmlEnumValue)
+SELECT
+	asla.asl2Key + 23
+	, asla.asl1Key 
+	, asla.siteTypeName 
+	, asla.siteTypeCode 
+	, asla.xmlEnumValue 
+FROM [NBNGatewayOrig].[dbo].[AdminSiteLevel2] asla
+
+GO
