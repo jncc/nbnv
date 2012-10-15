@@ -5,9 +5,7 @@
 package uk.org.nbn.nbnv.importer.ui.convert.converters;
 
 import java.util.ArrayList;
-import java.util.EnumMap;
 import java.util.List;
-import java.util.Map;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import uk.org.nbn.nbnv.importer.ui.convert.BadDataException;
@@ -114,7 +112,7 @@ public class SensitiveBooleanTest {
         assertEquals("false", row.get(0));
     }
     
-        /**
+    /**
      * Test of modifyRow method, of class SensitiveBoolean.
      */
     @Test(expected=BadDataException.class)
