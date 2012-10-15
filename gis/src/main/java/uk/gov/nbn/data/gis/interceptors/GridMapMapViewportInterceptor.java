@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import uk.gov.nbn.data.gis.processor.AtlasGrade;
+import uk.gov.nbn.data.gis.processor.GridMap;
 import uk.gov.nbn.data.gis.processor.Interceptor;
 import uk.gov.nbn.data.gis.processor.Intercepts;
 import uk.gov.nbn.data.gis.processor.MapServiceMethod.Type;
@@ -18,7 +18,7 @@ import uk.org.nbn.nbnv.api.model.Feature;
 
 @Component
 @Interceptor
-public class AtlasGradeMapViewportInterceptor {
+public class GridMapMapViewportInterceptor {
     private static int MINX = 0, MINY = 1, MAXX = 2, MAXY=3; //definition of where bbox values live
     private static int MAP_SERVER_IMAGE_MAXIMUM_DIMENSION_VALUE = 2048;
     private static int ZOOM_LEVELS = 15;
@@ -27,14 +27,14 @@ public class AtlasGradeMapViewportInterceptor {
     
     @Intercepts(Type.MAP)
     public Map<String, String[]> processRequestParameters(
-                    AtlasGrade atlasGradeProperties, 
-                    AtlasGrade.GridLayer layer,
+                    GridMap gridMapProperties, 
+                    GridMap.GridLayer layer,
                     @QueryParam(key="imagesize", validation="1[0-5]|[1-9]") @DefaultValue("10") String imagesizeStr,
                     @QueryParam(key="feature") String featureId) {
         Map<String, String[]> toReturn = new HashMap<String,String[]>();
         int[] orderedResolutions = getOrderedResolutions(layer.resolutions());
         int imageSize = Integer.parseInt(imagesizeStr), gcd = gcd(orderedResolutions); //calculate the greatest common divisor for the resolution of the map
-        BoundingBox featureToFocusOn = getFeatureToFocusOn(featureId, atlasGradeProperties);
+        BoundingBox featureToFocusOn = getFeatureToFocusOn(featureId, gridMapProperties);
         int[] griddedBBox = getFeatureBoundingBoxFixedToGrid(featureToFocusOn, orderedResolutions[orderedResolutions.length-1]); //fix to the largest resolution used
         
         int amountOfSquaresX = getAmountOfSquaresInDimension(griddedBBox[MAXX], griddedBBox[MINX], gcd);
@@ -55,7 +55,7 @@ public class AtlasGradeMapViewportInterceptor {
         return toReturn;
     }
     
-    private BoundingBox getFeatureToFocusOn(String featureId, AtlasGrade atlasGradeProperties) {
+    private BoundingBox getFeatureToFocusOn(String featureId, GridMap gridMapProperties) {
         if(featureId != null) {
             //Interact with the data api to find the bounding box which should be 
             //used for the viewport from the passed in feature
@@ -67,9 +67,9 @@ public class AtlasGradeMapViewportInterceptor {
         }
         else {
             //No feature has been defined. Zoom to the bounding box as specfied 
-            //in the atlas grade map annotation
-            int[] defaultExtent = atlasGradeProperties.defaultExtent();
-            return new BoundingBox(atlasGradeProperties.epsgCode(), 
+            //in the grid map annotation
+            int[] defaultExtent = gridMapProperties.defaultExtent();
+            return new BoundingBox(gridMapProperties.epsgCode(), 
                     BigDecimal.valueOf(defaultExtent[MINX]),
                     BigDecimal.valueOf(defaultExtent[MINY]),
                     BigDecimal.valueOf(defaultExtent[MAXX]),

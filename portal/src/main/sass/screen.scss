@@ -301,4 +301,33 @@ body {
         float: right;
     }
 
+    #nbn-site-map-container{
+        width: 30%;
+        margin: auto;
+        display: inline-block;
+        vertical-align: top;
+    }
+
+    #nbn-site-map-image{
+        border: 1px solid $majorColour;
+    }
+
+    #nbn-site-image-copyright{
+        font-size: 0.7em;
+    }
+
+    #nbn-grid-map-filter-container{
+        width: 39%;
+        float: left;
+    }
+
+    #nbn-grid-map-container{
+        width: 60%;
+        float: right;
+    }
+
+    .nbn-clear-floating-elements{
+        clear: both;
+    }
+
 }

@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Map;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-import uk.gov.nbn.data.gis.processor.AtlasGrade;
-import uk.gov.nbn.data.gis.processor.AtlasGrade.Layer;
+import uk.gov.nbn.data.gis.processor.GridMap;
+import uk.gov.nbn.data.gis.processor.GridMap.Layer;
 import uk.gov.nbn.data.gis.processor.Interceptor;
 import uk.gov.nbn.data.gis.processor.Intercepts;
 import uk.gov.nbn.data.gis.processor.MapServiceMethod.Type;
@@ -22,21 +22,21 @@ import uk.gov.nbn.data.gis.providers.annotations.QueryParam;
  */
 @Component
 @Interceptor
-public class AtlasGradeMapLayersInterceptor {
+public class GridMapMapLayersInterceptor {
    
     @Intercepts(Type.MAP)
     public Map<String, String[]> processRequestParameters(
-            AtlasGrade atlasGradeProperties,
+            GridMap gridMapProperties,
             @QueryParam(key="background") List<String> requestedBackgroundLayers,
             @QueryParam(key="overlay") List<String> requestedOverlayLayers,
-            AtlasGrade.GridLayer layer) {
+            GridMap.GridLayer layer) {
         Map<String, String[]> toReturn = new HashMap<String,String[]>();
         
         List<String> layersToRequest = new ArrayList<String>();
         
-        layersToRequest.addAll(getLayersToRequest(requestedBackgroundLayers, atlasGradeProperties.backgrounds(), atlasGradeProperties.defaultBackgrounds()));
+        layersToRequest.addAll(getLayersToRequest(requestedBackgroundLayers, gridMapProperties.backgrounds(), gridMapProperties.defaultBackgrounds()));
         layersToRequest.add(layer.layer()); //add the resolution layer
-        layersToRequest.addAll(getLayersToRequest(requestedOverlayLayers, atlasGradeProperties.overlays(), atlasGradeProperties.defaultOverlays()));
+        layersToRequest.addAll(getLayersToRequest(requestedOverlayLayers, gridMapProperties.overlays(), gridMapProperties.defaultOverlays()));
         
         toReturn.put("LAYERS",  new String[]{ StringUtils.collectionToCommaDelimitedString(layersToRequest) });
         return toReturn;

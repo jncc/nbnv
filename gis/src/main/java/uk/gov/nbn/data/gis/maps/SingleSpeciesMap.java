@@ -5,13 +5,14 @@ import java.util.List;
 import java.util.Properties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.gov.nbn.data.gis.maps.MapHelper.ResolutionDataGenerator;
 import uk.gov.nbn.data.gis.processor.MapFileModel;
 import uk.gov.nbn.data.gis.processor.MapService;
 import uk.gov.nbn.data.gis.processor.MapContainer;
-import uk.gov.nbn.data.gis.processor.AtlasGrade;
-import uk.gov.nbn.data.gis.processor.AtlasGrade.Layer;
-import uk.gov.nbn.data.gis.processor.AtlasGrade.GridLayer;
-import uk.gov.nbn.data.gis.processor.AtlasGrade.Resolution;
+import uk.gov.nbn.data.gis.processor.GridMap;
+import uk.gov.nbn.data.gis.processor.GridMap.Layer;
+import uk.gov.nbn.data.gis.processor.GridMap.GridLayer;
+import uk.gov.nbn.data.gis.processor.GridMap.Resolution;
 import uk.gov.nbn.data.gis.providers.annotations.PathParam;
 import uk.gov.nbn.data.gis.providers.annotations.QueryParam;
 import uk.gov.nbn.data.gis.providers.annotations.ServiceURL;
@@ -29,7 +30,7 @@ import uk.org.nbn.nbnv.api.model.User;
  */
 @Component
 @MapContainer("SingleSpecies")
-public class SingleSpeciesWMS {
+public class SingleSpeciesMap {
     private static final String QUERY = "geom from ("
             + "SELECT f.geom, o.observationID, f.label "
             + "FROM [dbo].[UserTaxonObservationData] o "
@@ -45,7 +46,7 @@ public class SingleSpeciesWMS {
     @Autowired Properties properties;
     
     @MapService("{taxonVersionKey}")
-    @AtlasGrade(
+    @GridMap(
         layers={
             @GridLayer(name="10km",     layer="Grid-10km",      resolutions=Resolution.TEN_KM),
             @GridLayer(name="2km",      layer="Grid-2km",       resolutions=Resolution.TWO_KM),
@@ -86,6 +87,6 @@ public class SingleSpeciesWMS {
                         MapHelper.createEndYearSegment(endYear));
                 }
         });
-        return new MapFileModel("SingleSpeciesWMS.map",data);
+        return new MapFileModel("SingleSpecies.map",data);
     }
 }

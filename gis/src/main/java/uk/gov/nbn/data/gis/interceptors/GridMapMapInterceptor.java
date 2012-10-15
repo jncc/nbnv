@@ -14,7 +14,7 @@ import uk.gov.nbn.data.gis.processor.MapServiceMethod.Type;
  */
 @Component
 @Interceptor
-public class AtlasGradeMapInterceptor {
+public class GridMapMapInterceptor {
     private static final Map<String, String> FORMATS;
     
     static {

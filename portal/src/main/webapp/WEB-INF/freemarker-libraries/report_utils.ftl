@@ -164,3 +164,35 @@
     </#if>
     <#return toReturn>
 </#function>
+
+<#macro siteBoundaryImage locationName locationID>
+        <@siteImage locationName=locationName locationID=locationID imageURL=getSiteBoundaryImageURL(350, locationID)/>
+</#macro>
+
+<#macro siteSpeciesImage locationName locationID ptvk>
+        <@siteImage locationName=locationName locationID=locationID imageURL=getSiteSpeciesImageURL(350, locationID, ptvk)/>
+</#macro>
+
+<#macro siteImage locationName locationID imageURL>
+    <div id="nbn-site-map-container">
+        <table class="nbn-coloured-table">
+            <tr>
+                <th class="nbn-th-right nbn-th-left">Map of ${locationName}</th>
+            </tr>
+            <tr>
+                <td class="nbn-td-right nbn-td-left"><img src="${imageURL}" id="nbn-site-map-image"></td>
+            </tr>
+            <tr>
+                <td class="nbn-td-right nbn-td-left" id="nbn-site-image-copyright">&copy; Crown copyright and database rights 2011 Ordnance Survey [100017955]</td>
+            </tr>
+        </table>
+    </div>
+</#macro>
+
+<#function getSiteBoundaryImageURL imageSize locationID>
+    <#return "/nbnv-gis-0.1-SNAPSHOT/OS-Modern?feature=" + locationID + "&request=GetMap&service=WMS&version=1.3.0&layers=OS-Scale-Dependent,Selected-Feature&width=" + imageSize + "&height=" + imageSize + "&crs=EPSG:27700&bbox=0,0,700000,700000&format=png">
+</#function>
+
+<#function getSiteSpeciesImageURL imageSize locationID ptvk>
+    <#return "/nbnv-gis-0.1-SNAPSHOT/SingleSpecies/" + ptvk + "?request=GetMap&service=WMS&width=100&version=1.1.0&layers=OS-Scale-Dependent,Grid-10km&width=" + imageSize + "&height=" + imageSize + "&srs=EPSG:27700&bbox=0,0,700000,700000&format=png">
+</#function>
