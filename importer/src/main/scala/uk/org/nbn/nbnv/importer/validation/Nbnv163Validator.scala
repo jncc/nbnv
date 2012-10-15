@@ -3,14 +3,9 @@ package uk.org.nbn.nbnv.importer.validation
 import uk.org.nbn.nbnv.importer.fidelity.{Result, ResultLevel}
 import uk.org.nbn.nbnv.importer.records.NbnRecord
 
-/**
- * Created with IntelliJ IDEA.
- * User: Matt Debont
- * Date: 15/10/12
- * Time: 10:51
- * To change this template use File | Settings | File Templates.
- */
 class Nbnv163Validator {
+  // Validate a record based on the presence of its record key, if its there then we are good to go, if the key is
+  // an empty string or whitespace then fail the validation of this record
   def validate(record:NbnRecord) = {
 
     def success = {
