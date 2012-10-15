@@ -8,15 +8,21 @@ import com.google.inject.Inject
 import org.apache.log4j.Logger
 import uk.org.nbn.nbnv.importer.ImportFailedException
 import uk.org.nbn.nbnv.{SpatialQueries, FeatureFactory}
+import javax.naming.spi.DirStateFactory.Result
 
 
 class Repository (log: Logger, em: EntityManager, cache: QueryCache) extends ControlAbstractions {
 
-  def getSRSForLatLong(lng: Double, lat: Double ) = {
+  def getSRSForLatLong(lng: Double, lat: Double ) : Option[Int] = {
     val queries = new SpatialQueries(em)
     val wkt = "POINT(%s %s)".format(lng.toString, lat.toString)
 
-    Option(queries.getGridProjectionForWGS84wkt(wkt).toString)
+    val result = queries.getGridProjectionForWGS84wkt(wkt)
+
+    //has to be done manually because getGridProjection returns java.lang.Integer
+    //scala will try cast to scala Int when wrapping in the option. This results in
+    //null pointer exception.
+    if (result == null) None else Option(result)
   }
 
   def createFeature(wkt: String) = {

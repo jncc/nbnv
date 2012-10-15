@@ -76,7 +76,7 @@ class FeatureIngester @Inject()(log: Logger, db: Database, gridSquareInfoFactory
     db.repo.getSiteBoundaryFeature(siteBoundaryDataset, providerKey)._1
   }
 
-  private def ensureGridRefFeatureByCoordinate(easting: Double, northing: Double, spatialReferenceSystem: String, gridReferencePrecision: Int = 0) = {
+  private def ensureGridRefFeatureByCoordinate(easting: Double, northing: Double, spatialReferenceSystem: Int, gridReferencePrecision: Int = 0) = {
 
     val info = gridSquareInfoFactory.getByCoordinate(easting, northing, spatialReferenceSystem, gridReferencePrecision)
 

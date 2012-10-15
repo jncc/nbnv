@@ -50,7 +50,7 @@ class NbnRecord(record: StarRecord) {
   def eventDate =       format.parse(eventDateRaw)
   def east =            parseOptional(record.core.value(DwcTerm.verbatimLongitude)) map { s => s.toDouble }
   def north =           parseOptional(record.core.value(DwcTerm.verbatimLatitude)) map { s => s.toDouble }
-  def srs =             parseOptional(record.core.value(DwcTerm.verbatimSRS))
+  def srs =             parseOptional(record.core.value(DwcTerm.verbatimSRS)) map { s => s.toInt }
   def attributes =      attributeMap
 
   def startDateRaw           = extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateStart")

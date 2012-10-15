@@ -21,7 +21,7 @@ class Nbnv58ValidationSuite extends BaseFunSuite {
     when(record.gridReference).thenReturn(None)
     when(record.east).thenReturn(Some(1234.0))
     when(record.north).thenReturn(Some(1234.0))
-    when(record.srs).thenReturn(Some("27700"))
+    when(record.srs).thenReturn(Some(27700))
 
     val v = new Nbnv58Validator
     val r = v.validate(record)

@@ -96,14 +96,44 @@ class GridSquareInfoFactorySuite extends BaseFunSuite{
   }
 
   test("smoke test - should give british grid square for lat 53.718103 lng -1.8684933") {
-    //requries a real database
+    //requries a real database for the grid reference system determination
     val db = (new DataAccessLayer).getDatabase
     val fac = new GridSquareInfoFactory(db)
 
-    val gs = fac.getByCoordinate(-1.8684933, 53.718103, "4326").get
+    val gs = fac.getByCoordinate(-1.8684933, 53.718103, 4326).get
 
     gs.projection should be ("OSGB36")
     gs.gridReference should be ("SE087246")
   }
 
+  test("smoke test - should give irish grid square for lat 54.622978 lng -7.1389159") {
+    //requries a real database for the grid reference system determination
+    val db = (new DataAccessLayer).getDatabase
+    val fac = new GridSquareInfoFactory(db)
+
+    val gs = fac.getByCoordinate(-7.1389159, 54.622978, 4326).get
+
+    gs.projection should be ("OSNI")
+    gs.gridReference should be ("H556753")
+  }
+
+  test("smoke test - should give channel islands grid square for lat 49.177422 lng -2.183612") {
+    //requries a real database for the grid reference system determination
+    val db = (new DataAccessLayer).getDatabase
+    val fac = new GridSquareInfoFactory(db)
+
+    val gs = fac.getByCoordinate(-2.183612, 49.177422, 4326).get
+
+    gs.projection should be ("ED50")
+    gs.gridReference should be ("WV596477")
+  }
+
+  test("should give none for grid ref outside of supported grid systems") {
+    val db = (new DataAccessLayer).getDatabase
+    val fac = new GridSquareInfoFactory(db)
+
+    val nullGS = fac.getByCoordinate(7.410391,  54.438641, 4326)
+
+    nullGS should be (None)
+  }
 }

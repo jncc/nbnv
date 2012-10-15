@@ -26,7 +26,7 @@ class Nbnv82ValidatorSuite extends BaseFunSuite {
 
     when(record.east).thenReturn(Some(377562.0))
     when(record.north).thenReturn(Some(6296480.0))
-    when(record.srs).thenReturn(Some("27700"))
+    when(record.srs).thenReturn(Some(27700))
     when(record.gridReference).thenReturn(None)
     when(record.featureKey).thenReturn(None)
 
