@@ -74,5 +74,4 @@ public abstract class ConverterStep {
     public abstract boolean isStepNeeded(List<ColumnMapping> columns);
     public abstract void modifyHeader(List<ColumnMapping> columns);
     public abstract void modifyRow(List<String> row) throws BadDataException;
-    public abstract void checkMappings(List<ColumnMapping> columns) throws MappingException;
 }

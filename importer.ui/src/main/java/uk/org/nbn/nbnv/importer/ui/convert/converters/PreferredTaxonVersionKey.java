@@ -11,7 +11,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import uk.org.nbn.nbnv.importer.ui.convert.BadDataException;
 import uk.org.nbn.nbnv.importer.ui.convert.ConverterStep;
-import uk.org.nbn.nbnv.importer.ui.convert.MappingException;
 import uk.org.nbn.nbnv.importer.ui.parser.ColumnMapping;
 import uk.org.nbn.nbnv.importer.ui.util.DatabaseConnection;
 import uk.org.nbn.nbnv.jpa.nbncore.Taxon;
@@ -67,22 +66,21 @@ public class PreferredTaxonVersionKey extends ConverterStep {
                     current = current.getPTaxonVersionKey();
                 }
 
+                // Put in the current link from TVK to PTVK
+                lookup.put(row.get(columnNumber), current.getTaxonVersionKey());
+                // Put in a link from PTVK to itself incase it pops up anywhere
+                lookup.put(current.getTaxonVersionKey(), current.getTaxonVersionKey());
+                // See the row to the PTVK
                 row.set(columnNumber, current.getTaxonVersionKey());
+                
             } else {
-                lookup.put(row.get(columnNumber), "");
+                lookup.put(row.get(columnNumber), row.get(columnNumber));
                 throw new BadDataException("Could not find an entry for the TaxonVersionKey: " + row.get(columnNumber));
             }
-        } else {
-            if (!lookup.get(row.get(columnNumber)).isEmpty()) {
-                row.set(columnNumber, lookup.get(row.get(columnNumber)));
-            }
-        }
-    }
-    
-    @Override
-    public void checkMappings(List<ColumnMapping> mappings) throws MappingException {
-        if (!isStepNeeded(mappings)) {
-            throw new MappingException("Could not find necessary columns again for step: " + this.getClass().getName() + " - " + getName());
+        } else if (!lookup.get(row.get(columnNumber)).isEmpty()) {
+            // We have already seen this TVK and got its PTVK, just put in the 
+            // stored value rather than query the database again
+            row.set(columnNumber, lookup.get(row.get(columnNumber)));
         }
     }
 }

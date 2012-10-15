@@ -5,9 +5,7 @@
 package uk.org.nbn.nbnv.importer.ui.convert.converters;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Random;
 import uk.org.nbn.nbnv.importer.ui.convert.BadDataException;
 import uk.org.nbn.nbnv.importer.ui.convert.ConverterStep;
 import uk.org.nbn.nbnv.importer.ui.parser.ColumnMapping;
@@ -20,6 +18,7 @@ import uk.org.nbn.nbnv.importer.ui.parser.DarwinCoreField;
 public class MissingID extends ConverterStep {
     private int count = 1;
     private List<Integer> lookup = new ArrayList<Integer>();
+    private int outColumn = -1;
     
     public MissingID() {
         super(ConverterStep.ADD_COLUMN);
@@ -60,7 +59,13 @@ public class MissingID extends ConverterStep {
             }
         }
         
-        ColumnMapping cm = new ColumnMapping(columns.size(), "OccurrenceID", DarwinCoreField.OCCURRENCEID);
+        for (ColumnMapping cm : columns) {
+            outColumn = cm.getColumnNumber() > outColumn ? cm.getColumnNumber() : outColumn;
+        }
+        
+        outColumn++;
+        
+        ColumnMapping cm = new ColumnMapping(outColumn, "RecordKey", DarwinCoreField.OCCURRENCEID);
         columns.add(cm);
     }
 
@@ -71,21 +76,8 @@ public class MissingID extends ConverterStep {
             uid = uid + row.get(col) + ":";
         }
         
-        Date rand = new Date();
-        Random randGen = new Random(rand.getTime());
-        Long out = randGen.nextLong();
-        
-        if (out < 0) {
-            out = 0 - out;
-        }
-        
-        uid = uid + Long.toString(out);
+        uid = uid + (count++);
         
         row.add(uid);
-    }
-    
-    @Override
-    public void checkMappings(List<ColumnMapping> mappings) {
-        // No mappings need to be checked, we only insert a column
     }
 }

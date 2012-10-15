@@ -31,6 +31,7 @@ public enum DarwinCoreField {
     SITEFEATUREKEY ("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/siteFeatureKey", DarwinCoreFieldType.NBNEXCHANGE),
     SENSITIVEOCCURRENCE ("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/sensitiveOccurrence", DarwinCoreFieldType.NBNEXCHANGE),
     DYNAMICPROPERTIES ("http://rs.tdwg.org/dwc/terms/dynamicProperties", DarwinCoreFieldType.DWCA_OCCURRENCE),
+    TAXONNAME ("TaxonName", DarwinCoreFieldType.INTERNAL),
     ATTRIBUTE ("Attribute", DarwinCoreFieldType.INTERNAL);
     
     private final String term;

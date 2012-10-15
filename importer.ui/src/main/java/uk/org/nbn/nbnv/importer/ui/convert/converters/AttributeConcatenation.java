@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package uk.org.nbn.nbnv.importer.ui.convert.converters;
 
 import java.util.HashMap;
@@ -13,7 +9,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import uk.org.nbn.nbnv.importer.ui.convert.BadDataException;
 import uk.org.nbn.nbnv.importer.ui.convert.ConverterStep;
-import uk.org.nbn.nbnv.importer.ui.convert.MappingException;
 import uk.org.nbn.nbnv.importer.ui.parser.ColumnMapping;
 import uk.org.nbn.nbnv.importer.ui.parser.DarwinCoreField;
 
@@ -23,9 +18,10 @@ import uk.org.nbn.nbnv.importer.ui.parser.DarwinCoreField;
  */
 public class AttributeConcatenation extends ConverterStep {
     private Map<Integer, String> columnList;
+    private int outColumn = -1;
 
     public AttributeConcatenation() {
-        super(ConverterStep.ADD_COLUMNS ^ ConverterStep.RUN_FIRST);
+        super(ConverterStep.ADD_COLUMN ^ ConverterStep.RUN_FIRST);
     }
     
     @Override
@@ -47,14 +43,14 @@ public class AttributeConcatenation extends ConverterStep {
     }
 
     @Override
-    public void modifyHeader(List<ColumnMapping> columns) {
-        int highestColumn = -1;
-        
+    public void modifyHeader(List<ColumnMapping> columns) {       
         for (ColumnMapping cm : columns) {
-            highestColumn = cm.getColumnNumber() > highestColumn ? cm.getColumnNumber() : highestColumn;
+            outColumn = cm.getColumnNumber() > outColumn ? cm.getColumnNumber() : outColumn;
         }
         
-        ColumnMapping col = new ColumnMapping(highestColumn + 1, "DynamicProperties", DarwinCoreField.DYNAMICPROPERTIES);
+        outColumn++;
+        
+        ColumnMapping col = new ColumnMapping(outColumn, "DynamicProperties", DarwinCoreField.DYNAMICPROPERTIES);
         columns.add(col);
     }
 
@@ -72,12 +68,5 @@ public class AttributeConcatenation extends ConverterStep {
         }
         
         row.add(obj.toString());
-    }
-    
-    @Override
-    public void checkMappings(List<ColumnMapping> mappings) throws MappingException {
-        if (!isStepNeeded(mappings)) {
-            throw new MappingException("Could not find necessary columns again for step: " + this.getClass().getName() + " - " + getName());
-        }
     }
 }

@@ -302,12 +302,6 @@ public class RunConversions {
             step.modifyRow(row);
         }
     }
-
-    private void checkMappings(List<ConverterStep> steps, List<ColumnMapping> mappings) throws MappingException {
-        for (ConverterStep step : steps) {
-            step.checkMappings(mappings);
-        }
-    }
     
     public List<String> run(File out, File meta, Map<String, String> args) throws IOException {
         List<String> errors = new ArrayList<String>();
@@ -347,8 +341,6 @@ public class RunConversions {
 
             MetaWriter mw = new MetaWriter();
             errors.addAll(mw.createMetaFile(mappings, meta));
-//        } catch (MappingException ex) {
-//            errors.add("MappingException: " + ex.getMessage());
         } catch (IOException ex) {
             errors.add("IOException: " + ex.getMessage());
         } catch(UnsatisfiableDependencyError ex) {
@@ -360,7 +352,7 @@ public class RunConversions {
         }
         return errors;
     }
-    
+
     private void updateStartEndDates(List<String> row) throws ParseException {
         DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
         if (startDateCol >= 0 && endDateCol >= 0) {

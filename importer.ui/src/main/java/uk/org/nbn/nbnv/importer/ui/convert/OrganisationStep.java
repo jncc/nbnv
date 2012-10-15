@@ -40,7 +40,5 @@ public abstract class OrganisationStep extends ConverterStep {
     @Override
     public abstract void modifyHeader(List<ColumnMapping> columns);
     @Override
-    public abstract void modifyRow(List<String> row) throws BadDataException; 
-    @Override
-    public abstract void checkMappings(List<ColumnMapping> columns) throws MappingException;    
+    public abstract void modifyRow(List<String> row) throws BadDataException;  
 }
