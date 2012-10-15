@@ -19,7 +19,9 @@ class ValidatorSuite extends BaseFunSuite with BeforeAndAfter{
   var starRec1: StarRecord = _
   var coreArchive1: Record = _
   var rec: Record = _
+  var rec2: Record = _
   var recs: util.LinkedList[Record] = _
+  var recs2: util.LinkedList[Record] = _
   var starRec2: StarRecord = _
   var coreArchive2: Record = _
   val repo = mock[Repository]
@@ -104,9 +106,19 @@ class ValidatorSuite extends BaseFunSuite with BeforeAndAfter{
     validator.validate(archive)
   }
 
-  ignore("Should validate a valid record but error on a missing id") {
-    when(coreArchive2.value(DwcTerm.occurrenceID)).thenReturn(null)
+  test("Should validate a valid record but error on a missing id") {
+    // Need to wait for a validation system for this to be available
+    when(coreArchive2.value(DwcTerm.occurrenceID)).thenReturn("")
 
+    val validator = new Validator(log, db)
+    val throws = intercept[ImportFailedException] {
+      validator.validate(archive)
+    }
+    throws should not be (null)
+  }
+
+  test("Should not validate a duplicated id") {
+    when(coreArchive2.value(DwcTerm.occurrenceID)).thenReturn("CI00000300000TNL")
     val validator = new Validator(log, db)
     val throws = intercept[ImportFailedException] {
       validator.validate(archive)
@@ -137,7 +149,7 @@ class ValidatorSuite extends BaseFunSuite with BeforeAndAfter{
     validator.validate(archive)
   }
 
-  ignore("Should validate with a valid lat/long val") {
+  test("Should validate with a valid lat/long val") {
     when(rec.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/gridReference")).thenReturn(null)
     when(rec.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/gridReferenceType")).thenReturn(null)
     when(rec.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/gridReferencePrecisionRaw")).thenReturn(null)
@@ -145,6 +157,33 @@ class ValidatorSuite extends BaseFunSuite with BeforeAndAfter{
     when(coreArchive1.value(DwcTerm.verbatimLongitude)).thenReturn("-0.22174100")
     when(coreArchive1.value(DwcTerm.verbatimLatitude)).thenReturn("52.585667")
     when(coreArchive1.value(DwcTerm.verbatimSRS)).thenReturn("4326")
+
+    when(coreArchive2.value(DwcTerm.verbatimLongitude)).thenReturn("-0.22174100")
+    when(coreArchive2.value(DwcTerm.verbatimLatitude)).thenReturn("52.585667")
+    when(coreArchive2.value(DwcTerm.verbatimSRS)).thenReturn("4326")
+
+    val validator = new Validator(log, db)
+    validator.validate(archive)
+  }
+
+  test("Should validate records with mixed valid locations") {
+    rec2 = mock[Record]
+    when(rec2.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateStart")).thenReturn("19/07/2001")
+    when(rec2.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateEnd")).thenReturn("19/07/2001")
+    when(rec2.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateTypeCode")).thenReturn("D")
+    when(rec2.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/sensitiveOccurrence")).thenReturn("false")
+    when(rec2.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/gridReferenceType")).thenReturn(null)
+    when(rec2.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/gridReference")).thenReturn(null)
+    when(rec2.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/gridReferencePrecisionRaw")).thenReturn(null)
+    when(rec2.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/featureKey")).thenReturn(null)
+
+    recs2 = new util.LinkedList[Record]
+    recs2.add(rec2)
+
+    when(starRec2.extension("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/nxfOccurrence")).thenReturn(recs2)
+    when(coreArchive2.value(DwcTerm.verbatimLongitude)).thenReturn("-0.22174100")
+    when(coreArchive2.value(DwcTerm.verbatimLatitude)).thenReturn("52.585667")
+    when(coreArchive2.value(DwcTerm.verbatimSRS)).thenReturn("4326")
 
     val validator = new Validator(log, db)
     validator.validate(archive)
