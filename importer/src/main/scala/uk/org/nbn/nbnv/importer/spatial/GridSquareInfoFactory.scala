@@ -7,7 +7,7 @@ import uk.org.nbn.nbnv.importer.data.Database
 class GridSquareInfoFactory @Inject()(db: Database) {
 
   /// Returns None for WGS84 points that don't lie within any supported grid system.
-  def getByCoordinate(east: Double, north: Double, spatialReferenceSystem: String, gridReferencePrecision: Int) : Option[GridSquareInfo] = {
+  def getByCoordinate(east: Double, north: Double, spatialReferenceSystem: String, gridReferencePrecision: Int = 0) : Option[GridSquareInfo] = {
 
     if (spatialReferenceSystem == "4326") {
       val longitude = east

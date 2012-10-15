@@ -1,6 +1,6 @@
 package uk.org.nbn.nbnv.importer.spatial
 
-import uk.org.nbn.nbnv.importer.testing.BaseFunSuite
+import uk.org.nbn.nbnv.importer.testing.{DataAccessLayer, BaseFunSuite}
 import uk.org.nbn.nbnv.importer.data.{Database, Repository}
 import org.mockito.Mockito._
 import org.mockito.Matchers._
@@ -93,6 +93,17 @@ class GridSquareInfoFactorySuite extends BaseFunSuite{
     intercept[ImportFailedException] {
       fac.getByGridRef(gridRef, gridRefType)
     }
+  }
+
+  test("smoke test - should give british grid square for lat 53.718103 lng -1.8684933") {
+    //requries a real database
+    val db = (new DataAccessLayer).getDatabase
+    val fac = new GridSquareInfoFactory(db)
+
+    val gs = fac.getByCoordinate(-1.8684933, 53.718103, "4326").get
+
+    gs.projection should be ("OSGB36")
+    gs.gridReference should be ("SE087246")
   }
 
 }
