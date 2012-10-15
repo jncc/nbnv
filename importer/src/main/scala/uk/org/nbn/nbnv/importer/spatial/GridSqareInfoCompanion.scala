@@ -42,7 +42,7 @@ trait GridSqareInfoCompanion {
     catch {
       case ife: ImportFailedException =>
         throw new ImportFailedException("Lat '%s' 'Lng are not in the '%s' projection".format(latitude, longitude, getEpsgCode))
-      case e => throw e
+      case e: Throwable => throw e
     }
   }
 
