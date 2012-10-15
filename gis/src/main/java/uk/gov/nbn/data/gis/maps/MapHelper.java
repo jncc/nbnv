@@ -15,7 +15,7 @@ class MapHelper {
     /**The following interface enables anonymous implementations for creating
      * SQL Expressions in Map Server Templates
      **/
-    interface ResolutionDataGenerator {
+    public interface ResolutionDataGenerator {
         String getData(int resolution);
     }
     
