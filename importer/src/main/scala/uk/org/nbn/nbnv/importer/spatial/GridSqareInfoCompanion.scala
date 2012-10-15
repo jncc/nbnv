@@ -8,7 +8,7 @@ import org.geotools.referencing.operation.DefaultCoordinateOperationFactory
 trait GridSqareInfoCompanion {
 
   protected def getEpsgCode : Int
-  protected def getGridSquareByLatLng(east: Int, north: Int, precision: Int) : GridSquareInfo
+  protected def getGridSquareByEastingNorthing(east: Int, north: Int, precision: Int) : GridSquareInfo
   protected def create(gridRef: String, precision: Int = 0) : GridSquareInfo
 
   def apply(east: Int, north: Int) : GridSquareInfo = {
@@ -17,7 +17,7 @@ trait GridSqareInfoCompanion {
 
   def apply(east: Int, north: Int, precision: Int) : GridSquareInfo = {
 
-    getGridSquareByLatLng(east, north, precision)
+    getGridSquareByEastingNorthing(east, north, precision)
   }
 
   def apply(gridRef : String) : GridSquareInfo = {

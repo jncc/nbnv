@@ -11,7 +11,7 @@ object ChannelIslandGridSquareInfo extends GridSqareInfoCompanion {
 
   protected def getEpsgCode = 23030
 
-  protected def getGridSquareByLatLng(east: Int, north: Int, precision: Int) ={
+  protected def getGridSquareByEastingNorthing(east: Int, north: Int, precision: Int) ={
     val gridLetters =
       north / 100000 match {
         case 55 => "WA"

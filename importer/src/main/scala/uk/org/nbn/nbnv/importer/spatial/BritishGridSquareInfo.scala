@@ -29,7 +29,7 @@ object BritishGridSquareInfo extends GridSqareInfoCompanion {
 
   protected def getEpsgCode = 27700
 
-  protected def getGridSquareByLatLng(east: Int, north: Int, precision: Int) = {
+  protected def getGridSquareByEastingNorthing(east: Int, north: Int, precision: Int) = {
     //Compute 100K grid square co-ordinate
 
     val e100k = (east - (east % 100000))
