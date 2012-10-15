@@ -1,16 +1,19 @@
 <#assign tvk=URLParameters.tvk>
 <#assign requestParametersExtended = RequestParameters + {"tvk":[tvk]}>
-<#assign providersWithQueryStats=json.readURL("${api}/taxonObservations/providers",requestParametersExtended)>
+<#--<#assign providersWithQueryStats=json.readURL("${api}/taxonObservations/providers",requestParametersExtended)>-->
 <#assign taxon=json.readURL("${api}/taxa/${tvk}")>
 
-<@template.master title="NBN Grid Map" javascripts=["/js/site-report-form-validation.js","/js/jquery.dataset-selector-utils.js","/js/jquery.gridmap_utils.js"]>
-<h1>Grid map for ${taxon_utils.getShortName(taxon)}</h1>
+<@template.master title="NBN Grid Map" 
+    javascripts=["/js/site-report-form-validation.js","/js/jquery.dataset-selector-utils.js","/js/jquery.gridmap_utils.js","/js/colourpicker/colorpicker.js"]
+    csss=["/css/colourpicker/colorpicker.css"]>
+    
+    <h1>Grid map for ${taxon_utils.getShortName(taxon)}</h1>
     <#assign imageSize=5>
     <div id="nbn-grid-map-filter-container">
         <@gridMapFilters imageSize=imageSize/>
     </div>
     <div id="nbn-grid-map-container">
-        <@gridMapContents tvk=tvk imageSize=imageSize/>
+<#--        <@gridMapContents tvk=tvk imageSize=imageSize/>-->
     </div>
     <div class="nbn-clear-floating-elements"></div>
 </@template.master>
@@ -51,10 +54,24 @@
                 </td>
             </tr>
             <tr>
-                <td class="nbn-td-left">Resolution:</td>
+                <td class="nbn-td-left nbn-td-contents-top">Date ranges:</td>
                 <td class="nbn-td-right">
-                    <input type="submit" value="submit">
+                    ${getYearRangeText("1", "#ff0000")}
+                    ${getYearRangeText("2", "#ff7f00")}
+                    ${getYearRangeText("3", "#ffff00")}
                 </td>
+            </tr>
+            <tr>
+                <td class="nbn-td-left nbn-td-contents-top">Overlays and backdrops:</td>
+                <td class="nbn-td-right">
+                    <input type="checkbox" value="os">Ordnance survey<br/>
+                    <input type="checkbox" value="os">Vice counties<br/>
+                    <input type="checkbox" value="os">100km grid<br/>
+                    <input type="checkbox" value="os">10km grid<br/>
+                </td>
+            </tr>
+            <tr>
+                <td class="nbn-td-left nbn-td-right nbn-td-contents-centre" colspan="2"><input type="submit" value="Submit"></td>
             </tr>
         </table>
         <input hidden id="nbn-grid-map-imagesize" value="${imageSize}">
@@ -72,3 +89,8 @@
         </tr>
     </table>
 </#macro>
+
+<#function getYearRangeText layerNum hexColour>
+    <#assign currentYear=.now?string("yyyy")>
+    <#return "<input type='checkbox' name='gridLayer${layerNum}' value='startYear${layerNum}'> from <input type='text' name='startYear${layerNum}' value='1600' class='nbn-year-input'> to <input type='text' name='endYear${layerNum}' value='${currentYear}' class='nbn-year-input'><div id='nbn-colour-picker${layerNum}' class='nbn-colour-picker'><div style='background-color: ${hexColour}'></div></div><br/>">
+</#function>
