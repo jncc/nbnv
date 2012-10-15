@@ -10,7 +10,7 @@ import uk.org.nbn.nbnv.importer.ImportFailedException
 import uk.org.nbn.nbnv.{SpatialQueries, FeatureFactory}
 
 
-class Repository @Inject()(log: Logger, em: EntityManager, cache: QueryCache) extends ControlAbstractions {
+class Repository (log: Logger, em: EntityManager, cache: QueryCache) extends ControlAbstractions {
 
   def getSRSForLatLong(lng: Double, lat: Double ) = {
     val queries = new SpatialQueries(em)

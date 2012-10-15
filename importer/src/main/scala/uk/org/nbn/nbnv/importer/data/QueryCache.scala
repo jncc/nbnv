@@ -4,7 +4,7 @@ import org.apache.log4j.Logger
 import com.google.inject.Inject
 
 
-class QueryCache @Inject()(log: Logger) {
+class QueryCache (log: Logger) {
 
   val map = scala.collection.mutable.Map[String, Any]()
 
@@ -23,5 +23,9 @@ class QueryCache @Inject()(log: Logger) {
     }
 
     map.put(key, o)
+  }
+
+  def clear() {
+    map.clear()
   }
 }

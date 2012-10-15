@@ -1,6 +1,6 @@
 package uk.org.nbn.nbnv.importer
 
-import data.{QueryCache, Repository, KeyGenerator}
+import data.{Database, QueryCache, Repository, KeyGenerator}
 import ingestion.FeatureIngester
 import injection.ImporterModule
 import testing.BaseFunSuite
@@ -18,8 +18,8 @@ class SmokeSuiteIT extends BaseFunSuite with ResourceLoader {
   ignore("should be able to get next dataset key") {
 
     val em = new PersistenceUtility().createEntityManagerFactory(Settings.map).createEntityManager
-    val dr = new Repository(mock[Logger], em, mock[QueryCache])
-    val kg = new KeyGenerator(dr)
+    val db = new Database(em, new Repository(mock[Logger], em, mock[QueryCache]), mock[QueryCache])
+    val kg = new KeyGenerator(db)
 
     val key = kg.nextTaxonDatasetKey
 
@@ -50,24 +50,6 @@ class SmokeSuiteIT extends BaseFunSuite with ResourceLoader {
     importer.run()
   }
 
-
-  ignore("run a query") {
-  
-    val tempDir = ".\\temp"
-    new File(tempDir).mkdirs()
-      val archivePath = resource("/archives/valid.zip")
-
-      val options = Options(archivePath = archivePath.getFile, tempDir = tempDir, whatIf = true)
-
-      val injector = Guice.createInjector(new ImporterModule(options))
-      val repo = injector.getInstance(classOf[Repository])
-
-    //todo: sort this out
-//      repo.getGridSquareFeature("HY540119") match {
-//        case Some((f, gs)) => println(f.toWkt + " ||| " + gs.getGridRef)
-//        case None => { println("failing"); fail() }
-//      }
-  }
 
   ignore("should ensure gridrefs are of a correct format / correct precision in this case") {
     val tempDir = ".\\temp"

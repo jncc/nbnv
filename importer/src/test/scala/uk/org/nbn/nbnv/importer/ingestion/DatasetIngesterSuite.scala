@@ -6,7 +6,7 @@ import javax.persistence.EntityManager
 import uk.org.nbn.nbnv.jpa.nbncore.{Dataset, TaxonDataset}
 import uk.org.nbn.nbnv.metadata.Metadata
 import uk.org.nbn.nbnv.importer.testing.BaseFunSuite
-import uk.org.nbn.nbnv.importer.data.{Repository, KeyGenerator}
+import uk.org.nbn.nbnv.importer.data.{Database, Repository, KeyGenerator}
 import org.mockito.Mockito
 import org.apache.log4j.Logger
 
@@ -28,10 +28,10 @@ class DatasetIngesterSuite extends BaseFunSuite {
     when(em.find(classOf[TaxonDataset], key)).thenReturn(taxonDataset)
 
     val keyGenerator = mock[KeyGenerator]
-    val repository = mock[Repository]
+    val db = mock[Database]
 
     // act
-    val ingester = new DatasetIngester(mock[Logger], em, keyGenerator, repository)
+    val ingester = new DatasetIngester(mock[Logger], db, keyGenerator)
     val result = ingester.upsertDataset(metadata)
 
     // assert - that the entity manager was not called with the retrieved dataset
@@ -54,10 +54,10 @@ class DatasetIngesterSuite extends BaseFunSuite {
     when(em.merge(any(classOf[Dataset]))).thenReturn(dataset)
 
     val keyGenerator = mock[KeyGenerator]
-    val repository = mock[Repository]
+    val db = mock[Database]
 
     // act
-    val ingester = new DatasetIngester(mock[Logger], em, keyGenerator, repository)
+    val ingester = new DatasetIngester(mock[Logger], db, keyGenerator)
     val taxonDataset = ingester.upsertDataset(metadata)
 
     //verify that setDataset is called against the new taxondataset enity with a dataset
