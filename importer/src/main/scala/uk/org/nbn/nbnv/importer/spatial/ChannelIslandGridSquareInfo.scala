@@ -3,20 +3,15 @@ package uk.org.nbn.nbnv.importer.spatial
 import math._
 import uk.org.nbn.nbnv.importer.ImportFailedException
 
-object ChannelIslandGridSquareInfo {
-  def apply(gridRef: String) : ChannelIslandGridSquareInfo = {
-    new ChannelIslandGridSquareInfo(gridRef)
-  }
+object ChannelIslandGridSquareInfo extends GridSqareInfoCompanion {
 
-  def apply(gridRef: String, precision: Int) : ChannelIslandGridSquareInfo = {
+  protected def create(gridRef: String, precision: Int = 0) = {
     new ChannelIslandGridSquareInfo(gridRef, precision)
   }
 
-  def apply(east: Int, north: Int) : ChannelIslandGridSquareInfo = {
-    ChannelIslandGridSquareInfo(east, north, 0)
-  }
+  protected def getEpsgCode = 23030
 
-  def apply(east: Int, north: Int, precision: Int) : ChannelIslandGridSquareInfo = {
+  protected def getGridSquareByLatLng(east: Int, north: Int, precision: Int) ={
     val gridLetters =
       north / 100000 match {
         case 55 => "WA"
@@ -31,17 +26,7 @@ object ChannelIslandGridSquareInfo {
     }
 
     val gridRef = gridLetters + eastPart + northPart
-    new ChannelIslandGridSquareInfo(gridRef, precision)
-  }
-
-  def apply(latitude : Double, longitude: Double) : ChannelIslandGridSquareInfo = {
-    ChannelIslandGridSquareInfo(latitude, longitude, 0)
-  }
-
-  def apply(latitude : Double, longitude: Double, precision : Int) : ChannelIslandGridSquareInfo = {
-    val (easting, northing) = (new LatLngReprojector).reproject(latitude, longitude, "23030")
-
-    ChannelIslandGridSquareInfo(easting, northing, precision)
+    create(gridRef, precision)
   }
 }
 

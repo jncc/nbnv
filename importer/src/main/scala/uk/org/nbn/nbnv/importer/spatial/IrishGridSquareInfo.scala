@@ -3,7 +3,7 @@ package uk.org.nbn.nbnv.importer.spatial
 import math._
 import uk.org.nbn.nbnv.importer.ImportFailedException
 
-object IrishGridSquareInfo {
+object IrishGridSquareInfo extends GridSqareInfoCompanion {
   val irishGridByLetter = Map (
     "A" -> (0,4), "B" -> (1,4), "C" -> (2,4), "D" -> (3,4), "E" -> (4,4),
     "F" -> (0,3), "G" -> (1,3), "H" -> (2,3), "J" -> (3,3), "K" -> (4,3),
@@ -14,19 +14,13 @@ object IrishGridSquareInfo {
 
   val irishGridByCoord = irishGridByLetter map {_.swap}
 
-  def apply(gridRef: String) : IrishGridSquareInfo = {
-    new IrishGridSquareInfo(gridRef)
-  }
-
-  def apply(gridRef: String, precision: Int) : IrishGridSquareInfo = {
+  protected def create(gridRef: String, precision: Int = 0) = {
     new IrishGridSquareInfo(gridRef, precision)
   }
 
-  def apply(east: Int, north: Int) : IrishGridSquareInfo = {
-    IrishGridSquareInfo(east, north, 0)
-  }
+  protected def getEpsgCode = 29903
 
-  def apply(east: Int, north: Int, precision: Int) : IrishGridSquareInfo = {
+  protected def getGridSquareByLatLng(east: Int, north: Int, precision: Int) = {
     //Compute 100K grid square co-ordinate
     val e100k = (east - (east % 100000))
     val n100k = (north - (north % 100000))
@@ -44,17 +38,7 @@ object IrishGridSquareInfo {
 
     val gridRef = gridLetter + eastPart + northPart
 
-    new IrishGridSquareInfo(gridRef, precision)
-  }
-
-  def apply(latitude : Double, longitude: Double) : IrishGridSquareInfo = {
-    IrishGridSquareInfo(latitude, longitude, 0)
-  }
-
-  def apply(latitude : Double, longitude: Double, precision : Int) : IrishGridSquareInfo = {
-    val (easting, northing) = (new LatLngReprojector).reproject(latitude, longitude, "29903")
-
-    IrishGridSquareInfo(easting, northing, precision)
+    create(gridRef, precision)
   }
 }
 

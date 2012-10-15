@@ -3,7 +3,7 @@ package uk.org.nbn.nbnv.importer.spatial
 import scala.math._
 import uk.org.nbn.nbnv.importer.ImportFailedException
 
-object BritishGridSquareInfo {
+object BritishGridSquareInfo extends GridSqareInfoCompanion {
 
   val majorBritishGridByLetter = Map (
     "H" -> (0,10), "J" -> (5,10),
@@ -23,12 +23,13 @@ object BritishGridSquareInfo {
 
   val minorBritishGridByCoord = minorBritishGridByLetter map {_.swap}
 
-  def apply(east: Int, north: Int) : BritishGridSquareInfo = {
-    BritishGridSquareInfo(east, north,0)
+  protected def create(gridRef: String, precision: Int = 0) = {
+    new BritishGridSquareInfo(gridRef, precision)
   }
 
-  def apply(east: Int, north: Int, precision: Int) : BritishGridSquareInfo = {
+  protected def getEpsgCode = 27700
 
+  protected def getGridSquareByLatLng(east: Int, north: Int, precision: Int) = {
     //Compute 100K grid square co-ordinate
 
     val e100k = (east - (east % 100000))
@@ -59,25 +60,7 @@ object BritishGridSquareInfo {
 
     val gridRef = majLetter + minLetter + eastPart + northPart
 
-    new BritishGridSquareInfo(gridRef, precision)
-  }
-
-  def apply(gridRef : String) : BritishGridSquareInfo = {
-    new BritishGridSquareInfo(gridRef)
-  }
-
-  def apply(gridRef : String, precision : Int) : BritishGridSquareInfo = {
-    new BritishGridSquareInfo(gridRef, precision)
-  }
-
-  def apply(latitude : Double, longitude: Double) : BritishGridSquareInfo = {
-    BritishGridSquareInfo(latitude, longitude, 0)
-  }
-
-  def apply(latitude : Double, longitude: Double, precision : Int) : BritishGridSquareInfo = {
-    val (easting, northing) = (new LatLngReprojector).reproject(latitude, longitude, "27700")
-
-    BritishGridSquareInfo(easting, northing, precision)
+    create(gridRef, precision)
   }
 }
 
