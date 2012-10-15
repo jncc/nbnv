@@ -338,14 +338,14 @@ BEGIN
 		i.id 
 		, f.id
 	FROM inserted i
-	INNER JOIN [Feature] f on i.geom.STIntersects(f.geom) = 1
+	INNER JOIN [Feature] f on i.geom.STIntersects(f.geom) = 1 and i.geom.STTouches(f.geom) = 0
 	
 	INSERT INTO [FeatureOverlaps] (featureID, overlappedFeatureID)
 	SELECT
 		f.id
 		, i.id
 	FROM inserted i
-	INNER JOIN [Feature] f on f.geom.STIntersects(i.geom) = 1
+	INNER JOIN [Feature] f on f.geom.STIntersects(i.geom) = 1 and f.geom.STTouches(i.geom) = 0
 	WHERE f.id != i.id
 END
 
