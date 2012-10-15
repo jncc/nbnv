@@ -15,7 +15,7 @@ import com.google.inject.Guice
 
 class SmokeSuiteIT extends BaseFunSuite with ResourceLoader {
 
-  ignore("should be able to get next dataset key") {
+  test("should be able to get next dataset key") {
 
     val em = new PersistenceUtility().createEntityManagerFactory(Settings.map).createEntityManager
     val db = new Database(em, new Repository(mock[Logger], em, mock[QueryCache]), mock[QueryCache])
