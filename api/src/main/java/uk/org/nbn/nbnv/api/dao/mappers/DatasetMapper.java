@@ -19,7 +19,7 @@ public interface DatasetMapper {
     @Select("SELECT * FROM DatasetData WHERE typeName = 'Taxon' ORDER BY title")
     List<TaxonDataset> selectAllTaxonDatasets();
     
-    @Select("SELECT * FROM DatasetData WHERE key = #{key}")
+    @Select("SELECT * FROM DatasetData WHERE [key] = #{key}")
     @Results(value = {
         @Result(property="organisation", column="organisationID", javaType=Organisation.class, one=@One(select="uk.org.nbn.nbnv.api.dao.mappers.OrganisationMapper.selectByID")),
         @Result(property="organisationID", column="organisationID")
