@@ -5,7 +5,7 @@ import java.util.Date;
 
 public class Dataset {
     
-    private String datasetKey, name, description, typeName, organisationName;
+    private String key, title, description, typeName, organisationName;
     private String captureMethod, purpose, geographicalCoverage, quality;
     private String additionalInformation, accessConstraints, useConstraints;
     private String temporalCoverage, updateFrequency;
@@ -16,13 +16,13 @@ public class Dataset {
     
     public Dataset(){}
     
-    public Dataset(String datasetKey, String name, String description, String typeName, String organisationName,
+    public Dataset(String key, String title, String description, String typeName, String organisationName,
                         String captureMethod, String purpose, String geographicalCoverage, String quality,
                         String additionalInformation, String accessConstraints, String useConstraints,
                         Date dateUploaded, int organisationID, boolean conditionsAccepted, Date metadataLastEdited,
                         String temporalCoverage, String updateFrequency, Organisation organisation){
-        this.datasetKey = datasetKey;
-        this.name = name;
+        this.key = key;
+        this.title = title;
         this.description = description;
         this.typeName = typeName;
         this.organisationName = organisationName;
@@ -42,20 +42,20 @@ public class Dataset {
         this.organisation = organisation;
     }
 
-    public String getDatasetKey() {
-        return datasetKey;
+    public String getKey() {
+        return key;
     }
 
-    public void setDatasetKey(String datasetKey) {
-        this.datasetKey = datasetKey;
+    public void setKey(String key) {
+        this.key = key;
     }
 
-    public String getName() {
-        return name;
+    public String getTitle() {
+        return title;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getDescription() {

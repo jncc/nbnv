@@ -40,7 +40,7 @@ public class UserDatasetAdministratorTest {
         Dataset ds = datasetMapper.selectByDatasetKey("DATASET1");
         
         //When
-        boolean result = datasetAdministratorMapper.isUserDatasetAdministrator(u.getId(), ds.getDatasetKey());   
+        boolean result = datasetAdministratorMapper.isUserDatasetAdministrator(u.getId(), ds.getKey());   
         
         // Then
         Assert.assertTrue(result);
@@ -53,7 +53,7 @@ public class UserDatasetAdministratorTest {
         Dataset ds = datasetMapper.selectByDatasetKey("DATASET1");
         
         // When
-        boolean result = datasetAdministratorMapper.isUserDatasetAdministrator(u.getId(), ds.getDatasetKey());
+        boolean result = datasetAdministratorMapper.isUserDatasetAdministrator(u.getId(), ds.getKey());
         
         // Then
         Assert.assertFalse(result);
