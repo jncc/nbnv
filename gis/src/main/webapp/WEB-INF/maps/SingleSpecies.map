@@ -1,14 +1,6 @@
 [#ftl]
 [#import "backgrounds.ftl" as backgrounds]
 
-[#assign layers={
-    "Grid-10km" :   {"resolution": 1, "fillColour": "255 255 0"  },
-    "Grid-2km"  :   {"resolution": 2, "fillColour": "0 255 0"    },
-    "Grid-1km"  :   {"resolution": 3, "fillColour": "0 255 255"  },
-    "Grid-100m" :   {"resolution": 4, "fillColour": "255 0 0"    }
-}]
-
-[#macro join list separator=","][#list list as element]${element}[#if element_has_next]${separator}[/#if][/#list][/#macro]
 MAP
     IMAGETYPE                                             PNG
     SIZE                                                  2800 2800
@@ -36,14 +28,14 @@ MAP
         "init=epsg:4326"
     END
     
-    [@backgrounds.os location=properties.ordnanceSurveyMapDataLocation requires=layers?keys/]
+    [@backgrounds.os location=properties.ordnanceSurveyMapDataLocation requires=layers/]
     
     [#if featureID??]
         [@backgrounds.selectedFeature featureID=featureID spatialConnection=properties.spatialConnection/]
     [/#if]
 
 
-    [#list layers?keys as layer_name]
+    [#list layers as layer_name]
         LAYER
             NAME                                                "${layer_name}"
             TYPE                                                POLYGON
@@ -51,7 +43,7 @@ MAP
             CONNECTIONTYPE                                      PLUGIN
             PLUGIN                                              "msplugin_mssql2008.dll"
             CONNECTION                                          "${properties.spatialConnection}"
-            DATA                                                "${layerGenerator.getData(layers[layer_name].resolution)}"
+            DATA                                                "${layerGenerator.getData(layer_name_index + 1)}"
             TEMPLATE                                            "dummy.txt"
             EXTENT                                              -180 -90 180 90
 
@@ -82,7 +74,7 @@ MAP
                         NAME                                              "${layer_name} Species Presence"
                         EXPRESSION                                        ([ABSENCE] = 0)
                         STYLE
-                            COLOR                                           ${layers[layer_name].fillColour}
+                            COLOR                                           ${colours[layer_name].red} ${colours[layer_name].green} ${colours[layer_name].blue}
                             OUTLINECOLOR                                    0 0 0
                             WIDTH                                           1
                         END
