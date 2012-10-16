@@ -74,10 +74,10 @@
         PROCESSING                                          "CLOSE_CONNECTION=DEFER"
         OPACITY                                             60
         DATA                        "geom from (
-                                        SELECT featureID, geom
+                                        SELECT id, geom
                                         FROM FeatureData
-                                        WHERE featureID = '${featureID}'
-                                    ) AS foo USING UNIQUE featureID USING SRID=4326"
+                                        WHERE id = '${featureID}'
+                                    ) AS foo USING UNIQUE id USING SRID=4326"
 
         METADATA
             "wms_title"                                       "Selected-Feature"
