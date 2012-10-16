@@ -67,18 +67,18 @@ public class SingleSpeciesMap {
             @QueryParam(key="startyear", validation="[0-9]{4}") final String startYear,
             @QueryParam(key="endyear", validation="[0-9]{4}") final String endYear,
             @QueryParam(key="feature", validation="[0-9]*") String featureID,
-            @QueryParam(key="band", commaSeperated=false) List<String> bandsInput
+            @QueryParam(key="band", commaSeperated=false) List<Band> bands
             ) {
         
         
         HashMap<String, Object> data = new HashMap<String, Object>();
         
-        List<Band> bands = new ArrayList<Band>();
-        if(bandsInput != null) {
-            for(String currBand : bandsInput) {
-                bands.add(new Band(currBand));
-            }
-        }
+//        List<Band> bands = new ArrayList<Band>();
+//        if(bandsInput != null) {
+//            for(String currBand : bandsInput) {
+//                bands.add(new Band(currBand));
+//            }
+//        }
         
         data.put("bands", bands);
         data.put("mapServiceURL", mapServiceURL);
