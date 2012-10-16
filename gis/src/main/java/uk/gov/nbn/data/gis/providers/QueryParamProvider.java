@@ -3,6 +3,7 @@ package uk.gov.nbn.data.gis.providers;
 import uk.gov.nbn.data.gis.providers.annotations.QueryParam;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Component;
 import uk.gov.nbn.data.gis.processor.Annotations;
@@ -29,13 +30,14 @@ public class QueryParamProvider implements Provider {
     @Override
     public Object provide(Class<?> returnType, MapServiceMethod method, HttpServletRequest request, Annotations annotations) throws ProviderException {
         QueryParam paramAnnot = annotations.get(QueryParam.class);
-        String toReturn = getParameter(request, paramAnnot.key(), annotations.get(DefaultValue.class));
-        if(toReturn != null) {
+        String[] requestParams = getParameters(request, paramAnnot.key(), annotations.get(DefaultValue.class));
+        if(requestParams != null) {
             if(returnType.equals(List.class)) {
-                return validateParameter(Arrays.asList(toReturn.split(",")), paramAnnot);
+                String[] toReturn = (paramAnnot.commaSeperated()) ? requestParams[0].split(",") : requestParams;
+                return validateParameter(Arrays.asList(toReturn), paramAnnot);
             }
             else {
-                return validateParameter(toReturn, paramAnnot);
+                return validateParameter(requestParams[0], paramAnnot);
             }
         }
         else {
@@ -43,10 +45,11 @@ public class QueryParamProvider implements Provider {
         }
     }
     
-    private static String getParameter(HttpServletRequest request, String key, DefaultValue defaultValAnnot) {
-        String defaultVal = (defaultValAnnot != null) ? defaultValAnnot.value() : null;
-        String userDefinedValue = request.getParameter(key);
-        return (userDefinedValue == null) ? defaultVal : userDefinedValue;
+    private static String[] getParameters(HttpServletRequest request, String key, DefaultValue defaultValAnnot) {
+        Map<String, String[]> parameterMap = request.getParameterMap();
+        String[] userDefinedValue = parameterMap.get(key);
+        return (userDefinedValue == null && defaultValAnnot != null) 
+                ? new String[] {defaultValAnnot.value()} : userDefinedValue;
     }
     
     private static String validateParameter(String toValidate, QueryParam annotation) throws ProviderException {

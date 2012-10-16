@@ -17,4 +17,5 @@ public @interface QueryParam {
 
     String key();
     String validation() default NO_VALIDATION;
+    boolean commaSeperated() default true;
 }
