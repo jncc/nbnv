@@ -16,6 +16,11 @@ MAP
     FONTSET                                               "fonts/fontset"
     EXTENT                                                -180 -90 180 90
 
+    SYMBOL
+        NAME 'absence'
+        TYPE HATCH
+    END
+
     WEB
         IMAGEPATH                                           "/ms4w/tmp/ms_tmp/"
         IMAGEURL                                            "/ms_tmp/"
@@ -72,14 +77,34 @@ MAP
                     END
                 [/#list]
             [#else]
-                CLASS
-                    NAME                                              "${layer_name} std"
-                    STYLE
-                        COLOR                                           ${layers[layer_name].fillColour}
-                        OUTLINECOLOR                                    0 0 0
-                        WIDTH                                           1
+                [#if enablePresence]
+                    CLASS
+                        NAME                                              "${layer_name} Species Presence"
+                        EXPRESSION                                        ([ABSENCE] = 0)
+                        STYLE
+                            COLOR                                           ${layers[layer_name].fillColour}
+                            OUTLINECOLOR                                    0 0 0
+                            WIDTH                                           1
+                        END
                     END
-                END
+                [/#if]
+                [#if enableAbsence]
+                    CLASS
+                        NAME                                              "${layer_name} Species Absence"
+                        EXPRESSION                                        ([ABSENCE] = 1)
+                        STYLE
+                            SYMBOL                                          'absence'
+                            COLOR                                           178 178 178
+                            ANGLE                                           45
+                            SIZE                                            5
+                            WIDTH                                           1
+                        END
+                        STYLE
+                            OUTLINECOLOR                                    115 0 0
+                            WIDTH                                           1
+                        END
+                    END
+                [/#if]
             [/#if]
         END
     [/#list]

@@ -1,6 +1,5 @@
 package uk.gov.nbn.data.gis.maps;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
@@ -15,6 +14,7 @@ import uk.gov.nbn.data.gis.processor.GridMap;
 import uk.gov.nbn.data.gis.processor.GridMap.Layer;
 import uk.gov.nbn.data.gis.processor.GridMap.GridLayer;
 import uk.gov.nbn.data.gis.processor.GridMap.Resolution;
+import uk.gov.nbn.data.gis.providers.annotations.DefaultValue;
 import uk.gov.nbn.data.gis.providers.annotations.PathParam;
 import uk.gov.nbn.data.gis.providers.annotations.QueryParam;
 import uk.gov.nbn.data.gis.providers.annotations.ServiceURL;
@@ -66,12 +66,13 @@ public class SingleSpeciesMap {
             @QueryParam(key="datasets", validation="^[A-Z0-9]{8}$") final List<String> datasetKeys,
             @QueryParam(key="startyear", validation="[0-9]{4}") final String startYear,
             @QueryParam(key="endyear", validation="[0-9]{4}") final String endYear,
+            @QueryParam(key="abundance", validation="(all)|(presence)|(absence)") @DefaultValue("presence") String abundance,
             @QueryParam(key="feature", validation="[0-9]*") String featureID,
             @QueryParam(key="band", commaSeperated=false) List<Band> bands
             ) {
-        
-        
-        HashMap<String, Object> data = new HashMap<String, Object>();       
+        HashMap<String, Object> data = new HashMap<String, Object>();
+        data.put("enableAbsence", abundance.equals("all") || abundance.equals("absence"));
+        data.put("enablePresence", abundance.equals("all") || abundance.equals("presence"));
         data.put("bands", bands);
         data.put("mapServiceURL", mapServiceURL);
         data.put("featureID", featureID);
