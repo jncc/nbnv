@@ -14,7 +14,7 @@ public interface BoundingBoxMapper {
                 "geom.STEnvelope().STPointN(1).STY as minY, " + 
                 "geom.STEnvelope().STPointN(3).STX as maxX, " + 
                 "geom.STEnvelope().STPointN(3).STY as maxY, " +
-                "'EPSG:4326' as epsgCode " + 
+                "'EPSG:' + cast(geom.STSrid as nvarchar) as epsgCode " + 
             "FROM FeatureData " + 
             "WHERE id = #{id}")
     BoundingBox getWorldBoundingBox(int id);
@@ -24,7 +24,7 @@ public interface BoundingBoxMapper {
                 "originalGeom.STEnvelope().STPointN(1).STY as minY, " + 
                 "originalGeom.STEnvelope().STPointN(3).STX as maxX, " + 
                 "originalGeom.STEnvelope().STPointN(3).STY as maxY, " +
-                "'EPSG:27700' as epsgCode " + 
+                "'EPSG:' + cast(originalGeom.STSrid as nvarchar) as epsgCode " + 
             "FROM FeatureData " + 
             "WHERE id = #{id}")
     BoundingBox getNativeBoundingBox(int id);
