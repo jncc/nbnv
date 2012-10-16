@@ -59,7 +59,19 @@ MAP
                 "init=epsg:4326"
             END
 
-            [#if bands?size == 0]
+            [#if bands??]
+                [#list bands as band]
+                    CLASS
+                        NAME                                              "Year Band"
+                        EXPRESSION                                        (${band.expression})
+                        STYLE
+                            COLOR                                         ${band.fillColour.red} ${band.fillColour.green} ${band.fillColour.blue}
+                            OUTLINECOLOR                                  ${band.outlineColour.red} ${band.outlineColour.green} ${band.outlineColour.blue}
+                            WIDTH                                         1
+                        END
+                    END
+                [/#list]
+            [#else]
                 CLASS
                     NAME                                              "${layer_name} std"
                     STYLE
@@ -69,18 +81,6 @@ MAP
                     END
                 END
             [/#if]
-
-            [#list bands as band]
-                CLASS
-                    NAME                                              "Year Band"
-                    EXPRESSION                                        (${band.expression})
-                    STYLE
-                        COLOR                                         ${band.fillColour.red} ${band.fillColour.green} ${band.fillColour.blue}
-                        OUTLINECOLOR                                  ${band.outlineColour.red} ${band.outlineColour.green} ${band.outlineColour.blue}
-                        WIDTH                                         1
-                    END
-                END
-            [/#list]
         END
     [/#list]
 END
