@@ -6,7 +6,7 @@ MAP
     SIZE                                                  600 600
     IMAGECOLOR                                            255 255 255
     FONTSET                                               "fonts/fontset"
-    EXTENT                                                330000 460000 450000 520000
+    EXTENT                                                ${extent.minX?c} ${extent.minY?c} ${extent.maxX?c} ${extent.maxY?c}
     WEB
         IMAGEPATH                                           "/ms4w/tmp/ms_tmp/"
         IMAGEURL                                            "/ms_tmp/"
@@ -19,7 +19,7 @@ MAP
     END
 
     PROJECTION
-        "init=epsg:27700"
+        "init=${extent.epsgCode}"
     END
     
     [@backgrounds.os location=properties.ordnanceSurveyMapDataLocation requires=[]/]
