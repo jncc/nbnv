@@ -1,5 +1,6 @@
 package uk.gov.nbn.data.gis.providers;
 
+import java.lang.reflect.TypeVariable;
 import uk.gov.nbn.data.gis.providers.annotations.QueryParam;
 import java.util.Arrays;
 import java.util.List;

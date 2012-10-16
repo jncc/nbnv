@@ -1,11 +1,13 @@
 package uk.gov.nbn.data.gis.maps;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.nbn.data.gis.maps.MapHelper.ResolutionDataGenerator;
+import uk.gov.nbn.data.gis.maps.colour.Band;
 import uk.gov.nbn.data.gis.processor.MapFileModel;
 import uk.gov.nbn.data.gis.processor.MapService;
 import uk.gov.nbn.data.gis.processor.MapContainer;
@@ -32,7 +34,7 @@ import uk.org.nbn.nbnv.api.model.User;
 @MapContainer("SingleSpecies")
 public class SingleSpeciesMap {
     private static final String QUERY = "geom from ("
-            + "SELECT f.geom, o.observationID, f.label "
+            + "SELECT f.geom, o.observationID, f.label, o.startDate, o.endDate "
             + "FROM [dbo].[UserTaxonObservationData] o "
             + "INNER JOIN [dbo].[GridTree] gt ON gt.featureID = o.featureID "
             + "INNER JOIN [dbo].[FeatureData] f ON f.id = gt.parentFeatureID "
@@ -52,12 +54,6 @@ public class SingleSpeciesMap {
             @GridLayer(name="2km",      layer="Grid-2km",       resolutions=Resolution.TWO_KM),
             @GridLayer(name="1km",      layer="Grid-1km",       resolutions=Resolution.ONE_KM),
             @GridLayer(name="100m",     layer="Grid-100m",      resolutions=Resolution.ONE_HUNDRED_METERS),
-            @GridLayer(name="10km-2km", layer="Grid-10km-2km",  resolutions={Resolution.TEN_KM, Resolution.TWO_KM}),
-            @GridLayer(name="10km-1km", layer="Grid-10km-1km",  resolutions={Resolution.TEN_KM, Resolution.TWO_KM, Resolution.ONE_KM}),
-            @GridLayer(name="10km-100m",layer="Grid-10km-100m", resolutions={Resolution.TEN_KM, Resolution.TWO_KM, Resolution.ONE_KM, Resolution.ONE_HUNDRED_METERS}),
-            @GridLayer(name="2km-1km",  layer="Grid-2km-1km",   resolutions={Resolution.TWO_KM, Resolution.ONE_KM}),
-            @GridLayer(name="2km-100m", layer="Grid-2km-100m",  resolutions={Resolution.TWO_KM, Resolution.ONE_KM, Resolution.ONE_HUNDRED_METERS}),
-            @GridLayer(name="1km-100m", layer="Grid-1km-100m",  resolutions={Resolution.ONE_KM, Resolution.ONE_HUNDRED_METERS})
         },
         defaultLayer="10km",
         backgrounds=@Layer(name="os", layer="OS-Scale-Dependent" ),
@@ -70,11 +66,21 @@ public class SingleSpeciesMap {
             @QueryParam(key="datasets", validation="^[A-Z0-9]{8}$") final List<String> datasetKeys,
             @QueryParam(key="startyear", validation="[0-9]{4}") final String startYear,
             @QueryParam(key="endyear", validation="[0-9]{4}") final String endYear,
-            @QueryParam(key="feature", validation="[0-9]*") String featureID
+            @QueryParam(key="feature", validation="[0-9]*") String featureID,
+            @QueryParam(key="band", commaSeperated=false) List<String> bandsInput
             ) {
         
         
         HashMap<String, Object> data = new HashMap<String, Object>();
+        
+        List<Band> bands = new ArrayList<Band>();
+        if(bandsInput != null) {
+            for(String currBand : bandsInput) {
+                bands.add(new Band(currBand));
+            }
+        }
+        
+        data.put("bands", bands);
         data.put("mapServiceURL", mapServiceURL);
         data.put("featureID", featureID);
         data.put("properties", properties);
