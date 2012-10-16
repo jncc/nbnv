@@ -38,7 +38,7 @@ public class SiteReportMap {
             + "WHERE featureID = %s";
     
     private static final String QUERY = "geom from ("
-            + "SELECT o.featureID , fd.geom, resolutionID "
+            + "SELECT o.featureID , fd.geom, resolutionID, o.absence "
             + "FROM [dbo].[UserTaxonObservationData] o "
             + "INNER JOIN [dbo].[FeatureData] fd ON fd.id = o.featureID "
             + "WHERE pTaxonVersionKey = '%s' "

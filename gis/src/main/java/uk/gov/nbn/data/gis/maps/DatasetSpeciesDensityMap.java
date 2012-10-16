@@ -58,7 +58,8 @@ public class DatasetSpeciesDensityMap {
                     + "COUNT(DISTINCT o.pTaxonVersionKey) AS species "
                 + "FROM [dbo].[UserTaxonObservationData] o "
                 + "INNER JOIN [dbo].[GridTree] gt ON gt.featureID = o.featureID "
-                + "WHERE datasetKey = '%s' "
+                + "WHERE absence = 0 "
+                + "AND datasetKey = '%s' "
                 + "AND userID = %s "
                 + "%s " //start year segment
                 + "%s " //end year segment

@@ -34,7 +34,7 @@ import uk.org.nbn.nbnv.api.model.User;
 @MapContainer("SingleSpecies")
 public class SingleSpeciesMap {
     private static final String QUERY = "geom from ("
-            + "SELECT f.geom, o.observationID, f.label, o.startDate, o.endDate "
+            + "SELECT f.geom, o.observationID, f.label, o.startDate, o.endDate, o.absence "
             + "FROM [dbo].[UserTaxonObservationData] o "
             + "INNER JOIN [dbo].[GridTree] gt ON gt.featureID = o.featureID "
             + "INNER JOIN [dbo].[FeatureData] f ON f.id = gt.parentFeatureID "
@@ -71,15 +71,7 @@ public class SingleSpeciesMap {
             ) {
         
         
-        HashMap<String, Object> data = new HashMap<String, Object>();
-        
-//        List<Band> bands = new ArrayList<Band>();
-//        if(bandsInput != null) {
-//            for(String currBand : bandsInput) {
-//                bands.add(new Band(currBand));
-//            }
-//        }
-        
+        HashMap<String, Object> data = new HashMap<String, Object>();       
         data.put("bands", bands);
         data.put("mapServiceURL", mapServiceURL);
         data.put("featureID", featureID);
