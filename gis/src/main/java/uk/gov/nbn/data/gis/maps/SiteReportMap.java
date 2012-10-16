@@ -27,19 +27,19 @@ import uk.org.nbn.nbnv.api.model.User;
 public class SiteReportMap {
     private static final String WITHIN_QUERY = "SELECT containedFeatureID "
             + "FROM FeatureContains "
-            + "WHERE parentFeatureID = %s";
+            + "WHERE featureID = %s";
     
     private static final String OVERLAPS_QUERY = "SELECT overlappedFeatureID "
             + "FROM FeatureOverlaps "
-            + "WHERE parentFeatureID = %s";
+            + "WHERE featureID = %s";
     
     private static final String QUERY = "geom from ("
             + "SELECT fd.featureID , fd.geom, resolutionID "
             + "FROM [dbo].[UserTaxonObservationData] o "
-            + "INNER JOIN [dbo].[FeatureData] fd ON fd.featureID = o.featureID "
+            + "INNER JOIN [dbo].[FeatureData] fd ON fd.id = o.featureID "
             + "WHERE pTaxonVersionKey = '%s' "
             + "AND o.featureID in (%s) "
-            + "AND userKey = %s "
+            + "AND userID = %s "
             + "%s " //place for dataset filter
             + "%s " //place for start year filter
             + "%s " //place for end year filter

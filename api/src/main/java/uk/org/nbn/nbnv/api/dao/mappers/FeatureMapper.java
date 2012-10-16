@@ -12,17 +12,17 @@ import uk.org.nbn.nbnv.api.model.Feature;
  * @author Christopher Johnson
  */
 public interface FeatureMapper {    
-    @Select("SELECT * FROM FeatureData WHERE featureID = #{id}")
+    @Select("SELECT * FROM FeatureData WHERE id = #{id}")
     @Results({
         @Result(
             property="worldBoundingBox", 
-            column="featureID", 
+            column="id", 
             javaType=BoundingBox.class, 
             one=@One(select="uk.org.nbn.nbnv.api.dao.mappers.BoundingBoxMapper.getWorldBoundingBox")
         ),
         @Result(
             property="nativeBoundingBox", 
-            column="featureID", 
+            column="id", 
             javaType=BoundingBox.class, 
             one=@One(select="uk.org.nbn.nbnv.api.dao.mappers.BoundingBoxMapper.getNativeBoundingBox")
         )

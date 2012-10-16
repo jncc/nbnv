@@ -35,9 +35,9 @@ public class SingleSpeciesMap {
             + "SELECT f.geom, o.observationID, f.label "
             + "FROM [dbo].[UserTaxonObservationData] o "
             + "INNER JOIN [dbo].[GridTree] gt ON gt.featureID = o.featureID "
-            + "INNER JOIN [dbo].[FeatureData] f ON f.featureID = gt.parentFeatureID "
+            + "INNER JOIN [dbo].[FeatureData] f ON f.id = gt.parentFeatureID "
             + "WHERE pTaxonVersionKey = '%s' "
-            + "AND userKey = %s "
+            + "AND userID = %s "
             + "AND resolutionID = %d "
             + "%s " //place for dataset filter
             + "%s " //place for start year filter

@@ -7,7 +7,7 @@ import java.util.Date;
  * @author Christopher Johnson
  */
 public class User {
-    public static final int PUBLIC_USER_ID = 0;
+    public static final int PUBLIC_USER_ID = 1;
     public static final User PUBLIC_USER = new User();
     
     private int id;
