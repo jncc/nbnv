@@ -42,7 +42,7 @@ public class UserOrganisationMemberTest {
         Organisation org = orgMapper.selectByID(1);
         
         //When
-        OrganisationMembership userMembership = orgMembershipMapper.selectByUserAndOrganisation(u.getId(), org.getOrganisationID());
+        OrganisationMembership userMembership = orgMembershipMapper.selectByUserAndOrganisation(u.getId(), org.getId());
         
         // Then
         Assert.assertEquals("User was expected to be an admin", Role.administrator, userMembership.getRole());
@@ -55,7 +55,7 @@ public class UserOrganisationMemberTest {
         Organisation org = orgMapper.selectByID(1);
         
         //When
-        OrganisationMembership userMembership = orgMembershipMapper.selectByUserAndOrganisation(u.getId(), org.getOrganisationID());
+        OrganisationMembership userMembership = orgMembershipMapper.selectByUserAndOrganisation(u.getId(), org.getId());
         
         // Then
         Assert.assertNotSame("A member was passed in but admin rights have been detected", Role.administrator, userMembership.getRole());
@@ -68,7 +68,7 @@ public class UserOrganisationMemberTest {
         Organisation org = orgMapper.selectByID(1);
         
         //When
-        OrganisationMembership userMembership = orgMembershipMapper.selectByUserAndOrganisation(u.getId(), org.getOrganisationID());
+        OrganisationMembership userMembership = orgMembershipMapper.selectByUserAndOrganisation(u.getId(), org.getId());
         
         // Then
         Assert.assertNull("Didn't expect user to have a membership", userMembership);
@@ -81,7 +81,7 @@ public class UserOrganisationMemberTest {
         Organisation org = orgMapper.selectByID(1);
         
         //When
-        OrganisationMembership userMembership = orgMembershipMapper.selectByUserAndOrganisation(u.getId(), org.getOrganisationID());
+        OrganisationMembership userMembership = orgMembershipMapper.selectByUserAndOrganisation(u.getId(), org.getId());
         
         // Then
         Assert.assertNotNull("Expected user to be a member", userMembership);
@@ -94,7 +94,7 @@ public class UserOrganisationMemberTest {
         Organisation org = orgMapper.selectByID(1);
         
         //When
-        boolean result = orgMembershipMapper.isUserMemberOfOrganisation(u.getId(), org.getOrganisationID());
+        boolean result = orgMembershipMapper.isUserMemberOfOrganisation(u.getId(), org.getId());
         
         // Then
         Assert.assertTrue("Expected admin to have a user membership", result);
@@ -107,7 +107,7 @@ public class UserOrganisationMemberTest {
         Organisation org = orgMapper.selectByID(1);
         
         //When
-        boolean result = orgMembershipMapper.isUserMemberOfOrganisation(u.getId(), org.getOrganisationID());
+        boolean result = orgMembershipMapper.isUserMemberOfOrganisation(u.getId(), org.getId());
         
         // Then
         Assert.assertFalse("Expected non user to not be a member", result);

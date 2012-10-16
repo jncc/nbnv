@@ -9,16 +9,13 @@ import javax.ws.rs.core.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.org.nbn.nbnv.api.dao.mappers.DatasetMapper;
-import uk.org.nbn.nbnv.api.dao.mappers.TaxonMapper;
 import uk.org.nbn.nbnv.api.model.Dataset;
-import uk.org.nbn.nbnv.api.model.TaxonDataset;
 
 @Component
 @Path("/datasets")
 public class DatasetResource {
     
     @Autowired DatasetMapper datasetMapper;
-    @Autowired TaxonMapper taxonMapper;
     
     @GET
     @Produces(MediaType.APPLICATION_JSON)

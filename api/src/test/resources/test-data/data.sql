@@ -1,11 +1,11 @@
 --Populate some designation categories
-INSERT INTO DesignationCategoryData ( designationCategoryID , label , description , sortOrder ) VALUES (19, N'International', N'International legislative lists and conventions (excludes global red lists)', 1);
-INSERT INTO DesignationCategoryData ( designationCategoryID , label , description , sortOrder ) VALUES (20, N'Nat Legislation', N'National legislative lists eg Wildlife and Countryside Act schedules', 5);
-INSERT INTO DesignationCategoryData ( designationCategoryID , label , description , sortOrder ) VALUES (21, N'Other rare/scarce', N'Other lists of rare and scarce species excluding those based on IUCN criteria for red listings', 4);
-INSERT INTO DesignationCategoryData ( designationCategoryID , label , description , sortOrder ) VALUES (22, N'Red Data List', N'Red lists based on the IUCN criteria', 2);
-INSERT INTO DesignationCategoryData ( designationCategoryID , label , description , sortOrder ) VALUES (23, N'UK BAP', N'UK BAP priority species lists', 3); 
-INSERT INTO DesignationCategoryData ( designationCategoryID , label , description , sortOrder ) VALUES (24, N'Organisation Defined Lists', N'Miscelleneous defined lists', 6);
-INSERT INTO DesignationCategoryData ( designationCategoryID , label , description , sortOrder ) VALUES (100, N'Embedded Record', N'Embedded Record test', 7);
+INSERT INTO DesignationCategoryData ( id , label , description , sortOrder ) VALUES (19, N'International', N'International legislative lists and conventions (excludes global red lists)', 1);
+INSERT INTO DesignationCategoryData ( id , label , description , sortOrder ) VALUES (20, N'Nat Legislation', N'National legislative lists eg Wildlife and Countryside Act schedules', 5);
+INSERT INTO DesignationCategoryData ( id , label , description , sortOrder ) VALUES (21, N'Other rare/scarce', N'Other lists of rare and scarce species excluding those based on IUCN criteria for red listings', 4);
+INSERT INTO DesignationCategoryData ( id , label , description , sortOrder ) VALUES (22, N'Red Data List', N'Red lists based on the IUCN criteria', 2);
+INSERT INTO DesignationCategoryData ( id , label , description , sortOrder ) VALUES (23, N'UK BAP', N'UK BAP priority species lists', 3); 
+INSERT INTO DesignationCategoryData ( id , label , description , sortOrder ) VALUES (24, N'Organisation Defined Lists', N'Miscelleneous defined lists', 6);
+INSERT INTO DesignationCategoryData ( id , label , description , sortOrder ) VALUES (100, N'Embedded Record', N'Embedded Record test', 7);
 
 -- ----------------
 --Create a single user "tester" with an id of 44
@@ -46,7 +46,7 @@ INSERT INTO UserRoleSystemAdministratorData (userKey) VALUES (42);
 -- ---------------
 --Create a test organisation "testorg" with id 1
 INSERT INTO OrganisationData (
-    organisationID, name
+    id, name
 ) VALUES (
     1, 'testorg'
 );
@@ -82,7 +82,7 @@ INSERT INTO OrganisationMembershipData (
 -- ------------------
 --Create a test organisation "testdataorg" with id 2
 INSERT INTO OrganisationData (
-    organisationID, name
+    id, name
 ) VALUES (
     2, 'testdataorg'
 );

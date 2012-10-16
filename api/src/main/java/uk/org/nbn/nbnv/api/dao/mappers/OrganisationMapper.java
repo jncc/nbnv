@@ -14,8 +14,8 @@ import uk.org.nbn.nbnv.api.model.Organisation;
  */
 public interface OrganisationMapper {
     final String SELECT_ALL = "SELECT * FROM OrganisationData";
-    final String SELECT_BY_ID = "SELECT * FROM OrganisationData WHERE organisationID = #{id}";
-    final String SELECT_LOGO = "SELECT logo FROM OrganisationData WHERE organisationID = #{id}";
+    final String SELECT_BY_ID = "SELECT * FROM OrganisationData WHERE id = #{id}";
+    final String SELECT_LOGO = "SELECT logo FROM OrganisationData WHERE id = #{id}";
     
     @Select(SELECT_ALL)
     List<Organisation> selectAll();

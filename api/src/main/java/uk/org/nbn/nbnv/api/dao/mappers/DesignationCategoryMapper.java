@@ -13,9 +13,9 @@ import uk.org.nbn.nbnv.api.model.DesignationCategory;
  * @author Administrator
  */
 public interface DesignationCategoryMapper {
-    final String SELECT_ALL = "SELECT designationCategoryID, label, description FROM DesignationCategoryData";
-    final String SELECT_BY_ID = "SELECT designationCategoryID, label, description FROM DesignationCategoryData WHERE designationCategoryID = #{id}";
-    final String SELECT_FROM_DESIGNATIONID = "SELECT dc.designationCategoryID, dc.label, dc.description FROM DesignationCategoryData dc INNER JOIN DesignationData d ON dc.designationCategoryID = d.designationCategoryID WHERE d.code = #{id}";
+    final String SELECT_ALL = "SELECT id, label, description FROM DesignationCategoryData";
+    final String SELECT_BY_ID = "SELECT id, label, description FROM DesignationCategoryData WHERE id = #{id}";
+    final String SELECT_FROM_DESIGNATIONID = "SELECT dc.id, dc.label, dc.description FROM DesignationCategoryData dc INNER JOIN DesignationData d ON dc.id = d.id WHERE d.code = #{id}";
 
     @Select(SELECT_ALL)
     List<DesignationCategory> selectAll();

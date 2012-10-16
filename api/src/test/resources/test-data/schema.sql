@@ -95,7 +95,7 @@ CREATE TABLE SiteBoundaryCategory(
         PRIMARY KEY (siteBoundaryCategoryID));
 
 CREATE TABLE OrganisationData(
-	organisationID int NOT NULL,
+	id int NOT NULL,
 	name varchar(200) NOT NULL);
 
 CREATE TABLE GridTree(
@@ -118,7 +118,7 @@ CREATE TABLE DesignationTaxonData(
 	PRIMARY KEY (designationID, pTaxonVersionKey));
 
 CREATE TABLE DesignationData(
-	designationID int NOT NULL,
+	id int NOT NULL,
 	name varchar(8000) NOT NULL,
 	label varchar(50) NOT NULL,
 	code varchar(100) NOT NULL,
@@ -126,7 +126,7 @@ CREATE TABLE DesignationData(
 	description varchar(8000) NULL);
 
 CREATE TABLE DesignationCategoryData(
-	designationCategoryID int NOT NULL,
+	id int NOT NULL,
 	label varchar(50) NOT NULL,
 	description varchar(8000) NULL,
 	sortOrder int NOT NULL);

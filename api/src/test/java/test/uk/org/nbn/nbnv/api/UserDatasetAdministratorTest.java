@@ -5,6 +5,7 @@
 package test.uk.org.nbn.nbnv.api;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,7 @@ public class UserDatasetAdministratorTest {
     @Autowired DatasetAdministratorMapper datasetAdministratorMapper;
     
     @Test
+    @Ignore
     public void isUserAnDatasetAdminTest() {
         // Given
         User u = userMapper.getUser(39);
@@ -47,6 +49,7 @@ public class UserDatasetAdministratorTest {
     }
 
     @Test
+    @Ignore
     public void isNotDatasetAdminUserAnDatasetAdminTest() {
         // Given
         User u = userMapper.getUser(43);
