@@ -26,19 +26,6 @@ public class TaxonObservationProvider {
         ORDER_BY("datasetKey");
         return SQL();
     }
-
-    public String testFilteredSelectRecordsOrderedByDataset(Map<String, Object> params) {
-        BEGIN();
-        SELECT("observationID, fullVersion, 'BRCCARA0' datasetKey, surveyKey, sampleKey, observationKey, siteKey, siteName, o.featureID, gridRef, polygonKey, o.projection, taxonVersionKey, pTaxonVersionKey, pTaxonName, pTaxonAuthority, startDate, endDate, dateType, recorder, determiner, sensitive, absence");
-        createSelectQuery(params);
-        String toReturn = SQL();
-        toReturn += " UNION ALL ";
-        BEGIN();
-        SELECT("observationID, fullVersion, 'TESTDS01' datasetKey, surveyKey, sampleKey, observationKey, siteKey, siteName, o.featureID, gridRef, polygonKey, o.projection, taxonVersionKey, pTaxonVersionKey, pTaxonName, pTaxonAuthority, startDate, endDate, dateType, recorder, determiner, sensitive, absence");
-        createSelectQuery(params);
-        toReturn += SQL();
-        return toReturn;
-    }
     
     public String filteredSelectGroups(Map<String, Object> params) {
         BEGIN();
@@ -70,13 +57,6 @@ public class TaxonObservationProvider {
         SELECT("DISTINCT o.datasetKey, dd.*");
         createSelectQuery(params);
         INNER_JOIN("DatasetData dd ON dd.datasetKey = o.datasetKey");
-        return SQL();
-    }
-    
-    public String testProviderAndDatasets(Map<String, Object> params){
-        BEGIN();
-        SELECT("top 100 datasetKey, CAST(CRYPT_GEN_RANDOM(1) AS INT) querySpecificObservationCount");
-        FROM("DatasetData");
         return SQL();
     }
     
