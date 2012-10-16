@@ -1,5 +1,6 @@
 package uk.gov.nbn.data.gis.maps;
 
+import com.sun.jersey.api.client.WebResource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
@@ -12,6 +13,8 @@ import uk.gov.nbn.data.gis.providers.annotations.DefaultValue;
 import uk.gov.nbn.data.gis.providers.annotations.PathParam;
 import uk.gov.nbn.data.gis.providers.annotations.QueryParam;
 import uk.gov.nbn.data.gis.providers.annotations.ServiceURL;
+import uk.org.nbn.nbnv.api.model.BoundingBox;
+import uk.org.nbn.nbnv.api.model.Feature;
 import uk.org.nbn.nbnv.api.model.User;
 
 /**
@@ -25,6 +28,7 @@ import uk.org.nbn.nbnv.api.model.User;
 @Component
 @MapContainer("SiteReport")
 public class SiteReportMap {
+    @Autowired WebResource resource;
     private static final String WITHIN_QUERY = "SELECT containedFeatureID "
             + "FROM FeatureContains "
             + "WHERE featureID = %s";
@@ -34,7 +38,7 @@ public class SiteReportMap {
             + "WHERE featureID = %s";
     
     private static final String QUERY = "geom from ("
-            + "SELECT fd.featureID , fd.geom, resolutionID "
+            + "SELECT o.featureID , fd.geom, resolutionID "
             + "FROM [dbo].[UserTaxonObservationData] o "
             + "INNER JOIN [dbo].[FeatureData] fd ON fd.id = o.featureID "
             + "WHERE pTaxonVersionKey = '%s' "
@@ -52,6 +56,7 @@ public class SiteReportMap {
             @ServiceURL String mapServiceURL,
             @PathParam(key="featureID", validation="[0-9]*") String featureID) {        
         HashMap<String, Object> data = new HashMap<String, Object>();
+        data.put("extent", getNativeBoundingBox(featureID));
         data.put("mapServiceURL", mapServiceURL);
         data.put("properties", properties);
         data.put("featureID", featureID);
@@ -74,6 +79,7 @@ public class SiteReportMap {
         String spatialRelationSelect = String.format(spatialRelation.equals("overlap") 
                 ? OVERLAPS_QUERY : WITHIN_QUERY, featureID);
         
+        data.put("extent", getNativeBoundingBox(featureID));
         data.put("mapServiceURL", mapServiceURL);
         data.put("properties", properties);
         data.put("featureID", featureID);
@@ -83,5 +89,13 @@ public class SiteReportMap {
                         MapHelper.createStartYearSegment(startYear),
                         MapHelper.createEndYearSegment(endYear)));
         return new MapFileModel("SiteReport.map",data);
+    }
+    
+    private BoundingBox getNativeBoundingBox(String featureId) {
+        return resource
+                    .path("features")
+                    .path(featureId)
+                    .get(Feature.class)
+                    .getNativeBoundingBox();
     }
 }
