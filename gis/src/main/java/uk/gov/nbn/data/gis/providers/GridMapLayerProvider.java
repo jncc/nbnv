@@ -1,5 +1,6 @@
 package uk.gov.nbn.data.gis.providers;
 
+import java.lang.reflect.Type;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -18,13 +19,13 @@ public class GridMapLayerProvider implements Provider {
     @Autowired GridMapProvider gridMapProvider;
     
     @Override
-    public boolean isProviderFor(Class<?> clazz, Annotations annotations) {
+    public boolean isProviderFor(Class<?> clazz, Type type, Annotations annotations) {
         return clazz.equals(GridMap.GridLayer.class);
     }
 
     @Override
-    public GridMap.GridLayer provide(Class<?> clazz, MapServiceMethod method, HttpServletRequest request, Annotations annotations) {
-        return getResolution(request.getParameter("resolution"), gridMapProvider.provide(clazz, method, request, annotations));
+    public GridMap.GridLayer provide(Class<?> clazz, Type type, MapServiceMethod method, HttpServletRequest request, Annotations annotations) {
+        return getResolution(request.getParameter("resolution"), gridMapProvider.provide(clazz, type, method, request, annotations));
     }
     
     public static GridMap.GridLayer getResolution(String resolution, GridMap gridMapProperties) {

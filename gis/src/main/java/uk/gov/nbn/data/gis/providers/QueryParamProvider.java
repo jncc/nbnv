@@ -1,6 +1,7 @@
 package uk.gov.nbn.data.gis.providers;
 
-import java.lang.reflect.TypeVariable;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import uk.gov.nbn.data.gis.providers.annotations.QueryParam;
 import java.util.Arrays;
 import java.util.List;
@@ -24,12 +25,12 @@ import uk.gov.nbn.data.gis.providers.annotations.DefaultValue;
 public class QueryParamProvider implements Provider {
 
     @Override
-    public boolean isProviderFor(Class<?> clazz, Annotations annotations) {
+    public boolean isProviderFor(Class<?> clazz, Type type, Annotations annotations) {
         return annotations.containsKey(QueryParam.class);
     }
 
     @Override
-    public Object provide(Class<?> returnType, MapServiceMethod method, HttpServletRequest request, Annotations annotations) throws ProviderException {
+    public Object provide(Class<?> returnType, Type type, MapServiceMethod method, HttpServletRequest request, Annotations annotations) throws ProviderException {
         QueryParam paramAnnot = annotations.get(QueryParam.class);
         String[] requestParams = getParameters(request, paramAnnot.key(), annotations.get(DefaultValue.class));
         if(requestParams != null) {
