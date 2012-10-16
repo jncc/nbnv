@@ -54,17 +54,17 @@ public class DatasetSpeciesDensityMap {
     private static final String QUERY = "geom from ("
             + "SELECT geom, species, label "
             + "FROM ( "
-                + "SELECT o.userKey, o.datasetKey, gt.parentFeatureID as featureID, "
+                + "SELECT o.userID, o.datasetKey, gt.parentFeatureID as featureID, "
                     + "COUNT(DISTINCT o.pTaxonVersionKey) AS species "
                 + "FROM [dbo].[UserTaxonObservationData] o "
                 + "INNER JOIN [dbo].[GridTree] gt ON gt.featureID = o.featureID "
                 + "WHERE datasetKey = '%s' "
-                + "AND userKey = %s "
+                + "AND userID = %s "
                 + "%s " //start year segment
                 + "%s " //end year segment
-                + "GROUP BY gt.parentFeatureID, o.datasetKey, o.userKey "
+                + "GROUP BY gt.parentFeatureID, o.datasetKey, o.userID "
             + ") AS a "
-            + "INNER JOIN [dbo].FeatureData AS f ON f.featureID = a.featureID "
+            + "INNER JOIN [dbo].FeatureData AS f ON f.id = a.featureID "
             + "WHERE resolutionID = %d"
         + ") AS foo USING UNIQUE label USING SRID=4326";
     

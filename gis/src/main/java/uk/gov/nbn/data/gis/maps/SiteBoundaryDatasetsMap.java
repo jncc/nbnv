@@ -25,13 +25,20 @@ import uk.org.nbn.nbnv.api.model.SiteBoundaryDataset;
 public class SiteBoundaryDatasetsMap {
     @Autowired Properties properties;
     @Autowired WebResource dataApi;
+    private final LayerGenerator layerGenerator = new LayerGenerator();
     
-    private static final String DATA = "geom from ("
+    private static class LayerGenerator {
+        private static final String DATA = "geom from ("
             + "SELECT geom, sbfd.featureID "
             + "FROM SiteBoundaryFeatureData sbfd "
             + "INNER JOIN SiteBoundaryData sbd ON sbd.featureID = sbfd.featureID "
             + "WHERE siteBoundaryDatasetKey = '%s'"
         + ") AS foo USING UNIQUE featureID USING SRID=4326";
+    
+        public String getData(String siteBoundary) {
+            return String.format(DATA, siteBoundary);
+        }
+    }
     
     @MapService
     public MapFileModel getSiteBoundariesModel(@ServiceURL String mapServiceURL) {
@@ -41,6 +48,7 @@ public class SiteBoundaryDatasetsMap {
                         .get(new GenericType<List<SiteBoundaryDataset>>() { });
         
         HashMap<String, Object> data = new HashMap<String, Object>();
+        data.put("layerGenerator", layerGenerator);
         data.put("mapServiceURL", mapServiceURL);
         data.put("properties", properties);
         data.put("siteBoundaries", datasets);
