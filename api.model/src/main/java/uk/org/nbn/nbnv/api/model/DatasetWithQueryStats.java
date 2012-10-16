@@ -40,7 +40,7 @@ public class DatasetWithQueryStats implements Comparable<DatasetWithQueryStats>{
     
     @Override
     public int compareTo(DatasetWithQueryStats that) {
-        return this.dataset.getName().compareTo(that.dataset.getName());
+        return this.dataset.getTitle().compareTo(that.dataset.getTitle());
     }
 
     

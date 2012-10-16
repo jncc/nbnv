@@ -89,7 +89,7 @@ INSERT INTO OrganisationData (
 
 --Create a test dataset as 'DATASET1'
 INSERT INTO DatasetData (
-	datasetKey, name, typeName, organisationID, dateUploaded, conditionsAccepted, metadataLastEdited, updateFrequency
+	key, name, typeName, organisationID, dateUploaded, conditionsAccepted, metadataLastEdited, updateFrequency
 ) VALUES (
     'DATASET1', 'Test Dataset', 'Taxon', 2, '2012-05-09 11:11:30', 1, '2012-05-09 11:11:30', 'unknown'
 );

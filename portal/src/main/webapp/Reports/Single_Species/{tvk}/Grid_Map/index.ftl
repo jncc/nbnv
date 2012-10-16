@@ -56,9 +56,9 @@
             <tr>
                 <td class="nbn-td-left nbn-td-contents-top">Date ranges:</td>
                 <td class="nbn-td-right">
-                    ${getYearRangeText("1", "#ff0000")}
-                    ${getYearRangeText("2", "#ff7f00")}
-                    ${getYearRangeText("3", "#ffff00")}
+                    <@yearRangeText layerNum="1" hexColour="#ff0000"/>
+                    <@yearRangeText layerNum="2" hexColour="#ff7f00"/>
+                    <@yearRangeText layerNum="3" hexColour="#ffff00"/>
                 </td>
             </tr>
             <tr>
@@ -90,7 +90,14 @@
     </table>
 </#macro>
 
-<#function getYearRangeText layerNum hexColour>
+<#macro yearRangeText layerNum hexColour>
     <#assign currentYear=.now?string("yyyy")>
-    <#return "<input type='checkbox' name='gridLayer${layerNum}' value='startYear${layerNum}'> from <input type='text' name='startYear${layerNum}' value='1600' class='nbn-year-input'> to <input type='text' name='endYear${layerNum}' value='${currentYear}' class='nbn-year-input'><div id='nbn-colour-picker${layerNum}' class='nbn-colour-picker'><div style='background-color: ${hexColour}'></div></div><br/>">
-</#function>
+    <input type='checkbox' name='gridLayer${layerNum}' value='startYear${layerNum}'>
+    from 
+    <input type='text' name='startYear${layerNum}' value='1600' class='nbn-year-input'> 
+    to 
+    <input type='text' name='endYear${layerNum}' value='${currentYear}' class='nbn-year-input'>
+    <div id='nbn-colour-picker${layerNum}' class='nbn-colour-picker'>
+        <div style='background-color: ${hexColour}'></div>
+    </div><br/>
+</#macro>

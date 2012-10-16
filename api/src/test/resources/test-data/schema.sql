@@ -147,7 +147,7 @@ CREATE TABLE OrganisationMembershipData(
         role varchar(50) NOT NULL);
 
 CREATE TABLE DatasetData(
-	datasetKey char(8) NOT NULL,
+	key char(8) NOT NULL,
 	name varchar(200) NOT NULL,
 	description longvarchar NULL,
 	typeName varchar(200) NOT NULL,
@@ -165,7 +165,7 @@ CREATE TABLE DatasetData(
 	metadataLastEdited timestamp NOT NULL,
 	temporalCoverage longvarchar NULL,
 	updateFrequency varchar(12) NOT NULL,
-        PRIMARY KEY (datasetKey));
+        PRIMARY KEY (key));
 
 CREATE TABLE DatasetAdministrator(
         userKey int NOT NULL,
