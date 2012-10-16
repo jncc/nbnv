@@ -277,11 +277,11 @@ CREATE VIEW [dbo].[SiteBoundaryFeatureData] WITH SCHEMABINDING AS (
 		f.id 
 		, sb.name AS label
 		, f.geom 
-		, sb.geom AS originalGeom
+		, sb.originalGeom
 		, p.label AS originalProjection
 	FROM [dbo].[Feature] f
 	INNER JOIN [dbo].[SiteBoundary] sb ON f.id = sb.featureID 
-	INNER JOIN [dbo].[Projection] p ON p.id = sb.projectionID
+	INNER JOIN [dbo].[Projection] p ON p.id = sb.originalProjectionID 
 );
 
 GO
@@ -302,14 +302,14 @@ CREATE VIEW [dbo].[GridSquareFeatureData] WITH SCHEMABINDING AS (
 		f.id 
 		, gs.gridRef AS label
 		, f.geom 
-		, gs.geom AS originalGeom
+		, gs.originalGeom
 		, p.label AS originalProjection
 		, gs.resolutionID 
 		, r.label AS resolution
 		, gs.parentSquareGridRef 
 	FROM [dbo].[Feature] f
 	INNER JOIN [dbo].[GridSquare] gs ON f.id = gs.featureID 
-	INNER JOIN [dbo].[Projection] p ON p.id = gs.projectionID 
+	INNER JOIN [dbo].[Projection] p ON p.id = gs.originalProjectionID 
 	INNER JOIN [dbo].[Resolution] r ON r.id = gs.resolutionID 
 );
 
