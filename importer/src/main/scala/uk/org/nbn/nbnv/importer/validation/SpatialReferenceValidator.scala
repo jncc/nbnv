@@ -9,11 +9,13 @@ class SpatialReferenceValidator @Inject()(grv: GridReferenceValidator) {
   def validate(record: NbnRecord) = {
     val resultList = new ListBuffer[Result]
 
+    // spatial reference supplied
     val v1 = new Nbnv82Validator
     val r1 = v1.validate(record)
     resultList.append(r1)
 
-    if (r1.level == ResultLevel.DEBUG){
+    //Check spatial reference in more detail if no errors so far
+    if (resultList.find(r => r.level == ResultLevel.ERROR) == None){
       if (record.gridReference.isDefined) {
         resultList.appendAll(grv.validate(record))
       }
