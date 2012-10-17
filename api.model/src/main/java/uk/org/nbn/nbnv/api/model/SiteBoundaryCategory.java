@@ -4,25 +4,25 @@ import java.util.List;
 
 public class SiteBoundaryCategory {
     
-    private int siteBoundaryCategoryID;
+    private int id;
     private String name;
     private List<SiteBoundaryDataset> siteBoundaryDatasets;
     
     public SiteBoundaryCategory(){}
     
-    public SiteBoundaryCategory(int siteBoundaryCategoryID, String name, List<SiteBoundaryDataset> siteBoundaryDatasets){
+    public SiteBoundaryCategory(int id, String name, List<SiteBoundaryDataset> siteBoundaryDatasets){
         super();
-        this.siteBoundaryCategoryID = siteBoundaryCategoryID;
+        this.id = id;
         this.name = name;
         this.siteBoundaryDatasets = siteBoundaryDatasets;
     }
 
-    public int getSiteBoundaryCategoryID() {
-        return siteBoundaryCategoryID;
+    public int getId() {
+        return id;
     }
 
-    public void setSiteBoundaryCategoryID(int siteBoundaryCategoryID) {
-        this.siteBoundaryCategoryID = siteBoundaryCategoryID;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getName() {

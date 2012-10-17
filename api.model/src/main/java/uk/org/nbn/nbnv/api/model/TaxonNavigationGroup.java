@@ -1,38 +1,38 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package uk.org.nbn.nbnv.api.model;
 
 import java.util.List;
 
-/**
- *
- * @author Administrator
- */
 public class TaxonNavigationGroup {
+    private String key;
     private int sortOrder;
-    private String taxonGroupName;
-    private String descriptor;
-    private String parent;
-    private String taxonGroupKey;
+    private String name;
+    private String description;
+    private String parentTaxonGroupKey;
     private int numSpecies;
     private List<TaxonNavigationGroup> children;
 
-    public String getDescriptor() {
-        return descriptor;
+    public String getKey(){
+        return key;
+    }
+    
+    public void setKey(String key){
+        this.key = key;
+    }
+    
+    public String getDescription() {
+        return description;
     }
 
-    public void setDescriptor(String descriptor) {
-        this.descriptor = descriptor;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public String getParent() {
-        return parent;
+    public String getParentTaxonGroupKey() {
+        return parentTaxonGroupKey;
     }
 
-    public void setParent(String parent) {
-        this.parent = parent;
+    public void setParentTaxonGroupKey(String parentTaxonGroupKey) {
+        this.parentTaxonGroupKey = parentTaxonGroupKey;
     }
 
     public int getSortOrder() {
@@ -44,19 +44,11 @@ public class TaxonNavigationGroup {
     }
 
     public String getName() {
-        return taxonGroupName;
+        return name;
     }
 
-    public void setTaxonGroupName(String taxonGroupName) {
-        this.taxonGroupName = taxonGroupName;
-    }
-    
-    public String getId() {
-        return taxonGroupKey;
-    }
-    
-    public void setTaxonGroupKey(String taxonGroupKey) {
-        this.taxonGroupKey = taxonGroupKey;
+    public void setName(String name) {
+        this.name = name;
     }
     
     public List<TaxonNavigationGroup> getChildren() {

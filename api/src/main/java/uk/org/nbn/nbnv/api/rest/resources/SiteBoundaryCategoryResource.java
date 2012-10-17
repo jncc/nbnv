@@ -17,15 +17,11 @@ import uk.org.nbn.nbnv.api.model.SiteBoundaryCategory;
 public class SiteBoundaryCategoryResource {
     
     @Autowired SiteBoundaryCategoryMapper siteBoundaryCategoryMapper;
-    @Autowired SiteBoundaryDatasetMapper siteBoundaryDatasetMapper;
     
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public List<SiteBoundaryCategory> get(){
         List<SiteBoundaryCategory> toReturn = siteBoundaryCategoryMapper.get();
-        for(SiteBoundaryCategory siteBoundaryCategory : toReturn){
-            siteBoundaryCategory.setSiteBoundaryDatasets(siteBoundaryDatasetMapper.getBySiteBoundaryCategoryID(siteBoundaryCategory.getSiteBoundaryCategoryID()));
-        }
         return toReturn;
     }
     
@@ -33,9 +29,7 @@ public class SiteBoundaryCategoryResource {
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public SiteBoundaryCategory getByID(@PathParam("id") int id){
-        SiteBoundaryCategory toReturn = siteBoundaryCategoryMapper.getByID(id);
-        toReturn.setSiteBoundaryDatasets(siteBoundaryDatasetMapper.getBySiteBoundaryCategoryID(id));
-        return toReturn;
+        return siteBoundaryCategoryMapper.getByID(id);
     }
     
 }

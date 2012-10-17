@@ -6,6 +6,7 @@ package uk.gov.nbn.data.gis.providers;
 
 import com.sun.jersey.api.client.WebResource;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MediaType;
@@ -37,12 +38,12 @@ public class TokenUserProvider implements Provider {
     @Autowired WebResource api;
 
     @Override
-    public boolean isProviderFor(Class<?> clazz, Annotations annotations) {
+    public boolean isProviderFor(Class<?> clazz, Type type, Annotations annotations) {
         return clazz.equals(User.class);
     }
 
     @Override
-    public Object provide(Class<?> returnType, MapServiceMethod method, HttpServletRequest request, Annotations annotations) throws ProviderException {
+    public Object provide(Class<?> returnType, Type type, MapServiceMethod method, HttpServletRequest request, Annotations annotations) throws ProviderException {
         return addUserkeyAndMD5Hash(api.path(AUTHENTICATION_ADDRESS),
             request)
             .header("Cookie", request.getHeader("Cookie"))

@@ -1,29 +1,17 @@
 [#ftl]
 [#import "backgrounds.ftl" as backgrounds]
 
-[#assign layers={
-    "Grid-10km" :   {"resolution": 1, "fillColour": "255 255 0"  },
-    "Grid-2km"  :   {"resolution": 2, "fillColour": "0 255 0"    },
-    "Grid-1km"  :   {"resolution": 3, "fillColour": "0 255 255"  },
-    "Grid-100m" :   {"resolution": 4, "fillColour": "255 0 0"    }
-}]
-
-[#assign union_layers={
-    "Grid-10km-2km" : ["Grid-10km", "Grid-2km"],
-    "Grid-10km-1km" : ["Grid-10km", "Grid-2km", "Grid-1km"],
-    "Grid-10km-100m": ["Grid-10km", "Grid-2km", "Grid-1km", "Grid-100m"],
-    "Grid-2km-1km"  : ["Grid-2km", "Grid-1km"],
-    "Grid-2km-100m" : ["Grid-2km", "Grid-1km", "Grid-100m"],
-    "Grid-1km-100m" : ["Grid-1km", "Grid-100m"]
-}]
-
-[#macro join list separator=","][#list list as element]${element}[#if element_has_next]${separator}[/#if][/#list][/#macro]
 MAP
     IMAGETYPE                                             PNG
     SIZE                                                  2800 2800
     IMAGECOLOR                                            255 255 255
     FONTSET                                               "fonts/fontset"
     EXTENT                                                -180 -90 180 90
+
+    SYMBOL
+        NAME 'absence'
+        TYPE HATCH
+    END
 
     WEB
         IMAGEPATH                                           "/ms4w/tmp/ms_tmp/"
@@ -40,49 +28,14 @@ MAP
         "init=epsg:4326"
     END
     
-    [@backgrounds.os location=properties.ordnanceSurveyMapDataLocation requires=union_layers?keys + layers?keys/]
+    [@backgrounds.os location=properties.ordnanceSurveyMapDataLocation requires=layers/]
     
     [#if featureID??]
         [@backgrounds.selectedFeature featureID=featureID spatialConnection=properties.spatialConnection/]
     [/#if]
 
-    [#list union_layers?keys as union_layer_name]
-        LAYER
-            NAME "${union_layer_name}"
-            TYPE POLYGON
-            STATUS ON
-            CONNECTIONTYPE UNION
-            CONNECTION "[@join union_layers[union_layer_name]/]"
-            STYLEITEM "AUTO"
-            EXTENT                                                -180 -90 180 90
 
-            # Define an empty class that will be filled at runtime from the color and
-            # styles read from each source layer.
-
-
-            PROJECTION
-                "init=epsg:4326"
-            END
-
-            METADATA
-                "wms_title"                                       "${union_layer_name}"
-                "wms_include_items"                               "all"
-            END
-
-            [#list union_layers[union_layer_name] as style_layer]
-                CLASS
-                    NAME                                              "${style_layer} std"
-                    STYLE
-                        COLOR                                           ${layers[style_layer].fillColour}
-                        OUTLINECOLOR                                    0 0 0
-                        WIDTH                                           1
-                    END
-                END
-            [/#list]
-        END
-    [/#list]
-
-    [#list layers?keys as layer_name]
+    [#list layers as layer_name]
         LAYER
             NAME                                                "${layer_name}"
             TYPE                                                POLYGON
@@ -90,7 +43,7 @@ MAP
             CONNECTIONTYPE                                      PLUGIN
             PLUGIN                                              "msplugin_mssql2008.dll"
             CONNECTION                                          "${properties.spatialConnection}"
-            DATA                                                "${layerGenerator.getData(layers[layer_name].resolution)}"
+            DATA                                                "${layerGenerator.getData(layer_name_index + 1)}"
             TEMPLATE                                            "dummy.txt"
             EXTENT                                              -180 -90 180 90
 
@@ -103,14 +56,48 @@ MAP
                 "init=epsg:4326"
             END
 
-            CLASS
-                NAME                                              "${layer_name} std"
-                STYLE
-                    COLOR                                           ${layers[layer_name].fillColour}
-                    OUTLINECOLOR                                    0 0 0
-                    WIDTH                                           1
-                END
-            END
+            [#if bands??]
+                [#list bands as band]
+                    CLASS
+                        NAME                                              "Year Band"
+                        EXPRESSION                                        (${band.expression})
+                        STYLE
+                            COLOR                                         ${band.fillColour.red} ${band.fillColour.green} ${band.fillColour.blue}
+                            OUTLINECOLOR                                  ${band.outlineColour.red} ${band.outlineColour.green} ${band.outlineColour.blue}
+                            WIDTH                                         1
+                        END
+                    END
+                [/#list]
+            [#else]
+                [#if enablePresence]
+                    CLASS
+                        NAME                                              "${layer_name} Species Presence"
+                        EXPRESSION                                        ([ABSENCE] = 0)
+                        STYLE
+                            COLOR                                           ${colours[layer_name].red} ${colours[layer_name].green} ${colours[layer_name].blue}
+                            OUTLINECOLOR                                    0 0 0
+                            WIDTH                                           1
+                        END
+                    END
+                [/#if]
+                [#if enableAbsence]
+                    CLASS
+                        NAME                                              "${layer_name} Species Absence"
+                        EXPRESSION                                        ([ABSENCE] = 1)
+                        STYLE
+                            SYMBOL                                          'absence'
+                            COLOR                                           178 178 178
+                            ANGLE                                           45
+                            SIZE                                            5
+                            WIDTH                                           1
+                        END
+                        STYLE
+                            OUTLINECOLOR                                    115 0 0
+                            WIDTH                                           1
+                        END
+                    END
+                [/#if]
+            [/#if]
         END
     [/#list]
 END

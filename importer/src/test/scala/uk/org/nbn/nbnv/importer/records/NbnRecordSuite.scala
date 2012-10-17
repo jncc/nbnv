@@ -1,23 +1,14 @@
-package uk.org.nbn.nbnv.importer.Recorder
+package uk.org.nbn.nbnv.importer.records
 
 import uk.org.nbn.nbnv.importer.testing.BaseFunSuite
 import org.scalatest.BeforeAndAfter
 import org.mockito.Mockito._
-import uk.org.nbn.nbnv.importer.records.NbnRecord
 import uk.org.nbn.nbnv.importer.ImportFailedException
-import uk.org.nbn.nbnv.importer.darwin.StarRecordExtensions
 import org.gbif.dwc.terms.DwcTerm
 import org.gbif.dwc.text.StarRecord
 import org.gbif.dwc.record.Record
 import java.util
 
-/**
- * Created with IntelliJ IDEA.
- * User: Matt Debont
- * Date: 10/10/12
- * Time: 16:11
- * To change this template use File | Settings | File Templates.
- */
 class NbnRecordSuite extends BaseFunSuite with BeforeAndAfter {
   var record: NbnRecord = _
 

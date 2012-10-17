@@ -2,6 +2,8 @@ package uk.gov.nbn.data.gis.processor;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.*;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
@@ -31,7 +33,8 @@ public class ProviderFactory {
         Object[] parameters = new Object[arguments.length];
         for(int i=0; i<parameters.length; i++) {
             parameters[i] = getProviderFor(arguments[i]).provide(
-                                            arguments[i].getParameterType(), 
+                                            arguments[i].getParameterClass(), 
+                                            arguments[i].getParameterType(),
                                             mapServiceMethod, 
                                             request, 
                                             arguments[i].getAnnotationMap());
@@ -52,7 +55,7 @@ public class ProviderFactory {
      */
     public Provider getProviderFor(Argument argument) {
         for(Provider currProvider : providers) {
-            if(currProvider.isProviderFor(argument.getParameterType(), argument.getAnnotationMap())) {
+            if(currProvider.isProviderFor(argument.getParameterClass(), argument.getParameterType(), argument.getAnnotationMap())) {
                 return currProvider;
             }
         }

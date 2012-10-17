@@ -2,6 +2,8 @@ package uk.gov.nbn.data.gis.processor;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -28,12 +30,13 @@ public class MethodArgumentFactory {
     
     public Argument[] getArguments(Method method) {
         if(!processedMethods.containsKey(method)) {
-            Class<?>[] parameterTypes = method.getParameterTypes();
-            Argument[] arguments = new Argument[parameterTypes.length];
+            Class<?>[] parameterClasses = method.getParameterTypes();
+            Type[] parameterTypes = method.getGenericParameterTypes();
+            Argument[] arguments = new Argument[parameterClasses.length];
             Annotation[][] parameterAnnotations = method.getParameterAnnotations();
 
             for(int i=0; i<parameterTypes.length; i++) {
-                arguments[i] = new Argument(parameterTypes[i], Arrays.asList(parameterAnnotations[i]));
+                arguments[i] = new Argument(parameterClasses[i], parameterTypes[i], Arrays.asList(parameterAnnotations[i]));
             }
             processedMethods.put(method, arguments);
         }
@@ -41,15 +44,21 @@ public class MethodArgumentFactory {
     }
     
     public static class Argument {
-        private Class<?> parameterType;
+        private Class<?> parameterClass;
+        private Type parameterType;
         private Annotations annotationMap;
         
-        private Argument(Class<?> parameterType, List<Annotation> annotations) {
+        private Argument(Class<?> parameterClass, Type parameterType, List<Annotation> annotations) {
+            this.parameterClass = parameterClass;
             this.parameterType = parameterType;
             this.annotationMap = new Annotations(annotations);
         }
 
-        public Class<?> getParameterType() {
+        public Class<?> getParameterClass() {
+            return parameterClass;
+        }
+        
+        public Type getParameterType() {
             return parameterType;
         }
 

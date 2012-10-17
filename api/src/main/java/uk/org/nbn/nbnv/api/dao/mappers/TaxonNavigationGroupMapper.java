@@ -18,7 +18,7 @@ public interface TaxonNavigationGroupMapper {
     })
     List<TaxonNavigationGroup> selectAll();
     
-    @Select("SELECT * FROM TaxonGroupData WHERE taxonGroupKey = #{id}")
+    @Select("SELECT * FROM TaxonNavigationGroupData WHERE [key] = #{id}")
     @Results({ 
         @Result(column = "taxonGroupKey", property = "children", javaType=List.class, many=@Many(select="uk.org.nbn.nbnv.api.dao.mappers.TaxonNavigationGroupMapper.getChildren")),
         @Result(column = "taxonGroupKey", property = "taxonGroupKey") //map but retain key
@@ -34,9 +34,9 @@ public interface TaxonNavigationGroupMapper {
     @Select("SELECT * FROM TaxonData WHERE outputGroupKey = #{taxonGroupKey}")
     List<Taxon> getTaxa(@Param("taxonGroupKey") String taxonGroupKey, RowBounds bounds);
     
-    @Select("SELECT dtngd.* from DesignationTaxonNavigationGroupData  dtngd INNER JOIN DesignationData dd ON dtngd.designationID = dd.designationID WHERE code = #{id} AND parent IS NULL ORDER BY sortOrder ASC")
+    @Select("SELECT dtngd.* FROM DesignationTaxonNavigationGroupData dtngd INNER JOIN DesignationData dd ON dtngd.designationID = dd.id WHERE code = #{designationId} AND parentTaxonGroupKey = #{taxonNavigationGroupId} ORDER BY sortOrder ASC")
     List<TaxonNavigationGroup> getTopLevelsByDesignationID(String id);
     
-    @Select("SELECT dtngd.* FROM DesignationTaxonNavigationGroupData dtngd INNER JOIN DesignationData dd ON dtngd.designationID = dd.designationID WHERE code = #{designationId} AND parent = #{taxonNavigationGroupId} ORDER BY sortOrder ASC")
+    @Select("SELECT dtngd.* FROM DesignationTaxonNavigationGroupData dtngd INNER JOIN DesignationData dd ON dtngd.designationID = dd.id WHERE code = #{designationId} AND parentTaxonGroupKey = #{taxonNavigationGroupId} ORDER BY sortOrder ASC")
     List<TaxonNavigationGroup> getChildrenByDesignation(@Param("taxonNavigationGroupId") String taxonNavigationGroupId, @Param("designationId") String designationId);
 }

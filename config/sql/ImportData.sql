@@ -200,6 +200,16 @@ INNER JOIN [NBNCore].[dbo].[Taxon] tb ON tb.taxonVersionKey = a.COMPONENT_TVK
 
 GO
 
+INSERT INTO [NBNCore].[dbo].[TaxonNavigation] 
+SELECT DISTINCT
+	t.pTaxonVersionKey 
+	, igm.TAXON_GROUP_KEY 
+FROM [SpeciesDictionary].[dbo].[INPUT_GROUP_MAP] igm
+INNER JOIN [NBNCore].[dbo].[Taxon] t ON t.taxonVersionKey = igm.TAXON_VERSION_KEY 
+INNER JOIN [NBNCore].[dbo].[TaxonGroup] tg ON tg.[key] = igm.TAXON_GROUP_KEY 
+
+GO
+
 INSERT INTO [DesignationCategory] (label, [description], sortOrder)
 SELECT 
 	tdtk.KIND

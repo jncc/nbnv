@@ -1,8 +1,15 @@
 package uk.gov.nbn.data.gis.providers;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import uk.gov.nbn.data.gis.providers.annotations.QueryParam;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Component;
 import uk.gov.nbn.data.gis.processor.Annotations;
@@ -22,20 +29,22 @@ import uk.gov.nbn.data.gis.providers.annotations.DefaultValue;
 public class QueryParamProvider implements Provider {
 
     @Override
-    public boolean isProviderFor(Class<?> clazz, Annotations annotations) {
+    public boolean isProviderFor(Class<?> clazz, Type type, Annotations annotations) {
         return annotations.containsKey(QueryParam.class);
     }
 
     @Override
-    public Object provide(Class<?> returnType, MapServiceMethod method, HttpServletRequest request, Annotations annotations) throws ProviderException {
+    public Object provide(Class<?> returnType, Type type, MapServiceMethod method, HttpServletRequest request, Annotations annotations) throws ProviderException {
         QueryParam paramAnnot = annotations.get(QueryParam.class);
-        String toReturn = getParameter(request, paramAnnot.key(), annotations.get(DefaultValue.class));
-        if(toReturn != null) {
+        String[] requestParams = getParameters(request, paramAnnot.key(), annotations.get(DefaultValue.class));
+        if(requestParams != null) {
             if(returnType.equals(List.class)) {
-                return validateParameter(Arrays.asList(toReturn.split(",")), paramAnnot);
+                Class<?> elementType = (Class<?>)(((ParameterizedType)type).getActualTypeArguments()[0]);
+                String[] toReturn = (paramAnnot.commaSeperated()) ? requestParams[0].split(",") : requestParams;
+                return validateParameter(Arrays.asList(toReturn), paramAnnot, elementType);
             }
             else {
-                return validateParameter(toReturn, paramAnnot);
+                return validateParameter(requestParams[0], paramAnnot, returnType);
             }
         }
         else {
@@ -43,29 +52,46 @@ public class QueryParamProvider implements Provider {
         }
     }
     
-    private static String getParameter(HttpServletRequest request, String key, DefaultValue defaultValAnnot) {
-        String defaultVal = (defaultValAnnot != null) ? defaultValAnnot.value() : null;
-        String userDefinedValue = request.getParameter(key);
-        return (userDefinedValue == null) ? defaultVal : userDefinedValue;
+    private static String[] getParameters(HttpServletRequest request, String key, DefaultValue defaultValAnnot) {
+        Map<String, String[]> parameterMap = request.getParameterMap();
+        String[] userDefinedValue = parameterMap.get(key);
+        return (userDefinedValue == null && defaultValAnnot != null) 
+                ? new String[] {defaultValAnnot.value()} : userDefinedValue;
     }
     
-    private static String validateParameter(String toValidate, QueryParam annotation) throws ProviderException {
+    private static <T> T validateParameter(String toValidate, QueryParam annotation, Class<T> type) throws ProviderException {
         if(annotation.validation().equals(QueryParam.NO_VALIDATION) || toValidate.matches(annotation.validation())) {
-            return toValidate;
+            return instantiateClassFromString(type, toValidate);
         }
         else {
             throw new ProviderException("The queryparam " + toValidate + " was not in the correct format");
         }
     }
     
-    private static List<String> validateParameter(List<String> toValidate, QueryParam annotation) throws ProviderException {
+    private static <T> List<T> validateParameter(List<String> toValidate, QueryParam annotation, Class<T> type) throws ProviderException {
+        List<T> toReturn = new ArrayList<T>();
         if(!annotation.validation().equals(QueryParam.NO_VALIDATION)) {
             for(String currValue : toValidate) {
                 if(!currValue.matches(annotation.validation())) {
                      throw new ProviderException("The queryparam " + currValue + " was not in the correct format");
                 }
+                toReturn.add(instantiateClassFromString(type, currValue));
             }
         }
-        return toValidate;
+        return toReturn;
+    }
+    
+    private static <T> T instantiateClassFromString(Class<T> type, String param) throws ProviderException {
+        try {
+            return type.getConstructor(String.class).newInstance(param);
+        } catch(InstantiationException ex) {
+            throw new ProviderException("An InstantiationException occured when creating constructing the param as a given class", ex);
+        }catch (IllegalAccessException ex) {
+            throw new ProviderException("An InstantiationException occured when creating constructing the param as a given class", ex);
+        } catch (InvocationTargetException ex) {
+            throw new ProviderException("An InstantiationException occured when creating constructing the param as a given class", ex);
+        } catch (NoSuchMethodException ex) {
+            throw new ProviderException("An InstantiationException occured when creating constructing the param as a given class", ex);
+        }
     }
 }

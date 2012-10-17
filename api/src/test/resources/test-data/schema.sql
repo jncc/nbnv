@@ -142,7 +142,7 @@ CREATE TABLE UserRoleSystemAdministratorData(
         userKey int NOT NULL);
 
 CREATE TABLE OrganisationMembershipData(
-        userKey int NOT NULL,
+        userID int NOT NULL,
         organisationID int NOT NULL,
         role varchar(50) NOT NULL);
 
