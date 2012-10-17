@@ -2,54 +2,42 @@ package uk.org.nbn.nbnv.importer.validation
 
 import uk.org.nbn.nbnv.importer.records.NbnRecord
 import uk.org.nbn.nbnv.importer.fidelity.{ResultLevel, Result}
+import java.util.Date
+import java.text.SimpleDateFormat
 
-// The start date should not be before the end date, can however be the same
+/**
+ * Created By: Matt Debont
+ * Date: 17/10/12
+ */
 class Nbnv71Validator {
 
-  def validate(record: NbnRecord) = {
-    if (record.startDate != null && record.endDate != null) {
-      // If our
-      if (record.startDate.after(record.endDate)) {
-        fail(record)
-      } else {
-        success(record)
-      }
-    } else if(record.eventDate != null) {
-      success()
-    } else {
-      fail
+  def validate(record: NbnRecord): Result = {
+    val current = new Date()
+    if (record.startDate != null && record.startDate.after(current)) {
+      return fail(new SimpleDateFormat("dd/MM/yyyy").format(record.startDate))
     }
+    if (record.endDate != null && record.endDate.after(current)) {
+      return fail(new SimpleDateFormat("dd/MM/yyyy").format(record.endDate))
+    }
+    if (record.eventDate != null && record.eventDate.after(current)) {
+      return fail(new SimpleDateFormat("dd/MM/yyyy").format(record.eventDate))
+    }
+    success
   }
 
-  def fail = {
-    new Result {
-      def level: ResultLevel.ResultLevel = ResultLevel.ERROR
-      def reference: String = "EventDate"
-      def message: String = "Could not find a valid Event Date field"
-    }
-  }
-
-  def fail(record: NbnRecord) = {
-    new Result {
-      def level: ResultLevel.ResultLevel = ResultLevel.ERROR
-      def reference: String = record.startDateRaw
-      def message: String = "The indicated start date for the record is after the end date: '%s' is before '%s'".format(record.startDateRaw, record.endDateRaw)
-    }
-  }
-
-  def success() = {
+  def success = {
     new Result {
       def level: ResultLevel.ResultLevel = ResultLevel.DEBUG
-      def reference: String = "EventDate"
-      def message: String = "The record has an event date and no start / end date"
+      def reference: String = "No_Future_Dates"
+      def message: String = "Date is valid, not in the future"
     }
   }
 
-  def success(record:NbnRecord) = {
+  def fail(dateString: String) = {
     new Result {
-      def level: ResultLevel.ResultLevel = ResultLevel.DEBUG
-      def reference: String = record.startDateRaw
-      def message: String = "The indicated start date is before or the same as the indicated end date"
+      def level: ResultLevel.ResultLevel = ResultLevel.ERROR
+      def reference: String = dateString
+      def message: String = "Date is in the future"
     }
   }
 }

@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package uk.org.nbn.nbnv.api.rest.resources;
 
 import java.util.ArrayList;
@@ -26,10 +22,6 @@ import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
 import uk.org.nbn.nbnv.api.dao.mappers.TaxonObservationMapper;
 import uk.org.nbn.nbnv.api.model.*;
 
-/**
- *
- * @author Administrator
- */
 @Component
 @Path("/taxonObservations")
 public class TaxonObservationResource {
@@ -63,17 +55,17 @@ public class TaxonObservationResource {
     }
 
     @GET
-    @Path("/{id : [A-Z][A-Z0-9]{7}}")
+    @Path("/{datasetKey : [A-Z][A-Z0-9]{7}}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<TaxonObservation> getObservationsByDataset(@TokenUser() User user, @PathParam("id") String id) {
-        return observationMapper.selectByDataset(id, user.getId());
+    public List<TaxonObservation> getObservationsByDataset(@TokenUser() User user, @PathParam("datasetKey") String datasetKey) {
+        return observationMapper.selectByDataset(datasetKey, user.getId());
     }
 
     @GET
-    @Path("/{id : [A-Z]{3}SYS[0-9]{10}}")
+    @Path("/{ptvk : [A-Z]{3}SYS[0-9]{10}}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<TaxonObservation> getObservationsByTaxon(@TokenUser() User user, @PathParam("id") String id) {
-        return observationMapper.selectByPTVK(id, user.getId());
+    public List<TaxonObservation> getObservationsByTaxon(@TokenUser() User user, @PathParam("ptvk") String ptvk) {
+        return observationMapper.selectByPTVK(ptvk, user.getId());
     }
 
     /*

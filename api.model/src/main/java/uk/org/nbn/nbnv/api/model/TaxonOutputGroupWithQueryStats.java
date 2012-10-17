@@ -2,24 +2,24 @@ package uk.org.nbn.nbnv.api.model;
 
 public class TaxonOutputGroupWithQueryStats {
     
-    private String taxonGroupKey;
+    private String taxonOutputGroupKey;
     private int querySpecificSpeciesCount;
     private TaxonOutputGroup taxonOutputGroup;
     
     public TaxonOutputGroupWithQueryStats(){}
     
-    public TaxonOutputGroupWithQueryStats(String taxonGroupKey, int querySpecificSpeciesCount, TaxonOutputGroup taxonOutputGroup){
-        this.taxonGroupKey = taxonGroupKey;
+    public TaxonOutputGroupWithQueryStats(String taxonOutputGroupKey, int querySpecificSpeciesCount, TaxonOutputGroup taxonOutputGroup){
+        this.taxonOutputGroupKey = taxonOutputGroupKey;
         this.querySpecificSpeciesCount = querySpecificSpeciesCount;
         this.taxonOutputGroup = taxonOutputGroup;
     }
 
-    public String getTaxonGroupKey() {
-        return taxonGroupKey;
+    public String getTaxonOutputGroupKey() {
+        return taxonOutputGroupKey;
     }
 
-    public void setTaxonGroupKey(String taxonGroupKey) {
-        this.taxonGroupKey = taxonGroupKey;
+    public void setTaxonOutputGroupKey(String taxonOutputGroupKey) {
+        this.taxonOutputGroupKey = taxonOutputGroupKey;
     }
 
     public int getQuerySpecificSpeciesCount() {
