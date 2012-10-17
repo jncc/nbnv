@@ -26,26 +26,26 @@ public interface DatasetMapper {
     })
     Dataset selectByDatasetKey(String key);
     
-    @Select("SELECT * FROM DatasetData WHERE key = #{key}")
+    @Select("SELECT * FROM DatasetData WHERE [key] = #{key}")
     Dataset selectByIDProviderNotInstantiated(String key);
     
     @Select("SELECT * FROM DatasetData WHERE organisationID = #{organisaionID} ORDER BY title")
     List<Dataset> selectByOrganisationID(int organisationID);
 
-    @Select("SELECT * FROM DatasetData dd INNER JOIN TaxonDatasetData tdd ON dd.key = tdd.key WHERE dd.key = #{key}")
+    @Select("SELECT * FROM DatasetData dd INNER JOIN TaxonDatasetData tdd ON dd.[key] = tdd.datasetKey WHERE dd.[key] = #{key}")
     @Results(value = {
         @Result(property="speciesCount", column="key", javaType=java.lang.Integer.class, one=@One(select="selectSpeciesCountByDatasetKey")),
         @Result(property="key", column="key")
     })
     TaxonDataset selectTaxonDatasetByID(String key);
 
-    @Select("SELECT year(startDate) year, COUNT_BIG(*) recordCount FROM TaxonObservationData WHERE key = #{key} AND fullVersion = 1 AND YEAR(startDate) <> 0 GROUP BY key, year(startDate) ORDER BY year")
+    @Select("SELECT year(startDate) year, COUNT_BIG(*) recordCount FROM TaxonObservationData WHERE datasetKey = #{key} AND fullVersion = 1 AND YEAR(startDate) <> 0 GROUP BY datasetKey, year(startDate) ORDER BY year")
     List<YearStats> selectRecordsPerYear(String key);
     
-    @Select("SELECT * FROM DatasetDateTypeRecordCountData WHERE key = #{key}")
+    @Select("SELECT * FROM DatasetDateTypeRecordCountData WHERE datasetKey = #{key}")
     List<DateTypeStats> selectRecordCountPerDateTypeByDatasetKey(String key);
     
-    @Select("SELECT count(*) speciesCount FROM TaxonDatasetTaxonData WHERE key = #{key}")
+    @Select("SELECT count(*) speciesCount FROM TaxonDatasetTaxonData WHERE datasetKey = #{key}")
     Integer selectSpeciesCountByDatasetKey(String key);
 
     @SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectDatasetsProviderNotInstantiated")

@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package uk.org.nbn.nbnv.api.rest.resources;
 
 import java.util.ArrayList;
@@ -26,10 +22,6 @@ import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
 import uk.org.nbn.nbnv.api.dao.mappers.TaxonObservationMapper;
 import uk.org.nbn.nbnv.api.model.*;
 
-/**
- *
- * @author Administrator
- */
 @Component
 @Path("/taxonObservations")
 public class TaxonObservationResource {
