@@ -1,5 +1,6 @@
 package uk.gov.nbn.data.gis.processor;
 
+import java.lang.reflect.Type;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -8,6 +9,6 @@ import javax.servlet.http.HttpServletRequest;
  * @author Chris Johnson
  */
 public interface Provider {
-    boolean isProviderFor(Class<?> clazz, Annotations annotations);
-    Object provide(Class<?> clazz, MapServiceMethod method, HttpServletRequest request, Annotations annotations) throws ProviderException;
+    boolean isProviderFor(Class<?> clazz, Type type, Annotations annotations);
+    Object provide(Class<?> clazz, Type type, MapServiceMethod method, HttpServletRequest request, Annotations annotations) throws ProviderException;
 }

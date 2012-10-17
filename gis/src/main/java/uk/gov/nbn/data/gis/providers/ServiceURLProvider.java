@@ -1,6 +1,7 @@
 package uk.gov.nbn.data.gis.providers;
 
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Type;
 import java.net.URLEncoder;
 import java.util.HashSet;
 import java.util.Map;
@@ -38,12 +39,12 @@ public class ServiceURLProvider implements Provider {
     @Autowired ProviderFactory providerFactory;
 
     @Override
-    public boolean isProviderFor(Class<?> clazz, Annotations annotations) {
+    public boolean isProviderFor(Class<?> clazz, Type type, Annotations annotations) {
         return annotations.containsKey(ServiceURL.class);
     }
 
     @Override
-    public String provide(Class<?> clazz, MapServiceMethod method, HttpServletRequest request, Annotations annotations) throws ProviderException {
+    public String provide(Class<?> clazz, Type type, MapServiceMethod method, HttpServletRequest request, Annotations annotations) throws ProviderException {
         try {
             StringBuilder toReturn = new StringBuilder(request.getRequestURL()).append("?");
             Set<String> mapServiceApplicableQueryParams = getMapServiceApplicableQueryParams(method);

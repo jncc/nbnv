@@ -60,7 +60,8 @@ public class DesignationSpeciesDensityMap {
                 + "FROM [dbo].[UserTaxonObservationData] o " 
                 + "INNER JOIN [dbo].[GridTree] gt ON gt.featureID = o.featureID "
                 + "INNER JOIN [dbo].[DesignationTaxonData] td ON td.pTaxonVersionKey = o.pTaxonVersionKey "
-                + "WHERE code = '%s' "
+                + "WHERE absence = 0 "
+                + "AND code = '%s' "
                 + "AND userID = %s "
                 + "%s " //placeholder for dataset filter
                 + "%s " //startyear for dataset filter
