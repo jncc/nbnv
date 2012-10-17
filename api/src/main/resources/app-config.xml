@@ -37,6 +37,6 @@
     
 <!--Create an embedded solr server instance-->
     <bean id="solrServer" class="org.apache.solr.client.solrj.impl.CommonsHttpSolrServer">
-        <constructor-arg value="http://staging.testnbn.net/solr"/>
+        <constructor-arg value="${solr_url}"/>
     </bean>
 </beans>
