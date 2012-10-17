@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package uk.org.nbn.nbnv.api.dao.mappers;
 
 import java.util.List;
@@ -26,13 +22,13 @@ import uk.org.nbn.nbnv.api.model.User;
  * @author Paul Gilbertson
  */
 public interface TaxonObservationMapper {
-    @Select("SELECT * FROM UserTaxonObservationData WHERE observationID = #{id} AND userKey = #{userKey}")
+    @Select("SELECT * FROM UserTaxonObservationData WHERE observationID = #{id} AND userID = #{userKey}")
     public TaxonObservation selectById(@Param("id") int id, @Param("userKey") int userKey);
 
-    @Select("SELECT * FROM UserTaxonObservationData WHERE datasetKey = #{id} AND userKey = #{userKey}")
+    @Select("SELECT * FROM UserTaxonObservationData WHERE datasetKey = #{id} AND userID = #{userKey}")
     public List<TaxonObservation> selectByDataset(@Param("id") String id, @Param("userKey") int userKey);
 
-    @Select("SELECT * FROM UserTaxonObservationData WHERE pTaxonVersionKey = #{id} AND userKey = #{userKey}")
+    @Select("SELECT * FROM UserTaxonObservationData WHERE pTaxonVersionKey = #{id} AND userID = #{userKey}")
     public List<TaxonObservation> selectByPTVK(@Param("id") String id, @Param("userKey") int userKey);
     
     @SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectRecords")
@@ -83,8 +79,8 @@ public interface TaxonObservationMapper {
     
     @SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectGroups")
     @Results(value = {
-        @Result(property="taxonOutputGroup", column="outputGroupKey", javaType=TaxonOutputGroup.class, one=@One(select="uk.org.nbn.nbnv.api.dao.mappers.TaxonOutputGroupMapper.getById")),
-        @Result(property="taxonGroupKey", column="outputGroupKey")
+        @Result(property="taxonOutputGroup", column="taxonOutputGroupKey", javaType=TaxonOutputGroup.class, one=@One(select="uk.org.nbn.nbnv.api.dao.mappers.TaxonOutputGroupMapper.getById")),
+        @Result(property="taxonOutputGroupKey", column="taxonOutputGroupKey")
     })
     public List<TaxonOutputGroupWithQueryStats> selectObservationGroupsByFilter(
             @Param("user") User user

@@ -2,49 +2,49 @@ package uk.org.nbn.nbnv.api.model;
 
 public class TaxonOutputGroup {
     
-    private String taxonGroupKey, taxonGroupName, descriptor, parent;
+    private String key, name, description, parentTaxonGroupKey;
     private int sortOrder;
     
     public TaxonOutputGroup(){}
     
-    public TaxonOutputGroup(String taxonGroupKey, String taxonGroupName, String descriptor, String parent, int sortOrder){
-        this.taxonGroupKey = taxonGroupKey;
-        this.taxonGroupName = taxonGroupName;
-        this.descriptor = descriptor;
-        this.parent = parent;
+    public TaxonOutputGroup(String key, String name, String description, String parentTaxonGroupKey, int sortOrder){
+        this.key = key;
         this.sortOrder = sortOrder;
+        this.name = name;
+        this.description = description;
+        this.parentTaxonGroupKey = parentTaxonGroupKey;
     }
 
-    public String getTaxonGroupKey() {
-        return taxonGroupKey;
+    public String getKey() {
+        return key;
     }
 
-    public void setTaxonGroupKey(String taxonGroupKey) {
-        this.taxonGroupKey = taxonGroupKey;
+    public void setKey(String key) {
+        this.key = key;
     }
 
-    public String getTaxonGroupName() {
-        return taxonGroupName;
+    public String getName() {
+        return name;
     }
 
-    public void setTaxonGroupName(String taxonGroupName) {
-        this.taxonGroupName = taxonGroupName;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getDescriptor() {
-        return descriptor;
+    public String getDescription() {
+        return description;
     }
 
-    public void setDescriptor(String descriptor) {
-        this.descriptor = descriptor;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public String getParent() {
-        return parent;
+    public String getParentTaxonGroupKey() {
+        return parentTaxonGroupKey;
     }
 
-    public void setParent(String parent) {
-        this.parent = parent;
+    public void setParentTaxonGroupKey(String parentTaxonGroupKey) {
+        this.parentTaxonGroupKey = parentTaxonGroupKey;
     }
 
     public int getSortOrder() {
