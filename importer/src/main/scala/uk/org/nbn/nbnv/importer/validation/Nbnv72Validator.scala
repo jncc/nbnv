@@ -4,7 +4,7 @@ import uk.org.nbn.nbnv.importer.records.NbnRecord
 import uk.org.nbn.nbnv.importer.fidelity.{ResultLevel, Result}
 
 // The start date should not be before the end date, can however be the same
-class Nbnv71Validator {
+class Nbnv72Validator {
 
   def validate(record: NbnRecord) = {
     if (record.startDate != null && record.endDate != null) {
@@ -15,7 +15,7 @@ class Nbnv71Validator {
         success(record)
       }
     } else if(record.eventDate != null) {
-      success()
+      success
     } else {
       fail
     }
@@ -32,12 +32,12 @@ class Nbnv71Validator {
   def fail(record: NbnRecord) = {
     new Result {
       def level: ResultLevel.ResultLevel = ResultLevel.ERROR
-      def reference: String = record.startDateRaw
-      def message: String = "The indicated start date for the record is after the end date: '%s' is before '%s'".format(record.startDateRaw, record.endDateRaw)
+      def reference: String = record.endDateRaw
+      def message: String = "End date is before start date"
     }
   }
 
-  def success() = {
+  def success = {
     new Result {
       def level: ResultLevel.ResultLevel = ResultLevel.DEBUG
       def reference: String = "EventDate"

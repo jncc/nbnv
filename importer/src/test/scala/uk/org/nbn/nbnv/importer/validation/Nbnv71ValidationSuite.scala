@@ -7,7 +7,7 @@ import java.text.SimpleDateFormat
 import uk.org.nbn.nbnv.importer.fidelity.{ResultLevel, Result}
 
 class Nbnv71ValidationSuite extends BaseFunSuite {
-  val validator = new Nbnv71Validator
+  val validator = new Nbnv72Validator
   val record = mock[NbnRecord]
 
   test("Should validate a start date before an end date") {
