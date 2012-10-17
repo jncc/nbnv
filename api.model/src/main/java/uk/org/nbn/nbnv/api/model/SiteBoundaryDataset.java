@@ -5,29 +5,27 @@ import java.util.Date;
 public class SiteBoundaryDataset {
     
     private String datasetKey;
-    private String name;
+    private String title;
     private String description;
     private Date dateUploaded;
-    private String provider;
-    private int providerID;
-    private String siteBoundaryCategoryName;
-    private int siteBoundaryCategoryID;
-    private String geoLayerName;
+    private String organisationName;
+    private int organisationID;
     private String nameField;
+    private int siteBoundaryCategory;
+    private String siteBoundaryCategoryName;
     
     public SiteBoundaryDataset(){}
 
-    public SiteBoundaryDataset(String datasetKey, String name, String description, Date dateUploaded, String provider, int providerID, String siteBoundaryCategoryName, int siteBoundaryCategoryID, String geoLayerName, String nameField){
+    public SiteBoundaryDataset(String datasetKey, String title, String description, Date dateUploaded, String organisationName, int organisationID, String siteBoundaryCategoryName, int siteBoundaryCategory, String nameField){
         super();
         this.datasetKey = datasetKey;
-        this.name = name;
+        this.title = title;
         this.description = description;
         this.dateUploaded = dateUploaded;
-        this.provider = provider;
-        this.providerID = providerID;
+        this.organisationName = organisationName;
+        this.organisationID = organisationID;
         this.siteBoundaryCategoryName = siteBoundaryCategoryName;
-        this.siteBoundaryCategoryID = siteBoundaryCategoryID;
-        this.geoLayerName = geoLayerName;
+        this.siteBoundaryCategory = siteBoundaryCategory;
         this.nameField = nameField;
     }
 
@@ -39,12 +37,12 @@ public class SiteBoundaryDataset {
         this.datasetKey = datasetKey;
     }
 
-    public String getName() {
-        return name;
+    public String getTitle() {
+        return title;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getDescription() {
@@ -63,20 +61,20 @@ public class SiteBoundaryDataset {
         this.dateUploaded = dateUploaded;
     }
 
-    public String getProvider() {
-        return provider;
+    public String getOrganisationName() {
+        return organisationName;
     }
 
-    public void setProvider(String provider) {
-        this.provider = provider;
+    public void setOrganisationName(String organisationName) {
+        this.organisationName = organisationName;
     }
 
-    public int getProviderID() {
-        return providerID;
+    public int getOrganisationID() {
+        return organisationID;
     }
 
-    public void setProviderID(int providerID) {
-        this.providerID = providerID;
+    public void setOrganisationID(int organisationID) {
+        this.organisationID = organisationID;
     }
 
     public String getSiteBoundaryCategoryName() {
@@ -87,20 +85,12 @@ public class SiteBoundaryDataset {
         this.siteBoundaryCategoryName = siteBoundaryCategoryName;
     }
 
-    public int getSiteBoundaryCategoryID() {
-        return siteBoundaryCategoryID;
+    public int getSiteBoundaryCategory() {
+        return siteBoundaryCategory;
     }
 
-    public void setSiteBoundaryCategoryID(int siteBoundaryCategoryID) {
-        this.siteBoundaryCategoryID = siteBoundaryCategoryID;
-    }
-
-    public String getGeoLayerName() {
-        return geoLayerName;
-    }
-
-    public void setGeoLayerName(String geoLayerName) {
-        this.geoLayerName = geoLayerName;
+    public void setSiteBoundaryCategory(int siteBoundaryCategory) {
+        this.siteBoundaryCategory = siteBoundaryCategory;
     }
 
     public String getNameField() {

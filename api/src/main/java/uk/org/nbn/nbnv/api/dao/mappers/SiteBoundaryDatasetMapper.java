@@ -10,7 +10,7 @@ public interface SiteBoundaryDatasetMapper {
     @Select("SELECT * FROM SiteBoundaryDatasetData")
     List<SiteBoundaryDataset> get();
     
-    @Select("SELECT * FROM SiteBoundaryDatasetData where siteBoundaryCategory = #{id} order by name asc")
+    @Select("SELECT * FROM SiteBoundaryDatasetData where siteBoundaryCategory = #{id} order by title asc")
     List<SiteBoundaryDataset> getBySiteBoundaryCategoryID(int id);
     
     @Select("SELECT * FROM SiteBoundaryDatasetData where datasetKey = #{id}")
