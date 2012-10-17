@@ -18,8 +18,8 @@
     
     <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="com.microsoft.sqlserver.jdbc.SQLServerDriver" />
-        <property name="url" value="jdbc:sqlserver://nbnsql-b.nerc-lancaster.ac.uk;databaseName=NBNWarehouse" />
-        <property name="username" value="NBNImporter" />
-        <property name="password" value="Ecowaswashere9" />
+        <property name="url" value="${db_warehouse_url}" />
+        <property name="username" value="${db_warehouse_username}" />
+        <property name="password" value="${db_warehouse_password}" />
     </bean>
 </beans>

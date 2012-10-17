@@ -61,6 +61,9 @@ public class RunConversions {
         this.nxfParser = new NXFParser(in);
         this.organisation = organisation;
         this.metadataForm = metadataForm;
+        
+        setSteps(new ArrayList<ConverterStep>());
+        
         DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
         try {
             endDate = df.parse("01/01/1900");
@@ -101,8 +104,6 @@ public class RunConversions {
      * @throws UnsatisfiableDependencyError 
      */
     private List<ConverterStep> getSteps(List<ColumnMapping> mappings) throws UnsatisfiableDependencyError {
-        setSteps(new ArrayList<ConverterStep>());
-        
         // Pre Steps
         List<ConverterStep> preSteps = new ArrayList<ConverterStep>();
         // Regular Steps
@@ -110,7 +111,7 @@ public class RunConversions {
         // Post Steps
         List<ConverterStep> postSteps = new ArrayList<ConverterStep>();
         // Unsorted Dependencies
-        List<ConverterStep> depSteps = new ArrayList<ConverterStep>();
+        List<ConverterStep> depSteps = getSteps(); //new ArrayList<ConverterStep>();
 
         Reflections reflections = new Reflections("uk.org.nbn.nbnv.importer.ui.convert.converters");
         
@@ -261,7 +262,7 @@ public class RunConversions {
                         }
                     }
                     
-                    if (!exists) {
+                    if (!exists || !depStep.hasDependency()) {
                         // If dependencies dont exist and are soft then put step either at the 
                         // minimum position defined or the postStepIndex (so either at postStepIndex
                         // or after)

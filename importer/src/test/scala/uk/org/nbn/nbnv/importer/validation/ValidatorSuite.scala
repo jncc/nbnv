@@ -13,6 +13,7 @@ import scala.collection.JavaConversions._
 import uk.org.nbn.nbnv.importer.ImportFailedException
 import org.gbif.utils.file.ClosableIterator
 import uk.org.nbn.nbnv.importer.utility.extClosableIterator
+import uk.org.nbn.nbnv.importer.spatial.GridSquareInfoFactory
 
 class ValidatorSuite extends BaseFunSuite with BeforeAndAfter{
   var archive: Archive = _
@@ -27,6 +28,7 @@ class ValidatorSuite extends BaseFunSuite with BeforeAndAfter{
   val repo = mock[Repository]
   val db = mock[Database]
   val log : Logger = mock[Logger]
+
 
   before {
     starRec1 = mock[StarRecord]
@@ -96,13 +98,24 @@ class ValidatorSuite extends BaseFunSuite with BeforeAndAfter{
     when(repo.confirmTaxonVersionKey("NHMSYS0020528265")).thenReturn(true)
   }
 
+  def getValidator = {
+    new Validator(log
+      , db
+      , new SpatialReferenceValidator(
+          new GridReferenceValidator(
+            new GridSquareInfoFactory(db)
+          )
+        )
+    )
+  }
+
   test("Should validate a set of real records - Head Record Only") {
     val headVal = new ArchiveHeadValidator
     headVal.validate(archive)
   }
 
   test("Should Validate a couple of records - Set of 2 Records") {
-    val validator = new Validator(log, db)
+    val validator = getValidator
     validator.validate(archive)
   }
 
@@ -110,7 +123,7 @@ class ValidatorSuite extends BaseFunSuite with BeforeAndAfter{
     // Need to wait for a validation system for this to be available
     when(coreArchive2.value(DwcTerm.occurrenceID)).thenReturn("")
 
-    val validator = new Validator(log, db)
+    val validator = getValidator
     val throws = intercept[ImportFailedException] {
       validator.validate(archive)
     }
@@ -119,7 +132,7 @@ class ValidatorSuite extends BaseFunSuite with BeforeAndAfter{
 
   test("Should not validate a duplicated id") {
     when(coreArchive2.value(DwcTerm.occurrenceID)).thenReturn("CI00000300000TNL")
-    val validator = new Validator(log, db)
+    val validator = getValidator
     val throws = intercept[ImportFailedException] {
       validator.validate(archive)
     }
@@ -131,7 +144,7 @@ class ValidatorSuite extends BaseFunSuite with BeforeAndAfter{
     when(rec.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/gridReferenceType")).thenReturn(null)
     when(rec.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/gridReferencePrecisionRaw")).thenReturn(null)
 
-    val validator = new Validator(log, db)
+    val validator = getValidator
     val throws = intercept[ImportFailedException] {
       validator.validate(archive)
     }
@@ -145,7 +158,7 @@ class ValidatorSuite extends BaseFunSuite with BeforeAndAfter{
 
     when(rec.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/featureKey")).thenReturn("1")
 
-    val validator = new Validator(log, db)
+    val validator = getValidator
     validator.validate(archive)
   }
 
@@ -162,7 +175,7 @@ class ValidatorSuite extends BaseFunSuite with BeforeAndAfter{
     when(coreArchive2.value(DwcTerm.verbatimLatitude)).thenReturn("52.585667")
     when(coreArchive2.value(DwcTerm.verbatimSRS)).thenReturn("4326")
 
-    val validator = new Validator(log, db)
+    val validator = getValidator
     validator.validate(archive)
   }
 
@@ -185,7 +198,9 @@ class ValidatorSuite extends BaseFunSuite with BeforeAndAfter{
     when(coreArchive2.value(DwcTerm.verbatimLatitude)).thenReturn("52.585667")
     when(coreArchive2.value(DwcTerm.verbatimSRS)).thenReturn("4326")
 
-    val validator = new Validator(log, db)
+    val validator = getValidator
     validator.validate(archive)
   }
+
+
 }

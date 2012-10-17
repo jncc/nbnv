@@ -3,8 +3,9 @@ package uk.org.nbn.nbnv.importer.validation
 import uk.org.nbn.nbnv.importer.records.NbnRecord
 import collection.mutable.ListBuffer
 import uk.org.nbn.nbnv.importer.fidelity.{ResultLevel, Result}
+import com.google.inject.Inject
 
-class SpatialReferenceValidator {
+class SpatialReferenceValidator @Inject()(grv: GridReferenceValidator) {
   def validate(record: NbnRecord) = {
     val resultList = new ListBuffer[Result]
 
@@ -14,7 +15,6 @@ class SpatialReferenceValidator {
 
     if (r1.level == ResultLevel.DEBUG){
       if (record.gridReference.isDefined) {
-        val grv = new GridReferenceValidator
         resultList.appendAll(grv.validate(record))
       }
       else if (record.featureKey.isDefined) {

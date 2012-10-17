@@ -14,7 +14,7 @@ import uk.org.nbn.nbnv.importer.data.{Database, Repository}
 // todo: ensure possibility for parallel
 
 
-class Validator @Inject()(log: Logger, db: Database){
+class Validator @Inject()(log: Logger, db: Database, srv: SpatialReferenceValidator){
 
   def validate(archive: Archive) {
     log.info("Hello from the validator.")
@@ -79,7 +79,6 @@ class Validator @Inject()(log: Logger, db: Database){
       val r9 = v9.validate(nbnRecord)
       logResult(r9)
 
-      val srv = new SpatialReferenceValidator
       val srvResults = srv.validate(nbnRecord)
       for (result <- srvResults) logResult(result)
 
