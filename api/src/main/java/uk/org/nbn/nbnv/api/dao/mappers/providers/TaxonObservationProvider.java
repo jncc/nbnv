@@ -56,14 +56,14 @@ public class TaxonObservationProvider {
         BEGIN();
         SELECT("DISTINCT o.datasetKey, dd.*");
         createSelectQuery(params);
-        INNER_JOIN("DatasetData dd ON dd.datasetKey = o.datasetKey");
+        INNER_JOIN("DatasetData dd ON dd.[key] = o.datasetKey");
         return SQL();
     }
     
     private void createSelectQuery(Map<String, Object> params) {
 
         FROM("UserTaxonObservationData o");
-        WHERE("userKey = #{user.id}");
+        WHERE("userID = #{user.id}");
 
         if (params.containsKey("startYear") && (Integer) params.get("startYear") > -1) {
             WHERE("YEAR(endDate) >= #{startYear}");

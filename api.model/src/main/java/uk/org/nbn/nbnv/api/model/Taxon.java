@@ -3,26 +3,22 @@ package uk.org.nbn.nbnv.api.model;
 public class Taxon implements Comparable<Taxon>{
     
     private String taxonVersionKey;
-    private String prefnameTaxonVersionKey;
+    private String pTaxonVersionKey;
     private String name;
     private String authority;
-    private String lang;
-    private String outputGroupKey;
-    private String navigationGroupKey;
-    private String outputGroupName;
+    private String languageKey;
+    private String taxonOutputGroupKey;
     
     public Taxon(){}
     
-    public Taxon(String taxonVersionKey, String prefnameTaxonVersionKey, String name, String authority, String lang, String outputGroupKey, String navigationGroupKey, String outputGroupName){
+    public Taxon(String taxonVersionKey, String pTaxonVersionKey, String name, String authority, String languageKey, String taxonOutputGroupKey){
         super();
         this.taxonVersionKey = taxonVersionKey;
-        this.prefnameTaxonVersionKey = prefnameTaxonVersionKey;
+        this.pTaxonVersionKey = pTaxonVersionKey;
         this.name = name;
         this.authority = authority;
-        this.lang = lang;
-        this.outputGroupKey = outputGroupKey;
-        this.navigationGroupKey = navigationGroupKey;
-        this.outputGroupName = outputGroupName;
+        this.languageKey = languageKey;
+        this.taxonOutputGroupKey = taxonOutputGroupKey;
     }
 
     public String getTaxonVersionKey() {
@@ -33,12 +29,12 @@ public class Taxon implements Comparable<Taxon>{
         this.taxonVersionKey = taxonVersionKey;
     }
 
-    public String getPrefnameTaxonVersionKey() {
-        return prefnameTaxonVersionKey;
+    public String getPTaxonVersionKey() {
+        return pTaxonVersionKey;
     }
 
-    public void setPrefnameTaxonVersionKey(String prefnameTaxonVersionKey) {
-        this.prefnameTaxonVersionKey = prefnameTaxonVersionKey;
+    public void setPTaxonVersionKey(String pTaxonVersionKey) {
+        this.pTaxonVersionKey = pTaxonVersionKey;
     }
 
     public String getName() {
@@ -57,36 +53,20 @@ public class Taxon implements Comparable<Taxon>{
         this.authority = authority;
     }
 
-    public String getOutputGroupKey() {
-        return outputGroupKey;
+    public String getTaxonOutputGroupKey() {
+        return taxonOutputGroupKey;
     }
 
-    public void setOutputGroupKey(String outputGroupKey) {
-        this.outputGroupKey = outputGroupKey;
+    public void setTaxonOutputGroupKey(String taxonOutputGroupKey) {
+        this.taxonOutputGroupKey = taxonOutputGroupKey;
     }
 
-    public String getNavigationGroupKey() {
-        return navigationGroupKey;
+    public String getLanguageKey() {
+        return languageKey;
     }
 
-    public void setNavigationGroupKey(String navigationGroupKey) {
-        this.navigationGroupKey = navigationGroupKey;
-    }
-
-    public String getLang() {
-        return lang;
-    }
-
-    public void setLang(String lang) {
-        this.lang = lang;
-    }
-
-    public String getOutputGroupName() {
-        return outputGroupName;
-    }
-
-    public void setOutputGroupName(String outputGroupName) {
-        this.outputGroupName = outputGroupName;
+    public void setLanguageKey(String languageKey) {
+        this.languageKey = languageKey;
     }
 
     @Override

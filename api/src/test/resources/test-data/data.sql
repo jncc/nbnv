@@ -60,7 +60,7 @@ INSERT INTO UserData (
 
 --Associate orgadmintester as admin of testorg
 INSERT INTO OrganisationMembershipData (
-    userKey, organisationID, role
+    userID, organisationID, role
 ) VALUES (
     41, 1, 'administrator'
 );
@@ -74,7 +74,7 @@ INSERT INTO UserData (
 
 --Associate orgmembertester as member of testorg
 INSERT INTO OrganisationMembershipData (
-    userKey, organisationID, role
+    userID, organisationID, role
 ) VALUES (
     40, 1, 'member'
 );
