@@ -188,4 +188,6 @@ class ValidatorSuite extends BaseFunSuite with BeforeAndAfter{
     val validator = new Validator(log, db)
     validator.validate(archive)
   }
+
+
 }
