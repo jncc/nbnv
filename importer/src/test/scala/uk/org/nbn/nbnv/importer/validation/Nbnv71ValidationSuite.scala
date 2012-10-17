@@ -1,66 +1,68 @@
 package uk.org.nbn.nbnv.importer.validation
 
 import uk.org.nbn.nbnv.importer.testing.BaseFunSuite
-import org.mockito.Mockito._
+import org.scalatest.BeforeAndAfter
 import uk.org.nbn.nbnv.importer.records.NbnRecord
 import java.text.SimpleDateFormat
-import uk.org.nbn.nbnv.importer.fidelity.{ResultLevel, Result}
+import uk.org.nbn.nbnv.importer.fidelity.ResultLevel
+import org.mockito.Mockito._
 
-class Nbnv71ValidationSuite extends BaseFunSuite {
-  val validator = new Nbnv72Validator
-  val record = mock[NbnRecord]
+/**
+ * Created By: Matt Debont
+ * Date: 17/10/12
+ */
+class Nbnv71ValidationSuite extends BaseFunSuite with BeforeAndAfter {
+  var record: NbnRecord = _
+  val validator = new Nbnv71Validator
 
-  test("Should validate a start date before an end date") {
-    when(record.startDateRaw).thenReturn("16/10/2012")
+  before {
+    record = mock[NbnRecord]
+  }
+
+  test("Should validate if all dates are in the past") {
     when(record.startDate).thenReturn(new SimpleDateFormat("dd/MM/yyyy").parse("16/10/2012"))
-    when(record.endDateRaw).thenReturn("17/10/2012")
-    when(record.endDate).thenReturn(new SimpleDateFormat("dd/MM/yyyy").parse("17/10/2012"))
+    when(record.endDate).thenReturn(new SimpleDateFormat("dd/MM/yyyy").parse("15/10/2012"))
+    when(record.eventDate).thenReturn(new SimpleDateFormat("dd/MM/yyyy").parse("14/10/2012"))
 
-    val r = validator.validate(record)
+    var r = validator.validate(record)
     r.level should be (ResultLevel.DEBUG)
-  }
 
-  test("Should not validate a start date after an end date") {
-    when(record.startDateRaw).thenReturn("17/10/2012")
-    when(record.startDate).thenReturn(new SimpleDateFormat("dd/MM/yyyy").parse("17/10/2012"))
-    when(record.endDateRaw).thenReturn("16/10/2012")
-    when(record.endDate).thenReturn(new SimpleDateFormat("dd/MM/yyyy").parse("16/10/2012"))
-
-    val r = validator.validate(record)
-    r.level should be (ResultLevel.ERROR)
-  }
-
-  test("Should validate a start and end date which are the same") {
-    when(record.startDateRaw).thenReturn("16/10/2012")
     when(record.startDate).thenReturn(new SimpleDateFormat("dd/MM/yyyy").parse("16/10/2012"))
-    when(record.endDateRaw).thenReturn("16/10/2012")
-    when(record.endDate).thenReturn(new SimpleDateFormat("dd/MM/yyyy").parse("16/10/2012"))
-
-    val r = validator.validate(record)
-    r.level should be (ResultLevel.DEBUG)
-  }
-
-  test("Should validate a record with an event date only") {
-    when(record.startDateRaw).thenReturn(null)
-    when(record.startDate).thenReturn(null)
-    when(record.endDateRaw).thenReturn(null)
-    when(record.endDate).thenReturn(null)
-    when(record.eventDateRaw).thenReturn("16/10/2012")
-    when(record.eventDate).thenReturn(new SimpleDateFormat("dd/MM/yyyy").parse("16/10/2012"))
-
-    val r = validator.validate(record)
-    r.level should be (ResultLevel.DEBUG)
-  }
-
-  test("Should fail when no dates are available") {
-    when(record.startDateRaw).thenReturn(null)
-    when(record.startDate).thenReturn(null)
-    when(record.endDateRaw).thenReturn(null)
-    when(record.endDate).thenReturn(null)
-    when(record.eventDateRaw).thenReturn(null)
+    when(record.endDate).thenReturn(new SimpleDateFormat("dd/MM/yyyy").parse("15/10/2012"))
     when(record.eventDate).thenReturn(null)
 
-    val r = validator.validate(record)
+    r = validator.validate(record)
+    r.level should be (ResultLevel.DEBUG)
+
+    when(record.startDate).thenReturn(null)
+    when(record.endDate).thenReturn(null)
+    when(record.eventDate).thenReturn(null)
+
+    r = validator.validate(record)
+    r.level should be (ResultLevel.DEBUG)
+  }
+
+  test("We should not validate if any of the dates are in the future") {
+    when(record.startDate).thenReturn(new SimpleDateFormat("dd/MM/yyyy").parse("16/10/3012"))
+    when(record.endDate).thenReturn(new SimpleDateFormat("dd/MM/yyyy").parse("15/10/2012"))
+    when(record.eventDate).thenReturn(new SimpleDateFormat("dd/MM/yyyy").parse("14/10/2012"))
+
+    var r = validator.validate(record)
+    r.level should be (ResultLevel.ERROR)
+
+    when(record.startDate).thenReturn(new SimpleDateFormat("dd/MM/yyyy").parse("16/10/2012"))
+    when(record.endDate).thenReturn(new SimpleDateFormat("dd/MM/yyyy").parse("15/10/3012"))
+    when(record.eventDate).thenReturn(new SimpleDateFormat("dd/MM/yyyy").parse("14/10/2012"))
+
+    r = validator.validate(record)
+    r.level should be (ResultLevel.ERROR)
+
+    when(record.startDate).thenReturn(new SimpleDateFormat("dd/MM/yyyy").parse("16/10/2012"))
+    when(record.endDate).thenReturn(new SimpleDateFormat("dd/MM/yyyy").parse("15/10/2012"))
+    when(record.eventDate).thenReturn(new SimpleDateFormat("dd/MM/yyyy").parse("14/10/3012"))
+
+    r = validator.validate(record)
     r.level should be (ResultLevel.ERROR)
   }
+
 }
