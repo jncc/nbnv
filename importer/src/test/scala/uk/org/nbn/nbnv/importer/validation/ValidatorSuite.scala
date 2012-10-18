@@ -197,7 +197,7 @@ class ValidatorSuite extends BaseFunSuite with BeforeAndAfter{
     when(rec2.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateEnd")).thenReturn("20/07/2001")
     when(rec2.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateTypeCode")).thenReturn("DD")
 
-    val validator = getValidator
+    val validator = new Validator(log, db)
     validator.validate(archive)
   }
 
@@ -206,7 +206,7 @@ class ValidatorSuite extends BaseFunSuite with BeforeAndAfter{
     when(rec2.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateEnd")).thenReturn("31/10/2001")
     when(rec2.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateTypeCode")).thenReturn("O")
 
-    val validator = getValidator
+    val validator = new Validator(log, db)
     validator.validate(archive)
   }
 
@@ -215,7 +215,7 @@ class ValidatorSuite extends BaseFunSuite with BeforeAndAfter{
     when(rec2.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateEnd")).thenReturn("31/12/2001")
     when(rec2.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateTypeCode")).thenReturn("OO")
 
-    val validator = getValidator
+    val validator = new Validator(log, db)
     validator.validate(archive)
   }
 
@@ -224,7 +224,7 @@ class ValidatorSuite extends BaseFunSuite with BeforeAndAfter{
     when(rec2.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateEnd")).thenReturn("31/12/2001")
     when(rec2.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateTypeCode")).thenReturn("P")
 
-    val validator = getValidator
+    val validator = new Validator(log, db)
     validator.validate(archive)
   }
 
@@ -233,7 +233,7 @@ class ValidatorSuite extends BaseFunSuite with BeforeAndAfter{
     when(rec2.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateEnd")).thenReturn("31/12/2001")
     when(rec2.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateTypeCode")).thenReturn("Y")
 
-    val validator = getValidator
+    val validator = new Validator(log, db)
     validator.validate(archive)
   }
 
@@ -242,7 +242,7 @@ class ValidatorSuite extends BaseFunSuite with BeforeAndAfter{
     when(rec2.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateEnd")).thenReturn("31/12/2012")
     when(rec2.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateTypeCode")).thenReturn("YY")
 
-    val validator = getValidator
+    val validator = new Validator(log, db)
     validator.validate(archive)
   }
 }
