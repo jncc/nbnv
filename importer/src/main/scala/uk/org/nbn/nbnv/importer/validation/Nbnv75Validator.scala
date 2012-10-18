@@ -27,7 +27,7 @@ class Nbnv75Validator {
     if (start.get(Calendar.YEAR) == end.get(Calendar.YEAR)) {
       validateYY(record)
     } else {
-      failY(record)
+      fail(record)
     }
   }
 
@@ -36,10 +36,10 @@ class Nbnv75Validator {
     end.setTime(record.endDate)
 
     if (start.get(Calendar.DAY_OF_YEAR) != start.getActualMinimum(Calendar.DAY_OF_YEAR)) {
-      return failYY(record)
+      return fail(record)
     }
     if (end.get(Calendar.DAY_OF_YEAR) != end.getActualMaximum(Calendar.DAY_OF_YEAR)) {
-      return failYY(record)
+      return fail(record)
     }
 
     success(record)
@@ -53,19 +53,11 @@ class Nbnv75Validator {
     }
   }
 
-  def failY(record: NbnRecord) = {
+  def fail(record: NbnRecord) = {
     new Result {
       def level: ResultLevel.ResultLevel = ResultLevel.ERROR
       def reference: String = record.dateType
-      def message: String = "Found an invalid set of dates for a 'Y' record [start: %s end: %s] dates should be at the start and end of the SAME year".format(record.startDateRaw, record.endDateRaw)
-    }
-  }
-
-  def failYY(record: NbnRecord) = {
-    new Result {
-      def level: ResultLevel.ResultLevel = ResultLevel.ERROR
-      def reference: String = record.dateType
-      def message: String = "Found an invalid set of dates for a 'YY' record [start: %s end: %s] dates should be at the start and end of the years".format(record.startDateRaw, record.endDateRaw)
+      def message: String = "Start date must be 1st of Jan and end date 31st Dec"
     }
   }
 

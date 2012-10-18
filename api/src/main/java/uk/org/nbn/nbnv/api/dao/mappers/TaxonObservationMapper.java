@@ -7,7 +7,7 @@ import org.apache.ibatis.annotations.Result;
 import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.SelectProvider;
-import uk.org.nbn.nbnv.api.dao.mappers.providers.TaxonObservationProvider;
+import uk.org.nbn.nbnv.api.dao.providers.TaxonObservationProvider;
 import uk.org.nbn.nbnv.api.model.Dataset;
 import uk.org.nbn.nbnv.api.model.DatasetWithQueryStats;
 import uk.org.nbn.nbnv.api.model.Taxon;

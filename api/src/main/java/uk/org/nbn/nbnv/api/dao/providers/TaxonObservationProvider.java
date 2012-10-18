@@ -1,4 +1,4 @@
-package uk.org.nbn.nbnv.api.dao.mappers.providers;
+package uk.org.nbn.nbnv.api.dao.providers;
 
 import java.util.List;
 import java.util.Map;

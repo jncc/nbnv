@@ -64,4 +64,45 @@ class Nbnv82ValidatorSuite extends BaseFunSuite {
     r.level should be (ResultLevel.ERROR)
   }
 
+  test("Nbnv82 should not validate if a feature key and grid ref are supplied") {
+    val record = mock[NbnRecord]
+    when(record.featureKey).thenReturn(Some("SB0003253"))
+    when(record.srs).thenReturn(None)
+    when(record.east).thenReturn(None)
+    when(record.north).thenReturn(None)
+    when(record.gridReference).thenReturn(Some("NN166712"))
+
+    val v = new Nbnv82Validator
+    val r = v.validate(record)
+
+    r.level should be (ResultLevel.ERROR)
+  }
+
+  test("Nbnv82 should not validate if a feature key and easting northing are supplied ") {
+    val record = mock[NbnRecord]
+    when(record.featureKey).thenReturn(Some("SB0003253"))
+    when(record.east).thenReturn(Some(377562.0))
+    when(record.north).thenReturn(Some(6296480.0))
+    when(record.srs).thenReturn(Some(27700))
+    when(record.gridReference).thenReturn(None)
+
+    val v = new Nbnv82Validator
+    val r = v.validate(record)
+
+    r.level should be (ResultLevel.ERROR)
+  }
+
+  test("Nbnv82 should not validate if an easting northing and grid reference are supplied ") {
+    val record = mock[NbnRecord]
+    when(record.featureKey).thenReturn(None)
+    when(record.east).thenReturn(Some(377562.0))
+    when(record.north).thenReturn(Some(6296480.0))
+    when(record.srs).thenReturn(Some(27700))
+    when(record.gridReference).thenReturn(Some("NN166712"))
+
+    val v = new Nbnv82Validator
+    val r = v.validate(record)
+
+    r.level should be (ResultLevel.ERROR)
+  }
 }

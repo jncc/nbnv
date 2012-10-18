@@ -6,27 +6,38 @@ import uk.org.nbn.nbnv.importer.fidelity.{ResultLevel, Result}
 class Nbnv82Validator {
 
   def validate(record: NbnRecord) = {
-    def success = {
+    var count = 0
+
+    if (record.gridReference.isDefined) {
+      count += 1
+    }
+
+    if (record.featureKey.isDefined) {
+      count += 1
+    }
+
+    if (record.east.isDefined && record.north.isDefined && record.srs.isDefined) {
+      count += 1
+    }
+
+    if (count > 1) {
       new Result {
-        def level = ResultLevel.DEBUG
-        def message = "Validated: A spatial reference has been supplied"
+        def level = ResultLevel.ERROR
+        def message = "More than one definition of a spatial reference has been supplied"
         def reference = "Record " + record.key
       }
     }
-
-    if (record.gridReference.isDefined) {
-      success
-    }
-    else if (record.featureKey.isDefined) {
-      success
-    }
-    else if (record.east.isDefined && record.north.isDefined && record.srs.isDefined) {
-      success
+    else if (count < 1) {
+      new Result {
+        def level = ResultLevel.ERROR
+        def message = "At least one definition of a spatial reference must be supplied"
+        def reference = "Record " + record.key
+      }
     }
     else {
       new Result {
-        def level = ResultLevel.ERROR
-        def message = "A spatial reference must be supplied"
+        def level = ResultLevel.DEBUG
+        def message = "Validated: Only one spatial reference definistion has been supplied"
         def reference = "Record " + record.key
       }
     }
