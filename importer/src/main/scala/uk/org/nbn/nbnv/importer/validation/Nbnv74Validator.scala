@@ -58,7 +58,7 @@ class Nbnv74Validator {
     new Result {
       def level: ResultLevel.ResultLevel = ResultLevel.ERROR
       def reference: String = record.dateType
-      def message: String = "Found an invalid set of dates for a '%s' record [start: %s end: %s]".format(record.dateType, record.startDateRaw, record.endDateRaw)
+      def message: String = "Start date must be 1st of month and end date last day of same month for 'O' and any successive month for 'OO' records"
     }
   }
 

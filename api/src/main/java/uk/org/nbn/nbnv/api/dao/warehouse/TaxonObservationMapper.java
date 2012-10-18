@@ -1,4 +1,4 @@
-package uk.org.nbn.nbnv.api.dao.mappers;
+package uk.org.nbn.nbnv.api.dao.warehouse;
 
 import java.util.List;
 import org.apache.ibatis.annotations.One;
@@ -7,7 +7,7 @@ import org.apache.ibatis.annotations.Result;
 import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.SelectProvider;
-import uk.org.nbn.nbnv.api.dao.mappers.providers.TaxonObservationProvider;
+import uk.org.nbn.nbnv.api.dao.providers.TaxonObservationProvider;
 import uk.org.nbn.nbnv.api.model.Dataset;
 import uk.org.nbn.nbnv.api.model.DatasetWithQueryStats;
 import uk.org.nbn.nbnv.api.model.Taxon;
@@ -61,7 +61,7 @@ public interface TaxonObservationMapper {
     
     @SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectSpecies")
     @Results(value = {
-        @Result(property="taxon", column="taxonVersionKey", javaType=Taxon.class, one=@One(select="uk.org.nbn.nbnv.api.dao.mappers.TaxonMapper.getTaxon")),
+        @Result(property="taxon", column="taxonVersionKey", javaType=Taxon.class, one=@One(select="uk.org.nbn.nbnv.api.dao.warehouse.TaxonMapper.getTaxon")),
         @Result(property="taxonVersionKey", column="taxonVersionKey")
     })
     public List<TaxonWithQueryStats> selectObservationSpeciesByFilter(
@@ -79,7 +79,7 @@ public interface TaxonObservationMapper {
     
     @SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectGroups")
     @Results(value = {
-        @Result(property="taxonOutputGroup", column="taxonOutputGroupKey", javaType=TaxonOutputGroup.class, one=@One(select="uk.org.nbn.nbnv.api.dao.mappers.TaxonOutputGroupMapper.getById")),
+        @Result(property="taxonOutputGroup", column="taxonOutputGroupKey", javaType=TaxonOutputGroup.class, one=@One(select="uk.org.nbn.nbnv.api.dao.warehouse.TaxonOutputGroupMapper.getById")),
         @Result(property="taxonOutputGroupKey", column="taxonOutputGroupKey")
     })
     public List<TaxonOutputGroupWithQueryStats> selectObservationGroupsByFilter(
@@ -97,7 +97,7 @@ public interface TaxonObservationMapper {
     
     @SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectDatasets")
     @Results(value = {
-        @Result(property="dataset", column="datasetKey", javaType=Dataset.class, one=@One(select="uk.org.nbn.nbnv.api.dao.mappers.DatasetMapper.selectByIDProviderNotInstantiated")),
+        @Result(property="dataset", column="datasetKey", javaType=Dataset.class, one=@One(select="uk.org.nbn.nbnv.api.dao.warehouse.DatasetMapper.selectByIDProviderNotInstantiated")),
         @Result(property="datasetKey", column="datasetKey")
     })
     public List<DatasetWithQueryStats> selectObservationDatasetsByFilter(

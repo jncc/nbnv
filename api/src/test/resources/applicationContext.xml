@@ -16,7 +16,12 @@
         The following applicationContext overrides the main code application context
         and uses an embedded database.
     -->
-    <jdbc:embedded-database id="dataSource" type="HSQL">
+    <jdbc:embedded-database id="warehouseDataSource" type="HSQL">
+        <jdbc:script location="classpath:test-data/schema.sql"/>
+        <jdbc:script location="classpath:test-data/data.sql"/>
+    </jdbc:embedded-database>
+
+    <jdbc:embedded-database id="coreDataSource" type="HSQL">
         <jdbc:script location="classpath:test-data/schema.sql"/>
         <jdbc:script location="classpath:test-data/data.sql"/>
     </jdbc:embedded-database>

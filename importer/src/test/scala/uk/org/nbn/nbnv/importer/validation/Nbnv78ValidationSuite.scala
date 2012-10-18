@@ -36,7 +36,7 @@ class Nbnv78ValidationSuite extends BaseFunSuite {
   }
 
   test("Should not validate an invalid DateType") {
-    when(record.dateType).thenReturn("U")
+    when(record.dateType).thenReturn("X")
     var r = validator.validate(record)
     r.level should be (ResultLevel.ERROR)
   }

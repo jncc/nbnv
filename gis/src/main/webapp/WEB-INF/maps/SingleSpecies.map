@@ -58,9 +58,10 @@ MAP
 
             [#if bands??]
                 [#list bands as band]
+[#-- NOTE :- When year banding is enabled, only presence records will be shown --]
                     CLASS
-                        NAME                                              "Year Band"
-                        EXPRESSION                                        (${band.expression})
+                        NAME                                              "Presence Year Band ${band.expression}"
+                        EXPRESSION                                        (${band.expression} AND [ABSENCE] = 0)
                         STYLE
                             COLOR                                         ${band.fillColour.red} ${band.fillColour.green} ${band.fillColour.blue}
                             OUTLINECOLOR                                  ${band.outlineColour.red} ${band.outlineColour.green} ${band.outlineColour.blue}

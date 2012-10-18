@@ -1,4 +1,4 @@
-package uk.org.nbn.nbnv.api.dao.mappers;
+package uk.org.nbn.nbnv.api.dao.warehouse;
 
 import org.apache.ibatis.annotations.Select;
 import uk.org.nbn.nbnv.api.model.BoundingBox;

@@ -1,4 +1,4 @@
-package uk.org.nbn.nbnv.api.dao.mappers;
+package uk.org.nbn.nbnv.api.dao.warehouse;
 
 import org.apache.ibatis.annotations.One;
 import org.apache.ibatis.annotations.Result;
@@ -18,13 +18,13 @@ public interface FeatureMapper {
             property="worldBoundingBox", 
             column="id", 
             javaType=BoundingBox.class, 
-            one=@One(select="uk.org.nbn.nbnv.api.dao.mappers.BoundingBoxMapper.getWorldBoundingBox")
+            one=@One(select="uk.org.nbn.nbnv.api.dao.warehouse.BoundingBoxMapper.getWorldBoundingBox")
         ),
         @Result(
             property="nativeBoundingBox", 
             column="id", 
             javaType=BoundingBox.class, 
-            one=@One(select="uk.org.nbn.nbnv.api.dao.mappers.BoundingBoxMapper.getNativeBoundingBox")
+            one=@One(select="uk.org.nbn.nbnv.api.dao.warehouse.BoundingBoxMapper.getNativeBoundingBox")
         )
     })
     Feature getFeature(int featureId);

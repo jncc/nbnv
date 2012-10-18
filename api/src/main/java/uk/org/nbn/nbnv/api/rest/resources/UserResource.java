@@ -22,8 +22,8 @@ import uk.org.nbn.nbnv.api.authentication.InvalidCredentialsException;
 import uk.org.nbn.nbnv.api.authentication.InvalidTokenException;
 import uk.org.nbn.nbnv.api.authentication.Token;
 import uk.org.nbn.nbnv.api.authentication.TokenAuthenticator;
-import uk.org.nbn.nbnv.api.dao.mappers.UserAuthenticationMapper;
-import uk.org.nbn.nbnv.api.dao.mappers.UserMapper;
+import uk.org.nbn.nbnv.api.dao.core.UserAuthenticationMapper;
+import uk.org.nbn.nbnv.api.dao.warehouse.UserMapper;
 import uk.org.nbn.nbnv.api.model.User;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
 
