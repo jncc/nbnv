@@ -15,7 +15,7 @@ class Repository (log: Logger, em: EntityManager, cache: QueryCache) extends Con
     query.setParameter("datasetKey", siteDatasetKey)
     query.setParameter("providerKey", siteProviderKey)
 
-    val count = query.getSingleResult.asInstanceOf[Int]
+    val count = query.getSingleResult.asInstanceOf[Long]
     if (count == 1) true else false
   }
 
@@ -48,7 +48,7 @@ class Repository (log: Logger, em: EntityManager, cache: QueryCache) extends Con
     val query = em.createQuery("SELECT COUNT(t.taxonVersionKey) FROM Taxon t WHERE t.taxonVersionKey = :tvk", classOf[Taxon])
     query.setParameter("tvk", taxonVersionKey)
 
-    val count = query.getSingleResult.asInstanceOf[Int]
+    val count = query.getSingleResult.asInstanceOf[Long]
     if (count == 1) true else false
   }
 
