@@ -29,10 +29,10 @@ public class TaxonObservationProvider {
     
     public String filteredSelectGroups(Map<String, Object> params) {
         BEGIN();
-        SELECT("outputGroupKey, COUNT(DISTINCT td.taxonVersionKey) querySpecificSpeciesCount");
+        SELECT("taxonOutputGroupKey, COUNT(DISTINCT td.taxonVersionKey) querySpecificSpeciesCount");
         createSelectQuery(params);
         INNER_JOIN("TaxonData td ON o.taxonVersionKey = td.taxonVersionKey");
-        GROUP_BY("outputGroupKey");
+        GROUP_BY("taxonOutputGroupKey");
         return SQL();
     }
     
@@ -102,14 +102,14 @@ public class TaxonObservationProvider {
             }
             if(TaxonObservationResource.SPATIAL_RELATIONSHIP_WITHIN.equals(spatialRelationship)){
                 INNER_JOIN("FeatureContains fc ON fc.containedFeatureID = o.featureID");
-                WHERE("fc.parentFeatureID = #{featureID}");
+                WHERE("fc.featureID = #{featureID}");
             }else{
                 INNER_JOIN("FeatureOverlaps fo ON fo.overlappedFeatureID = o.featureID");
-                WHERE("fo.parentFeatureID = #{featureID}");
+                WHERE("fo.featureID = #{featureID}");
             }
         }
         
-        if (params.containsKey("sensitive") && !(Boolean) params.get("sensitive")) {
+        if (params.containsKey("sensitive") && (Boolean) params.get("sensitive")) {
             WHERE("sensitive = #{sensitive}");
         }
             
@@ -120,13 +120,13 @@ public class TaxonObservationProvider {
         
         if (params.containsKey("gridRef") && !"".equals((String) params.get("gridRef"))) {
             INNER_JOIN("GridTree gt ON gt.featureID = o.featureID");
-            INNER_JOIN("GridSquareFeatureData gsfd ON gsfd.featureID = gt.parentFeatureID");
+            INNER_JOIN("GridSquareFeatureData gsfd ON gsfd.id = gt.parentFeatureID");
             WHERE("gsfd.label = #{gridRef}");
         }
         
         if (params.containsKey("taxonOutputGroup") && !"".equals((String) params.get("taxonOutputGroup"))) {
             INNER_JOIN("TaxonData td ON td.taxonVersionKey = o.pTaxonVersionKey");
-            WHERE("td.outputGroupKey =  #{taxonOutputGroup}");
+            WHERE("td.taxonOutputGroupKey =  #{taxonOutputGroup}");
         }
     }
     private String datasetListToCommaList(List<String> list) {

@@ -24,7 +24,7 @@ class GridReferenceValidator @Inject()(factory: GridSquareInfoFactory) {
 
       val v3 = new Nbnv90Validator(factory)
       val v3results = v3.validate(record)
-      for (result <- v3results) resultList.append(result)
+      resultList.appendAll(v3results)
     }
 
     resultList.toList

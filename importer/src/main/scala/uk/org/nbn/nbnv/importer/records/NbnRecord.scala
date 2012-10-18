@@ -6,6 +6,7 @@ import org.gbif.dwc.text.StarRecord
 import java.text.SimpleDateFormat
 import uk.org.nbn.nbnv.importer.ImportFailedException
 import util.parsing.json.JSON
+import uk.org.nbn.nbnv.importer.validation.Nbnv68Validator
 
 /// Wraps a Darwin record in NBN clothing.
 class NbnRecord(record: StarRecord) {
@@ -16,8 +17,6 @@ class NbnRecord(record: StarRecord) {
   // todo: we don't want to do parsing in this class
   // todo: .value (below) returns null if the column does not exist - should throw a better exception here
   // todo: parse all the gubbins eventDate types that NBN uses
-
-  private val format = new SimpleDateFormat("yyyy/MM/dd")
 
   private val attributeJson = record.core.value(DwcTerm.dynamicProperties)
   private val attributeMap = if (attributeJson != null && attributeJson.isEmpty == false) {
@@ -47,16 +46,16 @@ class NbnRecord(record: StarRecord) {
   def recorder =        record.core.value(DwcTerm.recordedBy)
   def determiner =      record.core.value(DwcTerm.identifiedBy)
   def eventDateRaw =    record.core.value(DwcTerm.eventDate)
-  def eventDate =       format.parse(eventDateRaw)
+  def eventDate =       parseEventDate(eventDateRaw)
   def east =            parseOptional(record.core.value(DwcTerm.verbatimLongitude)) map { s => s.toDouble }
   def north =           parseOptional(record.core.value(DwcTerm.verbatimLatitude)) map { s => s.toDouble }
   def srs =             parseOptional(record.core.value(DwcTerm.verbatimSRS)) map { s => s.toInt }
   def attributes =      attributeMap
 
   def startDateRaw           = extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateStart")
-  def startDate              = format.parse(startDateRaw)
+  def startDate              = parseDates(startDateRaw)
   def endDateRaw             = extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateEnd")
-  def endDate                = format.parse(endDateRaw)
+  def endDate                = parseDates(endDateRaw)
   def dateType               = extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateTypeCode")
   def sensitiveOccurrenceRaw = extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/sensitiveOccurrence")
   def sensitiveOccurrence    = parseSensitiveOccurrence(sensitiveOccurrenceRaw)
@@ -100,6 +99,20 @@ class NbnRecord(record: StarRecord) {
         case "absence" => true
         case _ => throw new ImportFailedException("Invalid occurrence status '%s'".format(s))
       }
+    }
+  }
+
+  def parseEventDate(s: String) = {
+    val validator = new Nbnv68Validator
+    validator.validate(s)
+  }
+
+  def parseDates(s: String) = {
+    if (eventDate != null && s == null) {
+      eventDate
+    } else {
+      val validator = new Nbnv68Validator
+      validator.validate(s)
     }
   }
 }
