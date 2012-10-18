@@ -62,8 +62,13 @@ public class MapServiceMethodFactory {
         }
         else {
             for(MapServicePart currPart :from.getChildren()) {
-                if(currPart.matches(requestedParts[index])) {
-                    return getMatchingPart(currPart, index+1, requestedParts);
+                //check to see if this part matches the given part in the request
+                if(currPart.matches(requestedParts[index])) { 
+                    //Yay, this part matches. Traverse down this part (RECURSE)
+                    MapServicePart prospectivePart = getMatchingPart(currPart, index+1, requestedParts);
+                    if(prospectivePart != null) { //check to see if this part was successful. If not, try next
+                        return prospectivePart;
+                    }
                 }
             }
             return null; //failed to find anything

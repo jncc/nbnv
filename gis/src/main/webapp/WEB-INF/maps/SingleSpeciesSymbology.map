@@ -1,0 +1,104 @@
+[#ftl]
+[#import "backgrounds.ftl" as backgrounds]
+
+MAP
+    IMAGETYPE                                             PNG
+    SIZE                                                  2800 2800
+    IMAGECOLOR                                            255 255 255
+    FONTSET                                               "fonts/fontset"
+    EXTENT                                                -180 -90 180 90
+
+    SYMBOL
+        NAME 'absence'
+        TYPE HATCH
+    END
+
+    WEB
+        IMAGEPATH                                           "/ms4w/tmp/ms_tmp/"
+        IMAGEURL                                            "/ms_tmp/"
+        METADATA
+            "wms_title"                                       "Single Species Map"
+            "wms_onlineresource"                              "${mapServiceURL}"
+            "wms_srs"                                         "EPSG:29903 EPSG:27700 EPSG:4326 EPSG:3857"
+            "wms_enable_request"                              "*"
+        END
+    END
+
+    PROJECTION
+        "init=epsg:4326"
+    END
+    
+    [@backgrounds.os location=properties.ordnanceSurveyMapDataLocation requires=layers/]
+    
+    [#if featureID??]
+        [@backgrounds.selectedFeature featureID=featureID spatialConnection=properties.spatialConnection/]
+    [/#if]
+
+
+    [#list layers as layer_name]
+        LAYER
+            NAME                                                "${layer_name}"
+            TYPE                                                POLYGON
+            STATUS                                              OFF
+            CONNECTIONTYPE                                      PLUGIN
+            PLUGIN                                              "msplugin_mssql2008.dll"
+            CONNECTION                                          "${properties.spatialConnection}"
+            DATA                                                "${layerGenerator.getData(layer_name_index + 1)}"
+            TEMPLATE                                            "dummy.txt"
+            EXTENT                                              -180 -90 180 90
+
+            METADATA
+                "wms_title"                                       "${layer_name}"
+                "wms_include_items"                               "all"
+            END
+
+            PROJECTION
+                "init=epsg:4326"
+            END
+
+            [#if bands??]
+                [#list bands as band]
+[#-- NOTE :- When year banding is enabled, only presence records will be shown --]
+                    CLASS
+                        NAME                                              "Presence Year Band ${band.expression}"
+                        EXPRESSION                                        (${band.expression} AND [ABSENCE] = 0)
+                        STYLE
+                            COLOR                                         ${band.fillColour.red} ${band.fillColour.green} ${band.fillColour.blue}
+                            OUTLINECOLOR                                  ${band.outlineColour.red} ${band.outlineColour.green} ${band.outlineColour.blue}
+                            WIDTH                                         1
+                        END
+                    END
+                [/#list]
+            [#else]
+                [#if enablePresence]
+                    CLASS
+                        NAME                                              "${layer_name} Species Presence"
+                        EXPRESSION                                        ([ABSENCE] = 0)
+                        STYLE
+                            COLOR                                           ${colours[layer_name].red} ${colours[layer_name].green} ${colours[layer_name].blue}
+                            OUTLINECOLOR                                    0 0 0
+                            WIDTH                                           1
+                        END
+                    END
+                [/#if]
+                [#if enableAbsence]
+                    CLASS
+                        NAME                                              "${layer_name} Species Absence"
+                        EXPRESSION                                        ([ABSENCE] = 1)
+                        STYLE
+                            SYMBOL                                          'absence'
+                            COLOR                                           178 178 178
+                            ANGLE                                           45
+                            SIZE                                            5
+                            WIDTH                                           1
+                        END
+                        STYLE
+                            OUTLINECOLOR                                    115 0 0
+                            WIDTH                                           1
+                        END
+                    END
+                [/#if]
+            [/#if]
+        END
+    [/#list]
+END
