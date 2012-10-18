@@ -8,8 +8,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import uk.org.nbn.nbnv.api.dao.mappers.SiteBoundaryCategoryMapper;
-import uk.org.nbn.nbnv.api.dao.mappers.SiteBoundaryDatasetMapper;
+import uk.org.nbn.nbnv.api.dao.warehouse.SiteBoundaryCategoryMapper;
+import uk.org.nbn.nbnv.api.dao.warehouse.SiteBoundaryDatasetMapper;
 import uk.org.nbn.nbnv.api.model.SiteBoundaryCategory;
 
 @Component

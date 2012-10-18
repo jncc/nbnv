@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package uk.org.nbn.nbnv.api.dao.mappers;
+package uk.org.nbn.nbnv.api.dao.warehouse;
 
 import java.util.List;
 import org.apache.ibatis.annotations.One;
@@ -21,29 +21,29 @@ import uk.org.nbn.nbnv.api.model.User;
 public interface DatasetAdministratorMapper {
     @Select("SELECT * FROM DatasetAdministrator")
     @Results(value={
-        @Result(property="user", column="userKey", javaType=User.class, one=@One(select="uk.org.nbn.nbnv.api.dao.mappers.UserMapper.getUser")),
-        @Result(property="dataset", column="datasetKey", javaType=Dataset.class, one=@One(select="uk.org.nbn.nbnv.api.dao.mappers.DatasetMapper.selectByDatasetKey"))
+        @Result(property="user", column="userKey", javaType=User.class, one=@One(select="uk.org.nbn.nbnv.api.dao.warehouse.UserMapper.getUser")),
+        @Result(property="dataset", column="datasetKey", javaType=Dataset.class, one=@One(select="uk.org.nbn.nbnv.api.dao.warehouse.DatasetMapper.selectByDatasetKey"))
     })
     List<DatasetAdministrator> selectAll();
 
     @Select("SELECT * FROM DatasetAdministrator WHERE userKey = #{userKey}")
     @Results(value={
-        @Result(property="user", column="userKey", javaType=User.class, one=@One(select="uk.org.nbn.nbnv.api.dao.mappers.UserMapper.getUser")),
-        @Result(property="dataset", column="datasetKey", javaType=Dataset.class, one=@One(select="uk.org.nbn.nbnv.api.dao.mappers.DatasetMapper.selectByDatasetKey"))
+        @Result(property="user", column="userKey", javaType=User.class, one=@One(select="uk.org.nbn.nbnv.api.dao.warehouse.UserMapper.getUser")),
+        @Result(property="dataset", column="datasetKey", javaType=Dataset.class, one=@One(select="uk.org.nbn.nbnv.api.dao.warehouse.DatasetMapper.selectByDatasetKey"))
     })
     List<DatasetAdministrator> selectByUser(@Param("userKey") int userKey);
 
     @Select("SELECT * FROM DatasetAdministrator WHERE datasetKey = #{datasetKey}")
     @Results(value={
-        @Result(property="user", column="userKey", javaType=User.class, one=@One(select="uk.org.nbn.nbnv.api.dao.mappers.UserMapper.getUser")),
-        @Result(property="dataset", column="datasetKey", javaType=Dataset.class, one=@One(select="uk.org.nbn.nbnv.api.dao.mappers.DatasetMapper.selectByDatasetKey"))
+        @Result(property="user", column="userKey", javaType=User.class, one=@One(select="uk.org.nbn.nbnv.api.dao.warehouse.UserMapper.getUser")),
+        @Result(property="dataset", column="datasetKey", javaType=Dataset.class, one=@One(select="uk.org.nbn.nbnv.api.dao.warehouse.DatasetMapper.selectByDatasetKey"))
     })
     List<DatasetAdministrator> selectByDataset(@Param("datasetKey") String datasetKey);
     
     @Select("SELECT * FROM DatasetAdministrator WHERE userKey = #{userKey} AND datasetKey = #{datasetKey}")
     @Results(value={
-        @Result(property="user", column="userKey", javaType=User.class, one=@One(select="uk.org.nbn.nbnv.api.dao.mappers.UserMapper.getUser")),
-        @Result(property="dataset", column="datasetKey", javaType=Dataset.class, one=@One(select="uk.org.nbn.nbnv.api.dao.mappers.DatasetMapper.selectByDatasetKey"))
+        @Result(property="user", column="userKey", javaType=User.class, one=@One(select="uk.org.nbn.nbnv.api.dao.warehouse.UserMapper.getUser")),
+        @Result(property="dataset", column="datasetKey", javaType=Dataset.class, one=@One(select="uk.org.nbn.nbnv.api.dao.warehouse.DatasetMapper.selectByDatasetKey"))
     })
     DatasetAdministrator selectByUserAndDataset(@Param("userKey") int userKey, @Param("datasetKey") String datasetKey);
 

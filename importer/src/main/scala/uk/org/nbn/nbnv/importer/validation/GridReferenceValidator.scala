@@ -3,10 +3,10 @@ package uk.org.nbn.nbnv.importer.validation
 import uk.org.nbn.nbnv.importer.records.NbnRecord
 import collection.mutable.ListBuffer
 import uk.org.nbn.nbnv.importer.fidelity.{ResultLevel, Result}
-import com.google.inject.Inject
 import uk.org.nbn.nbnv.importer.spatial.GridSquareInfoFactory
+import uk.org.nbn.nbnv.importer.data.Database
 
-class GridReferenceValidator @Inject()(factory: GridSquareInfoFactory) {
+class GridReferenceValidator (db: Database) {
   def validate(record: NbnRecord) = {
     val resultList = new ListBuffer[Result]
 
@@ -22,6 +22,7 @@ class GridReferenceValidator @Inject()(factory: GridSquareInfoFactory) {
       val r2 = v2.validate(record.gridReference.get, record.gridReferenceType, record.key)
       resultList.append(r2)
 
+      val factory = new GridSquareInfoFactory(db)
       val v3 = new Nbnv90Validator(factory)
       val v3results = v3.validate(record)
       resultList.appendAll(v3results)
