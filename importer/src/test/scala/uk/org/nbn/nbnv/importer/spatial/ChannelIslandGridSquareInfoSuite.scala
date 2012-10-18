@@ -266,5 +266,5 @@ class ChannelIslandGridSquareInfoSuite extends BaseFunSuite {
     cigr.gridReference should be ("WV166712")
   }
 
-  //todo test latlong to grid ref.
+
 }

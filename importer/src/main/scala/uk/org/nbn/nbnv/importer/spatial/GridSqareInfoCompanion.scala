@@ -33,7 +33,7 @@ trait GridSqareInfoCompanion {
   }
 
   def apply(latitude : Double, longitude: Double, precision : Int) : GridSquareInfo = {
-    val (easting, northing) = reproject(latitude, longitude, getEpsgCode)
+    val (easting, northing) = reprojectToWgs84(latitude, longitude, getEpsgCode)
 
     //wrap up invalid easting and northing in more relevant error
     try {
@@ -47,7 +47,7 @@ trait GridSqareInfoCompanion {
   }
 
 
-  private def reproject(lat: Double, lng: Double, targetEpsgCode : Int) : (Int, Int) = {
+  private def reprojectToWgs84(lat: Double, lng: Double, targetEpsgCode : Int) : (Int, Int) = {
     val latLngGdp = new GeneralDirectPosition(lat, lng)
 
     //Get the Source CRS to WGS84 transformation operation
