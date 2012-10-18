@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.org.nbn.nbnv.api.authentication.ExpiredTokenException;
 import uk.org.nbn.nbnv.api.authentication.InvalidTokenException;
-import uk.org.nbn.nbnv.api.dao.mappers.UserMapper;
+import uk.org.nbn.nbnv.api.dao.warehouse.UserMapper;
 import uk.org.nbn.nbnv.api.model.User;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenSystemAdministratorUser;
 

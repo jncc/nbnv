@@ -9,7 +9,7 @@ import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import uk.org.nbn.nbnv.api.dao.mappers.TaxonNavigationGroupMapper;
+import uk.org.nbn.nbnv.api.dao.warehouse.TaxonNavigationGroupMapper;
 import uk.org.nbn.nbnv.api.model.TaxonNavigationGroup;
 import uk.org.nbn.nbnv.api.solr.SolrResponse;
 

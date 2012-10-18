@@ -1,4 +1,4 @@
-package uk.org.nbn.nbnv.api.dao.mappers;
+package uk.org.nbn.nbnv.api.dao.warehouse;
 
 import java.util.List;
 import org.apache.ibatis.annotations.Select;
