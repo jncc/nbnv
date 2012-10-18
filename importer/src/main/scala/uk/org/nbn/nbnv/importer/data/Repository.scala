@@ -10,7 +10,7 @@ import uk.org.nbn.nbnv.importer.ImportFailedException
 import uk.org.nbn.nbnv.{SpatialQueries, FeatureFactory}
 
 class Repository (log: Logger, em: EntityManager, cache: QueryCache) extends ControlAbstractions {
-  def confirmSite(siteDatasetKey: String, siteProviderKey: String): Boolean = {
+  def confirmSiteBoundary(siteDatasetKey: String, siteProviderKey: String): Boolean = {
     val query = em.createQuery("select count(sb.featureID) from SiteBoundary sb join SiteBoundaryDataset sbd where sbd.datasetKey = :datasetKey and sb.providerKey = :providerKey")
     query.setParameter("datasetKey", siteDatasetKey)
     query.setParameter("providerKey", siteProviderKey)

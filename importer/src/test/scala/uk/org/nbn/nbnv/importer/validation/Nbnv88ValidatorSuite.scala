@@ -23,7 +23,7 @@ class Nbnv88ValidatorSuite extends BaseFunSuite with BeforeAndAfter {
 
   test("should validate a valid FeatureKey") {
     when(record.featureKey).thenReturn(Option("DS123456PK123"))
-    when(repo.confirmSite("DS123456","PK123")).thenReturn(true)
+    when(repo.confirmSiteBoundary("DS123456","PK123")).thenReturn(true)
 
     val v = new Nbnv88Validator(db)
     var r = v.validate(record)
@@ -33,7 +33,7 @@ class Nbnv88ValidatorSuite extends BaseFunSuite with BeforeAndAfter {
 
   test("should not validate an invalid FeatureKey") {
     when(record.featureKey).thenReturn(Option("DS123456PK123"))
-    when(repo.confirmSite("DS123456","PK123")).thenReturn(false)
+    when(repo.confirmSiteBoundary("DS123456","PK123")).thenReturn(false)
 
     val v = new Nbnv88Validator(db)
     var r = v.validate(record)
