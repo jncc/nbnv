@@ -4,6 +4,7 @@
  */
 package uk.org.nbn.nbnv.api.dao.mappers;
 
+import java.io.ByteArrayInputStream;
 import java.util.List;
 import org.apache.ibatis.annotations.Select;
 import uk.org.nbn.nbnv.api.model.Organisation;
@@ -16,6 +17,7 @@ public interface OrganisationMapper {
     final String SELECT_ALL = "SELECT * FROM OrganisationData";
     final String SELECT_BY_ID = "SELECT * FROM OrganisationData WHERE id = #{id}";
     final String SELECT_LOGO = "SELECT logo FROM OrganisationData WHERE id = #{id}";
+    final String SELECT_LOGO_SMALL = "SELECT logoSmall FROM OrganisationData WHERE id = #{id}";
     
     @Select(SELECT_ALL)
     List<Organisation> selectAll();
@@ -24,5 +26,8 @@ public interface OrganisationMapper {
     Organisation selectByID(int id);
     
     @Select(SELECT_LOGO)
-    String selectLogoByOrganisationID(int id);
+    Object selectLogoByOrganisationID(int id);
+    
+    @Select(SELECT_LOGO_SMALL)
+    Object selectLogoSmallByOrganisationID(int id);
 }

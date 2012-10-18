@@ -12,8 +12,6 @@ public class Organisation {
     private String contactEmail;
     private String website;
     private boolean allowPublicRegistration;
-    private String logo;
-    private String logoSmall;
 
     public int getId() {
         return id;
@@ -103,19 +101,4 @@ public class Organisation {
         this.allowPublicRegistration = allowPublicRegistration;
     }
 
-    public String getLogo() {
-        return logo;
-    }
-
-    public void setLogo(String logo) {
-        this.logo = logo;
-    }
-
-    public String getLogoSmall() {
-        return logoSmall;
-    }
-
-    public void setLogoSmall(String logoSmall) {
-        this.logoSmall = logoSmall;
-    }
 }
