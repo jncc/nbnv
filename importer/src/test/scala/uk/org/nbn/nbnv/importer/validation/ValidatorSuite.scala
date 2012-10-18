@@ -255,31 +255,4 @@ class ValidatorSuite extends BaseFunSuite with BeforeAndAfter{
     val validator = getValidator
     validator.validate(archive)
   }
-
-  test("Should validate records with valid datesets D / -Y") {
-    when(rec2.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateStart")).thenReturn(null)
-    when(rec2.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateEnd")).thenReturn("31/12/2012")
-    when(rec2.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateTypeCode")).thenReturn("-Y")
-
-    val validator = getValidator
-    validator.validate(archive)
-  }
-
-  test("Should validate records with valid datesets D / ND") {
-    when(rec2.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateStart")).thenReturn(null)
-    when(rec2.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateEnd")).thenReturn(null)
-    when(rec2.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateTypeCode")).thenReturn("ND")
-
-    val validator = getValidator
-    validator.validate(archive)
-  }
-
-  test("Should validate records with valid datesets D / U") {
-    when(rec2.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateStart")).thenReturn(null)
-    when(rec2.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateEnd")).thenReturn(null)
-    when(rec2.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateTypeCode")).thenReturn("U")
-
-    val validator = getValidator
-    validator.validate(archive)
-  }
 }

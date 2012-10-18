@@ -40,8 +40,6 @@ class DateValidator {
     case "O" | "OO" | "P" => val v1 = new Nbnv74Validator; v1.validate(record)
     case "Y"  => val v1 = new Nbnv75Validator; v1.validate(record)
     case "YY" => val v1 = new Nbnv75Validator; v1.validate(record)
-    case "-Y" => val v1 = new Nbnv76Validator; v1.validate(record)
-    case "ND" | "U" => val v1 = new Nbnv77Validator; v1.validate(record)
     case _    => new Result {def level: ResultLevel.ResultLevel = ResultLevel.ERROR; def reference: String = record.dateType; def message: String = "Got an invalid dateType"}
   }
 }
