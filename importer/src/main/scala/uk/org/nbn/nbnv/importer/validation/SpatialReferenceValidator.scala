@@ -27,8 +27,9 @@ class SpatialReferenceValidator (db: Database) {
         val r3 = v3.validate(record)
         resultList.append(r3)
       }
-      else if (record.east.isDefined && record.north.isDefined) {
-        //todo: validate point ?
+      else if (record.east.isDefined && record.north.isDefined && record.srs.isDefined) {
+        val pv = new PointValidator(db)
+        resultList.appendAll(pv.validate(record))
       }
     }
 
