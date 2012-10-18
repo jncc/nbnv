@@ -7,16 +7,8 @@ class Nbnv78Validator {
 
   // Record DateType must be one of the following
   def validate(record: NbnRecord) = record.dateType match {
-    case "D" | "DD" | "O" | "OO" | "Y" | "YY" => success(record)  // todo: Needs to continue processing the data to ensure the dates provided do actually fit this description
+    case "D" | "DD" | "O" | "OO" | "P" | "Y" | "YY" | "-Y" | "ND" | "U" => success(record)
     case _ => fail(record)
-  }
-
-  def fail(record: NbnRecord) = {
-    new Result {
-      def level: ResultLevel.ResultLevel = ResultLevel.ERROR
-      def reference: String = record.dateType
-      def message: String = "Unrecognised vague date type"
-    }
   }
 
   def success(record: NbnRecord) = {
@@ -24,6 +16,14 @@ class Nbnv78Validator {
       def level: ResultLevel.ResultLevel = ResultLevel.DEBUG
       def reference: String = record.dateType
       def message: String = "Found a valid date type"
+    }
+  }
+
+  def fail(record: NbnRecord) = {
+    new Result {
+      def level: ResultLevel.ResultLevel = ResultLevel.ERROR
+      def reference: String = record.dateType
+      def message: String = "Unrecognised vague date type"
     }
   }
 }

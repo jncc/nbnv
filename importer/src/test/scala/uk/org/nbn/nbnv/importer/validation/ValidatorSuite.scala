@@ -220,14 +220,23 @@ class ValidatorSuite extends BaseFunSuite with BeforeAndAfter{
     validator.validate(archive)
   }
 
-   test("Should validate records with valid datesets D / OO") {
+  test("Should validate records with valid datesets D / OO") {
     when(rec2.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateStart")).thenReturn("01/10/2001")
     when(rec2.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateEnd")).thenReturn("31/12/2001")
     when(rec2.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateTypeCode")).thenReturn("OO")
 
     val validator = getValidator
     validator.validate(archive)
-   }
+  }
+
+  test("Should validate records with valid datesets D / P") {
+    when(rec2.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateStart")).thenReturn("01/10/2001")
+    when(rec2.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateEnd")).thenReturn("31/12/2001")
+    when(rec2.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateTypeCode")).thenReturn("P")
+
+    val validator = getValidator
+    validator.validate(archive)
+  }
 
   test("Should validate records with valid datesets D / Y") {
     when(rec2.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateStart")).thenReturn("01/01/2001")
@@ -242,6 +251,33 @@ class ValidatorSuite extends BaseFunSuite with BeforeAndAfter{
     when(rec2.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateStart")).thenReturn("01/01/2001")
     when(rec2.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateEnd")).thenReturn("31/12/2012")
     when(rec2.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateTypeCode")).thenReturn("YY")
+
+    val validator = getValidator
+    validator.validate(archive)
+  }
+
+  test("Should validate records with valid datesets D / -Y") {
+    when(rec2.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateStart")).thenReturn(null)
+    when(rec2.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateEnd")).thenReturn("31/12/2012")
+    when(rec2.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateTypeCode")).thenReturn("-Y")
+
+    val validator = getValidator
+    validator.validate(archive)
+  }
+
+  test("Should validate records with valid datesets D / ND") {
+    when(rec2.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateStart")).thenReturn(null)
+    when(rec2.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateEnd")).thenReturn(null)
+    when(rec2.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateTypeCode")).thenReturn("ND")
+
+    val validator = getValidator
+    validator.validate(archive)
+  }
+
+  test("Should validate records with valid datesets D / U") {
+    when(rec2.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateStart")).thenReturn(null)
+    when(rec2.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateEnd")).thenReturn(null)
+    when(rec2.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateTypeCode")).thenReturn("U")
 
     val validator = getValidator
     validator.validate(archive)
