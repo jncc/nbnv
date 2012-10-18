@@ -16,10 +16,17 @@
 
     <import resource="classpath:app-config.xml"/>
     
-    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+    <bean id="warehouseDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="com.microsoft.sqlserver.jdbc.SQLServerDriver" />
         <property name="url" value="${db_warehouse_url}" />
         <property name="username" value="${db_warehouse_username}" />
         <property name="password" value="${db_warehouse_password}" />
+    </bean>
+    
+    <bean id="coreDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="com.microsoft.sqlserver.jdbc.SQLServerDriver" />
+        <property name="url" value="${db_core_url}" />
+        <property name="username" value="${db_core_username}" />
+        <property name="password" value="${db_core_password}" />
     </bean>
 </beans>

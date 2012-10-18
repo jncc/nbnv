@@ -28,11 +28,27 @@
     
 <!-- Scans the classpath of this application for @Components to deploy as beans -->
     <context:component-scan base-package="uk.org.nbn.nbnv.api" /> 
-    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
-        <property name="dataSource" ref="dataSource" />
+
+<!-- Define mybatis mappers for the warehouse database -->
+
+    
+<!-- Scan MyBatis Mappers for the WAREHOUSE database -->
+    <bean id="warehouseSqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="warehouseDataSource" />
+    </bean>
+    
+    <bean id="coreSqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="coreDataSource" />
     </bean>
     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-        <property name="basePackage" value="uk.org.nbn.nbnv.api.dao"/>
+        
+        <property name="basePackage" value="uk.org.nbn.nbnv.api.dao.mappers"/>
+        <property name="sqlSessionFactoryBeanName" value="warehouseSqlSessionFactory" />
+    </bean>
+    
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="uk.org.nbn.nbnv.api.dao.core"/>
+        <property name="sqlSessionFactoryBeanName" value="coreSqlSessionFactory" />
     </bean>
     
 <!--Create an embedded solr server instance-->
