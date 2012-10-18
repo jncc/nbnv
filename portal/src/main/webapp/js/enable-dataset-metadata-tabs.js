@@ -6,7 +6,8 @@
  * - http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/themes/smoothness/jquery-ui.css
  */
 (function($){
-    $(function(){
+    $(document).ready(function(){
+//    $(function(){
         $.fn.dataTableExt.oJUIClasses.sStripeOdd = 'ui-state-highlight';
         
         $('#nbn-tabs').bind('tabsload', function(event, ui){
@@ -182,14 +183,14 @@
 
         $('.collapsible-list ul').each(function(){
             var list = $(this);
-            list.parent().prepend(     //put the container before the sublist
-                $("<span>")
-                .addClass("collapsible-list-icon icons-expand")
-                .click(function(){  //register a click listener which toggles the icon and list visibility
-                    $('.collapsible-list-icon', this).toggleClass("icons-expand icons-collapse");
-                    $('~ ul', this).stop().slideToggle('slow');
-                })
-                );
+                list.parent().prepend(     //put the container before the sublist
+                    $("<span>")
+                    .addClass("collapsible-list-icon icons-expand")
+                    .click(function(){  //register a click listener which toggles the icon and list visibility
+                        $('.collapsible-list-icon', this).toggleClass("icons-expand icons-collapse");
+                        $('~ ul', this).stop().slideToggle('slow');
+                    })
+                    );
         });
     }
     

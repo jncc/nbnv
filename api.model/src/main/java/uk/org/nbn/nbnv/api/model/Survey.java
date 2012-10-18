@@ -5,18 +5,18 @@ import java.util.List;
 public class Survey {
     
     private String datasetKey, surveyKey, title, description, geographicalCoverage, temporalCoverage;
-    private int surveyID, speciesCount, sampleCount, recordCount;
+    private int id, speciesCount, sampleCount, recordCount;
     
     public Survey(){}
     
-    public Survey(String datasetKey, String surveyKey, String title, String description, String geographicalCoverage, String temoralCoverage, int surveyID, int speciesCount, int sampleCount, int recordCount){
+    public Survey(String datasetKey, String surveyKey, String title, String description, String geographicalCoverage, String temoralCoverage, int id, int speciesCount, int sampleCount, int recordCount){
         this.datasetKey = datasetKey;
         this.surveyKey = surveyKey;
         this.title = title;
         this.description = description;
         this.geographicalCoverage = geographicalCoverage;
         this.temporalCoverage = temoralCoverage;
-        this.surveyID = surveyID;
+        this.id = id;
         this.speciesCount = speciesCount;
         this.sampleCount = sampleCount;
         this.recordCount = recordCount;
@@ -70,12 +70,12 @@ public class Survey {
         this.temporalCoverage = temporalCoverage;
     }
 
-    public int getSurveyID() {
-        return surveyID;
+    public int getId() {
+        return id;
     }
 
-    public void setSurveyID(int surveyID) {
-        this.surveyID = surveyID;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public int getSampleCount() {

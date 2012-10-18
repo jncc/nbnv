@@ -5,6 +5,7 @@
 package uk.org.nbn.nbnv.api.rest.resources;
 
 import com.sun.jersey.core.util.Base64;
+import java.io.ByteArrayInputStream;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -52,10 +53,15 @@ public class OrganisationResource {
 
     @GET
     @Path("/{id}/logo")    
-    @Produces("image/gif")
-    public byte[] getLogo(@PathParam("id") int id) {
-        String base64Image = organisationMapper.selectLogoByOrganisationID(id);
-        String base64Data = base64Image.substring(base64Image.indexOf(',')+1,base64Image.length());
-        return Base64.decode(base64Data);
+    @Produces("image/jpg")
+    public Object getLogo(@PathParam("id") int id) {
+        return organisationMapper.selectLogoByOrganisationID(id);
+    }
+
+    @GET
+    @Path("/{id}/logosmall")    
+    @Produces("image/png")
+    public Object getLogoSmall(@PathParam("id") int id) {
+        return organisationMapper.selectLogoSmallByOrganisationID(id);
     }
 }
