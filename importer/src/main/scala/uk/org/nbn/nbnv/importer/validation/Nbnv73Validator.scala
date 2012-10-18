@@ -29,7 +29,7 @@ class Nbnv73Validator {
     new Result {
       def level: ResultLevel.ResultLevel = ResultLevel.ERROR
       def reference: String = record.dateType
-      def message: String = "Found an invalid set of dates for a 'D' record [start: %s end: %s] should be the same date".format(record.startDateRaw, record.endDateRaw)
+      def message: String = "Start and end dates are not the same"
     }
   }
 

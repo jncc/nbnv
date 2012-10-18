@@ -79,6 +79,11 @@ class Validator @Inject()(log: Logger, db: Database, srv: SpatialReferenceValida
       val r9 = v9.validate(nbnRecord)
       logResult(r9)
 
+      // Validates a set of dates
+      val dv = new DateValidator
+      val dvResults = dv.validate(nbnRecord)
+      for (result <- dvResults) logResult(result)
+
       val srvResults = srv.validate(nbnRecord)
       for (result <- srvResults) logResult(result)
 

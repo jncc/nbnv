@@ -15,7 +15,7 @@ class Nbnv78Validator {
     new Result {
       def level: ResultLevel.ResultLevel = ResultLevel.ERROR
       def reference: String = record.dateType
-      def message: String = "The Date Type : " + record.dateType + " is not a supported DateType => \"D\",\"DD\",\"O\",\"OO\",\"Y\",\"YY\""
+      def message: String = "Unrecognised vague date type"
     }
   }
 
