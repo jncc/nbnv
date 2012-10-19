@@ -13,7 +13,7 @@
                 <li>
                     <h1><span class="nbn-designation-category-heading-strong">${currEntry.label}:</span> ${currEntry.description}</h1>
                     <ul>
-                        <#assign designationCategory=json.readURL("${api}/designationCategories/${currEntry.designationCategoryID}/designations")>
+                        <#assign designationCategory=json.readURL("${api}/designationCategories/${currEntry.id}/designations")>
                         <#list designationCategory as currDesignation>
                             <li class="nbn-designation-nested-list"><a title="${currDesignation.description!}" href="/Designations/${currDesignation.code}">${currDesignation.name}</a> : ${currDesignation.label}</li>
                         </#list>

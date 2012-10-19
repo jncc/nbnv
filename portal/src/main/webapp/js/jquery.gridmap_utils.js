@@ -9,9 +9,16 @@
             return false;
         });
         
+        //Setup colour pickers
         $('#nbn-colour-picker1').ColorPicker(getColourPickerOptions('#nbn-colour-picker1'));
         $('#nbn-colour-picker2').ColorPicker(getColourPickerOptions('#nbn-colour-picker2'));
         $('#nbn-colour-picker3').ColorPicker(getColourPickerOptions('#nbn-colour-picker3'));
+        $('#nbn-colour-picker-outline').ColorPicker(getColourPickerOptions('#nbn-colour-picker-outline'));
+        
+        //When selecting a country scale region the Vice County drop down must return to 'none'
+        $('#nbn-region-selector').change(function(){
+            $('#nbn-vice-county-selector').val("none");
+        });
         
         function getURL(){
             var formArgs = {};
