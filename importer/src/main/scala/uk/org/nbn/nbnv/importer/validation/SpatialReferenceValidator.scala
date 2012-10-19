@@ -19,16 +19,19 @@ class SpatialReferenceValidator (db: Database) {
     //Check spatial reference in more detail if no errors so far
     if (resultList.find(r => r.level == ResultLevel.ERROR) == None){
       if (record.gridReference.isDefined) {
+        //validate a grid reference
         val grv = new GridReferenceValidator(db)
         resultList.appendAll(grv.validate(record))
       }
       else if (record.featureKey.isDefined) {
+        //check that a feature key is vlaid
         val v3 = new Nbnv88Validator(db)
         val r3 = v3.validate(record)
         resultList.append(r3)
       }
       else if (record.eastRaw.isDefined && record.northRaw.isDefined) {
-        val pv = new PointValidator(db)
+        //validate a point
+        val pv = new PointValidator
         resultList.appendAll(pv.validate(record))
       }
     }
