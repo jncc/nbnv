@@ -133,9 +133,17 @@ public class SingleSpeciesMap {
             @QueryParam(key="startyear", validation="[0-9]{4}") final String startYear,
             @QueryParam(key="endyear", validation="[0-9]{4}") final String endYear,
             @QueryParam(key="fillcolour", validation="[0-9a-fA-F]{6}") @DefaultValue("000000") String fillColour,
-            @QueryParam(key="outlinecolour", validation="[0-9a-fA-F]{6}") @DefaultValue("000000") String outlineColour
+            @QueryParam(key="outlinecolour", validation="[0-9a-fA-F]{6}") @DefaultValue("000000") String outlineColour,
+            @QueryParam(key="REQUEST") String request
             ) {
         HashMap<String, Object> data = new HashMap<String, Object>();
+        
+        /* Below is a HACK to get around when mapserver renders legends with
+         * none pixel size units. These will extends outside of the legend 
+         * @see https://github.com/mapserver/mapserver/issues/1147
+         */
+        data.put("legendSymbolHack", "GetLegendGraphic".equals(request));
+        
         data.put("symbol", symbol);
         data.put("layers", gridMapDefinition.layers());
         data.put("fillColour", new Color(Integer.parseInt(fillColour, 16)));

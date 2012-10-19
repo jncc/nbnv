@@ -7,7 +7,7 @@ MAP
     IMAGECOLOR                                            255 255 255
     FONTSET                                               "fonts/fontset"
     EXTENT                                                -180 -90 180 90
-    INCLUDE                                               "symbols.map"
+    SYMBOLSET                                             "symbols.sym"
 
     WEB
         IMAGEPATH                                           "/ms4w/tmp/ms_tmp/"
@@ -35,7 +35,10 @@ MAP
             DATA                                                "${layerGenerator.getData(layer_index + 1)}"
             TEMPLATE                                            "dummy.txt"
             EXTENT                                              -180 -90 180 90
-            SIZEUNITS                                           meters
+            [#-- Legend Hack, revert to pixels if requesting legend --]
+            [#if !legendSymbolHack]
+                SIZEUNITS                                           meters
+            [/#if]
 
             METADATA
                 "wms_title"                                       "${layer.layer()}"
@@ -52,9 +55,15 @@ MAP
                     SYMBOL                                        "${symbol}"
 
                     [#assign width = (layer.resolutions()[0] / outlineWidthDenominator) /]
-                    SIZE                                          ${(layer.resolutions()[0]-width)?c}
-                    WIDTH                                         ${width?c}
-
+                    
+                    [#-- Legend Hack, revert to hard coded symbol size --]
+                    [#if !legendSymbolHack]
+                        SIZE                                          ${(layer.resolutions()[0]-width)?c}
+                        WIDTH                                         ${width?c}
+                    [#else]
+                        SIZE                                          9
+                        WIDTH                                         1
+                    [/#if]
                     COLOR           ${fillColour.red} ${fillColour.green} ${fillColour.blue}
                     OUTLINECOLOR    ${outlineColour.red} ${outlineColour.green} ${outlineColour.blue}
                 END # end of STYLE
