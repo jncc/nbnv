@@ -23,43 +23,42 @@ MAP
     PROJECTION
         "init=epsg:4326"
     END
-    
-    [@backgrounds.os location=properties.ordnanceSurveyMapDataLocation requires=layers/]
    
-    [#list layers as layer_name]
+    [#list layers as layer]
         LAYER
-            NAME                                                "${layer_name}"
+            NAME                                                "${layer.layer()}"
             TYPE                                                POINT
             STATUS                                              OFF
             CONNECTIONTYPE                                      PLUGIN
             PLUGIN                                              "msplugin_mssql2008.dll"
             CONNECTION                                          "${properties.spatialConnection}"
-            DATA                                                "${layerGenerator.getData(layer_name_index + 1)}"
+            DATA                                                "${layerGenerator.getData(layer_index + 1)}"
             TEMPLATE                                            "dummy.txt"
             EXTENT                                              -180 -90 180 90
+            SIZEUNITS                                           meters
 
             METADATA
-                "wms_title"                                       "${layer_name}"
+                "wms_title"                                       "${layer.layer()}"
                 "wms_include_items"                               "all"
             END
 
             PROJECTION
                 "init=epsg:4326"
             END
-   
             CLASS
-                NAME                                              "${layer_name} Species Presence"
+                NAME                                              "${layer.layer()} Species Presence"
                 EXPRESSION                                        ([ABSENCE] = 0)
                 STYLE
+                    [#assign width = (layer.resolutions()[0] / outlineWidthDenominator) /]
                     # Symbol to be used (reference)
                     SYMBOL "circle"
                     # Size of the symbol in pixels
-                    SIZE ${fillsize}
+
+                    SIZE                                          ${(layer.resolutions()[0]-width)?c}
                     # Colour (RGB) - blue
                     COLOR           ${fillColour.red} ${fillColour.green} ${fillColour.blue}
-                    [#if showOutline] 
-                        OUTLINECOLOR    ${outlineColour.red} ${outlineColour.green} ${outlineColour.blue}
-                    [/#if]
+                    OUTLINECOLOR    ${outlineColour.red} ${outlineColour.green} ${outlineColour.blue}
+                    WIDTH                                         ${width?c}
                 END # end of STYLE
             END
         END

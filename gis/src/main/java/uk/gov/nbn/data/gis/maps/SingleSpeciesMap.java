@@ -37,6 +37,7 @@ import uk.org.nbn.nbnv.api.model.User;
 @Component
 @MapContainer("SingleSpecies")
 public class SingleSpeciesMap {
+    private static final int SYMBOLOGY_OUTLINE_WIDTH_DENOMINATOR = 10;
     private static final String TEN_KM_LAYER_NAME = "Grid-10km";
     private static final String TWO_KM_LAYER_NAME = "Grid-2km";
     private static final String ONE_KM_LAYER_NAME = "Grid-1km";
@@ -120,27 +121,24 @@ public class SingleSpeciesMap {
             @GridLayer(name="1km",      layer=ONE_KM_LAYER_NAME,        resolutions=Resolution.ONE_KM),
             @GridLayer(name="100m",     layer=ONE_HUNDRED_M_LAYER_NAME, resolutions=Resolution.ONE_HUNDRED_METERS)
         },
-        defaultLayer="10km",
-        backgrounds=@Layer(name="os", layer="OS-Scale-Dependent" )
+        defaultLayer="10km"
     )
     public MapFileModel getSingleSpeciesSymbologyModel(
             final User user,
+            GridMap gridMapDefinition,
             @ServiceURL String mapServiceURL,
             @PathParam(key="taxonVersionKey", validation="^[A-Z]{6}[0-9]{10}$") final String key,
             @QueryParam(key="datasets", validation="^[A-Z0-9]{8}$") final List<String> datasetKeys,
             @QueryParam(key="startyear", validation="[0-9]{4}") final String startYear,
             @QueryParam(key="endyear", validation="[0-9]{4}") final String endYear,
             @QueryParam(key="fillcolour", validation="[0-9a-fA-F]{6}") @DefaultValue("000000") String fillColour,
-            @QueryParam(key="outlinecolour", validation="[0-9a-fA-F]{6}") @DefaultValue("000000") String outlineColour,
-            @QueryParam(key="imagesize") Integer gridPixels
+            @QueryParam(key="outlinecolour", validation="[0-9a-fA-F]{6}") @DefaultValue("000000") String outlineColour
             ) {
         HashMap<String, Object> data = new HashMap<String, Object>();
-        int fillSize = (gridPixels > 4) ? gridPixels -2 : gridPixels;
-        data.put("fillsize", fillSize);
-        data.put("showOutline", gridPixels != fillSize);
-        data.put("layers", LAYERS);
+        data.put("layers", gridMapDefinition.layers());
         data.put("fillColour", new Color(Integer.parseInt(fillColour, 16)));
         data.put("outlineColour", new Color(Integer.parseInt(outlineColour, 16)));
+        data.put("outlineWidthDenominator", SYMBOLOGY_OUTLINE_WIDTH_DENOMINATOR);
         data.put("mapServiceURL", mapServiceURL);
         data.put("properties", properties);
         data.put("layerGenerator", new ResolutionDataGenerator() {
