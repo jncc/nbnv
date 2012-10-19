@@ -49,16 +49,14 @@ MAP
                 NAME                                              "${layer.layer()} Species Presence"
                 EXPRESSION                                        ([ABSENCE] = 0)
                 STYLE
-                    [#assign width = (layer.resolutions()[0] / outlineWidthDenominator) /]
-                    # Symbol to be used (reference)
-                    SYMBOL "circle"
-                    # Size of the symbol in pixels
+                    SYMBOL                                        "${symbol}"
 
+                    [#assign width = (layer.resolutions()[0] / outlineWidthDenominator) /]
                     SIZE                                          ${(layer.resolutions()[0]-width)?c}
-                    # Colour (RGB) - blue
+                    WIDTH                                         ${width?c}
+
                     COLOR           ${fillColour.red} ${fillColour.green} ${fillColour.blue}
                     OUTLINECOLOR    ${outlineColour.red} ${outlineColour.green} ${outlineColour.blue}
-                    WIDTH                                         ${width?c}
                 END # end of STYLE
             END
         END

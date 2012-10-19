@@ -113,7 +113,7 @@ public class SingleSpeciesMap {
         return new MapFileModel("SingleSpecies.map",data);
     }
     
-    @MapService("{taxonVersionKey}/symbology")
+    @MapService("{taxonVersionKey}/{symbol}")
     @GridMap(
         layers={
             @GridLayer(name="10km",     layer=TEN_KM_LAYER_NAME,        resolutions=Resolution.TEN_KM),
@@ -128,6 +128,7 @@ public class SingleSpeciesMap {
             GridMap gridMapDefinition,
             @ServiceURL String mapServiceURL,
             @PathParam(key="taxonVersionKey", validation="^[A-Z]{6}[0-9]{10}$") final String key,
+            @PathParam(key="symbol", validation="(circle)") String symbol,
             @QueryParam(key="datasets", validation="^[A-Z0-9]{8}$") final List<String> datasetKeys,
             @QueryParam(key="startyear", validation="[0-9]{4}") final String startYear,
             @QueryParam(key="endyear", validation="[0-9]{4}") final String endYear,
@@ -135,6 +136,7 @@ public class SingleSpeciesMap {
             @QueryParam(key="outlinecolour", validation="[0-9a-fA-F]{6}") @DefaultValue("000000") String outlineColour
             ) {
         HashMap<String, Object> data = new HashMap<String, Object>();
+        data.put("symbol", symbol);
         data.put("layers", gridMapDefinition.layers());
         data.put("fillColour", new Color(Integer.parseInt(fillColour, 16)));
         data.put("outlineColour", new Color(Integer.parseInt(outlineColour, 16)));
