@@ -3,7 +3,7 @@ package uk.org.nbn.nbnv.importer.validation
 import uk.org.nbn.nbnv.importer.data.Database
 import uk.org.nbn.nbnv.importer.records.NbnRecord
 import collection.mutable.ListBuffer
-import uk.org.nbn.nbnv.importer.fidelity.Result
+import uk.org.nbn.nbnv.importer.fidelity.{ResultLevel, Result}
 
 class PointValidator(db: Database) {
   val resultList = new ListBuffer[Result]
@@ -13,6 +13,16 @@ class PointValidator(db: Database) {
     val v1 = new Nbnv185Validator
     val r1 = v1.validate(record)
     resultList.append(r1)
+
+    //if valid srs
+    if (r1.level == ResultLevel.DEBUG) {
+      record.srs match {
+        case Some(4326) => //todo - lat long valiation
+        case _ => {
+
+        }
+      }
+    }
 
     resultList.toList
   }
