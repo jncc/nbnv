@@ -8,10 +8,11 @@ public class Taxon implements Comparable<Taxon>{
     private String authority;
     private String languageKey;
     private String taxonOutputGroupKey;
+    private String taxonOutputGroupName;
     
     public Taxon(){}
     
-    public Taxon(String taxonVersionKey, String pTaxonVersionKey, String name, String authority, String languageKey, String taxonOutputGroupKey){
+    public Taxon(String taxonVersionKey, String pTaxonVersionKey, String name, String authority, String languageKey, String taxonOutputGroupKey, String taxonOutputGroupName){
         super();
         this.taxonVersionKey = taxonVersionKey;
         this.pTaxonVersionKey = pTaxonVersionKey;
@@ -19,6 +20,7 @@ public class Taxon implements Comparable<Taxon>{
         this.authority = authority;
         this.languageKey = languageKey;
         this.taxonOutputGroupKey = taxonOutputGroupKey;
+        this.taxonOutputGroupName = taxonOutputGroupName;
     }
 
     public String getTaxonVersionKey() {
@@ -72,5 +74,13 @@ public class Taxon implements Comparable<Taxon>{
     @Override
     public int compareTo(Taxon that) {
         return this.name.compareTo(that.name);
+    }
+
+    public String getTaxonOutputGroupName() {
+        return taxonOutputGroupName;
+    }
+
+    public void setTaxonOutputGroupName(String taxonOutputGroupName) {
+        this.taxonOutputGroupName = taxonOutputGroupName;
     }
 }

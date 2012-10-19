@@ -8,7 +8,7 @@
     <#list attributes as attribute>
         <tr>
             <td>${attribute.label}</td>
-            <td><#if attribute.description?has_content>${attribute.description}<#else>Description not available</#if></td>
+            <td>${attribute.description?has_content?string(attribute.description,"Description not available")}</td>
         </tr>
     </#list>
 </table>

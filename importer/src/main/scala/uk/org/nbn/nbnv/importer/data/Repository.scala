@@ -10,6 +10,15 @@ import uk.org.nbn.nbnv.importer.ImportFailedException
 import uk.org.nbn.nbnv.{SpatialQueries, FeatureFactory}
 
 class Repository (log: Logger, em: EntityManager, cache: QueryCache) extends ControlAbstractions {
+  def confirmSiteBoundary(siteDatasetKey: String, siteProviderKey: String): Boolean = {
+    val query = em.createQuery("select count(sb.featureID) from SiteBoundary sb join SiteBoundaryDataset sbd where sbd.datasetKey = :datasetKey and sb.providerKey = :providerKey")
+    query.setParameter("datasetKey", siteDatasetKey)
+    query.setParameter("providerKey", siteProviderKey)
+
+    val count = query.getSingleResult.asInstanceOf[Long]
+    if (count == 1) true else false
+  }
+
 
   def getSRSForLatLong(lng: Double, lat: Double ) : Option[Int] = {
     val queries = new SpatialQueries(em)
@@ -36,10 +45,11 @@ class Repository (log: Logger, em: EntityManager, cache: QueryCache) extends Con
 
 
   def confirmTaxonVersionKey(taxonVersionKey: String): Boolean = {
-    val query = em.createQuery("SELECT t FROM Taxon t WHERE t.taxonVersionKey = :tvk", classOf[Taxon])
+    val query = em.createQuery("SELECT COUNT(t.taxonVersionKey) FROM Taxon t WHERE t.taxonVersionKey = :tvk", classOf[Taxon])
     query.setParameter("tvk", taxonVersionKey)
 
-    query.getResultList.size == 1
+    val count = query.getSingleResult.asInstanceOf[Long]
+    if (count == 1) true else false
   }
 
   def getAttribute(attributeLabel: String, taxonDataset: TaxonDataset) = {

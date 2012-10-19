@@ -20,9 +20,7 @@ class FeatureIngester @Inject()(log: Logger, db: Database, gridSquareInfoFactory
       ensureSiteBoundaryFeature(record.featureKey.get)
     }
     else if (record.east.isDefined && record.north.isDefined && record.srs.isDefined) {
-      // todo: wire this up to getFeatureByCoord
       ensureGridRefFeatureByCoordinate(record.east.get, record.north.get, record.srs.get, record.gridReferencePrecision)
-
     }
     else {
       throw new ImportFailedException("No feature specified.")
