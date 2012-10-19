@@ -89,9 +89,24 @@ INSERT INTO OrganisationData (
 
 --Create a test dataset as 'DATASET1'
 INSERT INTO DatasetData (
-	key, name, typeName, organisationID, dateUploaded, conditionsAccepted, metadataLastEdited, updateFrequency
+	key, title, description, typeName, organisationName, organisationID, captureMethod, 
+        purpose, geographicalCoverage, quality, additionalInformation, accessConstraints, 
+        useConstraints, dateUploaded, metadataLastEdited, temporalCoverage, updateFrequency 
 ) VALUES (
-    'DATASET1', 'Test Dataset', 'Taxon', 2, '2012-05-09 11:11:30', 1, '2012-05-09 11:11:30', 'unknown'
+    ('DATASET1', 'Test Dataset 1', 'Description 1', 'Taxon', 'TestOrg 1', 1, 
+     'Method 1', 'Purpose 1', 'GeoCover 1', 'Quite Interesting', 
+     'Additional Info 1', 'Access Con 1', 'Use Con 1', '2012-03-01 10:00:00', 
+     '2012-03-01 11:11:31', 'Temp Cover 1', 'unknown'),
+    ('DATASET2', 'Test Dataset 2', 'Description 2', 'Taxon', 'TestOrg 2', 2, 
+     'Method 2', 'Purpose 2', 'GeoCover 2', 'Quite Interesting', 
+     'Additional Info 2', 'Access Con 2', 'Use Con 2', '2012-03-01 10:00:00', 
+     '2012-03-01 11:11:31', 'Temp Cover 2', 'unknown')
+);
+INSERT INTO DatasetData (
+    key, title, typeName, organisationName, organisationID, dateUploaded, metadataLastEdited, updateFrequency
+) VALUES (
+    ('DATASET3', 'Test Dataset 3', 'Taxon', 'TestOrg 2', 2, '2012-03-01 10:00:00', '2012-03-01 11:11:31', 
+     'unknown')
 );
 
 --Create a single dataset admin "datasetadmintester" with an id of 39
