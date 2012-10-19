@@ -33,7 +33,7 @@
                                 <li>
                                     <h1 class="nbn-h1-minor">&nbsp;${topLevelTaxonNavigationGroup.name} (${topLevelTaxonNavigationGroup.numSpecies} species)</h1>
                                     <ul>
-                                        <#assign taxonNavigationGroupWithChildren=json.readURL("${api}/designations/${designationId}/taxonNavigationGroups/${topLevelTaxonNavigationGroup.id}")>
+                                        <#assign taxonNavigationGroupWithChildren=json.readURL("${api}/designations/${designationId}/taxonNavigationGroups/${topLevelTaxonNavigationGroup.key}")>
                                         <#if taxonNavigationGroupWithChildren.children?has_content>
                                             <#list taxonNavigationGroupWithChildren.children as childTaxonGroup>
                                                 <@childTaxonNavigationGroupListItem designationId=designationId taxonNavigationGroup=childTaxonGroup/>
@@ -54,5 +54,5 @@
 </@template.master>
 
 <#macro childTaxonNavigationGroupListItem designationId taxonNavigationGroup>
-    <li class="nbn-designation-nested-list"><a href="/Designations/${designationId}/Species_Group/${taxonNavigationGroup.id}">${taxonNavigationGroup.name}</a> (${taxonNavigationGroup.numSpecies} species)</li>
+    <li class="nbn-designation-nested-list"><a href="/Designations/${designationId}/Species_Group/${taxonNavigationGroup.key}">${taxonNavigationGroup.name}</a> (${taxonNavigationGroup.numSpecies} species)</li>
 </#macro>

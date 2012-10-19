@@ -27,7 +27,7 @@
                     <th>Species list for: ${taxonNavigationGroup.name}</th>
                     <td>
                         <#list species as spec>
-                            ${taxon_utils.getShortName(taxon)}<br/>
+                            ${taxon_utils.getShortName(spec)}<br/>
                         </#list>
                     </td>
                 </tr>
