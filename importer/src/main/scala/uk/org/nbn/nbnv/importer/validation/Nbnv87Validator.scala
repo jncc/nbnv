@@ -27,7 +27,7 @@ class Nbnv87Validator {
       new Result {
         def level: ResultLevel.ResultLevel = ResultLevel.ERROR
         def reference: String = record.key
-        def message: String = error.getOrElse("The easting and northing are invalid")
+        def message: String = error.getOrElse("The easting and northing are invalid for the supplied srs")
       }
     }
   }
