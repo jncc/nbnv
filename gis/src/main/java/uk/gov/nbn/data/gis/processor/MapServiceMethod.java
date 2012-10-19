@@ -2,8 +2,11 @@ package uk.gov.nbn.data.gis.processor;
 
 import freemarker.template.TemplateException;
 import java.io.IOException;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.EnumSet;
+import java.util.Iterator;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
@@ -18,17 +21,29 @@ public class MapServiceMethod {
     private final MapServicePart part;
     
     public enum Type {
-        STANDARD(null), LEGEND("legend"), MAP("map"), 
-        ACKNOWLEDGMENT("acknowledgement"), RESOLUTIONS("resolutions");
+        STANDARD(null, null), LEGEND("legend", GridMap.class), MAP("map", GridMap.class), 
+        ACKNOWLEDGMENT("acknowledgement", Acknowledgement.class), RESOLUTIONS("resolutions", GridMap.class);
+        private Class<? extends Annotation> annotationFlag;
         private String request;
 
-        private Type(String request) {
+        private Type(String request, Class<? extends Annotation> annotationFlag) {
             this.request = request;
+            this.annotationFlag = annotationFlag;
         }
 
         public String getRequest() {
             return request;
         }
+        
+        public static EnumSet<Type> getTypesValidForMethod(Method mapServiceMethod) {
+            EnumSet<Type> toReturn = EnumSet.complementOf(EnumSet.of(Type.STANDARD));
+            for ( Iterator<Type> typeI = toReturn.iterator(); typeI.hasNext(); ) {
+                if(mapServiceMethod.getAnnotation(typeI.next().annotationFlag) == null) {
+                    typeI.remove();
+                }
+            }
+            return toReturn;
+        }       
     }
 
     MapServiceMethod(MapServicePart part, String[] requestParts, ProviderFactory providerFactory) {
@@ -55,6 +70,10 @@ public class MapServiceMethod {
     
     public Method getUnderlyingMapMethod() {
         return part.getAssociatedMethod();
+    }
+    
+    public Object getUnderlyingInstance() {
+        return part.getMapServiceInstance();
     }
     
     public Type getType() {

@@ -1,6 +1,7 @@
 package uk.gov.nbn.data.gis.maps;
 
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,8 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.nbn.data.gis.maps.MapHelper.ResolutionDataGenerator;
 import uk.gov.nbn.data.gis.maps.colour.Band;
-import uk.gov.nbn.data.gis.maps.colour.Bucket;
-import uk.gov.nbn.data.gis.maps.colour.ColourHelper;
+import uk.gov.nbn.data.gis.processor.Acknowledgement;
 import uk.gov.nbn.data.gis.processor.MapFileModel;
 import uk.gov.nbn.data.gis.processor.MapService;
 import uk.gov.nbn.data.gis.processor.MapContainer;
@@ -22,6 +22,7 @@ import uk.gov.nbn.data.gis.providers.annotations.DefaultValue;
 import uk.gov.nbn.data.gis.providers.annotations.PathParam;
 import uk.gov.nbn.data.gis.providers.annotations.QueryParam;
 import uk.gov.nbn.data.gis.providers.annotations.ServiceURL;
+import uk.org.nbn.nbnv.api.model.ProviderWithQueryStats;
 import uk.org.nbn.nbnv.api.model.User;
 
 /**
@@ -113,7 +114,7 @@ public class SingleSpeciesMap {
         return new MapFileModel("SingleSpecies.map",data);
     }
     
-    @MapService("{taxonVersionKey}/{symbol}")
+    @MapService("{taxonVersionKey}/atlas/{symbol}")
     @GridMap(
         layers={
             @GridLayer(name="10km",     layer=TEN_KM_LAYER_NAME,        resolution=Resolution.TEN_KM),
@@ -122,7 +123,8 @@ public class SingleSpeciesMap {
             @GridLayer(name="100m",     layer=ONE_HUNDRED_M_LAYER_NAME, resolution=Resolution.ONE_HUNDRED_METERS)
         },
         defaultLayer="10km"
-    )
+    )    
+    @Acknowledgement(method="getDatasetProviders")
     public MapFileModel getSingleSpeciesSymbologyModel(
             final User user,
             GridMap gridMapDefinition,
@@ -161,5 +163,9 @@ public class SingleSpeciesMap {
                 }
         });
         return new MapFileModel("SingleSpeciesSymbology.map",data);
+    }
+    
+    public List<ProviderWithQueryStats> getDatasetProviders() {
+        return new ArrayList<ProviderWithQueryStats>();
     }
 }
