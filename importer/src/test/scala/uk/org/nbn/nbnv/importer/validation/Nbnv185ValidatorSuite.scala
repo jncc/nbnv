@@ -9,7 +9,7 @@ class Nbnv185ValidatorSuite extends BaseFunSuite {
 
   test("should validate srs 27700") {
     val rec = mock[NbnRecord]
-    when(rec.srsRaw).thenReturn("27700")
+    when(rec.srsRaw).thenReturn(Option("27700"))
 
     val v = new Nbnv185Validator
     val r = v.validate(rec)
@@ -19,7 +19,7 @@ class Nbnv185ValidatorSuite extends BaseFunSuite {
 
   test("should validate srs 29903") {
     val rec = mock[NbnRecord]
-    when(rec.srsRaw).thenReturn("29903")
+    when(rec.srsRaw).thenReturn(Option("29903"))
 
     val v = new Nbnv185Validator
     val r = v.validate(rec)
@@ -29,7 +29,7 @@ class Nbnv185ValidatorSuite extends BaseFunSuite {
 
   test("should validate srs 23030") {
     val rec = mock[NbnRecord]
-    when(rec.srsRaw).thenReturn("23030")
+    when(rec.srsRaw).thenReturn(Option("23030"))
 
     val v = new Nbnv185Validator
     val r = v.validate(rec)
@@ -39,7 +39,7 @@ class Nbnv185ValidatorSuite extends BaseFunSuite {
 
   test("should validate srs 4326") {
     val rec = mock[NbnRecord]
-    when(rec.srsRaw).thenReturn("4326")
+    when(rec.srsRaw).thenReturn(Option("4326"))
 
     val v = new Nbnv185Validator
     val r = v.validate(rec)
@@ -49,7 +49,17 @@ class Nbnv185ValidatorSuite extends BaseFunSuite {
 
   test("should not validate unrecognised srs") {
     val rec = mock[NbnRecord]
-    when(rec.srsRaw).thenReturn("11111")
+    when(rec.srsRaw).thenReturn(Option("11111"))
+
+    val v = new Nbnv185Validator
+    val r = v.validate(rec)
+
+    r.level should be (ResultLevel.ERROR)
+  }
+
+  test("should not validate a blank srs") {
+    val rec = mock[NbnRecord]
+    when(rec.srsRaw).thenReturn(None)
 
     val v = new Nbnv185Validator
     val r = v.validate(rec)

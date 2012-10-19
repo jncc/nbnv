@@ -46,6 +46,18 @@ trait GridSqareInfoCompanion {
     }
   }
 
+  //Returns true if easting / northing can be converted to a grid square and false + error meassage if it can't
+  def testEastingNorthing(east: Int, north: Int) : (Boolean, Option[String]) = {
+    try {
+      getGridSquareByEastingNorthing(east, north, 0)
+      (true, None)
+    }
+    catch {
+      case ife: ImportFailedException => (false, Some(ife.message))
+      case e: Throwable => throw e
+    }
+  }
+
 
   private def reprojectToWgs84(lat: Double, lng: Double, targetEpsgCode : Int) : (Int, Int) = {
     val latLngGdp = new GeneralDirectPosition(lat, lng)
