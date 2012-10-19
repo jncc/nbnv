@@ -92,8 +92,13 @@ body {
         color:$majorColour;
         margin: 5px 0px 10px 0px;
     }
-    
+        
     p { margin-top: 1em;}
+
+    fieldset{
+        border: 2px groove threedface;
+        padding: 10px;
+    }
     
     .nbn-navigation {
         margin-left: 5%;
@@ -138,7 +143,7 @@ body {
             padding: 1px;
         }
         td{
-            padding: 3px !important;
+            padding: 3px;
         }
     }
     
@@ -355,5 +360,21 @@ body {
             background: url('/img/colourpicker/select.png') center;
         }
     }
+
+    .nbn-form-label{
+        display: inline-block;
+    }
+
+    .nbn-form-field{
+        padding-bottom: 2px;
+    }
+
+    table.nbn-grid-map-table{
+        td{
+            padding: 10px;
+        }
+    }
+
+    
 
 }
