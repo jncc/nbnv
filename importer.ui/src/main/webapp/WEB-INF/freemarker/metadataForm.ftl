@@ -3,6 +3,7 @@
     <head>
         <title>Metadata Entry</title>
         <link rel="stylesheet" type="text/css" href="/importer/importer.css" />
+        <script type="text/javascript" src="/importer/jquery.js"></script>
     </head>
     <body>
         <form method="post" enctype="multipart/form-data">
@@ -135,7 +136,6 @@
                         <@spring.formRadioButtons 'metadataForm.metadata.recorderNames', referenceData.recNames, ' ' />
                         <@spring.showErrors "" "error" />
                     </span> <br /> <br />
-
                 </fieldset>                
 
                 <p>
@@ -143,5 +143,39 @@
                 </p>
             </fieldset>
         </form>
+
+        <script>
+            $(document).ready(function() {
+
+            });
+
+            function disableOptions() {
+                $("#metadata\\.recordAtts0").attr('disabled', 'disabled');
+                $("#metadata\\.recorderNames0").attr('disabled', 'disabled');
+                $("#metadata\\.recordAtts0").prop('checked', false);
+                $("#metadata\\.recorderNames0").prop('checked', false);
+            }
+
+            function enableOptions() {
+                $("#metadata\\.recorderNames0").removeAttr('disabled');
+                $("#metadata\\.recordAtts0").removeAttr('disabled');
+            }
+
+            $("#metadata\\.geographicalRes0").click(function() {
+                enableOptions();
+            });
+            $("#metadata\\.geographicalRes1").click(function() {
+                disableOptions();
+            });
+            $("#metadata\\.geographicalRes2").click(function() {
+                disableOptions();
+            });
+            $("#metadata\\.geographicalRes3").click(function() {
+                disableOptions();
+            });
+            $("#metadata\\.geographicalRes4").click(function() {
+                disableOptions();
+            });
+        </script>
     </body>
 </html>

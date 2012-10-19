@@ -148,9 +148,9 @@ CREATE TABLE OrganisationMembershipData(
 
 CREATE TABLE DatasetData(
 	key char(8) NOT NULL,
-	name varchar(200) NOT NULL,
+	title varchar(200) NOT NULL,
 	description longvarchar NULL,
-	typeName varchar(200) NOT NULL,
+	typeName varchar(20) NOT NULL,
 	organisationName varchar(200) NULL,
 	organisationID int NOT NULL,
 	captureMethod longvarchar NULL,
@@ -161,7 +161,6 @@ CREATE TABLE DatasetData(
 	accessConstraints longvarchar NULL,
 	useConstraints longvarchar NULL,
 	dateUploaded timestamp NOT NULL,
-	conditionsAccepted bit NOT NULL,
 	metadataLastEdited timestamp NOT NULL,
 	temporalCoverage longvarchar NULL,
 	updateFrequency varchar(12) NOT NULL,

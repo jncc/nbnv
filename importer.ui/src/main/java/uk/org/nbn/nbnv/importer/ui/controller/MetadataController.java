@@ -262,6 +262,7 @@ public class MetadataController {
         geoMap.put("1000","1km\u00B2 ");
         geoMap.put("2000","2km\u00B2");
         geoMap.put("10000","10km\u00B2");
+        geoMap.put("null", "No Access");
         
         Map<String, String> recAtts = new LinkedHashMap<String, String>();
         recAtts.put("true","Yes");
