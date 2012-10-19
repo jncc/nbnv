@@ -113,7 +113,7 @@ public class SingleSpeciesMap {
         return new MapFileModel("SingleSpecies.map",data);
     }
     
-    @MapService("symbology/{taxonVersionKey}")
+    @MapService("{taxonVersionKey}/symbology")
     @GridMap(
         layers={
             @GridLayer(name="10km",     layer=TEN_KM_LAYER_NAME,        resolutions=Resolution.TEN_KM),
