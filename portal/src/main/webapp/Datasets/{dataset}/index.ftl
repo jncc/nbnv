@@ -1,15 +1,11 @@
+<#assign datasetId="${URLParameters.dataset}">
+<#assign dataset=json.readURL("${api}/datasets/${datasetId}")>
 
 <@template.master title="NBN Gateway - Datasets"
     javascripts=["/js/jquery-ui-1.8.23.custom.min.js/","/js/enable-dataset-metadata-tabs.js","/js/jqueryui.simple-table-style.js","/js/jquery.dataTables.min.js","/js/jqplot/jquery.jqplot.min.js","/js/jqplot/excanvas.min.js","/js/jqplot/plugins/jqplot.json2.min.js","/js/jqplot/plugins/jqplot.highlighter.min.js","/js/jqplot/plugins/jqplot.canvasAxisLabelRenderer.min.js","/js/jqplot/plugins/jqplot.canvasTextRenderer.min.js","/js/jqplot/plugins/jqplot.cursor.min.js"] 
     csss=["/css/smoothness/jquery-ui-1.8.23.custom.css","/css/jquery.jqplot.min.css"] >
-
-    <#assign datasetId="${URLParameters.dataset}">
-    <#assign dataset=json.readURL("${api}/datasets/${datasetId}")>
-
-        <h1>${dataset.name}</h1>
-
+        <h1>${dataset.title}</h1>
         <div id="nbn-tabs">
-
             <ul>
                 <li><a href="#tabs-1">General</a></li>
                 <li><a href="#tabs-2">Access and constraints</a></li>
@@ -23,20 +19,19 @@
                     <li><a href="/Datasets/${datasetId}/Site_Boundaries"><span>Sites</span></a></li>
                 </#if>
             </ul>
-
             <div id="tabs-1">
                 <table class="nbn-dataset-table nbn-simple-table">
                     <tr>
                         <th>Provider</th>
-                        <td><img id="nbn-provider-logo" src="${dataset.organisation.logoSmall}"/><a href="/Organisations/${dataset.organisationID}">${dataset.organisationName}</a></td>
+                        <td><img id="nbn-provider-logo" src="${api}/organisations/${dataset.organisation.id}/logosmall"/><a href="/Organisations/${dataset.organisationID}">${dataset.organisationName}</a></td>
                     </tr>
                     <tr>
                         <th>Title</th>
-                        <td>${dataset.name}</td>
+                        <td>${dataset.title}</td>
                     </tr>
                     <tr>
                         <th>Permanent key</th>
-                        <td>${dataset.datasetKey}</td>
+                        <td>${dataset.key}</td>
                     </tr>
                     <tr>
                         <th>Description</th>
@@ -83,7 +78,6 @@
                     </#if>
                 </table>
             </div>
-
             <div id="tabs-2">
                 <table class="nbn-dataset-table nbn-simple-table">
                     <tr>
@@ -92,20 +86,17 @@
                     </tr>
                     <tr>
                         <th>Access constraints</th>
-                        <td>${dataset.accessConstraints!"Not available"}</td>
+                        <td>${dataset.accessConstraints?has_content?string(dataset.accessConstraints,"Not available")}</td>
                     </tr>
                     <tr>
                         <th>Use constraints</th>
-                        <td>${dataset.useConstraints!"Not available"}</td>
+                        <td>${dataset.useConstraints?has_content?string(dataset.useConstraints,"Not available")}</td>
                     </tr>
                 </table>
             </div>
-
             <div id="tabs-3">
                 [TODO: Ajax call to map]
                 <!--<iframe width="100%" height="600px" src="http://data.nbn.org.uk/imt/?baselayer=Hybrid&bbox=-18.576014044435876,49.03927489540209,9.5489859505262,60.45827601788278&mode=SINGLE_DATASET&dataset=GA001044"></iframe>-->
             </div>
-
         </div>
-
 </@template.master>

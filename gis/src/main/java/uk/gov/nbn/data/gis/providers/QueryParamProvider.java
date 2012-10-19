@@ -70,13 +70,11 @@ public class QueryParamProvider implements Provider {
     
     private static <T> List<T> validateParameter(List<String> toValidate, QueryParam annotation, Class<T> type) throws ProviderException {
         List<T> toReturn = new ArrayList<T>();
-        if(!annotation.validation().equals(QueryParam.NO_VALIDATION)) {
-            for(String currValue : toValidate) {
-                if(!currValue.matches(annotation.validation())) {
-                     throw new ProviderException("The queryparam " + currValue + " was not in the correct format");
-                }
-                toReturn.add(instantiateClassFromString(type, currValue));
+        for(String currValue : toValidate) {
+            if(!annotation.validation().equals(QueryParam.NO_VALIDATION) && !currValue.matches(annotation.validation())) {
+                 throw new ProviderException("The queryparam " + currValue + " was not in the correct format");
             }
+            toReturn.add(instantiateClassFromString(type, currValue));
         }
         return toReturn;
     }

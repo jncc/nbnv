@@ -14,7 +14,7 @@
             <tr>
                 <td><a class="nbn-datatable-anchor" href="#">${taxon_utils.getShortName(taxon)}</a></td>
                 <td>${taxon.taxonVersionKey}</td>
-                <td>${taxon.outputGroupName}</td>
+                <td>${taxon.taxonOutputGroupName}</td>
                 <td>${taxon.observationCount}</td>
             </tr>
         </#list>

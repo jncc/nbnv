@@ -4,8 +4,10 @@ import uk.org.nbn.nbnv.importer.records.NbnRecord
 import collection.mutable.ListBuffer
 import uk.org.nbn.nbnv.importer.fidelity.{ResultLevel, Result}
 import com.google.inject.Inject
+import uk.org.nbn.nbnv.importer.data.Database
 
-class SpatialReferenceValidator @Inject()(grv: GridReferenceValidator) {
+class SpatialReferenceValidator (db: Database) {
+
   def validate(record: NbnRecord) = {
     val resultList = new ListBuffer[Result]
 
@@ -17,13 +19,17 @@ class SpatialReferenceValidator @Inject()(grv: GridReferenceValidator) {
     //Check spatial reference in more detail if no errors so far
     if (resultList.find(r => r.level == ResultLevel.ERROR) == None){
       if (record.gridReference.isDefined) {
+        val grv = new GridReferenceValidator(db)
         resultList.appendAll(grv.validate(record))
       }
       else if (record.featureKey.isDefined) {
-        //todo: validate feature key
+        val v3 = new Nbnv88Validator(db)
+        val r3 = v3.validate(record)
+        resultList.append(r3)
       }
-      else if (record.east.isDefined && record.north.isDefined) {
-        //todo: validate point ?
+      else if (record.east.isDefined && record.north.isDefined && record.srs.isDefined) {
+        val pv = new PointValidator(db)
+        resultList.appendAll(pv.validate(record))
       }
     }
 

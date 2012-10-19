@@ -7,14 +7,14 @@ import uk.org.nbn.nbnv.importer.fidelity.{ResultLevel, Result}
 import org.apache.log4j.Logger
 import uk.org.nbn.nbnv.importer.ImportFailedException
 import uk.org.nbn.nbnv.importer.records.NbnRecord
-import uk.org.nbn.nbnv.importer.data.{Database, Repository}
+import uk.org.nbn.nbnv.importer.data.{Database}
 
 // todo: requirement for allowing e.g. 100 errors - presumably this needs to keep validating, but not import?
 // todo: mapping between darwin and nbn terms, separate from reading values, nulls throw?
 // todo: ensure possibility for parallel
 
 
-class Validator @Inject()(log: Logger, db: Database, srv: SpatialReferenceValidator){
+class Validator @Inject()(log: Logger, db: Database){
 
   def validate(archive: Archive) {
     log.info("Hello from the validator.")
@@ -84,6 +84,7 @@ class Validator @Inject()(log: Logger, db: Database, srv: SpatialReferenceValida
       val dvResults = dv.validate(nbnRecord)
       for (result <- dvResults) logResult(result)
 
+      val srv = new SpatialReferenceValidator(db)
       val srvResults = srv.validate(nbnRecord)
       for (result <- srvResults) logResult(result)
 
