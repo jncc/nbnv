@@ -68,7 +68,7 @@ public class DatasetResourceTest {
             assertEquals(dc.get(0).getTitle(), "Test Dataset 1");
             assertEquals(dc.get(0).getDescription(), "Description 1");
             assertEquals(dc.get(0).getTypeName(), "Taxon");
-            assertEquals(dc.get(0).getOrganisationName(), "TestOrg 1");
+            assertEquals(dc.get(0).getOrganisationName(), "testorg");
             assertEquals(dc.get(0).getOrganisationID(), 1);
             assertEquals(dc.get(0).getCaptureMethod(), "Method 1");
             assertEquals(dc.get(0).getPurpose(), "Purpose 1");
@@ -86,7 +86,7 @@ public class DatasetResourceTest {
             assertEquals(dc.get(1).getTitle(), "Test Dataset 2");
             assertEquals(dc.get(1).getDescription(), "Description 2");
             assertEquals(dc.get(1).getTypeName(), "Taxon");
-            assertEquals(dc.get(1).getOrganisationName(), "TestOrg 2");
+            assertEquals(dc.get(1).getOrganisationName(), "testdataorg");
             assertEquals(dc.get(1).getOrganisationID(), 2);
             assertEquals(dc.get(1).getCaptureMethod(), "Method 2");
             assertEquals(dc.get(1).getPurpose(), "Purpose 2");
@@ -104,7 +104,7 @@ public class DatasetResourceTest {
             assertEquals(dc.get(2).getTitle(), "Test Dataset 3");
             assertEquals(dc.get(2).getDescription(), null);
             assertEquals(dc.get(2).getTypeName(), "Taxon");
-            assertEquals(dc.get(2).getOrganisationName(), "TestOrg 2");
+            assertEquals(dc.get(2).getOrganisationName(), "testdataorg");
             assertEquals(dc.get(2).getOrganisationID(), 2);
             assertEquals(dc.get(2).getCaptureMethod(), null);
             assertEquals(dc.get(2).getPurpose(), null);
@@ -136,7 +136,7 @@ public class DatasetResourceTest {
             assertEquals(dc.getTitle(), "Test Dataset 3");
             assertEquals(dc.getDescription(), null);
             assertEquals(dc.getTypeName(), "Taxon");
-            assertEquals(dc.getOrganisationName(), "TestOrg 2");
+            assertEquals(dc.getOrganisationName(), "testdataorg");
             assertEquals(dc.getOrganisationID(), 2);
             assertEquals(dc.getCaptureMethod(), null);
             assertEquals(dc.getPurpose(), null);
