@@ -33,8 +33,19 @@ public class MetadataValidator implements Validator {
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "purpose", "purpose.required");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "quality", "quality.required");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "access", "access.required");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "geographicalRes", "geographicalRes.required");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "recordAtts", "recordAtts.required");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "recorderNames", "recorderNames.required");
         
         Metadata meta = (Metadata) o;
+        
+        // Replace nulls with false for Recorder Names / Record Atts options
+        if (meta.getRecordAtts().equals("null")) {
+            meta.setRecordAtts("false");
+        }
+        if (meta.getRecorderNames().equals("null")) {
+            meta.setRecorderNames("false");
+        }
         
         EntityManager em = DatabaseConnection.getInstance().createEntityManager();
         Query q = em.createNamedQuery("User.findByEmail");

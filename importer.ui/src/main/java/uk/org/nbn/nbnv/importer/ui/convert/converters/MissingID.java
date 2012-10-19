@@ -46,18 +46,18 @@ public class MissingID extends ConverterStep {
 //        }
         
         // Try and build up some meaningful data to make a UID
-        for (ColumnMapping cm : columns) {
-            if ((cm.getField() == DarwinCoreField.TAXONID || 
-                    cm.getField() == DarwinCoreField.COLLECTIONCODE || 
-                    cm.getField() == DarwinCoreField.LOCATIONID || 
-                    cm.getField() == DarwinCoreField.GRIDREFERENCE ||
-                    cm.getField() == DarwinCoreField.SITEFEATUREKEY ||
-                    cm.getField() == DarwinCoreField.EVENTID || 
-                    cm.getField() == DarwinCoreField.EVENTDATESTART || 
-                    cm.getField() == DarwinCoreField.EVENTDATE) && lookup.size() <= 1) {
-                lookup.add(cm.getColumnNumber());
-            }
-        }
+//        for (ColumnMapping cm : columns) {
+//            if ((cm.getField() == DarwinCoreField.TAXONID || 
+//                    cm.getField() == DarwinCoreField.COLLECTIONCODE || 
+//                    cm.getField() == DarwinCoreField.LOCATIONID || 
+//                    cm.getField() == DarwinCoreField.GRIDREFERENCE ||
+//                    cm.getField() == DarwinCoreField.SITEFEATUREKEY ||
+//                    cm.getField() == DarwinCoreField.EVENTID || 
+//                    cm.getField() == DarwinCoreField.EVENTDATESTART || 
+//                    cm.getField() == DarwinCoreField.EVENTDATE) && lookup.size() <= 1) {
+//                lookup.add(cm.getColumnNumber());
+//            }
+//        }
         
         for (ColumnMapping cm : columns) {
             outColumn = cm.getColumnNumber() > outColumn ? cm.getColumnNumber() : outColumn;
@@ -72,9 +72,9 @@ public class MissingID extends ConverterStep {
     @Override
     public void modifyRow(List<String> row) throws BadDataException {
         String uid = "uid:";
-        for (int col : lookup) {
-            uid = uid + row.get(col) + ":";
-        }
+//        for (int col : lookup) {
+//            uid = uid + row.get(col) + ":";
+//        }
         
         uid = uid + (count++);
         

@@ -61,6 +61,6 @@ public class MissingIDTest {
         } catch(BadDataException ex) {
             fail("Threw a BadDataException: " + ex.getMessage());
         }
-        assertEquals(row.get(3), "uid:CS0000TMA:SITE001:1");
+        assertEquals(row.get(3), "uid:1");
     }
 }

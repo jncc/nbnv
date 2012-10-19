@@ -85,7 +85,7 @@ public class TaxonName extends ConverterStep {
             List<Taxon> results = q.getResultList();
             
             if (results.size() == 1) {
-                lookup.put(origVal, results.get(0).getPTaxonVersionKey().getTaxonVersionKey());
+                lookup.put(origVal, results.get(0).getTaxonVersionKey());
             } else if (results.size() > 1) {
                 
                 String pTVK = results.get(0).getPTaxonVersionKey().getTaxonVersionKey();
@@ -104,7 +104,7 @@ public class TaxonName extends ConverterStep {
                 List<RecordingEntity> res = q.getResultList();
                 
                 if (res.size() == 1) {
-                    lookup.put(origVal, res.get(0).getTaxon().getPTaxonVersionKey().getTaxonVersionKey());
+                    lookup.put(origVal, res.get(0).getTaxon().getTaxonVersionKey());
                 } else if (results.size() > 1) {               
                     String pTVK = res.get(0).getTaxon().getPTaxonVersionKey().getTaxonVersionKey();
                     for (RecordingEntity recordingEntity : res) {
@@ -124,7 +124,7 @@ public class TaxonName extends ConverterStep {
                     results = q.setParameter("taxonVersionKey", origVal).getResultList();
                     
                     if (res.size() == 1) {
-                        lookup.put(origVal, results.get(0).getPTaxonVersionKey().getTaxonVersionKey());
+                        lookup.put(origVal, results.get(0).getTaxonVersionKey());
                     } else if (res.size() > 1) {
                         String pTVK = results.get(0).getPTaxonVersionKey().getTaxonVersionKey();
                         for (Taxon taxon : results) {
