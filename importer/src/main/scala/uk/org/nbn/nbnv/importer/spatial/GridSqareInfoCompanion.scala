@@ -47,6 +47,7 @@ trait GridSqareInfoCompanion {
   }
 
 
+
   private def reprojectToWgs84(lat: Double, lng: Double, targetEpsgCode : Int) : (Int, Int) = {
     val latLngGdp = new GeneralDirectPosition(lat, lng)
 

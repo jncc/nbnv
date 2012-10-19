@@ -19,10 +19,12 @@ class PointValidator(db: Database) {
       record.srs.get match {
         case 4326 => //todo - lat long valiation
         case _ => {
-          //validate some easting norhting
-          val v3 = new Nbnv85Validator(db)
+          //test easting and northing are numeric.
+          val v3 = new Nbnv85Validator
           val r3 = v3.validate(record)
           resultList.append(r3)
+
+          //todo: test easting and northing are valid for the specified srs
         }
       }
     }
