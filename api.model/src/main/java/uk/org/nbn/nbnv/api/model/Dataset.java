@@ -10,6 +10,7 @@ public class Dataset {
     private String additionalInformation, accessConstraints, useConstraints;
     private String temporalCoverage, updateFrequency;
     private Date dateUploaded, metadataLastEdited;
+    private String formattedDateUploaded, formattedMetadataLastEdited;
     private int organisationID;
     private boolean conditionsAccepted;
     private Organisation organisation;
@@ -35,8 +36,10 @@ public class Dataset {
         this.accessConstraints = accessConstraints;
         this.useConstraints = useConstraints;
         this.dateUploaded = dateUploaded;
+        this.formattedDateUploaded = getFormattedDateUploaded();
         this.conditionsAccepted = conditionsAccepted;
         this.metadataLastEdited = metadataLastEdited;
+        this.formattedMetadataLastEdited = getFormattedMetadataLastEdited();
         this.temporalCoverage = temporalCoverage;
         this.updateFrequency = updateFrequency;
         this.organisation = organisation;

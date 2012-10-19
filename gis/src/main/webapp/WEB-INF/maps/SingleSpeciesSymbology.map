@@ -1,0 +1,73 @@
+[#ftl]
+[#import "backgrounds.ftl" as backgrounds]
+
+MAP
+    IMAGETYPE                                             PNG
+    SIZE                                                  2800 2800
+    IMAGECOLOR                                            255 255 255
+    FONTSET                                               "fonts/fontset"
+    EXTENT                                                -180 -90 180 90
+    SYMBOLSET                                             "symbols.sym"
+
+    WEB
+        IMAGEPATH                                           "/ms4w/tmp/ms_tmp/"
+        IMAGEURL                                            "/ms_tmp/"
+        METADATA
+            "wms_title"                                       "Single Species Map"
+            "wms_onlineresource"                              "${mapServiceURL}"
+            "wms_srs"                                         "EPSG:29903 EPSG:27700 EPSG:4326 EPSG:3857"
+            "wms_enable_request"                              "*"
+        END
+    END
+
+    PROJECTION
+        "init=epsg:4326"
+    END
+   
+    [#list layers as layer]
+        LAYER
+            NAME                                                "${layer.layer()}"
+            TYPE                                                POINT
+            STATUS                                              OFF
+            CONNECTIONTYPE                                      PLUGIN
+            PLUGIN                                              "msplugin_mssql2008.dll"
+            CONNECTION                                          "${properties.spatialConnection}"
+            DATA                                                "${layerGenerator.getData(layer_index + 1)}"
+            TEMPLATE                                            "dummy.txt"
+            EXTENT                                              -180 -90 180 90
+            [#-- Legend Hack, revert to pixels if requesting legend --]
+            [#if !legendSymbolHack]
+                SIZEUNITS                                           meters
+            [/#if]
+
+            METADATA
+                "wms_title"                                       "${layer.layer()}"
+                "wms_include_items"                               "all"
+            END
+
+            PROJECTION
+                "init=epsg:4326"
+            END
+            CLASS
+                NAME                                              "${layer.layer()} Species Presence"
+                EXPRESSION                                        ([ABSENCE] = 0)
+                STYLE
+                    SYMBOL                                        "${symbol}"
+
+                    [#assign width = (layer.resolution() / outlineWidthDenominator) /]
+                    
+                    [#-- Legend Hack, revert to hard coded symbol size --]
+                    [#if !legendSymbolHack]
+                        SIZE                                          ${(layer.resolution()-width)?c}
+                        WIDTH                                         ${width?c}
+                    [#else]
+                        SIZE                                          9
+                        WIDTH                                         1
+                    [/#if]
+                    COLOR           ${fillColour.red} ${fillColour.green} ${fillColour.blue}
+                    OUTLINECOLOR    ${outlineColour.red} ${outlineColour.green} ${outlineColour.blue}
+                END # end of STYLE
+            END
+        END
+    [/#list]
+END

@@ -1,7 +1,6 @@
 package uk.gov.nbn.data.gis.interceptors;
 
 import freemarker.template.TemplateException;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
@@ -31,7 +30,6 @@ import uk.gov.nbn.data.gis.processor.Response;
 @Component
 @Interceptor
 public class JSONGetFeatureInterceptor {
-    private static final String JSONP_CALLBACK_PARAMETER = "callback";    
     @Autowired MapServerRequestProcessor requestProcessor;
     
     private static boolean isToInterceptQuery(Map<String, String[]> query) {
@@ -42,21 +40,9 @@ public class JSONGetFeatureInterceptor {
 
     @Intercepts(Type.STANDARD)
     public Response intercepts(MapServiceMethod method, HttpServletRequest request) throws IllegalAccessException, IllegalArgumentException, IOException, InvocationTargetException, ProviderException, TemplateException, JSONException {
-        Map<String, String[]> query = request.getParameterMap();
         if(isToInterceptQuery(request.getParameterMap())) {
             JSONObject toReturn = obtainJSONObjectFeatureInfo(method, request);
-
-            if(query.containsKey(JSONP_CALLBACK_PARAMETER)){ 
-               return new Response("application/javascript", 
-                    new ByteArrayInputStream(
-                       new StringBuilder(request.getParameter(JSONP_CALLBACK_PARAMETER))
-                            .append("(").append(toReturn.toString()).append(");")
-                       .toString().getBytes()
-                    )); 
-            }
-            else { 
-                return new Response("application/json", new ByteArrayInputStream(toReturn.toString().getBytes()));
-            }
+            return Response.getJSONPResponse(request, toReturn);
         }
         else {
             return null;

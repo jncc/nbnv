@@ -20,11 +20,7 @@ public @interface GridMap {
     @interface GridLayer {
         String name();
         String layer();
-        
-        /**
-         * @return An array of the resolutions used in the grid layer
-         */
-        int[] resolutions();
+        int resolution();
     }
     
     @interface Layer {

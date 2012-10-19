@@ -13,61 +13,58 @@
         <@gridMapFilters imageSize=imageSize/>
     </div>
     <div id="nbn-grid-map-container">
-<#--        <@gridMapContents tvk=tvk imageSize=imageSize/>-->
+        <@gridMapContents tvk=tvk imageSize=imageSize/>
     </div>
     <div class="nbn-clear-floating-elements"></div>
 </@template.master>
 
 <#macro gridMapFilters imageSize>
     <form target="" id="nbn-grid-map-form">
-        <table class="nbn-coloured-table">
+        <table class="nbn-coloured-table nbn-grid-map-table">
             <tr>
                 <th colspan=2 class="nbn-th-left nbn-th-right">Controls</th>
             </tr>
             <tr>
-                <td class="nbn-td-left">Region:</td>
-                <td class="nbn-td-right">
-                    <select name="region">
-                        <option value="gbi">GB and Ireland</option>
-                        <option value="gb">Great Britain</option>
-                        <option value="i">Ireland</option>
-                    </select>
-                </td>
-            </tr>
-            </tr>
-                <td class="nbn-td-left">Vice counties:</td>
-                <td class="nbn-td-right">
-                    <select name="vcNum">
-                        <option value="1">Dummy</option>
-                    </select>
-                </td>
-            </tr>
-            <tr>
-                <td class="nbn-td-left">Resolution:</td>
-                <td class="nbn-td-right">
-                    <select name="resolution" id="nbn-grid-map-resolution">
-                        <option value="10km">10km</option>
-                        <option value="2km">2km</option>
-                        <option value="1km">1km</option>
-                        <option value="100m">100m</option>
-                    </select>
-                </td>
-            </tr>
-            <tr>
-                <td class="nbn-td-left nbn-td-contents-top">Date ranges:</td>
-                <td class="nbn-td-right">
-                    <@yearRangeText layerNum="1" hexColour="#ff0000"/>
-                    <@yearRangeText layerNum="2" hexColour="#ff7f00"/>
-                    <@yearRangeText layerNum="3" hexColour="#ffff00"/>
-                </td>
-            </tr>
-            <tr>
-                <td class="nbn-td-left nbn-td-contents-top">Overlays and backdrops:</td>
-                <td class="nbn-td-right">
-                    <input type="checkbox" value="os">Ordnance survey<br/>
-                    <input type="checkbox" value="os">Vice counties<br/>
-                    <input type="checkbox" value="os">100km grid<br/>
-                    <input type="checkbox" value="os">10km grid<br/>
+                <td colspan="2" class="nbn-td-left nbn-td-right">
+                <span class="nbn-form-label">Resolution</span>
+                <span class="nbn-form-field">
+                        <select name="resolution" id="nbn-grid-map-resolution">
+                            <option value="10km">10km</option>
+                            <option value="2km">2km</option>
+                            <option value="1km">1km</option>
+                            <option value="100m">100m</option>
+                        </select>
+                    </span>
+                    <br/><br/>
+                    <fieldset>
+                        <legend>Regions</legend>
+                        <span class="nbn-form-label">Coastlines</span>
+                        <select name="region" id="nbn-region-selector">
+                            <option value="gbi">GB and Ireland</option>
+                            <option value="gb">Great Britain</option>
+                            <option value="i">Ireland</option>
+                        </select>
+                        <br/><br/>
+                        <span class="nbn-form-label">Vice counties</span>
+                        <@viceCountyDropDown/>
+                    </fieldset>
+                    <br/><br/>
+                    <fieldset>
+                        <legend>Date ranges and colours</legend>
+                        <@yearRangeText layerNum="1" hexColour="#ff0000"/> (top)<br/>
+                        <@yearRangeText layerNum="2" hexColour="#ff7f00"/> (middle)<br/>
+                        <@yearRangeText layerNum="3" hexColour="#ffff00"/> (bottom)<br/>
+                        Show outline: <input type='checkbox' name='showOutline'><span class="nbn-form-label">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Outline colour: </span><@colourPicker idSuffix="-outline" hexColour="#999"/>
+
+                    </fieldset>
+                    <br/><br/>
+                    <fieldset>
+                        <legend>Overlays and backgrounds</legend>
+                        <input type="checkbox" value="os">Ordnance survey<br/>
+                        <input type="checkbox" value="os">Vice counties<br/>
+                        <input type="checkbox" value="os">100km grid<br/>
+                        <input type="checkbox" value="os">10km grid<br/>
+                    </fieldset>
                 </td>
             </tr>
             <tr>
@@ -92,12 +89,27 @@
 
 <#macro yearRangeText layerNum hexColour>
     <#assign currentYear=.now?string("yyyy")>
+    Date ${layerNum}: 
     <input type='checkbox' name='gridLayer${layerNum}' value='startYear${layerNum}'>
     from 
     <input type='text' name='startYear${layerNum}' value='1600' class='nbn-year-input'> 
     to 
     <input type='text' name='endYear${layerNum}' value='${currentYear}' class='nbn-year-input'>
-    <div id='nbn-colour-picker${layerNum}' class='nbn-colour-picker'>
+    <@colourPicker idSuffix=layerNum hexColour=hexColour/>
+</#macro>
+
+<#macro colourPicker idSuffix hexColour>
+    <div id='nbn-colour-picker${idSuffix}' class='nbn-colour-picker' title='Change colour'>
         <div style='background-color: ${hexColour}'></div>
-    </div><br/>
+    </div>
+</#macro>
+
+<#macro viceCountyDropDown>
+    <#assign viceCounties=json.readURL("${api}/siteBoundaryDatasets/GA000344/siteBoundaries")>
+    <select name="vcNum" id="nbn-vice-county-selector" class="nbn-report-filter-dropdown">
+        <option value="none">None</option>
+        <#list viceCounties as viceCounty>
+            <option value="${viceCounty.featureID}">${viceCounty.name}</option>
+        </#list>
+    </select>
 </#macro>
