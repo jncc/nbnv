@@ -18,7 +18,8 @@ public class MapServiceMethod {
     private final MapServicePart part;
     
     public enum Type {
-        STANDARD(null), LEGEND("legend"), MAP("map"), ACKNOWLEDGMENT("acknowledgement");
+        STANDARD(null), LEGEND("legend"), MAP("map"), 
+        ACKNOWLEDGMENT("acknowledgement"), RESOLUTIONS("resolutions");
         private String request;
 
         private Type(String request) {

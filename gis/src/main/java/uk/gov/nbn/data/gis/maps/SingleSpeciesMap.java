@@ -72,10 +72,10 @@ public class SingleSpeciesMap {
     @MapService("{taxonVersionKey}")
     @GridMap(
         layers={
-            @GridLayer(name="10km",     layer=TEN_KM_LAYER_NAME,        resolutions=Resolution.TEN_KM),
-            @GridLayer(name="2km",      layer=TWO_KM_LAYER_NAME,        resolutions=Resolution.TWO_KM),
-            @GridLayer(name="1km",      layer=ONE_KM_LAYER_NAME,        resolutions=Resolution.ONE_KM),
-            @GridLayer(name="100m",     layer=ONE_HUNDRED_M_LAYER_NAME, resolutions=Resolution.ONE_HUNDRED_METERS)
+            @GridLayer(name="10km",     layer=TEN_KM_LAYER_NAME,        resolution=Resolution.TEN_KM),
+            @GridLayer(name="2km",      layer=TWO_KM_LAYER_NAME,        resolution=Resolution.TWO_KM),
+            @GridLayer(name="1km",      layer=ONE_KM_LAYER_NAME,        resolution=Resolution.ONE_KM),
+            @GridLayer(name="100m",     layer=ONE_HUNDRED_M_LAYER_NAME, resolution=Resolution.ONE_HUNDRED_METERS)
         },
         defaultLayer="10km",
         backgrounds=@Layer(name="os", layer="OS-Scale-Dependent" ),
@@ -116,10 +116,10 @@ public class SingleSpeciesMap {
     @MapService("{taxonVersionKey}/{symbol}")
     @GridMap(
         layers={
-            @GridLayer(name="10km",     layer=TEN_KM_LAYER_NAME,        resolutions=Resolution.TEN_KM),
-            @GridLayer(name="2km",      layer=TWO_KM_LAYER_NAME,        resolutions=Resolution.TWO_KM),
-            @GridLayer(name="1km",      layer=ONE_KM_LAYER_NAME,        resolutions=Resolution.ONE_KM),
-            @GridLayer(name="100m",     layer=ONE_HUNDRED_M_LAYER_NAME, resolutions=Resolution.ONE_HUNDRED_METERS)
+            @GridLayer(name="10km",     layer=TEN_KM_LAYER_NAME,        resolution=Resolution.TEN_KM),
+            @GridLayer(name="2km",      layer=TWO_KM_LAYER_NAME,        resolution=Resolution.TWO_KM),
+            @GridLayer(name="1km",      layer=ONE_KM_LAYER_NAME,        resolution=Resolution.ONE_KM),
+            @GridLayer(name="100m",     layer=ONE_HUNDRED_M_LAYER_NAME, resolution=Resolution.ONE_HUNDRED_METERS)
         },
         defaultLayer="10km"
     )
