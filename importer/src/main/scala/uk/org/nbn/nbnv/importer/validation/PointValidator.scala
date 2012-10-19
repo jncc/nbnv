@@ -16,10 +16,13 @@ class PointValidator(db: Database) {
 
     //if valid srs
     if (r1.level == ResultLevel.DEBUG) {
-      record.srs match {
-        case Some(4326) => //todo - lat long valiation
+      record.srs.get match {
+        case 4326 => //todo - lat long valiation
         case _ => {
-
+          //validate some easting norhting
+          val v3 = new Nbnv85Validator(db)
+          val r3 = v3.validate(record)
+          resultList.append(r3)
         }
       }
     }
