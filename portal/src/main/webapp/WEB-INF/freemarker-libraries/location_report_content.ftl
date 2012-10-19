@@ -6,7 +6,7 @@
             <table class="nbn-coloured-table">
                 <tr><th class="nbn-th-left nbn-th-right">Species groups (number of species)</th></tr>
                 <#list taxonOutputGroupsWithQueryStats as taxonOutputGroupWithQueryStats>
-                    <tr><td class="nbn-td-left nbn-td-right"><a href="/Reports/${getReportTypeTextForURL(is10kmReport)}/${locationID}/Groups/${taxonOutputGroupWithQueryStats.taxonGroupKey}/Species${report_utils.getQueryParameterText(requestParameters)}">${taxonOutputGroupWithQueryStats.taxonOutputGroup.taxonGroupName}</a>(${taxonOutputGroupWithQueryStats.querySpecificSpeciesCount})</td></tr>
+                    <tr><td class="nbn-td-left nbn-td-right"><a href="/Reports/${getReportTypeTextForURL(is10kmReport)}/${locationID}/Groups/${taxonOutputGroupWithQueryStats.taxonOutputGroupKey}/Species${report_utils.getQueryParameterText(requestParameters)}">${taxonOutputGroupWithQueryStats.taxonOutputGroup.name}</a>(${taxonOutputGroupWithQueryStats.querySpecificSpeciesCount})</td></tr>
                 </#list>
             </table>
         </div>
