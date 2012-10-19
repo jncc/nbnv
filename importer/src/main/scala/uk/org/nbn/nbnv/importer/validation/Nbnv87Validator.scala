@@ -18,16 +18,16 @@ class Nbnv87Validator {
 
     if (result == true) {
       new Result {
-        def level: ResultLevel.ResultLevel = ResultLevel.DEBUG
-        def reference: String = record.key
-        def message: String = "Validated: The easting and northing are valid for the specified SRS"
+        def level = ResultLevel.DEBUG
+        def reference = record.key
+        def message = "Validated: The easting and northing are valid for the specified SRS"
       }
     }
     else {
       new Result {
-        def level: ResultLevel.ResultLevel = ResultLevel.ERROR
-        def reference: String = record.key
-        def message: String = error.getOrElse("The easting and northing are invalid for the supplied srs")
+        def level = ResultLevel.ERROR
+        def reference = record.key
+        def message = error.getOrElse("The easting and northing are invalid for the supplied srs")
       }
     }
   }
