@@ -84,7 +84,8 @@ INSERT INTO OrganisationMembershipData (
 INSERT INTO OrganisationData (
     id, name
 ) VALUES (
-    2, 'testdataorg'
+    (1, 'TestOrg 1'),
+    (2, 'TestOrg 2')
 );
 
 --Create a test dataset as 'DATASET1'

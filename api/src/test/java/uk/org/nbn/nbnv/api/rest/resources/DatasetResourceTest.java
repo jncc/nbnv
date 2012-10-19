@@ -122,35 +122,33 @@ public class DatasetResourceTest {
         }
     }
 
-    @Ignore
+    @Test
     public void testGetDatasetByID() {
-        GenericType<List<Dataset>> gt = new GenericType<List<Dataset>>() { };
-        List<Dataset> dc = resource
+        GenericType<Dataset> gt = new GenericType<Dataset>() { };
+        Dataset dc = resource
             .path("datasets")
             .path("DATASET3")
             .accept(MediaType.APPLICATION_JSON)
             .get(gt);
         
-        assertEquals(dc.size(), 1);
-        
         try {
-            assertEquals(dc.get(0).getKey(), "DATASET3");
-            assertEquals(dc.get(0).getTitle(), "Test Dataset 3");
-            assertEquals(dc.get(0).getDescription(), null);
-            assertEquals(dc.get(0).getTypeName(), "Taxon");
-            assertEquals(dc.get(0).getOrganisationName(), null);
-            assertEquals(dc.get(0).getOrganisationID(), 2);
-            assertEquals(dc.get(0).getCaptureMethod(), null);
-            assertEquals(dc.get(0).getPurpose(), null);
-            assertEquals(dc.get(0).getGeographicalCoverage(), null);
-            assertEquals(dc.get(0).getQuality(), null);
-            assertEquals(dc.get(0).getAdditionalInformation(), null);
-            assertEquals(dc.get(0).getAccessConstraints(), null);
-            assertEquals(dc.get(0).getUseConstraints(), null);
-            assertEquals(dc.get(0).getDateUploaded(), new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").parse("2012-03-01 10:00:00"));
-            assertEquals(dc.get(0).getMetadataLastEdited(), new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").parse("2012-03-01 11:11:31"));
-            assertEquals(dc.get(0).getTemporalCoverage(), null);
-            assertEquals(dc.get(0).getUpdateFrequency(), "unknown");
+            assertEquals(dc.getKey(), "DATASET3");
+            assertEquals(dc.getTitle(), "Test Dataset 3");
+            assertEquals(dc.getDescription(), null);
+            assertEquals(dc.getTypeName(), "Taxon");
+            assertEquals(dc.getOrganisationName(), "TestOrg 2");
+            assertEquals(dc.getOrganisationID(), 2);
+            assertEquals(dc.getCaptureMethod(), null);
+            assertEquals(dc.getPurpose(), null);
+            assertEquals(dc.getGeographicalCoverage(), null);
+            assertEquals(dc.getQuality(), null);
+            assertEquals(dc.getAdditionalInformation(), null);
+            assertEquals(dc.getAccessConstraints(), null);
+            assertEquals(dc.getUseConstraints(), null);
+            assertEquals(dc.getDateUploaded(), new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").parse("2012-03-01 10:00:00"));
+            assertEquals(dc.getMetadataLastEdited(), new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").parse("2012-03-01 11:11:31"));
+            assertEquals(dc.getTemporalCoverage(), null);
+            assertEquals(dc.getUpdateFrequency(), "unknown");
         } catch (ParseException ex) {
             fail("Got a ParseException, something is broken with this test");
         } 
