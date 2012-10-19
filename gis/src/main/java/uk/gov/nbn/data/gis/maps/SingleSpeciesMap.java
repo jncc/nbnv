@@ -55,7 +55,7 @@ public class SingleSpeciesMap {
     }
     
     private static final String QUERY = "geom from ("
-            + "SELECT f.geom, o.observationID, f.label, o.startDate, o.endDate, o.absence "
+            + "SELECT f.geom, o.featureID, f.label, o.startDate, o.endDate, o.absence "
             + "FROM [dbo].[UserTaxonObservationData] o "
             + "INNER JOIN [dbo].[GridTree] gt ON gt.featureID = o.featureID "
             + "INNER JOIN [dbo].[FeatureData] f ON f.id = gt.parentFeatureID "
@@ -65,7 +65,7 @@ public class SingleSpeciesMap {
             + "%s " //place for dataset filter
             + "%s " //place for start year filter
             + "%s " //place for end year filter
-        + ") AS foo USING UNIQUE observationID USING SRID=4326";
+        + ") AS foo USING UNIQUE featureID USING SRID=4326";
     @Autowired Properties properties;
     
     @MapService("{taxonVersionKey}")
@@ -74,7 +74,7 @@ public class SingleSpeciesMap {
             @GridLayer(name="10km",     layer=TEN_KM_LAYER_NAME,        resolutions=Resolution.TEN_KM),
             @GridLayer(name="2km",      layer=TWO_KM_LAYER_NAME,        resolutions=Resolution.TWO_KM),
             @GridLayer(name="1km",      layer=ONE_KM_LAYER_NAME,        resolutions=Resolution.ONE_KM),
-            @GridLayer(name="100m",     layer=ONE_HUNDRED_M_LAYER_NAME, resolutions=Resolution.ONE_HUNDRED_METERS),
+            @GridLayer(name="100m",     layer=ONE_HUNDRED_M_LAYER_NAME, resolutions=Resolution.ONE_HUNDRED_METERS)
         },
         defaultLayer="10km",
         backgrounds=@Layer(name="os", layer="OS-Scale-Dependent" ),
@@ -110,5 +110,48 @@ public class SingleSpeciesMap {
                 }
         });
         return new MapFileModel("SingleSpecies.map",data);
+    }
+    
+    @MapService("symbology/{taxonVersionKey}")
+    @GridMap(
+        layers={
+            @GridLayer(name="10km",     layer=TEN_KM_LAYER_NAME,        resolutions=Resolution.TEN_KM),
+            @GridLayer(name="2km",      layer=TWO_KM_LAYER_NAME,        resolutions=Resolution.TWO_KM),
+            @GridLayer(name="1km",      layer=ONE_KM_LAYER_NAME,        resolutions=Resolution.ONE_KM),
+            @GridLayer(name="100m",     layer=ONE_HUNDRED_M_LAYER_NAME, resolutions=Resolution.ONE_HUNDRED_METERS)
+        },
+        defaultLayer="10km",
+        backgrounds=@Layer(name="os", layer="OS-Scale-Dependent" )
+    )
+    public MapFileModel getSingleSpeciesSymbologyModel(
+            final User user,
+            @ServiceURL String mapServiceURL,
+            @PathParam(key="taxonVersionKey", validation="^[A-Z]{6}[0-9]{10}$") final String key,
+            @QueryParam(key="datasets", validation="^[A-Z0-9]{8}$") final List<String> datasetKeys,
+            @QueryParam(key="startyear", validation="[0-9]{4}") final String startYear,
+            @QueryParam(key="endyear", validation="[0-9]{4}") final String endYear,
+            @QueryParam(key="fillcolour", validation="[0-9a-fA-F]{6}") @DefaultValue("000000") String fillColour,
+            @QueryParam(key="outlinecolour", validation="[0-9a-fA-F]{6}") @DefaultValue("000000") String outlineColour,
+            @QueryParam(key="imagesize") Integer gridPixels
+            ) {
+        HashMap<String, Object> data = new HashMap<String, Object>();
+        int fillSize = (gridPixels > 4) ? gridPixels -2 : gridPixels;
+        data.put("fillsize", fillSize);
+        data.put("showOutline", gridPixels != fillSize);
+        data.put("layers", LAYERS);
+        data.put("fillColour", new Color(Integer.parseInt(fillColour, 16)));
+        data.put("outlineColour", new Color(Integer.parseInt(outlineColour, 16)));
+        data.put("mapServiceURL", mapServiceURL);
+        data.put("properties", properties);
+        data.put("layerGenerator", new ResolutionDataGenerator() {
+                @Override
+                public String getData(int resolution) {
+                    return String.format(QUERY, key, user.getId(), resolution, 
+                        MapHelper.createInDatasetsSegment(datasetKeys),
+                        MapHelper.createStartYearSegment(startYear),
+                        MapHelper.createEndYearSegment(endYear));
+                }
+        });
+        return new MapFileModel("SingleSpeciesSymbology.map",data);
     }
 }
