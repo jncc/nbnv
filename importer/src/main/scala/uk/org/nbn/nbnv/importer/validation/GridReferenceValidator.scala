@@ -22,6 +22,7 @@ class GridReferenceValidator (db: Database) {
       val r2 = v2.validate(record.gridReference.get, record.gridReferenceType, record.key)
       resultList.append(r2)
 
+      //Is the requested precision valid for the grid ref.
       val factory = new GridSquareInfoFactory(db)
       val v3 = new Nbnv90Validator(factory)
       val v3results = v3.validate(record)
