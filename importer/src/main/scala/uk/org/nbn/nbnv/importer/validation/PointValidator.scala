@@ -16,21 +16,15 @@ class PointValidator(db: Database) {
 
     //if WGS84 Lat Long
     if (r1.level == ResultLevel.DEBUG && record.srs.get == 4326) {
+      val latLongValidator = new LatLongValidator(db)
+      val results = latLongValidator.validate(record)
+      resultList.appendAll(results)
     }
     //else one of the supported grid ref systems
     else if (r1.level == ResultLevel.DEBUG) {
-      //test easting and northing are numeric.
-      val v3 = new Nbnv85Validator
-      val r3 = v3.validate(record)
-      resultList.append(r3)
-
-      if (r3.level == ResultLevel.DEBUG) {
-        //test easting and northing are valid for the specified srs
-        val v4 = new Nbnv87Validator
-        val r4 = v4.validate(record)
-        resultList.append(r4)
-      }
-
+      val enValidator = new EastingNorthingValidator
+      val results = enValidator.validate(record)
+      resultList.appendAll(results)
     }
 
     resultList.toList
