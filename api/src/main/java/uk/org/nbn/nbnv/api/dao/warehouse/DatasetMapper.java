@@ -18,14 +18,14 @@ public interface DatasetMapper {
     @Select("SELECT * FROM DatasetData WHERE typeName = 'Taxon' ORDER BY title")
     List<TaxonDataset> selectAllTaxonDatasets();
     
-    @Select("SELECT * FROM DatasetData WHERE DatasetData.key = #{key}")
+    @Select("SELECT * FROM DatasetData WHERE DatasetData.[key] = #{key}")
     @Results(value = {
         @Result(property="organisation", column="organisationID", javaType=Organisation.class, one=@One(select="uk.org.nbn.nbnv.api.dao.warehouse.OrganisationMapper.selectByID")),
         @Result(property="organisationID", column="organisationID")
     })
     Dataset selectByDatasetKey(String key);
     
-    @Select("SELECT * FROM DatasetData WHERE DatasetData.key = #{key}")
+    @Select("SELECT * FROM DatasetData WHERE DatasetData.[key] = #{key}")
     Dataset selectByIDProviderNotInstantiated(String key);
     
     @Select("SELECT * FROM DatasetData WHERE organisationID = #{organisaionID} ORDER BY title")

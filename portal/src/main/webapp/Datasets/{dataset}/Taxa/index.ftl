@@ -12,7 +12,7 @@
     <tbody>
         <#list taxa as taxon>
             <tr>
-                <td><a class="nbn-datatable-anchor" href="#">${taxon_utils.getShortName(taxon)}</a></td>
+                <td><a class="nbn-datatable-anchor" href="/Reports/Single_Species/${taxon.taxonVersionKey}/Grid_Map">${taxon_utils.getShortName(taxon)}</a></td>
                 <td>${taxon.taxonVersionKey}</td>
                 <td>${taxon.taxonOutputGroupName}</td>
                 <td>${taxon.observationCount}</td>

@@ -157,12 +157,12 @@ class Repository (log: Logger, em: EntityManager, cache: QueryCache) extends Con
       .getSingleOrNone
   }
 
-  def getTaxonObservationPublic(observationId: Int) = {
+  def getTaxonObservationPublic(id: Int) = {
 
-    val q = "select o from TaxonObservationPublic o where o.taxonObservationID = :observationId "
+    val q = "select o from TaxonObservationPublic o where o.taxonObservationID = :id "
 
     em.createQuery(q, classOf[TaxonObservationPublic])
-      .setParameter("observationId", observationId)
+      .setParameter("id", id)
       .getSingleOrNone
   }
 

@@ -8,11 +8,13 @@ import org.apache.log4j.Logger
 import com.google.inject.{Inject, Guice}
 import utility.Stopwatch
 import validation.Validator
+import javax.validation.ConstraintViolationException
+import scala.collection.JavaConversions._
 
 object Importer {
 
   /// The entry point to the console application.
-  def main(args: Array[String]) : Unit = {
+  def main(args: Array[String]) {
 
     Options.parse(args.toList) match {
       case OptionsSuccess(options) => {
@@ -74,9 +76,16 @@ class Importer @Inject()(options:        Options,
   private def withTopLevelExceptionHandling(f: => Unit) {
     try { f }
     catch {
-      case ie: ImportFailedException => {
-        log.error("Import run failed", ie)
-        throw ie
+      case e: ImportFailedException => {
+        log.error("Import run failed", e)
+        throw e
+      }
+      case e: ConstraintViolationException => {
+        log.fatal("Unhandled exception!", e)
+        for (v <- e.getConstraintViolations) {
+          log.info(v.getPropertyPath + v.getMessage)
+        }
+        throw e
       }
       case e: Throwable => {
         log.fatal("Unhandled exception!", e)

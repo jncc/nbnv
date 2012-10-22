@@ -1,7 +1,7 @@
 package uk.gov.nbn.data.gis.maps;
 
+import com.sun.jersey.api.client.WebResource;
 import java.awt.Color;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.nbn.data.gis.maps.MapHelper.ResolutionDataGenerator;
 import uk.gov.nbn.data.gis.maps.colour.Band;
-import uk.gov.nbn.data.gis.processor.Acknowledgement;
 import uk.gov.nbn.data.gis.processor.MapFileModel;
 import uk.gov.nbn.data.gis.processor.MapService;
 import uk.gov.nbn.data.gis.processor.MapContainer;
@@ -22,7 +21,6 @@ import uk.gov.nbn.data.gis.providers.annotations.DefaultValue;
 import uk.gov.nbn.data.gis.providers.annotations.PathParam;
 import uk.gov.nbn.data.gis.providers.annotations.QueryParam;
 import uk.gov.nbn.data.gis.providers.annotations.ServiceURL;
-import uk.org.nbn.nbnv.api.model.ProviderWithQueryStats;
 import uk.org.nbn.nbnv.api.model.User;
 
 /**
@@ -38,7 +36,6 @@ import uk.org.nbn.nbnv.api.model.User;
 @Component
 @MapContainer("SingleSpecies")
 public class SingleSpeciesMap {
-    private static final int SYMBOLOGY_OUTLINE_WIDTH_DENOMINATOR = 10;
     private static final String TEN_KM_LAYER_NAME = "Grid-10km";
     private static final String TWO_KM_LAYER_NAME = "Grid-2km";
     private static final String ONE_KM_LAYER_NAME = "Grid-1km";
@@ -46,6 +43,8 @@ public class SingleSpeciesMap {
     
     private static final Map<String,Color> COLOURS;
     private static final String[] LAYERS;
+    
+    @Autowired WebResource resource;
     
     static {
         COLOURS = new HashMap<String, Color>();
@@ -102,70 +101,25 @@ public class SingleSpeciesMap {
         data.put("mapServiceURL", mapServiceURL);
         data.put("featureID", featureID);
         data.put("properties", properties);
-        data.put("layerGenerator", new ResolutionDataGenerator() {
-                @Override
-                public String getData(int resolution) {
-                    return String.format(QUERY, key, user.getId(), resolution, 
-                        MapHelper.createInDatasetsSegment(datasetKeys),
-                        MapHelper.createStartYearSegment(startYear),
-                        MapHelper.createEndYearSegment(endYear));
-                }
-        });
+        data.put("layerGenerator", getSingleSpeciesResolutionDataGenerator(key, user, datasetKeys, startYear, endYear));
         return new MapFileModel("SingleSpecies.map",data);
     }
     
-    @MapService("{taxonVersionKey}/atlas/{symbol}")
-    @GridMap(
-        layers={
-            @GridLayer(name="10km",     layer=TEN_KM_LAYER_NAME,        resolution=Resolution.TEN_KM),
-            @GridLayer(name="2km",      layer=TWO_KM_LAYER_NAME,        resolution=Resolution.TWO_KM),
-            @GridLayer(name="1km",      layer=ONE_KM_LAYER_NAME,        resolution=Resolution.ONE_KM),
-            @GridLayer(name="100m",     layer=ONE_HUNDRED_M_LAYER_NAME, resolution=Resolution.ONE_HUNDRED_METERS)
-        },
-        defaultLayer="10km"
-    )    
-    @Acknowledgement(method="getDatasetProviders")
-    public MapFileModel getSingleSpeciesSymbologyModel(
-            final User user,
-            GridMap gridMapDefinition,
-            @ServiceURL String mapServiceURL,
-            @PathParam(key="taxonVersionKey", validation="^[A-Z]{6}[0-9]{10}$") final String key,
-            @PathParam(key="symbol", validation="(circle)") String symbol,
-            @QueryParam(key="datasets", validation="^[A-Z0-9]{8}$") final List<String> datasetKeys,
-            @QueryParam(key="startyear", validation="[0-9]{4}") final String startYear,
-            @QueryParam(key="endyear", validation="[0-9]{4}") final String endYear,
-            @QueryParam(key="fillcolour", validation="[0-9a-fA-F]{6}") @DefaultValue("000000") String fillColour,
-            @QueryParam(key="outlinecolour", validation="[0-9a-fA-F]{6}") @DefaultValue("000000") String outlineColour,
-            @QueryParam(key="REQUEST") String request
-            ) {
-        HashMap<String, Object> data = new HashMap<String, Object>();
-        
-        /* Below is a HACK to get around when mapserver renders legends with
-         * none pixel size units. These will extends outside of the legend 
-         * @see https://github.com/mapserver/mapserver/issues/1147
-         */
-        data.put("legendSymbolHack", "GetLegendGraphic".equals(request));
-        
-        data.put("symbol", symbol);
-        data.put("layers", gridMapDefinition.layers());
-        data.put("fillColour", new Color(Integer.parseInt(fillColour, 16)));
-        data.put("outlineColour", new Color(Integer.parseInt(outlineColour, 16)));
-        data.put("outlineWidthDenominator", SYMBOLOGY_OUTLINE_WIDTH_DENOMINATOR);
-        data.put("mapServiceURL", mapServiceURL);
-        data.put("properties", properties);
-        data.put("layerGenerator", new ResolutionDataGenerator() {
+    //Factored out the single species resolution data generator so that it can be used by the atlas map
+    static ResolutionDataGenerator getSingleSpeciesResolutionDataGenerator(
+            final String taxonKey, 
+            final User user, 
+            final List<String> datasetKeys, 
+            final String startYear, 
+            final String endYear) {
+        return new ResolutionDataGenerator() {
                 @Override
                 public String getData(int resolution) {
-                    return String.format(QUERY, key, user.getId(), resolution, 
+                    return String.format(QUERY, taxonKey, user.getId(), resolution, 
                         MapHelper.createInDatasetsSegment(datasetKeys),
                         MapHelper.createStartYearSegment(startYear),
                         MapHelper.createEndYearSegment(endYear));
                 }
-        });
-        return new MapFileModel("SingleSpeciesSymbology.map",data);
-    }
-    
-    public List<ProviderWithQueryStats> getDatasetProviders() {
-        return new ArrayList<ProviderWithQueryStats>();
+        };
     }
 }
