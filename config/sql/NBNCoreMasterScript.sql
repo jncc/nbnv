@@ -1447,10 +1447,10 @@ CREATE PROCEDURE [dbo].[import_SiteBoundaryData]
 	, @nameColumn VARCHAR(255)
 	, @category INT
 	, @srid INT
+	, @loadDate DATETIME2
 AS
 BEGIN
 	DECLARE @projection INT
-	DECLARE @loadDate DATETIME2
 
 	SET @projection = (SELECT p.id FROM [NBNCore].[dbo].[Projection] p WHERE p.srcSRID = @srid)
 
