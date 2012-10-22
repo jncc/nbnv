@@ -6,7 +6,7 @@ import uk.org.nbn.nbnv.importer.records.NbnRecord
 import java.text.SimpleDateFormat
 import uk.org.nbn.nbnv.importer.fidelity.{ResultLevel, Result}
 
-class Nbnv72ValidationSuite extends BaseFunSuite {
+class Nbnv72ValidatorSuite extends BaseFunSuite {
   val validator = new Nbnv72Validator
   val record = mock[NbnRecord]
 

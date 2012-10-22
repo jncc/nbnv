@@ -11,7 +11,7 @@ import uk.org.nbn.nbnv.importer.fidelity.ResultLevel
  * Created By: Matt Debont
  * Date: 17/10/12
  */
-class Nbnv75ValidationSuite extends BaseFunSuite with BeforeAndAfter {
+class Nbnv75ValidatorSuite extends BaseFunSuite with BeforeAndAfter {
   val validator = new Nbnv75Validator
   var record: NbnRecord = _
 

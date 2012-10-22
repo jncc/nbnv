@@ -5,7 +5,7 @@ import uk.org.nbn.nbnv.importer.records.NbnRecord
 import org.mockito.Mockito._
 import uk.org.nbn.nbnv.importer.fidelity.ResultLevel
 
-class Nbnv57ValidationSuite extends BaseFunSuite  {
+class Nbnv57ValidatorSuite extends BaseFunSuite  {
   test("Nbnv57 should validate if the dwc eventDate field is specified") {
     val record = mock[NbnRecord]
     when(record.eventDateRaw).thenReturn("01/01/2012")

@@ -19,7 +19,7 @@ class PointValidator {
     if (resultList.find(r => r.level == ResultLevel.ERROR) == None) {
       //if WGS84 Lat Long
       if (record.srs.get == 4326) {
-        //check the lat long are numeric values
+        //check the lat long are valid numeric values
         val v2 = new Nbnv84Validator
         val r2 = v2.validate(record)
         resultList.append(r2)

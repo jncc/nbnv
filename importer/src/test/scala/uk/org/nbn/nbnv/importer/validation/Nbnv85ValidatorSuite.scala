@@ -5,7 +5,7 @@ import uk.org.nbn.nbnv.importer.records.NbnRecord
 import org.mockito.Mockito._
 import uk.org.nbn.nbnv.importer.fidelity.ResultLevel
 
-class Nbnv85ValidatiorSuite extends BaseFunSuite {
+class Nbnv85ValidatorSuite extends BaseFunSuite {
 
   test("should validate an integer easting and norhting"){
     val rec = mock[NbnRecord]

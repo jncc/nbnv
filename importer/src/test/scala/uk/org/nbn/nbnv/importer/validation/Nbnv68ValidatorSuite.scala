@@ -4,7 +4,7 @@ import uk.org.nbn.nbnv.importer.testing.BaseFunSuite
 import java.text.SimpleDateFormat
 import uk.org.nbn.nbnv.importer.ImportFailedException
 
-class Nbnv68ValidationSuite extends BaseFunSuite {
+class Nbnv68ValidatorSuite extends BaseFunSuite {
   val validator = new Nbnv68Validator()
 
   test("Should validate a correct date string") {
