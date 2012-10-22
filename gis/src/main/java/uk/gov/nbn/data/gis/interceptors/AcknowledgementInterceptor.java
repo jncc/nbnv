@@ -23,6 +23,7 @@ import uk.gov.nbn.data.gis.processor.ProviderException;
 import uk.gov.nbn.data.gis.processor.ProviderFactory;
 import uk.gov.nbn.data.gis.processor.Response;
 import uk.gov.nbn.data.gis.providers.annotations.QueryParam;
+import uk.gov.nbn.data.gis.providers.annotations.ServiceURL;
 
 /**
  * The following interceptor will create an acknowledgement html page
@@ -44,6 +45,7 @@ public class AcknowledgementInterceptor {
     
     @Intercepts(MapServiceMethod.Type.ACKNOWLEDGMENT)
     public Response processRequestParameters(   HttpServletRequest request, 
+                                                @ServiceURL String url,
                                                 MapServiceMethod method,
                                                 @QueryParam(key="css") String css) 
             throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, ProviderException, TemplateException, IOException {
@@ -54,6 +56,7 @@ public class AcknowledgementInterceptor {
        
         Map<String, Object> data = new HashMap<String, Object>();
         data.put("externalCss", css);
+        data.put("url", url);
         data.put("properties", properties);
         data.put("providers", providerFactory.provideForMethodAndExecute(
                                             instance, ackMethod, method, request));

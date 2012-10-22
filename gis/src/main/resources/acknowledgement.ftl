@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Acknowledgment for GridMap</title>
+        <title>Acknowledgment for ${url}</title>
         <#if externalCss??>
             <link href="${externalCss}" rel="stylesheet" type="text/css">
         <#else>
