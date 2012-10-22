@@ -12,7 +12,7 @@ class Nbnv84Validator {
         def reference = "Record " + record.key
       }
     }
-    else if ((record.northRaw.get matches """^\-*\d{1,3}(\.\d+)*$""") == false) {
+    else if ((record.northRaw.get matches """^\-*\d{1,2}(\.\d+)*$""") == false) {
       new Result {
         def level = ResultLevel.ERROR
         def message = "The value of north is not a valid numeric latitude: %s".format(record.northRaw.get)
