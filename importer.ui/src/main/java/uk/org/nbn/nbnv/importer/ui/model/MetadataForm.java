@@ -17,15 +17,14 @@ import uk.org.nbn.nbnv.jpa.nbncore.Organisation;
  * @author Paul Gilbertson
  */
 public class MetadataForm implements Serializable {
-    private Metadata metadata;
-    private boolean storedOrg;
-    private List<String> errors;
+    private Metadata metadata = new Metadata();;
+    private boolean storedOrg = false;
+    private List<String> errors = new ArrayList<String>();
     private List<Organisation> organisationList;
+    private boolean orgError = false;
     
     public MetadataForm() {
-        this.metadata = new Metadata();
-        this.storedOrg = false;
-        this.errors = new ArrayList<String>();
+        
     }
 
     /**
@@ -63,7 +62,7 @@ public class MetadataForm implements Serializable {
     /**
      * @return the processed
      */
-    public boolean hasStoredOrg() {
+    public boolean getStoredOrg() {
         return storedOrg;
     }
 
@@ -91,7 +90,21 @@ public class MetadataForm implements Serializable {
     public void updateOrganisationList() {
         EntityManager em = DatabaseConnection.getInstance().createEntityManager();
         
-        Query q = em.createNamedQuery("Organisation.findAll");
+        Query q = em.createNamedQuery("Organisation.findAllNameSort");
         setOrganisationList(q.getResultList());
+    }
+    
+    public boolean getOrgError() {
+        return orgError;
+    }
+
+    public void setOrgError(boolean orgError) {
+        this.orgError = orgError;
+    }
+    
+    public void resetForm() {
+        this.storedOrg = false;
+        this.errors = new ArrayList<String>();
+        this.orgError = false;
     }
 }

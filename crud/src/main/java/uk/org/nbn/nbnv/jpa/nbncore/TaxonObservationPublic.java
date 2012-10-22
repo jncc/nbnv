@@ -82,19 +82,21 @@ public class TaxonObservationPublic implements Serializable {
         this.site = site;
     }
 
-    public Recorder getRecorder() {
+    // manually renamed Determiner and Recorder properties
+
+    public Recorder getDeterminer() {
         return recorder;
     }
 
-    public void setRecorder(Recorder recorder) {
+    public void setDeterminer(Recorder recorder) {
         this.recorder = recorder;
     }
 
-    public Recorder getRecorder1() {
+    public Recorder getRecorder() {
         return recorder1;
     }
 
-    public void setRecorder1(Recorder recorder1) {
+    public void setRecorder(Recorder recorder1) {
         this.recorder1 = recorder1;
     }
 

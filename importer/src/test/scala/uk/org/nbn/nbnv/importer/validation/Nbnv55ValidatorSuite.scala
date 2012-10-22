@@ -5,7 +5,7 @@ import uk.org.nbn.nbnv.importer.records.NbnRecord
 import org.mockito.Mockito._
 import uk.org.nbn.nbnv.importer.fidelity.ResultLevel
 
-class Nbnv55ValidationSuite extends BaseFunSuite {
+class Nbnv55ValidatorSuite extends BaseFunSuite {
   test("Nbnv55 should not validate if recordkey is null") {
     val record = mock[NbnRecord]
     when(record.key).thenReturn(null)

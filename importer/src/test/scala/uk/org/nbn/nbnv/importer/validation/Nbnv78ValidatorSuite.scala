@@ -5,7 +5,7 @@ import uk.org.nbn.nbnv.importer.records.NbnRecord
 import org.mockito.Mockito._
 import uk.org.nbn.nbnv.importer.fidelity.{ResultLevel, Result}
 
-class Nbnv78ValidationSuite extends BaseFunSuite {
+class Nbnv78ValidatorSuite extends BaseFunSuite {
   val validator = new Nbnv78Validator
   val record = mock[NbnRecord]
 

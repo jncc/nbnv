@@ -6,7 +6,7 @@
         <script type="text/javascript" src="/importer/jquery.js"></script>
     </head>
     <body>
-        <form method="post" enctype="multipart/form-data">
+        <form method="post" enctype="multipart/form-data" action="metadata.html">
             <fieldset>
                 <legend>Upload Metadata Form</legend>
                 <p>
@@ -39,12 +39,21 @@
                     <span class="formlabel"><label for="organisationID" path="metadata">Organisation</label></span>
                     <span class="formfield">
                         <select path="metadata" name="organisationID" id="organisationID">
+                            <option value="-404" <#if metadataForm.metadata.organisationID==-1>selected="selected"</#if>></option>
                             <#list metadataForm.organisationList as org>
                                 <option value="${org.id}" <#if metadataForm.metadata.organisationID==org.id>selected="selected"</#if>>${org.name}</option>
                             </#list>
                         </select>
                     </span>
-                    <input type="submit" name="addOrganisation" value="Add Organisation" />
+                    <#if metadataForm.orgError == true>
+                        <span class="error">Please select an organisation</span>
+                    </#if>
+                    
+                    <#if metadataForm.storedOrg == true>
+                        <input type="submit" name="importOrganisation" value="Import Organisation" />
+                    <#else>
+                        <input type="submit" name="addOrganisation" value="Add Organisation" />
+                    </#if>
                 </p>
                 <p>
                     <span class="formlabel"><label for="description" path="metadata">Description</label></span>
@@ -121,7 +130,7 @@
                 <fieldset>
                     <legend>Level of Public Access</legend>
                     <br />
-                    <span class="formlabel">Maximum Public Geographic Resolution</span>
+                    <span class="formlabel">Geographic Resolution</span>
                     <span class="formfield">
                         <@spring.formRadioButtons 'metadataForm.metadata.geographicalRes', referenceData.geoMap, ' ' />
                         <@spring.showErrors "" "error" />
@@ -131,7 +140,7 @@
                         <@spring.formRadioButtons 'metadataForm.metadata.recordAtts', referenceData.recAtts, ' ' />
                         <@spring.showErrors "" "error" />
                     </span> <br /> <br />
-                    <span class="formlabel">Can user see Recorder Names?</span>
+                    <span class="formlabel">Recorder Names</span>
                     <span class="formfield">
                         <@spring.formRadioButtons 'metadataForm.metadata.recorderNames', referenceData.recNames, ' ' />
                         <@spring.showErrors "" "error" />

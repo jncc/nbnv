@@ -11,7 +11,7 @@ import org.scalatest.BeforeAndAfter
  * Created By: Matt Debont
  * Date: 17/10/12
  */
-class Nbnv73ValidationSuite extends BaseFunSuite with BeforeAndAfter {
+class Nbnv73ValidatorSuite extends BaseFunSuite with BeforeAndAfter {
   val validator = new Nbnv73Validator
   var record: NbnRecord = _
 

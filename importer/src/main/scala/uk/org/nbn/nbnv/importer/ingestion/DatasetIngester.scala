@@ -68,9 +68,9 @@ class DatasetIngester @Inject()(log: Logger,
     // certain fields are metadata, and we have to record when any changes
     var metadataChanged = false
 
-    def setMetadata[T](value: T, get: () => Any, set: T => Unit) {
-      metadataChanged = get != value
-      set(value)
+    def setMetadata[T](value: T, getter: () => Any, setter: T => Unit) {
+      metadataChanged = getter != value
+      setter(value)
     }
 
     setMetadata(m.dataCaptureMethod, d.getDataCaptureMethod, d.setDataCaptureMethod)
