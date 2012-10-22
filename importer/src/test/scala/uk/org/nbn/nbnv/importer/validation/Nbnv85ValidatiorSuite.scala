@@ -29,26 +29,15 @@ class Nbnv85ValidatiorSuite extends BaseFunSuite {
     r.level should be (ResultLevel.DEBUG)
   }
 
-  test("should validate a negative logitude"){
+  test("should not validate negative values"){
     val rec = mock[NbnRecord]
-    when(rec.eastRaw).thenReturn(Some("-0.123"))
-    when(rec.northRaw).thenReturn(Some("47.23"))
-
-    val v = new Nbnv85Validator
-    val r = v.validate(rec)
-
-    r.level should be (ResultLevel.DEBUG)
-  }
-
-  test("should validate a negative latitude"){
-    val rec = mock[NbnRecord]
-    when(rec.eastRaw).thenReturn(Some("1.123"))
+    when(rec.eastRaw).thenReturn(Some("-1.123"))
     when(rec.northRaw).thenReturn(Some("-47.23"))
 
     val v = new Nbnv85Validator
     val r = v.validate(rec)
 
-    r.level should be (ResultLevel.DEBUG)
+    r.level should be (ResultLevel.ERROR)
   }
 
 

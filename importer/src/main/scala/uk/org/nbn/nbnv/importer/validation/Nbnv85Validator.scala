@@ -9,17 +9,17 @@ import uk.org.nbn.nbnv.importer.fidelity.{ResultLevel, Result}
 class Nbnv85Validator() {
   def validate(record: NbnRecord) = {
 
-    if ((record.eastRaw.get matches """^\-*\d+(.\d+)*$""") == false) {
+    if ((record.eastRaw.get matches """^\d+(\.\d+)*$""") == false) {
       new Result {
         def level = ResultLevel.ERROR
-        def message = "The value of east is not numeric: %s".format(record.eastRaw.get)
+        def message = "The value of east is not a numeric easting: %s".format(record.eastRaw.get)
         def reference = "Record " + record.key
       }
     }
-    else if ((record.northRaw.get matches """^\-*\d+(.\d+)*$""") == false) {
+    else if ((record.northRaw.get matches """^\d+(\.\d+)*$""") == false) {
       new Result {
         def level = ResultLevel.ERROR
-        def message = "The value of north is not numeric: %s".format(record.northRaw.get)
+        def message = "The value of north is not a numeric northing: %s".format(record.northRaw.get)
         def reference = "Record " + record.key
       }
     }
