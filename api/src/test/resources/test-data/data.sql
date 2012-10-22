@@ -82,7 +82,7 @@ INSERT INTO OrganisationData (
 
 --Create a test dataset as 'DATASET1'
 INSERT INTO DatasetData (
-	key, title, description, typeName, organisationName, organisationID, captureMethod, 
+	"key", title, description, typeName, organisationName, organisationID, captureMethod, 
         purpose, geographicalCoverage, quality, additionalInformation, accessConstraints, 
         useConstraints, dateUploaded, metadataLastEdited, temporalCoverage, updateFrequency 
 ) VALUES (
@@ -96,7 +96,7 @@ INSERT INTO DatasetData (
      '2012-03-01 11:11:31', 'Temp Cover 2', 'unknown')
 );
 INSERT INTO DatasetData (
-    key, title, typeName, organisationName, organisationID, dateUploaded, metadataLastEdited, updateFrequency
+    "key", title, typeName, organisationName, organisationID, dateUploaded, metadataLastEdited, updateFrequency
 ) VALUES (
     ('DATASET3', 'Test Dataset 3', 'Taxon', 'testdataorg', 2, '2012-03-01 10:00:00', '2012-03-01 11:11:31', 
      'unknown')

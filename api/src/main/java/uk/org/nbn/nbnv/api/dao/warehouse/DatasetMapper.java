@@ -18,20 +18,20 @@ public interface DatasetMapper {
     @Select("SELECT * FROM DatasetData WHERE typeName = 'Taxon' ORDER BY title")
     List<TaxonDataset> selectAllTaxonDatasets();
     
-    @Select("SELECT * FROM DatasetData WHERE DatasetData.[key] = #{key}")
+    @Select("SELECT * FROM DatasetData WHERE DatasetData.\"key\" = #{key}")
     @Results(value = {
         @Result(property="organisation", column="organisationID", javaType=Organisation.class, one=@One(select="uk.org.nbn.nbnv.api.dao.warehouse.OrganisationMapper.selectByID")),
         @Result(property="organisationID", column="organisationID")
     })
     Dataset selectByDatasetKey(String key);
     
-    @Select("SELECT * FROM DatasetData WHERE DatasetData.[key] = #{key}")
+    @Select("SELECT * FROM DatasetData WHERE DatasetData.\"key\" = #{key}")
     Dataset selectByIDProviderNotInstantiated(String key);
     
     @Select("SELECT * FROM DatasetData WHERE organisationID = #{organisaionID} ORDER BY title")
     List<Dataset> selectByOrganisationID(int organisationID);
 
-    @Select("SELECT * FROM DatasetData dd INNER JOIN TaxonDatasetData tdd ON dd.[key] = tdd.datasetKey WHERE dd.[key] = #{key}")
+    @Select("SELECT * FROM DatasetData dd INNER JOIN TaxonDatasetData tdd ON dd.\"key\" = tdd.datasetKey WHERE dd.\"key\" = #{key}")
     @Results(value = {
         @Result(property="speciesCount", column="key", javaType=java.lang.Integer.class, one=@One(select="selectSpeciesCountByDatasetKey")),
         @Result(property="key", column="key")

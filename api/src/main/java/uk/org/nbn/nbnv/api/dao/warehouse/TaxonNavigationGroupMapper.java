@@ -18,7 +18,7 @@ public interface TaxonNavigationGroupMapper {
     })
     List<TaxonNavigationGroup> selectAll();
     
-    @Select("SELECT * FROM TaxonNavigationGroupData WHERE [key] = #{id}")
+    @Select("SELECT * FROM TaxonNavigationGroupData WHERE \"key\" = #{id}")
     @Results({ 
         @Result(column = "key", property = "children", javaType=List.class, many=@Many(select="getChildren")),
         @Result(column = "key", property = "key") //map but retain key

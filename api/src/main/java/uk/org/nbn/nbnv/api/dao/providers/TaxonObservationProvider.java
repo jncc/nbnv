@@ -56,7 +56,7 @@ public class TaxonObservationProvider {
         BEGIN();
         SELECT("DISTINCT o.datasetKey, dd.*");
         createSelectQuery(params);
-        INNER_JOIN("DatasetData dd ON dd.[key] = o.datasetKey");
+        INNER_JOIN("DatasetData dd ON dd.\"key\" = o.datasetKey");
         return SQL();
     }
     

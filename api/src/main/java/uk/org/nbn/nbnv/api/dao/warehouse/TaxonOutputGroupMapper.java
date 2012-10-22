@@ -9,7 +9,7 @@ public interface TaxonOutputGroupMapper {
     @Select("SELECT * FROM TaxonOutputGroupData")
     List<TaxonOutputGroup> selectAll();
     
-    @Select("SELECT * FROM TaxonOutputGroupData WHERE [key] = #{id}")
+    @Select("SELECT * FROM TaxonOutputGroupData WHERE \"key\" = #{id}")
     TaxonOutputGroup getById(String Id);
     
 }
