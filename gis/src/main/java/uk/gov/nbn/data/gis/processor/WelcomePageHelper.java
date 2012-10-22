@@ -33,6 +33,7 @@ public class WelcomePageHelper {
     }
     
     public void produceWelcomePage(HttpServletResponse servletResponse) throws TemplateException, IOException {
+        servletResponse.setContentType("text/html");
         PrintWriter out = servletResponse.getWriter();
         try {
             List<Map<String, Object>> methods = new ArrayList<Map<String, Object>>();
@@ -55,7 +56,6 @@ public class WelcomePageHelper {
     
     private boolean isAffectedByUser(MethodArgumentFactory.Argument[] arguments) {
         for(MethodArgumentFactory.Argument currArgument: arguments) {
-            QueryParam queryParam = currArgument.getAnnotationMap().get(QueryParam.class);
             if(currArgument.getParameterClass().equals(User.class)) {
                 return true;
             }
