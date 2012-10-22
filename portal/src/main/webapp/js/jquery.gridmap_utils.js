@@ -1,15 +1,15 @@
 (function($){
     
-    function getURL(formObjArray){
+    function getURL(form){
+        var formObjArray = form.serializeArray();
+        var tvk = $('#tvk').val(); 
         console.log(formObjArray)
-        var valuePairs = getKeyValuePairsFromForm(formObjArray);
-        var queryString = keyValuePairsToQueryString(valuePairs);
-        console.log(queryString);
-//        var queryString = keyValuePairsToQueryString(getKeyValuePairsFromForm(formObjArray));
-        //Harvest values into key/value pairs, multiple form values with the same name will become a single array
-    
-//        alert(queryString);
-    //            return "/nbnv-gis-0.1-SNAPSHOT/SingleSpecies/NHMSYS0020528107/map?imagesize=5&resolution=" + formArgs.resolution;
+        var keyValuePairs = getKeyValuePairsFromForm(formObjArray);
+        var keyValuePairsWithBusinessLogic = getKeyValuePairsWithBusinessLogic(keyValuePairs);
+        var queryString = getQueryStringFromKeyValuePairs(keyValuePairsWithBusinessLogic);
+        console.log('/nbnv-gis-0.1-SNAPSHOT/SingleSpecies/' + tvk + '/map?' + queryString);
+        return '/nbnv-gis-0.1-SNAPSHOT/SingleSpecies/' + tvk + '/map?' + queryString;
+//return 'http://localhost:8084/nbnv-gis-0.1-SNAPSHOT/SingleSpecies/NHMSYS0020528089/map?resolution=10km';
     }
         
     function getKeyValuePairsFromForm(formObjArray){
@@ -24,17 +24,52 @@
         });
         return toReturn;
     }
+    
+    function getKeyValuePairsWithBusinessLogic(keyValuePairs){
+        console.log(getQueryStringFromKeyValuePairs(keyValuePairs));
+        //Remove the feature agrument generated when Vice County value is 'none''
+        if(keyValuePairs.hasOwnProperty('feature') && keyValuePairs['feature'].toUpperCase()=='NONE'){
+            delete keyValuePairs['feature'];
+        }
+        //Add the year bands formatted for the grid map service
+        var showOutline = keyValuePairs.hasOwnProperty('showOutline');
+        for(var i=1; i<4; i++){
+            if(keyValuePairs.hasOwnProperty('gridLayer' + i)){
+                var fillColour = $('#value-nbn-colour-picker-' + i).val();
+                var outlineColour = fillColour;
+                if(showOutline){
+                    outlineColour = $('#value-nbn-colour-picker-outline').val();
+                }
+                keyValuePairs['band' + i] = keyValuePairs['startYear' + i] + '-' + keyValuePairs['endYear' + i] + ',' + fillColour.replace("#","") + ',' + outlineColour.replace("#","");
+            }
+            delete keyValuePairs['gridLayer' + i];
+            delete keyValuePairs['startYear' + i];
+            delete keyValuePairs['endYear' + i];
+            delete keyValuePairs['value-nbn-colour-picker-' + i];
+        }
+        //Remove the hidden tvk, just used to get the tvk from the path of the page request to here
+        delete keyValuePairs['tvk'];
+        //Remove the hidden outline colour
+        delete keyValuePairs['value-nbn-colour-picker-outline'];
+        delete keyValuePairs['showOutline'];
+        return keyValuePairs;
+    }
         
-    function keyValuePairsToQueryString(formVals){
+    function getQueryStringFromKeyValuePairs(keyValPairs){
         var queryString = "";
         var ampersand="";
-        $.each(formVals, function(name, value){
+        $.each(keyValPairs, function(name, value){
             queryString += ampersand + name + "=" + getArgForQueryString(value);
             if(ampersand==""){
                 ampersand="&";
             }
         });
-        return queryString;
+        //Unfortunately the 'band' argument is used mutliple times in the query string
+        //This didn't fit into the generic form handling implemented here, so needs
+        //an edit now
+        var pattern = /band[0-9]/g;
+        var toReturn = queryString.replace(pattern,'band');
+        return toReturn;
     }
 
     function getArgForQueryString(value){
@@ -44,7 +79,7 @@
     }
         
     function getColourPickerOptions(colourPickerId){
-        var currentColour = $(colourPickerId + ' div').css('backgroundColor');
+        var currentColour = $('#' + colourPickerId + ' div').css('backgroundColor');
         return {
             color: colorToHex(currentColour),
             onShow: function (colpkr) {
@@ -56,7 +91,8 @@
                 return false;
             },
             onChange: function (hsb, hex, rgb) {
-                $(colourPickerId + ' div').css('backgroundColor', '#' + hex);
+                $('#' + colourPickerId + ' div').css('backgroundColor', '#' + hex);
+                $('#value-' + colourPickerId).attr('value',hex);
             }
         }
     }
@@ -78,18 +114,15 @@
     $(document).ready(function(){
         /* Do map refresh */
         $('#nbn-grid-map-form').submit(function(){
-            //Get arguments and build url.....TODO
-            //            console.log($(this).serializeArray());
-            getURL($(this).serializeArray());
-            //            $('#nbn-grid-map-image-src').attr('src',getURL($(this).serializeArray()));
+            var form = $(this);
+            $('#nbn-grid-map-image-src').attr('src',getURL(form));
             return false;
         });
         
         //Setup colour pickers
-        $('#nbn-colour-picker1').ColorPicker(getColourPickerOptions('#nbn-colour-picker1'));
-        $('#nbn-colour-picker2').ColorPicker(getColourPickerOptions('#nbn-colour-picker2'));
-        $('#nbn-colour-picker3').ColorPicker(getColourPickerOptions('#nbn-colour-picker3'));
-        $('#nbn-colour-picker-outline').ColorPicker(getColourPickerOptions('#nbn-colour-picker-outline'));
+        $('#nbn-colour-picker-1, #nbn-colour-picker-2, #nbn-colour-picker-3, #nbn-colour-picker-outline').each(function(){
+            $(this).ColorPicker(getColourPickerOptions($(this).attr('id')));
+        });
         
         //When selecting a country scale region the Vice County drop down must return to 'none'
         $('#nbn-region-selector').change(function(){

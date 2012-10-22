@@ -39,7 +39,7 @@
                     <fieldset>
                         <legend>Regions</legend>
                         <span class="nbn-form-label">Coastlines</span>
-                        <select name="background" id="nbn-region-selector">
+                        <select name="background" id="nbn-region-selector" disabled>
                             <option value="gbi">GB and Ireland</option>
                             <option value="gb">Great Britain</option>
                             <option value="i">Ireland</option>
@@ -51,10 +51,10 @@
                     <br/><br/>
                     <fieldset>
                         <legend>Date ranges and colours</legend>
-                        <@yearRangeText layerNum="1" hexColour="#ff0000"/> (top)<br/>
-                        <@yearRangeText layerNum="2" hexColour="#ff7f00"/> (middle)<br/>
-                        <@yearRangeText layerNum="3" hexColour="#ffff00"/> (bottom)<br/>
-                        Show outline: <input type='checkbox' name='showOutline'><span class="nbn-form-label">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Outline colour: </span><@colourPicker idSuffix="-outline" hexColour="#999"/>
+                        <@yearRangeText layerNum="1" hexColour="#ff0000" checkedText="checked"/> (top)<br/>
+                        <@yearRangeText layerNum="2" hexColour="#ff7f00" checkedText=""/> (middle)<br/>
+                        <@yearRangeText layerNum="3" hexColour="#ffff00" checkedText=""/> (bottom)<br/>
+                        Show outline: <input type='checkbox' id='nbn-show-outline' name='showOutline' checked><span class="nbn-form-label">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Outline colour: </span><@colourPicker idSuffix="-outline" hexColour="#000000"/>
 
                     </fieldset>
                     <br/><br/>
@@ -62,8 +62,8 @@
                         <legend>Overlays and backgrounds</legend>
                         <input type="checkbox" value="os" name="background">Ordnance survey<br/>
                         <input type="checkbox" value="vicecounties" name="background" disabled>Vice counties (not yet available)<br/>
-                        <input type="checkbox" value="100kgrid" name="100kgrid" disabled>100km grid (not yet available)<br/>
-                        <input type="checkbox" value="10kgrid" name="10kgrid" disabled>10km grid (not yet available)<br/>
+                        <input type="checkbox" value="100kgrid" name="background" disabled>100km grid (not yet available)<br/>
+                        <input type="checkbox" value="10kgrid" name="background" disabled>10km grid (not yet available)<br/>
                     </fieldset>
                 </td>
             </tr>
@@ -71,12 +71,13 @@
                 <td class="nbn-td-left nbn-td-right nbn-td-contents-centre" colspan="2"><input type="submit" value="Submit"></td>
             </tr>
         </table>
-        <input hidden id="nbn-grid-map-imagesize" value="${imageSize}">
+        <input hidden name="imagesize" value="${imageSize}">
+        <input hidden id="tvk" name="tvk" value="${tvk}">
     </form>
 </#macro>
 
 <#macro gridMapContents tvk imageSize>
-    <#assign url="/nbnv-gis-0.1-SNAPSHOT/SingleSpecies/" + tvk + "/map?imagesize=" + imageSize + "&background=os">
+    <#assign url="/nbnv-gis-0.1-SNAPSHOT/SingleSpecies/" + tvk + "/map?imagesize=" + imageSize>
     <table class="nbn-coloured-table">
         <tr>
             <th class="nbn-th-left nbn-th-right">Map</th>
@@ -87,20 +88,22 @@
     </table>
 </#macro>
 
-<#macro yearRangeText layerNum hexColour>
+<#macro yearRangeText layerNum hexColour checkedText>
     <#assign currentYear=.now?string("yyyy")>
     Date ${layerNum}: 
-    <input type='checkbox' name='gridLayer${layerNum}' value='startYear${layerNum}'>
+    <input type='checkbox' name='gridLayer${layerNum}' value='gridLayer${layerNum}' ${checkedText}>
     from 
     <input type='text' name='startYear${layerNum}' value='1600' class='nbn-year-input'> 
     to 
     <input type='text' name='endYear${layerNum}' value='${currentYear}' class='nbn-year-input'>
-    <@colourPicker idSuffix=layerNum hexColour=hexColour/>
+    <@colourPicker idSuffix='-'+layerNum hexColour=hexColour/>
 </#macro>
 
 <#macro colourPicker idSuffix hexColour>
     <div id='nbn-colour-picker${idSuffix}' class='nbn-colour-picker' title='Change colour'>
-        <div style='background-color: ${hexColour}'></div>
+        <div style='background-color: ${hexColour}'>
+            <input hidden id="value-nbn-colour-picker${idSuffix}" name="value-nbn-colour-picker${idSuffix}" value="${hexColour}">
+        </div>
     </div>
 </#macro>
 
@@ -112,5 +115,4 @@
             <option value="${viceCounty.featureID}">${viceCounty.name}</option>
         </#list>
     </select>
-    <input hidden name="overlay" value="none">
 </#macro>

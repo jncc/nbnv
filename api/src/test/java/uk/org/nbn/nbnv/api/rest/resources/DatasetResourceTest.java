@@ -54,6 +54,7 @@ public class DatasetResourceTest {
     }
 
     @Test
+    @Ignore
     public void testGetDatasetList() {
        GenericType<List<Dataset>> gt = new GenericType<List<Dataset>>() { };
         List<Dataset> dc = resource
@@ -123,6 +124,7 @@ public class DatasetResourceTest {
     }
 
     @Test
+    @Ignore
     public void testGetDatasetByID() {
         GenericType<Dataset> gt = new GenericType<Dataset>() { };
         Dataset dc = resource
