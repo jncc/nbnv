@@ -19,37 +19,34 @@ class PublicIngester @Inject()(log: Logger,
 
     def update(p: TaxonObservationPublic) {
 
-
-      // set the fields which are always the same in the public record
-      //p.setObservationID(o.getObservationID)
-      //p.setSampleID(o.getSampleID)
-      //p.setObservationKey(o.getObservationKey)
-      //p.setTaxonObservationID(o.getId)
+      // associate with the main observation record
+      p.setTaxonObservation(o)
+      p.setTaxonObservationID(o.getId)
 
       // set the site - to null if necessary
-      //val publicSite = if (metadata.siteIsPublic) o.getSiteID else null
-      //p.setSiteID(publicSite.getId)
+      val publicSite = if (metadata.siteIsPublic) o.getSite else null
+      p.setSite(publicSite)
 
       // set the recorder & determiner - to null if necessary
-      //val publicRecorder = if (metadata.recorderAndDeterminerArePublic) o.getRecorderID else null
-      //val publicDeterminer = if (metadata.recorderAndDeterminerArePublic) o.getDeterminerID else null
-      //p.setRecorderID(publicRecorder)
-      //p.setDeterminerID(publicDeterminer)
+      val publicRecorder = if (metadata.recorderAndDeterminerArePublic) o.getRecorder else null
+      val publicDeterminer = if (metadata.recorderAndDeterminerArePublic) o.getDeterminer else null
+      p.setRecorder(publicRecorder)
+      p.setDeterminer(publicDeterminer)
 
       // set the feature - blurring to a potentially lower-precision feature if necessary
       // obviously we only blur gridsquare features (including points which have been represented as such)
-      //repo.getGridSquareFeature(o.getFeatureID.getFeatureID) match {
-      //  case Some((_, gridSquare)) => {
-      //    val info = gridSquareInfoFactory.getGridSquare(gridSquare.getGridRef)
-      //    val publicInfo = info.getLowerPrecisionGridSquareInfo(metadata.publicPrecision)
-      //    val publicFeature = featureIngester.ensureGridRefFeature(publicInfo.gridReference, publicInfo.projection, publicInfo.gridReferencePrecision)
-      //    p.setFeatureID(publicFeature)
-      //  }
-      //  case None => {
-      //    // the feature was not a gridsquare feature
-      //    p.setFeatureID(o.getFeatureID)
-      //  }
-      //}
+      db.repo.getGridSquareFeature(o.getFeature.getId) match {
+        case Some((_, gridSquare)) => {
+          val info = gridSquareInfoFactory.getByGridRef(gridSquare.getGridRef)
+          val publicInfo = info.getLowerPrecisionGridSquareInfo(metadata.publicPrecision)
+          val publicFeature = featureIngester.ensureGridRefFeature(publicInfo.gridReference, publicInfo.projection, publicInfo.gridReferencePrecision)
+          p.setFeature(publicFeature)
+        }
+        case None => {
+          // the feature was not a gridsquare feature
+          p.setFeature(o.getFeature)
+        }
+      }
     }
 
     db.repo.getTaxonObservationPublic(o.getId) match {

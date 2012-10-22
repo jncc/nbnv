@@ -54,11 +54,11 @@ MAP
                 STYLE
                     SYMBOL                                        "${symbol}"
 
-                    [#assign width = (layer.resolutions()[0] / outlineWidthDenominator) /]
+                    [#assign width = (layer.resolution() / outlineWidthDenominator) /]
                     
                     [#-- Legend Hack, revert to hard coded symbol size --]
                     [#if !legendSymbolHack]
-                        SIZE                                          ${(layer.resolutions()[0]-width)?c}
+                        SIZE                                          ${(layer.resolution()-width)?c}
                         WIDTH                                         ${width?c}
                     [#else]
                         SIZE                                          9

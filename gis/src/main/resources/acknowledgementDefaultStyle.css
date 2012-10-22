@@ -1,0 +1,49 @@
+/*Remove the padding from the body, will make the result look good in a iframe*/
+html, body {
+	margin:0;
+	padding:0;
+	border-collapse:collapse;
+}
+
+/*Style the table*/
+.nbn-acknowledgment-table {
+	font-family: Arial, Helvetica, Sans-serif;
+	font-size: 83%;
+	border-spacing:0px;
+	width:100%;
+	border: 1px silver solid;
+}
+
+/*Style the links*/
+.nbn-acknowledgment-table a {
+	color: #007BA6;
+	text-decoration: underline;
+}
+
+.nbn-acknowledgment-table a:hover  {
+	text-decoration: none;
+}
+
+/*pad the cells*/
+.nbn-acknowledgment-table td, .nbn-acknowledgment-table th {
+	padding: 4px;
+}
+
+.nbn-acknowledgment-headerRow {
+	background-color: #007BA6;
+	padding: 2px;
+	text-align: left;
+	color: white;
+	font-weight: bold;
+	font-size: 12px;
+}
+
+.nbn-acknowledgment-datasetProvider {
+	font-weight:bold;
+}
+
+.nbn-acknowledgment-entryRow td {
+	font-size:11px;
+	border-bottom: 1px silver solid;
+	vertical-align: top;
+}

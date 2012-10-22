@@ -44,11 +44,14 @@ public class TokenUserProvider implements Provider {
 
     @Override
     public Object provide(Class<?> returnType, Type type, MapServiceMethod method, HttpServletRequest request, Annotations annotations) throws ProviderException {
-        return addUserkeyAndMD5Hash(api.path(AUTHENTICATION_ADDRESS),
-            request)
-            .header("Cookie", request.getHeader("Cookie"))
+        return getTokenUserWebResourceBuilder(api.path(AUTHENTICATION_ADDRESS), request)
             .accept(MediaType.APPLICATION_JSON)
             .get(User.class);
+    }
+    
+    public static WebResource.Builder getTokenUserWebResourceBuilder(WebResource resource, HttpServletRequest request) {
+        return addUserkeyAndMD5Hash(resource, request)
+            .header("Cookie", request.getHeader("Cookie"));
     }
     
     private static WebResource addUserkeyAndMD5Hash(WebResource toAddTo, HttpServletRequest request) {

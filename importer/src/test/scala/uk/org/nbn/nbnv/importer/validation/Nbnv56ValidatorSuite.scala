@@ -5,7 +5,7 @@ import org.mockito.Mockito._
 import uk.org.nbn.nbnv.importer.fidelity.ResultLevel
 import uk.org.nbn.nbnv.importer.testing.BaseFunSuite
 
-class Nbnv56ValidationSuite extends BaseFunSuite{
+class Nbnv56ValidatorSuite extends BaseFunSuite{
   test("Nbnv56 should not validate if taxonVersionKey is null") {
     val record = mock[NbnRecord]
     when(record.taxonVersionKey).thenReturn(null)

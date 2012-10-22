@@ -58,12 +58,13 @@ class RecordIngester @Inject()(log: Logger,
         val o = new TaxonObservation
         update(o)
         db.em.persist(o)
-        db.em.flush()
         o
       }
     }
 
+    db.em.flush()
+
     attributeIngester.ingestAttributes(record, observation, dataset)
-    //publicIngester.ingestPublic(observation, sample, metadata)
+    publicIngester.ingestPublic(observation, sample, metadata)
   }
 }

@@ -11,7 +11,7 @@ import org.mockito.Mockito._
  * Created By: Matt Debont
  * Date: 17/10/12
  */
-class Nbnv71ValidationSuite extends BaseFunSuite with BeforeAndAfter {
+class Nbnv71ValidatorSuite extends BaseFunSuite with BeforeAndAfter {
   var record: NbnRecord = _
   val validator = new Nbnv71Validator
 

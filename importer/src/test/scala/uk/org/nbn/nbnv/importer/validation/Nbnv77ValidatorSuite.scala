@@ -11,7 +11,7 @@ import java.util.Date
  * Created By: Matt Debont
  * Date: 18/10/12
  */
-class Nbnv77ValidationSuite extends BaseFunSuite with BeforeAndAfter {
+class Nbnv77ValidatorSuite extends BaseFunSuite with BeforeAndAfter {
   val validator: Nbnv77Validator = new Nbnv77Validator
   var record: NbnRecord = _
 

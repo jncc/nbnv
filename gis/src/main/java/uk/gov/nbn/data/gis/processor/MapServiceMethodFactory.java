@@ -96,14 +96,11 @@ public class MapServiceMethodFactory {
                     }
                     pathPartOrCreate.setAssociatedMethod(currMethod);
                     
-                    //register gridmap functionality
-                    GridMap gridMapProperties = currMethod.getAnnotation(GridMap.class);
-                    if(gridMapProperties != null) {
-                        for(Type mapServiceType : EnumSet.complementOf(EnumSet.of(Type.STANDARD))) {
-                            MapServicePart gridMapServicePart = getPathPartOrCreate(mapServiceInstance, mapServiceType.getRequest(), pathPartOrCreate);
-                            gridMapServicePart.setAssociatedMethod(currMethod);
-                            gridMapServicePart.setMapServiceType(mapServiceType);
-                        }
+                    //register none standard map service functionality
+                    for(Type mapServiceType : Type.getTypesValidForMethod(currMethod)) {
+                        MapServicePart gridMapServicePart = getPathPartOrCreate(mapServiceInstance, mapServiceType.getRequest(), pathPartOrCreate);
+                        gridMapServicePart.setAssociatedMethod(currMethod);
+                        gridMapServicePart.setMapServiceType(mapServiceType);
                     }
                 }
             }

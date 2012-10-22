@@ -5,7 +5,7 @@ import uk.org.nbn.nbnv.importer.records.NbnRecord
 import org.mockito.Mockito._
 import uk.org.nbn.nbnv.importer.fidelity.ResultLevel
 
-class Nbnv58ValidationSuite extends BaseFunSuite {
+class Nbnv58ValidatorSuite extends BaseFunSuite {
   test("Nbnv58 should validate if a grid reference is specified") {
     val record = mock[NbnRecord]
     when(record.gridReference).thenReturn(Some("AB12345"))
