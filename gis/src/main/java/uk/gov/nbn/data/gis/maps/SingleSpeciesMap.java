@@ -1,11 +1,13 @@
 package uk.gov.nbn.data.gis.maps;
 
+import com.sun.jersey.api.client.GenericType;
+import com.sun.jersey.api.client.WebResource;
 import java.awt.Color;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.nbn.data.gis.maps.MapHelper.ResolutionDataGenerator;
@@ -18,6 +20,7 @@ import uk.gov.nbn.data.gis.processor.GridMap;
 import uk.gov.nbn.data.gis.processor.GridMap.Layer;
 import uk.gov.nbn.data.gis.processor.GridMap.GridLayer;
 import uk.gov.nbn.data.gis.processor.GridMap.Resolution;
+import uk.gov.nbn.data.gis.providers.TokenUserProvider;
 import uk.gov.nbn.data.gis.providers.annotations.DefaultValue;
 import uk.gov.nbn.data.gis.providers.annotations.PathParam;
 import uk.gov.nbn.data.gis.providers.annotations.QueryParam;
@@ -46,6 +49,8 @@ public class SingleSpeciesMap {
     
     private static final Map<String,Color> COLOURS;
     private static final String[] LAYERS;
+    
+    @Autowired WebResource resource;
     
     static {
         COLOURS = new HashMap<String, Color>();
@@ -165,7 +170,34 @@ public class SingleSpeciesMap {
         return new MapFileModel("SingleSpeciesSymbology.map",data);
     }
     
-    public List<ProviderWithQueryStats> getDatasetProviders() {
-        return new ArrayList<ProviderWithQueryStats>();
+    public List<ProviderWithQueryStats> getDatasetProviders(
+            HttpServletRequest request,
+            @PathParam(key="taxonVersionKey", validation="^[A-Z]{6}[0-9]{10}$") final String key,
+            @QueryParam(key="datasets", validation="^[A-Z0-9]{8}$") final List<String> datasetKeys,
+            @QueryParam(key="startyear", validation="[0-9]{4}") final String startYear,
+            @QueryParam(key="endyear", validation="[0-9]{4}") final String endYear) {
+        
+        WebResource ackResource = resource
+                .path("taxonObservations")
+                .path("providers")
+                .queryParam("ptvk", key);
+        
+        if(startYear != null) {
+            ackResource = ackResource.queryParam("startYear", startYear);
+        }
+        
+        if(endYear != null) {
+            ackResource = ackResource.queryParam("endYear", startYear);
+        }
+        
+        // Iterate around the dataset keys and add to the query
+        if(datasetKeys != null) {
+            for(String currDatasetKey : datasetKeys) {
+                ackResource = ackResource.queryParam("datasetKey", currDatasetKey);
+            }
+        }
+        
+        GenericType<List<ProviderWithQueryStats>> type = new GenericType<List<ProviderWithQueryStats>>() {};
+        return TokenUserProvider.getTokenUserWebResourceBuilder(ackResource, request).get(type);
     }
 }
