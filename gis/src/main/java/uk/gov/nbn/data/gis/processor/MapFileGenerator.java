@@ -37,8 +37,8 @@ public class MapFileGenerator {
         config.setDirectoryForTemplateLoading(templateDirectory);
     }
     
-    public File getMapFile(HttpServletRequest request, MapServiceMethod method) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, ProviderException, IOException, TemplateException {
-        return getMapFile(method.createMapModel(request));
+    public File getMapFile(MapServiceMethod.Call methodCall) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, ProviderException, IOException, TemplateException {
+        return getMapFile(methodCall.createMapModel());
     }
     
     public File getMapFile(MapFileModel createMapModel) throws IOException, TemplateException {

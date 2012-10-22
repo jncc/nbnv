@@ -39,9 +39,9 @@ public class JSONGetFeatureInterceptor {
     }
 
     @Intercepts(Type.STANDARD)
-    public Response intercepts(MapServiceMethod method, HttpServletRequest request) throws IllegalAccessException, IllegalArgumentException, IOException, InvocationTargetException, ProviderException, TemplateException, JSONException {
+    public Response intercepts(MapServiceMethod.Call methodCall, HttpServletRequest request) throws IllegalAccessException, IllegalArgumentException, IOException, InvocationTargetException, ProviderException, TemplateException, JSONException {
         if(isToInterceptQuery(request.getParameterMap())) {
-            JSONObject toReturn = obtainJSONObjectFeatureInfo(method, request);
+            JSONObject toReturn = obtainJSONObjectFeatureInfo(methodCall, request);
             return Response.getJSONPResponse(request, toReturn);
         }
         else {
@@ -49,10 +49,10 @@ public class JSONGetFeatureInterceptor {
         }
     }
     
-    private JSONObject obtainJSONObjectFeatureInfo(MapServiceMethod mapMethod, HttpServletRequest request) throws IllegalAccessException, IllegalArgumentException, IOException, InvocationTargetException, ProviderException, TemplateException, JSONException{
+    private JSONObject obtainJSONObjectFeatureInfo(MapServiceMethod.Call mapMethodCall, HttpServletRequest request) throws IllegalAccessException, IllegalArgumentException, IOException, InvocationTargetException, ProviderException, TemplateException, JSONException{
         InterceptedHttpServletRequest manipRequest = new InterceptedHttpServletRequest(request);
         manipRequest.setParameterValues("INFO_FORMAT", new String[]{"gml"});
-        InputStream in = requestProcessor.getResponse(mapMethod, manipRequest).getResponse();
+        InputStream in = requestProcessor.getResponse(mapMethodCall, manipRequest).getResponse();
         
         try {
             return XML.toJSONObject(IOUtils.toString(in));

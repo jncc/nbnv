@@ -55,26 +55,26 @@ public class InterceptorFactory {
         }
     }
     
-    public Response getResponse(MapServiceMethod mapMethod, HttpServletRequest request) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, ProviderException, IOException, TemplateException {
-        for(Entry<Method, Object> queryInterceptor : responseManipulatingInterceptors.get(mapMethod.getType()).entrySet()) {
+    public Response getResponse(MapServiceMethod.Call mapMethodCall) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, ProviderException, IOException, TemplateException {
+        for(Entry<Method, Object> queryInterceptor : responseManipulatingInterceptors.get(mapMethodCall.getMethod().getType()).entrySet()) {
             Response response = (Response)providerFactory.provideForMethodAndExecute(
                                                             queryInterceptor.getValue(), 
                                                             queryInterceptor.getKey(), 
-                                                            mapMethod, request);
+                                                            mapMethodCall);
             if(response!=null) {
                 return response;
             }
         }
-        return requestProcessor.getResponse(mapMethod, getInterceptedRequest(mapMethod, request)); //drop into a non intercepted response
+        return requestProcessor.getResponse(mapMethodCall, getInterceptedRequest(mapMethodCall)); //drop into a non intercepted response
     }
     
-    public InterceptedHttpServletRequest getInterceptedRequest(MapServiceMethod mapMethod, HttpServletRequest request) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, ProviderException {
-        InterceptedHttpServletRequest toReturn = new InterceptedHttpServletRequest(request);
-        for(Entry<Method, Object> queryInterceptor : queryManipulatingInterceptors.get(mapMethod.getType()).entrySet()) {
+    public InterceptedHttpServletRequest getInterceptedRequest(MapServiceMethod.Call mapMethodCall) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, ProviderException {
+        InterceptedHttpServletRequest toReturn = new InterceptedHttpServletRequest(mapMethodCall.getRequest());
+        for(Entry<Method, Object> queryInterceptor : queryManipulatingInterceptors.get(mapMethodCall.getMethod().getType()).entrySet()) {
             Object partialQueryMap = providerFactory.provideForMethodAndExecute(
                                                             queryInterceptor.getValue(), 
                                                             queryInterceptor.getKey(), 
-                                                            mapMethod, request);
+                                                            mapMethodCall);
             toReturn.putAllParameters((Map<String, String[]>)partialQueryMap);
         }
         return toReturn;

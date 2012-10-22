@@ -1,7 +1,6 @@
 package uk.gov.nbn.data.gis.providers;
 
 import java.lang.reflect.Type;
-import javax.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Component;
 import uk.gov.nbn.data.gis.processor.Annotations;
 import uk.gov.nbn.data.gis.processor.MapServiceMethod;
@@ -16,11 +15,11 @@ public class MapServiceMethodProvider implements Provider {
 
     @Override
     public boolean isProviderFor(Class<?> clazz, Type type, Annotations annotations) {
-        return clazz.equals(MapServiceMethod.class);
+        return clazz.equals(MapServiceMethod.Call.class);
     }
 
     @Override
-    public MapServiceMethod provide(Class<?> clazz, Type type, MapServiceMethod method, HttpServletRequest request, Annotations annotations) {
-        return method;
+    public MapServiceMethod.Call provide(Class<?> clazz, Type type, MapServiceMethod.Call methodCall, Annotations annotations) {
+        return methodCall;
     }
 }

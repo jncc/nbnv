@@ -20,7 +20,7 @@ public class HttpServletRequestProvider implements Provider {
     }
 
     @Override
-    public HttpServletRequest provide(Class<?> clazz, Type type, MapServiceMethod method, HttpServletRequest request, Annotations annotations) {
-        return request;
+    public HttpServletRequest provide(Class<?> clazz, Type type, MapServiceMethod.Call methodCall, Annotations annotations) {
+        return methodCall.getRequest();
     }
 }

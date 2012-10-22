@@ -12,7 +12,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.nbn.data.gis.processor.Acknowledgement;
@@ -44,12 +43,11 @@ public class AcknowledgementInterceptor {
     }
     
     @Intercepts(MapServiceMethod.Type.ACKNOWLEDGMENT)
-    public Response processRequestParameters(   HttpServletRequest request, 
-                                                @ServiceURL String url,
-                                                MapServiceMethod method,
+    public Response processRequestParameters(   @ServiceURL String url,
+                                                MapServiceMethod.Call methodCall,
                                                 @QueryParam(key="css") String css) 
             throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, ProviderException, TemplateException, IOException {
-        
+        MapServiceMethod method = methodCall.getMethod();
         Acknowledgement acknowledgement = method.getUnderlyingMapMethod().getAnnotation(Acknowledgement.class);
         Object instance = method.getUnderlyingInstance();
         Method ackMethod = getMethod(method.getUnderlyingInstance(), acknowledgement);
@@ -59,7 +57,7 @@ public class AcknowledgementInterceptor {
         data.put("url", url);
         data.put("properties", properties);
         data.put("providers", providerFactory.provideForMethodAndExecute(
-                                            instance, ackMethod, method, request));
+                                            instance, ackMethod, methodCall));
 
         return processTemplate(acknowledgementTemplate, data);
     }

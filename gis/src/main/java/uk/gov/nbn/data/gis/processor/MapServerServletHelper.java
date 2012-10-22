@@ -31,8 +31,8 @@ public class MapServerServletHelper {
     public void processRequest(HttpServletRequest request, 
             HttpServletResponse servletResponse) throws ServletException, IOException {
         try {
-            MapServiceMethod mapMethod = serviceFactory.getMatchingPart(request.getPathInfo());
-            Response interceptedResponse = interceptorFactory.getResponse(mapMethod, request);
+            MapServiceMethod mapMethod = serviceFactory.getMapServiceMethodCall(request.getPathInfo());
+            Response interceptedResponse = interceptorFactory.getResponse(mapMethod.call(request));
             servletResponse.setContentType(interceptedResponse.getContentType());
             copyAndClose(interceptedResponse.getResponse(), servletResponse);
         }

@@ -29,24 +29,49 @@ public class MapServiceMethodFactory {
      * @return A map method which corresponds to this pathInfo
      * @throws MapServiceUndefinedException If no map can be resolved to this path
      */
-    public MapServiceMethod getMatchingPart(String pathInfo) throws MapServiceUndefinedException {
-        return getMatchingPart(pathInfo.substring(1).split("/"));        
+    public MapServiceMethod getMapServiceMethodCall(String pathInfo) throws MapServiceUndefinedException {
+        return getMapServiceMethod(pathInfo.substring(1).split("/"));        
     }
     
     /**
-     * Obtain a map service method for a give pathInfo String
+     * Obtain a map service method for a given pathInfo array
      * @param requestedParts The path info string split into parts
      * @return A map method which corresponds to this pathInfo
      * @throws MapServiceUndefinedException If no map can be resolved to this path
      */
-    public MapServiceMethod getMatchingPart(String[] requestedParts) throws MapServiceUndefinedException {
+    public MapServiceMethod getMapServiceMethod(String[] requestedParts) throws MapServiceUndefinedException {
         MapServicePart matchingPart = getMatchingPart(rootMapService, 0, requestedParts);
         if(matchingPart != null && matchingPart.hasMethod()) {
-            return new MapServiceMethod(matchingPart, requestedParts, providerFactory);
+            return new MapServiceMethod(matchingPart, providerFactory);
         }
         else {
             throw new MapServiceUndefinedException("There is no MapServicePart which matches the path supplied");
         }
+    }
+    
+    /**
+     * The following method will recurse the root MapServicePart to return a 
+     * complete list of the MapServiceMethods registered in this factory
+     * @return A list of mapService methods registerd to the factory
+     */
+    public List<MapServiceMethod> getMapServiceMethodsRegistered() {
+        return getMapServiceMethods(rootMapService);
+    }
+    
+    /**
+     * Recurse from the root to find all map service parts
+     * @param partToLookIn
+     * @return A list of the map services registered at this part
+     */
+    private List<MapServiceMethod> getMapServiceMethods(MapServicePart partToLookIn) {
+        List<MapServiceMethod> toReturn = new ArrayList<MapServiceMethod>();
+        if(partToLookIn.hasMethod()) {
+            toReturn.add(new MapServiceMethod(partToLookIn, providerFactory));
+        }
+        for(MapServicePart currMethod : partToLookIn.getChildren()) {
+            toReturn.addAll(getMapServiceMethods(currMethod));
+        }
+        return toReturn;
     }
     
     /**

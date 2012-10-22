@@ -8,8 +8,6 @@ import uk.gov.nbn.data.gis.providers.annotations.QueryParam;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Component;
 import uk.gov.nbn.data.gis.processor.Annotations;
@@ -34,9 +32,9 @@ public class QueryParamProvider implements Provider {
     }
 
     @Override
-    public Object provide(Class<?> returnType, Type type, MapServiceMethod method, HttpServletRequest request, Annotations annotations) throws ProviderException {
+    public Object provide(Class<?> returnType, Type type, MapServiceMethod.Call methodCall, Annotations annotations) throws ProviderException {
         QueryParam paramAnnot = annotations.get(QueryParam.class);
-        String[] requestParams = getParameters(request, paramAnnot.key(), annotations.get(DefaultValue.class));
+        String[] requestParams = getParameters(methodCall.getRequest(), paramAnnot.key(), annotations.get(DefaultValue.class));
         if(requestParams != null) {
             if(returnType.equals(List.class)) {
                 Class<?> elementType = (Class<?>)(((ParameterizedType)type).getActualTypeArguments()[0]);

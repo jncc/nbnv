@@ -43,8 +43,8 @@ public class TokenUserProvider implements Provider {
     }
 
     @Override
-    public Object provide(Class<?> returnType, Type type, MapServiceMethod method, HttpServletRequest request, Annotations annotations) throws ProviderException {
-        return getTokenUserWebResourceBuilder(api.path(AUTHENTICATION_ADDRESS), request)
+    public Object provide(Class<?> returnType, Type type, MapServiceMethod.Call methodCall, Annotations annotations) throws ProviderException {
+        return getTokenUserWebResourceBuilder(api.path(AUTHENTICATION_ADDRESS), methodCall.getRequest())
             .accept(MediaType.APPLICATION_JSON)
             .get(User.class);
     }

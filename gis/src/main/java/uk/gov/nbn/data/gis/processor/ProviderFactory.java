@@ -2,11 +2,8 @@ package uk.gov.nbn.data.gis.processor;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.*;
 import javax.annotation.PostConstruct;
-import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -28,15 +25,14 @@ public class ProviderFactory {
         providers = context.getBeansOfType(Provider.class).values();
     }
 
-    public Object provideForMethodAndExecute(Object instance, Method method, MapServiceMethod mapServiceMethod, HttpServletRequest request) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, ProviderException {
+    public Object provideForMethodAndExecute(Object instance, Method method, MapServiceMethod.Call mapServiceMethod) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, ProviderException {
         Argument[] arguments = methodArgumentFactory.getArguments(method);
         Object[] parameters = new Object[arguments.length];
         for(int i=0; i<parameters.length; i++) {
             parameters[i] = getProviderFor(arguments[i]).provide(
                                             arguments[i].getParameterClass(), 
                                             arguments[i].getParameterType(),
-                                            mapServiceMethod, 
-                                            request, 
+                                            mapServiceMethod,
                                             arguments[i].getAnnotationMap());
         }
         

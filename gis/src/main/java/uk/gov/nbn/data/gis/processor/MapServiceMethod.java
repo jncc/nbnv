@@ -16,7 +16,6 @@ import javax.servlet.http.HttpServletRequest;
  * @author Christopher Johnson
  */
 public class MapServiceMethod {
-    private final Map<String,String> variableNamesMap;
     private final ProviderFactory providerFactory;
     private final MapServicePart part;
     
@@ -46,26 +45,64 @@ public class MapServiceMethod {
         }       
     }
 
-    MapServiceMethod(MapServicePart part, String[] requestParts, ProviderFactory providerFactory) {
+    
+    public class Call {
+        private final Map<String,String> variableNamesMap;
+        private final HttpServletRequest request;
+        
+        private Call(HttpServletRequest request) {
+            this.request = request;
+            this.variableNamesMap = part.getVariableParameterMappings(
+                    request.getPathInfo().substring(1).split("/"));
+        }
+        
+        /**
+         * Returns the original request object which was used to map this map
+         * Service call
+         * @return The original httpservletrequest
+         */
+        public HttpServletRequest getRequest() {
+            return request;
+        }
+        
+        /**
+        * Obtains the concrete value for a given variable key
+        * @param key The key to look up
+        * @return The concrete value of the parameter for a given key
+        */
+        public String getVariableValue(String key) {
+            return variableNamesMap.get(key);
+        }
+        
+        /**
+         * Obtains the map object model for a given request
+         *
+         * @param request
+         * @return The mapObj for this method for a given request
+         * @throws IllegalAccessException
+         * @throws IllegalArgumentException
+         * @throws InvocationTargetException
+         * @throws ProviderException
+         */
+        public MapFileModel createMapModel() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, ProviderException, IOException, TemplateException {
+            return (MapFileModel) providerFactory.provideForMethodAndExecute(
+                    part.getMapServiceInstance(),
+                    part.getAssociatedMethod(),
+                    this);
+        }
+    
+        public MapServiceMethod getMethod() {
+            return MapServiceMethod.this;
+        }
+    }
+    
+    MapServiceMethod(MapServicePart part,  ProviderFactory providerFactory) {
         this.part = part;
         this.providerFactory = providerFactory;
-        this.variableNamesMap = part.getVariableParameterMappings(requestParts);
     }
 
-    /**
-     * Obtains the map object model for a given request
-     * @param request
-     * @return The mapObj for this method for a given request
-     * @throws IllegalAccessException
-     * @throws IllegalArgumentException
-     * @throws InvocationTargetException
-     * @throws ProviderException 
-     */
-    MapFileModel createMapModel(HttpServletRequest request) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, ProviderException, IOException, TemplateException {
-        return (MapFileModel)providerFactory.provideForMethodAndExecute(
-                part.getMapServiceInstance(), 
-                part.getAssociatedMethod(), 
-                this, request);
+    public Call call(HttpServletRequest request) {
+        return new Call(request);
     }
     
     public Method getUnderlyingMapMethod() {
@@ -80,12 +117,11 @@ public class MapServiceMethod {
         return part.getMapServiceType();
     }
     
-    /**
-     * Obtains the concrete value for a given variable key
-     * @param key The key to look up
-     * @return The concrete value of the parameter for a given key
-     */
-    public String getVariableValue(String key) {
-        return variableNamesMap.get(key);
+    public String getPath() {
+        return part.getPath();
+    }
+    
+    @Override public String toString() {
+        return getPath();
     }
 }

@@ -27,6 +27,10 @@ class MapServicePart {
         this.children = new ArrayList<MapServicePart>();
         this.mapServiceType = Type.STANDARD;
     }
+    
+    String getPath() {
+        return (hasParent()) ? getParent().getPath() + "/" + getName() : getName();
+    }
 
     String getName() {
         return name;

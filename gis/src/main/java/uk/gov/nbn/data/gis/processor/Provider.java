@@ -1,7 +1,6 @@
 package uk.gov.nbn.data.gis.processor;
 
 import java.lang.reflect.Type;
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * The following is the interface which should be implemented in order to be a 
@@ -10,5 +9,5 @@ import javax.servlet.http.HttpServletRequest;
  */
 public interface Provider {
     boolean isProviderFor(Class<?> clazz, Type type, Annotations annotations);
-    Object provide(Class<?> clazz, Type type, MapServiceMethod method, HttpServletRequest request, Annotations annotations) throws ProviderException;
+    Object provide(Class<?> clazz, Type type, MapServiceMethod.Call method, Annotations annotations) throws ProviderException;
 }

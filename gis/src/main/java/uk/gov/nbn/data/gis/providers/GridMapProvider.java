@@ -1,7 +1,6 @@
 package uk.gov.nbn.data.gis.providers;
 
 import java.lang.reflect.Type;
-import javax.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Component;
 import uk.gov.nbn.data.gis.processor.Annotations;
 import uk.gov.nbn.data.gis.processor.GridMap;
@@ -21,7 +20,7 @@ public class GridMapProvider implements Provider {
     }
 
     @Override
-    public GridMap provide(Class<?> clazz, Type type, MapServiceMethod method, HttpServletRequest request, Annotations annotations) {
-        return method.getUnderlyingMapMethod().getAnnotation(GridMap.class);
+    public GridMap provide(Class<?> clazz, Type type, MapServiceMethod.Call methodCall, Annotations annotations) {
+        return methodCall.getMethod().getUnderlyingMapMethod().getAnnotation(GridMap.class);
     }
 }

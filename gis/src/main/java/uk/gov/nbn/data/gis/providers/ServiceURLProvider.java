@@ -44,10 +44,11 @@ public class ServiceURLProvider implements Provider {
     }
 
     @Override
-    public String provide(Class<?> clazz, Type type, MapServiceMethod method, HttpServletRequest request, Annotations annotations) throws ProviderException {
+    public String provide(Class<?> clazz, Type type, MapServiceMethod.Call methodCall, Annotations annotations) throws ProviderException {
         try {
+            HttpServletRequest request = methodCall.getRequest();
             StringBuilder toReturn = new StringBuilder(request.getRequestURL()).append("?");
-            Set<String> mapServiceApplicableQueryParams = getMapServiceApplicableQueryParams(method);
+            Set<String> mapServiceApplicableQueryParams = getMapServiceApplicableQueryParams(methodCall.getMethod());
             Map<String, String[]> parameters = request.getParameterMap();
             for(Entry<String, String[]> paramEntry : parameters.entrySet()) {
                 String paramKey = paramEntry.getKey();

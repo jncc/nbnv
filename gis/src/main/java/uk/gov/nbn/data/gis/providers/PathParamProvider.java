@@ -2,7 +2,6 @@ package uk.gov.nbn.data.gis.providers;
 
 import java.lang.reflect.Type;
 import uk.gov.nbn.data.gis.providers.annotations.PathParam;
-import javax.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Component;
 import uk.gov.nbn.data.gis.processor.Annotations;
 import uk.gov.nbn.data.gis.processor.MapServiceMethod;
@@ -23,9 +22,9 @@ public class PathParamProvider implements Provider {
     }
 
     @Override
-    public String provide(Class<?> clazz, Type type, MapServiceMethod method, HttpServletRequest request, Annotations annotations) throws ProviderException {
+    public String provide(Class<?> clazz, Type type, MapServiceMethod.Call methodCall, Annotations annotations) throws ProviderException {
         PathParam paramAnnot = annotations.get(PathParam.class);
-        String toReturn = method.getVariableValue(paramAnnot.key());
+        String toReturn = methodCall.getVariableValue(paramAnnot.key());
         if(paramAnnot.validation().equals(PathParam.NO_VALIDATION) || toReturn.matches(paramAnnot.validation())) {
             return toReturn;
         }
