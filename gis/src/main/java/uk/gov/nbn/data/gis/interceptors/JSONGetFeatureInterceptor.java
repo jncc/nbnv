@@ -52,7 +52,7 @@ public class JSONGetFeatureInterceptor {
     private JSONObject obtainJSONObjectFeatureInfo(MapServiceMethod.Call mapMethodCall, HttpServletRequest request) throws IllegalAccessException, IllegalArgumentException, IOException, InvocationTargetException, ProviderException, TemplateException, JSONException{
         InterceptedHttpServletRequest manipRequest = new InterceptedHttpServletRequest(request);
         manipRequest.setParameterValues("INFO_FORMAT", new String[]{"gml"});
-        InputStream in = requestProcessor.getResponse(mapMethodCall, manipRequest).getResponse();
+        InputStream in = requestProcessor.getResponse(mapMethodCall.getMethod().call(manipRequest)).getResponse();
         
         try {
             return XML.toJSONObject(IOUtils.toString(in));

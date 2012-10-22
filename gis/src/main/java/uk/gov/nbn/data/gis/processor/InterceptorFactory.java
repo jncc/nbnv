@@ -65,10 +65,10 @@ public class InterceptorFactory {
                 return response;
             }
         }
-        return requestProcessor.getResponse(mapMethodCall, getInterceptedRequest(mapMethodCall)); //drop into a non intercepted response
+        return requestProcessor.getResponse(getInterceptedMapMethodCall(mapMethodCall)); //drop into a non intercepted response
     }
     
-    public InterceptedHttpServletRequest getInterceptedRequest(MapServiceMethod.Call mapMethodCall) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, ProviderException {
+    public MapServiceMethod.Call getInterceptedMapMethodCall(MapServiceMethod.Call mapMethodCall) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, ProviderException {
         InterceptedHttpServletRequest toReturn = new InterceptedHttpServletRequest(mapMethodCall.getRequest());
         for(Entry<Method, Object> queryInterceptor : queryManipulatingInterceptors.get(mapMethodCall.getMethod().getType()).entrySet()) {
             Object partialQueryMap = providerFactory.provideForMethodAndExecute(
@@ -77,7 +77,7 @@ public class InterceptorFactory {
                                                             mapMethodCall);
             toReturn.putAllParameters((Map<String, String[]>)partialQueryMap);
         }
-        return toReturn;
+        return mapMethodCall.getMethod().call(toReturn);
     }
     
     private static EnumMap<Type, Map<Method, Object>> createLookupMap() {

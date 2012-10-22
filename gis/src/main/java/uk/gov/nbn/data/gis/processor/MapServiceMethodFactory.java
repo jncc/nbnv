@@ -29,7 +29,7 @@ public class MapServiceMethodFactory {
      * @return A map method which corresponds to this pathInfo
      * @throws MapServiceUndefinedException If no map can be resolved to this path
      */
-    public MapServiceMethod getMapServiceMethodCall(String pathInfo) throws MapServiceUndefinedException {
+    public MapServiceMethod getMapServiceMethod(String pathInfo) throws MapServiceUndefinedException {
         return getMapServiceMethod(pathInfo.substring(1).split("/"));        
     }
     

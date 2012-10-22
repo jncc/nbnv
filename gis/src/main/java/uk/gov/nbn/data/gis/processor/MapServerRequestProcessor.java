@@ -45,13 +45,13 @@ public class MapServerRequestProcessor {
      * @throws ProviderException
      * @throws TemplateException 
      */
-    public Response getResponse(MapServiceMethod.Call mapMethodCall, HttpServletRequest request) throws IllegalAccessException, IllegalArgumentException, IOException, InvocationTargetException, ProviderException, TemplateException {
+    public Response getResponse(MapServiceMethod.Call mapMethodCall) throws IllegalAccessException, IllegalArgumentException, IOException, InvocationTargetException, ProviderException, TemplateException {
         File mapFile = mapFileGenerator.getMapFile(mapMethodCall);
         try {
             URL mapServerURL = new URL(properties.getProperty("mapserver"));
             HttpURLConnection conn = (HttpURLConnection)mapServerURL.openConnection();
             conn.setDoOutput(true);
-            String requestToPost = getQueryFromMap(getMapServerRequest(mapFile, request));
+            String requestToPost = getQueryFromMap(getMapServerRequest(mapFile, mapMethodCall.getRequest()));
             OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
             try {
                 wr.write(requestToPost);
