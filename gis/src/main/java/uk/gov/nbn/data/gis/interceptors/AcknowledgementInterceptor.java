@@ -11,6 +11,7 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -31,6 +32,7 @@ import uk.gov.nbn.data.gis.providers.annotations.QueryParam;
 @Interceptor
 public class AcknowledgementInterceptor {
     @Autowired ProviderFactory providerFactory;
+    @Autowired Properties properties;
     
     private final Template acknowledgementTemplate;
     
@@ -52,6 +54,7 @@ public class AcknowledgementInterceptor {
        
         Map<String, Object> data = new HashMap<String, Object>();
         data.put("externalCss", css);
+        data.put("properties", properties);
         data.put("providers", providerFactory.provideForMethodAndExecute(
                                             instance, ackMethod, method, request));
 

@@ -15,10 +15,20 @@
                 <th class="nbn-acknowledgment-headerDatasetProvider">Dataset Provider</th>
                 <th class="nbn-acknowledgment-headerDataset">Dataset</th>
             </tr>  
-            <tr class="nbn-acknowledgment-entryRow">
-                <td class="nbn-acknowledgment-datasetProvider" rowspan="1"><a href="http://data.nbn.org.uk/organisation/organisation.jsp?orgKey=10621">Bedfordshire and Luton Biodiversity Recording and Monitoring Centre</a></td>
-                <td class="nbn-acknowledgment-datasetTitle"><a href="http://data.nbn.org.uk/datasetInfo/taxonDataset.jsp?dsKey=GA000482">Bedfordshire Flora (BNHS/BSBI) - 1904-2011</a></td>
-            </tr>
+            <#list providers as provider>
+                <#list provider.datasetsWithQueryStats as datasetStats>
+                    <tr class="nbn-acknowledgment-entryRow">
+                        <#if datasetStats_index == 0>
+                            <td class="nbn-acknowledgment-datasetProvider" rowspan="${provider.datasetsWithQueryStats?size}">
+                                <a href="${properties.portal}/Organisations/${provider.organisation.id}">${provider.organisation.name}</a>
+                            </td>
+                        </#if>
+                        <td class="nbn-acknowledgment-datasetTitle">
+                            <a href="${properties.portal}/Datasets/${datasetStats.dataset.key}">${datasetStats.dataset.title}</a>
+                        </td>
+                    </tr>
+                </#list>
+            </#list>
         </table>
     </body>
 </html>
