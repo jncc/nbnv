@@ -39,7 +39,7 @@
                     <fieldset>
                         <legend>Regions</legend>
                         <span class="nbn-form-label">Coastlines</span>
-                        <select name="region" id="nbn-region-selector">
+                        <select name="background" id="nbn-region-selector">
                             <option value="gbi">GB and Ireland</option>
                             <option value="gb">Great Britain</option>
                             <option value="i">Ireland</option>
@@ -60,10 +60,10 @@
                     <br/><br/>
                     <fieldset>
                         <legend>Overlays and backgrounds</legend>
-                        <input type="checkbox" value="os">Ordnance survey<br/>
-                        <input type="checkbox" value="os">Vice counties<br/>
-                        <input type="checkbox" value="os">100km grid<br/>
-                        <input type="checkbox" value="os">10km grid<br/>
+                        <input type="checkbox" value="os" name="background">Ordnance survey<br/>
+                        <input type="checkbox" value="vicecounties" name="background" disabled>Vice counties (not yet available)<br/>
+                        <input type="checkbox" value="100kgrid" name="100kgrid" disabled>100km grid (not yet available)<br/>
+                        <input type="checkbox" value="10kgrid" name="10kgrid" disabled>10km grid (not yet available)<br/>
                     </fieldset>
                 </td>
             </tr>
@@ -106,10 +106,11 @@
 
 <#macro viceCountyDropDown>
     <#assign viceCounties=json.readURL("${api}/siteBoundaryDatasets/GA000344/siteBoundaries")>
-    <select name="vcNum" id="nbn-vice-county-selector" class="nbn-report-filter-dropdown">
+    <select name="feature" id="nbn-vice-county-selector" class="nbn-report-filter-dropdown">
         <option value="none">None</option>
         <#list viceCounties as viceCounty>
             <option value="${viceCounty.featureID}">${viceCounty.name}</option>
         </#list>
     </select>
+    <input hidden name="overlay" value="none">
 </#macro>
