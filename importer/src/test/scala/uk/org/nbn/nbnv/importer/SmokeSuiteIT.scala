@@ -49,15 +49,4 @@ class SmokeSuiteIT extends BaseFunSuite with ResourceLoader {
     val f = fixture("/archives/valid_ui.zip")
     f.importer.run()
   }
-
-  ignore("should ensure gridrefs are of a correct format / correct precision in this case") {
-
-    // todo: i don't understand what this test is doing
-
-    val f = fixture("/archives/valid.zip")
-
-    val injector = Guice.createInjector(new ImporterModule(f.options))
-    val ingester = injector.getInstance(classOf[FeatureIngester])
-    ingester.ensureGridRefFeature("NN166712", "OSGB", 100)
-  }
 }

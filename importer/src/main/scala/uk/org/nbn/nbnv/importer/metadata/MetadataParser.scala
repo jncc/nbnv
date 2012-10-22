@@ -1,6 +1,7 @@
 package uk.org.nbn.nbnv.metadata
 
 import xml.Elem
+import uk.org.nbn.nbnv.importer.utility.StringParsing._
 
 class MetadataParser {
   def parse(xml: Elem) : Metadata = {
@@ -11,12 +12,11 @@ class MetadataParser {
       .text.replace("Access Constraints:", "")
       .split("Use Constraints:")
 
-    // gets data from the additionalInfo elements. Specific data is identified in the text of the element
-    // by an identifier such as Temporal Coverage:
+    // gets data from the additionalInfo elements using an identifier such as "Temporal Coverage:"
     def getAdditionalData(identifier: String) = {
-      val additionalInfoNodes = dataset \ "additionalInfo" \ "para"
-      additionalInfoNodes.find { _.text.startsWith(identifier) } match {
-        case Some(aiNode) => aiNode.text.replace(identifier, "").trim
+      val paras = dataset \ "additionalInfo" \ "para"
+      paras.find { _.text.startsWith(identifier) } match { // 'find' finds the first matching element
+        case Some(para) => para.text.replace(identifier, "").trim
         case None => ""
       }
     }
@@ -34,26 +34,10 @@ class MetadataParser {
       val dataQuality = (dataset \ "methods" \ "qualityControl" \ "description" \ "para" ).text.trim
       val temporalCoverage = getAdditionalData("Temporal Coverage:")
       val additionalInformation = getAdditionalData("Additional Information:")
-
-      var prec = 10000
-      try {
-        prec = getAdditionalData("Public Access:").toInt
-      } catch {
-        case e: Exception => prec = 10000
-      }
-      val publicPrecision = prec
-
-      var radap = false
-      try {
-        radap = getAdditionalData("Recorder Names:").toBoolean
-      } catch {
-        case e: Exception => radap = false
-      }
-      val recorderAndDeterminerArePublic = radap
+      val publicPrecision = getAdditionalData("Public Access:").maybeInt.getOrElse(10000)
+      val recorderAndDeterminerArePublic = getAdditionalData("Recorder Names:").maybeBoolean.getOrElse(false)
 
       val siteIsPublic = true // todo
-
-
     }
 
   }
