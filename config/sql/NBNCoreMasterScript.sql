@@ -1437,6 +1437,108 @@ GO
 
 ------------------------------
 
+USE [NBNCore]
+GO
+
+CREATE PROCEDURE [dbo].[import_SiteBoundaryData]
+	@datasetKey CHAR(8)
+	, @layer VARCHAR(255)
+	, @keyColumn VARCHAR(255)
+	, @nameColumn VARCHAR(255)
+	, @category INT
+	, @srid INT
+AS
+BEGIN
+	DECLARE @projection INT
+	DECLARE @loadDate DATETIME2
+
+	SET @projection = (SELECT p.id FROM [NBNCore].[dbo].[Projection] p WHERE p.srcSRID = @srid)
+
+	CREATE TABLE [#slayer] (
+		[id] int
+		, [originalGeom] geometry
+		, [geom] geometry
+		, [providerKey] varchar(100)
+		, [siteName] varchar(200)
+	)
+		
+	DECLARE @createTempTable VARCHAR(8000)
+	
+	SET @createTempTable = 'INSERT INTO [#slayer] SELECT orig.ogr_fid AS id, orig.ogr_geometry AS originalGeom, wgs.ogr_geometry AS geom, orig.[' + @keyColumn + '] AS providerKey, orig.[' + @nameColumn + '] AS siteName FROM [NBNSpatial].[dbo].[' + @layer + '] orig INNER JOIN [NBNSpatial].[dbo].[' + @layer + '_wgs] wgs ON wgs.ogr_fid = orig.ogr_fid'
+	EXEC @createTempTable 
+
+	DECLARE CUR CURSOR FOR SELECT id FROM [#slayer] 
+	DECLARE @pid INT
+
+	OPEN CUR
+	FETCH CUR INTO @pid
+
+	WHILE @@FETCH_STATUS = 0
+	BEGIN
+		INSERT INTO [NBNCore].[dbo].Feature (geom)
+		SELECT 
+			sl.geom 
+		FROM [#slayer] sl
+		WHERE sl.id = @pid 
+		
+		INSERT INTO [NBNCore].[dbo].SiteBoundary (featureID, siteBoundaryDataset, name, providerKey, originalProjectionID, originalGeom, uploadDate)
+		SELECT
+			@@IDENTITY
+			, @datasetKey
+			, sl.siteName 
+			, sl.providerKey 
+			, @projection
+			, sl.originalGeom 
+			, @loadDate
+		FROM [#slayer] sl
+		WHERE sl.id = @pid 
+		
+		FETCH NEXT FROM CUR INTO @pid
+	END
+
+	CLOSE CUR
+	DEALLOCATE CUR
+
+	DROP TABLE [#slayer]
+	
+	DECLARE @cName varchar(255)
+	
+	DECLARE COLCUR CURSOR FOR
+	SELECT 
+		c.COLUMN_NAME 
+	FROM information_schema.columns c
+	WHERE c.TABLE_NAME = @layer 
+	AND COLUMN_NAME NOT IN ('ogr_fid', 'ogr_geometry', 'objectid', 'adminsitekey')
+	ORDER BY ORDINAL_POSITION 
+	
+	CREATE TABLE [#sAttrib] (
+		featureID int
+		, attributeID int
+		, data varchar(255)
+	)
+	
+	OPEN COLCUR
+	FETCH COLCUR INTO @cName
+	
+	WHILE @@FETCH_STATUS = 0
+	BEGIN
+		INSERT INTO [NBNCore].[dbo].[Attribute] (label, [description], storageLevelID, storageTypeID)
+		VALUES (@cName, 'NBN-ATTRIB-' + @layer + '-' + @cName, 5, 3)
+		
+		SET @createTempTable = 'INSERT INTO [NBNCore].[dbo].[SiteBoundaryAttribute] (featureID, attributeID, textValue) SELECT sb.featureID, a.id, CAST(l.[' + @cName + '] AS varchar FROM [NBNSpatial].[dbo].[' + @layer + '] l INNER JOIN [NBNCore].[dbo].[SiteBoundary] sb ON sb.providerKey = l.[' + @keyColumn + '] AND sb.siteBoundaryDataset = ''' + @datasetKey + ''' INNER JOIN [NBNCore].[dbo].[Attribute] a ON a.[description] = ''NBN-ATTRIB-' + @layer + '-' + @cName + ''''
+		EXEC @createTempTable 
+
+		FETCH NEXT FROM COLCUR INTO @cName
+	END
+	
+	CLOSE COLCUR
+	DEALLOCATE COLCUR
+END
+
+GO
+
+------------------------------
+
 CREATE USER [NBNImporter] FOR LOGIN [NBNImporter]
 
 GO
