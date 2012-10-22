@@ -128,7 +128,7 @@ public class WordImporter_3_1 implements WordImporter {
                     }
 
                     if (!mappings.containsKey(desc)) {
-                        mappings.put(desc, field);
+                        mappings.put(desc, field.trim());
                     } else {
                         // Reset iterator to the correct place
                         strIt = strList.listIterator(cursor);

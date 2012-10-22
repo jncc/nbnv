@@ -59,7 +59,7 @@ public class AddOrganisationController {
     @RequestMapping(value = "/organisation.html", method = RequestMethod.GET)
     public ModelAndView addOrganisation(@ModelAttribute("metadataForm") MetadataForm metadataForm, @ModelAttribute("org") Organisation org) {       
         AddOrganisationForm orgForm = new AddOrganisationForm();
-        if (metadataForm.hasStoredOrg()) {
+        if (metadataForm.getStoredOrg()) {
             orgForm.setOrgagnisation(org);
         }
         return new ModelAndView("addOrganisation", "orgForm", orgForm);

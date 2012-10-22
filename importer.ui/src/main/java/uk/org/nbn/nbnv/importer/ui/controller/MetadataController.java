@@ -22,6 +22,7 @@ import org.reflections.Reflections;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
+import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -162,8 +163,12 @@ public class MetadataController {
                     organisation.setWebsite(mappings.get(importer.ORG_WEBSITE));
                     
                     metadataForm.setStoredOrg(true);
-
-                    return new ModelAndView("redirect:/organisation.html", "org", organisation);
+                    messages.add("Found an unknown organisation with the name " + organisation.getName() + ", please click Import Organisation to import this as a new Organisation or select the correct Organisation from the drop down list");
+                    metadataForm.setErrors(messages);
+                    ModelAndView mv = new ModelAndView("metadataForm", "metadataForm", metadataForm);
+                    mv.addObject("org", organisation);
+                    return mv;
+                    //return new ModelAndView("redirect:/organisation.html", "org", organisation);
                 }
             } else { 
                 messages.add("Could not detect Organisation, please select it from the list below or add manually");
@@ -193,11 +198,29 @@ public class MetadataController {
         metadataForm.setStoredOrg(false);
         return new ModelAndView("redirect:/organisation.html");
     }
+    
+    @RequestMapping(value="/metadataProcess.html", method = RequestMethod.POST, params="importOrganisation")
+    public ModelAndView importOrganisation(@ModelAttribute("metadataForm") MetadataForm metadataForm, @ModelAttribute("org") Organisation organisation, BindingResult result) {
+        metadataForm.setStoredOrg(true);
+        ModelAndView mv = new ModelAndView("redirect:/organisation.html", "org", organisation);
+        mv.addObject("metadataForm", metadataForm);
+        return mv;
+    }
 
     @RequestMapping(value="/metadataProcess.html", method = RequestMethod.POST, params="submit")
     public ModelAndView uploadFile(@ModelAttribute("org") Organisation organisation, @ModelAttribute("metadataForm") @Valid MetadataForm metadataForm, BindingResult result, @RequestParam("organisationID") String organisationID) {
 
         metadataForm.getMetadata().setOrganisationID(Integer.parseInt(organisationID));
+        
+        if (metadataForm.getMetadata().getOrganisationID() == -404) {
+            String[] strs = {"organisationID.required"};
+            result.addError(new FieldError("metadataForm", "metadata.organisationID", 
+                    "-404", false, strs, null, null));
+            // Workaround as the organisation list isn't bound to any value
+            metadataForm.setOrgError(true);
+        }
+        
+        
         
         if (result.hasErrors()) {
             for (ObjectError error : result.getAllErrors()) {
@@ -208,12 +231,13 @@ public class MetadataController {
             }
             
             metadataForm.updateOrganisationList();
-            
+            metadataForm.resetForm();
+            metadataForm.getErrors().add("There are errors with the form, please correct them and re-submit");
             return new ModelAndView("metadataForm", "metadataForm", metadataForm);
         }
         
         organisation = getOrganisationByID(metadataForm.getMetadata().getOrganisationID(), metadataForm.getOrganisationList());
-
+        
         ModelAndView mv = new ModelAndView("redirect:/upload.html", "metadataForm", metadataForm);
         mv.addObject("org", organisation);
         
