@@ -21,6 +21,7 @@ class PublicIngester @Inject()(log: Logger,
 
       // associate with the main observation record
       p.setTaxonObservation(o)
+      p.setTaxonObservationID(o.getId)
 
       // set the site - to null if necessary
       val publicSite = if (metadata.siteIsPublic) o.getSite else null
