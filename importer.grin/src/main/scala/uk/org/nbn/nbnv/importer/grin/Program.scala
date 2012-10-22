@@ -33,10 +33,6 @@ object Program {
 
     val injector = Guice.createInjector(new GuiceModule(options))
     injector.getInstance(classOf[Program])
-
-//    Log.configure(options.logDir, "4MB", Level.INFO)
-//    val log = Log.get()
-//    new Program(log, options)
   }
 }
 
@@ -66,7 +62,7 @@ class Program @Inject() (log: Logger, options: Options, db: Database, ingester: 
           log.info("Imported " + (i + 1) + " grid refs in " + watch.elapsedMillis() + "ms")
           log.info("Average speed is " + watch.elapsedMillis() / (i + 1) + "ms per grid ref")
         }
-        db.reset()
+        db.flushAndClear()
       }
     }
   }

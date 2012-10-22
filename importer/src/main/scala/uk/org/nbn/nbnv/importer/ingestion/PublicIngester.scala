@@ -17,6 +17,8 @@ class PublicIngester @Inject()(log: Logger,
 
   def ingestPublic(o: TaxonObservation, sample: Sample, metadata: Metadata) {
 
+    log.debug("Ingesting public record...")
+
     def update(p: TaxonObservationPublic) {
 
       // associate with the main observation record

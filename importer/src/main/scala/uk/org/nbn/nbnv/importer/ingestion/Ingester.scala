@@ -9,6 +9,7 @@ import uk.org.nbn.nbnv.importer.Options
 import com.google.inject.Inject
 import org.apache.log4j.Logger
 import uk.org.nbn.nbnv.importer.data.Database
+import com.google.common.base.Stopwatch
 
 /// Performs the interaction with the NBN core database.
 
@@ -17,6 +18,13 @@ class Ingester @Inject()(options: Options,
                          db: Database,
                          datasetIngester: DatasetIngester,
                          recordIngester: RecordIngester) {
+
+  val watch = new Stopwatch()
+
+  private def logProgress(i: Int) {
+    log.info("Ingested %d records in %d seconds".format(i + 1, watch.elapsedMillis() / 1000))
+    log.info("Ingestion average is %d milliseconds per record".format(watch.elapsedMillis() / (i + 1)))
+  }
 
   def ingest(archive: Archive, metadata: Metadata) {
 
@@ -28,12 +36,17 @@ class Ingester @Inject()(options: Options,
 
       // upsert dataset
       val dataset = datasetIngester.upsertDataset(metadata)
-      db.reset()
+      db.flushAndClear()
 
-      // upsert records
-      for (record <- archive.iteratorRaw) {
+      watch.start()
+
+      // upsert records in groups of 100, fully clearing the context to prevent an observed JPA slowdown
+      for (group <- archive.iteratorRaw.zipWithIndex.grouped(100); (record, i) <- group) {
+
         recordIngester.upsertRecord(new NbnRecord(record), dataset, metadata)
-        db.em.flush()
+
+        logProgress(i)
+        db.flushAndClear()
       }
 
       if (options.whatIf) {

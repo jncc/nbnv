@@ -5,7 +5,7 @@ import javax.persistence.EntityManager
 /// A wrapper data access object, or data context.
 class Database(val em: EntityManager, val repo: Repository, val cache: QueryCache) {
 
-  def reset() {
+  def flushAndClear() {
     // flush and clear the entity manager to prevent slowdown and memory consumption
     em.flush()
     em.clear()

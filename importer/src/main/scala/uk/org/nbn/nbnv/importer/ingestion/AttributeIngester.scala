@@ -14,6 +14,8 @@ class AttributeIngester @Inject()(log: Logger, db: Database){
 
   def ingestAttributes(record: NbnRecord, observation: TaxonObservation, dataset: TaxonDataset) {
 
+    log.debug("Ingesting attributes...")
+
     //clear the collection of existing attributes (this is for records that are being re-imported
     observation.getTaxonObservationAttributeCollection.clear()
 
