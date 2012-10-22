@@ -27,14 +27,21 @@ public class MapServerServletHelper {
     @Autowired MapServiceMethodFactory serviceFactory;
     @Autowired InterceptorFactory interceptorFactory;
     @Autowired MapFileGenerator mapFileGenerator;
+    @Autowired WelcomePageHelper welcomePageHelper;
     
     public void processRequest(HttpServletRequest request, 
             HttpServletResponse servletResponse) throws ServletException, IOException {
         try {
-            MapServiceMethod mapMethod = serviceFactory.getMapServiceMethod(request.getPathInfo());
-            Response interceptedResponse = interceptorFactory.getResponse(mapMethod.call(request));
-            servletResponse.setContentType(interceptedResponse.getContentType());
-            copyAndClose(interceptedResponse.getResponse(), servletResponse);
+            //decide if the welcome page should be displayed
+            if(!request.getPathInfo().equals("/")) {
+                MapServiceMethod mapMethod = serviceFactory.getMapServiceMethod(request.getPathInfo());
+                Response interceptedResponse = interceptorFactory.getResponse(mapMethod.call(request));
+                servletResponse.setContentType(interceptedResponse.getContentType());
+                copyAndClose(interceptedResponse.getResponse(), servletResponse);
+            }
+            else {
+                welcomePageHelper.produceWelcomePage(servletResponse);
+            }
         }
         catch(MapServiceUndefinedException msue) {
             servletResponse.sendError(HttpServletResponse.SC_NOT_FOUND, "Could not find: " + Arrays.toString(request.getPathInfo().substring(1).split("/")));
@@ -46,7 +53,6 @@ public class MapServerServletHelper {
             throw new ServletException(mapEx);
         }
     }
-    
     
     /*Handle execptions which were thrown during the construction of map services*/
     private static void handleMapServiceException(Throwable e, HttpServletResponse response) throws IOException {
