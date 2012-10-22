@@ -23,7 +23,7 @@ class DatasetIngester @Inject()(log: Logger,
       insertNew(metadata)
     }
     else {
-      // todo: delete existing data?
+      // todo: delete existing data? - yes
       updateExisting(metadata)
     }
   }

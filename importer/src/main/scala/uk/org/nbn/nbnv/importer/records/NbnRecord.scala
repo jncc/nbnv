@@ -14,9 +14,9 @@ class NbnRecord(record: StarRecord) {
   // there should be exactly one extension record for a record (hence .head)
   private val extension = record.extension("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/nxfOccurrence").head
 
-  // todo: we don't want to do parsing in this class
-  // todo: .value (below) returns null if the column does not exist - should throw a better exception here
-  // todo: parse all the gubbins eventDate types that NBN uses
+  // we don't want to do parsing in this classs
+  // .value (below) returns null if the column does not exist - should throw a better exception here
+  // parse all the gubbins eventDate types that NBN uses
 
   private val attributeJson = record.core.value(DwcTerm.dynamicProperties)
   private val attributeMap = if (attributeJson != null && attributeJson.isEmpty == false) {

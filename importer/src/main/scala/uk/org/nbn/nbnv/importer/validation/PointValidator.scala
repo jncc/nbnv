@@ -24,10 +24,12 @@ class PointValidator {
         val r2 = v2.validate(record)
         resultList.append(r2)
 
-        //check lat long falls with in supported range of values
-        val v3 = new Nbnv86Validator
-        val r3 = v3.validate(record)
-        resultList.append(r3)
+        if (r2.level == ResultLevel.DEBUG) {
+          //check lat long falls with in supported range of values
+          val v3 = new Nbnv86Validator
+          val r3 = v3.validate(record)
+          resultList.append(r3)
+        }
       }
       //else one of the supported grid ref systems
       else {
@@ -36,10 +38,12 @@ class PointValidator {
         val r4 = v4.validate(record)
         resultList.append(r4)
 
-        //check that easting northing fall within specified grid system
-        val v5 = new Nbnv87Validator
-        val r5 = v5.validate(record)
-        resultList.append(r5)
+        if (r4.level == ResultLevel.DEBUG) {
+          //check that easting northing fall within specified grid system
+          val v5 = new Nbnv87Validator
+          val r5 = v5.validate(record)
+          resultList.append(r5)
+        }
       }
     }
 
