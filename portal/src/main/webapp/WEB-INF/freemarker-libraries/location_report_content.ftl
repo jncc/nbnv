@@ -23,7 +23,7 @@
             <table class="nbn-coloured-table">
             <tr><th class="nbn-th-left nbn-th-right">Species recorded (number of records)</th></tr>
             <#list taxaWithQueryStats as taxonWithQueryStats>
-                <tr><td class="nbn-td-left nbn-td-right"><a href="/Reports/${getReportTypeTextForURL(is10kmReport)}/${locationID}/Groups/${taxonOutputGroup.taxonGroupKey}/Species/${taxonWithQueryStats.taxon.prefnameTaxonVersionKey}/Observations${report_utils.getQueryParameterText(requestParameters)}">${taxon_utils.getShortName(taxonWithQueryStats.taxon)}</a> (${taxonWithQueryStats.querySpecificObservationCount})</td></tr>
+                <tr><td class="nbn-td-left nbn-td-right"><a href="/Reports/${getReportTypeTextForURL(is10kmReport)}/${locationID}/Groups/${taxonOutputGroup.key}/Species/${taxonWithQueryStats.taxon.ptaxonVersionKey}/Observations${report_utils.getQueryParameterText(requestParameters)}">${taxon_utils.getShortName(taxonWithQueryStats.taxon)}</a> (${taxonWithQueryStats.querySpecificObservationCount})</td></tr>
             </#list>
             </table>
         </div>
@@ -34,21 +34,24 @@
 
 
 <#macro observations title locationName locationID datasets requestParameters taxon>
+    <#assign startYear=requestParameters.startYear?has_content?string(requestParameters.startYear[0]!"1600","1600")>
+    <#assign endYear=requestParameters.endYear?has_content?string(requestParameters.endYear[0]!.now?string("yyyy"),.now?string("yyyy"))>
+    <#assign spatialRelationship=requestParameters.spatialRelationship?has_content?string(requestParameters.spatialRelationship[0]!"overlap","overlap")>
     <h1>${title}</h1>
     <form action="" method="post" id="${getSiteFormId()}">
         <@report_utils.site_report_filters requestParameters=requestParameters args={"taxon":taxon} location=locationName isSpatialRelationshipNeeded=false isDesignationNeeded=false isDatasetNeeded=false/>
-        <@report_utils.siteSpeciesImage locationName=locationName locationID=locationID ptvk=taxon.prefnameTaxonVersionKey/>
+        <@report_utils.siteSpeciesImage locationName=locationName locationID=locationID ptvk=taxon.ptaxonVersionKey startYear=startYear endYear=endYear datasets=datasets spatialRelationship=spatialRelationship/>
     </form>
     <#list datasets as dataset>
         <#assign provider=json.readURL("${api}/organisations/${dataset.organisationID}")>
         <table class="nbn-coloured-table">
             <tr>
                 <th colspan="2" class="nbn-th-left">Dataset:</th>
-                <th colspan="4" class="nbn-th-right"><a href="/Datasets/${dataset.datasetKey}">${dataset.name}</a></th>
+                <th colspan="4" class="nbn-th-right"><a href="/Datasets/${dataset.key}">${dataset.title}</a></th>
             </tr>
             <tr>
                 <th colspan="2" class="nbn-td-left">Provider:</th>
-                <th colspan="4" class="nbn-td-right"><a href="/Organisations/${provider.organisationID}">${provider.name}</a></th>
+                <th colspan="4" class="nbn-td-right"><a href="/Organisations/${provider.id}">${provider.name}</a></th>
             </tr>
             <tr>
                 <th colspan="2" class="nbn-td-left">Your access:</th>
@@ -67,7 +70,7 @@
                     <td class="nbn-td-left">${observation.siteName!"N/A"}</td>
                     <td>${observation.gridRef}</td>
                     <td>${observation.startDate} to ${observation.endDate}</td>
-                    <td>${observation.dateType}</td>
+                    <td>${observation.dateTypekey}</td>
                     <td>${observation.sensitive?string}</td>
                     <td class="nbn-td-right">${observation.absence?string}</td>
                 </tr>

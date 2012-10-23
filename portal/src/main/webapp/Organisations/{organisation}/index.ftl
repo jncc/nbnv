@@ -12,7 +12,7 @@
             <th>Summary</th>
         </tr>
         <tr>
-            <td><img class="nbn-align-img-right" src="${organisation.logo}" />${organisation.summary}</td>
+            <td><img class="nbn-align-img-right" src="${api}/organisations/${organisation.id}/logo" />${organisation.summary}</td>
         </tr>
         <tr>
             <th>Contact details</th>
@@ -36,7 +36,7 @@
     <#assign habitatDatasetInfo = "">
     <#assign siteBoundaryDatasetInfo = "">
     <#list datasetList as dataset>
-        <#assign datasetLinkFragment = "<li><a href='/Datasets/${dataset.datasetKey}'>${dataset.name}</a></li>">
+        <#assign datasetLinkFragment = "<li><a href='/Datasets/${dataset.key}'>${dataset.key}</a></li>">
         
         <#if dataset.typeName == "Taxon">
             <#if taxonDatasetInfo?length == 0>

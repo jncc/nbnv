@@ -3,7 +3,7 @@
 
 MAP
     IMAGETYPE                                             PNG
-    SIZE                                                  600 600
+    SIZE                                                  350 350
     IMAGECOLOR                                            255 255 255
     FONTSET                                               "fonts/fontset"
     EXTENT                                                ${extent.minX?c} ${extent.minY?c} ${extent.maxX?c} ${extent.maxY?c}

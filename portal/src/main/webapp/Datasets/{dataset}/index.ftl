@@ -86,11 +86,11 @@
                     </tr>
                     <tr>
                         <th>Access constraints</th>
-                        <td>${dataset.accessConstraints?has_content?string(dataset.accessConstraints,"Not available")}</td>
+                        <td>${dataset.accessConstraints!"Not available"}</td>
                     </tr>
                     <tr>
                         <th>Use constraints</th>
-                        <td>${dataset.useConstraints?has_content?string(dataset.useConstraints,"Not available")}</td>
+                        <td>${dataset.useConstraints!"Not available"}</td>
                     </tr>
                 </table>
             </div>

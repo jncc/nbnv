@@ -86,20 +86,4 @@ MAP
     MINSCALEDENOM 150000   ##Scale Dependancy
   END # Layer
 
-  LAYER
-    NAME "OS25k"
-    METADATA
-      "wms_title"    "Ordnance Survey 1:25000 Scale Colour Raster (Modern)"   ##required
-    END
-    TYPE RASTER
-    STATUS ON
-    TILEINDEX "${ordnanceSurveyMapDataLocation}\25k\index.shp"
-    TILEITEM "Location"
-    PROJECTION
-      "init=epsg:27700"   ##recommended
-    END
-
-    MAXSCALEDENOM 15000
-  END # Layer
-
 END # Map File

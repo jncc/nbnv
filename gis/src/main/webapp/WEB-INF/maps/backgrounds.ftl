@@ -61,6 +61,24 @@
     MINSCALEDENOM 15000   ##Scale Dependancy
     MAXSCALEDENOM 35000
   END # Layer
+
+  LAYER
+    NAME "OS25k"
+    GROUP "OS-Scale-Dependent"
+    [#if requires?size != 0]REQUIRES "[@join requires/]"[/#if]
+    METADATA
+      "wms_title"    "Ordnance Survey 1:25000 Scale Colour Raster (Modern)"   ##required
+    END
+    TYPE RASTER
+    STATUS ON
+    TILEINDEX "${location}\25k\index.shp"
+    TILEITEM "Location"
+    PROJECTION
+      "init=epsg:27700"   ##recommended
+    END
+
+    MAXSCALEDENOM 15000
+  END # Layer
 [/#macro]
 
 [#macro selectedFeature featureID spatialConnection]

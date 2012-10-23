@@ -63,7 +63,7 @@
             <#if args.taxonOutputGroup??>
                 <tr>
                     <td class="nbn-td-left nbn-filter-name">Species group:</td>
-                    <td class="nbn-td-right">${args.taxonOutputGroup.taxonGroupName?cap_first}</td>
+                    <td class="nbn-td-right">${args.taxonOutputGroup.name?cap_first}</td>
                 </tr>
             </#if>
             <#if args.taxon??>
@@ -169,8 +169,8 @@
         <@siteImage locationName=locationName locationID=locationID imageURL=getSiteBoundaryImageURL(350, locationID)/>
 </#macro>
 
-<#macro siteSpeciesImage locationName locationID ptvk>
-        <@siteImage locationName=locationName locationID=locationID imageURL=getSiteSpeciesImageURL(350, locationID, ptvk)/>
+<#macro siteSpeciesImage locationName locationID ptvk startYear endYear datasets spatialRelationship>
+        <@siteImage locationName=locationName locationID=locationID imageURL=getSiteSpeciesImageURL(350, locationID, ptvk, startYear, endYear, datasets, spatialRelationship)/>
 </#macro>
 
 <#macro siteImage locationName locationID imageURL>
@@ -190,9 +190,20 @@
 </#macro>
 
 <#function getSiteBoundaryImageURL imageSize locationID>
-    <#return "/nbnv-gis-0.1-SNAPSHOT/OS-Modern?feature=" + locationID + "&request=GetMap&service=WMS&version=1.3.0&layers=OS-Scale-Dependent,Selected-Feature&width=" + imageSize + "&height=" + imageSize + "&crs=EPSG:27700&bbox=0,0,700000,700000&format=png">
+    <#return "${gis}/SiteReport/${locationID}?mode=map&LAYER=OS-Scale-Dependent&LAYER=Selected-Feature">
 </#function>
 
-<#function getSiteSpeciesImageURL imageSize locationID ptvk>
-    <#return "/nbnv-gis-0.1-SNAPSHOT/SingleSpecies/" + ptvk + "?request=GetMap&service=WMS&width=100&version=1.1.0&layers=OS-Scale-Dependent,Grid-10km&width=" + imageSize + "&height=" + imageSize + "&srs=EPSG:27700&bbox=0,0,700000,700000&format=png">
+<#function getSiteSpeciesImageURL imageSize locationID ptvk startYear endYear datasets spatialRelationship>
+    <#assign toReturn="${gis}/SiteReport/${locationID}/${ptvk}?mode=map&LAYER=OS-Scale-Dependent&LAYERS=Records&LAYERS=Selected-Feature&startyear=${startYear}&endyear=${endYear}&spatialRelationship=${spatialRelationship}">
+    <#if datasets??>
+        <#assign datasetKeys="">
+        <#list datasets as dataset>
+            <#assign datasetKeys = datasetKeys + dataset.key>
+            <#if dataset_has_next>
+                <#assign datasetKeys = datasetKeys + ",">
+            </#if>
+        </#list>
+        <#assign toReturn = toReturn + "&" + datasetKeys>
+    </#if>
+    <#return toReturn>
 </#function>
