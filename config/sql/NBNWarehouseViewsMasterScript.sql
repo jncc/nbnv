@@ -275,6 +275,7 @@ GO
 CREATE VIEW [dbo].[SiteBoundaryFeatureData] WITH SCHEMABINDING AS (
 	SELECT
 		f.id 
+		, sb.siteBoundaryDataset + sb.providerKey AS identifier
 		, sb.name AS label
 		, f.geom 
 		, sb.originalGeom
@@ -300,6 +301,7 @@ GO
 CREATE VIEW [dbo].[GridSquareFeatureData] WITH SCHEMABINDING AS (
 	SELECT
 		f.id 
+		, gs.gridRef AS identifier
 		, gs.gridRef AS label
 		, f.geom 
 		, gs.originalGeom
@@ -340,6 +342,7 @@ GO
 CREATE VIEW [dbo].[FeatureData] WITH SCHEMABINDING AS (
 	SELECT
 		gsfd.id 
+		, gsfd.identifier 
 		, gsfd.label 
 		, gsfd.geom 
 		, gsfd.originalGeom 
@@ -349,6 +352,7 @@ CREATE VIEW [dbo].[FeatureData] WITH SCHEMABINDING AS (
 	UNION ALL
 	SELECT 
 		sbfd.id
+		, sbfd.identifier
 		, sbfd.label 
 		, sbfd.geom 
 		, sbfd.originalGeom 
