@@ -107,7 +107,7 @@ Aliquam erat volutpat. Curabitur vel purus nisi, ut venenatis metus. Mauris elem
 </qualityControl>
 </methods>
 <additionalInfo>
-<para>Temporal Coverage: This is a test description, copy and pasted many a time to do stuff that shouldn't break the input system at all and it should be very nice and we should all have a tea party. This is a test description, copy and pasted many a time to do stuff that shouldn't break the input system at all and it should be very nice and we should all have a tea party.&#13;
+<para>temporalCoverage: This is a test description, copy and pasted many a time to do stuff that shouldn't break the input system at all and it should be very nice and we should all have a tea party. This is a test description, copy and pasted many a time to do stuff that shouldn't break the input system at all and it should be very nice and we should all have a tea party.&#13;
 &#13;
 This is a test description, copy and pasted many a time to do stuff that shouldn't break the input system at all and it should be very nice and we should all have a tea party.</para>
 </additionalInfo>
@@ -125,13 +125,13 @@ Ut scelerisque, metus in mattis luctus, lorem metus eleifend massa, ut hendrerit
 Morbi ligula leo, tristique gravida rutrum mollis, aliquet a lectus. Praesent rhoncus blandit felis sed sollicitudin. Pellentesque vel elit ligula. Duis venenatis ornare purus. Suspendisse feugiat sollicitudin aliquam. Aliquam pulvinar feugiat purus eget placerat. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae;</para>
 </additionalInfo>
 <additionalInfo>
-<para>Public Access: 10000</para>
+<para>publicPrecision: 10000</para>
 </additionalInfo>
 <additionalInfo>
-<para>Recorder Names: false</para>
+<para>recorderAndDeterminerNamesArePublic: false</para>
 </additionalInfo>
 <additionalInfo>
-<para>Record Attributes: false</para>
+<para>attributesArePublic: false</para>
 </additionalInfo>
 </dataset>
 </eml:eml>
