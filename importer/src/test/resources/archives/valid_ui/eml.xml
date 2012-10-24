@@ -125,7 +125,7 @@ Ut scelerisque, metus in mattis luctus, lorem metus eleifend massa, ut hendrerit
 Morbi ligula leo, tristique gravida rutrum mollis, aliquet a lectus. Praesent rhoncus blandit felis sed sollicitudin. Pellentesque vel elit ligula. Duis venenatis ornare purus. Suspendisse feugiat sollicitudin aliquam. Aliquam pulvinar feugiat purus eget placerat. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae;</para>
 </additionalInfo>
 <additionalInfo>
-<para>publicPrecision: 10000</para>
+<para>publicResolution: 10000</para>
 </additionalInfo>
 <additionalInfo>
 <para>recorderAndDeterminerNamesArePublic: false</para>

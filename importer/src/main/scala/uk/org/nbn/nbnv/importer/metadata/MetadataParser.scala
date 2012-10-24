@@ -34,7 +34,7 @@ class MetadataParser {
       val dataQuality = (dataset \ "methods" \ "qualityControl" \ "description" \ "para" ).text.trim
       val temporalCoverage = getAdditionalData("temporalCoverage:")
       val additionalInformation = getAdditionalData("additionalInformation:")
-      val publicPrecision = getAdditionalData("publicPrecision:").maybeInt.getOrElse(10000)
+      val publicResolution = getAdditionalData("publicResolution:").maybeInt.getOrElse(10000)
       val recorderAndDeterminerArePublic = getAdditionalData("recorderAndDeterminerNamesArePublic:").maybeBoolean.getOrElse(false)
       val siteIsPublic = getAdditionalData("siteNameIsPublic:").maybeBoolean.getOrElse(false)
     }

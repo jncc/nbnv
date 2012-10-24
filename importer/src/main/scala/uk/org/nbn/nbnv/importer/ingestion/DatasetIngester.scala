@@ -101,7 +101,7 @@ class DatasetIngester @Inject()(log: Logger,
   private def modifyTaxonDataset(td: TaxonDataset, m: Metadata) {
 
 
-    val resolution = db.repo.getResolution(m.publicPrecision)
+    val resolution = db.repo.getResolution(m.publicResolution)
 
     td.setPublicResolution(resolution)
 
