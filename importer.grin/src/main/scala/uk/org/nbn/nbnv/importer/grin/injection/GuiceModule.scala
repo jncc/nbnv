@@ -10,7 +10,7 @@ import uk.org.nbn.nbnv.importer.grin.Options
 
 class GuiceModule(options: Options) extends AbstractModule {
 
-  Log.configure(options.logDir, "4MB", Level.INFO)
+  Log.configure(options.logDir, "4MB", "INFO")
   val log = Log.get()
 
   val em = new PersistenceUtility().createEntityManagerFactory(Settings.map).createEntityManager
