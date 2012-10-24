@@ -13,7 +13,7 @@ import java.util.Properties;
  * @author Christopher Johnson
  */
 public class PropertiesReader {
-    private static final File PROPERTIES_OVERLOAD_DIR = new File("/server/overload/");
+    private static final File PROPERTIES_OVERLOAD_DIR = new File("/nbnv-settings/importer/");
     
     public static Properties getEffectiveProperties(String name) throws IOException {
         Properties localProperties = readStreamAndClose(PropertiesReader.class.getClassLoader().getResourceAsStream(name));
