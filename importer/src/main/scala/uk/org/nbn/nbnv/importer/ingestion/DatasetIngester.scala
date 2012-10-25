@@ -16,7 +16,7 @@ class DatasetIngester @Inject()(log: Logger,
 
     // we're only dealing with *Taxon* Datasets at the moment
 
-    // when there's no key given, insert a new dataset
+    // when there's no key given, insert a new dataset (and generate a new key)
     // when there is one, find it and update it (otherwise throw)
 
     if (metadata.datasetKey.isEmpty) {
