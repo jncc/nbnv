@@ -39,4 +39,16 @@ class PartialSmokeSuiteIT extends BaseFunSuite with ResourceLoader {
     i.ensureSiteBoundaryFeature("GA000942E012")
   }
 
+  test("should throw on non-existent site boundary feature") {
+
+    val f = fixture
+    val i = new FeatureIngester(mock[Logger], f.db, new GridSquareInfoFactory(f.db))
+
+    val ex = intercept[ImportFailedException] {
+      i.ensureSiteBoundaryFeature("THISDOESNOTEXIST")
+    }
+
+    ex.message should include ("Expected one result for 'THISDOES|NOTEXIST', but found none")
+  }
+
 }
