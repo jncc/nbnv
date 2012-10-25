@@ -40,10 +40,6 @@ class Ingester @Inject()(options: Options,
 
       watch.start()
 
-      for ((record, i) <- archive.iteratorRaw.zipWithIndex) {
-        println(new NbnRecord(record).key + "--"  + i)
-      }
-
       // upsert records
       for ((record, i) <- archive.iteratorRaw.zipWithIndex) {
 

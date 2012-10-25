@@ -43,6 +43,14 @@ INSERT INTO UserData (
 
 INSERT INTO UserRoleSystemAdministratorData (userKey) VALUES (42);
 
+-- ---------------
+--Create a test organisation "testorg" with id 1
+INSERT INTO OrganisationData (
+    id, name
+) VALUES (
+    1, 'testorg'
+);
+
 --Create a single organisation admin "orgadmintester" with an id of 41
 INSERT INTO UserData (
     id, forename, surname, username, email, registrationDate, phone
@@ -76,11 +84,10 @@ INSERT INTO OrganisationMembershipData (
 INSERT INTO OrganisationData (
     id, name
 ) VALUES (
-    (1, 'testorg'),
-    (2, 'testdataorg')
+    2, 'testdataorg'
 );
 
---Create a test dataset as 'DATASET1'
+--Create a series of test datasets
 INSERT INTO DatasetData (
 	"key", title, description, typeName, organisationName, organisationID, captureMethod, 
         purpose, geographicalCoverage, quality, additionalInformation, accessConstraints, 
@@ -113,5 +120,17 @@ INSERT INTO UserData (
 INSERT INTO DatasetAdministrator (
     userKey, datasetKey
 ) VALUES (
-    39, 'DATASET1'
+    (39, 'DATASET1'),
+    (39, 'DATASET2'),
+    (39, 'DATASET3')
+);
+
+-------------
+-- Make Designation Data test data
+INSERT INTO DesignationData (
+    id, name, label, code, designationCategoryID, description
+) VALUES (
+    (0, 'Test Description 1', 'TestDes1', 'TD1', 19, 'Thats is a mighty fine test you have there'),
+    (1, 'Test Description 2', 'TestDes2', 'TD2', 23, 'Would be a shame if something where to happen to it ...'),
+    (2, 'Test Description 3', 'TestDes3', 'TD3', 23, 'sssssssssssss......')
 );

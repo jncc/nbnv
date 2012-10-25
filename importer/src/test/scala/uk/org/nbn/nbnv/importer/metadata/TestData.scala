@@ -32,10 +32,10 @@ object TestData {
         </qualityControl>
       </methods>
       <additionalInfo>
-        <para>Temporal Coverage: Test temporal coverage</para>
+        <para>temporalCoverage: Test temporal coverage</para>
       </additionalInfo>
       <additionalInfo>
-        <para>Additional Information: Test additional info</para>
+        <para>additionalInformation: Test additional info</para>
       </additionalInfo>
     </dataset>
   </eml>

@@ -363,7 +363,7 @@ public class Dataset implements Serializable {
 
     @Override
     public String toString() {
-        return "uk.org.nbn.nbnv.jpa.nbncore.Dataset[ key=" + key + " ]";
+        return key;
     }
     
 }

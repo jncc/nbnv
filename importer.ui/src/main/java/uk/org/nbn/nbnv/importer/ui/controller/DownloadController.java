@@ -30,14 +30,14 @@ public class DownloadController {
         
         String file = request.getParameter("file");
         
-        if (!file.endsWith("archive.zip")) {
+        if (!file.endsWith(".zip") && !file.startsWith("archive_")) {
             return new ModelAndView("exception", "error", "Not a DwC-A archive");
         }
         
         File f = new File(file);
         response.setContentType("application/zip");
         response.setContentLength((int)f.length());
-        response.setHeader("Content-Disposition", "attachment; filename=\"archive.zip\"");
+        response.setHeader("Content-Disposition", String.format("attachment; filename=\"%s\"", file.substring(file.lastIndexOf("archive_"))));
         
         FileCopyUtils.copy(new FileInputStream(f), response.getOutputStream());
         

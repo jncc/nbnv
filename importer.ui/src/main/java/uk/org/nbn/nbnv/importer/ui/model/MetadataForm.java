@@ -10,6 +10,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import uk.org.nbn.nbnv.importer.ui.util.DatabaseConnection;
+import uk.org.nbn.nbnv.jpa.nbncore.Dataset;
 import uk.org.nbn.nbnv.jpa.nbncore.Organisation;
 
 /**
@@ -21,7 +22,10 @@ public class MetadataForm implements Serializable {
     private boolean storedOrg = false;
     private List<String> errors = new ArrayList<String>();
     private List<Organisation> organisationList;
+    private List<Dataset> datasets;
     private boolean orgError = false;
+    private boolean datasetError = false;
+    private boolean datasetUpdate = false;
     
     public MetadataForm() {
         
@@ -102,9 +106,42 @@ public class MetadataForm implements Serializable {
         this.orgError = orgError;
     }
     
+    public List<Dataset> getDatasets() {
+        return datasets;
+    }
+    
+    public void setDatasets(List<Dataset> datasets) {
+        this.datasets = datasets;
+    }
+    
+    public void updateDatasests() {
+        EntityManager em = DatabaseConnection.getInstance().createEntityManager();
+        Query q = em.createNamedQuery("Dataset.findAll");
+        List<Dataset> lis = (q.getResultList());
+        lis.add(0, new Dataset(""));
+        setDatasets(lis);
+    }
+
+    public boolean getDatasetError() {
+        return datasetError;
+    }
+
+    public void setDatasetError(boolean datasetError) {
+        this.datasetError = datasetError;
+    }
+    
+    public void setDatasetUpdate(boolean datasetUpdate) {
+        this.datasetUpdate = datasetUpdate;
+    }
+    
+    public boolean getDatasetUpdate() {
+        return this.datasetUpdate;
+    }
+    
     public void resetForm() {
         this.storedOrg = false;
         this.errors = new ArrayList<String>();
         this.orgError = false;
+        this.datasetError = false;
     }
 }
