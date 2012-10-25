@@ -23,7 +23,7 @@ public class FeatureResource {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Feature getFeature(@PathParam("id") int featureId) {
+    public Feature getFeature(@PathParam("id") String featureId) {
         return featureMapper.getFeature(featureId);
     }
 }

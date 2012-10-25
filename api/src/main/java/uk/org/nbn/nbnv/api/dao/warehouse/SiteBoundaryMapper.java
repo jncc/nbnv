@@ -6,7 +6,7 @@ import uk.org.nbn.nbnv.api.model.SiteBoundary;
 
 public interface SiteBoundaryMapper {
     
-    @Select("SELECT * FROM SiteBoundaryData where siteBoundaryDatasetKey = #{datasetKey} ORDER BY name ASC")
+    @Select("SELECT sbd.*, sbfd.identifier FROM SiteBoundaryData sbd INNER JOIN SiteBoundaryFeatureData sbfd ON sbd.featureID = sbfd.id WHERE siteBoundaryDatasetKey = #{datasetKey} ORDER BY name ASC")
     List<SiteBoundary> getByDatasetKey(String datasetKey);
 
 }

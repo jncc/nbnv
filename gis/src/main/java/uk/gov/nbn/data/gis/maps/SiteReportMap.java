@@ -4,6 +4,7 @@ import com.sun.jersey.api.client.WebResource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.nbn.data.gis.processor.MapContainer;
@@ -30,12 +31,12 @@ import uk.org.nbn.nbnv.api.model.User;
 public class SiteReportMap {
     @Autowired WebResource resource;
     private static final String WITHIN_QUERY = "SELECT containedFeatureID "
-            + "FROM FeatureContains "
-            + "WHERE featureID = %s";
+            + "FROM FeatureContains fc INNER JOIN FeatureData fd ON fc.featureID = fd.id "
+            + "WHERE fd.identifier = '%s'";
     
     private static final String OVERLAPS_QUERY = "SELECT overlappedFeatureID "
-            + "FROM FeatureOverlaps "
-            + "WHERE featureID = %s";
+            + "FROM FeatureOverlaps fo INNER JOIN FeatureData fd ON fo.featureID = fd.id "
+            + "WHERE fd.identifier = '%s'";
     
     private static final String QUERY = "geom from ("
             + "SELECT o.featureID , fd.geom, resolutionID, o.absence "
@@ -54,12 +55,12 @@ public class SiteReportMap {
     @MapService("{featureID}")
     public MapFileModel getFeatureMap(
             @ServiceURL String mapServiceURL,
-            @PathParam(key="featureID", validation="[0-9]*") String featureID) {        
+            @PathParam(key="featureID") String featureID) {        
         HashMap<String, Object> data = new HashMap<String, Object>();
         data.put("extent", getNativeBoundingBox(featureID));
         data.put("mapServiceURL", mapServiceURL);
         data.put("properties", properties);
-        data.put("featureID", featureID);
+        data.put("featureID", StringEscapeUtils.escapeSql(featureID));
         return new MapFileModel("SiteReport.map",data);
     }
     
@@ -67,7 +68,7 @@ public class SiteReportMap {
     public MapFileModel getSiteReport(
             User user,
             @ServiceURL String mapServiceURL,
-            @PathParam(key="featureID", validation="[0-9]*") String featureID,
+            @PathParam(key="featureID") String featureID,
             @PathParam(key="taxonVersionKey", validation="^[A-Z]{6}[0-9]{10}$") String taxonKey,
             @QueryParam(key="datasets", validation="^[A-Z0-9]{8}$") List<String> datasetKeys,
             @QueryParam(key="startyear", validation="[0-9]{4}") String startYear,
@@ -82,7 +83,7 @@ public class SiteReportMap {
         data.put("extent", getNativeBoundingBox(featureID));
         data.put("mapServiceURL", mapServiceURL);
         data.put("properties", properties);
-        data.put("featureID", featureID);
+        data.put("featureID", StringEscapeUtils.escapeSql(featureID));
         data.put("taxonVersionKey", taxonKey);
         data.put("recordsData", String.format(QUERY, taxonKey, spatialRelationSelect, user.getId(), 
                         MapHelper.createInDatasetsSegment(datasetKeys),

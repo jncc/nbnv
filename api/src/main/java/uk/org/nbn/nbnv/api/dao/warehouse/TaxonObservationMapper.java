@@ -39,7 +39,7 @@ public interface TaxonObservationMapper {
             , @Param("datasetKey") List<String> datasetKey
             , @Param("ptvk") List<String> ptvk
             , @Param("spatialRelationship") String spatialRelationship
-            , @Param("featureID") Integer featureId
+            , @Param("featureID") String featureId
             , @Param("sensitive") Boolean sensitive
             , @Param("designation") String designation
             , @Param("taxonOutputGroup") String taxonOutputGroup
@@ -53,7 +53,7 @@ public interface TaxonObservationMapper {
             , @Param("datasetKey") List<String> datasetKey
             , @Param("ptvk") List<String> ptvk
             , @Param("spatialRelationship") String spatialRelationship
-            , @Param("featureID") Integer featureId
+            , @Param("featureID") String featureId
             , @Param("sensitive") Boolean sensitive
             , @Param("designation") String designation
             , @Param("taxonOutputGroup") String taxonOutputGroup
@@ -71,7 +71,7 @@ public interface TaxonObservationMapper {
             , @Param("datasetKey") List<String> datasetKey
             , @Param("ptvk") List<String> ptvk
             , @Param("spatialRelationship") String spatialRelationship
-            , @Param("featureID") Integer featureId
+            , @Param("featureID") String featureId
             , @Param("sensitive") Boolean sensitive
             , @Param("designation") String designation
             , @Param("taxonOutputGroup") String taxonOutputGroup
@@ -89,7 +89,7 @@ public interface TaxonObservationMapper {
             , @Param("datasetKey") List<String> datasetKey
             , @Param("ptvk") List<String> ptvk
             , @Param("spatialRelationship") String spatialRelationship
-            , @Param("featureID") Integer featureId
+            , @Param("featureID") String featureId
             , @Param("sensitive") Boolean sensitive
             , @Param("designation") String designation
             , @Param("taxonOutputGroup") String taxonOutputGroup
@@ -107,7 +107,7 @@ public interface TaxonObservationMapper {
             , @Param("datasetKey") List<String> datasetKey
             , @Param("ptvk") List<String> ptvk
             , @Param("spatialRelationship") String spatialRelationship
-            , @Param("featureID") Integer featureId
+            , @Param("featureID") String featureId
             , @Param("sensitive") Boolean sensitive
             , @Param("designation") String designation
             , @Param("taxonOutputGroup") String taxonOutputGroup

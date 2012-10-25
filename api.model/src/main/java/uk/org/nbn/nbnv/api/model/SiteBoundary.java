@@ -5,18 +5,22 @@ public class SiteBoundary {
     private int featureID;
     private String name;
     private String providerKey;
+    private String description;
     private String siteBoundaryDatasetKey;
     private int siteBoundaryCategoryId;
+    private String identifier;
     
     public SiteBoundary(){}
     
-    public SiteBoundary(int featureID, String name, String providerKey, String siteBoundaryDatasetKey, int siteBoundaryCategoryId){
+    public SiteBoundary(int featureID, String name, String providerKey, String description, String siteBoundaryDatasetKey, int siteBoundaryCategoryId, String identifier){
         super();
         this.featureID = featureID;
         this.name = name;
         this.providerKey = providerKey;
+        this.description = description;
         this.siteBoundaryDatasetKey = siteBoundaryDatasetKey;
         this.siteBoundaryCategoryId = siteBoundaryCategoryId;
+        this.identifier = identifier;
     }
 
     public int getFeatureID() {
@@ -57,6 +61,22 @@ public class SiteBoundary {
 
     public void setSiteBoundaryCategoryId(int siteBoundaryCategoryId) {
         this.siteBoundaryCategoryId = siteBoundaryCategoryId;
+    }
+
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
     
 }

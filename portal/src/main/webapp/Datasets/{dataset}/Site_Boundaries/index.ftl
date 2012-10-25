@@ -10,7 +10,7 @@
     <tbody>
         <#list siteBoundaries as siteBoundary>
             <tr>
-                <td><a href="/Reports/Sites/${siteBoundary.featureID}/Groups">${siteBoundary.name}</a></td>
+                <td><a href="/Reports/Sites/${siteBoundary.identifier}/Groups">${siteBoundary.name}</a></td>
                 <td>${siteBoundary.providerKey}</td>
             </tr>
         </#list>

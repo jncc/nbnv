@@ -94,7 +94,7 @@
         DATA                        "geom from (
                                         SELECT id, geom
                                         FROM FeatureData
-                                        WHERE id = '${featureID}'
+                                        WHERE identifier = '${featureID}'
                                     ) AS foo USING UNIQUE id USING SRID=4326"
 
         METADATA

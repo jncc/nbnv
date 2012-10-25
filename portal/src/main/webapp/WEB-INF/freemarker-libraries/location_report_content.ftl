@@ -10,7 +10,7 @@
                 </#list>
             </table>
         </div>
-        <@report_utils.siteBoundaryImage locationName=locationName locationID=locationID/>
+        <@report_utils.siteImage locationName=locationName locationID=locationID imageURL=report_utils.getSiteBoundaryImageURL(locationID,!is10kmReport)/>
         <@report_utils.dataset_table providersWithQueryStats=providersWithQueryStats requestParameters=requestParameters/>
     </form>
 </#macro>
@@ -27,20 +27,20 @@
             </#list>
             </table>
         </div>
-        <@report_utils.siteBoundaryImage locationName=locationName locationID=locationID/>
+        <@report_utils.siteImage locationName=locationName locationID=locationID imageURL=report_utils.getSiteBoundaryImageURL(locationID,!is10kmReport)/>
         <@report_utils.dataset_table providersWithQueryStats=providersWithQueryStats requestParameters=RequestParameters/>
     </form>
 </#macro>
 
 
-<#macro observations title locationName locationID datasets requestParameters taxon>
+<#macro observations title locationName locationID datasets requestParameters taxon is10kmReport>
     <#assign startYear=requestParameters.startYear?has_content?string(requestParameters.startYear[0]!"1600","1600")>
     <#assign endYear=requestParameters.endYear?has_content?string(requestParameters.endYear[0]!.now?string("yyyy"),.now?string("yyyy"))>
     <#assign spatialRelationship=requestParameters.spatialRelationship?has_content?string(requestParameters.spatialRelationship[0]!"overlap","overlap")>
     <h1>${title}</h1>
     <form action="" method="post" id="${getSiteFormId()}">
         <@report_utils.site_report_filters requestParameters=requestParameters args={"taxon":taxon} location=locationName isSpatialRelationshipNeeded=false isDesignationNeeded=false isDatasetNeeded=false/>
-        <@report_utils.siteSpeciesImage locationName=locationName locationID=locationID ptvk=taxon.ptaxonVersionKey startYear=startYear endYear=endYear datasets=datasets spatialRelationship=spatialRelationship/>
+        <@report_utils.siteImage locationName=locationName locationID=locationID imageURL=report_utils.getSiteSpeciesImageURL(locationID, taxon.ptaxonVersionKey, startYear, endYear, datasets, spatialRelationship, !is10kmReport)/>
     </form>
     <#list datasets as dataset>
         <#assign provider=json.readURL("${api}/organisations/${dataset.organisationID}")>
@@ -67,7 +67,7 @@
             </tr>
             <#list dataset.observations as observation>
                 <tr>
-                    <td class="nbn-td-left">${observation.siteName!"N/A"}</td>
+                    <td class="nbn-td-left">${observation.siteName!"Not available"}</td>
                     <td>${observation.gridRef}</td>
                     <td>${observation.startDate} to ${observation.endDate}</td>
                     <td>${observation.dateTypekey}</td>

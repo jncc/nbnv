@@ -38,7 +38,7 @@ public class TaxonObservationResource {
     private final String defaultDesignation = "";
     private final String defaultTaxonOutputGroup = "";
     private final String defaultGridRef = "";
-    private final String defaultFeatureID = "-1";
+    private final String defaultFeatureID = "";
 
     @Autowired
     TaxonObservationMapper observationMapper;
@@ -85,7 +85,7 @@ public class TaxonObservationResource {
             @QueryParam("datasetKey") @DefaultValue(defaultDatasetKey) List<String> datasetKeys, 
             @QueryParam("ptvk") @DefaultValue(defaultTaxa) List<String> taxa, 
             @QueryParam("spatialRelationship") @DefaultValue(SPATIAL_RELATIONSHIP_DEFAULT) String spatialRelationship,
-            @QueryParam("featureID") @DefaultValue(defaultFeatureID) int featureID,
+            @QueryParam("featureID") @DefaultValue(defaultFeatureID) String featureID,
             @QueryParam("sensitive") @DefaultValue(defaultSensitive) Boolean sensitive, 
             @QueryParam("designation") @DefaultValue(defaultDesignation) String designation, 
             @QueryParam("taxonOutputGroup") @DefaultValue(defaultTaxonOutputGroup) String taxonOutputGroup, 
@@ -104,7 +104,7 @@ public class TaxonObservationResource {
             @QueryParam("datasetKey") @DefaultValue(defaultDatasetKey) List<String> datasetKeys, 
             @QueryParam("ptvk") @DefaultValue(defaultTaxa) List<String> taxa, 
             @QueryParam("spatialRelationship") @DefaultValue(SPATIAL_RELATIONSHIP_DEFAULT) String spatialRelationship, 
-            @QueryParam("featureID") @DefaultValue(defaultFeatureID) int featureID,
+            @QueryParam("featureID") @DefaultValue(defaultFeatureID) String featureID,
             @QueryParam("sensitive") @DefaultValue(defaultSensitive) Boolean sensitive, 
             @QueryParam("designation") @DefaultValue(defaultDesignation) String designation, 
             @QueryParam("taxonOutputGroup") @DefaultValue(defaultTaxonOutputGroup) String taxonOutputGroup, 
@@ -125,7 +125,7 @@ public class TaxonObservationResource {
             @QueryParam("datasetKey") @DefaultValue(defaultDatasetKey) List<String> datasetKeys, 
             @QueryParam("ptvk") @DefaultValue(defaultTaxa) List<String> taxa, 
             @QueryParam("spatialRelationship") @DefaultValue(SPATIAL_RELATIONSHIP_DEFAULT) String spatialRelationship, 
-            @QueryParam("featureID") @DefaultValue(defaultFeatureID) int featureID,
+            @QueryParam("featureID") @DefaultValue(defaultFeatureID) String featureID,
             @QueryParam("sensitive") @DefaultValue(defaultSensitive) Boolean sensitive, 
             @QueryParam("designation") @DefaultValue(defaultDesignation) String designation, 
             @QueryParam("taxonOutputGroup") @DefaultValue(defaultTaxonOutputGroup) String taxonOutputGroup, 
@@ -144,7 +144,7 @@ public class TaxonObservationResource {
             @QueryParam("datasetKey") @DefaultValue(defaultDatasetKey) List<String> datasetKeys, 
             @QueryParam("ptvk") @DefaultValue(defaultTaxa) List<String> taxa, 
             @QueryParam("spatialRelationship") @DefaultValue(SPATIAL_RELATIONSHIP_DEFAULT) String spatialRelationship, 
-            @QueryParam("featureID") @DefaultValue(defaultFeatureID) int featureID,
+            @QueryParam("featureID") @DefaultValue(defaultFeatureID) String featureID,
             @QueryParam("sensitive") @DefaultValue(defaultSensitive) Boolean sensitive, 
             @QueryParam("designation") @DefaultValue(defaultDesignation) String designation, 
             @QueryParam("taxonOutputGroup") @DefaultValue(defaultTaxonOutputGroup) String taxonOutputGroup, 
@@ -163,7 +163,7 @@ public class TaxonObservationResource {
             @QueryParam("datasetKey") @DefaultValue(defaultDatasetKey) List<String> datasetKeys, 
             @QueryParam("ptvk") @DefaultValue(defaultTaxa) List<String> taxa, 
             @QueryParam("spatialRelationship") @DefaultValue(SPATIAL_RELATIONSHIP_DEFAULT) String spatialRelationship, 
-            @QueryParam("featureID") @DefaultValue(defaultFeatureID) int featureID,
+            @QueryParam("featureID") @DefaultValue(defaultFeatureID) String featureID,
             @QueryParam("sensitive") @DefaultValue(defaultSensitive) Boolean sensitive, 
             @QueryParam("designation") @DefaultValue(defaultDesignation) String designation, 
             @QueryParam("taxonOutputGroup") @DefaultValue(defaultTaxonOutputGroup) String taxonOutputGroup, 
@@ -183,7 +183,7 @@ public class TaxonObservationResource {
             @QueryParam("datasetKey") @DefaultValue(defaultDatasetKey) List<String> datasetKeys, 
             @QueryParam("ptvk") @DefaultValue(defaultTaxa) List<String> taxa, 
             @QueryParam("spatialRelationship") @DefaultValue(SPATIAL_RELATIONSHIP_DEFAULT) String spatialRelationship, 
-            @QueryParam("featureID") @DefaultValue(defaultFeatureID) int featureID,
+            @QueryParam("featureID") @DefaultValue(defaultFeatureID) String featureID,
             @QueryParam("sensitive") @DefaultValue(defaultSensitive) Boolean sensitive, 
             @QueryParam("designation") @DefaultValue(defaultDesignation) String designation, 
             @QueryParam("taxonOutputGroup") @DefaultValue(defaultTaxonOutputGroup) String taxonOutputGroup, 

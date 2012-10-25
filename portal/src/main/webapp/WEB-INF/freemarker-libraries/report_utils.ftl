@@ -165,14 +165,6 @@
     <#return toReturn>
 </#function>
 
-<#macro siteBoundaryImage locationName locationID>
-        <@siteImage locationName=locationName locationID=locationID imageURL=getSiteBoundaryImageURL(350, locationID)/>
-</#macro>
-
-<#macro siteSpeciesImage locationName locationID ptvk startYear endYear datasets spatialRelationship>
-        <@siteImage locationName=locationName locationID=locationID imageURL=getSiteSpeciesImageURL(350, locationID, ptvk, startYear, endYear, datasets, spatialRelationship)/>
-</#macro>
-
 <#macro siteImage locationName locationID imageURL>
     <div id="nbn-site-map-container">
         <table class="nbn-coloured-table">
@@ -189,12 +181,16 @@
     </div>
 </#macro>
 
-<#function getSiteBoundaryImageURL imageSize locationID>
-    <#return "${gis}/SiteReport/${locationID}?mode=map&LAYER=OS-Scale-Dependent&LAYER=Selected-Feature">
+<#function getSiteBoundaryImageURL locationID showBoundary>
+    <#assign toReturn="${gis}/SiteReport/${locationID}?mode=map&LAYER=OS-Scale-Dependent">
+    <#if showBoundary>
+        <#assign toReturn = toReturn + "&LAYER=Selected-Feature">
+    </#if>
+    <#return toReturn>
 </#function>
 
-<#function getSiteSpeciesImageURL imageSize locationID ptvk startYear endYear datasets spatialRelationship>
-    <#assign toReturn="${gis}/SiteReport/${locationID}/${ptvk}?mode=map&LAYER=OS-Scale-Dependent&LAYERS=Records&LAYERS=Selected-Feature&startyear=${startYear}&endyear=${endYear}&spatialRelationship=${spatialRelationship}">
+<#function getSiteSpeciesImageURL locationID ptvk startYear endYear datasets spatialRelationship showBoundary>
+    <#assign toReturn="${gis}/SiteReport/${locationID}/${ptvk}?mode=map&LAYER=OS-Scale-Dependent&LAYERS=Records&startyear=${startYear}&endyear=${endYear}&spatialRelationship=${spatialRelationship}">
     <#if datasets??>
         <#assign datasetKeys="">
         <#list datasets as dataset>
@@ -204,6 +200,9 @@
             </#if>
         </#list>
         <#assign toReturn = toReturn + "&" + datasetKeys>
+    </#if>
+    <#if showBoundary>
+        <#assign toReturn = toReturn + "&LAYER=Selected-Feature">
     </#if>
     <#return toReturn>
 </#function>

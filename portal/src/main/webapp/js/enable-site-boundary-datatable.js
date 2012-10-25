@@ -7,7 +7,8 @@
         $('#nbn-site-boundary-datatable').dataTable({
             "bJQueryUI": true,
             "iDisplayLength": 25,
-            
+            "sPaginationType": "full_numbers",
+            "aLengthMenu": [[10,25,50,100,-1],[10,25,50,100,"All"]],
             "aoColumnDefs": [
                 {"sWidth": "75%", "aTargets": [0]}
             ]

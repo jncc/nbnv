@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.nbn.data.gis.maps.MapHelper.ResolutionDataGenerator;
@@ -89,7 +90,7 @@ public class SingleSpeciesMap {
             @QueryParam(key="startyear", validation="[0-9]{4}") final String startYear,
             @QueryParam(key="endyear", validation="[0-9]{4}") final String endYear,
             @QueryParam(key="abundance", validation="(all)|(presence)|(absence)") @DefaultValue("presence") String abundance,
-            @QueryParam(key="feature", validation="[0-9]*") String featureID,
+            @QueryParam(key="feature") String featureID,
             @QueryParam(key="band", commaSeperated=false) List<Band> bands
             ) {
         HashMap<String, Object> data = new HashMap<String, Object>();
@@ -99,7 +100,7 @@ public class SingleSpeciesMap {
         data.put("enablePresence", abundance.equals("all") || abundance.equals("presence"));
         data.put("bands", bands);
         data.put("mapServiceURL", mapServiceURL);
-        data.put("featureID", featureID);
+        data.put("featureID", StringEscapeUtils.escapeSql(featureID));
         data.put("properties", properties);
         data.put("layerGenerator", getSingleSpeciesResolutionDataGenerator(key, user, datasetKeys, startYear, endYear));
         return new MapFileModel("SingleSpecies.map",data);

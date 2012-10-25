@@ -73,7 +73,7 @@ public class TaxonObservationProvider {
             WHERE("YEAR(startDate) <= #{endYear}");
         }
 
-        if (params.containsKey("datasetKey") && params.get("datasetKey") != null) {
+        if (params.containsKey("datasetKey") && !params.get("datasetKey").equals("")) {
             if(params.get("datasetKey") instanceof List){
                 List<String> datasetArgs = (List<String>)params.get("datasetKey");
                 if(datasetArgs.size() > 0 && !"".equals(datasetArgs.get(0))){
@@ -84,7 +84,7 @@ public class TaxonObservationProvider {
             }
         }
 
-        if (params.containsKey("ptvk") && params.get("ptvk") != null) {
+        if (params.containsKey("ptvk") && !params.get("ptvk").equals("")) {
             if(params.get("ptvk") instanceof List){
                 List<String> ptvkArgs = (List<String>)params.get("ptvk");
                 if(ptvkArgs.size() > 0 && !"".equals(ptvkArgs.get(0))){
@@ -95,17 +95,19 @@ public class TaxonObservationProvider {
             }
         }
         
-        if(params.containsKey("featureID") && (Integer)params.get("featureID") > -1){
+        if(params.containsKey("featureID") && !params.get("featureID").equals("")){
             String spatialRelationship = TaxonObservationResource.SPATIAL_RELATIONSHIP_DEFAULT;
             if(params.containsKey("spatialRelationship") && params.get("spatialRelationship") != null){
                 spatialRelationship = (String)params.get("spatialRelationship");
             }
             if(TaxonObservationResource.SPATIAL_RELATIONSHIP_WITHIN.equals(spatialRelationship)){
                 INNER_JOIN("FeatureContains fc ON fc.containedFeatureID = o.featureID");
-                WHERE("fc.featureID = #{featureID}");
+                INNER_JOIN("FeatureData fd ON fd.id = fc.featureID");
+                WHERE("fd.identifier = #{featureID}");
             }else{
                 INNER_JOIN("FeatureOverlaps fo ON fo.overlappedFeatureID = o.featureID");
-                WHERE("fo.featureID = #{featureID}");
+                INNER_JOIN("FeatureData fd ON fd.id = fo.featureID");
+                WHERE("fd.identifier = #{featureID}");
             }
         }
         
