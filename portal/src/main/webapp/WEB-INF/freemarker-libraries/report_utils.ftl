@@ -157,7 +157,7 @@
     ${spatialRelationshipText}
 </#macro>
 
-<#function getQueryParameterText RequestParameters>
+<#function getQueryString RequestParameters>
     <#assign toReturn="">
     <#if RequestParameters?has_content>
         <#assign toReturn = core.queryString(RequestParameters)>
@@ -206,3 +206,11 @@
     </#if>
     <#return toReturn>
 </#function>
+
+<#function getSiteFormId>
+    <#return "nbn-site-report-form">
+</#function>
+
+<#macro noRecordsInfoBox>
+    <div class="nbn-information-panel">No records were found for your current filter options</div>
+</#macro>
