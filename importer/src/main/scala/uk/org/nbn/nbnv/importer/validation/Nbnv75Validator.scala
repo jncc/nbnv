@@ -65,7 +65,7 @@ class Nbnv75Validator {
     new Result {
       def level: ResultLevel.ResultLevel = ResultLevel.ERROR
       def reference: String = record.dateType
-      def message: String = "This validator only accepts types 'Y' and 'YY', found '%s'".format(record.dateType)
+      def message: String = "This importer only accepts types 'Y' and 'YY', found '%s'".format(record.dateType)
     }
   }
 }
