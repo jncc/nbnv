@@ -3,10 +3,11 @@ package uk.org.nbn.nbnv.importer.records
 import scala.collection.JavaConversions._
 import org.gbif.dwc.terms.DwcTerm
 import org.gbif.dwc.text.StarRecord
-import java.text.SimpleDateFormat
+import java.text.{ParseException, SimpleDateFormat}
 import uk.org.nbn.nbnv.importer.ImportFailedException
 import util.parsing.json.JSON
 import uk.org.nbn.nbnv.importer.validation.Nbnv68Validator
+import java.util.Date
 
 /// Wraps a Darwin record in NBN clothing.
 class NbnRecord(record: StarRecord) {
@@ -55,10 +56,10 @@ class NbnRecord(record: StarRecord) {
   def srsRaw =          parseOptional(record.core.value(DwcTerm.verbatimSRS))
   def attributes =      attributeMap
 
-  def startDateRaw           = extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateStart")
-  def startDate              = parseDates(startDateRaw)
-  def endDateRaw             = extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateEnd")
-  def endDate                = parseDates(endDateRaw)
+  def startDateRaw           = parseOptional(extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateStart"))
+  def startDate              = parseDate(startDateRaw)
+  def endDateRaw             = parseOptional(extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateEnd"))
+  def endDate                = parseDate(endDateRaw)
   def dateType               = extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateTypeCode")
   def sensitiveOccurrenceRaw = extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/sensitiveOccurrence")
   def sensitiveOccurrence    = parseSensitiveOccurrence(sensitiveOccurrenceRaw)
@@ -110,12 +111,32 @@ class NbnRecord(record: StarRecord) {
     validator.validate(s)
   }
 
-  def parseDates(s: String) = {
-    if (eventDate != null && s == null) {
-      eventDate
-    } else {
-      val validator = new Nbnv68Validator
-      validator.validate(s)
+  // Record Date must be of a valid format
+  private def parseDate(dateString: Option[String]): Option[Date] = {
+
+    dateString match {
+      case Some(ds) => {
+
+        var date : Option[Date] = None
+
+        def tryParse(dateFormat: String, dateString: String) = {
+          try {
+            val sdf = new SimpleDateFormat(dateFormat)
+            sdf.setLenient(false)
+            Some(sdf.parse(dateString))
+          } catch {
+            case e: ParseException => None
+          }
+        }
+
+        List("dd/MM/yyyy", "dd-MM-yyyy", "yyyy/MM/dd", "yyyy-MM-dd", "dd MMM yyyy", "MMM yyyy", "yyyy")
+          .toStream
+          .takeWhile(_ => date == None)
+          .foreach(df => date = tryParse(df, ds))
+
+        date
+      }
+      case None => None
     }
   }
 }

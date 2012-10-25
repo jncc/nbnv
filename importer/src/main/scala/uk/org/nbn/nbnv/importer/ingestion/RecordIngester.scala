@@ -33,6 +33,8 @@ class RecordIngester @Inject()(log: Logger,
     val determiner = recorderIngester.ensureRecorder(record.determiner)
     val recorder = recorderIngester.ensureRecorder(record.recorder)
 
+    val (startDate, endDate) =
+
     def update(o: TaxonObservation) {
 
       o.setAbsenceRecord(record.absence)

@@ -1,4 +1,4 @@
-package uk.org.nbn.nbnv.importer.records
+package uk.org.nbn.nbnv.importer.ingestion
 
 import java.util.{Calendar, Date}
 import java.text._
@@ -30,110 +30,110 @@ import uk.org.nbn.nbnv.importer.ImportFailedException
 
 
 class DateParser {
-  def parse(dateType: String, startDateString: String, endDateString: String) : (Option[Date], Option[Date]) = {
+  def parse(dateType: String, startDate: Option[Date], endDate: Option[Date]) : (Option[Date], Option[Date]) = {
     dateType match {
       case "<D" => {
-        parseDate(endDateString) match {
+        endDate match {
           case Some(d) => (None,Some(d))
           case None => throw new ImportFailedException("Invalid end date. An end date must be specified for dateType '<D'")
         }
       }
       case ">D" => {
-        parseDate(startDateString) match {
+        startDate match {
           case Some(d) => (Some(d), None)
           case None => throw new ImportFailedException("Invalid start date. A start date must be specified for dateType 'D>'")
         }
       }
       case "<Y" | "-Y" => {
 
-        val endDate = parseDate(endDateString).getOrElse(
+        val date = endDate.getOrElse(
           throw new ImportFailedException("Invalid end date. An end date must be specified for dateType '%s'".format(dateType))
         )
 
-        val endOfYear = getEndOfYear(endDate)
+        val endOfYear = getEndOfYear(date)
 
         (None, Some(endOfYear))
       }
       case ">Y" | "Y-" => {
-        val startDate = parseDate(startDateString).getOrElse(
+        val date = startDate.getOrElse(
           throw new ImportFailedException("Invalid start date. A start date must be specified for dateType '%s'".format(dateType))
         )
 
-        val startOfYear = getStartOfYear(startDate)
+        val startOfYear = getStartOfYear(date)
 
         (Some(startOfYear), None)
       }
       case "D" => {
 
-        parseDate(startDateString) match {
+        startDate match {
           case Some(d) => (Some(d), Some(d))
           case None => throw new ImportFailedException("Invalid start date. A start date must be specified for dateType '%s'".format(dateType))
         }
       }
       case "DD" => {
 
-        val startDate = parseDate(startDateString).getOrElse(
+        val periodStart = startDate.getOrElse(
           throw new ImportFailedException("Invalid start date. A start date must be specified for dateType '%s'".format(dateType))
         )
 
-        val endDate = parseDate(endDateString).getOrElse(
+        val periodEnd = endDate.getOrElse(
           throw new ImportFailedException("Invalid end date. An end date must be specified for dateType '%s'".format(dateType))
         )
 
-        if (endDate.compareTo(startDate) < 0 ) throw new ImportFailedException("Start date is before end dtate")
+        if (periodEnd.compareTo(periodStart) < 0 ) throw new ImportFailedException("Start date is before end dtate")
 
-        (Some(startDate), Some(endDate))
+        (Some(periodStart), Some(periodEnd))
       }
       case "M" | "O" => {
-        val startDate = parseDate(startDateString).getOrElse(
+        val date = startDate.getOrElse(
           throw new ImportFailedException("Invalid start date. A start date must be specified for dateType '%s'".format(dateType))
         )
 
-        val startOfMonth = getStartOfMonth(startDate)
-        val endOfMonth = getEndOfMonth(startDate)
+        val startOfMonth = getStartOfMonth(date)
+        val endOfMonth = getEndOfMonth(date)
 
         (Some(startOfMonth), Some(endOfMonth))
       }
       case "MM" | "OO" => {
-        val startDate = parseDate(startDateString).getOrElse(
+        val periodStart = startDate.getOrElse(
           throw new ImportFailedException("Invalid start date. A start date must be specified for dateType '%s'".format(dateType))
         )
 
-        val endDate = parseDate(endDateString).getOrElse(
+        val periodEnd = endDate.getOrElse(
           throw new ImportFailedException("Invalid end date. An end date must be specified for dateType '%s'".format(dateType))
         )
 
-        if (endDate.compareTo(startDate) < 0 ) throw new ImportFailedException("Start date is before end dtate")
+        if (periodEnd.compareTo(periodStart) < 0 ) throw new ImportFailedException("Start date is before end dtate")
 
-        val startOfMonth = getStartOfMonth(startDate)
-        val endOfMonth = getEndOfMonth(endDate)
+        val startOfMonth = getStartOfMonth(periodStart)
+        val endOfMonth = getEndOfMonth(periodEnd)
 
         (Some(startOfMonth), Some(endOfMonth))
       }
       case "ND"| "U" => (None, None)
       case "Y" => {
-        val startDate = parseDate(startDateString).getOrElse(
+        val date = startDate.getOrElse(
           throw new ImportFailedException("Invalid start date. A start date must be specified for dateType '%s'".format(dateType))
         )
 
-        val startOfYear = getStartOfYear(startDate)
-        val endOfYear = getEndOfYear(startDate)
+        val startOfYear = getStartOfYear(date)
+        val endOfYear = getEndOfYear(date)
 
         (Some(startOfYear), Some(endOfYear))
       }
       case "YY" => {
-        val startDate = parseDate(startDateString).getOrElse(
+        val periodStart = startDate.getOrElse(
           throw new ImportFailedException("Invalid start date. A start date must be specified for dateType '%s'".format(dateType))
         )
 
-        val endDate = parseDate(endDateString).getOrElse(
+        val periodEnd = endDate.getOrElse(
           throw new ImportFailedException("Invalid end date. An end date must be specified for dateType '%s'".format(dateType))
         )
 
-        if (endDate.compareTo(startDate) < 0 ) throw new ImportFailedException("Start date is before end dtate")
+        if (periodEnd.compareTo(periodStart) < 0 ) throw new ImportFailedException("Start date is before end dtate")
 
-        val startOfYear = getStartOfYear(startDate)
-        val endOfYear = getEndOfYear(endDate)
+        val startOfYear = getStartOfYear(periodStart)
+        val endOfYear = getEndOfYear(periodEnd)
 
         (Some(startOfYear), Some(endOfYear))
       }
@@ -167,24 +167,4 @@ class DateParser {
     endOfYear.set(Calendar.DAY_OF_YEAR, endOfYear.getActualMaximum(Calendar.DAY_OF_YEAR))
     endOfYear.getTime
   }
-
-  // Record Date must be of a valid format
-  private def parseDate(dateString: String): Option[Date] = {
-    val validFormats = List("dd/MM/yyyy", "dd-MM-yyyy", "yyyy/MM/dd", "yyyy-MM-dd", "dd MMM yyyy", "MMM yyyy", "yyyy")
-
-    for (fmt <- validFormats) {
-      try {
-        val sdf = new SimpleDateFormat(fmt)
-        sdf.setLenient(false)
-        return Some(sdf.parse(dateString))
-
-      } catch {
-        case e: ParseException => //move on and try the next format
-      }
-    }
-
-    //No date found
-    None
-  }
-
 }
