@@ -1,6 +1,6 @@
 <#assign tvk=URLParameters.tvk>
 <#assign requestParametersExtended = RequestParameters + {"tvk":[tvk]}>
-<#--<#assign providersWithQueryStats=json.readURL("${api}/taxonObservations/providers",requestParametersExtended)>-->
+<#assign providersWithQueryStats=json.readURL("${api}/taxonObservations/providers",requestParametersExtended)>
 <#assign taxon=json.readURL("${api}/taxa/${tvk}")>
 
 <@template.master title="NBN Grid Map" 
@@ -15,6 +15,11 @@
     <div id="nbn-grid-map-container">
         <@gridMapContents tvk=tvk imageSize=imageSize/>
     </div>
+    <div>
+        <#if providersWithQueryStats?has_content>
+            <@report_utils.dataset_table providersWithQueryStats=providersWithQueryStats requestParameters=RequestParameters/>
+        </#if>
+    <div>
     <div class="nbn-clear-floating-elements"></div>
 </@template.master>
 
