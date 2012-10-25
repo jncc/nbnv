@@ -19,16 +19,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
-/**
- * Created with IntelliJ IDEA.
- * User: felix mason
- * Date: 03/10/12
- * Time: 11:33
- * To change this template use File | Settings | File Templates.
- */
-public class FeatureFactory {
+
+public class StoredProcedureLibrary {
     private EntityManager _em;
-    public FeatureFactory(EntityManager em) {
+    public StoredProcedureLibrary(EntityManager em) {
         _em = em;
     }
 //

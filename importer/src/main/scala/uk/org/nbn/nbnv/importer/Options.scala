@@ -20,7 +20,7 @@ case class Options(archivePath: String  = "archive.zip",
       "  archivePath: %s" -> archivePath,
       "  tempDir:     %s" -> tempDir,
       "  logDir:      %s" -> logDir,
-      "  logDir:      %s" -> logLevel,
+      "  logLevel:    %s" -> logLevel,
       "  whatIf:      %s" -> whatIf)
       .map(x => x._1.format(x._2))
       .mkString("\n")
