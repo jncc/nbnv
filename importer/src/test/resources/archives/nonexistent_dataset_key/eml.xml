@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<eml:eml xmlns:eml="eml://ecoinformatics.org/eml-2.1.1" xmlns="eml://ecoinformatics.org/eml-2.1.1" xmlns:dc="http://purl.org/dc/terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" packageId="NBN//eml-1.xml" scope="system" system="GBIF" xml:lang="en" xsi:schemaLocation="eml://ecoinformatics.org/eml-2.1.1 eml.xsd">
+<dataset>
+
+<!-- this test archive should fail because of this -->
+<alternateIdentifier>DOESNOTEXIST</alternateIdentifier>
+
+<title xml:lang="en">this is a test</title>
+<creator>
+<organizationName>Conchological Society of Great Britain &amp; Ireland</organizationName>
+<electronicMailAddress/>
+</creator>
+<metadataProvider>
+<individualName>
+<givenName>Paul</givenName>
+<surName>Gilbertson</surName>
+</individualName>
+<organizationName>National Biodiversity Network</organizationName>
+<electronicMailAddress>paulbe@ceh.ac.uk</electronicMailAddress>
+<onlineUrl>http://data.nbn.org.uk/</onlineUrl>
+</metadataProvider>
+<pubDate>2012-08-21</pubDate>
+<language>en</language>
+<abstract>
+<para>dddd</para>
+</abstract>
+<intellectualRights>
+<para>Access Constraints: dddd Use Constraints: dddd</para>
+</intellectualRights>
+<coverage>
+<geographicCoverage>
+<geographicDescription>dddd</geographicDescription>
+<boundingCoordinates>
+<westBoundingCoordinate>-10</westBoundingCoordinate>
+<eastBoundingCoordinate>10</eastBoundingCoordinate>
+<northBoundingCoordinate>75</northBoundingCoordinate>
+<southBoundingCoordinate>45</southBoundingCoordinate>
+</boundingCoordinates>
+</geographicCoverage>
+<temporalCoverage>
+<rangeOfDates>
+<beginDate>
+<calendarDate>1600-02-01</calendarDate>
+</beginDate>
+<endDate>
+<calendarDate>2012-08-21</calendarDate>
+</endDate>
+</rangeOfDates>
+</temporalCoverage>
+</coverage>
+<purpose>
+<para>ddddd</para>
+</purpose>
+<methods>
+<methodStep>
+<description>
+<para>dddd</para>
+</description>
+</methodStep>
+<qualityControl>
+<description>
+<para>ddddd</para>
+</description>
+</qualityControl>
+</methods>
+<additionalInfo>
+<para>temporalCoverage: ddddd</para>
+</additionalInfo>
+<additionalInfo>
+<para>additionalInformation: ddddd</para>
+</additionalInfo>
+<additionalInfo>
+<para>recorderAndDeterminerNamesArePublic: true</para>
+</additionalInfo>
+</dataset>
+</eml:eml>

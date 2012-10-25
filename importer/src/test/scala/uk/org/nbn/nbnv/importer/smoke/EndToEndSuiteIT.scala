@@ -3,8 +3,7 @@ package uk.org.nbn.nbnv.importer.smoke
 import java.io.File
 import uk.org.nbn.nbnv.importer.testing.BaseFunSuite
 import uk.org.nbn.nbnv.importer.utility.ResourceLoader
-import uk.org.nbn.nbnv.importer.Options
-import uk.org.nbn.nbnv.importer.Importer
+import uk.org.nbn.nbnv.importer.{ImportFailedException, Options, Importer}
 
 class EndToEndSuiteIT extends BaseFunSuite with ResourceLoader {
 
@@ -31,4 +30,17 @@ class EndToEndSuiteIT extends BaseFunSuite with ResourceLoader {
     val f = fixture("/archives/valid_ui.zip")
     f.importer.run()
   }
+
+  test("should throw on non-existent dataset key") {
+
+    val ex = intercept[ImportFailedException] {
+
+      val f = fixture("/archives/nonexistent_dataset_key.zip")
+      f.importer.run()
+    }
+
+    ex.message should include ("Dataset 'DOESNOTEXIST' does not exist")
+  }
+
+
 }
