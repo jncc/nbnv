@@ -375,6 +375,13 @@ body {
         }
     }
 
-    
+    .nbn-information-panel{
+        @include border-radius(5px);
+        border: 1px #000 solid;
+        background-color: $minorToMediumGrey;
+        padding: 10px;
+        text-align: center;
+        font-size: 1.2em
+    }
 
 }
