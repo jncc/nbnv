@@ -143,7 +143,9 @@ class Repository (log: Logger, em: EntityManager, cache: QueryCache) extends Con
   def getTaxonDataset(key: String) = {
 
     cacheSingle("getTaxonDataset", key) {
-      em.findSingle(classOf[TaxonDataset], key)
+      em.findSingleOrNone(classOf[TaxonDataset], key) getOrElse {
+        throw new ImportFailedException("Dataset '%s' does not exist. Please check the key is correct.".format(key))
+      }
     }
   }
 
