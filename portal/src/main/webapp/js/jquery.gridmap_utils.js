@@ -7,9 +7,7 @@
         var keyValuePairs = getKeyValuePairsFromForm(formObjArray);
         var keyValuePairsWithBusinessLogic = getKeyValuePairsWithBusinessLogic(keyValuePairs);
         var queryString = getQueryStringFromKeyValuePairs(keyValuePairsWithBusinessLogic);
-        console.log('/nbnv-gis-0.1-SNAPSHOT/SingleSpecies/' + tvk + '/map?' + queryString);
-        return '/nbnv-gis-0.1-SNAPSHOT/SingleSpecies/' + tvk + '/map?' + queryString;
-//return 'http://localhost:8084/nbnv-gis-0.1-SNAPSHOT/SingleSpecies/NHMSYS0020528089/map?resolution=10km';
+        return form.attr('gis-server') + '/SingleSpecies/' + tvk + '/map?' + queryString;
     }
         
     function getKeyValuePairsFromForm(formObjArray){

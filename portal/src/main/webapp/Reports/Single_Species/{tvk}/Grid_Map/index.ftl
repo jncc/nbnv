@@ -19,7 +19,7 @@
 </@template.master>
 
 <#macro gridMapFilters imageSize>
-    <form target="" id="nbn-grid-map-form">
+    <form target="" id="nbn-grid-map-form" gis-server="${gis}">
         <table class="nbn-coloured-table nbn-grid-map-table">
             <tr>
                 <th colspan=2 class="nbn-th-left nbn-th-right">Controls</th>
@@ -77,7 +77,7 @@
 </#macro>
 
 <#macro gridMapContents tvk imageSize>
-    <#assign url="/nbnv-gis-0.1-SNAPSHOT/SingleSpecies/" + tvk + "/map?imagesize=" + imageSize>
+    <#assign url="${gis}/SingleSpecies/" + tvk + "/map?imagesize=" + imageSize>
     <table class="nbn-coloured-table">
         <tr>
             <th class="nbn-th-left nbn-th-right">Map</th>
