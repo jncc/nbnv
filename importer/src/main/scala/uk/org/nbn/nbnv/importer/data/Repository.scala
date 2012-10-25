@@ -89,17 +89,17 @@ class Repository (log: Logger, em: EntityManager, cache: QueryCache) extends Con
     }
   }
 
-  def getSiteBoundaryFeature(siteBoundaryDataset: String, providerKey: String) = {
+  def getSiteBoundaryFeature(siteBoundaryDatasetKey: String, providerKey: String) = {
 
-    val q = "select f, b from Feature f join f.siteBoundary b where b.siteBoundaryDataset = :siteBoundaryDataset and b.providerKey = :providerKey "
+    val q = "select f, b from Feature f join f.siteBoundary b where b.siteBoundaryDataset.datasetKey = :siteBoundaryDatasetKey and b.providerKey = :providerKey "
 
-    cacheSingle(q, siteBoundaryDataset, providerKey) {
+    cacheSingle(q, siteBoundaryDatasetKey, providerKey) {
 
       val query = em.createQuery(q)
-      query.setParameter("siteBoundaryDataset", siteBoundaryDataset)
+      query.setParameter("siteBoundaryDatasetKey", siteBoundaryDatasetKey)
       query.setParameter("providerKey", providerKey)
 
-      expectSingleResult(siteBoundaryDataset + providerKey) {
+      expectSingleResult(siteBoundaryDatasetKey + "|" + providerKey) {
         query.getResultList map { case Array(f: Feature, b: SiteBoundary) => (f, b) }
       }
     }

@@ -2,7 +2,7 @@ package uk.org.nbn.nbnv.importer.ingestion
 
 import uk.org.nbn.nbnv.importer.records.NbnRecord
 import uk.org.nbn.nbnv.importer.ImportFailedException
-import uk.org.nbn.nbnv.jpa.nbncore.{GridSquare, Feature}
+import uk.org.nbn.nbnv.jpa.nbncore.{SiteBoundaryDataset, GridSquare, Feature}
 import com.google.inject.Inject
 import uk.org.nbn.nbnv.importer.data.{Database, Repository}
 import uk.org.nbn.nbnv.importer.spatial.{GridSquareInfo, GridSquareInfoFactory}
@@ -64,14 +64,14 @@ class FeatureIngester @Inject()(log: Logger, db: Database, gridSquareInfoFactory
     }
   }
 
-  private def ensureSiteBoundaryFeature(featureKey : String) = {
+  def ensureSiteBoundaryFeature(featureKey : String) = {
 
-    // feature key - first 8 chars are the siteBoundaryDataset; remaining are the providerKey
-    val siteBoundaryDataset = featureKey.substring(0, 8)
+    // feature key - first 8 chars are the siteBoundaryDataset key; remaining are the provider key
+    val siteBoundaryDatasetKey = featureKey.substring(0, 8)
     val providerKey = featureKey.substring(8)
 
     // throws if the (Feature, SiteBoundary) pair doesn't exist
-    db.repo.getSiteBoundaryFeature(siteBoundaryDataset, providerKey)._1
+    db.repo.getSiteBoundaryFeature(siteBoundaryDatasetKey, providerKey)._1
   }
 
   private def ensureGridRefFeatureByCoordinate(easting: Double, northing: Double, spatialReferenceSystem: Int, gridReferencePrecision: Int = 0) = {
