@@ -29,6 +29,7 @@ public class Metadata implements Serializable {
     private String recorderNames = "";
     private int datasetAdminID = -1;
     private int organisationID = -1;
+    private String datasetID = "";
 
     /**
      * @return the title
@@ -290,5 +291,13 @@ public class Metadata implements Serializable {
 
     public void setRecorderNames(String recorderNames) {
         this.recorderNames = recorderNames;
+    }
+
+    public String getDatasetID() {
+        return datasetID;
+    }
+
+    public void setDatasetID(String datasetID) {
+        this.datasetID = datasetID;
     }
 }

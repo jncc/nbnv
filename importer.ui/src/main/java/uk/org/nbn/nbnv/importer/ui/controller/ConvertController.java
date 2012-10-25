@@ -6,14 +6,19 @@ package uk.org.nbn.nbnv.importer.ui.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.servlet.http.HttpServletRequest;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -45,13 +50,25 @@ public class ConvertController {
         try {
             ConvertResults model = new ConvertResults();
             
+            // Check if we are an update or not
+            if (!metadataForm.getDatasetUpdate()) {
+                metadataForm.getMetadata().setDatasetID("");
+            }
+            
             File in = new File(args.get("filename"));
             RunConversions rc = new RunConversions(in, organisation.getId(), metadataForm);
             
             File out = File.createTempFile("nbnimporter", "processed.tab");
             File meta = File.createTempFile("nbnimporter", "meta.xml");
-            File archive = File.createTempFile("nbnimporter", "archive.zip");
             File metadata = File.createTempFile("nbnimporter", "metadata.xml");
+            
+            String archiveName = String.format("archive_%s_%s.zip", 
+                    ((organisation.getAbbreviation() == null || 
+                     organisation.getAbbreviation().trim().isEmpty()) ? 
+                     organisation.getName().substring(0, 10).replace(" ", "") : 
+                     organisation.getAbbreviation()),
+                    new SimpleDateFormat("ddMMyyyy_hhmmss").format(new Date()));
+            File archive = File.createTempFile("nbnimporter", archiveName);
                         
             List<String> errors = rc.run(out, meta, args);
             

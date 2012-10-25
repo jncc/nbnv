@@ -56,11 +56,9 @@ public class MetadataWriter {
         Element dataset = doc.createElement("dataset");
         root.appendChild(dataset);
 
-        /*
         Element altID = doc.createElement("alternateIdentifier");
-        altID.setTextContent(ds.dsKey);
+        altID.setTextContent(ds.getDatasetID());
         dataset.appendChild(altID);
-        */
         
         Element title = doc.createElement("title");
         title.setAttribute("xml:lang", "en");
@@ -108,7 +106,7 @@ public class MetadataWriter {
 
     private Element createPublicAccessResNode(Document doc, Metadata ds) {
         Element ir = doc.createElement("additionalInfo");
-        ir.appendChild(formatParaTag(doc, "Public Access: " + ds.getGeographicalRes()));
+        ir.appendChild(formatParaTag(doc, "publicPrecision: " + ds.getGeographicalRes()));
         return ir;
     }
     
@@ -117,7 +115,7 @@ public class MetadataWriter {
         if (ds.getRecorderNames().equals("null")) {
             ds.setRecorderNames("false");
         }
-        ir.appendChild(formatParaTag(doc, "Recorder Names: " + ds.getRecorderNames()));
+        ir.appendChild(formatParaTag(doc, "recorderAndDeterminerNamesArePublic: " + ds.getRecorderNames()));
         return ir;
     }    
     
@@ -126,7 +124,7 @@ public class MetadataWriter {
         if (ds.getRecordAtts().equals("null")) {
             ds.setRecordAtts("false");
         }
-        ir.appendChild(formatParaTag(doc, "Record Attributes: " + ds.getRecordAtts()));
+        ir.appendChild(formatParaTag(doc, "recordAttributes: " + ds.getRecordAtts()));
         return ir;
     }      
 
@@ -224,7 +222,7 @@ public class MetadataWriter {
             ds.setUse("None");
         }
         
-        ir.appendChild(formatParaTag(doc, "Access Constraints: " + ds.getAccess() + " Use Constraints: " + ds.getUse()));
+        ir.appendChild(formatParaTag(doc, "accessConstraints: " + ds.getAccess() + " useConstraints: " + ds.getUse()));
         
         return ir;
     }
@@ -327,13 +325,13 @@ public class MetadataWriter {
 
     private Element createTemporalNode(Document doc, Metadata ds) {
         Element ir = doc.createElement("additionalInfo");
-        ir.appendChild(formatParaTag(doc, "Temporal Coverage: " + ds.getTemporal()));
+        ir.appendChild(formatParaTag(doc, "temporalCoverage: " + ds.getTemporal()));
         return ir;
     }
 
     private Element createInfoNode(Document doc, Metadata ds) {
         Element ir = doc.createElement("additionalInfo");
-        ir.appendChild(formatParaTag(doc, "Additional Information: " + ds.getInfo()));
+        ir.appendChild(formatParaTag(doc, "additionalInformation: " + ds.getInfo()));
         return ir;
     }
 }

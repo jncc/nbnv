@@ -13,6 +13,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import org.apache.poi.hwpf.HWPFDocument;
@@ -36,11 +38,14 @@ import uk.org.nbn.nbnv.importer.ui.convert.RunConversions;
 import uk.org.nbn.nbnv.importer.ui.model.Metadata;
 import uk.org.nbn.nbnv.importer.ui.model.MetadataForm;
 import uk.org.nbn.nbnv.importer.ui.model.UploadItem;
+import uk.org.nbn.nbnv.importer.ui.util.DatabaseConnection;
 import uk.org.nbn.nbnv.importer.ui.util.POIImportError;
 import uk.org.nbn.nbnv.importer.ui.util.wordImporter.WordImporter;
 import uk.org.nbn.nbnv.importer.ui.validators.MetadataFormValidator;
 import uk.org.nbn.nbnv.importer.ui.validators.MetadataValidator;
+import uk.org.nbn.nbnv.jpa.nbncore.Dataset;
 import uk.org.nbn.nbnv.jpa.nbncore.Organisation;
+import uk.org.nbn.nbnv.jpa.nbncore.User;
 
 /**
  *
@@ -54,12 +59,59 @@ public class MetadataController {
     public ModelAndView metadata() {  
         MetadataForm metadataForm = new MetadataForm();
         metadataForm.updateOrganisationList();
+        metadataForm.updateDatasests();
         ModelAndView mv = new ModelAndView("metadataForm", "metadataForm", metadataForm);
         mv.addObject("org", new Organisation());
         return mv;
     }
     
-    @RequestMapping(value="/metadata.html", method = RequestMethod.POST)
+    @RequestMapping(value="/metadata.html", method=RequestMethod.POST, params="updateDataset")
+    public ModelAndView updateMetadata(@ModelAttribute("metadataForm") MetadataForm metadataForm, @ModelAttribute("org") Organisation organisation, BindingResult result) {
+        metadataForm.resetForm();
+        Metadata metadata = metadataForm.getMetadata();
+        
+        if (!metadata.getDatasetID().equals("")) {
+        
+            EntityManager em = DatabaseConnection.getInstance().createEntityManager();
+            Query q = em.createNamedQuery("Dataset.findByKey");
+            q.setParameter("key", metadata.getDatasetID());
+            Dataset dataset = ((List<Dataset>) q.getResultList()).get(0);
+
+            metadata.setTitle(dataset.getTitle());
+            metadata.setOrganisationID(dataset.getOrganisation().getId());
+            metadata.setDescription(dataset.getDescription());
+            metadata.setMethods(dataset.getDataCaptureMethod());
+            metadata.setPurpose(dataset.getPurpose());
+            metadata.setGeographic(dataset.getGeographicalCoverage());
+            metadata.setTemporal(dataset.getTemporalCoverage());
+            metadata.setQuality(dataset.getDataQuality());
+            metadata.setInfo(dataset.getAdditionalInformation());
+            metadata.setUse(dataset.getUseConstraints());
+            metadata.setAccess(dataset.getAccessConstraints());
+
+            // Set the Dataset Admin data in the form, if there are any admins
+            if (dataset.getUserCollection().size() > 0) {
+                User admin = dataset.getUserCollection().iterator().next();
+                metadata.setDatasetAdminID(admin.getId());
+                metadata.setDatasetAdminName(admin.getForename() + " " + admin.getSurname());
+                metadata.setDatasetAdminPhone(admin.getPhone());
+                metadata.setDatasetAdminEmail(admin.getEmail());
+            }
+
+            // Set the Level of Public Access options   
+            
+            metadata.setDatasetID(dataset.getKey());
+            metadataForm.setDatasetUpdate(true);
+        } else {
+            metadataForm.setDatasetError(true);
+        }
+        
+        ModelAndView mv = new ModelAndView("metadataForm", "metadataForm", metadataForm);
+        mv.addObject("org", organisation);
+        return mv;
+    }
+    
+    @RequestMapping(value="/metadata.html", method=RequestMethod.POST, params="uploadMetadata")
     @SuppressWarnings("static-access")
     public ModelAndView uploadFile(@ModelAttribute("metadataForm") MetadataForm metadataForm, @ModelAttribute("org") Organisation organisation, UploadItem uploadItem, BindingResult result) {
         if (result.hasErrors()) {
@@ -220,8 +272,6 @@ public class MetadataController {
             metadataForm.setOrgError(true);
         }
         
-        
-        
         if (result.hasErrors()) {
             for (ObjectError error : result.getAllErrors()) {
                 Logger.getLogger(UploadController.class.getName()).log(Level.WARNING, "Error ({0}): {1}", new Object[]{error.getCode(), error.getDefaultMessage()});
@@ -240,8 +290,12 @@ public class MetadataController {
         
         ModelAndView mv = new ModelAndView("redirect:/upload.html", "metadataForm", metadataForm);
         mv.addObject("org", organisation);
-        
         return mv;
+    }
+    
+    @RequestMapping(value="/metadataProcess.html", method = RequestMethod.POST, params="clearForm")
+    public ModelAndView clearForm() {
+        return new ModelAndView("redirect:/metadata.html");
     }
      
     @RequestMapping(value="/metadataView.html", method = RequestMethod.GET) 
