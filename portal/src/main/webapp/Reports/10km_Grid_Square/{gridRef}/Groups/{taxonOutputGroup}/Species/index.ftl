@@ -1,6 +1,6 @@
 <#assign tenkmGridRef=URLParameters.gridRef>
 <#assign taxonOutputGroupKey=URLParameters.taxonOutputGroup>
-<#assign requestParametersExtended = RequestParameters + {"gridRef":[tenkmGridRef],"taxonOutputGroup":[taxonOutputGroupKey]}>
+<#assign requestParametersExtended = RequestParameters + {"featureID":[tenkmGridRef],"taxonOutputGroup":[taxonOutputGroupKey]}>
 <#assign taxaWithQueryStats=json.readURL("${api}/taxonObservations/species",requestParametersExtended)>
 <#assign providersWithQueryStats=json.readURL("${api}/taxonObservations/providers",requestParametersExtended)>
 <#assign taxonOutputGroup=json.readURL("${api}/taxonOutputGroups/${taxonOutputGroupKey}")>

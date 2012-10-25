@@ -1,5 +1,5 @@
 <#assign tenkmGridRef=URLParameters.gridRef>
-<#assign requestParametersExtended = RequestParameters + {"gridRef":[tenkmGridRef],"ptvk":[URLParameters.ptvk]}>
+<#assign requestParametersExtended = RequestParameters + {"featureID":[tenkmGridRef],"ptvk":[URLParameters.ptvk]}>
 <#assign datasets=json.readURL("${api}/taxonObservations/datasets/observations",requestParametersExtended)>
 <#assign taxon=json.readURL("${api}/taxa/${URLParameters.ptvk}")>
 

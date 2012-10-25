@@ -71,7 +71,7 @@
                 </tr>
                 <tr class="nbn-emphasise-row">
                     <td class="nbn-td-left">Site name</td>
-                    <td>Gridref</td>
+                    <td>Location</td>
                     <td>Date range</td>
                     <td>Date type</td>
                     <td>Sensitive</td>
@@ -80,7 +80,7 @@
                 <#list dataset.observations as observation>
                     <tr>
                         <td class="nbn-td-left">${observation.siteName!"Not available"}</td>
-                        <td>${observation.gridRef}</td>
+                        <td>${observation.identifier}</td>
                         <td>${observation.startDate} to ${observation.endDate}</td>
                         <td>${observation.dateTypekey}</td>
                         <td>${observation.sensitive?string}</td>
