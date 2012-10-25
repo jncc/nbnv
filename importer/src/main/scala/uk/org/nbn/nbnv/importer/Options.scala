@@ -12,6 +12,7 @@ case class OptionsFailure(message: String)  extends OptionsResult
 case class Options(archivePath: String  = "archive.zip",
                    tempDir:     String  = ".",
                    logDir:      String  = ".",
+                   logLevel:    String  = "INFO",
                    whatIf:      Boolean = false)
 {
   override def toString() = {
@@ -19,6 +20,7 @@ case class Options(archivePath: String  = "archive.zip",
       "  archivePath: %s" -> archivePath,
       "  tempDir:     %s" -> tempDir,
       "  logDir:      %s" -> logDir,
+      "  logDir:      %s" -> logLevel,
       "  whatIf:      %s" -> whatIf)
       .map(x => x._1.format(x._2))
       .mkString("\n")
@@ -32,6 +34,7 @@ object Options {
        |Usage:
        |importer "C:\some\archive.zip" (specify a DwcA archive)
        |         [-logDir "C:\logs"]   (specify a log directory)
+       |         [-logLevel DEBUG]     (specify a log level)
        |         [-tempDir "C:\temp"]  (specify a temp directory)
        |         [-whatIf]             (validate only, don't import)
     """.stripMargin
@@ -40,11 +43,12 @@ object Options {
   def parse(args: List[String]) : OptionsResult = {
 
     def process(options: Options, in: List[String]) : Options = in match {
-      case Nil                     => options
-      case "-logdir"  :: v :: tail => process(options.copy(logDir = v), tail)
-      case "-tempdir" :: v :: tail => process(options.copy(tempDir = v), tail)
-      case "-whatif"       :: tail => process(options.copy(whatIf = true), tail)
-      case v               :: tail => process(options.copy(archivePath = v), tail)
+      case Nil                      => options
+      case "-logdir"   :: v :: tail => process(options.copy(logDir = v), tail)
+      case "-loglevel" :: v :: tail => process(options.copy(logDir = v), tail)
+      case "-tempdir"  :: v :: tail => process(options.copy(tempDir = v), tail)
+      case "-whatif"        :: tail => process(options.copy(whatIf = true), tail)
+      case v                :: tail => process(options.copy(archivePath = v), tail)
     }
 
     args match {

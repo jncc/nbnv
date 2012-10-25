@@ -10,7 +10,7 @@ import uk.org.nbn.nbnv.importer.data.{Repository, Database, QueryCache}
 
 class ImporterModule(options: Options) extends AbstractModule {
 
-  Log.configure(options.logDir, "4MB", Level.ALL)
+  Log.configure(options.logDir, "4MB", options.logLevel)
   val log = Log.get()
 
   val em = new PersistenceUtility().createEntityManagerFactory(Settings.map).createEntityManager

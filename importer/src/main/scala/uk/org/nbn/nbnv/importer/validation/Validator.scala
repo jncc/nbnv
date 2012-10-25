@@ -17,12 +17,14 @@ import uk.org.nbn.nbnv.importer.data.{Database}
 class Validator @Inject()(log: Logger, db: Database){
 
   def validate(archive: Archive) {
+
     log.info("Hello from the validator.")
+
 //    (1) head scoped / required - can't validate darwin mappings for validation.
 //      ask gbif to alter reader to isMapped or list of defined mappings. at the mo we're checking for null in first record. perhaps null means not mapped
 
-    var validator = new ArchiveHeadValidator
-    var results = validator.validate(archive)
+    val validator = new ArchiveHeadValidator
+    val results = validator.validate(archive)
     for (result <- results) logResult(result)
 
 
@@ -37,7 +39,7 @@ class Validator @Inject()(log: Logger, db: Database){
 
     for (record <- archive.iteratorRaw) {
 
-      var nbnRecord = new NbnRecord(record)
+      val nbnRecord = new NbnRecord(record)
 
       val v0 = new Nbnv62Validator
       val r0 = v0.validate(nbnRecord)

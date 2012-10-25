@@ -16,7 +16,8 @@ class AttributeIngester @Inject()(log: Logger, db: Database){
 
     log.debug("Ingesting attributes...")
 
-    //clear the collection of existing attributes (this is for records that are being re-imported
+    // clear the collection of existing attributes (this is for records that are being re-imported)
+    // todo: will this really do anything? reimported datasets will be deleted first, so the auto-gen'd PKs will be new
     observation.getTaxonObservationAttributeCollection.clear()
 
     for ((attributeLabel, value) <- record.attributes) {
@@ -33,27 +34,24 @@ class AttributeIngester @Inject()(log: Logger, db: Database){
       db.em.persist(toa)
     }
 
+
     def ensureAttribute(attributeLabel: String) = {
-      val attribute = db.repo.getAttribute(attributeLabel, dataset)
 
-      attribute match {
-        case Some(a) => a
-        case None => {
+      db.repo.getAttribute(attributeLabel, dataset) getOrElse {
 
-          val storageLevel = db.em.find(classOf[AttributeStorageLevel], 4) //observation
-          val storageType = db.em.find(classOf[AttributeStorageType], 3) //for now all attributes are free text
+        val storageLevel = db.em.find(classOf[AttributeStorageLevel], 4) // observation
+        val storageType = db.em.find(classOf[AttributeStorageType], 3) // for now all attributes are free text
 
-          val a = new Attribute()
-          a.setLabel(attributeLabel)
-          a.setDescription(attributeLabel)
-          a.setAttributeStorageLevel(storageLevel)
-          a.setAttributeStorageType(storageType)
-
-          db.em.persist(a)
-          db.em.flush()
-          a
-        }
+        val a = new Attribute
+        a.setLabel(attributeLabel)
+        a.setDescription(attributeLabel)
+        a.setAttributeStorageLevel(storageLevel)
+        a.setAttributeStorageType(storageType)
+        db.em.persist(a)
+        db.em.flush()
+        a
       }
     }
+
   }
 }

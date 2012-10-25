@@ -40,13 +40,17 @@ class Ingester @Inject()(options: Options,
 
       watch.start()
 
-      // upsert records in groups of 100, fully clearing the context to prevent an observed JPA slowdown
-      for (group <- archive.iteratorRaw.zipWithIndex.grouped(100); (record, i) <- group) {
+      // upsert records
+      for ((record, i) <- archive.iteratorRaw.zipWithIndex) {
 
         recordIngester.upsertRecord(new NbnRecord(record), dataset, metadata)
-
         logProgress(i)
-        db.flushAndClear()
+
+        // every 100 records, fully clearing the context to prevent an observed JPA slowdown
+        // using Seq.grouped eats the GBIF iterator for reason!
+        if (i % 100 == 0) {
+          db.flushAndClear()
+        }
       }
 
       if (options.whatIf) {

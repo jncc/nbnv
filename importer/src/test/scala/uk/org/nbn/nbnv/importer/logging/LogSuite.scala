@@ -6,7 +6,7 @@ import uk.org.nbn.nbnv.importer.testing.BaseFunSuite
 class LogSuite extends BaseFunSuite {
   test("the log should work"){
 
-    Log.configure(".", "2MB", Level.ALL)
+    Log.configure(".", "2MB", "ALL")
     Log.get().info("The log is working!")
   }
 }

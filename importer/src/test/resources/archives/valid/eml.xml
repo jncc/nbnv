@@ -60,10 +60,13 @@
 </qualityControl>
 </methods>
 <additionalInfo>
-<para>Temporal Coverage: ddddd</para>
+<para>temporalCoverage: ddddd</para>
 </additionalInfo>
 <additionalInfo>
-<para>Additional Information: ddddd</para>
+<para>additionalInformation: ddddd</para>
+</additionalInfo>
+<additionalInfo>
+<para>recorderAndDeterminerNamesArePublic: true</para>
 </additionalInfo>
 </dataset>
 </eml:eml>

@@ -5,8 +5,9 @@ import java.io.File
 
 object Log {
 
-  def configure(logDir: String, maxLogSize: String, level: Level) = {
+  def configure(logDir: String, maxLogSize: String, logLevel: String) {
 
+    val level = Level.toLevel(logLevel)
     val pattern = new PatternLayout("%d{yyyy-MMM-dd HH:mm:ss} %-5p %m%n")
 
     val fa = new RollingFileAppender
@@ -15,14 +16,14 @@ object Log {
     fa.setName("FileLogger")
     fa.setFile(path)
     fa.setLayout(pattern)
-    fa.setThreshold(Level.ALL)
+    fa.setThreshold(level)
     fa.setAppend(true)
     fa.activateOptions()
 
     val ca = new ConsoleAppender
     ca.setName("ConsoleLogger")
     ca.setLayout(pattern)
-    ca.setThreshold(Level.ALL)
+    ca.setThreshold(level)
     ca.activateOptions()
 
     get().addAppender(ca)
