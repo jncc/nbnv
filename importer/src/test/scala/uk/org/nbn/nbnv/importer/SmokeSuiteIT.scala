@@ -3,6 +3,7 @@ package uk.org.nbn.nbnv.importer
 import data.{Database, QueryCache, Repository, KeyGenerator}
 import ingestion.FeatureIngester
 import injection.ImporterModule
+import spatial.GridSquareInfoFactory
 import testing.BaseFunSuite
 import utility.ResourceLoader
 import uk.org.nbn.nbnv.PersistenceUtility
@@ -26,16 +27,28 @@ class SmokeSuiteIT extends BaseFunSuite with ResourceLoader {
     val importer = Importer.createImporter(options)
   }
 
+  def simpleFixture = new {
+    val qc = new QueryCache(mock[Logger])
+    val em = new PersistenceUtility().createEntityManagerFactory(Settings.map).createEntityManager
+    val db = new Database(em, new Repository(mock[Logger], em, qc), qc)
+  }
+
   test("should be able to get next dataset key") {
 
-    val em = new PersistenceUtility().createEntityManagerFactory(Settings.map).createEntityManager
-    val db = new Database(em, new Repository(mock[Logger], em, mock[QueryCache]), mock[QueryCache])
-    val kg = new KeyGenerator(db)
-
+    def f = simpleFixture
+    val kg = new KeyGenerator(f.db)
     val key = kg.nextTaxonDatasetKey
 
     key should startWith ("GA")
     key should have length 8
+  }
+
+  test("should be able to get a site boundary feature") {
+
+    val f = simpleFixture
+    val i = new FeatureIngester(mock[Logger], f.db, new GridSquareInfoFactory(f.db))
+
+    i.ensureSiteBoundaryFeature("GA000942E012")
   }
 
   test("should import a valid archive") {
