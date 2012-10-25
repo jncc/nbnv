@@ -46,9 +46,9 @@ class Ingester @Inject()(options: Options,
         recordIngester.upsertRecord(new NbnRecord(record), dataset, metadata)
         logProgress(i)
 
-        // every 100 records, fully clearing the context to prevent an observed JPA slowdown
+        // every 100 records, fully clearing the data context to prevent observed JPA slowdown
         // using Seq.grouped eats the GBIF iterator for reason!
-        if (i % 100 == 0) {
+        if (i % 100 == 99) {
           db.flushAndClear()
         }
       }
