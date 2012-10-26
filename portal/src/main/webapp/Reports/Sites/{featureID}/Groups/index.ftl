@@ -12,12 +12,14 @@
         <@report_utils.site_report_filters requestParameters=RequestParameters location=site.label  isSpatialRelationshipNeeded=true/>
         <div class="nbn-report-data-container">
             <#if taxonOutputGroupsWithQueryStats?has_content>
-                <table class="nbn-coloured-table">
-                    <tr><th class="nbn-th-left nbn-th-right">Species groups (number of species)</th></tr>
-                    <#list taxonOutputGroupsWithQueryStats as taxonOutputGroupWithQueryStats>
-                        <tr><td class="nbn-td-left nbn-td-right"><a href="/Reports/Sites/${featureID}/Groups/${taxonOutputGroupWithQueryStats.taxonOutputGroupKey}/Species${report_utils.getQueryString(RequestParameters)}">${taxonOutputGroupWithQueryStats.taxonOutputGroup.name}</a>(${taxonOutputGroupWithQueryStats.querySpecificSpeciesCount})</td></tr>
-                    </#list>
-                </table>
+                <div class="tabbed">
+                    <h3>Species groups (number of species)</h3>
+                    <ul>
+                        <#list taxonOutputGroupsWithQueryStats as taxonOutputGroupWithQueryStats>
+                            <li><a href="/Reports/Sites/${featureID}/Groups/${taxonOutputGroupWithQueryStats.taxonOutputGroupKey}/Species${report_utils.getQueryString(RequestParameters)}">${taxonOutputGroupWithQueryStats.taxonOutputGroup.name}</a>(${taxonOutputGroupWithQueryStats.querySpecificSpeciesCount})</li>
+                        </#list>
+                    </ul>
+                </div>
             <#else>
                 <@report_utils.noRecordsInfoBox/>
             </#if>

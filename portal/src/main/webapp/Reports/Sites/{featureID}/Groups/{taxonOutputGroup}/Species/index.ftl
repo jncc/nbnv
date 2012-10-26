@@ -14,12 +14,14 @@
         <@report_utils.site_report_filters requestParameters=RequestParameters args={"taxonOutputGroup":taxonOutputGroup} location=site.label isSpatialRelationshipNeeded=true/>
         <div class="nbn-report-data-container">
             <#if taxaWithQueryStats?has_content>
-                <table class="nbn-coloured-table">
-                <tr><th class="nbn-th-left nbn-th-right">Species recorded (number of records)</th></tr>
-                <#list taxaWithQueryStats as taxonWithQueryStats>
-                    <tr><td class="nbn-td-left nbn-td-right"><a href="/Reports/Sites/${featureID}/Groups/${taxonOutputGroup.key}/Species/${taxonWithQueryStats.taxon.ptaxonVersionKey}/Observations${report_utils.getQueryString(RequestParameters)}">${taxon_utils.getShortName(taxonWithQueryStats.taxon)}</a> (${taxonWithQueryStats.querySpecificObservationCount})</td></tr>
-                </#list>
-                </table>
+                <div class="tabbed">
+                    <h3>Species recorded (number of records)</h3>
+                    <ul>
+                        <#list taxaWithQueryStats as taxonWithQueryStats>
+                            <li><a href="/Reports/Sites/${featureID}/Groups/${taxonOutputGroup.key}/Species/${taxonWithQueryStats.taxon.ptaxonVersionKey}/Observations${report_utils.getQueryString(RequestParameters)}">${taxon_utils.getShortName(taxonWithQueryStats.taxon)}</a> (${taxonWithQueryStats.querySpecificObservationCount})</li>
+                        </#list>
+                    </ul>
+                </div>
             <#else>
                 <@report_utils.noRecordsInfoBox/>
             </#if>

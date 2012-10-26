@@ -1,26 +1,28 @@
 <#macro dataset_table providersWithQueryStats requestParameters>
-    <table class="nbn-coloured-table">
-        <tr><th class="nbn-th-left nbn-th-right" colspan="3">Data providers and their datasets that contribute to this page (number of records)<span id="nbn-select-datasets-text">Select or deselect all datasets: <input type="checkbox" name="nbn-select-datasets-auto" id="nbn-select-datasets-auto"/></span></th></tr>
-        <#list providersWithQueryStats as providerWithQueryStats>
-            <tr class="nbn-emphasise-row">
-                <td class="nbn-td-left"><img src="${api}/organisations/${providerWithQueryStats.organisationID}/logo" class="nbn-provider-table-logo"></td>
-                <td class="nbn-td-right" colspan="2"><a href="/Provider/${providerWithQueryStats.organisationID}">${providerWithQueryStats.organisation.name}</a> (${providerWithQueryStats.querySpecificObservationCount})</td>
-            </tr>
-            <#assign datasetsWithQueryStats=providerWithQueryStats.datasetsWithQueryStats>
-            <#--All datasets will be checked by default unless dataset keys are found-->
-            <#assign checked = "checked">
-            <#list datasetsWithQueryStats as datasetWithQueryStats>
-                <tr class="nbn-de-emphasise-row">
-                    <#if requestParameters.datasetKey?has_content>
-                        <#assign checked = requestParameters.datasetKey?seq_contains(datasetWithQueryStats.datasetKey)?string("checked","")>
-                    </#if>
-                    <td class="nbn-td-left" ><input type="checkbox" name="datasetKey" value="${datasetWithQueryStats.datasetKey}" ${checked}></td>
-                    <td><a href="/Datasets/${datasetWithQueryStats.datasetKey}">${datasetWithQueryStats.dataset.title}</a> (${datasetWithQueryStats.querySpecificObservationCount})</td>
-                    <td  class="nbn-td-right" >Access to this dataset Fusce in leo massa, nec ullamcorper dui. Aliquam auctor iaculis sapien, et scelerisque mi iaculis in. Donec nibh libero, aliquet vitae cursus in, mattis vel augue. Nulla facilisi. Aenean porttitor.</td>
+    <div class="tabbed">
+        <h3>Data providers and their datasets that contribute to this page (number of records)<span id="nbn-select-datasets-text">Select or deselect all datasets: <input type="checkbox" name="nbn-select-datasets-auto" id="nbn-select-datasets-auto"/></span></h3>
+        <table>
+            <#list providersWithQueryStats as providerWithQueryStats>
+                <tr>
+                    <th><img src="${api}/organisations/${providerWithQueryStats.organisationID}/logo" class="nbn-provider-table-logo"></th>
+                    <th colspan="2"><a href="/Provider/${providerWithQueryStats.organisationID}">${providerWithQueryStats.organisation.name}</a> (${providerWithQueryStats.querySpecificObservationCount})</th>
                 </tr>
+                <#assign datasetsWithQueryStats=providerWithQueryStats.datasetsWithQueryStats>
+                <#--All datasets will be checked by default unless dataset keys are found-->
+                <#assign checked = "checked">
+                <#list datasetsWithQueryStats as datasetWithQueryStats>
+                    <tr>
+                        <#if requestParameters.datasetKey?has_content>
+                            <#assign checked = requestParameters.datasetKey?seq_contains(datasetWithQueryStats.datasetKey)?string("checked","")>
+                        </#if>
+                        <td><input type="checkbox" name="datasetKey" value="${datasetWithQueryStats.datasetKey}" ${checked}></td>
+                        <td><a href="/Datasets/${datasetWithQueryStats.datasetKey}">${datasetWithQueryStats.dataset.title}</a> (${datasetWithQueryStats.querySpecificObservationCount})</td>
+                        <td>Access to this dataset Fusce in leo massa, nec ullamcorper dui. Aliquam auctor iaculis sapien, et scelerisque mi iaculis in. Donec nibh libero, aliquet vitae cursus in, mattis vel augue. Nulla facilisi. Aenean porttitor.</td>
+                    </tr>
+                </#list>
             </#list>
-        </#list>
-    </table>
+        </table>
+    </div>
 </#macro>
 
 <#macro site_report_filters location requestParameters isSpatialRelationshipNeeded=true isDesignationNeeded=true isDatasetNeeded=true args={}>
@@ -29,100 +31,92 @@
     <#assign spatialRelationship=requestParameters.spatialRelationship?has_content?string(requestParameters.spatialRelationship[0]!"overlap","overlap")>
     <#assign designations=json.readURL("${api}/designations")>
     <div class="nbn-report-data-container">
-
-        <table class="nbn-coloured-table">
+        <div class="tabbed">
+            <h3>Your current filters</h3>
+            <table>
             <tr>
-                <th class="nbn-th-left nbn-th-right" colspan="2">
-                    Your current filters
-                </th>
+                <th>Location:</th>
+                <td>${location}</td>
             </tr>
             <tr>
-                <td class="nbn-td-left nbn-filter-name">Location:</td>
-                <td class="nbn-td-right">${location}</td>
-            </tr>
-            <tr>
-                <td class="nbn-td-left nbn-filter-name">Year range:</td>
-                <td class="nbn-td-right">${getYearRangeText(requestParameters)}</td>
+                <th>Year range:</th>
+                <td>${getYearRangeText(requestParameters)}</td>
             </tr>
             <#if isSpatialRelationshipNeeded>
                 <tr>
-                    <td class="nbn-td-left nbn-filter-name">Spatial relationship:</td>
-                    <td class="nbn-td-right"><@spatialRelationshipText requestParameters=requestParameters/></td>
+                    <th>Spatial relationship:</th>
+                    <td><@spatialRelationshipText requestParameters=requestParameters/></td>
                 </tr>
             </#if>
             <#if isDesignationNeeded>
                 <tr>
-                    <td class="nbn-td-left nbn-filter-name">Designation:</td>
-                    <td class="nbn-td-right"><@designationText requestParameters=requestParameters/></td>
+                    <th>Designation:</th>
+                    <td><@designationText requestParameters=requestParameters/></td>
                 </tr>
             </#if>
             <tr>
-                <td class="nbn-td-left nbn-filter-name">Datasets:</td>
-                <td class="nbn-td-right"><@datasetText requestParameters=requestParameters/></td>
+                <th>Datasets:</th>
+                <td><@datasetText requestParameters=requestParameters/></td>
             </tr>
             <#if args.taxonOutputGroup??>
                 <tr>
-                    <td class="nbn-td-left nbn-filter-name">Species group:</td>
-                    <td class="nbn-td-right">${args.taxonOutputGroup.name?cap_first}</td>
+                    <th>Species group:</th>
+                    <td>${args.taxonOutputGroup.name?cap_first}</td>
                 </tr>
             </#if>
             <#if args.taxon??>
                 <tr>
-                    <td class="nbn-td-left nbn-filter-name">Species:</td>
-                    <td class="nbn-td-right">${args.taxon.name}</td>
+                    <th>Species:</th>
+                    <td>${args.taxon.name}</td>
                 </tr>
             </#if>
-            <tr>
-                <th class="nbn-td-left nbn-td-right" colspan="2">
-                    Change your filters
-                </th>
-            </tr>
-            <tr>
-                <td class="nbn-td-left nbn-filter-name">Year range:</td>
-                <td class="nbn-td-right"><input name="startYear" id="startYear" type="textbox" value="${startYear}" class="nbn-year-input"/>
-                                         to <input name="endYear" id="endYear" type="textbox" value="${endYear}" class="nbn-year-input"/></td>
-            </tr>
-            <#if isSpatialRelationshipNeeded>
+            </table>
+            <h3>Change your filters</h3>
+            <table>
                 <tr>
-                    <td class="nbn-td-left nbn-filter-name">Spatial relationship: </td>
-                    <td class="nbn-td-right">
-                        <select name="spatialRelationship" id="spatialRelationship" class="nbn-report-filter-dropdown">
-                            <#if requestParameters.spatialRelationship?has_content && requestParameters.spatialRelationship[0]=="within" >
-                                <option value="within" selected="selected">Records within site</option>
-                                <option value="overlap">Records within or overlapping site</option>
-                            <#else>
-                                <option value="within">Records completely within site</option>
-                                <option value="overlap" selected="selected">Records within or overlapping site</option>
-                            </#if>
-                        </select><br/>
-                    </td>
+                    <th>Year range:</th>
+                    <td><input name="startYear" id="startYear" type="textbox" value="${startYear}" class="nbn-year-input"/>
+                                             to <input name="endYear" id="endYear" type="textbox" value="${endYear}" class="nbn-year-input"/></td>
                 </tr>
-            </#if>
-            <#if isDesignationNeeded>
-                <tr>
-                    <td class="nbn-td-left nbn-filter-name">Designation: </td>
-                    <td class="nbn-td-right">
-                        <select name="designation" id="designation" class="nbn-report-filter-dropdown">
-                            <option selected="selected" value="">None selected</option>
-                            <#list designations as designation>
-                                <#assign selected = requestParameters.designation?seq_contains(designation.code)?string("selected","")>
-                                <option value="${designation.code}" ${selected}>${designation.name}</option>
-                            </#list>
-                        </select><br/>
-                    </td>
-                </tr>
-            </#if>
-            <#if isDatasetNeeded>
-                <tr>
-                    <td class="nbn-td-left nbn-filter-name">Datasets:</td>
-                    <td class="nbn-td-right">Select from table below</td>
-                </tr>
-            </#if>
-            <tr>
-                <td class="nbn-td-left"></td>
-                <td class="nbn-td-right"><input type="submit"/></td>
-            </tr>
-        </table>
+                <#if isSpatialRelationshipNeeded>
+                    <tr>
+                        <th>Spatial relationship: </th>
+                        <td>
+                            <select name="spatialRelationship" id="spatialRelationship" class="nbn-report-filter-dropdown">
+                                <#if requestParameters.spatialRelationship?has_content && requestParameters.spatialRelationship[0]=="within" >
+                                    <option value="within" selected="selected">Records within site</option>
+                                    <option value="overlap">Records within or overlapping site</option>
+                                <#else>
+                                    <option value="within">Records completely within site</option>
+                                    <option value="overlap" selected="selected">Records within or overlapping site</option>
+                                </#if>
+                            </select><br/>
+                        </td>
+                    </tr>
+                </#if>
+                <#if isDesignationNeeded>
+                    <tr>
+                        <th>Designation: </th>
+                        <td>
+                            <select name="designation" id="designation" class="nbn-report-filter-dropdown">
+                                <option selected="selected" value="">None selected</option>
+                                <#list designations as designation>
+                                    <#assign selected = requestParameters.designation?seq_contains(designation.code)?string("selected","")>
+                                    <option value="${designation.code}" ${selected}>${designation.name}</option>
+                                </#list>
+                            </select><br/>
+                        </td>
+                    </tr>
+                </#if>
+                <#if isDatasetNeeded>
+                    <tr>
+                        <th>Datasets:</th>
+                        <td>Select from table below</td>
+                    </tr>
+                </#if>
+            </table>
+            <input type="submit"/>
+        </div>
     </div>
 </#macro>
 
@@ -167,17 +161,11 @@
 
 <#macro siteImage locationName locationID imageURL>
     <div id="nbn-site-map-container">
-        <table class="nbn-coloured-table">
-            <tr>
-                <th class="nbn-th-right nbn-th-left">Map of ${locationName}</th>
-            </tr>
-            <tr>
-                <td class="nbn-td-right nbn-td-left"><img src="${imageURL}" id="nbn-site-map-image"></td>
-            </tr>
-            <tr>
-                <td class="nbn-td-right nbn-td-left" id="nbn-site-image-copyright">&copy; Crown copyright and database rights 2011 Ordnance Survey [100017955]</td>
-            </tr>
-        </table>
+        <div class="tabbed">
+            <h3>Map of ${locationName}</h3>
+            <img src="${imageURL}" id="nbn-site-map-image">
+            <span id="nbn-site-image-copyright">&copy; Crown copyright and database rights 2011 Ordnance Survey [100017955]</span>
+        </div>
     </div>
 </#macro>
 

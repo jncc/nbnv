@@ -18,38 +18,43 @@
     <#if datasets?has_content>
         <#list datasets as dataset>
             <#assign provider=json.readURL("${api}/organisations/${dataset.organisationID}")>
-            <table class="nbn-coloured-table">
-                <tr>
-                    <th colspan="2" class="nbn-th-left">Dataset:</th>
-                    <th colspan="4" class="nbn-th-right"><a href="/Datasets/${dataset.key}">${dataset.title}</a></th>
-                </tr>
-                <tr>
-                    <th colspan="2" class="nbn-td-left">Provider:</th>
-                    <th colspan="4" class="nbn-td-right"><a href="/Organisations/${provider.id}">${provider.name}</a></th>
-                </tr>
-                <tr>
-                    <th colspan="2" class="nbn-td-left">Your access:</th>
-                    <th colspan="4" class="nbn-td-right">Access to this dataset Fusce in leo massa, nec ullamcorper dui. Aliquam auctor iaculis sapien, et scelerisque mi iaculis in. Donec nibh libero, aliquet vitae cursus in, mattis vel augue. Nulla facilisi. Aenean porttitor.</a></th>
-                </tr>
-                <tr class="nbn-emphasise-row">
-                    <td class="nbn-td-left">Site name</td>
-                    <td>Location</td>
-                    <td>Date range</td>
-                    <td>Date type</td>
-                    <td>Sensitive</td>
-                    <td class="nbn-td-right">Absence</td>
-                </tr>
-                <#list dataset.observations as observation>
+            <div class="tabbed">
+                <h3>Records</h3>
+                <table>
                     <tr>
-                        <td class="nbn-td-left">${observation.siteName!"Not available"}</td>
-                        <td>${observation.identifier}</td>
-                        <td>${observation.startDate} to ${observation.endDate}</td>
-                        <td>${observation.dateTypekey}</td>
-                        <td>${observation.sensitive?string}</td>
-                        <td class="nbn-td-right">${observation.absence?string}</td>
+                        <th>Dataset:</th>
+                        <th><a href="/Datasets/${dataset.key}">${dataset.title}</a></th>
                     </tr>
-                </#list>
-            </table>
+                    <tr>
+                        <th>Provider:</th>
+                        <th><a href="/Organisations/${provider.id}">${provider.name}</a></th>
+                    </tr>
+                    <tr>
+                        <th>Your access:</th>
+                        <th>Access to this dataset Fusce in leo massa, nec ullamcorper dui. Aliquam auctor iaculis sapien, et scelerisque mi iaculis in. Donec nibh libero, aliquet vitae cursus in, mattis vel augue. Nulla facilisi. Aenean porttitor.</a></th>
+                    </tr>
+                </table>
+                <table>
+                    <tr>
+                        <th>Site name</th>
+                        <th>Location</th>
+                        <th>Date range</th>
+                        <th>Date type</th>
+                        <th>Sensitive</th>
+                        <th >Absence</th>
+                    </tr>
+                    <#list dataset.observations as observation>
+                        <tr>
+                            <td>${observation.siteName!"Not available"}</td>
+                            <td>${observation.identifier}</td>
+                            <td>${observation.startDate} to ${observation.endDate}</td>
+                            <td>${observation.dateTypekey}</td>
+                            <td>${observation.sensitive?string}</td>
+                            <td>${observation.absence?string}</td>
+                        </tr>
+                    </#list>
+                </table>
+            </div>
         </#list>
     <#else>
         <@report_utils.noRecordsInfoBox/>

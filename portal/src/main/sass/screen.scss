@@ -99,6 +99,15 @@ body {
         border: 2px groove threedface;
         padding: 10px;
     }
+
+    table {
+        width : 100%;
+        th, td { padding: 0.2em 2em 0.2em 0; }
+        th { 
+            font-weight: bold;
+            background-color : $minorGrey;
+        }
+    }
     
     .nbn-navigation {
         margin-left: 5%;
@@ -114,12 +123,12 @@ body {
         margin:5px;
         @include border-top-radius(5px);
         border: 1px solid $majorColour;
-        padding: $padding;
+        padding: 0 $padding;
         h1, h2, h3 {
             @include contrasted($majorColour);
             padding: 0.5em;
             display: block;
-            margin: #{-$padding} #{-$padding} $padding;
+            margin: 0 #{-$padding} $padding;
         }
     }
     
@@ -147,66 +156,11 @@ body {
         }
     }
     
-    table.nbn-coloured-table{
-        @extend table.nbn-simple-table;
-        border-bottom: 1px solid $majorColour;
-        th{
-            color: white;
-            background-color: $majorColour;
-            padding: 5px;
-            a{
-                color: white;
-            }
-        }
-    }
-    
     table.nbn-observations-table{
         @extend table.nbn-coloured-table;
         th{
             padding: 2px;
         }
-    }
-
-    th.nbn-th-left {
-        border-top-left-radius: 5px;
-        -moz-border-top-left-radius: 5px;
-    }
-
-    th.nbn-th-right {
-        border-top-right-radius: 5px;
-        -moz-border-top-right-radius: 5px;
-    }
-
-    td.nbn-td-left {
-            border-left: 1px solid $majorColour;
-    }
-
-    td.nbn-td-right {
-        border-right: 1px solid $majorColour;
-    }
-
-    td.nbn-td-contents-centre {
-        text-align: center;
-    }
-
-    td.nbn-td-contents-top {
-        vertical-align: top;
-    }
-
-    tr.nbn-emphasise-row {
-        background-color: $minorToMediumGrey;
-        font-weight: bold;
-        a {
-            font-weight: bold;
-        }
-    }
-
-    tr.nbn-de-emphasise-row {
-        font-size: 0.9em;
-    }
-
-    tr.nbn-provider-row {
-        background-color: $minorToMediumGrey;
     }
 
     .nbn-dataset-table{
