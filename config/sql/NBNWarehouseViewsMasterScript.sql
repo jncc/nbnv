@@ -298,6 +298,56 @@ GO
 
 GO
 
+CREATE VIEW [dbo].[HabitatFeatureData] WITH SCHEMABINDING AS (
+	SELECT
+		hf.featureID
+		, hf.providerKey
+		, hf.uploadDate 
+		, hf.habitatDataset AS habitatDatasetKey
+		, hd.habitatCategory AS habitatCategoryID
+	FROM [dbo].[HabitatFeature] hf
+	INNER JOIN [dbo].[HabitatDataset] hd ON hd.datasetKey = hf.habitatDataset
+);
+
+GO
+
+CREATE UNIQUE CLUSTERED INDEX [cidx_HabitatFeatureData_featureID] ON [dbo].[HabitatFeatureData] 
+(
+	[featureID] ASC
+);
+
+GO
+
+--EXEC usp_dev_AddViewToPublication 'HabitatFeatureData';
+
+GO
+
+CREATE VIEW [dbo].[HabitatFeatureFeatureData] WITH SCHEMABINDING AS (
+	SELECT
+		f.id 
+		, hf.habitatDataset + hf.providerKey AS identifier
+		, hf.providerKey AS label
+		, f.geom 
+		, hf.originalGeom
+		, p.label AS originalProjection
+	FROM [dbo].[Feature] f
+	INNER JOIN [dbo].[HabitatFeature] hf ON f.id = hf.featureID 
+	INNER JOIN [dbo].[Projection] p ON p.id = hf.originalProjectionID 
+);
+
+GO
+
+CREATE UNIQUE CLUSTERED INDEX [cidx_HabitatFeatureFeatureData_featureID] ON [dbo].[HabitatFeatureFeatureData] 
+(
+	[id] ASC
+);
+
+GO
+
+--EXEC usp_dev_AddViewToPublication 'HabitatFeatureFeatureData';
+
+GO
+
 CREATE VIEW [dbo].[GridSquareFeatureData] WITH SCHEMABINDING AS (
 	SELECT
 		f.id 
@@ -348,6 +398,7 @@ CREATE VIEW [dbo].[FeatureData] WITH SCHEMABINDING AS (
 		, gsfd.originalGeom 
 		, gsfd.originalProjection 
 		, gsfd.resolutionID 
+		, 'GridSquare' AS [type]
 	FROM [dbo].[GridSquareFeatureData] gsfd
 	UNION ALL
 	SELECT 
@@ -358,7 +409,19 @@ CREATE VIEW [dbo].[FeatureData] WITH SCHEMABINDING AS (
 		, sbfd.originalGeom 
 		, sbfd.originalProjection 
 		, -1 AS resolutionID
+		, 'SiteBoundary' AS [type]
 	FROM [dbo].[SiteBoundaryFeatureData] sbfd
+	UNION ALL
+	SELECT 
+		hffd.id
+		, hffd.identifier
+		, hffd.label 
+		, hffd.geom 
+		, hffd.originalGeom 
+		, hffd.originalProjection 
+		, -1 AS resolutionID
+		, 'HabitatFeature' AS [type]
+	FROM [dbo].[HabitatFeatureFeatureData] hffd
 );
 
 GO
@@ -618,6 +681,35 @@ CREATE UNIQUE CLUSTERED INDEX [cidx_SiteBoundaryDatasetData_datasetKey] ON [dbo]
 GO
 
 --EXEC usp_dev_AddViewToPublication 'SiteBoundaryDatasetData'
+
+GO
+
+CREATE VIEW [dbo].[HabitatDatasetData] WITH SCHEMABINDING AS (
+	SELECT
+		hd.datasetKey 
+		, d.title
+		, d.[description]
+		, d.dateUploaded 
+		, o.name AS organisationName
+		, o.id AS organisationID
+		, hd.habitatCategory
+		, hc.name AS habitatCategoryName
+	FROM [dbo].[HabitatDataset] hd
+	INNER JOIN [dbo].[Dataset] d ON d.[key] = hd.datasetKey 
+	INNER JOIN [dbo].[HabitatCategory] hc ON hc.id = hd.habitatCategory 
+	INNER JOIN [dbo].[Organisation] o ON o.id = d.providerOrganisationKey 
+);
+
+GO
+
+CREATE UNIQUE CLUSTERED INDEX [cidx_HabitatDatasetData_datasetKey] ON [dbo].[HabitatDatasetData] 
+(
+	[datasetKey] ASC
+);
+
+GO
+
+--EXEC usp_dev_AddViewToPublication 'HabitatDatasetData'
 
 GO
 

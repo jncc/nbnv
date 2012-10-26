@@ -1,0 +1,2 @@
+ogr2ogr -progress -f MSSQLSpatial MSSQL:server=nbnsql-master;database=NBNSpatial;trusted_connection=yes SDE:NBNLOAD,5157,NBNHabitatLayers,NBNWebUser,101$unnyd4y$,%1,DBO.DEFAULT -nln %1 -t_srs EPSG:%2
+ogr2ogr -progress -f MSSQLSpatial MSSQL:server=nbnsql-master;database=NBNSpatial;trusted_connection=yes SDE:NBNLOAD,5157,NBNHabitatLayers,NBNWebUser,101$unnyd4y$,%1,DBO.DEFAULT -nln %1_wgs -s_srs EPSG:%2 -t_srs EPSG:4326

@@ -7,10 +7,12 @@ import uk.org.nbn.nbnv.importer.data.Implicits._
 import com.google.inject.Inject
 import org.apache.log4j.Logger
 import uk.org.nbn.nbnv.importer.ImportFailedException
-import uk.org.nbn.nbnv.{SpatialQueries, FeatureFactory}
+import uk.org.nbn.nbnv.{SpatialQueries, StoredProcedureLibrary}
 
 class Repository (log: Logger, em: EntityManager, cache: QueryCache) extends ControlAbstractions {
+
   def confirmSiteBoundary(siteDatasetKey: String, siteProviderKey: String): Boolean = {
+
     val query = em.createQuery("select count(sb.featureID) from SiteBoundary sb join SiteBoundaryDataset sbd where sbd.datasetKey = :datasetKey and sb.providerKey = :providerKey")
     query.setParameter("datasetKey", siteDatasetKey)
     query.setParameter("providerKey", siteProviderKey)
@@ -21,28 +23,32 @@ class Repository (log: Logger, em: EntityManager, cache: QueryCache) extends Con
 
 
   def getSRSForLatLong(lng: Double, lat: Double ) : Option[Int] = {
+
     val queries = new SpatialQueries(em)
     val wkt = "POINT(%s %s)".format(lng.toString, lat.toString)
 
     val result = queries.getGridProjectionForWGS84wkt(wkt)
 
-    //has to be done manually because getGridProjection returns java.lang.Integer
-    //scala will try cast to scala Int when wrapping in the option. This results in
-    //null pointer exception.
+    // manually wrap in an Option because getGridProjection returns java.lang.Integer
+    // which results in a null pointer exception
     if (result == null) None else Option(result)
   }
 
   def createFeature(wkt: String) = {
 
-    val factory = new FeatureFactory(em)
-    factory.createFeature(wkt)
+    val sprocs = new StoredProcedureLibrary(em)
+    sprocs.createFeature(wkt)
   }
 
   def createGridRef(feature: Feature, gridRef: String , resolution: Resolution , projection: Projection , wkt: String ) : GridSquare = {
-    val factory = new FeatureFactory(em)
-    factory.createGridSquare(gridRef, resolution, projection,wkt, feature)
+    val sprocs = new StoredProcedureLibrary(em)
+    sprocs.createGridSquare(gridRef, resolution, projection,wkt, feature)
   }
 
+  def deleteTaxonObservationsAndRelatedRecords(datasetKey: String) {
+    val sprocs = new StoredProcedureLibrary(em)
+    sprocs.deleteTaxonObservationsAndRelatedRecords(datasetKey)
+  }
 
   def confirmTaxonVersionKey(taxonVersionKey: String): Boolean = {
     val query = em.createQuery("SELECT COUNT(t.taxonVersionKey) FROM Taxon t WHERE t.taxonVersionKey = :tvk", classOf[Taxon])
