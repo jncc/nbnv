@@ -6,11 +6,20 @@
 
 USE [master]
 GO
+EXEC sp_removedbreplication NBNCore
+GO
 EXEC msdb.dbo.sp_delete_database_backuphistory @database_name = N'NBNCore'
 GO
 ALTER DATABASE [NBNCore] SET  SINGLE_USER WITH ROLLBACK IMMEDIATE
 GO
 DROP DATABASE [NBNCore]
+GO
+
+IF NOT EXISTS(SELECT principal_id FROM sys.server_principals WHERE name = 'NBNImporter') 
+BEGIN
+	CREATE LOGIN [NBNImporter] WITH PASSWORD=N'Ecowaswashere9', DEFAULT_DATABASE=[NBNCore], CHECK_EXPIRATION=OFF, CHECK_POLICY=OFF
+END
+
 GO
 
 --------------------------------
@@ -790,6 +799,7 @@ CREATE TABLE [dbo].[TaxonDataset](
 	[datasetKey] [char](8) NOT NULL PRIMARY KEY REFERENCES [Dataset] ([key]) ON UPDATE CASCADE ON DELETE CASCADE,
 	[publicResolutionID] [int] NOT NULL REFERENCES [Resolution] ([id]),
 	[allowRecordValidation] [bit] NOT NULL,
+	[publicAttribute] [bit] NOT NULL
 );
 
 ------------------------------
@@ -1437,8 +1447,6 @@ GO
 
 ------------------------------
 
-USE [NBNCore]
-GO
 
 CREATE PROCEDURE [dbo].[import_SiteBoundaryData]
 	@datasetKey CHAR(8)
@@ -1540,13 +1548,8 @@ GO
 ------------------------------
 
 CREATE USER [NBNImporter] FOR LOGIN [NBNImporter]
-
 GO
-
 ALTER USER [NBNImporter] WITH DEFAULT_SCHEMA=[dbo]
-
 GO
-
-GRANT EXECUTE TO [NBNImporter]
-
+GRANT SELECT,UPDATE,INSERT,DELETE,EXECUTE TO [NBNImporter]
 GO

@@ -348,6 +348,7 @@ CREATE VIEW [dbo].[FeatureData] WITH SCHEMABINDING AS (
 		, gsfd.originalGeom 
 		, gsfd.originalProjection 
 		, gsfd.resolutionID 
+		, 'GridSquare' AS [type]
 	FROM [dbo].[GridSquareFeatureData] gsfd
 	UNION ALL
 	SELECT 
@@ -358,6 +359,7 @@ CREATE VIEW [dbo].[FeatureData] WITH SCHEMABINDING AS (
 		, sbfd.originalGeom 
 		, sbfd.originalProjection 
 		, -1 AS resolutionID
+		, 'SiteBoundary' AS [type]
 	FROM [dbo].[SiteBoundaryFeatureData] sbfd
 );
 
