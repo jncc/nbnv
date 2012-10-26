@@ -55,19 +55,19 @@ class PublicIngester @Inject()(log: Logger,
       case Some(p) => {
         // delete the public record if it's become sensitive
         if (o.getSensitiveRecord) {
-          log.info("Deleting public record...")
+          log.debug("Deleting public record...")
           db.em.remove(p)
         } else {
-          log.info("Updating public record...")
+          log.debug("Updating public record...")
           update(p)
         }
       }
       case None => {
         // don't create the public record if it is sensitive
         if (o.getSensitiveRecord) {
-          log.info("Not creating public record (sensitive=true).")
+          log.debug("Not creating public record (sensitive=true).")
         } else {
-          log.info("Creating public record...")
+          log.debug("Creating public record...")
           val p = new TaxonObservationPublic
           update(p)
           db.em.persist(p)

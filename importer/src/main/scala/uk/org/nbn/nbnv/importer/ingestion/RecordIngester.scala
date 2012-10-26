@@ -19,7 +19,7 @@ class RecordIngester @Inject()(log: Logger,
                                featureIngester: FeatureIngester,
                                publicIngester: PublicIngester) {
 
-  def upsertRecord(record: NbnRecord, dataset: TaxonDataset, metadata: Metadata) {
+  def insertRecord(record: NbnRecord, dataset: TaxonDataset, metadata: Metadata) {
 
     log.info("Upserting record %s".format(record.key))
 

@@ -35,17 +35,17 @@ public class StoredProcedureLibrary {
 //            }
 //    )
     public Feature createFeature(String wgs84Wkt) {
-        StoredProcedureCall spcall = new StoredProcedureCall();
-        spcall.setProcedureName("import_CreateFeature");
-        spcall.addNamedArgument("wkt", "wgs84wkt");
-        spcall.addNamedOutputArgument(
+        StoredProcedureCall call = new StoredProcedureCall();
+        call.setProcedureName("import_CreateFeature");
+        call.addNamedArgument("wkt", "wgs84wkt");
+        call.addNamedOutputArgument(
                 "FeatureId",      // procedure parameter name
                 "FeatureId",      // out argument field name
                 Integer.class  // Java type corresponding to type returned by procedure
         );
 
         ValueReadQuery query = new ValueReadQuery();
-        query.setCall(spcall);
+        query.setCall(call);
         query.addArgument("wgs84wkt");   // input
 
         List arguments = new ArrayList();
@@ -68,17 +68,17 @@ public class StoredProcedureLibrary {
 //    , @gridSquareId INT OUT
 
     public GridSquare createGridSquare(String gridRef, Resolution resolution, Projection projection, String wkt, Feature wgs84Feature) {
-        StoredProcedureCall spcall = new StoredProcedureCall();
-        spcall.setProcedureName("import_CreateGridSquare");
+        StoredProcedureCall call = new StoredProcedureCall();
+        call.setProcedureName("import_CreateGridSquare");
 
-        spcall.addNamedArgument("gridRef", "gridRef");
-        spcall.addNamedArgument("resolutionID", "resolutionID");
-        spcall.addNamedArgument("projectionID", "projectionID");
-        spcall.addNamedArgument("wkt", "wkt");
-        spcall.addNamedArgument("featureID", "featureID");
+        call.addNamedArgument("gridRef", "gridRef");
+        call.addNamedArgument("resolutionID", "resolutionID");
+        call.addNamedArgument("projectionID", "projectionID");
+        call.addNamedArgument("wkt", "wkt");
+        call.addNamedArgument("featureID", "featureID");
 
         DataModifyQuery query = new DataModifyQuery();
-        query.setCall(spcall);
+        query.setCall(call);
         query.addArgument("gridRef");
         query.addArgument("resolutionID");
         query.addArgument("projectionID");
@@ -99,6 +99,23 @@ public class StoredProcedureLibrary {
         GridSquare gridSquare =  _em.find(GridSquare.class, gridRef);
 
         return gridSquare;
+    }
+
+    public void deleteTaxonObservationsAndRelatedRecords(String datasetKey) {
+
+        StoredProcedureCall call = new StoredProcedureCall();
+        call.setProcedureName("import_DeleteTaxonObservationsAndRelatedRecords");
+        call.addNamedArgument("datasetKey", "datasetKey");
+
+        DataModifyQuery query = new DataModifyQuery();
+        query.setCall(call);
+        query.addArgument("datasetKey");
+
+        List arguments = new ArrayList();
+        arguments.add(datasetKey);
+
+        Session session = getSession();
+        session.executeQuery(query, arguments);
     }
 
     private Session getSession() {

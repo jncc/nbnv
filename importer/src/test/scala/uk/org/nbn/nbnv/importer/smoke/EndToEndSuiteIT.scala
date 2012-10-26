@@ -13,7 +13,7 @@ class EndToEndSuiteIT extends BaseFunSuite with ResourceLoader {
     new File(tempDir).mkdirs()
 
     val archive = resource(archivePath)
-    val options = Options(archivePath = archive.getFile, tempDir = tempDir, whatIf = true)
+    val options = Options(archivePath = archive.getFile, tempDir = tempDir, whatIf = false)
 
     val importer = Importer.createImporter(options)
   }
