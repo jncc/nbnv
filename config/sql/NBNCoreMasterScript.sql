@@ -1632,7 +1632,6 @@ BEGIN
 		SELECT
 			@@IDENTITY
 			, @datasetKey
-			, sl.siteName 
 			, sl.providerKey 
 			, @projection
 			, sl.originalGeom 
