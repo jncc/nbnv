@@ -577,10 +577,41 @@ SET ANSI_PADDING OFF;
  *
  */
 
-CREATE TABLE [dbo].[HabitatDataset](
-	[datasetKey] [char](8) NOT NULL PRIMARY KEY REFERENCES [Dataset] ([key]) ON UPDATE CASCADE ON DELETE CASCADE,
+CREATE TABLE [dbo].[HabitatCategory](
+	[id] [int] NOT NULL PRIMARY KEY,
+	[name] [varchar](max) NOT NULL
 );
 
+INSERT INTO [dbo].[HabitatCategory] VALUES
+(1, 'BAP Priority Habitat');
+
+------------------------------
+
+CREATE TABLE [dbo].[HabitatDataset](
+	[datasetKey] [char](8) NOT NULL PRIMARY KEY REFERENCES [Dataset] ([key]) ON UPDATE CASCADE ON DELETE CASCADE,
+	[habitatCategory] [int] NOT NULL REFERENCES [HabitatCategory] ([id])
+);
+
+------------------------------
+
+CREATE TABLE [dbo].[HabitatFeature](
+	[featureID] [int] NOT NULL PRIMARY KEY REFERENCES [Feature] ([id]) ON UPDATE CASCADE ON DELETE CASCADE,
+	[providerKey] [varchar](100) NOT NULL,
+	[habitatDataset] [char](8) NOT NULL REFERENCES [HabitatDataset] ([datasetKey]),
+	[originalProjectionID] [int] NOT NULL REFERENCES [Projection] ([id]),
+	[originalGeom] [geometry] NOT NULL,
+	[uploadDate] [datetime] NOT NULL
+);
+
+SET ANSI_PADDING ON; 
+
+CREATE SPATIAL INDEX [sidx_HabitatFeature_originalGeom] ON [dbo].[HabitatFeature] (
+	[originalGeom]
+) USING GEOMETRY_GRID WITH (
+	BOUNDING_BOX =(-11, 49, 3, 63), GRIDS =(LEVEL_1 = MEDIUM,LEVEL_2 = MEDIUM,LEVEL_3 = MEDIUM,LEVEL_4 = MEDIUM), CELLS_PER_OBJECT = 16, PAD_INDEX  = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON
+);
+
+SET ANSI_PADDING OFF; 
 
 /*
  *
@@ -972,7 +1003,8 @@ INSERT INTO [AttributeStorageLevel] VALUES
 (2, 'survey'),
 (3, 'sample'),
 (4, 'observation'),
-(5, 'boundary');
+(5, 'boundary'),
+(6, 'habitat');
 
 ------------------------------
 
@@ -1054,6 +1086,17 @@ CREATE TABLE [dbo].[TaxonAttribute](
 
 CREATE TABLE [dbo].[SiteBoundaryAttribute](
 	[featureID] [int] NOT NULL REFERENCES [SiteBoundary] ([featureID]),
+	[attributeID] [int] NOT NULL REFERENCES [Attribute] ([id]),
+	[decimalValue] [decimal](18, 0) NULL,
+	[enumValue] [int] NULL,
+	[textValue] [varchar](255) NULL,
+	PRIMARY KEY ([featureID] ASC, [attributeID] ASC)
+);
+
+----------------------------
+
+CREATE TABLE [dbo].[HabitatFeatureAttribute](
+	[featureID] [int] NOT NULL REFERENCES [HabitatFeature] ([featureID]),
 	[attributeID] [int] NOT NULL REFERENCES [Attribute] ([id]),
 	[decimalValue] [decimal](18, 0) NULL,
 	[enumValue] [int] NULL,
@@ -1447,7 +1490,6 @@ GO
 
 ------------------------------
 
-
 CREATE PROCEDURE [dbo].[import_SiteBoundaryData]
 	@datasetKey CHAR(8)
 	, @layer VARCHAR(255)
@@ -1534,6 +1576,103 @@ BEGIN
 		VALUES (@cName, 'NBN-ATTRIB-' + @layer + '-' + @cName, 5, 3)
 		
 		SET @createTempTable = 'INSERT INTO [NBNCore].[dbo].[SiteBoundaryAttribute] (featureID, attributeID, textValue) SELECT sb.featureID, a.id, CAST(l.[' + @cName + '] AS varchar FROM [NBNSpatial].[dbo].[' + @layer + '] l INNER JOIN [NBNCore].[dbo].[SiteBoundary] sb ON sb.providerKey = l.[' + @keyColumn + '] AND sb.siteBoundaryDataset = ''' + @datasetKey + ''' INNER JOIN [NBNCore].[dbo].[Attribute] a ON a.[description] = ''NBN-ATTRIB-' + @layer + '-' + @cName + ''''
+		EXEC @createTempTable 
+
+		FETCH NEXT FROM COLCUR INTO @cName
+	END
+	
+	CLOSE COLCUR
+	DEALLOCATE COLCUR
+END
+
+GO
+
+------------------------------
+
+CREATE PROCEDURE [dbo].[import_HabitatFeatureData]
+	@datasetKey CHAR(8)
+	, @layer VARCHAR(255)
+	, @keyColumn VARCHAR(255)
+	, @category INT
+	, @srid INT
+	, @loadDate DATETIME2
+AS
+BEGIN
+	DECLARE @projection INT
+
+	SET @projection = (SELECT p.id FROM [NBNCore].[dbo].[Projection] p WHERE p.srcSRID = @srid)
+
+	CREATE TABLE [#slayer] (
+		[id] int
+		, [originalGeom] geometry
+		, [geom] geometry
+		, [providerKey] varchar(100)
+	)
+		
+	DECLARE @createTempTable VARCHAR(8000)
+	
+	SET @createTempTable = 'INSERT INTO [#slayer] SELECT orig.ogr_fid AS id, orig.ogr_geometry AS originalGeom, wgs.ogr_geometry AS geom, orig.[' + @keyColumn + '] AS providerKey FROM [NBNSpatial].[dbo].[' + @layer + '] orig INNER JOIN [NBNSpatial].[dbo].[' + @layer + '_wgs] wgs ON wgs.ogr_fid = orig.ogr_fid'
+	EXEC @createTempTable 
+
+	DECLARE CUR CURSOR FOR SELECT id FROM [#slayer] 
+	DECLARE @pid INT
+
+	OPEN CUR
+	FETCH CUR INTO @pid
+
+	WHILE @@FETCH_STATUS = 0
+	BEGIN
+		INSERT INTO [NBNCore].[dbo].Feature (geom)
+		SELECT 
+			sl.geom 
+		FROM [#slayer] sl
+		WHERE sl.id = @pid 
+		
+		INSERT INTO [NBNCore].[dbo].HabitatFeature (featureID, habitatDataset, providerKey, originalProjectionID, originalGeom, uploadDate)
+		SELECT
+			@@IDENTITY
+			, @datasetKey
+			, sl.siteName 
+			, sl.providerKey 
+			, @projection
+			, sl.originalGeom 
+			, @loadDate
+		FROM [#slayer] sl
+		WHERE sl.id = @pid 
+		
+		FETCH NEXT FROM CUR INTO @pid
+	END
+
+	CLOSE CUR
+	DEALLOCATE CUR
+
+	DROP TABLE [#slayer]
+	
+	DECLARE @cName varchar(255)
+	
+	DECLARE COLCUR CURSOR FOR
+	SELECT 
+		c.COLUMN_NAME 
+	FROM information_schema.columns c
+	WHERE c.TABLE_NAME = @layer 
+	AND COLUMN_NAME NOT IN ('ogr_fid', 'ogr_geometry', 'objectid', 'adminsitekey')
+	ORDER BY ORDINAL_POSITION 
+	
+	CREATE TABLE [#sAttrib] (
+		featureID int
+		, attributeID int
+		, data varchar(255)
+	)
+	
+	OPEN COLCUR
+	FETCH COLCUR INTO @cName
+	
+	WHILE @@FETCH_STATUS = 0
+	BEGIN
+		INSERT INTO [NBNCore].[dbo].[Attribute] (label, [description], storageLevelID, storageTypeID)
+		VALUES (@cName, 'NBN-ATTRIB-' + @layer + '-' + @cName, 5, 3)
+		
+		SET @createTempTable = 'INSERT INTO [NBNCore].[dbo].[HabitatFeatureAttribute] (featureID, attributeID, textValue) SELECT sb.featureID, a.id, CAST(l.[' + @cName + '] AS varchar FROM [NBNSpatial].[dbo].[' + @layer + '] l INNER JOIN [NBNCore].[dbo].[HabitatFeature] hf ON hf.providerKey = l.[' + @keyColumn + '] AND hf.habitatDataset = ''' + @datasetKey + ''' INNER JOIN [NBNCore].[dbo].[Attribute] a ON a.[description] = ''NBN-ATTRIB-' + @layer + '-' + @cName + ''''
 		EXEC @createTempTable 
 
 		FETCH NEXT FROM COLCUR INTO @cName
