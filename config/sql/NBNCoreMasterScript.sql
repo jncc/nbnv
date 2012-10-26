@@ -1515,7 +1515,7 @@ BEGIN
 	DECLARE @createTempTable VARCHAR(8000)
 	
 	SET @createTempTable = 'INSERT INTO [#slayer] SELECT orig.ogr_fid AS id, orig.ogr_geometry AS originalGeom, wgs.ogr_geometry AS geom, orig.[' + @keyColumn + '] AS providerKey, orig.[' + @nameColumn + '] AS siteName FROM [NBNSpatial].[dbo].[' + @layer + '] orig INNER JOIN [NBNSpatial].[dbo].[' + @layer + '_wgs] wgs ON wgs.ogr_fid = orig.ogr_fid'
-	EXEC @createTempTable 
+	EXEC(@createTempTable)
 
 	DECLARE CUR CURSOR FOR SELECT id FROM [#slayer] 
 	DECLARE @pid INT
@@ -1561,12 +1561,6 @@ BEGIN
 	AND COLUMN_NAME NOT IN ('ogr_fid', 'ogr_geometry', 'objectid', 'adminsitekey')
 	ORDER BY ORDINAL_POSITION 
 	
-	CREATE TABLE [#sAttrib] (
-		featureID int
-		, attributeID int
-		, data varchar(255)
-	)
-	
 	OPEN COLCUR
 	FETCH COLCUR INTO @cName
 	
@@ -1576,7 +1570,7 @@ BEGIN
 		VALUES (@cName, 'NBN-ATTRIB-' + @layer + '-' + @cName, 5, 3)
 		
 		SET @createTempTable = 'INSERT INTO [NBNCore].[dbo].[SiteBoundaryAttribute] (featureID, attributeID, textValue) SELECT sb.featureID, a.id, CAST(l.[' + @cName + '] AS varchar FROM [NBNSpatial].[dbo].[' + @layer + '] l INNER JOIN [NBNCore].[dbo].[SiteBoundary] sb ON sb.providerKey = l.[' + @keyColumn + '] AND sb.siteBoundaryDataset = ''' + @datasetKey + ''' INNER JOIN [NBNCore].[dbo].[Attribute] a ON a.[description] = ''NBN-ATTRIB-' + @layer + '-' + @cName + ''''
-		EXEC @createTempTable 
+		EXEC(@createTempTable) 
 
 		FETCH NEXT FROM COLCUR INTO @cName
 	END
@@ -1612,7 +1606,7 @@ BEGIN
 	DECLARE @createTempTable VARCHAR(8000)
 	
 	SET @createTempTable = 'INSERT INTO [#slayer] SELECT orig.ogr_fid AS id, orig.ogr_geometry AS originalGeom, wgs.ogr_geometry AS geom, orig.[' + @keyColumn + '] AS providerKey FROM [NBNSpatial].[dbo].[' + @layer + '] orig INNER JOIN [NBNSpatial].[dbo].[' + @layer + '_wgs] wgs ON wgs.ogr_fid = orig.ogr_fid'
-	EXEC @createTempTable 
+	EXEC(@createTempTable)
 
 	DECLARE CUR CURSOR FOR SELECT id FROM [#slayer] 
 	DECLARE @pid INT
@@ -1657,12 +1651,6 @@ BEGIN
 	AND COLUMN_NAME NOT IN ('ogr_fid', 'ogr_geometry', 'objectid', 'adminsitekey')
 	ORDER BY ORDINAL_POSITION 
 	
-	CREATE TABLE [#sAttrib] (
-		featureID int
-		, attributeID int
-		, data varchar(255)
-	)
-	
 	OPEN COLCUR
 	FETCH COLCUR INTO @cName
 	
@@ -1672,7 +1660,7 @@ BEGIN
 		VALUES (@cName, 'NBN-ATTRIB-' + @layer + '-' + @cName, 5, 3)
 		
 		SET @createTempTable = 'INSERT INTO [NBNCore].[dbo].[HabitatFeatureAttribute] (featureID, attributeID, textValue) SELECT sb.featureID, a.id, CAST(l.[' + @cName + '] AS varchar FROM [NBNSpatial].[dbo].[' + @layer + '] l INNER JOIN [NBNCore].[dbo].[HabitatFeature] hf ON hf.providerKey = l.[' + @keyColumn + '] AND hf.habitatDataset = ''' + @datasetKey + ''' INNER JOIN [NBNCore].[dbo].[Attribute] a ON a.[description] = ''NBN-ATTRIB-' + @layer + '-' + @cName + ''''
-		EXEC @createTempTable 
+		EXEC(@createTempTable)
 
 		FETCH NEXT FROM COLCUR INTO @cName
 	END
