@@ -39,6 +39,6 @@
     If 'null' (or absent), cores will not be manageable via request handler
   -->
   <cores adminPath="/admin/cores" defaultCoreName="collection1">
-    <core name="collection1" instanceDir="mssql" />
+    <core name="collection1" instanceDir="." />
   </cores>
 </solr>
