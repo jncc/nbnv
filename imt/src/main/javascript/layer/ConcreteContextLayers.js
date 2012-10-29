@@ -23,6 +23,6 @@ nbn.layer = nbn.layer || {};
 	};
 	
 	nbn.layer.HabitatLayer = function(hosts, googleMap, options) {	
-		$.extend(this, new nbn.layer.ResolvingVisibleContextLayer('Habitat', 'habitats', reconstructionObjectFromResolvedFilter, hosts, 'arcgis/rest/services/habitat/habitats/MapServer', googleMap, options)); //extend the layer
+		$.extend(this, new nbn.layer.ResolvingVisibleContextLayer('Habitat', 'habitats', reconstructionObjectFromResolvedFilter, hosts, 'HabitatDatasets', googleMap, options)); //extend the layer
 	};
 })();

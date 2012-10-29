@@ -10,7 +10,7 @@ nbn.mapping.construction.WidgetOptionsCreator.prototype.createNBNHabitatLayer = 
         var _habitatDialog = $('<div>').nbn_renderableControlDialog({
             renderableControl: new function() {
                 var content = $('<div>').nbn_treewidget({
-                    urlOfDescriptionFile : 'TreeWidgetGenerator?type=h',
+                    urlOfDescriptionFile : nbn.util.ServerGeneratedLoadTimeConstants.data_api + "/habitatDatasets",
                     allowMultipleSelection: 'checkbox'
                 });
 
@@ -20,7 +20,7 @@ nbn.mapping.construction.WidgetOptionsCreator.prototype.createNBNHabitatLayer = 
                         filter.setFilter(nbn.util.ArrayTools.getArrayByFunction(layers, function(element) {
                             return {
                                 gisLayerID: element,
-								datasetKey: content.nbn_treewidget('getChildUserData', element, 'datasetKey')
+                                datasetKey: content.nbn_treewidget('getChildUserData', element, 'datasetKey')
                             };
                         }));
                     }
@@ -28,7 +28,7 @@ nbn.mapping.construction.WidgetOptionsCreator.prototype.createNBNHabitatLayer = 
                         filter.clearFilter();
                 };
 				
-				this.getRepresentation = function() {return content;};
+                this.getRepresentation = function() {return content;};
                 this.reset = function() {content.nbn_treewidget('unCheckAll');};
                 this.getState = function() {return content.nbn_treewidget('getState');};
                 this.setState = function(state) {content.nbn_treewidget('setState', state);};
