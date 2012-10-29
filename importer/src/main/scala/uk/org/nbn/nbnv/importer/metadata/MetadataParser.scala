@@ -12,10 +12,6 @@ class MetadataParser {
       .text.replace("accessConstraints:", "")
       .split("useConstraints:")
 
-    println("wtf?")
-    println((dataset \ "intellectualRights" \ "para").text)
-    println(constraints(0))
-
     // gets data from the additionalInfo elements using an identifier such as "Temporal Coverage:"
     def getAdditionalData(identifier: String) = {
       val paras = dataset \ "additionalInfo" \ "para"
