@@ -85,55 +85,55 @@ class NbnRecordSuite extends BaseFunSuite with BeforeAndAfter {
   }
 
   test("Should correctly parse dates") {
-    record.startDate should be (new SimpleDateFormat("dd/MM/yyyy").parse("19/07/2001"))
-    record.endDate should be (new SimpleDateFormat("dd/MM/yyyy").parse("19/07/2001"))
+    record.startDate should be (Some(new SimpleDateFormat("dd/MM/yyyy").parse("19/07/2001")))
+    record.endDate should be (Some(new SimpleDateFormat("dd/MM/yyyy").parse("19/07/2001")))
 
     when(rec.value(DwcTerm.eventDate)).thenReturn("19/07/2001")
     when(ext.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateStart")).thenReturn(null)
     when(ext.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateEnd")).thenReturn(null)
     record = createRecord
 
-    record.startDate should be (new SimpleDateFormat("dd/MM/yyyy").parse("19/07/2001"))
-    record.endDate should be (new SimpleDateFormat("dd/MM/yyyy").parse("19/07/2001"))
+    record.startDate should be (Some(new SimpleDateFormat("dd/MM/yyyy").parse("19/07/2001")))
+    record.endDate should be (None)
 
     when(rec.value(DwcTerm.eventDate)).thenReturn("19/07/2001")
     when(ext.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateStart")).thenReturn("16/10/2012")
     when(ext.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateEnd")).thenReturn("16/10/2012")
     record = createRecord
 
-    record.startDate should be (new SimpleDateFormat("dd/MM/yyyy").parse("16/10/2012"))
-    record.endDate should be (new SimpleDateFormat("dd/MM/yyyy").parse("16/10/2012"))
+    record.startDate should be (Some(new SimpleDateFormat("dd/MM/yyyy").parse("16/10/2012")))
+    record.endDate should be (Some(new SimpleDateFormat("dd/MM/yyyy").parse("16/10/2012")))
 
     when(rec.value(DwcTerm.eventDate)).thenReturn(null)
     when(ext.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateStart")).thenReturn("16/10/2012")
     when(ext.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateEnd")).thenReturn("16/10/2012")
     record = createRecord
 
-    record.startDate should be (new SimpleDateFormat("dd/MM/yyyy").parse("16/10/2012"))
-    record.endDate should be (new SimpleDateFormat("dd/MM/yyyy").parse("16/10/2012"))
+    record.startDate should be (Some(new SimpleDateFormat("dd/MM/yyyy").parse("16/10/2012")))
+    record.endDate should be (Some(new SimpleDateFormat("dd/MM/yyyy").parse("16/10/2012")))
 
     when(rec.value(DwcTerm.eventDate)).thenReturn(null)
     when(ext.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateStart")).thenReturn(null)
     when(ext.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateEnd")).thenReturn("16/10/2012")
     record = createRecord
 
-    record.startDate should be (null)
-    record.endDate should be (new SimpleDateFormat("dd/MM/yyyy").parse("16/10/2012"))
+    record.startDate should be (None)
+    record.endDate should be (Some(new SimpleDateFormat("dd/MM/yyyy").parse("16/10/2012")))
 
     when(rec.value(DwcTerm.eventDate)).thenReturn(null)
     when(ext.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateStart")).thenReturn("16/10/2012")
     when(ext.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateEnd")).thenReturn(null)
     record = createRecord
 
-    record.startDate should be (new SimpleDateFormat("dd/MM/yyyy").parse("16/10/2012"))
-    record.endDate should be (null)
+    record.startDate should be (Some(new SimpleDateFormat("dd/MM/yyyy").parse("16/10/2012")))
+    record.endDate should be (None)
 
     when(rec.value(DwcTerm.eventDate)).thenReturn(null)
     when(ext.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateStart")).thenReturn(null)
     when(ext.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateEnd")).thenReturn(null)
     record = createRecord
 
-    record.startDate should be (null)
-    record.endDate should be (null)
+    record.startDate should be (None)
+    record.endDate should be (None)
   }
 }

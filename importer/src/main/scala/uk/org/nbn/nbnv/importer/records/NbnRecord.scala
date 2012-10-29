@@ -55,9 +55,8 @@ class NbnRecord(record: StarRecord) {
 
   private def eventDate = parseOptional(record.core.value(DwcTerm.eventDate))
 
-  def startDateRaw  = eventDate.orElse(
-      parseOptional(extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateStart"))
-    )
+  def startDateRaw  = parseOptional(extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateStart"))
+                      .orElse(eventDate)
 
   def startDate              = parseDate(startDateRaw)
   def endDateRaw             = parseOptional(extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateEnd"))
