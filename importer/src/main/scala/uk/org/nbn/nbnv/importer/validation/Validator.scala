@@ -30,12 +30,12 @@ class Validator @Inject()(log: Logger, db: Database){
 
 //    (2) archive scoped / aggregate value validation (e.g. no duplicate record keys)
 //
-//    (3) record-scoped
-//    parsing/conversions - don't want to duplicate the parsing logic
-//    size (length)
-//    lookups (range) (e.g. checking real taxon key)
-
     val aggregateValidators = List(new Nbnv61Validator)
+
+    //    (3) record-scoped
+    //    parsing/conversions - don't want to duplicate the parsing logic
+    //    size (length)
+    //    lookups (range) (e.g. checking real taxon key)
 
     for (record <- archive.iteratorRaw) {
 

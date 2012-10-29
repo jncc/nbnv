@@ -50,7 +50,7 @@ class FeatureIngesterSuite extends BaseFunSuite {
     result should be (feature)
   }
 
-  // todo: this test was broken by the switch to using a sproc
+  // this test was broken by the switch to using a sproc
   ignore("a new grid square feature that should have a parent should persist a grid square hierarchy") {
 
     // arrange
@@ -75,7 +75,7 @@ class FeatureIngesterSuite extends BaseFunSuite {
     persistedGridSquares should equal (List("GRANDPARENT", "PARENT", "ABCDEF"))
   }
 
-  // todo: this test was broken by the switch to using a sproc
+  // this test was broken by the switch to using a sproc
   ignore("a new grid square feature that shouldn't have a parent shouldn't persist a grid square hierarchy") {
 
     // arrange

@@ -248,7 +248,7 @@ class ChannelIslandGridSquareInfoSuite extends BaseFunSuite {
     cigr.sourceProjectionPolygon matches (TestResources.polygonWKTRegex)
   }
 
-  //todo add some tests in for easting northing to grid ref conversion and back again from real
+  //Add some tests in for easting northing to grid ref conversion and back again from real
   //values verrified externally
 
   test("should give correct easting and norhting for WV1663471237") {

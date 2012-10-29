@@ -25,7 +25,7 @@
 <para>dddd</para>
 </abstract>
 <intellectualRights>
-<para>Access Constraints: dddd Use Constraints: dddd</para>
+<para>accessConstraints: dddd useConstraints: dddd</para>
 </intellectualRights>
 <coverage>
 <geographicCoverage>

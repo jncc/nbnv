@@ -6,50 +6,30 @@ import uk.org.nbn.nbnv.importer.fidelity.{ResultLevel, Result}
 // The start date should not be before the end date, can however be the same
 class Nbnv72Validator {
 
+  //todo: write test for this
   def validate(record: NbnRecord) = {
-    if (record.startDate != null && record.endDate != null) {
-      // If our
-      if (record.startDate.after(record.endDate)) {
-        fail(record)
+
+    if (record.startDate.isDefined && record.endDate.isDefined) {
+
+      if (record.startDate.get.after(record.endDate.get)) {
+        new Result {
+          def level: ResultLevel.ResultLevel = ResultLevel.ERROR
+          def reference: String = record.key
+          def message: String = "Start date is before end date"
+        }
       } else {
-        success(record)
+        new Result {
+          def level: ResultLevel.ResultLevel = ResultLevel.DEBUG
+          def reference: String = record.key
+          def message: String = "Validated: Start and end dates are valid"
+        }
       }
-    } else if(record.eventDate != null) {
-      success
     } else {
-      fail
-    }
-  }
-
-  def fail = {
-    new Result {
-      def level: ResultLevel.ResultLevel = ResultLevel.ERROR
-      def reference: String = "EventDate"
-      def message: String = "Could not find a valid Event Date field"
-    }
-  }
-
-  def fail(record: NbnRecord) = {
-    new Result {
-      def level: ResultLevel.ResultLevel = ResultLevel.ERROR
-      def reference: String = record.endDateRaw
-      def message: String = "End date is before start date"
-    }
-  }
-
-  def success = {
-    new Result {
-      def level: ResultLevel.ResultLevel = ResultLevel.DEBUG
-      def reference: String = "EventDate"
-      def message: String = "The record has an event date and no start / end date"
-    }
-  }
-
-  def success(record:NbnRecord) = {
-    new Result {
-      def level: ResultLevel.ResultLevel = ResultLevel.DEBUG
-      def reference: String = record.startDateRaw
-      def message: String = "The indicated start date is before or the same as the indicated end date"
+      new Result {
+        def level: ResultLevel.ResultLevel = ResultLevel.DEBUG
+        def reference: String = record.key
+        def message: String = "Validated: Nbnv-72 validation rule not applicable"
+      }
     }
   }
 }

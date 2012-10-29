@@ -10,7 +10,7 @@ import collection.mutable.ListBuffer
  */
 class DateValidator {
 
-  def validate(record: NbnRecord):ListBuffer[Result] = {
+  def validate(record: NbnRecord) = {
     val resultList = new ListBuffer[Result]
 
     // Check for a valid DateType
@@ -18,28 +18,46 @@ class DateValidator {
     val r1 = v1.validate(record)
     resultList.append(r1)
 
-    // Check if any of the supplied dates are in the future
-    val v2 = new Nbnv71Validator
+    // Ensure any supplied dates are valid
+    val v2 = new Nbnv68Validator
     val r2 = v2.validate(record)
-    resultList.append(r2)
+    resultList.appendAll(r2)
 
-    val v3 = new Nbnv72Validator
-    val r3 = v3.validate(record)
-    resultList.append(r3)
+    if (resultList.find(r => r.level == ResultLevel.ERROR).isEmpty) {
+      // Check if any of the supplied dates are in the future
+      val v3 = new Nbnv71Validator
+      val r3 = v3.validate(record)
+      resultList.appendAll(r3)
 
-    // We only should every carry on if we have a set of valid dates otherwise these tests make no sense anymore
-    val r4 = validateAccordingToType(record)
-    resultList.append(r4)
+      // The start date should not be before the end date, can however be the same
+      val v4 = new Nbnv72Validator
+      val r4 = v4.validate(record)
+      resultList.append(r4)
+    }
 
-    return resultList
+    if (resultList.find(r => r.level == ResultLevel.ERROR).isEmpty) {
+      // We only should every carry on if we have a set of valid dates otherwise these tests make no sense anymore
+      val r5 = validateAccordingToType(record)
+      resultList.append(r5)
+    }
+
+    resultList
   }
 
   def validateAccordingToType(record: NbnRecord): Result = record.dateType match {
-    case "D"  => val v1 = new Nbnv73Validator; v1.validate(record)
-    case "DD" => new Result { def level: ResultLevel.ResultLevel = ResultLevel.DEBUG; def reference: String = record.dateType; def message: String = "Got a valid datetype and date combination" }
-    case "O" | "OO" | "P" => val v1 = new Nbnv74Validator; v1.validate(record)
-    case "Y"  => val v1 = new Nbnv75Validator; v1.validate(record)
-    case "YY" => val v1 = new Nbnv75Validator; v1.validate(record)
-    case _    => new Result {def level: ResultLevel.ResultLevel = ResultLevel.ERROR; def reference: String = record.dateType; def message: String = "Got an invalid dateType"}
+    case "<D" => (new Nbnv194Validator(new DateFormatValidator)).validate(record)
+    case "D" | ">D"  => (new Nbnv73Validator(new DateFormatValidator)).validate(record)
+    case "<Y" | "-Y" => (new Nbnv76Validator(new DateFormatValidator)).validate(record)
+    case "Y" | "Y-" | ">Y"  => (new Nbnv75Validator(new DateFormatValidator)).validate(record)
+    case "DD" => (new Nbnv195Validator(new DateFormatValidator)).validate(record)
+    case "O" | "M"=> (new Nbnv74Validator(new DateFormatValidator)).validate(record)
+    case "OO" | "MM" => (new Nbnv196Validator(new DateFormatValidator)).validate(record)
+    case "ND" | "U" =>
+      new Result {
+        def level: ResultLevel.ResultLevel = ResultLevel.DEBUG
+        def reference: String = record.dateType
+        def message: String = "Validated: no date is required for date types ND & U"
+      }
+    case "YY" => (new Nbnv197Validator(new DateFormatValidator)).validate(record)
   }
 }
