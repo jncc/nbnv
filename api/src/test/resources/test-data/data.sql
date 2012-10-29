@@ -134,13 +134,3 @@ INSERT INTO DesignationData (
     (1, 'Test Description 2', 'TestDes2', 'TD2', 23, 'Would be a shame if something where to happen to it ...'),
     (2, 'Test Description 3', 'TestDes3', 'TD3', 23, 'sssssssssssss......')
 );
-
-INSERT INTO TaxonData (
-    taxonVersionKey, pTaxonVersionKey, organismKey, name, authority, languageKey, 
-    taxonCode, taxonRankID, taxonNameStatusKey, taxonVersionFormKey,
-    taxonOutputGroupKey
-) VALUES (
-    'ABFG000000100001', 'ABFG000000100001', 'NBNORG0000000001', 'Annulohypoxylon multiforme var. multiforme', 
-    '(Fr.) Y.M. Ju, J.D. Rogers & H.M. Hsieh', 'la', 'anmul', 35, 'R', 'W', 
-    'NHMSYS0000629144'
-);
