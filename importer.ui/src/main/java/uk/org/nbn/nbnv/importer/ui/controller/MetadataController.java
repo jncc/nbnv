@@ -69,6 +69,9 @@ public class MetadataController {
     public ModelAndView updateMetadata(@ModelAttribute("metadataForm") MetadataForm metadataForm, @ModelAttribute("org") Organisation organisation, BindingResult result) {
         metadataForm.resetForm();
         Metadata metadata = metadataForm.getMetadata();
+        metadata.setGeographicalRes("");
+        metadata.setRecordAtts("");
+        metadata.setRecorderNames("");
         
         if (!metadata.getDatasetID().equals("")) {
         
@@ -98,7 +101,17 @@ public class MetadataController {
                 metadata.setDatasetAdminEmail(admin.getEmail());
             }
 
-            // Set the Level of Public Access options   
+            // Set the Level of Public Access options  
+            if (dataset.getTaxonDataset() != null) {
+                if (dataset.getTaxonDataset().getPublicResolution() != null) {
+                    metadata.setGeographicalRes(dataset.getTaxonDataset().getPublicResolution().getAccuracy().toString());
+                }
+
+                boolean v = dataset.getTaxonDataset().getPublicAttribute();
+                
+                metadata.setRecordAtts(dataset.getTaxonDataset().getPublicAttribute() ? "true" : "false");
+                //metadata.setRecorderNames(dataset.getTaxonDataset().getPublicAttribute() ? "true" : "false"); // TODO Need to ensure this is correct behaviour
+            }
             
             metadata.setDatasetID(dataset.getKey());
             metadataForm.setDatasetUpdate(true);
