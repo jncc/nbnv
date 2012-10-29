@@ -10,7 +10,7 @@ MAP
         IMAGEPATH                                           "/ms4w/tmp/ms_tmp/"
         IMAGEURL                                            "/ms_tmp/"
         METADATA
-            "wms_title"                                       "Site Boundary Dataset Map"
+            "wms_title"                                       "Habitat Dataset Map"
             "wms_onlineresource"                              "${mapServiceURL}"
             "wms_srs"                                         "EPSG:29903 EPSG:27700 EPSG:4326 EPSG:3857"
             "wms_enable_request"                              "*"
@@ -21,7 +21,7 @@ MAP
         "init=epsg:4326"
     END
 
-    [#list siteBoundaries as dataset]
+    [#list habitats as dataset]
         LAYER
             NAME                                                "${dataset.datasetKey}"
             TYPE                                                POLYGON

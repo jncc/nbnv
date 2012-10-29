@@ -27,13 +27,13 @@ public class SiteBoundaryDatasetsMap {
     @Autowired WebResource dataApi;
     private final LayerGenerator layerGenerator = new LayerGenerator();
     
-    private static class LayerGenerator {
+    public static class LayerGenerator {
         private static final String DATA = "geom from ("
             + "SELECT geom, sbfd.id "
             + "FROM SiteBoundaryFeatureData sbfd "
             + "INNER JOIN SiteBoundaryData sbd ON sbd.featureID = sbfd.id "
             + "WHERE siteBoundaryDatasetKey = '%s'"
-        + ") AS foo USING UNIQUE featureID USING SRID=4326";
+        + ") AS foo USING UNIQUE id USING SRID=4326";
     
         public String getData(String siteBoundary) {
             return String.format(DATA, siteBoundary);

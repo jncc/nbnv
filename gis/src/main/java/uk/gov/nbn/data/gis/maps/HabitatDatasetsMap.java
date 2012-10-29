@@ -27,7 +27,7 @@ public class HabitatDatasetsMap {
     @Autowired WebResource dataApi;
     private final LayerGenerator layerGenerator = new LayerGenerator();
     
-    private static class LayerGenerator {
+    public static class LayerGenerator {
         private static final String DATA = "geom from ("
             + "SELECT geom, hffd.id "
             + "FROM HabitatFeatureFeatureData hffd "
@@ -35,8 +35,8 @@ public class HabitatDatasetsMap {
             + "WHERE habitatDatasetKey = '%s'"
         + ") AS foo USING UNIQUE id USING SRID=4326";
     
-        public String getData(String siteBoundary) {
-            return String.format(DATA, siteBoundary);
+        public String getData(String habitat) {
+            return String.format(DATA, habitat);
         }
     }
     

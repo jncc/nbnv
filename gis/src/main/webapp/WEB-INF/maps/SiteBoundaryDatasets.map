@@ -21,7 +21,7 @@ MAP
         "init=epsg:4326"
     END
 
-    [#list habitats as dataset]
+    [#list siteBoundaries as dataset]
         LAYER
             NAME                                                "${dataset.datasetKey}"
             TYPE                                                POLYGON
