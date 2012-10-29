@@ -59,15 +59,15 @@ public class TaxonResourceTest {
      */
     @Test
     public void testGetTaxon() {
-//        GenericType<Taxon> gt = new GenericType<Taxon>() { };
-//        Taxon dc = resource
-//                .path("taxa")
-//                .path("ABFG000000100001")
-//                .accept(MediaType.APPLICATION_JSON)
-//                .get(gt);
-//        
-//        assertEquals(dc.getTaxonVersionKey(), "ABFG000000100001");
-//        assertEquals(dc.getName(), "Annulohypoxylon multiforme var. multiforme");
+        GenericType<Taxon> gt = new GenericType<Taxon>() { };
+        Taxon dc = resource
+                .path("taxa")
+                .path("ABFG000000100001")
+                .accept(MediaType.APPLICATION_JSON)
+                .get(gt);
+        
+        assertEquals(dc.getTaxonVersionKey(), "ABFG000000100001");
+        assertEquals(dc.getName(), "Annulohypoxylon multiforme var. multiforme");
     }
 
     /**

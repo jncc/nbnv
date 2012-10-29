@@ -134,3 +134,10 @@ INSERT INTO DesignationData (
     (1, 'Test Description 2', 'TestDes2', 'TD2', 23, 'Would be a shame if something where to happen to it ...'),
     (2, 'Test Description 3', 'TestDes3', 'TD3', 23, 'sssssssssssss......')
 );
+
+INSERT INTO TaxonData (
+    taxonVersionKey, prefnameTaxonVersionKey, name, authority, lang
+) VALUES (
+    'ABFG000000100001', 'ABFG000000100001', 'Annulohypoxylon multiforme var. multiforme', 
+    '(Fr.) Y.M. Ju, J.D. Rogers & H.M. Hsieh', 'la'
+);
