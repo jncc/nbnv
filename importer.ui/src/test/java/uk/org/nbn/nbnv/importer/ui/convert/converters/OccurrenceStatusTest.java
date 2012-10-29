@@ -87,7 +87,7 @@ public class OccurrenceStatusTest {
         
         instance.modifyRow(row);
         
-        assertEquals("absent", row.get(0));
+        assertEquals("absence", row.get(0));
     }
 
     /**
@@ -109,7 +109,7 @@ public class OccurrenceStatusTest {
         
         instance.modifyRow(row);
         
-        assertEquals("present", row.get(0));
+        assertEquals("presence", row.get(0));
     }
     
         /**

@@ -7,8 +7,10 @@ package uk.org.nbn.nbnv.importer.ui.convert;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -309,7 +311,7 @@ public class RunConversions {
         BufferedWriter w = null;
 
         try {
-            w = new BufferedWriter(new FileWriter(out));
+            w = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(out), "UTF8"));
 
             getMappings(args);
             getSteps(mappings);           

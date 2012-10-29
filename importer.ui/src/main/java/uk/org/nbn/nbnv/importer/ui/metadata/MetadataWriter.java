@@ -35,7 +35,7 @@ public class MetadataWriter {
     }
     
     public String datasetToEML(Metadata ds, Organisation org, Date startDate, Date endDate) throws Exception {
-        BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(metadata)));
+        BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(metadata), "UTF8"));
 
         DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
         DocumentBuilder docBuilder = dbfac.newDocumentBuilder();

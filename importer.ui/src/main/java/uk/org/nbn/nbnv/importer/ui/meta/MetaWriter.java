@@ -28,6 +28,7 @@ import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import uk.org.nbn.nbnv.importer.ui.parser.ColumnMapping;
+import uk.org.nbn.nbnv.importer.ui.parser.DarwinCoreField;
 import uk.org.nbn.nbnv.importer.ui.parser.DarwinCoreFieldType;
 
 /**
@@ -35,6 +36,7 @@ import uk.org.nbn.nbnv.importer.ui.parser.DarwinCoreFieldType;
  * @author Paul Gilbertson
  */
 public class MetaWriter {
+    private int idCol = 0;
 
     public List<String> createMetaFile(List<ColumnMapping> mapping, File metaFile) throws IOException {
         List<String> errors = new ArrayList<String>();
@@ -70,7 +72,9 @@ public class MetaWriter {
             Element extension = createExtension(doc, root);
 
             addCoreFields(doc, core, columns);
+            core.appendChild(insertId(doc, false, idCol));
             addExtensionFields(doc, extension, columns);
+            extension.appendChild(insertId(doc, true, idCol));
 
             return convertToString(doc);
         } catch (TransformerConfigurationException ex) {
@@ -91,6 +95,10 @@ public class MetaWriter {
                 field.setAttribute("index", Integer.toString(cm.getColumnNumber()));
                 field.setAttribute("term", cm.getField().toString());
                 core.appendChild(field);
+                
+                if (cm.getField() == DarwinCoreField.OCCURRENCEID) {
+                    idCol = cm.getColumnNumber();
+                }
             }
         }
     }
@@ -120,9 +128,6 @@ public class MetaWriter {
         location.setTextContent("data.tab");
         files.appendChild(location);
         core.appendChild(files);
-        Element id = doc.createElement("id");
-        id.setAttribute("index", "0");
-        core.appendChild(id);
         return core;
     }
 
@@ -140,10 +145,13 @@ public class MetaWriter {
         location.setTextContent("data.tab");
         files.appendChild(location);
         core.appendChild(files);
-        Element id = doc.createElement("coreid");
-        id.setAttribute("index", "0");
-        core.appendChild(id);
         return core;
+    }
+    
+    private Element insertId(Document doc, boolean core, int idCol) {
+        Element id = doc.createElement(core ? "coreid" : "id");
+        id.setAttribute("index", Integer.toString(idCol));
+        return id;
     }
 
     private String convertToString(Document doc) throws TransformerFactoryConfigurationError, TransformerConfigurationException, IllegalArgumentException, TransformerException {
