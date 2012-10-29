@@ -42,9 +42,9 @@ public class OccurrenceStatus extends ConverterStep {
         String data = row.get(column);
 
         if (data.equalsIgnoreCase("T") || data.equalsIgnoreCase("true") || data.equalsIgnoreCase("yes") || data.equalsIgnoreCase("absent")) {
-            row.set(column, "absent");
+            row.set(column, "absence");
         } else if (data.equalsIgnoreCase("F") || data.equalsIgnoreCase("false") || data.equalsIgnoreCase("no") || data.equalsIgnoreCase("present")) {
-            row.set(column, "present");
+            row.set(column, "presence");
         } else {
             throw new BadDataException("Bad zero abundance entry: " + data);
         }

@@ -47,8 +47,7 @@ public class TaxonName extends ConverterStep {
             // otherwise) into a taxon version key
             if (cm.getField() == DarwinCoreField.TAXONID) {
                 return false;
-            } else if (cm.getField() == DarwinCoreField.TAXONNAME 
-                    || pattern.matcher(cm.getColumnLabel()).matches()) {
+            } else if (cm.getField() == DarwinCoreField.TAXONNAME) {
                 this.column = cm.getColumnNumber();
                 found = true;
             }
