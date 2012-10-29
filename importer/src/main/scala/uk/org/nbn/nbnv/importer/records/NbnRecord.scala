@@ -3,11 +3,10 @@ package uk.org.nbn.nbnv.importer.records
 import scala.collection.JavaConversions._
 import org.gbif.dwc.terms.DwcTerm
 import org.gbif.dwc.text.StarRecord
-import java.text.{ParseException, SimpleDateFormat}
 import uk.org.nbn.nbnv.importer.ImportFailedException
 import util.parsing.json.JSON
-import uk.org.nbn.nbnv.importer.validation.Nbnv68Validator
 import java.util.Date
+import uk.org.nbn.nbnv.importer.utility.StringParsing._
 
 /// Wraps a Darwin record in NBN clothing.
 class NbnRecord(record: StarRecord) {
@@ -46,8 +45,6 @@ class NbnRecord(record: StarRecord) {
   def siteName =        record.core.value(DwcTerm.locality)
   def recorder =        record.core.value(DwcTerm.recordedBy)
   def determiner =      record.core.value(DwcTerm.identifiedBy)
-  def eventDateRaw =    record.core.value(DwcTerm.eventDate)
-  def eventDate =       parseEventDate(eventDateRaw)
   def eastRaw =         parseOptional(record.core.value(DwcTerm.verbatimLongitude))
   def east =            parseOptional(record.core.value(DwcTerm.verbatimLongitude)) map { s => s.toDouble }
   def northRaw =        parseOptional(record.core.value(DwcTerm.verbatimLatitude))
@@ -56,11 +53,21 @@ class NbnRecord(record: StarRecord) {
   def srsRaw =          parseOptional(record.core.value(DwcTerm.verbatimSRS))
   def attributes =      attributeMap
 
-  def startDateRaw           = parseOptional(extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateStart"))
+  private def eventDate = parseOptional(record.core.value(DwcTerm.eventDate))
+
+  def startDateRaw  = eventDate.orElse(
+      parseOptional(extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateStart"))
+    )
+
   def startDate              = parseDate(startDateRaw)
   def endDateRaw             = parseOptional(extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateEnd"))
   def endDate                = parseDate(endDateRaw)
-  def dateType               = extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateTypeCode")
+
+  def dateType  = {
+    if (eventDate.isDefined) "D"
+     else extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateTypeCode")
+  }
+
   def sensitiveOccurrenceRaw = extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/sensitiveOccurrence")
   def sensitiveOccurrence    = parseSensitiveOccurrence(sensitiveOccurrenceRaw)
 
@@ -106,11 +113,6 @@ class NbnRecord(record: StarRecord) {
     }
   }
 
-  def parseEventDate(s: String) = {
-    val validator = new Nbnv68Validator
-    validator.validate(s)
-  }
-
   // Record Date must be of a valid format
   private def parseDate(dateString: Option[String]): Option[Date] = {
 
@@ -119,20 +121,10 @@ class NbnRecord(record: StarRecord) {
 
         var date : Option[Date] = None
 
-        def tryParse(dateFormat: String, dateString: String) = {
-          try {
-            val sdf = new SimpleDateFormat(dateFormat)
-            sdf.setLenient(false)
-            Some(sdf.parse(dateString))
-          } catch {
-            case e: ParseException => None
-          }
-        }
-
         List("dd/MM/yyyy", "dd-MM-yyyy", "yyyy/MM/dd", "yyyy-MM-dd", "dd MMM yyyy", "MMM yyyy", "yyyy")
           .toStream
           .takeWhile(_ => date == None)
-          .foreach(df => date = tryParse(df, ds))
+          .foreach(df => date = ds.maybeDate(df))
 
         date
       }

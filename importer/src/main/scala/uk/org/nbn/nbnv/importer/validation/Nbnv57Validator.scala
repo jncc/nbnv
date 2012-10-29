@@ -5,8 +5,8 @@ import uk.org.nbn.nbnv.importer.fidelity.{ResultLevel, Result}
 
 class Nbnv57Validator {
   def validate(record: NbnRecord) = {
-    if (record.eventDateRaw != null
-      || (record.startDateRaw != null && record.endDateRaw != null && record.dateType != null)) {
+    if ((record.startDateRaw != null && record.dateType != null)
+      || (record.endDateRaw != null && record.dateType != null)) {
       new Result {
         def level = ResultLevel.DEBUG
         def message = "Validated: A record date field has been defined."

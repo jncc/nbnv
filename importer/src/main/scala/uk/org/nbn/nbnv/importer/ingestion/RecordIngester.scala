@@ -17,7 +17,8 @@ class RecordIngester @Inject()(log: Logger,
                                recorderIngester: RecorderIngester,
                                attributeIngester: AttributeIngester,
                                featureIngester: FeatureIngester,
-                               publicIngester: PublicIngester) {
+                               publicIngester: PublicIngester,
+                               dateParser: NbnDateParser) {
 
   def upsertRecord(record: NbnRecord, dataset: TaxonDataset, metadata: Metadata) {
 
@@ -33,13 +34,13 @@ class RecordIngester @Inject()(log: Logger,
     val determiner = recorderIngester.ensureRecorder(record.determiner)
     val recorder = recorderIngester.ensureRecorder(record.recorder)
 
-    val (startDate, endDate) =
+    val (startDate, endDate) = dateParser.parse(record.dateType, record.startDate, record.endDate)
 
     def update(o: TaxonObservation) {
 
       o.setAbsenceRecord(record.absence)
-      o.setDateStart(record.startDate)
-      o.setDateEnd(record.endDate)
+      o.setDateStart(startDate.getOrElse(null))
+      o.setDateEnd(endDate.getOrElse(null))
       o.setDateType(dateType)
       o.setDeterminer(determiner)
       o.setFeature(feature)
