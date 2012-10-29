@@ -9,7 +9,7 @@ object TestData {
         <para>Test Description</para>
       </abstract>
       <intellectualRights>
-        <para>Access Constraints: Test Access constraints Use Constraints: Test Use Constraints</para>
+        <para>accessConstraints: Test Access constraints useConstraints: Test Use Constraints</para>
       </intellectualRights>
       <coverage>
         <geographicCoverage>

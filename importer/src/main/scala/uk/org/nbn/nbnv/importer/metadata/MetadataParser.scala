@@ -9,8 +9,8 @@ class MetadataParser {
     val dataset = (xml \ "dataset")
 
     val constraints = (dataset \ "intellectualRights" \ "para")
-      .text.replace("Access Constraints:", "")
-      .split("Use Constraints:")
+      .text.replace("accessConstraints:", "")
+      .split("useConstraints:")
 
     // gets data from the additionalInfo elements using an identifier such as "Temporal Coverage:"
     def getAdditionalData(identifier: String) = {
