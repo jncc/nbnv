@@ -38,11 +38,8 @@ class Validator @Inject()(log: Logger, db: Database){
     // size (length)
     // lookups (range) (e.g. checking real taxon key)
 
-    log.info(archive.size)
 
     for (record <- archive.iteratorRaw) {
-
-      log.info("## aaa")
 
       val nbnRecord = new NbnRecord(record)
 
@@ -106,7 +103,6 @@ class Validator @Inject()(log: Logger, db: Database){
         processResult(result, v.name)
       }
 
-      log.info("## bbb")
     }
 
     for (v <- aggregateValidators) {
