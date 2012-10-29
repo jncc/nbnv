@@ -1,0 +1,58 @@
+[#ftl]
+MAP
+    IMAGETYPE                                             PNG
+    EXTENT                                                -180 -90 180 90
+    SIZE                                                  2800 2800
+    IMAGECOLOR                                            255 255 255
+    FONTSET                                               "fonts/fontset"
+
+    WEB
+        IMAGEPATH                                           "/ms4w/tmp/ms_tmp/"
+        IMAGEURL                                            "/ms_tmp/"
+        METADATA
+            "wms_title"                                       "Habitat Dataset Map"
+            "wms_onlineresource"                              "${mapServiceURL}"
+            "wms_srs"                                         "EPSG:29903 EPSG:27700 EPSG:4326 EPSG:3857"
+            "wms_enable_request"                              "*"
+        END
+    END
+
+    PROJECTION
+        "init=epsg:4326"
+    END
+
+    [#list habitats as dataset]
+        LAYER
+            NAME                                                "${dataset.datasetKey}"
+            TYPE                                                POLYGON
+            STATUS                                              OFF
+            CONNECTIONTYPE                                      PLUGIN
+            PLUGIN                                              "msplugin_mssql2008.dll"
+            CONNECTION                                          "${properties.spatialConnection}"
+            PROCESSING                                          "CLOSE_CONNECTION=DEFER"
+            EXTENT                                              -180 -90 180 90
+            TEMPLATE                                            "dummy.txt"
+
+            DATA                                                "${layerGenerator.getData(dataset.datasetKey)}"
+
+            METADATA
+                "wms_title"                                       "${dataset.datasetKey}"
+                "wms_include_items"                               "all"
+            END
+
+            PROJECTION
+                "init=epsg:4326"
+            END
+
+            CLASS
+                NAME                                              "default"
+
+                STYLE
+                    COLOR                                           255 255 0
+                    OUTLINECOLOR                                    0 0 0
+                    WIDTH                                           0.5
+                END
+            END
+        END
+    [/#list]
+END

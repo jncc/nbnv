@@ -10,6 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.nbn.data.gis.maps.MapHelper.ResolutionDataGenerator;
 import uk.gov.nbn.data.gis.maps.colour.ColourHelper.ColourRampGenerator;
+import uk.gov.nbn.data.gis.processor.GridMap;
+import uk.gov.nbn.data.gis.processor.GridMap.GridLayer;
+import uk.gov.nbn.data.gis.processor.GridMap.Resolution;
 import uk.gov.nbn.data.gis.processor.MapFileModel;
 import uk.gov.nbn.data.gis.processor.MapService;
 import uk.gov.nbn.data.gis.processor.MapContainer;
@@ -73,6 +76,15 @@ public class DatasetSpeciesDensityMap {
     @Autowired Properties properties;
     
     @MapService("{datasetKey}")
+    @GridMap(
+        layers={
+            @GridLayer(name="10km",     layer=TEN_KM_LAYER_NAME,        resolution=Resolution.TEN_KM),
+            @GridLayer(name="2km",      layer=TWO_KM_LAYER_NAME,        resolution=Resolution.TWO_KM),
+            @GridLayer(name="1km",      layer=ONE_KM_LAYER_NAME,        resolution=Resolution.ONE_KM),
+            @GridLayer(name="100m",     layer=ONE_HUNDRED_M_LAYER_NAME, resolution=Resolution.ONE_HUNDRED_METERS)
+        },
+        defaultLayer="10km"
+    )
     public MapFileModel getDatasetMapModel(
             final User user,
             @ServiceURL String mapServiceURL,

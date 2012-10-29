@@ -16,6 +16,7 @@ public class TaxonObservation {
     private String siteKey;
     private String siteName;
     private int featureID;
+    private String identifier;
     private String gridRef;
     private String polygonKey;
     private String projection;
@@ -213,5 +214,13 @@ public class TaxonObservation {
 
     public void setAbsence(boolean absence) {
         this.absence = absence;
+    }
+
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
     }
 }

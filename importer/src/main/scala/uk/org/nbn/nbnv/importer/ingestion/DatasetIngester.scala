@@ -18,12 +18,14 @@ class DatasetIngester @Inject()(log: Logger,
 
     // when there's no key given, insert a new dataset (and generate a new key)
     // when there is one, find it and update it (otherwise throw)
-
     if (metadata.datasetKey.isEmpty) {
       insertNew(metadata)
     }
     else {
-      // todo: delete existing data? - yes
+      // we have no way to say that a particular record should be deleted,
+      // so delete all the records - we will import them all again
+      db.repo.deleteTaxonObservationsAndRelatedRecords(metadata.datasetKey)
+
       updateExisting(metadata)
     }
   }
@@ -36,13 +38,13 @@ class DatasetIngester @Inject()(log: Logger,
     log.info("Inserting new dataset " + key)
 
     val d = new Dataset(key)
-    modifyDataset(d, metadata)
+    setDatasetValues(d, metadata)
     db.em.persist(d)
 
     // deal with the table-per-class inheritance model (TaxonDataset has-a Dataset)
     val td = new TaxonDataset(key)
     td.setDataset(d)
-    modifyTaxonDataset(td, metadata)
+    setTaxonDatasetValues(td, metadata)
     db.em.persist(td)
 
     td
@@ -53,19 +55,19 @@ class DatasetIngester @Inject()(log: Logger,
     log.info("Updating existing dataset " + metadata.datasetKey)
 
     val td = db.repo.getTaxonDataset(metadata.datasetKey)
-    modifyTaxonDataset(td, metadata)
+    setTaxonDatasetValues(td, metadata)
     val d = td.getDataset
-    modifyDataset(d, metadata)
+    setDatasetValues(d, metadata)
     td
   }
 
-  def modifyDataset(d: Dataset, m: Metadata) = {
+  def setDatasetValues(d: Dataset, m: Metadata) = {
 
     val providerOrganisation = db.repo.getOrganisation(m.datasetProviderName)
     val datasetUpdateFrequency = db.em.getReference(classOf[DatasetUpdateFrequency], "012")
     val datasetType = db.em.getReference(classOf[DatasetType], 'T')
 
-    // certain fields are metadata, and we have to record when any changes
+    // we have to record when certain fields change
     var metadataChanged = false
 
     def setMetadata[T](value: T, getter: () => Any, setter: T => Unit) {
@@ -95,14 +97,9 @@ class DatasetIngester @Inject()(log: Logger,
     d
   }
 
-
-
-
-  private def modifyTaxonDataset(td: TaxonDataset, m: Metadata) {
-
+  def setTaxonDatasetValues(td: TaxonDataset, m: Metadata) {
 
     val resolution = db.repo.getResolution(m.publicResolution)
-
     td.setPublicResolution(resolution)
 
     // default .. to be read from extra metadata.

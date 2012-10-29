@@ -5,7 +5,7 @@ package uk.org.nbn.nbnv.api.model;
  * @author Christopher Johnson
  */
 public class Feature {
-    private String label, identifier;
+    private String label, identifier, type;
     private BoundingBox worldBoundingBox, nativeBoundingBox;
 
     public String getLabel() {
@@ -38,5 +38,13 @@ public class Feature {
 
     public void setIdentifier(String identifier) {
         this.identifier = identifier;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

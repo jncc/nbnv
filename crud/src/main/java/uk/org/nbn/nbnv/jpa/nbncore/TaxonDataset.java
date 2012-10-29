@@ -46,6 +46,10 @@ public class TaxonDataset implements Serializable {
     @NotNull
     @Column(name = "allowRecordValidation")
     private boolean allowRecordValidation;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "publicAttribute")
+    private boolean publicAttribute;
     @JoinColumn(name = "publicResolutionID", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Resolution resolution;
@@ -87,6 +91,14 @@ public class TaxonDataset implements Serializable {
         this.allowRecordValidation = allowRecordValidation;
     }
 
+    public boolean getPublicAttribute() {
+        return publicAttribute;
+    }
+
+    public void setPublicAttribute(boolean publicAttribute) {
+        this.publicAttribute = publicAttribute;
+    }
+    
     // manually renamed to *public* resolution for clarity
 
     public Resolution getPublicResolution() {

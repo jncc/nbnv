@@ -1,5 +1,4 @@
-<#assign datasetId="${URLParameters.dataset}">
-<#assign dataset=json.readURL("${api}/datasets/${datasetId}")>
+<#assign dataset=json.readURL("${api}/datasets/${URLParameters.dataset}")>
 
 <@template.master title="NBN Gateway - Datasets"
     javascripts=["/js/jquery-ui-1.8.23.custom.min.js/","/js/enable-dataset-metadata-tabs.js","/js/jqueryui.simple-table-style.js","/js/jquery.dataTables.min.js","/js/jqplot/jquery.jqplot.min.js","/js/jqplot/excanvas.min.js","/js/jqplot/plugins/jqplot.json2.min.js","/js/jqplot/plugins/jqplot.highlighter.min.js","/js/jqplot/plugins/jqplot.canvasAxisLabelRenderer.min.js","/js/jqplot/plugins/jqplot.canvasTextRenderer.min.js","/js/jqplot/plugins/jqplot.cursor.min.js"] 
@@ -11,12 +10,12 @@
                 <li><a href="#tabs-2">Access and constraints</a></li>
                 <li><a href="#tabs-3">Geographical</a></li>
                 <#if dataset.typeName = "Taxon">
-                    <li><a href="/Datasets/${datasetId}/Records_Per_Year"><span>Temporal</span></a></li>
-                    <li><a href="/Datasets/${datasetId}/Surveys"><span>Surveys</span></a></li>
-                    <li><a href="/Datasets/${datasetId}/Attributes"><span>Attributes</span></a></li>
-                    <li><a href="/Datasets/${datasetId}/Taxa"><span>Species</span></a></li>
+                    <li><a href="/Datasets/${dataset.key}/Records_Per_Year"><span>Temporal</span></a></li>
+                    <li><a href="/Datasets/${dataset.key}/Surveys"><span>Surveys</span></a></li>
+                    <li><a href="/Datasets/${dataset.key}/Attributes"><span>Attributes</span></a></li>
+                    <li><a href="/Datasets/${dataset.key}/Taxa"><span>Species</span></a></li>
                 <#elseif dataset.typeName = "Site Boundary">
-                    <li><a href="/Datasets/${datasetId}/Site_Boundaries"><span>Sites</span></a></li>
+                    <li><a href="/Datasets/${dataset.key}/Site_Boundaries"><span>Sites</span></a></li>
                 </#if>
             </ul>
             <div id="tabs-1">
@@ -66,7 +65,7 @@
                         <td>${dataset.additionalInformation!"Not available"}</td>
                     </tr>
                     <#if dataset.typeName = "Taxon">
-                        <#assign taxonDataset=json.readURL("${api}/taxonDatasets/${datasetId}")>
+                        <#assign taxonDataset=json.readURL("${api}/taxonDatasets/${dataset.key}")>
                         <tr>
                             <th>Number of records</th>
                             <td>${taxonDataset.recordCount}</td>
@@ -95,8 +94,11 @@
                 </table>
             </div>
             <div id="tabs-3">
-                [TODO: Ajax call to map]
-                <!--<iframe width="100%" height="600px" src="http://data.nbn.org.uk/imt/?baselayer=Hybrid&bbox=-18.576014044435876,49.03927489540209,9.5489859505262,60.45827601788278&mode=SINGLE_DATASET&dataset=GA001044"></iframe>-->
+                <h1>Species Richness Map</h1>
+                <div class="nbn-grid-map">
+                    <img class="map" src="${gis}/DatasetSpeciesDensity/${dataset.key}/map?imagesize=4" alt="Species Richness for ${dataset.title}">
+                    <img class="legend" src="${gis}/DatasetSpeciesDensity/${dataset.key}/legend" alt="Species Richness for ${dataset.title}">
+                </div>
             </div>
         </div>
 </@template.master>
