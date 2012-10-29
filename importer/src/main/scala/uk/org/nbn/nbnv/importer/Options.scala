@@ -11,7 +11,7 @@ case class OptionsFailure(message: String)  extends OptionsResult
 /// The command line options that can be provided to the importer.
 case class Options(archivePath: String  = "archive.zip",
                    tempDir:     String  = ".",
-                   logDir:      String  = ".",
+                   logDir:      String  = "./temp",
                    logLevel:    String  = "INFO",
                    whatIf:      Boolean = false)
 {
