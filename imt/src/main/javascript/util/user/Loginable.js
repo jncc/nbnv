@@ -15,7 +15,7 @@ $.namespace("nbn.util.user.Loginable", function() {
     
     //Check with the data api to see if a user is already logged in
     $.getJSON(nbn.util.ServerGeneratedLoadTimeConstants.data_api + '/user', function(user) {
-        if (user.id !== 0) {
+        if (user.id !== 1) {
             userAttribute.setUser({
                 userID: user.id,
                 username: user.username,
