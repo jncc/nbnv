@@ -101,7 +101,7 @@
     <select name="feature" id="nbn-vice-county-selector" class="nbn-report-filter-dropdown">
         <option value="none">None</option>
         <#list viceCounties as viceCounty>
-            <option value="${viceCounty.featureID}">${viceCounty.name}</option>
+            <option value="${viceCounty.identifier}">${viceCounty.name}</option>
         </#list>
     </select>
 </#macro>
