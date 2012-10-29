@@ -571,6 +571,37 @@ CREATE SPATIAL INDEX [sidx_GridExtents_geom] ON [dbo].[GridExtents] (
 );
 
 SET ANSI_PADDING OFF; 
+
+/*
+ *
+ * ContextLayers
+ *
+ */
+
+CREATE TABLE [dbo].[ContextLayer] (
+	[id] [int] NOT NULL PRIMARY KEY,
+	[label] [varchar](50) NOT NULL UNIQUE
+);
+
+------------------------------
+
+CREATE TABLE [dbo].[ContextLayerFeature] (
+	[id] [int] IDENTITY(1,1) PRIMARY KEY,
+	[geom] [geometry] NOT NULL,
+	[projectionID] [int] NOT NULL REFERENCES [Projection] ([id]),
+	[contextLayerID] [int] NOT NULL REFERENCES [ContextLayer] ([id])
+);
+
+SET ANSI_PADDING ON; 
+
+CREATE SPATIAL INDEX [sidx_ContextLayerFeature_geom] ON [dbo].[ContextLayerFeature] (
+	[geom]
+) USING GEOMETRY_GRID WITH (
+	BOUNDING_BOX =(-15, 40, 8, 65), GRIDS =(LEVEL_1 = MEDIUM,LEVEL_2 = MEDIUM,LEVEL_3 = MEDIUM,LEVEL_4 = MEDIUM), CELLS_PER_OBJECT = 16, PAD_INDEX  = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON
+);
+
+SET ANSI_PADDING OFF; 
+
 /*
  *
  * Habitat
