@@ -21,7 +21,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import uk.org.nbn.nbnv.api.model.Dataset;
-import uk.org.nbn.nbnv.api.model.Designation;
 import uk.org.nbn.nbnv.api.model.Organisation;
 
 /**
@@ -116,8 +115,8 @@ public class OrganisationResourceTest {
      */
     @Ignore
     public void testGetLogo() {
-        GenericType<List<Dataset>> gt = new GenericType<List<Dataset>>() { };
-        List<Dataset> dc = resource
+        GenericType<Object> gt = new GenericType<Object>() { };
+        Object dc = resource
                 .path("organisations")
                 .path("2")
                 .path("logo")
@@ -130,8 +129,8 @@ public class OrganisationResourceTest {
      */
     @Ignore
     public void testGetLogoSmall() {
-        GenericType<List<Dataset>> gt = new GenericType<List<Dataset>>() { };
-        List<Dataset> dc = resource
+        GenericType<Object> gt = new GenericType<Object>() { };
+        Object dc = resource
                 .path("organisations")
                 .path("1")
                 .path("logosmall")
