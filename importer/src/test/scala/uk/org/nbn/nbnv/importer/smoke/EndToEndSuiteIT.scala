@@ -4,24 +4,33 @@ import java.io.File
 import uk.org.nbn.nbnv.importer.testing.BaseFunSuite
 import uk.org.nbn.nbnv.importer.utility.ResourceLoader
 import uk.org.nbn.nbnv.importer.{ImportFailedException, Options, Importer}
+import java.net.{URI, URL}
 
 class EndToEndSuiteIT extends BaseFunSuite with ResourceLoader {
 
-  def fixture(archivePath: String) = new {
+  def fixture(archiveURL: URL) = new {
 
     val tempDir = ".\\temp"
     new File(tempDir).mkdirs()
 
-    val archive = resource(archivePath)
+    val archive = archiveURL
     val options = Options(archivePath = archive.getFile, tempDir = tempDir, whatIf = true)
 
     val importer = Importer.createImporter(options)
   }
 
+  // change from 'ignore' to 'test' to run the importer against an archive within your IDE
+  ignore("import an archive") {
+
+    val archive = new URL("file:///C:/Users/Pete Montgomery/Desktop/New folder/archive_Aggregate_29102012_011031.zip")
+    val f = fixture(archive)
+    f.importer.run()
+  }
 
   test("should import a valid archive") {
 
-    val f = fixture("/archives/valid.zip")
+    val archive = resource("/archives/valid.zip")
+    val f = fixture(archive)
     f.importer.run()
   }
 
@@ -29,7 +38,8 @@ class EndToEndSuiteIT extends BaseFunSuite with ResourceLoader {
 
     val ex = intercept[ImportFailedException] {
 
-      val f = fixture("/archives/nonexistent_dataset_key.zip")
+      val archive = resource("/archives/nonexistent_dataset_key.zip")
+      val f = fixture(archive)
       f.importer.run()
     }
 

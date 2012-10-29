@@ -31,7 +31,7 @@ class Nbnv61Validator extends AggregateValidator {
     }
   }
 
-  def notifyComplete() {
+  def notifyComplete() {}
 
-  }
+  def name = "NBNV-61"
 }

@@ -9,105 +9,118 @@ import uk.org.nbn.nbnv.importer.ImportFailedException
 import uk.org.nbn.nbnv.importer.records.NbnRecord
 import uk.org.nbn.nbnv.importer.data.{Database}
 
-// todo: requirement for allowing e.g. 100 errors - presumably this needs to keep validating, but not import?
 // todo: mapping between darwin and nbn terms, separate from reading values, nulls throw?
 // todo: ensure possibility for parallel
 
 
 class Validator @Inject()(log: Logger, db: Database){
 
+  private var errors = 0 // count the validation errors
+
   def validate(archive: Archive) {
 
-    log.info("Hello from the validator.")
+    log.info("Validating archive...")
 
-//    (1) head scoped / required - can't validate darwin mappings for validation.
-//      ask gbif to alter reader to isMapped or list of defined mappings. at the mo we're checking for null in first record. perhaps null means not mapped
+    //    (1) head scoped / required - can't validate darwin mappings for validation.
+    //      ask gbif to alter reader to isMapped or list of defined mappings. at the mo we're checking for null in first record. perhaps null means not mapped
 
     val validator = new ArchiveHeadValidator
     val results = validator.validate(archive)
-    for (result <- results) logResult(result)
+    for (result <- results) processResult(result, "NBNV-HEAD")
 
 
-//    (2) archive scoped / aggregate value validation (e.g. no duplicate record keys)
-//
+    // (2) archive scoped / aggregate value validation (e.g. no duplicate record keys)
+    //
     val aggregateValidators = List(new Nbnv61Validator)
 
-    //    (3) record-scoped
-    //    parsing/conversions - don't want to duplicate the parsing logic
-    //    size (length)
-    //    lookups (range) (e.g. checking real taxon key)
+    // (3) record-scoped
+    // parsing/conversions - don't want to duplicate the parsing logic
+    // size (length)
+    // lookups (range) (e.g. checking real taxon key)
+
+    log.info(archive.size)
 
     for (record <- archive.iteratorRaw) {
+
+      log.info("## aaa")
 
       val nbnRecord = new NbnRecord(record)
 
       val v0 = new Nbnv62Validator
       val r0 = v0.validate(nbnRecord)
-      logResult(r0)
+      processResult(r0, "NBNV-62")
 
       val v1 = new Nbnv63Validator
       val r1 = v1.validate(nbnRecord)
-      logResult(r1)
+      processResult(r1, "NBNV-63")
 
       val v2 = new Nbnv64Validator(db.repo)
       val r2 = v2.validate(nbnRecord)
-      logResult(r2)
+      processResult(r2, "NBNV-64")
 
       val v3 = new Nbnv66Validator
       val r3 = v3.validate(nbnRecord)
-      logResult(r3)
+      processResult(r3, "NBNV-66")
 
       val v4 = new Nbnv67Validator
       val r4 = v4.validate(nbnRecord)
-      logResult(r4)
+      processResult(r4, "NBNV-67")
 
       val v5 = new Nbnv79Validator
       val r5 = v5.validate(nbnRecord)
-      logResult(r5)
+      processResult(r5, "NBNV-79")
 
       val v6 = new Nbnv80Validator
       val r6 = v6.validate(nbnRecord)
-      logResult(r6)
+      processResult(r6, "NBNV-80")
 
       val v7 = new Nbnv91Validator
       val r7 = v7.validate(nbnRecord)
-      logResult(r7)
+      processResult(r7, "NBNV-91")
 
       val v8 = new Nbnv92Validator
       val r8 = v8.validate(nbnRecord)
-      logResult(r8)
+      processResult(r8, "NBNV-92")
 
       val v9 = new Nbnv163Validator
       val r9 = v9.validate(nbnRecord)
-      logResult(r9)
+      processResult(r9, "NBNV-163")
 
       // Validates a set of dates
       val dv = new DateValidator
       val dvResults = dv.validate(nbnRecord)
-      for (result <- dvResults) logResult(result)
+      for (result <- dvResults) processResult(result, "NBNV-DATE")
 
       val srv = new SpatialReferenceValidator(db)
       val srvResults = srv.validate(nbnRecord)
-      for (result <- srvResults) logResult(result)
+      for (result <- srvResults) processResult(result, "NBNV-SPATIAL-REFERENCE")
 
       //Validates each attribute and returns a set of results
       val oav = new ObservationAttributeValidator
       val oavResults = oav.validate(nbnRecord)
-      for (result <- oavResults) logResult(result)
+      for (result <- oavResults) processResult(result, "NBNV-ATTRIBUTE")
 
       // call aggregation callbacks
       for (v <- aggregateValidators) {
         val result = v.processRecord(nbnRecord)
-        logResult(result)
+        processResult(result, v.name)
       }
+
+      log.info("## bbb")
     }
 
     for (v <- aggregateValidators) {
       v.notifyComplete()
     }
+
+    log.info("Validation complete. %n validation errors".format(errors))
+
+    if (errors > 0) {
+      throw new ImportFailedException("Failing due to validation errors")
+    }
   }
 
-  private def logResult(result: Result) {
+  private def processResult(result: Result, code: String) {
 
     val output = "Validation: " + result.reference + " | " + result.message
 
@@ -117,7 +130,7 @@ class Validator @Inject()(log: Logger, db: Database){
       case ResultLevel.WARN  => log.warn(output)
       case ResultLevel.ERROR => {
         log.error(output)
-        throw new ImportFailedException("Validation failure.")
+        errors = errors + 1
       }
     }
   }
