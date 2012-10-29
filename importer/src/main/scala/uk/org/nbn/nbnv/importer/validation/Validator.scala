@@ -109,10 +109,10 @@ class Validator @Inject()(log: Logger, db: Database){
       v.notifyComplete()
     }
 
-    log.info("Validation complete. %n validation errors".format(errors))
+    log.info("Validation complete. %d validation errors".format(errors))
 
     if (errors > 0) {
-      throw new ImportFailedException("Failing due to validation errors")
+      throw new ImportFailedException("Failed due to validation errors")
     }
   }
 

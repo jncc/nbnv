@@ -26,7 +26,6 @@ class NbnRecord(record: StarRecord) {
       }
       catch {
         case e: Throwable => {
-          //Return some usful error for the log.
           throw new ImportFailedException("Improperly formed JSON attribute list in record '%s'".format(this.key))
         }
       }
@@ -36,13 +35,13 @@ class NbnRecord(record: StarRecord) {
     }
 
   def key =             record.core.value(DwcTerm.occurrenceID)
-  def absenceRaw =     record.core.value(DwcTerm.occurrenceStatus)
+  def absenceRaw =      record.core.value(DwcTerm.occurrenceStatus)
   def absence =         parseOccurrenceStatus(absenceRaw)
-  def surveyKey =       record.core.value(DwcTerm.collectionCode)
-  def sampleKey =       record.core.value(DwcTerm.eventID)
+  def surveyKey =       parseOptional(record.core.value(DwcTerm.collectionCode))
+  def sampleKey =       parseOptional(record.core.value(DwcTerm.eventID))
   def taxonVersionKey = record.core.value(DwcTerm.taxonID)
-  def siteKey =         record.core.value(DwcTerm.locationID)
-  def siteName =        record.core.value(DwcTerm.locality)
+  def siteKey =         parseOptional(record.core.value(DwcTerm.locationID))
+  def siteName =        parseOptional(record.core.value(DwcTerm.locality))
   def recorder =        record.core.value(DwcTerm.recordedBy)
   def determiner =      record.core.value(DwcTerm.identifiedBy)
   def eastRaw =         parseOptional(record.core.value(DwcTerm.verbatimLongitude))

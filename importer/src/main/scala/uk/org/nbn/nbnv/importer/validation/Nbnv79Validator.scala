@@ -7,6 +7,6 @@ class Nbnv79Validator {
 
   def validate(record: NbnRecord) = {
     val validator = new LengthValidator
-    validator.validate(record.key, "SiteKey", record.siteKey, 30)
+    validator.validate(record.key, "SiteKey", record.siteKey getOrElse "", 30)
   }
 }

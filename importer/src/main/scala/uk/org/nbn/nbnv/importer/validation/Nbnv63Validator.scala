@@ -8,6 +8,6 @@ import uk.org.nbn.nbnv.importer.records.NbnRecord
 class Nbnv63Validator {
   def validate(record: NbnRecord) = {
     val validator = new LengthValidator
-    validator.validate(record.key, "SampleKey", record.sampleKey, 30)
+    validator.validate(record.key, "SampleKey", record.sampleKey getOrElse "", 30)
   }
 }

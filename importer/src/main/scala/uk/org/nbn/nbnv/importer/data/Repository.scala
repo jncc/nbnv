@@ -266,7 +266,7 @@ class Repository (log: Logger, em: EntityManager, cache: QueryCache) extends Con
 
     for (item <- cacheKey) {
       if (item == null)
-        throw new ImportFailedException("Cache key component was null. This could lead to incorrectness so we're failing.")
+        throw new ImportFailedException("Cache key component in '%s' was null. This could lead to incorrect data.".format(cacheKey.mkString("|")))
     }
 
     val key = cacheKey.map(_.trim).mkString("|")

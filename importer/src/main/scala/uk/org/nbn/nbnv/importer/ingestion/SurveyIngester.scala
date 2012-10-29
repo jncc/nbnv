@@ -9,9 +9,9 @@ import com.google.inject.Inject
 
 class SurveyIngester @Inject()(db: Database) {
 
-  def upsertSurvey(surveyKey: String, dataset: TaxonDataset): Survey = {
+  def upsertSurvey(surveyKey: Option[String], dataset: TaxonDataset): Survey = {
 
-    val key = if (surveyKey == "") "1" else surveyKey
+    val key = surveyKey getOrElse "1" // if no survey key provided
 
     def update(s: Survey) {
       s.setProviderKey(key)
@@ -19,16 +19,14 @@ class SurveyIngester @Inject()(db: Database) {
       s.setTaxonDataset(dataset)
     }
 
-    val survey = db.repo.getSurvey(key, dataset)
-
-    survey match {
-      case Some(s) => s
-      case None => {
-        val s = new Survey
-        update(s)
-        db.em.persist(s)
-        s
-      }
+    val survey = db.repo.getSurvey(key, dataset) getOrElse {
+      val s = new Survey
+      update(s)
+      db.em.persist(s)
+      s
     }
+
+    db.em.flush() // to get survey key for proceeding sample caching
+    survey
   }
 }

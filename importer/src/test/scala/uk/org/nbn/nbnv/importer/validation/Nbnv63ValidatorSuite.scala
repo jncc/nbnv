@@ -8,7 +8,7 @@ import uk.org.nbn.nbnv.importer.fidelity.ResultLevel
 class Nbnv63ValidatorSuite extends BaseFunSuite{
   test("Nvnv63 should validate null sample keys") {
     val record = mock[NbnRecord]
-    when(record.sampleKey).thenReturn(null)
+    when(record.sampleKey).thenReturn(None)
 
     val v = new Nbnv63Validator
     val r = v.validate(record)
@@ -18,7 +18,7 @@ class Nbnv63ValidatorSuite extends BaseFunSuite{
 
   test("Nvnv63 should validate samples keys of 30 chars or less") {
     val record = mock[NbnRecord]
-    when(record.sampleKey).thenReturn("a" * 30)
+    when(record.sampleKey).thenReturn(Some("a" * 30))
 
     val v = new Nbnv63Validator
     val r = v.validate(record)
@@ -28,7 +28,7 @@ class Nbnv63ValidatorSuite extends BaseFunSuite{
 
   test("Nvnv63 should not validate sample keys greater then 30 chars") {
     val record = mock[NbnRecord]
-    when(record.sampleKey).thenReturn("a" * 31)
+    when(record.sampleKey).thenReturn(Some("a" * 31))
 
     val v = new Nbnv63Validator
     val r = v.validate(record)
