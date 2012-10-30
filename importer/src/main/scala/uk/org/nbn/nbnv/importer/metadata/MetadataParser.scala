@@ -1,4 +1,4 @@
-package uk.org.nbn.nbnv.metadata
+package uk.org.nbn.nbnv.importer.metadata
 
 import xml.Elem
 import uk.org.nbn.nbnv.importer.utility.StringParsing._
