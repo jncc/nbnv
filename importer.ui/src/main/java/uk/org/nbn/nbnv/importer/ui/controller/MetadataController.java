@@ -230,6 +230,7 @@ public class MetadataController {
                     metadataForm.setStoredOrg(true);
                     messages.add("Found an unknown organisation with the name " + organisation.getName() + ", please click Import Organisation to import this as a new Organisation or select the correct Organisation from the drop down list");
                     metadataForm.setErrors(messages);
+                    
                     ModelAndView mv = new ModelAndView("metadataForm", "metadataForm", metadataForm);
                     mv.addObject("org", organisation);
                     return mv;
@@ -349,7 +350,7 @@ public class MetadataController {
     @ModelAttribute("referenceData")
     protected Map referenceData(HttpServletRequest request, Object command, Errors errors) throws Exception {
         Map<String, String> geoMap = new LinkedHashMap<String, String>();
-        geoMap.put("1","Full");
+        geoMap.put("100","Full");
         geoMap.put("1000","1km\u00B2 ");
         geoMap.put("2000","2km\u00B2");
         geoMap.put("10000","10km\u00B2");
