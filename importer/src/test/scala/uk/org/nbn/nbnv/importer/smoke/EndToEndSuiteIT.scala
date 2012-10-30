@@ -10,11 +10,8 @@ class EndToEndSuiteIT extends BaseFunSuite with ResourceLoader {
 
   def fixture(archiveURL: URL) = new {
 
-    val tempDir = ".\\temp"
-    new File(tempDir).mkdirs()
-
     val archive = archiveURL
-    val options = Options(archivePath = archive.getFile, target = Target.ingest, tempDir = tempDir)
+    val options = Options(archivePath = archive.getFile, target = Target.ingest)
 
     val importer = Importer.createImporter(options)
   }
