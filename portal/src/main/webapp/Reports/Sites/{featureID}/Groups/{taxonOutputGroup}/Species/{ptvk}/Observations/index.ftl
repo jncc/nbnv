@@ -9,9 +9,9 @@
 <#assign title="Records for ${taxon_utils.getShortName(taxon)} in '${site.label}' from ${report_utils.getYearRangeText(RequestParameters)}">
 <#assign is10kmReport=(site.type="GridSquare")>
 
-<@template.master title="NBN Site Report" javascripts=["/js/site-report-form-validation.js"]>
+<@template.master title="NBN Site Report" javascripts=["/js/site_report_utils.js"]>
     <h1>${title}</h1>
-    <form action="" method="post" id="${report_utils.getSiteFormId()}">
+    <form action="/Reports/Sites/${featureID}/Groups/${URLParameters.ptvk}/Species/${URLParameters.ptvk}" method="post" id="${report_utils.getSiteFormId()}">
         <@report_utils.site_report_filters requestParameters=RequestParameters args={"taxon":taxon} location=site.label isSpatialRelationshipNeeded=false isDesignationNeeded=false isDatasetNeeded=false/>
         <@report_utils.siteImage locationName=site.label locationID=featureID imageURL=report_utils.getSiteSpeciesImageURL(featureID, taxon.ptaxonVersionKey, startYear, endYear, datasets, spatialRelationship, !is10kmReport)/>
     </form>

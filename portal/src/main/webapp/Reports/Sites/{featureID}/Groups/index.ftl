@@ -6,9 +6,9 @@
 <#assign title="Species groups with records for '${site.label}' from ${report_utils.getYearRangeText(RequestParameters)}">
 <#assign is10kmReport=(site.type="GridSquare")>
 
-<@template.master title="NBN Site Report" javascripts=["/js/site-report-form-validation.js","/js/jquery.dataset-selector-utils.js"]>
+<@template.master title="NBN Site Report" javascripts=["/js/jquery.site_report_utils.js","/js/jquery.dataset-selector-utils.js"]>
     <h1>${title}</h1>
-    <form action="" method="post" id="${report_utils.getSiteFormId()}">
+    <form action="/Reports/Sites/${featureID}/Groups" method="post" id="${report_utils.getSiteFormId()}">
         <@report_utils.site_report_filters requestParameters=RequestParameters location=site.label  isSpatialRelationshipNeeded=true/>
         <div class="nbn-report-data-container">
             <#if taxonOutputGroupsWithQueryStats?has_content>

@@ -45,11 +45,15 @@ public class TaxonObservationProvider {
     }
     
     public String filteredSelectDatasets(Map<String, Object> params){
-        BEGIN();
-        SELECT("datasetKey, COUNT(*) querySpecificObservationCount");
-        createSelectQuery(params);
-        GROUP_BY("datasetKey");
-        return SQL();
+//        BEGIN();
+//        SELECT("datasetKey, COUNT(*) querySpecificObservationCount");
+//        createSelectQuery(params);
+//        GROUP_BY("datasetKey");
+        return "SELECT top 1 'GA000159' datasetKey, '10' querySpecificObservationCount from DatasetData "
+                + "union all SELECT top 1 'GA000339' datasetKey, '20' querySpecificObservationCount from DatasetData "
+                + "union all SELECT top 1 'GA000344' datasetKey, '30' querySpecificObservationCount from DatasetData "
+                + "union all SELECT top 1 'GA000466' datasetKey, '40' querySpecificObservationCount from DatasetData";
+//        return SQL();
     }
     
     public String filteredSelectDatasetsProviderNotInstantiated(Map<String, Object> params) {

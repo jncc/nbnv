@@ -3,7 +3,6 @@
     function getURL(form){
         var formObjArray = form.serializeArray();
         var tvk = $('#tvk').val(); 
-        console.log(formObjArray)
         var keyValuePairs = getKeyValuePairsFromForm(formObjArray);
         var keyValuePairsWithBusinessLogic = getKeyValuePairsWithBusinessLogic(keyValuePairs);
         var queryString = getQueryStringFromKeyValuePairs(keyValuePairsWithBusinessLogic);
@@ -110,9 +109,14 @@
     };
 
     $(document).ready(function(){
+
         /* Do map refresh */
         $('#nbn-grid-map-form').submit(function(){
             var form = $(this);
+            
+            //Requires jquery.dataset-selector-utils.js
+            nbn.portal.reports.utils.DatasetFields.doDeselectDatasetKeys();
+            
             $('#nbn-grid-map-image-src').attr('src',getURL(form));
             return false;
         });

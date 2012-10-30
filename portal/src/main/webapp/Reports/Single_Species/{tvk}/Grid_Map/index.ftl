@@ -4,28 +4,28 @@
 <#assign taxon=json.readURL("${api}/taxa/${tvk}")>
 
 <@template.master title="NBN Grid Map" 
-    javascripts=["/js/site-report-form-validation.js","/js/jquery.dataset-selector-utils.js","/js/jquery.gridmap_utils.js","/js/colourpicker/colorpicker.js"]
+    javascripts=["/js/jquery.dataset-selector-utils.js","/js/jquery.gridmap_utils.js","/js/colourpicker/colorpicker.js"]
     csss=["/css/colourpicker/colorpicker.css"]>
     
     <h1>Grid map for ${taxon_utils.getShortName(taxon)}</h1>
     <#assign imageSize=5>
-    <div id="nbn-grid-map-filter-container">
-        <@gridMapFilters imageSize=imageSize/>
-    </div>
-    <div id="nbn-grid-map-container">
-        <@gridMapContents tvk=tvk imageSize=imageSize/>
-    </div>
-    <div>
-        <#if providersWithQueryStats?has_content>
-            <@report_utils.dataset_table providersWithQueryStats=providersWithQueryStats requestParameters=RequestParameters/>
-        </#if>
-    <div>
-    <div class="nbn-clear-floating-elements"></div>
+    <form target="" id="nbn-grid-map-form" gis-server="${gis}">
+        <div id="nbn-grid-map-filter-container">
+            <@gridMapFilters imageSize=imageSize/>
+        </div>
+        <div id="nbn-grid-map-container">
+            <@gridMapContents tvk=tvk imageSize=imageSize/>
+        </div>
+        <div>
+            <#if providersWithQueryStats?has_content>
+                <@report_utils.dataset_table providersWithQueryStats=providersWithQueryStats requestParameters=RequestParameters/>
+            </#if>
+        </div>
+    </form>
 </@template.master>
 
 <#macro gridMapFilters imageSize>
     <div class="tabbed">
-        <form target="" id="nbn-grid-map-form" gis-server="${gis}">
             <h3>Controls</h3>
 
             <input hidden name="imagesize" value="${imageSize}">
@@ -66,7 +66,6 @@
                 <input type="checkbox" value="10kgrid" name="background" disabled>10km grid (not yet available)<br/>
             </fieldset>
             <input type="submit" value="Submit"></td>
-        </form>
     </div>
 </#macro>
 
