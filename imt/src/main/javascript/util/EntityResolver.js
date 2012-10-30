@@ -8,18 +8,33 @@
 *	jquery
 */
 $.namespace("nbn.util.EntityResolver", new function() {
+    //define a function which will call the data api multiple times with a comma 
+    //seperated id list
+    function multipleResolver(type, id, callback) {
+        //call all the habitats
+        var datasetKeys = id.split(","), requests = $.map(datasetKeys, function(datasetKey){
+            return $.getJSON(nbn.util.ServerGeneratedLoadTimeConstants.data_api + "/" + type + "/" + datasetKey);
+        });
+
+        //combine all requests to a single response
+        return $.when.apply(this, requests).done(function() {
+            var values = (datasetKeys.length === 1) ? [arguments] : arguments; //if only one request was made turn it into an array response
+            callback.call(this, $.map(values, function(arr) { return arr[0]; })); 
+        });
+    }
+    
     var dataResolvers = {
         boundary : function(id, callback) {
             return $.getJSON(nbn.util.ServerGeneratedLoadTimeConstants.data_api + "/siteBoundaryDatasets/" + id, callback);
         },
         habitats : function(id, callback) {
-            throw "Entity resolver not complete for habitats";
+            return multipleResolver("habitatDatasets", id, callback);
         },
         dataset : function(id, callback) {
             return $.getJSON(nbn.util.ServerGeneratedLoadTimeConstants.data_api + "/datasets/" + id, callback);
         },
         datasets : function(id, callback) {
-            throw "Entity resolver not complete for datasets";
+            return multipleResolver("datasets", id, callback);
         },
         designation : function(id, callback) {
             return $.getJSON(nbn.util.ServerGeneratedLoadTimeConstants.data_api + "/designations/" + id, callback);
