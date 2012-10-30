@@ -27,7 +27,8 @@ MAP
     PROJECTION
         "init=epsg:4326"
     END
-    
+
+    [@backgrounds.contextLayers spatialConnection=properties.spatialConnection/]    
     [@backgrounds.os location=properties.ordnanceSurveyMapDataLocation requires=layers/]
     
     [#if featureID??]

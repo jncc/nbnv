@@ -79,7 +79,13 @@ public class SingleSpeciesMap {
             @GridLayer(name="100m",     layer=ONE_HUNDRED_M_LAYER_NAME, resolution=Resolution.ONE_HUNDRED_METERS)
         },
         defaultLayer="10km",
-        backgrounds=@Layer(name="os", layer="OS-Scale-Dependent" ),
+        backgrounds={
+            @Layer(name="os", layer="OS-Scale-Dependent" ),
+            @Layer(name="gb", layer="GB-Coast" ),
+            @Layer(name="gbi", layer="Ireland-Coast" ),
+            @Layer(name="gb100kgrid", layer="GB-Coast-with-Hundred-km-Grid" ),
+            @Layer(name="gbi100kgrid", layer="GB-and-Ireland-Coasts-with-Hundred-km-Grid" )
+        },
         overlays=@Layer(name="feature", layer="Selected-Feature" )
     )
     public MapFileModel getSingleSpeciesModel(

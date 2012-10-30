@@ -117,3 +117,46 @@
         END
     END
 [/#macro]
+
+[#macro contextLayers spatialConnection]
+    [#assign layers=[
+        "GB-Coast", "Ireland-Coast", "GB-Hundred-km-Grid", "Ireland-Hundred-km-Grid",
+        "GB-Coast-with-Hundred-km-Grid", "GB-and-Ireland-Coasts-with-Hundred-km-Grid",
+        "Vice-counties-(low-res)", "GB-and-Ireland-Hundred-km-Grid"
+    ]]
+    [#list layers as contextLayer]
+        LAYER
+            NAME                                                "${contextLayer}"
+            TYPE                                                LINE
+            STATUS                                              OFF
+            CONNECTIONTYPE                                      PLUGIN
+            PLUGIN                                              "msplugin_mssql2008.dll"
+            CONNECTION                                          "${spatialConnection}"
+            PROCESSING                                          "CLOSE_CONNECTION=DEFER"
+
+            DATA                        "geom from (
+                                            SELECT id, geom
+                                            FROM ContextLayerFeatureData
+                                            WHERE contextLayerID = ${contextLayer_index+1}
+                                        ) AS foo USING UNIQUE id USING SRID=27700"
+
+            METADATA
+                "wms_title"                                       "${contextLayer}"
+                "wms_include_items"                               "all"
+            END
+
+            PROJECTION
+                "init=epsg:27700"
+            END
+
+            CLASS
+                NAME                                              "default"
+
+                STYLE
+                    COLOR                                           0 0 0
+                    WIDTH                                           1
+                END
+            END
+        END
+    [/#list]
+[/#macro]
