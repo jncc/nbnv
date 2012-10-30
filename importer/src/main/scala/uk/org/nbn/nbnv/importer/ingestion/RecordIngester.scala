@@ -38,13 +38,13 @@ class RecordIngester @Inject()(log: Logger,
     def update(o: TaxonObservation) {
 
       o.setAbsenceRecord(record.absence)
-      o.setDateStart(startDate.getOrElse(null))
-      o.setDateEnd(endDate.getOrElse(null))
+      o.setDateStart(startDate getOrElse null)
+      o.setDateEnd(endDate getOrElse null)
       o.setDateType(dateType)
-      o.setDeterminer(determiner)
+      o.setDeterminer(determiner getOrElse null)
       o.setFeature(feature)
       o.setProviderKey(record.key)
-      o.setRecorder(recorder)
+      o.setRecorder(recorder getOrElse null)
       o.setSample(sample)
       o.setSensitiveRecord(record.sensitiveOccurrence)
       o.setSite(site.orNull)

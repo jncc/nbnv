@@ -42,8 +42,8 @@ class NbnRecord(record: StarRecord) {
   def taxonVersionKey = record.core.value(DwcTerm.taxonID)
   def siteKey =         parseOptional(record.core.value(DwcTerm.locationID))
   def siteName =        parseOptional(record.core.value(DwcTerm.locality))
-  def recorder =        record.core.value(DwcTerm.recordedBy)
-  def determiner =      record.core.value(DwcTerm.identifiedBy)
+  def recorder =        parseOptional(record.core.value(DwcTerm.recordedBy))
+  def determiner =      parseOptional(record.core.value(DwcTerm.identifiedBy))
   def eastRaw =         parseOptional(record.core.value(DwcTerm.verbatimLongitude))
   def east =            parseOptional(record.core.value(DwcTerm.verbatimLongitude)) map { s => s.toDouble }
   def northRaw =        parseOptional(record.core.value(DwcTerm.verbatimLatitude))
