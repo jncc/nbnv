@@ -3,7 +3,7 @@ package uk.org.nbn.nbnv.importer
 import darwin.ArchiveManager
 import ingestion._
 import injection.ImporterModule
-import uk.org.nbn.nbnv.metadata.MetadataReader
+import uk.org.nbn.nbnv.importer.metadata.MetadataReader
 import org.apache.log4j.Logger
 import com.google.inject.{Inject, Guice}
 import utility.Stopwatch

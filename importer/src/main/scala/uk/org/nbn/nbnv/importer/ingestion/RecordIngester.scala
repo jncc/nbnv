@@ -7,7 +7,7 @@ import org.apache.log4j.Logger
 import uk.org.nbn.nbnv.importer.records.NbnRecord
 import uk.org.nbn.nbnv.importer.data.{Database, Repository}
 import com.google.inject.Inject
-import uk.org.nbn.nbnv.metadata.Metadata
+import uk.org.nbn.nbnv.importer.metadata.Metadata
 
 class RecordIngester @Inject()(log: Logger,
                                db: Database,

@@ -1,4 +1,4 @@
-package uk.org.nbn.nbnv.metadata
+package uk.org.nbn.nbnv.importer.metadata
 
 object TestData {
   val validMetadataXml = <eml xmlns="eml://ecoinformatics.org/eml-2.1.1" xmlns:dc="http://purl.org/dc/terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" packageId="NBN/GA000159/eml-1.xml" scope="system" system="GBIF" xml:lang="en" xsi:schemaLocation="eml://ecoinformatics.org/eml-2.1.1 eml.xsd">

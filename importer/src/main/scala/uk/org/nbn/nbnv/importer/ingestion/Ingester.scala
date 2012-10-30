@@ -4,7 +4,7 @@ import scala.collection.JavaConversions._
 import javax.persistence.EntityTransaction
 import uk.org.nbn.nbnv.importer.records.NbnRecord
 import org.gbif.dwc.text.Archive
-import uk.org.nbn.nbnv.metadata.Metadata
+import uk.org.nbn.nbnv.importer.metadata.Metadata
 import uk.org.nbn.nbnv.importer.{Target, Options}
 import com.google.inject.Inject
 import org.apache.log4j.Logger
