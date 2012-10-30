@@ -1,7 +1,7 @@
 package uk.org.nbn.nbnv.importer.spatial
 
 import math._
-import uk.org.nbn.nbnv.importer.ImportFailedException
+import uk.org.nbn.nbnv.importer.BadDataException
 
 object IrishGridSquareInfo extends GridSqareInfoCompanion {
   val irishGridByLetter = Map (
@@ -28,7 +28,7 @@ object IrishGridSquareInfo extends GridSqareInfoCompanion {
     val e = e100k / 100000
     val n = n100k / 100000
 
-    if (irishGridByCoord.get(e,n).isEmpty) throw new ImportFailedException("The easing and northing (%s,%s) are not within the Irish grid".format(east,north))
+    if (irishGridByCoord.get(e,n).isEmpty) throw new BadDataException("The easing and northing (%s,%s) are not within the Irish grid".format(east,north))
 
     val gridLetter = irishGridByCoord(e, n)
 

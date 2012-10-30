@@ -5,7 +5,7 @@ import com.google.inject.Inject
 import org.gbif.dwc.text.Archive
 import uk.org.nbn.nbnv.importer.fidelity.{ResultLevel, Result}
 import org.apache.log4j.Logger
-import uk.org.nbn.nbnv.importer.ImportFailedException
+import uk.org.nbn.nbnv.importer.BadDataException
 import uk.org.nbn.nbnv.importer.records.NbnRecord
 import uk.org.nbn.nbnv.importer.data.{Database}
 
@@ -112,7 +112,7 @@ class Validator @Inject()(log: Logger, db: Database){
     log.info("Validation complete. %d validation errors".format(errors))
 
     if (errors > 0) {
-      throw new ImportFailedException("Failed due to validation errors")
+      throw new BadDataException("Failed due to validation errors")
     }
   }
 

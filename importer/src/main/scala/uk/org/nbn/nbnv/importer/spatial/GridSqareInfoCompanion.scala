@@ -1,6 +1,6 @@
 package uk.org.nbn.nbnv.importer.spatial
 
-import uk.org.nbn.nbnv.importer.ImportFailedException
+import uk.org.nbn.nbnv.importer.BadDataException
 import org.geotools.geometry.GeneralDirectPosition
 import org.geotools.referencing.ReferencingFactoryFinder
 import org.geotools.referencing.operation.DefaultCoordinateOperationFactory
@@ -40,8 +40,8 @@ trait GridSqareInfoCompanion {
       this(easting, northing, precision)
     }
     catch {
-      case ife: ImportFailedException =>
-        throw new ImportFailedException("Lat '%s' 'Lng are not in the '%s' projection".format(latitude, longitude, getEpsgCode))
+      case ife: BadDataException =>
+        throw new BadDataException("Lat '%s' 'Lng are not in the '%s' projection".format(latitude, longitude, getEpsgCode))
       case e: Throwable => throw e
     }
   }
@@ -53,7 +53,7 @@ trait GridSqareInfoCompanion {
       (true, None)
     }
     catch {
-      case ife: ImportFailedException => (false, Some(ife.message))
+      case ife: BadDataException => (false, Some(ife.message))
       case e: Throwable => throw e
     }
   }

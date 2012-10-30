@@ -83,7 +83,7 @@ class Importer @Inject()(options:        Options,
   private def withTopLevelExceptionHandling(f: => Unit) {
     try { f }
     catch {
-      case e: ImportFailedException => {
+      case e: BadDataException => {
         log.error("Import run failed", e)
         throw e
       }

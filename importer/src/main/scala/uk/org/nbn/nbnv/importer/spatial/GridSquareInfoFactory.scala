@@ -1,6 +1,6 @@
 package uk.org.nbn.nbnv.importer.spatial
 
-import uk.org.nbn.nbnv.importer.ImportFailedException
+import uk.org.nbn.nbnv.importer.BadDataException
 import com.google.inject.Inject
 import uk.org.nbn.nbnv.importer.data.Database
 
@@ -26,7 +26,7 @@ class GridSquareInfoFactory @Inject()(db: Database) {
         case 27700 => Some(BritishGridSquareInfo(east.toInt, north.toInt, gridReferencePrecision))
         case 29903 => Some(IrishGridSquareInfo(east.toInt, north.toInt, gridReferencePrecision))
         case 23030 => Some(ChannelIslandGridSquareInfo(east.toInt, north.toInt, gridReferencePrecision))
-        case _ => throw new ImportFailedException("Unknown spatial referene system '%s'".format(spatialReferenceSystem))
+        case _ => throw new BadDataException("Unknown spatial referene system '%s'".format(spatialReferenceSystem))
       }
     }
   }
@@ -40,7 +40,7 @@ class GridSquareInfoFactory @Inject()(db: Database) {
       case BritishGrid => BritishGridSquareInfo(gridRef, gridReferencePrecision)
       case IrishGrid   => IrishGridSquareInfo(gridRef, gridReferencePrecision)
       case ChannelGrid => ChannelIslandGridSquareInfo(gridRef, gridReferencePrecision)
-      case UnknownGrid => throw new ImportFailedException("Unknown grid reference type '%s'".format(gridReferenceType))
+      case UnknownGrid => throw new BadDataException("Unknown grid reference type '%s'".format(gridReferenceType))
     }
   }
 
@@ -52,7 +52,7 @@ class GridSquareInfoFactory @Inject()(db: Database) {
     else if (gridRef.matches(GridRefPatterns.irishDintyGrid)) IrishGrid
     else if (gridRef.matches(GridRefPatterns.channelIslandsGridRef)) ChannelGrid
     else if (gridRef.matches(GridRefPatterns.channelIslandsDintyGridRef)) ChannelGrid
-    else throw new ImportFailedException("Grid reference type cannot be determined from grid ref '%s'".format(gridRef))
+    else throw new BadDataException("Grid reference type cannot be determined from grid ref '%s'".format(gridRef))
 
   }
 

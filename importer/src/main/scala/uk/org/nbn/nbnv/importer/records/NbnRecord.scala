@@ -3,7 +3,7 @@ package uk.org.nbn.nbnv.importer.records
 import scala.collection.JavaConversions._
 import org.gbif.dwc.terms.DwcTerm
 import org.gbif.dwc.text.StarRecord
-import uk.org.nbn.nbnv.importer.ImportFailedException
+import uk.org.nbn.nbnv.importer.BadDataException
 import util.parsing.json.JSON
 import java.util.Date
 import uk.org.nbn.nbnv.importer.utility.StringParsing._
@@ -26,7 +26,7 @@ class NbnRecord(record: StarRecord) {
       }
       catch {
         case e: Throwable => {
-          throw new ImportFailedException("Improperly formed JSON attribute list in record '%s'".format(this.key))
+          throw new BadDataException("Improperly formed JSON attribute list in record '%s'".format(this.key))
         }
       }
     }
@@ -106,7 +106,7 @@ class NbnRecord(record: StarRecord) {
       s.toLowerCase match {
         case "presence" => false
         case "absence" => true
-        case _ => throw new ImportFailedException("Invalid occurrence status '%s'".format(s))
+        case _ => throw new BadDataException("Invalid occurrence status '%s'".format(s))
       }
     }
   }

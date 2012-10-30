@@ -1,7 +1,7 @@
 package uk.org.nbn.nbnv.importer.ingestion
 
 import uk.org.nbn.nbnv.importer.records.NbnRecord
-import uk.org.nbn.nbnv.importer.ImportFailedException
+import uk.org.nbn.nbnv.importer.BadDataException
 import uk.org.nbn.nbnv.jpa.nbncore.{SiteBoundaryDataset, GridSquare, Feature}
 import com.google.inject.Inject
 import uk.org.nbn.nbnv.importer.data.{Database, Repository}
@@ -23,7 +23,7 @@ class FeatureIngester @Inject()(log: Logger, db: Database, gridSquareInfoFactory
       ensureGridRefFeatureByCoordinate(record.east.get, record.north.get, record.srs.get, record.gridReferencePrecision)
     }
     else {
-      throw new ImportFailedException("No feature specified.")
+      throw new BadDataException("No feature specified.")
     }
   }
 
