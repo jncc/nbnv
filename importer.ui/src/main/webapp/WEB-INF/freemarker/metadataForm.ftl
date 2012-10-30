@@ -43,13 +43,14 @@
         </div>
         <div id="metadata">
             <#if metadataForm.errors?has_content>
-                <div class="errors">
-                    <ul>
+                <fieldset>
+                    <legend>Errors</legend>
+                    <div class="errors">
                         <#list metadataForm.errors as error>
-                            <li>${error}</li>
+                            <p>${error}</p>
                         </#list>
-                    </ul>
-                </div>
+                    </div>
+                </fieldset>
             </#if>
 
             <form method="post" enctype="multipart/form-data" action="metadataProcess.html">
