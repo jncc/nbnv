@@ -442,6 +442,33 @@ GO
 
 GO
 
+CREATE VIEW [dbo].[ContextLayerFeatureData] WITH SCHEMABINDING AS (
+	SELECT
+		cf.id
+		, cf.geom
+		, cf.projectionID
+		, p.label AS projection
+		, p.srcSRID 
+		, cf.contextLayerID
+		, cl.label AS contextLayer
+	FROM [dbo].[ContextLayerFeature] cf
+	INNER JOIN [dbo].[ContextLayer] cl ON cl.id = cf.contextLayerID
+	INNER JOIN [dbo].[Projection] p ON p.id = cf.projectionID
+);
+
+GO
+
+CREATE UNIQUE CLUSTERED INDEX [cidx_ContextLayerFeatureData_id] ON [dbo].[ContextLayerFeatureData] 
+(
+	[id] ASC
+);
+
+GO
+
+--EXEC usp_dev_AddViewToPublication 'ContextLayerFeatureData'
+
+GO
+
 /*
  *
  * Taxon Data
