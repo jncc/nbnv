@@ -15,13 +15,12 @@ class MapServicePart {
     private final String name;
     private final boolean isVariable;
     private final List<MapServicePart> children;
-    private final Object instance;
+    private Object instance;
     private MapServicePart parent;
     private Method associatedMethod;
     private Type mapServiceType;
 
-    MapServicePart(Object instance, String name) {
-        this.instance = instance;
+    MapServicePart(String name) {
         this.name = name;
         this.isVariable = name.startsWith("{") && name.endsWith("}");
         this.children = new ArrayList<MapServicePart>();
@@ -48,12 +47,13 @@ class MapServicePart {
         return associatedMethod;
     }
 
-    void setAssociatedMethod(Method associatedMethod) {
-        if(this.associatedMethod !=null) {
+    void setAssociatedMethodAndInstance(Object instance, Method associatedMethod) {
+        if(this.associatedMethod !=null || this.instance !=null ) {
             throw new IllegalArgumentException("A method has already been registered "
                     + "to this part. Conflict between " + this.associatedMethod 
                     + " and " + associatedMethod);
         }
+        this.instance = instance;
         this.associatedMethod = associatedMethod;
     }
 
