@@ -6,7 +6,7 @@ import uk.org.nbn.nbnv.metadata.Metadata
 import org.gbif.dwc.text.{StarRecord, Archive}
 import org.gbif.utils.file.ClosableIterator
 import uk.org.nbn.nbnv.importer.testing.BaseFunSuite
-import uk.org.nbn.nbnv.importer.Options
+import uk.org.nbn.nbnv.importer.{Target, Options}
 import org.apache.log4j.Logger
 import uk.org.nbn.nbnv.importer.data.{QueryCache, Repository, Database}
 
@@ -15,7 +15,7 @@ class IngesterSuite extends BaseFunSuite {
   def fixture = new {
 
     // arrange
-    val options = mock[Options]
+    val options = Options(target = Target.commit)
 
     val t = mock[EntityTransaction]
 

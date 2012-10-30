@@ -3,7 +3,7 @@ package uk.org.nbn.nbnv.importer.smoke
 import java.io.File
 import uk.org.nbn.nbnv.importer.testing.BaseFunSuite
 import uk.org.nbn.nbnv.importer.utility.ResourceLoader
-import uk.org.nbn.nbnv.importer.{ImportFailedException, Options, Importer}
+import uk.org.nbn.nbnv.importer.{Target, ImportFailedException, Options, Importer}
 import java.net.{URI, URL}
 
 class EndToEndSuiteIT extends BaseFunSuite with ResourceLoader {
@@ -14,7 +14,7 @@ class EndToEndSuiteIT extends BaseFunSuite with ResourceLoader {
     new File(tempDir).mkdirs()
 
     val archive = archiveURL
-    val options = Options(archivePath = archive.getFile, tempDir = tempDir, whatIf = true)
+    val options = Options(archivePath = archive.getFile, target = Target.ingest, tempDir = tempDir)
 
     val importer = Importer.createImporter(options)
   }

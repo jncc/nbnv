@@ -59,16 +59,23 @@ class Importer @Inject()(options:        Options,
       val archive = archiveManager.open()
       val metadata = metadataReader.read(archive)
 
-      // validate the archive
-      validator.validate(archive)
-      // verify (... or ideally in the same parallel step as validate)
+      // validate
+      if (options.target >= Target.validate) {
+        validator.validate(archive)
+        log.info("Finished validation in " + stopwatch.elapsedSeconds + " seconds")
+      }
 
-      log.info("Finished validation in " + stopwatch.elapsedSeconds + " seconds")
+      // verify
+      if (options.target >= Target.verify) {
+        // (... ideally in the same parallel step as validate)
+      }
 
-      // ingest the archive and metadata
-      ingester.ingest(archive, metadata)
+      // ingest
+      if (options.target >= Target.ingest) {
+        ingester.ingest(archive, metadata)
+      }
 
-      log.info("Finished ingestion in " + stopwatch.elapsedSeconds + " seconds")
+      log.info("Finished import run in " + stopwatch.elapsedSeconds + " seconds")
       log.info("Done with archive '%s'".format(options.archivePath))
     }
   }
