@@ -25,6 +25,7 @@ import org.jooq.Condition;
 import org.jooq.SelectHavingStep;
 import static uk.gov.nbn.data.dao.jooq.Tables.*;
 import static org.jooq.impl.Factory.*;
+import uk.gov.nbn.data.gis.maps.context.ContextLayerDataGenerator;
 
 
 /**
@@ -62,6 +63,7 @@ public class DatasetSpeciesDensityMap {
     
 
     @Autowired Properties properties;
+    @Autowired ContextLayerDataGenerator contextGenerator;
     
     @MapService("{datasetKey}")
     @GridMap(
@@ -86,33 +88,34 @@ public class DatasetSpeciesDensityMap {
         data.put("buckets", BUCKETS);
         data.put("mapServiceURL", mapServiceURL);
         data.put("properties", properties);
+        data.put("contextGenerator", contextGenerator);
         data.put("layerGenerator", new ResolutionDataGenerator() {
                 @Override
                 public String getData(int resolution) {
                     SQLServerFactory create = new SQLServerFactory();
-                    Condition eq = 
+                    Condition condition = 
                             USERTAXONOBSERVATIONDATA.ABSENCE.eq(false)
                             .and(USERTAXONOBSERVATIONDATA.DATASETKEY.eq(key))
                             .and(USERTAXONOBSERVATIONDATA.USERID.eq(user.getId()));
-                    eq = MapHelper.createTemporalSegment(eq, startYear, endYear);
+                    condition = MapHelper.createTemporalSegment(condition, startYear, endYear);
                     
-                    SelectHavingStep SUB_SELECT = create
+                    SelectHavingStep observations = create
                         .select(
-                                    USERTAXONOBSERVATIONDATA.USERID,
-                                    USERTAXONOBSERVATIONDATA.DATASETKEY,
-                                    GRIDTREE.PARENTFEATUREID.as("featureID"),
-                                    countDistinct(USERTAXONOBSERVATIONDATA.PTAXONVERSIONKEY).as("species"))
+                            USERTAXONOBSERVATIONDATA.USERID,
+                            USERTAXONOBSERVATIONDATA.DATASETKEY,
+                            GRIDTREE.PARENTFEATUREID.as("featureID"),
+                            countDistinct(USERTAXONOBSERVATIONDATA.PTAXONVERSIONKEY).as("species"))
                          .from(USERTAXONOBSERVATIONDATA)
                          .join(GRIDTREE).on(GRIDTREE.FEATUREID.eq(USERTAXONOBSERVATIONDATA.FEATUREID))
-                         .where(eq)
+                         .where(condition)
                          .groupBy(GRIDTREE.PARENTFEATUREID, USERTAXONOBSERVATIONDATA.DATASETKEY, USERTAXONOBSERVATIONDATA.USERID);
                     
-                    SelectHavingStep query = create
-                        .select(FEATUREDATA.GEOM, FEATUREDATA.LABEL, FEATUREDATA.getField("species"))
-                        .from(FEATUREDATA)
-                        .join(FEATUREDATA).on(FEATUREDATA.ID.eq(SUB_SELECT.getField(GRIDTREE.FEATUREID)))
-                        .where(FEATUREDATA.RESOLUTIONID.eq(0));
-                    return MapHelper.getMapData("geom", "label", query, 4326);
+                    return MapHelper.getMapData(FEATUREDATA.GEOM, FEATUREDATA.LABEL, 4326, create
+                        .select(FEATUREDATA.GEOM, FEATUREDATA.LABEL, observations.getField("species"))
+                        .from(observations)
+                        .join(FEATUREDATA).on(FEATUREDATA.ID.eq(observations.getField(GRIDTREE.FEATUREID)))
+                        .where(FEATUREDATA.RESOLUTIONID.eq(resolution))
+                    );
                 }
         });
         return new MapFileModel("DatasetSpeciesDensity.map", data);

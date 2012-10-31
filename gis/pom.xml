@@ -117,8 +117,8 @@
                             <jdbc>
                                 <driver>com.microsoft.sqlserver.jdbc.SQLServerDriver</driver>
                                 <url>jdbc:sqlserver://nbnsql-b.nerc-lancaster.ac.uk;databaseName=NBNWarehouse</url>
-                                <user>NBNImporter</user>
-                                <password>Ecowaswashere9</password>
+                                <user>NBNGIS</user>
+                                <password>ForgottenWindGasClock25</password>
                             </jdbc>
 
                             <!-- Generator parameters -->

@@ -24,6 +24,9 @@ MAP
         "init=epsg:4326"
     END
    
+    [@backgrounds.contextLayers generator=contextGenerator spatialConnection=properties.spatialConnection/]    
+    [@backgrounds.os location=properties.ordnanceSurveyMapDataLocation requires=osRequiredLayers/]
+
     [#list layers as layer]
         LAYER
             NAME                                                "${layer.layer()}"

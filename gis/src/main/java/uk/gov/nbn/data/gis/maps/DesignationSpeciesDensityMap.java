@@ -78,13 +78,13 @@ public class DesignationSpeciesDensityMap {
                 public String getData(int resolution) {
                     SQLServerFactory create = new SQLServerFactory();
                     
-                    Condition eq = 
+                    Condition condition = 
                             USERTAXONOBSERVATIONDATA.ABSENCE.eq(false)
                             .and(DESIGNATIONTAXONDATA.CODE.eq(key))
                             .and(USERTAXONOBSERVATIONDATA.USERID.eq(user.getId()));
-                    eq = MapHelper.createTemporalSegment(eq, startYear, endYear);
+                    condition = MapHelper.createTemporalSegment(condition, startYear, endYear);
                     
-                    SelectHavingStep SUB_SELECT = create
+                    SelectHavingStep observations = create
                         .select(
                             USERTAXONOBSERVATIONDATA.USERID,
                             DESIGNATIONTAXONDATA.CODE,
@@ -93,18 +93,18 @@ public class DesignationSpeciesDensityMap {
                         .from(USERTAXONOBSERVATIONDATA)
                         .join(GRIDTREE).on(GRIDTREE.FEATUREID.eq(USERTAXONOBSERVATIONDATA.FEATUREID))
                         .join(DESIGNATIONTAXONDATA).on(DESIGNATIONTAXONDATA.PTAXONVERSIONKEY.eq(USERTAXONOBSERVATIONDATA.PTAXONVERSIONKEY))
-                        .where(eq)
+                        .where(condition)
                         .groupBy(GRIDTREE.PARENTFEATUREID, DESIGNATIONTAXONDATA.CODE, USERTAXONOBSERVATIONDATA.USERID);
                     
-                    return MapHelper.getMapData("geom", "label", create
-                            .select(
-                                FEATUREDATA.GEOM, SUB_SELECT.getField("species"),
-                                FEATUREDATA.LABEL
-                            )
-                            .from(SUB_SELECT)
-                            .join(FEATUREDATA).on(SUB_SELECT.getField(GRIDTREE.PARENTFEATUREID).eq(FEATUREDATA.ID))
-                            .where(FEATUREDATA.RESOLUTIONID.eq(resolution))
-                        , 4326);
+                    return MapHelper.getMapData(FEATUREDATA.GEOM, FEATUREDATA.LABEL, 4326, create
+                        .select(
+                            FEATUREDATA.GEOM, observations.getField("species"),
+                            FEATUREDATA.LABEL
+                        )
+                        .from(observations)
+                        .join(FEATUREDATA).on(observations.getField(GRIDTREE.PARENTFEATUREID).eq(FEATUREDATA.ID))
+                        .where(FEATUREDATA.RESOLUTIONID.eq(resolution))
+                    );
                 }
         });
         return new MapFileModel("DesignationSpeciesDensity.map", data);

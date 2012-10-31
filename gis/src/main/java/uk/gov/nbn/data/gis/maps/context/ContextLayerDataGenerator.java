@@ -20,12 +20,11 @@ public class ContextLayerDataGenerator {
     
     public String getContextLayerData(ContextLayer layer) {
         SQLServerFactory create = new SQLServerFactory();
-        
-        return MapHelper.getMapData("geom", "id", create
-                .select(CONTEXTLAYERFEATUREDATA.ID, CONTEXTLAYERFEATUREDATA.GEOM)
-                .from(CONTEXTLAYERFEATUREDATA)
-                .where(CONTEXTLAYERFEATUREDATA.CONTEXTLAYERID.eq(layer.getId()))
-            , layer.getSrid());
+        return MapHelper.getMapData(CONTEXTLAYERFEATUREDATA.GEOM, CONTEXTLAYERFEATUREDATA.ID, layer.getSrid(), create
+            .select(CONTEXTLAYERFEATUREDATA.ID, CONTEXTLAYERFEATUREDATA.GEOM)
+            .from(CONTEXTLAYERFEATUREDATA)
+            .where(CONTEXTLAYERFEATUREDATA.CONTEXTLAYERID.eq(layer.getId()))
+        );
     }
     
     public List<ContextLayer> getContextLayers() {
