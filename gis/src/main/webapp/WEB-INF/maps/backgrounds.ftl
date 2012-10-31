@@ -81,7 +81,7 @@
   END # Layer
 [/#macro]
 
-[#macro selectedFeature featureID spatialConnection]
+[#macro selectedFeature data spatialConnection]
     LAYER
         NAME                                                "Selected-Feature"
         TYPE                                                POLYGON
@@ -91,11 +91,7 @@
         CONNECTION                                          "${spatialConnection}"
         PROCESSING                                          "CLOSE_CONNECTION=DEFER"
         OPACITY                                             60
-        DATA                        "geom from (
-                                        SELECT id, geom
-                                        FROM FeatureData
-                                        WHERE identifier = '${featureID}'
-                                    ) AS foo USING UNIQUE id USING SRID=4326"
+        DATA                                                "${data}"
 
         METADATA
             "wms_title"                                       "Selected-Feature"
@@ -118,15 +114,15 @@
     END
 [/#macro]
 
-[#macro contextLayers spatialConnection]
+[#macro contextLayers generator spatialConnection]
     [#assign layers=[
         "GB-Coast", "Ireland-Coast", "GB-Hundred-km-Grid", "Ireland-Hundred-km-Grid",
         "GB-Coast-with-Hundred-km-Grid", "GB-and-Ireland-Coasts-with-Hundred-km-Grid",
         "Vice-counties-(low-res)", "GB-and-Ireland-Hundred-km-Grid"
     ]]
-    [#list layers as contextLayer]
+    [#list generator.contextLayers as contextLayer]
         LAYER
-            NAME                                                "${contextLayer}"
+            NAME                                                "${layers[contextLayer.id-1]}"
             TYPE                                                LINE
             STATUS                                              OFF
             CONNECTIONTYPE                                      PLUGIN
@@ -134,19 +130,15 @@
             CONNECTION                                          "${spatialConnection}"
             PROCESSING                                          "CLOSE_CONNECTION=DEFER"
 
-            DATA                        "geom from (
-                                            SELECT id, geom
-                                            FROM ContextLayerFeatureData
-                                            WHERE contextLayerID = ${contextLayer_index+1}
-                                        ) AS foo USING UNIQUE id USING SRID=27700"
+            DATA                                                "${generator.getContextLayerData(contextLayer)}"
 
             METADATA
-                "wms_title"                                       "${contextLayer}"
+                "wms_title"                                       "${layers[contextLayer.id-1]}"
                 "wms_include_items"                               "all"
             END
 
             PROJECTION
-                "init=epsg:27700"
+                "init=epsg:${contextLayer.srid?c}"
             END
 
             CLASS

@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 import javax.ws.rs.core.MediaType;
+import org.jooq.util.sqlserver.SQLServerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.nbn.data.gis.processor.MapFileModel;
@@ -13,6 +14,10 @@ import uk.gov.nbn.data.gis.processor.MapService;
 import uk.gov.nbn.data.gis.processor.MapContainer;
 import uk.gov.nbn.data.gis.providers.annotations.ServiceURL;
 import uk.org.nbn.nbnv.api.model.HabitatDataset;
+import org.jooq.Condition;
+import org.jooq.SelectHavingStep;
+import static uk.gov.nbn.data.dao.jooq.Tables.*;
+import static org.jooq.impl.Factory.*;
 
 /**
  * The following map service will make a call to the data api as defined in
@@ -28,15 +33,14 @@ public class HabitatDatasetsMap {
     private final LayerGenerator layerGenerator = new LayerGenerator();
     
     public static class LayerGenerator {
-        private static final String DATA = "geom from ("
-            + "SELECT geom, hffd.id "
-            + "FROM HabitatFeatureFeatureData hffd "
-            + "INNER JOIN HabitatFeatureData hfd ON hfd.featureID = hffd.id "
-            + "WHERE habitatDatasetKey = '%s'"
-        + ") AS foo USING UNIQUE id USING SRID=4326";
-    
         public String getData(String habitat) {
-            return String.format(DATA, habitat);
+            SQLServerFactory create = new SQLServerFactory();
+            return MapHelper.getMapData("geom", "id", create.
+                    select(HABITATFEATUREFEATUREDATA.GEOM, HABITATFEATUREFEATUREDATA.ID)
+                    .from(HABITATFEATUREFEATUREDATA)
+                    .join(HABITATFEATUREDATA).on(HABITATFEATUREDATA.FEATUREID.eq(HABITATFEATUREFEATUREDATA.ID))
+                    .where(HABITATFEATUREDATA.HABITATDATASETKEY.eq(habitat))
+                , 4326);
         }
     }
     

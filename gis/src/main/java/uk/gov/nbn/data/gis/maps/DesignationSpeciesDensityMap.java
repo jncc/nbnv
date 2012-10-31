@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import org.jooq.util.sqlserver.SQLServerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.nbn.data.gis.maps.MapHelper.ResolutionDataGenerator;
@@ -17,7 +18,10 @@ import uk.gov.nbn.data.gis.providers.annotations.PathParam;
 import uk.gov.nbn.data.gis.providers.annotations.QueryParam;
 import uk.gov.nbn.data.gis.providers.annotations.ServiceURL;
 import uk.org.nbn.nbnv.api.model.User;
-
+import org.jooq.Condition;
+import org.jooq.SelectHavingStep;
+import static uk.gov.nbn.data.dao.jooq.Tables.*;
+import static org.jooq.impl.Factory.*;
 /**
  * The following represents a Map service for DesignationSpeciesDensity
  * 
@@ -52,26 +56,6 @@ public class DesignationSpeciesDensityMap {
         LAYERS = new String[]{TEN_KM_LAYER_NAME, TWO_KM_LAYER_NAME, ONE_KM_LAYER_NAME, ONE_HUNDRED_M_LAYER_NAME};
     }
     
-    private static final String QUERY = "geom from ("
-            + "SELECT geom, species, label "
-            + "FROM ("
-                + "SELECT o.userID, td.code, gt.parentFeatureID AS featureID, "
-                    + "COUNT(DISTINCT o.pTaxonVersionKey) AS species "
-                + "FROM [dbo].[UserTaxonObservationData] o " 
-                + "INNER JOIN [dbo].[GridTree] gt ON gt.featureID = o.featureID "
-                + "INNER JOIN [dbo].[DesignationTaxonData] td ON td.pTaxonVersionKey = o.pTaxonVersionKey "
-                + "WHERE absence = 0 "
-                + "AND code = '%s' "
-                + "AND userID = %s "
-                + "%s " //placeholder for dataset filter
-                + "%s " //startyear for dataset filter
-                + "%s " //endyear for dataset filter
-                + "GROUP BY gt.parentFeatureID, td.code, o.userID"
-            + ") a "
-            + "INNER JOIN [dbo].[FeatureData] f ON f.id = a.featureID "
-            + "WHERE resolutionID = %d "
-        + ") AS foo USING UNIQUE label USING SRID=4326";
-    
     @Autowired Properties properties;
      
     @MapService("{designationKey}")
@@ -92,11 +76,35 @@ public class DesignationSpeciesDensityMap {
         data.put("layerGenerator", new ResolutionDataGenerator() {
                 @Override
                 public String getData(int resolution) {
-                    return String.format(QUERY, key, user.getId(), 
-                        MapHelper.createInDatasetsSegment(datasetKeys),
-                        MapHelper.createStartYearSegment(startYear),
-                        MapHelper.createEndYearSegment(endYear),
-                        resolution);
+                    SQLServerFactory create = new SQLServerFactory();
+                    
+                    Condition eq = 
+                            USERTAXONOBSERVATIONDATA.ABSENCE.eq(false)
+                            .and(DESIGNATIONTAXONDATA.CODE.eq(key))
+                            .and(USERTAXONOBSERVATIONDATA.USERID.eq(user.getId()));
+                    eq = MapHelper.createTemporalSegment(eq, startYear, endYear);
+                    
+                    SelectHavingStep SUB_SELECT = create
+                        .select(
+                            USERTAXONOBSERVATIONDATA.USERID,
+                            DESIGNATIONTAXONDATA.CODE,
+                            GRIDTREE.PARENTFEATUREID,
+                            countDistinct(USERTAXONOBSERVATIONDATA.PTAXONVERSIONKEY).as("species"))
+                        .from(USERTAXONOBSERVATIONDATA)
+                        .join(GRIDTREE).on(GRIDTREE.FEATUREID.eq(USERTAXONOBSERVATIONDATA.FEATUREID))
+                        .join(DESIGNATIONTAXONDATA).on(DESIGNATIONTAXONDATA.PTAXONVERSIONKEY.eq(USERTAXONOBSERVATIONDATA.PTAXONVERSIONKEY))
+                        .where(eq)
+                        .groupBy(GRIDTREE.PARENTFEATUREID, DESIGNATIONTAXONDATA.CODE, USERTAXONOBSERVATIONDATA.USERID);
+                    
+                    return MapHelper.getMapData("geom", "label", create
+                            .select(
+                                FEATUREDATA.GEOM, SUB_SELECT.getField("species"),
+                                FEATUREDATA.LABEL
+                            )
+                            .from(SUB_SELECT)
+                            .join(FEATUREDATA).on(SUB_SELECT.getField(GRIDTREE.PARENTFEATUREID).eq(FEATUREDATA.ID))
+                            .where(FEATUREDATA.RESOLUTIONID.eq(resolution))
+                        , 4326);
                 }
         });
         return new MapFileModel("DesignationSpeciesDensity.map", data);
