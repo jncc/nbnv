@@ -4,7 +4,7 @@ import com.sun.jersey.api.client.WebResource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
-import org.apache.commons.lang.StringEscapeUtils;
+import org.jooq.Condition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.nbn.data.gis.processor.MapContainer;
@@ -17,6 +17,8 @@ import uk.gov.nbn.data.gis.providers.annotations.ServiceURL;
 import uk.org.nbn.nbnv.api.model.BoundingBox;
 import uk.org.nbn.nbnv.api.model.Feature;
 import uk.org.nbn.nbnv.api.model.User;
+import static uk.gov.nbn.data.dao.jooq.Tables.*;
+import org.jooq.util.sqlserver.SQLServerFactory;
 
 /**
  * The following map container will create two map services. The first being a 
@@ -29,27 +31,7 @@ import uk.org.nbn.nbnv.api.model.User;
 @Component
 @MapContainer("SiteReport")
 public class SiteReportMap {
-    @Autowired WebResource resource;
-    private static final String WITHIN_QUERY = "SELECT containedFeatureID "
-            + "FROM FeatureContains fc INNER JOIN FeatureData fd ON fc.featureID = fd.id "
-            + "WHERE fd.identifier = '%s'";
-    
-    private static final String OVERLAPS_QUERY = "SELECT overlappedFeatureID "
-            + "FROM FeatureOverlaps fo INNER JOIN FeatureData fd ON fo.featureID = fd.id "
-            + "WHERE fd.identifier = '%s'";
-    
-    private static final String QUERY = "geom from ("
-            + "SELECT o.featureID , fd.geom, resolutionID, o.absence "
-            + "FROM [dbo].[UserTaxonObservationData] o "
-            + "INNER JOIN [dbo].[FeatureData] fd ON fd.id = o.featureID "
-            + "WHERE pTaxonVersionKey = '%s' "
-            + "AND o.featureID in (%s) "
-            + "AND userID = %s "
-            + "%s " //place for dataset filter
-            + "%s " //place for start year filter
-            + "%s " //place for end year filter
-        + ") AS foo USING UNIQUE featureID USING SRID=4326";
-    
+    @Autowired WebResource resource;    
     @Autowired Properties properties;
     
     @MapService("{featureID}")
@@ -60,7 +42,7 @@ public class SiteReportMap {
         data.put("extent", getNativeBoundingBox(featureID));
         data.put("mapServiceURL", mapServiceURL);
         data.put("properties", properties);
-        data.put("featureID", StringEscapeUtils.escapeSql(featureID));
+        data.put("featureID", featureID);
         return new MapFileModel("SiteReport.map",data);
     }
     
@@ -77,20 +59,38 @@ public class SiteReportMap {
         
         HashMap<String, Object> data = new HashMap<String, Object>();
         
-        String spatialRelationSelect = String.format(spatialRelation.equals("overlap") 
-                ? OVERLAPS_QUERY : WITHIN_QUERY, featureID);
+        SQLServerFactory create = new SQLServerFactory();
+        Condition condition = USERTAXONOBSERVATIONDATA.PTAXONVERSIONKEY.eq(taxonKey)
+                .and(FEATUREDATA.IDENTIFIER.eq(featureID))
+                .and(USERTAXONOBSERVATIONDATA.USERID.eq(user.getId()))
+                .and(USERTAXONOBSERVATIONDATA.FEATUREID.in(
+                    spatialRelation.equals("overlap") ? create
+                        .select(FEATURECONTAINS.CONTAINEDFEATUREID)
+                        .from(FEATURECONTAINS).join(FEATUREDATA).on(FEATUREDATA.ID.eq(FEATURECONTAINS.FEATUREID))
+                        .where(FEATUREDATA.IDENTIFIER.eq(featureID))
+                    : create
+                        .select(FEATUREOVERLAPS.OVERLAPPEDFEATUREID)
+                        .from(FEATUREOVERLAPS).join(FEATUREDATA).on(FEATUREDATA.ID.eq(FEATUREOVERLAPS.FEATUREID))
+                        .where(FEATUREDATA.IDENTIFIER.eq(featureID))
+                ));
+                
+        condition = MapHelper.createTemporalSegment(condition, startYear, endYear);
+        condition = MapHelper.createInDatasetsSegment(condition, datasetKeys);
         
         data.put("extent", getNativeBoundingBox(featureID));
         data.put("mapServiceURL", mapServiceURL);
         data.put("properties", properties);
-        data.put("featureID", StringEscapeUtils.escapeSql(featureID));
+        data.put("featureData", MapHelper.getSelectedFeatureData(featureID));
         data.put("taxonVersionKey", taxonKey);
-        data.put("recordsData", String.format(QUERY, taxonKey, spatialRelationSelect, user.getId(), 
-                        MapHelper.createInDatasetsSegment(datasetKeys),
-                        MapHelper.createStartYearSegment(startYear),
-                        MapHelper.createEndYearSegment(endYear)));
+        data.put("recordsData", MapHelper.getMapData("geom", "featureID", create.
+                select(USERTAXONOBSERVATIONDATA.FEATUREID, FEATUREDATA.GEOM, FEATUREDATA.RESOLUTIONID, USERTAXONOBSERVATIONDATA.ABSENCE)
+                .from(USERTAXONOBSERVATIONDATA)
+                .join(FEATUREDATA).on(FEATUREDATA.ID.eq(USERTAXONOBSERVATIONDATA.FEATUREID))
+                .where(condition)
+            , 4326));
         return new MapFileModel("SiteReport.map",data);
     }
+    
     
     private BoundingBox getNativeBoundingBox(String featureId) {
         return resource

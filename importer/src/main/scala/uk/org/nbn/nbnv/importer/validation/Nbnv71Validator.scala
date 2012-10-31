@@ -22,7 +22,7 @@ class Nbnv71Validator {
       val r1 = new Result {
         def level: ResultLevel.ResultLevel = ResultLevel.ERROR
         def reference: String = record.key
-        def message: String = "Start date is in the future"
+        def message: String = "NBNV-71: Start date is in the future"
       }
 
       resultList.append(r1)
@@ -32,7 +32,7 @@ class Nbnv71Validator {
       val r2 = new Result {
         def level: ResultLevel.ResultLevel = ResultLevel.ERROR
         def reference: String = record.key
-        def message: String = "End date is in the future"
+        def message: String = "NBNV-71: End date is in the future"
       }
 
       resultList.append(r2)

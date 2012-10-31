@@ -8,22 +8,22 @@ class Nbnv84Validator {
     if ((record.eastRaw.get matches """^\-*\d{1,3}(\.\d+)*$""") == false) {
       new Result {
         def level = ResultLevel.ERROR
-        def message = "The value of east is not a valid numeric longitude: %s".format(record.eastRaw.get)
-        def reference = "Record " + record.key
+        def message = "NBNV-84: The value of east is not a valid numeric longitude: %s".format(record.eastRaw.get)
+        def reference = record.key
       }
     }
     else if ((record.northRaw.get matches """^\-*\d{1,2}(\.\d+)*$""") == false) {
       new Result {
         def level = ResultLevel.ERROR
-        def message = "The value of north is not a valid numeric latitude: %s".format(record.northRaw.get)
-        def reference = "Record " + record.key
+        def message = "NBNV-84: The value of north is not a valid numeric latitude: %s".format(record.northRaw.get)
+        def reference = record.key
       }
     }
     else  {
       new Result {
         def level = ResultLevel.DEBUG
-        def message = "Validated: east and north are numeric"
-        def reference = "Record " + record.key
+        def message = "NBNV-84: Validated: east and north are numeric"
+        def reference = record.key
       }
     }
   }

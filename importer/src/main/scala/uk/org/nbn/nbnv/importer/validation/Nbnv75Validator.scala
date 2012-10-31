@@ -17,6 +17,6 @@ class Nbnv75Validator(validator: DateFormatValidator) {
 
     val validFormats = List("dd/MM/yyyy", "dd-MM-yyyy", "yyyy/MM/dd", "yyyy-MM-dd", "dd MMM yyyy", "MMM yyyy", "yyyy")
 
-    validator.validate(record,true, false, validFormats)
+    validator.validate("NBNV-75", record,true, false, validFormats)
   }
 }

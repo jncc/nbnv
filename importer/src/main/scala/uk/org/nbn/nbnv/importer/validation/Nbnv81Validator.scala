@@ -10,8 +10,8 @@ class Nbnv81Validator {
     def success = {
       new Result {
         def level = ResultLevel.DEBUG
-        def message = "Validated: A valid grid reference was supplied"
-        def reference = "Record " + recordKey
+        def message = "NBNV-81: Validated: A valid grid reference was supplied"
+        def reference = recordKey
       }
     }
 
@@ -24,8 +24,8 @@ class Nbnv81Validator {
     else {
       new Result {
         def level = ResultLevel.ERROR
-        def message = "'%s' is not a valid grid reference".format(gridReference)
-        def reference = "Record " + recordKey
+        def message = "NBNV-81: '%s' is not a valid grid reference".format(gridReference)
+        def reference = recordKey
       }
     }
   }
