@@ -33,7 +33,7 @@
             <fieldset>
                 <legend>Regions</legend>
                 <label for="nbn-region-selector">Coastlines</label>
-                <select name="background" id="nbn-region-selector" disabled>
+                <select name="background" id="nbn-region-selector">
                     <option value="gbi">GB and Ireland</option>
                     <option value="gb">Great Britain</option>
                     <option value="i">Ireland</option>
@@ -54,9 +54,9 @@
             <fieldset>
                 <legend>Overlays and backgrounds</legend>
                 <input type="checkbox" value="os" name="background">Ordnance survey<br/>
-                <input type="checkbox" value="vicecounties" name="background" disabled>Vice counties (not yet available)<br/>
-                <input type="checkbox" value="100kgrid" name="background" disabled>100km grid (not yet available)<br/>
-                <input type="checkbox" value="10kgrid" name="background" disabled>10km grid (not yet available)<br/>
+                <input type="checkbox" value="vicecounties" name="background">Vice counties<br/>
+                <input type="checkbox" value="100kgrid" name="background">100km grid<br/>
+                <input type="checkbox" value="10kgrid" name="background">10km grid<br/>
             </fieldset>
             <input type="submit" value="Submit"></td>
     </div>

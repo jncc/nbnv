@@ -14,7 +14,7 @@
         $.each(formObjArray, function(i, obj){
             if(toReturn[obj.name] == undefined)
                 toReturn[obj.name] = obj.value;
-            else if (typeof toReturn[obj.name] == Array)
+            else if (toReturn[obj.name] instanceof Array)
                 toReturn[obj.name].push(obj.value);
             else
                 toReturn[obj.name] = [toReturn[obj.name],obj.value];
@@ -23,10 +23,12 @@
     }
     
     function getKeyValuePairsWithBusinessLogic(keyValuePairs){
+        
         //Remove the feature argument generated when Vice County value is 'none''
         if(keyValuePairs.hasOwnProperty('feature') && keyValuePairs['feature'].toUpperCase()=='NONE'){
             delete keyValuePairs['feature'];
         }
+        
         //Add the year bands formatted for the grid map service
         var showOutline = keyValuePairs.hasOwnProperty('showOutline');
         for(var i=1; i<4; i++){
@@ -43,11 +45,27 @@
             delete keyValuePairs['endYear' + i];
             delete keyValuePairs['value-nbn-colour-picker-' + i];
         }
+        
+        //If OS is used as a background it must appear first to force vector layers to be drawn over it and not be obscured by it
+        if(keyValuePairs.hasOwnProperty('background') && keyValuePairs['background'] instanceof Array){
+            if($.inArray('os',keyValuePairs['background']) > -1){
+                var osFirstArray = ['os'];
+                $.each(keyValuePairs['background'],function(index, value){
+                    if(value != 'os'){
+                        osFirstArray.push(value);
+                    }
+                });
+                keyValuePairs['background'] = osFirstArray;
+            }
+        }
+        
         //Remove the hidden tvk, just used to get the tvk from the path of the page request to here
         delete keyValuePairs['tvk'];
+        
         //Remove the hidden outline colour
         delete keyValuePairs['value-nbn-colour-picker-outline'];
         delete keyValuePairs['showOutline'];
+        
         return keyValuePairs;
     }
         
@@ -65,6 +83,7 @@
         //an edit now
         var pattern = /band[0-9]/g;
         var toReturn = queryString.replace(pattern,'band');
+        console.log(toReturn);
         return toReturn;
     }
 
