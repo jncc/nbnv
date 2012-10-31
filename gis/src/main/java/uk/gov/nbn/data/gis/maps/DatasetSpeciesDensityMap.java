@@ -25,6 +25,7 @@ import org.jooq.Condition;
 import org.jooq.SelectHavingStep;
 import static uk.gov.nbn.data.dao.jooq.Tables.*;
 import static org.jooq.impl.Factory.*;
+import uk.gov.nbn.data.gis.maps.context.ContextLayerDataGenerator;
 
 
 /**
@@ -62,6 +63,7 @@ public class DatasetSpeciesDensityMap {
     
 
     @Autowired Properties properties;
+    @Autowired ContextLayerDataGenerator contextGenerator;
     
     @MapService("{datasetKey}")
     @GridMap(
@@ -86,6 +88,7 @@ public class DatasetSpeciesDensityMap {
         data.put("buckets", BUCKETS);
         data.put("mapServiceURL", mapServiceURL);
         data.put("properties", properties);
+        data.put("contextGenerator", contextGenerator);
         data.put("layerGenerator", new ResolutionDataGenerator() {
                 @Override
                 public String getData(int resolution) {
@@ -108,10 +111,10 @@ public class DatasetSpeciesDensityMap {
                          .groupBy(GRIDTREE.PARENTFEATUREID, USERTAXONOBSERVATIONDATA.DATASETKEY, USERTAXONOBSERVATIONDATA.USERID);
                     
                     SelectHavingStep query = create
-                        .select(FEATUREDATA.GEOM, FEATUREDATA.LABEL, FEATUREDATA.getField("species"))
-                        .from(FEATUREDATA)
+                        .select(FEATUREDATA.GEOM, FEATUREDATA.LABEL, SUB_SELECT.getField("species"))
+                        .from(SUB_SELECT)
                         .join(FEATUREDATA).on(FEATUREDATA.ID.eq(SUB_SELECT.getField(GRIDTREE.FEATUREID)))
-                        .where(FEATUREDATA.RESOLUTIONID.eq(0));
+                        .where(FEATUREDATA.RESOLUTIONID.eq(resolution));
                     return MapHelper.getMapData("geom", "label", query, 4326);
                 }
         });

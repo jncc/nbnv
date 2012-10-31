@@ -5,10 +5,12 @@ import com.sun.jersey.api.client.WebResource;
 import java.awt.Color;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.gov.nbn.data.gis.maps.context.ContextLayerDataGenerator;
 import uk.gov.nbn.data.gis.processor.Acknowledgement;
 import uk.gov.nbn.data.gis.processor.MapFileModel;
 import uk.gov.nbn.data.gis.processor.MapService;
@@ -40,18 +42,29 @@ import uk.org.nbn.nbnv.api.model.User;
 @Component
 @MapContainer("SingleSpecies")
 public class SingleSpeciesAtlasMap {
+    private static final String TEN_KM_LAYER_NAME = "Grid-10km";
+    private static final String TWO_KM_LAYER_NAME = "Grid-2km";
+    private static final String ONE_KM_LAYER_NAME = "Grid-1km";
+    private static final String ONE_HUNDRED_M_LAYER_NAME = "Grid-100m";
     private static final int SYMBOLOGY_OUTLINE_WIDTH_DENOMINATOR = 10;
+    
+    private static final String[] LAYERS;
     
     @Autowired WebResource resource;
     @Autowired Properties properties;
+    @Autowired ContextLayerDataGenerator contextGenerator;
+    
+    static {
+        LAYERS = new String[]{TEN_KM_LAYER_NAME, TWO_KM_LAYER_NAME, ONE_KM_LAYER_NAME, ONE_HUNDRED_M_LAYER_NAME};
+    }
     
     @MapService("{taxonVersionKey}/atlas/{symbol}")
     @GridMap(
         layers={
-            @GridLayer(name="10km",     layer="Grid-10km",  resolution=Resolution.TEN_KM),
-            @GridLayer(name="2km",      layer="Grid-2km",   resolution=Resolution.TWO_KM),
-            @GridLayer(name="1km",      layer="Grid-1km",   resolution=Resolution.ONE_KM),
-            @GridLayer(name="100m",     layer="Grid-100m",  resolution=Resolution.ONE_HUNDRED_METERS)
+            @GridLayer(name="10km",     layer=TEN_KM_LAYER_NAME,        resolution=Resolution.TEN_KM),
+            @GridLayer(name="2km",      layer=TWO_KM_LAYER_NAME,        resolution=Resolution.TWO_KM),
+            @GridLayer(name="1km",      layer=ONE_KM_LAYER_NAME,        resolution=Resolution.ONE_KM),
+            @GridLayer(name="100m",     layer=ONE_HUNDRED_M_LAYER_NAME, resolution=Resolution.ONE_HUNDRED_METERS)
         },
         defaultLayer="10km"
     )    
@@ -79,10 +92,12 @@ public class SingleSpeciesAtlasMap {
         
         data.put("symbol", symbol);
         data.put("layers", gridMapDefinition.layers());
+        data.put("osRequiredLayers", LAYERS);
         data.put("fillColour", new Color(Integer.parseInt(fillColour, 16)));
         data.put("outlineColour", new Color(Integer.parseInt(outlineColour, 16)));
         data.put("outlineWidthDenominator", SYMBOLOGY_OUTLINE_WIDTH_DENOMINATOR);
         data.put("mapServiceURL", mapServiceURL);
+        data.put("contextGenerator", contextGenerator);
         data.put("properties", properties);
         data.put("layerGenerator", SingleSpeciesMap.getSingleSpeciesResolutionDataGenerator(key, user, datasetKeys, startYear, endYear));
         return new MapFileModel("SingleSpeciesSymbology.map",data);

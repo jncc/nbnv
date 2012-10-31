@@ -30,9 +30,15 @@ public @interface GridMap {
 
     GridLayer[] layers();
     String defaultLayer();
-    Layer[] backgrounds() default {};
+    Layer[] backgrounds() default {
+        @Layer(name="os", layers="OS-Scale-Dependent" ),
+        @Layer(name="gb", layers="GB-Coast" ),
+        @Layer(name="gbi", layers={"GB-Coast", "Ireland-Coast"} ),
+        @Layer(name="gb100kgrid", layers="GB-Coast-with-Hundred-km-Grid" ),
+        @Layer(name="gbi100kgrid", layers="GB-and-Ireland-Coasts-with-Hundred-km-Grid" )
+    };
     Layer[] overlays() default {};
-    String[] defaultBackgrounds() default {};
+    String[] defaultBackgrounds() default {"gbi100kgrid"};
     String[] defaultOverlays() default {};
     String epsgCode() default "EPSG:27700";
     int[] defaultExtent() default {-250000, -50000, 750000, 1300000};

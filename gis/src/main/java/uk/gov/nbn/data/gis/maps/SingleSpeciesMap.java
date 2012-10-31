@@ -51,6 +51,8 @@ public class SingleSpeciesMap {
     private static final String[] LAYERS;
     
     @Autowired WebResource resource;
+    @Autowired Properties properties;
+    @Autowired ContextLayerDataGenerator contextGenerator;
     
     static {
         COLOURS = new HashMap<String, Color>();
@@ -61,9 +63,6 @@ public class SingleSpeciesMap {
         LAYERS = new String[]{TEN_KM_LAYER_NAME, TWO_KM_LAYER_NAME, ONE_KM_LAYER_NAME, ONE_HUNDRED_M_LAYER_NAME};
     }
     
-    @Autowired Properties properties;
-    @Autowired ContextLayerDataGenerator contextGenerator;
-    
     @MapService("{taxonVersionKey}")
     @GridMap(
         layers={
@@ -73,14 +72,6 @@ public class SingleSpeciesMap {
             @GridLayer(name="100m",     layer=ONE_HUNDRED_M_LAYER_NAME, resolution=Resolution.ONE_HUNDRED_METERS)
         },
         defaultLayer="10km",
-        backgrounds={
-            @Layer(name="os", layers="OS-Scale-Dependent" ),
-            @Layer(name="gb", layers="GB-Coast" ),
-            @Layer(name="gbi", layers={"GB-Coast", "Ireland-Coast"} ),
-            @Layer(name="gb100kgrid", layers="GB-Coast-with-Hundred-km-Grid" ),
-            @Layer(name="gbi100kgrid", layers="GB-and-Ireland-Coasts-with-Hundred-km-Grid" )
-        },
-        defaultBackgrounds="gbi100kgrid",
         overlays=@Layer(name="feature", layers="Selected-Feature" )
     )
     public MapFileModel getSingleSpeciesModel(
