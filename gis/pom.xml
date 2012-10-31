@@ -136,7 +136,7 @@
                                 </generate>
                                 <target>
                                     <packageName>uk.gov.nbn.data.dao.jooq</packageName>
-                                    <directory>target/generated-sources/jooq</directory>
+                                    <directory>${project.build.directory}/generated-sources/jooq</directory>
                                 </target>
                             </generator>
                         </configuration>
