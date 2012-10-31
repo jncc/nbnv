@@ -1,17 +1,32 @@
 package uk.gov.nbn.data.gis.maps;
 
-import java.util.Iterator;
 import java.util.List;
+import org.jooq.Condition;
+import org.jooq.DatePart;
+import org.jooq.Field;
+import org.jooq.Query;
+import static org.jooq.impl.Factory.*;
+import org.jooq.util.sqlserver.SQLServerFactory;
+import static uk.gov.nbn.data.dao.jooq.Tables.*;
 
 /**
  * The following class provides methods which can be used to inject SQL filters
  * into a SQL statement.
- * 
- * USE WITH CAUTION. Ensure that the parameters passed to these methods are 
- * validly sanitised to avoid SQL injection attacks
  * @author Chris Johnson
  */
-class MapHelper {
+public class MapHelper {
+    
+    public static String getMapData(Field<?> geomField, Field<?> uniqueField, int srid, Query query) {
+        return new StringBuilder(geomField.getName())
+                .append(" from (")
+                .append(query.getSQL(true))
+                .append(") AS foo USING UNIQUE ")
+                .append(uniqueField.getName())
+                .append(" USING SRID=")
+                .append(srid)
+                .toString();
+    }
+    
     /**The following interface enables anonymous implementations for creating
      * SQL Expressions in Map Server Templates
      **/
@@ -19,61 +34,47 @@ class MapHelper {
         String getData(int resolution);
     }
     
-    /**
-     * @param startYear
-     * @return A startyear filter for a given start year prefixed with AND for 
-     * use in a WHERE clause of an SQL query
-     */
-    static String createStartYearSegment(String startYear) {
+    static Condition createTemporalSegment(Condition currentCond, String startYear, String endYear) {
+        return createEndYearSegment(createStartYearSegment(currentCond, startYear), endYear);
+    }
+    
+    private static Condition createStartYearSegment(Condition currentCond, String startYear) {
         if(startYear != null) {
-            return new StringBuilder("AND startDate >= ")
-                .append(sqlQuote(startYear))
-                .toString();
+            return currentCond.and(
+                extract(USERTAXONOBSERVATIONDATA.STARTDATE,DatePart.YEAR)
+                .greaterOrEqual(Integer.parseInt(startYear)));
         }
         else {
-            return "";
+            return currentCond;
         }
     }
     
-     /**
-     * @param endYear
-     * @return A endYear filter for a given end year prefixed with AND for 
-     * use in a WHERE clause of an SQL query
-     */
-    static String createEndYearSegment(String endYear) {
+    private static Condition createEndYearSegment(Condition currentCond, String endYear) {
         if(endYear != null) {
-            return new StringBuilder("AND endDate <= ")
-                .append(sqlQuote(endYear))
-                .toString();
+            return currentCond.and(
+                extract(USERTAXONOBSERVATIONDATA.ENDDATE,DatePart.YEAR)
+                .lessOrEqual(Integer.parseInt(endYear)));
         }
         else {
-            return "";
+            return currentCond;
         }
     }
     
-    /**
-     * @param datasetKeys List of dataset keys 
-     * @return A IN filter with all of dataset keys defined prefixed with AND to
-     * use in a WHERE clause of an SQL Query
-     */
-    static String createInDatasetsSegment(List<String> datasetKeys) {
+    static Condition createInDatasetsSegment(Condition currentCond, List<String> datasetKeys) {
         if(datasetKeys !=null && !datasetKeys.isEmpty()) {
-            StringBuilder toReturn = new StringBuilder("AND datasetKey IN (");
-            Iterator<String> datasetKeyIter = datasetKeys.iterator();
-            toReturn.append(sqlQuote(datasetKeyIter.next()));
-            
-            while(datasetKeyIter.hasNext()) {
-                toReturn.append(",").append(sqlQuote(datasetKeyIter.next()));
-            }
-            toReturn.append(")");
-            return toReturn.toString();
+            return currentCond.and(USERTAXONOBSERVATIONDATA.DATASETKEY.in(datasetKeys));
         }
         else {
-            return "";
+            return currentCond;
         }
     }
     
-    private static String sqlQuote(String toQuote) {
-        return "'" + toQuote + "'";
+    static String getSelectedFeatureData(String selectedFeature) {
+        SQLServerFactory create = new SQLServerFactory();
+        return MapHelper.getMapData(FEATUREDATA.GEOM, FEATUREDATA.ID, 4326, create
+            .select(FEATUREDATA.ID, FEATUREDATA.GEOM)
+            .from(FEATUREDATA)
+            .where(FEATUREDATA.IDENTIFIER.eq(selectedFeature))
+        );
     }
 }

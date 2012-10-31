@@ -1,4 +1,6 @@
 [#ftl]
+[#import "backgrounds.ftl" as backgrounds]
+
 MAP
     IMAGETYPE                                             PNG
     EXTENT                                                -180 -90 180 90
@@ -20,6 +22,9 @@ MAP
     PROJECTION
         "init=epsg:4326"
     END
+
+    [@backgrounds.contextLayers generator=contextGenerator spatialConnection=properties.spatialConnection/]    
+    [@backgrounds.os location=properties.ordnanceSurveyMapDataLocation requires=layers/]
 
     [#list layers as layer]
         LAYER

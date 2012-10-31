@@ -14,6 +14,8 @@ import uk.gov.nbn.data.gis.processor.MapContainer;
 import uk.gov.nbn.data.gis.providers.annotations.ServiceURL;
 import uk.org.nbn.nbnv.api.model.SiteBoundaryDataset;
 
+import static uk.gov.nbn.data.dao.jooq.Tables.*;
+import org.jooq.util.sqlserver.SQLServerFactory;
 /**
  * The following map service will make a call to the data api as defined in
  * the gis.properties to retrieve the most upto-date list of site boundary 
@@ -28,15 +30,14 @@ public class SiteBoundaryDatasetsMap {
     private final LayerGenerator layerGenerator = new LayerGenerator();
     
     public static class LayerGenerator {
-        private static final String DATA = "geom from ("
-            + "SELECT geom, sbfd.id "
-            + "FROM SiteBoundaryFeatureData sbfd "
-            + "INNER JOIN SiteBoundaryData sbd ON sbd.featureID = sbfd.id "
-            + "WHERE siteBoundaryDatasetKey = '%s'"
-        + ") AS foo USING UNIQUE id USING SRID=4326";
-    
         public String getData(String siteBoundary) {
-            return String.format(DATA, siteBoundary);
+            SQLServerFactory create = new SQLServerFactory();
+            return MapHelper.getMapData(SITEBOUNDARYFEATUREDATA.GEOM, SITEBOUNDARYFEATUREDATA.ID, 4326, create.
+                select(SITEBOUNDARYFEATUREDATA.GEOM, SITEBOUNDARYFEATUREDATA.ID)
+                .from(SITEBOUNDARYFEATUREDATA)
+                .join(SITEBOUNDARYDATA).on(SITEBOUNDARYDATA.FEATUREID.eq(SITEBOUNDARYFEATUREDATA.ID))
+                .where(SITEBOUNDARYDATA.SITEBOUNDARYDATASETKEY.eq(siteBoundary))
+            );
         }
     }
     

@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import org.apache.commons.lang.StringEscapeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.nbn.data.gis.maps.MapHelper.ResolutionDataGenerator;
@@ -23,6 +22,12 @@ import uk.gov.nbn.data.gis.providers.annotations.PathParam;
 import uk.gov.nbn.data.gis.providers.annotations.QueryParam;
 import uk.gov.nbn.data.gis.providers.annotations.ServiceURL;
 import uk.org.nbn.nbnv.api.model.User;
+import org.jooq.Condition;
+import org.jooq.SelectHavingStep;
+import static uk.gov.nbn.data.dao.jooq.Tables.*;
+
+import org.jooq.util.sqlserver.SQLServerFactory;
+import uk.gov.nbn.data.gis.maps.context.ContextLayerDataGenerator;
 
 /**
  * The following represents a Map service for SingleSpecies
@@ -46,6 +51,8 @@ public class SingleSpeciesMap {
     private static final String[] LAYERS;
     
     @Autowired WebResource resource;
+    @Autowired Properties properties;
+    @Autowired ContextLayerDataGenerator contextGenerator;
     
     static {
         COLOURS = new HashMap<String, Color>();
@@ -56,20 +63,6 @@ public class SingleSpeciesMap {
         LAYERS = new String[]{TEN_KM_LAYER_NAME, TWO_KM_LAYER_NAME, ONE_KM_LAYER_NAME, ONE_HUNDRED_M_LAYER_NAME};
     }
     
-    private static final String QUERY = "geom from ("
-            + "SELECT f.geom, o.featureID, f.label, o.startDate, o.endDate, o.absence "
-            + "FROM [dbo].[UserTaxonObservationData] o "
-            + "INNER JOIN [dbo].[GridTree] gt ON gt.featureID = o.featureID "
-            + "INNER JOIN [dbo].[FeatureData] f ON f.id = gt.parentFeatureID "
-            + "WHERE pTaxonVersionKey = '%s' "
-            + "AND userID = %s "
-            + "AND resolutionID = %d "
-            + "%s " //place for dataset filter
-            + "%s " //place for start year filter
-            + "%s " //place for end year filter
-        + ") AS foo USING UNIQUE featureID USING SRID=4326";
-    @Autowired Properties properties;
-    
     @MapService("{taxonVersionKey}")
     @GridMap(
         layers={
@@ -79,8 +72,7 @@ public class SingleSpeciesMap {
             @GridLayer(name="100m",     layer=ONE_HUNDRED_M_LAYER_NAME, resolution=Resolution.ONE_HUNDRED_METERS)
         },
         defaultLayer="10km",
-        backgrounds=@Layer(name="os", layer="OS-Scale-Dependent" ),
-        overlays=@Layer(name="feature", layer="Selected-Feature" )
+        overlays=@Layer(name="feature", layers="Selected-Feature" )
     )
     public MapFileModel getSingleSpeciesModel(
             final User user,
@@ -100,7 +92,8 @@ public class SingleSpeciesMap {
         data.put("enablePresence", abundance.equals("all") || abundance.equals("presence"));
         data.put("bands", bands);
         data.put("mapServiceURL", mapServiceURL);
-        data.put("featureID", StringEscapeUtils.escapeSql(featureID));
+        data.put("featureData", MapHelper.getSelectedFeatureData(featureID));
+        data.put("contextGenerator", contextGenerator);
         data.put("properties", properties);
         data.put("layerGenerator", getSingleSpeciesResolutionDataGenerator(key, user, datasetKeys, startYear, endYear));
         return new MapFileModel("SingleSpecies.map",data);
@@ -116,10 +109,27 @@ public class SingleSpeciesMap {
         return new ResolutionDataGenerator() {
                 @Override
                 public String getData(int resolution) {
-                    return String.format(QUERY, taxonKey, user.getId(), resolution, 
-                        MapHelper.createInDatasetsSegment(datasetKeys),
-                        MapHelper.createStartYearSegment(startYear),
-                        MapHelper.createEndYearSegment(endYear));
+                    SQLServerFactory create = new SQLServerFactory();
+                    Condition condition = 
+                            USERTAXONOBSERVATIONDATA.PTAXONVERSIONKEY.eq(taxonKey)
+                            .and(USERTAXONOBSERVATIONDATA.USERID.eq(user.getId())
+                            .and(FEATUREDATA.RESOLUTIONID.eq(resolution)));
+                    condition = MapHelper.createTemporalSegment(condition, startYear, endYear);
+                    condition = MapHelper.createInDatasetsSegment(condition, datasetKeys);
+                    
+                    return MapHelper.getMapData(FEATUREDATA.GEOM, FEATUREDATA.ID, 4326 ,create
+                        .select(
+                            FEATUREDATA.GEOM,
+                            FEATUREDATA.ID,
+                            FEATUREDATA.LABEL,
+                            USERTAXONOBSERVATIONDATA.STARTDATE,
+                            USERTAXONOBSERVATIONDATA.ENDDATE,
+                            USERTAXONOBSERVATIONDATA.ABSENCE)
+                        .from(USERTAXONOBSERVATIONDATA)
+                        .join(GRIDTREE).on(GRIDTREE.FEATUREID.eq(USERTAXONOBSERVATIONDATA.FEATUREID))
+                        .join(FEATUREDATA).on(FEATUREDATA.ID.eq(GRIDTREE.PARENTFEATUREID))
+                        .where(condition)
+                    );
                 }
         };
     }

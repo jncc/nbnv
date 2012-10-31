@@ -102,7 +102,7 @@ public class MapServiceMethodFactory {
                 
     /* Load and all of the maps and return the root mapservicepart */
     private MapServicePart getMapCreatingMethods() {
-        MapServicePart rootNode = new MapServicePart(null, "");         
+        MapServicePart rootNode = new MapServicePart("");         
         
         for(Object mapServiceInstance : context.getBeansWithAnnotation(MapContainer.class).values()) {
             Class<?> currClass = mapServiceInstance.getClass();
@@ -114,17 +114,17 @@ public class MapServiceMethodFactory {
                     String mapServiceFullName = classAnnot.value() + "/" + mapService.value();
                     
                     Iterator<String> partNameIterator = Arrays.asList(mapServiceFullName.split("/")).iterator();
-                    MapServicePart pathPartOrCreate = getPathPartOrCreate(mapServiceInstance, partNameIterator.next(), rootNode);
+                    MapServicePart pathPartOrCreate = getPathPartOrCreate(partNameIterator.next(), rootNode);
 
                     while(partNameIterator.hasNext()) {
-                        pathPartOrCreate = getPathPartOrCreate(mapServiceInstance, partNameIterator.next(), pathPartOrCreate);
+                        pathPartOrCreate = getPathPartOrCreate(partNameIterator.next(), pathPartOrCreate);
                     }
-                    pathPartOrCreate.setAssociatedMethod(currMethod);
+                    pathPartOrCreate.setAssociatedMethodAndInstance(mapServiceInstance, currMethod);
                     
                     //register none standard map service functionality
                     for(Type mapServiceType : Type.getTypesValidForMethod(currMethod)) {
-                        MapServicePart gridMapServicePart = getPathPartOrCreate(mapServiceInstance, mapServiceType.getRequest(), pathPartOrCreate);
-                        gridMapServicePart.setAssociatedMethod(currMethod);
+                        MapServicePart gridMapServicePart = getPathPartOrCreate(mapServiceType.getRequest(), pathPartOrCreate);
+                        gridMapServicePart.setAssociatedMethodAndInstance(mapServiceInstance, currMethod);
                         gridMapServicePart.setMapServiceType(mapServiceType);
                     }
                 }
@@ -133,7 +133,7 @@ public class MapServiceMethodFactory {
         return rootNode;
     }
     
-    private static MapServicePart getPathPartOrCreate(Object instance, String name, MapServicePart toFindIn) {
+    private static MapServicePart getPathPartOrCreate(String name, MapServicePart toFindIn) {
         //look for a child which has the same name as the passed in name
         for(MapServicePart currChild : toFindIn.getChildren()) {
            if(name.equals(currChild.getName())) {
@@ -141,7 +141,7 @@ public class MapServiceMethodFactory {
            }
         }
         //Could not find. Create a new one
-        MapServicePart newPathPart = new MapServicePart(instance, name);
+        MapServicePart newPathPart = new MapServicePart(name);
         toFindIn.addChild(newPathPart);
         return newPathPart;
     }

@@ -24,7 +24,7 @@ MAP
     
     [@backgrounds.os location=properties.ordnanceSurveyMapDataLocation requires=[]/]
     
-    [@backgrounds.selectedFeature featureID=featureID spatialConnection=properties.spatialConnection/]
+    [@backgrounds.selectedFeature data=featureData spatialConnection=properties.spatialConnection/]
 
     [#if taxonVersionKey??]
         LAYER

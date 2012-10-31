@@ -81,7 +81,7 @@
   END # Layer
 [/#macro]
 
-[#macro selectedFeature featureID spatialConnection]
+[#macro selectedFeature data spatialConnection]
     LAYER
         NAME                                                "Selected-Feature"
         TYPE                                                POLYGON
@@ -91,11 +91,7 @@
         CONNECTION                                          "${spatialConnection}"
         PROCESSING                                          "CLOSE_CONNECTION=DEFER"
         OPACITY                                             60
-        DATA                        "geom from (
-                                        SELECT id, geom
-                                        FROM FeatureData
-                                        WHERE identifier = '${featureID}'
-                                    ) AS foo USING UNIQUE id USING SRID=4326"
+        DATA                                                "${data}"
 
         METADATA
             "wms_title"                                       "Selected-Feature"
@@ -116,4 +112,43 @@
             END
         END
     END
+[/#macro]
+
+[#macro contextLayers generator spatialConnection]
+    [#assign layers=[
+        "GB-Coast", "Ireland-Coast", "GB-Hundred-km-Grid", "Ireland-Hundred-km-Grid",
+        "GB-Coast-with-Hundred-km-Grid", "GB-and-Ireland-Coasts-with-Hundred-km-Grid",
+        "Vice-counties-(low-res)", "GB-and-Ireland-Ten-km-Grid"
+    ]]
+    [#list generator.contextLayers as contextLayer]
+        LAYER
+            NAME                                                "${layers[contextLayer.id-1]}"
+            TYPE                                                LINE
+            STATUS                                              OFF
+            CONNECTIONTYPE                                      PLUGIN
+            PLUGIN                                              "msplugin_mssql2008.dll"
+            CONNECTION                                          "${spatialConnection}"
+            PROCESSING                                          "CLOSE_CONNECTION=DEFER"
+
+            DATA                                                "${generator.getContextLayerData(contextLayer)}"
+
+            METADATA
+                "wms_title"                                       "${layers[contextLayer.id-1]}"
+                "wms_include_items"                               "all"
+            END
+
+            PROJECTION
+                "init=epsg:${contextLayer.srid?c}"
+            END
+
+            CLASS
+                NAME                                              "default"
+
+                STYLE
+                    COLOR                                           0 0 0
+                    WIDTH                                           1
+                END
+            END
+        END
+    [/#list]
 [/#macro]
