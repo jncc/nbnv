@@ -157,6 +157,9 @@
             //Do map refresh
             $('#nbn-grid-map-image').attr('src',getURL(form));
             
+            //Turn on all datasets if they are all off
+            nbn.portal.reports.utils.DatasetFields.doSelectDatasetKeys();
+            
             updateResolutionDropDown(form);
             
             return false;
