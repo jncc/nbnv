@@ -11,7 +11,7 @@ class Nbnv163Validator {
     def success = {
       new Result {
         def level = ResultLevel.DEBUG
-        def message = "RecordKey was present"
+        def message = "NBNV-163: RecordKey was present"
         def reference = record.key
       }
     }
@@ -19,7 +19,7 @@ class Nbnv163Validator {
     def fail = {
       new Result {
         def level = ResultLevel.ERROR
-        def message = "RecordKey was not present"
+        def message = "NBNV-163: RecordKey was not present"
         def reference = "(no record key)"
       }
     }

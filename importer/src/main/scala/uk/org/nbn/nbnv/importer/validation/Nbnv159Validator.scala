@@ -11,7 +11,7 @@ class Nbnv159Validator () {
     def success = {
       new Result {
         def level = ResultLevel.DEBUG
-        def message = "Validated: Grid refernce '%s' matches type '%s'".format(gridReference, gridReferenceType.get)
+        def message = "NBNV-159: Validated: Grid refernce '%s' matches type '%s'".format(gridReference, gridReferenceType.get)
         def reference = recordKey
       }
     }
@@ -19,7 +19,7 @@ class Nbnv159Validator () {
     def fail  = {
       new Result {
         def level = ResultLevel.ERROR
-        def message = "Grid refernce '%s' does not match type '%s'".format(gridReference, gridReferenceType.get)
+        def message = "NBNV-159: Grid refernce '%s' does not match type '%s'".format(gridReference, gridReferenceType.get)
         def reference = recordKey
       }
     }
@@ -46,7 +46,7 @@ class Nbnv159Validator () {
         case UnknownGrid => {
           new Result {
             def level = ResultLevel.ERROR
-            def message = "Grid refernce type '%s' is not recognised".format(gridReferenceType.get)
+            def message = "NBNV-159: Grid refernce type '%s' is not recognised".format(gridReferenceType.get)
             def reference = recordKey
           }
         }
@@ -55,7 +55,7 @@ class Nbnv159Validator () {
     else {
       new Result {
         def level = ResultLevel.DEBUG
-        def message = "Validated: Grid reference type not specified".format(gridReference, gridReferenceType)
+        def message = "NBNV-159: Validated: Grid reference type not specified".format(gridReference, gridReferenceType)
         def reference = recordKey
       }
     }

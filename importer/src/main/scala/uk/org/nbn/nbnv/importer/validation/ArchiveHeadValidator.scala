@@ -7,10 +7,10 @@ import uk.org.nbn.nbnv.importer.records.NbnRecord
 
 class ArchiveHeadValidator {
   def validate(archive: Archive) = {
-    var starRecord = archive.iteratorRaw.next()
-    var record = new NbnRecord(starRecord)
+    val starRecord = archive.iteratorRaw.next()
+    val record = new NbnRecord(starRecord)
 
-    var results = new ListBuffer[Result]
+    val results = new ListBuffer[Result]
 
     val v0 = new Nbnv55Validator
     results.append(v0.validate(record))

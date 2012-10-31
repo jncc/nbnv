@@ -12,13 +12,13 @@ class Nbnv115Validator {
     if (label.isEmpty) {
       new Result {
         def level = ResultLevel.ERROR
-        def message = "An attribute must have a label"
+        def message = "NBNV-115: An attribute must have a label"
         def reference = recordKey
       }
     }
     else {
       val validator = new LengthValidator
-      validator.validate(label, "Attribute", label, 50, 1)
+      validator.validate("NBNV-115", label, "Attribute", label, 50, 1)
     }
   }
 }

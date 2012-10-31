@@ -23,14 +23,14 @@ class Nbnv88Validator(db: Database) {
       if (db.repo.confirmSiteBoundary(siteDatasetKey, siteProviderKey)) {
         new Result {
           def level = ResultLevel.DEBUG
-          def message = "Validated: FeatureKey '%s' exists.".format(featureKey)
+          def message = "NBNV-88: Validated: FeatureKey '%s' exists.".format(featureKey)
           def reference = record.key
         }
       }
       else {
         new Result {
           def level = ResultLevel.ERROR
-          def message = "FeatureKey '%s' is invalid".format(featureKey)
+          def message = "NBNV-88: FeatureKey '%s' is invalid".format(featureKey)
           def reference = record.key
         }
       }

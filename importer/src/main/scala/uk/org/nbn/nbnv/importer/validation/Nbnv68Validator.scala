@@ -35,13 +35,13 @@ class Nbnv68Validator {
       new Result {
         def level: ResultLevel.ResultLevel = ResultLevel.DEBUG
         def reference: String = recordKey
-        def message: String = "Validated: %s date is a valid date format".format(resultPrefix)
+        def message: String = "NBNV-68: Validated: '%s' date is a valid date format".format(resultPrefix)
       }
     } else {
       new Result {
         def level: ResultLevel.ResultLevel = ResultLevel.ERROR
         def reference: String = recordKey
-        def message: String = "%s is not a valid date format".format(resultPrefix)
+        def message: String = "NBNV-68: '%s' is not a valid date format".format(resultPrefix)
       }
     }
   }
