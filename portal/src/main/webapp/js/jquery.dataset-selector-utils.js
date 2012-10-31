@@ -1,4 +1,24 @@
 (function($){
+
+    function isAllDatasetsChecked(){
+       var datasetCheckBoxes = $("INPUT[name='datasetKey'][type='checkbox']");
+       var numCheckBoxes = datasetCheckBoxes.length;
+       var numCheckBoxesChecked = datasetCheckBoxes.filter(':checked').length;
+       return numCheckBoxes == numCheckBoxesChecked;
+    }
+    
+    /* This ensures that 'all datasetKeys' are not posted if all of them are selected,
+     * the api assumes all are selected if it doesn't receive any, so it is safe.
+     * It is added to theSubmit event of report site and grid map forms.
+     */
+    namespace("nbn.portal.reports.utils.DatasetFields", {
+        doDeselectDatasetKeys: function(){
+            if(isAllDatasetsChecked()){
+               $("INPUT[name='datasetKey'][type='checkbox']").attr('checked', false);
+            }
+        }
+    });
+    
     $(document).ready(function(){
         /* This is used to check or uncheck all datasets on a selectable dataset table
          * eg as appears on a site report page.  It wires the button's click events to the
@@ -8,28 +28,12 @@
             $("INPUT[name='datasetKey'][type='checkbox']").attr('checked',$('#nbn-select-datasets-auto').is(':checked'));
         });
         
-        /* This ensures that 'all datasetKeys' are not posted if all of them are selected,
-         * the api assumes all are selected if it doesn't receive any, so it is safe.
-         */
-        $('#nbn-site-report-form').submit(function(){
-            if(isAllDatasetsChecked()){
-                $("INPUT[name='datasetKey'][type='checkbox']").attr('checked', false)
-            }
-            return true;
-        });
         
         /* If all datasetKeys are checked then set the select/deselect check box
          * to be checked
          */
          if(isAllDatasetsChecked()){
              $('#nbn-select-datasets-auto').attr('checked', true);
-         }
-         
-         function isAllDatasetsChecked(){
-            var datasetCheckBoxes = $("INPUT[name='datasetKey'][type='checkbox']");
-            var numCheckBoxes = datasetCheckBoxes.length;
-            var numCheckBoxesChecked = datasetCheckBoxes.filter(':checked').length;
-            return numCheckBoxes == numCheckBoxesChecked;
          }
          
     });

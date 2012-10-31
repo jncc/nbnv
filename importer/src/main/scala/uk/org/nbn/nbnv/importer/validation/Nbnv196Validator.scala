@@ -8,6 +8,8 @@ import uk.org.nbn.nbnv.importer.fidelity.Result
 
 //todo write test for this
 class Nbnv196Validator extends DateFormatValidator {
+  def code = "NBNV-196"
+
   def validate(record: NbnRecord) = {
     val validFormats = List("dd/MM/yyyy", "dd-MM-yyyy", "yyyy/MM/dd", "yyyy-MM-dd", "dd MMM yyyy", "MMM yyyy")
 

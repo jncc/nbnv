@@ -14,6 +14,8 @@ import collection.mutable.ListBuffer
 //todo: write a test for this
 class Nbnv73Validator extends DateFormatValidator {
 
+  def code = "NBNV-73"
+
   def validate(record: NbnRecord) = {
     val validFormats = List("dd/MM/yyyy", "dd-MM-yyyy", "yyyy/MM/dd", "yyyy-MM-dd", "dd MMM yyyy")
 
@@ -28,7 +30,7 @@ class Nbnv73Validator extends DateFormatValidator {
         new Result {
           def level: ResultLevel.ResultLevel = ResultLevel.ERROR
           def reference: String = record.key
-          def message: String = "An end date has been specified but it is not the same as the start date 'D'"
+          def message: String = "%s: An end date has been specified but it is not the same as the start date 'D'".format(code)
         })
     }
 

@@ -10,6 +10,8 @@ abstract class DateFormatValidator {
 
   def validate(record: NbnRecord): List[Result]
 
+  protected def code : String
+
   protected def validateDate(record: NbnRecord
                , startDateRequired: Boolean
                , endDateRequired: Boolean
@@ -21,7 +23,7 @@ abstract class DateFormatValidator {
       val r1 = new Result {
         def level: ResultLevel.ResultLevel = ResultLevel.ERROR
         def reference: String = record.key
-        def message: String = "The start date must be specified for date type '%s'".format(record.dateType)
+        def message: String = "%s: The start date must be specified for date type '%s'".format(code, record.dateType)
       }
 
       results.append(r1)
@@ -29,7 +31,7 @@ abstract class DateFormatValidator {
       val r2 = new Result {
         def level: ResultLevel.ResultLevel = ResultLevel.ERROR
         def reference: String = record.key
-        def message: String = "The start date is not specific enough for date type '%s'".format(record.dateType)
+        def message: String = "%s: The start date is not specific enough for date type '%s'".format(code, record.dateType)
       }
 
       results.append(r2)
@@ -39,7 +41,7 @@ abstract class DateFormatValidator {
       val r3 = new Result {
         def level: ResultLevel.ResultLevel = ResultLevel.ERROR
         def reference: String = record.key
-        def message: String = "The end date must be specified for date type '%s'".format(record.dateType)
+        def message: String = "%s: The end date must be specified for date type '%s'".format(code, record.dateType)
       }
 
       results.append(r3)
@@ -48,7 +50,7 @@ abstract class DateFormatValidator {
       val r4 = new Result {
         def level: ResultLevel.ResultLevel = ResultLevel.ERROR
         def reference: String = record.key
-        def message: String = "The end date is not specific enough for date type '%s'".format(record.dateType)
+        def message: String = "%s: The end date is not specific enough for date type '%s'".format(code, record.dateType)
       }
 
       results.append(r4)

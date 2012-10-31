@@ -8,6 +8,8 @@ import java.util.Calendar
 //validate "Y" date type
 //todo: write some tests for this
 class Nbnv284Validator extends DateFormatValidator {
+  def code = "NBNV-284"
+
   def validate(record: NbnRecord) = {
     val results = new ListBuffer[Result]
 

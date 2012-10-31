@@ -9,15 +9,15 @@ class Nbnv57Validator {
       || (record.endDateRaw != null && record.dateType != null)) {
       new Result {
         def level = ResultLevel.DEBUG
-        def message = "Validated: A record date field has been defined."
-        def reference = ""
+        def message = "NBNV-57: Validated: A record date field has been defined."
+        def reference = record.key
       }
     }
     else {
       new Result {
         def level = ResultLevel.ERROR
-        def message = "A record date field must be defined. Either a darwin core eventDate field or an NBN eventDate field must be specified."
-        def reference = ""
+        def message = "NBNV-57: A record date field must be defined. Either a darwin core eventDate field or an NBN eventDate field must be specified."
+        def reference = record.key
       }
     }
   }

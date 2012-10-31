@@ -15,6 +15,8 @@ import java.util.Calendar
 //todo: write a test for this
 class Nbnv74Validator extends DateFormatValidator {
 
+  def code = "NBNV-74"
+
   def validate(record: NbnRecord) = {
     val validFormats = List("dd/MM/yyyy", "dd-MM-yyyy", "yyyy/MM/dd", "yyyy-MM-dd", "dd MMM yyyy", "MMM yyyy")
 
@@ -33,7 +35,7 @@ class Nbnv74Validator extends DateFormatValidator {
         val r2 = new Result {
           def level: ResultLevel.ResultLevel = ResultLevel.ERROR
           def reference: String = record.key
-          def message: String = "The start date is not the start of the month"
+          def message: String = "%s: The start date is not the start of the month".format(code)
         }
 
         results.append(r2)
@@ -47,7 +49,7 @@ class Nbnv74Validator extends DateFormatValidator {
           val r3 = new Result {
             def level: ResultLevel.ResultLevel = ResultLevel.ERROR
             def reference: String = record.key
-            def message: String = "The end date is specified but it is not the end of the month"
+            def message: String = "%s: The end date is specified but it is not the end of the month".format(code)
           }
 
           results.append(r3)

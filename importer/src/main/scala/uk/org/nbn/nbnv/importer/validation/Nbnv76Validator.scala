@@ -11,6 +11,8 @@ import collection.mutable.ListBuffer
 //validate the <Y ad -Y date types
 class Nbnv76Validator extends DateFormatValidator {
 
+  def code = "NBNV-76"
+
   def validate(record: NbnRecord) = {
     val validFormats = List("dd/MM/yyyy", "dd-MM-yyyy", "yyyy/MM/dd", "yyyy-MM-dd", "dd MMM yyyy", "MMM yyyy", "yyyy")
     val results = new ListBuffer[Result]
@@ -19,7 +21,7 @@ class Nbnv76Validator extends DateFormatValidator {
       val r1 = new Result {
         def level: ResultLevel.ResultLevel = ResultLevel.ERROR
         def reference: String = record.key
-        def message: String = "No start date should be specified for date type '%s'".format(record.dateType)
+        def message: String = "%s: No start date should be specified for date type '%s'".format(code, record.dateType)
       }
 
       results.append(r1)
@@ -37,7 +39,7 @@ class Nbnv76Validator extends DateFormatValidator {
         val r3 = new Result {
           def level: ResultLevel.ResultLevel = ResultLevel.ERROR
           def reference: String = record.key
-          def message: String = "The end date is not the end of the year %s".format(endOfYear.get(Calendar.YEAR).toString)
+          def message: String = "%s: The end date is not the end of the year %s".format(code, endOfYear.get(Calendar.YEAR).toString)
         }
 
         results.append(r3)
@@ -48,7 +50,7 @@ class Nbnv76Validator extends DateFormatValidator {
       val r3 = new Result {
         def level: ResultLevel.ResultLevel = ResultLevel.DEBUG
         def reference: String = record.key
-        def message: String = "Validated: The dates are valid for date type '%s'".format(record.dateType)
+        def message: String = "Validated %s: The dates are valid for date type '%s'".format(code, record.dateType)
       }
 
       results.append(r3)

@@ -7,6 +7,8 @@ import collection.mutable.ListBuffer
 
 //todo: write a test for this
 class Nbnv194Validator extends DateFormatValidator {
+  def code = "NBNV-194"
+
   def validate(record: NbnRecord) = {
 
     val results = new ListBuffer[Result]

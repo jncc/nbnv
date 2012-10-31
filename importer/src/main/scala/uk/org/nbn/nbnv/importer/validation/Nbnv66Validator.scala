@@ -12,14 +12,14 @@ class Nbnv66Validator {
       || record.absenceRaw.toLowerCase == "absence") {
       new Result {
         def level = ResultLevel.DEBUG
-        def message = "Validated: Absence is null, presence or absence"
-        def reference = "Record " + record.key
+        def message = "NBNV-66: Validated: Absence is null, presence or absence"
+        def reference = record.key
       }
     } else {
       new Result {
         def level = ResultLevel.ERROR
-        def message = "The value of the optional absence field must be either 'presence' or 'absence'"
-        def reference = "Record " + record.key
+        def message = "NBNV-66: The value of the optional absence field must be either 'presence' or 'absence'"
+        def reference = record.key
       }
     }
   }
