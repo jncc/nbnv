@@ -15,7 +15,7 @@ import org.jooq.util.sqlserver.SQLServerFactory;
  */
 public class MapHelper {
     
-    public static String getMapData(String geomField, String uniqueField, Query query, int srid) {
+    public static String getMapData(String geomField, String uniqueField, int srid, Query query) {
         return new StringBuilder(geomField)
                 .append(" from (")
                 .append(query.getSQL(true))
@@ -70,10 +70,10 @@ public class MapHelper {
     
     static String getSelectedFeatureData(String selectedFeature) {
         SQLServerFactory create = new SQLServerFactory();
-        return MapHelper.getMapData("geom", "id", create
-                .select(FEATUREDATA.ID, FEATUREDATA.GEOM)
-                .from(FEATUREDATA)
-                .where(FEATUREDATA.IDENTIFIER.eq(selectedFeature))
-               , 4326);
+        return MapHelper.getMapData("geom", "id", 4326, create
+            .select(FEATUREDATA.ID, FEATUREDATA.GEOM)
+            .from(FEATUREDATA)
+            .where(FEATUREDATA.IDENTIFIER.eq(selectedFeature))
+        );
     }
 }

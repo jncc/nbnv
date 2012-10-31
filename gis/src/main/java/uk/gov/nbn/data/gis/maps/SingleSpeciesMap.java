@@ -110,14 +110,14 @@ public class SingleSpeciesMap {
                 @Override
                 public String getData(int resolution) {
                     SQLServerFactory create = new SQLServerFactory();
-                    Condition eq = 
+                    Condition condition = 
                             USERTAXONOBSERVATIONDATA.PTAXONVERSIONKEY.eq(taxonKey)
                             .and(USERTAXONOBSERVATIONDATA.USERID.eq(user.getId())
                             .and(FEATUREDATA.RESOLUTIONID.eq(resolution)));
-                    eq = MapHelper.createTemporalSegment(eq, startYear, endYear);
-                    eq = MapHelper.createInDatasetsSegment(eq, datasetKeys);
+                    condition = MapHelper.createTemporalSegment(condition, startYear, endYear);
+                    condition = MapHelper.createInDatasetsSegment(condition, datasetKeys);
                     
-                    SelectHavingStep query = create
+                    return MapHelper.getMapData("geom", "id", 4326 ,create
                         .select(
                             FEATUREDATA.GEOM,
                             FEATUREDATA.ID,
@@ -128,8 +128,8 @@ public class SingleSpeciesMap {
                         .from(USERTAXONOBSERVATIONDATA)
                         .join(GRIDTREE).on(GRIDTREE.FEATUREID.eq(USERTAXONOBSERVATIONDATA.FEATUREID))
                         .join(FEATUREDATA).on(FEATUREDATA.ID.eq(GRIDTREE.PARENTFEATUREID))
-                        .where(eq);
-                    return MapHelper.getMapData("geom", "id", query, 4326);
+                        .where(condition)
+                    );
                 }
         };
     }

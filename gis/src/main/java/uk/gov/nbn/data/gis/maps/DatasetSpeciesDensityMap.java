@@ -93,29 +93,29 @@ public class DatasetSpeciesDensityMap {
                 @Override
                 public String getData(int resolution) {
                     SQLServerFactory create = new SQLServerFactory();
-                    Condition eq = 
+                    Condition condition = 
                             USERTAXONOBSERVATIONDATA.ABSENCE.eq(false)
                             .and(USERTAXONOBSERVATIONDATA.DATASETKEY.eq(key))
                             .and(USERTAXONOBSERVATIONDATA.USERID.eq(user.getId()));
-                    eq = MapHelper.createTemporalSegment(eq, startYear, endYear);
+                    condition = MapHelper.createTemporalSegment(condition, startYear, endYear);
                     
-                    SelectHavingStep SUB_SELECT = create
+                    SelectHavingStep observations = create
                         .select(
-                                    USERTAXONOBSERVATIONDATA.USERID,
-                                    USERTAXONOBSERVATIONDATA.DATASETKEY,
-                                    GRIDTREE.PARENTFEATUREID.as("featureID"),
-                                    countDistinct(USERTAXONOBSERVATIONDATA.PTAXONVERSIONKEY).as("species"))
+                            USERTAXONOBSERVATIONDATA.USERID,
+                            USERTAXONOBSERVATIONDATA.DATASETKEY,
+                            GRIDTREE.PARENTFEATUREID.as("featureID"),
+                            countDistinct(USERTAXONOBSERVATIONDATA.PTAXONVERSIONKEY).as("species"))
                          .from(USERTAXONOBSERVATIONDATA)
                          .join(GRIDTREE).on(GRIDTREE.FEATUREID.eq(USERTAXONOBSERVATIONDATA.FEATUREID))
-                         .where(eq)
+                         .where(condition)
                          .groupBy(GRIDTREE.PARENTFEATUREID, USERTAXONOBSERVATIONDATA.DATASETKEY, USERTAXONOBSERVATIONDATA.USERID);
                     
-                    SelectHavingStep query = create
-                        .select(FEATUREDATA.GEOM, FEATUREDATA.LABEL, SUB_SELECT.getField("species"))
-                        .from(SUB_SELECT)
-                        .join(FEATUREDATA).on(FEATUREDATA.ID.eq(SUB_SELECT.getField(GRIDTREE.FEATUREID)))
-                        .where(FEATUREDATA.RESOLUTIONID.eq(resolution));
-                    return MapHelper.getMapData("geom", "label", query, 4326);
+                    return MapHelper.getMapData("geom", "label", 4326, create
+                        .select(FEATUREDATA.GEOM, FEATUREDATA.LABEL, observations.getField("species"))
+                        .from(observations)
+                        .join(FEATUREDATA).on(FEATUREDATA.ID.eq(observations.getField(GRIDTREE.FEATUREID)))
+                        .where(FEATUREDATA.RESOLUTIONID.eq(resolution))
+                    );
                 }
         });
         return new MapFileModel("DatasetSpeciesDensity.map", data);

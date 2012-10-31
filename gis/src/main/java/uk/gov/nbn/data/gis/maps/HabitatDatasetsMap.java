@@ -35,12 +35,12 @@ public class HabitatDatasetsMap {
     public static class LayerGenerator {
         public String getData(String habitat) {
             SQLServerFactory create = new SQLServerFactory();
-            return MapHelper.getMapData("geom", "id", create.
-                    select(HABITATFEATUREFEATUREDATA.GEOM, HABITATFEATUREFEATUREDATA.ID)
-                    .from(HABITATFEATUREFEATUREDATA)
-                    .join(HABITATFEATUREDATA).on(HABITATFEATUREDATA.FEATUREID.eq(HABITATFEATUREFEATUREDATA.ID))
-                    .where(HABITATFEATUREDATA.HABITATDATASETKEY.eq(habitat))
-                , 4326);
+            return MapHelper.getMapData("geom", "id", 4326, create.
+                select(HABITATFEATUREFEATUREDATA.GEOM, HABITATFEATUREFEATUREDATA.ID)
+                .from(HABITATFEATUREFEATUREDATA)
+                .join(HABITATFEATUREDATA).on(HABITATFEATUREDATA.FEATUREID.eq(HABITATFEATUREFEATUREDATA.ID))
+                .where(HABITATFEATUREDATA.HABITATDATASETKEY.eq(habitat))
+            );
         }
     }
     

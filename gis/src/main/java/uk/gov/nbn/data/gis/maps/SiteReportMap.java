@@ -82,12 +82,12 @@ public class SiteReportMap {
         data.put("properties", properties);
         data.put("featureData", MapHelper.getSelectedFeatureData(featureID));
         data.put("taxonVersionKey", taxonKey);
-        data.put("recordsData", MapHelper.getMapData("geom", "featureID", create.
-                select(USERTAXONOBSERVATIONDATA.FEATUREID, FEATUREDATA.GEOM, FEATUREDATA.RESOLUTIONID, USERTAXONOBSERVATIONDATA.ABSENCE)
-                .from(USERTAXONOBSERVATIONDATA)
-                .join(FEATUREDATA).on(FEATUREDATA.ID.eq(USERTAXONOBSERVATIONDATA.FEATUREID))
-                .where(condition)
-            , 4326));
+        data.put("recordsData", MapHelper.getMapData("geom", "featureID", 4326, create.
+            select(USERTAXONOBSERVATIONDATA.FEATUREID, FEATUREDATA.GEOM, FEATUREDATA.RESOLUTIONID, USERTAXONOBSERVATIONDATA.ABSENCE)
+            .from(USERTAXONOBSERVATIONDATA)
+            .join(FEATUREDATA).on(FEATUREDATA.ID.eq(USERTAXONOBSERVATIONDATA.FEATUREID))
+            .where(condition)
+        ));
         return new MapFileModel("SiteReport.map",data);
     }
     
