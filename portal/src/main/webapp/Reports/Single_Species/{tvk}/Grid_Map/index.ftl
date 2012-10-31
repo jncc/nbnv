@@ -8,7 +8,7 @@
     csss=["/css/gridmap.css","/css/colourpicker/colorpicker.css"]>
     
     <h1>Grid map for ${taxon_utils.getShortName(taxon)}</h1>
-    <#assign imageSize=4>
+    <#assign imageSize=5>
     <form target="" id="nbn-grid-map-form" gis-server="${gis}">
         <@gridMapFilters imageSize=imageSize/>
         <@gridMapContents tvk=tvk imageSize=imageSize/>
@@ -29,8 +29,6 @@
             <select name="resolution" id="nbn-grid-map-resolution">
                 <option value="10km">10km</option>
                 <option value="2km">2km</option>
-                <option value="1km">1km</option>
-                <option value="100m">100m</option>
             </select>
             <fieldset>
                 <legend>Regions</legend>
@@ -46,9 +44,9 @@
             </fieldset>
             <fieldset>
                 <legend>Date ranges and colours</legend>
-                <@yearRangeText layerNum="1" hexColour="#ff0000" checkedText="checked"/> (top)<br/>
+                <@yearRangeText layerNum="1" hexColour="#ffff00" checkedText="checked"/> (top)<br/>
                 <@yearRangeText layerNum="2" hexColour="#ff7f00" checkedText=""/> (middle)<br/>
-                <@yearRangeText layerNum="3" hexColour="#ffff00" checkedText=""/> (bottom)<br/>
+                <@yearRangeText layerNum="3" hexColour="#ff0000" checkedText=""/> (bottom)<br/>
                 Show outline: <input type='checkbox' id='nbn-show-outline' name='showOutline' checked><span class="nbn-form-label">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Outline colour: </span><@colourPicker idSuffix="-outline" hexColour="#000000"/>
 
             </fieldset>
@@ -73,7 +71,7 @@
 
 <#macro yearRangeText layerNum hexColour checkedText>
     <#assign currentYear=.now?string("yyyy")>
-    Date ${layerNum}: 
+    Date ${layerNum}
     <input type='checkbox' name='gridLayer${layerNum}' value='gridLayer${layerNum}' ${checkedText}>
     from 
     <input type='text' name='startYear${layerNum}' value='1600' class='nbn-year-input'> 

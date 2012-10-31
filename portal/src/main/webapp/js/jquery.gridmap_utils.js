@@ -23,7 +23,7 @@
     }
     
     function getKeyValuePairsWithBusinessLogic(keyValuePairs){
-        //Remove the feature agrument generated when Vice County value is 'none''
+        //Remove the feature argument generated when Vice County value is 'none''
         if(keyValuePairs.hasOwnProperty('feature') && keyValuePairs['feature'].toUpperCase()=='NONE'){
             delete keyValuePairs['feature'];
         }
@@ -106,17 +106,40 @@
         var rgb = blue | (green << 8) | (red << 16);
         return digits[1] + '#' + rgb.toString(16);
     };
+    
+    function updateResolutionDropDown(form){
+        var tvk = $('#tvk').val();
+        var feature = $('#nbn-vice-county-selector').val().toUpperCase();
+        var url = form.attr('gis-server') + '/SingleSpecies/' + tvk + '/resolutions?callback=?';
+        if(feature != 'NONE'){
+            url += '&feature=' + feature;
+        }
+        $.getJSON(url, function(json){
+            var imagesize = $("input[name='imagesize']").val();
+            var resolutions = json[imagesize];
+            var resolutionSelect = $('#nbn-grid-map-resolution');
+            resolutionSelect.find('option').remove();
+            $.each(resolutions, function(index, resolution){
+                resolutionSelect.append(
+                    $('<option></option>').val(resolution).html(resolution)
+                );
+            });
+        });
+    }
 
     $(document).ready(function(){
 
-        /* Do map refresh */
         $('#nbn-grid-map-form').submit(function(){
             var form = $(this);
             
-            //Requires jquery.dataset-selector-utils.js
+            //Deselect datasets if all are selected - requires jquery.dataset-selector-utils.js
             nbn.portal.reports.utils.DatasetFields.doDeselectDatasetKeys();
             
+            //Do map refresh
             $('#nbn-grid-map-image').attr('src',getURL(form));
+            
+            updateResolutionDropDown(form);
+            
             return false;
         });
         
