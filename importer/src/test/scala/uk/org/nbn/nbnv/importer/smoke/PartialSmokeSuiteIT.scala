@@ -44,7 +44,7 @@ class PartialSmokeSuiteIT extends BaseFunSuite with ResourceLoader {
     val f = fixture
     val i = new FeatureIngester(mock[Logger], f.db, new GridSquareInfoFactory(f.db))
 
-    val ex = intercept[ImportFailedException] {
+    val ex = intercept[BadDataException] {
       i.ensureSiteBoundaryFeature("THISDOESNOTEXIST")
     }
 

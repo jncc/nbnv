@@ -2,9 +2,9 @@ package uk.org.nbn.nbnv.importer.ingestion
 
 import java.util.{Calendar, Date}
 import java.text._
-import uk.org.nbn.nbnv.importer.ImportFailedException
+import uk.org.nbn.nbnv.importer.BadDataException
 import scala.Some
-import uk.org.nbn.nbnv.importer.ImportFailedException
+import uk.org.nbn.nbnv.importer.BadDataException
 
 //<D	Before Date – end date only
 //<Y	Before Year- end date only
@@ -35,19 +35,19 @@ class NbnDateParser {
       case "<D" => {
         endDate match {
           case Some(d) => (None,Some(d))
-          case None => throw new ImportFailedException("No end date. An end date must be specified for dateType '<D'")
+          case None => throw new BadDataException("No end date. An end date must be specified for dateType '<D'")
         }
       }
       case "D" | ">D" => {
         startDate match {
           case Some(d) => (Some(d), None)
-          case None => throw new ImportFailedException("No start date. A start date must be specified for dateType '%s'".format(dateType))
+          case None => throw new BadDataException("No start date. A start date must be specified for dateType '%s'".format(dateType))
         }
       }
       case "<Y" | "-Y" => {
 
         val date = endDate.getOrElse(
-          throw new ImportFailedException("No end date. An end date must be specified for dateType '%s'".format(dateType))
+          throw new BadDataException("No end date. An end date must be specified for dateType '%s'".format(dateType))
         )
 
         val endOfYear = getEndOfYear(date)
@@ -56,7 +56,7 @@ class NbnDateParser {
       }
       case ">Y" | "Y-" => {
         val date = startDate.getOrElse(
-          throw new ImportFailedException("No start date. A start date must be specified for dateType '%s'".format(dateType))
+          throw new BadDataException("No start date. A start date must be specified for dateType '%s'".format(dateType))
         )
 
         val startOfYear = getStartOfYear(date)
@@ -66,20 +66,20 @@ class NbnDateParser {
       case "DD" => {
 
         val periodStart = startDate.getOrElse(
-          throw new ImportFailedException("No start date. A start date must be specified for dateType '%s'".format(dateType))
+          throw new BadDataException("No start date. A start date must be specified for dateType '%s'".format(dateType))
         )
 
         val periodEnd = endDate.getOrElse(
-          throw new ImportFailedException("No end date. An end date must be specified for dateType '%s'".format(dateType))
+          throw new BadDataException("No end date. An end date must be specified for dateType '%s'".format(dateType))
         )
 
-        if (periodEnd.compareTo(periodStart) < 0 ) throw new ImportFailedException("Start date is before end dtate")
+        if (periodEnd.compareTo(periodStart) < 0 ) throw new BadDataException("Start date is before end dtate")
 
         (Some(periodStart), Some(periodEnd))
       }
       case "M" | "O" => {
         val date = startDate.getOrElse(
-          throw new ImportFailedException("No start date. A start date must be specified for dateType '%s'".format(dateType))
+          throw new BadDataException("No start date. A start date must be specified for dateType '%s'".format(dateType))
         )
 
         val startOfMonth = getStartOfMonth(date)
@@ -89,14 +89,14 @@ class NbnDateParser {
       }
       case "MM" | "OO" => {
         val periodStart = startDate.getOrElse(
-          throw new ImportFailedException("No start date. A start date must be specified for dateType '%s'".format(dateType))
+          throw new BadDataException("No start date. A start date must be specified for dateType '%s'".format(dateType))
         )
 
         val periodEnd = endDate.getOrElse(
-          throw new ImportFailedException("No end date. An end date must be specified for dateType '%s'".format(dateType))
+          throw new BadDataException("No end date. An end date must be specified for dateType '%s'".format(dateType))
         )
 
-        if (periodEnd.compareTo(periodStart) < 0 ) throw new ImportFailedException("Start date is before end dtate")
+        if (periodEnd.compareTo(periodStart) < 0 ) throw new BadDataException("Start date is before end dtate")
 
         val startOfMonth = getStartOfMonth(periodStart)
         val endOfMonth = getEndOfMonth(periodEnd)
@@ -106,7 +106,7 @@ class NbnDateParser {
       case "ND"| "U" => (None, None)
       case "Y" => {
         val date = startDate.getOrElse(
-          throw new ImportFailedException("No start date. A start date must be specified for dateType '%s'".format(dateType))
+          throw new BadDataException("No start date. A start date must be specified for dateType '%s'".format(dateType))
         )
 
         val startOfYear = getStartOfYear(date)
@@ -116,21 +116,21 @@ class NbnDateParser {
       }
       case "YY" => {
         val periodStart = startDate.getOrElse(
-          throw new ImportFailedException("No start date. A start date must be specified for dateType '%s'".format(dateType))
+          throw new BadDataException("No start date. A start date must be specified for dateType '%s'".format(dateType))
         )
 
         val periodEnd = endDate.getOrElse(
-          throw new ImportFailedException("No end date. An end date must be specified for dateType '%s'".format(dateType))
+          throw new BadDataException("No end date. An end date must be specified for dateType '%s'".format(dateType))
         )
 
-        if (periodEnd.compareTo(periodStart) < 0 ) throw new ImportFailedException("Start date is before end dtate")
+        if (periodEnd.compareTo(periodStart) < 0 ) throw new BadDataException("Start date is before end dtate")
 
         val startOfYear = getStartOfYear(periodStart)
         val endOfYear = getEndOfYear(periodEnd)
 
         (Some(startOfYear), Some(endOfYear))
       }
-      case _ => throw new ImportFailedException("Invalid date type '%s'".format(dateType))
+      case _ => throw new BadDataException("Invalid date type '%s'".format(dateType))
     }
   }
 

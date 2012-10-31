@@ -6,7 +6,7 @@ import uk.org.nbn.nbnv.jpa.nbncore._
 import uk.org.nbn.nbnv.importer.data.Implicits._
 import com.google.inject.Inject
 import org.apache.log4j.Logger
-import uk.org.nbn.nbnv.importer.ImportFailedException
+import uk.org.nbn.nbnv.importer.BadDataException
 import uk.org.nbn.nbnv.{SpatialQueries, StoredProcedureLibrary}
 
 class Repository (log: Logger, em: EntityManager, cache: QueryCache) extends ControlAbstractions {
@@ -150,7 +150,7 @@ class Repository (log: Logger, em: EntityManager, cache: QueryCache) extends Con
 
     cacheSingle("getTaxonDataset", key) {
       em.findSingleOrNone(classOf[TaxonDataset], key) getOrElse {
-        throw new ImportFailedException("Dataset '%s' does not exist. Please check the key is correct.".format(key))
+        throw new BadDataException("Dataset '%s' does not exist. Please check the key is correct.".format(key))
       }
     }
   }
@@ -266,7 +266,7 @@ class Repository (log: Logger, em: EntityManager, cache: QueryCache) extends Con
 
     for (item <- cacheKey) {
       if (item == null)
-        throw new ImportFailedException("Cache key component in '%s' was null. This could lead to incorrect data.".format(cacheKey.mkString("|")))
+        throw new BadDataException("Cache key component in '%s' was null. This could lead to incorrect data.".format(cacheKey.mkString("|")))
     }
 
     val key = cacheKey.map(_.trim).mkString("|")

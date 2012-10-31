@@ -10,7 +10,7 @@ import java.util
 import org.apache.log4j.Logger
 import uk.org.nbn.nbnv.importer.data.{Database, Repository}
 import scala.collection.JavaConversions._
-import uk.org.nbn.nbnv.importer.ImportFailedException
+import uk.org.nbn.nbnv.importer.BadDataException
 import org.gbif.utils.file.ClosableIterator
 import uk.org.nbn.nbnv.importer.utility.extClosableIterator
 import uk.org.nbn.nbnv.importer.spatial.GridSquareInfoFactory
@@ -113,7 +113,7 @@ class ValidatorSuite extends BaseFunSuite with BeforeAndAfter{
     when(coreArchive2.value(DwcTerm.occurrenceID)).thenReturn("")
 
     val validator = new Validator(log, db)
-    val throws = intercept[ImportFailedException] {
+    val throws = intercept[BadDataException] {
       validator.validate(archive)
     }
     throws should not be (null)
@@ -122,7 +122,7 @@ class ValidatorSuite extends BaseFunSuite with BeforeAndAfter{
   test("Should not validate a duplicated id") {
     when(coreArchive2.value(DwcTerm.occurrenceID)).thenReturn("CI00000300000TNL")
     val validator = new Validator(log, db)
-    val throws = intercept[ImportFailedException] {
+    val throws = intercept[BadDataException] {
       validator.validate(archive)
     }
     throws should not be (null)
@@ -134,7 +134,7 @@ class ValidatorSuite extends BaseFunSuite with BeforeAndAfter{
     when(rec.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/gridReferencePrecisionRaw")).thenReturn(null)
 
     val validator = new Validator(log, db)
-    val throws = intercept[ImportFailedException] {
+    val throws = intercept[BadDataException] {
       validator.validate(archive)
     }
     throws should not be (null)

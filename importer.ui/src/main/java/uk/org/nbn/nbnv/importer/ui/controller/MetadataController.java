@@ -201,6 +201,7 @@ public class MetadataController {
             meta.setDatasetAdminName(mappings.get(importer.META_NAME));
             meta.setDatasetAdminPhone(mappings.get(importer.META_CONTACT_PHONE));
             meta.setDatasetAdminEmail(mappings.get(importer.META_EMAIL));
+            meta.setDatasetID(metadataForm.getMetadata().getDatasetID());
             
             metadataForm.setMetadata(meta);
             

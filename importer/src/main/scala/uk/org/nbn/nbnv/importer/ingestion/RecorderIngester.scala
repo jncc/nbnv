@@ -7,15 +7,18 @@ import com.google.inject.Inject
 
 class RecorderIngester @Inject()(db: Database) {
 
-  def ensureRecorder(name: String) = {
+  def ensureRecorder(name: Option[String]) = {
 
-    db.repo.getFirstRecorder(name) match {
-      case Some(r) => r
-      case None => {
-        val r = new Recorder()
-        r.setName(name)
-        db.em.persist(r)
-        r
+    name match {
+      case None => None
+      case Some(n) => {
+        val recorder = db.repo.getFirstRecorder(n) getOrElse {
+          val r = new Recorder()
+          r.setName(n)
+          db.em.persist(r)
+          r
+        }
+        Some(recorder)
       }
     }
   }

@@ -1,7 +1,7 @@
 package uk.org.nbn.nbnv.importer.spatial
 
 import scala.math._
-import uk.org.nbn.nbnv.importer.ImportFailedException
+import uk.org.nbn.nbnv.importer.BadDataException
 
 object BritishGridSquareInfo extends GridSqareInfoCompanion {
 
@@ -42,7 +42,7 @@ object BritishGridSquareInfo extends GridSqareInfoCompanion {
     val majX = sqX - (sqX % 5)
     val majY = sqY - (sqY % 5)
 
-    if (majorBritishGridByCoord.get(majX, majY).isEmpty) throw new ImportFailedException("The easing and northing (%s,%s) are not within the british grid".format(east,north))
+    if (majorBritishGridByCoord.get(majX, majY).isEmpty) throw new BadDataException("The easing and northing (%s,%s) are not within the british grid".format(east,north))
 
     val majLetter = majorBritishGridByCoord(majX, majY)
 
@@ -50,7 +50,7 @@ object BritishGridSquareInfo extends GridSqareInfoCompanion {
     val mnrX = sqX - majX
     val mnrY = sqY - majY
 
-    if (minorBritishGridByCoord.get(mnrX, mnrY).isEmpty) throw new ImportFailedException("The easing and northing (%s,%s) are not within the british grid".format(east,north))
+    if (minorBritishGridByCoord.get(mnrX, mnrY).isEmpty) throw new BadDataException("The easing and northing (%s,%s) are not within the british grid".format(east,north))
 
     val minLetter = minorBritishGridByCoord(mnrX, mnrY)
 

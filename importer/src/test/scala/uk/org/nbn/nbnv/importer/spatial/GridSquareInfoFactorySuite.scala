@@ -4,7 +4,7 @@ import uk.org.nbn.nbnv.importer.testing.{DataAccessLayer, BaseFunSuite}
 import uk.org.nbn.nbnv.importer.data.{Database, Repository}
 import org.mockito.Mockito._
 import org.mockito.Matchers._
-import uk.org.nbn.nbnv.importer.ImportFailedException
+import uk.org.nbn.nbnv.importer.BadDataException
 
 class GridSquareInfoFactorySuite extends BaseFunSuite{
   test("should recognise irish grid ref") {
@@ -90,7 +90,7 @@ class GridSquareInfoFactorySuite extends BaseFunSuite{
 
     val fac = new GridSquareInfoFactory(db)
 
-    intercept[ImportFailedException] {
+    intercept[BadDataException] {
       fac.getByGridRef(gridRef, gridRefType)
     }
   }

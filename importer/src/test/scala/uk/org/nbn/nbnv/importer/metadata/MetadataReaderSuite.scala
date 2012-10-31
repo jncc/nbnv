@@ -1,4 +1,4 @@
-package uk.org.nbn.nbnv.metadata
+package uk.org.nbn.nbnv.importer.metadata
 
 import org.gbif.dwc.text.Archive
 import org.mockito.Mockito._

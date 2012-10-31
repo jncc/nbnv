@@ -10,6 +10,11 @@ root {
 
 }
 
+.errors {
+    clear: both;
+    color: red;
+}
+
 .formlabel {
     float: left;
     display: inline-block;
@@ -44,5 +49,9 @@ input.wide {
 }
 
 .error {
+    float: right;
+    width: 200px;
+    display: inline-block;
+    vertical-align: middle;
     color: red;
 }

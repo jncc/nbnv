@@ -9,7 +9,13 @@ import com.google.inject.Inject
 class ArchiveManager @Inject()(options: Options) {
 
   def open(): Archive = {
-    ArchiveFactory.openArchive(new File(options.archivePath), new File(options.tempDir))
+
+    // the gbif reader requires an extant "working" directory
+    val temp = new File(options.tempDir)
+    temp.mkdirs()
+
+    println(temp.getAbsolutePath)
+    ArchiveFactory.openArchive(new File(options.archivePath), temp)
   }
 }
 

@@ -3,7 +3,7 @@ package uk.org.nbn.nbnv.importer.records
 import uk.org.nbn.nbnv.importer.testing.BaseFunSuite
 import org.scalatest.BeforeAndAfter
 import org.mockito.Mockito._
-import uk.org.nbn.nbnv.importer.ImportFailedException
+import uk.org.nbn.nbnv.importer.BadDataException
 import org.gbif.dwc.terms.DwcTerm
 import org.gbif.dwc.text.StarRecord
 import org.gbif.dwc.record.Record
@@ -62,7 +62,7 @@ class NbnRecordSuite extends BaseFunSuite with BeforeAndAfter {
     record.parseOccurrenceStatus(null) should be (false)
     record.parseOccurrenceStatus("absence") should be (true)
 
-    val throws = intercept[ImportFailedException] {
+    val throws = intercept[BadDataException] {
       record.parseOccurrenceStatus("false") should be (false)
     }
     throws.getMessage should be ("Invalid occurrence status 'false'")

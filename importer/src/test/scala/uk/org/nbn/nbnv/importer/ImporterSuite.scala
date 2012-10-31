@@ -6,7 +6,7 @@ import org.apache.log4j.Logger
 import org.mockito.Mockito._
 import org.mockito.Matchers._
 import testing.BaseFunSuite
-import uk.org.nbn.nbnv.metadata.MetadataReader
+import uk.org.nbn.nbnv.importer.metadata.MetadataReader
 import javax.persistence.{EntityManager, EntityTransaction}
 import org.gbif.dwc.text.Archive
 import utility.Stopwatch

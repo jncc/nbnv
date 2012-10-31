@@ -2,7 +2,7 @@ package uk.org.nbn.nbnv.importer.validation
 
 import uk.org.nbn.nbnv.importer.records.NbnRecord
 import uk.org.nbn.nbnv.importer.fidelity.{ResultLevel, Result}
-import uk.org.nbn.nbnv.importer.ImportFailedException
+import uk.org.nbn.nbnv.importer.BadDataException
 
 class Nbnv66Validator {
   def validate(record: NbnRecord) = {
