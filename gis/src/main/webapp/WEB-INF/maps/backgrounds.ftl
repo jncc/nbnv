@@ -118,7 +118,7 @@
     [#assign layers=[
         "GB-Coast", "Ireland-Coast", "GB-Hundred-km-Grid", "Ireland-Hundred-km-Grid",
         "GB-Coast-with-Hundred-km-Grid", "GB-and-Ireland-Coasts-with-Hundred-km-Grid",
-        "Vice-counties-(low-res)", "GB-and-Ireland-Hundred-km-Grid"
+        "Vice-counties-(low-res)", "GB-and-Ireland-Ten-km-Grid"
     ]]
     [#list generator.contextLayers as contextLayer]
         LAYER

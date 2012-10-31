@@ -35,7 +35,11 @@ public @interface GridMap {
         @Layer(name="gb", layers="GB-Coast" ),
         @Layer(name="gbi", layers={"GB-Coast", "Ireland-Coast"} ),
         @Layer(name="gb100kgrid", layers="GB-Coast-with-Hundred-km-Grid" ),
-        @Layer(name="gbi100kgrid", layers="GB-and-Ireland-Coasts-with-Hundred-km-Grid" )
+        @Layer(name="gbi100kgrid", layers="GB-and-Ireland-Coasts-with-Hundred-km-Grid" ),
+        @Layer(name="vicecounty", layers="Vice-counties-(low-res)" ),
+        @Layer(name="gb100kextent", layers="GB-Hundred-km-Grid" ),
+        @Layer(name="i100kextent", layers="Ireland-Hundred-km-Grid" ),
+        @Layer(name="gbi10kextent", layers="GB-and-Ireland-Ten-km-Grid" )
     };
     Layer[] overlays() default {};
     String[] defaultBackgrounds() default {"gbi100kgrid"};
