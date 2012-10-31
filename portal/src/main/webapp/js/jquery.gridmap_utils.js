@@ -23,7 +23,6 @@
     }
     
     function getKeyValuePairsWithBusinessLogic(keyValuePairs){
-        console.log(getQueryStringFromKeyValuePairs(keyValuePairs));
         //Remove the feature agrument generated when Vice County value is 'none''
         if(keyValuePairs.hasOwnProperty('feature') && keyValuePairs['feature'].toUpperCase()=='NONE'){
             delete keyValuePairs['feature'];
@@ -117,7 +116,7 @@
             //Requires jquery.dataset-selector-utils.js
             nbn.portal.reports.utils.DatasetFields.doDeselectDatasetKeys();
             
-            $('#nbn-grid-map-image-src').attr('src',getURL(form));
+            $('#nbn-grid-map-image').attr('src',getURL(form));
             return false;
         });
         

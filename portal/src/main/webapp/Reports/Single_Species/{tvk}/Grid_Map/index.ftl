@@ -5,27 +5,21 @@
 
 <@template.master title="NBN Grid Map" 
     javascripts=["/js/jquery.dataset-selector-utils.js","/js/jquery.gridmap_utils.js","/js/colourpicker/colorpicker.js"]
-    csss=["/css/colourpicker/colorpicker.css"]>
+    csss=["/css/gridmap.css","/css/colourpicker/colorpicker.css"]>
     
     <h1>Grid map for ${taxon_utils.getShortName(taxon)}</h1>
-    <#assign imageSize=5>
+    <#assign imageSize=4>
     <form target="" id="nbn-grid-map-form" gis-server="${gis}">
-        <div id="nbn-grid-map-filter-container">
-            <@gridMapFilters imageSize=imageSize/>
-        </div>
-        <div id="nbn-grid-map-container">
-            <@gridMapContents tvk=tvk imageSize=imageSize/>
-        </div>
-        <div>
-            <#if providersWithQueryStats?has_content>
-                <@report_utils.dataset_table providersWithQueryStats=providersWithQueryStats requestParameters=RequestParameters/>
-            </#if>
-        </div>
+        <@gridMapFilters imageSize=imageSize/>
+        <@gridMapContents tvk=tvk imageSize=imageSize/>
+        <#if providersWithQueryStats?has_content>
+            <@report_utils.dataset_table providersWithQueryStats=providersWithQueryStats requestParameters=RequestParameters/>
+        </#if>
     </form>
 </@template.master>
 
 <#macro gridMapFilters imageSize>
-    <div class="tabbed">
+    <div class="tabbed" id="nbn-grid-map-filter-container">
             <h3>Controls</h3>
 
             <input hidden name="imagesize" value="${imageSize}">
@@ -46,6 +40,7 @@
                     <option value="gb">Great Britain</option>
                     <option value="i">Ireland</option>
                 </select>
+                <br/>
                 <label for="nbn-form-label">Vice counties</label>
                 <@viceCountyDropDown/>
             </fieldset>
@@ -70,9 +65,9 @@
 </#macro>
 
 <#macro gridMapContents tvk imageSize>
-    <div class="tabbed">
+    <div class="tabbed" id="nbn-grid-map-container">
         <h3>Map</h3>
-        <img src="${gis}/SingleSpecies/${tvk}/map?imagesize=${imageSize}" id="nbn-grid-map-image-src">
+        <img src="${gis}/SingleSpecies/${tvk}/map?imagesize=${imageSize}" id="nbn-grid-map-image">
     </div>
 </#macro>
 
