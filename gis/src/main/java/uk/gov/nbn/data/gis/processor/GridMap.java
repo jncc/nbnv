@@ -25,7 +25,7 @@ public @interface GridMap {
     
     @interface Layer {
         String name();
-        String layer();
+        String[] layers();
     }
 
     GridLayer[] layers();

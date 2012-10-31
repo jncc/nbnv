@@ -74,13 +74,14 @@ public class SingleSpeciesMap {
         },
         defaultLayer="10km",
         backgrounds={
-            @Layer(name="os", layer="OS-Scale-Dependent" ),
-            @Layer(name="gb", layer="GB-Coast" ),
-            @Layer(name="gbi", layer="Ireland-Coast" ),
-            @Layer(name="gb100kgrid", layer="GB-Coast-with-Hundred-km-Grid" ),
-            @Layer(name="gbi100kgrid", layer="GB-and-Ireland-Coasts-with-Hundred-km-Grid" )
+            @Layer(name="os", layers="OS-Scale-Dependent" ),
+            @Layer(name="gb", layers="GB-Coast" ),
+            @Layer(name="gbi", layers={"GB-Coast", "Ireland-Coast"} ),
+            @Layer(name="gb100kgrid", layers="GB-Coast-with-Hundred-km-Grid" ),
+            @Layer(name="gbi100kgrid", layers="GB-and-Ireland-Coasts-with-Hundred-km-Grid" )
         },
-        overlays=@Layer(name="feature", layer="Selected-Feature" )
+        defaultBackgrounds="gbi100kgrid",
+        overlays=@Layer(name="feature", layers="Selected-Feature" )
     )
     public MapFileModel getSingleSpeciesModel(
             final User user,

@@ -69,7 +69,7 @@ public class GridMapMapLayersInterceptor {
     private static List<String> getWMSLayersFromLayerList(List<Layer> layerList) {
         List<String> toReturn = new ArrayList<String>();
         for(Layer currBackground : layerList) {
-            toReturn.add(currBackground.layer());
+            toReturn.addAll(Arrays.asList(currBackground.layers()));
         }
         return toReturn;
     } 
