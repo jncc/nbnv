@@ -37,27 +37,23 @@ class DateValidator {
 
     if (resultList.find(r => r.level == ResultLevel.ERROR).isEmpty) {
       // We only should every carry on if we have a set of valid dates otherwise these tests make no sense anymore
-      val r5 = validateAccordingToType(record)
-      resultList.append(r5)
+      val results = validateAccordingToType(record)
+      resultList.appendAll(results)
     }
 
     resultList
   }
 
-  def validateAccordingToType(record: NbnRecord): Result = record.dateType match {
-    case "<D" => (new Nbnv194Validator(new DateFormatValidator)).validate(record)
-    case "D" | ">D"  => (new Nbnv73Validator(new DateFormatValidator)).validate(record)
-    case "<Y" | "-Y" => (new Nbnv76Validator(new DateFormatValidator)).validate(record)
-    case "Y" | "Y-" | ">Y"  => (new Nbnv75Validator(new DateFormatValidator)).validate(record)
-    case "DD" => (new Nbnv195Validator(new DateFormatValidator)).validate(record)
-    case "O" | "M"=> (new Nbnv74Validator(new DateFormatValidator)).validate(record)
-    case "OO" | "MM" => (new Nbnv196Validator(new DateFormatValidator)).validate(record)
-    case "ND" | "U" =>
-      new Result {
-        def level: ResultLevel.ResultLevel = ResultLevel.DEBUG
-        def reference: String = record.dateType
-        def message: String = "Validated: no date is required for date types ND & U"
-      }
-    case "YY" => (new Nbnv197Validator(new DateFormatValidator)).validate(record)
+  def validateAccordingToType(record: NbnRecord): List[Result] =  record.dateType match {
+    case "<D" => (new Nbnv194Validator).validate(record)
+    case "D" | ">D" => (new Nbnv73Validator).validate(record)
+    case "<Y" | "-Y" => (new Nbnv76Validator).validate(record)
+    case "Y-" | ">Y"  => (new Nbnv75Validator).validate(record)
+    case "Y"  => (new Nbnv284Validator).validate(record)
+    case "DD" => (new Nbnv195Validator).validate(record)
+    case "O" | "M"=> (new Nbnv74Validator).validate(record)
+    case "OO" | "MM" => (new Nbnv196Validator).validate(record)
+    case "ND" | "U" => (new Nbnv77Validator).validate(record)
+    case "YY" => (new Nbnv197Validator).validate(record)
   }
 }

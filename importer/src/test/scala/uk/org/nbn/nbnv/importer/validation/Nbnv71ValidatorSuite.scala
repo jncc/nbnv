@@ -7,17 +7,10 @@ import java.text.SimpleDateFormat
 import uk.org.nbn.nbnv.importer.fidelity.ResultLevel
 import org.mockito.Mockito._
 
-/**
- * Created By: Matt Debont
- * Date: 17/10/12
- */
+
 class Nbnv71ValidatorSuite extends BaseFunSuite with BeforeAndAfter {
-//  var record: NbnRecord = _
-//  val validator = new Nbnv71Validator
-//
-//  before {
-//    record = mock[NbnRecord]
-//  }
+
+
 //
 //  test("Should validate if all dates are in the past") {
 //    when(record.startDate).thenReturn(new SimpleDateFormat("dd/MM/yyyy").parse("16/10/2012"))

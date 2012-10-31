@@ -3,12 +3,28 @@ package uk.org.nbn.nbnv.importer.validation
 import uk.org.nbn.nbnv.importer.records.NbnRecord
 import uk.org.nbn.nbnv.importer.fidelity.{ResultLevel, Result}
 import uk.org.nbn.nbnv.importer.utility.StringParsing._
+import collection.mutable.ListBuffer
 
 //todo: write a test for this
-class Nbnv194Validator(validator: DateFormatValidator) {
+class Nbnv194Validator extends DateFormatValidator {
   def validate(record: NbnRecord) = {
-    val validFormats = List("dd/MM/yyyy", "dd-MM-yyyy", "yyyy/MM/dd", "yyyy-MM-dd", "dd MMM yyyy")
 
-    validator.validate(record,false,true,validFormats)
+    val results = new ListBuffer[Result]
+
+    if (record.startDate.isDefined) {
+      results.append(
+        new Result {
+          def level: ResultLevel.ResultLevel = ResultLevel.ERROR
+          def reference: String = record.key
+          def message: String = "A start date should not be specified for date type '%s'".format(record.dateType)
+        })
+    }
+    else {
+      val validFormats = List("dd/MM/yyyy", "dd-MM-yyyy", "yyyy/MM/dd", "yyyy-MM-dd", "dd MMM yyyy")
+
+      results.appendAll(validateDate(record,false,true,validFormats))
+    }
+
+    results.toList
   }
 }
