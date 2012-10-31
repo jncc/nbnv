@@ -24,21 +24,21 @@ class Nbnv82Validator {
       new Result {
         def level = ResultLevel.ERROR
         def message = "More than one definition of a spatial reference has been supplied"
-        def reference = "Record " + record.key
+        def reference = record.key
       }
     }
     else if (count < 1) {
       new Result {
         def level = ResultLevel.ERROR
         def message = "At least one definition of a spatial reference must be supplied"
-        def reference = "Record " + record.key
+        def reference = record.key
       }
     }
     else {
       new Result {
         def level = ResultLevel.DEBUG
         def message = "Validated: Only one spatial reference definistion has been supplied"
-        def reference = "Record " + record.key
+        def reference = record.key
       }
     }
   }

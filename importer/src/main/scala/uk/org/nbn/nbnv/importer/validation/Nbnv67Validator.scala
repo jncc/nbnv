@@ -12,13 +12,13 @@ class Nbnv67Validator {
       new Result {
         def level = ResultLevel.DEBUG
         def message = "Validated: sensitive field is valid"
-        def reference = "Record " + record.key
+        def reference = record.key
       }
     } else {
       new Result {
         def level = ResultLevel.ERROR
         def message = "The optional sensitive field must be 'true' or 'false' if defined"
-        def reference = "Record " + record.key
+        def reference = record.key
       }
     }
   }

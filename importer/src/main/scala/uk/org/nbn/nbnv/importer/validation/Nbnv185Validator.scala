@@ -12,21 +12,21 @@ class Nbnv185Validator {
         new Result {
           def level = ResultLevel.DEBUG
           def message = "Validated: A recognised SRS was provided"
-          def reference = "Record " + record.key
+          def reference = record.key
         }
       }
       case None => {
         new Result {
           def level = ResultLevel.ERROR
           def message = "The spatial reference system must be specified"
-          def reference = "Record " + record.key
+          def reference = record.key
         }
       }
       case _ => {
         new Result {
           def level = ResultLevel.ERROR
           def message = "The spatial reference system '%s' is not recognised".format(srs)
-          def reference = "Record " + record.key
+          def reference = record.key
         }
       }
     }

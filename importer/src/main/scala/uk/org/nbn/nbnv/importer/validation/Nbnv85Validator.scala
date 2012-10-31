@@ -13,21 +13,21 @@ class Nbnv85Validator() {
       new Result {
         def level = ResultLevel.ERROR
         def message = "The value of east is not a numeric easting: %s".format(record.eastRaw.get)
-        def reference = "Record " + record.key
+        def reference = record.key
       }
     }
     else if ((record.northRaw.get matches """^\d+(\.\d+)*$""") == false) {
       new Result {
         def level = ResultLevel.ERROR
         def message = "The value of north is not a numeric northing: %s".format(record.northRaw.get)
-        def reference = "Record " + record.key
+        def reference = record.key
       }
     }
     else  {
       new Result {
         def level = ResultLevel.DEBUG
         def message = "Validated: East and North are numeric"
-        def reference = "Record " + record.key
+        def reference = record.key
       }
     }
 

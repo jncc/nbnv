@@ -13,7 +13,7 @@ class Nbnv88Validator(db: Database) {
       new Result {
         def level = ResultLevel.ERROR
         def message = "FeatureKey '%s' is to short to be valid".format(featureKey)
-        def reference = "Record " + record.key
+        def reference = record.key
       }
     }
     else {
@@ -24,14 +24,14 @@ class Nbnv88Validator(db: Database) {
         new Result {
           def level = ResultLevel.DEBUG
           def message = "Validated: FeatureKey '%s' exists.".format(featureKey)
-          def reference = "Record " + record.key
+          def reference = record.key
         }
       }
       else {
         new Result {
           def level = ResultLevel.ERROR
           def message = "FeatureKey '%s' is invalid".format(featureKey)
-          def reference = "Record " + record.key
+          def reference = record.key
         }
       }
     }

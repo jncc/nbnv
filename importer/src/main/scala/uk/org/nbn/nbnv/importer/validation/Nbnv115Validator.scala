@@ -13,7 +13,7 @@ class Nbnv115Validator {
       new Result {
         def level = ResultLevel.ERROR
         def message = "An attribute must have a label"
-        def reference = "Record " + recordKey
+        def reference = recordKey
       }
     }
     else {

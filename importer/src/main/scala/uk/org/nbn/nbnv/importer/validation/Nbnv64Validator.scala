@@ -14,13 +14,13 @@ class Nbnv64Validator (repo: Repository) {
       new Result {
         def level = ResultLevel.DEBUG
         def message = "Validated: TaxonVersionKey '%s' exists.".format(record.taxonVersionKey)
-        def reference = "Record " + record.key
+        def reference = record.key
       }
     } else {
       new Result {
         def level = ResultLevel.ERROR
         def message = "TaxonVersionKey '%s' must exist.".format(record.taxonVersionKey)
-        def reference = "Record " + record.key
+        def reference = record.key
       }
     }
   }

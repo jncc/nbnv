@@ -13,13 +13,13 @@ class Nbnv66Validator {
       new Result {
         def level = ResultLevel.DEBUG
         def message = "Validated: Absence is null, presence or absence"
-        def reference = "Record " + record.key
+        def reference = record.key
       }
     } else {
       new Result {
         def level = ResultLevel.ERROR
         def message = "The value of the optional absence field must be either 'presence' or 'absence'"
-        def reference = "Record " + record.key
+        def reference = record.key
       }
     }
   }
