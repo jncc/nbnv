@@ -12,14 +12,14 @@ class Nbnv58Validator {
       new Result {
         def level = ResultLevel.DEBUG
         def message = "Validated: An acceptable combination of location fields has been specified."
-        def reference = ""
+        def reference = record.key
       }
     }
     else {
       new Result {
         def level = ResultLevel.ERROR
         def message = "A record must have a location defined for it. An acceptable combination of location fields has not been specified."
-        def reference = ""
+        def reference = record.key
       }
     }
   }
