@@ -5,6 +5,6 @@ import uk.org.nbn.nbnv.importer.records.NbnRecord
 class Nbnv56Validator {
   def validate(record: NbnRecord) = {
     val validator = new NullFieldValidator
-    validator.validate(record.taxonVersionKey, "TaxonVersionKey")
+    validator.validate("NBNV-56", record.taxonVersionKey, "TaxonVersionKey")
   }
 }

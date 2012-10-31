@@ -15,20 +15,20 @@ class Nbnv72Validator {
         new Result {
           def level: ResultLevel.ResultLevel = ResultLevel.ERROR
           def reference: String = record.key
-          def message: String = "Start date is before end date"
+          def message: String = "NBNV-72: Start date is before end date"
         }
       } else {
         new Result {
           def level: ResultLevel.ResultLevel = ResultLevel.DEBUG
           def reference: String = record.key
-          def message: String = "Validated: Start and end dates are valid"
+          def message: String = "NBNV-72: Validated: Start and end dates are valid"
         }
       }
     } else {
       new Result {
         def level: ResultLevel.ResultLevel = ResultLevel.DEBUG
         def reference: String = record.key
-        def message: String = "Validated: Nbnv-72 validation rule not applicable"
+        def message: String = "NBNV-72: Validated: Nbnv-72 validation rule not applicable"
       }
     }
   }

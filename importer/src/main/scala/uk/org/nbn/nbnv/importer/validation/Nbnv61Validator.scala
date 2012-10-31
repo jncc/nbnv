@@ -15,7 +15,7 @@ class Nbnv61Validator extends AggregateValidator {
     if (all.distinct.size != all.size) {
       new Result {
         def level = ResultLevel.ERROR
-        def message = "Duplicate record key. Key '%s' is not unique".format(record.key)
+        def message = "NBNV-61: Duplicate record key. Key '%s' is not unique".format(record.key)
         def reference = record.key
       }
     }
@@ -25,13 +25,11 @@ class Nbnv61Validator extends AggregateValidator {
 
       new Result {
         def level = ResultLevel.DEBUG
-        def message = "Validated: Record key '%s' is unique so far.".format(record.key)
+        def message = "NBNV-61: Validated: Record key '%s' is unique so far.".format(record.key)
         def reference = record.key
       }
     }
   }
 
   def notifyComplete() {}
-
-  def name = "NBNV-61"
 }

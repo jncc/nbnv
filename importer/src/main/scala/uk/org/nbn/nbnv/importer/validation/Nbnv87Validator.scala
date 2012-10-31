@@ -20,14 +20,17 @@ class Nbnv87Validator {
       new Result {
         def level = ResultLevel.DEBUG
         def reference = record.key
-        def message = "Validated: The easting and northing are valid for the specified SRS"
+        def message = "NBNV-87: Validated: The easting and northing are valid for the specified SRS"
       }
     }
     else {
       new Result {
         def level = ResultLevel.ERROR
         def reference = record.key
-        def message = error.getOrElse("The easting and northing are invalid for the supplied srs")
+        def message = error match {
+          case Some(e) => "NBNV-87: " + e
+          case None    => "NBNV-87: The easting and northing are invalid for the supplied srs"
+        }
       }
     }
   }

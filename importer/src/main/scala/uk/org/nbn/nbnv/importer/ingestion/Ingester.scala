@@ -1,11 +1,11 @@
 package uk.org.nbn.nbnv.importer.ingestion
 
 import scala.collection.JavaConversions._
-import javax.persistence.{EntityTransaction, EntityManager}
+import javax.persistence.EntityTransaction
 import uk.org.nbn.nbnv.importer.records.NbnRecord
 import org.gbif.dwc.text.Archive
-import uk.org.nbn.nbnv.metadata.Metadata
-import uk.org.nbn.nbnv.importer.Options
+import uk.org.nbn.nbnv.importer.metadata.Metadata
+import uk.org.nbn.nbnv.importer.{Target, Options}
 import com.google.inject.Inject
 import org.apache.log4j.Logger
 import uk.org.nbn.nbnv.importer.data.Database
@@ -53,8 +53,8 @@ class Ingester @Inject()(options: Options,
         }
       }
 
-      if (options.whatIf) {
-        log.info("Rolling back ingestion transaction (whatIf=true)")
+      if (options.target < Target.commit) {
+        log.info("Rolling back ingestion transaction")
         t.rollback()
       }
       else {

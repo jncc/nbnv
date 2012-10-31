@@ -1,7 +1,7 @@
 package uk.org.nbn.nbnv.importer.spatial
 
 import math._
-import uk.org.nbn.nbnv.importer.ImportFailedException
+import uk.org.nbn.nbnv.importer.BadDataException
 
 object ChannelIslandGridSquareInfo extends GridSqareInfoCompanion {
 
@@ -16,7 +16,7 @@ object ChannelIslandGridSquareInfo extends GridSqareInfoCompanion {
       north / 100000 match {
         case 55 => "WA"
         case 54 => "WV"
-        case _ => throw throw new ImportFailedException("The easing and northing (%s,%s) are not within the Channel Islands grid".format(east,north))
+        case _ => throw throw new BadDataException("The easing and northing (%s,%s) are not within the Channel Islands grid".format(east,north))
       }
 
     val eastPart = east - 500000

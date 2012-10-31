@@ -9,6 +9,6 @@ class Nbnv194Validator(validator: DateFormatValidator) {
   def validate(record: NbnRecord) = {
     val validFormats = List("dd/MM/yyyy", "dd-MM-yyyy", "yyyy/MM/dd", "yyyy-MM-dd", "dd MMM yyyy")
 
-    validator.validate(record,false,true,validFormats)
+    validator.validate("NBNV-194", record,false,true,validFormats)
   }
 }

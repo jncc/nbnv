@@ -3,7 +3,7 @@ package uk.org.nbn.nbnv.importer
 import darwin.ArchiveManager
 import ingestion._
 import injection.ImporterModule
-import uk.org.nbn.nbnv.metadata.MetadataReader
+import uk.org.nbn.nbnv.importer.metadata.MetadataReader
 import org.apache.log4j.Logger
 import com.google.inject.{Inject, Guice}
 import utility.Stopwatch
@@ -59,16 +59,23 @@ class Importer @Inject()(options:        Options,
       val archive = archiveManager.open()
       val metadata = metadataReader.read(archive)
 
-      // validate the archive
-      validator.validate(archive)
-      // verify (... or ideally in the same parallel step as validate)
+      // validate
+      if (options.target >= Target.validate) {
+        validator.validate(archive)
+        log.info("Finished validation in " + stopwatch.elapsedSeconds + " seconds")
+      }
 
-      log.info("Finished validation in " + stopwatch.elapsedSeconds + " seconds")
+      // verify
+      if (options.target >= Target.verify) {
+        // (... ideally in the same parallel step as validate)
+      }
 
-      // ingest the archive and metadata
-      ingester.ingest(archive, metadata)
+      // ingest
+      if (options.target >= Target.ingest) {
+        ingester.ingest(archive, metadata)
+      }
 
-      log.info("Finished ingestion in " + stopwatch.elapsedSeconds + " seconds")
+      log.info("Finished import run in " + stopwatch.elapsedSeconds + " seconds")
       log.info("Done with archive '%s'".format(options.archivePath))
     }
   }
@@ -76,7 +83,7 @@ class Importer @Inject()(options:        Options,
   private def withTopLevelExceptionHandling(f: => Unit) {
     try { f }
     catch {
-      case e: ImportFailedException => {
+      case e: BadDataException => {
         log.error("Import run failed", e)
         throw e
       }

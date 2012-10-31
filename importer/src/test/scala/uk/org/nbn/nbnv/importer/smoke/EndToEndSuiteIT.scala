@@ -3,18 +3,15 @@ package uk.org.nbn.nbnv.importer.smoke
 import java.io.File
 import uk.org.nbn.nbnv.importer.testing.BaseFunSuite
 import uk.org.nbn.nbnv.importer.utility.ResourceLoader
-import uk.org.nbn.nbnv.importer.{ImportFailedException, Options, Importer}
+import uk.org.nbn.nbnv.importer.{Target, BadDataException, Options, Importer}
 import java.net.{URI, URL}
 
 class EndToEndSuiteIT extends BaseFunSuite with ResourceLoader {
 
   def fixture(archiveURL: URL) = new {
 
-    val tempDir = ".\\temp"
-    new File(tempDir).mkdirs()
-
     val archive = archiveURL
-    val options = Options(archivePath = archive.getFile, tempDir = tempDir, whatIf = true)
+    val options = Options(archivePath = archive.getFile, target = Target.ingest)
 
     val importer = Importer.createImporter(options)
   }
@@ -22,7 +19,7 @@ class EndToEndSuiteIT extends BaseFunSuite with ResourceLoader {
   // change from 'ignore' to 'test' to run the importer against an archive within your IDE
   ignore("import an archive") {
 
-    val archive = new URL("file:///C:/Users/Pete Montgomery/Desktop/New folder/archive_Aggregate_29102012_011031.zip")
+    val archive = new URL("file:///C:/Users/Pete Montgomery/Desktop/New folder/archive_Agencedes_30102012_014508.zip")
     val f = fixture(archive)
     f.importer.run()
   }
@@ -36,7 +33,7 @@ class EndToEndSuiteIT extends BaseFunSuite with ResourceLoader {
 
   test("should throw on non-existent dataset key") {
 
-    val ex = intercept[ImportFailedException] {
+    val ex = intercept[BadDataException] {
 
       val archive = resource("/archives/nonexistent_dataset_key.zip")
       val f = fixture(archive)

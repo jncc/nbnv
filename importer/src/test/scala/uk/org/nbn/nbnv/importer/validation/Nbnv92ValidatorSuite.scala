@@ -8,7 +8,7 @@ import uk.org.nbn.nbnv.importer.fidelity.ResultLevel
 class Nbnv92ValidatorSuite extends BaseFunSuite{
   test("Nbnv92 should validate null determiner names") {
     val record = mock[NbnRecord]
-    when(record.determiner).thenReturn(null)
+    when(record.determiner).thenReturn(None)
 
     val v = new Nbnv92Validator
     val r = v.validate(record)
@@ -18,7 +18,7 @@ class Nbnv92ValidatorSuite extends BaseFunSuite{
 
   test("Nbnv92 should validate determiner names of 140 characters of less") {
     val record = mock[NbnRecord]
-    when(record.determiner).thenReturn("a" * 140)
+    when(record.determiner).thenReturn(Some("a" * 140))
 
     val v = new Nbnv92Validator
     val r = v.validate(record)
@@ -28,7 +28,7 @@ class Nbnv92ValidatorSuite extends BaseFunSuite{
 
   test("Nbnv92 should mot determiner names greater then 140 characters") {
     val record = mock[NbnRecord]
-    when(record.determiner).thenReturn("a" * 141)
+    when(record.determiner).thenReturn(Some("a" * 141))
 
     val v = new Nbnv92Validator
     val r = v.validate(record)

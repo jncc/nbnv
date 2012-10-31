@@ -11,14 +11,14 @@ class Nbnv67Validator {
       || record.sensitiveOccurrenceRaw.toLowerCase == "false") {
       new Result {
         def level = ResultLevel.DEBUG
-        def message = "Validated: sensitive field is valid"
-        def reference = "Record " + record.key
+        def message = "NBNV-67: Validated: sensitive field is valid"
+        def reference = record.key
       }
     } else {
       new Result {
         def level = ResultLevel.ERROR
-        def message = "The optional sensitive field must be 'true' or 'false' if defined"
-        def reference = "Record " + record.key
+        def message = "NBNV-67: The optional sensitive field must be 'true' or 'false' if defined"
+        def reference = record.key
       }
     }
   }

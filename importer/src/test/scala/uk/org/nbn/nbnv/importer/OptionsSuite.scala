@@ -10,7 +10,7 @@ class OptionsSuite extends BaseFunSuite {
 
   test("valid command line options should parse") {
 
-    val valid = List(archivePath, "-logDir", logDir, "-tempDir", tempDir, "-whatIf")
+    val valid = List(archivePath, "-target", "validate", "-logDir", logDir, "-tempDir", tempDir)
     val result = Options.parse(valid)
 
     assertValid(result)
@@ -18,7 +18,7 @@ class OptionsSuite extends BaseFunSuite {
 
   test("valid command line options passed in a weird order should parse") {
 
-    val valid = List("-logDir", logDir, "-tempDir", tempDir, "-whatIf", archivePath)
+    val valid = List("-logDir", logDir, "-tempDir", tempDir, "-target", "validate", archivePath)
     val result = Options.parse(valid)
 
     assertValid(result)
@@ -35,14 +35,16 @@ class OptionsSuite extends BaseFunSuite {
     }
   }
 
-  def assertValid(result: OptionsResult) = result match {
-    case OptionsSuccess(options) => {
-      options.archivePath should be (archivePath)
-      options.logDir should be (logDir)
-      options.tempDir should be (tempDir)
-      options.whatIf should be (true)
+  def assertValid(result: OptionsResult) {
+    result match {
+      case OptionsSuccess(options) => {
+        options.archivePath should be (archivePath)
+        options.logDir should be (logDir)
+        options.tempDir should be (tempDir)
+        options.target should be (Target.validate)
+      }
+      case _ => fail()
     }
-    case _ => fail()
   }
 
 }

@@ -5,7 +5,7 @@ import org.apache.log4j.Logger
 import javax.persistence.EntityManager
 import uk.org.nbn.nbnv.importer.data.{Database, Repository}
 import uk.org.nbn.nbnv.importer.spatial.GridSquareInfoFactory
-import uk.org.nbn.nbnv.metadata.Metadata
+import uk.org.nbn.nbnv.importer.metadata.Metadata
 import uk.org.nbn.nbnv.jpa.nbncore.{TaxonObservation, Sample, TaxonObservationPublic}
 
 /// Creates, updates or deletes the TaxonObservationPublic record appropriately.

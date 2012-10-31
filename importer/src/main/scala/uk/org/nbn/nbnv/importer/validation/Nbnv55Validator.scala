@@ -5,7 +5,7 @@ import uk.org.nbn.nbnv.importer.records.NbnRecord
 class Nbnv55Validator {
     def validate(record: NbnRecord) = {
       val validator = new NullFieldValidator
-      validator.validate(record.key, "RecordKey")
+      validator.validate("NBNV-55", record.key, "RecordKey")
     }
 
 }

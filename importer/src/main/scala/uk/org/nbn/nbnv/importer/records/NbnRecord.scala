@@ -3,7 +3,7 @@ package uk.org.nbn.nbnv.importer.records
 import scala.collection.JavaConversions._
 import org.gbif.dwc.terms.DwcTerm
 import org.gbif.dwc.text.StarRecord
-import uk.org.nbn.nbnv.importer.ImportFailedException
+import uk.org.nbn.nbnv.importer.BadDataException
 import util.parsing.json.JSON
 import java.util.Date
 import uk.org.nbn.nbnv.importer.utility.StringParsing._
@@ -26,7 +26,7 @@ class NbnRecord(record: StarRecord) {
       }
       catch {
         case e: Throwable => {
-          throw new ImportFailedException("Improperly formed JSON attribute list in record '%s'".format(this.key))
+          throw new BadDataException("Improperly formed JSON attribute list in record '%s'".format(this.key))
         }
       }
     }
@@ -42,8 +42,8 @@ class NbnRecord(record: StarRecord) {
   def taxonVersionKey = record.core.value(DwcTerm.taxonID)
   def siteKey =         parseOptional(record.core.value(DwcTerm.locationID))
   def siteName =        parseOptional(record.core.value(DwcTerm.locality))
-  def recorder =        record.core.value(DwcTerm.recordedBy)
-  def determiner =      record.core.value(DwcTerm.identifiedBy)
+  def recorder =        parseOptional(record.core.value(DwcTerm.recordedBy))
+  def determiner =      parseOptional(record.core.value(DwcTerm.identifiedBy))
   def eastRaw =         parseOptional(record.core.value(DwcTerm.verbatimLongitude))
   def east =            parseOptional(record.core.value(DwcTerm.verbatimLongitude)) map { s => s.toDouble }
   def northRaw =        parseOptional(record.core.value(DwcTerm.verbatimLatitude))
@@ -106,7 +106,7 @@ class NbnRecord(record: StarRecord) {
       s.toLowerCase match {
         case "presence" => false
         case "absence" => true
-        case _ => throw new ImportFailedException("Invalid occurrence status '%s'".format(s))
+        case _ => throw new BadDataException("Invalid occurrence status '%s'".format(s))
       }
     }
   }

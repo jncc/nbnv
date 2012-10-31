@@ -12,21 +12,21 @@ class Nbnv86Validator {
       new Result {
         def level: ResultLevel.ResultLevel = ResultLevel.ERROR
         def reference: String = record.key
-        def message: String = "Longitude does not fall on the earth"
+        def message: String = "NBNV-86: Longitude does not fall on the earth"
       }
     }
     else if (latitude > 90 || latitude < -90) {
       new Result {
         def level: ResultLevel.ResultLevel = ResultLevel.ERROR
         def reference: String = record.key
-        def message: String = "Latitiude does not fall on the earth"
+        def message: String = "NBNV-86: Latitiude does not fall on the earth"
       }
     }
     else{
       new Result {
         def level: ResultLevel.ResultLevel = ResultLevel.DEBUG
         def reference: String = record.key
-        def message: String = "Validated: Nbnv86 not implemented"
+        def message: String = "NBNV-86: Validated: Nbnv86 not implemented"
       }
     }
   }

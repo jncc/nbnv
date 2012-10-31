@@ -6,6 +6,6 @@ import uk.org.nbn.nbnv.importer.fidelity.{ResultLevel, Result}
 class Nbnv91Validator {
   def validate(record: NbnRecord) = {
     val validator = new LengthValidator
-    validator.validate(record.key, "Recorder", record.recorder, 140)
+    validator.validate("NBNV-91", record.key, "Recorder", record.recorder getOrElse "", 140)
   }
 }

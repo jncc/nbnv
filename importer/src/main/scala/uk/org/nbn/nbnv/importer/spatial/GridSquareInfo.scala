@@ -1,6 +1,6 @@
 package uk.org.nbn.nbnv.importer.spatial
 
-import uk.org.nbn.nbnv.importer.ImportFailedException
+import uk.org.nbn.nbnv.importer.BadDataException
 import org.geotools.geometry.GeneralDirectPosition
 import org.geotools.referencing.ReferencingFactoryFinder
 import org.geotools.referencing.operation.DefaultCoordinateOperationFactory
@@ -42,7 +42,7 @@ abstract class GridSquareInfo(gridRef : String, precision: Int = 0) {
   val outputGridRef = {
 
     if (normalisedPrecision > 0 &&  normalisedPrecision < currentPrecision) {
-      throw ImportFailedException("Normailised precsion '%s' is greater then grid ref '%s' precision".format(normalisedPrecision, gridRef))
+      throw BadDataException("Normailised precsion '%s' is greater then grid ref '%s' precision".format(normalisedPrecision, gridRef))
     }
     else if (normalisedPrecision > 0 && normalisedPrecision > currentPrecision) {
       decreaseGridPrecision(gridRef.toUpperCase,normalisedPrecision)
@@ -207,7 +207,7 @@ abstract class GridSquareInfo(gridRef : String, precision: Int = 0) {
         decreaseGridPrecision(outputGridRef, 10000 )
       }
       else {
-        throw new ImportFailedException("Current grid reference has an invalid precision")
+        throw new BadDataException("Current grid reference has an invalid precision")
       }
     }
   }
@@ -239,7 +239,7 @@ abstract class GridSquareInfo(gridRef : String, precision: Int = 0) {
       10000
     }
     else {
-      throw new ImportFailedException("Bad precision entry > 10000 : %s".format(precision))
+      throw new BadDataException("Bad precision entry > 10000 : %s".format(precision))
     }
   }
 
