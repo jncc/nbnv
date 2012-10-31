@@ -96,7 +96,7 @@ public class DesignationSpeciesDensityMap {
                         .where(condition)
                         .groupBy(GRIDTREE.PARENTFEATUREID, DESIGNATIONTAXONDATA.CODE, USERTAXONOBSERVATIONDATA.USERID);
                     
-                    return MapHelper.getMapData("geom", "label", 4326, create
+                    return MapHelper.getMapData(FEATUREDATA.GEOM, FEATUREDATA.LABEL, 4326, create
                         .select(
                             FEATUREDATA.GEOM, observations.getField("species"),
                             FEATUREDATA.LABEL

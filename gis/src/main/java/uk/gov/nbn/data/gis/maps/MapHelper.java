@@ -1,12 +1,13 @@
 package uk.gov.nbn.data.gis.maps;
 
 import java.util.List;
-import org.jooq.Query;
 import org.jooq.Condition;
 import org.jooq.DatePart;
-import static uk.gov.nbn.data.dao.jooq.Tables.*;
+import org.jooq.Field;
+import org.jooq.Query;
 import static org.jooq.impl.Factory.*;
 import org.jooq.util.sqlserver.SQLServerFactory;
+import static uk.gov.nbn.data.dao.jooq.Tables.*;
 
 /**
  * The following class provides methods which can be used to inject SQL filters
@@ -15,12 +16,12 @@ import org.jooq.util.sqlserver.SQLServerFactory;
  */
 public class MapHelper {
     
-    public static String getMapData(String geomField, String uniqueField, int srid, Query query) {
-        return new StringBuilder(geomField)
+    public static String getMapData(Field<?> geomField, Field<?> uniqueField, int srid, Query query) {
+        return new StringBuilder(geomField.getName())
                 .append(" from (")
                 .append(query.getSQL(true))
                 .append(") AS foo USING UNIQUE ")
-                .append(uniqueField)
+                .append(uniqueField.getName())
                 .append(" USING SRID=")
                 .append(srid)
                 .toString();
@@ -70,7 +71,7 @@ public class MapHelper {
     
     static String getSelectedFeatureData(String selectedFeature) {
         SQLServerFactory create = new SQLServerFactory();
-        return MapHelper.getMapData("geom", "id", 4326, create
+        return MapHelper.getMapData(FEATUREDATA.GEOM, FEATUREDATA.ID, 4326, create
             .select(FEATUREDATA.ID, FEATUREDATA.GEOM)
             .from(FEATUREDATA)
             .where(FEATUREDATA.IDENTIFIER.eq(selectedFeature))

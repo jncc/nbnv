@@ -110,7 +110,7 @@ public class DatasetSpeciesDensityMap {
                          .where(condition)
                          .groupBy(GRIDTREE.PARENTFEATUREID, USERTAXONOBSERVATIONDATA.DATASETKEY, USERTAXONOBSERVATIONDATA.USERID);
                     
-                    return MapHelper.getMapData("geom", "label", 4326, create
+                    return MapHelper.getMapData(FEATUREDATA.GEOM, FEATUREDATA.LABEL, 4326, create
                         .select(FEATUREDATA.GEOM, FEATUREDATA.LABEL, observations.getField("species"))
                         .from(observations)
                         .join(FEATUREDATA).on(FEATUREDATA.ID.eq(observations.getField(GRIDTREE.FEATUREID)))
