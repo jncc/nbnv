@@ -1,5 +1,23 @@
 (function($){
 
+
+    function isAllDatasetsUnchecked(){
+       var datasetCheckBoxes = $("INPUT[name='datasetKey'][type='checkbox']");
+       var numCheckBoxesChecked = datasetCheckBoxes.filter(':checked').length;
+       return numCheckBoxesChecked == 0;
+    }
+    
+    /*This is useful for checking all dataset check boxes when none are selected.
+     *This looks nicer for the user since non-selected is the same as using all.
+     */
+    namespace("nbn.portal.reports.utils.DatasetFields", {
+        doSelectDatasetKeys: function(){
+            if(isAllDatasetsUnchecked()){
+                   $("INPUT[name='datasetKey'][type='checkbox']").attr('checked', true);
+            }
+        }
+    });
+
     function isAllDatasetsChecked(){
        var datasetCheckBoxes = $("INPUT[name='datasetKey'][type='checkbox']");
        var numCheckBoxes = datasetCheckBoxes.length;
