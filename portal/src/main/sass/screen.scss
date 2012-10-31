@@ -98,6 +98,8 @@ body {
     fieldset{
         border: 2px groove threedface;
         padding: 10px;
+        margin-top: 10px;
+        margin-bottom: 10px;
     }
 
     table {
@@ -119,13 +121,14 @@ body {
     }
 
     .tabbed {
+        @include clearfix;
         $padding: 5px;
         margin:5px;
         @include border-top-radius(5px);
         border: 1px solid $majorColour;
         padding: 0 $padding;
         h1, h2, h3 {
-            @include contrasted($majorColour);
+            @include contrasted($majorColour, #000000, #ffffff, 50%);
             padding: 0.5em;
             display: block;
             margin: 0 #{-$padding} $padding;
@@ -281,20 +284,6 @@ body {
 
     #nbn-site-image-copyright{
         font-size: 0.7em;
-    }
-
-    #nbn-grid-map-filter-container{
-        width: 39%;
-        float: left;
-    }
-
-    #nbn-grid-map-container{
-        width: 60%;
-        float: right;
-    }
-
-    .nbn-clear-floating-elements{
-        clear: both;
     }
     
     .nbn-colour-picker {

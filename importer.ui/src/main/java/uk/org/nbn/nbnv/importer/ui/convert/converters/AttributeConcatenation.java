@@ -11,6 +11,7 @@ import uk.org.nbn.nbnv.importer.ui.convert.BadDataException;
 import uk.org.nbn.nbnv.importer.ui.convert.ConverterStep;
 import uk.org.nbn.nbnv.importer.ui.parser.ColumnMapping;
 import uk.org.nbn.nbnv.importer.ui.parser.DarwinCoreField;
+import uk.org.nbn.nbnv.importer.ui.parser.DarwinCoreFieldType;
 
 /**
  *
@@ -33,8 +34,9 @@ public class AttributeConcatenation extends ConverterStep {
     public boolean isStepNeeded(List<ColumnMapping> columns) {
         columnList = new HashMap<Integer, String>();
         
+        // If we have an Attribute or a TaxonName (internal use fields)
         for (ColumnMapping cm : columns) {
-            if (cm.getField() == DarwinCoreField.ATTRIBUTE) {
+            if (cm.getField().getType() == DarwinCoreFieldType.INTERNAL) {
                 columnList.put(cm.getColumnNumber(), cm.getColumnLabel());
             }
         }

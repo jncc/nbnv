@@ -15,6 +15,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -41,7 +42,16 @@ import uk.org.nbn.nbnv.importer.ui.util.UnsatisfiableDependencyError;
  * @author Paul Gilbertson
  */
 public class RunConversions {
-    private List<ConverterStep> steps;
+    private String[] validDates = {"dd/MM/yyyy", 
+        "dd-MM-yyyy", 
+        "yyyy/MM/dd", 
+        "yyyy-MM-dd", 
+        "dd MMM yyyy", 
+        "MMM yyyy", 
+        "yyyy"};
+    private List<String> dateFormats = Arrays.asList(validDates);
+    
+    private List<ConverterStep> steps = new ArrayList<ConverterStep>();
     private List<ColumnMapping> mappings;
     private NXFParser nxfParser;
     private int organisation;
@@ -50,7 +60,7 @@ public class RunConversions {
     private int startDateCol = -1;
     private Date startDate = new Date();
     private int endDateCol = -1;
-    private Date endDate = new Date();
+    private Date endDate = new Date(Long.MIN_VALUE);
 
     /**
      * Simple Constructor for RunConversions class
@@ -63,15 +73,6 @@ public class RunConversions {
         this.nxfParser = new NXFParser(in);
         this.organisation = organisation;
         this.metadataForm = metadataForm;
-        
-        setSteps(new ArrayList<ConverterStep>());
-        
-        DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-        try {
-            endDate = df.parse("01/01/1900");
-        } catch(ParseException ex) {
-            endDate = new Date(0);
-        }
     }
     
     /**
@@ -335,9 +336,7 @@ public class RunConversions {
                     errors.add("Ambiguous Data: " + ex.getMessage());
                 } catch (BadDataException ex) {
                     errors.add("Bad Data: " + ex.getMessage());
-                } catch (ParseException ex) {
-                    errors.add("Error Parsing Date fields: " + ex.getMessage());
-                } 
+                }
                 w.write(StringUtils.collectionToDelimitedString(row, "\t"));
                 w.newLine();
             }
@@ -356,17 +355,27 @@ public class RunConversions {
         return errors;
     }
 
-    private void updateStartEndDates(List<String> row) throws ParseException {
-        DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-        if (startDateCol >= 0 && endDateCol >= 0) {
-            Date currStart = df.parse(row.get(startDateCol));
-            if (startDate.after(currStart)) {
-                startDate = currStart;
-            }
-            
-            Date currEnd = df.parse(row.get(endDateCol));
-            if (endDate.before(currEnd)) {
-                endDate = currEnd;
+    private void updateStartEndDates(List<String> row) {
+        for (String format : dateFormats) { 
+            try {
+                DateFormat df = new SimpleDateFormat(format);
+                if (startDateCol >= 0 && endDateCol >= 0) {
+                    Date currStart = df.parse(row.get(startDateCol));
+                    if (startDate.after(currStart)) {
+                        startDate = currStart;
+                    }
+
+                    Date currEnd = df.parse(row.get(endDateCol));
+                    if (endDate.before(currEnd)) {
+                        endDate = currEnd;
+                    }
+                    
+                    if (currStart != null && currEnd != null) {
+                        return;
+                    }
+                }
+            } catch (ParseException ex) { 
+                
             }
         }
     }
