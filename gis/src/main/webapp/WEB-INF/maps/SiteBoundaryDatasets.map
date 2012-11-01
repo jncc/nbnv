@@ -1,7 +1,7 @@
 [#ftl]
 [#import "libraries/template.ftl" as template]
 
-[@template.master title="Site Boundary Dataset Map" mapServiceURL=mapServiceURL]
+[@template.master title="Site Boundary Dataset Map"]
     [#list siteBoundaries as dataset]
         LAYER
             NAME                                                "${dataset.datasetKey}"

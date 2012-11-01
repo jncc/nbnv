@@ -1,7 +1,7 @@
 [#ftl]
 [#import "libraries/template.ftl" as template]
 
-[@template.context title="Dataset Species Density Map" mapServiceURL=mapServiceURL properties=properties]
+[@template.context title="Dataset Species Density Map"]
     [#list layers as layer]
         LAYER
             NAME                                                "${layer}"

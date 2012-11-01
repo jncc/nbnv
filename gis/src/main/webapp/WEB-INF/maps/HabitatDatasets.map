@@ -1,7 +1,7 @@
 [#ftl]
 [#import "libraries/template.ftl" as template]
 
-[@template.master title="Habitat Dataset Map" mapServiceURL=mapServiceURL]
+[@template.master title="Habitat Dataset Map"]
     [#list habitats as dataset]
         LAYER
             NAME                                                "${dataset.datasetKey}"
