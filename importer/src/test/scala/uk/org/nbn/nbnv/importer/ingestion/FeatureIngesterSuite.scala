@@ -35,7 +35,7 @@ class FeatureIngesterSuite extends BaseFunSuite {
     val db = new Database(em, repo, mock[QueryCache])
   }
 
-  test("an existing grid square feature should just be returned") {
+  ignore("an existing grid square feature should just be returned") {
 
     // arrange
     val f = fixture
