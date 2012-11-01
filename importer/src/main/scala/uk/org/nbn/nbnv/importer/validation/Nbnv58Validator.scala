@@ -6,7 +6,7 @@ import uk.org.nbn.nbnv.importer.fidelity.{ResultLevel, Result}
 class Nbnv58Validator {
   def validate(record: NbnRecord) = {
     if (record.gridReferenceRaw.isDefined
-      || (record.east.isDefined && record.north.isDefined && record.srs.isDefined)
+      || (record.east.isDefined && record.north.isDefined && (record.srs.isDefined || record.gridReferenceTypeRaw.isDefined))
       || record.featureKey.isDefined){
 
       new Result {
