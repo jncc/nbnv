@@ -62,10 +62,9 @@ public class SiteReportMap {
         
         SQLServerFactory create = new SQLServerFactory();
         Condition condition = USERTAXONOBSERVATIONDATA.PTAXONVERSIONKEY.eq(taxonKey)
-                .and(FEATUREDATA.IDENTIFIER.eq(featureID))
                 .and(USERTAXONOBSERVATIONDATA.USERID.eq(user.getId()))
                 .and(USERTAXONOBSERVATIONDATA.FEATUREID.in(
-                    spatialRelation.equals("overlap") ? create
+                    spatialRelation.equals("within") ? create
                         .select(FEATURECONTAINS.CONTAINEDFEATUREID)
                         .from(FEATURECONTAINS).join(FEATUREDATA).on(FEATUREDATA.ID.eq(FEATURECONTAINS.FEATUREID))
                         .where(FEATUREDATA.IDENTIFIER.eq(featureID))
