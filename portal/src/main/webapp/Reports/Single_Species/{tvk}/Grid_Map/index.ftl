@@ -64,6 +64,7 @@
 <#macro gridMapContents tvk imageSize>
     <div class="tabbed" id="nbn-grid-map-container">
         <h3>Map</h3>
+        <img id="nbn-grid-map-busy-image" src='/img/ajax-loader-medium.gif'>
         <img id="nbn-grid-map-image">
     </div>
 </#macro>
