@@ -23,9 +23,10 @@ public class GridMapMapViewportInterceptor {
                     GridMap gridMapProperties, 
                     GridMap.GridLayer layer,
                     @QueryParam(key="imagesize", validation="1[0-5]|[1-9]") @DefaultValue("10") String imagesizeStr,
-                    @QueryParam(key="feature") String featureId) {
+                    @QueryParam(key="feature") String featureId,
+                    @QueryParam(key="nationalextent") String nationExtent) {
         Map<String, String[]> toReturn = new HashMap<String,String[]>();
-        BoundingBox featureToFocusOn = helper.getFeatureToFocusOn(featureId, gridMapProperties);
+        BoundingBox featureToFocusOn = helper.getFeatureToFocusOn(featureId, nationExtent, gridMapProperties);
         GridMapRequest request = helper.getGridMapRequest(featureToFocusOn, layer.resolution(), Integer.parseInt(imagesizeStr));
         
         if(!request.isValidRequest()) {
