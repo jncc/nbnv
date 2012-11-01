@@ -21,6 +21,7 @@ public class Metadata implements Serializable {
     private String info = "";
     private int organisationID = -1;
     private String datasetID = "";
+    private char datasetTypeKey = 'S';
 
     /**
      * @return the title
@@ -186,5 +187,19 @@ public class Metadata implements Serializable {
 
     public void setDatasetID(String datasetID) {
         this.datasetID = datasetID;
+    }
+
+    /**
+     * @return the datasetTypeKey
+     */
+    public char getDatasetTypeKey() {
+        return datasetTypeKey;
+    }
+
+    /**
+     * @param datasetTypeKey the datasetTypeKey to set
+     */
+    public void setDatasetTypeKey(char datasetTypeKey) {
+        this.datasetTypeKey = datasetTypeKey;
     }
 }
