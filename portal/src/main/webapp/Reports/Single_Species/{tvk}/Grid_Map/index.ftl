@@ -50,7 +50,6 @@
                 Show outline: <input type='checkbox' id='nbn-show-outline' name='showOutline' checked><span class="nbn-form-label">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Outline colour: </span><@colourPicker idSuffix="-outline" hexColour="#000000"/>
 
             </fieldset>
-
             <fieldset>
                 <legend>Overlays and backgrounds</legend>
                 <input type="checkbox" value="os" name="background">Ordnance survey<br/>
@@ -58,7 +57,7 @@
                 <input type="checkbox" value="100kgrid" name="background">100km grid<br/>
                 <input type="checkbox" value="10kgrid" name="background">10km grid<br/>
             </fieldset>
-            <input type="submit" value="Submit"></td>
+            <input type="submit" value="Refresh map"></td>
     </div>
 </#macro>
 

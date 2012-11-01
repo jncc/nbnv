@@ -145,11 +145,23 @@
             });
         });
     }
+    
+    function applyRules(){
+        if(!$("INPUT[name='gridLayer1'][type='checkbox']").is(':checked')
+            && !$("INPUT[name='gridLayer2'][type='checkbox']").is(':checked')
+            && !$("INPUT[name='gridLayer3'][type='checkbox']").is(':checked')
+        ){
+                $("INPUT[name='gridLayer1'][type='checkbox']").prop('checked',true);
+        }
+    }
 
     $(document).ready(function(){
 
         $('#nbn-grid-map-form').submit(function(){
             var form = $(this);
+            
+            //Apply any rules eg, must have at least one year band selected
+            applyRules();
             
             //Deselect datasets if all are selected - requires jquery.dataset-selector-utils.js
             nbn.portal.reports.utils.DatasetFields.doDeselectDatasetKeys();
