@@ -64,7 +64,7 @@
 <#macro gridMapContents tvk imageSize>
     <div class="tabbed" id="nbn-grid-map-container">
         <h3>Map</h3>
-        <img src="${gis}/SingleSpecies/${tvk}/map?imagesize=${imageSize}" id="nbn-grid-map-image">
+        <img id="nbn-grid-map-image">
     </div>
 </#macro>
 

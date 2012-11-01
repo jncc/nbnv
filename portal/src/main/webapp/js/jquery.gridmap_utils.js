@@ -157,6 +157,9 @@
 
     $(document).ready(function(){
 
+        //Add the initial map image
+        $('#nbn-grid-map-image').attr('src',getURL($('#nbn-grid-map-form')));
+
         $('#nbn-grid-map-form').submit(function(){
             var form = $(this);
             
