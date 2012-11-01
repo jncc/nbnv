@@ -25,7 +25,6 @@ import org.jooq.Condition;
 import org.jooq.SelectHavingStep;
 import static uk.gov.nbn.data.dao.jooq.Tables.*;
 import static org.jooq.impl.Factory.*;
-import uk.gov.nbn.data.gis.maps.context.ContextLayerDataGenerator;
 
 
 /**
@@ -63,7 +62,6 @@ public class DatasetSpeciesDensityMap {
     
 
     @Autowired Properties properties;
-    @Autowired ContextLayerDataGenerator contextGenerator;
     
     @MapService("{datasetKey}")
     @GridMap(
@@ -88,7 +86,6 @@ public class DatasetSpeciesDensityMap {
         data.put("buckets", BUCKETS);
         data.put("mapServiceURL", mapServiceURL);
         data.put("properties", properties);
-        data.put("contextGenerator", contextGenerator);
         data.put("layerGenerator", new ResolutionDataGenerator() {
                 @Override
                 public String getData(int resolution) {

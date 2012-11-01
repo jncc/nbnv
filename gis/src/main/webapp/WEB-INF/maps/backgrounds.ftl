@@ -114,35 +114,40 @@
     END
 [/#macro]
 
-[#macro contextLayers generator spatialConnection]
-    [#list generator.contextLayers as contextLayer]
+[#macro contextLayers location]
+    [#assign contextLayers = [
+        { "name" : "Vice-counties",                     "data" : "vice_counties",                   "projection" : 27700 },
+        { "name" : "GB-Coast",                          "data" : "gb_coast",                        "projection" : 27700 },
+        { "name" : "GB-Coast-with-Hundred-km-Grid",     "data" : "gb_coast_with_100k_grid",         "projection" : 27700 },
+        { "name" : "GB-Hundred-km-Grid",                "data" : "gb_100k_grid",                    "projection" : 27700 },
+        { "name" : "GB-Ten-km-Grid",                    "data" : "gb_10k_grid",                     "projection" : 27700 },
+        { "name" : "GB-Ten-km-Grid-Ireland-cutout",     "data" : "gb_10k_grid_ireland_cutout",      "projection" : 27700 },
+        { "name" : "GB-Hundred-km-Grid-Ireland-cutout", "data" : "gb_100k_grid_ireland_cutout",     "projection" : 27700 },
+
+        { "name" : "Ireland-Coast",                     "data" : "ireland_coast",                   "projection" : 29903 },
+        { "name" : "Ireland-Coast-with-Hundred-km-Grid","data" : "ireland_coast_with_100k_grid",    "projection" : 29903 },
+        { "name" : "Ireland-Hundred-km-Grid",           "data" : "ireland_100k_grid",               "projection" : 29903 },
+        { "name" : "Ireland-Ten-km-Grid",               "data" : "ireland_10k_grid",                "projection" : 29903 },
+        { "name" : "Ireland-Ten-km-Grid-GB-cutout",     "data" : "ireland_10k_grid_gb_cutout",      "projection" : 29903 },
+        { "name" : "Ireland-Hundred-km-Grid-GB-cutout", "data" : "ireland_100k_grid_gb_cutout",     "projection" : 29903 }
+    ]]
+
+    SHAPEPATH                       "${location}"
+
+    [#list contextLayers as layer]
         LAYER
-            NAME                                                "${contextLayer.name}"
-            TYPE                                                LINE
-            STATUS                                              OFF
-            CONNECTIONTYPE                                      PLUGIN
-            PLUGIN                                              "msplugin_mssql2008.dll"
-            CONNECTION                                          "${spatialConnection}"
-            PROCESSING                                          "CLOSE_CONNECTION=DEFER"
-
-            DATA                                                "${generator.getContextLayerData(contextLayer)}"
-
+            NAME                    "${layer.name}"
+            TYPE                    LINE
+            DATA                    ${layer.data}
+            STATUS                  ON
+            PROJECTION              "init=epsg:${layer.projection?c}"          END
             METADATA
-                "wms_title"                                       "${contextLayer.name}"
+                "wms_title"                                       "${layer.name}"
                 "wms_include_items"                               "all"
             END
-
-            PROJECTION
-                "init=epsg:${contextLayer.srid?c}"
-            END
-
             CLASS
-                NAME                                              "default"
-
-                STYLE
-                    COLOR                                           0 0 0
-                    WIDTH                                           1
-                END
+                NAME                                              "${layer.name}"
+                OUTLINECOLOR 0 0 0
             END
         END
     [/#list]

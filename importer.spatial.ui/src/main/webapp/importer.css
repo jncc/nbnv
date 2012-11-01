@@ -1,0 +1,57 @@
+/* 
+    Document   : importer
+    Created on : 08-Aug-2012, 10:52:09
+    Author     : Paul Gilbertson
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+root { 
+
+}
+
+.errors {
+    clear: both;
+    color: red;
+}
+
+.formlabel {
+    float: left;
+    display: inline-block;
+    vertical-align: middle;
+    width: 150px;
+}
+
+.optionHead {
+    height: 7.5em;
+}
+
+#uploadMetadata {
+    float: left;
+    height: 9em;
+    width: 50%;
+}
+
+#updateDataset {
+    float: right;
+    height: 10em;
+    width: 50%;
+}
+
+#metadata {
+    width: 100%;
+    clear: both;
+}
+
+input.wide {
+    display: inline-block;
+    width: 450px;    
+}
+
+.error {
+    float: right;
+    width: 200px;
+    display: inline-block;
+    vertical-align: middle;
+    color: red;
+}
