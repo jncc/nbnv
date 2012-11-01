@@ -1,6 +1,6 @@
 package uk.org.nbn.nbnv.importer.validation
 
-import uk.org.nbn.nbnv.importer.records.NbnRecord
+import uk.org.nbn.nbnv.importer.records.{GridRefDef, NbnRecord}
 import uk.org.nbn.nbnv.importer.fidelity.{ResultLevel, Result}
 import uk.org.nbn.nbnv.importer.spatial.GridSquareInfoFactory
 import collection.mutable.ListBuffer
@@ -42,7 +42,7 @@ class Nbnv90Validator (factory: GridSquareInfoFactory) {
         results.append(r3)
       }
       else  {
-        val gridRef = factory.getByGridRef(record.gridReferenceRaw.get)
+        val gridRef = factory.getByGridRef(GridRefDef(record.gridReferenceRaw.get,None, None))
 
         val targetPrecision = if (record.gridReferencePrecision.get < 100) 100 else record.gridReferencePrecision.get
 

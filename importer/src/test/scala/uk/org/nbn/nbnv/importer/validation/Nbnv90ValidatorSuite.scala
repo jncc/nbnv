@@ -2,7 +2,7 @@ package uk.org.nbn.nbnv.importer.validation
 
 import uk.org.nbn.nbnv.importer.testing.BaseFunSuite
 import uk.org.nbn.nbnv.importer.spatial.{GridSquareInfo, GridSquareInfoFactory}
-import uk.org.nbn.nbnv.importer.records.NbnRecord
+import uk.org.nbn.nbnv.importer.records.{GridRefDef, NbnRecord}
 import org.mockito.Mockito._
 import org.mockito.Matchers._
 import uk.org.nbn.nbnv.importer.fidelity.ResultLevel
@@ -17,7 +17,7 @@ class Nbnv90ValidatorSuite extends BaseFunSuite {
     when(gsi.gridReferencePrecision).thenReturn(100)
 
     val factory = mock[GridSquareInfoFactory]
-    when(factory.getByGridRef(knownGridRef_100m)).thenReturn(gsi)
+    when(factory.getByGridRef(any[GridRefDef])).thenReturn(gsi)
 
     val record = mock[NbnRecord]
     when(record.gridReferenceRaw).thenReturn(Some(knownGridRef_100m))
@@ -35,7 +35,7 @@ class Nbnv90ValidatorSuite extends BaseFunSuite {
     when(gsi.gridReferencePrecision).thenReturn(100)
 
     val factory = mock[GridSquareInfoFactory]
-    when(factory.getByGridRef(knownGridRef_100m)).thenReturn(gsi)
+    when(factory.getByGridRef(any[GridRefDef])).thenReturn(gsi)
 
     val record = mock[NbnRecord]
     when(record.gridReferenceRaw).thenReturn(Some(knownGridRef_100m))
@@ -53,7 +53,7 @@ class Nbnv90ValidatorSuite extends BaseFunSuite {
     when(gsi.gridReferencePrecision).thenReturn(1000)
 
     val factory = mock[GridSquareInfoFactory]
-    when(factory.getByGridRef(knownGridRef_1000m)).thenReturn(gsi)
+    when(factory.getByGridRef(any[GridRefDef])).thenReturn(gsi)
 
     val record = mock[NbnRecord]
     when(record.gridReferenceRaw).thenReturn(Some(knownGridRef_1000m))
@@ -71,7 +71,7 @@ class Nbnv90ValidatorSuite extends BaseFunSuite {
     when(gsi.gridReferencePrecision).thenReturn(100)
 
     val factory = mock[GridSquareInfoFactory]
-    when(factory.getByGridRef(knownGridRef_100m)).thenReturn(gsi)
+    when(factory.getByGridRef(any[GridRefDef])).thenReturn(gsi)
 
     val record = mock[NbnRecord]
     when(record.gridReferenceRaw).thenReturn(Some(knownGridRef_100m))
@@ -92,7 +92,7 @@ class Nbnv90ValidatorSuite extends BaseFunSuite {
     when(gsi.gridReferencePrecision).thenReturn(1000)
 
     val factory = mock[GridSquareInfoFactory]
-    when(factory.getByGridRef(knownGridRef_1000m)).thenReturn(gsi)
+    when(factory.getByGridRef(any[GridRefDef])).thenReturn(gsi)
 
     val record = mock[NbnRecord]
     when(record.gridReferenceRaw).thenReturn(Some(knownGridRef_1000m))

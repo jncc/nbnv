@@ -98,11 +98,11 @@ class NbnRecord(record: StarRecord) {
     }
   }
 
-  def location = {
+  def feature = {
     if (gridReferenceRaw.isDefined)
       GridRefDef(gridReferenceRaw.get, parseSrs, gridReferencePrecision)
     else if (featureKey.isDefined)
-      FeatureDef(featureKey.get)
+      BoundaryDef(featureKey.get)
     else if (east.isDefined && north.isDefined && (srs.isDefined || gridReferenceTypeRaw.isDefined))
       PointDef(east.get, north.get, parseSrs.get, gridReferencePrecision)
     else

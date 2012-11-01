@@ -11,6 +11,7 @@ import javax.validation.ConstraintViolationException
 import com.google.common.base.Stopwatch
 import uk.org.nbn.nbnv.importer.data.{Database, QueryCache, Repository}
 import uk.org.nbn.nbnv.importer.spatial.GridSquareInfoFactory
+import uk.org.nbn.nbnv.importer.records.GridRefDef
 
 object Program {
 
@@ -58,7 +59,7 @@ class Program @Inject() (log: Logger, options: Options, db: Database, ingester: 
 
         for ((ref, i) <- g) {
           log.info("Importing grid ref '%s'".format(ref))
-          ingester.ensureGridRefFeature(ref)
+          ingester.ensureGridRefFeature(GridRefDef(ref, None, None))
           log.info("Imported " + (i + 1) + " grid refs in " + watch.elapsedMillis() + "ms")
           log.info("Average speed is " + watch.elapsedMillis() / (i + 1) + "ms per grid ref")
         }

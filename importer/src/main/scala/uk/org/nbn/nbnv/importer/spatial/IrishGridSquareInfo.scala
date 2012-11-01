@@ -14,13 +14,13 @@ object IrishGridSquareInfo extends GridSqareInfoCompanion {
 
   val irishGridByCoord = irishGridByLetter map {_.swap}
 
-  protected def create(gridRef: String, precision: Int = 0) = {
+  protected def create(gridRef: String, precision: Option[Int]) = {
     new IrishGridSquareInfo(gridRef, precision)
   }
 
   protected def getEpsgCode = 29903
 
-  protected def getGridSquareByEastingNorthing(east: Int, north: Int, precision: Int) = {
+  protected def getGridSquareByEastingNorthing(east: Int, north: Int, precision: Option[Int]) = {
     //Compute 100K grid square co-ordinate
     val e100k = (east - (east % 100000))
     val n100k = (north - (north % 100000))
@@ -42,7 +42,7 @@ object IrishGridSquareInfo extends GridSqareInfoCompanion {
   }
 }
 
-class IrishGridSquareInfo(gridRef: String, precision: Int = 0) extends GridSquareInfo(gridRef, precision) {
+class IrishGridSquareInfo(gridRef: String, precision: Option[Int]) extends GridSquareInfo(gridRef, precision) {
 
   def projection =  "OSNI"
 
@@ -57,7 +57,7 @@ class IrishGridSquareInfo(gridRef: String, precision: Int = 0) extends GridSquar
     (x * 100000 + e.toInt, y * 100000 + n.toInt)
   }
 
-  protected def create(gridRef: String, precision: Int = 0) = {
+  protected def create(gridRef: String, precision: Option[Int]) = {
     new IrishGridSquareInfo(gridRef, precision)
   }
 

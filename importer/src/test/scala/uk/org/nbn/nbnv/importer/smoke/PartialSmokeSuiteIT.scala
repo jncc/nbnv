@@ -6,6 +6,7 @@ import uk.org.nbn.nbnv.importer.testing.BaseFunSuite
 import uk.org.nbn.nbnv.importer.utility.ResourceLoader
 import uk.org.nbn.nbnv.importer._
 import ingestion.FeatureIngester
+import records.BoundaryDef
 import spatial.GridSquareInfoFactory
 import uk.org.nbn.nbnv.importer.testing.BaseFunSuite
 import uk.org.nbn.nbnv.importer.utility.ResourceLoader
@@ -36,7 +37,7 @@ class PartialSmokeSuiteIT extends BaseFunSuite with ResourceLoader {
     val f = fixture
     val i = new FeatureIngester(mock[Logger], f.db, new GridSquareInfoFactory(f.db))
 
-    i.ensureSiteBoundaryFeature("GA000942E012")
+    i.ensureSiteBoundaryFeature(BoundaryDef("GA000942E012"))
   }
 
   test("should throw on non-existent site boundary feature") {
@@ -45,7 +46,7 @@ class PartialSmokeSuiteIT extends BaseFunSuite with ResourceLoader {
     val i = new FeatureIngester(mock[Logger], f.db, new GridSquareInfoFactory(f.db))
 
     val ex = intercept[BadDataException] {
-      i.ensureSiteBoundaryFeature("THISDOESNOTEXIST")
+      i.ensureSiteBoundaryFeature(BoundaryDef("THISDOESNOTEXIST"))
     }
 
     ex.message should include ("Expected one result for 'THISDOES|NOTEXIST', but found none")

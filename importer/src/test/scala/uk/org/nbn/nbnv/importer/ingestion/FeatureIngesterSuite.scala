@@ -6,7 +6,7 @@ import org.mockito.Matchers._
 import javax.persistence.EntityManager
 import uk.org.nbn.nbnv.importer.data.{QueryCache, Database, Repository}
 import uk.org.nbn.nbnv.importer.spatial.{GridSquareInfo, GridSquareInfoFactory}
-import uk.org.nbn.nbnv.importer.records.NbnRecord
+import uk.org.nbn.nbnv.importer.records.{GridTypeDef, GridRefDef, NbnRecord}
 import uk.org.nbn.nbnv.jpa.nbncore.{GridSquare, Feature}
 import org.apache.log4j.Logger
 
@@ -20,7 +20,7 @@ class FeatureIngesterSuite extends BaseFunSuite {
     val gridSquareInfo = mock[GridSquareInfo]
     when(gridSquareInfo.gridReference).thenReturn(gridRef)
     val gridSquareInfoFactory = mock[GridSquareInfoFactory]
-    when(gridSquareInfoFactory.getByGridRef(gridRef, gridReferenceType, gridReferencePrecision))
+    when(gridSquareInfoFactory.getByGridRef(GridRefDef(gridRef, Some(GridTypeDef(gridReferenceType)), Some(gridReferencePrecision))))
       .thenReturn(gridSquareInfo)
 
     val record = mock[NbnRecord]
