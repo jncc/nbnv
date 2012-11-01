@@ -1,5 +1,7 @@
 (function($){
     
+    var options = {imagesize: 5};
+    
     function getURL(form){
         var formObjArray = form.serializeArray();
         var tvk = $('#tvk').val(); 
@@ -24,9 +26,15 @@
     
     function getKeyValuePairsWithBusinessLogic(keyValuePairs){
         
-        //Remove the feature argument generated when Vice County value is 'none''
+        //Add the image size
+        keyValuePairs['imagesize'] = options.imagesize;
+        
+        //Vice county - remove the feature argument generated when Vice County value is 'none',
+        //otherwise we are zooming to a vice county so add overlay=feature
         if(keyValuePairs.hasOwnProperty('feature') && keyValuePairs['feature'].toUpperCase()=='NONE'){
             delete keyValuePairs['feature'];
+        }else{
+            keyValuePairs['overlay'] = 'feature';
         }
         
         //Add the year bands formatted for the grid map service
@@ -134,8 +142,7 @@
             url += '&feature=' + feature;
         }
         $.getJSON(url, function(json){
-            var imagesize = $("input[name='imagesize']").val();
-            var resolutions = json[imagesize];
+            var resolutions = json[options.imagesize];
             var resolutionSelect = $('#nbn-grid-map-resolution');
             resolutionSelect.find('option').remove();
             $.each(resolutions, function(index, resolution){
