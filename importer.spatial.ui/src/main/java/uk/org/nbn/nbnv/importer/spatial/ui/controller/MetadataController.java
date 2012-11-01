@@ -86,6 +86,7 @@ public class MetadataController {
             metadata.setQuality(dataset.getDataQuality());
             metadata.setInfo(dataset.getAdditionalInformation());
             metadata.setDatasetID(dataset.getKey());
+            metadata.setDatasetTypeKey(dataset.getDatasetType().getKey());
             metadataForm.setDatasetUpdate(true);
         } else {
             metadataForm.setDatasetError(true);
