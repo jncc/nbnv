@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<groups>
+    <organisationgroup id="1">
+        <organisation id="1">Conchological Society of Great Britain and Ireland</organisation>
+        <organisation id="2">Hoverfly Recording Scheme</organisation>
+    </organisationgroup>
+    <organisationgroup id="2">
+        <organisation id="1">Conchological Society of Great Britain and Ireland</organisation>
+    </organisationgroup>
+    <organisationgroup id="3">
+        <organisation id="2">Hoverfly Recording Scheme</organisation>
+        <organisation id="3">Botanical Society of the British Isles</organisation>
+    </organisationgroup>
+</groups>

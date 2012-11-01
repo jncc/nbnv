@@ -26,6 +26,7 @@
         <module>importer</module>
         <module>importer.grin</module>
         <module>importer.ui</module>
+		<module>importer.spatial.ui</module>
         <module>rs</module>
         <module>api.model</module>
         <module>api.solr</module>
