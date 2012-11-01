@@ -59,7 +59,6 @@ class NbnRecordSuite extends BaseFunSuite with BeforeAndAfter {
 
   test("Should parse occurence statuses correctly") {
     record.parseOccurrenceStatus("presence") should be (false)
-    record.parseOccurrenceStatus(null) should be (false)
     record.parseOccurrenceStatus("absence") should be (true)
 
     val throws = intercept[BadDataException] {
