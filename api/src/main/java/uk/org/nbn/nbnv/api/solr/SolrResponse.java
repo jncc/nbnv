@@ -23,9 +23,9 @@ public class SolrResponse {
         return toWrap.getResults();
     }
     
-    public Map getFacetFields() {
+    /*public Map getFacetFields() {
         return processFacetFields(toWrap.getFacetFields());
-    }
+    }*/
     
     private static Map processFacetFields(List<FacetField> facetFields) {
         Map toReturn = new HashMap();
