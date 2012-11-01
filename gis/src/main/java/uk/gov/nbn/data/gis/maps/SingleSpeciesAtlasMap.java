@@ -5,12 +5,10 @@ import com.sun.jersey.api.client.WebResource;
 import java.awt.Color;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import uk.gov.nbn.data.gis.maps.context.ContextLayerDataGenerator;
 import uk.gov.nbn.data.gis.processor.Acknowledgement;
 import uk.gov.nbn.data.gis.processor.MapFileModel;
 import uk.gov.nbn.data.gis.processor.MapService;
@@ -52,7 +50,6 @@ public class SingleSpeciesAtlasMap {
     
     @Autowired WebResource resource;
     @Autowired Properties properties;
-    @Autowired ContextLayerDataGenerator contextGenerator;
     
     static {
         LAYERS = new String[]{TEN_KM_LAYER_NAME, TWO_KM_LAYER_NAME, ONE_KM_LAYER_NAME, ONE_HUNDRED_M_LAYER_NAME};
@@ -97,7 +94,6 @@ public class SingleSpeciesAtlasMap {
         data.put("outlineColour", new Color(Integer.parseInt(outlineColour, 16)));
         data.put("outlineWidthDenominator", SYMBOLOGY_OUTLINE_WIDTH_DENOMINATOR);
         data.put("mapServiceURL", mapServiceURL);
-        data.put("contextGenerator", contextGenerator);
         data.put("properties", properties);
         data.put("layerGenerator", SingleSpeciesMap.getSingleSpeciesResolutionDataGenerator(key, user, datasetKeys, startYear, endYear));
         return new MapFileModel("SingleSpeciesSymbology.map",data);

@@ -23,7 +23,7 @@ MAP
         "init=epsg:4326"
     END
 
-    [@backgrounds.contextLayers generator=contextGenerator spatialConnection=properties.spatialConnection/]    
+    [@backgrounds.contextLayers location=properties.contextLayersLocation/]    
     [@backgrounds.os location=properties.ordnanceSurveyMapDataLocation requires=layers/]
 
     [#list layers as layer]

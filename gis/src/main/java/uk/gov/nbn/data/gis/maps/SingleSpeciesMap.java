@@ -23,11 +23,9 @@ import uk.gov.nbn.data.gis.providers.annotations.QueryParam;
 import uk.gov.nbn.data.gis.providers.annotations.ServiceURL;
 import uk.org.nbn.nbnv.api.model.User;
 import org.jooq.Condition;
-import org.jooq.SelectHavingStep;
 import static uk.gov.nbn.data.dao.jooq.Tables.*;
 
 import org.jooq.util.sqlserver.SQLServerFactory;
-import uk.gov.nbn.data.gis.maps.context.ContextLayerDataGenerator;
 
 /**
  * The following represents a Map service for SingleSpecies
@@ -52,7 +50,6 @@ public class SingleSpeciesMap {
     
     @Autowired WebResource resource;
     @Autowired Properties properties;
-    @Autowired ContextLayerDataGenerator contextGenerator;
     
     static {
         COLOURS = new HashMap<String, Color>();
@@ -93,7 +90,6 @@ public class SingleSpeciesMap {
         data.put("bands", bands);
         data.put("mapServiceURL", mapServiceURL);
         data.put("featureData", MapHelper.getSelectedFeatureData(featureID));
-        data.put("contextGenerator", contextGenerator);
         data.put("properties", properties);
         data.put("layerGenerator", getSingleSpeciesResolutionDataGenerator(key, user, datasetKeys, startYear, endYear));
         return new MapFileModel("SingleSpecies.map",data);
