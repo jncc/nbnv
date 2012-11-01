@@ -13,14 +13,15 @@ class FeatureIngester @Inject()(log: Logger, db: Database, gridSquareInfoFactory
 
   def ensureFeature(record: NbnRecord) : Feature = {
 
+    // todo: refactor
     if (record.gridReferenceRaw.isDefined) {
-      ensureGridRefFeature(record.gridReferenceRaw.get, record.gridReferenceType.get, record.gridReferencePrecision)
+      ensureGridRefFeature(record.gridReferenceRaw.get, record.gridReferenceTypeRaw.get, record.gridReferencePrecision.get)
     }
     else if (record.featureKey.isDefined) {
       ensureSiteBoundaryFeature(record.featureKey.get)
     }
     else if (record.east.isDefined && record.north.isDefined && record.srs.isDefined) {
-      ensureGridRefFeatureByCoordinate(record.east.get, record.north.get, record.srs.get, record.gridReferencePrecision)
+      ensureGridRefFeatureByCoordinate(record.east.get, record.north.get, record.srs.get, record.gridReferencePrecision.get)
     }
     else {
       throw new BadDataException("No feature specified.")

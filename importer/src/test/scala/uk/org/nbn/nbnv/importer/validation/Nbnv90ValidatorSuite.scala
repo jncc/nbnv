@@ -21,7 +21,7 @@ class Nbnv90ValidatorSuite extends BaseFunSuite {
 
     val record = mock[NbnRecord]
     when(record.gridReferenceRaw).thenReturn(Some(knownGridRef_100m))
-    when(record.gridReferencePrecision).thenReturn(1000)
+    when(record.gridReferencePrecision).thenReturn(Some(1000))
 
     val v = new Nbnv90Validator(factory)
     val results = v.validate(record)
@@ -39,7 +39,7 @@ class Nbnv90ValidatorSuite extends BaseFunSuite {
 
     val record = mock[NbnRecord]
     when(record.gridReferenceRaw).thenReturn(Some(knownGridRef_100m))
-    when(record.gridReferencePrecision).thenReturn(0)
+    when(record.gridReferencePrecision).thenReturn(None)
 
     val v = new Nbnv90Validator(factory)
     val results = v.validate(record)
@@ -57,7 +57,7 @@ class Nbnv90ValidatorSuite extends BaseFunSuite {
 
     val record = mock[NbnRecord]
     when(record.gridReferenceRaw).thenReturn(Some(knownGridRef_1000m))
-    when(record.gridReferencePrecision).thenReturn(100)
+    when(record.gridReferencePrecision).thenReturn(Some(100))
 
     val v = new Nbnv90Validator(factory)
     val results = v.validate(record)
@@ -75,7 +75,7 @@ class Nbnv90ValidatorSuite extends BaseFunSuite {
 
     val record = mock[NbnRecord]
     when(record.gridReferenceRaw).thenReturn(Some(knownGridRef_100m))
-    when(record.gridReferencePrecision).thenReturn(50)
+    when(record.gridReferencePrecision).thenReturn(Some(50))
 
     val v = new Nbnv90Validator(factory)
     val results = v.validate(record)
@@ -96,7 +96,7 @@ class Nbnv90ValidatorSuite extends BaseFunSuite {
 
     val record = mock[NbnRecord]
     when(record.gridReferenceRaw).thenReturn(Some(knownGridRef_1000m))
-    when(record.gridReferencePrecision).thenReturn(50)
+    when(record.gridReferencePrecision).thenReturn(Some(50))
 
     val v = new Nbnv90Validator(factory)
     val results = v.validate(record)
@@ -112,7 +112,7 @@ class Nbnv90ValidatorSuite extends BaseFunSuite {
     val factory = mock[GridSquareInfoFactory]
     val record = mock[NbnRecord]
     when(record.gridReferenceRaw).thenReturn(Some(knownGridRef_1000m))
-    when(record.gridReferencePrecision).thenReturn(10001)
+    when(record.gridReferencePrecision).thenReturn(Some(10001))
 
     val v = new Nbnv90Validator(factory)
     val results = v.validate(record)

@@ -68,18 +68,6 @@ class NbnRecordSuite extends BaseFunSuite with BeforeAndAfter {
     throws.getMessage should be ("Invalid occurrence status 'false'")
   }
 
-  test("Should parse sensitive occurences correctly") {
-    record.parseSensitiveOccurrence("false") should be (false)
-    record.parseSensitiveOccurrence("true") should be (true)
-    record.parseSensitiveOccurrence(null) should be (false)
-  }
-
-  test("Should create a valid precission") {
-    record.parseGridRefPrecision("100") should be (100)
-    record.parseGridRefPrecision(null) should be (0)
-    record.parseGridRefPrecision("") should be (0)
-  }
-
   test("Should generate a valid attribute map") {
     record.attributes should have size (4)
   }

@@ -25,8 +25,8 @@ class FeatureIngesterSuite extends BaseFunSuite {
 
     val record = mock[NbnRecord]
     when(record.gridReferenceRaw).thenReturn(Some(gridRef))
-    when(record.gridReferenceType).thenReturn(Some(gridReferenceType))
-    when(record.gridReferencePrecision).thenReturn(gridReferencePrecision)
+    when(record.gridReferenceTypeRaw).thenReturn(Some(gridReferenceType))
+    when(record.gridReferencePrecision).thenReturn(Some(gridReferencePrecision))
 
     val log = mock[Logger]
 

@@ -18,7 +18,7 @@ class Nbnv67ValidatorSuite extends BaseFunSuite{
 
   test("Nvnv67 should validate when sensitiveOccurrenceRaw is true") {
     val record = mock[NbnRecord]
-    when(record.sensitiveOccurrenceRaw).thenReturn("true")
+    when(record.sensitiveOccurrenceRaw).thenReturn(Some("true"))
 
     val v = new Nbnv67Validator
     val r = v.validate(record)
@@ -28,7 +28,7 @@ class Nbnv67ValidatorSuite extends BaseFunSuite{
 
   test("Nvnv67 should validate when sensitiveOccurrenceRaw is false") {
     val record = mock[NbnRecord]
-    when(record.sensitiveOccurrenceRaw).thenReturn("false")
+    when(record.sensitiveOccurrenceRaw).thenReturn(Some("false"))
 
     val v = new Nbnv67Validator
     val r = v.validate(record)
@@ -38,7 +38,7 @@ class Nbnv67ValidatorSuite extends BaseFunSuite{
 
   test("Nvnv67 should not validate when sensitiveOccurrenceRaw is not null true or false") {
     val record = mock[NbnRecord]
-    when(record.sensitiveOccurrenceRaw).thenReturn("fgadg")
+    when(record.sensitiveOccurrenceRaw).thenReturn(Some("fgadg"))
 
     val v = new Nbnv67Validator
     val r = v.validate(record)
