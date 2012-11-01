@@ -33,8 +33,10 @@ public @interface GridMap {
     Layer[] backgrounds() default {
         @Layer(name="os", layers="OS-Scale-Dependent" ),
         @Layer(name="gb", layers="GB-Coast" ),
+        @Layer(name="i", layers="Ireland-Coast" ),
         @Layer(name="gbi", layers={"GB-Coast", "Ireland-Coast"} ),
         @Layer(name="gb100kgrid", layers="GB-Coast-with-Hundred-km-Grid" ),
+        @Layer(name="i100kgrid", layers="Ireland-coast-with-Hundred-km-Grid" ),
         @Layer(name="gbi100kgrid", layers={"GB-Coast-with-Hundred-km-Grid", "Ireland-coast-with-Hundred-km-Grid"} ),
         @Layer(name="vicecounty", layers="Vice-counties" ),
         @Layer(name="gb100kextent", layers="GB-Hundred-km-Grid" ),
