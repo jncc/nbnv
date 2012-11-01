@@ -13,7 +13,6 @@ class FeatureIngester @Inject()(log: Logger, db: Database, gridSquareInfoFactory
 
   def ensureFeature(record: NbnRecord) : Feature = {
 
-    // todo: refactor
     if (record.gridReferenceRaw.isDefined) {
       ensureGridRefFeature(record.gridReferenceRaw.get, record.gridReferenceTypeRaw.get, record.gridReferencePrecision.get)
     }

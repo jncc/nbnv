@@ -98,10 +98,25 @@ class NbnRecord(record: StarRecord) {
     }
   }
 
-//  def location = {
-//    if (gridReferenceRaw.isDefined)
-//      GridRefDef(gridReferenceRaw.get, parseSrs, gridReferencePrecision)
-//  }
+  def location = {
+    if (gridReferenceRaw.isDefined)
+      GridRefDef(gridReferenceRaw.get, parseSrs, gridReferencePrecision)
+    else if (featureKey.isDefined)
+      FeatureDef(featureKey.get)
+    else if (east.isDefined && north.isDefined && (srs.isDefined || gridReferenceTypeRaw.isDefined))
+      PointDef(east.get, north.get, parseSrs.get, gridReferencePrecision)
+    else
+      throw new BadDataException("Couldn't parse location.")
+  }
+
+  def parseSrs = {
+    if (gridReferenceTypeRaw.isDefined)
+      Some(GridTypeDef(gridReferenceTypeRaw.get))
+    else if (srs.isDefined)
+      Some(SrsDef(srs.get))
+    else
+      None
+  }
 }
 
 
