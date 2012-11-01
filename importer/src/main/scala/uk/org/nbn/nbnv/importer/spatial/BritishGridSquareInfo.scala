@@ -23,13 +23,13 @@ object BritishGridSquareInfo extends GridSqareInfoCompanion {
 
   val minorBritishGridByCoord = minorBritishGridByLetter map {_.swap}
 
-  protected def create(gridRef: String, precision: Int = 0) = {
+  protected def create(gridRef: String, precision: Option[Int]) = {
     new BritishGridSquareInfo(gridRef, precision)
   }
 
   protected def getEpsgCode = 27700
 
-  protected def getGridSquareByEastingNorthing(east: Int, north: Int, precision: Int) = {
+  protected def getGridSquareByEastingNorthing(east: Int, north: Int, precision: Option[Int]) = {
     //Compute 100K grid square co-ordinate
 
     val e100k = (east - (east % 100000))
@@ -64,7 +64,7 @@ object BritishGridSquareInfo extends GridSqareInfoCompanion {
   }
 }
 
-class BritishGridSquareInfo(gridRef : String, precision: Int = 0) extends GridSquareInfo(gridRef, precision) {
+class BritishGridSquareInfo(gridRef : String, precision: Option[Int]) extends GridSquareInfo(gridRef, precision) {
 
   def projection = "OSGB36"
 
@@ -85,7 +85,7 @@ class BritishGridSquareInfo(gridRef : String, precision: Int = 0) extends GridSq
     (easting, northing)
   }
 
-  protected def create(gridRef: String, precision: Int = 0) = {
+  protected def create(gridRef: String, precision: Option[Int] ) = {
     new BritishGridSquareInfo(gridRef, precision)
   }
 

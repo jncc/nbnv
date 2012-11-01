@@ -1,6 +1,6 @@
 package uk.org.nbn.nbnv.importer.ingestion
 
-import uk.org.nbn.nbnv.importer.records.NbnRecord
+import uk.org.nbn.nbnv.importer.records._
 import uk.org.nbn.nbnv.importer.BadDataException
 import uk.org.nbn.nbnv.jpa.nbncore.{SiteBoundaryDataset, GridSquare, Feature}
 import com.google.inject.Inject
@@ -8,29 +8,23 @@ import uk.org.nbn.nbnv.importer.data.{Database, Repository}
 import uk.org.nbn.nbnv.importer.spatial.{GridSquareInfo, GridSquareInfoFactory}
 import javax.persistence.EntityManager
 import org.apache.log4j.Logger
+import uk.org.nbn.nbnv.importer.records.GridRefDef
+import scala.Some
+import uk.org.nbn.nbnv.importer.records.PointDef
 
 class FeatureIngester @Inject()(log: Logger, db: Database, gridSquareInfoFactory: GridSquareInfoFactory) {
 
-  def ensureFeature(record: NbnRecord) : Feature = {
+  def ensureFeature(record: NbnRecord) : Feature = record.feature match {
 
-    if (record.gridReference.isDefined) {
-      ensureGridRefFeature(record.gridReference.get, record.gridReferenceType.get, record.gridReferencePrecision)
-    }
-    else if (record.featureKey.isDefined) {
-      ensureSiteBoundaryFeature(record.featureKey.get)
-    }
-    else if (record.east.isDefined && record.north.isDefined && record.srs.isDefined) {
-      ensureGridRefFeatureByCoordinate(record.east.get, record.north.get, record.srs.get, record.gridReferencePrecision)
-    }
-    else {
-      throw new BadDataException("No feature specified.")
-    }
+    case value: GridRefDef  => ensureGridRefFeature(value)
+    case value: BoundaryDef => ensureSiteBoundaryFeature(value)
+    case value: PointDef    => ensureGridRefFeatureByCoordinate(value)
   }
 
-  def ensureGridRefFeature(gridRef: String, gridReferenceType: String = "", gridReferencePrecision: Int = 0) = {
+  def ensureGridRefFeature(value: GridRefDef) = {
 
     // a GridSquareInfo object can compute all the info we need about a grid square
-    val info = gridSquareInfoFactory.getByGridRef(gridRef, gridReferenceType, gridReferencePrecision)
+    val info = gridSquareInfoFactory.getByGridRef(value)
 
     // ensure that the (Feature, GridSquare) pair exists and return the feature
     ensureGridSquareFeatureRecursive(info)._1
@@ -64,23 +58,23 @@ class FeatureIngester @Inject()(log: Logger, db: Database, gridSquareInfoFactory
     }
   }
 
-  def ensureSiteBoundaryFeature(featureKey : String) = {
+  def ensureSiteBoundaryFeature(value: BoundaryDef) = {
 
     // feature key - first 8 chars are the siteBoundaryDataset key; remaining are the provider key
-    val siteBoundaryDatasetKey = featureKey.substring(0, 8)
-    val providerKey = featureKey.substring(8)
+    val siteBoundaryDatasetKey = value.key.substring(0, 8)
+    val providerKey = value.key.substring(8)
 
     // throws if the (Feature, SiteBoundary) pair doesn't exist
     db.repo.getSiteBoundaryFeature(siteBoundaryDatasetKey, providerKey)._1
   }
 
-  private def ensureGridRefFeatureByCoordinate(easting: Double, northing: Double, spatialReferenceSystem: Int, gridReferencePrecision: Int = 0) = {
+  private def ensureGridRefFeatureByCoordinate(value: PointDef) = {
 
-    val info = gridSquareInfoFactory.getByCoordinate(easting, northing, spatialReferenceSystem, gridReferencePrecision)
+    val info = gridSquareInfoFactory.getByCoordinate(value)
 
     info match {
       case Some(i) => ensureGridSquareFeatureRecursive(i)._1
-      case None => ensureWgs84PointFeature(easting, northing) // no corresponding square; just save the point
+      case None => ensureWgs84PointFeature(value.east, value.north) // no corresponding square; just save the point
     }
 
   }

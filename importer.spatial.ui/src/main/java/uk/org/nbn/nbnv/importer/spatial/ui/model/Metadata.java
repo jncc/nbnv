@@ -19,15 +19,6 @@ public class Metadata implements Serializable {
     private String temporal = "";
     private String quality = "";
     private String info = "";
-    private String use = "";
-    private String access = "";
-    private String datasetAdminName = "";
-    private String datasetAdminPhone = "";
-    private String datasetAdminEmail = "";
-    private String geographicalRes = "";
-    private String recordAtts = "";
-    private String recorderNames = "";
-    private int datasetAdminID = -1;
     private int organisationID = -1;
     private String datasetID = "";
 
@@ -176,42 +167,6 @@ public class Metadata implements Serializable {
     }
 
     /**
-     * @return the use
-     */
-    public String getUse() {
-        return use;
-    }
-
-    /**
-     * @param use the use to set
-     */
-    public void setUse(String use) {
-        if (use != null) {
-            this.use = use.trim();
-        } else {
-            this.use = "";
-        }
-    }
-
-    /**
-     * @return the access
-     */
-    public String getAccess() {
-        return access;
-    }
-
-    /**
-     * @param access the access to set
-     */
-    public void setAccess(String access) {
-        if (access != null) {
-            this.access = access.trim();
-        } else {
-            this.access = "";
-        }
-    }
-
-    /**
      * @return the organisationID
      */
     public int getOrganisationID() {
@@ -223,74 +178,6 @@ public class Metadata implements Serializable {
      */
     public void setOrganisationID(int organisationID) {
         this.organisationID = organisationID;
-    }
-
-    public String getDatasetAdminName() {
-        return datasetAdminName;
-    }
-
-    public void setDatasetAdminName(String datasetAdminName) {
-        if (datasetAdminName != null) {
-            this.datasetAdminName = datasetAdminName.trim();
-        } else {
-            this.datasetAdminName = "";
-        }
-    }
-
-    public String getDatasetAdminPhone() {
-        return datasetAdminPhone;
-    }
-
-    public void setDatasetAdminPhone(String datasetAdminPhone) {
-        if (datasetAdminPhone != null) {
-            this.datasetAdminPhone = datasetAdminPhone.trim();
-        } else {
-            this.datasetAdminPhone = "";
-        }
-    }
-
-    public String getDatasetAdminEmail() {
-        return datasetAdminEmail;
-    }
-
-    public void setDatasetAdminEmail(String datasetAdminEmail) {
-        if (datasetAdminEmail != null) {
-            this.datasetAdminEmail = datasetAdminEmail.trim();
-        } else {
-            this.datasetAdminEmail = "";
-        }
-    }
-
-    public int getDatasetAdminID() {
-        return datasetAdminID;
-    }
-
-    public void setDatasetAdminID(int datasetAdminID) {
-        this.datasetAdminID = datasetAdminID;
-    }
-
-    public String getGeographicalRes() {
-        return geographicalRes;
-    }
-
-    public void setGeographicalRes(String geographicalRes) {
-        this.geographicalRes = geographicalRes;
-    }
-
-    public String getRecordAtts() {
-        return recordAtts;
-    }
-
-    public void setRecordAtts(String recordAtts) {
-        this.recordAtts = recordAtts;
-    }
-
-    public String getRecorderNames() {
-        return recorderNames;
-    }
-
-    public void setRecorderNames(String recorderNames) {
-        this.recorderNames = recorderNames;
     }
 
     public String getDatasetID() {

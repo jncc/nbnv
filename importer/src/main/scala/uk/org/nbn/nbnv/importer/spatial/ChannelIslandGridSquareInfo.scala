@@ -5,13 +5,13 @@ import uk.org.nbn.nbnv.importer.BadDataException
 
 object ChannelIslandGridSquareInfo extends GridSqareInfoCompanion {
 
-  protected def create(gridRef: String, precision: Int = 0) = {
+  protected def create(gridRef: String, precision: Option[Int]) = {
     new ChannelIslandGridSquareInfo(gridRef, precision)
   }
 
   protected def getEpsgCode = 23030
 
-  protected def getGridSquareByEastingNorthing(east: Int, north: Int, precision: Int) ={
+  protected def getGridSquareByEastingNorthing(east: Int, north: Int, precision: Option[Int]) ={
     val gridLetters =
       north / 100000 match {
         case 55 => "WA"
@@ -30,7 +30,7 @@ object ChannelIslandGridSquareInfo extends GridSqareInfoCompanion {
   }
 }
 
-class ChannelIslandGridSquareInfo(gridRef: String, precision: Int = 0) extends GridSquareInfo(gridRef, precision) {
+class ChannelIslandGridSquareInfo(gridRef: String, precision: Option[Int]) extends GridSquareInfo(gridRef, precision) {
 
   def projection =  "ED50"
 
@@ -50,7 +50,7 @@ class ChannelIslandGridSquareInfo(gridRef: String, precision: Int = 0) extends G
     }
   }
 
-  protected def create(gridRef: String, precision: Int = 0) = {
+  protected def create(gridRef: String, precision: Option[Int]) = {
     new ChannelIslandGridSquareInfo(gridRef, precision)
   }
 

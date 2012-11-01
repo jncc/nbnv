@@ -8,31 +8,31 @@ import org.geotools.referencing.operation.DefaultCoordinateOperationFactory
 trait GridSqareInfoCompanion {
 
   protected def getEpsgCode : Int
-  protected def getGridSquareByEastingNorthing(east: Int, north: Int, precision: Int) : GridSquareInfo
-  protected def create(gridRef: String, precision: Int = 0) : GridSquareInfo
+  protected def getGridSquareByEastingNorthing(east: Int, north: Int, precision: Option[Int]) : GridSquareInfo
+  protected def create(gridRef: String, precision: Option[Int]) : GridSquareInfo
 
   def apply(east: Int, north: Int) : GridSquareInfo = {
-    this(east, north,0)
+    this(east, north,None)
   }
 
-  def apply(east: Int, north: Int, precision: Int) : GridSquareInfo = {
+  def apply(east: Int, north: Int, precision: Option[Int]) : GridSquareInfo = {
 
     getGridSquareByEastingNorthing(east, north, precision)
   }
 
   def apply(gridRef : String) : GridSquareInfo = {
-    create(gridRef)
+    create(gridRef, None)
   }
 
-  def apply(gridRef : String, precision : Int) : GridSquareInfo = {
+  def apply(gridRef : String, precision : Option[Int]) : GridSquareInfo = {
     create(gridRef, precision)
   }
 
   def apply(latitude : Double, longitude: Double) : GridSquareInfo = {
-    this(latitude, longitude, 0)
+    this(latitude, longitude, None)
   }
 
-  def apply(latitude : Double, longitude: Double, precision : Int) : GridSquareInfo = {
+  def apply(latitude : Double, longitude: Double, precision : Option[Int]) : GridSquareInfo = {
     val (easting, northing) = reprojectToWgs84(latitude, longitude, getEpsgCode)
 
     //wrap up invalid easting and northing in more relevant error
@@ -49,7 +49,7 @@ trait GridSqareInfoCompanion {
   //Returns true if easting / northing can be converted to a grid square and false + error meassage if it can't
   def testEastingNorthing(east: Int, north: Int) : (Boolean, Option[String]) = {
     try {
-      getGridSquareByEastingNorthing(east, north, 0)
+      getGridSquareByEastingNorthing(east, north, None)
       (true, None)
     }
     catch {

@@ -5,14 +5,20 @@ import uk.org.nbn.nbnv.importer.data.{Database, Repository}
 import org.mockito.Mockito._
 import org.mockito.Matchers._
 import uk.org.nbn.nbnv.importer.BadDataException
+import uk.org.nbn.nbnv.importer.records.{PointDef, GridTypeDef, SrsDef, GridRefDef}
 
 class GridSquareInfoFactorySuite extends BaseFunSuite{
+
+  def makeGridRef(ref: String) = GridRefDef(ref, None, None)
+  def makeGridRef(ref: String, code: String) = GridRefDef(ref, Some(GridTypeDef(code)), None)
+  def makePoint(east: Double, north: Double, code: Int) = PointDef(east, north, SrsDef(code), None)
+
   test("should recognise irish grid ref") {
     val gridRef = "A166712"
     val db = mock[Database]
 
     val fac = new GridSquareInfoFactory(db)
-    val gri = fac.getByGridRef(gridRef)
+    val gri = fac.getByGridRef(makeGridRef(gridRef))
 
     gri.projection should be ("OSNI")
   }
@@ -23,7 +29,7 @@ class GridSquareInfoFactorySuite extends BaseFunSuite{
     val db = mock[Database]
 
     val fac = new GridSquareInfoFactory(db)
-    val gri = fac.getByGridRef(gridRef)
+    val gri = fac.getByGridRef(makeGridRef(gridRef))
 
     gri.projection should be ("OSNI")
   }
@@ -33,7 +39,7 @@ class GridSquareInfoFactorySuite extends BaseFunSuite{
     val db = mock[Database]
 
     val fac = new GridSquareInfoFactory(db)
-    val gri = fac.getByGridRef(gridRef)
+    val gri = fac.getByGridRef(makeGridRef(gridRef))
 
     gri.projection should be ("OSGB36")
   }
@@ -42,7 +48,7 @@ class GridSquareInfoFactorySuite extends BaseFunSuite{
     val db = mock[Database]
 
     val fac = new GridSquareInfoFactory(db)
-    val gri = fac.getByGridRef(gridRef)
+    val gri = fac.getByGridRef(makeGridRef(gridRef))
 
     gri.projection should be ("OSGB36")
   }
@@ -53,7 +59,7 @@ class GridSquareInfoFactorySuite extends BaseFunSuite{
     val db = mock[Database]
 
     val fac = new GridSquareInfoFactory(db)
-    val gri = fac.getByGridRef(gridRef)
+    val gri = fac.getByGridRef(makeGridRef(gridRef))
 
     gri.projection should be ("ED50")
   }
@@ -64,7 +70,7 @@ class GridSquareInfoFactorySuite extends BaseFunSuite{
     val db = mock[Database]
 
     val fac = new GridSquareInfoFactory(db)
-    val gri = fac.getByGridRef(gridRef)
+    val gri = fac.getByGridRef(makeGridRef(gridRef))
 
     gri.projection should be ("ED50")
   }
@@ -76,7 +82,7 @@ class GridSquareInfoFactorySuite extends BaseFunSuite{
     val db = mock[Database]
     val fac = new GridSquareInfoFactory(db)
 
-    val gr = fac.getByGridRef(gridRef, gridRefType)
+    val gr = fac.getByGridRef(makeGridRef(gridRef, gridRefType))
 
     gr.gridReference should be ("NN166712")
     gr.projection should be ("OSGB36")
@@ -91,7 +97,7 @@ class GridSquareInfoFactorySuite extends BaseFunSuite{
     val fac = new GridSquareInfoFactory(db)
 
     intercept[BadDataException] {
-      fac.getByGridRef(gridRef, gridRefType)
+      fac.getByGridRef(makeGridRef(gridRef, gridRefType))
     }
   }
 
@@ -100,7 +106,7 @@ class GridSquareInfoFactorySuite extends BaseFunSuite{
     val db = (new DataAccessLayer).getDatabase
     val fac = new GridSquareInfoFactory(db)
 
-    val gs = fac.getByCoordinate(-1.8684933, 53.718103, 4326).get
+    val gs = fac.getByCoordinate(makePoint(-1.8684933, 53.718103, 4326)).get
 
     gs.projection should be ("OSGB36")
     gs.gridReference should be ("SE087246")
@@ -111,7 +117,7 @@ class GridSquareInfoFactorySuite extends BaseFunSuite{
     val db = (new DataAccessLayer).getDatabase
     val fac = new GridSquareInfoFactory(db)
 
-    val gs = fac.getByCoordinate(-7.1389159, 54.622978, 4326).get
+    val gs = fac.getByCoordinate(makePoint(-7.1389159, 54.622978, 4326)).get
 
     gs.projection should be ("OSNI")
     gs.gridReference should be ("H556753")
@@ -122,7 +128,7 @@ class GridSquareInfoFactorySuite extends BaseFunSuite{
     val db = (new DataAccessLayer).getDatabase
     val fac = new GridSquareInfoFactory(db)
 
-    val gs = fac.getByCoordinate(-2.183612, 49.177422, 4326).get
+    val gs = fac.getByCoordinate(makePoint(-2.183612, 49.177422, 4326)).get
 
     gs.projection should be ("ED50")
     gs.gridReference should be ("WV596477")
@@ -132,7 +138,7 @@ class GridSquareInfoFactorySuite extends BaseFunSuite{
     val db = (new DataAccessLayer).getDatabase
     val fac = new GridSquareInfoFactory(db)
 
-    val nullGS = fac.getByCoordinate(7.410391,  54.438641, 4326)
+    val nullGS = fac.getByCoordinate(makePoint(7.410391,  54.438641, 4326))
 
     nullGS should be (None)
   }

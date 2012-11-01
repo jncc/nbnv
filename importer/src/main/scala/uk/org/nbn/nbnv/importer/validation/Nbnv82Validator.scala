@@ -8,7 +8,7 @@ class Nbnv82Validator {
   def validate(record: NbnRecord) = {
     var count = 0
 
-    if (record.gridReference.isDefined) {
+    if (record.gridReferenceRaw.isDefined) {
       count += 1
     }
 
