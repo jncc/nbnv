@@ -157,6 +157,16 @@
 
     $(document).ready(function(){
 
+        //Add the initial map image
+        $('#nbn-grid-map-busy-image').hide();
+        $('#nbn-grid-map-image').attr('src','/img/ajax-loader-medium.gif');
+        $('#nbn-grid-map-image').attr('src',getURL($('#nbn-grid-map-form')));
+        
+        //Turn off the busy image when a map image loads
+        $('#nbn-grid-map-image').load(function(){
+            $('#nbn-grid-map-busy-image').hide();
+        });
+
         $('#nbn-grid-map-form').submit(function(){
             var form = $(this);
             
@@ -167,6 +177,7 @@
             nbn.portal.reports.utils.DatasetFields.doDeselectDatasetKeys();
             
             //Do map refresh
+            $('#nbn-grid-map-busy-image').show();
             $('#nbn-grid-map-image').attr('src',getURL(form));
             
             //Turn on all datasets if they are all off

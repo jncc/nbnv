@@ -6,6 +6,7 @@
     #nbn-grid-map-container{
         width: 62%;
         display: inline-block;
+        position: relative;
     }
 
     #nbn-dataset-selector-container{
@@ -16,5 +17,10 @@
         display: block;
         margin-left: auto;
         margin-right: auto;
+    }
 
+    #nbn-grid-map-busy-image{
+        position: absolute;
+        top: 50%;
+        left: 50%;
     }
