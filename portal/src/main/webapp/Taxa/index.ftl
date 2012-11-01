@@ -9,21 +9,7 @@ is not a finished product.
     <@search.search 
         url="${api}/taxa" 
         query=RequestParameters 
-        facets=[{
-                "name": "Taxon Navigation Group",
-                "id":"category",
-                "data":json.readURL("${api}/taxonNavigationGroups")
-            }, {
-                "id":"lang",
-                "name": "Language",
-                "data": [
-                    {"id":"en", "name":"English"},
-                    {"id":"la", "name":"Scientific"},
-                    {"id":"cy", "name":"Welsh"},
-                    {"id":"gd", "name":"Scottish Gaelic"},
-                    {"id":"En", "name":"Invalidly imported English"}
-                ]
-        }]; result>
+        facets=[]; result>
         ${taxon_utils.getShortName(result)}
     </@search.search>
 </@template.master>
