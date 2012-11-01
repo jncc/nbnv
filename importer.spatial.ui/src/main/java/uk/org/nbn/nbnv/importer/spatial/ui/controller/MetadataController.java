@@ -68,9 +68,6 @@ public class MetadataController {
     public ModelAndView updateMetadata(@ModelAttribute("metadataForm") MetadataForm metadataForm, @ModelAttribute("org") Organisation organisation, BindingResult result) {
         metadataForm.resetForm();
         Metadata metadata = metadataForm.getMetadata();
-        metadata.setGeographicalRes("");
-        metadata.setRecordAtts("");
-        metadata.setRecorderNames("");
         
         if (!metadata.getDatasetID().equals("")) {
         
@@ -88,31 +85,8 @@ public class MetadataController {
             metadata.setTemporal(dataset.getTemporalCoverage());
             metadata.setQuality(dataset.getDataQuality());
             metadata.setInfo(dataset.getAdditionalInformation());
-            metadata.setUse(dataset.getUseConstraints());
-            metadata.setAccess(dataset.getAccessConstraints());
-
-            // Set the Dataset Admin data in the form, if there are any admins
-            if (dataset.getUserCollection().size() > 0) {
-                User admin = dataset.getUserCollection().iterator().next();
-                metadata.setDatasetAdminID(admin.getId());
-                metadata.setDatasetAdminName(admin.getForename() + " " + admin.getSurname());
-                metadata.setDatasetAdminPhone(admin.getPhone());
-                metadata.setDatasetAdminEmail(admin.getEmail());
-            }
-
-            // Set the Level of Public Access options  
-            if (dataset.getTaxonDataset() != null) {
-                if (dataset.getTaxonDataset().getPublicResolution() != null) {
-                    metadata.setGeographicalRes(dataset.getTaxonDataset().getPublicResolution().getAccuracy().toString());
-                }
-
-                boolean v = dataset.getTaxonDataset().getPublicAttribute();
-                
-                metadata.setRecordAtts(dataset.getTaxonDataset().getPublicAttribute() ? "true" : "false");
-                //metadata.setRecorderNames(dataset.getTaxonDataset().getPublicAttribute() ? "true" : "false"); // TODO Need to ensure this is correct behaviour
-            }
-            
             metadata.setDatasetID(dataset.getKey());
+            metadata.setDatasetTypeKey(dataset.getDatasetType().getKey());
             metadataForm.setDatasetUpdate(true);
         } else {
             metadataForm.setDatasetError(true);
@@ -187,7 +161,6 @@ public class MetadataController {
             messages.addAll(errors);
             Metadata meta = new Metadata();
             
-            meta.setAccess(mappings.get(importer.META_ACCESS_CONSTRAINT));
             meta.setDescription(mappings.get(importer.META_DESC));
             meta.setGeographic(mappings.get(importer.META_GEOCOVER));
             meta.setInfo(mappings.get(importer.META_ADDITIONAL_INFO));
@@ -196,10 +169,6 @@ public class MetadataController {
             meta.setQuality(mappings.get(importer.META_DATA_CONFIDENCE));
             meta.setTemporal(mappings.get(importer.META_TEMPORAL));
             meta.setTitle(mappings.get(importer.META_TITLE));
-            meta.setUse(mappings.get(importer.META_USE_CONSTRAINT));
-            meta.setDatasetAdminName(mappings.get(importer.META_NAME));
-            meta.setDatasetAdminPhone(mappings.get(importer.META_CONTACT_PHONE));
-            meta.setDatasetAdminEmail(mappings.get(importer.META_EMAIL));
             meta.setDatasetID(metadataForm.getMetadata().getDatasetID());
             
             metadataForm.setMetadata(meta);
@@ -345,33 +314,6 @@ public class MetadataController {
     @InitBinder("metadataForm")
     protected void initBinder(WebDataBinder binder) {
         binder.setValidator(new MetadataFormValidator(new MetadataValidator()));
-    }    
-    
-    @ModelAttribute("referenceData")
-    protected Map referenceData(HttpServletRequest request, Object command, Errors errors) throws Exception {
-        Map<String, String> geoMap = new LinkedHashMap<String, String>();
-        geoMap.put("100","Full");
-        geoMap.put("1000","1km\u00B2 ");
-        geoMap.put("2000","2km\u00B2");
-        geoMap.put("10000","10km\u00B2");
-        geoMap.put("null", "No Access");
-        
-        Map<String, String> recAtts = new LinkedHashMap<String, String>();
-        recAtts.put("true","Yes");
-        recAtts.put("false","No");
-        recAtts.put("null","N/A");
-        
-        Map<String, String> recNames = new LinkedHashMap<String, String>();
-        recNames.put("true","Yes");
-        recNames.put("false","No");
-        recNames.put("null","N/A");
-        
-        Map<String, Object> ref = new HashMap<String, Object>();
-        ref.put("geoMap", geoMap);
-        ref.put("recAtts", recAtts);
-        ref.put("recNames", recNames);
-        
-        return ref;
     }    
     
     private Organisation getOrganisationByID(int id, List<Organisation> orgs) {

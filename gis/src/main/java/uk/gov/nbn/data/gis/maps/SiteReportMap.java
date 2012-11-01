@@ -42,6 +42,7 @@ public class SiteReportMap {
         data.put("extent", getNativeBoundingBox(featureID));
         data.put("mapServiceURL", mapServiceURL);
         data.put("properties", properties);
+        data.put("featureData", MapHelper.getSelectedFeatureData(featureID));
         data.put("featureID", featureID);
         return new MapFileModel("SiteReport.map",data);
     }
@@ -61,10 +62,9 @@ public class SiteReportMap {
         
         SQLServerFactory create = new SQLServerFactory();
         Condition condition = USERTAXONOBSERVATIONDATA.PTAXONVERSIONKEY.eq(taxonKey)
-                .and(FEATUREDATA.IDENTIFIER.eq(featureID))
                 .and(USERTAXONOBSERVATIONDATA.USERID.eq(user.getId()))
                 .and(USERTAXONOBSERVATIONDATA.FEATUREID.in(
-                    spatialRelation.equals("overlap") ? create
+                    spatialRelation.equals("within") ? create
                         .select(FEATURECONTAINS.CONTAINEDFEATUREID)
                         .from(FEATURECONTAINS).join(FEATUREDATA).on(FEATUREDATA.ID.eq(FEATURECONTAINS.FEATUREID))
                         .where(FEATUREDATA.IDENTIFIER.eq(featureID))
@@ -81,6 +81,7 @@ public class SiteReportMap {
         data.put("mapServiceURL", mapServiceURL);
         data.put("properties", properties);
         data.put("featureData", MapHelper.getSelectedFeatureData(featureID));
+        data.put("featureID", featureID);
         data.put("taxonVersionKey", taxonKey);
         data.put("recordsData", MapHelper.getMapData(FEATUREDATA.GEOM, USERTAXONOBSERVATIONDATA.FEATUREID, 4326, create.
             select(USERTAXONOBSERVATIONDATA.FEATUREID, FEATUREDATA.GEOM, FEATUREDATA.RESOLUTIONID, USERTAXONOBSERVATIONDATA.ABSENCE)

@@ -59,25 +59,12 @@ class NbnRecordSuite extends BaseFunSuite with BeforeAndAfter {
 
   test("Should parse occurence statuses correctly") {
     record.parseOccurrenceStatus("presence") should be (false)
-    record.parseOccurrenceStatus(null) should be (false)
     record.parseOccurrenceStatus("absence") should be (true)
 
     val throws = intercept[BadDataException] {
       record.parseOccurrenceStatus("false") should be (false)
     }
     throws.getMessage should be ("Invalid occurrence status 'false'")
-  }
-
-  test("Should parse sensitive occurences correctly") {
-    record.parseSensitiveOccurrence("false") should be (false)
-    record.parseSensitiveOccurrence("true") should be (true)
-    record.parseSensitiveOccurrence(null) should be (false)
-  }
-
-  test("Should create a valid precission") {
-    record.parseGridRefPrecision("100") should be (100)
-    record.parseGridRefPrecision(null) should be (0)
-    record.parseGridRefPrecision("") should be (0)
   }
 
   test("Should generate a valid attribute map") {

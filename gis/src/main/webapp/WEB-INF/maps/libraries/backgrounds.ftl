@@ -81,7 +81,7 @@
   END # Layer
 [/#macro]
 
-[#macro selectedFeature data spatialConnection]
+[#macro selectedFeature data spatialConnection fill=true]
     LAYER
         NAME                                                "Selected-Feature"
         TYPE                                                POLYGON
@@ -106,7 +106,9 @@
             NAME                                              "default"
 
             STYLE
-                COLOR                                           210 240 248
+                [#if fill] 
+                    COLOR                                           210 240 248 
+                [/#if]
                 OUTLINECOLOR                                    0 0 0
                 WIDTH                                           3
             END

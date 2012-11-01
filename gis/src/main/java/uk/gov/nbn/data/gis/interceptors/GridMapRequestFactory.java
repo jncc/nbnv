@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.nbn.data.gis.processor.GridMap;
+import uk.gov.nbn.data.gis.processor.GridMap.Extent;
 import uk.org.nbn.nbnv.api.model.BoundingBox;
 import uk.org.nbn.nbnv.api.model.Feature;
 
@@ -32,7 +33,7 @@ public class GridMapRequestFactory {
      * @param gridMapProperties The Grid Map properties which will be used if featureId is null
      * @return A bounding box to focus on
      */
-    public BoundingBox getFeatureToFocusOn(String featureId, GridMap gridMapProperties) {
+    public BoundingBox getFeatureToFocusOn(String featureId, String nationalExtent, GridMap gridMapProperties) {
         if(featureId != null) {
             //Interact with the data api to find the bounding box which should be 
             //used for the viewport from the passed in feature
@@ -43,15 +44,26 @@ public class GridMapRequestFactory {
                     .getNativeBoundingBox();
         }
         else {
+            Extent requestedExtent = getRequestedExtent(nationalExtent, gridMapProperties);
             //No feature has been defined. Zoom to the bounding box as specfied 
             //in the grid map annotation
-            int[] defaultExtent = gridMapProperties.defaultExtent();
-            return new BoundingBox(gridMapProperties.epsgCode(), 
+            int[] defaultExtent = requestedExtent.extent();
+            return new BoundingBox(requestedExtent.epsgCode(), 
                     BigDecimal.valueOf(defaultExtent[MINX]),
                     BigDecimal.valueOf(defaultExtent[MINY]),
                     BigDecimal.valueOf(defaultExtent[MAXX]),
                     BigDecimal.valueOf(defaultExtent[MAXY]));
         }
+    }
+    
+    private static Extent getRequestedExtent(String requestedExtent, GridMap gridMapProperties) {
+        String extentToFind = (requestedExtent !=null) ? requestedExtent : gridMapProperties.defaultExtent();
+        for(Extent currExtent : gridMapProperties.extents()) {
+            if(currExtent.name().equals(extentToFind)) {
+                return currExtent;
+            }
+        }
+        throw new IllegalArgumentException("The extent " + requestedExtent + " is not supported by this gridmap");
     }
     
     /**

@@ -27,14 +27,22 @@ public @interface GridMap {
         String name();
         String[] layers();
     }
+    
+    @interface Extent {
+        String name();
+        String epsgCode();
+        int[] extent();
+    }
 
     GridLayer[] layers();
     String defaultLayer();
     Layer[] backgrounds() default {
         @Layer(name="os", layers="OS-Scale-Dependent" ),
         @Layer(name="gb", layers="GB-Coast" ),
+        @Layer(name="i", layers="Ireland-Coast" ),
         @Layer(name="gbi", layers={"GB-Coast", "Ireland-Coast"} ),
         @Layer(name="gb100kgrid", layers="GB-Coast-with-Hundred-km-Grid" ),
+        @Layer(name="i100kgrid", layers="Ireland-coast-with-Hundred-km-Grid" ),
         @Layer(name="gbi100kgrid", layers={"GB-Coast-with-Hundred-km-Grid", "Ireland-coast-with-Hundred-km-Grid"} ),
         @Layer(name="vicecounty", layers="Vice-counties" ),
         @Layer(name="gb100kextent", layers="GB-Hundred-km-Grid" ),
@@ -47,7 +55,12 @@ public @interface GridMap {
     Layer[] overlays() default {};
     String[] defaultBackgrounds() default {"gbi100kgrid"};
     String[] defaultOverlays() default {};
-    String epsgCode() default "EPSG:27700";
-    int[] defaultExtent() default {-250000, -50000, 750000, 1300000};
+    Extent[] extents() default {
+        @Extent(name="gb",      epsgCode="EPSG:27700", extent={0, 0, 700000, 1300000}),
+        @Extent(name="ireland", epsgCode="EPSG:29903", extent={0, 0, 370000, 500000}),
+        @Extent(name="gbi",     epsgCode="EPSG:27700", extent={-250000, -50000, 750000, 1300000})
+    };
+    
+    String defaultExtent() default "gbi";    
 }
 

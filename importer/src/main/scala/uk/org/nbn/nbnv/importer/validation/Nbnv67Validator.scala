@@ -5,16 +5,15 @@ import uk.org.nbn.nbnv.importer.records.NbnRecord
 
 class Nbnv67Validator {
 
-  def validate(record: NbnRecord) = {
-    if (record.sensitiveOccurrenceRaw == null
-      || record.sensitiveOccurrenceRaw.toLowerCase == "true"
-      || record.sensitiveOccurrenceRaw.toLowerCase == "false") {
+  def validate(record: NbnRecord) = record.sensitiveOccurrenceRaw map { _.toLowerCase } match {
+
+    case None | Some("true") | Some("false") =>
       new Result {
         def level = ResultLevel.DEBUG
         def message = "NBNV-67: Validated: sensitive field is valid"
         def reference = record.key
       }
-    } else {
+    case _ => {
       new Result {
         def level = ResultLevel.ERROR
         def message = "NBNV-67: The optional sensitive field must be 'true' or 'false' if defined"
