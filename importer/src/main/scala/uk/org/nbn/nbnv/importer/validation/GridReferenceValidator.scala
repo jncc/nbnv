@@ -12,14 +12,14 @@ class GridReferenceValidator (db: Database) {
 
     //is valid grid ref
     val v1 = new Nbnv81Validator
-    val r1 = v1.validate(record.gridReference.get, record.key)
+    val r1 = v1.validate(record.gridReferenceRaw.get, record.key)
     resultList.append(r1)
 
     if(r1.level == ResultLevel.DEBUG)
     {
       //does grid ref match grid ref type if specified.
       val v2 = new Nbnv159Validator()
-      val r2 = v2.validate(record.gridReference.get, record.gridReferenceType, record.key)
+      val r2 = v2.validate(record.gridReferenceRaw.get, record.gridReferenceType, record.key)
       resultList.append(r2)
 
       //Is the requested precision valid for the grid ref.

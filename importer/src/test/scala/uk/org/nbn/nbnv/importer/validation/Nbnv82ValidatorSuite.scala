@@ -9,7 +9,7 @@ class Nbnv82ValidatorSuite extends BaseFunSuite {
 
   test("Nbnv82 should validate if a grid ref is provided") {
     val record = mock[NbnRecord]
-    when(record.gridReference).thenReturn(Some("NN166712"))
+    when(record.gridReferenceRaw).thenReturn(Some("NN166712"))
     when(record.srsRaw).thenReturn(None)
     when(record.featureKey).thenReturn(None)
     when(record.eastRaw).thenReturn(None)
@@ -27,7 +27,7 @@ class Nbnv82ValidatorSuite extends BaseFunSuite {
     when(record.eastRaw).thenReturn(Some("377562"))
     when(record.northRaw).thenReturn(Some("6296480"))
     when(record.srsRaw).thenReturn(Some("27700"))
-    when(record.gridReference).thenReturn(None)
+    when(record.gridReferenceRaw).thenReturn(None)
     when(record.featureKey).thenReturn(None)
 
     val v = new Nbnv82Validator
@@ -42,7 +42,7 @@ class Nbnv82ValidatorSuite extends BaseFunSuite {
     when(record.srsRaw).thenReturn(None)
     when(record.eastRaw).thenReturn(None)
     when(record.northRaw).thenReturn(None)
-    when(record.gridReference).thenReturn(None)
+    when(record.gridReferenceRaw).thenReturn(None)
 
     val v = new Nbnv82Validator
     val r = v.validate(record)
@@ -56,7 +56,7 @@ class Nbnv82ValidatorSuite extends BaseFunSuite {
     when(record.srsRaw).thenReturn(None)
     when(record.eastRaw).thenReturn(None)
     when(record.northRaw).thenReturn(None)
-    when(record.gridReference).thenReturn(None)
+    when(record.gridReferenceRaw).thenReturn(None)
 
     val v = new Nbnv82Validator
     val r = v.validate(record)
@@ -70,7 +70,7 @@ class Nbnv82ValidatorSuite extends BaseFunSuite {
     when(record.srsRaw).thenReturn(None)
     when(record.eastRaw).thenReturn(None)
     when(record.northRaw).thenReturn(None)
-    when(record.gridReference).thenReturn(Some("NN166712"))
+    when(record.gridReferenceRaw).thenReturn(Some("NN166712"))
 
     val v = new Nbnv82Validator
     val r = v.validate(record)
@@ -84,7 +84,7 @@ class Nbnv82ValidatorSuite extends BaseFunSuite {
     when(record.eastRaw).thenReturn(Some("377562"))
     when(record.northRaw).thenReturn(Some("629648"))
     when(record.srsRaw).thenReturn(Some("27700"))
-    when(record.gridReference).thenReturn(None)
+    when(record.gridReferenceRaw).thenReturn(None)
 
     val v = new Nbnv82Validator
     val r = v.validate(record)
@@ -98,7 +98,7 @@ class Nbnv82ValidatorSuite extends BaseFunSuite {
     when(record.eastRaw).thenReturn(Some("37756"))
     when(record.northRaw).thenReturn(Some("6296480"))
     when(record.srsRaw).thenReturn(Some("27700"))
-    when(record.gridReference).thenReturn(Some("NN166712"))
+    when(record.gridReferenceRaw).thenReturn(Some("NN166712"))
 
     val v = new Nbnv82Validator
     val r = v.validate(record)

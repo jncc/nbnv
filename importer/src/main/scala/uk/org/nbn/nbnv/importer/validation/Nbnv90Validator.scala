@@ -40,7 +40,7 @@ class Nbnv90Validator (factory: GridSquareInfoFactory) {
       results.append(r3)
     }
     else {
-      val gridRef = factory.getByGridRef(record.gridReference.get)
+      val gridRef = factory.getByGridRef(record.gridReferenceRaw.get)
 
       val targetPrecision = if (record.gridReferencePrecision < 100) 100 else record.gridReferencePrecision
 
@@ -58,7 +58,7 @@ class Nbnv90Validator (factory: GridSquareInfoFactory) {
           new Result {
             def level = ResultLevel.ERROR
             def reference = record.key
-            def message = "NBNV-90: The precision '%s' is higher then the precision of the grid referance '%s'".format(record.gridReferencePrecision, record.gridReference)
+            def message = "NBNV-90: The precision '%s' is higher then the precision of the grid referance '%s'".format(record.gridReferencePrecision, record.gridReferenceRaw)
           }
         results.append(r5)
       }

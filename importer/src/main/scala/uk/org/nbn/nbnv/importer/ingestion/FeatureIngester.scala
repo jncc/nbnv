@@ -13,8 +13,8 @@ class FeatureIngester @Inject()(log: Logger, db: Database, gridSquareInfoFactory
 
   def ensureFeature(record: NbnRecord) : Feature = {
 
-    if (record.gridReference.isDefined) {
-      ensureGridRefFeature(record.gridReference.get, record.gridReferenceType.get, record.gridReferencePrecision)
+    if (record.gridReferenceRaw.isDefined) {
+      ensureGridRefFeature(record.gridReferenceRaw.get, record.gridReferenceType.get, record.gridReferencePrecision)
     }
     else if (record.featureKey.isDefined) {
       ensureSiteBoundaryFeature(record.featureKey.get)

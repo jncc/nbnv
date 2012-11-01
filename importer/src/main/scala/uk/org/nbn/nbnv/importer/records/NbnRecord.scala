@@ -70,7 +70,7 @@ class NbnRecord(record: StarRecord) {
   def sensitiveOccurrence    = parseSensitiveOccurrence(sensitiveOccurrenceRaw)
 
   def gridReferenceType      = parseOptional(extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/gridReferenceType"))
-  def gridReference          = parseOptional(extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/gridReference"))
+  def gridReferenceRaw          = parseOptional(extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/gridReference"))
   def gridReferencePrecision = parseGridRefPrecision(gridReferencePrecisionRaw)
   def gridReferencePrecisionRaw = extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/gridReferencePrecisionRaw")
   def featureKey             = parseOptional(extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/featureKey"))
@@ -129,4 +129,19 @@ class NbnRecord(record: StarRecord) {
       case None => None
     }
   }
+
+//  def location = {
+//    if ()
+//  }
 }
+
+abstract sealed class LocationSpec
+case class FeatureSpec(key: String) extends LocationSpec
+case class GridRefSpec(ref: String, sys: Option[SpatialSystemSpec], prec: Option[Int]) extends LocationSpec
+case class PointSpec(east: Double, north: Double, sys: SpatialSystemSpec, prec: Option[Int]) extends LocationSpec
+
+abstract sealed class SpatialSystemSpec
+case class SrsSpec(code: Int) extends SpatialSystemSpec
+case class GridTypeSpec(code: String) extends SpatialSystemSpec
+
+

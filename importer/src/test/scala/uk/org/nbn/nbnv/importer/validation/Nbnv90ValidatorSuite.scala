@@ -20,7 +20,7 @@ class Nbnv90ValidatorSuite extends BaseFunSuite {
     when(factory.getByGridRef(knownGridRef_100m)).thenReturn(gsi)
 
     val record = mock[NbnRecord]
-    when(record.gridReference).thenReturn(Some(knownGridRef_100m))
+    when(record.gridReferenceRaw).thenReturn(Some(knownGridRef_100m))
     when(record.gridReferencePrecision).thenReturn(1000)
 
     val v = new Nbnv90Validator(factory)
@@ -38,7 +38,7 @@ class Nbnv90ValidatorSuite extends BaseFunSuite {
     when(factory.getByGridRef(knownGridRef_100m)).thenReturn(gsi)
 
     val record = mock[NbnRecord]
-    when(record.gridReference).thenReturn(Some(knownGridRef_100m))
+    when(record.gridReferenceRaw).thenReturn(Some(knownGridRef_100m))
     when(record.gridReferencePrecision).thenReturn(0)
 
     val v = new Nbnv90Validator(factory)
@@ -56,7 +56,7 @@ class Nbnv90ValidatorSuite extends BaseFunSuite {
     when(factory.getByGridRef(knownGridRef_1000m)).thenReturn(gsi)
 
     val record = mock[NbnRecord]
-    when(record.gridReference).thenReturn(Some(knownGridRef_1000m))
+    when(record.gridReferenceRaw).thenReturn(Some(knownGridRef_1000m))
     when(record.gridReferencePrecision).thenReturn(100)
 
     val v = new Nbnv90Validator(factory)
@@ -74,7 +74,7 @@ class Nbnv90ValidatorSuite extends BaseFunSuite {
     when(factory.getByGridRef(knownGridRef_100m)).thenReturn(gsi)
 
     val record = mock[NbnRecord]
-    when(record.gridReference).thenReturn(Some(knownGridRef_100m))
+    when(record.gridReferenceRaw).thenReturn(Some(knownGridRef_100m))
     when(record.gridReferencePrecision).thenReturn(50)
 
     val v = new Nbnv90Validator(factory)
@@ -95,7 +95,7 @@ class Nbnv90ValidatorSuite extends BaseFunSuite {
     when(factory.getByGridRef(knownGridRef_1000m)).thenReturn(gsi)
 
     val record = mock[NbnRecord]
-    when(record.gridReference).thenReturn(Some(knownGridRef_1000m))
+    when(record.gridReferenceRaw).thenReturn(Some(knownGridRef_1000m))
     when(record.gridReferencePrecision).thenReturn(50)
 
     val v = new Nbnv90Validator(factory)
@@ -111,7 +111,7 @@ class Nbnv90ValidatorSuite extends BaseFunSuite {
   test("should error if target precision is greater then 10,000m") {
     val factory = mock[GridSquareInfoFactory]
     val record = mock[NbnRecord]
-    when(record.gridReference).thenReturn(Some(knownGridRef_1000m))
+    when(record.gridReferenceRaw).thenReturn(Some(knownGridRef_1000m))
     when(record.gridReferencePrecision).thenReturn(10001)
 
     val v = new Nbnv90Validator(factory)
