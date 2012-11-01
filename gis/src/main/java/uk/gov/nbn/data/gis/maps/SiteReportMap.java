@@ -42,6 +42,7 @@ public class SiteReportMap {
         data.put("extent", getNativeBoundingBox(featureID));
         data.put("mapServiceURL", mapServiceURL);
         data.put("properties", properties);
+        data.put("featureData", MapHelper.getSelectedFeatureData(featureID));
         data.put("featureID", featureID);
         return new MapFileModel("SiteReport.map",data);
     }
@@ -81,6 +82,7 @@ public class SiteReportMap {
         data.put("mapServiceURL", mapServiceURL);
         data.put("properties", properties);
         data.put("featureData", MapHelper.getSelectedFeatureData(featureID));
+        data.put("featureID", featureID);
         data.put("taxonVersionKey", taxonKey);
         data.put("recordsData", MapHelper.getMapData(FEATUREDATA.GEOM, USERTAXONOBSERVATIONDATA.FEATUREID, 4326, create.
             select(USERTAXONOBSERVATIONDATA.FEATUREID, FEATUREDATA.GEOM, FEATUREDATA.RESOLUTIONID, USERTAXONOBSERVATIONDATA.ABSENCE)
