@@ -118,9 +118,9 @@ public class MetadataForm implements Serializable {
     public void updateDatasests() {
         EntityManager em = DatabaseConnection.getInstance().createEntityManager();
         Query q = em.createNamedQuery("DatasetType.findByKey");
-        q.setParameter("key", "H");
+        q.setParameter("key", 'H');
         List<Dataset> lis = new ArrayList<Dataset>(((DatasetType)q.getSingleResult()).getDatasetCollection());
-        q.setParameter("key", "A");
+        q.setParameter("key", 'A');
         lis.addAll(((DatasetType)q.getSingleResult()).getDatasetCollection());
         lis.add(0, new Dataset(""));
         setDatasets(lis);
