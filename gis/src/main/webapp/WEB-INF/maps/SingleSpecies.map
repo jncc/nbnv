@@ -1,40 +1,11 @@
 [#ftl]
-[#import "backgrounds.ftl" as backgrounds]
+[#import "libraries/template.ftl" as template]
 
-MAP
-    IMAGETYPE                                             PNG
-    SIZE                                                  2800 2800
-    IMAGECOLOR                                            255 255 255
-    FONTSET                                               "fonts/fontset"
-    EXTENT                                                -180 -90 180 90
-
+[@template.context title="Single Species Map" mapServiceURL=mapServiceURL properties=properties]
     SYMBOL
         NAME 'absence'
         TYPE HATCH
     END
-
-    WEB
-        IMAGEPATH                                           "/ms4w/tmp/ms_tmp/"
-        IMAGEURL                                            "/ms_tmp/"
-        METADATA
-            "wms_title"                                       "Single Species Map"
-            "wms_onlineresource"                              "${mapServiceURL}"
-            "wms_srs"                                         "EPSG:29903 EPSG:27700 EPSG:4326 EPSG:3857"
-            "wms_enable_request"                              "*"
-        END
-    END
-
-    PROJECTION
-        "init=epsg:4326"
-    END
-
-    [@backgrounds.contextLayers location=properties.contextLayersLocation/]    
-    [@backgrounds.os location=properties.ordnanceSurveyMapDataLocation requires=layers/]
-    
-    [#if featureID??]
-        [@backgrounds.selectedFeature data=featureData spatialConnection=properties.spatialConnection/]
-    [/#if]
-
 
     [#list layers as layer_name]
         LAYER
@@ -102,4 +73,4 @@ MAP
             [/#if]
         END
     [/#list]
-END
+[/@template.context]

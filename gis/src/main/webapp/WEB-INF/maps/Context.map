@@ -1,5 +1,5 @@
 [#ftl]
-[#import "backgrounds.ftl" as backgrounds]
+[#import "libraries/backgrounds.ftl" as backgrounds]
 
 MAP
     IMAGETYPE                                             PNG
@@ -7,11 +7,6 @@ MAP
     IMAGECOLOR                                            255 255 255
     FONTSET                                               "fonts/fontset"
     EXTENT                                                -180 -90 180 90
-
-    SYMBOL
-        NAME 'absence'
-        TYPE HATCH
-    END
 
     WEB
         IMAGEPATH                                           "/ms4w/tmp/ms_tmp/"
