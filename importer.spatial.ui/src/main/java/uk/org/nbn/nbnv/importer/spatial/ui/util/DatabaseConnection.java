@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package uk.org.nbn.nbnv.importer.ui.util;
+package uk.org.nbn.nbnv.importer.spatial.ui.util;
 
 import java.util.HashMap;
 import java.util.Map;

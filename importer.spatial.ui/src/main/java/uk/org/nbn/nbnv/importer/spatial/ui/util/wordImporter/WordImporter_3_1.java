@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package uk.org.nbn.nbnv.importer.ui.util.wordImporter;
+package uk.org.nbn.nbnv.importer.spatial.ui.util.wordImporter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,7 +11,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
-import uk.org.nbn.nbnv.importer.ui.util.POIImportError;
+import uk.org.nbn.nbnv.importer.spatial.ui.util.POIImportError;
 
 /**
  *

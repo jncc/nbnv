@@ -1,4 +1,4 @@
-package uk.org.nbn.nbnv.importer.ui.controller;
+package uk.org.nbn.nbnv.importer.spatial.ui.controller;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -34,15 +34,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
-import uk.org.nbn.nbnv.importer.ui.convert.RunConversions;
-import uk.org.nbn.nbnv.importer.ui.model.Metadata;
-import uk.org.nbn.nbnv.importer.ui.model.MetadataForm;
-import uk.org.nbn.nbnv.importer.ui.model.UploadItem;
-import uk.org.nbn.nbnv.importer.ui.util.DatabaseConnection;
-import uk.org.nbn.nbnv.importer.ui.util.POIImportError;
-import uk.org.nbn.nbnv.importer.ui.util.wordImporter.WordImporter;
-import uk.org.nbn.nbnv.importer.ui.validators.MetadataFormValidator;
-import uk.org.nbn.nbnv.importer.ui.validators.MetadataValidator;
+import uk.org.nbn.nbnv.importer.spatial.ui.model.Metadata;
+import uk.org.nbn.nbnv.importer.spatial.ui.model.MetadataForm;
+import uk.org.nbn.nbnv.importer.spatial.ui.model.UploadItem;
+import uk.org.nbn.nbnv.importer.spatial.ui.util.DatabaseConnection;
+import uk.org.nbn.nbnv.importer.spatial.ui.util.POIImportError;
+import uk.org.nbn.nbnv.importer.spatial.ui.util.wordImporter.WordImporter;
+import uk.org.nbn.nbnv.importer.spatial.ui.validator.MetadataFormValidator;
+import uk.org.nbn.nbnv.importer.spatial.ui.validator.MetadataValidator;
 import uk.org.nbn.nbnv.jpa.nbncore.Dataset;
 import uk.org.nbn.nbnv.jpa.nbncore.Organisation;
 import uk.org.nbn.nbnv.jpa.nbncore.User;
@@ -129,7 +128,7 @@ public class MetadataController {
     public ModelAndView uploadFile(@ModelAttribute("metadataForm") MetadataForm metadataForm, @ModelAttribute("org") Organisation organisation, UploadItem uploadItem, BindingResult result) {
         if (result.hasErrors()) {
             for (ObjectError error : result.getAllErrors()) {
-                Logger.getLogger(UploadController.class.getName()).log(Level.WARNING, "Error ({0}): {1}", new Object[]{error.getCode(), error.getDefaultMessage()});
+                Logger.getLogger(MetadataController.class.getName()).log(Level.WARNING, "Error ({0}): {1}", new Object[]{error.getCode(), error.getDefaultMessage()});
             }           
             return new ModelAndView("metadataForm", "metadataForm", metadataForm);
         }
@@ -289,7 +288,7 @@ public class MetadataController {
         
         if (result.hasErrors()) {
             for (ObjectError error : result.getAllErrors()) {
-                Logger.getLogger(UploadController.class.getName()).log(Level.WARNING, "Error ({0}): {1}", new Object[]{error.getCode(), error.getDefaultMessage()});
+                Logger.getLogger(MetadataController.class.getName()).log(Level.WARNING, "Error ({0}): {1}", new Object[]{error.getCode(), error.getDefaultMessage()});
                 if (error.getDefaultMessage() != null) {
                     metadataForm.getErrors().add(error.getDefaultMessage());
                 }
@@ -335,9 +334,9 @@ public class MetadataController {
                     return instance;
                 }
             } catch (InstantiationException ex) {
-                Logger.getLogger(RunConversions.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(MetadataController.class.getName()).log(Level.SEVERE, null, ex);
             } catch (IllegalAccessException ex) {
-                Logger.getLogger(RunConversions.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(MetadataController.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         return null;

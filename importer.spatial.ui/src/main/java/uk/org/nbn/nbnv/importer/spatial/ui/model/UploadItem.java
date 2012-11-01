@@ -1,4 +1,4 @@
-package uk.org.nbn.nbnv.importer.ui.model;
+package uk.org.nbn.nbnv.importer.spatial.ui.model;
 
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 

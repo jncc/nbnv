@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package uk.org.nbn.nbnv.importer.ui.validators;
+package uk.org.nbn.nbnv.importer.spatial.ui.validator;
 
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -10,8 +10,8 @@ import javax.persistence.Query;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
-import uk.org.nbn.nbnv.importer.ui.model.Metadata;
-import uk.org.nbn.nbnv.importer.ui.util.DatabaseConnection;
+import uk.org.nbn.nbnv.importer.spatial.ui.model.Metadata;
+import uk.org.nbn.nbnv.importer.spatial.ui.util.DatabaseConnection;
 import uk.org.nbn.nbnv.jpa.nbncore.User;
 
 /**

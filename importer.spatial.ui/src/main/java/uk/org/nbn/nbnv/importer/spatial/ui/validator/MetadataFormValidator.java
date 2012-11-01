@@ -2,13 +2,13 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package uk.org.nbn.nbnv.importer.ui.validators;
+package uk.org.nbn.nbnv.importer.spatial.ui.validator;
 
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
-import uk.org.nbn.nbnv.importer.ui.model.Metadata;
-import uk.org.nbn.nbnv.importer.ui.model.MetadataForm;
+import uk.org.nbn.nbnv.importer.spatial.ui.model.Metadata;
+import uk.org.nbn.nbnv.importer.spatial.ui.model.MetadataForm;
 
 /**
  *

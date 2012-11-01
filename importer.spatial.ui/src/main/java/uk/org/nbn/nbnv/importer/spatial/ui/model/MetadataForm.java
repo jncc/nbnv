@@ -2,14 +2,14 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package uk.org.nbn.nbnv.importer.ui.model;
+package uk.org.nbn.nbnv.importer.spatial.ui.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
-import uk.org.nbn.nbnv.importer.ui.util.DatabaseConnection;
+import uk.org.nbn.nbnv.importer.spatial.ui.util.DatabaseConnection;
 import uk.org.nbn.nbnv.jpa.nbncore.Dataset;
 import uk.org.nbn.nbnv.jpa.nbncore.Organisation;
 

@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package uk.org.nbn.nbnv.importer.ui.model;
+package uk.org.nbn.nbnv.importer.spatial.ui.model;
 
 import java.io.Serializable;
 
