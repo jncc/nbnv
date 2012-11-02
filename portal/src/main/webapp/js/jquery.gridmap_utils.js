@@ -187,19 +187,8 @@
             $("INPUT[name='gridLayer1'][type='checkbox']").prop('checked',true);
         }
         
-        //If not zooming to a vice county then add the 'nationalextent' specific
-        //layers, eg Irish coastline when zoomed to Ireland
+        //Set grid and coast check boxes to their region specific values
         var nationalExtent = $('#nbn-region-selector').val();
-        var viceCounty = $('#nbn-vice-county-selector option:selected').val().toUpperCase();
-        if(viceCounty == "NONE"){
-            //Disable/enable vice county and OS checkboxes dependent on whether zoomed to Ireland
-            var disableNonIrishLayers = (nationalExtent.toUpperCase() == 'IRELAND');
-            $('#nbn-grid-map-vicecounty').prop('disabled', disableNonIrishLayers);
-            $('#nbn-grid-map-os').prop('disabled', disableNonIrishLayers);
-        }else{
-            nationalExtent = 'gb';
-            $('#nbn-region-selector').val('gb');
-        }
         $('#nbn-grid-map-coastline').val(nationalExtentOptions[nationalExtent].coastline);
         $('#nbn-grid-map-100k-grid').val(nationalExtentOptions[nationalExtent].grid100k);
         $('#nbn-grid-map-10k-grid').val(nationalExtentOptions[nationalExtent].grid10k);
@@ -207,12 +196,18 @@
     
     function setupRegionVCInteractions(){
         //When selecting a national region the Vice County drop down must return to 'none'
+        //If Ireland is selected, then disable os and vc checkboxes
         $('#nbn-region-selector').change(function(){
             $('#nbn-vice-county-selector').val("none");
+            var disableNonIrishLayers = ($('#nbn-region-selector').val().toUpperCase() == 'IRELAND');
+            $('#nbn-grid-map-vicecounty').prop('disabled', disableNonIrishLayers);
+            $('#nbn-grid-map-os').prop('disabled', disableNonIrishLayers);
         });
-        //When selecting a vice county the national region must return 'gb'
+        //When selecting a vice county the national region must return 'gb' and vc/os checkboxes must be enabled
         $('#nbn-vice-county-selector').change(function(){
             $('#nbn-region-selector').val("gb");
+            $('#nbn-grid-map-vicecounty').prop('disabled', false);
+            $('#nbn-grid-map-os').prop('disabled', false);
         });
     }
     
