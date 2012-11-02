@@ -56,9 +56,9 @@ public @interface GridMap {
     String[] defaultBackgrounds() default {"gbi100kgrid"};
     String[] defaultOverlays() default {};
     Extent[] extents() default {
-        @Extent(name="gb",      epsgCode="EPSG:27700", extent={0, 0, 700000, 1300000}),
+        @Extent(name="gb",      epsgCode="EPSG:27700", extent={0, 0, 700000, 1310000}),
         @Extent(name="ireland", epsgCode="EPSG:29903", extent={-10000, -10000, 410000, 510000}),
-        @Extent(name="gbi",     epsgCode="EPSG:27700", extent={-250000, -50000, 750000, 1300000})
+        @Extent(name="gbi",     epsgCode="EPSG:27700", extent={-250000, -50000, 750000, 1310000})
     };
     
     String defaultExtent() default "gbi";    
