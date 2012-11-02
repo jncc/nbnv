@@ -70,11 +70,16 @@ public class MapHelper {
     }
     
     static String getSelectedFeatureData(String selectedFeature) {
-        SQLServerFactory create = new SQLServerFactory();
-        return MapHelper.getMapData(FEATUREDATA.GEOM, FEATUREDATA.ID, 4326, create
-            .select(FEATUREDATA.ID, FEATUREDATA.GEOM)
-            .from(FEATUREDATA)
-            .where(FEATUREDATA.IDENTIFIER.eq(selectedFeature))
-        );
+        if(selectedFeature != null) {
+            SQLServerFactory create = new SQLServerFactory();
+            return MapHelper.getMapData(FEATUREDATA.GEOM, FEATUREDATA.ID, 4326, create
+                .select(FEATUREDATA.ID, FEATUREDATA.GEOM)
+                .from(FEATUREDATA)
+                .where(FEATUREDATA.IDENTIFIER.eq(selectedFeature))
+            );
+        }
+        else {
+            return null;
+        }
     }
 }

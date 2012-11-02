@@ -1,5 +1,5 @@
 [#ftl]
-[#import "backgrounds.ftl" as backgrounds]
+[#import "libraries/backgrounds.ftl" as backgrounds]
 
 MAP
     IMAGETYPE                                             PNG
@@ -23,8 +23,7 @@ MAP
     END
     
     [@backgrounds.os location=properties.ordnanceSurveyMapDataLocation requires=[]/]
-    
-    [@backgrounds.selectedFeature data=featureData spatialConnection=properties.spatialConnection/]
+    [@backgrounds.selectedFeature fill=!taxonVersionKey?? data=featureData spatialConnection=properties.spatialConnection/]
 
     [#if taxonVersionKey??]
         LAYER

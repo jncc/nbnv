@@ -8,7 +8,7 @@ class Nbnv82Validator {
   def validate(record: NbnRecord) = {
     var count = 0
 
-    if (record.gridReference.isDefined) {
+    if (record.gridReferenceRaw.isDefined) {
       count += 1
     }
 
@@ -16,7 +16,7 @@ class Nbnv82Validator {
       count += 1
     }
 
-    if (record.eastRaw.isDefined && record.northRaw.isDefined && record.srsRaw.isDefined) {
+    if (record.eastRaw.isDefined && record.northRaw.isDefined && (record.srsRaw.isDefined || record.gridReferenceTypeRaw.isDefined)) {
       count += 1
     }
 

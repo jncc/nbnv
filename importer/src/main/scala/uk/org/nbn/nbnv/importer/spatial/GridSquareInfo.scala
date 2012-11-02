@@ -5,7 +5,7 @@ import org.geotools.geometry.GeneralDirectPosition
 import org.geotools.referencing.ReferencingFactoryFinder
 import org.geotools.referencing.operation.DefaultCoordinateOperationFactory
 
-abstract class GridSquareInfo(gridRef : String, precision: Int = 0) {
+abstract class GridSquareInfo(gridRef : String, precision: Option[Int]) {
 
   def projection : String
   def epsgCode : Int
@@ -16,7 +16,7 @@ abstract class GridSquareInfo(gridRef : String, precision: Int = 0) {
   protected def getDintyRegex : String
   protected def getPrecision(gridReference : String) : Int
   protected def checkGridRef
-  protected def create(gridRef: String, precision: Int = 0) : GridSquareInfo
+  protected def create(gridRef: String, precision: Option[Int]) : GridSquareInfo
 
   val dintyGridByCoord = Map (
     (0,8) -> "E", (2,8) -> "J", (4,8) -> "P", (6,8) -> "U", (8,8) -> "Z",
@@ -37,7 +37,10 @@ abstract class GridSquareInfo(gridRef : String, precision: Int = 0) {
   if (currentPrecision > 10000) throw new IllegalArgumentException("Grid reference precision must be 10Km or higher")
 
   //Normalise the precision to one of the allowable values
-  val normalisedPrecision = if (precision != 0) getNormalisedPrecision(precision) else 0
+  val normalisedPrecision = precision match {
+    case Some(p) => getNormalisedPrecision(p)
+    case None => 0
+  }
 
   val outputGridRef = {
 
@@ -65,7 +68,7 @@ abstract class GridSquareInfo(gridRef : String, precision: Int = 0) {
       None
     }
     else {
-      Some(create(parentGridRef))
+      Some(create(parentGridRef, None))
     }
   }
 
@@ -74,7 +77,7 @@ abstract class GridSquareInfo(gridRef : String, precision: Int = 0) {
       this
     }
     else {
-      create(outputGridRef, precision)
+      create(outputGridRef, Some(precision))
     }
   }
 

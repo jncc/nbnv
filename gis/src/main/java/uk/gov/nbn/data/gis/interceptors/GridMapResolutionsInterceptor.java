@@ -29,10 +29,11 @@ public class GridMapResolutionsInterceptor {
     public Response processRequestParameters(
             HttpServletRequest request,
             GridMap gridMapProperties,
-            @QueryParam(key="feature") String featureId) throws JSONException {
+            @QueryParam(key="feature") String featureId,
+            @QueryParam(key="nationalextent") String nationExtent) throws JSONException {
         JSONObject toReturn = new JSONObject();
         
-        BoundingBox featureToFocusOn = helper.getFeatureToFocusOn(featureId, gridMapProperties);
+        BoundingBox featureToFocusOn = helper.getFeatureToFocusOn(featureId, nationExtent, gridMapProperties);
         
         for(int i=1; i<=GridMapRequestFactory.ZOOM_LEVELS; i++) {
             toReturn.put(Integer.toString(i), getAvailableResolutionListForImagesSize(

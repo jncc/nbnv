@@ -18,7 +18,7 @@ class SpatialReferenceValidator (db: Database) {
 
     //Check spatial reference in more detail if no errors so far
     if (resultList.find(r => r.level == ResultLevel.ERROR) == None){
-      if (record.gridReference.isDefined) {
+      if (record.gridReferenceRaw.isDefined) {
         //validate a grid reference
         val grv = new GridReferenceValidator(db)
         resultList.appendAll(grv.validate(record))

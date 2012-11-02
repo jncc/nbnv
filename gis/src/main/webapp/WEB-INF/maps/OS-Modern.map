@@ -1,5 +1,5 @@
 [#ftl]
-[#import "backgrounds.ftl" as backgrounds]
+[#import "libraries/backgrounds.ftl" as backgrounds]
 
 MAP
   NAME "OS-Modern"

@@ -7,6 +7,7 @@ import uk.org.nbn.nbnv.importer.data.{Database, Repository}
 import uk.org.nbn.nbnv.importer.spatial.GridSquareInfoFactory
 import uk.org.nbn.nbnv.importer.metadata.Metadata
 import uk.org.nbn.nbnv.jpa.nbncore.{TaxonObservation, Sample, TaxonObservationPublic}
+import uk.org.nbn.nbnv.importer.records.{GridTypeDef, GridRefDef}
 
 /// Creates, updates or deletes the TaxonObservationPublic record appropriately.
 
@@ -39,9 +40,9 @@ class PublicIngester @Inject()(log: Logger,
       // obviously we only blur gridsquare features (including points which have been represented as such)
       db.repo.getGridSquareFeature(o.getFeature.getId) match {
         case Some((_, gridSquare)) => {
-          val info = gridSquareInfoFactory.getByGridRef(gridSquare.getGridRef)
+          val info = gridSquareInfoFactory.getByGridRef(GridRefDef(gridSquare.getGridRef, None, None))
           val publicInfo = info.getLowerPrecisionGridSquareInfo(metadata.publicResolution)
-          val publicFeature = featureIngester.ensureGridRefFeature(publicInfo.gridReference, publicInfo.projection, publicInfo.gridReferencePrecision)
+          val publicFeature = featureIngester.ensureGridRefFeature(GridRefDef(publicInfo.gridReference, Some(GridTypeDef(publicInfo.projection)), Some(publicInfo.gridReferencePrecision)))
           p.setFeature(publicFeature)
         }
         case None => {

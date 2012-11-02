@@ -57,13 +57,16 @@ class Nbnv185ValidatorSuite extends BaseFunSuite {
     r.level should be (ResultLevel.ERROR)
   }
 
-  test("should not validate a blank srs") {
+  test("should not validate a blank srs and grid ref type") {
     val rec = mock[NbnRecord]
     when(rec.srsRaw).thenReturn(None)
+    when(rec.gridReferenceTypeRaw).thenReturn(None)
 
     val v = new Nbnv185Validator
     val r = v.validate(rec)
 
     r.level should be (ResultLevel.ERROR)
   }
+
+  //todo add tests for grid ref type too
 }

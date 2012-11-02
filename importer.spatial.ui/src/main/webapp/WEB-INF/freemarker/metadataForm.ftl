@@ -55,6 +55,19 @@
 
             <form method="post" enctype="multipart/form-data" action="metadataProcess.html">
                 <fieldset>
+                    <legend>Spatial Dataset Type</legend>
+                    <p>
+                        <span class="formlabel"><label for="datasetTypeKey" path="metadata">Dataset Type</label></span>
+                        <span class="formfield">
+                            <select path="metadata" name="datasetTypeKey" id="datasetTypeKey">
+                                <option value="S" <#if metadataForm.metadata.datasetTypeKey=='S'>selected="selected"</#if>>Site Boundary</option>
+                                <option value="H" <#if metadataForm.metadata.datasetTypeKey=='H'>selected="selected"</#if>>Habitat</option>
+                            </select>
+                        </span>
+                    </p>
+                </fieldset>
+                <br />
+                <fieldset>
                     <legend>Dataset Metadata</legend>
                     <p>
                         <span class="formlabel"><label for="title" path="metadata">Title</label></span>
@@ -117,60 +130,6 @@
                         <@spring.showErrors "" "error" />
                     </p>
                     <p>
-                        <span class="formlabel"><label for="use" path="metadata">Use Constraints</label></span>
-                        <@spring.formTextarea "metadataForm.metadata.use" "class='wide' rows='6' cols='60'"/>
-                        <@spring.showErrors "" "error" />
-                    </p>
-                    <p>
-                        <span class="formlabel"><label for="access" path="metadata">Access Constraints</label></span>
-                        <@spring.formTextarea "metadataForm.metadata.access" "class='wide' rows='6' cols='60'"/>
-                        <@spring.showErrors "" "error" />
-                    </p>
-
-                    <fieldset>
-                        <legend>Dataset Administrator Details</legend>
-                        <p>
-                            <span class="formlabel"><label for="datasetAdminName" path="metadata">Name</label></span>
-                            <@spring.formInput "metadataForm.metadata.datasetAdminName" "class='wide' length='200'" />
-                            <@spring.showErrors "" "error" />
-                        </p>
-
-                        <p>
-                            <span class="formlabel"><label for="datasetAdminPhone" path="metadata">Phone Number</label></span>
-                            <@spring.formInput "metadataForm.metadata.datasetAdminPhone" "class='wide' length='200'" />
-                            <@spring.showErrors "" "error" />
-                        </p>
-
-                        <p>
-                            <span class="formlabel"><label for="datasetAdminEmail" path="metadata">E-mail Address</label></span>
-                            <@spring.formInput "metadataForm.metadata.datasetAdminEmail" "class='wide' length='200'" />
-                            <@spring.showErrors "" "error" />
-                        </p>
-
-                        <@spring.formHiddenInput "metadataForm.metadata.datasetAdminID" "length='100'"/>
-                    </fieldset>
-
-                    <fieldset>
-                        <legend>Level of Public Access</legend>
-                        <br />
-                        <span class="formlabel">Geographic Resolution</span>
-                        <span class="formfield">
-                            <@spring.formRadioButtons 'metadataForm.metadata.geographicalRes', referenceData.geoMap, ' ' />
-                            <@spring.showErrors "" "error" />
-                        </span> <br /> <br />
-                        <span class="formlabel">Record Attributes</span>
-                        <span class="formfield">
-                            <@spring.formRadioButtons 'metadataForm.metadata.recordAtts', referenceData.recAtts, ' ' />
-                            <@spring.showErrors "" "error" />
-                        </span> <br /> <br />
-                        <span class="formlabel">Recorder Names</span>
-                        <span class="formfield">
-                            <@spring.formRadioButtons 'metadataForm.metadata.recorderNames', referenceData.recNames, ' ' />
-                            <@spring.showErrors "" "error" />
-                        </span> <br /> <br />
-                    </fieldset>                
-
-                    <p>
                         <input type="submit" name="submit" value="Submit Metadata" />
                         <input type="submit" name="clearForm" value="Clear Form" />
 
@@ -181,39 +140,5 @@
                 </fieldset>
             </form>
         </div>
-
-        <script>
-            $(document).ready(function() {
-
-            });
-
-            function disableOptions() {
-                $("#metadata\\.recordAtts0").attr('disabled', 'disabled');
-                $("#metadata\\.recorderNames0").attr('disabled', 'disabled');
-                $("#metadata\\.recordAtts0").prop('checked', false);
-                $("#metadata\\.recorderNames0").prop('checked', false);
-            }
-
-            function enableOptions() {
-                $("#metadata\\.recorderNames0").removeAttr('disabled');
-                $("#metadata\\.recordAtts0").removeAttr('disabled');
-            }
-
-            $("#metadata\\.geographicalRes0").click(function() {
-                enableOptions();
-            });
-            $("#metadata\\.geographicalRes1").click(function() {
-                disableOptions();
-            });
-            $("#metadata\\.geographicalRes2").click(function() {
-                disableOptions();
-            });
-            $("#metadata\\.geographicalRes3").click(function() {
-                disableOptions();
-            });
-            $("#metadata\\.geographicalRes4").click(function() {
-                disableOptions();
-            });
-        </script>
     </body>
 </html>
