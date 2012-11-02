@@ -50,7 +50,8 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Dataset.findByAccessConstraints", query = "SELECT d FROM Dataset d WHERE d.accessConstraints = :accessConstraints"),
     @NamedQuery(name = "Dataset.findByUseConstraints", query = "SELECT d FROM Dataset d WHERE d.useConstraints = :useConstraints"),
     @NamedQuery(name = "Dataset.findByDateUploaded", query = "SELECT d FROM Dataset d WHERE d.dateUploaded = :dateUploaded"),
-    @NamedQuery(name = "Dataset.findByMetadataLastEdited", query = "SELECT d FROM Dataset d WHERE d.metadataLastEdited = :metadataLastEdited")})
+    @NamedQuery(name = "Dataset.findByMetadataLastEdited", query = "SELECT d FROM Dataset d WHERE d.metadataLastEdited = :metadataLastEdited"),
+    @NamedQuery(name = "Dataset.findByDatasetType", query = "SELECT d FROM Dataset d WHERE d.datasetType = :datasetType")})
 public class Dataset implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
