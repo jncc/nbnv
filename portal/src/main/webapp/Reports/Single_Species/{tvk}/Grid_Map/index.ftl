@@ -50,13 +50,17 @@
             </fieldset>
             <fieldset>
                 <legend>Overlays and backgrounds</legend>
-                <input type="checkbox" id="nbn-grid-map-coastline" value="gbi" name="background" checked>Coastline<br/>
-                <input type="checkbox" id="nbn-grid-map-os" value="os" name="background">Ordnance survey<br/>
-                <input type="checkbox" id="nbn-grid-map-vicecounty" value="vicecounty" name="background">Vice counties<br/>
-                <input type="checkbox" id="nbn-grid-map-100k-grid" value="gbi100kextent" name="background">100km grid<br/>
-                <input type="checkbox" id="nbn-grid-map-10k-grid" value="gbi10kextent" name="background">10km grid<br/>
+                <div id="nbn-background-checkbox-group">
+                    <input type="checkbox" id="nbn-grid-map-coastline" value="gbi" name="background" checked>Coastline<br/>
+                    <input type="checkbox" id="nbn-grid-map-os" value="os" name="background">Ordnance survey<br/>
+                    <input type="checkbox" id="nbn-grid-map-vicecounty" value="vicecounty" name="background">Vice counties
+                </div>
+                <div>
+                    <input type="checkbox" id="nbn-grid-map-100k-grid" value="gbi100kextent" name="background">100km grid<br/>
+                    <input type="checkbox" id="nbn-grid-map-10k-grid" value="gbi10kextent" name="background">10km grid
+                </div>
             </fieldset>
-            <input type="submit" value="Refresh map"></td>
+            <input type="submit" value="Refresh map" class="nbn-centre-element">
     </div>
 </#macro>
 
@@ -64,7 +68,7 @@
     <div class="tabbed" id="nbn-grid-map-container">
         <h3>Map</h3>
         <img id="nbn-grid-map-busy-image" src='/img/ajax-loader-medium.gif'>
-        <img id="nbn-grid-map-image">
+        <img id="nbn-grid-map-image" class="nbn-centre-element">
     </div>
 </#macro>
 
