@@ -14,6 +14,7 @@ import uk.gov.nbn.data.gis.processor.MapFileModel;
 import uk.gov.nbn.data.gis.processor.MapService;
 import uk.gov.nbn.data.gis.processor.MapContainer;
 import uk.gov.nbn.data.gis.processor.GridMap;
+import uk.gov.nbn.data.gis.processor.GridMap.Extent;
 import uk.gov.nbn.data.gis.processor.GridMap.GridLayer;
 import uk.gov.nbn.data.gis.processor.GridMap.Resolution;
 import uk.gov.nbn.data.gis.providers.TokenUserProvider;
@@ -63,7 +64,10 @@ public class SingleSpeciesAtlasMap {
             @GridLayer(name="1km",      layer=ONE_KM_LAYER_NAME,        resolution=Resolution.ONE_KM),
             @GridLayer(name="100m",     layer=ONE_HUNDRED_M_LAYER_NAME, resolution=Resolution.ONE_HUNDRED_METERS)
         },
-        defaultLayer="10km"
+        defaultLayer="10km",
+        extents= {
+            @Extent(name="gbi",     epsgCode="EPSG:27700", extent={-250000, -50000, 750000, 1300000})
+        }
     )    
     @Acknowledgement(method="getDatasetProviders")
     public MapFileModel getSingleSpeciesSymbologyModel(
