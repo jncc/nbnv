@@ -21,7 +21,7 @@ public class Metadata implements Serializable {
     private String info = "";
     private int organisationID = -1;
     private String datasetID = "";
-    private char datasetTypeKey = 'S';
+    private char datasetTypeKey = ' ';
 
     /**
      * @return the title

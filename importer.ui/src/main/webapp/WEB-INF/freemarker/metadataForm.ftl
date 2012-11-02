@@ -16,7 +16,8 @@
                             <span class="formfield"><input path="fileData" type="file" id="fileData" name="fileData"/></span>
                         </p>
                         <p>
-                            <input type="submit" name="uploadMetadata" value="Upload Metadata" />
+                            <input type="submit" id="uploadMetadataButton" name="uploadMetadata" value="Upload Metadata" />
+                            <img id="uploadSpinner" src="/importer/images/1-1.gif" />
                         </p>
                     </fieldset>
                 </form>
@@ -184,7 +185,11 @@
 
         <script>
             $(document).ready(function() {
+                $("#uploadSpinner").hide();
+            });
 
+            $("#uploadMetadataButton").click(function() {
+                $("uploadSpinner").show();
             });
 
             function disableOptions() {

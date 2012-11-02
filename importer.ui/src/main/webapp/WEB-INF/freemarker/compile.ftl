@@ -1,7 +1,7 @@
 <html>
     <head>
         <META http-equiv="Content-Type" content="text/html;charset=UTF-8">
-        <title>Upload Example Result</title>
+        <title>Download Darwin Core Dataset</title>
     </head>
     <body>
         <p>Steps:</p>
