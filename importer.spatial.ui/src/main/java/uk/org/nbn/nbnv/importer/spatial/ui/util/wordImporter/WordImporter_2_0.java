@@ -17,34 +17,21 @@ import uk.org.nbn.nbnv.importer.spatial.ui.util.POIImportError;
  *
  * @author Matt Debont
  */
-public class WordImporter_3_1 implements WordImporter {
-    public static final int MAJOR = 3;
-    public static final int MINOR = 1;
+public class WordImporter_2_0 implements WordImporter {
+    public static final int MAJOR = 2;
+    public static final int MINOR = 0;
     
     // Limit for wandering up the string list looking for a valid input
     // descriptor contained in the valid stringSet
     public static final int WANDER_MAX = 3;
     
-    private Map<String, Integer> longDescCutter;
     private HashSet<String> stringSet;
     
     private List<String> defaultMessages;
     
-    public WordImporter_3_1() {
-        longDescCutter = new HashMap<String, Integer>();
-        longDescCutter.put(META_ACCESS_CONSTRAINT, 15);
-        longDescCutter.put(META_DATA_CONFIDENCE, 1);
-        longDescCutter.put(META_DESC, 1);
-        longDescCutter.put(META_GEOCOVER, 3);
-        longDescCutter.put(META_CAPTURE_METHOD, 1);
-        longDescCutter.put(META_TEMPORAL, 5);
-        longDescCutter.put(META_TITLE, 1);
-        
+    public WordImporter_2_0() {       
         stringSet = new HashSet<String>(Arrays.asList(stringsHWPF));
-        
         defaultMessages = new ArrayList<String>();
-        defaultMessages.add("Checkboxes for level of public access could not be imported, please select them manually");
-        
     }
     
     
@@ -116,14 +103,6 @@ public class WordImporter_3_1 implements WordImporter {
                                 // No exceptions found We have an odity
                                 throw new POIImportError("Found an input field with an unknown name input was: " + origStr);
                             }
-                        }
-                    }
-
-                    // Deal with cases where the descriptions getted tagged
-                    // from the metadata 
-                    if (longDescCutter.get(desc.trim()) != null && longDescCutter.get(desc.trim()) > 0) {
-                        for (int i = 0; i < longDescCutter.get(desc.trim()); i++) {
-                            field = field.replaceAll("\n.*$", "");
                         }
                     }
 

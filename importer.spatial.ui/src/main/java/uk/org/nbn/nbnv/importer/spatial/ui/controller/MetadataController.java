@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -15,7 +14,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.extractor.WordExtractor;
@@ -23,7 +21,6 @@ import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.reflections.Reflections;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.WebDataBinder;
@@ -40,11 +37,10 @@ import uk.org.nbn.nbnv.importer.spatial.ui.model.UploadItem;
 import uk.org.nbn.nbnv.importer.spatial.ui.util.DatabaseConnection;
 import uk.org.nbn.nbnv.importer.spatial.ui.util.POIImportError;
 import uk.org.nbn.nbnv.importer.spatial.ui.util.wordImporter.WordImporter;
-import uk.org.nbn.nbnv.importer.spatial.ui.validator.MetadataFormValidator;
-import uk.org.nbn.nbnv.importer.spatial.ui.validator.MetadataValidator;
+import uk.org.nbn.nbnv.importer.spatial.ui.validators.MetadataFormValidator;
+import uk.org.nbn.nbnv.importer.spatial.ui.validators.MetadataValidator;
 import uk.org.nbn.nbnv.jpa.nbncore.Dataset;
 import uk.org.nbn.nbnv.jpa.nbncore.Organisation;
-import uk.org.nbn.nbnv.jpa.nbncore.User;
 
 /**
  *
@@ -125,24 +121,32 @@ public class MetadataController {
             // can read it
             Float version = null;
             WordImporter importer = null;
+            boolean spatial = false;
             while(strIt.hasNext() && version == null) {
                 try {
                     String str = strIt.next().trim();
+                    if (str.startsWith("Guide to Spatial Datasets")) {
+                        spatial = true;
+                    }
                     if (str.startsWith("Version ")) {
-                        Pattern pat;
-                        pat = Pattern.compile("([0-9]+)");
-                        Matcher matcher = pat.matcher(str);
-                        if (matcher.find()) {
-                            int major = Integer.parseInt(matcher.group(1));
-                            int minor = 0;
+                        if (spatial) {
+                            Pattern pat;
+                            pat = Pattern.compile("^([0-9]+)\\.?([0-9]+)?");
+                            Matcher matcher = pat.matcher(str.replace("Version ", "").trim());
+                            if (matcher.find()) {
+                                int major = Integer.parseInt(matcher.group(1));
+                                int minor = (matcher.group(2) == null) ? 0 : Integer.parseInt(matcher.group(2));
 
-                            version = Float.parseFloat(Integer.toString(major) + "." + Integer.toString(minor));
+                                version = Float.parseFloat(Integer.toString(major) + "." + Integer.toString(minor));
 
-                            importer = getDocumentImporter(major, minor);
+                                importer = getDocumentImporter(major, minor);
 
-                            if (importer == null) {
-                               throw new POIImportError("We do not currently support Version " + version + " of the Metadata Import Word Document");
+                                if (importer == null) {
+                                   throw new POIImportError("We do not currently support Version " + version + " of the Metadata Import Word Document");
+                                }
                             }
+                        } else {
+                            throw new POIImportError("Could not determine if this document is a spatial metadata import form");
                         }
                     }
                 } catch (NumberFormatException ex) {
@@ -203,7 +207,6 @@ public class MetadataController {
                     ModelAndView mv = new ModelAndView("metadataForm", "metadataForm", metadataForm);
                     mv.addObject("org", organisation);
                     return mv;
-                    //return new ModelAndView("redirect:/organisation.html", "org", organisation);
                 }
             } else { 
                 messages.add("Could not detect Organisation, please select it from the list below or add manually");
@@ -243,9 +246,10 @@ public class MetadataController {
     }
 
     @RequestMapping(value="/metadataProcess.html", method = RequestMethod.POST, params="submit")
-    public ModelAndView uploadFile(@ModelAttribute("org") Organisation organisation, @ModelAttribute("metadataForm") @Valid MetadataForm metadataForm, BindingResult result, @RequestParam("organisationID") String organisationID) {
+    public ModelAndView uploadFile(@ModelAttribute("org") Organisation organisation, @ModelAttribute("metadataForm") @Valid MetadataForm metadataForm, BindingResult result, @RequestParam("organisationID") String organisationID, @RequestParam("datasetTypeKey") String datasetTypeKey) {
 
         metadataForm.getMetadata().setOrganisationID(Integer.parseInt(organisationID));
+        metadataForm.getMetadata().setDatasetTypeKey(datasetTypeKey.charAt(0));
         
         if (metadataForm.getMetadata().getOrganisationID() == -404) {
             String[] strs = {"organisationID.required"};
@@ -253,6 +257,13 @@ public class MetadataController {
                     "-404", false, strs, null, null));
             // Workaround as the organisation list isn't bound to any value
             metadataForm.setOrgError(true);
+        }
+        
+        if (metadataForm.getMetadata().getDatasetTypeKey() == ' ') {
+            String[] strs = {"datasetTypeKey.required"};
+            result.addError(new FieldError("metadataForm", "metadata.datasetTypeKey",
+                    ' ', false, strs, null, null));
+            metadataForm.setSpatialError(true);
         }
         
         if (result.hasErrors()) {
@@ -292,7 +303,7 @@ public class MetadataController {
     }
 
     private WordImporter getDocumentImporter(int major, int minor) {
-        Reflections reflections = new Reflections("uk.org.nbn.nbnv.importer.ui.util.wordImporter");
+        Reflections reflections = new Reflections("uk.org.nbn.nbnv.importer.spatial.ui.util.wordImporter");
         
         Set<Class<? extends WordImporter>> importers = reflections.getSubTypesOf(WordImporter.class);
             
