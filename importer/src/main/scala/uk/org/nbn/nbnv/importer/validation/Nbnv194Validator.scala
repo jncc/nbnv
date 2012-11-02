@@ -5,7 +5,6 @@ import uk.org.nbn.nbnv.importer.fidelity.{ResultLevel, Result}
 import uk.org.nbn.nbnv.importer.utility.StringParsing._
 import collection.mutable.ListBuffer
 
-//todo: write a test for this
 //validate the "<D" date type
 class Nbnv194Validator extends DateFormatValidator {
   def code = "NBNV-194"
@@ -19,7 +18,7 @@ class Nbnv194Validator extends DateFormatValidator {
         new Result {
           def level: ResultLevel.ResultLevel = ResultLevel.ERROR
           def reference: String = record.key
-          def message: String = "A start date should not be specified for date type '%s'".format(record.dateType)
+          def message: String = "%s: A start date should not be specified for date type '%s'".format(code, record.dateType)
         })
     }
     else {
