@@ -49,12 +49,7 @@ class GridSquareInfoFactory @Inject()(db: Database) {
       value.sys match {
         case None => determineGridRefType(value.ref)
         case Some(GridTypeDef(gridType)) => GridSystem(gridType)
-        case Some(SrsDef(srs)) => srs match {
-          case 27700 => BritishGrid
-          case 29903 => IrishGrid
-          case 23030 => ChannelGrid
-          case _ => UnknownGrid
-        }
+        case Some(SrsDef(srs)) => GridSystem(srs)
       }
 
     gridType match {

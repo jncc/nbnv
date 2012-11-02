@@ -6,6 +6,7 @@ import uk.org.nbn.nbnv.importer.utility.StringParsing._
 import collection.mutable.ListBuffer
 
 //todo: write a test for this
+//validate the "<D" date type
 class Nbnv194Validator extends DateFormatValidator {
   def code = "NBNV-194"
 
