@@ -7,7 +7,6 @@ import java.awt.CardLayout
 import java.util.Calendar
 import collection.mutable.ListBuffer
 
-//todo: write a test for this
 //validate the <Y ad -Y date types
 class Nbnv76Validator extends DateFormatValidator {
 
