@@ -130,11 +130,11 @@ public class MetadataController {
                     String str = strIt.next().trim();
                     if (str.startsWith("Version ")) {
                         Pattern pat;
-                        pat = Pattern.compile("([0-9]+)\\.([0-9]+)");
+                        pat = Pattern.compile("([0-9]+)");
                         Matcher matcher = pat.matcher(str);
                         if (matcher.find()) {
                             int major = Integer.parseInt(matcher.group(1));
-                            int minor = Integer.parseInt(matcher.group(2));
+                            int minor = 0;
 
                             version = Float.parseFloat(Integer.toString(major) + "." + Integer.toString(minor));
 

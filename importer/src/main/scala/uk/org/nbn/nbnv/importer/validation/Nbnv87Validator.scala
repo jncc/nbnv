@@ -13,10 +13,10 @@ import javax.swing.event.ChangeEvent
 //todo refactor this sh*t code
 class Nbnv87Validator {
   def validate(record: NbnRecord) = {
-    val easting = record.east.get.toInt
-    val northing =  record.north.get.toInt
-
     val point = record.feature.asInstanceOf[PointDef]
+
+    val easting = point.east.toInt
+    val northing =  point.north.toInt
 
     val srs = point.sys match {
       case SrsDef(srs) => srs
