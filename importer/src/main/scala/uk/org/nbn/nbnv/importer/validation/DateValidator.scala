@@ -46,7 +46,8 @@ class DateValidator {
 
   def validateAccordingToType(record: NbnRecord): List[Result] =  record.dateType match {
     case "<D" => (new Nbnv194Validator).validate(record)
-    case "D" | ">D" => (new Nbnv73Validator).validate(record)
+    case "D" => (new Nbnv73Validator).validate(record)
+    case ">D" => (new Nbnv217Validator).validate(record)
     case "<Y" | "-Y" => (new Nbnv76Validator).validate(record)
     case "Y-" | ">Y"  => (new Nbnv75Validator).validate(record)
     case "Y"  => (new Nbnv284Validator).validate(record)

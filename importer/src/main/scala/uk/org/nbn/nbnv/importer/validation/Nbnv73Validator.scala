@@ -11,7 +11,6 @@ import collection.mutable.ListBuffer
  *
  * Check values for vague date type 'D'
  */
-//todo: write a test for this
 class Nbnv73Validator extends DateFormatValidator {
 
   def code = "NBNV-73"
