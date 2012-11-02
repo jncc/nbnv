@@ -282,9 +282,17 @@ public class MetadataController {
         
         organisation = getOrganisationByID(metadataForm.getMetadata().getOrganisationID(), metadataForm.getOrganisationList());
         
-        ModelAndView mv = new ModelAndView("redirect:/upload.html", "metadataForm", metadataForm);
-        mv.addObject("org", organisation);
-        return mv;
+        if (metadataForm.getMetadata().getDatasetTypeKey() == 'H') {
+            ModelAndView mv = new ModelAndView("redirect:/upsertHabitat.html", "metadataForm", metadataForm);
+            mv.addObject("org", organisation);
+            return mv;
+        } else if (metadataForm.getMetadata().getDatasetTypeKey() == 'S') {
+            ModelAndView mv = new ModelAndView("redirect:/upsertSiteBoundary.html", "metadataForm", metadataForm);
+            mv.addObject("org", organisation);
+            return mv;
+        }
+
+        return new ModelAndView("dump", "data", "Unknown dataset type");
     }
     
     @RequestMapping(value="/metadataProcess.html", method = RequestMethod.POST, params="clearForm")
