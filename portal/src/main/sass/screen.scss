@@ -133,6 +133,10 @@ body {
             display: block;
             margin: 0 #{-$padding} $padding;
         }
+        select {
+            margin-top: 5px;
+            margin-bottom: 5px;
+        }
     }
     
     .nbn-taxon-name{
