@@ -1,5 +1,27 @@
 (function($){
     
+    var options = {
+        imagesize: 5
+    };
+    
+    var nationalExtentOptions = {
+        gbi: {
+            coastline: 'gbi', 
+            grid100k: 'gbi100kextent', 
+            grid10k: 'gbi10kextent'
+        },
+        gb: {
+            coastline: 'gb', 
+            grid100k: 'gb100kextent', 
+            grid10k: 'gb10kextent'
+        },
+        ireland: {
+            coastline: 'i', 
+            grid100k: 'i100kextent', 
+            grid10k: 'i10kextent'
+        } 
+    };
+
     function getURL(form){
         var formObjArray = form.serializeArray();
         var tvk = $('#tvk').val(); 
@@ -24,9 +46,15 @@
     
     function getKeyValuePairsWithBusinessLogic(keyValuePairs){
         
-        //Remove the feature argument generated when Vice County value is 'none''
+        //Add the image size
+        keyValuePairs['imagesize'] = options.imagesize;
+        
+        //Vice county - remove the feature argument generated when Vice County value is 'none',
+        //otherwise we are zooming to a vice county so add overlay=feature to highlight the vc
         if(keyValuePairs.hasOwnProperty('feature') && keyValuePairs['feature'].toUpperCase()=='NONE'){
             delete keyValuePairs['feature'];
+        }else{
+            keyValuePairs['overlay'] = 'feature';
         }
         
         //Add the year bands formatted for the grid map service
@@ -46,17 +74,22 @@
             delete keyValuePairs['value-nbn-colour-picker-' + i];
         }
         
-        //If OS is used as a background it must appear first to force vector layers to be drawn over it and not be obscured by it
+        //There is a specific order that background layers should be requested to force
+        //some layers to be drawn over others
+        //eg - if OS is used as a background it must appear first to force vector layers to be drawn over it and not be obscured by it
         if(keyValuePairs.hasOwnProperty('background') && keyValuePairs['background'] instanceof Array){
-            if($.inArray('os',keyValuePairs['background']) > -1){
-                var osFirstArray = ['os'];
-                $.each(keyValuePairs['background'],function(index, value){
-                    if(value != 'os'){
-                        osFirstArray.push(value);
-                    }
-                });
-                keyValuePairs['background'] = osFirstArray;
-            }
+            var orderedBackgroundArgs = ['os','vicecounty',
+                nationalExtentOptions.gbi.coastline,nationalExtentOptions.gb.coastline,nationalExtentOptions.ireland.coastline,
+                nationalExtentOptions.gbi.grid10k,nationalExtentOptions.gb.grid10k,nationalExtentOptions.ireland.grid10k,
+                nationalExtentOptions.gbi.grid100k,nationalExtentOptions.gb.grid100k,nationalExtentOptions.ireland.grid100k
+            ];
+            var toReturn = [];
+            $.each(orderedBackgroundArgs, function(index, value){
+                if($.inArray(value,keyValuePairs['background']) > -1){
+                    toReturn.push(value);
+                }
+            });
+            keyValuePairs['background'] = toReturn;
         }
         
         //Remove the hidden tvk, just used to get the tvk from the path of the page request to here
@@ -83,7 +116,6 @@
         //an edit now
         var pattern = /band[0-9]/g;
         var toReturn = queryString.replace(pattern,'band');
-        console.log(toReturn);
         return toReturn;
     }
 
@@ -134,39 +166,63 @@
             url += '&feature=' + feature;
         }
         $.getJSON(url, function(json){
-            var imagesize = $("input[name='imagesize']").val();
-            var resolutions = json[imagesize];
+            var resolutions = json[options.imagesize];
             var resolutionSelect = $('#nbn-grid-map-resolution');
             resolutionSelect.find('option').remove();
             $.each(resolutions, function(index, resolution){
                 resolutionSelect.append(
                     $('<option></option>').val(resolution).html(resolution)
-                );
+                    );
             });
         });
     }
     
     function applyRules(){
+        
+        //There must be at least one year band - if none are selected then turn on first year band
         if(!$("INPUT[name='gridLayer1'][type='checkbox']").is(':checked')
             && !$("INPUT[name='gridLayer2'][type='checkbox']").is(':checked')
             && !$("INPUT[name='gridLayer3'][type='checkbox']").is(':checked')
-        ){
-                $("INPUT[name='gridLayer1'][type='checkbox']").prop('checked',true);
+            ){
+            $("INPUT[name='gridLayer1'][type='checkbox']").prop('checked',true);
         }
-    }
-
-    $(document).ready(function(){
-
-        //Add the initial map image
-        $('#nbn-grid-map-busy-image').hide();
-        $('#nbn-grid-map-image').attr('src','/img/ajax-loader-medium.gif');
-        $('#nbn-grid-map-image').attr('src',getURL($('#nbn-grid-map-form')));
         
-        //Turn off the busy image when a map image loads
-        $('#nbn-grid-map-image').load(function(){
-            $('#nbn-grid-map-busy-image').hide();
+        //If not zooming to a vice county then add the 'nationalextent' specific
+        //layers, eg Irish coastline when zoomed to Ireland
+        var nationalExtent = $('#nbn-region-selector').val();
+        var viceCounty = $('#nbn-vice-county-selector option:selected').val().toUpperCase();
+        if(viceCounty == "NONE"){
+            //Disable/enable vice county and OS checkboxes dependent on whether zoomed to Ireland
+            var disableNonIrishLayers = (nationalExtent.toUpperCase() == 'IRELAND');
+            $('#nbn-grid-map-vicecounty').prop('disabled', disableNonIrishLayers);
+            $('#nbn-grid-map-os').prop('disabled', disableNonIrishLayers);
+        }else{
+            nationalExtent = 'gb';
+            $('#nbn-region-selector').val('gb');
+        }
+        $('#nbn-grid-map-coastline').val(nationalExtentOptions[nationalExtent].coastline);
+        $('#nbn-grid-map-100k-grid').val(nationalExtentOptions[nationalExtent].grid100k);
+        $('#nbn-grid-map-10k-grid').val(nationalExtentOptions[nationalExtent].grid10k);
+    }
+    
+    function setupRegionVCInteractions(){
+        //When selecting a national region the Vice County drop down must return to 'none'
+        $('#nbn-region-selector').change(function(){
+            $('#nbn-vice-county-selector').val("none");
         });
-
+        //When selecting a vice county the national region must return 'gb'
+        $('#nbn-vice-county-selector').change(function(){
+            $('#nbn-region-selector').val("gb");
+        });
+    }
+    
+    function setupColourPickers(){
+        $('#nbn-colour-picker-1, #nbn-colour-picker-2, #nbn-colour-picker-3, #nbn-colour-picker-outline').each(function(){
+            $(this).ColorPicker(getColourPickerOptions($(this).attr('id')));
+        });
+    }
+    
+    function setupFormSubmit(){
         $('#nbn-grid-map-form').submit(function(){
             var form = $(this);
             
@@ -187,17 +243,26 @@
             
             return false;
         });
-        
-        //Setup colour pickers
-        $('#nbn-colour-picker-1, #nbn-colour-picker-2, #nbn-colour-picker-3, #nbn-colour-picker-outline').each(function(){
-            $(this).ColorPicker(getColourPickerOptions($(this).attr('id')));
+    }
+    
+    function hideBusyImageOnMapLoad(){
+        $('#nbn-grid-map-image').load(function(){
+            $('#nbn-grid-map-busy-image').hide();
         });
-        
-        //When selecting a country scale region the Vice County drop down must return to 'none'
-        $('#nbn-region-selector').change(function(){
-            $('#nbn-vice-county-selector').val("none");
-        });
-        
+    }
+
+    function addInitialMapImage(){
+        $('#nbn-grid-map-busy-image').hide();
+        $('#nbn-grid-map-image').attr('src','/img/ajax-loader-medium.gif');
+        $('#nbn-grid-map-image').attr('src',getURL($('#nbn-grid-map-form')));
+    }
+
+    $(document).ready(function(){
+        setupFormSubmit();
+        setupColourPickers();
+        setupRegionVCInteractions();
+        hideBusyImageOnMapLoad();
+        addInitialMapImage();
     });
         
 })(jQuery);

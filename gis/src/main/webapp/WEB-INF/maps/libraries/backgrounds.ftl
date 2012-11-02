@@ -81,7 +81,7 @@
   END # Layer
 [/#macro]
 
-[#macro selectedFeature data spatialConnection fill=true]
+[#macro selectedFeature data spatialConnection fill=false]
     LAYER
         NAME                                                "Selected-Feature"
         TYPE                                                POLYGON
@@ -107,7 +107,7 @@
 
             STYLE
                 [#if fill] 
-                    COLOR                                           210 240 248 
+                    COLOR                                       210 240 248 
                 [/#if]
                 OUTLINECOLOR                                    0 0 0
                 WIDTH                                           3
@@ -118,20 +118,20 @@
 
 [#macro contextLayers location]
     [#assign contextLayers = [
-        { "name" : "Vice-counties",                     "data" : "vice_counties",                   "projection" : 27700 },
+        { "name" : "Vice-counties",                     "data" : "vice_counties",                   "projection" : 27700},
         { "name" : "GB-Coast",                          "data" : "gb_coast",                        "projection" : 27700 },
         { "name" : "GB-Coast-with-Hundred-km-Grid",     "data" : "gb_coast_with_100k_grid",         "projection" : 27700 },
         { "name" : "GB-Hundred-km-Grid",                "data" : "gb_100k_grid",                    "projection" : 27700 },
-        { "name" : "GB-Ten-km-Grid",                    "data" : "gb_10k_grid",                     "projection" : 27700 },
-        { "name" : "GB-Ten-km-Grid-Ireland-cutout",     "data" : "gb_10k_grid_ireland_cutout",      "projection" : 27700 },
         { "name" : "GB-Hundred-km-Grid-Ireland-cutout", "data" : "gb_100k_grid_ireland_cutout",     "projection" : 27700 },
+        { "name" : "GB-Ten-km-Grid",                    "data" : "gb_10k_grid",                     "projection" : 27700,   "colour": "150 150 150" },
+        { "name" : "GB-Ten-km-Grid-Ireland-cutout",     "data" : "gb_10k_grid_ireland_cutout",      "projection" : 27700,   "colour": "150 150 150" },
 
         { "name" : "Ireland-Coast",                     "data" : "ireland_coast",                   "projection" : 29903 },
         { "name" : "Ireland-Coast-with-Hundred-km-Grid","data" : "ireland_coast_with_100k_grid",    "projection" : 29903 },
         { "name" : "Ireland-Hundred-km-Grid",           "data" : "ireland_100k_grid",               "projection" : 29903 },
-        { "name" : "Ireland-Ten-km-Grid",               "data" : "ireland_10k_grid",                "projection" : 29903 },
-        { "name" : "Ireland-Ten-km-Grid-GB-cutout",     "data" : "ireland_10k_grid_gb_cutout",      "projection" : 29903 },
-        { "name" : "Ireland-Hundred-km-Grid-GB-cutout", "data" : "ireland_100k_grid_gb_cutout",     "projection" : 29903 }
+        { "name" : "Ireland-Hundred-km-Grid-GB-cutout", "data" : "ireland_100k_grid_gb_cutout",     "projection" : 29903 },
+        { "name" : "Ireland-Ten-km-Grid",               "data" : "ireland_10k_grid",                "projection" : 29903,   "colour": "150 150 150" },
+        { "name" : "Ireland-Ten-km-Grid-GB-cutout",     "data" : "ireland_10k_grid_gb_cutout",      "projection" : 29903,   "colour": "150 150 150" }
     ]]
 
     SHAPEPATH                       "${location}"
@@ -149,7 +149,7 @@
             END
             CLASS
                 NAME                                              "${layer.name}"
-                OUTLINECOLOR 0 0 0
+                OUTLINECOLOR                                      ${layer.colour!"0 0 0"}
             END
         END
     [/#list]

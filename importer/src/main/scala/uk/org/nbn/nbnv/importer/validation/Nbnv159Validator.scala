@@ -4,29 +4,35 @@ import uk.org.nbn.nbnv.importer.fidelity.{ResultLevel, Result}
 import uk.org.nbn.nbnv.importer.spatial._
 import uk.org.nbn.nbnv.importer.spatial.BritishGrid
 import uk.org.nbn.nbnv.importer.spatial.IrishGrid
+import uk.org.nbn.nbnv.importer.records.NbnRecord
 
+//validate grid ref against type
 class Nbnv159Validator () {
-  def validate(gridReference : String, gridReferenceType : Option[String], recordKey : String)  = {
+  def validate(record: NbnRecord)  = {
 
     def success = {
       new Result {
         def level = ResultLevel.DEBUG
-        def message = "NBNV-159: Validated: Grid refernce '%s' matches type '%s'".format(gridReference, gridReferenceType.get)
-        def reference = recordKey
+        def message = "NBNV-159: Validated: Grid refernce '%s' is valid for the specified spatial system".format(record.gridReferenceRaw.get)
+        def reference = record.key
       }
     }
 
     def fail  = {
       new Result {
         def level = ResultLevel.ERROR
-        def message = "NBNV-159: Grid refernce '%s' does not match type '%s'".format(gridReference, gridReferenceType.get)
-        def reference = recordKey
+        def message = "NBNV-159: Grid refernce '%s' does not match the spatial system".format(record.gridReferenceRaw.get)
+        def reference = record.key
       }
     }
 
-    if(gridReferenceType.isDefined) {
+    val gridSystem = record.gridReferenceTypeRaw map {GridSystem(_)} orElse(
+      record.srs map {GridSystem(_)})
 
-      GridSystem(gridReferenceType.get) match {
+    if(gridSystem.isDefined) {
+      val gridReference = record.gridReferenceRaw.get
+
+     gridSystem.get match {
 
         case BritishGrid => {
           if (gridReference.matches(GridRefPatterns.ukGridRef)
@@ -46,8 +52,8 @@ class Nbnv159Validator () {
         case UnknownGrid => {
           new Result {
             def level = ResultLevel.ERROR
-            def message = "NBNV-159: Grid refernce type '%s' is not recognised".format(gridReferenceType.get)
-            def reference = recordKey
+            def message = "NBNV-159: Grid refernce type or srs is not recognised"
+            def reference = record.key
           }
         }
       }
@@ -55,8 +61,8 @@ class Nbnv159Validator () {
     else {
       new Result {
         def level = ResultLevel.DEBUG
-        def message = "NBNV-159: Validated: Grid reference type not specified".format(gridReference, gridReferenceType)
-        def reference = recordKey
+        def message = "NBNV-159: Validated: Grid reference type not specified"
+        def reference = record.key
       }
     }
 
