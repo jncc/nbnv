@@ -7,12 +7,8 @@ import collection.mutable.ListBuffer
 import java.util.Calendar
 
 /**
- * Created By: Matt Debont
- * Date: 17/10/12
- *
- * Should correct vague date for type 'Y' or 'Y>' or 'Y-'
+ * Should correct vague date for type 'Y>' or 'Y-'
  */
-//todo write a test for this
 class Nbnv75Validator extends DateFormatValidator {
 
   def code = "NBNV-75"
