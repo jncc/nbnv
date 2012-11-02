@@ -103,6 +103,14 @@ public class SiteReportMap {
                     .getNativeBoundingBox(), 0.05);
     }
     
+    /**
+     * The following method will buffer a given bounding box in all directions by
+     * a factor of bufferFactor.
+     * @param buffer The boundingbox to buffer
+     * @param bufferFactor The factor to buffer in all directions. 0.05 will will 
+     *  buffer 5% for a given dimension in all directions
+     * @return A buffered bounding box
+     */
     private static BoundingBox getBufferedBoundingBox(BoundingBox buffer, double bufferFactor) {
         double xDistance = buffer.getMaxX().subtract(buffer.getMinX()).abs().doubleValue();
         double yDistance = buffer.getMaxY().subtract(buffer.getMinY()).abs().doubleValue();
