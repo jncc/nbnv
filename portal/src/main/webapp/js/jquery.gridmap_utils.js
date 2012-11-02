@@ -30,7 +30,7 @@
         keyValuePairs['imagesize'] = options.imagesize;
         
         //Vice county - remove the feature argument generated when Vice County value is 'none',
-        //otherwise we are zooming to a vice county so add overlay=feature
+        //otherwise we are zooming to a vice county so add overlay=feature to highlight the vc
         if(keyValuePairs.hasOwnProperty('feature') && keyValuePairs['feature'].toUpperCase()=='NONE'){
             delete keyValuePairs['feature'];
         }else{
@@ -91,7 +91,6 @@
         //an edit now
         var pattern = /band[0-9]/g;
         var toReturn = queryString.replace(pattern,'band');
-        console.log(toReturn);
         return toReturn;
     }
 
@@ -154,12 +153,36 @@
     }
     
     function applyRules(){
+        
+        //There must be at least one year band - if none are selected then turn on first year band
         if(!$("INPUT[name='gridLayer1'][type='checkbox']").is(':checked')
             && !$("INPUT[name='gridLayer2'][type='checkbox']").is(':checked')
             && !$("INPUT[name='gridLayer3'][type='checkbox']").is(':checked')
         ){
                 $("INPUT[name='gridLayer1'][type='checkbox']").prop('checked',true);
         }
+        
+        //If not zooming to a vice county then add the 'nationalextent' specific
+        //layers, eg Irish coastline when zoomed to Ireland
+        var nationalExtentOptions = {
+          gbi: {coastline: 'gbi', grid100k: 'gbi100kextent', grid10k: 'gbi10kextent'},
+          gb: {coastline: 'gb', grid100k: 'gb100kextent', grid10k: 'gb10kextent'},
+          ireland: {coastline: 'i', grid100k: 'i100kextent', grid10k: 'i10kextent'} 
+        };
+        var nationalExtent = $('#nbn-region-selector').val();
+        var viceCounty = $('#nbn-vice-county-selector option:selected').val().toUpperCase();
+        if(viceCounty == "NONE"){
+            //Disable/enable vice county and OS checkboxes dependent on whether zoomed to Ireland
+            var disableNonIrishLayers = (nationalExtent.toUpperCase() == 'IRELAND');
+            $('#nbn-grid-map-vicecounty').prop('disabled', disableNonIrishLayers);
+            $('#nbn-grid-map-os').prop('disabled', disableNonIrishLayers);
+        }else{
+            nationalExtent = 'gb';
+            $('#nbn-region-selector').val('gb');
+        }
+        $('#nbn-grid-map-coastline').val(nationalExtentOptions[nationalExtent].coastline);
+        $('#nbn-grid-map-100k-grid').val(nationalExtentOptions[nationalExtent].grid100k);
+        $('#nbn-grid-map-10k-grid').val(nationalExtentOptions[nationalExtent].grid10k);
     }
 
     $(document).ready(function(){

@@ -29,12 +29,12 @@
                 <option value="2km">2km</option>
             </select>
             <fieldset>
-                <legend>Regions</legend>
-                <label for="nbn-region-selector">National</label>
-                <select name="background" id="nbn-region-selector">
+                <legend>Zoom to area</legend>
+                <label for="nbn-region-selector">Region</label>
+                <select name="nationalextent" id="nbn-region-selector">
                     <option value="gbi">GB and Ireland</option>
                     <option value="gb">Great Britain</option>
-                    <option value="i">Ireland</option>
+                    <option value="ireland">Ireland</option>
                 </select>
                 <br/>
                 <label for="nbn-form-label">Vice county</label>
@@ -45,15 +45,16 @@
                 <@yearRangeText layerNum="1" hexColour="#ffff00" checkedText="checked"/> (top)<br/>
                 <@yearRangeText layerNum="2" hexColour="#ff7f00" checkedText=""/> (middle)<br/>
                 <@yearRangeText layerNum="3" hexColour="#ff0000" checkedText=""/> (bottom)<br/>
-                Show outline: <input type='checkbox' id='nbn-show-outline' name='showOutline' checked><span class="nbn-form-label">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Outline colour: </span><@colourPicker idSuffix="-outline" hexColour="#000000"/>
+                Show outline: <input type='checkbox' id='nbn-show-outline' name='showOutline' checked><span class="nbn-form-label">&nbsp;&nbsp;&nbsp;&nbsp;Outline colour: </span><@colourPicker idSuffix="-outline" hexColour="#000000"/>
 
             </fieldset>
             <fieldset>
                 <legend>Overlays and backgrounds</legend>
-                <input type="checkbox" value="os" name="background">Ordnance survey<br/>
-                <input type="checkbox" value="vicecounty" name="background">Vice counties<br/>
-                <input type="checkbox" value="gb100kextent" name="background">100km grid<br/>
-                <input type="checkbox" value="gb10kgrid" name="background">10km grid<br/>
+                <input type="checkbox" id="nbn-grid-map-coastline" value="gbi" name="background" checked>Coastline<br/>
+                <input type="checkbox" id="nbn-grid-map-os" value="os" name="background">Ordnance survey<br/>
+                <input type="checkbox" id="nbn-grid-map-vicecounty" value="vicecounty" name="background">Vice counties<br/>
+                <input type="checkbox" id="nbn-grid-map-100k-grid" value="gbi100kextent" name="background">100km grid<br/>
+                <input type="checkbox" id="nbn-grid-map-10k-grid" value="gbi10kextent" name="background">10km grid<br/>
             </fieldset>
             <input type="submit" value="Refresh map"></td>
     </div>
