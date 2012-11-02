@@ -27,6 +27,7 @@ public class MetadataForm implements Serializable {
     private boolean orgError = false;
     private boolean datasetError = false;
     private boolean datasetUpdate = false;
+    private boolean spatialError = false;
     
     public MetadataForm() {
         
@@ -44,6 +45,14 @@ public class MetadataForm implements Serializable {
      */
     public void setMetadata(Metadata metadata) {
         this.metadata = metadata;
+    }
+
+    public boolean isSpatialError() {
+        return spatialError;
+    }
+
+    public void setSpatialError(boolean spatialError) {
+        this.spatialError = spatialError;
     }
 
     /**
