@@ -1,6 +1,7 @@
 package uk.gov.nbn.data.gis.maps;
 
 import com.sun.jersey.api.client.WebResource;
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
@@ -94,10 +95,24 @@ public class SiteReportMap {
     
     
     private BoundingBox getNativeBoundingBox(String featureId) {
-        return resource
+        return getBufferedBoundingBox(
+                resource
                     .path("features")
                     .path(featureId)
                     .get(Feature.class)
-                    .getNativeBoundingBox();
+                    .getNativeBoundingBox(), 0.05);
+    }
+    
+    private static BoundingBox getBufferedBoundingBox(BoundingBox buffer, double bufferFactor) {
+        double xDistance = buffer.getMaxX().subtract(buffer.getMinX()).abs().doubleValue();
+        double yDistance = buffer.getMaxY().subtract(buffer.getMinY()).abs().doubleValue();
+        BigDecimal xBuffer = new BigDecimal(xDistance*bufferFactor);
+        BigDecimal yBuffer = new BigDecimal(yDistance*bufferFactor);
+        return new BoundingBox(
+                buffer.getEpsgCode(), 
+                buffer.getMinX().subtract(xBuffer), 
+                buffer.getMinY().subtract(yBuffer), 
+                buffer.getMaxX().add(xBuffer), 
+                buffer.getMaxY().add(yBuffer));
     }
 }
