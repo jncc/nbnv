@@ -4,7 +4,7 @@ import uk.org.nbn.nbnv.importer.records.NbnRecord
 import collection.mutable.ListBuffer
 import uk.org.nbn.nbnv.importer.fidelity.{ResultLevel, Result}
 
-//todo: test this
+//valdiates the >D date code
 class Nbnv217Validator extends DateFormatValidator {
   def code = "NBNV-217"
 
