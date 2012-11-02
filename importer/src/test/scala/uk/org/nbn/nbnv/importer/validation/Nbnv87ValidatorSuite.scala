@@ -1,16 +1,18 @@
 package uk.org.nbn.nbnv.importer.validation
 
 import uk.org.nbn.nbnv.importer.testing.BaseFunSuite
-import uk.org.nbn.nbnv.importer.records.NbnRecord
+import uk.org.nbn.nbnv.importer.records.{SrsDef, PointDef, NbnRecord}
 import org.mockito.Mockito._
 import uk.org.nbn.nbnv.importer.fidelity.ResultLevel
 
 class Nbnv87ValidatorSuite extends BaseFunSuite {
+
+  def makePoint(east: Double, north: Double, srs: Int)
+    = PointDef(east, north, SrsDef(srs), None)
+
   test("should validate a valid british easthing and northing") {
     val record = mock[NbnRecord]
-    when(record.srs).thenReturn(Some(27700))
-    when(record.east).thenReturn(Some(408759.0))
-    when(record.north).thenReturn(Some(424612.0))
+    when(record.feature).thenReturn(makePoint(408759.0, 424612.0, 27700))
 
     val v = new Nbnv87Validator
     val r = v.validate(record)
@@ -20,9 +22,7 @@ class Nbnv87ValidatorSuite extends BaseFunSuite {
 
   test("should not validate an invalid british easting and northing") {
     val record = mock[NbnRecord]
-    when(record.srs).thenReturn(Some(27700))
-    when(record.east).thenReturn(Some(99999408759.0))
-    when(record.north).thenReturn(Some(9999999424612.0))
+    when(record.feature).thenReturn(makePoint(99999408759.0, 9999999424612.0, 27700))
 
     val v = new Nbnv87Validator
     val r = v.validate(record)
@@ -33,9 +33,7 @@ class Nbnv87ValidatorSuite extends BaseFunSuite {
 
   test("should validate a valid irish easting and northing") {
     val record = mock[NbnRecord]
-    when(record.srs).thenReturn(Some(29903))
-    when(record.east).thenReturn(Some(316587.0))
-    when(record.north).thenReturn(Some(234932.0))
+    when(record.feature).thenReturn(makePoint(316587.0, 234932.0, 29903))
 
     val v = new Nbnv87Validator
     val r = v.validate(record)
@@ -45,9 +43,7 @@ class Nbnv87ValidatorSuite extends BaseFunSuite {
 
   test("should not validate an invalid easting and northing") {
     val record = mock[NbnRecord]
-    when(record.srs).thenReturn(Some(29903))
-    when(record.east).thenReturn(Some(9999999999316587.0))
-    when(record.north).thenReturn(Some(99999999234932.0))
+    when(record.feature).thenReturn(makePoint(9999999999316587.0, 99999999234932.0, 29903))
 
     val v = new Nbnv87Validator
     val r = v.validate(record)
@@ -57,9 +53,7 @@ class Nbnv87ValidatorSuite extends BaseFunSuite {
 
   test("should validate a valid channel islands easting and northing") {
     val record = mock[NbnRecord]
-    when(record.srs).thenReturn(Some(23030))
-    when(record.east).thenReturn(Some(516600.0))
-    when(record.north).thenReturn(Some(5471200.0))
+    when(record.feature).thenReturn(makePoint(516600.0, 5471200.0, 23030))
 
     val v = new Nbnv87Validator
     val r = v.validate(record)
@@ -69,9 +63,7 @@ class Nbnv87ValidatorSuite extends BaseFunSuite {
 
   test("should not validate an invalid channel islands easting and northing") {
     val record = mock[NbnRecord]
-    when(record.srs).thenReturn(Some(23030))
-    when(record.east).thenReturn(Some(9999999999516600.0))
-    when(record.north).thenReturn(Some(999999999995471200.0))
+    when(record.feature).thenReturn(makePoint(9999999999516600.0, 999999999995471200.0, 23030))
 
     val v = new Nbnv87Validator
     val r = v.validate(record)

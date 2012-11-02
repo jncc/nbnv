@@ -16,7 +16,7 @@ class Nbnv82Validator {
       count += 1
     }
 
-    if (record.eastRaw.isDefined && record.northRaw.isDefined && record.srsRaw.isDefined) {
+    if (record.eastRaw.isDefined && record.northRaw.isDefined && (record.srsRaw.isDefined || record.gridReferenceTypeRaw.isDefined)) {
       count += 1
     }
 
