@@ -53,7 +53,7 @@ MAP
       "init=epsg:27700"   ##recommended
     END
 
-    MINSCALEDENOM 150000   ##Scale Dependancy
+    MINSCALEDENOM 150000   ##Scale Dependency
   END # Layer
 
   LAYER
@@ -68,7 +68,7 @@ MAP
       "init=epsg:27700"   ##recommended
     END
 
-    MINSCALEDENOM 150000   ##Scale Dependancy
+    MINSCALEDENOM 150000   ##Scale Dependency
   END # Layer
 
   LAYER
@@ -83,7 +83,7 @@ MAP
       "init=epsg:27700"   ##recommended
     END
 
-    MINSCALEDENOM 150000   ##Scale Dependancy
+    MINSCALEDENOM 150000   ##Scale Dependency
   END # Layer
 
 END # Map File
