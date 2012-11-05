@@ -1,7 +1,7 @@
 <#import "spring.ftl" as spring />
 <html>
     <head>
-        <title>Add an Organisation</title>
+        <title>Site Boundary Metadata</title>
         <link rel="stylesheet" type="text/css" href="/importer/importer.css" />
     </head>
     <body>

@@ -65,6 +65,8 @@
     <class>uk.org.nbn.nbnv.jpa.nbncore.TaxonAttribute</class>
     <class>uk.org.nbn.nbnv.jpa.nbncore.Designation</class>
     <class>uk.org.nbn.nbnv.jpa.nbncore.RecordingEntity</class>
+    <class>uk.org.nbn.nbnv.jpa.nbncore.HabitatCategory</class>
+    <class>uk.org.nbn.nbnv.jpa.nbncore.HabitatFeature</class>
     <shared-cache-mode>NONE</shared-cache-mode>
     <properties>
       <property name="javax.persistence.jdbc.driver" value="com.microsoft.sqlserver.jdbc.SQLServerDriver"/>
