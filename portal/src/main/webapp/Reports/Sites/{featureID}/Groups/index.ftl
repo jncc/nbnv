@@ -10,7 +10,7 @@
     csss=["/css/site-report.css"]
     javascripts=["/js/jquery.site_report_utils.js","/js/jquery.dataset-selector-utils.js"]>
     <h1>${title}</h1>
-    <form action="/Reports/Sites/${featureID}/Groups" method="post" id="${report_utils.getSiteFormId()}">
+    <form action="/Reports/Sites/${featureID}/Groups" method="post" id="${report_utils.getSiteFormId()}" api-server="${api}" featureID="${featureID}">
         <@report_utils.site_report_filters requestParameters=RequestParameters location=site.label  isSpatialRelationshipNeeded=true/>
         <#if taxonOutputGroupsWithQueryStats?has_content>
             <div class="tabbed" id="nbn-site-report-data-container">

@@ -31,21 +31,14 @@
     <#assign spatialRelationship=requestParameters.spatialRelationship?has_content?string(requestParameters.spatialRelationship[0]!"overlap","overlap")>
     <#assign designations=json.readURL("${api}/designations")>
     <div class="tabbed" id="nbn-site-report-filter-container">
-        <h3>Filters</h3>
-        <table>
-            <tr>
-                <th>Location:</th>
-                <td>${location}</td>
-            </tr>
-            <tr>
-                <th>Year range:</th>
-                <td><input name="startYear" id="startYear" type="textbox" value="${startYear}" class="nbn-year-input"/>
-                                         to <input name="endYear" id="endYear" type="textbox" value="${endYear}" class="nbn-year-input"/></td>
-            </tr>
-            <#if isSpatialRelationshipNeeded>
-                <tr>
-                    <th>Spatial relationship: </th>
-                    <td>
+        <h3>Info. and options</h3>
+            Location: ${location}
+            <fieldset>
+                <legend>Options</legend>
+                Year range: <input name="startYear" id="startYear" type="textbox" value="${startYear}" class="nbn-year-input"/>
+                             to <input name="endYear" id="endYear" type="textbox" value="${endYear}" class="nbn-year-input"/><br/>
+                <#if isSpatialRelationshipNeeded>
+                    Spatial relationship: 
                         <select name="spatialRelationship" id="spatialRelationship" class="nbn-report-filter-dropdown">
                             <#if requestParameters.spatialRelationship?has_content && requestParameters.spatialRelationship[0]=="within" >
                                 <option value="within" selected="selected">Records within site</option>
@@ -55,31 +48,19 @@
                                 <option value="overlap" selected="selected">Records within or overlapping site</option>
                             </#if>
                         </select><br/>
-                    </td>
-                </tr>
-            </#if>
-            <#if isDesignationNeeded>
-                <tr>
-                    <th>Designation: </th>
-                    <td>
-                        <select name="designation" id="designation" class="nbn-report-filter-dropdown">
-                            <option selected="selected" value="">None selected</option>
-                            <#list designations as designation>
-                                <#assign selected = requestParameters.designation?seq_contains(designation.code)?string("selected","")>
-                                <option value="${designation.code}" ${selected}>${designation.name}</option>
-                            </#list>
-                        </select><br/>
-                    </td>
-                </tr>
-            </#if>
-            <#if isDatasetNeeded>
-                <tr>
-                    <th>Datasets:</th>
-                    <td>Select from table below</td>
-                </tr>
-            </#if>
-        </table>
-        <input type="submit"/>
+                </#if>
+                <#if isDesignationNeeded>
+                        Designation: 
+                            <select name="designation" id="designation" class="nbn-report-filter-dropdown">
+                                <option selected="selected" value="">None selected</option>
+                                <#list designations as designation>
+                                    <#assign selected = requestParameters.designation?seq_contains(designation.code)?string("selected","")>
+                                    <option value="${designation.code}" ${selected}>${designation.name}</option>
+                                </#list>
+                            </select><br/>
+                </#if>
+            </fieldset>
+        <input type="Submit" value="Refresh" class="nbn-centre-element"/>
     </div>
 </#macro>
 

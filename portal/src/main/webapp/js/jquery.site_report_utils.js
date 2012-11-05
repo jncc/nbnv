@@ -16,7 +16,12 @@
 
     function isNumber(n) {
         return !isNaN(parseFloat(n)) && isFinite(n);
-    }        
+    }
+
+    function refreshGroupData(form){
+        <#assign taxonOutputGroupsWithQueryStats=json.readURL("${api}/taxonObservations/groups",requestParametersExtended)>
+        form.attr('api-server') + '/taxonObservations/groups';
+    }
     
     $(document).ready(function(){
         initializeValidation();
@@ -24,7 +29,11 @@
         $('#nbn-site-report-form').submit(function(){
             //Requires jquery.dataset-selector-utils.js
             nbn.portal.reports.utils.DatasetFields.doDeselectDatasetKeys();
-            return true;
+            
+            var form = $(this);
+            refreshGroupData(form);
+            
+            return false;
         });
 
     });
