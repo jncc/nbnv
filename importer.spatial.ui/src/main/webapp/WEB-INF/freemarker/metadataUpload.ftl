@@ -1,7 +1,7 @@
 <html>
     <head>
         <META http-equiv="Content-Type" content="text/html;charset=UTF-8">
-        <title>Upload Example</title>
+        <title>Spatial Dataset Upload</title>
     </head>
     <body>
         <form method="post" enctype="multipart/form-data">

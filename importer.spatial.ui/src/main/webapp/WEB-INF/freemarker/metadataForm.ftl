@@ -1,7 +1,7 @@
 <#import "spring.ftl" as spring />
 <html>
     <head>
-        <title>Metadata Entry</title>
+        <title>Spatial Metadata Entry</title>
         <link rel="stylesheet" type="text/css" href="/importer/importer.css" />
         <script type="text/javascript" src="/importer/jquery.js"></script>
     </head>
@@ -46,6 +46,7 @@
                 <fieldset>
                     <legend>Errors</legend>
                     <div class="errors">
+                        <p>There were errors with the input form, please correct them</p>
                         <#list metadataForm.errors as error>
                             <p>${error}</p>
                         </#list>
@@ -60,10 +61,14 @@
                         <span class="formlabel"><label for="datasetTypeKey" path="metadata">Dataset Type</label></span>
                         <span class="formfield">
                             <select path="metadata" name="datasetTypeKey" id="datasetTypeKey">
-                                <option value="S" <#if metadataForm.metadata.datasetTypeKey=='S'>selected="selected"</#if>>Site Boundary</option>
+                                <option value=" " <#if metadataForm.metadata.datasetTypeKey==''>selected="selected"</#if>></option>
+                                <option value="S" <#if metadataForm.metadata.datasetTypeKey=='A'>selected="selected"</#if>>Site Boundary</option>
                                 <option value="H" <#if metadataForm.metadata.datasetTypeKey=='H'>selected="selected"</#if>>Habitat</option>
                             </select>
                         </span>
+                        <#if metadataForm.spatialError == true>
+                            <span class="error">Please select a Spatial Type</span>
+                        </#if>
                     </p>
                 </fieldset>
                 <br />

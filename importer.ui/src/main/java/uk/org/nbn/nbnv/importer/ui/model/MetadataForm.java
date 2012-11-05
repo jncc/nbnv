@@ -6,11 +6,13 @@ package uk.org.nbn.nbnv.importer.ui.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import uk.org.nbn.nbnv.importer.ui.util.DatabaseConnection;
 import uk.org.nbn.nbnv.jpa.nbncore.Dataset;
+import uk.org.nbn.nbnv.jpa.nbncore.DatasetType;
 import uk.org.nbn.nbnv.jpa.nbncore.Organisation;
 
 /**
@@ -116,7 +118,8 @@ public class MetadataForm implements Serializable {
     
     public void updateDatasests() {
         EntityManager em = DatabaseConnection.getInstance().createEntityManager();
-        Query q = em.createNamedQuery("Dataset.findAll");
+        Query q = em.createNamedQuery("Dataset.findByDatasetType"); //em.createQuery("SELECT d FROM Dataset d WHERE d.datasetTypeKey = (:datasetType)", Dataset.class);
+        q.setParameter("datasetType", new DatasetType('T'));
         List<Dataset> lis = (q.getResultList());
         lis.add(0, new Dataset(""));
         setDatasets(lis);

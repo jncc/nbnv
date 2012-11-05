@@ -28,32 +28,21 @@ public interface WordImporter {
     public static final String ORG_WEBSITE = "Website";
     
     // Default Metadata Descriptors
-    public static final String META_ACCESS_CONSTRAINT = "Access Constraint";
     public static final String META_ADDITIONAL_INFO = "Additional Information";
     public static final String META_DATA_CONFIDENCE = "Confidence in the Data";
     public static final String META_DESC = "Description";
-    public static final String META_EMAIL = "Email Address";
     public static final String META_GEOCOVER = "Geographical Coverage";
     public static final String META_CAPTURE_METHOD = "Methods of Data Capture";
-    public static final String META_NAME = "Name";
     public static final String META_PURPOSE = "Purpose of Data Capture";
-    public static final String META_RECORD_ATT = "Record Attributes";
-    public static final String META_RECORDERS = "Recorder Names";
-    public static final String META_SET_GEORES = "Set Geographic Resolution";
     public static final String META_TITLE = "Title";
-    public static final String META_CONTACT_PHONE = "Telephone Number";
-    public static final String META_TEMPORAL = "Temporal Coverage";
-    public static final String META_USE_CONSTRAINT = "Use Constraint";   
+    public static final String META_TEMPORAL = "Temporal Coverage"; 
     
     // Default descriptors that we are searching for 
     public static final String[] stringsHWPF = {
-        ORG_ABBREVIATION, ORG_ADDRESS, ORG_CONTACT_NAME, ORG_DESC, 
-        ORG_EMAIL, ORG_LOGO, ORG_NAME, ORG_PHONE, ORG_POSTCODE, 
-        ORG_WEBSITE, META_ACCESS_CONSTRAINT, META_ADDITIONAL_INFO, 
-        META_CAPTURE_METHOD, META_CONTACT_PHONE, META_DATA_CONFIDENCE,
-        META_DESC, META_EMAIL, META_GEOCOVER, META_NAME, META_PURPOSE,
-        META_RECORDERS, META_RECORD_ATT, META_SET_GEORES, META_TEMPORAL,
-        META_TITLE, META_USE_CONSTRAINT
+        ORG_ABBREVIATION, ORG_ADDRESS, ORG_CONTACT_NAME, ORG_DESC, ORG_EMAIL, 
+        ORG_LOGO, ORG_NAME, ORG_PHONE, ORG_POSTCODE, ORG_WEBSITE, 
+        META_ADDITIONAL_INFO, META_CAPTURE_METHOD, META_DATA_CONFIDENCE, 
+        META_DESC, META_GEOCOVER, META_PURPOSE, META_TEMPORAL, META_TITLE
     };  
     
     // Default Input form elements for Word doc

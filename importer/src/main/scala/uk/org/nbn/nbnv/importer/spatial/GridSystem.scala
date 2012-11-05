@@ -19,4 +19,11 @@ object GridSystem {
     case "CI"  =>     ChannelGrid
     case _       =>   UnknownGrid
   }
+
+  def apply(srs: Int) = srs match {
+    case 27700 => BritishGrid
+    case 29903 => IrishGrid
+    case 23030 => ChannelGrid
+    case _ => UnknownGrid
+  }
 }
