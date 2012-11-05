@@ -33,7 +33,9 @@ public class TaxonObservationProvider {
         createSelectQuery(params);
         INNER_JOIN("TaxonData td ON o.taxonVersionKey = td.taxonVersionKey");
         GROUP_BY("taxonOutputGroupKey");
-        return SQL();
+String temp = SQL();
+return temp;
+//        return SQL();
     }
     
     public String filteredSelectSpecies(Map<String, Object> params) {

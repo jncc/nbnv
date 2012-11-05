@@ -142,5 +142,5 @@
 </#function>
 
 <#macro noRecordsInfoBox>
-    <div class="nbn-information-panel">No records were found for your current filter options</div>
+    <div class="nbn-information-panel">No records were found for your current options</div>
 </#macro>
