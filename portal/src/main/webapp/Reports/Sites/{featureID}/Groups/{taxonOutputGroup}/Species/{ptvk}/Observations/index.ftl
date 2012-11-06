@@ -9,57 +9,13 @@
 <#assign title="Records for ${taxon_utils.getShortName(taxon)} in '${site.label}'">
 <#assign is10kmReport=(site.type="GridSquare")>
 
-<@template.master title="NBN Site Report" javascripts=["/js/report_utils.js","/js/site_report_utils.js","/js/site_report_observations.js"]>
+<@template.master title="NBN Site Report" 
+    csss=["/css/site-report.css"]
+    javascripts=["/js/report_utils.js","/js/site_report_utils.js","/js/site_report_observations.js"]>
     <h1>${title}</h1>
     <form id="nbn-site-report-form" featureID="${featureID}" ptvk="${URLParameters.ptvk}" api-server="${api}">
-        <@report_utils.site_report_filters requestParameters=RequestParameters args={"taxon":taxon} location=site.label isSpatialRelationshipNeeded=false isDesignationNeeded=false isDatasetNeeded=false/>
+        <@report_utils.site_report_filters requestParameters=RequestParameters args={"taxon":taxon} location=site.label isSpatialRelationshipNeeded=true isDesignationNeeded=false isDatasetNeeded=false/>
         <@report_utils.siteImage locationName=site.label locationID=featureID imageURL=report_utils.getSiteSpeciesImageURL(featureID, taxon.ptaxonVersionKey, startYear, endYear, datasets, spatialRelationship, !is10kmReport)/>
     </form>
-    <div id="nbn-site-report-data-container"/>
-<#--
-    <#if datasets?has_content>
-        <#list datasets as dataset>
-            <#assign provider=json.readURL("${api}/organisations/${dataset.organisationID}")>
-            <div class="tabbed">
-                <h3>Records</h3>
-                <table>
-                    <tr>
-                        <th>Dataset:</th>
-                        <th><a href="/Datasets/${dataset.key}">${dataset.title}</a></th>
-                    </tr>
-                    <tr>
-                        <th>Provider:</th>
-                        <th><a href="/Organisations/${provider.id}">${provider.name}</a></th>
-                    </tr>
-                    <tr>
-                        <th>Your access:</th>
-                        <th>Access to this dataset Fusce in leo massa, nec ullamcorper dui. Aliquam auctor iaculis sapien, et scelerisque mi iaculis in. Donec nibh libero, aliquet vitae cursus in, mattis vel augue. Nulla facilisi. Aenean porttitor.</a></th>
-                    </tr>
-                </table>
-                <table>
-                    <tr>
-                        <th>Site name</th>
-                        <th>Location</th>
-                        <th>Date range</th>
-                        <th>Date type</th>
-                        <th>Sensitive</th>
-                        <th >Absence</th>
-                    </tr>
-                    <#list dataset.observations as observation>
-                        <tr>
-                            <td>${observation.siteName!"Not available"}</td>
-                            <td>${observation.identifier}</td>
-                            <td>${observation.startDate} to ${observation.endDate}</td>
-                            <td>${observation.dateTypekey}</td>
-                            <td>${observation.sensitive?string}</td>
-                            <td>${observation.absence?string}</td>
-                        </tr>
-                    </#list>
-                </table>
-            </div>
-        </#list>
-    <#else>
-        <@report_utils.noRecordsInfoBox/>
-    </#if>
--->
+    <div id="nbn-observation-container"></div>
 </@template.master>

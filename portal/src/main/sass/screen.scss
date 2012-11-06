@@ -1,5 +1,6 @@
 @import "compass/reset";
 @import "compass/css3/border-radius";
+@import "compass/utilities/general/clearfix";
 @import "_nbn-colour-scheme";
 @import "_header";
 @import "_footer";
@@ -142,33 +143,28 @@ body {
                 text-decoration: underline;
             }
         }
-        h4 {
-            @include contrasted($veryMinorColour, #000000, #ffffff, 50%);
-            padding: 0.5em;
-            display: block;
-            margin: #{-$padding} #{-$padding} 0px;
-            font-size: 1.1em;
-            a {
-                @include contrasted($veryMinorColour, #000000, #ffff00, 50%);
-                text-decoration: none;
-            }
-            a:hover {
-                text-decoration: underline;
-            }
-        }
         select {
             margin-top: 5px;
             margin-bottom: 5px;
         }
         table#nbn-tabbed-heading-table{
-            border: 1px solid black;
-            margin: #{-$padding};
+            @include contrasted($veryMinorColour, #000000, #ffffff, 50%);
+            margin: #{-$padding} #{-$padding} 0;
+            width: 101%;
             td:first-child{
                 width: 11%;
             }
             td{
                 padding: $padding;
             }
+            a {
+                @include contrasted($veryMinorColour, #333300, #ffffff, 50%);
+                text-decoration: none;
+            }
+            a:hover {
+                text-decoration: underline;
+            }
+
         }
     }
     
