@@ -51,8 +51,8 @@
         
 
     function getArgForQueryString(value){
-        if(value instanceof Array)
-            return join(value);
+        if($.isArray(value))
+            return value.join();
         return value;
     }
     

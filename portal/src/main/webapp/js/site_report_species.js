@@ -21,7 +21,7 @@
             if(data.length > 0){
                 toAppend += '<ul>';
                 $.each(data, function(key, val){
-                    toAppend += '<li><a href="/Reports/Sites/' + featureID + '/Groups/' + taxonOutputGroupKey + '/Species/' + val.taxon.taxonVersionKey + '">' + val.taxon.name + '</a>';
+                    toAppend += '<li><a href="/Reports/Sites/' + featureID + '/Groups/' + taxonOutputGroupKey + '/Species/' + val.taxon.taxonVersionKey + '/Observations">' + val.taxon.name + '</a>';
                 });
                 toAppend += '</ul>';
             }else{

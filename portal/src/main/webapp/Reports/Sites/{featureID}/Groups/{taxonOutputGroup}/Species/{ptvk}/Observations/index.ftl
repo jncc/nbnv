@@ -6,15 +6,17 @@
 <#assign startYear=RequestParameters.startYear?has_content?string(RequestParameters.startYear[0]!"1600","1600")>
 <#assign endYear=RequestParameters.endYear?has_content?string(RequestParameters.endYear[0]!.now?string("yyyy"),.now?string("yyyy"))>
 <#assign spatialRelationship=RequestParameters.spatialRelationship?has_content?string(RequestParameters.spatialRelationship[0]!"overlap","overlap")>
-<#assign title="Records for ${taxon_utils.getShortName(taxon)} in '${site.label}' from ${report_utils.getYearRangeText(RequestParameters)}">
+<#assign title="Records for ${taxon_utils.getShortName(taxon)} in '${site.label}'">
 <#assign is10kmReport=(site.type="GridSquare")>
 
-<@template.master title="NBN Site Report" javascripts=["/js/site_report_utils.js"]>
+<@template.master title="NBN Site Report" javascripts=["/js/report_utils.js","/js/site_report_utils.js","/js/site_report_observations.js"]>
     <h1>${title}</h1>
-    <form action="/Reports/Sites/${featureID}/Groups/${URLParameters.ptvk}/Species/${URLParameters.ptvk}/Observations" method="post" id="${report_utils.getSiteFormId()}">
+    <form id="nbn-site-report-form" featureID="${featureID}" ptvk="${URLParameters.ptvk}" api-server="${api}">
         <@report_utils.site_report_filters requestParameters=RequestParameters args={"taxon":taxon} location=site.label isSpatialRelationshipNeeded=false isDesignationNeeded=false isDatasetNeeded=false/>
         <@report_utils.siteImage locationName=site.label locationID=featureID imageURL=report_utils.getSiteSpeciesImageURL(featureID, taxon.ptaxonVersionKey, startYear, endYear, datasets, spatialRelationship, !is10kmReport)/>
     </form>
+    <div id="nbn-site-report-data-container"/>
+<#--
     <#if datasets?has_content>
         <#list datasets as dataset>
             <#assign provider=json.readURL("${api}/organisations/${dataset.organisationID}")>
@@ -59,4 +61,5 @@
     <#else>
         <@report_utils.noRecordsInfoBox/>
     </#if>
+-->
 </@template.master>
