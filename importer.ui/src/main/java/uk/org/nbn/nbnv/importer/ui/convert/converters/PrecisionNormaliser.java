@@ -45,20 +45,24 @@ public class PrecisionNormaliser extends ConverterStep {
 
     @Override
     public void modifyRow(List<String> row) throws BadDataException {
-        int data = Integer.parseInt(row.get(column));
+        if (!row.get(column).trim().isEmpty()) {
+            int data = Integer.parseInt(row.get(column));
 
-        if (data <= 100) {
-            data = 100;
-        } else if (data <= 1000) {
-            data = 1000;
-        } else if (data <= 2000) {
-            data = 2000;
-        } else if (data <= 10000) {
-            data = 10000;
+            if (data <= 100) {
+                data = 100;
+            } else if (data <= 1000) {
+                data = 1000;
+            } else if (data <= 2000) {
+                data = 2000;
+            } else if (data <= 10000) {
+                data = 10000;
+            } else {
+                throw new BadDataException("Bad precision entry >10000 : " + data);
+            }
+            
+            row.set(column, Integer.toString(data));
         } else {
-            throw new BadDataException("Bad precision entry >10000 : " + data);
+            row.set(column, "");
         }
-
-        row.set(column, Integer.toString(data));
     }
 }

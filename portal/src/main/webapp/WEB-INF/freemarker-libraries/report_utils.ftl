@@ -81,12 +81,6 @@
     ${datasetText}
 </#macro>
 
-<#function getYearRangeText requestParameters>
-    <#assign startYear=requestParameters.startYear?has_content?string(requestParameters.startYear[0]!"1600","1600")>
-    <#assign endYear=requestParameters.endYear?has_content?string(requestParameters.endYear[0]!.now?string("yyyy"),.now?string("yyyy"))>
-    <#return startYear + " to " + endYear/>
-</#function>
-
 <#macro spatialRelationshipText requestParameters>
     <#assign spatialRelationshipText="Records within or partially overlapping the site">
     <#if requestParameters.spatialRelationship?has_content && requestParameters.spatialRelationship[0]=="within" >
@@ -135,10 +129,6 @@
         <#assign toReturn = toReturn + "&LAYER=Selected-Feature">
     </#if>
     <#return toReturn>
-</#function>
-
-<#function getSiteFormId>
-    <#return "nbn-site-report-form">
 </#function>
 
 <#macro noRecordsInfoBox>
