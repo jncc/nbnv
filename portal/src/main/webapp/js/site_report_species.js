@@ -1,36 +1,27 @@
 (function($){
     
-    function initializeValidation(){
-        $("#startYear").change(function(){
-            validateYear($(this).val());
-        });
-        $("#endYear").change(function(){
-            validateYear($(this).val());
-        });
-    }
-    function validateYear(year){
-        if(!isNumber(year) || year > new Date().getFullYear()){
-            alert("You didn't enter a valid year, enter a value from 1600 to present");
-        }
-    }
-
-    function isNumber(n) {
-        return !isNaN(parseFloat(n)) && isFinite(n);
-    }
-
-    function refreshGroupData(form){
+    function refreshSpeciesData(form){
         var $dataContainer = $('#nbn-site-report-data-container');
-        var toAppend = '<h3>Groups</h3>';
+        var featureID = form.attr('featureID');
+        var taxonOutputGroupKey = form.attr('taxonOutputGroupKey');
+       
+        //Add title and busy image to data container whilst getting data
+        var toAppend = '<h3>Species</h3>';
         $dataContainer.empty();
         $dataContainer.append(toAppend);
         $dataContainer.append('<img src="/img/ajax-loader-medium.gif" class="nbn-centre-element">');
-        var queryString = nbn.portal.reports.utils.forms.getQueryStringFromKeyValuePairs(nbn.portal.reports.utils.forms.getKeyValuePairsFromForm(form), false);
-        var url = form.attr('api-server') + '/taxonObservations/groups' + queryString;
+        
+        //Get data from api and add to container
+        var keyValuePairsFromForm = nbn.portal.reports.utils.forms.getKeyValuePairsFromForm(form);
+        keyValuePairsFromForm['featureID'] = featureID;
+        keyValuePairsFromForm['taxonOutputGroup'] = taxonOutputGroupKey;
+        var queryString = nbn.portal.reports.utils.forms.getQueryStringFromKeyValuePairs(keyValuePairsFromForm, false);
+        var url = form.attr('api-server') + '/taxonObservations/species' + queryString;
         $.getJSON(url, function(data){
             if(data.length > 0){
                 toAppend += '<ul>';
                 $.each(data, function(key, val){
-                    toAppend += '<li>' + val.taxonOutputGroup.name;
+                    toAppend += '<li><a href="/Reports/Sites/' + featureID + '/Groups/' + taxonOutputGroupKey + '/Species/' + val.taxon.taxonVersionKey + '">' + val.taxon.name + '</a>';
                 });
                 toAppend += '</ul>';
             }else{
@@ -42,15 +33,16 @@
     }
     
     $(document).ready(function(){
+        
         var $siteReportForm = $('#nbn-site-report-form');
-        initializeValidation();
-        refreshGroupData($siteReportForm);
+        nbn.portal.reports.site.initializeValidation();
+        refreshSpeciesData($siteReportForm);
 
         $siteReportForm.submit(function(){
             //Requires jquery.dataset-selector-utils.js
             nbn.portal.reports.utils.DatasetFields.doDeselectDatasetKeys();
             var form = $(this);
-            refreshGroupData(form);
+            refreshSpeciesData(form);
             nbn.portal.reports.utils.DatasetFields.doSelectDatasetKeys();
             return false;
         });
