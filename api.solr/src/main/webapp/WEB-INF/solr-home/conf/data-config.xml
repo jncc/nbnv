@@ -8,12 +8,10 @@
         <entity name="taxon" query="Select * From TaxonData" transformer="TemplateTransformer">	  
             <field column="record_id" template="TAXON-${taxon.taxonVersionKey}" />
             <field column="record_type" template="taxon" />
-            <entity name="catgory" query="
-                        Select taxonNavigationGroupKey 
+            <entity name="navigation-catgory" query="
+                        Select taxonNavigationGroupKey as category
                         From TaxonNavigationData 
                         Where TaxonVersionKey = '${taxon.taxonVersionKey}'" transformer="TemplateTransformer">	  
-                <field column="record_id" template="TAXON-CATEGORY-${category.taxonNavigationGroupKey}" />
-                <field column="record_type" template="taxon-category" />
             </entity>
         </entity>
         <entity name="designation" query="Select * From DesignationData" transformer="TemplateTransformer">
