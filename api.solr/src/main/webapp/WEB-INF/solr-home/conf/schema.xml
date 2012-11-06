@@ -6,9 +6,14 @@
     <types>
     
         <fieldtype name="testedgengrams" class="solr.TextField">
-            <analyzer>
-                <tokenizer class="solr.LowerCaseTokenizerFactory"/>
-                <filter class="solr.EdgeNGramFilterFactory" minGramSize="2" maxGramSize="15" side="front"/>
+            <analyzer type="index">
+                <tokenizer class="solr.WhitespaceTokenizerFactory"/>
+                <filter class="solr.LowerCaseFilterFactory"/>
+                <filter class="solr.EdgeNGramFilterFactory"/>
+            </analyzer>
+            <analyzer type="query">
+                <tokenizer class="solr.WhitespaceTokenizerFactory"/>
+                <filter class="solr.LowerCaseFilterFactory"/>
             </analyzer>
         </fieldtype>
     <!-- The StrField type is not analyzed, but indexed/stored verbatim. -->
