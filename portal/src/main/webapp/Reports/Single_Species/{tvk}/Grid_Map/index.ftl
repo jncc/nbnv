@@ -1,10 +1,10 @@
 <#assign tvk=URLParameters.tvk>
-<#assign requestParametersExtended = RequestParameters + {"tvk":[tvk]}>
+<#assign requestParametersExtended = RequestParameters + {"ptvk":[tvk]}>
 <#assign providersWithQueryStats=json.readURL("${api}/taxonObservations/providers",requestParametersExtended)>
 <#assign taxon=json.readURL("${api}/taxa/${tvk}")>
 
 <@template.master title="NBN Grid Map" 
-    javascripts=["/js/jquery.dataset-selector-utils.js","/js/jquery.gridmap_utils.js","/js/colourpicker/colorpicker.js"]
+    javascripts=["/js/jquery.dataset-selector-utils.js","/js/jquery.gridmap_utils.js","/js/report_utils.js","/js/colourpicker/colorpicker.js"]
     csss=["/css/gridmap.css","/css/colourpicker/colorpicker.css"]>
     
     <h1>Grid map for ${taxon_utils.getShortName(taxon)}</h1>
@@ -21,7 +21,7 @@
     <div class="tabbed" id="nbn-grid-map-filter-container">
             <h3>Controls</h3>
 
-            <input hidden id="tvk" name="tvk" value="${tvk}">
+            <input type="hidden" id="tvk" name="tvk" value="${tvk}">
 
             <label for="nbn-grid-map-resolution">Resolution</label>
             <select name="resolution" id="nbn-grid-map-resolution">
@@ -86,7 +86,7 @@
 <#macro colourPicker idSuffix hexColour>
     <div id='nbn-colour-picker${idSuffix}' class='nbn-colour-picker' title='Change colour'>
         <div style='background-color: ${hexColour}'>
-            <input hidden id="value-nbn-colour-picker${idSuffix}" name="value-nbn-colour-picker${idSuffix}" value="${hexColour}">
+            <input type="hidden" id="value-nbn-colour-picker${idSuffix}" name="value-nbn-colour-picker${idSuffix}" value="${hexColour}">
         </div>
     </div>
 </#macro>

@@ -22,7 +22,7 @@ MAP
         "init=${extent.epsgCode}"
     END
     
-    [@backgrounds.os location=properties.ordnanceSurveyMapDataLocation requires=[]/]
+    [@backgrounds.os location=properties.contextLayersLocation requires=[]/]
     [@backgrounds.selectedFeature fill=!taxonVersionKey?? data=featureData spatialConnection=properties.spatialConnection/]
 
     [#if taxonVersionKey??]

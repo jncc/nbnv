@@ -39,7 +39,7 @@ MAP
   # Start of layer definitions
   #
 
-  [@backgrounds.os location=ordnanceSurveyMapDataLocation requires=[]/]
+  [@backgrounds.os location=contextLayersLocation requires=[]/]
 
   LAYER
     NAME "MiniScale-Grid"
@@ -48,12 +48,12 @@ MAP
     END
     TYPE RASTER
     STATUS ON
-    DATA "${ordnanceSurveyMapDataLocation}\MiniScale\raster\MiniScale_(with_grid)_R13.tif"   
+    DATA "${contextLayersLocation}\OS\MiniScale\raster\MiniScale_(with_grid)_R13.tif"   
     PROJECTION
       "init=epsg:27700"   ##recommended
     END
 
-    MINSCALEDENOM 150000   ##Scale Dependancy
+    MINSCALEDENOM 150000   ##Scale Dependency
   END # Layer
 
   LAYER
@@ -63,12 +63,12 @@ MAP
     END
     TYPE RASTER
     STATUS ON
-    DATA "${ordnanceSurveyMapDataLocation}\MiniScale\raster\MiniScale_(with_relief1)_R13.tif"
+    DATA "${contextLayersLocation}\OS\MiniScale\raster\MiniScale_(with_relief1)_R13.tif"
     PROJECTION
       "init=epsg:27700"   ##recommended
     END
 
-    MINSCALEDENOM 150000   ##Scale Dependancy
+    MINSCALEDENOM 150000   ##Scale Dependency
   END # Layer
 
   LAYER
@@ -78,12 +78,12 @@ MAP
     END
     TYPE RASTER
     STATUS ON
-    DATA "${ordnanceSurveyMapDataLocation}\MiniScale\raster\MiniScale_(with_relief2)_R13.tif"
+    DATA "${contextLayersLocation}\OS\MiniScale\raster\MiniScale_(with_relief2)_R13.tif"
     PROJECTION
       "init=epsg:27700"   ##recommended
     END
 
-    MINSCALEDENOM 150000   ##Scale Dependancy
+    MINSCALEDENOM 150000   ##Scale Dependency
   END # Layer
 
 END # Map File

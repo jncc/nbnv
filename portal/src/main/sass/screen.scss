@@ -126,12 +126,19 @@ body {
         margin:5px;
         @include border-top-radius(5px);
         border: 1px solid $majorColour;
-        padding: 0 $padding;
+        padding-top: 0;
+        padding-left: $padding;
+        padding-right: $padding;
+        padding-bottom: $padding;
         h1, h2, h3 {
             @include contrasted($majorColour, #000000, #ffffff, 50%);
             padding: 0.5em;
             display: block;
             margin: 0 #{-$padding} $padding;
+        }
+        select {
+            margin-top: 5px;
+            margin-bottom: 5px;
         }
     }
     
@@ -264,7 +271,7 @@ body {
     }
 
     .nbn-report-filter-dropdown{
-        width: 15em;
+        width: 12em;
     }
 
     #nbn-select-datasets-text{

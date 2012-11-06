@@ -35,13 +35,13 @@
     The following macro will create a Map general map file as defined from master
     macro. It will also have :
         OS Layers           - Only visible to globally defined 'layers' list
-        Context layers      - Those configured in the backgrounds.ftl
+        Vector layers       - Those configured in the backgrounds.ftl
         Selected-Feature    - If feature data is defined, a Selected Feature layer will be added
 --]
 [#macro context title]
     [@master title=title]
-        [@backgrounds.contextLayers location=properties.contextLayersLocation/]    
-        [@backgrounds.os location=properties.ordnanceSurveyMapDataLocation requires=layers/]
+        [@backgrounds.vectors location=properties.contextLayersLocation/]    
+        [@backgrounds.os location=properties.contextLayersLocation requires=layers/]
 
         [#if featureData??]
             [@backgrounds.selectedFeature data=featureData spatialConnection=properties.spatialConnection/]

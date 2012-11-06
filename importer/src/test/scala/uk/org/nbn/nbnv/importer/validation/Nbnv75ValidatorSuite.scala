@@ -4,68 +4,58 @@ import uk.org.nbn.nbnv.importer.testing.BaseFunSuite
 import org.scalatest.BeforeAndAfter
 import uk.org.nbn.nbnv.importer.records.NbnRecord
 import org.mockito.Mockito._
-import java.text.SimpleDateFormat
+import uk.org.nbn.nbnv.importer.utility.StringParsing._
 import uk.org.nbn.nbnv.importer.fidelity.ResultLevel
 
-/**
- * Created By: Matt Debont
- * Date: 17/10/12
- */
 class Nbnv75ValidatorSuite extends BaseFunSuite with BeforeAndAfter {
-//  val validator = new Nbnv75Validator
-//  var record: NbnRecord = _
-//
-//  before {
-//    record = mock[NbnRecord]
-//  }
-//
-//  test("Should validate a valid Y record") {
-//    when(record.dateType).thenReturn("Y")
-//    when(record.startDate).thenReturn(new SimpleDateFormat("dd/MM/yyyy").parse("01/01/2012"))
-//    when(record.endDate).thenReturn(new SimpleDateFormat("dd/MM/yyyy").parse("31/12/2012"))
-//
-//    val r = validator.validate(record)
-//    r.level should be (ResultLevel.DEBUG)
-//  }
-//
-//  test("Should validate a valid YY record") {
-//    when(record.dateType).thenReturn("YY")
-//    when(record.startDate).thenReturn(new SimpleDateFormat("dd/MM/yyyy").parse("01/01/2012"))
-//    when(record.endDate).thenReturn(new SimpleDateFormat("dd/MM/yyyy").parse("31/12/2014"))
-//
-//    val r = validator.validate(record)
-//    r.level should be (ResultLevel.DEBUG)
-//  }
-//
-//  test("Should not validate an invalid Y record") {
-//    when(record.dateType).thenReturn("Y")
-//    when(record.startDate).thenReturn(new SimpleDateFormat("dd/MM/yyyy").parse("01/01/2012"))
-//    when(record.endDate).thenReturn(new SimpleDateFormat("dd/MM/yyyy").parse("31/12/2014"))
-//
-//    var r = validator.validate(record)
-//    r.level should be (ResultLevel.ERROR)
-//
-//    when(record.startDate).thenReturn(new SimpleDateFormat("dd/MM/yyyy").parse("01/01/2012"))
-//    when(record.endDate).thenReturn(new SimpleDateFormat("dd/MM/yyyy").parse("31/10/2012"))
-//
-//    r = validator.validate(record)
-//    r.level should be (ResultLevel.ERROR)
-//  }
-//
-//  test("Should not validate an invalid YY record") {
-//    when(record.dateType).thenReturn("Y")
-//    when(record.startDate).thenReturn(new SimpleDateFormat("dd/MM/yyyy").parse("01/01/2012"))
-//    when(record.endDate).thenReturn(new SimpleDateFormat("dd/MM/yyyy").parse("31/10/2014"))
-//
-//    val r = validator.validate(record)
-//    r.level should be (ResultLevel.ERROR)
-//  }
-//
-//  test("Should not validate a non Y / YY record") {
-//    when(record.dateType).thenReturn("OO")
-//
-//    val r = validator.validate(record)
-//    r.level should be (ResultLevel.ERROR)
-//  }
+  var record: NbnRecord = _
 
+  before {
+    record = mock[NbnRecord]
+    when(record.key).thenReturn("1")
+  }
+
+  test("should validate if the start date supplied is the start of the year") {
+    when(record.endDate).thenReturn(None)
+    when(record.startDateRaw).thenReturn(Some("01/01/1997"))
+    when(record.startDate).thenReturn("01/01/1997".maybeDate("dd/MM/yyyy"))
+
+    val v = new Nbnv75Validator
+    val r = v.validate(record)
+
+    r.find(r => r.level == ResultLevel.ERROR) should be ('empty)
+  }
+
+  test("should validate if the start date is just a year") {
+    when(record.endDate).thenReturn(None)
+    when(record.startDateRaw).thenReturn(Some("1997"))
+    when(record.startDate).thenReturn("1997".maybeDate("yyyy"))
+
+    val v = new Nbnv75Validator
+    val r = v.validate(record)
+
+    r.find(r => r.level == ResultLevel.ERROR) should be ('empty)
+  }
+
+  test("should not validate if a end date is given") {
+    when(record.endDate).thenReturn("31/12/1997".maybeDate("dd/MM/yyyy"))
+    when(record.startDateRaw).thenReturn(Some("01/01/1997"))
+    when(record.startDate).thenReturn("01/01/1997".maybeDate("dd/MM/yyyy"))
+
+    val v = new Nbnv75Validator
+    val r = v.validate(record)
+
+    r.find(r => r.level == ResultLevel.ERROR) should not be ('empty)
+  }
+
+  test("should not validate if the start date is not the start of the year") {
+    when(record.endDate).thenReturn(None)
+    when(record.startDateRaw).thenReturn(Some("03/01/1997"))
+    when(record.startDate).thenReturn("03/01/1997".maybeDate("dd/MM/yyyy"))
+
+    val v = new Nbnv76Validator
+    val r = v.validate(record)
+
+    r.find(r => r.level == ResultLevel.ERROR) should not be ('empty)
+  }
 }

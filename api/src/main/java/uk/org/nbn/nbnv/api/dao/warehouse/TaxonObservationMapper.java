@@ -61,8 +61,8 @@ public interface TaxonObservationMapper {
     
     @SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectSpecies")
     @Results(value = {
-        @Result(property="taxon", column="taxonVersionKey", javaType=Taxon.class, one=@One(select="uk.org.nbn.nbnv.api.dao.warehouse.TaxonMapper.getTaxon")),
-        @Result(property="taxonVersionKey", column="taxonVersionKey")
+        @Result(property="taxon", column="pTaxonVersionKey", javaType=Taxon.class, one=@One(select="uk.org.nbn.nbnv.api.dao.warehouse.TaxonMapper.getTaxon")),
+        @Result(property="taxonVersionKey", column="pTaxonVersionKey")
     })
     public List<TaxonWithQueryStats> selectObservationSpeciesByFilter(
             @Param("user") User user

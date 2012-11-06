@@ -29,18 +29,18 @@ public class TaxonObservationProvider {
     
     public String filteredSelectGroups(Map<String, Object> params) {
         BEGIN();
-        SELECT("taxonOutputGroupKey, COUNT(DISTINCT td.taxonVersionKey) querySpecificSpeciesCount");
+        SELECT("taxonOutputGroupKey, COUNT(DISTINCT td.pTaxonVersionKey) querySpecificSpeciesCount");
         createSelectQuery(params);
-        INNER_JOIN("TaxonData td ON o.taxonVersionKey = td.taxonVersionKey");
+        INNER_JOIN("TaxonData td ON o.pTaxonVersionKey = td.pTaxonVersionKey");
         GROUP_BY("taxonOutputGroupKey");
         return SQL();
     }
     
     public String filteredSelectSpecies(Map<String, Object> params) {
         BEGIN();
-        SELECT("o.taxonVersionKey, COUNT(*) querySpecificObservationCount");
+        SELECT("o.pTaxonVersionKey, COUNT(*) querySpecificObservationCount");
         createSelectQuery(params);
-        GROUP_BY("o.taxonVersionKey");
+        GROUP_BY("o.pTaxonVersionKey");
         return SQL();
     }
     
