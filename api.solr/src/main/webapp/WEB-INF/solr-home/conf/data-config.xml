@@ -12,7 +12,8 @@
                         Select taxonNavigationGroupKey 
                         From TaxonNavigationData 
                         Where TaxonVersionKey = '${taxon.taxonVersionKey}'" transformer="TemplateTransformer">	  
-                
+                <field column="record_id" template="TAXON-CATEGORY-${category.taxonNavigationGroupKey}" />
+                <field column="record_type" template="taxon-category" />
             </entity>
         </entity>
         <entity name="designation" query="Select * From DesignationData" transformer="TemplateTransformer">
