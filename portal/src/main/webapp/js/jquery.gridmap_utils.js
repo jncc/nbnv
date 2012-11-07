@@ -102,6 +102,10 @@
                 return false;
             },
             onHide: function (colpkr) {
+                //Refresh map if the associated date range check box is selected
+                if($('input[colourPickerId="' + colourPickerId + '"]').is(':checked')){
+                    doOnChange();
+                }
                 $(colpkr).fadeOut(500);
                 return false;
             },
@@ -197,9 +201,7 @@
         });
     }
     
-    function setupFormOnChange(){
-        //The map should refresh when any form field is changed, except the nbn-select-datasets-auto check box
-        $('#nbn-grid-map-form :input[name!="nbn-select-datasets-auto"]').change(function(){
+    function doOnChange(){
             var form = $('#nbn-grid-map-form');
             
             //Apply any rules eg, must have at least one year band selected
@@ -218,6 +220,12 @@
             updateResolutionDropDown(form);
             
             return false;
+        }
+    
+    function setupFormOnChange(){
+        //The map should refresh when any form field is changed, except the nbn-select-datasets-auto check box
+        $('#nbn-grid-map-form :input[name!="nbn-select-datasets-auto"]').change(function(){
+            doOnChange();
         });
     }
     
