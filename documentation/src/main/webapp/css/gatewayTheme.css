@@ -1,0 +1,122 @@
+/*Declare clear fix*/
+.clearfix:after {
+    visibility: hidden;
+    display: block;
+    font-size: 0;
+    content: " ";
+    clear: both;
+    height: 0;
+    }
+* html .clearfix             { zoom: 1; } /* IE6 */
+*:first-child+html .clearfix { zoom: 1; } /* IE7 */
+
+
+body {
+	padding-right: 20px;
+	padding-left: 20px;
+	background: #E1E9F0;
+	color: #393733;
+	font-family: Arial, Helvetica, Sans-serif;
+	font-size: 83%;
+    margin-top:0;
+}
+
+a:link, a:visited {
+    color: #8696A4;
+    text-decoration: underline;
+    font-weight: normal;
+    color: #007BA6;
+}
+
+ul, ol {
+    margin-left: 10px;
+    list-style-type: circle;
+}
+
+h1 {
+    font-family: Trebuchet MS, Georgia, Sans-Serif;
+    font-size: 2.0em;
+    font-weight: lighter;
+    color: #007BA6;
+    margin-bottom: 20px;
+    line-height: 40px;
+    margin-top: 0;
+
+}
+h2 {
+    color: #007ba6;
+    font-size: 1.5em;
+    text-decoration: none;
+}
+
+h3
+{
+    font-size: 1.1em;
+    font-weight: lighter;
+    color: #007ba6;
+    margin: 10px 0px 5px 0px;
+    text-decoration: none;
+}
+
+h4
+{
+    font-size: 1.3em;
+    color:#007ba6; /* NBN green: #65b154; */
+    margin: 5px 0px 10px 0px;
+}
+
+#nbn-page-content, #nbn-page-footer, #nbn-page-header, #nbn-page-copyright {
+    width:1024px;
+    margin: 0 auto;
+}
+
+#nbn-page-content, #nbn-page-footer, #nbn-page-header {
+    background-color: white;
+}
+
+#nbn-page-content, #nbn-page-footer {
+    margin-bottom:7px;
+}
+
+#nbn-page-main-content {
+    margin-left: 280px;
+    padding: 15px 20px 10px 20px;
+}
+
+/*Footer*/
+#nbn-page-footer {
+    height:50px;
+    color:#8696A4;
+    font-size: 85%;
+}
+
+#nbn-page-footer .terms-and-conditions {
+    float: left;
+    width:400px;
+    margin: 5px 0 0 10px;
+}
+
+#nbn-page-footer .developed-by {
+    float: right;
+    margin: 5px 10px 0 0;
+}
+
+/*Copyright*/
+#nbn-page-copyright {
+	padding: 20px 15px 30px 15px;
+	font-size: 85%;
+	color: #999;
+}
+
+/*Rounded edges*/
+#nbn-page-header {
+    -moz-border-radius-topleft: 5px;
+    -moz-border-radius-topright: 5px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+#nbn-page-footer {
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}

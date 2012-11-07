@@ -1,0 +1,132 @@
+/*General Atlas Page*/
+.nbn-atlas-applicable {
+	float:right;
+	color:#007BA6;
+	padding:0.5em;
+	border: #C2DFFF 1px solid;
+}
+
+.nbn-atlas-applicable:before {
+	font-weight:bold;
+	content: "Applicable to: ";
+}
+
+ul.section-parameters-list, ul.section-parameters-list li.parameter-section{
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+
+ul.section-parameters-list {
+	list-style: none;
+}
+
+ul.section-parameters-list li.parameter-section {
+	padding-bottom:10px;
+	border-bottom:1px solid #C2DFFF;
+}
+
+/*Colour picker*/
+#interactive-colourGenerator .hexOutput {
+	position: relative;
+	display: inline-block;
+	width:250px;
+	height:170px;
+	border:solid #BDBDBD 3px;
+	border-left-width: 0px;
+}
+
+#interactive-colourGenerator .hexLabel {
+	position:absolute;
+	top:68px; /*container.height/2 - me.height/2*/
+	left:65px;/*container.width/2 - me.width/2*/
+	width:120px;
+	vertical-align:middle;
+	text-align:center;
+	font-weight:bold;
+	font-size:30px;
+	background-color:white;
+	padding-top:2px;
+}
+
+#interactive-colourGenerator .colorpicker, #interactive-colourGenerator  .colourPickerContainer {
+	display:inline-block;
+	width:210px;
+}
+
+/*Login generator*/
+.nbn-loginGenerator {
+	padding: 5px;
+}
+
+.nbn-loginGenerator, .nbn-loginGenerator .nbn-loginGenerator-label, .nbn-loginGenerator .nbn-loginGenerator-input {
+	display: inline-block;
+}
+
+.nbn-loginGenerator .nbn-loginGenerator-label {
+	width: 30%;
+}
+
+.nbn-loginGenerator .nbn-loginGenerator-input {
+	width: 66%
+}
+
+.nbn-loginGenerator .nbn-loginGenerator-generateButton {
+	display:block;
+}
+
+/*Imagesize Table*/
+table.nbn-atlas-imagesizeTbl {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+table.nbn-atlas-imagesizeTbl td {
+	margin: 0;
+	padding: 0;
+	height:44px;
+	text-align:center;
+}
+
+table.nbn-atlas-imagesizeTbl .images {
+	position:relative;
+	height:674px;
+	width:500px;
+	overflow:hidden;
+}
+
+table.nbn-atlas-imagesizeTbl .images img {
+	position: absolute;
+	top:-1px;
+	left:0;
+	border-right: 1px solid #C2DFFF;
+	border-bottom: 1px solid #C2DFFF;
+}
+
+table.nbn-atlas-imagesizeTbl img.imagesize-3, table.nbn-atlas-imagesizeTbl tr.imagesize-3 td {
+	background-color:#65A5D1;
+} 
+
+
+table.nbn-atlas-imagesizeTbl img.imagesize-6, table.nbn-atlas-imagesizeTbl tr.imagesize-6 td {
+	background-color:#3E94D1;
+} 
+
+
+table.nbn-atlas-imagesizeTbl img.imagesize-9, table.nbn-atlas-imagesizeTbl tr.imagesize-9 td {
+	background-color:#0A64A4;
+} 
+
+
+table.nbn-atlas-imagesizeTbl img.imagesize-12, table.nbn-atlas-imagesizeTbl tr.imagesize-12 td {
+	background-color:#24577B;
+} 
+
+
+table.nbn-atlas-imagesizeTbl img.imagesize-15, table.nbn-atlas-imagesizeTbl tr.imagesize-15 td {
+	background-color:#03406A;
+} 
+
+table.nbn-atlas-imagesizeTbl tr.imagesize-3 td, table.nbn-atlas-imagesizeTbl tr.imagesize-6 td, table.nbn-atlas-imagesizeTbl tr.imagesize-9 td, table.nbn-atlas-imagesizeTbl tr.imagesize-12 td, table.nbn-atlas-imagesizeTbl tr.imagesize-15 td {
+	color:white;
+}
