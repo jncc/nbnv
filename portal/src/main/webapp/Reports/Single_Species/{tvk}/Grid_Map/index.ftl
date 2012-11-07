@@ -60,7 +60,6 @@
                     <input type="checkbox" id="nbn-grid-map-10k-grid" value="gbi10kextent" name="background">10km grid
                 </div>
             </fieldset>
-            <input type="submit" value="Refresh map" class="nbn-centre-element">
     </div>
 </#macro>
 

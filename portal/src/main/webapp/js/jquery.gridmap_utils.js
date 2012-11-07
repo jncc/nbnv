@@ -64,9 +64,9 @@
         //eg - if OS is used as a background it must appear first to force vector layers to be drawn over it and not be obscured by it
         if(keyValuePairs.hasOwnProperty('background') && keyValuePairs['background'] instanceof Array){
             var orderedBackgroundArgs = ['os','vicecounty',
-                nationalExtentOptions.gbi.coastline,nationalExtentOptions.gb.coastline,nationalExtentOptions.ireland.coastline,
-                nationalExtentOptions.gbi.grid10k,nationalExtentOptions.gb.grid10k,nationalExtentOptions.ireland.grid10k,
-                nationalExtentOptions.gbi.grid100k,nationalExtentOptions.gb.grid100k,nationalExtentOptions.ireland.grid100k
+            nationalExtentOptions.gbi.coastline,nationalExtentOptions.gb.coastline,nationalExtentOptions.ireland.coastline,
+            nationalExtentOptions.gbi.grid10k,nationalExtentOptions.gb.grid10k,nationalExtentOptions.ireland.grid10k,
+            nationalExtentOptions.gbi.grid100k,nationalExtentOptions.gb.grid100k,nationalExtentOptions.ireland.grid100k
             ];
             var toReturn = [];
             $.each(orderedBackgroundArgs, function(index, value){
@@ -136,11 +136,17 @@
         $.getJSON(url, function(json){
             var resolutions = json[options.imagesize];
             var resolutionSelect = $('#nbn-grid-map-resolution');
+            //Get the currently selected option, if possible it will be used to set the selected option
+            var selectedResolution = resolutionSelect.val();
             resolutionSelect.find('option').remove();
             $.each(resolutions, function(index, resolution){
+                var selected = '';
+                if(resolution == selectedResolution){
+                    selected = ' selected="selected"';
+                }
                 resolutionSelect.append(
-                    $('<option></option>').val(resolution).html(resolution)
-                    );
+                    $('<option' + selected + '></option>').val(resolution).html(resolution)
+                );
             });
         });
     }
@@ -160,6 +166,12 @@
         $('#nbn-grid-map-coastline').val(nationalExtentOptions[nationalExtent].coastline);
         $('#nbn-grid-map-100k-grid').val(nationalExtentOptions[nationalExtent].grid100k);
         $('#nbn-grid-map-10k-grid').val(nationalExtentOptions[nationalExtent].grid10k);
+        
+        //There should be at least one background layer (eg coastlines)
+        if($("INPUT:checked[name='background'][type='checkbox']").length == 0){
+            $('#nbn-grid-map-coastline').prop('checked',true);
+        }
+        
     }
     
     function setupRegionVCInteractions(){
@@ -185,9 +197,10 @@
         });
     }
     
-    function setupFormSubmit(){
-        $('#nbn-grid-map-form').submit(function(){
-            var form = $(this);
+    function setupFormOnChange(){
+        //The map should refresh when any form field is changed, except the nbn-select-datasets-auto check box
+        $('#nbn-grid-map-form :input[name!="nbn-select-datasets-auto"]').change(function(){
+            var form = $('#nbn-grid-map-form');
             
             //Apply any rules eg, must have at least one year band selected
             applyRules();
@@ -223,7 +236,7 @@
     }
 
     $(document).ready(function(){
-        setupFormSubmit();
+        setupFormOnChange();
         setupColourPickers();
         setupRegionVCInteractions();
         hideBusyImageOnMapLoad();
