@@ -1,6 +1,7 @@
 @import "_nbn-colour-scheme";
 @import "compass/utilities/general/clearfix";
 @import "compass/utilities/color/contrast";
+@import "compass/css3/border-radius";
 
 div.paginator {
     @include clearfix;
@@ -31,13 +32,21 @@ form.nbn-search {
     .nbn-search-facets {
         float:left;
         width: 300px;
-        border-right: 1px solid black;
         font-size:0.8em;
     }
     
     .controls, .results {
         float:left;
         width: 651px;
+    }
+
+    .results > li {
+        @include border-radius(15px);
+        padding: 1em;
+        background-color: skyBlue;
+        margin: 1em;
+        list-style: none;
+        font-weight: bold;
     }
     .controls   { text-align: right; }
     .paginator  { float: right; clear: both; }
