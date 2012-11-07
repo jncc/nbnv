@@ -9,7 +9,13 @@ is not a finished product.
     <@search.search 
         url="${api}/taxa" 
         query=RequestParameters 
-        facets=[]; result>
+        facets=[{
+                "name": "Taxon Navigation Group",	  	
+              "id":"category",
+	  	"render" : "combo",
+               "data":json.readURL("${api}/taxonNavigationGroups/topLevels")
+	  	
+            }]; result>
         ${taxon_utils.getShortName(result)}
     </@search.search>
 </@template.master>

@@ -11,7 +11,7 @@
             <entity name="navigation-catgory" query="
                         Select taxonNavigationGroupKey as category
                         From TaxonNavigationData 
-                        Where TaxonVersionKey = '${taxon.taxonVersionKey}'" transformer="TemplateTransformer">	  
+                        Where TaxonVersionKey = '${taxon.pTaxonVersionKey}'" transformer="TemplateTransformer">	  
             </entity>
         </entity>
         <entity name="designation" query="Select * From DesignationData" transformer="TemplateTransformer">

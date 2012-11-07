@@ -1,8 +1,8 @@
 <h1><a href="/">NBN Gateway</a></h1>
 <#include "_sso.ftl"/>
 <form action="/Search">
-    <input type="text" name="q" value="Search the NBN Gateway"/>
-    <input type="submit" value="GO!"/>
+    <input type="text" name="q" placeholder="Search the NBN Gateway"/>
+    <input type="submit" value="Go"/>
 </form>
 <ul>
     <li class="first"><a href="/">NBN Gateway Home</a></li>
