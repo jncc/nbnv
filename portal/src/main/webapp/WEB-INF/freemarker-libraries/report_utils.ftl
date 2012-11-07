@@ -5,7 +5,7 @@
             <#list providersWithQueryStats as providerWithQueryStats>
                 <tr>
                     <th><img src="${api}/organisations/${providerWithQueryStats.organisationID}/logo" class="nbn-provider-table-logo"></th>
-                    <th colspan="2"><a href="/Provider/${providerWithQueryStats.organisationID}">${providerWithQueryStats.organisation.name}</a> (${providerWithQueryStats.querySpecificObservationCount})</th>
+                    <th colspan="2"><a href="/Organisations/${providerWithQueryStats.organisationID}">${providerWithQueryStats.organisation.name}</a> (${providerWithQueryStats.querySpecificObservationCount})</th>
                 </tr>
                 <#assign datasetsWithQueryStats=providerWithQueryStats.datasetsWithQueryStats>
                 <#--All datasets will be checked by default unless dataset keys are found-->
