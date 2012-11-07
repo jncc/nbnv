@@ -5,15 +5,15 @@ import java.io.File
 
 object Log {
 
-  def configure(logDir: String, maxLogSize: String, logLevel: String) {
+  def configure(logDir: String, archivePath: String, logLevel: String) {
 
     val level = Level.toLevel(logLevel)
     val pattern = new PatternLayout("%d{yyyy-MMM-dd HH:mm:ss} %-5p %m%n")
 
-    val fa = new RollingFileAppender
-    val path = new File(logDir, "log.txt").getAbsolutePath
-    fa.setMaxFileSize(maxLogSize)
-    fa.setName("FileLogger")
+    val fa = new NewLogPerRunFileAppender
+    val name =  new File(archivePath).getName.replace(' ', '-')
+    val path = new File(logDir, "log-" + name + ".log").getAbsolutePath
+    fa.setName("LogPerRunFileLogger")
     fa.setFile(path)
     fa.setLayout(pattern)
     fa.setThreshold(level)
