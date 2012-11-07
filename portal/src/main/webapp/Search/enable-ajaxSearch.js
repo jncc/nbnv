@@ -4,7 +4,6 @@
 (function($){
     $(document).ready(function(){
         var searchForm = $('form.nbn-search').nbn_search({
-            searchNode: '/api/search',
             renderSearchResult:function(data){
                 return "<h3>" + data.record_type + "</h3>" + data.name;
             },
