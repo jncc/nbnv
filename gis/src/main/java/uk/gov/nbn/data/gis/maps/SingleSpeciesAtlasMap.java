@@ -74,7 +74,7 @@ public class SingleSpeciesAtlasMap {
             final User user,
             GridMap gridMapDefinition,
             @ServiceURL String mapServiceURL,
-            @PathParam(key="taxonVersionKey", validation="^[A-Z]{6}[0-9]{10}$") final String key,
+            @PathParam(key="taxonVersionKey", validation="[A-Z][A-Z0-9]{15}") final String key,
             @PathParam(key="symbol", validation="(circle)") String symbol,
             @QueryParam(key="datasets", validation="^[A-Z0-9]{8}$") final List<String> datasetKeys,
             @QueryParam(key="startyear", validation="[0-9]{4}") final String startYear,
@@ -106,7 +106,7 @@ public class SingleSpeciesAtlasMap {
     
     public List<ProviderWithQueryStats> getDatasetProviders(
             HttpServletRequest request,
-            @PathParam(key="taxonVersionKey", validation="^[A-Z]{6}[0-9]{10}$") final String key,
+            @PathParam(key="taxonVersionKey", validation="[A-Z][A-Z0-9]{15}") final String key,
             @QueryParam(key="datasets", validation="^[A-Z0-9]{8}$") final List<String> datasetKeys,
             @QueryParam(key="startyear", validation="[0-9]{4}") final String startYear,
             @QueryParam(key="endyear", validation="[0-9]{4}") final String endYear) {

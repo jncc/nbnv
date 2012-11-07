@@ -53,7 +53,7 @@ public class SiteReportMap {
             User user,
             @ServiceURL String mapServiceURL,
             @PathParam(key="featureID") String featureID,
-            @PathParam(key="taxonVersionKey", validation="^[A-Z]{6}[0-9]{10}$") String taxonKey,
+            @PathParam(key="taxonVersionKey", validation="[A-Z][A-Z0-9]{15}") String taxonKey,
             @QueryParam(key="datasets", validation="^[A-Z0-9]{8}$") List<String> datasetKeys,
             @QueryParam(key="startyear", validation="[0-9]{4}") String startYear,
             @QueryParam(key="endyear", validation="[0-9]{4}") String endYear,
