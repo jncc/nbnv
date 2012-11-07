@@ -60,7 +60,6 @@
                             </select><br/>
                 </#if>
             </fieldset>
-        <input type="Submit" value="Refresh" class="nbn-centre-element"/>
     </div>
 </#macro>
 

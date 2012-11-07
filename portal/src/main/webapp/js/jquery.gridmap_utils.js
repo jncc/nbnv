@@ -218,14 +218,15 @@
             nbn.portal.reports.utils.DatasetFields.doSelectDatasetKeys();
             
             updateResolutionDropDown(form);
-            
-            return false;
         }
     
     function setupFormOnChange(){
-        //The map should refresh when any form field is changed, except the nbn-select-datasets-auto check box
-        $('#nbn-grid-map-form :input[name!="nbn-select-datasets-auto"]').change(function(){
-            doOnChange();
+        //The map should refresh when any form field is changed
+        //except when the nbn-select-datasets-auto check box is deselected
+        $('#nbn-grid-map-form :input').change(function(){
+            if(($(this).attr('id')!='nbn-select-datasets-auto') || ($('#nbn-select-datasets-auto').is(':checked'))){
+                doOnChange();
+            }
         });
     }
     
