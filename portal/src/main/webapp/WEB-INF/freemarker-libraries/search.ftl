@@ -118,7 +118,7 @@
 -->
 <#macro search url query={} facets=[]>
     <#assign search=json.readURL(url, query)/>
-    <form class="nbn-search">    
+    <form class="nbn-search" nbn-search-node="${url}">    
         <@__facets facets search.facetFields/>
         <div class="controls">
             Search - <input type="text" name="q" value="${RequestParameters.q?first!''}"/>

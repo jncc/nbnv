@@ -4,7 +4,6 @@
 (function($){
     $(document).ready(function(){
         var searchForm = $('form.nbn-search').nbn_search({
-            searchNode: '/api/taxa',
             renderSearchResult:function(data){
                 return $('<div>')
                     .append($("<h3>")).html(data.name)
