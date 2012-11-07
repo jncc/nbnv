@@ -58,6 +58,10 @@ body {
         color: $majorColour;
     }
     
+    a:hover {
+        text-decoration: none;
+    }
+    
     ul, ol {
         margin-left: 10px;
         list-style-type: circle;
@@ -136,12 +140,12 @@ body {
             display: block;
             margin: 0 #{-$padding} $padding;
             a {
-                @include contrasted($majorColour, #000000, #ffff00, 50%);
-                text-decoration: none;
+                @include contrasted($majorColour, #000000, #ffffff, 50%);
             }
-            a:hover {
-                text-decoration: underline;
-            }
+        }
+        ul {
+            list-style: none;
+            margin: 10px;
         }
         select {
             margin-top: 5px;
@@ -158,11 +162,7 @@ body {
                 padding: $padding;
             }
             a {
-                @include contrasted($veryMinorColour, #333300, #ffffff, 50%);
-                text-decoration: none;
-            }
-            a:hover {
-                text-decoration: underline;
+                @include contrasted($veryMinorColour, #000000, #ffffff, 50%);
             }
 
         }
