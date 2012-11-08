@@ -6,7 +6,7 @@
 <#assign startYear=RequestParameters.startYear?has_content?string(RequestParameters.startYear[0]!"1600","1600")>
 <#assign endYear=RequestParameters.endYear?has_content?string(RequestParameters.endYear[0]!.now?string("yyyy"),.now?string("yyyy"))>
 <#assign spatialRelationship=RequestParameters.spatialRelationship?has_content?string(RequestParameters.spatialRelationship[0]!"overlap","overlap")>
-<#assign title="Records for ${taxon_utils.getShortName(taxon)} in '${site.label}'">
+<#assign title="Records for ${taxon_utils.getLongName(taxon)} in ${site.label}">
 <#assign is10kmReport=(site.type="GridSquare")>
 
 <@template.master title="NBN Site Report" 

@@ -8,8 +8,17 @@
         },
         getNoRecordsFoundInfoBox: function(){
             return '<div class="nbn-information-panel">No records were found for your current options</div>';
+        },getDefaultText: function(value, defaultText){
+            return $.isEmptyObject(value) ? defaultText : value;
+        },getDateText: function(date){
+            return doGetDateText(date);
         }
     });
+    
+    function doGetDateText(date){
+        var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        return (date.getDate()) + '/' + months[date.getMonth()] + '/' + date.getFullYear();
+    }
     
     function doGetKeyValuePairsFromForm(form){
         var formObjArray = form.serializeArray();
