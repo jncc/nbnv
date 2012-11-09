@@ -1067,12 +1067,14 @@ CREATE VIEW [dbo].[TaxonObservationData] WITH SCHEMABINDING AS (
         , obs.startDate
         , obs.endDate
         , obs.dateTypeKey
+		, dt.label AS dateType
         , rr.name AS recorder
         , rd.name AS determiner
         , obs.sensitive
         , obs.absence
     FROM [dbo].[TaxonObservationDataEnhanced] obs 
     INNER JOIN [dbo].[TaxonData] pt ON pt.taxonVersionKey = obs.pTaxonVersionKey
+	INNER JOIN [dbo].[DateType] dt ON dt.[key] = obs.dateTypeKey 
     LEFT JOIN [dbo].[GridSquareFeatureData] gs ON gs.id  = obs.featureID
     LEFT JOIN [dbo].[SiteBoundaryData] sb ON sb.featureID = obs.featureID
     LEFT JOIN [dbo].[SiteData] si ON si.id = obs.siteID
@@ -1100,12 +1102,14 @@ CREATE VIEW [dbo].[TaxonObservationData] WITH SCHEMABINDING AS (
         , obs.startDate
         , obs.endDate
         , obs.dateTypeKey
+		, dt.label AS dateType
         , rr.name AS recorder
         , rd.name AS determiner
         , obs.sensitive
         , obs.absence
     FROM [dbo].[TaxonObservationDataPublic] obs 
     INNER JOIN [dbo].[TaxonData] pt ON pt.taxonVersionKey = obs.pTaxonVersionKey
+	INNER JOIN [dbo].[DateType] dt ON dt.[key] = obs.dateTypeKey 
     LEFT JOIN [dbo].[GridSquareFeatureData] gs ON gs.id = obs.featureID
     LEFT JOIN [dbo].[SiteBoundaryData] sb ON sb.featureID = obs.featureID
     LEFT JOIN [dbo].[SiteData] si ON si.id = obs.siteID
@@ -1227,6 +1231,7 @@ CREATE VIEW [dbo].[UserTaxonObservationData] WITH SCHEMABINDING AS (
 		, obs.startDate
 		, obs.endDate
 		, obs.dateTypeKey
+		, obs.dateType 
 		, obs.recorder
 		, obs.determiner
 		, obs.sensitive
@@ -1257,6 +1262,7 @@ CREATE VIEW [dbo].[UserTaxonObservationData] WITH SCHEMABINDING AS (
 		, obs.startDate
 		, obs.endDate
 		, obs.dateTypeKey 
+		, obs.dateType 
 		, obs.recorder
 		, obs.determiner
 		, obs.sensitive
@@ -1295,6 +1301,7 @@ CREATE VIEW [dbo].[OrganisationTaxonObservationData] WITH SCHEMABINDING AS (
 		, obs.startDate
 		, obs.endDate
 		, obs.dateTypeKey 
+		, obs.dateType 
 		, obs.recorder
 		, obs.determiner
 		, obs.sensitive
@@ -1325,6 +1332,7 @@ CREATE VIEW [dbo].[OrganisationTaxonObservationData] WITH SCHEMABINDING AS (
 		, obs.startDate
 		, obs.endDate
 		, obs.dateTypeKey
+		, obs.dateType 
 		, obs.recorder
 		, obs.determiner
 		, obs.sensitive
