@@ -164,7 +164,7 @@ nbn.mapping.openlayers.OpenLayersMap = function(options, interactiveMap) {
 		_me.addBaseLayerType(new nbn.mapping.openlayers.OpenLayersBingLayer({type : 'Aerial'}));
                 _me.addBaseLayerType(new nbn.layer.BaseLayer(new nbn.mapping.openlayers.OpenLayersLayer(
 				new OpenLayers.Layer.WMS("Outline", nbn.util.ServerGeneratedLoadTimeConstants.gisServers + "Context", {
-					layers: "Vice-counties", 
+					layers: "Vice-counties,Ireland-Coast", 
 					format:"image/png"}, {
 					isBaseLayer:true, 
 					projection:new OpenLayers.Projection("EPSG:27700"), 
