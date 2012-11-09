@@ -1045,6 +1045,10 @@ GO
 
 GO
 
+--EXEC usp_dev_AddTableToPublication 'DateType'
+
+GO
+
 CREATE VIEW [dbo].[TaxonObservationData] WITH SCHEMABINDING AS (
 	SELECT 
         obs.id
