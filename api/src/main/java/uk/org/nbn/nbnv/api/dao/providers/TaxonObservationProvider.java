@@ -29,11 +29,13 @@ public class TaxonObservationProvider {
 
     public String filteredSelectOneAttribute(Map<String, Object> params) {
         BEGIN();
-        SELECT("o.observationID, dad.label, dad.description, toad.textValue");
-        INNER_JOIN("TaxonObservationAttributeData toad ON o.observationID = toad.observationID");
+        SELECT("o.observationID, dad.label, dad.description, utoad.textValue");
+        createSelectQuery(params);
+        INNER_JOIN("UserTaxonObservationAttributeData utoad ON o.observationID = utoad.observationID");
         INNER_JOIN("DatasetAttributeData dad ON toad.attributeID = dad.attributeID");
         WHERE("dad.attributeID = #{attributeID}");
-        createSelectQuery(params);
+        WHERE("utoad.userID = #{user.id}");
+  
         return SQL();
     }
     
