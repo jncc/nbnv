@@ -170,24 +170,33 @@
         },
 
         _setCollapsed: function(collapsed, speed) {
-			var aniOpt = this.options.animation;
-            this._contentsContainer[(collapsed) ? 'hide' : 'show'](aniOpt.effect, aniOpt.options, speed);
+	    var aniOpt = this.options.animation;
+            this._collapse(this._contentsContainer, collapsed, aniOpt, speed);
             this._notifyStateChange('collapsed', collapsed);
         },
 
         _setAdvancedCollapsed: function(advancedCollapsed,speed) {
-			var aniOpt = this.options.animation;
-            $('[advancedControl="true"]',this._contentsContainer)[(advancedCollapsed) ? 'hide' : 'show'](aniOpt.effect, aniOpt.options, speed);
+	    var aniOpt = this.options.animation;
+            this._collapse($('[advancedControl="true"]',this._contentsContainer), advancedCollapsed, aniOpt, speed);
             this._notifyStateChange('advancedcollapsed', advancedCollapsed);
         },
+        
+        _collapse: function(element, toShow, aniOpt, speed) {
+            if(speed) {
+                element[(toShow) ? 'hide' : 'show'](aniOpt.effect, aniOpt.options, speed);
+            }
+            else {
+                element[(toShow) ? 'hide' : 'show']();
+            }
+        },
 		
-		setAdvancedCollapsed: function(advancedCollapsed) {
-			this._setAdvancedCollapsed(advancedCollapsed,this.options.animation.speed);
-		},
-		
-		setCollapsed: function(collapsed) {
-			this._setCollapsed(collapsed,this.options.animation.speed);
-		},
+        setAdvancedCollapsed: function(advancedCollapsed) {
+            this._setAdvancedCollapsed(advancedCollapsed,this.options.animation.speed);
+        },
+
+        setCollapsed: function(collapsed) {
+            this._setCollapsed(collapsed,this.options.animation.speed);
+        },
 		
         destroy: function() {
             this.element

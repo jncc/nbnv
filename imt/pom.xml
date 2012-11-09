@@ -146,6 +146,8 @@
                                 <include>mapping/construction/WidgetOptionsCreator-createNBNBoundaryLayer.js</include>
                                 <include>mapping/InteractiveMappingClient.js</include>
                                 <include>mapping/InteractiveMappingClient-getMapURL.js</include>
+                                
+                                <include>mapping/construction/species/createTaxonSelectionTable.js</include>
                             </includes>
                         </aggregation>
                         <aggregation>

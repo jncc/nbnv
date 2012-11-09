@@ -24,6 +24,9 @@ $.namespace("nbn.util.EntityResolver", new function() {
     }
     
     var dataResolvers = {
+        species : function(id, callback) {
+            return $.getJSON(nbn.util.ServerGeneratedLoadTimeConstants.data_api + "/taxa/" + id, callback);
+        },
         boundary : function(id, callback) {
             return $.getJSON(nbn.util.ServerGeneratedLoadTimeConstants.data_api + "/siteBoundaryDatasets/" + id, callback);
         },
