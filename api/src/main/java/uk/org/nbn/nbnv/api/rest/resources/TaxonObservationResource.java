@@ -96,8 +96,7 @@ public class TaxonObservationResource {
     }
 
     @GET
-    @Path("/{datasetKey : [A-Z][A-Z0-9]{7}}/attribute/{attributeID: [0-9]{1,10}}")
-//    @Path("/test")
+    @Path("/{datasetKey : [A-Z][A-Z0-9]{7}}/attributes/{attributeID: [0-9]{1,10}}")
     @Produces(MediaType.APPLICATION_JSON)
     public List<TaxonObservationAttributeValue> getOneObservationAttributeByFilter(
             @TokenUser() User user, 
