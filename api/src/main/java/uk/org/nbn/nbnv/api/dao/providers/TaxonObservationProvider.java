@@ -26,6 +26,16 @@ public class TaxonObservationProvider {
         ORDER_BY("datasetKey");
         return SQL();
     }
+
+    public String filteredSelectOneAttribute(Map<String, Object> params) {
+        BEGIN();
+        SELECT("o.observationID, dad.label, dad.description, toad.textValue");
+        INNER_JOIN("TaxonObservationAttributeData toad ON o.observationID = toad.observationID");
+        INNER_JOIN("DatasetAttributeData dad ON toad.attributeID = dad.attributeID");
+        WHERE("dad.attributeID = #{attributeID}");
+        createSelectQuery(params);
+        return SQL();
+    }
     
     public String filteredSelectGroups(Map<String, Object> params) {
         BEGIN();
@@ -80,7 +90,7 @@ public class TaxonObservationProvider {
                     WHERE("datasetKey IN " + datasetListToCommaList((List<String>) params.get("datasetKey")));
                 }
             }else{
-                WHERE("datasetKey = '" + params.get("datasetKey") + "'");
+                WHERE("o.datasetKey = '" + params.get("datasetKey") + "'");
             }
         }
 

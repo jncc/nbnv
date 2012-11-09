@@ -37,6 +37,7 @@
                     $row.append($('<th></th>').text("Absence"));
                     $row.append($('<th></th>').text("Sensitive"));
                     $row.append($('<th></th>').text("Public"));
+                    $row.append($('<th></th>').append("<select><option>blah</option><option>bloo</option></select>"));
                     $table.append($row);
                     $.each(dataset.observations, function(key, observation){
                         var $row = $('<tr></tr>');
@@ -50,6 +51,7 @@
                         $row.append($('<td></td>').text(observation.absence));
                         $row.append($('<td></td>').text(observation.sensitive));
                         $row.append($('<td></td>').text(!observation.fullVersion));
+                        $row.append($('<td></td>').text('Value'));
                         $table.append($row);
                     });
                     $datasetContent.append($table);

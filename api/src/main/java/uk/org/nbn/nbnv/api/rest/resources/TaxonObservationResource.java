@@ -39,6 +39,7 @@ public class TaxonObservationResource {
     private final String defaultTaxonOutputGroup = "";
     private final String defaultGridRef = "";
     private final String defaultFeatureID = "";
+    private final String defaultAttributeID = "-1";
 
     @Autowired
     TaxonObservationMapper observationMapper;
@@ -92,6 +93,27 @@ public class TaxonObservationResource {
             @QueryParam("gridRef") @DefaultValue(defaultGridRef) String gridRef) {
         //TODO: squareBlurring(?)
         return observationMapper.selectObservationRecordsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef);
+    }
+
+    @GET
+    @Path("/{datasetKey : [A-Z][A-Z0-9]{7}}/attribute/{attributeID: [0-9]{1,10}}")
+//    @Path("/test")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<TaxonObservationAttributeValue> getOneObservationAttributeByFilter(
+            @TokenUser() User user, 
+            @PathParam("datasetKey") @DefaultValue(defaultDatasetKey) String datasetKey, 
+            @PathParam("attributeID") @DefaultValue(defaultAttributeID) int attributeID, 
+            @QueryParam("startYear") @DefaultValue(defaultStartYear) int startYear, 
+            @QueryParam("endYear") @DefaultValue(defaultEndYear) int endYear, 
+            @QueryParam("ptvk") @DefaultValue(defaultTaxa) List<String> taxa, 
+            @QueryParam("spatialRelationship") @DefaultValue(SPATIAL_RELATIONSHIP_DEFAULT) String spatialRelationship,
+            @QueryParam("featureID") @DefaultValue(defaultFeatureID) String featureID,
+            @QueryParam("sensitive") @DefaultValue(defaultSensitive) Boolean sensitive, 
+            @QueryParam("designation") @DefaultValue(defaultDesignation) String designation, 
+            @QueryParam("taxonOutputGroup") @DefaultValue(defaultTaxonOutputGroup) String taxonOutputGroup, 
+            @QueryParam("gridRef") @DefaultValue(defaultGridRef) String gridRef) {
+        //TODO: squareBlurring(?)
+        return observationMapper.selectObservationAttributeByFilter(user, datasetKey, attributeID, startYear, endYear, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef);
     }
 
     @GET
