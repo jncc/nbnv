@@ -14,7 +14,7 @@ $.widget( "ui.nbn_datasetmetadata", {
 		renderFunction: function(datasetToRender) {
 			return {
 				title: $('<a>')
-					.html(datasetToRender.name)
+					.html(datasetToRender.title)
 					.attr('title', 'Click for more information')
 					.attr('target', '_blank')
 					.attr('href', 'http://data.nbn.org.uk/datasetInfo/taxonDataset.jsp?dsKey=' + datasetToRender.datasetKey),

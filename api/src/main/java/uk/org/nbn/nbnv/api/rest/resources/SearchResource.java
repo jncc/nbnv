@@ -4,6 +4,7 @@
  */
 package uk.org.nbn.nbnv.api.rest.resources;
 
+import java.util.List;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import org.apache.solr.client.solrj.SolrQuery;
@@ -65,6 +66,29 @@ public class SearchResource {
         return new SolrHelper()
                 .query(q)
                 .filterQuery("record_type:taxondataset")
+                .sort(sort, SolrQuery.ORDER.asc)
+                .start(start)
+                .rows(rows)
+                .response(solrServer);
+    }
+    
+    @GET
+    @Path("/taxa")
+    @Produces(MediaType.APPLICATION_JSON)
+    public SolrResponse searchTaxa(
+            @QueryParam("rows") @DefaultValue("20") int rows,
+            @QueryParam("start") @DefaultValue("0") int start,
+            @QueryParam("category") List<String> categories,
+            @QueryParam("languageKey") List<String> languages,
+            @QueryParam("sort") String sort,
+            @QueryParam("q") String q
+            ) throws SolrServerException {
+        return new SolrHelper()
+                .query(q)
+                .filterQuery("record_type:taxon")
+                .facetOn("category", "languageKey")
+                .addOrFilter("category", categories)
+                .addOrFilter("languageKey", languages)
                 .sort(sort, SolrQuery.ORDER.asc)
                 .start(start)
                 .rows(rows)

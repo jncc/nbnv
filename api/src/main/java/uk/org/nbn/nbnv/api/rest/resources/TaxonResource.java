@@ -21,7 +21,7 @@ import uk.org.nbn.nbnv.api.solr.SolrResponse;
 @Component
 @Path("/taxa")
 public class TaxonResource {
-    @Autowired SolrServer solrServer;
+    @Autowired SearchResource searchResource;
     @Autowired TaxonMapper taxonMapper;
     @Autowired DatasetMapper datasetMapper;
     
@@ -49,15 +49,6 @@ public class TaxonResource {
             @QueryParam("sort") String sort,
             @QueryParam("q") String q
             ) throws SolrServerException {
-        return new SolrHelper()
-                .query(q)
-                .filterQuery("record_type:taxon")
-                .facetOn("category", "languageKey")
-                .addOrFilter("category", categories)
-                .addOrFilter("languageKey", languages)
-                .sort(sort, SolrQuery.ORDER.asc)
-                .start(start)
-                .rows(rows)
-                .response(solrServer);
+        return searchResource.searchTaxa(rows, start, categories, languages, sort, q);
     }
 }

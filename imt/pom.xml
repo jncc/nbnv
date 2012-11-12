@@ -147,7 +147,8 @@
                                 <include>mapping/InteractiveMappingClient.js</include>
                                 <include>mapping/InteractiveMappingClient-getMapURL.js</include>
                                 
-                                <include>mapping/construction/species/createTaxonSelectionTable.js</include>
+                                <include>mapping/construction/search/__createSearchTable.js</include>
+                                <include>mapping/construction/search/searchTables.js</include>
                             </includes>
                         </aggregation>
                         <aggregation>

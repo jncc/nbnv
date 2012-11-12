@@ -8,19 +8,19 @@
         return toReturn;
     }
 
-    function processResults(serverRes) {
+    function processResults(callbackField, serverRes) {
         var toReturn = [];
         $.each(serverRes, function(i, val) {
-            toReturn.push(['<a href="' + val.pTaxonVersionKey + '">'+ val.name+'</a>']);
+            toReturn.push(['<a href="' + val[callbackField] + '">'+ val.name+'</a>']);
         });
         return toReturn;
     }
 
-    $.namespace("nbn.construction.species.createTaxonSelectionTable", function(callback) {
+    $.namespace("nbn.construction.search__createSearchTable", function(options, callback) {
         //define table variables
         var toReturn = $('<div>').css({"margin-bottom": 30}), table = $('<table>')
             .append($("<thead>")
-                .append($('<tr>').append($('<th>').html("Taxon Name")))
+                .append($('<tr>').append($('<th>').html(options.title)))
             ).appendTo(toReturn);
 
         //construct table
@@ -28,7 +28,7 @@
             "bProcessing": true,
             "bServerSide": true,
             "sPaginationType": "full_numbers",
-            "sAjaxSource": nbn.util.ServerGeneratedLoadTimeConstants.data_api + "/taxa",
+            "sAjaxSource": nbn.util.ServerGeneratedLoadTimeConstants.data_api + "/search/" + options.searchSource,
             "fnServerData": function( sUrl, aoData, fnCallback, oSettings ) {
                 var query = toObject(aoData);
                 oSettings.jqXHR = $.ajax( {
@@ -43,7 +43,7 @@
                             iTotalDisplayRecords: data.header.numFound,
                             iTotalRecords: data.header.numFound,
                             sEcho: query.sEcho,
-                            aaData:processResults(data.results)
+                            aaData:processResults(options.callbackField, data.results)
                         });
                     },
                     "dataType": "jsonp",
