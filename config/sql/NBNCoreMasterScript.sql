@@ -22,6 +22,21 @@ END
 
 GO
 
+IF NOT EXISTS(SELECT principal_id FROM sys.server_principals WHERE name = 'NBNGIS') 
+BEGIN
+	CREATE LOGIN [NBNGIS] WITH PASSWORD=N'ForgottenWindGasClock25', DEFAULT_DATABASE=[master], CHECK_EXPIRATION=OFF, CHECK_POLICY=OFF
+END
+
+GO
+
+IF NOT EXISTS(SELECT principal_id FROM sys.server_principals WHERE name = 'NBNWeb') 
+BEGIN
+	CREATE LOGIN [NBNWeb] WITH PASSWORD=N'ExcellentSceneScoreExamine48', DEFAULT_DATABASE=[master], CHECK_EXPIRATION=OFF, CHECK_POLICY=OFF
+END
+
+GO
+
+
 --------------------------------
 
 CREATE DATABASE [NBNCore]
