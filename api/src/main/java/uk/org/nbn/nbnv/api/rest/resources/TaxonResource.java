@@ -15,6 +15,7 @@ import uk.org.nbn.nbnv.api.model.Dataset;
 import uk.org.nbn.nbnv.api.model.Taxon;
 import uk.org.nbn.nbnv.api.model.User;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
+import uk.org.nbn.nbnv.api.solr.SolrHelper;
 import uk.org.nbn.nbnv.api.solr.SolrResponse;
 
 @Component
@@ -48,53 +49,15 @@ public class TaxonResource {
             @QueryParam("sort") String sort,
             @QueryParam("q") String q
             ) throws SolrServerException {
-        
-        SolrQuery query = new SolrQuery();
-        
-        if(q!=null && !q.isEmpty()) {
-            query.setQuery(q);
-            query.setParam("defType", "dismax");
-        }
-        else {
-            query.setQuery("*:*");
-        }
-        query.setFacet(true);
-
-        query.addFilterQuery("record_type:taxon");
-        if(shouldFilter(categories)) {
-            query.addFilterQuery(getOrFilter("category", categories));
-        }
-        if(shouldFilter(languages)) {
-            query.addFilterQuery(getOrFilter("languageKey", languages));
-        }
-        
-        query.addFacetField("category", "languageKey");
-        if(sort!=null) {
-            query.setSortField(sort, SolrQuery.ORDER.asc);
-        }
-        query.setRows(rows);
-        query.setStart(start);
-        return new SolrResponse(solrServer.query(query));
-    }
-    
-    private static boolean shouldFilter(List<String> collection) {
-        return !collection.isEmpty() && !collection.get(0).equals("*");
-    }
-    
-    private static String getOrFilter(String parameter, List<String> values) {
-        if(values.isEmpty()) {
-            throw new IllegalArgumentException("I need some values in order to filter");
-        }
-        StringBuilder toReturn = new StringBuilder(parameter);
-        toReturn.append(":(");
-        Iterator<String> iterator = values.iterator();
-        
-        toReturn.append(iterator.next());
-        for(; iterator.hasNext();) {
-            toReturn.append(" OR ");
-            toReturn.append(iterator.next());
-        }
-        toReturn.append(")");
-        return toReturn.toString();
+        return new SolrHelper()
+                .query(q)
+                .filterQuery("record_type:taxon")
+                .facetOn("category", "languageKey")
+                .addOrFilter("category", categories)
+                .addOrFilter("languageKey", languages)
+                .sort(sort, SolrQuery.ORDER.asc)
+                .start(start)
+                .rows(rows)
+                .response(solrServer);
     }
 }

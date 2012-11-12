@@ -73,7 +73,6 @@
         <field name="navigationGroupKey" type="string" indexed="true" stored="true"/>
         <field name="category" type="string" indexed="true" stored="true" multiValued="true"/>
   
-        <field name="designationID" type="string" indexed="true" stored="true"/>
         <field name="name" type="testedgengrams" indexed="true" stored="true"/>
         <field name="label" type="string" indexed="true" stored="true"/>
         <field name="code" type="string" indexed="true" stored="true"/>
