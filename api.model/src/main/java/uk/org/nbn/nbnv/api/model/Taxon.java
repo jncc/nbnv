@@ -10,6 +10,7 @@ public class Taxon implements Comparable<Taxon>{
     private String taxonOutputGroupKey;
     private String taxonOutputGroupName;
     private String commonNameTaxonVersionKey;
+    private String commonName;
     private String organismKey;
     private String rank;
     private String nameStatus;
@@ -157,5 +158,19 @@ public class Taxon implements Comparable<Taxon>{
      */
     public void setVersionForm(String versionForm) {
         this.versionForm = versionForm;
+    }
+
+    /**
+     * @return the commonName
+     */
+    public String getCommonName() {
+        return commonName;
+    }
+
+    /**
+     * @param commonName the commonName to set
+     */
+    public void setCommonName(String commonName) {
+        this.commonName = commonName;
     }
 }

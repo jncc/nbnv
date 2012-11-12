@@ -10,8 +10,10 @@ import org.apache.solr.client.solrj.SolrServerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.org.nbn.nbnv.api.dao.warehouse.DatasetMapper;
+import uk.org.nbn.nbnv.api.dao.warehouse.DesignationMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.TaxonMapper;
 import uk.org.nbn.nbnv.api.model.Dataset;
+import uk.org.nbn.nbnv.api.model.Designation;
 import uk.org.nbn.nbnv.api.model.Taxon;
 import uk.org.nbn.nbnv.api.model.User;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
@@ -24,6 +26,7 @@ public class TaxonResource {
     @Autowired SearchResource searchResource;
     @Autowired TaxonMapper taxonMapper;
     @Autowired DatasetMapper datasetMapper;
+    @Autowired DesignationMapper designationMapper;
     
     @GET
     @Produces(MediaType.APPLICATION_JSON) 
@@ -32,6 +35,20 @@ public class TaxonResource {
         return taxonMapper.getTaxon(taxonVersionKey);
     }
     
+    @GET
+    @Produces(MediaType.APPLICATION_JSON) 
+    @Path("{taxonVersionKey}/synonyms")
+    public List<Taxon> getTaxonSynonyms(@PathParam("taxonVersionKey") String taxonVersionKey) {
+        return taxonMapper.selectSynonymsByTVK(taxonVersionKey);
+    }
+    
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("{taxonVersionKey}/designations")
+    public List<Designation> getTaxonDesignations(@PathParam("taxonVersionKey") String taxonVersionKey) {
+        return designationMapper.selectByTaxonVersionKey(taxonVersionKey);
+    }
+
     @GET
     @Produces(MediaType.APPLICATION_JSON) 
     @Path("/{taxonVersionKey}/datasets")
