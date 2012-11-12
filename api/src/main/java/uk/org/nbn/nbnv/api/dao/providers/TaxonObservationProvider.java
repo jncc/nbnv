@@ -32,7 +32,7 @@ public class TaxonObservationProvider {
         SELECT("o.observationID, dad.label, dad.description, utoad.textValue");
         createSelectQuery(params);
         INNER_JOIN("UserTaxonObservationAttributeData utoad ON o.observationID = utoad.observationID");
-        INNER_JOIN("DatasetAttributeData dad ON toad.attributeID = dad.attributeID");
+        INNER_JOIN("DatasetAttributeData dad ON utoad.attributeID = dad.attributeID");
         WHERE("dad.attributeID = #{attributeID}");
         WHERE("utoad.userID = #{user.id}");
   
@@ -75,7 +75,7 @@ public class TaxonObservationProvider {
     private void createSelectQuery(Map<String, Object> params) {
 
         FROM("UserTaxonObservationData o");
-        WHERE("userID = #{user.id}");
+        WHERE("o.userID = #{user.id}");
 
         if (params.containsKey("startYear") && (Integer) params.get("startYear") > -1) {
             WHERE("YEAR(endDate) >= #{startYear}");
