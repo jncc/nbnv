@@ -43,9 +43,8 @@
                         buttons:{
                             Login: function() {
                                 _me._setLoginErrorMessage(); //clear the message box
-                                _me.options.loginUser.doUserLogin(_me._usernameField.val(), _me._passwordField.val(), function(result) {
-                                    if(!result.success)
-                                        _me._setLoginErrorMessage('Login has failed, please try again');
+                                _me.options.loginUser.doUserLogin(_me._usernameField.val(), _me._passwordField.val()).fail(function() {
+                                    _me._setLoginErrorMessage('Login has failed, please try again');
                                 }); 
                             }
                         }
