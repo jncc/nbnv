@@ -3,6 +3,7 @@ package uk.org.nbn.nbnv.importer.validation
 import uk.org.nbn.nbnv.importer.records.NbnRecord
 import uk.org.nbn.nbnv.importer.fidelity.{ResultLevel, Result}
 
+//validate dates fields have been defined
 class Nbnv57Validator {
   def validate(record: NbnRecord) = {
     if ((record.startDateRaw != null && record.dateType != null)

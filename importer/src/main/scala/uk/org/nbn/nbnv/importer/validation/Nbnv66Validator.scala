@@ -4,6 +4,7 @@ import uk.org.nbn.nbnv.importer.records.NbnRecord
 import uk.org.nbn.nbnv.importer.fidelity.{ResultLevel, Result}
 import uk.org.nbn.nbnv.importer.BadDataException
 
+//validate Absence flag
 class Nbnv66Validator {
 
   def validate(record: NbnRecord) = record.absenceRaw map { _.toLowerCase } match {

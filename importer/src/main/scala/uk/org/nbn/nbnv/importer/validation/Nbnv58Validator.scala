@@ -3,6 +3,7 @@ package uk.org.nbn.nbnv.importer.validation
 import uk.org.nbn.nbnv.importer.records.NbnRecord
 import uk.org.nbn.nbnv.importer.fidelity.{ResultLevel, Result}
 
+//validate a location fields have been defined
 class Nbnv58Validator {
   def validate(record: NbnRecord) = {
     if (record.gridReferenceRaw.isDefined

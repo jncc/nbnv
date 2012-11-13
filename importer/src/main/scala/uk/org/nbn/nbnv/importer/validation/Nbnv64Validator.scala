@@ -7,6 +7,7 @@ import uk.org.nbn.nbnv.importer.fidelity.{ResultLevel, Result}
 
 import uk.org.nbn.nbnv.importer.data.Repository
 
+//validate taxon version key exists
 class Nbnv64Validator (repo: Repository) {
   def validate(record: NbnRecord) = {
 

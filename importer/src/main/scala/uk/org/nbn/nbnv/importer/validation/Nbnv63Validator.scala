@@ -5,6 +5,7 @@ import org.gbif.dwc.terms.DwcTerm
 import uk.org.nbn.nbnv.importer.fidelity.{ResultLevel, Result}
 import uk.org.nbn.nbnv.importer.records.NbnRecord
 
+//validate SampleKey length
 class Nbnv63Validator {
   def validate(record: NbnRecord) = {
     val validator = new LengthValidator

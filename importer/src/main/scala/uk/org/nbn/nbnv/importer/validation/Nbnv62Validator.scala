@@ -5,6 +5,7 @@ import org.gbif.dwc.text.StarRecord
 import org.gbif.dwc.terms.DwcTerm
 import uk.org.nbn.nbnv.importer.records.NbnRecord
 
+//validate SurveyKey length
 class Nbnv62Validator {
 
   def validate(record: NbnRecord) = {

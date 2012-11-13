@@ -12,15 +12,19 @@ class ArchiveHeadValidator {
 
     val results = new ListBuffer[Result]
 
+    //Validate RecordKey exists
     val v0 = new Nbnv55Validator
     results.append(v0.validate(record))
 
+    //Validate TaxonVerionKey exits
     val v1 = new Nbnv56Validator
     results.append(v1.validate(record))
 
+    //validate dates fields have been defined
     val v2 = new Nbnv57Validator
     results.append(v2.validate(record))
 
+    //validate a location fields have been defined
     val v3 = new Nbnv58Validator
     results.append(v3.validate(record))
 
