@@ -5,6 +5,7 @@
 <#assign designations=json.readURL("${api}/taxa/${tvk}/designations")>
 <#assign parent=json.readURL("${api}/taxa/${tvk}/parent")>
 <#assign children=json.readURL("${api}/taxa/${tvk}/children")>
+<#assign datasets=json.readURL("${api}/taxa/${tvk}/datasets")>
 <#assign ptvk=taxon.ptaxonVersionKey>
 
 <@template.master title="NBN Gateway - Taxon"
@@ -20,6 +21,7 @@
         <@taxonPageNBNLinks taxon=taxon/>
         <@gridMapContents key=ptvk/>
     </div>
+    <@taxonPageDatasets datasets=datasets/>
 </@template.master>
 
 <#macro gridMapContents key>
@@ -83,7 +85,7 @@
     <div class="tabbed nbn-taxon-page-taxonomy-container">
         <h3>Taxonomy</h3>
         <table>
-            <#if parent?has_content>
+            <#if parent.ptaxonVersionKey??>
                 <tr><td><a href="${parent.taxonVersionKey}">${parent.name}</a></td><td><#if parent.authority??>${parent.authority}</#if></td><td>${parent.rank}</td></tr>
             </#if>
         
@@ -122,5 +124,12 @@
     <div class="tabbed nbn-taxon-page-taxonomy-container">
         <h3>External Links</h3>
         TODO: External links go here
+    </div>
+</#macro>
+
+<#macro taxonPageDatasets datasets>
+    <div class="tabbed">
+        <h3>Datasets</h3>
+        TODO: Datasets go here
     </div>
 </#macro>
