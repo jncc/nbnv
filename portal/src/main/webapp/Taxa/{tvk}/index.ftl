@@ -6,6 +6,7 @@
 <#assign parent=json.readURL("${api}/taxa/${tvk}/parent")>
 <#assign children=json.readURL("${api}/taxa/${tvk}/children")>
 <#assign datasets=json.readURL("${api}/taxa/${tvk}/datasets")>
+<#assign output=json.readURL("${api}/taxonOutputGroups/${taxon.taxonOutputGroupKey}")>
 <#assign ptvk=taxon.ptaxonVersionKey>
 
 <@template.master title="NBN Gateway - Taxon"
@@ -13,7 +14,7 @@
     csss=["/css/taxon-page.css"]>
     <h1>${taxon.name} <#if taxon.authority??>${taxon.authority}</#if></h1>
     <div>
-        <@taxonPageTaxonData taxon=taxon/>
+        <@taxonPageTaxonData taxon=taxon outputGroup=output/>
         <@taxonPageSynonyms syn=synonyms/>
         <@taxonPageTaxonomy parent=parent taxon=taxon children=children/>
         <@taxonPageDesignations des=designations/>
@@ -34,14 +35,14 @@
 
 <#macro taxonPageNBNLinks taxon>
     <div class="tabbed nbn-taxon-page-right-container">
-        <h3>Tools</h3>
-        <div class="nbn-taxon-page-list"><a href="/Reports/Single_Species/${taxon.taxonVersionKey}/Grid_Map">Grid Map for ${taxon.name}</a></div>
-        <div class="nbn-taxon-page-list"><a href="/imt/?mode=SPECIES&species=${taxon.taxonVersionKey}">Interactive Map for ${taxon.name}</a></div>
-        <div class="nbn-taxon-page-list">List of sites for ${taxon.name}</div>
+        <h3>Explore Records</h3>
+        <div class="nbn-taxon-page-list"><a href="/Reports/Single_Species/${taxon.taxonVersionKey}/Grid_Map">Grid Map</a></div>
+        <div class="nbn-taxon-page-list"><a href="/imt/?mode=SPECIES&species=${taxon.taxonVersionKey}">Interactive Map</a></div>
+        <div class="nbn-taxon-page-list">List of sites</div>
     </div>
 </#macro>
 
-<#macro taxonPageTaxonData taxon>
+<#macro taxonPageTaxonData taxon outputGroup>
     <div class="tabbed nbn-taxon-page-taxonomy-container">
         <h3>Taxon</h3>
         <table>
@@ -57,6 +58,7 @@
             <tr><td>Rank:</td><td>${taxon.rank}</td></tr>
             <tr><td>Name Status:</td><td>${taxon.nameStatus}</td></tr>
             <tr><td>Name Form:</td><td>${taxon.versionForm}</td></tr>
+            <#if !json.isNull(outputGroup)><tr><td>Output Group:</td><td>${outputGroup.name}</td></tr></#if>
         </table>
     </div>
 </#macro>
@@ -140,6 +142,8 @@
                     </tr>
                 </#list>
             </table>
+        <#else>
+            None
         </#if>
     </div>
 </#macro>

@@ -19,7 +19,7 @@ public class TaxonOutputGroupResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<TaxonOutputGroup> getTaxonNavigationGroups() {
+    public List<TaxonOutputGroup> getTaxonOutputGroups() {
         return taxonOutputGroupMapper.selectAll();
     }
 
