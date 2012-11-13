@@ -85,7 +85,7 @@
     <div class="tabbed nbn-taxon-page-taxonomy-container">
         <h3>Taxonomy</h3>
         <table>
-            <#if parent.ptaxonVersionKey??>
+            <#if !json.isNull(parent)>
                 <tr><td><a href="${parent.taxonVersionKey}">${parent.name}</a></td><td><#if parent.authority??>${parent.authority}</#if></td><td>${parent.rank}</td></tr>
             </#if>
         
