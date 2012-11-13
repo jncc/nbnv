@@ -15,6 +15,7 @@
         <@taxonPageTaxonomy tax=taxon/>
         <@taxonPageDesignations des=designations/>
         <@taxonPageLinks links=taxon/>
+        <@taxonPageNBNLinks taxon=taxon/>
         <@gridMapContents key=ptvk/>
     </div>
 </@template.master>
@@ -24,6 +25,15 @@
         <h3>Map</h3>
         <img id="nbn-grid-map-busy-image" src='/img/ajax-loader-medium.gif'>
         <img id="nbn-grid-map-image" class="nbn-centre-element">
+    </div>
+</#macro>
+
+<#macro taxonPageNBNLinks taxon>
+    <div class="tabbed" id="nbn-taxon-page-right-container">
+        <h3>Tools</h3>
+        <div class="nbn-taxon-page-list"><a href="/Reports/Single_Species/${taxon.taxonVersionKey}/Grid_Map">Grid Map for ${taxon.name}</a></div>
+        <div class="nbn-taxon-page-list"><a href="/imt/?species=${taxon.taxonVersionKey}">Interactive Map for ${taxon.name}</a></div>
+        <div class="nbn-taxon-page-list">List of sites for ${taxon.name}</div>
     </div>
 </#macro>
 
