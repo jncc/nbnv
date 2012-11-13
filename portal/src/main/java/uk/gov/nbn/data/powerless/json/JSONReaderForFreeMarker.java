@@ -60,6 +60,7 @@ public class JSONReaderForFreeMarker {
         }
         else { //assuming post for now
             HttpURLConnection conn = passthrough.openConnection(new URL(url));
+            
             conn.setRequestMethod(requestType);
             conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded" );
             conn.setDoOutput(true);
@@ -85,6 +86,12 @@ public class JSONReaderForFreeMarker {
     }
     
     private TemplateModel readAndClose(HttpURLConnection conn) throws IOException, TemplateModelException, JSONException, JSONReaderStatusException {
-        return readAndClose(new InputStreamReader(passthrough.getInputStream(conn)));
+        if(conn.getResponseCode() == 204) { // NBNV-227 Check for 204 response and handle them as nothings
+            conn.disconnect();
+            return TemplateModel.NOTHING;
+        }
+        else {
+            return readAndClose(new InputStreamReader(passthrough.getInputStream(conn)));
+        }
     }
 }
