@@ -515,6 +515,43 @@ GO
 
 GO
 
+CREATE VIEW [dbo].[OrganismData] WITH SCHEMABINDING AS (
+	SELECT
+		o.[key]
+		, o.parentOrganismKey 
+	FROM [dbo].[Organism] o
+);
+
+GO
+
+CREATE UNIQUE CLUSTERED INDEX [cidx_OrganismData_key] ON [dbo].[OrganismData]
+(
+	[key] ASC
+);
+
+GO
+
+--EXEC usp_dev_AddViewToPublication 'OrganismData';
+
+GO
+
+CREATE VIEW [dbo].[OrganismTaxonData] WITH SCHEMABINDING AS (
+	SELECT
+		o.[key]
+		, o.parentOrganismKey 
+		, t.pTaxonVersionKey
+		, tp.pTaxonVersionKey AS parentPTaxonVersionKey
+	FROM [dbo].[OrganismData] o
+	INNER JOIN [dbo].[TaxonData] t ON t.organismKey = o.[key]
+	INNER JOIN [dbo].[TaxonData] tp ON tp.organismKey = o.parentOrganismKey AND tp.taxonVersionKey = tp.pTaxonVersionKey 
+);
+
+GO
+
+--EXEC usp_dev_AddViewToPublicationAsView 'OrganismTaxonData';
+
+GO
+
 /*
  *
  * Designation Views

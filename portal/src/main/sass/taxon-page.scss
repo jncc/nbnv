@@ -1,7 +1,8 @@
-    #nbn-taxon-page-taxonomy-container{
+    .nbn-taxon-page-taxonomy-container{
         width: 62%;
         display: inline-block;
         float: left;
+        position: relative;
     }
 
     #nbn-grid-map-container{
@@ -10,7 +11,7 @@
         position: relative;
     }
 
-    #nbn-taxon-page-right-container{
+    .nbn-taxon-page-right-container{
         width: 33%;
         display: inline-block;
         position: relative;
@@ -34,4 +35,8 @@
     div.nbn-taxon-page-list{
         padding-top: 2px;
         padding-bottom: 2px;
+    }
+
+    span.nbn-taxon-page-indent{
+        width: 2em;
     }
