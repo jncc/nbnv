@@ -218,7 +218,6 @@ nbn.mapping.construction.WidgetOptionsCreator = function(interactiveMapper){
             var _speciesSelector = nbn.construction.search.createTaxonTable(_setSelectedSpecies);
 
             _singleSpeciesDatasetSelectionTree = $('<div>').nbn_treewidget({
-                    urlOfDescriptionFile : nbn.util.ServerGeneratedLoadTimeConstants.data_api + "/taxa/NBNSYS0000005629/datasets",
                     allowMultipleSelection: 'checkbox',
                     selectDeselect: true,
                     dataFilter: function(dataset) {
@@ -328,7 +327,6 @@ nbn.mapping.construction.WidgetOptionsCreator = function(interactiveMapper){
             };
 
             _designationDatasetsTree = $('<div>').nbn_treewidget({
-                    urlOfDescriptionFile : nbn.util.ServerGeneratedLoadTimeConstants.data_api + "/designations/BIRDSDIR-A1/datasets",
                     dataFilter: function(designation) {
                         return $.extend({ title : designation.name, select: true }, designation);
                     },

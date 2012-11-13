@@ -56,7 +56,7 @@ var times = 0;
         
         _create: function() {
             this.element.addClass( "nbn-treewidget" ); //set the class of the nbn-treewidget       
-            this._createTree();
+            this.setUrlOfDescriptionFile(this.options.urlOfDescriptionFile);
             if(this.options.selectDeselect === true)
                 this.addSelectDeselect();
         },
@@ -71,8 +71,10 @@ var times = 0;
 
         setUrlOfDescriptionFile : function(newUrl) {
             this.options.urlOfDescriptionFile = newUrl;
-            this._treeRepresentation.remove();
-            this._createTree();
+            if(this._treeRepresentation)
+                this._treeRepresentation.remove();
+            if(newUrl)
+                this._createTree();
         },
 		
         getChildText : function(id) {
@@ -106,7 +108,7 @@ var times = 0;
         
         _getAllChildrenNodes: function(checked) {
             var toReturn = [];
-            $.each(this._tree.getRoot().getChildren(), function(i, node) {
+            $.each(this._tree.getRoot().getChildren() || [], function(i, node) {
                 if(!node.hasChildren() && node.isSelected() === checked) {
                     toReturn.push(node);
                 }
@@ -115,7 +117,8 @@ var times = 0;
         },
 	
         isFullyChecked: function() {
-            return this._tree.count() === this._tree.getSelectedNodes().length;
+            //minus one for the root node
+            return (this._tree.count() - 1) === this._tree.getSelectedNodes().length;
         },
 		
         _checkAllWithValue: function(toCheck) {
