@@ -13,6 +13,8 @@
 *	(selection) a selection listener which will notify of the current set of elements have been selected.
 *	(selected) a seleted listener which will notify that a new element has been selected.
 *
+* @warning :- This tree widget is now deprecated and is only running to support 
+*   single level trees (i.e. lists)
 */
 var times = 0;
 (function( $, undefined ) {
