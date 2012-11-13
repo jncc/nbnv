@@ -105,14 +105,14 @@
         <h3>Designations</h3>
         <#if des?has_content>
             <table>
-            <#list des as d>
-                <tr>
-                    <td><a href="/Designations/${d.designation.code}">${d.designation.name}</a></td>
-                    <td>${d.designation.code}</td>
-                    <td>TODO: start/end date</td>
-                    <td>TODO: source</td>
-                </tr>
-            </#list>
+                <#list des as d>
+                    <tr>
+                        <td><a href="/Designations/${d.designation.code}">${d.designation.name}</a></td>
+                        <td>${d.designation.code}</td>
+                        <td>TODO: start/end date</td>
+                        <td>TODO: source</td>
+                    </tr>
+                </#list>
             </table>
         <#else>
             <div>None</div>
@@ -128,8 +128,18 @@
 </#macro>
 
 <#macro taxonPageDatasets datasets>
-    <div class="tabbed">
+    <div class="tabbed nbn-taxon-page-dataset-container">
         <h3>Datasets</h3>
-        TODO: Datasets go here
+        <#if datasets?has_content>
+            <table>
+                <#list datasets as d>
+                    <tr>
+                        <td><a href="/Datasets/${d.key}">${d.title}</a></td>
+                        <td><a href="/Organisations/${d.organisationID}">${d.organisationName}</a></td>
+                        <td>${d.formattedDateUploaded}</td>
+                    </tr>
+                </#list>
+            </table>
+        </#if>
     </div>
 </#macro>
