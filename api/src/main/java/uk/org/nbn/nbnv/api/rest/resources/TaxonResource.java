@@ -1,11 +1,8 @@
 package uk.org.nbn.nbnv.api.rest.resources;
 
-import java.util.Iterator;
 import java.util.List;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import org.apache.solr.client.solrj.SolrQuery;
-import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -13,11 +10,10 @@ import uk.org.nbn.nbnv.api.dao.warehouse.DatasetMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.DesignationMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.TaxonMapper;
 import uk.org.nbn.nbnv.api.model.Dataset;
-import uk.org.nbn.nbnv.api.model.Designation;
 import uk.org.nbn.nbnv.api.model.Taxon;
+import uk.org.nbn.nbnv.api.model.TaxonDesignation;
 import uk.org.nbn.nbnv.api.model.User;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
-import uk.org.nbn.nbnv.api.solr.SolrHelper;
 import uk.org.nbn.nbnv.api.solr.SolrResponse;
 
 @Component
@@ -45,7 +41,7 @@ public class TaxonResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{taxonVersionKey}/designations")
-    public List<Designation> getTaxonDesignations(@PathParam("taxonVersionKey") String taxonVersionKey) {
+    public List<TaxonDesignation> getTaxonDesignations(@PathParam("taxonVersionKey") String taxonVersionKey) {
         return designationMapper.selectByTaxonVersionKey(taxonVersionKey);
     }
 
