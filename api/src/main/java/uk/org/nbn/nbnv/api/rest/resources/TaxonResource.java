@@ -37,7 +37,21 @@ public class TaxonResource {
     public List<Taxon> getTaxonSynonyms(@PathParam("taxonVersionKey") String taxonVersionKey) {
         return taxonMapper.selectSynonymsByTVK(taxonVersionKey);
     }
-    
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON) 
+    @Path("{taxonVersionKey}/parent")
+    public Taxon getTaxonParent(@PathParam("taxonVersionKey") String taxonVersionKey) {
+        return taxonMapper.getParentTaxon(taxonVersionKey);
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON) 
+    @Path("{taxonVersionKey}/children")
+    public List<Taxon> getTaxonChildren(@PathParam("taxonVersionKey") String taxonVersionKey) {
+        return taxonMapper.selectChildrenByTVK(taxonVersionKey);
+    }
+
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{taxonVersionKey}/designations")

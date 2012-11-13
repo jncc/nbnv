@@ -3,6 +3,8 @@
 <#assign ptaxon=json.readURL("${api}/taxa/${taxon.ptaxonVersionKey}")>
 <#assign synonyms=json.readURL("${api}/taxa/${tvk}/synonyms")>
 <#assign designations=json.readURL("${api}/taxa/${tvk}/designations")>
+<#assign parent=json.readURL("${api}/taxa/${tvk}/parent")>
+<#assign children=json.readURL("${api}/taxa/${tvk}/children")>
 <#assign ptvk=taxon.ptaxonVersionKey>
 
 <@template.master title="NBN Gateway - Taxon"
@@ -12,7 +14,7 @@
     <div>
         <@taxonPageTaxonData taxon=taxon/>
         <@taxonPageSynonyms syn=synonyms/>
-        <@taxonPageTaxonomy tax=taxon/>
+        <@taxonPageTaxonomy parent=parent taxon=taxon children=children/>
         <@taxonPageDesignations des=designations/>
         <@taxonPageLinks links=taxon/>
         <@taxonPageNBNLinks taxon=taxon/>
@@ -29,16 +31,16 @@
 </#macro>
 
 <#macro taxonPageNBNLinks taxon>
-    <div class="tabbed" id="nbn-taxon-page-right-container">
+    <div class="tabbed nbn-taxon-page-right-container">
         <h3>Tools</h3>
         <div class="nbn-taxon-page-list"><a href="/Reports/Single_Species/${taxon.taxonVersionKey}/Grid_Map">Grid Map for ${taxon.name}</a></div>
-        <div class="nbn-taxon-page-list"><a href="/imt/?species=${taxon.taxonVersionKey}">Interactive Map for ${taxon.name}</a></div>
+        <div class="nbn-taxon-page-list"><a href="/imt/?mode=SPECIES&species=${taxon.taxonVersionKey}">Interactive Map for ${taxon.name}</a></div>
         <div class="nbn-taxon-page-list">List of sites for ${taxon.name}</div>
     </div>
 </#macro>
 
 <#macro taxonPageTaxonData taxon>
-    <div class="tabbed" id="nbn-taxon-page-taxonomy-container">
+    <div class="tabbed nbn-taxon-page-taxonomy-container">
         <h3>Taxon</h3>
         <table>
             <tr><td>Name:</td><td>${taxon.name}</td></tr>
@@ -58,7 +60,7 @@
 </#macro>
 
 <#macro taxonPageSynonyms syn>
-    <div class="tabbed" id="nbn-taxon-page-taxonomy-container">
+    <div class="tabbed nbn-taxon-page-taxonomy-container">
         <h3>Synonyms</h3>
         <#if syn?has_content>
             <table>
@@ -77,15 +79,27 @@
     </div>
 </#macro>
 
-<#macro taxonPageTaxonomy tax>
-    <div class="tabbed" id="nbn-taxon-page-taxonomy-container">
+<#macro taxonPageTaxonomy parent taxon children>
+    <div class="tabbed nbn-taxon-page-taxonomy-container">
         <h3>Taxonomy</h3>
-        TODO: Management Taxonomy goes here
+        <table>
+            <#if parent??>
+                <tr><td><a href="${parent.taxonVersionKey}">${parent.name}</a></td><td><#if parent.authority??>${parent.authority}</#if></td><td>${parent.rank}</td></tr>
+            </#if>
+        
+            <tr><td><span class="nbn-taxon-page-indent">&nbsp;</span>${taxon.name}</td><td><#if taxon.authority??>${taxon.authority}</#if></td><td>${taxon.rank}</td></tr>
+
+            <#if children?has_content>
+                <#list children as c>
+                    <tr><td><span class="nbn-taxon-page-indent">&nbsp;</span><span class="nbn-taxon-page-indent">&nbsp;</span><a href="${c.taxonVersionKey}">${c.name}</a></td><td><#if c.authority??>${c.authority}</#if></td><td>${c.rank}</td></tr>
+                </#list>
+            </#if>
+        </table>
     </div>
 </#macro>
 
 <#macro taxonPageDesignations des>
-    <div class="tabbed" id="nbn-taxon-page-taxonomy-container">
+    <div class="tabbed nbn-taxon-page-taxonomy-container">
         <h3>Designations</h3>
         <#if des?has_content>
             <table>
@@ -105,7 +119,7 @@
 </#macro>
 
 <#macro taxonPageLinks links>
-    <div class="tabbed" id="nbn-taxon-page-taxonomy-container">
+    <div class="tabbed nbn-taxon-page-taxonomy-container">
         <h3>External Links</h3>
         TODO: External links go here
     </div>

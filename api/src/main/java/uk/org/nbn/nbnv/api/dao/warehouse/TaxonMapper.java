@@ -26,4 +26,21 @@ public interface TaxonMapper {
     
     @Select("SELECT taxonVersionKey, tdt.pTaxonVersionKey, t.name, authority, languageKey, taxonOutputGroupKey, datasetKey, observationCount, togd.name taxonOutputGroupName FROM TaxonDatasetTaxonData tdt INNER JOIN TaxonData t ON tdt.pTaxonVersionKey = t.taxonVersionKey INNER JOIN TaxonOutputGroupData togd ON t.taxonOutputGroupKey = togd.\"key\" WHERE datasetKey = #{datasetKey} ORDER BY name")
     List<TaxonWithDatasetStats> selectByDatasetKey(String datasetKey);
+
+    @Select("SELECT tp.*, ct.name AS commonName "
+            + "FROM TaxonData t "
+            + "INNER JOIN OrganismData o ON o.[key] = t.organismKey "
+            + "INNER JOIN TaxonData tp ON tp.organismKey = o.parentOrganismKey AND tp.taxonVersionKey = tp.pTaxonVersionKey "
+            + "LEFT JOIN TaxonData ct ON ct.taxonVersionKey = tp.commonNameTaxonVersionKey "
+            + "WHERE t.taxonVersionKey = #{id}")
+    Taxon getParentTaxon(String taxonVersionKey);
+
+    @Select("SELECT tp.*, ct.name AS commonName "
+            + "FROM TaxonData t "
+            + "INNER JOIN OrganismData o ON o.parentOrganismKey = t.organismKey "
+            + "INNER JOIN TaxonData tp ON tp.organismKey = o.[key] AND tp.taxonVersionKey = tp.pTaxonVersionKey "
+            + "LEFT JOIN TaxonData ct ON ct.taxonVersionKey = tp.commonNameTaxonVersionKey "
+            + "WHERE t.taxonVersionKey = #{id}")
+    List<Taxon> selectChildrenByTVK(String taxonVersionKey);
+
 }
