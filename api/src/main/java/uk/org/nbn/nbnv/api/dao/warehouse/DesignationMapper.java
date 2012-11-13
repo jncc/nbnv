@@ -32,7 +32,7 @@ public interface DesignationMapper {
             + "INNER JOIN TaxonData t ON t.pTaxonVersionKey = dtd.pTaxonVersionKey "
             + "WHERE t.taxonVersionKey = #{id}")
     @Results(value = {
-        @Result(property="designation", column="code", javaType=Designation.class, one=@One(select="uk.org.nbn.nbnv.api.dao.warehouse.DesignationMapper.selectByID")),
+        @Result(property="designation", column="code", javaType=Designation.class, one=@One(select="uk.org.nbn.nbnv.api.dao.warehouse.DesignationMapper.selectByID"))
     })
     List<TaxonDesignation> selectByTaxonVersionKey(String taxonVersionKey);
 }
