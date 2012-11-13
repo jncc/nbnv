@@ -14,7 +14,7 @@
 *	(selected) a seleted listener which will notify that a new element has been selected.
 *
 */
-
+var times = 0;
 (function( $, undefined ) {
     $.widget( "ui.nbn_treewidget", {
         options: {
@@ -28,35 +28,30 @@
             var _me = this;
             this.element.prepend(this._treeRepresentation = $('<div>').dynatree({
                  checkbox: true,
-                 selectMode: 1,
+                 selectMode: (_me.options.allowMultipleSelection === 'radio') ? 1 : 2,
                  initAjax:{
                     url: _me.options.urlOfDescriptionFile,
                     dataFilter : function(data) {
                         //convert the data that came in and present it as a object 
                         //that dynatree can cope with. Use the dataFilterFunction 
-                        //to transform the object in nessersary
+                        //to transform the object if nessersary
                         return JSON.stringify($.map($.parseJSON(data), _me.options.dataFilter));
                     }
-                },
-                onLazyRead: function(node) {
-                    $.getJSON(nbn.util.ServerGeneratedLoadTimeConstants.data_api + "/taxa", {
-                            rows: 2147483647, category: node.data.id
-                        }, function(solr) {
-                            node.setLazyNodeStatus(DTNodeStatus_Ok);
-                            $.each(solr.results, function(i, result) {
-                               node.addChild($.extend({title: result.name}, result)); 
-                            });
-                    });
                 },
                 onSelect : function(flag, dtnode) {
                     if(!dtnode.hasChildren()) {
                         _me._trigger("selected", 0, dtnode.data);
                     }
+                    
+                    _me._trigger("childrenSelectionListener", 0, _me.getAllChildrenChecked()); //notify of check change
                 }, 
-                
-                 classNames: {checkbox: "dynatree-radio"}
+                onPostInit: function(node) {
+                    _me._trigger("loaded", 0); //notify of check change
+                },
+                classNames: {checkbox: (_me.options.allowMultipleSelection === 'radio') ? "dynatree-radio" : "dynatree-checkbox"}
              }));
              this._tree = this._treeRepresentation.dynatree("getTree");
+             
         }, 
         
         _create: function() {

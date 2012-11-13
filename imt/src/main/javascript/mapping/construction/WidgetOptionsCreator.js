@@ -222,7 +222,7 @@ nbn.mapping.construction.WidgetOptionsCreator = function(interactiveMapper){
                     allowMultipleSelection: 'checkbox',
                     selectDeselect: true,
                     dataFilter: function(dataset) {
-                        return $.extend({ title : dataset.name }, dataset);
+                        return $.extend({ title : dataset.name, select: true}, dataset);
                     },
                     childrenSelectionListener: function(event, selected) {
                         _setSelectedSpeciesDatasets(selected);
@@ -330,7 +330,7 @@ nbn.mapping.construction.WidgetOptionsCreator = function(interactiveMapper){
             _designationDatasetsTree = $('<div>').nbn_treewidget({
                     urlOfDescriptionFile : nbn.util.ServerGeneratedLoadTimeConstants.data_api + "/designations/BIRDSDIR-A1/datasets",
                     dataFilter: function(designation) {
-                        return $.extend({ title : designation.name }, designation);
+                        return $.extend({ title : designation.name, select: true }, designation);
                     },
                     allowMultipleSelection: 'checkbox',
                     selectDeselect: true,
