@@ -47,7 +47,7 @@ trait GridSqareInfoCompanion {
   }
 
   //Returns true if easting / northing can be converted to a grid square and false + error meassage if it can't
-  def testEastingNorthing(east: Int, north: Int) : (Boolean, Option[String]) = {
+  def IsValidEastingNorthing(east: Int, north: Int) : (Boolean, Option[String]) = {
     try {
       getGridSquareByEastingNorthing(east, north, None)
       (true, None)

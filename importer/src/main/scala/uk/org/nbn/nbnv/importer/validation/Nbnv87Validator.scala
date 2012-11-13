@@ -38,9 +38,9 @@ class Nbnv87Validator {
     else {
       val (result, error) =
         srs match {
-          case 27700 => BritishGridSquareInfo.testEastingNorthing(easting, northing)
-          case 29903 => IrishGridSquareInfo.testEastingNorthing(easting, northing)
-          case 23030 => ChannelIslandGridSquareInfo.testEastingNorthing(easting, northing)
+          case 27700 => BritishGridSquareInfo.IsValidEastingNorthing(easting, northing)
+          case 29903 => IrishGridSquareInfo.IsValidEastingNorthing(easting, northing)
+          case 23030 => ChannelIslandGridSquareInfo.IsValidEastingNorthing(easting, northing)
         }
 
       if (result == true) {
