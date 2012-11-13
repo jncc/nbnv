@@ -55,7 +55,7 @@ CREATE TABLE TaxonData(
 	authority varchar(8000) NULL,
 	lang char(2) NULL,
 	outputGroupKey char(16) NULL,
-	navigationGroupKey char(16) NULL,
+	commonNameTaxonVersionKey char(16) NULL,
         PRIMARY KEY (taxonVersionKey));
 
 CREATE TABLE SiteOverlaps(

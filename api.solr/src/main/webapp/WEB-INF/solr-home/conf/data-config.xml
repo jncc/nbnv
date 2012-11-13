@@ -8,6 +8,11 @@
         <entity name="taxon" query="Select * From TaxonData" transformer="TemplateTransformer">	  
             <field column="record_id" template="TAXON-${taxon.taxonVersionKey}" />
             <field column="record_type" template="taxon" />
+            <entity name="navigation-catgory" query="
+                        Select taxonNavigationGroupKey as category
+                        From TaxonNavigationData 
+                        Where TaxonVersionKey = '${taxon.pTaxonVersionKey}'" transformer="TemplateTransformer">	  
+            </entity>
         </entity>
         <entity name="designation" query="Select * From DesignationData" transformer="TemplateTransformer">
             <field column="record_id" template="DESIGNATION-${designation.id}" />
@@ -21,9 +26,10 @@
             <field column="record_id" template="SITEBOUNDARYCATEGORY-${siteboundarycategory.id}" />
             <field column="record_type" template="siteboundarycategory" />
         </entity>
-        <entity name="siteboundarydataset" query="Select * From SiteBoundaryDatasetData" transformer="TemplateTransformer">
-            <field column="record_id" template="SITEBOUNDARYDATASET-${siteboundarydataset.datasetKey}" />
-            <field column="record_type" template="siteboundarydataset" />
+        <entity name="dataset" query="Select lower(typeName) as [typeNameLower],* From DatasetData" transformer="TemplateTransformer">
+            <field column="record_id" template="DATASET-${dataset.key}" />
+            <field column="record_type" template="${dataset.typeNameLower}dataset" />
+            <field column="name" template="${dataset.title}" />
         </entity>
     </document>
 </dataConfig>

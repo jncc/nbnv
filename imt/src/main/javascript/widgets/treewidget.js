@@ -13,8 +13,10 @@
 *	(selection) a selection listener which will notify of the current set of elements have been selected.
 *	(selected) a seleted listener which will notify that a new element has been selected.
 *
+* @warning :- This tree widget is now deprecated and is only running to support 
+*   single level trees (i.e. lists)
 */
-
+var times = 0;
 (function( $, undefined ) {
     $.widget( "ui.nbn_treewidget", {
         options: {
@@ -28,40 +30,35 @@
             var _me = this;
             this.element.prepend(this._treeRepresentation = $('<div>').dynatree({
                  checkbox: true,
-                 selectMode: 1,
+                 selectMode: (_me.options.allowMultipleSelection === 'radio') ? 1 : 2,
                  initAjax:{
                     url: _me.options.urlOfDescriptionFile,
                     dataFilter : function(data) {
                         //convert the data that came in and present it as a object 
                         //that dynatree can cope with. Use the dataFilterFunction 
-                        //to transform the object in nessersary
+                        //to transform the object if nessersary
                         return JSON.stringify($.map($.parseJSON(data), _me.options.dataFilter));
                     }
-                },
-                onLazyRead: function(node) {
-                    $.getJSON(nbn.util.ServerGeneratedLoadTimeConstants.data_api + "/taxa", {
-                            rows: 2147483647, category: node.data.id
-                        }, function(solr) {
-                            node.setLazyNodeStatus(DTNodeStatus_Ok);
-                            $.each(solr.results, function(i, result) {
-                               node.addChild($.extend({title: result.name}, result)); 
-                            });
-                    });
                 },
                 onSelect : function(flag, dtnode) {
                     if(!dtnode.hasChildren()) {
                         _me._trigger("selected", 0, dtnode.data);
                     }
+                    
+                    _me._trigger("childrenSelectionListener", 0, _me.getAllChildrenChecked()); //notify of check change
                 }, 
-                
-                 classNames: {checkbox: "dynatree-radio"}
+                onPostInit: function(node) {
+                    _me._trigger("loaded", 0); //notify of check change
+                },
+                classNames: {checkbox: (_me.options.allowMultipleSelection === 'radio') ? "dynatree-radio" : "dynatree-checkbox"}
              }));
              this._tree = this._treeRepresentation.dynatree("getTree");
+             
         }, 
         
         _create: function() {
             this.element.addClass( "nbn-treewidget" ); //set the class of the nbn-treewidget       
-            this._createTree();
+            this.setUrlOfDescriptionFile(this.options.urlOfDescriptionFile);
             if(this.options.selectDeselect === true)
                 this.addSelectDeselect();
         },
@@ -76,8 +73,10 @@
 
         setUrlOfDescriptionFile : function(newUrl) {
             this.options.urlOfDescriptionFile = newUrl;
-            this._treeRepresentation.remove();
-            this._createTree();
+            if(this._treeRepresentation)
+                this._treeRepresentation.remove();
+            if(newUrl)
+                this._createTree();
         },
 		
         getChildText : function(id) {
@@ -111,7 +110,7 @@
         
         _getAllChildrenNodes: function(checked) {
             var toReturn = [];
-            $.each(this._tree.getRoot().getChildren(), function(i, node) {
+            $.each(this._tree.getRoot().getChildren() || [], function(i, node) {
                 if(!node.hasChildren() && node.isSelected() === checked) {
                     toReturn.push(node);
                 }
@@ -120,7 +119,8 @@
         },
 	
         isFullyChecked: function() {
-            return this._tree.count() === this._tree.getSelectedNodes().length;
+            //minus one for the root node
+            return (this._tree.count() - 1) === this._tree.getSelectedNodes().length;
         },
 		
         _checkAllWithValue: function(toCheck) {

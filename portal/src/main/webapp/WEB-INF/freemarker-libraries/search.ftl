@@ -3,6 +3,20 @@
     be powered by NBN Gateway API standardised search resources
 -->
 
+<!--Define a combo facet filter for searching-->
+<#macro combo id name data counts>
+    <h1>${name}</h1>
+    <select name="${id}">
+        <option value="*">All</option>
+        <#list data as currentFacet>
+            <option 
+                value="${currentFacet.key}"
+                ${RequestParameters[id]?seq_contains(currentFacet.key)?string('selected="selected"','')}
+                >${currentFacet.name}</option>
+        </#list>
+    </select>
+</#macro>
+
 <#--Define a tree macro for facet rendering
     @param id (Scalar) The query search parameter of the current facet
     @param name (Scalar) Specifies the name of the current facet
@@ -104,8 +118,8 @@
 -->
 <#macro search url query={} facets=[]>
     <#assign search=json.readURL(url, query)/>
-    <form class="nbn-search">    
-        <#--<@__facets facets search.facetFields/>-->
+    <form class="nbn-search" nbn-search-node="${url}">    
+        <@__facets facets search.facetFields/>
         <div class="controls">
             Search - <input type="text" name="q" value="${RequestParameters.q?first!''}"/>
             Show - <@pagination.show/> 

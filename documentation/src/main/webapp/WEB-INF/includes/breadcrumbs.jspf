@@ -1,0 +1,8 @@
+<%
+    String currentURL = request.getRequestURL().toString();
+    int start, endOfSchemeIndex = currentURL.indexOf('/',currentURL.indexOf("//")+2)+1;
+%>
+<a href="<%=currentURL.substring(0,endOfSchemeIndex)%>">NBN Gateway</a>
+<%while((endOfSchemeIndex = currentURL.indexOf('/',start = endOfSchemeIndex)+1) != 0) {%>
+    > <a href="<%=currentURL.substring(0,endOfSchemeIndex)%>"><%=currentURL.substring(start,endOfSchemeIndex-1).replaceAll("_"," ")%></a>
+<%}%>

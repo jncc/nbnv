@@ -15,7 +15,7 @@ nbn.mapping.construction.WidgetOptionsCreator.prototype.createNBNBoundaryLayer =
                     allowMultipleSelection: 'radio',
                     dataFilter : function(sb) {
                         return { 
-                            title: sb.name,
+                            title: sb.title,
                             datasetKey: sb.datasetKey
                         };
                     }

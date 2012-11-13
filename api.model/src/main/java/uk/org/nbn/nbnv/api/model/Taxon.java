@@ -9,7 +9,13 @@ public class Taxon implements Comparable<Taxon>{
     private String languageKey;
     private String taxonOutputGroupKey;
     private String taxonOutputGroupName;
-    
+    private String commonNameTaxonVersionKey;
+    private String commonName;
+    private String organismKey;
+    private String rank;
+    private String nameStatus;
+    private String versionForm;
+
     public Taxon(){}
     
     public Taxon(String taxonVersionKey, String pTaxonVersionKey, String name, String authority, String languageKey, String taxonOutputGroupKey, String taxonOutputGroupName){
@@ -82,5 +88,89 @@ public class Taxon implements Comparable<Taxon>{
 
     public void setTaxonOutputGroupName(String taxonOutputGroupName) {
         this.taxonOutputGroupName = taxonOutputGroupName;
+    }
+
+    /**
+     * @return the commonNameTaxonVersionKey
+     */
+    public String getCommonNameTaxonVersionKey() {
+        return commonNameTaxonVersionKey;
+    }
+
+    /**
+     * @param commonNameTaxonVersionKey the commonNameTaxonVersionKey to set
+     */
+    public void setCommonNameTaxonVersionKey(String commonNameTaxonVersionKey) {
+        this.commonNameTaxonVersionKey = commonNameTaxonVersionKey;
+    }
+
+    /**
+     * @return the organismKey
+     */
+    public String getOrganismKey() {
+        return organismKey;
+    }
+
+    /**
+     * @param organismKey the organismKey to set
+     */
+    public void setOrganismKey(String organismKey) {
+        this.organismKey = organismKey;
+    }
+
+    /**
+     * @return the rank
+     */
+    public String getRank() {
+        return rank;
+    }
+
+    /**
+     * @param rank the rank to set
+     */
+    public void setRank(String rank) {
+        this.rank = rank;
+    }
+
+    /**
+     * @return the nameStatus
+     */
+    public String getNameStatus() {
+        return nameStatus;
+    }
+
+    /**
+     * @param nameStatus the nameStatus to set
+     */
+    public void setNameStatus(String nameStatus) {
+        this.nameStatus = nameStatus;
+    }
+
+    /**
+     * @return the versionForm
+     */
+    public String getVersionForm() {
+        return versionForm;
+    }
+
+    /**
+     * @param versionForm the versionForm to set
+     */
+    public void setVersionForm(String versionForm) {
+        this.versionForm = versionForm;
+    }
+
+    /**
+     * @return the commonName
+     */
+    public String getCommonName() {
+        return commonName;
+    }
+
+    /**
+     * @param commonName the commonName to set
+     */
+    public void setCommonName(String commonName) {
+        this.commonName = commonName;
     }
 }

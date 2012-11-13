@@ -6,9 +6,16 @@
     <types>
     
         <fieldtype name="testedgengrams" class="solr.TextField">
-            <analyzer>
-                <tokenizer class="solr.LowerCaseTokenizerFactory"/>
-                <filter class="solr.EdgeNGramFilterFactory" minGramSize="2" maxGramSize="15" side="front"/>
+            <analyzer type="index">
+                <tokenizer class="solr.WhitespaceTokenizerFactory" />
+                <filter class="solr.LowerCaseFilterFactory" />
+                <filter class="solr.WordDelimiterFilterFactory" generateWordParts="1" generateNumberParts="1" catenateWords="0" catenateNumbers="0" catenateAll="0" splitOnCaseChange="1"/>
+                <filter class="solr.EdgeNGramFilterFactory" minGramSize="2" maxGramSize="15" side="front" />
+            </analyzer>
+            <analyzer type="query">
+                <tokenizer class="solr.WhitespaceTokenizerFactory" />
+                <filter class="solr.LowerCaseFilterFactory" />
+                <filter class="solr.WordDelimiterFilterFactory" generateWordParts="1" generateNumberParts="1" catenateWords="0" catenateNumbers="0" catenateAll="0" splitOnCaseChange="1"/>
             </analyzer>
         </fieldtype>
     <!-- The StrField type is not analyzed, but indexed/stored verbatim. -->
@@ -60,13 +67,12 @@
 
     <fields>
         <field name="taxonVersionKey" type="string" indexed="true" stored="true"/>
-        <field name="prefnameTaxonVersionKey" type="string" indexed="true" stored="true"/>
+        <field name="pTaxonVersionKey" type="string" indexed="true" stored="true"/>
         <field name="taxonAuthority" type="string" indexed="true" stored="true"/>
-        <field name="lang" type="string"/>
+        <field name="languageKey" type="string"/>
         <field name="navigationGroupKey" type="string" indexed="true" stored="true"/>
         <field name="category" type="string" indexed="true" stored="true" multiValued="true"/>
   
-        <field name="designationID" type="string" indexed="true" stored="true"/>
         <field name="name" type="testedgengrams" indexed="true" stored="true"/>
         <field name="label" type="string" indexed="true" stored="true"/>
         <field name="code" type="string" indexed="true" stored="true"/>

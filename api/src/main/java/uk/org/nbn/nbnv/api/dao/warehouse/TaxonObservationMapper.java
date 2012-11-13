@@ -12,6 +12,7 @@ import uk.org.nbn.nbnv.api.model.Dataset;
 import uk.org.nbn.nbnv.api.model.DatasetWithQueryStats;
 import uk.org.nbn.nbnv.api.model.Taxon;
 import uk.org.nbn.nbnv.api.model.TaxonObservation;
+import uk.org.nbn.nbnv.api.model.TaxonObservationAttributeValue;
 import uk.org.nbn.nbnv.api.model.TaxonOutputGroup;
 import uk.org.nbn.nbnv.api.model.TaxonOutputGroupWithQueryStats;
 import uk.org.nbn.nbnv.api.model.TaxonWithQueryStats;
@@ -45,6 +46,21 @@ public interface TaxonObservationMapper {
             , @Param("taxonOutputGroup") String taxonOutputGroup
             , @Param("gridRef") String gridRef);
     
+    @SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectOneAttribute")
+    public List<TaxonObservationAttributeValue> selectObservationAttributeByFilter(
+            @Param("user") User user
+            , @Param("datasetKey") String datasetKey
+            , @Param("attributeID") Integer attributeID
+            , @Param("startYear") Integer startYear
+            , @Param("endYear") Integer endYear
+            , @Param("ptvk") List<String> ptvk
+            , @Param("spatialRelationship") String spatialRelationship
+            , @Param("featureID") String featureId
+            , @Param("sensitive") Boolean sensitive
+            , @Param("designation") String designation
+            , @Param("taxonOutputGroup") String taxonOutputGroup
+            , @Param("gridRef") String gridRef);
+    
     @SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectRecordsOrderedByDataset")
     public List<TaxonObservation> selectObservationsByFilterOrderedByDataset(
             @Param("user") User user
@@ -61,8 +77,8 @@ public interface TaxonObservationMapper {
     
     @SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectSpecies")
     @Results(value = {
-        @Result(property="taxon", column="taxonVersionKey", javaType=Taxon.class, one=@One(select="uk.org.nbn.nbnv.api.dao.warehouse.TaxonMapper.getTaxon")),
-        @Result(property="taxonVersionKey", column="taxonVersionKey")
+        @Result(property="taxon", column="pTaxonVersionKey", javaType=Taxon.class, one=@One(select="uk.org.nbn.nbnv.api.dao.warehouse.TaxonMapper.getTaxon")),
+        @Result(property="taxonVersionKey", column="pTaxonVersionKey")
     })
     public List<TaxonWithQueryStats> selectObservationSpeciesByFilter(
             @Param("user") User user

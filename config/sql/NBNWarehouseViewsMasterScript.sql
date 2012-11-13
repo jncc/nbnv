@@ -483,7 +483,16 @@ CREATE VIEW [dbo].[TaxonData] WITH SCHEMABINDING AS (
 		, t.authority
 		, t.languageKey
 		, t.taxonOutputGroupKey
+		, t.commonNameTaxonVersionKey
+		, t.organismKey
+		, t.taxonCode
+		, tr.[rank] 
+		, tns.[description] AS nameStatus
+		, tvf.[description] AS versionForm
 	FROM [dbo].[Taxon] t
+	INNER JOIN [dbo].[TaxonRank] tr ON tr.id = t.taxonRankID
+	INNER JOIN [dbo].[TaxonNameStatus] tns ON tns.[key] = t.taxonNameStatusKey 
+	INNER JOIN [dbo].[TaxonVersionForm] tvf ON tvf.[key] = t.taxonVersionFormKey 
 );
 
 GO
@@ -742,13 +751,16 @@ GO
 
 CREATE VIEW [dbo].[TaxonDatasetData] WITH SCHEMABINDING AS (
 	SELECT 
-		su.datasetKey
+		td.datasetKey
+		, td.allowRecordValidation
+		, td.publicAttribute 
 		, COUNT_BIG(*) AS recordCount
 	FROM [dbo].[TaxonObservation] tob 
 	INNER JOIN [dbo].[Sample] sa on tob.sampleID = sa.id
 	INNER JOIN [dbo].[Survey] su ON sa.surveyID = su.id
+	INNER JOIN [dbo].[TaxonDataset] td ON td.datasetKey = su.datasetKey
 	INNER JOIN [dbo].[Taxon] t on tob.taxonVersionKey = t.taxonVersionKey
-	GROUP BY su.datasetKey
+	GROUP BY td.datasetKey, td.allowRecordValidation, td.publicAttribute
 );
 
 GO
@@ -1033,6 +1045,10 @@ GO
 
 GO
 
+--EXEC usp_dev_AddTableToPublication 'DateType'
+
+GO
+
 CREATE VIEW [dbo].[TaxonObservationData] WITH SCHEMABINDING AS (
 	SELECT 
         obs.id
@@ -1045,7 +1061,8 @@ CREATE VIEW [dbo].[TaxonObservationData] WITH SCHEMABINDING AS (
         , si.name AS siteName
         , obs.featureID
         , gs.label AS gridRef
-        , sb.providerKey AS polygonKey
+        , sb.siteBoundaryDatasetKey + sb.providerKey AS polygonKey
+        , ISNULL(gs.label, sb.siteBoundaryDatasetKey + sb.providerKey) AS location
         , gs.originalProjection
         , obs.taxonVersionKey
         , obs.pTaxonVersionKey
@@ -1054,12 +1071,14 @@ CREATE VIEW [dbo].[TaxonObservationData] WITH SCHEMABINDING AS (
         , obs.startDate
         , obs.endDate
         , obs.dateTypeKey
+		, dt.label AS dateType
         , rr.name AS recorder
         , rd.name AS determiner
         , obs.sensitive
         , obs.absence
     FROM [dbo].[TaxonObservationDataEnhanced] obs 
     INNER JOIN [dbo].[TaxonData] pt ON pt.taxonVersionKey = obs.pTaxonVersionKey
+	INNER JOIN [dbo].[DateType] dt ON dt.[key] = obs.dateTypeKey 
     LEFT JOIN [dbo].[GridSquareFeatureData] gs ON gs.id  = obs.featureID
     LEFT JOIN [dbo].[SiteBoundaryData] sb ON sb.featureID = obs.featureID
     LEFT JOIN [dbo].[SiteData] si ON si.id = obs.siteID
@@ -1077,7 +1096,8 @@ CREATE VIEW [dbo].[TaxonObservationData] WITH SCHEMABINDING AS (
         , si.name
         , obs.featureID
         , gs.label AS gridRef
-        , sb.providerKey AS polygonKey
+        , sb.siteBoundaryDatasetKey + sb.providerKey AS polygonKey
+        , ISNULL(gs.label, sb.siteBoundaryDatasetKey + sb.providerKey) AS location
         , gs.originalProjection 
         , obs.taxonVersionKey
         , obs.pTaxonVersionKey
@@ -1086,12 +1106,14 @@ CREATE VIEW [dbo].[TaxonObservationData] WITH SCHEMABINDING AS (
         , obs.startDate
         , obs.endDate
         , obs.dateTypeKey
+		, dt.label AS dateType
         , rr.name AS recorder
         , rd.name AS determiner
         , obs.sensitive
         , obs.absence
     FROM [dbo].[TaxonObservationDataPublic] obs 
     INNER JOIN [dbo].[TaxonData] pt ON pt.taxonVersionKey = obs.pTaxonVersionKey
+	INNER JOIN [dbo].[DateType] dt ON dt.[key] = obs.dateTypeKey 
     LEFT JOIN [dbo].[GridSquareFeatureData] gs ON gs.id = obs.featureID
     LEFT JOIN [dbo].[SiteBoundaryData] sb ON sb.featureID = obs.featureID
     LEFT JOIN [dbo].[SiteData] si ON si.id = obs.siteID
@@ -1204,6 +1226,7 @@ CREATE VIEW [dbo].[UserTaxonObservationData] WITH SCHEMABINDING AS (
 		, obs.featureID
 		, obs.gridRef
 		, obs.polygonKey
+		, obs.location 
 		, obs.originalProjection
 		, obs.taxonVersionKey
 		, obs.pTaxonVersionKey
@@ -1212,6 +1235,7 @@ CREATE VIEW [dbo].[UserTaxonObservationData] WITH SCHEMABINDING AS (
 		, obs.startDate
 		, obs.endDate
 		, obs.dateTypeKey
+		, obs.dateType 
 		, obs.recorder
 		, obs.determiner
 		, obs.sensitive
@@ -1233,6 +1257,7 @@ CREATE VIEW [dbo].[UserTaxonObservationData] WITH SCHEMABINDING AS (
 		, obs.featureID
 		, obs.gridRef
 		, obs.polygonKey
+		, obs.location 
 		, obs.originalProjection 
 		, obs.taxonVersionKey
 		, obs.pTaxonVersionKey
@@ -1241,6 +1266,7 @@ CREATE VIEW [dbo].[UserTaxonObservationData] WITH SCHEMABINDING AS (
 		, obs.startDate
 		, obs.endDate
 		, obs.dateTypeKey 
+		, obs.dateType 
 		, obs.recorder
 		, obs.determiner
 		, obs.sensitive
@@ -1270,6 +1296,7 @@ CREATE VIEW [dbo].[OrganisationTaxonObservationData] WITH SCHEMABINDING AS (
 		, obs.featureID
 		, obs.gridRef
 		, obs.polygonKey
+		, obs.location 
 		, obs.originalProjection 
 		, obs.taxonVersionKey
 		, obs.pTaxonVersionKey
@@ -1278,6 +1305,7 @@ CREATE VIEW [dbo].[OrganisationTaxonObservationData] WITH SCHEMABINDING AS (
 		, obs.startDate
 		, obs.endDate
 		, obs.dateTypeKey 
+		, obs.dateType 
 		, obs.recorder
 		, obs.determiner
 		, obs.sensitive
@@ -1299,6 +1327,7 @@ CREATE VIEW [dbo].[OrganisationTaxonObservationData] WITH SCHEMABINDING AS (
 		, obs.featureID
 		, obs.gridRef
 		, obs.polygonKey
+		, obs.location 
 		, obs.originalProjection 
 		, obs.taxonVersionKey
 		, obs.pTaxonVersionKey
@@ -1307,6 +1336,7 @@ CREATE VIEW [dbo].[OrganisationTaxonObservationData] WITH SCHEMABINDING AS (
 		, obs.startDate
 		, obs.endDate
 		, obs.dateTypeKey
+		, obs.dateType 
 		, obs.recorder
 		, obs.determiner
 		, obs.sensitive
@@ -1319,6 +1349,60 @@ CREATE VIEW [dbo].[OrganisationTaxonObservationData] WITH SCHEMABINDING AS (
 GO
 
 --EXEC usp_dev_AddViewToPublicationAsView 'OrganisationTaxonObservationData'
+
+GO
+
+CREATE VIEW [dbo].[UserTaxonObservationAttributeData] WITH SCHEMABINDING AS (
+	SELECT
+		utod.userID 
+		, toad.observationID 
+		, toad.attributeID 
+		, toad.textValue 
+	FROM [dbo].[TaxonObservationAttributeData] toad
+	INNER JOIN [dbo].[UserTaxonObservationData] utod ON utod.observationID = toad.observationID 
+	WHERE utod.fullVersion = 1
+	UNION ALL
+	SELECT
+		utod.userID 
+		, toad.observationID 
+		, toad.attributeID 
+		, toad.textValue 
+	FROM [dbo].[TaxonObservationAttributeData] toad
+	INNER JOIN [dbo].[UserTaxonObservationData] utod ON utod.observationID = toad.observationID 
+	INNER JOIN [dbo].[TaxonDatasetData] td ON td.datasetKey = utod.datasetKey 
+	WHERE utod.fullVersion = 0 AND td.publicAttribute = 1
+);
+
+GO
+
+--EXEC usp_dev_AddViewToPublicationAsView 'UserTaxonObservationAttributeData'
+
+GO
+
+CREATE VIEW [dbo].[OrganisationTaxonObservationAttributeData] WITH SCHEMABINDING AS (
+	SELECT
+		otod.organisationID 
+		, toad.observationID 
+		, toad.attributeID 
+		, toad.textValue 
+	FROM [dbo].[TaxonObservationAttributeData] toad
+	INNER JOIN [dbo].[OrganisationTaxonObservationData] otod ON otod.observationID = toad.observationID 
+	WHERE otod.fullVersion = 1
+	UNION ALL
+	SELECT
+		otod.organisationID 
+		, toad.observationID 
+		, toad.attributeID 
+		, toad.textValue 
+	FROM [dbo].[TaxonObservationAttributeData] toad
+	INNER JOIN [dbo].[OrganisationTaxonObservationData] otod ON otod.observationID = toad.observationID 
+	INNER JOIN [dbo].[TaxonDatasetData] td ON td.datasetKey = otod.datasetKey 
+	WHERE otod.fullVersion = 0 AND td.publicAttribute = 1
+);
+
+GO
+
+--EXEC usp_dev_AddViewToPublicationAsView 'OrganisationTaxonObservationAttributeData'
 
 GO
 

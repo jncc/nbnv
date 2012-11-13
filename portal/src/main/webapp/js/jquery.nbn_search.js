@@ -26,7 +26,7 @@
         _querySearchNode: function() {
             var me=this, searchParams = me._createSearchURL();
             this._searchRequest.abort();
-            this._searchRequest = $.getJSON(me.options.searchNode, searchParams , function(search) {
+            this._searchRequest = $.getJSON(me.element.attr('nbn-search-node'), searchParams , function(search) {
                 //create and persist the state of this search form
                 me.setState({ 
                     search: search,         facet: me._getFacetState(), 

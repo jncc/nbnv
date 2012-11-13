@@ -24,8 +24,8 @@ $.namespace("nbn.util.user.Loginable", function() {
         }
     });
     
-    this.doUserLogin = function(username, password, callback) {
-        $.getJSON(nbn.util.ServerGeneratedLoadTimeConstants.data_api + '/user/login?username=' + username + '&password=' + password, function(result) {
+    this.doUserLogin = function(username, password) {
+        return $.getJSON(nbn.util.ServerGeneratedLoadTimeConstants.data_api + '/user/login?username=' + username + '&password=' + password, function(result) {
             var user = result.user;
             if (result.success) {
                 userAttribute.setUser({
@@ -34,8 +34,6 @@ $.namespace("nbn.util.user.Loginable", function() {
                     fullname: user.forename + ' ' + user.surname
                 });
             }
-            if($.isFunction(callback))
-                callback(result); //notify callbacks
         });
     };
 	

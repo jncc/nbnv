@@ -47,7 +47,7 @@ nbn.layer.SpeciesLayer = function(hosts, googleMap, options) {
 			if(datasets && datasets.length > 0) {
 				var datasetKeys = [];
 				for(var i in datasets)
-					datasetKeys.push(datasets[i].datasetKey);
+					datasetKeys.push(datasets[i].key);
 				_datasetFilter.setFilter({ //set the filter to the correct state
 					filters: {
 						datasets: datasetKeys.join(',')
@@ -104,10 +104,10 @@ nbn.layer.SpeciesLayer = function(hosts, googleMap, options) {
 				}, function(data) {
 					_datasetFilter.clearFilter();
 					_abundanceFilter.setEnabled(false);
-					_constructionFilterParams = {dataset: data.dataset.datasetKey};
-					additionalFilterParams = {datasets: data.dataset.datasetKey};
-					_arcGisMap.setMapService('DatasetSpeciesDensity/' + data.dataset.datasetKey);
-					_descriptionAttribute.setDescription('Single Dataset map for ' + data.dataset.name);
+					_constructionFilterParams = {dataset: data.dataset.key};
+					additionalFilterParams = {datasets: data.dataset.key};
+					_arcGisMap.setMapService('DatasetSpeciesDensity/' + data.dataset.key);
+					_descriptionAttribute.setDescription('Single Dataset map for ' + data.dataset.title);
 					_layerParameters.setLayerParameters(data);
 			});	
 		});

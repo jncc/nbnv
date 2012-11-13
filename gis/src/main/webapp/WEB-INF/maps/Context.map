@@ -23,5 +23,5 @@ MAP
         "init=epsg:4326"
     END
 
-    [@backgrounds.contextLayers location=properties.contextLayersLocation/]   
+    [@backgrounds.vectors location=properties.contextLayersLocation/]   
 END

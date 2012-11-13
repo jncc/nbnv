@@ -11,7 +11,7 @@
 window.nbn = window.nbn || {};
 nbn.layer = nbn.layer || {};
 nbn.layer.SwitchableArcGisMapFilter = function(defaultState) {
-	var _me = this, underlyingFilterLogic, underlyingFilter;
+	var _me = this, underlyingFilterLogic = defaultState, underlyingFilter;
 	$.extend(this,
 		new nbn.util.ObservableAttribute('Enabled',defaultState),
 		underlyingFilter = new nbn.layer.ArcGisMapFilter()

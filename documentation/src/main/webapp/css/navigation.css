@@ -1,0 +1,48 @@
+#nbn-page-navigation-menu {
+    float: left;
+    min-height: 500px;
+    margin-bottom: 2em;
+    width: 270px;
+}
+
+#nbn-page-navigation-menu h3 {
+    margin: 1.5em 0 0.2em 10px;
+}
+
+#nbn-page-navigation-menu ul {
+    margin:0;
+    padding:0;
+    list-style: none;
+}
+
+#nbn-page-navigation-menu ul a {
+    display:block;
+    color:#007BA6;
+    font-weight:bold;
+    border-bottom: solid 1px #E5ECF3;
+    text-decoration:none;
+    padding:4px 10px 4px 32px;
+    font-size:85%;
+}
+
+#nbn-page-navigation-menu ul a:hover {
+    color: white;
+    background-color: #47C0D7;
+}
+
+#nbn-page-navigation-menu ul ul a { /*depth of two */
+    color:#47C0D7;
+}
+
+#nbn-page-navigation-menu ul ul ul a { /*depth of three*/
+    color:#65B154;
+}
+
+#nbn-page-navigation-menu ul ul ul ul a { /*depth of four*/
+    color:#C60;
+}
+
+#nbn-page-navigation-menu ul ul {
+    margin-left:8px;
+}
+

@@ -195,7 +195,7 @@ nbn.mapping.construction.WidgetOptionsCreator = function(interactiveMapper){
             var _setSelectedSpecies = function(selection) {
                     if(_selectedSpecies = selection) {//save the species selection
                             var currUser = interactiveMapper.getUser();//get the current user
-                            _singleSpeciesDatasetSelectionTree.nbn_treewidget('setUrlOfDescriptionFile',nbn.util.ServerGeneratedLoadTimeConstants.data_api + "/taxa/" + _selectedSpecies.taxonVersionKey.taxonVersionKey + "/datasets");
+                            _singleSpeciesDatasetSelectionTree.nbn_treewidget('setUrlOfDescriptionFile',nbn.util.ServerGeneratedLoadTimeConstants.data_api + "/taxa/" + _selectedSpecies + "/datasets");
                             _datasetSelectionBox.show(); //show the selection box
                     }
                     _selectedDatasets=[];
@@ -215,60 +215,13 @@ nbn.mapping.construction.WidgetOptionsCreator = function(interactiveMapper){
                     renderableToControl.setRenderable(_me.isRenderable()); //is this map now renderable?
             };
 
-            var _speciesAutoComplete = $('<input>')
-                    .addClass("nbn-autocomplete")
-                    .autocomplete({
-                            source : 'TaxonSearch',
-                            select: function(event, ui) {
-                                    _setSelectedSpecies({
-                                            taxonVersionKey: ui.item.key,
-                                            name: ui.item.name
-                                    });
-                            }
-                    });
-            _speciesAutoComplete.data( "autocomplete" )._renderItem = function(ul, item) {
-                    return $( "<li></li>" )
-                            .data( "item.autocomplete", item )
-                            .append( "<a><strong>" + item.value + "</strong><br>" + item.authority + ", " + item.taxonRank + ", " + item.taxonGroup + "</a>" )
-                            .appendTo(ul);
-            };
-
-            
-            var _speciesTree = $('<div>').nbn_treewidget({
-                    urlOfDescriptionFile : nbn.util.ServerGeneratedLoadTimeConstants.data_api + "/taxonNavigationGroups",
-                    dataFilter: function(taxonNavGroup) {
-                        function transformTaxonNavGroup(taxonNavGroup) {
-                            var base = { 
-                                title : taxonNavGroup.name,
-                                unselectable: true, 
-                                isLazy: true,hideCheckbox: false
-                            };
-                            if(taxonNavGroup.children) {
-                                return $.extend(base, taxonNavGroup, {
-                                    children : $.map(taxonNavGroup.children, transformTaxonNavGroup)
-                                });
-                            }
-                            else {
-                                return $.extend(base, taxonNavGroup);
-                            }
-                        }
-                        return transformTaxonNavGroup(taxonNavGroup);
-                    },
-                    allowMultipleSelection: 'none',
-                    selected: function(event, selected) {
-                            _setSelectedSpecies({
-                                    taxonVersionKey: selected.taxonVersionKey,
-                                    name: $(this).nbn_treewidget('getChildText', selected)
-                            });
-                    }
-            });
+            var _speciesSelector = nbn.construction.search.createTaxonTable(_setSelectedSpecies);
 
             _singleSpeciesDatasetSelectionTree = $('<div>').nbn_treewidget({
-                    urlOfDescriptionFile : nbn.util.ServerGeneratedLoadTimeConstants.data_api + "/taxa/NBNSYS0000005629/datasets",
                     allowMultipleSelection: 'checkbox',
                     selectDeselect: true,
                     dataFilter: function(dataset) {
-                        return $.extend({ title : dataset.name }, dataset);
+                        return $.extend({ title : dataset.name, select: true}, dataset);
                     },
                     childrenSelectionListener: function(event, selected) {
                         _setSelectedSpeciesDatasets(selected);
@@ -279,11 +232,7 @@ nbn.mapping.construction.WidgetOptionsCreator = function(interactiveMapper){
             });
 
             var _content = $('<div>')
-                    .append($('<span>')
-                            .append('Search for species:')
-                            .append(_speciesAutoComplete)
-                    )
-                    .append(_speciesTree)
+                    .append(_speciesSelector)
                     .append(_datasetSelectionBox = $('<div>')
                             .hide() //tree box hidden by default
                             .append($('<div>').html('Datasets:'))
@@ -319,38 +268,13 @@ nbn.mapping.construction.WidgetOptionsCreator = function(interactiveMapper){
             var _datasetMetadata = $('<div>').nbn_datasetmetadata();
 			
             var _setSelectedDataset = function(selection) {
-                    _selectedDataset = selection//save the species selection
-                    _datasetMetadata.nbn_datasetmetadata('setDataset', _selectedDataset.datasetKey + '');
+                    _selectedDataset = selection.substring(8);//save the species selection
+                    _datasetMetadata.nbn_datasetmetadata('setDataset', _selectedDataset + '');
                     renderableToControl.setRenderable(_selectedDataset != undefined); //is this map now renderable?
             };
 
-            var _singleDatasetSelectionAutocomplete = $('<input>')
-                    .addClass("nbn-autocomplete")
-                    .autocomplete({
-                            source : 'DatasetSearch',
-                            select: function(event, ui) {
-                                    _setSelectedDataset({
-                                            datasetKey: ui.item.key,
-                                            name: ui.item.name
-                                    });
-                            }
-                    });
-
-            var _singleDatasetSelectionTree = $('<div>').nbn_treewidget({
-                    urlOfDescriptionFile : nbn.util.ServerGeneratedLoadTimeConstants.data_api + "/datasets",
-                    dataFilter: function(dataset) {
-                        return $.extend({ title : dataset.name }, dataset);
-                    },
-                    allowMultipleSelection: 'none',
-                    selected: function(event, selected) { _setSelectedDataset(selected); }
-                    });
-			
             var _content = $('<div>')
-                    .append($('<span>')
-                            .html('Select a dataset:')
-                            .append(_singleDatasetSelectionAutocomplete)
-                    )
-                    .append(_singleDatasetSelectionTree)
+                    .append(nbn.construction.search.createTaxonDatasetTable(_setSelectedDataset))
                     .append(_datasetMetadata);
 
             this.isRenderable = function() {
@@ -382,7 +306,7 @@ nbn.mapping.construction.WidgetOptionsCreator = function(interactiveMapper){
             var _setSelectedDesignation = function(selection) {
                     if(_selectedDesignation = selection) {//save the species selection
                             var currUser = interactiveMapper.getUser();//get the current user
-                            _designationDatasetsTree.nbn_treewidget('setUrlOfDescriptionFile',nbn.util.ServerGeneratedLoadTimeConstants.data_api + "/designations/" + _selectedDesignation.designationKey.code + "/datasets");
+                            _designationDatasetsTree.nbn_treewidget('setUrlOfDescriptionFile',nbn.util.ServerGeneratedLoadTimeConstants.data_api + "/designations/" + _selectedDesignation + "/datasets");
                             _datasetSelectionBox.show();
                     }
                     _selectedDatasets=[];
@@ -403,9 +327,8 @@ nbn.mapping.construction.WidgetOptionsCreator = function(interactiveMapper){
             };
 
             _designationDatasetsTree = $('<div>').nbn_treewidget({
-                    urlOfDescriptionFile : nbn.util.ServerGeneratedLoadTimeConstants.data_api + "/designations/BIRDSDIR-A1/datasets",
                     dataFilter: function(designation) {
-                        return $.extend({ title : designation.name }, designation);
+                        return $.extend({ title : designation.name, select: true }, designation);
                     },
                     allowMultipleSelection: 'checkbox',
                     selectDeselect: true,
@@ -417,23 +340,9 @@ nbn.mapping.construction.WidgetOptionsCreator = function(interactiveMapper){
                     }
             });
 
-            var _designationTree = $('<div>').nbn_treewidget({
-                    urlOfDescriptionFile : nbn.util.ServerGeneratedLoadTimeConstants.data_api + "/designations",
-                    dataFilter: function(designation) {
-                        return $.extend({ title : designation.name }, designation);
-                    },
-                    allowMultipleSelection: 'none',
-                    selected: function(event, selected) {
-                            _setSelectedDesignation({
-                                    designationKey: selected,
-                                    name: $(this).nbn_treewidget('getChildText', selected)
-                            });
-                    }
-            });
 
             var _content = $('<div>')
-                    .append('Select a designation:')
-                    .append(_designationTree)
+                    .append(nbn.construction.search.createDesignationsTable(_setSelectedDesignation))
                     .append(_datasetSelectionBox = $('<div>')
                             .hide() //tree box hidden by default
                             .append($('<div>').html('Datasets:'))
@@ -453,7 +362,7 @@ nbn.mapping.construction.WidgetOptionsCreator = function(interactiveMapper){
             };
 
             this.apply = function() {
-                    layer.setMode(layer.Modes.DESIGNATION,_selectedDesignation.designationKey, _selectedDatasets);
+                    layer.setMode(layer.Modes.DESIGNATION,_selectedDesignation, _selectedDatasets);
             };
 
             this.getState = function() {

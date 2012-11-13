@@ -5,7 +5,7 @@
             <#list providersWithQueryStats as providerWithQueryStats>
                 <tr>
                     <th><img src="${api}/organisations/${providerWithQueryStats.organisationID}/logo" class="nbn-provider-table-logo"></th>
-                    <th colspan="2"><a href="/Provider/${providerWithQueryStats.organisationID}">${providerWithQueryStats.organisation.name}</a> (${providerWithQueryStats.querySpecificObservationCount})</th>
+                    <th colspan="2"><a href="/Organisations/${providerWithQueryStats.organisationID}">${providerWithQueryStats.organisation.name}</a> (${providerWithQueryStats.querySpecificObservationCount})</th>
                 </tr>
                 <#assign datasetsWithQueryStats=providerWithQueryStats.datasetsWithQueryStats>
                 <#--All datasets will be checked by default unless dataset keys are found-->
@@ -30,74 +30,27 @@
     <#assign endYear=requestParameters.endYear?has_content?string(requestParameters.endYear[0]!.now?string("yyyy"),.now?string("yyyy"))>
     <#assign spatialRelationship=requestParameters.spatialRelationship?has_content?string(requestParameters.spatialRelationship[0]!"overlap","overlap")>
     <#assign designations=json.readURL("${api}/designations")>
-    <div class="nbn-report-data-container">
-        <div class="tabbed">
-            <h3>Your current filters</h3>
-            <table>
-            <tr>
-                <th>Location:</th>
-                <td>${location}</td>
-            </tr>
-            <tr>
-                <th>Year range:</th>
-                <td>${getYearRangeText(requestParameters)}</td>
-            </tr>
-            <#if isSpatialRelationshipNeeded>
-                <tr>
-                    <th>Spatial relationship:</th>
-                    <td><@spatialRelationshipText requestParameters=requestParameters/></td>
-                </tr>
-            </#if>
-            <#if isDesignationNeeded>
-                <tr>
-                    <th>Designation:</th>
-                    <td><@designationText requestParameters=requestParameters/></td>
-                </tr>
-            </#if>
-            <tr>
-                <th>Datasets:</th>
-                <td><@datasetText requestParameters=requestParameters/></td>
-            </tr>
-            <#if args.taxonOutputGroup??>
-                <tr>
-                    <th>Species group:</th>
-                    <td>${args.taxonOutputGroup.name?cap_first}</td>
-                </tr>
-            </#if>
-            <#if args.taxon??>
-                <tr>
-                    <th>Species:</th>
-                    <td>${args.taxon.name}</td>
-                </tr>
-            </#if>
-            </table>
-            <h3>Change your filters</h3>
-            <table>
-                <tr>
-                    <th>Year range:</th>
-                    <td><input name="startYear" id="startYear" type="textbox" value="${startYear}" class="nbn-year-input"/>
-                                             to <input name="endYear" id="endYear" type="textbox" value="${endYear}" class="nbn-year-input"/></td>
-                </tr>
+    <div class="tabbed" id="nbn-site-report-filter-container">
+        <h3>Info. and options</h3>
+            Location: ${location}
+            <fieldset>
+                <legend>Options</legend>
+                Year range: <input name="startYear" id="startYear" type="textbox" value="${startYear}" class="nbn-year-input"/>
+                             to <input name="endYear" id="endYear" type="textbox" value="${endYear}" class="nbn-year-input"/><br/>
                 <#if isSpatialRelationshipNeeded>
-                    <tr>
-                        <th>Spatial relationship: </th>
-                        <td>
-                            <select name="spatialRelationship" id="spatialRelationship" class="nbn-report-filter-dropdown">
-                                <#if requestParameters.spatialRelationship?has_content && requestParameters.spatialRelationship[0]=="within" >
-                                    <option value="within" selected="selected">Records within site</option>
-                                    <option value="overlap">Records within or overlapping site</option>
-                                <#else>
-                                    <option value="within">Records completely within site</option>
-                                    <option value="overlap" selected="selected">Records within or overlapping site</option>
-                                </#if>
-                            </select><br/>
-                        </td>
-                    </tr>
+                    Spatial relationship: 
+                        <select name="spatialRelationship" id="spatialRelationship" class="nbn-report-filter-dropdown">
+                            <#if requestParameters.spatialRelationship?has_content && requestParameters.spatialRelationship[0]=="within" >
+                                <option value="within" selected="selected">Records within site</option>
+                                <option value="overlap">Records within or overlapping site</option>
+                            <#else>
+                                <option value="within">Records completely within site</option>
+                                <option value="overlap" selected="selected">Records within or overlapping site</option>
+                            </#if>
+                        </select><br/>
                 </#if>
                 <#if isDesignationNeeded>
-                    <tr>
-                        <th>Designation: </th>
-                        <td>
+                        Designation: 
                             <select name="designation" id="designation" class="nbn-report-filter-dropdown">
                                 <option selected="selected" value="">None selected</option>
                                 <#list designations as designation>
@@ -105,18 +58,8 @@
                                     <option value="${designation.code}" ${selected}>${designation.name}</option>
                                 </#list>
                             </select><br/>
-                        </td>
-                    </tr>
                 </#if>
-                <#if isDatasetNeeded>
-                    <tr>
-                        <th>Datasets:</th>
-                        <td>Select from table below</td>
-                    </tr>
-                </#if>
-            </table>
-            <input type="submit"/>
-        </div>
+            </fieldset>
     </div>
 </#macro>
 
@@ -137,12 +80,6 @@
     ${datasetText}
 </#macro>
 
-<#function getYearRangeText requestParameters>
-    <#assign startYear=requestParameters.startYear?has_content?string(requestParameters.startYear[0]!"1600","1600")>
-    <#assign endYear=requestParameters.endYear?has_content?string(requestParameters.endYear[0]!.now?string("yyyy"),.now?string("yyyy"))>
-    <#return startYear + " to " + endYear/>
-</#function>
-
 <#macro spatialRelationshipText requestParameters>
     <#assign spatialRelationshipText="Records within or partially overlapping the site">
     <#if requestParameters.spatialRelationship?has_content && requestParameters.spatialRelationship[0]=="within" >
@@ -160,12 +97,10 @@
 </#function>
 
 <#macro siteImage locationName locationID imageURL>
-    <div id="nbn-site-map-container">
-        <div class="tabbed">
-            <h3>Map of ${locationName}</h3>
-            <img src="${imageURL}" id="nbn-site-map-image">
-            <span id="nbn-site-image-copyright">&copy; Crown copyright and database rights 2011 Ordnance Survey [100017955]</span>
-        </div>
+    <div class="tabbed" id="nbn-site-report-map">
+        <h3>Map of ${locationName}</h3>
+        <img src="${imageURL}" id="nbn-site-map-image">
+        <span id="nbn-site-image-copyright">&copy; Crown copyright and database rights 2011 Ordnance Survey [100017955]</span>
     </div>
 </#macro>
 
@@ -195,10 +130,6 @@
     <#return toReturn>
 </#function>
 
-<#function getSiteFormId>
-    <#return "nbn-site-report-form">
-</#function>
-
 <#macro noRecordsInfoBox>
-    <div class="nbn-information-panel">No records were found for your current filter options</div>
+    <div class="nbn-information-panel">No records were found for your current options</div>
 </#macro>

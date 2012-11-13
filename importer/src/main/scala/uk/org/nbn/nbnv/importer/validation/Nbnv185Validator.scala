@@ -19,7 +19,7 @@ class Nbnv185Validator {
          case _ =>
             new Result {
               def level = ResultLevel.ERROR
-              def message = "NBNV-185: A recognised SRS was not provided"
+              def message = "NBNV-185: Unrecognised SRS '%s'".format(record.srsRaw.get)
               def reference = record.key
             }
         }
@@ -29,13 +29,13 @@ class Nbnv185Validator {
         case UnknownGrid =>
           new Result {
             def level = ResultLevel.ERROR
-            def message = "NBNV-185: An unrecognised grid reference type"
+            def message = "NBNV-185: Unrecognised grid reference type '%s'".format(record.gridReferenceTypeRaw.get)
             def reference = record.key
           }
         case _ =>
           new Result {
             def level = ResultLevel.DEBUG
-            def message = "NBNV-185: Validated: A recognised grid reference type wass provided"
+            def message = "NBNV-185: Validated: A recognised grid reference type was provided"
             def reference = record.key
           }
       }

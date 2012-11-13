@@ -26,12 +26,13 @@
         <module>importer</module>
         <module>importer.grin</module>
         <module>importer.ui</module>
-		<module>importer.spatial.ui</module>
+        <module>importer.spatial.ui</module>
         <module>rs</module>
         <module>api.model</module>
         <module>api.solr</module>
         <module>api</module>
         <module>portal</module>
+        <module>documentation</module>
         <module>gis</module>
         <module>imt</module>
     </modules>

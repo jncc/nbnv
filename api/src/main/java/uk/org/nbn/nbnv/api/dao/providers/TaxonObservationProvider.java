@@ -26,21 +26,33 @@ public class TaxonObservationProvider {
         ORDER_BY("datasetKey");
         return SQL();
     }
+
+    public String filteredSelectOneAttribute(Map<String, Object> params) {
+        BEGIN();
+        SELECT("o.observationID, dad.label, dad.description, utoad.textValue");
+        createSelectQuery(params);
+        INNER_JOIN("UserTaxonObservationAttributeData utoad ON o.observationID = utoad.observationID");
+        INNER_JOIN("DatasetAttributeData dad ON utoad.attributeID = dad.attributeID");
+        WHERE("dad.attributeID = #{attributeID}");
+        WHERE("utoad.userID = #{user.id}");
+  
+        return SQL();
+    }
     
     public String filteredSelectGroups(Map<String, Object> params) {
         BEGIN();
-        SELECT("taxonOutputGroupKey, COUNT(DISTINCT td.taxonVersionKey) querySpecificSpeciesCount");
+        SELECT("taxonOutputGroupKey, COUNT(DISTINCT td.pTaxonVersionKey) querySpecificSpeciesCount");
         createSelectQuery(params);
-        INNER_JOIN("TaxonData td ON o.taxonVersionKey = td.taxonVersionKey");
+        INNER_JOIN("TaxonData td ON o.pTaxonVersionKey = td.pTaxonVersionKey");
         GROUP_BY("taxonOutputGroupKey");
         return SQL();
     }
     
     public String filteredSelectSpecies(Map<String, Object> params) {
         BEGIN();
-        SELECT("o.taxonVersionKey, COUNT(*) querySpecificObservationCount");
+        SELECT("o.pTaxonVersionKey, COUNT(*) querySpecificObservationCount");
         createSelectQuery(params);
-        GROUP_BY("o.taxonVersionKey");
+        GROUP_BY("o.pTaxonVersionKey");
         return SQL();
     }
     
@@ -63,7 +75,7 @@ public class TaxonObservationProvider {
     private void createSelectQuery(Map<String, Object> params) {
 
         FROM("UserTaxonObservationData o");
-        WHERE("userID = #{user.id}");
+        WHERE("o.userID = #{user.id}");
 
         if (params.containsKey("startYear") && (Integer) params.get("startYear") > -1) {
             WHERE("YEAR(endDate) >= #{startYear}");
@@ -80,7 +92,7 @@ public class TaxonObservationProvider {
                     WHERE("datasetKey IN " + datasetListToCommaList((List<String>) params.get("datasetKey")));
                 }
             }else{
-                WHERE("datasetKey = '" + params.get("datasetKey") + "'");
+                WHERE("o.datasetKey = '" + params.get("datasetKey") + "'");
             }
         }
 

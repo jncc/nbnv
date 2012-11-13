@@ -1,10 +1,10 @@
 <#assign tvk=URLParameters.tvk>
-<#assign requestParametersExtended = RequestParameters + {"tvk":[tvk]}>
+<#assign requestParametersExtended = RequestParameters + {"ptvk":[tvk]}>
 <#assign providersWithQueryStats=json.readURL("${api}/taxonObservations/providers",requestParametersExtended)>
 <#assign taxon=json.readURL("${api}/taxa/${tvk}")>
 
 <@template.master title="NBN Grid Map" 
-    javascripts=["/js/jquery.dataset-selector-utils.js","/js/jquery.gridmap_utils.js","/js/colourpicker/colorpicker.js"]
+    javascripts=["/js/jquery.dataset-selector-utils.js","/js/jquery.gridmap_utils.js","/js/report_utils.js","/js/colourpicker/colorpicker.js"]
     csss=["/css/gridmap.css","/css/colourpicker/colorpicker.css"]>
     
     <h1>Grid map for ${taxon_utils.getShortName(taxon)}</h1>
@@ -45,7 +45,7 @@
                 <@yearRangeText layerNum="1" hexColour="#ffff00" checkedText="checked"/> (top)<br/>
                 <@yearRangeText layerNum="2" hexColour="#ff7f00" checkedText=""/> (middle)<br/>
                 <@yearRangeText layerNum="3" hexColour="#ff0000" checkedText=""/> (bottom)<br/>
-                Show outline: <input type='checkbox' id='nbn-show-outline' name='showOutline' checked><span class="nbn-form-label">&nbsp;&nbsp;&nbsp;&nbsp;Outline colour: </span><@colourPicker idSuffix="-outline" hexColour="#000000"/>
+                Show outline: <input type='checkbox' id='nbn-show-outline' name='showOutline' checked colourPickerId='nbn-colour-picker-outline'><span class="nbn-form-label">&nbsp;&nbsp;&nbsp;&nbsp;Outline colour: </span><@colourPicker idSuffix="-outline" hexColour="#000000"/>
 
             </fieldset>
             <fieldset>
@@ -60,7 +60,6 @@
                     <input type="checkbox" id="nbn-grid-map-10k-grid" value="gbi10kextent" name="background">10km grid
                 </div>
             </fieldset>
-            <input type="submit" value="Refresh map" class="nbn-centre-element">
     </div>
 </#macro>
 
@@ -75,7 +74,7 @@
 <#macro yearRangeText layerNum hexColour checkedText>
     <#assign currentYear=.now?string("yyyy")>
     Date ${layerNum}
-    <input type='checkbox' name='gridLayer${layerNum}' value='gridLayer${layerNum}' ${checkedText}>
+    <input type='checkbox' name='gridLayer${layerNum}' value='gridLayer${layerNum}' ${checkedText} colourPickerId='nbn-colour-picker-${layerNum}'>
     from 
     <input type='text' name='startYear${layerNum}' value='1600' class='nbn-year-input'> 
     to 
