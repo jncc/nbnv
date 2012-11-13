@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.json.JSONTokener;
 import uk.gov.nbn.data.powerless.FreeMarkerHelper;
 import uk.gov.nbn.data.powerless.request.TraditionalHttpRequestParameterIterable;
@@ -50,6 +51,10 @@ public class JSONReaderForFreeMarker {
     
     public TemplateModel readURL(String url, Map<String, Object> data) throws TemplateException, IOException, JSONException, JSONReaderStatusException {
         return readURL(url, "GET", data);
+    }
+    
+    public boolean isNull(TemplateModel input) {
+        return TemplateModel.NOTHING.equals(input);
     }
     
     public TemplateModel readURL(String url, String requestType, Map<String,Object> data) throws TemplateException, IOException, JSONException, JSONReaderStatusException {
