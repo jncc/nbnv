@@ -6,8 +6,8 @@
 <#assign parent=json.readURL("${api}/taxa/${tvk}/taxonomy")>
 <#assign children=json.readURL("${api}/taxa/${tvk}/children")>
 <#assign datasets=json.readURL("${api}/taxa/${tvk}/datasets")>
+<#assign weblinks=json.readURL("${api}/taxa/${tvk}/weblinks")>
 <#assign output=json.readURL("${api}/taxonOutputGroups/${taxon.taxonOutputGroupKey}")>
-<#assign arkiveData=json.readURL("http://www.arkive.org/api/K8M8UWEO09/portlet/latin/${ptaxon.name}/0")>
 <#assign ptvk=taxon.ptaxonVersionKey>
 
 <@template.master title="NBN Gateway - Taxon"
@@ -16,15 +16,22 @@
     <h1>${taxon.name} <#if taxon.authority??>${taxon.authority}</#if></h1>
     <div>
         <@taxonPageTaxonData taxon=taxon outputGroup=output/>
-        <@taxonPageTaxonomy parent=parent taxon=taxon children=children/>
-        <@taxonPageSynonyms syn=synonyms/>
-        <@taxonPageDesignations des=designations/>
-        <@taxonPageLinks links=taxon/>
+        <#if taxon.taxonVersionKey == ptaxon.taxonVersionKey>
+            <@taxonPageTaxonomy parent=parent taxon=taxon children=children/>
+            <@taxonPageSynonyms syn=synonyms/>
+            <@taxonPageDesignations des=designations/>
+            <@taxonPageLinks links=weblinks/>
+        </#if>
         <@taxonPageNBNLinks taxon=taxon/>
         <@gridMapContents key=ptvk/>
-        <@arkive data=arkiveData/>
     </div>
-    <@taxonPageDatasets datasets=datasets/>
+    <#if taxon.taxonVersionKey == ptaxon.taxonVersionKey>
+        <@taxonPageDatasets datasets=datasets/>
+    </#if>
+    <div align="center">
+        <a href="http://www.nhm.ac.uk/" target="_blank"><img src="/img/nhm_new.gif" alt="Natural History Museum logo" width="135" height="85" border="0" /></a>
+        <a href="http://www.jncc.gov.uk/page-5546" target="_blank"><img src="/img/jncc.gif" alt="Joint Nature Conservation Committee logo" width="150" height="66" border="0" /></a>
+    </div>
 </@template.master>
 
 <#macro gridMapContents key>
@@ -32,15 +39,6 @@
         <h3>Map</h3>
         <img id="nbn-grid-map-busy-image" src='/img/ajax-loader-medium.gif'>
         <img id="nbn-grid-map-image" class="nbn-centre-element">
-    </div>
-</#macro>
-
-<#macro arkive data>
-    <div class="tabbed nbn-taxon-page-right-container">
-        <h3>Arkive Image</h3>
-        <div id="nbn-taxon-page-arkive">
-                ${data.results}
-        </div>
     </div>
 </#macro>
 
@@ -166,7 +164,17 @@
 <#macro taxonPageLinks links>
     <div class="tabbed nbn-taxon-page-taxonomy-container">
         <h3>External Links</h3>
-        TODO: External links go here
+        <#if links?has_content>
+            <table>
+                <#list links as link>
+                    <tr>
+                        <td><a href="${link.link}">${d.description}</a></td>
+                    </tr>
+                </#list>
+            </table>
+        <#else>
+            None
+        </#if>
     </div>
 </#macro>
 
