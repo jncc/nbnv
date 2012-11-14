@@ -609,6 +609,10 @@ CREATE VIEW [dbo].[DesignationTaxonData] WITH SCHEMABINDING AS (
 		td.designationID
 		, d.code
 		, t.pTaxonVersionKey
+		, td.startDate 
+		, td.endDate 
+		, td.[source]
+		, td.statusConstraint 
 	FROM [dbo].[TaxonDesignation] td
 	INNER JOIN [dbo].[Designation] d ON d.id = td.designationID
 	INNER JOIN [dbo].[Taxon] t ON t.taxonVersionKey = td.taxonVersionKey AND t.pTaxonVersionKey = td.taxonVersionKey
