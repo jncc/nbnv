@@ -515,6 +515,10 @@ GO
 
 GO
 
+--EXEC usp_dev_AddTableToPublication 'TaxonWebLink';
+
+GO
+
 CREATE VIEW [dbo].[OrganismData] WITH SCHEMABINDING AS (
 	SELECT
 		o.[key]

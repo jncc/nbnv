@@ -828,6 +828,16 @@ CREATE TABLE [dbo].[TaxonNavigation](
 	PRIMARY KEY ([taxonVersionKey] ASC, [taxonNavigationGroupKey] ASC)
 );
 
+------------------------------
+
+CREATE TABLE [dbo].[TaxonWebLink](
+	[id] [int] IDENTITY(1,1) PRIMARY KEY,
+	[taxonVersionKey] [char](16) NOT NULL REFERENCES [Taxon] ([taxonVersionKey]),
+	[link] [varchar](8000) NOT NULL,
+	[description] [varchar](8000) NOT NULL,
+	[active] bit NOT NULL
+);
+
 /*
  *
  * Taxon Designation
