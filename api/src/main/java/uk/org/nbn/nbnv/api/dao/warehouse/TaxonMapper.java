@@ -1,9 +1,14 @@
 package uk.org.nbn.nbnv.api.dao.warehouse;
 
 import java.util.List;
+import org.apache.ibatis.annotations.One;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Result;
+import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.Select;
+import uk.org.nbn.nbnv.api.model.Designation;
 import uk.org.nbn.nbnv.api.model.Taxon;
+import uk.org.nbn.nbnv.api.model.TaxonWebLink;
 import uk.org.nbn.nbnv.api.model.TaxonWithDatasetStats;
 
 public interface TaxonMapper {
@@ -58,4 +63,9 @@ public interface TaxonMapper {
             + "WHERE t.taxonVersionKey = #{id}")
     List<Taxon> selectChildrenByTVK(String taxonVersionKey);
 
+    @Select("SELECT * FROM TaxonWebLink twl WHERE twl.taxonVersionKey = #{id} AND twl.active = 1")
+    @Results(value = {
+        @Result(property="taxon", column="taxonVersionKey", javaType=Taxon.class, one=@One(select="uk.org.nbn.nbnv.api.dao.warehouse.TaxonMapper.getTaxon"))
+    })
+    List<TaxonWebLink> getActiveWebLinksByTVK(String taxonVersionKey);
 }
