@@ -15,6 +15,7 @@ public class TaxonDesignation {
     private Date startDate;
     private Date endDate;
     private String source;
+    private String statusConstraint;
 
     /**
      * @return the designation
@@ -70,6 +71,20 @@ public class TaxonDesignation {
      */
     public void setSource(String source) {
         this.source = source;
+    }
+
+    /**
+     * @return the statusConstraint
+     */
+    public String getStatusConstraint() {
+        return statusConstraint;
+    }
+
+    /**
+     * @param statusConstraint the statusConstraint to set
+     */
+    public void setStatusConstraint(String statusConstraint) {
+        this.statusConstraint = statusConstraint;
     }
     
 }
