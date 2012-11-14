@@ -96,7 +96,11 @@ public class JSONReaderForFreeMarker {
             return TemplateModel.NOTHING;
         }
         else {
-            return readAndClose(new InputStreamReader(passthrough.getInputStream(conn)));
+            return readAndClose(new InputStreamReader(
+                passthrough.getInputStream(conn), 
+                CharsetReader.getCharsetFromContentType(conn.getContentType())
+            ));
         }
     }
+   
 }
