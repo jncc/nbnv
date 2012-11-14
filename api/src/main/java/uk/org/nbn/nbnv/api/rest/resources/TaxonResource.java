@@ -25,56 +25,56 @@ public class TaxonResource {
     @Autowired DesignationMapper designationMapper;
     
     @GET
-    @Produces(MediaType.APPLICATION_JSON) 
+    @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8") 
     @Path("{taxonVersionKey}")
     public Taxon getTaxon(@PathParam("taxonVersionKey") String taxonVersionKey) {
         return taxonMapper.getTaxon(taxonVersionKey);
     }
     
     @GET
-    @Produces(MediaType.APPLICATION_JSON) 
+    @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8") 
     @Path("{taxonVersionKey}/synonyms")
     public List<Taxon> getTaxonSynonyms(@PathParam("taxonVersionKey") String taxonVersionKey) {
         return taxonMapper.selectSynonymsByTVK(taxonVersionKey);
     }
 
     @GET
-    @Produces(MediaType.APPLICATION_JSON) 
+    @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8") 
     @Path("{taxonVersionKey}/parent")
     public Taxon getTaxonParent(@PathParam("taxonVersionKey") String taxonVersionKey) {
         return taxonMapper.getParentTaxon(taxonVersionKey);
     }
 
     @GET
-    @Produces(MediaType.APPLICATION_JSON) 
+    @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8") 
     @Path("{taxonVersionKey}/children")
     public List<Taxon> getTaxonChildren(@PathParam("taxonVersionKey") String taxonVersionKey) {
         return taxonMapper.selectChildrenByTVK(taxonVersionKey);
     }
 
     @GET
-    @Produces(MediaType.APPLICATION_JSON) 
+    @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8") 
     @Path("{taxonVersionKey}/taxonomy")
     public List<Taxon> getTaxonAncestry(@PathParam("taxonVersionKey") String taxonVersionKey) {
         return taxonMapper.selectAncestryByTVK(taxonVersionKey);
     }
 
     @GET
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
     @Path("{taxonVersionKey}/designations")
     public List<TaxonDesignation> getTaxonDesignations(@PathParam("taxonVersionKey") String taxonVersionKey) {
         return designationMapper.selectByTaxonVersionKey(taxonVersionKey);
     }
 
     @GET
-    @Produces(MediaType.APPLICATION_JSON) 
+    @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8") 
     @Path("/{taxonVersionKey}/datasets")
     public List<Dataset> getDatasetListForTaxonViewableByUser(@TokenUser User user, @PathParam("taxonVersionKey") String taxonVersionKey) {
         return datasetMapper.selectDatasetsForTaxonViewableByUser(user, taxonVersionKey);
     }
     
     @GET
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
     public SolrResponse getTaxa(
             @QueryParam("rows") @DefaultValue("20") int rows,
             @QueryParam("start") @DefaultValue("0") int start,
