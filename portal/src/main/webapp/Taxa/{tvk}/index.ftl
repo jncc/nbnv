@@ -16,8 +16,8 @@
     <h1>${taxon.name} <#if taxon.authority??>${taxon.authority}</#if></h1>
     <div>
         <@taxonPageTaxonData taxon=taxon outputGroup=output/>
-        <@taxonPageSynonyms syn=synonyms/>
         <@taxonPageTaxonomy parent=parent taxon=taxon children=children/>
+        <@taxonPageSynonyms syn=synonyms/>
         <@taxonPageDesignations des=designations/>
         <@taxonPageLinks links=taxon/>
         <@taxonPageNBNLinks taxon=taxon/>
