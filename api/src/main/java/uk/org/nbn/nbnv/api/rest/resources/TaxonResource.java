@@ -53,6 +53,13 @@ public class TaxonResource {
     }
 
     @GET
+    @Produces(MediaType.APPLICATION_JSON) 
+    @Path("{taxonVersionKey}/taxonomy")
+    public List<Taxon> getTaxonAncestry(@PathParam("taxonVersionKey") String taxonVersionKey) {
+        return taxonMapper.selectAncestryByTVK(taxonVersionKey);
+    }
+
+    @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{taxonVersionKey}/designations")
     public List<TaxonDesignation> getTaxonDesignations(@PathParam("taxonVersionKey") String taxonVersionKey) {

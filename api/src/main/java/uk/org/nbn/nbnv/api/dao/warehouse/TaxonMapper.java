@@ -35,6 +35,21 @@ public interface TaxonMapper {
             + "WHERE t.taxonVersionKey = #{id}")
     Taxon getParentTaxon(String taxonVersionKey);
 
+    @Select("WITH tree (organismKey, parentOrganismKey, [level]) AS ("
+            + "	SELECT o.[key], o.parentOrganismKey, 0"
+            + "	FROM OrganismData o"
+            + "	INNER JOIN TaxonData td ON td.organismKey = o.[key] "
+            + "	WHERE td.taxonVersionKey = #{id}"
+            + "	UNION ALL"
+            + "	SELECT o.[key], o.parentOrganismKey, t.[level] + 1"
+            + "	FROM OrganismData o"
+            + "	INNER JOIN tree t ON t.parentOrganismKey = o.[key] )"
+            + " SELECT td.* FROM tree t"
+            + " INNER JOIN TaxonData td ON td.organismKey = t.organismKey AND td.pTaxonVersionKey = td.taxonVersionKey "
+            + " WHERE t.[level] > 0"
+            + "ORDER BY t.[level] DESC ")
+    List<Taxon> selectAncestryByTVK(String taxonVersionKey);
+    
     @Select("SELECT tp.*, ct.name AS commonName "
             + "FROM TaxonData t "
             + "INNER JOIN OrganismData o ON o.parentOrganismKey = t.organismKey "

@@ -38,9 +38,20 @@
         $('#nbn-grid-map-image').attr('src',getURL($('#nbn-grid-map-container')));
     }
 
+    function addArkiveImage(name){
+        $.ajax({
+            url: "http://www.arkive.org/api/K8M8UWEO09/portlet/latin/" + name + "/1"
+        }).done(function( html ) {
+            
+            $('#nbn-taxon-page-arkive').append(html);
+        });
+    }
+    
     $(document).ready(function(){
         hideBusyImageOnMapLoad();
         addInitialMapImage();
+        addArkiveImage($('#nbn-taxon-page-arkive').attr('sciName'));
+        
     });
         
 })(jQuery);

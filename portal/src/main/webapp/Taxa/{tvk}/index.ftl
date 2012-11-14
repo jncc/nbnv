@@ -3,7 +3,7 @@
 <#assign ptaxon=json.readURL("${api}/taxa/${taxon.ptaxonVersionKey}")>
 <#assign synonyms=json.readURL("${api}/taxa/${tvk}/synonyms")>
 <#assign designations=json.readURL("${api}/taxa/${tvk}/designations")>
-<#assign parent=json.readURL("${api}/taxa/${tvk}/parent")>
+<#assign parent=json.readURL("${api}/taxa/${tvk}/taxonomy")>
 <#assign children=json.readURL("${api}/taxa/${tvk}/children")>
 <#assign datasets=json.readURL("${api}/taxa/${tvk}/datasets")>
 <#assign output=json.readURL("${api}/taxonOutputGroups/${taxon.taxonOutputGroupKey}")>
@@ -21,6 +21,7 @@
         <@taxonPageLinks links=taxon/>
         <@taxonPageNBNLinks taxon=taxon/>
         <@gridMapContents key=ptvk/>
+        <@arkive taxon=ptaxon/>
     </div>
     <@taxonPageDatasets datasets=datasets/>
 </@template.master>
@@ -30,6 +31,14 @@
         <h3>Map</h3>
         <img id="nbn-grid-map-busy-image" src='/img/ajax-loader-medium.gif'>
         <img id="nbn-grid-map-image" class="nbn-centre-element">
+    </div>
+</#macro>
+
+<#macro arkive taxon>
+    <div class="tabbed nbn-taxon-page-right-container">
+        <h3>Arkive Image</h3>
+        <div>Not working yet!</div>
+        <div id="nbn-taxon-page-arkive" sciName="${taxon.name}"></div>
     </div>
 </#macro>
 
@@ -72,8 +81,7 @@
                 <tr>
                     <td><a href="${s.taxonVersionKey}">${s.name}</a></td>
                     <td><#if s.authority??>${s.authority}</#if></td>
-                    <td>${s.nameStatus}</td>
-                    <td>${s.versionForm}</td>
+                    <td>${s.taxonVersionKey}</td>
                 </tr>
             </#list>
             </table>
@@ -87,15 +95,19 @@
     <div class="tabbed nbn-taxon-page-taxonomy-container">
         <h3>Taxonomy</h3>
         <table>
-            <#if !json.isNull(parent)>
-                <tr><td><a href="${parent.taxonVersionKey}">${parent.name}</a></td><td><#if parent.authority??>${parent.authority}</#if></td><td>${parent.rank}</td></tr>
+            <#assign indent=0/>
+            <#if parent?has_content>
+                <#list parent as p>
+                    <tr><td><span style="padding-left: ${indent / 2}em;"><a href="${p.taxonVersionKey}">${p.name}</a></span></td><td><#if p.authority??>${p.authority}</#if></td><td>${p.rank}</td></tr>
+                    <#assign indent = indent + 1 />
+                </#list>
             </#if>
         
-            <tr><td><span class="nbn-taxon-page-indent">&nbsp;</span>${taxon.name}</td><td><#if taxon.authority??>${taxon.authority}</#if></td><td>${taxon.rank}</td></tr>
+            <tr><td><span style="padding-left: ${(indent + 1) / 2}em;">${taxon.name}</span></td><td><#if taxon.authority??>${taxon.authority}</#if></td><td>${taxon.rank}</td></tr>
 
             <#if children?has_content>
                 <#list children as c>
-                    <tr><td><span class="nbn-taxon-page-indent">&nbsp;</span><span class="nbn-taxon-page-indent">&nbsp;</span><a href="${c.taxonVersionKey}">${c.name}</a></td><td><#if c.authority??>${c.authority}</#if></td><td>${c.rank}</td></tr>
+                    <tr><td><span style="padding-left: ${(indent + 2) / 2}em;"><a href="${c.taxonVersionKey}">${c.name}</a></span></td><td><#if c.authority??>${c.authority}</#if></td><td>${c.rank}</td></tr>
                 </#list>
             </#if>
         </table>
