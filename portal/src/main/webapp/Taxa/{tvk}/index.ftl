@@ -7,6 +7,7 @@
 <#assign children=json.readURL("${api}/taxa/${tvk}/children")>
 <#assign datasets=json.readURL("${api}/taxa/${tvk}/datasets")>
 <#assign output=json.readURL("${api}/taxonOutputGroups/${taxon.taxonOutputGroupKey}")>
+<#assign arkiveData=json.readURL("http://www.arkive.org/api/K8M8UWEO09/portlet/latin/${ptaxon.name}/0")>
 <#assign ptvk=taxon.ptaxonVersionKey>
 
 <@template.master title="NBN Gateway - Taxon"
@@ -21,7 +22,7 @@
         <@taxonPageLinks links=taxon/>
         <@taxonPageNBNLinks taxon=taxon/>
         <@gridMapContents key=ptvk/>
-        <@arkive taxon=ptaxon/>
+        <@arkive data=arkiveData/>
     </div>
     <@taxonPageDatasets datasets=datasets/>
 </@template.master>
@@ -34,11 +35,12 @@
     </div>
 </#macro>
 
-<#macro arkive taxon>
+<#macro arkive data>
     <div class="tabbed nbn-taxon-page-right-container">
         <h3>Arkive Image</h3>
-        <div>Not working yet!</div>
-        <div id="nbn-taxon-page-arkive" sciName="${taxon.name}"></div>
+        <div id="nbn-taxon-page-arkive">
+                ${data.results}
+        </div>
     </div>
 </#macro>
 
@@ -76,14 +78,38 @@
     <div class="tabbed nbn-taxon-page-taxonomy-container">
         <h3>Synonyms</h3>
         <#if syn?has_content>
+            <h4>Well formed name(s)</h4>
+            <#assign w = 0 />
             <table>
             <#list syn as s>
+                <#if s.versionForm == 'Well-formed'>
+                <#assign w = 1 />
                 <tr>
                     <td><a href="${s.taxonVersionKey}">${s.name}</a></td>
                     <td><#if s.authority??>${s.authority}</#if></td>
-                    <td>${s.taxonVersionKey}</td>
                 </tr>
+                </#if>
             </#list>
+            <#if w == 0>
+                <td>None</td>
+            </#if>
+            </table>
+            <h4 style="margin-bottom: 0px; margin-top: 10px;">Badly formed name(s)</h4>
+            <div style="margin-bottom: 10px;">(e.g. some error in the spelling or authority, missing authority etc)</div>
+            <#assign w = 0 />
+            <table>
+            <#list syn as s>
+                <#if s.versionForm != 'Well-formed'>
+                <#assign w = 1 />
+                <tr>
+                    <td><a href="${s.taxonVersionKey}">${s.name}</a></td>
+                    <td><#if s.authority??>${s.authority}</#if></td>
+                </tr>
+                </#if>
+            </#list>
+            <#if w == 0>
+                <td>None</td>
+            </#if>
             </table>
         <#else>
             <div>None</div>
@@ -122,9 +148,12 @@
                 <#list des as d>
                     <tr>
                         <td><a href="/Designations/${d.designation.code}">${d.designation.name}</a></td>
-                        <td>${d.designation.code}</td>
-                        <td>TODO: start/end date</td>
-                        <td>TODO: source</td>
+                        <td style="width: 110px;">
+                            <#if d.startDate??>From: ${d.startDate}</#if>
+                            <#if d.startDate?? && d.endDate??><br/></#if>
+                            <#if d.endDate??>Until: ${d.endDate}</#if>
+                        </td>
+                        <td><#if d.source??>${d.source}</#if></td>
                     </tr>
                 </#list>
             </table>
