@@ -220,6 +220,10 @@ GO
 
 GO
 
+--EXEC usp_dev_AddTableToPublication 'DatasetAdministrator';
+
+GO
+
 /*
  *
  * Feature Views
