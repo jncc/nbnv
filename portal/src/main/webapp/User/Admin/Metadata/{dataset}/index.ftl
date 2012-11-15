@@ -1,54 +1,52 @@
 <#assign dataset=json.readURL("${api}/datasets/${URLParameters.dataset}")>
 
-<@template.master title="Metadata for ${dataset.title}">
+<@template.master title="Metadata for ${dataset.title}"
+    javascripts=["/js/jquery-ui-1.8.23.custom.min.js/","/js/jqueryui.simple-table-style.js","/js/jquery.dataTables.min.js"] 
+    csss=["/css/smoothness/jquery-ui-1.8.23.custom.css", "/css/admin-controls.css"]>
+            <form>
                 <table class="nbn-dataset-table nbn-simple-table">
                     <tr>
                         <th>Title</th>
-                        <td>${dataset.title}</td>
-                    </tr>
-                    <tr>
-                        <th>Permanent key</th>
-                        <td>${dataset.key}</td>
+                        <td><input type="text" name="title" value="${dataset.title}"></input></td>
                     </tr>
                     <tr>
                         <th>Description</th>
-                        <td>${dataset.description!"Not available"}</td>
-                    </tr>
-                    <tr>
-                        <th>Date uploaded</th>
-                        <td>${dataset.formattedDateUploaded}</td>
+                        <td><textarea name="description">${dataset.description}</textarea></td>
                     </tr>
                     <tr>
                         <th>Purpose of data capture</th>
-                        <td>${dataset.purpose!"Not available"}</td>
+                        <td><textarea name="purpose">${dataset.purpose}</textarea></td>
                     </tr>
                     <tr>
                         <th>Methods of data capture</th>
-                        <td>${dataset.captureMethod!"Not available"}</td>
+                        <td><textarea name="captureMethod">${dataset.captureMethod}</textarea></td>
                     </tr>
                     <tr>
                         <th>Geographical coverage</th>
-                        <td>${dataset.geographicalCoverage!"Not available"}</td>
+                        <td><textarea name="geographicalCoverage">${dataset.geographicalCoverage}</textarea></td>
                     </tr>
                     <tr>
                         <th>Temporal coverage</th>
-                        <td>${dataset.temporalCoverage!"Not available"}</td>
+                        <td><textarea name="temporalCoverage">${dataset.temporalCoverage}</textarea></td>
                     </tr>
                     <tr>
                         <th>Data quality</th>
-                        <td>${dataset.quality!"Not available"}</td>
+                        <td><textarea name="quality">${dataset.quality}</textarea></td>
                     </tr>
                     <tr>
                         <th>Additional information</th>
-                        <td>${dataset.additionalInformation!"Not available"}</td>
+                        <td><textarea name="additionalInformation">${dataset.additionalInformation}</textarea></td>
                     </tr>
                     <tr>
                         <th>Access constraints</th>
-                        <td>${dataset.accessConstraints!"Not available"}</td>
+                        <td><textarea name="accessConstraints">${dataset.accessConstraints}</textarea></td>
                     </tr>
                     <tr>
                         <th>Use constraints</th>
-                        <td>${dataset.useConstraints!"Not available"}</td>
+                        <td><textarea name="useConstraints">${dataset.useConstraints}</textarea></td>
                     </tr>
                 </table>
+                <input type="hidden" name="key" value="${dataset.key}" />
+                <input type="submit" id="nbn-form-submit" />
+            </form>
 </@template.master>
