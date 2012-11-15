@@ -469,117 +469,32 @@ nbn.mapping.construction.WidgetOptionsCreator = function(interactiveMapper){
             return _getDatasetProviderRecordCount(b) - _getDatasetProviderRecordCount(a);
         };
 
-        var _renderDatasetBoolean = function(value) {
-            var toReturn = $('<span>');
-            if(value)
-                toReturn.append($('<span>').addClass('ui-icon ui-icon-check'));
-            return toReturn;
-        };
-
         var datasetsSelectedTable = function() {
             return $('<ul>').addClass('dataset-provider-list').nbn_list({
             sortFunction: _recordCountSortFunction,
             elementRenderFunction: function(datasetProviderData) {
                 var organisationProviderTitle = $('<div>').addClass('nbn-dataset-provider');
-                if(datasetProviderData.imageUrl) {
+                if(datasetProviderData.organisation.smallLogo) {
                     organisationProviderTitle.append($('<span>')
-                        .css('backgroundImage', 'url(' + datasetProviderData.imageUrl + ')')
+                        .css('backgroundImage', 'url(' + datasetProviderData.organisation.smallLogo + ')')
                         .addClass('nbn-dataset-provider-logo')
                     );
                 }
                 organisationProviderTitle.append($('<a>')
-                    .html(datasetProviderData.name)
-                    .attr('href','http://data.nbn.org.uk/organisation/organisation.jsp?orgKey=' + datasetProviderData.organisationKey)
+                    .html(datasetProviderData.organisation.name)
+                    .attr('href','/Organisations/' + datasetProviderData.organisation.key)
                     .addClass('nbn-dataset-provider-title')
                 )
 
                 return $('<div>')
                     .append(organisationProviderTitle)
                     .append($('<ul>').addClass('dataset-list').nbn_list({
-                        elementRenderFunction: function(datasetData) {
-							return $('<a>')
-                                .addClass('dataset-name')
-                                .html(datasetData.name)
-                                .attr('href', 'http://data.nbn.org.uk/datasetInfo/taxonDataset.jsp?dsKey=' + datasetData.datasetKey)
-                                .attr('target','_blank')
-                                .add($('<span>').addClass("dataset-resolution").html(datasetData.datasetResolution))
-                                .add($('<span>').addClass("dataset-userResolution").html((datasetData.hasFullAccess) ? "Full" : datasetData.userResolution))
-                                .add(_renderDatasetBoolean(datasetData.sensitiveAccess).addClass('dataset-sensitiveAccess'))
-                                .add(_renderDatasetBoolean(datasetData.downloadRawData).addClass('dataset-downloadRawData'))
-                                .add(_renderDatasetBoolean(datasetData.viewAttributes).addClass('dataset-viewAttributes'))
-                                .add(_renderDatasetBoolean(datasetData.viewRecorder).addClass('dataset-viewRecorder'));
-                        },
-                        data: datasetProviderData.datasets
-                    }));
-            }
-        })};
-
-        var datasetsNotSelectedTable = function() {
-            return $('<ul>').addClass('dataset-provider-list').nbn_list({
-            sortFunction: _recordCountSortFunction,
-            elementRenderFunction: function(datasetProviderData) {
-                if(datasetProviderData){
-                    var organisationProviderTitle = $('<div>').addClass('nbn-dataset-provider').addClass('datasetlist').addClass('ui-widget');
-                    if(datasetProviderData.imageUrl) {
-                        organisationProviderTitle.append($('<span>')
-                            .css('backgroundImage', 'url(' + datasetProviderData.imageUrl + ')')
-                            .addClass('nbn-dataset-provider-logo')
-                        );
-                    }
-                    organisationProviderTitle.append($('<a>')
-                        .html(datasetProviderData.name)
-                        .attr('href','http://data.nbn.org.uk/organisation/organisation.jsp?orgKey=' + datasetProviderData.organisationKey)
-                        .addClass('nbn-dataset-provider-title')
-                    )
-                    return $('<div>')
-                        .append(organisationProviderTitle)
-                        .append($('<ul>').addClass('dataset-list').nbn_list({
-                            elementRenderFunction: function(datasetData) {
-                                return $('<a>')
-                                    .addClass('dataset-name')
-                                    .html(datasetData.name)
-                                    .attr('href', 'http://data.nbn.org.uk/datasetInfo/taxonDataset.jsp?dsKey=' + datasetData.datasetKey)
-                                    .attr('target','_blank')
-                                    .add($('<span>').addClass("dataset-resolution").html(datasetData.datasetResolution))
-                                    .add($('<span>').addClass("dataset-userResolution").html((datasetData.hasFullAccess) ? "Full" : datasetData.userResolution))
-                                    .add(_renderDatasetBoolean(datasetData.sensitiveAccess).addClass('dataset-sensitiveAccess'))
-                                    .add(_renderDatasetBoolean(datasetData.downloadRawData).addClass('dataset-downloadRawData'))
-                                    .add(_renderDatasetBoolean(datasetData.viewAttributes).addClass('dataset-viewAttributes'))
-                                    .add(_renderDatasetBoolean(datasetData.viewRecorder).addClass('dataset-viewRecorder'));
-                            },
-                            data: datasetProviderData.datasets
-                        }));
-                }
-            }
-        })};
-        
-        var datasetsNotViewableTable = function() {
-            return $('<ul>').addClass('dataset-provider-list').nbn_list({
-            sortFunction: _recordCountSortFunction,
-            elementRenderFunction: function(datasetProviderData) {
-                var organisationProviderTitle = $('<div>').addClass('nbn-dataset-provider');
-                if(datasetProviderData.imageUrl) {
-                    organisationProviderTitle.append($('<span>')
-                        .css('backgroundImage', 'url(' + datasetProviderData.imageUrl + ')')
-                        .addClass('nbn-dataset-provider-logo')
-                    );
-                }
-                organisationProviderTitle.append($('<a>')
-                    .html(datasetProviderData.name)
-                    .attr('href','http://data.nbn.org.uk/organisation/organisation.jsp?orgKey=' + datasetProviderData.organisationKey)
-                    .addClass('nbn-dataset-provider-title')
-                )
-                return $('<div>')
-                    .append(organisationProviderTitle)
-                    .append($('<ul>').addClass('dataset-list').nbn_list({
-                        elementRenderFunction: function(datasetData) {
+                        elementRenderFunction: function(data) {
                             return $('<a>')
-                                .addClass('dataset-name')
-                                .html(datasetData.name)
-                                .attr('href', 'http://data.nbn.org.uk/datasetInfo/taxonDataset.jsp?dsKey=' + datasetData.datasetKey)
-                                .attr('target','_blank');
+                                .addClass('dataset-title').html(data.dataset.title).attr('href', '/Datasets/' + data.dataset.key).attr('target','_blank')
+                            .add($('<span>').addClass("dataset-description").html(data.dataset.description));
                         },
-                        data: datasetProviderData.datasets
+                        data: datasetProviderData.datasetsWithQueryStats
                     }));
             }
         })};
@@ -608,45 +523,9 @@ nbn.mapping.construction.WidgetOptionsCreator = function(interactiveMapper){
         };
 
         var headerDatasetsSelected = $('<div class="ui-widget-header">')
-            .append($('<span>').addClass('dataset-name-heading').html('Datasets you have selected'))
-            .append($('<span>').addClass('dataset-resolution-heading').html('Dataset Resolution'))
-            .append($('<span>').addClass('dataset-userResolution-heading').html('Your Resolution'))
-            .append($('<span>').addClass('dataset-sensitiveAccess-heading').html('Sensitive Access'))
-            .append($('<span>').addClass('dataset-downloadRawData-heading').html('Download Raw Data'))
-            .append($('<span>').addClass('dataset-viewAttributes-heading').html('View Attributes'))
-            .append($('<span>').addClass('dataset-viewRecorder-heading').html('View Recorder'));
+            .append($('<span>').addClass('dataset-title-heading').html('Datasets you have selected'))
+            .append($('<span>').addClass('dataset-description-heading').html('Dataset Description'));
 
-        var headerDatasetsNotSelected = $('<div class="ui-widget-header">')
-            .append($('<span>').addClass('dataset-name-heading').html('Datasets you have not selected'))
-            .append($('<span>').addClass('dataset-resolution-heading').html('Dataset Resolution'))
-            .append($('<span>').addClass('dataset-userResolution-heading').html('Your Resolution'))
-            .append($('<span>').addClass('dataset-sensitiveAccess-heading').html('Sensitive Access'))
-            .append($('<span>').addClass('dataset-downloadRawData-heading').html('Download Raw Data'))
-            .append($('<span>').addClass('dataset-viewAttributes-heading').html('View Attributes'))
-            .append($('<span>').addClass('dataset-viewRecorder-heading').html('View Recorder'));
-
-        var headerDatasetsNotViewable = function(){
-                return $('<div class="ui-widget-header">')
-                    .empty()
-                    .append($('<span>').addClass('dataset-heading datasetName')).html('Datasets you don\'t have access to. ')
-                    .html(
-                    (interactiveMapper.getUser()) ?
-                        'Datasets you don\'t have access to. To request access, click on them and look for \'Apply for access\'.'
-                    :
-                        'Datasets you don\'t have access to. You will need to login to apply for access to them.'
-                    )
-        };
-
-        var tabContainerDiv;
-        
-        var addDynamicTab = function(tabName, contentHeader, contentData){
-            tabContainerDiv.nbn_dynamictabs('add',tabName,
-                $('<div>')
-                    .addClass('dataset-list-container')
-                    .append(contentHeader)
-                    .append(contentData)
-            );
-        }
 
         return $('<div>')
             .addClass('dataset-dialog')
@@ -658,58 +537,37 @@ nbn.mapping.construction.WidgetOptionsCreator = function(interactiveMapper){
                 width: 830,
                 height: 590,
                 open: function() { //on open refresh
-                    var _me = $(this);
+                    var _me = $(this), loadingDiv = $('<div>').addClass('loading');
                     _me.empty();
-                    var loadingDiv = $('<div>').addClass('loading');
-                    _me.append(loadingDiv);
-                    $.getJSON('OrganisationAcknowledgementServlet' + nbn.util.ArrayTools.joinAndPrepend(nbn.util.ArrayTools.fromObject(nbnMapLayer.getNBNSpeciesLayerFilters()),'&', '?'), function(response) {
-                        var dataDiv = $('<div>')
-                        dataDiv.append(tabContainerDiv = $('<div>').nbn_dynamictabs());
-                        _me.append($('<div>')
-                            .addClass('nbn-datasetmetadata-caveat')
-                            .append($('<div>')
-                              .addClass('nbn-datasetmetadata-caveat-header')
-                              .html("IMPORTANT NOTICE TO THOSE INTENDING TO USE THESE DATA FOR RESEARCH, PLANNING OR LAND MANAGEMENT PURPOSES")
-                            ).append($('<div>')
-                              .addClass('nbn-datasetmetadata-caveat-text')
-                              .html("You may not have full access to all the datasets relating to this query. Your current level of access can be identified in the list provided below.  You are STRONGLY ADVISED to seek improved access by selecting the relevant datasets below and then clicking to request improved access.  Please ensure that your use of these data complies with the NBN Gateway <a href=\"/help/popups/generalTerms.jsp\" target=\"_blank\">Terms and Conditions</a>")
-                            )
-                        );
-                        _me.append(dataDiv);
-                    var sortableTables = new Array();
-                        if(response){
-                            if(response.datasetsUnviewable){
-                                sortableTables.push(datasetsNotViewableTable().nbn_list('setData',response.datasetsUnviewable));
-                                addDynamicTab(
-                                    'Datasets Not Available',
-                                    headerDatasetsNotViewable(),
-                                    sortableTables[sortableTables.length - 1]
-                                );
-                            }
-                            if(response.datasetsNotUsed){
-                                sortableTables.push(datasetsNotSelectedTable().nbn_list('setData',response.datasetsNotUsed));
-                                addDynamicTab(
-                                    'Datasets Not Selected',
-                                    headerDatasetsNotSelected,
-                                    sortableTables[sortableTables.length - 1]
-                                );
-                            }
-                            if(response.datasetsUsed){
-                                sortableTables.push(datasetsSelectedTable().nbn_list('setData',response.datasetsUsed));
-                                addDynamicTab(
-                                    'Datasets Selected',
-                                    headerDatasetsSelected,
-                                    sortableTables[sortableTables.length - 1]
-                                );
-                            }
+                    
+                    var query = nbnMapLayer.getNBNSpeciesLayerFilters();
+                    if($.isEmptyObject(query)) {
+                         _me.append($('<div>').html('<h2>You don\'t currently have any species data on the map.</h2>'));
+                    }
+                    else {
+                        _me.append(loadingDiv);
+                        $.getJSON(nbn.util.ServerGeneratedLoadTimeConstants.data_api + "/taxonObservations/providers",{
+                            ptvk : query.species,
+                            datasetKey: query.datasets,
+                            designation: query.desig
+                        }, function(data) {
+                            _me
+                                .append($('<div>')
+                                    .addClass('nbn-datasetmetadata-caveat')
+                                    .append($('<div>')
+                                      .addClass('nbn-datasetmetadata-caveat-header')
+                                      .html("IMPORTANT NOTICE TO THOSE INTENDING TO USE THESE DATA FOR RESEARCH, PLANNING OR LAND MANAGEMENT PURPOSES")
+                                    ).append($('<div>')
+                                      .addClass('nbn-datasetmetadata-caveat-text')
+                                      .html("You may not have full access to all the datasets relating to this query. Your current level of access can be identified in the list provided below.  You are STRONGLY ADVISED to seek improved access by selecting the relevant datasets below and then clicking to request improved access.  Please ensure that your use of these data complies with the NBN Gateway <a href=\"/help/popups/generalTerms.jsp\" target=\"_blank\">Terms and Conditions</a>")
+                                    )
+                                )
+                                .append(headerDatasetsSelected)
+                                .append(datasetsSelectedTable().nbn_list('setData',data));
+                                //.append(_createSortByButtonSet(sortableTables));
                             loadingDiv.fadeOut('slow');
-                            tabContainerDiv.tabs();
-                            _me.append(_createSortByButtonSet(sortableTables));
-                        }else{
-                            loadingDiv.fadeOut('slow');
-                            _me.append($('<div>').html('<h2>You don\'t currently have any species data on the map.</h2>'));
-                        }
-                    });
+                        });
+                    }
                 }
             });
     };

@@ -84,36 +84,22 @@ body {
     padding: 5px;
 }
 
-.dataset-resolution, .dataset-userResolution, .dataset-sensitiveAccess, .dataset-downloadRawData, .dataset-viewAttributes, .dataset-viewRecorder, .dataset-name,
-.dataset-resolution-heading, .dataset-userResolution-heading, .dataset-sensitiveAccess-heading, .dataset-downloadRawData-heading, .dataset-viewAttributes-heading, .dataset-viewRecorder-heading, .dataset-name-heading {
+.dataset-title, .dataset-title-heading {
     display: inline-block;
     vertical-align: top;
 }
 
-.dataset-resolution, .dataset-userResolution, .dataset-sensitiveAccess, .dataset-downloadRawData, .dataset-viewAttributes, .dataset-viewRecorder, .dataset-name {
-    padding-left: 10px;
-}
-
-.dataset-resolution, .dataset-userResolution, .dataset-sensitiveAccess, .dataset-downloadRawData, .dataset-viewAttributes, .dataset-viewRecorder {
-    width: 65px;
-}
-
-.dataset-name {
+.dataset-title {
     width: 300px;
 }
 
-.dataset-resolution-heading, .dataset-userResolution-heading, .dataset-sensitiveAccess-heading, .dataset-downloadRawData-heading, .dataset-viewAttributes-heading, .dataset-viewRecorder-heading {
-    width: 75px;
-}
-
-.dataset-name-heading {
+.dataset-title-heading {
     width: 310px;
 }
 
-.dataset-applyForAccess {
+.dataset-description {
     display: inline-block;
-    width: 75px;
-    vertical-align: top;
+    width: 466px;
 }
 
 .non-viewable-title{
