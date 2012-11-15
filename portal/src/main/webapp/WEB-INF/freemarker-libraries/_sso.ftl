@@ -1,7 +1,7 @@
 <#assign user = json.readURL("${api}/user")/>
 
 <#if user.id == 1>
-    <a href="/User/SSO">Login</a>
+    <div class="nbn-login-text"><a href="/User/SSO">Login</a></div>
 <#else>
-    Welcome ${user.forename} (<a href="/User/Logout">Logout</a>)
+    <div class="nbn-login-text">Welcome ${user.forename} ${user.surname} (<a href="/User/Logout">Logout</a> | <a href="/User/Admin">My Account</a>)</div>
 </#if>

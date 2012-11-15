@@ -22,7 +22,8 @@ import uk.org.nbn.nbnv.api.authentication.InvalidCredentialsException;
 import uk.org.nbn.nbnv.api.authentication.InvalidTokenException;
 import uk.org.nbn.nbnv.api.authentication.Token;
 import uk.org.nbn.nbnv.api.authentication.TokenAuthenticator;
-import uk.org.nbn.nbnv.api.dao.core.UserAuthenticationMapper;
+import uk.org.nbn.nbnv.api.dao.core.OperationalUserMapper;
+import uk.org.nbn.nbnv.api.dao.warehouse.UserAuthenticationMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.UserMapper;
 import uk.org.nbn.nbnv.api.model.User;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
@@ -43,6 +44,7 @@ public class UserResource {
     
     @Autowired TokenAuthenticator tokenAuth;
     @Autowired UserMapper userMapper;
+    @Autowired OperationalUserMapper oUserMapper;
     @Autowired UserAuthenticationMapper userAuthenticationMapper;
     
     @Autowired public UserResource(Properties properties) throws NoSuchAlgorithmException {
@@ -93,7 +95,7 @@ public class UserResource {
         byte[] passwordHashSHA1 = sha1.digest(password.getBytes(STRING_ENCODING));
         byte[] md5HashSHA1 = sha1.digest(md5.digest(password.getBytes(STRING_ENCODING)));
     
-        userAuthenticationMapper.setUserPassword(user, passwordHashSHA1, md5HashSHA1);
+        oUserMapper.setUserPassword(user, passwordHashSHA1, md5HashSHA1);
         return Response.ok("success").build();
     }
     

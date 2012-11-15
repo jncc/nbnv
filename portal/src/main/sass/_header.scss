@@ -42,3 +42,7 @@
         .first:hover { @include border-left-radius(5px); }
     }
 }
+
+.nbn-login-text {
+    text-align: right;
+}

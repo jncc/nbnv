@@ -8,7 +8,7 @@ import javax.crypto.*;
 import javax.crypto.spec.IvParameterSpec;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import uk.org.nbn.nbnv.api.dao.core.UserAuthenticationMapper;
+import uk.org.nbn.nbnv.api.dao.warehouse.UserAuthenticationMapper;
 import uk.org.nbn.nbnv.api.model.User;
 
 /**
