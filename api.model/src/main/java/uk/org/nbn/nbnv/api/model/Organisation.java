@@ -1,5 +1,8 @@
 package uk.org.nbn.nbnv.api.model;
 
+import com.sun.jersey.server.linking.Ref;
+import java.net.URI;
+
 public class Organisation {
     private int id;
     private String name;
@@ -12,6 +15,20 @@ public class Organisation {
     private String contactEmail;
     private String website;
     private boolean allowPublicRegistration;
+    
+    private boolean hasLogo, hasSmallLogo;
+    @Ref(value="organisations/${instance.id}/logo", condition="${instance.hasLogo}") 
+    private URI logo;
+    @Ref(value="organisations/${instance.id}/logosmall", condition="${instance.hasSmallLogo}")
+    private URI smallLogo;
+   
+    public void setHasLogo(boolean hasLogo) {
+        this.hasLogo = hasLogo;
+    }
+
+    public void setHasSmallLogo(boolean hasSmallLogo) {
+        this.hasSmallLogo = hasSmallLogo;
+    }
 
     public int getId() {
         return id;
@@ -101,4 +118,27 @@ public class Organisation {
         this.allowPublicRegistration = allowPublicRegistration;
     }
 
+    public URI getLogo() {
+        return logo;
+    }
+
+    public void setLogo(URI logo) {
+        this.logo = logo;
+    }
+
+    public URI getSmallLogo() {
+        return smallLogo;
+    }
+
+    public void setSmallLogo(URI smallLogo) {
+        this.smallLogo = smallLogo;
+    }
+
+    public boolean isHasLogo() {
+        return hasLogo;
+    }
+
+    public boolean isHasSmallLogo() {
+        return hasSmallLogo;
+    }
 }

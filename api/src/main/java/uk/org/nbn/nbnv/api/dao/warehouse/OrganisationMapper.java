@@ -14,20 +14,22 @@ import uk.org.nbn.nbnv.api.model.Organisation;
  * @author Paul Gilbertson
  */
 public interface OrganisationMapper {
-    final String SELECT_ALL = "SELECT * FROM OrganisationData";
-    final String SELECT_BY_ID = "SELECT * FROM OrganisationData WHERE id = #{id}";
-    final String SELECT_LOGO = "SELECT logo FROM OrganisationData WHERE id = #{id}";
-    final String SELECT_LOGO_SMALL = "SELECT logoSmall FROM OrganisationData WHERE id = #{id}";
+    final String SELECT_ALL = "SELECT " +
+            "CASE WHEN logo IS NULL THEN 0 ELSE 1 END as hasLogo," +
+            "CASE WHEN logoSmall IS NULL THEN 0 ELSE 1 END as hasSmallLogo,"  +
+            "id, name, abbreviation, summary, address, postcode, contactName,"  +
+            "contactEmail, website, allowPublicRegistration "  +
+        "FROM OrganisationData";
     
     @Select(SELECT_ALL)
     List<Organisation> selectAll();
     
-    @Select(SELECT_BY_ID)
+    @Select(SELECT_ALL + " WHERE id = #{id}")
     Organisation selectByID(int id);
     
-    @Select(SELECT_LOGO)
+    @Select("SELECT logo FROM OrganisationData WHERE id = #{id}")
     Object selectLogoByOrganisationID(int id);
     
-    @Select(SELECT_LOGO_SMALL)
+    @Select("SELECT logoSmall FROM OrganisationData WHERE id = #{id}")
     Object selectLogoSmallByOrganisationID(int id);
 }

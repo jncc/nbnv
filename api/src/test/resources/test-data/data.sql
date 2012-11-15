@@ -46,9 +46,9 @@ INSERT INTO UserRoleSystemAdministratorData (userKey) VALUES (42);
 -- ---------------
 --Create a test organisation "testorg" with id 1
 INSERT INTO OrganisationData (
-    id, name
+    id, name, allowPublicRegistration
 ) VALUES (
-    1, 'testorg'
+    1, 'testorg', false
 );
 
 --Create a single organisation admin "orgadmintester" with an id of 41
@@ -82,9 +82,9 @@ INSERT INTO OrganisationMembershipData (
 -- ------------------
 --Create a test organisation "testdataorg" with id 2
 INSERT INTO OrganisationData (
-    id, name
+    id, name, allowPublicRegistration
 ) VALUES (
-    2, 'testdataorg'
+    2, 'testdataorg', false
 );
 
 --Create a series of test datasets

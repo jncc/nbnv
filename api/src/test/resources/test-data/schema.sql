@@ -96,7 +96,18 @@ CREATE TABLE SiteBoundaryCategory(
 
 CREATE TABLE OrganisationData(
 	id int NOT NULL,
-	name varchar(200) NOT NULL);
+	name varchar(200) NOT NULL,
+	abbreviation varchar(10) NULL,
+	summary varchar(8000) NULL,
+	address varchar(200) NULL,
+	postcode varchar(10) NULL,
+	phone varchar(50) NULL,
+	contactName varchar(120) NULL,
+	contactEmail varchar(100) NULL,
+	website varchar(100) NULL,
+	allowPublicRegistration bit NOT NULL,
+	logo varbinary(8000) NULL,
+	logoSmall varbinary(8000) NULL);
 
 CREATE TABLE GridTree(
 	featureID int NOT NULL,
