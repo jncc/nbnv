@@ -29,8 +29,8 @@
         <@taxonPageDatasets datasets=datasets/>
     </#if>
     <div align="center">
-        <a href="http://www.nhm.ac.uk/" target="_blank"><img src="/img/nhm_new.gif" alt="Natural History Museum logo" width="135" height="85" border="0" /></a>
-        <a href="http://www.jncc.gov.uk/page-5546" target="_blank"><img src="/img/jncc.gif" alt="Joint Nature Conservation Committee logo" width="150" height="66" border="0" /></a>
+        <a href="http://www.nhm.ac.uk/" target="_blank"><img src="/img/taxonPage/nhm_new.gif" alt="Natural History Museum logo" width="135" height="85" border="0" /></a>
+        <a href="http://www.jncc.gov.uk/page-5546" target="_blank"><img src="/img/taxonPage/jncc.gif" alt="Joint Nature Conservation Committee logo" width="150" height="66" border="0" /></a>
     </div>
 </@template.master>
 
@@ -45,9 +45,9 @@
 <#macro taxonPageNBNLinks taxon>
     <div class="tabbed nbn-taxon-page-right-container">
         <h3>Explore Records</h3>
-        <div class="nbn-taxon-page-list"><a href="/Reports/Single_Species/${taxon.taxonVersionKey}/Grid_Map">Grid Map</a></div>
-        <div class="nbn-taxon-page-list"><a href="/imt/?mode=SPECIES&species=${taxon.taxonVersionKey}">Interactive Map</a></div>
-        <div class="nbn-taxon-page-list">List of sites</div>
+        <div class="nbn-taxon-page-list"><a href="/Reports/Single_Species/${taxon.taxonVersionKey}/Grid_Map"><img src="/img/taxonPage/grid.png" class="nbn-taxon-page-link-img" />Grid Map</a></div>
+        <div class="nbn-taxon-page-list"><a href="/imt/?mode=SPECIES&species=${taxon.taxonVersionKey}"><img src="/img/taxonPage/imt.png" class="nbn-taxon-page-link-img" />Interactive Map</a></div>
+        <div class="nbn-taxon-page-list"><img src="/img/taxonPage/site.png" class="nbn-taxon-page-link-img" />List of sites</div>
     </div>
 </#macro>
 
