@@ -8,22 +8,25 @@
 <#assign datasets=json.readURL("${api}/taxa/${tvk}/datasets")>
 <#assign weblinks=json.readURL("${api}/taxa/${tvk}/weblinks")>
 <#assign output=json.readURL("${api}/taxonOutputGroups/${taxon.taxonOutputGroupKey}")>
-<#assign ptvk=taxon.ptaxonVersionKey>
 
 <@template.master title="NBN Gateway - Taxon"
-    javascripts=["/js/taxon-page-utils.js","/js/report_utils.js"]
-    csss=["/css/taxon-page.css"]>
+    javascripts=["/js/jquery-ui-1.8.23.custom.min.js","/js/jqueryui.simple-table-style.js","/js/jquery.dataTables.min.js","/js/taxon-page-utils.js","/js/report_utils.js"]
+    csss=["/css/smoothness/jquery-ui-1.8.23.custom.css","/css/taxon-page.css"]>
     <h1>${taxon.name} <#if taxon.authority??>${taxon.authority}</#if></h1>
     <div>
-        <@taxonPageTaxonData taxon=taxon outputGroup=output/>
         <#if taxon.taxonVersionKey == ptaxon.taxonVersionKey>
             <@taxonPageTaxonomy parent=parent taxon=taxon children=children/>
+        </#if>
+        <@taxonPageTaxonData taxon=taxon outputGroup=output/>
+        <#if taxon.taxonVersionKey == ptaxon.taxonVersionKey>
             <@taxonPageSynonyms syn=synonyms/>
             <@taxonPageDesignations des=designations/>
             <@taxonPageLinks links=weblinks/>
         </#if>
         <@taxonPageNBNLinks taxon=taxon/>
-        <@gridMapContents key=ptvk/>
+        <#if taxon.taxonVersionKey == ptaxon.taxonVersionKey>
+            <@gridMapContents taxon=ptaxon/>
+        </#if>
     </div>
     <#if taxon.taxonVersionKey == ptaxon.taxonVersionKey>
         <@taxonPageDatasets datasets=datasets/>
@@ -34,11 +37,11 @@
     </div>
 </@template.master>
 
-<#macro gridMapContents key>
-    <div class="tabbed" id="nbn-grid-map-container" gis-server="http://staging.testnbn.net/gis" tvk="${key}">
+<#macro gridMapContents taxon>
+    <div class="tabbed" id="nbn-grid-map-container" gis-server="http://staging.testnbn.net/gis" tvk="${taxon.taxonVersionKey}">
         <h3>Map</h3>
-        <img id="nbn-grid-map-busy-image" src='/img/ajax-loader-medium.gif'>
-        <img id="nbn-grid-map-image" class="nbn-centre-element">
+        <img id="nbn-grid-map-busy-image" src='/img/ajax-loader-medium.gif' />
+        <img id="nbn-grid-map-image" class="nbn-centre-element" alt="Distribution of ${taxon.name} in the UK according to records accessible through the NBN Gateway" />
     </div>
 </#macro>
 
@@ -54,20 +57,19 @@
 <#macro taxonPageTaxonData taxon outputGroup>
     <div class="tabbed nbn-taxon-page-taxonomy-container">
         <h3>Taxon</h3>
-        <table>
-            <tr><td>Name:</td><td>${taxon.name}</td></tr>
-            <tr><td>Authority:</td><td><#if taxon.authority??>${taxon.authority}</#if></td></tr>
-            <#if taxon.commonNameTaxonVersionKey??><tr><td>Common Name:</td><td>${taxon.commonName}</td></tr></#if>
-            <tr><td>Taxon Version Key:</td><td>${taxon.taxonVersionKey}</td></tr>
+        <table class="nbn-dataset-table nbn-simple-table">
+            <tr><th>Name:</th><td>${taxon.name}</td></tr>
+            <tr><th>Authority:</th><td><#if taxon.authority??>${taxon.authority}</#if></td></tr>
+            <#if taxon.commonNameTaxonVersionKey??><tr><th>Common Name:</th><td>${taxon.commonName}</td></tr></#if>
+            <tr><th>Taxon Version Key:</th><td>${taxon.taxonVersionKey}</td></tr>
             <#if taxon.ptaxonVersionKey != taxon.taxonVersionKey>
-            <tr><td>Preferred Name:</td><td><a href="${ptaxon.taxonVersionKey}">${ptaxon.name}</a></td></tr>
-            <tr><td>Preferred Name Authority:</td><td><#if ptaxon.authority??>${ptaxon.authority}</#if></td></tr>
-            <tr><td>Preferred Taxon Version Key:</td><td>${ptaxon.taxonVersionKey}</td></tr>
+            <tr><th>Preferred Name:</th><td><a href="${ptaxon.taxonVersionKey}">${ptaxon.name}</a></td></tr>
+            <tr><th>Preferred Name Authority:</th><td><#if ptaxon.authority??>${ptaxon.authority}</#if></td></tr>
+            <tr><th>Preferred Taxon Version Key:</th><td>${ptaxon.taxonVersionKey}</td></tr>
             </#if>
-            <tr><td>Rank:</td><td>${taxon.rank}</td></tr>
-            <tr><td>Name Status:</td><td>${taxon.nameStatus}</td></tr>
-            <tr><td>Name Form:</td><td>${taxon.versionForm}</td></tr>
-            <#if !json.isNull(outputGroup)><tr><td>Output Group:</td><td>${outputGroup.name}</td></tr></#if>
+            <tr><th>Rank:</th><td>${taxon.rank}</td></tr>
+            <tr><th>Name Form:</th><td>${taxon.versionForm}</td></tr>
+            <#if !json.isNull(outputGroup)><tr><th>Output Group:</th><td>${outputGroup.name}</td></tr></#if>
         </table>
     </div>
 </#macro>
@@ -78,13 +80,12 @@
         <#if syn?has_content>
             <h4>Well formed name(s)</h4>
             <#assign w = 0 />
-            <table>
+            <table class="nbn-dataset-table nbn-simple-table">
             <#list syn as s>
                 <#if s.versionForm == 'Well-formed'>
                 <#assign w = 1 />
                 <tr>
-                    <td><a href="${s.taxonVersionKey}">${s.name}</a></td>
-                    <td><#if s.authority??>${s.authority}</#if></td>
+                    <td><a href="${s.taxonVersionKey}">${s.name}</a> <#if s.authority??>${s.authority}</#if></td>
                 </tr>
                 </#if>
             </#list>
@@ -92,16 +93,14 @@
                 <td>None</td>
             </#if>
             </table>
-            <h4 style="margin-bottom: 0px; margin-top: 10px;">Badly formed name(s)</h4>
-            <div style="margin-bottom: 10px;">(e.g. some error in the spelling or authority, missing authority etc)</div>
+            <h4>Badly formed / unverified name(s)</h4>
             <#assign w = 0 />
-            <table>
+            <table class="nbn-dataset-table nbn-simple-table">
             <#list syn as s>
                 <#if s.versionForm != 'Well-formed'>
                 <#assign w = 1 />
                 <tr>
-                    <td><a href="${s.taxonVersionKey}">${s.name}</a></td>
-                    <td><#if s.authority??>${s.authority}</#if></td>
+                    <td><a href="${s.taxonVersionKey}">${s.name}</a> <#if s.authority??>${s.authority}</#if></td>
                 </tr>
                 </#if>
             </#list>
@@ -118,20 +117,20 @@
 <#macro taxonPageTaxonomy parent taxon children>
     <div class="tabbed nbn-taxon-page-taxonomy-container">
         <h3>Taxonomy</h3>
-        <table>
+        <table class="nbn-dataset-table nbn-simple-table">
             <#assign indent=0/>
             <#if parent?has_content>
                 <#list parent as p>
-                    <tr><td><span style="padding-left: ${indent / 2}em;"><a href="${p.taxonVersionKey}">${p.name}</a></span></td><td><#if p.authority??>${p.authority}</#if></td><td>${p.rank}</td></tr>
+                    <tr><th>${p.rank}</th><td><span style="padding-left: ${indent / 2}em;"><a href="${p.taxonVersionKey}">${p.name}</a> <#if p.authority??>${p.authority}</#if></span></td></tr>
                     <#assign indent = indent + 1 />
                 </#list>
             </#if>
         
-            <tr><td><span style="padding-left: ${(indent + 1) / 2}em;">${taxon.name}</span></td><td><#if taxon.authority??>${taxon.authority}</#if></td><td>${taxon.rank}</td></tr>
+            <tr><th>${taxon.rank}</th><td><span style="padding-left: ${(indent + 1) / 2}em;">${taxon.name} <#if taxon.authority??>${taxon.authority}</#if></span></td></tr>
 
             <#if children?has_content>
                 <#list children as c>
-                    <tr><td><span style="padding-left: ${(indent + 2) / 2}em;"><a href="${c.taxonVersionKey}">${c.name}</a></span></td><td><#if c.authority??>${c.authority}</#if></td><td>${c.rank}</td></tr>
+                    <tr><th>${taxon.rank}</th><td><span style="padding-left: ${(indent + 2) / 2}em;"><a href="${c.taxonVersionKey}">${c.name}</a> <#if c.authority??>${c.authority}</#if></span></tr>
                 </#list>
             </#if>
         </table>
@@ -142,10 +141,10 @@
     <div class="tabbed nbn-taxon-page-taxonomy-container">
         <h3>Designations</h3>
         <#if des?has_content>
-            <table>
+            <table class="nbn-dataset-table nbn-simple-table">
                 <#list des as d>
                     <tr>
-                        <td><a href="/Designations/${d.designation.code}">${d.designation.name}</a></td>
+                        <td width="25%"><a href="/Designations/${d.designation.code}">${d.designation.name}</a></td>
                         <td style="width: 110px;">
                             <#if d.startDate??>From: ${d.startDate}</#if>
                             <#if d.startDate?? && d.endDate??><br/></#if>
@@ -182,7 +181,7 @@
     <div class="tabbed nbn-taxon-page-dataset-container">
         <h3>Datasets</h3>
         <#if datasets?has_content>
-            <table>
+            <table class="nbn-dataset-table nbn-simple-table">
                 <#list datasets as d>
                     <tr>
                         <td><a href="/Datasets/${d.key}">${d.title}</a></td>
