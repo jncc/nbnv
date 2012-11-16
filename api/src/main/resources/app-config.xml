@@ -51,4 +51,10 @@
     <bean id="solrServer" class="org.apache.solr.client.solrj.impl.CommonsHttpSolrServer">
         <constructor-arg value="${solr_url}"/>
     </bean>
+    
+<!--E-mailer for the api application -->
+    <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+        <property name="host" value="${email_host}"/>
+        <property name="port" value="${email_port}"/>
+    </bean>
 </beans>

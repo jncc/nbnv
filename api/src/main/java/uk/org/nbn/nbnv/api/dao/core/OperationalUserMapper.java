@@ -4,6 +4,8 @@
  */
 package uk.org.nbn.nbnv.api.dao.core;
 
+import java.util.Date;
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Update;
 import uk.org.nbn.nbnv.api.model.User;
@@ -13,11 +15,34 @@ import uk.org.nbn.nbnv.api.model.User;
  * @author Paul Gilbertson
  */
 public interface OperationalUserMapper {
-    @Update("UPDATE User " +
+    @Update("UPDATE \"User\" " +
         "SET password_sha1 = #{passwordSHA1}, " +
             "password_md5_sha1 = #{md5PasswordSHA1} " +
         "WHERE id=#{user.id}")
     void setUserPassword( @Param("user") User user,  
                                 @Param("passwordSHA1") byte[] passwordHash, 
-                                @Param("md5PasswordSHA1") byte[] md5passwordHash);    
+                                @Param("md5PasswordSHA1") byte[] md5passwordHash); 
+    
+    @Insert("INSERT INTO \"User\"" +
+                                "(username, password_sha1, password_md5_sha1, " + 
+                                "userTypeID, forename, surname, phone, email," +
+                                "active, activationKey, invalidEmail, allowEmailAlerts," +
+                                "subscribedToAdminMails, subscribedToNBNMarketting, " +
+                                "bannedFromValidation, englishNameOrder, registrationDate)" +
+                        "VALUES (#{username}, #{passwordSHA1}, #{md5PasswordSHA1}," +
+                                "2, #{forename}, #{surname}, #{phone}," +
+                                "#{email}, 0, #{activationKey}, 0, 0, 0, 0, " +
+                                "0, 0, #{registrationDate})")
+    void registerNewUser(   @Param("username") String username,
+                            @Param("forename") String forename,
+                            @Param("surname") String surname,
+                            @Param("phone") String phone,
+                            @Param("email") String email,
+                            @Param("registrationDate") Date registrationDate,
+                            @Param("activationKey") String activationKey,
+                            @Param("passwordSHA1") byte[] passwordHash, 
+                            @Param("md5PasswordSHA1") byte[] md5passwordHash);
+    
+    @Insert("UPDATE \"User\" SET active = 1 WHERE username = #{username} AND active = 0 AND activationKey = #{code}")
+    int activateNewUser( @Param("username") String username, @Param("code") String code);
 }
