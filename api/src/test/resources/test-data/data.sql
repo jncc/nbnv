@@ -118,7 +118,7 @@ INSERT INTO UserData (
 
 --Make "datasetadmintester" the test datasets admin
 INSERT INTO DatasetAdministrator (
-    userKey, datasetKey
+    userID, datasetKey
 ) VALUES (
     (39, 'DATASET1'),
     (39, 'DATASET2'),

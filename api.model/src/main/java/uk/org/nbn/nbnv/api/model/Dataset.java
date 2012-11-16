@@ -16,7 +16,7 @@ public class Dataset {
     private Organisation organisation;
     
     public Dataset(){}
-    
+
     public Dataset(String key, String title, String description, String typeName, String organisationName,
                         String captureMethod, String purpose, String geographicalCoverage, String quality,
                         String additionalInformation, String accessConstraints, String useConstraints,
@@ -43,6 +43,22 @@ public class Dataset {
         this.temporalCoverage = temporalCoverage;
         this.updateFrequency = updateFrequency;
         this.organisation = organisation;
+    }
+
+    public Dataset(String key, String title, String description, 
+                        String captureMethod, String purpose, String geographicalCoverage, String quality,
+                        String additionalInformation, String accessConstraints, String useConstraints, String temporalCoverage) {
+        this.key = key;
+        this.title = title;
+        this.description = description;
+        this.captureMethod = captureMethod;
+        this.purpose = purpose;
+        this.geographicalCoverage = geographicalCoverage;
+        this.quality = quality;
+        this.additionalInformation = additionalInformation;
+        this.accessConstraints = accessConstraints;
+        this.useConstraints = useConstraints;
+        this.temporalCoverage = temporalCoverage;
     }
 
     public String getKey() {
