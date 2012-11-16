@@ -3,11 +3,11 @@ package uk.org.nbn.nbnv.api.rest.resources;
 import freemarker.template.TemplateException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import javax.ws.rs.GET;
@@ -31,6 +31,7 @@ import uk.org.nbn.nbnv.api.dao.core.OperationalUserMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.UserAuthenticationMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.UserMapper;
 import uk.org.nbn.nbnv.api.mail.TemplateMailer;
+import uk.org.nbn.nbnv.api.model.Dataset;
 import uk.org.nbn.nbnv.api.model.User;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
 
@@ -169,5 +170,12 @@ public class UserResource {
     @Produces(MediaType.APPLICATION_JSON)
     public User getUserByID(@PathParam("id") int id) {
         return userMapper.getUser(id);
+    }
+    
+    @GET
+    @Path("/adminDatasets")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Dataset> getUserAdminDatasets(@TokenUser User user) {
+        return userMapper.getDatasetsUserAdmins(user.getId());
     }
 }
