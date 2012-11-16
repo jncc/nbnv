@@ -1,9 +1,9 @@
 <#assign dataset=json.readURL("${api}/datasets/${URLParameters.dataset}")>
 
 <@template.master title="Metadata for ${dataset.title}"
-    javascripts=["/js/jquery-ui-1.8.23.custom.min.js/","/js/jqueryui.simple-table-style.js","/js/jquery.dataTables.min.js"] 
+    javascripts=["/js/jquery-ui-1.8.23.custom.min.js","/js/jqueryui.simple-table-style.js","/js/jquery.dataTables.min.js","/js/admin/metadata.js"] 
     csss=["/css/smoothness/jquery-ui-1.8.23.custom.css", "/css/admin-controls.css"]>
-            <form>
+            <form id="nbn-metadata-update" url="${api}/dataset/${dataset.key}">
                 <table class="nbn-dataset-table nbn-simple-table">
                     <tr>
                         <th>Title</th>
@@ -47,6 +47,6 @@
                     </tr>
                 </table>
                 <input type="hidden" name="key" value="${dataset.key}" />
-                <input type="submit" id="nbn-form-submit" />
+                <button id="nbn-form-submit"> Update </button>
             </form>
 </@template.master>
