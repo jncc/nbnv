@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+        xmlns:tx="http://www.springframework.org/schema/tx"
+        xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd 
+                            http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+<!--Read in the gis properties file using the NBN Properties reader and use as a bean-->
+    <bean id="properties" factory-method="getEffectiveProperties" class="uk.gov.nbn.data.properties.PropertiesReader">
+        <constructor-arg value="powerless-global.properties"/>
+    </bean>
+    
+<!--Use above properties file in this spring.xml-->
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="properties" ref="properties"/>
+    </bean> 
+             
+<!--Create a jersey client pointing to the data api as defined in the properites file-->
+    <bean id="client" factory-method="create" class="com.sun.jersey.api.client.Client">
+        <constructor-arg>
+            <bean class="uk.gov.nbn.data.portal.config.JerseyClientConfig"/>
+        </constructor-arg>
+    </bean>
+    <bean id="api" factory-bean="client" factory-method="resource">
+        <constructor-arg value="${api}"/>
+    </bean>
+</beans>

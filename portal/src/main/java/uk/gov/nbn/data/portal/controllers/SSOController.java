@@ -1,71 +1,68 @@
 package uk.gov.nbn.data.portal.controllers;
 
 
+import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.GenericType;
+import com.sun.jersey.api.client.WebResource;
 import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.Properties;
-import javax.servlet.ServletConfig;
+import java.util.Map;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import uk.gov.nbn.data.properties.PropertiesReader;
+import javax.ws.rs.core.MediaType;
+import org.codehaus.jettison.json.JSONException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
 
 /**
- * The following servlet will attempt a login to the NBN api and if successful
+ * The following Controller handles logging into and out of the NBN Gateway data
+ * API
  * forward the cookie token to the browser
  * @author Christopher Johnson
  */
-public class SSOController extends HttpServlet {
-    private Properties properties; 
+@Controller
+public class SSOController {
+    @Autowired WebResource resource; 
     
-    @Override
-    public void init(ServletConfig config) throws ServletException {
-        try {
-            properties = PropertiesReader.getEffectiveProperties("powerless-global.properties");
-        } catch (IOException ex) {
-            throw new ServletException(ex);
-        }
+    @RequestMapping(value = "/User/SSO/Login", method = RequestMethod.GET)
+    public String processRequest() {
+        return "sso";
     }
     
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-
-        String url = properties.getProperty("api") + "/user/login?username=" + 
-                request.getParameter("username") + "&password=" +
-                request.getParameter("password");
+    @RequestMapping(value = "/User/SSO/Login", method = RequestMethod.POST) 
+    public ModelAndView login(  @RequestParam("username") String username,
+                                @RequestParam("password") String password, 
+                                HttpServletResponse response
+            ) throws IOException, ServletException, JSONException {
+        GenericType<Map<String, Object>> type = new GenericType<Map<String, Object>>(){};
+        ClientResponse clientResponse = resource.path("/user/login")
+                                                .queryParam("username", username)
+                                                .queryParam("password", password)
+                                                .accept(MediaType.APPLICATION_JSON)
+                                                .get(ClientResponse.class);
         
-        HttpURLConnection conn = (HttpURLConnection)new URL(url).openConnection();
-        try {
-            String header = conn.getHeaderField("Set-Cookie");
-            if(header != null) { //success
-                response.addHeader("Set-Cookie", header);
-                response.sendRedirect("/");
-            }
-            else {
-                request.getRequestDispatcher("/User/SSO/").forward(request, response);
-            }
+        Map<String, Object> body = clientResponse.getEntity(type);
+        if((Boolean)body.get("success")) {
+            response.addHeader("Set-Cookie", clientResponse.getHeaders().getFirst("Set-Cookie"));
+            response.sendRedirect("/");
+            return null;
         }
-        finally {
-            conn.disconnect();
+        else {
+            return new ModelAndView("sso", body);
         }
     }
-
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
-    }
-
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
-    }
-
-    @Override
-    public String getServletInfo() {
-        return "Servlet which wraps data api login and handles redirects";
+    
+    @RequestMapping(value = "/User/SSO/Logout", method = RequestMethod.GET) 
+    public void logout( HttpServletRequest request, 
+                        HttpServletResponse response
+            ) throws IOException, ServletException {
+        ClientResponse clientResponse = resource.path("/user/logout")
+                                                .accept(MediaType.APPLICATION_JSON)
+                                                .get(ClientResponse.class);
+        response.addHeader("Set-Cookie", clientResponse.getHeaders().getFirst("Set-Cookie"));
     }
 }

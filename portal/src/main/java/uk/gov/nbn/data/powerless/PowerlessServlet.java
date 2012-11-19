@@ -1,57 +1,42 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package uk.gov.nbn.data.powerless;
 
 import freemarker.ext.servlet.FreemarkerServlet;
 import freemarker.ext.servlet.HttpRequestParametersHashModel;
 import freemarker.template.*;
 import java.io.File;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.util.Map;
+import java.util.Properties;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 import uk.gov.nbn.data.powerless.json.CookiePassthrough;
 import uk.gov.nbn.data.powerless.json.JSONReaderForFreeMarker;
 import uk.gov.nbn.data.powerless.request.TraditionalHttpRequestParametersHashModel;
-import uk.gov.nbn.data.properties.PropertiesReader;
 
 /**
- *
- * @author Administrator
+ * The following servlet handles simple resources in a powerless fashion. For 
+ * more complex functionality see Spring MVC.
+ * @author Christopher Johnson
  */
 public class PowerlessServlet extends FreemarkerServlet{
-    private static final String FREEMARKER_TEMPLATE_LIBRARIES = "/WEB-INF/freemarker-libraries/";
-    private static final String FREEMARKER_GLOBAL_VARIABLES = "powerless-global.properties";
     private static final String POWERLESS_URL_PARAMETERSATION_KEY = "URLParameters";
     
     @Override public void init() throws ServletException {
         super.init();
         try {
             Configuration config = getConfiguration();
-            
-            importLibraries(config);
-            for(Map.Entry currEntry : PropertiesReader.getEffectiveProperties(FREEMARKER_GLOBAL_VARIABLES).entrySet()){
-                config.setSharedVariable((String)currEntry.getKey(), currEntry.getValue());
-            }
-            config.setSharedVariable("markdown", new MarkDownDirectiveModel());
-            config.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
+            AutowireCapableBeanFactory beanFactory = WebApplicationContextUtils
+                                    .getWebApplicationContext(getServletContext())
+                                    .getAutowireCapableBeanFactory();
+            PowerlessHelper.setUpConfiguration(
+                    config, 
+                    beanFactory.getBean("properties", Properties.class), 
+                    new File(getServletContext().getRealPath(PowerlessHelper.DEFAULT_FREEMARKER_TEMPLATE_LIBRARIES)), 
+                    PowerlessHelper.DEFAULT_FREEMARKER_TEMPLATE_LIBRARIES);
         } catch (TemplateModelException ex) {
             throw new ServletException(ex);
-        } catch (IOException io) {
-            throw new ServletException(io);
-        }
-    }
-    
-    private void importLibraries(Configuration config) {
-        File librariesDir = new File(getServletContext().getRealPath(FREEMARKER_TEMPLATE_LIBRARIES));
-        for(File currFile : librariesDir.listFiles(new FreeMarkerTemplateLibraryFileFilter())) {
-            String libraryName = currFile.getName().substring(0, currFile.getName().lastIndexOf('.'));
-            config.addAutoImport(libraryName, FREEMARKER_TEMPLATE_LIBRARIES + currFile.getName());
         }
     }
     
@@ -82,11 +67,5 @@ public class PowerlessServlet extends FreemarkerServlet{
     @Override
     protected HttpRequestParametersHashModel createRequestParametersHashModel(javax.servlet.http.HttpServletRequest request) {
         return new TraditionalHttpRequestParametersHashModel(request);
-    }
-        
-    private class FreeMarkerTemplateLibraryFileFilter implements FilenameFilter{
-        @Override public boolean accept(File dir, String name) {
-            return !name.startsWith("_") && name.endsWith(".ftl");
-        }
     }
 }

@@ -4,8 +4,8 @@
 
 Please enter your username and password in order to login to the NBN Gateway 
     </@markdown>
-
-    <form action="/SSO_Controller" method="POST">
+${message!}
+    <form action="/User/SSO/Login" method="POST">
         <input type="text" name="username" value=""/>
         <input type="password" name="password" value=""/>
         <input type="submit" value="Login"/>

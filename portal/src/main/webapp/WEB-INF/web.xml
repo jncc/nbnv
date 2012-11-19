@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app id="WebApp_ID" version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
     <display-name>NBN Gateway Frontend</display-name>
+       
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+ 
+    <servlet>
+        <servlet-name>spring-mvc</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <load-on-startup>2</load-on-startup>
+    </servlet>
+
     <!--Create the Powerless Servlet-->
     <servlet>
         <servlet-name>freemarker</servlet-name>
@@ -60,14 +71,18 @@
         <filter-name>PowerlessTemplateExceptionFilter</filter-name>
         <filter-class>uk.gov.nbn.data.powerless.PowerlessTemplateExceptionFilter</filter-class>
     </filter>
-    <filter-mapping>
-        <filter-name>PowerlessTemplateExceptionFilter</filter-name>
-        <url-pattern>*.ftl</url-pattern>
-    </filter-mapping>
+    <servlet-mapping>
+        <servlet-name>spring-mvc</servlet-name>
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
     <servlet-mapping>
         <servlet-name>freemarker</servlet-name>
         <url-pattern>*.ftl</url-pattern>
     </servlet-mapping>
+    <filter-mapping>
+        <filter-name>PowerlessTemplateExceptionFilter</filter-name>
+        <url-pattern>*.ftl</url-pattern>
+    </filter-mapping>
     <!--Define custom error pages -->
     <error-page>
         <error-code>401</error-code>
@@ -85,21 +100,4 @@
         <exception-type>java.io.FileNotFoundException</exception-type>
         <location>/WEB-INF/unavailable-pages/data-service-not-responding.ftl</location>
     </error-page>
-    <!--Define Custom controller servlets-->
-    <servlet>
-        <servlet-name>SSO_Controller</servlet-name>
-        <servlet-class>uk.gov.nbn.data.portal.controllers.SSOController</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>SSO_Controller</servlet-name>
-        <url-pattern>/SSO_Controller</url-pattern>
-    </servlet-mapping>
-    <servlet>
-        <servlet-name>Logout_Controller</servlet-name>
-        <servlet-class>uk.gov.nbn.data.portal.controllers.LogoutController</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>Logout_Controller</servlet-name>
-        <url-pattern>/User/Logout</url-pattern>
-    </servlet-mapping>
 </web-app>
