@@ -100,16 +100,16 @@ class NbnRecord(record: StarRecord) {
 
   def feature = {
     if (gridReferenceRaw.isDefined)
-      GridRefDef(gridReferenceRaw.get, parseSrs, gridReferencePrecision)
+      GridRefDef(gridReferenceRaw.get, parseSpatialSystem, gridReferencePrecision)
     else if (featureKey.isDefined)
       BoundaryDef(featureKey.get)
     else if (east.isDefined && north.isDefined && (srs.isDefined || gridReferenceTypeRaw.isDefined))
-      PointDef(east.get, north.get, parseSrs.get, gridReferencePrecision)
+      PointDef(east.get, north.get, parseSpatialSystem.get, gridReferencePrecision)
     else
-      throw new BadDataException("Couldn't parse location.")
+      throw new BadDataException("Couldn't parse feature.")
   }
 
-  def parseSrs = {
+  def parseSpatialSystem = {
     if (gridReferenceTypeRaw.isDefined)
       Some(GridTypeDef(gridReferenceTypeRaw.get))
     else if (srs.isDefined)
