@@ -178,6 +178,6 @@ CREATE TABLE DatasetData (
         PRIMARY KEY ("key"));
 
 CREATE TABLE DatasetAdministrator(
-        userKey int NOT NULL,
+        userID int NOT NULL,
         datasetKey char(8) NOT NULL,
-        PRIMARY KEY (userKey, datasetKey));
+        PRIMARY KEY (userID, datasetKey));
