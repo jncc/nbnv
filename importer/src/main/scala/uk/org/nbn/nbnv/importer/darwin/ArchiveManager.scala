@@ -14,7 +14,6 @@ class ArchiveManager @Inject()(options: Options) {
     val temp = new File(options.tempDir)
     temp.mkdirs()
 
-    println(temp.getAbsolutePath)
     ArchiveFactory.openArchive(new File(options.archivePath), temp)
   }
 }
