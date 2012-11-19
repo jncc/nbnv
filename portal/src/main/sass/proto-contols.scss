@@ -1,0 +1,50 @@
+.header { font-size: 16px; width: 500px; margin: 0 1em 1em 0; padding: 0.4em; }
+
+.portlet { margin: 0 1em 1em 0; width: 500px; font-size: 12px; }
+.portlet-widthless { margin: 0 1em 1em 0; font-size: 12px; }
+
+.portlet-header { margin: 0.3em; padding-bottom: 4px; padding-left: 0.2em; }
+.portlet-header .ui-icon { float: left; }
+
+.portlet-content { padding: 0.4em; }
+
+.section-header { margin: 0.3em; padding-bottom: 4px; padding-left: 0.2em; }
+.section-content { margin: 0.3em; padding: 0.4em; }
+.section-content-datasetfilter { height: 75px; overflow-y: scroll; }
+
+.portlet-reason { margin: 0.3em; padding: 0.4em; width: 400px; }
+
+.sub-filter { margin: 0.3em; padding: 0.4em; }
+.sub-filter-spatial-select { width: 400px; }
+
+.dataset { color: blue; }
+.dataset-label { font-size: 12px; }
+
+.warning { margin: 0 0.25em 0.5em 0; width: 500px; font-size: 12px; }
+.portlet-warning { margin: 0 0.25em 0.5em 0; font-size: 12px; }
+.warning-header { text-align: center; font-weight: bold; padding-bottom: 0.3em; }
+.warning-text { text-align: justify; padding: 0.2em; }
+
+.privileges { min-height: 200px; max-height: 600px; overflow-y: scroll; width: 532px;}
+.privilege { border-width: 3px; }
+.privilege-dataset { min-height: 32px; font-weight: bold; background-color: #EEEEEE;}
+.privilege-constraint { font-weight: bold; border-width: 1px; border-color: #EEEEEE; }
+.privilege-access { width: 485px; margin-left: 5px; margin-bottom: 0.25em; }
+.logo { padding: 0.2em; float: left; }
+
+.datause-para { padding-bottom: 0.2em; padding-top: 0.3em; }
+
+.tac-checkbox { margin: 0 0.25em 0.5em 0; font-size: 12px; }
+
+.admin-request { padding: 0.4em; width: 459px; display: inline-block;  float: left; }
+.admin-request-reason { margin: 0.3em; padding: 0.4em; width: 400px; }
+.admin-request-reason-type { text-align: center; padding-bottom: 0.3em; }
+.admin-controls-request { padding: 0.4em; width: 20px; display: inline-block; float: right; }
+.admin-controls-request .ui-icon { display: inline-block; }
+.admin-granted { padding: 0.4em; width: 459px; display: inline-block;  float: left; }
+.admin-controls-granted { padding: 0.4em; width: 20px; display: inline-block; float: right; }
+.admin-controls-granted .ui-icon { display: inline-block; }
+
+.log-table table { font-size: 10px; text-align: center; border-collapse: collapse; }
+.log-table td, th { border-width: 1px; border-style: solid; border-color: #DDDDDD; margin: 0px; padding-left: 0.25em; padding-right: 0.25em }
+.log-table th {  background-color: #EEEEEE; }
