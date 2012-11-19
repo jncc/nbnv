@@ -1,0 +1,10 @@
+.message {
+    display: block;
+    margin: 10px;
+    padding: 1em;
+
+    &.error {
+        border: solid 1px #C00;
+        background-color: #FCC;
+    }
+}

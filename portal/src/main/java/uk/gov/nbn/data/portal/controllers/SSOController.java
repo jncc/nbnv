@@ -57,12 +57,13 @@ public class SSOController {
     }
     
     @RequestMapping(value = "/User/SSO/Logout", method = RequestMethod.GET) 
-    public void logout( HttpServletRequest request, 
+    public String logout( HttpServletRequest request, 
                         HttpServletResponse response
             ) throws IOException, ServletException {
         ClientResponse clientResponse = resource.path("/user/logout")
                                                 .accept(MediaType.APPLICATION_JSON)
                                                 .get(ClientResponse.class);
         response.addHeader("Set-Cookie", clientResponse.getHeaders().getFirst("Set-Cookie"));
+        return "redirect:/";
     }
 }
