@@ -50,35 +50,13 @@ public class JSONReaderForFreeMarker {
     }
     
     public TemplateModel readURL(String url, Map<String, Object> data) throws TemplateException, IOException, JSONException, JSONReaderStatusException {
-        return readURL(url, "GET", data);
+        TraditionalHttpRequestParameterIterable wrappedData = new TraditionalHttpRequestParameterIterable(data);
+        URL toCall = new URL(url + (data.isEmpty() ? "" : (((url.contains("?") ? '&' : '?') + wrappedData.getEncodedParameters() )))); //form url
+        return readAndClose(passthrough.openConnection(toCall));
     }
     
     public boolean isNull(TemplateModel input) {
         return TemplateModel.NOTHING.equals(input);
-    }
-    
-    public TemplateModel readURL(String url, String requestType, Map<String,Object> data) throws TemplateException, IOException, JSONException, JSONReaderStatusException {
-        TraditionalHttpRequestParameterIterable wrappedData = new TraditionalHttpRequestParameterIterable(data);
-        if(requestType.equals("GET")) {
-            URL toCall = new URL(url + (data.isEmpty() ? "" : (((url.contains("?") ? '&' : '?') + wrappedData.getEncodedParameters() )))); //form url
-            return readAndClose(passthrough.openConnection(toCall));
-        }
-        else { //assuming post for now
-            HttpURLConnection conn = passthrough.openConnection(new URL(url));
-            
-            conn.setRequestMethod(requestType);
-            conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded" );
-            conn.setDoOutput(true);
-            OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-            try {
-                wrappedData.writeEncodedParameters(wr); //write the map in url encoded form
-                wr.flush();
-                return readAndClose(conn);
-            }
-            finally {
-                wr.close();
-            }
-        }
     }
     
     private TemplateModel readAndClose(Reader in) throws IOException, TemplateModelException, JSONException {
