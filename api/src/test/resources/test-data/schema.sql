@@ -181,3 +181,9 @@ CREATE TABLE DatasetAdministrator(
         userID int NOT NULL,
         datasetKey char(8) NOT NULL,
         PRIMARY KEY (userID, datasetKey));
+
+CREATE TABLE TaxonObservationFilter(
+        id int IDENTITY,
+        filterJSON longvarchar NOT NULL,
+        filterText longvarchar NOT NULL
+);
