@@ -6,12 +6,10 @@ package uk.org.nbn.nbnv.api.rest.resources;
 
 import java.io.IOException;
 import java.sql.Date;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -21,7 +19,9 @@ import org.springframework.transaction.annotation.Transactional;
 import uk.org.nbn.nbnv.api.dao.core.OperationalTaxonObservationFilterMapper;
 import uk.org.nbn.nbnv.api.dao.core.OperationalUserAccessRequestMapper;
 import uk.org.nbn.nbnv.api.model.TaxonObservationFilter;
+import uk.org.nbn.nbnv.api.model.User;
 import uk.org.nbn.nbnv.api.model.meta.AccessRequestJSON;
+import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
 
 /**
  *
@@ -38,7 +38,7 @@ public class UserAccessRequestResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     @Transactional
-    public Response createRequest(String json) throws IOException {
+    public Response createRequest(@TokenUser User user, String json) throws IOException {
         AccessRequestJSON accessRequest = parseJSON(json);
         
         TaxonObservationFilter filter = new TaxonObservationFilter();
@@ -48,7 +48,7 @@ public class UserAccessRequestResource {
         oTaxonObservationFilterMapper.createFilter(filter);
         
         for (String datasetKey : accessRequest.getDatasetselection().getDatasets()) {
-            oUserAccessRequestMapper.createRequest(filter.getId(), 1, datasetKey, accessRequest.getRequest().getRole(), accessRequest.getRequest().getPurpose(), accessRequest.getRequest().getDetails(), new Date(new java.util.Date().getTime()));
+            oUserAccessRequestMapper.createRequest(filter.getId(), user.getId(), datasetKey, accessRequest.getRequest().getRole(), accessRequest.getRequest().getPurpose(), accessRequest.getRequest().getDetails(), new Date(new java.util.Date().getTime()));
         }
         return Response.ok("success").build();
     }
