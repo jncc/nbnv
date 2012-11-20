@@ -6,4 +6,6 @@
     <h1>Access Request Submitted</h1>
     <div style="padding-bottom: 40px;">TODO: Blurb on access request process, what happens next etc</div>
     <div>DEBUG: ${data}</div>
+    <div id="debug-data">
+    </div>
 </@template.master>

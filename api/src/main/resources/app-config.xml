@@ -25,7 +25,7 @@
     
 <!-- Configures the @Service programming model -->
     <task:annotation-driven />
-    
+        
 <!-- Scans the classpath of this application for @Components to deploy as beans -->
     <context:component-scan base-package="uk.org.nbn.nbnv.api" /> 
 

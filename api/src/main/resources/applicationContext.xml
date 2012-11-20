@@ -15,7 +15,7 @@
                     http://www.springframework.org/schema/task/spring-task-3.0.xsd">
 
     <import resource="classpath:app-config.xml"/>
-    
+
     <bean id="warehouseDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="com.microsoft.sqlserver.jdbc.SQLServerDriver" />
         <property name="url" value="${db_warehouse_url}" />

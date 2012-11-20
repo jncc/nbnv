@@ -210,6 +210,6 @@
             <artifactId>jersey-client</artifactId>
             <version>${jersey.version}</version>
             <scope>test</scope>
-        </dependency>    
+        </dependency>
     </dependencies>
 </project>

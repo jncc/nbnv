@@ -12,6 +12,7 @@ import java.sql.Date;
  */
 public class AccessRequest {
     private TaxonObservationFilter filter;
+    private Dataset dataset;
     private int requestRoleID;
     private int requestTypeID;
     private String requestReason;
@@ -145,6 +146,20 @@ public class AccessRequest {
      */
     public void setAccessExpires(Date accessExpires) {
         this.accessExpires = accessExpires;
+    }
+
+    /**
+     * @return the dataset
+     */
+    public Dataset getDataset() {
+        return dataset;
+    }
+
+    /**
+     * @param dataset the dataset to set
+     */
+    public void setDataset(Dataset dataset) {
+        this.dataset = dataset;
     }
 
 }
