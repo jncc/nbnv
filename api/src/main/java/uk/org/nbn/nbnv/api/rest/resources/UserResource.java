@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -20,6 +22,8 @@ import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.RandomStringUtils;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.org.nbn.nbnv.api.authentication.ExpiredTokenException;
@@ -54,6 +58,7 @@ public class UserResource {
     @Autowired OperationalUserMapper oUserMapper;
     @Autowired UserAuthenticationMapper userAuthenticationMapper;
     @Autowired TemplateMailer mailer;
+    @Autowired Properties properties;
     
     @Autowired public UserResource(Properties properties) throws NoSuchAlgorithmException {
         tokenTTL = Integer.parseInt(properties.getProperty("sso_token_default_ttl"));
@@ -120,48 +125,45 @@ public class UserResource {
             .build();
     }
     
-    @GET
-    @Path("/register")
+    @POST
     @Produces(MediaType.APPLICATION_JSON) 
-    public Response registerNewUser(
-            @QueryParam("username")  String username, 
-            @QueryParam("forename")  String forename, 
-            @QueryParam("surname")  String surname, 
-            @QueryParam("phone")  String phone, 
-            @QueryParam("email")  String email, 
-            @QueryParam("password") String password
-            ) throws UnsupportedEncodingException, IOException, TemplateException  {
-        byte[] passwordHashSHA1 = sha1.digest(password.getBytes(STRING_ENCODING));
-        byte[] md5HashSHA1 = sha1.digest(md5.digest(password.getBytes(STRING_ENCODING)));
+    public Response registerNewUser(User newUser) throws 
+            UnsupportedEncodingException, IOException, TemplateException, JSONException  {
+        byte[] passwordHashSHA1 = sha1.digest(newUser.getPassword().getBytes(STRING_ENCODING));
+        byte[] md5HashSHA1 = sha1.digest(md5.digest(newUser.getPassword().getBytes(STRING_ENCODING)));
         String activationKey = RandomStringUtils.randomAlphanumeric(12); //generate a random one off activation key
         //save that key in the database
-        oUserMapper.registerNewUser(    username, forename, surname, phone,     
-                                        email, Calendar.getInstance().getTime(), 
+        oUserMapper.registerNewUser(    newUser, Calendar.getInstance().getTime(), 
                                         activationKey, passwordHashSHA1, md5HashSHA1);
         //email the user with the activation key
         Map<String, Object> message = new HashMap<String, Object>();
-        message.put("name", forename);
+        message.put("name", newUser.getForename());
+        message.put("portal", properties.getProperty("portal_url"));
         message.put("activationKey", activationKey);
-        message.put("username", username);
-        mailer.send("activation.ftl", email, "NBN Gateway: Please activate your account", message);
+        message.put("username", newUser.getUsername());
+        mailer.send("activation.ftl", newUser.getEmail(), "NBN Gateway: Please activate your account", message);
         
-        Map<String, Object> toReturn = new HashMap<String, Object>();
-        toReturn.put("success", true);
-        toReturn.put("status", "An activation code has been sent you your e-mail.");
-        return Response.ok(toReturn).build();
+        return Response.ok(new JSONObject()
+                                        .put("success", true)
+                                        .put("status", "An activation code has been sent you your e-mail.")
+                           ).build();
     }
     
-    @GET
-    @Path("/activate")
+    @PUT
+    @Path("/activations/{username}")
     @Produces(MediaType.APPLICATION_JSON) 
-    public Response activateUser(@QueryParam("username") String username, @QueryParam("code") String activationCode) {
+    public Response activateUser(@PathParam("username") String username, String activationCode) throws JSONException {
         if(oUserMapper.activateNewUser(username, activationCode) == 1) {
-            return Response.ok("activated successfully").build();
+            return Response.ok(new JSONObject()
+                    .put("success", true)
+                    .put("status", "activated successfully")
+                ).build();
         }
         else {
-            return Response.status(Response.Status.FORBIDDEN)
-                    .entity("The activation code is not valid for the given username")
-                    .build();
+            return Response.status(Response.Status.FORBIDDEN).entity(new JSONObject()
+                    .put("success", false)
+                    .put("status", "The activation code is not valid for the given username")
+                ).build();
         }
     }
     

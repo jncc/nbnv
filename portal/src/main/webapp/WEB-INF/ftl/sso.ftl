@@ -1,3 +1,4 @@
+<#import "spring.ftl" as spring />
 <@template.master title="National Biodiversity Network Gateway">
     <@markdown>
 #Login to the NBN Gateway

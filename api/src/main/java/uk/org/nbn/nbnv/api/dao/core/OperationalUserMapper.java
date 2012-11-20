@@ -29,15 +29,11 @@ public interface OperationalUserMapper {
                                 "active, activationKey, invalidEmail, allowEmailAlerts," +
                                 "subscribedToAdminMails, subscribedToNBNMarketting, " +
                                 "bannedFromValidation, englishNameOrder, registrationDate)" +
-                        "VALUES (#{username}, #{passwordSHA1}, #{md5PasswordSHA1}," +
-                                "2, #{forename}, #{surname}, #{phone}," +
-                                "#{email}, 0, #{activationKey}, 0, 0, 0, 0, " +
+                        "VALUES (#{user.username}, #{passwordSHA1}, #{md5PasswordSHA1}," +
+                                "2, #{user.forename}, #{user.surname}, #{user.phone}," +
+                                "#{user.email}, 0, #{activationKey}, 0, 0, 0, 0, " +
                                 "0, 0, #{registrationDate})")
-    void registerNewUser(   @Param("username") String username,
-                            @Param("forename") String forename,
-                            @Param("surname") String surname,
-                            @Param("phone") String phone,
-                            @Param("email") String email,
+    void registerNewUser(   @Param("user") User user,
                             @Param("registrationDate") Date registrationDate,
                             @Param("activationKey") String activationKey,
                             @Param("passwordSHA1") byte[] passwordHash, 

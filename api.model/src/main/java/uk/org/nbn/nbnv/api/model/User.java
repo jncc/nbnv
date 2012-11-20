@@ -8,17 +8,25 @@ import java.util.Date;
  */
 public class User {
     public static final int PUBLIC_USER_ID = 1;
-    public static final User PUBLIC_USER = new User();
+    public static final User PUBLIC_USER;
+    
+    static {
+        PUBLIC_USER = new User();
+        PUBLIC_USER.setId(PUBLIC_USER_ID);
+    }
     
     private int id;
-    private String forename, surname, username, email, phone;
+    private String forename, surname, username, email, phone, password;
     private Date registrationDate;
-    
-    /*Constructor for public user*/
-    private User() {
-        this.id=PUBLIC_USER_ID;
+
+    public String getPassword() {
+        return password;
     }
 
+    public void setPassword(String password) {
+        this.password = password;
+    }
+    
     public String getEmail() {
         return email;
     }
