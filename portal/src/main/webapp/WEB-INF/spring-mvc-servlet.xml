@@ -43,4 +43,9 @@
         <property name="suffix" value=".ftl"/>
         <property name="contentType" value="text/html;charset=UTF-8"/>
     </bean>
+    
+    <!-- Use validation-messages for errors-->
+    <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+        <property name="basename" value="validation-messages" />
+    </bean>
 </beans>

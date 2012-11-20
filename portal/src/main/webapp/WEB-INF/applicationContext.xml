@@ -8,7 +8,7 @@
 
 <!--Read in the gis properties file using the NBN Properties reader and use as a bean-->
     <bean id="properties" factory-method="getEffectiveProperties" class="uk.gov.nbn.data.properties.PropertiesReader">
-        <constructor-arg value="powerless-global.properties"/>
+        <constructor-arg value="portal.properties"/>
     </bean>
     
 <!--Use above properties file in this spring.xml-->

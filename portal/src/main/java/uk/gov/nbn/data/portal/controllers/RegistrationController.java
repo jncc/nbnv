@@ -1,15 +1,14 @@
 package uk.gov.nbn.data.portal.controllers;
 
-
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.ClientResponse.Status;
 import com.sun.jersey.api.client.WebResource;
-import java.util.HashMap;
-import java.util.Map;
+import javax.validation.Valid;
 import javax.ws.rs.core.MediaType;
 import org.codehaus.jettison.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -33,17 +32,18 @@ public class RegistrationController {
     }
     
     @RequestMapping(value = "/User/Register", method = RequestMethod.POST)
-    public ModelAndView registerUser(User newUser) {
-        ClientResponse regResponse = resource.path("user")
-                                             .type(MediaType.APPLICATION_JSON)
-                                             .post(ClientResponse.class, newUser);
-        if(regResponse.getClientResponseStatus() == Status.OK) {
-            return new ModelAndView("activationWait");
-        }
-        else {
-            //to do. handle errors
-            return new ModelAndView("register", "user", newUser);
-        }
+    public ModelAndView registerUser(@Valid User newUser, BindingResult result) {
+        if(!result.hasErrors()) {
+            ClientResponse regResponse = resource.path("user")
+                                                 .type(MediaType.APPLICATION_JSON)
+                                                 .post(ClientResponse.class, newUser);
+            if(regResponse.getClientResponseStatus() == Status.OK) {
+                return new ModelAndView("activationWait");
+            }
+        }  
+        //Fill form in again to resolve errors
+        //TODO handle errors from api
+        return new ModelAndView("register", "user", newUser);
     }
     
     @RequestMapping(value = "/User/Activate/{username}", method = RequestMethod.GET)

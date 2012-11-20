@@ -1,6 +1,13 @@
 #login {
     margin: 0 auto;
-    width: 400px;
+    width: 525px;
+
+    label {
+        margin-top: 0.5em;
+        font-size: large;
+        float: left;
+        width: 125px;
+    }
 
     input[type="text"], input[type="password"] {
         display: block;
@@ -9,8 +16,5 @@
         height: 2em;
     }
     
-    input { 
-        margin-left: 2em;
-        padding: 0.5em;
-    }
+    input { padding: 0.5em;  }
 }

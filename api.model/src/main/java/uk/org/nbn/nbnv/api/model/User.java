@@ -1,6 +1,9 @@
 package uk.org.nbn.nbnv.api.model;
 
 import java.util.Date;
+import javax.validation.constraints.NotNull;
+import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.NotEmpty;
 
 /**
  * A simple class to hold the details of a nbn user
@@ -16,7 +19,21 @@ public class User {
     }
     
     private int id;
-    private String forename, surname, username, email, phone, password;
+    @NotEmpty
+    private String forename;
+    @NotEmpty
+    private String surname;
+    @NotEmpty
+    private String username;
+    
+    @Email
+    private String email;
+    
+    @NotEmpty
+    private String phone;
+    
+    @NotEmpty
+    private String password;
     private Date registrationDate;
 
     public String getPassword() {

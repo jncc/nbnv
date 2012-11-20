@@ -10,8 +10,9 @@ Please enter your username and password in order to login to the NBN Gateway
         <#if message??>
             <div class="message error">${message!}</div>
         </#if>
-        <input type="text" name="username" value="" placeholder="User name"/>
-        <input type="password" name="password" value="" placeholder="Password"/>
+        <label for="username">Username</label><input type="text" name="username" value="" placeholder="User name"/>
+        <label for="password">Password</label><input type="password" name="password" value="" placeholder="Password"/>
+        
         <input type="submit" value="Login to the NBN Gateway"/>
     </form>
 </@template.master>
