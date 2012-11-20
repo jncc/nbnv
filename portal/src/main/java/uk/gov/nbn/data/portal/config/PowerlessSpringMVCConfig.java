@@ -1,8 +1,4 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-package uk.gov.nbn.data.powerless.mvc;
+package uk.gov.nbn.data.portal.config;
 
 import freemarker.template.TemplateModelException;
 import java.io.File;
@@ -10,7 +6,6 @@ import java.util.Properties;
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 import uk.gov.nbn.data.powerless.PowerlessHelper;
 
@@ -21,11 +16,14 @@ import uk.gov.nbn.data.powerless.PowerlessHelper;
  * @see PowerlessHelper for details on this 
  * @author Christopher Johnson
  */
-@Component
-public class PowerlessSpringMVCSetup {
-    @Autowired FreeMarkerConfigurer configurer;
+public class PowerlessSpringMVCConfig {
+    private FreeMarkerConfigurer configurer;
     @Autowired Properties properties;
     @Autowired ServletContext context;
+    
+    public PowerlessSpringMVCConfig(FreeMarkerConfigurer configurer) {
+        this.configurer = configurer;
+    }
     
     @PostConstruct
     public void setup() throws TemplateModelException {        

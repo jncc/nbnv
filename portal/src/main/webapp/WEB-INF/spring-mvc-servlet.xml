@@ -30,6 +30,11 @@
             </props>
         </property>
     </bean>
+    
+    <!--Configurers the freemarker configuration with powerless beans-->
+    <bean class="uk.gov.nbn.data.portal.config.PowerlessSpringMVCConfig">
+        <constructor-arg ref="freemarkerConfig"/>
+    </bean>
 
     <!--Defines what is a Spring MVC view-->
     <bean id="viewResolver" class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
