@@ -2,6 +2,7 @@
 <#assign requestParametersExtended = RequestParameters + {"ptvk":[tvk]}>
 <#assign providersWithQueryStats=json.readURL("${api}/taxonObservations/providers",requestParametersExtended)>
 <#assign taxon=json.readURL("${api}/taxa/${tvk}")>
+<#assign unavailableDatasets=json.readURL("${api}/taxonObservations/unavailableDatasets",requestParametersExtended)>
 
 <@template.master title="NBN Grid Map" 
     javascripts=["/js/jquery.dataset-selector-utils.js","/js/jquery.gridmap_utils.js","/js/report_utils.js","/js/colourpicker/colorpicker.js"]
@@ -11,10 +12,10 @@
     <form target="" id="nbn-grid-map-form" gis-server="${gis}">
         <@gridMapFilters/>
         <@gridMapContents tvk=tvk/>
-        <#if providersWithQueryStats?has_content>
-            <@report_utils.dataset_table providersWithQueryStats=providersWithQueryStats requestParameters=RequestParameters/>
-        </#if>
+        <@report_utils.dataset_table providersWithQueryStats=providersWithQueryStats requestParameters=RequestParameters/>
     </form>
+    <br><br>
+    <@report_utils.unavailable_datasets unavailableDatasets=unavailableDatasets/>
 </@template.master>
 
 <#macro gridMapFilters>

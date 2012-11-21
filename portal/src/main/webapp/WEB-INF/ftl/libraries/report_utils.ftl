@@ -1,28 +1,50 @@
 <#macro dataset_table providersWithQueryStats requestParameters>
-    <div class="tabbed" id="nbn-dataset-selector-container">
-        <h3>Data providers and their datasets that contribute to this page (number of records)<span id="nbn-select-datasets-text">Select or deselect all datasets: <input type="checkbox" name="nbn-select-datasets-auto" id="nbn-select-datasets-auto"/></span></h3>
-        <table>
-            <#list providersWithQueryStats as providerWithQueryStats>
-                <tr>
-                    <th><img src="${api}/organisations/${providerWithQueryStats.organisationID}/logo" class="nbn-provider-table-logo"></th>
-                    <th colspan="2"><a href="/Organisations/${providerWithQueryStats.organisationID}">${providerWithQueryStats.organisation.name}</a> (${providerWithQueryStats.querySpecificObservationCount})</th>
-                </tr>
-                <#assign datasetsWithQueryStats=providerWithQueryStats.datasetsWithQueryStats>
-                <#--All datasets will be checked by default unless dataset keys are found-->
-                <#assign checked = "checked">
-                <#list datasetsWithQueryStats as datasetWithQueryStats>
+    <#if providersWithQueryStats?has_content>
+        <div class="tabbed" id="nbn-dataset-selector-container">
+            <h3>Data providers and their datasets that contribute to this page (number of records)<span id="nbn-select-datasets-text">Select or deselect all datasets: <input type="checkbox" name="nbn-select-datasets-auto" id="nbn-select-datasets-auto"/></span></h3>
+            <table>
+                <#list providersWithQueryStats as providerWithQueryStats>
                     <tr>
-                        <#if requestParameters.datasetKey?has_content>
-                            <#assign checked = requestParameters.datasetKey?seq_contains(datasetWithQueryStats.datasetKey)?string("checked","")>
-                        </#if>
-                        <td><input type="checkbox" name="datasetKey" value="${datasetWithQueryStats.datasetKey}" ${checked}></td>
-                        <td><a href="/Datasets/${datasetWithQueryStats.datasetKey}">${datasetWithQueryStats.dataset.title}</a> (${datasetWithQueryStats.querySpecificObservationCount})</td>
-                        <td>Access to this dataset Fusce in leo massa, nec ullamcorper dui. Aliquam auctor iaculis sapien, et scelerisque mi iaculis in. Donec nibh libero, aliquet vitae cursus in, mattis vel augue. Nulla facilisi. Aenean porttitor.</td>
+                        <th><img src="${api}/organisations/${providerWithQueryStats.organisationID}/logo" class="nbn-provider-table-logo"></th>
+                        <th colspan="2"><a href="/Organisations/${providerWithQueryStats.organisationID}">${providerWithQueryStats.organisation.name}</a> (${providerWithQueryStats.querySpecificObservationCount})</th>
+                    </tr>
+                    <#assign datasetsWithQueryStats=providerWithQueryStats.datasetsWithQueryStats>
+                    <#--All datasets will be checked by default unless dataset keys are found-->
+                    <#assign checked = "checked">
+                    <#list datasetsWithQueryStats as datasetWithQueryStats>
+                        <tr>
+                            <#if requestParameters.datasetKey?has_content>
+                                <#assign checked = requestParameters.datasetKey?seq_contains(datasetWithQueryStats.datasetKey)?string("checked","")>
+                            </#if>
+                            <td><input type="checkbox" name="datasetKey" value="${datasetWithQueryStats.datasetKey}" ${checked}></td>
+                            <td><a href="/Datasets/${datasetWithQueryStats.datasetKey}">${datasetWithQueryStats.dataset.title}</a> (${datasetWithQueryStats.querySpecificObservationCount})</td>
+                            <td>Access to this dataset Fusce in leo massa, nec ullamcorper dui. Aliquam auctor iaculis sapien, et scelerisque mi iaculis in. Donec nibh libero, aliquet vitae cursus in, mattis vel augue. Nulla facilisi. Aenean porttitor.</td>
+                        </tr>
+                    </#list>
+                </#list>
+            </table>
+        </div>
+    </#if>
+</#macro>
+
+<#macro unavailable_datasets unavailableDatasets>
+    <#if unavailableDatasets?has_content>
+        <div class="tabbed">
+            <h3>Datasets with relevant data that you do not have access to</h3> 
+            <table>
+                <tr>
+                    <th>Dataset</th>
+                    <th>Provider</th>
+                </tr>
+                <#list unavailableDatasets as unavailableDataset>
+                    <tr>
+                        <td><a href="/Datasets/${unavailableDataset.datasetKey}">${unavailableDataset.dataset.title}</a></td>
+                        <td><a href="/Organisations/${unavailableDataset.dataset.organisationID}">${unavailableDataset.dataset.organisationName}</a></td>
                     </tr>
                 </#list>
-            </#list>
-        </table>
-    </div>
+            </table>
+        </div>
+    </#if>
 </#macro>
 
 <#macro site_report_filters location requestParameters isSpatialRelationshipNeeded=true isDesignationNeeded=true isDatasetNeeded=true args={}>

@@ -8,6 +8,7 @@
 <#assign spatialRelationship=RequestParameters.spatialRelationship?has_content?string(RequestParameters.spatialRelationship[0]!"overlap","overlap")>
 <#assign title="Records for ${taxon_utils.getLongName(taxon)} in ${site.label}">
 <#assign is10kmReport=(site.type="GridSquare")>
+<#assign unavailableDatasets=json.readURL("${api}/taxonObservations/unavailableDatasets",requestParametersExtended)>
 
 <@template.master title="NBN Site Report" 
     csss=["/css/site-report.css"]
@@ -18,4 +19,6 @@
         <@report_utils.siteImage locationName=site.label locationID=featureID imageURL=report_utils.getSiteSpeciesImageURL(featureID, taxon.ptaxonVersionKey, startYear, endYear, datasets, spatialRelationship, !is10kmReport)/>
     </form>
     <div id="nbn-observation-container"></div>
+    <br><br>
+    <@report_utils.unavailable_datasets unavailableDatasets=unavailableDatasets/>
 </@template.master>
