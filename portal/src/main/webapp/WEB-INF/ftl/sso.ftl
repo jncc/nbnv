@@ -6,7 +6,7 @@
 Please enter your username and password in order to login to the NBN Gateway 
     </@markdown>
     
-    <form id="login" action="/User/SSO/Login" method="POST">
+    <form id="login-form" action="/User/SSO/Login" method="POST">
         <#if message??>
             <div class="message error">${message!}</div>
         </#if>

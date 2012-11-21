@@ -9,7 +9,7 @@ owner. To begin to gain access to this you must register by entering your
 details below. Find out how to gain access to data.
     </@markdown>
 
-    <@form.form method="POST" id="login" commandName="user" action="/User/Register">
+    <@form.form method="POST" id="register-form" commandName="user" action="/User/Register">
         <@form.errors path="*" cssClass="message error" element="div" />
         <label for="username">Username</label>      <@form.input path="username"/>
         <label for="password">Password</label>      <@form.password path="password"/>
