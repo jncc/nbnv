@@ -21,10 +21,10 @@ nbn.nbnv.ui.accessRequest = function() {
                     .addClass("datause-para")
                     .text("I am a:")
                 ).append($('<select>')
-                    .append($('<option>').text('Scientist').attr('value', '0'))
-                    .append($('<option>').text('Conservation Worker').attr('value', '1'))
-                    .append($('<option>').text('Ecological Consultant').attr('value', '2'))
-                    .append($('<option>').text('Planning Officer').attr('value', '3'))
+                    .append($('<option>').text('Scientist').attr('value', '1'))
+                    .append($('<option>').text('Conservation Worker').attr('value', '2'))
+                    .append($('<option>').text('Ecological Consultant').attr('value', '3'))
+                    .append($('<option>').text('Planning Officer').attr('value', '4'))
                     .change(function() {
                          role = $(this).val();
                     })
@@ -32,10 +32,10 @@ nbn.nbnv.ui.accessRequest = function() {
                     .addClass("datause-para")
                     .text("I am requesting data for the following purpose:")
                 ).append($('<select>')
-                    .append($('<option>').text('Species Conservation').attr('value', '0'))
-                    .append($('<option>').text('Habitat Conservation').attr('value', '1'))
-                    .append($('<option>').text('Scientific Study').attr('value', '2'))
-                    .append($('<option>').text('Planning Permission').attr('value', '3'))
+                    .append($('<option>').text('Species Conservation').attr('value', '1'))
+                    .append($('<option>').text('Habitat Conservation').attr('value', '2'))
+                    .append($('<option>').text('Scientific Study').attr('value', '3'))
+                    .append($('<option>').text('Planning Permission').attr('value', '4'))
                     .change(function() {
                          purpose = $(this).val();
                     })

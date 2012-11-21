@@ -6,7 +6,9 @@ package uk.org.nbn.nbnv.api.rest.resources;
 
 import java.io.IOException;
 import java.sql.Date;
+import java.util.List;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -20,6 +22,7 @@ import uk.org.nbn.nbnv.api.dao.core.OperationalTaxonObservationFilterMapper;
 import uk.org.nbn.nbnv.api.dao.core.OperationalUserAccessRequestMapper;
 import uk.org.nbn.nbnv.api.model.TaxonObservationFilter;
 import uk.org.nbn.nbnv.api.model.User;
+import uk.org.nbn.nbnv.api.model.UserAccessRequest;
 import uk.org.nbn.nbnv.api.model.meta.AccessRequestJSON;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
 import uk.org.nbn.nbnv.api.utils.AccessRequestJSONToText;
@@ -54,6 +57,12 @@ public class UserAccessRequestResource {
         return Response.ok("success").build();
     }
     
+    @GET
+    @Path("/requests/admin")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<UserAccessRequest> getRequestsForAdmin(@TokenUser User user) {
+        return oUserAccessRequestMapper.getAdminableRequests(user.getId());
+    }
     private AccessRequestJSON parseJSON(String json) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.readValue(json, AccessRequestJSON.class);

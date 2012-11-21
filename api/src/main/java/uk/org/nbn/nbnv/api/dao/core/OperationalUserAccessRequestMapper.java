@@ -5,8 +5,10 @@
 package uk.org.nbn.nbnv.api.dao.core;
 
 import java.sql.Date;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Param;
+import java.util.List;
+import org.apache.ibatis.annotations.*;
+import uk.org.nbn.nbnv.api.model.TaxonObservationFilter;
+import uk.org.nbn.nbnv.api.model.UserAccessRequest;
 
 /**
  *
@@ -23,4 +25,12 @@ public interface OperationalUserAccessRequestMapper {
             , @Param("requestTypeID") int requestTypeID
             , @Param("requestReason") String requestReason
             , @Param("requestDate") Date requestDate);
+
+    @Select("SELECT uar.* FROM UserAccessRequest uar "
+            + "INNER JOIN DatasetAdministrator da ON da.datasetKey = uar.datasetKey "
+            + "WHERE da.userID = #{id}")
+    @Results(value = {
+        @Result(property="filter", column="filterID", javaType=TaxonObservationFilter.class, one=@One(select="uk.org.nbn.nbnv.api.dao.core.OperationalTaxonObservationFilterMapper.selectById"))
+    })
+    public List<UserAccessRequest> getAdminableRequests(int id);
 }
