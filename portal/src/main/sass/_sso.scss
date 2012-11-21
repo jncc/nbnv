@@ -2,12 +2,16 @@
     margin: 0 auto;
     width: 525px;
 
+    $labelWidth : 125px;
+
     label {
         margin-top: 0.5em;
         font-size: large;
         float: left;
-        width: 125px;
+        width: $labelWidth;
     }
+
+    input, .sign-up { margin-left : $labelWidth; }
 
     input[type="text"], input[type="password"] {
         display: block;
@@ -17,4 +21,6 @@
     }
     
     input { padding: 0.5em;  }
+
+    .sign-up { margin-top: 20px; }
 }

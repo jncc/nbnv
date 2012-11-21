@@ -14,5 +14,9 @@ Please enter your username and password in order to login to the NBN Gateway
         <label for="password">Password</label><input type="password" name="password" value="" placeholder="Password"/>
         
         <input type="submit" value="Login to the NBN Gateway"/>
+        
+        <div class="sign-up">
+            <a href="/User/Register">Need an account? Sign up free.</a>
+        </div>
     </form>
 </@template.master>
