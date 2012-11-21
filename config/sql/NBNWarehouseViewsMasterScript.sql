@@ -803,13 +803,16 @@ CREATE VIEW [dbo].[TaxonDatasetData] WITH SCHEMABINDING AS (
 		td.datasetKey
 		, td.allowRecordValidation
 		, td.publicAttribute 
+		, td.publicResolutionID
+		, r.label
 		, COUNT_BIG(*) AS recordCount
 	FROM [dbo].[TaxonObservation] tob 
 	INNER JOIN [dbo].[Sample] sa on tob.sampleID = sa.id
 	INNER JOIN [dbo].[Survey] su ON sa.surveyID = su.id
 	INNER JOIN [dbo].[TaxonDataset] td ON td.datasetKey = su.datasetKey
 	INNER JOIN [dbo].[Taxon] t on tob.taxonVersionKey = t.taxonVersionKey
-	GROUP BY td.datasetKey, td.allowRecordValidation, td.publicAttribute
+	INNER JOIN [dbo].[Resolution] r ON r.id = td.publicResolutionID
+	GROUP BY td.datasetKey, td.allowRecordValidation, td.publicAttribute, td.publicResolutionID, r.label
 );
 
 GO
