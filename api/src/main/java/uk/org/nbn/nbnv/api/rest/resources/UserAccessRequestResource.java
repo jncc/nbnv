@@ -22,6 +22,7 @@ import uk.org.nbn.nbnv.api.model.TaxonObservationFilter;
 import uk.org.nbn.nbnv.api.model.User;
 import uk.org.nbn.nbnv.api.model.meta.AccessRequestJSON;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
+import uk.org.nbn.nbnv.api.utils.AccessRequestJSONToText;
 
 /**
  *
@@ -43,12 +44,13 @@ public class UserAccessRequestResource {
         
         TaxonObservationFilter filter = new TaxonObservationFilter();
         filter.setFilterJSON(json);
-        filter.setFilterText("Test");
+        filter.setFilterText(AccessRequestJSONToText.convert(accessRequest));
         
         for (String datasetKey : accessRequest.getDatasetselection().getDatasets()) {
             oTaxonObservationFilterMapper.createFilter(filter);
             oUserAccessRequestMapper.createRequest(filter.getId(), user.getId(), datasetKey, accessRequest.getRequest().getRole(), accessRequest.getRequest().getPurpose(), accessRequest.getRequest().getDetails(), new Date(new java.util.Date().getTime()));
         }
+
         return Response.ok("success").build();
     }
     
