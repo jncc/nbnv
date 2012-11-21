@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app id="WebApp_ID" version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+<web-app id="WebApp_ID" version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" 
+         xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" 
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
+                            http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
     <display-name>NBN Gateway Frontend</display-name>
-       
-    <listener>
-        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
-    </listener>
- 
-    <servlet>
-        <servlet-name>spring-mvc</servlet-name>
-        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
-        <load-on-startup>2</load-on-startup>
-    </servlet>
 
-    <!--Create the Powerless Servlet-->
+<!--Load Spring Context -->
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+    
+<!--Create the Powerless Freemarker Servlet and Map to *.ftl-->
     <servlet>
         <servlet-name>freemarker</servlet-name>
         <servlet-class>uk.gov.nbn.data.powerless.PowerlessServlet</servlet-class>
@@ -47,43 +46,55 @@
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
-    <!--Define servlet hosting-->
-    <welcome-file-list>
-        <welcome-file>index.ftl</welcome-file>
-    </welcome-file-list>
-    <filter>
-        <filter-name>PowerlessTemplateURLParameterisationFilter</filter-name>
-        <filter-class>uk.gov.nbn.data.powerless.PowerlessTemplateURLParameterisationFilter</filter-class>
-    </filter>
-    <filter-mapping>
-        <filter-name>PowerlessTemplateURLParameterisationFilter</filter-name>
-        <url-pattern>/*</url-pattern>
-    </filter-mapping>
-    <filter>
-        <filter-name>PowerlessRemoteAPIExceptionFilter</filter-name>
-        <filter-class>uk.gov.nbn.data.powerless.PowerlessJSONReaderStatusExceptionFilter</filter-class>
-    </filter>
-    <filter-mapping>
-        <filter-name>PowerlessRemoteAPIExceptionFilter</filter-name>
-        <url-pattern>*.ftl</url-pattern>
-    </filter-mapping>
-    <filter>
-        <filter-name>PowerlessTemplateExceptionFilter</filter-name>
-        <filter-class>uk.gov.nbn.data.powerless.PowerlessTemplateExceptionFilter</filter-class>
-    </filter>
-    <servlet-mapping>
-        <servlet-name>spring-mvc</servlet-name>
-        <url-pattern>/</url-pattern>
-    </servlet-mapping>
     <servlet-mapping>
         <servlet-name>freemarker</servlet-name>
         <url-pattern>*.ftl</url-pattern>
     </servlet-mapping>
+
+<!--Define filters for Powerless operation -->
+    <filter>
+        <filter-name>PowerlessTemplateURLParameterisationFilter</filter-name>
+        <filter-class>uk.gov.nbn.data.powerless.PowerlessTemplateURLParameterisationFilter</filter-class>
+    </filter>
+    <filter>
+        <filter-name>PowerlessRemoteAPIExceptionFilter</filter-name>
+        <filter-class>uk.gov.nbn.data.powerless.PowerlessJSONReaderStatusExceptionFilter</filter-class>
+    </filter>
+    <filter>
+        <filter-name>PowerlessTemplateExceptionFilter</filter-name>
+        <filter-class>uk.gov.nbn.data.powerless.PowerlessTemplateExceptionFilter</filter-class>
+    </filter>
+    
+    <filter-mapping>
+        <filter-name>PowerlessTemplateURLParameterisationFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>PowerlessRemoteAPIExceptionFilter</filter-name>
+        <url-pattern>*.ftl</url-pattern>
+    </filter-mapping>
     <filter-mapping>
         <filter-name>PowerlessTemplateExceptionFilter</filter-name>
         <url-pattern>*.ftl</url-pattern>
     </filter-mapping>
-    <!--Define custom error pages -->
+    
+<!--Create spring MVC Servlet and Map-->
+    <servlet>
+        <servlet-name>spring-mvc</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <load-on-startup>2</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>spring-mvc</servlet-name>
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
+
+<!--Define welcome pages-->
+    <welcome-file-list>
+        <welcome-file>index.ftl</welcome-file>
+    </welcome-file-list>
+    
+<!--Define custom error pages -->
     <error-page>
         <error-code>401</error-code>
         <location>/WEB-INF/unavailable-pages/401.ftl</location>
