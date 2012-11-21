@@ -12,7 +12,7 @@ details below. Find out how to gain access to data.
     <@form.form method="POST" id="login" commandName="user" action="/User/Register">
         <@form.errors path="*" cssClass="message error" element="div" />
         <label for="username">Username</label>      <@form.input path="username"/>
-        <label for="password">Password</label>      <@form.input path="password"/>
+        <label for="password">Password</label>      <@form.password path="password"/>
         <label for="forename">First Name</label>    <@form.input path="forename"/>
         <label for="surname">Last Name</label>      <@form.input path="surname"/>
         <label for="email">Your E-mail</label>      <@form.input path="email"/>
