@@ -44,10 +44,9 @@ public class UserAccessRequestResource {
         TaxonObservationFilter filter = new TaxonObservationFilter();
         filter.setFilterJSON(json);
         filter.setFilterText("Test");
-    
-        oTaxonObservationFilterMapper.createFilter(filter);
         
         for (String datasetKey : accessRequest.getDatasetselection().getDatasets()) {
+            oTaxonObservationFilterMapper.createFilter(filter);
             oUserAccessRequestMapper.createRequest(filter.getId(), user.getId(), datasetKey, accessRequest.getRequest().getRole(), accessRequest.getRequest().getPurpose(), accessRequest.getRequest().getDetails(), new Date(new java.util.Date().getTime()));
         }
         return Response.ok("success").build();
