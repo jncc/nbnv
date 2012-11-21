@@ -1261,6 +1261,7 @@ CREATE TABLE [dbo].[AccessRequestResponseType] (
 CREATE TABLE [dbo].[UserAccessRequest](
 	[filterID] [int] NOT NULL PRIMARY KEY REFERENCES [TaxonObservationFilter] ([id]),
 	[userID] [int] NOT NULL REFERENCES [User] ([id]),
+	[datasetKey] [char](8) NOT NULL REFERENCES [Dataset] ([key]),
 	[requestRoleID] [int] NOT NULL REFERENCES [AccessRequestRole] ([id]),
 	[requestTypeID] [int] NOT NULL REFERENCES [AccessRequestType] ([id]),
 	[requestReason] [varchar](max) NOT NULL,
@@ -1276,6 +1277,7 @@ CREATE TABLE [dbo].[UserAccessRequest](
 CREATE TABLE [dbo].[OrganisationAccessRequest](
 	[filterID] [int] NOT NULL PRIMARY KEY REFERENCES [TaxonObservationFilter] ([id]),
 	[organisationID] [int] NOT NULL REFERENCES [Organisation] ([id]),
+	[datasetKey] [char](8) NOT NULL REFERENCES [Dataset] ([key]),
 	[requestRoleID] [int] NOT NULL REFERENCES [AccessRequestRole] ([id]),
 	[requestTypeID] [int] NOT NULL REFERENCES [AccessRequestType] ([id]),
 	[requestReason] [varchar](max) NOT NULL,
