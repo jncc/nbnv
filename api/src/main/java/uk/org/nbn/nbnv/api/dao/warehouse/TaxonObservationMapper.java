@@ -129,4 +129,22 @@ public interface TaxonObservationMapper {
             , @Param("taxonOutputGroup") String taxonOutputGroup
             , @Param("gridRef") String gridRef);
     
+    @SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectUnavailableDatasets")
+    @Results(value = {
+        @Result(property="dataset", column="datasetKey", javaType=Dataset.class, one=@One(select="uk.org.nbn.nbnv.api.dao.warehouse.DatasetMapper.selectByIDProviderNotInstantiated")),
+        @Result(property="datasetKey", column="datasetKey")
+    })
+    public List<DatasetWithQueryStats> selectUnavailableDatasetsByFilter(
+            @Param("user") User user
+            , @Param("startYear") Integer startYear
+            , @Param("endYear") Integer endYear
+            , @Param("datasetKey") List<String> datasetKey
+            , @Param("ptvk") List<String> ptvk
+            , @Param("spatialRelationship") String spatialRelationship
+            , @Param("featureID") String featureId
+            , @Param("sensitive") Boolean sensitive
+            , @Param("designation") String designation
+            , @Param("taxonOutputGroup") String taxonOutputGroup
+            , @Param("gridRef") String gridRef);
+    
 }

@@ -175,6 +175,25 @@ public class TaxonObservationResource {
     }
 
     @GET
+    @Path("/unavailableDatasets")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<DatasetWithQueryStats> getUnavailableDatasetsByFilter(
+            @TokenUser() User user, 
+            @QueryParam("startYear") @DefaultValue(defaultStartYear) int startYear, 
+            @QueryParam("endYear") @DefaultValue(defaultEndYear) int endYear, 
+            @QueryParam("datasetKey") @DefaultValue(defaultDatasetKey) List<String> datasetKeys, 
+            @QueryParam("ptvk") @DefaultValue(defaultTaxa) List<String> taxa, 
+            @QueryParam("spatialRelationship") @DefaultValue(SPATIAL_RELATIONSHIP_DEFAULT) String spatialRelationship, 
+            @QueryParam("featureID") @DefaultValue(defaultFeatureID) String featureID,
+            @QueryParam("sensitive") @DefaultValue(defaultSensitive) Boolean sensitive, 
+            @QueryParam("designation") @DefaultValue(defaultDesignation) String designation, 
+            @QueryParam("taxonOutputGroup") @DefaultValue(defaultTaxonOutputGroup) String taxonOutputGroup, 
+            @QueryParam("gridRef") @DefaultValue(defaultGridRef) String gridRef) {
+        //TODO: squareBlurring(?)
+        return observationMapper.selectUnavailableDatasetsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef);
+    }
+
+    @GET
     @Path("/datasets/observations")
     @Produces(MediaType.APPLICATION_JSON)
     public List<TaxonDataset> getDatasetsWithObservationsByFilter(

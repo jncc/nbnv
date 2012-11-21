@@ -64,6 +64,16 @@ public class TaxonObservationProvider {
         return SQL();
     }
     
+    public String filteredSelectUnavailableDatasets(Map<String, Object> params){
+        BEGIN();
+        SELECT("tdd.datasetKey, COUNT(*) querySpecificObservationCount");
+        createSelectQueryForUnavailableDatasets(params);
+        INNER_JOIN("TaxonDatasetData tdd ON tode.datasetKey = tdd.datasetKey");
+        WHERE("tdd.publicResolutionID = 0");
+        GROUP_BY("tdd.datasetKey");
+        return SQL();
+    }
+    
     public String filteredSelectDatasetsProviderNotInstantiated(Map<String, Object> params) {
         BEGIN();
         SELECT("DISTINCT o.datasetKey, dd.*");
@@ -143,6 +153,78 @@ public class TaxonObservationProvider {
             WHERE("td.taxonOutputGroupKey =  #{taxonOutputGroup}");
         }
     }
+    
+    private void createSelectQueryForUnavailableDatasets(Map<String, Object> params) {
+
+        FROM("TaxonObservationDataEnhanced tode");
+
+        if (params.containsKey("startYear") && (Integer) params.get("startYear") > -1) {
+            WHERE("YEAR(endDate) >= #{startYear}");
+        }
+
+        if (params.containsKey("endYear") && (Integer) params.get("endYear") > -1) {
+            WHERE("YEAR(startDate) <= #{endYear}");
+        }
+
+        if (params.containsKey("datasetKey") && !params.get("datasetKey").equals("")) {
+            if(params.get("datasetKey") instanceof List){
+                List<String> datasetArgs = (List<String>)params.get("datasetKey");
+                if(datasetArgs.size() > 0 && !"".equals(datasetArgs.get(0))){
+                    WHERE("tode.datasetKey IN " + datasetListToCommaList((List<String>) params.get("datasetKey")));
+                }
+            }else{
+                WHERE("tode.datasetKey = '" + params.get("datasetKey") + "'");
+            }
+        }
+
+        if (params.containsKey("ptvk") && !params.get("ptvk").equals("")) {
+            if(params.get("ptvk") instanceof List){
+                List<String> ptvkArgs = (List<String>)params.get("ptvk");
+                if(ptvkArgs.size() > 0 && !"".equals(ptvkArgs.get(0))){
+                    WHERE("pTaxonVersionKey IN " + taxaListToCommaList((List<String>) params.get("ptvk")));
+                }
+            }else{
+                WHERE("pTaxonVersionKey = '" + params.get("ptvk") + "'");
+            }
+        }
+        
+        if(params.containsKey("featureID") && !params.get("featureID").equals("")){
+            String spatialRelationship = TaxonObservationResource.SPATIAL_RELATIONSHIP_DEFAULT;
+            if(params.containsKey("spatialRelationship") && params.get("spatialRelationship") != null){
+                spatialRelationship = (String)params.get("spatialRelationship");
+            }
+            if(TaxonObservationResource.SPATIAL_RELATIONSHIP_WITHIN.equals(spatialRelationship)){
+                INNER_JOIN("FeatureContains fc ON fc.containedFeatureID = tode.featureID");
+                INNER_JOIN("FeatureData fd ON fd.id = fc.featureID");
+                WHERE("fd.identifier = #{featureID}");
+            }else{
+                INNER_JOIN("FeatureOverlaps fo ON fo.overlappedFeatureID = tode.featureID");
+                INNER_JOIN("FeatureData fd ON fd.id = fo.featureID");
+                WHERE("fd.identifier = #{featureID}");
+            }
+        }
+        
+        if (params.containsKey("sensitive") && (Boolean) params.get("sensitive")) {
+            WHERE("sensitive = #{sensitive}");
+        }
+            
+        if (params.containsKey("designation") && !"".equals((String) params.get("designation"))) {
+            INNER_JOIN("DesignationTaxonData dtd ON dtd.pTaxonVersionKey = tode.pTaxonVersionKey");
+            WHERE("dtd.code = #{designation}");
+        }
+        
+        if (params.containsKey("gridRef") && !"".equals((String) params.get("gridRef"))) {
+            INNER_JOIN("GridTree gt ON gt.featureID = tode.featureID");
+            INNER_JOIN("GridSquareFeatureData gsfd ON gsfd.id = gt.parentFeatureID");
+            WHERE("gsfd.label = #{gridRef}");
+        }
+        
+        if (params.containsKey("taxonOutputGroup") && !"".equals((String) params.get("taxonOutputGroup"))) {
+            INNER_JOIN("TaxonData td ON td.taxonVersionKey = tode.pTaxonVersionKey");
+            WHERE("td.taxonOutputGroupKey =  #{taxonOutputGroup}");
+        }
+    }
+    
     private String datasetListToCommaList(List<String> list) {
         for (String d : list) {
             if (!d.matches("[A-Z0-9]{8}")) {
