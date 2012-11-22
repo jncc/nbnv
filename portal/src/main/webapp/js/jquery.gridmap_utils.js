@@ -150,7 +150,7 @@
                 }
                 resolutionSelect.append(
                     $('<option' + selected + '></option>').val(resolution).html(resolution)
-                );
+                    );
             });
         });
     }
@@ -202,30 +202,33 @@
     }
     
     function doOnChange(){
-            var form = $('#nbn-grid-map-form');
+        var form = $('#nbn-grid-map-form');
             
-            //Apply any rules eg, must have at least one year band selected
-            applyRules();
+        //Apply any rules eg, must have at least one year band selected
+        applyRules();
             
-            //Deselect datasets if all are selected - requires jquery.dataset-selector-utils.js
-            nbn.portal.reports.utils.datasetfields.doDeselectDatasetKeys();
+        //Deselect datasets if all are selected - requires jquery.dataset-selector-utils.js
+        nbn.portal.reports.utils.datasetfields.doDeselectDatasetKeys();
             
-            //Do map refresh
-            $('#nbn-grid-map-busy-image').show();
-            $('#nbn-grid-map-image').attr('src',getURL(form));
+        //Do map refresh
+        $('#nbn-grid-map-busy-image').show();
+        $('#nbn-grid-map-image').attr('src',getURL(form));
             
-            //Turn on all datasets if they are all off
-            nbn.portal.reports.utils.datasetfields.doSelectDatasetKeys();
+        //Turn on all datasets if they are all off
+        nbn.portal.reports.utils.datasetfields.doSelectDatasetKeys();
             
-            updateResolutionDropDown(form);
-        }
+        updateResolutionDropDown(form);
+    }
     
     function setupFormOnChange(){
         //The map should refresh when any form field is changed
         //except when the nbn-select-datasets-auto check box is deselected
         $('#nbn-grid-map-form :input').change(function(){
             if(($(this).attr('id')!='nbn-select-datasets-auto') || ($('#nbn-select-datasets-auto').is(':checked'))){
-                doOnChange();
+                var $input = $(this);
+                if(nbn.portal.reports.utils.forms.isFormFieldValid($input)){
+                    doOnChange();
+                }
             }
         });
     }

@@ -24,7 +24,7 @@
     });
     
     function doIsFormFieldValid($input){
-        if($input.attr('id') == 'startYear' || $input.attr('id') == "endYear"){
+        if($input.hasClass('nbn-year-input')){
             if(isValidYear($input.val())){
                 return true;
             }else{

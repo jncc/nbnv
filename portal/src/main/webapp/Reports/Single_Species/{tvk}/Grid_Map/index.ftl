@@ -77,9 +77,9 @@
     Date ${layerNum}
     <input type='checkbox' name='gridLayer${layerNum}' value='gridLayer${layerNum}' ${checkedText} colourPickerId='nbn-colour-picker-${layerNum}'>
     from 
-    <input type='text' name='startYear${layerNum}' value='1600' class='nbn-year-input'> 
+    <input type='text' name='startYear${layerNum}' value='' class='nbn-year-input'> 
     to 
-    <input type='text' name='endYear${layerNum}' value='${currentYear}' class='nbn-year-input'>
+    <input type='text' name='endYear${layerNum}' value='' class='nbn-year-input'>
     <@colourPicker idSuffix='-'+layerNum hexColour=hexColour/>
 </#macro>
 
