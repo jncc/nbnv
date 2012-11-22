@@ -31,20 +31,22 @@
     }
     
     function setupFormOnChange(){
-        //The map should refresh when any form field is changed
+        //The map should refresh when any form field is changed and has valid data
         //except when the nbn-select-datasets-auto check box is deselected
         $('#nbn-site-report-form :input').change(function(){
-            if(($(this).attr('id')!='nbn-select-datasets-auto') || ($('#nbn-select-datasets-auto').is(':checked'))){
-                //Requires jquery.dataset-selector-utils.js
-                nbn.portal.reports.utils.DatasetFields.doDeselectDatasetKeys();
-                refreshGroupData($('#nbn-site-report-form'));
-                nbn.portal.reports.utils.DatasetFields.doSelectDatasetKeys();
+            var $input = $(this);
+            if(($input.attr('id')!='nbn-select-datasets-auto') || ($('#nbn-select-datasets-auto').is(':checked'))){
+                if(nbn.portal.reports.utils.forms.isFormFieldValid($input)){
+                    //Requires jquery.dataset-selector-utils.js
+                    nbn.portal.reports.utils.datasetfields.doDeselectDatasetKeys();
+                    refreshGroupData($('#nbn-site-report-form'));
+                    nbn.portal.reports.utils.datasetfields.doSelectDatasetKeys();
+                }
             }
         });
     }
     
     function doFirstVisitToPage(){
-        nbn.portal.reports.site.initializeValidation();
         refreshGroupData($('#nbn-site-report-form'));
     }
     

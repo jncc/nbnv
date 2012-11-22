@@ -48,8 +48,8 @@
 </#macro>
 
 <#macro site_report_filters location requestParameters isSpatialRelationshipNeeded=true isDesignationNeeded=true isDatasetNeeded=true args={}>
-    <#assign startYear=requestParameters.startYear?has_content?string(requestParameters.startYear[0]!"1600","1600")>
-    <#assign endYear=requestParameters.endYear?has_content?string(requestParameters.endYear[0]!.now?string("yyyy"),.now?string("yyyy"))>
+    <#assign startYear=requestParameters.startYear?has_content?string(requestParameters.startYear[0]!"","")>
+    <#assign endYear=requestParameters.endYear?has_content?string(requestParameters.endYear[0]!"","")>
     <#assign spatialRelationship=requestParameters.spatialRelationship?has_content?string(requestParameters.spatialRelationship[0]!"overlap","overlap")>
     <#assign designations=json.readURL("${api}/designations")>
     <div class="tabbed" id="nbn-site-report-filter-container">

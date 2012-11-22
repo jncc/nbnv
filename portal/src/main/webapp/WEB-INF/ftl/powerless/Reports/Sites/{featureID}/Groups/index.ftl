@@ -8,7 +8,7 @@
 
 <@template.master title="NBN Site Report" 
     csss=["/css/site-report.css"]
-    javascripts=["/js/report_utils.js","/js/site_report_utils.js","/js/site_report_groups.js","/js/jquery.dataset-selector-utils.js"]>
+    javascripts=["/js/report_utils.js","/js/site_report_groups.js","/js/jquery.dataset-selector-utils.js"]>
     <h1>${title}</h1>
     <form id="nbn-site-report-form" api-server="${api}" featureID="${featureID}">
         <@report_utils.site_report_filters requestParameters=RequestParameters location=site.label  isSpatialRelationshipNeeded=true/>

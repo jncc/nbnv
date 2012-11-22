@@ -14,7 +14,7 @@
         return numCheckBoxes == numCheckBoxesChecked;
     }
     
-    namespace("nbn.portal.reports.utils.DatasetFields", {
+    namespace("nbn.portal.reports.utils.datasetfields", {
         doDeselectDatasetKeys: function(){
             if(isAllDatasetsChecked()){
                 $("INPUT[name='datasetKey'][type='checkbox']").attr('checked', false);

@@ -63,7 +63,7 @@
                     $datasetContent.append($table);
                     $dataContainer.append($datasetContent);
                     if($attributeDropDown){
-                      addAttributeData(dataset.key, $attributeDropDown.val(), queryString);
+                        addAttributeData(dataset.key, $attributeDropDown.val(), queryString);
                     }
 
                 });
@@ -77,16 +77,16 @@
         var attributes = getDatasetAttributes(datasetKey);
         if(!$.isEmptyObject(attributes)){
             var $select = $("<select id='nbn-site-observation-attribute-select'></select>")
-                .change(function(){
-                    $('#nbn-attribute-dropdown-busy-image').attr('src','/img/ajax-loader.gif');
-                    addAttributeData(datasetKey, $(this).val(), queryString);
-                });
+            .change(function(){
+                $('#nbn-attribute-dropdown-busy-image').attr('src','/img/ajax-loader.gif');
+                addAttributeData(datasetKey, $(this).val(), queryString);
+            });
             $.each(attributes, function(index, attribute){
                 $select.append($("<option></option>")
-                .attr("value",attribute.attributeID)
-                .text(attribute.label));
+                    .attr("value",attribute.attributeID)
+                    .text(attribute.label));
             });
-//            $select.add($('<img src="" id="nbn-attribute-dropdown-busy-image">'));
+            //            $select.add($('<img src="" id="nbn-attribute-dropdown-busy-image">'));
             return $('<th></th>').append($select);
         }else{
             return false;
@@ -141,13 +141,15 @@
     
     function setupFormOnChange(){
         $('#nbn-site-report-form :input').change(function(){
-            refreshObservationData($('#nbn-site-report-form'));
+            var $input = $(this);
+            if(nbn.portal.reports.utils.forms.isFormFieldValid($input)){
+                refreshObservationData($('#nbn-site-report-form'));
+            }
         });
 
     }
 
     function doFirstVisitToPage(){
-        nbn.portal.reports.site.initializeValidation();
         refreshObservationData($('#nbn-site-report-form'));
     }
     
