@@ -21,7 +21,7 @@
             this._querySearchNode(); //Ajaxify the search from the start
         },
 
-        _createSearchURL : function() {return this.element.serialize() + "&start=" + this._state.start;},
+        _createSearchURL : function() {return $(':input[value!=""]', this.element).serialize() + "&start=" + this._state.start;},
         
         _querySearchNode: function() {
             var me=this, searchParams = me._createSearchURL();
