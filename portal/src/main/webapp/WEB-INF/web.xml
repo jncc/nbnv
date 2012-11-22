@@ -29,19 +29,11 @@
     
 <!--Define custom error pages -->
     <error-page>
-        <error-code>401</error-code>
-        <location>/WEB-INF/unavailable-pages/401.ftl</location>
-    </error-page>
-    <error-page>
         <error-code>404</error-code>
         <location>/unavailable-pages/404</location>
     </error-page>
     <error-page>
         <error-code>500</error-code>
-        <location>/unavailable-pages/500.ftl</location>
-    </error-page>
-    <error-page>
-        <exception-type>java.io.FileNotFoundException</exception-type>
-        <location>/WEB-INF/unavailable-pages/data-service-not-responding.ftl</location>
+        <location>/unavailable-pages/500</location>
     </error-page>
 </web-app>
