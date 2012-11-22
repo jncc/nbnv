@@ -38,7 +38,7 @@
         $('#nbn-site-report-form :input').change(function(){
             var $input = $(this);
             if(($input.attr('id')!='nbn-select-datasets-auto') || ($('#nbn-select-datasets-auto').is(':checked'))){
-                if(nbn.portal.reports.utils.forms.isFormFieldValid($input)){
+                if(nbn.portal.reports.utils.forms.isSiteReportFormFieldValid($input)){
                     //Requires jquery.dataset-selector-utils.js
                     nbn.portal.reports.utils.datasetfields.doDeselectDatasetKeys();
                     refreshSpeciesData($('#nbn-site-report-form'));
