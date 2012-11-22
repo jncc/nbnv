@@ -1,6 +1,6 @@
 (function($){
     
-    var earliestYear = 1000;
+    var earliestYear = 1600;
 
     namespace("nbn.portal.reports.utils.forms", {
         getKeyValuePairsFromForm: function(form){
@@ -18,17 +18,35 @@
         getDateText: function(date){
             return doGetDateText(date);
         },
-        isFormFieldValid: function($input){
-            return doIsFormFieldValid($input);
+        isSiteReportFormFieldValid: function($input){
+            return doIsSiteReportFormFieldValid($input);
+        }
+,
+        isGridMapFormFieldValid: function($input){
+            return doIsGridMapFormFieldValid($input);
         }
     });
     
-    function doIsFormFieldValid($input){
+    function doIsSiteReportFormFieldValid($input){
         if($input.hasClass('nbn-year-input')){
-            if(isValidYear($input.val())){
+            if(isSiteReportValidYear($input.val())){
                 return true;
             }else{
-                alert(getInvalidYearText());
+                alert(getInvalidYearTextSiteReport());
+                $input.focus();
+                return false;
+            }
+        }else{
+            return true;
+        }
+    }
+    
+    function doIsGridMapFormFieldValid($input){
+        if($input.hasClass('nbn-year-input')){
+            if(isGridMapValidYear($input.val())){
+                return true;
+            }else{
+                alert(getInvalidYearTextGridMap());
                 $input.focus();
                 return false;
             }
@@ -37,12 +55,20 @@
         }
     }
 
-    function isValidYear(year){
-        return year=='' || (isNumber(year) && (year <= new Date().getFullYear() && year >= earliestYear));
+    function isSiteReportValidYear(year){
+        return year=='' || isGridMapValidYear(year);
+    }
+
+    function isGridMapValidYear(year){
+        return (isNumber(year) && (year <= new Date().getFullYear() && year >= earliestYear));
     }
     
-    function getInvalidYearText(){
+    function getInvalidYearTextSiteReport(){
         return 'You entered an invalid year.  Either leave blank, or enter a 4 digit year in the range ' + earliestYear + ' to ' + new Date().getFullYear();
+    }
+    
+    function getInvalidYearTextGridMap(){
+        return 'You entered an invalid year.  Enter a 4 digit year in the range ' + earliestYear + ' to ' + new Date().getFullYear();
     }
     
     function doGetDateText(date){

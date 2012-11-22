@@ -142,7 +142,7 @@
     function setupFormOnChange(){
         $('#nbn-site-report-form :input').change(function(){
             var $input = $(this);
-            if(nbn.portal.reports.utils.forms.isFormFieldValid($input)){
+            if(nbn.portal.reports.utils.forms.isSiteReportFormFieldValid($input)){
                 refreshObservationData($('#nbn-site-report-form'));
             }
         });

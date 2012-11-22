@@ -226,7 +226,7 @@
         $('#nbn-grid-map-form :input').change(function(){
             if(($(this).attr('id')!='nbn-select-datasets-auto') || ($('#nbn-select-datasets-auto').is(':checked'))){
                 var $input = $(this);
-                if(nbn.portal.reports.utils.forms.isFormFieldValid($input)){
+                if(nbn.portal.reports.utils.forms.isGridMapFormFieldValid($input)){
                     doOnChange();
                 }
             }
