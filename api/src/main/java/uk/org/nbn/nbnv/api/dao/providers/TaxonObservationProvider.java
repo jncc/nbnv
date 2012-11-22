@@ -45,7 +45,9 @@ public class TaxonObservationProvider {
         createSelectQuery(params);
         INNER_JOIN("TaxonData td ON o.pTaxonVersionKey = td.pTaxonVersionKey");
         GROUP_BY("taxonOutputGroupKey");
-        return SQL();
+String temp = SQL();
+return temp;
+//        return SQL();
     }
     
     public String filteredSelectSpecies(Map<String, Object> params) {
@@ -61,7 +63,9 @@ public class TaxonObservationProvider {
         SELECT("datasetKey, COUNT(*) querySpecificObservationCount");
         createSelectQuery(params);
         GROUP_BY("datasetKey");
-        return SQL();
+String temp = SQL();
+return temp;
+//        return SQL();
     }
     
     public String filteredSelectUnavailableDatasets(Map<String, Object> params){

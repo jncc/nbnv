@@ -1,4 +1,7 @@
 (function($){
+    
+    var earliestYear = 1000;
+
     namespace("nbn.portal.reports.utils.forms", {
         getKeyValuePairsFromForm: function(form){
             return doGetKeyValuePairsFromForm(form);
@@ -8,12 +11,39 @@
         },
         getNoRecordsFoundInfoBox: function(){
             return '<div class="nbn-information-panel">No records were found for your current options</div>';
-        },getDefaultText: function(value, defaultText){
+        },
+        getDefaultText: function(value, defaultText){
             return $.isEmptyObject(value) ? defaultText : value;
-        },getDateText: function(date){
+        },
+        getDateText: function(date){
             return doGetDateText(date);
+        },
+        isFormFieldValid: function($input){
+            return doIsFormFieldValid($input);
         }
     });
+    
+    function doIsFormFieldValid($input){
+        if($input.attr('id') == 'startYear' || $input.attr('id') == "endYear"){
+            if(isValidYear($input.val())){
+                return true;
+            }else{
+                alert(getInvalidYearText());
+                $input.focus();
+                return false;
+            }
+        }else{
+            return true;
+        }
+    }
+
+    function isValidYear(year){
+        return year=='' || (isNumber(year) && (year <= new Date().getFullYear() && year >= earliestYear));
+    }
+    
+    function getInvalidYearText(){
+        return 'You entered an invalid year.  Either leave blank, or enter a 4 digit year in the range ' + earliestYear + ' to ' + new Date().getFullYear();
+    }
     
     function doGetDateText(date){
         var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -78,6 +108,10 @@
         }else{
             return name + '=' + value;
         }
+    }
+
+    function isNumber(n) {
+        return !isNaN(parseFloat(n)) && isFinite(n);
     }
 
 })(jQuery);

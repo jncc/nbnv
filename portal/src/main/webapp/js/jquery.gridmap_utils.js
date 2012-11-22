@@ -208,14 +208,14 @@
             applyRules();
             
             //Deselect datasets if all are selected - requires jquery.dataset-selector-utils.js
-            nbn.portal.reports.utils.DatasetFields.doDeselectDatasetKeys();
+            nbn.portal.reports.utils.datasetfields.doDeselectDatasetKeys();
             
             //Do map refresh
             $('#nbn-grid-map-busy-image').show();
             $('#nbn-grid-map-image').attr('src',getURL(form));
             
             //Turn on all datasets if they are all off
-            nbn.portal.reports.utils.DatasetFields.doSelectDatasetKeys();
+            nbn.portal.reports.utils.datasetfields.doSelectDatasetKeys();
             
             updateResolutionDropDown(form);
         }
@@ -239,9 +239,9 @@
     function addInitialMapImage(){
         $('#nbn-grid-map-busy-image').hide();
         $('#nbn-grid-map-image').attr('src','/img/ajax-loader-medium.gif');
-        nbn.portal.reports.utils.DatasetFields.doDeselectDatasetKeys();
+        nbn.portal.reports.utils.datasetfields.doDeselectDatasetKeys();
         $('#nbn-grid-map-image').attr('src',getURL($('#nbn-grid-map-form')));
-        nbn.portal.reports.utils.DatasetFields.doSelectDatasetKeys();
+        nbn.portal.reports.utils.datasetfields.doSelectDatasetKeys();
     }
 
     $(document).ready(function(){
