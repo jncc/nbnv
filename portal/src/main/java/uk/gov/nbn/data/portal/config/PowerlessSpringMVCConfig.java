@@ -12,7 +12,6 @@ import javax.servlet.ServletContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 import uk.gov.nbn.data.powerless.MarkDownDirectiveModel;
-import uk.gov.nbn.data.powerless.PowerlessHelper;
 
 /**
  * The following Spring Bean will configure the FreeMarkerConfigurer with any 
@@ -36,8 +35,7 @@ public class PowerlessSpringMVCConfig {
     public void setup() throws TemplateModelException {      
         Configuration config = configurer.getConfiguration();
         
-        importLibraries(config, new File(context.getRealPath(
-                    PowerlessHelper.DEFAULT_FREEMARKER_TEMPLATE_LIBRARIES)));
+        importLibraries(config, new File(context.getRealPath(DEFAULT_FREEMARKER_TEMPLATE_LIBRARIES)));
         
         for(Map.Entry currEntry : properties.entrySet()){
             config.setSharedVariable((String)currEntry.getKey(), currEntry.getValue());
