@@ -68,7 +68,7 @@ public class SolrHelper {
     }
     
     private static boolean shouldFilter(List<String> collection) {
-        return !collection.isEmpty() && !collection.get(0).equals("*");
+        return !collection.isEmpty() && !collection.get(0).isEmpty();
     }
     
     private static String getOrFilter(String parameter, List<String> values) {

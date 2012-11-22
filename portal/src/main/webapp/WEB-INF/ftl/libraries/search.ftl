@@ -7,7 +7,7 @@
 <#macro combo id name data counts>
     <h1>${name}</h1>
     <select name="${id}">
-        <option value="*">All</option>
+        <option value>All</option>
         <#list data as currentFacet>
             <option 
                 value="${currentFacet.key}"

@@ -61,13 +61,13 @@ public class UserCookieLoginTest {
         Cookie invalidCookie = new Cookie(cookieKey, "Giberish");
         
         //when
-        Status statusResponse = addCookies(resource.path("user"), Arrays.asList(invalidCookie))
+        ClientResponse response = addCookies(resource.path("user"), Arrays.asList(invalidCookie))
             .accept(MediaType.APPLICATION_JSON)
-            .head()
-            .getClientResponseStatus();
-        
+            .head();
+            
         //then
-        assertEquals("The forbidden status was expected", Status.UNAUTHORIZED, statusResponse);
+        assertEquals("The forbidden status was expected", Status.OK, response.getClientResponseStatus());
+        assertTrue("Request to replace cookie was not sent", response.getHeaders().containsKey("Set-Cookie"));
     }
     
     @Test
