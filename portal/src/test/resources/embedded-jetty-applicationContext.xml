@@ -36,6 +36,6 @@
     </bean>
     
     <bean id="testServer" class="java.net.URL">
-        <constructor-arg value="http://staging.testnbn.net/"/>
+        <constructor-arg value="http://localhost:8050/"/>
     </bean>
 </beans>

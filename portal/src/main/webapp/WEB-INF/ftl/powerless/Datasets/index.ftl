@@ -18,7 +18,7 @@
             <tbody>
                 <#list datasets as dataset>
                     <tr>
-                        <td><a href="${dataset.key}">${dataset.title?html}</a></td>
+                        <td><a href="/Datasets/${dataset.key}">${dataset.title?html}</a></td>
                         <td>${dataset.key}</td>
                         <td>${dataset.organisationName?html}</td>
                         <td>${dataset.formattedDateUploaded?html}</td>

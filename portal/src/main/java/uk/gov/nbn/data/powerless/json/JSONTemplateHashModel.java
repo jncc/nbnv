@@ -7,7 +7,6 @@ package uk.gov.nbn.data.powerless.json;
 import freemarker.template.*;
 import org.json.JSONException;
 import org.json.JSONObject;
-import uk.gov.nbn.data.powerless.WrappedTemplateMethod;
 
 /**
  *
