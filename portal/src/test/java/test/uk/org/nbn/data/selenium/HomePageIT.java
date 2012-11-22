@@ -36,6 +36,6 @@ public class HomePageIT {
         WebElement element = driver.findElement(By.tagName("h1"));
         
         // Check the title of the page
-        assertEquals("The title for the NBN Gateway is incorrect","NBN Gateway Wrong", element.getText());
+        assertEquals("The title for the NBN Gateway is incorrect","NBN Gateway", element.getText());
     }
 }
