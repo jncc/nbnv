@@ -11,73 +11,6 @@
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
     
-<!--Create the Powerless Freemarker Servlet and Map to *.ftl-->
-    <servlet>
-        <servlet-name>freemarker</servlet-name>
-        <servlet-class>uk.gov.nbn.data.powerless.PowerlessServlet</servlet-class>
-        <!-- FreemarkerServlet settings: -->
-        <init-param>
-            <param-name>TemplatePath</param-name>
-            <param-value>/</param-value>
-        </init-param>
-        <init-param>
-            <param-name>NoCache</param-name>
-            <param-value>true</param-value>
-        </init-param>
-        <init-param>
-            <param-name>ContentType</param-name>
-            <param-value>text/html; charset=UTF-8</param-value>
-            <!-- Forces UTF-8 output encoding! -->
-        </init-param>
-        <!-- FreeMarker settings: -->
-        <init-param>
-            <param-name>template_update_delay</param-name>
-            <param-value>0</param-value>
-            <!-- 0 is for development only! Use higher value otherwise. -->
-        </init-param>
-        <init-param>
-            <param-name>default_encoding</param-name>
-            <param-value>ISO-8859-1</param-value>
-            <!-- The encoding of the template files. -->
-        </init-param>
-        <init-param>
-            <param-name>number_format</param-name>
-            <param-value>0.##########</param-value>
-        </init-param>
-        <load-on-startup>1</load-on-startup>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>freemarker</servlet-name>
-        <url-pattern>*.ftl</url-pattern>
-    </servlet-mapping>
-
-<!--Define filters for Powerless operation -->
-    <filter>
-        <filter-name>PowerlessTemplateURLParameterisationFilter</filter-name>
-        <filter-class>uk.gov.nbn.data.powerless.PowerlessTemplateURLParameterisationFilter</filter-class>
-    </filter>
-    <filter>
-        <filter-name>PowerlessRemoteAPIExceptionFilter</filter-name>
-        <filter-class>uk.gov.nbn.data.powerless.PowerlessJSONReaderStatusExceptionFilter</filter-class>
-    </filter>
-    <filter>
-        <filter-name>PowerlessTemplateExceptionFilter</filter-name>
-        <filter-class>uk.gov.nbn.data.powerless.PowerlessTemplateExceptionFilter</filter-class>
-    </filter>
-    
-    <filter-mapping>
-        <filter-name>PowerlessTemplateURLParameterisationFilter</filter-name>
-        <url-pattern>/*</url-pattern>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>PowerlessRemoteAPIExceptionFilter</filter-name>
-        <url-pattern>*.ftl</url-pattern>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>PowerlessTemplateExceptionFilter</filter-name>
-        <url-pattern>*.ftl</url-pattern>
-    </filter-mapping>
-    
 <!--Create spring MVC Servlet and Map-->
     <servlet>
         <servlet-name>spring-mvc</servlet-name>
@@ -101,11 +34,11 @@
     </error-page>
     <error-page>
         <error-code>404</error-code>
-        <location>/WEB-INF/unavailable-pages/404.ftl</location>
+        <location>/unavailable-pages/404</location>
     </error-page>
     <error-page>
         <error-code>500</error-code>
-        <location>/WEB-INF/unavailable-pages/500.ftl</location>
+        <location>/unavailable-pages/500.ftl</location>
     </error-page>
     <error-page>
         <exception-type>java.io.FileNotFoundException</exception-type>

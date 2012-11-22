@@ -11,7 +11,6 @@ import freemarker.template.TemplateModelIterator;
 import freemarker.template.TemplateSequenceModel;
 import org.json.JSONArray;
 import org.json.JSONException;
-import uk.gov.nbn.data.powerless.WrappedTemplateMethod;
 
 /**
  *

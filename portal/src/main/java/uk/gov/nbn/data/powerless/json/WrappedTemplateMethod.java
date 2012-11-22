@@ -1,4 +1,4 @@
-package uk.gov.nbn.data.powerless;
+package uk.gov.nbn.data.powerless.json;
 
 import freemarker.template.TemplateMethodModel;
 import freemarker.template.TemplateModelException;
