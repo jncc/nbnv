@@ -4,8 +4,8 @@
  */
 package test.uk.org.nbn.data.selenium;
 
+import java.net.URL;
 import static junit.framework.Assert.*;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
@@ -24,13 +24,13 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:embedded-jetty-applicationContext.xml")
-public class HomePageTest {
-    @Autowired String jettyRoot;
-    @Ignore
+public class HomePageIT {
+    @Autowired URL testServer;
+    
     @Test public void loadHomePage() {
         WebDriver driver = new HtmlUnitDriver();
         
-        driver.get(jettyRoot); //Go to the deployed application root
+        driver.get(testServer.toString()); //Go to the deployed application root
 
         // Find the h1 element of the page
         WebElement element = driver.findElement(By.tagName("h1"));

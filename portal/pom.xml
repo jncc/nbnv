@@ -117,6 +117,8 @@
                     <warName>ROOT</warName>
                 </configuration>
             </plugin>
+            
+            <!--Compile Compass-->
             <plugin>
                 <groupId>de.saumya.mojo</groupId>
                 <artifactId>gem-maven-plugin</artifactId>
@@ -136,6 +138,32 @@
             </plugin>
         </plugins>
     </build>
+    
+    <profiles>
+        <!-- Integration testing -->
+        <profile>
+            <id>integration-test</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <version>2.12.4</version>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                    <goal>verify</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
     <properties>
         <jruby.version>1.6.4</jruby.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

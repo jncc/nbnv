@@ -28,11 +28,6 @@
                 <bean class="org.mortbay.jetty.webapp.WebAppContext"> 
                     <!--
                         Deploy the app (war points to container of the WEB-INF).
-                        
-                        N.B In a test enviroment The applicationContext.xml defined in
-                        the web.xml will reference the applicationContext.xml of the
-                        test resources (i.e. using embedded database) rather than
-                        the main.
                     -->
                     <property name="war" value="src/main/webapp/"/>
                 </bean>
@@ -40,7 +35,7 @@
         </property> 
     </bean>
     
-    <bean id="jettyRoot" class="java.lang.String">
-        <constructor-arg value="http://localhost:8050/"/>
+    <bean id="testServer" class="java.net.URL">
+        <constructor-arg value="http://staging.testnbn.net/"/>
     </bean>
 </beans>
