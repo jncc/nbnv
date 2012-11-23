@@ -1,11 +1,17 @@
 package uk.org.nbn.nbnv.api.authentication;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.security.*;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Properties;
 import javax.crypto.*;
 import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.org.nbn.nbnv.api.dao.warehouse.UserAuthenticationMapper;
@@ -23,6 +29,7 @@ import uk.org.nbn.nbnv.api.model.User;
  */
 @Component
 public class NBNTokenAuthenticator implements TokenAuthenticator {
+    private static final String AUTHENTICATOR_KEY_LOCATION_PROPERTY = "authenticator_key";
     private static final int INITALIZATION_VECTOR_SIZE = 16;
     private static final int KEY_CHECK_VALUE_SIZE = 16;
     private static final String CREDENTIALS_DIGEST = "SHA-1";
@@ -30,10 +37,11 @@ public class NBNTokenAuthenticator implements TokenAuthenticator {
     private static final String CRYPTO_ALGORITHM = "AES/CBC/PKCS5Padding";
     private static final String STRING_ENCODING = "UTF-8";
 
-    private final SecureRandom random;
-    private final byte[] keyCheckValue;
     private final MessageDigest credentialsDigest;
-    private final SecretKey key;
+    private final byte[] keyCheckValue;
+    private final File keyFile;
+    
+    private SecretKey key;
     
     @Autowired UserAuthenticationMapper userAuthentication;
     
@@ -41,15 +49,35 @@ public class NBNTokenAuthenticator implements TokenAuthenticator {
      * The following constructor will generate a random key check value and
      * @see #SECRET_KEY_ALGORITHM key for encrypting tokens
      * @throws NoSuchAlgorithmException
-     * @throws NoSuchPaddingException
-     * @throws InvalidKeyException
-     * @throws InvalidAlgorithmParameterException 
+     * @throws IOException
      */
-    public NBNTokenAuthenticator() throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException {
-        this.key = KeyGenerator.getInstance(SECRET_KEY_ALGORITHM).generateKey();
+    @Autowired
+    public NBNTokenAuthenticator(Properties properties) throws NoSuchAlgorithmException, IOException {
         this.credentialsDigest = MessageDigest.getInstance(CREDENTIALS_DIGEST);
-        this.random = new SecureRandom();
-        this.keyCheckValue = randomBytes(KEY_CHECK_VALUE_SIZE);
+        this.keyCheckValue = new byte[KEY_CHECK_VALUE_SIZE];
+        this.keyFile = new File(properties.getProperty(AUTHENTICATOR_KEY_LOCATION_PROPERTY));
+        if(keyFile.exists()) 
+            loadKeys();
+        else {
+            //Ensure that the parent folder for the key file exists. Only do this once
+            File parent = keyFile.getParentFile();
+            if(!parent.exists() && !parent.mkdirs())
+                throw new RuntimeException("Failed to create parent file");
+            
+            generateKeys(); //generate keys and save these to the key file
+        }
+    }
+    
+    /**
+     * The following method will reset the secrets of this TokenAuthenticator with
+     * new ones. A new encryption key and checkvalue. These will be saved to the
+     * key file for this Authenticator
+     * @throws NoSuchAlgorithmException 
+     */
+    public final synchronized void generateKeys() throws NoSuchAlgorithmException, IOException {
+        this.key = KeyGenerator.getInstance(SECRET_KEY_ALGORITHM).generateKey();
+        new SecureRandom().nextBytes(keyCheckValue);
+        saveKeys();
     }
     
     /**
@@ -196,6 +224,47 @@ public class NBNTokenAuthenticator implements TokenAuthenticator {
     }
     
     /**
+     * The following method will load the key and keycheck values from this beans
+     * key file.
+     * The structure of this file is as follows :
+     *      BYTE_ARRAY_LENGTH           |                   CONTENT
+     * -----------------------------------------------------------------------
+     *  @see #INITALIZATION_VECTOR_SIZE | The secret key for this authenticator
+     *  @see #KEY_CHECK_VALUE_SIZE      | Randomly generated id for this 
+     *                                  |   TokenAuthenticator
+     * @throws IOException 
+     */
+    private void loadKeys() throws IOException {
+        FileInputStream in = new FileInputStream(keyFile);
+        try {
+            byte[] keyBytes = new byte[INITALIZATION_VECTOR_SIZE];
+            in.read(keyBytes);
+            key = new SecretKeySpec(keyBytes, SECRET_KEY_ALGORITHM);
+            in.read(keyCheckValue);
+        }
+        finally {
+            in.close();
+        }
+    }
+    
+    /**
+     * The following method will persist a secret key file for this bean.
+     * @see #loadKeys() For details on the structure of this file.
+     * @throws IOException 
+     */
+    private void saveKeys() throws IOException {
+        FileOutputStream out = new FileOutputStream(keyFile);
+        try {
+            out.write(key.getEncoded());
+            out.write(keyCheckValue);
+            out.flush();
+        }
+        finally {
+            out.close();
+        }
+    }
+    
+    /**
      * Utility method to read a byte array of size from a ByteBuffer
      * @param buf The buffer to read from
      * @param size The amount of bytes to read
@@ -205,17 +274,5 @@ public class NBNTokenAuthenticator implements TokenAuthenticator {
         byte[] toReturn = new byte[size];
         buf.get(toReturn);
         return toReturn;
-    }
-    
-    /**
-     * Utility method to create a byte array of a specified size full of random
-     * bytes
-     * @param size The amount of bytes to randomly create
-     * @return A byte array of random bytes
-     */
-    private byte[] randomBytes(int size) {
-        byte[] nonce = new byte[size];
-        random.nextBytes(nonce);
-        return nonce;
     }
 }
