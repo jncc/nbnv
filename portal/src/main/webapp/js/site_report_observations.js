@@ -146,7 +146,6 @@
                 refreshObservationData($('#nbn-site-report-form'));
             }
         });
-
     }
 
     function doFirstVisitToPage(){

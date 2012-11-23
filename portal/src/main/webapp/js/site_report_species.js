@@ -17,19 +17,46 @@
         keyValuePairsFromForm['taxonOutputGroup'] = taxonOutputGroupKey;
         var queryString = nbn.portal.reports.utils.forms.getQueryStringFromKeyValuePairs(keyValuePairsFromForm, false);
         var url = form.attr('api-server') + '/taxonObservations/species' + queryString;
+        var numSpecies = 0;
+        var datatableDisplayThreshold = 10;
         $.getJSON(url, function(data){
             if(data.length > 0){
-                toAppend += '<ul>';
+                numSpecies = data.length;
+                if(numSpecies > datatableDisplayThreshold){
+                    toAppend += '<table id="nbn-species-table"><thead><tr><th>Sort</th></thead><tbody>';
+                }else{
+                    toAppend += '<table id="nbn-species-table"><tbody>';
+                }
                 $.each(data, function(key, val){
-                    toAppend += '<li><a href="/Reports/Sites/' + featureID + '/Groups/' + taxonOutputGroupKey + '/Species/' + val.taxon.taxonVersionKey + '/Observations">' + val.taxon.name + '</a>';
+                    toAppend += '<tr><td><a href="/Reports/Sites/' + featureID + '/Groups/' + taxonOutputGroupKey + '/Species/' + val.taxon.taxonVersionKey + '/Observations">' + val.taxon.name + '</a></td></tr>';
                 });
-                toAppend += '</ul>';
+                toAppend += '</tbody></table>';
             }else{
                 toAppend += nbn.portal.reports.utils.forms.getNoRecordsFoundInfoBox();
             }
             $dataContainer.empty();
             $($dataContainer).append(toAppend);
+            if(numSpecies > datatableDisplayThreshold){
+                addDataTable();
+            }
         });
+    }
+    
+    function addDataTable(){
+        $('#nbn-species-table').dataTable({
+            "bJQueryUI": true,
+            "sPaginationType": "full_numbers",
+            "oLanguage": {
+                "sLengthMenu": "Show _MENU_ species", 
+                "sSearch": 'Search list',
+                "sInfo": "Showing _START_ to _END_ of _TOTAL_ species",
+                "sInfoFiltered": " (filtered from _MAX_ total species)"
+            },
+            "iDisplayLength": 25,
+            "bSortClasses": false,
+            "aLengthMenu": [[10,25,50,100,-1],[10,25,50,100,"All"]]
+        });
+
     }
     
     function setupFormOnChange(){
