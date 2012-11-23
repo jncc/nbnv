@@ -12,13 +12,13 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -42,8 +42,6 @@ import uk.org.nbn.nbnv.api.utils.AccessRequestJSONToText;
 @Component
 @Path("/user/userAccesses")
 public class UserAccessRequestResource {
-    private static Date neverExpiresDate = new Date(0);
-    
     @Autowired OperationalTaxonObservationFilterMapper oTaxonObservationFilterMapper;
     @Autowired OperationalUserAccessRequestMapper oUserAccessRequestMapper;
     
@@ -73,19 +71,23 @@ public class UserAccessRequestResource {
     public List<UserAccessRequest> getRequestsForAdmin(@TokenUser(allowPublic=false) User user) {
         return oUserAccessRequestMapper.getAdminableRequests(user.getId());
     }
-    private AccessRequestJSON parseJSON(String json) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.readValue(json, AccessRequestJSON.class);
+    
+    @GET
+    @Path("/requests/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public UserAccessRequest getRequest(@TokenAccessRequestAdminUser(path="id") User user
+            , @PathParam("id") int filterID) {
+        return oUserAccessRequestMapper.getRequest(filterID);
     }
     
     @POST
-    @Path("/requests/admin/{requestID}")
+    @Path("/requests/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response acceptRequest(@TokenAccessRequestAdminUser() User user
+    public Response updateRequest(@TokenAccessRequestAdminUser(path="id") User user
             , @PathParam("id") int filterID
-            , @QueryParam("action") String action
-            , @QueryParam("reason") String reason
-            , @QueryParam("expires") @DefaultValue("") String expires) throws ParseException {
+            , @FormParam("action") String action
+            , @FormParam("reason") String reason
+            , @FormParam("expires") @DefaultValue("") String expires) throws ParseException {
         if ("accept".equalsIgnoreCase(action)) {
             return acceptRequest(filterID, reason, expires);
         } else if ("deny".equalsIgnoreCase(action)) {
@@ -100,16 +102,20 @@ public class UserAccessRequestResource {
             oUserAccessRequestMapper.acceptRequest(filterID, reason, new Date(new java.util.Date().getTime()));
             return Response.ok("success").build();
         } else {
-            DateFormat df = new SimpleDateFormat("yyyymmdd");
+            DateFormat df = new SimpleDateFormat("dd/mm/yyyy");
             java.util.Date expiresDate = df.parse(expires);
-            oUserAccessRequestMapper.acceptRequest(filterID, reason, new Date(new java.util.Date().getTime()), new Date(expiresDate.getTime()));
+            oUserAccessRequestMapper.acceptRequestWithExpires(filterID, reason, new Date(new java.util.Date().getTime()), new Date(expiresDate.getTime()));
             return Response.ok("success").build();
         }
     }
 
-    public Response denyRequest(int filterID, String reason) {
+    private Response denyRequest(int filterID, String reason) {
         oUserAccessRequestMapper.denyRequest(filterID, reason, new Date(new java.util.Date().getTime()));
         return Response.ok("success").build();
     }
 
+    private AccessRequestJSON parseJSON(String json) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.readValue(json, AccessRequestJSON.class);
+    }
 }

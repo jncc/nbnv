@@ -34,7 +34,7 @@ public interface OperationalUserAccessRequestMapper {
     })
     public List<UserAccessRequest> getAdminableRequests(int id);
     
-    @Select("SELECT uar.* FROM UserAccessRequest uar WHERE filterID = #{id}")
+    @Select("SELECT uar.* FROM UserAccessRequest uar WHERE uar.filterID = #{id}")
     @Results(value = {
         @Result(property="filter", column="filterID", javaType=TaxonObservationFilter.class, one=@One(select="uk.org.nbn.nbnv.api.dao.core.OperationalTaxonObservationFilterMapper.selectById"))
     })
@@ -49,7 +49,7 @@ public interface OperationalUserAccessRequestMapper {
 
     @Update("UPDATE UserAccessRequest SET responseTypeID = 1, responseReason = #{responseReason}, responseDate = #{responseDate}, accessExpires = #{expiresDate} "
             + "WHERE filterID = #{filterID}")
-    public int acceptRequest(
+    public int acceptRequestWithExpires(
             @Param("filterID") int filterID
             , @Param("responseReason") String responseReason
             , @Param("responseDate") Date responseDate
