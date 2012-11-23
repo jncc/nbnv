@@ -66,7 +66,7 @@ public class UserCookieLoginTest {
             .head();
             
         //then
-        assertEquals("The forbidden status was expected", Status.OK, response.getClientResponseStatus());
+        assertEquals("The forbidden status was expected", Status.UNAUTHORIZED, response.getClientResponseStatus());
         assertTrue("Request to replace cookie was not sent", response.getHeaders().containsKey("Set-Cookie"));
     }
     
