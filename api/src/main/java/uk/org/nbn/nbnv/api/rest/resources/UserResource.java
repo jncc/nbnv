@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -79,7 +80,8 @@ public class UserResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response createTokenCookie(
             @QueryParam("username")  String username, 
-            @QueryParam("password") String password
+            @QueryParam("password") String password,
+            @DefaultValue("false") @QueryParam("remember") Boolean remember
         ) throws InvalidCredentialsException, InvalidTokenException, ExpiredTokenException {
         Token token = tokenAuth.generateToken(username, password, tokenTTL);
         
@@ -93,7 +95,7 @@ public class UserResource {
                 tokenCookieKey, 
                 Base64.encodeBase64URLSafeString(token.getBytes()),
                 "/", domain, "authentication token",
-                tokenTTL/1000, false
+                (remember) ? tokenTTL/1000 : NewCookie.DEFAULT_MAX_AGE, false
             ))
            .build();
     }

@@ -35,13 +35,15 @@ public class SSOController {
     
     @RequestMapping(value = "/User/SSO/Login", method = RequestMethod.POST) 
     public ModelAndView login(  @RequestParam("username") String username,
-                                @RequestParam("password") String password, 
+                                @RequestParam("password") String password,
+                                @RequestParam(value="remember", required=false) String remember,
                                 HttpServletResponse response
             ) throws IOException, ServletException, JSONException {
         GenericType<Map<String, Object>> type = new GenericType<Map<String, Object>>(){};
         ClientResponse clientResponse = resource.path("/user/login")
                                                 .queryParam("username", username)
                                                 .queryParam("password", password)
+                                                .queryParam("remember", remember != null ? remember : Boolean.toString(false) )
                                                 .accept(MediaType.APPLICATION_JSON)
                                                 .get(ClientResponse.class);
         
