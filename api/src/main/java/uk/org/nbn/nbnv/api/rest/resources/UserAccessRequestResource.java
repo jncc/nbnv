@@ -6,12 +6,19 @@ package uk.org.nbn.nbnv.api.rest.resources;
 
 import java.io.IOException;
 import java.sql.Date;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -24,6 +31,7 @@ import uk.org.nbn.nbnv.api.model.TaxonObservationFilter;
 import uk.org.nbn.nbnv.api.model.User;
 import uk.org.nbn.nbnv.api.model.UserAccessRequest;
 import uk.org.nbn.nbnv.api.model.meta.AccessRequestJSON;
+import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenAccessRequestAdminUser;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
 import uk.org.nbn.nbnv.api.utils.AccessRequestJSONToText;
 
@@ -34,6 +42,8 @@ import uk.org.nbn.nbnv.api.utils.AccessRequestJSONToText;
 @Component
 @Path("/user/userAccesses")
 public class UserAccessRequestResource {
+    private static Date neverExpiresDate = new Date(0);
+    
     @Autowired OperationalTaxonObservationFilterMapper oTaxonObservationFilterMapper;
     @Autowired OperationalUserAccessRequestMapper oUserAccessRequestMapper;
     
@@ -42,7 +52,7 @@ public class UserAccessRequestResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     @Transactional
-    public Response createRequest(@TokenUser User user, String json) throws IOException {
+    public Response createRequest(@TokenUser(allowPublic=false) User user, String json) throws IOException {
         AccessRequestJSON accessRequest = parseJSON(json);
         
         TaxonObservationFilter filter = new TaxonObservationFilter();
@@ -60,11 +70,46 @@ public class UserAccessRequestResource {
     @GET
     @Path("/requests/admin")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<UserAccessRequest> getRequestsForAdmin(@TokenUser User user) {
+    public List<UserAccessRequest> getRequestsForAdmin(@TokenUser(allowPublic=false) User user) {
         return oUserAccessRequestMapper.getAdminableRequests(user.getId());
     }
     private AccessRequestJSON parseJSON(String json) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.readValue(json, AccessRequestJSON.class);
     }
+    
+    @POST
+    @Path("/requests/admin/{requestID}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response acceptRequest(@TokenAccessRequestAdminUser() User user
+            , @PathParam("id") int filterID
+            , @QueryParam("action") String action
+            , @QueryParam("reason") String reason
+            , @QueryParam("expires") @DefaultValue("") String expires) throws ParseException {
+        if ("accept".equalsIgnoreCase(action)) {
+            return acceptRequest(filterID, reason, expires);
+        } else if ("deny".equalsIgnoreCase(action)) {
+            return denyRequest(filterID, reason);
+        } else {
+            return Response.serverError().build();
+        }
+    }
+       
+    private Response acceptRequest(int filterID, String reason, String expires) throws ParseException {
+        if (expires.isEmpty()) {
+            oUserAccessRequestMapper.acceptRequest(filterID, reason, new Date(new java.util.Date().getTime()));
+            return Response.ok("success").build();
+        } else {
+            DateFormat df = new SimpleDateFormat("yyyymmdd");
+            java.util.Date expiresDate = df.parse(expires);
+            oUserAccessRequestMapper.acceptRequest(filterID, reason, new Date(new java.util.Date().getTime()), new Date(expiresDate.getTime()));
+            return Response.ok("success").build();
+        }
+    }
+
+    public Response denyRequest(int filterID, String reason) {
+        oUserAccessRequestMapper.denyRequest(filterID, reason, new Date(new java.util.Date().getTime()));
+        return Response.ok("success").build();
+    }
+
 }

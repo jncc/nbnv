@@ -28,7 +28,7 @@
         <h3>Administrate Datasets</h3>
         <table>
             <tr><td><a href="Admin/Metadata">Alter Dataset Metadata</a></td></tr>
-            <tr><td>Interact with Access Permissions</td></tr>
+            <tr><td><a href="Admin/AccessRequest/Admin">Interact with Access Permissions</a></td></tr>
             <tr><td>View Download Log</td></tr>
         </table>
     </div>

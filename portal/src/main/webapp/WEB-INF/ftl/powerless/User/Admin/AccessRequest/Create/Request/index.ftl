@@ -31,7 +31,7 @@
                 }
                 $('#next').click(function() {
                     json.request = req.getJSON();
-                    window.location = "../Complete?json=" + (JSON.stringify(json, null, '\t'));
+                    window.location = "Complete?json=" + (JSON.stringify(json, null, '\t'));
                 });
                 $('#cancel').click(function() {
 				window.location = "/";

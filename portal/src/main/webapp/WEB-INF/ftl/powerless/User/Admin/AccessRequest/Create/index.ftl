@@ -15,7 +15,7 @@
 		$('#filter').append(filter._render());
 		
 		$('#next').click(function() {
-				window.location = "Request?src=0&json=" + (JSON.stringify(filter.getJSON(), null, '\t'));
+				window.location = "Create/Request?src=0&json=" + (JSON.stringify(filter.getJSON(), null, '\t'));
 			}
 		);
                 $('#cancel').click(function() {

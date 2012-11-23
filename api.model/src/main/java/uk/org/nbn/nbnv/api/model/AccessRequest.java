@@ -21,6 +21,7 @@ public class AccessRequest {
     private String responseReason;
     private Date responseDate;
     private Date accessExpires;
+    private String datasetKey;
 
     /**
      * @return the filter
@@ -160,6 +161,20 @@ public class AccessRequest {
      */
     public void setDataset(Dataset dataset) {
         this.dataset = dataset;
+    }
+
+    /**
+     * @return the datasetKey
+     */
+    public String getDatasetKey() {
+        return datasetKey;
+    }
+
+    /**
+     * @param datasetKey the datasetKey to set
+     */
+    public void setDatasetKey(String datasetKey) {
+        this.datasetKey = datasetKey;
     }
 
 }

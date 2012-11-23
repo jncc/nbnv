@@ -13,20 +13,23 @@ import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.Provider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.org.nbn.nbnv.api.dao.core.OperationalUserAccessRequestMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.DatasetAdministratorMapper;
 import uk.org.nbn.nbnv.api.model.User;
+import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenAccessRequestAdminUser;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenDatasetAdminUser;
 
 /**
  * The following Injectable Provider will produce users who have been checked for
- * dataset administration rights to a given dataset as specified as a path param 
+ * dataset administration rights to a the dataset within an access request as specified as a path param 
  * in the URL called which triggers this provider.
- * @author Christopher Johnson
+ * @author Paul Gilbertson
  */
 @Provider
 @Component
-public class TokenDatasetAdminUserProvider implements InjectableProvider<TokenDatasetAdminUser, Type> {   
+public class TokenAccessRequestAdminUserProvider implements InjectableProvider<TokenAccessRequestAdminUser, Type> {   
     @Autowired private DatasetAdministratorMapper datasetAdministratorMapper;
+    @Autowired private OperationalUserAccessRequestMapper oUserAccessRequestMapper;
     @Autowired private UserProviderHelper userObtainer;
     @Context private UriInfo request;
     @Context private HttpHeaders headers;
@@ -38,7 +41,7 @@ public class TokenDatasetAdminUserProvider implements InjectableProvider<TokenDa
         return ComponentScope.PerRequest;
     }
 
-    @Override public Injectable<User> getInjectable(ComponentContext cc, TokenDatasetAdminUser a, Type c) {
+    @Override public Injectable<User> getInjectable(ComponentContext cc, TokenAccessRequestAdminUser a, Type c) {
         if (c.equals(User.class)) {
             return new UserInjector(a);
         }
@@ -46,22 +49,22 @@ public class TokenDatasetAdminUserProvider implements InjectableProvider<TokenDa
     }
     
     private class UserInjector implements Injectable<User> {
-        private final TokenDatasetAdminUser userAnnot;
+        private final TokenAccessRequestAdminUser userAnnot;
         
-        private UserInjector(TokenDatasetAdminUser userAnnot) {
+        private UserInjector(TokenAccessRequestAdminUser userAnnot) {
             this.userAnnot = userAnnot;
         }
         
         /**
          * The following method will return the a User who is not public is an
-         * administrator for a given dataset as specified in the user annotation
+         * administrator for a given access request as specified in the user annotation
          * @return A user who is a administrator of the given dataset
          * @throws WebApplicationException If an invalid token, expired token, 
          * user is not an administrator of the specified dataset.
          */
         @Override public User getValue() {
             User user = userObtainer.getValue(headers, request, false); //get the logged in user
-            String datasetKey = request.getPathParameters().getFirst(userAnnot.path());
+            String datasetKey = oUserAccessRequestMapper.getRequest(Integer.parseInt(request.getPathParameters().getFirst(userAnnot.path()))).getDatasetKey();
 
             if(datasetAdministratorMapper.isUserDatasetAdministrator(user.getId(), datasetKey)) {
                 return user;

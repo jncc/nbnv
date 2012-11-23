@@ -33,4 +33,33 @@ public interface OperationalUserAccessRequestMapper {
         @Result(property="filter", column="filterID", javaType=TaxonObservationFilter.class, one=@One(select="uk.org.nbn.nbnv.api.dao.core.OperationalTaxonObservationFilterMapper.selectById"))
     })
     public List<UserAccessRequest> getAdminableRequests(int id);
+    
+    @Select("SELECT uar.* FROM UserAccessRequest uar WHERE filterID = #{id}")
+    @Results(value = {
+        @Result(property="filter", column="filterID", javaType=TaxonObservationFilter.class, one=@One(select="uk.org.nbn.nbnv.api.dao.core.OperationalTaxonObservationFilterMapper.selectById"))
+    })
+    public UserAccessRequest getRequest(int id);
+    
+    @Update("UPDATE UserAccessRequest SET responseTypeID = 1, responseReason = #{responseReason}, responseDate = #{responseDate} "
+            + "WHERE filterID = #{filterID}")
+    public int acceptRequest(
+            @Param("filterID") int filterID
+            , @Param("responseReason") String responseReason
+            , @Param("responseDate") Date responseDate);
+
+    @Update("UPDATE UserAccessRequest SET responseTypeID = 1, responseReason = #{responseReason}, responseDate = #{responseDate}, accessExpires = #{expiresDate} "
+            + "WHERE filterID = #{filterID}")
+    public int acceptRequest(
+            @Param("filterID") int filterID
+            , @Param("responseReason") String responseReason
+            , @Param("responseDate") Date responseDate
+            , @Param("expiresDate") Date expiresDate);
+
+    @Update("UPDATE UserAccessRequest SET responseTypeID = 2, responseReason = #{responseReason}, responseDate = #{responseDate} "
+            + "WHERE filterID = #{filterID}")
+    public int denyRequest(
+            @Param("filterID") int filterID
+            , @Param("responseReason") String responseReason
+            , @Param("responseDate") Date responseDate);
+
 }
