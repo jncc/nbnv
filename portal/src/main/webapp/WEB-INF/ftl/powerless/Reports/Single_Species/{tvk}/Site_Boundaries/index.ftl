@@ -6,7 +6,7 @@
 <#assign spatialRelationship=RequestParameters.spatialRelationship?has_content?string(RequestParameters.spatialRelationship[0]!"overlap","overlap")>
 
 <@template.master title="NBN Site Report" 
-    csss=["/css/species_site_list.css","http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/themes/smoothness/jquery-ui.css"]
+    csss=["/css/species-site-list.css","http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/themes/smoothness/jquery-ui.css"]
     javascripts=["/js/jqueryui.simple-table-style.js","/js/report_utils.js","/js/species_site_list.js","/js/jquery.dataset-selector-utils.js","/js/jquery.dataTables.min.js"]>
     <h1>List of site boundaries for ${taxon_utils.getShortName(ptaxon)}</h1>
     <form id="nbn-species-site-list-form" api-server="${api}" ptvk="${ptaxon.taxonVersionKey}" taxonOutputGroupKey="${ptaxon.taxonOutputGroupKey}">
