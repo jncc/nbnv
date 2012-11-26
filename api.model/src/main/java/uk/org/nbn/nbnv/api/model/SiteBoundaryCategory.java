@@ -1,10 +1,13 @@
 package uk.org.nbn.nbnv.api.model;
 
 import java.util.List;
+import org.hibernate.validator.constraints.NotEmpty;
 
 public class SiteBoundaryCategory {
     
+    @NotEmpty
     private int id;
+    @NotEmpty
     private String name;
     private List<SiteBoundaryDataset> siteBoundaryDatasets;
     

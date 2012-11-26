@@ -22,5 +22,8 @@ public interface SiteBoundaryCategoryMapper {
         @Result(property="id", column="id")
     })
     SiteBoundaryCategory getByID(int id);
+    
+    @Select("SELECT * FROM SiteBoundaryCategoryData where id = #{id}")
+    SiteBoundaryCategory getByIDDatasetsNotInstantiated(int id);
 
 }

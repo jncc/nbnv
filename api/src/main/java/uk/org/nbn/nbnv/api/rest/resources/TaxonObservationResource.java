@@ -24,23 +24,8 @@ import uk.org.nbn.nbnv.api.model.*;
 
 @Component
 @Path("/taxonObservations")
-public class TaxonObservationResource {
+public class TaxonObservationResource extends ObservationResource {
     
-    public static final String SPATIAL_RELATIONSHIP_WITHIN = "within";
-    public static final String SPATIAL_RELATIONSHIP_OVERLAP = "overlap";
-    public static final String SPATIAL_RELATIONSHIP_DEFAULT = SPATIAL_RELATIONSHIP_OVERLAP;
-
-    private final String defaultStartYear = "-1";
-    private final String defaultEndYear = "-1";
-    private final String defaultDatasetKey = "";
-    private final String defaultTaxa = "";
-    private final String defaultSensitive = "1";
-    private final String defaultDesignation = "";
-    private final String defaultTaxonOutputGroup = "";
-    private final String defaultGridRef = "";
-    private final String defaultFeatureID = "";
-    private final String defaultAttributeID = "-1";
-
     @Autowired
     TaxonObservationMapper observationMapper;
     @Autowired
