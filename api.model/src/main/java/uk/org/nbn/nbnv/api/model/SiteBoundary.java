@@ -1,14 +1,23 @@
 package uk.org.nbn.nbnv.api.model;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
 public class SiteBoundary {
     
+    @NotEmpty
     private int featureID;
     private String name;
+    @NotEmpty
     private String providerKey;
     private String description;
+    @NotEmpty
     private String siteBoundaryDatasetKey;
+    @NotEmpty
     private int siteBoundaryCategoryId;
+    @NotEmpty
     private String identifier;
+    private SiteBoundaryDataset siteBoundaryDataset;
+    private SiteBoundaryCategory siteBoundaryCategory;
     
     public SiteBoundary(){}
     
@@ -77,6 +86,22 @@ public class SiteBoundary {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public SiteBoundaryDataset getSiteBoundaryDataset() {
+        return siteBoundaryDataset;
+    }
+
+    public void setSiteBoundaryDataset(SiteBoundaryDataset siteBoundaryDataset) {
+        this.siteBoundaryDataset = siteBoundaryDataset;
+    }
+
+    public SiteBoundaryCategory getSiteBoundaryCategory() {
+        return siteBoundaryCategory;
+    }
+
+    public void setSiteBoundaryCategory(SiteBoundaryCategory siteBoundaryCategory) {
+        this.siteBoundaryCategory = siteBoundaryCategory;
     }
     
 }

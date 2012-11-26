@@ -8,8 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.org.nbn.nbnv.api.dao.warehouse.DatasetMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.DesignationMapper;
+import uk.org.nbn.nbnv.api.dao.warehouse.SiteBoundaryMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.TaxonMapper;
 import uk.org.nbn.nbnv.api.model.Dataset;
+import uk.org.nbn.nbnv.api.model.SiteBoundary;
 import uk.org.nbn.nbnv.api.model.Taxon;
 import uk.org.nbn.nbnv.api.model.TaxonDesignation;
 import uk.org.nbn.nbnv.api.model.TaxonWebLink;
@@ -19,11 +21,13 @@ import uk.org.nbn.nbnv.api.solr.SolrResponse;
 
 @Component
 @Path("/taxa")
-public class TaxonResource {
+public class TaxonResource extends ObservationResource {
+    
     @Autowired SearchResource searchResource;
     @Autowired TaxonMapper taxonMapper;
     @Autowired DatasetMapper datasetMapper;
     @Autowired DesignationMapper designationMapper;
+    @Autowired SiteBoundaryMapper siteBoundaryMapper;
     
     @GET
     @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8") 
@@ -92,5 +96,23 @@ public class TaxonResource {
             @QueryParam("q") String q
             ) throws SolrServerException {
         return searchResource.searchTaxa(rows, start, categories, languages, sort, q);
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8") 
+    @Path("/{taxonVersionKey}/siteBoundaries")
+    public List<SiteBoundary> getSiteBoundaries(
+            @TokenUser() User user, 
+            @QueryParam("startYear") @DefaultValue(defaultStartYear) int startYear, 
+            @QueryParam("endYear") @DefaultValue(defaultEndYear) int endYear, 
+            @QueryParam("datasetKey") @DefaultValue(defaultDatasetKey) List<String> datasetKeys, 
+            @PathParam("taxonVersionKey") List<String> taxa, 
+            @QueryParam("spatialRelationship") @DefaultValue(SPATIAL_RELATIONSHIP_DEFAULT) String spatialRelationship,
+            @QueryParam("featureID") @DefaultValue(defaultFeatureID) String featureID,
+            @QueryParam("sensitive") @DefaultValue(defaultSensitive) Boolean sensitive, 
+            @QueryParam("designation") @DefaultValue(defaultDesignation) String designation, 
+            @QueryParam("taxonOutputGroup") @DefaultValue(defaultTaxonOutputGroup) String taxonOutputGroup, 
+            @QueryParam("gridRef") @DefaultValue(defaultGridRef) String gridRef) {
+        return siteBoundaryMapper.getByTaxonVersionKey(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef);
     }
 }
