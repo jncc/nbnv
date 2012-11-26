@@ -32,7 +32,7 @@ public class UserDatasetAdministratorTest {
     @Test
     public void isUserAnDatasetAdminTest() {
         // Given
-        User u = userMapper.getUser(39);
+        User u = userMapper.getUserById(39);
         Dataset ds = datasetMapper.selectByDatasetKey("DATASET1");
         
         //When
@@ -45,7 +45,7 @@ public class UserDatasetAdministratorTest {
     @Test
     public void isNotDatasetAdminUserAnDatasetAdminTest() {
         // Given
-        User u = userMapper.getUser(43);
+        User u = userMapper.getUserById(43);
         Dataset ds = datasetMapper.selectByDatasetKey("DATASET1");
         
         // When

@@ -10,7 +10,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -27,6 +29,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.org.nbn.nbnv.api.authentication.TokenResetCredentials;
 import uk.org.nbn.nbnv.api.authentication.ExpiredTokenException;
 import uk.org.nbn.nbnv.api.authentication.InvalidCredentialsException;
 import uk.org.nbn.nbnv.api.authentication.InvalidTokenException;
@@ -55,6 +58,7 @@ public class UserResource {
     private final MessageDigest sha1, md5;
     
     @Autowired TokenAuthenticator tokenAuth;
+    @Autowired TokenResetCredentials credentialsResetter;
     @Autowired UserMapper userMapper;
     @Autowired OperationalUserMapper oUserMapper;
     @Autowired UserAuthenticationMapper userAuthenticationMapper;
@@ -100,8 +104,8 @@ public class UserResource {
            .build();
     }
     
-    @GET
-    @Path("/changePassword")
+    @PUT
+    @Path("/passwords/change")
     @Produces(MediaType.APPLICATION_JSON)
     public Response setUserPassword(
             @TokenUser(allowPublic=false) User user,
@@ -113,6 +117,74 @@ public class UserResource {
         oUserMapper.setUserPassword(user, passwordHashSHA1, md5HashSHA1);
         return Response.ok("success").build();
     }
+    
+    @POST
+    @Path("/passwords/change/{username}")
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response setUserPassword(
+            @PathParam("username") String username,
+            @FormParam("reset") String resetToken,
+            @FormParam("password") String password) throws UnsupportedEncodingException, InvalidTokenException, ExpiredTokenException {
+        return setUserPassword(credentialsResetter.getUser(
+                username, new Token(Base64.decodeBase64(resetToken))), password);
+    }
+    
+    @POST
+    @Path("/mail/password")
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response requestPasswordReset(
+            @FormParam("username") String username,
+            @FormParam("email") String email
+            ) throws JSONException, InvalidCredentialsException, IOException, TemplateException {
+        User user = userMapper.getUser(username);
+        if(user != null) {
+            Token generateToken = credentialsResetter.generateToken(username, email, tokenTTL);
+             //email the user with the activation key
+            Map<String, Object> message = new HashMap<String, Object>();
+            message.put("name", user.getForename());
+            message.put("token", Base64.encodeBase64URLSafeString(generateToken.getBytes()));
+            mailer.send("forgotten-password.ftl", user.getEmail(), "NBN Gateway: Your password reset link", message);
+        
+            return Response.ok(new JSONObject()
+                    .put("success", true)
+                    .put("status", "A password reset command has been e-mailed to you")
+               ).build();
+        }
+        else {
+            return Response.status(Response.Status.NOT_FOUND).entity(new JSONObject()
+                    .put("success", false)
+                    .put("status", "No user is known with this username")
+                ).build();
+        }
+    }
+    
+    @POST
+    @Path("/mail/username")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getUsername(@QueryParam("email") String emailAddress) throws JSONException, IOException, TemplateException {
+        User user = userMapper.getUserFromEmail(emailAddress);
+        if(user != null) {
+            //email the user with the activation key
+            Map<String, Object> message = new HashMap<String, Object>();
+            message.put("name", user.getForename());
+            message.put("username", user.getUsername());
+            mailer.send("forgotten-username.ftl", user.getEmail(), "NBN Gateway: Your username reminder", message);
+        
+            return Response.ok(new JSONObject()
+                    .put("success", true)
+                    .put("status", "Your username has been sent to you via e-mail.")
+               ).build();
+        }
+        else {
+            return Response.status(Response.Status.NOT_FOUND).entity(new JSONObject()
+                    .put("success", false)
+                    .put("status", "No user is known with this email")
+                ).build();
+        }
+    }
+    
     
     @GET
     @Path("/logout")
@@ -168,14 +240,7 @@ public class UserResource {
                 ).build();
         }
     }
-    
-    @GET
-    @Path("/{id}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public User getUserByID(@PathParam("id") int id) {
-        return userMapper.getUser(id);
-    }
-    
+
     @GET
     @Path("/adminDatasets")
     @Produces(MediaType.APPLICATION_JSON)

@@ -24,4 +24,11 @@ public interface UserAuthenticationMapper {
         ") = id"
     )
     User getUser(@Param("u") byte[] username_SHA1);
+    
+    @Select("SELECT password_sha1 " + 
+            "FROM UserTokenAuthenticationData utad " +
+                "INNER JOIN UserData ud ON ud.id = utad.id " +
+            "WHERE username_sha1 = #{u} " +
+            "AND email = #{email}")
+    Object getUsersPassHash(@Param("u") byte[] username_SHA1, @Param("email") String email); 
 }
