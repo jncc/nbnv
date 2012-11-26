@@ -1,34 +1,33 @@
 (function($){
     
-    function refreshSpeciesData(form){
-        var $dataContainer = $('#nbn-site-report-data-container');
-        var featureID = form.attr('featureID');
+    function refreshSiteListData(form){
+        var $dataContainer = $('#nbn-species-site-list-container');
+        var ptvk = form.attr('ptvk');
         var taxonOutputGroupKey = form.attr('taxonOutputGroupKey');
        
-        //Add title and busy image to data container whilst getting data
-        var toAppend = '<h3>Species</h3>';
+        //Add busy image to data container whilst getting data
         $dataContainer.empty();
-        $dataContainer.append(toAppend);
         $dataContainer.append('<img src="/img/ajax-loader-medium.gif" class="nbn-centre-element">');
         
         //Get data from api and add to container
         var keyValuePairsFromForm = nbn.portal.reports.utils.forms.getKeyValuePairsFromForm(form);
-        keyValuePairsFromForm['featureID'] = featureID;
-        keyValuePairsFromForm['taxonOutputGroup'] = taxonOutputGroupKey;
         var queryString = nbn.portal.reports.utils.forms.getQueryStringFromKeyValuePairs(keyValuePairsFromForm, false);
-        var url = form.attr('api-server') + '/taxonObservations/species' + queryString;
-        var numSpecies = 0;
+        var url = form.attr('api-server') + '/taxa/' + ptvk + '/siteBoundaries' + queryString;
+        var toAppend = '';
+        var numSites = 0;
         var datatableDisplayThreshold = 10;
         $.getJSON(url, function(data){
             if(data.length > 0){
-                numSpecies = data.length;
-                if(numSpecies > datatableDisplayThreshold){
-                    toAppend += '<table id="nbn-species-table"><thead><tr><th>Sort</th></thead><tbody>';
+                numSites = data.length;
+                if(numSites > datatableDisplayThreshold){
+                    toAppend += '<table id="nbn-species-table" class="nbn-simple-table"><thead><tr><th>Site name</th><th>Dataset</th><th>Category</th></thead><tbody>';
                 }else{
                     toAppend += '<table id="nbn-species-table"><tbody>';
                 }
                 $.each(data, function(key, val){
-                    toAppend += '<tr><td><a href="/Reports/Sites/' + featureID + '/Groups/' + taxonOutputGroupKey + '/Species/' + val.taxon.taxonVersionKey + '/Observations">' + val.taxon.name + '</a></td></tr>';
+                    toAppend += '<tr><td><a href="/Reports/Sites/' + val.identifier + '/Groups/' + taxonOutputGroupKey + '/Species/' + ptvk + '/Observations">' + val.name + '</a></td>';
+                    toAppend += '<td>' + val.siteBoundaryDataset.title + '</td>';
+                    toAppend += '<td>' + val.siteBoundaryCategory.name + '</td></tr>';
                 });
                 toAppend += '</tbody></table>';
             }else{
@@ -36,46 +35,49 @@
             }
             $dataContainer.empty();
             $($dataContainer).append(toAppend);
-            if(numSpecies > datatableDisplayThreshold){
+            if(numSites > datatableDisplayThreshold){
                 addDataTable();
             }
         });
     }
-    
+
     function addDataTable(){
         $('#nbn-species-table').dataTable({
             "bJQueryUI": true,
             "sPaginationType": "full_numbers",
             "oLanguage": {
-                "sLengthMenu": "Show _MENU_ species", 
+                "sLengthMenu": "Show _MENU_ sites", 
                 "sSearch": 'Search list',
-                "sInfo": "Showing _START_ to _END_ of _TOTAL_ species",
-                "sInfoFiltered": " (filtered from _MAX_ total species)"
+                "sInfo": "Showing _START_ to _END_ of _TOTAL_ sites",
+                "sInfoFiltered": " (filtered from _MAX_ total sites)"
             },
             "iDisplayLength": 25,
             "bSortClasses": false,
-            "aLengthMenu": [[10,25,50,100,-1],[10,25,50,100,"All"]]
+            "aLengthMenu": [[10,25,50,100,-1],[10,25,50,100,"All"]],
+            "aoColumnDefs": [
+                            {"sWidth": "33%", "aTargets": [0,1,2]}
+            ]
         });
     }
-    
+
     function setupFormOnChange(){
-        //The map should refresh when any form field is changed
+        //The list refresh when any form field is changed and has valid data
         //except when the nbn-select-datasets-auto check box is deselected
         $('#nbn-site-report-form :input').change(function(){
             var $input = $(this);
             if(($input.attr('id')!='nbn-select-datasets-auto') || ($('#nbn-select-datasets-auto').is(':checked'))){
                 if(nbn.portal.reports.utils.forms.isSiteReportFormFieldValid($input)){
                     //Requires jquery.dataset-selector-utils.js
-                    nbn.portal.reports.utils.datasetfields.doDeselectDatasetKeys();
-                    refreshSpeciesData($('#nbn-site-report-form'));
-                    nbn.portal.reports.utils.datasetfields.doSelectDatasetKeys();
+//                    nbn.portal.reports.utils.datasetfields.doDeselectDatasetKeys();
+                    refreshSiteListData($('#nbn-species-site-list-form'));
+//                    nbn.portal.reports.utils.datasetfields.doSelectDatasetKeys();
                 }
             }
         });
     }
     
     function doFirstVisitToPage(){
-        refreshSpeciesData($('#nbn-site-report-form'));
+        refreshSiteListData($('#nbn-species-site-list-form'));
     }
     
     $(document).ready(function(){
