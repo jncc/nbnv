@@ -50,7 +50,7 @@
         <h3>Explore Records</h3>
         <div class="nbn-taxon-page-list"><a href="/Reports/Single_Species/${taxon.taxonVersionKey}/Grid_Map"><img src="/img/taxonPage/grid.png" class="nbn-taxon-page-link-img" />Grid Map</a></div>
         <div class="nbn-taxon-page-list"><a href="/imt/?mode=SPECIES&species=${taxon.taxonVersionKey}"><img src="/img/taxonPage/imt.png" class="nbn-taxon-page-link-img" />Interactive Map</a></div>
-        <div class="nbn-taxon-page-list"><img src="/img/taxonPage/site.png" class="nbn-taxon-page-link-img" />List of sites</div>
+        <div class="nbn-taxon-page-list"><a href="/Reports/Single_Species/${taxon.taxonVersionKey}/Site_Boundaries"><img src="/img/taxonPage/site.png" class="nbn-taxon-page-link-img" />List of sites</a></div>
     </div>
 </#macro>
 
