@@ -67,7 +67,7 @@ public class TaxonObservationProvider {
     public String filteredSelectUnavailableDatasets(Map<String, Object> params){
         BEGIN();
         SELECT("tdd.datasetKey, COUNT(*) querySpecificObservationCount");
-        createSelectQueryForUnavailableDatasets(params);
+        createSelectQueryFromEnhancedRecords(params);
         INNER_JOIN("TaxonDatasetData tdd ON tode.datasetKey = tdd.datasetKey");
         WHERE("tdd.publicResolutionID = 0");
         GROUP_BY("tdd.datasetKey");
@@ -80,6 +80,13 @@ public class TaxonObservationProvider {
         createSelectQuery(params);
         INNER_JOIN("DatasetData dd ON dd.\"key\" = o.datasetKey");
         return SQL();
+    }
+    
+    public String filteredSelectEnhancedRecordIDs(Map<String, Object> params) {
+        BEGIN();
+        SELECT("tode.id");
+        createSelectQueryFromEnhancedRecords(params);
+        return SQL();        
     }
     
     private void createSelectQuery(Map<String, Object> params) {
@@ -154,7 +161,7 @@ public class TaxonObservationProvider {
         }
     }
     
-    private void createSelectQueryForUnavailableDatasets(Map<String, Object> params) {
+    private void createSelectQueryFromEnhancedRecords(Map<String, Object> params) {
 
         FROM("TaxonObservationDataEnhanced tode");
 
