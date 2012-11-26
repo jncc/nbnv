@@ -38,7 +38,7 @@ public class UserOrganisationMemberTest {
     @Test
     public void isUserAnOrgAdminTest() {
         // Given
-        User u = userMapper.getUser(41);
+        User u = userMapper.getUserById(41);
         Organisation org = orgMapper.selectByID(1);
         
         //When
@@ -51,7 +51,7 @@ public class UserOrganisationMemberTest {
     @Test
     public void isMemberUserAnOrgAdminTest() {
         // Given
-        User u = userMapper.getUser(40);
+        User u = userMapper.getUserById(40);
         Organisation org = orgMapper.selectByID(1);
         
         //When
@@ -64,7 +64,7 @@ public class UserOrganisationMemberTest {
     @Test
     public void isNonMemberUserAnOrgAdminTest() {
         // Given
-        User u = userMapper.getUser(43);
+        User u = userMapper.getUserById(43);
         Organisation org = orgMapper.selectByID(1);
         
         //When
@@ -77,7 +77,7 @@ public class UserOrganisationMemberTest {
     @Test
     public void isUserAnOrgMemberTest() {
         // Given
-        User u = userMapper.getUser(40);
+        User u = userMapper.getUserById(40);
         Organisation org = orgMapper.selectByID(1);
         
         //When
@@ -90,7 +90,7 @@ public class UserOrganisationMemberTest {
     @Test
     public void isOrgAdminUserAnOrgMemberTest() {
         // Given
-        User u = userMapper.getUser(41);
+        User u = userMapper.getUserById(41);
         Organisation org = orgMapper.selectByID(1);
         
         //When
@@ -103,7 +103,7 @@ public class UserOrganisationMemberTest {
     @Test
     public void isNonOrgUserAnOrgMemberTest() {
         // Given
-        User u = userMapper.getUser(43);
+        User u = userMapper.getUserById(43);
         Organisation org = orgMapper.selectByID(1);
         
         //When

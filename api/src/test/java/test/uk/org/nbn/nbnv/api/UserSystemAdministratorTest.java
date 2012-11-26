@@ -27,7 +27,7 @@ public class UserSystemAdministratorTest {
     @Test
     public void notAdminTest() {        
         // Given
-        User u = userMapper.getUser(43);
+        User u = userMapper.getUserById(43);
         
         // When
         boolean result = userMapper.isUserSystemAdministrator(u.getId());
@@ -39,7 +39,7 @@ public class UserSystemAdministratorTest {
     @Test
     public void isAdminTest() {        
         // Given
-        User u = userMapper.getUser(42);
+        User u = userMapper.getUserById(42);
         
         // When
         boolean result = userMapper.isUserSystemAdministrator(u.getId());

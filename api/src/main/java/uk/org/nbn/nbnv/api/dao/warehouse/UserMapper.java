@@ -16,7 +16,13 @@ import uk.org.nbn.nbnv.api.model.User;
  */
 public interface UserMapper {
     @Select("SELECT * from UserData WHERE id = #{id}")
-    public User getUser(@Param("id") int id);
+    public User getUserById(@Param("id") int id);
+    
+    @Select("Select * from UserData where username = #{username}")
+    public User getUser(@Param("username") String username);
+    
+    @Select("Select * from UserData where email = #{email}")
+    public User getUserFromEmail(@Param("email") String username);
     
     @Select("SELECT COUNT(*) FROM UserRoleSystemAdministratorData WHERE userKey = #{id}")
     public boolean isUserSystemAdministrator(@Param("id") int id);
