@@ -67,34 +67,12 @@ public class TaxonObservationProvider {
     public String filteredSelectUnavailableDatasets(Map<String, Object> params){
         BEGIN();
         SELECT("tdd.datasetKey, COUNT(*) querySpecificObservationCount");
-        createSelectQueryForUnavailableDatasets(params);
+        createSelectQueryFromEnhancedRecords(params);
         INNER_JOIN("TaxonDatasetData tdd ON tode.datasetKey = tdd.datasetKey");
         WHERE("tdd.publicResolutionID = 0");
         GROUP_BY("tdd.datasetKey");
         return SQL();
     }
-    
-    public String filteredSelectSitesForTVK(Map<String, Object> params){
-        String spatialRelationship = TaxonObservationResource.SPATIAL_RELATIONSHIP_DEFAULT;
-        if(params.containsKey("spatialRelationship") && params.get("spatialRelationship") != null){
-            spatialRelationship = (String)params.get("spatialRelationship");
-        }
-        BEGIN();
-        SELECT("DISTINCT sbd.featureID, sbd.name, sbd.providerKey, sbd.description, sbd.siteBoundaryDatasetKey, sbd.siteBoundaryCategoryID, fd.identifier");
-        createSelectQuery(params);
-        if(TaxonObservationResource.SPATIAL_RELATIONSHIP_WITHIN.equals(spatialRelationship)){
-            INNER_JOIN("FeatureContains fc ON o.featureID = fc.containedFeatureID");
-            INNER_JOIN("FeatureData fd ON fc.featureID = fd.id");
-        }else{
-            INNER_JOIN("FeatureOverlaps fo ON o.featureID = fo.overlappedFeatureID");
-            INNER_JOIN("FeatureData fd ON fo.featureID = fd.id");
-        }
-        INNER_JOIN("SiteBoundaryData sbd ON fd.id = sbd.featureID");
-        return SQL();
-    }
-    
-
-    
     
     public String filteredSelectDatasetsProviderNotInstantiated(Map<String, Object> params) {
         BEGIN();
@@ -102,6 +80,13 @@ public class TaxonObservationProvider {
         createSelectQuery(params);
         INNER_JOIN("DatasetData dd ON dd.\"key\" = o.datasetKey");
         return SQL();
+    }
+    
+    public String filteredSelectEnhancedRecordIDs(Map<String, Object> params) {
+        BEGIN();
+        SELECT("tode.id");
+        createSelectQueryFromEnhancedRecords(params);
+        return SQL();        
     }
     
     private void createSelectQuery(Map<String, Object> params) {
@@ -176,7 +161,7 @@ public class TaxonObservationProvider {
         }
     }
     
-    private void createSelectQueryForUnavailableDatasets(Map<String, Object> params) {
+    private void createSelectQueryFromEnhancedRecords(Map<String, Object> params) {
 
         FROM("TaxonObservationDataEnhanced tode");
 
