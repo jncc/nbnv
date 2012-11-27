@@ -27,7 +27,7 @@
                     $datasetContent.append('<h3>Records from dataset: <a href="/Datasets/' + dataset.key + '">' + dataset.title + '</a></h3>' +
                         '<table id="nbn-tabbed-heading-table"><tr><td>Provider:</td><td><a href="/Organisations/' + dataset.organisationID + '">' + providerName + '</a></tr>' +
                         '<tr><td>Your access:</td><td>Access to this dataset Fusce in leo massa, nec ullamcorper dui. Aliquam auctor iaculis sapien, et scelerisque mi iaculis in. Donec nibh libero, aliquet vitae cursus in, mattis vel augue. Nulla facilisi. Aenean porttitor.</tr></td>');
-                    var $table = $('<table></table>');
+                    var $table = $('<table class="nbn-simple-table"></table>');
                     var $row = $('<tr></tr>');
                     $row.append($('<th></th>').text("Site name"));
                     $row.append($('<th></th>').text("Location"));
@@ -65,7 +65,8 @@
                     if($attributeDropDown){
                         addAttributeData(dataset.key, $attributeDropDown.val(), queryString);
                     }
-
+                    console.log
+                    nbn.portal.style.addSimpleTableStyle();
                 });
             }else{
                 $dataContainer.append(nbn.portal.reports.utils.forms.getNoRecordsFoundInfoBox());
