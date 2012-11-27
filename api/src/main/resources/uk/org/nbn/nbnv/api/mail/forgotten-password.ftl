@@ -1,6 +1,6 @@
 Dear ${name}
 
-Below is your password resetting token is
+Below is your password resetting token
 
 ${token}
 
