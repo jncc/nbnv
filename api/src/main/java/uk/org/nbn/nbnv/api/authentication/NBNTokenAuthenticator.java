@@ -108,6 +108,9 @@ public class NBNTokenAuthenticator implements TokenAuthenticator {
      * @throws ExpiredTokenException If the token is no longer valid
      */
     @Override public User getUser(Token token) throws InvalidTokenException, ExpiredTokenException {
-        return userAuthentication.getUser(generator.getMessage(token));
+        User toReturn = userAuthentication.getUser(generator.getMessage(token));
+        if(toReturn == null)
+            throw new InvalidTokenException("No user exists for this token");
+        return toReturn;
     }
 }

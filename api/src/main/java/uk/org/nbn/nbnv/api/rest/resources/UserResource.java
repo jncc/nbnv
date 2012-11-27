@@ -132,18 +132,16 @@ public class UserResource {
     
     @POST
     @Path("/mail/password")
-    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response requestPasswordReset(
-            @FormParam("username") String username,
-            @FormParam("email") String email
+    public Response requestPasswordReset(String emailAddress
             ) throws JSONException, InvalidCredentialsException, IOException, TemplateException {
-        User user = userMapper.getUser(username);
+        User user = userMapper.getUserFromEmail(emailAddress);
         if(user != null) {
-            Token generateToken = credentialsResetter.generateToken(username, email, tokenTTL);
+            Token generateToken = credentialsResetter.generateToken(user.getUsername(), tokenTTL);
              //email the user with the activation key
             Map<String, Object> message = new HashMap<String, Object>();
             message.put("name", user.getForename());
+            message.put("portal", properties.getProperty("portal_url"));
             message.put("token", Base64.encodeBase64URLSafeString(generateToken.getBytes()));
             mailer.send("forgotten-password.ftl", user.getEmail(), "NBN Gateway: Your password reset link", message);
         
@@ -163,10 +161,10 @@ public class UserResource {
     @POST
     @Path("/mail/username")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getUsername(@QueryParam("email") String emailAddress) throws JSONException, IOException, TemplateException {
+    public Response getUsername(String emailAddress) throws JSONException, IOException, TemplateException {
         User user = userMapper.getUserFromEmail(emailAddress);
         if(user != null) {
-            //email the user with the activation key
+            //email the user with their username
             Map<String, Object> message = new HashMap<String, Object>();
             message.put("name", user.getForename());
             message.put("username", user.getUsername());

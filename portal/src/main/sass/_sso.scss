@@ -1,10 +1,24 @@
-#login-form, #register-form {
+#login-form, #register-form, #recovery-form {
     margin: 0 auto;
     width: 525px;
 
     $labelWidth : 125px;
 
-    label {
+    fieldset {
+        border: none;
+        padding: 0;
+        input { margin: auto; }
+        label { 
+            display: inline-block;
+            margin-top: 1em;
+            margin-left: 1em;
+            float: none;  
+            font-size: medium;
+            width: auto;
+        }
+    }
+
+    fieldset legend, label {
         margin-top: 0.5em;
         font-size: large;
         float: left;

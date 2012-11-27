@@ -42,10 +42,10 @@ public class NBNTokenResetCredentials implements TokenResetCredentials {
     }
     
     @Override
-    public Token generateToken(String username, String email, int ttl) throws InvalidCredentialsException {
+    public Token generateToken(String username, int ttl) throws InvalidCredentialsException {
         try {
             byte[] usernameHash = credentialsDigest.digest(username.getBytes(STRING_ENCODING));
-            byte[] passHash = (byte[])userAuthentication.getUsersPassHash(usernameHash, email); //cast the passhash to a byte array (mybatis limitation)
+            byte[] passHash = (byte[])userAuthentication.getUsersPassHash(usernameHash); //cast the passhash to a byte array (mybatis limitation)
             if(passHash != null) //check user exists
                 return generator.generateToken(passHash, ttl);
             else

@@ -12,12 +12,11 @@ public interface TokenResetCredentials {
      * Generates a Token for a given username. Token will be valid for ttl 
      * milliseconds as long as this token is not used to change a users password
      * @param username
-     * @param email
      * @param ttl Milliseconds for how long this token is required 
      * @return A generated token for the user
      * @throws InvalidCredentialsException if the user does not exist
      */
-    public Token generateToken(String username, String email, int ttl) throws InvalidCredentialsException;
+    public Token generateToken(String username, int ttl) throws InvalidCredentialsException;
     
     /**
      * Gets the user associated with a particular token
