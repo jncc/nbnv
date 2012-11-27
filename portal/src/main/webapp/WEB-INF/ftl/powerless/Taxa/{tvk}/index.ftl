@@ -38,7 +38,7 @@
 </@template.master>
 
 <#macro gridMapContents taxon>
-    <div class="tabbed" id="nbn-grid-map-container" gis-server="http://staging.testnbn.net/gis" tvk="${taxon.taxonVersionKey}">
+    <div class="tabbed" id="nbn-grid-map-container" gis-server="${gis}" tvk="${taxon.taxonVersionKey}">
         <h3>Map</h3>
         <img id="nbn-grid-map-busy-image" src='/img/ajax-loader-medium.gif' />
         <img id="nbn-grid-map-image" class="nbn-centre-element" alt="Distribution of ${taxon.name} in the UK according to records accessible through the NBN Gateway" />
