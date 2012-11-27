@@ -3,7 +3,15 @@
  * The table needs to use the class 'nbn-simple-table'
  */
 (function($){
+    
+    namespace("nbn.portal.style", {
+        addSimpleTableStyle: function(){
+            $(".nbn-simple-table tr:even").addClass("ui-state-highlight");
+        }
+    });
+    
     $(document).ready(function(){
-        $(".nbn-simple-table tr:even").addClass("ui-state-highlight");
+        nbn.portal.style.addSimpleTableStyle();
     }); 
+    
 })(jQuery);

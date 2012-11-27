@@ -1,7 +1,21 @@
 #nbn-species-table_paginate{
-    float: left;
+    float: right;
 }
 
 #nbn-species-table_filter{
+    float: right;
+}
+
+#nbn-year-range-filter{
     float: left;
+    margin-left: 10em;
+    margin-right: 10em;
+}
+
+#nbn-species-site-list-container{
+    margin-bottom: 2em;
+}
+
+#nbn-site-list-filter-container{
+    margin-bottom: 2em;
 }
