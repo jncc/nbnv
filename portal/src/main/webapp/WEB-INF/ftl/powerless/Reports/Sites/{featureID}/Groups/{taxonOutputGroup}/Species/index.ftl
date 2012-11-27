@@ -10,7 +10,7 @@
 
 <@template.master title="NBN Site Report"
     csss=["/css/site-report.css","http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/themes/smoothness/jquery-ui.css"]
-    javascripts=["/js/report_utils.js","/js/site_report_species.js","/js/jquery.dataset-selector-utils.js","/js/jquery.dataTables.min.js"]>
+    javascripts=["/js/report_utils.js","/js/site_report_species.js","/js/jquery.dataset-selector-utils.js","/js/jquery.dataTables.min.js","/js/jqueryui.simple-table-style.js"]>
 
     <h1>${title}</h1>
     <form id="nbn-site-report-form" api-server="${api}" featureID="${featureID}" taxonOutputGroupKey="${taxonOutputGroupKey}">
