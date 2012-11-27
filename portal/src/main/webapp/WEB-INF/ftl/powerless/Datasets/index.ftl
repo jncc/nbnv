@@ -20,7 +20,7 @@
                     <tr>
                         <td><a href="/Datasets/${dataset.key}">${dataset.title?html}</a></td>
                         <td>${dataset.key}</td>
-                        <td>${dataset.organisationName?html}</td>
+                        <td><a href="/Organisations/${dataset.organisationID}">${dataset.organisationName?html}</a></td>
                         <td>${dataset.formattedDateUploaded?html}</td>
                         <td>${dataset.typeName?html}</td>
                     </tr>
