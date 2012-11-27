@@ -23,9 +23,9 @@
             if(data.length > 0){
                 numSpecies = data.length;
                 if(numSpecies > datatableDisplayThreshold){
-                    toAppend += '<table id="nbn-species-table"><thead><tr><th>Sort</th></thead><tbody>';
+                    toAppend += '<table id="nbn-species-table" class="nbn-simple-table"><thead><tr><th>Sort</th></thead><tbody>';
                 }else{
-                    toAppend += '<table id="nbn-species-table"><tbody>';
+                    toAppend += '<table id="nbn-species-table" class="nbn-simple-table"><tbody>';
                 }
                 $.each(data, function(key, val){
                     toAppend += '<tr><td><a href="/Reports/Sites/' + featureID + '/Groups/' + taxonOutputGroupKey + '/Species/' + val.taxon.taxonVersionKey + '/Observations">' + val.taxon.name + '</a></td></tr>';
@@ -39,6 +39,7 @@
             if(numSpecies > datatableDisplayThreshold){
                 addDataTable();
             }
+            nbn.portal.style.addSimpleTableStyle();
         });
     }
     
