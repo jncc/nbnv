@@ -6,7 +6,7 @@ ${token}
 
 You can reset your token here
 
-${portal}/User/Recovery/Password?token=${token}
+${portal}/User/Recovery/Password?reset=${token}
 
 Many Thanks,
 
