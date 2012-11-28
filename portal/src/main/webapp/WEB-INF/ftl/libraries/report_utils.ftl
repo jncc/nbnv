@@ -2,7 +2,7 @@
     <#if providersWithQueryStats?has_content>
         <div class="tabbed" id="nbn-dataset-selector-container">
             <h3>Data providers and their datasets that contribute to this page (number of records)<span id="nbn-select-datasets-text">Select or deselect all datasets: <input type="checkbox" name="nbn-select-datasets-auto" id="nbn-select-datasets-auto"/></span></h3>
-            <table>
+            <table class="nbn-simple-table">
                 <#list providersWithQueryStats as providerWithQueryStats>
                     <tr>
                         <th><img src="${api}/organisations/${providerWithQueryStats.organisationID}/logo" class="nbn-provider-table-logo"></th>
