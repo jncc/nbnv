@@ -3,14 +3,12 @@ package uk.org.nbn.nbnv.api.rest.resources;
 import java.util.List;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import org.apache.solr.client.solrj.SolrQuery;
-import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.response.QueryResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.org.nbn.nbnv.api.dao.warehouse.TaxonNavigationGroupMapper;
 import uk.org.nbn.nbnv.api.model.TaxonNavigationGroup;
+import uk.org.nbn.nbnv.api.solr.Solr;
 import uk.org.nbn.nbnv.api.solr.SolrResponse;
 
 @Component
@@ -19,7 +17,7 @@ public class TaxonNavigationGroupResource {
 
     @Autowired TaxonNavigationGroupMapper mapper;
 
-    @Autowired SolrServer solrServer;
+    @Autowired Solr solr;
     
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -60,11 +58,12 @@ public class TaxonNavigationGroupResource {
             @QueryParam("rows") @DefaultValue("20") int rows,
             @QueryParam("start") @DefaultValue("0") int start) throws SolrServerException {
         
-        SolrQuery query = new SolrQuery();
-        query.setQuery("navigationGroupKey:" + taxonGroup);
-        query.setRows(rows);
-        query.setStart(start);
-        return new SolrResponse(solrServer.query(query));
+        return solr
+                .create()
+                .query("navigationGroupKey:" + taxonGroup)
+                .rows(rows)
+                .start(start)
+                .response();
     }
     
 }

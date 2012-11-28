@@ -35,4 +35,6 @@ public class SolrDataImportService {
         request.setPath("/dataimport");
         solrServer.request(request);
     }
+    
+    
 }

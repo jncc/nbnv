@@ -1,8 +1,10 @@
 package uk.org.nbn.nbnv.api.solr;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.FacetField.Count;
 import org.apache.solr.client.solrj.response.QueryResponse;
@@ -14,13 +16,29 @@ import org.apache.solr.common.util.NamedList;
  * @author Administrator
  */
 public class SolrResponse {
+    private static final String PORTAL_LINK_KEY = "portal_href";
+    private static final String API_LINK_KEY = "api_href";
+    
     private final QueryResponse toWrap;
-    public SolrResponse(QueryResponse toWrap) {
+    private final String portalPath, apiPath;
+    
+    public SolrResponse(QueryResponse toWrap, String portalPath, String apiPath) {
         this.toWrap = toWrap;
+        this.portalPath = portalPath;
+        this.apiPath = apiPath;
     }
     
+    /**
+     * The following method will process the values of api_href and portal_href
+     * @return 
+     */
     public List<SolrDocument> getResults() {
-        return toWrap.getResults();
+        List<SolrDocument> toReturn = toWrap.getResults();
+        for(SolrDocument currDocument : toReturn) {
+            currDocument.put(API_LINK_KEY, apiPath + currDocument.get(API_LINK_KEY));
+            currDocument.put(PORTAL_LINK_KEY, portalPath + currDocument.get(PORTAL_LINK_KEY));
+        }
+        return toReturn;
     }
     
     public Map getFacetFields() {
