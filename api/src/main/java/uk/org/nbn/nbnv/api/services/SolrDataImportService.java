@@ -22,6 +22,8 @@ public class SolrDataImportService {
     public void performFullDataImport() throws SolrServerException, IOException {
         ModifiableSolrParams params = new ModifiableSolrParams();
         params.set("command", "full-import");
+        params.set("commit", "true");
+        params.set("clean", "true");
         QueryRequest request = new QueryRequest(params);
         request.setPath("/dataimport");
         solrServer.request(request);
@@ -31,6 +33,7 @@ public class SolrDataImportService {
     public void performDeltaDataImport() throws SolrServerException, IOException {
         ModifiableSolrParams params = new ModifiableSolrParams();
         params.set("command", "delta-import");
+        params.set("commit", "true");
         QueryRequest request = new QueryRequest(params);
         request.setPath("/dataimport");
         solrServer.request(request);
