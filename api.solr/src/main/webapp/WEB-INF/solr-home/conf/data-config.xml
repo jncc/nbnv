@@ -6,6 +6,10 @@
                 password="Ecowaswashere9"/>
     <document name="nbn-gateway">
         <entity name="taxon" query="Select * From TaxonData" transformer="TemplateTransformer">	  
+            <!--Define links to api and portal representations-->
+            <field column="portal_href" template="/Taxa/${taxon.taxonVersionKey}" />
+            <field column="api_href" template="/taxa/${taxon.taxonVersionKey}" />
+            
             <field column="record_id" template="TAXON-${taxon.taxonVersionKey}" />
             <field column="record_type" template="taxon" />
             <entity name="navigation-catgory" query="
@@ -15,18 +19,26 @@
             </entity>
         </entity>
         <entity name="designation" query="Select * From DesignationData" transformer="TemplateTransformer">
+            <!--Define links to api and portal representations-->
+            <field column="portal_href" template="/Designations/${designation.id}" />
+            <field column="api_href" template="/designations/${designation.id}" />
+            
             <field column="record_id" template="DESIGNATION-${designation.id}" />
             <field column="record_type" template="designation" />
         </entity>
         <entity name="siteboundary" query="Select * From SiteBoundaryData" transformer="TemplateTransformer">
+            <!--Define links to api and portal representations-->
+            <field column="portal_href" template="/Reports/Sites/${siteboundary.featureID}/Groups" />
+            <field column="api_href" template="/features/${siteboundary.featureID}" />
+            
             <field column="record_id" template="SITEBOUNDARY-${siteboundary.featureID}" />
             <field column="record_type" template="siteboundary" />
         </entity>
-        <entity name="siteboundarycategory" query="Select * From SiteBoundaryCategoryData" transformer="TemplateTransformer">
-            <field column="record_id" template="SITEBOUNDARYCATEGORY-${siteboundarycategory.id}" />
-            <field column="record_type" template="siteboundarycategory" />
-        </entity>
         <entity name="dataset" query="Select lower(typeName) as [typeNameLower],* From DatasetData" transformer="TemplateTransformer">
+            <!--Define links to api and portal representations-->
+            <field column="portal_href" template="/Datasets/${dataset.key}" />
+            <field column="api_href" template="/datasets/${dataset.key}" />
+            
             <field column="record_id" template="DATASET-${dataset.key}" />
             <field column="record_type" template="${dataset.typeNameLower}dataset" />
             <field column="name" template="${dataset.title}" />

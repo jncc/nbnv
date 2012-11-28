@@ -79,6 +79,9 @@
         <field name="designationCategoryID" type="string" indexed="true" stored="true"/>
         <field name="description" type="string" indexed="true" stored="true"/>
   
+        <field name="portal_href" type="string" required="true" stored="true"/>
+        <field name="api_href" type="string" required="true" stored="true"/>
+        
         <field name="record_type" type="string" required="true" indexed="true" stored="true"/>
         <field name="record_id" type="string" required="true" indexed="true" stored="true"/>
     </fields>
