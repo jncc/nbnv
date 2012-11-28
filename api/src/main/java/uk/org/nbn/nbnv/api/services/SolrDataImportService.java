@@ -26,4 +26,13 @@ public class SolrDataImportService {
         request.setPath("/dataimport");
         solrServer.request(request);
     }
+    
+    @Scheduled(fixedDelay=10*60*1000)
+    public void performDeltaDataImport() throws SolrServerException, IOException {
+        ModifiableSolrParams params = new ModifiableSolrParams();
+        params.set("command", "delta-import");
+        QueryRequest request = new QueryRequest(params);
+        request.setPath("/dataimport");
+        solrServer.request(request);
+    }
 }
