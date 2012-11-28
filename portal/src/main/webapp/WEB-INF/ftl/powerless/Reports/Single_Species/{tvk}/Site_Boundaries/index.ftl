@@ -10,12 +10,11 @@
 <@template.master title="NBN Site Report" 
     csss=["/css/species-site-list.css","http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/themes/smoothness/jquery-ui.css"]
     javascripts=["/js/jqueryui.simple-table-style.js","/js/report_utils.js","/js/species_site_list.js","/js/jquery.dataset-selector-utils.js","/js/jquery.dataTables.min.js"]>
-    <h1>List of site boundaries for ${taxon_utils.getShortName(ptaxon)}</h1>
+    <h1>List of sites for ${taxon_utils.getShortName(ptaxon)}</h1>
     <form id="nbn-species-site-list-form" api-server="${api}" ptvk="${ptaxon.taxonVersionKey}" taxonOutputGroupKey="${ptaxon.taxonOutputGroupKey}">
         <div id="nbn-site-list-filter-container">
             <fieldset>
-                <legend>Adjust which species records are used to create the site boundary list</0.
-legend>
+                <legend>Adjust which species records are used to create the site list</legend>
                 <div id="nbn-year-range-filter">
                     Year range: <input name="startYear" id="startYear" type="textbox" value="${startYear}" class="nbn-year-input"/>
                                 to <input name="endYear" id="endYear" type="textbox" value="${endYear}" class="nbn-year-input"/>
@@ -35,7 +34,7 @@ legend>
             </fieldset>
         </div>
         <div class="tabbed" id="nbn-species-site-list-container">
-            <h3>Site boundaries</h3>
+            <h3>Site list</h3>
             <div id="nbn-species-site-list-data"></div>
         </div>
     <@report_utils.dataset_table providersWithQueryStats=providersWithQueryStats requestParameters=RequestParameters/>
