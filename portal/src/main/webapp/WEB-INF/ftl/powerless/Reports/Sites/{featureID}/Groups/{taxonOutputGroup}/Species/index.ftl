@@ -9,7 +9,7 @@
 <#assign is10kmReport=(site.type="GridSquare")>
 
 <@template.master title="NBN Site Report"
-    csss=["/css/site-report.css","http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/themes/smoothness/jquery-ui.css"]
+    csss=["/css/site-report.css","/css/smoothness/jquery-ui-1.8.23.custom.css"]
     javascripts=["/js/report_utils.js","/js/site_report_species.js","/js/jquery.dataset-selector-utils.js","/js/jquery.dataTables.min.js","/js/jqueryui.simple-table-style.js"]>
 
     <h1>${title}</h1>
