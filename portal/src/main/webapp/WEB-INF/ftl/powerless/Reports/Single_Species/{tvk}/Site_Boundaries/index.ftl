@@ -14,7 +14,8 @@
     <form id="nbn-species-site-list-form" api-server="${api}" ptvk="${ptaxon.taxonVersionKey}" taxonOutputGroupKey="${ptaxon.taxonOutputGroupKey}">
         <div id="nbn-site-list-filter-container">
             <fieldset>
-                <legend>Adjust which species records are used to create the site boundary list</legend>
+                <legend>Adjust which species records are used to create the site boundary list</0.
+legend>
                 <div id="nbn-year-range-filter">
                     Year range: <input name="startYear" id="startYear" type="textbox" value="${startYear}" class="nbn-year-input"/>
                                 to <input name="endYear" id="endYear" type="textbox" value="${endYear}" class="nbn-year-input"/>

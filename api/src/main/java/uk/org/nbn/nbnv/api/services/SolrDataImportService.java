@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 public class SolrDataImportService {
     @Autowired SolrServer solrServer;
     
-    @Scheduled(cron="0 0 * * *")
+    @Scheduled(cron="0 0 0 * * *")
     public void performFullDataImport() throws SolrServerException, IOException {
         ModifiableSolrParams params = new ModifiableSolrParams();
         params.set("command", "full-import");
