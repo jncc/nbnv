@@ -34,7 +34,11 @@
             <field column="record_id" template="SITEBOUNDARY-${siteboundary.featureID}" />
             <field column="record_type" template="siteboundary" />
         </entity>
-        <entity name="dataset" query="Select lower(typeName) as [typeNameLower],* From DatasetData" transformer="TemplateTransformer">
+        <entity name="dataset" 
+                query="Select lower(typeName) as [typeNameLower],* From DatasetData" 
+                deltaImportQuery="Select lower(typeName) as [typeNameLower],* From DatasetData where [key]='${dih.delta.key}'" 
+                deltaQuery="Select [key] From DatasetData where metadataLastEdited &gt; '${dih.last_index_time}'"
+                transformer="TemplateTransformer">
             <!--Define links to api and portal representations-->
             <field column="portal_href" template="/Datasets/${dataset.key}" />
             <field column="api_href" template="/datasets/${dataset.key}" />
