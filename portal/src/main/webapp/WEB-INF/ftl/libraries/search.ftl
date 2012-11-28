@@ -119,7 +119,10 @@
 <#macro search url query={} facets=[]>
     <#assign search=json.readURL(url, query)/>
     <form class="nbn-search" nbn-search-node="${url}">    
-        <@__facets facets search.facetFields/>
+        <#--If this search has facets, add these -->
+        <#if search.facetFields??>
+            <@__facets facets search.facetFields/>
+        </#if>
         <div class="controls">
             Search - <input type="text" name="q" value="${RequestParameters.q?first!''}"/>
             Show - <@pagination.show/> 
