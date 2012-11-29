@@ -24,7 +24,7 @@
             var me = this, initialSearch = $('input[name="q"]', me.element).val();
             $.fn.dataTableExt.oJUIClasses.sStripeOdd = 'ui-state-highlight';
             $('.controls, .results, .paginator', me.element).remove();
-            $('<table>').addClass("nbn-simple-table").append($("<thead>")
+            $('<table>').append($("<thead>")
                 .append($('<tr>').append($('<th>').html("Taxon")))
             ).appendTo(me.element).dataTable( {
                 "oSearch": {"sSearch": initialSearch},
