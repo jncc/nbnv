@@ -11,22 +11,35 @@
         return toReturn;
     }
     
+    
+    var columns = [ {title:"Taxon", key:"name"},
+                    {title:"Authority", key:"authority"},
+                    {title:"Rank", key:"rank"}];
+    
     function processResults(callbackField, serverRes) {
         var toReturn = [];
         $.each(serverRes, function(i, val) {
-            toReturn.push(['<a href="' + val[callbackField] + '">'+ val.name+'</a>']);
+            toReturn.push(
+                ['<a href="' + val[callbackField] + '">'+ val.name +'</a>',
+                val.authority || "",
+                val.rank
+                ]);
         });
         return toReturn;
     }
     
+    $.fn.dataTableExt.oJUIClasses.sStripeOdd = 'ui-state-highlight';
+            
     $.widget( "ui.nbn_search", {
         _create: function() {
             var me = this, initialSearch = $('input[name="q"]', me.element).val();
-            $.fn.dataTableExt.oJUIClasses.sStripeOdd = 'ui-state-highlight';
             $('.controls, .results, .paginator', me.element).remove();
-            $('<table>').append($("<thead>")
-                .append($('<tr>').append($('<th>').html("Taxon")))
-            ).appendTo(me.element).dataTable( {
+            
+            /** HACKING THE ROWS FROM THE VAR ABOVE **/
+            var headerRow = $('<tr>');
+            $.each(columns, function(i, ele) { headerRow.append($('<th>').html(ele.title)); });
+            
+            $('<table>').append($("<thead>").append(headerRow)).appendTo(me.element).dataTable( {
                 "oSearch": {"sSearch": initialSearch},
                 "iDisplayLength": 25,
                 "bJQueryUI": true,
