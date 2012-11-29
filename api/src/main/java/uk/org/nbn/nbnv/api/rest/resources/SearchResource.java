@@ -16,7 +16,7 @@ import uk.org.nbn.nbnv.api.solr.SolrResponse;
 
 @Component
 @Path("/search")
-public class SearchResource {
+public class SearchResource extends AbstractResource {
     @Autowired Solr solr;
     
     @GET

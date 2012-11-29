@@ -1,6 +1,6 @@
 package uk.org.nbn.nbnv.api.rest.resources;
 
-public abstract class ObservationResource {
+public abstract class ObservationResource extends AbstractResource {
 
     public static final String SPATIAL_RELATIONSHIP_WITHIN = "within";
     public static final String SPATIAL_RELATIONSHIP_OVERLAP = "overlap";

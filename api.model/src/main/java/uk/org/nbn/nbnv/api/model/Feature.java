@@ -1,12 +1,26 @@
 package uk.org.nbn.nbnv.api.model;
 
+import com.sun.jersey.server.linking.Ref;
+import java.net.URI;
+
 /**
  *
  * @author Christopher Johnson
  */
 public class Feature {
+    @Ref(value="${resource.portalUrl}/Reports/Sites/${instance.identifier}", style=Ref.Style.RELATIVE_PATH) 
+    private URI href;
+    
     private String label, identifier, type;
     private BoundingBox worldBoundingBox, nativeBoundingBox;
+
+    public URI getHref() {
+        return href;
+    }
+
+    public void setHref(URI href) {
+        this.href = href;
+    }
 
     public String getLabel() {
         return label;

@@ -15,7 +15,7 @@ import uk.org.nbn.nbnv.api.model.SiteBoundaryDataset;
 
 @Component
 @Path("/siteBoundaryDatasets")
-public class SiteBoundaryDatasetResource {
+public class SiteBoundaryDatasetResource extends AbstractResource {
     
     @Autowired SiteBoundaryDatasetMapper SiteBoundaryDatasetMapper;
     @Autowired SiteBoundaryMapper siteBoundaryMapper;

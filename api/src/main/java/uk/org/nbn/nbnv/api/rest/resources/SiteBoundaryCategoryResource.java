@@ -14,7 +14,7 @@ import uk.org.nbn.nbnv.api.model.SiteBoundaryCategory;
 
 @Component
 @Path("/siteBoundaryCategories")
-public class SiteBoundaryCategoryResource {
+public class SiteBoundaryCategoryResource extends AbstractResource {
     
     @Autowired SiteBoundaryCategoryMapper siteBoundaryCategoryMapper;
     

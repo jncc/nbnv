@@ -13,7 +13,7 @@ import uk.org.nbn.nbnv.api.solr.SolrResponse;
 
 @Component
 @Path("/taxonNavigationGroups")
-public class TaxonNavigationGroupResource {
+public class TaxonNavigationGroupResource extends AbstractResource {
 
     @Autowired TaxonNavigationGroupMapper mapper;
 

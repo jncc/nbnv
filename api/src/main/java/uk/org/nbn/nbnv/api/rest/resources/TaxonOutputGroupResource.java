@@ -13,7 +13,7 @@ import uk.org.nbn.nbnv.api.model.TaxonOutputGroup;
 
 @Component
 @Path("/taxonOutputGroups")
-public class TaxonOutputGroupResource {
+public class TaxonOutputGroupResource extends AbstractResource {
 
     @Autowired TaxonOutputGroupMapper taxonOutputGroupMapper;
 

@@ -13,7 +13,7 @@ import uk.org.nbn.nbnv.api.model.HabitatDataset;
 
 @Component
 @Path("/habitatDatasets")
-public class HabitatDatasetResource {
+public class HabitatDatasetResource extends AbstractResource {
     
     @Autowired HabitatDatasetMapper habitatDatasetMapper;
     

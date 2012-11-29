@@ -17,7 +17,7 @@ import uk.org.nbn.nbnv.api.model.Feature;
  */
 @Component
 @Path("/features")
-public class FeatureResource {
+public class FeatureResource extends AbstractResource {
     @Autowired FeatureMapper featureMapper;
     
     @GET

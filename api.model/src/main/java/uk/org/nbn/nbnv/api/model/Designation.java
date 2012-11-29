@@ -1,5 +1,9 @@
 package uk.org.nbn.nbnv.api.model;
 
+import com.sun.jersey.server.linking.Ref;
+import com.sun.jersey.server.linking.Ref.Style;
+import java.net.URI;
+
 public class Designation {
     private int id;
     private String name;
@@ -7,10 +11,13 @@ public class Designation {
     private String code;
     private int designationCategoryID;
     private String description;
+    
+    @Ref(value="${resource.portalUrl}/Designations/${instance.id}", style=Style.RELATIVE_PATH) 
+    private URI href;
 
     public Designation() {}
     
-    public Designation(int designationID, String name, String label, String code, int designationCategoryID, String description) {
+    public Designation(int id, String name, String label, String code, int designationCategoryID, String description) {
         super();
         this.id = id;
         this.name = name;
@@ -66,5 +73,13 @@ public class Designation {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public URI getHref() {
+        return href;
+    }
+
+    public void setHref(URI href) {
+        this.href = href;
     }
 }
