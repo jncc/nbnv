@@ -90,7 +90,6 @@ public class SearchResource extends AbstractResource {
                 .query(q)
                 .filterQuery("record_type:taxon")
                 .addOrFilter("category", categories)
-                .addOrFilter("languageKey", languages)
                 .sort(sort, SolrQuery.ORDER.asc)
                 .start(start)
                 .rows(rows)
