@@ -16,6 +16,6 @@ is not a finished product.
                "data":json.readURL("${api}/taxonNavigationGroups/topLevels")
 	  	
             }]; result>
-        ${taxon_utils.getShortName(result)}
+        <a href="${result.href}">${taxon_utils.getShortName(result)}</a>
     </@search.search>
 </@template.master>

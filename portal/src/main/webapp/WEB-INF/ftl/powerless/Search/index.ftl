@@ -7,6 +7,6 @@ is not a finished product.
     </@markdown>
 
     <@search.search url="${api}/search" query=RequestParameters; result>
-        <a href="${result.portal_href}">${result.name}</a>
+        <a href="${result.href}">${result.name!""}${result.title!""}</a>
     </@search.search>
 </@template.master>
