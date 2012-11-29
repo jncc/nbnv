@@ -12,8 +12,6 @@
             <script type="text/javascript" src="/js/enable-maphilight.js"></script>
             <script type="text/javascript" src="/js/jquery.maphilight.min.js"></script>
             <script type="text/javascript" src="/js/jquery.query_string.js"></script>
-            <script type="text/javascript" src="/js/jquery.pagination.js"></script>
-            <script type="text/javascript" src="/js/jquery.nbn_search.js"></script>
             <script type="text/javascript" src="/js/nbn_namespace.js"></script>
             <#list javascripts as javascript>
                 <script type="text/javascript" src="${javascript}"></script>

@@ -10,7 +10,7 @@
 <#assign output=json.readURL("${api}/taxonOutputGroups/${taxon.taxonOutputGroupKey}")>
 
 <@template.master title="NBN Gateway - Taxon"
-    javascripts=["/js/jquery-ui-1.8.23.custom.min.js","/js/jqueryui.simple-table-style.js","/js/jquery.dataTables.min.js","/js/taxon-page-utils.js","/js/report_utils.js"]
+    javascripts=["/js/jquery-ui-1.8.23.custom.min.js","/js/jquery.dataTables.min.js","/js/taxon-page-utils.js","/js/report_utils.js"]
     csss=["/css/smoothness/jquery-ui-1.8.23.custom.css","/css/taxon-page.css"]>
     <h1>${taxon.name} <#if taxon.authority??>${taxon.authority}</#if></h1>
     <div>

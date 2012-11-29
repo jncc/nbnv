@@ -1,5 +1,4 @@
-<@template.master title="NBN Gateway - Organisations" 
-    javascripts=["/js/jqueryui.simple-table-style.js"]
+<@template.master title="NBN Gateway - Organisations"
     csss=["/css/smoothness/jquery-ui-1.8.23.custom.css","/css/organisation.css"]>
 
     <#assign organisationId="${URLParameters.organisation}">

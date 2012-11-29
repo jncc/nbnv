@@ -34,7 +34,6 @@
             if(numSites > datatableDisplayThreshold){
                 addDataTable();
             }
-            nbn.portal.style.addSimpleTableStyle();
         });
     }
 

@@ -1,4 +1,8 @@
-<@template.master title="NBN Gateway - Taxon Search" javascripts=["/js/enable-search.js"]>
+<@template.master title="NBN Gateway - Taxon Search" 
+    csss=["http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/themes/smoothness/jquery-ui.css"] 
+    javascripts=["/js/jquery.dataTables.min.js",
+                "/js/jquery.nbn_search.js",
+                "/js/enable-search.js"]>
     <@markdown>
 #General Gateway Search Demonstration
 

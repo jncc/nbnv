@@ -8,7 +8,7 @@ import java.net.URI;
  * @author Christopher Johnson
  */
 public class Feature {
-    @Ref(value="${resource.portalUrl}/Reports/Sites/${instance.identifier}", style=Ref.Style.RELATIVE_PATH) 
+    @Ref(value="${resource.portalUrl}/Reports/Sites/${instance.identifier}/Groups", style=Ref.Style.RELATIVE_PATH) 
     private URI href;
     
     private String label, identifier, type;
