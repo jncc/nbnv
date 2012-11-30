@@ -88,6 +88,7 @@ public class SearchResource extends AbstractResource {
         return solr
                 .create()
                 .query(q)
+                .facetOn("category")
                 .filterQuery("record_type:taxon")
                 .addOrFilter("category", categories)
                 .sort(sort, SolrQuery.ORDER.asc)

@@ -135,9 +135,16 @@ INSERT INTO DesignationData (
     (2, 'Test Description 3', 'TestDes3', 'TD3', 23, 'sssssssssssss......')
 );
 
+
+INSERT INTO TaxonOutputGroupData (
+    "key", sortOrder, outputFlag, name, description, parentTaxonGroupKey
+) VALUES (
+    'NHMSYS0000629144', NULL, 1, 'fungus', NULL, 'NHMSYS0020755471'
+);
+
 INSERT INTO TaxonData (
-    taxonVersionKey, prefnameTaxonVersionKey, name, authority, lang
+    taxonVersionKey, prefnameTaxonVersionKey, name, authority, lang, taxonOutputGroupKey
 ) VALUES (
     'ABFG000000100001', 'ABFG000000100001', 'Annulohypoxylon multiforme var. multiforme', 
-    '(Fr.) Y.M. Ju, J.D. Rogers & H.M. Hsieh', 'la'
+    '(Fr.) Y.M. Ju, J.D. Rogers & H.M. Hsieh', 'la', 'NHMSYS0000629144'
 );

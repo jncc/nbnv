@@ -6,13 +6,16 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Result;
 import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.Select;
-import uk.org.nbn.nbnv.api.model.Designation;
 import uk.org.nbn.nbnv.api.model.Taxon;
 import uk.org.nbn.nbnv.api.model.TaxonWebLink;
 import uk.org.nbn.nbnv.api.model.TaxonWithDatasetStats;
 
 public interface TaxonMapper {
-    @Select("SELECT t.*, ct.name AS commonName FROM TaxonData t LEFT JOIN TaxonData ct ON ct.taxonVersionKey = t.commonNameTaxonVersionKey WHERE t.taxonVersionKey = #{id}")
+    @Select("SELECT t.*, ct.name AS commonName, tog.name AS taxonOutputGroupName " +
+            "FROM TaxonData t " +
+                "INNER JOIN TaxonOutputGroupData tog ON tog.\"key\" = t.taxonOutputGroupKey " +
+                "LEFT JOIN TaxonData ct ON ct.taxonVersionKey = t.commonNameTaxonVersionKey " +
+            "WHERE t.taxonVersionKey = #{id}")
     Taxon getTaxon(String taxonVersionKey);
     
     @Select("SELECT taxonVersionKey, t.pTaxonVersionKey, name, authority, languageKey, taxonOutputGroupKey from DesignationTaxonData dtd inner join TaxonData t on dtd.pTaxonVersionKey = t.taxonVersionKey where code = #{id}")

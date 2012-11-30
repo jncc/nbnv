@@ -54,7 +54,7 @@ CREATE TABLE TaxonData(
 	name varchar(8000) NULL,
 	authority varchar(8000) NULL,
 	lang char(2) NULL,
-	outputGroupKey char(16) NULL,
+	taxonOutputGroupKey char(16) NOT NULL,
 	commonNameTaxonVersionKey char(16) NULL,
         PRIMARY KEY (taxonVersionKey));
 
@@ -187,3 +187,14 @@ CREATE TABLE TaxonObservationFilter(
         filterJSON longvarchar NOT NULL,
         filterText longvarchar NOT NULL
 );
+
+CREATE TABLE TaxonOutputGroupData(
+	"key" char(16) NOT NULL,
+	sortOrder int NULL,
+	outputFlag bit NOT NULL,
+	name varchar(50) NULL,
+	description varchar(65) NULL,
+	parentTaxonGroupKey char(16) NULL,
+        PRIMARY KEY ("key")
+);
+

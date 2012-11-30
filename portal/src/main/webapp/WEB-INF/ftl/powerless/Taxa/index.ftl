@@ -16,13 +16,14 @@ is not a finished product.
             {"title":"Taxon", "attr":"name", "link":"href"},
             {"title":"Common Name", "attr":"commonName"},
             {"title":"Authority", "attr":"authority"},
+            {"title":"Output Group", "attr":"taxonOutputGroupName"},
             {"title":"Rank", "attr":"rank"}
         ]
         query=RequestParameters 
         facets=[{
-                "name": "Taxon Navigation Group",	  	
-                "id":"category",
-                "render" : "combo",
-                "data":json.readURL("${api}/taxonNavigationGroups/topLevels")
-            }]/>
+            "name": "Taxon Navigation Group",	  	
+            "id":"category",
+            "render" : "combo",
+            "data":json.readURL("${api}/taxonOutputGroups")
+        }]/>
 </@template.master>
