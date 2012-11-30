@@ -25,12 +25,13 @@ public class SearchResource extends AbstractResource {
             @QueryParam("rows") @DefaultValue("20") int rows,
             @QueryParam("start") @DefaultValue("0") int start,
             @QueryParam("sort") String sort,
+            @QueryParam("order") @DefaultValue("asc") SolrQuery.ORDER order,
             @QueryParam("q") String q
             ) throws SolrServerException {
         return solr
                 .create()
                 .query(q)
-                .sort(sort, SolrQuery.ORDER.asc)
+                .sort(sort, order)
                 .start(start)
                 .rows(rows)
                 .response();
@@ -43,13 +44,14 @@ public class SearchResource extends AbstractResource {
             @QueryParam("rows") @DefaultValue("20") int rows,
             @QueryParam("start") @DefaultValue("0") int start,
             @QueryParam("sort") String sort,
+            @QueryParam("order") @DefaultValue("asc") SolrQuery.ORDER order,
             @QueryParam("q") String q
             ) throws SolrServerException {
         return solr
                 .create()
                 .query(q)
                 .filterQuery("record_type:designation")
-                .sort(sort, SolrQuery.ORDER.asc)
+                .sort(sort, order)
                 .start(start)
                 .rows(rows)
                 .response();
@@ -62,13 +64,14 @@ public class SearchResource extends AbstractResource {
             @QueryParam("rows") @DefaultValue("20") int rows,
             @QueryParam("start") @DefaultValue("0") int start,
             @QueryParam("sort") String sort,
+            @QueryParam("order") @DefaultValue("asc") SolrQuery.ORDER order,
             @QueryParam("q") String q
             ) throws SolrServerException {
         return solr
                 .create()
                 .query(q)
                 .filterQuery("record_type:taxondataset")
-                .sort(sort, SolrQuery.ORDER.asc)
+                .sort(sort, order)
                 .start(start)
                 .rows(rows)
                 .response();
@@ -82,6 +85,7 @@ public class SearchResource extends AbstractResource {
             @QueryParam("start") @DefaultValue("0") int start,
             @QueryParam("taxonOutputGroupKey") List<String> outputGroups,
             @QueryParam("sort") String sort,
+            @QueryParam("order") @DefaultValue("asc") SolrQuery.ORDER order,
             @QueryParam("q") String q
             ) throws SolrServerException {
         return solr
@@ -89,7 +93,7 @@ public class SearchResource extends AbstractResource {
                 .query(q)
                 .filterQuery("record_type:taxon")
                 .addOrFilter("taxonOutputGroupKey", outputGroups)
-                .sort(sort, SolrQuery.ORDER.asc)
+                .sort(sort, order)
                 .start(start)
                 .rows(rows)
                 .response();

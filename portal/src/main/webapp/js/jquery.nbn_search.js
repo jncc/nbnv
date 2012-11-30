@@ -30,6 +30,7 @@
             
             this._dataTable.dataTable( {
                 "oSearch": {"sSearch": initialSearch},
+                "bSort": false,
                 "iDisplayLength": 25,
                 "bJQueryUI": true,
                 "bProcessing": true,

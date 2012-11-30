@@ -3,6 +3,7 @@ package uk.org.nbn.nbnv.api.rest.resources;
 import java.util.List;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -92,9 +93,10 @@ public class TaxonResource extends AbstractResource {
             @QueryParam("start") @DefaultValue("0") int start,
             @QueryParam("taxonOutputGroupKey") List<String> taxonOutputGroups,
             @QueryParam("sort") String sort,
+            @DefaultValue("asc") @QueryParam("order") SolrQuery.ORDER order,
             @QueryParam("q") String q
             ) throws SolrServerException {
-        return searchResource.searchTaxa(rows, start, taxonOutputGroups, sort, q);
+        return searchResource.searchTaxa(rows, start, taxonOutputGroups, sort, order, q);
     }
 
     @GET
