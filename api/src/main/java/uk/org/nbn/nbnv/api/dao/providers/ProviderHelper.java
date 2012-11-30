@@ -38,4 +38,23 @@ public class ProviderHelper {
 
         return "('" + StringUtils.collectionToDelimitedString(list, "','") + "')";
     }
+    
+    public static Integer getStartYear(String band) {
+        int delimIndex = band.indexOf("-");
+        String startYear = band.substring(0, delimIndex);
+        if (!startYear.matches("[0-9]{4}")) {
+            throw new IllegalArgumentException("startYear is incorrect: " + startYear);
+        }
+        return Integer.parseInt(startYear);
+    }
+
+    public static Integer getEndYear(String band) {
+        int delimIndex = band.indexOf("-");
+        String endYear = band.substring(delimIndex + 1, delimIndex + 5);
+        if (!endYear.matches("[0-9]{4}")) {
+            throw new IllegalArgumentException("endYear is incorrect: " + endYear);
+        }
+        return Integer.parseInt(endYear);
+    }
+
 }

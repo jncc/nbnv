@@ -1,5 +1,6 @@
 package uk.org.nbn.nbnv.api.rest.resources;
 
+import com.ibm.icu.util.Calendar;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -26,8 +27,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.StreamingOutput;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.org.nbn.nbnv.api.dao.providers.ProviderHelper;
 import uk.org.nbn.nbnv.api.dao.warehouse.GridMapSquareMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.TaxonMapper;
+import uk.org.nbn.nbnv.api.model.Dataset;
 import uk.org.nbn.nbnv.api.model.GridMapSquare;
 import uk.org.nbn.nbnv.api.model.Taxon;
 import uk.org.nbn.nbnv.api.model.User;
@@ -50,12 +53,13 @@ public class GridMapSquareResource extends AbstractResource {
             @PathParam("ptvk") final String ptvk,
             @QueryParam("resolution") @DefaultValue("") final String resolution,
             @QueryParam("band") @DefaultValue("") final List<String> bands,
-            @QueryParam("datasetKey") @DefaultValue(ObservationResourceDefaults.defaultDatasetKey) final List<String> datasetKey) throws IOException {
+            @QueryParam("datasetKey") @DefaultValue(ObservationResourceDefaults.defaultDatasetKey) final List<String> datasetKeys) throws IOException {
         return new StreamingOutput() {
             public void write(OutputStream out) throws IOException, WebApplicationException {
                 ZipOutputStream zip = new ZipOutputStream(out);
                 addReadMe(zip, ptvk);
-                addGridRefs(zip, user, ptvk, resolution, bands, datasetKey);
+                addGridRefs(zip, user, ptvk, resolution, bands, datasetKeys);
+                addDatasetMetadata(zip, user, ptvk, resolution, bands, datasetKeys);
                 zip.flush();
                 zip.close();
             }
@@ -66,9 +70,9 @@ public class GridMapSquareResource extends AbstractResource {
         Taxon taxon = taxonMapper.getTaxon(ptvk);
         DateFormat dateFormat = new SimpleDateFormat("yyyy/mmm/dd HH:mm:ss");
         zip.putNextEntry(new ZipEntry("readme.txt"));
-        zip.write("Grid map square download from the NBN Gateway\r\n".getBytes());
-        zip.write((taxon.getName() + " (authority: " + taxon.getAuthority() + ")\r\n").getBytes());
-        zip.write((dateFormat.format(new Date()) + "\r\n").getBytes());
+        writeln(zip, "Grid map square download from the NBN Gateway");
+        writeln(zip, taxon.getName() + " (authority: " + taxon.getAuthority() + ")");
+        writeln(zip, dateFormat.format(new Date()));
         zip.flush();
     }
 
@@ -82,20 +86,58 @@ public class GridMapSquareResource extends AbstractResource {
         }
     }
 
-    private void addGridRefsForYearBand(ZipOutputStream zip, User user, String ptvk, String resolution, String band, List<String> datasetKey) throws IOException {
+    private void addGridRefsForYearBand(ZipOutputStream zip, User user, String ptvk, String resolution, String band, List<String> datasetKeys) throws IOException {
         //Example year band: 2000-2012,ff0000,000000
         String yearRange = band.substring(0,band.indexOf(","));
         zip.putNextEntry(new ZipEntry("gridrefs_" + yearRange + ".csv"));
-        List<GridMapSquare> gridMapSquares = gridMapSquareMapper.getGridMapSquares(user, ptvk, resolution, band, datasetKey);
+        List<GridMapSquare> gridMapSquares = gridMapSquareMapper.getGridMapSquares(user, ptvk, resolution, band, datasetKeys);
         for (GridMapSquare gridMapSquare : gridMapSquares) {
-            zip.write((gridMapSquare.getGridRef() + "\r\n").getBytes());
+            writeln(zip, gridMapSquare.getGridRef());
         }
         zip.flush();
     }
 
-    private void addDatasetMetadata(ZipOutputStream zip, String ptvk) throws IOException {
-        DateFormat dateFormat = new SimpleDateFormat("yyyy/mmm/dd HH:mm:ss");
+    private void addDatasetMetadata(ZipOutputStream zip, User user, String ptvk, String resolution, List<String> bands, List<String> datasetKeys) throws IOException {
+        List<Dataset> datasets = gridMapSquareMapper.getGridMapDatasets(user, ptvk, resolution, getStartYear(bands), getEndYear(bands), datasetKeys);
         zip.putNextEntry(new ZipEntry("datasetmetadata.txt"));
+        for(Dataset dataset : datasets){
+            writeln(zip, dataset.getTitle());
+        }
         zip.flush();
     }
+    
+    private Integer getStartYear(List<String> bands){
+        Integer toReturn = Calendar.getInstance().get(Calendar.YEAR);
+        if(bands.size() < 1){
+            throw new IllegalArgumentException("No year bands have been specified, there should be at least one (eg 2000-2012,ff0000,000000)");
+        }else{
+            for(String band : bands){
+                Integer currentStartYear = ProviderHelper.getStartYear(band);
+                if (toReturn > currentStartYear){
+                    toReturn = currentStartYear;
+                }
+            }
+        }
+        return toReturn;
+    }
+    
+    private Integer getEndYear(List<String> bands){
+        Integer toReturn = 0;
+        if(bands.size() < 1){
+            throw new IllegalArgumentException("No year bands have been specified, there should be at least one (eg 2000-2012,ff0000,000000)");
+        }else{
+            for(String band : bands){
+                Integer currentEndYear = ProviderHelper.getEndYear(band);
+                if (toReturn < currentEndYear){
+                    toReturn = currentEndYear;
+                }
+            }
+        }
+        return toReturn;
+    }
+    
+    private void writeln(ZipOutputStream zip, String output) throws IOException{
+        zip.write((output + "\r\n").getBytes());
+    }
+    
 }
