@@ -6,7 +6,7 @@ import uk.org.nbn.nbnv.api.model.TaxonOutputGroup;
 
 public interface TaxonOutputGroupMapper {
     
-    @Select("SELECT * FROM TaxonOutputGroupData")
+    @Select("SELECT * FROM TaxonOutputGroupData ORDER BY name")
     List<TaxonOutputGroup> selectAll();
     
     @Select("SELECT * FROM TaxonOutputGroupData WHERE \"key\" = #{id}")
