@@ -5,8 +5,9 @@
 
 <!--Define a combo facet filter for searching-->
 <#macro combo id name data>
+    <label>${name}</label>
     <select name="${id}">
-        <option value="">All ${name}</option>
+        <option value="">All</option>
         <#list data as currentFacet>
             <option 
                 value="${currentFacet.key}"

@@ -55,6 +55,7 @@
                     } );
                 }
             } );
+            this._dataTable.prev().append($('.filters', this.element));
             
             this._customFilters.change(function() {me._dataTable.fnDraw();}); //register listeners to the custom filters
             

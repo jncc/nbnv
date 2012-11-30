@@ -41,4 +41,26 @@ form.nbn-search {
 
     .controls   { text-align: right; }
     .paginator  { float: right; clear: both; }
+    
+    .filters { list-style: none; }
+    
+    .dataTables_wrapper {
+        .fg-toolbar .filters { float: left; padding: 5px; }
+
+        .dataTables_processing {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 250px;
+            height: 30px;
+            margin-left: -125px;
+            margin-top: -15px;
+            padding: 14px 0 2px 0;
+            border: 1px solid #DDD;
+            text-align: center;
+            color: #999;
+            font-size: 14px;
+            background-color: white;
+        }
+    }
 }
