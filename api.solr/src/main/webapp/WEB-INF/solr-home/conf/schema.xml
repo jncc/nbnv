@@ -66,21 +66,9 @@
 
 
     <fields>
-        <field name="taxonVersionKey" type="string" indexed="true" stored="true"/>
-        <field name="pTaxonVersionKey" type="string" indexed="true" stored="true"/>
-        <field name="taxonAuthority" type="string" indexed="true" stored="true"/>
-        <field name="languageKey" type="string"/>
-        <field name="navigationGroupKey" type="string" indexed="true" stored="true"/>
         <field name="category" type="string" indexed="true" stored="true" multiValued="true"/>
   
         <field name="name" type="testedgengrams" indexed="true" stored="true"/>
-        <field name="label" type="string" indexed="true" stored="true"/>
-        <field name="code" type="string" indexed="true" stored="true"/>
-        <field name="designationCategoryID" type="string" indexed="true" stored="true"/>
-        <field name="description" type="string" indexed="true" stored="true"/>
-  
-        <field name="portal_href" type="string" required="true" stored="true"/>
-        <field name="api_href" type="string" required="true" stored="true"/>
         
         <field name="record_type" type="string" required="true" indexed="true" stored="true"/>
         <field name="record_id" type="string" required="true" indexed="true" stored="true"/>

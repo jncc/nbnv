@@ -20,7 +20,7 @@ import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
 
 @Component
 @Path("/designations")
-public class DesignationResource {
+public class DesignationResource extends AbstractResource {
     @Autowired DesignationCategoryMapper designationCategoryMapper;
     @Autowired DesignationMapper designationMapper;
     @Autowired TaxonMapper taxonMapper;

@@ -16,7 +16,7 @@ import uk.org.nbn.nbnv.api.solr.SolrResponse;
 
 @Component
 @Path("/search")
-public class SearchResource {
+public class SearchResource extends AbstractResource {
     @Autowired Solr solr;
     
     @GET
@@ -89,9 +89,7 @@ public class SearchResource {
                 .create()
                 .query(q)
                 .filterQuery("record_type:taxon")
-                .facetOn("category", "languageKey")
                 .addOrFilter("category", categories)
-                .addOrFilter("languageKey", languages)
                 .sort(sort, SolrQuery.ORDER.asc)
                 .start(start)
                 .rows(rows)

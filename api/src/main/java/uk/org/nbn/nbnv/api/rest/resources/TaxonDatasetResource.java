@@ -16,7 +16,7 @@ import uk.org.nbn.nbnv.api.model.*;
 
 @Component
 @Path("/taxonDatasets")
-public class TaxonDatasetResource {
+public class TaxonDatasetResource extends AbstractResource {
     
     @Autowired DatasetMapper datasetMapper;
     @Autowired TaxonMapper taxonMapper;

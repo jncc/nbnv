@@ -15,7 +15,7 @@ import uk.org.nbn.nbnv.api.model.DesignationCategory;
 
 @Component
 @Path("/designationCategories")
-public class DesignationCategoryResource {
+public class DesignationCategoryResource extends AbstractResource {
     @Autowired DesignationCategoryMapper desigCat;
     @Autowired DesignationMapper desig;
     

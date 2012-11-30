@@ -39,7 +39,6 @@
             if(numSpecies > datatableDisplayThreshold){
                 addDataTable();
             }
-            nbn.portal.style.addSimpleTableStyle();
         });
     }
     

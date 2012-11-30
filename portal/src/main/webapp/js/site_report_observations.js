@@ -65,8 +65,6 @@
                     if($attributeDropDown){
                         addAttributeData(dataset.key, $attributeDropDown.val(), queryString);
                     }
-                    console.log
-                    nbn.portal.style.addSimpleTableStyle();
                 });
             }else{
                 $dataContainer.append(nbn.portal.reports.utils.forms.getNoRecordsFoundInfoBox());

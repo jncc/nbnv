@@ -9,6 +9,10 @@ import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.org.nbn.nbnv.api.rest.resources.DatasetResource;
+import uk.org.nbn.nbnv.api.rest.resources.DesignationResource;
+import uk.org.nbn.nbnv.api.rest.resources.FeatureResource;
+import uk.org.nbn.nbnv.api.rest.resources.TaxonResource;
 
 /**
  * The following class is a builder for solr queries
@@ -19,6 +23,25 @@ public class Solr {
     @Autowired SolrServer solrServer;
     @Autowired Properties properties;
     @Autowired(required=false) ServletContext context;
+    
+    enum ResultType { DESIGNATION, DATASET, FEATURE, TAXON}
+    
+    @Autowired DatasetResource datasetResource;
+    @Autowired DesignationResource designationResource;
+    @Autowired FeatureResource featureResource;
+    @Autowired TaxonResource taxonResource;
+    
+    protected Object resolveSolrResult(String record_id) {
+        String[] record_idParts = record_id.split("-", 2);
+        String id = record_idParts[1];
+        switch(ResultType.valueOf(record_idParts[0])) {
+            case DESIGNATION:   return designationResource.getDesignation(id);
+            case DATASET:       return datasetResource.getDatasetByID(id);
+            case FEATURE:       return featureResource.getFeature(id);
+            case TAXON:         return taxonResource.getTaxon(id);
+            default :           throw new IllegalArgumentException("The solr response contained results on an unkown type");
+        }
+    }
     
     public SolrBuilder create() {
         return new SolrBuilder();
@@ -78,9 +101,7 @@ public class Solr {
         }
 
         public SolrResponse response() throws SolrServerException {
-            return new SolrResponse(solrServer.query(query), 
-                                    properties.getProperty("portal_url"),
-                                    (context != null) ? context.getContextPath() : "");
+            return new SolrResponse(solrServer.query(query),Solr.this);
         }
     }
     

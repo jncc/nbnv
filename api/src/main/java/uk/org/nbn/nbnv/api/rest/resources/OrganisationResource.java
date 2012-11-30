@@ -27,7 +27,7 @@ import uk.org.nbn.nbnv.api.model.Organisation;
  */
 @Component
 @Path("/organisations")
-public class OrganisationResource {
+public class OrganisationResource extends AbstractResource {
     @Autowired OrganisationMapper organisationMapper;
     @Autowired DatasetMapper datasetMapper;
     

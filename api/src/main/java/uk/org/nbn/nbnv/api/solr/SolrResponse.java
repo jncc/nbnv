@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.FacetField.Count;
 import org.apache.solr.client.solrj.response.QueryResponse;
@@ -16,29 +15,24 @@ import org.apache.solr.common.util.NamedList;
  * @author Administrator
  */
 public class SolrResponse {
-    private static final String PORTAL_LINK_KEY = "portal_href";
-    private static final String API_LINK_KEY = "api_href";
     
     private final QueryResponse toWrap;
-    private final String portalPath, apiPath;
+    private final List<Object> results;
     
-    public SolrResponse(QueryResponse toWrap, String portalPath, String apiPath) {
+    public SolrResponse(QueryResponse toWrap, Solr solrHelper) {
         this.toWrap = toWrap;
-        this.portalPath = portalPath;
-        this.apiPath = apiPath;
+        this.results = new ArrayList<Object>();
+        for(SolrDocument currDocument : toWrap.getResults()) {
+            results.add(solrHelper.resolveSolrResult((String)currDocument.get("record_id")));
+        }
     }
     
     /**
      * The following method will process the values of api_href and portal_href
      * @return 
      */
-    public List<SolrDocument> getResults() {
-        List<SolrDocument> toReturn = toWrap.getResults();
-        for(SolrDocument currDocument : toReturn) {
-            currDocument.put(API_LINK_KEY, apiPath + currDocument.get(API_LINK_KEY));
-            currDocument.put(PORTAL_LINK_KEY, portalPath + currDocument.get(PORTAL_LINK_KEY));
-        }
-        return toReturn;
+    public List<Object> getResults() {
+        return results;
     }
     
     public Map getFacetFields() {

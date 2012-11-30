@@ -20,7 +20,7 @@ import uk.org.nbn.nbnv.api.model.OrganisationMembership;
  */
 @Component
 @Path("/organisationMemberships")
-public class OrganisationMembershipResource {
+public class OrganisationMembershipResource extends AbstractResource {
     @Autowired OrganisationMembershipMapper organisationMembershipMapper;
     
     @GET

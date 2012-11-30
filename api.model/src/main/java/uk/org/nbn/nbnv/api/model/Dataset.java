@@ -1,9 +1,13 @@
 package uk.org.nbn.nbnv.api.model;
 
+import com.sun.jersey.server.linking.Ref;
+import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Dataset {
+    @Ref(value="${resource.portalUrl}/Datasets/${instance.key}", style=Ref.Style.RELATIVE_PATH) 
+    private URI href;
     
     private String key, title, description, typeName, organisationName;
     private String captureMethod, purpose, geographicalCoverage, quality;
@@ -61,6 +65,14 @@ public class Dataset {
         this.temporalCoverage = temporalCoverage;
     }
 
+    public URI getHref() {
+        return href;
+    }
+
+    public void setHref(URI href) {
+        this.href = href;
+    }
+    
     public String getKey() {
         return key;
     }

@@ -20,7 +20,7 @@ import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenDatasetAdminUser;
 
 @Component
 @Path("/datasets")
-public class DatasetResource {
+public class DatasetResource extends AbstractResource {
     @Autowired OperationalDatasetMapper oDatasetMapper;
     @Autowired DatasetMapper datasetMapper;
     

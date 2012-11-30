@@ -49,7 +49,7 @@ import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
  */
 @Component
 @Path("/user")
-public class UserResource {  
+public class UserResource extends AbstractResource {  
     private static final String STRING_ENCODING = "UTF-8";
     
     private final int tokenTTL;

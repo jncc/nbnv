@@ -139,10 +139,4 @@
     function isNumber(n) {
         return !isNaN(parseFloat(n)) && isFinite(n);
     }
-    
-    $(document).ready(function(){
-        //Style up an simple nbn tables
-        nbn.portal.style.addSimpleTableStyle();
-    });
-
 })(jQuery);

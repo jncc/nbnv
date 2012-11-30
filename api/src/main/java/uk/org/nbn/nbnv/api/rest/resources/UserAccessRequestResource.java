@@ -41,7 +41,7 @@ import uk.org.nbn.nbnv.api.utils.AccessRequestJSONToText;
  */
 @Component
 @Path("/user/userAccesses")
-public class UserAccessRequestResource {
+public class UserAccessRequestResource extends AbstractResource {
     @Autowired OperationalTaxonObservationFilterMapper oTaxonObservationFilterMapper;
     @Autowired OperationalUserAccessRequestMapper oUserAccessRequestMapper;
     

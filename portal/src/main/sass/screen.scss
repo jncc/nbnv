@@ -192,15 +192,8 @@ body {
             padding: 3px;
         }
     }
-    
-    table.nbn-observations-table{
-        @extend table.nbn-coloured-table;
-        th{
-            padding: 2px;
-        }
-    }
 
-    .nbn-dataset-table{
+    .dataTable{
         $padding: 3px;
         font-family: Arial,Helvetica,Sans-serif;
         padding: 1px;
@@ -212,17 +205,6 @@ body {
         }
         td{
             padding: $padding;
-        }
-    }
-    
-    .nbn-organisation-table{
-        @extend .nbn-dataset-table;
-        $padding: 10px;
-        td{
-            padding: $padding;
-        }
-        ul{
-            padding-left: 20px;
         }
     }
     

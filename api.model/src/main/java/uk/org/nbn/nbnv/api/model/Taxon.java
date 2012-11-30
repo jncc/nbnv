@@ -1,5 +1,9 @@
 package uk.org.nbn.nbnv.api.model;
 
+import com.sun.jersey.server.linking.Ref;
+import com.sun.jersey.server.linking.Ref.Style;
+import java.net.URI;
+
 public class Taxon implements Comparable<Taxon>{
     
     private String taxonVersionKey;
@@ -15,6 +19,9 @@ public class Taxon implements Comparable<Taxon>{
     private String rank;
     private String nameStatus;
     private String versionForm;
+
+    @Ref(value="${resource.portalUrl}/Taxa/${instance.taxonVersionKey}", style=Style.RELATIVE_PATH) 
+    private URI href;
 
     public Taxon(){}
     
@@ -172,5 +179,16 @@ public class Taxon implements Comparable<Taxon>{
      */
     public void setCommonName(String commonName) {
         this.commonName = commonName;
+    }
+    
+    /**
+     * @return The link to the portal version of this resource
+     */
+    public URI getHref() {
+        return href;
+    }
+
+    public void setHref(URI href) {
+        this.href = href;
     }
 }

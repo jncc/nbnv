@@ -2,57 +2,79 @@
  * The following JavaScript will progressivly enhance the Search 
  * tag and provide ajax Search.
  * @author Christopher Johnson
- * @dependancy jquery.pagination.js, jQuery.query_string.js, jQuery, jQuery UI
+ * @dependancy jquery.dataTables.js jQuery, jQuery UI
  */
  (function( $, undefined ) {
-    $.widget( "ui.nbn_search", {
-        options: {
-            renderSearchResult: function() {return "Result render not defined";}
-        },
- 
-        _create: function() {
-            var me = this;    
-            this._state = {start: $.query_string().start || 0}; //get start value
-            /*create dummy request response object so don't need to check it exists every search*/
-            this._searchRequest = {abort: function(){return false;}};
-            this._resultsDiv = $('.results', this.element);
-            $('input, select', this.element).change(function() {me._state.start=0; me._querySearchNode();});
-            $('input[type="submit"]', this.element).remove(); //remove the unnessersary search button
-            this._querySearchNode(); //Ajaxify the search from the start
-        },
+    var SEARCH_NODE_ATTR = 'nbn-search-node',
+        RESULT_LINK_ATTR = 'result-link',
+        RESULT_ATTR = 'result-attr';
+        
+    /** 
+     * The following utility function will transform dataTables aoData structure
+     * (an array) to a standard js object for simple lookups
+     */
+    function toObject(arr) {
+        var toReturn = {};
+        $.each(arr, function(i, val) {toReturn[val.name] = val.value;}); 
+        return toReturn;
+    }
 
-        _createSearchURL : function() {return $(':input[value!=""]', this.element).serialize() + "&start=" + this._state.start;},
+    $.fn.dataTableExt.oJUIClasses.sStripeOdd = 'ui-state-highlight';
+            
+    $.widget( "ui.nbn_search", {
+        _create: function() {
+            var me = this, initialSearch = $('input[name="q"]', me.element).val();
+            $('.controls, .paginator', me.element).remove(); //remove the elements which are going to be replace with datatable
+            
+            me._dataTable = $('.results', me.element).removeClass("results"); //maintain a reference to the data table (Remove old styling class)
+            
+            me._dataTable.dataTable( {
+                "oSearch": {"sSearch": initialSearch},
+                "iDisplayLength": 25,
+                "bJQueryUI": true,
+                "bProcessing": true,
+                "bServerSide": true,
+                "sPaginationType": "full_numbers",
+                "sAjaxSource": me.element.attr(SEARCH_NODE_ATTR),
+                "fnServerData": function( sUrl, aoData, fnCallback, oSettings ) {
+                    var query = toObject(aoData);
+                    oSettings.jqXHR = $.ajax( {
+                        "url": sUrl,
+                        "data": {
+                            q: query.sSearch,
+                            start: query.iDisplayStart,
+                            rows: query.iDisplayLength
+                        },
+                        "success": function(data) {
+                            fnCallback.call(this, {
+                                iTotalDisplayRecords: data.header.numFound,
+                                iTotalRecords: data.header.numFound,
+                                sEcho: query.sEcho,
+                                aaData:me._processResults(data.results)
+                            });
+                        },
+                        "dataType": "jsonp",
+                        "cache": false
+                    } );
+                }
+            } );
+        },
         
-        _querySearchNode: function() {
-            var me=this, searchParams = me._createSearchURL();
-            this._searchRequest.abort();
-            this._searchRequest = $.getJSON(me.element.attr('nbn-search-node'), searchParams , function(search) {
-                //create and persist the state of this search form
-                me.setState({ 
-                    search: search,         facet: me._getFacetState(), 
-                    start: me._state.start, formencodded : searchParams
+        _processResults: function processResults(serverRes) {
+            var _me = this, toReturn = [];
+            $.each(serverRes, function(i, val) {
+                var row = [];
+                $('thead th', _me.element).each(function() {
+                    var ele = $(this), label = val[ele.attr(RESULT_ATTR)] || "";
+                    row.push( 
+                        ele.attr(RESULT_LINK_ATTR) //if the element has a label
+                            ? '<a href="' + val[ele.attr(RESULT_LINK_ATTR)] + '">'+ label +'</a>'
+                            : label
+                    );
                 });
-                me._trigger('queried', 0, me.getState());
+                toReturn.push(row);
             });
-        },
-        
-        getState :function() {
-            return this._state;
-        },
-        
-        setState: function(state) {
-            this._state = state; //store the state object locally
-            this._updateCounts();
-            this._updatePagingLinks();
-            this._updateResults();
-        },
-        
-        _updateResults: function() {
-            var me=this;
-            this._resultsDiv.empty();
-            $.each(me._state.search.results, function(i, data) {
-                me._resultsDiv.append($('<li>').html(me.options.renderSearchResult(data)));
-            });
+            return toReturn;
         },
         
         _getFacetState: function() {
@@ -60,7 +82,7 @@
             $('.nbn-search-facets input[type="checkbox"]', this.element).each(function(i, ele) {
                 var me = $(ele);
                 if(me.is(':checked'))
-                    toReturn.push({ name: me.attr("name"), value:me.attr("value") });
+                    toReturn.push({name: me.attr("name"), value:me.attr("value")});
             })
             return toReturn;
         },
@@ -85,25 +107,6 @@
                         var currCount = $(this);
                         currCount.html("(" + facetData[currCount.attr('rel')] + ")");
                     })
-            });
-        },
-        
-        _updatePagingLinks: function() {
-            var me=this, rows = $('[name="rows"]',this.element).val(), currPage = this._state.start/rows;
-            
-            $('.paginator', this.element).pagination(this._state.search.header.numFound, {
-                num_edge_entries:2,
-                items_per_page: rows,
-                current_page: currPage,
-                prev_text:"&laquo; Previous",
-                next_text:"Next &raquo;",
-                callback: function(page) {
-                    if(page != currPage) {
-                        me._state.start = page * rows;
-                        me._querySearchNode();
-                    }
-                    return false;
-                }
             });
         }
     });
