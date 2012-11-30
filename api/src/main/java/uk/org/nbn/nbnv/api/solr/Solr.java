@@ -9,10 +9,7 @@ import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import uk.org.nbn.nbnv.api.rest.resources.DatasetResource;
-import uk.org.nbn.nbnv.api.rest.resources.DesignationResource;
-import uk.org.nbn.nbnv.api.rest.resources.FeatureResource;
-import uk.org.nbn.nbnv.api.rest.resources.TaxonResource;
+import uk.org.nbn.nbnv.api.rest.resources.*;
 
 /**
  * The following class is a builder for solr queries
@@ -24,12 +21,13 @@ public class Solr {
     @Autowired Properties properties;
     @Autowired(required=false) ServletContext context;
     
-    enum ResultType { DESIGNATION, DATASET, FEATURE, TAXON}
+    enum ResultType { DESIGNATION, DATASET, FEATURE, TAXON, ORGANISATION}
     
     @Autowired DatasetResource datasetResource;
     @Autowired DesignationResource designationResource;
     @Autowired FeatureResource featureResource;
     @Autowired TaxonResource taxonResource;
+    @Autowired OrganisationResource organisationResource;
     
     protected Object resolveSolrResult(String record_id) {
         String[] record_idParts = record_id.split("-", 2);
@@ -38,6 +36,7 @@ public class Solr {
             case DESIGNATION:   return designationResource.getDesignation(id);
             case DATASET:       return datasetResource.getDatasetByID(id);
             case FEATURE:       return featureResource.getFeature(id);
+            case ORGANISATION:  return organisationResource.getByID(Integer.parseInt(id));
             case TAXON:         return taxonResource.getTaxon(id);
             default :           throw new IllegalArgumentException("The solr response contained results on an unkown type");
         }

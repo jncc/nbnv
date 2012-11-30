@@ -21,7 +21,18 @@ public class Organisation {
     private URI logo;
     @Ref(value="organisations/${instance.id}/logosmall", condition="${instance.hasSmallLogo}")
     private URI smallLogo;
-   
+    
+    @Ref(value="${resource.portalUrl}/Organisations/${instance.id}", style=Ref.Style.RELATIVE_PATH) 
+    private URI href;
+
+    public URI getHref() {
+        return href;
+    }
+
+    public void setHref(URI href) {
+        this.href = href;
+    }
+    
     public void setHasLogo(boolean hasLogo) {
         this.hasLogo = hasLogo;
     }
