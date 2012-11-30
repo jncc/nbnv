@@ -61,6 +61,10 @@
                     <input type="checkbox" id="nbn-grid-map-10k-grid" value="gbi10kextent" name="background">10km grid
                 </div>
             </fieldset>
+            <fieldset>
+                <legend>Data download</legend>
+                <button id="nbn-grid-map-squares-download">Download Squares</button>
+            </fieldset>
     </div>
 </#macro>
 

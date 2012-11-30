@@ -246,11 +246,21 @@
         $('#nbn-grid-map-image').attr('src',getURL($('#nbn-grid-map-form')));
         nbn.portal.reports.utils.datasetfields.doSelectDatasetKeys();
     }
+    
+    function setupDownloadSquaresButton(){
+        $('#nbn-grid-map-squares-download').click(function(){
+            var $form = $('#nbn-grid-map-form');
+            applyRules();
+            nbn.portal.reports.utils.datasetfields.doDeselectDatasetKeys();
+            alert('nearly done ;), just need to modify this to call api service: ' + getURL($form));
+        });
+    }
 
     $(document).ready(function(){
         setupFormOnChange();
         setupColourPickers();
         setupRegionVCInteractions();
+        setupDownloadSquaresButton();
         hideBusyImageOnMapLoad();
         addInitialMapImage();
     });
