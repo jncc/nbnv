@@ -19,7 +19,7 @@
             <field column="name" template="${feature.label}" />
         </entity>
         <entity name="organisation" query="Select * From OrganisationData" transformer="TemplateTransformer">
-            <field column="record_id" template="ORGANISATION-${feature.id}" />
+            <field column="record_id" template="ORGANISATION-${organisation.id}" />
             <field column="record_type" template="organisation" />
         </entity>
         <entity name="dataset" 
