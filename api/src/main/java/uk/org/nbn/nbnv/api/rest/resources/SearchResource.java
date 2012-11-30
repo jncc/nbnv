@@ -81,7 +81,6 @@ public class SearchResource extends AbstractResource {
             @QueryParam("rows") @DefaultValue("20") int rows,
             @QueryParam("start") @DefaultValue("0") int start,
             @QueryParam("taxonOutputGroupKey") List<String> outputGroups,
-            @QueryParam("languageKey") List<String> languages,
             @QueryParam("sort") String sort,
             @QueryParam("q") String q
             ) throws SolrServerException {

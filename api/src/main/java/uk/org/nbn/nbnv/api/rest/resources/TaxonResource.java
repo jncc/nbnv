@@ -90,12 +90,11 @@ public class TaxonResource extends AbstractResource {
     public SolrResponse getTaxa(
             @QueryParam("rows") @DefaultValue("20") int rows,
             @QueryParam("start") @DefaultValue("0") int start,
-            @QueryParam("category") List<String> categories,
-            @QueryParam("languageKey") List<String> languages,
+            @QueryParam("taxonOutputGroupKey") List<String> taxonOutputGroups,
             @QueryParam("sort") String sort,
             @QueryParam("q") String q
             ) throws SolrServerException {
-        return searchResource.searchTaxa(rows, start, categories, languages, sort, q);
+        return searchResource.searchTaxa(rows, start, taxonOutputGroups, sort, q);
     }
 
     @GET
