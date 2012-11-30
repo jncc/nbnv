@@ -35,7 +35,7 @@ import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
 
 @Component
 @Path("/gridMapSquares")
-public class GridMapSquareResource {
+public class GridMapSquareResource extends AbstractResource {
 
     @Autowired
     GridMapSquareMapper gridMapSquareMapper;

@@ -21,7 +21,7 @@ import uk.org.nbn.nbnv.api.solr.SolrResponse;
 
 @Component
 @Path("/taxa")
-public class TaxonResource {
+public class TaxonResource extends AbstractResource {
     
     @Autowired SearchResource searchResource;
     @Autowired TaxonMapper taxonMapper;

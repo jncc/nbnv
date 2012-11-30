@@ -24,7 +24,7 @@ import uk.org.nbn.nbnv.api.model.*;
 
 @Component
 @Path("/taxonObservations")
-public class TaxonObservationResource {
+public class TaxonObservationResource extends AbstractResource{
     
     @Autowired
     TaxonObservationMapper observationMapper;
