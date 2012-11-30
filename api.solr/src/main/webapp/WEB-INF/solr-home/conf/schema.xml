@@ -66,7 +66,7 @@
 
 
     <fields>
-        <field name="category" type="string" indexed="true" stored="true" multiValued="true"/>
+        <field name="taxonOutputGroupKey" type="string" indexed="true" stored="true"/>
   
         <field name="name" type="testedgengrams" indexed="true" stored="true"/>
         

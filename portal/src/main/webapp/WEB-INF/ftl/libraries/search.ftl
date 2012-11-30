@@ -4,10 +4,9 @@
 -->
 
 <!--Define a combo facet filter for searching-->
-<#macro combo id name data counts>
-    <h1>${name}</h1>
+<#macro combo id name data>
     <select name="${id}">
-        <option value>All</option>
+        <option value>All ${name}</option>
         <#list data as currentFacet>
             <option 
                 value="${currentFacet.key}"
@@ -16,47 +15,6 @@
         </#list>
     </select>
 </#macro>
-
-<#--Define a tree macro for facet rendering
-    @param id (Scalar) The query search parameter of the current facet
-    @param name (Scalar) Specifies the name of the current facet
-    @param data (Sequence) The data which is to be rendered up in tree form.
-        The structure of the data sequence is quite forgiving.
-        An example of the structure of this would be :
-        <code>
-            [{
-                "name":"Name which will be displayed in tree",
-                "id": 'ID_AS_DEFINED_IN_COUNTS_HASH',
-                "children": [{
-                    "name":"A will be rendered as a tree child of my hash parent",
-                    "id": 'ID_AS_DEFINED_IN_COUNTS_HASH',
-                }]
-            },{
-                "id": 'THIS_ID_WILL_BE_RENDERED_AS_NAME'
-            },"SO_WOULD_THIS_ONE"]
-        </code>
-    @param counts (hash) A hash of ids to count values
--->
-<#macro tree id name data counts>
-    <h1>${name}</h1>
-    <ul class="collapsible-list"><@__treeFacetHelper id data counts/></ul>
-</#macro>
-
-<#macro __treeFacetHelper id data counts>
-    <@__listID data; currentFacet>
-        <li>
-            <@__filterInputBox id currentFacet/>
-            ${currentFacet.name!currentFacet.id} 
-            <span class="facet-count" rel="${currentFacet.id}">(${(counts[currentFacet.id])!0})</span>
-
-            <#if currentFacet.children?has_content>
-                <ul><@__treeFacetHelper id currentFacet.children counts/></ul>
-            </#if>
-        </li>
-    </@__listID>
-</#macro>
-
-
 
 <#--The following macro will render search results of a particular query to a 
     particular search resource. A sequence of facet configurations can be 
@@ -116,18 +74,15 @@
             }]
         </code>
 -->
-<#macro search url display query={} facets=[]>
+<#macro search url display query={} filters=[]>
     <#assign search=json.readURL(url, query)/>
     <form class="nbn-search" nbn-search-node="${url}">    
-        <#--If this search has facets, add these -->
-        <#if search.facetFields??>
-            <@__facets facets search.facetFields/>
-        </#if>
         <div class="controls">
             Search - <input type="text" name="q" value="${RequestParameters.q?first!''}"/>
             Show - <@pagination.show/> 
             <input type="submit" value="Filter"/>
         </div>
+        <#if filters?size != 0><@__renderFilters filters/></#if>
         <table class="results">
             <thead>
                 <tr><@__tableHeader display/></tr>
@@ -162,38 +117,11 @@
     </#list>
 </#macro>
 
-<#-- Start defining the utilities used for creating facets -->
-<#macro __facets facets counts>
-    <ul class="nbn-search-facets">
-        <@__listID facets; facetConfig>
-            <li class="nbn-search-facet" rel="${facetConfig.id}">
-                <@.vars[facetConfig.render!"tree"]
-                    id=facetConfig.id
-                    name=facetConfig.name!facetConfig.id
-                    data=facetConfig.data!counts[facetConfig.id]?keys
-                    counts=counts[facetConfig.id]
-                />
-            </li>
-        </@__listID>
+<#-- Macro to render a row of results -->
+<#macro __renderFilters filters>
+    <ul class="filters">
+        <#list filters as filter>
+            <li><@combo filter.id filter.name filter.data/></li>
+        </#list>
     </ul>
-</#macro>
-
-<#macro __filterInputBox name currentFacet>
-    <input 
-        type="checkbox" 
-        name="${name}" 
-        value="${currentFacet.id}"
-        ${RequestParameters[name]?seq_contains(currentFacet.id)?string('checked="checked"','')}
-    />
-</#macro>
-
-<#macro __listID sequence>
-    <#list sequence as id>
-        <#--Check if the id object is already an id-->
-        <#if id?is_hash>
-            <#nested id>
-        <#else>
-            <#nested {"id" : id}/>
-        </#if>
-    </#list>
 </#macro>

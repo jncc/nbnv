@@ -80,7 +80,7 @@ public class SearchResource extends AbstractResource {
     public SolrResponse searchTaxa(
             @QueryParam("rows") @DefaultValue("20") int rows,
             @QueryParam("start") @DefaultValue("0") int start,
-            @QueryParam("category") List<String> categories,
+            @QueryParam("taxonOutputGroupKey") List<String> outputGroups,
             @QueryParam("languageKey") List<String> languages,
             @QueryParam("sort") String sort,
             @QueryParam("q") String q
@@ -88,9 +88,8 @@ public class SearchResource extends AbstractResource {
         return solr
                 .create()
                 .query(q)
-                .facetOn("category")
                 .filterQuery("record_type:taxon")
-                .addOrFilter("category", categories)
+                .addOrFilter("taxonOutputGroupKey", outputGroups)
                 .sort(sort, SolrQuery.ORDER.asc)
                 .start(start)
                 .rows(rows)

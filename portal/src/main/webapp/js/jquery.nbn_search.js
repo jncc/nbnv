@@ -24,11 +24,11 @@
     $.widget( "ui.nbn_search", {
         _create: function() {
             var me = this, initialSearch = $('input[name="q"]', me.element).val();
-            $('.controls, .paginator', me.element).remove(); //remove the elements which are going to be replace with datatable
             
-            me._dataTable = $('.results', me.element).removeClass("results"); //maintain a reference to the data table (Remove old styling class)
+            this._customFilters = $('.nbn-search [name]');  //store a list of the additional filters
+            this._dataTable = $('.results', me.element).removeClass("results"); //maintain a reference to the data table (Remove old styling class)
             
-            me._dataTable.dataTable( {
+            this._dataTable.dataTable( {
                 "oSearch": {"sSearch": initialSearch},
                 "iDisplayLength": 25,
                 "bJQueryUI": true,
@@ -40,11 +40,7 @@
                     var query = toObject(aoData);
                     oSettings.jqXHR = $.ajax( {
                         "url": sUrl,
-                        "data": {
-                            q: query.sSearch,
-                            start: query.iDisplayStart,
-                            rows: query.iDisplayLength
-                        },
+                        "data": me._generateSearchQuery(query),
                         "success": function(data) {
                             fnCallback.call(this, {
                                 iTotalDisplayRecords: data.header.numFound,
@@ -58,6 +54,23 @@
                     } );
                 }
             } );
+            
+            this._customFilters.change(function() {me._dataTable.fnDraw();}); //register listeners to the custom filters
+            
+            $('.controls, .paginator', me.element).remove(); //remove the elements which are going to be replace with datatable
+        },
+        
+        _generateSearchQuery: function(query) {
+            //generate the additional filters data object
+            var additionalFilters = toObject(this._customFilters.map(function() {
+                return {name: $(this).attr('name'), value: $(this).val()};
+            }));
+            //extend the query with these additional filters
+            return $.extend(additionalFilters, {
+                q: query.sSearch,
+                start: query.iDisplayStart,
+                rows: query.iDisplayLength
+            });
         },
         
         _processResults: function processResults(serverRes) {
@@ -75,39 +88,6 @@
                 toReturn.push(row);
             });
             return toReturn;
-        },
-        
-        _getFacetState: function() {
-            var toReturn=[];
-            $('.nbn-search-facets input[type="checkbox"]', this.element).each(function(i, ele) {
-                var me = $(ele);
-                if(me.is(':checked'))
-                    toReturn.push({name: me.attr("name"), value:me.attr("value")});
-            })
-            return toReturn;
-        },
-        
-        _updateFacets: function() {
-            //reset checkboxes
-            $('.nbn-search-facets input[type="checkbox"]', this.element).prop('checked', false);
-            $.each(this._state.facet, function(i, curr) {
-                $('.nbn-search-facets input'+
-                    '[type="checkbox"][name="'+ curr.name + '"]' +
-                    '[value="'+ curr.value + '"]', this.element
-                ).prop('checked', true);
-            });
-        },
-        
-        _updateCounts: function() {
-            var me=this;
-            $(".facet-count", this.element).html("(0)");// reset all facet fields
-            $.each(this._state.search.facetFields, function(currFacetName, facetData) {
-                $('.nbn-search-facet[rel="'+ currFacetName + '"] .facet-count', me.element)
-                    .each(function() {
-                        var currCount = $(this);
-                        currCount.html("(" + facetData[currCount.attr('rel')] + ")");
-                    })
-            });
         }
     });
 })( jQuery );
