@@ -21,7 +21,7 @@ import uk.org.nbn.nbnv.api.solr.SolrResponse;
 
 @Component
 @Path("/taxa")
-public class TaxonResource extends ObservationResource {
+public class TaxonResource extends AbstractResource {
     
     @Autowired SearchResource searchResource;
     @Autowired TaxonMapper taxonMapper;
@@ -103,16 +103,16 @@ public class TaxonResource extends ObservationResource {
     @Path("/{taxonVersionKey}/siteBoundaries")
     public List<SiteBoundary> getSiteBoundaries(
             @TokenUser() User user, 
-            @QueryParam("startYear") @DefaultValue(defaultStartYear) int startYear, 
-            @QueryParam("endYear") @DefaultValue(defaultEndYear) int endYear, 
-            @QueryParam("datasetKey") @DefaultValue(defaultDatasetKey) List<String> datasetKeys, 
+            @QueryParam("startYear") @DefaultValue(ObservationResourceDefaults.defaultStartYear) int startYear, 
+            @QueryParam("endYear") @DefaultValue(ObservationResourceDefaults.defaultEndYear) int endYear, 
+            @QueryParam("datasetKey") @DefaultValue(ObservationResourceDefaults.defaultDatasetKey) List<String> datasetKeys, 
             @PathParam("taxonVersionKey") List<String> taxa, 
-            @QueryParam("spatialRelationship") @DefaultValue(SPATIAL_RELATIONSHIP_DEFAULT) String spatialRelationship,
-            @QueryParam("featureID") @DefaultValue(defaultFeatureID) String featureID,
-            @QueryParam("sensitive") @DefaultValue(defaultSensitive) Boolean sensitive, 
-            @QueryParam("designation") @DefaultValue(defaultDesignation) String designation, 
-            @QueryParam("taxonOutputGroup") @DefaultValue(defaultTaxonOutputGroup) String taxonOutputGroup, 
-            @QueryParam("gridRef") @DefaultValue(defaultGridRef) String gridRef) {
+            @QueryParam("spatialRelationship") @DefaultValue(ObservationResourceDefaults.SPATIAL_RELATIONSHIP_DEFAULT) String spatialRelationship,
+            @QueryParam("featureID") @DefaultValue(ObservationResourceDefaults.defaultFeatureID) String featureID,
+            @QueryParam("sensitive") @DefaultValue(ObservationResourceDefaults.defaultSensitive) Boolean sensitive, 
+            @QueryParam("designation") @DefaultValue(ObservationResourceDefaults.defaultDesignation) String designation, 
+            @QueryParam("taxonOutputGroup") @DefaultValue(ObservationResourceDefaults.defaultTaxonOutputGroup) String taxonOutputGroup, 
+            @QueryParam("gridRef") @DefaultValue(ObservationResourceDefaults.defaultGridRef) String gridRef) {
         return siteBoundaryMapper.getByTaxonVersionKey(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef);
     }
 }

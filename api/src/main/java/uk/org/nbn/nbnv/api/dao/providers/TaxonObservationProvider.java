@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import static org.apache.ibatis.jdbc.SelectBuilder.*;
 import org.springframework.util.StringUtils;
+import uk.org.nbn.nbnv.api.rest.resources.ObservationResourceDefaults;
 import uk.org.nbn.nbnv.api.rest.resources.TaxonObservationResource;
 
 /**
@@ -68,21 +69,21 @@ public class TaxonObservationProvider {
         BEGIN();
         SELECT("tdd.datasetKey, COUNT(*) querySpecificObservationCount");
         createSelectQueryFromEnhancedRecords(params);
-        INNER_JOIN("TaxonDatasetData tdd ON tode.datasetKey = tdd.datasetKey");
+        INNER_JOIN("TaxonDatasetData tdd ON o.datasetKey = tdd.datasetKey");
         WHERE("tdd.publicResolutionID = 0");
         GROUP_BY("tdd.datasetKey");
         return SQL();
     }
     
     public String filteredSelectSitesForTVK(Map<String, Object> params){
-        String spatialRelationship = TaxonObservationResource.SPATIAL_RELATIONSHIP_DEFAULT;
+        String spatialRelationship = ObservationResourceDefaults.SPATIAL_RELATIONSHIP_DEFAULT;
         if(params.containsKey("spatialRelationship") && params.get("spatialRelationship") != null){
             spatialRelationship = (String)params.get("spatialRelationship");
         }
         BEGIN();
         SELECT("DISTINCT sbd.featureID, sbd.name, sbd.providerKey, sbd.description, sbd.siteBoundaryDatasetKey, sbd.siteBoundaryCategoryID, fd.identifier");
         createSelectQuery(params);
-        if(TaxonObservationResource.SPATIAL_RELATIONSHIP_WITHIN.equals(spatialRelationship)){
+        if(ObservationResourceDefaults.SPATIAL_RELATIONSHIP_WITHIN.equals(spatialRelationship)){
             INNER_JOIN("FeatureContains fc ON o.featureID = fc.containedFeatureID");
             INNER_JOIN("FeatureData fd ON fc.featureID = fd.id");
         }else{
@@ -103,7 +104,7 @@ public class TaxonObservationProvider {
     
     public String filteredSelectEnhancedRecordIDs(Map<String, Object> params) {
         BEGIN();
-        SELECT("tode.id");
+        SELECT("o.id");
         createSelectQueryFromEnhancedRecords(params);
         return SQL();        
     }
@@ -114,23 +115,14 @@ public class TaxonObservationProvider {
         WHERE("o.userID = #{user.id}");
 
         if (params.containsKey("startYear") && (Integer) params.get("startYear") > -1) {
-            WHERE("YEAR(endDate) >= #{startYear}");
+            ProviderHelper.addStartYearFilter((Integer) params.get("startYear"));
         }
 
         if (params.containsKey("endYear") && (Integer) params.get("endYear") > -1) {
-            WHERE("YEAR(startDate) <= #{endYear}");
+            ProviderHelper.addEndYearFilter((Integer) params.get("endYear"));
         }
 
-        if (params.containsKey("datasetKey") && !params.get("datasetKey").equals("")) {
-            if(params.get("datasetKey") instanceof List){
-                List<String> datasetArgs = (List<String>)params.get("datasetKey");
-                if(datasetArgs.size() > 0 && !"".equals(datasetArgs.get(0))){
-                    WHERE("datasetKey IN " + datasetListToCommaList((List<String>) params.get("datasetKey")));
-                }
-            }else{
-                WHERE("o.datasetKey = '" + params.get("datasetKey") + "'");
-            }
-        }
+        ProviderHelper.addDatasetKeysFilter(params);
 
         if (params.containsKey("ptvk") && !params.get("ptvk").equals("")) {
             if(params.get("ptvk") instanceof List){
@@ -144,11 +136,11 @@ public class TaxonObservationProvider {
         }
         
         if(params.containsKey("featureID") && !params.get("featureID").equals("")){
-            String spatialRelationship = TaxonObservationResource.SPATIAL_RELATIONSHIP_DEFAULT;
+            String spatialRelationship = ObservationResourceDefaults.SPATIAL_RELATIONSHIP_DEFAULT;
             if(params.containsKey("spatialRelationship") && params.get("spatialRelationship") != null){
                 spatialRelationship = (String)params.get("spatialRelationship");
             }
-            if(TaxonObservationResource.SPATIAL_RELATIONSHIP_WITHIN.equals(spatialRelationship)){
+            if(ObservationResourceDefaults.SPATIAL_RELATIONSHIP_WITHIN.equals(spatialRelationship)){
                 INNER_JOIN("FeatureContains fc ON fc.containedFeatureID = o.featureID");
                 INNER_JOIN("FeatureData fd ON fd.id = fc.featureID");
                 WHERE("fd.identifier = #{featureID}");
@@ -182,27 +174,18 @@ public class TaxonObservationProvider {
     
     private void createSelectQueryFromEnhancedRecords(Map<String, Object> params) {
 
-        FROM("TaxonObservationDataEnhanced tode");
+        FROM("TaxonObservationDataEnhanced o");
 
         if (params.containsKey("startYear") && (Integer) params.get("startYear") > -1) {
-            WHERE("YEAR(endDate) >= #{startYear}");
+            ProviderHelper.addStartYearFilter((Integer) params.get("startYear"));
         }
 
         if (params.containsKey("endYear") && (Integer) params.get("endYear") > -1) {
-            WHERE("YEAR(startDate) <= #{endYear}");
+            ProviderHelper.addEndYearFilter((Integer) params.get("endYear"));
         }
 
-        if (params.containsKey("datasetKey") && !params.get("datasetKey").equals("")) {
-            if(params.get("datasetKey") instanceof List){
-                List<String> datasetArgs = (List<String>)params.get("datasetKey");
-                if(datasetArgs.size() > 0 && !"".equals(datasetArgs.get(0))){
-                    WHERE("tode.datasetKey IN " + datasetListToCommaList((List<String>) params.get("datasetKey")));
-                }
-            }else{
-                WHERE("tode.datasetKey = '" + params.get("datasetKey") + "'");
-            }
-        }
-
+        ProviderHelper.addDatasetKeysFilter(params);
+        
         if (params.containsKey("ptvk") && !params.get("ptvk").equals("")) {
             if(params.get("ptvk") instanceof List){
                 List<String> ptvkArgs = (List<String>)params.get("ptvk");
@@ -215,16 +198,16 @@ public class TaxonObservationProvider {
         }
         
         if(params.containsKey("featureID") && !params.get("featureID").equals("")){
-            String spatialRelationship = TaxonObservationResource.SPATIAL_RELATIONSHIP_DEFAULT;
+            String spatialRelationship = ObservationResourceDefaults.SPATIAL_RELATIONSHIP_DEFAULT;
             if(params.containsKey("spatialRelationship") && params.get("spatialRelationship") != null){
                 spatialRelationship = (String)params.get("spatialRelationship");
             }
-            if(TaxonObservationResource.SPATIAL_RELATIONSHIP_WITHIN.equals(spatialRelationship)){
-                INNER_JOIN("FeatureContains fc ON fc.containedFeatureID = tode.featureID");
+            if(ObservationResourceDefaults.SPATIAL_RELATIONSHIP_WITHIN.equals(spatialRelationship)){
+                INNER_JOIN("FeatureContains fc ON fc.containedFeatureID = o.featureID");
                 INNER_JOIN("FeatureData fd ON fd.id = fc.featureID");
                 WHERE("fd.identifier = #{featureID}");
             }else{
-                INNER_JOIN("FeatureOverlaps fo ON fo.overlappedFeatureID = tode.featureID");
+                INNER_JOIN("FeatureOverlaps fo ON fo.overlappedFeatureID = o.featureID");
                 INNER_JOIN("FeatureData fd ON fd.id = fo.featureID");
                 WHERE("fd.identifier = #{featureID}");
             }
@@ -235,30 +218,20 @@ public class TaxonObservationProvider {
         }
             
         if (params.containsKey("designation") && !"".equals((String) params.get("designation"))) {
-            INNER_JOIN("DesignationTaxonData dtd ON dtd.pTaxonVersionKey = tode.pTaxonVersionKey");
+            INNER_JOIN("DesignationTaxonData dtd ON dtd.pTaxonVersionKey = o.pTaxonVersionKey");
             WHERE("dtd.code = #{designation}");
         }
         
         if (params.containsKey("gridRef") && !"".equals((String) params.get("gridRef"))) {
-            INNER_JOIN("GridTree gt ON gt.featureID = tode.featureID");
+            INNER_JOIN("GridTree gt ON gt.featureID = o.featureID");
             INNER_JOIN("GridSquareFeatureData gsfd ON gsfd.id = gt.parentFeatureID");
             WHERE("gsfd.label = #{gridRef}");
         }
         
         if (params.containsKey("taxonOutputGroup") && !"".equals((String) params.get("taxonOutputGroup"))) {
-            INNER_JOIN("TaxonData td ON td.taxonVersionKey = tode.pTaxonVersionKey");
+            INNER_JOIN("TaxonData td ON td.taxonVersionKey = o.pTaxonVersionKey");
             WHERE("td.taxonOutputGroupKey =  #{taxonOutputGroup}");
         }
-    }
-    
-    private String datasetListToCommaList(List<String> list) {
-        for (String d : list) {
-            if (!d.matches("[A-Z0-9]{8}")) {
-                throw new IllegalArgumentException("Non-dataset key in dataset argument: " + d);
-            }
-        }
-
-        return "('" + StringUtils.collectionToDelimitedString(list, "','") + "')";
     }
 
     private String taxaListToCommaList(List<String> list) {
