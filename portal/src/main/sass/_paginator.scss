@@ -34,19 +34,11 @@ form.nbn-search {
         font-size:0.8em;
     }
     
-    .controls, .results {
+    .controls {
         float:left;
         width: 651px;
     }
 
-    .results > li {
-        @include border-radius(15px);
-        padding: 1em;
-        background-color: skyBlue;
-        margin: 1em;
-        list-style: none;
-        font-weight: bold;
-    }
     .controls   { text-align: right; }
     .paginator  { float: right; clear: both; }
 }

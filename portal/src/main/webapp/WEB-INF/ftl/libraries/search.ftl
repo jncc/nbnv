@@ -116,7 +116,7 @@
             }]
         </code>
 -->
-<#macro search url query={} facets=[]>
+<#macro search url display query={} facets=[]>
     <#assign search=json.readURL(url, query)/>
     <form class="nbn-search" nbn-search-node="${url}">    
         <#--If this search has facets, add these -->
@@ -128,13 +128,38 @@
             Show - <@pagination.show/> 
             <input type="submit" value="Filter"/>
         </div>
-        <ol class="results">
-            <#list search.results as result>
-                <li><#nested result></li>
-            </#list>
-        </ol>
+        <table class="results">
+            <thead>
+                <tr><@__tableHeader display/></tr>
+            </thead>
+            <tbody>
+                <#list search.results as result>
+                    <tr><@__renderRow result display/></tr>
+                </#list>
+            </tbody>
+        </table>
         <@pagination.paginator search/>
     </form>
+</#macro>
+
+<#-- Macro to create the header of the table -->
+<#macro __tableHeader display>
+    <#list display as column>
+        <th result-attr="${column.attr}" <#if column.link??>result-link="${column.link}"</#if>>${column.title}</th>
+    </#list>
+</#macro>
+
+<#-- Macro to render a row of results -->
+<#macro __renderRow result display>
+    <#list display as column>
+        <td>
+            <#if column.link??>
+                <a href="${result[column.link]}">${result[column.attr]!""}</a>
+            <#else>
+                ${result[column.attr]!""}
+            </#if>
+        </td>
+    </#list>
 </#macro>
 
 <#-- Start defining the utilities used for creating facets -->

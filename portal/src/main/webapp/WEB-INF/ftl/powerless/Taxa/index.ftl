@@ -11,14 +11,18 @@ is not a finished product.
     </@markdown>
 
     <@search.search 
-        url="${api}/taxa" 
+        url="${api}/taxa"
+        display=[
+            {"title":"Taxon", "attr":"name", "link":"href"},
+            {"title":"Common Name", "attr":"commonName"},
+            {"title":"Authority", "attr":"authority"},
+            {"title":"Rank", "attr":"rank"}
+        ]
         query=RequestParameters 
         facets=[{
                 "name": "Taxon Navigation Group",	  	
                 "id":"category",
-	  	"render" : "combo",
+                "render" : "combo",
                 "data":json.readURL("${api}/taxonNavigationGroups/topLevels")
-            }]; result>
-        <a href="${result.href}">${taxon_utils.getShortName(result)}</a>
-    </@search.search>
+            }]/>
 </@template.master>
