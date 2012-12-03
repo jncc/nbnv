@@ -63,9 +63,14 @@ body {
         text-decoration: none;
     }
     
-    ul, ol {
-        margin-left: 10px;
+    ul {
+        margin-left: 2em;
         list-style-type: circle;
+    }
+
+    ol {
+        margin: 1em 0 1em 2em;
+        list-style-type: decimal;
     }
     
     h1 {
@@ -99,7 +104,7 @@ body {
         margin: 5px 0px 10px 0px;
     }
         
-    p { margin-top: 1em;}
+    p { margin: 1em 0; }
 
     fieldset{
         border: 2px groove threedface;
