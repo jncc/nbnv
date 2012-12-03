@@ -6,7 +6,7 @@
 2.  The material, data and/or information you access may be subject to Specific 
     Terms of Access and/or Use imposed by the Data Provider. Where Specific 
     Terms of Access and/or Use have been identified for a dataset they are 
-    provided within the Â‘Access ConstraintÂ’ and/or Â‘Use ConstraintÂ’ field of 
+    provided within the "Access Constraint" and/or "Use Constraint" field of 
     the Metadata for that dataset. If there is any conflict or inconsistency 
     between these Gateway Terms & Conditions and the Specific Terms of Access 
     and/or Use, the latter will prevail, but only in relation to the particular 
