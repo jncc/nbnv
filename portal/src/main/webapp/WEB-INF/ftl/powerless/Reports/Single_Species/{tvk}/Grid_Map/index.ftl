@@ -64,6 +64,7 @@
             <fieldset>
                 <legend>Data download</legend>
                 <button id="nbn-grid-map-squares-download">Download Squares</button>
+                <@downloadTermsDialogue/>
             </fieldset>
     </div>
 </#macro>
@@ -103,4 +104,10 @@
             <option value="${viceCounty.identifier}">${viceCounty.name}</option>
         </#list>
     </select>
+</#macro>
+
+<#macro downloadTermsDialogue>
+    <div id="nbn-download-terms" title="Data download terms and conditions">
+        <@mdcontent.dataDownloadTerms/>
+    </div>
 </#macro>
