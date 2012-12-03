@@ -248,22 +248,36 @@
     }
     
     function setupDownloadSquaresButton(){
-        $('#nbn-grid-map-squares-download').click(function(){
-            var $form = $('#nbn-grid-map-form');
-            applyRules();
-            nbn.portal.reports.utils.datasetfields.doDeselectDatasetKeys();
-            var tvk = $('#tvk').val(); 
-            var keyValuePairs = nbn.portal.reports.utils.forms.getKeyValuePairsFromForm($form);
-            var keyValuePairsWithBusinessLogic = getKeyValuePairsWithBusinessLogic(keyValuePairs);
-            var queryString = nbn.portal.reports.utils.forms.getQueryStringFromKeyValuePairs(keyValuePairsWithBusinessLogic, true);
-            var url = $form.attr('api-server') + '/gridMapSquares/' + tvk + queryString;
-            nbn.portal.reports.utils.datasetfields.doSelectDatasetKeys();
-            window.location = url;
-            return false;
+        $('#nbn-grid-map-squares-download').click(function(e){
+            $('#nbn-download-terms').dialog({
+                modal: true,
+                width: 800,
+                height: 450,
+                buttons: {
+                    'Accept': function(){
+                        var $form = $('#nbn-grid-map-form');
+                        applyRules();
+                        nbn.portal.reports.utils.datasetfields.doDeselectDatasetKeys();
+                        var tvk = $('#tvk').val(); 
+                        var keyValuePairs = nbn.portal.reports.utils.forms.getKeyValuePairsFromForm($form);
+                        var keyValuePairsWithBusinessLogic = getKeyValuePairsWithBusinessLogic(keyValuePairs);
+                        var queryString = nbn.portal.reports.utils.forms.getQueryStringFromKeyValuePairs(keyValuePairsWithBusinessLogic, true);
+                        var url = $form.attr('api-server') + '/gridMapSquares/' + tvk + queryString;
+                        nbn.portal.reports.utils.datasetfields.doSelectDatasetKeys();
+                        $(this).dialog("close");
+                        window.location = url;
+                    },
+                    'Cancel': function(){
+                        $(this).dialog("close");
+                    }
+                }
+            });
+            e.preventDefault();
         });
     }
 
     $(document).ready(function(){
+        $('#nbn-download-terms').hide();
         setupFormOnChange();
         setupColourPickers();
         setupRegionVCInteractions();
