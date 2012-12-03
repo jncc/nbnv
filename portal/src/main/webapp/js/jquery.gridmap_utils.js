@@ -252,7 +252,14 @@
             var $form = $('#nbn-grid-map-form');
             applyRules();
             nbn.portal.reports.utils.datasetfields.doDeselectDatasetKeys();
-            alert('nearly done ;), just need to modify this to call api service: ' + getURL($form));
+            var tvk = $('#tvk').val(); 
+            var keyValuePairs = nbn.portal.reports.utils.forms.getKeyValuePairsFromForm($form);
+            var keyValuePairsWithBusinessLogic = getKeyValuePairsWithBusinessLogic(keyValuePairs);
+            var queryString = nbn.portal.reports.utils.forms.getQueryStringFromKeyValuePairs(keyValuePairsWithBusinessLogic, true);
+            var url = $form.attr('api-server') + '/gridMapSquares/' + tvk + queryString;
+            nbn.portal.reports.utils.datasetfields.doSelectDatasetKeys();
+            window.location = url;
+            return false;
         });
     }
 
