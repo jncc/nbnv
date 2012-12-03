@@ -44,12 +44,12 @@ provided for any dataset each time you access and use them.
     <h1>Contents</h1>
     <ol>
         <#list contents as currSection>
-            <li><a title="${currSection.description}" href="#section-${currSection_index}">${currSection.title}</a></li>
+            <li><a title="${currSection.description}" href="#${currSection.title?replace(" ", "_")}">${currSection.title}</a></li>
         </#list>
     </ol>
 
     <#list contents as currSection>
-        <h2 id="section-${currSection_index}">${currSection.title}</h2>
+        <h2 id="${currSection.title?replace(" ", "_")}">${currSection.title}</h2>
         <@markdown file="${currSection.file}"/>
     </#list>
 </@template.master>
