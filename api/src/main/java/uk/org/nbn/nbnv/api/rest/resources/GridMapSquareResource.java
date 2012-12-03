@@ -43,7 +43,7 @@ public class GridMapSquareResource extends AbstractResource {
         return new StreamingOutput() {
             public void write(OutputStream out) throws IOException, WebApplicationException {
                 ZipOutputStream zip = new ZipOutputStream(out);
-                addReadMe(zip, ptvk);
+                addReadMe(zip, ptvk, resolution);
                 addGridRefs(zip, user, ptvk, resolution, bands, datasetKeys);
                 addDatasetMetadata(zip, user, ptvk, resolution, bands, datasetKeys);
                 zip.flush();
@@ -52,13 +52,15 @@ public class GridMapSquareResource extends AbstractResource {
         };
     }
 
-    private void addReadMe(ZipOutputStream zip, String ptvk) throws IOException {
+    private void addReadMe(ZipOutputStream zip, String ptvk, String resolution) throws IOException {
         Taxon taxon = taxonMapper.getTaxon(ptvk);
         DateFormat dateFormat = new SimpleDateFormat("yyyy/mmm/dd HH:mm:ss");
         zip.putNextEntry(new ZipEntry("readme.txt"));
         writeln(zip, "Grid map square download from the NBN Gateway");
-        writeln(zip, taxon.getName() + " (authority: " + taxon.getAuthority() + ")");
-        writeln(zip, dateFormat.format(new Date()));
+        writeln(zip, "---------------------------------------------");
+        writeln(zip, "Taxon: " + taxon.getName() + " (authority: " + taxon.getAuthority() + ")");
+        writeln(zip, "Date and time of download: " + dateFormat.format(new Date()));
+        writeln(zip, "Resolution: " + resolution);
         zip.flush();
     }
 
@@ -86,8 +88,17 @@ public class GridMapSquareResource extends AbstractResource {
     private void addDatasetMetadata(ZipOutputStream zip, User user, String ptvk, String resolution, List<String> bands, List<String> datasetKeys) throws IOException {
         List<Dataset> datasets = gridMapSquareMapper.getGridMapDatasets(user, ptvk, resolution, getStartYear(bands), getEndYear(bands), datasetKeys);
         zip.putNextEntry(new ZipEntry("datasetmetadata.txt"));
+        writeln(zip, "Datasets that contributed to this download");
         for(Dataset dataset : datasets){
-            writeln(zip, dataset.getTitle());
+        writeln(zip, "------------------------------------------");
+        writeln(zip, "");
+            writeln(zip, "Title: " + dataset.getTitle());
+            writeln(zip, "Dataset key: " + dataset.getKey());
+            writeln(zip, "Description: " + dataset.getDescription());
+            writeln(zip, "Dataset owner: " + dataset.getOrganisationName());
+            if(dataset.getUseConstraints() != null && !"".equals(dataset.getUseConstraints())){
+                writeln(zip, "Use constraints: " + dataset.getUseConstraints());
+            }
         }
         zip.flush();
     }
