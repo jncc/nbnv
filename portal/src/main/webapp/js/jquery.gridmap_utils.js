@@ -130,28 +130,36 @@
         return digits[1] + '#' + rgb.toString(16);
     };
     
-    function updateResolutionDropDown(form){
+    function updateResolutionDropDown($form){
         var tvk = $('#tvk').val();
         var feature = $('#nbn-vice-county-selector').val().toUpperCase();
-        var url = form.attr('gis-server') + '/SingleSpecies/' + tvk + '/resolutions?callback=?';
+        var url = $form.attr('gis-server') + '/SingleSpecies/' + tvk + '/resolutions?callback=?';
         if(feature != 'NONE'){
             url += '&feature=' + feature;
         }
-        $.getJSON(url, function(json){
+        return $.getJSON(url, function(json){
             var resolutions = json[options.imagesize];
-            var resolutionSelect = $('#nbn-grid-map-resolution');
+            var $resolutionSelect = $('#nbn-grid-map-resolution');
             //Get the currently selected option, if possible it will be used to set the selected option
-            var selectedResolution = resolutionSelect.val();
-            resolutionSelect.find('option').remove();
+            var selectedResolution = $resolutionSelect.val();
+            $resolutionSelect.find('option').remove();
+            var isSelectedMatchFound = false;
             $.each(resolutions, function(index, resolution){
                 var selected = '';
                 if(resolution == selectedResolution){
                     selected = ' selected="selected"';
+                    isSelectedMatchFound = true;
                 }
-                resolutionSelect.append(
+                $resolutionSelect.append(
                     $('<option' + selected + '></option>').val(resolution).html(resolution)
                     );
             });
+            //Default to 10km
+            if(!isSelectedMatchFound){
+                $resolutionSelect.val("10km");
+                $('#nbn-grid-map-resolution-download-text').text($resolutionSelect.val());
+
+            }
         });
     }
     
@@ -202,22 +210,22 @@
     }
     
     function doOnChange(){
-        var form = $('#nbn-grid-map-form');
+        var $form = $('#nbn-grid-map-form');
             
         //Apply any rules eg, must have at least one year band selected
         applyRules();
             
         //Deselect datasets if all are selected - requires jquery.dataset-selector-utils.js
         nbn.portal.reports.utils.datasetfields.doDeselectDatasetKeys();
-            
-        //Do map refresh
-        $('#nbn-grid-map-busy-image').show();
-        $('#nbn-grid-map-image').attr('src',getURL(form));
-            
-        //Turn on all datasets if they are all off
-        nbn.portal.reports.utils.datasetfields.doSelectDatasetKeys();
-            
-        updateResolutionDropDown(form);
+        
+        updateResolutionDropDown($form).complete(function(){
+            //Do map refresh
+            $('#nbn-grid-map-busy-image').show();
+            $('#nbn-grid-map-image').attr('src',getURL($form));
+
+            //Turn on all datasets if they are all off
+            nbn.portal.reports.utils.datasetfields.doSelectDatasetKeys();
+        })   
     }
     
     function setupFormOnChange(){
@@ -229,6 +237,10 @@
                 if(nbn.portal.reports.utils.forms.isGridMapFormFieldValid($input)){
                     doOnChange();
                 }
+            }
+            //Update resolution text used on data download section
+            if($(this).attr('id') == 'nbn-grid-map-resolution'){
+                $('#nbn-grid-map-resolution-download-text').text($(this).val());
             }
         });
     }

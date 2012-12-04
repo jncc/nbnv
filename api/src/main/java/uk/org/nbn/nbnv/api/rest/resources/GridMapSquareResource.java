@@ -58,7 +58,7 @@ public class GridMapSquareResource extends AbstractResource {
         zip.putNextEntry(new ZipEntry("readme.txt"));
         writeln(zip, "Grid map square download from the NBN Gateway");
         writeln(zip, "---------------------------------------------");
-        writeln(zip, "Taxon: " + taxon.getName() + " (authority: " + taxon.getAuthority() + ")");
+        writeln(zip, "Taxon: " + taxon.getName() + " " + taxon.getAuthority());
         writeln(zip, "Date and time of download: " + dateFormat.format(new Date()));
         writeln(zip, "Resolution: " + resolution);
         zip.flush();
