@@ -50,7 +50,7 @@ CREATE TABLE TaxonGroupData(
 
 CREATE TABLE TaxonData(
 	taxonVersionKey char(16) NOT NULL,
-	prefnameTaxonVersionKey char(16) NOT NULL,
+	pTaxonVersionKey char(16) NOT NULL,
 	name varchar(8000) NULL,
 	authority varchar(8000) NULL,
 	lang char(2) NULL,
@@ -198,3 +198,8 @@ CREATE TABLE TaxonOutputGroupData(
         PRIMARY KEY ("key")
 );
 
+CREATE TABLE TaxonRecordCountData (
+    pTaxonVersionKey char(16) NOT NULL,
+    gatewayRecordCount int NOT NULL,
+    PRIMARY KEY (pTaxonVersionKey)
+);

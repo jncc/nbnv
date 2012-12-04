@@ -11,8 +11,9 @@ import uk.org.nbn.nbnv.api.model.TaxonWebLink;
 import uk.org.nbn.nbnv.api.model.TaxonWithDatasetStats;
 
 public interface TaxonMapper {
-    @Select("SELECT t.*, ct.name AS commonName, tog.name AS taxonOutputGroupName " +
+    @Select("SELECT t.*, ct.name AS commonName, tog.name AS taxonOutputGroupName, trc.gatewayRecordCount " +
             "FROM TaxonData t " +
+                "LEFT JOIN TaxonRecordCountData trc ON trc.pTaxonVersionKey = t.pTaxonVersionKey " +
                 "INNER JOIN TaxonOutputGroupData tog ON tog.\"key\" = t.taxonOutputGroupKey " +
                 "LEFT JOIN TaxonData ct ON ct.taxonVersionKey = t.commonNameTaxonVersionKey " +
             "WHERE t.taxonVersionKey = #{id}")

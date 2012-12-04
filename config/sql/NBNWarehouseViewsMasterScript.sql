@@ -560,6 +560,28 @@ GO
 
 GO
 
+CREATE VIEW [dbo].[TaxonRecordCountData] WITH SCHEMABINDING AS (
+	SELECT
+		t.pTaxonVersionKey
+		, COUNT_BIG(*) as gatewayRecordCount
+	FROM [dbo].[Taxon] t 
+	INNER JOIN [dbo].[TaxonObservation] obs ON obs.taxonVersionKey = t.taxonVersionKey 
+	GROUP BY t.pTaxonVersionKey 
+);
+
+GO
+
+CREATE UNIQUE CLUSTERED INDEX [cidx_TaxonRecordCountData] ON [dbo].[TaxonRecordCountData]
+(
+	[pTaxonVersionKey] ASC
+);
+
+GO
+
+--EXEC usp_dev_AddViewToPublication 'TaxonRecordCountData'
+
+GO
+
 /*
  *
  * Designation Views
