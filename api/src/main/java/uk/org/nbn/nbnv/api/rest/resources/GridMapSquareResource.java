@@ -55,7 +55,7 @@ public class GridMapSquareResource extends AbstractResource {
     private void addReadMe(ZipOutputStream zip, String ptvk, String resolution) throws IOException {
         Taxon taxon = taxonMapper.getTaxon(ptvk);
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MMM-dd HH:mm:ss");
-        zip.putNextEntry(new ZipEntry("readme.txt"));
+        zip.putNextEntry(new ZipEntry("ReadMe.txt"));
         writeln(zip, "Grid map square download from the NBN Gateway");
         writeln(zip, "---------------------------------------------");
         writeln(zip, "Taxon: " + taxon.getName() + " " + taxon.getAuthority());
@@ -77,8 +77,9 @@ public class GridMapSquareResource extends AbstractResource {
     private void addGridRefsForYearBand(ZipOutputStream zip, User user, String ptvk, String resolution, String band, List<String> datasetKeys) throws IOException {
         //Example year band: 2000-2012,ff0000,000000
         String yearRange = band.substring(0,band.indexOf(","));
-        zip.putNextEntry(new ZipEntry("gridrefs_" + yearRange + ".csv"));
+        zip.putNextEntry(new ZipEntry("GridSquares_" + yearRange + ".csv"));
         List<GridMapSquare> gridMapSquares = gridMapSquareMapper.getGridMapSquares(user, ptvk, resolution, band, datasetKeys);
+        writeln(zip, "GridSquares");
         for (GridMapSquare gridMapSquare : gridMapSquares) {
             writeln(zip, gridMapSquare.getGridRef());
         }
@@ -87,7 +88,7 @@ public class GridMapSquareResource extends AbstractResource {
 
     private void addDatasetMetadata(ZipOutputStream zip, User user, String ptvk, String resolution, List<String> bands, List<String> datasetKeys) throws IOException {
         List<Dataset> datasets = gridMapSquareMapper.getGridMapDatasets(user, ptvk, resolution, getStartYear(bands), getEndYear(bands), datasetKeys);
-        zip.putNextEntry(new ZipEntry("datasetmetadata.txt"));
+        zip.putNextEntry(new ZipEntry("DatasetMetadata.txt"));
         writeln(zip, "Datasets that contributed to this download");
         for(Dataset dataset : datasets){
         writeln(zip, "------------------------------------------");
