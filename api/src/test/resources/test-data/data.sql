@@ -143,8 +143,14 @@ INSERT INTO TaxonOutputGroupData (
 );
 
 INSERT INTO TaxonData (
-    taxonVersionKey, prefnameTaxonVersionKey, name, authority, lang, taxonOutputGroupKey
+    taxonVersionKey, pTaxonVersionKey, name, authority, lang, taxonOutputGroupKey
 ) VALUES (
     'ABFG000000100001', 'ABFG000000100001', 'Annulohypoxylon multiforme var. multiforme', 
     '(Fr.) Y.M. Ju, J.D. Rogers & H.M. Hsieh', 'la', 'NHMSYS0000629144'
+);
+
+INSERT INTO TaxonRecordCountData (
+    pTaxonVersionKey, gatewayRecordCount
+) VALUES (
+    'ABFG000000100001', 8008135
 );

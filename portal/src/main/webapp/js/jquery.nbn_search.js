@@ -80,7 +80,8 @@
             $.each(serverRes, function(i, val) {
                 var row = [];
                 $('thead th', _me.element).each(function() {
-                    var ele = $(this), label = val[ele.attr(RESULT_ATTR)] || "";
+                    var ele = $(this), label = val[ele.attr(RESULT_ATTR)];
+                    if(label == null) label = "";
                     row.push( 
                         ele.attr(RESULT_LINK_ATTR) //if the element has a label
                             ? '<a href="' + val[ele.attr(RESULT_LINK_ATTR)] + '">'+ label +'</a>'

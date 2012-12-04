@@ -16,7 +16,8 @@ is not a finished product.
             {"title":"Taxon", "attr":"name", "link":"href"},
             {"title":"Authority", "attr":"authority"},
             {"title":"Group", "attr":"taxonOutputGroupName"},
-            {"title":"Rank", "attr":"rank"}
+            {"title":"Rank", "attr":"rank"},
+            {"title":"Record Count", "attr":"gatewayRecordCount"}
         ]
         query=RequestParameters 
         filters=[{
