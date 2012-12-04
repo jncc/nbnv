@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.org.nbn.nbnv.api.dao.warehouse.FeatureMapper;
 import uk.org.nbn.nbnv.api.model.Feature;
+import uk.org.nbn.nbnv.api.solr.SolrResolver;
 
 /**
  * A jersey resource which provides bounding boxes for certain features on the 
@@ -23,6 +24,7 @@ public class FeatureResource extends AbstractResource {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
+    @SolrResolver("FEATURE")
     public Feature getFeature(@PathParam("id") String featureId) {
         return featureMapper.getFeature(featureId);
     }

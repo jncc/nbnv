@@ -17,6 +17,7 @@ import uk.org.nbn.nbnv.api.model.Taxon;
 import uk.org.nbn.nbnv.api.model.TaxonNavigationGroup;
 import uk.org.nbn.nbnv.api.model.User;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
+import uk.org.nbn.nbnv.api.solr.SolrResolver;
 
 @Component
 @Path("/designations")
@@ -36,6 +37,7 @@ public class DesignationResource extends AbstractResource {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
+    @SolrResolver("DESIGNATION")
     public Designation getDesignation(@PathParam("id") String id) {
         return designationMapper.selectByID(id); 
     }

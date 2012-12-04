@@ -18,6 +18,7 @@ import uk.org.nbn.nbnv.api.model.TaxonDesignation;
 import uk.org.nbn.nbnv.api.model.TaxonWebLink;
 import uk.org.nbn.nbnv.api.model.User;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
+import uk.org.nbn.nbnv.api.solr.SolrResolver;
 import uk.org.nbn.nbnv.api.solr.SolrResponse;
 
 @Component
@@ -33,6 +34,7 @@ public class TaxonResource extends AbstractResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8") 
     @Path("{taxonVersionKey}")
+    @SolrResolver("TAXON")
     public Taxon getTaxon(@PathParam("taxonVersionKey") String taxonVersionKey) {
         return taxonMapper.getTaxon(taxonVersionKey);
     }

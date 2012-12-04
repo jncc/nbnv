@@ -17,6 +17,7 @@ import uk.org.nbn.nbnv.api.model.Dataset;
 import uk.org.nbn.nbnv.api.model.User;
 import uk.org.nbn.nbnv.api.model.meta.OpResult;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenDatasetAdminUser;
+import uk.org.nbn.nbnv.api.solr.SolrResolver;
 
 @Component
 @Path("/datasets")
@@ -33,6 +34,7 @@ public class DatasetResource extends AbstractResource {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
+    @SolrResolver("DATASET")
     public Dataset getDatasetByID(@PathParam("id") String id){
         return datasetMapper.selectByDatasetKey(id);
     }

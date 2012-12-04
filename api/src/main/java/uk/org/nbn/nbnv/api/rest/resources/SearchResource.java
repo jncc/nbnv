@@ -94,6 +94,7 @@ public class SearchResource extends AbstractResource {
                 .filterQuery("record_type:taxon")
                 .addOrFilter("taxonOutputGroupKey", outputGroups)
                 .sort(sort, order)
+                .boostFunction("ord(gatewayRecordCount)")
                 .start(start)
                 .rows(rows)
                 .response();
