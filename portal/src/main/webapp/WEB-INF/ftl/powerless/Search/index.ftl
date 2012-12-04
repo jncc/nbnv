@@ -13,7 +13,8 @@ is not a finished product.
     <@search.search 
         url="${api}/search"
         display=[
-            {"title":"Result", "attr":"name", "link":"href"}
+            {"title":"Result", "attr":"title", "link":"href"},
+            {"title":"Type", "attr":"entityType"}
         ]
         query=RequestParameters/>
 </@template.master>

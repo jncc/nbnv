@@ -17,13 +17,17 @@ import org.apache.solr.common.util.NamedList;
 public class SolrResponse {
     
     private final QueryResponse toWrap;
-    private final List<Object> results;
+    private final List<SolrResponseDocument<?>> results;
     
     public SolrResponse(QueryResponse toWrap, Solr solrHelper) {
         this.toWrap = toWrap;
-        this.results = new ArrayList<Object>();
+        this.results = new ArrayList<SolrResponseDocument<?>>();
         for(SolrDocument currDocument : toWrap.getResults()) {
-            results.add(solrHelper.resolveSolrResult((String)currDocument.get("record_id")));
+            results.add(new SolrResponseDocument<Object>(
+                solrHelper.resolveSolrResult((String)currDocument.get("record_id")),
+                (String)currDocument.get("record_type"),
+                (String)currDocument.get("name")
+            ));
         }
     }
     
@@ -31,7 +35,7 @@ public class SolrResponse {
      * The following method will process the values of api_href and portal_href
      * @return 
      */
-    public List<Object> getResults() {
+    public List<SolrResponseDocument<?>> getResults() {
         return results;
     }
     

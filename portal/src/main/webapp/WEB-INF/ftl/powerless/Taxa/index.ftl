@@ -14,7 +14,6 @@ is not a finished product.
         url="${api}/taxa"
         display=[
             {"title":"Taxon", "attr":"name", "link":"href"},
-            {"title":"Common Name", "attr":"commonName"},
             {"title":"Authority", "attr":"authority"},
             {"title":"Output Group", "attr":"taxonOutputGroupName"},
             {"title":"Rank", "attr":"rank"}
