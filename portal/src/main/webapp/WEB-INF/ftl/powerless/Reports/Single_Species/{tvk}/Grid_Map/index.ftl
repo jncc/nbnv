@@ -64,7 +64,7 @@
             </fieldset>
             <fieldset>
                 <legend>Data download</legend>
-                <button id="nbn-grid-map-squares-download">Download Squares</button>
+                <button id="nbn-grid-map-squares-download">Download</button> all <span id="nbn-grid-map-resolution-download-text">10km</span> squares within selected dates
                 <@downloadTermsDialogue/>
             </fieldset>
     </div>
