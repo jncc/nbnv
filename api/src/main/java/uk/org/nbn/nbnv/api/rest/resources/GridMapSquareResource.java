@@ -54,7 +54,7 @@ public class GridMapSquareResource extends AbstractResource {
 
     private void addReadMe(ZipOutputStream zip, String ptvk, String resolution) throws IOException {
         Taxon taxon = taxonMapper.getTaxon(ptvk);
-        DateFormat dateFormat = new SimpleDateFormat("yyyy/mmm/dd HH:mm:ss");
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MMM-dd HH:mm:ss");
         zip.putNextEntry(new ZipEntry("readme.txt"));
         writeln(zip, "Grid map square download from the NBN Gateway");
         writeln(zip, "---------------------------------------------");
@@ -102,6 +102,10 @@ public class GridMapSquareResource extends AbstractResource {
             writeln(zip, "");
             if(dataset.getUseConstraints() != null && !"".equals(dataset.getUseConstraints())){
                 writeln(zip, "Use constraints: " + dataset.getUseConstraints());
+                writeln(zip, "");
+            }
+            if(dataset.getAccessConstraints() != null && !"".equals(dataset.getAccessConstraints())){
+                writeln(zip, "Access constraints: " + dataset.getUseConstraints());
                 writeln(zip, "");
             }
         }

@@ -236,6 +236,9 @@
     function hideBusyImageOnMapLoad(){
         $('#nbn-grid-map-image').load(function(){
             $('#nbn-grid-map-busy-image').hide();
+            if($('#nbn-grid-map-container').hasClass('nbn-map-image-container-startup-height')){
+                $('#nbn-grid-map-container').removeClass('nbn-map-image-container-startup-height');
+            }
         });
     }
 

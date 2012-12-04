@@ -12,6 +12,7 @@
     <form target="" id="nbn-grid-map-form" gis-server="${gis}" api-server="${api}">
         <@gridMapFilters/>
         <@gridMapContents tvk=tvk/>
+        <@mdcontent.smallCaveat/>
         <@report_utils.dataset_table providersWithQueryStats=providersWithQueryStats requestParameters=RequestParameters/>
     </form>
     <br><br>
@@ -70,7 +71,7 @@
 </#macro>
 
 <#macro gridMapContents tvk>
-    <div class="tabbed" id="nbn-grid-map-container">
+    <div class="tabbed nbn-map-image-container-startup-height" id="nbn-grid-map-container">
         <h3>Map</h3>
         <img id="nbn-grid-map-busy-image" src='/img/ajax-loader-medium.gif'>
         <img id="nbn-grid-map-image" class="nbn-centre-element">

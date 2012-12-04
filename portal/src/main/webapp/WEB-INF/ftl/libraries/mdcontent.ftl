@@ -14,3 +14,12 @@ Before downloading data, please ensure that you understand and accept the [NBN G
 *    Many data providers restrict public access to datasets by 'blurring' the resolution. If you require better access, please apply to the data provider before downloading the records.
     </@markdown>
 </#macro>
+
+<#macro smallCaveat>
+    <div class="nbn-caveat">
+        <@markdown>
+# IMPORTANT NOTICE TO THOSE INTENDING TO USE THESE DATA FOR RESEARCH, PLANNING OR LAND MANAGEMENT PURPOSES
+You may not have full access to all the datasets relating to this query. Your current level of access can be identified in the list provided below. You are STRONGLY ADVISED to seek improved access by selecting the relevant datasets below and then clicking to request improved access. Please ensure that your use of these data complies with the [NBN Gateway Terms and Conditions](/Terms).
+        </@markdown>
+    </div>
+</#macro>

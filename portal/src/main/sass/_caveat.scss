@@ -1,0 +1,28 @@
+@import "_nbn-colour-scheme";
+
+.nbn-caveat {
+
+    border: 1px black solid;
+    width: 96%;
+    padding: 10px;
+    background-color: $caveatBackground;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    h1 {
+        color: red;
+        font-weight: bold;
+        font-size: 0.9em;
+        margin-bottom: 0.5em;
+        line-height: 1em;
+    }
+
+    p {
+        color: #333333;
+        font-size: 0.8em;
+        margin: 0px;
+    }
+    
+}
