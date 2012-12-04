@@ -15,12 +15,12 @@ is not a finished product.
         display=[
             {"title":"Taxon", "attr":"name", "link":"href"},
             {"title":"Authority", "attr":"authority"},
-            {"title":"Output Group", "attr":"taxonOutputGroupName"},
+            {"title":"Group", "attr":"taxonOutputGroupName"},
             {"title":"Rank", "attr":"rank"}
         ]
         query=RequestParameters 
         filters=[{
-            "name": "Output Groups",	  	
+            "name": "Groups",	  	
             "id":"taxonOutputGroupKey",
             "data":json.readURL("${api}/taxonOutputGroups")
         }]/>
