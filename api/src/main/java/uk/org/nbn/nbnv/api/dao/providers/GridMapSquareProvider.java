@@ -21,9 +21,7 @@ public class GridMapSquareProvider {
         createGenericQuery(params);
         INNER_JOIN("DatasetData dd ON o.datasetKey = dd.\"key\"");
         addYearRange((Integer)params.get("startYear"), (Integer)params.get("endYear"));
-String temp = SQL();
-return temp;
-//        return SQL();
+        return SQL();
     }
     
     private void createGenericQuery(Map<String, Object> params){

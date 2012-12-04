@@ -100,15 +100,16 @@ public class GridMapSquareResource extends AbstractResource {
             writeln(zip, "");
             writeln(zip, "Dataset owner: " + dataset.getOrganisationName());
             writeln(zip, "");
-            if(dataset.getUseConstraints() != null && !"".equals(dataset.getUseConstraints())){
+            if(dataset.getUseConstraints() != null && !"".equals(dataset.getUseConstraints().trim())){
                 writeln(zip, "Use constraints: " + dataset.getUseConstraints());
                 writeln(zip, "");
             }
-            if(dataset.getAccessConstraints() != null && !"".equals(dataset.getAccessConstraints())){
-                writeln(zip, "Access constraints: " + dataset.getUseConstraints());
+            if(dataset.getAccessConstraints() != null && !"".equals(dataset.getAccessConstraints().trim())){
+                writeln(zip, "Access constraints: " + dataset.getAccessConstraints());
                 writeln(zip, "");
             }
         }
+        
         zip.flush();
     }
     
