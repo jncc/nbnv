@@ -52,4 +52,7 @@ public interface DatasetMapper {
     
     @SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectDatasetsProviderNotInstantiated")
     List<Dataset> selectDatasetsForTaxonViewableByUser(@Param("user") User user, @Param("ptvk") String pTaxonVersionKey);
+    
+    @Select("SELECT filterText FROM UserAccessPosition uap WHERE datasetKey = #{datasetKey} AND userID = #{userID}")
+    List<String>getDatasetAccessPositions(@Param("datasetKey") String datasetKey, @Param("userID") int userID); 
 }

@@ -32,6 +32,8 @@ public class GridMapSquareResource extends AbstractResource {
     GridMapSquareMapper gridMapSquareMapper;
     @Autowired
     TaxonMapper taxonMapper;
+    @Autowired
+    DownloadHelper downloadHelper;
 
     @GET
     @Produces("application/x-zip-compressed")
@@ -64,7 +66,7 @@ public class GridMapSquareResource extends AbstractResource {
         for(String band: bands){
             filters.put("Year range " + i++, band.substring(0,band.indexOf(",")));
         }
-        DownloadHelper.addReadMe(zip, user, title, filters);
+        downloadHelper.addReadMe(zip, user, title, filters);
     }
 
     private void addGridRefs(ZipOutputStream zip, User user, String ptvk, String resolution, List<String> bands, List<String> datasetKey) throws IOException {
@@ -82,16 +84,16 @@ public class GridMapSquareResource extends AbstractResource {
         String yearRange = band.substring(0,band.indexOf(","));
         zip.putNextEntry(new ZipEntry("GridSquares_" + yearRange + ".csv"));
         List<GridMapSquare> gridMapSquares = gridMapSquareMapper.getGridMapSquares(user, ptvk, resolution, band, datasetKeys);
-        DownloadHelper.writeln(zip, "GridSquares");
+        downloadHelper.writeln(zip, "GridSquares");
         for (GridMapSquare gridMapSquare : gridMapSquares) {
-            DownloadHelper.writeln(zip, gridMapSquare.getGridRef());
+            downloadHelper.writeln(zip, gridMapSquare.getGridRef());
         }
         zip.flush();
     }
 
     private void addDatasetMetadata(ZipOutputStream zip, User user, String ptvk, String resolution, List<String> bands, List<String> datasetKeys) throws IOException {
         List<Dataset> datasets = gridMapSquareMapper.getGridMapDatasets(user, ptvk, resolution, getStartYear(bands), getEndYear(bands), datasetKeys);
-        DownloadHelper.addDatasetMetadata(zip, datasets);
+        downloadHelper.addDatasetMetadata(zip, user.getId(), datasets);
     }
     
     private Integer getStartYear(List<String> bands){

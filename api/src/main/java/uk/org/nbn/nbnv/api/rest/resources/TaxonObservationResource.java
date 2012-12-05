@@ -47,6 +47,8 @@ public class TaxonObservationResource extends AbstractResource {
     FeatureMapper featureMapper;
     @Autowired
     TaxonOutputGroupMapper taxonOutputGroupMapper;
+    @Autowired
+    DownloadHelper downloadHelper;
 
     @GET
     @Path("/{id : \\d+}")
@@ -348,20 +350,20 @@ public class TaxonObservationResource extends AbstractResource {
         ArrayList<String> values = new ArrayList<String>();
         values.add("TaxonName");
         values.add("PreferredTaxonVersionKey");
-        DownloadHelper.writelnCsv(zip, values);
+        downloadHelper.writelnCsv(zip, values);
         for (TaxonWithQueryStats taxonWithStats : taxaWithStats) {
             Taxon taxon = taxonWithStats.getTaxon();
             String name = taxon.getName() + " " + taxon.getAuthority();
             values = new ArrayList<String>();
             values.add(name);
             values.add(taxon.getPTaxonVersionKey());
-            DownloadHelper.writelnCsv(zip, values);
+            downloadHelper.writelnCsv(zip, values);
         }
     }
 
     private void addDatasetMetadata(ZipOutputStream zip, User user, int startYear, int endYear, List<String> datasetKeys, List<String> taxa, String spatialRelationship, String featureID, boolean sensitive, String designation, String taxonOutputGroup, String gridRef) throws IOException {
         List<DatasetWithQueryStats> datasetsWithQueryStats = observationMapper.selectObservationDatasetsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef);
-        DownloadHelper.addDatasetWithQueryStatsMetadata(zip, datasetsWithQueryStats);
+        downloadHelper.addDatasetWithQueryStatsMetadata(zip, user.getId(), datasetsWithQueryStats);
     }
     
     private void addReadMe(ZipOutputStream zip, String title, User user, int startYear, int endYear, List<String> datasetKeys, String spatialRelationship, String featureID, boolean sensitive, String designation, String taxonOutputGroupKey) throws IOException{
@@ -395,6 +397,6 @@ public class TaxonObservationResource extends AbstractResource {
             filters.put("Taxon group", taxonOutputGroup.getName());
             filters.put("Taxon group key", taxonOutputGroupKey);
         }
-        DownloadHelper.addReadMe(zip, user, title, filters);
+        downloadHelper.addReadMe(zip, user, title, filters);
     }
 }
