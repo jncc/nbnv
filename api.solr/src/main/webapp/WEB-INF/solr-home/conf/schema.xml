@@ -66,12 +66,26 @@
 
 
     <fields>
-        <field name="taxonOutputGroupKey" type="string" indexed="true" stored="true"/>
-  
-        <field name="name" type="testedgengrams" indexed="true" stored="true"/>
+        <!-- Define association with datasets -->
+        <field name="datasetKey" type="string" indexed="true" stored="true"/>
         
+        <!-- Taxon specific fields -->
+        <field name="taxonOutputGroupKey" type="string" indexed="true" stored="true"/>
         <field name="gatewayRecordCount" type="sint" stored="true"/>
         
+        <!-- Location properties for spatial searching -->
+        <field name="location" type="location" indexed="true" stored="true"/>
+        <field name="location_0_coordinate" type="double" indexed="true" stored="true" />
+        <field name="location_1_coordinate" type="double" indexed="true" stored="true" />
+        
+        <!--The Default Search field -->
+        <field name="name" type="testedgengrams" indexed="true" stored="true"/>
+        
+        <!-- 
+            The following fields are required by the API Project to transform 
+            indexed objects to their API equivilant and for filtering to specific
+            types.
+        -->
         <field name="record_type" type="string" required="true" indexed="true" stored="true"/>
         <field name="record_id" type="string" required="true" indexed="true" stored="true"/>
     </fields>

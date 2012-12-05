@@ -13,10 +13,15 @@
             <field column="record_id" template="DESIGNATION-${designation.id}" />
             <field column="record_type" template="designation" />
         </entity>
-        <entity name="feature" query="Select lower(type) as [typeLower],* From FeatureData" transformer="TemplateTransformer">
-            <field column="record_id" template="FEATURE-${feature.identifier}" />
-            <field column="record_type" template="${feature.typeLower}feature" />
-            <field column="name" template="${feature.label}" />
+        <entity name="gridsquarefeature" query="Select geom.STCentroid().STX AS location_0_coordinate, geom.STCentroid().STY AS location_1_coordinate,* From GridSquareFeatureData" transformer="TemplateTransformer">
+            <field column="record_id" template="FEATURE-${gridsquarefeature.label}" />
+            <field column="record_type" template="gridsquarefeature" />
+            <field column="name" template="${gridsquarefeature.label}" />
+        </entity>
+        <entity name="siteboundaryfeature" query="Select geom.STCentroid().STX AS location_0_coordinate, geom.STCentroid().STY AS location_1_coordinate, sb.siteBoundaryDatasetKey as datasetKey, sbf.* From SiteBoundaryFeatureData sbf Inner Join SiteBoundaryData sb on sbf.id = sb.featureID" transformer="TemplateTransformer">
+            <field column="record_id" template="FEATURE-${siteboundaryfeature.identifier}" />
+            <field column="record_type" template="siteboundaryfeature" />
+            <field column="name" template="${siteboundaryfeature.label}" />
         </entity>
         <entity name="organisation" query="Select * From OrganisationData" transformer="TemplateTransformer">
             <field column="record_id" template="ORGANISATION-${organisation.id}" />

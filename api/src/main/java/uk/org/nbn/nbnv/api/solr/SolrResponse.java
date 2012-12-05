@@ -24,7 +24,7 @@ public class SolrResponse {
         this.results = new ArrayList<SolrResponseDocument<?>>();
         for(SolrDocument currDocument : toWrap.getResults()) {
             results.add(new SolrResponseDocument<Object>(
-                solrHelper.resolveSolrResult((String)currDocument.get("record_id")),
+                solrHelper.solrFactory.resolve(currDocument),
                 (String)currDocument.get("record_type"),
                 (String)currDocument.get("name")
             ));

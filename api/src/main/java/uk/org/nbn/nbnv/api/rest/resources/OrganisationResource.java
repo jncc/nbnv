@@ -4,11 +4,7 @@
  */
 package uk.org.nbn.nbnv.api.rest.resources;
 
-import com.sun.jersey.core.util.Base64;
-import java.io.ByteArrayInputStream;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -20,6 +16,7 @@ import uk.org.nbn.nbnv.api.dao.warehouse.DatasetMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.OrganisationMapper;
 import uk.org.nbn.nbnv.api.model.Dataset;
 import uk.org.nbn.nbnv.api.model.Organisation;
+import uk.org.nbn.nbnv.api.solr.SolrResolver;
 
 /**
  *
@@ -40,6 +37,7 @@ public class OrganisationResource extends AbstractResource {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
+    @SolrResolver("ORGANISATION")
     public Organisation getByID(@PathParam("id") int id) {
         return organisationMapper.selectByID(id);
     }

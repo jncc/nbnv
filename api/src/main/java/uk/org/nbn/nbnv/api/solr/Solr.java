@@ -1,15 +1,11 @@
 package uk.org.nbn.nbnv.api.solr;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Properties;
-import javax.servlet.ServletContext;
+import java.util.*;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import uk.org.nbn.nbnv.api.rest.resources.*;
 
 /**
  * The following class is a builder for solr queries
@@ -19,28 +15,7 @@ import uk.org.nbn.nbnv.api.rest.resources.*;
 public class Solr {
     @Autowired SolrServer solrServer;
     @Autowired Properties properties;
-    @Autowired(required=false) ServletContext context;
-    
-    enum ResultType { DESIGNATION, DATASET, FEATURE, TAXON, ORGANISATION}
-    
-    @Autowired DatasetResource datasetResource;
-    @Autowired DesignationResource designationResource;
-    @Autowired FeatureResource featureResource;
-    @Autowired TaxonResource taxonResource;
-    @Autowired OrganisationResource organisationResource;
-    
-    protected Object resolveSolrResult(String record_id) {
-        String[] record_idParts = record_id.split("-", 2);
-        String id = record_idParts[1];
-        switch(ResultType.valueOf(record_idParts[0])) {
-            case DESIGNATION:   return designationResource.getDesignation(id);
-            case DATASET:       return datasetResource.getDatasetByID(id);
-            case FEATURE:       return featureResource.getFeature(id);
-            case ORGANISATION:  return organisationResource.getByID(Integer.parseInt(id));
-            case TAXON:         return taxonResource.getTaxon(id);
-            default :           throw new IllegalArgumentException("The solr response contained results on an unkown type");
-        }
-    }
+    @Autowired SolrResolverFactory solrFactory;
     
     public SolrBuilder create() {
         return new SolrBuilder();
@@ -96,6 +71,11 @@ public class Solr {
             if(shouldFilter(values)) {
                 query.addFilterQuery(getOrFilter(key, values));
             }
+            return this;
+        }
+        
+        public SolrBuilder boostFunction(String function) {
+            query.setParam("bf", function);
             return this;
         }
 
