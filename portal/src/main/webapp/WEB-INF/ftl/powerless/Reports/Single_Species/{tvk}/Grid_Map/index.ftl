@@ -65,7 +65,7 @@
             <fieldset>
                 <legend>Data download</legend>
                 <button id="nbn-grid-map-squares-download">Download</button> all <span id="nbn-grid-map-resolution-download-text">10km</span> squares within selected dates
-                <@downloadTermsDialogue/>
+                <@report_utils.downloadTermsDialogue/>
             </fieldset>
     </div>
 </#macro>
@@ -107,8 +107,3 @@
     </select>
 </#macro>
 
-<#macro downloadTermsDialogue>
-    <div id="nbn-download-terms" title="Data download terms and conditions">
-        <@mdcontent.dataDownloadTerms/>
-    </div>
-</#macro>
