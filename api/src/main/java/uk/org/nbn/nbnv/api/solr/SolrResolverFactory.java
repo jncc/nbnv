@@ -78,16 +78,24 @@ public class SolrResolverFactory {
          */
         public Object execute(String id) {
             try {
-                if(identifierType == int.class) {
-                    return method.invoke(instance, Integer.parseInt(id));
+                if(identifierType == String.class) {
+                    return method.invoke(instance, id); //normal string just invoke
                 }
-                else {
-                    return method.invoke(instance, id);
+                else if(identifierType.isPrimitive()) { //type is primative, must parse
+                    if (identifierType == int.class)
+                        return method.invoke(instance, Integer.parseInt(id));
+                    else if (identifierType == double.class)
+                        return method.invoke(instance, Double.parseDouble(id));
+                    else if (identifierType == float.class)
+                        return method.invoke(instance, Float.parseFloat(id));
+                    else
+                        throw new IllegalArgumentException("Unhandled primative type parse");
                 }
+                throw new IllegalArgumentException("The solr resolver parameter type is not handled");
             } catch (IllegalAccessException ex) {
-                throw new IllegalArgumentException(ex);
+                throw new RuntimeException(ex);
             } catch (InvocationTargetException ex) {
-                throw new IllegalArgumentException(ex);
+                throw new RuntimeException(ex);
             }
         }
     }
