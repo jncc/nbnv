@@ -1540,3 +1540,82 @@ CREATE VIEW [dbo].[DatasetAttributeData] WITH SCHEMABINDING AS (
 GO
 
 --EXEC usp_dev_AddViewToPublicationAsView 'DatasetAttributeData'
+
+GO
+
+/*
+ *
+ * Access Positions
+ *
+ */
+
+CREATE VIEW [dbo].[UserAccessData] WITH SCHEMABINDING AS (
+	SELECT
+		tof.id 
+		, uar.userID 
+		, uar.datasetKey 
+		, tof.filterText 
+	FROM [dbo].[UserAccessRequest] uar
+	INNER JOIN [dbo].[TaxonObservationFilter] tof ON tof.id = uar.filterID 
+	WHERE uar.responseTypeID = 1
+);
+
+GO
+
+CREATE UNIQUE CLUSTERED INDEX [cidx_UserAccessData_id-userID-datasetKey] ON [dbo].[UserAccessData] (
+	[id] ASC
+	, [userID] ASC
+	, [datasetKey] ASC
+);
+
+GO
+
+--EXEC usp_dev_AddViewToPublication 'UserAccessData'
+
+GO
+	
+CREATE VIEW [dbo].[OrganisationAccessData] WITH SCHEMABINDING AS (
+	SELECT
+		tof.id
+		, oar.organisationID 
+		, oar.datasetKey 
+		, tof.filterText 
+	FROM [dbo].[OrganisationAccessRequest] oar
+	INNER JOIN [dbo].[TaxonObservationFilter] tof ON tof.id = oar.filterID 
+	WHERE oar.responseTypeID = 1
+);
+
+GO
+
+CREATE UNIQUE CLUSTERED INDEX [cidx_OrganisationAccessData_id-organisationID-datasetKey] ON [dbo].[OrganisationAccessData] (
+	[id] ASC
+	, [organisationID] ASC
+	, [datasetKey] ASC
+);
+
+GO
+
+--EXEC usp_dev_AddViewToPublication 'OrganisationAccessData'
+
+GO
+
+CREATE VIEW [dbo].[UserAccessPosition] WITH SCHEMABINDING AS (
+	SELECT
+		uad.userID
+		, uad.datasetKey
+		, uad.filterText 
+	FROM [dbo].[UserAccessData] uad
+	UNION ALL
+	SELECT
+		omd.userID 
+		, oad.datasetKey 
+		, oad.filterText 
+	FROM [dbo].[OrganisationAccessData] oad
+	INNER JOIN [dbo].[OrganisationMembershipData] omd ON omd.organisationID = oad.organisationID 
+);
+
+GO
+
+--EXEC usp_dev_AddViewToPublicationAsView 'UserAccessPosition'
+
+GO
