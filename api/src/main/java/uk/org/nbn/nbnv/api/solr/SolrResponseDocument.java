@@ -9,15 +9,15 @@ import org.codehaus.jackson.annotate.JsonUnwrapped;
  */
 public class SolrResponseDocument<T> {
     private String entityType;
-    private String title;
+    private String searchMatchTitle;
     
     @JsonUnwrapped
     private T result;
     
-    public SolrResponseDocument(T result, String entityType, String title) {
+    public SolrResponseDocument(T result, String entityType, String searchMatchTitle) {
         this.result = result;
         this.entityType = entityType;
-        this.title = title;
+        this.searchMatchTitle = searchMatchTitle;
     }
 
     public String getEntityType() {
@@ -36,11 +36,11 @@ public class SolrResponseDocument<T> {
         this.result = result;
     }
 
-    public String getTitle() {
-        return title;
+    public String getSearchMatchTitle() {
+        return searchMatchTitle;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setSearchMatchTitle(String searchMatchTitle) {
+        this.searchMatchTitle = searchMatchTitle;
     }
 }
