@@ -38,6 +38,26 @@ public class SearchResource extends AbstractResource {
     }
     
     @GET
+    @Path("/siteDatasets/{datasetKey}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public SolrResponse searchSiteDataset(
+            @PathParam("datasetKey") String datasetKey,
+            @QueryParam("rows") @DefaultValue("20") int rows,
+            @QueryParam("start") @DefaultValue("0") int start,
+            @QueryParam("bbox") String bbox,
+            @QueryParam("q") String q) throws SolrServerException {
+        String[] bboxParts = bbox.split(",");
+        return solr
+                .create()
+                .query(q)
+                .start(start)
+                .rows(rows)
+                .filterQuery("record_type:siteboundaryfeature")
+                .filterQuery(String.format("location:[%s,%s TO %s,%s]", (Object[]) bboxParts))
+                .response();
+    }
+    
+    @GET
     @Path("/designations")
     @Produces(MediaType.APPLICATION_JSON)
     public SolrResponse searchDesignations(

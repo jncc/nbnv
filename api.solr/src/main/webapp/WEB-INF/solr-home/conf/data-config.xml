@@ -13,9 +13,19 @@
             <field column="record_id" template="DESIGNATION-${designation.id}" />
             <field column="record_type" template="designation" />
         </entity>
-        <entity name="feature" query="Select geom.STCentroid().STX AS location_0_coordinate, geom.STCentroid().STY AS location_1_coordinate, lower(type) as [typeLower],* From FeatureData" transformer="TemplateTransformer">
+        <entity name="gridsquarefeature" query="Select geom.STCentroid().STX AS location_0_coordinate, geom.STCentroid().STY AS location_1_coordinate,* From GridSquareFeatureData" transformer="TemplateTransformer">
+            <field column="record_id" template="FEATURE-${gridsquarefeature.identifier}" />
+            <field column="record_type" template="gridsquarefeature" />
+            <field column="name" template="${feature.label}" />
+        </entity>
+        <entity name="siteboundaryfeature" query="Select geom.STCentroid().STX AS location_0_coordinate, geom.STCentroid().STY AS location_1_coordinate, sb.siteBoundaryDatasetKey as datasetKey, * From SiteBoundaryFeatureData sbf Inner Join SiteBoundaryData sb on sbf.id = sb.featureID" transformer="TemplateTransformer">
             <field column="record_id" template="FEATURE-${feature.identifier}" />
-            <field column="record_type" template="${feature.typeLower}feature" />
+            <field column="record_type" template="siteboundaryfeature" />
+            <field column="name" template="${feature.label}" />
+        </entity>
+        <entity name="habitatfeature" query="Select geom.STCentroid().STX AS location_0_coordinate, geom.STCentroid().STY AS location_1_coordinate, * From HabitatFeatureFeatureData" transformer="TemplateTransformer">
+            <field column="record_id" template="FEATURE-${feature.identifier}" />
+            <field column="record_type" template="habitatfeature" />
             <field column="name" template="${feature.label}" />
         </entity>
         <entity name="organisation" query="Select * From OrganisationData" transformer="TemplateTransformer">
