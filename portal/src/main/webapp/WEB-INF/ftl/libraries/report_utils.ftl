@@ -47,7 +47,7 @@
     </#if>
 </#macro>
 
-<#macro site_report_filters location requestParameters isSpatialRelationshipNeeded=true isDesignationNeeded=true isDatasetNeeded=true args={}>
+<#macro site_report_filters location requestParameters isSpatialRelationshipNeeded=true isDesignationNeeded=true isDatasetNeeded=true isDownloadButtonNeeded=false args={}>
     <#assign startYear=requestParameters.startYear?has_content?string(requestParameters.startYear[0]!"","")>
     <#assign endYear=requestParameters.endYear?has_content?string(requestParameters.endYear[0]!"","")>
     <#assign spatialRelationship=requestParameters.spatialRelationship?has_content?string(requestParameters.spatialRelationship[0]!"overlap","overlap")>
@@ -82,6 +82,12 @@
                             </select><br/>
                 </#if>
             </fieldset>
+            <#if isDownloadButtonNeeded>
+                <fieldset>
+                    <legend>Data download</legend>
+                    <button id="nbn-site-report-download-button">Download</button> <span id="nbn-site-report-download-button-text"></span>
+                </fieldset>
+            </#if>
     </div>
 </#macro>
 
@@ -154,4 +160,10 @@
 
 <#macro noRecordsInfoBox>
     <div class="nbn-information-panel">No records were found for your current options</div>
+</#macro>
+
+<#macro downloadTermsDialogue>
+    <div id="nbn-download-terms" title="Data download terms and conditions">
+        <@mdcontent.dataDownloadTerms/>
+    </div>
 </#macro>
