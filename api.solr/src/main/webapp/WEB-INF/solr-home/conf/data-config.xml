@@ -13,7 +13,7 @@
             <field column="record_id" template="DESIGNATION-${designation.id}" />
             <field column="record_type" template="designation" />
         </entity>
-        <entity name="feature" query="Select lower(type) as [typeLower],* From FeatureData" transformer="TemplateTransformer">
+        <entity name="feature" query="Select geom.STCentroid() as location, lower(type) as [typeLower],* From FeatureData" transformer="TemplateTransformer">
             <field column="record_id" template="FEATURE-${feature.identifier}" />
             <field column="record_type" template="${feature.typeLower}feature" />
             <field column="name" template="${feature.label}" />
