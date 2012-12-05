@@ -1,37 +1,54 @@
 package uk.org.nbn.nbnv.api.rest.resources;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.StreamingOutput;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+import uk.org.nbn.nbnv.api.dao.providers.ProviderHelper;
 import uk.org.nbn.nbnv.api.dao.warehouse.DatasetMapper;
+import uk.org.nbn.nbnv.api.dao.warehouse.FeatureMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.OrganisationMapper;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
 import uk.org.nbn.nbnv.api.dao.warehouse.TaxonObservationMapper;
+import uk.org.nbn.nbnv.api.dao.warehouse.TaxonOutputGroupMapper;
 import uk.org.nbn.nbnv.api.model.*;
+import uk.org.nbn.nbnv.api.rest.resources.utils.DownloadHelper;
 
 @Component
 @Path("/taxonObservations")
-public class TaxonObservationResource extends AbstractResource{
-    
+public class TaxonObservationResource extends AbstractResource {
+
     @Autowired
     TaxonObservationMapper observationMapper;
     @Autowired
     OrganisationMapper organisationMapper;
     @Autowired
     DatasetMapper datasetMapper;
+    @Autowired
+    FeatureMapper featureMapper;
+    @Autowired
+    TaxonOutputGroupMapper taxonOutputGroupMapper;
+    @Autowired
+    DownloadHelper downloadHelper;
 
     @GET
     @Path("/{id : \\d+}")
@@ -65,16 +82,16 @@ public class TaxonObservationResource extends AbstractResource{
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public List<TaxonObservation> getObservationsByFilter(
-            @TokenUser() User user, 
-            @QueryParam("startYear") @DefaultValue(ObservationResourceDefaults.defaultStartYear) int startYear, 
-            @QueryParam("endYear") @DefaultValue(ObservationResourceDefaults.defaultEndYear) int endYear, 
-            @QueryParam("datasetKey") @DefaultValue(ObservationResourceDefaults.defaultDatasetKey) List<String> datasetKeys, 
-            @QueryParam("ptvk") @DefaultValue(ObservationResourceDefaults.defaultTaxa) List<String> taxa, 
+            @TokenUser() User user,
+            @QueryParam("startYear") @DefaultValue(ObservationResourceDefaults.defaultStartYear) int startYear,
+            @QueryParam("endYear") @DefaultValue(ObservationResourceDefaults.defaultEndYear) int endYear,
+            @QueryParam("datasetKey") @DefaultValue(ObservationResourceDefaults.defaultDatasetKey) List<String> datasetKeys,
+            @QueryParam("ptvk") @DefaultValue(ObservationResourceDefaults.defaultTaxa) List<String> taxa,
             @QueryParam("spatialRelationship") @DefaultValue(ObservationResourceDefaults.SPATIAL_RELATIONSHIP_DEFAULT) String spatialRelationship,
             @QueryParam("featureID") @DefaultValue(ObservationResourceDefaults.defaultFeatureID) String featureID,
-            @QueryParam("sensitive") @DefaultValue(ObservationResourceDefaults.defaultSensitive) Boolean sensitive, 
-            @QueryParam("designation") @DefaultValue(ObservationResourceDefaults.defaultDesignation) String designation, 
-            @QueryParam("taxonOutputGroup") @DefaultValue(ObservationResourceDefaults.defaultTaxonOutputGroup) String taxonOutputGroup, 
+            @QueryParam("sensitive") @DefaultValue(ObservationResourceDefaults.defaultSensitive) Boolean sensitive,
+            @QueryParam("designation") @DefaultValue(ObservationResourceDefaults.defaultDesignation) String designation,
+            @QueryParam("taxonOutputGroup") @DefaultValue(ObservationResourceDefaults.defaultTaxonOutputGroup) String taxonOutputGroup,
             @QueryParam("gridRef") @DefaultValue(ObservationResourceDefaults.defaultGridRef) String gridRef) {
         //TODO: squareBlurring(?)
         return observationMapper.selectObservationRecordsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef);
@@ -84,17 +101,17 @@ public class TaxonObservationResource extends AbstractResource{
     @Path("/{datasetKey : [A-Z][A-Z0-9]{7}}/attributes/{attributeID: [0-9]{1,10}}")
     @Produces(MediaType.APPLICATION_JSON)
     public List<TaxonObservationAttributeValue> getOneObservationAttributeByFilter(
-            @TokenUser() User user, 
-            @PathParam("datasetKey") @DefaultValue(ObservationResourceDefaults.defaultDatasetKey) String datasetKey, 
-            @PathParam("attributeID") @DefaultValue(ObservationResourceDefaults.defaultAttributeID) int attributeID, 
-            @QueryParam("startYear") @DefaultValue(ObservationResourceDefaults.defaultStartYear) int startYear, 
-            @QueryParam("endYear") @DefaultValue(ObservationResourceDefaults.defaultEndYear) int endYear, 
-            @QueryParam("ptvk") @DefaultValue(ObservationResourceDefaults.defaultTaxa) List<String> taxa, 
+            @TokenUser() User user,
+            @PathParam("datasetKey") @DefaultValue(ObservationResourceDefaults.defaultDatasetKey) String datasetKey,
+            @PathParam("attributeID") @DefaultValue(ObservationResourceDefaults.defaultAttributeID) int attributeID,
+            @QueryParam("startYear") @DefaultValue(ObservationResourceDefaults.defaultStartYear) int startYear,
+            @QueryParam("endYear") @DefaultValue(ObservationResourceDefaults.defaultEndYear) int endYear,
+            @QueryParam("ptvk") @DefaultValue(ObservationResourceDefaults.defaultTaxa) List<String> taxa,
             @QueryParam("spatialRelationship") @DefaultValue(ObservationResourceDefaults.SPATIAL_RELATIONSHIP_DEFAULT) String spatialRelationship,
             @QueryParam("featureID") @DefaultValue(ObservationResourceDefaults.defaultFeatureID) String featureID,
-            @QueryParam("sensitive") @DefaultValue(ObservationResourceDefaults.defaultSensitive) Boolean sensitive, 
-            @QueryParam("designation") @DefaultValue(ObservationResourceDefaults.defaultDesignation) String designation, 
-            @QueryParam("taxonOutputGroup") @DefaultValue(ObservationResourceDefaults.defaultTaxonOutputGroup) String taxonOutputGroup, 
+            @QueryParam("sensitive") @DefaultValue(ObservationResourceDefaults.defaultSensitive) Boolean sensitive,
+            @QueryParam("designation") @DefaultValue(ObservationResourceDefaults.defaultDesignation) String designation,
+            @QueryParam("taxonOutputGroup") @DefaultValue(ObservationResourceDefaults.defaultTaxonOutputGroup) String taxonOutputGroup,
             @QueryParam("gridRef") @DefaultValue(ObservationResourceDefaults.defaultGridRef) String gridRef) {
         //TODO: squareBlurring(?)
         return observationMapper.selectObservationAttributeByFilter(user, datasetKey, attributeID, startYear, endYear, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef);
@@ -104,16 +121,16 @@ public class TaxonObservationResource extends AbstractResource{
     @Path("/species")
     @Produces(MediaType.APPLICATION_JSON)
     public List<TaxonWithQueryStats> getObservationSpeciesByFilter(
-            @TokenUser() User user, 
-            @QueryParam("startYear") @DefaultValue(ObservationResourceDefaults.defaultStartYear) int startYear, 
-            @QueryParam("endYear") @DefaultValue(ObservationResourceDefaults.defaultEndYear) int endYear, 
-            @QueryParam("datasetKey") @DefaultValue(ObservationResourceDefaults.defaultDatasetKey) List<String> datasetKeys, 
-            @QueryParam("ptvk") @DefaultValue(ObservationResourceDefaults.defaultTaxa) List<String> taxa, 
-            @QueryParam("spatialRelationship") @DefaultValue(ObservationResourceDefaults.SPATIAL_RELATIONSHIP_DEFAULT) String spatialRelationship, 
+            @TokenUser() User user,
+            @QueryParam("startYear") @DefaultValue(ObservationResourceDefaults.defaultStartYear) int startYear,
+            @QueryParam("endYear") @DefaultValue(ObservationResourceDefaults.defaultEndYear) int endYear,
+            @QueryParam("datasetKey") @DefaultValue(ObservationResourceDefaults.defaultDatasetKey) List<String> datasetKeys,
+            @QueryParam("ptvk") @DefaultValue(ObservationResourceDefaults.defaultTaxa) List<String> taxa,
+            @QueryParam("spatialRelationship") @DefaultValue(ObservationResourceDefaults.SPATIAL_RELATIONSHIP_DEFAULT) String spatialRelationship,
             @QueryParam("featureID") @DefaultValue(ObservationResourceDefaults.defaultFeatureID) String featureID,
-            @QueryParam("sensitive") @DefaultValue(ObservationResourceDefaults.defaultSensitive) Boolean sensitive, 
-            @QueryParam("designation") @DefaultValue(ObservationResourceDefaults.defaultDesignation) String designation, 
-            @QueryParam("taxonOutputGroup") @DefaultValue(ObservationResourceDefaults.defaultTaxonOutputGroup) String taxonOutputGroup, 
+            @QueryParam("sensitive") @DefaultValue(ObservationResourceDefaults.defaultSensitive) Boolean sensitive,
+            @QueryParam("designation") @DefaultValue(ObservationResourceDefaults.defaultDesignation) String designation,
+            @QueryParam("taxonOutputGroup") @DefaultValue(ObservationResourceDefaults.defaultTaxonOutputGroup) String taxonOutputGroup,
             @QueryParam("gridRef") @DefaultValue(ObservationResourceDefaults.defaultGridRef) String gridRef) {
         //TODO: squareBlurring(?)
         List<TaxonWithQueryStats> toReturn = observationMapper.selectObservationSpeciesByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef);
@@ -122,19 +139,52 @@ public class TaxonObservationResource extends AbstractResource{
     }
 
     @GET
+    @Path("/species/download")
+    @Produces("application/x-zip-compressed")
+    public StreamingOutput getSpeciesDownloadByFilter(
+            @TokenUser() final User user,
+            @QueryParam("startYear") @DefaultValue(ObservationResourceDefaults.defaultStartYear) final int startYear,
+            @QueryParam("endYear") @DefaultValue(ObservationResourceDefaults.defaultEndYear) final int endYear,
+            @QueryParam("datasetKey") @DefaultValue(ObservationResourceDefaults.defaultDatasetKey) final List<String> datasetKeys,
+            @QueryParam("ptvk") @DefaultValue(ObservationResourceDefaults.defaultTaxa) final List<String> taxa,
+            @QueryParam("spatialRelationship") @DefaultValue(ObservationResourceDefaults.SPATIAL_RELATIONSHIP_DEFAULT) final String spatialRelationship,
+            @QueryParam("featureID") @DefaultValue(ObservationResourceDefaults.defaultFeatureID) final String featureID,
+            @QueryParam("sensitive") @DefaultValue(ObservationResourceDefaults.defaultSensitive) final Boolean sensitive,
+            @QueryParam("designation") @DefaultValue(ObservationResourceDefaults.defaultDesignation) final String designation,
+            @QueryParam("taxonOutputGroup") @DefaultValue(ObservationResourceDefaults.defaultTaxonOutputGroup) final String taxonOutputGroup,
+            @QueryParam("gridRef") @DefaultValue(ObservationResourceDefaults.defaultGridRef) final String gridRef) {
+        //TODO: squareBlurring(?)
+        return new StreamingOutput() {
+            public void write(OutputStream out) throws IOException, WebApplicationException {
+                ZipOutputStream zip = new ZipOutputStream(out);
+                String title = "Species list download";
+                addSpecies(zip, user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef);
+                addReadMe(zip, title, user, startYear, endYear, datasetKeys, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup);
+                addDatasetMetadata(zip, user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef);
+                zip.flush();
+                zip.close();
+            }
+        };
+
+//        List<TaxonWithQueryStats> toReturn = observationMapper.selectObservationSpeciesByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef);
+//        Collections.sort(toReturn);
+//        return toReturn;
+    }
+
+    @GET
     @Path("/groups")
     @Produces(MediaType.APPLICATION_JSON)
     public List<TaxonOutputGroupWithQueryStats> getObservationGroupsByFilter(
-            @TokenUser() User user, 
-            @QueryParam("startYear") @DefaultValue(ObservationResourceDefaults.defaultStartYear) int startYear, 
-            @QueryParam("endYear") @DefaultValue(ObservationResourceDefaults.defaultEndYear) int endYear, 
-            @QueryParam("datasetKey") @DefaultValue(ObservationResourceDefaults.defaultDatasetKey) List<String> datasetKeys, 
-            @QueryParam("ptvk") @DefaultValue(ObservationResourceDefaults.defaultTaxa) List<String> taxa, 
-            @QueryParam("spatialRelationship") @DefaultValue(ObservationResourceDefaults.SPATIAL_RELATIONSHIP_DEFAULT) String spatialRelationship, 
+            @TokenUser() User user,
+            @QueryParam("startYear") @DefaultValue(ObservationResourceDefaults.defaultStartYear) int startYear,
+            @QueryParam("endYear") @DefaultValue(ObservationResourceDefaults.defaultEndYear) int endYear,
+            @QueryParam("datasetKey") @DefaultValue(ObservationResourceDefaults.defaultDatasetKey) List<String> datasetKeys,
+            @QueryParam("ptvk") @DefaultValue(ObservationResourceDefaults.defaultTaxa) List<String> taxa,
+            @QueryParam("spatialRelationship") @DefaultValue(ObservationResourceDefaults.SPATIAL_RELATIONSHIP_DEFAULT) String spatialRelationship,
             @QueryParam("featureID") @DefaultValue(ObservationResourceDefaults.defaultFeatureID) String featureID,
-            @QueryParam("sensitive") @DefaultValue(ObservationResourceDefaults.defaultSensitive) Boolean sensitive, 
-            @QueryParam("designation") @DefaultValue(ObservationResourceDefaults.defaultDesignation) String designation, 
-            @QueryParam("taxonOutputGroup") @DefaultValue(ObservationResourceDefaults.defaultTaxonOutputGroup) String taxonOutputGroup, 
+            @QueryParam("sensitive") @DefaultValue(ObservationResourceDefaults.defaultSensitive) Boolean sensitive,
+            @QueryParam("designation") @DefaultValue(ObservationResourceDefaults.defaultDesignation) String designation,
+            @QueryParam("taxonOutputGroup") @DefaultValue(ObservationResourceDefaults.defaultTaxonOutputGroup) String taxonOutputGroup,
             @QueryParam("gridRef") @DefaultValue(ObservationResourceDefaults.defaultGridRef) String gridRef) {
         //TODO: squareBlurring(?)
         return observationMapper.selectObservationGroupsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef);
@@ -144,16 +194,16 @@ public class TaxonObservationResource extends AbstractResource{
     @Path("/datasets")
     @Produces(MediaType.APPLICATION_JSON)
     public List<DatasetWithQueryStats> getObservationDatasetsByFilter(
-            @TokenUser() User user, 
-            @QueryParam("startYear") @DefaultValue(ObservationResourceDefaults.defaultStartYear) int startYear, 
-            @QueryParam("endYear") @DefaultValue(ObservationResourceDefaults.defaultEndYear) int endYear, 
-            @QueryParam("datasetKey") @DefaultValue(ObservationResourceDefaults.defaultDatasetKey) List<String> datasetKeys, 
-            @QueryParam("ptvk") @DefaultValue(ObservationResourceDefaults.defaultTaxa) List<String> taxa, 
-            @QueryParam("spatialRelationship") @DefaultValue(ObservationResourceDefaults.SPATIAL_RELATIONSHIP_DEFAULT) String spatialRelationship, 
+            @TokenUser() User user,
+            @QueryParam("startYear") @DefaultValue(ObservationResourceDefaults.defaultStartYear) int startYear,
+            @QueryParam("endYear") @DefaultValue(ObservationResourceDefaults.defaultEndYear) int endYear,
+            @QueryParam("datasetKey") @DefaultValue(ObservationResourceDefaults.defaultDatasetKey) List<String> datasetKeys,
+            @QueryParam("ptvk") @DefaultValue(ObservationResourceDefaults.defaultTaxa) List<String> taxa,
+            @QueryParam("spatialRelationship") @DefaultValue(ObservationResourceDefaults.SPATIAL_RELATIONSHIP_DEFAULT) String spatialRelationship,
             @QueryParam("featureID") @DefaultValue(ObservationResourceDefaults.defaultFeatureID) String featureID,
-            @QueryParam("sensitive") @DefaultValue(ObservationResourceDefaults.defaultSensitive) Boolean sensitive, 
-            @QueryParam("designation") @DefaultValue(ObservationResourceDefaults.defaultDesignation) String designation, 
-            @QueryParam("taxonOutputGroup") @DefaultValue(ObservationResourceDefaults.defaultTaxonOutputGroup) String taxonOutputGroup, 
+            @QueryParam("sensitive") @DefaultValue(ObservationResourceDefaults.defaultSensitive) Boolean sensitive,
+            @QueryParam("designation") @DefaultValue(ObservationResourceDefaults.defaultDesignation) String designation,
+            @QueryParam("taxonOutputGroup") @DefaultValue(ObservationResourceDefaults.defaultTaxonOutputGroup) String taxonOutputGroup,
             @QueryParam("gridRef") @DefaultValue(ObservationResourceDefaults.defaultGridRef) String gridRef) {
         //TODO: squareBlurring(?)
         return observationMapper.selectObservationDatasetsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef);
@@ -163,16 +213,16 @@ public class TaxonObservationResource extends AbstractResource{
     @Path("/unavailableDatasets")
     @Produces(MediaType.APPLICATION_JSON)
     public List<DatasetWithQueryStats> getUnavailableDatasetsByFilter(
-            @TokenUser() User user, 
-            @QueryParam("startYear") @DefaultValue(ObservationResourceDefaults.defaultStartYear) int startYear, 
-            @QueryParam("endYear") @DefaultValue(ObservationResourceDefaults.defaultEndYear) int endYear, 
-            @QueryParam("datasetKey") @DefaultValue(ObservationResourceDefaults.defaultDatasetKey) List<String> datasetKeys, 
-            @QueryParam("ptvk") @DefaultValue(ObservationResourceDefaults.defaultTaxa) List<String> taxa, 
-            @QueryParam("spatialRelationship") @DefaultValue(ObservationResourceDefaults.SPATIAL_RELATIONSHIP_DEFAULT) String spatialRelationship, 
+            @TokenUser() User user,
+            @QueryParam("startYear") @DefaultValue(ObservationResourceDefaults.defaultStartYear) int startYear,
+            @QueryParam("endYear") @DefaultValue(ObservationResourceDefaults.defaultEndYear) int endYear,
+            @QueryParam("datasetKey") @DefaultValue(ObservationResourceDefaults.defaultDatasetKey) List<String> datasetKeys,
+            @QueryParam("ptvk") @DefaultValue(ObservationResourceDefaults.defaultTaxa) List<String> taxa,
+            @QueryParam("spatialRelationship") @DefaultValue(ObservationResourceDefaults.SPATIAL_RELATIONSHIP_DEFAULT) String spatialRelationship,
             @QueryParam("featureID") @DefaultValue(ObservationResourceDefaults.defaultFeatureID) String featureID,
-            @QueryParam("sensitive") @DefaultValue(ObservationResourceDefaults.defaultSensitive) Boolean sensitive, 
-            @QueryParam("designation") @DefaultValue(ObservationResourceDefaults.defaultDesignation) String designation, 
-            @QueryParam("taxonOutputGroup") @DefaultValue(ObservationResourceDefaults.defaultTaxonOutputGroup) String taxonOutputGroup, 
+            @QueryParam("sensitive") @DefaultValue(ObservationResourceDefaults.defaultSensitive) Boolean sensitive,
+            @QueryParam("designation") @DefaultValue(ObservationResourceDefaults.defaultDesignation) String designation,
+            @QueryParam("taxonOutputGroup") @DefaultValue(ObservationResourceDefaults.defaultTaxonOutputGroup) String taxonOutputGroup,
             @QueryParam("gridRef") @DefaultValue(ObservationResourceDefaults.defaultGridRef) String gridRef) {
         //TODO: squareBlurring(?)
         return observationMapper.selectUnavailableDatasetsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef);
@@ -182,16 +232,16 @@ public class TaxonObservationResource extends AbstractResource{
     @Path("/datasets/observations")
     @Produces(MediaType.APPLICATION_JSON)
     public List<TaxonDataset> getDatasetsWithObservationsByFilter(
-            @TokenUser() User user, 
-            @QueryParam("startYear") @DefaultValue(ObservationResourceDefaults.defaultStartYear) int startYear, 
-            @QueryParam("endYear") @DefaultValue(ObservationResourceDefaults.defaultEndYear) int endYear, 
-            @QueryParam("datasetKey") @DefaultValue(ObservationResourceDefaults.defaultDatasetKey) List<String> datasetKeys, 
-            @QueryParam("ptvk") @DefaultValue(ObservationResourceDefaults.defaultTaxa) List<String> taxa, 
-            @QueryParam("spatialRelationship") @DefaultValue(ObservationResourceDefaults.SPATIAL_RELATIONSHIP_DEFAULT) String spatialRelationship, 
+            @TokenUser() User user,
+            @QueryParam("startYear") @DefaultValue(ObservationResourceDefaults.defaultStartYear) int startYear,
+            @QueryParam("endYear") @DefaultValue(ObservationResourceDefaults.defaultEndYear) int endYear,
+            @QueryParam("datasetKey") @DefaultValue(ObservationResourceDefaults.defaultDatasetKey) List<String> datasetKeys,
+            @QueryParam("ptvk") @DefaultValue(ObservationResourceDefaults.defaultTaxa) List<String> taxa,
+            @QueryParam("spatialRelationship") @DefaultValue(ObservationResourceDefaults.SPATIAL_RELATIONSHIP_DEFAULT) String spatialRelationship,
             @QueryParam("featureID") @DefaultValue(ObservationResourceDefaults.defaultFeatureID) String featureID,
-            @QueryParam("sensitive") @DefaultValue(ObservationResourceDefaults.defaultSensitive) Boolean sensitive, 
-            @QueryParam("designation") @DefaultValue(ObservationResourceDefaults.defaultDesignation) String designation, 
-            @QueryParam("taxonOutputGroup") @DefaultValue(ObservationResourceDefaults.defaultTaxonOutputGroup) String taxonOutputGroup, 
+            @QueryParam("sensitive") @DefaultValue(ObservationResourceDefaults.defaultSensitive) Boolean sensitive,
+            @QueryParam("designation") @DefaultValue(ObservationResourceDefaults.defaultDesignation) String designation,
+            @QueryParam("taxonOutputGroup") @DefaultValue(ObservationResourceDefaults.defaultTaxonOutputGroup) String taxonOutputGroup,
             @QueryParam("gridRef") @DefaultValue(ObservationResourceDefaults.defaultGridRef) String gridRef) {
         //TODO: squareBlurring(?)
         List<TaxonObservation> taxonObservationsOrderedByDataset = observationMapper.selectObservationsByFilterOrderedByDataset(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef);
@@ -202,16 +252,16 @@ public class TaxonObservationResource extends AbstractResource{
     @Path("/providers")
     @Produces(MediaType.APPLICATION_JSON)
     public List<ProviderWithQueryStats> getObservationProvidersByFilter(
-            @TokenUser() User user, 
-            @QueryParam("startYear") @DefaultValue(ObservationResourceDefaults.defaultStartYear) int startYear, 
-            @QueryParam("endYear") @DefaultValue(ObservationResourceDefaults.defaultEndYear) int endYear, 
-            @QueryParam("datasetKey") @DefaultValue(ObservationResourceDefaults.defaultDatasetKey) List<String> datasetKeys, 
-            @QueryParam("ptvk") @DefaultValue(ObservationResourceDefaults.defaultTaxa) List<String> taxa, 
-            @QueryParam("spatialRelationship") @DefaultValue(ObservationResourceDefaults.SPATIAL_RELATIONSHIP_DEFAULT) String spatialRelationship, 
+            @TokenUser() User user,
+            @QueryParam("startYear") @DefaultValue(ObservationResourceDefaults.defaultStartYear) int startYear,
+            @QueryParam("endYear") @DefaultValue(ObservationResourceDefaults.defaultEndYear) int endYear,
+            @QueryParam("datasetKey") @DefaultValue(ObservationResourceDefaults.defaultDatasetKey) List<String> datasetKeys,
+            @QueryParam("ptvk") @DefaultValue(ObservationResourceDefaults.defaultTaxa) List<String> taxa,
+            @QueryParam("spatialRelationship") @DefaultValue(ObservationResourceDefaults.SPATIAL_RELATIONSHIP_DEFAULT) String spatialRelationship,
             @QueryParam("featureID") @DefaultValue(ObservationResourceDefaults.defaultFeatureID) String featureID,
-            @QueryParam("sensitive") @DefaultValue(ObservationResourceDefaults.defaultSensitive) Boolean sensitive, 
-            @QueryParam("designation") @DefaultValue(ObservationResourceDefaults.defaultDesignation) String designation, 
-            @QueryParam("taxonOutputGroup") @DefaultValue(ObservationResourceDefaults.defaultTaxonOutputGroup) String taxonOutputGroup, 
+            @QueryParam("sensitive") @DefaultValue(ObservationResourceDefaults.defaultSensitive) Boolean sensitive,
+            @QueryParam("designation") @DefaultValue(ObservationResourceDefaults.defaultDesignation) String designation,
+            @QueryParam("taxonOutputGroup") @DefaultValue(ObservationResourceDefaults.defaultTaxonOutputGroup) String taxonOutputGroup,
             @QueryParam("gridRef") @DefaultValue(ObservationResourceDefaults.defaultGridRef) String gridRef) {
         //TODO: squareBlurring(?)
         List<DatasetWithQueryStats> datasetsWithQueryStats = observationMapper.selectObservationDatasetsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef);
@@ -252,10 +302,10 @@ public class TaxonObservationResource extends AbstractResource{
         provider.setQuerySpecificObservationCount(provider.getQuerySpecificObservationCount() + datasetWithQueryStats.getQuerySpecificObservationCount());
         provider.getDatasetsWithQueryStats().add(datasetWithQueryStats);
     }
-    
-    private void sortByProviderAndDataset(List<ProviderWithQueryStats> providersToSort){
-        Collections.sort(providersToSort,Collections.reverseOrder());
-        for(ProviderWithQueryStats providerWithQueryStats : providersToSort){
+
+    private void sortByProviderAndDataset(List<ProviderWithQueryStats> providersToSort) {
+        Collections.sort(providersToSort, Collections.reverseOrder());
+        for (ProviderWithQueryStats providerWithQueryStats : providersToSort) {
             Collections.sort(providerWithQueryStats.getDatasetsWithQueryStats());
         }
     }
@@ -264,18 +314,18 @@ public class TaxonObservationResource extends AbstractResource{
      * This takes a list of observations in dataset order and returns a list
      * of datasets with their observations
      */
-    private List<TaxonDataset>getDatasetsWithObservations(List<TaxonObservation> taxonObservationsOrderedByDataset){
+    private List<TaxonDataset> getDatasetsWithObservations(List<TaxonObservation> taxonObservationsOrderedByDataset) {
         List<TaxonDataset> toReturn = new ArrayList<TaxonDataset>();
-        if(taxonObservationsOrderedByDataset.size() > 0){
+        if (taxonObservationsOrderedByDataset.size() > 0) {
             List<TaxonObservation> taxonObservationsForDataset = null;
             String currentDatasetKey = "";
             String previousDatasetKey = "";
-            for(TaxonObservation taxonObservation : taxonObservationsOrderedByDataset){
+            for (TaxonObservation taxonObservation : taxonObservationsOrderedByDataset) {
                 currentDatasetKey = taxonObservation.getDatasetKey();
-                if(currentDatasetKey.equals(previousDatasetKey)){
+                if (currentDatasetKey.equals(previousDatasetKey)) {
                     taxonObservationsForDataset.add(taxonObservation);
-                }else{
-                    if(!"".equals(previousDatasetKey)){
+                } else {
+                    if (!"".equals(previousDatasetKey)) {
                         appendTaxonDataset(taxonObservationsForDataset, previousDatasetKey, toReturn);
                     }
                     taxonObservationsForDataset = new ArrayList<TaxonObservation>();
@@ -287,12 +337,66 @@ public class TaxonObservationResource extends AbstractResource{
         }
         return toReturn;
     }
-    
-    private void appendTaxonDataset(List<TaxonObservation> taxonObservations, String taxonDatasetKey, List<TaxonDataset> taxonDatasets){
+
+    private void appendTaxonDataset(List<TaxonObservation> taxonObservations, String taxonDatasetKey, List<TaxonDataset> taxonDatasets) {
         TaxonDataset taxonDataset = datasetMapper.selectTaxonDatasetByID(taxonDatasetKey);
         taxonDataset.setObservations(taxonObservations);
         taxonDatasets.add(taxonDataset);
     }
+
+    private void addSpecies(ZipOutputStream zip, User user, int startYear, int endYear, List<String> datasetKeys, List<String> taxa, String spatialRelationship, String featureID, boolean sensitive, String designation, String taxonOutputGroup, String gridRef) throws IOException {
+        List<TaxonWithQueryStats> taxaWithStats = observationMapper.selectObservationSpeciesByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef);
+        zip.putNextEntry(new ZipEntry("TaxonList.csv"));
+        ArrayList<String> values = new ArrayList<String>();
+        values.add("TaxonName");
+        values.add("PreferredTaxonVersionKey");
+        downloadHelper.writelnCsv(zip, values);
+        for (TaxonWithQueryStats taxonWithStats : taxaWithStats) {
+            Taxon taxon = taxonWithStats.getTaxon();
+            String name = taxon.getName() + " " + taxon.getAuthority();
+            values = new ArrayList<String>();
+            values.add(name);
+            values.add(taxon.getPTaxonVersionKey());
+            downloadHelper.writelnCsv(zip, values);
+        }
+    }
+
+    private void addDatasetMetadata(ZipOutputStream zip, User user, int startYear, int endYear, List<String> datasetKeys, List<String> taxa, String spatialRelationship, String featureID, boolean sensitive, String designation, String taxonOutputGroup, String gridRef) throws IOException {
+        List<DatasetWithQueryStats> datasetsWithQueryStats = observationMapper.selectObservationDatasetsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef);
+        downloadHelper.addDatasetWithQueryStatsMetadata(zip, user.getId(), datasetsWithQueryStats);
+    }
     
-     
+    private void addReadMe(ZipOutputStream zip, String title, User user, int startYear, int endYear, List<String> datasetKeys, String spatialRelationship, String featureID, boolean sensitive, String designation, String taxonOutputGroupKey) throws IOException{
+        
+        HashMap<String, String> filters = new HashMap<String, String>();
+        if(featureID != null && !featureID.equals(ObservationResourceDefaults.defaultFeatureID)){
+            Feature feature = featureMapper.getFeature(featureID);
+            if(feature.getType().equals("GridSquare")){
+                filters.put("Grid reference:", feature.getLabel());
+            }else if(feature.getType().equals("SiteBoundary")){
+                filters.put("Site name", feature.getLabel());
+                filters.put("Site key", feature.getIdentifier());
+            }
+        }
+        if(!(new Integer(startYear).toString().equals(ObservationResourceDefaults.defaultStartYear))){
+            filters.put("Start year", new Integer(startYear).toString());
+        }
+        if(!(new Integer(endYear).toString().equals(ObservationResourceDefaults.defaultEndYear))){
+            filters.put("End year", new Integer(endYear).toString());
+        }
+        filters.put("Spatial relationship", spatialRelationship);
+        filters.put("Include only sensitive records", Boolean.toString(sensitive));
+        if(designation != null && !designation.equals(ObservationResourceDefaults.defaultDesignation)){
+            filters.put("Designation key", designation);
+        }
+        if(datasetKeys != null && datasetKeys.size() > 0 && !((String)datasetKeys.get(0)).equals("")) {
+            filters.put("Datset keys", ProviderHelper.datasetListToCommaList(datasetKeys));
+        }
+        if(taxonOutputGroupKey != null && !taxonOutputGroupKey.equals(ObservationResourceDefaults.defaultTaxonOutputGroup)){
+            TaxonOutputGroup taxonOutputGroup = taxonOutputGroupMapper.getById(taxonOutputGroupKey);
+            filters.put("Taxon group", taxonOutputGroup.getName());
+            filters.put("Taxon group key", taxonOutputGroupKey);
+        }
+        downloadHelper.addReadMe(zip, user, title, filters);
+    }
 }

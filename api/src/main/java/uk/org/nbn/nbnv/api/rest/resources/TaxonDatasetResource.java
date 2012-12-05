@@ -13,6 +13,7 @@ import uk.org.nbn.nbnv.api.dao.warehouse.DatasetMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.SurveyMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.TaxonMapper;
 import uk.org.nbn.nbnv.api.model.*;
+import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
 
 @Component
 @Path("/taxonDatasets")
@@ -70,6 +71,13 @@ public class TaxonDatasetResource extends AbstractResource {
     @Produces(MediaType.APPLICATION_JSON)
     public List<Attribute> getAttributesByDatasetKey(@PathParam("id") String id){
         return attributeMapper.selectAttributesByDatasetKey(id);
+    }
+    
+    @GET
+    @Path("/{datasetKey}/accessPositions")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<String> getAttributesByDatasetKey(@TokenUser() User user, @PathParam("datasetKey") String datasetKey){
+        return datasetMapper.getDatasetAccessPositions(datasetKey, user.getId());
     }
     
 }

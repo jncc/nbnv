@@ -6,6 +6,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -21,6 +22,7 @@ import uk.org.nbn.nbnv.api.model.GridMapSquare;
 import uk.org.nbn.nbnv.api.model.Taxon;
 import uk.org.nbn.nbnv.api.model.User;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
+import uk.org.nbn.nbnv.api.rest.resources.utils.DownloadHelper;
 
 @Component
 @Path("/gridMapSquares")
@@ -30,6 +32,8 @@ public class GridMapSquareResource extends AbstractResource {
     GridMapSquareMapper gridMapSquareMapper;
     @Autowired
     TaxonMapper taxonMapper;
+    @Autowired
+    DownloadHelper downloadHelper;
 
     @GET
     @Produces("application/x-zip-compressed")
@@ -43,7 +47,7 @@ public class GridMapSquareResource extends AbstractResource {
         return new StreamingOutput() {
             public void write(OutputStream out) throws IOException, WebApplicationException {
                 ZipOutputStream zip = new ZipOutputStream(out);
-                addReadMe(zip, ptvk, resolution);
+                addReadMe(zip, user, ptvk, resolution, bands);
                 addGridRefs(zip, user, ptvk, resolution, bands, datasetKeys);
                 addDatasetMetadata(zip, user, ptvk, resolution, bands, datasetKeys);
                 zip.flush();
@@ -52,16 +56,17 @@ public class GridMapSquareResource extends AbstractResource {
         };
     }
 
-    private void addReadMe(ZipOutputStream zip, String ptvk, String resolution) throws IOException {
+    private void addReadMe(ZipOutputStream zip, User user, String ptvk, String resolution, List<String> bands) throws IOException {
         Taxon taxon = taxonMapper.getTaxon(ptvk);
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MMM-dd HH:mm:ss");
-        zip.putNextEntry(new ZipEntry("ReadMe.txt"));
-        writeln(zip, "Grid map square download from the NBN Gateway");
-        writeln(zip, "---------------------------------------------");
-        writeln(zip, "Taxon: " + taxon.getName() + " " + taxon.getAuthority());
-        writeln(zip, "Date and time of download: " + dateFormat.format(new Date()));
-        writeln(zip, "Resolution: " + resolution);
-        zip.flush();
+        String title = "Grid map square download from the NBN Gateway";
+        HashMap<String, String> filters = new HashMap<String, String>();
+        filters.put("Taxon", taxon.getName() + " " + taxon.getAuthority());
+        filters.put("Resolution: ", resolution);
+        int i = 1;
+        for(String band: bands){
+            filters.put("Year range " + i++, band.substring(0,band.indexOf(",")));
+        }
+        downloadHelper.addReadMe(zip, user, title, filters);
     }
 
     private void addGridRefs(ZipOutputStream zip, User user, String ptvk, String resolution, List<String> bands, List<String> datasetKey) throws IOException {
@@ -79,39 +84,16 @@ public class GridMapSquareResource extends AbstractResource {
         String yearRange = band.substring(0,band.indexOf(","));
         zip.putNextEntry(new ZipEntry("GridSquares_" + yearRange + ".csv"));
         List<GridMapSquare> gridMapSquares = gridMapSquareMapper.getGridMapSquares(user, ptvk, resolution, band, datasetKeys);
-        writeln(zip, "GridSquares");
+        downloadHelper.writeln(zip, "GridSquares");
         for (GridMapSquare gridMapSquare : gridMapSquares) {
-            writeln(zip, gridMapSquare.getGridRef());
+            downloadHelper.writeln(zip, gridMapSquare.getGridRef());
         }
         zip.flush();
     }
 
     private void addDatasetMetadata(ZipOutputStream zip, User user, String ptvk, String resolution, List<String> bands, List<String> datasetKeys) throws IOException {
         List<Dataset> datasets = gridMapSquareMapper.getGridMapDatasets(user, ptvk, resolution, getStartYear(bands), getEndYear(bands), datasetKeys);
-        zip.putNextEntry(new ZipEntry("DatasetMetadata.txt"));
-        writeln(zip, "Datasets that contributed to this download");
-        for(Dataset dataset : datasets){
-        writeln(zip, "------------------------------------------");
-        writeln(zip, "");
-            writeln(zip, "Title: " + dataset.getTitle());
-            writeln(zip, "");
-            writeln(zip, "Dataset key: " + dataset.getKey());
-            writeln(zip, "");
-            writeln(zip, "Description: " + dataset.getDescription());
-            writeln(zip, "");
-            writeln(zip, "Dataset owner: " + dataset.getOrganisationName());
-            writeln(zip, "");
-            if(dataset.getUseConstraints() != null && !"".equals(dataset.getUseConstraints().trim())){
-                writeln(zip, "Use constraints: " + dataset.getUseConstraints());
-                writeln(zip, "");
-            }
-            if(dataset.getAccessConstraints() != null && !"".equals(dataset.getAccessConstraints().trim())){
-                writeln(zip, "Access constraints: " + dataset.getAccessConstraints());
-                writeln(zip, "");
-            }
-        }
-        
-        zip.flush();
+        downloadHelper.addDatasetMetadata(zip, user.getId(), datasets);
     }
     
     private Integer getStartYear(List<String> bands){
@@ -142,10 +124,6 @@ public class GridMapSquareResource extends AbstractResource {
             }
         }
         return toReturn;
-    }
-    
-    private void writeln(ZipOutputStream zip, String output) throws IOException{
-        zip.write((output + "\r\n").getBytes());
     }
     
 }
