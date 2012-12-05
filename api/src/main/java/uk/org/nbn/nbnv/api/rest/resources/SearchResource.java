@@ -53,6 +53,7 @@ public class SearchResource extends AbstractResource {
                 .start(start)
                 .rows(rows)
                 .filterQuery("record_type:siteboundaryfeature")
+                .filterQuery(String.format("datasetKey:%s",datasetKey))
                 .filterQuery(String.format("location:[%s,%s TO %s,%s]", (Object[]) bboxParts))
                 .response();
     }
