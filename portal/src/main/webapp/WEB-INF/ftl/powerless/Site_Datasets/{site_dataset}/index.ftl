@@ -1,26 +1,28 @@
-<@template.master title="NBN Gateway - Site Boundaries"
-    javascripts=["/js/enable-site-boundary-datatable.js","/js/jquery.dataTables.min.js"] 
-    csss=["http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/themes/smoothness/jquery-ui.css"] >
+<#assign dataset=json.readURL("${api}/datasets/${URLParameters.site_dataset}")>
 
-<#assign datasetId="${URLParameters.site_dataset}">
-<#assign siteBoundaries=json.readURL("${api}/siteBoundaryDatasets/${datasetId}/siteBoundaries")>
-<#assign dataset=json.readURL("${api}/datasets/${datasetId}")>
-<h1>Site boundaries for the dataset '${dataset.title}'</h1>
-<table id="nbn-site-boundary-datatable" class="nbn-dataset-table">
-    <thead>
-        <tr>
-            <th>Site boundary name</th>
-            <th>Site key</th>
-        </tr>
-    </thead>
-    <tbody>
-        <#list siteBoundaries as siteBoundary>
-            <tr>
-                <td><a href="/Reports/Sites/${siteBoundary.identifier}/Groups">${siteBoundary.name}</a></td>
-                <td>${siteBoundary.providerKey}</td>
-            </tr>
-        </#list>
-    </tbody>
-</table>
+<@template.master title="NBN Gateway - Site Boundaries"
+    csss=["http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/themes/smoothness/jquery-ui.css"] 
+    javascripts=["/js/OpenLayers.js",
+                "/js/jquery.dataTables.min.js",
+                "/js/jquery.nbn_search.js",
+                "/js/enable-search.js"]>
+
+    <h1>Site boundaries for the dataset '${dataset.title}'</h1>
+
+    <div id="site-search-map" style="height:335px; width:100%;"></div>
+    <@search.search 
+        url="${api}/search/siteDatasets/${dataset.key}"
+        display=[
+            {"title":"Site Boundary Name", "attr":"label", "link":"href"},
+            {"title":"Site Key", "attr":"identifier"}
+        ]
+        query=RequestParameters
+        filters=[{
+            "type": "spatial",
+            "id" : "bbox",
+            "map" : "site-search-map",
+            "layer": "${gis}/SiteBoundaryDatasets?LAYERS=${dataset.key}"
+        }]
+        />
 
 </@template.master>

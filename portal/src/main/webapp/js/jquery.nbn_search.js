@@ -18,14 +18,40 @@
         $.each(arr, function(i, val) {toReturn[val.name] = val.value;}); 
         return toReturn;
     }
-
+    
     $.fn.dataTableExt.oJUIClasses.sStripeOdd = 'ui-state-highlight';
             
     $.widget( "ui.nbn_search", {
+        _initSpatialSearch: function(inputField) {
+            var _me = this;
+            map = new OpenLayers.Map({
+                div: inputField.attr("map-div"),
+                displayProjection: new OpenLayers.Projection("EPSG:4326"),
+                layers: [
+                    new OpenLayers.Layer.OSM({sphericalMercator:true}),
+                    new OpenLayers.Layer.WMS("Site layer", inputField.attr("spatial-layer"), {
+                        format: "image/png",
+                        transparent: true
+                    }, { isBaseLayer:false, projection: new OpenLayers.Projection("EPSG:3857") })
+                ],
+                eventListeners: {
+                    moveend : function(evt) {
+                        inputField.attr("value", evt.object.getExtent().transform(
+                                    evt.object.getProjectionObject(),
+                                    new OpenLayers.Projection("EPSG:4326")).toBBOX());
+                        _me.refresh();
+                    }            
+                }
+            });
+            map.zoomToExtent(new OpenLayers.Bounds(
+                -2695039.240359,6300039.134229,2216498.44845,7938849.020435));
+        },
+        
         _create: function() {
             var me = this, initialSearch = $('input[name="q"]', me.element).val();
             
             this._customFilters = $('.nbn-search [name]');  //store a list of the additional filters
+
             this._dataTable = $('.results', me.element).removeClass("results"); //maintain a reference to the data table (Remove old styling class)
             
             this._dataTable.dataTable( {
@@ -57,10 +83,17 @@
             } );
             this._dataTable.prev().append($('.filters', this.element));
             
+            $('input[spatial-layer]', this.element).each(function(i, ele) {//enable all spatial filters
+                me._initSpatialSearch($(ele));}
+            );
+            
+            
             this._customFilters.change(function() {me._dataTable.fnDraw();}); //register listeners to the custom filters
             
             $('.controls, .paginator', me.element).remove(); //remove the elements which are going to be replace with datatable
         },
+        
+        refresh : function() {  this._dataTable.fnDraw();    },
         
         _generateSearchQuery: function(query) {
             //generate the additional filters data object

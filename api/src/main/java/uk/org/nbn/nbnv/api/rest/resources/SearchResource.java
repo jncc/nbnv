@@ -44,7 +44,7 @@ public class SearchResource extends AbstractResource {
             @PathParam("datasetKey") String datasetKey,
             @QueryParam("rows") @DefaultValue("20") int rows,
             @QueryParam("start") @DefaultValue("0") int start,
-            @QueryParam("bbox") String bbox,
+            @QueryParam("bbox") @DefaultValue("-180,-90,180,90") String bbox,
             @QueryParam("q") String q) throws SolrServerException {
         String[] bboxParts = bbox.split(",");
         return solr

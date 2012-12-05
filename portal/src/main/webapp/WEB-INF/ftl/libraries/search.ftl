@@ -3,18 +3,23 @@
     be powered by NBN Gateway API standardised search resources
 -->
 
-<!--Define a combo facet filter for searching-->
-<#macro combo id name data>
-    <label>${name}</label>
-    <select name="${id}">
+<!--Define a combo filter for searching-->
+<#macro combo filter>
+    <label>${filter.name}</label>
+    <select name="${filter.id}">
         <option value="">All</option>
-        <#list data as currentFacet>
+        <#list filter.data as currentFacet>
             <option 
                 value="${currentFacet.key}"
-                ${RequestParameters[id]?seq_contains(currentFacet.key)?string('selected="selected"','')}
+                ${RequestParameters[filter.id]?seq_contains(currentFacet.key)?string('selected="selected"','')}
                 >${currentFacet.name}</option>
         </#list>
     </select>
+</#macro>
+
+<!--Define a spatial filter for searching-->
+<#macro spatial filter>
+    <input type="hidden" name="${filter.id}" spatial-layer="${filter.layer}" map-div="${filter.map}" value="-180,-90,180,90"/>
 </#macro>
 
 <#--The following macro will render search results of a particular query to a 
@@ -122,7 +127,7 @@
 <#macro __renderFilters filters>
     <ul class="filters">
         <#list filters as filter>
-            <li><@combo filter.id filter.name filter.data/></li>
+            <li><@.vars[filter.type!"combo"] filter/></li>
         </#list>
     </ul>
 </#macro>
