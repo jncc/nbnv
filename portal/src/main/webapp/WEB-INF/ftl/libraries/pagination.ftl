@@ -90,12 +90,12 @@
     </div>
 </#macro>
 
-<#macro show rowSizes=[20,40,60,100]>
+<#macro show defaultRows=25 rowSizes=[10,25,50,100]>
     <select name="rows">
         <#list rowSizes as rowSize>
             <option 
                 value="${rowSize}" 
-                ${RequestParameters.rows?seq_contains(rowSize?string)?string('selected="selected"','')}
+                ${((RequestParameters.rows?size == 0 && defaultRows == rowSize) || (RequestParameters.rows?size == 1 && RequestParameters.rows?seq_contains(rowSize?string)))?string('selected="selected"','')}
             >${rowSize}</option>
         </#list>
     </select>

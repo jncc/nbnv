@@ -12,6 +12,7 @@
     <div id="site-search-map" style="height:335px; width:100%;"></div>
     <@search.search 
         url="${api}/search/siteDatasets/${dataset.key}"
+        defaultRows=10
         display=[
             {"title":"Site Boundary Name", "attr":"label", "link":"href"},
             {"title":"Site Key", "attr":"identifier"}
@@ -24,5 +25,4 @@
             "layer": "${gis}/SiteBoundaryDatasets?LAYERS=${dataset.key}"
         }]
         />
-
 </@template.master>

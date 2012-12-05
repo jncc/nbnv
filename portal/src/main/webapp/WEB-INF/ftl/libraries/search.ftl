@@ -80,12 +80,12 @@
             }]
         </code>
 -->
-<#macro search url display query={} filters=[]>
+<#macro search url display defaultRows=25 query={} filters=[]>
     <#assign search=json.readURL(url, query)/>
     <form class="nbn-search" nbn-search-node="${url}">    
         <div class="controls">
             Search - <input type="text" name="q" value="${RequestParameters.q?first!''}"/>
-            Show - <@pagination.show/> 
+            Show - <@pagination.show defaultRows/> 
             <input type="submit" value="Filter"/>
         </div>
         <#if filters?size != 0><@__renderFilters filters/></#if>

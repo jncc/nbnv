@@ -23,8 +23,7 @@
             
     $.widget( "ui.nbn_search", {
         _initSpatialSearch: function(inputField) {
-            var _me = this;
-            map = new OpenLayers.Map({
+            var _me = this, map = new OpenLayers.Map({
                 div: inputField.attr("map-div"),
                 displayProjection: new OpenLayers.Projection("EPSG:4326"),
                 layers: [
@@ -48,8 +47,9 @@
         },
         
         _create: function() {
-            var me = this, initialSearch = $('input[name="q"]', me.element).val();
-            
+            var me = this, 
+                initialSearch = $('input[name="q"]', me.element).val(),
+                initialRows = $('select[name="rows"]', me.element).val();
             this._customFilters = $('.nbn-search [name]');  //store a list of the additional filters
 
             this._dataTable = $('.results', me.element).removeClass("results"); //maintain a reference to the data table (Remove old styling class)
@@ -57,7 +57,7 @@
             this._dataTable.dataTable( {
                 "oSearch": {"sSearch": initialSearch},
                 "bSort": false,
-                "iDisplayLength": 25,
+                "iDisplayLength": initialRows,
                 "bJQueryUI": true,
                 "bProcessing": true,
                 "bServerSide": true,

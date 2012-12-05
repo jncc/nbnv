@@ -22,7 +22,7 @@ public class SearchResource extends AbstractResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public SolrResponse searchAll(
-            @QueryParam("rows") @DefaultValue("20") int rows,
+            @QueryParam("rows") @DefaultValue("25") int rows,
             @QueryParam("start") @DefaultValue("0") int start,
             @QueryParam("sort") String sort,
             @QueryParam("order") @DefaultValue("asc") SolrQuery.ORDER order,
@@ -42,7 +42,7 @@ public class SearchResource extends AbstractResource {
     @Produces(MediaType.APPLICATION_JSON)
     public SolrResponse searchSiteDataset(
             @PathParam("datasetKey") String datasetKey,
-            @QueryParam("rows") @DefaultValue("20") int rows,
+            @QueryParam("rows") @DefaultValue("10") int rows,
             @QueryParam("start") @DefaultValue("0") int start,
             @QueryParam("bbox") @DefaultValue("-180,-90,180,90") String bbox,
             @QueryParam("q") String q) throws SolrServerException {
@@ -62,7 +62,7 @@ public class SearchResource extends AbstractResource {
     @Path("/designations")
     @Produces(MediaType.APPLICATION_JSON)
     public SolrResponse searchDesignations(
-            @QueryParam("rows") @DefaultValue("20") int rows,
+            @QueryParam("rows") @DefaultValue("25") int rows,
             @QueryParam("start") @DefaultValue("0") int start,
             @QueryParam("sort") String sort,
             @QueryParam("order") @DefaultValue("asc") SolrQuery.ORDER order,
@@ -82,7 +82,7 @@ public class SearchResource extends AbstractResource {
     @Path("/taxonDatasets")
     @Produces(MediaType.APPLICATION_JSON)
     public SolrResponse searchDatasets(
-            @QueryParam("rows") @DefaultValue("20") int rows,
+            @QueryParam("rows") @DefaultValue("25") int rows,
             @QueryParam("start") @DefaultValue("0") int start,
             @QueryParam("sort") String sort,
             @QueryParam("order") @DefaultValue("asc") SolrQuery.ORDER order,
@@ -102,7 +102,7 @@ public class SearchResource extends AbstractResource {
     @Path("/taxa")
     @Produces(MediaType.APPLICATION_JSON)
     public SolrResponse searchTaxa(
-            @QueryParam("rows") @DefaultValue("20") int rows,
+            @QueryParam("rows") @DefaultValue("25") int rows,
             @QueryParam("start") @DefaultValue("0") int start,
             @QueryParam("taxonOutputGroupKey") List<String> outputGroups,
             @QueryParam("sort") String sort,
