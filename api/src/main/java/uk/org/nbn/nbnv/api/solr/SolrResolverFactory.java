@@ -56,13 +56,15 @@ public class SolrResolverFactory {
      * take one parameter (An identifer specific for that type)
      */
     private static class InstanceMethod {
-        private Method method;
-        private Object instance;
-        private Class<?> identifierType;
+        private final Method method;
+        private final Object instance;
+        private final Class<?> identifierType;
+        
         public InstanceMethod(Object instance, Method method) {
             this.instance = instance;
             this.method = method;
             Class<?>[] parameterTypes = method.getParameterTypes();
+            this.identifierType = parameterTypes[0];
             if(parameterTypes.length != 1) {
                 throw new IllegalArgumentException("The annotated method must only take one argument");
             }
