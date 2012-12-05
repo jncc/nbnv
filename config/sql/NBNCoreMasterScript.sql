@@ -1256,6 +1256,11 @@ CREATE TABLE [dbo].[AccessRequestResponseType] (
 	[label] [varchar](50) NOT NULL UNIQUE
 );
 
+INSERT INTO [AccessRequestResponseType] VALUES
+(1, 'accept'), 
+(2, 'deny'), 
+(3, 'expired');
+
 ---------------------------
 
 CREATE TABLE [dbo].[UserAccessRequest](
