@@ -21,11 +21,11 @@ public class ProviderHelper {
     }
 
     static void addStartYearFilter(Integer startYear) {
-        WHERE("YEAR(endDate) >= " + startYear);
+        WHERE("YEAR(o.endDate) >= " + startYear);
     }
 
     static void addEndYearFilter(Integer endYear) {
-        WHERE("YEAR(startDate) <= " + endYear);
+        WHERE("YEAR(o.startDate) <= " + endYear);
 
     }
 
