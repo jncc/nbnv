@@ -25,6 +25,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import uk.org.nbn.nbnv.api.dao.providers.ProviderHelper;
 import uk.org.nbn.nbnv.api.dao.warehouse.DatasetMapper;
+import uk.org.nbn.nbnv.api.dao.warehouse.DesignationMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.FeatureMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.OrganisationMapper;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
@@ -49,6 +50,9 @@ public class TaxonObservationResource extends AbstractResource {
     TaxonOutputGroupMapper taxonOutputGroupMapper;
     @Autowired
     DownloadHelper downloadHelper;
+    @Autowired 
+    DesignationMapper designationMapper;
+    
 
     @GET
     @Path("/{id : \\d+}")
@@ -388,7 +392,9 @@ public class TaxonObservationResource extends AbstractResource {
         filters.put("Spatial relationship", spatialRelationship);
         filters.put("Include only sensitive records", Boolean.toString(sensitive));
         if(designation != null && !designation.equals(ObservationResourceDefaults.defaultDesignation)){
+            Designation desig = designationMapper.selectByID(designation);
             filters.put("Designation key", designation);
+            filters.put("Designation name", desig.getName());
         }
         if(datasetKeys != null && datasetKeys.size() > 0 && !((String)datasetKeys.get(0)).equals("")) {
             filters.put("Datset keys", ProviderHelper.datasetListToCommaList(datasetKeys));

@@ -84,7 +84,7 @@
             </fieldset>
             <#if isDownloadButtonNeeded>
                 <fieldset>
-                    <legend>Data download</legend>
+                    <legend>Download</legend>
                     <button id="nbn-site-report-download-button">Download</button> species list
                 </fieldset>
             </#if>
