@@ -6,7 +6,7 @@ import java.util.Map;
 
 public class TaxonDataset extends Dataset{
     private String datasetKey, maxResolution, publicResolution;
-    private boolean allowRecordValidation;
+    private boolean allowRecordValidation, publicAttribute;
     private int recordCount, speciesCount;
     private List<TaxonWithDatasetStats> taxa;
     private List<YearStats> recordsPerYear;
@@ -115,5 +115,13 @@ public class TaxonDataset extends Dataset{
 
     public void setObservations(List<TaxonObservation> observations) {
         this.observations = observations;
+    }
+
+    public boolean isPublicAttribute() {
+        return publicAttribute;
+    }
+
+    public void setPublicAttribute(boolean publicAttribute) {
+        this.publicAttribute = publicAttribute;
     }
 }

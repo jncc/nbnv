@@ -17,9 +17,10 @@ public class GridMapSquareProvider {
 
     public String gridMapDatasets(Map<String, Object> params) {
         BEGIN();
-        SELECT("DISTINCT dd.*");
+        SELECT("DISTINCT dd.*, tdd.*");
         createGenericQuery(params);
         INNER_JOIN("DatasetData dd ON o.datasetKey = dd.\"key\"");
+        INNER_JOIN("TaxonDatasetData tdd ON dd.\"key\" = tdd.datasetKey");
         addYearRange((Integer)params.get("startYear"), (Integer)params.get("endYear"));
         return SQL();
     }

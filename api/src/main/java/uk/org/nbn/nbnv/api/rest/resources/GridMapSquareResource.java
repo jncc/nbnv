@@ -20,6 +20,7 @@ import uk.org.nbn.nbnv.api.dao.warehouse.TaxonMapper;
 import uk.org.nbn.nbnv.api.model.Dataset;
 import uk.org.nbn.nbnv.api.model.GridMapSquare;
 import uk.org.nbn.nbnv.api.model.Taxon;
+import uk.org.nbn.nbnv.api.model.TaxonDataset;
 import uk.org.nbn.nbnv.api.model.User;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
 import uk.org.nbn.nbnv.api.rest.resources.utils.DownloadHelper;
@@ -92,8 +93,8 @@ public class GridMapSquareResource extends AbstractResource {
     }
 
     private void addDatasetMetadata(ZipOutputStream zip, User user, String ptvk, String resolution, List<String> bands, List<String> datasetKeys) throws IOException {
-        List<Dataset> datasets = gridMapSquareMapper.getGridMapDatasets(user, ptvk, resolution, getStartYear(bands), getEndYear(bands), datasetKeys);
-        downloadHelper.addDatasetMetadata(zip, user.getId(), datasets);
+        List<TaxonDataset> taxonDatasets = gridMapSquareMapper.getGridMapDatasets(user, ptvk, resolution, getStartYear(bands), getEndYear(bands), datasetKeys);
+        downloadHelper.addDatasetMetadata(zip, user.getId(), taxonDatasets);
     }
     
     private Integer getStartYear(List<String> bands){

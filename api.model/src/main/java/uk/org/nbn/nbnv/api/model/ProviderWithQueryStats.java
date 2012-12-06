@@ -6,11 +6,11 @@ public class ProviderWithQueryStats implements Comparable<ProviderWithQueryStats
     
     private int organisationID, querySpecificObservationCount;
     private Organisation organisation;
-    private List<DatasetWithQueryStats> datasetsWithQueryStats;
+    private List<TaxonDatasetWithQueryStats> datasetsWithQueryStats;
     
     public ProviderWithQueryStats(){}
     
-    public ProviderWithQueryStats(int organisationID, Organisation organisation, int querySpecificObservationCount, List<DatasetWithQueryStats> datasetsWithQueryStats){
+    public ProviderWithQueryStats(int organisationID, Organisation organisation, int querySpecificObservationCount, List<TaxonDatasetWithQueryStats> datasetsWithQueryStats){
         this.organisationID = organisationID;
         this.organisation = organisation;
         this.querySpecificObservationCount = querySpecificObservationCount;
@@ -41,11 +41,11 @@ public class ProviderWithQueryStats implements Comparable<ProviderWithQueryStats
         this.organisation = organisation;
     }
 
-    public List<DatasetWithQueryStats> getDatasetsWithQueryStats() {
+    public List<TaxonDatasetWithQueryStats> getDatasetsWithQueryStats() {
         return datasetsWithQueryStats;
     }
 
-    public void setDatasetsWithQueryStats(List<DatasetWithQueryStats> datasetsWithQueryStats) {
+    public void setDatasetsWithQueryStats(List<TaxonDatasetWithQueryStats> datasetsWithQueryStats) {
         this.datasetsWithQueryStats = datasetsWithQueryStats;
     }
 
