@@ -17,6 +17,7 @@
         <@report_utils.site_report_filters requestParameters=RequestParameters args={"taxonOutputGroup":taxonOutputGroup} location=site.label isSpatialRelationshipNeeded=true isDownloadButtonNeeded=true/>
         <div class="tabbed" id="nbn-site-report-data-container"></div>
         <@report_utils.siteImage locationName=site.label locationID=featureID imageURL=report_utils.getSiteBoundaryImageURL(featureID,!is10kmReport)/>
+        <@mdcontent.smallCaveat/>
         <@report_utils.dataset_table providersWithQueryStats=providersWithQueryStats requestParameters=RequestParameters/>
     </form>
     <br><br>
