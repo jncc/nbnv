@@ -1,4 +1,6 @@
 /*CSS For rendering jqueryui plugin datatable*/
+.dataTables_wrapper {
+    position: relative;
 
     div.dataTables_length, div.dataTables_info {
             float: left;
@@ -27,3 +29,4 @@
         color: #007BA6 !important;
         text-decoration: underline !important;
     }
+}
