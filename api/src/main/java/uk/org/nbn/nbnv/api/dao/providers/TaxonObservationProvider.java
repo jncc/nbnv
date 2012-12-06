@@ -25,7 +25,9 @@ public class TaxonObservationProvider {
         SELECT("*");
         createSelectQuery(params);
         ORDER_BY("datasetKey");
-        return SQL();
+String temp = SQL();
+return temp;
+//        return SQL();
     }
 
     public String filteredSelectOneAttribute(Map<String, Object> params) {

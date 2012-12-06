@@ -86,6 +86,7 @@
                         nbn.portal.reports.utils.datasetfields.doDeselectDatasetKeys();
                         var keyValuePairs = nbn.portal.reports.utils.forms.getKeyValuePairsFromForm($form);
                         keyValuePairs.featureID = $form.attr("featureID");
+                        keyValuePairs.taxonOutputGroup = $form.attr("taxonOutputGroupKey");
                         var queryString = nbn.portal.reports.utils.forms.getQueryStringFromKeyValuePairs(keyValuePairs, true);
                         var url = $form.attr('api-server') + '/taxonObservations/species/download/' + queryString;
                         nbn.portal.reports.utils.datasetfields.doSelectDatasetKeys();
