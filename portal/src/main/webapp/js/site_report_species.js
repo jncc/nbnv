@@ -84,11 +84,8 @@
                     'Accept': function(){
                         var $form = $('#nbn-site-report-form');
                         nbn.portal.reports.utils.datasetfields.doDeselectDatasetKeys();
-                        
-                        
                         var keyValuePairs = nbn.portal.reports.utils.forms.getKeyValuePairsFromForm($form);
-                        keyValuePairs = keyValuePairs + {"featureID":$form.attr("featureID")};
-//                        var keyValuePairsWithBusinessLogic = getKeyValuePairsWithBusinessLogic(keyValuePairs);
+                        keyValuePairs.featureID = $form.attr("featureID");
                         var queryString = nbn.portal.reports.utils.forms.getQueryStringFromKeyValuePairs(keyValuePairs, true);
                         var url = $form.attr('api-server') + '/taxonObservations/species/download/' + queryString;
                         nbn.portal.reports.utils.datasetfields.doSelectDatasetKeys();

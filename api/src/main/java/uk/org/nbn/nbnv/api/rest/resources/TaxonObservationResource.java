@@ -349,13 +349,14 @@ public class TaxonObservationResource extends AbstractResource {
         zip.putNextEntry(new ZipEntry("TaxonList.csv"));
         ArrayList<String> values = new ArrayList<String>();
         values.add("TaxonName");
+        values.add("Authority");
         values.add("PreferredTaxonVersionKey");
         downloadHelper.writelnCsv(zip, values);
         for (TaxonWithQueryStats taxonWithStats : taxaWithStats) {
             Taxon taxon = taxonWithStats.getTaxon();
-            String name = taxon.getName() + " " + taxon.getAuthority();
             values = new ArrayList<String>();
-            values.add(name);
+            values.add(taxon.getName());
+            values.add(taxon.getAuthority());
             values.add(taxon.getPTaxonVersionKey());
             downloadHelper.writelnCsv(zip, values);
         }

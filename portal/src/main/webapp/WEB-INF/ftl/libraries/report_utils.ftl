@@ -85,7 +85,7 @@
             <#if isDownloadButtonNeeded>
                 <fieldset>
                     <legend>Data download</legend>
-                    <button id="nbn-site-report-download-button">Download</button> <span id="nbn-site-report-download-button-text"></span>
+                    <button id="nbn-site-report-download-button">Download</button> species list
                 </fieldset>
             </#if>
     </div>
