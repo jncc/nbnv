@@ -109,6 +109,7 @@ console.log(url);
     }
     
     $(document).ready(function(){
+        $('#nbn-download-terms').hide();
         setupFormOnChange();
         setupDownloadSpeciesButton();
         doFirstVisitToPage();
