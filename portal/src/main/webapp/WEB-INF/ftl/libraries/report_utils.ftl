@@ -2,7 +2,8 @@
     <#if providersWithQueryStats?has_content>
         <div class="tabbed" id="nbn-dataset-selector-container">
             <h3>Data providers and their datasets that contribute to this page (number of records)<span id="nbn-select-datasets-text">Select or deselect all datasets: <input type="checkbox" name="nbn-select-datasets-auto" id="nbn-select-datasets-auto"/></span></h3>
-            <table class="nbn-simple-table">
+            <table class="nbn-simple-table" id="nbn-report-dataset-table">
+                <tr><td class="nbn-dataset-table-heading"></td><td class="nbn-dataset-table-heading">Dataset title</td><td class="nbn-dataset-table-heading">Dataset access</td></tr>
                 <#list providersWithQueryStats as providerWithQueryStats>
                     <tr>
                         <th><img src="${api}/organisations/${providerWithQueryStats.organisationID}/logo" class="nbn-provider-table-logo"></th>
@@ -12,13 +13,23 @@
                     <#--All datasets will be checked by default unless dataset keys are found-->
                     <#assign checked = "checked">
                     <#list datasetsWithQueryStats as datasetWithQueryStats>
+                        <#assign accessPositions=json.readURL("${api}/taxonDatasets/${datasetWithQueryStats.datasetKey}/accessPositions")>
                         <tr>
                             <#if requestParameters.datasetKey?has_content>
                                 <#assign checked = requestParameters.datasetKey?seq_contains(datasetWithQueryStats.datasetKey)?string("checked","")>
                             </#if>
                             <td><input type="checkbox" name="datasetKey" value="${datasetWithQueryStats.datasetKey}" ${checked}></td>
                             <td><a href="/Datasets/${datasetWithQueryStats.datasetKey}">${datasetWithQueryStats.taxonDataset.title}</a> (${datasetWithQueryStats.querySpecificObservationCount})</td>
-                            <td>Access to this dataset Fusce in leo massa, nec ullamcorper dui. Aliquam auctor iaculis sapien, et scelerisque mi iaculis in. Donec nibh libero, aliquet vitae cursus in, mattis vel augue. Nulla facilisi. Aenean porttitor.</td>
+                            <td>
+                                <ul>
+                                    <li>Public access: records available at ${datasetWithQueryStats.taxonDataset.publicResolution}
+                                    <#if datasetWithQueryStats.taxonDataset.publicAttribute>
+                                        with record attributes
+                                    </#if>
+                                    <li>Enhanced access: 100m data for vice county North Norfolk
+                                    <li>Enhanced access: No spatial restriction for Hippocrepis comosa
+                                </ul>
+                            </td>
                         </tr>
                     </#list>
                 </#list>

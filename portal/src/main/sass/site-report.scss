@@ -1,4 +1,5 @@
 @import "compass/utilities/general/clearfix";
+@import "_nbn-colour-scheme";
 
 #nbn-site-report-filter-container{
     width: 31%;
@@ -20,6 +21,7 @@
 
 #nbn-dataset-selector-container{
     display: inline-block;
+    width: 98%;
 }
 
 #nbn-observation-container{
@@ -37,4 +39,33 @@
 
 #nbn-species-table_filter{
     float: left;
+}
+
+#nbn-report-dataset-table{
+    td {
+        vertical-align: top;
+        ul {
+            margin: 0px;
+        }
+        li {
+            list-style: disc;
+        }
+    }
+    th {
+        background-color: $mediumMajorGrey;
+        padding: 5px;
+        border: 1px solid $mediumMajorGrey;
+    }
+    th:first-child{
+        background-color: white;
+    }
+    tr:nth-child(even){
+        background: #FBF9EE url(images/ui-bg_glass_55_fbf9ee_1x400.png) 50% 50% repeat-x;
+        border: 1px solid #FCEFA1;
+    }
+    td .nbn-dataset-table-heading{
+        background-color: #C1D8E2;
+        border: 1px solid #C1D8E2;
+        font-weight: bold;
+    }
 }
