@@ -44,13 +44,15 @@ public class GridMapSquareResource extends AbstractResource {
             @PathParam("ptvk") final String ptvk,
             @QueryParam("resolution") @DefaultValue("") final String resolution,
             @QueryParam("band") @DefaultValue("") final List<String> bands,
-            @QueryParam("datasetKey") @DefaultValue(ObservationResourceDefaults.defaultDatasetKey) final List<String> datasetKeys) throws IOException {
+            @QueryParam("datasetKey") @DefaultValue(ObservationResourceDefaults.defaultDatasetKey) final List<String> datasetKeys,
+            @QueryParam("feature") @DefaultValue(ObservationResourceDefaults.defaultFeatureID) final String viceCountyIdentifier)
+            throws IOException {
         return new StreamingOutput() {
             public void write(OutputStream out) throws IOException, WebApplicationException {
                 ZipOutputStream zip = new ZipOutputStream(out);
                 addReadMe(zip, user, ptvk, resolution, bands);
-                addGridRefs(zip, user, ptvk, resolution, bands, datasetKeys);
-                addDatasetMetadata(zip, user, ptvk, resolution, bands, datasetKeys);
+                addGridRefs(zip, user, ptvk, resolution, bands, datasetKeys, viceCountyIdentifier);
+                addDatasetMetadata(zip, user, ptvk, resolution, bands, datasetKeys, viceCountyIdentifier);
                 zip.flush();
                 zip.close();
             }
@@ -70,21 +72,21 @@ public class GridMapSquareResource extends AbstractResource {
         downloadHelper.addReadMe(zip, user, title, filters);
     }
 
-    private void addGridRefs(ZipOutputStream zip, User user, String ptvk, String resolution, List<String> bands, List<String> datasetKey) throws IOException {
+    private void addGridRefs(ZipOutputStream zip, User user, String ptvk, String resolution, List<String> bands, List<String> datasetKey, String viceCountyIdentifier) throws IOException {
         for (String band : bands) {
             if (!"".equals(band)) {
-                addGridRefsForYearBand(zip, user, ptvk, resolution, band, datasetKey);
+                addGridRefsForYearBand(zip, user, ptvk, resolution, band, datasetKey, viceCountyIdentifier);
             } else {
                 throw new IllegalArgumentException("No year band arguments supplied, at least one 'band' argument is required (eg band=2000-2012,ff0000,000000)");
             }
         }
     }
 
-    private void addGridRefsForYearBand(ZipOutputStream zip, User user, String ptvk, String resolution, String band, List<String> datasetKeys) throws IOException {
+    private void addGridRefsForYearBand(ZipOutputStream zip, User user, String ptvk, String resolution, String band, List<String> datasetKeys, String viceCountyIdentifier) throws IOException {
         //Example year band: 2000-2012,ff0000,000000
         String yearRange = band.substring(0,band.indexOf(","));
         zip.putNextEntry(new ZipEntry("GridSquares_" + yearRange + ".csv"));
-        List<GridMapSquare> gridMapSquares = gridMapSquareMapper.getGridMapSquares(user, ptvk, resolution, band, datasetKeys);
+        List<GridMapSquare> gridMapSquares = gridMapSquareMapper.getGridMapSquares(user, ptvk, resolution, band, datasetKeys, viceCountyIdentifier);
         downloadHelper.writeln(zip, "GridSquares");
         for (GridMapSquare gridMapSquare : gridMapSquares) {
             downloadHelper.writeln(zip, gridMapSquare.getGridRef());
@@ -92,8 +94,8 @@ public class GridMapSquareResource extends AbstractResource {
         zip.flush();
     }
 
-    private void addDatasetMetadata(ZipOutputStream zip, User user, String ptvk, String resolution, List<String> bands, List<String> datasetKeys) throws IOException {
-        List<TaxonDataset> taxonDatasets = gridMapSquareMapper.getGridMapDatasets(user, ptvk, resolution, getStartYear(bands), getEndYear(bands), datasetKeys);
+    private void addDatasetMetadata(ZipOutputStream zip, User user, String ptvk, String resolution, List<String> bands, List<String> datasetKeys, String viceCountyIdentifier) throws IOException {
+        List<TaxonDataset> taxonDatasets = gridMapSquareMapper.getGridMapDatasets(user, ptvk, resolution, getStartYear(bands), getEndYear(bands), datasetKeys, viceCountyIdentifier);
         downloadHelper.addDatasetMetadata(zip, user.getId(), taxonDatasets);
     }
     

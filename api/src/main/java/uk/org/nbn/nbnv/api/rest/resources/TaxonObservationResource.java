@@ -169,10 +169,6 @@ public class TaxonObservationResource extends AbstractResource {
                 zip.close();
             }
         };
-
-//        List<TaxonWithQueryStats> toReturn = observationMapper.selectObservationSpeciesByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef);
-//        Collections.sort(toReturn);
-//        return toReturn;
     }
 
     @GET

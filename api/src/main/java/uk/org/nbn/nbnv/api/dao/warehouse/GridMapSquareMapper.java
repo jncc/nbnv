@@ -18,7 +18,8 @@ public interface GridMapSquareMapper {
             @Param("ptvk") String ptvk, 
             @Param("resolution") String resolution, 
             @Param("band") String band, 
-            @Param("datasetKey") List<String> datasetKey);
+            @Param("datasetKey") List<String> datasetKey,
+            @Param("viceCountyIdentifier") String viceCountyIdentifier);
     
     @SelectProvider(type=GridMapSquareProvider.class, method="gridMapDatasets")
     List<TaxonDataset> getGridMapDatasets(
@@ -27,5 +28,6 @@ public interface GridMapSquareMapper {
             @Param("resolution") String resolution, 
             @Param("startYear") Integer startYear, 
             @Param("endYear") Integer endYear, 
-            @Param("datasetKey") List<String> datasetKey);
+            @Param("datasetKey") List<String> datasetKey,
+            @Param("viceCountyIdentifier") String viceCountyIdentifier);
 }

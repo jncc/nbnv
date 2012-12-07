@@ -36,7 +36,6 @@ public class TaxonObservationProvider {
         INNER_JOIN("DatasetAttributeData dad ON utoad.attributeID = dad.attributeID");
         WHERE("dad.attributeID = #{attributeID}");
         WHERE("utoad.userID = #{user.id}");
-  
         return SQL();
     }
     
