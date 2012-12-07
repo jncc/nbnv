@@ -21,7 +21,7 @@ public class GridMapSquareProvider {
 
     public String gridMapDatasets(Map<String, Object> params) {
         BEGIN();
-        SELECT("DISTINCT dd.*, tdd.*");
+        SELECT("DISTINCT dd.*, tdd.*, tdd.label publicResolution");
         createGenericQuery(params);
         INNER_JOIN("DatasetData dd ON o.datasetKey = dd.\"key\"");
         INNER_JOIN("TaxonDatasetData tdd ON dd.\"key\" = tdd.datasetKey");

@@ -27,7 +27,7 @@
 
             <fieldset>
                 <legend>Resolution</legend>
-                <label for="nbn-grid-map-resolution">Resolution of sqares displayed</label>
+                <label for="nbn-grid-map-resolution">Resolution of squares displayed</label>
                 <select name="resolution" id="nbn-grid-map-resolution">
                     <option value="10km">10km</option>
                     <option value="2km">2km</option>
@@ -67,7 +67,7 @@
             </fieldset>
             <fieldset>
                 <legend>Download</legend>
-                <button id="nbn-grid-map-squares-download">Download</button> all <span id="nbn-grid-map-resolution-download-text">10km</span> squares within selected dates
+                <button id="nbn-grid-map-squares-download">Download</button> <span id="nbn-grid-map-resolution-download-text">10km</span> squares within selected dates
                 <@report_utils.downloadTermsDialogue/>
             </fieldset>
     </div>
