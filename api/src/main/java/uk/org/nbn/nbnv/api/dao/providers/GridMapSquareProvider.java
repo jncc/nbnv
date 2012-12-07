@@ -16,9 +16,7 @@ public class GridMapSquareProvider {
         SELECT("DISTINCT gridRef");
         createGenericQuery(params);
         addYearBand(params);
-String temp = SQL();
-return temp;
-//        return SQL();
+        return SQL();
     }
 
     public String gridMapDatasets(Map<String, Object> params) {
