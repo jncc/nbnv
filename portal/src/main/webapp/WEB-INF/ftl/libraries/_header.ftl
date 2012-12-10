@@ -12,5 +12,5 @@
     <li><a href="/Site_Datasets">Browse Sites</a></li>
     <li><a href="/Designation_Categories">Browse Designations</a></li>
     <li><a href="/Documentation">Documentation</a></li>
-    <li><a href="#">Feedback</a></li>
+    <li><a href="http://forums.nbn.org.uk">Forum</a></li>
 </ul>
