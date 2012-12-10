@@ -77,7 +77,7 @@ public class UserRegistrationTest {
         existingUser.setEmail("not_registered_user@user.com");
         existingUser.setForename("Existing");
         existingUser.setSurname("Username");
-        //existingUser.setPassword("Not setting password");
+        existingUser.setPassword("");
         existingUser.setPhone("0124123123");
         
         //when
