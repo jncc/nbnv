@@ -7,7 +7,7 @@
 <#assign is10kmReport=(site.type="GridSquare")>
 
 <@template.master title="NBN Site Report" 
-    csss=["/css/site-report.css","/css/smoothness/jquery-ui-1.8.23.custom.css"]
+    csss=["/css/report.css","/css/site-report.css","/css/smoothness/jquery-ui-1.8.23.custom.css"]
     javascripts=["/js/report_utils.js","/js/site_report_groups.js","/js/jquery.dataset-selector-utils.js"]>
     <h1>${title}</h1>
     <form id="nbn-site-report-form" api-server="${api}" featureID="${featureID}">

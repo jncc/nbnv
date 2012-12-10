@@ -1,4 +1,5 @@
 <#assign dataset=json.readURL("${api}/datasets/${URLParameters.dataset}")>
+<#assign provider=json.readURL("${api}/organisations/${dataset.organisationID}")>
 
 <@template.master title="NBN Gateway - Datasets"
     javascripts=["/js/jquery-ui-1.8.23.custom.min.js/","/js/enable-dataset-metadata-tabs.js","/js/jquery.dataTables.min.js","/js/jqplot/jquery.jqplot.min.js","/js/jqplot/excanvas.min.js","/js/jqplot/plugins/jqplot.json2.min.js","/js/jqplot/plugins/jqplot.highlighter.min.js","/js/jqplot/plugins/jqplot.canvasAxisLabelRenderer.min.js","/js/jqplot/plugins/jqplot.canvasTextRenderer.min.js","/js/jqplot/plugins/jqplot.cursor.min.js"] 
@@ -22,7 +23,12 @@
                 <table class="nbn-dataset-table nbn-simple-table">
                     <tr>
                         <th>Provider</th>
-                        <td><img id="nbn-provider-logo" src="${api}/organisations/${dataset.organisation.id}/logosmall"/><a href="/Organisations/${dataset.organisationID}">${dataset.organisationName}</a></td>
+                        <td>
+                            <#if provider.hasLogo>
+                                <img id="nbn-provider-logo" src="${api}/organisations/${dataset.organisation.id}/logo" class="nbn-provider-table-logo">
+                            </#if>
+                            <a href="/Organisations/${dataset.organisationID}">${dataset.organisationName}</a>
+                        </td>
                     </tr>
                     <tr>
                         <th>Title</th>

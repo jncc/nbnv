@@ -1,0 +1,38 @@
+@import "_nbn-colour-scheme";
+
+
+#nbn-dataset-selector-container{
+    display: inline-block;
+    width: 98%;
+}
+
+#nbn-report-dataset-table{
+    td {
+        vertical-align: top;
+        ul {
+            margin: 0px;
+        }
+        li {
+            list-style: disc;
+        }
+    }
+    th {
+        background-color: $mediumMajorGrey;
+        padding: 5px;
+        border: 1px solid $mediumMajorGrey;
+    }
+    th:first-child{
+        background-color: white;
+    }
+    tr:nth-child(even){
+        background: #FBF9EE url(images/ui-bg_glass_55_fbf9ee_1x400.png) 50% 50% repeat-x;
+        border: 1px solid #FCEFA1;
+    }
+}
+
+.nbn-dataset-table-heading {
+    background-color: $mediumBlue;
+    border: 1px solid $mediumBlue;
+    font-weight: bold;
+    padding: 5px !important;
+}
