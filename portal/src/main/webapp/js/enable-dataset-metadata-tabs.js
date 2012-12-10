@@ -7,7 +7,7 @@
  */
 (function($){
     $(document).ready(function(){
-//    $(function(){
+
         $.fn.dataTableExt.oJUIClasses.sStripeOdd = 'ui-state-highlight';
         
         $('#nbn-tabs').bind('tabsload', function(event, ui){
@@ -45,10 +45,10 @@
             "sPaginationType": "full_numbers",
             "aLengthMenu": [[10,25,50,100,-1],[10,25,50,100,"All"]],
             "aoColumnDefs": [
+                {"sClass": ".nbn-datatable-generic", "aTargets": [0]},
                 {"bVisible": false, "aTargets": [1]},
-                {"sWidth": "7%", "sClass": "nbn-align-right .nbn-datatable-generic", "aTargets": [2]},
-                {"sWidth": "6%", "sClass": "nbn-align-right .nbn-datatable-generic", "aTargets": [3]},
-                {"sClass": ".nbn-datatable-generic", "aTargets": [0]}
+                {"sWidth": "15%", "sClass": ".nbn-datatable-generic", "aTargets": [2]},
+                {"sWidth": "6%", "sClass": ".nbn-datatable-generic", "aTargets": [3]}
             ]
         });
         $('#' + elementForRender).width("100%");
