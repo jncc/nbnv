@@ -9,8 +9,9 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.SelectProvider;
 import uk.org.nbn.nbnv.api.dao.providers.TaxonObservationProvider;
 import uk.org.nbn.nbnv.api.model.Dataset;
-import uk.org.nbn.nbnv.api.model.DatasetWithQueryStats;
+import uk.org.nbn.nbnv.api.model.TaxonDatasetWithQueryStats;
 import uk.org.nbn.nbnv.api.model.Taxon;
+import uk.org.nbn.nbnv.api.model.TaxonDataset;
 import uk.org.nbn.nbnv.api.model.TaxonObservation;
 import uk.org.nbn.nbnv.api.model.TaxonObservationAttributeValue;
 import uk.org.nbn.nbnv.api.model.TaxonOutputGroup;
@@ -113,10 +114,10 @@ public interface TaxonObservationMapper {
     
     @SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectDatasets")
     @Results(value = {
-        @Result(property="dataset", column="datasetKey", javaType=Dataset.class, one=@One(select="uk.org.nbn.nbnv.api.dao.warehouse.DatasetMapper.selectByIDProviderNotInstantiated")),
+        @Result(property="taxonDataset", column="datasetKey", javaType=TaxonDataset.class, one=@One(select="uk.org.nbn.nbnv.api.dao.warehouse.DatasetMapper.selectByIDProviderNotInstantiated")),
         @Result(property="datasetKey", column="datasetKey")
     })
-    public List<DatasetWithQueryStats> selectObservationDatasetsByFilter(
+    public List<TaxonDatasetWithQueryStats> selectObservationDatasetsByFilter(
             @Param("user") User user
             , @Param("startYear") Integer startYear
             , @Param("endYear") Integer endYear
@@ -134,7 +135,7 @@ public interface TaxonObservationMapper {
         @Result(property="dataset", column="datasetKey", javaType=Dataset.class, one=@One(select="uk.org.nbn.nbnv.api.dao.warehouse.DatasetMapper.selectByIDProviderNotInstantiated")),
         @Result(property="datasetKey", column="datasetKey")
     })
-    public List<DatasetWithQueryStats> selectUnavailableDatasetsByFilter(
+    public List<TaxonDatasetWithQueryStats> selectUnavailableDatasetsByFilter(
             @Param("user") User user
             , @Param("startYear") Integer startYear
             , @Param("endYear") Integer endYear

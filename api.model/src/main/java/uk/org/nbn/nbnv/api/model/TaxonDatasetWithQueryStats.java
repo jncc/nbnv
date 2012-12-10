@@ -1,17 +1,17 @@
 package uk.org.nbn.nbnv.api.model;
 
-public class DatasetWithQueryStats implements Comparable<DatasetWithQueryStats>{
+public class TaxonDatasetWithQueryStats implements Comparable<TaxonDatasetWithQueryStats>{
     
     private String datasetKey;
     private int querySpecificObservationCount;
-    private Dataset dataset;
+    private TaxonDataset taxonDataset;
     
-    public DatasetWithQueryStats(){}
+    public TaxonDatasetWithQueryStats(){}
     
-    public DatasetWithQueryStats(String datasetKey, int querySpecificObservationCount, Dataset dataset){
+    public TaxonDatasetWithQueryStats(String datasetKey, int querySpecificObservationCount, TaxonDataset taxonDataset){
         this.datasetKey = datasetKey;
         this.querySpecificObservationCount = querySpecificObservationCount;
-        this.dataset = dataset;
+        this.taxonDataset = taxonDataset;
     }
 
     public String getDatasetKey() {
@@ -30,17 +30,17 @@ public class DatasetWithQueryStats implements Comparable<DatasetWithQueryStats>{
         this.querySpecificObservationCount = querySpecificObservationCount;
     }
 
-    public Dataset getDataset() {
-        return dataset;
+    public TaxonDataset getTaxonDataset() {
+        return taxonDataset;
     }
 
-    public void setDataset(Dataset dataset) {
-        this.dataset = dataset;
+    public void setTaxonDataset(TaxonDataset taxonDataset) {
+        this.taxonDataset = taxonDataset;
     }
     
     @Override
-    public int compareTo(DatasetWithQueryStats that) {
-        return this.dataset.getTitle().compareTo(that.dataset.getTitle());
+    public int compareTo(TaxonDatasetWithQueryStats that) {
+        return this.taxonDataset.getTitle().compareTo(that.taxonDataset.getTitle());
     }
 
     

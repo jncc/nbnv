@@ -25,8 +25,8 @@ public interface DatasetMapper {
     })
     Dataset selectByDatasetKey(String key);
     
-    @Select("SELECT * FROM DatasetData WHERE DatasetData.\"key\" = #{key}")
-    Dataset selectByIDProviderNotInstantiated(String key);
+    @Select("SELECT *, tdd.label publicResolution FROM DatasetData dd INNER JOIN TaxonDatasetData tdd ON dd.\"key\" = tdd.datasetKey WHERE dd.\"key\" = #{key}")
+    TaxonDataset selectByIDProviderNotInstantiated(String key);
     
     @Select("SELECT * FROM DatasetData WHERE organisationID = #{organisaionID} ORDER BY title")
     List<Dataset> selectByOrganisationID(int organisationID);

@@ -14,7 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.org.nbn.nbnv.api.dao.warehouse.DatasetMapper;
 import uk.org.nbn.nbnv.api.model.Dataset;
-import uk.org.nbn.nbnv.api.model.DatasetWithQueryStats;
+import uk.org.nbn.nbnv.api.model.TaxonDatasetWithQueryStats;
+import uk.org.nbn.nbnv.api.model.TaxonDataset;
 import uk.org.nbn.nbnv.api.model.User;
 
 @Component
@@ -23,39 +24,39 @@ public class DownloadHelper {
     @Autowired
     DatasetMapper datasetMapper;
 
-    public void addDatasetMetadata(ZipOutputStream zip, int userID, List<Dataset> datasets) throws IOException {
+    public void addDatasetMetadata(ZipOutputStream zip, int userID, List<TaxonDataset> taxonDatasets) throws IOException {
         zip.putNextEntry(new ZipEntry("DatasetMetadata.txt"));
         writeln(zip, "Datasets that contributed to this download");
-        for (Dataset dataset : datasets) {
+        for (TaxonDataset taxonDataset : taxonDatasets) {
             writeln(zip, "------------------------------------------");
             writeln(zip, "");
-            writeln(zip, "Title: " + dataset.getTitle());
+            writeln(zip, "Title: " + taxonDataset.getTitle());
             writeln(zip, "");
-            writeln(zip, "Dataset key: " + dataset.getKey());
+            writeln(zip, "Dataset key: " + taxonDataset.getKey());
             writeln(zip, "");
-            writeln(zip, "Description: " + dataset.getDescription());
+            writeln(zip, "Description: " + taxonDataset.getDescription());
             writeln(zip, "");
-            writeln(zip, "Dataset owner: " + dataset.getOrganisationName());
+            writeln(zip, "Dataset owner: " + taxonDataset.getOrganisationName());
             writeln(zip, "");
-            addAccessPositions(zip, userID, dataset.getKey());
-            if (dataset.getUseConstraints() != null && !"".equals(dataset.getUseConstraints().trim())) {
-                writeln(zip, "Use constraints: " + dataset.getUseConstraints());
+            addAccessPositions(zip, userID, taxonDataset);
+            if (taxonDataset.getUseConstraints() != null && !"".equals(taxonDataset.getUseConstraints().trim())) {
                 writeln(zip, "");
+                writeln(zip, "Use constraints: " + taxonDataset.getUseConstraints());
             }
-            if (dataset.getAccessConstraints() != null && !"".equals(dataset.getAccessConstraints().trim())) {
-                writeln(zip, "Access constraints: " + dataset.getAccessConstraints());
+            if (taxonDataset.getAccessConstraints() != null && !"".equals(taxonDataset.getAccessConstraints().trim())) {
                 writeln(zip, "");
+                writeln(zip, "Access constraints: " + taxonDataset.getAccessConstraints());
             }
         }
         zip.flush();
     }
 
-    public void addDatasetWithQueryStatsMetadata(ZipOutputStream zip, int userID, List<DatasetWithQueryStats> datasetsWithQueryStats) throws IOException {
-        List<Dataset> datasets = new ArrayList<Dataset>();
-        for (DatasetWithQueryStats datasetWithStats : datasetsWithQueryStats) {
-            datasets.add(datasetWithStats.getDataset());
+    public void addDatasetWithQueryStatsMetadata(ZipOutputStream zip, int userID, List<TaxonDatasetWithQueryStats> datasetsWithQueryStats) throws IOException {
+        List<TaxonDataset> taxonDatasets = new ArrayList<TaxonDataset>();
+        for (TaxonDatasetWithQueryStats datasetWithStats : datasetsWithQueryStats) {
+            taxonDatasets.add(datasetWithStats.getTaxonDataset());
         }
-        addDatasetMetadata(zip, userID, datasets);
+        addDatasetMetadata(zip, userID, taxonDatasets);
     }
 
     public void addReadMe(ZipOutputStream zip, User user, String title, Map<String, String> filters) throws IOException {
@@ -98,21 +99,22 @@ public class DownloadHelper {
         zip.write((value + "\r\n").getBytes());
     }
 
-    private void addAccessPositions(ZipOutputStream zip, int userID, String datasetKey) throws IOException {
-        List<String> accessPositions = datasetMapper.getDatasetAccessPositions(datasetKey, userID);
+    private void addAccessPositions(ZipOutputStream zip, int userID, TaxonDataset taxonDataset) throws IOException {
+        List<String> accessPositions = datasetMapper.getDatasetAccessPositions(taxonDataset.getDatasetKey(), userID);
         boolean first = true;
         int counter = 1;
+        writeln(zip, "Public access to this data is:");
+        writeln(zip, "    Resolution: " + taxonDataset.getPublicResolution());
+        writeln(zip, "    View attributes: " + taxonDataset.isPublicAttribute());
         if (accessPositions != null && accessPositions.size() > 0) {
             for (String accessPosition : accessPositions) {
                 if (first) {
-                    writeln(zip, "");
-                    writeln(zip, "You have been granted the following access to this dataset");
+                    writeln(zip, "You have been granted the following access to this dataset:");
                     first = false;
                 }
-                writeln(zip, "    Access " + counter++ + ": " + accessPosition);
+                writeln(zip, "    " + counter++ + ": " + accessPosition);
             }
         } else {
-            writeln(zip, "You have public access to this dataset");
         }
     }
 

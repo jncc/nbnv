@@ -25,6 +25,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import uk.org.nbn.nbnv.api.dao.providers.ProviderHelper;
 import uk.org.nbn.nbnv.api.dao.warehouse.DatasetMapper;
+import uk.org.nbn.nbnv.api.dao.warehouse.DesignationMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.FeatureMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.OrganisationMapper;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
@@ -49,6 +50,9 @@ public class TaxonObservationResource extends AbstractResource {
     TaxonOutputGroupMapper taxonOutputGroupMapper;
     @Autowired
     DownloadHelper downloadHelper;
+    @Autowired 
+    DesignationMapper designationMapper;
+    
 
     @GET
     @Path("/{id : \\d+}")
@@ -165,10 +169,6 @@ public class TaxonObservationResource extends AbstractResource {
                 zip.close();
             }
         };
-
-//        List<TaxonWithQueryStats> toReturn = observationMapper.selectObservationSpeciesByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef);
-//        Collections.sort(toReturn);
-//        return toReturn;
     }
 
     @GET
@@ -193,7 +193,7 @@ public class TaxonObservationResource extends AbstractResource {
     @GET
     @Path("/datasets")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<DatasetWithQueryStats> getObservationDatasetsByFilter(
+    public List<TaxonDatasetWithQueryStats> getObservationDatasetsByFilter(
             @TokenUser() User user,
             @QueryParam("startYear") @DefaultValue(ObservationResourceDefaults.defaultStartYear) int startYear,
             @QueryParam("endYear") @DefaultValue(ObservationResourceDefaults.defaultEndYear) int endYear,
@@ -212,7 +212,7 @@ public class TaxonObservationResource extends AbstractResource {
     @GET
     @Path("/unavailableDatasets")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<DatasetWithQueryStats> getUnavailableDatasetsByFilter(
+    public List<TaxonDatasetWithQueryStats> getUnavailableDatasetsByFilter(
             @TokenUser() User user,
             @QueryParam("startYear") @DefaultValue(ObservationResourceDefaults.defaultStartYear) int startYear,
             @QueryParam("endYear") @DefaultValue(ObservationResourceDefaults.defaultEndYear) int endYear,
@@ -264,15 +264,15 @@ public class TaxonObservationResource extends AbstractResource {
             @QueryParam("taxonOutputGroup") @DefaultValue(ObservationResourceDefaults.defaultTaxonOutputGroup) String taxonOutputGroup,
             @QueryParam("gridRef") @DefaultValue(ObservationResourceDefaults.defaultGridRef) String gridRef) {
         //TODO: squareBlurring(?)
-        List<DatasetWithQueryStats> datasetsWithQueryStats = observationMapper.selectObservationDatasetsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef);
+        List<TaxonDatasetWithQueryStats> datasetsWithQueryStats = observationMapper.selectObservationDatasetsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef);
 
         return groupDatasetsByProvider(datasetsWithQueryStats);
     }
 
-    private List<ProviderWithQueryStats> groupDatasetsByProvider(List<DatasetWithQueryStats> datasetsWithQueryStats) {
+    private List<ProviderWithQueryStats> groupDatasetsByProvider(List<TaxonDatasetWithQueryStats> datasetsWithQueryStats) {
         HashMap<Integer, ProviderWithQueryStats> providers = new HashMap<Integer, ProviderWithQueryStats>();
-        for (DatasetWithQueryStats datasetWithQueryStats : datasetsWithQueryStats) {
-            Integer providerKey = datasetWithQueryStats.getDataset().getOrganisationID();
+        for (TaxonDatasetWithQueryStats datasetWithQueryStats : datasetsWithQueryStats) {
+            Integer providerKey = datasetWithQueryStats.getTaxonDataset().getOrganisationID();
             if (providers.containsKey(providerKey)) {
                 appendDatasetToProvider(providers, datasetWithQueryStats);
             } else {
@@ -284,9 +284,9 @@ public class TaxonObservationResource extends AbstractResource {
         return toReturn;
     }
 
-    private ProviderWithQueryStats getNewProviderWithQueryStats(DatasetWithQueryStats datasetWithQueryStats) {
-        int organisationID = datasetWithQueryStats.getDataset().getOrganisationID();
-        List<DatasetWithQueryStats> datasets = new ArrayList<DatasetWithQueryStats>();
+    private ProviderWithQueryStats getNewProviderWithQueryStats(TaxonDatasetWithQueryStats datasetWithQueryStats) {
+        int organisationID = datasetWithQueryStats.getTaxonDataset().getOrganisationID();
+        List<TaxonDatasetWithQueryStats> datasets = new ArrayList<TaxonDatasetWithQueryStats>();
         datasets.add(datasetWithQueryStats);
 
         ProviderWithQueryStats toReturn = new ProviderWithQueryStats();
@@ -297,8 +297,8 @@ public class TaxonObservationResource extends AbstractResource {
         return toReturn;
     }
 
-    private void appendDatasetToProvider(HashMap<Integer, ProviderWithQueryStats> providers, DatasetWithQueryStats datasetWithQueryStats) {
-        ProviderWithQueryStats provider = providers.get(datasetWithQueryStats.getDataset().getOrganisationID());
+    private void appendDatasetToProvider(HashMap<Integer, ProviderWithQueryStats> providers, TaxonDatasetWithQueryStats datasetWithQueryStats) {
+        ProviderWithQueryStats provider = providers.get(datasetWithQueryStats.getTaxonDataset().getOrganisationID());
         provider.setQuerySpecificObservationCount(provider.getQuerySpecificObservationCount() + datasetWithQueryStats.getQuerySpecificObservationCount());
         provider.getDatasetsWithQueryStats().add(datasetWithQueryStats);
     }
@@ -363,7 +363,7 @@ public class TaxonObservationResource extends AbstractResource {
     }
 
     private void addDatasetMetadata(ZipOutputStream zip, User user, int startYear, int endYear, List<String> datasetKeys, List<String> taxa, String spatialRelationship, String featureID, boolean sensitive, String designation, String taxonOutputGroup, String gridRef) throws IOException {
-        List<DatasetWithQueryStats> datasetsWithQueryStats = observationMapper.selectObservationDatasetsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef);
+        List<TaxonDatasetWithQueryStats> datasetsWithQueryStats = observationMapper.selectObservationDatasetsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef);
         downloadHelper.addDatasetWithQueryStatsMetadata(zip, user.getId(), datasetsWithQueryStats);
     }
     
@@ -388,7 +388,9 @@ public class TaxonObservationResource extends AbstractResource {
         filters.put("Spatial relationship", spatialRelationship);
         filters.put("Include only sensitive records", Boolean.toString(sensitive));
         if(designation != null && !designation.equals(ObservationResourceDefaults.defaultDesignation)){
+            Designation desig = designationMapper.selectByID(designation);
             filters.put("Designation key", designation);
+            filters.put("Designation name", desig.getName());
         }
         if(datasetKeys != null && datasetKeys.size() > 0 && !((String)datasetKeys.get(0)).equals("")) {
             filters.put("Datset keys", ProviderHelper.datasetListToCommaList(datasetKeys));

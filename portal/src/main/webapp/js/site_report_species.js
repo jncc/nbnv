@@ -86,7 +86,8 @@
                         nbn.portal.reports.utils.datasetfields.doDeselectDatasetKeys();
                         var keyValuePairs = nbn.portal.reports.utils.forms.getKeyValuePairsFromForm($form);
                         keyValuePairs.featureID = $form.attr("featureID");
-                        var queryString = nbn.portal.reports.utils.forms.getQueryStringFromKeyValuePairs(keyValuePairs, true);
+                        keyValuePairs.taxonOutputGroup = $form.attr("taxonOutputGroupKey");
+                        var queryString = nbn.portal.reports.utils.forms.getQueryStringFromKeyValuePairs(keyValuePairs, false);
                         var url = $form.attr('api-server') + '/taxonObservations/species/download/' + queryString;
                         nbn.portal.reports.utils.datasetfields.doSelectDatasetKeys();
                         $(this).dialog("close");
@@ -107,6 +108,7 @@
     }
     
     $(document).ready(function(){
+        $('#nbn-download-terms').hide();
         setupFormOnChange();
         setupDownloadSpeciesButton();
         doFirstVisitToPage();
