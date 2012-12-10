@@ -21,12 +21,13 @@
             $dataContainer.empty();
             if(data.length > 0){
                 $.each(data, function(key, dataset){
-                    var providerName = getProviderName(dataset.organisationID);
+                    var provider = getProvider(dataset.organisationID);
                     var $attributeDropDown = getAttributeDropDown(dataset.key, queryString);
                     var $datasetContent = $('<div><div/>').addClass('tabbed');
-                    $datasetContent.append('<h3>Records from dataset: <a href="/Datasets/' + dataset.key + '">' + dataset.title + '</a></h3>' +
-                        '<table id="nbn-tabbed-heading-table"><tr><td>Provider:</td><td><a href="/Organisations/' + dataset.organisationID + '">' + providerName + '</a></tr>' +
-                        '<tr><td>Your access:</td><td>Access to this dataset Fusce in leo massa, nec ullamcorper dui. Aliquam auctor iaculis sapien, et scelerisque mi iaculis in. Donec nibh libero, aliquet vitae cursus in, mattis vel augue. Nulla facilisi. Aenean porttitor.</tr></td>');
+//                    $datasetContent.append('<h3>Records from dataset: <a href="/Datasets/' + dataset.key + '">' + dataset.title + '</a></h3>' +
+//                        '<table id="nbn-tabbed-heading-table"><tr><td>Provider:</td><td><a href="/Organisations/' + dataset.organisationID + '">' + providerName + '</a></tr>' +
+//                        '<tr><td>Your access:</td><td>Access to this dataset Fusce in leo massa, nec ullamcorper dui. Aliquam auctor iaculis sapien, et scelerisque mi iaculis in. Donec nibh libero, aliquet vitae cursus in, mattis vel augue. Nulla facilisi. Aenean porttitor.</tr></td>');
+                    $datasetContent.append(getProviderHeading(dataset, provider));
                     var $table = $('<table class="nbn-simple-table"></table>');
                     var $row = $('<tr></tr>');
                     $row.append($('<th></th>').text("Site name"));
@@ -70,6 +71,17 @@
                 $dataContainer.append(nbn.portal.reports.utils.forms.getNoRecordsFoundInfoBox());
             }
         });
+    }
+    
+    function getProviderHeading(dataset, provider){
+        var toReturn = '<h3>Records from dataset: <a href="/Datasets/' + dataset.key + '">' + dataset.title + '</a></h3>' +
+                        '<table id="nbn-tabbed-heading-table"><tr><td>Provider:</td><td>';
+                        if(provider.hasLogo){
+                            toReturn += '<img src="' + apiServer + '/organisations/' + provider.id + '/logo "class="nbn-provider-table-logo">&nbsp&nbsp&nbsp;';
+                        }
+                        toReturn += '<a href="/Organisations/' + dataset.organisationID + '">' + provider.name + '</a></tr>' +
+                        '<tr><td>Your access:</td><td>Access to this dataset Fusce in leo massa, nec ullamcorper dui. Aliquam auctor iaculis sapien, et scelerisque mi iaculis in. Donec nibh libero, aliquet vitae cursus in, mattis vel augue. Nulla facilisi. Aenean porttitor.</tr></td>'
+        return toReturn;
     }
     
     function getAttributeDropDown(datasetKey, queryString){
@@ -123,15 +135,15 @@
         });
     }
     
-    function getProviderName(providerID){
+    function getProvider(providerID){
         var url = apiServer + '/organisations/' + providerID;
-        var toReturn = '';
+        var toReturn;
         $.ajax({
             type: 'GET',
             url: url,
             dataType: 'json',
             success: function(data){
-                toReturn = data.name;
+                toReturn = data;
             },
             async: false
         });

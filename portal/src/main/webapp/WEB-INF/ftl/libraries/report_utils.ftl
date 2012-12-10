@@ -6,7 +6,11 @@
                 <tr><td class="nbn-dataset-table-heading"></td><td class="nbn-dataset-table-heading">Dataset title</td><td class="nbn-dataset-table-heading">Dataset access</td></tr>
                 <#list providersWithQueryStats as providerWithQueryStats>
                     <tr>
-                        <th><img src="${api}/organisations/${providerWithQueryStats.organisationID}/logo" class="nbn-provider-table-logo"></th>
+                        <th>
+                            <#if providerWithQueryStats.organisation.hasLogo>
+                                <img src="${api}/organisations/${providerWithQueryStats.organisationID}/logo" class="nbn-provider-table-logo">
+                            </#if>
+                        </th>
                         <th colspan="2"><a href="/Organisations/${providerWithQueryStats.organisationID}">${providerWithQueryStats.organisation.name}</a> (${providerWithQueryStats.querySpecificObservationCount})</th>
                     </tr>
                     <#assign datasetsWithQueryStats=providerWithQueryStats.datasetsWithQueryStats>
