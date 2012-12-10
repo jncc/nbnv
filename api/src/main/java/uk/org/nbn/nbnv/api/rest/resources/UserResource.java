@@ -63,7 +63,6 @@ public class UserResource extends AbstractResource {
     @Autowired OperationalUserMapper oUserMapper;
     @Autowired UserAuthenticationMapper userAuthenticationMapper;
     @Autowired TemplateMailer mailer;
-    @Autowired Properties properties;
     
     @Autowired public UserResource(Properties properties) throws NoSuchAlgorithmException {
         tokenTTL = Integer.parseInt(properties.getProperty("sso_token_default_ttl"));
@@ -216,9 +215,9 @@ public class UserResource extends AbstractResource {
         mailer.send("activation.ftl", newUser.getEmail(), "NBN Gateway: Please activate your account", message);
         
         return Response.ok(new JSONObject()
-                                        .put("success", true)
-                                        .put("status", "An activation code has been sent you your e-mail.")
-                           ).build();
+                .put("success", true)
+                .put("status", "An activation code has been sent you your e-mail.")
+            ).build();
     }
     
     @PUT
