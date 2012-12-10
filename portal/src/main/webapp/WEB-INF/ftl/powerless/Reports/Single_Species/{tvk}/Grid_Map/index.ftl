@@ -6,14 +6,16 @@
 
 <@template.master title="NBN Grid Map" 
     javascripts=["/js/jquery.dataset-selector-utils.js","/js/jquery.gridmap_utils.js","/js/report_utils.js","/js/colourpicker/colorpicker.js"]
-    csss=["/css/gridmap.css","/css/colourpicker/colorpicker.css","/css/smoothness/jquery-ui-1.8.23.custom.css"]>
+    csss=["/css/report.css","/css/gridmap.css","/css/colourpicker/colorpicker.css","/css/smoothness/jquery-ui-1.8.23.custom.css"]>
     
     <h1>Grid map for ${taxon_utils.getShortName(taxon)}</h1>
     <form target="" id="nbn-grid-map-form" gis-server="${gis}" api-server="${api}">
         <@gridMapFilters/>
         <@gridMapContents tvk=tvk/>
         <@mdcontent.smallCaveat/>
-        <@report_utils.dataset_table providersWithQueryStats=providersWithQueryStats requestParameters=RequestParameters/>
+        <div style="width: 100%">
+            <@report_utils.dataset_table providersWithQueryStats=providersWithQueryStats requestParameters=RequestParameters/>
+        </div>
     </form>
     <br><br>
     <@report_utils.unavailable_datasets unavailableDatasets=unavailableDatasets/>

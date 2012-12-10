@@ -1,6 +1,6 @@
 <#macro dataset_table providersWithQueryStats requestParameters>
     <#if providersWithQueryStats?has_content>
-        <div class="tabbed" id="nbn-dataset-selector-container">
+        <div class="tabbed tabbed-reports-dataset-table" id="nbn-dataset-selector-container">
             <h3>Data providers and their datasets that contribute to this page (number of records)<span id="nbn-select-datasets-text">Select or deselect all datasets: <input type="checkbox" name="nbn-select-datasets-auto" id="nbn-select-datasets-auto"/></span></h3>
             <table class="nbn-simple-table" id="nbn-report-dataset-table">
                 <tr><td class="nbn-dataset-table-heading"></td><td class="nbn-dataset-table-heading">Dataset title</td><td class="nbn-dataset-table-heading">Dataset access</td></tr>
@@ -26,8 +26,11 @@
                                     <#if datasetWithQueryStats.taxonDataset.publicAttribute>
                                         with record attributes
                                     </#if>
-                                    <li>Enhanced access: 100m data for vice county North Norfolk
-                                    <li>Enhanced access: No spatial restriction for Hippocrepis comosa
+                                    <#if accessPositions?has_content>
+                                        <#list accessPositions as accessPosition>
+                                            <li>Your enhanced access: ${accessPosition}
+                                        </#list>
+                                    </#if>
                                 </ul>
                             </td>
                         </tr>
