@@ -27,7 +27,7 @@
                     <th>Species list for: ${taxonNavigationGroup.name}</th>
                     <td>
                         <#list species as spec>
-                            ${taxon_utils.getShortName(spec)}<br/>
+                            <a href="/Taxa/${spec.ptaxonVersionKey}">${taxon_utils.getShortName(spec)}</a><br/>
                         </#list>
                     </td>
                 </tr>
