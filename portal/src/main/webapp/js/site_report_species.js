@@ -28,7 +28,7 @@
                     toAppend += '<table id="nbn-species-table" class="nbn-simple-table"><tbody>';
                 }
                 $.each(data, function(key, val){
-                    toAppend += '<tr><td><a href="/Reports/Sites/' + featureID + '/Groups/' + taxonOutputGroupKey + '/Species/' + val.taxon.taxonVersionKey + '/Observations">' + val.taxon.name + '</a></td></tr>';
+                    toAppend += '<tr><td>' + val.taxon.name + '</td></tr>';
                 });
                 toAppend += '</tbody></table>';
             }else{
