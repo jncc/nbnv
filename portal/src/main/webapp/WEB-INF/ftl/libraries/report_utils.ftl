@@ -146,7 +146,7 @@
     <div class="tabbed" id="nbn-site-report-map">
         <h3>Map of ${locationName}</h3>
         <img src="${imageURL}" id="nbn-site-map-image">
-        <span id="nbn-site-image-copyright">&copy; Crown copyright and database rights 2011 Ordnance Survey [100017955]</span>
+        <@OSCopyright/>
     </div>
 </#macro>
 
@@ -184,4 +184,8 @@
     <div id="nbn-download-terms" title="Data download terms and conditions">
         <@mdcontent.dataDownloadTerms/>
     </div>
+</#macro>
+
+<#macro OSCopyright>
+        <span id="nbn-site-image-copyright">&copy; Crown copyright and database rights 2011 Ordnance Survey [100017955]</span>
 </#macro>
