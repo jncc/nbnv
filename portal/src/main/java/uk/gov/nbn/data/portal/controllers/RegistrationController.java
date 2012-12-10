@@ -5,10 +5,12 @@ import com.sun.jersey.api.client.ClientResponse.Status;
 import com.sun.jersey.api.client.WebResource;
 import javax.validation.Valid;
 import javax.ws.rs.core.MediaType;
+import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -32,7 +34,7 @@ public class RegistrationController {
     }
     
     @RequestMapping(value = "/User/Register", method = RequestMethod.POST)
-    public ModelAndView registerUser(@Valid User newUser, BindingResult result) {
+    public ModelAndView registerUser(@Valid User newUser, BindingResult result) throws JSONException {
         if(!result.hasErrors()) {
             ClientResponse regResponse = resource.path("user")
                                                  .type(MediaType.APPLICATION_JSON)
@@ -40,9 +42,11 @@ public class RegistrationController {
             if(regResponse.getClientResponseStatus() == Status.OK) {
                 return new ModelAndView("activationWait");
             }
-        }  
-        //Fill form in again to resolve errors
-        //TODO handle errors from api
+            else {
+                JSONObject entity = regResponse.getEntity(JSONObject.class);
+                result.addError(new ObjectError(result.getObjectName(), entity.getString("status")));
+            }
+        }
         return new ModelAndView("register", "user", newUser);
     }
     
