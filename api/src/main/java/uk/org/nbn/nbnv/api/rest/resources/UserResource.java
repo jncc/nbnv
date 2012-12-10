@@ -200,24 +200,38 @@ public class UserResource extends AbstractResource {
     @Produces(MediaType.APPLICATION_JSON) 
     public Response registerNewUser(User newUser) throws 
             UnsupportedEncodingException, IOException, TemplateException, JSONException  {
-        byte[] passwordHashSHA1 = sha1.digest(newUser.getPassword().getBytes(STRING_ENCODING));
-        byte[] md5HashSHA1 = sha1.digest(md5.digest(newUser.getPassword().getBytes(STRING_ENCODING)));
-        String activationKey = RandomStringUtils.randomAlphanumeric(12); //generate a random one off activation key
-        //save that key in the database
-        oUserMapper.registerNewUser(    newUser, Calendar.getInstance().getTime(), 
-                                        activationKey, passwordHashSHA1, md5HashSHA1);
-        //email the user with the activation key
-        Map<String, Object> message = new HashMap<String, Object>();
-        message.put("name", newUser.getForename());
-        message.put("portal", properties.getProperty("portal_url"));
-        message.put("activationKey", activationKey);
-        message.put("username", newUser.getUsername());
-        mailer.send("activation.ftl", newUser.getEmail(), "NBN Gateway: Please activate your account", message);
-        
-        return Response.ok(new JSONObject()
-                .put("success", true)
-                .put("status", "An activation code has been sent you your e-mail.")
-            ).build();
+        //Perform some checks to before hitting database constraints. 
+        //Would be better to read the status from a constraint violation
+        //and report on this
+        if(newUser.getPassword() == null || newUser.getPassword().isEmpty()) {
+            throw new IllegalArgumentException("You are required to supply a password");
+        }
+        else if(userMapper.getUser(newUser.getUsername()) != null) {
+            throw new IllegalArgumentException("The specified username is already taken");
+        }
+        else if(userMapper.getUserFromEmail(newUser.getEmail()) != null) {
+            throw new IllegalArgumentException("The specified e-mail address is already registered to another user.");
+        }
+        else {
+            byte[] passwordHashSHA1 = sha1.digest(newUser.getPassword().getBytes(STRING_ENCODING));
+            byte[] md5HashSHA1 = sha1.digest(md5.digest(newUser.getPassword().getBytes(STRING_ENCODING)));
+            String activationKey = RandomStringUtils.randomAlphanumeric(12); //generate a random one off activation key
+            //save that key in the database
+            oUserMapper.registerNewUser(    newUser, Calendar.getInstance().getTime(), 
+                                            activationKey, passwordHashSHA1, md5HashSHA1);
+            //email the user with the activation key
+            Map<String, Object> message = new HashMap<String, Object>();
+            message.put("name", newUser.getForename());
+            message.put("portal", properties.getProperty("portal_url"));
+            message.put("activationKey", activationKey);
+            message.put("username", newUser.getUsername());
+            mailer.send("activation.ftl", newUser.getEmail(), "NBN Gateway: Please activate your account", message);
+
+            return Response.ok(new JSONObject()
+                    .put("success", true)
+                    .put("status", "An activation code has been sent you your e-mail.")
+                ).build();
+        }
     }
     
     @PUT

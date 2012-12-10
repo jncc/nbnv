@@ -12,7 +12,7 @@ INSERT INTO DesignationCategoryData ( id , label , description , sortOrder ) VAL
 INSERT INTO UserData (
     id, forename, surname, username, email, registrationDate, phone
 ) VALUES (
-    44, 'Test', 'User', 'tester2', 'test@user.com', NULL, NULL
+    44, 'Test', 'User', 'tester2', 'test2@user.com', NULL, NULL
 );
 
 --Create an authentication user table with a single userid "43" and a password of "password
