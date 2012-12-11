@@ -6,9 +6,8 @@
 #nbn-page-header {
     @include clearfix;
     h1 {
-        background: image-url("logo.jpg") no-repeat 15px 15px;
+        background: image-url("logo.jpg") no-repeat 15px 5px;
         display: block;
-        padding: 15px;
         width: 200px;
         height: 73px;
         float: left;
