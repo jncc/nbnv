@@ -39,6 +39,13 @@ public class DatasetResource extends AbstractResource {
         return datasetMapper.selectByDatasetKey(id);
     }
     
+    @GET
+    @Path("/latest")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Dataset> getLastUpdatedDatasets() {
+        return datasetMapper.getLatestUploaded();
+    }
+    
     @POST
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
