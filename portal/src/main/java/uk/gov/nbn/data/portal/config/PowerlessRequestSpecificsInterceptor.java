@@ -42,7 +42,10 @@ public class PowerlessRequestSpecificsInterceptor extends HandlerInterceptorAdap
     
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws IOException {
-        System.out.println(handler);
+        handleThrowable(request, response, handler, ex);
+    }
+    
+    private void handleThrowable(HttpServletRequest request, HttpServletResponse response, Object handler, Throwable ex) throws IOException {
         if(ex instanceof JSONReaderStatusException) {
             JSONReaderStatusException jsonException = (JSONReaderStatusException)ex;
             if(jsonException.getStatusCode() == 401) {
@@ -50,7 +53,7 @@ public class PowerlessRequestSpecificsInterceptor extends HandlerInterceptorAdap
             }
         }
         else if(ex instanceof Exception) {
-            afterCompletion(request, response, handler, (Exception)ex.getCause());
+            handleThrowable(request, response, handler, ex.getCause()); //attempt the match the cause of this exception
         } 
     }
 }
