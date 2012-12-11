@@ -9,6 +9,9 @@ public class Dataset {
     @Ref(value="${resource.portalUrl}/Datasets/${instance.key}", style=Ref.Style.RELATIVE_PATH) 
     private URI href;
     
+    @Ref(value="/organisations/${instance.organisationID}", style=Ref.Style.ABSOLUTE)
+    private URI organisationHref;
+    
     private String key, title, description, typeName, organisationName;
     private String captureMethod, purpose, geographicalCoverage, quality;
     private String additionalInformation, accessConstraints, useConstraints;
@@ -235,5 +238,13 @@ public class Dataset {
     
     public void setOrganisation(Organisation organisation){
         this.organisation = organisation;
+    }
+
+    public URI getOrganisationHref() {
+        return organisationHref;
+    }
+
+    public void setOrganisationHref(URI organisationHref) {
+        this.organisationHref = organisationHref;
     }
 }
