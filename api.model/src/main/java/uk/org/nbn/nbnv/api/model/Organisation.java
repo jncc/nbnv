@@ -17,9 +17,9 @@ public class Organisation {
     private boolean allowPublicRegistration;
     
     private boolean hasLogo, hasSmallLogo;
-    @Ref(value="organisations/${instance.id}/logo", condition="${instance.hasLogo}") 
+    @Ref(value="organisations/${instance.id}/logo", condition="${instance.hasLogo}", style=Ref.Style.ABSOLUTE) 
     private URI logo;
-    @Ref(value="organisations/${instance.id}/logosmall", condition="${instance.hasSmallLogo}")
+    @Ref(value="organisations/${instance.id}/logosmall", condition="${instance.hasSmallLogo}", style=Ref.Style.ABSOLUTE)
     private URI smallLogo;
     
     @Ref(value="${resource.portalUrl}/Organisations/${instance.id}", style=Ref.Style.RELATIVE_PATH) 

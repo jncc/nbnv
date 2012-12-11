@@ -15,6 +15,9 @@ public interface DatasetMapper {
     @Select("SELECT * FROM DatasetData ORDER BY title")
     List<Dataset> selectAll();
     
+    @Select("SELECT TOP 10 * from DatasetData order by dateUploaded desc")
+    List<Dataset> getLatestUploaded();
+    
     @Select("SELECT * FROM DatasetData WHERE typeName = 'Taxon' ORDER BY title")
     List<TaxonDataset> selectAllTaxonDatasets();
     
