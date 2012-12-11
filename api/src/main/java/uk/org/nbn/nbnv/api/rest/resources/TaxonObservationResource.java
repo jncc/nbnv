@@ -232,7 +232,7 @@ public class TaxonObservationResource extends AbstractResource {
     @Path("/datasets/observations")
     @Produces(MediaType.APPLICATION_JSON)
     public List<TaxonDataset> getDatasetsWithObservationsByFilter(
-            @TokenUser() User user,
+            @TokenUser(allowPublic=false) User user,
             @QueryParam("startYear") @DefaultValue(ObservationResourceDefaults.defaultStartYear) int startYear,
             @QueryParam("endYear") @DefaultValue(ObservationResourceDefaults.defaultEndYear) int endYear,
             @QueryParam("datasetKey") @DefaultValue(ObservationResourceDefaults.defaultDatasetKey) List<String> datasetKeys,

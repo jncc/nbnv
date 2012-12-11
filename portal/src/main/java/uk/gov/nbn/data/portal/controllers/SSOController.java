@@ -4,6 +4,7 @@ package uk.gov.nbn.data.portal.controllers;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.GenericType;
 import com.sun.jersey.api.client.WebResource;
+import freemarker.template.TemplateModelException;
 import java.io.IOException;
 import java.util.Map;
 import javax.servlet.ServletException;
@@ -13,10 +14,12 @@ import javax.ws.rs.core.MediaType;
 import org.codehaus.jettison.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import uk.gov.nbn.data.powerless.json.JSONReaderStatusException;
 
 /**
  * The following Controller handles logging into and out of the NBN Gateway data
@@ -68,4 +71,5 @@ public class SSOController {
         response.addHeader("Set-Cookie", clientResponse.getHeaders().getFirst("Set-Cookie"));
         return "redirect:/";
     }
+    
 }
