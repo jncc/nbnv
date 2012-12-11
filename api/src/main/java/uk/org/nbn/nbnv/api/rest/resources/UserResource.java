@@ -11,8 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import javax.validation.Valid;
-import javax.validation.Validation;
-import javax.validation.Validator;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.FormParam;
@@ -205,14 +203,7 @@ public class UserResource extends AbstractResource {
             UnsupportedEncodingException, IOException, TemplateException, JSONException  {
         //Perform some checks to before hitting database constraints. 
         //Would be better to read the status from a constraint violation
-        //and report on this
-        /*if(newUser.getPassword() == null || newUser.getPassword().isEmpty()) {
-            throw new IllegalArgumentException("You are required to supply a password");
-        }
-        * 
-        else */
-//        Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
-//        validator.validate(newUser);
+        //and report on this     
         if(userMapper.getUser(newUser.getUsername()) != null) {
             throw new IllegalArgumentException("The specified username is already taken");
         }

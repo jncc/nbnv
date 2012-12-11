@@ -23,7 +23,7 @@ public class JsonpResponseFilter implements ContainerResponseFilter {
     @Override
     public ContainerResponse filter(ContainerRequest request, ContainerResponse response) {
         String callback = request.getQueryParameters().getFirst(JSONP_CALLBACK_PARAMETER);
-        
+
         MediaType acceptableJavascriptType = request.getAcceptableMediaType(ACCEPTABLE_JAVASCRIPT_TYPES);
         boolean jsonpPossible = acceptableJavascriptType != null && callback != null && !callback.isEmpty();
         
