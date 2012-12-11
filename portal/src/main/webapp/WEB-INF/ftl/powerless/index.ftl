@@ -43,4 +43,6 @@ biodiversity data, as contributed by participating data providers.
 
         </#list>
     </ul>
+The following pages will demonstrate the development of the NBN Gateway.
+    </@markdown>
 </@template.master>
