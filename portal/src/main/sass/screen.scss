@@ -25,17 +25,12 @@ body {
     font-size: 83%;
     margin-top: 0;
     
-    #nbn-page-content, #nbn-page-header { 
+    #nbn-page-content, #nbn-page-breadcrumbs, #nbn-page-header { 
         background-color: $backgroundContentColor; 
         color: $textColour;
     }
     
-    #nbn-page-content, #nbn-page-header { 
-        background-color: $backgroundContentColor; 
-        color: $textColour;
-    }
-    
-    #nbn-page-content, #nbn-page-footer, #nbn-page-header, #nbn-page-copyright {
+    #nbn-page-content, #nbn-page-footer, #nbn-page-header, #nbn-page-copyright, #nbn-page-breadcrumbs  {
         width: 1004px;
         padding: 10px;
         margin: 0 auto;
@@ -53,6 +48,23 @@ body {
     #nbn-page-footer, #nbn-page-copyright { font-size: 0.85em; }
     
     #nbn-page-copyright { padding: 20px 15px 30px 15px; }
+
+    #nbn-page-breadcrumbs {
+        ol {
+            list-style: none; 
+            margin: 0; 
+            li { 
+                color: #65B154; 
+                &:after { content: ">"; } 
+            }
+        }
+        
+        span, li {
+            margin-right: 4px;
+            float: left;
+            font-size: x-small;
+        }
+    }
     
     a:link, a:visited {
         text-decoration: underline;

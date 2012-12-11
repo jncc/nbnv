@@ -39,6 +39,6 @@ public class JsonpResponseFilter implements ContainerResponseFilter {
    
     private static boolean isResponseJSON(ContainerResponse response) {
         MediaType mediaType = response.getMediaType();
-        return mediaType == null || !mediaType.equals(MediaType.APPLICATION_JSON_TYPE);
+        return mediaType != null && mediaType.isCompatible(MediaType.APPLICATION_JSON_TYPE);
     }
 }
