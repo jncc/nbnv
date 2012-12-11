@@ -1,9 +1,11 @@
+@import "compass/utilities/general/clearfix";
 @import "_nbn-colour-scheme";
 
 body{
     
     #nbn-designation-content{
-        
+        @include clearfix;
+
         table {
             border-width: 1px;
             border-style: none;
@@ -42,9 +44,6 @@ body{
     }
     
     #nbn-designation-categories-tree{
-        margin-left: 10%;
-        margin-right: 10%;
-        margin-bottom: 10px;
         padding: 10px;
         background-color: $minorGrey;
         border: 1px solid $mediumGrey;
