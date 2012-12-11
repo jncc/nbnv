@@ -25,7 +25,7 @@
         </init-param>
         <init-param>
             <param-name>com.sun.jersey.spi.container.ContainerResponseFilters</param-name>
-            <param-value>com.sun.jersey.server.linking.LinkFilter</param-value>
+            <param-value>com.sun.jersey.server.linking.LinkFilter;uk.org.nbn.nbnv.api.rest.filters.JsonpResponseFilter</param-value>
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
@@ -34,14 +34,4 @@
         <servlet-name>jersey-serlvet</servlet-name>
         <url-pattern>/*</url-pattern>
     </servlet-mapping>
-    
-    <!--Enabling JSONP Wrapping-->
-    <filter>
-        <filter-name>JsonPWrapperFilter</filter-name>
-        <filter-class>uk.org.nbn.nbnv.api.servlet.filters.JsonpResponseFilter</filter-class>
-    </filter>
-    <filter-mapping>
-        <filter-name>JsonPWrapperFilter</filter-name>
-        <url-pattern>/*</url-pattern>
-    </filter-mapping>
 </web-app>
