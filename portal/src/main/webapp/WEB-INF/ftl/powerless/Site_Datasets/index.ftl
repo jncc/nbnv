@@ -4,7 +4,10 @@
 
     <div id="nbn-designation-content">
         <h1>10km grid square and site boundary browser</h1>
-        <p class="nbn-navigation">Browse to a 10km grid square or site boundary to view a report of taxa found there.</p>
+        <div class="nbn-navigation">
+            <p>Browse to a 10km grid square or site boundary to view a report of taxa found there.
+                Either click on a 100km square or expand a site boundary category to start your navigation.</p>
+        </div>
         <div id="nbn-100km-selector-container">
             <@image_map.hundredKM/>
         </div>
