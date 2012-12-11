@@ -2,13 +2,17 @@
     the Sequence which has been made globally available (breadcrumbs)
 -->
 <ol>
-    <#list breadcrumbs as breadcrumb>
-        <li>
-            <#if breadcrumb.link?? && breadcrumb_has_next>
-                <a href="${breadcrumb.link}">${breadcrumb.name}</a>
-            <#else>
-                ${breadcrumb.name}
-            </#if>
-        </li>
-    </#list>
+    <#-- Only show breadcrumbs when this is not a top level page -->
+    <#if (breadcrumbs?size > 1)>
+        <span>You are here: </span>
+        <#list breadcrumbs as breadcrumb>
+            <li>
+                <#if breadcrumb.link?? && breadcrumb_has_next>
+                    <a href="${breadcrumb.link}">${breadcrumb.name}</a>
+                <#else>
+                    ${breadcrumb.name}
+                </#if>
+            </li>
+        </#list>
+    </#if>
 </ol>
