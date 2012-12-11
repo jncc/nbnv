@@ -20,6 +20,7 @@
         </head>
         <body>
             <div id="nbn-page-header"><#include "_header.ftl"></div>
+            <div id="nbn-page-breadcrumbs"><#include "_breadcrumbs.ftl"></div>
             <div id="nbn-page-content"><#nested></div>
             <div id="nbn-page-footer"><#include "_footer.ftl"></div>
             <div id="nbn-page-copyright">&copy; National Biodiversity Network 2012</div>
