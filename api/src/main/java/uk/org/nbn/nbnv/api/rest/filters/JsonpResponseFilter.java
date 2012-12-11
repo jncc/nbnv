@@ -26,8 +26,9 @@ public class JsonpResponseFilter implements ContainerResponseFilter {
         
         MediaType acceptableJavascriptType = request.getAcceptableMediaType(ACCEPTABLE_JAVASCRIPT_TYPES);
         boolean jsonpPossible = acceptableJavascriptType != null && callback != null && !callback.isEmpty();
+        
         if (isResponseJSON(response) && jsonpPossible && response.getEntity() != null) {
-            response.setResponse(Response.ok(
+            response.setResponse(Response.ok(   //Browsers will not execute none 200 codes
                     new JSONWithPadding(response.getEntity(), callback), 
                     acceptableJavascriptType
                 ).build());
