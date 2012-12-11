@@ -54,5 +54,5 @@
 </@template.master>
 
 <#macro childTaxonNavigationGroupListItem designationId taxonNavigationGroup>
-    <li class="nbn-designation-nested-list"><a href="/Designations/${designationId}/Species_Group/${taxonNavigationGroup.key}">${taxonNavigationGroup.name}</a> (${taxonNavigationGroup.numSpecies} species)</li>
+    <li class="nbn-designation-nested-list"><a href="/Designation_Categories/${designationId}/Species_Group/${taxonNavigationGroup.key}">${taxonNavigationGroup.name}</a> (${taxonNavigationGroup.numSpecies} species)</li>
 </#macro>
