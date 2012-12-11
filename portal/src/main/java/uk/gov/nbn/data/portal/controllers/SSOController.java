@@ -4,8 +4,8 @@ package uk.gov.nbn.data.portal.controllers;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.GenericType;
 import com.sun.jersey.api.client.WebResource;
-import freemarker.template.TemplateModelException;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -14,12 +14,10 @@ import javax.ws.rs.core.MediaType;
 import org.codehaus.jettison.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-import uk.gov.nbn.data.powerless.json.JSONReaderStatusException;
 
 /**
  * The following Controller handles logging into and out of the NBN Gateway data
@@ -31,14 +29,25 @@ import uk.gov.nbn.data.powerless.json.JSONReaderStatusException;
 public class SSOController {
     @Autowired WebResource resource; 
     
+    @RequestMapping(value = "/User/SSO/Unauthorized", method = RequestMethod.GET)
+    public ModelAndView processUnauthorized(
+            @RequestParam(value="redirect", defaultValue="/") String redirect) {
+        Map<String, Object> model = new HashMap<String, Object>();
+        model.put("redirect", redirect);
+        model.put("status", "You need to be logged in to view this page.");
+        return new ModelAndView("sso", model);
+    }
+    
     @RequestMapping(value = "/User/SSO/Login", method = RequestMethod.GET)
-    public String processRequest() {
-        return "sso";
+    public ModelAndView processRequest(
+            @RequestParam(value="redirect", defaultValue="/") String redirect) {
+        return new ModelAndView("sso", "redirect", redirect);
     }
     
     @RequestMapping(value = "/User/SSO/Login", method = RequestMethod.POST) 
     public ModelAndView login(  @RequestParam("username") String username,
                                 @RequestParam("password") String password,
+                                @RequestParam(value="redirect", defaultValue="/") String redirect,
                                 @RequestParam(value="remember", required=false) String remember,
                                 HttpServletResponse response
             ) throws IOException, ServletException, JSONException {
@@ -50,13 +59,14 @@ public class SSOController {
                                                 .accept(MediaType.APPLICATION_JSON)
                                                 .get(ClientResponse.class);
         
-        Map<String, Object> body = clientResponse.getEntity(type);
+        Map<String, Object> body = new HashMap<String,Object>(clientResponse.getEntity(type));
         if((Boolean)body.get("success")) {
             response.addHeader("Set-Cookie", clientResponse.getHeaders().getFirst("Set-Cookie"));
-            response.sendRedirect("/");
+            response.sendRedirect(redirect);
             return null;
         }
         else {
+            body.put("redirect", redirect); //maintain any redirect request on second attempt
             return new ModelAndView("sso", body);
         }
     }
