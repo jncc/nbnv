@@ -78,6 +78,11 @@
             <version>${jersey.version}</version>
         </dependency>
         <dependency>
+            <groupId>com.sun.jersey.contribs</groupId>
+            <artifactId>jersey-atom-abdera</artifactId>
+            <version>${jersey.version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-server-linking</artifactId>
             <version>${jersey.version}</version>
@@ -116,7 +121,7 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        
+            
         <!--Solr-->
         <dependency>
             <groupId>org.apache.solr</groupId>

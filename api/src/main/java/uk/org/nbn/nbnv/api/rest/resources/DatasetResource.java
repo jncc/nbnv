@@ -9,6 +9,9 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import org.apache.abdera.Abdera;
+import org.apache.abdera.model.Entry;
+import org.apache.abdera.model.Feed;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.org.nbn.nbnv.api.dao.core.OperationalDatasetMapper;
@@ -44,6 +47,20 @@ public class DatasetResource extends AbstractResource {
     @Produces(MediaType.APPLICATION_JSON)
     public List<Dataset> getLastUpdatedDatasets() {
         return datasetMapper.getLatestUploaded();
+    }
+    
+    @GET
+    @Path("/latest.rss")
+    @Produces("application/atom+xml")  
+    public Feed getLastUpdatedDatasetsFeed() {
+        Feed toReturn = new Abdera().getFactory().newFeed();
+        for(Dataset currDataset :datasetMapper.getLatestUploaded()) {
+            Entry entry = toReturn.addEntry();
+            entry.setTitle(currDataset.getOrganisationName());
+            entry.setContent(currDataset.getTitle());
+            entry.setPublished(currDataset.getDateUploaded());
+        }
+        return toReturn;
     }
     
     @POST
