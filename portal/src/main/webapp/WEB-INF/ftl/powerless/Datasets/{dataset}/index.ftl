@@ -87,7 +87,9 @@
                 <table class="nbn-dataset-table nbn-simple-table">
                     <tr>
                         <th>Your access</th>
-                        <td></td>
+                        <td>
+                            <@report_utils.taxonDatasetAccessPositionByDatasetKey datasetKey=dataset.key/>
+                        </td>
                     </tr>
                     <tr>
                         <th>Access constraints</th>
