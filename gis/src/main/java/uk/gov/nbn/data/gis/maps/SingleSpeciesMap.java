@@ -113,10 +113,10 @@ public class SingleSpeciesMap {
                     condition = MapHelper.createTemporalSegment(condition, startYear, endYear);
                     condition = MapHelper.createInDatasetsSegment(condition, datasetKeys);
                     
-                    return MapHelper.getMapData(FEATUREDATA.GEOM, FEATUREDATA.ID, 4326 ,create
+                    return MapHelper.getMapData(FEATUREDATA.GEOM, FEATUREDATA.IDENTIFIER, 4326 ,create
                         .select(
                             FEATUREDATA.GEOM,
-                            FEATUREDATA.ID,
+                            FEATUREDATA.IDENTIFIER,
                             FEATUREDATA.LABEL,
                             USERTAXONOBSERVATIONDATA.STARTDATE,
                             USERTAXONOBSERVATIONDATA.ENDDATE,
