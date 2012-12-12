@@ -17,7 +17,6 @@
                     <#--All datasets will be checked by default unless dataset keys are found-->
                     <#assign checked = "checked">
                     <#list datasetsWithQueryStats as datasetWithQueryStats>
-                        <#assign accessPositions=json.readURL("${api}/taxonDatasets/${datasetWithQueryStats.datasetKey}/accessPositions")>
                         <tr>
                             <#if requestParameters.datasetKey?has_content>
                                 <#assign checked = requestParameters.datasetKey?seq_contains(datasetWithQueryStats.datasetKey)?string("checked","")>
@@ -25,17 +24,7 @@
                             <td><input type="checkbox" name="datasetKey" value="${datasetWithQueryStats.datasetKey}" ${checked}></td>
                             <td><a href="/Datasets/${datasetWithQueryStats.datasetKey}">${datasetWithQueryStats.taxonDataset.title}</a> (${datasetWithQueryStats.querySpecificObservationCount})</td>
                             <td>
-                                <ul>
-                                    <li>Public access: records available at ${datasetWithQueryStats.taxonDataset.publicResolution}
-                                    <#if datasetWithQueryStats.taxonDataset.publicAttribute>
-                                        with record attributes
-                                    </#if>
-                                    <#if accessPositions?has_content>
-                                        <#list accessPositions as accessPosition>
-                                            <li>Your enhanced access: ${accessPosition}
-                                        </#list>
-                                    </#if>
-                                </ul>
+                                <@taxonDatasetAccessPositions taxonDataset=datasetWithQueryStats.taxonDataset/>
                             </td>
                         </tr>
                     </#list>
@@ -188,4 +177,24 @@
 
 <#macro OSCopyright>
         <span id="nbn-site-image-copyright">&copy; Crown copyright and database rights 2011 Ordnance Survey [100017955]</span>
+</#macro>
+
+<#macro taxonDatasetAccessPositionByDatasetKey datasetKey>
+<#assign taxonDataset=json.readURL("${api}/taxonDatasets/${datasetKey}")>
+<@taxonDatasetAccessPositions taxonDataset=taxonDataset/>
+</#macro>
+
+<#macro taxonDatasetAccessPositions taxonDataset>
+    <#assign accessPositions=json.readURL("${api}/taxonDatasets/${taxonDataset.key}/accessPositions")>
+    <ul>
+        <li>Public access: records available at ${taxonDataset.publicResolution}
+        <#if taxonDataset.publicAttribute>
+            with record attributes
+        </#if>
+        <#if accessPositions?has_content>
+            <#list accessPositions as accessPosition>
+                <li>Your enhanced access: ${accessPosition}
+            </#list>
+        </#if>
+    </ul>
 </#macro>
