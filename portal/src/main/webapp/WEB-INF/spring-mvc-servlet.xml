@@ -49,7 +49,7 @@
     </bean>
 
     <!--Defines what is a Spring MVC view-->
-    <bean id="viewResolver" class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
+    <bean id="viewResolver" class="uk.gov.nbn.data.powerless.view.PowerlessFreeMarkerViewResolver">
         <property name="cache" value="true"/>
         <property name="prefix" value=""/>
         <property name="suffix" value=".ftl"/>

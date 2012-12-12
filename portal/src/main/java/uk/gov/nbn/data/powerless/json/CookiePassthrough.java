@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLEncoder;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -40,12 +39,9 @@ public class CookiePassthrough {
         if(newCookie != null) {
             response.addHeader("Set-Cookie", newCookie);
         }
-        switch(conn.getResponseCode()) {
-            case 200: return conn.getInputStream();
-            //deliberatly fall into the json reader status exception. This will stop processing of stream
-            case 401: response.sendRedirect("/User/SSO/Unauthorized?redirect=" + URLEncoder.encode(request.getRequestURL().toString()));
-            default: throw new JSONReaderStatusException(conn.getResponseCode(), conn.getResponseMessage());
+        if(conn.getResponseCode() != 200) {
+            throw new JSONReaderStatusException(conn.getResponseCode(), conn.getResponseMessage());
         }
+        return conn.getInputStream();
     }
-    
 }
