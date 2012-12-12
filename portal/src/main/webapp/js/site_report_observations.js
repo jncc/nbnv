@@ -24,9 +24,6 @@
                     var provider = getProvider(dataset.organisationID);
                     var $attributeDropDown = getAttributeDropDown(dataset.key, queryString);
                     var $datasetContent = $('<div><div/>').addClass('tabbed');
-//                    $datasetContent.append('<h3>Records from dataset: <a href="/Datasets/' + dataset.key + '">' + dataset.title + '</a></h3>' +
-//                        '<table id="nbn-tabbed-heading-table"><tr><td>Provider:</td><td><a href="/Organisations/' + dataset.organisationID + '">' + providerName + '</a></tr>' +
-//                        '<tr><td>Your access:</td><td>Access to this dataset Fusce in leo massa, nec ullamcorper dui. Aliquam auctor iaculis sapien, et scelerisque mi iaculis in. Donec nibh libero, aliquet vitae cursus in, mattis vel augue. Nulla facilisi. Aenean porttitor.</tr></td>');
                     $datasetContent.append(getProviderHeading(dataset, provider));
                     var $table = $('<table class="nbn-simple-table"></table>');
                     var $row = $('<tr></tr>');
@@ -80,7 +77,31 @@
                             toReturn += '<img src="' + apiServer + '/organisations/' + provider.id + '/logo "class="nbn-provider-table-logo">&nbsp&nbsp&nbsp;';
                         }
                         toReturn += '<a href="/Organisations/' + dataset.organisationID + '">' + provider.name + '</a></tr>' +
-                        '<tr><td>Your access:</td><td>Access to this dataset Fusce in leo massa, nec ullamcorper dui. Aliquam auctor iaculis sapien, et scelerisque mi iaculis in. Donec nibh libero, aliquet vitae cursus in, mattis vel augue. Nulla facilisi. Aenean porttitor.</tr></td>'
+                        '<tr><td>Your access:</td><td>';
+                        toReturn += getAccessPositions(dataset);
+                        '</tr></td>'
+        return toReturn;
+    }
+    
+    function getAccessPositions(taxonDataset){
+        var url = apiServer + '/taxonDatasets/' + taxonDataset.key + '/accessPositions';
+        var toReturn = '';
+        $.ajax({
+            type: 'GET',
+            url: url,
+            dataType: 'json',
+            success: function(data){
+                toReturn += '<ul><li>You have public access to records at ' + taxonDataset.publicResolution;
+                    if(taxonDataset.publicAttribute){
+                        toReturn += ' with record attributes';
+                    }
+                    for(var i = 0; i < data.length; i++){
+                        toReturn += '<li>Your enhanced access: ' + data[i];
+                    }
+                toReturn += '</ul>';
+            },
+            async: false
+        });
         return toReturn;
     }
     

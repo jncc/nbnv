@@ -187,7 +187,7 @@
 <#macro taxonDatasetAccessPositions taxonDataset>
     <#assign accessPositions=json.readURL("${api}/taxonDatasets/${taxonDataset.key}/accessPositions")>
     <ul>
-        <li>Public access: records available at ${taxonDataset.publicResolution}
+        <li>Public access: records available at ${taxonDataset.publicResolution} 
         <#if taxonDataset.publicAttribute>
             with record attributes
         </#if>
