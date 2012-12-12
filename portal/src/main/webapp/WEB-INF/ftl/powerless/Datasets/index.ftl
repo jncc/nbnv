@@ -8,8 +8,8 @@
         <table id="nbn-datasets-datatable" class="nbn-dataset-table">
             <thead>
                 <tr>
-                    <th>Dataset</th>
                     <th>Dataset key</th>
+                    <th>Dataset</th>
                     <th>Provider</th>
                     <th>Uploaded</th>
                     <th>Type</th>
@@ -18,8 +18,8 @@
             <tbody>
                 <#list datasets as dataset>
                     <tr>
-                        <td><a href="/Datasets/${dataset.key}">${dataset.title?html}</a></td>
                         <td>${dataset.key}</td>
+                        <td><a href="/Datasets/${dataset.key}">${dataset.title?html}</a></td>
                         <td><a href="/Organisations/${dataset.organisationID}">${dataset.organisationName?html}</a></td>
                         <td>${dataset.formattedDateUploaded?html}</td>
                         <td>${dataset.typeName?html}</td>
