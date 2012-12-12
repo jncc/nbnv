@@ -6,15 +6,15 @@
     $.fn.dataTableExt.oJUIClasses.sStripeOdd = 'ui-state-highlight';
     $(document).ready(function(){
         $('#nbn-datasets-datatable').dataTable({
+            "aaSorting": [[3, "desc"]],
             "bJQueryUI": true,
             "iDisplayLength": 25,
             "bSortClasses": false,
             "sPaginationType": "full_numbers",
             "aLengthMenu": [[10,25,50,100,-1],[10,25,50,100,"All"]],
             "aoColumnDefs": [
-                {"bVisible": false, "aTargets": [1]},
-                {"sWidth": "5%", "aTargets": [3]},
-                {"sWidth": "5%", "aTargets": [4]}
+                {"bVisible": false, "aTargets": [0]},
+                {"sWidth": "5%", "aTargets": [3,4]}
             ]
         });
     });
