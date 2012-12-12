@@ -5,7 +5,7 @@
             return nbn.construction.search__createSearchTable({
                  title : "Taxon Name", 
                  searchSource : "taxa",
-                 callbackField: "pTaxonVersionKey"
+                 callbackField: "ptaxonVersionKey"
             }, callback);
        },
        createTaxonDatasetTable : function(callback) {
