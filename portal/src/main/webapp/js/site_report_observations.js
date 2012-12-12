@@ -118,7 +118,6 @@
                     .attr("value",attribute.attributeID)
                     .text(attribute.label));
             });
-            //            $select.add($('<img src="" id="nbn-attribute-dropdown-busy-image">'));
             return $('<th></th>').append($select);
         }else{
             return false;
