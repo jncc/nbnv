@@ -22,6 +22,12 @@
     <!--Adds the JSON bean to freemarker templates handled by Spring MVC-->
     <mvc:interceptors>
         <bean class="uk.gov.nbn.data.portal.config.PowerlessRequestSpecificsInterceptor"/>
+        <bean class="org.springframework.web.servlet.mvc.WebContentInterceptor">
+            <property name="cacheSeconds" value="0"/>
+            <property name="useExpiresHeader" value="true"/>
+            <property name="useCacheControlHeader" value="true"/>
+            <property name="useCacheControlNoStore" value="true"/>
+        </bean>
     </mvc:interceptors>
     
     <!--Register the Powerless Mapping Handler -->
