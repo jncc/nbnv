@@ -1,21 +1,74 @@
 <#assign statistics = json.readURL("${api}/statistics")/>
 
-<@template.master title="National Biodiversity Network Gateway">
-    <div style="float:left; font-size:x-large; width: 678px;">
-        <@markdown>
-#Welcome to the NBN Gateway
+<@template.master title="National Biodiversity Network Gateway"
+        csss=["/css/homepage.css"]>
+    <h1>Welcome to the NBN Gateway</h1>
 
+
+    <div id="slidorion">
+	<div id="slider">
+            <div class="slide welcome">
+                <@markdown>
 This is the National Biodiversity Network's Gateway. Use it to explore UK 
 biodiversity data, as contributed by participating data providers.
-        </@markdown>
+                </@markdown>
+            </div>
+            
+            <div class="slide imt">
+                <a href="/imt"><img src="/img/slides/imt.jpg"></a>
+            </div>
+            
+            <div class="slide location-search">
+                <div class="site">
+                    <h1>Search by a Site</h1>
+                    <img src="/img/slides/site.png">
+                </div>
+                <div class="grid-square">
+                    <h1>Search by Grid Square</h1>
+                    <@image_map.hundredKM/>
+                </div>
+            </div>
+            
+            <div class="slide grid-map">
+                <img src="/img/slides/grid1.png">
+                <img src="/img/slides/grid1.png">
+                <img src="/img/slides/grid1.png">
+            </div>
+	</div>
+
+	<div id="accordion">
+            <div class="link-header">Welcome</div>
+            <div class="link-content">All systems go for NBN Gateway </div>
+
+            <div class="link-header">Interactive Map Tool</div>
+            <div class="link-content">
+                The new Interactive Map provides new ways to explore species records.
+            </div>
+
+            <div class="link-header">Search by Location</div>
+            <div class="link-content">
+                <@markdown>
+You can use the NBN gateway to find where species have been recorded using grid 
+squares or sites.
+
+&copy; Crown copyright and database rights 2011 Ordnance Survey [100017955]
+                </@markdown>
+            </div>
+
+            <div class="link-header">Grid Map</div>
+            <div class="link-content">
+                <@markdown>
+The Grid Map product allows you to view the grid squares which have been recorded against.
+
+You can get to this by searching for a [species](/Taxa) or searching for a 
+[dataset](/Datasets])
+                </@markdown>
+            </div>
+        </div>
     </div>
 
-    <div style="float: right;
-                margin-right: 5em;
-                margin-top: 1em;
-                font-size: smaller;">
-        <h1 style="background: url('img/statistics.png') no-repeat left top; 
-                    padding-left: 35px;">Gateway Statistics</h1>
+    <div id="statistics">
+        <h1>Gateway Statistics</h1>
         <table>
             <#list statistics?keys as stat>
                 <tr>
@@ -26,21 +79,22 @@ biodiversity data, as contributed by participating data providers.
         </table>
     </div>
 
-    <div id="slides">
-        <div class="slides_container">
-            <div>
-                <img src="http://placehold.it/1000x200">
-            </div>
-        </div>
+    <div id="news-container">
+        <h1><a title="RSS" href="${api}/datasets/latest.rss">RSS</a><a href="/Datasets">Latest Datasets</a></h1>
+        <ul class="news-ticker">
+            <#list json.readURL("${api}/datasets/latest") as dataset>
+                <#assign organisation = json.readURL(dataset.organisationHref)>
+
+                <li>
+                    <h3>
+                        <#if organisation.smallLogo??>
+                            <img src="${organisation.smallLogo}"> 
+                        </#if>
+                        ${organisation.name} Dataset Updated: ${dataset.formattedDateUploaded}</h3>
+                    <a href="${dataset.href}">${dataset.title}</a> 
+                </li>
+
+            </#list>
+        </ul>
     </div>
-
-    <h1>Latest updated Datasets</h1>
-    <ul>
-        <#list json.readURL("${api}/datasets/latest") as dataset>
-            <#assign organisation = json.readURL(dataset.organisationHref)>
-            
-            <li><img src="${organisation.smallLogo!""}"> ${organisation.name}  <a href="${dataset.href}">${dataset.title}</a> ${dataset.formattedDateUploaded}</li>
-
-        </#list>
-    </ul>
 </@template.master>
