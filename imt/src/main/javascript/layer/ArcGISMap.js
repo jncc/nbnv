@@ -82,12 +82,32 @@ nbn.layer.ArcGISMap = function(mapHosts, mapService, map, options) {
 			nbn.util.ArrayTools.joinAndPrepend(nbn.util.ArrayTools.fromObject(urlParams),'&', '?') 
 		);
 	}
-	
+        
+        function getIdentifiers(object, identifiers){
+            $.each(object, function(index, value){
+                if((typeof value == "object") && (Object.prototype.toString.call(value) == '[object Array]')){
+                    $.each(value, function(index_identifier, value_identifier){
+                        identifiers.push(value_identifier);
+                    });
+                } else if((typeof value == "object")){
+                    getIdentifiers(value, identifiers);
+                }else if((typeof value == 'string') || (typeof value == 'number')){
+                    if(index == "identifier"){
+                        identifiers.push(value);
+                    }
+                }
+            });
+        }	
+
 	this.identifyFeature = function(xy, callback) { //call the identification server
 		_checkIfInPositionToMakeACall('identify');
-		return $.getJSON(_createIdentifyURL(xy), function() {
+		return $.getJSON(_createIdentifyURL(xy), function(data) {
+                    var identifiers = [];
+                    getIdentifiers(data, identifiers);
                     console.log("TODO  pass the identify result to the picker");
-                    callback({results:[]});
+                    console.log(identifiers);
+                    // Chris says : Pass in a list of feature identifier keys into the callback method
+                    callback([/*TL45, GA...*/]);
                 });
 	};
 	
@@ -95,7 +115,7 @@ nbn.layer.ArcGISMap = function(mapHosts, mapService, map, options) {
 		_checkIfInPositionToMakeACall('legend');
 		return $.map(this.getCurrentVisibleLayers(), createLegendURL);
 	};
-
+        
 	$.extend(this,
 		new nbn.util.ObservableAttribute('ToRenderLogic',options.toRenderLogic || function(combinedFilter) {
 			return combinedFilter.getCurrentVisibleLayers().length != 0;

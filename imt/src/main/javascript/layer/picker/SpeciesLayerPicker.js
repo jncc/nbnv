@@ -30,6 +30,7 @@ nbn.layer.picker.SpeciesLayerPicker = function(layerToQuery) {
 	function getSpeciesPickerServletWithParams(resultsFromIdentify, sitesFound) {	
 		var servletParameters = layerToQuery.getNBNSpeciesLayerFilters();
 		servletParameters.sites = sitesFound; //append the sites found to the parameter object for the layer
+                //Jon says: this should return a url with query string for the api
 		return getSpeciesPickerServlet() + nbn.util.ArrayTools.joinAndPrepend(nbn.util.ArrayTools.fromObject(servletParameters),'&','?');
 	}
 	
@@ -120,9 +121,17 @@ nbn.layer.picker.SpeciesLayerPicker = function(layerToQuery) {
 	
 	$.extend(this, new nbn.layer.picker.ArcGisLayerFeaturePicker(layerToQuery, {
 		createPickerDiv: function(resultsFromIdentify, position, callback) {
-			var featuresFound = createFeaturesFoundArray(resultsFromIdentify);
+                    //Chris says: If i am right resultsFromIdentify should hold [TL45...]
+console.log('resultsFromIdentifier:');
+console.log(resultsFromIdentify);
+                    //
+                    //THe rest of this method should be about passing that idenifier list to
+                    //the api with layer specfic arguments
+                    //
+//			var featuresFound = createFeaturesFoundArray(resultsFromIdentify);
 			
 			if(featuresFound.length!==0) {
+                                //You shopu
 				this.__lastRequest = $.getJSON(getSpeciesPickerServletWithParams(resultsFromIdentify, featuresFound), function(pickerResults) {
 					var toReturn = $('<div>').addClass('nbn-picker-speciesResults');
 					toReturn.nbn_dynamictabs();
