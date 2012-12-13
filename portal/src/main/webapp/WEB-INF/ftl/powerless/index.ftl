@@ -31,9 +31,9 @@ biodiversity data, as contributed by participating data providers.
             </div>
             
             <div class="slide grid-map">
-                <img src="/img/slides/grid1.png">
-                <img src="/img/slides/grid1.png">
-                <img src="/img/slides/grid1.png">
+                <a href="/Taxa/NBNSYS0000002854" title="Danish scurvygrass"><img src="/img/slides/scurvygrass.png"></a>
+                <a href="/Taxa/NBNSYS0000003278" title="Hippocrepis comosa"><img src="/img/slides/comosa.png"></a>
+                <a href="/Taxa/NHMSYS0000712592" title="Harlequin ladybird"><img src="/img/slides/ladybird.png"></a>
             </div>
 	</div>
 
