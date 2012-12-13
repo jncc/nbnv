@@ -47,16 +47,22 @@ biodiversity data, as contributed by participating data providers.
 
             <div class="link-header">Search by Location</div>
             <div class="link-content">
-                You can use the NBN gateway to find where species have been recorded
-                using grid squares or sites.
+                <@markdown>
+You can use the NBN gateway to find where species have been recorded using grid 
+squares or sites.
 
-                &copy; Crown copyright and database rights 2011 Ordnance Survey [100017955]
+&copy; Crown copyright and database rights 2011 Ordnance Survey [100017955]
+                </@markdown>
             </div>
 
             <div class="link-header">Grid Map</div>
             <div class="link-content">
-                The Grid Map product allows you to view the grid squares which
-                have been recorded against
+                <@markdown>
+The Grid Map product allows you to view the grid squares which have been recorded against.
+
+You can get to this by searching for a [species](/Taxa) or searching for a 
+[dataset](/Datasets])
+                </@markdown>
             </div>
         </div>
     </div>
