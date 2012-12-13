@@ -26,7 +26,7 @@ public class Band {
     }
 
     public String getExpression() {
-        return String.format("[STARTDATE] >= %d AND [ENDDATE] <= %d", startYear, endYear);
+        return String.format("[ENDDATE] >= %d AND [STARTDATE] <= %d", startYear, endYear);
     }
 
     public Color getFillColour() {
@@ -36,5 +36,4 @@ public class Band {
     public Color getOutlineColour() {
         return outlineColour;
     }
-
 }
