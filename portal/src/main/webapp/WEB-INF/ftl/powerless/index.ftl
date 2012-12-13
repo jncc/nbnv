@@ -22,6 +22,7 @@ biodiversity data, as contributed by participating data providers.
                 <div class="site">
                     <h1>Search by a Site</h1>
                     <img src="/img/slides/site.png">
+                    <p class="copyright">&copy; Crown copyright and database rights 2011 Ordnance Survey [100017955]</p>
                 </div>
                 <div class="grid-square">
                     <h1>Search by Grid Square</h1>
@@ -42,7 +43,9 @@ biodiversity data, as contributed by participating data providers.
 
             <div class="link-header">Interactive Map Tool</div>
             <div class="link-content">
-                The new Interactive Map provides new ways to explore species records.
+                <@markdown>
+The [Interactive Map Tool](/imt) provides new ways to explore species records.
+                </@markdown>
             </div>
 
             <div class="link-header">Search by Location</div>
@@ -50,8 +53,6 @@ biodiversity data, as contributed by participating data providers.
                 <@markdown>
 You can use the NBN gateway to find where species have been recorded using grid 
 squares or sites.
-
-&copy; Crown copyright and database rights 2011 Ordnance Survey [100017955]
                 </@markdown>
             </div>
 
