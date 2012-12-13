@@ -132,7 +132,7 @@ public interface TaxonObservationMapper {
     
     @SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectUnavailableDatasets")
     @Results(value = {
-        @Result(property="dataset", column="datasetKey", javaType=Dataset.class, one=@One(select="uk.org.nbn.nbnv.api.dao.warehouse.DatasetMapper.selectByIDProviderNotInstantiated")),
+        @Result(property="taxonDataset", column="datasetKey", javaType=Dataset.class, one=@One(select="uk.org.nbn.nbnv.api.dao.warehouse.DatasetMapper.selectByIDProviderNotInstantiated")),
         @Result(property="datasetKey", column="datasetKey")
     })
     public List<TaxonDatasetWithQueryStats> selectUnavailableDatasetsByFilter(
