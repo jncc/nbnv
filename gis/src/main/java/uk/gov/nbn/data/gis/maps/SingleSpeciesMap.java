@@ -44,9 +44,10 @@ public class SingleSpeciesMap {
     private static final String TWO_KM_LAYER_NAME = "Grid-2km";
     private static final String ONE_KM_LAYER_NAME = "Grid-1km";
     private static final String ONE_HUNDRED_M_LAYER_NAME = "Grid-100m";
+    private static final String NONE_GRID_LAYER_NAME = "None-Grid";
     
     private static final Map<String,Color> COLOURS;
-    private static final String[] LAYERS;
+    private static final Map<String, Integer> LAYERS;
     
     @Autowired WebResource resource;
     @Autowired Properties properties;
@@ -57,7 +58,14 @@ public class SingleSpeciesMap {
         COLOURS.put(TWO_KM_LAYER_NAME, new Color(0, 255, 0));
         COLOURS.put(ONE_KM_LAYER_NAME, new Color(0, 255, 255));
         COLOURS.put(ONE_HUNDRED_M_LAYER_NAME, new Color(255, 0, 0));
-        LAYERS = new String[]{TEN_KM_LAYER_NAME, TWO_KM_LAYER_NAME, ONE_KM_LAYER_NAME, ONE_HUNDRED_M_LAYER_NAME};
+        COLOURS.put(NONE_GRID_LAYER_NAME, new Color(255, 0, 255));
+        
+        LAYERS = new HashMap<String, Integer>();
+        LAYERS.put(TEN_KM_LAYER_NAME, 1);
+        LAYERS.put(TWO_KM_LAYER_NAME, 2);
+        LAYERS.put(ONE_KM_LAYER_NAME, 3);
+        LAYERS.put(ONE_HUNDRED_M_LAYER_NAME, 4);
+        LAYERS.put(NONE_GRID_LAYER_NAME, -1);
     }
     
     @MapService("{taxonVersionKey}")
@@ -83,7 +91,7 @@ public class SingleSpeciesMap {
             @QueryParam(key="band", commaSeperated=false) List<Band> bands
             ) {
         HashMap<String, Object> data = new HashMap<String, Object>();
-        data.put("layers", LAYERS);
+        data.put("layers", LAYERS.keySet());
         data.put("colours", COLOURS);
         data.put("enableAbsence", abundance.equals("all") || abundance.equals("absence"));
         data.put("enablePresence", abundance.equals("all") || abundance.equals("presence"));
@@ -104,12 +112,12 @@ public class SingleSpeciesMap {
             final String endYear) {
         return new ResolutionDataGenerator() {
                 @Override
-                public String getData(int resolution) {
+                public String getData(String layerName) {
                     SQLServerFactory create = new SQLServerFactory();
                     Condition condition = 
                             USERTAXONOBSERVATIONDATA.PTAXONVERSIONKEY.eq(taxonKey)
                             .and(USERTAXONOBSERVATIONDATA.USERID.eq(user.getId())
-                            .and(FEATUREDATA.RESOLUTIONID.eq(resolution)));
+                            .and(FEATUREDATA.RESOLUTIONID.eq(LAYERS.get(layerName))));
                     condition = MapHelper.createTemporalSegment(condition, startYear, endYear);
                     condition = MapHelper.createInDatasetsSegment(condition, datasetKeys);
                     

@@ -46,7 +46,7 @@ nbn.mapping.construction.WidgetOptionsCreator = function(interactiveMapper){
     };
 
 	function _createPolygonFilters() {
-		return [_createNamedFilter('Polygons', '5', true), _createNamedFilter('Markers', '4', true)];
+		return [_createNamedFilter('Polygons', 'None-Grid', true)];
 	};
 	
     this.createNBNSpeciesLayer = function(options) {

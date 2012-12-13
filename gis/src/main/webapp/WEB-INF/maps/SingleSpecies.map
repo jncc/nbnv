@@ -18,7 +18,7 @@
                     CONNECTIONTYPE                                      PLUGIN
                     PLUGIN                                              "msplugin_mssql2008.dll"
                     CONNECTION                                          "${properties.spatialConnection}"
-                    DATA                                                "${layerGenerator.getData(layer_name_index + 1)}"
+                    DATA                                                "${layerGenerator.getData(layer_name)}"
                     TEMPLATE                                            "dummy.txt"
                     EXTENT                                              -180 -90 180 90
 
@@ -50,7 +50,7 @@
                 CONNECTIONTYPE                                      PLUGIN
                 PLUGIN                                              "msplugin_mssql2008.dll"
                 CONNECTION                                          "${properties.spatialConnection}"
-                DATA                                                "${layerGenerator.getData(layer_name_index + 1)}"
+                DATA                                                "${layerGenerator.getData(layer_name)}"
                 TEMPLATE                                            "dummy.txt"
                 EXTENT                                              -180 -90 180 90
 
