@@ -10,87 +10,72 @@
     [#list layers as layer_name]
         [#if bands??] [#--If banding is enabled, create lots of layers and group them to the given layer--]
             [#list bands as band]
-                LAYER
-                    NAME                                                "${layer_name}_Band_${band_index}"
-                    GROUP                                               "${layer_name}"
-                    TYPE                                                POLYGON
-                    STATUS                                              OFF
-                    CONNECTIONTYPE                                      PLUGIN
-                    PLUGIN                                              "msplugin_mssql2008.dll"
-                    CONNECTION                                          "${properties.spatialConnection}"
-                    DATA                                                "${layerGenerator.getData(layer_name_index + 1)}"
-                    TEMPLATE                                            "dummy.txt"
-                    EXTENT                                              -180 -90 180 90
-
-                    METADATA
-                        "wms_title"                                       "${layer_name}_Band_${band_index}"
-                        "wms_include_items"                               "all"
+                [@layer group=layer_name name="Band_${band_index}"]
+                    NAME                                              "Presence Year Band ${band.expression}"
+                    EXPRESSION                                        (${band.expression} AND [ABSENCE] = 0)
+                    STYLE
+                        COLOR                                         ${band.fillColour.red} ${band.fillColour.green} ${band.fillColour.blue}
+                        OUTLINECOLOR                                  ${band.outlineColour.red} ${band.outlineColour.green} ${band.outlineColour.blue}
+                        WIDTH                                         1
                     END
-
-                    PROJECTION
-                        "init=epsg:4326"
-                    END
-                    
-                    CLASS
-                        NAME                                              "Presence Year Band ${band.expression}"
-                        EXPRESSION                                        (${band.expression} AND [ABSENCE] = 0)
-                        STYLE
-                            COLOR                                         ${band.fillColour.red} ${band.fillColour.green} ${band.fillColour.blue}
-                            OUTLINECOLOR                                  ${band.outlineColour.red} ${band.outlineColour.green} ${band.outlineColour.blue}
-                            WIDTH                                         1
-                        END
-                    END
-                END
+                [/@layer]
             [/#list]
         [#else]
-            LAYER
-                NAME                                                "${layer_name}"
-                TYPE                                                POLYGON
-                STATUS                                              OFF
-                CONNECTIONTYPE                                      PLUGIN
-                PLUGIN                                              "msplugin_mssql2008.dll"
-                CONNECTION                                          "${properties.spatialConnection}"
-                DATA                                                "${layerGenerator.getData(layer_name_index + 1)}"
-                TEMPLATE                                            "dummy.txt"
-                EXTENT                                              -180 -90 180 90
-
-                METADATA
-                    "wms_title"                                       "${layer_name}"
-                    "wms_include_items"                               "all"
-                END
-
-                PROJECTION
-                    "init=epsg:4326"
-                END
-                [#if enablePresence]
-                    CLASS
-                        NAME                                              "${layer_name} Species Presence"
-                        EXPRESSION                                        ([ABSENCE] = 0)
-                        STYLE
-                            COLOR                                           ${colours[layer_name].red} ${colours[layer_name].green} ${colours[layer_name].blue}
-                            OUTLINECOLOR                                    0 0 0
-                            WIDTH                                           1
-                        END
+            [#if enablePresence]
+                [@layer group=layer_name name="Presence"]
+                    NAME                                              "${layer_name} Species Presence"
+                    EXPRESSION                                        ([ABSENCE] = 0)
+                    STYLE
+                        COLOR                                           ${colours[layer_name].red} ${colours[layer_name].green} ${colours[layer_name].blue}
+                        OUTLINECOLOR                                    0 0 0
+                        WIDTH                                           1
                     END
-                [/#if]
-                [#if enableAbsence]
-                    CLASS
-                        NAME                                              "${layer_name} Species Absence"
-                        EXPRESSION                                        ([ABSENCE] = 1)
-                        STYLE
-                            SYMBOL                                          'absence'
-                            COLOR                                           178 178 178
-                            ANGLE                                           45
-                            SIZE                                            5
-                            WIDTH                                           1
-                        END
-                        STYLE
-                            OUTLINECOLOR                                    115 0 0
-                            WIDTH                                           1
-                        END
+                [/@layer]
+            [/#if]
+            [#if enableAbsence]
+                [@layer group=layer_name name="Absence"]
+                    NAME                                              "${layer_name} Species Absence"
+                    EXPRESSION                                        ([ABSENCE] = 1)
+                    STYLE
+                        SYMBOL                                          'absence'
+                        COLOR                                           178 178 178
+                        ANGLE                                           45
+                        SIZE                                            5
+                        WIDTH                                           1
                     END
-                [/#if]
-            END
+                    STYLE
+                        OUTLINECOLOR                                    115 0 0
+                        WIDTH                                           1
+                    END
+                [/@layer]
+            [/#if]
         [/#if]
     [/#list]
 [/@template.context]
+
+[#-- Definition of a Single species layer, All single species layers consist of grouped layers --]
+[#macro layer group name]
+    LAYER
+        NAME                                                "${group}_${name}"
+        GROUP                                               "${group}"
+        TYPE                                                POLYGON
+        STATUS                                              OFF
+        CONNECTIONTYPE                                      PLUGIN
+        PLUGIN                                              "msplugin_mssql2008.dll"
+        CONNECTION                                          "${properties.spatialConnection}"
+        DATA                                                "${layerGenerator.getData(group)}"
+        TEMPLATE                                            "dummy.txt"
+        EXTENT                                              -180 -90 180 90
+
+        METADATA
+            "wms_title"                                       "${group}_${name}"
+            "wms_include_items"                               "all"
+        END
+
+        PROJECTION
+            "init=epsg:4326"
+        END
+
+        CLASS [#nested] END
+    END
+[/#macro]

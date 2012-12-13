@@ -31,7 +31,7 @@ public class MapHelper {
      * SQL Expressions in Map Server Templates
      **/
     public interface ResolutionDataGenerator {
-        String getData(int resolution);
+        String getData(String layerName);
     }
     
     static Condition createTemporalSegment(Condition currentCond, String startYear, String endYear) {
