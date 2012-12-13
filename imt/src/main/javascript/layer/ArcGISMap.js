@@ -107,7 +107,7 @@ nbn.layer.ArcGISMap = function(mapHosts, mapService, map, options) {
                     console.log("TODO  pass the identify result to the picker");
                     console.log(identifiers);
                     // Chris says : Pass in a list of feature identifier keys into the callback method
-                    callback([/*TL45, GA...*/]);
+                    callback(identifiers);
                 });
 	};
 	
