@@ -8,29 +8,29 @@
     END
 
     [#list layers as layer_name]
-        LAYER
-            NAME                                                "${layer_name}"
-            TYPE                                                POLYGON
-            STATUS                                              OFF
-            CONNECTIONTYPE                                      PLUGIN
-            PLUGIN                                              "msplugin_mssql2008.dll"
-            CONNECTION                                          "${properties.spatialConnection}"
-            DATA                                                "${layerGenerator.getData(layer_name_index + 1)}"
-            TEMPLATE                                            "dummy.txt"
-            EXTENT                                              -180 -90 180 90
+        [#if bands??] [#--If banding is enabled, create lots of layers and group them to the given layer--]
+            [#list bands as band]
+                LAYER
+                    NAME                                                "${layer_name}_Band_${band_index}"
+                    GROUP                                               "${layer_name}"
+                    TYPE                                                POLYGON
+                    STATUS                                              OFF
+                    CONNECTIONTYPE                                      PLUGIN
+                    PLUGIN                                              "msplugin_mssql2008.dll"
+                    CONNECTION                                          "${properties.spatialConnection}"
+                    DATA                                                "${layerGenerator.getData(layer_name_index + 1)}"
+                    TEMPLATE                                            "dummy.txt"
+                    EXTENT                                              -180 -90 180 90
 
-            METADATA
-                "wms_title"                                       "${layer_name}"
-                "wms_include_items"                               "all"
-            END
+                    METADATA
+                        "wms_title"                                       "${layer_name}_Band_${band_index}"
+                        "wms_include_items"                               "all"
+                    END
 
-            PROJECTION
-                "init=epsg:4326"
-            END
-
-            [#if bands??]
-                [#list bands as band]
-[#-- NOTE :- When year banding is enabled, only presence records will be shown --]
+                    PROJECTION
+                        "init=epsg:4326"
+                    END
+                    
                     CLASS
                         NAME                                              "Presence Year Band ${band.expression}"
                         EXPRESSION                                        (${band.expression} AND [ABSENCE] = 0)
@@ -40,8 +40,28 @@
                             WIDTH                                         1
                         END
                     END
-                [/#list]
-            [#else]
+                END
+            [/#list]
+        [#else]
+            LAYER
+                NAME                                                "${layer_name}"
+                TYPE                                                POLYGON
+                STATUS                                              OFF
+                CONNECTIONTYPE                                      PLUGIN
+                PLUGIN                                              "msplugin_mssql2008.dll"
+                CONNECTION                                          "${properties.spatialConnection}"
+                DATA                                                "${layerGenerator.getData(layer_name_index + 1)}"
+                TEMPLATE                                            "dummy.txt"
+                EXTENT                                              -180 -90 180 90
+
+                METADATA
+                    "wms_title"                                       "${layer_name}"
+                    "wms_include_items"                               "all"
+                END
+
+                PROJECTION
+                    "init=epsg:4326"
+                END
                 [#if enablePresence]
                     CLASS
                         NAME                                              "${layer_name} Species Presence"
@@ -70,7 +90,7 @@
                         END
                     END
                 [/#if]
-            [/#if]
-        END
+            END
+        [/#if]
     [/#list]
 [/@template.context]
