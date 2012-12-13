@@ -7,12 +7,33 @@
 
     <div id="slidorion">
 	<div id="slider">
-            <div class="slide" style="background-color:white;">
-                <p style="padding:2em; font-size: x-large;">This is the National Biodiversity Network's Gateway. Use it to explore UK 
-                biodiversity data, as contributed by participating data providers.</p>
+            <div class="slide welcome">
+                <@markdown>
+This is the National Biodiversity Network's Gateway. Use it to explore UK 
+biodiversity data, as contributed by participating data providers.
+                </@markdown>
             </div>
-            <div class="slide"><img src="http://data.nbn.org.uk/images/index_homepage/imt/gallery/imtEmpty.jpg"></div>
-            <div class="slide"><img src="http://data.nbn.org.uk/images/index_homepage/imt/gallery/youtube.jpg"></div>
+            
+            <div class="slide imt">
+                <a href="/imt"><img src="/img/slides/imt.jpg"></a>
+            </div>
+            
+            <div class="slide location-search">
+                <div class="site">
+                    <h1>Search by a Site</h1>
+                    <img src="/img/slides/site.png">
+                </div>
+                <div class="grid-square">
+                    <h1>Search by Grid Square</h1>
+                    <@image_map.hundredKM/>
+                </div>
+            </div>
+            
+            <div class="slide grid-map">
+                <img src="/img/slides/grid1.png">
+                <img src="/img/slides/grid1.png">
+                <img src="/img/slides/grid1.png">
+            </div>
 	</div>
 
 	<div id="accordion">
@@ -20,14 +41,22 @@
             <div class="link-content">All systems go for NBN Gateway </div>
 
             <div class="link-header">Interactive Map Tool</div>
-            <div class="link-content">The new Interactive Map provides new ways to explore species records.</div>
-
-            <div class="link-header">Hmm</div>
             <div class="link-content">
-                The above map shows an individual moth species on the UK BAP 
-                list – the white-spotted pinion (cosmia diffinis) with records 
-                supplied by Butterfly Conservation’s National Moth Recording Scheme. 
-                SSSI boundaries have also been selected for comparison
+                The new Interactive Map provides new ways to explore species records.
+            </div>
+
+            <div class="link-header">Search by Location</div>
+            <div class="link-content">
+                You can use the NBN gateway to find where species have been recorded
+                using grid squares or sites.
+
+                &copy; Crown copyright and database rights 2011 Ordnance Survey [100017955]
+            </div>
+
+            <div class="link-header">Grid Map</div>
+            <div class="link-content">
+                The Grid Map product allows you to view the grid squares which
+                have been recorded against
             </div>
         </div>
     </div>
@@ -51,7 +80,11 @@
                 <#assign organisation = json.readURL(dataset.organisationHref)>
 
                 <li>
-                    <h3><img src="${organisation.smallLogo!""}"> ${organisation.name} Dataset Updated: ${dataset.formattedDateUploaded}</h3>
+                    <h3>
+                        <#if organisation.smallLogo??>
+                            <img src="${organisation.smallLogo}"> 
+                        </#if>
+                        ${organisation.name} Dataset Updated: ${dataset.formattedDateUploaded}</h3>
                     <a href="${dataset.href}">${dataset.title}</a> 
                 </li>
 
