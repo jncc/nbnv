@@ -12,7 +12,7 @@
             CONNECTIONTYPE                                      PLUGIN
             PLUGIN                                              "msplugin_mssql2008.dll"
             CONNECTION                                          "${properties.spatialConnection}"
-            DATA                                                "${layerGenerator.getData(layer_index + 1)}"
+            DATA                                                "${layerGenerator.getData(layer.layer())}"
             TEMPLATE                                            "dummy.txt"
             EXTENT                                              -180 -90 180 90
             [#-- Legend Hack, revert to pixels if requesting legend --]
@@ -30,7 +30,6 @@
             END
             CLASS
                 NAME                                              "${layer.layer()} Species Presence"
-                EXPRESSION                                        ([ABSENCE] = 0)
                 STYLE
                     SYMBOL                                        "${symbol}"
 

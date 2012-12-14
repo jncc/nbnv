@@ -10,42 +10,39 @@
     [#list layers as layer_name]
         [#if bands??] [#--If banding is enabled, create lots of layers and group them to the given layer--]
             [#list bands as band]
-                [@layer group=layer_name name="Band_${band_index}"]
-                    NAME                                              "Presence Year Band ${band.expression}"
-                    EXPRESSION                                        (${band.expression} AND [ABSENCE] = 0)
+                [@layer group=layer_name name="Band_${band_index}" data=bandLayerGenerator.getData(layer_name, band)]
+                    NAME                "Presence Year Band ${band.expression}"
                     STYLE
-                        COLOR                                         ${band.fillColour.red} ${band.fillColour.green} ${band.fillColour.blue}
-                        OUTLINECOLOR                                  ${band.outlineColour.red} ${band.outlineColour.green} ${band.outlineColour.blue}
-                        WIDTH                                         1
+                        COLOR           ${band.fillColour.red} ${band.fillColour.green} ${band.fillColour.blue}
+                        OUTLINECOLOR    ${band.outlineColour.red} ${band.outlineColour.green} ${band.outlineColour.blue}
+                        WIDTH           1
                     END
                 [/@layer]
             [/#list]
         [#else]
             [#if enablePresence]
-                [@layer group=layer_name name="Presence"]
-                    NAME                                              "${layer_name} Species Presence"
-                    EXPRESSION                                        ([ABSENCE] = 0)
+                [@layer group=layer_name name="Presence" data=presencelayerGenerator.getData(layer_name)]
+                    NAME               "${layer_name} Species Presence"
                     STYLE
-                        COLOR                                           ${colours[layer_name].red} ${colours[layer_name].green} ${colours[layer_name].blue}
-                        OUTLINECOLOR                                    0 0 0
-                        WIDTH                                           1
+                        COLOR          ${colours[layer_name].red} ${colours[layer_name].green} ${colours[layer_name].blue}
+                        OUTLINECOLOR   0 0 0
+                        WIDTH          1
                     END
                 [/@layer]
             [/#if]
             [#if enableAbsence]
-                [@layer group=layer_name name="Absence"]
-                    NAME                                              "${layer_name} Species Absence"
-                    EXPRESSION                                        ([ABSENCE] = 1)
+                [@layer group=layer_name name="Absence" data=absenceLayerGenerator.getData(layer_name)]
+                    NAME               "${layer_name} Species Absence"
                     STYLE
-                        SYMBOL                                          'absence'
-                        COLOR                                           178 178 178
-                        ANGLE                                           45
-                        SIZE                                            5
-                        WIDTH                                           1
+                        SYMBOL         'absence'
+                        COLOR          178 178 178
+                        ANGLE          45
+                        SIZE           5
+                        WIDTH          1
                     END
                     STYLE
-                        OUTLINECOLOR                                    115 0 0
-                        WIDTH                                           1
+                        OUTLINECOLOR   115 0 0
+                        WIDTH          1
                     END
                 [/@layer]
             [/#if]
@@ -54,26 +51,26 @@
 [/@template.context]
 
 [#-- Definition of a Single species layer, All single species layers consist of grouped layers --]
-[#macro layer group name]
+[#macro layer group name data]
     LAYER
-        NAME                                                "${group}_${name}"
-        GROUP                                               "${group}"
-        TYPE                                                POLYGON
-        STATUS                                              OFF
-        CONNECTIONTYPE                                      PLUGIN
-        PLUGIN                                              "msplugin_mssql2008.dll"
-        CONNECTION                                          "${properties.spatialConnection}"
-        DATA                                                "${layerGenerator.getData(group)}"
-        TEMPLATE                                            "dummy.txt"
-        EXTENT                                              -180 -90 180 90
+        NAME                        "${group}_${name}"
+        GROUP                       "${group}"
+        TYPE                        POLYGON
+        STATUS                      OFF
+        CONNECTIONTYPE              PLUGIN
+        PLUGIN                      "msplugin_mssql2008.dll"
+        CONNECTION                  "${properties.spatialConnection}"
+        DATA                        "${data}"
+        TEMPLATE                    "dummy.txt"
+        EXTENT                      -180 -90 180 90
 
         METADATA
-            "wms_title"                                       "${group}_${name}"
-            "wms_include_items"                               "all"
+            "wms_title"             "${group}_${name}"
+            "wms_include_items"     "all"
         END
 
         PROJECTION
-            "init=epsg:4326"
+                                    "init=epsg:4326"
         END
 
         CLASS [#nested] END

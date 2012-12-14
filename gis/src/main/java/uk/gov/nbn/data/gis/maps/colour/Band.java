@@ -9,7 +9,7 @@ import java.awt.Color;
 public class Band {
     private static final String BAND_REGEX = "[0-9]{4}-[0-9]{4},[0-9a-fA-F]{6},[0-9a-fA-F]{6}";
     
-    private final int startYear, endYear;
+    private final String startYear, endYear;
     private final Color fillColour, outlineColour;
     
     public Band(String band) {
@@ -19,14 +19,22 @@ public class Band {
         String[] bandSplit = band.split(",");
         String[] yearRange = bandSplit[0].split("-");
         
-        this.startYear = Integer.parseInt(yearRange[0]);
-        this.endYear = Integer.parseInt(yearRange[1]);
+        this.startYear = yearRange[0];
+        this.endYear = yearRange[1];
         this.fillColour = new Color(Integer.parseInt(bandSplit[1], 16));
         this.outlineColour = new Color(Integer.parseInt(bandSplit[2], 16));
     }
 
     public String getExpression() {
-        return String.format("[ENDDATE] >= %d AND [STARTDATE] <= %d", startYear, endYear);
+        return String.format("[ENDDATE] >= %s AND [STARTDATE] <= %s", startYear, endYear);
+    }
+
+    public String getEndYear() {
+        return endYear;
+    }
+
+    public String getStartYear() {
+        return startYear;
     }
 
     public Color getFillColour() {

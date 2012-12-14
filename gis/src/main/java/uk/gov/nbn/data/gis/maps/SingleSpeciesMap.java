@@ -99,8 +99,18 @@ public class SingleSpeciesMap {
         data.put("mapServiceURL", mapServiceURL);
         data.put("featureData", MapHelper.getSelectedFeatureData(featureID));
         data.put("properties", properties);
-        data.put("layerGenerator", getSingleSpeciesResolutionDataGenerator(key, user, datasetKeys, startYear, endYear));
+        data.put("absenceLayerGenerator", getSingleSpeciesResolutionDataGenerator(key, user, datasetKeys, startYear, endYear, true));
+        data.put("presencelayerGenerator", getSingleSpeciesResolutionDataGenerator(key, user, datasetKeys, startYear, endYear, false));
+        data.put("bandLayerGenerator", new SingleSpeciesBandSqlGenerator() {
+            @Override public String getData(String layerName, Band dateBand) {
+                return getSQL(key, user, datasetKeys, dateBand.getStartYear(), dateBand.getEndYear(), false, layerName);
+            }
+        });
         return new MapFileModel("SingleSpecies.map",data);
+    }
+    
+    public interface SingleSpeciesBandSqlGenerator {
+        public String getData(String layerName, Band dateBand);
     }
     
     //Factored out the single species resolution data generator so that it can be used by the atlas map
@@ -109,32 +119,40 @@ public class SingleSpeciesMap {
             final User user, 
             final List<String> datasetKeys, 
             final String startYear, 
-            final String endYear) {
+            final String endYear,
+            final boolean absence) {
         return new ResolutionDataGenerator() {
-                @Override
-                public String getData(String layerName) {
-                    SQLServerFactory create = new SQLServerFactory();
-                    Condition condition = 
-                            USERTAXONOBSERVATIONDATA.PTAXONVERSIONKEY.eq(taxonKey)
-                            .and(USERTAXONOBSERVATIONDATA.USERID.eq(user.getId())
-                            .and(FEATUREDATA.RESOLUTIONID.eq(LAYERS.get(layerName))));
-                    condition = MapHelper.createTemporalSegment(condition, startYear, endYear);
-                    condition = MapHelper.createInDatasetsSegment(condition, datasetKeys);
-                    
-                    return MapHelper.getMapData(FEATUREDATA.GEOM, FEATUREDATA.IDENTIFIER, 4326 ,create
-                        .select(
-                            FEATUREDATA.GEOM,
-                            FEATUREDATA.IDENTIFIER,
-                            FEATUREDATA.LABEL,
-                            USERTAXONOBSERVATIONDATA.STARTDATE,
-                            USERTAXONOBSERVATIONDATA.ENDDATE,
-                            USERTAXONOBSERVATIONDATA.ABSENCE)
-                        .from(USERTAXONOBSERVATIONDATA)
-                        .join(GRIDTREE).on(GRIDTREE.FEATUREID.eq(USERTAXONOBSERVATIONDATA.FEATUREID))
-                        .join(FEATUREDATA).on(FEATUREDATA.ID.eq(GRIDTREE.PARENTFEATUREID))
-                        .where(condition)
-                    );
-                }
+            @Override public String getData(String layerName) {
+                return getSQL(taxonKey, user, datasetKeys, startYear, endYear, absence, layerName);
+            }
         };
+    }
+            
+    
+    private static String getSQL(   String taxonKey, User user, 
+                                    List<String> datasetKeys, 
+                                    String startYear, String endYear, 
+                                    boolean absence, String layerName) {
+        SQLServerFactory create = new SQLServerFactory();
+        Condition condition = 
+                USERTAXONOBSERVATIONDATA.PTAXONVERSIONKEY.eq(taxonKey)
+                .and(USERTAXONOBSERVATIONDATA.USERID.eq(user.getId()))
+                .and(USERTAXONOBSERVATIONDATA.ABSENCE.eq(absence));
+        condition = MapHelper.createTemporalSegment(condition, startYear, endYear);
+        condition = MapHelper.createInDatasetsSegment(condition, datasetKeys);
+
+        return MapHelper.getMapData(FEATUREDATA.GEOM, FEATUREDATA.IDENTIFIER, 4326 ,create
+            .select(FEATUREDATA.GEOM, FEATUREDATA.IDENTIFIER, FEATUREDATA.LABEL)
+            .from(FEATUREDATA)
+            .where(
+                FEATUREDATA.ID.in(create
+                    .select(GRIDTREE.PARENTFEATUREID)
+                    .from(USERTAXONOBSERVATIONDATA)
+                    .join(GRIDTREE).on(GRIDTREE.FEATUREID.eq(USERTAXONOBSERVATIONDATA.FEATUREID))
+                    .where(condition)
+                )
+                .and(FEATUREDATA.RESOLUTIONID.eq(LAYERS.get(layerName)))
+            )
+        );
     }
 }
