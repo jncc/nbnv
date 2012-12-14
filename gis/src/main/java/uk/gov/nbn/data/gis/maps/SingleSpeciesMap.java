@@ -2,10 +2,7 @@ package uk.gov.nbn.data.gis.maps;
 
 import com.sun.jersey.api.client.WebResource;
 import java.awt.Color;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.nbn.data.gis.maps.MapHelper.ResolutionDataGenerator;
@@ -91,10 +88,13 @@ public class SingleSpeciesMap {
             @QueryParam(key="band", commaSeperated=false) List<Band> bands
             ) {
         HashMap<String, Object> data = new HashMap<String, Object>();
+        boolean absence = abundance.equals("all") || abundance.equals("absence");
+        boolean presence = abundance.equals("all") || abundance.equals("presence");
         data.put("layers", LAYERS.keySet());
         data.put("colours", COLOURS);
-        data.put("enableAbsence", abundance.equals("all") || abundance.equals("absence"));
-        data.put("enablePresence", abundance.equals("all") || abundance.equals("presence"));
+        data.put("osRequiredLayers", getOSRequiredLayers(LAYERS.keySet(), presence, absence, bands));
+        data.put("enableAbsence", absence);
+        data.put("enablePresence", presence);
         data.put("bands", bands);
         data.put("mapServiceURL", mapServiceURL);
         data.put("featureData", MapHelper.getSelectedFeatureData(featureID));
@@ -154,5 +154,27 @@ public class SingleSpeciesMap {
                 .and(FEATUREDATA.RESOLUTIONID.eq(LAYERS.get(layerName)))
             )
         );
+    }
+    
+    /** The following method will create a list of layer names which will be used
+     * in this map**/
+    private static List<String> getOSRequiredLayers(Collection<String> layerNames, boolean presence, boolean absence, List<Band> bands) {
+        List<String> toReturn = new ArrayList<String>();
+        for(String layer : layerNames) {
+            if(bands != null) {
+                for(int i=0; i<bands.size(); i++) {
+                    toReturn.add(layer + "_" + i);
+                }
+            }
+            else {
+                if(presence) {
+                    toReturn.add(layer + "_Presence");
+                }
+                if(absence) {
+                    toReturn.add(layer + "_Absence");
+                }
+            }
+        }
+        return toReturn;
     }
 }
