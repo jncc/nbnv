@@ -38,10 +38,10 @@
         Vector layers       - Those configured in the backgrounds.ftl
         Selected-Feature    - If feature data is defined, a Selected Feature layer will be added
 --]
-[#macro context title]
+[#macro context title requires]
     [@master title=title]
         [@backgrounds.vectors location=properties.contextLayersLocation/]    
-        [@backgrounds.os location=properties.contextLayersLocation requires=layers/]
+        [@backgrounds.os location=properties.contextLayersLocation requires=requires/]
 
         [#if featureData??]
             [@backgrounds.selectedFeature data=featureData spatialConnection=properties.spatialConnection/]

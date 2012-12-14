@@ -1,7 +1,7 @@
 [#ftl]
 [#import "libraries/template.ftl" as template]
 
-[@template.context title="Single Species Map"]
+[@template.context title="Single Species Map" requires=[]]
     SYMBOL
         NAME 'absence'
         TYPE HATCH
