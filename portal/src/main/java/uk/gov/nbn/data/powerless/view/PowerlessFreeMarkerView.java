@@ -33,10 +33,9 @@ public class PowerlessFreeMarkerView extends FreeMarkerView {
             JSONReaderStatusException jsonException = (JSONReaderStatusException)ex.getCauseException();
             if(jsonException.getStatusCode() == 401) {
                 response.sendRedirect("/User/SSO/Unauthorized?redirect=" + URLEncoder.encode(request.getRequestURL().toString()));
+                return;
             }
         }
-        else {
-            throw ex; //rethrow the original exception
-        }
+        throw ex; //rethrow the original exception
     }
 }

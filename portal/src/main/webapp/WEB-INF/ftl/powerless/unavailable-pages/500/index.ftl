@@ -2,12 +2,9 @@
     <@markdown>
 #D'oh. Something went wrong.
 
-Integer nec odio. 
-Praesent libero. Sed cursus ante dapibus diam. Sed nisi. Nulla quis sem at nibh 
-elementum imperdiet. Duis sagittis ipsum. Praesent mauris. Fusce nec tellus sed 
-augue semper porta. Mauris massa. Vestibulum lacinia arcu eget nulla. Class 
-aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos 
-himenaeos. Curabitur sodales ligula in libero.
+An issue has occurred on the NBN Gateway which means we are unable to satisfy 
+your request. If you continually see this message, please notify us using the
+[NBN Forums](http://forums.nbn.org.uk/)
 
 [Please click to go back to the NBN Gateway](/)
     </@markdown>
