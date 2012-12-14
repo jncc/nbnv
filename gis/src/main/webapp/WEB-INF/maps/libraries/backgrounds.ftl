@@ -134,8 +134,6 @@
         { "name" : "Ireland-Ten-km-Grid-GB-cutout",     "data" : "ireland_10k_grid_gb_cutout",      "projection" : 29903,   "colour": "150 150 150" }
     ]]
 
-    #SHAPEPATH                       "E:"
-
     [#list vectorLayers as layer]
         LAYER
             NAME                    "${layer.name}"
