@@ -122,17 +122,16 @@ nbn.layer.picker.SpeciesLayerPicker = function(layerToQuery) {
 	$.extend(this, new nbn.layer.picker.ArcGisLayerFeaturePicker(layerToQuery, {
 		createPickerDiv: function(resultsFromIdentify, position, callback) {
                     //Chris says: If i am right resultsFromIdentify should hold [TL45...]
-console.log('resultsFromIdentifier:');
-console.log(resultsFromIdentify);
                     //
                     //THe rest of this method should be about passing that idenifier list to
                     //the api with layer specfic arguments
                     //
 //			var featuresFound = createFeaturesFoundArray(resultsFromIdentify);
 			
-			if(featuresFound.length!==0) {
+			if(resultsFromIdentify.length!==0) {
                                 //You shopu
-				this.__lastRequest = $.getJSON(getSpeciesPickerServletWithParams(resultsFromIdentify, featuresFound), function(pickerResults) {
+console.log(getSpeciesPickerServletWithParams(resultsFromIdentify, resultsFromIdentify));
+				this.__lastRequest = $.getJSON(getSpeciesPickerServletWithParams(resultsFromIdentify, resultsFromIdentify), function(pickerResults) {
 					var toReturn = $('<div>').addClass('nbn-picker-speciesResults');
 					toReturn.nbn_dynamictabs();
 					toReturn.nbn_dynamictabs('add','Records',createRecordsTabDiv(pickerResults));

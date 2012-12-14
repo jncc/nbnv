@@ -104,9 +104,6 @@ nbn.layer.ArcGISMap = function(mapHosts, mapService, map, options) {
 		return $.getJSON(_createIdentifyURL(xy), function(data) {
                     var identifiers = [];
                     getIdentifiers(data, identifiers);
-                    console.log("TODO  pass the identify result to the picker");
-                    console.log(identifiers);
-                    // Chris says : Pass in a list of feature identifier keys into the callback method
                     callback(identifiers);
                 });
 	};
