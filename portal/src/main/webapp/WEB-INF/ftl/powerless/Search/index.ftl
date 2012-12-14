@@ -3,12 +3,7 @@
     javascripts=["/js/jquery.dataTables.min.js",
                 "/js/jquery.nbn_search.js",
                 "/js/enable-search.js"]>
-    <@markdown>
-#General Gateway Search Demonstration
-
-Welcome to a mockup of viewing and searching gateway concepts. Please be aware that this 
-is not a finished product.
-    </@markdown>
+    <@markdown file="introduction.md"/>
 
     <@search.search 
         url="${api}/search"
