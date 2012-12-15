@@ -69,7 +69,7 @@ nbn.util.ArrayTools = new function() {
 	this.toJQueryRenderedList = function(toRender, renderingFunction) {
 		var toReturn = $('<ul>');
 		renderingFunction = renderingFunction || function(element) { return element; }; //if no render function has been defined, create a passthrough function
-		for(var i in toRender) {
+                for(var i in toRender) {
 			var renderedResult = renderingFunction(toRender[i], i);
 			if(renderedResult)
 				toReturn.append($('<li>').append(renderedResult));

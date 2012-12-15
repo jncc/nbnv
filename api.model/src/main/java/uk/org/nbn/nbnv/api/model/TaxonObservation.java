@@ -27,6 +27,7 @@ public class TaxonObservation {
     private Date startDate;
     private Date endDate;
     private String dateTypeKey;
+    private String dateType;
     private String recorder;
     private String determiner;
     private boolean sensitive;
@@ -222,5 +223,13 @@ public class TaxonObservation {
 
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    public String getDateType() {
+        return dateType;
+    }
+
+    public void setDateType(String dateType) {
+        this.dateType = dateType;
     }
 }
