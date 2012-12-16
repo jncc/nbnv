@@ -19,33 +19,33 @@ nbn.layer.picker.SpeciesLayerPicker = function(layerToQuery) {
     }
 	
     /*The following function defines the resource that should be called depending on the current mode of the species layer*/ 
-    function getSpeciesResource() {
+    function getResource(tab) {
         var server = nbn.util.ServerGeneratedLoadTimeConstants.data_api;
-        switch(layerToQuery.getMode()) {
-            case layerToQuery.Modes.SPECIES :
-                return {SpeciesList: server + '/taxonObservations/species', DatasetList: server + '/taxonObservations/datasets', Records: server + '/taxonObservations/datasets/observations'};
-            case layerToQuery.Modes.DESIGNATION :
-                return 'DesignationPickerServlet';
-            case layerToQuery.Modes.SINGLE_DATASET :
-                return 'DatasetPickerServlet';
-        }
+        var resourceURLs = {SpeciesList: server + '/taxonObservations/species', DatasetList: server + '/taxonObservations/datasets', Records: server + '/taxonObservations/datasets/observations'};
+        return resourceURLs[tab];
     }
 	
-    /*This function will give the api resource url qualified with the parameters for a given layer's current state*/
-    function getResourceParameters(resultsFromIdentify) {	
-        var servletParameters = {};
-        servletParameters.featureID = resultsFromIdentify;
-        servletParameters.ptvk = (layerToQuery.getNBNSpeciesLayerFilters()).species;
-        servletParameters.spatialRelationship = 'overlap';
-        return servletParameters;
+    /*This function will return the api resource url qualified with the parameters for a given layer's current state*/
+    function getResourceParameters(resultsFromIdentify) {
+        var toReturn = {};
+        toReturn.featureID = resultsFromIdentify;
+        toReturn.spatialRelationship = 'overlap';
+        switch(layerToQuery.getMode()) {
+            case layerToQuery.Modes.SPECIES :
+                toReturn.ptvk = (layerToQuery.getNBNSpeciesLayerFilters()).species;
+                break;
+            case layerToQuery.Modes.DESIGNATION :
+                toReturn.designation = (layerToQuery.getNBNSpeciesLayerFilters()).desig;
+                break;
+            case layerToQuery.Modes.SINGLE_DATASET :
+                toReturn.datasetKey = (layerToQuery.getNBNSpeciesLayerFilters()).datasets;
+                break;
+        }
+    return toReturn;
     }
     
-    function getSingleSpeciesResource(resultsFromIdentify, tab){
-        return getSpeciesResource()[tab] + nbn.util.ArrayTools.joinAndPrepend(nbn.util.ArrayTools.fromObject(getResourceParameters(resultsFromIdentify)),'&','?');
-    }
-    
-    function getDatasetOrDesignationResource(resultsFromIdentify){
-        return getSpeciesResource() + nbn.util.ArrayTools.joinAndPrepend(nbn.util.ArrayTools.fromObject(getResourceParameters(resultsFromIdentify)),'&','?');
+    function getResourceWithParams(resultsFromIdentify, tab){
+        return getResource(tab) + nbn.util.ArrayTools.joinAndPrepend(nbn.util.ArrayTools.fromObject(getResourceParameters(resultsFromIdentify)),'&','?');
     }
 	
     /*This function will take a javascript object which has a name and perhaps a link attribute and create a label from it*/
@@ -163,14 +163,14 @@ nbn.layer.picker.SpeciesLayerPicker = function(layerToQuery) {
                 var errorDiv = $('<div>').html('An error occured whilst trying to obtain a response from the picker server');
                 var toReturn = $('<div>').addClass('nbn-picker-speciesResults');
                 toReturn.nbn_dynamictabs();
-                $.getJSON(getSingleSpeciesResource(resultsFromIdentify, 'SpeciesList'), function(pickerResults){
-                    toReturn.nbn_dynamictabs('add','Species',createSpeciesTabDiv(pickerResults));
+                $.getJSON(getResourceWithParams(resultsFromIdentify, 'Records'), function(pickerResults){
+                    toReturn.nbn_dynamictabs('add','Records',createObservationsTabDiv(pickerResults));
                 }).done(function(){
-                    $.getJSON(getSingleSpeciesResource(resultsFromIdentify, 'DatasetList'), function(pickerResults){
+                    $.getJSON(getResourceWithParams(resultsFromIdentify, 'DatasetList'), function(pickerResults){
                         toReturn.nbn_dynamictabs('add','Datasets',createDatasetsTabDiv(pickerResults));
                     }).done(function(){
-                        $.getJSON(getSingleSpeciesResource(resultsFromIdentify, 'Records'), function(pickerResults){
-                            toReturn.nbn_dynamictabs('add','Records',createObservationsTabDiv(pickerResults));
+                        $.getJSON(getResourceWithParams(resultsFromIdentify, 'SpeciesList'), function(pickerResults){
+                            toReturn.nbn_dynamictabs('add','Species',createSpeciesTabDiv(pickerResults));
                         }).done(function(){
                             toReturn.tabs();
                             callback(toReturn);
