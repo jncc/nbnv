@@ -32,8 +32,8 @@ public class SiteBoundaryDatasetsMap {
     public static class LayerGenerator {
         public String getData(String siteBoundary) {
             SQLServerFactory create = new SQLServerFactory();
-            return MapHelper.getMapData(SITEBOUNDARYFEATUREDATA.GEOM, SITEBOUNDARYFEATUREDATA.ID, 4326, create.
-                select(SITEBOUNDARYFEATUREDATA.GEOM, SITEBOUNDARYFEATUREDATA.ID)
+            return MapHelper.getMapData(SITEBOUNDARYFEATUREDATA.GEOM, SITEBOUNDARYFEATUREDATA.IDENTIFIER, 4326, create.
+                select(SITEBOUNDARYFEATUREDATA.GEOM, SITEBOUNDARYFEATUREDATA.IDENTIFIER)
                 .from(SITEBOUNDARYFEATUREDATA)
                 .join(SITEBOUNDARYDATA).on(SITEBOUNDARYDATA.FEATUREID.eq(SITEBOUNDARYFEATUREDATA.ID))
                 .where(SITEBOUNDARYDATA.SITEBOUNDARYDATASETKEY.eq(siteBoundary))

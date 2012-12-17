@@ -35,8 +35,8 @@ public class HabitatDatasetsMap {
     public static class LayerGenerator {
         public String getData(String habitat) {
             SQLServerFactory create = new SQLServerFactory();
-            return MapHelper.getMapData(HABITATFEATUREFEATUREDATA.GEOM, HABITATFEATUREFEATUREDATA.ID, 4326, create.
-                select(HABITATFEATUREFEATUREDATA.GEOM, HABITATFEATUREFEATUREDATA.ID)
+            return MapHelper.getMapData(HABITATFEATUREFEATUREDATA.GEOM, HABITATFEATUREFEATUREDATA.IDENTIFIER, 4326, create.
+                select(HABITATFEATUREFEATUREDATA.GEOM, HABITATFEATUREFEATUREDATA.IDENTIFIER)
                 .from(HABITATFEATUREFEATUREDATA)
                 .join(HABITATFEATUREDATA).on(HABITATFEATUREDATA.FEATUREID.eq(HABITATFEATUREFEATUREDATA.ID))
                 .where(HABITATFEATUREDATA.HABITATDATASETKEY.eq(habitat))
