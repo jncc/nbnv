@@ -137,7 +137,8 @@ public class SingleSpeciesMap {
         Condition condition = 
                 USERMAPPINGDATA.PTAXONVERSIONKEY.eq(taxonKey)
                 .and(USERMAPPINGDATA.USERID.eq(user.getId()))
-                .and(USERMAPPINGDATA.ABSENCE.eq(absence));
+                .and(USERMAPPINGDATA.ABSENCE.eq(absence))
+                .and(USERMAPPINGDATA.RESOLUTIONID.eq(LAYERS.get(layerName)));
         condition = MapHelper.createTemporalSegment(condition, startYear, endYear);
         condition = MapHelper.createInDatasetsSegment(condition, datasetKeys);
 
@@ -150,7 +151,6 @@ public class SingleSpeciesMap {
                     .from(USERMAPPINGDATA)
                     .where(condition)
                 )
-                .and(FEATUREDATA.RESOLUTIONID.eq(LAYERS.get(layerName)))
             )
         );
     }

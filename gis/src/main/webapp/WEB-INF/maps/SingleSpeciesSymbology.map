@@ -12,6 +12,7 @@
             CONNECTIONTYPE                                      PLUGIN
             PLUGIN                                              "msplugin_mssql2008.dll"
             CONNECTION                                          "${properties.spatialConnection}"
+            PROCESSING                                          "CLOSE_CONNECTION=DEFER"
             DATA                                                "${layerGenerator.getData(layer.layer())}"
             TEMPLATE                                            "dummy.txt"
             EXTENT                                              -180 -90 180 90
