@@ -9,6 +9,7 @@ nbn.layer.picker.SiteBoundaryPicker = function(layerToQuery) {
 //resultsFromIdentify = ['GA000942E007'];//Wiltshire & Swindon Biological Records Centre
 
             if(resultsFromIdentify.length!==0) {
+                var errorDiv = $('<div>').html('An error occured whilst trying to obtain a response from the picker server');
                 var toReturn = $('<div>');
                 var jqxhrs = [];
                 $.each(resultsFromIdentify, function(index, identifier){
@@ -22,7 +23,7 @@ nbn.layer.picker.SiteBoundaryPicker = function(layerToQuery) {
                                     .attr('alt', 'Site name')
                                 )
                                 .appendTo(toReturn); 
-                        })
+                        }).error(errorDiv.appendTo(toReturn))
                     );
                 });
                 $.when.apply(this, jqxhrs).done(function (){
