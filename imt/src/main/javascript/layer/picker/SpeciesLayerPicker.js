@@ -147,7 +147,6 @@ nbn.layer.picker.SpeciesLayerPicker = function(layerToQuery) {
 	
     $.extend(this, new nbn.layer.picker.ArcGisLayerFeaturePicker(layerToQuery, {
         createPickerDiv: function(resultsFromIdentify, position, callback) {
-            //Chris says: If i am right resultsFromIdentify should hold [TL45...]
             if(resultsFromIdentify.length!==0) {
                 //				this.__lastRequest = $.getJSON(getSpeciesPickerServletWithParams(resultsFromIdentify, resultsFromIdentify), function(pickerResults) {
                 //					var toReturn = $('<div>').addClass('nbn-picker-speciesResults');

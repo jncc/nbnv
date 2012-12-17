@@ -4,23 +4,35 @@ nbn.layer.picker = nbn.layer.picker || {};
 
 nbn.layer.picker.SiteBoundaryPicker = function(layerToQuery) {
 	$.extend(this, new nbn.layer.picker.ArcGisLayerFeaturePicker(layerToQuery, {
-		createPickerDiv: function(idresults, position, callback) {
-console.log(idresults);
-			var toReturn = $('<div>');
-			var res = idresults.results;
-			for (var i in res) {
-				var adminSiteKey = res[i].attributes.ADMINSITEKEY || res[i].attributes.adminSiteKey;
-				$('<div>')
-					.append($('<a>' + res[i].displayFieldName + ' - ' + res[i].value + '</a>')
-						.attr('href', 'http://data.nbn.org.uk/siteInfo/siteSpeciesGroups.jsp?useIntersects=1&engOrd=false&allDs=1&maxRes=1&siteKey=' + adminSiteKey)
-						.attr('target', '_blank')
-						.attr('alt', 'Site name')
-					)
-					.appendTo(toReturn);
-			}
-			if(res.length==0)
-				toReturn.append($('<div>No Results here</div>'));
-			callback(toReturn);
-		}
-	}));
+		createPickerDiv: function(resultsFromIdentify, position, callback) {
+//console.log(resultsFromIdentify);
+//resultsFromIdentify = ['GA000942E007'];//Wiltshire & Swindon Biological Records Centre
+
+            if(resultsFromIdentify.length!==0) {
+                var toReturn = $('<div>');
+                var jqxhrs = [];
+                $.each(resultsFromIdentify, function(index, identifier){
+                    var url = nbn.util.ServerGeneratedLoadTimeConstants.data_api + '/features/' + identifier;
+                    jqxhrs.push(
+                        $.getJSON(url, function(siteBoundary){
+                            $('<div>')
+                                .append($('<a>' + siteBoundary.label + '</a>')
+                                    .attr('href', siteBoundary.href)
+                                    .attr('target', '_blank')
+                                    .attr('alt', 'Site name')
+                                )
+                                .appendTo(toReturn); 
+                        })
+                    );
+                });
+                $.when.apply(this, jqxhrs).done(function (){
+                    toReturn.tabs();
+                    callback(toReturn);
+                });
+            }else{
+                toReturn.append($('<div>No Results here</div>'));
+                callback(toReturn);
+            }
+        }
+    }));
 }
