@@ -17,14 +17,14 @@ nbn.layer.picker.SpeciesLayerPicker = function(layerToQuery) {
                 return 'SITEBOUNDARY:' + attributes.adminSiteKey;
         });
     }
-	
+
     /*The following function defines the resource that should be called depending on the current mode of the species layer*/ 
     function getResource(tab) {
         var server = nbn.util.ServerGeneratedLoadTimeConstants.data_api;
         var resourceURLs = {SpeciesList: server + '/taxonObservations/species', DatasetList: server + '/taxonObservations/datasets', Records: server + '/taxonObservations/datasets/observations'};
         return resourceURLs[tab];
     }
-	
+
     /*This function will return the api resource url qualified with the parameters for a given layer's current state*/
     function getResourceParameters(resultsFromIdentify) {
         var toReturn = {};
@@ -43,16 +43,16 @@ nbn.layer.picker.SpeciesLayerPicker = function(layerToQuery) {
         }
     return toReturn;
     }
-    
+
     function getResourceWithParams(resultsFromIdentify, tab){
         return getResource(tab) + nbn.util.ArrayTools.joinAndPrepend(nbn.util.ArrayTools.fromObject(getResourceParameters(resultsFromIdentify)),'&','?');
     }
-	
+
     /*This function will take a javascript object which has a name and perhaps a link attribute and create a label from it*/
     function createLabel(toLabel) {
         return (!toLabel.link) ? toLabel.name : $('<a>').attr('target','_blank').attr('href',toLabel.link).html(toLabel.name);
     }
-	
+
     /*This function will render a dataset object as html. Creates a link to metadata and shows the providing organisation*/ 
     function createDatasetLabel(dataset) {
         return $('<div>')
@@ -163,25 +163,24 @@ nbn.layer.picker.SpeciesLayerPicker = function(layerToQuery) {
                 var errorDiv = $('<div>').html('An error occured whilst trying to obtain a response from the picker server');
                 var toReturn = $('<div>').addClass('nbn-picker-speciesResults');
                 toReturn.nbn_dynamictabs();
-                $.getJSON(getResourceWithParams(resultsFromIdentify, 'Records'), function(pickerResults){
+                var jqxhrRecords = $.getJSON(getResourceWithParams(resultsFromIdentify, 'Records'), function(pickerResults){
                     toReturn.nbn_dynamictabs('add','Records',createObservationsTabDiv(pickerResults));
-                }).done(function(){
-                    $.getJSON(getResourceWithParams(resultsFromIdentify, 'DatasetList'), function(pickerResults){
-                        toReturn.nbn_dynamictabs('add','Datasets',createDatasetsTabDiv(pickerResults));
-                    }).done(function(){
-                        $.getJSON(getResourceWithParams(resultsFromIdentify, 'SpeciesList'), function(pickerResults){
-                            toReturn.nbn_dynamictabs('add','Species',createSpeciesTabDiv(pickerResults));
-                        }).done(function(){
-                            toReturn.tabs();
-                            callback(toReturn);
-                        }).error(function(){
-                            toReturn.nbn_dynamictabs('add','Records',errorDiv);
-                        });
-                    }).error(function(){
-                        toReturn.nbn_dynamictabs('add','Datasets',errorDiv);
-                    });
                 }).error(function(){
-                    toReturn.nbn_dynamictabs('add','Species',errorDiv);
+                    toReturn.nbn_dynamictabs('add','Records',errorDiv);
+                });
+                var jqxhrDatasetList = $.getJSON(getResourceWithParams(resultsFromIdentify, 'DatasetList'), function(pickerResults){
+                        toReturn.nbn_dynamictabs('add','Datasets',createDatasetsTabDiv(pickerResults));
+                }).error(function(){
+                    toReturn.nbn_dynamictabs('add','Records',errorDiv);
+                });
+                var jqxhrSpeciesList = $.getJSON(getResourceWithParams(resultsFromIdentify, 'SpeciesList'), function(pickerResults){
+                    toReturn.nbn_dynamictabs('add','Species',createSpeciesTabDiv(pickerResults));
+                }).error(function(){
+                    toReturn.nbn_dynamictabs('add','Records',errorDiv);
+                });
+                $.when(jqxhrRecords, jqxhrDatasetList, jqxhrSpeciesList).done(function(){
+                    toReturn.tabs();
+                    callback(toReturn);
                 });
             }
             else
