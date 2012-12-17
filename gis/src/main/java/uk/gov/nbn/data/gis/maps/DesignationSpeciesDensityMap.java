@@ -103,10 +103,12 @@ public class DesignationSpeciesDensityMap {
                         .where(condition)
                         .groupBy(GRIDTREE.PARENTFEATUREID, DESIGNATIONTAXONDATA.CODE, USERTAXONOBSERVATIONDATA.USERID);
                     
-                    return MapHelper.getMapData(FEATUREDATA.GEOM, FEATUREDATA.LABEL, 4326, create
+                    return MapHelper.getMapData(FEATUREDATA.GEOM, FEATUREDATA.IDENTIFIER, 4326, create
                         .select(
-                            FEATUREDATA.GEOM, observations.getField("species"),
-                            FEATUREDATA.LABEL
+                            FEATUREDATA.GEOM, 
+                            FEATUREDATA.LABEL,
+                            FEATUREDATA.IDENTIFIER,
+                            observations.getField("species")
                         )
                         .from(observations)
                         .join(FEATUREDATA).on(observations.getField(GRIDTREE.PARENTFEATUREID).eq(FEATUREDATA.ID))

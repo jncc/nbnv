@@ -113,9 +113,8 @@ public class DatasetSpeciesDensityMap {
                          .join(GRIDTREE).on(GRIDTREE.FEATUREID.eq(USERTAXONOBSERVATIONDATA.FEATUREID))
                          .where(condition)
                          .groupBy(GRIDTREE.PARENTFEATUREID, USERTAXONOBSERVATIONDATA.DATASETKEY, USERTAXONOBSERVATIONDATA.USERID);
-                    
-                    return MapHelper.getMapData(FEATUREDATA.GEOM, FEATUREDATA.LABEL, 4326, create
-                        .select(FEATUREDATA.GEOM, FEATUREDATA.LABEL, observations.getField("species"))
+                    return MapHelper.getMapData(FEATUREDATA.GEOM, FEATUREDATA.IDENTIFIER, 4326, create
+                        .select(FEATUREDATA.GEOM, FEATUREDATA.IDENTIFIER, FEATUREDATA.LABEL, observations.getField("species"))
                         .from(observations)
                         .join(FEATUREDATA).on(FEATUREDATA.ID.eq(observations.getField(GRIDTREE.FEATUREID)))
                         .where(FEATUREDATA.RESOLUTIONID.eq(LAYERS.get(layerName)))

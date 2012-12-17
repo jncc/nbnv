@@ -5,6 +5,7 @@ nbn.layer.picker = nbn.layer.picker || {};
 nbn.layer.picker.SiteBoundaryPicker = function(layerToQuery) {
 	$.extend(this, new nbn.layer.picker.ArcGisLayerFeaturePicker(layerToQuery, {
 		createPickerDiv: function(idresults, position, callback) {
+console.log(idresults);
 			var toReturn = $('<div>');
 			var res = idresults.results;
 			for (var i in res) {
