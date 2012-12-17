@@ -2,12 +2,14 @@ package uk.org.nbn.nbnv.api.authentication;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.ByteBuffer;
 import java.security.*;
 import java.util.Properties;
 import javax.crypto.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.org.nbn.nbnv.api.dao.warehouse.UserAuthenticationMapper;
+import uk.org.nbn.nbnv.api.dao.warehouse.UserMapper;
 import uk.org.nbn.nbnv.api.model.User;
 
 /**
@@ -29,6 +31,7 @@ public class NBNTokenAuthenticator implements TokenAuthenticator {
     private final TokenGenerator generator;
     
     @Autowired UserAuthenticationMapper userAuthentication;
+    @Autowired UserMapper userMapper;
     
     
     /**
@@ -57,8 +60,9 @@ public class NBNTokenAuthenticator implements TokenAuthenticator {
     @Override public Token generateToken(String username, String password, int ttl) throws InvalidCredentialsException {
         try {
             byte[] usernameHash = credentialsDigest.digest(username.getBytes(STRING_ENCODING));
-            if(userAuthentication.isUser(usernameHash, credentialsDigest.digest(password.getBytes(STRING_ENCODING)))) //check credentials are okay
-                return generator.generateToken(usernameHash, ttl);
+            User user = userAuthentication.getUser(usernameHash, credentialsDigest.digest(password.getBytes(STRING_ENCODING)));
+            if(user != null) //check credentials are okay
+                return generator.generateToken(getIntAsBuffer(user.getId()), ttl);
             else
                 throw new InvalidCredentialsException("Invalid username and/or password");
         } catch (InvalidKeyException ex) {
@@ -85,8 +89,9 @@ public class NBNTokenAuthenticator implements TokenAuthenticator {
     @Override public Token generateToken(String username, byte[] md5Hash, int ttl) throws InvalidCredentialsException {
         try {
             byte[] usernameHash = credentialsDigest.digest(username.getBytes(STRING_ENCODING));
-            if(userAuthentication.isUserMD5(usernameHash, credentialsDigest.digest(md5Hash))) //check credentials are okay
-                return generator.generateToken(usernameHash, ttl);
+            User user = userAuthentication.getUserMD5(usernameHash, credentialsDigest.digest(md5Hash));
+            if(user != null) //check credentials are okay
+                return generator.generateToken(getIntAsBuffer(user.getId()), ttl);
             else
                 throw new InvalidCredentialsException("Invalid username and/or password");
         } catch (InvalidKeyException ex) {
@@ -108,9 +113,15 @@ public class NBNTokenAuthenticator implements TokenAuthenticator {
      * @throws ExpiredTokenException If the token is no longer valid
      */
     @Override public User getUser(Token token) throws InvalidTokenException, ExpiredTokenException {
-        User toReturn = userAuthentication.getUser(generator.getMessage(token));
+        User toReturn = userMapper.getUserById(generator.getMessage(token).getInt());
         if(toReturn == null)
             throw new InvalidTokenException("No user exists for this token");
+        return toReturn;
+    }
+    
+    private static ByteBuffer getIntAsBuffer(int id) {
+        ByteBuffer toReturn = ByteBuffer.allocate(4).putInt(id);
+        toReturn.flip();
         return toReturn;
     }
 }

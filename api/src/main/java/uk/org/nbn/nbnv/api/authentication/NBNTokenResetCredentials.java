@@ -3,6 +3,7 @@ package uk.org.nbn.nbnv.api.authentication;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.ByteBuffer;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -47,7 +48,7 @@ public class NBNTokenResetCredentials implements TokenResetCredentials {
             byte[] usernameHash = credentialsDigest.digest(username.getBytes(STRING_ENCODING));
             byte[] passHash = (byte[])userAuthentication.getUsersPassHash(usernameHash); //cast the passhash to a byte array (mybatis limitation)
             if(passHash != null) //check user exists
-                return generator.generateToken(passHash, ttl);
+                return generator.generateToken(ByteBuffer.wrap(passHash), ttl);
             else
                 throw new InvalidCredentialsException("Invalid username and/or email");
         } catch (InvalidKeyException ex) {
@@ -65,8 +66,12 @@ public class NBNTokenResetCredentials implements TokenResetCredentials {
     public User getUser(String username, Token token) throws InvalidTokenException, ExpiredTokenException {
         try {
             byte[] usernameHash = credentialsDigest.digest(username.getBytes(STRING_ENCODING));
-            if(userAuthentication.isUser(usernameHash, generator.getMessage(token)))
-                return userAuthentication.getUser(usernameHash);
+            ByteBuffer passwordMessage = generator.getMessage(token);
+            byte[] passwordHash = new byte[passwordMessage.remaining()];
+            passwordMessage.get(passwordHash);
+            User user = userAuthentication.getUser(usernameHash, passwordHash);
+            if(user != null)
+                return user;
             else
                 throw new InvalidTokenException("This token has already been used");
         } catch (UnsupportedEncodingException ex) {
