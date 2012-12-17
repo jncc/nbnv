@@ -135,9 +135,9 @@ public class SingleSpeciesMap {
                                     boolean absence, String layerName) {
         SQLServerFactory create = new SQLServerFactory();
         Condition condition = 
-                USERTAXONOBSERVATIONDATA.PTAXONVERSIONKEY.eq(taxonKey)
-                .and(USERTAXONOBSERVATIONDATA.USERID.eq(user.getId()))
-                .and(USERTAXONOBSERVATIONDATA.ABSENCE.eq(absence));
+                USERMAPPINGDATA.PTAXONVERSIONKEY.eq(taxonKey)
+                .and(USERMAPPINGDATA.USERID.eq(user.getId()))
+                .and(USERMAPPINGDATA.ABSENCE.eq(absence));
         condition = MapHelper.createTemporalSegment(condition, startYear, endYear);
         condition = MapHelper.createInDatasetsSegment(condition, datasetKeys);
 
@@ -146,9 +146,8 @@ public class SingleSpeciesMap {
             .from(FEATUREDATA)
             .where(
                 FEATUREDATA.ID.in(create
-                    .select(GRIDTREE.PARENTFEATUREID)
-                    .from(USERTAXONOBSERVATIONDATA)
-                    .join(GRIDTREE).on(GRIDTREE.FEATUREID.eq(USERTAXONOBSERVATIONDATA.FEATUREID))
+                    .select(USERMAPPINGDATA.FEATUREID)
+                    .from(USERMAPPINGDATA)
                     .where(condition)
                 )
                 .and(FEATUREDATA.RESOLUTIONID.eq(LAYERS.get(layerName)))

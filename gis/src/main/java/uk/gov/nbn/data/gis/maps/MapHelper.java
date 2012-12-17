@@ -40,8 +40,9 @@ public class MapHelper {
     
     private static Condition createStartYearSegment(Condition currentCond, String startYear) {
         if(startYear != null) {
+            
             return currentCond.and(
-                extract(USERTAXONOBSERVATIONDATA.STARTDATE,DatePart.YEAR)
+                extract(USERMAPPINGDATA.STARTDATE,DatePart.YEAR)
                 .greaterOrEqual(Integer.parseInt(startYear)));
         }
         else {
@@ -52,7 +53,7 @@ public class MapHelper {
     private static Condition createEndYearSegment(Condition currentCond, String endYear) {
         if(endYear != null) {
             return currentCond.and(
-                extract(USERTAXONOBSERVATIONDATA.ENDDATE,DatePart.YEAR)
+                extract(USERMAPPINGDATA.ENDDATE,DatePart.YEAR)
                 .lessOrEqual(Integer.parseInt(endYear)));
         }
         else {
