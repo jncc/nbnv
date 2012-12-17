@@ -24,7 +24,7 @@
                             <td><input type="checkbox" name="datasetKey" value="${datasetWithQueryStats.datasetKey}" ${checked}></td>
                             <td><a href="/Datasets/${datasetWithQueryStats.datasetKey}">${datasetWithQueryStats.taxonDataset.title}</a> (${datasetWithQueryStats.querySpecificObservationCount})</td>
                             <td>
-                                <@taxonDatasetAccessPositions taxonDataset=datasetWithQueryStats.taxonDataset/>
+                                <@datasetAccessPositions dataset=datasetWithQueryStats.taxonDataset/>
                             </td>
                         </tr>
                     </#list>
@@ -179,17 +179,25 @@
         <span id="nbn-site-image-copyright">&copy; Crown copyright and database rights 2011 Ordnance Survey [100017955]</span>
 </#macro>
 
-<#macro taxonDatasetAccessPositionByDatasetKey datasetKey>
-<#assign taxonDataset=json.readURL("${api}/taxonDatasets/${datasetKey}")>
-<@taxonDatasetAccessPositions taxonDataset=taxonDataset/>
+<#macro datasetAccessPositionByDatasetKey datasetKey>
+    <#assign dataset=json.readURL("${api}/datasets/${datasetKey}")>
+    <#if dataset.typeName == "Taxon">
+        <#assign dataset=json.readURL("${api}/taxonDatasets/${datasetKey}")>
+    </#if>
+    <@datasetAccessPositions dataset=dataset/>
 </#macro>
 
-<#macro taxonDatasetAccessPositions taxonDataset>
-    <#assign accessPositions=json.readURL("${api}/taxonDatasets/${taxonDataset.key}/accessPositions")>
+<#macro datasetAccessPositions dataset>
+    <#assign accessPositions=json.readURL("${api}/datasets/${dataset.key}/accessPositions")>
     <ul>
-        <li>Public access: records available at ${taxonDataset.publicResolution} 
-        <#if taxonDataset.publicAttribute>
-            with record attributes
+        <li>Public access: 
+        <#if dataset.typeName == "Taxon">
+            records available at ${dataset.publicResolution}
+            <#if dataset.publicAttribute>
+                with attributes
+            </#if>
+        <#else>
+            all polygons
         </#if>
         <#if accessPositions?has_content>
             <#list accessPositions as accessPosition>

@@ -88,7 +88,7 @@
                     <tr>
                         <th>Your access</th>
                         <td>
-                            <@report_utils.taxonDatasetAccessPositionByDatasetKey datasetKey=dataset.key/>
+                            <@report_utils.datasetAccessPositionByDatasetKey datasetKey=dataset.key/>
                         </td>
                     </tr>
                     <tr>
