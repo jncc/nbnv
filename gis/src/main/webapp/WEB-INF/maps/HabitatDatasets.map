@@ -4,28 +4,29 @@
 
 [@template.master title="Habitat Dataset Map"]
     [#list habitats as dataset]
+        [#assign colour = colours.getColour(dataset.datasetKey)/]
         LAYER
-            NAME                                                "${dataset.datasetKey}"
-            TYPE                                                POLYGON
-            STATUS                                              OFF
+            NAME                        "${dataset.datasetKey}"
+            TYPE                        POLYGON
+            STATUS                      OFF
             
             [@layers.data layerGenerator shapes dataset.datasetKey/]
             PROJECTION "init=epsg:4326" END
-            TEMPLATE                                            "dummy.txt"
+            TEMPLATE                    "dummy.txt"
 
             METADATA
-                "wms_title"                                       "${dataset.datasetKey}"
-                "wms_include_items"                               "all"
+                "wms_title"             "${dataset.datasetKey}"
+                "wms_include_items"     "all"
             END
 
 
             CLASS
-                NAME                                              "${dataset.title}"
+                NAME                    "${dataset.title}"
 
                 STYLE
-                    COLOR                                           255 255 0
-                    OUTLINECOLOR                                    0 0 0
-                    WIDTH                                           0.5
+                    COLOR               ${colour.red} ${colour.green} ${colour.blue}
+                    OUTLINECOLOR        0 0 0
+                    WIDTH               0.5
                 END
             END
         END

@@ -14,11 +14,9 @@ import uk.gov.nbn.data.gis.processor.MapService;
 import uk.gov.nbn.data.gis.processor.MapContainer;
 import uk.gov.nbn.data.gis.providers.annotations.ServiceURL;
 import uk.org.nbn.nbnv.api.model.HabitatDataset;
-import org.jooq.Condition;
-import org.jooq.SelectHavingStep;
 import static uk.gov.nbn.data.dao.jooq.Tables.*;
-import static org.jooq.impl.Factory.*;
 import uk.gov.nbn.data.gis.maps.cache.ShapefileStore;
+import uk.gov.nbn.data.gis.maps.colour.ColourHelper;
 
 /**
  * The following map service will make a call to the data api as defined in
@@ -32,6 +30,7 @@ public class HabitatDatasetsMap {
     @Autowired Properties properties;
     @Autowired WebResource dataApi;
     @Autowired ShapefileStore shapes;
+    @Autowired ColourHelper colours;
     private final LayerGenerator layerGenerator = new LayerGenerator();
     
     public static class LayerGenerator {
@@ -59,6 +58,7 @@ public class HabitatDatasetsMap {
         data.put("mapServiceURL", mapServiceURL);
         data.put("properties", properties);
         data.put("habitats", datasets);
+        data.put("colours", colours);
         return new MapFileModel("HabitatDatasets.map",data);
     }
 }

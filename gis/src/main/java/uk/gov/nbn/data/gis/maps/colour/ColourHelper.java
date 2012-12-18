@@ -1,14 +1,30 @@
 package uk.gov.nbn.data.gis.maps.colour;
 
 import java.awt.Color;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import org.springframework.stereotype.Component;
 
 /**
  * The following class aids in the creation of generation colour gradients
  * @author Christopher Johnson
  */
+@Component
 public class ColourHelper {    
-    public static Color getHuedColour(int i, int amount, float saturation, float brightness) {
-        return Color.getHSBColor((float)i/(float)amount, saturation, brightness);
+    private final MessageDigest md5;
+    
+    public ColourHelper() throws NoSuchAlgorithmException {
+        md5 = MessageDigest.getInstance("md5");
+    }
+    
+    /**
+     * The following method will generate a Colour based upon some given id 
+     * @param id
+     * @return A Colour which corresponds to the given id
+     */
+    public Color getColour(String id) {
+        byte[] digest = md5.digest(id.getBytes());
+        return new Color(digest[0] & 0xFF, digest[1] & 0xFF, digest[2] & 0xFF);
     }
     
     public static Color getMidColour(int i, int amount, Color start, Color end) {

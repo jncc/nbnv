@@ -17,6 +17,7 @@ import uk.org.nbn.nbnv.api.model.SiteBoundaryDataset;
 import static uk.gov.nbn.data.dao.jooq.Tables.*;
 import org.jooq.util.sqlserver.SQLServerFactory;
 import uk.gov.nbn.data.gis.maps.cache.ShapefileStore;
+import uk.gov.nbn.data.gis.maps.colour.ColourHelper;
 /**
  * The following map service will make a call to the data api as defined in
  * the gis.properties to retrieve the most upto-date list of site boundary 
@@ -29,7 +30,7 @@ public class SiteBoundaryDatasetsMap {
     @Autowired Properties properties;
     @Autowired WebResource dataApi;
     @Autowired ShapefileStore shapes;
-    
+    @Autowired ColourHelper colours;
     private final LayerGenerator layerGenerator = new LayerGenerator();
     
     public static class LayerGenerator {
@@ -57,6 +58,7 @@ public class SiteBoundaryDatasetsMap {
         data.put("mapServiceURL", mapServiceURL);
         data.put("properties", properties);
         data.put("siteBoundaries", datasets);
+        data.put("colours", colours);
 
         return new MapFileModel("SiteBoundaryDatasets.map",data);
     }
