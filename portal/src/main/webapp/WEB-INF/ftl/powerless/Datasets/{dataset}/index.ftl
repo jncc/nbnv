@@ -9,8 +9,8 @@
             <ul>
                 <li><a href="#tabs-1">General</a></li>
                 <li><a href="#tabs-2">Access and constraints</a></li>
-                <li><a href="#tabs-3">Geographical</a></li>
                 <#if dataset.typeName = "Taxon">
+                    <li><a href="#tabs-3">Geographical</a></li>
                     <li><a href="/Datasets/${dataset.key}/Records_Per_Year"><span>Temporal</span></a></li>
                     <li><a href="/Datasets/${dataset.key}/Surveys"><span>Surveys</span></a></li>
                     <li><a href="/Datasets/${dataset.key}/Attributes"><span>Attributes</span></a></li>
@@ -59,6 +59,10 @@
                         <td>${dataset.geographicalCoverage!"Not available"}</td>
                     </tr>
                     <tr>
+                        <th>View in interactive map</th>
+                        <td><a href="<@hrefForDatasetOnIMT dataset/>">Map link</a></td>
+                    </tr>
+                    <tr>
                         <th>Temporal coverage</th>
                         <td>${dataset.temporalCoverage!"Not available"}</td>
                     </tr>
@@ -101,12 +105,25 @@
                     </tr>
                 </table>
             </div>
-            <div id="tabs-3">
-                <h1>Species Richness Map</h1>
-                <div class="nbn-grid-map">
-                    <img class="map" src="${gis}/DatasetSpeciesDensity/${dataset.key}/map?imagesize=4" alt="Species Richness for ${dataset.title}">
-                    <img class="legend" src="${gis}/DatasetSpeciesDensity/${dataset.key}/legend" alt="Species Richness for ${dataset.title}">
+            <#if dataset.typeName = "Taxon">
+                <div id="tabs-3">
+                    <h1>Species Richness Map</h1>
+                    <div class="nbn-grid-map">
+                        <img class="map" src="${gis}/DatasetSpeciesDensity/${dataset.key}/map?imagesize=4" alt="Species Richness for ${dataset.title}">
+                        <img class="legend" src="${gis}/DatasetSpeciesDensity/${dataset.key}/legend" alt="Species Richness for ${dataset.title}">
+                    </div>
                 </div>
-            </div>
+            </#if>
         </div>
+<#macro hrefForDatasetOnIMT dataset>
+    <#if dataset.typeName = "Taxon">
+        /${imt}/?mode=SINGLE_DATASET&dataset=${dataset.key}
+    <#elseif dataset.typeName = "Site Boundary">
+        /${imt}/?boundary=${dataset.key}
+    <#elseif dataset.typeName = "Habitat">
+        /${imt}/?habitats=${dataset.key}
+    </#if>
+
+</#macro>
+
 </@template.master>
