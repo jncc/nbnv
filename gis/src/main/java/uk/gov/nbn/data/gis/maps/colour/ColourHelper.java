@@ -10,20 +10,14 @@ import org.springframework.stereotype.Component;
  * @author Christopher Johnson
  */
 @Component
-public class ColourHelper {    
-    private final MessageDigest md5;
-    
-    public ColourHelper() throws NoSuchAlgorithmException {
-        md5 = MessageDigest.getInstance("md5");
-    }
-    
+public class ColourHelper {     
     /**
      * The following method will generate a Colour based upon some given id 
      * @param id
      * @return A Colour which corresponds to the given id
      */
-    public Color getColour(String id) {
-        byte[] digest = md5.digest(id.getBytes());
+    public Color getColour(String id) throws NoSuchAlgorithmException {
+        byte[] digest = MessageDigest.getInstance("md5").digest(id.getBytes());
         return new Color(digest[0] & 0xFF, digest[1] & 0xFF, digest[2] & 0xFF);
     }
     

@@ -56,7 +56,6 @@ public class UserResource extends AbstractResource {
     private final int tokenTTL;
     private final String tokenCookieKey;
     private final String domain;
-    private final MessageDigest sha1, md5;
     
     @Autowired TokenAuthenticator tokenAuth;
     @Autowired TokenResetCredentials credentialsResetter;
@@ -69,8 +68,6 @@ public class UserResource extends AbstractResource {
         tokenTTL = Integer.parseInt(properties.getProperty("sso_token_default_ttl"));
         tokenCookieKey = properties.getProperty("sso_token_key");
         domain = properties.getProperty("sso_token_domain");
-        sha1 = MessageDigest.getInstance("SHA-1");
-        md5 = MessageDigest.getInstance("MD5");
     }
     
     @GET
@@ -110,7 +107,8 @@ public class UserResource extends AbstractResource {
     public Response setUserPassword(
             @TokenUser(allowPublic=false) User user,
             @QueryParam("password") String password
-        ) throws UnsupportedEncodingException {
+        ) throws UnsupportedEncodingException, NoSuchAlgorithmException {
+        MessageDigest sha1 = MessageDigest.getInstance("SHA-1"), md5 = MessageDigest.getInstance("MD5");
         byte[] passwordHashSHA1 = sha1.digest(password.getBytes(STRING_ENCODING));
         byte[] md5HashSHA1 = sha1.digest(md5.digest(password.getBytes(STRING_ENCODING)));
     
@@ -200,7 +198,7 @@ public class UserResource extends AbstractResource {
     @POST
     @Produces(MediaType.APPLICATION_JSON) 
     public Response registerNewUser(@Valid User newUser) throws 
-            UnsupportedEncodingException, IOException, TemplateException, JSONException  {
+            UnsupportedEncodingException, IOException, TemplateException, JSONException, NoSuchAlgorithmException  {
         //Perform some checks to before hitting database constraints. 
         //Would be better to read the status from a constraint violation
         //and report on this     
@@ -211,6 +209,7 @@ public class UserResource extends AbstractResource {
             throw new IllegalArgumentException("The specified e-mail address is already registered to another user.");
         }
         else {
+            MessageDigest sha1 = MessageDigest.getInstance("SHA-1"), md5 = MessageDigest.getInstance("MD5");
             byte[] passwordHashSHA1 = sha1.digest(newUser.getPassword().getBytes(STRING_ENCODING));
             byte[] md5HashSHA1 = sha1.digest(md5.digest(newUser.getPassword().getBytes(STRING_ENCODING)));
             String activationKey = RandomStringUtils.randomAlphanumeric(12); //generate a random one off activation key

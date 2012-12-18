@@ -27,7 +27,6 @@ public class NBNTokenAuthenticator implements TokenAuthenticator {
     private static final String CREDENTIALS_DIGEST = "SHA-1";
     private static final String STRING_ENCODING = "UTF-8";
     
-    private final MessageDigest credentialsDigest;
     private final TokenGenerator generator;
     
     @Autowired UserAuthenticationMapper userAuthentication;
@@ -42,7 +41,6 @@ public class NBNTokenAuthenticator implements TokenAuthenticator {
     @Autowired
     public NBNTokenAuthenticator(Properties properties) throws NoSuchAlgorithmException, IOException {
         this.generator = new TokenGenerator(new File(properties.getProperty(AUTHENTICATOR_KEY_LOCATION_PROPERTY)));
-        this.credentialsDigest = MessageDigest.getInstance(CREDENTIALS_DIGEST);
     }
     
     
@@ -59,6 +57,7 @@ public class NBNTokenAuthenticator implements TokenAuthenticator {
      */
     @Override public Token generateToken(String username, String password, int ttl) throws InvalidCredentialsException {
         try {
+            MessageDigest credentialsDigest = MessageDigest.getInstance(CREDENTIALS_DIGEST);
             byte[] usernameHash = credentialsDigest.digest(username.getBytes(STRING_ENCODING));
             User user = userAuthentication.getUser(usernameHash, credentialsDigest.digest(password.getBytes(STRING_ENCODING)));
             if(user != null) //check credentials are okay
@@ -88,6 +87,7 @@ public class NBNTokenAuthenticator implements TokenAuthenticator {
      */
     @Override public Token generateToken(String username, byte[] md5Hash, int ttl) throws InvalidCredentialsException {
         try {
+            MessageDigest credentialsDigest = MessageDigest.getInstance(CREDENTIALS_DIGEST);
             byte[] usernameHash = credentialsDigest.digest(username.getBytes(STRING_ENCODING));
             User user = userAuthentication.getUserMD5(usernameHash, credentialsDigest.digest(md5Hash));
             if(user != null) //check credentials are okay
