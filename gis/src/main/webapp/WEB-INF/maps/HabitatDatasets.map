@@ -1,5 +1,6 @@
 [#ftl]
 [#import "libraries/template.ftl" as template]
+[#import "libraries/layers.ftl" as layers]
 
 [@template.master title="Habitat Dataset Map"]
     [#list habitats as dataset]
