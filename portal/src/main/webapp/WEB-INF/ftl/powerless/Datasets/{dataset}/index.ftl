@@ -3,7 +3,7 @@
 
 <@template.master title="NBN Gateway - Datasets"
     javascripts=["/js/jquery-ui-1.8.23.custom.min.js/","/js/enable-dataset-metadata-tabs.js","/js/jquery.dataTables.min.js","/js/jqplot/jquery.jqplot.min.js","/js/jqplot/excanvas.min.js","/js/jqplot/plugins/jqplot.json2.min.js","/js/jqplot/plugins/jqplot.highlighter.min.js","/js/jqplot/plugins/jqplot.canvasAxisLabelRenderer.min.js","/js/jqplot/plugins/jqplot.canvasTextRenderer.min.js","/js/jqplot/plugins/jqplot.cursor.min.js"] 
-    csss=["/css/smoothness/jquery-ui-1.8.23.custom.css","/css/jquery.jqplot.min.css"] >
+    csss=["/css/smoothness/jquery-ui-1.8.23.custom.css","/css/jquery.jqplot.min.css","/css/dataset-metadata.css"] >
         <h1>${dataset.title}</h1>
         <div id="nbn-tabs">
             <ul>
@@ -20,7 +20,7 @@
                 </#if>
             </ul>
             <div id="tabs-1">
-                <table class="nbn-dataset-table nbn-simple-table">
+                <table class="nbn-dataset-table nbn-simple-table nbn-metadata-dataset-table">
                     <tr>
                         <th>Provider</th>
                         <td>
@@ -88,7 +88,7 @@
                 </table>
             </div>
             <div id="tabs-2">
-                <table class="nbn-dataset-table nbn-simple-table">
+                <table class="nbn-dataset-table nbn-simple-table nbn-metadata-dataset-table">
                     <tr>
                         <th>Your access</th>
                         <td>
