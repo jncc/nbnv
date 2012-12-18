@@ -7,23 +7,16 @@
             NAME                                                "${dataset.datasetKey}"
             TYPE                                                POLYGON
             STATUS                                              OFF
-            CONNECTIONTYPE                                      PLUGIN
-            PLUGIN                                              "msplugin_mssql2008.dll"
-            CONNECTION                                          "${properties.spatialConnection}"
-            PROCESSING                                          "CLOSE_CONNECTION=DEFER"
-            EXTENT                                              -180 -90 180 90
+            
+            [@layers.data layerGenerator shapes dataset.datasetKey/]
+            PROJECTION "init=epsg:4326" END
             TEMPLATE                                            "dummy.txt"
-
-            DATA                                                "${layerGenerator.getData(dataset.datasetKey)}"
 
             METADATA
                 "wms_title"                                       "${dataset.datasetKey}"
                 "wms_include_items"                               "all"
             END
 
-            PROJECTION
-                "init=epsg:4326"
-            END
 
             CLASS
                 NAME                                              "default"
