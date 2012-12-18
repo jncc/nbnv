@@ -4,14 +4,14 @@
 
 [@template.master title="Site Boundary Dataset Map"]
     [#list siteBoundaries as dataset]
-       [#assign colour = colours.getColour(dataset.datasetKey)/]
+        [#assign colour = colours.getColour(dataset.datasetKey)/]
         LAYER
             NAME                        "${dataset.datasetKey}"
             TYPE                        POLYGON
             STATUS                      OFF
             
-            [@layers.data layerGenerator shapes dataset.datasetKey/]
-            PROJECTION "init=epsg:4326" END
+            [@layers.data layerGenerator shapes dataset.datasetKey srs/]
+
             TEMPLATE                    "dummy.txt"
 
             METADATA

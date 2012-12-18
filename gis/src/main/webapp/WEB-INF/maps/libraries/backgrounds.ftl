@@ -138,7 +138,7 @@
         LAYER
             NAME                    "${layer.name}"
             TYPE                    LINE
-            DATA                    "${location}\Vector\${layer.data}"
+            DATA                    "${location}\Vector\${layer.data}\${layer.projection?c}"
             STATUS                  ON
             PROJECTION              "init=epsg:${layer.projection?c}"          END
             METADATA
