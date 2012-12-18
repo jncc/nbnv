@@ -12,7 +12,7 @@
            return nbn.construction.search__createSearchTable({
                  title : "Taxon Dataset Name", 
                  searchSource : "taxonDatasets",
-                 callbackField: "record_id"
+                 callbackField: "key"
             }, callback);
        },
        createDesignationsTable : function(callback) {

@@ -11,7 +11,7 @@
     function processResults(callbackField, serverRes) {
         var toReturn = [];
         $.each(serverRes, function(i, val) {
-            toReturn.push(['<a href="' + val[callbackField] + '">'+ val.name+'</a>']);
+            toReturn.push(['<a href="' + val[callbackField] + '">'+ val.searchMatchTitle+'</a>']);
         });
         return toReturn;
     }

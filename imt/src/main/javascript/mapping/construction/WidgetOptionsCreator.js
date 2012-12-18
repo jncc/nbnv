@@ -268,7 +268,7 @@ nbn.mapping.construction.WidgetOptionsCreator = function(interactiveMapper){
             var _datasetMetadata = $('<div>').nbn_datasetmetadata();
 			
             var _setSelectedDataset = function(selection) {
-                    _selectedDataset = selection.substring(8);//save the species selection
+                    _selectedDataset = selection;//save the species selection
                     _datasetMetadata.nbn_datasetmetadata('setDataset', _selectedDataset + '');
                     renderableToControl.setRenderable(_selectedDataset != undefined); //is this map now renderable?
             };

@@ -10,7 +10,7 @@
             <field column="record_type" template="taxon" />
         </entity>
         <entity name="designation" query="Select * From DesignationData" transformer="TemplateTransformer">
-            <field column="record_id" template="DESIGNATION-${designation.id}" />
+            <field column="record_id" template="DESIGNATION-${designation.code}" />
             <field column="record_type" template="designation" />
         </entity>
         <entity name="gridsquarefeature" query="Select geom.STCentroid().STX AS location_0_coordinate, geom.STCentroid().STY AS location_1_coordinate,* From GridSquareFeatureData" transformer="TemplateTransformer">
