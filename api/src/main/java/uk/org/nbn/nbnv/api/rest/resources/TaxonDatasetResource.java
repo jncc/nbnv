@@ -73,11 +73,4 @@ public class TaxonDatasetResource extends AbstractResource {
         return attributeMapper.selectAttributesByDatasetKey(id);
     }
     
-    @GET
-    @Path("/{datasetKey}/accessPositions")
-    @Produces(MediaType.APPLICATION_JSON)
-    public List<String> getAttributesByDatasetKey(@TokenUser() User user, @PathParam("datasetKey") String datasetKey){
-        return datasetMapper.getDatasetAccessPositions(datasetKey, user.getId());
-    }
-    
 }

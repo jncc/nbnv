@@ -20,6 +20,7 @@ import uk.org.nbn.nbnv.api.model.Dataset;
 import uk.org.nbn.nbnv.api.model.User;
 import uk.org.nbn.nbnv.api.model.meta.OpResult;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenDatasetAdminUser;
+import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
 import uk.org.nbn.nbnv.api.solr.SolrResolver;
 
 @Component
@@ -88,4 +89,12 @@ public class DatasetResource extends AbstractResource {
             return new OpResult("Unknown issue");
         }
     }
+        
+    @GET
+    @Path("/{datasetKey}/accessPositions")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<String> getAttributesByDatasetKey(@TokenUser() User user, @PathParam("datasetKey") String datasetKey){
+        return datasetMapper.getDatasetAccessPositions(datasetKey, user.getId());
+    }
+
 }

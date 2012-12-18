@@ -3,37 +3,46 @@ nbn.layer = nbn.layer || {};
 nbn.layer.picker = nbn.layer.picker || {};
 
 nbn.layer.picker.HabitatPicker = function(layerToQuery) {
-	var _NODISPLAY = { 'OBJECTID':'', 'Shape':'', 'Shape.area':'', 'Shape.len':'' };
-	var _NEFILTER = { 'INCID':'', 'HABDEFVER':'', 'PRIHABTXT':'', 'PRIDET':'', 'INTERPQUAL':'', 'PRIDETCOM':'', 'PHABFEANOT':'',
-		'SOURCE1TXT':'', 'S1CAPTDATE':'', 'S1HABCLASS':'', 'S1HABTYPE':'', 'S1BOUNDARY':'', 'S1HABID':'',
-		'SOURCE2TXT':'', 'S2CAPTDATE':'', 'S2HABCLASS':'', 'S2HABTYPE':'', 'S2BOUNDARY':'', 'S2HABID':'',
-		'SOURCE3TXT':'', 'S3CAPTDATE':'', 'S3HABCLASS':'', 'S3HABTYPE':'', 'S3BOUNDARY':'', 'S3HABID':'' };
+    $.extend(this, new nbn.layer.picker.ArcGisLayerFeaturePicker(layerToQuery, {
+        createPickerDiv: function(resultsFromIdentify, position, callback) {
 
-	$.extend(this, new nbn.layer.picker.ArcGisLayerFeaturePicker(layerToQuery, {
-		createPickerDiv: function(idresults, position, callback) {
-			var toReturn = $('<div>');
-			var res = idresults.results;
-			for (var i in res) {
-				var resultsList = $('<ul>');
-				var resultDiv = $("<div>")
-					.addClass("result")
-					.append($("<div>" + res[i].layerName + " - " + res[i].value + "</div>")
-						.addClass("title")
-					)
-					.append(resultsList)
-					.appendTo(toReturn);
+//console.log(resultsFromIdentify);
+//resultsFromIdentify = ['HL0000020101:0001394'];//Habitat feature from: Blanket Bog BAP Priority Habitat - England v2.1
+//resultsFromIdentify = ['HL0000020101:0001394','HL0000020101:0001395'];//Habitat feature from: Blanket Bog BAP Priority Habitat - England v2.1
 
-				for (var j in res[i].attributes) {
-					if (res[i].attributes[j] !== "" && !(j in _NODISPLAY) && !(res[i].layerName.indexOf("NE_") != -1 && !(j in _NEFILTER))) {
-						resultsList.append($('<li>')
-							.html(j + " : " + res[i].attributes[j])
-						);
-					}
-				}
-			}
-			if(res.length==0)
-				toReturn.append($('<div>No Results here</div>'));
-			callback(toReturn);
-		}
-	}));
+            if(resultsFromIdentify.length!==0) {
+                var errorDiv = $('<div>').html('An error occured whilst trying to obtain a response from the picker server');
+                var toReturn = $('<div>');
+                var jqxhrs = [];
+                $.each(resultsFromIdentify, function(index, identifier){
+                    var url = nbn.util.ServerGeneratedLoadTimeConstants.data_api + '/habitatFeatures/' + identifier;
+                    jqxhrs.push(
+                        $.getJSON(url, function(habitatFeature){
+                            $('<div>')
+                                .append($('<a>' + habitatFeature.datasetTitle + '</a>')
+                                    .attr('href', habitatFeature.datasetHref)
+                                    .attr('target', '_blank')
+                                    .attr('alt', 'Habitat dataset')
+                                )
+                                .append("<br>Date uploaded: " + habitatFeature.formattedUploadDate)
+                                .append("<br>Feature identifier: " + habitatFeature.identifier)
+                                .append("<br>Dataset key: " + habitatFeature.habitatDatasetKey)
+                                .append("<br>Provider's feature key: " + habitatFeature.formattedUploadDate)
+                                .append($('<p>'))
+                                .appendTo(toReturn); 
+                        }).error(function(){
+                            errorDiv.appendTo(toReturn)
+                        })
+                    );
+                });
+                $.when.apply(this, jqxhrs).done(function (){
+                    toReturn.tabs();
+                    callback(toReturn);
+                });
+            }else{
+                toReturn.append($('<div>No Results here</div>'));
+                callback(toReturn);
+            }
+        }
+    }));
 }
