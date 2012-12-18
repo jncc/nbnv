@@ -20,7 +20,7 @@
 
 
             CLASS
-                NAME                                              "default"
+                NAME                                              "${dataset.title}"
 
                 STYLE
                     COLOR                                           255 255 0
