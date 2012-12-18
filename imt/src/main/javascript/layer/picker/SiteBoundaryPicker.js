@@ -23,7 +23,9 @@ nbn.layer.picker.SiteBoundaryPicker = function(layerToQuery) {
                                     .attr('alt', 'Site name')
                                 )
                                 .appendTo(toReturn); 
-                        }).error(errorDiv.appendTo(toReturn))
+                        }).error(function(){
+                            errorDiv.appendTo(toReturn)
+                        })
                     );
                 });
                 $.when.apply(this, jqxhrs).done(function (){
