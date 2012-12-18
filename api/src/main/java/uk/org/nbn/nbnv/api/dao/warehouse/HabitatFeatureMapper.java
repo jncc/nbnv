@@ -1,8 +1,6 @@
 package uk.org.nbn.nbnv.api.dao.warehouse;
 
-import java.util.List;
 import org.apache.ibatis.annotations.Select;
-import uk.org.nbn.nbnv.api.model.HabitatDataset;
 import uk.org.nbn.nbnv.api.model.HabitatFeature;
 
 public interface HabitatFeatureMapper {

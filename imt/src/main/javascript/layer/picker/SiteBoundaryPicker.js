@@ -6,7 +6,8 @@ nbn.layer.picker.SiteBoundaryPicker = function(layerToQuery) {
 	$.extend(this, new nbn.layer.picker.ArcGisLayerFeaturePicker(layerToQuery, {
 		createPickerDiv: function(resultsFromIdentify, position, callback) {
 //console.log(resultsFromIdentify);
-//resultsFromIdentify = ['GA000942E007'];//Wiltshire & Swindon Biological Records Centre
+//resultsFromIdentify = ['GA000942E007'];//Wiltshire & Swindon Biological Records CentreGA000942E009
+//resultsFromIdentify = ['GA000942E007','GA000942E009'];
 
             if(resultsFromIdentify.length!==0) {
                 var errorDiv = $('<div>').html('An error occured whilst trying to obtain a response from the picker server');

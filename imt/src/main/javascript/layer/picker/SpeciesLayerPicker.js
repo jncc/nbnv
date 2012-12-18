@@ -85,14 +85,6 @@ nbn.layer.picker.SpeciesLayerPicker = function(layerToQuery) {
         toReturn.append(nbn.util.ArrayTools.toJQueryRenderedList(pickerResults, function(taxonWithQueryStats, index){
             return createLabel(taxonWithQueryStats.taxon);
         }));
-//        $.each(pickerResults, function(sitename, site) {
-//            toReturn.append(createLabel(site));
-//            if(site.SPECIES.length > 1)
-//                toReturn.append(' - (' + site.SPECIES.length + ' Species)');
-//            toReturn.append(nbn.util.ArrayTools.toJQueryRenderedList(site.SPECIES, function(nbnsysCode) {
-//                return createLabel(pickerResults.TAXON[nbnsysCode]);
-//            }));
-//        });
         return toReturn;
     }
 	
@@ -101,12 +93,6 @@ nbn.layer.picker.SpeciesLayerPicker = function(layerToQuery) {
         toReturn.append(nbn.util.ArrayTools.toJQueryRenderedList(pickerResults, function(datasetWithQueryStats, index){
             return $('<div>').append($('<div>').html(createDatasetLabel(datasetWithQueryStats.taxonDataset))); 
         }));
-//        $.each(pickerResults.SITES, function(sitename, site) {
-//            toReturn.append(createLabel(site));
-//            toReturn.append(nbn.util.ArrayTools.toJQueryRenderedList(site.DATASETS, function(records, datasetKey) {
-//                return createDatasetLabel(pickerResults.DATASETS[datasetKey]);
-//            }));
-//        });
         return toReturn;
     }
 	
@@ -118,29 +104,6 @@ nbn.layer.picker.SpeciesLayerPicker = function(layerToQuery) {
                 return createobservationLabel(observation);
             }));
         }));
-        //                    toReturn.append(datasetTitle);
-        //                });
-        //		$.each(pickerResults.SITES, function(sitename, site) {
-        //			toReturn.append(createLabel(site)).append(' - (Maximum 250 Records Shown)');
-        //			toReturn.append(nbn.util.ArrayTools.toJQueryRenderedList(site.DATASETS, function(records, datasetKey) {
-        //				var datasetTitle = $('<div>').append($('<div>').html(createDatasetLabel(pickerResults.DATASETS[datasetKey]))); //append the dataset as a title for the records
-        //				if(records.length) { //only return a response if there are records to show
-        //					records = records.sort(function(a,b) { return pickerResults.RECORDS[b].presence - pickerResults.RECORDS[a].presence; }); //order the results so that presence and absence are grouped
-        //					
-        //					return datasetTitle.append(nbn.util.ArrayTools.toJQueryRenderedList(records, function(recordID) {
-        //						return createRecordLabel(pickerResults.RECORDS[recordID]);
-        //					}));
-        //				}
-        //				else if(!pickerResults.DATASETS[datasetKey].downloadRawData) //or leave a message if the user does does not have downloadRawData?
-        //					return datasetTitle.append(nbn.util.ArrayTools.toJQueryRenderedList(["You do not have download raw data privilege for this dataset"],function(element) {
-        //						return $('<em>').html(element); //convert the text to an em element
-        //					}));
-        //				else
-        //					return false;
-        //			}));
-        //			if(site.additional && site.additional.recordComment) //Fix for NBNIV-553, could this be done in a better way?
-        //				toReturn.append(createLabel(site.additional.recordComment).addClass('moreInfo'));
-        //		});
         return toReturn;
     }
     /*END DEFINITIONS OF TAB CREATION FUNCTIONS*/
@@ -148,15 +111,6 @@ nbn.layer.picker.SpeciesLayerPicker = function(layerToQuery) {
     $.extend(this, new nbn.layer.picker.ArcGisLayerFeaturePicker(layerToQuery, {
         createPickerDiv: function(resultsFromIdentify, position, callback) {
             if(resultsFromIdentify.length!==0) {
-                //				this.__lastRequest = $.getJSON(getSpeciesPickerServletWithParams(resultsFromIdentify, resultsFromIdentify), function(pickerResults) {
-                //					var toReturn = $('<div>').addClass('nbn-picker-speciesResults');
-                //					toReturn.nbn_dynamictabs();
-                //					toReturn.nbn_dynamictabs('add','Records',createRecordsTabDiv(pickerResults));
-                //					toReturn.nbn_dynamictabs('add','Datasets',createDatasetsTabDiv(pickerResults));
-                //					toReturn.nbn_dynamictabs('add','Species',createSpeciesTabDiv(pickerResults));
-                //					toReturn.tabs();
-                //					callback(toReturn);
-                //				});
 
                 //Three api calls are required to get the species, datasets and observation data - these are chained together
                 var errorDiv = $('<div>').html('An error occured whilst trying to obtain a response from the picker server');

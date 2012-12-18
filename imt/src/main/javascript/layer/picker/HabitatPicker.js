@@ -8,6 +8,7 @@ nbn.layer.picker.HabitatPicker = function(layerToQuery) {
 
 //console.log(resultsFromIdentify);
 //resultsFromIdentify = ['HL0000020101:0001394'];//Habitat feature from: Blanket Bog BAP Priority Habitat - England v2.1
+//resultsFromIdentify = ['HL0000020101:0001394','HL0000020101:0001395'];//Habitat feature from: Blanket Bog BAP Priority Habitat - England v2.1
 
             if(resultsFromIdentify.length!==0) {
                 var errorDiv = $('<div>').html('An error occured whilst trying to obtain a response from the picker server');
@@ -18,18 +19,16 @@ nbn.layer.picker.HabitatPicker = function(layerToQuery) {
                     jqxhrs.push(
                         $.getJSON(url, function(habitatFeature){
                             $('<div>')
-                                .append('<ul>')
-                                .append($('<li>')
-                                    .append($('<a>' + habitatFeature.datasetTitle + '</a>')
-                                        .attr('href', habitatFeature.datasetHref)
-                                        .attr('target', '_blank')
-                                        .attr('alt', 'Habitat dataset')
-                                    )
+                                .append($('<a>' + habitatFeature.datasetTitle + '</a>')
+                                    .attr('href', habitatFeature.datasetHref)
+                                    .attr('target', '_blank')
+                                    .attr('alt', 'Habitat dataset')
                                 )
-                                .append($('<li>').html("Date uploaded: " + habitatFeature.formattedUploadDate))
-                                .append($('<li>').html("Identifier: " + habitatFeature.identifier))
-                                .append($('<li>').html("Dataset key: " + habitatFeature.formattedUploadDate))
-                                .append($('<li>').html("Provider's feature key: " + habitatFeature.formattedUploadDate))
+                                .append("<br>Date uploaded: " + habitatFeature.formattedUploadDate)
+                                .append("<br>Feature identifier: " + habitatFeature.identifier)
+                                .append("<br>Dataset key: " + habitatFeature.habitatDatasetKey)
+                                .append("<br>Provider's feature key: " + habitatFeature.formattedUploadDate)
+                                .append($('<p>'))
                                 .appendTo(toReturn); 
                         }).error(function(){
                             errorDiv.appendTo(toReturn)
