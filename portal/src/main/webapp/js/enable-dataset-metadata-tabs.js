@@ -36,6 +36,7 @@
             spinner: 'Loading <img src="/img/ajax-loader.gif"/>',
             cache: true
         });
+        applyTableEvenRowStyle();
     });
     
     function renderSpecies(elementForRender){

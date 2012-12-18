@@ -3,14 +3,14 @@
 
 <@template.master title="NBN Gateway - Datasets"
     javascripts=["/js/jquery-ui-1.8.23.custom.min.js/","/js/enable-dataset-metadata-tabs.js","/js/jquery.dataTables.min.js","/js/jqplot/jquery.jqplot.min.js","/js/jqplot/excanvas.min.js","/js/jqplot/plugins/jqplot.json2.min.js","/js/jqplot/plugins/jqplot.highlighter.min.js","/js/jqplot/plugins/jqplot.canvasAxisLabelRenderer.min.js","/js/jqplot/plugins/jqplot.canvasTextRenderer.min.js","/js/jqplot/plugins/jqplot.cursor.min.js"] 
-    csss=["/css/smoothness/jquery-ui-1.8.23.custom.css","/css/jquery.jqplot.min.css"] >
+    csss=["/css/smoothness/jquery-ui-1.8.23.custom.css","/css/jquery.jqplot.min.css","/css/dataset-metadata.css"] >
         <h1>${dataset.title}</h1>
         <div id="nbn-tabs">
             <ul>
                 <li><a href="#tabs-1">General</a></li>
                 <li><a href="#tabs-2">Access and constraints</a></li>
-                <li><a href="#tabs-3">Geographical</a></li>
                 <#if dataset.typeName = "Taxon">
+                    <li><a href="#tabs-3">Geographical</a></li>
                     <li><a href="/Datasets/${dataset.key}/Records_Per_Year"><span>Temporal</span></a></li>
                     <li><a href="/Datasets/${dataset.key}/Surveys"><span>Surveys</span></a></li>
                     <li><a href="/Datasets/${dataset.key}/Attributes"><span>Attributes</span></a></li>
@@ -20,7 +20,7 @@
                 </#if>
             </ul>
             <div id="tabs-1">
-                <table class="nbn-dataset-table nbn-simple-table">
+                <table class="nbn-dataset-table nbn-simple-table nbn-metadata-dataset-table">
                     <tr>
                         <th>Provider</th>
                         <td>
@@ -59,6 +59,10 @@
                         <td>${dataset.geographicalCoverage!"Not available"}</td>
                     </tr>
                     <tr>
+                        <th>View in interactive map</th>
+                        <td><a href="<@hrefForDatasetOnIMT dataset/>">Map link</a></td>
+                    </tr>
+                    <tr>
                         <th>Temporal coverage</th>
                         <td>${dataset.temporalCoverage!"Not available"}</td>
                     </tr>
@@ -84,7 +88,7 @@
                 </table>
             </div>
             <div id="tabs-2">
-                <table class="nbn-dataset-table nbn-simple-table">
+                <table class="nbn-dataset-table nbn-simple-table nbn-metadata-dataset-table">
                     <tr>
                         <th>Your access</th>
                         <td>
@@ -101,12 +105,25 @@
                     </tr>
                 </table>
             </div>
-            <div id="tabs-3">
-                <h1>Species Richness Map</h1>
-                <div class="nbn-grid-map">
-                    <img class="map" src="${gis}/DatasetSpeciesDensity/${dataset.key}/map?imagesize=4" alt="Species Richness for ${dataset.title}">
-                    <img class="legend" src="${gis}/DatasetSpeciesDensity/${dataset.key}/legend" alt="Species Richness for ${dataset.title}">
+            <#if dataset.typeName = "Taxon">
+                <div id="tabs-3">
+                    <h1>Species Richness Map</h1>
+                    <div class="nbn-grid-map">
+                        <img class="map" src="${gis}/DatasetSpeciesDensity/${dataset.key}/map?imagesize=4" alt="Species Richness for ${dataset.title}">
+                        <img class="legend" src="${gis}/DatasetSpeciesDensity/${dataset.key}/legend" alt="Species Richness for ${dataset.title}">
+                    </div>
                 </div>
-            </div>
+            </#if>
         </div>
+<#macro hrefForDatasetOnIMT dataset>
+    <#if dataset.typeName = "Taxon">
+        /${imt}/?mode=SINGLE_DATASET&dataset=${dataset.key}
+    <#elseif dataset.typeName = "Site Boundary">
+        /${imt}/?boundary=${dataset.key}
+    <#elseif dataset.typeName = "Habitat">
+        /${imt}/?habitats=${dataset.key}
+    </#if>
+
+</#macro>
+
 </@template.master>
