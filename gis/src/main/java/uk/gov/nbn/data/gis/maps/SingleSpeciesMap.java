@@ -139,8 +139,8 @@ public class SingleSpeciesMap {
                 .and(USERMAPPINGDATA.USERID.eq(user.getId()))
                 .and(USERMAPPINGDATA.ABSENCE.eq(absence))
                 .and(USERMAPPINGDATA.RESOLUTIONID.eq(LAYERS.get(layerName)));
-        condition = MapHelper.createTemporalSegment(condition, startYear, endYear);
-        condition = MapHelper.createInDatasetsSegment(condition, datasetKeys);
+        condition = MapHelper.createTemporalSegment(condition, startYear, endYear, USERMAPPINGDATA.STARTDATE, USERMAPPINGDATA.ENDDATE);
+        condition = MapHelper.createInDatasetsSegment(condition, USERMAPPINGDATA.DATASETKEY, datasetKeys);
 
         return MapHelper.getMapData(FEATUREDATA.GEOM, FEATUREDATA.IDENTIFIER, 4326 ,create
             .select(FEATUREDATA.GEOM, FEATUREDATA.IDENTIFIER, FEATUREDATA.LABEL)

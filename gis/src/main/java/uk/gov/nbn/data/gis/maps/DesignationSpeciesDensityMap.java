@@ -22,6 +22,7 @@ import org.jooq.Condition;
 import org.jooq.SelectHavingStep;
 import static uk.gov.nbn.data.dao.jooq.Tables.*;
 import static org.jooq.impl.Factory.*;
+import uk.gov.nbn.data.gis.processor.GridMap;
 /**
  * The following represents a Map service for DesignationSpeciesDensity
  * 
@@ -66,6 +67,15 @@ public class DesignationSpeciesDensityMap {
     @Autowired Properties properties;
      
     @MapService("{designationKey}")
+    @GridMap(
+        layers={
+            @GridMap.GridLayer(name="10km",     layer=TEN_KM_LAYER_NAME,        resolution=GridMap.Resolution.TEN_KM),
+            @GridMap.GridLayer(name="2km",      layer=TWO_KM_LAYER_NAME,        resolution=GridMap.Resolution.TWO_KM),
+            @GridMap.GridLayer(name="1km",      layer=ONE_KM_LAYER_NAME,        resolution=GridMap.Resolution.ONE_KM),
+            @GridMap.GridLayer(name="100m",     layer=ONE_HUNDRED_M_LAYER_NAME, resolution=GridMap.Resolution.ONE_HUNDRED_METERS)
+        },
+        defaultLayer="10km"
+    )
     public MapFileModel getDesignationMapModel(
             final User user,
             @ServiceURL String mapServiceURL,
@@ -86,32 +96,29 @@ public class DesignationSpeciesDensityMap {
                     SQLServerFactory create = new SQLServerFactory();
                     
                     Condition condition = 
-                            USERTAXONOBSERVATIONDATA.ABSENCE.eq(false)
+                            USERMAPPINGDATA.ABSENCE.eq(false)
                             .and(DESIGNATIONTAXONDATA.CODE.eq(key))
-                            .and(USERTAXONOBSERVATIONDATA.USERID.eq(user.getId()));
-                    condition = MapHelper.createTemporalSegment(condition, startYear, endYear);
+                            .and(USERMAPPINGDATA.USERID.eq(user.getId()));
+                    condition = MapHelper.createTemporalSegment(condition, startYear, endYear, USERMAPPINGDATA.STARTDATE, USERMAPPINGDATA.ENDDATE);
+                    condition = MapHelper.createInDatasetsSegment(condition, USERMAPPINGDATA.DATASETKEY, datasetKeys);
                     
                     SelectHavingStep observations = create
                         .select(
-                            USERTAXONOBSERVATIONDATA.USERID,
-                            DESIGNATIONTAXONDATA.CODE,
-                            GRIDTREE.PARENTFEATUREID,
-                            countDistinct(USERTAXONOBSERVATIONDATA.PTAXONVERSIONKEY).as("species"))
-                        .from(USERTAXONOBSERVATIONDATA)
-                        .join(GRIDTREE).on(GRIDTREE.FEATUREID.eq(USERTAXONOBSERVATIONDATA.FEATUREID))
-                        .join(DESIGNATIONTAXONDATA).on(DESIGNATIONTAXONDATA.PTAXONVERSIONKEY.eq(USERTAXONOBSERVATIONDATA.PTAXONVERSIONKEY))
+                            USERMAPPINGDATA.FEATUREID,
+                            countDistinct(USERMAPPINGDATA.PTAXONVERSIONKEY).as("species"))
+                        .from(USERMAPPINGDATA)
+                        .join(DESIGNATIONTAXONDATA).on(DESIGNATIONTAXONDATA.PTAXONVERSIONKEY.eq(USERMAPPINGDATA.PTAXONVERSIONKEY))
                         .where(condition)
-                        .groupBy(GRIDTREE.PARENTFEATUREID, DESIGNATIONTAXONDATA.CODE, USERTAXONOBSERVATIONDATA.USERID);
+                        .groupBy(USERMAPPINGDATA.FEATUREID);
                     
                     return MapHelper.getMapData(FEATUREDATA.GEOM, FEATUREDATA.IDENTIFIER, 4326, create
                         .select(
                             FEATUREDATA.GEOM, 
-                            FEATUREDATA.LABEL,
                             FEATUREDATA.IDENTIFIER,
                             observations.getField("species")
                         )
                         .from(observations)
-                        .join(FEATUREDATA).on(observations.getField(GRIDTREE.PARENTFEATUREID).eq(FEATUREDATA.ID))
+                        .join(FEATUREDATA).on(observations.getField(USERMAPPINGDATA.FEATUREID).eq(FEATUREDATA.ID))
                         .where(FEATUREDATA.RESOLUTIONID.eq(LAYERS.get(layerName)))
                     );
                 }

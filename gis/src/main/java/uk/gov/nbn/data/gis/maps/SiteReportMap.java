@@ -75,8 +75,8 @@ public class SiteReportMap {
                         .where(FEATUREDATA.IDENTIFIER.eq(featureID))
                 ));
                 
-        condition = MapHelper.createTemporalSegment(condition, startYear, endYear);
-        condition = MapHelper.createInDatasetsSegment(condition, datasetKeys);
+        condition = MapHelper.createTemporalSegment(condition, startYear, endYear, USERTAXONOBSERVATIONDATA.STARTDATE, USERTAXONOBSERVATIONDATA.ENDDATE);
+        condition = MapHelper.createInDatasetsSegment(condition, USERTAXONOBSERVATIONDATA.DATASETKEY, datasetKeys);
         
         data.put("extent", getNativeBoundingBox(featureID));
         data.put("mapServiceURL", mapServiceURL);

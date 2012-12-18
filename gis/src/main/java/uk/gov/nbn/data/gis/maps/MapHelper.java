@@ -1,5 +1,6 @@
 package uk.gov.nbn.data.gis.maps;
 
+import java.sql.Date;
 import java.util.List;
 import org.jooq.Condition;
 import org.jooq.DatePart;
@@ -34,15 +35,15 @@ public class MapHelper {
         String getData(String layerName);
     }
     
-    static Condition createTemporalSegment(Condition currentCond, String startYear, String endYear) {
-        return createEndYearSegment(createStartYearSegment(currentCond, startYear), endYear);
+    static Condition createTemporalSegment(Condition currentCond, String startYear, String endYear, Field<? extends Date> startDateField, Field<? extends Date> endDateField) {
+        return createEndYearSegment(createStartYearSegment(currentCond, startDateField, startYear), endDateField, endYear);
     }
     
-    private static Condition createStartYearSegment(Condition currentCond, String startYear) {
+    private static Condition createStartYearSegment(Condition currentCond, Field<? extends Date> startDateField, String startYear) {
         if(startYear != null) {
             
             return currentCond.and(
-                extract(USERMAPPINGDATA.STARTDATE,DatePart.YEAR)
+                extract(startDateField,DatePart.YEAR)
                 .greaterOrEqual(Integer.parseInt(startYear)));
         }
         else {
@@ -50,10 +51,10 @@ public class MapHelper {
         }
     }
     
-    private static Condition createEndYearSegment(Condition currentCond, String endYear) {
+    private static Condition createEndYearSegment(Condition currentCond, Field<? extends Date> endDateField, String endYear) {
         if(endYear != null) {
             return currentCond.and(
-                extract(USERMAPPINGDATA.ENDDATE,DatePart.YEAR)
+                extract(endDateField,DatePart.YEAR)
                 .lessOrEqual(Integer.parseInt(endYear)));
         }
         else {
@@ -61,9 +62,9 @@ public class MapHelper {
         }
     }
     
-    static Condition createInDatasetsSegment(Condition currentCond, List<String> datasetKeys) {
+    static Condition createInDatasetsSegment(Condition currentCond, Field<String> datasetField, List<String> datasetKeys) {
         if(datasetKeys !=null && !datasetKeys.isEmpty()) {
-            return currentCond.and(USERTAXONOBSERVATIONDATA.DATASETKEY.in(datasetKeys));
+            return currentCond.and(datasetField.in(datasetKeys));
         }
         else {
             return currentCond;

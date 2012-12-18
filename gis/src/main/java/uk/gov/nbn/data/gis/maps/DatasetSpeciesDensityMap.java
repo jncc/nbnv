@@ -98,25 +98,23 @@ public class DatasetSpeciesDensityMap {
                 public String getData(String layerName) {
                     SQLServerFactory create = new SQLServerFactory();
                     Condition condition = 
-                            USERTAXONOBSERVATIONDATA.ABSENCE.eq(false)
-                            .and(USERTAXONOBSERVATIONDATA.DATASETKEY.eq(key))
-                            .and(USERTAXONOBSERVATIONDATA.USERID.eq(user.getId()));
-                    condition = MapHelper.createTemporalSegment(condition, startYear, endYear);
+                            USERDATASETMAPPINGDATA.ABSENCE.eq(false)
+                            .and(USERDATASETMAPPINGDATA.DATASETKEY.eq(key))
+                            .and(USERDATASETMAPPINGDATA.USERID.eq(user.getId()));
+                    condition = MapHelper.createTemporalSegment(condition, startYear, endYear, USERDATASETMAPPINGDATA.STARTDATE, USERDATASETMAPPINGDATA.ENDDATE);
                     
                     SelectHavingStep observations = create
                         .select(
-                            USERTAXONOBSERVATIONDATA.USERID,
-                            USERTAXONOBSERVATIONDATA.DATASETKEY,
-                            GRIDTREE.PARENTFEATUREID.as("featureID"),
-                            countDistinct(USERTAXONOBSERVATIONDATA.PTAXONVERSIONKEY).as("species"))
-                         .from(USERTAXONOBSERVATIONDATA)
-                         .join(GRIDTREE).on(GRIDTREE.FEATUREID.eq(USERTAXONOBSERVATIONDATA.FEATUREID))
+                            USERDATASETMAPPINGDATA.FEATUREID,
+                            countDistinct(USERDATASETMAPPINGDATA.PTAXONVERSIONKEY).as("species"))
+                         .from(USERDATASETMAPPINGDATA)
                          .where(condition)
-                         .groupBy(GRIDTREE.PARENTFEATUREID, USERTAXONOBSERVATIONDATA.DATASETKEY, USERTAXONOBSERVATIONDATA.USERID);
+                         .groupBy(USERDATASETMAPPINGDATA.FEATUREID);
+                    
                     return MapHelper.getMapData(FEATUREDATA.GEOM, FEATUREDATA.IDENTIFIER, 4326, create
                         .select(FEATUREDATA.GEOM, FEATUREDATA.IDENTIFIER, FEATUREDATA.LABEL, observations.getField("species"))
                         .from(observations)
-                        .join(FEATUREDATA).on(FEATUREDATA.ID.eq(observations.getField(GRIDTREE.FEATUREID)))
+                        .join(FEATUREDATA).on(FEATUREDATA.ID.eq(observations.getField(USERDATASETMAPPINGDATA.FEATUREID)))
                         .where(FEATUREDATA.RESOLUTIONID.eq(LAYERS.get(layerName)))
                     );
                 }
