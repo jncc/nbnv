@@ -112,29 +112,35 @@ nbn.layer.picker.SpeciesLayerPicker = function(layerToQuery) {
         createPickerDiv: function(resultsFromIdentify, position, callback) {
             if(resultsFromIdentify.length!==0) {
 
-                //Three api calls are required to get the species, datasets and observation data - these are chained together
                 var errorDiv = $('<div>').html('An error occured whilst trying to obtain a response from the picker server');
-                var toReturn = $('<div>').addClass('nbn-picker-speciesResults');
-                toReturn.nbn_dynamictabs();
-                var jqxhrRecords = $.getJSON(getResourceWithParams(resultsFromIdentify, 'Records'), function(pickerResults){
-                    toReturn.nbn_dynamictabs('add','Records',createObservationsTabDiv(pickerResults));
-                }).error(function(){
-                    toReturn.nbn_dynamictabs('add','Records',errorDiv);
+                var jqxhrs = [];
+                $.each(resultsFromIdentify, function(index, identifier){
+
+                    //Three api calls are required to get the species, datasets and observation data - these are chained together
+                    var toReturn = $('<div>').addClass('nbn-picker-speciesResults');
+                    toReturn.nbn_dynamictabs();
+                    jqxhrs.push($.getJSON(getResourceWithParams(identifier, 'Records'), function(pickerResults){
+                        toReturn.nbn_dynamictabs('add','Records',createObservationsTabDiv(pickerResults));
+                    }).error(function(){
+                        toReturn.nbn_dynamictabs('add','Records',errorDiv);
+                    }));
+                    jqxhrs.push($.getJSON(getResourceWithParams(identifier, 'DatasetList'), function(pickerResults){
+                            toReturn.nbn_dynamictabs('add','Datasets',createDatasetsTabDiv(pickerResults));
+                    }).error(function(){
+                        toReturn.nbn_dynamictabs('add','Records',errorDiv);
+                    }));
+                    jqxhrs.push($.getJSON(getResourceWithParams(identifier, 'SpeciesList'), function(pickerResults){
+                        toReturn.nbn_dynamictabs('add','Species',createSpeciesTabDiv(pickerResults));
+                    }).error(function(){
+                        toReturn.nbn_dynamictabs('add','Records',errorDiv);
+                    }));
+                    $.when.apply(this, jqxhrs).done(function(){
+                        toReturn.tabs();
+                        callback(toReturn);
+                    });
+                
                 });
-                var jqxhrDatasetList = $.getJSON(getResourceWithParams(resultsFromIdentify, 'DatasetList'), function(pickerResults){
-                        toReturn.nbn_dynamictabs('add','Datasets',createDatasetsTabDiv(pickerResults));
-                }).error(function(){
-                    toReturn.nbn_dynamictabs('add','Records',errorDiv);
-                });
-                var jqxhrSpeciesList = $.getJSON(getResourceWithParams(resultsFromIdentify, 'SpeciesList'), function(pickerResults){
-                    toReturn.nbn_dynamictabs('add','Species',createSpeciesTabDiv(pickerResults));
-                }).error(function(){
-                    toReturn.nbn_dynamictabs('add','Records',errorDiv);
-                });
-                $.when(jqxhrRecords, jqxhrDatasetList, jqxhrSpeciesList).done(function(){
-                    toReturn.tabs();
-                    callback(toReturn);
-                });
+                
             }
             else
                 callback($('<div>').html('No Results here'));
