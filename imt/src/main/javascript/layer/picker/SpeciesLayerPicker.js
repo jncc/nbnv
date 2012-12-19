@@ -21,7 +21,11 @@ nbn.layer.picker.SpeciesLayerPicker = function(layerToQuery) {
     /*The following function defines the resource that should be called depending on the current mode of the species layer*/ 
     function getResource(tab) {
         var server = nbn.util.ServerGeneratedLoadTimeConstants.data_api;
-        var resourceURLs = {SpeciesList: server + '/taxonObservations/species', DatasetList: server + '/taxonObservations/datasets', Records: server + '/taxonObservations/datasets/observations'};
+        var resourceURLs = {
+            SpeciesList: server + '/taxonObservations/species', 
+            DatasetList: server + '/taxonObservations/datasets', 
+            Records: server + '/taxonObservations/datasets/observations'
+            };
         return resourceURLs[tab];
     }
 
@@ -41,7 +45,7 @@ nbn.layer.picker.SpeciesLayerPicker = function(layerToQuery) {
                 toReturn.datasetKey = (layerToQuery.getNBNSpeciesLayerFilters()).datasets;
                 break;
         }
-    return toReturn;
+        return toReturn;
     }
 
     function getResourceWithParams(resultsFromIdentify, tab){
@@ -70,12 +74,12 @@ nbn.layer.picker.SpeciesLayerPicker = function(layerToQuery) {
         if (observation.sensitive) 
             toReturn.append($('<span>').addClass('nbn-picker-sensitiveobservation').append('Sensitive observation - '));
         toReturn.append(observation.pTaxonName + ' - Date: ' + observation.startDate + ' (' + observation.dateType + ')');
-//        if (observation.location !== 'Site name protected') 
+        //        if (observation.location !== 'Site name protected') 
         toReturn.append(' - Location: ' + observation.location + ((typeof observation.siteName != 'undefined')?' (' + observation.siteName + ')': ''));
-//        if (observation.observationer !== '') 
-//            toReturn.append(' - observationer: ' + observation.observationer);
-//        if (observation.determiner !== '') 
-//            toReturn.append(' - Determiner: ' + observation.determiner);
+        //        if (observation.observationer !== '') 
+        //            toReturn.append(' - observationer: ' + observation.observationer);
+        //        if (observation.determiner !== '') 
+        //            toReturn.append(' - Determiner: ' + observation.determiner);
         return toReturn;
     }
 	
@@ -106,46 +110,53 @@ nbn.layer.picker.SpeciesLayerPicker = function(layerToQuery) {
         }));
         return toReturn;
     }
+
     /*END DEFINITIONS OF TAB CREATION FUNCTIONS*/
 	
     $.extend(this, new nbn.layer.picker.ArcGisLayerFeaturePicker(layerToQuery, {
         createPickerDiv: function(resultsFromIdentify, position, callback) {
             if(resultsFromIdentify.length!==0) {
 
-                var errorDiv = $('<div>').html('An error occured whilst trying to obtain a response from the picker server');
                 var jqxhrs = [];
+                var toReturn = $('<div>').addClass('nbn-picker-speciesResults');
+                toReturn.nbn_dynamictabs();
                 $.each(resultsFromIdentify, function(index, identifier){
 
                     //Three api calls are required to get the species, datasets and observation data - these are chained together
-                    var toReturn = $('<div>').addClass('nbn-picker-speciesResults');
-                    toReturn.nbn_dynamictabs();
                     jqxhrs.push($.getJSON(getResourceWithParams(identifier, 'Records'), function(pickerResults){
                         toReturn.nbn_dynamictabs('add','Records',createObservationsTabDiv(pickerResults));
-                    }).error(function(){
-                        toReturn.nbn_dynamictabs('add','Records',errorDiv);
                     }));
                     jqxhrs.push($.getJSON(getResourceWithParams(identifier, 'DatasetList'), function(pickerResults){
-                            toReturn.nbn_dynamictabs('add','Datasets',createDatasetsTabDiv(pickerResults));
-                    }).error(function(){
-                        toReturn.nbn_dynamictabs('add','Records',errorDiv);
+                        toReturn.nbn_dynamictabs('add','Datasets',createDatasetsTabDiv(pickerResults));
                     }));
                     jqxhrs.push($.getJSON(getResourceWithParams(identifier, 'SpeciesList'), function(pickerResults){
                         toReturn.nbn_dynamictabs('add','Species',createSpeciesTabDiv(pickerResults));
-                    }).error(function(){
-                        toReturn.nbn_dynamictabs('add','Records',errorDiv);
                     }));
-                    $.when.apply(this, jqxhrs).done(function(){
-                        toReturn.tabs();
-                        callback(toReturn);
-                    });
-                
                 });
-                
+                $.when.apply(this, jqxhrs)
+                .done(function(){
+                    toReturn.tabs();
+                    callback(toReturn);
+                })
+                .fail(function(data){
+                    //Create error tab
+                    var errorDiv = $('<div>').html('Sorry an error occured whilst trying to obtain a response from the picker server');
+                    var unauthorizedAccessDiv = $('<div>').html("You are required to be logged in to access these records, please log in");
+                    var errorToReturn = $('<div>').addClass('nbn-picker-speciesResults');
+                    errorToReturn.nbn_dynamictabs();
+                    if(data.status == 401){
+                        errorToReturn.nbn_dynamictabs('add','Log in required',unauthorizedAccessDiv);
+                    }else{
+                        errorToReturn.nbn_dynamictabs('add','Error',errorDiv);
+                    }
+                    errorToReturn.tabs();
+                    callback(errorToReturn);
+                });
+
             }
             else
                 callback($('<div>').html('No Results here'));
         },
-		
         abort: function() {
             if(this.__lastRequest__) 
                 this.__lastRequest__.abort(); //if there is a last request then abort it
