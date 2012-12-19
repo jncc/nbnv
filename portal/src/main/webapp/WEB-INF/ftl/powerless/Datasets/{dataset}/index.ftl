@@ -117,11 +117,11 @@
         </div>
 <#macro hrefForDatasetOnIMT dataset>
     <#if dataset.typeName = "Taxon">
-        /${imt}/?mode=SINGLE_DATASET&dataset=${dataset.key}
+        /imt/?mode=SINGLE_DATASET&dataset=${dataset.key}
     <#elseif dataset.typeName = "Site Boundary">
-        /${imt}/?boundary=${dataset.key}
+        /imt/?boundary=${dataset.key}
     <#elseif dataset.typeName = "Habitat">
-        /${imt}/?habitats=${dataset.key}
+        /imt/?habitats=${dataset.key}
     </#if>
 
 </#macro>
