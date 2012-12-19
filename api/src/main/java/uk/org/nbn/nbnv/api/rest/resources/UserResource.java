@@ -123,7 +123,7 @@ public class UserResource extends AbstractResource {
     public Response setUserPassword(
             @PathParam("username") String username,
             @FormParam("reset") String resetToken,
-            @FormParam("password") String password) throws UnsupportedEncodingException, InvalidTokenException, ExpiredTokenException {
+            @FormParam("password") String password) throws UnsupportedEncodingException, InvalidTokenException, ExpiredTokenException, NoSuchAlgorithmException {
         return setUserPassword(credentialsResetter.getUser(
                 username, new Token(Base64.decodeBase64(resetToken))), password);
     }
