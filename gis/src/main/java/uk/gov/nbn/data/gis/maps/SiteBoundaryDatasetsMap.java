@@ -18,6 +18,8 @@ import static uk.gov.nbn.data.dao.jooq.Tables.*;
 import org.jooq.util.sqlserver.SQLServerFactory;
 import uk.gov.nbn.data.gis.maps.cache.ShapefileStore;
 import uk.gov.nbn.data.gis.maps.colour.ColourHelper;
+import uk.gov.nbn.data.gis.providers.annotations.DefaultValue;
+import uk.gov.nbn.data.gis.providers.annotations.QueryParam;
 /**
  * The following map service will make a call to the data api as defined in
  * the gis.properties to retrieve the most upto-date list of site boundary 
@@ -46,7 +48,9 @@ public class SiteBoundaryDatasetsMap {
     }
     
     @MapService
-    public MapFileModel getSiteBoundariesModel(@ServiceURL String mapServiceURL) {
+    public MapFileModel getSiteBoundariesModel(
+            @ServiceURL String mapServiceURL, 
+            @QueryParam(key="SRS") @DefaultValue("EPSG:4326") String srs) {
         List<SiteBoundaryDataset> datasets = dataApi
                         .path("siteBoundaryDatasets")
                         .accept(MediaType.APPLICATION_JSON) 
@@ -54,6 +58,7 @@ public class SiteBoundaryDatasetsMap {
         
         HashMap<String, Object> data = new HashMap<String, Object>();
         data.put("layerGenerator", layerGenerator);
+        data.put("srs", srs);
         data.put("shapes", shapes);
         data.put("mapServiceURL", mapServiceURL);
         data.put("properties", properties);

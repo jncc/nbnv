@@ -25,7 +25,6 @@ public class NBNTokenResetCredentials implements TokenResetCredentials {
     private static final String KEY_LOCATION_PROPERTY = "reset_key";
     private static final String CREDENTIALS_DIGEST = "SHA-1";
     private static final String STRING_ENCODING = "UTF-8";
-    private final MessageDigest credentialsDigest;
     
     private final TokenGenerator generator;
     
@@ -39,12 +38,12 @@ public class NBNTokenResetCredentials implements TokenResetCredentials {
     @Autowired
     public NBNTokenResetCredentials(Properties properties) throws NoSuchAlgorithmException, IOException {
         this.generator = new TokenGenerator(new File(properties.getProperty(KEY_LOCATION_PROPERTY)));
-        this.credentialsDigest = MessageDigest.getInstance(CREDENTIALS_DIGEST);
     }
     
     @Override
     public Token generateToken(String username, int ttl) throws InvalidCredentialsException {
         try {
+            MessageDigest credentialsDigest = MessageDigest.getInstance(CREDENTIALS_DIGEST);
             byte[] usernameHash = credentialsDigest.digest(username.getBytes(STRING_ENCODING));
             byte[] passHash = (byte[])userAuthentication.getUsersPassHash(usernameHash); //cast the passhash to a byte array (mybatis limitation)
             if(passHash != null) //check user exists
@@ -65,6 +64,7 @@ public class NBNTokenResetCredentials implements TokenResetCredentials {
     @Override
     public User getUser(String username, Token token) throws InvalidTokenException, ExpiredTokenException {
         try {
+            MessageDigest credentialsDigest = MessageDigest.getInstance(CREDENTIALS_DIGEST);
             byte[] usernameHash = credentialsDigest.digest(username.getBytes(STRING_ENCODING));
             ByteBuffer passwordMessage = generator.getMessage(token);
             byte[] passwordHash = new byte[passwordMessage.remaining()];
@@ -76,6 +76,8 @@ public class NBNTokenResetCredentials implements TokenResetCredentials {
                 throw new InvalidTokenException("This token has already been used");
         } catch (UnsupportedEncodingException ex) {
             throw new RuntimeException("A configuration error has occurred", ex);
-        }
+        } catch (NoSuchAlgorithmException ex) {
+            throw new RuntimeException("A configuration error has occurred", ex);
+        } 
     }
 }

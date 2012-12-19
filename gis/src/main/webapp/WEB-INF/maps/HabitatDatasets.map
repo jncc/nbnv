@@ -10,8 +10,8 @@
             TYPE                        POLYGON
             STATUS                      OFF
             
-            [@layers.data layerGenerator shapes dataset.datasetKey/]
-            PROJECTION "init=epsg:4326" END
+            [@layers.data layerGenerator shapes dataset.datasetKey srs/]
+
             TEMPLATE                    "dummy.txt"
 
             METADATA

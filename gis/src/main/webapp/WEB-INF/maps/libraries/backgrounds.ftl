@@ -16,7 +16,7 @@
         END
         TYPE RASTER
         STATUS ON
-        DATA "${location}\OS\Modern\MiniScale\raster\MiniScale_(no_grid)_R13.tif"
+        DATA "${location}/OS/Modern/MiniScale/raster/MiniScale_(no_grid)_R13.tif"
         PROJECTION
             "init=epsg:27700"   ##recommended
         END
@@ -33,7 +33,7 @@
         END
         TYPE RASTER
         STATUS ON
-        TILEINDEX "${location}\OS\Modern\250k\index.shp"
+        TILEINDEX "${location}/OS/Modern/250k/index.shp"
         TILEITEM "Location"
         PROJECTION
             "init=epsg:27700"   ##recommended
@@ -52,7 +52,7 @@
         END
         TYPE RASTER
         STATUS ON
-        TILEINDEX "${location}\OS\Modern\50k\index.shp"
+        TILEINDEX "${location}/OS/Modern/50k/index.shp"
         TILEITEM "Location"
         PROJECTION
             "init=epsg:27700"   ##recommended
@@ -71,7 +71,7 @@
         END
         TYPE RASTER
         STATUS ON
-        TILEINDEX "${location}\OS\Modern\25k\index.shp"
+        TILEINDEX "${location}/OS/Modern/25k/index.shp"
         TILEITEM "Location"
         PROJECTION
             "init=epsg:27700"   ##recommended
@@ -138,7 +138,7 @@
         LAYER
             NAME                    "${layer.name}"
             TYPE                    LINE
-            DATA                    "${location}\Vector\${layer.data}"
+            DATA                    "${location}/Vector/${layer.data}/${layer.projection?c}"
             STATUS                  ON
             PROJECTION              "init=epsg:${layer.projection?c}"          END
             METADATA

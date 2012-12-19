@@ -15,34 +15,47 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class ShapefileStore {
-    private final Map<String, File> shapefiles;
+    private final Map<String, Map<String, File>> shapefiles;
     
     @Autowired 
     public ShapefileStore(Properties properties) {
         File shapefileList = new File(properties.getProperty("contextLayersLocation"), "Vector");
-        this.shapefiles = new HashMap<String, File>();
-        for(File currShapefile : shapefileList.listFiles(new ShapefileFilter())) {
-            shapefiles.put(getShapefileName(currShapefile), currShapefile);
-        }
+        this.shapefiles = new HashMap<String, Map<String, File>>();
+        for(File shapefile : shapefileList.listFiles(new DirectoryFilter())) {
+            Map<String, File> shapefileInProjection = new HashMap<String, File>();
+            
+            for(File currShapefile : shapefile.listFiles(new ShapefileFilter())) {
+                shapefileInProjection.put(getShapefileName(currShapefile), currShapefile);
+            }
+            
+            shapefiles.put(shapefile.getName(), shapefileInProjection);
+        }        
     }
     
     public boolean isShapefilePresent(String shapefileName) {
         return shapefiles.containsKey(shapefileName);
     }
     
-    public File getShapefile(String shapefileName) {
+    public Map<String, File> getProjections(String shapefileName) {
         return shapefiles.get(shapefileName);
     }
     
     private static String getShapefileName(File shapefile) {
         String shapefileName = shapefile.getName();
-        return shapefileName.substring(0, shapefileName.length() - 4);
+        return "EPSG:" + shapefileName.substring(0, shapefileName.length() - 4);
     }
     
     private static class ShapefileFilter implements FileFilter {
         @Override
         public boolean accept(File pathname) {
             return pathname.getName().endsWith(".shp");
+        }
+    }
+    
+    private static class DirectoryFilter implements FileFilter {
+        @Override
+        public boolean accept(File pathname) {
+            return pathname.isDirectory();
         }
     }
 }
