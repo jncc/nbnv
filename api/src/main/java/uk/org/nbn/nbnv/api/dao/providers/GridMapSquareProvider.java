@@ -13,7 +13,7 @@ public class GridMapSquareProvider {
 
     public String gridMapSquares(Map<String, Object> params) {
         BEGIN();
-        SELECT("DISTINCT gridRef");
+        SELECT("DISTINCT fd.identifier gridref");
         createGenericQuery(params);
         addYearBand(params);
         return SQL();

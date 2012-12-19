@@ -67,13 +67,13 @@
                     <input type="checkbox" id="nbn-grid-map-10k-grid" value="gbi10kextent" name="background">10km grid
                 </div>
             </fieldset>
-<!--
+
             <fieldset>
                 <legend>Download</legend>
                 <button id="nbn-grid-map-squares-download">Download</button> <span id="nbn-grid-map-resolution-download-text">10km</span> squares within selected dates
                 <@report_utils.downloadTermsDialogue/>
             </fieldset>
--->
+
     </div>
 </#macro>
 
