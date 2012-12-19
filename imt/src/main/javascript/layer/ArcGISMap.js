@@ -102,7 +102,6 @@ nbn.layer.ArcGISMap = function(mapHosts, mapService, map, options) {
 	this.identifyFeature = function(xy, callback) { //call the identification server
 		_checkIfInPositionToMakeACall('identify');
 		return $.getJSON(_createIdentifyURL(xy), function(data) {
-console.log(data);
                     var identifiers = [];
                     getIdentifiers(data, identifiers);
                     callback(identifiers);
