@@ -28,7 +28,9 @@
                     toAppend += '<table id="nbn-species-table" class="nbn-simple-table"><tbody>';
                 }
                 $.each(data, function(key, val){
-                    toAppend += '<tr><td><a href="/Reports/Sites/' + featureID + '/Groups/' + taxonOutputGroupKey + '/Species/'+ val.taxon.ptaxonVersionKey + '/Observations">' + val.taxon.name + '</a></td></tr>';
+                    //Link to observation data disabled for Christmas release 2012
+                    toAppend += '<tr><td>' + val.taxon.name + '</tr>';
+//                    toAppend += '<tr><td><a href="/Reports/Sites/' + featureID + '/Groups/' + taxonOutputGroupKey + '/Species/'+ val.taxon.ptaxonVersionKey + '/Observations">' + val.taxon.name + '</a></td></tr>';
                 });
                 toAppend += '</tbody></table>';
             }else{
