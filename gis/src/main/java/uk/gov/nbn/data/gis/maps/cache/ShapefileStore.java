@@ -20,7 +20,6 @@ public class ShapefileStore {
     @Autowired 
     public ShapefileStore(Properties properties) {
         File shapefileList = new File(properties.getProperty("contextLayersLocation"), "Vector");
-                
         this.shapefiles = new HashMap<String, Map<String, File>>();
         for(File shapefile : shapefileList.listFiles(new DirectoryFilter())) {
             Map<String, File> shapefileInProjection = new HashMap<String, File>();
