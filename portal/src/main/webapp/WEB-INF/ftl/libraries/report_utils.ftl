@@ -1,37 +1,61 @@
 <#macro dataset_table providersWithQueryStats requestParameters>
     <#if providersWithQueryStats?has_content>
         <div class="tabbed tabbed-reports-dataset-table" id="nbn-dataset-selector-container">
-            <h3>Data providers and their datasets that contribute to this page (number of records)<span id="nbn-select-datasets-text">Select or deselect all datasets: <input type="checkbox" name="nbn-select-datasets-auto" id="nbn-select-datasets-auto"/></span></h3>
+            <h3>Data providers and their datasets that contribute to this page (number of records)<span id="nbn-select-datasets-text">Select or deselect all datasets: <input type="checkbox" name="nbn-select-datasets-auto" id="nbn-select-datasets-auto"/></span><br />Sort by: <select id="nbn-select-datasets-orderby"><option value="1">Number of Records</option><option value="2">Organisation Name</option></select></span> </h3>
+                <div id="nbn-dataset-ordered-table-byrecord">
+                    <@ordered_datasets providersWithQueryStats=providersWithQueryStats?sort_by('querySpecificObservationCount')?reverse requestParameters=requestParameters />
+                </div>
+                <div id="nbn-dataset-ordered-table-byname">
+                    <@ordered_datasets providersWithQueryStats=providersWithQueryStats?sort_by(['organisation', 'name']) requestParameters=requestParameters />
+                </div>
+        </div>
+        <script type="text/javascript">
+            $(function() {
+                $('#nbn-select-datasets-orderby').change(function() {
+                    if($('#nbn-select-datasets-orderby').val() == 1) {
+                        $('#nbn-dataset-ordered-table-byrecord').show();
+                        $('#nbn-dataset-ordered-table-byname').hide();
+                    }
+                    if($('#nbn-select-datasets-orderby').val() == 2) {
+                        $('#nbn-dataset-ordered-table-byrecord').hide();
+                        $('#nbn-dataset-ordered-table-byname').show();
+                    }
+                });
+                    $('#nbn-dataset-ordered-table-byname').hide();
+            });
+        </script>
+    </#if>
+</#macro>
+
+<#macro ordered_datasets providersWithQueryStats requestParameters>
             <table class="nbn-simple-table" id="nbn-report-dataset-table">
                 <tr><td class="nbn-dataset-table-heading"></td><td class="nbn-dataset-table-heading">Dataset title</td><td class="nbn-dataset-table-heading">Dataset access</td></tr>
-                <#list providersWithQueryStats as providerWithQueryStats>
-                    <tr>
-                        <th>
-                            <#if providerWithQueryStats.organisation.hasLogo>
-                                <img src="${api}/organisations/${providerWithQueryStats.organisationID}/logo" class="nbn-provider-table-logo">
-                            </#if>
-                        </th>
-                        <th colspan="2"><a href="/Organisations/${providerWithQueryStats.organisationID}">${providerWithQueryStats.organisation.name}</a> (${providerWithQueryStats.querySpecificObservationCount})</th>
-                    </tr>
-                    <#assign datasetsWithQueryStats=providerWithQueryStats.datasetsWithQueryStats>
-                    <#--All datasets will be checked by default unless dataset keys are found-->
-                    <#assign checked = "checked">
-                    <#list datasetsWithQueryStats as datasetWithQueryStats>
-                        <tr>
-                            <#if requestParameters.datasetKey?has_content>
-                                <#assign checked = requestParameters.datasetKey?seq_contains(datasetWithQueryStats.datasetKey)?string("checked","")>
-                            </#if>
-                            <td><input type="checkbox" name="datasetKey" value="${datasetWithQueryStats.datasetKey}" ${checked}></td>
-                            <td><a href="/Datasets/${datasetWithQueryStats.datasetKey}">${datasetWithQueryStats.taxonDataset.title}</a> (${datasetWithQueryStats.querySpecificObservationCount})</td>
-                            <td>
-                                <@datasetAccessPositions dataset=datasetWithQueryStats.taxonDataset/>
-                            </td>
-                        </tr>
-                    </#list>
-                </#list>
+    <#list providersWithQueryStats as providerWithQueryStats>
+        <tr>
+            <th>
+                <#if providerWithQueryStats.organisation.hasLogo>
+                    <img src="${api}/organisations/${providerWithQueryStats.organisationID}/logo" class="nbn-provider-table-logo">
+                </#if>
+            </th>
+            <th colspan="2"><a href="/Organisations/${providerWithQueryStats.organisationID}">${providerWithQueryStats.organisation.name}</a> (${providerWithQueryStats.querySpecificObservationCount})</th>
+        </tr>
+        <#assign datasetsWithQueryStats=providerWithQueryStats.datasetsWithQueryStats>
+        <#--All datasets will be checked by default unless dataset keys are found-->
+        <#assign checked = "checked">
+        <#list datasetsWithQueryStats as datasetWithQueryStats>
+            <tr>
+                <#if requestParameters.datasetKey?has_content>
+                    <#assign checked = requestParameters.datasetKey?seq_contains(datasetWithQueryStats.datasetKey)?string("checked","")>
+                </#if>
+                <td><input type="checkbox" name="datasetKey" value="${datasetWithQueryStats.datasetKey}" ${checked}></td>
+                <td><a href="/Datasets/${datasetWithQueryStats.datasetKey}">${datasetWithQueryStats.taxonDataset.title}</a> (${datasetWithQueryStats.querySpecificObservationCount})</td>
+                <td>
+                    <@datasetAccessPositions dataset=datasetWithQueryStats.taxonDataset/>
+                </td>
+            </tr>
+        </#list>
+    </#list>
             </table>
-        </div>
-    </#if>
 </#macro>
 
 <#macro unavailable_datasets unavailableDatasets>
