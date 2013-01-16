@@ -129,7 +129,7 @@
 
             <#if children?has_content>
                 <#list children as c>
-                    <tr><th>${taxon.rank}</th><td><span style="padding-left: ${(indent + 2) / 2}em;"><a href="${c.taxonVersionKey}">${c.name}</a> <#if c.authority??>${c.authority}</#if></span></tr>
+                    <tr><th>${c.rank}</th><td><span style="padding-left: ${(indent + 2) / 2}em;"><a href="${c.taxonVersionKey}">${c.name}</a> <#if c.authority??>${c.authority}</#if></span></tr>
                 </#list>
             </#if>
         </table>
