@@ -62,7 +62,7 @@ squares or sites.
 The Grid Map product allows you to view the grid squares which have been recorded against.
 
 You can get to this by searching for a [species](/Taxa) or searching for a 
-[dataset](/Datasets])
+[dataset](/Datasets)
                 </@markdown>
             </div>
         </div>
