@@ -69,8 +69,8 @@
                 </tr>
                 <#list unavailableDatasets as unavailableDataset>
                     <tr>
-                        <td><a href="/Datasets/${unavailableDataset.datasetKey}">${unavailableDataset.dataset.title}</a></td>
-                        <td><a href="/Organisations/${unavailableDataset.dataset.organisationID}">${unavailableDataset.dataset.organisationName}</a></td>
+                        <td><a href="/Datasets/${unavailableDataset.datasetKey}">${unavailableDataset.taxonDataset.title}</a></td>
+                        <td><a href="/Organisations/${unavailableDataset.taxonDataset.organisationID}">${unavailableDataset.taxonDataset.organisationName}</a></td>
                     </tr>
                 </#list>
             </table>
