@@ -4,6 +4,7 @@ import com.sun.jersey.server.linking.Ref;
 import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 public class Dataset {
     @Ref(value="${resource.portalUrl}/Datasets/${instance.key}", style=Ref.Style.RELATIVE_PATH) 
@@ -21,6 +22,7 @@ public class Dataset {
     private int organisationID;
     private boolean conditionsAccepted;
     private Organisation organisation;
+    private List<Organisation> contributingOrganisations;
     
     public Dataset(){}
 
@@ -246,5 +248,19 @@ public class Dataset {
 
     public void setOrganisationHref(URI organisationHref) {
         this.organisationHref = organisationHref;
+    }
+
+    /**
+     * @return the contributingOrganisations
+     */
+    public List<Organisation> getContributingOrganisations() {
+        return contributingOrganisations;
+    }
+
+    /**
+     * @param contributingOrganisations the contributingOrganisations to set
+     */
+    public void setContributingOrganisations(List<Organisation> contributingOrganisations) {
+        this.contributingOrganisations = contributingOrganisations;
     }
 }

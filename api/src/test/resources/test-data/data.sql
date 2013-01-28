@@ -125,6 +125,12 @@ INSERT INTO DatasetAdministrator (
     (39, 'DATASET3')
 );
 
+INSERT INTO DatasetContributingOrganisation (
+    datasetKey, organisationID
+) VALUES (
+    'DATASET1', 2
+);
+
 -------------
 -- Make Designation Data test data
 INSERT INTO DesignationData (

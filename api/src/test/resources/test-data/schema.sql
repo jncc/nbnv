@@ -203,3 +203,9 @@ CREATE TABLE TaxonRecordCountData (
     gatewayRecordCount int NOT NULL,
     PRIMARY KEY (pTaxonVersionKey)
 );
+
+CREATE TABLE DatasetContributingOrganisation (
+    datasetKey char(8) NOT NULL,
+    organisationID int NOT NULL,
+    PRIMARY KEY (datasetKey, organisationID)
+);

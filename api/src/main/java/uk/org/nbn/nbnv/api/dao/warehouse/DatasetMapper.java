@@ -1,6 +1,7 @@
 package uk.org.nbn.nbnv.api.dao.warehouse;
 
 import java.util.List;
+import org.apache.ibatis.annotations.Many;
 import org.apache.ibatis.annotations.One;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Result;
@@ -24,7 +25,9 @@ public interface DatasetMapper {
     @Select("SELECT * FROM DatasetData WHERE DatasetData.\"key\" = #{key}")
     @Results(value = {
         @Result(property="organisation", column="organisationID", javaType=Organisation.class, one=@One(select="uk.org.nbn.nbnv.api.dao.warehouse.OrganisationMapper.selectByID")),
-        @Result(property="organisationID", column="organisationID")
+        @Result(property="organisationID", column="organisationID"),
+        @Result(property="key", column="key"),
+        @Result(property="contributingOrganisations", column="key", javaType=List.class, many=@Many(select="uk.org.nbn.nbnv.api.dao.warehouse.DatasetContributingOrganisationMapper.selectOrganisationsByDataset"))
     })
     Dataset selectByDatasetKey(String key);
     

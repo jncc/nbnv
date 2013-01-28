@@ -30,6 +30,16 @@
                             <a href="/Organisations/${dataset.organisationID}">${dataset.organisationName}</a>
                         </td>
                     </tr>
+                    <#if dataset.contributingOrganisations?has_content>
+                        <tr>
+                            <th>Contributing Organisations</th>
+                            <td>
+                                <#list dataset.contributingOrganisations as corg>
+                                    <a href="/Organisations/${corg.id}">${corg.name}</a>
+                                </#list>
+                            </td>
+                        </tr>
+                    </#if>
                     <tr>
                         <th>Title</th>
                         <td>${dataset.title}</td>
