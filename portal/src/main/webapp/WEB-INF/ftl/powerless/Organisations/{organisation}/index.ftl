@@ -4,6 +4,7 @@
     <#assign organisationId="${URLParameters.organisation}">
     <#assign organisation=json.readURL("${api}/organisations/${organisationId}")>
     <#assign datasets=json.readURL("${api}/organisations/${organisationId}/datasets")>
+    <#assign cdatasets=json.readURL("${api}/organisations/${organisationId}/contributedDatasets")>
 
     <h1>${organisation.name}</h1>
     <div class="tabbed nbn-organisation-tabbed">
@@ -20,7 +21,12 @@
                     <#if organisation.website?has_content></br>${organisation.website}</#if>
                 </div>
     </div>
+    <h2>Datasets ${organisation.name} has provided</h2>
     <@parseDatasets datasetList=datasets />
+    <#if cdatasets?has_content>
+        <h2>Datasets ${organisation.name} has contributed to</h2>
+        <@parseDatasets datasetList=cdatasets />
+    </#if>
 
 </@template.master>
 

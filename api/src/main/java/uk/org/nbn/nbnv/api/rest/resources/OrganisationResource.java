@@ -50,6 +50,13 @@ public class OrganisationResource extends AbstractResource {
     }
 
     @GET
+    @Path("/{id}/contributedDatasets")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Dataset> getContributedDatasetsByID(@PathParam("id") int id) {
+        return datasetMapper.selectContributedByOrganisationID(id);
+    }
+
+    @GET
     @Path("/{id}/logo")    
     @Produces("image/jpg")
     public Object getLogo(@PathParam("id") int id) {
