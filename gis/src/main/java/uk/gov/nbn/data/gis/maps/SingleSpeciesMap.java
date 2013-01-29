@@ -134,8 +134,7 @@ public class SingleSpeciesMap {
                                     String startYear, String endYear, 
                                     boolean absence, String layerName) {
         SQLServerFactory create = new SQLServerFactory();
-        Condition condition = 
-                USERMAPPINGDATA.PTAXONVERSIONKEY.eq(taxonKey)
+        Condition condition = TAXONTREE.NODEPTVK.eq(taxonKey)
                 .and(USERMAPPINGDATA.USERID.eq(user.getId()))
                 .and(USERMAPPINGDATA.ABSENCE.eq(absence))
                 .and(USERMAPPINGDATA.RESOLUTIONID.eq(LAYERS.get(layerName)));
@@ -149,6 +148,7 @@ public class SingleSpeciesMap {
                 FEATUREDATA.ID.in(create
                     .select(USERMAPPINGDATA.FEATUREID)
                     .from(USERMAPPINGDATA)
+                    .join(TAXONTREE).on(TAXONTREE.CHILDPTVK.eq(USERMAPPINGDATA.PTAXONVERSIONKEY))
                     .where(condition)
                 )
             )
