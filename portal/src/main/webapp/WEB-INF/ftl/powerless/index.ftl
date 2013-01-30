@@ -8,10 +8,7 @@
     <div id="slidorion">
 	<div id="slider">
             <div class="slide welcome">
-                <@markdown>
-This is the National Biodiversity Network's Gateway. Use it to explore UK 
-biodiversity data, as contributed by participating data providers.
-                </@markdown>
+                <img src="/img/logo.jpg" width="700px" height=400px" />
             </div>
             
             <div class="slide imt">
@@ -39,7 +36,13 @@ biodiversity data, as contributed by participating data providers.
 
 	<div id="accordion">
             <div class="link-header">Welcome</div>
-            <div class="link-content">All systems go for NBN Gateway </div>
+            <div class="link-content">
+                <@markdown>
+This is the National Biodiversity Network's Gateway. 
+
+Use it to explore UK biodiversity data, as contributed by participating [data providers](/Organisations).
+                </@markdown>
+            </div>
 
             <div class="link-header">Interactive Map Tool</div>
             <div class="link-content">
