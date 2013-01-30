@@ -47,25 +47,21 @@ Use it to explore UK biodiversity data, as contributed by participating [data pr
             <div class="link-header">Interactive Map Tool</div>
             <div class="link-content">
                 <@markdown>
-The [Interactive Map Tool](/imt) provides new ways to explore species records.
+Explore distributions of species records, whole datasets, protected sites and habitats using the [Interactive Map Tool](/imt).
                 </@markdown>
             </div>
 
             <div class="link-header">Search by Location</div>
             <div class="link-content">
                 <@markdown>
-You can use the NBN gateway to find where species have been recorded using grid 
-squares or sites.
+Explore species lists and records for a particular [site or grid square](/Site_Datasets).
                 </@markdown>
             </div>
 
             <div class="link-header">Grid Map</div>
             <div class="link-content">
                 <@markdown>
-The Grid Map product allows you to view the grid squares which have been recorded against.
-
-You can get to this by searching for a [species](/Taxa) or searching for a 
-[dataset](/Datasets)
+Explore and map grid squares for a particular [species](/Taxa).
                 </@markdown>
             </div>
         </div>
