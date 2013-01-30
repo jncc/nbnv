@@ -68,7 +68,7 @@ public class DatasetResource extends AbstractResource {
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    public OpResult pdateDataset(@TokenDatasetAdminUser(path="id") User admin, @PathParam("id") String datasetKey
+    public OpResult updateDataset(@TokenDatasetAdminUser(path="id") User admin, @PathParam("id") String datasetKey
             , @FormParam("title") String title
             , @FormParam("description") String description
             , @FormParam("captureMethod") String captureMethod

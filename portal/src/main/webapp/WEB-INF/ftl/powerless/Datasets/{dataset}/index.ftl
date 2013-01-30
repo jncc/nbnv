@@ -117,6 +117,7 @@
             </div>
             <#if dataset.typeName = "Taxon">
                 <div id="tabs-3">
+                    <h1>Resolution</h1>
                     <h1>Species Richness Map</h1>
                     <div class="nbn-grid-map">
                         <img class="map" src="${gis}/DatasetSpeciesDensity/${dataset.key}/map?imagesize=4" alt="Species Richness for ${dataset.title}">
