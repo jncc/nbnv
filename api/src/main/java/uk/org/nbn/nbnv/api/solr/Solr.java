@@ -32,6 +32,7 @@ public class Solr {
             if(q!=null && !q.isEmpty()) {
                 query.setQuery(q);
                 query.setParam("defType", "dismax");
+                query.setParam("q.op", "AND");
             }
             else {
                 query.setQuery("*:*");

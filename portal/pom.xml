@@ -20,11 +20,6 @@
     </repositories>
     <dependencies>
         <!--NBN Gateway API-->
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>nbnv-api-model</artifactId>
-            <version>${project.version}</version>
-        </dependency>
         <!-- Get the properties reader -->
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -104,6 +99,11 @@
             <artifactId>jetty</artifactId>
             <version>${jetty.version}</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>nbnv-api-model</artifactId>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
     <build>
