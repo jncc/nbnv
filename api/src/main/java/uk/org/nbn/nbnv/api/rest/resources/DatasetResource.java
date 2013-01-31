@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 import uk.org.nbn.nbnv.api.dao.core.OperationalDatasetMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.DatasetMapper;
 import uk.org.nbn.nbnv.api.model.Dataset;
+import uk.org.nbn.nbnv.api.model.DatasetResolutionRecordCount;
 import uk.org.nbn.nbnv.api.model.User;
 import uk.org.nbn.nbnv.api.model.meta.OpResult;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenDatasetAdminUser;
@@ -95,6 +96,13 @@ public class DatasetResource extends AbstractResource {
     @Produces(MediaType.APPLICATION_JSON)
     public List<String> getAttributesByDatasetKey(@TokenUser() User user, @PathParam("datasetKey") String datasetKey){
         return datasetMapper.getDatasetAccessPositions(datasetKey, user.getId());
+    }
+
+    @GET
+    @Path("/{datasetKey}/resolutionData")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<DatasetResolutionRecordCount> getDatasetResolution(@PathParam("datasetKey") String datasetKey) {
+        return datasetMapper.getResolutionData(datasetKey);
     }
 
 }

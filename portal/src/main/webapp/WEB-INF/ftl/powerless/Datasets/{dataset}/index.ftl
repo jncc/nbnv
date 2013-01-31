@@ -1,4 +1,5 @@
 <#assign dataset=json.readURL("${api}/datasets/${URLParameters.dataset}")>
+<#assign resolution=json.readURL("${api}/datasets/${URLParameters.dataset}/resolutionData")>
 <#assign provider=json.readURL("${api}/organisations/${dataset.organisationID}")>
 
 <@template.master title="NBN Gateway - Datasets"
@@ -118,6 +119,12 @@
             <#if dataset.typeName = "Taxon">
                 <div id="tabs-3">
                     <h1>Resolution</h1>
+                    <p>Some biological records have more precise location information than others. Often they are recorded using national grid references, which identify which 10km, 2km, 1km or 100m square they occur in. This table shows how many records there are at these resolutions for this dataset.</p>
+                    <table class="nbn-dataset-table nbn-simple-table nbn-metadata-dataset-table">
+                        <#list resolution as r>
+                            <tr><th>${r.label}</th><td>${r.count} records</td></tr>
+                        </#list>
+                    </table>
                     <h1>Species Richness Map</h1>
                     <div class="nbn-grid-map">
                         <img class="map" src="${gis}/DatasetSpeciesDensity/${dataset.key}/map?imagesize=4" alt="Species Richness for ${dataset.title}">
