@@ -12,12 +12,12 @@
     <packaging>war</packaging>
     <name>${project.artifactId}-${project.version}</name>
     <url>http://maven.apache.org</url>
-    <repositories>
+<!--    <repositories>
         <repository>
             <id>rubygems-releases</id>
             <url>http://rubygems-proxy.torquebox.org/releases</url>
         </repository>
-    </repositories>
+    </repositories> -->
     <dependencies>
         <!--NBN Gateway API-->
         <!-- Get the properties reader -->
@@ -27,12 +27,12 @@
             <version>${project.version}</version>
         </dependency>
         
-        <dependency>
+<!--        <dependency>
             <groupId>rubygems</groupId>
             <artifactId>compass</artifactId>
             <version>0.11.7</version>
             <type>gem</type>
-        </dependency>
+        </dependency>-->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
@@ -118,7 +118,7 @@
             </plugin>
             
             <!--Compile Compass-->
-            <plugin>
+<!--            <plugin>
                 <groupId>de.saumya.mojo</groupId>
                 <artifactId>gem-maven-plugin</artifactId>
                 <version>0.28.6</version>
@@ -134,7 +134,7 @@
                 <configuration>
                     <execArgs>"${project.build.directory}/rubygems/bin/compass" compile "${basedir}/src/main/sass"</execArgs>
                 </configuration>
-            </plugin>
+            </plugin> -->
         </plugins>
     </build>
     
