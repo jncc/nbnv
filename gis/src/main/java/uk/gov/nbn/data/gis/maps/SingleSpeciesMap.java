@@ -135,7 +135,7 @@ public class SingleSpeciesMap {
                                     boolean absence, String layerName) {
         SQLServerFactory create = new SQLServerFactory();
         Condition condition = TAXONTREE.NODEPTVK.eq(taxonKey)
-                .and(USERMAPPINGDATA.USERID.eq(user.getId()))
+                .and(USERMAPPINGDATA.USERID.eq(user.getId()).or(USERMAPPINGDATA.USERID.eq(1)))
                 .and(USERMAPPINGDATA.ABSENCE.eq(absence))
                 .and(USERMAPPINGDATA.RESOLUTIONID.eq(LAYERS.get(layerName)));
         condition = MapHelper.createTemporalSegment(condition, startYear, endYear, USERMAPPINGDATA.STARTDATE, USERMAPPINGDATA.ENDDATE);

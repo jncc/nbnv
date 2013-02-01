@@ -98,7 +98,7 @@ public class DesignationSpeciesDensityMap {
                     Condition condition = 
                             USERMAPPINGDATA.ABSENCE.eq(false)
                             .and(DESIGNATIONTAXONDATA.CODE.eq(key))
-                            .and(USERMAPPINGDATA.USERID.eq(user.getId()));
+                            .and(USERMAPPINGDATA.USERID.eq(user.getId()).or(USERMAPPINGDATA.USERID.eq(1)));
                     condition = MapHelper.createTemporalSegment(condition, startYear, endYear, USERMAPPINGDATA.STARTDATE, USERMAPPINGDATA.ENDDATE);
                     condition = MapHelper.createInDatasetsSegment(condition, USERMAPPINGDATA.DATASETKEY, datasetKeys);
                     

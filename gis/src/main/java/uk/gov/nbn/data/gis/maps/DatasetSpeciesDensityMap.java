@@ -100,7 +100,7 @@ public class DatasetSpeciesDensityMap {
                     Condition condition = 
                             USERDATASETMAPPINGDATA.ABSENCE.eq(false)
                             .and(USERDATASETMAPPINGDATA.DATASETKEY.eq(key))
-                            .and(USERDATASETMAPPINGDATA.USERID.eq(user.getId()));
+                            .and(USERDATASETMAPPINGDATA.USERID.eq(user.getId()).or(USERDATASETMAPPINGDATA.USERID.eq(1)));
                     condition = MapHelper.createTemporalSegment(condition, startYear, endYear, USERDATASETMAPPINGDATA.STARTDATE, USERDATASETMAPPINGDATA.ENDDATE);
                     
                     SelectHavingStep observations = create
