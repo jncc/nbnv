@@ -166,7 +166,7 @@
             <table>
                 <#list links as link>
                     <tr>
-                        <td><a href="${link.link}">${d.description}</a></td>
+                        <td><a href="${link.link}" target="_blank">${link.description}</a></td>
                     </tr>
                 </#list>
             </table>
