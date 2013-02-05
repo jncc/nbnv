@@ -15,7 +15,7 @@
                 </tr>
             </thead>
             <tbody>
-                <#list organisations as org>
+                <#list organisations?sort_by("name") as org>
                     <tr>
                         <td><a href="/Organisations/${org.id}">${org.name}</a></td>
                         <td><#if org.website?has_content><a href="http://${org.website}">${org.website}</a></#if></td>
