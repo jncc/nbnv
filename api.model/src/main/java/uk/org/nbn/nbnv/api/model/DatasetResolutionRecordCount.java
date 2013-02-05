@@ -12,6 +12,7 @@ public class DatasetResolutionRecordCount {
     private String datasetKey;
     private String label;
     private int count;
+    private int resolutionID;
 
     /**
      * @return the datasetKey
@@ -53,5 +54,19 @@ public class DatasetResolutionRecordCount {
      */
     public void setCount(int count) {
         this.count = count;
+    }
+
+    /**
+     * @return the resolutionID
+     */
+    public int getResolutionID() {
+        return resolutionID;
+    }
+
+    /**
+     * @param resolutionID the resolutionID to set
+     */
+    public void setResolutionID(int resolutionID) {
+        this.resolutionID = resolutionID;
     }
 }

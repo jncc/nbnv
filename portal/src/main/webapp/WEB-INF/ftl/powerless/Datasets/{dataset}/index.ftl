@@ -121,8 +121,8 @@
                     <h1>Resolution</h1>
                     <p>Some biological records have more precise location information than others. Often they are recorded using national grid references, which identify which 10km, 2km, 1km or 100m square they occur in. This table shows how many records there are at these resolutions for this dataset.</p>
                     <table class="nbn-dataset-table nbn-simple-table nbn-metadata-dataset-table">
-                        <#list resolution as r>
-                            <tr><th>${r.label}</th><td>${r.count} records</td></tr>
+                        <#list resolution?sort_by("resolutionID")?reverse as r>
+                            <tr><th>${r.label}</th><td style="text-align: right">${r.count} records</td></tr>
                         </#list>
                     </table>
                     <h1>Species Richness Map</h1>

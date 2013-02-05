@@ -65,6 +65,6 @@ public interface DatasetMapper {
     @Select("SELECT filterText FROM UserAccessPosition uap WHERE datasetKey = #{datasetKey} AND userID = #{userID}")
     List<String> getDatasetAccessPositions(@Param("datasetKey") String datasetKey, @Param("userID") int userID); 
     
-    @Select("SELECT * FROM DatasetResolutionRecordCountData WHERE datasetKey = #{datasetKey}")
+    @Select("SELECT drrcd.datasetKey, drrcd.count, r.label, r.id AS resolutionID FROM DatasetResolutionRecordCountData drrcd LEFT JOIN Resolution r ON r.label = drrcd.label WHERE datasetKey = #{datasetKey}")
     List<DatasetResolutionRecordCount> getResolutionData(@Param("datasetKey") String datasetKey);
 }
