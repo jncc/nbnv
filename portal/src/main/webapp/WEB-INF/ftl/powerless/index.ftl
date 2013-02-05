@@ -8,7 +8,7 @@
     <div id="slidorion">
 	<div id="slider">
             <div class="slide welcome">
-                <img src="/img/logo.jpg" width="700px" height=400px" />
+                <img src="/img/slides/welcome.jpg" width="700px" height=400px" />
             </div>
             
             <div class="slide imt">
