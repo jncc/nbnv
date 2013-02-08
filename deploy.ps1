@@ -8,8 +8,9 @@ $ErrorActionPreference = "Stop"
 # @param $artifact, The path to the artifact to get
 # @return The location of the downloaded file
 ###############################################################################
-Function GetBuild ($build, $build_number, $artifact) {
-	$source = "http://labuild.nerc-lancaster.ac.uk/browse/$build-$build_number/artifact/shared/$artifact"
+Function GetBuild ($build, [int] $build_number, $artifact) {
+	$formated_build_number = "{0:D5}" -f $build_number
+	$source = "http://labuild.nerc-lancaster.ac.uk:8080/$build/shared/build-$formated_build_number/$artifact"
 	$destination = (Get-Location).Path + "\" + [system.guid]::newguid().tostring()
 	
 	#Download the zip from the build server
