@@ -5,7 +5,6 @@ import java.util.Map;
 import static org.apache.ibatis.jdbc.SelectBuilder.*;
 import org.springframework.util.StringUtils;
 import uk.org.nbn.nbnv.api.rest.resources.ObservationResourceDefaults;
-import uk.org.nbn.nbnv.api.rest.resources.TaxonObservationResource;
 
 /**
  *key
@@ -110,8 +109,16 @@ public class TaxonObservationProvider {
     
     private void createSelectQuery(Map<String, Object> params) {
 
-        FROM("UserTaxonObservationData o");
-        WHERE("o.userID = #{user.id}");
+        //FROM("UserTaxonObservationData o");
+        FROM ("(SELECT obse.* FROM TaxonObservationDataEnhanced obse "
+                + "INNER JOIN UserTaxonObservationID utoa ON utoa.observationID = obse.id "
+                + "WHERE utoa.userID = #{user.id} "
+                + "UNION ALL "
+                + "SELECT obsp.* FROM TaxonObservationDataPublic obsp "
+                + "WHERE obsp.id NOT IN ( "
+                + "	SELECT utoa.observationID FROM UserTaxonObservationID utoa WHERE utoa.userID = #{user.id} "
+                + ")) o");
+        //WHERE("o.userID = #{user.id}");
 
         if (params.containsKey("startYear") && (Integer) params.get("startYear") > -1) {
             ProviderHelper.addStartYearFilter((Integer) params.get("startYear"));
