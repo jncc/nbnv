@@ -116,7 +116,7 @@
                             <!-- JDBC connection parameters -->
                             <jdbc>
                                 <driver>com.microsoft.sqlserver.jdbc.SQLServerDriver</driver>
-                                <url>jdbc:sqlserver://nbnsql-a.nerc-lancaster.ac.uk;databaseName=NBNWarehouse</url>
+                                <url>jdbc:sqlserver://nbnsql-b.nerc-lancaster.ac.uk;databaseName=NBNWarehouse</url>
                                 <user>NBNGIS</user>
                                 <password>ForgottenWindGasClock25</password>
                             </jdbc>
