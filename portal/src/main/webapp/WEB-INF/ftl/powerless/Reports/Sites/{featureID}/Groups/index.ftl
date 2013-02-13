@@ -11,7 +11,7 @@
     javascripts=["/js/report_utils.js","/js/site_report_groups.js","/js/jquery.dataset-selector-utils.js"]>
     <h1>${title}</h1>
     <form id="nbn-site-report-form" api-server="${api}" featureID="${featureID}">
-        <@report_utils.site_report_filters requestParameters=RequestParameters location=site.label  isSpatialRelationshipNeeded=true/>
+        <@report_utils.site_report_filters requestParameters=RequestParameters location=site.label  isSpatialRelationshipNeeded=true isDownloadButtonNeeded=true />
         <div class="tabbed" id="nbn-site-report-data-container"></div>
         <@report_utils.siteImage locationName=site.label locationID=featureID imageURL=report_utils.getSiteBoundaryImageURL(featureID,!is10kmReport)/>
         <@mdcontent.smallCaveat/>
@@ -19,4 +19,5 @@
     </form>
     <br><br>
     <@report_utils.unavailable_datasets unavailableDatasets=unavailableDatasets/>
+    <@report_utils.downloadTermsDialogue/>
 </@template.master>
