@@ -20,7 +20,6 @@ set POWERSHELL_PUBLISH=$deploymentParams = @{}; ^
 		-FilePath .\deploy.ps1 ^
 		-ArgumentList @($deploymentParams) ^
 		-ConnectionURI http://%SERVER%:5985/WSMAN ^
-		-Authentication basic ^
 		-Credential $Cred;
 
 powershell -command "%POWERSHELL_PUBLISH%" < NUL
