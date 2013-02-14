@@ -11,12 +11,14 @@ for /f "tokens=1-3*" %%a in ("%*") do (
     set SERVER=%%c
     set BUILD_PLANS=%%d
 )
-
-set POWERSHELL_PUBLISH=$pass = ConvertTo-SecureString -AsPlainText '%PASSWORD%' -Force; ^
+ 
+set POWERSHELL_PUBLISH=$deploymentParams = @{}; ^
+	$pass = ConvertTo-SecureString -AsPlainText '%PASSWORD%' -Force; ^
 	$Cred = New-Object System.Management.Automation.PSCredential -ArgumentList '%USERNAME%',$pass; ^
+	'%BUILD_PLANS%'.split(' ') ^| %% { $parts = $_.split(':'); $deploymentParams += @{$parts[0]=$parts[1]}}; ^
 	Invoke-Command ^
 		-FilePath .\deploy.ps1 ^
-		-ArgumentList '%BUILD_PLANS%'.split(' ') ^
+		-ArgumentList @($deploymentParams) ^
 		-ConnectionURI http://%SERVER%:5985/WSMAN ^
 		-Authentication basic ^
 		-Credential $Cred;

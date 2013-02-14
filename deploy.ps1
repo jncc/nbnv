@@ -1,5 +1,7 @@
 $ErrorActionPreference = "Stop"
 
+$DEPLOYED_DESCRIPTOR = "D:\deployed.xml"
+
 ###############################################################################
 # This function will obtain some build code from the build server
 #
@@ -143,15 +145,12 @@ $REGISTERED_BUILDS = @{
 
 #Create an array of builds to process
 $build_plans = @()
-$args | ForEach { 
-	$build_request = $_.split(":")
-	if($REGISTERED_BUILDS.keys -notcontains $build_request[0]) { #checking for invalid keys
+$deploying = $args[0]
+$deploying.Keys | % {
+	if($REGISTERED_BUILDS.keys -notcontains $_) { #checking for invalid keys
 		throw "The $build_request plan is not registered. Valid plans are " + $REGISTERED_BUILDS.keys 
 	}
-	if( ($build_plans.keys | % { $_.plan}) -contains $build_request[0]) { #check for duplicate request
-		throw "The build plan $build_request has been requested to be build multiple times."
-	}
-	$build_plans += @{"plan" = $REGISTERED_BUILDS[$build_request[0]]; "number" = $build_request[1];}
+	$build_plans += @{"plan" = $REGISTERED_BUILDS[$_]; "number" = $deploying.Item($_)}
 }
 if($build_plans.length -eq 0) { throw "No build plans have been specified. USAGE: [BUILDID-1]:[XX] ... [BUILDID-N]:[XX]" }
 
@@ -178,3 +177,14 @@ $services | ForEach {Start-Service $_}
 #delete all processed dirs
 echo "Cleaning up old dirs " + $data.values
 $data.values | ForEach { Remove-Item -r $_}
+
+#Store deployed descriptor
+echo "Recording the newly deployed artifacts"
+$mutex = New-Object -TypeName System.Threading.Mutex -ArgumentList $false, "DEPLOYED_DESCRIPTOR_MUTEX";
+$result = $mutex.WaitOne();
+if(Test-Path $DEPLOYED_DESCRIPTOR) { $loaded = Import-Clixml $DEPLOYED_DESCRIPTOR } #Reading in what was deployed
+($loaded.keys | ?{$deploying.keys -contains $_}) | ForEach { $loaded.remove($_) } #Remove old entries
+($loaded += $deploying) | Export-Clixml $DEPLOYED_DESCRIPTOR #Merge hashes
+$mutex.ReleaseMutex();
+echo "As long as no one has been bypassing the deployment script, the following will be deployed"
+$loaded.Keys | % { Write-Host -ForegroundColor GREEN $_ : $loaded.Item($_) }
