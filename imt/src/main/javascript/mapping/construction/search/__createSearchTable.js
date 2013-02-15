@@ -11,7 +11,11 @@
     function processResults(callbackField, serverRes) {
         var toReturn = [];
         $.each(serverRes, function(i, val) {
-            toReturn.push(['<a href="' + val[callbackField] + '">'+ val.searchMatchTitle+'</a>']);
+            if (val.entityType == 'taxon') {
+                toReturn.push(['<a href="' + val[callbackField] + '"><i>'+ val.searchMatchTitle+'</i></a> ' + val.authority + ' - ' + val.taxonOutputGroupName + ' - ' + val.rank + ' - ' + val.gatewayRecordCount + ' record(s)']);
+            } else {
+                toReturn.push(['<a href="' + val[callbackField] + '">'+ val.searchMatchTitle+'</a>']);
+            }            
         });
         return toReturn;
     }
