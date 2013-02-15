@@ -3,9 +3,7 @@ package uk.org.nbn.nbnv.api.rest.resources;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.zip.ZipEntry;
@@ -19,19 +17,17 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.StreamingOutput;
-import org.apache.commons.lang.StringEscapeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 import uk.org.nbn.nbnv.api.dao.providers.ProviderHelper;
 import uk.org.nbn.nbnv.api.dao.warehouse.DatasetMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.DesignationMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.FeatureMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.OrganisationMapper;
-import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
 import uk.org.nbn.nbnv.api.dao.warehouse.TaxonObservationMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.TaxonOutputGroupMapper;
 import uk.org.nbn.nbnv.api.model.*;
+import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
 import uk.org.nbn.nbnv.api.rest.resources.utils.DownloadHelper;
 
 @Component
@@ -350,6 +346,7 @@ public class TaxonObservationResource extends AbstractResource {
         ArrayList<String> values = new ArrayList<String>();
         values.add("TaxonName");
         values.add("Authority");
+        values.add("CommonName");
         values.add("PreferredTaxonVersionKey");
         downloadHelper.writelnCsv(zip, values);
         for (TaxonWithQueryStats taxonWithStats : taxaWithStats) {
@@ -357,6 +354,11 @@ public class TaxonObservationResource extends AbstractResource {
             values = new ArrayList<String>();
             values.add(taxon.getName());
             values.add(taxon.getAuthority());
+            if (taxon.getCommonName() != null && !taxon.getCommonName().isEmpty()) {
+                values.add(taxon.getCommonName());
+            } else {
+                values.add("");
+            }
             values.add(taxon.getPTaxonVersionKey());
             downloadHelper.writelnCsv(zip, values);
         }

@@ -33,7 +33,7 @@ public interface TaxonMapper {
             + "AND st.taxonVersionKey != t.taxonVersionKey")
     List<Taxon> selectSynonymsByTVK(String taxonVersionKey);
     
-    @Select("SELECT taxonVersionKey, tdt.pTaxonVersionKey, t.name, authority, languageKey, taxonOutputGroupKey, datasetKey, observationCount, togd.name taxonOutputGroupName FROM TaxonDatasetTaxonData tdt INNER JOIN TaxonData t ON tdt.pTaxonVersionKey = t.taxonVersionKey INNER JOIN TaxonOutputGroupData togd ON t.taxonOutputGroupKey = togd.\"key\" WHERE datasetKey = #{datasetKey} ORDER BY name")
+    @Select("SELECT t.taxonVersionKey, tdt.pTaxonVersionKey, t.name, ct.name AS commonName, t.authority, t.languageKey, t.taxonOutputGroupKey, datasetKey, observationCount, togd.name taxonOutputGroupName FROM TaxonDatasetTaxonData tdt INNER JOIN TaxonData t ON tdt.pTaxonVersionKey = t.taxonVersionKey INNER JOIN TaxonOutputGroupData togd ON t.taxonOutputGroupKey = togd.\"key\" LEFT JOIN TaxonData ct ON ct.taxonVersionKey = t.commonNameTaxonVersionKey WHERE datasetKey = #{datasetKey} ORDER BY name")
     List<TaxonWithDatasetStats> selectByDatasetKey(String datasetKey);
 
     @Select("SELECT tp.*, ct.name AS commonName "

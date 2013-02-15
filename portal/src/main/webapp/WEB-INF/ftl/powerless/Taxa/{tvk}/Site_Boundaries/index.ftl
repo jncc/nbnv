@@ -10,7 +10,7 @@
 <@template.master title="NBN Site Report" 
     csss=["/css/species-site-list.css","/css/smoothness/jquery-ui-1.8.23.custom.css"]
     javascripts=["/js/report_utils.js","/js/species_site_list.js","/js/jquery.dataset-selector-utils.js","/js/jquery.dataTables.min.js"]>
-    <h1>List of sites for ${taxon_utils.getShortName(ptaxon)}</h1>
+    <h1>List of sites for ${taxon_utils.getLongName(ptaxon)}</h1>
     <form id="nbn-species-site-list-form" api-server="${api}" ptvk="${ptaxon.taxonVersionKey}" taxonOutputGroupKey="${ptaxon.taxonOutputGroupKey}">
         <div id="nbn-site-list-filter-container">
             <fieldset>
