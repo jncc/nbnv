@@ -1,17 +1,19 @@
 package uk.org.nbn.nbnv.api.dao.warehouse;
 
 import java.util.List;
+import org.apache.ibatis.annotations.CacheNamespace;
 import org.apache.ibatis.annotations.One;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Result;
 import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.SelectProvider;
+import org.mybatis.caches.oscache.OSCache;
 import uk.org.nbn.nbnv.api.dao.providers.TaxonObservationProvider;
 import uk.org.nbn.nbnv.api.model.Dataset;
-import uk.org.nbn.nbnv.api.model.TaxonDatasetWithQueryStats;
 import uk.org.nbn.nbnv.api.model.Taxon;
 import uk.org.nbn.nbnv.api.model.TaxonDataset;
+import uk.org.nbn.nbnv.api.model.TaxonDatasetWithQueryStats;
 import uk.org.nbn.nbnv.api.model.TaxonObservation;
 import uk.org.nbn.nbnv.api.model.TaxonObservationAttributeValue;
 import uk.org.nbn.nbnv.api.model.TaxonOutputGroup;
@@ -23,6 +25,7 @@ import uk.org.nbn.nbnv.api.model.User;
  *
  * @author Paul Gilbertson
  */
+@CacheNamespace(implementation=org.mybatis.caches.oscache.OSCache.class)
 public interface TaxonObservationMapper {
     @Select("SELECT * FROM UserTaxonObservationData WHERE observationID = #{id} AND userID = #{userKey}")
     public TaxonObservation selectById(@Param("id") int id, @Param("userKey") int userKey);

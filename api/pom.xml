@@ -216,5 +216,10 @@
             <version>${jersey.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.mybatis.caches</groupId>
+            <artifactId>mybatis-oscache</artifactId>
+            <version>1.0.1</version>
+        </dependency>
     </dependencies>
 </project>
