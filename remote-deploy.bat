@@ -17,7 +17,7 @@ set POWERSHELL_PUBLISH=$deploymentParams = @{}; ^
 	$Cred = New-Object System.Management.Automation.PSCredential -ArgumentList '%USERNAME%',$pass; ^
 	'%BUILD_PLANS%'.split(' ') ^| %% { $parts = $_.split(':'); $deploymentParams += @{$parts[0]=$parts[1]}}; ^
 	Invoke-Command ^
-		-FilePath .\deploy.ps1 ^
+		-FilePath .\config\scripts\server\deploy.ps1 ^
 		-ArgumentList @($deploymentParams) ^
 		-ConnectionURI http://%SERVER%:5985/WSMAN ^
 		-Credential $Cred;

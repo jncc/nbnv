@@ -15,3 +15,13 @@ The following is a list of scripts and their function
 	
 	N.b. This script has not been tested or intended to be used on 
 	Multihomed network adapters
+
+* mirror-deploy.ps1 - This script enables you to mirror the deployment
+	of one server to another. In essence, this script orchestrates deployment
+	by reading which builds are deployed on one server and then executing
+	the deploy.ps1 script with those builds on a remote server
+	
+* deploy.ps1 - Executing this script on an NBN Web machine will obtain
+	a the specified builds from the build server and then perform any
+	service restarts required to get those builds running. A description
+	of which builds have been deployed on that server will be persisted.
