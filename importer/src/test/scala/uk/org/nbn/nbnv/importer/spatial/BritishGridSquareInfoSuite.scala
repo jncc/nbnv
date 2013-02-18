@@ -11,6 +11,15 @@ class BritishGridSquareInfoSuite extends BaseFunSuite {
   val knownGridRef_2000m = "NN17Q"
   val knownGridRef_10000m = "NN17"
 
+
+
+
+  test("NBNV-234"){
+    val bgr = BritishGridSquareInfo("TL2384", Some(2000))
+
+    bgr.gridReference should be ("TL28H")
+  }
+
   test("should identify projection as OSGB36") {
     val bgr = BritishGridSquareInfo(knownGridRef_100m)
 
