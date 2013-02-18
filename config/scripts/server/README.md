@@ -12,3 +12,6 @@ The following is a list of scripts and their function
 	currently assigned IP Address of a Network adapter with regards to
 	the respective tomcat. Meaning that the portal tomcat is tied to
 	the Portal Network Connection.
+	
+	N.b. This script has not been tested or intended to be used on 
+	Multihomed network adapters
