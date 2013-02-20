@@ -9,9 +9,9 @@ $tomcatAdapters = @{
 	"gis"="gis.nbn.org.uk Network Connection";
 }
 
-# Get the named adapters
-$namedAdapters = @{}
-$netConfig = Get-WmiObject win32_networkadapterconfiguration
+# Get the named adapters. Convert adapter configuration to lookable hash
+$netConfig = @{}; $namedAdapters = @{}
+Get-WmiObject win32_networkadapterconfiguration | % {$netConfig[$_.Index] = $_}
 Get-WmiObject win32_networkadapter | Where-Object {$_.NetConnectionID -ne $null} | % {
 	$namedAdapters += @{$_.NetConnectionID=$netConfig[$_.Index]} 
 }
