@@ -37,7 +37,7 @@
 	<div id="accordion">
             <div class="link-header">Welcome</div>
             <div class="link-content">
-<p>This is the first release of the new version of the NBN Gateway.  Whilst it is available for you to try out, it is not a fully functioning site and we are currently working to resolve some technical issues. </p>
+<p>This is the first release of the new version of the NBN Gateway.  Whilst it is available for you to try out, it is still undergoing development and we are currently working to improve performance. </p>
 <p>If you want to access or use data please use the <a href="http://data.nbn.org.uk/">current NBN Gateway</a></p>
 <p><h3>Your views</h3></p>
 <p>As part of the technical work is to address <a href="http://data.nbn.org.uk/Documentation/NBN_Gateway_Documentation/NBNGatewayVIssues.pdf">known issues</a> and implement planned functionality and enhancements, we would be very interested in your views on how the site could be improved. Please send comments and suggestions to <a href="mailto:access@nbn.org.uk">access@nbn.org.uk</a>.</p>
