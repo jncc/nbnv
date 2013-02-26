@@ -57,7 +57,23 @@ public class SearchResource extends AbstractResource {
                 .filterQuery(String.format("location:[%s,%s TO %s,%s]", (Object[]) bboxParts))
                 .response();
     }
-    
+
+    @GET
+    @Path("/siteBoundaries")
+    @Produces(MediaType.APPLICATION_JSON)
+    public SolrResponse searchSiteBoundaries(
+            @QueryParam("rows") @DefaultValue("10") int rows,
+            @QueryParam("start") @DefaultValue("0") int start,
+            @QueryParam("q") String q) throws SolrServerException {
+        return solr
+                .create()
+                .query(q)
+                .start(start)
+                .rows(rows)
+                .filterQuery("record_type:siteboundaryfeature")
+                .response();
+    }
+
     @GET
     @Path("/designations")
     @Produces(MediaType.APPLICATION_JSON)

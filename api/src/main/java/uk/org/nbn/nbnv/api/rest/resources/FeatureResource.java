@@ -1,5 +1,6 @@
 package uk.org.nbn.nbnv.api.rest.resources;
 
+import java.util.List;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -8,7 +9,9 @@ import javax.ws.rs.core.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.org.nbn.nbnv.api.dao.warehouse.FeatureMapper;
+import uk.org.nbn.nbnv.api.dao.warehouse.SiteBoundaryMapper;
 import uk.org.nbn.nbnv.api.model.Feature;
+import uk.org.nbn.nbnv.api.model.SiteBoundary;
 import uk.org.nbn.nbnv.api.solr.SolrResolver;
 
 /**
@@ -20,6 +23,7 @@ import uk.org.nbn.nbnv.api.solr.SolrResolver;
 @Path("/features")
 public class FeatureResource extends AbstractResource {
     @Autowired FeatureMapper featureMapper;
+    @Autowired SiteBoundaryMapper siteBoundaryMapper;
     
     @GET
     @Path("/{id}")
@@ -27,5 +31,12 @@ public class FeatureResource extends AbstractResource {
     @SolrResolver("FEATURE")
     public Feature getFeature(@PathParam("id") String featureId) {
         return featureMapper.getFeature(featureId);
+    }
+    
+    @GET
+    @Path("/siteBoundaries")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<SiteBoundary> getSiteBoundaries() {
+        return siteBoundaryMapper.getAll();
     }
 }

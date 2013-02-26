@@ -14,7 +14,15 @@ import uk.org.nbn.nbnv.api.model.SiteBoundaryDataset;
 import uk.org.nbn.nbnv.api.model.User;
 
 public interface SiteBoundaryMapper {
-
+    @Select("SELECT sbd.*, sbfd.identifier FROM SiteBoundaryData sbd INNER JOIN SiteBoundaryFeatureData sbfd ON sbd.featureID = sbfd.id ORDER BY name ASC")
+    @Results(value = {
+        @Result(property = "siteBoundaryDataset", column = "siteBoundaryDatasetKey", javaType = SiteBoundaryDataset.class, one = @One(select = "uk.org.nbn.nbnv.api.dao.warehouse.SiteBoundaryDatasetMapper.getByDatasetKey")),
+        @Result(property = "siteBoundaryDatasetKey", column = "siteBoundaryDatasetKey"),
+        @Result(property = "siteBoundaryCategory", column = "siteBoundaryCategoryID", javaType = SiteBoundaryCategory.class, one = @One(select = "uk.org.nbn.nbnv.api.dao.warehouse.SiteBoundaryCategoryMapper.getByIDDatasetsNotInstantiated")),
+        @Result(property = "siteBoundaryCategoryId", column = "siteBoundaryCategoryID")
+    })
+    List<SiteBoundary> getAll();
+    
     @Select("SELECT sbd.*, sbfd.identifier FROM SiteBoundaryData sbd INNER JOIN SiteBoundaryFeatureData sbfd ON sbd.featureID = sbfd.id WHERE siteBoundaryDatasetKey = #{datasetKey} ORDER BY name ASC")
     List<SiteBoundary> getByDatasetKey(String datasetKey);
 

@@ -9,6 +9,7 @@
         url="${api}/search"
         display=[
             {"title":"Result", "attr":"searchMatchTitle", "link":"href"},
+            {"title":"Info", "attr":"descript"},
             {"title":"Type", "attr":"entityType"}
         ]
         query=RequestParameters/>
