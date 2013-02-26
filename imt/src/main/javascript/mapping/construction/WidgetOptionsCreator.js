@@ -221,7 +221,7 @@ nbn.mapping.construction.WidgetOptionsCreator = function(interactiveMapper){
                     allowMultipleSelection: 'checkbox',
                     selectDeselect: true,
                     dataFilter: function(dataset) {
-                        return $.extend({ title : dataset.organisationName + ' - ' + dataset.name, select: true}, dataset);
+                        return $.extend({}, dataset, { title : dataset.organisationName + ' - ' + dataset.title, select: true});
                     },
                     childrenSelectionListener: function(event, selected) {
                         _setSelectedSpeciesDatasets(selected);
