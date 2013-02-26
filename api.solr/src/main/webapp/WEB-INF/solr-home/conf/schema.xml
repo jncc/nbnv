@@ -82,6 +82,9 @@
         <!--The Default Search field -->
         <field name="name" type="testedgengrams" indexed="true" stored="true"/>
         
+        <!-- Descriptor for general search -->
+        <field name="descript" type="string" indexed="true" stored="true" />
+        
         <!-- 
             The following fields are required by the API Project to transform 
             indexed objects to their API equivilant and for filtering to specific
