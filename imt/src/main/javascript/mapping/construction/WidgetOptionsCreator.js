@@ -219,7 +219,7 @@ nbn.mapping.construction.WidgetOptionsCreator = function(interactiveMapper){
 
             _singleSpeciesDatasetSelectionTree = $('<div>').nbn_treewidget({
                     allowMultipleSelection: 'checkbox',
-                    selectDeselect: true,
+                    selectDeselect: false,
                     dataFilter: function(dataset) {
                         return $.extend({}, dataset, { title : dataset.organisationName + ' - ' + dataset.title, select: true});
                     },

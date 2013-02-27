@@ -124,7 +124,7 @@ var times = 0;
         },
 		
         _checkAllWithValue: function(toCheck) {
-            $.each(this._getAllChildrenNodes(!toCheck), function(i, node) {
+            $.each(this._tree.getRoot().getChildren() || [], function(i, node) {
                 node.select(toCheck);
             });
             
