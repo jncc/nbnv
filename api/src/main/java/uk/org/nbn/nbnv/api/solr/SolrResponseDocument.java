@@ -10,6 +10,7 @@ import org.codehaus.jackson.annotate.JsonUnwrapped;
 public class SolrResponseDocument<T> {
     private String entityType;
     private String searchMatchTitle;
+    private String descript;
     
     @JsonUnwrapped
     private T result;
@@ -42,5 +43,19 @@ public class SolrResponseDocument<T> {
 
     public void setSearchMatchTitle(String searchMatchTitle) {
         this.searchMatchTitle = searchMatchTitle;
+    }
+
+    /**
+     * @return the descript
+     */
+    public String getDescript() {
+        return descript;
+    }
+
+    /**
+     * @param descript the descript to set
+     */
+    public void setDescript(String descript) {
+        this.descript = descript;
     }
 }
