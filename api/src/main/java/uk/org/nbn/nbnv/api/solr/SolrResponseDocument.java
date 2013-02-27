@@ -15,10 +15,11 @@ public class SolrResponseDocument<T> {
     @JsonUnwrapped
     private T result;
     
-    public SolrResponseDocument(T result, String entityType, String searchMatchTitle) {
+    public SolrResponseDocument(T result, String entityType, String searchMatchTitle, String descript) {
         this.result = result;
         this.entityType = entityType;
         this.searchMatchTitle = searchMatchTitle;
+        this.descript = descript;
     }
 
     public String getEntityType() {
