@@ -241,7 +241,7 @@ nbn.mapping.construction.WidgetOptionsCreator = function(interactiveMapper){
 
 
             this.isRenderable = function() {
-                    return _selectedSpecies != undefined && (_selectedDatasets.length > 0 || _singleSpeciesDatasetSelectionTree.nbn_treewidget('isFullyChecked'));
+                    return true; //_selectedSpecies != undefined && (_selectedDatasets.length > 0 || _singleSpeciesDatasetSelectionTree.nbn_treewidget('isFullyChecked'));
             };
 
             this.getRepresentation = function() {
