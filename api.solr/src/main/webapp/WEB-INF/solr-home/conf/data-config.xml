@@ -5,7 +5,7 @@
                 user="NBNImporter"
                 password="Ecowaswashere9"/>
     <document name="nbn-gateway">
-        <entity name="taxon" query="Select t.*, trc.gatewayRecordCount, 'Group: ' + tog.name + ' - Rank: ' + t.rank + ' - Record Count: ' + CAST(ISNULL(trc.gatewayRecordCount, 0) AS varchar) AS descript from TaxonData t INNER JOIN TaxonOutputGroupData tog ON tog.[key] = t.taxonOutputGroupKey  Left join TaxonRecordCountData trc ON trc.pTaxonVersionKey = t.pTaxonVersionKey" transformer="TemplateTransformer">	  
+        <entity name="taxon" query="Select t.*, trc.gatewayRecordCount, tog.name + ', ' + t.rank + ', ' + CAST(ISNULL(trc.gatewayRecordCount, 0) AS varchar) + ' record(s)' AS descript from TaxonData t INNER JOIN TaxonOutputGroupData tog ON tog.[key] = t.taxonOutputGroupKey  Left join TaxonRecordCountData trc ON trc.pTaxonVersionKey = t.pTaxonVersionKey" transformer="TemplateTransformer">	  
             <field column="record_id" template="TAXON-${taxon.taxonVersionKey}" />
             <field column="record_type" template="taxon" />
         </entity>
