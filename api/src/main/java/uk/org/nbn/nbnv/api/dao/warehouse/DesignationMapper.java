@@ -35,4 +35,14 @@ public interface DesignationMapper {
         @Result(property="designation", column="code", javaType=Designation.class, one=@One(select="uk.org.nbn.nbnv.api.dao.warehouse.DesignationMapper.selectByID"))
     })
     List<TaxonDesignation> selectByTaxonVersionKey(String taxonVersionKey);
+
+    @Select("SELECT dtd.* FROM DesignationData d "
+            + "INNER JOIN DesignationTaxonData dtd ON dtd.designationID = d.id "
+            + "INNER JOIN TaxonData t ON t.pTaxonVersionKey = dtd.pTaxonVersionKey "
+            + "WHERE t.taxonVersionKey = #{id} AND dtd.endDate IS NOT NULL")
+    @Results(value = {
+        @Result(property="designation", column="code", javaType=Designation.class, one=@One(select="uk.org.nbn.nbnv.api.dao.warehouse.DesignationMapper.selectByID"))
+    })
+    List<TaxonDesignation> selectArchiveByTaxonVersionKey(String taxonVersionKey);
+
 }

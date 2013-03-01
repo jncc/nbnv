@@ -3,6 +3,7 @@
 <#assign ptaxon=json.readURL("${api}/taxa/${taxon.ptaxonVersionKey}")>
 <#assign synonyms=json.readURL("${api}/taxa/${tvk}/synonyms")>
 <#assign designations=json.readURL("${api}/taxa/${tvk}/designations")>
+<#assign arcdesignations=json.readURL("${api}/taxa/${tvk}/designations/archive")>
 <#assign parent=json.readURL("${api}/taxa/${tvk}/taxonomy")>
 <#assign children=json.readURL("${api}/taxa/${tvk}/children")>
 <#assign datasets=json.readURL("${api}/taxa/${tvk}/datasets")>
@@ -20,7 +21,7 @@
         <@taxonPageTaxonData taxon=taxon outputGroup=output/>
         <#if taxon.taxonVersionKey == ptaxon.taxonVersionKey>
             <@taxonPageSynonyms syn=synonyms/>
-            <@taxonPageDesignations des=designations/>
+            <@taxonPageDesignations des=designations ades=arcdesignations/>
             <@taxonPageLinks links=weblinks/>
         </#if>
         <@taxonPageNBNLinks taxon=ptaxon/>
@@ -136,12 +137,16 @@
     </div>
 </#macro>
 
-<#macro taxonPageDesignations des>
+<#macro taxonPageDesignations des ades>
     <div class="tabbed nbn-taxon-page-taxonomy-container">
         <h3>Designations</h3>
         <#if des?has_content>
+            <h4>Current designation(s)</h4>
+            <#assign w = 0 />
             <table class="nbn-dataset-table nbn-simple-table">
-                <#list des as d>
+                <#list des?sort_by("startDate")?reverse as d>
+                    <#if !d.endDate??>
+                    <#assign w = 1 />
                     <tr>
                         <td width="25%"><a href="/Designations/${d.designation.code}">${d.designation.name}</a></td>
                         <td style="width: 110px;">
@@ -151,7 +156,32 @@
                         </td>
                         <td><#if d.source??>${d.source}</#if></td>
                     </tr>
+                    </#if>
                 </#list>
+                <#if w == 0>
+                    <tr><td>None</td></tr>
+                </#if>
+            </table>
+            <h4>Archived designation(s)</h4>
+            <#assign w = 0 />
+            <table class="nbn-dataset-table nbn-simple-table">
+                <#list ades?sort_by("endDate")?reverse as d>
+                    <#if d.endDate??>
+                    <#assign w = 1 />
+                    <tr>
+                        <td width="25%"><a href="/Designations/${d.designation.code}">${d.designation.name}</a></td>
+                        <td style="width: 110px;">
+                            <#if d.startDate??>From: ${d.startDate}</#if>
+                            <#if d.startDate?? && d.endDate??><br/></#if>
+                            <#if d.endDate??>Until: ${d.endDate}</#if>
+                        </td>
+                        <td><#if d.source??>${d.source}</#if></td>
+                    </tr>
+                    </#if>
+                </#list>
+                <#if w == 0>
+                    <tr><td>None</td></tr>
+                </#if>
             </table>
         <#else>
             <div>None</div>

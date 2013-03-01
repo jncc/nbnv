@@ -75,6 +75,13 @@ public class TaxonResource extends AbstractResource {
     }
 
     @GET
+    @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
+    @Path("{taxonVersionKey}/designations/archive")
+    public List<TaxonDesignation> getArchiveTaxonDesignations(@PathParam("taxonVersionKey") String taxonVersionKey) {
+        return designationMapper.selectArchiveByTaxonVersionKey(taxonVersionKey);
+    }
+
+    @GET
     @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8") 
     @Path("/{taxonVersionKey}/datasets")
     public List<Dataset> getDatasetListForTaxonViewableByUser(@TokenUser User user, @PathParam("taxonVersionKey") String taxonVersionKey) {
