@@ -211,11 +211,11 @@
         <h3>Datasets</h3>
         <#if datasets?has_content>
             <table class="nbn-dataset-table nbn-simple-table">
-                <#list datasets as d>
+                <#list datasets?sort_by("dateUploaded")?reverse as d>
                     <tr>
-                        <td><a href="/Datasets/${d.key}">${d.title}</a></td>
                         <td><a href="/Organisations/${d.organisationID}">${d.organisationName}</a></td>
-                        <td>${d.formattedDateUploaded}</td>
+                        <td><a href="/Datasets/${d.key}">${d.title}</a></td>
+                        <td style="width: 75px">${d.formattedDateUploaded}</td>
                     </tr>
                 </#list>
             </table>
