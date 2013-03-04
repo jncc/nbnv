@@ -105,6 +105,11 @@
             <artifactId>nbnv-api-model</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.reflections</groupId>
+            <artifactId>reflections</artifactId>
+            <version>0.9.8</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

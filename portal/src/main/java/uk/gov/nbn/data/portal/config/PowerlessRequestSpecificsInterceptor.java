@@ -4,6 +4,7 @@
  */
 package uk.gov.nbn.data.portal.config;
 
+import com.sun.jersey.api.client.WebResource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,7 @@ import uk.gov.nbn.data.powerless.json.JSONReaderForFreeMarker;
  */
 public class PowerlessRequestSpecificsInterceptor extends HandlerInterceptorAdapter {   
     @Autowired ApplicationContext context;
+    @Autowired WebResource webResource;
 
     @Override
     public void postHandle(
@@ -33,7 +35,7 @@ public class PowerlessRequestSpecificsInterceptor extends HandlerInterceptorAdap
         if(!(handler instanceof ResourceHttpRequestHandler) && modelAndView != null) {
             modelAndView.addObject("json", new JSONReaderForFreeMarker(new CookiePassthrough(request, response)));     
             modelAndView.addObject("breadcrumbs", BreadcrumbsHelper.getBreadcrumbs(
-                    context.getBeansOfType(HandlerMapping.class).values(), request));     
+                    context.getBeansOfType(HandlerMapping.class).values(), request, webResource));     
         }
     }
 }
