@@ -97,6 +97,7 @@ public class TaxonObservationProvider {
         SELECT("DISTINCT o.datasetKey, dd.*");
         createSelectQuery(params);
         INNER_JOIN("DatasetData dd ON dd.\"key\" = o.datasetKey");
+        ORDER_BY("dd.organisationName ASC, dd.title ASC");
         return SQL();
     }
     
