@@ -32,6 +32,10 @@
                     </select><br/>
                 </div>
             </fieldset>
+                <fieldset>
+                    <legend>Download</legend>
+                    <button id="nbn-site-report-download-button">Download</button> site list
+                </fieldset>
         </div>
         <div class="tabbed" id="nbn-species-site-list-container">
             <h3>Site list</h3>
@@ -39,4 +43,5 @@
         </div>
     <@report_utils.dataset_table providersWithQueryStats=providersWithQueryStats requestParameters=RequestParameters/>
     </form>
+    <@report_utils.downloadTermsDialogue/>
 </@template.master>

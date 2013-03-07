@@ -38,6 +38,15 @@ public class ProviderHelper {
 
         return "('" + StringUtils.collectionToDelimitedString(list, "','") + "')";
     }
+    public static String taxaListToCommaList(List<String> list) {
+        for (String d : list) {
+            if (!d.matches("[A-Z0-9]{16}")) {
+                throw new IllegalArgumentException("Non-taxa key in taxa argument: " + d);
+            }
+        }
+
+        return "('" + StringUtils.collectionToDelimitedString(list, "','") + "')";
+    }
     
     public static Integer getStartYear(String band) {
         int delimIndex = band.indexOf("-");

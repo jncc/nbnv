@@ -73,13 +73,44 @@
             }
         });
     }
-    
+
+   function setupDownloadSitesButton(){
+        $('#nbn-site-report-download-button').click(function(e){
+            $('#nbn-download-terms').dialog({
+                modal: true,
+                width: 800,
+                height: 450,
+                buttons: {
+                    'Accept': function(){
+                        var $form = $('#nbn-species-site-list-form');
+                        var ptvk = $('#nbn-species-site-list-form').attr('ptvk');
+                        nbn.portal.reports.utils.datasetfields.doDeselectDatasetKeys();
+                        var keyValuePairs = nbn.portal.reports.utils.forms.getKeyValuePairsFromForm($form);
+//                        keyValuePairs.featureID = $form.attr("featureID");
+//                        keyValuePairs.taxonOutputGroup = $form.attr("taxonOutputGroupKey");
+                        var queryString = nbn.portal.reports.utils.forms.getQueryStringFromKeyValuePairs(keyValuePairs, false);
+                        var url = $form.attr('api-server') + '/taxa/' + ptvk + '/siteBoundaries/download/' + queryString;
+                        nbn.portal.reports.utils.datasetfields.doSelectDatasetKeys();
+                        $(this).dialog("close");
+                        window.location = url;
+                    },
+                    'Cancel': function(){
+                        $(this).dialog("close");
+                    }
+                }
+            });
+            e.preventDefault();
+        });
+
+    }
+
     function doFirstVisitToPage(){
         refreshSiteListData($('#nbn-species-site-list-form'));
     }
     
     $(document).ready(function(){
         setupFormOnChange();
+        setupDownloadSitesButton();
         doFirstVisitToPage();
     });
 })(jQuery);
