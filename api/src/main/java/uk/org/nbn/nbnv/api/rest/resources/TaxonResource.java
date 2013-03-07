@@ -218,7 +218,7 @@ public class TaxonResource extends AbstractResource {
         for (SiteBoundary site : sites) {
             values = new ArrayList<String>();
             values.add(site.getName());
-            values.add(site.getSiteBoundaryDataset().getNameField());
+            values.add(site.getSiteBoundaryDataset().getTitle());
             values.add(site.getIdentifier());
             downloadHelper.writelnCsv(zip, values);
         }
