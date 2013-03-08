@@ -80,6 +80,7 @@
     }
     
     $(document).ready(function(){
+        $('#nbn-download-terms').hide();
         setupFormOnChange();
         setupDownloadSpeciesButton();
         doFirstVisitToPage();
