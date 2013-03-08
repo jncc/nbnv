@@ -1,9 +1,12 @@
 package uk.org.nbn.nbnv.api.model;
 
+import java.util.List;
+
 public class TaxonDatasetWithQueryStats implements Comparable<TaxonDatasetWithQueryStats>{
     
     private String datasetKey;
     private int querySpecificObservationCount;
+    private List<String> accessPositions;
     private TaxonDataset taxonDataset;
     
     public TaxonDatasetWithQueryStats(){}
@@ -41,6 +44,20 @@ public class TaxonDatasetWithQueryStats implements Comparable<TaxonDatasetWithQu
     @Override
     public int compareTo(TaxonDatasetWithQueryStats that) {
         return this.taxonDataset.getTitle().compareTo(that.taxonDataset.getTitle());
+    }
+
+    /**
+     * @return the accessPositions
+     */
+    public List<String> getAccessPositions() {
+        return accessPositions;
+    }
+
+    /**
+     * @param accessPositions the accessPositions to set
+     */
+    public void setAccessPositions(List<String> accessPositions) {
+        this.accessPositions = accessPositions;
     }
 
     

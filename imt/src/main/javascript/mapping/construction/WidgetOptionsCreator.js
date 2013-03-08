@@ -490,9 +490,22 @@ nbn.mapping.construction.WidgetOptionsCreator = function(interactiveMapper){
                     .append(organisationProviderTitle)
                     .append($('<ul>').addClass('dataset-list').nbn_list({
                         elementRenderFunction: function(data) {
-                            return $('<a>')
-                                .addClass('dataset-title').html(data.dataset.title).attr('href', '/Datasets/' + data.dataset.key).attr('target','_blank')
-                            .add($('<span>').addClass("dataset-description").html(data.dataset.description));
+                            var pa = '';
+                            
+                            if (data.taxonDataset.publicAttribute) pa = ' with attributes';
+                            
+                            var perm = $('<ul>').append(
+                                    $('<li>').text('Public access: records available at ' + data.taxonDataset.publicResolution + pa)
+                                );
+
+                            $.each(data.accessPositions, function (i, p) {
+                                perm.append($('<li>').text('Your enhanced access: ' + p))
+                            });
+
+                            return $('<span>').addClass('dataset-title').append($('<a>')
+                                .html(data.taxonDataset.title).attr('href', '/Datasets/' + data.taxonDataset.key).attr('target','_blank'))
+                            .append(' (' + data.querySpecificObservationCount + ')')
+                            .add($('<span>').addClass("dataset-description").append(perm));
                         },
                         data: datasetProviderData.datasetsWithQueryStats
                     }));
@@ -524,7 +537,7 @@ nbn.mapping.construction.WidgetOptionsCreator = function(interactiveMapper){
 
         var headerDatasetsSelected = $('<div class="ui-widget-header">')
             .append($('<span>').addClass('dataset-title-heading').html('Datasets you have selected'))
-            .append($('<span>').addClass('dataset-description-heading').html('Dataset Description'));
+            .append($('<span>').addClass('dataset-description-heading').html('Access position'));
 
 
         return $('<div>')
@@ -549,7 +562,8 @@ nbn.mapping.construction.WidgetOptionsCreator = function(interactiveMapper){
                         $.getJSON(nbn.util.ServerGeneratedLoadTimeConstants.data_api + "/taxonObservations/providers",{
                             ptvk : query.species,
                             datasetKey: query.datasets,
-                            designation: query.desig
+                            designation: query.desig,
+                            returnAccessPositions: 'true'
                         }, function(data) {
                             _me
                                 .append($('<div>')
