@@ -12,15 +12,9 @@ import java.nio.ByteBuffer;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.Calendar;
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.KeyGenerator;
-import javax.crypto.NoSuchPaddingException;
-import javax.crypto.SecretKey;
+import javax.crypto.*;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
@@ -32,17 +26,16 @@ import javax.crypto.spec.SecretKeySpec;
  */
 public class TokenGenerator {
     private static final int INITALIZATION_VECTOR_SIZE = 16;
-    private static final int KEY_CHECK_VALUE_SIZE = 16;
+    private static final int KEY_CHECK_VALUE_SIZE = 32;
+    private static final String MAC_ALGORITHM = "HmacSHA256";
     private static final String SECRET_KEY_ALGORITHM = "AES";
     private static final String CRYPTO_ALGORITHM = "AES/CBC/PKCS5Padding";
 
-    private final byte[] keyCheckValue;
     private final File keyFile;
     
-    private SecretKey key;
+    private SecretKey key, hmac;
     
     public TokenGenerator(File keyFile) throws NoSuchAlgorithmException, IOException {
-        this.keyCheckValue = new byte[KEY_CHECK_VALUE_SIZE];
         this.keyFile = keyFile;
         if(keyFile.exists()) 
             loadKeys();
@@ -64,7 +57,7 @@ public class TokenGenerator {
      */
     public final synchronized void generateKeys() throws NoSuchAlgorithmException, IOException {
         this.key = KeyGenerator.getInstance(SECRET_KEY_ALGORITHM).generateKey();
-        new SecureRandom().nextBytes(keyCheckValue);
+        this.hmac = KeyGenerator.getInstance(MAC_ALGORITHM).generateKey();
         saveKeys();
     }
     
@@ -79,15 +72,22 @@ public class TokenGenerator {
      */
     public ByteBuffer getMessage(Token token) throws InvalidTokenException, ExpiredTokenException {
         try {
-            if(token.getBytes().length > INITALIZATION_VECTOR_SIZE) {
+            Mac mac = Mac.getInstance(MAC_ALGORITHM);
+            mac.init(hmac);
+            
+            if(token.getBytes().length > INITALIZATION_VECTOR_SIZE + mac.getMacLength()) {
                 ByteBuffer message = ByteBuffer.wrap(token.getBytes());
 
-                Cipher decrypt = Cipher.getInstance(CRYPTO_ALGORITHM);
-                decrypt.init(Cipher.DECRYPT_MODE, key, new IvParameterSpec( getBytes(message, INITALIZATION_VECTOR_SIZE) ));
+                byte[] keyCheckValue = getBytes(message, mac.getMacLength());
+                message.mark(); //store the current place into the buffer
+                
+                //check if this message was created by this authenticator
+                if(Arrays.equals(keyCheckValue, mac.doFinal(getBytes(message, message.remaining())))) {
+                    message.reset(); //return to just after reading the mac message
+                    Cipher decrypt = Cipher.getInstance(CRYPTO_ALGORITHM);
+                    decrypt.init(Cipher.DECRYPT_MODE, key, new IvParameterSpec( getBytes(message, INITALIZATION_VECTOR_SIZE) ));
 
-                ByteBuffer payload = ByteBuffer.wrap(decrypt.doFinal(getBytes(message, message.remaining())));
-                //Check if the first set of bytes is the same key check value
-                if(Arrays.equals(keyCheckValue, getBytes(payload, KEY_CHECK_VALUE_SIZE))) {
+                    ByteBuffer payload = ByteBuffer.wrap(decrypt.doFinal(getBytes(message, message.remaining())));
                     if(payload.getLong() >= Calendar.getInstance().getTimeInMillis())  //is ticket still valid
                         return payload;
                     else 
@@ -118,10 +118,10 @@ public class TokenGenerator {
      *      BYTE_ARRAY_LENGTH           |                   CONTENT
      * -----------------------------------------------------------------------
      * ---------------------------- PLAINTEXT --------------------------------
+     *  32 (byte size of hmac)          | HMAC value of the message including 
+     *                                  |   the plain text vector
      *  @see #INITALIZATION_VECTOR_SIZE | The vector used for the message
      * --------------------------- CIPHER TEXT -------------------------------
-     *  @see #KEY_CHECK_VALUE_SIZE      | Randomly generated id for this 
-     *                                  |   TokenAuthenticator
      *  8 (byte size of long)           | The time in milliseconds from epoch 
      *                                  | when this token expires
      *  message.length                  | A secret message to be encrypted in 
@@ -133,22 +133,28 @@ public class TokenGenerator {
      * @return An Token object with the above byte structure encrypted in 
      *  @see #SECRET_KEY_ALGORITHM
      */
-    public Token generateToken(ByteBuffer messageBuf,  int ttl) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException {
+    public Token generateToken(ByteBuffer messageBuf, int ttl) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException {
         byte[] message = new byte[messageBuf.remaining()];
         messageBuf.get(message);
         try {
             Cipher encrypt = Cipher.getInstance(CRYPTO_ALGORITHM);
             encrypt.init(Cipher.ENCRYPT_MODE, key);
+            Mac mac = Mac.getInstance(MAC_ALGORITHM);
+            mac.init(hmac);
             
-            byte[] payload = encrypt.doFinal(ByteBuffer.allocate(KEY_CHECK_VALUE_SIZE + 8 + message.length) //Encrypt byte buffer
-                .put(keyCheckValue)                                         //store key check
+            byte[] cipherText = encrypt.doFinal(ByteBuffer.allocate(8 + message.length) //Encrypt byte buffer
                 .putLong(Calendar.getInstance().getTimeInMillis() + ttl)    //Store the time when this token becomes invalid
                 .put(message)                                               //Store message
                 .array()
             );                    
             
-            return new Token(ByteBuffer.allocate(INITALIZATION_VECTOR_SIZE + payload.length)
+            byte[] payload = ByteBuffer.allocate(INITALIZATION_VECTOR_SIZE + cipherText.length)
                 .put(encrypt.getIV())
+                .put(cipherText)
+                .array();
+            
+            return new Token(ByteBuffer.allocate(mac.getMacLength() + payload.length)
+                .put(mac.doFinal(payload))
                 .put(payload)
                 .array()
             );
@@ -176,7 +182,9 @@ public class TokenGenerator {
             byte[] keyBytes = new byte[INITALIZATION_VECTOR_SIZE];
             in.read(keyBytes);
             key = new SecretKeySpec(keyBytes, SECRET_KEY_ALGORITHM);
-            in.read(keyCheckValue);
+            byte[] hmacBytes = new byte[KEY_CHECK_VALUE_SIZE];
+            in.read(hmacBytes);
+            hmac = new SecretKeySpec(hmacBytes, MAC_ALGORITHM);
         }
         finally {
             in.close();
@@ -192,7 +200,7 @@ public class TokenGenerator {
         FileOutputStream out = new FileOutputStream(keyFile);
         try {
             out.write(key.getEncoded());
-            out.write(keyCheckValue);
+            out.write(hmac.getEncoded());
             out.flush();
         }
         finally {
