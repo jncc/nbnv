@@ -12,7 +12,7 @@ import uk.org.nbn.nbnv.api.model.Feature;
  * @author Christopher Johnson
  */
 public interface FeatureMapper {    
-    @Select("SELECT * FROM FeatureData WHERE identifier = #{id}")
+    @Select("SELECT id, label, identifier, type FROM FeatureData WHERE identifier = #{id}")
     @Results({
         @Result(
             property="worldBoundingBox", 
