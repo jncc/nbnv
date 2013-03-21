@@ -42,7 +42,7 @@ public class TaxonObservationProvider {
         BEGIN();
         SELECT("taxonOutputGroupKey, COUNT(DISTINCT td.pTaxonVersionKey) querySpecificSpeciesCount");
         createSelectQuery(params);
-        INNER_JOIN("TaxonData td ON o.pTaxonVersionKey = td.pTaxonVersionKey");
+        INNER_JOIN("TaxonTaxonGroupData td ON o.pTaxonVersionKey = td.pTaxonVersionKey");
         GROUP_BY("taxonOutputGroupKey");
         return SQL();
     }

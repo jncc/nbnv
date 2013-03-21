@@ -56,7 +56,7 @@ public interface TaxonMapper {
             + " SELECT td.* FROM tree t"
             + " INNER JOIN TaxonData td ON td.organismKey = t.organismKey AND td.pTaxonVersionKey = td.taxonVersionKey "
             + " WHERE t.[level] > 0"
-            + "ORDER BY t.[level] DESC ")
+            + " ORDER BY t.[level] DESC ")
     List<Taxon> selectAncestryByTVK(String taxonVersionKey);
     
     @Select("SELECT tp.*, ct.name AS commonName "
