@@ -13,25 +13,28 @@ import uk.org.nbn.nbnv.api.rest.resources.ObservationResourceDefaults;
 public class TaxonObservationProvider {
 
     public String filteredSelectRecords(Map<String, Object> params) {
+        String from = createSelect(params, "o.*");
         BEGIN();
         SELECT("*");
-        createSelectQuery(params);
+        FROM(from);
         return SQL();
     }
 
     public String filteredSelectRecordsOrderedByDataset(Map<String, Object> params) {
+        String from = createSelect(params, "o.*");
         BEGIN();
         SELECT("*");
-        createSelectQuery(params);
-        ORDER_BY("datasetKey");
+        FROM(from);
+        ORDER_BY("obs.datasetKey");
         return SQL();
     }
 
     public String filteredSelectOneAttribute(Map<String, Object> params) {
+        String from = createSelect(params, "o.observationID");
         BEGIN();
-        SELECT("o.observationID, dad.label, dad.description, utoad.textValue");
-        createSelectQuery(params);
-        INNER_JOIN("UserTaxonObservationAttributeData utoad ON o.observationID = utoad.observationID");
+        SELECT("obs.observationID, dad.label, dad.description, utoad.textValue");
+        FROM(from);
+        INNER_JOIN("UserTaxonObservationAttributeData utoad ON obs.observationID = utoad.observationID");
         INNER_JOIN("DatasetAttributeData dad ON utoad.attributeID = dad.attributeID");
         WHERE("dad.attributeID = #{attributeID}");
         WHERE("utoad.userID = #{user.id}");
@@ -39,27 +42,30 @@ public class TaxonObservationProvider {
     }
     
     public String filteredSelectGroups(Map<String, Object> params) {
+        String from = createSelect(params, "o.pTaxonVersionKey");
         BEGIN();
-        SELECT("taxonOutputGroupKey, COUNT(DISTINCT td.pTaxonVersionKey) querySpecificSpeciesCount");
-        createSelectQuery(params);
-        INNER_JOIN("TaxonTaxonGroupData td ON o.pTaxonVersionKey = td.pTaxonVersionKey");
-        GROUP_BY("taxonOutputGroupKey");
+        SELECT("td.taxonOutputGroupKey, COUNT(DISTINCT td.pTaxonVersionKey) querySpecificSpeciesCount");
+        FROM(from);
+        INNER_JOIN("TaxonTaxonGroupData td ON obs.pTaxonVersionKey = td.pTaxonVersionKey");
+        GROUP_BY("td.taxonOutputGroupKey");
         return SQL();
     }
     
     public String filteredSelectSpecies(Map<String, Object> params) {
+        String from = createSelect(params, "o.pTaxonVersionKey");
         BEGIN();
-        SELECT("o.pTaxonVersionKey, COUNT(*) querySpecificObservationCount");
-        createSelectQuery(params);
-        GROUP_BY("o.pTaxonVersionKey");
+        SELECT("obs.pTaxonVersionKey, COUNT(*) querySpecificObservationCount");
+        FROM(from);
+        GROUP_BY("obs.pTaxonVersionKey");
         return SQL();
     }
     
     public String filteredSelectDatasets(Map<String, Object> params){
+        String from = createSelect(params, "o.datasetKey");
         BEGIN();
-        SELECT("datasetKey, COUNT(*) querySpecificObservationCount");
-        createSelectQuery(params);
-        GROUP_BY("datasetKey");
+        SELECT("obs.datasetKey, COUNT(*) querySpecificObservationCount");
+        FROM(from);
+        GROUP_BY("obs.datasetKey");
         return SQL();
     }
     
@@ -78,14 +84,15 @@ public class TaxonObservationProvider {
         if(params.containsKey("spatialRelationship") && params.get("spatialRelationship") != null){
             spatialRelationship = (String)params.get("spatialRelationship");
         }
+        String from = createSelect(params, "o.featureID");
         BEGIN();
         SELECT("DISTINCT sbd.featureID, sbd.name, sbd.providerKey, sbd.description, sbd.siteBoundaryDatasetKey, sbd.siteBoundaryCategoryID, fd.identifier");
-        createSelectQuery(params);
+        FROM(from);
         if(ObservationResourceDefaults.SPATIAL_RELATIONSHIP_WITHIN.equals(spatialRelationship)){
-            INNER_JOIN("FeatureContains fc ON o.featureID = fc.containedFeatureID");
+            INNER_JOIN("FeatureContains fc ON obs.featureID = fc.containedFeatureID");
             INNER_JOIN("FeatureData fd ON fc.featureID = fd.id");
         }else{
-            INNER_JOIN("FeatureOverlaps fo ON o.featureID = fo.overlappedFeatureID");
+            INNER_JOIN("FeatureOverlaps fo ON obs.featureID = fo.overlappedFeatureID");
             INNER_JOIN("FeatureData fd ON fo.featureID = fd.id");
         }
         INNER_JOIN("SiteBoundaryData sbd ON fd.id = sbd.featureID");
@@ -93,9 +100,10 @@ public class TaxonObservationProvider {
     }
     
     public String filteredSelectDatasetsProviderNotInstantiated(Map<String, Object> params) {
+        String from = createSelect(params, "o.datasetKey");
         BEGIN();
-        SELECT("DISTINCT o.datasetKey, dd.*");
-        createSelectQuery(params);
+        SELECT("DISTINCT obs.datasetKey, dd.*");
+        FROM(from);
         INNER_JOIN("DatasetData dd ON dd.\"key\" = o.datasetKey");
         ORDER_BY("dd.organisationName ASC, dd.title ASC");
         return SQL();
@@ -108,18 +116,24 @@ public class TaxonObservationProvider {
         return SQL();        
     }
     
-    private void createSelectQuery(Map<String, Object> params) {
-
-        //FROM("UserTaxonObservationData o");
-        FROM ("(SELECT obse.* FROM TaxonObservationDataEnhanced obse "
-                + "INNER JOIN UserTaxonObservationID utoa ON utoa.observationID = obse.id "
-                + "WHERE utoa.userID = #{user.id} "
-                + "UNION ALL "
-                + "SELECT obsp.* FROM TaxonObservationDataPublic obsp "
-                + "WHERE obsp.id NOT IN ( "
-                + "	SELECT utoa.observationID FROM UserTaxonObservationID utoa WHERE utoa.userID = #{user.id} "
-                + ")) o");
-        //WHERE("o.userID = #{user.id}");
+    
+    private String createSelect(Map<String, Object> params, String fields) {
+        String publicSelect = createSelectQuery(params, false, fields);
+        String fullSelect = createSelectQuery(params, true, fields);
+        return "(" + fullSelect + " UNION ALL " + publicSelect + ") obs";
+    }
+    
+    private String createSelectQuery(Map<String, Object> params, boolean full, String fields) {
+        BEGIN();
+        SELECT(fields);
+        if (full) {
+            FROM("TaxonObservationDataEnhanced o");
+            INNER_JOIN("UserTaxonObservationID utoa ON o.observationID = obse.id ");
+            WHERE("utoa.userID = #{user.id}");
+        } else {
+            FROM("TaxonObservationDataPublic o");
+            WHERE("obsp.id NOT IN ( SELECT utoa.observationID FROM UserTaxonObservationID utoa WHERE utoa.userID = #{user.id} )");
+        }
 
         if (params.containsKey("startYear") && (Integer) params.get("startYear") > -1) {
             ProviderHelper.addStartYearFilter((Integer) params.get("startYear"));
@@ -177,6 +191,8 @@ public class TaxonObservationProvider {
             INNER_JOIN("TaxonData td ON td.taxonVersionKey = o.pTaxonVersionKey");
             WHERE("td.taxonOutputGroupKey =  #{taxonOutputGroup}");
         }
+        
+        return SQL();
     }
     
     private void createSelectQueryFromEnhancedRecords(Map<String, Object> params) {
