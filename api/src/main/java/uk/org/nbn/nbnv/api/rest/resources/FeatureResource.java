@@ -26,6 +26,14 @@ public class FeatureResource extends AbstractResource {
     @Autowired SiteBoundaryMapper siteBoundaryMapper;
     
     @GET
+    @Path("/{id: [0-9]+}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @SolrResolver("FEATURE")
+    public Feature getFeatureId(@PathParam("id") int featureId) {
+        return featureMapper.getFeatureID(featureId);
+    }
+
+    @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     @SolrResolver("FEATURE")

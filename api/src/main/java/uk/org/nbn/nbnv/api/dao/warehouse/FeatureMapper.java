@@ -28,4 +28,21 @@ public interface FeatureMapper {
         )
     })
     Feature getFeature(String featureId);
+
+    @Select("SELECT id, label, identifier, type FROM FeatureData WHERE id = #{id}")
+    @Results({
+        @Result(
+            property="worldBoundingBox", 
+            column="id", 
+            javaType=BoundingBox.class, 
+            one=@One(select="uk.org.nbn.nbnv.api.dao.warehouse.BoundingBoxMapper.getWorldBoundingBox")
+        ),
+        @Result(
+            property="nativeBoundingBox", 
+            column="id", 
+            javaType=BoundingBox.class, 
+            one=@One(select="uk.org.nbn.nbnv.api.dao.warehouse.BoundingBoxMapper.getNativeBoundingBox")
+        )
+    })
+    Feature getFeatureID(int featureId);
 }
