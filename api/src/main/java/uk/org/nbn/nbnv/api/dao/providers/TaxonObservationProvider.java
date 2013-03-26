@@ -46,7 +46,7 @@ public class TaxonObservationProvider {
         BEGIN();
         SELECT("td.taxonOutputGroupKey, COUNT(DISTINCT td.pTaxonVersionKey) querySpecificSpeciesCount");
         FROM(from);
-        INNER_JOIN("TaxonTaxonGroupData td ON obs.pTaxonVersionKey = td.pTaxonVersionKey");
+        INNER_JOIN("TaxonTaxonOutputGroupData td ON obs.pTaxonVersionKey = td.pTaxonVersionKey");
         GROUP_BY("td.taxonOutputGroupKey");
         return SQL();
     }
@@ -104,7 +104,7 @@ public class TaxonObservationProvider {
         BEGIN();
         SELECT("DISTINCT obs.datasetKey, dd.*");
         FROM(from);
-        INNER_JOIN("DatasetData dd ON dd.\"key\" = o.datasetKey");
+        INNER_JOIN("DatasetData dd ON dd.\"key\" = obs.datasetKey");
         ORDER_BY("dd.organisationName ASC, dd.title ASC");
         return SQL();
     }
@@ -128,11 +128,11 @@ public class TaxonObservationProvider {
         SELECT(fields);
         if (full) {
             FROM("TaxonObservationDataEnhanced o");
-            INNER_JOIN("UserTaxonObservationID utoa ON o.observationID = obse.id ");
+            INNER_JOIN("UserTaxonObservationID utoa ON utoa.observationID = o.id ");
             WHERE("utoa.userID = #{user.id}");
         } else {
             FROM("TaxonObservationDataPublic o");
-            WHERE("obsp.id NOT IN ( SELECT utoa.observationID FROM UserTaxonObservationID utoa WHERE utoa.userID = #{user.id} )");
+            WHERE("o.id NOT IN ( SELECT utoa.observationID FROM UserTaxonObservationID utoa WHERE utoa.userID = #{user.id} )");
         }
 
         if (params.containsKey("startYear") && (Integer) params.get("startYear") > -1) {
