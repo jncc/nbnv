@@ -25,7 +25,7 @@ import uk.org.nbn.nbnv.api.model.User;
  *
  * @author Paul Gilbertson
  */
-@CacheNamespace(implementation=org.mybatis.caches.oscache.OSCache.class)
+//@CacheNamespace(implementation=org.mybatis.caches.oscache.OSCache.class)
 public interface TaxonObservationMapper {
     @Select("SELECT * FROM UserTaxonObservationData WHERE observationID = #{id} AND userID = #{userKey}")
     public TaxonObservation selectById(@Param("id") int id, @Param("userKey") int userKey);

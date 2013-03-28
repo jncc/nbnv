@@ -18,6 +18,7 @@ public class TaxonObservation {
     private int featureID;
     private String location;
     private String gridRef;
+    private String resolution;
     private String polygonKey;
     private String projection;
     private String taxonVersionKey;
@@ -231,5 +232,19 @@ public class TaxonObservation {
 
     public void setDateType(String dateType) {
         this.dateType = dateType;
+    }
+
+    /**
+     * @return the resolution
+     */
+    public String getResolution() {
+        return resolution;
+    }
+
+    /**
+     * @param resolution the resolution to set
+     */
+    public void setResolution(String resolution) {
+        this.resolution = resolution;
     }
 }
