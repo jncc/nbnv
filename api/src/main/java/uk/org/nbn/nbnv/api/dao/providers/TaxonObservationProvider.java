@@ -175,11 +175,11 @@ public class TaxonObservationProvider {
             }
             if (ObservationResourceDefaults.SPATIAL_RELATIONSHIP_WITHIN.equals(spatialRelationship)) {
                 INNER_JOIN("FeatureContains fc ON fc.containedFeatureID = o.featureID");
-                INNER_JOIN("FeatureData fd ON fd.id = fc.featureID");
+                INNER_JOIN("FeatureIdentifierData fd ON fd.id = fc.featureID");
                 WHERE("fd.identifier = #{featureID}");
             } else {
                 INNER_JOIN("FeatureOverlaps fo ON fo.overlappedFeatureID = o.featureID");
-                INNER_JOIN("FeatureData fd ON fd.id = fo.featureID");
+                INNER_JOIN("FeatureIdentifierData fd ON fd.id = fo.featureID");
                 WHERE("fd.identifier = #{featureID}");
             }
         }
@@ -239,11 +239,11 @@ public class TaxonObservationProvider {
             }
             if (ObservationResourceDefaults.SPATIAL_RELATIONSHIP_WITHIN.equals(spatialRelationship)) {
                 INNER_JOIN("FeatureContains fc ON fc.containedFeatureID = o.featureID");
-                INNER_JOIN("FeatureData fd ON fd.id = fc.featureID");
+                INNER_JOIN("FeatureIdentifierData fd ON fd.id = fc.featureID");
                 WHERE("fd.identifier = #{featureID}");
             } else {
                 INNER_JOIN("FeatureOverlaps fo ON fo.overlappedFeatureID = o.featureID");
-                INNER_JOIN("FeatureData fd ON fd.id = fo.featureID");
+                INNER_JOIN("FeatureIdentifierData fd ON fd.id = fo.featureID");
                 WHERE("fd.identifier = #{featureID}");
             }
         }
