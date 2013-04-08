@@ -20,6 +20,9 @@ import uk.gov.nbn.data.gis.providers.annotations.QueryParam;
 import uk.gov.nbn.data.gis.providers.annotations.ServiceURL;
 import uk.org.nbn.nbnv.api.model.User;
 import org.jooq.Condition;
+import org.jooq.Field;
+import org.jooq.Record;
+import org.jooq.Table;
 import static uk.gov.nbn.data.dao.jooq.Tables.*;
 
 import org.jooq.util.sqlserver.SQLServerFactory;
@@ -146,13 +149,9 @@ public class SingleSpeciesMap {
                 .and(MAPPINGDATAENHANCED.RESOLUTIONID.eq(LAYERS.get(layerName)));
         enhancedCondition = MapHelper.createTemporalSegment(enhancedCondition, startYear, endYear, MAPPINGDATAENHANCED.STARTDATE, MAPPINGDATAENHANCED.ENDDATE);
         enhancedCondition = MapHelper.createInDatasetsSegment(enhancedCondition, MAPPINGDATAENHANCED.DATASETKEY, datasetKeys);
-        
-        return MapHelper.getMapData(FEATUREDATA.GEOM, FEATUREDATA.IDENTIFIER, 4326 ,create
-            .select(FEATUREDATA.GEOM, FEATUREDATA.IDENTIFIER, FEATUREDATA.LABEL)
-            .from(FEATUREDATA)
-            .where(
-                FEATUREDATA.ID.in(create
-                    .select(MAPPINGDATAPUBLIC.FEATUREID)
+
+        Table<Record> nested =                 create
+                    .select(MAPPINGDATAPUBLIC.FEATUREID.as("FEATUREID"))
                     .from(MAPPINGDATAPUBLIC)
                     .join(TAXONTREE).on(TAXONTREE.CHILDPTVK.eq(MAPPINGDATAPUBLIC.PTAXONVERSIONKEY))
                     .where(publicCondition)
@@ -162,10 +161,13 @@ public class SingleSpeciesMap {
                         .join(TAXONTREE).on(TAXONTREE.CHILDPTVK.eq(MAPPINGDATAENHANCED.PTAXONVERSIONKEY))
                         .join(USERTAXONOBSERVATIONID).on(USERTAXONOBSERVATIONID.OBSERVATIONID.eq(MAPPINGDATAENHANCED.ID))
                         .where(enhancedCondition)
-                    )
-                )
-            )
-        );
+                    ).asTable("nested");
+
+        return MapHelper.getMapData(FEATUREDATA.GEOM, FEATUREDATA.IDENTIFIER, 4326 ,create
+            .select(FEATUREDATA.GEOM, FEATUREDATA.IDENTIFIER, FEATUREDATA.LABEL)
+            .from(FEATUREDATA.as("fd"))
+            .join(nested).on("nested.FEATUREID = fd.id"));
+           
     }
     
     /** The following method will create a list of layer names which will be used
