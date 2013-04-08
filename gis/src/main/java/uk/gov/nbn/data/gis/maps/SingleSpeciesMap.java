@@ -165,8 +165,8 @@ public class SingleSpeciesMap {
 
         return MapHelper.getMapData(FEATUREDATA.GEOM, FEATUREDATA.IDENTIFIER, 4326 ,create
             .select(FEATUREDATA.GEOM, FEATUREDATA.IDENTIFIER, FEATUREDATA.LABEL)
-            .from(FEATUREDATA.as("fd"))
-            .join(nested).on("nested.FEATUREID = fd.id"));
+            .from(FEATUREDATA)
+            .join(nested).on("nested.FEATUREID = [dbo].[FeatureData].id"));
            
     }
     
