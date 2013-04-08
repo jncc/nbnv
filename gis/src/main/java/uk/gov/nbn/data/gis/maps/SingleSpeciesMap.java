@@ -134,22 +134,35 @@ public class SingleSpeciesMap {
                                     String startYear, String endYear, 
                                     boolean absence, String layerName) {
         SQLServerFactory create = new SQLServerFactory();
-        Condition condition = TAXONTREE.NODEPTVK.eq(taxonKey)
-                .and(USERMAPPINGDATA.USERID.eq(user.getId()).or(USERMAPPINGDATA.USERID.eq(1)))
-                .and(USERMAPPINGDATA.ABSENCE.eq(absence))
-                .and(USERMAPPINGDATA.RESOLUTIONID.eq(LAYERS.get(layerName)));
-        condition = MapHelper.createTemporalSegment(condition, startYear, endYear, USERMAPPINGDATA.STARTDATE, USERMAPPINGDATA.ENDDATE);
-        condition = MapHelper.createInDatasetsSegment(condition, USERMAPPINGDATA.DATASETKEY, datasetKeys);
+        Condition publicCondition = TAXONTREE.NODEPTVK.eq(taxonKey)
+                .and(MAPPINGDATAPUBLIC.ABSENCE.eq(absence))
+                .and(MAPPINGDATAPUBLIC.RESOLUTIONID.eq(LAYERS.get(layerName)));
+        publicCondition = MapHelper.createTemporalSegment(publicCondition, startYear, endYear, MAPPINGDATAPUBLIC.STARTDATE, MAPPINGDATAPUBLIC.ENDDATE);
+        publicCondition = MapHelper.createInDatasetsSegment(publicCondition, MAPPINGDATAPUBLIC.DATASETKEY, datasetKeys);
 
+        Condition enhancedCondition = TAXONTREE.NODEPTVK.eq(taxonKey)
+                .and(USERTAXONOBSERVATIONID.USERID.eq(user.getId()))
+                .and(MAPPINGDATAENHANCED.ABSENCE.eq(absence))
+                .and(MAPPINGDATAENHANCED.RESOLUTIONID.eq(LAYERS.get(layerName)));
+        enhancedCondition = MapHelper.createTemporalSegment(enhancedCondition, startYear, endYear, MAPPINGDATAENHANCED.STARTDATE, MAPPINGDATAENHANCED.ENDDATE);
+        enhancedCondition = MapHelper.createInDatasetsSegment(enhancedCondition, MAPPINGDATAENHANCED.DATASETKEY, datasetKeys);
+        
         return MapHelper.getMapData(FEATUREDATA.GEOM, FEATUREDATA.IDENTIFIER, 4326 ,create
             .select(FEATUREDATA.GEOM, FEATUREDATA.IDENTIFIER, FEATUREDATA.LABEL)
             .from(FEATUREDATA)
             .where(
                 FEATUREDATA.ID.in(create
-                    .select(USERMAPPINGDATA.FEATUREID)
-                    .from(USERMAPPINGDATA)
-                    .join(TAXONTREE).on(TAXONTREE.CHILDPTVK.eq(USERMAPPINGDATA.PTAXONVERSIONKEY))
-                    .where(condition)
+                    .select(MAPPINGDATAPUBLIC.FEATUREID)
+                    .from(MAPPINGDATAPUBLIC)
+                    .join(TAXONTREE).on(TAXONTREE.CHILDPTVK.eq(MAPPINGDATAPUBLIC.PTAXONVERSIONKEY))
+                    .where(publicCondition)
+                    .unionAll(create
+                        .select(MAPPINGDATAENHANCED.FEATUREID)
+                        .from(MAPPINGDATAENHANCED)
+                        .join(TAXONTREE).on(TAXONTREE.CHILDPTVK.eq(MAPPINGDATAENHANCED.PTAXONVERSIONKEY))
+                        .join(USERTAXONOBSERVATIONID).on(USERTAXONOBSERVATIONID.OBSERVATIONID.eq(MAPPINGDATAENHANCED.ID))
+                        .where(enhancedCondition)
+                    )
                 )
             )
         );
