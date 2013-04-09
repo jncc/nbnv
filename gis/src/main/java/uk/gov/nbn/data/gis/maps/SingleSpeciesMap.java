@@ -22,6 +22,7 @@ import uk.org.nbn.nbnv.api.model.User;
 import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.Record;
+import org.jooq.Select;
 import org.jooq.Table;
 import static uk.gov.nbn.data.dao.jooq.Tables.*;
 
@@ -150,7 +151,7 @@ public class SingleSpeciesMap {
         enhancedCondition = MapHelper.createTemporalSegment(enhancedCondition, startYear, endYear, MAPPINGDATAENHANCED.STARTDATE, MAPPINGDATAENHANCED.ENDDATE);
         enhancedCondition = MapHelper.createInDatasetsSegment(enhancedCondition, MAPPINGDATAENHANCED.DATASETKEY, datasetKeys);
 
-        Table<Record> nested =                 create
+        Select<Record> nested = create
                     .select(MAPPINGDATAPUBLIC.FEATUREID.as("FEATUREID"))
                     .from(MAPPINGDATAPUBLIC)
                     .join(TAXONTREE).on(TAXONTREE.CHILDPTVK.eq(MAPPINGDATAPUBLIC.PTAXONVERSIONKEY))
@@ -161,12 +162,12 @@ public class SingleSpeciesMap {
                         .join(TAXONTREE).on(TAXONTREE.CHILDPTVK.eq(MAPPINGDATAENHANCED.PTAXONVERSIONKEY))
                         .join(USERTAXONOBSERVATIONID).on(USERTAXONOBSERVATIONID.OBSERVATIONID.eq(MAPPINGDATAENHANCED.ID))
                         .where(enhancedCondition)
-                    ).asTable("nested");
+                    );
 
         return MapHelper.getMapData(FEATUREDATA.GEOM, FEATUREDATA.IDENTIFIER, 4326 ,create
             .select(FEATUREDATA.GEOM, FEATUREDATA.IDENTIFIER, FEATUREDATA.LABEL)
             .from(FEATUREDATA)
-            .join(nested).on("nested.FEATUREID = [dbo].[FeatureData].id"));
+            .join(nested).on(FEATUREDATA.ID.eq(nested.getField(MAPPINGDATAPUBLIC.ID))));
            
     }
     
