@@ -123,12 +123,12 @@ public class DatasetSpeciesDensityMap {
                         .where(enhancedCondition));
                 
                 SelectHavingStep squares = create
-                        .select((Field<Integer>)observations.getField(0).as("featureID"), countDistinct(observations.getField(1).as("species")))
+                        .select((Field<Integer>)observations.getField(0).as("featureID"), countDistinct(observations.getField(1)).as("species"))
                         .from(observations)
                         .groupBy(observations.getField(0));
 
                 return MapHelper.getMapData(FEATUREDATA.GEOM, FEATUREDATA.IDENTIFIER, 4326, create
-                        .select(FEATUREDATA.GEOM, FEATUREDATA.IDENTIFIER, FEATUREDATA.LABEL, observations.getField("species"))
+                        .select(FEATUREDATA.GEOM, FEATUREDATA.IDENTIFIER, FEATUREDATA.LABEL, squares.getField("species"))
                         .from(squares)
                         .join(FEATUREDATA).on(FEATUREDATA.ID.eq((Field<Integer>)squares.getField(0))));
             }
