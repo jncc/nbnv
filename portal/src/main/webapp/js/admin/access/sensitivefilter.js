@@ -32,10 +32,12 @@ nbn.nbnv.ui.sensitivefilter = function() {
 			.append("All ")
 			.append(select).append(" records");
 		
-		//this.setresultText("All <b>non-sensitive</b> records");
-		
 		return data;
 	};
+        
+        this._renderHeader = function() {
+            return $('<h3>').append($('<span>').addClass('filterheader').append('Sensitive Filter')).append($('<span>').addClass('resulttext').append(this.getresultText()));
+        }
 	
 	this.getJSON = function() {
 		return {

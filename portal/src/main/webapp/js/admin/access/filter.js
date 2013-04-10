@@ -44,7 +44,14 @@ nbn.nbnv.ui.filter = function() {
 		return data;
 	};
 	
-	this._render = function() {
+        this._render = function(div) {
+            //var div = $('<div>')
+                        div.append(this.sensitivefilter._renderHeader())
+                        .append(this.sensitivefilter._render());
+            //data.accordion({ heightStyle: 'content' });
+            //return data;
+        }
+	this._renderOld = function() {
 		var _me = this;
 		
 		var data = $('<div>');
