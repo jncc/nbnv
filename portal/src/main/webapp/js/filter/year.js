@@ -16,7 +16,7 @@ nbn.nbnv.ui.filter.year = function(json) {
     }
 
     this._renderHeader = function() {
-        return $('<h3>')
+        return $('<h3>').attr('filtertype', 'year')
             .append($('<span>').addClass('filterheader').append('Year Filter'))
             .append($('<span>').attr('id', 'yearResult').addClass('resulttext'));
     };
@@ -38,8 +38,42 @@ nbn.nbnv.ui.filter.year = function(json) {
                 _me._endYear = $(this).val();
             });
                                 
-        var allRecords = $('<div>').append($('<input>').attr('type', 'radio').attr('id', 'yearfilteralltrue').attr('name', 'yearfilterall').attr('value', 'true')).append('All records');
-	var filterRecords = $('<div>').append($('<input>').attr('type', 'radio').attr('name', 'yearfilterall').attr('value', 'false')).append("Filter to between ").append(startInput).append(" and ").append(endInput);
+        var allRecords = $('<div>')
+            .append($('<input>')
+                .attr('type', 'radio')
+                .attr('name', 'yearfilterall')
+                .attr('value', 'true')
+                .change(function() {
+                    if (this.checked) {
+                        _me._all = true;
+                        startInput.prop('disabled', true);
+                        endInput.prop('disabled', true);
+                    }
+                })
+            ).append('All records');
+
+	var filterRecords = $('<div>')
+            .append($('<input>')
+                .attr('type', 'radio')
+                .attr('name', 'yearfilterall')
+                .attr('value', 'false')
+                .change(function() {
+                    if (this.checked) {
+                        _me._all = false;
+                        startInput.prop('disabled', false);
+                        endInput.prop('disabled', false);
+                    }
+                })
+            ).append("Filter to between ")
+            .append(startInput)
+            .append(" and ")
+            .append(endInput);
+        
+        if (this._all) {
+            allRecords.children('input').attr('checked', 'checked').change();
+        } else {
+            filterRecords.children('input').attr('checked', 'checked').change();
+        }
         
         data.append(allRecords).append(filterRecords);
         

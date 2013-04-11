@@ -9,7 +9,7 @@ nbn.nbnv.ui.filter.sensitive = function(json) {
     this._value = json.sensitive;
     
     this._renderHeader = function() {
-        return $('<h3>')
+        return $('<h3>').attr('filtertype', 'sensitive')
             .append($('<span>').addClass('filterheader').append('Sensitive Filter'))
             .append($('<span>').attr('id', 'sensitiveResult').addClass('resulttext'));
     };
