@@ -40,6 +40,8 @@
                             year._onEnter();
                         } else if (newFilter == 'spatial') {
                             spatial._onEnter();
+                        } else if (newFilter == 'taxon') {
+                            taxon._onEnter();
                         }
 
                         if (oldFilter == 'sensitive') {
@@ -48,6 +50,8 @@
                             year._onExit();
                         } else if (oldFilter == 'spatial') {
                             spatial._onExit();
+                        } else if (oldFilter == 'taxon') {
+                            taxon._onExit();
                         }
                     }
                 });

@@ -30,12 +30,13 @@ nbn.nbnv.ui.filter.taxon = function(json) {
             .autocomplete({
                 source: function(request, response) {
                     $.getJSON(nbn.nbnv.api + '/taxa?q=' + request.term, function(data) {
-                        response($.map(data.results, function(item) { return item; }))
+                        response($.map(data.results, function(item) { item.value = item.name; return item; }))
                     });
                 },
                 select: function(event, ui) {
                     _me._taxonName = ui.item.name;
                     _me._tvk = ui.item.ptaxonVersionKey;
+                    speciesAutoComplete.val(ui.item.name);
                 }
             });
         
@@ -83,5 +84,29 @@ nbn.nbnv.ui.filter.taxon = function(json) {
         dataDiv.append(allRecords).append(filterRecords);
 
         return dataDiv;
+    };
+    
+    this._onEnter = function() {
+        $('#taxonResult').text('');
+    };
+    
+    this._onExit = function() {
+        var text = '';
+        
+        if (this._all) {
+            text = 'All species'
+        } else {
+            text = this._taxonName + ' records';
+        }
+        
+        $('#taxonResult').text(text);
+    };
+    
+    this.getJson = function() {
+        if (this._all) {
+            return { taxon: { all: true }};
+        } else {
+            return { taxon: { all: false, tvk: this._tvk }};
+        }
     };
 };

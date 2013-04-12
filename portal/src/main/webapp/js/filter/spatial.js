@@ -134,7 +134,7 @@ nbn.nbnv.ui.filter.spatial = function(json) {
         var text = '';
         
         if (this._all) {
-            text = 'All years'
+            text = 'All records'
         } else {
             text = 'Records ' + this._matchType + ' ' + this._featureName;
         }
