@@ -1,6 +1,6 @@
 
 <@template.master title="Request Permission"
-    javascripts=["/js/jquery-ui-1.8.23.custom.min.js","/js/filter/sensitive.js","/js/filter/year.js","/js/filter/spatial.js","/js/filter/taxon.js"] 
+    javascripts=["/js/jquery-ui-1.8.23.custom.min.js","/js/filter/sensitive.js","/js/filter/year.js","/js/filter/spatial.js","/js/filter/taxon.js","/js/filter/dataset.js","/js/admin/access/requestReason.js","/js/admin/access/requestResult.js","/js/admin/access/timeLimit.js"] 
     csss=["/css/smoothness/jquery-ui-1.8.23.custom.css"]>
 
     <style>
@@ -15,11 +15,17 @@
 	$(function() {
                 var json = {};
 		
+                var reason = new nbn.nbnv.ui.requestReason();
                 var sensitive = new nbn.nbnv.ui.filter.sensitive();
                 var year = new nbn.nbnv.ui.filter.year();
                 var spatial = new nbn.nbnv.ui.filter.spatial();
                 var taxon = new nbn.nbnv.ui.filter.taxon();
+                var dataset = new nbn.nbnv.ui.filter.dataset();
+                var timeLimit = new nbn.nbnv.ui.timeLimit();
+                var result = new nbn.nbnv.ui.requestResult();
 
+		$('#filter').append(reason._renderHeader());
+		$('#filter').append(reason._renderPanel());
 		$('#filter').append(sensitive._renderHeader());
 		$('#filter').append(sensitive._renderPanel());
 		$('#filter').append(spatial._renderHeader());
@@ -28,6 +34,13 @@
 		$('#filter').append(taxon._renderPanel());
 		$('#filter').append(year._renderHeader());
 		$('#filter').append(year._renderPanel());
+		$('#filter').append(dataset._renderHeader());
+		$('#filter').append(dataset._renderPanel());
+		$('#filter').append(timeLimit._renderHeader());
+		$('#filter').append(timeLimit._renderPanel());
+		$('#filter').append(result._renderHeader());
+		$('#filter').append(result._renderPanel());
+
                 $('#filter').accordion({
                     autoHeight: false,
                     change: function(event, ui) {
@@ -42,6 +55,8 @@
                             spatial._onEnter();
                         } else if (newFilter == 'taxon') {
                             taxon._onEnter();
+                        } else if (newFilter == 'dataset') {
+                            dataset._onEnter();
                         }
 
                         if (oldFilter == 'sensitive') {
@@ -52,6 +67,8 @@
                             spatial._onExit();
                         } else if (oldFilter == 'taxon') {
                             taxon._onExit();
+                        } else if (oldFilter == 'dataset') {
+                            dataset._onExit();
                         }
                     }
                 });
@@ -71,20 +88,4 @@
 	<h1>Request Enhanced Access</h1>
 	<div id="filter">
         </div>
-
-	<button id="next">Next &gt;</button><button id="cancel">Cancel</button>
-
-<!--            <h3><span class="filterheader">Request Details</span></h3>
-            <div>TODO</div>
-            <h3><span class="filterheader">Sensitive Filter</span></h3>
-            <div id="sensitive-filter"></div>
-            <h3><span class="filterheader">Taxon Filter</span></h3>
-            <div id="taxon-filter">Taxon filter</div>
-            <h3><span class="filterheader">Spatial Filter</span></h3>
-            <div id="spatial-filter">Spatial filter</div>
-            <h3><span class="filterheader">Temporal Filter</span></h3>
-            <div id="temporal-filter">Temporal filter</div>
-            <h3><span class="filterheader">Dataset Filter</span></h3>
-            <div id="dataset-filter">Dataset filter</div> -->
-
 </@template.master>
