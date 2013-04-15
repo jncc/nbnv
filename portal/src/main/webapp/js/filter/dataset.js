@@ -45,8 +45,12 @@ nbn.nbnv.ui.filter.dataset = function(json) {
                                 })
                             )
                         ).append($('<td>')
-                            .addClass('dataset-label')
-                            .append(td.organisationName + ' - ' + td.title)
+                            .append($('<a>')
+                                .attr('href', '/Datasets/' + td.key)
+                                .attr('target', '_blank')
+                                .addClass('dataset-label')
+                                .append(td.organisationName + ' - ' + td.title)
+                            )
                         );
                         
                     datasetTable.append(dr);
