@@ -19,9 +19,13 @@ nbn.nbnv.ui.requestReason = function() {
     this._purpose = 1;
     this._details = '';
     
+    var username = 'Myself';
+    var purposename = 'Personal interest';
+    
     this._renderHeader = function() {
-        return $('<h3>')
-            .append($('<span>').addClass('filterheader').append('Request Access to Records'));
+        return $('<h3>').attr('filtertype', 'reason')
+            .append($('<span>').addClass('filterheader').append('Request Access to Records'))
+            .append($('<span>').attr('id', 'reasonResult').addClass('resulttext'));
     };
     
     this._renderPanel = function() {
@@ -36,6 +40,7 @@ nbn.nbnv.ui.requestReason = function() {
                 .append($('<option>').text('Organisation #2').attr('value', '3'))
                 .change(function() {
                     _me._userID = $(this).val();
+                    username = $(this).find("option:selected").text();
                 })
             ).append($('<div>').addClass('queryBlock')
                 .text("I am requesting data for the following purpose:")
@@ -51,6 +56,8 @@ nbn.nbnv.ui.requestReason = function() {
                 .append($('<option>').text('Statutory work').attr('value', '9'))
                 .change(function() {
                     _me._purpose = $(this).val();
+                    purposename = $(this).find("option:selected").text();
+                    
                     $('#purposedescription').html('');
                     $('#purposedescription').append($('<p>')
                         .append($(this).find("option:selected").text())
@@ -73,4 +80,23 @@ nbn.nbnv.ui.requestReason = function() {
 
         return data;
     };
+    
+    this._onEnter = function() {
+        $('#reasonResult').text('');
+    };
+    
+    this._onExit = function() {
+        var text = username + ' - ' + purposename;
+        
+        $('#reasonResult').text(text);
+    };
+    
+    this.getJson = function() {
+        if (this._all) {
+            return { time: { all: true }};
+        } else {
+            return { time: { all: false, date: this._date.format('DD/MM/YYYY') }};
+        }
+    };
+
 };

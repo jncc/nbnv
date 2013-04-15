@@ -60,6 +60,8 @@
                             dataset._onEnter();
                         } else if (newFilter == 'timeLimit') {
                             timeLimit._onEnter();
+                        } else if (newFilter == 'reason') {
+                            reason._onEnter();
                         }
 
                         if (oldFilter == 'sensitive') {
@@ -74,6 +76,8 @@
                             dataset._onExit();
                         } else if (oldFilter == 'timeLimit') {
                             timeLimit._onExit();
+                        } else if (oldFilter == 'reason') {
+                            reason._onExit();
                         }
                     }
                 });
