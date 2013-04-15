@@ -7,6 +7,7 @@
         .filterheader { font-weight: bold; padding-left: 25px; }
         .resulttext { padding-left: 25px; }
         .comboSpan { padding-left: 25px; width: 100px; display: inline-block; }
+        .queryBlock { padding-top: 1em; }
     </style>
     <script>
 	var filter;

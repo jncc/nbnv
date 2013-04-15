@@ -3,12 +3,30 @@ nbn.nbnv = nbn.nbnv || {};
 nbn.nbnv.ui = nbn.nbnv.ui || {};
 
 nbn.nbnv.ui.requestReason = function() {
+    var purposes = {
+        '1' : 'Data is for personal interest only and will not be passed on to other people. Examples – a local natural history society creating a recording checklist for a site or identifying gaps to target local recording effort; a county recorder checking the distribution of a species for verification purposes, commenting on records to improve data quality, comparing the NBN Gateway with other data sources.',
+        '2' : 'Small scale student assignments (but not dissertations), environmental education – e.g. producing a leaflet. Non commercial training products.',
+        '3' : 'Research project, for example part of formal academic study, especially where this is likely to lead to a publication.',
+        '4' : 'Publication of data in printed or web-based media. Any journalistic or media use – e.g. BBC website. Publication of data, e.g. a distribution atlas or species identification guide.',
+        '5' : 'Any non commercial work associated with the core business of an environmental NGO.',
+        '6' : 'Data will be used to inform land management and decision making carried out by staff for a private or public landowner, e.g. MOD, Department of Transport, Network Rail, Local Authorities.  This includes use of data to inform forward planning and development control decisions, including mitigation and biodiversity offsetting.',
+        '7' : 'Professional data services provided to paying clients by private sector organisations such as ecological consultants.  This includes desk studies for Environmental Impact Assessments, extended Phase I ecological surveys, agri-environment application surveys.',
+        '8' : 'Professional data services provided to paying clients by non-profit organisations such as local environmental records centres, local recording groups and national recording schemes.',
+        '9' : 'Any work that is connected with the core business of an organisation that has a statutory responsibility, such as Natural England, the Environment Agency or Forestry Commission.  This includes statutory nature conservation, regulatory functions and reporting.'
+    };
+    
+    this._userID = 1;
+    this._purpose = 1;
+    this._details = '';
+    
     this._renderHeader = function() {
         return $('<h3>')
             .append($('<span>').addClass('filterheader').append('Request Access to Records'));
     };
     
     this._renderPanel = function() {
+        var _me = this;
+        
         var data = $('<div>')
             .append($('<div>')
                 .text("I requesting access for:")
@@ -17,9 +35,9 @@ nbn.nbnv.ui.requestReason = function() {
                 .append($('<option>').text('Organisation #1').attr('value', '2'))
                 .append($('<option>').text('Organisation #2').attr('value', '3'))
                 .change(function() {
-                    //role = $(this).val();
+                    _me._userID = $(this).val();
                 })
-            ).append($('<div>')
+            ).append($('<div>').addClass('queryBlock')
                 .text("I am requesting data for the following purpose:")
             ).append($('<select>')
                 .append($('<option>').text('Personal interest').attr('value', '1'))
@@ -32,18 +50,24 @@ nbn.nbnv.ui.requestReason = function() {
                 .append($('<option>').text('Data provision and interpretation services (non-profit)').attr('value', '8'))
                 .append($('<option>').text('Statutory work').attr('value', '9'))
                 .change(function() {
-                    //purpose = $(this).val();
+                    _me._purpose = $(this).val();
+                    $('#purposedescription').html('');
+                    $('#purposedescription').append($('<p>')
+                        .append($(this).find("option:selected").text())
+                        .append(' - ')
+                        .append(purposes[$(this).val()])
+                    );
                 })
-            ).append($('<div>')
-                .append($('<p>').append('Purpose description here ####'))
-            ).append($('<div>')
+            ).append($('<div>').addClass('resulttext').attr('id', 'purposedescription')
+                .append($('<p>').append('Personal interest - ').append(purposes['1']))
+            ).append($('<div>').addClass('queryBlock')
                 .text("Detailed description of purpose:")
             ).append($('<textarea>')
                 .attr('cols', '75')
                 .attr('rows', '15')
                 .text("Please enter details here")
                 .change(function() {
-                    //details = $(this).val();
+                    _me._details = $(this).val();
                 })
             );
 
