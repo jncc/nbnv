@@ -73,7 +73,7 @@ nbn.nbnv.ui.filter.taxon = function(json) {
                     }
                 })
             ).append("Records that are ")
-            .append(speciesAutoComplete)
+            .append(speciesAutoComplete);
 
         if (this._all) {
             allRecords.children('input').attr('checked', 'checked').change();

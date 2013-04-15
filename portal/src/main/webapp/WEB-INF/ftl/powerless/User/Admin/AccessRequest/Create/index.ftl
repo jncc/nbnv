@@ -1,6 +1,6 @@
 
 <@template.master title="Request Permission"
-    javascripts=["/js/jquery-ui-1.8.23.custom.min.js","/js/filter/sensitive.js","/js/filter/year.js","/js/filter/spatial.js","/js/filter/taxon.js","/js/filter/dataset.js","/js/admin/access/requestReason.js","/js/admin/access/requestResult.js","/js/admin/access/timeLimit.js"] 
+    javascripts=["/js/jquery-ui-1.8.23.custom.min.js","/js/admin/access/util/moment.min.js","/js/filter/sensitive.js","/js/filter/year.js","/js/filter/spatial.js","/js/filter/taxon.js","/js/filter/dataset.js","/js/admin/access/requestReason.js","/js/admin/access/requestResult.js","/js/admin/access/timeLimit.js"] 
     csss=["/css/smoothness/jquery-ui-1.8.23.custom.css"]>
 
     <style>
@@ -57,6 +57,8 @@
                             taxon._onEnter();
                         } else if (newFilter == 'dataset') {
                             dataset._onEnter();
+                        } else if (newFilter == 'timeLimit') {
+                            timeLimit._onEnter();
                         }
 
                         if (oldFilter == 'sensitive') {
@@ -69,6 +71,8 @@
                             taxon._onExit();
                         } else if (oldFilter == 'dataset') {
                             dataset._onExit();
+                        } else if (oldFilter == 'timeLimit') {
+                            timeLimit._onExit();
                         }
                     }
                 });
