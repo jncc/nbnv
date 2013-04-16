@@ -45,11 +45,17 @@ nbn.nbnv.ui.filter.dataset = function(json) {
                                 })
                             )
                         ).append($('<td>')
-                            .append($('<a>')
-                                .attr('href', '/Datasets/' + td.key)
-                                .attr('target', '_blank')
+                            .append($('<span>')
                                 .addClass('dataset-label')
                                 .append(td.organisationName + ' - ' + td.title)
+                                .click(function () {
+                                    var win = window.open('/Datasets/' + td.key, '_blank');
+                                    win.focus();
+                                }).hover(function () {
+                                    $(this).addClass('ui-state-highlight');
+                                }, function () {
+                                    $(this).removeClass('ui-state-highlight');
+                                })
                             )
                         );
                         

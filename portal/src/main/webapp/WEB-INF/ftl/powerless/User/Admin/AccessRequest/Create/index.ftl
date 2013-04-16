@@ -8,7 +8,8 @@
         .resulttext { padding-left: 25px; }
         .comboSpan { padding-left: 25px; width: 100px; display: inline-block; }
         .queryBlock { padding-top: 1em; }
-        a.dataset-label { text-decoration: none; color: blue; }
+        .dataset-label { width: 100%; display: inline-block; border: 1px solid white; }
+        .spanHover { background-color: lightgrey; }
     </style>
     <script>
 	var filter;
