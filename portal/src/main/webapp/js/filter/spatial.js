@@ -75,7 +75,7 @@ nbn.nbnv.ui.filter.spatial = function(json) {
 
         var match = $('<select>')
             .append($('<option>').text("within").attr('value', 'within'))
-            .append($('<option>').text("overlapping").attr('value', 'overlaps'))
+            .append($('<option>').text("overlapping").attr('value', 'overlap'))
             .change(function() {
                 var value = $(this).find("option:selected").attr('value');
                 _me._matchType = value;

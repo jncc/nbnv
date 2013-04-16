@@ -8,6 +8,7 @@ nbn.nbnv.ui.filter.dataset = function(json) {
     
     this._all = true;
     this._datasets = [];
+    this._fullCount = 0;
     
     if (!json.dataset.all) {
         this._all = false;
@@ -21,22 +22,42 @@ nbn.nbnv.ui.filter.dataset = function(json) {
     };
     
     this._renderPanel = function() {
-        var _me = this;
-        
         var dataDiv = $('<div>');
         
-        var datasetTable = $('<table>');
+        var datasetTable = $('<table>').attr('id', 'datasetfiltertable');
+        
+        dataDiv.append(datasetTable);
+        
+        return dataDiv;
+    };
+
+    this.setupTable = function (json) {
+        var datasetTable = $('#datasetfiltertable');
+        var _me = this;
+        
+        datasetTable.html('');
+        datasetTable.append('Loading');
+        
+        var filter = {};
+        if (!json.taxon.all) { filter.ptvk = json.taxon.tvk; }
+        if (!json.year.all) { filter.startYear = json.year.startYear; filter.endYear = json.year.endYear; }
+        if (!json.spatial.all) { filter.featureID = json.spatial.feature; filter.spatialRelationship = json.spatial.matchType; }
+        if (json.sensitive == 'sans') { filter.sensitive = 'true'; }
         
         $.ajax({
-            url: nbn.nbnv.api + '/taxonDatasets',
+            url: nbn.nbnv.api + '/taxonObservations/datasets/',
+            data: filter,
             success: function(datasets) {
-                $.each(datasets.slice(0, 15), function(id, td) {
+                datasetTable.html('');
+                _me._fullCount = datasets.length;
+                
+                $.each(datasets, function(id, td) {
                     var dr = $('<tr>')
                         .append($('<td>')
                             .append($('<input>')
                                 .attr('type', 'checkbox')
                                 .attr('checked', 'true')
-                                .attr('name', td.key)
+                                .attr('name', td.taxonDataset.key)
                                 .change(function() { 
                                     if ($(this).is(':checked'))
                                         _me._addDataset($(this).attr('name'));
@@ -47,10 +68,10 @@ nbn.nbnv.ui.filter.dataset = function(json) {
                         ).append($('<td>')
                             .append($('<span>')
                                 .addClass('dataset-label')
-                                .attr('title', 'Use constraints - ' + (td.useConstraints===''?'None':td.useConstraints))
-                                .append(td.organisationName + ' - ' + td.title)
+                                .attr('title', 'Use constraints - ' + (td.taxonDataset.useConstraints===''?'None':td.taxonDataset.useConstraints))
+                                .append(td.taxonDataset.organisationName + ' - ' + td.taxonDataset.title + ' (' + td.querySpecificObservationCount + ' record(s))')
                                 .click(function () {
-                                    var win = window.open('/Datasets/' + td.key, '_blank');
+                                    var win = window.open('/Datasets/' + td.taxonDataset.key, '_blank');
                                     win.focus();
                                 }).hover(function () {
                                     $(this).addClass('ui-state-highlight');
@@ -71,18 +92,16 @@ nbn.nbnv.ui.filter.dataset = function(json) {
                 });
             }
         });
-
-        dataDiv.append(datasetTable);
-        
-        return dataDiv;
     };
     
     this._addDataset = function(dataset) {
         this._datasets.push(dataset);
+        if (this._datasets.length == this._fullCount) { this._all = true; }
     };
     
     this._dropDataset = function(dataset) {
         this._datasets.splice(this._datasets.indexOf(dataset), 1);
+        this._all = false;
     };
     
     this._onEnter = function() {
@@ -95,7 +114,7 @@ nbn.nbnv.ui.filter.dataset = function(json) {
         if (this._all) {
             text = 'All datasets'
         } else {
-            text = 'Filter to ' + this._datasets.length + ' datasets';
+            text = 'Filter to ' + this._datasets.length + ' of ' + this._fullCount + ' datasets';
         }
         
         $('#datasetResult').text(text);

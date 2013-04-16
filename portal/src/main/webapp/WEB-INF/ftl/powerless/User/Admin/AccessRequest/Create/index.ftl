@@ -59,6 +59,13 @@
                         } else if (newFilter == 'taxon') {
                             taxon._onEnter();
                         } else if (newFilter == 'dataset') {
+                            var j = {};
+                            $.extend(j, sensitive.getJson());
+                            $.extend(j, taxon.getJson());
+                            $.extend(j, spatial.getJson());
+                            $.extend(j, year.getJson());
+
+                            dataset.setupTable(j);
                             dataset._onEnter();
                         } else if (newFilter == 'timeLimit') {
                             timeLimit._onEnter();
@@ -84,11 +91,14 @@
                     }
                 });
 		
-		
+		$('#btn').click(function () {
+                    alert(JSON.stringify(j));
+                });
 	});
 	</script>
 
 	<h1>Request Enhanced Access</h1>
 	<div id="filter">
         </div>
+        <button id='btn' />
 </@template.master>
