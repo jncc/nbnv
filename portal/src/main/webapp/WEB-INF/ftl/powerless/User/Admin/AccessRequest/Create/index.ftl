@@ -1,7 +1,7 @@
 
 <@template.master title="Request Permission"
-    javascripts=["/js/jquery-ui-1.8.23.custom.min.js","/js/admin/access/util/moment.min.js","/js/filter/sensitive.js","/js/filter/year.js","/js/filter/spatial.js","/js/filter/taxon.js","/js/filter/dataset.js","/js/admin/access/requestReason.js","/js/admin/access/requestResult.js","/js/admin/access/timeLimit.js"] 
-    csss=["/css/smoothness/jquery-ui-1.8.23.custom.css"]>
+    javascripts=["/js/jquery-ui-1.8.23.custom.min.js","/js/admin/access/util/jquery.qtip.min.js","/js/admin/access/util/moment.min.js","/js/filter/sensitive.js","/js/filter/year.js","/js/filter/spatial.js","/js/filter/taxon.js","/js/filter/dataset.js","/js/admin/access/requestReason.js","/js/admin/access/requestResult.js","/js/admin/access/timeLimit.js"] 
+    csss=["/css/smoothness/jquery-ui-1.8.23.custom.css","/css/jquery.qtip.min.css"]>
 
     <style>
         .filterheader { font-weight: bold; padding-left: 25px; }
@@ -84,15 +84,7 @@
                     }
                 });
 		
-		$('#next').click(function() {
-				window.location = "Create/Request?src=0&json=" + (JSON.stringify(filter.getJSON(), null, '\t'));
-			}
-		);
-                $('#cancel').click(function() {
-				sensitive._onExit(); year._onExit();
-			}
-		);
-			
+		
 	});
 	</script>
 

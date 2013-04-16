@@ -47,6 +47,7 @@ nbn.nbnv.ui.filter.dataset = function(json) {
                         ).append($('<td>')
                             .append($('<span>')
                                 .addClass('dataset-label')
+                                .attr('title', 'Use constraints - ' + (td.useConstraints===''?'None':td.useConstraints))
                                 .append(td.organisationName + ' - ' + td.title)
                                 .click(function () {
                                     var win = window.open('/Datasets/' + td.key, '_blank');
@@ -55,6 +56,12 @@ nbn.nbnv.ui.filter.dataset = function(json) {
                                     $(this).addClass('ui-state-highlight');
                                 }, function () {
                                     $(this).removeClass('ui-state-highlight');
+                                })
+                                .qtip({
+                                    position: {
+                                        my: 'left center',
+                                        at: 'right center'
+                                    }
                                 })
                             )
                         );
