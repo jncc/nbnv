@@ -31,7 +31,7 @@ nbn.nbnv.ui.filter.dataset = function(json) {
         return dataDiv;
     };
 
-    this.setupTable = function (json) {
+    this.setupTable = function (json, endpoint) {
         var datasetTable = $('#datasetfiltertable');
         var _me = this;
         
@@ -45,11 +45,24 @@ nbn.nbnv.ui.filter.dataset = function(json) {
         if (json.sensitive == 'sans') { filter.sensitive = 'true'; }
         
         $.ajax({
-            url: nbn.nbnv.api + '/taxonObservations/datasets/',
+            url: nbn.nbnv.api + endpoint,
             data: filter,
             success: function(datasets) {
                 datasetTable.html('');
                 _me._fullCount = datasets.length;
+                
+                datasets.sort(function (a, b) {
+                    if (a.taxonDataset.organisationName < b.taxonDataset.organisationName)
+                        return -1;
+                    if (a.taxonDataset.organisationName > b.taxonDataset.organisationName)
+                        return 1;
+                    if (a.taxonDataset.title < b.taxonDataset.title)
+                        return -1;
+                    if (a.taxonDataset.title > b.taxonDataset.title)
+                        return 1;
+
+                    return 0;
+                })
                 
                 $.each(datasets, function(id, td) {
                     var dr = $('<tr>')

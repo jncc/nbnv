@@ -65,7 +65,7 @@
                             $.extend(j, spatial.getJson());
                             $.extend(j, year.getJson());
 
-                            dataset.setupTable(j);
+                            dataset.setupTable(j, '/taxonObservations/datasets/requestable');
                             dataset._onEnter();
                         } else if (newFilter == 'timeLimit') {
                             timeLimit._onEnter();

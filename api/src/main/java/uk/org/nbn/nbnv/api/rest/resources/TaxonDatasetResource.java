@@ -13,12 +13,11 @@ import uk.org.nbn.nbnv.api.dao.warehouse.DatasetMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.SurveyMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.TaxonMapper;
 import uk.org.nbn.nbnv.api.model.*;
-import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
 
 @Component
 @Path("/taxonDatasets")
 public class TaxonDatasetResource extends AbstractResource {
-    
+
     @Autowired DatasetMapper datasetMapper;
     @Autowired TaxonMapper taxonMapper;
     @Autowired SurveyMapper surveyMapper;

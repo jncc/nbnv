@@ -82,11 +82,31 @@ public class TaxonObservationProvider {
         return SQL();
     }
 
+    public String filteredSelectAllDatasets(Map<String, Object> params) {
+        String from = createSelectEnhanced(params, "o.datasetKey");
+        BEGIN();
+        SELECT("obs.datasetKey, COUNT(*) querySpecificObservationCount");
+        FROM(from);
+        GROUP_BY("obs.datasetKey");
+        return SQL();
+    }
+
+    public String filteredSelectRequestableDatasets(Map<String, Object> params) {
+        String from = createSelectEnhanced(params, "o.datasetKey, o.id");
+        BEGIN();
+        SELECT("obs.datasetKey, COUNT(*) querySpecificObservationCount");
+        FROM(from);
+        WHERE("obs.id NOT IN ( SELECT utoa.observationID FROM UserTaxonObservationID utoa WHERE utoa.userID = #{user.id} )");
+        GROUP_BY("obs.datasetKey");
+        return SQL();
+    }
+        
     public String filteredSelectUnavailableDatasets(Map<String, Object> params) {
+        String from = createSelectEnhanced(params, "o.datasetKey, o.id");
         BEGIN();
         SELECT("tdd.datasetKey, COUNT(*) querySpecificObservationCount");
-        createSelectQueryFromEnhancedRecords(params);
-        INNER_JOIN("TaxonDatasetData tdd ON o.datasetKey = tdd.datasetKey");
+        FROM(from);
+        INNER_JOIN("TaxonDatasetData tdd ON obs.datasetKey = tdd.datasetKey");
         WHERE("tdd.publicResolutionID = 0");
         GROUP_BY("tdd.datasetKey");
         return SQL();
@@ -123,9 +143,10 @@ public class TaxonObservationProvider {
     }
 
     public String filteredSelectEnhancedRecordIDs(Map<String, Object> params) {
+        String from = createSelectEnhanced(params, "o.id");
         BEGIN();
-        SELECT("o.id");
-        createSelectQueryFromEnhancedRecords(params);
+        SELECT("obs.id");
+        FROM(from);
         return SQL();
     }
 
@@ -133,6 +154,11 @@ public class TaxonObservationProvider {
         String publicSelect = createSelectQuery(params, false, fields);
         String fullSelect = createSelectQuery(params, true, fields);
         return "(" + fullSelect + " UNION ALL " + publicSelect + ") obs";
+    }
+
+    private String createSelectEnhanced(Map<String, Object> params, String fields) {
+        String fullSelect = createSelectAllRecordsQuery(params, fields);
+        return "(" + fullSelect + ") obs";
     }
 
     private String createSelectQuery(Map<String, Object> params, boolean full, String fields) {
@@ -207,8 +233,9 @@ public class TaxonObservationProvider {
         return SQL();
     }
 
-    private void createSelectQueryFromEnhancedRecords(Map<String, Object> params) {
-
+    private String createSelectAllRecordsQuery(Map<String, Object> params, String fields) {
+        BEGIN();
+        SELECT(fields);
         FROM("TaxonObservationDataEnhanced o");
 
         if (params.containsKey("startYear") && (Integer) params.get("startYear") > -1) {
@@ -267,6 +294,8 @@ public class TaxonObservationProvider {
             INNER_JOIN("TaxonData td ON td.taxonVersionKey = o.pTaxonVersionKey");
             WHERE("td.taxonOutputGroupKey =  #{taxonOutputGroup}");
         }
+
+        return SQL();
     }
 
     private String taxaListToCommaList(List<String> list) {
