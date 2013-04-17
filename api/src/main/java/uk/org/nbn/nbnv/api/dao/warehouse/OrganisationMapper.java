@@ -32,4 +32,10 @@ public interface OrganisationMapper {
     
     @Select("SELECT logoSmall FROM OrganisationData WHERE id = #{id}")
     Object selectLogoSmallByOrganisationID(int id);
+
+    @Select("SELECT org.* FROM OrganisationData org INNER JOIN OrganisationMembershipData omd ON omd.organisationID = org.id WHERE omd.userID = #{id}")
+    List<Organisation> selectByUser(int id);
+
+    @Select("SELECT org.* FROM OrganisationData org INNER JOIN OrganisationMembershipData omd ON omd.organisationID = org.id WHERE omd.userID = #{id} AND (omd.role = 'administrator' OR omd.role = 'lead')")
+    List<Organisation> selectByAdminUser(int id);
 }

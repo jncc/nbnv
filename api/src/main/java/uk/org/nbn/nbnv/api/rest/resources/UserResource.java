@@ -37,10 +37,12 @@ import uk.org.nbn.nbnv.api.authentication.InvalidTokenException;
 import uk.org.nbn.nbnv.api.authentication.Token;
 import uk.org.nbn.nbnv.api.authentication.TokenAuthenticator;
 import uk.org.nbn.nbnv.api.dao.core.OperationalUserMapper;
+import uk.org.nbn.nbnv.api.dao.warehouse.OrganisationMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.UserAuthenticationMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.UserMapper;
 import uk.org.nbn.nbnv.api.mail.TemplateMailer;
 import uk.org.nbn.nbnv.api.model.Dataset;
+import uk.org.nbn.nbnv.api.model.Organisation;
 import uk.org.nbn.nbnv.api.model.User;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
 
@@ -60,6 +62,7 @@ public class UserResource extends AbstractResource {
     @Autowired TokenAuthenticator tokenAuth;
     @Autowired TokenResetCredentials credentialsResetter;
     @Autowired UserMapper userMapper;
+    @Autowired OrganisationMapper organisationMapper;
     @Autowired OperationalUserMapper oUserMapper;
     @Autowired UserAuthenticationMapper userAuthenticationMapper;
     @Autowired TemplateMailer mailer;
@@ -252,7 +255,21 @@ public class UserResource extends AbstractResource {
     @GET
     @Path("/adminDatasets")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Dataset> getUserAdminDatasets(@TokenUser User user) {
+    public List<Dataset> getUserAdminDatasets(@TokenUser(allowPublic=false) User user) {
         return userMapper.getDatasetsUserAdmins(user.getId());
+    }
+    
+    @GET
+    @Path("/organisations")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Organisation> getUserOrganisations(@TokenUser(allowPublic=false) User user) {
+        return organisationMapper.selectByUser(user.getId());
+    }
+
+    @GET
+    @Path("/adminOrganisations")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Organisation> getUserAdminOrganisations(@TokenUser(allowPublic=false) User user) {
+        return organisationMapper.selectByAdminUser(user.getId());
     }
 }

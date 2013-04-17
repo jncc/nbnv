@@ -15,7 +15,7 @@ nbn.nbnv.ui.requestReason = function() {
         '9' : 'Any work that is connected with the core business of an organisation that has a statutory responsibility, such as Natural England, the Environment Agency or Forestry Commission.  This includes statutory nature conservation, regulatory functions and reporting.'
     };
     
-    this._userID = 1;
+    this._asID = -1;
     this._purpose = 1;
     this._details = '';
     
@@ -31,18 +31,27 @@ nbn.nbnv.ui.requestReason = function() {
     this._renderPanel = function() {
         var _me = this;
         
+        var asSelect = $('<select>')
+                .append($('<option>').text('Myself').attr('value', '-1'))
+                .change(function() {
+                    _me._asID = $(this).val();
+                    username = $(this).find("option:selected").text();
+                });
+        
+        $.ajax({
+            url: nbn.nbnv.api + '/user/adminOrganisations',
+            success: function(orgs) {
+                $.each(orgs, function (i, org) {
+                    asSelect.append($('<option>').text(org.name).attr('value', org.id));
+                });
+            }
+        })
+
         var data = $('<div>')
             .append($('<div>')
                 .text("I requesting access for:")
-            ).append($('<select>')
-                .append($('<option>').text('Myself').attr('value', '1'))
-                .append($('<option>').text('Organisation #1').attr('value', '2'))
-                .append($('<option>').text('Organisation #2').attr('value', '3'))
-                .change(function() {
-                    _me._userID = $(this).val();
-                    username = $(this).find("option:selected").text();
-                })
-            ).append($('<div>').addClass('queryBlock')
+            ).append(asSelect)
+            .append($('<div>').addClass('queryBlock')
                 .text("I am requesting data for the following purpose:")
             ).append($('<select>')
                 .append($('<option>').text('Personal interest').attr('value', '1'))
@@ -92,11 +101,10 @@ nbn.nbnv.ui.requestReason = function() {
     };
     
     this.getJson = function() {
-        if (this._all) {
-            return { time: { all: true }};
-        } else {
-            return { time: { all: false, date: this._date.format('DD/MM/YYYY') }};
-        }
+        if (this._asID > -1)
+            return { reason: { purpose: this._purpose, details: this._details, organisationID: this._asID }};
+        
+        return { reason: { purpose: this._purpose, details: this._details }};
     };
 
 };
