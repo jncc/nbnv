@@ -8,10 +8,7 @@
     <@search.search 
         url="${api}/taxa"
         display=[
-            {"title":"Taxon", "attr":"name", "link":"href"},
-            {"title":"Authority", "attr":"authority"},
-            {"title":"Group", "attr":"taxonOutputGroupName"},
-            {"title":"Rank", "attr":"rank"},
+            {"title":"Taxon", "attr":"searchMatchTitle", "link":"href"},
             {"title":"Record Count", "attr":"gatewayRecordCount"}
         ]
         query=RequestParameters 
