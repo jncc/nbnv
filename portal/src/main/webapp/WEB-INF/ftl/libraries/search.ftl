@@ -106,7 +106,7 @@
 <#-- Macro to create the header of the table -->
 <#macro __tableHeader display>
     <#list display as column>
-        <th result-attr="${column.attr}" <#if column.link??>result-link="${column.link}"</#if> <#if column.width??>width="${column.width}"</#if>>${column.title}</th>
+        <th result-attr="${column.attr}" <#if column.link??>result-link="${column.link}"</#if>>${column.title}</th>
     </#list>
 </#macro>
 
