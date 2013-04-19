@@ -125,6 +125,11 @@ public class TaxonResource extends AbstractResource {
             @QueryParam("sort") String sort,
             @DefaultValue("asc") @QueryParam("order") SolrQuery.ORDER order,
             @QueryParam("q") String q) throws SolrServerException {
+        
+        if (q == null || q.isEmpty()) {
+            return searchResource.searchTaxa(rows, start, taxonOutputGroups, "gatewayRecordCount", SolrQuery.ORDER.desc, q);
+        }
+        
         return searchResource.searchTaxa(rows, start, taxonOutputGroups, sort, order, q);
     }
 

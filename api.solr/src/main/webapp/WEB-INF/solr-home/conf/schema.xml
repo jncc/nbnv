@@ -73,6 +73,7 @@
         <field name="taxonOutputGroupKey" type="string" indexed="true" stored="true"/>
         <field name="taxonCode" type="string" indexed="true" stored="true"/>
         <field name="gatewayRecordCount" type="sint" stored="true"/>
+        <field name="prefered" type="boolean" indexed="true" stored="true"/>
         
         <!-- Location properties for spatial searching -->
         <field name="location" type="location" indexed="true" stored="true"/>

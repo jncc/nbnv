@@ -5,7 +5,7 @@
                 user="NBNImporter"
                 password="Ecowaswashere9"/>
     <document name="nbn-gateway">
-        <entity name="taxon" query="SELECT t.taxonVersionKey, t.taxonCode, t.taxonOutputGroupKey, r.ExtendedName AS name, r.DangerousName, r.pTaxonVersionKey, trc.gatewayRecordCount, CAST(ISNULL(trc.gatewayRecordCount, 0) AS varchar) + ' record(s)' AS descript FROM RecordingEntity r INNER JOIN TaxonData t ON t.taxonVersionKey = r.TaxonVersionKey INNER JOIN TaxonOutputGroupData tog ON tog.[key] = t.taxonOutputGroupKey LEFT JOIN TaxonRecordCountData trc ON trc.pTaxonVersionKey = t.pTaxonVersionKey" transformer="TemplateTransformer">	  
+        <entity name="taxon" query="SELECT t.taxonVersionKey, t.taxonCode, t.taxonOutputGroupKey, r.ExtendedName AS name, r.DangerousName, r.pTaxonVersionKey, trc.gatewayRecordCount, CAST(ISNULL(trc.gatewayRecordCount, 0) AS varchar) + ' record(s)' AS descript, CASE WHEN t.taxonVersionKey = t.pTaxonVersionKey THEN 1 ELSE 0 END AS prefered FROM RecordingEntity r INNER JOIN TaxonData t ON t.taxonVersionKey = r.TaxonVersionKey INNER JOIN TaxonOutputGroupData tog ON tog.[key] = t.taxonOutputGroupKey LEFT JOIN TaxonRecordCountData trc ON trc.pTaxonVersionKey = t.pTaxonVersionKey" transformer="TemplateTransformer">	  
             <field column="record_id" template="TAXON-${taxon.taxonVersionKey}" />
             <field column="record_type" template="taxon" />
         </entity>
