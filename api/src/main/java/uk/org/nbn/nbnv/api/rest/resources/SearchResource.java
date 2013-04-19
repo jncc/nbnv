@@ -123,15 +123,16 @@ public class SearchResource extends AbstractResource {
             @QueryParam("taxonOutputGroupKey") List<String> outputGroups,
             @QueryParam("sort") String sort,
             @QueryParam("order") @DefaultValue("asc") SolrQuery.ORDER order,
+            @QueryParam("prefered") @DefaultValue("false") boolean prefered,
             @QueryParam("q") String q
             ) throws SolrServerException {
         return solr
                 .create()
                 .query(q)
-                .filterQuery("record_type:taxon")
+                .filterQuery("record_type:taxon" + (prefered ? " AND prefered:true" : ""))
                 .addOrFilter("taxonOutputGroupKey", outputGroups)
                 .sort(sort, order)
-                .boostFunction("ord(gatewayRecordCount)")
+                //.boostFunction("ord(gatewayRecordCount)")
                 .start(start)
                 .rows(rows)
                 .response();
