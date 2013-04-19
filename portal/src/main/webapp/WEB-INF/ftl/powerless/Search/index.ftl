@@ -8,9 +8,9 @@
     <@search.search 
         url="${api}/search"
         display=[
-            {"title":"Result", "attr":"searchMatchTitle", "link":"href"},
+            {"title":"Result", "attr":"searchMatchTitle", "link":"href", "width":"50%"},
             {"title":"Info", "attr":"descript"},
-            {"title":"Type", "attr":"entityType"}
+            {"title":"Type", "attr":"entityType", "width":"15%"}
         ]
         query=RequestParameters/>
 </@template.master>

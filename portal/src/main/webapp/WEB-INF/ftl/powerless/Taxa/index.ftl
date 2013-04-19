@@ -8,7 +8,7 @@
     <@search.search 
         url="${api}/taxa"
         display=[
-            {"title":"Taxon", "attr":"searchMatchTitle", "link":"href", "width":"80%"},
+            {"title":"Taxon", "attr":"searchMatchTitle", "link":"href", "width":"85%"},
             {"title":"Record Count", "attr":"gatewayRecordCount"}
         ]
         query=RequestParameters 
