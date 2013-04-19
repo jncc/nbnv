@@ -21,7 +21,7 @@ public class Taxon implements Comparable<Taxon>{
     private String versionForm;
     private long gatewayRecordCount;
 
-    @Ref(value="${resource.portalUrl}/Taxa/${instance.taxonVersionKey}", style=Style.RELATIVE_PATH) 
+    @Ref(value="${resource.portalUrl}/Taxa/${instance.PTaxonVersionKey}", style=Style.RELATIVE_PATH) 
     private URI href;
 
     public Taxon(){}
