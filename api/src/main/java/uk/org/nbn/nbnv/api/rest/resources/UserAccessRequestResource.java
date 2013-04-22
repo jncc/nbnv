@@ -57,9 +57,9 @@ public class UserAccessRequestResource extends AbstractResource {
         filter.setFilterJSON(json);
         filter.setFilterText(AccessRequestJSONToText.convert(accessRequest));
         
-        for (String datasetKey : accessRequest.getDatasetselection().getDatasets()) {
+        for (String datasetKey : accessRequest.getDataset().getDatasets()) {
             oTaxonObservationFilterMapper.createFilter(filter);
-            oUserAccessRequestMapper.createRequest(filter.getId(), user.getId(), datasetKey, accessRequest.getRequest().getRole(), accessRequest.getRequest().getPurpose(), accessRequest.getRequest().getDetails(), new Date(new java.util.Date().getTime()));
+//            oUserAccessRequestMapper.createRequest(filter.getId(), user.getId(), datasetKey, accessRequest.getRequest().getRole(), accessRequest.getRequest().getPurpose(), accessRequest.getRequest().getDetails(), new Date(new java.util.Date().getTime()));
         }
 
         return Response.ok("success").build();

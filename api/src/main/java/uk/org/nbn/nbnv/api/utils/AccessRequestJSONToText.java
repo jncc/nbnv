@@ -20,20 +20,21 @@ public class AccessRequestJSONToText {
             text = "All <b>non-sensitive</b> records";
         } else if ("sans".equals(ar.getSensitive())) {
             text = "All <b>sensitive and non-sensitive</b> records";
-        } else if ("s".equals(ar.getSensitive())) {
-            text = "All <b>sensitive</b> records";
         }
 
-        for (AccessRequestFilterJSON filter : ar.getFilters()) {
-            if ("year".equals(filter.getType())) {
-                text += " between <b>" + Integer.toString(filter.getStart()) + "</b> and <b>" + Integer.toString(filter.getEnd()) + "</b>";
-            } else if ("taxon".equals(filter.getType())) {
-                text += " for <b><i>" + filter.getSciname() + "</i></b>";
-            } else if ("spatial".equals(filter.getType())) {
-                text += " <b>" + filter.getMatch() + "</b> the boundary of <b>" + filter.getBoundary() + "</b>";
-            }
+        if (!ar.getYear().isAll()) {
+            text += " between <b>" + Integer.toString(ar.getYear().getStartYear()) + "</b> and <b>" + Integer.toString(ar.getYear().getEndYear()) + "</b>";
         }
-        
+
+        if (!ar.getTaxon().isAll()) {
+            text += " for <b><i>" + ar.getTaxon().getTvk() + "</i></b>";
+        }
+
+        if (!ar.getSpatial().isAll()) {
+            text += " <b>" + ar.getSpatial().getMatch() + "</b> the boundary of <b>" + Integer.toString(ar.getSpatial().getFeature()) + "</b>";
+        }
+
+
         return text;
     }
 }

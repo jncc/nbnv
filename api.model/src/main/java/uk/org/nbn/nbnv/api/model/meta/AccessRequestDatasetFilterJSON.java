@@ -10,23 +10,8 @@ import java.util.List;
  *
  * @author Paul Gilbertson
  */
-public class AccessRequestDatasetSelectionJSON {
-    private int count;
+public class AccessRequestDatasetFilterJSON extends AccessRequestFilterJSON {
     private List<String> datasets;
-
-    /**
-     * @return the count
-     */
-    public int getCount() {
-        return count;
-    }
-
-    /**
-     * @param count the count to set
-     */
-    public void setCount(int count) {
-        this.count = count;
-    }
 
     /**
      * @return the datasets

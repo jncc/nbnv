@@ -8,24 +8,10 @@ package uk.org.nbn.nbnv.api.model.meta;
  *
  * @author Paul Gilbertson
  */
-public class AccessRequestRequestJSON {
-    private int role;
+public class AccessRequestReasonJSON {
     private int purpose;
+    private int organisationID = -1;
     private String details;
-
-    /**
-     * @return the role
-     */
-    public int getRole() {
-        return role;
-    }
-
-    /**
-     * @param role the role to set
-     */
-    public void setRole(int role) {
-        this.role = role;
-    }
 
     /**
      * @return the purpose
@@ -53,5 +39,19 @@ public class AccessRequestRequestJSON {
      */
     public void setDetails(String details) {
         this.details = details;
+    }
+
+    /**
+     * @return the organisationID
+     */
+    public int getOrganisationID() {
+        return organisationID;
+    }
+
+    /**
+     * @param organisationID the organisationID to set
+     */
+    public void setOrganisationID(int organisationID) {
+        this.organisationID = organisationID;
     }
 }

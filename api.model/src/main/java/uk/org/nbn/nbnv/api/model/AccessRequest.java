@@ -13,8 +13,7 @@ import java.sql.Date;
 public class AccessRequest {
     private TaxonObservationFilter filter;
     private Dataset dataset;
-    private int requestRoleID;
-    private int requestTypeID;
+    private int requestPurposeID;
     private String requestReason;
     private Date requestDate;
     private int responseTypeID;
@@ -35,34 +34,6 @@ public class AccessRequest {
      */
     public void setFilter(TaxonObservationFilter filter) {
         this.filter = filter;
-    }
-
-    /**
-     * @return the requestRoleID
-     */
-    public int getRequestRoleID() {
-        return requestRoleID;
-    }
-
-    /**
-     * @param requestRoleID the requestRoleID to set
-     */
-    public void setRequestRoleID(int requestRoleID) {
-        this.requestRoleID = requestRoleID;
-    }
-
-    /**
-     * @return the requestTypeID
-     */
-    public int getRequestTypeID() {
-        return requestTypeID;
-    }
-
-    /**
-     * @param requestTypeID the requestTypeID to set
-     */
-    public void setRequestTypeID(int requestTypeID) {
-        this.requestTypeID = requestTypeID;
     }
 
     /**
@@ -175,6 +146,20 @@ public class AccessRequest {
      */
     public void setDatasetKey(String datasetKey) {
         this.datasetKey = datasetKey;
+    }
+
+    /**
+     * @return the requestPurposeID
+     */
+    public int getRequestPurposeID() {
+        return requestPurposeID;
+    }
+
+    /**
+     * @param requestPurposeID the requestPurposeID to set
+     */
+    public void setRequestPurposeID(int requestPurposeID) {
+        this.requestPurposeID = requestPurposeID;
     }
 
 }

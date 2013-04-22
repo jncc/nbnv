@@ -4,17 +4,17 @@
  */
 package uk.org.nbn.nbnv.api.model.meta;
 
-import java.util.List;
-
 /**
  *
  * @author Paul Gilbertson
  */
 public class AccessRequestJSON {
     private String sensitive;
-    private List<AccessRequestFilterJSON> filters;
-    private AccessRequestDatasetSelectionJSON datasetselection;
-    private AccessRequestRequestJSON request;
+    private AccessRequestSpatialFilterJSON spatial;
+    private AccessRequestTaxonFilterJSON taxon;
+    private AccessRequestYearFilterJSON year;
+    private AccessRequestDatasetFilterJSON dataset;
+    private AccessRequestReasonJSON reason;
 
     /**
      * @return the sensitive
@@ -31,44 +31,72 @@ public class AccessRequestJSON {
     }
 
     /**
-     * @return the filters
+     * @return the spatial
      */
-    public List<AccessRequestFilterJSON> getFilters() {
-        return filters;
+    public AccessRequestSpatialFilterJSON getSpatial() {
+        return spatial;
     }
 
     /**
-     * @param filters the filters to set
+     * @param spatial the spatial to set
      */
-    public void setFilters(List<AccessRequestFilterJSON> filters) {
-        this.filters = filters;
+    public void setSpatial(AccessRequestSpatialFilterJSON spatial) {
+        this.spatial = spatial;
     }
 
     /**
-     * @return the datasetselection
+     * @return the taxon
      */
-    public AccessRequestDatasetSelectionJSON getDatasetselection() {
-        return datasetselection;
+    public AccessRequestTaxonFilterJSON getTaxon() {
+        return taxon;
     }
 
     /**
-     * @param datasetselection the datasetselection to set
+     * @param taxon the taxon to set
      */
-    public void setDatasetselection(AccessRequestDatasetSelectionJSON datasetselection) {
-        this.datasetselection = datasetselection;
+    public void setTaxon(AccessRequestTaxonFilterJSON taxon) {
+        this.taxon = taxon;
     }
 
     /**
-     * @return the request
+     * @return the year
      */
-    public AccessRequestRequestJSON getRequest() {
-        return request;
+    public AccessRequestYearFilterJSON getYear() {
+        return year;
     }
 
     /**
-     * @param request the request to set
+     * @param year the year to set
      */
-    public void setRequest(AccessRequestRequestJSON request) {
-        this.request = request;
+    public void setYear(AccessRequestYearFilterJSON year) {
+        this.year = year;
+    }
+
+    /**
+     * @return the dataset
+     */
+    public AccessRequestDatasetFilterJSON getDataset() {
+        return dataset;
+    }
+
+    /**
+     * @param dataset the dataset to set
+     */
+    public void setDataset(AccessRequestDatasetFilterJSON dataset) {
+        this.dataset = dataset;
+    }
+
+    /**
+     * @return the reason
+     */
+    public AccessRequestReasonJSON getReason() {
+        return reason;
+    }
+
+    /**
+     * @param reason the reason to set
+     */
+    public void setReason(AccessRequestReasonJSON reason) {
+        this.reason = reason;
     }
 }
