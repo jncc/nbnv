@@ -8,16 +8,11 @@
     <@markdown file="introduction.md"/>
 
     <div class="taxonpagesection">
-        <h2>Find:</h2>
-        <input type="text" id="taxonautocomplete" class="largeautocomplete" api="${api}/taxa" />
-    </div>
-    <div class="taxonpagesection">
-        <h2>Or browse:</h2>
-
         <@search.search 
             url="${api}/taxa"
             display=[
-                {"title":"Taxon", "attr":"searchMatchTitle", "link":"href", "width":"85%"},
+                {"title":"Taxon", "attr":"searchMatchTitle", "link":"href"}
+                {"title":"Info", "attr":"ExtendedName", "width":"85%"},
                 {"title":"Record Count", "attr":"gatewayRecordCount"}
             ]
             query=RequestParameters 
