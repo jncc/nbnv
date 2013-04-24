@@ -11,17 +11,17 @@ public class SolrResponseDocument<T> {
     private String entityType;
     private String searchMatchTitle;
     private String descript;
-    private String extendedName;
+    private String pExtendedName;
     
     @JsonUnwrapped
     private T result;
     
-    public SolrResponseDocument(T result, String entityType, String searchMatchTitle, String descript, String extendedName) {
+    public SolrResponseDocument(T result, String entityType, String searchMatchTitle, String descript, String pExtendedName) {
         this.result = result;
         this.entityType = entityType;
         this.searchMatchTitle = searchMatchTitle;
         this.descript = descript;
-        this.extendedName = extendedName;
+        this.pExtendedName = pExtendedName;
     }
 
     public String getEntityType() {
@@ -63,16 +63,17 @@ public class SolrResponseDocument<T> {
     }
 
     /**
-     * @return the extendedName
+     * @return the pExtendedName
      */
-    public String getExtendedName() {
-        return extendedName;
+    public String getpExtendedName() {
+        return pExtendedName;
     }
 
     /**
-     * @param extendedName the extendedName to set
+     * @param pExtendedName the pExtendedName to set
      */
-    public void setExtendedName(String extendedName) {
-        this.extendedName = extendedName;
+    public void setpExtendedName(String pExtendedName) {
+        this.pExtendedName = pExtendedName;
     }
+
 }

@@ -28,7 +28,7 @@ public class SolrResponse {
                 (String)currDocument.get("record_type"),
                 (String)currDocument.get("name"),
                 (String)currDocument.get("descript"),
-                (String)currDocument.get("extendedName")
+                (String)currDocument.get("pExtendedName")
             ));
         }
     }

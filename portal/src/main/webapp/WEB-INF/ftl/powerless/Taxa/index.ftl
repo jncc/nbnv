@@ -12,7 +12,7 @@
             url="${api}/taxa"
             display=[
                 {"title":"Name", "attr":"searchMatchTitle", "link":"href"}
-                {"title":"Preferred Name", "attr":"extendedName", "width":"85%"},
+                {"title":"Preferred Name", "attr":"pExtendedName", "width":"85%"},
                 {"title":"Record Count", "attr":"gatewayRecordCount"}
             ]
             query=RequestParameters 
