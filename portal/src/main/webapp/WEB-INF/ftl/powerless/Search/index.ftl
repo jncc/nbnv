@@ -8,8 +8,8 @@
     <@search.search 
         url="${api}/search"
         display=[
-            {"title":"Result", "attr":"searchMatchTitle", "link":"href", "width":"50%"},
-            {"title":"Info", "attr":"descript"},
+            {"title":"Result", "attr":"searchMatchTitle", "link":"href"},
+            {"title":"Info", "attr":"descript", "width":"60%"},
             {"title":"Type", "attr":"entityType", "width":"15%"}
         ]
         query=RequestParameters/>
