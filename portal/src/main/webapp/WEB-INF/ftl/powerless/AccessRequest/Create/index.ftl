@@ -16,7 +16,7 @@
         nbn.nbnv.api = '${api}';
 	
 	$(function() {
-                var json = ${json!'{}'};
+                var json = {};
 		
                 var reason = new nbn.nbnv.ui.requestReason();
                 var sensitive = new nbn.nbnv.ui.filter.sensitive();
