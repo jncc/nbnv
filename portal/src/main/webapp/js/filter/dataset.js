@@ -4,7 +4,7 @@ nbn.nbnv.ui = nbn.nbnv.ui || {};
 nbn.nbnv.ui.filter = nbn.nbnv.ui.filter || {};
 
 nbn.nbnv.ui.filter.dataset = function(json) {
-    if (typeof(json) === 'undefined') { json = { dataset: { all: true } }; }
+    if (typeof(json.dataset) === 'undefined') { json.dataset = { all: true }; }
     
     this._all = true;
     this._datasets = [];

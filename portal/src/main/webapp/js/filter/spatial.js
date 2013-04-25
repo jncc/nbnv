@@ -4,7 +4,7 @@ nbn.nbnv.ui = nbn.nbnv.ui || {};
 nbn.nbnv.ui.filter = nbn.nbnv.ui.filter || {};
 
 nbn.nbnv.ui.filter.spatial = function(json) {
-    if (typeof(json)==='undefined') { json = { spatial: { all: true } }; }
+    if (typeof(json.spatial)==='undefined') { json.spatial = { all: true }; }
     
     this._all = true;
     this._matchType = 'within';

@@ -4,7 +4,7 @@ nbn.nbnv.ui = nbn.nbnv.ui || {};
 nbn.nbnv.ui.filter = nbn.nbnv.ui.filter || {};
 
 nbn.nbnv.ui.filter.taxon = function(json) {
-    if (typeof(json)==='undefined') { json = { taxon: { all: true } }; }
+    if (typeof(json.taxon)==='undefined') { json.taxon = { all: true }; }
     
     this._all = true;
     this._tvk = '';

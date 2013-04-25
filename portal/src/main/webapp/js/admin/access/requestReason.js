@@ -2,7 +2,9 @@ window.nbn = window.nbn || {};
 nbn.nbnv = nbn.nbnv || {};
 nbn.nbnv.ui = nbn.nbnv.ui || {};
 
-nbn.nbnv.ui.requestReason = function() {
+nbn.nbnv.ui.requestReason = function(json) {
+    if (typeof(json.reason) === 'undefined') { json.reason = { purpose: 1, details: '', organisationID: -1 }; }
+    
     var purposes = {
         '1' : 'Data is for personal interest only and will not be passed on to other people. Examples – a local natural history society creating a recording checklist for a site or identifying gaps to target local recording effort; a county recorder checking the distribution of a species for verification purposes, commenting on records to improve data quality, comparing the NBN Gateway with other data sources.',
         '2' : 'Small scale student assignments (but not dissertations), environmental education – e.g. producing a leaflet. Non commercial training products.',
@@ -15,9 +17,9 @@ nbn.nbnv.ui.requestReason = function() {
         '9' : 'Any work that is connected with the core business of an organisation that has a statutory responsibility, such as Natural England, the Environment Agency or Forestry Commission.  This includes statutory nature conservation, regulatory functions and reporting.'
     };
     
-    this._asID = -1;
-    this._purpose = 1;
-    this._details = '';
+    this._asID = json.reason.organisationID;
+    this._purpose = json.reason.purpose;
+    this._details = json.reason.details;
     
     var username = 'Myself';
     var purposename = 'Personal interest';

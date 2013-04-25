@@ -4,7 +4,7 @@ nbn.nbnv.ui = nbn.nbnv.ui || {};
 nbn.nbnv.ui.filter = nbn.nbnv.ui.filter || {};
 
 nbn.nbnv.ui.filter.year = function(json) {
-    if (typeof(json)==='undefined') { json = { year: { all: true } }; }
+    if (typeof(json.year)==='undefined') { json.year = { all: true }; }
     
     this._all = true;
     this._startYear = 1600;

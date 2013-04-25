@@ -3,7 +3,7 @@ nbn.nbnv = nbn.nbnv || {};
 nbn.nbnv.ui = nbn.nbnv.ui || {};
 
 nbn.nbnv.ui.timeLimit = function(json) {
-    if (typeof(json) === 'undefined') { json = { time : { all: true }}; }
+    if (typeof(json.time) === 'undefined') { json.time = { all: true }; }
     
     this._all = true;
     this._date = moment().add('year', 1);

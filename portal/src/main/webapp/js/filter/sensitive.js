@@ -4,7 +4,7 @@ nbn.nbnv.ui = nbn.nbnv.ui || {};
 nbn.nbnv.ui.filter = nbn.nbnv.ui.filter || {};
 
 nbn.nbnv.ui.filter.sensitive = function(json) {
-    if (typeof(json)==='undefined') { json = { sensitive: 'ns' }; }
+    if (typeof(json.sensitive)==='undefined') { json.sensitive = 'ns'; }
     
     this._value = json.sensitive;
     
