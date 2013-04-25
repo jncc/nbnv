@@ -101,9 +101,17 @@ nbn.nbnv.ui.filter.taxon = function(json) {
     
     this._onExit = function() {
         var text = '';
+        var _me = this;
         
         if (this._all) {
             text = 'All species'
+        } else if (this._taxonName == '') {
+            $.ajax({
+                url: nbn.nbnv.api + '/taxa/' + _me._tvk,
+                success: function(data) {
+                    $('#taxonResult').text(data.name + ' records');  
+                }
+            });
         } else {
             text = this._taxonName + ' records';
         }

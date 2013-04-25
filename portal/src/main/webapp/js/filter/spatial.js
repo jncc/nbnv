@@ -145,9 +145,17 @@ nbn.nbnv.ui.filter.spatial = function(json) {
     
     this._onExit = function() {
         var text = '';
+        var _me = this;
         
         if (this._all) {
             text = 'All areas'
+        } else if (this._featureName == '') {
+            $.ajax({
+                url: nbn.nbnv.api + '/features/' + this._feature,
+                success: function (data) {
+                    $('#spatialResult').text('Records ' + _me._matchType + ' ' + data.label);
+                }
+            });
         } else {
             text = 'Records ' + this._matchType + ' ' + this._featureName;
         }

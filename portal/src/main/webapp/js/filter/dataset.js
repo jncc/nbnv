@@ -8,7 +8,7 @@ nbn.nbnv.ui.filter.dataset = function(json) {
     
     this._all = true;
     this._datasets = [];
-    this._fullCount = 0;
+    this._fullCount = -1;
     
     if (!json.dataset.all) {
         this._all = false;
@@ -135,6 +135,8 @@ nbn.nbnv.ui.filter.dataset = function(json) {
         
         if (this._all) {
             text = 'All datasets'
+        } else if (this._fullCount == -1) {
+            text = 'Filter to ' + this._datasets.length + ' datasets';
         } else {
             text = 'Filter to ' + this._datasets.length + ' of ' + this._fullCount + ' datasets';
         }

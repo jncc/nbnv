@@ -87,4 +87,12 @@ nbn.nbnv.ui.createRequest = function (json, div) {
             }
         }
     });
+    
+    sensitive._onExit();
+    spatial._onExit();
+    year._onExit();
+    taxon._onExit();
+    timeLimit._onExit();
+    dataset._onExit();
+    
 };
