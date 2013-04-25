@@ -34,6 +34,8 @@ nbn.nbnv.ui.filter.dataset = function(json) {
     this.setupTable = function (json, endpoint) {
         var datasetTable = $('#datasetfiltertable');
         var _me = this;
+        var dataf = this._datasets;
+        this._datasets = [];
         
         datasetTable.html('');
         datasetTable.append('Loading');
@@ -65,19 +67,23 @@ nbn.nbnv.ui.filter.dataset = function(json) {
                 })
                 
                 $.each(datasets, function(id, td) {
-                    var dr = $('<tr>')
-                        .append($('<td>')
-                            .append($('<input>')
+                    var cb = $('<input>')
                                 .attr('type', 'checkbox')
-                                .attr('checked', 'true')
                                 .attr('name', td.taxonDataset.key)
                                 .change(function() { 
                                     if ($(this).is(':checked'))
                                         _me._addDataset($(this).attr('name'));
                                     else
                                         _me._dropDataset($(this).attr('name'));
-                                })
-                            )
+                                });
+                    
+                    if (_me._all || $.inArray(td.taxonDataset.key, dataf) > -1) {
+                        cb.attr("checked", "true");
+                    }
+                    
+                    var dr = $('<tr>')
+                        .append($('<td>')
+                            .append(cb)
                         ).append($('<td>')
                             .append($('<span>')
                                 .addClass('dataset-label')
@@ -101,7 +107,10 @@ nbn.nbnv.ui.filter.dataset = function(json) {
                         );
                         
                     datasetTable.append(dr);
-                    _me._addDataset(td.key);
+                    
+                    if (_me._all || $.inArray(td.taxonDataset.key, dataf) > -1) {
+                        _me._addDataset(td.taxonDataset.key);
+                    }
                 });
             }
         });

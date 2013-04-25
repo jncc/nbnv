@@ -8,11 +8,14 @@ nbn.nbnv.ui.requestResult = function() {
             .append($('<span>').addClass('filterheader').append('Confirm Access Request'));
     };
     
-    this._renderPanel = function() {
+    this._renderPanel = function(clickfn) {
         var data = $('<div>');
-        
+
+        var btn = $('<button>').text('Request')
+            .click(clickfn);
+            
         data.append($('<div>').append('TODO'))
-            .append($('<button>').text('Request'));
+            .append(btn);
             
         return data;
     };

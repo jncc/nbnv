@@ -29,7 +29,17 @@ nbn.nbnv.ui.createRequest = function (json, div) {
     this.div.append(timeLimit._renderHeader());
     this.div.append(timeLimit._renderPanel());
     this.div.append(result._renderHeader());
-    this.div.append(result._renderPanel());
+    this.div.append(result._renderPanel(function () {
+        var j = {};
+        $.extend(j, reason.getJson());        
+        $.extend(j, sensitive.getJson());
+        $.extend(j, taxon.getJson());
+        $.extend(j, spatial.getJson());
+        $.extend(j, year.getJson());        
+        $.extend(j, dataset.getJson());        
+        $.extend(j, timeLimit.getJson());    
+        window.location = "/AccessRequest/Create/Complete?json=" + JSON.stringify(j);
+    }));
 
     this.div.accordion({
         autoHeight: false,

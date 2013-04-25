@@ -24,7 +24,6 @@
         .spanHover { background-color: lightgrey; }
     </style>
     <script>
-	var filter;
         nbn.nbnv.api = '${api}';
 	
 	$(function() {
@@ -36,5 +35,4 @@
 	<h1>Request Enhanced Access</h1>
 	<div id="filter">
         </div>
-        <button id='btn' />
 </@template.master>

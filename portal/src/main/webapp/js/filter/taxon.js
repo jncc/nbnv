@@ -41,13 +41,22 @@ nbn.nbnv.ui.filter.taxon = function(json) {
             });
         
         speciesAutoComplete.data( "autocomplete" )._renderItem = function(ul, item) {
-            var authority = item.authority ? item.authority : '';
             return $( "<li></li>" )
                 .data( "item.autocomplete", item )
-                .append( "<a><strong>" + item.searchMatchTitle + "</strong> " + authority + "<br>" + item.descript + "</a>" )
+                .append( "<a><i>" + item.searchMatchTitle + "</i><br>" + item.descript + "</a>" )
                 .appendTo(ul);
             };
 
+        if (this._tvk != '') {
+            $.ajax({
+                url: nbn.nbnv.api + '/taxa/' + _me._tvk,
+                success: function(data) {
+                    speciesAutoComplete.val(data.name);
+                    _me._taxonName = data.name;
+                }
+            });
+        }
+        
         var allRecords = $('<div>')
             .append($('<input>')
                 .attr('type', 'radio')

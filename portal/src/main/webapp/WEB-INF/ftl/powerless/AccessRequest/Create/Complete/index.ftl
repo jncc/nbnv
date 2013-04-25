@@ -7,6 +7,7 @@
     <script>
         nbn.nbnv.api = '${api}';
 
+/*
         $(function() {
             $.ajax({
                 type: "PUT",
@@ -22,9 +23,11 @@
                 }
                 });
         });
+*/
     </script>
     <h1>Access Request Submitted</h1>
     <div style="padding-bottom: 40px;">TODO: Blurb on access request process, what happens next etc</div>
     <div id="debug-data">
+        ${data}
     </div>
 </@template.master>

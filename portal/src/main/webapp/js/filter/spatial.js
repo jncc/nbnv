@@ -48,10 +48,15 @@ nbn.nbnv.ui.filter.spatial = function(json) {
                         boundary.html('');
                         
                         $.each(data, function(id, sb) {
-                            boundary.append($('<option>')
+                            var option = $('<option>')
                                 .text(sb.name)
                                 .attr('value', sb.identifier)
-                            );
+                                
+                            if (_me._feature == sb.identifier) {
+                                option.attr("selected","selected");
+                            }
+                            
+                            boundary.append(option);
                         });
                         
                         boundary.change();
@@ -63,16 +68,21 @@ nbn.nbnv.ui.filter.spatial = function(json) {
             url: nbn.nbnv.api + '/siteBoundaryDatasets',
             success: function (datasets) {
                 $.each(datasets, function(id, sbd) {
-                    boundaryTypes.append($('<option>')
+                    var option = $('<option>')
                         .text(sbd.title)
-                        .attr('value', sbd.datasetKey)
-                    );
+                        .attr('value', sbd.datasetKey);
+                    
+                    if (_me._dataset == sbd.datasetKey) {
+                        option.attr("selected", "selected");
+                    }
+                    
+                    boundaryTypes.append(option);
                 });
                 
                 boundaryTypes.change();
             }
         });
-
+        
         var match = $('<select>')
             .append($('<option>').text("within").attr('value', 'within'))
             .append($('<option>').text("overlapping").attr('value', 'overlap'))
@@ -80,6 +90,9 @@ nbn.nbnv.ui.filter.spatial = function(json) {
                 var value = $(this).find("option:selected").attr('value');
                 _me._matchType = value;
             });
+
+        match.val(this._matchType);
+        match.change();
 
         var allRecords = $('<div>')
             .append($('<input>')

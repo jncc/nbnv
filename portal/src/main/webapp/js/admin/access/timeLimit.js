@@ -36,7 +36,7 @@ nbn.nbnv.ui.timeLimit = function(json) {
                     _me._date = moment(this.value, 'DD/MM/YYYY');
                 });
         
-        datePicker.val(this._date.format('DD/MM/YYYY'));        
+        datePicker.val(this._date);        
         
         var allRecords = $('<div>')
             .append($('<input>')

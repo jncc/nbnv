@@ -11,6 +11,7 @@ nbn.nbnv.ui.filter.year = function(json) {
     this._endYear = new Date().getFullYear();
     
     if (!json.year.all) {
+        this._all = false;
         this._startYear = json.year.startYear;
         this._endYear = json.year.endYear;
     }
