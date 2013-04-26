@@ -6,20 +6,21 @@ nbn.nbnv.ui.requestReason = function(json) {
     if (typeof(json.reason) === 'undefined') { json.reason = { purpose: 1, details: '', organisationID: -1 }; }
     
     var purposes = {
-        '1' : 'Data is for personal interest only and will not be passed on to other people. Examples – a local natural history society creating a recording checklist for a site or identifying gaps to target local recording effort; a county recorder checking the distribution of a species for verification purposes, commenting on records to improve data quality, comparing the NBN Gateway with other data sources.',
-        '2' : 'Small scale student assignments (but not dissertations), environmental education – e.g. producing a leaflet. Non commercial training products.',
-        '3' : 'Research project, for example part of formal academic study, especially where this is likely to lead to a publication.',
-        '4' : 'Publication of data in printed or web-based media. Any journalistic or media use – e.g. BBC website. Publication of data, e.g. a distribution atlas or species identification guide.',
-        '5' : 'Any non commercial work associated with the core business of an environmental NGO.',
-        '6' : 'Data will be used to inform land management and decision making carried out by staff for a private or public landowner, e.g. MOD, Department of Transport, Network Rail, Local Authorities.  This includes use of data to inform forward planning and development control decisions, including mitigation and biodiversity offsetting.',
-        '7' : 'Professional data services provided to paying clients by private sector organisations such as ecological consultants.  This includes desk studies for Environmental Impact Assessments, extended Phase I ecological surveys, agri-environment application surveys.',
-        '8' : 'Professional data services provided to paying clients by non-profit organisations such as local environmental records centres, local recording groups and national recording schemes.',
-        '9' : 'Any work that is connected with the core business of an organisation that has a statutory responsibility, such as Natural England, the Environment Agency or Forestry Commission.  This includes statutory nature conservation, regulatory functions and reporting.'
+        '1' : { text : 'Data is for personal interest only and will not be passed on to other people. Examples - a local natural history society creating a recording checklist for a site or identifying gaps to target local recording effort; a county recorder checking the distribution of a species for verification purposes, commenting on records to improve data quality, comparing the NBN Gateway with other data sources.', perm : false },
+        '2' : { text : 'Small scale student assignments (but not PhD theses or papers published in peer reviewed literature), environmental education - e.g. producing a leaflet. Non commercial training products.', perm : false },
+        '3' : { text : 'Any funded research project, such as a PhD or postdoctoral research, and any research that leads to publication.', perm : true },
+        '4' : { text : 'Publication of data in printed or web-based media. Any journalistic or media use – e.g. BBC website. Publication of data, e.g. a distribution atlas or species identification guide.', perm : true },
+        '5' : { text : 'Any non commercial work associated with the core business of an environmental NGO.', perm : false },
+        '6' : { text : 'Data will be used to inform land management and decision making carried out by staff for a private or public landowner, e.g. MOD, Department of Transport, Network Rail, Local Authorities.  This includes use of data to inform forward planning and development control decisions, including mitigation and biodiversity offsetting.', perm : true },
+        '7' : { text : 'Professional data services provided to paying clients by private sector organisations such as ecological consultants.  This includes desk studies for Environmental Impact Assessments, extended Phase I ecological surveys, agri-environment application surveys.', perm : true },
+        '8' : { text : 'Professional data services provided to paying clients by non-profit organisations such as local environmental records centres, local recording groups and national recording schemes.', perm : true },
+        '9' : { text : 'Any work that is connected with the core business of an organisation that has a statutory responsibility, such as Natural England, the Environment Agency or Forestry Commission.  This includes statutory nature conservation, regulatory functions and reporting.', perm : false }
     };
     
     this._asID = json.reason.organisationID;
     this._purpose = json.reason.purpose;
     this._details = json.reason.details;
+    this._perm = false;
     
     var username = 'Myself';
     var purposename = 'Personal interest';
@@ -67,17 +68,26 @@ nbn.nbnv.ui.requestReason = function(json) {
                 .append($('<option>').text('Statutory work').attr('value', '9'))
                 .change(function() {
                     _me._purpose = $(this).val();
+                    _me._perm = purposes[$(this).val()].perm;
+                    
                     purposename = $(this).find("option:selected").text();
                     
                     $('#purposedescription').html('');
                     $('#purposedescription').append($('<p>')
                         .append($(this).find("option:selected").text())
                         .append(' - ')
-                        .append(purposes[$(this).val()])
+                        .append(purposes[$(this).val()].text)
                     );
+                        
+                    if (_me._perm) {
+                        $('#purposedescription').append($('<p>')
+                            .addClass('ui-state-error')
+                            .append('WRITTEN PERMISSION FROM THE DATA PROVIDER IS REQUIRED FOR THIS TYPE OF USE.')
+                            );
+                    }
                 })
             ).append($('<div>').addClass('resulttext').attr('id', 'purposedescription')
-                .append($('<p>').append('Personal interest - ').append(purposes['1']))
+                .append($('<p>').append('Personal interest - ').append(purposes['1'].text))
             ).append($('<div>').addClass('queryBlock')
                 .text("Detailed description of purpose:")
             ).append($('<textarea>')

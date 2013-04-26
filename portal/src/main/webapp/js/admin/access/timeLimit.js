@@ -10,7 +10,7 @@ nbn.nbnv.ui.timeLimit = function(json) {
     
     if (!json.time.all) {
         this._all = false;
-        this._date = json.time.date;
+        this._date = moment(json.time.date);
     }
     
     this._renderHeader = function() {
@@ -36,7 +36,7 @@ nbn.nbnv.ui.timeLimit = function(json) {
                     _me._date = moment(this.value, 'DD/MM/YYYY');
                 });
         
-        datePicker.val(this._date);        
+        datePicker.val(this._date.format('DD/MM/YYYY'));        
         
         var allRecords = $('<div>')
             .append($('<input>')
@@ -97,7 +97,7 @@ nbn.nbnv.ui.timeLimit = function(json) {
         if (this._all) {
             return { time: { all: true }};
         } else {
-            return { time: { all: false, date: this._date.format('DD/MM/YYYY') }};
+            return { time: { all: false, date: this._date }};
         }
     };
 };

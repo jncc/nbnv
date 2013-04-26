@@ -15,6 +15,7 @@ public class AccessRequestJSON {
     private AccessRequestYearFilterJSON year;
     private AccessRequestDatasetFilterJSON dataset;
     private AccessRequestReasonJSON reason;
+    private AccessRequestTimeLimitJSON time;
 
     /**
      * @return the sensitive
@@ -98,5 +99,19 @@ public class AccessRequestJSON {
      */
     public void setReason(AccessRequestReasonJSON reason) {
         this.reason = reason;
+    }
+
+    /**
+     * @return the time
+     */
+    public AccessRequestTimeLimitJSON getTime() {
+        return time;
+    }
+
+    /**
+     * @param time the time to set
+     */
+    public void setTime(AccessRequestTimeLimitJSON time) {
+        this.time = time;
     }
 }

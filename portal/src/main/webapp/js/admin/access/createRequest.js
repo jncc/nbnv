@@ -68,6 +68,8 @@ nbn.nbnv.ui.createRequest = function (json, div) {
                 timeLimit._onEnter();
             } else if (newFilter == 'reason') {
                 reason._onEnter();
+            } else if (newFilter == 'result') {
+                result._onEnter(reason._perm);
             }
 
             if (oldFilter == 'sensitive') {
