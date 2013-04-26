@@ -41,7 +41,17 @@ nbn.nbnv.ui.filter.dataset = function(json) {
         datasetTable.append('Loading');
         
         var filter = {};
-        if (!json.taxon.all) { filter.ptvk = json.taxon.tvk; }
+        
+        if (!json.taxon.all) { 
+            if (json.taxon.tvk) {
+                filter.ptvk = json.taxon.tvk; 
+            } else if (json.taxon.designation) {
+                filter.designation = json.taxon.designation;
+            } else if (json.taxon.output) {
+                filter.taxonOutputGroup = json.taxon.output;
+            }
+        }
+        
         if (!json.year.all) { filter.startYear = json.year.startYear; filter.endYear = json.year.endYear; }
         if (!json.spatial.all) { filter.featureID = json.spatial.feature; filter.spatialRelationship = json.spatial.matchType; }
         if (json.sensitive == 'sans') { filter.sensitive = 'true'; }

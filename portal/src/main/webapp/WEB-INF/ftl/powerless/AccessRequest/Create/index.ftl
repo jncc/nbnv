@@ -22,6 +22,7 @@
         .queryBlock { padding-top: 1em; }
         .dataset-label { width: 100%; display: inline-block; border: 1px solid white; }
         .spanHover { background-color: lightgrey; }
+        .selectMaxWidth { width: 70%; }
     </style>
     <script>
         nbn.nbnv.api = '${api}';
