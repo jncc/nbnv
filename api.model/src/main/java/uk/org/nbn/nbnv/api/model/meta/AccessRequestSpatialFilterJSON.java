@@ -9,21 +9,21 @@ package uk.org.nbn.nbnv.api.model.meta;
  * @author paulbe
  */
 public class AccessRequestSpatialFilterJSON extends AccessRequestFilterJSON {
-    private int feature;
-    private String match;
+    private String feature;
+    private String match = "overlap";
     private String datasetKey;
 
     /**
      * @return the feature
      */
-    public int getFeature() {
+    public String getFeature() {
         return feature;
     }
 
     /**
      * @param feature the feature to set
      */
-    public void setFeature(int feature) {
+    public void setFeature(String feature) {
         this.feature = feature;
     }
 
