@@ -9,9 +9,9 @@ package uk.org.nbn.nbnv.api.model.meta;
  * @author paulbe
  */
 public class AccessRequestTaxonFilterJSON extends AccessRequestFilterJSON {
-    private String tvk;
-    private String designation;
-    private String output;
+    private String tvk = "";
+    private String designation = "";
+    private String output = "";
 
     /**
      * @return the tvk

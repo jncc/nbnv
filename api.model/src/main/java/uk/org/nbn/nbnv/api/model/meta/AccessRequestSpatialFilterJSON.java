@@ -9,9 +9,9 @@ package uk.org.nbn.nbnv.api.model.meta;
  * @author paulbe
  */
 public class AccessRequestSpatialFilterJSON extends AccessRequestFilterJSON {
-    private String feature;
+    private String feature = "";
     private String match = "overlap";
-    private String datasetKey;
+    private String dataset = "";
 
     /**
      * @return the feature
@@ -42,16 +42,16 @@ public class AccessRequestSpatialFilterJSON extends AccessRequestFilterJSON {
     }
 
     /**
-     * @return the datasetKey
+     * @return the dataset
      */
-    public String getDatasetKey() {
-        return datasetKey;
+    public String getDataset() {
+        return dataset;
     }
 
     /**
-     * @param datasetKey the datasetKey to set
+     * @param dataset the dataset to set
      */
-    public void setDatasetKey(String datasetKey) {
-        this.datasetKey = datasetKey;
+    public void setDataset(String dataset) {
+        this.dataset = dataset;
     }
 }

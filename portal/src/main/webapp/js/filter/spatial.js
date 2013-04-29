@@ -14,7 +14,7 @@ nbn.nbnv.ui.filter.spatial = function(json) {
     
     if (!json.spatial.all) {
         this._all = false;
-        this._matchType = json.spatial.matchType;
+        this._matchType = json.spatial.match;
         this._feature = json.spatial.feature;
         this._dataset = json.spatial.dataset;
     }
@@ -167,7 +167,7 @@ nbn.nbnv.ui.filter.spatial = function(json) {
         if (this._all) {
             return { spatial: { all: true }};
         } else {
-            return { spatial: { all: false, matchType: this._matchType, feature: this._feature, dataset: this._dataset }};
+            return { spatial: { all: false, match: this._matchType, feature: this._feature, dataset: this._dataset }};
         }
     };
 

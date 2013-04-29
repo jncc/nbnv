@@ -7,7 +7,7 @@
     <script>
         nbn.nbnv.api = '${api}';
 
-/*
+
         $(function() {
             $.ajax({
                 type: "PUT",
@@ -21,9 +21,9 @@
                 error: function() {
                     $('#debug-data').append("Fail");
                 }
-                });
+            });
         });
-*/
+
     </script>
     <h1>Access Request Submitted</h1>
     <div style="padding-bottom: 40px;">TODO: Blurb on access request process, what happens next etc</div>
