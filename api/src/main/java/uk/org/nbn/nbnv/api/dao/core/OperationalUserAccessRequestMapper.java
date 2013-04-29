@@ -15,14 +15,13 @@ import uk.org.nbn.nbnv.api.model.UserAccessRequest;
  * @author Paul Gilbertson
  */
 public interface OperationalUserAccessRequestMapper {
-    @Insert("INSERT INTO UserAccessRequest (filterID, userID, datasetKey, requestRoleID, requestTypeID, requestReason, requestDate)"
-            + " VALUES (#{filterID}, #{userID}, #{datasetKey}, #{requestRoleID}, #{requestTypeID}, #{requestReason}, #{requestDate})")
+    @Insert("INSERT INTO UserAccessRequest (filterID, userID, datasetKey, requestPurposeID, requestReason, requestDate)"
+            + " VALUES (#{filterID}, #{userID}, #{datasetKey}, #{requestPurposeID}, #{requestReason}, #{requestDate})")
     public int createRequest(
             @Param("filterID") int filterID
             , @Param("userID") int userID
             , @Param("datasetKey") String datasetKey
-            , @Param("requestRoleID") int requestRoleID
-            , @Param("requestTypeID") int requestTypeID
+            , @Param("requestPurposeID") int requestPurposeID
             , @Param("requestReason") String requestReason
             , @Param("requestDate") Date requestDate);
 
@@ -61,5 +60,4 @@ public interface OperationalUserAccessRequestMapper {
             @Param("filterID") int filterID
             , @Param("responseReason") String responseReason
             , @Param("responseDate") Date responseDate);
-
 }

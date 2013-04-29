@@ -9,6 +9,7 @@ import java.sql.Date;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
@@ -27,6 +28,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import uk.org.nbn.nbnv.api.dao.core.OperationalTaxonObservationFilterMapper;
 import uk.org.nbn.nbnv.api.dao.core.OperationalUserAccessRequestMapper;
+import uk.org.nbn.nbnv.api.dao.warehouse.TaxonObservationMapper;
+import uk.org.nbn.nbnv.api.model.TaxonDatasetWithQueryStats;
 import uk.org.nbn.nbnv.api.model.TaxonObservationFilter;
 import uk.org.nbn.nbnv.api.model.User;
 import uk.org.nbn.nbnv.api.model.UserAccessRequest;
@@ -44,6 +47,7 @@ import uk.org.nbn.nbnv.api.utils.AccessRequestJSONToText;
 public class UserAccessRequestResource extends AbstractResource {
     @Autowired OperationalTaxonObservationFilterMapper oTaxonObservationFilterMapper;
     @Autowired OperationalUserAccessRequestMapper oUserAccessRequestMapper;
+    @Autowired TaxonObservationMapper taxonObservationMapper;
     
     @PUT
     @Path("/requests")
@@ -53,13 +57,37 @@ public class UserAccessRequestResource extends AbstractResource {
     public Response createRequest(@TokenUser(allowPublic=false) User user, String json) throws IOException {
         AccessRequestJSON accessRequest = parseJSON(json);
         
+        // Fail if this is an organisation request
+        if (accessRequest.getReason().getOrganisationID() > -1) {
+            return Response.serverError().build();
+        }
+        
         TaxonObservationFilter filter = new TaxonObservationFilter();
         filter.setFilterJSON(json);
         filter.setFilterText(AccessRequestJSONToText.convert(accessRequest));
+
+        List<String> species = null;
+        if (accessRequest.getTaxon().getTvk() != null && !accessRequest.getTaxon().getTvk().isEmpty()) {
+            species = new ArrayList<String>();
+            species.add(accessRequest.getTaxon().getTvk());
+        }
         
-        for (String datasetKey : accessRequest.getDataset().getDatasets()) {
+        List<String> datasets;
+        
+        if (accessRequest.getDataset().isAll()) {
+            List<TaxonDatasetWithQueryStats> selectRequestableObservationDatasetsByFilter = taxonObservationMapper.selectRequestableObservationDatasetsByFilter(user, accessRequest.getYear().getStartYear(), accessRequest.getYear().getEndYear(), null, species, accessRequest.getSpatial().getMatch(), accessRequest.getSpatial().getFeature(), (accessRequest.getSensitive().equals("sans") ? true : false), accessRequest.getTaxon().getDesignation(), accessRequest.getTaxon().getOutput(), null);
+            datasets = new ArrayList<String>();
+            
+            for (TaxonDatasetWithQueryStats tdwqs : selectRequestableObservationDatasetsByFilter) {
+                datasets.add(tdwqs.getDatasetKey());
+            }
+        } else {
+            datasets = accessRequest.getDataset().getDatasets();
+        }
+        
+        for (String datasetKey : datasets) {
             oTaxonObservationFilterMapper.createFilter(filter);
-//            oUserAccessRequestMapper.createRequest(filter.getId(), user.getId(), datasetKey, accessRequest.getRequest().getRole(), accessRequest.getRequest().getPurpose(), accessRequest.getRequest().getDetails(), new Date(new java.util.Date().getTime()));
+            oUserAccessRequestMapper.createRequest(filter.getId(), user.getId(), datasetKey, accessRequest.getReason().getPurpose(), accessRequest.getReason().getDetails(), new Date(new java.util.Date().getTime()));
         }
 
         return Response.ok("success").build();

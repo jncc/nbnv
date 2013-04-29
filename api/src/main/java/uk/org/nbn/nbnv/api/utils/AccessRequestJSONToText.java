@@ -31,7 +31,7 @@ public class AccessRequestJSONToText {
         }
 
         if (!ar.getSpatial().isAll()) {
-            text += " <b>" + ar.getSpatial().getMatch() + "</b> the boundary of <b>" + Integer.toString(ar.getSpatial().getFeature()) + "</b>";
+            text += " <b>" + ar.getSpatial().getMatch() + "</b> the boundary of <b>" + ar.getSpatial().getFeature() + "</b>";
         }
 
 
