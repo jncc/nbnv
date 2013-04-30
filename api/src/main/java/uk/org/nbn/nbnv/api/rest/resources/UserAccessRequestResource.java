@@ -101,10 +101,10 @@ public class UserAccessRequestResource extends AbstractResource {
     }
     
     @GET
-    @Path("/requests/admin/outstanding")
+    @Path("/requests/admin/pending")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<UserAccessRequest> getRequestsOutstandingForAdmin(@TokenUser(allowPublic=false) User user) {
-        return oUserAccessRequestMapper.getOutstandingAdminableRequests(user.getId());
+    public List<UserAccessRequest> getRequestsPendingForAdmin(@TokenUser(allowPublic=false) User user) {
+        return oUserAccessRequestMapper.getPendingAdminableRequests(user.getId());
     }
 
     @GET
