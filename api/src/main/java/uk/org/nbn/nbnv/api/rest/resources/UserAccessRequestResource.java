@@ -101,6 +101,27 @@ public class UserAccessRequestResource extends AbstractResource {
     }
     
     @GET
+    @Path("/requests/admin/outstanding")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<UserAccessRequest> getRequestsOutstandingForAdmin(@TokenUser(allowPublic=false) User user) {
+        return oUserAccessRequestMapper.getOutstandingAdminableRequests(user.getId());
+    }
+
+    @GET
+    @Path("/requests/admin/granted")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<UserAccessRequest> getRequestsGrantedForAdmin(@TokenUser(allowPublic=false) User user) {
+        return oUserAccessRequestMapper.getGrantedAdminableRequests(user.getId());
+    }
+
+    @GET
+    @Path("/requests/admin/denied")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<UserAccessRequest> getRequestsDeniedForAdmin(@TokenUser(allowPublic=false) User user) {
+        return oUserAccessRequestMapper.getDeniedAdminableRequests(user.getId());
+    }
+
+    @GET
     @Path("/requests/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public UserAccessRequest getRequest(@TokenAccessRequestAdminUser(path="id") User user
