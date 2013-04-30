@@ -9,19 +9,20 @@ package uk.org.nbn.nbnv.api.model;
  * @author Paul Gilbertson
  */
 public class UserAccessRequest extends AccessRequest {
-    private int userID;
+    private User user;
 
     /**
      * @return the user
      */
-    public int getUserID() {
-        return userID;
+    public User getUser() {
+        return user;
     }
 
     /**
      * @param user the user to set
      */
-    public void setUser(int userID) {
-        this.userID = userID;
+    public void setUser(User user) {
+        this.user = user;
     }
+
 }

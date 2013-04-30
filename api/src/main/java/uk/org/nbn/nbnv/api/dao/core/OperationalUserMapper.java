@@ -7,6 +7,7 @@ package uk.org.nbn.nbnv.api.dao.core;
 import java.util.Date;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 import uk.org.nbn.nbnv.api.model.User;
 
@@ -41,4 +42,8 @@ public interface OperationalUserMapper {
     
     @Insert("UPDATE \"User\" SET active = 1 WHERE username = #{username} AND active = 0 AND activationKey = #{code}")
     int activateNewUser( @Param("username") String username, @Param("code") String code);
+    
+    @Select("SELECT * from UserData WHERE id = #{id}")
+    public User getUserById(@Param("id") int id);
+
 }

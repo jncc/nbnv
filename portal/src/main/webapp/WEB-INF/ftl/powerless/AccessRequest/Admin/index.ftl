@@ -1,21 +1,26 @@
 <#assign userRequests=json.readURL("${api}/user/userAccesses/requests/admin") />
 
 <@template.master title="Requests for Datasets"
-    javascripts=["/js/jquery.dataTables.min.js","/js/jquery-ui-1.8.23.custom.min.js"]
-    csss=["/css/smoothness/jquery-ui-1.8.23.custom.css","/css/jquery.qtip.min.css"]>
+    javascripts=["/js/jquery.dataTables.min.js"]
+    csss=["http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/themes/smoothness/jquery-ui.css"]>
 
     <script>
         $(function(){
+            $.fn.dataTableExt.oJUIClasses.sStripeOdd = 'ui-state-highlight';
             $('#requesttable').dataTable({
-                "iDisplayLength": 5,
+                "aaSorting": [[4, "desc"]],
+                "bAutoWidth": true,
+                "bFilter": false,
                 "bJQueryUI": true,
-                "bProcessing": true,
-                "sPaginationType": "full_numbers"
+                "iDisplayLength": 25,
+                "bSortClasses": false,
+                "sPaginationType": "full_numbers",
+                "aLengthMenu": [[10,25,50,100,-1],[10,25,50,100,"All"]],
             });
         });
     </script>
     <h1>Pending Access Requests</h1>
-    <table id="requesttable" class="results">
+    <table id="requesttable" class="nbn-dataset-table">
         <thead>
             <tr>
                 <th>User</th>
@@ -29,10 +34,10 @@
             <#list userRequests as r>
             <tr>
                 <td>
-                    ${r.userID}
+                    ${r.user.forename} ${r.user.surname}
                 </td>
                 <td>
-                    ${r.datasetKey}
+                    ${r.dataset.title}
                 </td>
                 <td>
                     ${r.filter.filterText}
