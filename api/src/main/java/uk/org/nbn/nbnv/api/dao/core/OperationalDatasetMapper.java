@@ -26,10 +26,10 @@ public interface OperationalDatasetMapper {
 
     @Select("SELECT * FROM DatasetData WHERE DatasetData.\"key\" = #{key}")
     @Results(value = {
-        //@Result(property="organisation", column="organisationID", javaType=Organisation.class, one=@One(select="uk.org.nbn.nbnv.api.dao.warehouse.OrganisationMapper.selectByID")),
+        @Result(property="organisation", column="organisationID", javaType=Organisation.class, one=@One(select="uk.org.nbn.nbnv.api.dao.core.OperationalOrganisationMapper.selectByID")),
         @Result(property="organisationID", column="organisationID"),
-        @Result(property="key", column="key")//,
-        //@Result(property="contributingOrganisations", column="key", javaType=List.class, many=@Many(select="uk.org.nbn.nbnv.api.dao.warehouse.DatasetContributingOrganisationMapper.selectOrganisationsByDataset"))
+        @Result(property="key", column="key"),
+        @Result(property="contributingOrganisations", column="key", javaType=List.class, many=@Many(select="uk.org.nbn.nbnv.api.dao.core.OperationalDatasetContributingOrganisationMapper.selectOrganisationsByDataset"))
     })
     Dataset selectByDatasetKey(String key);
 
