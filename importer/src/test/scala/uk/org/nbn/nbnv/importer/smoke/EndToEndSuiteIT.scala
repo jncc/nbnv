@@ -19,19 +19,19 @@ class EndToEndSuiteIT extends BaseFunSuite with ResourceLoader {
   // change from 'ignore' to 'test' to run the importer against an archive within your IDE
   ignore("import an archive") {
 
-    val archive = new URL("file:///C:/Users/Pete Montgomery/Desktop/New folder/archive_Agencedes_30102012_014508.zip")
+    val archive = new URL("file:///C://Working//nbnv-234//nbnv-234.zip")
     val f = fixture(archive)
     f.importer.run()
   }
 
-  test("should import a valid archive") {
+  ignore("should import a valid archive") {
 
     val archive = resource("/archives/valid.zip")
     val f = fixture(archive)
     f.importer.run()
   }
 
-  test("should throw on non-existent dataset key") {
+  ignore("should throw on non-existent dataset key") {
 
     val ex = intercept[BadDataException] {
 
