@@ -62,7 +62,7 @@ class NbnRecord(record: StarRecord) {
   def gridReferenceTypeRaw      = parseOptional(extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/gridReferenceType"))
   def gridReferenceRaw          = parseOptional(extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/gridReference"))
   def gridReferencePrecision    = gridReferencePrecisionRaw map { _.toInt }
-  def gridReferencePrecisionRaw = parseOptional(extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/gridReferencePrecisionRaw"))
+  def gridReferencePrecisionRaw = parseOptional(extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/gridReferencePrecision"))
 
   def featureKey             = parseOptional(extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/featureKey"))
 
