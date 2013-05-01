@@ -1,4 +1,6 @@
-<#assign userRequests=json.readURL("${api}/user/userAccesses/requests/admin") />
+<#assign oUserRequests=json.readURL("${api}/user/userAccesses/requests/admin/pending") />
+<#assign gUserRequests=json.readURL("${api}/user/userAccesses/requests/admin/granted") />
+<#assign dUserRequests=json.readURL("${api}/user/userAccesses/requests/admin/denied") />
 
 <@template.master title="Requests for Datasets"
     javascripts=["/js/jquery.dataTables.min.js"]
@@ -7,7 +9,7 @@
     <script>
         $(function(){
             $.fn.dataTableExt.oJUIClasses.sStripeOdd = 'ui-state-highlight';
-            $('#requesttable').dataTable({
+            $('.results').dataTable({
                 "aaSorting": [[4, "desc"]],
                 "bAutoWidth": true,
                 "bFilter": false,
@@ -20,7 +22,7 @@
         });
     </script>
     <h1>Pending Access Requests</h1>
-    <table id="requesttable" class="nbn-dataset-table">
+    <table class="results">
         <thead>
             <tr>
                 <th>User</th>
@@ -31,7 +33,7 @@
             </tr>
         </thead>
         <tbody>
-            <#list userRequests as r>
+            <#list oUserRequests as r>
             <tr>
                 <td>
                     ${r.user.forename} ${r.user.surname}
@@ -47,6 +49,88 @@
                 </td>
                 <td>
                     ${r.requestDate}
+                </td>
+            </tr>
+            </#list>
+        </tbody>
+    </table>
+    <h1>Granted Access Requests</h1>
+    <table class="results">
+        <thead>
+            <tr>
+                <th>User</th>
+                <th>Dataset</th>
+                <th>Data Request</th>
+                <th>Request Reason</th>
+                <th>Request Date</th>
+                <th>Response Reason</th>
+                <th>Response Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            <#list gUserRequests as r>
+            <tr>
+                <td>
+                    ${r.user.forename} ${r.user.surname}
+                </td>
+                <td>
+                    ${r.dataset.title}
+                </td>
+                <td>
+                    ${r.filter.filterText}
+                </td>
+                <td>
+                    ${r.requestReason}
+                </td>
+                <td>
+                    ${r.requestDate}
+                </td>
+                <td>
+                    ${r.responseReason}
+                </td>
+                <td>
+                    ${r.responseDate}
+                </td>
+            </tr>
+            </#list>
+        </tbody>
+    </table>
+    <h1>Denied Access Requests</h1>
+    <table class="results">
+        <thead>
+            <tr>
+                <th>User</th>
+                <th>Dataset</th>
+                <th>Data Request</th>
+                <th>Request Reason</th>
+                <th>Request Date</th>
+                <th>Response Reason</th>
+                <th>Response Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            <#list dUserRequests as r>
+            <tr>
+                <td>
+                    ${r.user.forename} ${r.user.surname}
+                </td>
+                <td>
+                    ${r.dataset.title}
+                </td>
+                <td>
+                    ${r.filter.filterText}
+                </td>
+                <td>
+                    ${r.requestReason}
+                </td>
+                <td>
+                    ${r.requestDate}
+                </td>
+                <td>
+                    ${r.responseReason}
+                </td>
+                <td>
+                    ${r.responseDate}
                 </td>
             </tr>
             </#list>

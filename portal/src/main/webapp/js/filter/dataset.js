@@ -9,10 +9,13 @@ nbn.nbnv.ui.filter.dataset = function(json) {
     this._all = true;
     this._datasets = [];
     this._fullCount = -1;
+    this._mode = 'all';
     
     if (!json.dataset.all) {
         this._all = false;
         this._datasets = json.dataset.datasets;
+        
+        if (this._datasets.length == 1) { this._mode = 'single'; } else { this._mode = 'filter'; }
     }
     
     this._renderHeader = function() {
@@ -22,11 +25,86 @@ nbn.nbnv.ui.filter.dataset = function(json) {
     };
     
     this._renderPanel = function() {
+        var _me = this;
         var dataDiv = $('<div>');
         
-        var datasetTable = $('<table>').attr('id', 'datasetfiltertable');
+        var datasetTable = $('<table>').attr('id', 'datasetfiltertable').addClass('results');
+        $.fn.dataTableExt.oJUIClasses.sStripeOdd = 'ui-state-highlight';
+
+        var datasetAutoComplete = $('<input>')
+            .autocomplete({
+                source: function(request, response) {
+                    $.getJSON(nbn.nbnv.api + '/search/taxonDatasets?q=' + request.term, function(data) {
+                        response($.map(data.results, function(item) { item.value = item.title; return item; }))
+                    });
+                },
+                select: function(event, ui) {
+                    _me._datasets = [ui.item.datasetKey];
+                    datasetAutoComplete.val(ui.item.title);
+                }
+            });
         
-        dataDiv.append(datasetTable);
+        datasetAutoComplete.data( "autocomplete" )._renderItem = function(ul, item) {
+            return $( "<li></li>" )
+                .data( "item.autocomplete", item )
+                .append( "<a><i>" + item.searchMatchTitle + "</i><br>" + item.organisationName + "</a>" )
+                .appendTo(ul);
+            };
+
+        var allRecords = $('<div>')
+            .append($('<input>')
+                .attr('type', 'radio')
+                .attr('name', 'datasetfilterall')
+                .attr('value', 'all')
+                .change(function() {
+                    if (this.checked) {
+                        _me._all = true;
+                        _me._mode = 'all';
+                        datasetAutoComplete.prop('disabled', true);
+                        $('#datasetfiltertable').find(":checkbox").prop('disabled', true);
+                    }
+                })
+            ).append('All records');
+
+
+	var singleRecords = $('<div>')
+            .append($('<input>')
+                .attr('type', 'radio')
+                .attr('name', 'datasetfilterall')
+                .attr('value', 'single')
+                .change(function() {
+                    if (this.checked) {
+                        _me._all = false;
+                        _me._mode = 'single';
+                        datasetAutoComplete.prop('disabled', false);
+                        $('#datasetfiltertable').find(":checkbox").prop('disabled', true);
+                    }
+                })
+            ).append('Records belong to the dataset ').append(datasetAutoComplete);
+                
+	var filterRecords = $('<div>')
+            .append($('<input>')
+                .attr('type', 'radio')
+                .attr('name', 'datasetfilterall')
+                .attr('value', 'filter')
+                .change(function() {
+                    if (this.checked) {
+                        _me._all = false;
+                        _me._mode = 'filter';
+                        datasetAutoComplete.prop('disabled', true);
+                        $('#datasetfiltertable').find(":checkbox").prop('disabled', false);
+                    }
+                })
+            ).append("Records that belong to ")
+            .append(datasetTable);
+        
+        if (this._all) {
+            allRecords.children('input').attr('checked', 'checked').change();
+        } else {
+            filterRecords.children('input').attr('checked', 'checked').change();
+        }
+
+        dataDiv.append(allRecords).append(singleRecords).append(filterRecords);
         
         return dataDiv;
     };
@@ -42,6 +120,12 @@ nbn.nbnv.ui.filter.dataset = function(json) {
         
         var filter = {};
         
+        if (json.taxon.all && json.spatial.all) {
+            datasetTable.html('');
+            datasetTable.append('Please apply a taxon or spatial filter to choose datasets.');
+            return;
+        }
+        
         if (!json.taxon.all) { 
             if (json.taxon.tvk) {
                 filter.ptvk = json.taxon.tvk; 
@@ -55,12 +139,23 @@ nbn.nbnv.ui.filter.dataset = function(json) {
         if (!json.year.all) { filter.startYear = json.year.startYear; filter.endYear = json.year.endYear; }
         if (!json.spatial.all) { filter.featureID = json.spatial.feature; filter.spatialRelationship = json.spatial.matchType; }
         if (json.sensitive == 'sans') { filter.sensitive = 'true'; }
-        
+
         $.ajax({
             url: nbn.nbnv.api + endpoint,
             data: filter,
             success: function(datasets) {
                 datasetTable.html('');
+                datasetTable.append($('<thead>')
+                    .append($('<tr>')
+                        .append($('<th>').append('Use'))
+                        .append($('<th>').append('Dataset'))
+                        .append($('<th>').append('Records'))
+                    )
+                );
+                    
+                var tbody = $('<tbody>');
+                    
+                    
                 _me._fullCount = datasets.length;
                 
                 datasets.sort(function (a, b) {
@@ -91,6 +186,10 @@ nbn.nbnv.ui.filter.dataset = function(json) {
                         cb.attr("checked", "true");
                     }
                     
+                    if (_me._mode != filter) {
+                        cb.prop('disabled', true);
+                    }
+                    
                     var dr = $('<tr>')
                         .append($('<td>')
                             .append(cb)
@@ -98,7 +197,7 @@ nbn.nbnv.ui.filter.dataset = function(json) {
                             .append($('<span>')
                                 .addClass('dataset-label')
                                 .attr('title', 'Use constraints - ' + (td.taxonDataset.useConstraints===''?'None':td.taxonDataset.useConstraints))
-                                .append(td.taxonDataset.organisationName + ' - ' + td.taxonDataset.title + ' (' + td.querySpecificObservationCount + ' record(s))')
+                                .append(td.taxonDataset.organisationName + ' - ' + td.taxonDataset.title)
                                 .click(function () {
                                     var win = window.open('/Datasets/' + td.taxonDataset.key, '_blank');
                                     win.focus();
@@ -114,14 +213,29 @@ nbn.nbnv.ui.filter.dataset = function(json) {
                                     }
                                 })
                             )
+                        ).append($('<td>')
+                            .append(td.querySpecificObservationCount)
                         );
                         
-                    datasetTable.append(dr);
+                    tbody.append(dr);
                     
                     if (_me._all || $.inArray(td.taxonDataset.key, dataf) > -1) {
                         _me._addDataset(td.taxonDataset.key);
                     }
                 });
+                
+                datasetTable.append(tbody);
+                datasetTable.dataTable({
+                "aaSorting": [[1, "asc"]],
+                "bAutoWidth": true,
+                "bFilter": false,
+                "bJQueryUI": true,
+                "iDisplayLength": 25,
+                "bSortClasses": false,
+                "sPaginationType": "full_numbers",
+                "aLengthMenu": [[10,25,50,100,-1],[10,25,50,100,"All"]]
+            });
+
             }
         });
     };
