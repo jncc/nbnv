@@ -171,4 +171,7 @@ nbn.nbnv.ui.filter.spatial = function(json) {
         }
     };
 
+    this.getError = function() {
+        return [];
+    };
 };

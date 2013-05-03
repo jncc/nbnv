@@ -100,4 +100,9 @@ nbn.nbnv.ui.timeLimit = function(json) {
             return { time: { all: false, date: this._date }};
         }
     };
+    
+    this.getError = function() {
+        if (!this._all && !moment(this._date).isAfter(moment())) { return ['Time limit must be in the future']; }
+        return [];
+    };
 };

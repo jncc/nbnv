@@ -9,7 +9,7 @@ nbn.nbnv.ui.requestReason = function(json) {
         '1' : { text : 'Data is for personal interest only and will not be passed on to other people. Examples - a local natural history society creating a recording checklist for a site or identifying gaps to target local recording effort; a county recorder checking the distribution of a species for verification purposes, commenting on records to improve data quality, comparing the NBN Gateway with other data sources.', perm : false },
         '2' : { text : 'Small scale student assignments (but not PhD theses or papers published in peer reviewed literature), environmental education - e.g. producing a leaflet. Non commercial training products.', perm : false },
         '3' : { text : 'Any funded research project, such as a PhD or postdoctoral research, and any research that leads to publication.', perm : true },
-        '4' : { text : 'Publication of data in printed or web-based media. Any journalistic or media use – e.g. BBC website. Publication of data, e.g. a distribution atlas or species identification guide.', perm : true },
+        '4' : { text : 'Publication of data in printed or web-based media. Any journalistic or media use - e.g. BBC website. Publication of data, e.g. a distribution atlas or species identification guide.', perm : true },
         '5' : { text : 'Any non commercial work associated with the core business of an environmental NGO.', perm : false },
         '6' : { text : 'Data will be used to inform land management and decision making carried out by staff for a private or public landowner, e.g. MOD, Department of Transport, Network Rail, Local Authorities.  This includes use of data to inform forward planning and development control decisions, including mitigation and biodiversity offsetting.', perm : true },
         '7' : { text : 'Professional data services provided to paying clients by private sector organisations such as ecological consultants.  This includes desk studies for Environmental Impact Assessments, extended Phase I ecological surveys, agri-environment application surveys.', perm : true },
@@ -93,7 +93,7 @@ nbn.nbnv.ui.requestReason = function(json) {
             ).append($('<textarea>')
                 .attr('cols', '75')
                 .attr('rows', '15')
-                .text("Please enter details here")
+                .watermark("Please enter details here")
                 .change(function() {
                     _me._details = $(this).val();
                 })
@@ -119,4 +119,9 @@ nbn.nbnv.ui.requestReason = function(json) {
         return { reason: { purpose: this._purpose, details: this._details }};
     };
 
+    this.getError = function() {
+        if (this._details == '') { return ['Please enter detailed reason for your request']; }
+        
+        return [];
+    };
 };
