@@ -1,3 +1,4 @@
+<#assign user=json.readURL("${api}/user") />
 <#if RequestParameters.json?has_content><#assign data="${RequestParameters.json}" /><#else><#assign data="{}" /></#if>
 
 <@template.master title="Request Permission"
@@ -5,7 +6,6 @@
         "/js/admin/access/util/jquery.qtip.min.js"
         ,"/js/admin/access/util/moment.min.js"
         ,"/js/jquery.dataTables.min.js"
-        ,"/js/filter/sensitive.js"
         ,"/js/filter/year.js"
         ,"/js/filter/spatial.js"
         ,"/js/filter/taxon.js"
