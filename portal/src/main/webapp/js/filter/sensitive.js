@@ -53,4 +53,8 @@ nbn.nbnv.ui.filter.sensitive = function(json) {
     this.getJson = function() {
         return { sensitive: this._value };
     };
+    
+    this.getError = function() {
+        return [];
+    };
 };

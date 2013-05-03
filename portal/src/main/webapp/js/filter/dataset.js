@@ -31,7 +31,7 @@ nbn.nbnv.ui.filter.dataset = function(json) {
         var datasetTable = $('<table>').attr('id', 'datasetfiltertable').addClass('results');
         $.fn.dataTableExt.oJUIClasses.sStripeOdd = 'ui-state-highlight';
 
-        var datasetAutoComplete = $('<input>')
+        var datasetAutoComplete = $('<input>').addClass('selectMaxWidth')
             .autocomplete({
                 source: function(request, response) {
                     $.getJSON(nbn.nbnv.api + '/search/taxonDatasets?q=' + request.term, function(data) {
@@ -123,8 +123,10 @@ nbn.nbnv.ui.filter.dataset = function(json) {
         if (json.taxon.all && json.spatial.all) {
             datasetTable.html('');
             datasetTable.append('Please apply a taxon or spatial filter to choose datasets.');
+            $("input:radio[name='datasetfilterall'][value='filter']").prop('disabled', true);
             return;
         }
+        $("input:radio[name='datasetfilterall'][value='filter']").prop('disabled', false);
         
         if (!json.taxon.all) { 
             if (json.taxon.tvk) {
@@ -275,4 +277,9 @@ nbn.nbnv.ui.filter.dataset = function(json) {
             return { dataset : { all: false, datasets : this._datasets } };
         }
     }
+    
+    this.getError = function() {
+        if (!this._all && this._datasets.length < 1) { return [ 'You must select at least one dataset' ]; }
+        return [];
+    };
 };

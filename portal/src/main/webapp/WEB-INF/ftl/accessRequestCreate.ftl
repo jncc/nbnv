@@ -6,6 +6,7 @@
         "/js/admin/access/util/jquery.qtip.min.js"
         ,"/js/admin/access/util/moment.min.js"
         ,"/js/jquery.dataTables.min.js"
+        ,"/js/jquery.watermark.min.js"
         ,"/js/filter/year.js"
         ,"/js/filter/spatial.js"
         ,"/js/filter/taxon.js"

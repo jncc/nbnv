@@ -261,4 +261,12 @@ nbn.nbnv.ui.filter.taxon = function(json) {
             return { taxon: { all: false }};
         }
     };
+    
+    this.getError = function() {
+        var e = [];
+        
+        if (mode == 'taxon' && this._tvk == '') { e.push('You must specify a taxon in the taxon filter'); }
+        
+        return e;
+    };
 };
