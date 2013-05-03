@@ -6,6 +6,7 @@ package test.uk.org.nbn.data.selenium;
 
 import java.net.URL;
 import static junit.framework.Assert.*;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
@@ -24,6 +25,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:embedded-jetty-applicationContext.xml")
+@Ignore
 public class HomePageIT {
     @Autowired URL testServer;
     
