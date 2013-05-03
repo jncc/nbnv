@@ -80,7 +80,7 @@ nbn.nbnv.ui.filter.dataset = function(json) {
                         $('#datasetfiltertable').find(":checkbox").prop('disabled', true);
                     }
                 })
-            ).append('Records belong to the dataset ').append(datasetAutoComplete);
+            ).append('Records belonging to the dataset ').append(datasetAutoComplete);
                 
 	var filterRecords = $('<div>')
             .append($('<input>')

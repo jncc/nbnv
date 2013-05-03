@@ -65,7 +65,7 @@ nbn.nbnv.ui.filter.year = function(json) {
                         endInput.prop('disabled', false);
                     }
                 })
-            ).append("Filter to between ")
+            ).append("Records between the years ")
             .append(startInput)
             .append(" and ")
             .append(endInput);
