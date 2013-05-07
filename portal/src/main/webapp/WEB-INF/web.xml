@@ -5,23 +5,7 @@
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
                             http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
     <display-name>NBN Gateway Frontend</display-name>
-
-<!--Load Spring Context -->
-    <listener>
-        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
-    </listener>
     
-<!--Create spring MVC Servlet and Map-->
-    <servlet>
-        <servlet-name>spring-mvc</servlet-name>
-        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
-        <load-on-startup>2</load-on-startup>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>spring-mvc</servlet-name>
-        <url-pattern>/</url-pattern>
-    </servlet-mapping>
-
 <!--Define welcome pages-->
     <welcome-file-list>
         <welcome-file>index.ftl</welcome-file>

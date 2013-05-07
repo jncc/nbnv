@@ -62,12 +62,17 @@ nbn.nbnv.ui.createRequest = function (json, div) {
             } else if (newFilter == 'reason') {
                 reason._onEnter();
             } else if (newFilter == 'result') {
-                result._onEnter(reason._perm);
+                var error = [];
+                error.push(reason.getError());
+                error.push(taxon.getError());
+                error.push(spatial.getError());
+                error.push(year.getError());
+                error.push(timeLimit.getError());
+                
+                result._onEnter(reason._perm, error);
             }
 
-            if (oldFilter == 'sensitive') {
-                sensitive._onExit();
-            } else if (oldFilter == 'year') {
+            if (oldFilter == 'year') {
                 year._onExit();
             } else if (oldFilter == 'spatial') {
                 spatial._onExit();

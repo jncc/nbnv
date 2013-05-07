@@ -6,10 +6,10 @@ import freemarker.template.TemplateModelException;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.Map;
-import java.util.Properties;
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 import uk.gov.nbn.data.powerless.MarkDownDirectiveModel;
 
@@ -24,7 +24,8 @@ public class PowerlessSpringMVCConfig {
     public static final String DEFAULT_FREEMARKER_TEMPLATE_LIBRARIES = "/WEB-INF/ftl/libraries/";
     
     private FreeMarkerConfigurer configurer;
-    @Autowired Properties properties;
+    @Value("${api}") String api;
+    @Value("${gis}") String gis;
     @Autowired ServletContext context;
     
     public PowerlessSpringMVCConfig(FreeMarkerConfigurer configurer) {
@@ -37,9 +38,8 @@ public class PowerlessSpringMVCConfig {
         
         importLibraries(config, new File(context.getRealPath(DEFAULT_FREEMARKER_TEMPLATE_LIBRARIES)));
         
-        for(Map.Entry currEntry : properties.entrySet()){
-            config.setSharedVariable((String)currEntry.getKey(), currEntry.getValue());
-        }
+        config.setSharedVariable("api", api);
+        config.setSharedVariable("gis", gis);
         config.setSharedVariable("markdown", new MarkDownDirectiveModel());
         config.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
     }    
