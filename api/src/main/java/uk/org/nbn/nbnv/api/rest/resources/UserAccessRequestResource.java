@@ -56,7 +56,11 @@ public class UserAccessRequestResource extends AbstractResource {
     @Transactional
     public Response createRequest(@TokenUser(allowPublic=false) User user, String json) throws IOException {
         AccessRequestJSON accessRequest = parseJSON(json);
-        
+
+        if (!accessRequest.getSpatial().isAll() && !accessRequest.getDataset().isSecret()) {
+            accessRequest.setSensitive("ns");
+        }
+
         // Fail if this is an organisation request
         if (accessRequest.getReason().getOrganisationID() > -1) {
             return Response.serverError().build();
@@ -83,6 +87,9 @@ public class UserAccessRequestResource extends AbstractResource {
             }
         } else {
             datasets = accessRequest.getDataset().getDatasets();
+            
+            if (accessRequest.getDataset().isSecret())
+                datasets.addAll(taxonObservationMapper.selectRequestableSensitiveObservationDatasetsByFilter(user, accessRequest.getYear().getStartYear(), accessRequest.getYear().getEndYear(), new ArrayList<String>(), species, accessRequest.getSpatial().getMatch(), accessRequest.getSpatial().getFeature(), (accessRequest.getSensitive().equals("sans") ? true : false), accessRequest.getTaxon().getDesignation(), accessRequest.getTaxon().getOutput(), ""););
         }
         
         for (String datasetKey : datasets) {
