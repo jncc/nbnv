@@ -18,6 +18,7 @@
         <jersey.version>1.15</jersey.version>
         <spring.version>3.1.1.RELEASE</spring.version>
         <jetty.version>6.1.26</jetty.version>
+        <netbeans.hint.deploy.server>Tomcat</netbeans.hint.deploy.server>
     </properties>
 
     <modules>
@@ -35,6 +36,7 @@
         <module>documentation</module>
         <module>gis</module>
         <module>imt</module>
+        <module>crud.importstaging</module>
     </modules>
 	
     <build>

@@ -63,7 +63,10 @@ class DatasetIngester @Inject()(log: Logger,
 
   def setDatasetValues(d: Dataset, m: Metadata) = {
 
+    // todo get Id
     val providerOrganisation = db.repo.getOrganisation(m.datasetProviderName)
+
+    //todo make static strings
     val datasetUpdateFrequency = db.em.getReference(classOf[DatasetUpdateFrequency], "012")
     val datasetType = db.em.getReference(classOf[DatasetType], 'T')
 

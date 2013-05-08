@@ -1,0 +1,152 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package uk.org.nbn.nbnv.jpa.nbnimportstaging;
+
+import java.io.Serializable;
+import java.util.Collection;
+import javax.persistence.Basic;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+
+/**
+ *
+ * @author felix mason
+ */
+@Entity
+@Table(name = "TaxonDataset")
+@XmlRootElement
+@NamedQueries({
+    @NamedQuery(name = "TaxonDataset.findAll", query = "SELECT t FROM TaxonDataset t"),
+    @NamedQuery(name = "TaxonDataset.findByDatasetKey", query = "SELECT t FROM TaxonDataset t WHERE t.datasetKey = :datasetKey"),
+    @NamedQuery(name = "TaxonDataset.findByPublicResolutionID", query = "SELECT t FROM TaxonDataset t WHERE t.publicResolutionID = :publicResolutionID"),
+    @NamedQuery(name = "TaxonDataset.findByAllowRecordValidation", query = "SELECT t FROM TaxonDataset t WHERE t.allowRecordValidation = :allowRecordValidation"),
+    @NamedQuery(name = "TaxonDataset.findByPublicAttribute", query = "SELECT t FROM TaxonDataset t WHERE t.publicAttribute = :publicAttribute")})
+public class TaxonDataset implements Serializable {
+    private static final long serialVersionUID = 1L;
+    @Id
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 8)
+    @Column(name = "datasetKey", nullable = false, length = 8)
+    private String datasetKey;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "publicResolutionID", nullable = false)
+    private int publicResolutionID;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "allowRecordValidation", nullable = false)
+    private boolean allowRecordValidation;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "publicAttribute", nullable = false)
+    private boolean publicAttribute;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "datasetKey")
+    private Collection<Survey> surveyCollection;
+    @JoinColumn(name = "datasetKey", referencedColumnName = "key", nullable = false, insertable = false, updatable = false)
+    @OneToOne(optional = false)
+    private Dataset dataset;
+
+    public TaxonDataset() {
+    }
+
+    public TaxonDataset(String datasetKey) {
+        this.datasetKey = datasetKey;
+    }
+
+    public TaxonDataset(String datasetKey, int publicResolutionID, boolean allowRecordValidation, boolean publicAttribute) {
+        this.datasetKey = datasetKey;
+        this.publicResolutionID = publicResolutionID;
+        this.allowRecordValidation = allowRecordValidation;
+        this.publicAttribute = publicAttribute;
+    }
+
+    public String getDatasetKey() {
+        return datasetKey;
+    }
+
+    public void setDatasetKey(String datasetKey) {
+        this.datasetKey = datasetKey;
+    }
+
+    public int getPublicResolutionID() {
+        return publicResolutionID;
+    }
+
+    public void setPublicResolutionID(int publicResolutionID) {
+        this.publicResolutionID = publicResolutionID;
+    }
+
+    public boolean getAllowRecordValidation() {
+        return allowRecordValidation;
+    }
+
+    public void setAllowRecordValidation(boolean allowRecordValidation) {
+        this.allowRecordValidation = allowRecordValidation;
+    }
+
+    public boolean getPublicAttribute() {
+        return publicAttribute;
+    }
+
+    public void setPublicAttribute(boolean publicAttribute) {
+        this.publicAttribute = publicAttribute;
+    }
+
+    @XmlTransient
+    public Collection<Survey> getSurveyCollection() {
+        return surveyCollection;
+    }
+
+    public void setSurveyCollection(Collection<Survey> surveyCollection) {
+        this.surveyCollection = surveyCollection;
+    }
+
+    public Dataset getDataset() {
+        return dataset;
+    }
+
+    public void setDataset(Dataset dataset) {
+        this.dataset = dataset;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 0;
+        hash += (datasetKey != null ? datasetKey.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the id fields are not set
+        if (!(object instanceof TaxonDataset)) {
+            return false;
+        }
+        TaxonDataset other = (TaxonDataset) object;
+        if ((this.datasetKey == null && other.datasetKey != null) || (this.datasetKey != null && !this.datasetKey.equals(other.datasetKey))) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "uk.org.nbn.nbnv.jpa.nbnimportstaging.TaxonDataset[ datasetKey=" + datasetKey + " ]";
+    }
+    
+}
