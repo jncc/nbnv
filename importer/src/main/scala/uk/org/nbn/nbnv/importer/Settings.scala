@@ -13,7 +13,8 @@ object Settings {
 
   // provide statically-bound access to settings
   // ...
-  def myTestSetting = coreDbSettingsMap.getProperty("my.test.setting")
+  def myCoreDbTestSetting = coreDbSettingsMap.getProperty("my.test.setting")
+  def myStagingDbTestSetting = stagingDbSettingsMap.getProperty("my.test.setting")
 
 }
 
