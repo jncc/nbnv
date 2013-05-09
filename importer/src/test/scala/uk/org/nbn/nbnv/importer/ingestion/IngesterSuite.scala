@@ -8,7 +8,7 @@ import org.gbif.utils.file.ClosableIterator
 import uk.org.nbn.nbnv.importer.testing.BaseFunSuite
 import uk.org.nbn.nbnv.importer.{Target, Options}
 import org.apache.log4j.Logger
-import uk.org.nbn.nbnv.importer.data.{QueryCache, CoreRepository, Database}
+import uk.org.nbn.nbnv.importer.data.{StagingRepository, QueryCache, CoreRepository, Database}
 
 class IngesterSuite extends BaseFunSuite {
 
@@ -33,7 +33,7 @@ class IngesterSuite extends BaseFunSuite {
     when(archive.iteratorRaw).thenReturn(iterator)
 
     val metadata = mock[Metadata]
-    val db = new Database(em, sem, mock[CoreRepository], mock[QueryCache])
+    val db = new Database(em, sem, mock[StagingRepository] ,mock[CoreRepository], mock[QueryCache])
 
   }
 

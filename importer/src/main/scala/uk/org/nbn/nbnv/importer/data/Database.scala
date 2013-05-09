@@ -3,7 +3,7 @@ package uk.org.nbn.nbnv.importer.data
 import javax.persistence.EntityManager
 
 /// A wrapper data access object, or data context.
-class Database(val em: EntityManager, val sem: EntityManager, val coreRepo: CoreRepository, val cache: QueryCache) {
+class Database(val em: EntityManager, val sem: EntityManager, val stagingRepo: StagingRepository, val coreRepo: CoreRepository, val cache: QueryCache) {
 
   def flushAndClear() {
     // flush and clear the entity manager to prevent slowdown and memory consumption

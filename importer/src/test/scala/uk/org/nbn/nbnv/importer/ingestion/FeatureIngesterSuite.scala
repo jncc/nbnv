@@ -4,7 +4,7 @@ import uk.org.nbn.nbnv.importer.testing.{FakePersistenceTrackingEntityManager, B
 import org.mockito.Mockito._
 import org.mockito.Matchers._
 import javax.persistence.EntityManager
-import uk.org.nbn.nbnv.importer.data.{QueryCache, Database, CoreRepository}
+import uk.org.nbn.nbnv.importer.data.{StagingRepository, QueryCache, Database, CoreRepository}
 import uk.org.nbn.nbnv.importer.spatial.{GridSquareInfo, GridSquareInfoFactory}
 import uk.org.nbn.nbnv.importer.records.{GridTypeDef, GridRefDef, NbnRecord}
 import uk.org.nbn.nbnv.jpa.nbncore.{GridSquare, Feature}
@@ -30,10 +30,11 @@ class FeatureIngesterSuite extends BaseFunSuite {
 
     val log = mock[Logger]
 
-    val repo = mock[CoreRepository]
+    val coreRepo = mock[CoreRepository]
     val em = mock[EntityManager]
     val sem = mock[EntityManager]
-    val db = new Database(em, sem, repo, mock[QueryCache])
+    val stagingRepo = mock[StagingRepository]
+    val db = new Database(em, sem, stagingRepo, coreRepo, mock[QueryCache])
   }
 
   ignore("an existing grid square feature should just be returned") {
@@ -81,7 +82,7 @@ class FeatureIngesterSuite extends BaseFunSuite {
 
     // arrange
     val f = fixture
-    when(f.repo.getGridSquareFeature(anyString)).thenReturn(None)
+    when(f.coreRepo.getGridSquareFeature(anyString)).thenReturn(None)
     when(f.gridSquareInfo.getParentGridSquareInfo).thenReturn(None)
 
     // act

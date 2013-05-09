@@ -3,7 +3,7 @@ package uk.org.nbn.nbnv.importer.testing
 import uk.org.nbn.nbnv.PersistenceUtility
 import uk.org.nbn.nbnv.importer.Settings
 import org.mockito.Mockito._
-import uk.org.nbn.nbnv.importer.data.{CoreRepository, Database, QueryCache}
+import uk.org.nbn.nbnv.importer.data.{StagingRepository, CoreRepository, Database, QueryCache}
 import org.apache.log4j.Logger
 import uk.org.nbn.nbnv.jpa.nbnimportstaging.StagingPersistenceUtility
 
@@ -13,7 +13,8 @@ class DataAccessLayer {
     val sem = new StagingPersistenceUtility().createEntityManagerFactory(Settings.stagingDbSettingsMap).createEntityManager
     val log = mock(classOf[Logger])
     val cache = new QueryCache(log)
+    val stagingCache = new QueryCache(log)
 
-    new Database(em, sem, new CoreRepository(log, em, cache), cache)
+    new Database(em, sem, new StagingRepository(log, sem, stagingCache),new CoreRepository(log, em, cache), cache)
   }
 }

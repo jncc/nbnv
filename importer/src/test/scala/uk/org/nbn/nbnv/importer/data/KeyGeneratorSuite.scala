@@ -9,7 +9,8 @@ class KeyGeneratorSuite extends BaseFunSuite {
 
   def fixture = new {
     val repo = mock[CoreRepository]
-    val db = new Database(mock[EntityManager], mock[EntityManager], repo, mock[QueryCache])
+    val stagingRepo = mock[StagingRepository]
+    val db = new Database(mock[EntityManager], mock[EntityManager], stagingRepo, repo, mock[QueryCache])
   }
 
   test("when there are no existing datasets, should generate GA000001") {

@@ -5,7 +5,7 @@ import com.google.inject.{Provides, Singleton, AbstractModule}
 import uk.org.nbn.nbnv.PersistenceUtility
 import uk.org.nbn.nbnv.importer.logging.Log
 import org.apache.log4j.Level
-import uk.org.nbn.nbnv.importer.data.{CoreRepository, Database, QueryCache}
+import uk.org.nbn.nbnv.importer.data.{StagingRepository, CoreRepository, Database, QueryCache}
 import uk.org.nbn.nbnv.importer.grin.Options
 import uk.org.nbn.nbnv.jpa.nbnimportstaging.StagingPersistenceUtility
 
@@ -17,7 +17,8 @@ class GuiceModule(options: Options) extends AbstractModule {
   val em = new PersistenceUtility().createEntityManagerFactory(Settings.coreDbSettingsMap).createEntityManager
   val sem = new StagingPersistenceUtility().createEntityManagerFactory(Settings.coreDbSettingsMap).createEntityManager
   val qc = new QueryCache(log)
-  val db = new Database(em, sem, new CoreRepository(log, em, qc), qc)
+  val sqc = new QueryCache(log)
+  val db = new Database(em, sem, new StagingRepository(log, sem, sqc) ,new CoreRepository(log, em, qc), qc)
 
   def configure() {} // nothing to do here
 

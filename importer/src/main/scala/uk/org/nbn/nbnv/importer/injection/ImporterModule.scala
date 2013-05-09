@@ -6,7 +6,7 @@ import uk.org.nbn.nbnv.jpa.nbnimportstaging.StagingPersistenceUtility
 import uk.org.nbn.nbnv.importer.{Options, Settings}
 import uk.org.nbn.nbnv.importer.logging.Log
 import org.apache.log4j.Level
-import uk.org.nbn.nbnv.importer.data.{CoreRepository, Database, QueryCache}
+import uk.org.nbn.nbnv.importer.data.{StagingRepository, CoreRepository, Database, QueryCache}
 
 
 class ImporterModule(options: Options) extends AbstractModule {
@@ -15,10 +15,10 @@ class ImporterModule(options: Options) extends AbstractModule {
   val log = Log.get()
 
   val sem = new StagingPersistenceUtility().createEntityManagerFactory(Settings.stagingDbSettingsMap).createEntityManager
+  val sqc = new QueryCache(log)
   val em = new PersistenceUtility().createEntityManagerFactory(Settings.coreDbSettingsMap).createEntityManager
   val qc = new QueryCache(log)
-  val db = new Database(em, sem, new CoreRepository(log, em, qc), qc)
-
+  val db = new Database(em, sem, new StagingRepository(log,sem,sqc), new CoreRepository(log, em, qc), qc)
 
   def configure() {} 
 
