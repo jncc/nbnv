@@ -6,7 +6,7 @@ import javax.persistence.EntityManager
 import uk.org.nbn.nbnv.jpa.nbncore.{Dataset, TaxonDataset}
 import uk.org.nbn.nbnv.importer.metadata.Metadata
 import uk.org.nbn.nbnv.importer.testing.BaseFunSuite
-import uk.org.nbn.nbnv.importer.data.{Database, Repository, KeyGenerator}
+import uk.org.nbn.nbnv.importer.data.{Database, CoreRepository, KeyGenerator}
 import org.mockito.Mockito
 import org.apache.log4j.Logger
 

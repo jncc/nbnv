@@ -8,11 +8,12 @@ import java.io.{InputStream, FileInputStream}
 
 object Settings {
 
-  val map = uk.gov.nbn.data.properties.PropertiesReader.getEffectiveProperties("importer.properties")
+  val coreDbSettingsMap = uk.gov.nbn.data.properties.PropertiesReader.getEffectiveProperties("coreDb.properties")
+  val stagingDbSettingsMap = uk.gov.nbn.data.properties.PropertiesReader.getEffectiveProperties("stagingDb.properties")
 
   // provide statically-bound access to settings
   // ...
-  def myTestSetting = map.getProperty("my.test.setting")
+  def myTestSetting = coreDbSettingsMap.getProperty("my.test.setting")
 
 }
 

@@ -52,7 +52,7 @@ class Validator @Inject()(log: Logger, db: Database){
       processResult(r1)
 
       //validate taxon version key exists
-      val v2 = new Nbnv64Validator(db.repo)
+      val v2 = new Nbnv64Validator(db.coreRepo)
       val r2 = v2.validate(nbnRecord)
       processResult(r2)
 

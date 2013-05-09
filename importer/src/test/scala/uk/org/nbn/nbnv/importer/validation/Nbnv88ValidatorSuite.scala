@@ -3,21 +3,21 @@ package uk.org.nbn.nbnv.importer.validation
 import uk.org.nbn.nbnv.importer.testing.BaseFunSuite
 import uk.org.nbn.nbnv.importer.records.NbnRecord
 import org.mockito.Mockito._
-import uk.org.nbn.nbnv.importer.data.{Repository, Database}
+import uk.org.nbn.nbnv.importer.data.{CoreRepository, Database}
 import uk.org.nbn.nbnv.importer.fidelity.ResultLevel
 import org.scalatest.BeforeAndAfter
 
 class Nbnv88ValidatorSuite extends BaseFunSuite with BeforeAndAfter {
   var record : NbnRecord = _
   var db : Database = _
-  var repo : Repository = _
+  var repo : CoreRepository = _
 
   before {
     record = mock[NbnRecord]
-    repo = mock[Repository]
+    repo = mock[CoreRepository]
     db = mock[Database]
 
-    when(db.repo).thenReturn(repo)
+    when(db.coreRepo).thenReturn(repo)
   }
 
 

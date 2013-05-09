@@ -3,7 +3,7 @@ package uk.org.nbn.nbnv.importer.ingestion
 import com.google.inject.Inject
 import org.apache.log4j.Logger
 import javax.persistence.EntityManager
-import uk.org.nbn.nbnv.importer.data.{Database, Repository}
+import uk.org.nbn.nbnv.importer.data.{Database, CoreRepository}
 import uk.org.nbn.nbnv.importer.spatial.GridSquareInfoFactory
 import uk.org.nbn.nbnv.importer.metadata.Metadata
 import uk.org.nbn.nbnv.jpa.nbncore.{TaxonObservation, Sample, TaxonObservationPublic}
@@ -38,7 +38,7 @@ class PublicIngester @Inject()(log: Logger,
 
       // set the feature - blurring to a potentially lower-precision feature if necessary
       // obviously we only blur gridsquare features (including points which have been represented as such)
-      db.repo.getGridSquareFeature(o.getFeature.getId) match {
+      db.coreRepo.getGridSquareFeature(o.getFeature.getId) match {
         case Some((_, gridSquare)) => {
           val info = gridSquareInfoFactory.getByGridRef(GridRefDef(gridSquare.getGridRef, None, None))
           val publicInfo = info.getLowerPrecisionGridSquareInfo(metadata.publicResolution)
@@ -52,7 +52,7 @@ class PublicIngester @Inject()(log: Logger,
       }
     }
 
-    db.repo.getTaxonObservationPublic(o.getId) match {
+    db.coreRepo.getTaxonObservationPublic(o.getId) match {
       case Some(p) => {
         // delete the public record if it's become sensitive
         if (o.getSensitiveRecord) {

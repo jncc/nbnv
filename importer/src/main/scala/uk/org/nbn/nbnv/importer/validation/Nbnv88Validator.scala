@@ -20,7 +20,7 @@ class Nbnv88Validator(db: Database) {
       val siteDatasetKey = featureKey.substring(0,8)
       val siteProviderKey = featureKey.substring(8, featureKey.length)
 
-      if (db.repo.confirmSiteBoundary(siteDatasetKey, siteProviderKey)) {
+      if (db.coreRepo.confirmSiteBoundary(siteDatasetKey, siteProviderKey)) {
         new Result {
           def level = ResultLevel.DEBUG
           def message = "NBNV-88: Validated: FeatureKey '%s' exists.".format(featureKey)

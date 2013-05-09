@@ -5,7 +5,7 @@ import uk.org.nbn.nbnv.jpa.nbncore._
 import javax.persistence.EntityManager
 import org.apache.log4j.Logger
 import uk.org.nbn.nbnv.importer.records.NbnRecord
-import uk.org.nbn.nbnv.importer.data.{Database, Repository}
+import uk.org.nbn.nbnv.importer.data.{Database, CoreRepository}
 import com.google.inject.Inject
 import uk.org.nbn.nbnv.importer.metadata.Metadata
 
@@ -28,8 +28,8 @@ class RecordIngester @Inject()(log: Logger,
     val sample = sampleIngester.upsertSample(record.sampleKey, survey)
     val site = siteIngester.upsertSite(record.siteKey, record.siteName, dataset.getDataset)
     val feature = featureIngester.ensureFeature(record)
-    val taxon = db.repo.getTaxon(record.taxonVersionKey)
-    val dateType = db.repo.getDateType(record.dateType)
+    val taxon = db.coreRepo.getTaxon(record.taxonVersionKey)
+    val dateType = db.coreRepo.getDateType(record.dateType)
     val determiner = recorderIngester.ensureRecorder(record.determiner)
     val recorder = recorderIngester.ensureRecorder(record.recorder)
 
@@ -51,7 +51,7 @@ class RecordIngester @Inject()(log: Logger,
       o.setTaxon(taxon)
     }
 
-    val observation = db.repo.getTaxonObservation(record.key, sample) match {
+    val observation = db.coreRepo.getTaxonObservation(record.key, sample) match {
       case Some(o) => {
         update(o)
         o

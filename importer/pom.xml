@@ -23,6 +23,11 @@
     <dependencies>
         <dependency>
             <groupId>uk.org.nbn</groupId>
+            <artifactId>nbnv-crud-importstaging</artifactId>
+            <version>0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>uk.org.nbn</groupId>
             <artifactId>nbnv-crud</artifactId>
         </dependency>
         <dependency>

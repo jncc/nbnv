@@ -4,7 +4,7 @@ import uk.org.nbn.nbnv.importer.metadata.Metadata
 import uk.org.nbn.nbnv.jpa.nbncore._
 import uk.org.nbn.nbnv.importer.utility._
 import javax.persistence.EntityManager
-import uk.org.nbn.nbnv.importer.data.{Database, Repository, KeyGenerator}
+import uk.org.nbn.nbnv.importer.data.{Database, CoreRepository, KeyGenerator}
 import org.apache.log4j.Logger
 import com.google.inject.Inject
 
@@ -24,7 +24,7 @@ class DatasetIngester @Inject()(log: Logger,
     else {
       // we have no way to say that a particular record should be deleted,
       // so delete all the records - we will import them all again
-      db.repo.deleteTaxonObservationsAndRelatedRecords(metadata.datasetKey)
+      db.coreRepo.deleteTaxonObservationsAndRelatedRecords(metadata.datasetKey)
 
       updateExisting(metadata)
     }
@@ -54,7 +54,7 @@ class DatasetIngester @Inject()(log: Logger,
 
     log.info("Updating existing dataset " + metadata.datasetKey)
 
-    val td = db.repo.getTaxonDataset(metadata.datasetKey)
+    val td = db.coreRepo.getTaxonDataset(metadata.datasetKey)
     setTaxonDatasetValues(td, metadata)
     val d = td.getDataset
     setDatasetValues(d, metadata)
@@ -64,7 +64,7 @@ class DatasetIngester @Inject()(log: Logger,
   def setDatasetValues(d: Dataset, m: Metadata) = {
 
     // todo get Id
-    val providerOrganisation = db.repo.getOrganisation(m.datasetProviderName)
+    val providerOrganisation = db.coreRepo.getOrganisation(m.datasetProviderName)
 
     //todo make static strings
     val datasetUpdateFrequency = db.em.getReference(classOf[DatasetUpdateFrequency], "012")
@@ -102,7 +102,7 @@ class DatasetIngester @Inject()(log: Logger,
 
   def setTaxonDatasetValues(td: TaxonDataset, m: Metadata) {
 
-    val resolution = db.repo.getResolution(m.publicResolution)
+    val resolution = db.coreRepo.getResolution(m.publicResolution)
     td.setPublicResolution(resolution)
 
     // default .. to be read from extra metadata.

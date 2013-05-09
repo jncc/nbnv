@@ -1,7 +1,7 @@
 package uk.org.nbn.nbnv.importer.spatial
 
 import uk.org.nbn.nbnv.importer.testing.{DataAccessLayer, BaseFunSuite}
-import uk.org.nbn.nbnv.importer.data.{Database, Repository}
+import uk.org.nbn.nbnv.importer.data.{Database, CoreRepository}
 import org.mockito.Mockito._
 import org.mockito.Matchers._
 import uk.org.nbn.nbnv.importer.BadDataException

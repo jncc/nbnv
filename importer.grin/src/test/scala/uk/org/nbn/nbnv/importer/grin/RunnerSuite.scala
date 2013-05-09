@@ -8,7 +8,7 @@ import org.scalatest.matchers.ShouldMatchers
 import org.scalatest.FunSuite
 import uk.org.nbn.nbnv.PersistenceUtility
 import uk.org.nbn.nbnv.importer.Settings
-import uk.org.nbn.nbnv.importer.data.{QueryCache, Repository}
+import uk.org.nbn.nbnv.importer.data.{QueryCache, CoreRepository}
 import org.apache.log4j.Logger
 
 @RunWith(classOf[JUnitRunner])
@@ -27,8 +27,8 @@ class RunnerSuite extends FunSuite with ShouldMatchers with MockitoSugar with Re
 
   ignore("should be able to run a sproc") {
 
-    val em = new PersistenceUtility().createEntityManagerFactory(Settings.map).createEntityManager
-    val r = new Repository(mock[Logger], em, mock[QueryCache])
+    val em = new PersistenceUtility().createEntityManagerFactory(Settings.coreDbSettingsMap).createEntityManager
+    val r = new CoreRepository(mock[Logger], em, mock[QueryCache])
 
 //    val query = em.createQuery("SELECT t FROM Taxon t WHERE t.taxonVersionKey = :tvk", classOf[Taxon])
 //    query.setParameter("tvk", taxonVersionKey)

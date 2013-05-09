@@ -5,10 +5,10 @@ import com.google.inject.Inject
 import uk.org.nbn.nbnv.importer.records.NbnRecord
 import uk.org.nbn.nbnv.importer.fidelity.{ResultLevel, Result}
 
-import uk.org.nbn.nbnv.importer.data.Repository
+import uk.org.nbn.nbnv.importer.data.CoreRepository
 
 //validate taxon version key exists
-class Nbnv64Validator (repo: Repository) {
+class Nbnv64Validator (repo: CoreRepository) {
   def validate(record: NbnRecord) = {
 
     if (repo.confirmTaxonVersionKey(record.taxonVersionKey)) {

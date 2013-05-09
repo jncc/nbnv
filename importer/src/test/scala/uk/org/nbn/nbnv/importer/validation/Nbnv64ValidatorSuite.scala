@@ -1,14 +1,14 @@
 package uk.org.nbn.nbnv.importer.validation
 
 import uk.org.nbn.nbnv.importer.testing.BaseFunSuite
-import uk.org.nbn.nbnv.importer.data.Repository
+import uk.org.nbn.nbnv.importer.data.CoreRepository
 import org.mockito.Mockito._
 import uk.org.nbn.nbnv.importer.records.NbnRecord
 import uk.org.nbn.nbnv.importer.fidelity.ResultLevel
 
 class Nbnv64ValidatorSuite extends BaseFunSuite {
   test("Nvnv64 should validate know tvk") {
-    val repo = mock[Repository]
+    val repo = mock[CoreRepository]
     when(repo.confirmTaxonVersionKey("some tvk")).thenReturn(true)
 
     val record = mock[NbnRecord]
@@ -21,7 +21,7 @@ class Nbnv64ValidatorSuite extends BaseFunSuite {
   }
 
   test("Nvnv64 should not validate unknown tvk") {
-    val repo = mock[Repository]
+    val repo = mock[CoreRepository]
     when(repo.confirmTaxonVersionKey("some tvk")).thenReturn(false)
 
     val record = mock[NbnRecord]

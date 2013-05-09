@@ -9,7 +9,7 @@ import io.Source
 import org.apache.log4j.Logger
 import javax.validation.ConstraintViolationException
 import com.google.common.base.Stopwatch
-import uk.org.nbn.nbnv.importer.data.{Database, QueryCache, Repository}
+import uk.org.nbn.nbnv.importer.data.{Database, QueryCache, CoreRepository}
 import uk.org.nbn.nbnv.importer.spatial.GridSquareInfoFactory
 import uk.org.nbn.nbnv.importer.records.GridRefDef
 

@@ -8,8 +8,8 @@ import javax.persistence.EntityManager
 class KeyGeneratorSuite extends BaseFunSuite {
 
   def fixture = new {
-    val repo = mock[Repository]
-    val db = new Database(mock[EntityManager], repo, mock[QueryCache])
+    val repo = mock[CoreRepository]
+    val db = new Database(mock[EntityManager], mock[EntityManager], repo, mock[QueryCache])
   }
 
   test("when there are no existing datasets, should generate GA000001") {

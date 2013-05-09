@@ -4,7 +4,7 @@ import uk.org.nbn.nbnv.importer.records._
 import uk.org.nbn.nbnv.importer.BadDataException
 import uk.org.nbn.nbnv.jpa.nbncore.{SiteBoundaryDataset, GridSquare, Feature}
 import com.google.inject.Inject
-import uk.org.nbn.nbnv.importer.data.{Database, Repository}
+import uk.org.nbn.nbnv.importer.data.{Database, CoreRepository}
 import uk.org.nbn.nbnv.importer.spatial.{GridSquareInfo, GridSquareInfoFactory}
 import javax.persistence.EntityManager
 import org.apache.log4j.Logger
@@ -34,15 +34,15 @@ class FeatureIngester @Inject()(log: Logger, db: Database, gridSquareInfoFactory
   private def ensureGridSquareFeatureRecursive(info: GridSquareInfo) : (Feature, GridSquare) = {
 
     // if there's a feature already, all necessary parents should already exist, so just return it
-    db.repo.getGridSquareFeature(info.gridReference) getOrElse {
+    db.coreRepo.getGridSquareFeature(info.gridReference) getOrElse {
 
       log.debug("Creating grid ref '%s'.".format(info.gridReference))
 
       // the feature doesn't exist, so we need to create it
-      val f = db.repo.createFeature(info.wgs84Polygon)
-      val projection = db.repo.getProjection(info.projection)
-      val resolution = db.repo.getResolution(info.gridReferencePrecision)
-      val gs = db.repo.createGridRef(f, info.gridReference, resolution, projection, info.sourceProjectionPolygon)
+      val f = db.coreRepo.createFeature(info.wgs84Polygon)
+      val projection = db.coreRepo.getProjection(info.projection)
+      val resolution = db.coreRepo.getResolution(info.gridReferencePrecision)
+      val gs = db.coreRepo.createGridRef(f, info.gridReference, resolution, projection, info.sourceProjectionPolygon)
 
       // if square should have a parent, ensure that it does, and set it
       info.getParentGridSquareInfo match {
@@ -65,7 +65,7 @@ class FeatureIngester @Inject()(log: Logger, db: Database, gridSquareInfoFactory
     val providerKey = value.key.substring(8)
 
     // throws if the (Feature, SiteBoundary) pair doesn't exist
-    db.repo.getSiteBoundaryFeature(siteBoundaryDatasetKey, providerKey)._1
+    db.coreRepo.getSiteBoundaryFeature(siteBoundaryDatasetKey, providerKey)._1
   }
 
   private def ensureGridRefFeatureByCoordinate(value: PointDef) = {
@@ -81,7 +81,7 @@ class FeatureIngester @Inject()(log: Logger, db: Database, gridSquareInfoFactory
 
   private def ensureWgs84PointFeature(latitude: Double, longitude: Double) =  {
     val wkt = "POINT(%s %s)".format(longitude, latitude)
-    db.repo.createFeature(wkt)
+    db.coreRepo.createFeature(wkt)
   }
 }
 

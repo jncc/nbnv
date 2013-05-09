@@ -6,7 +6,7 @@ import javax.persistence.EntityManager
 import uk.org.nbn.nbnv.importer.records.NbnRecord
 import uk.org.nbn.nbnv.jpa.nbncore._
 import util.parsing.json.JSON
-import uk.org.nbn.nbnv.importer.data.{Database, Repository}
+import uk.org.nbn.nbnv.importer.data.{Database, CoreRepository}
 import scala.Some
 
 class AttributeIngester @Inject()(log: Logger, db: Database){
@@ -37,7 +37,7 @@ class AttributeIngester @Inject()(log: Logger, db: Database){
 
     def ensureAttribute(attributeLabel: String) = {
 
-      db.repo.getAttribute(attributeLabel, dataset) getOrElse {
+      db.coreRepo.getAttribute(attributeLabel, dataset) getOrElse {
 
         val storageLevel = db.em.find(classOf[AttributeStorageLevel], 4) // observation
         val storageType = db.em.find(classOf[AttributeStorageType], 3) // for now all attributes are free text

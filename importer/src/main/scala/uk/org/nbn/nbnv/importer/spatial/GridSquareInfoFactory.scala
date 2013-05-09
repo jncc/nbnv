@@ -24,7 +24,7 @@ class GridSquareInfoFactory @Inject()(db: Database) {
     if (srs == 4326) {
       val longitude = value.east
       val latitude = value.north
-      val targetSrs = db.repo.getSRSForLatLong(longitude, latitude)
+      val targetSrs = db.coreRepo.getSRSForLatLong(longitude, latitude)
 
       targetSrs match {
       case None => None

@@ -8,7 +8,7 @@ import org.gbif.dwc.text.{ArchiveFile, Archive, StarRecord}
 import org.gbif.dwc.record.Record
 import java.util
 import org.apache.log4j.Logger
-import uk.org.nbn.nbnv.importer.data.{Database, Repository}
+import uk.org.nbn.nbnv.importer.data.{Database, CoreRepository}
 import scala.collection.JavaConversions._
 import uk.org.nbn.nbnv.importer.BadDataException
 import org.gbif.utils.file.ClosableIterator
@@ -25,7 +25,7 @@ class ValidatorSuite extends BaseFunSuite with BeforeAndAfter{
   var recs2: util.LinkedList[Record] = _
   var starRec2: StarRecord = _
   var coreArchive2: Record = _
-  val repo = mock[Repository]
+  val repo = mock[CoreRepository]
   val db = mock[Database]
   val log : Logger = mock[Logger]
 
@@ -94,7 +94,7 @@ class ValidatorSuite extends BaseFunSuite with BeforeAndAfter{
 
     when(archive.iteratorRaw).thenReturn(new extClosableIterator[StarRecord](list))
 
-    when(db.repo).thenReturn(repo)
+    when(db.coreRepo).thenReturn(repo)
     when(repo.confirmTaxonVersionKey("NHMSYS0020528265")).thenReturn(true)
   }
 

@@ -3,7 +3,7 @@ package uk.org.nbn.nbnv.importer.ingestion
 
 import uk.org.nbn.nbnv.jpa.nbncore._
 import javax.persistence.EntityManager
-import uk.org.nbn.nbnv.importer.data.{Database, Repository}
+import uk.org.nbn.nbnv.importer.data.{Database, CoreRepository}
 import com.google.inject.Inject
 ;
 
@@ -19,7 +19,7 @@ class SurveyIngester @Inject()(db: Database) {
       s.setTaxonDataset(dataset)
     }
 
-    val survey = db.repo.getSurvey(key, dataset) getOrElse {
+    val survey = db.coreRepo.getSurvey(key, dataset) getOrElse {
       val s = new Survey
       update(s)
       db.em.persist(s)
