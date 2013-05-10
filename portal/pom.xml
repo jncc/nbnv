@@ -15,8 +15,7 @@
     <repositories>
         <repository>
             <id>rubygems-releases</id>
-<!--            <url>http://mavenrepo.nerc-lancaster.ac.uk/nexus/content/repositories/RubyGems</url>-->
-            <url>http://192.171.153.102/nexus/content/repositories/RubyGems</url>
+            <url>http://mavenrepo.nerc-lancaster.ac.uk/nexus/content/repositories/RubyGems</url>
         </repository>
     </repositories>
     <dependencies>
