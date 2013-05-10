@@ -45,11 +45,6 @@ class CoreRepository (log: Logger, em: EntityManager, cache: QueryCache) extends
     sprocs.createGridSquare(gridRef, resolution, projection,wkt, feature)
   }
 
-  def deleteTaxonObservationsAndRelatedRecords(datasetKey: String) {
-    val sprocs = new StoredProcedureLibrary(em)
-    sprocs.deleteTaxonObservationsAndRelatedRecords(datasetKey)
-  }
-
   def confirmTaxonVersionKey(taxonVersionKey: String): Boolean = {
     val query = em.createQuery("SELECT COUNT(t.taxonVersionKey) FROM Taxon t WHERE t.taxonVersionKey = :tvk", classOf[Taxon])
     query.setParameter("tvk", taxonVersionKey)
@@ -146,14 +141,6 @@ class CoreRepository (log: Logger, em: EntityManager, cache: QueryCache) extends
     }
   }
 
-  def getTaxonDataset(key: String) = {
-
-    cacheSingle("getTaxonDataset", key) {
-      em.findSingleOrNone(classOf[TaxonDataset], key) getOrElse {
-        throw new BadDataException("Dataset '%s' does not exist. Please check the key is correct.".format(key))
-      }
-    }
-  }
 
   def getTaxonObservation(key: String, sample: Sample) = {
 
@@ -186,6 +173,7 @@ class CoreRepository (log: Logger, em: EntityManager, cache: QueryCache) extends
       expectSingleResult(name) { query.getResultList }
     }
   }
+
 
   def getProjection(label: String) = {
 

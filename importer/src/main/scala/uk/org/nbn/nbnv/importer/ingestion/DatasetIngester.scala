@@ -2,6 +2,7 @@ package uk.org.nbn.nbnv.importer.ingestion
 
 import uk.org.nbn.nbnv.importer.metadata.Metadata
 import uk.org.nbn.nbnv.jpa.nbncore._
+import uk.org.nbn.nbnv.jpa.nbnimportstaging.{Dataset, TaxonDataset}
 import uk.org.nbn.nbnv.importer.utility._
 import javax.persistence.EntityManager
 import uk.org.nbn.nbnv.importer.data.{Database, CoreRepository, KeyGenerator}
@@ -24,7 +25,7 @@ class DatasetIngester @Inject()(log: Logger,
     else {
       // we have no way to say that a particular record should be deleted,
       // so delete all the records - we will import them all again
-      db.coreRepo.deleteTaxonObservationsAndRelatedRecords(metadata.datasetKey)
+      db.stagingRepo.deleteTaxonObservationsAndRelatedRecords(metadata.datasetKey)
 
       updateExisting(metadata)
     }
@@ -39,13 +40,13 @@ class DatasetIngester @Inject()(log: Logger,
 
     val d = new Dataset(key)
     setDatasetValues(d, metadata)
-    db.em.persist(d)
+    db.sem.persist(d)
 
     // deal with the table-per-class inheritance model (TaxonDataset has-a Dataset)
     val td = new TaxonDataset(key)
     td.setDataset(d)
     setTaxonDatasetValues(td, metadata)
-    db.em.persist(td)
+    db.sem.persist(td)
 
     td
   }
@@ -54,7 +55,7 @@ class DatasetIngester @Inject()(log: Logger,
 
     log.info("Updating existing dataset " + metadata.datasetKey)
 
-    val td = db.coreRepo.getTaxonDataset(metadata.datasetKey)
+    val td = db.stagingRepo.getTaxonDataset(metadata.datasetKey)
     setTaxonDatasetValues(td, metadata)
     val d = td.getDataset
     setDatasetValues(d, metadata)
@@ -89,10 +90,11 @@ class DatasetIngester @Inject()(log: Logger,
     setMetadata(m.additionalInformation, d.getAdditionalInformation, d.setAdditionalInformation)
     setMetadata(m.temporalCoverage, d.getTemporalCoverage, d.setTemporalCoverage)
 
-    d.setOrganisation(providerOrganisation) // not metadata
-    d.setDatasetType(datasetType) // never changes, always 'T'
+//    d.setOrganisation(providerOrganisation) // not metadata
+    d.setProviderOrganisationKey(providerOrganisation.getId)
+    d.setDatasetTypeKey(datasetType.getKey) // never changes, always 'T'
     d.setDateUploaded(Clock.nowUtc) // eventDate of this import
-    d.setDatasetUpdateFrequency(datasetUpdateFrequency) // never changes, always '012'
+    d.setUpdateFrequencyCode(datasetUpdateFrequency.getCode) // never changes, always '012'
 
     if (metadataChanged)
       d.setMetadataLastEdited(Clock.nowUtc)
@@ -103,7 +105,7 @@ class DatasetIngester @Inject()(log: Logger,
   def setTaxonDatasetValues(td: TaxonDataset, m: Metadata) {
 
     val resolution = db.coreRepo.getResolution(m.publicResolution)
-    td.setPublicResolution(resolution)
+    td.setPublicResolutionID(resolution.getId)
 
     // default .. to be read from extra metadata.
     // ...could be more columns like this

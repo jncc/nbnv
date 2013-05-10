@@ -10,8 +10,12 @@ class Database(val em: EntityManager, val sem: EntityManager, val stagingRepo: S
     em.flush()
     em.clear()
 
+    sem.flush()
+    sem.clear()
+
     // clear the cache so it will not hold on to objects which are no longer tracked
     cache.clear()
+    //todo: need to clear the staging cache too.
   }
 
 }
