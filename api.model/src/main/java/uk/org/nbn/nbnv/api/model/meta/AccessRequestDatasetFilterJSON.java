@@ -12,6 +12,7 @@ import java.util.List;
  */
 public class AccessRequestDatasetFilterJSON extends AccessRequestFilterJSON {
     private List<String> datasets;
+    private boolean secret;
 
     /**
      * @return the datasets
@@ -25,5 +26,19 @@ public class AccessRequestDatasetFilterJSON extends AccessRequestFilterJSON {
      */
     public void setDatasets(List<String> datasets) {
         this.datasets = datasets;
+    }
+
+    /**
+     * @return the secret
+     */
+    public boolean isSecret() {
+        return secret;
+    }
+
+    /**
+     * @param secret the secret to set
+     */
+    public void setSecret(boolean secret) {
+        this.secret = secret;
     }
 }

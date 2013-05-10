@@ -240,6 +240,12 @@ public class TaxonObservationResource extends AbstractResource {
             @QueryParam("taxonOutputGroup") @DefaultValue(ObservationResourceDefaults.defaultTaxonOutputGroup) String taxonOutputGroup,
             @QueryParam("gridRef") @DefaultValue(ObservationResourceDefaults.defaultGridRef) String gridRef) {
         //TODO: squareBlurring(?)
+        
+        // Stop leaking dataset info when spatial filter applied. Fixes issue species info fishing
+        if (sensitive && !featureID.equals(ObservationResourceDefaults.defaultFeatureID)) {
+            sensitive = Boolean.FALSE;
+        }
+        
         return observationMapper.selectRequestableObservationDatasetsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef);
     }
         
