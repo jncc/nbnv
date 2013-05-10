@@ -18,7 +18,7 @@ nbn.nbnv.ui.requestResult = function() {
             );
     };
     
-    this._onEnter = function(permissionNeeded) {
+    this._onEnter = function(permissionNeeded, error) {
         var data = $('#resultpermtext');
         data.html('');
         

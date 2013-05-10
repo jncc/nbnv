@@ -59,7 +59,7 @@ nbn.nbnv.ui.filter.taxon = function(json) {
         speciesAutoComplete.data( "autocomplete" )._renderItem = function(ul, item) {
             return $( "<li></li>" )
                 .data( "item.autocomplete", item )
-                .append( "<a><i>" + item.searchMatchTitle + "</i><br>" + item.descript + "</a>" )
+                .append( '<a><span class="taxonTerm">' + item.searchMatchTitle + "</span><br>" + item.descript + "</a>" )
                 .appendTo(ul);
             };
 
@@ -148,7 +148,7 @@ nbn.nbnv.ui.filter.taxon = function(json) {
                         speciesAutoComplete.prop('disabled', false);
                     }
                 })
-            ).append("Records that are ")
+            ).append("Records from ")
             .append(speciesAutoComplete);
 
         var desigFilterRecords = $('<div>')
@@ -260,5 +260,13 @@ nbn.nbnv.ui.filter.taxon = function(json) {
         } else {
             return { taxon: { all: false }};
         }
+    };
+    
+    this.getError = function() {
+        var e = [];
+        
+        if (mode == 'taxon' && this._tvk == '') { e.push('You must specify a taxon in the taxon filter'); }
+        
+        return e;
     };
 };

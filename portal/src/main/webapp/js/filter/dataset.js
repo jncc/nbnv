@@ -10,10 +10,13 @@ nbn.nbnv.ui.filter.dataset = function(json) {
     this._datasets = [];
     this._fullCount = -1;
     this._mode = 'all';
+    this._secret = true;
+    this._useSecret = false;
     
     if (!json.dataset.all) {
         this._all = false;
         this._datasets = json.dataset.datasets;
+        this._secret = json.dataset.secret;
         
         if (this._datasets.length == 1) { this._mode = 'single'; } else { this._mode = 'filter'; }
     }
@@ -31,7 +34,7 @@ nbn.nbnv.ui.filter.dataset = function(json) {
         var datasetTable = $('<table>').attr('id', 'datasetfiltertable').addClass('results');
         $.fn.dataTableExt.oJUIClasses.sStripeOdd = 'ui-state-highlight';
 
-        var datasetAutoComplete = $('<input>')
+        var datasetAutoComplete = $('<input>').addClass('selectMaxWidth')
             .autocomplete({
                 source: function(request, response) {
                     $.getJSON(nbn.nbnv.api + '/search/taxonDatasets?q=' + request.term, function(data) {
@@ -51,6 +54,18 @@ nbn.nbnv.ui.filter.dataset = function(json) {
                 .appendTo(ul);
             };
 
+        var secret = $('<div>')
+            .addClass('queryBlock')
+            .attr('id', 'datasetfiltersecretblock')
+            .append($('<input>')
+                .attr('type', 'checkbox')
+                .attr('name', 'datasetfiltersecret')
+                .attr('value', 'secret')
+                .change(function() {
+                    _me._secret = this.checked;
+                })
+            ).append('Include sensitive datasets');
+                
         var allRecords = $('<div>')
             .append($('<input>')
                 .attr('type', 'radio')
@@ -80,7 +95,7 @@ nbn.nbnv.ui.filter.dataset = function(json) {
                         $('#datasetfiltertable').find(":checkbox").prop('disabled', true);
                     }
                 })
-            ).append('Records belong to the dataset ').append(datasetAutoComplete);
+            ).append('Records belonging to the dataset ').append(datasetAutoComplete);
                 
 	var filterRecords = $('<div>')
             .append($('<input>')
@@ -103,8 +118,12 @@ nbn.nbnv.ui.filter.dataset = function(json) {
         } else {
             filterRecords.children('input').attr('checked', 'checked').change();
         }
+        
+        if (this._secret) {
+            secret.find('input').attr('checked', 'checked').change();
+        }
 
-        dataDiv.append(allRecords).append(singleRecords).append(filterRecords);
+        dataDiv.append(allRecords).append(singleRecords).append(filterRecords).append(secret);
         
         return dataDiv;
     };
@@ -120,12 +139,35 @@ nbn.nbnv.ui.filter.dataset = function(json) {
         
         var filter = {};
         
-        if (json.taxon.all && json.spatial.all) {
-            datasetTable.html('');
-            datasetTable.append('Please apply a taxon or spatial filter to choose datasets.');
-            return;
+        if (json.spatial.all) {
+            $('#datasetfiltersecretblock').hide();
+            this._useSecret = false;
+        } else {
+            $('#datasetfiltersecretblock').show();
+            this._useSecret = true;
         }
         
+        if (json.taxon.all && json.spatial.all) {
+            datasetTable.html('');
+            datasetTable
+                .append($('<tr>')
+                    .append($('<td>')
+                        .append($('<span>')
+                            .addClass('comboSpan')
+                            .append('&nbsp;')
+                        )
+                    ).append($('<td>')
+                        .append($('<span>')
+                            .addClass('ui-state-highlight')
+                            .append('Please apply a taxon or spatial filter to choose datasets.')
+                        )
+                    )
+                );
+            $("input:radio[name='datasetfilterall'][value='filter']").prop('disabled', true);
+            return;
+        }
+        $("input:radio[name='datasetfilterall'][value='filter']").prop('disabled', false);
+                
         if (!json.taxon.all) { 
             if (json.taxon.tvk) {
                 filter.ptvk = json.taxon.tvk; 
@@ -270,9 +312,20 @@ nbn.nbnv.ui.filter.dataset = function(json) {
 
     this.getJson = function() {
         if (this._all) {
+            if (this._useSecret) {
+                return { dataset : { all: true, secret: this._secret } };
+            }
             return { dataset : { all: true } };
         } else {
+            if (this._useSecret) {
+                return { dataset : { all: false, datasets : this._datasets, secret: this._secret } };
+            }
             return { dataset : { all: false, datasets : this._datasets } };
         }
     }
+    
+    this.getError = function() {
+        if (!this._all && this._datasets.length < 1) { return [ 'You must select at least one dataset' ]; }
+        return [];
+    };
 };

@@ -6,7 +6,6 @@ nbn.nbnv.ui.createRequest = function (json, div) {
     this.div = div;
     
     var reason = new nbn.nbnv.ui.requestReason(json);
-    var sensitive = new nbn.nbnv.ui.filter.sensitive(json);
     var year = new nbn.nbnv.ui.filter.year(json);
     var spatial = new nbn.nbnv.ui.filter.spatial(json);
     var taxon = new nbn.nbnv.ui.filter.taxon(json);
@@ -16,8 +15,6 @@ nbn.nbnv.ui.createRequest = function (json, div) {
 
     this.div.append(reason._renderHeader());
     this.div.append(reason._renderPanel());
-    this.div.append(sensitive._renderHeader());
-    this.div.append(sensitive._renderPanel());
     this.div.append(spatial._renderHeader());
     this.div.append(spatial._renderPanel());
     this.div.append(taxon._renderHeader());
@@ -30,9 +27,8 @@ nbn.nbnv.ui.createRequest = function (json, div) {
     this.div.append(timeLimit._renderPanel());
     this.div.append(result._renderHeader());
     this.div.append(result._renderPanel(function () {
-        var j = {};
+        var j = { sensitive: 'sans' };
         $.extend(j, reason.getJson());        
-        $.extend(j, sensitive.getJson());
         $.extend(j, taxon.getJson());
         $.extend(j, spatial.getJson());
         $.extend(j, year.getJson());        
@@ -47,17 +43,14 @@ nbn.nbnv.ui.createRequest = function (json, div) {
             var newFilter = ui.newHeader.attr('filtertype');
             var oldFilter = ui.oldHeader.attr('filtertype');
 
-            if (newFilter == 'sensitive') {
-                sensitive._onEnter();
-            } else if (newFilter == 'year') {
+            if (newFilter == 'year') {
                 year._onEnter();
             } else if (newFilter == 'spatial') {
                 spatial._onEnter();
             } else if (newFilter == 'taxon') {
                 taxon._onEnter();
             } else if (newFilter == 'dataset') {
-                var j = {};
-                $.extend(j, sensitive.getJson());
+                var j = { sensitive: 'sans' };
                 $.extend(j, taxon.getJson());
                 $.extend(j, spatial.getJson());
                 $.extend(j, year.getJson());
@@ -69,12 +62,17 @@ nbn.nbnv.ui.createRequest = function (json, div) {
             } else if (newFilter == 'reason') {
                 reason._onEnter();
             } else if (newFilter == 'result') {
-                result._onEnter(reason._perm);
+                var error = [];
+                error.push(reason.getError());
+                error.push(taxon.getError());
+                error.push(spatial.getError());
+                error.push(year.getError());
+                error.push(timeLimit.getError());
+                
+                result._onEnter(reason._perm, error);
             }
 
-            if (oldFilter == 'sensitive') {
-                sensitive._onExit();
-            } else if (oldFilter == 'year') {
+            if (oldFilter == 'year') {
                 year._onExit();
             } else if (oldFilter == 'spatial') {
                 spatial._onExit();
@@ -90,7 +88,6 @@ nbn.nbnv.ui.createRequest = function (json, div) {
         }
     });
     
-    sensitive._onExit();
     spatial._onExit();
     year._onExit();
     taxon._onExit();
