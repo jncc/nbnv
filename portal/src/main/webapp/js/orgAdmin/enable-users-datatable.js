@@ -58,6 +58,7 @@
             var roleId = $(this).data('role');
             
             $('#nbn-org-role-change-select').val(roleId).attr('selected',true);
+            $('#nbn-org-role-change-name').text(name);
 
             $("#dialog-role-choice").dialog({
                 resizable: false,

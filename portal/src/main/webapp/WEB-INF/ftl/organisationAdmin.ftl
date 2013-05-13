@@ -1,8 +1,8 @@
 <@template.master title="NBN Gateway - Organisations Administration"
-    javascripts=["/js/jquery-ui-1.8.23.custom.min.js/","/js/enable-dataset-metadata-tabs.js","/js/jquery.dataTables.min.js","/js/enable-users-datatable.js"]
+    javascripts=["/js/jquery-ui-1.8.23.custom.min.js/","/js/enable-dataset-metadata-tabs.js","/js/jquery.dataTables.min.js","/js/orgAdmin/enable-users-datatable.js","/js/orgAdmin/enable-join-datatable.js"]
     csss=["/css/smoothness/jquery-ui-1.8.23.custom.css","/css/organisation.css","/css/org-admin.css"]>
 
-    <#assign organisationId="1">
+    <#assign organisationId="${.data_model['organisationID']}">
     <#assign organisation=json.readURL("${api}/organisations/${organisationId}")>
     <#assign users=json.readURL("${api}/organisationMemberships/${organisationId}")>
 
@@ -48,7 +48,7 @@
         </div>
         <div id="tabs-3">
             <@parseUsers userList=users />
-            <@parseRequests userList=users />
+            <@parseRequests userList=[] />
         </div>
     </div>
 
@@ -111,37 +111,30 @@
 </#macro>
 
 <#macro parseRequests userList>
-    <#assign users = []>
-    <#list userList as obj>
-        <#assign users = users + [{"key": obj.user.id, "name": obj.user.forename + " " + obj.user.surname, "text": obj.desc}]/>
-    </#list>
-    <@requestsTable users "Requests to join this organisation" />
+        <#assign users = []>
+        <#list userList as obj>
+            <#assign users = users + [{"key": obj.user.id, "name": obj.user.forename + " " + obj.user.surname, "text": obj.desc}]/>
+        </#list>
+        <@requestsTable users "Requests to join this organisation" />
 </#macro>
 
 <#macro requestsTable users title>
     <div class="tabbed nbn-organisation-tabbed">
         <h3>${title}</h3>
-        <table id="nbn-users-datatable" class="nbn-simple-table">
+        <table id="nbn-requests-datatable" class="nbn-simple-table">
             <thead>
                 <tr>
                     <th>ID</th>
                     <th>User</th>
-                    <th>Role</th>
-                    <th></th>
+                    <th>Request Message</th>
                 </tr>
             </thead>
             <tbody>
             <#list users as user>
                 <tr>
-                    <td class="nbn-org-user-id-td">${user.key?string("0")}</td>
-                    <td class="nbn-org-user-name-td">${user.name}</td>
-                    <td class="nbn-org-user-role-td">
-                        <#if user.role == "administrator">Administrator<#elseif user.role == "lead">Lead<#else>Member</#if>
-                    </td>
-                    <td class="nbn-org-user-delete-td">
-                        <img data-id="${user.key?string("0")}" data-name="${user.name}" class="nbn-org-user-remove" src="/img/delete.png" style="float:right;" title="Remove User" />
-                        <img data-id="${user.key?string("0")}" data-name="${user.name}" data-role="<#if user.role == "administrator">2<#elseif user.role == "lead">3<#else>1</#if>" class="nbn-org-user-role" src="/img/role.png" style="float:right;" title="Change User Role" /> 
-                    </td>
+                    <td class="nbn-org-user-join-id-td">${user.key?string("0")}</td>
+                    <td class="nbn-org-user-join-name-td">${user.name}</td>
+                    <td class="nbn-org-user-join-text-td">${user.text}</td>
                 </tr>
             </#list>
             </tbody>
