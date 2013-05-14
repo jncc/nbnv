@@ -5,6 +5,8 @@
 package uk.gov.nbn.data.portal.controllers;
 
 import com.sun.jersey.api.client.WebResource;
+import java.util.HashMap;
+import java.util.Map;
 import javax.ws.rs.core.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,14 +21,24 @@ import uk.org.nbn.nbnv.api.model.User;
  */
 @Controller
 public class AccessRequestCreateController {
-    @Autowired WebResource resource;
-    
-    @RequestMapping(value= "/AccessRequest/Create", method= RequestMethod.GET)
+
+    @Autowired
+    WebResource resource;
+
+    @RequestMapping(value = "/AccessRequest/Create", method = RequestMethod.GET)
     public ModelAndView getPage() {
         //get the current logged in user
         User currentUser = resource.path("user")
-                                   .accept(MediaType.APPLICATION_JSON)
-                                    .get(User.class);
-        return new ModelAndView("accessRequestCreate");
+                .accept(MediaType.APPLICATION_JSON)
+                .get(User.class);
+
+        if (currentUser.getId() > 1) {
+            return new ModelAndView("accessRequestCreate");
+        } else {
+            Map<String, Object> model = new HashMap<String, Object>();
+            model.put("redirect", "/AccessRequest/Create");
+            model.put("status", "You need to be logged in to view this page.");
+            return new ModelAndView("sso", model);
+        }
     }
 }
