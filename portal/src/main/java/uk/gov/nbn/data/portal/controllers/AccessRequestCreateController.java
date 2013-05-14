@@ -32,12 +32,12 @@ public class AccessRequestCreateController {
                 .accept(MediaType.APPLICATION_JSON)
                 .get(User.class);
 
-        if (currentUser.getId() > 1) {
+        if (currentUser.getId() != User.PUBLIC_USER_ID) {
             return new ModelAndView("accessRequestCreate");
         } else {
             Map<String, Object> model = new HashMap<String, Object>();
             model.put("redirect", "/AccessRequest/Create");
-            model.put("status", "You need to be logged in to view this page.");
+            model.put("status", "You need to be logged in to create an access request.");
             return new ModelAndView("sso", model);
         }
     }
