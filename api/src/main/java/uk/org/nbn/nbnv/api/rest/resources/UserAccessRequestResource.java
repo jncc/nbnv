@@ -28,7 +28,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import uk.org.nbn.nbnv.api.dao.core.OperationalTaxonObservationFilterMapper;
 import uk.org.nbn.nbnv.api.dao.core.OperationalUserAccessRequestMapper;
+import uk.org.nbn.nbnv.api.dao.warehouse.DesignationMapper;
+import uk.org.nbn.nbnv.api.dao.warehouse.SiteBoundaryMapper;
+import uk.org.nbn.nbnv.api.dao.warehouse.TaxonMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.TaxonObservationMapper;
+import uk.org.nbn.nbnv.api.dao.warehouse.TaxonOutputGroupMapper;
 import uk.org.nbn.nbnv.api.model.TaxonDatasetWithQueryStats;
 import uk.org.nbn.nbnv.api.model.TaxonObservationFilter;
 import uk.org.nbn.nbnv.api.model.User;
@@ -48,6 +52,10 @@ public class UserAccessRequestResource extends AbstractResource {
     @Autowired OperationalTaxonObservationFilterMapper oTaxonObservationFilterMapper;
     @Autowired OperationalUserAccessRequestMapper oUserAccessRequestMapper;
     @Autowired TaxonObservationMapper taxonObservationMapper;
+    @Autowired TaxonMapper taxonMapper;
+    @Autowired DesignationMapper designationMapper;
+    @Autowired TaxonOutputGroupMapper outputGroupMapper;
+    @Autowired SiteBoundaryMapper siteBoundaryMapper;
     
     @PUT
     @Path("/requests")
@@ -68,7 +76,7 @@ public class UserAccessRequestResource extends AbstractResource {
         
         TaxonObservationFilter filter = new TaxonObservationFilter();
         filter.setFilterJSON(json);
-        filter.setFilterText(AccessRequestJSONToText.convert(accessRequest));
+        filter.setFilterText(AccessRequestJSONToText.convert(accessRequest, taxonMapper, designationMapper, outputGroupMapper, siteBoundaryMapper));
 
         List<String> species = null;
         if (accessRequest.getTaxon().getTvk() != null && !accessRequest.getTaxon().getTvk().isEmpty()) {

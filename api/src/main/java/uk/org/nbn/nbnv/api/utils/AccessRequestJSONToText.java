@@ -4,7 +4,16 @@
  */
 package uk.org.nbn.nbnv.api.utils;
 
-import uk.org.nbn.nbnv.api.model.meta.AccessRequestFilterJSON;
+import java.text.SimpleDateFormat;
+import org.springframework.beans.factory.annotation.Autowired;
+import uk.org.nbn.nbnv.api.dao.warehouse.DesignationMapper;
+import uk.org.nbn.nbnv.api.dao.warehouse.SiteBoundaryMapper;
+import uk.org.nbn.nbnv.api.dao.warehouse.TaxonMapper;
+import uk.org.nbn.nbnv.api.dao.warehouse.TaxonOutputGroupMapper;
+import uk.org.nbn.nbnv.api.model.Designation;
+import uk.org.nbn.nbnv.api.model.SiteBoundary;
+import uk.org.nbn.nbnv.api.model.Taxon;
+import uk.org.nbn.nbnv.api.model.TaxonOutputGroup;
 import uk.org.nbn.nbnv.api.model.meta.AccessRequestJSON;
 
 /**
@@ -12,28 +21,39 @@ import uk.org.nbn.nbnv.api.model.meta.AccessRequestJSON;
  * @author Administrator
  */
 public class AccessRequestJSONToText {
-
-    public static String convert(AccessRequestJSON ar) {
+    public static String convert(AccessRequestJSON ar, TaxonMapper taxonMapper, DesignationMapper designationMapper, TaxonOutputGroupMapper outputGroupMapper, SiteBoundaryMapper siteBoundaryMapper) {
         String text = null;
 
         if ("ns".equals(ar.getSensitive())) {
-            text = "All <b>non-sensitive</b> records";
+            text = "All non-sensitive records";
         } else if ("sans".equals(ar.getSensitive())) {
-            text = "All <b>sensitive and non-sensitive</b> records";
+            text = "All sensitive and non-sensitive records";
         }
 
         if (!ar.getYear().isAll()) {
-            text += " between <b>" + Integer.toString(ar.getYear().getStartYear()) + "</b> and <b>" + Integer.toString(ar.getYear().getEndYear()) + "</b>";
+            text += " between " + Integer.toString(ar.getYear().getStartYear()) + " and " + Integer.toString(ar.getYear().getEndYear());
         }
 
-        if (!ar.getTaxon().isAll()) {
-            text += " for <b><i>" + ar.getTaxon().getTvk() + "</i></b>";
+        if (!ar.getTaxon().isAll() && !ar.getTaxon().getTvk().isEmpty()) {
+            Taxon t = taxonMapper.getTaxon(ar.getTaxon().getTvk());
+            text += " for " + t.getName() + " " + t.getAuthority();
+        } else if (!ar.getTaxon().isAll() && !ar.getTaxon().getDesignation().isEmpty()) {
+            Designation d = designationMapper.selectByID(ar.getTaxon().getDesignation());
+            text += " for " + d.getName() + " species";
+        } else if (!ar.getTaxon().isAll() && !ar.getTaxon().getOutput().isEmpty()) {
+            TaxonOutputGroup o = outputGroupMapper.getById(ar.getTaxon().getOutput());
+            text += " for " + o.getName() + " species";
         }
 
         if (!ar.getSpatial().isAll()) {
-            text += " <b>" + ar.getSpatial().getMatch() + "</b> the boundary of <b>" + ar.getSpatial().getFeature() + "</b>";
+            SiteBoundary sb = siteBoundaryMapper.getById(ar.getSpatial().getFeature());
+            text += " " + ar.getSpatial().getMatch() + " the boundary of " + sb.getName();
         }
 
+        if (!ar.getTime().isAll()) {
+            SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+            text += " until " + df.format(ar.getTime().getDate());
+        }
 
         return text;
     }
