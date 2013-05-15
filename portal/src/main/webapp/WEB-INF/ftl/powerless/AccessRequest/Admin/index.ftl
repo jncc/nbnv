@@ -25,7 +25,7 @@
     <table class="results">
         <thead>
             <tr>
-                <th>User</th>
+                <th style="width: 15%">User</th>
                 <th>Dataset</th>
                 <th>Data Request</th>
                 <th>Request Reason</th>
@@ -58,7 +58,7 @@
     <table class="results">
         <thead>
             <tr>
-                <th>User</th>
+                <th style="width: 15%">User</th>
                 <th>Dataset</th>
                 <th>Data Request</th>
                 <th>Request Reason</th>
@@ -99,7 +99,7 @@
     <table class="results">
         <thead>
             <tr>
-                <th>User</th>
+                <th style="width: 15%">User</th>
                 <th>Dataset</th>
                 <th>Data Request</th>
                 <th>Request Reason</th>
