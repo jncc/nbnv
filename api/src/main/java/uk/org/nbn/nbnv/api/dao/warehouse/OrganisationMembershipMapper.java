@@ -45,4 +45,9 @@ public interface OrganisationMembershipMapper {
     
     @Select("SELECT COUNT(*) FROM OrganisationMembershipData WHERE userID = #{userKey} AND organisationID = #{organisationID}")
     boolean isUserMemberOfOrganisation(@Param("userKey") int userKey, @Param("organisationID") int organisationID);
+    
+    @Select("SELECT COUNT(*) FROM OrganisationMembershipData WHERE userID = #{userKey} AND organisationID = #{organisationID} AND (role = 'lead' OR role = 'administrator')")
+    boolean isUserOrganisationAdmin(@Param("userKey") int userKey, @Param("organisationID") int organisationID);
+    
+    
 }

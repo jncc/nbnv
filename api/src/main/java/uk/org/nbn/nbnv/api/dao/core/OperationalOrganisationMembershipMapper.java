@@ -5,6 +5,7 @@
 package uk.org.nbn.nbnv.api.dao.core;
 
 import org.apache.ibatis.annotations.Delete;
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Update;
 
@@ -14,9 +15,12 @@ import org.apache.ibatis.annotations.Update;
  */
 public interface OperationalOrganisationMembershipMapper {
     
-    @Update("UPDATE UserOrganisationMembership SET (organisationRoleID = {organistionRoleID}) WHERE userID = {userID} AND organisationID = {organisationID}")
+    @Insert("INSERT INTO UserOrganisationMembership VALUES (#{userID}, #{organisationID}, 1)")
+    public int addUser(@Param("userID") int userID, @Param("organisationID") int organisationID);
+    
+    @Update("UPDATE UserOrganisationMembership SET organisationRoleID = #{organisationRoleID} WHERE userID = #{userID} AND organisationID = #{organisationID}")
     public int changeUserRole(@Param("organisationRoleID") int organisationRoleID, @Param("userID") int userID, @Param("organisationID") int organisationID);
     
-    @Delete("DELETE FROM UserOrganisationMembership WHERE userID = {userID} AND organisationID = {organisationID}")
+    @Delete("DELETE FROM UserOrganisationMembership WHERE userID = #{userID} AND organisationID = #{organisationID}")
     public int removeUser(@Param("userID") int userID, @Param("organisationID") int organisationID);
 }

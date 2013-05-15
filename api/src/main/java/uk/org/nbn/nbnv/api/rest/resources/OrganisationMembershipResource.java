@@ -4,28 +4,24 @@
  */
 package uk.org.nbn.nbnv.api.rest.resources;
 
-import java.io.IOException;
-import java.util.Date;
 import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 import uk.org.nbn.nbnv.api.dao.core.OperationalOrganisationJoinRequestMapper;
+import uk.org.nbn.nbnv.api.dao.core.OperationalOrganisationMembershipMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.OrganisationMembershipMapper;
 import uk.org.nbn.nbnv.api.model.OrganisationMembership;
 import uk.org.nbn.nbnv.api.model.User;
-import uk.org.nbn.nbnv.api.model.meta.AccessRequestJSON;
-import uk.org.nbn.nbnv.api.model.meta.OrganisationJoinRequestJSON;
+import uk.org.nbn.nbnv.api.model.meta.OrganisationAddRemoveUserJSON;
+import uk.org.nbn.nbnv.api.model.meta.UserRoleChangeJSON;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
 
 /**
@@ -36,6 +32,7 @@ import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
 @Path("/organisationMemberships")
 public class OrganisationMembershipResource extends AbstractResource {
     @Autowired OrganisationMembershipMapper organisationMembershipMapper;
+    @Autowired OperationalOrganisationMembershipMapper oOrganisationMembershipMapper;
     @Autowired OperationalOrganisationJoinRequestMapper oOrganisationJoinRequestMapper;
     
     @GET
@@ -75,31 +72,39 @@ public class OrganisationMembershipResource extends AbstractResource {
         return false;
     }
 
-    @GET
-    @Path("/{id}/join")
-    @Produces(MediaType.APPLICATION_JSON)
-    public OrganisationMembership getJoinRequests(@TokenUser(allowPublic=false) User user, @PathParam("id") int orgId) {
-        return null;
-    }
-    
-    @PUT
-    @Path("/{id}/join")
-    @Produces(MediaType.APPLICATION_JSON)
+    @POST
+    @Path("/{id}/addUser")
     @Consumes(MediaType.APPLICATION_JSON)
-    @Transactional
-    public Response createJoinRequest(@TokenUser(allowPublic=false) User user, @PathParam("id") int orgId, String json) throws IOException {
-        OrganisationJoinRequestJSON organisationJoinRequestJSON = parseJSON(json);
+    public Response addUserFromAdminPanel(@TokenUser(allowPublic = false) User user, @PathParam("id") int orgId, OrganisationAddRemoveUserJSON data) {
+        if (organisationMembershipMapper.isUserOrganisationAdmin(user.getId(), orgId)) {
+            oOrganisationMembershipMapper.addUser(data.getUserID(), orgId);
+            return Response.status(Response.Status.ACCEPTED).entity(data).build();
+        }
         
-        oOrganisationJoinRequestMapper.createJoinRequest(user.getId(), 
-                orgId, 
-                organisationJoinRequestJSON.getRequestReason(), 
-                new java.sql.Date(new Date().getTime()));
-        
-        return Response.ok("success").build();
+        return Response.status(Response.Status.UNAUTHORIZED).build();
     }
     
-    private OrganisationJoinRequestJSON parseJSON(String json) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.readValue(json, OrganisationJoinRequestJSON.class);
+    @POST
+    @Path("/{id}/modifyUserRole")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response modifyUserRole(@TokenUser(allowPublic=false) User user, @PathParam("id") int orgId, UserRoleChangeJSON data) {
+        if (organisationMembershipMapper.isUserOrganisationAdmin(user.getId(), orgId)) {
+            oOrganisationMembershipMapper.changeUserRole(data.getRole(), data.getUserID(), orgId);
+            return Response.status(Response.Status.ACCEPTED).entity(data).build();
+        } 
+        
+        return Response.status(Response.Status.UNAUTHORIZED).build();
+    }
+    
+    @POST
+    @Path("/{id}/removeUser")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response modifyUserRole(@TokenUser(allowPublic=false) User user, @PathParam("id") int orgId, OrganisationAddRemoveUserJSON data) {
+        if (organisationMembershipMapper.isUserOrganisationAdmin(user.getId(), orgId)) {
+            oOrganisationMembershipMapper.removeUser(data.getUserID(), orgId);
+            return Response.status(Response.Status.ACCEPTED).entity(data).build();
+        } 
+        
+        return Response.status(Response.Status.UNAUTHORIZED).build();
     }
 }
