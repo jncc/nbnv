@@ -42,7 +42,7 @@ nbn.nbnv.ui.filter.dataset = function(json) {
                     });
                 },
                 select: function(event, ui) {
-                    _me._datasets = [ui.item.datasetKey];
+                    _me._datasets = [ui.item.key];
                     datasetAutoComplete.val(ui.item.title);
                 }
             });
