@@ -9,7 +9,7 @@
     <script>
         $(function(){
             $.fn.dataTableExt.oJUIClasses.sStripeOdd = 'ui-state-highlight';
-            $('.results').dataTable({
+            $('.presults').dataTable({
                 "aaSorting": [[4, "desc"]],
                 "bAutoWidth": true,
                 "bFilter": false,
@@ -18,18 +18,31 @@
                 "bSortClasses": false,
                 "sPaginationType": "full_numbers",
                 "aLengthMenu": [[10,25,50,100,-1],[10,25,50,100,"All"]],
+                "aoColumns": [{"sWidth": "15%"}, {"sWidth": "20%"}, {"sWidth": "25%"}, {"sWidth": "28%"}, {"sWidth": "7%"}, {"sWidth": "5%"}]
+            });
+
+            $('.results').dataTable({
+                "aaSorting": [[4, "desc"]],
+                "bAutoWidth": true,
+                "bFilter": false,
+                "bJQueryUI": true,
+                "iDisplayLength": 25,
+                "bSortClasses": false,
+                "sPaginationType": "full_numbers",
+                "aLengthMenu": [[10,25,50,100,-1],[10,25,50,100,"All"]]
             });
         });
     </script>
     <h1>Pending Access Requests</h1>
-    <table class="results">
+    <table class="presults">
         <thead>
             <tr>
-                <th style="width: 15%">User</th>
+                <th>User</th>
                 <th>Dataset</th>
                 <th>Data Request</th>
                 <th>Request Reason</th>
                 <th>Request Date</th>
+                <th>Action</th>
             </tr>
         </thead>
         <tbody>
@@ -49,6 +62,12 @@
                 </td>
                 <td>
                     ${r.requestDate}
+                </td>
+                <td>
+                    Grant
+                    Deny
+                    Edit
+                    Close
                 </td>
             </tr>
             </#list>
