@@ -113,6 +113,20 @@ public class UserAccessRequestResource extends AbstractResource {
     }
     
     @GET
+    @Path("/requests")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<UserAccessRequest> getRequests(@TokenUser(allowPublic=false) User user) throws IOException {
+        return oUserAccessRequestMapper.getUserRequests(user.getId());
+    }
+    
+    @GET
+    @Path("/requests/granted")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<UserAccessRequest> getGrantedRequests(@TokenUser(allowPublic=false) User user) throws IOException {
+        return oUserAccessRequestMapper.getGrantedUserRequests(user.getId());
+    }
+
+    @GET
     @Path("/requests/admin")
     @Produces(MediaType.APPLICATION_JSON)
     public List<UserAccessRequest> getRequestsForAdmin(@TokenUser(allowPublic=false) User user) {
