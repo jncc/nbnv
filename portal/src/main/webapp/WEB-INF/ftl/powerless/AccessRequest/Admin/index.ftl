@@ -3,11 +3,18 @@
 <#assign dUserRequests=json.readURL("${api}/user/userAccesses/requests/admin/denied") />
 
 <@template.master title="Requests for Datasets"
-    javascripts=["/js/jquery.dataTables.min.js"]
+    javascripts=["/js/jquery.dataTables.min.js"
+    ,"/js/admin/access/requestCloseDialog.js"]
     csss=["http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/themes/smoothness/jquery-ui.css"]>
 
     <script>
+        var close;
+
         $(function(){
+            close = new nbn.nbnv.ui.dialog.requestCloseDialog();
+            close._render();
+            $('.closelink').click(function() { close.show(); });
+
             $.fn.dataTableExt.oJUIClasses.sStripeOdd = 'ui-state-highlight';
             $('.presults').dataTable({
                 "aaSorting": [[4, "desc"]],
@@ -67,7 +74,7 @@
                     Grant
                     Deny
                     Edit
-                    Close
+                    <a class="closelink" href="#">Close</a>
                 </td>
             </tr>
             </#list>
