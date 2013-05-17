@@ -23,15 +23,34 @@ class RecordIngester @Inject()(log: Logger,
   def insertRecord(record: NbnRecord, dataset: TaxonDataset, metadata: Metadata) {
 
     log.info("Upserting record %s".format(record.key))
-
-    val survey = surveyIngester.upsertSurvey(record.surveyKey, dataset)
-    val sample = sampleIngester.upsertSample(record.sampleKey, survey)
-    val site = siteIngester.upsertSite(record.siteKey, record.siteName, dataset.getDataset)
-    val feature = featureIngester.ensureFeature(record)
+    
+    val survey = db.repo.getSurvey(record.surveyKey getOrElse "1", dataset).get
+    //val survey = surveyIngester.upsertSurvey(record.surveyKey, dataset)
+    val sample = db.repo.getSample(record.sampleKey getOrElse "1", survey).get
+    //val sample = sampleIngester.upsertSample(record.sampleKey, survey)
+    val site = if (record.siteKey.isDefined) {
+    		db.repo.getSite(record.siteKey.get, dataset.getDataset)
+    	}
+    	else {
+    		None
+    	}
+    //val site = siteIngester.upsertSite(record.siteKey, record.siteName, dataset.getDataset)
+    val feature = featureIngester.getFeature(record) 
     val taxon = db.repo.getTaxon(record.taxonVersionKey)
     val dateType = db.repo.getDateType(record.dateType)
-    val determiner = recorderIngester.ensureRecorder(record.determiner)
-    val recorder = recorderIngester.ensureRecorder(record.recorder)
+    val determiner = if (record.determiner.isDefined) {
+        db.repo.getFirstRecorder(record.determiner.get)
+      }
+      else {
+        None
+      }
+
+    val recorder = if (record.determiner.isDefined) {
+        db.repo.getFirstRecorder(record.recorder.get)
+      }
+      else {
+        None
+      }
 
     val (startDate, endDate) = dateParser.parse(record.dateType, record.startDate, record.endDate)
 
@@ -71,4 +90,14 @@ class RecordIngester @Inject()(log: Logger,
 
     db.em.flush()
   }
+  
+//  public getFeature(record: NbnRecord)
+//  {
+//
+//    case value: GridRefDef  => ensureGridRefFeature(value)
+//    case value: BoundaryDef => ensureSiteBoundaryFeature(value)
+//    case value: PointDef    => ensureGridRefFeatureByCoordinate(value)
+//  }
+
 }
+

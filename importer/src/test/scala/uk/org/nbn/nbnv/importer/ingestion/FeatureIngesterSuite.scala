@@ -44,7 +44,7 @@ class FeatureIngesterSuite extends BaseFunSuite {
 
     // act
     val ingester = new FeatureIngester(f.log, f.db, f.gridSquareInfoFactory)
-    val result = ingester.ensureFeature(f.record)
+    val result = ingester.ensureGridSquareFeature(f.record)
 
     // assert
     result should be (feature)
@@ -68,7 +68,7 @@ class FeatureIngesterSuite extends BaseFunSuite {
 
     // act
     val ingester = new FeatureIngester(f.log, f.db, f.gridSquareInfoFactory)
-    ingester.ensureFeature(f.record)
+    ingester.ensureGridSquareFeature(f.record)
 
     // assert
     val persistedGridSquares = em.buffer collect { case gs: GridSquare => gs.getGridRef }
@@ -85,7 +85,7 @@ class FeatureIngesterSuite extends BaseFunSuite {
 
     // act
     val ingester = new FeatureIngester(f.log, f.db, f.gridSquareInfoFactory)
-    ingester.ensureFeature(f.record)
+    ingester.ensureGridSquareFeature(f.record)
 
     // assert - that exactly one GridSquare should be persisted
     verify(f.em, times(1)).persist(isA(classOf[GridSquare]))

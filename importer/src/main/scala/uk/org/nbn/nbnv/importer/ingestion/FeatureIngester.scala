@@ -13,13 +13,26 @@ import scala.Some
 import uk.org.nbn.nbnv.importer.records.PointDef
 
 class FeatureIngester @Inject()(log: Logger, db: Database, gridSquareInfoFactory: GridSquareInfoFactory) {
-
-  def ensureFeature(record: NbnRecord) : Feature = record.feature match {
-
-    case value: GridRefDef  => ensureGridRefFeature(value)
-    case value: BoundaryDef => ensureSiteBoundaryFeature(value)
-    case value: PointDef    => ensureGridRefFeatureByCoordinate(value)
+  
+  //get feature
+  //ensure grid features
+  
+  def getFeature(record: NbnRecord) : Feature = record.feature match {
+    case value: GridRefDef  => {
+      val info = gridSquareInfoFactory.getByGridRef(value)
+      db.repo.getGridSquareFeature(info.gridReference).get._1
+    }
+    case value: BoundaryDef => getSiteBoundaryFeature(value)
+    case value: PointDef    => ensurePointFeatureByCoordinate(value)
   }
+
+  def ensureGridSquareFeature(record: NbnRecord) {
+    record.feature match {
+      case value: GridRefDef  => ensureGridRefFeature(value)
+      case value: PointDef    => ensureGridRefFeatureByCoordinate(value)
+      case _ => //nothing needs to be done for boundary defs
+    }
+   }
 
   def ensureGridRefFeature(value: GridRefDef) = {
 
@@ -58,7 +71,7 @@ class FeatureIngester @Inject()(log: Logger, db: Database, gridSquareInfoFactory
     }
   }
 
-  def ensureSiteBoundaryFeature(value: BoundaryDef) = {
+  def getSiteBoundaryFeature(value: BoundaryDef) = {
 
     // feature key - first 8 chars are the siteBoundaryDataset key; remaining are the provider key
     val siteBoundaryDatasetKey = value.key.substring(0, 8)
@@ -70,15 +83,23 @@ class FeatureIngester @Inject()(log: Logger, db: Database, gridSquareInfoFactory
 
   private def ensureGridRefFeatureByCoordinate(value: PointDef) = {
 
-    val info = gridSquareInfoFactory.getByCoordinate(value)
+   val info = gridSquareInfoFactory.getByCoordinate(value)
 
-    info match {
-      case Some(i) => ensureGridSquareFeatureRecursive(i)._1
-      case None => ensureWgs84PointFeature(value.east, value.north) // no corresponding square; just save the point
-    }
-
+   info match {
+     case Some(i) =>  ensureGridSquareFeatureRecursive(i)._1
+     case None =>
+   }
   }
 
+  private def ensurePointFeatureByCoordinate(value: PointDef) = {
+    val info = gridSquareInfoFactory.getByCoordinate(value)
+    
+    info match {
+      case Some(i) =>  db.repo.getGridSquareFeature(i.gridReference).get._1
+      case None =>  ensureWgs84PointFeature(value.east, value.north)
+    }
+  }
+  
   private def ensureWgs84PointFeature(latitude: Double, longitude: Double) =  {
     val wkt = "POINT(%s %s)".format(longitude, latitude)
     db.repo.createFeature(wkt)

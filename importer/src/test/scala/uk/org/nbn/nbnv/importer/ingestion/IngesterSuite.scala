@@ -24,6 +24,11 @@ class IngesterSuite extends BaseFunSuite {
 
     val datasetIngester = mock[DatasetIngester]
     val recordIngester = mock[RecordIngester]
+    val sampleIngester = mock[SampleIngester]
+    val surveyIngester = mock[SurveyIngester]
+    val siteIngester = mock[SiteIngester]
+    val featureIngester = mock[FeatureIngester]
+    val recorderIngester = mock[RecorderIngester]
 
     val archive = mock[Archive]
     val iterator = mock[ClosableIterator[StarRecord]]
@@ -39,7 +44,7 @@ class IngesterSuite extends BaseFunSuite {
     val f = fixture
 
     // act
-    val ingester = new Ingester(f.options, mock[Logger], f.db, f.datasetIngester, f.recordIngester)
+    val ingester = new Ingester(f.options, mock[Logger], f.db, f.datasetIngester, f.recordIngester, f.surveyIngester, f.sampleIngester, f.siteIngester, f.recorderIngester, f.featureIngester)
     ingester.ingest(f.archive, f.metadata)
 
     // assert
@@ -51,7 +56,7 @@ class IngesterSuite extends BaseFunSuite {
     val f = fixture
 
     // act
-    val ingester = new Ingester(f.options, mock[Logger], f.db, f.datasetIngester, f.recordIngester)
+    val ingester = new Ingester(f.options, mock[Logger], f.db, f.datasetIngester, f.recordIngester, f.surveyIngester, f.sampleIngester, f.siteIngester, f.recorderIngester, f.featureIngester)
     ingester.ingest(f.archive, f.metadata)
 
     // assert

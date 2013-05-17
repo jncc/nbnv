@@ -13,20 +13,15 @@ import com.google.inject.Inject
 
 class SampleIngester  @Inject()(db: Database) {
 
-  def upsertSample(sampleKey: Option[String], survey: Survey): Sample = {
+  def upsertSample(sampleKey: Option[String], survey: Survey) {
 
     val key = sampleKey getOrElse "1"
-    val sample = db.repo.getSample(key, survey)
 
-    sample match {
-      case Some(s) => s
-      case None => {
+    if (!db.repo.getSample(key, survey).isDefined) {
         val s = new Sample()
         s.setProviderKey(key)
         s.setSurvey(survey)
         db.em.persist(s)
-        s
-      }
     }
   }
 }
