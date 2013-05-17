@@ -4,16 +4,33 @@
 
 <@template.master title="Requests for Datasets"
     javascripts=["/js/jquery.dataTables.min.js"
-    ,"/js/admin/access/requestCloseDialog.js"]
+    ,"/js/jquery.watermark.min.js"
+    ,"/js/admin/access/requestCloseDialog.js"
+    ,"/js/admin/access/requestGrantDialog.js"
+    ,"/js/admin/access/requestDenyDialog.js"
+    ,"/js/admin/access/requestRevokeDialog.js"
+    ]
     csss=["http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/themes/smoothness/jquery-ui.css"]>
 
     <script>
         var close;
+        var grant;
+        var deny;
+        var revoke;
 
         $(function(){
             close = new nbn.nbnv.ui.dialog.requestCloseDialog();
             close._render();
-            $('.closelink').click(function() { close.show(); });
+            $('.closelink').click(function() { close.show($(this).attr("request")); });
+            grant = new nbn.nbnv.ui.dialog.requestGrantDialog();
+            grant._render();
+            $('.grantlink').click(function() { grant.show($(this).attr("request")); });
+            deny = new nbn.nbnv.ui.dialog.requestDenyDialog();
+            deny._render();
+            $('.denylink').click(function() { deny.show($(this).attr("request")); });
+            revoke = new nbn.nbnv.ui.dialog.requestRevokeDialog();
+            revoke._render();
+            $('.revokelink').click(function() { revoke.show($(this).attr("request")); });
 
             $.fn.dataTableExt.oJUIClasses.sStripeOdd = 'ui-state-highlight';
             $('.presults').dataTable({
@@ -71,10 +88,10 @@
                     ${r.requestDate}
                 </td>
                 <td>
-                    Grant
-                    Deny
+                    <a class="grantlink" href="#" request="${r.filter.id?c}">Grant</a>
+                    <a class="denylink" href="#" request="${r.filter.id?c}">Deny</a>
                     Edit
-                    <a class="closelink" href="#">Close</a>
+                    <a class="closelink" href="#" request="${r.filter.id?c}">Close</a>
                 </td>
             </tr>
             </#list>
@@ -91,6 +108,7 @@
                 <th>Request Date</th>
                 <th>Response Reason</th>
                 <th>Response Date</th>
+                <th>Action</th>
             </tr>
         </thead>
         <tbody>
@@ -116,6 +134,9 @@
                 </td>
                 <td>
                     ${r.responseDate}
+                </td>
+                <td>
+                    <a class="revokelink" href="#" request="${r.filter.id?c}">Revoke</a>
                 </td>
             </tr>
             </#list>
