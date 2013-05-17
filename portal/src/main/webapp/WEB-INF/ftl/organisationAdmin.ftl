@@ -5,13 +5,14 @@
     <#assign organisationId="${.data_model['organisationID']}">
     <#assign organisation=json.readURL("${api}/organisations/${organisationId}")>
     <#assign users=json.readURL("${api}/organisationMemberships/${organisationId}")>
+    <#assign joinRequests=json.readURL("${api}/organisationMemberships/${organisationId}/join/all")>
 
     <h1>${organisation.name}</h1>
     <div id="nbn-tabs">
         <ul>
             <li><a href="#tabs-1">User Management</a></li>
             <li><a href="#tabs-2">Add a User</a></li>
-            <li><a href="#tabs-3">Join Requests</a></li>
+            <li><a href="#tabs-3">Join Requests <b>(${joinRequests?size})</b></a></li>
         </ul>
         <div id="tabs-1">
             <@parseUsers userList=users />
@@ -22,7 +23,7 @@
             <input id="nbn-org-add-user-submit" type="button" data-url="${api}/organisationMemberships/${organisationId}/addUser" value="Add Selected User" />
         </div>
         <div id="tabs-3">
-            <@parseRequests userList=[] />
+            <@parseRequests requestList=joinRequests />
         </div>
     </div>
 
@@ -84,29 +85,33 @@
     </table>
 </#macro>
 
-<#macro parseRequests userList>
-        <#assign users = []>
-        <#list userList as obj>
-            <#assign users = users + [{"key": obj.user.id, "name": obj.user.forename + " " + obj.user.surname, "text": obj.desc}]/>
+<#macro parseRequests requestList>
+        <#assign requests = []>
+        <#list requestList as obj>
+            <#assign requests = requests + [{"key": obj.id, "name": obj.user.forename + " " + obj.user.surname, "text": obj.requestReason, "date": obj.requestDate}]/>
         </#list>
-        <@requestsTable users "Requests to join this organisation" />
+        <@requestsTable requests "Requests to join this organisation" />
 </#macro>
 
-<#macro requestsTable users title>
+<#macro requestsTable requests title>
     <table id="nbn-requests-datatable" class="nbn-simple-table">
         <thead>
             <tr>
                 <th>ID</th>
                 <th>User</th>
                 <th>Request Message</th>
+                <th>Request Date</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
-        <#list users as user>
+        <#list requests as request>
             <tr>
-                <td class="nbn-org-user-join-id-td">${user.key?string("0")}</td>
-                <td class="nbn-org-user-join-name-td">${user.name}</td>
-                <td class="nbn-org-user-join-text-td">${user.text}</td>
+                <td class="nbn-org-user-join-id-td">${request.key?string("0")}</td>
+                <td class="nbn-org-user-join-name-td">${request.name}</td>
+                <td class="nbn-org-user-join-request-text-td">${request.text}</td>
+                <td class="nbn-org-user-join-request-date-td">${request.date?number_to_date}</td>
+                <td class="nbn-org-user-join-request-view-td"><input type="button" class="nbn-org-user-join-request-action" data-url="/Organisations/Join/${request.key?string("0")}" value="Action this request"/></td>
             </tr>
         </#list>
         </tbody>

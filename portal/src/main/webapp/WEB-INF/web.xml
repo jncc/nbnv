@@ -13,8 +13,8 @@
     
 <!--Define custom error pages -->
     <error-page>
-        <error-code>401</error-code>
-        <location>/unavailable-pages/401</location>
+        <error-code>403</error-code>
+        <location>/unavailable-pages/403</location>
     </error-page>
     <error-page>
         <error-code>404</error-code>

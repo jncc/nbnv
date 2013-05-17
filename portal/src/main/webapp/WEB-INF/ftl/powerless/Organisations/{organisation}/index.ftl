@@ -6,7 +6,20 @@
     <#assign datasets=json.readURL("${api}/organisations/${organisationId}/datasets")>
     <#assign cdatasets=json.readURL("${api}/organisations/${organisationId}/contributedDatasets")>
 
+    <#assign user=json.readURL("${api}/user")>
+    <#assign isAdmin=json.readURL("${api}/organisationMemberships/${organisationId}/${user.id?string('0')}/isadmin")>
+    <#assign isMember=json.readURL("${api}/organisationMemberships/${organisationId}/${user.id?string('0')}/isMember")>
+
     <h1>${organisation.name}</h1>
+    <#if isAdmin>
+        <div style="float:right; top: -20px;">
+            <a href="/Organisations/${organisationId}/Admin">Admin Pages</a>
+        </div>
+    <#elseif !isMember>
+        <div style="float:right; top: -20px;">
+            <a href="/Organisations/${organisationId}/Join">Join this organisation</a>
+        </div>
+    </#if>
     <div class="tabbed nbn-organisation-tabbed">
         <h3>Summary</h3>
         <img class="nbn-align-img-right" src="${api}/organisations/${organisation.id}/logo" />${organisation.summary}

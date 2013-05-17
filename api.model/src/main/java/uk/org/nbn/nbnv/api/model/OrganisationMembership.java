@@ -5,6 +5,7 @@ package uk.org.nbn.nbnv.api.model;
  * @author Paul Gilbertson
  */
 public class OrganisationMembership {
+
     private User user;
     private Organisation organisation;
     private Role role;
@@ -14,7 +15,7 @@ public class OrganisationMembership {
         administrator,
         lead
     }
-    
+
     public User getUser() {
         return user;
     }
@@ -34,6 +35,7 @@ public class OrganisationMembership {
     public Role getRole() {
         return role;
     }
+
     public void setRole(Role role) {
         this.role = role;
     }

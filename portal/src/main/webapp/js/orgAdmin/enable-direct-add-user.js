@@ -40,11 +40,11 @@
                             dataType: "json",
                             success: function() {
                                 $('#nbn-org-add-user-dialog').dialog('close');
-                                alert("Added user with id " + $('#nbn-org-add-user-id').val());
+                                location.reload();
                             },
                             error: function() {
                                 $('#nbn-org-add-user-dialog').dialog('close');
-                                alert("ERROR: Could not add user with id " + $('#nbn-org-add-user-id').val());
+                                alert("ERROR: Could not add user " + $('#nbn-org-add-user').text());
                             }
                         });
                     },

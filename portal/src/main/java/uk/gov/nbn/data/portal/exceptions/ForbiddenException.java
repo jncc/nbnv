@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  * @author Matt Debont
  */
 
-@ResponseStatus(value = HttpStatus.UNAUTHORIZED)
-public class UnauthorisedException extends RuntimeException {
-    // Doesn't really need any functionality, just want the Unauthorised 
+@ResponseStatus(value = HttpStatus.FORBIDDEN)
+public class ForbiddenException extends RuntimeException {
+    // Doesn't really need any functionality, just want the Forbidden 
     // response code to come back
 }

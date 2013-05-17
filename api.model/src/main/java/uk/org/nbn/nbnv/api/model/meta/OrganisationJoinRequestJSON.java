@@ -4,20 +4,25 @@
  */
 package uk.org.nbn.nbnv.api.model.meta;
 
-import java.util.Date;
-
 /**
  *
  * @author Matt Debont
  */
 public class OrganisationJoinRequestJSON {
+    private int id;
     private int userID;
     private int organisationID;
-    private String requestReason;
-    private int requestResponseType;
-    private String requestResponse;
-    private Date responseDate;
+    private String reason;
+    private int responseType;
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+    
     public int getUserID() {
         return userID;
     }
@@ -34,35 +39,19 @@ public class OrganisationJoinRequestJSON {
         this.organisationID = organisationID;
     }
 
-    public String getRequestReason() {
-        return requestReason;
+    public String getReason() {
+        return reason;
     }
 
-    public void setRequestReason(String requestReason) {
-        this.requestReason = requestReason;
+    public void setReason(String reason) {
+        this.reason = reason;
     }
 
-    public int getRequestResponseType() {
-        return requestResponseType;
+    public int getResponseType() {
+        return responseType;
     }
 
-    public void setRequestResponseType(int requestResponseType) {
-        this.requestResponseType = requestResponseType;
-    }
-
-    public String getRequestResponse() {
-        return requestResponse;
-    }
-
-    public void setRequestResponse(String requestResponse) {
-        this.requestResponse = requestResponse;
-    }
-
-    public Date getResponseDate() {
-        return responseDate;
-    }
-
-    public void setResponseDate(Date responseDate) {
-        this.responseDate = responseDate;
+    public void setResponseType(int responseType) {
+        this.responseType = responseType;
     }
 }

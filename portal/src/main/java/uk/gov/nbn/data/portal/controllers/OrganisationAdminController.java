@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package uk.gov.nbn.data.portal.controllers;
 
 import com.sun.jersey.api.client.WebResource;
@@ -13,7 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
-import uk.gov.nbn.data.portal.exceptions.UnauthorisedException;
+import uk.gov.nbn.data.portal.exceptions.ForbiddenException;
 import uk.org.nbn.nbnv.api.model.User;
 
 /**
@@ -37,7 +33,7 @@ public class OrganisationAdminController {
             return new ModelAndView("organisationAdmin");
         }
 
-        throw new UnauthorisedException();
+        throw new ForbiddenException();
     }
 
     private boolean isUserOrgAdmin(int orgId) {
