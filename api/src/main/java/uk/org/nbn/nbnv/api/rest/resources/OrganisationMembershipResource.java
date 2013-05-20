@@ -282,13 +282,13 @@ public class OrganisationMembershipResource extends AbstractResource {
 
     // TODO: Add explanation to this to the user feedback
     private void sendEmail(OrganisationJoinRequest request, String template, String email, String subject) throws IOException, TemplateException {
-        Map<String, Object> message = new HashMap<String, Object>();
-        message.put("portal", properties.getProperty("portal_url"));
-        message.put("name", request.getUser().getForename());
-        message.put("organisation", request.getOrganisation().getName());
-        message.put("organisationID", request.getOrganisation().getId());
-        message.put("responseReason", request.getRequestReason());
-
-        mailer.send(template, request.getUser().getEmail(), subject, message);
+//        Map<String, Object> message = new HashMap<String, Object>();
+//        message.put("portal", properties.getProperty("portal_url"));
+//        message.put("name", request.getUser().getForename());
+//        message.put("organisation", request.getOrganisation().getName());
+//        message.put("organisationID", request.getOrganisation().getId());
+//        message.put("responseReason", request.getRequestReason());
+//
+//        mailer.send(template, request.getUser().getEmail(), subject, message);
     }
 }
