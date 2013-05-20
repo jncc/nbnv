@@ -32,7 +32,7 @@
             <#switch request.responseTypeID>
                 <#case 0>
                     <p>No response received</p>
-                    <input id="nbn-org-join-withdraw" data-id="${request.id}" data-url="${api}/organisationMemberships/join/${request.id}" type="button" value="Withdraw this request" />
+                    <input id="nbn-org-join-withdraw" data-id="${request.id}" data-url="${api}/organisationMemberships/request/${request.id}" type="button" value="Withdraw this request" />
                     <div id="nbn-org-join-withdraw-dialog" style="display:none;">
                         <p>Are you sure that you would like to withdraw this request?</p>
                     </div>
@@ -53,8 +53,8 @@
         <div id="nbn-org-join-action" data-id=${request.id}>
             <#switch request.responseTypeID>
                 <#case 0>
-                    <input id="nbn-org-join-accept" data-url="${api}/organisationMemberships/join/${request.id}" type="button" value="Accept" />
-                    <input id="nbn-org-join-decline" data-url="${api}/organisationMemberships/join/${request.id}" type="button" value="Decline" />
+                    <input id="nbn-org-join-accept" data-url="${api}/organisationMemberships/request/${request.id}" type="button" value="Accept" />
+                    <input id="nbn-org-join-decline" data-url="${api}/organisationMemberships/request/${request.id}" type="button" value="Decline" />
                     <div id="nbn-org-join-reason-dialog" style="display:none;">
                         <p>Please enter any details as to why you want to <span class="nbn-org-join-dialog-type"></span> this request below;</p>
                         <textarea id="nbn-org-join-reason-text" rows="5" cols="50"></textarea>

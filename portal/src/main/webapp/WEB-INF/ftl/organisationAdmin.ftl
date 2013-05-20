@@ -5,7 +5,7 @@
     <#assign organisationId="${.data_model['organisationID']}">
     <#assign organisation=json.readURL("${api}/organisations/${organisationId}")>
     <#assign users=json.readURL("${api}/organisationMemberships/${organisationId}")>
-    <#assign joinRequests=json.readURL("${api}/organisationMemberships/${organisationId}/join/all")>
+    <#assign joinRequests=json.readURL("${api}/organisationMemberships/${organisationId}/requests")>
 
     <h1>${organisation.name}</h1>
     <div id="nbn-tabs">
@@ -111,7 +111,7 @@
                 <td class="nbn-org-user-join-name-td">${request.name}</td>
                 <td class="nbn-org-user-join-request-text-td">${request.text}</td>
                 <td class="nbn-org-user-join-request-date-td">${request.date?number_to_date}</td>
-                <td class="nbn-org-user-join-request-view-td"><input type="button" class="nbn-org-user-join-request-action" data-url="/Organisations/Join/${request.key?string("0")}" value="Action this request"/></td>
+                <td class="nbn-org-user-join-request-view-td"><input type="button" class="nbn-org-user-join-request-action" data-url="/Organisations/JoinRequest/${request.key?string("0")}" value="Action this request"/></td>
             </tr>
         </#list>
         </tbody>

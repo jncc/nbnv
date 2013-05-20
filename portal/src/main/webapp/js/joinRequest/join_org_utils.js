@@ -23,7 +23,7 @@
                                 dataType: 'json',
                                 success: function() {
                                     $('#nbn-org-join-withdraw').dialog('close');
-                                    window.location = "/Organisations/Join/" + $('#nbn-org-join-withdraw').data('id');
+                                    window.location = "/Organisations/JoinRequest/" + $('#nbn-org-join-withdraw').data('id');
                                 },
                                 error: function() {
                                     $('#nbn-org-join-withdraw-dialog').dialog('close');
