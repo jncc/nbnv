@@ -272,4 +272,11 @@ public class UserResource extends AbstractResource {
     public List<Organisation> getUserAdminOrganisations(@TokenUser(allowPublic=false) User user) {
         return organisationMapper.selectByAdminUser(user.getId());
     }
+    
+    @GET
+    @Path("/search")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<User> searchForUserByPartial(@TokenUser(allowPublic=false) User user, @QueryParam("term") String term) {
+       return userMapper.searchForUser("%" + term + "%");
+    }
 }
