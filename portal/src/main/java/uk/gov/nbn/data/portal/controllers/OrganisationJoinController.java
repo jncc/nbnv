@@ -4,6 +4,7 @@
  */
 package uk.gov.nbn.data.portal.controllers;
 
+import com.sun.jersey.api.client.UniformInterfaceException;
 import com.sun.jersey.api.client.WebResource;
 import javax.ws.rs.core.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,15 +31,19 @@ public class OrganisationJoinController {
 
     @RequestMapping(method = RequestMethod.GET)
     public ModelAndView get(@PathVariable int id, Model model) {
-        OrganisationJoinRequest request = resource.path(String.format("organisationMemberships/request/%d", id))
-                .accept(MediaType.APPLICATION_JSON)
-                .get(OrganisationJoinRequest.class);
+        try {
+            OrganisationJoinRequest request = resource.path(String.format("organisationMemberships/request/%d", id))
+                    .accept(MediaType.APPLICATION_JSON)
+                    .get(OrganisationJoinRequest.class);
+            if (isUserOrgAdminOrRequestor(id, request)) {
+                model.addAttribute("organisationID", request.getOrganisation().getId());
+                model.addAttribute("requestID", id);
 
-        if (isUserOrgAdminOrRequestor(id,request)) {
-            model.addAttribute("organisationID", request.getOrganisation().getId());
-            model.addAttribute("requestID", id);
-            
-            return new ModelAndView("organisationJoinRequestView");
+                return new ModelAndView("organisationJoinRequestView");
+            }
+        } catch (UniformInterfaceException ex) {
+            // TODO Make sure this is a forbidden exception
+            throw new ForbiddenException();
         }
 
         throw new ForbiddenException();
