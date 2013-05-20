@@ -31,6 +31,8 @@ import uk.org.nbn.nbnv.api.model.User;
 import uk.org.nbn.nbnv.api.model.meta.OrganisationAddRemoveUserJSON;
 import uk.org.nbn.nbnv.api.model.meta.OrganisationJoinRequestJSON;
 import uk.org.nbn.nbnv.api.model.meta.UserRoleChangeJSON;
+import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenOrganisationJoinRequestUser;
+import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenOrganisationUser;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
 
 /**
@@ -97,13 +99,9 @@ public class OrganisationMembershipResource extends AbstractResource {
     @POST
     @Path("/{id}/addUser")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response addUserFromAdminPanel(@TokenUser(allowPublic = false) User user, @PathParam("id") int orgId, OrganisationAddRemoveUserJSON data) {
-        if (oOrganisationMembershipMapper.isUserOrganisationAdmin(user.getId(), orgId)) {
-            oOrganisationMembershipMapper.addUser(data.getUserID(), orgId);
-            return Response.status(Response.Status.ACCEPTED).entity(data).build();
-        }
-
-        return Response.status(Response.Status.UNAUTHORIZED).build();
+    public Response addUserFromAdminPanel(@TokenOrganisationUser(path = "id", roles = OrganisationMembership.Role.administrator) User user, @PathParam("id") int orgId, OrganisationAddRemoveUserJSON data) {
+        oOrganisationMembershipMapper.addUser(data.getUserID(), orgId);
+        return Response.status(Response.Status.OK).entity(data).build();
     }
 
     /**
@@ -118,13 +116,9 @@ public class OrganisationMembershipResource extends AbstractResource {
     @POST
     @Path("/{id}/modifyUserRole")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response modifyUserRole(@TokenUser(allowPublic = false) User user, @PathParam("id") int orgId, UserRoleChangeJSON data) {
-        if (oOrganisationMembershipMapper.isUserOrganisationAdmin(user.getId(), orgId)) {
-            oOrganisationMembershipMapper.changeUserRole(data.getRole(), data.getUserID(), orgId);
-            return Response.status(Response.Status.ACCEPTED).entity(data).build();
-        }
-
-        return Response.status(Response.Status.UNAUTHORIZED).build();
+    public Response modifyUserRole(@TokenOrganisationUser(path = "id", roles = OrganisationMembership.Role.administrator) User user, @PathParam("id") int orgId, UserRoleChangeJSON data) {
+        oOrganisationMembershipMapper.changeUserRole(data.getRole(), data.getUserID(), orgId);
+        return Response.status(Response.Status.OK).entity(data).build();
     }
 
     /**
@@ -139,13 +133,9 @@ public class OrganisationMembershipResource extends AbstractResource {
     @POST
     @Path("/{id}/removeUser")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response modifyUserRole(@TokenUser(allowPublic = false) User user, @PathParam("id") int orgId, OrganisationAddRemoveUserJSON data) {
-        if (oOrganisationMembershipMapper.isUserOrganisationAdmin(user.getId(), orgId)) {
-            oOrganisationMembershipMapper.removeUser(data.getUserID(), orgId);
-            return Response.status(Response.Status.ACCEPTED).entity(data).build();
-        }
-
-        return Response.status(Response.Status.FORBIDDEN).build();
+    public Response modifyUserRole(@TokenOrganisationUser(path = "id", roles = OrganisationMembership.Role.administrator) User user, @PathParam("id") int orgId, OrganisationAddRemoveUserJSON data) {
+        oOrganisationMembershipMapper.removeUser(data.getUserID(), orgId);
+        return Response.status(Response.Status.OK).entity(data).build();
     }
 
     /**
@@ -210,12 +200,8 @@ public class OrganisationMembershipResource extends AbstractResource {
     @GET
     @Path("/{id}/requests")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getActiveJoinRequests(@TokenUser(allowPublic = false) User user, @PathParam("id") int orgId) {
-        if (oOrganisationMembershipMapper.isUserOrganisationAdmin(user.getId(), orgId)) {
-            return Response.status(Response.Status.OK).entity(oOrganisationJoinRequestMapper.getActiveJoinRequestsByOrganisation(orgId)).build();
-        }
-
-        return Response.status(Response.Status.FORBIDDEN).build();
+    public Response getActiveJoinRequests(@TokenOrganisationUser(path = "id", roles = OrganisationMembership.Role.administrator) User user, @PathParam("id") int orgId) {
+        return Response.status(Response.Status.OK).entity(oOrganisationJoinRequestMapper.getActiveJoinRequestsByOrganisation(orgId)).build();
     }
 
     /**
@@ -229,18 +215,8 @@ public class OrganisationMembershipResource extends AbstractResource {
     @GET
     @Path("/request/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getJoinRequestByID(@TokenUser(allowPublic = false) User user, @PathParam("id") int reqId) {
-        try {
-            OrganisationJoinRequest req = oOrganisationJoinRequestMapper.getActiveJoinRequestByID(reqId);
-            if (user.getId() == req.getUser().getId()
-                    || oOrganisationMembershipMapper.isUserOrganisationAdmin(user.getId(), req.getOrganisation().getId())) {
-                return Response.status(Response.Status.OK).entity(req).build();
-            }
-
-            return Response.status(Response.Status.FORBIDDEN).build();
-        } catch (NullPointerException ex) {
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
+    public OrganisationJoinRequest getJoinRequestByID(@TokenOrganisationJoinRequestUser(path = "id") User user, @PathParam("id") int reqId) {
+        return oOrganisationJoinRequestMapper.getJoinRequestByID(reqId);
     }
 
     /**
@@ -263,9 +239,8 @@ public class OrganisationMembershipResource extends AbstractResource {
     @POST
     @Path("/request/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response action(@TokenUser(allowPublic = false) User user, @PathParam("id") int id, OrganisationJoinRequestJSON data) {
-        OrganisationJoinRequest request = oOrganisationJoinRequestMapper.getActiveJoinRequestByID(id);
-
+    public Response action(@TokenOrganisationJoinRequestUser(path = "id") User user, @PathParam("id") int id, OrganisationJoinRequestJSON data) {
+        OrganisationJoinRequest request = oOrganisationJoinRequestMapper.getJoinRequestByID(id);
 
         if (oOrganisationMembershipMapper.isUserOrganisationAdmin(user.getId(), request.getOrganisation().getId())) {
             if (data.getResponseType() == 1) {
@@ -293,20 +268,16 @@ public class OrganisationMembershipResource extends AbstractResource {
                 }
 
                 return Response.status(Response.Status.OK).entity(data).build();
-            } else {
-                return Response.status(Response.Status.BAD_REQUEST).build();
             }
-        } else if (user.getId() == oOrganisationJoinRequestMapper.getActiveJoinRequestByID(data.getId()).getUser().getId()) {
+        } else if (user.getId() == oOrganisationJoinRequestMapper.getJoinRequestByID(data.getId()).getUser().getId()) {
             if (data.getResponseType() == 3) {
                 // Withdraw the request
                 oOrganisationJoinRequestMapper.withdrawJoinRequest(data.getId(), new java.sql.Date(new java.util.Date().getTime()));
                 return Response.status(Response.Status.OK).entity(data).build();
-            } else {
-                return Response.status(Response.Status.BAD_REQUEST).build();
             }
         }
-
-        return Response.status(Response.Status.UNAUTHORIZED).entity(data).build();
+        
+        return Response.status(Response.Status.BAD_REQUEST).build();
     }
 
     // TODO: Add explanation to this to the user feedback

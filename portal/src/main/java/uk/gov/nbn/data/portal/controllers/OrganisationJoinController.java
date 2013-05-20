@@ -26,8 +26,7 @@ import uk.org.nbn.nbnv.api.model.User;
 @RequestMapping(value = "/Organisations/JoinRequest/{id}")
 public class OrganisationJoinController {
 
-    @Autowired
-    WebResource resource;
+    @Autowired WebResource resource;
 
     @RequestMapping(method = RequestMethod.GET)
     public ModelAndView get(@PathVariable int id, Model model) {

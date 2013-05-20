@@ -28,7 +28,7 @@ public interface OperationalOrganisationJoinRequestMapper {
         @Result(property = "organisation", column = "organisationID", javaType = Organisation.class, one = @One(select = "uk.org.nbn.nbnv.api.dao.core.OperationalOrganisationMapper.selectByID")),
         @Result(property = "user", column = "userID", javaType = User.class, one = @One(select = "uk.org.nbn.nbnv.api.dao.core.OperationalUserMapper.getUserById"))
     })
-    public OrganisationJoinRequest getActiveJoinRequestByID (
+    public OrganisationJoinRequest getJoinRequestByID (
             @Param("id") int id);
     
     @Select("SELECT * FROM OrganisationJoinRequest WHERE userID = #{userID} AND organisationID = #{organisationID} AND responseTypeID IS NULL")
