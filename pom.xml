@@ -35,6 +35,7 @@
         <module>documentation</module>
         <module>gis</module>
         <module>imt</module>
+        <module>importer.orglogo</module>
     </modules>
 	
     <build>
