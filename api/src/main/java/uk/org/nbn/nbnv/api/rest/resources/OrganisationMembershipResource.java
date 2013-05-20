@@ -6,6 +6,7 @@ package uk.org.nbn.nbnv.api.rest.resources;
 
 import freemarker.template.TemplateException;
 import java.io.IOException;
+import java.net.SocketException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,14 +41,10 @@ import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
 @Path("/organisationMemberships")
 public class OrganisationMembershipResource extends AbstractResource {
 
-    @Autowired
-    OrganisationMembershipMapper organisationMembershipMapper;
-    @Autowired
-    OperationalOrganisationMembershipMapper oOrganisationMembershipMapper;
-    @Autowired
-    OperationalOrganisationJoinRequestMapper oOrganisationJoinRequestMapper;
-    @Autowired
-    TemplateMailer mailer;
+    @Autowired OrganisationMembershipMapper organisationMembershipMapper;
+    @Autowired OperationalOrganisationMembershipMapper oOrganisationMembershipMapper;
+    @Autowired OperationalOrganisationJoinRequestMapper oOrganisationJoinRequestMapper;
+    @Autowired TemplateMailer mailer;
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -178,7 +175,7 @@ public class OrganisationMembershipResource extends AbstractResource {
      * Create a new organisation join request for a given organisation, return a
      * status code
      *
-     * @param user The current user 
+     * @param user The current user
      * @param orgID The Organisation ID
      * @param data A JSON packet containing a reason for the request
      * @return
@@ -266,14 +263,9 @@ public class OrganisationMembershipResource extends AbstractResource {
     @POST
     @Path("/request/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response action(@TokenUser(allowPublic = false) User user, @PathParam("id") int id, OrganisationJoinRequestJSON data) throws IOException, TemplateException {
+    public Response action(@TokenUser(allowPublic = false) User user, @PathParam("id") int id, OrganisationJoinRequestJSON data) {
         OrganisationJoinRequest request = oOrganisationJoinRequestMapper.getActiveJoinRequestByID(id);
-        Map<String, Object> message = new HashMap<String, Object>();
-        message.put("portal", properties.getProperty("portal_url"));
-        message.put("name", request.getUser().getForename());
-        message.put("organisation", request.getOrganisation().getName());
-        message.put("organisationID", request.getOrganisation().getId());
-        message.put("responseReason", request.getRequestReason());
+
 
         if (oOrganisationMembershipMapper.isUserOrganisationAdmin(user.getId(), request.getOrganisation().getId())) {
             if (data.getResponseType() == 1) {
@@ -281,19 +273,24 @@ public class OrganisationMembershipResource extends AbstractResource {
                 oOrganisationJoinRequestMapper.acceptJoinRequest(data.getId(), data.getReason(), new java.sql.Date(new java.util.Date().getTime()));
                 // Add the user to the organisation
                 oOrganisationMembershipMapper.addUser(request.getUser().getId(), request.getOrganisation().getId());
-                // Send email response to the requesting user, saying that the request was accepted
-                mailer.send("organisation-join-accept.ftl", request.getUser().getEmail(),
-                        "NBN Gateway: You are now a member of " + request.getOrganisation().getName(),
-                        message);
-
-                return Response.status(Response.Status.OK).entity(data).build();
+                try {
+                    // Send email response to the requesting user, saying that the request was accepted
+                    sendEmail(request, "organisation-join-accept.ftl", request.getUser().getEmail(),
+                            "NBN Gateway: You are now a member of " + request.getOrganisation().getName());
+                    return Response.status(Response.Status.OK).entity(data).build();
+                } catch (Exception ex) {
+                    return Response.status(Response.Status.ACCEPTED).entity(ex).build();
+                }
             } else if (data.getResponseType() == 2) {
                 // Deny the request
                 oOrganisationJoinRequestMapper.denyJoinRequest(data.getId(), data.getReason(), new java.sql.Date(new java.util.Date().getTime()));
-                // Send email response to the requesting user, saying that the request was denied
-                mailer.send("organisation-join-deny.ftl", request.getUser().getEmail(),
-                        "NBN Gateway: You are now a member of " + request.getOrganisation().getName(),
-                        message);
+                try {
+                    // Send email response to the requesting user, saying that the request was denied
+                    sendEmail(request, "organisation-join-deny.ftl", request.getUser().getEmail(),
+                            "NBN Gateway: Your request to join " + request.getOrganisation().getName() + " was denied");
+                } catch (Exception ex) {
+                    return Response.status(Response.Status.ACCEPTED).entity(ex).build();
+                }
 
                 return Response.status(Response.Status.OK).entity(data).build();
             } else {
@@ -310,5 +307,17 @@ public class OrganisationMembershipResource extends AbstractResource {
         }
 
         return Response.status(Response.Status.UNAUTHORIZED).entity(data).build();
+    }
+
+    // TODO: Add explanation to this to the user feedback
+    private void sendEmail(OrganisationJoinRequest request, String template, String email, String subject) throws IOException, TemplateException {
+        Map<String, Object> message = new HashMap<String, Object>();
+        message.put("portal", properties.getProperty("portal_url"));
+        message.put("name", request.getUser().getForename());
+        message.put("organisation", request.getOrganisation().getName());
+        message.put("organisationID", request.getOrganisation().getId());
+        message.put("responseReason", request.getRequestReason());
+
+        mailer.send(template, request.getUser().getEmail(), subject, message);
     }
 }

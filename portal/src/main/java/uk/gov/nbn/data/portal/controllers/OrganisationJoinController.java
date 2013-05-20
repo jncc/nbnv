@@ -5,8 +5,6 @@
 package uk.gov.nbn.data.portal.controllers;
 
 import com.sun.jersey.api.client.WebResource;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -16,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import uk.gov.nbn.data.portal.exceptions.ForbiddenException;
-import uk.org.nbn.nbnv.api.model.Organisation;
 import uk.org.nbn.nbnv.api.model.OrganisationJoinRequest;
 import uk.org.nbn.nbnv.api.model.User;
 
