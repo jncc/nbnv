@@ -63,11 +63,11 @@ nbn.nbnv.ui.createRequest = function (json, div) {
                 reason._onEnter();
             } else if (newFilter == 'result') {
                 var error = [];
-                error.push(reason.getError());
-                error.push(taxon.getError());
-                error.push(spatial.getError());
-                error.push(year.getError());
-                error.push(timeLimit.getError());
+                $.merge(error, reason.getError());
+                $.merge(error, taxon.getError());
+                $.merge(error, spatial.getError());
+                $.merge(error, year.getError());
+                $.merge(error, timeLimit.getError());
                 
                 result._onEnter(reason._perm, error);
             }
