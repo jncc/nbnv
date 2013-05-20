@@ -90,7 +90,7 @@
                 <td>
                     <a class="grantlink" href="#" request="${r.filter.id?c}">Grant</a>
                     <a class="denylink" href="#" request="${r.filter.id?c}">Deny</a>
-                    Edit
+                    <a href="/AccessRequest/Edit/User/${r.filter.id?c}">Edit</a>
                     <a class="closelink" href="#" request="${r.filter.id?c}">Close</a>
                 </td>
             </tr>
