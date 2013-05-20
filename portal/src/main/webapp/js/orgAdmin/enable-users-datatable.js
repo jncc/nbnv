@@ -12,7 +12,7 @@
             "aLengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
             "aoColumnDefs": [
                 {"bVisible": false, "aTargets": [0]},
-                {"bSortable": false, "aTargets": [3]}
+                {"bSortable": false, "aTargets": [3,4]}
             ]
         });
 

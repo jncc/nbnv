@@ -65,6 +65,7 @@
                 <th>User</th>
                 <th>Role</th>
                 <th></th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -76,8 +77,10 @@
                     <#if user.role == "administrator">Administrator<#elseif user.role == "lead">Lead<#else>Member</#if>
                 </td>
                 <td class="nbn-org-user-modify-td">
-                    <img data-id="${user.key?string("0")}" data-name="${user.name}" class="nbn-org-user-remove" src="/img/delete.png" style="float:right;" title="Remove User" />
-                    <img data-id="${user.key?string("0")}" data-name="${user.name}" data-role="<#if user.role == "administrator">2<#elseif user.role == "lead">3<#else>1</#if>" class="nbn-org-user-role" src="/img/role.png" style="float:right;" title="Change User Role" /> 
+                    <a href="#" class="nbn-org-user-role" style="float:right;" data-name="${user.name}" data-id="${user.key?string("0")}" data-role="<#if user.role == "administrator">2<#elseif user.role == "lead">3<#else>1</#if>">Change User Role</a> 
+                </td>
+                <td class="nbn-org-user-remove-td">
+                    <a href="#" class="nbn-org-user-remove" style="float:right;" data-id="${user.key?string("0")}" data-name="${user.name}">Remove User</a>
                 </td>
             </tr>
         </#list>
@@ -111,7 +114,7 @@
                 <td class="nbn-org-user-join-name-td">${request.name}</td>
                 <td class="nbn-org-user-join-request-text-td">${request.text}</td>
                 <td class="nbn-org-user-join-request-date-td">${request.date?number_to_date}</td>
-                <td class="nbn-org-user-join-request-view-td"><input type="button" class="nbn-org-user-join-request-action" data-url="/Organisations/JoinRequest/${request.key?string("0")}" value="Action this request"/></td>
+                <td class="nbn-org-user-join-request-view-td"><a href="/Organisations/JoinRequest/${request.key?string("0")}">Action this request</a></td>
             </tr>
         </#list>
         </tbody>
