@@ -1,6 +1,8 @@
 package uk.gov.nbn.data.portal.controllers;
 
 import com.sun.jersey.api.client.WebResource;
+import java.util.HashMap;
+import java.util.Map;
 import javax.ws.rs.core.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -25,23 +27,28 @@ public class OrganisationAdminController {
 
     @RequestMapping(method = RequestMethod.GET)
     public ModelAndView get(@PathVariable int id, Model model) {
-        if (isUserOrgAdmin(id)) {
-            // Push org ID into the model so we can grab the data a bit more 
-            // easilly
-            model.addAttribute("organisationID", id);
+        //get the current logged in user
+        User currentUser = resource.path("user")
+                .accept(MediaType.APPLICATION_JSON)
+                .get(User.class);
 
-            return new ModelAndView("organisationAdmin");
+        if (currentUser.getId() != User.PUBLIC_USER_ID) {
+            if (isUserOrgAdmin(currentUser, id)) {
+                model.addAttribute("organisationID", id);
+                return new ModelAndView("organisationAdmin");
+            }
+        } else {
+            Map<String, Object> modelSSO = new HashMap<String, Object>();
+            modelSSO.put("redirect", "/Organisations/" + id + "/Admin");
+            modelSSO.put("status", "You need to be logged in to view the organisation admin pages");
+            return new ModelAndView("sso", modelSSO);
         }
 
         throw new ForbiddenException();
     }
 
-    private boolean isUserOrgAdmin(int orgId) {
-        User currentUser = resource.path("user")
-                .accept(MediaType.APPLICATION_JSON)
-                .get(User.class);
-
-        if (resource.path(String.format("organisationMemberships/%d/%d/isadmin", orgId, currentUser.getId()))
+    private boolean isUserOrgAdmin(User user, int orgId) {
+        if (resource.path(String.format("organisationMemberships/%d/%d/isadmin", orgId, user.getId()))
                 .accept(MediaType.APPLICATION_JSON)
                 .get(boolean.class)) {
             return true;
