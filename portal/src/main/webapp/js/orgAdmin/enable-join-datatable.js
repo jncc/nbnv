@@ -8,6 +8,10 @@
 
     $.fn.dataTableExt.oJUIClasses.sStripeOdd = 'ui-state-highlight';
     $(document).ready(function() {
+        $('.nbn-org-user-join-request-action').click(function() {
+            window.location = $(this).data('url');
+        });
+
         rTable = $('#nbn-requests-datatable').dataTable({
             "aaSorting": [[1, "asc"]],
             "bJQueryUI": true,
@@ -21,10 +25,6 @@
             "oLanguage": {
                 "sEmptyTable": "There are no outstanding requests to join this organisation"
             }
-        });
-        
-        $('.nbn-org-user-join-request-action').click(function() {
-            window.location = $(this).data('url');
         });
     });
 })(jQuery);
