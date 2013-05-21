@@ -6,6 +6,7 @@ package uk.org.nbn.nbnv.api.utils;
 
 import java.text.SimpleDateFormat;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import uk.org.nbn.nbnv.api.dao.warehouse.DesignationMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.SiteBoundaryMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.TaxonMapper;
@@ -20,8 +21,14 @@ import uk.org.nbn.nbnv.api.model.meta.AccessRequestJSON;
  *
  * @author Administrator
  */
+@Component
 public class AccessRequestJSONToText {
-    public static String convert(AccessRequestJSON ar, TaxonMapper taxonMapper, DesignationMapper designationMapper, TaxonOutputGroupMapper outputGroupMapper, SiteBoundaryMapper siteBoundaryMapper) {
+    @Autowired static TaxonMapper taxonMapper;
+    @Autowired static DesignationMapper designationMapper;
+    @Autowired static TaxonOutputGroupMapper outputGroupMapper;
+    @Autowired static SiteBoundaryMapper siteBoundaryMapper;
+
+    public static String convert(AccessRequestJSON ar) {
         String text = null;
 
         if ("ns".equals(ar.getSensitive())) {

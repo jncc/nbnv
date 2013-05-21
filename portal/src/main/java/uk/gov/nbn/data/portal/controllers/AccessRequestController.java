@@ -59,6 +59,6 @@ public class AccessRequestController {
             return new ModelAndView("sso", model);            
         }
         
-        return new ModelAndView("accessRequestEdit", "model", request.getFilter());
+        return new ModelAndView("accessRequestEdit", "model", request);
     }
 }

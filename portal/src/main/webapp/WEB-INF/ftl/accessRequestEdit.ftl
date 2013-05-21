@@ -10,8 +10,8 @@
         ,"/js/filter/spatial.js"
         ,"/js/filter/taxon.js"
         ,"/js/filter/dataset.js"
-        ,"/js/admin/access/requestReason.js"
-        ,"/js/admin/access/requestResult.js"
+        ,"/js/admin/access/requestDetails.js"
+        ,"/js/admin/access/requestEditResult.js"
         ,"/js/admin/access/timeLimit.js"
         ,"/js/admin/access/editRequest.js"] 
     csss=["http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/themes/smoothness/jquery-ui.css","/css/jquery.qtip.min.css","/css/accessRequest.css"]>
@@ -20,8 +20,10 @@
         nbn.nbnv.api = '${api}';
 	
 	$(function() {
-            var json = ${model.filterJSON};
-            nbn.nbnv.ui.editRequest(json, $('#filter'));
+            var json = ${model.filter.filterJSON};
+            var requester = '${model.user.forename} ${model.user.surname}';
+            var dataset = '${model.datasetKey}';
+            nbn.nbnv.ui.editRequest(json, requester, dataset, $('#filter'));
 	});
     </script>
 

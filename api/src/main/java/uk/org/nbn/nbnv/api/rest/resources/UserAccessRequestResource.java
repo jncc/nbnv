@@ -5,6 +5,7 @@
 package uk.org.nbn.nbnv.api.rest.resources;
 
 import java.io.IOException;
+import java.lang.String;
 import java.sql.Date;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -28,11 +29,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import uk.org.nbn.nbnv.api.dao.core.OperationalTaxonObservationFilterMapper;
 import uk.org.nbn.nbnv.api.dao.core.OperationalUserAccessRequestMapper;
-import uk.org.nbn.nbnv.api.dao.warehouse.DesignationMapper;
-import uk.org.nbn.nbnv.api.dao.warehouse.SiteBoundaryMapper;
-import uk.org.nbn.nbnv.api.dao.warehouse.TaxonMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.TaxonObservationMapper;
-import uk.org.nbn.nbnv.api.dao.warehouse.TaxonOutputGroupMapper;
 import uk.org.nbn.nbnv.api.model.TaxonDatasetWithQueryStats;
 import uk.org.nbn.nbnv.api.model.TaxonObservationFilter;
 import uk.org.nbn.nbnv.api.model.User;
@@ -40,7 +37,7 @@ import uk.org.nbn.nbnv.api.model.UserAccessRequest;
 import uk.org.nbn.nbnv.api.model.meta.AccessRequestJSON;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenAccessRequestAdminUser;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
-import uk.org.nbn.nbnv.api.utils.AccessRequestJSONToText;
+import uk.org.nbn.nbnv.api.utils.AccessRequestUtils;
 
 /**
  *
@@ -51,11 +48,6 @@ import uk.org.nbn.nbnv.api.utils.AccessRequestJSONToText;
 public class UserAccessRequestResource extends AbstractResource {
     @Autowired OperationalTaxonObservationFilterMapper oTaxonObservationFilterMapper;
     @Autowired OperationalUserAccessRequestMapper oUserAccessRequestMapper;
-    @Autowired TaxonObservationMapper taxonObservationMapper;
-    @Autowired TaxonMapper taxonMapper;
-    @Autowired DesignationMapper designationMapper;
-    @Autowired TaxonOutputGroupMapper outputGroupMapper;
-    @Autowired SiteBoundaryMapper siteBoundaryMapper;
     
     @PUT
     @Path("/requests")
@@ -65,44 +57,19 @@ public class UserAccessRequestResource extends AbstractResource {
     public Response createRequest(@TokenUser(allowPublic=false) User user, String json) throws IOException {
         AccessRequestJSON accessRequest = parseJSON(json);
 
-        if (!accessRequest.getSpatial().isAll() && !accessRequest.getDataset().isSecret()) {
-            accessRequest.setSensitive("ns");
-        }
-
         // Fail if this is an organisation request
         if (accessRequest.getReason().getOrganisationID() > -1) {
             return Response.serverError().build();
         }
         
-        TaxonObservationFilter filter = new TaxonObservationFilter();
-        filter.setFilterJSON(json);
-        filter.setFilterText(AccessRequestJSONToText.convert(accessRequest, taxonMapper, designationMapper, outputGroupMapper, siteBoundaryMapper));
+        if (!accessRequest.getSpatial().isAll() && !accessRequest.getDataset().isSecret()) {
+            accessRequest.setSensitive("ns");
+        }
 
-        List<String> species = null;
-        if (accessRequest.getTaxon().getTvk() != null && !accessRequest.getTaxon().getTvk().isEmpty()) {
-            species = new ArrayList<String>();
-            species.add(accessRequest.getTaxon().getTvk());
-        }
+        TaxonObservationFilter filter = AccessRequestUtils.createFilter(json, accessRequest);
+        List<String> species = AccessRequestUtils.createSpeciesList(accessRequest);        
+        List<String> datasets = AccessRequestUtils.createDatasetList(accessRequest, species, user);
         
-        List<String> datasets;
-        
-        if (accessRequest.getDataset().isAll()) {
-            List<TaxonDatasetWithQueryStats> selectRequestableObservationDatasetsByFilter = taxonObservationMapper.selectRequestableObservationDatasetsByFilter(user, accessRequest.getYear().getStartYear(), accessRequest.getYear().getEndYear(), new ArrayList<String>(), species, accessRequest.getSpatial().getMatch(), accessRequest.getSpatial().getFeature(), (accessRequest.getSensitive().equals("sans") ? true : false), accessRequest.getTaxon().getDesignation(), accessRequest.getTaxon().getOutput(), "");
-            datasets = new ArrayList<String>();
-            
-            for (TaxonDatasetWithQueryStats tdwqs : selectRequestableObservationDatasetsByFilter) {
-                datasets.add(tdwqs.getDatasetKey());
-            }
-        } else {
-            datasets = accessRequest.getDataset().getDatasets();
-            
-            if (accessRequest.getDataset().isSecret()) {
-                List<TaxonDatasetWithQueryStats> selectRequestableSensitiveObservationDatasetsByFilter = taxonObservationMapper.selectRequestableSensitiveObservationDatasetsByFilter(user, accessRequest.getYear().getStartYear(), accessRequest.getYear().getEndYear(), new ArrayList<String>(), species, accessRequest.getSpatial().getMatch(), accessRequest.getSpatial().getFeature(), (accessRequest.getSensitive().equals("sans") ? true : false), accessRequest.getTaxon().getDesignation(), accessRequest.getTaxon().getOutput(), "");
-                for (TaxonDatasetWithQueryStats tdwqs : selectRequestableSensitiveObservationDatasetsByFilter) {
-                    datasets.add(tdwqs.getDatasetKey());
-                }
-            }
-        }
         
         for (String datasetKey : datasets) {
             oTaxonObservationFilterMapper.createFilter(filter);
