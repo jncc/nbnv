@@ -109,7 +109,7 @@ nbn.nbnv.ui.filter.year = function(json) {
         var e = [];
         if (!this._all && this._startYear > this._endYear) { e.push('Start year must be before (or equal to) end year')}
         if (!this._all && this._startYear < 1600) { e.push('Start year must be after (or equal to) 1600')}
-        if (!this._all && this._endYear < new Date().getFullYear()) { e.push('End year must be before (or equal to) ' + new Date().getFullYear())}
+        if (!this._all && this._endYear > new Date().getFullYear()) { e.push('End year must be before (or equal to) ' + new Date().getFullYear())}
         
         return e;
     };

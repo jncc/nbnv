@@ -15,9 +15,7 @@ import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.Provider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import uk.org.nbn.nbnv.api.authentication.ExpiredTokenException;
-import uk.org.nbn.nbnv.api.authentication.InvalidTokenException;
-import uk.org.nbn.nbnv.api.dao.warehouse.OrganisationMembershipMapper;
+import uk.org.nbn.nbnv.api.dao.core.OperationalOrganisationMembershipMapper;
 import uk.org.nbn.nbnv.api.model.OrganisationMembership;
 import uk.org.nbn.nbnv.api.model.OrganisationMembership.Role;
 import uk.org.nbn.nbnv.api.model.User;
@@ -32,7 +30,7 @@ import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenOrganisationUser;
 @Provider
 @Component
 public class TokenOrganisationUserProvider implements InjectableProvider<TokenOrganisationUser, Type> {   
-    @Autowired private OrganisationMembershipMapper organisationMembershipMapper;
+    @Autowired private OperationalOrganisationMembershipMapper organisationMembershipMapper;
     @Autowired private UserProviderHelper userObtainer;
     @Context private UriInfo request;
     @Context private HttpHeaders headers;

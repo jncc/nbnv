@@ -47,16 +47,15 @@ nbn.nbnv.ui.requestReason = function(json) {
                 $.each(orgs, function (i, org) {
                     asSelect.append($('<option>').text(org.name).attr('value', org.id));
                 });
+                
+                if (_me._asID > -1) { 
+                    asSelect.val(_me._asID);
+                    asSelect.change();
+                }
             }
         })
 
-        var data = $('<div>')
-            .append($('<div>')
-                .text("I requesting access for:")
-            ).append(asSelect)
-            .append($('<div>').addClass('queryBlock')
-                .text("I am requesting data for the following purpose:")
-            ).append($('<select>')
+        var purpose = $('<select>')
                 .append($('<option>').text('Personal interest').attr('value', '1'))
                 .append($('<option>').text('Educational purposes').attr('value', '2'))
                 .append($('<option>').text('Research and scientific analysis').attr('value', '3'))
@@ -85,19 +84,33 @@ nbn.nbnv.ui.requestReason = function(json) {
                             .append('WRITTEN PERMISSION FROM THE DATA PROVIDER IS REQUIRED FOR THIS TYPE OF USE.')
                             );
                     }
-                })
-            ).append($('<div>').addClass('resulttext').attr('id', 'purposedescription')
-                .append($('<p>').append('Personal interest - ').append(purposes['1'].text))
-            ).append($('<div>').addClass('queryBlock')
-                .text("Detailed description of purpose:")
-            ).append($('<textarea>')
+                });
+                
+        purpose.val(this._purpose);
+        purpose.change();
+                
+        var details = $('<textarea>')
                 .attr('cols', '75')
                 .attr('rows', '15')
                 .watermark("Please enter details here")
                 .change(function() {
                     _me._details = $(this).val();
-                })
-            );
+                });
+        
+        if (this._details != '') { details.text(this._details); }
+        
+        var data = $('<div>')
+            .append($('<div>')
+                .text("I requesting access for:")
+            ).append(asSelect)
+            .append($('<div>').addClass('queryBlock')
+                .text("I am requesting data for the following purpose:")
+            ).append(purpose)
+            .append($('<div>').addClass('resulttext').attr('id', 'purposedescription')
+                .append($('<p>').append('Personal interest - ').append(purposes['1'].text))
+            ).append($('<div>').addClass('queryBlock')
+                .text("Detailed description of purpose:")
+            ).append(details);
 
         return data;
     };

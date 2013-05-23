@@ -15,18 +15,8 @@
         ,"/js/admin/access/requestResult.js"
         ,"/js/admin/access/timeLimit.js"
         ,"/js/admin/access/createRequest.js"] 
-    csss=["http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/themes/smoothness/jquery-ui.css","/css/jquery.qtip.min.css"]>
+    csss=["http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/themes/smoothness/jquery-ui.css","/css/jquery.qtip.min.css","/css/accessRequest.css"]>
 
-    <style>
-        .filterheader { font-weight: bold; padding-left: 25px; }
-        .resulttext { padding-left: 25px; }
-        .comboSpan { padding-left: 25px; width: 100px; display: inline-block; }
-        .queryBlock { padding-top: 1em; }
-        .dataset-label { width: 100%; display: inline-block; border: 1px solid white; }
-        .spanHover { background-color: lightgrey; }
-        .selectMaxWidth { width: 70%; }
-        .taxonTerm { font-weight: bold; }
-    </style>
     <script>
         nbn.nbnv.api = '${api}';
 	
@@ -34,9 +24,8 @@
             var json = ${data};
             nbn.nbnv.ui.createRequest(json, $('#filter'));
 	});
-	</script>
+    </script>
 
-	<h1>Request Enhanced Access</h1>
-	<div id="filter">
-        </div>
+    <h1>Request Enhanced Access</h1>
+    <div id="filter"></div>
 </@template.master>
