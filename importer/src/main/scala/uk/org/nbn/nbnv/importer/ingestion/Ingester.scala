@@ -33,6 +33,7 @@ class Ingester @Inject()(options: Options,
   }
 
   def upsertSurveys(archive: Archive, dataset: TaxonDataset) {
+    log.debug("Ingesting surveys...")
     for ((record, i) <- archive.iteratorRaw.zipWithIndex) {
       val rec = new NbnRecord(record)
       surveyIngester.upsertSurvey(rec.surveyKey, dataset)
@@ -44,6 +45,7 @@ class Ingester @Inject()(options: Options,
 
 
   def upsertSamples(archive: Archive, dataset: TaxonDataset) {
+    log.debug("Ingesting samples...")
     for ((record, i) <- archive.iteratorRaw.zipWithIndex) {
       val rec = new NbnRecord(record)
       val survey = db.repo.getSurvey((rec.surveyKey getOrElse "1"),dataset )
@@ -55,6 +57,7 @@ class Ingester @Inject()(options: Options,
   }
 
   def upsertSites(archive: Archive, dataset: TaxonDataset) {
+    log.debug("Ingesting sites...")
     for ((record, i) <- archive.iteratorRaw.zipWithIndex) {
       val rec = new NbnRecord(record)
       siteIngester.upsertSite(rec.siteKey, rec.siteName, dataset.getDataset)
@@ -64,6 +67,7 @@ class Ingester @Inject()(options: Options,
   }
   
   def upsertRecorders(archive: Archive) {
+    log.debug("Ingesting recorders...")
     for ((record, i) <- archive.iteratorRaw.zipWithIndex) {
       val rec = new NbnRecord(record)
       recorderIngester.ensureRecorder(rec.determiner)
@@ -74,6 +78,7 @@ class Ingester @Inject()(options: Options,
   }
   
   def upsertGridSquareFeatures(archive: Archive) {
+    log.debug("Ingesting grid squares...")
     for ((record, i) <- archive.iteratorRaw.zipWithIndex) {
       val rec = new NbnRecord(record)
       
@@ -84,6 +89,7 @@ class Ingester @Inject()(options: Options,
   }
   
   def upsertRecords(archive: Archive, dataset: TaxonDataset, metadata: Metadata) {
+    log.debug("Ingesting records...")
      for ((record, i) <- archive.iteratorRaw.zipWithIndex) {
 
         recordIngester.insertRecord(new NbnRecord(record), dataset, metadata)

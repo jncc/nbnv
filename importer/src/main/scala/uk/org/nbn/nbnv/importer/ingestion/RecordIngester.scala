@@ -83,12 +83,8 @@ class RecordIngester @Inject()(log: Logger,
       }
     }
 
-    db.em.flush()
-
     attributeIngester.ingestAttributes(record, observation, dataset)
     publicIngester.ingestPublic(observation, sample, metadata)
-
-    db.em.flush()
   }
   
 //  public getFeature(record: NbnRecord)
