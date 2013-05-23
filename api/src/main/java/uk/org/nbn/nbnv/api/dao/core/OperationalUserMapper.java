@@ -5,10 +5,12 @@
 package uk.org.nbn.nbnv.api.dao.core;
 
 import java.util.Date;
+import java.util.List;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
+import uk.org.nbn.nbnv.api.model.Dataset;
 import uk.org.nbn.nbnv.api.model.User;
 
 /**
@@ -16,6 +18,25 @@ import uk.org.nbn.nbnv.api.model.User;
  * @author Paul Gilbertson
  */
 public interface OperationalUserMapper {
+    
+    @Select("SELECT * from \"User\" WHERE id = #{id}")
+    public User getUserById(@Param("id") int id);
+    
+    @Select("Select * from \"User\" where username = #{username}")
+    public User getUser(@Param("username") String username);
+
+    @Select("Select * from \"User\" where email = #{email}")
+    public User getUserFromEmail(@Param("email") String username);
+
+    @Select("SELECT COUNT(*) FROM UserRoleSystemAdministrator WHERE userKey = #{id}")
+    public boolean isUserSystemAdministrator(@Param("id") int id);
+
+    @Select("SELECT d.* FROM DatasetData d INNER JOIN DatasetAdministrator da ON da.datasetKey = d.[key] WHERE da.userID = #{id}")
+    public List<Dataset> getDatasetsUserAdmins(@Param("id") int id);
+
+    @Select("SELECT * from \"User\" WHERE forename LIKE #{term} OR surname LIKE #{term} OR email LIKE #{term} OR (forename + ' ' + surname) LIKE #{term} ORDER BY forename, surname")
+    public List<User> searchForUser(@Param("term") String term);
+    
     @Update("UPDATE \"User\" " +
         "SET password_sha1 = #{passwordSHA1}, " +
             "password_md5_sha1 = #{md5PasswordSHA1} " +
@@ -43,7 +64,9 @@ public interface OperationalUserMapper {
     @Insert("UPDATE \"User\" SET active = 1 WHERE username = #{username} AND active = 0 AND activationKey = #{code}")
     int activateNewUser( @Param("username") String username, @Param("code") String code);
     
-    @Select("SELECT * from UserData WHERE id = #{id}")
-    public User getUserById(@Param("id") int id);
-
+    @Update("UPDATE \"User\" SET forename = #{forename}, surname = #{surname}, email = #{email}, phone = #{phone} WHERE id = #{id}")
+    public void updateUserDetails(@Param("id") int id, @Param("forename") String forename, @Param("surname") String surname, @Param("email") String email, @Param("phone") String phone);
+    
+    @Update("UPDATE \"User\" SET allowEmailAlerts = #{emailAlerts}, subscribedToAdminMails = #{adminMails}, subscribedToNBNMarketting = #{nbnMarketing} WHERE id = #{id}") 
+    public void updateUserEmailSettings(@Param("id") int id,  @Param("emailAlerts") int emailAlerts, @Param("adminMails") int adminMails, @Param("nbnMarketing") int nbnMarketing);
 }
