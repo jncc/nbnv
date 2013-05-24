@@ -10,6 +10,7 @@
         ,"/js/filter/spatial.js"
         ,"/js/filter/taxon.js"
         ,"/js/filter/dataset.js"
+        ,"/js/filter/sensitive.js"
         ,"/js/admin/access/requestDetails.js"
         ,"/js/admin/access/requestEditResult.js"
         ,"/js/admin/access/timeLimit.js"
@@ -23,7 +24,8 @@
             var json = ${model.filter.filterJSON};
             var requester = '${model.user.forename} ${model.user.surname}';
             var dataset = '${model.datasetKey}';
-            nbn.nbnv.ui.editRequest(json, requester, dataset, $('#filter'));
+            var id = ${model.filter.id?c};
+            nbn.nbnv.ui.editRequest(json, requester, dataset, id, $('#filter'));
 	});
     </script>
 

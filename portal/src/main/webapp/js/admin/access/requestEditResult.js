@@ -2,8 +2,8 @@ window.nbn = window.nbn || {};
 nbn.nbnv = nbn.nbnv || {};
 nbn.nbnv.ui = nbn.nbnv.ui || {};
 
-nbn.nbnv.ui.requestEditResult = function() {
-
+nbn.nbnv.ui.requestEditResult = function(endpoint) {
+    this._endpoint = endpoint;
 
     this._renderHeader = function() {
         return $('<h3>').attr('filtertype', 'result')
@@ -11,8 +11,6 @@ nbn.nbnv.ui.requestEditResult = function() {
     };
     
     this._renderPanel = function() {
-        var _me = this;
-        
         return $('<div>')
             .append($('<p>')
                 .attr('id', 'recordcounts')
@@ -28,7 +26,7 @@ nbn.nbnv.ui.requestEditResult = function() {
             );
     };
 
-    this.setupData = function(json, dataset, endpoint) {
+    this.setupData = function(json, dataset, datasetEndpoint) {
         var filter = {};
         $('#recordcounts').html('');
         $('#recordcounts').text('Loading request record coverage')
@@ -49,7 +47,7 @@ nbn.nbnv.ui.requestEditResult = function() {
         filter.datasetKey = dataset;
 
         $.ajax({
-            url: nbn.nbnv.api + endpoint,
+            url: nbn.nbnv.api + datasetEndpoint,
             data: filter,
             success: function(datasets) { 
                 $('#recordcounts').html('');
@@ -58,7 +56,21 @@ nbn.nbnv.ui.requestEditResult = function() {
         });
     };
     
-    this._onEnter = function() {
+    this._onEnter = function(json, id) {
+        var _me = this;
+        
+        $('#changebtn').click(function() {
+                    $.ajax({
+                        type: "PUT"
+                        , url: nbn.nbnv.api + _me._endpoint + '/' + id
+                        , contentType: 'application/json'
+                        , processData: false
+                        , data: JSON.stringify(json)
+                        , complete: function(data) {
+                            window.location = '/AccessRequest/Admin';
+                        }
+                    })
+                })
     };
     
     this._onExit = function() {

@@ -4,6 +4,7 @@
  */
 package uk.org.nbn.nbnv.api.utils;
 
+import uk.org.nbn.nbnv.api.utils.AccessRequestJSONToText;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,17 +21,17 @@ import uk.org.nbn.nbnv.api.model.meta.AccessRequestJSON;
  */
 @Component
 public class AccessRequestUtils {
-    @Autowired static TaxonObservationMapper taxonObservationMapper;
+    @Autowired TaxonObservationMapper taxonObservationMapper;
         
-    public static TaxonObservationFilter createFilter(String json, AccessRequestJSON accessRequest) { 
+    public TaxonObservationFilter createFilter(String json, AccessRequestJSON accessRequest) { 
         TaxonObservationFilter filter = new TaxonObservationFilter();
         filter.setFilterJSON(json);
-        filter.setFilterText(AccessRequestJSONToText.convert(accessRequest));
+        filter.setFilterText(new AccessRequestJSONToText().convert(accessRequest));
 
         return filter;
     }
     
-    public static List<String> createSpeciesList(AccessRequestJSON accessRequest) {
+    public List<String> createSpeciesList(AccessRequestJSON accessRequest) {
         List<String> species = null;
         if (accessRequest.getTaxon().getTvk() != null && !accessRequest.getTaxon().getTvk().isEmpty()) {
             species = new ArrayList<String>();
@@ -40,7 +41,7 @@ public class AccessRequestUtils {
         return species;
     }
     
-    public static List<String> createDatasetList(AccessRequestJSON accessRequest, List<String> species, User user) {
+    public List<String> createDatasetList(AccessRequestJSON accessRequest, List<String> species, User user) {
         List<String> datasets;
         
         if (accessRequest.getDataset().isAll()) {

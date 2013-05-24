@@ -223,7 +223,7 @@ public class TaxonObservationProvider {
         }
 
         if (params.containsKey("sensitive") && (Boolean) params.get("sensitive")) {
-            WHERE("sensitive = #{sensitive}");
+            WHERE("sensitive <= #{sensitive}");
         }
 
         if (params.containsKey("designation") && !"".equals((String) params.get("designation"))) {
@@ -288,7 +288,7 @@ public class TaxonObservationProvider {
         }
 
         if (params.containsKey("sensitive") && (Boolean) params.get("sensitive")) {
-            WHERE("sensitive = #{sensitive}");
+            WHERE("sensitive <= #{sensitive}");
         }
 
         if (params.containsKey("designation") && !"".equals((String) params.get("designation"))) {

@@ -4,6 +4,7 @@
  */
 package uk.org.nbn.nbnv.api.rest.resources;
 
+import uk.org.nbn.nbnv.api.utils.AccessRequestUtils;
 import java.io.IOException;
 import java.lang.String;
 import java.sql.Date;
@@ -37,7 +38,6 @@ import uk.org.nbn.nbnv.api.model.UserAccessRequest;
 import uk.org.nbn.nbnv.api.model.meta.AccessRequestJSON;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenAccessRequestAdminUser;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
-import uk.org.nbn.nbnv.api.utils.AccessRequestUtils;
 
 /**
  *
@@ -66,9 +66,10 @@ public class UserAccessRequestResource extends AbstractResource {
             accessRequest.setSensitive("ns");
         }
 
-        TaxonObservationFilter filter = AccessRequestUtils.createFilter(json, accessRequest);
-        List<String> species = AccessRequestUtils.createSpeciesList(accessRequest);        
-        List<String> datasets = AccessRequestUtils.createDatasetList(accessRequest, species, user);
+        AccessRequestUtils aru = new AccessRequestUtils();
+        TaxonObservationFilter filter = aru.createFilter(json, accessRequest);
+        List<String> species = aru.createSpeciesList(accessRequest);        
+        List<String> datasets = aru.createDatasetList(accessRequest, species, user);
         
         
         for (String datasetKey : datasets) {
@@ -79,6 +80,24 @@ public class UserAccessRequestResource extends AbstractResource {
         return Response.ok("success").build();
     }
     
+    @PUT
+    @Path("/requests/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Transactional
+    public Response editRequest(@TokenAccessRequestAdminUser(path="id") User user, @PathParam("id") int filterID, String json) throws IOException {
+        AccessRequestJSON accessRequest = parseJSON(json);
+
+        // Fail if this is an organisation request
+        if (accessRequest.getReason().getOrganisationID() > -1) {
+            return Response.serverError().build();
+        }
+        TaxonObservationFilter filter = new AccessRequestUtils().createFilter(json, accessRequest);
+        oTaxonObservationFilterMapper.editFilter(filterID, filter.getFilterText(), filter.getFilterJSON());
+
+        return Response.ok("success").build();
+    }
+
     @GET
     @Path("/requests")
     @Produces(MediaType.APPLICATION_JSON)
