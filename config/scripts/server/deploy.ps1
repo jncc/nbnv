@@ -10,9 +10,8 @@ $DEPLOYED_DESCRIPTOR = "D:\deployed.xml"
 # @param $artifact, The path to the artifact to get
 # @return The location of the downloaded file
 ###############################################################################
-Function GetBuild ($build, [int] $build_number, $artifact) {
-	$formated_build_number = "{0:D5}" -f $build_number
-	$source = "http://labuild.nerc-lancaster.ac.uk:8080/$build/shared/build-$formated_build_number/$artifact"
+Function GetBuild ($build, [int] $build_number, $artifact) {	
+	$source = "http://bamboo.ceh.ac.uk/browse/$build-$build_number/artifact/shared/$artifact"
 	$destination = (Get-Location).Path + "\" + [system.guid]::newguid().tostring()
 	
 	#Download the zip from the build server
@@ -69,7 +68,7 @@ $REGISTERED_BUILDS = @{
 		"services" = @("Tomcat7-data.nbn.org.uk");
 		"obtain" = { 
 			param($build_number);
-			$data["NBNV-PORTAL-API"] = GetBuild "NBNV-PORTAL" $build_number "NBN-API-War/nbnv-api-0.1-SNAPSHOT.war"
+			$data["NBNV-PORTAL-API"] = GetBuild "NBN-FRONTENDSNAP" $build_number "NBN-API-War/nbnv-api-0.1-SNAPSHOT.war"
 		};
 		"deploy" = { Deploy $data["NBNV-PORTAL-API"] "data" "api" }
 	};
@@ -77,7 +76,7 @@ $REGISTERED_BUILDS = @{
 		"services" = @("Tomcat7-data.nbn.org.uk");
 		"obtain" = { 
 			param($build_number);
-			$data["NBNV-PORTAL-GIS"] = GetBuild "NBNV-PORTAL" $build_number "NBN-GIS-War/gis.war"
+			$data["NBNV-PORTAL-GIS"] = GetBuild "NBN-FRONTENDSNAP" $build_number "NBN-GIS-War/gis.war"
 		};
 		"deploy" = { Deploy $data["NBNV-PORTAL-GIS"] "data" "gis" }
 	};
@@ -85,7 +84,7 @@ $REGISTERED_BUILDS = @{
 		"services" = @("Tomcat7-data.nbn.org.uk");
 		"obtain" = { 
 			param($build_number);
-			$data["NBNV-PORTAL-IMT"] = GetBuild "NBNV-PORTAL" $build_number "NBN-IMT-War/imt.war"
+			$data["NBNV-PORTAL-IMT"] = GetBuild "NBN-FRONTENDSNAP" $build_number "NBN-IMT-War/imt.war"
 		};
 		"deploy" = { Deploy $data["NBNV-PORTAL-IMT"] "data" "imt" }
 	};
@@ -93,7 +92,7 @@ $REGISTERED_BUILDS = @{
 		"services" = @("Tomcat7-data.nbn.org.uk");
 		"obtain" = { 
 			param($build_number);
-			$data["NBNV-PORTAL-FRONTEND"] = GetBuild "NBNV-PORTAL" $build_number "NBN-Portal-War/ROOT.war"
+			$data["NBNV-PORTAL-FRONTEND"] = GetBuild "NBN-FRONTENDSNAP" $build_number "NBN-Portal-War/ROOT.war"
 		};
 		"deploy" = { Deploy $data["NBNV-PORTAL-FRONTEND"] "data" "ROOT" }
 	};
