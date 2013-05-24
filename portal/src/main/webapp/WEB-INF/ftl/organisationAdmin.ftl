@@ -18,7 +18,7 @@
             <@parseUsers userList=users />
         </div>
         <div id="tabs-2">
-            <input id="nbn-org-add-user" type="text" data-url="${api}/user/search" />
+            <input id="nbn-org-add-user" type="text" data-url="${api}/user/search?organisation=${organisationId}" />
             <input id="nbn-org-add-user-id" type="hidden" />
             <input id="nbn-org-add-user-submit" type="button" data-url="${api}/organisationMemberships/${organisationId}/addUser" value="Add Selected User" />
         </div>

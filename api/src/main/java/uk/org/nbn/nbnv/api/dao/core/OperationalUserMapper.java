@@ -5,6 +5,7 @@
 package uk.org.nbn.nbnv.api.dao.core;
 
 import java.util.Date;
+import java.util.List;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -46,4 +47,11 @@ public interface OperationalUserMapper {
     @Select("SELECT * from UserData WHERE id = #{id}")
     public User getUserById(@Param("id") int id);
 
+    
+    @Select("SELECT * from \"User\" WHERE forename LIKE #{term} OR surname LIKE #{term} OR email LIKE #{term} OR (forename + ' ' + surname) LIKE #{term} ORDER BY forename, surname")
+    public List<User> searchForUser(@Param("term") String term);
+    
+    @Select("SELECT * FROM (SELECT * from \"User\" WHERE forename LIKE #{term} OR surname LIKE #{term} OR email LIKE #{term} OR (forename + ' ' + surname) LIKE #{term}) AS temp WHERE NOT EXISTS (SELECT 1 FROM UserOrganisationMembership WHERE userID = id AND organisationID = #{organisation}) ORDER BY forename, surname")
+    public List<User> searchForUserExcludeOrganisationMembers(@Param("term") String term, @Param("organisation") int organisationId);
+    
 }
