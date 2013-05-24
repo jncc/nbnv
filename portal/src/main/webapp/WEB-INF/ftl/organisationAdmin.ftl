@@ -27,11 +27,11 @@
         </div>
     </div>
 
-    <div id="dialog-remove-confirm" title="Remove this user from the organisation?" style="display:none;">
-        <p><span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0;"></span>Are you sure you want to remove <span id="nbn-org-remove-confirm-name"></span> from the organisation?</p>
+    <div id="dialog-remove-confirm" title="Revoke this users membership?" style="display:none;">
+        <p><span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0;"></span>Are you sure you want to revoke <span id="nbn-org-remove-confirm-name"></span>'s membership?</p>
     </div>
 
-    <div id="dialog-role-choice" title="Change this users role" style="display:none;">
+    <div id="dialog-role-choice" title="Change Member's Role" style="display:none;">
         <p>Please select a new role for <span id="nbn-org-role-change-name"></span> from the dropdown list</p>
         <select id="nbn-org-role-change-select">
             <option value="1">Member</option>
@@ -39,11 +39,11 @@
         </select>
     </div>
 
-    <div id="dialog-role-confirm" title="Change this users role" style="display:none;">
+    <div id="dialog-role-confirm" title="Change Member's Role" style="display:none;">
         <p><span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0;"></span>Are you sure you want to change <span id="nbn-org-role-confirm-name"></span>'s role to <span id="nbn-org-role-confirm-type"></span>?</p>
     </div>
 
-    <div id="nbn-org-add-user-dialog" title="Add user to organisation" style="display:none;">
+    <div id="nbn-org-add-user-dialog" title="Add Member to Organisation" style="display:none;">
         <p><span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0;"></span>Are you sure you want to add <span id="nbn-org-add-user-dialog-name"></span> to this organisation?</p>
     </div>
     
