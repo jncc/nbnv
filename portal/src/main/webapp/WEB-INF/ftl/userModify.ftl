@@ -1,10 +1,13 @@
 <#assign form=JspTaglibs["http://www.springframework.org/tags/form"] />
 
 <@template.master title="NBN Gateway - User Modify"
-    javascripts=["/js/jquery-ui-1.8.23.custom.min.js/","/js/userAdmin/enable-user-admin-tabs.js"]
-    csss=["/css/smoothness/jquery-ui-1.8.23.custom.css"]>
+    javascripts=["/js/jquery-ui-1.8.23.custom.min.js/","/js/jquery.validate.min.js","/js/userAdmin/enable-user-admin-tabs.js"]
+    csss=["/css/smoothness/jquery-ui-1.8.23.custom.css", "/css/user.css"]>
       
     <h1>Modify User Details</h1>
+    <div id="nbn-success-response">
+    
+    </div>
     <div id="nbn-tabs">
         <ul>
             <li><a href="#tabs-1">User Details</a></li>
@@ -16,25 +19,25 @@
                 <@form.errors path="*" cssClass="message error" element="div" />
                 <table class="nbn-simple-table">
                     <tr>
-                        <td><label for="forename">First Name</label></td>
+                        <td class="firstCol"><label for="forename">First Name</label></td>
                         <td><@form.input path="forename"/></td>
                     </tr>
                     <tr>
-                        <td><label for="surname">Last Name</label> </td>
+                        <td class="firstCol"><label for="surname">Last Name</label> </td>
                         <td><@form.input path="surname"/></td>
                     </tr>
                     <tr>
-                        <td><label for="email">E-mail</label></td>
+                        <td class="firstCol"><label for="email">E-mail</label></td>
                         <td><@form.input path="email"/></td>
                     </tr>
                     <tr>
-                        <td><label for="phone">Phone</label></td>
+                        <td class="firstCol"><label for="phone">Phone</label></td>
                         <td><@form.input path="phone"/></td>
                     </tr>   
                 </table>
 
                 <@form.hidden path="username" />
-                <@form.hidden path="password" />
+                <@form.hidden path="password" id="default_password"/>
                 <input type="submit" value="Change User Details" />
             </@form.form>
         </div>
@@ -44,8 +47,12 @@
                 <@form.errors path="*" cssClass="message error" element="div" />
                 <table class="nbn-simple-table">
                     <tr>
-                        <td><label for="password">Enter new password</label></td>
+                        <td class="firstCol"><label for="password">Enter new password</label></td>
                         <td><@form.password path="password"/></td>
+                    </tr>
+                    <tr>
+                        <td class="firstCol"><label for="password">Confirm new password</label></td>
+                        <td><input type="password" name="password_confirm" id="password_confirm"/></td>
                     </tr>
                 </table>
                 <@form.hidden path="username"/>

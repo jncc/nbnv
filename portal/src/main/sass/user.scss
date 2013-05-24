@@ -1,0 +1,17 @@
+label.error {
+    color: red;
+    font-style: italic;
+}
+
+input.error {
+    color: red;
+}
+
+td.firstCol {
+    width:25%;
+}
+
+td input:not([type=checkbox]) {
+    width: 250px;
+    margin-right: 20px;
+}
