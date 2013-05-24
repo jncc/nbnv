@@ -60,7 +60,7 @@ $REGISTERED_BUILDS = @{
 		"services" = @("Tomcat7-data.nbn.org.uk");
 		"obtain" = { 
 			param($build_number);
-			$data["NBNV-DOCUMENTATION"] = GetBuild "NBNV-DOCUMENTATION" $build_number "NBN-Documentation-War/nbnv-documentation-1.0-SNAPSHOT.war" "war"
+			$data["NBNV-DOCUMENTATION"] = GetBuild "NBN-DOCSNAP" $build_number "NBN-Documentation-War/nbnv-documentation-1.0-SNAPSHOT.war" "war"
 		};
 		"deploy" = { Deploy $data["NBNV-DOCUMENTATION"] "data" "Documentation"}
 	};
@@ -100,7 +100,7 @@ $REGISTERED_BUILDS = @{
 		"services" = @("Tomcat7-SOLR");
 		"obtain" = { 
 			param($build_number);
-			$data["NBNV-SOLR"] = GetBuild "NBNV-SOLR" $build_number "NBN-Solr-War/nbnv-api-solr-0.1-SNAPSHOT.war"
+			$data["NBNV-SOLR"] = GetBuild "NBN-SOLRSNAP" $build_number "NBN-Solr-War/nbnv-api-solr-0.1-SNAPSHOT.war"
 		};
 		"deploy" = { Deploy $data["NBNV-SOLR"] "solr" "solr" }
 	};
@@ -108,7 +108,7 @@ $REGISTERED_BUILDS = @{
 		"services" = @("Tomcat7-data.nbn.org.uk");
 		"obtain" = { 
 			param($build_number);
-			$data["NBNV-IMPORTER-UI"] = GetBuild "NBNV-IMPORTER-FRONTEND" $build_number "Spatial-Importer-UI/importer.war"
+			$data["NBNV-IMPORTER-UI"] = GetBuild "NBN-IMPORTERSNAP" $build_number "Spatial-Importer-UI/importer.war"
 		};
 		"deploy" = { Deploy $data["NBNV-IMPORTER-UI"] "data" "importer" }
 	};
@@ -116,7 +116,7 @@ $REGISTERED_BUILDS = @{
 		"services" = @("Tomcat7-data.nbn.org.uk");
 		"obtain" = { 
 			param($build_number);
-			$data["NBNV-IMPORTER-SPATIAL-UI"] = GetBuild "NBNV-IMPORTER-FRONTEND" $build_number "Spatial-Importer-UI/spatial.war"
+			$data["NBNV-IMPORTER-SPATIAL-UI"] = GetBuild "NBN-IMPORTERSNAP" $build_number "Spatial-Importer-UI/spatial.war"
 		};
 		"deploy" = { Deploy $data["NBNV-IMPORTER-SPATIAL-UI"] "data" "spatial-importer" }
 	}
