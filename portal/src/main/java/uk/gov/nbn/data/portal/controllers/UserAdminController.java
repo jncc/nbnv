@@ -64,7 +64,6 @@ public class UserAdminController {
                     .view("userModify")
                     .user(currentUser)
                     .changePassword(currentUser.getUsername())
-                    .successMessage("User Details have been successfully modified.")
                     .build();
         }
 
@@ -83,20 +82,18 @@ public class UserAdminController {
                         .type(MediaType.APPLICATION_JSON)
                         .post(ClientResponse.class, modifiedUser);
 
-                if (regResponse.getClientResponseStatus() == ClientResponse.Status.OK) {
-                    return new ModelAndView(new RedirectView("/User/Modify", true));
-                } else {
+                if (regResponse.getClientResponseStatus() != ClientResponse.Status.OK) {
                     JSONObject entity = regResponse.getEntity(JSONObject.class);
                     result.addError(new ObjectError(result.getObjectName(), entity.getString("status")));
                 }
             }
 
             String successMessage = "";
-            
+
             if (!result.hasErrors()) {
                 successMessage = "User Details have been successfully modified.";
             }
-            
+
             return new UserAdminModelBuilder()
                     .view("userModify")
                     .user(modifiedUser)
@@ -109,7 +106,7 @@ public class UserAdminController {
     }
 
     @RequestMapping(value = "Modify", method = RequestMethod.POST, params = "changePassword")
-    public ModelAndView changePassword(@Valid ChangePassword changePassword, Model model, BindingResult result) {
+    public ModelAndView changePassword(@Valid ChangePassword changePassword, Model model, BindingResult result) throws JSONException {
         User currentUser = resource.path("user/full")
                 .accept(MediaType.APPLICATION_JSON)
                 .get(User.class);
@@ -122,11 +119,22 @@ public class UserAdminController {
                         .type(MediaType.APPLICATION_FORM_URLENCODED)
                         .post(ClientResponse.class, data);
 
+                if (response.getClientResponseStatus() != ClientResponse.Status.OK) {
+                    JSONObject entity = response.getEntity(JSONObject.class);
+                    result.addError(new ObjectError(result.getObjectName(), entity.getString("status")));
+                }
+
+                String successMessage = "";
+
+                if (!result.hasErrors()) {
+                    successMessage = "You have successfully changed your password. Next time you login to the NBN Gateway please supply your new password.";
+                }
+
                 return new UserAdminModelBuilder()
                         .view("userModify")
                         .user(currentUser)
                         .changePassword(currentUser.getUsername())
-                        .successMessage("You have successfully changed your password. Next time you login to the NBN Gateway please supply your new password.")
+                        .successMessage(successMessage)
                         .build();
             } else {
                 return new UserAdminModelBuilder()
@@ -141,7 +149,7 @@ public class UserAdminController {
     }
 
     @RequestMapping(value = "Modify", method = RequestMethod.POST, params = "emailSettings")
-    public ModelAndView changeEmailSettings(User user, Model model, BindingResult result) {
+    public ModelAndView changeEmailSettings(User user, Model model, BindingResult result) throws JSONException {
         User currentUser = resource.path("user/full")
                 .accept(MediaType.APPLICATION_JSON)
                 .get(User.class);
@@ -156,6 +164,17 @@ public class UserAdminController {
                     .type(MediaType.APPLICATION_FORM_URLENCODED)
                     .post(ClientResponse.class, data);
 
+            if (response.getClientResponseStatus() != ClientResponse.Status.OK) {
+                JSONObject entity = response.getEntity(JSONObject.class);
+                result.addError(new ObjectError(result.getObjectName(), entity.getString("status")));
+            }
+
+            String successMessage = "";
+
+            if (!result.hasErrors()) {
+                successMessage = "Succesfully changed email subscriptions.";
+            }
+
             User updatedUser = resource.path("user/full")
                     .accept(MediaType.APPLICATION_JSON)
                     .get(User.class);
@@ -164,7 +183,7 @@ public class UserAdminController {
                     .view("userModify")
                     .user(updatedUser)
                     .changePassword(currentUser.getUsername())
-                    .successMessage("Succesfully changed email subscriptions.")
+                    .successMessage(successMessage)
                     .build();
         }
 
