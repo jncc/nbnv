@@ -67,10 +67,22 @@
     <class>uk.org.nbn.nbnv.jpa.nbncore.RecordingEntity</class>
     <class>uk.org.nbn.nbnv.jpa.nbncore.HabitatCategory</class>
     <class>uk.org.nbn.nbnv.jpa.nbncore.HabitatFeature</class>
+    <class>uk.org.nbn.nbnv.jpa.nbncore.ImportAttribute</class>
+    <class>uk.org.nbn.nbnv.jpa.nbncore.ImportTaxonObservationAttribute</class>
+    <class>uk.org.nbn.nbnv.jpa.nbncore.ImportTaxonDataset</class>
+    <class>uk.org.nbn.nbnv.jpa.nbncore.ImportDataset</class>
+    <class>uk.org.nbn.nbnv.jpa.nbncore.ImportSurvey</class>
+    <class>uk.org.nbn.nbnv.jpa.nbncore.ImportSite</class>
+    <class>uk.org.nbn.nbnv.jpa.nbncore.ImportTaxonObservationPublic</class>
+    <class>uk.org.nbn.nbnv.jpa.nbncore.ImportRecorder</class>
+    <class>uk.org.nbn.nbnv.jpa.nbncore.ImportFeature</class>
+    <class>uk.org.nbn.nbnv.jpa.nbncore.ImportTaxonObservation</class>
+    <class>uk.org.nbn.nbnv.jpa.nbncore.ImportSample</class>
     <shared-cache-mode>NONE</shared-cache-mode>
     <properties>
+      <property name="eclipselink.target-database" value="SQLServer"/>
       <property name="javax.persistence.jdbc.driver" value="com.microsoft.sqlserver.jdbc.SQLServerDriver"/>
-      <property name="eclipselink.jdbc.batch-writing" value="JDBC" />
+      <property name="eclipselink.jdbc.batch-writing" value="JDBC"/>
     </properties>
   </persistence-unit>
 </persistence>
