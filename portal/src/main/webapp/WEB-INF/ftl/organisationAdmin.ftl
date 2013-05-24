@@ -10,9 +10,9 @@
     <h1>${organisation.name}</h1>
     <div id="nbn-tabs">
         <ul>
-            <li><a href="#tabs-1">User Management</a></li>
-            <li><a href="#tabs-2">Add a User</a></li>
-            <li><a href="#tabs-3">Join Requests <b>(${joinRequests?size})</b></a></li>
+            <li><a href="#tabs-1">Current Members</a></li>
+            <li><a href="#tabs-2">Add a Member</a></li>
+            <li><a href="#tabs-3">Membership Requests <b>(${joinRequests?size})</b></a></li>
         </ul>
         <div id="tabs-1">
             <@parseUsers userList=users />
@@ -77,10 +77,10 @@
                     <#if user.role == "administrator">Administrator<#elseif user.role == "lead">Lead<#else>Member</#if>
                 </td>
                 <td class="nbn-org-user-modify-td">
-                    <a href="#" class="nbn-org-user-role" style="float:right;" data-name="${user.name}" data-id="${user.key?string("0")}" data-role="<#if user.role == "administrator">2<#elseif user.role == "lead">3<#else>1</#if>">Change User Role</a> 
+                    <a href="#" class="nbn-org-user-role" style="float:right;" data-name="${user.name}" data-id="${user.key?string("0")}" data-role="<#if user.role == "administrator">2<#elseif user.role == "lead">3<#else>1</#if>">Change Member's Role</a> 
                 </td>
                 <td class="nbn-org-user-remove-td">
-                    <a href="#" class="nbn-org-user-remove" style="float:right;" data-id="${user.key?string("0")}" data-name="${user.name}">Remove User</a>
+                    <a href="#" class="nbn-org-user-remove" style="float:right;" data-id="${user.key?string("0")}" data-name="${user.name}">Revoke Membership</a>
                 </td>
             </tr>
         </#list>
