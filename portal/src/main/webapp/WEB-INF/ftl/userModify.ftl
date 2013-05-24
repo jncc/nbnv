@@ -1,13 +1,16 @@
 <#assign form=JspTaglibs["http://www.springframework.org/tags/form"] />
+<#assign resultMsg="${.data_model['successMessage']}" >
 
 <@template.master title="NBN Gateway - User Modify"
     javascripts=["/js/jquery-ui-1.8.23.custom.min.js/","/js/jquery.validate.min.js","/js/userAdmin/enable-user-admin-tabs.js"]
     csss=["/css/smoothness/jquery-ui-1.8.23.custom.css", "/css/user.css"]>
-      
+
     <h1>Modify User Details</h1>
-    <div id="nbn-success-response">
-    
-    </div>
+    <#if (resultMsg?length > 0)>
+        <div id="nbn-success-response" class="success">
+            <p>${resultMsg}</p>
+        </div>
+    </#if>
     <div id="nbn-tabs">
         <ul>
             <li><a href="#tabs-1">User Details</a></li>

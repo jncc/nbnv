@@ -130,7 +130,7 @@ public class UserResource extends AbstractResource {
         oUserMapper.setUserPassword(user, passwordHashSHA1, md5HashSHA1);
         return Response.ok("success").build();
     }
-    
+
     @POST
     @Path("/passwords/change")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -143,7 +143,7 @@ public class UserResource extends AbstractResource {
         byte[] md5HashSHA1 = sha1.digest(md5.digest(password.getBytes(STRING_ENCODING)));
 
         oUserMapper.setUserPassword(user, passwordHashSHA1, md5HashSHA1);
-        return Response.ok("success").build();        
+        return Response.ok("success").build();
     }
 
     @POST
@@ -312,12 +312,17 @@ public class UserResource extends AbstractResource {
 
     @POST
     @Path("/emailSettings")
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response modifyEmailSettings(@TokenUser(allowPublic = false) User user, EmailSettingsModel emailSettings) throws JSONException {
-        oUserMapper.updateUserEmailSettings(user.getId(),
-                emailSettings.isAllowEmailAlerts() ? 1 : 0,
-                emailSettings.isSubscribedToAdminEmails() ? 1 : 0,
-                emailSettings.isSubscribedToNBNMarketting() ? 1 : 0);
+    public Response modifyEmailSettings(@TokenUser(allowPublic = false) User user, 
+        @FormParam("allowEmailAlerts") int allowEmailAlerts,
+        @FormParam("subscribedToAdminEmails") int subscribedToAdminEmails,
+        @FormParam("subscribedToNBNMarketting") int subscribedToNBNMarketting) throws JSONException {
+        oUserMapper.updateUserEmailSettings(user.getId(), 
+                allowEmailAlerts, 
+                subscribedToAdminEmails, 
+                subscribedToNBNMarketting);
+        
         return Response.ok(new JSONObject()
                 .put("success", true)
                 .put("status", "You have successfully modifed your email settings")).build();

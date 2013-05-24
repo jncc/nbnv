@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 import uk.gov.nbn.data.portal.controllers.models.ChangePassword;
+import uk.gov.nbn.data.portal.controllers.models.builders.UserAdminModelBuilder;
 import uk.org.nbn.nbnv.api.model.EmailSettingsModel;
 import uk.org.nbn.nbnv.api.model.User;
 
@@ -41,7 +42,11 @@ public class UserAdminController {
 
     @RequestMapping(method = RequestMethod.GET)
     public ModelAndView getUserLandingPage() {
-        if (isNotPublicUser()) {
+        User currentUser = resource.path("user/full")
+                .accept(MediaType.APPLICATION_JSON)
+                .get(User.class);
+
+        if (isNotPublicUser(currentUser)) {
             return new ModelAndView("userLanding");
         }
 
@@ -50,29 +55,29 @@ public class UserAdminController {
 
     @RequestMapping(value = "Modify", method = RequestMethod.GET)
     public ModelAndView getUserModifyPage() {
-        if (isNotPublicUser()) {
-            ModelAndView view = new ModelAndView("userModify");
-            addToModel(view, "change");
-            return view;
+        User currentUser = resource.path("user/full")
+                .accept(MediaType.APPLICATION_JSON)
+                .get(User.class);
+
+        if (isNotPublicUser(currentUser)) {
+            return new UserAdminModelBuilder()
+                    .view("userModify")
+                    .user(currentUser)
+                    .changePassword(currentUser.getUsername())
+                    .successMessage("User Details have been successfully modified.")
+                    .build();
         }
 
         return ssoRedirect("/User/Modify", "You need to be logged in to view the user modify page.");
     }
 
-    private void addToModel(ModelAndView model, String token) {
+    @RequestMapping(value = "Modify", method = RequestMethod.POST)
+    public ModelAndView postUserModifyPage(@Valid User modifiedUser, BindingResult result) throws JSONException {
         User currentUser = resource.path("user/full")
                 .accept(MediaType.APPLICATION_JSON)
                 .get(User.class);
-        model.addObject("user", currentUser);
-        ChangePassword changePassword = new ChangePassword();
-        changePassword.setToken(token);
-        changePassword.setUsername(currentUser.getUsername());
-        model.addObject("changePassword", changePassword);
-    }
 
-    @RequestMapping(value = "Modify", method = RequestMethod.POST)
-    public ModelAndView postUserModifyPage(@Valid User modifiedUser, BindingResult result) throws JSONException {
-        if (isNotPublicUser()) {
+        if (isNotPublicUser(currentUser)) {
             if (!result.hasErrors()) {
                 ClientResponse regResponse = resource.path("user/modify")
                         .type(MediaType.APPLICATION_JSON)
@@ -86,9 +91,18 @@ public class UserAdminController {
                 }
             }
 
-            ModelAndView view = new ModelAndView("userModify");
-            addToModel(view, "change");
-            return view;
+            String successMessage = "";
+            
+            if (!result.hasErrors()) {
+                successMessage = "User Details have been successfully modified.";
+            }
+            
+            return new UserAdminModelBuilder()
+                    .view("userModify")
+                    .user(modifiedUser)
+                    .changePassword(currentUser.getUsername())
+                    .successMessage(successMessage)
+                    .build();
         }
 
         return ssoRedirect("/User/Modify", "You need to be logged in to view the user modify page.");
@@ -96,37 +110,68 @@ public class UserAdminController {
 
     @RequestMapping(value = "Modify", method = RequestMethod.POST, params = "changePassword")
     public ModelAndView changePassword(@Valid ChangePassword changePassword, Model model, BindingResult result) {
-        if (!result.hasErrors()) {
-            MultivaluedMap data = new MultivaluedMapImpl();
-            data.add("password", changePassword.getPassword());
-            ClientResponse response = resource.path("user/passwords/change")
-                    .type(MediaType.APPLICATION_FORM_URLENCODED)
-                    .post(ClientResponse.class, data);
+        User currentUser = resource.path("user/full")
+                .accept(MediaType.APPLICATION_JSON)
+                .get(User.class);
 
-            return new ModelAndView("password-change-success");
-        } else {
-            ModelAndView view = new ModelAndView("userModify");
-            addToModel(view, "change");
-            return view;
+        if (isNotPublicUser(currentUser)) {
+            if (!result.hasErrors()) {
+                MultivaluedMap data = new MultivaluedMapImpl();
+                data.add("password", changePassword.getPassword());
+                ClientResponse response = resource.path("user/passwords/change")
+                        .type(MediaType.APPLICATION_FORM_URLENCODED)
+                        .post(ClientResponse.class, data);
+
+                return new UserAdminModelBuilder()
+                        .view("userModify")
+                        .user(currentUser)
+                        .changePassword(currentUser.getUsername())
+                        .successMessage("You have successfully changed your password. Next time you login to the NBN Gateway please supply your new password.")
+                        .build();
+            } else {
+                return new UserAdminModelBuilder()
+                        .view("userModify")
+                        .user(currentUser)
+                        .changePassword(changePassword)
+                        .build();
+            }
         }
+
+        return ssoRedirect("/User/Modify", "You need to be logged in to view the user modify page.");
     }
 
     @RequestMapping(value = "Modify", method = RequestMethod.POST, params = "emailSettings")
     public ModelAndView changeEmailSettings(User user, Model model, BindingResult result) {
-        ClientResponse response = resource.path("user/emailSettings")
-                .type(MediaType.APPLICATION_JSON)
-                .post(ClientResponse.class, new EmailSettingsModel(user.isAllowEmailAlerts(), user.isSubscribedToAdminMails(), user.isSubscribedToNBNMarketting()));
-
-        ModelAndView view = new ModelAndView("userModify");
-        addToModel(view, "change");
-        return view;
-    }
-
-    private boolean isNotPublicUser() {
-        User currentUser = resource.path("user")
+        User currentUser = resource.path("user/full")
                 .accept(MediaType.APPLICATION_JSON)
                 .get(User.class);
 
+        if (isNotPublicUser(currentUser)) {
+            MultivaluedMap data = new MultivaluedMapImpl();
+            data.add("allowEmailAlerts", user.isAllowEmailAlerts() ? "1" : "0");
+            data.add("subscribedToAdminEmails", user.isSubscribedToAdminMails() ? "1" : "0");
+            data.add("subscribedToNBNMarketting", user.isSubscribedToNBNMarketting() ? "1" : "0");
+
+            ClientResponse response = resource.path("user/emailSettings")
+                    .type(MediaType.APPLICATION_FORM_URLENCODED)
+                    .post(ClientResponse.class, data);
+
+            User updatedUser = resource.path("user/full")
+                    .accept(MediaType.APPLICATION_JSON)
+                    .get(User.class);
+
+            return new UserAdminModelBuilder()
+                    .view("userModify")
+                    .user(updatedUser)
+                    .changePassword(currentUser.getUsername())
+                    .successMessage("Succesfully changed email subscriptions.")
+                    .build();
+        }
+
+        return ssoRedirect("/User/Modify", "You need to be logged in to view the user modify page.");
+    }
+
+    private boolean isNotPublicUser(User currentUser) {
         if (currentUser.getId() != User.PUBLIC_USER_ID) {
             return true;
         }
