@@ -22,11 +22,12 @@ import uk.org.nbn.nbnv.api.model.meta.AccessRequestJSON;
 @Component
 public class AccessRequestUtils {
     @Autowired TaxonObservationMapper taxonObservationMapper;
+    @Autowired AccessRequestJSONToText accessRequestJSONToText;
         
     public TaxonObservationFilter createFilter(String json, AccessRequestJSON accessRequest) { 
         TaxonObservationFilter filter = new TaxonObservationFilter();
         filter.setFilterJSON(json);
-        filter.setFilterText(new AccessRequestJSONToText().convert(accessRequest));
+        filter.setFilterText(accessRequestJSONToText.convert(accessRequest));
 
         return filter;
     }

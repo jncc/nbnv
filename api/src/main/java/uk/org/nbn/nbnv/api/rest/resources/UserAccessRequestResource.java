@@ -11,7 +11,6 @@ import java.sql.Date;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
@@ -30,8 +29,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import uk.org.nbn.nbnv.api.dao.core.OperationalTaxonObservationFilterMapper;
 import uk.org.nbn.nbnv.api.dao.core.OperationalUserAccessRequestMapper;
-import uk.org.nbn.nbnv.api.dao.warehouse.TaxonObservationMapper;
-import uk.org.nbn.nbnv.api.model.TaxonDatasetWithQueryStats;
 import uk.org.nbn.nbnv.api.model.TaxonObservationFilter;
 import uk.org.nbn.nbnv.api.model.User;
 import uk.org.nbn.nbnv.api.model.UserAccessRequest;
@@ -48,6 +45,7 @@ import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
 public class UserAccessRequestResource extends AbstractResource {
     @Autowired OperationalTaxonObservationFilterMapper oTaxonObservationFilterMapper;
     @Autowired OperationalUserAccessRequestMapper oUserAccessRequestMapper;
+    @Autowired AccessRequestUtils accessRequestUtils;
     
     @PUT
     @Path("/requests")
@@ -66,10 +64,9 @@ public class UserAccessRequestResource extends AbstractResource {
             accessRequest.setSensitive("ns");
         }
 
-        AccessRequestUtils aru = new AccessRequestUtils();
-        TaxonObservationFilter filter = aru.createFilter(json, accessRequest);
-        List<String> species = aru.createSpeciesList(accessRequest);        
-        List<String> datasets = aru.createDatasetList(accessRequest, species, user);
+        TaxonObservationFilter filter = accessRequestUtils.createFilter(json, accessRequest);
+        List<String> species = accessRequestUtils.createSpeciesList(accessRequest);        
+        List<String> datasets = accessRequestUtils.createDatasetList(accessRequest, species, user);
         
         
         for (String datasetKey : datasets) {
@@ -92,7 +89,7 @@ public class UserAccessRequestResource extends AbstractResource {
         if (accessRequest.getReason().getOrganisationID() > -1) {
             return Response.serverError().build();
         }
-        TaxonObservationFilter filter = new AccessRequestUtils().createFilter(json, accessRequest);
+        TaxonObservationFilter filter = accessRequestUtils.createFilter(json, accessRequest);
         oTaxonObservationFilterMapper.editFilter(filterID, filter.getFilterText(), filter.getFilterJSON());
 
         return Response.ok("success").build();
