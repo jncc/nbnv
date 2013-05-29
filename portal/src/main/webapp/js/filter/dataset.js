@@ -256,7 +256,7 @@ nbn.nbnv.ui.filter.dataset = function(json) {
                                 })
                             )
                         ).append($('<td>')
-                            .append(td.querySpecificObservationCount)
+                            .append(td.querySpecificObservationCount + (td.querySpecificSensitiveObservationCount > 0?' (' + td.querySpecificSensitiveObservationCount + ' sensitive)':''))
                         );
                         
                     tbody.append(dr);
@@ -268,15 +268,15 @@ nbn.nbnv.ui.filter.dataset = function(json) {
                 
                 datasetTable.append(tbody);
                 datasetTable.dataTable({
-                "aaSorting": [[1, "asc"]],
-                "bAutoWidth": true,
-                "bFilter": false,
-                "bJQueryUI": true,
-                "iDisplayLength": 25,
-                "bSortClasses": false,
-                "sPaginationType": "full_numbers",
-                "aLengthMenu": [[10,25,50,100,-1],[10,25,50,100,"All"]]
-            });
+                    "aaSorting": [[1, "asc"]],
+                    "bAutoWidth": true,
+                    "bFilter": false,
+                    "bJQueryUI": true,
+                    "iDisplayLength": 25,
+                    "bSortClasses": false,
+                    "sPaginationType": "full_numbers",
+                    "aLengthMenu": [[10,25,50,100,-1],[10,25,50,100,"All"]]
+                });
 
             }
         });

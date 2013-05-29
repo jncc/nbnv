@@ -92,9 +92,9 @@ public class TaxonObservationProvider {
     }
 
     public String filteredSelectRequestableDatasets(Map<String, Object> params) {
-        String from = createSelectEnhanced(params, "o.datasetKey, o.id");
+        String from = createSelectEnhanced(params, "o.datasetKey, o.sensitive, o.id");
         BEGIN();
-        SELECT("obs.datasetKey, COUNT(*) querySpecificObservationCount");
+        SELECT("obs.datasetKey, COUNT(*) querySpecificObservationCount, SUM(CAST(obs.sensitive AS int)) querySpecificSensitiveObservationCount");
         FROM(from);
         WHERE("obs.id NOT IN ( SELECT utoa.observationID FROM UserTaxonObservationID utoa WHERE utoa.userID = #{user.id} )");
         GROUP_BY("obs.datasetKey");
@@ -223,7 +223,9 @@ public class TaxonObservationProvider {
         }
 
         if (params.containsKey("sensitive") && (Boolean) params.get("sensitive")) {
-            WHERE("sensitive <= #{sensitive}");
+            WHERE("sensitive <= 1");
+        } else {
+            WHERE("sensitive = 0");
         }
 
         if (params.containsKey("designation") && !"".equals((String) params.get("designation"))) {
@@ -288,7 +290,9 @@ public class TaxonObservationProvider {
         }
 
         if (params.containsKey("sensitive") && (Boolean) params.get("sensitive")) {
-            WHERE("sensitive <= #{sensitive}");
+            WHERE("sensitive <= 1");
+        } else {
+            WHERE("sensitive = 0");
         }
 
         if (params.containsKey("designation") && !"".equals((String) params.get("designation"))) {
