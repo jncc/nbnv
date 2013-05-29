@@ -13,14 +13,14 @@ import com.google.inject.Inject
 
 class SampleIngester  @Inject()(db: Database) {
 
-  def upsertSample(sampleKey: Option[String], survey: Survey) {
+  def stageSample(sampleKey: Option[String], survey: ImportSurvey) {
 
     val key = sampleKey getOrElse "1"
 
-    if (!db.repo.getSample(key, survey).isDefined) {
-        val s = new Sample()
+    if (!db.repo.getImportSample(key, survey).isDefined) {
+        val s = new ImportSample()
         s.setProviderKey(key)
-        s.setSurvey(survey)
+        s.setSurveyID(survey)
         db.em.persist(s)
     }
   }

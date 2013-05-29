@@ -10,7 +10,7 @@ import com.google.inject.Inject
 import org.apache.log4j.Logger
 import uk.org.nbn.nbnv.importer.data.Database
 import com.google.common.base.Stopwatch
-import uk.org.nbn.nbnv.jpa.nbncore.TaxonDataset
+import uk.org.nbn.nbnv.jpa.nbncore.{ImportTaxonDataset, TaxonDataset}
 
 /// Performs the interaction with the NBN core database.
 
@@ -32,11 +32,11 @@ class Ingester @Inject()(options: Options,
     log.info("Ingestion average is %d milliseconds per record".format(watch.elapsedMillis() / (i + 1)))
   }
 
-  def upsertSurveys(archive: Archive, dataset: TaxonDataset) {
+  def stageSurveys(archive: Archive, dataset: ImportTaxonDataset) {
     log.debug("Ingesting surveys...")
     for ((record, i) <- archive.iteratorRaw.zipWithIndex) {
       val rec = new NbnRecord(record)
-      surveyIngester.upsertSurvey(rec.surveyKey, dataset)
+      surveyIngester.stageSurvey(rec.surveyKey, dataset)
     }
 
     //Save all the surveys
@@ -44,29 +44,29 @@ class Ingester @Inject()(options: Options,
   }
 
 
-  def upsertSamples(archive: Archive, dataset: TaxonDataset) {
+  def stageSamples(archive: Archive, dataset: ImportTaxonDataset) {
     log.debug("Ingesting samples...")
     for ((record, i) <- archive.iteratorRaw.zipWithIndex) {
       val rec = new NbnRecord(record)
-      val survey = db.repo.getSurvey((rec.surveyKey getOrElse "1"),dataset )
-      sampleIngester.upsertSample(rec.sampleKey,survey.get)
+      val survey = db.repo.getImportSurvey((rec.surveyKey getOrElse "1"),dataset )
+      sampleIngester.stageSample(rec.sampleKey, survey.get)
     }
 
     //Save all the surveys
     db.flushAndClear()
   }
 
-  def upsertSites(archive: Archive, dataset: TaxonDataset) {
+  def stageSites(archive: Archive, dataset: ImportTaxonDataset) {
     log.debug("Ingesting sites...")
     for ((record, i) <- archive.iteratorRaw.zipWithIndex) {
       val rec = new NbnRecord(record)
-      siteIngester.upsertSite(rec.siteKey, rec.siteName, dataset.getDataset)
+      siteIngester.stageSite(rec.siteKey, rec.siteName, dataset.getImportDataset)
     }
     
     db.flushAndClear()
   }
   
-  def upsertRecorders(archive: Archive) {
+  def stageRecorders(archive: Archive) {
     log.debug("Ingesting recorders...")
     for ((record, i) <- archive.iteratorRaw.zipWithIndex) {
       val rec = new NbnRecord(record)
@@ -88,7 +88,7 @@ class Ingester @Inject()(options: Options,
     db.flushAndClear()
   }
   
-  def upsertRecords(archive: Archive, dataset: TaxonDataset, metadata: Metadata) {
+  def upsertRecords(archive: Archive, dataset: ImportTaxonDataset, metadata: Metadata) {
     log.debug("Ingesting records...")
      for ((record, i) <- archive.iteratorRaw.zipWithIndex) {
 
@@ -111,22 +111,24 @@ class Ingester @Inject()(options: Options,
 
       t.begin()
 
+      // Clear down importer tables
       // upsert dataset
-      val dataset = datasetIngester.upsertDataset(metadata)
+//      val dataset = datasetIngester.upsertDataset(metadata)
+      val dataset = datasetIngester.stageDataset(metadata)
       db.flushAndClear()
 
       watch.start()
       //upnsert surveys
-      upsertSurveys(archive, dataset)
+      stageSurveys(archive, dataset)
 
       //upnsert samples
-      upsertSamples(archive, dataset)
+      stageSamples(archive, dataset)
       
       //upnsert sites
-      upsertSites(archive, dataset)
+      stageSites(archive, dataset)
       
       //insert recorders & determiners
-      upsertRecorders(archive)
+      stageRecorders(archive)
      
       //insert grid square features
       upsertGridSquareFeatures(archive)

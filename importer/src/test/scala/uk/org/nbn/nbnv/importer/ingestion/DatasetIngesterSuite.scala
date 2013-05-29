@@ -3,7 +3,7 @@ package uk.org.nbn.nbnv.importer.ingestion
 import org.mockito.Mockito._
 import org.mockito.Matchers._
 import javax.persistence.EntityManager
-import uk.org.nbn.nbnv.jpa.nbncore.{Dataset, TaxonDataset}
+import uk.org.nbn.nbnv.jpa.nbncore.{ImportDataset, ImportTaxonDataset, Dataset, TaxonDataset}
 import uk.org.nbn.nbnv.importer.metadata.Metadata
 import uk.org.nbn.nbnv.importer.testing.BaseFunSuite
 import uk.org.nbn.nbnv.importer.data.{Database, Repository, KeyGenerator}
@@ -20,19 +20,19 @@ class DatasetIngesterSuite extends BaseFunSuite {
     val metadata = mock[Metadata]
     when(metadata.datasetKey) thenReturn key
 
-    val dataset = mock[Dataset]
-    val taxonDataset = mock[TaxonDataset]
-    when(taxonDataset.getDataset).thenReturn(dataset)
+    val dataset = mock[ImportDataset]
+    val taxonDataset = mock[ImportTaxonDataset]
+    when(taxonDataset.getImportDataset).thenReturn(dataset)
 
     val em = mock[EntityManager]
-    when(em.find(classOf[TaxonDataset], key)).thenReturn(taxonDataset)
+    when(em.find(classOf[ImportTaxonDataset], key)).thenReturn(taxonDataset)
 
     val keyGenerator = mock[KeyGenerator]
     val db = mock[Database]
 
     // act
     val ingester = new DatasetIngester(mock[Logger], db, keyGenerator)
-    val result = ingester.upsertDataset(metadata)
+    val result = ingester.stageDataset(metadata)
 
     // assert - that the entity manager was not called with the retrieved dataset
     verify(em, never()).persist(dataset)
@@ -48,17 +48,17 @@ class DatasetIngesterSuite extends BaseFunSuite {
     when(metadata.datasetKey) thenReturn key
 
     val em = mock[EntityManager]
-    when(em.find(classOf[TaxonDataset], key)).thenReturn(null)
+    when(em.find(classOf[ImportTaxonDataset], key)).thenReturn(null)
 
-    val dataset = mock[Dataset]
-    when(em.merge(any(classOf[Dataset]))).thenReturn(dataset)
+    val dataset = mock[ImportDataset]
+    when(em.merge(any(classOf[ImportDataset]))).thenReturn(dataset)
 
     val keyGenerator = mock[KeyGenerator]
     val db = mock[Database]
 
     // act
     val ingester = new DatasetIngester(mock[Logger], db, keyGenerator)
-    val taxonDataset = ingester.upsertDataset(metadata)
+    val taxonDataset = ingester.stageDataset(metadata)
 
     //verify that setDataset is called against the new taxondataset enity with a dataset
     // check that the taxondataset has got a dataset on it
@@ -66,6 +66,6 @@ class DatasetIngesterSuite extends BaseFunSuite {
 
 
     // assert - that the entity manager was called with a dataset
-    verify(em).persist(any(classOf[TaxonDataset])) // would be better to verify that it's called with some dataset with key=key
+    verify(em).persist(any(classOf[ImportTaxonDataset])) // would be better to verify that it's called with some dataset with key=key
   }
 }

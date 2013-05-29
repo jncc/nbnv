@@ -2,7 +2,7 @@ package uk.org.nbn.nbnv.importer.ingestion
 
 import uk.org.nbn.nbnv.importer.records._
 import uk.org.nbn.nbnv.importer.BadDataException
-import uk.org.nbn.nbnv.jpa.nbncore.{SiteBoundaryDataset, GridSquare, Feature}
+import uk.org.nbn.nbnv.jpa.nbncore._
 import com.google.inject.Inject
 import uk.org.nbn.nbnv.importer.data.{Database, Repository}
 import uk.org.nbn.nbnv.importer.spatial.{GridSquareInfo, GridSquareInfoFactory}
@@ -11,18 +11,24 @@ import org.apache.log4j.Logger
 import uk.org.nbn.nbnv.importer.records.GridRefDef
 import scala.Some
 import uk.org.nbn.nbnv.importer.records.PointDef
+import uk.org.nbn.nbnv.importer.records.GridRefDef
+import uk.org.nbn.nbnv.importer.records.BoundaryDef
+import scala.Some
+import uk.org.nbn.nbnv.importer.records.PointDef
 
 class FeatureIngester @Inject()(log: Logger, db: Database, gridSquareInfoFactory: GridSquareInfoFactory) {
   
   //get feature
   //ensure grid features
+  def getBoundaryFeatureId(boundary : BoundaryDef) : Int = {
+    getSiteBoundaryFeature(boundary).getId
+  }
   
-  def getFeature(record: NbnRecord) : Feature = record.feature match {
+  def getGridFeature(record: NbnRecord) : ImportFeature = record.feature match {
     case value: GridRefDef  => {
       val info = gridSquareInfoFactory.getByGridRef(value)
       db.repo.getGridSquareFeature(info.gridReference).get._1
     }
-    case value: BoundaryDef => getSiteBoundaryFeature(value)
     case value: PointDef    => ensurePointFeatureByCoordinate(value)
   }
 
@@ -44,7 +50,7 @@ class FeatureIngester @Inject()(log: Logger, db: Database, gridSquareInfoFactory
   }
 
   // ensures that the Grid Feature corresponding to the GridSquareInfo, and all its parents, exist
-  private def ensureGridSquareFeatureRecursive(info: GridSquareInfo) : (Feature, GridSquare) = {
+  private def ensureGridSquareFeatureRecursive(info: GridSquareInfo) : (ImportFeature, ImportGridSquare) = {
 
     // if there's a feature already, all necessary parents should already exist, so just return it
     db.repo.getGridSquareFeature(info.gridReference) getOrElse {
@@ -61,7 +67,7 @@ class FeatureIngester @Inject()(log: Logger, db: Database, gridSquareInfoFactory
       info.getParentGridSquareInfo match {
         case Some(parentInfo) => {
           val (_, parentSquare) = ensureGridSquareFeatureRecursive(parentInfo)
-          gs.setParentGridSquare(parentSquare)
+          gs.setParentSquareGridRef(parentSquare)
         }
         case None => ()
       }

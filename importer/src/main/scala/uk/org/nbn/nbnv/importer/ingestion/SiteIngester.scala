@@ -1,20 +1,20 @@
 package uk.org.nbn.nbnv.importer.ingestion
 
-import uk.org.nbn.nbnv.jpa.nbncore.{Site, Dataset}
+import uk.org.nbn.nbnv.jpa.nbncore.{ImportSite, ImportDataset, Site, Dataset}
 import com.google.inject.Inject
 import javax.persistence.EntityManager
 import uk.org.nbn.nbnv.importer.data.{Database, Repository}
 
 class SiteIngester @Inject()(db: Database) {
 
-  def upsertSite(siteKey: Option[String], siteName: Option[String], dataset: Dataset) {
+  def stageSite(siteKey: Option[String], siteName: Option[String], dataset: ImportDataset) {
     
-    if (siteKey.isDefined && !db.repo.getSite(siteKey.get, dataset).isDefined) {
-    	val s = new Site()
+    if (siteKey.isDefined && !db.repo.getImportSite(siteKey.get, dataset).isDefined) {
+    	val s = new ImportSite()
     	val key = siteKey.get
         s.setProviderKey(key)
         s.setName(siteName getOrElse key)
-        s.setDataset(dataset)
+        s.setDatasetKey(dataset)
         db.em.persist(s)
     }
   }

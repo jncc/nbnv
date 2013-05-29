@@ -35,17 +35,19 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "ImportFeature.findById", query = "SELECT i FROM ImportFeature i WHERE i.id = :id"),
     @NamedQuery(name = "ImportFeature.findByIdentifier", query = "SELECT i FROM ImportFeature i WHERE i.identifier = :identifier")})
 public class ImportFeature implements Serializable {
+    @Basic(optional = false)
+    @NotNull
+    @Lob
+    @Column(name = "geom")
+    private byte[] geom;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "featureID")
+    private Collection<ImportGridSquare> importGridSquareCollection;
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
-    @Basic(optional = false)
-    @NotNull
-    @Lob
-    @Column(name = "geom")
-    private byte[] geom;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 200)
@@ -75,14 +77,6 @@ public class ImportFeature implements Serializable {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public byte[] getGeom() {
-        return geom;
-    }
-
-    public void setGeom(byte[] geom) {
-        this.geom = geom;
     }
 
     public String getIdentifier() {
@@ -134,6 +128,23 @@ public class ImportFeature implements Serializable {
     @Override
     public String toString() {
         return "uk.org.nbn.nbnv.jpa.nbncore.ImportFeature[ id=" + id + " ]";
+    }
+
+    @XmlTransient
+    public Collection<ImportGridSquare> getImportGridSquareCollection() {
+        return importGridSquareCollection;
+    }
+
+    public void setImportGridSquareCollection(Collection<ImportGridSquare> importGridSquareCollection) {
+        this.importGridSquareCollection = importGridSquareCollection;
+    }
+
+    public byte[] getGeom() {
+        return geom;
+    }
+
+    public void setGeom(byte[] geom) {
+        this.geom = geom;
     }
     
 }

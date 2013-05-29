@@ -46,6 +46,8 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "ImportTaxonObservation.findByAbsenceRecord", query = "SELECT i FROM ImportTaxonObservation i WHERE i.absenceRecord = :absenceRecord"),
     @NamedQuery(name = "ImportTaxonObservation.findBySensitiveRecord", query = "SELECT i FROM ImportTaxonObservation i WHERE i.sensitiveRecord = :sensitiveRecord")})
 public class ImportTaxonObservation implements Serializable {
+    @Column(name = "existingFeatureId")
+    private Integer existingFeatureId;
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
@@ -261,6 +263,14 @@ public class ImportTaxonObservation implements Serializable {
     @Override
     public String toString() {
         return "uk.org.nbn.nbnv.jpa.nbncore.ImportTaxonObservation[ id=" + id + " ]";
+    }
+
+    public Integer getExistingFeatureId() {
+        return existingFeatureId;
+    }
+
+    public void setExistingFeatureId(Integer existingFeatureId) {
+        this.existingFeatureId = existingFeatureId;
     }
     
 }

@@ -12,23 +12,23 @@ import scala.Some
 class AttributeIngester @Inject()(log: Logger, db: Database){
 
 
-  def ingestAttributes(record: NbnRecord, observation: TaxonObservation, dataset: TaxonDataset) {
+  def ingestAttributes(record: NbnRecord, observation: ImportTaxonObservation, dataset: ImportTaxonDataset) {
 
     log.debug("Ingesting attributes...")
 
     // clear the collection of existing attributes (this is for records that are being re-imported)
     // todo: will this really do anything? reimported datasets will be deleted first, so the auto-gen'd PKs will be new
-    observation.getTaxonObservationAttributeCollection.clear()
+    observation.getImportTaxonObservationAttributeCollection.clear()
 
     for ((attributeLabel, value) <- record.attributes) {
 
       val attribute = ensureAttribute(attributeLabel)
 
-      val toa = new TaxonObservationAttribute()
-      val pk = new TaxonObservationAttributePK()
+      val toa = new ImportTaxonObservationAttribute()
+      val pk = new ImportTaxonObservationAttributePK()
       pk.setAttributeID(attribute.getId)
       pk.setObservationID(observation.getId)
-      toa.setTaxonObservationAttributePK(pk)
+      toa.setImportTaxonObservationAttributePK(pk)
       toa.setTextValue(value)
 
       db.em.persist(toa)
@@ -42,11 +42,11 @@ class AttributeIngester @Inject()(log: Logger, db: Database){
         val storageLevel = db.em.find(classOf[AttributeStorageLevel], 4) // observation
         val storageType = db.em.find(classOf[AttributeStorageType], 3) // for now all attributes are free text
 
-        val a = new Attribute
+        val a = new ImportAttribute
         a.setLabel(attributeLabel)
         a.setDescription(attributeLabel)
-        a.setAttributeStorageLevel(storageLevel)
-        a.setAttributeStorageType(storageType)
+        a.setStorageLevelID(storageLevel.getId)
+        a.setStorageTypeID(storageType.getId)
         db.em.persist(a)
         db.em.flush()
         a

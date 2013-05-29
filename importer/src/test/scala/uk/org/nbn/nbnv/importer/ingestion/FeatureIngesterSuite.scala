@@ -7,7 +7,7 @@ import javax.persistence.EntityManager
 import uk.org.nbn.nbnv.importer.data.{QueryCache, Database, Repository}
 import uk.org.nbn.nbnv.importer.spatial.{GridSquareInfo, GridSquareInfoFactory}
 import uk.org.nbn.nbnv.importer.records.{GridTypeDef, GridRefDef, NbnRecord}
-import uk.org.nbn.nbnv.jpa.nbncore.{GridSquare, Feature}
+import uk.org.nbn.nbnv.jpa.nbncore.{ImportGridSquare, ImportFeature, GridSquare, Feature}
 import org.apache.log4j.Logger
 
 class FeatureIngesterSuite extends BaseFunSuite {
@@ -39,8 +39,8 @@ class FeatureIngesterSuite extends BaseFunSuite {
 
     // arrange
     val f = fixture
-    val feature = mock[Feature]
-    when(f.db.repo.getGridSquareFeature(f.gridRef)).thenReturn(Some((feature, mock[GridSquare])))
+    val feature = mock[ImportFeature]
+    when(f.db.repo.getGridSquareFeature(f.gridRef)).thenReturn(Some((feature, mock[ImportGridSquare])))
 
     // act
     val ingester = new FeatureIngester(f.log, f.db, f.gridSquareInfoFactory)

@@ -5,15 +5,12 @@ import org.eclipse.persistence.queries.DataModifyQuery;
 import org.eclipse.persistence.queries.StoredProcedureCall;
 import org.eclipse.persistence.queries.ValueReadQuery;
 import org.eclipse.persistence.sessions.Session;
-import uk.org.nbn.nbnv.jpa.nbncore.Feature;
+import uk.org.nbn.nbnv.jpa.nbncore.*;
 
 import javax.persistence.EntityManager;
 import org.eclipse.persistence.annotations.StoredProcedureParameter;
 import org.eclipse.persistence.annotations.NamedStoredProcedureQuery;
 import org.eclipse.persistence.annotations.Direction;
-import uk.org.nbn.nbnv.jpa.nbncore.GridSquare;
-import uk.org.nbn.nbnv.jpa.nbncore.Projection;
-import uk.org.nbn.nbnv.jpa.nbncore.Resolution;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +31,7 @@ public class StoredProcedureLibrary {
 //                    @StoredProcedureParameter(queryParameter="wkt",name="p1",direction=Direction.IN,type=Integer.class)
 //            }
 //    )
-    public Feature createFeature(String wgs84Wkt) {
+    public ImportFeature createFeature(String wgs84Wkt) {
         StoredProcedureCall call = new StoredProcedureCall();
         call.setProcedureName("import_CreateFeature");
         call.addNamedArgument("wkt", "wgs84wkt");
@@ -55,7 +52,7 @@ public class StoredProcedureLibrary {
 
         Integer featureId = (Integer) session.executeQuery(query, arguments);
 
-        Feature feature =  _em.find(Feature.class,featureId);
+        ImportFeature feature =  _em.find(ImportFeature.class,featureId);
 
         return feature;
     }
@@ -67,7 +64,7 @@ public class StoredProcedureLibrary {
 //    , @wkt VARCHAR(MAX)
 //    , @gridSquareId INT OUT
 
-    public GridSquare createGridSquare(String gridRef, Resolution resolution, Projection projection, String wkt, Feature wgs84Feature) {
+    public ImportGridSquare createGridSquare(String gridRef, Resolution resolution, Projection projection, String wkt, ImportFeature wgs84Feature) {
         StoredProcedureCall call = new StoredProcedureCall();
         call.setProcedureName("import_CreateGridSquare");
 
@@ -96,7 +93,7 @@ public class StoredProcedureLibrary {
 
         session.executeQuery(query, arguments);
 
-        GridSquare gridSquare =  _em.find(GridSquare.class, gridRef);
+        ImportGridSquare gridSquare =  _em.find(ImportGridSquare.class, gridRef);
 
         return gridSquare;
     }

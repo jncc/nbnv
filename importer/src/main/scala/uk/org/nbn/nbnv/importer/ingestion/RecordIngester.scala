@@ -4,10 +4,11 @@ package uk.org.nbn.nbnv.importer.ingestion
 import uk.org.nbn.nbnv.jpa.nbncore._
 import javax.persistence.EntityManager
 import org.apache.log4j.Logger
-import uk.org.nbn.nbnv.importer.records.NbnRecord
+import uk.org.nbn.nbnv.importer.records.{PointDef, GridRefDef, BoundaryDef, NbnRecord}
 import uk.org.nbn.nbnv.importer.data.{Database, Repository}
 import com.google.inject.Inject
 import uk.org.nbn.nbnv.importer.metadata.Metadata
+import uk.org.nbn.nbnv.importer.BadDataException
 
 class RecordIngester @Inject()(log: Logger,
                                db: Database,
@@ -20,33 +21,42 @@ class RecordIngester @Inject()(log: Logger,
                                publicIngester: PublicIngester,
                                dateParser: NbnDateParser) {
 
-  def insertRecord(record: NbnRecord, dataset: TaxonDataset, metadata: Metadata) {
+  def insertRecord(record: NbnRecord, dataset: ImportTaxonDataset, metadata: Metadata) {
 
     log.info("Upserting record %s".format(record.key))
     
-    val survey = db.repo.getSurvey(record.surveyKey getOrElse "1", dataset).get
-    //val survey = surveyIngester.upsertSurvey(record.surveyKey, dataset)
-    val sample = db.repo.getSample(record.sampleKey getOrElse "1", survey).get
-    //val sample = sampleIngester.upsertSample(record.sampleKey, survey)
+    val survey = db.repo.getImportSurvey(record.surveyKey getOrElse "1", dataset).get
+    //val survey = surveyIngester.stageSurvey(record.surveyKey, dataset)
+    val sample = db.repo.getImportSample(record.sampleKey getOrElse "1", survey).get
+    //val sample = sampleIngester.stageSample(record.sampleKey, survey)
     val site = if (record.siteKey.isDefined) {
-    		db.repo.getSite(record.siteKey.get, dataset.getDataset)
+    		db.repo.getImportSite(record.siteKey.get, dataset.getImportDataset)
     	}
     	else {
     		None
     	}
-    //val site = siteIngester.upsertSite(record.siteKey, record.siteName, dataset.getDataset)
-    val feature = featureIngester.getFeature(record) 
+    //val site = siteIngester.stageSite(record.siteKey, record.siteName, dataset.getDataset)
+    var existingFeatureId: Int = 0
+    var gridFeature : Option[ImportFeature] = None
+    record.feature match {
+      case value: BoundaryDef => existingFeatureId = featureIngester.getBoundaryFeatureId(value)
+      case value: GridRefDef => gridFeature = Some(featureIngester.getGridFeature(record))
+      case value: PointDef => gridFeature = Some(featureIngester.getGridFeature(record))
+    }
+
+    if (existingFeatureId == 0 && gridFeature.isEmpty) new BadDataException("Invalid feature definition")
+
     val taxon = db.repo.getTaxon(record.taxonVersionKey)
     val dateType = db.repo.getDateType(record.dateType)
     val determiner = if (record.determiner.isDefined) {
-        db.repo.getFirstRecorder(record.determiner.get)
+        db.repo.getFirstImportRecorder(record.determiner.get)
       }
       else {
         None
       }
 
     val recorder = if (record.determiner.isDefined) {
-        db.repo.getFirstRecorder(record.recorder.get)
+        db.repo.getFirstImportRecorder(record.recorder.get)
       }
       else {
         None
@@ -54,20 +64,21 @@ class RecordIngester @Inject()(log: Logger,
 
     val (startDate, endDate) = dateParser.parse(record.dateType, record.startDate, record.endDate)
 
-    def update(o: TaxonObservation) {
+    def update(o: ImportTaxonObservation) {
 
       o.setAbsenceRecord(record.absence)
       o.setDateStart(startDate getOrElse null)
       o.setDateEnd(endDate getOrElse null)
-      o.setDateType(dateType)
-      o.setDeterminer(determiner getOrElse null)
-      o.setFeature(feature)
+      o.setDateTypeKey(dateType.getKey)
+      o.setDeterminerID(determiner getOrElse null)
+      o.setFeatureID(gridFeature getOrElse null)
+      o.setExistingFeatureId(existingFeatureId)
       o.setProviderKey(record.key)
-      o.setRecorder(recorder getOrElse null)
-      o.setSample(sample)
+      o.setRecorderID(recorder getOrElse null)
+      o.setSampleID(sample)
       o.setSensitiveRecord(record.sensitiveOccurrence)
-      o.setSite(site.orNull)
-      o.setTaxon(taxon)
+      o.setSiteID(site.orNull)
+      o.setTaxonVersionKey(taxon.getTaxonVersionKey)
     }
 
     val observation = db.repo.getTaxonObservation(record.key, sample) match {
@@ -76,24 +87,19 @@ class RecordIngester @Inject()(log: Logger,
         o
       }
       case None => {
-        val o = new TaxonObservation
+        val o = new ImportTaxonObservation
         update(o)
         db.em.persist(o)
+        db.flushAndClear()
         o
+
       }
     }
 
     attributeIngester.ingestAttributes(record, observation, dataset)
     publicIngester.ingestPublic(observation, sample, metadata)
   }
-  
-//  public getFeature(record: NbnRecord)
-//  {
-//
-//    case value: GridRefDef  => ensureGridRefFeature(value)
-//    case value: BoundaryDef => ensureSiteBoundaryFeature(value)
-//    case value: PointDef    => ensureGridRefFeatureByCoordinate(value)
-//  }
+
 
 }
 

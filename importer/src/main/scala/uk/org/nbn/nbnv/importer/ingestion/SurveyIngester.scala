@@ -9,15 +9,15 @@ import com.google.inject.Inject
 
 class SurveyIngester @Inject()(db: Database) {
 
-  def upsertSurvey(surveyKey: Option[String], dataset: TaxonDataset) {
+  def stageSurvey(surveyKey: Option[String], dataset: ImportTaxonDataset) {
 
     val key = surveyKey getOrElse "1" // if no survey key provided
 
-    if (!db.repo.getSurvey(key, dataset).isDefined) {
-      val s = new Survey
+    if (!db.repo.getImportSurvey(key, dataset).isDefined) {
+      val s = new ImportSurvey()
       s.setProviderKey(key)
       s.setTitle(key)
-      s.setTaxonDataset(dataset)
+      s.setDatasetKey(dataset)
       db.em.persist(s)
     }
   }

@@ -78,6 +78,7 @@
     <class>uk.org.nbn.nbnv.jpa.nbncore.ImportFeature</class>
     <class>uk.org.nbn.nbnv.jpa.nbncore.ImportTaxonObservation</class>
     <class>uk.org.nbn.nbnv.jpa.nbncore.ImportSample</class>
+    <class>uk.org.nbn.nbnv.jpa.nbncore.ImportGridSquare</class>
     <shared-cache-mode>NONE</shared-cache-mode>
     <properties>
       <property name="eclipselink.target-database" value="SQLServer"/>
