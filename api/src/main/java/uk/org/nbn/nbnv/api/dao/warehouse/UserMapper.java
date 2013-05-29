@@ -30,7 +30,4 @@ public interface UserMapper {
 
     @Select("SELECT d.* FROM DatasetData d INNER JOIN DatasetAdministrator da ON da.datasetKey = d.[key] WHERE da.userID = #{id}")
     public List<Dataset> getDatasetsUserAdmins(@Param("id") int id);
-
-    @Select("SELECT * from UserData WHERE forename LIKE #{term} OR surname LIKE #{term} OR email LIKE #{term} OR (forename + ' ' + surname) LIKE #{term} ORDER BY forename, surname")
-    public List<User> searchForUser(@Param("term") String term);
 }

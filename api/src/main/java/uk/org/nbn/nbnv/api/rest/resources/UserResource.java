@@ -42,7 +42,6 @@ import uk.org.nbn.nbnv.api.dao.warehouse.UserAuthenticationMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.UserMapper;
 import uk.org.nbn.nbnv.api.mail.TemplateMailer;
 import uk.org.nbn.nbnv.api.model.Dataset;
-import uk.org.nbn.nbnv.api.model.EmailSettingsModel;
 import uk.org.nbn.nbnv.api.model.Organisation;
 import uk.org.nbn.nbnv.api.model.User;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
@@ -289,8 +288,8 @@ public class UserResource extends AbstractResource {
     @GET
     @Path("/search")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<User> searchForUserByPartial(@TokenUser(allowPublic = false) User user, @QueryParam("term") String term) {
-        return oUserMapper.searchForUser("%" + term + "%");
+    public List<User> searchForUserByPartial(@TokenUser(allowPublic=false) User user, @QueryParam("term") String term, @QueryParam("organisation") int orgId) {
+       return oUserMapper.searchForUserExcludeOrganisationMembers("%" + term + "%", orgId);
     }
 
     @POST

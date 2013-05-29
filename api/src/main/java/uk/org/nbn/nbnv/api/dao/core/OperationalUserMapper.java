@@ -69,4 +69,8 @@ public interface OperationalUserMapper {
     
     @Update("UPDATE \"User\" SET allowEmailAlerts = #{emailAlerts}, subscribedToAdminMails = #{adminMails}, subscribedToNBNMarketting = #{nbnMarketing} WHERE id = #{id}") 
     public void updateUserEmailSettings(@Param("id") int id,  @Param("emailAlerts") int emailAlerts, @Param("adminMails") int adminMails, @Param("nbnMarketing") int nbnMarketing);
+    
+    @Select("SELECT * FROM (SELECT * from \"User\" WHERE forename LIKE #{term} OR surname LIKE #{term} OR email LIKE #{term} OR (forename + ' ' + surname) LIKE #{term}) AS temp WHERE NOT EXISTS (SELECT 1 FROM UserOrganisationMembership WHERE userID = id AND organisationID = #{organisation}) ORDER BY forename, surname")
+    public List<User> searchForUserExcludeOrganisationMembers(@Param("term") String term, @Param("organisation") int organisationId);
+    
 }
