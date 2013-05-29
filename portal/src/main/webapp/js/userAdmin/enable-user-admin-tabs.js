@@ -6,7 +6,6 @@
             cache: true
         });
         applyTableEvenRowStyle();
-
         $('#modify-details-form').submit(function() {
             // Set this to constant just to make the model pass validation, 
             // never used though
@@ -17,7 +16,7 @@
             }
             return true;
         });
-
+        
         $('#modify-details-form').validate({
             submitHandler: function(form) {
                 // Set this to constant just to make the model pass validation, 
@@ -54,7 +53,21 @@
                 }
             }
         });
-
+        
+                
+        $('#password').passField({
+            acceptRate: 1,
+            pattern: 'Abcde12',
+            showToggle: false,
+            showGenerate: false,
+            showWarn: false,
+            localeMsg: {
+                noCharType: "Password should contain {}",
+                passTooShort: "Password should be more than {} characters long"
+            },
+            locale: "en"
+        });
+        
         $("#change-password-form").validate({
             submitHandler: function(form) {
                 // Set this to constant just to make the model pass validation, 
@@ -69,7 +82,6 @@
                 },
                 password_confirm: {
                     required: true,
-                    minlength: 5,
                     equalTo: "#password"
                 }
             },
@@ -80,13 +92,11 @@
                 },
                 password_confirm: {
                     required: "Please provide a password",
-                    minlength: "Your password must be at least 5 characters long",
                     equalTo: "Please enter the same password as above"
                 }
             }
         });
     });
-
     function applyTableEvenRowStyle() {
         $(".nbn-simple-table tr:even").addClass("ui-state-highlight");
     }
