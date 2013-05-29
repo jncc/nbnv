@@ -13,21 +13,28 @@
     csss=["http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/themes/smoothness/jquery-ui.css"]>
 
     <script>
+        nbn.nbnv.api = '${api}';
+
         var close;
         var grant;
         var deny;
         var revoke;
+        var jsonCache = {};
 
         $(function(){
+            <#list oUserRequests as r>
+                jsonCache[${r.filter.id?c}] = ${r.filter.filterJSON}
+            </#list>
+
             close = new nbn.nbnv.ui.dialog.requestCloseDialog();
             close._render();
             $('.closelink').click(function() { close.show($(this).attr("request")); });
             grant = new nbn.nbnv.ui.dialog.requestGrantDialog();
             grant._render();
-            $('.grantlink').click(function() { grant.show($(this).attr("request")); });
+            $('.grantlink').click(function() { grant.show($(this).attr("request"), jsonCache[$(this).attr("request")], $(this).attr("dataset"), '/taxonObservations/datasets/' + $(this).attr("dataset") + '/requestable'); });
             deny = new nbn.nbnv.ui.dialog.requestDenyDialog();
             deny._render();
-            $('.denylink').click(function() { deny.show($(this).attr("request")); });
+            $('.denylink').click(function() { deny.show($(this).attr("request"), jsonCache[$(this).attr("request")], $(this).attr("dataset"), '/taxonObservations/datasets/' + $(this).attr("dataset") + '/requestable'); });
             revoke = new nbn.nbnv.ui.dialog.requestRevokeDialog();
             revoke._render();
             $('.revokelink').click(function() { revoke.show($(this).attr("request")); });
@@ -88,8 +95,8 @@
                     ${r.requestDate}
                 </td>
                 <td>
-                    <a class="grantlink" href="#" request="${r.filter.id?c}">Grant</a>
-                    <a class="denylink" href="#" request="${r.filter.id?c}">Deny</a>
+                    <a class="grantlink" href="#" request="${r.filter.id?c}" dataset="${r.dataset.key}">Grant</a>
+                    <a class="denylink" href="#" request="${r.filter.id?c}" dataset="${r.dataset.key}">Deny</a>
                     <a href="/AccessRequest/Edit/User/${r.filter.id?c}">Edit</a>
                     <a class="closelink" href="#" request="${r.filter.id?c}">Close</a>
                 </td>

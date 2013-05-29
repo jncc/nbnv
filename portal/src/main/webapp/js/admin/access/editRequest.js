@@ -51,7 +51,7 @@ nbn.nbnv.ui.editRequest = function (json, requester, dataset, id, div) {
                 $.extend(json, spatial.getJson());
                 $.extend(json, year.getJson());
 
-                result.setupData(json, dataset, '/taxonObservations/datasets/requestable');
+                result.setupData(json, dataset, '/taxonObservations/datasets/' + dataset + '/requestable');
                 result._onEnter(json, id);
             }  else if (newFilter == 'timeLimit') {
                 timeLimit._onEnter();

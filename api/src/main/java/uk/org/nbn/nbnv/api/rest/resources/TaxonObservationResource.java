@@ -27,6 +27,7 @@ import uk.org.nbn.nbnv.api.dao.warehouse.OrganisationMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.TaxonObservationMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.TaxonOutputGroupMapper;
 import uk.org.nbn.nbnv.api.model.*;
+import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenDatasetAdminUser;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
 import uk.org.nbn.nbnv.api.rest.resources.utils.DownloadHelper;
 
@@ -248,7 +249,29 @@ public class TaxonObservationResource extends AbstractResource {
         
         return observationMapper.selectRequestableObservationDatasetsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef);
     }
-        
+    
+    @GET
+    @Path("/datasets/{datasetKey : [A-Z][A-Z0-9]{7}}/requestable")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<TaxonDatasetWithQueryStats> getRequestableObservationDetailsForDatasetByFilter(
+            @TokenDatasetAdminUser(path="datasetKey") User user,
+            @QueryParam("startYear") @DefaultValue(ObservationResourceDefaults.defaultStartYear) int startYear,
+            @QueryParam("endYear") @DefaultValue(ObservationResourceDefaults.defaultEndYear) int endYear,
+            @PathParam("datasetKey") String datasetKey,
+            @QueryParam("ptvk") @DefaultValue(ObservationResourceDefaults.defaultTaxa) List<String> taxa,
+            @QueryParam("spatialRelationship") @DefaultValue(ObservationResourceDefaults.SPATIAL_RELATIONSHIP_DEFAULT) String spatialRelationship,
+            @QueryParam("featureID") @DefaultValue(ObservationResourceDefaults.defaultFeatureID) String featureID,
+            @QueryParam("sensitive") @DefaultValue(ObservationResourceDefaults.defaultSensitive) Boolean sensitive,
+            @QueryParam("designation") @DefaultValue(ObservationResourceDefaults.defaultDesignation) String designation,
+            @QueryParam("taxonOutputGroup") @DefaultValue(ObservationResourceDefaults.defaultTaxonOutputGroup) String taxonOutputGroup,
+            @QueryParam("gridRef") @DefaultValue(ObservationResourceDefaults.defaultGridRef) String gridRef) {
+        //TODO: squareBlurring(?)
+                
+        List<String> datasetKeys = new ArrayList<String>();
+        datasetKeys.add(datasetKey);
+        return observationMapper.selectRequestableObservationDatasetsByFilter(User.PUBLIC_USER, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef);
+    }
+    
     @GET
     @Path("/unavailableDatasets")
     @Produces(MediaType.APPLICATION_JSON)

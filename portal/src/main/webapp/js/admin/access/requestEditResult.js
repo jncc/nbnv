@@ -51,7 +51,7 @@ nbn.nbnv.ui.requestEditResult = function(endpoint) {
             data: filter,
             success: function(datasets) { 
                 $('#recordcounts').html('');
-                $('#recordcounts').append('This request covers ' + datasets[0].querySpecificObservationCount + ' (' + datasets[0].querySpecificSensitiveObservationCount + ' sensitive) of ' + datasets[0].taxonDataset.recordCount + ' records in the dataset');
+                $('#recordcounts').append('This request covers ' + datasets[0].querySpecificObservationCount + ' of ' + datasets[0].taxonDataset.recordCount + ' records in the dataset, ' + datasets[0].querySpecificSensitiveObservationCount + ' are sensitive records');
             }
         });
     };
