@@ -40,7 +40,8 @@ nbn.nbnv.ui.dialog.requestGrantDialog = function() {
                 width: 650,
                 buttons: { 
                     "Grant Request": function() {
-                        var filter = { action: "grant", reason: _me.reason }
+                        var filter = { action: "grant", reason: _me.reason };
+                        
                         if (!_me.timeLimit._all) {
                             filter.expires = _me.timeLimit.getJson().date;
                         }
