@@ -35,6 +35,10 @@ public class User {
     @NotEmpty
     private String password;
     private Date registrationDate;
+    
+    private boolean allowEmailAlerts;
+    private boolean subscribedToAdminMails;
+    private boolean subscribedToNBNMarketting;
 
     public String getPassword() {
         return password;
@@ -98,6 +102,30 @@ public class User {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+    
+        public boolean isAllowEmailAlerts() {
+        return allowEmailAlerts;
+    }
+
+    public void setAllowEmailAlerts(boolean allowEmailAlerts) {
+        this.allowEmailAlerts = allowEmailAlerts;
+    }
+
+    public boolean isSubscribedToAdminMails() {
+        return subscribedToAdminMails;
+    }
+
+    public void setSubscribedToAdminMails(boolean subscribedToAdminMails) {
+        this.subscribedToAdminMails = subscribedToAdminMails;
+    }
+
+    public boolean isSubscribedToNBNMarketting() {
+        return subscribedToNBNMarketting;
+    }
+
+    public void setSubscribedToNBNMarketting(boolean subscribedToNBNMarketting) {
+        this.subscribedToNBNMarketting = subscribedToNBNMarketting;
     }
 
     @Override public boolean equals(Object o) {
