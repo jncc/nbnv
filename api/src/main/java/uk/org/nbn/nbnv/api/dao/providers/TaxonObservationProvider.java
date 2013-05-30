@@ -27,6 +27,15 @@ public class TaxonObservationProvider {
         return SQL();
     }
 
+    public String filteredSelectRequestableRecordIDs(Map<String, Object> params) {
+        String from = createSelectEnhanced(params, "o.id");
+        BEGIN();
+        SELECT("obs.id");
+        FROM(from);
+        WHERE("obs.id NOT IN ( SELECT utoa.observationID FROM UserTaxonObservationID utoa WHERE utoa.userID = #{user.id} )");
+        return SQL();
+    }
+
     public String filteredSelectRecordsOrderedByDataset(Map<String, Object> params) {
         String from = createSelect(params, "o.*");
         BEGIN();

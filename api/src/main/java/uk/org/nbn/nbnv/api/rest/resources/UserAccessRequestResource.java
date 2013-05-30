@@ -29,6 +29,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import uk.org.nbn.nbnv.api.dao.core.OperationalTaxonObservationFilterMapper;
 import uk.org.nbn.nbnv.api.dao.core.OperationalUserAccessRequestMapper;
+import uk.org.nbn.nbnv.api.dao.core.OperationalUserTaxonObservationAccessMapper;
 import uk.org.nbn.nbnv.api.model.TaxonObservationFilter;
 import uk.org.nbn.nbnv.api.model.User;
 import uk.org.nbn.nbnv.api.model.UserAccessRequest;
@@ -45,7 +46,9 @@ import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
 public class UserAccessRequestResource extends AbstractResource {
     @Autowired OperationalTaxonObservationFilterMapper oTaxonObservationFilterMapper;
     @Autowired OperationalUserAccessRequestMapper oUserAccessRequestMapper;
+    @Autowired OperationalUserTaxonObservationAccessMapper oUserTaxonObservationAccessMapper;
     @Autowired AccessRequestUtils accessRequestUtils;
+    
     
     @PUT
     @Path("/requests")
@@ -193,6 +196,42 @@ public class UserAccessRequestResource extends AbstractResource {
         return Response.status(Response.Status.OK).entity("{}").build();
     }
 
+    private boolean stripAccess(int id) throws IOException {
+        UserAccessRequest uar = oUserAccessRequestMapper.getRequest(id);
+        AccessRequestJSON accessRequest = parseJSON(uar.getFilter().getFilterJSON());
+
+        List<String> species = accessRequestUtils.createSpeciesList(accessRequest);        
+        List<Integer> records = accessRequestUtils.getRecordSet(accessRequest, species, uar.getDatasetKey(), uar.getUser());
+        
+        for (int i : records) {
+            oUserTaxonObservationAccessMapper.RemoveAccess(uar.getUser().getId(), i);
+        }
+
+        List<UserAccessRequest> uars = oUserAccessRequestMapper.getGrantedUserRequests(uar.getDatasetKey(), uar.getUser().getId());
+        
+        for (UserAccessRequest req : uars) {
+            giveAccess(req);
+        }
+        return true;
+    }
+
+    private boolean giveAccess(int id) throws IOException {
+        UserAccessRequest uar = oUserAccessRequestMapper.getRequest(id);
+        return giveAccess(uar);
+    }
+    
+    private boolean giveAccess(UserAccessRequest uar) throws IOException {
+        AccessRequestJSON accessRequest = parseJSON(uar.getFilter().getFilterJSON());
+
+        List<String> species = accessRequestUtils.createSpeciesList(accessRequest);        
+        List<Integer> records = accessRequestUtils.getRecordSet(accessRequest, species, uar.getDatasetKey(), uar.getUser());
+        
+        for (int i : records) {
+            oUserTaxonObservationAccessMapper.AddAccess(uar.getUser().getId(), i);
+        }
+
+        return true;
+    }
     private AccessRequestJSON parseJSON(String json) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.readValue(json, AccessRequestJSON.class);

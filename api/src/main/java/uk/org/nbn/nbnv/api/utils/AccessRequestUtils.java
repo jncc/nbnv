@@ -4,7 +4,6 @@
  */
 package uk.org.nbn.nbnv.api.utils;
 
-import uk.org.nbn.nbnv.api.utils.AccessRequestJSONToText;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,5 +63,11 @@ public class AccessRequestUtils {
         }
 
         return datasets;
+    }
+    
+    public List<Integer> getRecordSet(AccessRequestJSON accessRequest, List<String> species, String dataset, User user) {
+        List<String> datasets = new ArrayList<String>();
+        datasets.add(dataset);
+        return taxonObservationMapper.selectRequestableObservationRecordIDsByFilter(user, accessRequest.getYear().getStartYear(), accessRequest.getYear().getEndYear(), datasets, species, accessRequest.getSpatial().getMatch(), accessRequest.getSpatial().getFeature(), (accessRequest.getSensitive().equals("sans") ? true : false), accessRequest.getTaxon().getDesignation(), accessRequest.getTaxon().getOutput(), "");
     }
 }
