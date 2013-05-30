@@ -153,10 +153,14 @@ public class UserAccessRequestResource extends AbstractResource {
             , @FormParam("action") String action
             , @FormParam("reason") String reason
             , @FormParam("expires") @DefaultValue("") String expires) throws ParseException {
-        if ("accept".equalsIgnoreCase(action)) {
+        if ("grant".equalsIgnoreCase(action)) {
             return acceptRequest(filterID, reason, expires);
         } else if ("deny".equalsIgnoreCase(action)) {
             return denyRequest(filterID, reason);
+        } else if ("close".equalsIgnoreCase(action)) {
+            return closeRequest(filterID, reason);
+        } else if ("revoke".equalsIgnoreCase(action)) {
+            return revokeRequest(filterID, reason);
         } else {
             return Response.serverError().build();
         }
@@ -165,18 +169,28 @@ public class UserAccessRequestResource extends AbstractResource {
     private Response acceptRequest(int filterID, String reason, String expires) throws ParseException {
         if (expires.isEmpty()) {
             oUserAccessRequestMapper.acceptRequest(filterID, reason, new Date(new java.util.Date().getTime()));
-            return Response.ok("success").build();
+            return Response.status(Response.Status.OK).entity("{}").build();
         } else {
             DateFormat df = new SimpleDateFormat("dd/mm/yyyy");
             java.util.Date expiresDate = df.parse(expires);
             oUserAccessRequestMapper.acceptRequestWithExpires(filterID, reason, new Date(new java.util.Date().getTime()), new Date(expiresDate.getTime()));
-            return Response.ok("success").build();
+            return Response.status(Response.Status.OK).entity("{}").build();
         }
     }
 
     private Response denyRequest(int filterID, String reason) {
         oUserAccessRequestMapper.denyRequest(filterID, reason, new Date(new java.util.Date().getTime()));
-        return Response.ok("success").build();
+        return Response.status(Response.Status.OK).entity("{}").build();
+    }
+
+    private Response closeRequest(int filterID, String reason) {
+        oUserAccessRequestMapper.closeRequest(filterID, reason, new Date(new java.util.Date().getTime()));
+        return Response.status(Response.Status.OK).entity("{}").build();
+    }
+
+    private Response revokeRequest(int filterID, String reason) {
+        oUserAccessRequestMapper.revokeRequest(filterID, reason, new Date(new java.util.Date().getTime()));
+        return Response.status(Response.Status.OK).entity("{}").build();
     }
 
     private AccessRequestJSON parseJSON(String json) throws IOException {

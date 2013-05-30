@@ -17,8 +17,14 @@ nbn.nbnv.ui.dialog.requestCloseDialog = function() {
             autoOpen: false,
             buttons: { 
                 "Close Request": function() {
-                    alert(_me.requestID);
-                    $(this).dialog("close"); 
+                        var filter = { action: "close", reason: "via portal" }
+                        
+                        $.ajax({
+                            type: 'POST',
+                            url: nbn.nbnv.api + '/user/userAccesses/requests/' + _me.requestID,
+                            data: filter,
+                            success: function () { document.location.reload(true); }
+                        });
                 }, Cancel: function() { 
                     $(this).dialog("close"); 
                 }

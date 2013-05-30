@@ -37,9 +37,14 @@ nbn.nbnv.ui.dialog.requestDenyDialog = function() {
                 width: 650,
                 buttons: { 
                     "Deny Request": function() {
-                        alert(_me.requestID);
-                        alert(_me.reason);
-                        $(this).dialog("close"); 
+                        var filter = { action: "deny", reason: _me.reason }
+                        
+                        $.ajax({
+                            type: 'POST',
+                            url: nbn.nbnv.api + '/user/userAccesses/requests/' + _me.requestID,
+                            data: filter,
+                            success: function () { document.location.reload(true); }
+                        });
                     }, Cancel: function() { 
                         $(this).dialog("close"); 
                     }

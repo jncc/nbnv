@@ -113,4 +113,18 @@ public interface OperationalUserAccessRequestMapper {
             @Param("filterID") int filterID
             , @Param("responseReason") String responseReason
             , @Param("responseDate") Date responseDate);
+
+    @Update("UPDATE UserAccessRequest SET responseTypeID = 3, responseReason = #{responseReason}, responseDate = #{responseDate} "
+            + "WHERE filterID = #{filterID}")
+    public int closeRequest(
+            @Param("filterID") int filterID
+            , @Param("responseReason") String responseReason
+            , @Param("responseDate") Date responseDate);
+
+    @Update("UPDATE UserAccessRequest SET responseTypeID = 4, responseReason = #{responseReason}, responseDate = #{responseDate} "
+            + "WHERE filterID = #{filterID}")
+    public int revokeRequest(
+            @Param("filterID") int filterID
+            , @Param("responseReason") String responseReason
+            , @Param("responseDate") Date responseDate);
 }
