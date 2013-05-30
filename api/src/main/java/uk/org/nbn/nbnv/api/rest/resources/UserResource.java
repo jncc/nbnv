@@ -137,12 +137,7 @@ public class UserResource extends AbstractResource {
     public Response setUserPasswordPost(
             @TokenUser(allowPublic = false) User user,
             @FormParam("password") String password) throws UnsupportedEncodingException, NoSuchAlgorithmException {
-        MessageDigest sha1 = MessageDigest.getInstance("SHA-1"), md5 = MessageDigest.getInstance("MD5");
-        byte[] passwordHashSHA1 = sha1.digest(password.getBytes(STRING_ENCODING));
-        byte[] md5HashSHA1 = sha1.digest(md5.digest(password.getBytes(STRING_ENCODING)));
-
-        oUserMapper.setUserPassword(user, passwordHashSHA1, md5HashSHA1);
-        return Response.ok("success").build();
+        return setUserPassword(user, password);
     }
 
     @POST
