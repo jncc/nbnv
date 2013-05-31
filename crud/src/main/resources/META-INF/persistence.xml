@@ -81,9 +81,9 @@
     <class>uk.org.nbn.nbnv.jpa.nbncore.ImportGridSquare</class>
     <shared-cache-mode>NONE</shared-cache-mode>
     <properties>
-      <property name="eclipselink.target-database" value="SQLServer"/>
+      <!--<property name="eclipselink.target-database" value="SQLServer"/>-->
       <property name="javax.persistence.jdbc.driver" value="com.microsoft.sqlserver.jdbc.SQLServerDriver"/>
-      <property name="eclipselink.jdbc.batch-writing" value="JDBC"/>
+      <!--<property name="eclipselink.jdbc.batch-writing" value="JDBC"/>-->
     </properties>
   </persistence-unit>
 </persistence>

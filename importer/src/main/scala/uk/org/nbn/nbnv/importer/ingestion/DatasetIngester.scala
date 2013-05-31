@@ -18,7 +18,7 @@ class DatasetIngester @Inject()(log: Logger,
 
     if (metadata.datasetKey.isEmpty) {
       // Always inserting exactly 1 dataset
-      key = "NewDataset"
+      key = "NewDst00"
     } else {
       key = metadata.datasetKey
     }
@@ -32,7 +32,7 @@ class DatasetIngester @Inject()(log: Logger,
     val td = new ImportTaxonDataset(key)
     td.setImportDataset(d)
     setTaxonDatasetValues(td, metadata)
-    db.em.persist()
+    db.em.persist(td)
 
     td
   }
@@ -130,8 +130,8 @@ class DatasetIngester @Inject()(log: Logger,
 
   def setTaxonDatasetValues(td: ImportTaxonDataset, m: Metadata) {
 
-    val resolution = db.repo.getResolution(m.publicResolution)
-    td.setPublicResolutionID(resolution.getId)
+    val resolutionId = db.repo.getResolution(m.publicResolution).getId
+    td.setPublicResolutionID(resolutionId)
 //    td.setPublicResolution(resolution)
 
     // default .. to be read from extra metadata.

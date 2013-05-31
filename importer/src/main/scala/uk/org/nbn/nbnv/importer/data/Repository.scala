@@ -74,7 +74,7 @@ class Repository (log: Logger, em: EntityManager, cache: QueryCache) extends Con
 
   def getGridSquareFeature(gridRef: String): Option[(ImportFeature, ImportGridSquare)] = {
 
-    val q = "select f, s from ImportFeature f join f.importGridSquareCollection s where s.gridRef = :gridref"
+    val q = "select f, s from ImportFeature f join f.importGridSquareCollection s where s.gridRef = :gridRef"
 
     cacheSome(q, gridRef) {
 

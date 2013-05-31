@@ -3,7 +3,7 @@ package uk.org.nbn.nbnv.importer.testing
 import javax.persistence.{FlushModeType, LockModeType, EntityManager}
 import sun.reflect.generics.reflectiveObjects.NotImplementedException
 import java.util
-import javax.persistence.criteria.CriteriaQuery
+import javax.persistence.criteria.{CriteriaDelete, CriteriaUpdate, CriteriaQuery}
 
 abstract class FakeEntityManagerBase extends EntityManager {
 
@@ -86,4 +86,26 @@ abstract class FakeEntityManagerBase extends EntityManager {
   def getCriteriaBuilder = null
 
   def getMetamodel = null
+
+  def createQuery(p1: CriteriaUpdate[_]) = null
+
+  def createQuery(p1: CriteriaDelete[_]) = null
+
+  def createNamedStoredProcedureQuery(p1: String) = null
+
+  def createStoredProcedureQuery(p1: String) = null
+
+  def createStoredProcedureQuery(p1: String, p2: Array[Class[_]]) = null
+
+  def createStoredProcedureQuery(p1: String, p2: Array[String]) = null
+
+  def isJoinedToTransaction = false
+
+  def createEntityGraph[T](p1: Class[T]) = null
+
+  def createEntityGraph(p1: String) = null
+
+  def getEntityGraph(p1: String) = null
+
+  def getEntityGraphs[T](p1: Class[T]) = null
 }
