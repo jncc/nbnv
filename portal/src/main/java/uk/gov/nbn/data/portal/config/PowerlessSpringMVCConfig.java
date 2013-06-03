@@ -41,6 +41,10 @@ public class PowerlessSpringMVCConfig {
         config.setSharedVariable("api", api);
         config.setSharedVariable("gis", gis);
         config.setSharedVariable("markdown", new MarkDownDirectiveModel());
+        // TODO: Need to make a decision if we need commas, etc... in numbers as 
+        // its all to easy to have an error creep up on us much later on, this 
+        // will fix it globally for powerless controllers at least
+        //config.setNumberFormat("0.##########");
         config.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
     }    
     

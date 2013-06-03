@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.org.nbn.nbnv.api.dao.core.OperationalDatasetMapper;
 import uk.org.nbn.nbnv.api.dao.core.OperationalSurveyMapper;
+import uk.org.nbn.nbnv.api.dao.warehouse.DatasetAdministratorMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.DatasetMapper;
 import uk.org.nbn.nbnv.api.model.Dataset;
 import uk.org.nbn.nbnv.api.model.DatasetResolutionRecordCount;
@@ -31,6 +32,7 @@ import uk.org.nbn.nbnv.api.solr.SolrResolver;
 @Path("/datasets")
 public class DatasetResource extends AbstractResource {
     @Autowired OperationalDatasetMapper oDatasetMapper;
+    @Autowired DatasetAdministratorMapper datasetAdministratorMapper;
     @Autowired DatasetMapper datasetMapper;
     @Autowired OperationalSurveyMapper oSurveyMapper;
     
@@ -114,6 +116,14 @@ public class DatasetResource extends AbstractResource {
     @Produces(MediaType.APPLICATION_JSON)
     public List<DatasetResolutionRecordCount> getDatasetResolution(@PathParam("datasetKey") String datasetKey) {
         return datasetMapper.getResolutionData(datasetKey);
+    }
+    
+    @GET
+    @Path("/{datasetKey}/isAdmin")
+    @Produces(MediaType.APPLICATION_JSON)
+    public boolean isDatasetAdmin(@TokenUser User user, @PathParam("datasetKey") String datasetKey) {
+        
+        return datasetAdministratorMapper.isUserDatasetAdministrator(user.getId(), datasetKey);
     }
     
     /***********************************************
