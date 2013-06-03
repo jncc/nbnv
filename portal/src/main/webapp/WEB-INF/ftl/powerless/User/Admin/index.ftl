@@ -18,7 +18,7 @@
             <tr><td>Username:</td><td>${user.username}</td></tr>
             <tr><td>Email:</td><td>${user.email}</td></tr>
             <tr><td>Id:</td><td>${user.id}</td></tr>
-            <tr><td>TODO: Editable bits go here...</td></tr>
+            <tr><td><a href="/User/Modify">Modify your user details</a></td><td><a href="/User/Modify#tabs-2">Change password</a></td><td><a href="/User/Modify#tabs-3">Change Email Subscriptions</a></td></tr>
         </table>
     </div>
 </#macro>
