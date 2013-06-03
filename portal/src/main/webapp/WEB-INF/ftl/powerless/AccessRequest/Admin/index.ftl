@@ -5,6 +5,8 @@
 <@template.master title="Requests for Datasets"
     javascripts=["/js/jquery.dataTables.min.js"
     ,"/js/jquery.watermark.min.js"
+    ,"/js/admin/access/util/moment.min.js"
+    ,"/js/admin/access/timeLimit.js"
     ,"/js/admin/access/requestCloseDialog.js"
     ,"/js/admin/access/requestGrantDialog.js"
     ,"/js/admin/access/requestDenyDialog.js"

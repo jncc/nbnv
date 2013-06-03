@@ -27,6 +27,23 @@ public class TaxonObservationProvider {
         return SQL();
     }
 
+    public String filteredSelectRequestableRecordIDs(Map<String, Object> params) {
+        String from = createSelectEnhanced(params, "o.id");
+        BEGIN();
+        SELECT("obs.id");
+        FROM(from);
+        WHERE("obs.id NOT IN ( SELECT utoa.observationID FROM UserTaxonObservationID utoa WHERE utoa.userID = #{user.id} )");
+        return SQL();
+    }
+
+    public String filteredSelectRequestableRecordIDsOrganisation(Map<String, Object> params) {
+        String from = createSelectEnhanced(params, "o.id");
+        BEGIN();
+        SELECT("obs.id");
+        FROM(from);
+        WHERE("obs.id NOT IN ( SELECT utoa.observationID FROM OrganisationTaxonObservationID utoa WHERE utoa.organisationID = #{organisation.id} )");
+        return SQL();
+    }
     public String filteredSelectRecordsOrderedByDataset(Map<String, Object> params) {
         String from = createSelect(params, "o.*");
         BEGIN();
@@ -101,6 +118,16 @@ public class TaxonObservationProvider {
         return SQL();
     }
         
+    public String filteredSelectRequestableDatasetsOrganisation(Map<String, Object> params) {
+        String from = createSelectEnhanced(params, "o.datasetKey, o.sensitive, o.id");
+        BEGIN();
+        SELECT("obs.datasetKey, COUNT(*) querySpecificObservationCount, SUM(CAST(obs.sensitive AS int)) querySpecificSensitiveObservationCount");
+        FROM(from);
+        WHERE("obs.id NOT IN ( SELECT utoa.observationID FROM OrganisationTaxonObservationID utoa WHERE utoa.organisationID = #{organisation.id} )");
+        GROUP_BY("obs.datasetKey");
+        return SQL();
+    }
+
     public String filteredSelectRequestableSensitiveDatasets(Map<String, Object> params) {
         params.put("sensitive", Boolean.TRUE);
         String from = createSelectEnhanced(params, "o.datasetKey, o.sensitive, o.id");
@@ -108,6 +135,18 @@ public class TaxonObservationProvider {
         SELECT("obs.datasetKey, COUNT(*) querySpecificObservationCount");
         FROM(from);
         WHERE("obs.id NOT IN ( SELECT utoa.observationID FROM UserTaxonObservationID utoa WHERE utoa.userID = #{user.id} )");
+        WHERE("obs.sensitive = 1");
+        GROUP_BY("obs.datasetKey");
+        return SQL();
+    }
+
+    public String filteredSelectRequestableSensitiveDatasetsOrganisation(Map<String, Object> params) {
+        params.put("sensitive", Boolean.TRUE);
+        String from = createSelectEnhanced(params, "o.datasetKey, o.sensitive, o.id");
+        BEGIN();
+        SELECT("obs.datasetKey, COUNT(*) querySpecificObservationCount");
+        FROM(from);
+        WHERE("obs.id NOT IN ( SELECT utoa.observationID FROM OrganisationTaxonObservationID utoa WHERE utoa.organisationID = #{organisation.id} )");
         WHERE("obs.sensitive = 1");
         GROUP_BY("obs.datasetKey");
         return SQL();

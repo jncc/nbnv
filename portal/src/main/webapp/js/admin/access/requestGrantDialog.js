@@ -7,6 +7,7 @@ nbn.nbnv.ui.dialog.requestGrantDialog = function() {
     this.requestID =  -1;
     this.div = null;
     this.reason = '';
+    this.timeLimit = null;
     
     this._render = function() {
         var _me = this;
@@ -21,6 +22,8 @@ nbn.nbnv.ui.dialog.requestGrantDialog = function() {
                 .addClass('ui-state-error')
                 .append('This request was sent without the user knowing about your dataset. If you reply, they will. So be careful m\'kay?')
                 .hide()
+            ).append($('<p>')
+                .attr('id', 'granttimelimit')
             ).append($('<p>')
                 .append('Grant reason:')
                 .append($('<textarea>')
@@ -37,9 +40,18 @@ nbn.nbnv.ui.dialog.requestGrantDialog = function() {
                 width: 650,
                 buttons: { 
                     "Grant Request": function() {
-                        alert(_me.requestID);
-                        alert(_me.reason);
-                        $(this).dialog("close"); 
+                        var filter = { action: "grant", reason: _me.reason };
+                        
+                        if (!_me.timeLimit._all) {
+                            filter.expires = _me.timeLimit.getJson().date;
+                        }
+                        
+                        $.ajax({
+                            type: 'POST',
+                            url: nbn.nbnv.api + '/user/userAccesses/requests/' + _me.requestID,
+                            data: filter,
+                            success: function () { document.location.reload(true); }
+                        });
                     }, Cancel: function() { 
                         $(this).dialog("close"); 
                     }
@@ -49,6 +61,8 @@ nbn.nbnv.ui.dialog.requestGrantDialog = function() {
     
     this.show = function(id, json, dataset, datasetEndpoint) {
         this.requestID = id;
+        this.timeLimit = new nbn.nbnv.ui.timeLimit(json);
+        $('#granttimelimit').append(this.timeLimit._renderPanel());
         var filter = {};
         $('#granteffect').html('');
         $('#granteffect').text('Loading request record coverage');

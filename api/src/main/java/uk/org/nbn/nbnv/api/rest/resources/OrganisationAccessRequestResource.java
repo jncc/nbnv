@@ -25,14 +25,20 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import uk.org.nbn.nbnv.api.dao.core.OperationalOrganisationAccessRequestMapper;
+import uk.org.nbn.nbnv.api.dao.core.OperationalOrganisationTaxonObservationAccessMapper;
 import uk.org.nbn.nbnv.api.dao.core.OperationalTaxonObservationFilterMapper;
-import uk.org.nbn.nbnv.api.dao.core.OperationalUserAccessRequestMapper;
-import uk.org.nbn.nbnv.api.dao.core.OperationalUserTaxonObservationAccessMapper;
+import uk.org.nbn.nbnv.api.dao.warehouse.OrganisationMapper;
+import uk.org.nbn.nbnv.api.model.Organisation;
+import uk.org.nbn.nbnv.api.model.OrganisationAccessRequest;
+import uk.org.nbn.nbnv.api.model.OrganisationMembership;
 import uk.org.nbn.nbnv.api.model.TaxonObservationFilter;
 import uk.org.nbn.nbnv.api.model.User;
 import uk.org.nbn.nbnv.api.model.UserAccessRequest;
 import uk.org.nbn.nbnv.api.model.meta.AccessRequestJSON;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenAccessRequestAdminUser;
+import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenOrganisationJoinRequestUser;
+import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenOrganisationUser;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
 import uk.org.nbn.nbnv.api.utils.AccessRequestUtils;
 
@@ -41,11 +47,12 @@ import uk.org.nbn.nbnv.api.utils.AccessRequestUtils;
  * @author Paul Gilbertson
  */
 @Component
-@Path("/user/userAccesses")
-public class UserAccessRequestResource extends AbstractResource {
+@Path("/organisation/organisationAccesses")
+public class OrganisationAccessRequestResource extends AbstractResource {
     @Autowired OperationalTaxonObservationFilterMapper oTaxonObservationFilterMapper;
-    @Autowired OperationalUserAccessRequestMapper oUserAccessRequestMapper;
-    @Autowired OperationalUserTaxonObservationAccessMapper oUserTaxonObservationAccessMapper;
+    @Autowired OperationalOrganisationAccessRequestMapper oOrganisationAccessRequestMapper;
+    @Autowired OperationalOrganisationTaxonObservationAccessMapper oOrganisationTaxonObservationAccessMapper;
+    @Autowired OrganisationMapper organisationMapper;
     @Autowired AccessRequestUtils accessRequestUtils;
     
     
@@ -57,10 +64,12 @@ public class UserAccessRequestResource extends AbstractResource {
     public Response createRequest(@TokenUser(allowPublic=false) User user, String json) throws IOException {
         AccessRequestJSON accessRequest = parseJSON(json);
 
-        // Fail if this is an organisation request
-        if (accessRequest.getReason().getOrganisationID() > -1) {
+        // Fail if this is an user request
+        if (accessRequest.getReason().getOrganisationID() == -1) {
             return Response.serverError().build();
         }
+        
+        Organisation org = organisationMapper.selectByID(accessRequest.getReason().getOrganisationID());
         
         if (!accessRequest.getSpatial().isAll() && !accessRequest.getDataset().isSecret()) {
             accessRequest.setSensitive("ns");
@@ -68,12 +77,11 @@ public class UserAccessRequestResource extends AbstractResource {
 
         TaxonObservationFilter filter = accessRequestUtils.createFilter(json, accessRequest);
         List<String> species = accessRequestUtils.createSpeciesList(accessRequest);        
-        List<String> datasets = accessRequestUtils.createDatasetList(accessRequest, species, user);
-        
+        List<String> datasets = accessRequestUtils.createDatasetList(accessRequest, species, org);
         
         for (String datasetKey : datasets) {
             oTaxonObservationFilterMapper.createFilter(filter);
-            oUserAccessRequestMapper.createRequest(filter.getId(), user.getId(), datasetKey, accessRequest.getReason().getPurpose(), accessRequest.getReason().getDetails(), new Date(new java.util.Date().getTime()));
+            oOrganisationAccessRequestMapper.createRequest(filter.getId(), org.getId(), datasetKey, accessRequest.getReason().getPurpose(), accessRequest.getReason().getDetails(), new Date(new java.util.Date().getTime()));
         }
 
         return Response.ok("success").build();
@@ -87,8 +95,8 @@ public class UserAccessRequestResource extends AbstractResource {
     public Response editRequest(@TokenAccessRequestAdminUser(path="id") User user, @PathParam("id") int filterID, String json) throws IOException {
         AccessRequestJSON accessRequest = parseJSON(json);
 
-        // Fail if this is an organisation request
-        if (accessRequest.getReason().getOrganisationID() > -1) {
+        // Fail if this is an user request
+        if (accessRequest.getReason().getOrganisationID() == -1) {
             return Response.serverError().build();
         }
         TaxonObservationFilter filter = accessRequestUtils.createFilter(json, accessRequest);
@@ -98,53 +106,52 @@ public class UserAccessRequestResource extends AbstractResource {
     }
 
     @GET
-    @Path("/requests")
+    @Path("/{id}/requests")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<UserAccessRequest> getRequests(@TokenUser(allowPublic=false) User user) throws IOException {
-        return oUserAccessRequestMapper.getUserRequests(user.getId());
+    public List<OrganisationAccessRequest> getRequests(@TokenOrganisationUser(path="id", roles = OrganisationMembership.Role.administrator) User user, @PathParam("id") int orgID) throws IOException {
+        return oOrganisationAccessRequestMapper.getOrganisationRequests(orgID);
     }
     
     @GET
-    @Path("/requests/granted")
+    @Path("{id}/requests/granted")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<UserAccessRequest> getGrantedRequests(@TokenUser(allowPublic=false) User user) throws IOException {
-        return oUserAccessRequestMapper.getGrantedUserRequests(user.getId());
+    public List<OrganisationAccessRequest> getGrantedRequests(@TokenOrganisationUser(path="id", roles = OrganisationMembership.Role.administrator) User user, @PathParam("id") int orgID) throws IOException {
+        return oOrganisationAccessRequestMapper.getGrantedOrganisationRequests(orgID);
     }
 
     @GET
     @Path("/requests/admin")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<UserAccessRequest> getRequestsForAdmin(@TokenUser(allowPublic=false) User user) {
-        return oUserAccessRequestMapper.getAdminableRequests(user.getId());
+    public List<OrganisationAccessRequest> getRequestsForAdmin(@TokenUser(allowPublic=false) User user) {
+        return oOrganisationAccessRequestMapper.getAdminableRequests(user.getId());
     }
     
     @GET
     @Path("/requests/admin/pending")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<UserAccessRequest> getRequestsPendingForAdmin(@TokenUser(allowPublic=false) User user) {
-        return oUserAccessRequestMapper.getPendingAdminableRequests(user.getId());
+    public List<OrganisationAccessRequest> getRequestsPendingForAdmin(@TokenUser(allowPublic=false) User user) {
+        return oOrganisationAccessRequestMapper.getPendingAdminableRequests(user.getId());
     }
 
     @GET
     @Path("/requests/admin/granted")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<UserAccessRequest> getRequestsGrantedForAdmin(@TokenUser(allowPublic=false) User user) {
-        return oUserAccessRequestMapper.getGrantedAdminableRequests(user.getId());
+    public List<OrganisationAccessRequest> getRequestsGrantedForAdmin(@TokenUser(allowPublic=false) User user) {
+        return oOrganisationAccessRequestMapper.getGrantedAdminableRequests(user.getId());
     }
 
     @GET
     @Path("/requests/admin/denied")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<UserAccessRequest> getRequestsDeniedForAdmin(@TokenUser(allowPublic=false) User user) {
-        return oUserAccessRequestMapper.getDeniedAdminableRequests(user.getId());
+    public List<OrganisationAccessRequest> getRequestsDeniedForAdmin(@TokenUser(allowPublic=false) User user) {
+        return oOrganisationAccessRequestMapper.getDeniedAdminableRequests(user.getId());
     }
 
     @GET
     @Path("/requests/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public UserAccessRequest getRequest(@TokenAccessRequestAdminUser(path="id") User user
-            , @PathParam("id") int filterID) {
-        return oUserAccessRequestMapper.getRequest(filterID);
+    public OrganisationAccessRequest getRequest(@TokenAccessRequestAdminUser(path="id") User user, @PathParam("id") int filterID) {
+        return oOrganisationAccessRequestMapper.getRequest(filterID);
     }
     
     @POST
@@ -170,67 +177,68 @@ public class UserAccessRequestResource extends AbstractResource {
        
     private Response acceptRequest(int filterID, String reason, String expires) throws ParseException {
         if (expires.isEmpty()) {
-            oUserAccessRequestMapper.acceptRequest(filterID, reason, new Date(new java.util.Date().getTime()));
+            oOrganisationAccessRequestMapper.acceptRequest(filterID, reason, new Date(new java.util.Date().getTime()));
             return Response.status(Response.Status.OK).entity("{}").build();
         } else {
             DateFormat df = new SimpleDateFormat("dd/mm/yyyy");
             java.util.Date expiresDate = df.parse(expires);
-            oUserAccessRequestMapper.acceptRequestWithExpires(filterID, reason, new Date(new java.util.Date().getTime()), new Date(expiresDate.getTime()));
+            oOrganisationAccessRequestMapper.acceptRequestWithExpires(filterID, reason, new Date(new java.util.Date().getTime()), new Date(expiresDate.getTime()));
             return Response.status(Response.Status.OK).entity("{}").build();
         }
     }
 
     private Response denyRequest(int filterID, String reason) {
-        oUserAccessRequestMapper.denyRequest(filterID, reason, new Date(new java.util.Date().getTime()));
+        oOrganisationAccessRequestMapper.denyRequest(filterID, reason, new Date(new java.util.Date().getTime()));
         return Response.status(Response.Status.OK).entity("{}").build();
     }
 
     private Response closeRequest(int filterID, String reason) {
-        oUserAccessRequestMapper.closeRequest(filterID, reason, new Date(new java.util.Date().getTime()));
+        oOrganisationAccessRequestMapper.closeRequest(filterID, reason, new Date(new java.util.Date().getTime()));
         return Response.status(Response.Status.OK).entity("{}").build();
     }
 
     private Response revokeRequest(int filterID, String reason) {
-        oUserAccessRequestMapper.revokeRequest(filterID, reason, new Date(new java.util.Date().getTime()));
+        oOrganisationAccessRequestMapper.revokeRequest(filterID, reason, new Date(new java.util.Date().getTime()));
         return Response.status(Response.Status.OK).entity("{}").build();
     }
 
     private boolean stripAccess(int id) throws IOException {
-        UserAccessRequest uar = oUserAccessRequestMapper.getRequest(id);
+        OrganisationAccessRequest uar = oOrganisationAccessRequestMapper.getRequest(id);
         AccessRequestJSON accessRequest = parseJSON(uar.getFilter().getFilterJSON());
 
         List<String> species = accessRequestUtils.createSpeciesList(accessRequest);        
-        List<Integer> records = accessRequestUtils.getRecordSet(accessRequest, species, uar.getDatasetKey(), uar.getUser());
+        List<Integer> records = accessRequestUtils.getRecordSet(accessRequest, species, uar.getDatasetKey(), uar.getOrganisation());
         
         for (int i : records) {
-            oUserTaxonObservationAccessMapper.RemoveAccess(uar.getUser().getId(), i);
+            oOrganisationTaxonObservationAccessMapper.RemoveAccess(uar.getOrganisation().getId(), i);
         }
 
-        List<UserAccessRequest> uars = oUserAccessRequestMapper.getGrantedUserRequestsByDataset(uar.getDatasetKey(), uar.getUser().getId());
+        List<OrganisationAccessRequest> uars = oOrganisationAccessRequestMapper.getGrantedOrganisationRequestsByDataset(uar.getDatasetKey(), uar.getOrganisation().getId());
         
-        for (UserAccessRequest req : uars) {
+        for (OrganisationAccessRequest req : uars) {
             giveAccess(req);
         }
         return true;
     }
 
     private boolean giveAccess(int id) throws IOException {
-        UserAccessRequest uar = oUserAccessRequestMapper.getRequest(id);
+        OrganisationAccessRequest uar = oOrganisationAccessRequestMapper.getRequest(id);
         return giveAccess(uar);
     }
     
-    private boolean giveAccess(UserAccessRequest uar) throws IOException {
+    private boolean giveAccess(OrganisationAccessRequest uar) throws IOException {
         AccessRequestJSON accessRequest = parseJSON(uar.getFilter().getFilterJSON());
 
         List<String> species = accessRequestUtils.createSpeciesList(accessRequest);        
-        List<Integer> records = accessRequestUtils.getRecordSet(accessRequest, species, uar.getDatasetKey(), uar.getUser());
+        List<Integer> records = accessRequestUtils.getRecordSet(accessRequest, species, uar.getDatasetKey(), uar.getOrganisation());
         
         for (int i : records) {
-            oUserTaxonObservationAccessMapper.AddAccess(uar.getUser().getId(), i);
+            oOrganisationTaxonObservationAccessMapper.AddAccess(uar.getOrganisation().getId(), i);
         }
 
         return true;
     }
+    
     private AccessRequestJSON parseJSON(String json) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.readValue(json, AccessRequestJSON.class);

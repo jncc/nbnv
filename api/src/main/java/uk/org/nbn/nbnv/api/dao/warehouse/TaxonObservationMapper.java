@@ -1,8 +1,6 @@
 package uk.org.nbn.nbnv.api.dao.warehouse;
 
 import java.util.List;
-import org.apache.ibatis.annotations.CacheNamespace;
-import org.apache.ibatis.annotations.Many;
 import org.apache.ibatis.annotations.One;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Result;
@@ -11,6 +9,7 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.SelectProvider;
 import uk.org.nbn.nbnv.api.dao.providers.TaxonObservationProvider;
 import uk.org.nbn.nbnv.api.model.Dataset;
+import uk.org.nbn.nbnv.api.model.Organisation;
 import uk.org.nbn.nbnv.api.model.Taxon;
 import uk.org.nbn.nbnv.api.model.TaxonDataset;
 import uk.org.nbn.nbnv.api.model.TaxonDatasetWithQueryStats;
@@ -50,6 +49,34 @@ public interface TaxonObservationMapper {
             , @Param("taxonOutputGroup") String taxonOutputGroup
             , @Param("gridRef") String gridRef);
     
+    @SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectRequestableRecordIDs")
+    public List<Integer> selectRequestableObservationRecordIDsByFilter(
+            @Param("user") User user
+            , @Param("startYear") Integer startYear
+            , @Param("endYear") Integer endYear
+            , @Param("datasetKey") List<String> datasetKey
+            , @Param("ptvk") List<String> ptvk
+            , @Param("spatialRelationship") String spatialRelationship
+            , @Param("featureID") String featureId
+            , @Param("sensitive") Boolean sensitive
+            , @Param("designation") String designation
+            , @Param("taxonOutputGroup") String taxonOutputGroup
+            , @Param("gridRef") String gridRef);
+
+    @SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectRequestableRecordIDsOrganisation")
+    public List<Integer> selectRequestableObservationRecordIDsByFilterOrganisation(
+            @Param("organisation") Organisation organisation
+            , @Param("startYear") Integer startYear
+            , @Param("endYear") Integer endYear
+            , @Param("datasetKey") List<String> datasetKey
+            , @Param("ptvk") List<String> ptvk
+            , @Param("spatialRelationship") String spatialRelationship
+            , @Param("featureID") String featureId
+            , @Param("sensitive") Boolean sensitive
+            , @Param("designation") String designation
+            , @Param("taxonOutputGroup") String taxonOutputGroup
+            , @Param("gridRef") String gridRef);
+
     @SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectOneAttribute")
     public List<TaxonObservationAttributeValue> selectObservationAttributeByFilter(
             @Param("user") User user
@@ -169,6 +196,24 @@ public interface TaxonObservationMapper {
             , @Param("taxonOutputGroup") String taxonOutputGroup
             , @Param("gridRef") String gridRef);
     
+    @SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectRequestableDatasetsOrganisation")
+    @Results(value = {
+        @Result(property="taxonDataset", column="datasetKey", javaType=TaxonDataset.class, one=@One(select="uk.org.nbn.nbnv.api.dao.warehouse.DatasetMapper.selectByIDProviderNotInstantiated")),
+        @Result(property="datasetKey", column="datasetKey")
+    })
+    public List<TaxonDatasetWithQueryStats> selectRequestableObservationDatasetsByFilterOrganisation(
+            @Param("organisation") Organisation organisation
+            , @Param("startYear") Integer startYear
+            , @Param("endYear") Integer endYear
+            , @Param("datasetKey") List<String> datasetKey
+            , @Param("ptvk") List<String> ptvk
+            , @Param("spatialRelationship") String spatialRelationship
+            , @Param("featureID") String featureId
+            , @Param("sensitive") Boolean sensitive
+            , @Param("designation") String designation
+            , @Param("taxonOutputGroup") String taxonOutputGroup
+            , @Param("gridRef") String gridRef);
+
     @SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectRequestableSensitiveDatasets")
     @Results(value = {
         @Result(property="taxonDataset", column="datasetKey", javaType=TaxonDataset.class, one=@One(select="uk.org.nbn.nbnv.api.dao.warehouse.DatasetMapper.selectByIDProviderNotInstantiated")),
@@ -176,6 +221,24 @@ public interface TaxonObservationMapper {
     })
     public List<TaxonDatasetWithQueryStats> selectRequestableSensitiveObservationDatasetsByFilter(
             @Param("user") User user
+            , @Param("startYear") Integer startYear
+            , @Param("endYear") Integer endYear
+            , @Param("datasetKey") List<String> datasetKey
+            , @Param("ptvk") List<String> ptvk
+            , @Param("spatialRelationship") String spatialRelationship
+            , @Param("featureID") String featureId
+            , @Param("sensitive") Boolean sensitive
+            , @Param("designation") String designation
+            , @Param("taxonOutputGroup") String taxonOutputGroup
+            , @Param("gridRef") String gridRef);
+
+    @SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectRequestableSensitiveDatasetsOrganisation")
+    @Results(value = {
+        @Result(property="taxonDataset", column="datasetKey", javaType=TaxonDataset.class, one=@One(select="uk.org.nbn.nbnv.api.dao.warehouse.DatasetMapper.selectByIDProviderNotInstantiated")),
+        @Result(property="datasetKey", column="datasetKey")
+    })
+    public List<TaxonDatasetWithQueryStats> selectRequestableSensitiveObservationDatasetsByFilterOrganisation(
+            @Param("organisation") Organisation organisation
             , @Param("startYear") Integer startYear
             , @Param("endYear") Integer endYear
             , @Param("datasetKey") List<String> datasetKey
