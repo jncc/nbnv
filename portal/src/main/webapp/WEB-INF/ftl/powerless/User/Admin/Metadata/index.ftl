@@ -15,7 +15,7 @@
             <table>
                 <#list datasets as d>
                     <tr>
-                        <td><a href="Metadata/${d.key}">${d.title}</a></td>
+                        <td><a href="/Datasets/${d.key}/Edit">${d.title}</a></td>
                         <td>${d.organisationName}</td>
                         <td>${d.typeName}</td>
                         <td>${d.formattedDateUploaded}</td>
