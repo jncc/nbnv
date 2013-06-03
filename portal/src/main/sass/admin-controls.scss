@@ -1,4 +1,4 @@
-input {
+input:not([type="submit"]):not([name=q]) {
     width: 100%;
 }
 
