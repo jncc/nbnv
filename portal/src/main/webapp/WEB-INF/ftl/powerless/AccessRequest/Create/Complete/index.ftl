@@ -1,7 +1,7 @@
 <#assign data="${RequestParameters.json}" />
 
 <@template.master title="Conditions"
-    javascripts=["/js/jquery-ui-1.8.23.custom.min.js","/js/admin/access/warning.js","/js/admin/access/util/requestJsonToText.js","/js/admin/access/privileges.js","/js/admin/access/privilege.js","/js/admin/access/requestedAccess.js","/js/admin/access/accessRequest.js"]
+    javascripts=["/js/jquery-ui-1.8.23.custom.min.js","/js/admin/access/util/requestJsonToText.js"]
     csss=["/css/smoothness/jquery-ui-1.8.23.custom.css","/css/proto-contols.css"]>
 
     <script>
@@ -9,12 +9,17 @@
 
 
         $(function() {
+            var userUrl = nbn.nbnv.api + '/user/userAccesses/requests';
+            var orgUrl = nbn.nbnv.api + '/organisation/organisationAccesses/requests';
+            var data = ${data};
+            var url = data.reason.organisationID != -1 ? orgUrl : userUrl;
+
             $.ajax({
                 type: "PUT",
-                url: nbn.nbnv.api + '/user/userAccesses/requests',
+                url: url,
                 contentType: 'application/json',
                 processData: false,
-                data: '${data}',
+                data: JSON.stringify(data),
                 success: function() {
                     $('#debug-data').append("Success");
                 },
