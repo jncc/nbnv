@@ -29,13 +29,29 @@ import uk.org.nbn.nbnv.api.rest.resources.utils.DownloadHelper;
 @Path("/gridMapSquares")
 public class GridMapSquareResource extends AbstractResource {
 
-    @Autowired
-    GridMapSquareMapper gridMapSquareMapper;
-    @Autowired
-    TaxonMapper taxonMapper;
-    @Autowired
-    DownloadHelper downloadHelper;
+    @Autowired GridMapSquareMapper gridMapSquareMapper;
+    @Autowired TaxonMapper taxonMapper;
+    @Autowired DownloadHelper downloadHelper;
 
+    /**
+     * Returns a zip file containing a list of grid map squares filtered by the
+     * given parameters, specifically the Taxon Version Key supplied
+     * 
+     * @param user The current user (determines what records are available)
+     * @param ptvk The Taxon Version Key we are looking for
+     * @param resolution What resolution we are looking for
+     * @param bands A list of bands
+     * @param datasetKeys A list of datasets to restrict the search to
+     * @param viceCountyIdentifier An identifier for a Vice County
+     * 
+     * @return A zip containing a list of grid squares filtered by the given
+     * parameters
+     * 
+     * @throws IOException 
+     * 
+     * @response.representation.200.qname StreamingOutput
+     * @response.representation.200.mediaType application/x-zip-compressed
+     */
     @GET
     @Produces("application/x-zip-compressed")
     @Path("{ptvk : [A-Z]{3}SYS[0-9]{10}}")
@@ -59,6 +75,15 @@ public class GridMapSquareResource extends AbstractResource {
         };
     }
 
+    /**
+     * 
+     * @param zip
+     * @param user
+     * @param ptvk
+     * @param resolution
+     * @param bands
+     * @throws IOException 
+     */
     private void addReadMe(ZipOutputStream zip, User user, String ptvk, String resolution, List<String> bands) throws IOException {
         Taxon taxon = taxonMapper.getTaxon(ptvk);
         String title = "Grid map square download from the NBN Gateway";
@@ -72,6 +97,17 @@ public class GridMapSquareResource extends AbstractResource {
         downloadHelper.addReadMe(zip, user, title, filters);
     }
 
+    /**
+     * 
+     * @param zip
+     * @param user
+     * @param ptvk
+     * @param resolution
+     * @param bands
+     * @param datasetKey
+     * @param viceCountyIdentifier
+     * @throws IOException 
+     */
     private void addGridRefs(ZipOutputStream zip, User user, String ptvk, String resolution, List<String> bands, List<String> datasetKey, String viceCountyIdentifier) throws IOException {
         for (String band : bands) {
             if (!"".equals(band)) {
@@ -82,6 +118,17 @@ public class GridMapSquareResource extends AbstractResource {
         }
     }
 
+    /**
+     * 
+     * @param zip
+     * @param user
+     * @param ptvk
+     * @param resolution
+     * @param band
+     * @param datasetKeys
+     * @param viceCountyIdentifier
+     * @throws IOException 
+     */
     private void addGridRefsForYearBand(ZipOutputStream zip, User user, String ptvk, String resolution, String band, List<String> datasetKeys, String viceCountyIdentifier) throws IOException {
         //Example year band: 2000-2012,ff0000,000000
         String yearRange = band.substring(0,band.indexOf(","));
@@ -94,11 +141,27 @@ public class GridMapSquareResource extends AbstractResource {
         zip.flush();
     }
 
+    /**
+     * 
+     * @param zip
+     * @param user
+     * @param ptvk
+     * @param resolution
+     * @param bands
+     * @param datasetKeys
+     * @param viceCountyIdentifier
+     * @throws IOException 
+     */
     private void addDatasetMetadata(ZipOutputStream zip, User user, String ptvk, String resolution, List<String> bands, List<String> datasetKeys, String viceCountyIdentifier) throws IOException {
         List<TaxonDataset> taxonDatasets = gridMapSquareMapper.getGridMapDatasets(user, ptvk, resolution, getStartYear(bands), getEndYear(bands), datasetKeys, viceCountyIdentifier);
         downloadHelper.addDatasetMetadata(zip, user.getId(), taxonDatasets);
     }
     
+    /**
+     * 
+     * @param bands
+     * @return 
+     */
     private Integer getStartYear(List<String> bands){
         Integer toReturn = Calendar.getInstance().get(Calendar.YEAR);
         if(bands.size() < 1){
@@ -114,6 +177,11 @@ public class GridMapSquareResource extends AbstractResource {
         return toReturn;
     }
     
+    /**
+     * 
+     * @param bands
+     * @return 
+     */
     private Integer getEndYear(List<String> bands){
         Integer toReturn = 0;
         if(bands.size() < 1){

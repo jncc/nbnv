@@ -17,12 +17,30 @@ public class HabitatDatasetResource extends AbstractResource {
     
     @Autowired HabitatDatasetMapper habitatDatasetMapper;
     
+    /**
+     * Returns a list of all habitat datasets from the data warehouse
+     * 
+     * @return A list of all habitat datasets from the data warehouse
+     * 
+     * @response.representation.200.qname List<HabitatDataset>
+     * @response.representation.200.mediaType application/json
+     */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public List<HabitatDataset> get(){
         return habitatDatasetMapper.get();
     }
     
+    /**
+     * Returns a specific habitat dataset from the data warehouse
+     * 
+     * @param id A Habitat Dataset Key
+     * 
+     * @return A specific habitat dataset from the data warehouse
+     * 
+     * @response.representation.200.qname HabitatDataset
+     * @response.representation.200.mediaType application/json
+     */
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)

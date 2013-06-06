@@ -20,12 +20,30 @@ public class SiteBoundaryDatasetResource extends AbstractResource {
     @Autowired SiteBoundaryDatasetMapper SiteBoundaryDatasetMapper;
     @Autowired SiteBoundaryMapper siteBoundaryMapper;
     
+    /**
+     * Return a list of all Site Boundary Datasets from the data warehouse
+     * 
+     * @return A list of all Site Boundary Datasets from the data warehouse
+     * 
+     * @response.representation.200.qname SiteBoundaryCategory
+     * @response.representation.200.mediaType application/json
+     */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public List<SiteBoundaryDataset> get(){
         return SiteBoundaryDatasetMapper.get();
     }
     
+    /**
+     * Returns a specific Site Boundary Dataset from the data warehouse
+     * 
+     * @param id A Site Boundary Dataset ID
+     * 
+     * @return A specific Site Boundary Dataset from the data warehouse
+     * 
+     * @response.representation.200.qname SiteBoundaryCategory
+     * @response.representation.200.mediaType application/json
+     */
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -33,6 +51,16 @@ public class SiteBoundaryDatasetResource extends AbstractResource {
         return SiteBoundaryDatasetMapper.getByDatasetKey(id);
     }
     
+    /**
+     * Return a list of Site Boundaries associated with a specified Dataset
+     * 
+     * @param id A dataset Key
+     * 
+     * @return A list of Site Boundaries associated with a specified Dataset
+     * 
+     * @response.representation.200.qname List<SiteBoundary>
+     * @response.representation.200.mediaType application/json
+     */
     @GET
     @Path("/{id}/siteBoundaries")
     @Produces(MediaType.APPLICATION_JSON)

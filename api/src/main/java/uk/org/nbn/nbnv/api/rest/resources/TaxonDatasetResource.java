@@ -23,12 +23,30 @@ public class TaxonDatasetResource extends AbstractResource {
     @Autowired SurveyMapper surveyMapper;
     @Autowired AttributeMapper attributeMapper;
     
+    /**
+     * Return a list of all Taxon Datasets from the data warehouse
+     * 
+     * @return A list of all Taxon Datasets from the data warehouse
+     * 
+     * @response.representation.200.qname List<TaxonDataset>
+     * @response.representation.200.mediaType application/json
+     */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public List<TaxonDataset> getDatasetList(){
         return datasetMapper.selectAllTaxonDatasets();
     }
     
+    /**
+     * Return a specific Taxon Dataset from the data warehouse
+     * 
+     * @param id A Taxon Dataset ID
+     * 
+     * @return A specific Taxon Dataset from the data warehouse
+     * 
+     * @response.representation.200.qname TaxonDataset
+     * @response.representation.200.mediaType application/json
+     */
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -37,6 +55,18 @@ public class TaxonDatasetResource extends AbstractResource {
         return toReturn;
     }
     
+    /**
+     * Return a list of Dataset Stats of the Taxon within a Taxon Dataset from 
+     * the data warehouse
+     * 
+     * @param id A Taxon Dataset ID
+     * 
+     * @return A list of Dataset Stats of the Taxon within a Taxon Dataset from 
+     * the data warehouse
+     * 
+     * @response.representation.200.qname List<TaxonWithDatasetStats>
+     * @response.representation.200.mediaType application/json
+     */
     @GET
     @Path("/{id}/taxa")
     @Produces(MediaType.APPLICATION_JSON)
@@ -44,6 +74,16 @@ public class TaxonDatasetResource extends AbstractResource {
         return taxonMapper.selectByDatasetKey(id);
     }
     
+    /**
+     * Return a list of yearly stats for specific dataset
+     * 
+     * @param id A dataset key
+     * 
+     * @return A list of yearly stats for specific dataset
+     * 
+     * @response.representation.200.qname JSONObject
+     * @response.representation.200.mediaType application/json
+     */
     @GET
     @Path("/{id}/recordsPerYear")
     @Produces(MediaType.APPLICATION_JSON)
@@ -51,6 +91,16 @@ public class TaxonDatasetResource extends AbstractResource {
         return datasetMapper.selectRecordsPerYear(id);
     }
     
+    /**
+     * Return a list of records per date for a specific dataset
+     * 
+     * @param id A dataset key
+     * 
+     * @return A list of records per date for a specific dataset
+     * 
+     * @response.representation.200.qname JSONObject
+     * @response.representation.200.mediaType application/json
+     */
     @GET
     @Path("/{id}/recordsPerDateType")
     @Produces(MediaType.APPLICATION_JSON)
@@ -58,6 +108,16 @@ public class TaxonDatasetResource extends AbstractResource {
         return datasetMapper.selectRecordCountPerDateTypeByDatasetKey(id);
     }
     
+    /**
+     * Return a list of surveys in a dataset
+     * 
+     * @param id A dataset key
+     * 
+     * @return A list of surveys in a dataset
+     * 
+     * @response.representation.200.qname JSONObject
+     * @response.representation.200.mediaType application/json
+     */
     @GET
     @Path("/{id}/surveys")
     @Produces(MediaType.APPLICATION_JSON)
@@ -65,6 +125,16 @@ public class TaxonDatasetResource extends AbstractResource {
         return surveyMapper.selectSurveysByDatasetKey(id);
     }
     
+    /**
+     * Return a list of attributes in a specific dataset
+     * 
+     * @param id A dataset key
+     * 
+     * @return A list of attributes in a specific dataset
+     * 
+     * @response.representation.200.qname JSONObject
+     * @response.representation.200.mediaType application/json
+     */
     @GET
     @Path("/{id}/attributes")
     @Produces(MediaType.APPLICATION_JSON)

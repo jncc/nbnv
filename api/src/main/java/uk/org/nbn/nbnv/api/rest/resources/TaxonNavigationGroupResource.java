@@ -16,15 +16,30 @@ import uk.org.nbn.nbnv.api.solr.SolrResponse;
 public class TaxonNavigationGroupResource extends AbstractResource {
 
     @Autowired TaxonNavigationGroupMapper mapper;
-
     @Autowired Solr solr;
     
+    /**
+     * Return a list of all Taxon Navigation Groups from the data warehouse
+     * 
+     * @response.representation.200.qname List<TaxonNavigationGroup>
+     * @response.representation.200.mediaType application/json
+     */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public List<TaxonNavigationGroup> getTaxonNavigationGroups() {
         return mapper.selectAll();
     }
 
+    /**
+     * Return a specific Taxon Navigation Group from the data warehouse
+     * 
+     * @param id A Taxon Navigation Group ID
+     * 
+     * @return A specific Taxon Navigation Group from the data warehouse
+     * 
+     * @response.representation.200.qname TaxonNavigationGroup
+     * @response.representation.200.mediaType application/json
+     */
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -32,6 +47,18 @@ public class TaxonNavigationGroupResource extends AbstractResource {
         return mapper.getTaxonNavigationGroup(id);
     }
 
+    /**
+     * Return the Top Levels of Taxon Navigation Groups, optionally associated
+     * with a Designation TODO: Do we need this? Have another endpoint which does
+     * this below
+     * 
+     * @param designationId A Designation ID (Optional)
+     * 
+     * @return The Top Levels of Taxon Navigation Groups
+     *  
+     * @response.representation.200.qname List<TaxonNavigationGroup>
+     * @response.representation.200.mediaType application/json
+     */
     @GET
     @Path("/topLevels")
     @Produces(MediaType.APPLICATION_JSON)
@@ -43,6 +70,18 @@ public class TaxonNavigationGroupResource extends AbstractResource {
         }
     }
 
+    /**
+     * Return the Top Levels of Taxon Navigation Groups associated with a 
+     * Designation
+     * 
+     * @param id A Designation ID
+     * 
+     * @return The Top Levels of Taxon Navigation Groups associated with a 
+     * Designation
+     * 
+     * @response.representation.200.qname List<TaxonNavigationGroup>
+     * @response.representation.200.mediaType application/json
+     */
     @GET
     @Path("/topLevels/designations/{designationId}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -50,6 +89,20 @@ public class TaxonNavigationGroupResource extends AbstractResource {
         return mapper.getTopLevelsByDesignationID(id);
     }
 
+    /**
+     * Return a solr response returning Taxa within a Taxon Navigation Group
+     * 
+     * @param taxonGroup A Taxon Group ID
+     * @param rows The number of rows
+     * @param start The page to start at
+     * 
+     * @returns A SOLR response to this search
+     * 
+     * @throws SolrServerException 
+     * 
+     * @response.representation.200.qname SolrResponse
+     * @response.representation.200.mediaType application/json
+     */
     @GET
     @Path("/{id}/species")
     @Produces(MediaType.APPLICATION_JSON)

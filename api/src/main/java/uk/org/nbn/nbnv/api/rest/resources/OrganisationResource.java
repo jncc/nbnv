@@ -31,12 +31,30 @@ public class OrganisationResource extends AbstractResource {
     @Autowired OrganisationMapper organisationMapper;
     @Autowired DatasetMapper datasetMapper;
     
+    /**
+     * Get a list of all organisations from the data warehouse
+     * 
+     * @return A list of all organisations from the data warehouse
+     * 
+     * @response.representation.200.qname List<Organisation>
+     * @response.representation.200.mediaType application/json
+     */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public List<Organisation> get() {
         return organisationMapper.selectAll();
     }
 
+    /**
+     * Return a specified organisation
+     * 
+     * @param id An organisation ID
+     * 
+     * @return A specified organisation
+     * 
+     * @response.representation.200.qname List<Organisation>
+     * @response.representation.200.mediaType application/json
+     */
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -45,6 +63,16 @@ public class OrganisationResource extends AbstractResource {
         return organisationMapper.selectByID(id);
     }
 
+    /**
+     * Return a list of all datasets from a particular organisation
+     * 
+     * @param id An organisation ID
+     * 
+     * @return A list of all datasets from a particular organisation
+     * 
+     * @response.representation.200.qname List<Dataset>
+     * @response.representation.200.mediaType application/json
+     */
     @GET
     @Path("/{id}/datasets")
     @Produces(MediaType.APPLICATION_JSON)
@@ -52,6 +80,18 @@ public class OrganisationResource extends AbstractResource {
         return datasetMapper.selectByOrganisationID(id);
     }
 
+    /**
+     * Return a list of all datasets that a specified organisation has 
+     * contributed to
+     * 
+     * @param id An organisation ID
+     * 
+     * @return a list of all datasets that a specified organisation has 
+     * contributed to
+     * 
+     * @response.representation.200.qname List<Dataset>
+     * @response.representation.200.mediaType application/json
+     */
     @GET
     @Path("/{id}/contributedDatasets")
     @Produces(MediaType.APPLICATION_JSON)
@@ -59,6 +99,16 @@ public class OrganisationResource extends AbstractResource {
         return datasetMapper.selectContributedByOrganisationID(id);
     }
 
+    /**
+     * Return the full sized logo of a specified organisation
+     * 
+     * @param id An organisation ID
+     * 
+     * @return The full sized logo of a specified organisation
+     * 
+     * @response.representation.200.qname Object
+     * @response.representation.200.mediaType application/json
+     */
     @GET
     @Path("/{id}/logo")    
     @Produces("image/jpg")
@@ -66,6 +116,16 @@ public class OrganisationResource extends AbstractResource {
         return organisationMapper.selectLogoByOrganisationID(id);
     }
 
+    /**
+     * Return the small logo for a specified organisation
+     * 
+     * @param id An organisation ID
+     * 
+     * @return The small logo for a specified organisation
+     * 
+     * @response.representation.200.qname Object
+     * @response.representation.200.mediaType application/json
+     */
     @GET
     @Path("/{id}/logosmall")    
     @Produces("image/png")

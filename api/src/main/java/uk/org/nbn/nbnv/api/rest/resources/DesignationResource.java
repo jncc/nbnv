@@ -27,13 +27,31 @@ public class DesignationResource extends AbstractResource {
     @Autowired TaxonMapper taxonMapper;
     @Autowired DatasetMapper datasetMapper;
     @Autowired TaxonNavigationGroupMapper taxonNavigationGroupMapper;
-	
+
+    /**
+     * Return a list of all Designations from the data warehouse
+     * 
+     * @return A list of all Designations from the data warehouse
+     * 
+     * @response.representation.200.qname List<Designation>
+     * @response.representation.200.mediaType application/json
+     */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public List<Designation> getDesignationList() {
         return designationMapper.selectAll();
     }
 
+    /**
+     * Returns a specific designation from the data warehouse
+     * 
+     * @param id A Designation ID
+     * 
+     * @return A specific designation from the data warehouse
+     * 
+     * @response.representation.200.qname Designation
+     * @response.representation.200.mediaType application/json
+     */
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -42,6 +60,18 @@ public class DesignationResource extends AbstractResource {
         return designationMapper.selectByID(id); 
     }
 
+    /**
+     * Returns all associated designation categories associated with a specified 
+     * designation
+     * 
+     * @param id A Designation ID
+     * 
+     * @return All associated designation categories associated with a specified 
+     * designation
+     * 
+     * @response.representation.200.qname DesignationCategory
+     * @response.representation.200.mediaType application/json
+     */
     @GET
     @Path("/{id}/designationCategories")
     @Produces(MediaType.APPLICATION_JSON)
@@ -49,6 +79,19 @@ public class DesignationResource extends AbstractResource {
         return designationCategoryMapper.selectByDesignationID(id);
     }
     
+    /**
+     * Returns a list of datasets in a specified designation which are viewable
+     * by the current user
+     * 
+     * @param user The current user
+     * @param designation A Designation ID
+     * 
+     * @return A list of datasets in a specified designation which are viewable
+     * by the current user
+     * 
+     * @response.representation.200.qname List<Dataset>
+     * @response.representation.200.mediaType application/json
+     */
     @GET
     @Path("/{id}/datasets")
     @Produces(MediaType.APPLICATION_JSON)
@@ -56,6 +99,22 @@ public class DesignationResource extends AbstractResource {
         return datasetMapper.selectDatasetsInDesignationViewableByUser(user, designation);
     }
     
+    /**
+     * Returns a list of Taxons specified by designation and a taxon navigation
+     * group (or just by a designation id if no taxon navigation group id is 
+     * supplied)
+     * 
+     * @param id A Designation ID
+     * @param taxonNavigationGroupId A Taxon Navigation Group ID (Optional) 
+     * supplied via querystring
+     * 
+     * @return A list of Taxons specified by designation and a taxon navigation
+     * group (or just by a designation id if no taxon navigation group id is 
+     * supplied)
+     * 
+     * @response.representation.200.qname List<Taxon>
+     * @response.representation.200.mediaType application/json
+     */
     @GET
     @Path("/{id}/species")
     @Produces(MediaType.APPLICATION_JSON)
@@ -67,6 +126,19 @@ public class DesignationResource extends AbstractResource {
         }
     }
 
+    /**
+     * Returns a Taxon Navigation Group specified by a designation and taxon 
+     * navigation group id
+     * 
+     * @param id A Designation ID
+     * @param taxonNavigationGroupId A Taxon Navigation Group ID
+     * 
+     * @return A Taxon Navigation Group specified by a designation and taxon 
+     * navigation group ID
+     * 
+     * @response.representation.200.qname TaxonNavigationGroup
+     * @response.representation.200.mediaType application/json
+     */
     @GET
     @Path("{id}/taxonNavigationGroups/{taxonNavigationGroupId}")
     @Produces(MediaType.APPLICATION_JSON)

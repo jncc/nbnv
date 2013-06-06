@@ -55,7 +55,19 @@ public class OrganisationAccessRequestResource extends AbstractResource {
     @Autowired OrganisationMapper organisationMapper;
     @Autowired AccessRequestUtils accessRequestUtils;
     
-    
+    /**
+     * Create an Organisation Access Request for data
+     * 
+     * @param user The current user (Must be logged in)
+     * @param json JSON object containing an access request
+     * 
+     * @return A Response object detailing the success or failure of the action
+     * 
+     * @throws IOException 
+     * 
+     * @response.representation.200.qname Response
+     * @response.representation.200.mediaType application/json
+     */
     @PUT
     @Path("/requests")
     @Produces(MediaType.APPLICATION_JSON)
@@ -87,6 +99,20 @@ public class OrganisationAccessRequestResource extends AbstractResource {
         return Response.ok("success").build();
     }
     
+    /**
+     * Edit an existing Organisation Access Request for data
+     * 
+     * @param user The current user (Must be logged in)
+     * @param filterID Filter ID for a TaxonObservationFilter
+     * @param json JSON containing an access request
+     * 
+     * @return A Response object detailing the success or failure of the action
+     * 
+     * @throws IOException 
+     * 
+     * @response.representation.200.qname Response
+     * @response.representation.200.mediaType application/json
+     */
     @PUT
     @Path("/requests/{id}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -105,6 +131,22 @@ public class OrganisationAccessRequestResource extends AbstractResource {
         return Response.ok("success").build();
     }
 
+    /**
+     * Returns a list of all Organisation Access Requests for a given 
+     * organisation
+     * 
+     * @param user The current user if they are an organisation admin for the 
+     * supplied organisation ID, or returns a 403 Forbidden error
+     * @param orgID An Organisation ID
+     * 
+     * @return A list of all Organisation Access Requests for a given 
+     * organisation
+     * 
+     * @throws IOException 
+     * 
+     * @response.representation.200.qname List<OrganisationAccessRequest>
+     * @response.representation.200.mediaType application/json
+     */
     @GET
     @Path("/{id}/requests")
     @Produces(MediaType.APPLICATION_JSON)
@@ -112,6 +154,22 @@ public class OrganisationAccessRequestResource extends AbstractResource {
         return oOrganisationAccessRequestMapper.getOrganisationRequests(orgID);
     }
     
+    /**
+     * Returns a list of all Organisation Access Requests for a given 
+     * organisation that have been granted
+     * 
+     * @param user The current user if they are an organisation admin for the 
+     * supplied organisation ID, or returns a 403 Forbidden error
+     * @param orgID An Organisation ID
+     * 
+     * @return A list of all Organisation Access Requests for a given 
+     * organisation that have been granted
+     * 
+     * @throws IOException 
+     * 
+     * @response.representation.200.qname List<OrganisationAccessRequest>
+     * @response.representation.200.mediaType application/json
+     */
     @GET
     @Path("{id}/requests/granted")
     @Produces(MediaType.APPLICATION_JSON)
@@ -119,6 +177,18 @@ public class OrganisationAccessRequestResource extends AbstractResource {
         return oOrganisationAccessRequestMapper.getGrantedOrganisationRequests(orgID);
     }
 
+    /**
+     * Returns a List of Organisation Access Requests for which the current user
+     * has admin rights
+     * 
+     * @param user The current user (Must be logged in)
+     * 
+     * @return A List of Organisation Access Requests for which the current user
+     * has admin rights
+     * 
+     * @response.representation.200.qname List<OrganisationAccessRequest>
+     * @response.representation.200.mediaType application/json
+     */
     @GET
     @Path("/requests/admin")
     @Produces(MediaType.APPLICATION_JSON)
@@ -126,6 +196,18 @@ public class OrganisationAccessRequestResource extends AbstractResource {
         return oOrganisationAccessRequestMapper.getAdminableRequests(user.getId());
     }
     
+    /**
+     * Returns a List of Organisation Access Requests which are pending and the
+     * current user has admin rights over
+     * 
+     * @param user The current user (Must be logged in)
+     * 
+     * @return A List of Organisation Access Requests which are pending and the
+     * current user has admin rights over
+     * 
+     * @response.representation.200.qname List<OrganisationAccessRequest>
+     * @response.representation.200.mediaType application/json
+     */
     @GET
     @Path("/requests/admin/pending")
     @Produces(MediaType.APPLICATION_JSON)
@@ -133,6 +215,18 @@ public class OrganisationAccessRequestResource extends AbstractResource {
         return oOrganisationAccessRequestMapper.getPendingAdminableRequests(user.getId());
     }
 
+    /**
+     * Returns a List of Organisation Access Requests which have been granted 
+     * and the current user has admin rights over
+     * 
+     * @param user The current user (Must be logged in)
+     * 
+     * @return A List of Organisation Access Requests which have been granted 
+     * and the current user has admin rights over
+     * 
+     * @response.representation.200.qname List<OrganisationAccessRequest>
+     * @response.representation.200.mediaType application/json
+     */
     @GET
     @Path("/requests/admin/granted")
     @Produces(MediaType.APPLICATION_JSON)
@@ -140,6 +234,18 @@ public class OrganisationAccessRequestResource extends AbstractResource {
         return oOrganisationAccessRequestMapper.getGrantedAdminableRequests(user.getId());
     }
 
+    /**
+     * Returns a List of Organisation Access Requests which have been denied 
+     * and the current user has admin rights over
+     * 
+     * @param user The current user (Must be logged in)
+     * 
+     * @return A List of Organisation Access Requests which have been denied 
+     * and the current user has admin rights over
+     * 
+     * @response.representation.200.qname List<OrganisationAccessRequest>
+     * @response.representation.200.mediaType application/json
+     */
     @GET
     @Path("/requests/admin/denied")
     @Produces(MediaType.APPLICATION_JSON)
@@ -147,6 +253,18 @@ public class OrganisationAccessRequestResource extends AbstractResource {
         return oOrganisationAccessRequestMapper.getDeniedAdminableRequests(user.getId());
     }
 
+    /**
+     * Returns an Organisation Access Request with a specific filter ID
+     * 
+     * @param user The Current User (checked for dataset administration rights 
+     * to the dataset within an access request as specified as a path param id
+     * @param filterID The filter ID for this request
+     * 
+     * @return An Organisation Access Request with a specific filter ID
+     * 
+     * @response.representation.200.qname OrganisationAccessRequest
+     * @response.representation.200.mediaType application/json
+     */
     @GET
     @Path("/requests/{id}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -154,6 +272,22 @@ public class OrganisationAccessRequestResource extends AbstractResource {
         return oOrganisationAccessRequestMapper.getRequest(filterID);
     }
     
+    /**
+     * Update a specified Organisation Access Request 
+     * 
+     * @param user The current user (must have admin rights over the request)
+     * @param filterID The filter ID for this request
+     * @param action The action to take on this request
+     * @param reason The reason this action has been taken
+     * @param expires An optional expiry date for the access
+     * 
+     * @return A Response object detailing the success or failure of the action
+     * 
+     * @throws ParseException 
+     * 
+     * @response.representation.200.qname Response
+     * @response.representation.200.mediaType application/json
+     */
     @POST
     @Path("/requests/{id}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -175,6 +309,15 @@ public class OrganisationAccessRequestResource extends AbstractResource {
         }
     }
        
+    /**
+     * Accept a given organisation access request 
+     * 
+     * @param filterID The Filter ID of a request
+     * @param reason Any reason given for acceptance of the request
+     * @param expires An expiry date for this access request (Optional)
+     * @return Response to be passed back to the user
+     * @throws ParseException 
+     */
     private Response acceptRequest(int filterID, String reason, String expires) throws ParseException {
         if (expires.isEmpty()) {
             oOrganisationAccessRequestMapper.acceptRequest(filterID, reason, new Date(new java.util.Date().getTime()));
@@ -187,21 +330,52 @@ public class OrganisationAccessRequestResource extends AbstractResource {
         }
     }
 
+    /**
+     * Deny a given organisation access request 
+     * 
+     * @param filterID The Filter ID of a request
+     * @param reason Any reason given for denial of the request
+     * @return Response to be passed back to the user
+     * @throws ParseException 
+     */
     private Response denyRequest(int filterID, String reason) {
         oOrganisationAccessRequestMapper.denyRequest(filterID, reason, new Date(new java.util.Date().getTime()));
         return Response.status(Response.Status.OK).entity("{}").build();
     }
 
+    /**
+     * Close a given organisation access request
+     *
+     * @param filterID The Filter ID of a request
+     * @param reason Any reason given for closure of the request
+     * @return Response to be passed back to the user
+     * @throws ParseException
+     */
     private Response closeRequest(int filterID, String reason) {
         oOrganisationAccessRequestMapper.closeRequest(filterID, reason, new Date(new java.util.Date().getTime()));
         return Response.status(Response.Status.OK).entity("{}").build();
     }
 
+    /**
+     * Revoke a given organisation access request 
+     * 
+     * @param filterID The Filter ID of a request
+     * @param reason Any reason given for revocation of the request
+     * @return Response to be passed back to the user
+     * @throws ParseException 
+     */
     private Response revokeRequest(int filterID, String reason) {
         oOrganisationAccessRequestMapper.revokeRequest(filterID, reason, new Date(new java.util.Date().getTime()));
         return Response.status(Response.Status.OK).entity("{}").build();
     }
 
+    /**
+     * Strip access granted by a particular request
+     * 
+     * @param id The ID of the request to be actioned on
+     * @return A boolean denoting the success of this operation
+     * @throws IOException 
+     */
     private boolean stripAccess(int id) throws IOException {
         OrganisationAccessRequest uar = oOrganisationAccessRequestMapper.getRequest(id);
         AccessRequestJSON accessRequest = parseJSON(uar.getFilter().getFilterJSON());
@@ -221,11 +395,25 @@ public class OrganisationAccessRequestResource extends AbstractResource {
         return true;
     }
 
+    /**
+     * Give access according to a given request id
+     * 
+     * @param id The request ID to be actioned
+     * @return A boolean denoting the success of this operation
+     * @throws IOException 
+     */
     private boolean giveAccess(int id) throws IOException {
         OrganisationAccessRequest uar = oOrganisationAccessRequestMapper.getRequest(id);
         return giveAccess(uar);
     }
     
+    /**
+     * Give access according to a given request
+     * 
+     * @param uar The request to be actioned
+     * @return A boolean denoting the success of this operation
+     * @throws IOException 
+     */
     private boolean giveAccess(OrganisationAccessRequest uar) throws IOException {
         AccessRequestJSON accessRequest = parseJSON(uar.getFilter().getFilterJSON());
 
@@ -239,6 +427,13 @@ public class OrganisationAccessRequestResource extends AbstractResource {
         return true;
     }
     
+    /**
+     * Parse JSON object into an AccessRequestJSON object
+     * 
+     * @param json Input string representation of JSON object
+     * @return An AccessRequestJSON representation of the json string
+     * @throws IOException 
+     */
     private AccessRequestJSON parseJSON(String json) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.readValue(json, AccessRequestJSON.class);

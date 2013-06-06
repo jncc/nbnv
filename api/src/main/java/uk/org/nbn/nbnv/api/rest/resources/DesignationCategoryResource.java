@@ -19,12 +19,30 @@ public class DesignationCategoryResource extends AbstractResource {
     @Autowired DesignationCategoryMapper desigCat;
     @Autowired DesignationMapper desig;
     
+    /**
+     * Returns all DesignationCategory items from the data warehouse
+     * 
+     * @return All DesignationCategory items from the data warehouse
+     * 
+     * @response.representation.200.qname List<DesignationCategory>
+     * @response.representation.200.mediaType application/json
+     */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public List<DesignationCategory> getDesignationCategory() { 
         return desigCat.selectAll();
     }
 
+    /**
+     * Returns a specified designation category from the data warehouse
+     * 
+     * @param id ID of a designation category
+     * 
+     * @return A specific designation category from the data warehouse
+     * 
+     * @response.representation.200.qname DesignationCategory
+     * @response.representation.200.mediaType application/json
+     */
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -32,6 +50,16 @@ public class DesignationCategoryResource extends AbstractResource {
         return desigCat.selectByID(id);
     }
 
+    /**
+     * Returns a list of Designations associated with a specified category
+     * 
+     * @param id ID of a designation category
+     * 
+     * @return A list of Designations associated with a specified category
+     * 
+     * @response.representation.200.qname List<Designation>
+     * @response.representation.200.mediaType application/json
+     */
     @GET
     @Path("/{id}/designations")
     @Produces(MediaType.APPLICATION_JSON)
@@ -39,6 +67,17 @@ public class DesignationCategoryResource extends AbstractResource {
         return desig.selectByCategoryID(id);
     }
 
+    /**
+     * Returns a Designation associated with a specified category
+     * 
+     * @param id ID of a designation category
+     * @param designationId ID of a designation
+     * 
+     * @return A Designation associated with a specified category
+     * 
+     * @response.representation.200.qname Designation
+     * @response.representation.200.mediaType application/json
+     */
     @GET
     @Path("/{id}/designations/{designationId}")
     @Produces(MediaType.APPLICATION_JSON)

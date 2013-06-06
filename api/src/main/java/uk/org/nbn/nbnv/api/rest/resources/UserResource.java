@@ -58,20 +58,13 @@ public class UserResource extends AbstractResource {
     private final int tokenTTL;
     private final String tokenCookieKey;
     private final String domain;
-    @Autowired
-    TokenAuthenticator tokenAuth;
-    @Autowired
-    TokenResetCredentials credentialsResetter;
-    @Autowired
-    UserMapper userMapper;
-    @Autowired
-    OrganisationMapper organisationMapper;
-    @Autowired
-    OperationalUserMapper oUserMapper;
-    @Autowired
-    UserAuthenticationMapper userAuthenticationMapper;
-    @Autowired
-    TemplateMailer mailer;
+    @Autowired TokenAuthenticator tokenAuth;
+    @Autowired TokenResetCredentials credentialsResetter;
+    @Autowired UserMapper userMapper;
+    @Autowired OrganisationMapper organisationMapper;
+    @Autowired OperationalUserMapper oUserMapper;
+    @Autowired UserAuthenticationMapper userAuthenticationMapper;
+    @Autowired TemplateMailer mailer;
 
     @Autowired
     public UserResource(Properties properties) throws NoSuchAlgorithmException {
@@ -80,12 +73,33 @@ public class UserResource extends AbstractResource {
         domain = properties.getProperty("sso_token_domain");
     }
 
+    /**
+     * Return details about the current user from the data warehouse
+     * 
+     * @param user The current user
+     * 
+     * @return The current user
+     * 
+     * @response.representation.200.qname User
+     * @response.representation.200.mediaType application/json
+     */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public User getDetails(@TokenUser User user) {
         return user;
     }
 
+    /**
+     * Return full up to date details about the current user from the core 
+     * database
+     * 
+     * @param user The current user
+     * 
+     * @return The most upto date data about the current user
+     * 
+     * @response.representation.200.qname User
+     * @response.representation.200.mediaType application/json
+     */
     @GET
     @Path("/full")
     @Produces(MediaType.APPLICATION_JSON)
@@ -93,6 +107,24 @@ public class UserResource extends AbstractResource {
         return oUserMapper.getUserById(user.getId());
     }
 
+    /**
+     * Log the indicated user into the system
+     * 
+     * @param username The username of the user
+     * @param password The password of the user
+     * @param remember Whether the browser should remember this data (stay 
+     * logged in)
+     * 
+     * @return A Response object detailing the success or failure of the action
+     * 
+     * @throws InvalidCredentialsException Credentials are invalid (incorrect
+     * username / password)
+     * @throws InvalidTokenException Token is invalid
+     * @throws ExpiredTokenException Token has expired
+     * 
+     * @response.representation.200.qname Response
+     * @response.representation.200.mediaType application/json
+     */
     @GET
     @Path("/login")
     @Produces(MediaType.APPLICATION_JSON)
@@ -116,6 +148,20 @@ public class UserResource extends AbstractResource {
                 .build();
     }
 
+    /**
+     * Change the current users password
+     * 
+     * @param user The current user
+     * @param password The new password to change to
+     * 
+     * @return A Response object detailing the success or failure of the action
+     * 
+     * @throws UnsupportedEncodingException
+     * @throws NoSuchAlgorithmException 
+     * 
+     * @response.representation.200.qname Response
+     * @response.representation.200.mediaType application/json
+     */
     @PUT
     @Path("/passwords/change")
     @Produces(MediaType.APPLICATION_JSON)
@@ -130,6 +176,20 @@ public class UserResource extends AbstractResource {
         return Response.ok("success").build();
     }
 
+    /**
+     * Change the current users password from the user panel
+     * 
+     * @param user The current user
+     * @param password The new password
+     * 
+     * @return A Response object detailing the success or failure of the action
+     * 
+     * @throws UnsupportedEncodingException
+     * @throws NoSuchAlgorithmException 
+     * 
+     * @response.representation.200.qname Response
+     * @response.representation.200.mediaType application/json
+     */
     @POST
     @Path("/passwords/change")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -140,6 +200,23 @@ public class UserResource extends AbstractResource {
         return setUserPassword(user, password);
     }
 
+    /**
+     * Change password from the forgotten password interface
+     * 
+     * @param username The requesting users username
+     * @param resetToken The reset token from the forgotten password email
+     * @param password The new password
+     * 
+     * @return A Response object detailing the success or failure of the action
+     * 
+     * @throws UnsupportedEncodingException
+     * @throws InvalidTokenException
+     * @throws ExpiredTokenException
+     * @throws NoSuchAlgorithmException 
+     * 
+     * @response.representation.200.qname Response
+     * @response.representation.200.mediaType application/json
+     */
     @POST
     @Path("/passwords/change/{username}")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -152,6 +229,22 @@ public class UserResource extends AbstractResource {
                 username, new Token(Base64.decodeBase64(resetToken))), password);
     }
 
+    /**
+     * Email a password reset form to a user with the specified email address
+     * 
+     * @param emailAddress The email address of the user who has forgotten their
+     * password
+     * 
+     * @return A Response object detailing the success or failure of the action
+     * 
+     * @throws JSONException
+     * @throws InvalidCredentialsException
+     * @throws IOException
+     * @throws TemplateException 
+     * 
+     * @response.representation.200.qname Response
+     * @response.representation.200.mediaType application/json
+     */
     @POST
     @Path("/mail/password")
     @Produces(MediaType.APPLICATION_JSON)
@@ -176,6 +269,21 @@ public class UserResource extends AbstractResource {
         }
     }
 
+    /**
+     * Email the users username to their email address from the forgotten 
+     * username form
+     * 
+     * @param emailAddress The users email address
+     * 
+     * @return A Response object detailing the success or failure of the action
+     * 
+     * @throws JSONException
+     * @throws IOException
+     * @throws TemplateException 
+     * 
+     * @response.representation.200.qname Response
+     * @response.representation.200.mediaType application/json
+     */
     @POST
     @Path("/mail/username")
     @Produces(MediaType.APPLICATION_JSON)
@@ -198,6 +306,14 @@ public class UserResource extends AbstractResource {
         }
     }
 
+    /**
+     * Logout the current user
+     * 
+     * @return A Response object detailing the success or failure of the action
+     * 
+     * @response.representation.200.qname Response
+     * @response.representation.200.mediaType application/json
+     */
     @GET
     @Path("/logout")
     @Produces(MediaType.APPLICATION_JSON)
@@ -211,6 +327,22 @@ public class UserResource extends AbstractResource {
                 .build();
     }
 
+    /**
+     * Register a new user to the NBN gateway
+     * 
+     * @param newUser The details of the new user to put into the database
+     * 
+     * @return A Response object detailing the success or failure of the action
+     * 
+     * @throws UnsupportedEncodingException
+     * @throws IOException
+     * @throws TemplateException
+     * @throws JSONException
+     * @throws NoSuchAlgorithmException 
+     * 
+     * @response.representation.200.qname Response
+     * @response.representation.200.mediaType application/json
+     */
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     public Response registerNewUser(@Valid User newUser) throws
@@ -244,6 +376,19 @@ public class UserResource extends AbstractResource {
         }
     }
 
+    /**
+     * Activate a newly registered user account
+     * 
+     * @param username The username of the account
+     * @param activationCode The activation code sent to the user
+     * 
+     * @return A Response object detailing the success or failure of the action
+     * 
+     * @throws JSONException 
+     * 
+     * @response.representation.200.qname Response
+     * @response.representation.200.mediaType application/json
+     */
     @PUT
     @Path("/activations/{username}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -259,6 +404,17 @@ public class UserResource extends AbstractResource {
         }
     }
 
+    /**
+     * Return a list of all datasets which the current user has admin rights
+     * over
+     * 
+     * @param user The current user (Must be logged in)
+     * 
+     * @return A List of Datasets that this user has admin rights over
+     * 
+     * @response.representation.200.qname List<Dataset>
+     * @response.representation.200.mediaType application/json
+     */
     @GET
     @Path("/adminDatasets")
     @Produces(MediaType.APPLICATION_JSON)
@@ -266,6 +422,16 @@ public class UserResource extends AbstractResource {
         return userMapper.getDatasetsUserAdmins(user.getId());
     }
 
+    /**
+     * Return a list of organisations of which the current user is a member
+     * 
+     * @param user The current user (Must be logged in)
+     * 
+     * @return a List of Organisations that the user is a member of
+     * 
+     * @response.representation.200.qname List<Organisation>
+     * @response.representation.200.mediaType application/json
+     */
     @GET
     @Path("/organisations")
     @Produces(MediaType.APPLICATION_JSON)
@@ -273,6 +439,16 @@ public class UserResource extends AbstractResource {
         return organisationMapper.selectByUser(user.getId());
     }
 
+    /**
+     * Return a list of organisations of which the current user has admin rights
+     * 
+     * @param user The current user (Must be logged in)
+     * 
+     * @return A list of organisations that the user is an admin of
+     * 
+     * @response.representation.200.qname List<Organisation>
+     * @response.representation.200.mediaType application/json
+     */
     @GET
     @Path("/adminOrganisations")
     @Produces(MediaType.APPLICATION_JSON)
@@ -280,6 +456,19 @@ public class UserResource extends AbstractResource {
         return organisationMapper.selectByAdminUser(user.getId());
     }
 
+    /**
+     * Search for users in the core database, excluding those who are members
+     * of the specified organisation
+     * 
+     * @param user The current user (Must be logged in)
+     * @param term The search term (username, first name, last name or email)
+     * @param orgId An organisation ID
+     * 
+     * @return A List of users that match the search term
+     * 
+     * @response.representation.200.qname List<User>
+     * @response.representation.200.mediaType application/json
+     */
     @GET
     @Path("/search")
     @Produces(MediaType.APPLICATION_JSON)
@@ -287,6 +476,21 @@ public class UserResource extends AbstractResource {
        return oUserMapper.searchForUserExcludeOrganisationMembers("%" + term + "%", orgId);
     }
 
+    /**
+     * Modify the currently logged in user with new details from the user modify
+     * form in the user admin section
+     * 
+     * @param user The current user (Must be logged in)
+     * @param modified A user with modified user details from the user modify 
+     * form
+     * 
+     * @return A Response object detailing the success or failure of the action
+     * 
+     * @throws JSONException 
+     * 
+     * @response.representation.200.qname Response
+     * @response.representation.200.mediaType application/json
+     */
     @POST
     @Path("/modify")
     @Produces(MediaType.APPLICATION_JSON)
@@ -304,6 +508,24 @@ public class UserResource extends AbstractResource {
                 .put("status", "You have successfully modifed your user details")).build();
     }
 
+    /**
+     * Change the email subscription settings of the current user from the user
+     * modify panel
+     * 
+     * @param user The current user (Must be logged in)
+     * @param allowEmailAlerts Whether to allow email alerts
+     * @param subscribedToAdminEmails Whether user is subscribed to admin emails
+     * or not
+     * @param subscribedToNBNMarketting Whether user is subscribed to NBN 
+     * Marketing emails or not
+     * 
+     * @return A Response object detailing the success or failure of the action
+     * 
+     * @throws JSONException 
+     * 
+     * @response.representation.200.qname User
+     * @response.representation.200.mediaType application/json
+     */
     @POST
     @Path("/emailSettings")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
