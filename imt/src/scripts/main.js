@@ -2,11 +2,8 @@ require.config({
 	stubModules: ['cs', 'hbs'],
 	shim: {
         'handlebars': { exports: 'Handlebars' },
-		'openlayers': { exports: 'OpenLayers' },
-		'jquery-ui': {
-            exports: '$',
-            deps: ['jquery']
-        }
+		'openlayers': { exports: 'OpenLayers', deps: ['proj4js']},
+		'jquery-ui': { exports: '$', deps: ['jquery']}
     },
 	paths: {
 		'hbs' : '../vendor/requirejs-hbs/hbs',
@@ -16,10 +13,11 @@ require.config({
 		'jquery-ui': '../vendor/jquery-ui/ui/jquery-ui',
 		'underscore': '../vendor/underscore-amd/underscore',
 		'backbone': '../vendor/backbone-amd/backbone',
-		'openlayers': '../vendor/openlayers-js/index'
+		'openlayers': '../vendor/openlayers-js/index',
+		'proj4js' : '../vendor/proj4js/lib/proj4js-combined'
 	}
 });
 
 require(['models/App', 'views/AppView'], function(App, AppView) {
-	new AppView({model : new App()});
+	new AppView({model : test = new App()});
 });
