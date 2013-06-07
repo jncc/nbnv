@@ -1,0 +1,15 @@
+{
+  "name": "nbn-interactive-map-tool",
+  "version": "0.0.0",
+  "dependencies": {
+    "requirejs": "~2.1.6",
+    "jquery": "~1.10.0",
+	"jquery-ui": "~1.10.3",
+    "backbone-amd": "~1.0.0",
+    "underscore-amd": "~1.4.4",
+    "requirejs-hbs": "latest",
+    "requirejs-text": "latest",
+    "handlebars": "latest",
+    "openlayers-js": "http://cdnjs.cloudflare.com/ajax/libs/openlayers/2.12/OpenLayers.js"
+  }
+}
