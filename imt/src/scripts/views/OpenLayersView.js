@@ -19,7 +19,8 @@ define([
                     moveend : function() {
 						_me.model.set("viewport", _me.getOpenlayersViewport());
                     }            
-                }
+                },
+				controls : [new OpenLayers.Control.Attribution()]
 			});
 			this.zoomToViewport(null, this.model.get("viewport"));
 			this.listenTo(this.model, "change:viewport", this.zoomToViewport);

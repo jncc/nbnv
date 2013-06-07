@@ -10,6 +10,7 @@ define([
 		
 		// Register to imt events which the view should respond to
 		initialize: function() {
+			this.$el.addClass("interactiveMapTool");
 			this.render();
 		},
 		

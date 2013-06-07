@@ -2,10 +2,11 @@ define([
 		"jquery-ui",
 		"underscore",
 		"backbone",
-], function($, _, Backbone) {
+		"text!templates/SearchView.html"
+], function($, _, Backbone, template) {
 	return Backbone.View.extend({
 		initialize: function () {
-			this.$el.html('<input type="text" size="30"></input>');
+			this.$el.html(template);
 			//Start a new search 
 			this.searchCollection = this.model.getSearch();
 			

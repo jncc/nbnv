@@ -10,6 +10,7 @@
     "requirejs-hbs": "latest",
     "requirejs-text": "latest",
     "handlebars": "latest",
-    "openlayers-js": "http://cdnjs.cloudflare.com/ajax/libs/openlayers/2.12/OpenLayers.js"
+    "openlayers-js": "http://cdnjs.cloudflare.com/ajax/libs/openlayers/2.12/OpenLayers.js",
+	"bootstrap" : "~2.3.2"
   }
 }
