@@ -43,24 +43,22 @@ module.exports = function (grunt) {
             tasks: ["less"]
         },
 		clean: {
-			prep:['dist']
+			prep:['dist', 'src/css']
 		},
 		copy: {
 			build: {
 				files: [
 					{ src: 'src/index.html', dest : 'dist/index.html' },
 					{ src: 'src/css/app.css', dest : 'dist/css/app.css' },
-					{ expand: true, cwd: 'src/vendor/', src: ['jquery-ui/themes/black-tie/**', 'requirejs/require.js'], dest : 'dist/vendor/'}//,
-					//{ src: 'src/vendor/requirejs/require.js', dest : 'dist/vendor/requirejs/require.js' }
+					{ src: 	['jquery-ui/themes/black-tie/**', 
+							 'requirejs/require.js'
+							], dest : 'dist/vendor/', cwd: 'src/vendor/'}
 				]
 			}
 		},
 		connect: {
 			development: {
-				options: {
-					port: 8080,
-					base: 'src'
-				}
+				options: { port: 8080, base: 'src' }
 			}
 		}
 	});
@@ -72,7 +70,7 @@ module.exports = function (grunt) {
 
 	grunt.registerTask('prep', ['clean', 'bower-install']);
 	grunt.registerTask('test', ['prep', 'jasmine']);
-	grunt.registerTask('develop', ['connect', 'watch']);
-	grunt.registerTask('build', ['test', 'requirejs' , 'copy']);
+	grunt.registerTask('develop', ['connect', 'less', 'watch']);
+	grunt.registerTask('build', ['less', 'test', 'requirejs' , 'copy']);
 	grunt.registerTask('default', ['build']); //register the default task as build
 };
