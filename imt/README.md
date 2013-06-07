@@ -1,6 +1,6 @@
 # NBN Interactive Map Tool
 
-Welcome to the code base for the NBN Gateway Interactive Map Tool (IMT). The following readme explains the structure and technologies used in this project.
+Welcome to the code base for the NBN Gateway Interactive Map Tool (IMT). The following readme explains the structure and technologies used in this project. For further documentation for this product view the [CEH wiki](https://wiki.ceh.ac.uk/display/nbn/Interactive+Map+Tool).
 
 ## Prerequisites for building the project
 The IMT is a built using [grunt](http://gruntjs.com) and therefore requires [node.js](http://nodejs.org). To build and test the project, you will first need to set up your environment:
