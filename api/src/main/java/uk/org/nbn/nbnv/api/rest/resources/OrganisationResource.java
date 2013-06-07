@@ -109,7 +109,8 @@ public class OrganisationResource extends AbstractResource {
      * @param contactName A contact for this organisation for the NBN
      * @param contactEmail A contact email for this organisation for the NBN
      * @param allowPublicRegistration Whether this organisation allows public
-     * registration or not
+     * registration or not (is passed as the string 'on' due to jQuery 
+     * serialisation)
      * 
      * @return An OpResult detailing the success or failure of this operation
      */
@@ -129,11 +130,13 @@ public class OrganisationResource extends AbstractResource {
             @FormParam("website") String website,
             @FormParam("contactName") String contactName,
             @FormParam("contactEmail") String contactEmail,
-            @FormParam("allowPublicRegistration") boolean allowPublicRegistration) {
+            @FormParam("allowPublicRegistration") String allowPublicRegistration) {
 
+        
         int response = oOrganisationMapper.updateOrganisationDetails(id, name,
                 abbreviation, summary, address, postcode, phone, website,
-                contactName, contactEmail, allowPublicRegistration ? 1 : 0);
+                contactName, contactEmail, 
+                (allowPublicRegistration != null && allowPublicRegistration.equals("on"))? 1 : 0);
 
         if (response == 1) {
             return new OpResult();
