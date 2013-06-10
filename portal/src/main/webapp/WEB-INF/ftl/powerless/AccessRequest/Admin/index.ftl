@@ -1,6 +1,9 @@
 <#assign oUserRequests=json.readURL("${api}/user/userAccesses/requests/admin/pending") />
 <#assign gUserRequests=json.readURL("${api}/user/userAccesses/requests/admin/granted") />
 <#assign dUserRequests=json.readURL("${api}/user/userAccesses/requests/admin/denied") />
+<#assign oOrgRequests=json.readURL("${api}/organisation/organisationAccesses/requests/admin/pending") />
+<#assign gOrgRequests=json.readURL("${api}/organisation/organisationAccesses/requests/admin/granted") />
+<#assign dOrgRequests=json.readURL("${api}/organisation/organisationAccesses/requests/admin/denied") />
 
 <@template.master title="Requests for Datasets"
     javascripts=["/js/jquery.dataTables.min.js"
@@ -27,10 +30,13 @@
             <#list oUserRequests as r>
                 jsonCache[${r.filter.id?c}] = ${r.filter.filterJSON}
             </#list>
+            <#list oOrgRequests as r>
+                jsonCache[${r.filter.id?c}] = ${r.filter.filterJSON}
+            </#list>
 
             close = new nbn.nbnv.ui.dialog.requestCloseDialog();
             close._render();
-            $('.closelink').click(function() { close.show($(this).attr("request")); });
+            $('.closelink').click(function() { close.show($(this).attr("request"), jsonCache[$(this).attr("request")]); });
             grant = new nbn.nbnv.ui.dialog.requestGrantDialog();
             grant._render();
             $('.grantlink').click(function() { grant.show($(this).attr("request"), jsonCache[$(this).attr("request")], $(this).attr("dataset"), '/taxonObservations/datasets/' + $(this).attr("dataset") + '/requestable'); });
@@ -104,6 +110,31 @@
                 </td>
             </tr>
             </#list>
+            <#list oOrgRequests as r>
+            <tr>
+                <td>
+                    ${r.organisation.name}
+                </td>
+                <td>
+                    ${r.dataset.title}
+                </td>
+                <td>
+                    ${r.filter.filterText}
+                </td>
+                <td>
+                    ${r.requestReason}
+                </td>
+                <td>
+                    ${r.requestDate}
+                </td>
+                <td>
+                    <a class="grantlink" href="#" request="${r.filter.id?c}" dataset="${r.dataset.key}">Grant</a>
+                    <a class="denylink" href="#" request="${r.filter.id?c}" dataset="${r.dataset.key}">Deny</a>
+                    <a href="/AccessRequest/Edit/Organisation/${r.filter.id?c}">Edit</a>
+                    <a class="closelink" href="#" request="${r.filter.id?c}">Close</a>
+                </td>
+            </tr>
+            </#list>
         </tbody>
     </table>
     <h1>Granted Access Requests</h1>
@@ -149,6 +180,34 @@
                 </td>
             </tr>
             </#list>
+            <#list gOrgRequests as r>
+            <tr>
+                <td>
+                    ${r.organisation.name}
+                </td>
+                <td>
+                    ${r.dataset.title}
+                </td>
+                <td>
+                    ${r.filter.filterText}
+                </td>
+                <td>
+                    ${r.requestReason}
+                </td>
+                <td>
+                    ${r.requestDate}
+                </td>
+                <td>
+                    ${r.responseReason}
+                </td>
+                <td>
+                    ${r.responseDate}
+                </td>
+                <td>
+                    <a class="revokelink" href="#" request="${r.filter.id?c}">Revoke</a>
+                </td>
+            </tr>
+            </#list>
         </tbody>
     </table>
     <h1>Denied Access Requests</h1>
@@ -169,6 +228,31 @@
             <tr>
                 <td>
                     ${r.user.forename} ${r.user.surname}
+                </td>
+                <td>
+                    ${r.dataset.title}
+                </td>
+                <td>
+                    ${r.filter.filterText}
+                </td>
+                <td>
+                    ${r.requestReason}
+                </td>
+                <td>
+                    ${r.requestDate}
+                </td>
+                <td>
+                    ${r.responseReason}
+                </td>
+                <td>
+                    ${r.responseDate}
+                </td>
+            </tr>
+            </#list>
+            <#list dOrgRequests as r>
+            <tr>
+                <td>
+                    ${r.organisation.name}
                 </td>
                 <td>
                     ${r.dataset.title}

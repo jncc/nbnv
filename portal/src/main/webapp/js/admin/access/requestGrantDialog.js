@@ -8,6 +8,7 @@ nbn.nbnv.ui.dialog.requestGrantDialog = function() {
     this.div = null;
     this.reason = '';
     this.timeLimit = null;
+    this.orgReq = false;
     
     this._render = function() {
         var _me = this;
@@ -41,6 +42,13 @@ nbn.nbnv.ui.dialog.requestGrantDialog = function() {
                 buttons: { 
                     "Grant Request": function() {
                         var filter = { action: "grant", reason: _me.reason };
+                        var url;
+                        
+                        if (_me.orgReq) {
+                            url = nbn.nbnv.api + '/organisation/organisationAccesses/requests/' + _me.requestID;
+                        } else {
+                            url = nbn.nbnv.api + '/user/userAccesses/requests/' + _me.requestID;
+                        }
                         
                         if (!_me.timeLimit._all) {
                             filter.expires = _me.timeLimit.getJson().date;
@@ -48,7 +56,7 @@ nbn.nbnv.ui.dialog.requestGrantDialog = function() {
                         
                         $.ajax({
                             type: 'POST',
-                            url: nbn.nbnv.api + '/user/userAccesses/requests/' + _me.requestID,
+                            url: url,
                             data: filter,
                             success: function () { document.location.reload(true); }
                         });
@@ -67,6 +75,8 @@ nbn.nbnv.ui.dialog.requestGrantDialog = function() {
         $('#granteffect').html('');
         $('#granteffect').text('Loading request record coverage');
         $('#grantanonwarn').hide();
+        
+        if (json.reason.organisationID != -1) { this.orgReq = true; } else { this.orgReq = false; }
         
         if (!json.taxon.all) { 
             if (json.taxon.tvk) {

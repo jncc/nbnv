@@ -34,10 +34,8 @@ import uk.org.nbn.nbnv.api.model.OrganisationAccessRequest;
 import uk.org.nbn.nbnv.api.model.OrganisationMembership;
 import uk.org.nbn.nbnv.api.model.TaxonObservationFilter;
 import uk.org.nbn.nbnv.api.model.User;
-import uk.org.nbn.nbnv.api.model.UserAccessRequest;
 import uk.org.nbn.nbnv.api.model.meta.AccessRequestJSON;
-import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenAccessRequestAdminUser;
-import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenOrganisationJoinRequestUser;
+import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenOrganisationAccessRequestAdminUser;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenOrganisationUser;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
 import uk.org.nbn.nbnv.api.utils.AccessRequestUtils;
@@ -118,7 +116,7 @@ public class OrganisationAccessRequestResource extends AbstractResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     @Transactional
-    public Response editRequest(@TokenAccessRequestAdminUser(path="id") User user, @PathParam("id") int filterID, String json) throws IOException {
+    public Response editRequest(@TokenOrganisationAccessRequestAdminUser(path="id") User user, @PathParam("id") int filterID, String json) throws IOException {
         AccessRequestJSON accessRequest = parseJSON(json);
 
         // Fail if this is an user request
@@ -268,7 +266,7 @@ public class OrganisationAccessRequestResource extends AbstractResource {
     @GET
     @Path("/requests/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public OrganisationAccessRequest getRequest(@TokenAccessRequestAdminUser(path="id") User user, @PathParam("id") int filterID) {
+    public OrganisationAccessRequest getRequest(@TokenOrganisationAccessRequestAdminUser(path="id") User user, @PathParam("id") int filterID) {
         return oOrganisationAccessRequestMapper.getRequest(filterID);
     }
     
@@ -291,7 +289,7 @@ public class OrganisationAccessRequestResource extends AbstractResource {
     @POST
     @Path("/requests/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response updateRequest(@TokenAccessRequestAdminUser(path="id") User user
+    public Response updateRequest(@TokenOrganisationAccessRequestAdminUser(path="id") User user
             , @PathParam("id") int filterID
             , @FormParam("action") String action
             , @FormParam("reason") String reason
