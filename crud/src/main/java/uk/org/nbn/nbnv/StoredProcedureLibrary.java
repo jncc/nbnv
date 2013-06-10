@@ -31,10 +31,11 @@ public class StoredProcedureLibrary {
 //                    @StoredProcedureParameter(queryParameter="wkt",name="p1",direction=Direction.IN,type=Integer.class)
 //            }
 //    )
-    public ImportFeature createFeature(String wgs84Wkt) {
+    public ImportFeature createFeature(String wgs84Wkt, String identifier) {
         StoredProcedureCall call = new StoredProcedureCall();
         call.setProcedureName("import_CreateFeature");
         call.addNamedArgument("wkt", "wgs84wkt");
+        call.addNamedArgument("identifier", "identifier");
         call.addNamedOutputArgument(
                 "FeatureId",      // procedure parameter name
                 "FeatureId",      // out argument field name
@@ -44,9 +45,11 @@ public class StoredProcedureLibrary {
         ValueReadQuery query = new ValueReadQuery();
         query.setCall(call);
         query.addArgument("wgs84wkt");   // input
+        query.addArgument("identifier");
 
         List arguments = new ArrayList();
         arguments.add(wgs84Wkt);
+        arguments.add(identifier);
 
         Session session = getSession();
 

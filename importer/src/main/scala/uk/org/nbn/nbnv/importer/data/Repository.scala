@@ -35,10 +35,10 @@ class Repository (log: Logger, em: EntityManager, cache: QueryCache) extends Con
     if (result == null) None else Option(result)
   }
 
-  def createFeature(wkt: String) = {
+  def createFeature(wkt: String, identifier: String) = {
 
     val sprocs = new StoredProcedureLibrary(em)
-    sprocs.createFeature(wkt)
+    sprocs.createFeature(wkt, identifier)
   }
 
   def createGridRef(feature: ImportFeature, gridRef: String , resolution: Resolution , projection: Projection , wkt: String ) : ImportGridSquare = {
