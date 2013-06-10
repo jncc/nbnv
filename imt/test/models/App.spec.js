@@ -1,5 +1,5 @@
 define([
-	"models/App"
+	"cs!models/App"
 ], function(App) {
 	describe("App Model", function() {
 		it("can zoom to spatial search result", function() {

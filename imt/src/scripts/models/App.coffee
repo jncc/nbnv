@@ -1,6 +1,6 @@
 define [
   'backbone', 
-  'collections/Search'
+  'cs!collections/Search'
 ], (Backbone, Search) -> Backbone.Model.extend 
   defaults :
     viewport: 

@@ -20,6 +20,6 @@ require.config({
 	}
 });
 
-require(['cs!models/App', 'views/AppView'], function(App, AppView) {
+require(['cs!models/App', 'cs!views/AppView'], function(App, AppView) {
 	new AppView({model : test = new App()});
 });
