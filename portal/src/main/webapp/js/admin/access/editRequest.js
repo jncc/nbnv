@@ -2,17 +2,24 @@ window.nbn = window.nbn || {};
 nbn.nbnv = nbn.nbnv || {};
 nbn.nbnv.ui = nbn.nbnv.ui || {};
 
-nbn.nbnv.ui.editRequest = function (json, requester, dataset, id, div) {
+nbn.nbnv.ui.editRequest = function (json, requester, dataset, id, div, orgReq) {
     this.div = div;
+    
+    var reqEndpoint;
+    
+    if (orgReq) {
+        reqEndpoint = '/organisation/organisationAccesses/requests';
+    } else {
+        reqEndpoint = '/user/userAccesses/requests';
+    }
     
     var reason = new nbn.nbnv.ui.requestDetails(json, requester, 'Test');
     var sensitive = new nbn.nbnv.ui.filter.sensitive(json);
     var year = new nbn.nbnv.ui.filter.year(json);
     var spatial = new nbn.nbnv.ui.filter.spatial(json);
     var taxon = new nbn.nbnv.ui.filter.taxon(json);
-//    var dataset = new nbn.nbnv.ui.filter.dataset(json);
     var timeLimit = new nbn.nbnv.ui.timeLimit(json);
-    var result = new nbn.nbnv.ui.requestEditResult('/user/userAccesses/requests');
+    var result = new nbn.nbnv.ui.requestEditResult(reqEndpoint);
 
     this.div.append(reason._renderHeader());
     this.div.append(reason._renderPanel());
@@ -24,8 +31,6 @@ nbn.nbnv.ui.editRequest = function (json, requester, dataset, id, div) {
     this.div.append(taxon._renderPanel());
     this.div.append(year._renderHeader());
     this.div.append(year._renderPanel());
-//    this.div.append(dataset._renderHeader());
-//    this.div.append(dataset._renderPanel());
     this.div.append(timeLimit._renderHeader());
     this.div.append(timeLimit._renderPanel());
     this.div.append(result._renderHeader());

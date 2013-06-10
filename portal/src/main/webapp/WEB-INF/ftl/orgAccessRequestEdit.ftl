@@ -22,10 +22,10 @@
 	
 	$(function() {
             var json = ${model.filter.filterJSON};
-            var requester = '${model.user.forename} ${model.user.surname}';
+            var requester = '${model.organisation.name}';
             var dataset = '${model.datasetKey}';
             var id = ${model.filter.id?c};
-            nbn.nbnv.ui.editRequest(json, requester, dataset, id, $('#filter'));
+            nbn.nbnv.ui.editRequest(json, requester, dataset, id, $('#filter'), true);
 	});
     </script>
 
