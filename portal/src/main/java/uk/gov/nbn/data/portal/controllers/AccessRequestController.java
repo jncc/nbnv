@@ -43,6 +43,23 @@ public class AccessRequestController {
         }
     }
     
+    @RequestMapping(value = "/AccessRequest/Create/Grant", method = RequestMethod.GET)
+    public ModelAndView getCreateGrantPage() {
+        //get the current logged in user
+        User currentUser = resource.path("user")
+                .accept(MediaType.APPLICATION_JSON)
+                .get(User.class);
+
+        if (currentUser.getId() != User.PUBLIC_USER_ID) {
+            return new ModelAndView("accessGrantCreate");
+        } else {
+            Map<String, Object> model = new HashMap<String, Object>();
+            model.put("redirect", "/AccessRequest/Create/Grant");
+            model.put("status", "You need to be logged in to create an access grant.");
+            return new ModelAndView("sso", model);
+        }
+    }
+
     @RequestMapping(value = "/AccessRequest/Edit/User/{id}", method = RequestMethod.GET)
     public ModelAndView getUserEditPage(@PathVariable("id") int id) {
         User currentUser = resource.path("user")
