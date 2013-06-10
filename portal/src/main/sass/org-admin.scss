@@ -4,3 +4,24 @@
     /* prevent horizontal scrollbar */
     overflow-x: hidden;
 }
+
+form input:not([type="submit"]):not([name=q]) {
+    width: 100%;
+}
+
+form textarea {
+    width: 100%;
+    height: 100px;
+}
+
+form table th {
+    width: 25%;
+}
+
+form table td {
+    width:75%;
+}
+
+form table tr {
+    width: 100%;
+}
