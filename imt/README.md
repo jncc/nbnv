@@ -26,6 +26,11 @@ Once this has been done, grab the git repository and then :
         grunt build
 
 ## Technologies
+### Languages
+[Coffeescript](http://coffeescript.org/) is the language of choice for this project. Compilation of the coffeescript code is handled by require.js.
+
+**This project uses soft tabs (3 spaces) for coffeescript indentation**
+
 ### Building and Dependency Management
 The following are used for building and dependency management
 
@@ -58,7 +63,8 @@ The following defines the grunt tasks available and when you should use them.
 
 * develop - Loads up a simple static servicing server hosting the src folder on port 8080 of your localhost. Perform this after prep to begin development with instant updates to code reflected in the browser. Also performs a watch on the less css folder and performs LESS compilation when a .less file has been modified.
 
-* test - performs prep and jasmine
+* test - performs jasmine tests
 
-* build - Populates the dist folder with all the code optimized ready for deployment.
+* build - Executes Tests and then populates the dist folder with all the code optimized ready for deployment.
 
+* package - Performs a build and then compresses the dist folder into a imt.war file. Ready to publish in a Java Servlet Container

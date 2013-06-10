@@ -6,6 +6,8 @@ require.config({
 		'jquery-ui': { exports: '$', deps: ['jquery']}
     },
 	paths: {
+		'cs' : '../vendor/require-cs/cs',
+		'coffee-script': '../vendor/coffee-script/extras/coffee-script',
 		'hbs' : '../vendor/requirejs-hbs/hbs',
 		'handlebars' : '../vendor/handlebars/Handlebars',
 		'text' : '../vendor/requirejs-text/text',
@@ -18,6 +20,6 @@ require.config({
 	}
 });
 
-require(['models/App', 'views/AppView'], function(App, AppView) {
+require(['cs!models/App', 'views/AppView'], function(App, AppView) {
 	new AppView({model : test = new App()});
 });

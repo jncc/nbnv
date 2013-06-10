@@ -7,6 +7,7 @@ module.exports = function (grunt) {
 	grunt.loadNpmTasks('grunt-contrib-clean');
 	grunt.loadNpmTasks('grunt-contrib-less');
 	grunt.loadNpmTasks('grunt-contrib-watch');
+	grunt.loadNpmTasks('grunt-contrib-compress');
 	
 	//Configure tasks
 	grunt.initConfig({
@@ -26,10 +27,11 @@ module.exports = function (grunt) {
 		requirejs: {
 			compile: {
 				options: {
-					baseUrl: 'src/scripts',
+					exclude:['coffee-script'],
+					baseUrl: 'dist/scripts',
 					out: 'dist/scripts/main.js',
 					name: 'main',
-					mainConfigFile: 'src/scripts/main.js'
+					mainConfigFile: 'dist/scripts/main.js'
 				}
 			}
 		},
@@ -47,13 +49,18 @@ module.exports = function (grunt) {
 		},
 		copy: {
 			build: {
-				files: [
-					{ src: 'src/index.html', dest : 'dist/index.html' },
-					{ src: 'src/css/app.css', dest : 'dist/css/app.css' },
-					{ src: 	['jquery-ui/themes/black-tie/**', 
-							 'requirejs/require.js'
-							], dest : 'dist/vendor/', cwd: 'src/vendor/'}
-				]
+				files: [{ expand: true, cwd: 'src/', src: ['**'], dest : 'dist'}]
+			}
+		},
+		compress: {
+			package: {
+				options: {
+					archive: 'dist/imt.war',
+					mode: 'zip'
+				},
+				expand: true,
+				cwd: 'dist/',
+				src: ['**/*']
 			}
 		},
 		connect: {
@@ -69,8 +76,9 @@ module.exports = function (grunt) {
 	});
 
 	grunt.registerTask('prep', ['clean', 'bower-install']);
-	grunt.registerTask('test', ['prep', 'jasmine']);
+	grunt.registerTask('test', ['jasmine']);
 	grunt.registerTask('develop', ['connect', 'less', 'watch']);
-	grunt.registerTask('build', ['less', 'test', 'requirejs' , 'copy']);
-	grunt.registerTask('default', ['build']); //register the default task as build
+	grunt.registerTask('build', ['less', 'test', 'copy', 'requirejs']);
+	grunt.registerTask('package', ['build', 'compress']);
+	grunt.registerTask('default', ['prep', 'package']); //register the default task as build
 };
