@@ -36,13 +36,17 @@ define [
 
 
     ###
-    * Event listener for viewport changes on the model. Update the Openlayers Map
+    Event listener for viewport changes on the model. Update the Openlayers Map
     ###
     zoomToViewport: (evt, viewport) ->
       extent = @map.getExtent();
       #Check if view port is already and is not the same as the openlayers viewport
       @map.zoomToExtent @getOpenlayersBounds(viewport) if not extent? or not _.isEqual( viewport, @getOpenlayersViewport() )
 
+    ###
+    Translate the given viewport which is in 4326 into an openlayers bounds in the
+    projection system that the OpenLayers.Map is currently working in
+    ###
     getOpenlayersBounds: (viewport)-> 
       openlayersBounds = new OpenLayers.Bounds  viewport.minX, 
                                                 viewport.minY, 
@@ -50,6 +54,9 @@ define [
                                                 viewport.maxY
       openlayersBounds.transform new OpenLayers.Projection("EPSG:4326"), @map.getProjectionObject()
 
+    ###
+    Obtain the current viewport of the openlayers map and return it in EPSG:4326
+    ###
     getOpenlayersViewport: ->
       extent = @map.getExtent().transform @map.getProjectionObject(), 
                                           new OpenLayers.Projection("EPSG:4326")
