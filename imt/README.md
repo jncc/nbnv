@@ -29,7 +29,7 @@ Once this has been done, grab the git repository and then :
 ### Languages
 [Coffeescript](http://coffeescript.org/) is the language of choice for this project. Compilation of the coffeescript code is handled by require.js.
 
-**This project uses soft tabs (3 spaces) for coffeescript indentation**
+**This project uses soft tabs (2 spaces) for coffeescript indentation**
 
 ### Building and Dependency Management
 The following are used for building and dependency management
