@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<?xml-stylesheet type="text/xsl" href="wadl.xsl"?>
 <ns2:application xmlns:ns2="http://wadl.dev.java.net/2009/02">
     <ns2:doc xmlns:jersey="http://jersey.java.net/" jersey:generatedBy="Jersey: 1.15 10/30/2012 02:40 PM"/>
     <ns2:grammars/>
@@ -2355,3 +2356,4 @@
         </ns2:resource>
     </ns2:resources>
 </ns2:application>
+

@@ -15,18 +15,6 @@
     543 Howard Street, 5th Floor
     San Francisco, California, 94105, USA
 -->
-<!-- 
- * FIXME
-    - Doesn't inherit query/header params from resource/@type
-    - XML schema import, include, redefine don't import
--->
-<!--
-  * TODO
-    - forms
-    - link to or include non-schema variable type defs (as a separate list?)
-    - @href error handling
--->
-
 <xsl:stylesheet 
  xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0"
  xmlns:wadl="http://wadl.dev.java.net/2009/02"
@@ -791,6 +779,5 @@
         <xsl:copy>
             <xsl:apply-templates select="@*|node()" mode="copy"/>
         </xsl:copy>
-    </xsl:template>    
-
+    </xsl:template>  
 </xsl:stylesheet>
