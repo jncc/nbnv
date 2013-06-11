@@ -1,0 +1,41 @@
+.interactiveMapTool {
+	.baseLayers { 
+		position: absolute; 
+		bottom : 0.5em;
+		left : 1em;
+
+    .img-polaroid {
+      .icon(@x:1, @y:1) {
+        background-image: url("../img/baseLayer-sprites.jpg");
+        height: 45px;
+        width: 65px;
+        background-position: @x*70px -@y*55px;
+      }
+
+      .OS-icon      { .icon(0,1) }
+      .Outline-icon { .icon(1,1) }
+      .Shaded-icon  { .icon(0,2) }
+      .Hybrid-icon  { .icon(1,0) }
+      .Aerial-icon  { .icon(0,0) }
+
+      .label { display: block; text-align: center; }
+      &:hover {background-color: grey;}
+    }
+
+    .others, .obvious-alt { 
+      position: absolute;
+      bottom: 0;
+      left: 0;
+    }
+
+    .others {
+      overflow: hidden;
+      .img-polaroid { position: absolute; }
+
+
+      [option="0"] { top:0; left: 0;}
+      [option="1"] { top:0; right: 0;}
+      [option="2"] { bottom:0; right: 0;}
+    } 
+	}
+}

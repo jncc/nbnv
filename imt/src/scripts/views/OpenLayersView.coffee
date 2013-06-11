@@ -2,8 +2,9 @@ define [
   "jquery",
   "underscore",
   "backbone",
-  "openlayers"
-], ($, _, Backbone, OpenLayers) -> 
+  "openlayers",
+  "cs!helpers/OpenLayersLayerFactory"
+], ($, _, Backbone, OpenLayers, OpenLayersLayerFactory) -> 
   Proj4js.defs["EPSG:27700"] = "+proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 +x_0=400000 +y_0=-100000 +ellps=airy +datum=OSGB36 +units=m +no_defs";
   Backbone.View.extend
     # Register to imt events which the view should respond to
@@ -13,7 +14,7 @@ define [
         maxExtent: new OpenLayers.Bounds(-20037508.34,-20037508.34,20037508.34,20037508.34),
         displayProjection: new OpenLayers.Projection("EPSG:4326"),
         theme: null,
-        layers: [new OpenLayers.Layer.OSM sphericalMercator:true],
+        layers: [OpenLayersLayerFactory.getBaseLayer( @model.get "baseLayer" )],
         eventListeners: 
           moveend : => @model.set("viewport", do @getOpenlayersViewport)
         ,
@@ -29,10 +30,15 @@ define [
     Create an openlayers version of the desired baselayer
     ###
     updateBaseLayer: (evt, baselayer) -> 
-      @map.removeLayer(@map.baseLayer); #remove the current baselayer
-      #Find the openlayers version of baselayer and add
-      #TODO, add the requested layer
-      @map.addLayer new OpenLayers.Layer.OSM sphericalMercator:true 
+      centre = @map.getCenter()
+      zoom = @map.getZoom()
+      oldProjection = @map.getProjectionObject()
+
+      @map.removeLayer(@map.baseLayer); #remove the current baseLayer
+      @map.addLayer OpenLayersLayerFactory.getBaseLayer baselayer #Find the openlayers version of baseLayer and add
+
+      #this line is required to fix a bug in OpenLayers 2.10 (Ticket #1249)
+      @map.setCenter(centre.transform(oldProjection, @map.getProjectionObject()),zoom); 
 
 
     ###

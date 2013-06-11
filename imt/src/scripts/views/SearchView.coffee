@@ -17,7 +17,6 @@ define [
   select: (event, ui) ->
      @model.addSearchResult ui.item
 
-
    search: (request, response) ->
      @searchCollection
        .fetch

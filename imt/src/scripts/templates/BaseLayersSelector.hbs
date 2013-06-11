@@ -1,0 +1,13 @@
+<div class="others">
+  {{#each others}}
+    <div class="img-polaroid" option="{{@index}}" layer="{{this}}">
+      <div class="{{this}}-icon"></div>
+      <div class="label">{{this}}</div>
+    </div>
+  {{/each}}
+</div>
+
+<div class="obvious-alt img-polaroid" layer="{{obvious}}">
+  <div class="{{obvious}}-icon"></div>
+  <div class="label">{{obvious}}</div>
+</div>
