@@ -28,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 import uk.org.nbn.nbnv.api.dao.core.OperationalOrganisationAccessRequestMapper;
 import uk.org.nbn.nbnv.api.dao.core.OperationalOrganisationTaxonObservationAccessMapper;
 import uk.org.nbn.nbnv.api.dao.core.OperationalTaxonObservationFilterMapper;
+import uk.org.nbn.nbnv.api.dao.warehouse.DatasetAdministratorMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.OrganisationMapper;
 import uk.org.nbn.nbnv.api.model.Organisation;
 import uk.org.nbn.nbnv.api.model.OrganisationAccessRequest;
@@ -51,6 +52,7 @@ public class OrganisationAccessRequestResource extends AbstractResource {
     @Autowired OperationalOrganisationAccessRequestMapper oOrganisationAccessRequestMapper;
     @Autowired OperationalOrganisationTaxonObservationAccessMapper oOrganisationTaxonObservationAccessMapper;
     @Autowired OrganisationMapper organisationMapper;
+    @Autowired DatasetAdministratorMapper datasetAdministratorMapper;
     @Autowired AccessRequestUtils accessRequestUtils;
     
     /**
@@ -97,6 +99,38 @@ public class OrganisationAccessRequestResource extends AbstractResource {
         return Response.ok("success").build();
     }
     
+
+        @PUT
+    @Path("/requests/admin/granted")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Transactional
+    public Response createGrant(@TokenUser(allowPublic=false) User user, String json) throws IOException, ParseException {
+        AccessRequestJSON accessRequest = parseJSON(json);
+
+        // Fail if this is not an organisation request
+        if (accessRequest.getReason().getOrganisationID() == -1) {
+            return Response.serverError().build();
+        }
+        
+        // Fail if the dataset request is not admined by the requestor
+        if (!datasetAdministratorMapper.isUserDatasetAdministrator(user.getId(), accessRequest.getDataset().getDatasets().get(0))) {
+            return Response.serverError().build();
+        }
+
+        TaxonObservationFilter filter = accessRequestUtils.createFilter(json, accessRequest);
+        List<String> species = accessRequestUtils.createSpeciesList(accessRequest);        
+        List<String> datasets = accessRequest.getDataset().getDatasets();
+        
+        for (String datasetKey : datasets) {
+            oTaxonObservationFilterMapper.createFilter(filter);
+            oOrganisationAccessRequestMapper.createRequest(filter.getId(), accessRequest.getReason().getOrganisationID(), datasetKey, accessRequest.getReason().getPurpose(), accessRequest.getReason().getDetails(), new Date(new java.util.Date().getTime()));
+            acceptRequest(filter.getId(), accessRequest.getReason().getReason(), accessRequest.getTime().isAll() ? "" : accessRequest.getTime().getDate().toString());
+        }
+
+        return Response.ok("success").build();
+    }
+
     /**
      * Edit an existing Organisation Access Request for data
      * 

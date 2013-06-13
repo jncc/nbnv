@@ -19,6 +19,7 @@
 
     <script>
         nbn.nbnv.api = '${api}';
+        nbn.nbnv.userID = ${user.id?c};
 	
 	$(function() {
             var json = ${data};
