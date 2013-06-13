@@ -2,18 +2,19 @@
   "name": "nbn-interactive-map-tool",
   "version": "0.0.0",
   "dependencies": {
-	"coffee-script": "~1.6.3",
+    "coffee-script": "~1.6.3",
     "requirejs": "~2.1.6",
     "jquery": "~1.8.0",
-	"jquery-ui": "~1.10.3",
+    "jquery-ui": "~1.10.3",
     "backbone-amd": "~1.0.0",
     "underscore-amd": "~1.4.4",
     "requirejs-hbs": "latest",
     "requirejs-text": "~2.0.7",
-	"require-cs": "~0.4.4",
+    "require-cs": "~0.4.4",
     "handlebars": "~1.0.0",
     "openlayers-js": "http://cdnjs.cloudflare.com/ajax/libs/openlayers/2.12/OpenLayers.js",
-	"proj4js": "http://download.osgeo.org/proj4js/proj4js-1.1.0.zip",
-	"bootstrap": "~2.3.2"
+    "openlayers-css": "http://cdnjs.cloudflare.com/ajax/libs/openlayers/2.12/theme/default/style.css",
+  	"proj4js": "http://download.osgeo.org/proj4js/proj4js-1.1.0.zip",
+  	"bootstrap": "~2.3.2"
   }
 }

@@ -8,4 +8,4 @@ define [
     switch attr.entityType
       when "habitatdataset"       then return new HabitatLayer attr, options
       when "site boundarydataset" then return new SiteBoundaryLayer attr, options
-      when "taxondataset"         then return new SingleSpeciesLayer attr, options
+      when "taxon"                then return new SingleSpeciesLayer attr, options
