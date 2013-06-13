@@ -4,29 +4,32 @@ define [
   "backbone",
   "hbs!templates/BaseLayersSelector"
 ], ($, _, Backbone, template)-> Backbone.View.extend
+  templateModels :
+    "OS" :     obvious: "Outline"
+    "Outline": obvious: "OS"
+    "Aerial":  obvious: "Hybrid"
+    "Hybrid":  obvious: "Shaded"
+    "Shaded":  obvious: "Hybrid"
+
   initialize: ->
+    #Populate the [others] value of the templateModels hash, so this does not need to be 
+    #processed later
+    for key,value of @templateModels
+      value.others = _.reject @model.getBaseLayers(), (x)=> x is value.obvious or x is key
+
     do @render
-    #$('.selector', @$el).hide()
     @$el.hover (=> $('.others', @$el).stop(true, false).animate height: 152, width: 156, 'fast'),
                (=> $('.others', @$el).stop(true, false).animate height: 73, width: 75, 'fast')
               
-
     @listenTo @model, "change:baseLayer", @render
-
 
   ###
   Each base layer which we allow to set up for displaying on the map has an obvious
   alternative. This obvious alternative should be the most prominant option for the
   currently selected layer. The other non selected layers should be positioned so 
-  that their position is easily recallable
+  that their position is easily recallable. The links are defined in templateModels
   ###
-  getTemplateModel: ->
-    switch @model.get("baseLayer")
-      when "OS"       then return obvious: "Outline", others: _.reject @model.getBaseLayers(), (x)=> x is "Outline" or x is "OS"
-      when "Outline"  then return obvious: "OS",      others: _.reject @model.getBaseLayers(), (x)=> x is "OS" or x is "Outline"
-      when "Aerial"   then return obvious: "Hybrid",  others: _.reject @model.getBaseLayers(), (x)=> x is "Hybrid" or x is "Aerial"
-      when "Hybrid"   then return obvious: "Shaded",  others: _.reject @model.getBaseLayers(), (x)=> x is "Shaded" or x is "Hybrid"
-      when "Shaded"   then return obvious: "Hybrid",  others: _.reject @model.getBaseLayers(), (x)=> x is "Hybrid" or x is "Shaded"
+  getTemplateModel: -> @templateModels[@model.get("baseLayer")]
 
   ###
   Event Handler for when the base layer changes
