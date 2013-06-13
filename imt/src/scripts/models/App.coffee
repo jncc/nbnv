@@ -5,10 +5,10 @@ define [
 ], (Backbone, Search, Layers) -> Backbone.Model.extend 
   defaults :
     viewport: 
-      minX: -24.90413904330953
-      minY: 42.925823307748196
-      maxX: 18.29410313645321
-      maxY: 64.17861427158351
+      minX:  -14.489099982674913
+      maxX: 7.87906407581859
+      minY: 49.825193671965025
+      maxY: 59.45733404137668
     baseLayer: "Aerial"
     layers : new Layers()
 

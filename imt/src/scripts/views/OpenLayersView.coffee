@@ -29,6 +29,7 @@ define [
       @listenTo @model, "change:viewport", @zoomToViewport
       @listenTo @model, "change:baseLayer", @updateBaseLayer
       @listenTo @model.getLayers(), "add", @addLayer
+      @listenTo @model.getLayers(), "position", @positionLayer
       @listenTo @model.getLayers(), "remove", @removeLayer
 
     ###
@@ -50,6 +51,13 @@ define [
     the Backbone layer model for easy removing at a later date
     ###
     addLayer: (layer)-> @map.addLayer layer._openlayersWMS = OpenLayersLayerFactory.createLayer(layer)
+
+    ###
+    Listens to when layers have been repositioned. Notify the OpenLayers Map and set the 
+    new index for that layer
+    ###
+    positionLayer: (layer, collection, newPosition)->
+      @map.setLayerIndex layer._openlayersWMS, newPosition
 
     ###
     Remove the wms layer associated with the given layer
