@@ -30,20 +30,20 @@ define [
       when "Hybrid" then return new OpenLayers.Layer.Bing( type: "AerialWithLabels", key: apiKey, projection: new OpenLayers.Projection("EPSG:3857") )
       when "Aerial" then return new OpenLayers.Layer.Bing( type: "Aerial", key: apiKey, projection: new OpenLayers.Projection("EPSG:3857"))
       when "OS" then return new OpenLayers.Layer.WMS name, Globals.gis("OS-Modern"), 
-              layers: "MiniScale-NoGrid,OS250k,OS50k,OS25k", 
+              layers: "MiniScale-NoGrid,OS250k,OS50k,OS25k"
               format:"image/png"
             ,
-              isBaseLayer: true, 
-              projection: new OpenLayers.Projection("EPSG:27700"), 
-              resolutions: @__EPSG_27700_RESOLUTIONS__,
+              isBaseLayer: true
+              projection: new OpenLayers.Projection("EPSG:27700")
+              resolutions: @__EPSG_27700_RESOLUTIONS__
               attribution: "&copy; Crown copyright and database rights 2011 Ordnance Survey [100017955]"
 
       when "Outline" then return new OpenLayers.Layer.WMS name, Globals.gis("Context"), 
-              layers: "Vice-counties,Ireland-Coast", 
+              layers: "Vice-counties,Ireland-Coast"
               format:"image/png"
             ,
-              isBaseLayer: true, 
-              projection: new OpenLayers.Projection("EPSG:27700"), 
+              isBaseLayer: true
+              projection: new OpenLayers.Projection("EPSG:27700")
               resolutions: @__EPSG_27700_RESOLUTIONS__
 
   ###
@@ -54,9 +54,9 @@ define [
   accordingly
   ###
   createLayer: (layer) -> new OpenLayers.Layer.WMS layer.getName(), layer.getWMS(), 
-                            layers: layer.getLayers().join(), 
-                            format:"image/png",
+                            layers: layer.getLayers().join()
+                            format:"image/png"
                             transparent: true
                           ,
-                            isBaseLayer:false,
+                            isBaseLayer:false
                             opacity: layer.getOpacity()
