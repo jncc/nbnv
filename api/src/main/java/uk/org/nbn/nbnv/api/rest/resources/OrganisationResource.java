@@ -12,6 +12,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -24,6 +25,7 @@ import uk.org.nbn.nbnv.api.model.OrganisationMembership;
 import uk.org.nbn.nbnv.api.model.User;
 import uk.org.nbn.nbnv.api.model.meta.OpResult;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenOrganisationUser;
+import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
 import uk.org.nbn.nbnv.api.solr.SolrResolver;
 
 /**
@@ -50,6 +52,21 @@ public class OrganisationResource extends AbstractResource {
     @Produces(MediaType.APPLICATION_JSON)
     public List<Organisation> get() {
         return organisationMapper.selectAll();
+    }
+
+    /**
+     * Search for organisations based on name and abbreviation
+     * @param term Search term
+     * @return List of organisations matching the search term
+     * 
+     * @response.representation.200.qname List<Organisation>
+     * @response.representation.200.mediaType application/json
+     */
+    @GET
+    @Path("/search")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Organisation> searchForOrgByPartial(@QueryParam("term") String term) {
+       return oOrganisationMapper.searchForOrganisation("%" + term + "%");
     }
 
     /**

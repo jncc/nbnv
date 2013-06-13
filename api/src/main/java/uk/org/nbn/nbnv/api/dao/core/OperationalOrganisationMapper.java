@@ -24,6 +24,9 @@ public interface OperationalOrganisationMapper {
     @Select("SELECT org.* FROM Organisation org INNER JOIN OrganisationMembership omd ON omd.organisationID = org.id WHERE omd.userID = #{id} AND (omd.role = 'administrator' OR omd.role = 'lead')")
     List<Organisation> selectByAdminUser(int id);
     
+    @Select("SELECT org.* FROM Organisation org WHERE name LIKE #{term} OR abbreviation LIKE #{term}")
+    List<Organisation> searchForOrganisation(@Param("term") String term);
+    
     @Update("UPDATE Organisation SET name = #{name}, abbreviation = #{abbreviation}, "
             + "summary = #{summary}, address = #{address}, postcode = #{postcode}, "
             + "phone = #{phone}, website = #{website}, contactName = #{contactName}, "

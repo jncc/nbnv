@@ -36,18 +36,37 @@ nbn.nbnv.ui.requestPickUserReason = function(json) {
     this._renderPanel = function() {
         var _me = this;
         
-        var asSelect = $('<input>').autocomplete({
+        var userSelect = $('<input>').autocomplete({
             source: nbn.nbnv.api + '/user/search?',
-            minLength: 3,
             select: function(event, ui) {
+                event.preventDefault();
                 _me._asID = ui.item.id;
+                userSelect.val(ui.item.forename + ' ' + ui.item.surname);
+                username = ui.item.forename + ' ' + ui.item.surname;
             }
         });
-        asSelect.data('autocomplete')._renderItem = function(ul, item) {
-            var re = new RegExp(this.term, 'i');
+
+        userSelect.data('autocomplete')._renderItem = function(ul, item) {
             return $('<li></li>')
                     .data('item.autocomplete', item)
                     .append('<a><strong style="font-size: small;">' + item.forename + ' ' + item.surname + '</strong><br><span style="font-size: smaller;">' + item.email + '</span></a>')
+                    .appendTo(ul);
+        };
+
+        var orgSelect = $('<input>').autocomplete({
+            source: nbn.nbnv.api + '/organisations/search?',
+            select: function(event, ui) {
+                event.preventDefault();
+                _me._asID = ui.item.id;
+                orgSelect.val(ui.item.name);
+                username = ui.item.name;
+            }
+        });
+        
+        orgSelect.data('autocomplete')._renderItem = function(ul, item) {
+            return $('<li></li>')
+                    .data('item.autocomplete', item)
+                    .append('<a><strong style="font-size: small;">' + item.name + '</strong><br><span style="font-size: smaller;">' + item.abbreviation + '</span></a>')
                     .appendTo(ul);
         };
 
@@ -73,13 +92,6 @@ nbn.nbnv.ui.requestPickUserReason = function(json) {
                         .append(' - ')
                         .append(purposes[$(this).val()].text)
                     );
-                        
-                    if (_me._perm) {
-                        $('#purposedescription').append($('<p>')
-                            .addClass('ui-state-error')
-                            .append('WRITTEN PERMISSION FROM THE DATA PROVIDER IS REQUIRED FOR THIS TYPE OF USE.')
-                            );
-                    }
                 });
                 
         purpose.val(this._purpose);
@@ -105,10 +117,51 @@ nbn.nbnv.ui.requestPickUserReason = function(json) {
         
         if (this._reason != '') { reason.text(this._reason); }
 
+        var userPick = $('<div>')
+            .append($('<input>')
+                .attr('type', 'radio')
+                .attr('name', 'pickfilter')
+                .attr('value', 'user')
+                .change(function() {
+                    if (this.checked) {
+                        _me._user = true;
+                        _me._asID = -1;
+                        orgSelect.prop('disabled', true);
+                        userSelect.prop('disabled', false);
+                        userSelect.val('');
+                        username = '';
+                    }
+                })
+            ).append('User: ').append(userSelect);
+
+        var orgPick = $('<div>')
+            .append($('<input>')
+                .attr('type', 'radio')
+                .attr('name', 'pickfilter')
+                .attr('value', 'org')
+                .change(function() {
+                    if (this.checked) {
+                        _me._user = false;
+                        _me._asID = -1;
+                        orgSelect.prop('disabled', false);
+                        userSelect.prop('disabled', true);
+                        orgSelect.val('');
+                        username = '';
+                    }
+                })
+            ).append('Organisation: ').append(orgSelect);
+
+        if (this._user) {
+            userPick.children('input').attr('checked', 'checked').change();
+        } else {
+            orgPick.children('input').attr('checked', 'checked').change();
+        }
+        
         var data = $('<div>')
             .append($('<div>')
                 .text("I am granting access to:")
-            ).append(asSelect)
+            ).append(userPick)
+            .append(orgPick)
             .append($('<div>').addClass('queryBlock')
                 .text("I am granting access to data for the following purpose:")
             ).append(purpose)
@@ -144,6 +197,7 @@ nbn.nbnv.ui.requestPickUserReason = function(json) {
 
     this.getError = function() {
         if (this._details == '') { return ['Please enter detailed reason for your request']; }
+        if (this._asID == -1) { return ['Missing user or organisation to grant access to']}
         
         return [];
     };
