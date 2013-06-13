@@ -21,5 +21,5 @@ require.config({
 });
 
 require(['cs!models/App', 'cs!views/AppView'], function(App, AppView) {
-	new AppView({model : test = new App()});
+	new AppView({model : new App()});
 });

@@ -26,9 +26,9 @@ define [
     #TODO this is openlayers key, we need our own
     apiKey = "AqTGBsziZHIJYYxgivLBf0hVdrAk9mWO5cQcb8Yux8sW5M8c8opEC2lZqKR1ZZXf"
     switch name
-      when "Shaded" then return new OpenLayers.Layer.Bing( type: "Road", key: apiKey )
-      when "Hybrid" then return new OpenLayers.Layer.Bing( type: "AerialWithLabels", key: apiKey )
-      when "Aerial" then return new OpenLayers.Layer.Bing( type: "Aerial", key: apiKey)
+      when "Shaded" then return new OpenLayers.Layer.Bing( type: "Road", key: apiKey, projection: new OpenLayers.Projection("EPSG:3857") )
+      when "Hybrid" then return new OpenLayers.Layer.Bing( type: "AerialWithLabels", key: apiKey, projection: new OpenLayers.Projection("EPSG:3857") )
+      when "Aerial" then return new OpenLayers.Layer.Bing( type: "Aerial", key: apiKey, projection: new OpenLayers.Projection("EPSG:3857"))
       when "OS" then return new OpenLayers.Layer.WMS name, Globals.gis("OS-Modern"), 
               layers: "MiniScale-NoGrid,OS250k,OS50k,OS25k", 
               format:"image/png"
@@ -45,3 +45,18 @@ define [
               isBaseLayer: true, 
               projection: new OpenLayers.Projection("EPSG:27700"), 
               resolutions: @__EPSG_27700_RESOLUTIONS__
+
+  ###
+  Create an openlayers layer given some model/Layer which updates when different parts
+  of the layer change
+
+  TODO, this method should listen to changes of the Backbone Layer model and update
+  accordingly
+  ###
+  createLayer: (layer) -> new OpenLayers.Layer.WMS layer.getName(), layer.getWMS(), 
+                            layers: layer.getLayers().join(), 
+                            format:"image/png",
+                            transparent: true
+                          ,
+                            isBaseLayer:false,
+                            opacity: layer.getOpacity()

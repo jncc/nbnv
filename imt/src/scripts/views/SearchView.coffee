@@ -13,15 +13,21 @@ define [
     $('input', @$el).autocomplete 
       source: _.bind(@search, @),
       select: _.bind(@select, @)
+    .data('uiAutocomplete')._renderItem = @renderResult
 
   select: (event, ui) ->
-     @model.addSearchResult ui.item
+    @model.addSearchResult ui.item
 
-   search: (request, response) ->
-     @searchCollection
-       .fetch
-           data : 
-             q:request.term, 
-             rows:3
-       .success => 
-           response @searchCollection.map (model)-> model.attributes
+  search: (request, response) ->
+    @searchCollection
+      .fetch
+        data : 
+          q:request.term, 
+          rows:3
+      .success => 
+        response @searchCollection.map (model)-> model.attributes
+
+  renderResult: (ul, item)->
+    $('<li>')
+      .append( "<a>#{item.searchMatchTitle}</a>" )
+      .appendTo ul

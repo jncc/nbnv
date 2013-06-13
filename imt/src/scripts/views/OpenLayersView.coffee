@@ -5,7 +5,10 @@ define [
   "openlayers",
   "cs!helpers/OpenLayersLayerFactory"
 ], ($, _, Backbone, OpenLayers, OpenLayersLayerFactory) -> 
+  #this is actually SR-ORG:7094, rather than EPSG:3857, it matches the bing map better than EPSG:3857. See NBNIV-534
+  Proj4js.defs['EPSG:3857'] = "+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext  +no_defs";
   Proj4js.defs["EPSG:27700"] = "+proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 +x_0=400000 +y_0=-100000 +ellps=airy +datum=OSGB36 +units=m +no_defs";
+  
   Backbone.View.extend
     # Register to imt events which the view should respond to
     initialize: ->
@@ -25,6 +28,8 @@ define [
       @zoomToViewport(null, @model.get "viewport")
       @listenTo @model, "change:viewport", @zoomToViewport
       @listenTo @model, "change:baseLayer", @updateBaseLayer
+      @listenTo @model.getLayers(), "add", @addLayer
+      @listenTo @model.getLayers(), "remove", @removeLayer
 
     ###
     Create an openlayers version of the desired baselayer
@@ -40,6 +45,16 @@ define [
       #this line is required to fix a bug in OpenLayers 2.10 (Ticket #1249)
       @map.setCenter(centre.transform(oldProjection, @map.getProjectionObject()),zoom); 
 
+    ###
+    Add a new wms layer for the given layer. Associates the new Openlayers.Layer.WMS to
+    the Backbone layer model for easy removing at a later date
+    ###
+    addLayer: (layer)-> @map.addLayer layer._openlayersWMS = OpenLayersLayerFactory.createLayer(layer)
+
+    ###
+    Remove the wms layer associated with the given layer
+    ###
+    removeLayer: (layer)-> @map.remove layer._openlayersWMS
 
     ###
     Event listener for viewport changes on the model. Update the Openlayers Map
