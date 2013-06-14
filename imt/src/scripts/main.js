@@ -1,10 +1,10 @@
 require.config({
 	stubModules: ['cs', 'hbs'],
 	shim: {
-        'handlebars': { exports: 'Handlebars' },
+    'handlebars': { exports: 'Handlebars' },
 		'openlayers': { exports: 'OpenLayers', deps: ['proj4js']},
 		'jquery-ui': { exports: '$', deps: ['jquery']}
-    },
+  },
 	paths: {
 		'cs' : '../vendor/require-cs/cs',
 		'coffee-script': '../vendor/coffee-script/extras/coffee-script',
