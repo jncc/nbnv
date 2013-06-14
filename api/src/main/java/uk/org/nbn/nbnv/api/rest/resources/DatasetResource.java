@@ -19,6 +19,7 @@ import uk.org.nbn.nbnv.api.dao.core.OperationalDatasetMapper;
 import uk.org.nbn.nbnv.api.dao.core.OperationalSurveyMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.DatasetAdministratorMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.DatasetMapper;
+import uk.org.nbn.nbnv.api.model.Attribute;
 import uk.org.nbn.nbnv.api.model.Dataset;
 import uk.org.nbn.nbnv.api.model.DatasetResolutionRecordCount;
 import uk.org.nbn.nbnv.api.model.Survey;
