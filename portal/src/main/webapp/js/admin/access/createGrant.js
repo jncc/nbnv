@@ -10,9 +10,9 @@ nbn.nbnv.ui.createGrant = function (json, div) {
     var year = new nbn.nbnv.ui.filter.year(json);
     var spatial = new nbn.nbnv.ui.filter.spatial(json);
     var taxon = new nbn.nbnv.ui.filter.taxon(json);
-    var dataset = new nbn.nbnv.ui.filter.dataset(json);
+    var dataset = new nbn.nbnv.ui.requestPickDataset(json);
     var timeLimit = new nbn.nbnv.ui.timeLimit(json);
-    var result = new nbn.nbnv.ui.requestResult(json);
+    var result = new nbn.nbnv.ui.requestGrantResult(json);
 
     this.div.append(reason._renderHeader());
     this.div.append(reason._renderPanel());
@@ -38,7 +38,22 @@ nbn.nbnv.ui.createGrant = function (json, div) {
         $.extend(j, year.getJson());        
         $.extend(j, dataset.getJson());        
         $.extend(j, timeLimit.getJson());    
-        window.location = "/AccessRequest/Admin";
+        
+        var endpoint;
+        
+        if (j.reason.userID > -1) { endpoint = '/user/userAccesses/request/admin/granted'; } else { endpoint = '/organisations/organisationAccesses/request/admin/granted'; }
+        
+        $.ajax({
+            url: nbn.nbnv.api + endpoint,
+            type: "PUT",
+            contentType: 'application/json',
+            processData: false,
+            data: JSON.stringify(j),
+            complete: function() {
+                window.location = "/AccessRequest/Admin";
+            }
+        });
+        
     }));
 
     this.div.accordion({
@@ -56,13 +71,6 @@ nbn.nbnv.ui.createGrant = function (json, div) {
             } else if (newFilter == 'taxon') {
                 taxon._onEnter();
             } else if (newFilter == 'dataset') {
-                var j = {};
-                $.extend(j, sensitive.getJson());
-                $.extend(j, taxon.getJson());
-                $.extend(j, spatial.getJson());
-                $.extend(j, year.getJson());
-
-                dataset.setupTable(j, '/taxonObservations/datasets/requestable');
                 dataset._onEnter();
             } else if (newFilter == 'timeLimit') {
                 timeLimit._onEnter();
@@ -72,12 +80,13 @@ nbn.nbnv.ui.createGrant = function (json, div) {
                 var error = [];
                 $.merge(error, reason.getError());
                 $.merge(error, sensitive.getError());
+                $.merge(error, dataset.getError());
                 $.merge(error, taxon.getError());
                 $.merge(error, spatial.getError());
                 $.merge(error, year.getError());
                 $.merge(error, timeLimit.getError());
                 
-                result._onEnter(reason._perm, error);
+                result._onEnter(error);
             }
 
             if (oldFilter == 'year') {

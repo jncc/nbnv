@@ -224,7 +224,7 @@ public class DatasetResource extends AbstractResource {
      * 
      * @return True if the user is admin of this dataset
      * 
-     * @response.representation.200.qname List<DatasetResolutionRecordCount>
+     * @response.representation.200.qname boolean
      * @response.representation.200.mediaType application/json
      */
     @GET
@@ -234,6 +234,23 @@ public class DatasetResource extends AbstractResource {
         return datasetAdministratorMapper.isUserDatasetAdministrator(user.getId(), datasetKey);
     }
     
+    /**
+     * Returns a list of datasets the user can admin
+     * 
+     * @param user The current user
+     *
+     * @return List of datasets
+     * 
+     * @response.representation.200.qname List<Dataset>
+     * @response.representation.200.mediaType application/json
+     */
+    
+    @GET
+    @Path("/adminable")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Dataset> adminableDatasets(@TokenUser(allowPublic=false) User user) {
+        return datasetAdministratorMapper.selectDatasetsByUser(user.getId());
+    }
     /***********************************************
      * Survey API calls
      ***********************************************/

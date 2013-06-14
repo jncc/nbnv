@@ -47,6 +47,8 @@
             revoke._render();
             $('.revokelink').click(function() { revoke.show($(this).attr("request")); });
 
+            $('#addgrantbtn').click(function() { window.location = '/AccessRequest/Create/Grant'; });
+
             $.fn.dataTableExt.oJUIClasses.sStripeOdd = 'ui-state-highlight';
             $('.presults').dataTable({
                 "aaSorting": [[4, "desc"]],
@@ -210,6 +212,7 @@
             </#list>
         </tbody>
     </table>
+    <button id="addgrantbtn">Add New Grant</button>
     <h1>Denied Access Requests</h1>
     <table class="results">
         <thead>

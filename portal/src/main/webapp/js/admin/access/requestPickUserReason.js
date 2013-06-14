@@ -189,14 +189,14 @@ nbn.nbnv.ui.requestPickUserReason = function(json) {
     };
     
     this.getJson = function() {
-        if (this._asID > -1)
-            return { reason: { purpose: this._purpose, details: this._details, organisationID: this._asID }};
+        if (this._user)
+            return { reason: { purpose: this._purpose, details: this._details, reason: this._reason, organisationID: this._asID }};
         
-        return { reason: { purpose: this._purpose, details: this._details }};
+        return { reason: { purpose: this._purpose, details: this._details, reason: this._reason, userID: this._asID }};
     };
 
     this.getError = function() {
-        if (this._details == '') { return ['Please enter detailed reason for your request']; }
+        if (this._details == '') { return ['Please enter detailed reason for the request']; }
         if (this._asID == -1) { return ['Missing user or organisation to grant access to']}
         
         return [];

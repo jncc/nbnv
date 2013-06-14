@@ -33,6 +33,9 @@ public interface DatasetAdministratorMapper {
     })
     List<DatasetAdministrator> selectByUser(@Param("userKey") int userKey);
 
+    @Select("SELECT d.* FROM DatasetAdministrator da INNER JOIN DatasetData d ON da.datasetKey = d.[key] WHERE da.userID = #{userKey}")
+    List<Dataset> selectDatasetsByUser(@Param("userKey") int userKey);
+
     @Select("SELECT * FROM DatasetAdministrator WHERE datasetKey = #{datasetKey}")
     @Results(value={
         @Result(property="user", column="userID", javaType=User.class, one=@One(select="uk.org.nbn.nbnv.api.dao.warehouse.UserMapper.getUserById")),
