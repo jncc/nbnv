@@ -17,7 +17,6 @@ import uk.org.nbn.nbnv.api.dao.warehouse.DatasetMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.SurveyMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.TaxonMapper;
 import uk.org.nbn.nbnv.api.model.*;
-import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenDatasetAdminUser;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenTaxonObservationAttributeAdminUser;
 
 @Component
@@ -176,5 +175,4 @@ public class TaxonDatasetResource extends AbstractResource {
             @FormParam("description") String description) {
         return oAttributeMapper.updateDatasetAttribute(attributeID, description);
     }
-    
 }

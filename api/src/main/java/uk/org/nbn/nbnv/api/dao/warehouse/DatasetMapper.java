@@ -67,7 +67,4 @@ public interface DatasetMapper {
     
     @Select("SELECT drrcd.datasetKey, drrcd.count, r.label, r.id AS resolutionID FROM DatasetResolutionRecordCountData drrcd LEFT JOIN Resolution r ON r.label = drrcd.label WHERE datasetKey = #{datasetKey}")
     List<DatasetResolutionRecordCount> getResolutionData(@Param("datasetKey") String datasetKey);
-    
-    @Select("SELECT * FROM d")
-    List<Attribute> getDatasetAttributes(@Param("datasetKey") String datasetKey);
 }

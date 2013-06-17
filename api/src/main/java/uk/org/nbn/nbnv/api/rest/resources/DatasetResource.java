@@ -19,13 +19,13 @@ import uk.org.nbn.nbnv.api.dao.core.OperationalDatasetMapper;
 import uk.org.nbn.nbnv.api.dao.core.OperationalSurveyMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.DatasetAdministratorMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.DatasetMapper;
-import uk.org.nbn.nbnv.api.model.Attribute;
 import uk.org.nbn.nbnv.api.model.Dataset;
 import uk.org.nbn.nbnv.api.model.DatasetResolutionRecordCount;
 import uk.org.nbn.nbnv.api.model.Survey;
 import uk.org.nbn.nbnv.api.model.User;
 import uk.org.nbn.nbnv.api.model.meta.OpResult;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenDatasetAdminUser;
+import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenDatasetSurveyAdminUser;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
 import uk.org.nbn.nbnv.api.solr.SolrResolver;
 
@@ -271,9 +271,9 @@ public class DatasetResource extends AbstractResource {
     @GET
     @Path("/{datasetKey}/surveys/{survey}")
     @Produces("application/json")
-    public Survey getJson(@TokenDatasetAdminUser(path = "datasetKey") User user, 
+    public Survey getJson(@TokenDatasetSurveyAdminUser(dataset = "datasetKey", survey = "survey") User user, 
             @PathParam("datasetKey") String datasetKey, @PathParam("survey") int survey) {
-        return oSurveyMapper.getSurveyById(survey, datasetKey);
+        return oSurveyMapper.getSurveyById(survey);
     }
 
     /**
@@ -303,7 +303,7 @@ public class DatasetResource extends AbstractResource {
     @Path("/{datasetKey}/surveys/{survey}")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response putJson(@TokenDatasetAdminUser(path = "datasetKey") User user,
+    public Response putJson(@TokenDatasetSurveyAdminUser(dataset = "datasetKey", survey = "survey") User user,
             @PathParam("datasetKey") String datasetKey, @PathParam("survey") int survey,
             @FormParam("providerKey") String providerKey,
             @FormParam("title") String title,

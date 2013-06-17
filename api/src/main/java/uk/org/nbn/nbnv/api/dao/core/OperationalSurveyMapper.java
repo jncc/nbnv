@@ -10,8 +10,8 @@ import uk.org.nbn.nbnv.api.model.Survey;
  * @author Matt Debont
  */
 public interface OperationalSurveyMapper {
-    @Select("SELECT * FROM Survey WHERE id = #{id} AND datasetKey = #{datasetKey}")
-    public Survey getSurveyById(@Param("id") int id, @Param("datasetKey") String datasetKey);
+    @Select("SELECT * FROM Survey WHERE id = #{id}")
+    public Survey getSurveyById(@Param("id") int id);
     
     @Update("UPDATE Survey SET providerKey = #{providerKey}, title = #{title}, description = #{description}, geographicalCoverage = #{geographicalCoverage}, temporalCoverage = #{temporalCoverage}, dataQuality = #{dataQuality}, dataCaptureMethod = #{dataCaptureMethod}, purpose = #{purpose}, additionalInformation = #{additionalInformation} WHERE id = #{id}")
     public int updateSurveyById(Survey survey);
