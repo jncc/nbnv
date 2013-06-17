@@ -33,6 +33,12 @@
             <#list oOrgRequests as r>
                 jsonCache[${r.filter.id?c}] = ${r.filter.filterJSON}
             </#list>
+            <#list gUserRequests as r>
+                jsonCache[${r.filter.id?c}] = ${r.filter.filterJSON}
+            </#list>
+            <#list gOrgRequests as r>
+                jsonCache[${r.filter.id?c}] = ${r.filter.filterJSON}
+            </#list>
 
             close = new nbn.nbnv.ui.dialog.requestCloseDialog();
             close._render();
@@ -45,7 +51,7 @@
             $('.denylink').click(function() { deny.show($(this).attr("request"), jsonCache[$(this).attr("request")], $(this).attr("dataset"), '/taxonObservations/datasets/' + $(this).attr("dataset") + '/requestable'); });
             revoke = new nbn.nbnv.ui.dialog.requestRevokeDialog();
             revoke._render();
-            $('.revokelink').click(function() { revoke.show($(this).attr("request")); });
+            $('.revokelink').click(function() { revoke.show($(this).attr("request"), jsonCache[$(this).attr("request")]); });
 
             $('#addgrantbtn').click(function() { window.location = '/AccessRequest/Create/Grant'; });
 

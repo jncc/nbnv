@@ -43,7 +43,7 @@ nbn.nbnv.ui.dialog.requestCloseDialog = function() {
     
     this.show = function(id, json) {
         this.requestID = id;
-        if (json.reason.organisationID != -1) { this.orgReq = true; } else { this.orgReq = false; }
+        if ('organisationID' in json.reason && json.reason.organisationID != -1) { this.orgReq = true; } else { this.orgReq = false; }
         this.div.dialog("open");
         
     };

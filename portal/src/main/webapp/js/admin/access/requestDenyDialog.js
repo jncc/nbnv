@@ -68,7 +68,7 @@ nbn.nbnv.ui.dialog.requestDenyDialog = function() {
         $('#denyeffect').text('Loading request record coverage');
         $('#denyanonwarn').hide();
         
-        if (json.reason.organisationID != -1) { this.orgReq = true; } else { this.orgReq = false; }
+        if ('organisationID' in json.reason && json.reason.organisationID != -1) { this.orgReq = true; } else { this.orgReq = false; }
         
         if (!json.taxon.all) { 
             if (json.taxon.tvk) {

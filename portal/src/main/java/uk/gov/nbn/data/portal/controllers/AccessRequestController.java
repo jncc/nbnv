@@ -80,6 +80,23 @@ public class AccessRequestController {
         return new ModelAndView("userAccessRequestEdit", "model", request);
     }
 
+    @RequestMapping(value = "/AccessRequest/History/{dataset}", method = RequestMethod.GET)
+    public ModelAndView getHistoryPage(@PathVariable("dataset") String dataset) {
+        //get the current logged in user
+        User currentUser = resource.path("user")
+                .accept(MediaType.APPLICATION_JSON)
+                .get(User.class);
+
+        if (currentUser.getId() != User.PUBLIC_USER_ID) {
+            return new ModelAndView("accessRequestHistory", "model", dataset);
+        } else {
+            Map<String, Object> model = new HashMap<String, Object>();
+            model.put("redirect", "/AccessRequest/History/" + dataset);
+            model.put("status", "You need to be logged in to view access request history.");
+            return new ModelAndView("sso", model);
+        }
+    }
+    
     @RequestMapping(value = "/AccessRequest/Edit/Organisation/{id}", method = RequestMethod.GET)
     public ModelAndView getOrgEditPage(@PathVariable("id") int id) {
         User currentUser = resource.path("user")

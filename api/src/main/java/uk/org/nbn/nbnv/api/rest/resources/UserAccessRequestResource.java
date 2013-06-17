@@ -22,14 +22,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import uk.org.nbn.nbnv.api.dao.core.OperationalTaxonObservationFilterMapper;
+import uk.org.nbn.nbnv.api.dao.core.OperationalUserAccessRequestAuditHistoryMapper;
 import uk.org.nbn.nbnv.api.dao.core.OperationalUserAccessRequestMapper;
 import uk.org.nbn.nbnv.api.dao.core.OperationalUserTaxonObservationAccessMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.DatasetAdministratorMapper;
 import uk.org.nbn.nbnv.api.model.TaxonObservationFilter;
 import uk.org.nbn.nbnv.api.model.User;
 import uk.org.nbn.nbnv.api.model.UserAccessRequest;
+import uk.org.nbn.nbnv.api.model.UserAccessRequestAuditHistory;
 import uk.org.nbn.nbnv.api.model.meta.AccessRequestJSON;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenAccessRequestAdminUser;
+import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenDatasetAdminUser;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
 import uk.org.nbn.nbnv.api.utils.AccessRequestUtils;
 
@@ -43,6 +46,7 @@ public class UserAccessRequestResource extends AbstractResource {
     @Autowired OperationalTaxonObservationFilterMapper oTaxonObservationFilterMapper;
     @Autowired OperationalUserAccessRequestMapper oUserAccessRequestMapper;
     @Autowired OperationalUserTaxonObservationAccessMapper oUserTaxonObservationAccessMapper;
+    @Autowired OperationalUserAccessRequestAuditHistoryMapper oUserAccessRequestAuditHistoryMapper;
     @Autowired DatasetAdministratorMapper datasetAdministratorMapper;
     @Autowired AccessRequestUtils accessRequestUtils;
     
@@ -84,6 +88,7 @@ public class UserAccessRequestResource extends AbstractResource {
         for (String datasetKey : datasets) {
             oTaxonObservationFilterMapper.createFilter(filter);
             oUserAccessRequestMapper.createRequest(filter.getId(), user.getId(), datasetKey, accessRequest.getReason().getPurpose(), accessRequest.getReason().getDetails(), new Date(new java.util.Date().getTime()));
+            oUserAccessRequestAuditHistoryMapper.addHistory(filter.getId(), user.getId(), "Created request for: '" + filter.getFilterText() + "'");
         }
 
         return Response.ok("success").build();
@@ -114,6 +119,7 @@ public class UserAccessRequestResource extends AbstractResource {
         for (String datasetKey : datasets) {
             oTaxonObservationFilterMapper.createFilter(filter);
             oUserAccessRequestMapper.createRequest(filter.getId(), accessRequest.getReason().getUserID(), datasetKey, accessRequest.getReason().getPurpose(), accessRequest.getReason().getDetails(), new Date(new java.util.Date().getTime()));
+            oUserAccessRequestAuditHistoryMapper.addHistory(filter.getId(), user.getId(), "Created and granted request for: '" + filter.getFilterText() + "'");
             acceptRequest(filter.getId(), accessRequest.getReason().getReason(), accessRequest.getTime().isAll() ? "" : accessRequest.getTime().getDate().toString());
         }
 
@@ -148,7 +154,9 @@ public class UserAccessRequestResource extends AbstractResource {
             return Response.serverError().build();
         }
         TaxonObservationFilter filter = accessRequestUtils.createFilter(json, accessRequest);
+        TaxonObservationFilter orig = oTaxonObservationFilterMapper.selectById(filterID);
         oTaxonObservationFilterMapper.editFilter(filterID, filter.getFilterText(), filter.getFilterJSON());
+        oUserAccessRequestAuditHistoryMapper.addHistory(filterID, user.getId(), "Edit request to: '" + filter.getFilterText() + "', from: '" + orig.getFilterText() + "'");
 
         return Response.ok("success").build();
     }
@@ -313,18 +321,40 @@ public class UserAccessRequestResource extends AbstractResource {
             , @FormParam("reason") String reason
             , @FormParam("expires") @DefaultValue("") String expires) throws ParseException {
         if ("grant".equalsIgnoreCase(action)) {
+            oUserAccessRequestAuditHistoryMapper.addHistory(filterID, user.getId(), "Accept request");
             return acceptRequest(filterID, reason, expires);
         } else if ("deny".equalsIgnoreCase(action)) {
+            oUserAccessRequestAuditHistoryMapper.addHistory(filterID, user.getId(), "Deny request");
             return denyRequest(filterID, reason);
         } else if ("close".equalsIgnoreCase(action)) {
+            oUserAccessRequestAuditHistoryMapper.addHistory(filterID, user.getId(), "Close request");
             return closeRequest(filterID, reason);
         } else if ("revoke".equalsIgnoreCase(action)) {
+            oUserAccessRequestAuditHistoryMapper.addHistory(filterID, user.getId(), "Revoke action");
             return revokeRequest(filterID, reason);
         } else {
             return Response.serverError().build();
         }
     }
        
+        /**
+     * Returns an audit history listing all organisational access changes made to a dataset
+     * 
+     * @param user A dataset administrator
+     * @param dataset The dataset being queried
+     * 
+     * @return A list of history elements
+     * 
+     * @response.representation.200.qname List<OrganisationAccessRequestAuditHistory>
+     * @response.representation.200.mediaType application/json
+     */
+    @GET
+    @Path("/requests/history/{dataset}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<UserAccessRequestAuditHistory> getHistory(@TokenDatasetAdminUser(path="dataset") User user, @PathParam("dataset") String dataset) {
+        return oUserAccessRequestAuditHistoryMapper.getHistory(dataset);
+    }
+
     /**
      * Accept a User Access Request with a given ID
      * 

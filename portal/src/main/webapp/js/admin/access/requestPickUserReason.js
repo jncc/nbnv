@@ -189,7 +189,7 @@ nbn.nbnv.ui.requestPickUserReason = function(json) {
     };
     
     this.getJson = function() {
-        if (this._user)
+        if (!this._user)
             return { reason: { purpose: this._purpose, details: this._details, reason: this._reason, organisationID: this._asID }};
         
         return { reason: { purpose: this._purpose, details: this._details, reason: this._reason, userID: this._asID }};
