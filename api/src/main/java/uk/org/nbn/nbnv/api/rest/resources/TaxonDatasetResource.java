@@ -172,7 +172,8 @@ public class TaxonDatasetResource extends AbstractResource {
     public int updateAttributeByID(@TokenTaxonObservationAttributeAdminUser(dataset = "id", attribute = "attribute") User user, 
             @PathParam("id") String id, 
             @PathParam("attribute") int attributeID,
+            @FormParam("label") String label,
             @FormParam("description") String description) {
-        return oAttributeMapper.updateDatasetAttribute(attributeID, description);
+        return oAttributeMapper.updateDatasetAttribute(attributeID, label, description);
     }
 }
