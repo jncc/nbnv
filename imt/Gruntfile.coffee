@@ -44,8 +44,8 @@ module.exports = (grunt)->
         files: 'src/css/app.css' : 'src/less/app.less'
 
     watch: 
-        files: "src/less/*"
-        tasks: ["less"]
+      files: "src/less/*"
+      tasks: ["less"]
 
     clean: 
       test:['test-js']

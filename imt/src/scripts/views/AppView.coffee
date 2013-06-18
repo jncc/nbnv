@@ -4,8 +4,9 @@ define [
   "hbs!templates/AppScaffolding",
   "cs!views/OpenLayersView",
   "cs!views/SearchView",
-  "cs!views/BaseLayerSelectorView"
-], ($, Backbone, imtScaffolding, OpenLayersView, SearchView, BaseLayerSelectorView) -> Backbone.View.extend
+  "cs!views/BaseLayerSelectorView",
+  "cs!views/LegendView"
+], ($, Backbone, imtScaffolding, OpenLayersView, SearchView, BaseLayerSelectorView, LegendView) -> Backbone.View.extend
   el: '#imt',
 
   ###
@@ -28,3 +29,7 @@ define [
     @baseLayerSelectorView = new BaseLayerSelectorView
       model: @model,
       el: $('.baseLayers', @$el)
+
+    @legendView = new LegendView
+      model: @model,
+      el: $('.legend', @$el)
