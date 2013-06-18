@@ -5,8 +5,8 @@ define [
   "cs!views/OpenLayersView",
   "cs!views/SearchView",
   "cs!views/BaseLayerSelectorView",
-  "cs!views/LegendView"
-], ($, Backbone, imtScaffolding, OpenLayersView, SearchView, BaseLayerSelectorView, LegendView) -> Backbone.View.extend
+  "cs!views/ControlPanelView"
+], ($, Backbone, imtScaffolding, OpenLayersView, SearchView, BaseLayerSelectorView, ControlPanelView) -> Backbone.View.extend
   el: '#imt',
 
   ###
@@ -30,6 +30,6 @@ define [
       model: @model,
       el: $('.baseLayers', @$el)
 
-    @legendView = new LegendView
+    @controlPanelView = new ControlPanelView
       model: @model,
-      el: $('.legend', @$el)
+      el: $('.controlPanel', @$el)
