@@ -8,13 +8,14 @@ module.exports = function (grunt) {
 	grunt.loadNpmTasks('grunt-contrib-less');
 	grunt.loadNpmTasks('grunt-contrib-watch');
 	grunt.loadNpmTasks('grunt-contrib-compress');
-	
+	grunt.loadNpmTasks('grunt-contrib-coffee');
+
 	//Configure tasks
 	grunt.initConfig({
 		jasmine : {
 			compile: {
 				options : {
-					specs : 'test/**/*spec.js',
+					specs : 'test-compiled/**/*spec.js',
 					template: require('grunt-template-jasmine-requirejs'),
 					templateOptions: {
 						requireConfigFile: 'src/scripts/main.js',
@@ -22,6 +23,15 @@ module.exports = function (grunt) {
 					},
 					junit : { path : 'junit' }
 				}
+			}
+		},
+		coffee: {
+			test :{
+				expand: true,
+		    cwd: 'test',
+		    src: ['**/*.coffee'],
+		    dest: 'test-compiled',
+		    ext: '.spec.js'
 			}
 		},
 		requirejs: {
@@ -41,10 +51,11 @@ module.exports = function (grunt) {
 			}
 		},
 		watch: {
-            files: "src/less/*",
-            tasks: ["less"]
-        },
+        files: "src/less/*",
+        tasks: ["less"]
+    },
 		clean: {
+			test:['test-js'],
 			prep:['dist', 'src/css']
 		},
 		copy: {
@@ -76,7 +87,7 @@ module.exports = function (grunt) {
 	});
 
 	grunt.registerTask('prep', ['clean', 'bower-install']);
-	grunt.registerTask('test', ['jasmine']);
+	grunt.registerTask('test', ['clean:test', 'coffee', 'jasmine']);
 	grunt.registerTask('develop', ['connect', 'less', 'watch']);
 	grunt.registerTask('build', ['less', 'test', 'copy', 'requirejs']);
 	grunt.registerTask('package', ['build', 'compress']);

@@ -1,7 +1,8 @@
 # Bower output
 src/vendor
 
-# Grunt code output and LESS compilation
+# Grunt code output, LESS and test compilation
+test-compiled
 dist
 src/css
 
