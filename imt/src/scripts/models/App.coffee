@@ -11,6 +11,7 @@ define [
       maxY: 59.45733404137668
     baseLayer: "Aerial"
     layers : new Layers()
+    controlPanelVisible: false
 
   ###
   Return this models layers collection
