@@ -17,15 +17,16 @@ import uk.org.nbn.nbnv.api.model.TaxonObservationFilter;
  * @author Paul Gilbertson
  */
 public interface OperationalOrganisationAccessRequestMapper {
-    @Insert("INSERT INTO OrganisationAccessRequest (filterID, organisationID, datasetKey, requestPurposeID, requestReason, requestDate)"
-            + " VALUES (#{filterID}, #{organisationID}, #{datasetKey}, #{requestPurposeID}, #{requestReason}, #{requestDate})")
+    @Insert("INSERT INTO OrganisationAccessRequest (filterID, organisationID, datasetKey, requestPurposeID, requestReason, requestDate, sensitiveRequest)"
+            + " VALUES (#{filterID}, #{organisationID}, #{datasetKey}, #{requestPurposeID}, #{requestReason}, #{requestDate}, #{sensitive})")
     public int createRequest(
             @Param("filterID") int filterID
             , @Param("organisationID") int organisationID
             , @Param("datasetKey") String datasetKey
             , @Param("requestPurposeID") int requestPurposeID
             , @Param("requestReason") String requestReason
-            , @Param("requestDate") Date requestDate);
+            , @Param("requestDate") Date requestDate
+            , @Param("sensitive") boolean sensitiveRequest);
 
     @Select("SELECT uar.* FROM OrganisationAccessRequest uar "
             + "WHERE uar.organisationID = #{id}")

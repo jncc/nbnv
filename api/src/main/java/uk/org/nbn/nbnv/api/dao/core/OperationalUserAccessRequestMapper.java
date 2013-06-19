@@ -17,15 +17,16 @@ import uk.org.nbn.nbnv.api.model.UserAccessRequest;
  * @author Paul Gilbertson
  */
 public interface OperationalUserAccessRequestMapper {
-    @Insert("INSERT INTO UserAccessRequest (filterID, userID, datasetKey, requestPurposeID, requestReason, requestDate)"
-            + " VALUES (#{filterID}, #{userID}, #{datasetKey}, #{requestPurposeID}, #{requestReason}, #{requestDate})")
+    @Insert("INSERT INTO UserAccessRequest (filterID, userID, datasetKey, requestPurposeID, requestReason, requestDate, sensitiveRequest)"
+            + " VALUES (#{filterID}, #{userID}, #{datasetKey}, #{requestPurposeID}, #{requestReason}, #{requestDate}, #{sensitive})")
     public int createRequest(
             @Param("filterID") int filterID
             , @Param("userID") int userID
             , @Param("datasetKey") String datasetKey
             , @Param("requestPurposeID") int requestPurposeID
             , @Param("requestReason") String requestReason
-            , @Param("requestDate") Date requestDate);
+            , @Param("requestDate") Date requestDate
+            , @Param("sensitive") boolean sensitiveRequest);
 
     @Select("SELECT uar.* FROM UserAccessRequest uar "
             + "WHERE uar.userID = #{id}")

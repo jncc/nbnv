@@ -21,6 +21,7 @@ public class AccessRequest {
     private Date responseDate;
     private Date accessExpires;
     private String datasetKey;
+    private boolean sensitiveRequest;
 
     /**
      * @return the filter
@@ -160,6 +161,20 @@ public class AccessRequest {
      */
     public void setRequestPurposeID(int requestPurposeID) {
         this.requestPurposeID = requestPurposeID;
+    }
+
+    /**
+     * @return the sensitiveRequest
+     */
+    public boolean isSensitiveRequest() {
+        return sensitiveRequest;
+    }
+
+    /**
+     * @param sensitiveRequest the sensitiveRequest to set
+     */
+    public void setSensitiveRequest(boolean sensitiveRequest) {
+        this.sensitiveRequest = sensitiveRequest;
     }
 
 }
