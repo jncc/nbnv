@@ -49,7 +49,7 @@ public class AccessRequestUtils {
         List<String> datasets;
 
         if (accessRequest.getDataset().isAll()) {
-            List<TaxonDatasetWithQueryStats> selectRequestableObservationDatasetsByFilter = taxonObservationMapper.selectRequestableObservationDatasetsByFilter(user, accessRequest.getYear().getStartYear(), accessRequest.getYear().getEndYear(), new ArrayList<String>(), species, accessRequest.getSpatial().getMatch(), accessRequest.getSpatial().getFeature(), (accessRequest.getSensitive().equals("sans") ? true : false), accessRequest.getTaxon().getDesignation(), accessRequest.getTaxon().getOutput(), "");
+            List<TaxonDatasetWithQueryStats> selectRequestableObservationDatasetsByFilter = taxonObservationMapper.selectRequestableObservationDatasetsByFilter(user, accessRequest.getYear().getStartYear(), accessRequest.getYear().getEndYear(), new ArrayList<String>(), species, accessRequest.getSpatial().getMatch(), accessRequest.getSpatial().getFeature(), (accessRequest.getSensitive().equals("sans") ? true : false), accessRequest.getTaxon().getDesignation(), accessRequest.getTaxon().getOutput(), "", "");
             datasets = new ArrayList<String>();
 
             for (TaxonDatasetWithQueryStats tdwqs : selectRequestableObservationDatasetsByFilter) {
@@ -65,7 +65,7 @@ public class AccessRequestUtils {
     public List<String> createSensitiveDatasetList(AccessRequestJSON accessRequest, List<String> species, User user) {
         List<String> datasets = new ArrayList<String>();
 
-        List<TaxonDatasetWithQueryStats> selectRequestableSensitiveObservationDatasetsByFilter = taxonObservationMapper.selectRequestableSensitiveObservationDatasetsByFilter(user, accessRequest.getYear().getStartYear(), accessRequest.getYear().getEndYear(), new ArrayList<String>(), species, accessRequest.getSpatial().getMatch(), accessRequest.getSpatial().getFeature(), (accessRequest.getSensitive().equals("sans") ? true : false), accessRequest.getTaxon().getDesignation(), accessRequest.getTaxon().getOutput(), "");
+        List<TaxonDatasetWithQueryStats> selectRequestableSensitiveObservationDatasetsByFilter = taxonObservationMapper.selectRequestableSensitiveObservationDatasetsByFilter(user, accessRequest.getYear().getStartYear(), accessRequest.getYear().getEndYear(), new ArrayList<String>(), species, accessRequest.getSpatial().getMatch(), accessRequest.getSpatial().getFeature(), (accessRequest.getSensitive().equals("sans") ? true : false), accessRequest.getTaxon().getDesignation(), accessRequest.getTaxon().getOutput(), "", "");
         for (TaxonDatasetWithQueryStats tdwqs : selectRequestableSensitiveObservationDatasetsByFilter) {
             datasets.add(tdwqs.getDatasetKey());
         }
@@ -77,7 +77,7 @@ public class AccessRequestUtils {
         List<String> datasets;
 
         if (accessRequest.getDataset().isAll()) {
-            List<TaxonDatasetWithQueryStats> selectRequestableObservationDatasetsByFilter = taxonObservationMapper.selectRequestableObservationDatasetsByFilterOrganisation(org, accessRequest.getYear().getStartYear(), accessRequest.getYear().getEndYear(), new ArrayList<String>(), species, accessRequest.getSpatial().getMatch(), accessRequest.getSpatial().getFeature(), (accessRequest.getSensitive().equals("sans") ? true : false), accessRequest.getTaxon().getDesignation(), accessRequest.getTaxon().getOutput(), "");
+            List<TaxonDatasetWithQueryStats> selectRequestableObservationDatasetsByFilter = taxonObservationMapper.selectRequestableObservationDatasetsByFilterOrganisation(org, accessRequest.getYear().getStartYear(), accessRequest.getYear().getEndYear(), new ArrayList<String>(), species, accessRequest.getSpatial().getMatch(), accessRequest.getSpatial().getFeature(), (accessRequest.getSensitive().equals("sans") ? true : false), accessRequest.getTaxon().getDesignation(), accessRequest.getTaxon().getOutput(), "", "");
             datasets = new ArrayList<String>();
 
             for (TaxonDatasetWithQueryStats tdwqs : selectRequestableObservationDatasetsByFilter) {
@@ -93,7 +93,7 @@ public class AccessRequestUtils {
     public List<String> createSensitiveDatasetList(AccessRequestJSON accessRequest, List<String> species, Organisation org) {
         List<String> datasets = new ArrayList<String>();
 
-        List<TaxonDatasetWithQueryStats> selectRequestableSensitiveObservationDatasetsByFilter = taxonObservationMapper.selectRequestableSensitiveObservationDatasetsByFilterOrganisation(org, accessRequest.getYear().getStartYear(), accessRequest.getYear().getEndYear(), new ArrayList<String>(), species, accessRequest.getSpatial().getMatch(), accessRequest.getSpatial().getFeature(), (accessRequest.getSensitive().equals("sans") ? true : false), accessRequest.getTaxon().getDesignation(), accessRequest.getTaxon().getOutput(), "");
+        List<TaxonDatasetWithQueryStats> selectRequestableSensitiveObservationDatasetsByFilter = taxonObservationMapper.selectRequestableSensitiveObservationDatasetsByFilterOrganisation(org, accessRequest.getYear().getStartYear(), accessRequest.getYear().getEndYear(), new ArrayList<String>(), species, accessRequest.getSpatial().getMatch(), accessRequest.getSpatial().getFeature(), (accessRequest.getSensitive().equals("sans") ? true : false), accessRequest.getTaxon().getDesignation(), accessRequest.getTaxon().getOutput(), "", "");
         for (TaxonDatasetWithQueryStats tdwqs : selectRequestableSensitiveObservationDatasetsByFilter) {
             datasets.add(tdwqs.getDatasetKey());
         }
@@ -104,12 +104,12 @@ public class AccessRequestUtils {
     public List<Integer> getRecordSet(AccessRequestJSON accessRequest, List<String> species, String dataset, User user) {
         List<String> datasets = new ArrayList<String>();
         datasets.add(dataset);
-        return taxonObservationMapper.selectRequestableObservationRecordIDsByFilter(user, accessRequest.getYear().getStartYear(), accessRequest.getYear().getEndYear(), datasets, species, accessRequest.getSpatial().getMatch(), accessRequest.getSpatial().getFeature(), (accessRequest.getSensitive().equals("sans") ? true : false), accessRequest.getTaxon().getDesignation(), accessRequest.getTaxon().getOutput(), "");
+        return taxonObservationMapper.selectRequestableObservationRecordIDsByFilter(user, accessRequest.getYear().getStartYear(), accessRequest.getYear().getEndYear(), datasets, species, accessRequest.getSpatial().getMatch(), accessRequest.getSpatial().getFeature(), (accessRequest.getSensitive().equals("sans") ? true : false), accessRequest.getTaxon().getDesignation(), accessRequest.getTaxon().getOutput(), "", "");
     }
 
     public List<Integer> getRecordSet(AccessRequestJSON accessRequest, List<String> species, String dataset, Organisation org) {
         List<String> datasets = new ArrayList<String>();
         datasets.add(dataset);
-        return taxonObservationMapper.selectRequestableObservationRecordIDsByFilterOrganisation(org, accessRequest.getYear().getStartYear(), accessRequest.getYear().getEndYear(), datasets, species, accessRequest.getSpatial().getMatch(), accessRequest.getSpatial().getFeature(), (accessRequest.getSensitive().equals("sans") ? true : false), accessRequest.getTaxon().getDesignation(), accessRequest.getTaxon().getOutput(), "");
+        return taxonObservationMapper.selectRequestableObservationRecordIDsByFilterOrganisation(org, accessRequest.getYear().getStartYear(), accessRequest.getYear().getEndYear(), datasets, species, accessRequest.getSpatial().getMatch(), accessRequest.getSpatial().getFeature(), (accessRequest.getSensitive().equals("sans") ? true : false), accessRequest.getTaxon().getDesignation(), accessRequest.getTaxon().getOutput(), "", "");
     }
 }
