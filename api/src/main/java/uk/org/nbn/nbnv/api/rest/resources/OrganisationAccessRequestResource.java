@@ -177,6 +177,27 @@ public class OrganisationAccessRequestResource extends AbstractResource {
 
         return Response.ok("success").build();
     }
+    
+    /**
+     * Returns a list of all Organisation Access Requests for 
+     * organisations that a user is a member of and have been granted
+     * 
+     * @param user The current user 
+     * 
+     * @return A list of all Organisation Access Requests for a given 
+     * organisation that have been granted
+     * 
+     * @throws IOException 
+     * 
+     * @response.representation.200.qname List<OrganisationAccessRequest>
+     * @response.representation.200.mediaType application/json
+     */
+    @GET
+    @Path("/requests/granted")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<OrganisationAccessRequest> getGrantedRequests(@TokenUser(allowPublic=false) User user) throws IOException {
+        return oOrganisationAccessRequestMapper.getUserGrantedOrganisationRequests(user.getId());
+    }
 
     /**
      * Returns a list of all Organisation Access Requests for a given 
@@ -222,6 +243,29 @@ public class OrganisationAccessRequestResource extends AbstractResource {
     @Produces(MediaType.APPLICATION_JSON)
     public List<OrganisationAccessRequest> getGrantedRequests(@TokenOrganisationUser(path="id", roles = OrganisationMembership.Role.administrator) User user, @PathParam("id") int orgID) throws IOException {
         return oOrganisationAccessRequestMapper.getGrantedOrganisationRequests(orgID);
+    }
+
+    /**
+     * Returns a list of all Organisation Access Requests for a given 
+     * organisation that are pending
+     * 
+     * @param user The current user if they are an organisation admin for the 
+     * supplied organisation ID, or returns a 403 Forbidden error
+     * @param orgID An Organisation ID
+     * 
+     * @return A list of all Organisation Access Requests for a given 
+     * organisation that are pending
+     * 
+     * @throws IOException 
+     * 
+     * @response.representation.200.qname List<OrganisationAccessRequest>
+     * @response.representation.200.mediaType application/json
+     */
+    @GET
+    @Path("{id}/requests/pending")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<OrganisationAccessRequest> getPendingRequests(@TokenOrganisationUser(path="id", roles = OrganisationMembership.Role.administrator) User user, @PathParam("id") int orgID) throws IOException {
+        return oOrganisationAccessRequestMapper.getPendingOrganisationRequests(orgID);
     }
 
     /**

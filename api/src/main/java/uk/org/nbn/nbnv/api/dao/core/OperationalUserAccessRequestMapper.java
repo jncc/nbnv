@@ -29,7 +29,7 @@ public interface OperationalUserAccessRequestMapper {
             , @Param("sensitive") boolean sensitiveRequest);
 
     @Select("SELECT uar.* FROM UserAccessRequest uar "
-            + "WHERE uar.userID = #{id}")
+            + "WHERE uar.userID = #{id} AND sensitiveRequests = 0")
     @Results(value = {
         @Result(property="filter", column="filterID", javaType=TaxonObservationFilter.class, one=@One(select="uk.org.nbn.nbnv.api.dao.core.OperationalTaxonObservationFilterMapper.selectById")),
         @Result(property="user", column="userID", javaType=User.class, one=@One(select="uk.org.nbn.nbnv.api.dao.core.OperationalUserMapper.getUserById")),
@@ -47,6 +47,16 @@ public interface OperationalUserAccessRequestMapper {
         @Result(property="datasetKey", column="datasetKey")
     })
     public List<UserAccessRequest> getGrantedUserRequests(int id);
+
+    @Select("SELECT uar.* FROM UserAccessRequest uar "
+            + "WHERE uar.userID = #{id} AND responseTypeID IS NULL AND sensitiveRequest = 0")
+    @Results(value = {
+        @Result(property="filter", column="filterID", javaType=TaxonObservationFilter.class, one=@One(select="uk.org.nbn.nbnv.api.dao.core.OperationalTaxonObservationFilterMapper.selectById")),
+        @Result(property="user", column="userID", javaType=User.class, one=@One(select="uk.org.nbn.nbnv.api.dao.core.OperationalUserMapper.getUserById")),
+        @Result(property="dataset", column="datasetKey", javaType=Dataset.class, one=@One(select="uk.org.nbn.nbnv.api.dao.core.OperationalDatasetMapper.selectByDatasetKey")),
+        @Result(property="datasetKey", column="datasetKey")
+    })
+    public List<UserAccessRequest> getPendingUserRequests(int id);
 
     @Select("SELECT uar.* FROM UserAccessRequest uar "
             + "WHERE uar.userID = #{user} AND uar.datasetKey = #{dataset} AND responseTypeID = 1")

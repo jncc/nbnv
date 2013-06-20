@@ -53,6 +53,7 @@
                     <td>${r.name}</td>
                     <#assign t=0 /><#list admin as a><#if a.id==r.id><#assign t=1 /></#if></#list>
                     <#if t==1><td><a href="/Organisations/${r.id?c}/Admin">Admin Organisation</a></#if>
+                    <#if t==1><td><a href="/AccessRequests/Organisations/${r.id?c}">View Organisation Access Requests</a></#if>
                 </tr>
             </#list>
             </tbody>

@@ -210,6 +210,25 @@ public class UserAccessRequestResource extends AbstractResource {
     }
 
     /**
+     * Return a list of access requests made by a user that are pending
+     * 
+     * @param user The current user (Must be logged in)
+     * 
+     * @return A List of User Access Requests made by a user that are pending
+     * 
+     * @throws IOException 
+     * 
+     * @response.representation.200.qname List<UserAccessRequest> 
+     * @response.representation.200.mediaType application/json
+     */
+    @GET
+    @Path("/requests/pending")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<UserAccessRequest> getPendingRequests(@TokenUser(allowPublic=false) User user) throws IOException {
+        return oUserAccessRequestMapper.getPendingUserRequests(user.getId());
+    }
+
+    /**
      * Return a list of access requests made that a user has admin rights over
      * 
      * @param user The current user (Must be logged in)

@@ -1,6 +1,6 @@
-<#assign gUserRequests=json.readURL("${api}/user/userAccesses/requests/granted") />
-<#assign gOrgRequests=json.readURL("${api}/organisation/organisationAccesses/requests/granted") />
-<#assign pUserRequests=json.readURL("${api}/user/userAccesses/requests/pending") />
+<#assign org="${URLParameters.organisation}" />
+<#assign gOrgRequests=json.readURL("${api}/organisation/organisationAccesses/${org}/requests/granted") />
+<#assign pOrgRequests=json.readURL("${api}/organisation/organisationAccesses/${org}/requests/pending") />
 
 <@template.master title="Requests for Datasets"
     javascripts=["/js/jquery.dataTables.min.js"]
