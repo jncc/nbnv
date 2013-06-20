@@ -7,5 +7,5 @@ define [
 
   initialize: ()->
     @set "wms", Globals.gis "SingleSpecies/#{@attributes.ptaxonVersionKey}"
-    @set "name", @attributes.title
+    @set "name", @attributes.name
     @set "layers", ['Grid-10km']

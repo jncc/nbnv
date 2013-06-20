@@ -57,7 +57,7 @@ define [
     new index for that layer
     ###
     positionLayer: (layer, collection, newPosition)->
-      @map.setLayerIndex layer._openlayersWMS, newPosition
+      @map.setLayerIndex layer._openlayersWMS, newPosition + 1
 
     ###
     Remove the wms layer associated with the given layer

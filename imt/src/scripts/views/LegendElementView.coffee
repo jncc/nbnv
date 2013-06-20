@@ -3,4 +3,4 @@ define [
 ], (Backbone) -> Backbone.View.extend
 
   initialize: ->
-    @$el.append '<p>Test layer :)</p>'
+    @$el.append "<p>#{@model.getName()}</p>"
