@@ -1,5 +1,5 @@
 define [
-  "openlayers",
+  "openlayers"
   "cs!helpers/Globals"
 ], (OpenLayers, Globals) ->
   #Resolutions optimized for Ordnance Survey map [2500,1e3,500,200,100,50,25,4,2.5,2,1],
@@ -49,14 +49,18 @@ define [
   ###
   Create an openlayers layer given some model/Layer which updates when different parts
   of the layer change
-
-  TODO, this method should listen to changes of the Backbone Layer model and update
-  accordingly
   ###
-  createLayer: (layer) -> new OpenLayers.Layer.WMS layer.getName(), layer.getWMS(), 
-                            layers: layer.getLayers().join()
-                            format:"image/png"
-                            transparent: true
-                          ,
-                            isBaseLayer:false
-                            opacity: layer.getOpacity()
+  createLayer: (layer) -> 
+    wmsLayer = new OpenLayers.Layer.WMS layer.getName(), layer.getWMS(), 
+        layers: [layer.getLayer()]
+        format:"image/png"
+        transparent: true
+        "SLD_BODY": layer.getSLD()
+      ,
+        isBaseLayer:false
+        opacity: layer.getOpacity()
+
+    layer.on 'change:sld', -> wmsLayer.mergeNewParams "SLD_BODY" : layer.getSLD() 
+    layer.on 'change:opacity', -> wmsLayer.setOpacity layer.getOpacity()
+
+    return wmsLayer

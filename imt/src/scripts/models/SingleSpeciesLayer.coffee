@@ -1,11 +1,19 @@
 define [
-  "cs!models/Layer",
+  "cs!models/Layer"
   "cs!helpers/Globals"
-], (Layer, Globals) -> Layer.extend
+  "hbs!templates/slds/Default"
+], (Layer, Globals, sld) -> Layer.extend
   defaults:
     opacity: 1
+    colour: "FF0000"
 
-  initialize: ()->
+  initialize: () ->
     @set "wms", Globals.gis "SingleSpecies/#{@attributes.ptaxonVersionKey}"
     @set "name", @attributes.title
-    @set "layers", ['Grid-10km']
+    @set "layer", 'Grid-10km'
+
+    @on 'change:colour change:layer', => @trigger 'change:sld'
+
+  getSLD: -> sld
+    layer: @getLayer(),
+    colour: @get "colour"

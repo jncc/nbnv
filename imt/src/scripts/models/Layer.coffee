@@ -1,7 +1,8 @@
 define [
   "backbone"
 ], (Backbone) -> Backbone.Model.extend
+  getSLD:-> @get "sld"
   getName:-> @get "name"
   getWMS:-> @get "wms"
-  getLayers:-> @get "layers"
+  getLayer:-> @get "layer"
   getOpacity: -> @get "opacity"

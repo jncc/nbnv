@@ -13,6 +13,7 @@ require.config({
 		'text' : '../vendor/requirejs-text/text',
 		'jquery' : '../vendor/jquery/jquery',
 		'jquery-ui': '../vendor/jquery-ui/ui/jquery-ui',
+		'jquery-colorpicker': '../vendor/jquery-colorpicker/js/colorpicker',
 		'underscore': '../vendor/underscore-amd/underscore',
 		'backbone': '../vendor/backbone-amd/backbone',
 		'openlayers': '../vendor/openlayers-js/index',
@@ -21,5 +22,5 @@ require.config({
 });
 
 require(['cs!models/App', 'cs!views/AppView'], function(App, AppView) {
-	new AppView({model : out = new App()});
+	view = new AppView({model : out = new App()});
 });
