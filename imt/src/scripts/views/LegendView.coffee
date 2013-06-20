@@ -1,10 +1,17 @@
 define [
-  "backbone",
-], (Backbone) -> Backbone.View.extend
+  "backbone"
+  "cs!views/LegendElementView"
+  "jquery-ui"
+], (Backbone, LegendElementView, $) -> Backbone.View.extend
 
   initialize: ->
-    @listenTo @model.getLayers(), 'add', @addLayer
+    @listenTo @collection, 'add', @addLayer
+    @$el.sortable
+      start: (ui, event) ->
+      update:0
+    @$el.disableSelection()
 
   addLayer: (layer) -> 
-    @$el.append '<p>Test layer</p>'
-    
+    new LegendElementView
+      model: layer
+      el: $('<li></li>').appendTo(@$el)

@@ -1,8 +1,8 @@
 define [
-  "jquery-ui",
-  "backbone",
+  "jquery-ui"
+  "backbone"
   "hbs!templates/ControlPanel"
-  "cs!views/LegendView",
+  "cs!views/LegendView"
 ], ($, Backbone, controlPanel, LegendView) -> Backbone.View.extend
   
   initialize:->
@@ -16,7 +16,7 @@ define [
     @$el.tabs(); #Turn the control panel into jquery tabs
 
     @legendView = new LegendView
-      model: @model,
+      collection: @model.getLayers(),
       el: $('.legend', @$el)
 
   updateVisiblity:->
