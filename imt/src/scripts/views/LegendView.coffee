@@ -7,8 +7,11 @@ define [
   initialize: ->
     @listenTo @collection, 'add', @addLayer
     @$el.sortable
-      start: (ui, event) ->
-      update:0
+      start: (event, ui) => 
+        @_oldPosition = ui.item.index()
+      update: (event, ui) =>
+        @_newPosition = ui.item.index()
+        @collection.position @_oldPosition, @_newPosition
     @$el.disableSelection()
 
   addLayer: (layer) -> 
