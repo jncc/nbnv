@@ -2,6 +2,7 @@
 src/vendor
 
 # Grunt code output, LESS and test compilation
+_SpecRunner.html
 test-compiled
 dist
 src/css
