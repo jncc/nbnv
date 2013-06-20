@@ -6,7 +6,7 @@
     "requirejs": "~2.1.6",
     "jquery": "~1.8.0",
     "jquery-ui": "~1.10.3",
-    "jquery.colorpicker" :"0.9.2",
+    "jquery.colorpicker" : "~0.9.2",
     "backbone-amd": "~1.0.0",
     "underscore-amd": "~1.4.4",
     "requirejs-hbs": "latest",
