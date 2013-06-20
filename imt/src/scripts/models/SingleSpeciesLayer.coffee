@@ -9,7 +9,7 @@ define [
 
   initialize: () ->
     @set "wms", Globals.gis "SingleSpecies/#{@attributes.ptaxonVersionKey}"
-    @set "name", @attributes.title
+    @set "name", @attributes.name
     @set "layer", 'Grid-10km'
 
     @on 'change:colour change:layer', => @trigger 'change:sld'
