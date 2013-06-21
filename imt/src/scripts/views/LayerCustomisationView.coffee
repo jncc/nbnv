@@ -2,8 +2,9 @@ define [
   "jquery"
   "backbone"
   "cs!views/ColourView"
+  "cs!views/OpacityView"
   "hbs!templates/LayerCustomisation"
-], ($, Backbone, ColourView, customisationTemplate) -> Backbone.View.extend
+], ($, Backbone, ColourView, OpacityView, customisationTemplate) -> Backbone.View.extend
   ###
   The role of this view is to determine which sub customisation
   views are required for the given model that has been provided
@@ -15,3 +16,12 @@ define [
     @colorView = new ColourView
       model: @model
       el: $('.colourPicker', @$el)
+
+    @opacityView = new OpacityView
+      model: @model
+      el: $('.opacity', @$el)
+
+    @$el.dialog
+      resizable: false
+      width: 400
+
