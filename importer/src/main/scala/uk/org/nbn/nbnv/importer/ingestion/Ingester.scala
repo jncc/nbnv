@@ -37,6 +37,8 @@ class Ingester @Inject()(options: Options,
     for ((record, i) <- archive.iteratorRaw.zipWithIndex) {
       val rec = new NbnRecord(record)
       surveyIngester.stageSurvey(rec.surveyKey, dataset)
+
+      logProgress(i)
     }
 
     //Save all the surveys
@@ -50,6 +52,8 @@ class Ingester @Inject()(options: Options,
       val rec = new NbnRecord(record)
       val survey = db.repo.getImportSurvey((rec.surveyKey getOrElse "1"),dataset )
       sampleIngester.stageSample(rec.sampleKey, survey.get)
+
+      logProgress(i)
     }
 
     //Save all the surveys
@@ -61,6 +65,8 @@ class Ingester @Inject()(options: Options,
     for ((record, i) <- archive.iteratorRaw.zipWithIndex) {
       val rec = new NbnRecord(record)
       siteIngester.stageSite(rec.siteKey, rec.siteName, dataset.getImportDataset)
+
+      logProgress(i)
     }
     
     db.flushAndClear()
@@ -72,6 +78,8 @@ class Ingester @Inject()(options: Options,
       val rec = new NbnRecord(record)
       recorderIngester.ensureRecorder(rec.determiner)
       recorderIngester.ensureRecorder(rec.recorder)
+
+      logProgress(i)
     }
    
     db.flushAndClear()
@@ -83,6 +91,8 @@ class Ingester @Inject()(options: Options,
       val rec = new NbnRecord(record)
       
       featureIngester.ensureGridSquareFeature(rec)
+
+      logProgress(i)
     }
     
     db.flushAndClear()

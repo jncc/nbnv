@@ -44,6 +44,7 @@ class FeatureIngester @Inject()(log: Logger, db: Database, gridSquareInfoFactory
 
     // a GridSquareInfo object can compute all the info we need about a grid square
     val info = gridSquareInfoFactory.getByGridRef(value)
+    log.info("Ensuring grid square %s and parents".format(info.gridReference))
 
     // ensure that the (Feature, GridSquare) pair exists and return the feature
     ensureGridSquareFeatureRecursive(info)._1
@@ -55,7 +56,7 @@ class FeatureIngester @Inject()(log: Logger, db: Database, gridSquareInfoFactory
     // if there's a feature already, all necessary parents should already exist, so just return it
     db.repo.getGridSquareFeature(info.gridReference) getOrElse {
 
-      log.debug("Creating grid ref '%s'.".format(info.gridReference))
+      log.info("Creating grid ref '%s'.".format(info.gridReference))
 
       // the feature doesn't exist, so we need to create it
       val f = db.repo.createFeature(info.wgs84Polygon, info.gridReference)

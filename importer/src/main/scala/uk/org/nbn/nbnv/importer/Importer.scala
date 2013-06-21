@@ -61,7 +61,7 @@ class Importer @Inject()(options:        Options,
 
       // validate
       if (options.target >= Target.validate) {
-//        validator.validate(archive)
+        validator.validate(archive)
         log.info("Finished validation in " + stopwatch.elapsedSeconds + " seconds")
       }
 
