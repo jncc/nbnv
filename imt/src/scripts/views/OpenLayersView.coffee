@@ -20,6 +20,7 @@ define [
         layers: [OpenLayersLayerFactory.getBaseLayer( @model.get "baseLayer" )],
         eventListeners: 
           moveend : => @model.set("viewport", do @getOpenlayersViewport)
+          zoomend: => @model.set("zoom", do @map.getZoom)
         ,
         controls : [ new OpenLayers.Control.Navigation,
                      new OpenLayers.Control.ArgParser,

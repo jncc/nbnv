@@ -60,6 +60,7 @@ define [
         isBaseLayer:false
         opacity: layer.getOpacity()
 
+    layer.on 'change:layer', -> wmsLayer.mergeNewParams layers : [layer.getLayer()]
     layer.on 'change:sld', -> wmsLayer.mergeNewParams "SLD_BODY" : layer.getSLD() 
     layer.on 'change:opacity', -> wmsLayer.setOpacity layer.getOpacity()
 
