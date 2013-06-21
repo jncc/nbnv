@@ -10,4 +10,5 @@ define [
   initialize:->
     @$el.ColorPicker 
       flat: true
+      color: "#" + @model.get 'colour'
       onSubmit: (hsb, hex, rgb) => @model.set 'colour', hex

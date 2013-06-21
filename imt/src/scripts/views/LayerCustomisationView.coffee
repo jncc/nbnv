@@ -22,6 +22,8 @@ define [
       el: $('.opacity', @$el)
 
     @$el.dialog
+      title: @model.getName()
       resizable: false
       width: 400
+      close: -> $(this).dialog('destroy').remove() #remove the dialog from the dom on close
 

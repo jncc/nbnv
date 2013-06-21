@@ -3,12 +3,16 @@ define [
   "cs!models/HabitatLayer",
   "cs!models/SiteBoundaryLayer",
   "cs!models/SingleSpeciesLayer"
-], (Backbone, HabitatLayer, SiteBoundaryLayer, SingleSpeciesLayer) -> Backbone.Collection.extend
+  "cs!models/DatasetSpeciesDensityLayer"
+  "cs!models/DesignationSpeciesDensityLayer"
+], (Backbone, HabitatLayer, SiteBoundaryLayer, SingleSpeciesLayer, DatasetSpeciesDensityLayer, DesignationSpeciesDensityLayer) -> Backbone.Collection.extend
   model: (attr, options)->
     switch attr.entityType
       when "habitatdataset"       then return new HabitatLayer attr, options
       when "site boundarydataset" then return new SiteBoundaryLayer attr, options
       when "taxon"                then return new SingleSpeciesLayer attr, options
+      when "taxondataset"         then return new DatasetSpeciesDensityLayer attr, options
+      when "designation"          then return new DesignationSpeciesDensityLayer attr, options
 
   ###
   Moves an existing element in the the collection from position index 
