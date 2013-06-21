@@ -118,6 +118,17 @@ public class StoredProcedureLibrary {
         session.executeQuery(query, arguments);
     }
 
+    public void importTaxonObservationsAndRelatedRecords() {
+        StoredProcedureCall call = new StoredProcedureCall();
+        call.setProcedureName("import_ImportTaxonObservationsAndRelatedRecords");
+
+        DataModifyQuery query = new DataModifyQuery();
+        query.setCall(call);
+
+        Session session = getSession();
+        session.executeQuery(query);
+    }
+
     private Session getSession() {
         return ((EntityManagerImpl) _em).getActiveSession();
     }

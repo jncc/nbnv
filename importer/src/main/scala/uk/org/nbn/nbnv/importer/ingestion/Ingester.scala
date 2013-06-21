@@ -102,6 +102,20 @@ class Ingester @Inject()(options: Options,
         }
       }
   }
+
+  def finaliseImport(metadata: Metadata)
+  {
+    log.info("Deleting existing records...")
+    //Clear down the taxon observations
+    db.repo.deleteTaxonObservationsAndRelatedRecords(metadata.datasetKey)
+
+    log.info("Importing records...")
+
+    val i = watch.elapsedMillis()
+    db.repo.importTaxonObservationsAndRelatedRecords()
+    log.info("Imported records in %d seconds".format((watch.elapsedMillis() - i) / 1000))
+  }
+
   
   def ingest(archive: Archive, metadata: Metadata) {
 
@@ -113,7 +127,6 @@ class Ingester @Inject()(options: Options,
 
       // Clear down importer tables
       // upsert dataset
-//      val dataset = datasetIngester.upsertDataset(metadata)
       val dataset = datasetIngester.stageDataset(metadata)
       db.flushAndClear()
 
@@ -135,6 +148,9 @@ class Ingester @Inject()(options: Options,
 
       // insert records
       upsertRecords(archive, dataset, metadata)
+
+      //Import data into main database.
+      finaliseImport(metadata)
 
       if (options.target < Target.commit) {
         log.info("Rolling back ingestion transaction")

@@ -10,7 +10,9 @@ import uk.org.nbn.nbnv.importer.BadDataException
 import uk.org.nbn.nbnv.{SpatialQueries, StoredProcedureLibrary}
 
 class Repository (log: Logger, em: EntityManager, cache: QueryCache) extends ControlAbstractions {
-  
+
+
+
 
   def confirmSiteBoundary(siteDatasetKey: String, siteProviderKey: String): Boolean = {
 
@@ -49,6 +51,11 @@ class Repository (log: Logger, em: EntityManager, cache: QueryCache) extends Con
   def deleteTaxonObservationsAndRelatedRecords(datasetKey: String) {
     val sprocs = new StoredProcedureLibrary(em)
     sprocs.deleteTaxonObservationsAndRelatedRecords(datasetKey)
+  }
+
+  def importTaxonObservationsAndRelatedRecords() {
+    val sprocs = new StoredProcedureLibrary(em)
+    sprocs.importTaxonObservationsAndRelatedRecords
   }
 
   def confirmTaxonVersionKey(taxonVersionKey: String): Boolean = {
