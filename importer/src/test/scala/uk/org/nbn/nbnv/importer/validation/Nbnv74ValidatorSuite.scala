@@ -12,21 +12,42 @@ import org.scalatest.BeforeAndAfter
  * Date: 17/10/12
  */
 class Nbnv74ValidatorSuite extends BaseFunSuite with BeforeAndAfter {
-//  val validator = new Nbnv74Validator
-//  var record: NbnRecord = _
-//
-//  before {
-//    record = mock[NbnRecord]
-//  }
-//
-//  test("Should validate a valid O type date set") {
-//    when(record.dateType).thenReturn("O")
-//    when(record.startDate).thenReturn(new SimpleDateFormat("dd/MM/yyyy").parse("01/10/2012"))
-//    when(record.endDate).thenReturn(new SimpleDateFormat("dd/MM/yyyy").parse("31/10/2012"))
-//
-//    val r = validator.validate(record)
-//    r.level should be (ResultLevel.DEBUG)
-//  }
+
+
+  val validator = new Nbnv74Validator
+  var record: NbnRecord = _
+
+  before {
+    record = mock[NbnRecord]
+  }
+
+  test("Should validate a valid O type date set for a leap year") {
+    val startDateString = "01/02/2004"
+    val endDateString = "29/02/2004"
+
+    when(record.dateType).thenReturn("O")
+    when(record.startDateRaw).thenReturn(Option(startDateString))
+    when(record.startDate).thenReturn(Option( new SimpleDateFormat("dd/MM/yyyy").parse(startDateString)))
+    when(record.endDateRaw).thenReturn(Option(endDateString))
+    when(record.endDate).thenReturn(Option(new SimpleDateFormat("dd/MM/yyyy").parse(endDateString)))
+
+    val r = validator.validate(record)
+    r.find(r => r.level == ResultLevel.ERROR) should be ('empty)
+  }
+
+  test("Should validate a valid O type date set for a normal year") {
+    val startDateString = "01/02/2005"
+    val endDateString = "28/02/2005"
+
+    when(record.dateType).thenReturn("O")
+    when(record.startDateRaw).thenReturn(Option(startDateString))
+    when(record.startDate).thenReturn(Option( new SimpleDateFormat("dd/MM/yyyy").parse(startDateString)))
+    when(record.endDateRaw).thenReturn(Option(endDateString))
+    when(record.endDate).thenReturn(Option(new SimpleDateFormat("dd/MM/yyyy").parse(endDateString)))
+
+    val r = validator.validate(record)
+    r.find(r => r.level == ResultLevel.ERROR) should be ('empty)
+  }
 //
 //  test("Should validate a valid OO type date set") {
 //    when(record.dateType).thenReturn("OO")
