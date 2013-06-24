@@ -3,7 +3,8 @@ define [
   "backbone"
   "hbs!templates/ControlPanel"
   "cs!views/LegendView"
-], ($, Backbone, controlPanel, LegendView) -> Backbone.View.extend
+  "cs!views/DatasetsView"
+], ($, Backbone, controlPanel, LegendView, DatasetsView) -> Backbone.View.extend
   
   initialize:->
     do @render
@@ -18,6 +19,10 @@ define [
     @legendView = new LegendView
       collection: @model.getLayers()
       el: @$('.legend')
+
+    @datasetsView = new DatasetsView
+      collection: @model.getLayers()
+      el: @$('.datasets')
 
   updateVisiblity:->
     if @model.get "controlPanelVisible" then do @$el.show else do @$el.hide
