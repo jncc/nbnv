@@ -61,11 +61,15 @@ class Repository (log: Logger, em: EntityManager, cache: QueryCache) extends Con
   }
 
   def confirmTaxonVersionKey(taxonVersionKey: String): Boolean = {
-    val query = em.createQuery("SELECT COUNT(t.taxonVersionKey) FROM Taxon t WHERE t.taxonVersionKey = :tvk", classOf[Taxon])
-    query.setParameter("tvk", taxonVersionKey)
+    val q = "SELECT COUNT(t.taxonVersionKey) FROM Taxon t WHERE t.taxonVersionKey = :tvk";
 
-    val count = query.getSingleResult.asInstanceOf[Long]
-    if (count == 1) true else false
+    cacheSingle(q, taxonVersionKey) {
+      val query = em.createQuery(q, classOf[Taxon])
+      query.setParameter("tvk", taxonVersionKey)
+
+      val count = query.getSingleResult.asInstanceOf[Long]
+      if (count == 1) true else false
+    }
   }
 
   def getAttribute(attributeLabel: String, taxonDataset: ImportTaxonDataset) = {
