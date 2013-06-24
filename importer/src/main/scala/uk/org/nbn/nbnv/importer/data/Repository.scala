@@ -10,8 +10,10 @@ import uk.org.nbn.nbnv.importer.BadDataException
 import uk.org.nbn.nbnv.{SpatialQueries, StoredProcedureLibrary}
 
 class Repository (log: Logger, em: EntityManager, cache: QueryCache) extends ControlAbstractions {
-
-
+  def clearImportStagingTables(){
+    val sprocs = new StoredProcedureLibrary(em)
+    sprocs.clearImportStagingTables
+  }
 
 
   def confirmSiteBoundary(siteDatasetKey: String, siteProviderKey: String): Boolean = {

@@ -136,6 +136,8 @@ class Ingester @Inject()(options: Options,
       t.begin()
 
       // Clear down importer tables
+      db.repo.clearImportStagingTables()
+
       // upsert dataset
       val dataset = datasetIngester.stageDataset(metadata)
       db.flushAndClear()

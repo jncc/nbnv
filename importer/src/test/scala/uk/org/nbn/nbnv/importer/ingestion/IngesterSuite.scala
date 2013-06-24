@@ -29,6 +29,7 @@ class IngesterSuite extends BaseFunSuite {
     val siteIngester = mock[SiteIngester]
     val featureIngester = mock[FeatureIngester]
     val recorderIngester = mock[RecorderIngester]
+    val repository = mock[Repository]
 
     val archive = mock[Archive]
     val iterator = mock[ClosableIterator[StarRecord]]
