@@ -37,7 +37,11 @@ class Validator @Inject()(log: Logger, db: Database){
     // lookups (range) (e.g. checking real taxon key)
 
 
-    for (record <- archive.iteratorRaw) {
+    for ((record, i) <- archive.iteratorRaw.zipWithIndex) {
+
+      if (i % 100 == 99) {
+        log.info("Validated %d records".format(i))
+      }
 
       val nbnRecord = new NbnRecord(record)
 
