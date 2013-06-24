@@ -8,9 +8,9 @@ define [
   isGridLayer: true
   
   initialize: () ->
-    @on 'change:resolution change:isPolygon change:autoResolution', => do @refreshLayer
+    @on 'change:resolution change:isPolygon change:autoResolution', => do @generateLayer
 
-  refreshLayer: ->
+  generateLayer: ->
     resolution = @get "resolution"
     layer = if @get "isPolygon" then "None-Grid" else 
             if resolution is 'auto' then "Grid-#{@get 'autoResolution'}"
