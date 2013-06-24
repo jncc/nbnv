@@ -13,11 +13,11 @@ define [
 
   render: ->
     @$el.html controlPanel()
-    @$el.tabs(); #Turn the control panel into jquery tabs
+    @$el.tabs() #Turn the control panel into jquery tabs
 
     @legendView = new LegendView
-      collection: @model.getLayers(),
-      el: $('.legend', @$el)
+      collection: @model.getLayers()
+      el: @$('.legend')
 
   updateVisiblity:->
     if @model.get "controlPanelVisible" then do @$el.show else do @$el.hide

@@ -15,11 +15,11 @@ define [
 
     @colorView = new ColourView
       model: @model
-      el: $('.colourPicker', @$el)
+      el: @$('.colourPicker')
 
     @opacityView = new OpacityView
       model: @model
-      el: $('.opacity', @$el)
+      el: @$('.opacity')
 
     @$el.dialog
       title: @model.getName()

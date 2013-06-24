@@ -13,9 +13,9 @@ define [
     @listenTo @model, 'change:colour', @updateLegendIcon
 
     # Add a click listener to the icon
-    $('span.icon', @$el).click =>
+    @$('span.icon').click =>
       new LayerCustomisationView model: @model
 
   updateLegendIcon:->
-    $('span.icon', @$el).css
+    @$('span.icon').css
       backgroundColor: "#" + @model.get "colour"

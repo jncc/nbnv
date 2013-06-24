@@ -11,7 +11,7 @@ define [
     @searchCollection = do @model.getSearch
 
     #Create a jquery autocomplete widget. Use 
-    $('input', @$el).autocomplete 
+    @$('input').autocomplete 
       source: _.bind(@search, @),
       select: _.bind(@select, @)
     .data('uiAutocomplete')._renderItem = _.bind(@renderResult,@)

@@ -17,28 +17,28 @@ define [
     do @render
 
     #Add a click listener to the settings button and toggle the settings visibility
-    $('.controlPanelToggle', @$el).click => do @toggleControlPanel
+    @$('.controlPanelToggle').click => do @toggleControlPanel
 
   toggleControlPanel :->
       @model.set "controlPanelVisible", not @model.get "controlPanelVisible"
-      $('.controlPanelToggle', @$el).toggleClass 'active'
+      @$('.controlPanelToggle').toggleClass 'active'
 
   render: ->
     @$el.html imtScaffolding()
     @openlayersView = new OpenLayersView
-      model: @model,
-      el: $('.openlayers', @$el)
+      model: @model
+      el: @$('.openlayers')
 
     @searchView = new SearchView
-      model: @model,
-      el: $('.search', @$el)
+      model: @model
+      el: @$('.search')
 
     @baseLayerSelectorView = new BaseLayerSelectorView
-      model: @model,
-      el: $('.baseLayers', @$el)
+      model: @model
+      el: @$('.baseLayers')
 
     @controlPanelView = new ControlPanelView
-      model: @model,
-      el: $('.controlPanel', @$el)
+      model: @model
+      el: @$('.controlPanel')
 
-    $('.controlPanelToggle', @$el).addClass 'active' if @model.get 'controlPanelVisible'
+    @$('.controlPanelToggle').addClass 'active' if @model.get 'controlPanelVisible'
