@@ -47,9 +47,8 @@ public class ImportTaxonObservationPublic implements Serializable {
     @JoinColumn(name = "determinerID", referencedColumnName = "id")
     @ManyToOne
     private ImportRecorder determinerID;
-    @JoinColumn(name = "featureID", referencedColumnName = "id")
-    @ManyToOne(optional = false)
-    private ImportFeature featureID;
+    @Column(name = "taxonObservationID")
+    private Integer featureID;
 
     public ImportTaxonObservationPublic() {
     }
@@ -98,11 +97,11 @@ public class ImportTaxonObservationPublic implements Serializable {
         this.determinerID = determinerID;
     }
 
-    public ImportFeature getFeatureID() {
+    public Integer getFeatureID() {
         return featureID;
     }
 
-    public void setFeatureID(ImportFeature featureID) {
+    public void setFeatureID(Integer featureID) {
         this.featureID = featureID;
     }
 

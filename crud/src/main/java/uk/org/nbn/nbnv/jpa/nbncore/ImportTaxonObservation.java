@@ -46,8 +46,6 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "ImportTaxonObservation.findByAbsenceRecord", query = "SELECT i FROM ImportTaxonObservation i WHERE i.absenceRecord = :absenceRecord"),
     @NamedQuery(name = "ImportTaxonObservation.findBySensitiveRecord", query = "SELECT i FROM ImportTaxonObservation i WHERE i.sensitiveRecord = :sensitiveRecord")})
 public class ImportTaxonObservation implements Serializable {
-    @Column(name = "existingFeatureId")
-    private Integer existingFeatureId;
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
@@ -99,9 +97,8 @@ public class ImportTaxonObservation implements Serializable {
     @JoinColumn(name = "determinerID", referencedColumnName = "id")
     @ManyToOne
     private ImportRecorder determinerID;
-    @JoinColumn(name = "featureID", referencedColumnName = "id")
-    @ManyToOne(optional = false)
-    private ImportFeature featureID;
+    @Column(name = "featureID")
+    private Integer featureID;
 
     public ImportTaxonObservation() {
     }
@@ -232,11 +229,11 @@ public class ImportTaxonObservation implements Serializable {
         this.determinerID = determinerID;
     }
 
-    public ImportFeature getFeatureID() {
+    public Integer getFeatureID() {
         return featureID;
     }
 
-    public void setFeatureID(ImportFeature featureID) {
+    public void setFeatureID(Integer featureID) {
         this.featureID = featureID;
     }
 
@@ -264,13 +261,4 @@ public class ImportTaxonObservation implements Serializable {
     public String toString() {
         return "uk.org.nbn.nbnv.jpa.nbncore.ImportTaxonObservation[ id=" + id + " ]";
     }
-
-    public Integer getExistingFeatureId() {
-        return existingFeatureId;
-    }
-
-    public void setExistingFeatureId(Integer existingFeatureId) {
-        this.existingFeatureId = existingFeatureId;
-    }
-    
 }

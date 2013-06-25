@@ -31,7 +31,7 @@ public class StoredProcedureLibrary {
 //                    @StoredProcedureParameter(queryParameter="wkt",name="p1",direction=Direction.IN,type=Integer.class)
 //            }
 //    )
-    public ImportFeature createFeature(String wgs84Wkt, String identifier) {
+    public Feature createFeature(String wgs84Wkt, String identifier) {
         StoredProcedureCall call = new StoredProcedureCall();
         call.setProcedureName("import_CreateFeature");
         call.addNamedArgument("wkt", "wgs84wkt");
@@ -55,7 +55,7 @@ public class StoredProcedureLibrary {
 
         Integer featureId = (Integer) session.executeQuery(query, arguments);
 
-        ImportFeature feature =  _em.find(ImportFeature.class,featureId);
+        Feature feature =  _em.find(Feature.class,featureId);
 
         return feature;
     }
@@ -67,7 +67,7 @@ public class StoredProcedureLibrary {
 //    , @wkt VARCHAR(MAX)
 //    , @gridSquareId INT OUT
 
-    public ImportGridSquare createGridSquare(String gridRef, Resolution resolution, Projection projection, String wkt, ImportFeature wgs84Feature) {
+    public GridSquare createGridSquare(String gridRef, Resolution resolution, Projection projection, String wkt, Feature wgs84Feature) {
         StoredProcedureCall call = new StoredProcedureCall();
         call.setProcedureName("import_CreateGridSquare");
 
@@ -96,7 +96,7 @@ public class StoredProcedureLibrary {
 
         session.executeQuery(query, arguments);
 
-        ImportGridSquare gridSquare =  _em.find(ImportGridSquare.class, gridRef);
+        GridSquare gridSquare =  _em.find(GridSquare.class, gridRef);
 
         return gridSquare;
     }
