@@ -1,23 +1,28 @@
 define [
-  "backbone"
   "underscore"
-  "jquery-ui"
-], (Backbone, _, $) -> Backbone.View.extend
-
-  organisations: {}
+  "backbone"
+  "hbs!templates/DatasetAcknowledgment"
+], (_, Backbone, template) -> Backbone.View.extend
 
   initialize: ->
-    @listenTo @collection, 'add', @addLayer
+    @listenTo @collection, 'add change:usedDatasets', @render
 
-  addLayer: (layer) ->    
-    layer.getDatasets().done (datasets) => 
-      datasets.forEach (dataset) => @datasets[dataset.get 'key'] = dataset : dataset
-      do @render
+  ###
+  This datasets view renders the datasets which are currently
+  being used by layers on maps grouped by the organisation which
+  provided that dataset
+  ###
+  render: () ->
+    usedDatasets = @collection.getUsedDatasets()
+    organisations = _.chain(usedDatasets)
+                      .groupBy((dataset) -> dataset.getOrganisationID() )
+                      .map( (val,key) ->  
+                        name: val[0].attributes.organisationName
+                        href: val[0].attributes.organisationHref
+                        id: val[0].attributes.organisationID
+                        datasets: val
+                      )
+                      .value()
 
-  render:->
-    @$el.empty()
-    _.each @datasets, (val, key) => 
-      $('<li>')
-        .append("<img src='#{val.dataset.attributes.organisationHref}/logosmall'></img")
-        #.html(val.dataset.get "title")
-        .appendTo(@$el)
+    @$el.html template organisations: organisations
+   

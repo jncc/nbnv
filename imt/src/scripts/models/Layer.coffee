@@ -6,3 +6,4 @@ define [
   getWMS:-> @get "wms"
   getLayer:-> @get "layer"
   getOpacity: -> @get "opacity"
+  getUsedDatasets: -> []

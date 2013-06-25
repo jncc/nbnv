@@ -55,3 +55,15 @@ define [
 
   _syncLayer: (layer) ->
     layer.set "autoResolution", @state.get "autoResolution" if layer.isGridLayer
+
+  ###
+  Gets all the layers used datasets of this collection and return
+  them merged together
+  ###
+  getUsedDatasets: ->
+    @chain()
+    .map( (layer) ->  layer.getUsedDatasets() )
+    .flatten()
+    .groupBy( (dataset) -> dataset.id )
+    .map( (val, key) -> val[0])
+    .value()

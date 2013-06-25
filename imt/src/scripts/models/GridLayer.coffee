@@ -1,7 +1,8 @@
 define [
   "underscore"
   "cs!models/Layer"
-], (_, Layer) -> Layer.extend
+  "cs!models/AvailableDataset"
+], (_, Layer, AvailableDataset) -> Layer.extend
   ###
   Flag that this is a grid layer and should be updated by the App
   when the auto resolution changes
@@ -9,13 +10,15 @@ define [
   isGridLayer: true
   
   initialize: () ->
-    @_availableDatasets = new Backbone.Collection [], url: @getAvailableDatasetsURL()
+    @availableDatasets = new Backbone.Collection [], url: @getAvailableDatasetsURL(), model: AvailableDataset
     
-    @listenTo @_availableDatasets, 'sync', @updateAvailableDatasets
-    @listenTo @_availableDatasets, 'change:selected', @updateSelectedDatasets
-
-    @on 'change:resolution change:isPolygon change:autoResolution', => do @generateLayer
-    do @getDatasets #Prepopulate the datasets list
+    @listenTo @availableDatasets, 'reset', @updateAvailableDatasets
+    @listenTo @availableDatasets, 'change:selected', @updateSelectedDatasets
+    @listenTo @availableDatasets, 'reset change:selected', -> @trigger 'change:usedDatasets'
+    
+    @on 'change:resolution change:isPolygon change:autoResolution', -> do @generateLayer
+    
+    do @fetchAvailableDatasets #Prepopulate the datasets list
 
   ###
   Listen to when a available datasets list has been populated and update
@@ -24,7 +27,7 @@ define [
   updateAvailableDatasets: ->
     selectedDatasets = @get "datasets"
     allSelected = _.isEmpty selectedDatasets
-    @_availableDatasets.forEach (dataset) -> 
+    @availableDatasets.forEach (dataset) -> 
       dataset.set 'selected',
           allSelected or _.contains( selectedDatasets, dataset.attributes.key),
           silent: true # don't notify that we have updated
@@ -35,24 +38,24 @@ define [
   the selected datasets array should be empty
   ###
   updateSelectedDatasets:->
-    selectedDatasets = @_availableDatasets
+    selectedDatasets = @availableDatasets
       .chain()
-      .filter( (dataset) -> dataset.get "selected")
+      .filter( (dataset) -> dataset.isSelected() )
       .map( (dataset) -> dataset.get "key" )
       .value() 
 
-    allSelected = selectedDatasets.length is @_availableDatasets.length
+    allSelected = selectedDatasets.length is @availableDatasets.length
     @set "datasets", if allSelected then [] else selectedDatasets
 
   ###
   Get the list of datasets which contribute to this GridLayer.
-  This method will perform a fetch on the _availableDatasets and then
+  This method will perform a fetch on the availableDatasets and then
   return a jQuery promise of the Backbone.Collection
   ###
-  getDatasets:->
+  fetchAvailableDatasets:->
     if @_availableDatasetsFetch? then return @_availableDatasetsFetch
     defer = $.Deferred()
-    @_availableDatasets.fetch success: => defer.resolve(@_availableDatasets)
+    @availableDatasets.fetch reset:true, success: => defer.resolve(@availableDatasets)
     @_availableDatasetsFetch = defer.promise()
 
   ###
@@ -64,3 +67,9 @@ define [
             if resolution is 'auto' then "Grid-#{@get 'autoResolution'}"
             else "Grid-#{resolution}"
     @set 'layer', layer
+
+  ###
+  Returns the list of datasets which are currently contributing towards
+  the layer
+  ###
+  getUsedDatasets: -> @availableDatasets.filter (dataset) -> dataset.isSelected() 
