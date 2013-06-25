@@ -31,4 +31,7 @@ define [
   ###
   addSearchResult: (searchResult) ->
     @set "viewport", searchResult.worldBoundingBox if searchResult.worldBoundingBox
-    @getLayers().add searchResult if not searchResult.worldBoundingBox
+    
+    if not searchResult.worldBoundingBox
+      @getLayers().add searchResult
+      @set 'controlPanelVisible', true
