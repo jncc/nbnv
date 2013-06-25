@@ -5,14 +5,7 @@
 package uk.org.nbn.nbnv.jpa.nbncore;
 
 import java.io.Serializable;
-import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -42,10 +35,10 @@ public class SurveyAttribute implements Serializable {
     @Column(name = "textValue")
     private String textValue;
     @JoinColumn(name = "surveyID", referencedColumnName = "id", insertable = false, updatable = false)
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch= FetchType.LAZY)
     private Survey survey;
     @JoinColumn(name = "attributeID", referencedColumnName = "id", insertable = false, updatable = false)
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch= FetchType.LAZY)
     private Attribute attribute;
 
     public SurveyAttribute() {

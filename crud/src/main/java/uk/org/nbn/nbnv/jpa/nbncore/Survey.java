@@ -54,7 +54,7 @@ public class Survey implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "survey")
     private Collection<SurveyAttribute> surveyAttributeCollection;
     @JoinColumn(name = "datasetKey", referencedColumnName = "datasetKey")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch= FetchType.LAZY)
     private TaxonDataset taxonDataset;
 
     public Survey() {

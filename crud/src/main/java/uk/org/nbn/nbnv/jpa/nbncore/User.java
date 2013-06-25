@@ -124,7 +124,7 @@ public class User implements Serializable {
     @ManyToMany(mappedBy = "userCollection")
     private Collection<Dataset> datasetCollection;
     @JoinColumn(name = "userTypeID", referencedColumnName = "id")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch= FetchType.LAZY)
     private UserType userType;
     @OneToMany(mappedBy = "user")
     private Collection<TaxonObservationDownload> taxonObservationDownloadCollection;

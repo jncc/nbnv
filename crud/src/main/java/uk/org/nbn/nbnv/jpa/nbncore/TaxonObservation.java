@@ -66,13 +66,13 @@ public class TaxonObservation implements Serializable {
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "taxonObservation")
     private TaxonObservationPublic taxonObservationPublic;
     @JoinColumn(name = "taxonVersionKey", referencedColumnName = "taxonVersionKey")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch= FetchType.LAZY)
     private Taxon taxon;
     @JoinColumn(name = "siteID", referencedColumnName = "id")
     @ManyToOne
     private Site site;
     @JoinColumn(name = "sampleID", referencedColumnName = "id")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch= FetchType.LAZY)
     private Sample sample;
     @JoinColumn(name = "determinerID", referencedColumnName = "id")
     @ManyToOne
@@ -81,10 +81,10 @@ public class TaxonObservation implements Serializable {
     @ManyToOne
     private Recorder recorder1;
     @JoinColumn(name = "featureID", referencedColumnName = "id")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch= FetchType.LAZY)
     private Feature feature;
     @JoinColumn(name = "dateTypeKey", referencedColumnName = "key")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch= FetchType.LAZY)
     private DateType dateType;
 
     public TaxonObservation() {

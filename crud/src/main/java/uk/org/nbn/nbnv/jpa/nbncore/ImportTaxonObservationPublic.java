@@ -47,7 +47,7 @@ public class ImportTaxonObservationPublic implements Serializable {
     @JoinColumn(name = "determinerID", referencedColumnName = "id")
     @ManyToOne
     private ImportRecorder determinerID;
-    @Column(name = "taxonObservationID")
+    @Column(name = "featureID")
     private Integer featureID;
 
     public ImportTaxonObservationPublic() {

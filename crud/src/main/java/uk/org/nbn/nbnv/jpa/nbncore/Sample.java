@@ -52,7 +52,7 @@ public class Sample implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "sample")
     private Collection<TaxonObservation> taxonObservationCollection;
     @JoinColumn(name = "surveyID", referencedColumnName = "id")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch= FetchType.LAZY)
     private Survey survey;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "sample")
     private Collection<SampleAttribute> sampleAttributeCollection;

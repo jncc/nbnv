@@ -5,13 +5,7 @@
 package uk.org.nbn.nbnv.jpa.nbncore;
 
 import java.io.Serializable;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -31,7 +25,7 @@ public class DatasetKeyword implements Serializable {
     @EmbeddedId
     protected DatasetKeywordPK datasetKeywordPK;
     @JoinColumn(name = "datasetKey", referencedColumnName = "key", insertable = false, updatable = false)
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch= FetchType.LAZY)
     private Dataset dataset;
 
     public DatasetKeyword() {

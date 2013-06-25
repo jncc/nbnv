@@ -44,7 +44,7 @@ public class Site implements Serializable {
     @OneToMany(mappedBy = "site")
     private Collection<TaxonObservation> taxonObservationCollection;
     @JoinColumn(name = "datasetKey", referencedColumnName = "key")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch= FetchType.LAZY)
     private Dataset dataset;
 
     public Site() {

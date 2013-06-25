@@ -5,16 +5,7 @@
 package uk.org.nbn.nbnv.jpa.nbncore;
 
 import java.io.Serializable;
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -48,7 +39,7 @@ public class TaxonObservationPublic implements Serializable {
     @ManyToOne
     private Recorder recorder1;
     @JoinColumn(name = "featureID", referencedColumnName = "id")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch= FetchType.LAZY)
     private Feature feature;
 
     public TaxonObservationPublic() {

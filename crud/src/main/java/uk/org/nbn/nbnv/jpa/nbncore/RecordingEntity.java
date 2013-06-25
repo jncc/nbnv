@@ -5,15 +5,7 @@
 package uk.org.nbn.nbnv.jpa.nbncore;
 
 import java.io.Serializable;
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -42,7 +34,7 @@ public class RecordingEntity implements Serializable {
     @Column(name = "dangerous")
     private boolean dangerous;
     @JoinColumn(name = "taxonVersionKey", referencedColumnName = "taxonVersionKey")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch= FetchType.LAZY)
     private Taxon taxon;
 
     public RecordingEntity() {

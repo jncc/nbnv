@@ -61,7 +61,7 @@ public class Designation implements Serializable {
     @ManyToOne
     private Feature feature;
     @JoinColumn(name = "designationCategoryID", referencedColumnName = "id")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch= FetchType.LAZY)
     private DesignationCategory designationCategory;
 
     public Designation() {

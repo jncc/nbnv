@@ -6,17 +6,7 @@ package uk.org.nbn.nbnv.jpa.nbncore;
 
 import java.io.Serializable;
 import java.util.Date;
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -52,10 +42,10 @@ public class TaxonObservationFilterElement implements Serializable {
     @Temporal(TemporalType.DATE)
     private Date filterDateEnd;
     @JoinColumn(name = "filterElementTypeID", referencedColumnName = "id")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch= FetchType.LAZY)
     private TaxonObservationFilterElementType taxonObservationFilterElementType;
     @JoinColumn(name = "filterID", referencedColumnName = "id")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch= FetchType.LAZY)
     private TaxonObservationFilter taxonObservationFilter;
     @JoinColumn(name = "filterDatasetKey", referencedColumnName = "datasetKey")
     @ManyToOne

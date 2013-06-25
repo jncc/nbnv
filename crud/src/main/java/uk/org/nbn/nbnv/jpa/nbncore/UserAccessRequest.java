@@ -6,18 +6,7 @@ package uk.org.nbn.nbnv.jpa.nbncore;
 
 import java.io.Serializable;
 import java.util.Date;
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -64,16 +53,16 @@ public class UserAccessRequest implements Serializable {
     @Temporal(TemporalType.DATE)
     private Date accessExpires;
     @JoinColumn(name = "userID", referencedColumnName = "id")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch= FetchType.LAZY)
     private User user;
     @JoinColumn(name = "filterID", referencedColumnName = "id", insertable = false, updatable = false)
     @OneToOne(optional = false)
     private TaxonObservationFilter taxonObservationFilter;
     @JoinColumn(name = "requestTypeID", referencedColumnName = "id")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch= FetchType.LAZY)
     private AccessRequestType accessRequestType;
     @JoinColumn(name = "requestRoleID", referencedColumnName = "id")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch= FetchType.LAZY)
     private AccessRequestRole accessRequestRole;
     @JoinColumn(name = "responseTypeID", referencedColumnName = "id")
     @ManyToOne
