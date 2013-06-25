@@ -19,8 +19,9 @@ define [
   initialize: () ->
     @set "name", @attributes.name
 
-    @on 'change:colour change:layer', => @trigger 'change:sld'
-    @on 'change:isPresence change:startDate change:endDate change:datasets', => @trigger 'change:wms'
+    @on 'change:colour', -> @trigger 'change:legendIcon'
+    @on 'change:colour change:layer', -> @trigger 'change:sld'
+    @on 'change:isPresence change:startDate change:endDate change:datasets', -> @trigger 'change:wms'
     GridLayer.prototype.initialize.call(this, arguments); #call super initialize
     DatasetFilterMixin.initialize.call(this, arguments); #initalize the mixin
 
@@ -28,9 +29,10 @@ define [
     layer: @getLayer(),
     colour: @get "colour"
 
-  getWMS: -> 
-    console.log "hello"
-    Globals.gis "SingleSpecies/#{@attributes.ptaxonVersionKey}",
+  getLegendIcon: ->
+    backgroundColor: "#" + @get "colour"
+
+  getWMS: -> Globals.gis "SingleSpecies/#{@attributes.ptaxonVersionKey}",
     abundance: if @attributes.isPresence then "presence" else "absence"
     startDate : @get "startDate"
     endDate : @get "endDate"

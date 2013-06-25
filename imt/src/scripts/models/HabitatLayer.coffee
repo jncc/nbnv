@@ -12,7 +12,11 @@ define [
     @set "name", @attributes.title
     @set "layer", @attributes.key
 
-    @on 'change:colour change:layer', => @trigger 'change:sld'
+    @on 'change:colour', -> @trigger 'change:legendIcon'
+    @on 'change:colour change:layer', -> @trigger 'change:sld'
+
+  getLegendIcon: ->
+    backgroundColor: "#" + @get "colour"
 
   getSLD: -> sld
     layer: @getLayer(),

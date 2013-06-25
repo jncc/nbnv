@@ -13,4 +13,7 @@ define [
     @set "name", @attributes.title
     GridLayer.prototype.initialize.call(this, arguments); #call super initialize
 
+  getLegendIcon: ->
+    background: "linear-gradient(to right, #ffff80 0%, #76130a 100%)"
+
   getUsedDatasets: -> [ new Dataset @attributes ]

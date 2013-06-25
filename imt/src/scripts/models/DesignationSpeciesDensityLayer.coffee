@@ -16,6 +16,9 @@ define [
     GridLayer.prototype.initialize.call(this, arguments); #call super initialize
     DatasetFilterMixin.initialize.call(this, arguments); #initalize the mixin
   
+  getLegendIcon: ->
+    background: "linear-gradient(to right, #ffff80 0%, #76130a 100%)"
+  
   ###
   Get the url which lists the datasets which provide data for this map
   Needed by the DatasetFilterMixin
