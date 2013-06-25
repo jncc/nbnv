@@ -1,8 +1,10 @@
 define [
+  "underscore"
   "cs!models/GridLayer"
+  "cs!models/DatasetFilterMixin"
   "cs!helpers/Globals"
   "hbs!templates/slds/Default"
-], (GridLayer, Globals, sld) -> GridLayer.extend
+], (_, GridLayer, DatasetFilterMixin, Globals, sld) -> GridLayer.extend _.extend {}, DatasetFilterMixin,
   defaults:
     opacity: 1
     colour: "FF0000"
@@ -20,15 +22,22 @@ define [
     @on 'change:colour change:layer', => @trigger 'change:sld'
     @on 'change:isPresence change:startDate change:endDate change:datasets', => @trigger 'change:wms'
     GridLayer.prototype.initialize.call(this, arguments); #call super initialize
+    DatasetFilterMixin.initialize.call(this, arguments); #initalize the mixin
 
   getSLD: -> sld
     layer: @getLayer(),
     colour: @get "colour"
 
-  getWMS: -> Globals.gis "SingleSpecies/#{@attributes.ptaxonVersionKey}",
+  getWMS: -> 
+    console.log "hello"
+    Globals.gis "SingleSpecies/#{@attributes.ptaxonVersionKey}",
     abundance: if @attributes.isPresence then "presence" else "absence"
     startDate : @get "startDate"
     endDate : @get "endDate"
     datasets: @get("datasets").join ','
 
+  ###
+  Get the url which lists the datasets which provide data for this map
+  Needed by the DatasetFilterMixin
+  ###
   getAvailableDatasetsURL: -> Globals.api "taxa/#{@attributes.ptaxonVersionKey}/datasets"
