@@ -32,7 +32,7 @@ define [
   renderResult: (ul, item)->
 
     $('<li>')
-      .append( "<a>#{@formatResult(item)}</a>" )
+      .append( "<a><b>#{item.searchMatchTitle}</b><br>#{@formatResult(item)}</a>" )
       .appendTo ul
 
   formatResult: (item) ->
