@@ -15,7 +15,6 @@ define [
     endDate: new Date().getFullYear()
     datasets: []
 
-
   initialize: () ->
     @set "name", @attributes.name
 

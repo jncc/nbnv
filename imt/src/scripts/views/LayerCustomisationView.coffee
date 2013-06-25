@@ -3,8 +3,9 @@ define [
   "backbone"
   "cs!views/ColourView"
   "cs!views/OpacityView"
+  "cs!views/ResolutionView"
   "hbs!templates/LayerCustomisation"
-], ($, Backbone, ColourView, OpacityView, customisationTemplate) -> Backbone.View.extend
+], ($, Backbone, ColourView, OpacityView, ResolutionView, customisationTemplate) -> Backbone.View.extend
   ###
   The role of this view is to determine which sub customisation
   views are required for the given model that has been provided
@@ -20,6 +21,10 @@ define [
     @opacityView = new OpacityView
       model: @model
       el: @$('.opacity')
+
+    @resolutionView = new ResolutionView
+      model: @model
+      el: @$('.resolution')
 
     @$el.dialog
       title: @model.getName()
