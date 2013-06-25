@@ -4,9 +4,12 @@ define [
   "cs!helpers/Globals"
 ], (GridLayer, Dataset, Globals) -> GridLayer.extend
   defaults:
+    entityType: 'taxondataset'
     opacity: 1
     resolution: "auto"
     isPolygon: false
+
+  url: -> Globals.api "taxonDatasets/#{@id}"
 
   idAttribute: "key"
 

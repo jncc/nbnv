@@ -5,10 +5,13 @@ define [
   "cs!helpers/Globals"
 ], (_, GridLayer, DatasetFilterMixin, Globals) -> GridLayer.extend _.extend {}, DatasetFilterMixin,
   defaults:
+    entityType: 'designation'
     opacity: 1
     resolution: "auto"
     isPolygon: false
     datasets: []
+
+  url: -> Globals.api "designations/#{@id}"
 
   idAttribute: "code"
 

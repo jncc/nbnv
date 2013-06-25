@@ -15,6 +15,8 @@ define [
     endDate: new Date().getFullYear()
     datasets: []
 
+  url: -> Globals.api "taxa/#{@id}"
+  
   idAttribute: "ptaxonVersionKey"
 
   initialize: () ->

@@ -5,10 +5,13 @@ define [
   "cs!helpers/Globals"
   "hbs!templates/slds/Default"
 ], ($, Layer, Dataset, Globals, sld) -> Layer.extend
-  defaults: 
+  defaults:
+    entityType: 'habitatdataset'
     opacity: 1
     wms: Globals.gis "HabitatDatasets"
 
+  url: -> Globals.api "habitatDatasets/#{id}"
+  
   idAttribute: "key"
 
   initialize: ()->

@@ -6,8 +6,11 @@ define [
   "hbs!templates/slds/Default"
 ], ($, Layer, Dataset, Globals, sld) -> Layer.extend
   defaults:
+    entityType: 'site boundarydataset'
     opacity: 1
     wms: Globals.gis "SiteBoundaryDatasets"
+
+  url: -> Globals.api "siteBoundaryDatasets/#{@id}"
 
   idAttribute: "key"
 
