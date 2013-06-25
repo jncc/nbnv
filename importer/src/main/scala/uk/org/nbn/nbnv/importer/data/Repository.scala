@@ -45,7 +45,7 @@ class Repository (log: Logger, em: EntityManager, cache: QueryCache) extends Con
     sprocs.createFeature(wkt, identifier)
   }
 
-  def createGridRef(feature: ImportFeature, gridRef: String , resolution: Resolution , projection: Projection , wkt: String ) : ImportGridSquare = {
+  def createGridRef(feature: Feature, gridRef: String , resolution: Resolution , projection: Projection , wkt: String ) : GridSquare = {
     val sprocs = new StoredProcedureLibrary(em)
     sprocs.createGridSquare(gridRef, resolution, projection,wkt, feature)
   }
@@ -85,27 +85,27 @@ class Repository (log: Logger, em: EntityManager, cache: QueryCache) extends Con
     }
   }
 
-  def getGridSquareFeature(gridRef: String): Option[(ImportFeature, ImportGridSquare)] = {
+  def getGridSquareFeature(gridRef: String): Option[(Feature, GridSquare)] = {
 
-    val q = "select f, s from ImportFeature f join f.importGridSquareCollection s where s.gridRef = :gridRef"
+    val q = "select f, s from Feature f join f.gridSquareCollection s where s.gridRef = :gridRef"
 
     cacheSome(q, gridRef) {
 
       val query = em.createQuery(q)
       query.setParameter("gridRef", gridRef)
-      query.getSingleOrNone collect { case Array(f: ImportFeature, s: ImportGridSquare) => (f, s) }
+      query.getSingleOrNone collect { case Array(f: Feature, s: GridSquare) => (f, s) }
     }
   }
 
-  def getGridSquareFeature(featureID: Int): Option[(ImportFeature, ImportGridSquare)] = {
+  def getGridSquareFeature(featureID: Int): Option[(Feature, GridSquare)] = {
 
-    val q = "select f, s from ImportFeature f join f.importGridSquareCollection s where f.id = :featureID"
+    val q = "select f, s from Feature f join f.gridSquareCollection s where f.id = :featureID"
 
     cacheSome(q, featureID.toString) {
 
       val query = em.createQuery(q)
       query.setParameter("featureID", featureID)
-      query.getSingleOrNone collect { case Array(f: ImportFeature, s: ImportGridSquare) => (f, s) }
+      query.getSingleOrNone collect { case Array(f: Feature, s: GridSquare) => (f, s) }
     }
   }
 

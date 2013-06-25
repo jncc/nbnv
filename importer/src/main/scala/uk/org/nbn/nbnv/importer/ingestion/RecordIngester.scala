@@ -35,16 +35,9 @@ class RecordIngester @Inject()(log: Logger,
     	else {
     		None
     	}
-    //val site = siteIngester.stageSite(record.siteKey, record.siteName, dataset.getDataset)
-    var existingFeatureId: Int = 0
-    var gridFeature : Option[ImportFeature] = None
-    record.feature match {
-      case value: BoundaryDef => existingFeatureId = featureIngester.getBoundaryFeatureId(value)
-      case value: GridRefDef => gridFeature = Some(featureIngester.getGridFeature(record))
-      case value: PointDef => gridFeature = Some(featureIngester.getGridFeature(record))
-    }
 
-    if (existingFeatureId == 0 && gridFeature.isEmpty) new BadDataException("Invalid feature definition")
+
+    val feature = featureIngester.ensureFeature(record)
 
     val taxon = db.repo.getTaxon(record.taxonVersionKey)
     val dateType = db.repo.getDateType(record.dateType)
@@ -71,8 +64,7 @@ class RecordIngester @Inject()(log: Logger,
       o.setDateEnd(endDate getOrElse null)
       o.setDateTypeKey(dateType.getKey)
       o.setDeterminerID(determiner getOrElse null)
-      o.setFeatureID(gridFeature getOrElse null)
-      o.setExistingFeatureId(existingFeatureId)
+      o.setFeatureID(feature.getId)
       o.setProviderKey(record.key)
       o.setRecorderID(recorder getOrElse null)
       o.setSampleID(sample)

@@ -85,19 +85,6 @@ class Ingester @Inject()(options: Options,
     db.flushAndClear()
   }
   
-  def upsertGridSquareFeatures(archive: Archive) {
-    log.debug("Ingesting grid squares...")
-    for ((record, i) <- archive.iteratorRaw.zipWithIndex) {
-      val rec = new NbnRecord(record)
-      
-      featureIngester.ensureGridSquareFeature(rec)
-
-      logProgress(i)
-    }
-    
-    db.flushAndClear()
-  }
-  
   def upsertRecords(archive: Archive, dataset: ImportTaxonDataset, metadata: Metadata) {
     log.debug("Ingesting records...")
      for ((record, i) <- archive.iteratorRaw.zipWithIndex) {
@@ -154,9 +141,6 @@ class Ingester @Inject()(options: Options,
       
       //insert recorders & determiners
       stageRecorders(archive)
-     
-      //insert grid square features
-      upsertGridSquareFeatures(archive)
 
       // insert records
       upsertRecords(archive, dataset, metadata)

@@ -41,12 +41,12 @@ class PublicIngester @Inject()(log: Logger,
 
       // set the feature - blurring to a potentially lower-precision feature if necessary
       // obviously we only blur gridsquare features (including points which have been represented as such)
-      db.repo.getGridSquareFeature(o.getFeatureID.getId) match {
+      db.repo.getGridSquareFeature(o.getFeatureID) match {
         case Some((_, gridSquare)) => {
           val info = gridSquareInfoFactory.getByGridRef(GridRefDef(gridSquare.getGridRef, None, None))
           val publicInfo = info.getLowerPrecisionGridSquareInfo(metadata.publicResolution)
           val publicFeature = featureIngester.ensureGridRefFeature(GridRefDef(publicInfo.gridReference, Some(GridTypeDef(publicInfo.projection)), Some(publicInfo.gridReferencePrecision)))
-          p.setFeatureID(publicFeature)
+          p.setFeatureID(publicFeature.getId)
         }
         case None => {
           // the feature was not a gridsquare feature
