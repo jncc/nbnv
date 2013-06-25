@@ -10,12 +10,14 @@ define [
     isPolygon: false
     datasets: []
 
+  idAttribute: "code"
+
   initialize: () ->
     @on 'change:startDate change:endDate change:datasets', -> @trigger 'change:wms'
     GridLayer.prototype.initialize.call(this, arguments); #call super initialize
     DatasetFilterMixin.initialize.call(this, arguments); #initalize the mixin
   
-  getWMS: -> Globals.gis "DesignationSpeciesDensity/#{@attributes.code}",
+  getWMS: -> Globals.gis "DesignationSpeciesDensity/#{@id}",
     startDate : @get "startDate"
     endDate : @get "endDate"
     datasets: @get("datasets").join ','
@@ -27,7 +29,7 @@ define [
   Get the url which lists the datasets which provide data for this map
   Needed by the DatasetFilterMixin
   ###
-  getAvailableDatasetsURL: -> Globals.api "designations/#{@attributes.code}/datasets"
+  getAvailableDatasetsURL: -> Globals.api "designations/#{@id}/datasets"
 
   ###
   Define what this layer is mapping. Only ever species richness

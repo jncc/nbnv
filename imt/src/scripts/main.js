@@ -3,7 +3,8 @@ require.config({
 	shim: {
     'handlebars': { exports: 'Handlebars' },
 		'openlayers': { exports: 'OpenLayers', deps: ['proj4js']},
-		'jquery-ui': { exports: '$', deps: ['jquery']}
+		'jquery-ui': { exports: '$', deps: ['jquery']},
+		'jquery-md5': { exports: '$', deps: ['jquery']}
   },
 	paths: {
 		'cs' : '../vendor/require-cs/cs',
@@ -13,6 +14,7 @@ require.config({
 		'text' : '../vendor/requirejs-text/text',
 		'jquery' : '../vendor/jquery/jquery',
 		'jquery-ui': '../vendor/jquery-ui/ui/jquery-ui',
+		'jquery-md5': '../vendor/jquery-md5/jquery.md5',
 		'jquery-colorpicker': '../vendor/jquery-colorpicker/js/colorpicker',
 		'underscore': '../vendor/underscore-amd/underscore',
 		'backbone': '../vendor/backbone-amd/backbone',

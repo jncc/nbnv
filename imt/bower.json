@@ -16,6 +16,7 @@
     "openlayers-js": "http://cdnjs.cloudflare.com/ajax/libs/openlayers/2.12/OpenLayers.js",
     "openlayers-css": "http://cdnjs.cloudflare.com/ajax/libs/openlayers/2.12/theme/default/style.css",
     "proj4js": "http://download.osgeo.org/proj4js/proj4js-1.1.0.zip",
-    "bootstrap": "~2.3.2"
+    "bootstrap": "~2.3.2",
+    "jquery-md5": "b985fce4e867773e5fb7a29b4fb5df74c53595d0"
   }
 }

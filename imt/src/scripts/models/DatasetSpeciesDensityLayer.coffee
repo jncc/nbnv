@@ -8,13 +8,15 @@ define [
     resolution: "auto"
     isPolygon: false
 
+  idAttribute: "key"
+
   initialize: () ->
     @set "name", @attributes.title
 
     @on 'change:startDate change:endDate', -> @trigger 'change:wms'
     GridLayer.prototype.initialize.call(this, arguments); #call super initialize
 
-  getWMS: -> Globals.gis "DatasetSpeciesDensity/#{@attributes.key}",
+  getWMS: -> Globals.gis "DatasetSpeciesDensity/#{@id}",
     startDate : @get "startDate"
     endDate : @get "endDate"
 

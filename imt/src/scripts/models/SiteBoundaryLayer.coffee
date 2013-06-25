@@ -1,17 +1,20 @@
 define [
+  "jquery-md5"
   "cs!models/Layer"
   "cs!models/Dataset"
   "cs!helpers/Globals"
   "hbs!templates/slds/Default"
-], (Layer, Dataset, Globals, sld) -> Layer.extend
+], ($, Layer, Dataset, Globals, sld) -> Layer.extend
   defaults:
     opacity: 1
     wms: Globals.gis "SiteBoundaryDatasets"
-    colour: "FF0000"
+
+  idAttribute: "key"
 
   initialize: ()->
     @set "name", @attributes.title
-    @set "layer", @attributes.key
+    @set "layer", @id
+    @set "colour", $.md5(@id).substring 0, 6
         
     @on 'change:colour', -> @trigger 'change:legendIcon'
     @on 'change:colour change:layer', -> @trigger 'change:sld'
