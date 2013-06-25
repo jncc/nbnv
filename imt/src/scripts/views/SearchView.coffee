@@ -12,10 +12,9 @@ define [
 
     #Create a jquery autocomplete widget. Use 
     @$('input').autocomplete 
-      source: _.bind(@search, @),
+      source: _.bind(@search, @)
       select: _.bind(@select, @)
     .data('uiAutocomplete')._renderItem = _.bind(@renderResult,@)
-    
 
   select: (event, ui) ->
     @model.addSearchResult ui.item
@@ -27,10 +26,10 @@ define [
           q:request.term, 
           rows:3
       .success => 
-        response @searchCollection.map (model)-> model.attributes
+        response @searchCollection.map (model)-> 
+          _.extend label: model.attributes.searchMatchTitle, model.attributes
 
   renderResult: (ul, item)->
-
     $('<li>')
       .append( "<a><b>#{item.searchMatchTitle}</b><br>#{@formatResult(item)}</a>" )
       .appendTo ul
@@ -45,5 +44,3 @@ define [
       when "habitatdataset" then "Add habitat: #{item.searchMatchTitle}"
       when "gridsquarefeature" then "Zoom to the grid square: #{item.searchMatchTitle}"
       when "siteboundaryfeature" then "Zoom to the boundary: #{item.searchMatchTitle}"
-
-  

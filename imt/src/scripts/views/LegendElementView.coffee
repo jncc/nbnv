@@ -11,6 +11,7 @@ define [
     do @updateLegendIcon
     
     @listenTo @model, 'change:legendIcon', @updateLegendIcon
+    @listenTo @model, 'change:name', @updateDescription
 
     # Add a click listener to the icon
     @$('span.icon').click =>
@@ -18,3 +19,6 @@ define [
 
   updateLegendIcon:->
     @$('span.icon').css @model.getLegendIcon()
+
+  updateDescription:->
+    @$('p.description').html @model.getName()
