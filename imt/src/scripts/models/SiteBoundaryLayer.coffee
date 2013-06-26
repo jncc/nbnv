@@ -16,8 +16,10 @@ define [
   idAttribute: "key"
 
   initialize: ()->
-    @set "name", @attributes.title
     @set "layer", @id
+    @on "change:title", -> @trigger "change:name"
     PolygonFillMixin.initialize.call(this, arguments); #initalize the mixin
 
+  getName: -> @get "title"
+  
   getUsedDatasets: -> [ new Dataset @attributes ]
