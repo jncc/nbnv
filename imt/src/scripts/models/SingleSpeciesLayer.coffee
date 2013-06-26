@@ -15,20 +15,22 @@ define [
     datasets: []
 
   url: -> Globals.api "taxa/#{@id}"
+
   
   idAttribute: "ptaxonVersionKey"
 
   initialize: () ->
     do @updateSymbolToUse
-    
+
     @on 'change:isPresence', @updateSymbolToUse
+    @on 'change:isPresence', -> @trigger 'change:name'
     @on 'change:isPresence change:startDate change:endDate change:datasets', -> @trigger 'change:wms'
     GridLayer.prototype.initialize.call(this, arguments); #call super initialize
     DatasetFilterMixin.initialize.call(this, arguments); #initalize the mixin
     PolygonFillMixin.initialize.call(this, arguments); #initalize the mixin
 
   getWMS: -> Globals.gis "SingleSpecies/#{@id}",
-    abundance: if @attributes.isPresence then "presence" else "absence"
+    abundance: if @get "isPresence" then "presence" else "absence"
     startDate : @get "startDate"
     endDate : @get "endDate"
     datasets: @get("datasets").join ','
