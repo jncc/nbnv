@@ -9,6 +9,7 @@ define [
     entityType: 'site boundarydataset'
     opacity: 1
     wms: Globals.gis "SiteBoundaryDatasets"
+    symbol: "fill"
 
   url: -> Globals.api "siteBoundaryDatasets/#{@id}"
 

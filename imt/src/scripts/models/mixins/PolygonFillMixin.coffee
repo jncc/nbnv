@@ -1,17 +1,36 @@
 define [
   "jquery-md5"
   "hbs!templates/slds/Default"
-], ($, sld) ->
+  "hbs!templates/slds/Hatching"
+], ($, polygonFill, polygonHatching) ->
   initialize: () ->
-    console.log @id
     @set "colour", $.md5(@id).substring 0, 6
 
-    @on 'change:colour', -> @trigger 'change:legendIcon'
-    @on 'change:colour change:layer', -> @trigger 'change:sld'
+    @on 'change:colour change:symbol', -> @trigger 'change:legendIcon'
+    @on 'change:colour change:symbol change:layer', -> @trigger 'change:sld'
 
-  getSLD: -> sld
-    layer: @getLayer(),
-    colour: @get "colour"
+  ###
+  The following method will work out the sld template which
+  should be used depending on the current symbol. Once determined
+  it will be called with the current layer and selected colour
+  ###
+  getSLD: -> 
+    sldTemplate = switch @get "symbol" 
+      when "fill" then polygonFill
+      when "hatching" then polygonHatching
 
+    sldTemplate
+      layer: @getLayer(),
+      colour: @get "colour"
+
+  ###
+  Generate the current legend icon given the symbol and colour
+  ###
   getLegendIcon: ->
-    backgroundColor: "#" + @get "colour"
+    switch @get "symbol"
+      when 'fill'
+        backgroundColor: "#" + @get "colour"
+        backgroundImage: ""
+      when 'hatching'
+        backgroundColor: "#" + @get "colour"
+        backgroundImage: "url('img/polygonHatching.png')"

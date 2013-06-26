@@ -9,6 +9,7 @@ define [
     entityType: 'habitatdataset'
     opacity: 1
     wms: Globals.gis "HabitatDatasets"
+    symbol: "fill"
 
   url: -> Globals.api "habitatDatasets/#{@id}"
   
