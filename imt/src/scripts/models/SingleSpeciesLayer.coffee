@@ -1,11 +1,10 @@
 define [
-  "jquery-md5"
   "underscore"
   "cs!models/GridLayer"
-  "cs!models/DatasetFilterMixin"
+  "cs!models/mixins/DatasetFilterMixin"
+  "cs!models/mixins/PolygonFillMixin"
   "cs!helpers/Globals"
-  "hbs!templates/slds/Default"
-], ($, _, GridLayer, DatasetFilterMixin, Globals, sld) -> GridLayer.extend _.extend {}, DatasetFilterMixin,
+], (_, GridLayer, DatasetFilterMixin, PolygonFillMixin, Globals) -> GridLayer.extend _.extend {}, DatasetFilterMixin, PolygonFillMixin,
   defaults:
     opacity: 1
     resolution: "auto"
@@ -20,20 +19,10 @@ define [
   idAttribute: "ptaxonVersionKey"
 
   initialize: () ->
-    @set "colour", $.md5(@id).substring 0, 6
-
-    @on 'change:colour', -> @trigger 'change:legendIcon'
-    @on 'change:colour change:layer', -> @trigger 'change:sld'
     @on 'change:isPresence change:startDate change:endDate change:datasets', -> @trigger 'change:wms'
     GridLayer.prototype.initialize.call(this, arguments); #call super initialize
     DatasetFilterMixin.initialize.call(this, arguments); #initalize the mixin
-
-  getSLD: -> sld
-    layer: @getLayer(),
-    colour: @get "colour"
-
-  getLegendIcon: ->
-    backgroundColor: "#" + @get "colour"
+    PolygonFillMixin.initialize.call(this, arguments); #initalize the mixin
 
   getWMS: -> Globals.gis "SingleSpecies/#{@id}",
     abundance: if @attributes.isPresence then "presence" else "absence"

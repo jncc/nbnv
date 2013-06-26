@@ -1,10 +1,10 @@
 define [
-  "jquery-md5"
+  "underscore"
   "cs!models/Layer"
   "cs!models/Dataset"
+  "cs!models/mixins/PolygonFillMixin"
   "cs!helpers/Globals"
-  "hbs!templates/slds/Default"
-], ($, Layer, Dataset, Globals, sld) -> Layer.extend
+], (_, Layer, Dataset, PolygonFillMixin, Globals) -> Layer.extend _.extend {}, PolygonFillMixin,
   defaults:
     entityType: 'site boundarydataset'
     opacity: 1
@@ -17,16 +17,6 @@ define [
   initialize: ()->
     @set "name", @attributes.title
     @set "layer", @id
-    @set "colour", $.md5(@id).substring 0, 6
-        
-    @on 'change:colour', -> @trigger 'change:legendIcon'
-    @on 'change:colour change:layer', -> @trigger 'change:sld'
-
-  getLegendIcon: ->
-    backgroundColor: "#" + @get "colour"
-
-  getSLD: -> sld
-    layer: @getLayer(),
-    colour: @get "colour"
+    PolygonFillMixin.initialize.call(this, arguments); #initalize the mixin
 
   getUsedDatasets: -> [ new Dataset @attributes ]

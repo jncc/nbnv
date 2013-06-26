@@ -1,7 +1,7 @@
 define [
   "underscore"
   "cs!models/GridLayer"
-  "cs!models/DatasetFilterMixin"
+  "cs!models/mixins/DatasetFilterMixin"
   "cs!helpers/Globals"
 ], (_, GridLayer, DatasetFilterMixin, Globals) -> GridLayer.extend _.extend {}, DatasetFilterMixin,
   defaults:
