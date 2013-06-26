@@ -12,19 +12,21 @@ define [
   to this instance
   ###  
   initialize:->
-    @$el.html customisationTemplate()
+    @$el.html customisationTemplate(@model)
 
-    @colorView = new ColourView
-      model: @model
-      el: @$('.colourPicker')
+    if @model.isStyleable
+      @colorView = new ColourView
+        model: @model
+        el: @$('.colourPicker')
 
     @opacityView = new OpacityView
       model: @model
       el: @$('.opacity')
 
-    @resolutionView = new ResolutionView
-      model: @model
-      el: @$('.resolution')
+    if @model.isGridLayer
+      @resolutionView = new ResolutionView
+        model: @model
+        el: @$('.resolution')
 
     @$el.dialog
       title: @model.getName()

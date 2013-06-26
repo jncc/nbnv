@@ -16,12 +16,18 @@ define [
     @$el.addClass "interactiveMapTool"
     do @render
 
+    @listenTo @model, 'change:controlPanelVisible', @renderControlPanelToggle
     #Add a click listener to the settings button and toggle the settings visibility
     @$('.controlPanelToggle').click => do @toggleControlPanel
 
   toggleControlPanel :->
       @model.set "controlPanelVisible", not @model.get "controlPanelVisible"
-      @$('.controlPanelToggle').toggleClass 'active'
+
+  renderControlPanelToggle:-> 
+    if @model.get 'controlPanelVisible' 
+      @$('.controlPanelToggle').addClass 'active'
+    else
+      @$('.controlPanelToggle').removeClass 'active'
 
   render: ->
     @$el.html imtScaffolding()
@@ -41,4 +47,4 @@ define [
       model: @model
       el: @$('.controlPanel')
 
-    @$('.controlPanelToggle').addClass 'active' if @model.get 'controlPanelVisible'
+    do @renderControlPanelToggle #update the state of the control panel button

@@ -4,6 +4,8 @@ define [
   "cs!models/Layer"
   "cs!models/Dataset"
 ], (_, Backbone, Layer, Dataset) ->
+  isDatasetFilterable: true #expose that this layer can be filtered by datasets
+
   initialize: () ->
     @availableDatasets = new Backbone.Collection [], url: @getAvailableDatasetsURL(), model: Dataset
     
