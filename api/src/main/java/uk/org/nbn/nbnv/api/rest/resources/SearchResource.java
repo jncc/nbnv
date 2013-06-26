@@ -19,6 +19,24 @@ import uk.org.nbn.nbnv.api.solr.SolrResponse;
 public class SearchResource extends AbstractResource {
     @Autowired Solr solr;
     
+    /**
+     * Unrestricted search, searches for any reference to a given search term in
+     * all searchable objects in the database
+     * 
+     * @param rows The number of rows to show in each page of search results
+     * @param start The page that the user wants to start displaying the results 
+     * at
+     * @param sort If we should sort the results or not
+     * @param order The order in which we should sort the results
+     * @param q The search term
+     * 
+     * @return Search Results for this search term
+     * 
+     * @throws SolrServerException 
+     * 
+     * @response.representation.200.qname SolrResponse
+     * @response.representation.200.mediaType application/json
+     */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public SolrResponse searchAll(
@@ -37,6 +55,24 @@ public class SearchResource extends AbstractResource {
                 .response();
     }
     
+    /**
+     * Search inside the site dataset records and a specific dataset for a given 
+     * search term
+     * 
+     * @param datasetKey The dataset to be searched
+     * @param start The page that the user wants to start displaying the results 
+     * at
+     * @param sort If we should sort the results or not
+     * @param bbox A Bounding Box to search within
+     * @param q The search term
+     * 
+     * @return Search Results for this search term, restricted to site datasets
+     * 
+     * @throws SolrServerException 
+     * 
+     * @response.representation.200.qname SolrResponse
+     * @response.representation.200.mediaType application/json
+     */
     @GET
     @Path("/siteDatasets/{datasetKey}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -58,6 +94,21 @@ public class SearchResource extends AbstractResource {
                 .response();
     }
 
+    /**
+     * Search within site boundaries records for a given term 
+     * 
+     * @param rows The number of rows to show in each page of search results
+     * @param start The page that the user wants to start displaying the results 
+     * at
+     * @param q The search term
+     * 
+     * @throws SolrServerException 
+     * 
+     * @return Search Results for this search term restricted to site boundaries
+     * 
+     * @response.representation.200.qname SolrResponse
+     * @response.representation.200.mediaType application/json
+     */
     @GET
     @Path("/siteBoundaries")
     @Produces(MediaType.APPLICATION_JSON)
@@ -74,6 +125,24 @@ public class SearchResource extends AbstractResource {
                 .response();
     }
 
+    /**
+     * Search designation records for a given search term
+     * 
+     * @param rows The number of rows to show in each page of search results
+     * @param start The page that the user wants to start displaying the results 
+     * at
+     * @param sort If we should sort the results or not
+     * @param order The order in which we should sort the results
+     * @param q The search term
+     * 
+     * @return Search Results for this search term restricted to designation 
+     * records
+     * 
+     * @throws SolrServerException 
+     * 
+     * @response.representation.200.qname SolrResponse
+     * @response.representation.200.mediaType application/json
+     */
     @GET
     @Path("/designations")
     @Produces(MediaType.APPLICATION_JSON)
@@ -94,6 +163,23 @@ public class SearchResource extends AbstractResource {
                 .response();
     }
     
+    /**
+     * Search taxon dataset records for a given search term
+     * 
+     * @param rows The number of rows to show in each page of search results
+     * @param start The page that the user wants to start displaying the results 
+     * at
+     * @param sort If we should sort the results or not
+     * @param order The order in which we should sort the results
+     * @param q The search term
+     * 
+     * @return Search Results for this search term restricted to taxon datasets
+     *
+     * @throws SolrServerException 
+     * 
+     * @response.representation.200.qname SolrResponse
+     * @response.representation.200.mediaType application/json
+     */
     @GET
     @Path("/taxonDatasets")
     @Produces(MediaType.APPLICATION_JSON)
@@ -114,6 +200,25 @@ public class SearchResource extends AbstractResource {
                 .response();
     }
     
+    /**
+     * Search taxon records with a given term
+     * 
+     * @param rows The number of rows to show in each page of search results
+     * @param start The page that the user wants to start displaying the results 
+     * at
+     * @param outputGroups List of taxon output groups
+     * @param sort If we should sort the results or not
+     * @param order The order in which we should sort the results
+     * @param prefered Restrict search to preferred or any
+     * @param q The search term
+     * 
+     * @return Search Results for this search term restricted to taxon records
+     * 
+     * @throws SolrServerException 
+     * 
+     * @response.representation.200.qname SolrResponse
+     * @response.representation.200.mediaType application/json
+     */
     @GET
     @Path("/taxa")
     @Produces(MediaType.APPLICATION_JSON)

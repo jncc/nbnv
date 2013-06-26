@@ -2,27 +2,35 @@ window.nbn = window.nbn || {};
 nbn.nbnv = nbn.nbnv || {};
 nbn.nbnv.ui = nbn.nbnv.ui || {};
 
-nbn.nbnv.ui.editRequest = function (json, requester, dataset, div) {
+nbn.nbnv.ui.editRequest = function (json, requester, dataset, id, div, orgReq) {
     this.div = div;
     
+    var reqEndpoint;
+    
+    if (orgReq) {
+        reqEndpoint = '/organisation/organisationAccesses/requests';
+    } else {
+        reqEndpoint = '/user/userAccesses/requests';
+    }
+    
     var reason = new nbn.nbnv.ui.requestDetails(json, requester, 'Test');
+    var sensitive = new nbn.nbnv.ui.filter.sensitive(json);
     var year = new nbn.nbnv.ui.filter.year(json);
     var spatial = new nbn.nbnv.ui.filter.spatial(json);
     var taxon = new nbn.nbnv.ui.filter.taxon(json);
-//    var dataset = new nbn.nbnv.ui.filter.dataset(json);
     var timeLimit = new nbn.nbnv.ui.timeLimit(json);
-    var result = new nbn.nbnv.ui.requestEditResult();
+    var result = new nbn.nbnv.ui.requestEditResult(reqEndpoint);
 
     this.div.append(reason._renderHeader());
     this.div.append(reason._renderPanel());
+    this.div.append(sensitive._renderHeader());
+    this.div.append(sensitive._renderPanel());
     this.div.append(spatial._renderHeader());
     this.div.append(spatial._renderPanel());
     this.div.append(taxon._renderHeader());
     this.div.append(taxon._renderPanel());
     this.div.append(year._renderHeader());
     this.div.append(year._renderPanel());
-//    this.div.append(dataset._renderHeader());
-//    this.div.append(dataset._renderPanel());
     this.div.append(timeLimit._renderHeader());
     this.div.append(timeLimit._renderPanel());
     this.div.append(result._renderHeader());
@@ -38,29 +46,31 @@ nbn.nbnv.ui.editRequest = function (json, requester, dataset, div) {
                 year._onEnter();
             } else if (newFilter == 'spatial') {
                 spatial._onEnter();
+            } else if (newFilter == 'sensitive') {
+                sensitive._onEnter();
             } else if (newFilter == 'taxon') {
                 taxon._onEnter();
             } else if (newFilter == 'result') {
-                var j = { sensitive: 'sans' };
-                $.extend(j, taxon.getJson());
-                $.extend(j, spatial.getJson());
-                $.extend(j, year.getJson());
+                $.extend(json, sensitive.getJson());
+                $.extend(json, taxon.getJson());
+                $.extend(json, spatial.getJson());
+                $.extend(json, year.getJson());
 
-                result.setupData(j, dataset, '/taxonObservations/datasets/requestable');
-                result._onEnter();
+                result.setupData(json, dataset, '/taxonObservations/datasets/' + dataset + '/requestable');
+                result._onEnter(json, id);
             }  else if (newFilter == 'timeLimit') {
                 timeLimit._onEnter();
             } 
 
             if (oldFilter == 'year') {
                 year._onExit();
+            } else if (oldFilter == 'sensitive') {
+                sensitive._onExit();
             } else if (oldFilter == 'spatial') {
                 spatial._onExit();
             } else if (oldFilter == 'taxon') {
                 taxon._onExit();
-            } /* else if (oldFilter == 'dataset') {
-                dataset._onExit();
-            } */ else if (oldFilter == 'timeLimit') {
+            }  else if (oldFilter == 'timeLimit') {
                 timeLimit._onExit();
             } 
         }
@@ -70,6 +80,6 @@ nbn.nbnv.ui.editRequest = function (json, requester, dataset, div) {
     year._onExit();
     taxon._onExit();
     timeLimit._onExit();
-//    dataset._onExit();
+    sensitive._onExit();
     
 };

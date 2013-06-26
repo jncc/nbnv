@@ -7,6 +7,7 @@ nbn.nbnv.ui.dialog.requestRevokeDialog = function() {
     this.requestID =  -1;
     this.div = null;
     this.reason = '';
+    this.orgReq = false;
     
     this._render = function() {
         var _me = this;
@@ -29,9 +30,21 @@ nbn.nbnv.ui.dialog.requestRevokeDialog = function() {
             width: 650,
             buttons: { 
                 "Revoke Request": function() {
-                    alert(_me.requestID);
-                    alert(_me.reason);
-                    $(this).dialog("close"); 
+                        var filter = { action: "revoke", reason: _me.reason }
+                        var url;
+                        
+                        if (_me.orgReq) {
+                            url = nbn.nbnv.api + '/organisation/organisationAccesses/requests/' + _me.requestID;
+                        } else {
+                            url = nbn.nbnv.api + '/user/userAccesses/requests/' + _me.requestID;
+                        }
+                                                
+                        $.ajax({
+                            type: 'POST',
+                            url: url,
+                            data: filter,
+                            success: function () { document.location.reload(true); }
+                        });
                 }, Cancel: function() { 
                     $(this).dialog("close"); 
                 }
@@ -39,8 +52,9 @@ nbn.nbnv.ui.dialog.requestRevokeDialog = function() {
         });
     };
     
-    this.show = function(id) {
+    this.show = function(id, json) {
         this.requestID = id;
+        if ('organisationID' in json.reason && json.reason.organisationID != -1) { this.orgReq = true; } else { this.orgReq = false; }
         this.div.dialog("open");
     };
 }

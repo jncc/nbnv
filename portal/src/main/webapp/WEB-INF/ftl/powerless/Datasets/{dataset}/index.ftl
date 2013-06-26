@@ -1,6 +1,7 @@
 <#assign dataset=json.readURL("${api}/datasets/${URLParameters.dataset}")>
 <#assign resolution=json.readURL("${api}/datasets/${URLParameters.dataset}/resolutionData")>
 <#assign provider=json.readURL("${api}/organisations/${dataset.organisationID}")>
+<#assign isAdmin=json.readURL("${api}/datasets/${URLParameters.dataset}/isAdmin")>
 
 <@template.master title="NBN Gateway - Datasets"
     javascripts=["/js/jquery-ui-1.8.23.custom.min.js/","/js/enable-dataset-metadata-tabs.js","/js/jquery.dataTables.min.js","/js/jqplot/jquery.jqplot.min.js","/js/jqplot/excanvas.min.js","/js/jqplot/plugins/jqplot.json2.min.js","/js/jqplot/plugins/jqplot.highlighter.min.js","/js/jqplot/plugins/jqplot.canvasAxisLabelRenderer.min.js","/js/jqplot/plugins/jqplot.canvasTextRenderer.min.js","/js/jqplot/plugins/jqplot.cursor.min.js"] 
@@ -94,6 +95,12 @@
                         <tr>
                             <th>Number of species</th>
                             <td>${taxonDataset.speciesCount}</td>
+                        </tr>
+                    </#if>
+                    <#if isAdmin>
+                        <tr>
+                            <td></td>
+                            <td><a style="float:right;" href="/Datasets/${URLParameters.dataset}/Edit">Edit Dataset Metadata</a></td>
                         </tr>
                     </#if>
                 </table>

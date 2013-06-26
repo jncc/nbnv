@@ -17,22 +17,24 @@ import uk.org.nbn.nbnv.api.model.UserAccessRequest;
  * @author Paul Gilbertson
  */
 public interface OperationalUserAccessRequestMapper {
-    @Insert("INSERT INTO UserAccessRequest (filterID, userID, datasetKey, requestPurposeID, requestReason, requestDate)"
-            + " VALUES (#{filterID}, #{userID}, #{datasetKey}, #{requestPurposeID}, #{requestReason}, #{requestDate})")
+    @Insert("INSERT INTO UserAccessRequest (filterID, userID, datasetKey, requestPurposeID, requestReason, requestDate, sensitiveRequest)"
+            + " VALUES (#{filterID}, #{userID}, #{datasetKey}, #{requestPurposeID}, #{requestReason}, #{requestDate}, #{sensitive})")
     public int createRequest(
             @Param("filterID") int filterID
             , @Param("userID") int userID
             , @Param("datasetKey") String datasetKey
             , @Param("requestPurposeID") int requestPurposeID
             , @Param("requestReason") String requestReason
-            , @Param("requestDate") Date requestDate);
+            , @Param("requestDate") Date requestDate
+            , @Param("sensitive") boolean sensitiveRequest);
 
     @Select("SELECT uar.* FROM UserAccessRequest uar "
-            + "WHERE uar.userID = #{id}")
+            + "WHERE uar.userID = #{id} AND sensitiveRequests = 0")
     @Results(value = {
         @Result(property="filter", column="filterID", javaType=TaxonObservationFilter.class, one=@One(select="uk.org.nbn.nbnv.api.dao.core.OperationalTaxonObservationFilterMapper.selectById")),
         @Result(property="user", column="userID", javaType=User.class, one=@One(select="uk.org.nbn.nbnv.api.dao.core.OperationalUserMapper.getUserById")),
-        @Result(property="dataset", column="datasetKey", javaType=Dataset.class, one=@One(select="uk.org.nbn.nbnv.api.dao.core.OperationalDatasetMapper.selectByDatasetKey"))
+        @Result(property="dataset", column="datasetKey", javaType=Dataset.class, one=@One(select="uk.org.nbn.nbnv.api.dao.core.OperationalDatasetMapper.selectByDatasetKey")),
+        @Result(property="datasetKey", column="datasetKey")
     })
     public List<UserAccessRequest> getUserRequests(int id);
 
@@ -41,9 +43,30 @@ public interface OperationalUserAccessRequestMapper {
     @Results(value = {
         @Result(property="filter", column="filterID", javaType=TaxonObservationFilter.class, one=@One(select="uk.org.nbn.nbnv.api.dao.core.OperationalTaxonObservationFilterMapper.selectById")),
         @Result(property="user", column="userID", javaType=User.class, one=@One(select="uk.org.nbn.nbnv.api.dao.core.OperationalUserMapper.getUserById")),
-        @Result(property="dataset", column="datasetKey", javaType=Dataset.class, one=@One(select="uk.org.nbn.nbnv.api.dao.core.OperationalDatasetMapper.selectByDatasetKey"))
+        @Result(property="dataset", column="datasetKey", javaType=Dataset.class, one=@One(select="uk.org.nbn.nbnv.api.dao.core.OperationalDatasetMapper.selectByDatasetKey")),
+        @Result(property="datasetKey", column="datasetKey")
     })
     public List<UserAccessRequest> getGrantedUserRequests(int id);
+
+    @Select("SELECT uar.* FROM UserAccessRequest uar "
+            + "WHERE uar.userID = #{id} AND responseTypeID IS NULL AND sensitiveRequest = 0")
+    @Results(value = {
+        @Result(property="filter", column="filterID", javaType=TaxonObservationFilter.class, one=@One(select="uk.org.nbn.nbnv.api.dao.core.OperationalTaxonObservationFilterMapper.selectById")),
+        @Result(property="user", column="userID", javaType=User.class, one=@One(select="uk.org.nbn.nbnv.api.dao.core.OperationalUserMapper.getUserById")),
+        @Result(property="dataset", column="datasetKey", javaType=Dataset.class, one=@One(select="uk.org.nbn.nbnv.api.dao.core.OperationalDatasetMapper.selectByDatasetKey")),
+        @Result(property="datasetKey", column="datasetKey")
+    })
+    public List<UserAccessRequest> getPendingUserRequests(int id);
+
+    @Select("SELECT uar.* FROM UserAccessRequest uar "
+            + "WHERE uar.userID = #{user} AND uar.datasetKey = #{dataset} AND responseTypeID = 1")
+    @Results(value = {
+        @Result(property="filter", column="filterID", javaType=TaxonObservationFilter.class, one=@One(select="uk.org.nbn.nbnv.api.dao.core.OperationalTaxonObservationFilterMapper.selectById")),
+        @Result(property="user", column="userID", javaType=User.class, one=@One(select="uk.org.nbn.nbnv.api.dao.core.OperationalUserMapper.getUserById")),
+        @Result(property="dataset", column="datasetKey", javaType=Dataset.class, one=@One(select="uk.org.nbn.nbnv.api.dao.core.OperationalDatasetMapper.selectByDatasetKey")),
+        @Result(property="datasetKey", column="datasetKey")
+    })
+    public List<UserAccessRequest> getGrantedUserRequestsByDataset(@Param("dataset") String datasetKey, @Param("user") int userID);
 
     @Select("SELECT uar.* FROM UserAccessRequest uar "
             + "INNER JOIN DatasetAdministrator da ON da.datasetKey = uar.datasetKey "
@@ -51,7 +74,8 @@ public interface OperationalUserAccessRequestMapper {
     @Results(value = {
         @Result(property="filter", column="filterID", javaType=TaxonObservationFilter.class, one=@One(select="uk.org.nbn.nbnv.api.dao.core.OperationalTaxonObservationFilterMapper.selectById")),
         @Result(property="user", column="userID", javaType=User.class, one=@One(select="uk.org.nbn.nbnv.api.dao.core.OperationalUserMapper.getUserById")),
-        @Result(property="dataset", column="datasetKey", javaType=Dataset.class, one=@One(select="uk.org.nbn.nbnv.api.dao.core.OperationalDatasetMapper.selectByDatasetKey"))
+        @Result(property="dataset", column="datasetKey", javaType=Dataset.class, one=@One(select="uk.org.nbn.nbnv.api.dao.core.OperationalDatasetMapper.selectByDatasetKey")),
+        @Result(property="datasetKey", column="datasetKey")
     })
     public List<UserAccessRequest> getAdminableRequests(int id);
     
@@ -61,7 +85,8 @@ public interface OperationalUserAccessRequestMapper {
     @Results(value = {
         @Result(property="filter", column="filterID", javaType=TaxonObservationFilter.class, one=@One(select="uk.org.nbn.nbnv.api.dao.core.OperationalTaxonObservationFilterMapper.selectById")),
         @Result(property="user", column="userID", javaType=User.class, one=@One(select="uk.org.nbn.nbnv.api.dao.core.OperationalUserMapper.getUserById")),
-        @Result(property="dataset", column="datasetKey", javaType=Dataset.class, one=@One(select="uk.org.nbn.nbnv.api.dao.core.OperationalDatasetMapper.selectByDatasetKey"))
+        @Result(property="dataset", column="datasetKey", javaType=Dataset.class, one=@One(select="uk.org.nbn.nbnv.api.dao.core.OperationalDatasetMapper.selectByDatasetKey")),
+        @Result(property="datasetKey", column="datasetKey")
     })
     public List<UserAccessRequest> getPendingAdminableRequests(int id);
 
@@ -71,7 +96,8 @@ public interface OperationalUserAccessRequestMapper {
     @Results(value = {
         @Result(property="filter", column="filterID", javaType=TaxonObservationFilter.class, one=@One(select="uk.org.nbn.nbnv.api.dao.core.OperationalTaxonObservationFilterMapper.selectById")),
         @Result(property="user", column="userID", javaType=User.class, one=@One(select="uk.org.nbn.nbnv.api.dao.core.OperationalUserMapper.getUserById")),
-        @Result(property="dataset", column="datasetKey", javaType=Dataset.class, one=@One(select="uk.org.nbn.nbnv.api.dao.core.OperationalDatasetMapper.selectByDatasetKey"))
+        @Result(property="dataset", column="datasetKey", javaType=Dataset.class, one=@One(select="uk.org.nbn.nbnv.api.dao.core.OperationalDatasetMapper.selectByDatasetKey")),
+        @Result(property="datasetKey", column="datasetKey")
     })
     public List<UserAccessRequest> getGrantedAdminableRequests(int id);
 
@@ -81,14 +107,17 @@ public interface OperationalUserAccessRequestMapper {
     @Results(value = {
         @Result(property="filter", column="filterID", javaType=TaxonObservationFilter.class, one=@One(select="uk.org.nbn.nbnv.api.dao.core.OperationalTaxonObservationFilterMapper.selectById")),
         @Result(property="user", column="userID", javaType=User.class, one=@One(select="uk.org.nbn.nbnv.api.dao.core.OperationalUserMapper.getUserById")),
-        @Result(property="dataset", column="datasetKey", javaType=Dataset.class, one=@One(select="uk.org.nbn.nbnv.api.dao.core.OperationalDatasetMapper.selectByDatasetKey"))
+        @Result(property="dataset", column="datasetKey", javaType=Dataset.class, one=@One(select="uk.org.nbn.nbnv.api.dao.core.OperationalDatasetMapper.selectByDatasetKey")),
+        @Result(property="datasetKey", column="datasetKey")
     })
     public List<UserAccessRequest> getDeniedAdminableRequests(int id);
 
     @Select("SELECT uar.* FROM UserAccessRequest uar WHERE uar.filterID = #{id}")
     @Results(value = {
         @Result(property="filter", column="filterID", javaType=TaxonObservationFilter.class, one=@One(select="uk.org.nbn.nbnv.api.dao.core.OperationalTaxonObservationFilterMapper.selectById")),
-        @Result(property="user", column="userID", javaType=User.class, one=@One(select="uk.org.nbn.nbnv.api.dao.core.OperationalUserMapper.getUserById"))
+        @Result(property="user", column="userID", javaType=User.class, one=@One(select="uk.org.nbn.nbnv.api.dao.core.OperationalUserMapper.getUserById")),
+        @Result(property="dataset", column="datasetKey", javaType=Dataset.class, one=@One(select="uk.org.nbn.nbnv.api.dao.core.OperationalDatasetMapper.selectByDatasetKey")),
+        @Result(property="datasetKey", column="datasetKey")
     })
     public UserAccessRequest getRequest(int id);
     
@@ -110,6 +139,20 @@ public interface OperationalUserAccessRequestMapper {
     @Update("UPDATE UserAccessRequest SET responseTypeID = 2, responseReason = #{responseReason}, responseDate = #{responseDate} "
             + "WHERE filterID = #{filterID}")
     public int denyRequest(
+            @Param("filterID") int filterID
+            , @Param("responseReason") String responseReason
+            , @Param("responseDate") Date responseDate);
+
+    @Update("UPDATE UserAccessRequest SET responseTypeID = 3, responseReason = #{responseReason}, responseDate = #{responseDate} "
+            + "WHERE filterID = #{filterID}")
+    public int closeRequest(
+            @Param("filterID") int filterID
+            , @Param("responseReason") String responseReason
+            , @Param("responseDate") Date responseDate);
+
+    @Update("UPDATE UserAccessRequest SET responseTypeID = 4, responseReason = #{responseReason}, responseDate = #{responseDate} "
+            + "WHERE filterID = #{filterID}")
+    public int revokeRequest(
             @Param("filterID") int filterID
             , @Param("responseReason") String responseReason
             , @Param("responseDate") Date responseDate);

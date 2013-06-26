@@ -48,12 +48,32 @@ public class OrganisationMembershipResource extends AbstractResource {
     @Autowired OperationalOrganisationJoinRequestMapper oOrganisationJoinRequestMapper;
     @Autowired TemplateMailer mailer;
 
+    /**
+     * Return a list of all organisation memberships from the data warehouse
+     * 
+     * @return A list of all organisation memberships from the data warehouse
+     * 
+     * @response.representation.200.qname List<OrganisationMembership>
+     * @response.representation.200.mediaType application/json
+     */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public List<OrganisationMembership> get() {
         return organisationMembershipMapper.selectAll();
     }
 
+    /**
+     * Return a list of organisation memberships for a given organisation from 
+     * the core database
+     * 
+     * @param id An organisation ID
+     * 
+     * @return A list of organisation memberships for a given organisation from 
+     * the core database
+     * 
+     * @response.representation.200.qname List<OrganisationMembership>
+     * @response.representation.200.mediaType application/json
+     */
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -61,6 +81,19 @@ public class OrganisationMembershipResource extends AbstractResource {
         return oOrganisationMembershipMapper.selectByOrganisation(id);
     }
 
+    /**
+     * Return the organisation membership details for a given user and 
+     * organisation from the core database
+     * 
+     * @param id An organisation ID
+     * @param user A Users ID
+     * 
+     * @return The organisation membership details for a given user and 
+     * organisation from the core database
+     * 
+     * @response.representation.200.qname OrganisationMembership
+     * @response.representation.200.mediaType application/json
+     */
     @GET
     @Path("/{id}/{user}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -72,6 +105,19 @@ public class OrganisationMembershipResource extends AbstractResource {
         return null;
     }
 
+    /**
+     * Return true if a user is a member of a given organisation from the core 
+     * database
+     * 
+     * @param id An organisation ID
+     * @param user A Users ID     
+     * 
+     * @return True if a user is a member of a given organisation from the core 
+     * database
+     * 
+     * @response.representation.200.qname boolean
+     * @response.representation.200.mediaType application/json
+     */
     @GET
     @Path("/{id}/{user}/isMember")
     @Produces(MediaType.APPLICATION_JSON)
@@ -83,6 +129,19 @@ public class OrganisationMembershipResource extends AbstractResource {
         return false;
     }
 
+    /**
+     * Return true if a user is an admin of a given organisation from the core 
+     * database
+     * 
+     * @param id An organisation ID
+     * @param user A Users ID     
+     * 
+     * @return True if a user is an admin of a given organisation from the core 
+     * database
+     * 
+     * @response.representation.200.qname boolean
+     * @response.representation.200.mediaType application/json
+     */    
     @GET
     @Path("/{id}/{user}/isadmin")
     @Produces(MediaType.APPLICATION_JSON)
@@ -96,6 +155,19 @@ public class OrganisationMembershipResource extends AbstractResource {
         return false;
     }
 
+    /**
+     * Add a user directly to the organisation from the admin panel, requires a
+     * user who has admin rights over the organisation
+     * 
+     * @param user The current user (Must be an admin or returns 403 Forbidden)
+     * @param orgId An organisation ID
+     * @param data The user to be added to the organisation
+     * 
+     * @return A Response object detailing the success or failure of the action
+     * 
+     * @response.representation.200.qname Response
+     * @response.representation.200.mediaType application/json
+     */
     @POST
     @Path("/{id}/addUser")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -111,7 +183,11 @@ public class OrganisationMembershipResource extends AbstractResource {
      * @param orgId The organisation ID
      * @param data A JSON data packet containing the user to modified and their
      * new role
-     * @return
+     * 
+     * @return A Response object detailing the success or failure of the action
+     * 
+     * @response.representation.200.qname Response
+     * @response.representation.200.mediaType application/json
      */
     @POST
     @Path("/{id}/modifyUserRole")
@@ -128,7 +204,11 @@ public class OrganisationMembershipResource extends AbstractResource {
      * @param user The current user (must be an admin)
      * @param orgId The organisation ID
      * @param data A JSON data packet containing the user to removed
-     * @return
+     * 
+     * @return A Response object detailing the success or failure of the action
+     * 
+     * @response.representation.200.qname Response
+     * @response.representation.200.mediaType application/json
      */
     @POST
     @Path("/{id}/removeUser")
@@ -144,7 +224,12 @@ public class OrganisationMembershipResource extends AbstractResource {
      *
      * @param user The current user (must be an admin)
      * @param orgID The organisation id
-     * @return
+     * 
+     * @return An Organisation Join Request made by the user for the specified
+     * organisation or a null response ID if no request has been made
+     * 
+     * @response.representation.200.qname OrganisationJoinRequest
+     * @response.representation.200.mediaType application/json
      */
     @GET
     @Path("/{id}/join")
@@ -168,7 +253,11 @@ public class OrganisationMembershipResource extends AbstractResource {
      * @param user The current user
      * @param orgID The Organisation ID
      * @param data A JSON packet containing a reason for the request
-     * @return
+     * 
+     * @return A Response object detailing the success or failure of the action
+     * 
+     * @response.representation.200.qname Response
+     * @response.representation.200.mediaType application/json
      */
     @PUT
     @Path("/{id}/join")
@@ -195,7 +284,11 @@ public class OrganisationMembershipResource extends AbstractResource {
      *
      * @param user The Current user (must be an admin)
      * @param orgId The Organisation ID
-     * @return
+     * 
+     * @return A Response object detailing the success or failure of the action
+     * 
+     * @response.representation.200.qname Response
+     * @response.representation.200.mediaType application/json
      */
     @GET
     @Path("/{id}/requests")
@@ -206,11 +299,16 @@ public class OrganisationMembershipResource extends AbstractResource {
 
     /**
      * Return a specific request by its ID, if the user can access it i.e. org
-     * Admin or requesting user
+     * Admin or requesting user otherwise return a 403 Forbidden error
      *
      * @param user The Current User (must be an admin or requesting user)
      * @param reqId The request id
-     * @return A Response containing the Request or an error code
+     * 
+     * @return A specific organisation join request by its ID, if the user can 
+     * access it
+     * 
+     * @response.representation.200.qname OrganisationJoinRequest
+     * @response.representation.200.mediaType application/json
      */
     @GET
     @Path("/request/{id}")
@@ -231,10 +329,14 @@ public class OrganisationMembershipResource extends AbstractResource {
      * @param id The id of the request in the database
      * @param data A JSON data packet containing information about the type of
      * response and associated reasons for it
-     * @return A Response containing any feedback from the REST services, i.e.
-     * request status
+     * 
+     * @return A Response object detailing the success or failure of the action
+     * 
      * @throws IOException Errors associated with the Mailer
      * @throws TemplateException Errors associated with the Mailer
+     * 
+     * @response.representation.200.qname Response
+     * @response.representation.200.mediaType application/json
      */
     @POST
     @Path("/request/{id}")
@@ -281,6 +383,16 @@ public class OrganisationMembershipResource extends AbstractResource {
     }
 
     // TODO: Add explanation to this to the user feedback
+    /**
+     * E-mail the user with a response to their request
+     * 
+     * @param request The join request in question
+     * @param template The email template that should be used
+     * @param email The users email address
+     * @param subject The subject line of the email
+     * @throws IOException
+     * @throws TemplateException 
+     */
     private void sendEmail(OrganisationJoinRequest request, String template, String email, String subject) throws IOException, TemplateException {
 //        Map<String, Object> message = new HashMap<String, Object>();
 //        message.put("portal", properties.getProperty("portal_url"));

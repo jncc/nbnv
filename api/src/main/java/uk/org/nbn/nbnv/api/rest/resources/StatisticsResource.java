@@ -11,6 +11,19 @@ import org.springframework.stereotype.Component;
 @Component
 @Path("/statistics")
 public class StatisticsResource extends AbstractResource {
+    
+    /**
+     * Return a set of statistics about the current status of the NBN records
+     * 
+     * TODO populate this from the database
+     * 
+     * @return A set of statistics about the current status of the NBN records
+     * 
+     * @throws JSONException 
+     * 
+     * @response.representation.200.qname JSONObject
+     * @response.representation.200.mediaType application/json
+     */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public JSONObject getDatasetList() throws JSONException {

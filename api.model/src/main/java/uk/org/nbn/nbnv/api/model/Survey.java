@@ -1,15 +1,26 @@
 package uk.org.nbn.nbnv.api.model;
 
 import java.util.List;
+import javax.validation.constraints.Size;
 
 public class Survey {
+
+    private String datasetKey, surveyKey, description,
+            geographicalCoverage, temporalCoverage, dataCaptureMethod, purpose,
+            dataQuality, additionalInformation;
     
-    private String datasetKey, surveyKey, title, description, geographicalCoverage, temporalCoverage;
+    @Size(max = 100)
+    private String providerKey;
+    
+    @Size(max = 200)
+    private String title;
+    
     private int id, speciesCount, sampleCount, recordCount;
-    
-    public Survey(){}
-    
-    public Survey(String datasetKey, String surveyKey, String title, String description, String geographicalCoverage, String temoralCoverage, int id, int speciesCount, int sampleCount, int recordCount){
+
+    public Survey() {
+    }
+
+    public Survey(String datasetKey, String surveyKey, String title, String description, String geographicalCoverage, String temoralCoverage, int id, int speciesCount, int sampleCount, int recordCount) {
         this.datasetKey = datasetKey;
         this.surveyKey = surveyKey;
         this.title = title;
@@ -20,6 +31,59 @@ public class Survey {
         this.speciesCount = speciesCount;
         this.sampleCount = sampleCount;
         this.recordCount = recordCount;
+    }
+    
+    public Survey(int id, String providerKey, String title, String description, String geographicalCoverage, String temporalCoverage, String dataQuality, String dataCaptureMethod, String purpose, String additionalInformation) {
+        this.id = id;
+        this.providerKey = providerKey;
+        this.title = title;
+        this.description = description;
+        this.geographicalCoverage = geographicalCoverage;
+        this.temporalCoverage = temporalCoverage;
+        this.dataQuality = dataQuality;
+        this.dataCaptureMethod = dataCaptureMethod;
+        this.purpose = purpose;
+        this.additionalInformation = additionalInformation;
+    }
+
+    public String getProviderKey() {
+        return providerKey;
+    }
+
+    public void setProviderKey(String providerKey) {
+        this.providerKey = providerKey;
+    }
+
+    public String getDataCaptureMethod() {
+        return dataCaptureMethod;
+    }
+
+    public void setDataCaptureMethod(String dataCaptureMethod) {
+        this.dataCaptureMethod = dataCaptureMethod;
+    }
+
+    public String getPurpose() {
+        return purpose;
+    }
+
+    public void setPurpose(String purpose) {
+        this.purpose = purpose;
+    }
+
+    public String getDataQuality() {
+        return dataQuality;
+    }
+
+    public void setDataQuality(String dataQuality) {
+        this.dataQuality = dataQuality;
+    }
+
+    public String getAdditionalInformation() {
+        return additionalInformation;
+    }
+
+    public void setAdditionalInformation(String additionalInformation) {
+        this.additionalInformation = additionalInformation;
     }
 
     public String getDatasetKey() {
@@ -101,5 +165,4 @@ public class Survey {
     public void setSpeciesCount(int speciesCount) {
         this.speciesCount = speciesCount;
     }
-    
 }

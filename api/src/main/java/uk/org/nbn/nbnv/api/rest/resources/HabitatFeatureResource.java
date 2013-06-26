@@ -18,7 +18,17 @@ import uk.org.nbn.nbnv.api.model.HabitatFeature;
 public class HabitatFeatureResource extends AbstractResource {
 
     @Autowired HabitatFeatureMapper habitatFeatureMapper;
-            
+
+    /**
+     * Returns a specific habitat feature from the data warehouse
+     * 
+     * @param identifier A habitat feature identifier
+     * 
+     * @return A specific habitat feature from the data warehouse
+     * 
+     * @response.representation.200.qname HabitatFeature
+     * @response.representation.200.mediaType application/json
+     */
     @GET
     @Path("/{identifier}")
     @Produces(MediaType.APPLICATION_JSON)

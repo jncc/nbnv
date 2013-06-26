@@ -18,6 +18,14 @@ public class SiteBoundaryCategoryResource extends AbstractResource {
     
     @Autowired SiteBoundaryCategoryMapper siteBoundaryCategoryMapper;
     
+    /**
+     * Return a list of all site boundary categories from the data warehouse
+     * 
+     * @return A list of all site boundary categories from the data warehouse
+     * 
+     * @response.representation.200.qname List<SiteBoundaryCategory>
+     * @response.representation.200.mediaType application/json
+     */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public List<SiteBoundaryCategory> get(){
@@ -25,6 +33,16 @@ public class SiteBoundaryCategoryResource extends AbstractResource {
         return toReturn;
     }
     
+    /**
+     * Return a specific site boundary category
+     * 
+     * @param id A Site Boundary Category ID
+     * 
+     * @return A specific site boundary category
+     * 
+     * @response.representation.200.qname SiteBoundaryCategory
+     * @response.representation.200.mediaType application/json
+     */
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)

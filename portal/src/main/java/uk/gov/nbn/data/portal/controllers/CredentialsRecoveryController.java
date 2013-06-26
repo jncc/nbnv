@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import uk.gov.nbn.data.portal.controllers.models.ChangePassword;
 
 /**
  *
@@ -72,43 +73,6 @@ public class CredentialsRecoveryController {
         }
         else {
             return new ModelAndView("recovery-password-form", "changePassword", changePassword);
-        }
-    }
-    
-    public static class ChangePassword {
-        @NotNull
-        private String token;
-        
-        @NotNull
-        @NotEmpty
-        private String username;        
-        
-        @NotNull
-        @NotEmpty
-        private String password;
-        
-        public String getToken() {
-            return token;
-        }
-
-        public void setToken(String token) {
-            this.token = token;
-        }
-
-        public String getUsername() {
-            return username;
-        }
-
-        public void setUsername(String username) {
-            this.username = username;
-        }
-
-        public String getPassword() {
-            return password;
-        }
-
-        public void setPassword(String password) {
-            this.password = password;
         }
     }
     

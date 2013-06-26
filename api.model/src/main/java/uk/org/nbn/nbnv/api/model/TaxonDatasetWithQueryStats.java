@@ -6,6 +6,7 @@ public class TaxonDatasetWithQueryStats implements Comparable<TaxonDatasetWithQu
     
     private String datasetKey;
     private int querySpecificObservationCount;
+    private int querySpecificSensitiveObservationCount;
     private List<String> accessPositions;
     private TaxonDataset taxonDataset;
     
@@ -58,6 +59,20 @@ public class TaxonDatasetWithQueryStats implements Comparable<TaxonDatasetWithQu
      */
     public void setAccessPositions(List<String> accessPositions) {
         this.accessPositions = accessPositions;
+    }
+
+    /**
+     * @return the querySpecificSensitiveObservationCount
+     */
+    public int getQuerySpecificSensitiveObservationCount() {
+        return querySpecificSensitiveObservationCount;
+    }
+
+    /**
+     * @param querySpecificSensitiveObservationCount the querySpecificSensitiveObservationCount to set
+     */
+    public void setQuerySpecificSensitiveObservationCount(int querySpecificSensitiveObservationCount) {
+        this.querySpecificSensitiveObservationCount = querySpecificSensitiveObservationCount;
     }
 
     

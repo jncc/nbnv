@@ -27,6 +27,23 @@ public class TaxonObservationProvider {
         return SQL();
     }
 
+    public String filteredSelectRequestableRecordIDs(Map<String, Object> params) {
+        String from = createSelectEnhanced(params, "o.id");
+        BEGIN();
+        SELECT("obs.id");
+        FROM(from);
+        WHERE("obs.id NOT IN ( SELECT utoa.observationID FROM UserTaxonObservationID utoa WHERE utoa.userID = #{user.id} )");
+        return SQL();
+    }
+
+    public String filteredSelectRequestableRecordIDsOrganisation(Map<String, Object> params) {
+        String from = createSelectEnhanced(params, "o.id");
+        BEGIN();
+        SELECT("obs.id");
+        FROM(from);
+        WHERE("obs.id NOT IN ( SELECT utoa.observationID FROM OrganisationTaxonObservationID utoa WHERE utoa.organisationID = #{organisation.id} )");
+        return SQL();
+    }
     public String filteredSelectRecordsOrderedByDataset(Map<String, Object> params) {
         String from = createSelect(params, "o.*");
         BEGIN();
@@ -92,15 +109,25 @@ public class TaxonObservationProvider {
     }
 
     public String filteredSelectRequestableDatasets(Map<String, Object> params) {
-        String from = createSelectEnhanced(params, "o.datasetKey, o.id");
+        String from = createSelectEnhanced(params, "o.datasetKey, o.sensitive, o.id");
         BEGIN();
-        SELECT("obs.datasetKey, COUNT(*) querySpecificObservationCount");
+        SELECT("obs.datasetKey, COUNT(*) querySpecificObservationCount, SUM(CAST(obs.sensitive AS int)) querySpecificSensitiveObservationCount");
         FROM(from);
         WHERE("obs.id NOT IN ( SELECT utoa.observationID FROM UserTaxonObservationID utoa WHERE utoa.userID = #{user.id} )");
         GROUP_BY("obs.datasetKey");
         return SQL();
     }
         
+    public String filteredSelectRequestableDatasetsOrganisation(Map<String, Object> params) {
+        String from = createSelectEnhanced(params, "o.datasetKey, o.sensitive, o.id");
+        BEGIN();
+        SELECT("obs.datasetKey, COUNT(*) querySpecificObservationCount, SUM(CAST(obs.sensitive AS int)) querySpecificSensitiveObservationCount");
+        FROM(from);
+        WHERE("obs.id NOT IN ( SELECT utoa.observationID FROM OrganisationTaxonObservationID utoa WHERE utoa.organisationID = #{organisation.id} )");
+        GROUP_BY("obs.datasetKey");
+        return SQL();
+    }
+
     public String filteredSelectRequestableSensitiveDatasets(Map<String, Object> params) {
         params.put("sensitive", Boolean.TRUE);
         String from = createSelectEnhanced(params, "o.datasetKey, o.sensitive, o.id");
@@ -108,6 +135,18 @@ public class TaxonObservationProvider {
         SELECT("obs.datasetKey, COUNT(*) querySpecificObservationCount");
         FROM(from);
         WHERE("obs.id NOT IN ( SELECT utoa.observationID FROM UserTaxonObservationID utoa WHERE utoa.userID = #{user.id} )");
+        WHERE("obs.sensitive = 1");
+        GROUP_BY("obs.datasetKey");
+        return SQL();
+    }
+
+    public String filteredSelectRequestableSensitiveDatasetsOrganisation(Map<String, Object> params) {
+        params.put("sensitive", Boolean.TRUE);
+        String from = createSelectEnhanced(params, "o.datasetKey, o.sensitive, o.id");
+        BEGIN();
+        SELECT("obs.datasetKey, COUNT(*) querySpecificObservationCount");
+        FROM(from);
+        WHERE("obs.id NOT IN ( SELECT utoa.observationID FROM OrganisationTaxonObservationID utoa WHERE utoa.organisationID = #{organisation.id} )");
         WHERE("obs.sensitive = 1");
         GROUP_BY("obs.datasetKey");
         return SQL();
@@ -222,8 +261,24 @@ public class TaxonObservationProvider {
             }
         }
 
+        if (params.containsKey("polygon") && !params.get("polygon").equals("")) {
+            String spatialRelationship = ObservationResourceDefaults.SPATIAL_RELATIONSHIP_DEFAULT;
+            if (params.containsKey("spatialRelationship") && params.get("spatialRelationship") != null) {
+                spatialRelationship = (String) params.get("spatialRelationship");
+            }
+            INNER_JOIN("FeatureData ftd ON ftd.id = o.featureID");
+            if (ObservationResourceDefaults.SPATIAL_RELATIONSHIP_WITHIN.equals(spatialRelationship)) {
+                WHERE("ftd.geom.STWithin(geometry::STGeomFromText(#{polygon}, 4326) = 1");
+            } else {
+                WHERE("ftd.geom.STIntersects(geometry::STGeomFromText(#{polygon}, 4326) = 1");
+                WHERE("ftd.geom.STTouches(geometry::STGeomFromText(#{polygon}, 4326) = 0");
+            }            
+        }
+        
         if (params.containsKey("sensitive") && (Boolean) params.get("sensitive")) {
-            WHERE("sensitive = #{sensitive}");
+            WHERE("sensitive <= 1");
+        } else {
+            WHERE("sensitive = 0");
         }
 
         if (params.containsKey("designation") && !"".equals((String) params.get("designation"))) {
@@ -287,8 +342,24 @@ public class TaxonObservationProvider {
             }
         }
 
+        if (params.containsKey("polygon") && !params.get("polygon").equals("")) {
+            String spatialRelationship = ObservationResourceDefaults.SPATIAL_RELATIONSHIP_DEFAULT;
+            if (params.containsKey("spatialRelationship") && params.get("spatialRelationship") != null) {
+                spatialRelationship = (String) params.get("spatialRelationship");
+            }
+            INNER_JOIN("FeatureData ftd ON ftd.id = o.featureID");
+            if (ObservationResourceDefaults.SPATIAL_RELATIONSHIP_WITHIN.equals(spatialRelationship)) {
+                WHERE("ftd.geom.STWithin(geometry::STGeomFromText(#{polygon}, 4326) = 1");
+            } else {
+                WHERE("ftd.geom.STIntersects(geometry::STGeomFromText(#{polygon}, 4326) = 1");
+                WHERE("ftd.geom.STTouches(geometry::STGeomFromText(#{polygon}, 4326) = 0");
+            }            
+        }
+
         if (params.containsKey("sensitive") && (Boolean) params.get("sensitive")) {
-            WHERE("sensitive = #{sensitive}");
+            WHERE("sensitive <= 1");
+        } else {
+            WHERE("sensitive = 0");
         }
 
         if (params.containsKey("designation") && !"".equals((String) params.get("designation"))) {

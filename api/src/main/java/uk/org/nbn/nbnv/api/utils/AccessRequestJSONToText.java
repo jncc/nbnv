@@ -23,12 +23,12 @@ import uk.org.nbn.nbnv.api.model.meta.AccessRequestJSON;
  */
 @Component
 public class AccessRequestJSONToText {
-    @Autowired static TaxonMapper taxonMapper;
-    @Autowired static DesignationMapper designationMapper;
-    @Autowired static TaxonOutputGroupMapper outputGroupMapper;
-    @Autowired static SiteBoundaryMapper siteBoundaryMapper;
+    @Autowired TaxonMapper taxonMapper;
+    @Autowired DesignationMapper designationMapper;
+    @Autowired TaxonOutputGroupMapper outputGroupMapper;
+    @Autowired SiteBoundaryMapper siteBoundaryMapper;
 
-    public static String convert(AccessRequestJSON ar) {
+    public String convert(AccessRequestJSON ar) {
         String text = null;
 
         if ("ns".equals(ar.getSensitive())) {
