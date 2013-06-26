@@ -75,14 +75,13 @@
     <class>uk.org.nbn.nbnv.jpa.nbncore.ImportSite</class>
     <class>uk.org.nbn.nbnv.jpa.nbncore.ImportTaxonObservationPublic</class>
     <class>uk.org.nbn.nbnv.jpa.nbncore.ImportRecorder</class>
-    <class>uk.org.nbn.nbnv.jpa.nbncore.ImportFeature</class>
     <class>uk.org.nbn.nbnv.jpa.nbncore.ImportTaxonObservation</class>
     <class>uk.org.nbn.nbnv.jpa.nbncore.ImportSample</class>
-    <class>uk.org.nbn.nbnv.jpa.nbncore.ImportGridSquare</class>
     <shared-cache-mode>NONE</shared-cache-mode>
     <properties>
       <!--<property name="eclipselink.target-database" value="SQLServer"/>-->
       <property name="javax.persistence.jdbc.driver" value="com.microsoft.sqlserver.jdbc.SQLServerDriver"/>
+      <property name="eclipselink.weaving" value="static"/>
       <!--<property name="eclipselink.jdbc.batch-writing" value="JDBC"/>-->
     </properties>
   </persistence-unit>
