@@ -4,8 +4,10 @@ define [
   "cs!views/ColourView"
   "cs!views/OpacityView"
   "cs!views/ResolutionView"
+  "cs!views/TemporalView"
+  "cs!views/DatasetSelectorView"
   "hbs!templates/LayerCustomisation"
-], ($, Backbone, ColourView, OpacityView, ResolutionView, customisationTemplate) -> Backbone.View.extend
+], ($, Backbone, ColourView, OpacityView, ResolutionView, TemporalView, DatasetSelectorView, customisationTemplate) -> Backbone.View.extend
   ###
   The role of this view is to determine which sub customisation
   views are required for the given model that has been provided
@@ -27,6 +29,16 @@ define [
       @resolutionView = new ResolutionView
         model: @model
         el: @$('.resolution')
+
+    if @model.isTemporalFilterable
+      @resolutionView = new TemporalView
+        model: @model
+        el: @$('.temporal')
+
+    if @model.isDatasetFilterable
+      @resolutionView = new DatasetSelectorView
+        model: @model
+        el: @$('.datasets')
 
     @$el.dialog
       title: @model.getName()

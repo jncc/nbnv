@@ -24,8 +24,8 @@ define [
     TemporalFilterMixin.initialize.call(this, arguments); #initalize the mixin
 
   getWMS: -> Globals.gis "DatasetSpeciesDensity/#{@id}",
-    startDate : @getStartDate() #Temporal mixin handles this value
-    endDate : @getEndDate() #Temporal mixin handles this value
+    startyear : @getStartDate() #Temporal mixin handles this value
+    endyear : @getEndDate() #Temporal mixin handles this value
 
   getLegendIcon: ->
     background: "linear-gradient(to right, #ffff80 0%, #76130a 100%)"

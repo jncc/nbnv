@@ -32,8 +32,8 @@ define [
 
   getWMS: -> Globals.gis "SingleSpecies/#{@id}",
     abundance: if @get "isPresence" then "presence" else "absence"
-    startDate : @getStartDate() #Temporal mixin handles this value
-    endDate : @getEndDate() #Temporal mixin handles this value
+    startyear : @getStartDate() #Temporal mixin handles this value
+    endyear : @getEndDate() #Temporal mixin handles this value
     datasets: @get("datasets").join ','
 
   ###

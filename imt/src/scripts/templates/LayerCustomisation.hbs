@@ -13,3 +13,20 @@
     <input type="radio" id="resolution-auto" name="radio" checked="checked" /><label for="resolution-auto">Auto</label>
   </div>
 {{/if}}
+
+{{#if isTemporalFilterable}}
+  <div class="temporal">
+    <div class="control-group">
+      <div class="controls">
+        <input type="text" placeholder= "yyyy" class="startDate" value="{{attributes.startDate}}">
+        <span>to</span>
+        <input type="text" placeholder= "yyyy" class="endDate" value="{{attributes.endDate}}">
+        <span class="help-inline"></span>
+      </div>
+    </div>
+  </div>
+{{/if}}
+
+{{#if isDatasetFilterable}}
+  <div class="datasets"></div>
+{{/if}}

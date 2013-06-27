@@ -25,8 +25,8 @@ define [
     DatasetFilterMixin.initialize.call(this, arguments); #initalize the mixin
   
   getWMS: -> Globals.gis "DesignationSpeciesDensity/#{@id}",
-    startDate : @getStartDate() #Temporal mixin handles this value
-    endDate : @getEndDate() #Temporal mixin handles this value
+    startyear : @getStartDate() #Temporal mixin handles this value
+    endyear : @getEndDate() #Temporal mixin handles this value
     datasets: @get("datasets").join ','
 
   getLegendIcon: ->

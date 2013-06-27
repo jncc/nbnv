@@ -63,6 +63,8 @@ define [
     layer.on 'change:layer', -> wmsLayer.mergeNewParams layers : [layer.getLayer()]
     layer.on 'change:sld', -> wmsLayer.mergeNewParams "SLD_BODY" : layer.getSLD() 
     layer.on 'change:opacity', -> wmsLayer.setOpacity layer.getOpacity()
-    layer.on 'change:wms', -> wmsLayer.setUrl layer.getWMS()
+    layer.on 'change:wms', -> 
+      wmsLayer.setUrl layer.getWMS()
+      do wmsLayer.redraw #trigger a redraw of the layer. Openlayers doesn't do this when we update the url
 
     return wmsLayer
