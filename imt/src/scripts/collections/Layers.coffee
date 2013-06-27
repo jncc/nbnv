@@ -67,3 +67,13 @@ define [
     .groupBy( (dataset) -> dataset.id )
     .map( (val, key) -> val[0])
     .value()
+
+  ###
+  Override the default get method for the collection. Backbone doesn't
+  like it when collections contain two versions of a model with the same
+  id. By overriding the get method, the collection is unable to find 
+  duplicates and therefore allows the models to be added. It also makes
+  sense to disable this method as it no longer possible to return a single
+  result for a given id.
+  ###
+  get: -> false;
