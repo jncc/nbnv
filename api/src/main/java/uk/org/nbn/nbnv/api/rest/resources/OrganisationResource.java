@@ -146,14 +146,12 @@ public class OrganisationResource extends AbstractResource {
             @FormParam("phone") String phone,
             @FormParam("website") String website,
             @FormParam("contactName") String contactName,
-            @FormParam("contactEmail") String contactEmail,
-            @FormParam("allowPublicRegistration") String allowPublicRegistration) {
+            @FormParam("contactEmail") String contactEmail) {
 
         
         int response = oOrganisationMapper.updateOrganisationDetails(id, name,
                 abbreviation, summary, address, postcode, phone, website,
-                contactName, contactEmail, 
-                (allowPublicRegistration != null && allowPublicRegistration.equals("on"))? 1 : 0);
+                contactName, contactEmail);
 
         if (response == 1) {
             return new OpResult();
