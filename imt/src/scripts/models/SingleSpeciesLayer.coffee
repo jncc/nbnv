@@ -1,22 +1,22 @@
 define [
   "underscore"
   "cs!models/GridLayer"
+  "cs!models/mixins/TemporalFilterMixin"
   "cs!models/mixins/DatasetFilterMixin"
   "cs!models/mixins/PolygonFillMixin"
   "cs!helpers/Globals"
-], (_, GridLayer, DatasetFilterMixin, PolygonFillMixin, Globals) -> GridLayer.extend _.extend {}, DatasetFilterMixin, PolygonFillMixin,
+], (_, GridLayer, TemporalFilterMixin, DatasetFilterMixin, PolygonFillMixin, Globals) -> GridLayer.extend _.extend {}, TemporalFilterMixin, DatasetFilterMixin, PolygonFillMixin,
   defaults:
     opacity: 1
     resolution: "auto"
     isPresence: true
     isPolygon: false
-    startDate: 1600
-    endDate: new Date().getFullYear()
+    startDate: TemporalFilterMixin.earliestRecordDate
+    endDate: TemporalFilterMixin.latestRecordDate
     datasets: []
 
   url: -> Globals.api "taxa/#{@id}"
 
-  
   idAttribute: "ptaxonVersionKey"
 
   initialize: () ->
@@ -26,13 +26,14 @@ define [
     @on 'change:isPresence', -> @trigger 'change:name'
     @on 'change:isPresence change:startDate change:endDate change:datasets', -> @trigger 'change:wms'
     GridLayer.prototype.initialize.call(this, arguments); #call super initialize
+    TemporalFilterMixin.initialize.call(this, arguments); #initalize the mixin
     DatasetFilterMixin.initialize.call(this, arguments); #initalize the mixin
     PolygonFillMixin.initialize.call(this, arguments); #initalize the mixin
 
   getWMS: -> Globals.gis "SingleSpecies/#{@id}",
     abundance: if @get "isPresence" then "presence" else "absence"
-    startDate : @get "startDate"
-    endDate : @get "endDate"
+    startDate : @getStartDate() #Temporal mixin handles this value
+    endDate : @getEndDate() #Temporal mixin handles this value
     datasets: @get("datasets").join ','
 
   ###
