@@ -30,6 +30,7 @@
             <thead>
                 <tr>
                     <th>Survey</th>
+                    <th>Key</th>
                     <th>Description</th>
                     <#if isAdmin><th>Action</th></#if>
                 </tr>
@@ -38,6 +39,7 @@
             <#list surveys as r>
                 <tr>
                     <td>${r.title}</td>
+                    <td>${r.providerKey}</td>
                     <td>${r.description}</td>
                     <#if isAdmin><td><a href="${r.id}/Edit">Alter metadata</a></td></#if>
                 </tr>
