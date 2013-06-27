@@ -8,6 +8,7 @@ define [
 ], (_, GridLayer, TemporalFilterMixin, DatasetFilterMixin, PolygonFillMixin, Globals) -> GridLayer.extend _.extend {}, TemporalFilterMixin, DatasetFilterMixin, PolygonFillMixin,
   defaults:
     opacity: 1
+    visibility: true
     resolution: "auto"
     isPresence: true
     isPolygon: false

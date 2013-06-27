@@ -8,6 +8,7 @@ define [
   defaults:
     entityType: 'site boundarydataset'
     opacity: 1
+    visibility: true
     wms: Globals.gis "SiteBoundaryDatasets"
     symbol: "fill"
 

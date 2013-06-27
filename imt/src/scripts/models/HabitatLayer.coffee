@@ -8,6 +8,7 @@ define [
   defaults:
     entityType: 'habitatdataset'
     opacity: 1
+    visibility: true
     wms: Globals.gis "HabitatDatasets"
     symbol: "fill"
 

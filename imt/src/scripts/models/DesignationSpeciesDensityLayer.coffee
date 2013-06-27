@@ -8,6 +8,7 @@ define [
   defaults:
     entityType: 'designation'
     opacity: 1
+    visibility: true
     resolution: "auto"
     isPolygon: false    
     startDate: TemporalFilterMixin.earliestRecordDate
