@@ -70,7 +70,6 @@
         <table>
             <tr><td>Username:</td><td>${user.username}</td></tr>
             <tr><td>Email:</td><td>${user.email}</td></tr>
-            <tr><td>Id:</td><td>${user.id}</td></tr>
             <tr><td><a href="/User/Modify">Modify your user details</a></td><td><a href="/User/Modify#tabs-2">Change password</a></td><td><a href="/User/Modify#tabs-3">Change Email Subscriptions</a></td></tr>
         </table>
     </div>
@@ -93,9 +92,10 @@
                 <tr>
                     <td>${r.title}</td>
                     <td>
-                        <a href="/Datasets/${r.key}/Edit">Alter Dataset Metadata</a><br/>
-                        <a href="/Datasets/${r.key}/Surveys/Edit">Alter Survey Metadata</a><br/>
-                        <a href="/Datasets/${r.key}/Attributes/Edit">Alter Attribute Metadata</a>
+                        <a href="/Datasets/${r.key}/Edit">Edit Dataset Metadata</a><br/>
+                        <a href="/Datasets/${r.key}/Surveys/Edit">Edit Survey Metadata</a><br/>
+                        <a href="/Datasets/${r.key}/Attributes/Edit">Edit Attribute Metadata</a><br/>
+                        <a href="/AccessRequest/History/${r.key}">Access Permissions History</a>
                     </td>
                 </tr>
             </#list>

@@ -35,31 +35,6 @@
             </tr>
         </thead>
         <tbody>
-            <#list gUserRequests as r>
-            <tr>
-                <td>
-                    ${r.user.forename} ${r.user.surname}
-                </td>
-                <td>
-                    ${r.dataset.title}
-                </td>
-                <td>
-                    ${r.filter.filterText}
-                </td>
-                <td>
-                    ${r.requestReason}
-                </td>
-                <td>
-                    ${r.requestDate}
-                </td>
-                <td>
-                    ${r.responseReason}
-                </td>
-                <td>
-                    ${r.responseDate}
-                </td>
-            </tr>
-            </#list>
             <#list gOrgRequests as r>
             <tr>
                 <td>
@@ -100,10 +75,10 @@
             </tr>
         </thead>
         <tbody>
-            <#list gUserRequests as r>
+            <#list pOrgRequests as r>
             <tr>
                 <td>
-                    ${r.user.forename} ${r.user.surname}
+                    ${r.organisation.name}
                 </td>
                 <td>
                     ${r.dataset.title}
