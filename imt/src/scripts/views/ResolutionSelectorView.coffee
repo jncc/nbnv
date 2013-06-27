@@ -6,9 +6,11 @@ define [
   "jquery-ui"
 ], ($, _, Backbone, template) -> Backbone.View.extend
 
+  events:
+    "click input" : "handleButtonClick"
+    
   initialize:->
     do @render
-    @$('input').click _.bind @handleButtonClick, @
 
     @listenTo @model, 'change:resolution', @updateChecked
 

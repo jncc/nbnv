@@ -9,6 +9,9 @@ define [
 ], ($, Backbone, imtScaffolding, OpenLayersView, SearchView, BaseLayerSelectorView, ControlPanelView) -> Backbone.View.extend
   el: '#imt',
 
+  events:
+    "click .controlPanelToggle" : "toggleControlPanel"
+    
   ###
   Register to imt events which the view should respond to
   ###
@@ -17,8 +20,6 @@ define [
     do @render
 
     @listenTo @model, 'change:controlPanelVisible', @renderControlPanelToggle
-    #Add a click listener to the settings button and toggle the settings visibility
-    @$('.controlPanelToggle').click => do @toggleControlPanel
 
   toggleControlPanel :->
       @model.set "controlPanelVisible", not @model.get "controlPanelVisible"
