@@ -14,6 +14,7 @@ define [
     do @render #render for the first time
 
   render:->
+    @$el.addClass "datasets"
     @$el.html template @collection.toJSON()
 
   handleClick: (evt) ->

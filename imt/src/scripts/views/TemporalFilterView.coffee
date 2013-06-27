@@ -2,11 +2,14 @@ define [
   "jquery"
   "underscore"
   "backbone"
+  "hbs!templates/TemporalFilter"
   "jquery-ui"
-], ($, _, Backbone) -> Backbone.View.extend
+], ($, _, Backbone, template) -> Backbone.View.extend
 
   initialize:->
-    @listenTo @model, "change:startDate change:endDate", @render
+    do @render  
+
+    @listenTo @model, "change:startDate change:endDate", @updateView
     @listenTo @model, "invalid", @handleValidation
 
     @$('.startDate').change (evt) => 
@@ -18,9 +21,16 @@ define [
       @model.set "endDate", parseInt( $(evt.target).val() ), validate: true
 
   ###
-  Update the view with data from the model
+  Set up the html content for this view
   ###
   render:->
+    @$el.addClass "temporal"
+    @$el.html template @model #set the html content
+
+  ###
+  Update the view with data from the model
+  ###
+  updateView:->
     @$('.startDate').html @model.get "startDate"
     @$('.endDate').html @model.get "endDate"
 

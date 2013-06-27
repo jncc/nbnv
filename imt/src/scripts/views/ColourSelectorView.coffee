@@ -8,6 +8,7 @@ define [
   of the given backbone model
   ###
   initialize:->
+    @$el.addClass "colourPicker"
     @$el.ColorPicker 
       flat: true
       color: "#" + @model.get 'colour'

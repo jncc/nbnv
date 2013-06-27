@@ -1,45 +1,43 @@
 define [
   "jquery"
   "backbone"
-  "cs!views/ColourView"
+  "cs!views/ColourSelectorView"
   "cs!views/OpacityView"
-  "cs!views/ResolutionView"
-  "cs!views/TemporalView"
+  "cs!views/ResolutionSelectorView"
+  "cs!views/TemporalFilterView"
   "cs!views/DatasetSelectorView"
-  "hbs!templates/LayerCustomisation"
-], ($, Backbone, ColourView, OpacityView, ResolutionView, TemporalView, DatasetSelectorView, customisationTemplate) -> Backbone.View.extend
+], ($, Backbone, ColourSelectorView, OpacityView, ResolutionSelectorView, TemporalFilterView, DatasetSelectorView) -> Backbone.View.extend
   ###
   The role of this view is to determine which sub customisation
   views are required for the given model that has been provided
   to this instance
   ###  
   initialize:->
-    @$el.html customisationTemplate(@model)
     @$el.addClass "layerCustomisation"
-    
+
     if @model.isStyleable
-      @colorView = new ColourView
+      @colorView = new ColourSelectorView
         model: @model
-        el: @$('.colourPicker')
+        el: $('<div>').appendTo @$el
 
     @opacityView = new OpacityView
       model: @model
-      el: @$('.opacity')
+      el: $('<div>').appendTo @$el
 
     if @model.isGridLayer
-      @resolutionView = new ResolutionView
+      @resolutionView = new ResolutionSelectorView
         model: @model
-        el: @$('.resolution')
+        el: $('<div>').appendTo @$el
 
     if @model.isTemporalFilterable
-      @resolutionView = new TemporalView
+      @resolutionView = new TemporalFilterView
         model: @model
-        el: @$('.temporal')
+        el: $('<div>').appendTo @$el
 
     if @model.isDatasetFilterable
       @resolutionView = new DatasetSelectorView
         collection: @model.availableDatasets
-        el: @$('.datasets')
+        el: $('<div>').appendTo @$el
 
     @$el.dialog
       title: @model.getName()
