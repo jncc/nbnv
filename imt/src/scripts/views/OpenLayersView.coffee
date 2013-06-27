@@ -21,10 +21,6 @@ define [
         eventListeners: 
           moveend : => @model.set("viewport", do @getOpenlayersViewport)
           zoomend: => @model.getLayers().setZoom(do @map.getZoom)
-        ,
-        controls : [ new OpenLayers.Control.Navigation,
-                     new OpenLayers.Control.ArgParser,
-                     new OpenLayers.Control.Attribution]
 
       @zoomToViewport(null, @model.get "viewport")
       @listenTo @model, "change:viewport", @zoomToViewport
