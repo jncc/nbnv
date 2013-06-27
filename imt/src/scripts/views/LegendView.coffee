@@ -6,6 +6,7 @@ define [
 
   initialize: ->
     @listenTo @collection, 'add', @addLayer
+    @listenTo @collection, 'remove', @removeLayer
     @$el.sortable
       start: (event, ui) => 
         @_oldPosition = (@collection.length - 1) - ui.item.index()
@@ -15,6 +16,8 @@ define [
     @$el.disableSelection()
 
   addLayer: (layer) -> 
-    new LegendElementView
+    layer._legendElementView = new LegendElementView
       model: layer
       el: $('<li></li>').prependTo(@$el)
+
+  removeLayer: (layer) -> do layer._legendElementView.remove

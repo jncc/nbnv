@@ -63,7 +63,7 @@ define [
     ###
     Remove the wms layer associated with the given layer
     ###
-    removeLayer: (layer)-> @map.remove layer._openlayersWMS
+    removeLayer: (layer)-> @map.removeLayer layer._openlayersWMS
 
     ###
     Event listener for viewport changes on the model. Update the Openlayers Map

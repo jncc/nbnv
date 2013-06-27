@@ -71,9 +71,9 @@ define [
   ###
   Override the default get method for the collection. Backbone doesn't
   like it when collections contain two versions of a model with the same
-  id. By overriding the get method, the collection is unable to find 
-  duplicates and therefore allows the models to be added. It also makes
-  sense to disable this method as it no longer possible to return a single
-  result for a given id.
+  id.
+
+  This get method reverts to using backbones client id, which is unique for
+  all backbone models created
   ###
-  get: -> false;
+  get: (model)-> Backbone.Collection.prototype.get.call(this, model.cid)

@@ -4,6 +4,10 @@ define [
   "hbs!templates/LegendElement"
 ], (Backbone, LayerCustomisationView, template) -> Backbone.View.extend
 
+  events:
+    "click span.icon": "customise"
+    "click button.destroy": "removeLayer"
+
   initialize: ->
     do @render
     
@@ -11,9 +15,10 @@ define [
     @listenTo @model, 'change:name', @updateDescription
     @listenTo @model, 'change:visibility', @updateVisibility
 
-    # Add a click listener to the icon
-    @$('span.icon').click =>
-      new LayerCustomisationView model: @model
+  customise:->
+    new LayerCustomisationView model: @model
+
+  removeLayer:-> @model.collection.remove @model
 
   updateLegendIcon:->
     @$('span.icon').css @model.getLegendIcon()
