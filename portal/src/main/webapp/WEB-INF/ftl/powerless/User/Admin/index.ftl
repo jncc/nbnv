@@ -31,15 +31,14 @@
         <#if datasets?has_content>
             <@datasetAdmin datasets=datasets />
         </#if>
-        <#if orgs?has_content>
-            <@organisations organisations=orgs admin=orgAs />
-        </#if>
+        <@organisations organisations=orgs admin=orgAs />
     </div>
 </@template.master>
 
 <#macro organisations organisations admin>
     <div class="tabbed">
         <h3>Organisations</h3>
+        <!-- <a href="/Organisations/Join">Join an Organisation</a> -->
         <table class="sTable">
             <thead>
                 <tr>
@@ -54,7 +53,7 @@
                     <#assign t=0 /><#list admin as a><#if a.id==r.id><#assign t=1 /></#if></#list>
                     <#if t==1>
                         <td>
-                            <a href="/Organisations/${r.id?c}/Admin">Admin Organisation</a><br/>
+                            <a href="/Organisations/${r.id?c}/Admin">Admin Organisation Membership and Metadata</a><br/>
                             <a href="/AccessRequest/Organisations/${r.id?c}">View Organisation Access Requests</a>
                         </td>
                     </#if>
@@ -64,6 +63,7 @@
         </table>
     </div>
 </#macro>
+
 <#macro userAdmin user>
     <div class="tabbed">
         <h3>User Settings</h3>
@@ -78,7 +78,7 @@
 <#macro datasetAdmin datasets>
     <div class="tabbed">
         <h3>Administrate Datasets</h3>
-        <div><a href="AccessRequest/Admin">Interact with Access Permissions</a></div>
+        <div><a href="/AccessRequest/Admin">Admin Access Permissions</a></div>
         <div>View Download Log</div>
         <table class="sTable">
             <thead>
