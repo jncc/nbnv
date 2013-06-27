@@ -25,6 +25,7 @@ import uk.org.nbn.nbnv.api.model.Survey;
 import uk.org.nbn.nbnv.api.model.User;
 import uk.org.nbn.nbnv.api.model.meta.OpResult;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenDatasetAdminUser;
+import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenDatasetSurveyAdminUser;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
 import uk.org.nbn.nbnv.api.solr.SolrResolver;
 
@@ -223,7 +224,7 @@ public class DatasetResource extends AbstractResource {
      * 
      * @return True if the user is admin of this dataset
      * 
-     * @response.representation.200.qname List<DatasetResolutionRecordCount>
+     * @response.representation.200.qname boolean
      * @response.representation.200.mediaType application/json
      */
     @GET
@@ -233,6 +234,23 @@ public class DatasetResource extends AbstractResource {
         return datasetAdministratorMapper.isUserDatasetAdministrator(user.getId(), datasetKey);
     }
     
+    /**
+     * Returns a list of datasets the user can admin
+     * 
+     * @param user The current user
+     *
+     * @return List of datasets
+     * 
+     * @response.representation.200.qname List<Dataset>
+     * @response.representation.200.mediaType application/json
+     */
+    
+    @GET
+    @Path("/adminable")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Dataset> adminableDatasets(@TokenUser(allowPublic=false) User user) {
+        return datasetAdministratorMapper.selectDatasetsByUser(user.getId());
+    }
     /***********************************************
      * Survey API calls
      ***********************************************/
@@ -253,9 +271,9 @@ public class DatasetResource extends AbstractResource {
     @GET
     @Path("/{datasetKey}/surveys/{survey}")
     @Produces("application/json")
-    public Survey getJson(@TokenDatasetAdminUser(path = "datasetKey") User user, 
+    public Survey getJson(@TokenDatasetSurveyAdminUser(dataset = "datasetKey", survey = "survey") User user, 
             @PathParam("datasetKey") String datasetKey, @PathParam("survey") int survey) {
-        return oSurveyMapper.getSurveyById(survey, datasetKey);
+        return oSurveyMapper.getSurveyById(survey);
     }
 
     /**
@@ -285,7 +303,7 @@ public class DatasetResource extends AbstractResource {
     @Path("/{datasetKey}/surveys/{survey}")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response putJson(@TokenDatasetAdminUser(path = "datasetKey") User user,
+    public Response putJson(@TokenDatasetSurveyAdminUser(dataset = "datasetKey", survey = "survey") User user,
             @PathParam("datasetKey") String datasetKey, @PathParam("survey") int survey,
             @FormParam("providerKey") String providerKey,
             @FormParam("title") String title,

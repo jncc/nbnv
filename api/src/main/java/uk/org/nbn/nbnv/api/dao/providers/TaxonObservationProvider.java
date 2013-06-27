@@ -261,6 +261,20 @@ public class TaxonObservationProvider {
             }
         }
 
+        if (params.containsKey("polygon") && !params.get("polygon").equals("")) {
+            String spatialRelationship = ObservationResourceDefaults.SPATIAL_RELATIONSHIP_DEFAULT;
+            if (params.containsKey("spatialRelationship") && params.get("spatialRelationship") != null) {
+                spatialRelationship = (String) params.get("spatialRelationship");
+            }
+            INNER_JOIN("FeatureData ftd ON ftd.id = o.featureID");
+            if (ObservationResourceDefaults.SPATIAL_RELATIONSHIP_WITHIN.equals(spatialRelationship)) {
+                WHERE("ftd.geom.STWithin(geometry::STGeomFromText(#{polygon}, 4326) = 1");
+            } else {
+                WHERE("ftd.geom.STIntersects(geometry::STGeomFromText(#{polygon}, 4326) = 1");
+                WHERE("ftd.geom.STTouches(geometry::STGeomFromText(#{polygon}, 4326) = 0");
+            }            
+        }
+        
         if (params.containsKey("sensitive") && (Boolean) params.get("sensitive")) {
             WHERE("sensitive <= 1");
         } else {
@@ -326,6 +340,20 @@ public class TaxonObservationProvider {
                 INNER_JOIN("FeatureIdentifierData fd ON fd.id = fo.featureID");
                 WHERE("fd.identifier = #{featureID}");
             }
+        }
+
+        if (params.containsKey("polygon") && !params.get("polygon").equals("")) {
+            String spatialRelationship = ObservationResourceDefaults.SPATIAL_RELATIONSHIP_DEFAULT;
+            if (params.containsKey("spatialRelationship") && params.get("spatialRelationship") != null) {
+                spatialRelationship = (String) params.get("spatialRelationship");
+            }
+            INNER_JOIN("FeatureData ftd ON ftd.id = o.featureID");
+            if (ObservationResourceDefaults.SPATIAL_RELATIONSHIP_WITHIN.equals(spatialRelationship)) {
+                WHERE("ftd.geom.STWithin(geometry::STGeomFromText(#{polygon}, 4326) = 1");
+            } else {
+                WHERE("ftd.geom.STIntersects(geometry::STGeomFromText(#{polygon}, 4326) = 1");
+                WHERE("ftd.geom.STTouches(geometry::STGeomFromText(#{polygon}, 4326) = 0");
+            }            
         }
 
         if (params.containsKey("sensitive") && (Boolean) params.get("sensitive")) {

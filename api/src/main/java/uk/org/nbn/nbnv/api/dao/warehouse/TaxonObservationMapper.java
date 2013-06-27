@@ -47,7 +47,8 @@ public interface TaxonObservationMapper {
             , @Param("sensitive") Boolean sensitive
             , @Param("designation") String designation
             , @Param("taxonOutputGroup") String taxonOutputGroup
-            , @Param("gridRef") String gridRef);
+            , @Param("gridRef") String gridRef
+            , @Param("polygon") String polygon);
     
     @SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectRequestableRecordIDs")
     public List<Integer> selectRequestableObservationRecordIDsByFilter(
@@ -61,7 +62,8 @@ public interface TaxonObservationMapper {
             , @Param("sensitive") Boolean sensitive
             , @Param("designation") String designation
             , @Param("taxonOutputGroup") String taxonOutputGroup
-            , @Param("gridRef") String gridRef);
+            , @Param("gridRef") String gridRef
+            , @Param("polygon") String polygon);
 
     @SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectRequestableRecordIDsOrganisation")
     public List<Integer> selectRequestableObservationRecordIDsByFilterOrganisation(
@@ -75,7 +77,8 @@ public interface TaxonObservationMapper {
             , @Param("sensitive") Boolean sensitive
             , @Param("designation") String designation
             , @Param("taxonOutputGroup") String taxonOutputGroup
-            , @Param("gridRef") String gridRef);
+            , @Param("gridRef") String gridRef
+            , @Param("polygon") String polygon);
 
     @SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectOneAttribute")
     public List<TaxonObservationAttributeValue> selectObservationAttributeByFilter(
@@ -90,7 +93,8 @@ public interface TaxonObservationMapper {
             , @Param("sensitive") Boolean sensitive
             , @Param("designation") String designation
             , @Param("taxonOutputGroup") String taxonOutputGroup
-            , @Param("gridRef") String gridRef);
+            , @Param("gridRef") String gridRef
+            , @Param("polygon") String polygon);
     
     @SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectRecordsOrderedByDataset")
     public List<TaxonObservation> selectObservationsByFilterOrderedByDataset(
@@ -104,7 +108,8 @@ public interface TaxonObservationMapper {
             , @Param("sensitive") Boolean sensitive
             , @Param("designation") String designation
             , @Param("taxonOutputGroup") String taxonOutputGroup
-            , @Param("gridRef") String gridRef);
+            , @Param("gridRef") String gridRef
+            , @Param("polygon") String polygon);
     
     @SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectSpecies")
     @Results(value = {
@@ -122,7 +127,8 @@ public interface TaxonObservationMapper {
             , @Param("sensitive") Boolean sensitive
             , @Param("designation") String designation
             , @Param("taxonOutputGroup") String taxonOutputGroup
-            , @Param("gridRef") String gridRef);
+            , @Param("gridRef") String gridRef
+            , @Param("polygon") String polygon);
     
     @SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectGroups")
     @Results(value = {
@@ -140,7 +146,8 @@ public interface TaxonObservationMapper {
             , @Param("sensitive") Boolean sensitive
             , @Param("designation") String designation
             , @Param("taxonOutputGroup") String taxonOutputGroup
-            , @Param("gridRef") String gridRef);
+            , @Param("gridRef") String gridRef
+            , @Param("polygon") String polygon);
     
     @SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectDatasets")
     @Results(value = {
@@ -158,7 +165,8 @@ public interface TaxonObservationMapper {
             , @Param("sensitive") Boolean sensitive
             , @Param("designation") String designation
             , @Param("taxonOutputGroup") String taxonOutputGroup
-            , @Param("gridRef") String gridRef);
+            , @Param("gridRef") String gridRef
+            , @Param("polygon") String polygon);
     
     @SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectAllDatasets")
     @Results(value = {
@@ -176,7 +184,8 @@ public interface TaxonObservationMapper {
             , @Param("sensitive") Boolean sensitive
             , @Param("designation") String designation
             , @Param("taxonOutputGroup") String taxonOutputGroup
-            , @Param("gridRef") String gridRef);
+            , @Param("gridRef") String gridRef
+            , @Param("polygon") String polygon);
 
     @SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectRequestableDatasets")
     @Results(value = {
@@ -194,7 +203,8 @@ public interface TaxonObservationMapper {
             , @Param("sensitive") Boolean sensitive
             , @Param("designation") String designation
             , @Param("taxonOutputGroup") String taxonOutputGroup
-            , @Param("gridRef") String gridRef);
+            , @Param("gridRef") String gridRef
+            , @Param("polygon") String polygon);
     
     @SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectRequestableDatasetsOrganisation")
     @Results(value = {
@@ -212,7 +222,8 @@ public interface TaxonObservationMapper {
             , @Param("sensitive") Boolean sensitive
             , @Param("designation") String designation
             , @Param("taxonOutputGroup") String taxonOutputGroup
-            , @Param("gridRef") String gridRef);
+            , @Param("gridRef") String gridRef
+            , @Param("polygon") String polygon);
 
     @SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectRequestableSensitiveDatasets")
     @Results(value = {
@@ -230,7 +241,8 @@ public interface TaxonObservationMapper {
             , @Param("sensitive") Boolean sensitive
             , @Param("designation") String designation
             , @Param("taxonOutputGroup") String taxonOutputGroup
-            , @Param("gridRef") String gridRef);
+            , @Param("gridRef") String gridRef
+            , @Param("polygon") String polygon);
 
     @SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectRequestableSensitiveDatasetsOrganisation")
     @Results(value = {
@@ -248,7 +260,8 @@ public interface TaxonObservationMapper {
             , @Param("sensitive") Boolean sensitive
             , @Param("designation") String designation
             , @Param("taxonOutputGroup") String taxonOutputGroup
-            , @Param("gridRef") String gridRef);
+            , @Param("gridRef") String gridRef
+            , @Param("polygon") String polygon);
 
     @SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectUnavailableDatasets")
     @Results(value = {
@@ -266,6 +279,7 @@ public interface TaxonObservationMapper {
             , @Param("sensitive") Boolean sensitive
             , @Param("designation") String designation
             , @Param("taxonOutputGroup") String taxonOutputGroup
-            , @Param("gridRef") String gridRef);
+            , @Param("gridRef") String gridRef
+            , @Param("polygon") String polygon);
     
 }

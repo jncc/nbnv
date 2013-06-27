@@ -129,7 +129,7 @@ nbn.nbnv.ui.requestReason = function(json) {
         if (this._asID > -1)
             return { reason: { purpose: this._purpose, details: this._details, organisationID: this._asID }};
         
-        return { reason: { purpose: this._purpose, details: this._details }};
+        return { reason: { purpose: this._purpose, details: this._details, userID: nbn.nbnv.userID }};
     };
 
     this.getError = function() {
