@@ -15,7 +15,8 @@ define [
   ###  
   initialize:->
     @$el.html customisationTemplate(@model)
-
+    @$el.addClass "layerCustomisation"
+    
     if @model.isStyleable
       @colorView = new ColourView
         model: @model
@@ -37,7 +38,7 @@ define [
 
     if @model.isDatasetFilterable
       @resolutionView = new DatasetSelectorView
-        model: @model
+        collection: @model.availableDatasets
         el: @$('.datasets')
 
     @$el.dialog
@@ -45,4 +46,3 @@ define [
       resizable: false
       width: 400
       close: -> $(this).dialog('destroy').remove() #remove the dialog from the dom on close
-

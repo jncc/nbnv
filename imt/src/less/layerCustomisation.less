@@ -1,17 +1,27 @@
-.colourPicker input {
-  font-size: 10px;
-  height: 11px;
-  letter-spacing: normal;
-  line-height: normal;
-  width: 35px;
-  word-spacing: 0px;
-  margin: 0;
-  padding: 0;
-  color: #898989;
-  border:none;
-  background: none;
-}
+.layerCustomisation {
+  .colourPicker input {
+    font-size: 10px;
+    height: 11px;
+    letter-spacing: normal;
+    line-height: normal;
+    width: 35px;
+    word-spacing: 0px;
+    margin: 0;
+    padding: 0;
+    color: #898989;
+    border:none;
+    background: none;
+  }
 
-.temporal {
-  input { width: 4em; }
+  .temporal {
+    input { width: 4em; }
+  }
+
+  .datasets {
+    height: 200px;
+    overflow-y: scroll;
+
+    input { float: left;}
+    span.title { display: block; margin-left:2em; }
+  }
 }
