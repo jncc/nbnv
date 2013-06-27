@@ -5,6 +5,7 @@ define [
 ], (Backbone, LayerCustomisationView, template) -> Backbone.View.extend
 
   initialize: ->
+    @$el.addClass "ui-state-default"
     @$el.html template
       name: @model.getName()
 
