@@ -1,7 +1,7 @@
 package uk.org.nbn.nbnv.importer.validation
 
 import uk.org.nbn.nbnv.importer.records.NbnRecord
-
+//Correct vague date for datetype "DD"
 //todo: write a test for this
 class Nbnv195Validator extends DateFormatValidator {
   def code = "NBNV-195"
