@@ -27,6 +27,9 @@ public interface OperationalOrganisationMapper {
     @Select("SELECT org.* FROM Organisation org WHERE name LIKE #{term} OR abbreviation LIKE #{term}")
     List<Organisation> searchForOrganisation(@Param("term") String term);
     
+    @Select("SELECT org.* FROM Organisation org WHERE org.id NOT IN (SELECT omd.organisationID FROM UserOrganisationMembership omd WHERE omd.userID = #{userID})")
+    List<Organisation> getJoinableOrganisations(@Param("userID") int userID);
+    
     @Update("UPDATE Organisation SET name = #{name}, abbreviation = #{abbreviation}, "
             + "summary = #{summary}, address = #{address}, postcode = #{postcode}, "
             + "phone = #{phone}, website = #{website}, contactName = #{contactName}, "
