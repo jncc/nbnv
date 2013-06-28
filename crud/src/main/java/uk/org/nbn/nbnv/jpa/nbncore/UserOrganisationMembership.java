@@ -5,7 +5,13 @@
 package uk.org.nbn.nbnv.jpa.nbncore;
 
 import java.io.Serializable;
-import javax.persistence.*;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -24,13 +30,13 @@ public class UserOrganisationMembership implements Serializable {
     @EmbeddedId
     protected UserOrganisationMembershipPK userOrganisationMembershipPK;
     @JoinColumn(name = "organisationRoleID", referencedColumnName = "id")
-    @ManyToOne(optional = false, fetch= FetchType.LAZY)
+    @ManyToOne(optional = false)
     private UserOrganisationRole userOrganisationRole;
     @JoinColumn(name = "userID", referencedColumnName = "id", insertable = false, updatable = false)
-    @ManyToOne(optional = false, fetch= FetchType.LAZY)
+    @ManyToOne(optional = false)
     private User user;
     @JoinColumn(name = "organisationID", referencedColumnName = "id", insertable = false, updatable = false)
-    @ManyToOne(optional = false, fetch= FetchType.LAZY)
+    @ManyToOne(optional = false)
     private Organisation organisation;
 
     public UserOrganisationMembership() {

@@ -6,7 +6,16 @@ package uk.org.nbn.nbnv.jpa.nbncore;
 
 import java.io.Serializable;
 import java.util.Date;
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -42,10 +51,10 @@ public class TaxonDesignation implements Serializable {
     @Column(name = "statusConstraint")
     private String statusConstraint;
     @JoinColumn(name = "taxonVersionKey", referencedColumnName = "taxonVersionKey", insertable = false, updatable = false)
-    @ManyToOne(optional = false, fetch= FetchType.LAZY)
+    @ManyToOne(optional = false)
     private Taxon taxon;
     @JoinColumn(name = "designationID", referencedColumnName = "id", insertable = false, updatable = false)
-    @ManyToOne(optional = false, fetch= FetchType.LAZY)
+    @ManyToOne(optional = false)
     private Designation designation;
 
     public TaxonDesignation() {

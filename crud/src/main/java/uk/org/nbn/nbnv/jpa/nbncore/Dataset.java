@@ -7,7 +7,22 @@ package uk.org.nbn.nbnv.jpa.nbncore;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
-import javax.persistence.*;
+import javax.persistence.Basic;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -102,13 +117,13 @@ public class Dataset implements Serializable {
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "dataset")
     private TaxonDataset taxonDataset;
     @JoinColumn(name = "providerOrganisationKey", referencedColumnName = "id")
-    @ManyToOne(optional = false, fetch= FetchType.LAZY)
+    @ManyToOne(optional = false)
     private Organisation organisation;
     @JoinColumn(name = "updateFrequencyCode", referencedColumnName = "code")
-    @ManyToOne(optional = false, fetch= FetchType.LAZY)
+    @ManyToOne(optional = false)
     private DatasetUpdateFrequency datasetUpdateFrequency;
     @JoinColumn(name = "datasetTypeKey", referencedColumnName = "key")
-    @ManyToOne(optional = false, fetch= FetchType.LAZY)
+    @ManyToOne(optional = false)
     private DatasetType datasetType;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "dataset")
     private Collection<DatasetAttribute> datasetAttributeCollection;

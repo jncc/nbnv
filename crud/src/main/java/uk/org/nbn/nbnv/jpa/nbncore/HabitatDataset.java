@@ -6,7 +6,18 @@ package uk.org.nbn.nbnv.jpa.nbncore;
 
 import java.io.Serializable;
 import java.util.Collection;
-import javax.persistence.*;
+import javax.persistence.Basic;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -26,7 +37,7 @@ public class HabitatDataset implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "habitatDataset")
     private Collection<HabitatFeature> habitatFeatureCollection;
     @JoinColumn(name = "habitatCategory", referencedColumnName = "id")
-    @ManyToOne(optional = false, fetch= FetchType.LAZY)
+    @ManyToOne(optional = false)
     private HabitatCategory habitatCategory;
     private static final long serialVersionUID = 1L;
     @Id

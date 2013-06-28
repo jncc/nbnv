@@ -6,7 +6,17 @@ package uk.org.nbn.nbnv.jpa.nbncore;
 
 import java.io.Serializable;
 import java.util.Collection;
-import javax.persistence.*;
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -36,10 +46,10 @@ public class GridSquare implements Serializable {
     @Column(name = "originalGeom")
     private byte[] originalGeom;
     @JoinColumn(name = "resolutionID", referencedColumnName = "id")
-    @ManyToOne(optional = false, fetch= FetchType.LAZY)
+    @ManyToOne(optional = false)
     private Resolution resolution;
     @JoinColumn(name = "originalProjectionID", referencedColumnName = "id")
-    @ManyToOne(optional = false, fetch= FetchType.LAZY)
+    @ManyToOne(optional = false)
     private Projection projection;
     @OneToMany(mappedBy = "gridSquare")
     private Collection<GridSquare> gridSquareCollection;
@@ -47,7 +57,7 @@ public class GridSquare implements Serializable {
     @ManyToOne
     private GridSquare gridSquare;
     @JoinColumn(name = "featureID", referencedColumnName = "id")
-    @ManyToOne(optional = false, fetch= FetchType.LAZY)
+    @ManyToOne(optional = false)
     private Feature feature;
 
     public GridSquare() {

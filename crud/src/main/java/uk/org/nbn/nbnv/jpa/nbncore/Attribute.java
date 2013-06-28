@@ -51,10 +51,10 @@ public class Attribute implements Serializable {
     @ManyToOne
     private GatewayAttribute gatewayAttribute;
     @JoinColumn(name = "storageTypeID", referencedColumnName = "id")
-    @ManyToOne(optional = false, fetch= FetchType.LAZY)
+    @ManyToOne(optional = false)
     private AttributeStorageType attributeStorageType;
     @JoinColumn(name = "storageLevelID", referencedColumnName = "id")
-    @ManyToOne(optional = false, fetch= FetchType.LAZY)
+    @ManyToOne(optional = false)
     private AttributeStorageLevel attributeStorageLevel;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "attribute")
     private Collection<DatasetAttribute> datasetAttributeCollection;

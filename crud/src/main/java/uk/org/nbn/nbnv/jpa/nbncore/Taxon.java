@@ -6,7 +6,19 @@ package uk.org.nbn.nbnv.jpa.nbncore;
 
 import java.io.Serializable;
 import java.util.Collection;
-import javax.persistence.*;
+import javax.persistence.Basic;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -63,13 +75,13 @@ public class Taxon implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "taxon")
     private Collection<TaxonObservation> taxonObservationCollection;
     @JoinColumn(name = "taxonVersionFormKey", referencedColumnName = "key")
-    @ManyToOne(optional = false, fetch= FetchType.LAZY)
+    @ManyToOne(optional = false)
     private TaxonVersionForm taxonVersionForm;
     @JoinColumn(name = "taxonRankID", referencedColumnName = "id")
-    @ManyToOne(optional = false, fetch= FetchType.LAZY)
+    @ManyToOne(optional = false)
     private TaxonRank taxonRank;
     @JoinColumn(name = "taxonNameStatusKey", referencedColumnName = "key")
-    @ManyToOne(optional = false, fetch= FetchType.LAZY)
+    @ManyToOne(optional = false)
     private TaxonNameStatus taxonNameStatus;
     @JoinColumn(name = "taxonOutputGroupKey", referencedColumnName = "key")
     @ManyToOne
@@ -82,13 +94,13 @@ public class Taxon implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "pTaxonVersionKey")
     private Collection<Taxon> taxonCollection3;
     @JoinColumn(name = "pTaxonVersionKey", referencedColumnName = "taxonVersionKey")
-    @ManyToOne(optional = false, fetch= FetchType.LAZY)
+    @ManyToOne(optional = false)
     private Taxon pTaxonVersionKey;
     @JoinColumn(name = "organismKey", referencedColumnName = "key")
-    @ManyToOne(optional = false, fetch= FetchType.LAZY)
+    @ManyToOne(optional = false)
     private Organism organism;
     @JoinColumn(name = "languageKey", referencedColumnName = "key")
-    @ManyToOne(optional = false, fetch= FetchType.LAZY)
+    @ManyToOne(optional = false)
     private Language language;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "taxon")
     private Collection<RecordingEntity> recordingEntityCollection;

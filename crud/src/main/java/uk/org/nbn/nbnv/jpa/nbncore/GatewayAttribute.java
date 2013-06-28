@@ -42,7 +42,7 @@ public class GatewayAttribute implements Serializable {
     @Column(name = "description")
     private String description;
     @JoinColumn(name = "storageTypeID", referencedColumnName = "id")
-    @ManyToOne(optional = false, fetch= FetchType.LAZY)
+    @ManyToOne(optional = false)
     private AttributeStorageType attributeStorageType;
     @OneToMany(mappedBy = "gatewayAttribute")
     private Collection<Attribute> attributeCollection;

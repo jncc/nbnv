@@ -81,7 +81,6 @@
     <properties>
       <!--<property name="eclipselink.target-database" value="SQLServer"/>-->
       <property name="javax.persistence.jdbc.driver" value="com.microsoft.sqlserver.jdbc.SQLServerDriver"/>
-      <property name="eclipselink.weaving" value="static"/>
       <!--<property name="eclipselink.jdbc.batch-writing" value="JDBC"/>-->
     </properties>
   </persistence-unit>
