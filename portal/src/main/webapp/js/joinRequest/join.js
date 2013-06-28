@@ -16,6 +16,7 @@
                     modal: true,
                     buttons: {
                         'Send Request': function() {
+                            displaySendingRequestDialog('Sending Request');
                             $.ajax({
                                 type: 'PUT',
                                 contentType: "application/json; charset=utf-8",
@@ -34,6 +35,7 @@
                                             modal: true,
                                             buttons: {
                                                 "View Request": function () {
+                                                    $('<div style="width:20px;height:20px;float:left;" class="ui-autocomplete-loading"></div>').insertBefore('#respond_div .ui-dialog-buttonpane button:first');
                                                     window.location.href = "/Organisations/" + org + "/Join";
                                                 },
                                                 "Cancel": function () {

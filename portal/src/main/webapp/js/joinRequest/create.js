@@ -17,6 +17,7 @@
                 modal: true,
                 buttons: {
                     'Send Request': function() {
+                        displaySendingRequestDialog('Sending Request');
                         $.ajax({
                             type: 'PUT',
                             contentType: "application/json; charset=utf-8",

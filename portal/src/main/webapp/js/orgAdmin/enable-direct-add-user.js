@@ -32,6 +32,7 @@
                 modal: true,
                 buttons: {
                     'Add User': function() {
+                        displaySendingRequestDialog('Adding User');
                         $.ajax({
                             type: 'POST',
                             contentType: "application/json; charset=utf-8",
@@ -39,7 +40,6 @@
                             data: JSON.stringify({userID: $('#nbn-org-add-user-id').val()}),
                             dataType: "json",
                             success: function() {
-                                $('#nbn-org-add-user-dialog').dialog('close');
                                 location.reload();
                             },
                             error: function() {
