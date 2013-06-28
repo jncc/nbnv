@@ -3,6 +3,8 @@ define [
   "hbs!templates/slds/Default"
   "hbs!templates/slds/Hatching"
 ], ($, polygonFill, polygonHatching) ->
+  isStyleable: true #expose that this layer is styleable
+
   initialize: () ->
     @set "colour", $.md5(@id).substring 0, 6
 

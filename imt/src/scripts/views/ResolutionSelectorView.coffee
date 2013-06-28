@@ -2,14 +2,22 @@ define [
   "jquery"
   "underscore"
   "backbone"
+  "hbs!templates/ResolutionSelector"
   "jquery-ui"
-], ($, _, Backbone) -> Backbone.View.extend
+], ($, _, Backbone, template) -> Backbone.View.extend
 
+  events:
+    "click input" : "handleButtonClick"
+    
   initialize:->
-    @$el.buttonset()
-    @$('input').click _.bind @handleButtonClick, @
+    do @render
 
     @listenTo @model, 'change:resolution', @updateChecked
+
+  render:->
+    @$el.html template @model
+    @$el.addClass "resolution"
+    @$el.buttonset()
 
   ###
   When the model changes, update the buttonset to reflect

@@ -66,7 +66,7 @@ module.exports = (grunt)->
 
     connect: 
       development: 
-        options: port: 8080, base: 'src' 
+        options: port: 8080, base: 'src'
 
   #Define grunt tasks  
   grunt.registerTask 'bower-install', ->

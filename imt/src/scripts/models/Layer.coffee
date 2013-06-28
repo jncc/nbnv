@@ -29,6 +29,11 @@ define [
   getOpacity: -> @get "opacity"
 
   ###
+  Check if this layer is visible and should be renedered
+  ###
+  isVisible: -> @get "visibility"
+
+  ###
   Returns a list of Dataset models for each dataset which is used to
   produce the layer
   ###

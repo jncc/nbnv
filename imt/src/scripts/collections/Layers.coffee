@@ -67,3 +67,13 @@ define [
     .groupBy( (dataset) -> dataset.id )
     .map( (val, key) -> val[0])
     .value()
+
+  ###
+  Override the default get method for the collection. Backbone doesn't
+  like it when collections contain two versions of a model with the same
+  id.
+
+  This get method reverts to using backbones client id, which is unique for
+  all backbone models created
+  ###
+  get: (model)-> Backbone.Collection.prototype.get.call(this, model.cid)

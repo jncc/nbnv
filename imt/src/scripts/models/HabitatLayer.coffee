@@ -8,6 +8,7 @@ define [
   defaults:
     entityType: 'habitatdataset'
     opacity: 1
+    visibility: true
     wms: Globals.gis "HabitatDatasets"
     symbol: "fill"
 
@@ -16,8 +17,10 @@ define [
   idAttribute: "key"
 
   initialize: ()->
-    @set "name", @attributes.title
-    @set "layer", @id    
+    @set "layer", @id
+    @on "change:title", -> @trigger "change:name"
     PolygonFillMixin.initialize.call(this, arguments); #initalize the mixin
+
+  getName: -> @get "title"
 
   getUsedDatasets: -> [ new Dataset @attributes ]

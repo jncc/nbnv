@@ -21,10 +21,6 @@ define [
         eventListeners: 
           moveend : => @model.set("viewport", do @getOpenlayersViewport)
           zoomend: => @model.getLayers().setZoom(do @map.getZoom)
-        ,
-        controls : [ new OpenLayers.Control.Navigation,
-                     new OpenLayers.Control.ArgParser,
-                     new OpenLayers.Control.Attribution]
 
       @zoomToViewport(null, @model.get "viewport")
       @listenTo @model, "change:viewport", @zoomToViewport
@@ -63,7 +59,7 @@ define [
     ###
     Remove the wms layer associated with the given layer
     ###
-    removeLayer: (layer)-> @map.remove layer._openlayersWMS
+    removeLayer: (layer)-> @map.removeLayer layer._openlayersWMS
 
     ###
     Event listener for viewport changes on the model. Update the Openlayers Map
