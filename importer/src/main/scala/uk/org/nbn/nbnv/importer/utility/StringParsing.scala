@@ -26,7 +26,7 @@ object StringParsing {
 
       dateFormatList.toStream
         .takeWhile(_ => isValid == false)
-        .foreach(df => if( s.maybeDate(df) != None) isValid = true)
+        .foreach(df => if(df.length == s.length && s.maybeDate(df) != None) isValid = true)
 
       isValid
     }

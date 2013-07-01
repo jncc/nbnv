@@ -73,4 +73,21 @@ class Nbnv73ValidatorSuite extends BaseFunSuite {
     results.find(r => r.level == ResultLevel.ERROR) should not be (None)
   }
 
+  test("Should not validate a start date year that is too vague") {
+    val record = mock[NbnRecord]
+    val startDateRaw = "21/08/11"
+    when(record.startDateRaw).thenReturn(Some(startDateRaw))
+    when(record.startDate).thenReturn(startDateRaw.maybeDate("dd/MM/yy"))
+
+    when(record.endDate).thenReturn(None)
+    when(record.endDateRaw).thenReturn(None)
+
+    when(record.dateType).thenReturn("D")
+
+    val v = new Nbnv73Validator
+    val results = v.validate(record)
+
+    results.find(r => r.level == ResultLevel.ERROR) should not be (None)
+  }
+
 }

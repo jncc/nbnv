@@ -25,11 +25,7 @@ class Nbnv68Validator {
   private def validateDate(dateString: String, resultPrefix: String, recordKey: String) = {
     val validFormats = List("dd/MM/yyyy", "dd-MM-yyyy", "yyyy/MM/dd", "yyyy-MM-dd", "dd MMM yyyy", "MMM yyyy", "yyyy")
 
-    var isValid = false
-
-    validFormats.toStream
-      .takeWhile(_ => isValid == false)
-      .foreach(df => if (dateString.maybeDate(df) != None) isValid = true)
+    var isValid = dateString.isValidDate(validFormats)
 
     if (isValid) {
       new Result {
