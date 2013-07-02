@@ -298,6 +298,23 @@ public class OrganisationMembershipResource extends AbstractResource {
     }
 
     /**
+     * Return all active requests to join organisations
+     *
+     * @param user The Current user
+     * 
+     * @return The list of open organisation requests
+     * 
+     * @response.representation.200.qname List<OrganisationJoinRequest>
+     * @response.representation.200.mediaType application/json
+     */
+    @GET
+    @Path("/requests")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<OrganisationJoinRequest> getUserActiveRequest(@TokenUser(allowPublic=false) User user) {
+        return oOrganisationJoinRequestMapper.getActiveJoinRequestsByUser(user.getId());
+    }
+    
+    /**
      * Return a specific request by its ID, if the user can access it i.e. org
      * Admin or requesting user otherwise return a 403 Forbidden error
      *

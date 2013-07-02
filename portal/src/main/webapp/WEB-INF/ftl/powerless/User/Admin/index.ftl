@@ -2,6 +2,7 @@
 <#assign datasets = json.readURL("${api}/user/adminDatasets")/>
 <#assign orgs = json.readURL("${api}/user/organisations")/>
 <#assign orgAs = json.readURL("${api}/user/adminOrganisations")/>
+<#assign orgRs = json.readURL("${api}/organisationMemberships/requests")/>
 
 <@template.master title="National Biodiversity Network Gateway"
     javascripts=["/js/jquery.dataTables.min.js"]
@@ -31,14 +32,34 @@
         <#if datasets?has_content>
             <@datasetAdmin datasets=datasets />
         </#if>
-        <@organisations organisations=orgs admin=orgAs />
+        <@organisations organisations=orgs admin=orgAs requests=orgRs />
     </div>
 </@template.master>
 
-<#macro organisations organisations admin>
+<#macro organisations organisations admin requests>
     <div class="tabbed">
         <h3>Organisations</h3>
-        <!-- <a href="/Organisations/Join">Join an Organisation</a> -->
+        <a href="/Organisations/Join">Join an Organisation</a>
+        <#if requests?has_content>
+        <table class="sTable">
+            <thead>
+                <tr>
+                    <th>Organisation</th>
+                    <th>Request Reason</th>
+                    <th>Request Date</th>
+                </tr>
+            </thead>
+            <tbody>
+            <#list requests as r>
+                <tr>
+                    <td>${r.organisation.name}</td>
+                    <td>${r.requestReason}</td>
+                    <td>${r.requestDate}</td>
+                </tr>
+            </#list>
+            </tbody>
+        </table>
+        </#if>
         <table class="sTable">
             <thead>
                 <tr>

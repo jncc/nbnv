@@ -53,6 +53,14 @@ public interface OperationalOrganisationJoinRequestMapper {
     public List<OrganisationJoinRequest> getActiveJoinRequestsByOrganisation(
             @Param("organisationID") int orgId);
 
+    @Select("SELECT * FROM OrganisationJoinRequest WHERE userID = #{userID} AND responseTypeID IS NULL")
+    @Results(value = {
+        @Result(property="user", column="userID", javaType=User.class, one=@One(select="uk.org.nbn.nbnv.api.dao.core.OperationalUserMapper.getUserById")),
+        @Result(property="organisation", column="organisationID", javaType=Organisation.class, one=@One(select="uk.org.nbn.nbnv.api.dao.core.OperationalOrganisationMapper.selectByID"))           
+    })
+    public List<OrganisationJoinRequest> getActiveJoinRequestsByUser(
+            @Param("userID") int userID);
+
     @Insert("INSERT INTO OrganisationJoinRequest (userID, organisationID, requestReason, requestDate)"
             + " VALUES (#{userID}, #{organisationID}, #{requestReason}, #{requestDate})")
     public int createJoinRequest(
