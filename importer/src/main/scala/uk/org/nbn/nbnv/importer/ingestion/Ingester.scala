@@ -59,18 +59,6 @@ class Ingester @Inject()(options: Options,
     //Save all the surveys
     db.flushAndClear()
   }
-
-  def stageSites(archive: Archive, dataset: ImportTaxonDataset) {
-    log.debug("Ingesting sites...")
-    for ((record, i) <- archive.iteratorRaw.zipWithIndex) {
-      val rec = new NbnRecord(record)
-      siteIngester.stageSite(rec.siteKey, rec.siteName, dataset.getImportDataset)
-
-      logProgress(i)
-    }
-    
-    db.flushAndClear()
-  }
   
   def stageRecorders(archive: Archive) {
     log.debug("Ingesting recorders...")
@@ -135,9 +123,6 @@ class Ingester @Inject()(options: Options,
 
       //upnsert samples
       stageSamples(archive, dataset)
-      
-      //upnsert sites
-      stageSites(archive, dataset)
       
       //insert recorders & determiners
       stageRecorders(archive)

@@ -10,6 +10,19 @@ import uk.org.nbn.nbnv.importer.BadDataException
 import uk.org.nbn.nbnv.{SpatialQueries, StoredProcedureLibrary}
 
 class Repository (log: Logger, em: EntityManager, cache: QueryCache) extends ControlAbstractions {
+  def getImportSiteByName(name: String, dataset: ImportDataset): Option[ImportSite] = {
+    val q = "select s from ImportSite s where s.name = :name and s.datasetKey = :dataset "
+
+    cacheSome(q, name, dataset.getKey) {
+
+      val query = em.createQuery(q, classOf[ImportSite])
+      query.setParameter("name", name)
+      query.setParameter("dataset", dataset)
+
+      query.getSingleOrNone
+    }
+  }
+
   def clearImportStagingTables(){
     val sprocs = new StoredProcedureLibrary(em)
     sprocs.clearImportStagingTables
@@ -239,7 +252,7 @@ class Repository (log: Logger, em: EntityManager, cache: QueryCache) extends Con
     }
   }
 
-  def getImportSite(providerKey: String, dataset: ImportDataset) = {
+  def getImportSiteByKey(providerKey: String, dataset: ImportDataset) = {
 
     val q = "select s from ImportSite s where s.providerKey = :providerKey and s.datasetKey = :dataset "
 

@@ -29,12 +29,7 @@ class RecordIngester @Inject()(log: Logger,
     //val survey = surveyIngester.stageSurvey(record.surveyKey, dataset)
     val sample = db.repo.getImportSample(record.sampleKey getOrElse "1", survey).get
     //val sample = sampleIngester.stageSample(record.sampleKey, survey)
-    val site = if (record.siteKey.isDefined) {
-    		db.repo.getImportSite(record.siteKey.get, dataset.getImportDataset)
-    	}
-    	else {
-    		None
-    	}
+    val site = siteIngester.upsertSite(record.siteKey, record.siteName, dataset.getImportDataset)
 
 
     val feature = featureIngester.ensureFeature(record)
