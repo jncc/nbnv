@@ -25,7 +25,7 @@ class Nbnv159ValidatorSuite extends BaseFunSuite with BeforeAndAfter {
     when(record.key).thenReturn("1")
   }
 
-  test("Should validate if no gridref type supplied") {
+  test("Should not validate if gridref type not supplied") {
     when(record.gridReferenceRaw).thenReturn(knownUkGridRef)
     when(record.gridReferenceTypeRaw).thenReturn(None)
     when(record.srs).thenReturn(None)
@@ -33,7 +33,7 @@ class Nbnv159ValidatorSuite extends BaseFunSuite with BeforeAndAfter {
     val v = new Nbnv159Validator()
     val r = v.validate(record)
 
-    r.level should be (ResultLevel.DEBUG)
+    r.level should be (ResultLevel.ERROR)
   }
 
   test("Should validate gb grid ref and OSGB36 type") {
@@ -193,4 +193,25 @@ class Nbnv159ValidatorSuite extends BaseFunSuite with BeforeAndAfter {
     r.level should be (ResultLevel.ERROR)
   }
 
+  test("should not validate mismatched grid reference type") {
+    when(record.gridReferenceRaw).thenReturn(knownIrishGridRef)
+    when(record.gridReferenceTypeRaw).thenReturn(ukGridType)
+    when(record.srs).thenReturn(None)
+
+    val v = new Nbnv159Validator()
+    val r = v.validate(record)
+
+    r.level should be (ResultLevel.ERROR)
+  }
+
+  test("should not validate mismatched srs type") {
+    when(record.gridReferenceRaw).thenReturn(knownIrishGridRef)
+    when(record.gridReferenceTypeRaw).thenReturn(None)
+    when(record.srs).thenReturn(ukSRS)
+
+    val v = new Nbnv159Validator()
+    val r = v.validate(record)
+
+    r.level should be (ResultLevel.ERROR)
+  }
 }

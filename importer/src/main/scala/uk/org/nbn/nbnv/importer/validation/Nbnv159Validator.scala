@@ -60,8 +60,8 @@ class Nbnv159Validator () {
     }
     else {
       new Result {
-        def level = ResultLevel.DEBUG
-        def message = "NBNV-159: Validated: Grid reference type not specified"
+        def level = ResultLevel.ERROR
+        def message = "NBNV-159: Grid reference type not specified"
         def reference = record.key
       }
     }
