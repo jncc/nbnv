@@ -52,7 +52,7 @@
             <tbody>
             <#list requests as r>
                 <tr>
-                    <td>${r.organisation.name}</td>
+                    <td><a href="/Organisations/${r.organisation.id?c}">${r.organisation.name}</a></td>
                     <td>${r.requestReason}</td>
                     <td>${r.requestDate}</td>
                 </tr>
@@ -70,7 +70,7 @@
             <tbody>
             <#list organisations as r>
                 <tr>
-                    <td>${r.name}</td>
+                    <td><a href="/Organisations/${r.id?c}">${r.name}</a></td>
                     <#assign t=0 /><#list admin as a><#if a.id==r.id><#assign t=1 /></#if></#list>
                     <#if t==1>
                         <td>
@@ -112,7 +112,7 @@
             <tbody>
             <#list datasets as r>
                 <tr>
-                    <td>${r.title}</td>
+                    <td><a href="/Datasets/${r.key}">${r.title}</a></td>
                     <td>
                         <a href="/Datasets/${r.key}/Edit">Edit Dataset Metadata</a><br/>
                         <a href="/Datasets/${r.key}/Surveys/Edit">Edit Survey Metadata</a><br/>
