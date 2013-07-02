@@ -27,7 +27,7 @@ nbn.nbnv.ui.requestReason = function(json) {
     
     this._renderHeader = function() {
         return $('<h3>').attr('filtertype', 'reason')
-            .append($('<span>').addClass('filterheader').append('Request Access to Records'))
+            .append($('<span>').addClass('filterheader').append('Access Details'))
             .append($('<span>').attr('id', 'reasonResult').addClass('resulttext'));
     };
     

@@ -23,7 +23,7 @@ nbn.nbnv.ui.filter.dataset = function(json) {
     
     this._renderHeader = function() {
         return $('<h3>').attr('filtertype', 'dataset')
-            .append($('<span>').addClass('filterheader').append('Dataset Filter'))
+            .append($('<span>').addClass('filterheader').append('Datasets'))
             .append($('<span>').attr('id', 'datasetResult').addClass('resulttext'));
     };
     
@@ -79,7 +79,7 @@ nbn.nbnv.ui.filter.dataset = function(json) {
                         $('#datasetfiltertable').find(":checkbox").prop('disabled', true);
                     }
                 })
-            ).append('All records');
+            ).append('All datasets');
 
 
 	var singleRecords = $('<div>')
@@ -95,7 +95,7 @@ nbn.nbnv.ui.filter.dataset = function(json) {
                         $('#datasetfiltertable').find(":checkbox").prop('disabled', true);
                     }
                 })
-            ).append('Records belonging to the dataset ').append(datasetAutoComplete);
+            ).append('Single Dataset ').append(datasetAutoComplete);
                 
 	var filterRecords = $('<div>')
             .append($('<input>')
@@ -110,7 +110,7 @@ nbn.nbnv.ui.filter.dataset = function(json) {
                         $('#datasetfiltertable').find(":checkbox").prop('disabled', false);
                     }
                 })
-            ).append("Records that belong to ")
+            ).append("Dataset List ")
             .append(datasetTable);
         
         if (this._all) {
