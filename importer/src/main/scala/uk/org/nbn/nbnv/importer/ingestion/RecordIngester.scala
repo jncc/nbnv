@@ -84,7 +84,8 @@ class RecordIngester @Inject()(log: Logger,
     }
 
     attributeIngester.ingestAttributes(record, observation, dataset)
-    publicIngester.ingestPublic(observation, sample, metadata)
+
+    if (metadata.publicPrecision != 0) publicIngester.ingestPublic(observation, sample, metadata)
   }
 
 

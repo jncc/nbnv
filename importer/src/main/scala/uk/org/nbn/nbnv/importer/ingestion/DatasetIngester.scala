@@ -130,9 +130,15 @@ class DatasetIngester @Inject()(log: Logger,
 
   def setTaxonDatasetValues(td: ImportTaxonDataset, m: Metadata) {
 
-    val resolutionId = db.repo.getResolution(m.publicResolution).getId
-    td.setPublicResolutionID(resolutionId)
-//    td.setPublicResolution(resolution)
+    if (m.publicPrecision == 0) {
+      //no public records
+      td.setPublicResolutionID(0)
+    }
+    else {
+      val resolutionId = db.repo.getResolution(m.publicPrecision).getId
+      td.setPublicResolutionID(resolutionId)
+    }
+
 
     // default .. to be read from extra metadata.
     // ...could be more columns like this

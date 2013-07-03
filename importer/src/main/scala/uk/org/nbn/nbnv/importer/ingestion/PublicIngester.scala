@@ -44,7 +44,7 @@ class PublicIngester @Inject()(log: Logger,
       db.repo.getGridSquareFeature(o.getFeatureID) match {
         case Some((_, gridSquare)) => {
           val info = gridSquareInfoFactory.getByGridRef(GridRefDef(gridSquare.getGridRef, None, None))
-          val publicInfo = info.getLowerPrecisionGridSquareInfo(metadata.publicResolution)
+          val publicInfo = info.getLowerPrecisionGridSquareInfo(metadata.publicPrecision)
           val publicFeature = featureIngester.ensureGridRefFeature(GridRefDef(publicInfo.gridReference, Some(GridTypeDef(publicInfo.projection)), Some(publicInfo.gridReferencePrecision)))
           p.setFeatureID(publicFeature.getId)
         }
