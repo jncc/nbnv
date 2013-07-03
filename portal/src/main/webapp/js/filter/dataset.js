@@ -34,6 +34,19 @@ nbn.nbnv.ui.filter.dataset = function(json) {
         var datasetTable = $('<table>').attr('id', 'datasetfiltertable').addClass('results');
         $.fn.dataTableExt.oJUIClasses.sStripeOdd = 'ui-state-highlight';
 
+        var sensitiveInfo = $('<div>')
+            .append($('<p>')
+                .append('Datasets relevant to your search area may not appear in the list of datasets you can request enhanced access to. This is to protect the location of any sensitive records.')
+            ).append($('<p>')
+                .append('You may request access to these additional sensitive datasets by ticking this box. A request for access will then be sent to the relevant dataset administrators. Please note there may not be any additional sensitive datasets and you may not receive a reply regarding this additional request.')
+            ).dialog({ 
+                modal: true, 
+                autoOpen: false,
+                buttons: {
+                    "OK" : function() { sensitiveInfo.dialog("close"); }
+                }
+            });
+            
         var datasetAutoComplete = $('<input>').addClass('selectMaxWidth')
             .autocomplete({
                 source: function(request, response) {
@@ -64,7 +77,12 @@ nbn.nbnv.ui.filter.dataset = function(json) {
                 .change(function() {
                     _me._secret = this.checked;
                 })
-            ).append('Include sensitive datasets');
+            ).append('Include additional sensitive datasets. ')
+            .append($('<a>')
+                .text('Why are they excluded from the above list of datasets?')
+                .attr('href', '#')
+                .click(function() { sensitiveInfo.dialog("open"); })
+            );
                 
         var allRecords = $('<div>')
             .append($('<input>')
