@@ -148,7 +148,7 @@
                     <#if !d.endDate??>
                     <#assign w = 1 />
                     <tr>
-                        <td width="25%"><a href="/Designations/${d.designation.code}">${d.designation.name}</a></td>
+                        <td width="25%"><a href="/Designation_Categories/${d.designation.code}">${d.designation.name}</a></td>
                         <td style="width: 110px;">
                             <#if d.startDate??>From: ${d.startDate}</#if>
                             <#if d.startDate?? && d.endDate??><br/></#if>

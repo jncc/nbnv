@@ -14,6 +14,7 @@ public class AccessRequest {
     private TaxonObservationFilter filter;
     private Dataset dataset;
     private int requestPurposeID;
+    private String requestPurposeLabel;
     private String requestReason;
     private Date requestDate;
     private int responseTypeID;
@@ -175,6 +176,20 @@ public class AccessRequest {
      */
     public void setSensitiveRequest(boolean sensitiveRequest) {
         this.sensitiveRequest = sensitiveRequest;
+    }
+
+    /**
+     * @return the requestPurposeLabel
+     */
+    public String getRequestPurposeLabel() {
+        return requestPurposeLabel;
+    }
+
+    /**
+     * @param requestPurposeLabel the requestPurposeLabel to set
+     */
+    public void setRequestPurposeLabel(String requestPurposeLabel) {
+        this.requestPurposeLabel = requestPurposeLabel;
     }
 
 }

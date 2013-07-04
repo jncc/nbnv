@@ -1,11 +1,14 @@
 package uk.org.nbn.nbnv.api.rest.resources;
 
+import freemarker.template.TemplateException;
 import java.io.IOException;
 import java.sql.Date;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.FormParam;
@@ -26,6 +29,9 @@ import uk.org.nbn.nbnv.api.dao.core.OperationalUserAccessRequestAuditHistoryMapp
 import uk.org.nbn.nbnv.api.dao.core.OperationalUserAccessRequestMapper;
 import uk.org.nbn.nbnv.api.dao.core.OperationalUserTaxonObservationAccessMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.DatasetAdministratorMapper;
+import uk.org.nbn.nbnv.api.dao.warehouse.UserMapper;
+import uk.org.nbn.nbnv.api.mail.TemplateMailer;
+import uk.org.nbn.nbnv.api.model.DatasetAdministrator;
 import uk.org.nbn.nbnv.api.model.TaxonObservationFilter;
 import uk.org.nbn.nbnv.api.model.User;
 import uk.org.nbn.nbnv.api.model.UserAccessRequest;
@@ -48,7 +54,9 @@ public class UserAccessRequestResource extends AbstractResource {
     @Autowired OperationalUserTaxonObservationAccessMapper oUserTaxonObservationAccessMapper;
     @Autowired OperationalUserAccessRequestAuditHistoryMapper oUserAccessRequestAuditHistoryMapper;
     @Autowired DatasetAdministratorMapper datasetAdministratorMapper;
+    @Autowired UserMapper userMapper;
     @Autowired AccessRequestUtils accessRequestUtils;
+    @Autowired TemplateMailer mailer;
     
     /**
      * Create a Access Request for a user
@@ -68,7 +76,7 @@ public class UserAccessRequestResource extends AbstractResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     @Transactional
-    public Response createRequest(@TokenUser(allowPublic=false) User user, String json) throws IOException {
+    public Response createRequest(@TokenUser(allowPublic=false) User user, String json) throws IOException, TemplateException {
         AccessRequestJSON accessRequest = parseJSON(json);
 
         // Fail if this is an organisation request
@@ -90,17 +98,19 @@ public class UserAccessRequestResource extends AbstractResource {
                 oTaxonObservationFilterMapper.createFilter(filter);
                 oUserAccessRequestMapper.createRequest(filter.getId(), user.getId(), datasetKey, accessRequest.getReason().getPurpose(), accessRequest.getReason().getDetails(), new Date(new java.util.Date().getTime()), true);
                 oUserAccessRequestAuditHistoryMapper.addHistory(filter.getId(), user.getId(), "Created request for: '" + filter.getFilterText() + "'");
+                mailRequestCreate(oUserAccessRequestMapper.getRequest(filter.getId()));
             }
         }
-        
-        
+                
         for (String datasetKey : datasets) {
             oTaxonObservationFilterMapper.createFilter(filter);
             oUserAccessRequestMapper.createRequest(filter.getId(), user.getId(), datasetKey, accessRequest.getReason().getPurpose(), accessRequest.getReason().getDetails(), new Date(new java.util.Date().getTime()), false);
             oUserAccessRequestAuditHistoryMapper.addHistory(filter.getId(), user.getId(), "Created request for: '" + filter.getFilterText() + "'");
+            
+            mailRequestCreate(oUserAccessRequestMapper.getRequest(filter.getId()));
         }
 
-        return Response.ok("success").build();
+        return Response.status(Response.Status.OK).entity("{}").build();
     }
     
     @PUT
@@ -108,7 +118,7 @@ public class UserAccessRequestResource extends AbstractResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     @Transactional
-    public Response createGrant(@TokenUser(allowPublic=false) User user, String json) throws IOException, ParseException {
+    public Response createGrant(@TokenUser(allowPublic=false) User user, String json) throws IOException, ParseException, TemplateException {
         AccessRequestJSON accessRequest = parseJSON(json);
 
         // Fail if this is an organisation request
@@ -122,17 +132,17 @@ public class UserAccessRequestResource extends AbstractResource {
         }
 
         TaxonObservationFilter filter = accessRequestUtils.createFilter(json, accessRequest);
-        List<String> species = accessRequestUtils.createSpeciesList(accessRequest);        
         List<String> datasets = accessRequest.getDataset().getDatasets();
+        User reqUser = userMapper.getUserById(accessRequest.getReason().getUserID());
         
         for (String datasetKey : datasets) {
             oTaxonObservationFilterMapper.createFilter(filter);
             oUserAccessRequestMapper.createRequest(filter.getId(), accessRequest.getReason().getUserID(), datasetKey, accessRequest.getReason().getPurpose(), accessRequest.getReason().getDetails(), new Date(new java.util.Date().getTime()), false);
-            oUserAccessRequestAuditHistoryMapper.addHistory(filter.getId(), user.getId(), "Created and granted request for: '" + filter.getFilterText() + "'");
-            acceptRequest(filter.getId(), accessRequest.getReason().getReason(), accessRequest.getTime().isAll() ? "" : accessRequest.getTime().getDate().toString());
+            oUserAccessRequestAuditHistoryMapper.addHistory(filter.getId(), user.getId(), "Created request for " + reqUser.getForename() + ' ' + reqUser.getSurname() + " of: '" + filter.getFilterText() + "'");
+            acceptRequest(user, filter.getId(), accessRequest.getReason().getReason(), accessRequest.getTime().isAll() ? "" : accessRequest.getTime().getDate().toString());
         }
 
-        return Response.ok("success").build();
+        return Response.status(Response.Status.OK).entity("{}").build();
     }
 
     /**
@@ -167,7 +177,7 @@ public class UserAccessRequestResource extends AbstractResource {
         oTaxonObservationFilterMapper.editFilter(filterID, filter.getFilterText(), filter.getFilterJSON());
         oUserAccessRequestAuditHistoryMapper.addHistory(filterID, user.getId(), "Edit request to: '" + filter.getFilterText() + "', from: '" + orig.getFilterText() + "'");
 
-        return Response.ok("success").build();
+        return Response.status(Response.Status.OK).entity("{}").build();
     }
 
     /**
@@ -347,13 +357,11 @@ public class UserAccessRequestResource extends AbstractResource {
             , @PathParam("id") int filterID
             , @FormParam("action") String action
             , @FormParam("reason") String reason
-            , @FormParam("expires") @DefaultValue("") String expires) throws ParseException {
+            , @FormParam("expires") @DefaultValue("") String expires) throws ParseException, IOException, TemplateException {
         if ("grant".equalsIgnoreCase(action)) {
-            oUserAccessRequestAuditHistoryMapper.addHistory(filterID, user.getId(), "Accept request");
-            return acceptRequest(filterID, reason, expires);
+            return acceptRequest(user, filterID, reason, expires);
         } else if ("deny".equalsIgnoreCase(action)) {
-            oUserAccessRequestAuditHistoryMapper.addHistory(filterID, user.getId(), "Deny request");
-            return denyRequest(filterID, reason);
+            return denyRequest(user, filterID, reason);
         } else if ("close".equalsIgnoreCase(action)) {
             oUserAccessRequestAuditHistoryMapper.addHistory(filterID, user.getId(), "Close request");
             return closeRequest(filterID, reason);
@@ -394,16 +402,19 @@ public class UserAccessRequestResource extends AbstractResource {
      * 
      * @throws ParseException The expires string was in an incorrect format
      */
-    private Response acceptRequest(int filterID, String reason, String expires) throws ParseException {
+    private Response acceptRequest(User user, int filterID, String reason, String expires) throws ParseException, IOException, TemplateException {
         if (expires.isEmpty()) {
             oUserAccessRequestMapper.acceptRequest(filterID, reason, new Date(new java.util.Date().getTime()));
-            return Response.status(Response.Status.OK).entity("{}").build();
         } else {
             DateFormat df = new SimpleDateFormat("dd/mm/yyyy");
             java.util.Date expiresDate = df.parse(expires);
             oUserAccessRequestMapper.acceptRequestWithExpires(filterID, reason, new Date(new java.util.Date().getTime()), new Date(expiresDate.getTime()));
-            return Response.status(Response.Status.OK).entity("{}").build();
         }
+
+        oUserAccessRequestAuditHistoryMapper.addHistory(filterID, user.getId(), "Accept request");
+        giveAccess(filterID);
+        mailRequestGrant(oUserAccessRequestMapper.getRequest(filterID), reason);
+        return Response.status(Response.Status.OK).entity("{}").build();
     }
 
     /**
@@ -414,8 +425,10 @@ public class UserAccessRequestResource extends AbstractResource {
      * 
      * @return A Response object detailing the result of the operation
      */
-    private Response denyRequest(int filterID, String reason) {
+    private Response denyRequest(User user, int filterID, String reason) throws IOException, TemplateException {
         oUserAccessRequestMapper.denyRequest(filterID, reason, new Date(new java.util.Date().getTime()));
+        oUserAccessRequestAuditHistoryMapper.addHistory(filterID, user.getId(), "Deny request");
+        mailRequestDeny(oUserAccessRequestMapper.getRequest(filterID), reason);
         return Response.status(Response.Status.OK).entity("{}").build();
     }
 
@@ -521,5 +534,43 @@ public class UserAccessRequestResource extends AbstractResource {
     private AccessRequestJSON parseJSON(String json) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.readValue(json, AccessRequestJSON.class);
+    }
+    
+    private void mailRequestCreate(UserAccessRequest request) throws IOException, TemplateException {
+        List<DatasetAdministrator> admins = datasetAdministratorMapper.selectByDataset(request.getDatasetKey());
+        
+        Map<String, Object> message = new HashMap<String, Object>();
+        message.put("rName", request.getUser().getForename() + " " + request.getUser().getSurname());
+        message.put("reason", request.getRequestReason());
+        message.put("details", request.getFilter().getFilterText());
+        message.put("orgReq", Boolean.FALSE);
+        message.put("dataset", request.getDataset().getTitle());
+        message.put("purpose", request.getRequestPurposeLabel());        
+        
+        for (DatasetAdministrator admin : admins) {
+            message.put("daName", admin.getUser().getForename() + " " + admin.getUser().getSurname());
+            mailer.send("accessRequestMade.ftl", admin.getUser().getEmail(), "NBN Gateway: New access request", message);
+        }
+    }
+
+    private void mailRequestDeny(UserAccessRequest request, String reason) throws IOException, TemplateException {
+        Map<String, Object> message = new HashMap<String, Object>();
+        message.put("rName", request.getUser().getForename() + " " + request.getUser().getSurname());
+        message.put("rDate", request.getRequestDate());
+        message.put("reason", reason);
+        message.put("details", request.getFilter().getFilterText());
+        message.put("dataset", request.getDataset().getTitle());
+        mailer.send("accessRequestDeny.ftl", request.getUser().getEmail(), "NBN Gateway: Access request declined", message);
+    }
+
+    private void mailRequestGrant(UserAccessRequest request, String reason) throws IOException, TemplateException {
+        Map<String, Object> message = new HashMap<String, Object>();
+        message.put("rName", request.getUser().getForename() + " " + request.getUser().getSurname());
+        message.put("rDate", request.getRequestDate());
+        message.put("lDate", request.getAccessExpires());
+        message.put("reason", reason);
+        message.put("details", request.getFilter().getFilterText());
+        message.put("dataset", request.getDataset().getTitle());
+        mailer.send("accessRequestGrant.ftl", request.getUser().getEmail(), "NBN Gateway: Access request approved", message);
     }
 }
