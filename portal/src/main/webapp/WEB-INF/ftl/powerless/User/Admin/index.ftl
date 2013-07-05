@@ -92,7 +92,7 @@
             <tr><td>Username:</td><td>${user.username}</td></tr>
             <tr><td>Email:</td><td>${user.email}</td></tr>
             <tr><td><a href="/User/Modify">Modify your user details</a></td><td><a href="/User/Modify#tabs-2">Change password</a></td><td><a href="/User/Modify#tabs-3">Change Email Subscriptions</a></td></tr>
-            <tr><td><a href="/AccessRequest">Access Permissions Summary</a></td></tr>
+            <tr><td><a href="/AccessRequest">Access Permissions Summary</a></td><td><a href="/AccessRequest/Create">Create Access Request</a></td></tr>
         </table>
     </div>
 </#macro>
