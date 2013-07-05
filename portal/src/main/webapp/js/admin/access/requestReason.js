@@ -101,7 +101,7 @@ nbn.nbnv.ui.requestReason = function(json) {
         
         var data = $('<div>')
             .append($('<div>')
-                .text("I requesting access for:")
+                .text("I am requesting access for:")
             ).append(asSelect)
             .append($('<div>').addClass('queryBlock')
                 .text("I am requesting data for the following purpose:")
