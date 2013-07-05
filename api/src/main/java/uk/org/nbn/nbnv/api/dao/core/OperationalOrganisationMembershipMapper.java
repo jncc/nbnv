@@ -49,6 +49,14 @@ public interface OperationalOrganisationMembershipMapper {
     })
     List<OrganisationMembership> selectByOrganisation(@Param("organisationID") int organisationID);
 
+    @Select("SELECT uom.userID, uom.organisationID, uor.label AS roleType FROM UserOrganisationMembership uom JOIN UserOrganisationRole uor ON uom.organisationRoleID = uor.id WHERE uom.organisationID = #{organisationID} AND uor.id > 1")
+    @Results(value = {
+        @Result(property="user", column="userID", javaType=User.class, one=@One(select="uk.org.nbn.nbnv.api.dao.core.OperationalUserMapper.getUserById")),
+        @Result(property="organisation", column="organisationID", javaType=Organisation.class, one=@One(select="uk.org.nbn.nbnv.api.dao.core.OperationalOrganisationMapper.selectByID")),
+        @Result(property="role", column="roleType", javaType= OrganisationMembership.Role.class)
+    })
+    List<OrganisationMembership> selectAdminsByOrganisation(@Param("organisationID") int organisationID);
+
     @Select("SELECT uom.userID, uom.organisationID, uor.label AS roleType FROM UserOrganisationMembership uom JOIN UserOrganisationRole uor ON uom.organisationRoleID = uor.id WHERE uom.userID = #{userKey} AND uom.organisationID = #{organisationID}")
     @Results(value = {
         @Result(property="user", column="userID", javaType=User.class, one=@One(select="uk.org.nbn.nbnv.api.dao.core.OperationalUserMapper.getUserById")),

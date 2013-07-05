@@ -363,11 +363,9 @@ public class UserAccessRequestResource extends AbstractResource {
         } else if ("deny".equalsIgnoreCase(action)) {
             return denyRequest(user, filterID, reason);
         } else if ("close".equalsIgnoreCase(action)) {
-            oUserAccessRequestAuditHistoryMapper.addHistory(filterID, user.getId(), "Close request");
-            return closeRequest(filterID, reason);
+            return closeRequest(user, filterID, reason);
         } else if ("revoke".equalsIgnoreCase(action)) {
-            oUserAccessRequestAuditHistoryMapper.addHistory(filterID, user.getId(), "Revoke action");
-            return revokeRequest(filterID, reason);
+            return revokeRequest(user, filterID, reason);
         } else {
             return Response.serverError().build();
         }
@@ -440,8 +438,9 @@ public class UserAccessRequestResource extends AbstractResource {
      * 
      * @return A Response object detailing the result of the operation
      */
-    private Response closeRequest(int filterID, String reason) {
+    private Response closeRequest(User user, int filterID, String reason) {
         oUserAccessRequestMapper.closeRequest(filterID, reason, new Date(new java.util.Date().getTime()));
+        oUserAccessRequestAuditHistoryMapper.addHistory(filterID, user.getId(), "Close request");
         return Response.status(Response.Status.OK).entity("{}").build();
     }
     
@@ -453,8 +452,11 @@ public class UserAccessRequestResource extends AbstractResource {
      * 
      * @return A Response object detailing the result of the operation
      */
-    private Response revokeRequest(int filterID, String reason) {
+    private Response revokeRequest(User user, int filterID, String reason) throws IOException, TemplateException {
         oUserAccessRequestMapper.revokeRequest(filterID, reason, new Date(new java.util.Date().getTime()));
+        oUserAccessRequestAuditHistoryMapper.addHistory(filterID, user.getId(), "Revoke action");
+        stripAccess(filterID);
+        mailRequestRevoke(oUserAccessRequestMapper.getRequest(filterID), reason);
         return Response.status(Response.Status.OK).entity("{}").build();
     }
 
@@ -573,4 +575,15 @@ public class UserAccessRequestResource extends AbstractResource {
         message.put("dataset", request.getDataset().getTitle());
         mailer.send("accessRequestGrant.ftl", request.getUser().getEmail(), "NBN Gateway: Access request approved", message);
     }
+
+    private void mailRequestRevoke(UserAccessRequest request, String reason) throws IOException, TemplateException {
+        Map<String, Object> message = new HashMap<String, Object>();
+        message.put("rName", request.getUser().getForename() + " " + request.getUser().getSurname());
+        message.put("rDate", request.getRequestDate());
+        message.put("reason", reason);
+        message.put("details", request.getFilter().getFilterText());
+        message.put("dataset", request.getDataset().getTitle());
+        mailer.send("accessRequestRevoke.ftl", request.getUser().getEmail(), "NBN Gateway: Access request removed", message);
+    }
+
 }
