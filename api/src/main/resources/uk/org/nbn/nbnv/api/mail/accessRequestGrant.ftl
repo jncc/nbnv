@@ -7,7 +7,7 @@ Dear ${rName},
 The administrator of the dataset '${dataset}' held on the NBN Gateway has APPROVED your request for enhanced access made on ${rDate}. 
 
 Your level of access is:
-${request}
+${details}
 <#if lDate?has_content>Enhanced access has been provided until ${lDate}</#if> 
 
 <#if reason?has_content>The administrator has provided additional information regarding your access request as follows:
