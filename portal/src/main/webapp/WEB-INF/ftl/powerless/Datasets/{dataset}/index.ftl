@@ -121,6 +121,10 @@
                         <th>Use constraints</th>
                         <td>${dataset.useConstraints!"Not available"}</td>
                     </tr>
+                    <tr>
+                        <th>Access</th>
+                        <td><a href="/AccessRequest/Create?json={dataset:{all:false,datasets:['${dataset.key}']}}">Request Better Access</a></td>
+                    </tr>
                 </table>
             </div>
             <#if dataset.typeName = "Taxon">

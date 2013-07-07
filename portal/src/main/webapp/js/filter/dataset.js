@@ -131,10 +131,12 @@ nbn.nbnv.ui.filter.dataset = function(json) {
             ).append("Dataset List ")
             .append(datasetTable);
         
-        if (this._all) {
+        if (this._mode == 'all') {
             allRecords.children('input').attr('checked', 'checked').change();
-        } else {
+        } else if (this._mode == 'filter') {
             filterRecords.children('input').attr('checked', 'checked').change();
+        } else if (this._mode == 'single') {
+            singleRecords.children('input').attr('checked', 'checked').change();
         }
         
         if (this._secret) {
