@@ -77,6 +77,8 @@
                             <a href="/Organisations/${r.id?c}/Admin">Admin Organisation Membership and Metadata</a><br/>
                             <a href="/AccessRequest/Organisations/${r.id?c}">View Organisation Access Requests</a>
                         </td>
+                    <#elseif admin?has_content>
+                        <td>&nbsp;</td>
                     </#if>
                 </tr>
             </#list>
