@@ -37,7 +37,7 @@ define [
   formatResult: (item) ->
     entityType = item.entityType
     switch item.entityType
-      when "taxon" then "Add observations of: #{item.searchMatchTitle}"
+      when "taxon" then "Add observations of: #{item.descript}"
       when "taxondataset" then "Add species richness for the dataset: #{item.searchMatchTitle}"
       when "designation" then "Add species richness for the designation: #{item.searchMatchTitle}"
       when "site boundarydataset" then "Add boundaries of: #{item.searchMatchTitle}"
