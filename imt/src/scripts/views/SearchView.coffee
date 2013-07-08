@@ -37,16 +37,10 @@ define [
   formatResult: (item) ->
     entityType = item.entityType
     switch item.entityType
-      when "taxon" then "Add observations of: #{@formatSpeciesName(item)}"
+      when "taxon" then "Add observations of: #{item.searchMatchTitle}"
       when "taxondataset" then "Add species richness for the dataset: #{item.searchMatchTitle}"
       when "designation" then "Add species richness for the designation: #{item.searchMatchTitle}"
       when "site boundarydataset" then "Add boundaries of: #{item.searchMatchTitle}"
       when "habitatdataset" then "Add habitat: #{item.searchMatchTitle}"
       when "gridsquarefeature" then "Zoom to the grid square: #{item.searchMatchTitle}"
       when "siteboundaryfeature" then "Zoom to the boundary: #{item.searchMatchTitle}"
-
-  formatSpeciesName: (item) ->
-    if item.languageKey == 'la' 
-      '<span class="scientific-name">'  + item.searchMatchTitle + '<span>'
-    else
-      item.searchMatchTitle
