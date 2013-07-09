@@ -59,7 +59,7 @@
 
         function checkReasonDialog(url, id, type) {
             var reason = $('#nbn-org-join-reason-text').val();
-            if (reason.trim() === '') {
+            if ($.trim(reason) === '') {
                 $("#nbn-org-join-dialog-reason").text('with no reason attached?');
             } else {
                 $("#nbn-org-join-dialog-reason").text('with the following reason?');
