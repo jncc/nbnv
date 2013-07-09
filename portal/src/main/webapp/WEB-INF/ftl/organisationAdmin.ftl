@@ -158,7 +158,7 @@
                 <td class="nbn-org-user-join-id-td">${request.key?string("0")}</td>
                 <td class="nbn-org-user-join-name-td">${request.name}</td>
                 <td class="nbn-org-user-join-request-text-td">${request.text}</td>
-                <td class="nbn-org-user-join-request-date-td">${request.date?number_to_date}</td>
+                <td class="nbn-org-user-join-request-date-td">${request.date}</td>
                 <td class="nbn-org-user-join-request-view-td"><a href="/Organisations/JoinRequest/${request.key?string("0")}">Action this request</a></td>
             </tr>
         </#list>
