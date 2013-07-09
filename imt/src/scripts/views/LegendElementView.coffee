@@ -16,9 +16,14 @@ define [
     @listenTo @model, 'change:visibility', @updateVisibility
 
   customise:->
-    new LayerCustomisationView model: @model
+    if not @customisationView?
+      @customisationView = new LayerCustomisationView model: @model
+    else
+      do @customisationView.reopen
 
-  removeLayer:-> @model.collection.remove @model
+  removeLayer:->
+    @customisationView.remove() if @customisationView?
+    @model.collection.remove @model
 
   updateLegendIcon:->
     @$('span.icon').css @model.getLegendIcon()

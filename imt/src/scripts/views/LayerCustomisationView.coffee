@@ -14,7 +14,12 @@ define [
   ###  
   initialize:->
     @$el.addClass "layerCustomisation"
+    
+    do @render
 
+    @listenTo @model, 'change:name', => @$el.dialog "option", "title", @model.getName()
+
+  render:->
     if @model.isStyleable
       @colorView = new ColourSelectorView
         model: @model
@@ -43,4 +48,18 @@ define [
       title: @model.getName()
       resizable: false
       width: 400
-      close: -> $(this).dialog('destroy').remove() #remove the dialog from the dom on close
+
+  ###
+  Reopens the view and brings it back in to focus
+  ###
+  reopen:->
+    @$el.dialog('open')
+        .dialog('moveToTop')
+
+  ###
+  Override the remove method for the view and clean up the
+  .dialog
+  ###
+  remove:->
+    @$el.dialog('destroy').remove()
+    Backbone.View.prototype.remove.call this, arguments
