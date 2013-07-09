@@ -38,10 +38,10 @@
             <tbody>
             <#list surveys as r>
                 <tr>
-                    <td>${r.title}</td>
+                    <td>${r.title!'No title'}</td>
                     <td>${r.providerKey}</td>
-                    <td>${r.description}</td>
-                    <#if isAdmin><td><a href="${r.id}/Edit">Alter metadata</a></td></#if>
+                    <td>${r.description!'No description'}</td>
+                    <#if isAdmin><td><a href="${r.id?c}/Edit">Alter metadata</a></td></#if>
                 </tr>
             </#list>
             </tbody>
