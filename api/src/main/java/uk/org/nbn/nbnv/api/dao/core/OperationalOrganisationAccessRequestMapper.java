@@ -80,6 +80,17 @@ public interface OperationalOrganisationAccessRequestMapper {
     public List<OrganisationAccessRequest> getUserGrantedOrganisationRequests(int id);
 
     @Select("SELECT uar.* FROM OrganisationAccessRequest uar "
+            + "INNER JOIN UserOrganisationMembership uom ON uom.organisationID = uar.organisationID "
+            + "WHERE uom.userID = #{id} AND responseTypeID IS NULL AND organisationRoleID > 1")
+    @Results(value = {
+        @Result(property="filter", column="filterID", javaType=TaxonObservationFilter.class, one=@One(select="uk.org.nbn.nbnv.api.dao.core.OperationalTaxonObservationFilterMapper.selectById")),
+        @Result(property="organisation", column="organisationID", javaType=Organisation.class, one=@One(select="uk.org.nbn.nbnv.api.dao.core.OperationalOrganisationMapper.selectByID")),
+        @Result(property="dataset", column="datasetKey", javaType=Dataset.class, one=@One(select="uk.org.nbn.nbnv.api.dao.core.OperationalDatasetMapper.selectByDatasetKey")),
+        @Result(property="datasetKey", column="datasetKey")
+    })
+    public List<OrganisationAccessRequest> getUserPendingOrganisationRequests(int id);
+
+    @Select("SELECT uar.* FROM OrganisationAccessRequest uar "
             + "INNER JOIN DatasetAdministrator da ON da.datasetKey = uar.datasetKey "
             + "WHERE da.userID = #{id}")
     @Results(value = {

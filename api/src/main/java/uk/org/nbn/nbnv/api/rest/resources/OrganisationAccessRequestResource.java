@@ -281,6 +281,26 @@ public class OrganisationAccessRequestResource extends AbstractResource {
     }
 
     /**
+     * Returns a list of all pending Organisation Access Requests for 
+     * Organisations that a user administers
+     * 
+     * @param user The current user if they are an organisation admin 
+     * 
+     * @return A list of all pending Organisation Access Requests 
+     * 
+     * @throws IOException 
+     * 
+     * @response.representation.200.qname List<OrganisationAccessRequest>
+     * @response.representation.200.mediaType application/json
+     */
+    @GET
+    @Path("/requests/pending")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<OrganisationAccessRequest> getPendingRequests(@TokenUser(allowPublic=false) User user) throws IOException {
+        return oOrganisationAccessRequestMapper.getUserPendingOrganisationRequests(user.getId());
+    }
+    
+    /**
      * Returns a List of Organisation Access Requests for which the current user
      * has admin rights
      * 
