@@ -13,6 +13,7 @@ nbn.nbnv.ui.dialog.requestDenyDialog = function() {
         var _me = this;
         
         this.div = $('<div>')
+            .attr('id', 'denydialog')
             .append($('<p>')
                 .append('Denying a request dispatches an email informing them of the denied access request. If you want to silently deny a request, close it instead.')
             ).append($('<p>')
@@ -20,7 +21,7 @@ nbn.nbnv.ui.dialog.requestDenyDialog = function() {
             ).append($('<p>')
                 .attr('id', 'denyanonwarn')
                 .addClass('ui-state-error')
-                .append('This request was sent without the user knowing about your dataset. If you reply, they will. So be careful m\'kay?')
+                .append('IMPORTANT: THIS REQUEST CONTAINS SENSITIVE RECORDS FOR SPECIFIC SITE(S) DO NOT USE THIS DENY BUTTON. INSTEAD REJECT THE ACCESS REQUEST USING THE CLOSE LINK. CLOSING THE REQUEST WILL NOT SEND AN EMAIL TO THE USER AND SO WILL NOT INADVERTENTLY MAKE THEM AWARE OF THE LOCATION OF THESE SENSITIVE RECORDS. ')
                 .hide()
             ).append($('<p>')
                 .append('Deny reason:')
@@ -67,6 +68,7 @@ nbn.nbnv.ui.dialog.requestDenyDialog = function() {
         $('#denyeffect').html('');
         $('#denyeffect').text('Loading request record coverage');
         $('#denyanonwarn').hide();
+        $(":button:contains('Deny Request')").button('enable');
         
         if ('organisationID' in json.reason && json.reason.organisationID != -1) { this.orgReq = true; } else { this.orgReq = false; }
         
@@ -94,6 +96,7 @@ nbn.nbnv.ui.dialog.requestDenyDialog = function() {
                 
                 if (!json.spatial.all && datasets[0].querySpecificObservationCount == datasets[0].querySpecificSensitiveObservationCount) {
                     $('#denyanonwarn').show();
+                    $(":button:contains('Deny Request')").button('disable');
                 } 
             }
         });

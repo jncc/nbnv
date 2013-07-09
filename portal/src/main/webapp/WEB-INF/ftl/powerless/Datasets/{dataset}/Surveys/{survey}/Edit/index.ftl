@@ -12,7 +12,7 @@
             </tr>
             <tr>
                 <th>Provider Key</th>
-                <td><input type="text" name="providerKey" value="<#if survey.providerKey??>${survey.providerKey}<#else></#if>" /></td>
+                <td><#if survey.providerKey??>${survey.providerKey}<#else>No Provider Key Supplied</#if></td>
             </tr>
             <tr>
                 <th>Title</th>

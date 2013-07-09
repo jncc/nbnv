@@ -4,8 +4,16 @@
 <#assign isAdmin=json.readURL("${api}/datasets/${URLParameters.dataset}/isAdmin")>
 
 <@template.master title="NBN Gateway - Datasets"
-    javascripts=["/js/jquery-ui-1.8.23.custom.min.js/","/js/enable-dataset-metadata-tabs.js","/js/jquery.dataTables.min.js","/js/jqplot/jquery.jqplot.min.js","/js/jqplot/excanvas.min.js","/js/jqplot/plugins/jqplot.json2.min.js","/js/jqplot/plugins/jqplot.highlighter.min.js","/js/jqplot/plugins/jqplot.canvasAxisLabelRenderer.min.js","/js/jqplot/plugins/jqplot.canvasTextRenderer.min.js","/js/jqplot/plugins/jqplot.cursor.min.js"] 
-    csss=["/css/smoothness/jquery-ui-1.8.23.custom.css","/css/jquery.jqplot.min.css","/css/dataset-metadata.css"] >
+    javascripts=["/js/jquery-ui-1.8.23.custom.min.js/"
+        ,"/js/enable-dataset-metadata-tabs.js","/js/jquery.dataTables.min.js",
+        "/js/jqplot/jquery.jqplot.min.js","/js/jqplot/excanvas.min.js",
+        "/js/jqplot/plugins/jqplot.json2.min.js",
+        "/js/jqplot/plugins/jqplot.highlighter.min.js",
+        "/js/jqplot/plugins/jqplot.canvasAxisLabelRenderer.min.js",
+        "/js/jqplot/plugins/jqplot.canvasTextRenderer.min.js",
+        "/js/jqplot/plugins/jqplot.cursor.min.js",
+        "/js/dialog_spinner.js"] 
+    csss=["/css/smoothness/jquery-ui-1.8.23.custom.css","/css/jquery.jqplot.min.css","/css/dataset-metadata.css","/css/dialog-spinner.css","/css/org-admin.css"] >
         <h1>${dataset.title}</h1>
         <div id="nbn-tabs">
             <ul>
@@ -19,6 +27,9 @@
                     <li><a href="/Datasets/${dataset.key}/Taxa"><span>Species</span></a></li>
                 <#elseif dataset.typeName = "Site Boundary">
                     <li><a href="/Datasets/${dataset.key}/Site_Boundaries"><span>Sites</span></a></li>
+                </#if>
+                <#if isAdmin>
+                    <li><a href="/Datasets/${dataset.key}/Admin"><span>Admin</span></a></li>
                 </#if>
             </ul>
             <div id="tabs-1">
@@ -121,6 +132,10 @@
                         <th>Use constraints</th>
                         <td>${dataset.useConstraints!"Not available"}</td>
                     </tr>
+                    <tr>
+                        <th>Access</th>
+                        <td><a href="/AccessRequest/Create?json={dataset:{all:false,datasets:['${dataset.key}']}}">Request Better Access</a></td>
+                    </tr>
                 </table>
             </div>
             <#if dataset.typeName = "Taxon">
@@ -148,7 +163,6 @@
     <#elseif dataset.typeName = "Habitat">
         /imt/?habitats=${dataset.key}
     </#if>
-
 </#macro>
 
 </@template.master>

@@ -12,7 +12,7 @@ nbn.nbnv.ui.dialog.requestCloseDialog = function() {
         var _me = this;
         
         this.div = $('<div>').append($('<p>')
-            .append('Closing a request removes it from the system, it does not grant access, and sends no response by email. This is used when a request has been handled outside of the NBN Gateway.')
+            .append('Closing a request removes it from the NBN Gateway, it does not grant access and does not send a response to the user by email. CLOSING A REQUEST SHOULD BE USED WHEN THE REQUEST CONTAINS SENSITIVE RECORDS FOR SPECIFIC SITE(S), as well as when requests have been handled outside of the NBN Gateway')
         ).dialog({ 
             modal: true, 
             autoOpen: false,

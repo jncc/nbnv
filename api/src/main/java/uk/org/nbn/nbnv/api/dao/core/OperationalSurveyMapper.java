@@ -13,6 +13,6 @@ public interface OperationalSurveyMapper {
     @Select("SELECT * FROM Survey WHERE id = #{survey}")
     public Survey getSurveyById(@Param("survey") int id);
     
-    @Update("UPDATE Survey SET providerKey = #{providerKey}, title = #{title}, description = #{description}, geographicalCoverage = #{geographicalCoverage}, temporalCoverage = #{temporalCoverage}, dataQuality = #{dataQuality}, dataCaptureMethod = #{dataCaptureMethod}, purpose = #{purpose}, additionalInformation = #{additionalInformation} WHERE id = #{id}")
+    @Update("UPDATE Survey SET title = #{title}, description = #{description}, geographicalCoverage = #{geographicalCoverage}, temporalCoverage = #{temporalCoverage}, dataQuality = #{dataQuality}, dataCaptureMethod = #{dataCaptureMethod}, purpose = #{purpose}, additionalInformation = #{additionalInformation} WHERE id = #{id}")
     public int updateSurveyById(Survey survey);
 }
