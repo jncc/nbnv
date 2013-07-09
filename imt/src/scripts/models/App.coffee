@@ -1,9 +1,8 @@
 define [
   'underscore'
-  'backbone' 
-  'cs!collections/Search'
+  'backbone'
   'cs!collections/Layers'
-], (_, Backbone, Search, Layers) -> Backbone.Model.extend 
+], (_, Backbone, Layers) -> Backbone.Model.extend 
   defaults :
     viewport: 
       minX:  -14.489099982674913
@@ -20,11 +19,6 @@ define [
   getLayers: -> @get "layers"
 
   getBaseLayers: -> ["OS", "Outline", "Shaded", "Aerial", "Hybrid"]
-
-  ### 
-  Return an instance of the NBN Gateways search api
-  ###
-  getSearch: -> new Search()
 
   ###
   Process a search result and update the application accordingly
