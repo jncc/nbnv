@@ -12,7 +12,7 @@
             var userUrl = nbn.nbnv.api + '/user/userAccesses/requests';
             var orgUrl = nbn.nbnv.api + '/organisation/organisationAccesses/requests';
             var data = ${data};
-            var url = data.reason.organisationID != -1 ? orgUrl : userUrl;
+            var url = ('organisationID' in data.reason && data.reason.organisationID != -1) ? orgUrl : userUrl;
 
             $.ajax({
                 type: "PUT",

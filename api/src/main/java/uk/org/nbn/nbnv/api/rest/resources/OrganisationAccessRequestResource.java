@@ -4,12 +4,15 @@
  */
 package uk.org.nbn.nbnv.api.rest.resources;
 
+import freemarker.template.TemplateException;
 import java.io.IOException;
 import java.sql.Date;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.FormParam;
@@ -27,10 +30,14 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import uk.org.nbn.nbnv.api.dao.core.OperationalOrganisationAccessRequestAuditHistoryMapper;
 import uk.org.nbn.nbnv.api.dao.core.OperationalOrganisationAccessRequestMapper;
+import uk.org.nbn.nbnv.api.dao.core.OperationalOrganisationMembershipMapper;
 import uk.org.nbn.nbnv.api.dao.core.OperationalOrganisationTaxonObservationAccessMapper;
 import uk.org.nbn.nbnv.api.dao.core.OperationalTaxonObservationFilterMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.DatasetAdministratorMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.OrganisationMapper;
+import uk.org.nbn.nbnv.api.dao.warehouse.OrganisationMembershipMapper;
+import uk.org.nbn.nbnv.api.mail.TemplateMailer;
+import uk.org.nbn.nbnv.api.model.DatasetAdministrator;
 import uk.org.nbn.nbnv.api.model.Organisation;
 import uk.org.nbn.nbnv.api.model.OrganisationAccessRequest;
 import uk.org.nbn.nbnv.api.model.OrganisationAccessRequestAuditHistory;
@@ -57,7 +64,9 @@ public class OrganisationAccessRequestResource extends AbstractResource {
     @Autowired OperationalOrganisationAccessRequestAuditHistoryMapper oOrganisationAccessRequestAuditHistoryMapper;
     @Autowired OrganisationMapper organisationMapper;
     @Autowired DatasetAdministratorMapper datasetAdministratorMapper;
+    @Autowired OperationalOrganisationMembershipMapper oOrganisationMembershipMapper;
     @Autowired AccessRequestUtils accessRequestUtils;
+    @Autowired TemplateMailer mailer;
     
     /**
      * Create an Organisation Access Request for data
@@ -77,7 +86,7 @@ public class OrganisationAccessRequestResource extends AbstractResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     @Transactional
-    public Response createRequest(@TokenUser(allowPublic=false) User user, String json) throws IOException {
+    public Response createRequest(@TokenUser(allowPublic=false) User user, String json) throws IOException, TemplateException {
         AccessRequestJSON accessRequest = parseJSON(json);
 
         // Fail if this is an user request
@@ -101,6 +110,7 @@ public class OrganisationAccessRequestResource extends AbstractResource {
                 oTaxonObservationFilterMapper.createFilter(filter);
                 oOrganisationAccessRequestMapper.createRequest(filter.getId(), org.getId(), datasetKey, accessRequest.getReason().getPurpose(), accessRequest.getReason().getDetails(), new Date(new java.util.Date().getTime()), true);
                 oOrganisationAccessRequestAuditHistoryMapper.addHistory(filter.getId(), user.getId(), "Created request for: '" + filter.getFilterText() + "'");
+                mailRequestCreate(oOrganisationAccessRequestMapper.getRequest(filter.getId()), user);
             }
         }
 
@@ -108,6 +118,7 @@ public class OrganisationAccessRequestResource extends AbstractResource {
             oTaxonObservationFilterMapper.createFilter(filter);
             oOrganisationAccessRequestMapper.createRequest(filter.getId(), org.getId(), datasetKey, accessRequest.getReason().getPurpose(), accessRequest.getReason().getDetails(), new Date(new java.util.Date().getTime()), false);
             oOrganisationAccessRequestAuditHistoryMapper.addHistory(filter.getId(), user.getId(), "Created request for: '" + filter.getFilterText() + "'");
+            mailRequestCreate(oOrganisationAccessRequestMapper.getRequest(filter.getId()), user);
         }
 
         return Response.ok("success").build();
@@ -118,7 +129,7 @@ public class OrganisationAccessRequestResource extends AbstractResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     @Transactional
-    public Response createGrant(@TokenUser(allowPublic=false) User user, String json) throws IOException, ParseException {
+    public Response createGrant(@TokenUser(allowPublic=false) User user, String json) throws IOException, ParseException, TemplateException {
         AccessRequestJSON accessRequest = parseJSON(json);
 
         // Fail if this is not an organisation request
@@ -137,8 +148,9 @@ public class OrganisationAccessRequestResource extends AbstractResource {
         for (String datasetKey : datasets) {
             oTaxonObservationFilterMapper.createFilter(filter);
             oOrganisationAccessRequestMapper.createRequest(filter.getId(), accessRequest.getReason().getOrganisationID(), datasetKey, accessRequest.getReason().getPurpose(), accessRequest.getReason().getDetails(), new Date(new java.util.Date().getTime()), false);
-            oOrganisationAccessRequestAuditHistoryMapper.addHistory(filter.getId(), user.getId(), "Created and granted request for: '" + filter.getFilterText() + "'");
-            acceptRequest(filter.getId(), accessRequest.getReason().getReason(), accessRequest.getTime().isAll() ? "" : accessRequest.getTime().getDate().toString());
+            Organisation org = organisationMapper.selectByID(accessRequest.getReason().getOrganisationID());
+            oOrganisationAccessRequestAuditHistoryMapper.addHistory(filter.getId(), user.getId(), "Created request for " + org.getName() + " of: '" + filter.getFilterText() + "'");
+            acceptRequest(user, filter.getId(), accessRequest.getReason().getReason(), accessRequest.getTime().isAll() ? "" : accessRequest.getTime().getDate().toString());
         }
 
         return Response.ok("success").build();
@@ -386,19 +398,15 @@ public class OrganisationAccessRequestResource extends AbstractResource {
             , @PathParam("id") int filterID
             , @FormParam("action") String action
             , @FormParam("reason") String reason
-            , @FormParam("expires") @DefaultValue("") String expires) throws ParseException {
+            , @FormParam("expires") @DefaultValue("") String expires) throws ParseException, IOException, TemplateException {
         if ("grant".equalsIgnoreCase(action)) {
-            oOrganisationAccessRequestAuditHistoryMapper.addHistory(filterID, user.getId(), "Accept request");
-            return acceptRequest(filterID, reason, expires);
+            return acceptRequest(user, filterID, reason, expires);
         } else if ("deny".equalsIgnoreCase(action)) {
-            oOrganisationAccessRequestAuditHistoryMapper.addHistory(filterID, user.getId(), "Deny request");            
-            return denyRequest(filterID, reason);
+            return denyRequest(user, filterID, reason);
         } else if ("close".equalsIgnoreCase(action)) {
-            oOrganisationAccessRequestAuditHistoryMapper.addHistory(filterID, user.getId(), "Close request");            
-            return closeRequest(filterID, reason);
+            return closeRequest(user, filterID, reason);
         } else if ("revoke".equalsIgnoreCase(action)) {
-            oOrganisationAccessRequestAuditHistoryMapper.addHistory(filterID, user.getId(), "Revoke action");
-            return revokeRequest(filterID, reason);
+            return revokeRequest(user, filterID, reason);
         } else {
             return Response.serverError().build();
         }
@@ -431,16 +439,19 @@ public class OrganisationAccessRequestResource extends AbstractResource {
      * @return Response to be passed back to the user
      * @throws ParseException 
      */
-    private Response acceptRequest(int filterID, String reason, String expires) throws ParseException {
+    private Response acceptRequest(User user, int filterID, String reason, String expires) throws ParseException, IOException, TemplateException {
         if (expires.isEmpty()) {
             oOrganisationAccessRequestMapper.acceptRequest(filterID, reason, new Date(new java.util.Date().getTime()));
-            return Response.status(Response.Status.OK).entity("{}").build();
         } else {
             DateFormat df = new SimpleDateFormat("dd/mm/yyyy");
             java.util.Date expiresDate = df.parse(expires);
             oOrganisationAccessRequestMapper.acceptRequestWithExpires(filterID, reason, new Date(new java.util.Date().getTime()), new Date(expiresDate.getTime()));
-            return Response.status(Response.Status.OK).entity("{}").build();
         }
+
+        oOrganisationAccessRequestAuditHistoryMapper.addHistory(filterID, user.getId(), "Accept request");
+        giveAccess(filterID);
+        mailRequestGrant(oOrganisationAccessRequestMapper.getRequest(filterID), reason);
+        return Response.status(Response.Status.OK).entity("{}").build();
     }
 
     /**
@@ -451,8 +462,10 @@ public class OrganisationAccessRequestResource extends AbstractResource {
      * @return Response to be passed back to the user
      * @throws ParseException 
      */
-    private Response denyRequest(int filterID, String reason) {
+    private Response denyRequest(User user, int filterID, String reason) throws IOException, TemplateException {
         oOrganisationAccessRequestMapper.denyRequest(filterID, reason, new Date(new java.util.Date().getTime()));
+        oOrganisationAccessRequestAuditHistoryMapper.addHistory(filterID, user.getId(), "Deny request");            
+        mailRequestDeny(oOrganisationAccessRequestMapper.getRequest(filterID), reason);
         return Response.status(Response.Status.OK).entity("{}").build();
     }
 
@@ -464,8 +477,9 @@ public class OrganisationAccessRequestResource extends AbstractResource {
      * @return Response to be passed back to the user
      * @throws ParseException
      */
-    private Response closeRequest(int filterID, String reason) {
+    private Response closeRequest(User user, int filterID, String reason) {
         oOrganisationAccessRequestMapper.closeRequest(filterID, reason, new Date(new java.util.Date().getTime()));
+        oOrganisationAccessRequestAuditHistoryMapper.addHistory(filterID, user.getId(), "Close request");            
         return Response.status(Response.Status.OK).entity("{}").build();
     }
 
@@ -477,8 +491,11 @@ public class OrganisationAccessRequestResource extends AbstractResource {
      * @return Response to be passed back to the user
      * @throws ParseException 
      */
-    private Response revokeRequest(int filterID, String reason) {
+    private Response revokeRequest(User user, int filterID, String reason) throws IOException, TemplateException {
         oOrganisationAccessRequestMapper.revokeRequest(filterID, reason, new Date(new java.util.Date().getTime()));
+        oOrganisationAccessRequestAuditHistoryMapper.addHistory(filterID, user.getId(), "Revoke action");
+        stripAccess(filterID);
+        mailRequestRevoke(oOrganisationAccessRequestMapper.getRequest(filterID), reason);
         return Response.status(Response.Status.OK).entity("{}").build();
     }
 
@@ -551,4 +568,65 @@ public class OrganisationAccessRequestResource extends AbstractResource {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.readValue(json, AccessRequestJSON.class);
     }
+
+    private void mailRequestCreate(OrganisationAccessRequest request, User user) throws IOException, TemplateException {
+        List<DatasetAdministrator> admins = datasetAdministratorMapper.selectByDataset(request.getDatasetKey());
+        
+        Map<String, Object> message = new HashMap<String, Object>();
+        message.put("rName", user.getForename() + " " + user.getSurname());
+        message.put("reason", request.getRequestReason());
+        message.put("details", request.getFilter().getFilterText());
+        message.put("orgReq", Boolean.TRUE);
+        message.put("dataset", request.getDataset().getTitle());
+        message.put("purpose", request.getRequestPurposeLabel());        
+        
+        for (DatasetAdministrator admin : admins) {
+            message.put("daName", admin.getUser().getForename() + " " + admin.getUser().getSurname());
+            mailer.send("accessRequestMade.ftl", admin.getUser().getEmail(), "NBN Gateway: New access request", message);
+        }
+    }
+
+    private void mailRequestDeny(OrganisationAccessRequest request, String reason) throws IOException, TemplateException {
+        Map<String, Object> message = new HashMap<String, Object>();
+        message.put("rName", request.getOrganisation().getName());
+        message.put("rDate", request.getRequestDate());
+        message.put("reason", reason);
+        message.put("details", request.getFilter().getFilterText());
+        message.put("dataset", request.getDataset().getTitle());
+        
+        List<OrganisationMembership> admins = oOrganisationMembershipMapper.selectAdminsByOrganisation(request.getOrganisation().getId());
+        for (OrganisationMembership admin : admins) {
+            mailer.send("accessRequestDeny.ftl", admin.getUser().getEmail(), "NBN Gateway: Access request declined", message);
+        }
+    }
+
+    private void mailRequestGrant(OrganisationAccessRequest request, String reason) throws IOException, TemplateException {
+        Map<String, Object> message = new HashMap<String, Object>();
+        message.put("rName", request.getOrganisation().getName());
+        message.put("rDate", request.getRequestDate());
+        message.put("lDate", request.getAccessExpires());
+        message.put("reason", reason);
+        message.put("details", request.getFilter().getFilterText());
+        message.put("dataset", request.getDataset().getTitle());
+
+        List<OrganisationMembership> admins = oOrganisationMembershipMapper.selectAdminsByOrganisation(request.getOrganisation().getId());
+        for (OrganisationMembership admin : admins) {
+            mailer.send("accessRequestGrant.ftl", admin.getUser().getEmail(), "NBN Gateway: Access request approved", message);
+        }
+    }
+
+    private void mailRequestRevoke(OrganisationAccessRequest request, String reason) throws IOException, TemplateException {
+        Map<String, Object> message = new HashMap<String, Object>();
+        message.put("rName", request.getOrganisation().getName());
+        message.put("rDate", request.getRequestDate());
+        message.put("reason", reason);
+        message.put("details", request.getFilter().getFilterText());
+        message.put("dataset", request.getDataset().getTitle());
+        
+        List<OrganisationMembership> admins = oOrganisationMembershipMapper.selectAdminsByOrganisation(request.getOrganisation().getId());
+        for (OrganisationMembership admin : admins) {
+            mailer.send("accessRequestRevoke.ftl", admin.getUser().getEmail(), "NBN Gateway: Access request removed", message);
+        }
+    }
+
 }

@@ -15,6 +15,7 @@
                     modal: true,
                     buttons: {
                         Ok: function() {
+                            displaySendingRequestDialog('Withdrawing Request');
                             $.ajax({
                                 type: 'POST',
                                 contentType: 'application/json; charset=utf-8',
@@ -72,6 +73,11 @@
                 buttons: {
                     Ok: function() {
                         $('#nbn-org-join-reason-dialog').dialog('close');
+                        var text = 'Denying Request';
+                        if (type === 'accept') {
+                            text = 'Accepting Request';
+                        }
+                        displaySendingRequestDialog(text);
                         postResponse(url, id, type, reason);
                     },
                     Cancel: function() {

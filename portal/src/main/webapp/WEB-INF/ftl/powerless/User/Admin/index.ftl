@@ -2,6 +2,7 @@
 <#assign datasets = json.readURL("${api}/user/adminDatasets")/>
 <#assign orgs = json.readURL("${api}/user/organisations")/>
 <#assign orgAs = json.readURL("${api}/user/adminOrganisations")/>
+<#assign orgRs = json.readURL("${api}/organisationMemberships/requests")/>
 
 <@template.master title="National Biodiversity Network Gateway"
     javascripts=["/js/jquery.dataTables.min.js"]
@@ -31,14 +32,34 @@
         <#if datasets?has_content>
             <@datasetAdmin datasets=datasets />
         </#if>
-        <@organisations organisations=orgs admin=orgAs />
+        <@organisations organisations=orgs admin=orgAs requests=orgRs />
     </div>
 </@template.master>
 
-<#macro organisations organisations admin>
+<#macro organisations organisations admin requests>
     <div class="tabbed">
         <h3>Organisations</h3>
-        <!-- <a href="/Organisations/Join">Join an Organisation</a> -->
+        <a href="/Organisations/Join">Join an Organisation</a>
+        <#if requests?has_content>
+        <table class="sTable">
+            <thead>
+                <tr>
+                    <th>Organisation</th>
+                    <th>Request Reason</th>
+                    <th>Request Date</th>
+                </tr>
+            </thead>
+            <tbody>
+            <#list requests as r>
+                <tr>
+                    <td><a href="/Organisations/${r.organisation.id?c}">${r.organisation.name}</a></td>
+                    <td>${r.requestReason}</td>
+                    <td>${r.requestDate}</td>
+                </tr>
+            </#list>
+            </tbody>
+        </table>
+        </#if>
         <table class="sTable">
             <thead>
                 <tr>
@@ -49,13 +70,15 @@
             <tbody>
             <#list organisations as r>
                 <tr>
-                    <td>${r.name}</td>
+                    <td><a href="/Organisations/${r.id?c}">${r.name}</a></td>
                     <#assign t=0 /><#list admin as a><#if a.id==r.id><#assign t=1 /></#if></#list>
                     <#if t==1>
                         <td>
                             <a href="/Organisations/${r.id?c}/Admin">Admin Organisation Membership and Metadata</a><br/>
                             <a href="/AccessRequest/Organisations/${r.id?c}">View Organisation Access Requests</a>
                         </td>
+                    <#elseif admin?has_content>
+                        <td>&nbsp;</td>
                     </#if>
                 </tr>
             </#list>
@@ -71,6 +94,7 @@
             <tr><td>Username:</td><td>${user.username}</td></tr>
             <tr><td>Email:</td><td>${user.email}</td></tr>
             <tr><td><a href="/User/Modify">Modify your user details</a></td><td><a href="/User/Modify#tabs-2">Change password</a></td><td><a href="/User/Modify#tabs-3">Change Email Subscriptions</a></td></tr>
+            <tr><td><a href="/AccessRequest">Access Permissions Summary</a></td><td><a href="/AccessRequest/Create">Create Access Request</a></td></tr>
         </table>
     </div>
 </#macro>
@@ -90,7 +114,7 @@
             <tbody>
             <#list datasets as r>
                 <tr>
-                    <td>${r.title}</td>
+                    <td><a href="/Datasets/${r.key}">${r.title}</a></td>
                     <td>
                         <a href="/Datasets/${r.key}/Edit">Edit Dataset Metadata</a><br/>
                         <a href="/Datasets/${r.key}/Surveys/Edit">Edit Survey Metadata</a><br/>

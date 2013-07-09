@@ -21,7 +21,7 @@ nbn.nbnv.ui.dialog.requestGrantDialog = function() {
             ).append($('<p>')
                 .attr('id', 'grantanonwarn')
                 .addClass('ui-state-error')
-                .append('This request was sent without the user knowing about your dataset. If you reply, they will. So be careful m\'kay?')
+                .append('THIS REQUEST CONTAINS SENSITIVE RECORDS REQUESTED FOR SPECIFIC SITE(S). ACCEPTING THIS ACCESS REQUEST MAY REVEAL THE LOCATION OF THESE SENSITIVE RECORDS TO THE USER')
                 .hide()
             ).append($('<p>')
                 .attr('id', 'granttimelimit')

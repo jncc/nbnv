@@ -15,6 +15,7 @@
                 modal: true,
                 buttons: {
                     "Remove User": function() {
+                        displaySendingRequestDialog('Removing User');
                         $.ajax({
                             type: "POST",
                             contentType: "application/json; charset=utf-8",
@@ -22,7 +23,6 @@
                             data: JSON.stringify({userID: id}),
                             dataType: "json",
                             success: function(result) {
-                                $("#dialog-remove-confirm").dialog("close");
                                 location.reload();
                             },
                             error: function(result) {
@@ -89,6 +89,7 @@
             modal: true,
             buttons: {
                 "Change Role": function() {
+                    displaySendingRequestDialog('Changing Role');
                     $.ajax({
                         type: "POST",
                         contentType: "application/json; charset=utf-8",
@@ -96,7 +97,6 @@
                         data: JSON.stringify({userID: id, role: roleId}),
                         dataType: "json",
                         success: function() {
-                            $("#dialog-role-confirm").dialog("close");
                             location.reload();
                         },
                         error: function() {
