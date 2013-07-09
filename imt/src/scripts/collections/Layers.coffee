@@ -18,13 +18,14 @@ define [
   Internal state, just a place to store the autoResolution 
   for this Layers collection
   ###
-  state : new Backbone.Model defaults:
+  state : new Backbone.Model
     autoResolution: "10km"
+    maxResolution: "10km"
 
   initialize: ->
     #When a layer is added, synchronize that layer to this layers state
     @on "add", (layer) => @_syncLayer(layer)
-    @listenTo @state, "change:autoResolution", => @forEach (layer) => @_syncLayer(layer)
+    @listenTo @state, "change", => @forEach (layer) => @_syncLayer(layer)
 
   ###
   Moves an existing element in the the collection from position index 
@@ -53,8 +54,14 @@ define [
       else if 8 < zoom then '2km'
       else '10km'
 
-  _syncLayer: (layer) ->
-    layer.set "autoResolution", @state.get "autoResolution" if layer.isGridLayer
+    @state.set "maxResolution",
+      if 11 < zoom then '100m'
+      else if 7 < zoom then '1km'
+      else if 6 < zoom then '2km'
+      else if 3 < zoom then '10km'
+      else 'Polygon'
+
+  _syncLayer: (layer) -> layer.set @state.attributes if layer.isGridLayer
 
   ###
   Gets all the layers used datasets of this collection and return

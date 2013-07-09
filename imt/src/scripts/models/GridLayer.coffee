@@ -11,6 +11,7 @@ define [
   initialize: () ->
     @on 'change:resolution change:isPolygon change:autoResolution', -> do @generateLayer
     @on 'change:resolution change:isPolygon change:autoResolution', -> @trigger 'change:name'
+    @on 'change:resolution change:isPolygon change:autoResolution change:maxResolution', -> @trigger 'change:visibility'
 
   ###
   Works out what the current resolution is, if this is a Polygon layer
@@ -22,7 +23,6 @@ define [
     if resolution is 'auto' then @get 'autoResolution'
     else resolution
 
-
   ###
   Generate the label for the grid layer
   ###
@@ -30,8 +30,23 @@ define [
     "#{@getCurrentResolution()} #{@mapOf()} for #{@attributes.name}"
 
   ###
+  Determines if the given layer is currently in range and can be rendered
+  on the map
+  ###
+  isInRange: ->
+    resolutionOrders = ["Polygon", "10km", "2km", "1km", "100m"]
+    layerPos = _.indexOf resolutionOrders, @getCurrentResolution()
+    allowedPos = _.indexOf resolutionOrders, @get "maxResolution"
+    layerPos <= allowedPos
+
+  ###
   Generate the wms layer to request depending on the state of this GridLayer
   ###
   generateLayer: ->
     resolution = @getCurrentResolution()
     @set 'layer', if resolution is "Polygon" then "None-Grid" else "Grid-#{resolution}"
+
+  ###
+  Check if this layer is visible and should be renedered
+  ###
+  isVisible: -> Layer.prototype.isVisible.call(this, arguments) and @isInRange()
