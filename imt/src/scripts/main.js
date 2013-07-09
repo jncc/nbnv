@@ -19,7 +19,8 @@ require.config({
 		'underscore': '../vendor/underscore-amd/underscore',
 		'backbone': '../vendor/backbone-amd/backbone',
 		'openlayers': '../vendor/openlayers-js/index',
-		'proj4js' : '../vendor/proj4js/lib/proj4js-combined'
+		'proj4js' : '../vendor/proj4js/lib/proj4js-combined',
+		'select2' : '../vendor/select2/select2'
 	}
 });
 

@@ -1,38 +1,58 @@
 define [
-  "jquery-ui",
+  "jquery",
   "underscore",
   "backbone",
-  "text!templates/SearchView.html"
-], ($, _, Backbone, template)-> Backbone.View.extend
+  "cs!helpers/Globals",
+  "text!templates/SearchView.html",
+  "select2"
+], ($, _, Backbone, Globals, template)-> Backbone.View.extend
+
+  events: 
+    "select2-selecting": "select"
+
+  rows: 20
 
   initialize: ->
     @$el.html template
-    #Start a new search 
-    @searchCollection = do @model.getSearch
 
-    #Create a jquery autocomplete widget. Use 
-    @$('input').autocomplete 
-      source: _.bind(@search, @)
-      select: _.bind(@select, @)
-    .data('uiAutocomplete')._renderItem = _.bind(@renderResult,@)
+    #Create a select2 infinite scrolling search widget on the input field
+    @$('input').select2
+      minimumInputLength: 2
+      ajax:
+        url: Globals.api "search"
+        quietMillis: 100
+        data: _.bind( @request, @)
+        results: @processResults
+      formatResult: _.bind( @renderResult, @)
+      formatSelection: (result) -> result.searchMatchTitle
+      dropdownCssClass: "bigdrop"
+      escapeMarkup: (m)-> m
 
-  select: (event, ui) ->
-    @model.addSearchResult ui.item
+  ###
+  Populate a query to send to the search end point
+  ###
+  request: (term, page) -> 
+    q: term
+    rows: @rows
+    start: (page-1)*@rows
 
-  search: (request, response) ->
-    @searchCollection
-      .fetch
-        data : 
-          q:request.term, 
-          rows:3
-      .success => 
-        response @searchCollection.map (model)-> 
-          _.extend label: model.attributes.searchMatchTitle, model.attributes
+  ###
+  Assigns an id to each of the results and determines if there are any more
+  results available
+  ###
+  processResults: (data, page) -> 
+    record = data.header.start
+    _.each data.results, ((result) -> result.id = record++ )
 
-  renderResult: (ul, item)->
-    $('<li>')
-      .append( "<a><b>#{item.searchMatchTitle}</b><br>#{@formatResult(item)}</a>" )
-      .appendTo ul
+    results: data.results
+    more: data.header.numFound > data.header.start + data.header.rows
+
+  ###
+  When an option has been selected. Notify the model
+  ###
+  select: (event, ui) -> @model.addSearchResult event.object
+
+  renderResult: (item)-> "<b>#{item.searchMatchTitle}</b><br>#{@formatResult(item)}"
 
   formatResult: (item) ->
     entityType = item.entityType
