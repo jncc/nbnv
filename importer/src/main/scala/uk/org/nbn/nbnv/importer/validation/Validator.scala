@@ -32,11 +32,13 @@ class Validator @Inject()(log: Logger, db: Database ){
     // This currently won't work because of case
 //    val aggregateValidators = List(new Nbnv61Validator)
 
+
+
     val duplicateValidator = new Nbnv61Validator
 
     for ((record, i) <- archive.iteratorRaw.zipWithIndex) {
-      val result = duplicateValidator.processRecord(record)
-      processResult(result)
+      val result2 = duplicateValidator.processRecord(record)
+      processResult(result2)
     }
 
     if (errors > 0) {
