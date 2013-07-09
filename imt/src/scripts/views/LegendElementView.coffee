@@ -21,9 +21,7 @@ define [
     else
       do @customisationView.reopen
 
-  removeLayer:->
-    @customisationView.remove() if @customisationView?
-    @model.collection.remove @model
+  removeLayer: -> @model.collection.remove @model
 
   updateLegendIcon:->
     @$('span.icon').css @model.getLegendIcon()
@@ -44,3 +42,12 @@ define [
 
     do @updateLegendIcon
     do @updateVisibility
+
+  ###
+  This is called when the legend element view has been notified
+  to be removed. Therefore remove the customisationView if one
+  has been created
+  ###
+  remove: ->
+    @customisationView.remove() if @customisationView?
+    Backbone.View.prototype.remove.call this, arguments #Then call the super method
