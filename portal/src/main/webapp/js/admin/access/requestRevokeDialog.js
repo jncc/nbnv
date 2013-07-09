@@ -30,6 +30,7 @@ nbn.nbnv.ui.dialog.requestRevokeDialog = function() {
             width: 650,
             buttons: { 
                 "Revoke Request": function() {
+                        $(":button:contains('Revoke Request')").button('disable');
                         var filter = { action: "revoke", reason: _me.reason }
                         var url;
                         
@@ -43,7 +44,8 @@ nbn.nbnv.ui.dialog.requestRevokeDialog = function() {
                             type: 'POST',
                             url: url,
                             data: filter,
-                            success: function () { document.location.reload(true); }
+                            success: function () { document.location.reload(true); },
+                            error: function () { alert("Problem with request id: " + _me.requestID); document.location.reload(true);  }
                         });
                 }, Cancel: function() { 
                     $(this).dialog("close"); 

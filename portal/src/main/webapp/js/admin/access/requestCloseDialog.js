@@ -18,6 +18,7 @@ nbn.nbnv.ui.dialog.requestCloseDialog = function() {
             autoOpen: false,
             buttons: { 
                 "Close Request": function() {
+                    $(":button:contains('Close Request')").button('disable');
                         var filter = { action: "close", reason: "via portal" };
                         
                         var url;
@@ -32,7 +33,8 @@ nbn.nbnv.ui.dialog.requestCloseDialog = function() {
                             type: 'POST',
                             url: url,
                             data: filter,
-                            success: function () { document.location.reload(true); }
+                            success: function () { document.location.reload(true); },
+                            error: function () { alert("Problem with request id: " + _me.requestID); document.location.reload(true);  }                        
                         });
                 }, Cancel: function() { 
                     $(this).dialog("close"); 

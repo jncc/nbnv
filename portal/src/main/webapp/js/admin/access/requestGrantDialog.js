@@ -41,6 +41,7 @@ nbn.nbnv.ui.dialog.requestGrantDialog = function() {
                 width: 650,
                 buttons: { 
                     "Grant Request": function() {
+                        $(":button:contains('Grant Request')").button('disable');
                         var filter = { action: "grant", reason: _me.reason };
                         var url;
                         
@@ -58,7 +59,8 @@ nbn.nbnv.ui.dialog.requestGrantDialog = function() {
                             type: 'POST',
                             url: url,
                             data: filter,
-                            success: function () { document.location.reload(true); }
+                            success: function () { document.location.reload(true); },
+                            error: function () { alert("Problem with request id: " + _me.requestID); document.location.reload(true);  }
                         });
                     }, Cancel: function() { 
                         $(this).dialog("close"); 
