@@ -594,6 +594,7 @@ public class OrganisationAccessRequestResource extends AbstractResource {
         
         Map<String, Object> message = new HashMap<String, Object>();
         message.put("rName", user.getForename() + " " + user.getSurname());
+        message.put("oName", request.getOrganisation().getName());
         message.put("reason", request.getRequestReason());
         message.put("details", request.getFilter().getFilterText());
         message.put("orgReq", Boolean.TRUE);
