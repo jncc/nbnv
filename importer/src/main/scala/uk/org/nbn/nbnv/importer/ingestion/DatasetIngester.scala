@@ -18,7 +18,7 @@ class DatasetIngester @Inject()(log: Logger,
 
     if (metadata.datasetKey.isEmpty) {
       // Always inserting exactly 1 dataset
-      key = "NewDst00"
+      key = "NewDst00"   // this is used in the stored procedure!
     } else {
       key = metadata.datasetKey
     }
