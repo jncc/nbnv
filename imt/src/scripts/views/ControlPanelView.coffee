@@ -6,7 +6,9 @@ define [
   "cs!views/DatasetsView"
   "cs!views/PickerView"
 ], ($, Backbone, controlPanel, LegendView, DatasetsView, PickerView) -> Backbone.View.extend
-  
+  events :
+    "tabsactivate" : "updateIsPicking"
+
   initialize:->
     do @render
     do @updateVisiblity # update state for the first time
@@ -31,3 +33,11 @@ define [
 
   updateVisiblity:->
     if @model.get "controlPanelVisible" then do @$el.show else do @$el.hide
+
+  ###
+  Determine if the picker tab has been selected. If it has
+  put the map into picking mode
+  ###
+  updateIsPicking: (evt, ui)->
+    isPicking = ui.newPanel.hasClass "picker"
+    @model.getPicker().set "isPicking", isPicking

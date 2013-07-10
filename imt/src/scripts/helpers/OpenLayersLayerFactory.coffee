@@ -70,3 +70,28 @@ define [
       do wmsLayer.redraw #trigger a redraw of the layer. Openlayers doesn't do this when we update the url
 
     return wmsLayer
+
+  ###
+  Create a drawing layer which is listens to the Picker and updates the picker
+  if features are drawn
+  ###
+  getDrawingLayer: (picker) ->
+    wktFactory = new OpenLayers.Format.WKT #Create the wktFactory to convert openlayers features to wkt
+    drawingLayer = new OpenLayers.Layer.Vector "Drawing Layer"
+
+    #Define a simple function which sets the features on the drawing layer
+    #to that of the wkt in the picker (if there is any defined)
+    updateDrawingLayer = ->
+      wkt = picker.get "wkt"
+      do drawingLayer.removeAllFeatures
+      drawingLayer.addFeatures wktFactory.read wkt if wkt
+
+    do updateDrawingLayer #Update the drawing layer initally
+
+    picker.on 'change:wkt', updateDrawingLayer #When the wkt is changed, update the layer
+
+    #If a feature is added to the layer then update the wkt
+    drawingLayer.events.register "featureadded", drawingLayer, (evt)->
+      picker.set "wkt", wktFactory.write(evt.feature)
+
+    return drawingLayer

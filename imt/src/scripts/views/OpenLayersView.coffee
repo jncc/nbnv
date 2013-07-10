@@ -12,15 +12,21 @@ define [
   Backbone.View.extend
     # Register to imt events which the view should respond to
     initialize: ->
+      @drawingLayer = OpenLayersLayerFactory.getDrawingLayer @model.getPicker()
+      @drawingControl = new OpenLayers.Control.DrawFeature @drawingLayer, OpenLayers.Handler.RegularPolygon,
+        handlerOptions: sides: 4
+
       @map = new OpenLayers.Map
         div: @el,
         maxExtent: new OpenLayers.Bounds(-20037508.34,-20037508.34,20037508.34,20037508.34),
         displayProjection: new OpenLayers.Projection("EPSG:4326"),
         theme: null,
-        layers: [OpenLayersLayerFactory.getBaseLayer( @model.get "baseLayer" )],
+        layers: [OpenLayersLayerFactory.getBaseLayer( @model.get "baseLayer" ), @drawingLayer],
         eventListeners: 
           moveend : => @model.set("viewport", do @getOpenlayersViewport)
           zoomend: => @model.getLayers().setZoom(do @map.getZoom)
+
+      @map.addControl(@drawingControl)
 
       @zoomToViewport(null, @model.get "viewport")
       @listenTo @model, "change:viewport", @zoomToViewport
@@ -28,6 +34,7 @@ define [
       @listenTo @model.getLayers(), "add", @addLayer
       @listenTo @model.getLayers(), "position", @positionLayer
       @listenTo @model.getLayers(), "remove", @removeLayer
+      @listenTo @model.getPicker(), "change:isPicking", @toggleDrawing
 
     ###
     Create an openlayers version of the desired baselayer
@@ -43,11 +50,24 @@ define [
       #this line is required to fix a bug in OpenLayers 2.10 (Ticket #1249)
       @map.setCenter(centre.transform(oldProjection, @map.getProjectionObject()),zoom); 
 
+
+    ###
+    If the picker is in picking mode then enable the drawing control
+    ###
+    toggleDrawing: (evt, isPicking)->
+      if isPicking then @drawingControl.activate() else @drawingControl.deactivate()
+
     ###
     Add a new wms layer for the given layer. Associates the new Openlayers.Layer.WMS to
     the Backbone layer model for easy removing at a later date
     ###
-    addLayer: (layer)-> @map.addLayer layer._openlayersWMS = OpenLayersLayerFactory.createLayer(layer)
+    addLayer: (layer)-> 
+      @map.addLayer layer._openlayersWMS = OpenLayersLayerFactory.createLayer(layer)
+      #move the new layer to below the drawing layer(s). this can be done by setting
+      #the index of the new layer to the size of the collection. Length will be one 
+      #than the last index of the collection, and will therefore will accomodate the 
+      #base layer
+      @map.setLayerIndex layer._openlayersWMS, @model.getLayers().length
 
     ###
     Listens to when layers have been repositioned. Notify the OpenLayers Map and set the 

@@ -8,7 +8,8 @@ define [
     features: new Features
     isPicking: false
     layers: new Layers
-
+    wkt: ""
+    
   getLayers: -> @get "layers"
 
   getFeatures: -> @get "features"
