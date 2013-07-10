@@ -6,7 +6,8 @@ define [
   "cs!views/SearchView",
   "cs!views/BaseLayerSelectorView",
   "cs!views/ControlPanelView"
-], ($, Backbone, imtScaffolding, OpenLayersView, SearchView, BaseLayerSelectorView, ControlPanelView) -> Backbone.View.extend
+  "cs!views/UserView"
+], ($, Backbone, imtScaffolding, OpenLayersView, SearchView, BaseLayerSelectorView, ControlPanelView, UserView) -> Backbone.View.extend
   el: '#imt',
 
   events:
@@ -47,5 +48,9 @@ define [
     @controlPanelView = new ControlPanelView
       model: @model
       el: @$('.controlPanel')
+
+    @userView = new UserView
+      model: @model.getUser()
+      el: @$('.userView')
 
     do @renderControlPanelToggle #update the state of the control panel button

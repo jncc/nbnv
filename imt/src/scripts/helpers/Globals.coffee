@@ -3,7 +3,8 @@ define [
 ], (_) ->
   api: (path) -> "http://staging.testnbn.net/api/#{path}?callback=?"
   gis: (path, attr) -> "http://staging.testnbn.net/gis/#{path}?#{@_buildQueryString(attr)}"
-
+  portal: (path) -> "http://staging.testnbn.net/#{path}"
+  
   ###
   The following function will build a query string from an object of
   filters. If an attribute is provided in that object which does not

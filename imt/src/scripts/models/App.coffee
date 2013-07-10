@@ -2,7 +2,8 @@ define [
   'underscore'
   'backbone'
   'cs!collections/Layers'
-], (_, Backbone, Layers) -> Backbone.Model.extend 
+  'cs!models/User'
+], (_, Backbone, Layers, User) -> Backbone.Model.extend 
   defaults :
     viewport: 
       minX:  -14.489099982674913
@@ -12,6 +13,14 @@ define [
     baseLayer: "Aerial"
     layers: new Layers
     controlPanelVisible: false
+
+  user: new User
+
+  initialize: () ->
+    do @user.fetch
+
+
+  getUser: -> @user
 
   ###
   Return this models layers collection
