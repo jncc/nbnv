@@ -13,18 +13,17 @@ define [
       maxY: 59.45733404137668
     baseLayer: "Aerial"
     layers: new Layers
+    currentUser: new User
     controlPanelVisible: false
 
-  currentUser: new User
-
   initialize: () ->
-    do @currentUser.fetch
+    do @getCurrentUser().fetch
     @set "picker", new Picker layers: @getLayers()
 
   ###
   Returns the user whose access is currently being used
   ###
-  getCurrentUser: -> @currentUser
+  getCurrentUser: -> @get "currentUser"
 
   ###
   Return this models layers collection
