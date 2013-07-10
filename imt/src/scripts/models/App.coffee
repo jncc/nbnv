@@ -14,13 +14,15 @@ define [
     layers: new Layers
     controlPanelVisible: false
 
-  user: new User
+  currentUser: new User
 
   initialize: () ->
-    do @user.fetch
+    do @currentUser.fetch
 
-
-  getUser: -> @user
+  ###
+  Returns the user whose access is currently being used
+  ###
+  getCurrentUser: -> @currentUser
 
   ###
   Return this models layers collection

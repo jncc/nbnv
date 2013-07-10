@@ -50,7 +50,7 @@ define [
       el: @$('.controlPanel')
 
     @userView = new UserView
-      model: @model.getUser()
+      model: @model.getCurrentUser()
       el: @$('.userView')
 
     do @renderControlPanelToggle #update the state of the control panel button
