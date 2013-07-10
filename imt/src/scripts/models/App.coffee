@@ -3,7 +3,8 @@ define [
   'backbone'
   'cs!collections/Layers'
   'cs!models/User'
-], (_, Backbone, Layers, User) -> Backbone.Model.extend 
+  'cs!models/Picker'
+], (_, Backbone, Layers, User, Picker) -> Backbone.Model.extend 
   defaults :
     viewport: 
       minX:  -14.489099982674913
@@ -18,6 +19,7 @@ define [
 
   initialize: () ->
     do @currentUser.fetch
+    @set "picker", new Picker layers: @getLayers()
 
   ###
   Returns the user whose access is currently being used
@@ -28,6 +30,8 @@ define [
   Return this models layers collection
   ###
   getLayers: -> @get "layers"
+
+  getPicker: -> @get "picker"
 
   getBaseLayers: -> ["OS", "Outline", "Shaded", "Aerial", "Hybrid"]
 

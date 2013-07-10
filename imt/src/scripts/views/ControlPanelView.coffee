@@ -4,7 +4,8 @@ define [
   "hbs!templates/ControlPanel"
   "cs!views/LegendView"
   "cs!views/DatasetsView"
-], ($, Backbone, controlPanel, LegendView, DatasetsView) -> Backbone.View.extend
+  "cs!views/PickerView"
+], ($, Backbone, controlPanel, LegendView, DatasetsView, PickerView) -> Backbone.View.extend
   
   initialize:->
     do @render
@@ -23,6 +24,10 @@ define [
     @datasetsView = new DatasetsView
       collection: @model.getLayers()
       el: @$('.datasets')
+
+    @pickerView = new PickerView
+      collection: @model.getPicker().getFeatures()
+      el: @$('.picker');
 
   updateVisiblity:->
     if @model.get "controlPanelVisible" then do @$el.show else do @$el.hide
