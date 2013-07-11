@@ -7,10 +7,12 @@ class OptionsSuite extends BaseFunSuite {
   val archivePath = "c:\\some\\archive.zip"
   val logDir = "c:\\logs"
   val tempDir = "c:\\temp"
+  val target = Target.validate
+  val mode = Mode.incremental
 
   test("valid command line options should parse") {
 
-    val valid = List(archivePath, "-target", "validate", "-logDir", logDir, "-tempDir", tempDir)
+    val valid = List(archivePath, "-target", target.toString, "-mode", mode.toString, "-logDir", logDir, "-tempDir", tempDir)
     val result = Options.parse(valid)
 
     assertValid(result)
@@ -18,7 +20,7 @@ class OptionsSuite extends BaseFunSuite {
 
   test("valid command line options passed in a weird order should parse") {
 
-    val valid = List("-logDir", logDir, "-tempDir", tempDir, "-target", "validate", archivePath)
+    val valid = List("-logDir", logDir, "-tempDir", tempDir, "-target", Target.validate.toString, "-mode", mode.toString, archivePath)
     val result = Options.parse(valid)
 
     assertValid(result)
@@ -41,6 +43,7 @@ class OptionsSuite extends BaseFunSuite {
         options.archivePath should be (archivePath)
         options.logDir should be (logDir)
         options.tempDir should be (tempDir)
+        options.mode should be (Mode.incremental)
         options.target should be (Target.validate)
       }
       case _ => fail()
