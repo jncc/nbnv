@@ -5,7 +5,7 @@ import javax.persistence.EntityTransaction
 import uk.org.nbn.nbnv.importer.records.NbnRecord
 import org.gbif.dwc.text.Archive
 import uk.org.nbn.nbnv.importer.metadata.Metadata
-import uk.org.nbn.nbnv.importer.{Target, Options}
+import uk.org.nbn.nbnv.importer.{Mode, Target, Options}
 import com.google.inject.Inject
 import org.apache.log4j.Logger
 import uk.org.nbn.nbnv.importer.data.Database
@@ -90,9 +90,11 @@ class Ingester @Inject()(options: Options,
 
   def finaliseImport(metadata: Metadata)
   {
-    log.info("Deleting existing records...")
-    //Clear down the taxon observations
-    db.repo.deleteTaxonObservationsAndRelatedRecords(metadata.datasetKey)
+    if (options.mode == Mode.full) {
+      log.info("Deleting existing records...")
+      //Clear down the taxon observations
+      db.repo.deleteTaxonObservationsAndRelatedRecords(metadata.datasetKey)
+    }
 
     log.info("Importing records...")
 
