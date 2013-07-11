@@ -72,6 +72,7 @@ nbn.nbnv.ui.dialog.requestGrantDialog = function() {
     this.show = function(id, json, dataset, datasetEndpoint) {
         this.requestID = id;
         this.timeLimit = new nbn.nbnv.ui.timeLimit(json);
+        $('#granttimelimit').html('');
         $('#granttimelimit').append(this.timeLimit._renderPanel());
         var filter = {};
         $('#granteffect').html('');
