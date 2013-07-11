@@ -35,6 +35,9 @@ public interface TaxonObservationMapper {
     @Select("SELECT * FROM UserTaxonObservationData WHERE pTaxonVersionKey = #{id} AND userID = #{userKey}")
     public List<TaxonObservation> selectByPTVK(@Param("id") String id, @Param("userKey") int userKey);
     
+    @Select("SELECT TOP 1 absence FROM UserTaxonObservationData WHere pTaxonVersionKey = #{id} AND userID = #{userKey} AND absence = #{absence}")
+    public Integer pTVKHasAbsence(@Param("id") String id, @Param("userKey") int userKey, @Param("absence") int absence);
+    
     @SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectRecords")
     public List<TaxonObservation> selectObservationRecordsByFilter(
             @Param("user") User user

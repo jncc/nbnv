@@ -206,7 +206,7 @@ public class TaxonResource extends AbstractResource {
     public List<TaxonWebLink> getTaxonWebLinks(@PathParam("taxonVersionKey") String taxonVersionKey) {
         return taxonMapper.getActiveWebLinksByTVK(taxonVersionKey);
     }
-
+    
     /**
      * Search for a Taxon Record given a search term, this is a SOLR search
      * function

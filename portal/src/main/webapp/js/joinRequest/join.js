@@ -5,7 +5,7 @@
                 alert("Please Select an Organisation!");
             } else {
                 var org = $('#combobox').val();
-                if ($('#nbn-org-join-request-reason').val().trim() === "") {
+                if ($.trim($('#nbn-org-join-request-reason').val()) === "") {
                     $('#nbn-org-join-request-dialog-extra').text(' without a message');
                 } else {
                     $('#nbn-org-join-request-dialog-extra').text('');

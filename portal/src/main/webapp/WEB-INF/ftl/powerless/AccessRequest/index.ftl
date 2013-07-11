@@ -1,6 +1,7 @@
 <#assign gUserRequests=json.readURL("${api}/user/userAccesses/requests/granted") />
 <#assign gOrgRequests=json.readURL("${api}/organisation/organisationAccesses/requests/granted") />
 <#assign pUserRequests=json.readURL("${api}/user/userAccesses/requests/pending") />
+<#assign pOrgRequests=json.readURL("${api}/organisation/organisationAccesses/requests/pending") />
 
 <@template.master title="Requests for Datasets"
     javascripts=["/js/jquery.dataTables.min.js"]
@@ -100,10 +101,29 @@
             </tr>
         </thead>
         <tbody>
-            <#list gUserRequests as r>
+            <#list pUserRequests as r>
             <tr>
                 <td>
                     ${r.user.forename} ${r.user.surname}
+                </td>
+                <td>
+                    ${r.dataset.title}
+                </td>
+                <td>
+                    ${r.filter.filterText}
+                </td>
+                <td>
+                    ${r.requestReason}
+                </td>
+                <td>
+                    ${r.requestDate}
+                </td>
+            </tr>
+            </#list>
+            <#list pOrgRequests as r>
+            <tr>
+                <td>
+                    ${r.organisation.name}
                 </td>
                 <td>
                     ${r.dataset.title}
