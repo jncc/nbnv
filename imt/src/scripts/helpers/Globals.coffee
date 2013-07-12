@@ -1,9 +1,28 @@
 define [
   'underscore'
 ], (_) ->
-  api: (path) -> "http://staging.testnbn.net/api/#{path}?callback=?"
-  gis: (path, attr) -> "http://staging.testnbn.net/gis/#{path}?#{@_buildQueryString(attr)}"
-  portal: (path) -> "http://staging.testnbn.net/#{path}"
+  ###
+  Define the servers which should be used based on the where the IMT
+  is currently operating
+  ###
+  servers: 
+    switch window.location.host
+      when "localhost:8080", "dev-data.nbn.org.uk" 
+        api: "dev-data.nbn.org.uk/api"
+        gis: "dev-data.nbn.org.uk/gis"
+        portal: "dev-data.nbn.org.uk" 
+      when "staging.testnbn.net" 
+        api: "staging.testnbn.net/api"
+        gis: "staging.testnbn.net/gis"
+        portal: "staging.testnbn.net" 
+      else  
+        api: "data.nbn.org.uk/api"
+        gis: "data.nbn.org.uk/gis"
+        portal: "data.nbn.org.uk"
+
+  api: (path) -> "http://#{@servers.api}/#{path}?callback=?"
+  gis: (path, attr) -> "http://#{@servers.gis}/#{path}?#{@_buildQueryString(attr)}"
+  portal: (path) -> "http://#{@servers.portal}/#{path}"
   
   ###
   The following function will build a query string from an object of
