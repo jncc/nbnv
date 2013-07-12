@@ -137,6 +137,24 @@ public class TaxonObservationResource extends AbstractResource {
     public boolean taxonHasAbsence(@TokenUser() User user, @PathParam("ptvk") String taxonVersionKey) {
         return (observationMapper.pTVKHasAbsence(taxonVersionKey, user.getId(), 1) != null);
     }
+    
+    /**
+     * Returns if a TVK has polygon records associated with it which are 
+     * accessible by the current user
+     * 
+     * @param user The current user
+     * @param taxonVersionKey The TVK to be searched
+     * @return If any polygon records exist
+     * 
+     * @response.representation.200.qname boolean
+     * @response.representation.200.mediaType application/json
+     */
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/{ptvk : [A-Z]{3}SYS[0-9]{10}}/hasPolygon")
+    public boolean taxonHasPolygon(@TokenUser() User user, @PathParam("ptvk") String taxonVersionKey) {
+        return (observationMapper.pTVKHasPolygon(taxonVersionKey, user.getId()) != null);
+    }
 
 
     /*

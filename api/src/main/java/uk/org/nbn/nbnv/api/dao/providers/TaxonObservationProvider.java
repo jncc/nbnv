@@ -268,10 +268,10 @@ public class TaxonObservationProvider {
             }
             INNER_JOIN("FeatureData ftd ON ftd.id = o.featureID");
             if (ObservationResourceDefaults.SPATIAL_RELATIONSHIP_WITHIN.equals(spatialRelationship)) {
-                WHERE("ftd.geom.STWithin(geometry::STGeomFromText(#{polygon}, 4326) = 1");
+                WHERE("ftd.geom.STWithin(geometry::STGeomFromText(#{polygon}, 4326)) = 1");
             } else {
-                WHERE("ftd.geom.STIntersects(geometry::STGeomFromText(#{polygon}, 4326) = 1");
-                WHERE("ftd.geom.STTouches(geometry::STGeomFromText(#{polygon}, 4326) = 0");
+                WHERE("ftd.geom.STIntersects(geometry::STGeomFromText(#{polygon}, 4326)) = 1");
+                WHERE("ftd.geom.STTouches(geometry::STGeomFromText(#{polygon}, 4326)) = 0");
             }            
         }
         
@@ -349,10 +349,10 @@ public class TaxonObservationProvider {
             }
             INNER_JOIN("FeatureData ftd ON ftd.id = o.featureID");
             if (ObservationResourceDefaults.SPATIAL_RELATIONSHIP_WITHIN.equals(spatialRelationship)) {
-                WHERE("ftd.geom.STWithin(geometry::STGeomFromText(#{polygon}, 4326) = 1");
+                WHERE("ftd.geom.STWithin(geometry::STGeomFromText(#{polygon}, 4326)) = 1");
             } else {
-                WHERE("ftd.geom.STIntersects(geometry::STGeomFromText(#{polygon}, 4326) = 1");
-                WHERE("ftd.geom.STTouches(geometry::STGeomFromText(#{polygon}, 4326) = 0");
+                WHERE("ftd.geom.STIntersects(geometry::STGeomFromText(#{polygon}, 4326)) = 1");
+                WHERE("ftd.geom.STTouches(geometry::STGeomFromText(#{polygon}, 4326)) = 0");
             }            
         }
 
