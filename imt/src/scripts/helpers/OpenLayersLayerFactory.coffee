@@ -73,25 +73,37 @@ define [
 
   ###
   Create a drawing layer which is listens to the Picker and updates the picker
-  if features are drawn
+  if features are drawn.
   ###
   getDrawingLayer: (picker) ->
     wktFactory = new OpenLayers.Format.WKT #Create the wktFactory to convert openlayers features to wkt
     drawingLayer = new OpenLayers.Layer.Vector "Drawing Layer"
+    epsg4326 = new OpenLayers.Projection("EPSG:4326")
 
     #Define a simple function which sets the features on the drawing layer
     #to that of the wkt in the picker (if there is any defined)
     updateDrawingLayer = ->
       wkt = picker.get "wkt"
       do drawingLayer.removeAllFeatures
-      drawingLayer.addFeatures wktFactory.read wkt if wkt
-
-    do updateDrawingLayer #Update the drawing layer initally
+      
+      #If a wkt value is set then we need to read it into a vector,
+      #convert it from epsg4326 to the projection system of the map
+      #then add it to the picking layer
+      if wkt
+        vector = wktFactory.read wkt
+        vector.geometry.transform epsg4326, drawingLayer.map.getProjectionObject()
+        drawingLayer.addFeatures vector, silent:true
 
     picker.on 'change:wkt', updateDrawingLayer #When the wkt is changed, update the layer
 
     #If a feature is added to the layer then update the wkt
     drawingLayer.events.register "featureadded", drawingLayer, (evt)->
-      picker.set "wkt", wktFactory.write(evt.feature)
+      feature = evt.feature.clone() #clone the feature so we can perform a transformation
+      feature.geometry.transform drawingLayer.map.getProjectionObject(), epsg4326 #convert to 4326
+      picker.set "wkt", wktFactory.write(feature)
+    
+    #Update the drawing layer when added to a map
+    drawingLayer.events.register "added", drawingLayer, updateDrawingLayer
 
+    drawingLayer.update = updateDrawingLayer #Attaching the update method to be called from elsewhere
     return drawingLayer

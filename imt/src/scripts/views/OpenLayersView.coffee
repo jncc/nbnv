@@ -19,7 +19,7 @@ define [
       @map = new OpenLayers.Map
         div: @el,
         maxExtent: new OpenLayers.Bounds(-20037508.34,-20037508.34,20037508.34,20037508.34),
-        displayProjection: new OpenLayers.Projection("EPSG:4326"),
+        displayProjection: new OpenLayers.Projection("EPSG:3857"),
         theme: null,
         layers: [OpenLayersLayerFactory.getBaseLayer( @model.get "baseLayer" ), @drawingLayer],
         eventListeners: 
@@ -27,7 +27,9 @@ define [
           zoomend: => @model.getLayers().setZoom(do @map.getZoom)
 
       @map.addControl(@drawingControl)
-
+      #If base layer changes, drawing layer might need to be reprojected
+      @map.events.register "changebaselayer", @map, @drawingLayer.update 
+      
       @zoomToViewport(null, @model.get "viewport")
       @listenTo @model, "change:viewport", @zoomToViewport
       @listenTo @model, "change:baseLayer", @updateBaseLayer
@@ -44,11 +46,11 @@ define [
       zoom = @map.getZoom()
       oldProjection = @map.getProjectionObject()
 
-      @map.removeLayer(@map.baseLayer); #remove the current baseLayer
+      @map.removeLayer @map.baseLayer #remove the current baseLayer
       @map.addLayer OpenLayersLayerFactory.getBaseLayer baselayer #Find the openlayers version of baseLayer and add
 
       #this line is required to fix a bug in OpenLayers 2.10 (Ticket #1249)
-      @map.setCenter(centre.transform(oldProjection, @map.getProjectionObject()),zoom); 
+      @map.setCenter centre.transform(oldProjection, @map.getProjectionObject()), zoom
 
 
     ###
