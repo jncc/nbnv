@@ -4,8 +4,9 @@ define [
   "cs!models/mixins/TemporalFilterMixin"
   "cs!models/mixins/DatasetFilterMixin"
   "cs!models/mixins/PolygonFillMixin"
+  "cs!collections/TaxonObservations"
   "cs!helpers/Globals"
-], (_, GridLayer, TemporalFilterMixin, DatasetFilterMixin, PolygonFillMixin, Globals) -> GridLayer.extend _.extend {}, TemporalFilterMixin, DatasetFilterMixin, PolygonFillMixin,
+], (_, GridLayer, TemporalFilterMixin, DatasetFilterMixin, PolygonFillMixin, TaxonObservations, Globals) -> GridLayer.extend _.extend {}, TemporalFilterMixin, DatasetFilterMixin, PolygonFillMixin,
   defaults:
     opacity: 1
     visibility: true
@@ -37,12 +38,15 @@ define [
     endyear : @getEndDate() #Temporal mixin handles this value
     datasets: @get("datasets").join ','
 
-  getPickerResults: (polygon) -> Globals.api "taxonObservations",
-    ptvk: @id
-    polygon: polygon
-    startYear: @getStartDate() #Temporal mixin handles this value
-    endYear : @getEndDate() #Temporal mixin handles this value
-    datasetKey: @get("datasets") #TODO make dataset array work
+  getPickerResults: (polygon) -> 
+    taxonObservations = new TaxonObservations
+    taxonObservations.fetch data:
+      ptvk: @id
+      polygon: polygon
+      startYear: @getStartDate() #Temporal mixin handles this value
+      endYear : @getEndDate() #Temporal mixin handles this value
+      datasetKey: @get("datasets") #TODO make dataset array work
+    return taxonObservations
 
   ###
   Define what this layer is mapping

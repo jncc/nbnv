@@ -26,4 +26,6 @@ define [
 #    @getFeatures().add new Feature ({layerName: "layer3", info: "feauture1"})
 
     
-    @getLayers().each((layer) => console.log layer.getPickerResults(@get('wkt')))
+    @getLayers().each (layer) => 
+      results = layer.getPickerResults(@get('wkt'))
+      results.on "reset", -> console.log ""
