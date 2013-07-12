@@ -1,4 +1,4 @@
-<#assign dataset=json.readURL("${api}/datasets/${URLParameters.dataset}")>
+<#assign dataset=json.readURL("${api}/datasets/${URLParameters.dataset}/edit")>
 
 <@template.master title="Metadata for ${dataset.title}"
     javascripts=["/js/jquery-ui-1.8.23.custom.min.js","/js/jquery.dataTables.min.js","/js/admin/metadata.js"] 

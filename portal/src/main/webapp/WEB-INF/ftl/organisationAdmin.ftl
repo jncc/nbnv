@@ -1,9 +1,9 @@
 <@template.master title="NBN Gateway - Organisations Administration"
-    javascripts=["/js/jquery-ui-1.8.23.custom.min.js/","/js/enable-dataset-metadata-tabs.js","/js/jquery.dataTables.min.js","/js/orgAdmin/enable-users-datatable.js","/js/orgAdmin/enable-join-datatable.js","/js/orgAdmin/enable-direct-add-user.js"]
-    csss=["/css/smoothness/jquery-ui-1.8.23.custom.css","/css/organisation.css","/css/org-admin.css"]>
+    javascripts=["/js/jquery-ui-1.8.23.custom.min.js/","/js/enable-dataset-metadata-tabs.js","/js/jquery.dataTables.min.js","/js/orgAdmin/enable-users-datatable.js","/js/orgAdmin/enable-join-datatable.js","/js/orgAdmin/enable-direct-add-user.js","/js/jquery.validate.min.js","/js/orgAdmin/enable-metadata-edit.js","/js/dialog_spinner.js"]
+    csss=["/css/smoothness/jquery-ui-1.8.23.custom.css","/css/organisation.css","/css/org-admin.css","/css/dialog-spinner.css"]>
 
     <#assign organisationId="${.data_model['organisationID']}">
-    <#assign organisation=json.readURL("${api}/organisations/${organisationId}")>
+    <#assign organisation=json.readURL("${api}/organisations/${organisationId}/metadata")>
     <#assign users=json.readURL("${api}/organisationMemberships/${organisationId}")>
     <#assign joinRequests=json.readURL("${api}/organisationMemberships/${organisationId}/requests")>
 
@@ -13,6 +13,7 @@
             <li><a href="#tabs-1">Current Members</a></li>
             <li><a href="#tabs-2">Add a Member</a></li>
             <li><a href="#tabs-3">Membership Requests <b>(${joinRequests?size})</b></a></li>
+            <li><a href="#tabs-4">Update Organisation Details</a></li>
         </ul>
         <div id="tabs-1">
             <@parseUsers userList=users />
@@ -24,6 +25,50 @@
         </div>
         <div id="tabs-3">
             <@parseRequests requestList=joinRequests />
+        </div>
+        <div id="tabs-4">
+            <form id="nbn-org-metadata-edit" action="${api}/organisations/${organisationId}/metadata">
+                <table>
+                    <tr>
+                        <th>Name</th>
+                        <td><input type="text" name="name" value="${organisation.name}" /></td>
+                    </tr>
+                    <tr>
+                        <th>Abbreviation</th>
+                        <td><input type="text" name="abbreviation" value="<#if organisation.abbreviation??>${organisation.abbreviation}<#else></#if>" /></td>
+                    </td>
+                    <tr>
+                        <th>Summary</th>    
+                        <td><textarea name="summary"><#if organisation.summary??>${organisation.summary}<#else></#if></textarea></td>
+                    </tr>
+                    <tr>
+                        <th>Address</th>
+                        <td><textarea name="address"><#if organisation.address??>${organisation.address}<#else></#if></textarea></td>
+                    </tr>
+                    <tr>
+                        <th>Postcode</th>
+                        <td><input type="text" name="postcode" value="<#if organisation.postcode??>${organisation.postcode}<#else></#if>" /></td>
+                    </tr>
+                    <tr>
+                        <th>Phone</th>
+                        <td><input type="text" name="phone" value="<#if organisation.phone??>${organisation.phone}<#else></#if>" /></td>
+                    </tr>
+                    <tr>
+                        <th>Website</th>
+                        <td><input type="text" name="website" value="<#if organisation.website??>${organisation.website}<#else></#if>" /></td>
+                    </tr>
+                    <tr>
+                        <th>Contact Name</th>
+                        <td><input type="text" name="contactName" value="<#if organisation.contactName??>${organisation.contactName}<#else></#if>" /></td>
+                    </tr>
+                    <tr>
+                        <th>Contact Email</th>
+                        <td><input type="text" name="contactEmail" value="<#if organisation.contactEmail??>${organisation.contactEmail}<#else></#if>" /></td>
+                    </tr>
+                </table>
+                <input id="nbn-org-metadata-update-submit" type="submit" value="Change Organisation Details" />
+                <div id="nbn-waiting-ticker" style="display:none; float: right;"><p>Warning it may take some time for these changes to propagate to live site <img src="/img/ajax-loader.gif" /></p></div>
+            </form>
         </div>
     </div>
 
@@ -113,7 +158,7 @@
                 <td class="nbn-org-user-join-id-td">${request.key?string("0")}</td>
                 <td class="nbn-org-user-join-name-td">${request.name}</td>
                 <td class="nbn-org-user-join-request-text-td">${request.text}</td>
-                <td class="nbn-org-user-join-request-date-td">${request.date?number_to_date}</td>
+                <td class="nbn-org-user-join-request-date-td">${request.date}</td>
                 <td class="nbn-org-user-join-request-view-td"><a href="/Organisations/JoinRequest/${request.key?string("0")}">Action this request</a></td>
             </tr>
         </#list>

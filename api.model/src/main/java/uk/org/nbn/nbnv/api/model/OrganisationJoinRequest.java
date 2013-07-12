@@ -1,6 +1,6 @@
 package uk.org.nbn.nbnv.api.model;
 
-import java.util.Date;
+import java.sql.Date;
 
 /**
  *

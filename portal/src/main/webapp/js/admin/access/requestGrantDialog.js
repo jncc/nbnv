@@ -8,6 +8,7 @@ nbn.nbnv.ui.dialog.requestGrantDialog = function() {
     this.div = null;
     this.reason = '';
     this.timeLimit = null;
+    this.orgReq = false;
     
     this._render = function() {
         var _me = this;
@@ -20,7 +21,7 @@ nbn.nbnv.ui.dialog.requestGrantDialog = function() {
             ).append($('<p>')
                 .attr('id', 'grantanonwarn')
                 .addClass('ui-state-error')
-                .append('This request was sent without the user knowing about your dataset. If you reply, they will. So be careful m\'kay?')
+                .append('THIS REQUEST CONTAINS SENSITIVE RECORDS REQUESTED FOR SPECIFIC SITE(S). ACCEPTING THIS ACCESS REQUEST MAY REVEAL THE LOCATION OF THESE SENSITIVE RECORDS TO THE USER')
                 .hide()
             ).append($('<p>')
                 .attr('id', 'granttimelimit')
@@ -40,7 +41,15 @@ nbn.nbnv.ui.dialog.requestGrantDialog = function() {
                 width: 650,
                 buttons: { 
                     "Grant Request": function() {
+                        $(":button:contains('Grant Request')").button('disable');
                         var filter = { action: "grant", reason: _me.reason };
+                        var url;
+                        
+                        if (_me.orgReq) {
+                            url = nbn.nbnv.api + '/organisation/organisationAccesses/requests/' + _me.requestID;
+                        } else {
+                            url = nbn.nbnv.api + '/user/userAccesses/requests/' + _me.requestID;
+                        }
                         
                         if (!_me.timeLimit._all) {
                             filter.expires = _me.timeLimit.getJson().date;
@@ -48,9 +57,10 @@ nbn.nbnv.ui.dialog.requestGrantDialog = function() {
                         
                         $.ajax({
                             type: 'POST',
-                            url: nbn.nbnv.api + '/user/userAccesses/requests/' + _me.requestID,
+                            url: url,
                             data: filter,
-                            success: function () { document.location.reload(true); }
+                            success: function () { document.location.reload(true); },
+                            error: function () { alert("Problem with request id: " + _me.requestID); document.location.reload(true);  }
                         });
                     }, Cancel: function() { 
                         $(this).dialog("close"); 
@@ -62,11 +72,14 @@ nbn.nbnv.ui.dialog.requestGrantDialog = function() {
     this.show = function(id, json, dataset, datasetEndpoint) {
         this.requestID = id;
         this.timeLimit = new nbn.nbnv.ui.timeLimit(json);
+        $('#granttimelimit').html('');
         $('#granttimelimit').append(this.timeLimit._renderPanel());
         var filter = {};
         $('#granteffect').html('');
         $('#granteffect').text('Loading request record coverage');
         $('#grantanonwarn').hide();
+        
+        if ('organisationID' in json.reason && json.reason.organisationID != -1) { this.orgReq = true; } else { this.orgReq = false; }
         
         if (!json.taxon.all) { 
             if (json.taxon.tvk) {

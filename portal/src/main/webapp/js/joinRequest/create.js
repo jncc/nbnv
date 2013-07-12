@@ -6,7 +6,7 @@
 (function($) {
     $(document).ready(function() {
         $('#nbn-org-join-request-submit').click(function(e) {
-            if ($('#nbn-org-join-request-reason').val().trim() === "") {
+            if ($.trim($('#nbn-org-join-request-reason').val()) === "") {
                 $('#nbn-org-join-request-dialog-extra').text(' without a message');
             } else {
                 $('#nbn-org-join-request-dialog-extra').text('');
@@ -17,6 +17,7 @@
                 modal: true,
                 buttons: {
                     'Send Request': function() {
+                        displaySendingRequestDialog('Sending Request');
                         $.ajax({
                             type: 'PUT',
                             contentType: "application/json; charset=utf-8",

@@ -216,7 +216,11 @@
     <ul>
         <li>Public access: 
         <#if dataset.typeName == "Taxon">
-            records available at ${dataset.publicResolution}
+            <#if dataset.publicResolution == "None">
+                No access
+            <#else>
+                records available at ${dataset.publicResolution}
+            </#if>
             <#if dataset.publicAttribute>
                 with attributes
             </#if>

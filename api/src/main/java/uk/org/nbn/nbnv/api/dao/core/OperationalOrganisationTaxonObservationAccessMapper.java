@@ -13,7 +13,7 @@ import org.apache.ibatis.annotations.Param;
  * @author paulbe
  */
 public interface OperationalOrganisationTaxonObservationAccessMapper {
-    @Insert("INSERT INTO OrganisationTaxonObservationAccess (organisationID, observationID) VALUES (#{organisationID}, #{observationID}")
+    @Insert("INSERT INTO OrganisationTaxonObservationAccess (organisationID, observationID) VALUES (#{organisationID}, #{observationID})")
     public void AddAccess(@Param("organisationID") int organisationID, @Param("observationID") int observationID);
     
     @Delete("DELETE FROM OrganisationTaxonObservationAccess WHERE organisationID = #{organisationID} AND observationID = #{observationID}")

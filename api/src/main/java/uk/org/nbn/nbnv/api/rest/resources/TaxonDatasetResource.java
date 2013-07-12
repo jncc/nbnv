@@ -1,18 +1,23 @@
 package uk.org.nbn.nbnv.api.rest.resources;
 
 import java.util.List;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.org.nbn.nbnv.api.dao.core.OperationalAttributeMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.AttributeMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.DatasetMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.SurveyMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.TaxonMapper;
 import uk.org.nbn.nbnv.api.model.*;
+import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenTaxonObservationAttributeAdminUser;
 
 @Component
 @Path("/taxonDatasets")
@@ -22,6 +27,7 @@ public class TaxonDatasetResource extends AbstractResource {
     @Autowired TaxonMapper taxonMapper;
     @Autowired SurveyMapper surveyMapper;
     @Autowired AttributeMapper attributeMapper;
+    @Autowired OperationalAttributeMapper oAttributeMapper;
     
     /**
      * Return a list of all Taxon Datasets from the data warehouse
@@ -142,4 +148,31 @@ public class TaxonDatasetResource extends AbstractResource {
         return attributeMapper.selectAttributesByDatasetKey(id);
     }
     
+    /**
+     * Return a specific attribute if the user is the admin of the dataset that
+     * contains this attribute (attributes in this case are related to Taxon
+     * Observations)
+     * 
+     * @param user The current user (Must be an admin of this dataset)
+     * @param id A dataset Key
+     * @param attributeID An attribute that resides in this dataset
+     * @return 
+     */
+    @GET
+    @Path("/{id}/attributes/{attribute}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Attribute getAttributeByID(@TokenTaxonObservationAttributeAdminUser(dataset = "id", attribute = "attribute") User user, @PathParam("id") String id, @PathParam("attribute") int attributeID) {
+        return oAttributeMapper.getDatasetAttribute(attributeID);
+    }
+    
+    @POST
+    @Path("/{id}/attributes/{attribute}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    public int updateAttributeByID(@TokenTaxonObservationAttributeAdminUser(dataset = "id", attribute = "attribute") User user, 
+            @PathParam("id") String id, 
+            @PathParam("attribute") int attributeID,
+            @FormParam("description") String description) {
+        return oAttributeMapper.updateDatasetAttribute(attributeID, description);
+    }
 }

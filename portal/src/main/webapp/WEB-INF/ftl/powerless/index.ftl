@@ -76,6 +76,9 @@ Explore and map grid squares for a particular [species](/Taxa).
                     <td>${statistics[stat]}</td>
                 </tr>
             </#list>
+            <tr>
+                <td colspan="2"><a href="/AccessRequest/Create">Request Better Access</a></td>
+            </tr>
         </table>
     </div>
 

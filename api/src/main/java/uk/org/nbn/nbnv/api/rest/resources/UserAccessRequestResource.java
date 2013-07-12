@@ -1,11 +1,14 @@
 package uk.org.nbn.nbnv.api.rest.resources;
 
+import freemarker.template.TemplateException;
 import java.io.IOException;
 import java.sql.Date;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.FormParam;
@@ -22,13 +25,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import uk.org.nbn.nbnv.api.dao.core.OperationalTaxonObservationFilterMapper;
+import uk.org.nbn.nbnv.api.dao.core.OperationalUserAccessRequestAuditHistoryMapper;
 import uk.org.nbn.nbnv.api.dao.core.OperationalUserAccessRequestMapper;
 import uk.org.nbn.nbnv.api.dao.core.OperationalUserTaxonObservationAccessMapper;
+import uk.org.nbn.nbnv.api.dao.warehouse.DatasetAdministratorMapper;
+import uk.org.nbn.nbnv.api.dao.warehouse.UserMapper;
+import uk.org.nbn.nbnv.api.mail.TemplateMailer;
+import uk.org.nbn.nbnv.api.model.DatasetAdministrator;
 import uk.org.nbn.nbnv.api.model.TaxonObservationFilter;
 import uk.org.nbn.nbnv.api.model.User;
 import uk.org.nbn.nbnv.api.model.UserAccessRequest;
+import uk.org.nbn.nbnv.api.model.UserAccessRequestAuditHistory;
 import uk.org.nbn.nbnv.api.model.meta.AccessRequestJSON;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenAccessRequestAdminUser;
+import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenDatasetAdminUser;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
 import uk.org.nbn.nbnv.api.utils.AccessRequestUtils;
 
@@ -42,7 +52,11 @@ public class UserAccessRequestResource extends AbstractResource {
     @Autowired OperationalTaxonObservationFilterMapper oTaxonObservationFilterMapper;
     @Autowired OperationalUserAccessRequestMapper oUserAccessRequestMapper;
     @Autowired OperationalUserTaxonObservationAccessMapper oUserTaxonObservationAccessMapper;
+    @Autowired OperationalUserAccessRequestAuditHistoryMapper oUserAccessRequestAuditHistoryMapper;
+    @Autowired DatasetAdministratorMapper datasetAdministratorMapper;
+    @Autowired UserMapper userMapper;
     @Autowired AccessRequestUtils accessRequestUtils;
+    @Autowired TemplateMailer mailer;
     
     /**
      * Create a Access Request for a user
@@ -62,7 +76,7 @@ public class UserAccessRequestResource extends AbstractResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     @Transactional
-    public Response createRequest(@TokenUser(allowPublic=false) User user, String json) throws IOException {
+    public Response createRequest(@TokenUser(allowPublic=false) User user, String json) throws IOException, TemplateException {
         AccessRequestJSON accessRequest = parseJSON(json);
 
         // Fail if this is an organisation request
@@ -78,15 +92,59 @@ public class UserAccessRequestResource extends AbstractResource {
         List<String> species = accessRequestUtils.createSpeciesList(accessRequest);        
         List<String> datasets = accessRequestUtils.createDatasetList(accessRequest, species, user);
         
+        if (accessRequest.getDataset().isSecret()) {
+            List<String> sensitive = accessRequestUtils.createSensitiveDatasetList(accessRequest, species, user);
+            for (String datasetKey : sensitive) {
+                oTaxonObservationFilterMapper.createFilter(filter);
+                oUserAccessRequestMapper.createRequest(filter.getId(), user.getId(), datasetKey, accessRequest.getReason().getPurpose(), accessRequest.getReason().getDetails(), new Date(new java.util.Date().getTime()), true);
+                oUserAccessRequestAuditHistoryMapper.addHistory(filter.getId(), user.getId(), "Created request for: '" + filter.getFilterText() + "'");
+                mailRequestCreate(oUserAccessRequestMapper.getRequest(filter.getId()));
+            }
+        }
+                
+        for (String datasetKey : datasets) {
+            oTaxonObservationFilterMapper.createFilter(filter);
+            oUserAccessRequestMapper.createRequest(filter.getId(), user.getId(), datasetKey, accessRequest.getReason().getPurpose(), accessRequest.getReason().getDetails(), new Date(new java.util.Date().getTime()), false);
+            oUserAccessRequestAuditHistoryMapper.addHistory(filter.getId(), user.getId(), "Created request for: '" + filter.getFilterText() + "'");
+            
+            mailRequestCreate(oUserAccessRequestMapper.getRequest(filter.getId()));
+        }
+
+        return Response.status(Response.Status.OK).entity("{}").build();
+    }
+    
+    @PUT
+    @Path("/requests/admin/granted")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Transactional
+    public Response createGrant(@TokenUser(allowPublic=false) User user, String json) throws IOException, ParseException, TemplateException {
+        AccessRequestJSON accessRequest = parseJSON(json);
+
+        // Fail if this is an organisation request
+        if (accessRequest.getReason().getOrganisationID() > -1) {
+            return Response.serverError().build();
+        }
+        
+        // Fail if the dataset request is not admined by the requestor
+        if (!datasetAdministratorMapper.isUserDatasetAdministrator(user.getId(), accessRequest.getDataset().getDatasets().get(0))) {
+            return Response.serverError().build();
+        }
+
+        TaxonObservationFilter filter = accessRequestUtils.createFilter(json, accessRequest);
+        List<String> datasets = accessRequest.getDataset().getDatasets();
+        User reqUser = userMapper.getUserById(accessRequest.getReason().getUserID());
         
         for (String datasetKey : datasets) {
             oTaxonObservationFilterMapper.createFilter(filter);
-            oUserAccessRequestMapper.createRequest(filter.getId(), user.getId(), datasetKey, accessRequest.getReason().getPurpose(), accessRequest.getReason().getDetails(), new Date(new java.util.Date().getTime()));
+            oUserAccessRequestMapper.createRequest(filter.getId(), accessRequest.getReason().getUserID(), datasetKey, accessRequest.getReason().getPurpose(), accessRequest.getReason().getDetails(), new Date(new java.util.Date().getTime()), false);
+            oUserAccessRequestAuditHistoryMapper.addHistory(filter.getId(), user.getId(), "Created request for " + reqUser.getForename() + ' ' + reqUser.getSurname() + " of: '" + filter.getFilterText() + "'");
+            acceptRequest(user, filter.getId(), accessRequest.getReason().getReason(), accessRequest.getTime().isAll() ? "" : accessRequest.getTime().getDate().toString());
         }
 
-        return Response.ok("success").build();
+        return Response.status(Response.Status.OK).entity("{}").build();
     }
-    
+
     /**
      * Edit an existing User Access Request 
      * 
@@ -115,9 +173,11 @@ public class UserAccessRequestResource extends AbstractResource {
             return Response.serverError().build();
         }
         TaxonObservationFilter filter = accessRequestUtils.createFilter(json, accessRequest);
+        TaxonObservationFilter orig = oTaxonObservationFilterMapper.selectById(filterID);
         oTaxonObservationFilterMapper.editFilter(filterID, filter.getFilterText(), filter.getFilterJSON());
+        oUserAccessRequestAuditHistoryMapper.addHistory(filterID, user.getId(), "Edit request to: '" + filter.getFilterText() + "', from: '" + orig.getFilterText() + "'");
 
-        return Response.ok("success").build();
+        return Response.status(Response.Status.OK).entity("{}").build();
     }
 
     /**
@@ -157,6 +217,25 @@ public class UserAccessRequestResource extends AbstractResource {
     @Produces(MediaType.APPLICATION_JSON)
     public List<UserAccessRequest> getGrantedRequests(@TokenUser(allowPublic=false) User user) throws IOException {
         return oUserAccessRequestMapper.getGrantedUserRequests(user.getId());
+    }
+
+    /**
+     * Return a list of access requests made by a user that are pending
+     * 
+     * @param user The current user (Must be logged in)
+     * 
+     * @return A List of User Access Requests made by a user that are pending
+     * 
+     * @throws IOException 
+     * 
+     * @response.representation.200.qname List<UserAccessRequest> 
+     * @response.representation.200.mediaType application/json
+     */
+    @GET
+    @Path("/requests/pending")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<UserAccessRequest> getPendingRequests(@TokenUser(allowPublic=false) User user) throws IOException {
+        return oUserAccessRequestMapper.getPendingUserRequests(user.getId());
     }
 
     /**
@@ -278,20 +357,38 @@ public class UserAccessRequestResource extends AbstractResource {
             , @PathParam("id") int filterID
             , @FormParam("action") String action
             , @FormParam("reason") String reason
-            , @FormParam("expires") @DefaultValue("") String expires) throws ParseException {
+            , @FormParam("expires") @DefaultValue("") String expires) throws ParseException, IOException, TemplateException {
         if ("grant".equalsIgnoreCase(action)) {
-            return acceptRequest(filterID, reason, expires);
+            return acceptRequest(user, filterID, reason, expires);
         } else if ("deny".equalsIgnoreCase(action)) {
-            return denyRequest(filterID, reason);
+            return denyRequest(user, filterID, reason);
         } else if ("close".equalsIgnoreCase(action)) {
-            return closeRequest(filterID, reason);
+            return closeRequest(user, filterID, reason);
         } else if ("revoke".equalsIgnoreCase(action)) {
-            return revokeRequest(filterID, reason);
+            return revokeRequest(user, filterID, reason);
         } else {
             return Response.serverError().build();
         }
     }
        
+        /**
+     * Returns an audit history listing all organisational access changes made to a dataset
+     * 
+     * @param user A dataset administrator
+     * @param dataset The dataset being queried
+     * 
+     * @return A list of history elements
+     * 
+     * @response.representation.200.qname List<OrganisationAccessRequestAuditHistory>
+     * @response.representation.200.mediaType application/json
+     */
+    @GET
+    @Path("/requests/history/{dataset}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<UserAccessRequestAuditHistory> getHistory(@TokenDatasetAdminUser(path="dataset") User user, @PathParam("dataset") String dataset) {
+        return oUserAccessRequestAuditHistoryMapper.getHistory(dataset);
+    }
+
     /**
      * Accept a User Access Request with a given ID
      * 
@@ -303,16 +400,19 @@ public class UserAccessRequestResource extends AbstractResource {
      * 
      * @throws ParseException The expires string was in an incorrect format
      */
-    private Response acceptRequest(int filterID, String reason, String expires) throws ParseException {
+    private Response acceptRequest(User user, int filterID, String reason, String expires) throws ParseException, IOException, TemplateException {
         if (expires.isEmpty()) {
             oUserAccessRequestMapper.acceptRequest(filterID, reason, new Date(new java.util.Date().getTime()));
-            return Response.status(Response.Status.OK).entity("{}").build();
         } else {
             DateFormat df = new SimpleDateFormat("dd/mm/yyyy");
             java.util.Date expiresDate = df.parse(expires);
             oUserAccessRequestMapper.acceptRequestWithExpires(filterID, reason, new Date(new java.util.Date().getTime()), new Date(expiresDate.getTime()));
-            return Response.status(Response.Status.OK).entity("{}").build();
         }
+
+        oUserAccessRequestAuditHistoryMapper.addHistory(filterID, user.getId(), "Accept request");
+        //giveAccess(filterID);
+        mailRequestGrant(oUserAccessRequestMapper.getRequest(filterID), reason);
+        return Response.status(Response.Status.OK).entity("{}").build();
     }
 
     /**
@@ -323,8 +423,10 @@ public class UserAccessRequestResource extends AbstractResource {
      * 
      * @return A Response object detailing the result of the operation
      */
-    private Response denyRequest(int filterID, String reason) {
+    private Response denyRequest(User user, int filterID, String reason) throws IOException, TemplateException {
         oUserAccessRequestMapper.denyRequest(filterID, reason, new Date(new java.util.Date().getTime()));
+        oUserAccessRequestAuditHistoryMapper.addHistory(filterID, user.getId(), "Deny request");
+        mailRequestDeny(oUserAccessRequestMapper.getRequest(filterID), reason);
         return Response.status(Response.Status.OK).entity("{}").build();
     }
 
@@ -336,8 +438,9 @@ public class UserAccessRequestResource extends AbstractResource {
      * 
      * @return A Response object detailing the result of the operation
      */
-    private Response closeRequest(int filterID, String reason) {
+    private Response closeRequest(User user, int filterID, String reason) {
         oUserAccessRequestMapper.closeRequest(filterID, reason, new Date(new java.util.Date().getTime()));
+        oUserAccessRequestAuditHistoryMapper.addHistory(filterID, user.getId(), "Close request");
         return Response.status(Response.Status.OK).entity("{}").build();
     }
     
@@ -349,8 +452,11 @@ public class UserAccessRequestResource extends AbstractResource {
      * 
      * @return A Response object detailing the result of the operation
      */
-    private Response revokeRequest(int filterID, String reason) {
+    private Response revokeRequest(User user, int filterID, String reason) throws IOException, TemplateException {
         oUserAccessRequestMapper.revokeRequest(filterID, reason, new Date(new java.util.Date().getTime()));
+        oUserAccessRequestAuditHistoryMapper.addHistory(filterID, user.getId(), "Revoke action");
+        //stripAccess(filterID);
+        mailRequestRevoke(oUserAccessRequestMapper.getRequest(filterID), reason);
         return Response.status(Response.Status.OK).entity("{}").build();
     }
 
@@ -431,4 +537,53 @@ public class UserAccessRequestResource extends AbstractResource {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.readValue(json, AccessRequestJSON.class);
     }
+    
+    private void mailRequestCreate(UserAccessRequest request) throws IOException, TemplateException {
+        List<DatasetAdministrator> admins = datasetAdministratorMapper.selectByDataset(request.getDatasetKey());
+        
+        Map<String, Object> message = new HashMap<String, Object>();
+        message.put("rName", request.getUser().getForename() + " " + request.getUser().getSurname());
+        message.put("reason", request.getRequestReason());
+        message.put("details", request.getFilter().getFilterText());
+        message.put("orgReq", Boolean.FALSE);
+        message.put("dataset", request.getDataset().getTitle());
+        message.put("purpose", request.getRequestPurposeLabel());        
+        
+        for (DatasetAdministrator admin : admins) {
+            message.put("daName", admin.getUser().getForename() + " " + admin.getUser().getSurname());
+            mailer.send("accessRequestMade.ftl", admin.getUser().getEmail(), "NBN Gateway: New access request", message);
+        }
+    }
+
+    private void mailRequestDeny(UserAccessRequest request, String reason) throws IOException, TemplateException {
+        Map<String, Object> message = new HashMap<String, Object>();
+        message.put("rName", request.getUser().getForename() + " " + request.getUser().getSurname());
+        message.put("rDate", request.getRequestDate());
+        message.put("reason", reason);
+        message.put("details", request.getFilter().getFilterText());
+        message.put("dataset", request.getDataset().getTitle());
+        mailer.send("accessRequestDeny.ftl", request.getUser().getEmail(), "NBN Gateway: Access request declined", message);
+    }
+
+    private void mailRequestGrant(UserAccessRequest request, String reason) throws IOException, TemplateException {
+        Map<String, Object> message = new HashMap<String, Object>();
+        message.put("rName", request.getUser().getForename() + " " + request.getUser().getSurname());
+        message.put("rDate", request.getRequestDate());
+        message.put("lDate", request.getAccessExpires());
+        message.put("reason", reason);
+        message.put("details", request.getFilter().getFilterText());
+        message.put("dataset", request.getDataset().getTitle());
+        mailer.send("accessRequestGrant.ftl", request.getUser().getEmail(), "NBN Gateway: Access request approved", message);
+    }
+
+    private void mailRequestRevoke(UserAccessRequest request, String reason) throws IOException, TemplateException {
+        Map<String, Object> message = new HashMap<String, Object>();
+        message.put("rName", request.getUser().getForename() + " " + request.getUser().getSurname());
+        message.put("rDate", request.getRequestDate());
+        message.put("reason", reason);
+        message.put("details", request.getFilter().getFilterText());
+        message.put("dataset", request.getDataset().getTitle());
+        mailer.send("accessRequestRevoke.ftl", request.getUser().getEmail(), "NBN Gateway: Access request removed", message);
+    }
+
 }

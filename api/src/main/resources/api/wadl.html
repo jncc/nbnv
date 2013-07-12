@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>NBN V API</title>
+	<script src="xslt.js"></script>
+	<script>
+		function displayResult()
+		{
+			new Transformation().setXml("application.wadl")
+				.setXslt("wadl.xsl").transform("transformResult");
+		}
+	</script>
+</head>
+<body onload="displayResult()">
+<div id="license">
+<h2>Introduction</h2>
+<p>A revised version of the NBN Gateway web services (NBN Gateway API) will be released later in 2013. Ahead of that release it is recognised that some consumers may wish to begin to develop (or redevelop) applications and also contribute to more generally testing the new suite of services. With this in mind a BETA version of the API is being made available as a limited release. While various steps have been taken to minimise the inadvertent leakage of data through this period, the fact that the system is still under development means there remains a risk of such leakage occurring. The primary reason for these restrictions is to manage this possibility.</p>
+<p>This document is a license for that BETA version of the NBN Gateway API. It contains a number of restrictions and conditions that apply to the use of the API and its documentation.  The conditions will be relaxed when the API enters into full release.</p>
+<h2>Conditions</h2>
+<p>The conditions for use of this document and the API itself are:</p>
+<ul>
+	<li>You may not pass this document, nor allow it to be read or accessed by any other party for any reason. If you wish for others to receive this document please email paulbe@ceh.ac.uk</li>
+	<li>You may not create any publically accessible website or software that utilises the API</li>
+	<li>You may not publish or pass on in any form data retrieved from the API, nor use such data to inform, advise or  form any part of published material</li>
+</ul>
+<p>The API and associated documentation are provided 'as is' without warranty of any kind, either express or implied, including, but not limited to, the implied warranties of fitness for a purpose, or the warranty of non-infringement. Without limiting the foregoing, the NBN/JNCC/CEH make no warranty that:</p>
+<ul>
+	<li>The API will meet your requirements</li>
+	<li>The API service will be uninterrupted, timely, secure or error-free</li>
+	<li>The results that may be obtained from the use of the API will be effective, accurate or reliable</li>
+	<li>The quality of the API will meet your expectations</li>
+	<li>Any errors in the API will be corrected</li>
+	<li>There will be no further changes to the interface of the API</li>
+</ul>
+<p>The documentation made available to you:</p>
+<ul>
+	<li>Could include technical or other mistakes, inaccuracies or typographical errors</li>
+	<li>May be out of date, and the NBN/JNCC/CEH make no commitment to update such materials</li>
+</ul>
+<p>The NBN assumes no responsibility for errors or omissions in the software or documentation available from its web site.</p>
+<p>In no event shall the NBN/JNCC/CEH be liable to you or any third parties for any special, punitive, incidental, indirect or consequential damages of any kind, or any damages whatsoever, including, without limitation, those resulting from loss of use, data or profits, whether or not the NBN/JNCC/CEH has been advised of the possibility of such damages, and on any theory of liability, arising out of or in connection with the use of this API.</p>
+<p>The use of the API is done at your own discretion and risk and with agreement that you will be solely responsible for any damage to your computer system or loss of data that results from such activities. No advice or information, whether oral or written, obtained by you from the NBN/JNCC/CEH shall create any warranty for the API.</p>
+<br />
+<h2>Using the API</h2>
+<p>The API itself is currently located at <a href="http://staging.testnbn.net/api">http://staging.testnbn.net/api</a> just append the paths below to this URL to run the appropriate function</p>
+</div>
+<div id="transformResult">
+</div>
+</body>
+</html>

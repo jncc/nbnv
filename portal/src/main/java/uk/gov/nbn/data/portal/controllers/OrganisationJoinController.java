@@ -47,7 +47,7 @@ public class OrganisationJoinController {
             return new ModelAndView("sso", modelSSO);
         }
     }
-
+    
     @RequestMapping(value = "/Organisations/JoinRequest/{id}", method = RequestMethod.GET)
     public ModelAndView get(@PathVariable int id, Model model) {
         //get the current logged in user

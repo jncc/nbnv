@@ -5,6 +5,8 @@
 package uk.org.nbn.nbnv.api.dao.warehouse;
 
 import java.util.List;
+import org.apache.ibatis.annotations.Delete;
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.One;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Result;
@@ -33,6 +35,9 @@ public interface DatasetAdministratorMapper {
     })
     List<DatasetAdministrator> selectByUser(@Param("userKey") int userKey);
 
+    @Select("SELECT d.* FROM DatasetAdministrator da INNER JOIN DatasetData d ON da.datasetKey = d.[key] WHERE da.userID = #{userKey}")
+    List<Dataset> selectDatasetsByUser(@Param("userKey") int userKey);
+
     @Select("SELECT * FROM DatasetAdministrator WHERE datasetKey = #{datasetKey}")
     @Results(value={
         @Result(property="user", column="userID", javaType=User.class, one=@One(select="uk.org.nbn.nbnv.api.dao.warehouse.UserMapper.getUserById")),
@@ -49,4 +54,10 @@ public interface DatasetAdministratorMapper {
 
     @Select("SELECT COUNT(*) FROM DatasetAdministrator WHERE userID = #{userKey} AND datasetKey = #{datasetKey}")
     boolean isUserDatasetAdministrator(@Param("userKey") int userKey, @Param("datasetKey") String datasetKey);
+    
+    @Insert("INSERT INTO DatasetAdministrator VALUES (#{userKey}, #{datasetKey})")
+    int insertNewDatasetAdministrator(@Param("userKey") int userKey, @Param("datasetKey") String datasetKey);
+    
+    @Delete("DELETE FROM DatasetAdministrator WHERE userID = #{userKey} AND datasetKey = #{datasetKey}")
+    int removeDatasetAdministrator(@Param("userKey") int userKey, @Param("datasetKey") String datasetKey);
 }

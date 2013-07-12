@@ -14,6 +14,7 @@ public class AccessRequest {
     private TaxonObservationFilter filter;
     private Dataset dataset;
     private int requestPurposeID;
+    private String requestPurposeLabel;
     private String requestReason;
     private Date requestDate;
     private int responseTypeID;
@@ -21,6 +22,7 @@ public class AccessRequest {
     private Date responseDate;
     private Date accessExpires;
     private String datasetKey;
+    private boolean sensitiveRequest;
 
     /**
      * @return the filter
@@ -160,6 +162,34 @@ public class AccessRequest {
      */
     public void setRequestPurposeID(int requestPurposeID) {
         this.requestPurposeID = requestPurposeID;
+    }
+
+    /**
+     * @return the sensitiveRequest
+     */
+    public boolean isSensitiveRequest() {
+        return sensitiveRequest;
+    }
+
+    /**
+     * @param sensitiveRequest the sensitiveRequest to set
+     */
+    public void setSensitiveRequest(boolean sensitiveRequest) {
+        this.sensitiveRequest = sensitiveRequest;
+    }
+
+    /**
+     * @return the requestPurposeLabel
+     */
+    public String getRequestPurposeLabel() {
+        return requestPurposeLabel;
+    }
+
+    /**
+     * @param requestPurposeLabel the requestPurposeLabel to set
+     */
+    public void setRequestPurposeLabel(String requestPurposeLabel) {
+        this.requestPurposeLabel = requestPurposeLabel;
     }
 
 }

@@ -11,7 +11,9 @@ package uk.org.nbn.nbnv.api.model.meta;
 public class AccessRequestReasonJSON {
     private int purpose;
     private int organisationID = -1;
+    private int userID = -1;
     private String details;
+    private String reason;
 
     /**
      * @return the purpose
@@ -53,5 +55,33 @@ public class AccessRequestReasonJSON {
      */
     public void setOrganisationID(int organisationID) {
         this.organisationID = organisationID;
+    }
+
+    /**
+     * @return the userID
+     */
+    public int getUserID() {
+        return userID;
+    }
+
+    /**
+     * @param userID the userID to set
+     */
+    public void setUserID(int userID) {
+        this.userID = userID;
+    }
+
+    /**
+     * @return the reason
+     */
+    public String getReason() {
+        return reason;
+    }
+
+    /**
+     * @param reason the reason to set
+     */
+    public void setReason(String reason) {
+        this.reason = reason;
     }
 }

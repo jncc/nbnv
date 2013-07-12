@@ -21,7 +21,7 @@ nbn.nbnv.ui.filter.spatial = function(json) {
     
     this._renderHeader = function() {
         return $('<h3>').attr('filtertype', 'spatial')
-            .append($('<span>').addClass('filterheader').append('Spatial Filter'))
+            .append($('<span>').addClass('filterheader').append('Geographical Area'))
             .append($('<span>').attr('id', 'spatialResult').addClass('resulttext'));
     };
     
@@ -107,7 +107,7 @@ nbn.nbnv.ui.filter.spatial = function(json) {
                         boundaryTypes.prop('disabled', true);
                     }
                 })
-            ).append('All records');
+            ).append('All areas');
 
 	var filterRecords = $('<div>')
             .append($('<input>')
@@ -125,7 +125,7 @@ nbn.nbnv.ui.filter.spatial = function(json) {
             ).append("Records that are ")
             .append(match)
             .append(' the boundary of ')
-            .append($('<div>').append($('<span>').addClass('comboSpan').text('Dataset:')).append(boundaryTypes))
+            .append($('<div>').append($('<span>').addClass('comboSpan').text('Site List:')).append(boundaryTypes))
             .append($('<div>').append($('<span>').addClass('comboSpan').text('Site:')).append(boundary));
 
         if (this._all) {

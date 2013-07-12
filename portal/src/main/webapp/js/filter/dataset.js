@@ -23,7 +23,7 @@ nbn.nbnv.ui.filter.dataset = function(json) {
     
     this._renderHeader = function() {
         return $('<h3>').attr('filtertype', 'dataset')
-            .append($('<span>').addClass('filterheader').append('Dataset Filter'))
+            .append($('<span>').addClass('filterheader').append('Datasets'))
             .append($('<span>').attr('id', 'datasetResult').addClass('resulttext'));
     };
     
@@ -34,6 +34,19 @@ nbn.nbnv.ui.filter.dataset = function(json) {
         var datasetTable = $('<table>').attr('id', 'datasetfiltertable').addClass('results');
         $.fn.dataTableExt.oJUIClasses.sStripeOdd = 'ui-state-highlight';
 
+        var sensitiveInfo = $('<div>')
+            .append($('<p>')
+                .append('Datasets relevant to your search area may not appear in the list of datasets you can request enhanced access to. This is to protect the location of any sensitive records.')
+            ).append($('<p>')
+                .append('You may request access to these additional sensitive datasets by ticking this box. A request for access will then be sent to the relevant dataset administrators. Please note there may not be any additional sensitive datasets and you may not receive a reply regarding this additional request.')
+            ).dialog({ 
+                modal: true, 
+                autoOpen: false,
+                buttons: {
+                    "OK" : function() { sensitiveInfo.dialog("close"); }
+                }
+            });
+            
         var datasetAutoComplete = $('<input>').addClass('selectMaxWidth')
             .autocomplete({
                 source: function(request, response) {
@@ -64,7 +77,12 @@ nbn.nbnv.ui.filter.dataset = function(json) {
                 .change(function() {
                     _me._secret = this.checked;
                 })
-            ).append('Include sensitive datasets');
+            ).append('Include additional sensitive datasets. ')
+            .append($('<a>')
+                .text('Why are they excluded from the above list of datasets?')
+                .attr('href', '#')
+                .click(function() { sensitiveInfo.dialog("open"); })
+            );
                 
         var allRecords = $('<div>')
             .append($('<input>')
@@ -79,7 +97,7 @@ nbn.nbnv.ui.filter.dataset = function(json) {
                         $('#datasetfiltertable').find(":checkbox").prop('disabled', true);
                     }
                 })
-            ).append('All records');
+            ).append('All datasets');
 
 
 	var singleRecords = $('<div>')
@@ -95,7 +113,7 @@ nbn.nbnv.ui.filter.dataset = function(json) {
                         $('#datasetfiltertable').find(":checkbox").prop('disabled', true);
                     }
                 })
-            ).append('Records belonging to the dataset ').append(datasetAutoComplete);
+            ).append('Single Dataset ').append(datasetAutoComplete);
                 
 	var filterRecords = $('<div>')
             .append($('<input>')
@@ -110,13 +128,15 @@ nbn.nbnv.ui.filter.dataset = function(json) {
                         $('#datasetfiltertable').find(":checkbox").prop('disabled', false);
                     }
                 })
-            ).append("Records that belong to ")
+            ).append("Dataset List ")
             .append(datasetTable);
         
-        if (this._all) {
+        if (this._mode == 'all') {
             allRecords.children('input').attr('checked', 'checked').change();
-        } else {
+        } else if (this._mode == 'filter') {
             filterRecords.children('input').attr('checked', 'checked').change();
+        } else if (this._mode == 'single') {
+            singleRecords.children('input').attr('checked', 'checked').change();
         }
         
         if (this._secret) {

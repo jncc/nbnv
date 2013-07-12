@@ -20,11 +20,14 @@ import uk.org.nbn.nbnv.api.dao.core.OperationalSurveyMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.DatasetAdministratorMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.DatasetMapper;
 import uk.org.nbn.nbnv.api.model.Dataset;
+import uk.org.nbn.nbnv.api.model.DatasetAdministrator;
 import uk.org.nbn.nbnv.api.model.DatasetResolutionRecordCount;
 import uk.org.nbn.nbnv.api.model.Survey;
 import uk.org.nbn.nbnv.api.model.User;
+import uk.org.nbn.nbnv.api.model.meta.DatasetAdminMembershipJSON;
 import uk.org.nbn.nbnv.api.model.meta.OpResult;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenDatasetAdminUser;
+import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenDatasetSurveyAdminUser;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
 import uk.org.nbn.nbnv.api.solr.SolrResolver;
 
@@ -223,7 +226,7 @@ public class DatasetResource extends AbstractResource {
      * 
      * @return True if the user is admin of this dataset
      * 
-     * @response.representation.200.qname List<DatasetResolutionRecordCount>
+     * @response.representation.200.qname boolean
      * @response.representation.200.mediaType application/json
      */
     @GET
@@ -233,6 +236,69 @@ public class DatasetResource extends AbstractResource {
         return datasetAdministratorMapper.isUserDatasetAdministrator(user.getId(), datasetKey);
     }
     
+    /**
+     * Return a list of admin users for the specified dataset if the requesting
+     * user is an admin themselves
+     * 
+     * @param user The Current User
+     * @param datasetKey Key of a dataset i.e. GA000466
+     * 
+     * @return True if the user is admin of this dataset
+     * 
+     * @response.representation.200.qname List<DatasetAdministrator>
+     * @response.representation.200.mediaType application/json
+     */
+    @GET
+    @Path("/{datasetKey}/admins")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<DatasetAdministrator> getDatasetAdmins(@TokenDatasetAdminUser(path = "datasetKey") User user, @PathParam("datasetKey") String datasetKey) {
+        return datasetAdministratorMapper.selectByDataset(datasetKey);
+    }
+    
+    @POST 
+    @Path("/{datasetKey}/addAdmin")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public OpResult addDatasetAdmin(@TokenDatasetAdminUser(path = "datasetKey") User user, @PathParam("datasetKey") String datasetKey, DatasetAdminMembershipJSON data) {
+        int result = datasetAdministratorMapper.insertNewDatasetAdministrator(data.getUserID(), datasetKey);
+        
+        if (result == 1) {
+            return new OpResult();
+        }
+        
+        return new OpResult("Could not give the selected user admin rights, possibly an admin already");
+    };
+    
+    @POST
+    @Path("/{datasetKey}/removeAdmin")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public OpResult removeDatasetAdmin(@TokenDatasetAdminUser(path = "datasetKey") User user, @PathParam("datasetKey") String datasetKey, DatasetAdminMembershipJSON data) {
+        int result = datasetAdministratorMapper.removeDatasetAdministrator(data.getUserID(), datasetKey);
+        
+        if (result == 1) {
+            return new OpResult();
+        }
+        
+        return new OpResult("Could not revoke the user's dataset admin rights");        
+    }
+    
+    /**
+     * Returns a list of datasets the user can admin
+     * 
+     * @param user The current user
+     *
+     * @return List of datasets
+     * 
+     * @response.representation.200.qname List<Dataset>
+     * @response.representation.200.mediaType application/json
+     */
+    @GET
+    @Path("/adminable")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Dataset> adminableDatasets(@TokenUser(allowPublic=false) User user) {
+        return datasetAdministratorMapper.selectDatasetsByUser(user.getId());
+    }   
     /***********************************************
      * Survey API calls
      ***********************************************/
@@ -253,9 +319,9 @@ public class DatasetResource extends AbstractResource {
     @GET
     @Path("/{datasetKey}/surveys/{survey}")
     @Produces("application/json")
-    public Survey getJson(@TokenDatasetAdminUser(path = "datasetKey") User user, 
+    public Survey getJson(@TokenDatasetSurveyAdminUser(dataset = "datasetKey", survey = "survey") User user, 
             @PathParam("datasetKey") String datasetKey, @PathParam("survey") int survey) {
-        return oSurveyMapper.getSurveyById(survey, datasetKey);
+        return oSurveyMapper.getSurveyById(survey);
     }
 
     /**
@@ -266,7 +332,6 @@ public class DatasetResource extends AbstractResource {
      * dataset or throw a 403 Forbidden error
      * @param datasetKey Key of the parent dataset i.e. GA000466
      * @param survey Key of the survey to have its metadata edited
-     * @param providerKey Key provided by the owner of the survey (external id)
      * @param title The survey title
      * @param description The survey description
      * @param geographicalCoverage The Geographical Coverage of the survey
@@ -285,9 +350,8 @@ public class DatasetResource extends AbstractResource {
     @Path("/{datasetKey}/surveys/{survey}")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response putJson(@TokenDatasetAdminUser(path = "datasetKey") User user,
+    public Response putJson(@TokenDatasetSurveyAdminUser(dataset = "datasetKey", survey = "survey") User user,
             @PathParam("datasetKey") String datasetKey, @PathParam("survey") int survey,
-            @FormParam("providerKey") String providerKey,
             @FormParam("title") String title,
             @FormParam("description") String description,
             @FormParam("geographicalCoverage") String geographicalCoverage,
@@ -297,7 +361,7 @@ public class DatasetResource extends AbstractResource {
             @FormParam("purpose") String purpose,
             @FormParam("additionalInformation") String additionalInformation) {
 
-        Survey updated = new Survey(survey, providerKey, title, 
+        Survey updated = new Survey(survey, null, title, 
                 description, geographicalCoverage, temporalCoverage, 
                 dataQuality, dataCaptureMethod, purpose, 
                 additionalInformation);

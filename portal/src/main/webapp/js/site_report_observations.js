@@ -91,13 +91,20 @@
             url: url,
             dataType: 'json',
             success: function(data){
-                toReturn += '<ul><li>You have public access to records at ' + taxonDataset.publicResolution;
-                    if(taxonDataset.publicAttribute){
-                        toReturn += ' with record attributes';
-                    }
-                    for(var i = 0; i < data.length; i++){
-                        toReturn += '<li>Your enhanced access: ' + data[i];
-                    }
+                if (taxonDataset.publicResolution == "None") { 
+                    toReturn += '<ul><li>No public access'; 
+                } else {
+                    toReturn += '<ul><li>You have public access to records at ' + taxonDataset.publicResolution;
+                }
+                
+                if(taxonDataset.publicAttribute){
+                    toReturn += ' with record attributes</li>';
+                }
+                
+                for(var i = 0; i < data.length; i++){
+                    toReturn += '<li>Your enhanced access: ' + data[i] + '</li>';
+                }
+
                 toReturn += '</ul>';
             },
             async: false
@@ -127,8 +134,7 @@
     function getDatasetAttributes(datasetKey){
         var url = apiServer + '/taxonDatasets/' + datasetKey + '/attributes';
         var toReturn = '';
-        $.ajax({
-            type: 'GET',
+        $.ajax({            type: 'GET',
             url: url,
             dataType: 'json',
             success: function(data){
