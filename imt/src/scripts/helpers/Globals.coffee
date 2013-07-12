@@ -20,7 +20,7 @@ define [
         gis: "data.nbn.org.uk/gis"
         portal: "data.nbn.org.uk"
 
-  api: (path) -> "http://#{@servers.api}/#{path}?callback=?"
+  api: (path, attr) -> "http://#{@servers.api}/#{path}?callback=?&#{@_buildQueryString(attr)}"
   gis: (path, attr) -> "http://#{@servers.gis}/#{path}?#{@_buildQueryString(attr)}"
   portal: (path) -> "http://#{@servers.portal}/#{path}"
   

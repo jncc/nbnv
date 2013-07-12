@@ -1,4 +1,9 @@
 define [
   'backbone' 
-], (Backbone) -> Backbone.Collection.model
-  
+], (Backbone) -> Backbone.Model.extend
+	defaults:
+		layerName: ""
+		info: ""
+
+	getLayerName: -> @get "layerName"
+	getInfo: -> @get "info"

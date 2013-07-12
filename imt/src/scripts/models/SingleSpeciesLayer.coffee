@@ -37,6 +37,13 @@ define [
     endyear : @getEndDate() #Temporal mixin handles this value
     datasets: @get("datasets").join ','
 
+  getPickerResults: (polygon) -> Globals.api "taxonObservations",
+    ptvk: @id
+    polygon: polygon
+    startYear: @getStartDate() #Temporal mixin handles this value
+    endYear : @getEndDate() #Temporal mixin handles this value
+    datasetKey: @get("datasets") #TODO make dataset array work
+
   ###
   Define what this layer is mapping
   ###
