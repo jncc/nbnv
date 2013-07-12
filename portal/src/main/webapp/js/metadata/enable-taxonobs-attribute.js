@@ -9,7 +9,7 @@
                     url: $('#nbn-dataset-attribute-modify').attr('action'),
                     data: $('#nbn-dataset-attribute-modify').serialize(),
                     success: function() {
-                        location.reload();
+                        location = '/Datasets/' + dataset + '/Attributes/Edit';
                     },
                     error: function(error) {
                         alert("An Error Occurred");
