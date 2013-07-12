@@ -171,42 +171,10 @@ BEGIN TRY
 		--Insert new recorders and determiners
 		INSERT INTO dbo.Recorder (name)
 		SELECT
-			LTRIM(RTRIM(ir.name))
+			ir.name
 		FROM dbo.ImportRecorder ir 
 			LEFT JOIN dbo.Recorder r ON ir.name = r.name
 		WHERE r.id IS NULL;
-	
-		--RECORD IMPORT.
-		
-		DECLARE @UpdatedTaxonObservations AS TABLE 
-			(UpdatedTaxonObservationID int);
-		
-		--INSERT INTO @UpdatedTaxonObservations
-		--	(UpdatedTaxonObservationID)
-		--SELECT tob.Id
-		--FROM dbo.TaxonObservation tob
-		--	INNER JOIN dbo.Sample s ON tob.sampleID = s.id
-		--	INNER JOIN dbo.Survey sv ON sv.id = s.surveyID
-		--		AND sv.datasetKey = @DatasetKey
-		--	INNER JOIN dbo.ImportSurvey isv ON sv.providerKey = isv.providerKey
-		--	INNER JOIN dbo.ImportSample ism ON ism.surveyID = isv.id
-		--	INNER JOIN dbo.ImportTaxonObservation itob ON ism.id = itob.sampleID
-		--		AND itob.providerKey = tob.providerKey;
-			
-		
-		--DELETE FROM dbo.TaxonObservationAttribute
-		--WHERE observationID IN 
-		--	(SELECT uto.UpdatedTaxonObservationID FROM @UpdatedTaxonObservations uto);
-			
-		--DELETE FROM dbo.TaxonObservation
-		--WHERE id IN 
-		--	(SELECT uto.UpdatedTaxonObservationID FROM @UpdatedTaxonObservations uto);*-
-				
-
-		--DECLARE @TaxonObservationMap AS TABLE 
-		--	(InsertedTaxonObservationId int
-		--	,ImportTaxonObservationId int);
-		
 		
 		MERGE [dbo].[TaxonObservation] as tob
 		USING
@@ -238,7 +206,7 @@ BEGIN TRY
 				LEFT JOIN dbo.Recorder rc ON irc.name = rc.name
 				LEFT JOIN dbo.ImportRecorder idt ON itob.determinerID = idt.id
 				LEFT JOIN dbo.Recorder dt ON idt.name = dt.name) s
-		ON s.SampleId = tob.SampleId AND s.providerKey = tob.providerKey
+		ON s.SampleId = tob.SampleId AND itob.providerKey = tob.providerKey
 		WHEN NOT MATCHED THEN
 			INSERT  
 			([sampleID]
@@ -282,11 +250,11 @@ BEGIN TRY
 		
 		MERGE [dbo].[TaxonObservationPublic] AS tobp
 		USING
-				(SELECT tob.id AS taxonObservationID
-					,st.id AS siteId
-					,itobp.featureID AS featureID
-					,rr.id AS recorderID
-					,rd.id AS determinerID
+			(SELECT tob.id AS taxonObservationID
+				,st.id AS siteId
+				,itobp.featureID AS featureID
+				,rr.id AS recorderID
+				,rd.id AS determinerID
 			FROM dbo.ImportTaxonObservationPublic itobp
 				INNER JOIN dbo.ImportTaxonObservation itob ON itobp.taxonObservationID = itob.id
 				INNER JOIN dbo.ImportSample isam ON itob.sampleID = isam.id 
