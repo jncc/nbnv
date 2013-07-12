@@ -410,7 +410,7 @@ public class UserAccessRequestResource extends AbstractResource {
         }
 
         oUserAccessRequestAuditHistoryMapper.addHistory(filterID, user.getId(), "Accept request");
-        giveAccess(filterID);
+        //giveAccess(filterID);
         mailRequestGrant(oUserAccessRequestMapper.getRequest(filterID), reason);
         return Response.status(Response.Status.OK).entity("{}").build();
     }
@@ -455,7 +455,7 @@ public class UserAccessRequestResource extends AbstractResource {
     private Response revokeRequest(User user, int filterID, String reason) throws IOException, TemplateException {
         oUserAccessRequestMapper.revokeRequest(filterID, reason, new Date(new java.util.Date().getTime()));
         oUserAccessRequestAuditHistoryMapper.addHistory(filterID, user.getId(), "Revoke action");
-        stripAccess(filterID);
+        //stripAccess(filterID);
         mailRequestRevoke(oUserAccessRequestMapper.getRequest(filterID), reason);
         return Response.status(Response.Status.OK).entity("{}").build();
     }

@@ -25,6 +25,7 @@ import uk.gov.nbn.data.portal.config.PowerlessHandlerMapping;
 import uk.gov.nbn.data.portal.config.PowerlessRequestSpecificsInterceptor;
 import uk.gov.nbn.data.portal.config.PowerlessSpringMVCConfig;
 import uk.gov.nbn.data.portal.mvc.RequestScopedResponseInterceptor.HttpServletResponseFactoryBean;
+import uk.gov.nbn.data.powerless.view.PowerlessFreeMarkerViewResolver;
 
 /**
  *
@@ -37,7 +38,7 @@ import uk.gov.nbn.data.portal.mvc.RequestScopedResponseInterceptor.HttpServletRe
 public class WebConfig extends WebMvcConfigurerAdapter {    
     @Bean
     public FreeMarkerViewResolver configureFreeMarkerViewResolver() {
-        FreeMarkerViewResolver resolver = new FreeMarkerViewResolver();
+        FreeMarkerViewResolver resolver = new PowerlessFreeMarkerViewResolver();
         resolver.setCache(true);
         resolver.setSuffix(".ftl");
         resolver.setContentType("text/html;charset=UTF-8");
