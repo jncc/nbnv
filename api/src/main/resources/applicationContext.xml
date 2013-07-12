@@ -23,10 +23,10 @@
         <property name="password" value="${db_warehouse_password}" />
     </bean>
     
-    <bean id="coreDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-        <property name="driverClassName" value="com.microsoft.sqlserver.jdbc.SQLServerDriver" />
-        <property name="url" value="${db_core_url}" />
-        <property name="username" value="${db_core_username}" />
-        <property name="password" value="${db_core_password}" />
-    </bean>
+    <bean id="coreDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"
+        destroy-method="close" p:driverClass="com.microsoft.sqlserver.jdbc.SQLServerDriver"
+        p:jdbcUrl="${db_core_url}" p:user="${db_core_username}" p:password="${db_core_password}" 
+        p:acquireIncrement="10" p:idleConnectionTestPeriod="3600" p:maxPoolSize="200"
+        p:maxStatements="32000" p:minPoolSize="10" />
+
 </beans>

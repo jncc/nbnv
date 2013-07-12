@@ -201,18 +201,18 @@ public class TaxonObservationProvider {
         return SQL();
     }
 
-    private String createSelect(Map<String, Object> params, String fields) {
+    String createSelect(Map<String, Object> params, String fields) {
         String publicSelect = createSelectQuery(params, false, fields);
         String fullSelect = createSelectQuery(params, true, fields);
         return "(" + fullSelect + " UNION ALL " + publicSelect + ") obs";
     }
 
-    private String createSelectEnhanced(Map<String, Object> params, String fields) {
+    String createSelectEnhanced(Map<String, Object> params, String fields) {
         String fullSelect = createSelectAllRecordsQuery(params, fields);
         return "(" + fullSelect + ") obs";
     }
 
-    private String createSelectQuery(Map<String, Object> params, boolean full, String fields) {
+    String createSelectQuery(Map<String, Object> params, boolean full, String fields) {
         BEGIN();
         SELECT(fields);
         if (full) {
