@@ -469,7 +469,7 @@ public class OrganisationAccessRequestResource extends AbstractResource {
         }
 
         oOrganisationAccessRequestAuditHistoryMapper.addHistory(filterID, user.getId(), "Accept request");
-        giveAccess(filterID);
+        //giveAccess(filterID);
         mailRequestGrant(oOrganisationAccessRequestMapper.getRequest(filterID), reason);
         return Response.status(Response.Status.OK).entity("{}").build();
     }
@@ -514,7 +514,7 @@ public class OrganisationAccessRequestResource extends AbstractResource {
     private Response revokeRequest(User user, int filterID, String reason) throws IOException, TemplateException {
         oOrganisationAccessRequestMapper.revokeRequest(filterID, reason, new Date(new java.util.Date().getTime()));
         oOrganisationAccessRequestAuditHistoryMapper.addHistory(filterID, user.getId(), "Revoke action");
-        stripAccess(filterID);
+        //stripAccess(filterID);
         mailRequestRevoke(oOrganisationAccessRequestMapper.getRequest(filterID), reason);
         return Response.status(Response.Status.OK).entity("{}").build();
     }
