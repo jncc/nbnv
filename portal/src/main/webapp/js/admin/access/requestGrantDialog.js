@@ -52,7 +52,7 @@ nbn.nbnv.ui.dialog.requestGrantDialog = function() {
                         }
                         
                         if (!_me.timeLimit._all) {
-                            filter.expires = _me.timeLimit.getJson().date;
+                            filter.expires = _me.timeLimit.getJson().time.date.format('DD/MM/YYYY');
                         }
                         
                         $.ajax({
