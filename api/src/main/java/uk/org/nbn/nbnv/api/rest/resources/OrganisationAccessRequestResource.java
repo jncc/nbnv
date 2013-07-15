@@ -94,6 +94,10 @@ public class OrganisationAccessRequestResource extends AbstractResource {
         if (accessRequest.getReason().getOrganisationID() == -1) {
             return Response.serverError().build();
         }
+
+        if (accessRequest.getDataset().isAll() && accessRequest.getTaxon().isAll() && accessRequest.getSpatial().isAll()) {
+            return Response.serverError().build();
+        }
         
         Organisation org = organisationMapper.selectByID(accessRequest.getReason().getOrganisationID());
         

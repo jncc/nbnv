@@ -85,6 +85,10 @@ public class UserAccessRequestResource extends AbstractResource {
             return Response.serverError().build();
         }
         
+        if (accessRequest.getDataset().isAll() && accessRequest.getTaxon().isAll() && accessRequest.getSpatial().isAll()) {
+            return Response.serverError().build();
+        }
+        
         if (!accessRequest.getSpatial().isAll() && !accessRequest.getDataset().isSecret()) {
             accessRequest.setSensitive("ns");
         }

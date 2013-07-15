@@ -69,6 +69,8 @@ nbn.nbnv.ui.createRequest = function (json, div) {
                 $.merge(error, year.getError());
                 $.merge(error, timeLimit.getError());
                 
+                if (dataset._all && taxon._all && spatial._all) { $.merge(error, ['You may not request access for all datasets on the Gateway. Please apply one filter.']); }
+                
                 result._onEnter(reason._perm, error);
             }
 
