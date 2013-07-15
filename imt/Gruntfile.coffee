@@ -48,7 +48,7 @@ module.exports = (grunt)->
       tasks: ["less"]
 
     clean: 
-      test:['test-js']
+      test:['test-js', 'test-compiled']
       prep:['dist', 'src/css']
 
     copy: 

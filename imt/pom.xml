@@ -1,0 +1,33 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+	<!-- nbn rs library -->
+
+    <parent>
+        <groupId>uk.org.nbn</groupId>
+        <artifactId>nbnv</artifactId>
+        <version>0.1-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>nbnv-imt</artifactId>
+    
+    <name>${project.artifactId}-${project.version}</name>
+    
+    <build>
+        <resources>
+            <resource>
+                <directory>src/scripts</directory>
+            </resource>
+            <resource>
+                <directory>src/less</directory>
+            </resource>
+        </resources>
+        <testResources>
+            <testResource>
+                <directory>test</directory>
+            </testResource>
+        </testResources>
+    </build>
+</project>
