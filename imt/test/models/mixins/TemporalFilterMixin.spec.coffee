@@ -1,13 +1,15 @@
 define [
+  "backbone"
   "cs!models/mixins/TemporalFilterMixin"
-], (TemporalFilterMixin) ->
-  define "TemporalFilterMixin Tests", ->
+], (Backbone, TemporalFilterMixin) ->
+  describe "TemporalFilterMixin Tests", ->
     temporalFilterMixin = null
     
     beforeEach ->
-      temporalFilterMixin = new TemporalFilterMixin
+      TemporalFilterModel = Backbone.Model.extend TemporalFilterMixin
+      temporalFilterMixin = new TemporalFilterModel
       
-    it "Defaults should be set as expected", ->
+    it "sets defaults as expected", ->
       expect(temporalFilterMixin.isTemporalFilterable).toBeTruthy
       expect(temporalFilterMixin.earliestRecordDate).toBe 1600
       

@@ -1,13 +1,15 @@
 define [
+  "backbone"
   "cs!models/mixins/PolygonFillMixin"
-], (PolygonFillMixin) ->
-  define "PolygonFillMixin Tests", ->  
+], (Backbone, PolygonFillMixin) ->
+  describe "PolygonFillMixin Tests", ->  
     polygonFillMixin = null
 
     beforeEach ->
-      polygonFillMixin = new PolygonFillMixin
+      PolygonFillModel = Backbone.Model.extend PolygonFillMixin
+      polygonFillMixin = new PolygonFillModel
       
-    it "Defaults set as expected", ->
+    it "sets defaults as expected", ->
       expect(polygonFillMixin.get "isStyleable").toBeTruthy
     
   

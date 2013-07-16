@@ -1,12 +1,25 @@
 define [
+  "backbone"
   "cs!models/mixins/DatasetFilterMixin"
-], (DatasetFilterMixin) ->
-  define "DatasetFilterMixin Tests", ->
-    datasetFilterMixin = new DatasetFilterMixin
+], (Backbone, DatasetFilterMixin) ->
+  describe "DatasetFilterMixin Tests", ->  
+    datasetFilterMixin = null
+
+    ###
+
+    The dataset mixin needs to be mixed in with a model which supports
+    getAvailableDatasets()
+
+    Mixining in with the default Backbone model means that it can not
+    be instantiated 
+    beforeEach ->
+      DatasetFilterModel = Backbone.Model.extend DatasetFilterMixin
+      datasetFilterMixin = new DatasetFilterModel
     
+
     it "Should be filterable by default", ->
       expect(datasetFilterMixin.isDatasetFilterable()).toBeTruthy
-    
+    ###
 #
 #  ###
 #  Listen to when a available datasets list has been populated and update
