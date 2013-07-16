@@ -1,0 +1,24 @@
+<table cellpadding="0" cellspacing="0" border="0" class="display" id="example">
+  <thead>
+    <tr>
+      <th>Location</th>
+      <th>Resolution</th>
+      <th>Site Name</th>
+      <th>Start Date</th>
+      <th>End Data</th>
+      <th>Recorder</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each this}}
+      <tr>
+        <td>{{location}}</td>
+        <td>{{resolution}}</td>
+        <td>{{siteName}}</td>
+        <td>{{startDate}}</td>
+        <td>{{endDate}}</td>
+        <td>{{recorder}}</td>
+      </tr>
+    {{/each}}
+  </tbody>
+</table>

@@ -4,7 +4,8 @@ require.config({
     'handlebars': { exports: 'Handlebars' },
 		'openlayers': { exports: 'OpenLayers', deps: ['proj4js']},
 		'jquery-ui': { exports: '$', deps: ['jquery']},
-		'jquery-md5': { exports: '$', deps: ['jquery']}
+		'jquery-md5': { exports: '$', deps: ['jquery']},
+		'DataTables' : { exports: '$', deps: ['jquery']}
   },
 	paths: {
 		'cs' : '../vendor/require-cs/cs',
@@ -12,6 +13,7 @@ require.config({
 		'hbs' : '../vendor/requirejs-hbs/hbs',
 		'handlebars' : '../vendor/handlebars/Handlebars',
 		'text' : '../vendor/requirejs-text/text',
+		'DataTables': '../vendor/DataTables/media/js/jquery.dataTables',
 		'jquery' : '../vendor/jquery/jquery',
 		'jquery-ui': '../vendor/jquery-ui/ui/jquery-ui',
 		'jquery-md5': '../vendor/jquery-md5/jquery.md5',

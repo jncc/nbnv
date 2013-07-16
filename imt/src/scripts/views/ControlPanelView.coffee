@@ -14,6 +14,7 @@ define [
     do @updateVisiblity # update state for the first time
 
     @listenTo @model, 'change:controlPanelVisible', @updateVisiblity
+    @listenTo @model.getPicker(), 'change:hasResults', @updateIsPicking
 
   render: ->
     @$el.html controlPanel()
@@ -38,6 +39,11 @@ define [
   Determine if the picker tab has been selected. If it has
   put the map into picking mode
   ###
-  updateIsPicking: (evt, ui)->
-    isPicking = ui.newPanel.hasClass "picker"
-    @model.getPicker().set "isPicking", isPicking
+  updateIsPicking: ->
+    isOnPickerTab = @$el.tabs( "option", "active" ) is 2 #picker is on second tab
+    @model.getPicker().set "isPicking", isOnPickerTab
+
+    if isOnPickerTab and @model.getPicker().hasResults()
+      @$el.animate width:800
+    else
+      @$el.animate width:350

@@ -1,6 +1,12 @@
 define [
   "jquery"
   "backbone"
-], ($, Backbone) -> Backbone.View.extend
+  "hbs!templates/TaxonObservations"
+  "DataTables"
+], ($, Backbone, template) -> Backbone.View.extend
   initialize:->
-    console.log "creating taxon observations view"
+    @listenTo @collection, 'sync', @render
+
+  render: ->
+    @$el.html template @collection.toJSON()
+    @$('table').dataTable()

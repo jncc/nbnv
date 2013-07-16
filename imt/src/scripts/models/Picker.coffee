@@ -11,11 +11,16 @@ define [
     wkt: ""
 
   initialize: -> 
+    @on 'change:resultsForLayers', => @trigger 'change:hasResults'
     @on 'change:wkt', @updateResultsForLayers
 
   getLayers: -> @get "layers"
 
   getResultsForLayers: -> @get "resultsForLayers"
+
+  hasResults: -> @get("resultsForLayers").length isnt 0
+
+  clearResults: -> @set "wkt", ""
 
   ###
   The following method will search through the layers and check to see
@@ -26,15 +31,18 @@ define [
   The TaxonObservations models will then be fetched for the currently selected polygon
   ###
   updateResultsForLayers: ->
-    #Object an array of pickerResultsForLayers which i can query
-    resultsForLayers = @getLayers()
-      .chain()
-      .filter( (layer) -> layer.getTaxonObservations? )
-      .map( (layer) -> layer: layer, records: layer.getTaxonObservations() )
-      .value()
+    if not @get "wkt"
+      @set "resultsForLayers", []
+    else
+      #Object an array of pickerResultsForLayers which i can query
+      resultsForLayers = @getLayers()
+        .chain()
+        .filter( (layer) -> layer.getTaxonObservations? )
+        .map( (layer) -> layer: layer, records: layer.getTaxonObservations() )
+        .value()
 
-    #Fetch all the layers and store the promises in an array
-    _.each resultsForLayers, (resultsForLayer) => resultsForLayer.records.fetch
-      polygon: @get "wkt"
+      #Fetch all the layers and store the promises in an array
+      _.each resultsForLayers, (resultsForLayer) => resultsForLayer.records.fetch
+        polygon: @get "wkt"
 
-    @set "resultsForLayers", resultsForLayers
+      @set "resultsForLayers", resultsForLayers      

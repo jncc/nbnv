@@ -1,8 +1,7 @@
-<ul>
-  {{#each this}}
-    <li>
-      <h1>{{layer.attributes.descript}}</h1>
-      <div class="records"></div>
-    </li>
-  {{/each}}
-</ul>
+{{#if hasResults}}
+  <button type="button" class="btn clearResults">Redraw Selection</button>
+  <div class="results"></div>
+{{else}}
+  You are now in picking mode, draw something on the map and you will see what
+  records have contributed to your area.
+{{/if}}
