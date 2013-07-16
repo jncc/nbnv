@@ -1,4 +1,8 @@
-{{#each features}}
-  <h2>{{layerName}}</h2>
-  {{info}}
-{{/each}}
+<ul>
+  {{#each this}}
+    <li>
+      <h1>{{layer.attributes.descript}}</h1>
+      <div class="records"></div>
+    </li>
+  {{/each}}
+</ul>

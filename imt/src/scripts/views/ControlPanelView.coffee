@@ -28,8 +28,8 @@ define [
       el: @$('.datasets')
 
     @pickerView = new PickerView
-      collection: @model.getPicker().getFeatures()
-      el: @$('.picker');
+      model: @model.getPicker()
+      el: @$('.picker')
 
   updateVisiblity:->
     if @model.get "controlPanelVisible" then do @$el.show else do @$el.hide

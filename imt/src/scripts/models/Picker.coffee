@@ -3,55 +3,38 @@ define [
   'underscore'
   'backbone' 
   'cs!collections/Layers'
-  'cs!collections/Features'
-  'cs!models/Feature'
-], ($, _, Backbone, Layers, Features, Feature) -> Backbone.Model.extend 
+], ($, _, Backbone, Layers) -> Backbone.Model.extend 
   defaults :
-    features: new Features
+    resultsForLayers: []
     isPicking: false
     layers: new Layers
     wkt: ""
 
-  _deferred: $.Deferred()
-
   initialize: -> 
-    @on 'change:wkt', @updateFeatures
+    @on 'change:wkt', @updateResultsForLayers
 
   getLayers: -> @get "layers"
 
-  getFeatures: -> @get "features"
+  getResultsForLayers: -> @get "resultsForLayers"
 
   ###
   The following method will search through the layers and check to see
-  if they have a getTaxonObservations method. If they do, it will be called
-  and the returned collection will be fetched with the current wkt.
+  if they have a getTaxonObservations method. If they do, a new model will 
+  be added to the resultsForLayers collection and which represents the result of
+  getTaxonObservations and the layer the observations are linked to.
 
-  This method returns a jquery promise for when the request is completed
+  The TaxonObservations models will then be fetched for the currently selected polygon
   ###
-  updateFeatures: ->
-    do @_deferred.reject #reject the last request
-    @_deferred = $.Deferred() #and create a new one
-
-    features = @getFeatures()
-    do features.reset #remove all of the features currently in the collection
-
-    #Object an array of collections which i can query
-    collectionsToFetch = @getLayers()
+  updateResultsForLayers: ->
+    #Object an array of pickerResultsForLayers which i can query
+    resultsForLayers = @getLayers()
       .chain()
       .filter( (layer) -> layer.getTaxonObservations? )
-      .map( (layer) -> layer.getTaxonObservations() )
+      .map( (layer) -> layer: layer, records: layer.getTaxonObservations() )
       .value()
 
     #Fetch all the layers and store the promises in an array
-    fetchPromises = collectionsToFetch.map (layer) => layer.fetch 
-      polygon: @get 'wkt'
+    _.each resultsForLayers, (resultsForLayer) => resultsForLayer.records.fetch
+      polygon: @get "wkt"
 
-    #Bundle all the promises together and return a single promise for when all
-    #layers have been 'picked'
-    $.when.apply($, fetchPromises)
-      .done => @_deferred.resolve @getFeatures()
-
-    #When done, add all the obtained observations to the features collection
-    @_deferred
-      .done(-> _.each collectionsToFetch, (layer) -> features.add layer)
-      .promise()
+    @set "resultsForLayers", resultsForLayers

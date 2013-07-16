@@ -1,41 +1,19 @@
 define [
   "jquery",
   "backbone",
+  "cs!views/TaxonObservationsView"
   "hbs!templates/PickerView"
-], ($, Backbone, template) -> Backbone.View.extend
-
+], ($, Backbone, TaxonObservationsView, template) -> Backbone.View.extend
 
   initialize: ->
-    do @render
-    @listenTo @collection, 'change', @render
+    @listenTo @model, 'change:resultsForLayers', @render
 
-  render: -> 
+  render: ->
+    resultsForLayers = @model.getResultsForLayers()
 
-    ###
-    features = _.chain(@collection)
-                .groupBy((feature) -> feature.getLayerName())
-                .map((val,key) -> 
-                  layerName: val[0].attributes.layerName
-                  info: val[0].attributes.featureInfo
-                  )
-                .value()
-    ###
+    @$el.html template resultsForLayers
 
-#    features = @collection.groupBy('layerName')
-#    console.log features
-
-    @$el.html template features: @collection.toJSON();
-
-
-#    features = @collection.getUsedDatasets()
-#    organisations = _.chain(usedDatasets)
-#                      .groupBy((dataset) -> dataset.getOrganisationID() )
-#                      .map( (val,key) ->  
-#                        name: val[0].attributes.organisationName
-#                        href: val[0].attributes.organisationHref
-#                        id: val[0].attributes.organisationID
-#                        datasets: val
-#                      )
-#                      .value()
-
-#    @$el.html template organisations: organisations
+    _.each resultsForLayers, (resultsForLayer, index) =>
+      new TaxonObservationsView
+        collection: resultsForLayer.records
+        el: @$("li:eq(#{index}) div.records")
