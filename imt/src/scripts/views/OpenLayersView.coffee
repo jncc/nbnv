@@ -49,9 +49,9 @@ define [
       @map.removeLayer @map.baseLayer #remove the current baseLayer
       @map.addLayer OpenLayersLayerFactory.getBaseLayer baselayer #Find the openlayers version of baseLayer and add
 
-      #this line is required to fix a bug in OpenLayers 2.10 (Ticket #1249)
-      @map.setCenter centre.transform(oldProjection, @map.getProjectionObject()), zoom
-
+      #Fix the Openlayers bugs 
+      @map.setLayerIndex @map.baseLayer, 0 #move the baselayer to the 0th position
+      @map.setCenter centre.transform(oldProjection, @map.getProjectionObject()), zoom #(Ticket #1249)
 
     ###
     If the picker is in picking mode then enable the drawing control
