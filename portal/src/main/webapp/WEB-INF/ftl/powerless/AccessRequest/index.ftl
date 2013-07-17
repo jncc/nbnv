@@ -22,6 +22,8 @@
             });
         });
     </script>
+    <h1>Your Access Requests</h1>
+    <p>Your pending and granted enhanced access requests are displayed in the tables below.</p>
     <h1>Pending Access Requests</h1>
     <table class="results">
         <thead>

@@ -79,6 +79,8 @@
             });
         });
     </script>
+    <h1>Manage Access Requests</h1>
+    <p>Pending and granted access requests to your datasets are displayed in the tables below. Follow the links to manage these requests.</p>
     <h1>Updating Public Access</h1>
     <p>The current level of public access to your dataset is displayed in the Access and Constraints tab of the dataset metadata. Public access can be changed by reloading the dataset onto the NBN Gateway. Please contact access@nbn.org.uk who will help with this. If you require an urgent change to the level of public access then public access to the dataset can be removed whilst the dataset is reloaded at the new level of public access.</p>
     <h1>Pending Access Requests</h1>
