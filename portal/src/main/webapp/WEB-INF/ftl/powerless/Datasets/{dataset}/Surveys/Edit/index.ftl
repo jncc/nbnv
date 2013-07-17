@@ -41,7 +41,7 @@
                     <td>${r.title!'No title'}</td>
                     <td>${r.providerKey}</td>
                     <td>${r.description!'No description'}</td>
-                    <#if isAdmin><td><a href="${r.id?c}/Edit">Alter metadata</a></td></#if>
+                    <#if isAdmin><td><a href="${r.id?c}/Edit">Edit metadata</a></td></#if>
                 </tr>
             </#list>
             </tbody>
