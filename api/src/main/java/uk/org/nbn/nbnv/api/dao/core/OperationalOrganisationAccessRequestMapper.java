@@ -70,7 +70,7 @@ public interface OperationalOrganisationAccessRequestMapper {
         @Result(property="requestPurposeLabel", column="requestPurposeID", javaType=String.class, one=@One(select="uk.org.nbn.nbnv.api.dao.core.AccessRequestPurposeMapper.getPurposeText")),
         @Result(property="datasetKey", column="datasetKey")
     })
-    public List<OrganisationAccessRequest> getGrantedOrganisationRequestsByDataset(@Param("dataset") String datasetKey, @Param("user") int organisationID);
+    public List<OrganisationAccessRequest> getGrantedOrganisationRequestsByDataset(@Param("dataset") String datasetKey, @Param("organisation") int organisationID);
 
     @Select("SELECT uar.* FROM OrganisationAccessRequest uar "
             + "INNER JOIN UserOrganisationMembership uom ON uom.organisationID = uar.organisationID "
