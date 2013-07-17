@@ -13,7 +13,7 @@ require.config({
 		'hbs' : '../vendor/requirejs-hbs/hbs',
 		'handlebars' : '../vendor/handlebars/Handlebars',
 		'text' : '../vendor/requirejs-text/text',
-		'DataTables': '../vendor/DataTables/media/js/jquery.dataTables',
+		'DataTables': '../vendor/datatables/media/js/jquery.dataTables',
 		'jquery' : '../vendor/jquery/jquery',
 		'jquery-ui': '../vendor/jquery-ui/ui/jquery-ui',
 		'jquery-md5': '../vendor/jquery-md5/jquery.md5',
