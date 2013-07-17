@@ -148,7 +148,7 @@ nbn.nbnv.ui.filter.taxon = function(json) {
                         speciesAutoComplete.prop('disabled', false);
                     }
                 })
-            ).append("Single species ")
+            ).append("Single species or taxon ")
             .append(speciesAutoComplete);
 
         var desigFilterRecords = $('<div>')
