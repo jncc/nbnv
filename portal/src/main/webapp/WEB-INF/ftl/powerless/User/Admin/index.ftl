@@ -40,6 +40,7 @@
     <div class="tabbed">
         <h3>Your Organisation Membership</h3>
         <#if requests?has_content>
+        <h4>Pending Membership Requests</h4>
         <table class="sTable">
             <thead>
                 <tr>
@@ -59,6 +60,7 @@
             </tbody>
         </table>
         </#if>
+        <h4>Organisation Membership</h4>
         <table class="sTable">
             <thead>
                 <tr>
