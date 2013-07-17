@@ -19,10 +19,18 @@ nbn.nbnv.ui.requestGrantResult = function() {
                 .text('Grant')
                 .attr('id', 'resultsubmitbtn')
                 .click(clickfn)
+            ).append($('<div>')
+                .attr('id', 'resultworkingspan')
+                .append($('<span>')
+                    .addClass('ui-loading')
+                ).append($('<span>')
+                    .append('Working...')
+                )
             );
     };
     
     this._onEnter = function(error) {
+        $('#resultworkingspan').hide();
         var data = $('#resultpermtext');
         data.html('');
         

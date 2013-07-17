@@ -30,6 +30,8 @@ nbn.nbnv.ui.createGrant = function (json, div) {
     this.div.append(timeLimit._renderPanel());
     this.div.append(result._renderHeader());
     this.div.append(result._renderPanel(function () {
+        $('#resultsubmitbtn').prop('disabled', 'true');
+        $('#resultworkingspan').show();
         var j = {};
         $.extend(j, reason.getJson());        
         $.extend(j, sensitive.getJson());
@@ -49,7 +51,11 @@ nbn.nbnv.ui.createGrant = function (json, div) {
             contentType: 'application/json',
             processData: false,
             data: JSON.stringify(j),
-            complete: function() {
+            success: function() {
+                window.location = "/AccessRequest/Admin";
+            },
+            error: function() {
+                alert('Problem granting access, please try again later');
                 window.location = "/AccessRequest/Admin";
             }
         });

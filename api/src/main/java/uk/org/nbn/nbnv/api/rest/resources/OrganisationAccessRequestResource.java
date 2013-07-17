@@ -10,6 +10,7 @@ import java.sql.Date;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -91,6 +92,10 @@ public class OrganisationAccessRequestResource extends AbstractResource {
 
         // Fail if this is an user request
         if (accessRequest.getReason().getOrganisationID() == -1) {
+            return Response.serverError().build();
+        }
+
+        if (accessRequest.getDataset().isAll() && accessRequest.getTaxon().isAll() && accessRequest.getSpatial().isAll()) {
             return Response.serverError().build();
         }
         
@@ -460,6 +465,8 @@ public class OrganisationAccessRequestResource extends AbstractResource {
      * @throws ParseException 
      */
     private Response acceptRequest(User user, int filterID, String reason, String expires) throws ParseException, IOException, TemplateException {
+        giveAccess(filterID);
+        
         if (expires.isEmpty()) {
             oOrganisationAccessRequestMapper.acceptRequest(filterID, reason, new Date(new java.util.Date().getTime()));
         } else {
@@ -469,7 +476,6 @@ public class OrganisationAccessRequestResource extends AbstractResource {
         }
 
         oOrganisationAccessRequestAuditHistoryMapper.addHistory(filterID, user.getId(), "Accept request");
-        //giveAccess(filterID);
         mailRequestGrant(oOrganisationAccessRequestMapper.getRequest(filterID), reason);
         return Response.status(Response.Status.OK).entity("{}").build();
     }
@@ -512,9 +518,9 @@ public class OrganisationAccessRequestResource extends AbstractResource {
      * @throws ParseException 
      */
     private Response revokeRequest(User user, int filterID, String reason) throws IOException, TemplateException {
+        stripAccess(filterID);
         oOrganisationAccessRequestMapper.revokeRequest(filterID, reason, new Date(new java.util.Date().getTime()));
         oOrganisationAccessRequestAuditHistoryMapper.addHistory(filterID, user.getId(), "Revoke action");
-        //stripAccess(filterID);
         mailRequestRevoke(oOrganisationAccessRequestMapper.getRequest(filterID), reason);
         return Response.status(Response.Status.OK).entity("{}").build();
     }
@@ -531,11 +537,9 @@ public class OrganisationAccessRequestResource extends AbstractResource {
         AccessRequestJSON accessRequest = parseJSON(uar.getFilter().getFilterJSON());
 
         List<String> species = accessRequestUtils.createSpeciesList(accessRequest);        
-        List<Integer> records = accessRequestUtils.getRecordSet(accessRequest, species, uar.getDatasetKey(), uar.getOrganisation());
-        
-        for (int i : records) {
-            oOrganisationTaxonObservationAccessMapper.RemoveAccess(uar.getOrganisation().getId(), i);
-        }
+        List<String> datasets = new ArrayList<String>();
+        datasets.add(uar.getDatasetKey());
+        oOrganisationTaxonObservationAccessMapper.removeOrganisationAccess(uar.getOrganisation(), accessRequest.getYear().getStartYear(), accessRequest.getYear().getEndYear(), datasets, species, accessRequest.getSpatial().getMatch(), accessRequest.getSpatial().getFeature(), (accessRequest.getSensitive().equals("sans") ? true : false), accessRequest.getTaxon().getDesignation(), accessRequest.getTaxon().getOutput(), "", "");
 
         List<OrganisationAccessRequest> uars = oOrganisationAccessRequestMapper.getGrantedOrganisationRequestsByDataset(uar.getDatasetKey(), uar.getOrganisation().getId());
         
@@ -568,12 +572,9 @@ public class OrganisationAccessRequestResource extends AbstractResource {
         AccessRequestJSON accessRequest = parseJSON(uar.getFilter().getFilterJSON());
 
         List<String> species = accessRequestUtils.createSpeciesList(accessRequest);        
-        List<Integer> records = accessRequestUtils.getRecordSet(accessRequest, species, uar.getDatasetKey(), uar.getOrganisation());
-        
-        for (int i : records) {
-            oOrganisationTaxonObservationAccessMapper.AddAccess(uar.getOrganisation().getId(), i);
-        }
-
+        List<String> datasets = new ArrayList<String>();
+        datasets.add(uar.getDatasetKey());
+        oOrganisationTaxonObservationAccessMapper.addOrganisationAccess(uar.getOrganisation(), accessRequest.getYear().getStartYear(), accessRequest.getYear().getEndYear(), datasets, species, accessRequest.getSpatial().getMatch(), accessRequest.getSpatial().getFeature(), (accessRequest.getSensitive().equals("sans") ? true : false), accessRequest.getTaxon().getDesignation(), accessRequest.getTaxon().getOutput(), "", "");
         return true;
     }
     
