@@ -38,8 +38,7 @@
 
 <#macro organisations organisations admin requests>
     <div class="tabbed">
-        <h3>Organisations</h3>
-        <a href="/Organisations/Join">Join an Organisation</a>
+        <h3>Your Organisation Membership</h3>
         <#if requests?has_content>
         <table class="sTable">
             <thead>
@@ -74,7 +73,8 @@
                     <#assign t=0 /><#list admin as a><#if a.id==r.id><#assign t=1 /></#if></#list>
                     <#if t==1>
                         <td>
-                            <a href="/Organisations/${r.id?c}/Admin">Admin Organisation Membership and Metadata</a><br/>
+                            <a href="/Organisations/${r.id?c}/Admin#tabs-4">Edit Organisation Details</a><br/>
+                            <a href="/Organisations/${r.id?c}/Admin">Manage Organisation Membership</a><br/>
                             <a href="/AccessRequest/Organisations/${r.id?c}">View Organisation Access Requests</a>
                         </td>
                     <#elseif admin?has_content>
@@ -89,21 +89,22 @@
 
 <#macro userAdmin user>
     <div class="tabbed">
-        <h3>User Settings</h3>
+        <h3>Your Account</h3>
         <table>
             <tr><td>Username:</td><td>${user.username}</td></tr>
             <tr><td>Email:</td><td>${user.email}</td></tr>
-            <tr><td><a href="/User/Modify">Modify your user details</a></td><td><a href="/User/Modify#tabs-2">Change password</a></td><td><a href="/User/Modify#tabs-3">Change Email Subscriptions</a></td></tr>
-            <tr><td><a href="/AccessRequest">Access Permissions Summary</a></td><td><a href="/AccessRequest/Create">Create Access Request</a></td></tr>
+            <tr><td><a href="/User/Modify">Change Your User Details</a></td><td><a href="/User/Modify#tabs-2">Change Password</a></td><td><a href="/User/Modify#tabs-3">Change Email Subscriptions</a></td></tr>
+            <tr><td><a href="/AccessRequest/Create">Create New Access Request</a></td><td><a href="/AccessRequest">View Your Access Requests</a></td><td><a href="/Organisations/Join">Join an Organisation</a></td></tr>
         </table>
     </div>
 </#macro>
 
 <#macro datasetAdmin datasets>
     <div class="tabbed">
-        <h3>Administrate Datasets</h3>
-        <div><a href="/AccessRequest/Admin">Admin Access Permissions</a></div>
-        <div>View Download Log</div>
+        <h3>Manage Your Datasets</h3>
+        <p><a href="/AccessRequest/Admin">Manage Access Requests</a></p>
+        <p><a href="/AccessRequest/Create/Grant">Create New Dataset Access</a></p>
+        <p>View Download Log</p>
         <table class="sTable">
             <thead>
                 <tr>
