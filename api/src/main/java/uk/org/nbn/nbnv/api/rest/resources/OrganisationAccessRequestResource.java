@@ -126,7 +126,7 @@ public class OrganisationAccessRequestResource extends AbstractResource {
             mailRequestCreate(oOrganisationAccessRequestMapper.getRequest(filter.getId()), user);
         }
 
-        return Response.ok("success").build();
+        return Response.status(Response.Status.OK).entity("{}").build();
     }
     
     @PUT
@@ -158,7 +158,7 @@ public class OrganisationAccessRequestResource extends AbstractResource {
             acceptRequest(user, filter.getId(), accessRequest.getReason().getReason(), accessRequest.getTime().isAll() ? "" : accessRequest.getTime().getDate().toString());
         }
 
-        return Response.ok("success").build();
+        return Response.status(Response.Status.OK).entity("{}").build();
     }
 
     /**
@@ -192,7 +192,7 @@ public class OrganisationAccessRequestResource extends AbstractResource {
         oTaxonObservationFilterMapper.editFilter(filterID, filter.getFilterText(), filter.getFilterJSON());
         oOrganisationAccessRequestAuditHistoryMapper.addHistory(filterID, user.getId(), "Edit request to: '" + filter.getFilterText() + "', from: '" + orig.getFilterText() + "'");
 
-        return Response.ok("success").build();
+        return Response.status(Response.Status.OK).entity("{}").build();
     }
     
     /**
