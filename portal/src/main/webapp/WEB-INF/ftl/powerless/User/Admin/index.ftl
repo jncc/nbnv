@@ -123,7 +123,7 @@
                         <a href="/Datasets/${r.key}/Edit">Edit Dataset Metadata</a><br/>
                         <a href="/Datasets/${r.key}/Surveys/Edit">Edit Survey Metadata</a><br/>
                         <a href="/Datasets/${r.key}/Attributes/Edit">Edit Attribute Metadata</a><br/>
-                        <a href="/AccessRequest/History/${r.key}">Access Permissions History</a>
+                        <a href="/AccessRequest/History/${r.key}">View Dataset Access History</a>
                     </td>
                 </tr>
             </#list>
