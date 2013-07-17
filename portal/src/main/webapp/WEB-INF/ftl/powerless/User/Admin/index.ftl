@@ -27,6 +27,7 @@
     </script>
 
     <h1>Administration Options for ${user.forename} ${user.surname}</h1>
+    <p>Welcome to your Account Page. Follow the links to update your account details, request enhanced access to datasets and apply for membership to organisations. Links are provided for administrators to manage their datasets and organisations. </p>
     <div>
         <@userAdmin user=user />
         <#if datasets?has_content>
