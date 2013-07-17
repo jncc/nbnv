@@ -69,15 +69,7 @@
                 <@form.errors path="*" cssClass="message error" element="div" />
                 <table class="nbn-simple-table">
                     <tr>
-                        <td><label for="allowEmailAlerts">Allow Email Alerts<label></td>
-                        <td><@form.checkbox path="allowEmailAlerts"/></td>
-                    </tr>
-                    <tr>
-                        <td><label for="subscribedToAdminMails">Subscribe to Admin Emails<label></td>
-                        <td><@form.checkbox path="subscribedToAdminMails"/></td>
-                    </tr>
-                    <tr>
-                        <td><label for="subscribedToNBNMarketting">Subscribe to NBN Marketing<label></td>
+                        <td><label for="subscribedToNBNMarketting">Subscribe to NBN e-mail newsletters<label></td>
                         <td><@form.checkbox path="subscribedToNBNMarketting"/></td>
                     </tr>
                 </table>

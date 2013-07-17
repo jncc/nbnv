@@ -534,13 +534,8 @@ public class UserResource extends AbstractResource {
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
     public Response modifyEmailSettings(@TokenUser(allowPublic = false) User user, 
-        @FormParam("allowEmailAlerts") int allowEmailAlerts,
-        @FormParam("subscribedToAdminEmails") int subscribedToAdminEmails,
         @FormParam("subscribedToNBNMarketting") int subscribedToNBNMarketting) throws JSONException {
-        oUserMapper.updateUserEmailSettings(user.getId(), 
-                allowEmailAlerts, 
-                subscribedToAdminEmails, 
-                subscribedToNBNMarketting);
+        oUserMapper.updateUserEmailSettings(user.getId(), subscribedToNBNMarketting);
         
         return Response.ok(new JSONObject()
                 .put("success", true)
