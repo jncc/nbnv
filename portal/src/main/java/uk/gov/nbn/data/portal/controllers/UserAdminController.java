@@ -153,8 +153,6 @@ public class UserAdminController {
 
         if (isNotPublicUser(currentUser)) {
             MultivaluedMap data = new MultivaluedMapImpl();
-            data.add("allowEmailAlerts", user.isAllowEmailAlerts() ? "1" : "0");
-            data.add("subscribedToAdminEmails", user.isSubscribedToAdminMails() ? "1" : "0");
             data.add("subscribedToNBNMarketting", user.isSubscribedToNBNMarketting() ? "1" : "0");
 
             ClientResponse response = resource.path("user/emailSettings")
@@ -169,7 +167,7 @@ public class UserAdminController {
             String successMessage = "";
 
             if (!result.hasErrors()) {
-                successMessage = "Succesfully changed email subscriptions.";
+                successMessage = "Successfully changed email subscription";
             }
 
             User updatedUser = resource.path("user/full")
