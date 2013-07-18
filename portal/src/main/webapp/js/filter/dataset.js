@@ -150,6 +150,7 @@ nbn.nbnv.ui.filter.dataset = function(json) {
 
     this.setupTable = function (json, endpoint) {
         var datasetTable = $('#datasetfiltertable');
+
         var _me = this;
         var dataf = this._datasets;
         this._datasets = [];
@@ -291,6 +292,7 @@ nbn.nbnv.ui.filter.dataset = function(json) {
                     "aaSorting": [[1, "asc"]],
                     "bAutoWidth": true,
                     "bFilter": false,
+                    "bDestroy": true,
                     "bJQueryUI": true,
                     "iDisplayLength": 25,
                     "bSortClasses": false,
