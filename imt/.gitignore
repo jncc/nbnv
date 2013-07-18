@@ -1,3 +1,15 @@
-# output
-/target
+# Bower output
+src/vendor
 
+# Grunt code output, LESS and test compilation
+_SpecRunner.html
+test-compiled
+dist
+src/css
+
+# Test results
+junit
+
+# npm and temp directories
+node_modules
+.grunt

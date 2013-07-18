@@ -18,7 +18,7 @@ nbn.nbnv.ui.filter.year = function(json) {
 
     this._renderHeader = function() {
         return $('<h3>').attr('filtertype', 'year')
-            .append($('<span>').addClass('filterheader').append('Year Filter'))
+            .append($('<span>').addClass('filterheader').append('Year Range'))
             .append($('<span>').attr('id', 'yearResult').addClass('resulttext'));
     };
     
@@ -51,7 +51,7 @@ nbn.nbnv.ui.filter.year = function(json) {
                         endInput.prop('disabled', true);
                     }
                 })
-            ).append('All records');
+            ).append('All years');
 
 	var filterRecords = $('<div>')
             .append($('<input>')

@@ -1,0 +1,14 @@
+.ui-loading {
+    background-image:url('/img/ajax-loader.gif');
+    background-repeat:no-repeat;
+    height: 20px;
+    width: 20px;
+    float: left; 
+    margin: 0 7px 15px 0;
+}
+
+.ui-spinner-containing-div {
+    float:left;
+    padding-top:15px;
+    height:25px;
+}

@@ -16,7 +16,7 @@
         ,"/js/admin/access/requestGrantResult.js"
         ,"/js/admin/access/timeLimit.js"
         ,"/js/admin/access/createGrant.js"] 
-    csss=["http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/themes/smoothness/jquery-ui.css","/css/jquery.qtip.min.css","/css/accessRequest.css"]>
+    csss=["http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/themes/smoothness/jquery-ui.css","/css/jquery.qtip.min.css","/css/accessRequest.css","/css/dialog-spinner.css"]>
 
     <script>
         nbn.nbnv.api = '${api}';

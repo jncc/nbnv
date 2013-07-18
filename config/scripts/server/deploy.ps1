@@ -84,7 +84,7 @@ $REGISTERED_BUILDS = @{
 		"services" = @("Tomcat7-data.nbn.org.uk");
 		"obtain" = { 
 			param($build_number);
-			$data["NBNV-PORTAL-IMT"] = GetBuild "NBN-FRONTENDSNAP" $build_number "NBN-IMT-War/imt.war"
+			$data["NBNV-PORTAL-IMT"] = GetBuild "NBN-IMT" $build_number "IMT-War/imt.war"
 		};
 		"deploy" = { Deploy $data["NBNV-PORTAL-IMT"] "data" "imt" }
 	};

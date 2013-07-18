@@ -21,7 +21,7 @@ nbn.nbnv.ui.dialog.requestGrantDialog = function() {
             ).append($('<p>')
                 .attr('id', 'grantanonwarn')
                 .addClass('ui-state-error')
-                .append('This request was sent without the user knowing about your dataset. If you reply, they will. So be careful m\'kay?')
+                .append('THIS REQUEST CONTAINS SENSITIVE RECORDS REQUESTED FOR SPECIFIC SITE(S). ACCEPTING THIS ACCESS REQUEST MAY REVEAL THE LOCATION OF THESE SENSITIVE RECORDS TO THE USER')
                 .hide()
             ).append($('<p>')
                 .attr('id', 'granttimelimit')
@@ -41,6 +41,7 @@ nbn.nbnv.ui.dialog.requestGrantDialog = function() {
                 width: 650,
                 buttons: { 
                     "Grant Request": function() {
+                        displaySendingRequestDialog('Working...');
                         var filter = { action: "grant", reason: _me.reason };
                         var url;
                         
@@ -51,14 +52,15 @@ nbn.nbnv.ui.dialog.requestGrantDialog = function() {
                         }
                         
                         if (!_me.timeLimit._all) {
-                            filter.expires = _me.timeLimit.getJson().date;
+                            filter.expires = _me.timeLimit.getJson().time.date.format('DD/MM/YYYY');
                         }
                         
                         $.ajax({
                             type: 'POST',
                             url: url,
                             data: filter,
-                            success: function () { document.location.reload(true); }
+                            success: function () { document.location.reload(true); },
+                            error: function () { alert("Problem with request id: " + _me.requestID); document.location.reload(true);  }
                         });
                     }, Cancel: function() { 
                         $(this).dialog("close"); 
@@ -70,6 +72,7 @@ nbn.nbnv.ui.dialog.requestGrantDialog = function() {
     this.show = function(id, json, dataset, datasetEndpoint) {
         this.requestID = id;
         this.timeLimit = new nbn.nbnv.ui.timeLimit(json);
+        $('#granttimelimit').html('');
         $('#granttimelimit').append(this.timeLimit._renderPanel());
         var filter = {};
         $('#granteffect').html('');

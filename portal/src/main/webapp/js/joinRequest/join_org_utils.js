@@ -15,6 +15,7 @@
                     modal: true,
                     buttons: {
                         Ok: function() {
+                            displaySendingRequestDialog('Withdrawing Request');
                             $.ajax({
                                 type: 'POST',
                                 contentType: 'application/json; charset=utf-8',
@@ -58,7 +59,7 @@
 
         function checkReasonDialog(url, id, type) {
             var reason = $('#nbn-org-join-reason-text').val();
-            if (reason.trim() === '') {
+            if ($.trim(reason) === '') {
                 $("#nbn-org-join-dialog-reason").text('with no reason attached?');
             } else {
                 $("#nbn-org-join-dialog-reason").text('with the following reason?');
@@ -72,6 +73,11 @@
                 buttons: {
                     Ok: function() {
                         $('#nbn-org-join-reason-dialog').dialog('close');
+                        var text = 'Denying Request';
+                        if (type === 'accept') {
+                            text = 'Accepting Request';
+                        }
+                        displaySendingRequestDialog(text);
                         postResponse(url, id, type, reason);
                     },
                     Cancel: function() {

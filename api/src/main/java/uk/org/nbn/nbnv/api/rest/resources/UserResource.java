@@ -472,7 +472,10 @@ public class UserResource extends AbstractResource {
     @GET
     @Path("/search")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<User> searchForUserByPartial(@TokenUser(allowPublic=false) User user, @QueryParam("term") String term, @QueryParam("organisation") int orgId) {
+    public List<User> searchForUserByPartial(@TokenUser(allowPublic=false) User user, @QueryParam("term") String term, @QueryParam("organisation") int orgId, @QueryParam("dataset") String dataset) {
+        if (dataset != null && !dataset.equals("")) {
+            return oUserMapper.searchForUserExcludeDatasetAdmins(term, dataset);
+        }
        return oUserMapper.searchForUserExcludeOrganisationMembers("%" + term + "%", orgId);
     }
 
@@ -531,13 +534,8 @@ public class UserResource extends AbstractResource {
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
     public Response modifyEmailSettings(@TokenUser(allowPublic = false) User user, 
-        @FormParam("allowEmailAlerts") int allowEmailAlerts,
-        @FormParam("subscribedToAdminEmails") int subscribedToAdminEmails,
         @FormParam("subscribedToNBNMarketting") int subscribedToNBNMarketting) throws JSONException {
-        oUserMapper.updateUserEmailSettings(user.getId(), 
-                allowEmailAlerts, 
-                subscribedToAdminEmails, 
-                subscribedToNBNMarketting);
+        oUserMapper.updateUserEmailSettings(user.getId(), subscribedToNBNMarketting);
         
         return Response.ok(new JSONObject()
                 .put("success", true)

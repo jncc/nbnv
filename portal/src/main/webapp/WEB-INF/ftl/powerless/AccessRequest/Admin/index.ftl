@@ -14,8 +14,9 @@
     ,"/js/admin/access/requestGrantDialog.js"
     ,"/js/admin/access/requestDenyDialog.js"
     ,"/js/admin/access/requestRevokeDialog.js"
+    ,"/js/dialog_spinner.js"
     ]
-    csss=["http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/themes/smoothness/jquery-ui.css"]>
+    csss=["http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/themes/smoothness/jquery-ui.css","/css/dialog-spinner.css"]>
 
     <script>
         nbn.nbnv.api = '${api}';
@@ -53,8 +54,6 @@
             revoke._render();
             $('.revokelink').click(function() { revoke.show($(this).attr("request"), jsonCache[$(this).attr("request")]); });
 
-            $('#addgrantbtn').click(function() { window.location = '/AccessRequest/Create/Grant'; });
-
             $.fn.dataTableExt.oJUIClasses.sStripeOdd = 'ui-state-highlight';
             $('.presults').dataTable({
                 "aaSorting": [[4, "desc"]],
@@ -80,6 +79,10 @@
             });
         });
     </script>
+    <h1>Manage Access Requests</h1>
+    <p>Pending and granted access requests to your datasets are displayed in the tables below. Follow the links to manage these requests.</p>
+    <h1>Updating Public Access</h1>
+    <p>The current level of public access to your dataset is displayed in the Access and Constraints tab of the dataset metadata. Public access can be changed by reloading the dataset onto the NBN Gateway. Please contact access@nbn.org.uk who will help with this. If you require an urgent change to the level of public access then public access to the dataset can be removed whilst the dataset is reloaded at the new level of public access.</p>
     <h1>Pending Access Requests</h1>
     <table class="presults">
         <thead>
@@ -218,7 +221,6 @@
             </#list>
         </tbody>
     </table>
-    <button id="addgrantbtn">Add New Grant</button>
     <h1>Denied Access Requests</h1>
     <table class="results">
         <thead>

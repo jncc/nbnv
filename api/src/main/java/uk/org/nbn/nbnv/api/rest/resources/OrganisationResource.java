@@ -68,6 +68,24 @@ public class OrganisationResource extends AbstractResource {
     public List<Organisation> searchForOrgByPartial(@QueryParam("term") String term) {
        return oOrganisationMapper.searchForOrganisation("%" + term + "%");
     }
+    
+    /**
+     * Return a list of organisations that the current user can join, so 
+     * excludes any organisation of which the current user is already a member
+     * or cannot join
+     * 
+     * @param user The current user
+     * @return A list of organisations that the current user can join
+     * 
+     * @response.representation.200.qname List<Organisation>
+     * @response.representation.200.mediaType application/json
+     */
+    @GET
+    @Path("/joinable")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Organisation> getJoinableOrganisations(@TokenUser(allowPublic = false) User user) {
+        return oOrganisationMapper.getJoinableOrganisations(user.getId());
+    }
 
     /**
      * Return a specified organisation
@@ -125,11 +143,11 @@ public class OrganisationResource extends AbstractResource {
      * @param website The organisations website address
      * @param contactName A contact for this organisation for the NBN
      * @param contactEmail A contact email for this organisation for the NBN
-     * @param allowPublicRegistration Whether this organisation allows public
-     * registration or not (is passed as the string 'on' due to jQuery 
-     * serialisation)
      * 
      * @return An OpResult detailing the success or failure of this operation
+     * 
+     * @response.representation.200.qname OpResult
+     * @response.representation.200.mediaType application/json
      */
     @POST
     @Path("/{id}/metadata")
@@ -146,14 +164,12 @@ public class OrganisationResource extends AbstractResource {
             @FormParam("phone") String phone,
             @FormParam("website") String website,
             @FormParam("contactName") String contactName,
-            @FormParam("contactEmail") String contactEmail,
-            @FormParam("allowPublicRegistration") String allowPublicRegistration) {
+            @FormParam("contactEmail") String contactEmail) {
 
         
         int response = oOrganisationMapper.updateOrganisationDetails(id, name,
                 abbreviation, summary, address, postcode, phone, website,
-                contactName, contactEmail, 
-                (allowPublicRegistration != null && allowPublicRegistration.equals("on"))? 1 : 0);
+                contactName, contactEmail);
 
         if (response == 1) {
             return new OpResult();

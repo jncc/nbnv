@@ -1,188 +1,33 @@
-
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    
+
+	<!-- nbn rs library -->
+
     <parent>
         <groupId>uk.org.nbn</groupId>
         <artifactId>nbnv</artifactId>
         <version>0.1-SNAPSHOT</version>
     </parent>
-    
-    <artifactId>nbnv-imt</artifactId>
-    <packaging>war</packaging>
-    <name>${project.artifactId}-${project.version}</name>
-    <url>http://maven.apache.org</url>
-    
-    <dependencies>
-        <dependency>
-            <groupId>commons-lang</groupId>
-            <artifactId>commons-lang</artifactId>
-            <version>2.4</version>
-        </dependency>
-        <dependency>
-            <groupId>org.json</groupId>
-            <artifactId>json</artifactId>
-            <version>20090211</version>
-        </dependency> 
-        <!--NBN Gateway Properties Reader-->
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>nbnv-properties</artifactId>
-            <version>${project.version}</version>
-        </dependency>       
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
-            <version>2.5</version>
-            <scope>provided</scope>
-        </dependency>
-    </dependencies>
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>net.alchim31.maven</groupId>
-                <artifactId>yuicompressor-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>compress</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <nosuffix>true</nosuffix>
-                    <aggregations>
-                        <aggregation>
-                            <insertNewLine>true</insertNewLine>
-                            <output>${project.build.directory}/${project.build.finalName}/js/InteractiveMappingClient.js</output>
-                            <inputDir>${basedir}/src/main/javascript/</inputDir>
-                            <includes>
-                                <include>json2.js</include>
-                                <include>jquery/jquery.namespace.js</include>
-                                <include>jquery/jquery.tipTip.js</include>
-                                <include>jquery/jquery.md5.js</include>
-                                <include>jquery/jquery-measure.js</include>
-                                <include>jquery/jquery-attached.js</include>
-                                <include>jquery/jquery-split.js</include>
-                                <include>jquery/jquery-DataURIShemeSupport.js</include>
-                                <include>jquery/jquery-cssExpressions.js</include>
-                                <include>jquery/jquery-conflictingAbsolutePositionsFix.js</include>
-                                <include>jquery/jquery-maxHeightFix.js</include>
-                                <include>jquery/jquery.dynatree.js</include>
-                                <include>layout/StaticGridLayoutManager.js</include>
-                                <include>util/Observable.js</include>
-                                <include>util/loading/ImagePreLoader.js</include>
-                                <include>util/loading/LoadingConsolidator.js</include>
-                                <include>util/loading/AverageLoadingProgress.js</include>
-                                <include>util/ArrayTools.js</include>
-                                <include>util/IDTools.js</include>
-                                <include>util/CookieTools.js</include>
-                                <include>util/ObservableAttribute.js</include>
-                                <include>util/ElementIterator.js</include>
-                                <include>util/EntityResolver.js</include>
-                                <include>util/Logger.js</include>
-                                <include>util/ObservableCollection.js</include>
-                                <include>util/HashedObservableCollection.js</include>
-                                <include>util/PropagatingObservableCollection.js</include>
-                                <include>util/user/Loginable.js</include>
-                                <include>util/GoogleAnalytics.js</include> <!-- Import for Google Analytics -->
-                                <include>widgets/copyrightControllerWidget.js</include>
-                                <include>widgets/treewidget.js</include>
-                                <include>widgets/loginWidget.js</include>
-                                <include>widgets/filterStatusWidget.js</include>
-                                <include>widgets/loadingWidget.js</include>
-                                <include>widgets/legendWidget.js</include>
-                                <include>widgets/statefulButtonWidget.js</include>
-                                <include>widgets/statefulBoxWidget.js</include>
-                                <include>widgets/buttonBarWidget.js</include>
-                                <include>widgets/contentListenerWidget.js</include>
-                                <include>widgets/labelWidget.js</include>
-                                <include>widgets/dynamicTabsWidget.js</include>
-                                <include>widgets/listWidget.js</include>
-                                <include>widgets/autosizeWidget.js</include>
-                                <include>widgets/renderableControlDialogWidget.js</include>
-                                <include>widgets/selectionPaneWidget.js</include>
-                                <include>widgets/datasetMetadataWidget.js</include>
-                                <include>widgets/iconWidget.js</include>
-                                <include>widgets/baseLayerIconWidget.js</include>
-                                <include>widgets/currentBaseLayerIndicatorWidget.js</include>
-                                <include>widgets/baseLayerSelectorWidget.js</include>
-                                <include>layer/picker/SiteBoundaryPicker.js</include>
-                                <include>layer/picker/HabitatPicker.js</include>
-                                <include>layer/picker/SpeciesLayerPicker.js</include>
-                                <include>layer/picker/PickerInfoWindow.js</include>
-                                <include>layer/picker/ArcGisLayerFeaturePicker.js</include>
-                                <include>layer/ArcGISMap.js</include>
-                                <include>layer/ArcGisMapFilter.js</include>
-                                <include>layer/ResolvingVisibleLayersArcGisMapFilter.js</include>
-                                <include>layer/ResolvingVisibleContextLayer.js</include>
-                                <include>layer/SwitchableArcGisMapFilter.js</include>
-                                <include>layer/ContextArcGisMapFilter.js</include>
-                                <include>layer/ConcreteContextLayers.js</include>
-                                <include>layer/SpeciesLayer.js</include>
-                                <include>layer/BaseLayer.js</include>
-                                <include>mapping/openlayers/proj4js-combined.js</include>
-                                <include>mapping/openlayers/OpenLayersLayer.js</include>
-                                <include>mapping/openlayers/OpenLayersImageMap.js</include>
-                                <include>mapping/openlayers/OpenLayersBingLayer.js</include>
-                                <include>mapping/openlayers/OpenLayersMap.js</include>
-                                <include>mapping/openlayers/OpenLayersMappingLayoutManager.js</include>
-                                <include>mapping/openlayers/OpenLayersSpatialReferenceSystemDefs.js</include>
-                                <include>mapping/openlayers/ZoomDelayImage.js</include>
-                                <include>mapping/openlayers/ZoomDelayedTMS.js</include>
-                                <include>mapping/openlayers/widgets/openLayersScaleWidget.js</include>
-                                <include>mapping/construction/WidgetOptionsCreator.js</include>
-                                <include>mapping/construction/LayerHelper.js</include>
-                                <include>mapping/construction/WidgetOptionsCreator-createCopyrightWidget.js</include>
-                                <include>mapping/construction/WidgetOptionsCreator-createLayersCreatorBox.js</include>
-                                <include>mapping/construction/WidgetOptionsCreator-createLayersContainer.js</include>
-                                <include>mapping/construction/WidgetOptionsCreator-createLoadingWidget.js</include>
-                                <include>mapping/construction/WidgetOptionsCreator-createLoginWidget.js</include>
-                                <include>mapping/construction/WidgetOptionsCreator-createGetURLWidget.js</include>
-                                <include>mapping/construction/WidgetOptionsCreator-createLogger.js</include>
-                                <include>mapping/construction/WidgetOptionsCreator-createLoginFilter.js</include>
-                                <include>mapping/construction/WidgetOptionsCreator-createNBNHabitatLayer.js</include>
-                                <include>mapping/construction/WidgetOptionsCreator-createNBNBoundaryLayer.js</include>
-                                <include>mapping/InteractiveMappingClient.js</include>
-                                <include>mapping/InteractiveMappingClient-getMapURL.js</include>
-                                
-                                <include>mapping/construction/search/__createSearchTable.js</include>
-                                <include>mapping/construction/search/searchTables.js</include>
-                            </includes>
-                        </aggregation>
-                        <aggregation>
-                            <insertNewLine>true</insertNewLine>
-                            <output>${project.build.directory}/${project.build.finalName}/css/InteractiveMappingClient.css</output>
-                            <inputDir>${basedir}/src/main/webapp/</inputDir>
-                            <includes>
-                                <include>css/widgets.css</include>
-                                <include>css/widgets-IE7fix.css</include>
-                                <include>css/mapper.css</include>
-                                <include>css/mapper-IE7fix.css</include>
-                                <include>css/picker.css</include>
-                                <include>css/layout.css</include>
-                                <include>css/layout-IE7fix.css</include>
-                                <include>css/jquery/tipTip.css</include>
-                                <include>css/jquery/ui.dynatree.css</include>
-                                <include>css/widgets-openLayers.css</include> <!--Custom styling for the openlayers interals-->
-                            </includes>
-                        </aggregation>
-                    </aggregations>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
-                <version>2.1.1</version>
-                <configuration>
-                    <warName>imt</warName>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-    <properties>
-        <netbeans.hint.deploy.server>Tomcat</netbeans.hint.deploy.server>
-    </properties>
-</project>
 
+    <artifactId>nbnv-imt</artifactId>
+    
+    <name>${project.artifactId}-${project.version}</name>
+    
+    <build>
+        <resources>
+            <resource>
+                <directory>src/scripts</directory>
+            </resource>
+            <resource>
+                <directory>src/less</directory>
+            </resource>
+        </resources>
+        <testResources>
+            <testResource>
+                <directory>test</directory>
+            </testResource>
+        </testResources>
+    </build>
+</project>

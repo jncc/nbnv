@@ -11,7 +11,7 @@
             // never used though
             $('#default_password').val("0");
             // If the phone number is blank then set the text to "No number avail"
-            if ($('#phone').val().trim() === '') {
+            if ($.trim($('#phone').val()) === '') {
                 $('#phone').val('No number avail');
             }
             return true;
@@ -23,7 +23,7 @@
                 // never used though
                 $('#default_password').val("0");
                 // If the phone number is blank then set the text to "No number avail"
-                if ($('#phone').val().trim() === '') {
+                if ($.trim($('#phone').val()) === '') {
                     $('#phone').val('No number avail');
                 }
                 form.submit();

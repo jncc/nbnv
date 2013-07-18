@@ -33,7 +33,7 @@ nbn.nbnv.ui.filter.taxon = function(json) {
     
     this._renderHeader = function() {
         return $('<h3>').attr('filtertype', 'taxon')
-            .append($('<span>').addClass('filterheader').append('Taxon Filter'))
+            .append($('<span>').addClass('filterheader').append('Species'))
             .append($('<span>').attr('id', 'taxonResult').addClass('resulttext'));
     };
     
@@ -132,7 +132,7 @@ nbn.nbnv.ui.filter.taxon = function(json) {
                         speciesAutoComplete.prop('disabled', true);
                     }
                 })
-            ).append('All records');
+            ).append('All species');
 
 	var taxonFilterRecords = $('<div>')
             .append($('<input>')
@@ -148,7 +148,7 @@ nbn.nbnv.ui.filter.taxon = function(json) {
                         speciesAutoComplete.prop('disabled', false);
                     }
                 })
-            ).append("Records from ")
+            ).append("Single species or taxon ")
             .append(speciesAutoComplete);
 
         var desigFilterRecords = $('<div>')
@@ -165,7 +165,7 @@ nbn.nbnv.ui.filter.taxon = function(json) {
                         speciesAutoComplete.prop('disabled', true);
                     }
                 })
-            ).append("Records with a species from ")
+            ).append("Designated List ")
             .append(desig);
         
         var outputFilterRecords = $('<div>')
@@ -182,7 +182,7 @@ nbn.nbnv.ui.filter.taxon = function(json) {
                         speciesAutoComplete.prop('disabled', true);
                     }
                 })
-            ).append("Records with a species from ")
+            ).append("Species Group ")
             .append(output);
         
         if (mode == 'all') {

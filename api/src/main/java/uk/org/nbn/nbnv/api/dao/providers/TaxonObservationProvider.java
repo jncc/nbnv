@@ -201,18 +201,18 @@ public class TaxonObservationProvider {
         return SQL();
     }
 
-    private String createSelect(Map<String, Object> params, String fields) {
+    String createSelect(Map<String, Object> params, String fields) {
         String publicSelect = createSelectQuery(params, false, fields);
         String fullSelect = createSelectQuery(params, true, fields);
         return "(" + fullSelect + " UNION ALL " + publicSelect + ") obs";
     }
 
-    private String createSelectEnhanced(Map<String, Object> params, String fields) {
+    String createSelectEnhanced(Map<String, Object> params, String fields) {
         String fullSelect = createSelectAllRecordsQuery(params, fields);
         return "(" + fullSelect + ") obs";
     }
 
-    private String createSelectQuery(Map<String, Object> params, boolean full, String fields) {
+    String createSelectQuery(Map<String, Object> params, boolean full, String fields) {
         BEGIN();
         SELECT(fields);
         if (full) {
@@ -234,7 +234,7 @@ public class TaxonObservationProvider {
 
         ProviderHelper.addDatasetKeysFilter(params);
 
-        if (params.containsKey("ptvk") && !params.get("ptvk").equals("")) {
+        if (params.containsKey("ptvk") && params.get("ptvk") != null && !params.get("ptvk").equals("")) {
             if (params.get("ptvk") instanceof List) {
                 List<String> ptvkArgs = (List<String>) params.get("ptvk");
                 if (ptvkArgs.size() > 0 && !"".equals(ptvkArgs.get(0))) {
@@ -245,7 +245,7 @@ public class TaxonObservationProvider {
             }
         }
 
-        if (params.containsKey("featureID") && !params.get("featureID").equals("")) {
+        if (params.containsKey("featureID") && params.get("featureID") != null && !params.get("featureID").equals("")) {
             String spatialRelationship = ObservationResourceDefaults.SPATIAL_RELATIONSHIP_DEFAULT;
             if (params.containsKey("spatialRelationship") && params.get("spatialRelationship") != null) {
                 spatialRelationship = (String) params.get("spatialRelationship");
@@ -261,17 +261,17 @@ public class TaxonObservationProvider {
             }
         }
 
-        if (params.containsKey("polygon") && !params.get("polygon").equals("")) {
+        if (params.containsKey("polygon") && params.get("polygon") != null && !params.get("polygon").equals("")) {
             String spatialRelationship = ObservationResourceDefaults.SPATIAL_RELATIONSHIP_DEFAULT;
             if (params.containsKey("spatialRelationship") && params.get("spatialRelationship") != null) {
                 spatialRelationship = (String) params.get("spatialRelationship");
             }
             INNER_JOIN("FeatureData ftd ON ftd.id = o.featureID");
             if (ObservationResourceDefaults.SPATIAL_RELATIONSHIP_WITHIN.equals(spatialRelationship)) {
-                WHERE("ftd.geom.STWithin(geometry::STGeomFromText(#{polygon}, 4326) = 1");
+                WHERE("ftd.geom.STWithin(geometry::STGeomFromText(#{polygon}, 4326)) = 1");
             } else {
-                WHERE("ftd.geom.STIntersects(geometry::STGeomFromText(#{polygon}, 4326) = 1");
-                WHERE("ftd.geom.STTouches(geometry::STGeomFromText(#{polygon}, 4326) = 0");
+                WHERE("ftd.geom.STIntersects(geometry::STGeomFromText(#{polygon}, 4326)) = 1");
+                WHERE("ftd.geom.STTouches(geometry::STGeomFromText(#{polygon}, 4326)) = 0");
             }            
         }
         
@@ -281,18 +281,18 @@ public class TaxonObservationProvider {
             WHERE("sensitive = 0");
         }
 
-        if (params.containsKey("designation") && !"".equals((String) params.get("designation"))) {
+        if (params.containsKey("designation") && params.get("designation") != null && !"".equals((String) params.get("designation"))) {
             INNER_JOIN("DesignationTaxonData dtd ON dtd.pTaxonVersionKey = o.pTaxonVersionKey");
             WHERE("dtd.code = #{designation}");
         }
 
-        if (params.containsKey("gridRef") && !"".equals((String) params.get("gridRef"))) {
+        if (params.containsKey("gridRef") && params.get("gridRef") != null && !"".equals((String) params.get("gridRef"))) {
             INNER_JOIN("GridTree gt ON gt.featureID = o.featureID");
             INNER_JOIN("GridSquareFeatureData gsfd ON gsfd.id = gt.parentFeatureID");
             WHERE("gsfd.label = #{gridRef}");
         }
 
-        if (params.containsKey("taxonOutputGroup") && !"".equals((String) params.get("taxonOutputGroup"))) {
+        if (params.containsKey("taxonOutputGroup") && params.get("taxonOutputGroup") != null && !"".equals((String) params.get("taxonOutputGroup"))) {
             INNER_JOIN("TaxonData td ON td.taxonVersionKey = o.pTaxonVersionKey");
             WHERE("td.taxonOutputGroupKey =  #{taxonOutputGroup}");
         }
@@ -315,7 +315,7 @@ public class TaxonObservationProvider {
 
         ProviderHelper.addDatasetKeysFilter(params);
 
-        if (params.containsKey("ptvk") && !params.get("ptvk").equals("")) {
+        if (params.containsKey("ptvk") && params.get("ptvk") != null && !params.get("ptvk").equals("")) {
             if (params.get("ptvk") instanceof List) {
                 List<String> ptvkArgs = (List<String>) params.get("ptvk");
                 if (ptvkArgs.size() > 0 && !"".equals(ptvkArgs.get(0))) {
@@ -326,7 +326,7 @@ public class TaxonObservationProvider {
             }
         }
 
-        if (params.containsKey("featureID") && !params.get("featureID").equals("")) {
+        if (params.containsKey("featureID") && params.get("featureID") != null && !params.get("featureID").equals("")) {
             String spatialRelationship = ObservationResourceDefaults.SPATIAL_RELATIONSHIP_DEFAULT;
             if (params.containsKey("spatialRelationship") && params.get("spatialRelationship") != null) {
                 spatialRelationship = (String) params.get("spatialRelationship");
@@ -342,17 +342,17 @@ public class TaxonObservationProvider {
             }
         }
 
-        if (params.containsKey("polygon") && !params.get("polygon").equals("")) {
+        if (params.containsKey("polygon") && params.get("polygon") != null && !params.get("polygon").equals("")) {
             String spatialRelationship = ObservationResourceDefaults.SPATIAL_RELATIONSHIP_DEFAULT;
             if (params.containsKey("spatialRelationship") && params.get("spatialRelationship") != null) {
                 spatialRelationship = (String) params.get("spatialRelationship");
             }
             INNER_JOIN("FeatureData ftd ON ftd.id = o.featureID");
             if (ObservationResourceDefaults.SPATIAL_RELATIONSHIP_WITHIN.equals(spatialRelationship)) {
-                WHERE("ftd.geom.STWithin(geometry::STGeomFromText(#{polygon}, 4326) = 1");
+                WHERE("ftd.geom.STWithin(geometry::STGeomFromText(#{polygon}, 4326)) = 1");
             } else {
-                WHERE("ftd.geom.STIntersects(geometry::STGeomFromText(#{polygon}, 4326) = 1");
-                WHERE("ftd.geom.STTouches(geometry::STGeomFromText(#{polygon}, 4326) = 0");
+                WHERE("ftd.geom.STIntersects(geometry::STGeomFromText(#{polygon}, 4326)) = 1");
+                WHERE("ftd.geom.STTouches(geometry::STGeomFromText(#{polygon}, 4326)) = 0");
             }            
         }
 
@@ -362,18 +362,18 @@ public class TaxonObservationProvider {
             WHERE("sensitive = 0");
         }
 
-        if (params.containsKey("designation") && !"".equals((String) params.get("designation"))) {
+        if (params.containsKey("designation") && params.get("designation") != null && !"".equals((String) params.get("designation"))) {
             INNER_JOIN("DesignationTaxonData dtd ON dtd.pTaxonVersionKey = o.pTaxonVersionKey");
             WHERE("dtd.code = #{designation}");
         }
 
-        if (params.containsKey("gridRef") && !"".equals((String) params.get("gridRef"))) {
+        if (params.containsKey("gridRef") && params.get("gridRef") != null && !"".equals((String) params.get("gridRef"))) {
             INNER_JOIN("GridTree gt ON gt.featureID = o.featureID");
             INNER_JOIN("GridSquareFeatureData gsfd ON gsfd.id = gt.parentFeatureID");
             WHERE("gsfd.label = #{gridRef}");
         }
 
-        if (params.containsKey("taxonOutputGroup") && !"".equals((String) params.get("taxonOutputGroup"))) {
+        if (params.containsKey("taxonOutputGroup") && params.get("taxonOutputGroup") != null && !"".equals((String) params.get("taxonOutputGroup"))) {
             INNER_JOIN("TaxonData td ON td.taxonVersionKey = o.pTaxonVersionKey");
             WHERE("td.taxonOutputGroupKey =  #{taxonOutputGroup}");
         }
