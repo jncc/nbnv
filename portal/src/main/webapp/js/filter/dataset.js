@@ -336,6 +336,7 @@ nbn.nbnv.ui.filter.dataset = function(json) {
                 $("div.dsfilter-toolbar").append($('<button>')
                         .text('Select All')
                         .attr('id', 'dsfilter-sa')
+                        .prop('disabled', true)
                         .click(function() {
                             var dTable = $('#datasetfiltertable').dataTable();
                             dTable.$('tr').find(":checkbox").prop('checked', true);                        
@@ -343,6 +344,7 @@ nbn.nbnv.ui.filter.dataset = function(json) {
                     ).append($('<button>')
                         .text('Deselect All')
                         .attr('id', 'dsfilter-da')
+                        .prop('disabled', true)
                         .click(function() {
                             var dTable = $('#datasetfiltertable').dataTable();
                             dTable.$('tr').find(":checkbox").prop('checked', false);                        
