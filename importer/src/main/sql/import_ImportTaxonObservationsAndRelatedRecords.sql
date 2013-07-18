@@ -206,7 +206,7 @@ BEGIN TRY
 				LEFT JOIN dbo.Recorder rc ON irc.name = rc.name
 				LEFT JOIN dbo.ImportRecorder idt ON itob.determinerID = idt.id
 				LEFT JOIN dbo.Recorder dt ON idt.name = dt.name) s
-		ON s.SampleId = tob.SampleId AND itob.providerKey = tob.providerKey
+		ON s.SampleId = tob.SampleId AND s.providerKey = tob.providerKey
 		WHEN NOT MATCHED THEN
 			INSERT  
 			([sampleID]
