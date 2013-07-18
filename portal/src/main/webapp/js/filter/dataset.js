@@ -67,6 +67,15 @@ nbn.nbnv.ui.filter.dataset = function(json) {
                 .appendTo(ul);
             };
 
+        if (this._mode == 'single') {
+            $.ajax({
+                url: nbn.nbnv.api + '/datasets/' + _me._datasets[0],
+                success: function(data) {
+                    datasetAutoComplete.val(data.title);
+                }
+            });
+        }
+
         var secret = $('<div>')
             .addClass('queryBlock')
             .attr('id', 'datasetfiltersecretblock')
