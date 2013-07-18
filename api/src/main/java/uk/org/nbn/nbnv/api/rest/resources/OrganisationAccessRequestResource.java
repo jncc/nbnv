@@ -155,7 +155,7 @@ public class OrganisationAccessRequestResource extends AbstractResource {
             oOrganisationAccessRequestMapper.createRequest(filter.getId(), accessRequest.getReason().getOrganisationID(), datasetKey, accessRequest.getReason().getPurpose(), accessRequest.getReason().getDetails(), new Date(new java.util.Date().getTime()), false);
             Organisation org = organisationMapper.selectByID(accessRequest.getReason().getOrganisationID());
             oOrganisationAccessRequestAuditHistoryMapper.addHistory(filter.getId(), user.getId(), "Created request for " + org.getName() + " of: '" + filter.getFilterText() + "'");
-            acceptRequest(user, filter.getId(), accessRequest.getReason().getReason(), accessRequest.getTime().isAll() ? "" : accessRequest.getTime().getDate().toString());
+            acceptRequest(user, filter.getId(), accessRequest.getReason().getReason(), accessRequest.getTime().isAll() ? "" : accessRequest.getTime().getDate().toString(), true);
         }
 
         return Response.status(Response.Status.OK).entity("{}").build();
@@ -425,7 +425,7 @@ public class OrganisationAccessRequestResource extends AbstractResource {
             , @FormParam("reason") String reason
             , @FormParam("expires") @DefaultValue("") String expires) throws ParseException, IOException, TemplateException {
         if ("grant".equalsIgnoreCase(action)) {
-            return acceptRequest(user, filterID, reason, expires);
+            return acceptRequest(user, filterID, reason, expires, false);
         } else if ("deny".equalsIgnoreCase(action)) {
             return denyRequest(user, filterID, reason);
         } else if ("close".equalsIgnoreCase(action)) {
@@ -461,10 +461,13 @@ public class OrganisationAccessRequestResource extends AbstractResource {
      * @param filterID The Filter ID of a request
      * @param reason Any reason given for acceptance of the request
      * @param expires An expiry date for this access request (Optional)
+     * @param proactive If the request was a proactive from the dataset admin 
+     * (true) or was a request made by a user (false)
+     * 
      * @return Response to be passed back to the user
      * @throws ParseException 
      */
-    private Response acceptRequest(User user, int filterID, String reason, String expires) throws ParseException, IOException, TemplateException {
+    private Response acceptRequest(User user, int filterID, String reason, String expires, boolean proactive) throws ParseException, IOException, TemplateException {
         giveAccess(filterID);
         
         if (expires.isEmpty()) {
@@ -476,7 +479,7 @@ public class OrganisationAccessRequestResource extends AbstractResource {
         }
 
         oOrganisationAccessRequestAuditHistoryMapper.addHistory(filterID, user.getId(), "Accept request");
-        mailRequestGrant(oOrganisationAccessRequestMapper.getRequest(filterID), reason);
+        mailRequestGrant(oOrganisationAccessRequestMapper.getRequest(filterID), reason, proactive);
         return Response.status(Response.Status.OK).entity("{}").build();
     }
 
@@ -622,7 +625,7 @@ public class OrganisationAccessRequestResource extends AbstractResource {
         }
     }
 
-    private void mailRequestGrant(OrganisationAccessRequest request, String reason) throws IOException, TemplateException {
+    private void mailRequestGrant(OrganisationAccessRequest request, String reason, boolean proactive) throws IOException, TemplateException {
         Map<String, Object> message = new HashMap<String, Object>();
         message.put("rName", request.getOrganisation().getName());
         message.put("rDate", request.getRequestDate());
@@ -630,10 +633,15 @@ public class OrganisationAccessRequestResource extends AbstractResource {
         message.put("reason", reason);
         message.put("details", request.getFilter().getFilterText());
         message.put("dataset", request.getDataset().getTitle());
+        message.put("org", true);
 
         List<OrganisationMembership> admins = oOrganisationMembershipMapper.selectAdminsByOrganisation(request.getOrganisation().getId());
         for (OrganisationMembership admin : admins) {
-            mailer.send("accessRequestGrant.ftl", admin.getUser().getEmail(), "NBN Gateway: Access request approved", message);
+            if (proactive) {
+                mailer.send("accessGrant.ftl", admin.getUser().getEmail(), "NBN Gateway: Access granted", message);
+            } else {
+                mailer.send("accessRequestGrant.ftl", admin.getUser().getEmail(), "NBN Gateway: Access request approved", message);
+            }
         }
     }
 
@@ -650,5 +658,4 @@ public class OrganisationAccessRequestResource extends AbstractResource {
             mailer.send("accessRequestRevoke.ftl", admin.getUser().getEmail(), "NBN Gateway: Access request removed", message);
         }
     }
-
 }
