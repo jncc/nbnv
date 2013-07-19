@@ -580,7 +580,7 @@ public class UserAccessRequestResource extends AbstractResource {
         message.put("org", false);
 
         if (proactive) {    
-            mailer.send("accessGrant.ftl", request.getUser().getEmail(), "NBN Gateway: Access Granted", message);
+            mailer.send("accessProactiveGrant.ftl", request.getUser().getEmail(), "NBN Gateway: Access Granted", message);
         } else {
             mailer.send("accessRequestGrant.ftl", request.getUser().getEmail(), "NBN Gateway: Access request approved", message);
         }
