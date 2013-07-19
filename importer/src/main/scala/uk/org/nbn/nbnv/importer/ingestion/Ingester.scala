@@ -106,14 +106,37 @@ class Ingester @Inject()(options: Options,
   
   def ingest(archive: Archive, metadata: Metadata) {
 
-    val t = db.em.getTransaction
+    def finaliseTransaction(t: EntityTransaction) {
+      if (options.target < Target.commit) {
+        log.info("Rolling back ingestion transaction")
+        t.rollback()
+      }
+      else {
+        log.info("Committing ingestion transaction")
+        t.commit()
+      }
+    }
 
-    withEntityTransaction(t) {
+    //Clear down staging tables
+    val t1: EntityTransaction = db.em.getTransaction
 
-      t.begin()
+    withEntityTransaction(t1) {
 
-      // Clear down importer tables
+      t1.begin()
+
       db.repo.clearImportStagingTables()
+
+      finaliseTransaction(t1)
+    }
+    log.info("Step 1 Complete: Prepared import staging tables")
+
+
+    val t2: EntityTransaction = db.em.getTransaction
+
+    //Import the data into the staging tables
+    withEntityTransaction(t2) {
+
+      t2.begin()
 
       // upsert dataset
       val dataset = datasetIngester.stageDataset(metadata)
@@ -132,18 +155,22 @@ class Ingester @Inject()(options: Options,
       // insert records
       upsertRecords(archive, dataset, metadata)
 
-      //Import data into main database.
+      finaliseTransaction(t2)
+    }
+    log.info("Step 2 Complete: Ingested data into import staging tables")
+
+    val t3 = db.em.getTransaction
+
+    //Importing data into database
+    withEntityTransaction(t3) {
+
+      t3.begin()
+
       finaliseImport(metadata)
 
-      if (options.target < Target.commit) {
-        log.info("Rolling back ingestion transaction")
-        t.rollback()
-      }
-      else {
-        log.info("Committing ingestion transaction")
-        t.commit()
-      }
+      finaliseTransaction(t3)
     }
+    log.info("Step 2 Complete: Imported data into core tables")
   }
 
   def withEntityTransaction(t: EntityTransaction)(f: => Unit) {
