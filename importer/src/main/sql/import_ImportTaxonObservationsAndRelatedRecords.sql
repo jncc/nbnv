@@ -9,6 +9,14 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
+--TODO -Handle attribution
+--	-Attribute is specific to a dataset.
+--	-Exisiting datasets 
+--		-Get attribute map
+--		-Insert new attributes
+--	-New datasaets 
+--		-Insert new attributs
+
 
 
 -- =============================================
@@ -176,6 +184,7 @@ BEGIN TRY
 			LEFT JOIN dbo.Recorder r ON ir.name = r.name
 		WHERE r.id IS NULL;
 		
+		--TAXON OBSERVATION IMPORT
 		MERGE [dbo].[TaxonObservation] as tob
 		USING
 			(SELECT sam.id AS [SampleId]
@@ -295,6 +304,9 @@ BEGIN TRY
 				  ,[determinerID] = s.determinerID;
 			         
          --INSERT ATTRIBUTES
+         --todo - get attibute id's for current dataset
+         
+         
 		INSERT INTO dbo.Attribute
 		   ([label]
 		   ,[description]
@@ -310,7 +322,10 @@ BEGIN TRY
 			LEFT JOIN dbo.Attribute a ON ia.label = a.label
 				AND ia.[storageLevelID] = a.[storageLevelID]
 				AND ia.[storageTypeID] = a.[storageTypeID]
+			--todo - and check id is not in set of attribute id's for current data set
 		WHERE a.id IS NULL
+		
+			--todo output inserted id's in to set attribute id's for current dataset
 			
 		MERGE [dbo].[TaxonObservationAttribute] toa
 		USING
@@ -333,6 +348,7 @@ BEGIN TRY
 				INNER JOIN dbo.Attribute a ON ia.label = a.label
 					AND ia.[storageLevelID] = a.[storageLevelID]
 					AND ia.[storageTypeID] = a.[storageTypeID]) s
+					--todo: and id is in set of id's for current dataset
 		ON s.observationID = toa.observationID AND s.attributeID = toa.attributeID
 		WHEN NOT MATCHED THEN
 			INSERT
