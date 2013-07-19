@@ -67,6 +67,15 @@ nbn.nbnv.ui.filter.dataset = function(json) {
                 .appendTo(ul);
             };
 
+        if (this._mode == 'single') {
+            $.ajax({
+                url: nbn.nbnv.api + '/datasets/' + _me._datasets[0],
+                success: function(data) {
+                    datasetAutoComplete.val(data.title);
+                }
+            });
+        }
+
         var secret = $('<div>')
             .addClass('queryBlock')
             .attr('id', 'datasetfiltersecretblock')
@@ -91,10 +100,18 @@ nbn.nbnv.ui.filter.dataset = function(json) {
                 .attr('value', 'all')
                 .change(function() {
                     if (this.checked) {
+                        var dTable = $('#datasetfiltertable').dataTable();
                         _me._all = true;
                         _me._mode = 'all';
                         datasetAutoComplete.prop('disabled', true);
-                        $('#datasetfiltertable').find(":checkbox").prop('disabled', true);
+                        datasetAutoComplete.val('');
+
+                        if (dTable.data() != null) {
+                            $('#dsfilter-sa').prop('disabled', true);
+                            $('#dsfilter-da').prop('disabled', true);
+                            dTable.$('tr').find(":checkbox").prop('disabled', false);
+                            dTable.$('tr').find(":checkbox").prop('checked', true);                        
+                        }
                     }
                 })
             ).append('All datasets');
@@ -107,10 +124,17 @@ nbn.nbnv.ui.filter.dataset = function(json) {
                 .attr('value', 'single')
                 .change(function() {
                     if (this.checked) {
+                        var dTable = $('#datasetfiltertable').dataTable();
                         _me._all = false;
                         _me._mode = 'single';
                         datasetAutoComplete.prop('disabled', false);
-                        $('#datasetfiltertable').find(":checkbox").prop('disabled', true);
+                        
+                        if (dTable.data() != null) {
+                            $('#dsfilter-sa').prop('disabled', true);
+                            $('#dsfilter-da').prop('disabled', true);
+                            dTable.$('tr').find(":checkbox").prop('disabled', true);
+                            dTable.$('tr').find(":checkbox").prop('checked', true);                        
+                        }
                     }
                 })
             ).append('Single Dataset ').append(datasetAutoComplete);
@@ -122,10 +146,18 @@ nbn.nbnv.ui.filter.dataset = function(json) {
                 .attr('value', 'filter')
                 .change(function() {
                     if (this.checked) {
+                        var dTable = $('#datasetfiltertable').dataTable();
                         _me._all = false;
                         _me._mode = 'filter';
                         datasetAutoComplete.prop('disabled', true);
-                        $('#datasetfiltertable').find(":checkbox").prop('disabled', false);
+                        datasetAutoComplete.val('');
+                        
+                        if (dTable.data() != null) {
+                            $('#dsfilter-sa').prop('disabled', false);
+                            $('#dsfilter-da').prop('disabled', false);
+                            dTable.$('tr').find(":checkbox").prop('disabled', false);
+                            dTable.$('tr').find(":checkbox").prop('checked', true);                        
+                        }
                     }
                 })
             ).append("Dataset List ")
@@ -296,9 +328,28 @@ nbn.nbnv.ui.filter.dataset = function(json) {
                     "bJQueryUI": true,
                     "iDisplayLength": 25,
                     "bSortClasses": false,
+                    "sDom": '<"dsfilter-toolbar">frtip',
                     "sPaginationType": "full_numbers",
                     "aLengthMenu": [[10,25,50,100,-1],[10,25,50,100,"All"]]
                 });
+                
+                $("div.dsfilter-toolbar").append($('<button>')
+                        .text('Select All')
+                        .attr('id', 'dsfilter-sa')
+                        .prop('disabled', true)
+                        .click(function() {
+                            var dTable = $('#datasetfiltertable').dataTable();
+                            dTable.$('tr').find(":checkbox").prop('checked', true);                        
+                        })
+                    ).append($('<button>')
+                        .text('Deselect All')
+                        .attr('id', 'dsfilter-da')
+                        .prop('disabled', true)
+                        .click(function() {
+                            var dTable = $('#datasetfiltertable').dataTable();
+                            dTable.$('tr').find(":checkbox").prop('checked', false);                        
+                        })
+                    );
 
             }
         });

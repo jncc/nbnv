@@ -105,6 +105,9 @@ nbn.nbnv.ui.filter.spatial = function(json) {
                         match.prop('disabled', true);
                         boundary.prop('disabled', true);
                         boundaryTypes.prop('disabled', true);
+                        match.val(0);
+                        boundaryTypes.val(0);
+                        boundaryTypes.change();
                     }
                 })
             ).append('All areas');

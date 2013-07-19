@@ -371,6 +371,13 @@ public class OrganisationMembershipResource extends AbstractResource {
                     // Send email response to the requesting user, saying that the request was accepted
                     sendEmail(request, "organisation-join-accept.ftl", request.getUser().getEmail(),
                             "NBN Gateway: You are now a member of " + request.getOrganisation().getName());
+                    
+                    List<OrganisationMembership> admins = 
+                            oOrganisationMembershipMapper.selectAdminsByOrganisation(request.getOrganisation().getId());
+                    for (OrganisationMembership admin : admins) {
+                        sendJoinRequestToAdmins(request, admin.getUser());
+                    }
+                    
                     return Response.status(Response.Status.OK).entity(data).build();
                 } catch (Exception ex) {
                     return Response.status(Response.Status.ACCEPTED).entity(ex).build();
@@ -411,13 +418,24 @@ public class OrganisationMembershipResource extends AbstractResource {
      * @throws TemplateException 
      */
     private void sendEmail(OrganisationJoinRequest request, String template, String email, String subject) throws IOException, TemplateException {
-//        Map<String, Object> message = new HashMap<String, Object>();
-//        message.put("portal", properties.getProperty("portal_url"));
-//        message.put("name", request.getUser().getForename());
-//        message.put("organisation", request.getOrganisation().getName());
-//        message.put("organisationID", request.getOrganisation().getId());
-//        message.put("responseReason", request.getRequestReason());
-//
-//        mailer.send(template, request.getUser().getEmail(), subject, message);
+        Map<String, Object> message = new HashMap<String, Object>();
+        message.put("portal", properties.getProperty("portal_url"));
+        message.put("name", request.getUser().getForename());
+        message.put("organisation", request.getOrganisation().getName());
+        message.put("organisationID", request.getOrganisation().getId());
+        message.put("responseReason", request.getRequestReason());
+
+        mailer.send(template, request.getUser().getEmail(), subject, message);
+    }
+    
+    private void sendJoinRequestToAdmins(OrganisationJoinRequest request, User admin) throws IOException, TemplateException {
+        Map<String, Object> message = new HashMap<String,Object>();
+        message.put("portal", properties.getProperty("portal_url"));
+        message.put("name", admin.getForename());
+        message.put("requestor", request.getUser().getForename() + " " + request.getUser().getSurname());
+        message.put("reason", request.getRequestReason());
+        message.put("organsiation", request.getOrganisation().getName());
+        
+        mailer.send("organisation-join-admin-notify.ftl", admin.getEmail(), "NBN Gateway: A user has requested to join your organisation", message);
     }
 }

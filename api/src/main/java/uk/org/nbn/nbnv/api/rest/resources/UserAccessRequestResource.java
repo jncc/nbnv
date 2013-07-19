@@ -144,7 +144,7 @@ public class UserAccessRequestResource extends AbstractResource {
             oTaxonObservationFilterMapper.createFilter(filter);
             oUserAccessRequestMapper.createRequest(filter.getId(), accessRequest.getReason().getUserID(), datasetKey, accessRequest.getReason().getPurpose(), accessRequest.getReason().getDetails(), new Date(new java.util.Date().getTime()), false);
             oUserAccessRequestAuditHistoryMapper.addHistory(filter.getId(), user.getId(), "Created request for " + reqUser.getForename() + ' ' + reqUser.getSurname() + " of: '" + filter.getFilterText() + "'");
-            acceptRequest(user, filter.getId(), accessRequest.getReason().getReason(), accessRequest.getTime().isAll() ? "" : accessRequest.getTime().getDate().toString());
+            acceptRequest(user, filter.getId(), accessRequest.getReason().getReason(), accessRequest.getTime().isAll() ? "" : accessRequest.getTime().getDate().toString(), true);
         }
 
         return Response.status(Response.Status.OK).entity("{}").build();
@@ -364,7 +364,7 @@ public class UserAccessRequestResource extends AbstractResource {
             , @FormParam("reason") String reason
             , @FormParam("expires") @DefaultValue("") String expires) throws ParseException, IOException, TemplateException {
         if ("grant".equalsIgnoreCase(action)) {
-            return acceptRequest(user, filterID, reason, expires);
+            return acceptRequest(user, filterID, reason, expires, false);
         } else if ("deny".equalsIgnoreCase(action)) {
             return denyRequest(user, filterID, reason);
         } else if ("close".equalsIgnoreCase(action)) {
@@ -400,12 +400,14 @@ public class UserAccessRequestResource extends AbstractResource {
      * @param filterID A filter ID identifying a request
      * @param reason A reason for accepting the request
      * @param expires An expiry date for the request (Optional)
+     * @param proactive If the request was a proactive from the dataset admin 
+     * (true) or was a request made by a user (false)
      * 
      * @return A Response object detailing the result of the operation
      * 
      * @throws ParseException The expires string was in an incorrect format
      */
-    private Response acceptRequest(User user, int filterID, String reason, String expires) throws ParseException, IOException, TemplateException {
+    private Response acceptRequest(User user, int filterID, String reason, String expires, boolean proactive) throws ParseException, IOException, TemplateException {
         giveAccess(filterID);
         
         if (expires.isEmpty()) {
@@ -417,7 +419,7 @@ public class UserAccessRequestResource extends AbstractResource {
         }
 
         oUserAccessRequestAuditHistoryMapper.addHistory(filterID, user.getId(), "Accept request");
-        mailRequestGrant(oUserAccessRequestMapper.getRequest(filterID), reason);
+        mailRequestGrant(oUserAccessRequestMapper.getRequest(filterID), reason, proactive);
         return Response.status(Response.Status.OK).entity("{}").build();
     }
 
@@ -567,7 +569,7 @@ public class UserAccessRequestResource extends AbstractResource {
         mailer.send("accessRequestDeny.ftl", request.getUser().getEmail(), "NBN Gateway: Access request declined", message);
     }
 
-    private void mailRequestGrant(UserAccessRequest request, String reason) throws IOException, TemplateException {
+    private void mailRequestGrant(UserAccessRequest request, String reason, boolean proactive) throws IOException, TemplateException {
         Map<String, Object> message = new HashMap<String, Object>();
         message.put("rName", request.getUser().getForename() + " " + request.getUser().getSurname());
         message.put("rDate", request.getRequestDate());
@@ -575,7 +577,13 @@ public class UserAccessRequestResource extends AbstractResource {
         message.put("reason", reason);
         message.put("details", request.getFilter().getFilterText());
         message.put("dataset", request.getDataset().getTitle());
-        mailer.send("accessRequestGrant.ftl", request.getUser().getEmail(), "NBN Gateway: Access request approved", message);
+        message.put("org", false);
+
+        if (proactive) {    
+            mailer.send("accessProactiveGrant.ftl", request.getUser().getEmail(), "NBN Gateway: Access Granted", message);
+        } else {
+            mailer.send("accessRequestGrant.ftl", request.getUser().getEmail(), "NBN Gateway: Access request approved", message);
+        }
     }
 
     private void mailRequestRevoke(UserAccessRequest request, String reason) throws IOException, TemplateException {

@@ -49,6 +49,8 @@ nbn.nbnv.ui.filter.year = function(json) {
                         _me._all = true;
                         startInput.prop('disabled', true);
                         endInput.prop('disabled', true);
+                        startInput.val('1600');
+                        endInput.val(new Date().getFullYear());
                     }
                 })
             ).append('All years');
