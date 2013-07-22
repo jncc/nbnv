@@ -171,6 +171,8 @@ class Ingester @Inject()(options: Options,
       finaliseTransaction(t3)
     }
     log.info("Step 2 Complete: Imported data into core tables")
+
+    db.em.close()
   }
 
   def withEntityTransaction(t: EntityTransaction)(f: => Unit) {
@@ -180,11 +182,9 @@ class Ingester @Inject()(options: Options,
     catch {
       case e: Throwable => {
         if (t != null && t.isActive) t.rollback()
+        db.em.close()
         throw (e)
       }
-    }
-    finally {
-      db.em.close()
     }
   }
 }
