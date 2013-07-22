@@ -8,17 +8,6 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
---TODO -Handle attribution
---	-Attribute is specific to a dataset.
---	-Exisiting datasets 
---		-Get attribute map
---		-Insert new attributes
---	-New datasaets 
---		-Insert new attributs
-
-
-
 -- =============================================
 -- Author:  Felix Mason
 -- Create date: 31/05/2013
@@ -303,9 +292,17 @@ BEGIN TRY
 				  ,[recorderID] = s.recorderID 
 				  ,[determinerID] = s.determinerID;
 			         
-         --INSERT ATTRIBUTES
-         --todo - get attibute id's for current dataset
+        --INSERT ATTRIBUTES
+		DECLARE @DatasetAttributes TABLE (AttributeID int)
          
+        INSERT INTO @DatasetAttributes (AttributeID)
+        SELECT DISTINCT a.id
+        FROM dbo.Attribute a
+			INNER JOIN dbo.TaxonObservationAttribute toa ON a.id = toa.attributeID
+			INNER JOIN dbo.TaxonObservation tob ON toa.observationID = tob.id
+			INNER JOIN dbo.Sample sam ON tob.sampleID = sam.id
+			INNER JOIN dbo.Survey srv ON sam.surveyID = srv.id
+		WHERE srv.datasetKey = @DatasetKey
          
 		INSERT INTO dbo.Attribute
 		   ([label]
@@ -313,6 +310,7 @@ BEGIN TRY
 		   ,[storageLevelID]
 		   ,[storageTypeID]
 		   ,[gatewayAttributeID])
+		OUTPUT inserted.id INTO @DatasetAttributes(AttributeID)
 		SELECT ia.[label]
 			  ,ia.[description]
 			  ,ia.[storageLevelID]
@@ -322,11 +320,9 @@ BEGIN TRY
 			LEFT JOIN dbo.Attribute a ON ia.label = a.label
 				AND ia.[storageLevelID] = a.[storageLevelID]
 				AND ia.[storageTypeID] = a.[storageTypeID]
-			--todo - and check id is not in set of attribute id's for current data set
+				AND a.id IN (SELECT AttributeID FROM @DatasetAttributes)
 		WHERE a.id IS NULL
-		
-			--todo output inserted id's in to set attribute id's for current dataset
-			
+	
 		MERGE [dbo].[TaxonObservationAttribute] toa
 		USING
 			(SELECT tob.id AS observationID
@@ -347,8 +343,8 @@ BEGIN TRY
 					AND tob.providerKey = itob.providerKey
 				INNER JOIN dbo.Attribute a ON ia.label = a.label
 					AND ia.[storageLevelID] = a.[storageLevelID]
-					AND ia.[storageTypeID] = a.[storageTypeID]) s
-					--todo: and id is in set of id's for current dataset
+					AND ia.[storageTypeID] = a.[storageTypeID]
+					AND a.id IN (SELECT AttributeID FROM @DatasetAttributes)) s
 		ON s.observationID = toa.observationID AND s.attributeID = toa.attributeID
 		WHEN NOT MATCHED THEN
 			INSERT
@@ -365,9 +361,7 @@ BEGIN TRY
 		   ,s.textValue)
 		WHEN MATCHED THEN
 			UPDATE 
-			   SET [observationID] = s.observationID
-				  ,[attributeID] = s.attributeID
-				  ,[decimalValue] = s.decimalValue
+			   SET [decimalValue] = s.decimalValue
 				  ,[enumValue] = s.enumValue
 				  ,[textValue] = s.textValue;
 
