@@ -36,6 +36,7 @@ import uk.org.nbn.nbnv.api.authentication.InvalidCredentialsException;
 import uk.org.nbn.nbnv.api.authentication.InvalidTokenException;
 import uk.org.nbn.nbnv.api.authentication.Token;
 import uk.org.nbn.nbnv.api.authentication.TokenAuthenticator;
+import uk.org.nbn.nbnv.api.dao.core.OperationalOrganisationMapper;
 import uk.org.nbn.nbnv.api.dao.core.OperationalUserMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.OrganisationMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.UserAuthenticationMapper;
@@ -62,6 +63,7 @@ public class UserResource extends AbstractResource {
     @Autowired TokenResetCredentials credentialsResetter;
     @Autowired UserMapper userMapper;
     @Autowired OrganisationMapper organisationMapper;
+    @Autowired OperationalOrganisationMapper oOrganisationMapper;
     @Autowired OperationalUserMapper oUserMapper;
     @Autowired UserAuthenticationMapper userAuthenticationMapper;
     @Autowired TemplateMailer mailer;
@@ -436,7 +438,7 @@ public class UserResource extends AbstractResource {
     @Path("/organisations")
     @Produces(MediaType.APPLICATION_JSON)
     public List<Organisation> getUserOrganisations(@TokenUser(allowPublic = false) User user) {
-        return organisationMapper.selectByUser(user.getId());
+        return oOrganisationMapper.selectByUser(user.getId());
     }
 
     /**
@@ -453,7 +455,7 @@ public class UserResource extends AbstractResource {
     @Path("/adminOrganisations")
     @Produces(MediaType.APPLICATION_JSON)
     public List<Organisation> getUserAdminOrganisations(@TokenUser(allowPublic = false) User user) {
-        return organisationMapper.selectByAdminUser(user.getId());
+        return oOrganisationMapper.selectByAdminUser(user.getId());
     }
 
     /**
