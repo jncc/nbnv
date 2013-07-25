@@ -438,7 +438,7 @@ public class UserResource extends AbstractResource {
     @Path("/organisations")
     @Produces(MediaType.APPLICATION_JSON)
     public List<Organisation> getUserOrganisations(@TokenUser(allowPublic = false) User user) {
-        return oOrganisationMapper.selectByUser(user.getId());
+        return organisationMapper.selectByUser(user.getId());
     }
 
     /**
@@ -455,7 +455,7 @@ public class UserResource extends AbstractResource {
     @Path("/adminOrganisations")
     @Produces(MediaType.APPLICATION_JSON)
     public List<Organisation> getUserAdminOrganisations(@TokenUser(allowPublic = false) User user) {
-        return oOrganisationMapper.selectByAdminUser(user.getId());
+        return organisationMapper.selectByAdminUser(user.getId());
     }
 
     /**
