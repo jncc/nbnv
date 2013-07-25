@@ -126,18 +126,6 @@ class Ingester @Inject()(options: Options,
 
       db.repo.clearImportStagingTables()
 
-      finaliseTransaction(t1)
-    }
-    log.info("Step 1 Complete: Prepared import staging tables")
-
-
-    val t2: EntityTransaction = db.em.getTransaction
-
-    //Import the data into the staging tables
-    withEntityTransaction(t2) {
-
-      t2.begin()
-
       // upsert dataset
       val dataset = datasetIngester.stageDataset(metadata)
       db.flushAndClear()
@@ -155,20 +143,20 @@ class Ingester @Inject()(options: Options,
       // insert records
       upsertRecords(archive, dataset, metadata)
 
-      finaliseTransaction(t2)
+      t1.commit()
     }
-    log.info("Step 2 Complete: Ingested data into import staging tables")
+    log.info("Step 1 Complete: Ingested data into import staging tables")
 
-    val t3 = db.em.getTransaction
+    val t2 = db.em.getTransaction
 
     //Importing data into database
-    withEntityTransaction(t3) {
+    withEntityTransaction(t2) {
 
-      t3.begin()
+      t2.begin()
 
       finaliseImport(metadata)
 
-      finaliseTransaction(t3)
+      finaliseTransaction(t2)
     }
     log.info("Step 2 Complete: Imported data into core tables")
 
