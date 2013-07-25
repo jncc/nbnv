@@ -136,7 +136,7 @@
 <#macro parseRequests requestList>
         <#assign requests = []>
         <#list requestList as obj>
-            <#assign requests = requests + [{"key": obj.id, "name": obj.user.forename + " " + obj.user.surname, "text": obj.requestReason, "date": obj.requestDate}]/>
+            <#assign requests = requests + [{"key": obj.id, "name": obj.user.forename + " " + obj.user.surname, "email": obj.user.email, "text": obj.requestReason, "date": obj.requestDate}]/>
         </#list>
         <@requestsTable requests "Requests to join this organisation" />
 </#macro>
@@ -156,7 +156,7 @@
         <#list requests as request>
             <tr>
                 <td class="nbn-org-user-join-id-td">${request.key?string("0")}</td>
-                <td class="nbn-org-user-join-name-td">${request.name}</td>
+                <td class="nbn-org-user-join-name-td">${request.name} (${request.email})</td>
                 <td class="nbn-org-user-join-request-text-td">${request.text}</td>
                 <td class="nbn-org-user-join-request-date-td">${request.date}</td>
                 <td class="nbn-org-user-join-request-view-td"><a href="/Organisations/JoinRequest/${request.key?string("0")}">Action this request</a></td>

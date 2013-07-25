@@ -358,7 +358,7 @@ public class OrganisationMembershipResource extends AbstractResource {
     @POST
     @Path("/request/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response action(@TokenOrganisationJoinRequestUser(path = "id") User user, @PathParam("id") int id, OrganisationJoinRequestJSON data) {
+    public Response action(@TokenOrganisationJoinRequestUser(path = "id") User user, @PathParam("id") int id, OrganisationJoinRequestJSON data) throws IOException, TemplateException {
         OrganisationJoinRequest request = oOrganisationJoinRequestMapper.getJoinRequestByID(id);
 
         if (oOrganisationMembershipMapper.isUserOrganisationAdmin(user.getId(), request.getOrganisation().getId())) {
@@ -367,21 +367,18 @@ public class OrganisationMembershipResource extends AbstractResource {
                 oOrganisationJoinRequestMapper.acceptJoinRequest(data.getId(), data.getReason(), new java.sql.Date(new java.util.Date().getTime()));
                 // Add the user to the organisation
                 oOrganisationMembershipMapper.addUser(request.getUser().getId(), request.getOrganisation().getId());
-                try {
-                    // Send email response to the requesting user, saying that the request was accepted
-                    sendEmail(request, "organisation-join-accept.ftl", request.getUser().getEmail(),
-                            "NBN Gateway: You are now a member of " + request.getOrganisation().getName());
-                    
-                    List<OrganisationMembership> admins = 
-                            oOrganisationMembershipMapper.selectAdminsByOrganisation(request.getOrganisation().getId());
-                    for (OrganisationMembership admin : admins) {
-                        sendJoinRequestToAdmins(request, admin.getUser());
-                    }
-                    
-                    return Response.status(Response.Status.OK).entity(data).build();
-                } catch (Exception ex) {
-                    return Response.status(Response.Status.ACCEPTED).entity(ex).build();
+                
+                // Send email response to the requesting user, saying that the request was accepted
+                sendEmail(request, "organisation-join-accept.ftl", request.getUser().getEmail(),
+                        "NBN Gateway: You are now a member of " + request.getOrganisation().getName());
+
+                List<OrganisationMembership> admins = 
+                        oOrganisationMembershipMapper.selectAdminsByOrganisation(request.getOrganisation().getId());
+                for (OrganisationMembership admin : admins) {
+                    sendJoinRequestToAdmins(request, admin.getUser());
                 }
+
+                return Response.status(Response.Status.OK).entity(data).build();
             } else if (data.getResponseType() == 2) {
                 // Deny the request
                 oOrganisationJoinRequestMapper.denyJoinRequest(data.getId(), data.getReason(), new java.sql.Date(new java.util.Date().getTime()));

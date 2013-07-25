@@ -9,7 +9,7 @@
         <tbody>
             <tr>
                 <td>
-                    <p>Request to join made by ${username} on ${request.requestDate}</p>
+                    <p>Request to join made by ${username} (${requestingUser.email}) on ${request.requestDate}</p>
                 </td>
             </tr>
             <tr>
