@@ -8,9 +8,6 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-
-
 -- =============================================
 -- Author:  Felix Mason
 -- Create date: 31/05/2013
@@ -176,6 +173,7 @@ BEGIN TRY
 			LEFT JOIN dbo.Recorder r ON ir.name = r.name
 		WHERE r.id IS NULL;
 		
+		--TAXON OBSERVATION IMPORT
 		MERGE [dbo].[TaxonObservation] as tob
 		USING
 			(SELECT sam.id AS [SampleId]
@@ -294,13 +292,25 @@ BEGIN TRY
 				  ,[recorderID] = s.recorderID 
 				  ,[determinerID] = s.determinerID;
 			         
-         --INSERT ATTRIBUTES
+        --INSERT ATTRIBUTES
+		DECLARE @DatasetAttributes TABLE (AttributeID int)
+         
+        INSERT INTO @DatasetAttributes (AttributeID)
+        SELECT DISTINCT a.id
+        FROM dbo.Attribute a
+			INNER JOIN dbo.TaxonObservationAttribute toa ON a.id = toa.attributeID
+			INNER JOIN dbo.TaxonObservation tob ON toa.observationID = tob.id
+			INNER JOIN dbo.Sample sam ON tob.sampleID = sam.id
+			INNER JOIN dbo.Survey srv ON sam.surveyID = srv.id
+		WHERE srv.datasetKey = @DatasetKey
+         
 		INSERT INTO dbo.Attribute
 		   ([label]
 		   ,[description]
 		   ,[storageLevelID]
 		   ,[storageTypeID]
 		   ,[gatewayAttributeID])
+		OUTPUT inserted.id INTO @DatasetAttributes(AttributeID)
 		SELECT ia.[label]
 			  ,ia.[description]
 			  ,ia.[storageLevelID]
@@ -310,8 +320,9 @@ BEGIN TRY
 			LEFT JOIN dbo.Attribute a ON ia.label = a.label
 				AND ia.[storageLevelID] = a.[storageLevelID]
 				AND ia.[storageTypeID] = a.[storageTypeID]
+				AND a.id IN (SELECT AttributeID FROM @DatasetAttributes)
 		WHERE a.id IS NULL
-			
+	
 		MERGE [dbo].[TaxonObservationAttribute] toa
 		USING
 			(SELECT tob.id AS observationID
@@ -332,7 +343,8 @@ BEGIN TRY
 					AND tob.providerKey = itob.providerKey
 				INNER JOIN dbo.Attribute a ON ia.label = a.label
 					AND ia.[storageLevelID] = a.[storageLevelID]
-					AND ia.[storageTypeID] = a.[storageTypeID]) s
+					AND ia.[storageTypeID] = a.[storageTypeID]
+					AND a.id IN (SELECT AttributeID FROM @DatasetAttributes)) s
 		ON s.observationID = toa.observationID AND s.attributeID = toa.attributeID
 		WHEN NOT MATCHED THEN
 			INSERT
@@ -349,9 +361,7 @@ BEGIN TRY
 		   ,s.textValue)
 		WHEN MATCHED THEN
 			UPDATE 
-			   SET [observationID] = s.observationID
-				  ,[attributeID] = s.attributeID
-				  ,[decimalValue] = s.decimalValue
+			   SET [decimalValue] = s.decimalValue
 				  ,[enumValue] = s.enumValue
 				  ,[textValue] = s.textValue;
 
