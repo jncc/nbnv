@@ -9,6 +9,8 @@ import freemarker.template.TemplateException;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Properties;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
@@ -28,6 +30,8 @@ public class TemplateMailer {
     @Autowired MailSender mailSender;
     @Autowired Properties properties;
     
+    private static Log logger = LogFactory.getLog(TemplateMailer.class);
+    
     private Configuration configuration;
     
     public TemplateMailer() {
@@ -43,6 +47,10 @@ public class TemplateMailer {
         test.setText(FreeMarkerTemplateUtils.processTemplateIntoString(
                 configuration.getTemplate(template), data));
         
-        mailSender.send(test);
+        if ("dev".equals(properties.getProperty("email_mode"))) {
+            logger.info("Mail Sent -> <" + to + "> Subject: <" + subject + "> Email Template: " + template);
+        } else {
+            mailSender.send(test);
+        }
     }
 }
