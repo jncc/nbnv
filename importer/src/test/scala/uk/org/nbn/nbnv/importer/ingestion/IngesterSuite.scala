@@ -49,7 +49,8 @@ class IngesterSuite extends BaseFunSuite {
     ingester.ingest(f.archive, f.metadata)
 
     // assert
-    verify(f.t).begin()
+
+    verify(f.t, times(2)).begin()
   }
 
   test("should commit transaction") {
@@ -61,6 +62,6 @@ class IngesterSuite extends BaseFunSuite {
     ingester.ingest(f.archive, f.metadata)
 
     // assert
-    verify(f.t).commit()
+    verify(f.t, times(2)).commit()
   }
 }
