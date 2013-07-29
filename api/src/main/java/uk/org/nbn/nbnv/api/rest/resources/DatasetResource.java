@@ -2,9 +2,11 @@ package uk.org.nbn.nbnv.api.rest.resources;
 
 import java.util.List;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -15,15 +17,19 @@ import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.org.nbn.nbnv.api.dao.core.OperationalDatasetContributingOrganisationMapper;
 import uk.org.nbn.nbnv.api.dao.core.OperationalDatasetMapper;
 import uk.org.nbn.nbnv.api.dao.core.OperationalSurveyMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.DatasetAdministratorMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.DatasetMapper;
+import uk.org.nbn.nbnv.api.dao.warehouse.OrganisationMapper;
 import uk.org.nbn.nbnv.api.model.Dataset;
 import uk.org.nbn.nbnv.api.model.DatasetAdministrator;
 import uk.org.nbn.nbnv.api.model.DatasetResolutionRecordCount;
+import uk.org.nbn.nbnv.api.model.Organisation;
 import uk.org.nbn.nbnv.api.model.Survey;
 import uk.org.nbn.nbnv.api.model.User;
+import uk.org.nbn.nbnv.api.model.meta.ContributingOrganisation;
 import uk.org.nbn.nbnv.api.model.meta.DatasetAdminMembershipJSON;
 import uk.org.nbn.nbnv.api.model.meta.OpResult;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenDatasetAdminUser;
@@ -38,6 +44,8 @@ public class DatasetResource extends AbstractResource {
     @Autowired DatasetAdministratorMapper datasetAdministratorMapper;
     @Autowired DatasetMapper datasetMapper;
     @Autowired OperationalSurveyMapper oSurveyMapper;
+    @Autowired OrganisationMapper organisationMapper;
+    @Autowired OperationalDatasetContributingOrganisationMapper oDatasetContributingOrganisationMapper;
     
     /**
      * Returns a list of all datasets from the data warehouse
@@ -369,5 +377,89 @@ public class DatasetResource extends AbstractResource {
         oSurveyMapper.updateSurveyById(updated);
 
         return Response.status(Response.Status.OK).entity(updated).build();
+    }
+    
+    /**
+     * Adds a new contributing organisation to a dataset, if the current user is
+     * and admin of that dataset.
+     * 
+     * @param user The current user, must be a dataset admin
+     * @param datasetKey The selected dataset to add a contributing org to
+     * @param data JSON datapacket containing the organisation id, ie. 
+     * {orgID: 1}
+     * @return The success or failure of the action
+     * 
+     * @response.representation.200.qname OpResult
+     * @response.representation.200.mediaType application/json  
+     */
+    @PUT
+    @Path("/{datasetKey}/contributing")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public OpResult addNewContributingOrganisation(
+            @TokenDatasetAdminUser(path = "datasetKey") User user,
+            @PathParam("datasetKey") String datasetKey,
+            ContributingOrganisation data) {
+        // Needs most up to date data so use core otherwise we can get 
+        // inconsistencies
+        Dataset dataset = oDatasetMapper.selectByDatasetKey(datasetKey);
+        Organisation org = organisationMapper.selectByID(data.getOrgID());
+        
+        if (org == null)
+            return new OpResult("No such organisation exists");
+        for (Organisation contrib : dataset.getContributingOrganisations()) {
+            if (contrib.getId() == org.getId()) 
+                return new OpResult("This organisation already contributes to this dataset");
+        }            
+        if (dataset.getOrganisation().getId() == data.getOrgID())
+            return new OpResult("This organisation owns this dataset");
+        
+        if (oDatasetContributingOrganisationMapper.addNewDatasetContirbutor(datasetKey, data.getOrgID()) == 1)
+            return new OpResult();
+        
+        return new OpResult("Could not add the contributing organisation, please try again later");
+    }
+    
+    /**
+     * Removes an existing contributing organisation to a dataset, if the 
+     * current user is a dataset admin
+     * 
+     * @param user The current user, must be a dataset admin
+     * @param datasetKey The selected dataset
+     * @param id The organisation ID to be removed from contributing org list
+     * @return The success or failure of this operation
+     * 
+     * @response.representation.200.qname OpResult
+     * @response.representation.200.mediaType application/json  
+     */
+    @DELETE
+    @Path("/{datasetKey}/contributing/{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public OpResult removeContributingOrganisation(
+            @TokenDatasetAdminUser(path = "datasetKey") User user,
+            @PathParam("datasetKey") String datasetKey,
+            @PathParam("id") int id) {
+        // Needs most up to date data so use core otherwise we can get 
+        // inconsistencies
+        Dataset dataset = oDatasetMapper.selectByDatasetKey(datasetKey);
+        Organisation org = organisationMapper.selectByID(id);
+        
+        if (org == null)
+            return new OpResult("No such organisation exists");
+        boolean exists = false;
+        for (Organisation contrib : dataset.getContributingOrganisations()) {
+            if (contrib.getId() == org.getId()) 
+                exists = true;
+        }                    
+        if (!exists)
+            return new OpResult("This organisation does not currently contribute to this dataset");
+        if (dataset.getOrganisation().getId() == id)
+            return new OpResult("This organisation owns this dataset, cannot remove it");
+        
+        if (oDatasetContributingOrganisationMapper.removeExistingContributer(datasetKey, id) == 1)
+            return new OpResult();
+        
+        return new OpResult("Could not remove the contributing organisation, please try again later");
     }
 }

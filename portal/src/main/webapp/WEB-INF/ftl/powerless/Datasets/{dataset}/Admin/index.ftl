@@ -1,4 +1,4 @@
-<#assign isAdmin=json.readURL("${api}/datasets/${URLParameters.dataset}/isAdmin")>
+<#assign full=json.readURL("${api}/datasets/${URLParameters.dataset}/edit")>
 <#assign admins=json.readURL("${api}/datasets/${URLParameters.dataset}/admins")>
 
 <h3>Add a user as dataset administrator</h2>
@@ -16,6 +16,14 @@
 <div id="dialog-dataset-admin-success" title="Successfully completed operation" style="display:none;">
     <p><span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0;"></span><span id="dialog-dataset-admin-success-text"></span></p>
 </div>
+
+<h3>Other Dataset Administration Actions</h3>
+<a href="/Datasets/${full.key}/Edit">Edit Dataset Metadata</a><br/>
+<a href="/Datasets/${full.key}/Surveys/Edit">Edit Survey Metadata</a><br/>
+<a href="/Datasets/${full.key}/Attributes/Edit">Edit Attribute Metadata</a><br/>
+<a href="/AccessRequest/History/${full.key}">View Dataset Access History</a><br/>
+<a href="/Datasets/${full.key}/Contributing">Add / Remove Contributing Organisations</a><br/>
+<a href="/Datasets/${full.key}#ui-tabs-<#if full.typeName == "Taxon">5<#else>1</#if>">Add / Remove Dataset Administrators</a>                        
 
 <#macro parseUsers userList>
     <#assign users = []>
