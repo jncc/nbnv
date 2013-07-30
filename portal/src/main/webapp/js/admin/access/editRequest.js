@@ -19,7 +19,10 @@ nbn.nbnv.ui.editRequest = function (json, requester, dataset, id, div, orgReq) {
     var spatial = new nbn.nbnv.ui.filter.spatial(json);
     var taxon = new nbn.nbnv.ui.filter.taxon(json);
     var timeLimit = new nbn.nbnv.ui.timeLimit(json);
-    var result = new nbn.nbnv.ui.requestEditResult(reqEndpoint);
+    var grantDialog = new nbn.nbnv.ui.dialog.requestGrantDialog();
+    grantDialog._render();
+    
+    var result = new nbn.nbnv.ui.requestEditResult(reqEndpoint, dataset, '/datasets/' + dataset, grantDialog);
 
     this.div.append(reason._renderHeader());
     this.div.append(reason._renderPanel());

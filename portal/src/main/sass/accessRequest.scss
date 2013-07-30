@@ -34,3 +34,12 @@
 .taxonTerm {
     font-weight: bold; 
 }
+
+#editWaitingWindow {
+    display: none !important;
+}
+
+#editWaitingWindow span {
+    float: left !important;
+    margin-top: 15px;
+}
