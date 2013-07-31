@@ -638,7 +638,7 @@ public class OrganisationAccessRequestResource extends AbstractResource {
         List<OrganisationMembership> admins = oOrganisationMembershipMapper.selectAdminsByOrganisation(request.getOrganisation().getId());
         for (OrganisationMembership admin : admins) {
             if (proactive) {
-                mailer.send("accessGrant.ftl", admin.getUser().getEmail(), "NBN Gateway: Access granted", message);
+                mailer.send("accessProactiveGrant.ftl", admin.getUser().getEmail(), "NBN Gateway: Access granted", message);
             } else {
                 mailer.send("accessRequestGrant.ftl", admin.getUser().getEmail(), "NBN Gateway: Access request approved", message);
             }
