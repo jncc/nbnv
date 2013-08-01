@@ -74,6 +74,11 @@
                 <@report_utils.downloadTermsDialogue/>
             </fieldset>
 
+            <fieldset>
+                <legend>Interactive Map</legend>
+                <a href="/imt?mode=SPECIES&species=${tvk}">View on Interactive Map</a>
+            </fieldset>
+
     </div>
 </#macro>
 
