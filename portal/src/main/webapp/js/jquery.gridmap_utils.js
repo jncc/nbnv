@@ -290,6 +290,23 @@
             e.preventDefault();
         });
     }
+    
+    // Creates a link to the IMT retaining TVK / dataset filters
+    function setupIMTLink() {
+        $('#nbn-interactive-map').click(function() {
+            if($('#nbn-select-datasets-orderby').val() === '1') {
+                var datasets = $('#nbn-dataset-ordered-table-byrecord input[name=datasetKey][type=checkbox]:checked').map(function() {
+                    return $(this).attr("value");
+                }).get();
+            } else if($('#nbn-select-datasets-orderby').val() === '2') {
+                var datasets = $('#nbn-dataset-ordered-table-byname input[name=datasetKey][type=checkbox]:checked').map(function() {
+                    return $(this).attr("value");
+                }).get();
+            }
+            
+            window.location = '/imt?mode=SPECIES&species=' + $('#tvk').val() + '&datasets=' + datasets; 
+        });
+    }
 
     $(document).ready(function(){
         $('#nbn-download-terms').hide();
@@ -297,6 +314,7 @@
         setupColourPickers();
         setupRegionVCInteractions();
         setupDownloadSquaresButton();
+        setupIMTLink();
         hideBusyImageOnMapLoad();
         addInitialMapImage();
     });
