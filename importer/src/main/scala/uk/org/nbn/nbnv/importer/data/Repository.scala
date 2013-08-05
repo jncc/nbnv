@@ -10,6 +10,24 @@ import uk.org.nbn.nbnv.importer.BadDataException
 import uk.org.nbn.nbnv.{SpatialQueries, StoredProcedureLibrary}
 
 class Repository (log: Logger, em: EntityManager, cache: QueryCache) extends ControlAbstractions {
+  def getImportSiteByName(name: String, dataset: ImportDataset): Option[ImportSite] = {
+    val q = "select s from ImportSite s where s.name = :name and s.datasetKey = :dataset "
+
+    cacheSome(q, name, dataset.getKey) {
+
+      val query = em.createQuery(q, classOf[ImportSite])
+      query.setParameter("name", name)
+      query.setParameter("dataset", dataset)
+
+      query.getSingleOrNone
+    }
+  }
+
+  def clearImportStagingTables(){
+    val sprocs = new StoredProcedureLibrary(em)
+    sprocs.clearImportStagingTables
+  }
+
 
   def confirmSiteBoundary(siteDatasetKey: String, siteProviderKey: String): Boolean = {
 
@@ -34,10 +52,10 @@ class Repository (log: Logger, em: EntityManager, cache: QueryCache) extends Con
     if (result == null) None else Option(result)
   }
 
-  def createFeature(wkt: String) = {
+  def createFeature(wkt: String, identifier: String) = {
 
     val sprocs = new StoredProcedureLibrary(em)
-    sprocs.createFeature(wkt)
+    sprocs.createFeature(wkt, identifier)
   }
 
   def createGridRef(feature: Feature, gridRef: String , resolution: Resolution , projection: Projection , wkt: String ) : GridSquare = {
@@ -50,21 +68,30 @@ class Repository (log: Logger, em: EntityManager, cache: QueryCache) extends Con
     sprocs.deleteTaxonObservationsAndRelatedRecords(datasetKey)
   }
 
-  def confirmTaxonVersionKey(taxonVersionKey: String): Boolean = {
-    val query = em.createQuery("SELECT COUNT(t.taxonVersionKey) FROM Taxon t WHERE t.taxonVersionKey = :tvk", classOf[Taxon])
-    query.setParameter("tvk", taxonVersionKey)
-
-    val count = query.getSingleResult.asInstanceOf[Long]
-    if (count == 1) true else false
+  def importTaxonObservationsAndRelatedRecords() {
+    val sprocs = new StoredProcedureLibrary(em)
+    sprocs.importTaxonObservationsAndRelatedRecords
   }
 
-  def getAttribute(attributeLabel: String, taxonDataset: TaxonDataset) = {
+  def confirmTaxonVersionKey(taxonVersionKey: String): Boolean = {
+    val q = "SELECT COUNT(t.taxonVersionKey) FROM Taxon t WHERE t.taxonVersionKey = :tvk";
 
-    val q = "select a from Attribute a join a.taxonObservationAttributeCollection toa join toa.taxonObservation to join to.sample s join s.survey sv where a.label = :label and sv.taxonDataset = :dataset"
+    cacheSingle(q, taxonVersionKey) {
+      val query = em.createQuery(q, classOf[Taxon])
+      query.setParameter("tvk", taxonVersionKey)
+
+      val count = query.getSingleResult.asInstanceOf[Long]
+      if (count == 1) true else false
+    }
+  }
+
+  def getAttribute(attributeLabel: String, taxonDataset: ImportTaxonDataset) = {
+
+    val q = "select a from ImportAttribute a join a.importTaxonObservationAttributeCollection toa join toa.importTaxonObservation to join to.sampleID s join s.surveyID sv where a.label = :label and sv.datasetKey = :dataset"
 
     cacheSome(q, attributeLabel, taxonDataset.getDatasetKey) {
 
-      val query = em.createQuery(q, classOf[Attribute])
+      val query = em.createQuery(q, classOf[ImportAttribute])
       query.setParameter("label", attributeLabel)
       query.setParameter("dataset", taxonDataset)
       query.getFirstOrNone
@@ -111,13 +138,13 @@ class Repository (log: Logger, em: EntityManager, cache: QueryCache) extends Con
     }
   }
 
-  def getSurvey(surveyKey: String, taxonDataset: TaxonDataset) = {
+  def getImportSurvey(surveyKey: String, taxonDataset: ImportTaxonDataset) = {
 
-    val q = "SELECT s FROM Survey s WHERE s.providerKey = :providerKey AND s.taxonDataset = :taxonDataset"
+    val q = "SELECT s FROM ImportSurvey s WHERE s.providerKey = :providerKey AND s.datasetKey = :taxonDataset"
 
     cacheSome(q, surveyKey, taxonDataset.getDatasetKey) {
 
-      val query = em.createQuery(q, classOf[Survey])
+      val query = em.createQuery(q, classOf[ImportSurvey])
       query.setParameter("providerKey", surveyKey)
       query.setParameter("taxonDataset", taxonDataset)
 
@@ -155,11 +182,11 @@ class Repository (log: Logger, em: EntityManager, cache: QueryCache) extends Con
     }
   }
 
-  def getTaxonObservation(key: String, sample: Sample) = {
+  def getTaxonObservation(key: String, sample: ImportSample) = {
 
-    val q = "select o from TaxonObservation o where o.providerKey = :key and o.sample = :sample "
+    val q = "select o from ImportTaxonObservation o where o.providerKey = :key and o.sampleID = :sample "
 
-    em.createQuery(q, classOf[TaxonObservation])
+    em.createQuery(q, classOf[ImportTaxonObservation])
       .setParameter("key", key)
       .setParameter("sample", sample)
       .getSingleOrNone
@@ -167,9 +194,9 @@ class Repository (log: Logger, em: EntityManager, cache: QueryCache) extends Con
 
   def getTaxonObservationPublic(id: Int) = {
 
-    val q = "select o from TaxonObservationPublic o where o.taxonObservationID = :id "
+    val q = "select o from ImportTaxonObservationPublic o where o.taxonObservationID = :id "
 
-    em.createQuery(q, classOf[TaxonObservationPublic])
+    em.createQuery(q, classOf[ImportTaxonObservationPublic])
       .setParameter("id", id)
       .getSingleOrNone
   }
@@ -213,25 +240,25 @@ class Repository (log: Logger, em: EntityManager, cache: QueryCache) extends Con
     }
   }
 
-  def getFirstRecorder(name: String) = {
+  def getFirstImportRecorder(name: String) = {
 
-    val q = "select r from Recorder r where r.name = :name "
+    val q = "select r from ImportRecorder r where r.name = :name "
 
-    cacheSome("getFirstRecorder", name) {
+    cacheSome("getFirstImportRecorder", name) {
 
-      val query = em.createQuery(q, classOf[Recorder])
+      val query = em.createQuery(q, classOf[ImportRecorder])
       query.setParameter("name", name)
       query.getFirstOrNone
     }
   }
 
-  def getSite(providerKey: String, dataset: Dataset) = {
+  def getImportSiteByKey(providerKey: String, dataset: ImportDataset) = {
 
-    val q = "select s from Site s where s.providerKey = :providerKey and s.dataset = :dataset "
+    val q = "select s from ImportSite s where s.providerKey = :providerKey and s.datasetKey = :dataset "
 
     cacheSome(q, providerKey, dataset.getKey) {
 
-      val query = em.createQuery(q, classOf[Site])
+      val query = em.createQuery(q, classOf[ImportSite])
       query.setParameter("providerKey", providerKey)
       query.setParameter("dataset", dataset)
 
@@ -246,13 +273,13 @@ class Repository (log: Logger, em: EntityManager, cache: QueryCache) extends Con
     em.createQuery(q, classOf[String]).setMaxResults(1).getFirstOrNone
   }
 
-  def getSample(providerKey: String, survey: Survey) = {
+  def getImportSample(providerKey: String, survey: ImportSurvey) = {
 
-    val q = "SELECT s FROM Sample s WHERE s.providerKey=:providerKey AND s.survey = :survey"
+    val q = "SELECT s FROM ImportSample s WHERE s.providerKey=:providerKey AND s.surveyID = :survey"
 
     cacheSome(q, providerKey, survey.getId.toString) {
 
-      em.createQuery(q, classOf[Sample])
+      em.createQuery(q, classOf[ImportSample])
         .setParameter("providerKey", providerKey)
         .setParameter("survey", survey)
         .getSingleOrNone

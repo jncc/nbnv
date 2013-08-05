@@ -122,6 +122,8 @@
                         <th>Your access</th>
                         <td>
                             <@report_utils.datasetAccessPositionByDatasetKey datasetKey=dataset.key/>
+                            <br/>
+                            <div><a href="/AccessRequest/Create?json={dataset:{all:false,datasets:['${dataset.key}']}}">Request Better Access</a></div>
                         </td>
                     </tr>
                     <tr>
@@ -131,10 +133,6 @@
                     <tr>
                         <th>Use constraints</th>
                         <td>${dataset.useConstraints!"Not available"}</td>
-                    </tr>
-                    <tr>
-                        <th>Access</th>
-                        <td><a href="/AccessRequest/Create?json={dataset:{all:false,datasets:['${dataset.key}']}}">Request Better Access</a></td>
                     </tr>
                 </table>
             </div>

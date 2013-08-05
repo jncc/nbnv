@@ -130,6 +130,9 @@ nbn.nbnv.ui.filter.taxon = function(json) {
                         output.prop('disabled', true);
                         desig.prop('disabled', true);
                         speciesAutoComplete.prop('disabled', true);
+                        speciesAutoComplete.val('');
+                        output.val(0);
+                        desig.val(0);
                     }
                 })
             ).append('All species');
@@ -146,9 +149,11 @@ nbn.nbnv.ui.filter.taxon = function(json) {
                         output.prop('disabled', true);
                         desig.prop('disabled', true);
                         speciesAutoComplete.prop('disabled', false);
+                        output.val(0);
+                        desig.val(0);
                     }
                 })
-            ).append("Single species ")
+            ).append("Single species or taxon ")
             .append(speciesAutoComplete);
 
         var desigFilterRecords = $('<div>')
@@ -163,6 +168,8 @@ nbn.nbnv.ui.filter.taxon = function(json) {
                         output.prop('disabled', true);
                         desig.prop('disabled', false);
                         speciesAutoComplete.prop('disabled', true);
+                        speciesAutoComplete.val('');
+                        output.val(0);
                     }
                 })
             ).append("Designated List ")
@@ -180,6 +187,8 @@ nbn.nbnv.ui.filter.taxon = function(json) {
                         output.prop('disabled', false);
                         desig.prop('disabled', true);
                         speciesAutoComplete.prop('disabled', true);
+                        speciesAutoComplete.val('');
+                        desig.val(0);
                     }
                 })
             ).append("Species Group ")

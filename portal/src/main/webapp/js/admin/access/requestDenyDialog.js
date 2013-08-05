@@ -39,7 +39,7 @@ nbn.nbnv.ui.dialog.requestDenyDialog = function() {
                 width: 650,
                 buttons: { 
                     "Deny Request": function() {
-                        $(":button:contains('Deny Request')").button('disable');
+                        displaySendingRequestDialog('Working...');
                         var filter = { action: "deny", reason: _me.reason };
                         
                         var url;

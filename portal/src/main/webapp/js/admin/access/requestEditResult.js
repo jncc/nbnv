@@ -2,8 +2,11 @@ window.nbn = window.nbn || {};
 nbn.nbnv = nbn.nbnv || {};
 nbn.nbnv.ui = nbn.nbnv.ui || {};
 
-nbn.nbnv.ui.requestEditResult = function(endpoint) {
+nbn.nbnv.ui.requestEditResult = function(endpoint, dataset, datasetEndpoint, grantDialog) {
     this._endpoint = endpoint;
+    this._dataset = dataset;
+    this._datasetEndpoint = datasetEndpoint;
+    this._grantDialog = grantDialog;
 
     this._renderHeader = function() {
         return $('<h3>').attr('filtertype', 'result')
@@ -16,12 +19,23 @@ nbn.nbnv.ui.requestEditResult = function(endpoint) {
                 .attr('id', 'recordcounts')
             ).append($('<button>')
                 .attr('id', 'changebtn')
-                .text('Change')
+                .text('Change And Approve')
             ).append($('<button>')
                 .attr('id', 'cancelbtn')
                 .text('Cancel')
                 .click(function() {
                     window.location = '/AccessRequest/Admin';
+                })
+            ).append($('<div>')
+                .attr('id', 'editWaitingWindow')
+                .append($('<span>')
+                    .text('Editing Request'))
+                .append($('<img>')
+                    .attr('src', '/img/ajax-loader-medium.gif'))
+                .dialog({ 
+                    modal: true, 
+                    autoOpen: false,
+                    width: 400
                 })
             );
     };
@@ -60,17 +74,19 @@ nbn.nbnv.ui.requestEditResult = function(endpoint) {
         var _me = this;
         
         $('#changebtn').click(function() {
-                    $.ajax({
-                        type: "PUT"
-                        , url: nbn.nbnv.api + _me._endpoint + '/' + id
-                        , contentType: 'application/json'
-                        , processData: false
-                        , data: JSON.stringify(json)
-                        , complete: function(data) {
-                            window.location = '/AccessRequest/Admin';
-                        }
-                    })
-                })
+            $('#editWaitingWindow').dialog('show');
+            $.ajax({
+                type: "PUT"
+                , url: nbn.nbnv.api + _me._endpoint + '/' + id
+                , contentType: 'application/json'
+                , processData: false
+                , data: JSON.stringify(json)
+                , success: function(data) {
+                    $('#editWaitingWindow').dialog('hide');
+                    _me._grantDialog.show(id, json, _me._dataset, '/taxonObservations/datasets/' + _me._dataset + '/requestable');
+                }
+            })
+        })
     };
     
     this._onExit = function() {

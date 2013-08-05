@@ -41,7 +41,7 @@ nbn.nbnv.ui.dialog.requestGrantDialog = function() {
                 width: 650,
                 buttons: { 
                     "Grant Request": function() {
-                        $(":button:contains('Grant Request')").button('disable');
+                        displaySendingRequestDialog('Working...');
                         var filter = { action: "grant", reason: _me.reason };
                         var url;
                         

@@ -38,9 +38,16 @@ class NbnDateParser {
           case None => throw new BadDataException("No end date. An end date must be specified for dateType '<D'")
         }
       }
-      case "D" | ">D" => {
+      case  ">D" => {
         startDate match {
           case Some(d) => (Some(d), None)
+          case None => throw new BadDataException("No start date. A start date must be specified for dateType '%s'".format(dateType))
+        }
+      }
+      case "D" => {
+        startDate match {
+          //Validation should ensure start date is same as end date if provided (NBNV 73)
+          case Some(d) => (Some(d), Some(endDate.getOrElse(d)))
           case None => throw new BadDataException("No start date. A start date must be specified for dateType '%s'".format(dateType))
         }
       }

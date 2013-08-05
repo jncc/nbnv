@@ -22,7 +22,7 @@
                 <td><input name="description" value="${attribute.description?has_content?string(attribute.description,"")}" /></td>
             </tr>
         </table>
-        <input id="nbn-modify-submit" type="submit" value="Modify Attribute" />
+        <input id="nbn-modify-submit" type="submit" value="Edit Attribute" />
         <div id="nbn-waiting-ticker" style="display:none; float: right;"><p>Warning it may take some time for these changes to propagate to live site <img src="/img/ajax-loader.gif" /></p></div>
     </form>
 </@template.master>

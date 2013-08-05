@@ -3,6 +3,7 @@ package uk.org.nbn.nbnv.importer.metadata
 import uk.org.nbn.nbnv.importer.testing.BaseFunSuite
 
 class MetadataParserSuite extends BaseFunSuite {
+
   test("can parse valid metadata") {
 
     val parser = new MetadataParser()

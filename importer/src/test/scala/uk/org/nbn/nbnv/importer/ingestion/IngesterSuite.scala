@@ -24,6 +24,12 @@ class IngesterSuite extends BaseFunSuite {
 
     val datasetIngester = mock[DatasetIngester]
     val recordIngester = mock[RecordIngester]
+    val sampleIngester = mock[SampleIngester]
+    val surveyIngester = mock[SurveyIngester]
+    val siteIngester = mock[SiteIngester]
+    val featureIngester = mock[FeatureIngester]
+    val recorderIngester = mock[RecorderIngester]
+    val repository = mock[Repository]
 
     val archive = mock[Archive]
     val iterator = mock[ClosableIterator[StarRecord]]
@@ -39,11 +45,12 @@ class IngesterSuite extends BaseFunSuite {
     val f = fixture
 
     // act
-    val ingester = new Ingester(f.options, mock[Logger], f.db, f.datasetIngester, f.recordIngester)
+    val ingester = new Ingester(f.options, mock[Logger], f.db, f.datasetIngester, f.recordIngester, f.surveyIngester, f.sampleIngester, f.siteIngester, f.recorderIngester, f.featureIngester)
     ingester.ingest(f.archive, f.metadata)
 
     // assert
-    verify(f.t).begin()
+
+    verify(f.t, times(2)).begin()
   }
 
   test("should commit transaction") {
@@ -51,10 +58,10 @@ class IngesterSuite extends BaseFunSuite {
     val f = fixture
 
     // act
-    val ingester = new Ingester(f.options, mock[Logger], f.db, f.datasetIngester, f.recordIngester)
+    val ingester = new Ingester(f.options, mock[Logger], f.db, f.datasetIngester, f.recordIngester, f.surveyIngester, f.sampleIngester, f.siteIngester, f.recorderIngester, f.featureIngester)
     ingester.ingest(f.archive, f.metadata)
 
     // assert
-    verify(f.t).commit()
+    verify(f.t, times(2)).commit()
   }
 }

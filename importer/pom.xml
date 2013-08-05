@@ -37,11 +37,11 @@
         <dependency>
             <groupId>org.gbif</groupId>
             <artifactId>dwca-reader</artifactId>
-            <version>1.11</version>
+            <version>1.14</version>
         </dependency>
         <dependency>
             <groupId>org.scalatest</groupId>
-            <artifactId>scalatest_2.9.2</artifactId>
+            <artifactId>scalatest_2.10.0</artifactId>
             <version>1.8</version>
             <scope>test</scope>
         </dependency>
@@ -73,7 +73,6 @@
             <artifactId>gt2-referencing</artifactId>
             <version>${geotools2.version}</version>
         </dependency>
-
     </dependencies>
 
     <build>

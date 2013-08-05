@@ -18,10 +18,10 @@ public interface OperationalOrganisationMapper {
     @Select("SELECT CASE WHEN logo IS NULL THEN 0 ELSE 1 END as hasLogo, CASE WHEN logoSmall IS NULL THEN 0 ELSE 1 END as hasSmallLogo, id, name, abbreviation, summary, address, postcode, contactName, contactEmail, phone, website, allowPublicRegistration FROM Organisation WHERE id = #{id}")
     Organisation selectByID(int id);
     
-    @Select("SELECT org.* FROM Organisation org INNER JOIN OrganisationMembership omd ON omd.organisationID = org.id WHERE omd.userID = #{id}")
+    @Select("SELECT org.* FROM Organisation org INNER JOIN UserOrganisationMembership omd ON omd.organisationID = org.id WHERE omd.userID = #{id}")
     List<Organisation> selectByUser(int id);
 
-    @Select("SELECT org.* FROM Organisation org INNER JOIN OrganisationMembership omd ON omd.organisationID = org.id WHERE omd.userID = #{id} AND (omd.role = 'administrator' OR omd.role = 'lead')")
+    @Select("SELECT org.* FROM Organisation org INNER JOIN UserOrganisationMembership omd ON omd.organisationID = org.id WHERE omd.userID = #{id} AND (omd.organisationRoleID = 2 OR omd.organisationRoleID = 3)")
     List<Organisation> selectByAdminUser(int id);
     
     @Select("SELECT org.* FROM Organisation org WHERE name LIKE #{term} OR abbreviation LIKE #{term}")

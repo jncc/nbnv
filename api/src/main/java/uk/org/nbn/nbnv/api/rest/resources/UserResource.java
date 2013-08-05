@@ -36,6 +36,7 @@ import uk.org.nbn.nbnv.api.authentication.InvalidCredentialsException;
 import uk.org.nbn.nbnv.api.authentication.InvalidTokenException;
 import uk.org.nbn.nbnv.api.authentication.Token;
 import uk.org.nbn.nbnv.api.authentication.TokenAuthenticator;
+import uk.org.nbn.nbnv.api.dao.core.OperationalOrganisationMapper;
 import uk.org.nbn.nbnv.api.dao.core.OperationalUserMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.OrganisationMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.UserAuthenticationMapper;
@@ -62,6 +63,7 @@ public class UserResource extends AbstractResource {
     @Autowired TokenResetCredentials credentialsResetter;
     @Autowired UserMapper userMapper;
     @Autowired OrganisationMapper organisationMapper;
+    @Autowired OperationalOrganisationMapper oOrganisationMapper;
     @Autowired OperationalUserMapper oUserMapper;
     @Autowired UserAuthenticationMapper userAuthenticationMapper;
     @Autowired TemplateMailer mailer;
@@ -534,13 +536,8 @@ public class UserResource extends AbstractResource {
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
     public Response modifyEmailSettings(@TokenUser(allowPublic = false) User user, 
-        @FormParam("allowEmailAlerts") int allowEmailAlerts,
-        @FormParam("subscribedToAdminEmails") int subscribedToAdminEmails,
         @FormParam("subscribedToNBNMarketting") int subscribedToNBNMarketting) throws JSONException {
-        oUserMapper.updateUserEmailSettings(user.getId(), 
-                allowEmailAlerts, 
-                subscribedToAdminEmails, 
-                subscribedToNBNMarketting);
+        oUserMapper.updateUserEmailSettings(user.getId(), subscribedToNBNMarketting);
         
         return Response.ok(new JSONObject()
                 .put("success", true)

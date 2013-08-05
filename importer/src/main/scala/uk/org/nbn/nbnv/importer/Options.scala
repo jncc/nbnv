@@ -11,6 +11,7 @@ case class OptionsFailure(message: String)  extends OptionsResult
 /// The command line options that can be provided to the importer.
 case class Options(archivePath: String  = "specify-an-archive-path.zip",
                    target:      Target.Value = Target.commit,
+                   mode:        Mode.Value = Mode.full,
                    logLevel:    String  = "INFO",
                    logDir:      String  = ".",
                    tempDir:     String  = "./temp")
@@ -19,6 +20,7 @@ case class Options(archivePath: String  = "specify-an-archive-path.zip",
     Map(
       "  archivePath %s" -> archivePath,
       "  target      %s" -> target,
+      "  mode        %s" -> mode,
       "  logLevel    %s" -> logLevel,
       "  logDir      %s" -> logDir,
       "  tempDir     %s" -> tempDir)
@@ -33,7 +35,8 @@ object Options {
     """|
        |Usage:
        |importer "C:\some\archive.zip" (specify a DwcA archive)
-       |         [-target validate]    (one of validate|verify|ingest|commit)
+       |         [-target validate]    (specify validate|verify|ingest|commit)
+       |         [-mode incremental]   (specify full|incremental)
        |         [-logLevel DEBUG]     (specify a log level)
        |         [-logDir "C:\logs"]   (specify a log directory)
        |         [-tempDir "C:\temp"]  (specify a temp directory)
@@ -47,6 +50,7 @@ object Options {
       case "-tempdir"  :: v :: tail => process(options.copy(tempDir = v), tail)
       case "-logdir"   :: v :: tail => process(options.copy(logDir = v), tail)
       case "-loglevel" :: v :: tail => process(options.copy(logLevel = v), tail)
+      case "-mode"     :: v :: tail => process(options.copy(mode = Mode.withName(v.toLowerCase)), tail)
       case "-target"   :: v :: tail => process(options.copy(target = Target.withName(v.toLowerCase)), tail)
       case v                :: tail => process(options.copy(archivePath = v), tail)
     }
@@ -67,3 +71,8 @@ object Target extends Enumeration {
   val commit   = Value("commit")
 }
 
+/// The "mode" of import.
+object Mode extends Enumeration {
+  val full        = Value("full")
+  val incremental = Value("incremental")
+}

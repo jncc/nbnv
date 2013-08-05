@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.org.nbn.nbnv.api.dao.core.OperationalOrganisationJoinRequestMapper;
 import uk.org.nbn.nbnv.api.dao.core.OperationalOrganisationMembershipMapper;
+import uk.org.nbn.nbnv.api.dao.warehouse.OrganisationMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.OrganisationMembershipMapper;
 import uk.org.nbn.nbnv.api.mail.TemplateMailer;
 import uk.org.nbn.nbnv.api.model.OrganisationJoinRequest;
@@ -44,6 +45,7 @@ import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
 public class OrganisationMembershipResource extends AbstractResource {
 
     @Autowired OrganisationMembershipMapper organisationMembershipMapper;
+    @Autowired OrganisationMapper organisationMapper;
     @Autowired OperationalOrganisationMembershipMapper oOrganisationMembershipMapper;
     @Autowired OperationalOrganisationJoinRequestMapper oOrganisationJoinRequestMapper;
     @Autowired TemplateMailer mailer;
@@ -262,7 +264,7 @@ public class OrganisationMembershipResource extends AbstractResource {
     @PUT
     @Path("/{id}/join")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response create(@TokenUser(allowPublic = false) User user, @PathParam("id") int orgID, OrganisationJoinRequestJSON data) {
+    public Response create(@TokenUser(allowPublic = false) User user, @PathParam("id") int orgID, OrganisationJoinRequestJSON data) throws IOException, TemplateException {
         if (oOrganisationMembershipMapper.isUserMemberOfOrganisation(user.getId(), orgID)) {
             data.setReason("Already a member of this organisation");
             return Response.status(Response.Status.BAD_REQUEST).entity(data).build();
@@ -274,6 +276,17 @@ public class OrganisationMembershipResource extends AbstractResource {
         }
 
         oOrganisationJoinRequestMapper.createJoinRequest(user.getId(), orgID, data.getReason(), new java.sql.Date(new java.util.Date().getTime()));
+        
+        List<OrganisationMembership> admins = 
+        oOrganisationMembershipMapper.selectAdminsByOrganisation(orgID);
+        for (OrganisationMembership admin : admins) {
+            OrganisationJoinRequest request = new OrganisationJoinRequest();
+            request.setUser(user);
+            request.setRequestReason(data.getReason());
+            request.setOrganisation(organisationMapper.selectByID(orgID));
+            sendJoinRequestToAdmins(request, admin.getUser());           
+        }
+        
         return Response.status(Response.Status.CREATED).entity(data).build();
     }
 
@@ -358,7 +371,7 @@ public class OrganisationMembershipResource extends AbstractResource {
     @POST
     @Path("/request/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response action(@TokenOrganisationJoinRequestUser(path = "id") User user, @PathParam("id") int id, OrganisationJoinRequestJSON data) {
+    public Response action(@TokenOrganisationJoinRequestUser(path = "id") User user, @PathParam("id") int id, OrganisationJoinRequestJSON data) throws IOException, TemplateException {
         OrganisationJoinRequest request = oOrganisationJoinRequestMapper.getJoinRequestByID(id);
 
         if (oOrganisationMembershipMapper.isUserOrganisationAdmin(user.getId(), request.getOrganisation().getId())) {
@@ -367,14 +380,12 @@ public class OrganisationMembershipResource extends AbstractResource {
                 oOrganisationJoinRequestMapper.acceptJoinRequest(data.getId(), data.getReason(), new java.sql.Date(new java.util.Date().getTime()));
                 // Add the user to the organisation
                 oOrganisationMembershipMapper.addUser(request.getUser().getId(), request.getOrganisation().getId());
-                try {
-                    // Send email response to the requesting user, saying that the request was accepted
-                    sendEmail(request, "organisation-join-accept.ftl", request.getUser().getEmail(),
-                            "NBN Gateway: You are now a member of " + request.getOrganisation().getName());
-                    return Response.status(Response.Status.OK).entity(data).build();
-                } catch (Exception ex) {
-                    return Response.status(Response.Status.ACCEPTED).entity(ex).build();
-                }
+                
+                // Send email response to the requesting user, saying that the request was accepted
+                sendEmail(request, "organisation-join-accept.ftl", request.getUser().getEmail(),
+                        "NBN Gateway: You are now a member of " + request.getOrganisation().getName());
+
+                return Response.status(Response.Status.OK).entity(data).build();
             } else if (data.getResponseType() == 2) {
                 // Deny the request
                 oOrganisationJoinRequestMapper.denyJoinRequest(data.getId(), data.getReason(), new java.sql.Date(new java.util.Date().getTime()));
@@ -411,13 +422,24 @@ public class OrganisationMembershipResource extends AbstractResource {
      * @throws TemplateException 
      */
     private void sendEmail(OrganisationJoinRequest request, String template, String email, String subject) throws IOException, TemplateException {
-//        Map<String, Object> message = new HashMap<String, Object>();
-//        message.put("portal", properties.getProperty("portal_url"));
-//        message.put("name", request.getUser().getForename());
-//        message.put("organisation", request.getOrganisation().getName());
-//        message.put("organisationID", request.getOrganisation().getId());
-//        message.put("responseReason", request.getRequestReason());
-//
-//        mailer.send(template, request.getUser().getEmail(), subject, message);
+        Map<String, Object> message = new HashMap<String, Object>();
+        message.put("portal", properties.getProperty("portal_url"));
+        message.put("name", request.getUser().getForename());
+        message.put("organisation", request.getOrganisation().getName());
+        message.put("organisationID", request.getOrganisation().getId());
+        message.put("responseReason", request.getRequestReason());
+
+        mailer.send(template, request.getUser().getEmail(), subject, message);
+    }
+    
+    private void sendJoinRequestToAdmins(OrganisationJoinRequest request, User admin) throws IOException, TemplateException {
+        Map<String, Object> message = new HashMap<String,Object>();
+        message.put("portal", properties.getProperty("portal_url"));
+        message.put("name", admin.getForename());
+        message.put("requestor", request.getUser().getForename() + " " + request.getUser().getSurname());
+        message.put("reason", request.getRequestReason());
+        message.put("organisation", request.getOrganisation().getName());
+        
+        mailer.send("organistaion-join-admin-notify.ftl", admin.getEmail(), "NBN Gateway: A user has requested to join your organisation", message);
     }
 }

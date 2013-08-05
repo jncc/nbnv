@@ -10,7 +10,7 @@ object StringParsing {
 
   class MaybeParsableString(s: String) {
     def maybeInt = try { Some(s.toInt) } catch { case ex: NumberFormatException => None }
-    def maybeBoolean = try { Some(s.toBoolean) } catch { case ex: NumberFormatException => None }
+    def maybeBoolean = try { Some(s.toBoolean) } catch { case ex: IllegalArgumentException => None }
     def maybeDate(dateFormat: String) = {
       try {
         val sdf = new SimpleDateFormat(dateFormat)
@@ -26,7 +26,7 @@ object StringParsing {
 
       dateFormatList.toStream
         .takeWhile(_ => isValid == false)
-        .foreach(df => if( s.maybeDate(df) != None) isValid = true)
+        .foreach(df => if(df.length == s.length && s.maybeDate(df) != None) isValid = true)
 
       isValid
     }

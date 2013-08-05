@@ -18,7 +18,7 @@ nbn.nbnv.ui.dialog.requestCloseDialog = function() {
             autoOpen: false,
             buttons: { 
                 "Close Request": function() {
-                    $(":button:contains('Close Request')").button('disable');
+                        displaySendingRequestDialog('Working...');
                         var filter = { action: "close", reason: "via portal" };
                         
                         var url;

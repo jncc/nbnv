@@ -30,7 +30,7 @@ nbn.nbnv.ui.dialog.requestRevokeDialog = function() {
             width: 650,
             buttons: { 
                 "Revoke Request": function() {
-                        $(":button:contains('Revoke Request')").button('disable');
+                        displaySendingRequestDialog('Working...');
                         var filter = { action: "revoke", reason: _me.reason }
                         var url;
                         

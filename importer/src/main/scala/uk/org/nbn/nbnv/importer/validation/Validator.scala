@@ -13,7 +13,7 @@ import uk.org.nbn.nbnv.importer.data.{Database}
 // todo: ensure possibility for parallel
 
 
-class Validator @Inject()(log: Logger, db: Database){
+class Validator @Inject()(log: Logger, db: Database ){
 
   private var errors = 0 // count the validation errors
 
@@ -29,7 +29,21 @@ class Validator @Inject()(log: Logger, db: Database){
 
 
     // (2) archive scoped / aggregate value validation (e.g. no duplicate record keys)
-    val aggregateValidators = List(new Nbnv61Validator)
+    // This currently won't work because of case
+//    val aggregateValidators = List(new Nbnv61Validator)
+
+
+
+    val duplicateValidator = new Nbnv61Validator
+
+    for ((record, i) <- archive.iteratorRaw.zipWithIndex) {
+      val result2 = duplicateValidator.processRecord(record)
+      processResult(result2)
+    }
+
+    if (errors > 0) {
+      throw new BadDataException("Failed due to duplicated records")
+    }
 
     // (3) record-scoped
     // parsing/conversions - don't want to duplicate the parsing logic
@@ -37,7 +51,11 @@ class Validator @Inject()(log: Logger, db: Database){
     // lookups (range) (e.g. checking real taxon key)
 
 
-    for (record <- archive.iteratorRaw) {
+    for ((record, i) <- archive.iteratorRaw.zipWithIndex) {
+
+      if (i % 100 == 99) {
+        log.info("Validated %d records".format(i))
+      }
 
       val nbnRecord = new NbnRecord(record)
 
@@ -105,17 +123,17 @@ class Validator @Inject()(log: Logger, db: Database){
       val oavResults = oav.validate(nbnRecord)
       for (result <- oavResults) processResult(result)
 
-      // call aggregation callbacks
-      for (v <- aggregateValidators) {
-        val result = v.processRecord(nbnRecord)
-        processResult(result)
-      }
+//      // call aggregation callbacks
+//      for (v <- aggregateValidators) {
+//        val result = v.processRecord(nbnRecord)
+//        processResult(result)
+//      }
 
     }
 
-    for (v <- aggregateValidators) {
-      v.notifyComplete()
-    }
+//    for (v <- aggregateValidators) {
+//      v.notifyComplete()
+//    }
 
     log.info("Validation complete. %d validation errors".format(errors))
 
