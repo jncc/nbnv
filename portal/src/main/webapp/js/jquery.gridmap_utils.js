@@ -293,19 +293,45 @@
     
     // Creates a link to the IMT retaining TVK / dataset filters
     function setupIMTLink() {
-        $('#nbn-interactive-map').click(function() {
-            if($('#nbn-select-datasets-orderby').val() === '1') {
-                var datasets = $('#nbn-dataset-ordered-table-byrecord input[name=datasetKey][type=checkbox]:checked').map(function() {
-                    return $(this).attr("value");
-                }).get();
-            } else if($('#nbn-select-datasets-orderby').val() === '2') {
-                var datasets = $('#nbn-dataset-ordered-table-byname input[name=datasetKey][type=checkbox]:checked').map(function() {
-                    return $(this).attr("value");
-                }).get();
-            }
-            
-            window.location = '/imt?mode=SPECIES&species=' + $('#tvk').val() + '&datasets=' + datasets; 
+        $('#nbn-interactive-map').click(function() {            
+            window.location = '/imt?mode=SPECIES&species=' + $('#tvk').val() + '&datasets=' + getSelectedDatasets(); 
         });
+    }
+    
+    function getSelectedDatasets() {
+        var datasets = [];
+        
+        if ($('#nbn-select-datasets-orderby').val() === '1') {
+            var datasets = $('#nbn-dataset-ordered-table-byrecord input[name=datasetKey][type=checkbox]:checked').map(function() {
+                return $(this).attr("value");
+            }).get();
+        } else if ($('#nbn-select-datasets-orderby').val() === '2') {
+            var datasets = $('#nbn-dataset-ordered-table-byname input[name=datasetKey][type=checkbox]:checked').map(function() {
+                return $(this).attr("value");
+            }).get();
+        }
+        
+        return datasets;
+    }
+    
+    function setupBetterAccessLink() {
+        $('#nbn-request-better-access').click(function() {
+            window.location = '/AccessRequest/Create?json={' + 
+                    getTaxonJSON() + ',' +
+                    getSelectedDatasetsJSON() +
+                    '}';
+        });
+    }
+    
+    function getSelectedDatasetsJSON() {
+        return 'dataset:{all:false,datasets:[' + 
+                    getSelectedDatasets().map(function(element) { 
+                        return '\'' + String(element) + '\'';
+                    }) + ']}';
+    }
+    
+    function getTaxonJSON() {
+        return 'taxon:{tvk:\'' + $('#tvk').val() + '\'}';
     }
 
     $(document).ready(function(){
@@ -315,6 +341,7 @@
         setupRegionVCInteractions();
         setupDownloadSquaresButton();
         setupIMTLink();
+        setupBetterAccessLink();
         hideBusyImageOnMapLoad();
         addInitialMapImage();
     });
