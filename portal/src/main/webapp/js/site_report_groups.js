@@ -78,11 +78,43 @@
     function doFirstVisitToPage(){
         refreshGroupData($('#nbn-site-report-form'));
     }
+      
+    function setupBetterAccessLink() {
+        $('#nbn-request-better-access').click(function() {
+            var form = $('#nbn-site-report-form');
+            var keyValuePairs = nbn.portal.reports.utils.forms.getKeyValuePairsFromForm(form);
+            window.open('/AccessRequest/Create?json={' + 
+                    getSpatialFeatures(keyValuePairs) + ',' +
+                    nbn.portal.reports.utils.datasetfields.getSelectedDatasetsJSON() + ',' +
+                    getYearRange(keyValuePairs) +
+                    '}');
+        });
+    }
+    
+    function getYearRange(keyPairs) {
+        if (keyPairs['startYear'] != undefined &&
+                keyPairs['startYear'] != '' && 
+                keyPairs['endYear'] != undefined && 
+                keyPairs['endYear'] != '') {
+            return 'year:{all:false:startYear:' + 
+                    keyPairs['startYear'] + 
+                    ',endYear:' + 
+                    keyPairs['endYear'] + 
+                    '}';
+        } else {
+            return 'year:{all:true}'
+        }
+    }
+    
+    function getSpatialFeatures(keyPairs) {
+        return 'spatial:{all:false,match:\'' + keyPairs['spatialRelationship'] + '\',feature:\'' + $('#nbn-site-report-form').attr('featureid') + '\'}'
+    }
     
     $(document).ready(function(){
         $('#nbn-download-terms').hide();
         setupFormOnChange();
         setupDownloadSpeciesButton();
+        setupBetterAccessLink();
         doFirstVisitToPage();
     });
 })(jQuery);

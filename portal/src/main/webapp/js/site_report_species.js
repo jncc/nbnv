@@ -107,7 +107,7 @@
         });
 
     }
-    
+      
     function doFirstVisitToPage(){
         refreshSpeciesData($('#nbn-site-report-form'));
     }

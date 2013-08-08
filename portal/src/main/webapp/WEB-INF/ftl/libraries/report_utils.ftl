@@ -78,7 +78,7 @@
     </#if>
 </#macro>
 
-<#macro site_report_filters location requestParameters isSpatialRelationshipNeeded=true isDesignationNeeded=true isDatasetNeeded=true isDownloadButtonNeeded=false args={}>
+<#macro site_report_filters location requestParameters isSpatialRelationshipNeeded=true isDesignationNeeded=true isDatasetNeeded=true isDownloadButtonNeeded=false isMapLinkNeeded=false isRequestBetterAccessLinkNeeded=false args={}>
     <#assign startYear=requestParameters.startYear?has_content?string(requestParameters.startYear[0]!"","")>
     <#assign endYear=requestParameters.endYear?has_content?string(requestParameters.endYear[0]!"","")>
     <#assign spatialRelationship=requestParameters.spatialRelationship?has_content?string(requestParameters.spatialRelationship[0]!"overlap","overlap")>
@@ -117,6 +117,17 @@
                 <fieldset>
                     <legend>Download</legend>
                     <button id="nbn-site-report-download-button">Download</button> species list
+                </fieldset>
+            </#if>
+            <#if isMapLinkNeeded || isRequestBetterAccessLinkNeeded>
+                <fieldset>
+                    <legend>Other Options</legend>
+                    <#if isMapLinkNeeded>
+                        <a href="#" id="nbn-interactive-map">View on IMT</a><br />
+                    </#if>
+                    <#if isRequestBetterAccessLinkNeeded>
+                        <a href="#" id="nbn-request-better-access">Request Better Access</a>
+                    </#if>
                 </fieldset>
             </#if>
     </div>

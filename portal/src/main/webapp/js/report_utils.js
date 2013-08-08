@@ -20,8 +20,7 @@
         },
         isSiteReportFormFieldValid: function($input){
             return doIsSiteReportFormFieldValid($input);
-        }
-,
+        },
         isGridMapFormFieldValid: function($input){
             return doIsGridMapFormFieldValid($input);
         }
