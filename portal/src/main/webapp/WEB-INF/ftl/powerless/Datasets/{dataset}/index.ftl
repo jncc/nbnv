@@ -28,9 +28,6 @@
                 <#elseif dataset.typeName = "Site Boundary">
                     <li><a href="/Datasets/${dataset.key}/Site_Boundaries"><span>Sites</span></a></li>
                 </#if>
-                <#if isAdmin>
-                    <li><a href="/Datasets/${dataset.key}/Admin"><span>Admin</span></a></li>
-                </#if>
             </ul>
             <div id="tabs-1">
                 <table class="nbn-dataset-table nbn-simple-table nbn-metadata-dataset-table">

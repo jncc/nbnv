@@ -102,12 +102,12 @@
                     keyPairs['endYear'] + 
                     '}';
         } else {
-            return 'year:{all:true}'
+            return 'year:{all:true}';
         }
     }
     
     function getSpatialFeatures(keyPairs) {
-        return 'spatial:{all:false,match:\'' + keyPairs['spatialRelationship'] + '\',feature:\'' + $('#nbn-site-report-form').attr('featureid') + '\'}'
+        return 'spatial:{all:false,match:\'' + keyPairs['spatialRelationship'] + '\',feature:\'' + $('#nbn-site-report-form').attr('featureid') + '\'}';
     }
     
     $(document).ready(function(){

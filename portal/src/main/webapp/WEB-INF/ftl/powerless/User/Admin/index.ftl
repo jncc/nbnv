@@ -125,7 +125,7 @@
                         <a href="/Datasets/${r.key}/Attributes/Edit">Edit Attribute Metadata</a><br/>
                         <a href="/AccessRequest/History/${r.key}">View Dataset Access History</a><br/>
                         <a href="/Datasets/${r.key}/Contributing">Add / Remove Contributing Organisations</a><br/>
-                        <a href="/Datasets/${r.key}#ui-tabs-<#if r.typeName == "Taxon">5<#else>1</#if>">Add / Remove Dataset Administrators</a>                        
+                        <a href="/Datasets/${r.key}/Admin">Add / Remove Dataset Administrators</a>                        
                     </td>
                 </tr>
             </#list>
