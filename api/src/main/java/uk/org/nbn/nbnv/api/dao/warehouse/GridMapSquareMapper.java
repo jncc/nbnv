@@ -19,7 +19,8 @@ public interface GridMapSquareMapper {
             @Param("resolution") String resolution, 
             @Param("band") String band, 
             @Param("datasetKey") List<String> datasetKey,
-            @Param("viceCountyIdentifier") String viceCountyIdentifier);
+            @Param("viceCountyIdentifier") String viceCountyIdentifier,
+            @Param("absence") int absence);
     
     @SelectProvider(type=GridMapSquareProvider.class, method="gridMapDatasets")
     List<TaxonDataset> getGridMapDatasets(

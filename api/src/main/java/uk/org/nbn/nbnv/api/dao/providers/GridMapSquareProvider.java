@@ -38,6 +38,9 @@ public class GridMapSquareProvider {
         WHERE("o.userID = #{user.id}");
         WHERE("o.pTaxonVersionKey = #{ptvk}");
         WHERE("r.label = #{resolution}");
+        if (params.containsKey("absence")) {
+            WHERE("o.absence = #{absence}");
+        }
         ProviderHelper.addDatasetKeysFilter(params);
     }
 
