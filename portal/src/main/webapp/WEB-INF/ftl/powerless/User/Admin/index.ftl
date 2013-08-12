@@ -96,7 +96,7 @@
         <table>
             <tr><td>Username:</td><td>${user.username}</td></tr>
             <tr><td>Email:</td><td>${user.email}</td></tr>
-            <tr><td><a href="/User/Modify">Change Your User Details</a></td><td><a href="/User/Modify#tabs-2">Change Password</a></td><td><a href="/User/Modify#tabs-3">Change Email Subscriptions</a></td></tr>
+            <tr><td><a href="/User/Modify">Change Your User Details</a></td><td><a href="/User/Modify#tabs-2">Change Password</a></td><td><a href="http://www.nbn.org.uk/News/Latest-news/Sign-up-to-receive-eNews.aspx">Subscribe to NBN eNews</a></td></tr>
             <tr><td><a href="/AccessRequest/Create">Create New Access Request</a></td><td><a href="/AccessRequest">View Your Access Requests</a></td><td><a href="/Organisations/Join">Join an Organisation</a></td></tr>
         </table>
     </div>
@@ -124,7 +124,8 @@
                         <a href="/Datasets/${r.key}/Surveys/Edit">Edit Survey Metadata</a><br/>
                         <a href="/Datasets/${r.key}/Attributes/Edit">Edit Attribute Metadata</a><br/>
                         <a href="/AccessRequest/History/${r.key}">View Dataset Access History</a><br/>
-                        <a href="/Datasets/${r.key}#ui-tabs-<#if r.typeName == "Taxon">5<#else>1</#if>">Add / Remove Dataset Administrators</a>                        
+                        <a href="/Datasets/${r.key}/Contributing">Add / Remove Contributing Organisations</a><br/>
+                        <a href="/Datasets/${r.key}/Admin">Add / Remove Dataset Administrators</a>                        
                     </td>
                 </tr>
             </#list>

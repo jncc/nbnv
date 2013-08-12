@@ -74,6 +74,15 @@
                 <@report_utils.downloadTermsDialogue/>
             </fieldset>
 
+            <fieldset>
+                <legend>Interactive Map</legend>
+                <a id="nbn-interactive-map" href="#">View on Interactive Map</a>
+            </fieldset>
+            <fieldset>
+                <legend>Request Better Access</legend>
+                <a id="nbn-request-better-access" href="#">Request Better Access</a>
+            </fieldset>
+
     </div>
 </#macro>
 

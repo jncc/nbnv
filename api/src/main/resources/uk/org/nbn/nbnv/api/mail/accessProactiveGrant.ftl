@@ -4,7 +4,7 @@ This is an automatically generated message from the NBN Gateway - DO NOT REPLY.
 
 Dear ${rName},
 
-The administrator of the dataset '${dataset}' held on the NBN Gateway has granted <#if org>your organisation (${orgName})<#else>you</#if> enhanced access on ${rDate}. 
+The administrator of the dataset '${dataset}' held on the NBN Gateway has granted <#if org>your organisation (${rName})<#else>you</#if> enhanced access on ${rDate}. 
 
 Your level of access is:
 ${details}

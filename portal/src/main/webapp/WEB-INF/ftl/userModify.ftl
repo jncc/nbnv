@@ -15,7 +15,6 @@
         <ul>
             <li><a href="#tabs-1">User Details</a></li>
             <li><a href="#tabs-2">Change Password</a></li>
-            <li><a href="#tabs-3">Email Settings</a></li>
         </ul>
         <div id="tabs-1">
             <@form.form method="POST" id="modify-details-form" commandName="user" action="/User/Modify">
@@ -61,19 +60,6 @@
                 <@form.hidden path="username"/>
                 <@form.hidden path="token"/>
                 <input type="submit" name="changePassword" value="Change Password" />
-            </@form.form>
-        </div>
-
-        <div id="tabs-3">
-            <@form.form method="POST" id="change-email-settings-form" commandName="user" action="/User/Modify#tabs-3">
-                <@form.errors path="*" cssClass="message error" element="div" />
-                <table class="nbn-simple-table">
-                    <tr>
-                        <td><label for="subscribedToNBNMarketting">Subscribe to NBN e-mail newsletters<label></td>
-                        <td><@form.checkbox path="subscribedToNBNMarketting"/></td>
-                    </tr>
-                </table>
-                <input type="submit" name="emailSettings" value="Change Email Settings" />
             </@form.form>
         </div>
     </div>

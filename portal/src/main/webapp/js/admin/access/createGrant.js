@@ -43,7 +43,7 @@ nbn.nbnv.ui.createGrant = function (json, div) {
         
         var endpoint;
         
-        if (j.reason.userID > -1) { endpoint = '/user/userAccesses/requests/admin/granted'; } else { endpoint = '/organisations/organisationAccesses/requests/admin/granted'; }
+        if (j.reason.userID > -1) { endpoint = '/user/userAccesses/requests/admin/granted'; } else { endpoint = '/organisation/organisationAccesses/requests/admin/granted'; }
         
         $.ajax({
             url: nbn.nbnv.api + endpoint,

@@ -513,34 +513,35 @@ public class UserResource extends AbstractResource {
                 .put("status", "You have successfully modifed your user details")).build();
     }
 
-    /**
-     * Change the email subscription settings of the current user from the user
-     * modify panel
-     * 
-     * @param user The current user (Must be logged in)
-     * @param allowEmailAlerts Whether to allow email alerts
-     * @param subscribedToAdminEmails Whether user is subscribed to admin emails
-     * or not
-     * @param subscribedToNBNMarketting Whether user is subscribed to NBN 
-     * Marketing emails or not
-     * 
-     * @return A Response object detailing the success or failure of the action
-     * 
-     * @throws JSONException 
-     * 
-     * @response.representation.200.qname User
-     * @response.representation.200.mediaType application/json
-     */
-    @POST
-    @Path("/emailSettings")
-    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response modifyEmailSettings(@TokenUser(allowPublic = false) User user, 
-        @FormParam("subscribedToNBNMarketting") int subscribedToNBNMarketting) throws JSONException {
-        oUserMapper.updateUserEmailSettings(user.getId(), subscribedToNBNMarketting);
-        
-        return Response.ok(new JSONObject()
-                .put("success", true)
-                .put("status", "You have successfully modifed your email settings")).build();
-    }
+// Function no longer in use
+//    /**
+//     * Change the email subscription settings of the current user from the user
+//     * modify panel
+//     * 
+//     * @param user The current user (Must be logged in)
+//     * @param allowEmailAlerts Whether to allow email alerts
+//     * @param subscribedToAdminEmails Whether user is subscribed to admin emails
+//     * or not
+//     * @param subscribedToNBNMarketting Whether user is subscribed to NBN 
+//     * Marketing emails or not
+//     * 
+//     * @return A Response object detailing the success or failure of the action
+//     * 
+//     * @throws JSONException 
+//     * 
+//     * @response.representation.200.qname User
+//     * @response.representation.200.mediaType application/json
+//     */
+//    @POST
+//    @Path("/emailSettings")
+//    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+//    @Produces(MediaType.APPLICATION_JSON)
+//    public Response modifyEmailSettings(@TokenUser(allowPublic = false) User user, 
+//        @FormParam("subscribedToNBNMarketting") int subscribedToNBNMarketting) throws JSONException {
+//        oUserMapper.updateUserEmailSettings(user.getId(), subscribedToNBNMarketting);
+//        
+//        return Response.ok(new JSONObject()
+//                .put("success", true)
+//                .put("status", "You have successfully modifed your email settings")).build();
+//    }
 }

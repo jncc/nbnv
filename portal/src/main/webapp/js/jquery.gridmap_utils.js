@@ -290,6 +290,29 @@
             e.preventDefault();
         });
     }
+    
+    // Creates a link to the IMT retaining TVK / dataset filters
+    function setupIMTLink() {
+        $('#nbn-interactive-map').click(function() {            
+            window.location = '/imt?mode=SPECIES&species=' + 
+                    $('#tvk').val() + 
+                    '&datasets=' + 
+                    nbn.portal.reports.utils.datasetfields.getSelectedDatasets(); 
+        });
+    }
+   
+    function setupBetterAccessLink() {
+        $('#nbn-request-better-access').click(function() {
+            window.location = '/AccessRequest/Create?json={' + 
+                    getTaxonJSON() + ',' +
+                    nbn.portal.reports.utils.datasetfields.getSelectedDatasetsJSON() +
+                    '}';
+        });
+    }
+    
+    function getTaxonJSON() {
+        return 'taxon:{tvk:\'' + $('#tvk').val() + '\'}';
+    }
 
     $(document).ready(function(){
         $('#nbn-download-terms').hide();
@@ -297,6 +320,8 @@
         setupColourPickers();
         setupRegionVCInteractions();
         setupDownloadSquaresButton();
+        setupIMTLink();
+        setupBetterAccessLink();
         hideBusyImageOnMapLoad();
         addInitialMapImage();
     });

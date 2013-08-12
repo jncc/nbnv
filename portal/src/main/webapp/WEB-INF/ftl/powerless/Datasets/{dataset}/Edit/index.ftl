@@ -48,5 +48,6 @@
                 </table>
                 <input type="hidden" name="key" value="${dataset.key}" />
                 <button id="nbn-form-submit"> Update </button>
+                <div id="nbn-waiting-note" style="float:right; display:none;"><img src="/img/ajax-loader.gif"/>Changing Dataset Metadata, changes may not appear on the site instantly</div>
             </form>
 </@template.master>

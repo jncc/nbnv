@@ -21,6 +21,40 @@
             });
         });
     </script>
+    <h1>Pending Access Requests</h1>
+    <table class="results">
+        <thead>
+            <tr>
+                <th style="width: 15%">User</th>
+                <th>Dataset</th>
+                <th>Data Request</th>
+                <th>Request Reason</th>
+                <th>Request Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            <#list pOrgRequests as r>
+            <tr>
+                <td>
+                    ${r.organisation.name}
+                </td>
+                <td>
+                    ${r.dataset.title}
+                </td>
+                <td>
+                    ${r.filter.filterText}
+                </td>
+                <td>
+                    ${r.requestReason}
+                </td>
+                <td>
+                    ${r.requestDate}
+                </td>
+            </tr>
+            </#list>
+        </tbody>
+    </table>
+
     <h1>Granted Access Requests</h1>
     <table class="results">
         <thead>
@@ -57,40 +91,6 @@
                 </td>
                 <td>
                     ${r.responseDate}
-                </td>
-            </tr>
-            </#list>
-        </tbody>
-    </table>
-
-    <h1>Pending Access Requests</h1>
-    <table class="results">
-        <thead>
-            <tr>
-                <th style="width: 15%">User</th>
-                <th>Dataset</th>
-                <th>Data Request</th>
-                <th>Request Reason</th>
-                <th>Request Date</th>
-            </tr>
-        </thead>
-        <tbody>
-            <#list pOrgRequests as r>
-            <tr>
-                <td>
-                    ${r.organisation.name}
-                </td>
-                <td>
-                    ${r.dataset.title}
-                </td>
-                <td>
-                    ${r.filter.filterText}
-                </td>
-                <td>
-                    ${r.requestReason}
-                </td>
-                <td>
-                    ${r.requestDate}
                 </td>
             </tr>
             </#list>
