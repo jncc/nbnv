@@ -12,6 +12,8 @@ import uk.org.nbn.nbnv.api.dao.providers.TaxonObservationProvider;
 import uk.org.nbn.nbnv.api.model.*;
 
 public interface DatasetMapper {
+    @Select("SELECT td.* dd.* FROM DatasetAdministrator da INNER JOIN TaxonDatasetData td ON da.datasetKey = td.datasetKey INNER JOIN DatasetData dd ON da.datasetKey = dd.\"key\" WHERE da.userID = #(userID)")
+    List<TaxonDataset> getTaxonDatasetsForUser(@Param("userID") int userID);
     
     @Select("SELECT * FROM DatasetData ORDER BY title")
     List<Dataset> selectAll();
