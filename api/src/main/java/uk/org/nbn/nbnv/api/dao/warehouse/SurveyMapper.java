@@ -13,4 +13,17 @@ public interface SurveyMapper {
         @Result(property="id", column="surveyID", javaType=Integer.class)
     })
     List<Survey> selectSurveysByDatasetKey(String datasetKey);
+    
+    @Select("SELECT * FROM SurveySpeciesRecordCountData WHERE datasetKey = #{datasetKey} AND surveyID = #{surveyID}")
+    @Results(value = {
+        @Result(property="id", column="surveyID", javaType=Integer.class)
+    })
+    List<Survey> selectSurveyByIdAndDatasetKey(String datasetKey, int surveyID);
+    
+    @Select("SELECT * FROM SurveySpeciesRecordCountData WHERE datasetKey = #{datasetKey} AND providerKey = #{providerKey}")
+    @Results(value = {
+        @Result(property="id", column="surveyID", javaType=Integer.class)
+    })
+    List<Survey> selectSurveyByProviderKeyAndDatasetKey(String datasetKey, String providerKey);
+    
 }
