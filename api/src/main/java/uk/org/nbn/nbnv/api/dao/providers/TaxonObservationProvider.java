@@ -296,6 +296,10 @@ public class TaxonObservationProvider {
             INNER_JOIN("TaxonData td ON td.taxonVersionKey = o.pTaxonVersionKey");
             WHERE("td.taxonOutputGroupKey =  #{taxonOutputGroup}");
         }
+        
+        if (params.containsKey("absence")) {
+            WHERE("o.absence = #{absence}");
+        }
 
         return SQL();
     }
