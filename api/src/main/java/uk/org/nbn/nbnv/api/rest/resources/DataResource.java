@@ -140,19 +140,19 @@ public class DataResource extends AbstractResource {
         return sampleMapper.selectSampleBySampleProviderKey(datasetKey, surveyProviderKey, sampleProviderKey);
     }
     
-    @GET
-    @Path("/taxondatasets/{datasetKey}/surveys/{surveyProviderKey}/samples/{sampleProviderKey}/taxonObservations")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Sample getSampleTaxonObservations(@TokenUser(allowPublic=false) User user
-            , @PathParam("datasetKey") String datasetKey
-            , @PathParam("surveyProviderKey") String surveyProviderKey
-            , @PathParam("sampleProviderKey") String sampleProviderKey){
-        if (!datasetAdministratorMapper.isUserDatasetAdministrator(user.getId(), datasetKey)) {
-           throw new UnauthorisedException();
-        }
-        
-        return taxonObservationMapper.
-    }
+//    @GET
+//    @Path("/taxondatasets/{datasetKey}/surveys/{surveyProviderKey}/samples/{sampleProviderKey}/taxonObservations")
+//    @Produces(MediaType.APPLICATION_JSON)
+//    public Sample getSampleTaxonObservations(@TokenUser(allowPublic=false) User user
+//            , @PathParam("datasetKey") String datasetKey
+//            , @PathParam("surveyProviderKey") String surveyProviderKey
+//            , @PathParam("sampleProviderKey") String sampleProviderKey){
+//        if (!datasetAdministratorMapper.isUserDatasetAdministrator(user.getId(), datasetKey)) {
+//           throw new UnauthorisedException();
+//        }
+//        
+//        return taxonObservationMapper.
+//    }
  }
   
 
