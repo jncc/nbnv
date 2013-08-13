@@ -86,7 +86,7 @@
             window.open('/AccessRequest/Create?json={' + 
                     getSpatialFeatures(keyValuePairs) + ',' +
                     nbn.portal.reports.utils.datasetfields.getSelectedDatasetsJSON() + ',' +
-                    getYearRange(keyValuePairs) +
+                    nbn.portal.reports.utils.forms.getYearJSON(keyValuePairs) +
                     '}');
         });
     }

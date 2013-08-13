@@ -23,6 +23,9 @@
         },
         isGridMapFormFieldValid: function($input){
             return doIsGridMapFormFieldValid($input);
+        },
+        getYearJSON: function(keyPairs) {
+            return getYearRange(keyPairs);
         }
     });
     
@@ -138,4 +141,20 @@
     function isNumber(n) {
         return !isNaN(parseFloat(n)) && isFinite(n);
     }
+    
+    function getYearRange(keyPairs) {
+        if (keyPairs['startYear'] != undefined &&
+                keyPairs['startYear'] != '' && 
+                keyPairs['endYear'] != undefined && 
+                keyPairs['endYear'] != '') {
+            return 'year:{all:false,startYear:' + 
+                    keyPairs['startYear'] + 
+                    ',endYear:' + 
+                    keyPairs['endYear'] + 
+                    '}';
+        } else {
+            return 'year:{all:true}';
+        }
+    }
+    
 })(jQuery);
