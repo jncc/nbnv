@@ -32,10 +32,14 @@
                     </select><br/>
                 </div>
             </fieldset>
-                <fieldset>
-                    <legend>Download</legend>
-                    <button id="nbn-site-report-download-button">Download</button> site list
-                </fieldset>
+            <fieldset>
+                <legend>Download</legend>
+                <button id="nbn-site-report-download-button">Download</button> site list
+            </fieldset>
+            <fieldset>
+                <legend>Other Options</legend>
+                <a id="nbn-request-better-access" href="#">Request Better Access</a>
+            </fieldset>
         </div>
         <div class="tabbed" id="nbn-species-site-list-container">
             <h3>Site list</h3>

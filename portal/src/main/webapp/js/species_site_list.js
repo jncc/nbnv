@@ -103,6 +103,18 @@
         });
 
     }
+    
+    function setupBetterAccessLink() {
+        $('#nbn-request-better-access').click(function() {
+            var form = $('#nbn-species-site-list-form');
+            var keyValuePairs = nbn.portal.reports.utils.forms.getKeyValuePairsFromForm(form);
+            window.open('/AccessRequest/Create?json={' +
+                    'taxon:{tvk:\'' + form.attr('ptvk') + '\'},' +
+                    nbn.portal.reports.utils.datasetfields.getSelectedDatasetsJSON() + ',' +
+                    nbn.portal.reports.utils.forms.getYearJSON(keyValuePairs) +
+                    '}');
+        });
+    }
 
     function doFirstVisitToPage(){
         refreshSiteListData($('#nbn-species-site-list-form'));
@@ -112,6 +124,7 @@
         $('#nbn-download-terms').hide();
         setupFormOnChange();
         setupDownloadSitesButton();
+        setupBetterAccessLink();
         doFirstVisitToPage();
     });
 })(jQuery);

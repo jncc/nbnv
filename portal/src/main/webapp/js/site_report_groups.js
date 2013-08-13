@@ -86,24 +86,9 @@
             window.open('/AccessRequest/Create?json={' + 
                     getSpatialFeatures(keyValuePairs) + ',' +
                     nbn.portal.reports.utils.datasetfields.getSelectedDatasetsJSON() + ',' +
-                    getYearRange(keyValuePairs) +
+                    nbn.portal.reports.utils.forms.getYearJSON(keyValuePairs) +
                     '}');
         });
-    }
-    
-    function getYearRange(keyPairs) {
-        if (keyPairs['startYear'] != undefined &&
-                keyPairs['startYear'] != '' && 
-                keyPairs['endYear'] != undefined && 
-                keyPairs['endYear'] != '') {
-            return 'year:{all:false:startYear:' + 
-                    keyPairs['startYear'] + 
-                    ',endYear:' + 
-                    keyPairs['endYear'] + 
-                    '}';
-        } else {
-            return 'year:{all:true}';
-        }
     }
     
     function getSpatialFeatures(keyPairs) {

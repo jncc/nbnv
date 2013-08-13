@@ -134,7 +134,8 @@ public interface TaxonObservationMapper {
             , @Param("designation") String designation
             , @Param("taxonOutputGroup") String taxonOutputGroup
             , @Param("gridRef") String gridRef
-            , @Param("polygon") String polygon);
+            , @Param("polygon") String polygon
+            , @Param("absence") int absence);
     
     @SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectGroups")
     @Results(value = {
@@ -153,7 +154,8 @@ public interface TaxonObservationMapper {
             , @Param("designation") String designation
             , @Param("taxonOutputGroup") String taxonOutputGroup
             , @Param("gridRef") String gridRef
-            , @Param("polygon") String polygon);
+            , @Param("polygon") String polygon
+            , @Param("absence") int absence);
     
     @SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectDatasets")
     @Results(value = {

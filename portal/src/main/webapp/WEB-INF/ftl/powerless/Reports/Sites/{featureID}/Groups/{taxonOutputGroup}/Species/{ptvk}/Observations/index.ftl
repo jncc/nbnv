@@ -16,6 +16,11 @@
     <h1>${title}</h1>
     <form id="nbn-site-report-form" featureID="${featureID}" ptvk="${URLParameters.ptvk}" api-server="${api}">
         <@report_utils.site_report_filters requestParameters=RequestParameters args={"taxon":taxon} location=site.label isSpatialRelationshipNeeded=true isDesignationNeeded=false isDatasetNeeded=false/>
+        <div class="tabbed" id="nbn-site-report-filter-container">
+            <h3>Other Options</h3>
+            <a id="nbn-request-better-access" href="#">Request Better Access</a>
+            <a id="nbn-interactive-map" href="#">View on IMT</a>
+        </div>
         <@report_utils.siteImage locationName=site.label locationID=featureID imageURL=report_utils.getSiteSpeciesImageURL(featureID, taxon.ptaxonVersionKey, startYear, endYear, datasets, spatialRelationship, !is10kmReport)/>
     </form>
     <div id="nbn-observation-container"></div>

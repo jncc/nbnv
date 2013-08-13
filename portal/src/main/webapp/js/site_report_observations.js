@@ -189,9 +189,42 @@
         refreshObservationData($('#nbn-site-report-form'));
     }
     
+    function setupBetterAccessLink() {
+        $('#nbn-request-better-access').click(function() {
+            var form = $('#nbn-site-report-form');
+            var keyValuePairs = nbn.portal.reports.utils.forms.getKeyValuePairsFromForm(form);
+            window.open('/AccessRequest/Create?json={' +
+                    'taxon:{tvk:\'' + form.attr('ptvk') + '\'},' +
+                    'dataset:{all:true},' +
+                    nbn.portal.reports.utils.forms.getYearJSON(keyValuePairs) +
+                    '}');
+        });
+    }
+    
+    function setupIMTLink() {
+        $('#nbn-interactive-map').click(function() {          
+            var form = $('#nbn-site-report-form');
+            var keyValuePairs = nbn.portal.reports.utils.forms.getKeyValuePairsFromForm(form);
+            var url = '/imt?mode=SPECIES&species=' + 
+                    form.attr('ptvk');
+            if (keyValuePairs['startYear'] != undefined &&
+                keyValuePairs['startYear'] != '' && 
+                keyValuePairs['endYear'] != undefined && 
+                keyValuePairs['endYear'] != '') {
+                url = url + '&startyear=' + 
+                    keyValuePairs['startYear'] + 
+                    '&endyear=' + 
+                    keyValuePairs['endYear'];
+            }
+            window.open(url);
+        });
+    }
+    
     $(document).ready(function(){
         apiServer = $('#nbn-site-report-form').attr('api-server');
         setupFormOnChange();
+        setupBetterAccessLink();
+        setupIMTLink();
         doFirstVisitToPage();
     });
     

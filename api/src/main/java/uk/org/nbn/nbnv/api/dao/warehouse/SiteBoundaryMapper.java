@@ -43,5 +43,16 @@ public interface SiteBoundaryMapper {
         @Result(property = "siteBoundaryCategoryId", column = "siteBoundaryCategoryID")
     })
     public List<SiteBoundary> getByTaxonVersionKey(
-            @Param("user") User user, @Param("startYear") Integer startYear, @Param("endYear") Integer endYear, @Param("datasetKey") List<String> datasetKey, @Param("ptvk") List<String> ptvk, @Param("spatialRelationship") String spatialRelationship, @Param("featureID") String featureId, @Param("sensitive") Boolean sensitive, @Param("designation") String designation, @Param("taxonOutputGroup") String taxonOutputGroup, @Param("gridRef") String gridRef);
+            @Param("user") User user, 
+            @Param("startYear") Integer startYear, 
+            @Param("endYear") Integer endYear, 
+            @Param("datasetKey") List<String> datasetKey, 
+            @Param("ptvk") List<String> ptvk, 
+            @Param("spatialRelationship") String spatialRelationship, 
+            @Param("featureID") String featureId, 
+            @Param("sensitive") Boolean sensitive, 
+            @Param("designation") String designation, 
+            @Param("taxonOutputGroup") String taxonOutputGroup, 
+            @Param("gridRef") String gridRef,
+            @Param("absence") int absence);
 }
