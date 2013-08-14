@@ -305,8 +305,8 @@ public class TaxonObservationProvider {
             WHERE("o.sampleKey = #{sampleKey}");
         }
         
-        if (params.containsKey("taxonObservationID") && params.get("taxonObservationID") != null && !"".equals((String) params.get("taxonObservationID"))) {
-            WHERE("o.id = #{taxonObservationID}");
+        if (params.containsKey("taxonObservationKey") && params.get("taxonObservationKey") != null && !"".equals((String) params.get("taxonObservationKey")) ){
+            WHERE("o.providerKey = #{taxonObservationKey}");
         }
 
         return SQL();
@@ -398,8 +398,8 @@ public class TaxonObservationProvider {
             WHERE("o.sampleKey = #{sampleKey}");
         }
         
-        if (params.containsKey("taxonObservationID") && params.get("taxonObservationID") != null && !"".equals((String) params.get("taxonObservationID"))) {
-            WHERE("o.id = #{taxonObservationID}");
+        if (params.containsKey("taxonObservationKey") && params.get("taxonObservationKey") != null && !"".equals((String) params.get("taxonObservationKey")) ){
+            WHERE("o.providerKey = #{taxonObservationKey}");
         }
 
         return SQL();

@@ -296,16 +296,16 @@ public interface TaxonObservationMapper {
             , @Param("sampleKey") String sampleKey);
     
     @SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectRecords")
-    public List<TaxonObservation> selectObservationsByHierachyAndId(
+    public List<TaxonObservation> selectObservationsByHierachyAndKey(
             @Param("datasetKey") List<String> datasetKey
             , @Param("surveyKey") String surveyKey
             , @Param("sampleKey") String sampleKey
-            , @Param("taxonObservationID") int taxonObservationID);
+            , @Param("taxonObservationKey") String taxonObservationKey);
     
     @SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectOneAttribute")
     public List<TaxonObservationAttributeValue> selectObservationAttributeByHierchy(
             @Param("datasetKey") List<String> datasetKey
             , @Param("surveyKey") String surveyKey
             , @Param("sampleKey") String sampleKey
-            , @Param("taxonObservationID") int taxonObservationID);
+            , @Param("taxonObservationKey") String taxonObservationKey);
 }

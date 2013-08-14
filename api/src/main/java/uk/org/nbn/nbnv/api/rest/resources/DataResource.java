@@ -77,121 +77,97 @@ public class DataResource extends AbstractResource {
         
         return surveyMapper.selectSurveysByDatasetKey(datasetKey);
     }
-    
-//    @GET
-//    @Path("/taxondatasets/{datasetKey}/surveys/{surveyId}")
-//    @Produces(MediaType.APPLICATION_JSON)
-//    public List<Survey> getDatasetSurveys(@TokenUser(allowPublic=false) User user
-//            , @PathParam("datasetKey") String datasetKey
-//            , @PathParam("surveyId") int surveyId){
-//        if (!datasetAdministratorMapper.isUserDatasetAdministrator(user.getId(), datasetKey)) {
-//           throw new UnauthorisedException();
-//        }
-//        
-//        return surveyMapper.selectSurveyByIdAndDatasetKey(datasetKey, surveyId);
-//    }
+
     
     @GET
-    @Path("/taxondatasets/{datasetKey}/surveys/{surveyProviderKey}")
+    @Path("/taxondatasets/{datasetKey}/surveys/{surveyKey}")
     @Produces(MediaType.APPLICATION_JSON)
     public List<Survey> getDatasetSurveys(@TokenUser(allowPublic=false) User user
             , @PathParam("datasetKey") String datasetKey
-            , @PathParam("surveyProviderKey") String providerKey){
+            , @PathParam("surveyKey") String surveyKey){
         if (!datasetAdministratorMapper.isUserDatasetAdministrator(user.getId(), datasetKey)) {
            throw new UnauthorisedException();
         }
         
-        return surveyMapper.selectSurveyByProviderKeyAndDatasetKey(datasetKey, providerKey);
+        return surveyMapper.selectSurveyByProviderKeyAndDatasetKey(datasetKey, surveyKey);
     }
-    
-//    @GET
-//    @Path("/taxondatasets/{datasetKey}/surveys/{surveyId}/samples")
-//    @Produces(MediaType.APPLICATION_JSON)
-//    public List<Sample> getSurveySamples(@TokenUser(allowPublic=false) User user
-//            , @PathParam("datasetKey") String datasetKey
-//            , @PathParam("surveyId") int surveyId){
-//        if (!datasetAdministratorMapper.isUserDatasetAdministrator(user.getId(), datasetKey)) {
-//           throw new UnauthorisedException();
-//        }
-//        
-//        return sampleMapper.selectSamplesBySurveyID(surveyId);
-//    }
+   
     
     @GET
-    @Path("/taxondatasets/{datasetKey}/surveys/{surveyProviderKey}/samples")
+    @Path("/taxondatasets/{datasetKey}/surveys/{surveyKey}/samples")
     @Produces(MediaType.APPLICATION_JSON)
     public List<Sample> getSurveySamples(@TokenUser(allowPublic=false) User user
             , @PathParam("datasetKey") String datasetKey
-            , @PathParam("surveyProviderKey") String providerKey){
+            , @PathParam("surveyKey") String surveyKey){
         if (!datasetAdministratorMapper.isUserDatasetAdministrator(user.getId(), datasetKey)) {
            throw new UnauthorisedException();
         }
         
-        return sampleMapper.selectSamplesBySurveyProviderKey(datasetKey, providerKey);
+        return sampleMapper.selectSamplesBySurveyProviderKey(datasetKey, surveyKey);
     }
         
     @GET
-    @Path("/taxondatasets/{datasetKey}/surveys/{surveyProviderKey}/samples/{sampleProviderKey}")
+    @Path("/taxondatasets/{datasetKey}/surveys/{surveyKey}/samples/{sampleKey}")
     @Produces(MediaType.APPLICATION_JSON)
     public Sample getSurveySample(@TokenUser(allowPublic=false) User user
             , @PathParam("datasetKey") String datasetKey
-            , @PathParam("surveyProviderKey") String surveyProviderKey
-            , @PathParam("sampleProviderKey") String sampleProviderKey){
+            , @PathParam("surveyKey") String surveyKey
+            , @PathParam("sampleKey") String sampleKey){
         if (!datasetAdministratorMapper.isUserDatasetAdministrator(user.getId(), datasetKey)) {
            throw new UnauthorisedException();
         }
         
-        return sampleMapper.selectSampleBySampleProviderKey(datasetKey, surveyProviderKey, sampleProviderKey);
+        return sampleMapper.selectSampleBySampleProviderKey(datasetKey, surveyKey, sampleKey);
     }
     
     @GET
-    @Path("/taxondatasets/{datasetKey}/surveys/{surveyProviderKey}/samples/{sampleProviderKey}/taxonObservations")
+    @Path("/taxondatasets/{datasetKey}/surveys/{surveyKey}/samples/{sampleKey}/taxonObservations")
     @Produces(MediaType.APPLICATION_JSON)
     public List<TaxonObservation> getSampleTaxonObservations(@TokenUser(allowPublic=false) User user
             , @PathParam("datasetKey") String datasetKey
-            , @PathParam("surveyProviderKey") String surveyProviderKey
-            , @PathParam("sampleProviderKey") String sampleProviderKey){
+            , @PathParam("surveyKey") String surveyKey
+            , @PathParam("sampleKey") String sampleKey){
         if (!datasetAdministratorMapper.isUserDatasetAdministrator(user.getId(), datasetKey)) {
            throw new UnauthorisedException();
         }
         
         List<String> datasetKeyList = Arrays.asList(datasetKey);
         
-        return taxonObservationMapper.selectObservationsByHierachy(datasetKeyList, surveyProviderKey, sampleProviderKey);
+        return taxonObservationMapper.selectObservationsByHierachy(datasetKeyList, surveyKey, sampleKey);
     }
     
     @GET
-    @Path("/taxondatasets/{datasetKey}/surveys/{surveyProviderKey}/samples/{sampleProviderKey}/taxonObservations/{observationId}")
+    @Path("/taxondatasets/{datasetKey}/surveys/{surveyKey}/samples/{sampleKey}/taxonObservations/{taxonObservationKey}")
     @Produces(MediaType.APPLICATION_JSON)
     public List<TaxonObservation> getTaxonObservation(@TokenUser(allowPublic=false) User user
             , @PathParam("datasetKey") String datasetKey
-            , @PathParam("surveyProviderKey") String surveyProviderKey
-            , @PathParam("sampleProviderKey") String sampleProviderKey
-            , @PathParam("observationId") int observationId){
+            , @PathParam("surveyKey") String surveyKey
+            , @PathParam("sampleKey") String sampleKey
+            , @PathParam("observationKey") String taxonObservationKey){
         if (!datasetAdministratorMapper.isUserDatasetAdministrator(user.getId(), datasetKey)) {
            throw new UnauthorisedException();
         }
         
         List<String> datasetKeyList = Arrays.asList(datasetKey);
         
-        return taxonObservationMapper.selectObservationsByHierachyAndId(datasetKeyList, surveyProviderKey, sampleProviderKey, observationId);
+        return taxonObservationMapper.selectObservationsByHierachyAndKey(datasetKeyList, surveyKey, sampleKey, taxonObservationKey);
     }
     
     @GET
-    @Path("/taxondatasets/{datasetKey}/surveys/{surveyProviderKey}/samples/{sampleProviderKey}/taxonObservations/{observationId}/attributes")
+    @Path("/taxondatasets/{datasetKey}/surveys/{surveyKey}/samples/{sampleKey}/taxonObservations/{taxonObservationKey}/attributes")
     @Produces(MediaType.APPLICATION_JSON)
     public List<TaxonObservationAttributeValue> getTaxonObservationAttributes(@TokenUser(allowPublic=false) User user
             , @PathParam("datasetKey") String datasetKey
-            , @PathParam("surveyProviderKey") String surveyProviderKey
-            , @PathParam("sampleProviderKey") String sampleProviderKey
-            , @PathParam("observationId") int observationId){
+            , @PathParam("surveyKey") String surveyKey
+            , @PathParam("sampleKey") String sampleKey
+            , @PathParam("taxonObservationKey") String taxonObservationKey){
         if (!datasetAdministratorMapper.isUserDatasetAdministrator(user.getId(), datasetKey)) {
            throw new UnauthorisedException();
         }
         
         List<String> datasetKeyList = Arrays.asList(datasetKey);
         
-        return taxonObservationMapper.selectObservationAttributeByHierchy(datasetKeyList, surveyProviderKey, sampleProviderKey, observationId);
+        return taxonObservationMapper.selectObservationAttributeByHierchy(datasetKeyList, surveyKey, sampleKey, taxonObservationKey);
     }
     
  }
