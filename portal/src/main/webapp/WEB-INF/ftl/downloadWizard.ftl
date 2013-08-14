@@ -11,6 +11,7 @@
         ,"/js/filter/spatial.js"
         ,"/js/filter/taxon.js"
         ,"/js/filter/dataset.js"
+        ,"/js/download/downloadReason.js"
         ,"/js/download/download.js"
         ,"/js/download/downloadResult.js"] 
     csss=["http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/themes/smoothness/jquery-ui.css","/css/jquery.qtip.min.css","/css/accessRequest.css"]>
@@ -25,7 +26,7 @@
 	});
     </script>
 
-    <h1>Download Records</h1>
+    <h1>Download Wizard</h1>
     <div id="filter"></div>
     
 </@template.master>

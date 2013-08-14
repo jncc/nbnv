@@ -5,12 +5,15 @@ nbn.nbnv.ui = nbn.nbnv.ui || {};
 nbn.nbnv.ui.download = function (json, div) {
     this.div = div;
     
+    var reason = new nbn.nbnv.ui.downloadReason(json);
     var year = new nbn.nbnv.ui.filter.year(json);
     var spatial = new nbn.nbnv.ui.filter.spatial(json);
     var taxon = new nbn.nbnv.ui.filter.taxon(json);
     var dataset = new nbn.nbnv.ui.filter.dataset(json);
     var result = new nbn.nbnv.ui.downloadResult(json)
     
+    this.div.append(reason._renderHeader());
+    this.div.append(reason._renderPanel());
     this.div.append(spatial._renderHeader());
     this.div.append(spatial._renderPanel());
     this.div.append(taxon._renderHeader());
@@ -27,7 +30,7 @@ nbn.nbnv.ui.download = function (json, div) {
         $.extend(j, spatial.getJson());
         $.extend(j, year.getJson());        
         $.extend(j, dataset.getJson());        
-        window.location = "/Download/Create/Complete?json=" + JSON.stringify(j);
+        window.location = "/TaxonObservations/Download?json=" + JSON.stringify(j);
     }));
 
     this.div.accordion({
@@ -55,10 +58,11 @@ nbn.nbnv.ui.download = function (json, div) {
                 $.merge(error, taxon.getError());
                 $.merge(error, spatial.getError());
                 $.merge(error, year.getError());
+                $.merge(error, reason.getError());
                 
                 if (dataset._all && taxon._all && spatial._all) { $.merge(error, ['You may not download all datasets on the Gateway. Please apply at least one filter.']); }
                 
-                //result._onEnter(reason._perm, error);
+                result._onEnter(error);
             }
 
             if (oldFilter == 'year') {
@@ -69,10 +73,9 @@ nbn.nbnv.ui.download = function (json, div) {
                 taxon._onExit();
             } else if (oldFilter == 'dataset') {
                 dataset._onExit();
+            } else if (oldFilter == 'reason') {
+                reason._onExit();
             }
-//            } else if (oldFilter == 'reason') {
-//                reason._onExit();
-//            }
         }
     });
     
