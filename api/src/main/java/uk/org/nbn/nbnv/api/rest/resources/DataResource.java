@@ -1,5 +1,7 @@
 package uk.org.nbn.nbnv.api.rest.resources;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
@@ -29,6 +31,8 @@ import uk.org.nbn.nbnv.api.model.DatasetResolutionRecordCount;
 import uk.org.nbn.nbnv.api.model.Sample;
 import uk.org.nbn.nbnv.api.model.Survey;
 import uk.org.nbn.nbnv.api.model.TaxonDataset;
+import uk.org.nbn.nbnv.api.model.TaxonObservation;
+import uk.org.nbn.nbnv.api.model.TaxonObservationAttributeValue;
 import uk.org.nbn.nbnv.api.model.User;
 import uk.org.nbn.nbnv.api.model.meta.DatasetAdminMembershipJSON;
 import uk.org.nbn.nbnv.api.model.meta.OpResult;
@@ -140,19 +144,56 @@ public class DataResource extends AbstractResource {
         return sampleMapper.selectSampleBySampleProviderKey(datasetKey, surveyProviderKey, sampleProviderKey);
     }
     
-//    @GET
-//    @Path("/taxondatasets/{datasetKey}/surveys/{surveyProviderKey}/samples/{sampleProviderKey}/taxonObservations")
-//    @Produces(MediaType.APPLICATION_JSON)
-//    public Sample getSampleTaxonObservations(@TokenUser(allowPublic=false) User user
-//            , @PathParam("datasetKey") String datasetKey
-//            , @PathParam("surveyProviderKey") String surveyProviderKey
-//            , @PathParam("sampleProviderKey") String sampleProviderKey){
-//        if (!datasetAdministratorMapper.isUserDatasetAdministrator(user.getId(), datasetKey)) {
-//           throw new UnauthorisedException();
-//        }
-//        
-//        return taxonObservationMapper.
-//    }
+    @GET
+    @Path("/taxondatasets/{datasetKey}/surveys/{surveyProviderKey}/samples/{sampleProviderKey}/taxonObservations")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<TaxonObservation> getSampleTaxonObservations(@TokenUser(allowPublic=false) User user
+            , @PathParam("datasetKey") String datasetKey
+            , @PathParam("surveyProviderKey") String surveyProviderKey
+            , @PathParam("sampleProviderKey") String sampleProviderKey){
+        if (!datasetAdministratorMapper.isUserDatasetAdministrator(user.getId(), datasetKey)) {
+           throw new UnauthorisedException();
+        }
+        
+        List<String> datasetKeyList = Arrays.asList(datasetKey);
+        
+        return taxonObservationMapper.selectObservationsByHierachy(datasetKeyList, surveyProviderKey, sampleProviderKey);
+    }
+    
+    @GET
+    @Path("/taxondatasets/{datasetKey}/surveys/{surveyProviderKey}/samples/{sampleProviderKey}/taxonObservations/{observationId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<TaxonObservation> getTaxonObservation(@TokenUser(allowPublic=false) User user
+            , @PathParam("datasetKey") String datasetKey
+            , @PathParam("surveyProviderKey") String surveyProviderKey
+            , @PathParam("sampleProviderKey") String sampleProviderKey
+            , @PathParam("observationId") int observationId){
+        if (!datasetAdministratorMapper.isUserDatasetAdministrator(user.getId(), datasetKey)) {
+           throw new UnauthorisedException();
+        }
+        
+        List<String> datasetKeyList = Arrays.asList(datasetKey);
+        
+        return taxonObservationMapper.selectObservationsByHierachyAndId(datasetKeyList, surveyProviderKey, sampleProviderKey, observationId);
+    }
+    
+    @GET
+    @Path("/taxondatasets/{datasetKey}/surveys/{surveyProviderKey}/samples/{sampleProviderKey}/taxonObservations/{observationId}/attributes")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<TaxonObservationAttributeValue> getTaxonObservationAttributes(@TokenUser(allowPublic=false) User user
+            , @PathParam("datasetKey") String datasetKey
+            , @PathParam("surveyProviderKey") String surveyProviderKey
+            , @PathParam("sampleProviderKey") String sampleProviderKey
+            , @PathParam("observationId") int observationId){
+        if (!datasetAdministratorMapper.isUserDatasetAdministrator(user.getId(), datasetKey)) {
+           throw new UnauthorisedException();
+        }
+        
+        List<String> datasetKeyList = Arrays.asList(datasetKey);
+        
+        return taxonObservationMapper.selectObservationAttributeByHierchy(datasetKeyList, surveyProviderKey, sampleProviderKey, observationId);
+    }
+    
  }
   
 

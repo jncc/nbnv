@@ -101,6 +101,7 @@ public interface TaxonObservationMapper {
             , @Param("taxonOutputGroup") String taxonOutputGroup
             , @Param("gridRef") String gridRef
             , @Param("polygon") String polygon);
+   
     
     @SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectRecordsOrderedByDataset")
     public List<TaxonObservation> selectObservationsByFilterOrderedByDataset(
@@ -288,4 +289,23 @@ public interface TaxonObservationMapper {
             , @Param("gridRef") String gridRef
             , @Param("polygon") String polygon);
     
+    @SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectRecords")
+    public List<TaxonObservation> selectObservationsByHierachy(
+            @Param("datasetKey") List<String> datasetKey
+            , @Param("surveyKey") String surveyKey
+            , @Param("sampleKey") String sampleKey);
+    
+    @SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectRecords")
+    public List<TaxonObservation> selectObservationsByHierachyAndId(
+            @Param("datasetKey") List<String> datasetKey
+            , @Param("surveyKey") String surveyKey
+            , @Param("sampleKey") String sampleKey
+            , @Param("taxonObservationID") int taxonObservationID);
+    
+    @SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectOneAttribute")
+    public List<TaxonObservationAttributeValue> selectObservationAttributeByHierchy(
+            @Param("datasetKey") List<String> datasetKey
+            , @Param("surveyKey") String surveyKey
+            , @Param("sampleKey") String sampleKey
+            , @Param("taxonObservationID") int taxonObservationID);
 }

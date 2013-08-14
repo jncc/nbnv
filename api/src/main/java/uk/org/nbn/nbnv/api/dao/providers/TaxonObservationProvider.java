@@ -304,6 +304,10 @@ public class TaxonObservationProvider {
         if (params.containsKey("sampleKey") && params.get("sampleKey") != null && !"".equals((String) params.get("sampleKey")) ){
             WHERE("o.sampleKey = #{sampleKey}");
         }
+        
+        if (params.containsKey("taxonObservationID") && params.get("taxonObservationID") != null && !"".equals((String) params.get("taxonObservationID"))) {
+            WHERE("o.id = #{taxonObservationID}");
+        }
 
         return SQL();
     }
@@ -384,6 +388,18 @@ public class TaxonObservationProvider {
         if (params.containsKey("taxonOutputGroup") && params.get("taxonOutputGroup") != null && !"".equals((String) params.get("taxonOutputGroup"))) {
             INNER_JOIN("TaxonData td ON td.taxonVersionKey = o.pTaxonVersionKey");
             WHERE("td.taxonOutputGroupKey =  #{taxonOutputGroup}");
+        }
+        
+        if (params.containsKey("surveyKey") && params.get("surveyKey") != null && !"".equals((String) params.get("surveyKey")) ){
+            WHERE("o.surveyKey = #{surveyKey}");
+        }
+        
+        if (params.containsKey("sampleKey") && params.get("sampleKey") != null && !"".equals((String) params.get("sampleKey")) ){
+            WHERE("o.sampleKey = #{sampleKey}");
+        }
+        
+        if (params.containsKey("taxonObservationID") && params.get("taxonObservationID") != null && !"".equals((String) params.get("taxonObservationID"))) {
+            WHERE("o.id = #{taxonObservationID}");
         }
 
         return SQL();
