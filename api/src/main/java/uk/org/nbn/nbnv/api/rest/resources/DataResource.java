@@ -82,7 +82,7 @@ public class DataResource extends AbstractResource {
     @GET
     @Path("/taxondatasets/{datasetKey}/surveys/{surveyKey}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Survey> getDatasetSurveys(@TokenUser(allowPublic=false) User user
+    public Survey getSurvey(@TokenUser(allowPublic=false) User user
             , @PathParam("datasetKey") String datasetKey
             , @PathParam("surveyKey") String surveyKey){
         if (!datasetAdministratorMapper.isUserDatasetAdministrator(user.getId(), datasetKey)) {
