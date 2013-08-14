@@ -1,16 +1,36 @@
 .layerCustomisation {
-  .colourPicker input {
-    font-size: 10px;
-    height: 11px;
-    letter-spacing: normal;
-    line-height: normal;
-    width: 35px;
-    word-spacing: 0px;
-    margin: 0;
-    padding: 0;
-    color: #898989;
-    border:none;
-    background: none;
+  .colourPicker {
+    .preview-container {
+      float:left;
+      height:80px;
+      width:80px;
+      background: #ffffff url('../img/colourPickerTransparent.png') repeat;
+      border: 1px black solid;
+
+      .preview {
+        height:100%;
+        width:100%;
+      }
+    }
+
+    .sliders {
+      float:right;
+      .slider-container {
+        height: 21px;
+        span { margin-right: 8px; }
+        div {
+          background: none;
+          background-image: url('../img/colourPicker.png');
+          float: right;
+          width: 215px;
+          margin-top:6px;
+        }
+
+        .sat-slider { background-position: 0 -9px; }
+        .lum-slider { background-position: 0 -18px; }
+        .opacity-slider { background-position: 0 -27px; }
+      }
+    }
   }
 
   .temporal {
