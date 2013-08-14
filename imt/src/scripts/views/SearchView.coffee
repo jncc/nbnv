@@ -70,4 +70,4 @@ define [
       when "site boundarydataset" then "Add boundaries of: #{item.searchMatchTitle}"
       when "habitatdataset" then "Add habitat: #{item.searchMatchTitle}"
       when "gridsquarefeature" then "Zoom to the grid square: #{item.searchMatchTitle}"
-      when "siteboundaryfeature" then "Zoom to the boundary: #{item.searchMatchTitle}"
+      when "siteboundaryfeature" then "Zoom to the boundary: #{item.searchMatchTitle}, #{item.descript}"
