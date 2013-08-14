@@ -9,12 +9,14 @@ define [
 
   events: 
     "select2-selecting": "select"
+    "change": "clear"
 
   rows: 20
 
   initialize: ->
     @$el.html template
 
+    placeholder = @$('input').attr('placeholder')
     #Create a select2 infinite scrolling search widget on the input field
     @$('input').select2
       minimumInputLength: 2
@@ -24,7 +26,6 @@ define [
         data: _.bind( @request, @)
         results: @processResults
       formatResult: _.bind( @renderResult, @)
-      formatSelection: (result) -> result.searchMatchTitle
       dropdownCssClass: "bigdrop"
       escapeMarkup: (m)-> m
 
@@ -51,6 +52,12 @@ define [
   When an option has been selected. Notify the model
   ###
   select: (event, ui) -> @model.addSearchResult event.object
+  
+  ###
+  Clear the selection after it has been handled to show the placeholder
+  text again
+  ###
+  clear: -> @$('input').select2 'data', null
 
   renderResult: (item)-> "<b>#{item.searchMatchTitle}</b><br>#{@formatResult(item)}"
 
