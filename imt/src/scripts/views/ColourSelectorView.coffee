@@ -11,10 +11,10 @@ define [
   @see http://stackoverflow.com/questions/9121160/jquery-ui-slider-value-returned-from-slide-event-on-release-is-different-fro
   ###
   events:
-    "slide .hue-slider" : (evt, ui) -> @hueSlider.slider("value", ui.value); do @updatePreview
-    "slide .sat-slider" : (evt, ui) -> @satSlider.slider("value", ui.value); do @updatePreview
-    "slide .lum-slider" : (evt, ui) -> @lumSlider.slider("value", ui.value); do @updatePreview
-    "slide .opacity-slider" : (evt, ui) -> @opacitySlider.slider("value", ui.value); do @updatePreview
+    "slide .hue-slider" : (evt, ui) -> @hsl[0] = ui.value; do @updatePreview
+    "slide .sat-slider" : (evt, ui) -> @hsl[1] = ui.value; do @updatePreview
+    "slide .lum-slider" : (evt, ui) -> @hsl[2] = ui.value; do @updatePreview
+    "slide .opacity-slider" : (evt, ui) -> @opacity = ui.value; do @updatePreview
     
   ###
   This view is resposible for controlling the colour attribute 
@@ -25,8 +25,6 @@ define [
 
     @listenTo @model, 'change:colour', @updateColour
     @listenTo @model, 'change:opacity', @updateOpacity
-
-  hueSlide:(evt, ui) -> updatePreview(ui.value,s,l,o)
 
   render: ->
     sliderOptions = max: 1, step: 0.01
@@ -44,52 +42,70 @@ define [
     @updateOpacity @model.getOpacity()
     do @updatePreview
 
-  getColour:-> 
-    rgb = @hslToRgb( @hueSlider.slider("value"),
-                     @satSlider.slider("value"),
-                     @lumSlider.slider("value"))
+  ###
+  Get the current colour which this selector is offering
+  ###
+  getColour: -> @rgbToHex @hslToRgb @hsl
 
-    _.chain(rgb)
-      .map( (val) -> val.toString 16 )
-      .map( (hex) -> if hex.length is 1 then return "0#{hex}" else return hex )
-      .reduce( ((hex, comp) -> hex + comp), "")
-      .value()
-
-  getOpacity: -> @opacitySlider.slider("value") 
-
-  updatePreview: (h,s,l,o) ->
-    @preview.css
-      "background-color": "#" + @getColour()
-      "opacity": @getOpacity()
-
-    hueRgb = @hslToRgb( @hueSlider.slider("value"), 1, 0.5)
-
-    for i, slider of [@satSlider, @lumSlider, @opacitySlider]
-      slider.css "background-color": "rgb(#{hueRgb[0]}, #{hueRgb[1]}, #{hueRgb[2]})"
+  ###
+  Get the current opacity which this selector is offering
+  ###
+  getOpacity: -> @opacity 
 
   ###
   Define a listener to be called when the opacity is updated
   ###
   updateOpacity: -> 
-    @opacitySlider.slider "value", @model.getOpacity()
+    @opacity = @model.getOpacity()
+    @opacitySlider.slider "value", @opacity
     do @updatePreview
 
   ###
   Define a listener to be called when the colour is updated
   ###
   updateColour: ->
-    hsl = @rgbToHsl(@hexToRgb( @model.get 'colour' ))
-    @hueSlider.slider "value", hsl[0]
-    @satSlider.slider "value", hsl[1]
-    @lumSlider.slider "value", hsl[2]
+    @hsl = @rgbToHsl @hexToRgb @model.get 'colour'
+    @hueSlider.slider "value", @hsl[0]
+    @satSlider.slider "value", @hsl[1]
+    @lumSlider.slider "value", @hsl[2]
     do @updatePreview
 
-  hexToRgb: (hex) ->
-    r: parseInt(hex.slice(0,2), 16)
-    g: parseInt(hex.slice(2,4), 16)
-    b: parseInt(hex.slice(4,6), 16)
+  ###
+  Define the function to call to update the preview window and the sliders
+  according the current state of @hsl and @opacity
+  ###
+  updatePreview: ->
+    colourHex = "#" + @getColour()
+     
+    @satSlider.css "background-color": "#" + @rgbToHex @hslToRgb( [@hsl[0], 1,        0.5] )
+    @lumSlider.css "background-color": "#" + @rgbToHex @hslToRgb( [@hsl[0], @hsl[1],  0.5] )
+    @opacitySlider.css  "background-color": colourHex
+    @preview.css        "background-color": colourHex, opacity: @getOpacity()
 
-  hslToRgb: (h,s,l) -> 
+  ###
+  Translate the colour from rgb array to a hexadecimal value
+  ###
+  rgbToHex:(rgb) ->  
+    _.chain(rgb)
+      .map( (val) -> val.toString 16 )
+      .map( (hex) -> if hex.length is 1 then return "0#{hex}" else return hex )
+      .reduce( ((hex, comp) -> hex + comp), "")
+      .value()
+  
+  ###
+  Translate the given hex to an rgb array
+  ###
+  hexToRgb: (hex) ->[ parseInt(hex.slice(0,2), 16)
+                      parseInt(hex.slice(2,4), 16)
+                      parseInt(hex.slice(4,6), 16)]
+
+  ###
+  HSL to RGB function adapted from stackoverflow. Converted to CoffeeScript, and
+  configured to take an array in the form of [h,s,l] rather than individual parameters.
+  @see http://stackoverflow.com/questions/2353211/hsl-to-rgb-color-conversion
+  ###
+  hslToRgb: (hsl) ->
+    [h,s,l] = hsl #split the array and assign to h, s, and l
     if s is 0
       r = g = b = l #achromatic
     else
@@ -109,8 +125,12 @@ define [
 
     return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)]
 
-  rgbToHsl: (colour) ->
-    r = colour.r / 255; g = colour.g / 255; b = colour.b / 255
+  ###
+  RGB to HSL function adapted from stackoverflow. Converted to CoffeeScript, and
+  configured to take an array in the form of [r,g,b] rather than individual parameters.
+  ###
+  rgbToHsl: (rgb) ->
+    r = rgb[0] / 255; g = rgb[1] / 255; b = rgb[2] / 255
     max = Math.max(r, g, b); min = Math.min(r, g, b)
     h = 0; s = 0; l = (max + min) / 2
 
@@ -125,4 +145,4 @@ define [
           when b then h = (r - g) / d + 4
       h /= 6
 
-    return [h, s, l]
+    return [h,s,l]
