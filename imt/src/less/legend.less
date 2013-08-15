@@ -5,18 +5,25 @@ ul.legend {
   
   li {
     cursor: move;
-    span.icon {
+    button.customise {
       float: left;
-      height: 20px;
-      width: 20px;
-      border: black 1px solid;
-      margin: 2px;
-      cursor: pointer;
-      &:hover { opacity: 0.4} 
+      padding-left: 4px;
+      padding-right: 4px;
+      i {
+        vertical-align: top;
+        margin-top: 2px;
+      }
+      span.icon {
+        vertical-align: top;
+        display: inline-block;
+        height: 16px;
+        width: 16px;
+        border: black 1px solid;
+      }
     }
-    p.description { margin-left: 30px; }
+    p.description { margin-left: 56px; }
     button.destroy { float:right; }
-    min-height: 26px;
+    min-height: 32px;
   }
 
 }
