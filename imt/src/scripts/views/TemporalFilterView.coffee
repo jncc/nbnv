@@ -12,14 +12,18 @@ define [
     @listenTo @model, "change:startDate change:endDate", @updateView
     @listenTo @model, "invalid", @handleValidation
 
-    @$('.startDate').change (evt) => 
-      do @removeErrorMessage
-      @model.set "startDate", parseInt( $(evt.target).val() ), validate: true
- 
-    @$('.endDate').change (evt) =>
-      do @removeErrorMessage
-      @model.set "endDate", parseInt( $(evt.target).val() ), validate: true
+    @$('.startDate').change (evt) => do @removeErrorMessage
+    
+    @$('.endDate').change (evt) => do @removeErrorMessage
+     
 
+  ###
+  Apply the current state of the view to the model
+  ###
+  apply: ->
+    @model.set "startDate", parseInt( @$('.startDate').val() ), validate: true
+    @model.set "endDate", parseInt( @$('.endDate').val() ), validate: true
+    
   ###
   Set up the html content for this view
   ###

@@ -47,10 +47,13 @@ define [
   ###
   getColour: -> @rgbToHex @hslToRgb @hsl
 
+
   ###
-  Get the current opacity which this selector is offering
+  Apply the current state of the view to the model
   ###
-  getOpacity: -> @opacity 
+  apply:->
+      @model.set "colour", @getColour()
+      @model.set "opacity", @opacity
 
   ###
   Define a listener to be called when the opacity is updated
@@ -80,7 +83,7 @@ define [
     @satSlider.css "background-color": "#" + @rgbToHex @hslToRgb( [@hsl[0], 1,        0.5] )
     @lumSlider.css "background-color": "#" + @rgbToHex @hslToRgb( [@hsl[0], @hsl[1],  0.5] )
     @opacitySlider.css  "background-color": colourHex
-    @preview.css        "background-color": colourHex, opacity: @getOpacity()
+    @preview.css        "background-color": colourHex, opacity: @opacity
 
   ###
   Translate the colour from rgb array to a hexadecimal value

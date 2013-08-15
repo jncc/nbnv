@@ -30,12 +30,12 @@ define [
         el: $('<div>').appendTo @$el
 
     if @model.isTemporalFilterable
-      @resolutionView = new TemporalFilterView
+      @temporalView = new TemporalFilterView
         model: @model
         el: $('<div>').appendTo @$el
 
     if @model.isDatasetFilterable
-      @resolutionView = new DatasetSelectorView
+      @datasetsView = new DatasetSelectorView
         collection: @model.availableDatasets
         el: $('<div>').appendTo @$el
 
@@ -43,6 +43,14 @@ define [
       title: @model.getName()
       resizable: false
       width: 400
+      buttons: 
+        Ok: => do @update; @$el.dialog( "close" )
+        Update: => do @update
+      
+  update:->
+    do @colorView.apply if @colorView
+    do @temporalView.apply if @temporalView
+    do @datasetsView.apply if @datasetsView
 
   ###
   Reopens the view and brings it back in to focus
