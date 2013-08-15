@@ -10,6 +10,6 @@ define [
     if @model.isLoggedIn()
       forename = @model.get "forename"
       surname = @model.get "surname"
-      @$el.html "#{forname} #{surname}"
+      @$el.html "#{forename} #{surname}"
     else
       @$el.html """<a href="#{@model.getSSOHref()}">Login</a>"""
