@@ -12,10 +12,11 @@ define [
   initialize:->
     do @render
     do @updateVisiblity # update state for the first time
+    do @updatePickerState
 
     @listenTo @model, 'change:controlPanelVisible', @updateVisiblity
     @listenTo @model.getPicker(), 'change:hasResults', @updateIsPicking
-
+    @listenTo @model.getLayers(), 'add remove reset', @updatePickerState
 
   render: ->
     @$el.html controlPanel()
@@ -38,6 +39,10 @@ define [
       @$el.show "slide", direction: 'right'
     else 
       @$el.hide "slide",  direction: 'right'
+
+  updatePickerState:->
+    state = if @model.getPicker().getPickableLayers().length is 0 then "disable" else "enable"
+    @$('.controlPanelTabs').tabs state, 2
 
   ###
   Determine if the picker tab has been selected. If it has
