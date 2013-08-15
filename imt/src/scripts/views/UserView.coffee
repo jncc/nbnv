@@ -7,7 +7,9 @@ define [
     @listenTo @model, 'change', @render
 
   render: () ->
-    if @model.isLoggedIn()
-      @$el.html @model.get "email"
+    if @model.isLoggedIn(
+      forename = @model.get "forename"
+      surname = @model.get "surname"
+      @$el.html "#{forname} #{surname}"
     else
       @$el.html """<a href="#{@model.getSSOHref()}">Login</a>"""
