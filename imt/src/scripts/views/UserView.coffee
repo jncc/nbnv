@@ -7,7 +7,7 @@ define [
     @listenTo @model, 'change', @render
 
   render: () ->
-    if @model.isLoggedIn(
+    if @model.isLoggedIn()
       forename = @model.get "forename"
       surname = @model.get "surname"
       @$el.html "#{forname} #{surname}"

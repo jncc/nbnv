@@ -35,10 +35,10 @@ define [
       el: @$('.picker')
 
   updateVisiblity:->
-    if @model.get "controlPanelVisible" then
+    if @model.get "controlPanelVisible"
       @$el.show "slide", direction: 'right'
     else 
-      @$el.hide "slide",  direction: 'right'
+      @$el.hide "slide", direction: 'right'
 
   updatePickerState:->
     state = if @model.getPicker().getPickableLayers().length is 0 then "disable" else "enable"
