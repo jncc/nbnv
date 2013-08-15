@@ -13,9 +13,11 @@ define [
     do @render
     do @$el.hide
 #    do @updateVisiblity # update state for the first time
+    do @updatePickerState
 
     @listenTo @model, 'change:controlPanelVisible', @updateVisiblity
     @listenTo @model.getPicker(), 'change:hasResults', @updateIsPicking
+    @listenTo @model.getLayers(), 'add remove reset', @updatePickerState
 
 
   render: ->
@@ -40,12 +42,15 @@ define [
 #    if @model.get "controlPanelVisible" then do @$el.show else do @$el.hide
     @$el.toggle("slide", {direction: 'right'})
 
+  updatePickerState:->
+    state = if @model.getPicker().getPickableLayers().length is 0 then "disable" else "enable"
+    @$('.controlPanelTabs').tabs state, 2
+
   ###
   Determine if the picker tab has been selected. If it has
   put the map into picking mode
   ###
   updateIsPicking: ->
-#    isOnPickerTab = @$el.tabs( "option", "active" ) is 2 #picker is on second tab
     isOnPickerTab = @$('.controlPanelTabs').tabs( "option", "active" ) is 2 #picker is on second tab
     @model.getPicker().set "isPicking", isOnPickerTab
 
