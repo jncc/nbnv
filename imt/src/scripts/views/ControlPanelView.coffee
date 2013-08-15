@@ -12,7 +12,6 @@ define [
   initialize:->
     do @render
     do @$el.hide
-#    do @updateVisiblity # update state for the first time
 
     @listenTo @model, 'change:controlPanelVisible', @updateVisiblity
     @listenTo @model.getPicker(), 'change:hasResults', @updateIsPicking
@@ -20,8 +19,6 @@ define [
 
   render: ->
     @$el.html controlPanel()
-#    @$el.tabs() #Turn the control panel into jquery tabs
-#    @$('.controlPanelTabs').html controlPanel()
     @$('.controlPanelTabs').tabs() #Turn the control panel into jquery tabs
 
     @legendView = new LegendView
@@ -37,7 +34,6 @@ define [
       el: @$('.picker')
 
   updateVisiblity:->
-#    if @model.get "controlPanelVisible" then do @$el.show else do @$el.hide
     @$el.toggle("slide", {direction: 'right'})
 
   ###
@@ -45,12 +41,10 @@ define [
   put the map into picking mode
   ###
   updateIsPicking: ->
-#    isOnPickerTab = @$el.tabs( "option", "active" ) is 2 #picker is on second tab
     isOnPickerTab = @$('.controlPanelTabs').tabs( "option", "active" ) is 2 #picker is on second tab
     @model.getPicker().set "isPicking", isOnPickerTab
 
     if isOnPickerTab and @model.getPicker().hasResults()
       @$el.animate width:800
-      @$('.controlPanelTabs').animate width:810
     else
       @$el.animate width:357
