@@ -11,7 +11,7 @@ define [
 
   initialize:->
     do @render
-    do @$el.hide
+    do @updateVisiblity # update state for the first time
 
     @listenTo @model, 'change:controlPanelVisible', @updateVisiblity
     @listenTo @model.getPicker(), 'change:hasResults', @updateIsPicking
@@ -34,7 +34,10 @@ define [
       el: @$('.picker')
 
   updateVisiblity:->
-    @$el.toggle("slide", {direction: 'right'})
+    if @model.get "controlPanelVisible" then
+      @$el.show "slide", direction: 'right'
+    else 
+      @$el.hide "slide",  direction: 'right'
 
   ###
   Determine if the picker tab has been selected. If it has
