@@ -397,6 +397,21 @@ nbn.nbnv.ui.filter.dataset = function(json) {
         }
     }
     
+    this.getQueryString = function() {
+        if (this._all) {
+            if (this._useSecret) {
+                return 'sensitive=true';
+            }
+        } else {
+            if (this._useSecret) {
+                return 'datasets=' + this._datasets + ',sensitive=true';
+            }
+            return 'datasets=' + this._datasets;
+        }
+        
+        return '';
+    };
+    
     this.getError = function() {
         if (!this._all && this._datasets.length < 1) { return [ 'You must select at least one dataset' ]; }
         return [];

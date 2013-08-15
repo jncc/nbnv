@@ -173,6 +173,13 @@ nbn.nbnv.ui.filter.spatial = function(json) {
             return { spatial: { all: false, match: this._matchType, feature: this._feature, dataset: this._dataset }};
         }
     };
+    
+    this.getQueryString = function() {
+        if (this._all) {
+            return '';
+        }
+        return "spatialRelationship=" + this._matchType + ",siteKey=" + this._feature;
+    };
 
     this.getError = function() {
         return [];

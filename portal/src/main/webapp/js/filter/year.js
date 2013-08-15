@@ -107,6 +107,13 @@ nbn.nbnv.ui.filter.year = function(json) {
         }
     };
     
+    this.getQueryString = function() {
+        if (this._all) {
+            return '';
+        }
+        return 'startYear=' + this.startYear + ',endYear=' + this._endYear;
+    }
+    
     this.getError = function() {
         var e = [];
         if (!this._all && this._startYear > this._endYear) { e.push('Start year must be before (or equal to) end year')}

@@ -131,6 +131,10 @@ nbn.nbnv.ui.downloadReason = function(json) {
         
         return { reason: { purpose: this._purpose, details: this._details, userID: nbn.nbnv.userID }};
     };
+    
+    this.getQueryString = function() {
+        return "purpose=" + this._purpose + ",details=" + this._details;
+    };
 
     this.getError = function() {
         if (this._details == '') { return ['Please enter detailed reason for this download']; }

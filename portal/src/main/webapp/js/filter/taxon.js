@@ -271,6 +271,18 @@ nbn.nbnv.ui.filter.taxon = function(json) {
         }
     };
     
+    this.getQueryString = function() {
+        if (mode == 'taxon') {
+            return 'ptvk=' + this._tvk;
+        } else if (mode == 'desig') {
+            return 'designation=' + this._desigCode;
+        } else if (mode == 'output') {
+            return 'taxonOutputGroup=' + this._outputGroupKey;
+        }
+        
+        return '';
+    };
+    
     this.getError = function() {
         var e = [];
         

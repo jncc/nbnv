@@ -24,6 +24,7 @@ import uk.org.nbn.nbnv.api.dao.warehouse.DatasetMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.DesignationMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.FeatureMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.OrganisationMapper;
+import uk.org.nbn.nbnv.api.dao.warehouse.SiteBoundaryMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.TaxonObservationMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.TaxonOutputGroupMapper;
 import uk.org.nbn.nbnv.api.model.*;
@@ -42,6 +43,7 @@ public class TaxonObservationResource extends AbstractResource {
     @Autowired TaxonOutputGroupMapper taxonOutputGroupMapper;
     @Autowired DownloadHelper downloadHelper;
     @Autowired DesignationMapper designationMapper;
+    @Autowired SiteBoundaryMapper siteBoundaryMapper;
     
 
     /**
@@ -205,6 +207,36 @@ public class TaxonObservationResource extends AbstractResource {
             @QueryParam("polygon") @DefaultValue(ObservationResourceDefaults.defaultPolygon) String polygon) {
         //TODO: squareBlurring(?)
         return observationMapper.selectObservationRecordsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon);
+    }
+    
+    @GET
+    @Path("/download")
+    @Produces("application/x-zip-compressed")
+    public StreamingOutput getObservationsByFilterZip(            
+            @TokenUser(allowPublic = false) final User user,
+            @QueryParam("ptvk") @DefaultValue(ObservationResourceDefaults.defaultTaxa) final List<String> taxa,
+            @QueryParam("designation") @DefaultValue(ObservationResourceDefaults.defaultDesignation) final String designation,
+            @QueryParam("taxonOutputGroup") @DefaultValue(ObservationResourceDefaults.defaultTaxonOutputGroup) final String taxonOutputGroup,
+            @QueryParam("datasetKey") @DefaultValue(ObservationResourceDefaults.defaultDatasetKey) final List<String> datasetKeys,
+            @QueryParam("spatialRelationship") @DefaultValue(ObservationResourceDefaults.SPATIAL_RELATIONSHIP_DEFAULT) final String spatialRelationship,
+            @QueryParam("siteKey") @DefaultValue(ObservationResourceDefaults.defaultFeatureID) final String siteKey,
+            @QueryParam("siteDataset") @DefaultValue(ObservationResourceDefaults.defaultFeatureID) final String siteDataset,
+            @QueryParam("gridRef") @DefaultValue(ObservationResourceDefaults.defaultGridRef) final String gridRef,
+            @QueryParam("startYear") @DefaultValue(ObservationResourceDefaults.defaultStartYear) final int startYear,
+            @QueryParam("endYear") @DefaultValue(ObservationResourceDefaults.defaultEndYear) final int endYear,
+            @QueryParam("sensitive") @DefaultValue(ObservationResourceDefaults.defaultSensitive) final Boolean sensitive,
+            @QueryParam("polygon") @DefaultValue(ObservationResourceDefaults.defaultPolygon) final String polygon) {
+        return new StreamingOutput() {
+            public void write(OutputStream out) throws IOException, WebApplicationException {
+                ZipOutputStream zip = new ZipOutputStream(out);
+                String title = "Species list download";
+                addSpecies(zip, user, startYear, endYear, datasetKeys, taxa, spatialRelationship, siteKey, sensitive, designation, taxonOutputGroup, gridRef, polygon);
+                addReadMe(zip, title, user, startYear, endYear, datasetKeys, spatialRelationship, siteKey, sensitive, designation, taxonOutputGroup);
+                addDatasetMetadata(zip, user, startYear, endYear, datasetKeys, taxa, spatialRelationship, siteKey, sensitive, designation, taxonOutputGroup, gridRef, polygon);
+                zip.flush();
+                zip.close();
+            }
+        };
     }
 
     /**
