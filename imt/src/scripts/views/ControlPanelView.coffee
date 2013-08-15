@@ -11,9 +11,9 @@ define [
 
   initialize:->
     do @render
-    do @updateVisiblity # update state for the first time
     do @updatePickerState
-
+    @updateVisiblity(0) # update state for the first time
+    
     @listenTo @model, 'change:controlPanelVisible', @updateVisiblity
     @listenTo @model.getPicker(), 'change:hasResults', @updateIsPicking
     @listenTo @model.getLayers(), 'add remove reset', @updatePickerState
@@ -34,11 +34,9 @@ define [
       model: @model.getPicker()
       el: @$('.picker')
 
-  updateVisiblity:->
-    if @model.get "controlPanelVisible"
-      @$el.show "slide", direction: 'right'
-    else 
-      @$el.hide "slide", direction: 'right'
+  updateVisiblity: (speed)->
+    options = direction: 'right', duration :speed, effect: 'slide'
+    if @model.get "controlPanelVisible" then @$el.show options else  @$el.hide options
 
   updatePickerState:->
     state = if @model.getPicker().getPickableLayers().length is 0 then "disable" else "enable"
