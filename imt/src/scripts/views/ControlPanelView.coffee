@@ -51,6 +51,6 @@ define [
 
     if isOnPickerTab and @model.getPicker().hasResults()
       @$el.animate width:800
-      @$('.controlPanelTabs').animate width:800
+      @$('.controlPanelTabs').animate width:810
     else
       @$el.animate width:357
