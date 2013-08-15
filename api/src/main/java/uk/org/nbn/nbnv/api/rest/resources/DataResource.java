@@ -75,7 +75,7 @@ public class DataResource extends AbstractResource {
            throw new UnauthorisedException();
         }
         
-        return surveyMapper.selectSurveysByDatasetKey(datasetKey);
+        return surveyMapper.selectSurveysWithNoStatsByDatasetKey(datasetKey);
     }
 
     
@@ -89,7 +89,7 @@ public class DataResource extends AbstractResource {
            throw new UnauthorisedException();
         }
         
-        return surveyMapper.selectSurveyByProviderKeyAndDatasetKey(datasetKey, surveyKey);
+        return surveyMapper.selectSurveyWithNoStatsByProviderKeyAndDatasetKey(datasetKey, surveyKey);
     }
    
     

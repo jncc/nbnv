@@ -21,10 +21,10 @@ public interface SurveyMapper {
     })
     List<Survey> selectSurveyByIdAndDatasetKey(String datasetKey, int surveyID);
     
-    @Select("SELECT * FROM SurveySpeciesRecordCountData WHERE datasetKey = #{datasetKey} AND providerKey = #{providerKey}")
-    @Results(value = {
-        @Result(property="id", column="surveyID", javaType=Integer.class)
-    })
-    Survey selectSurveyByProviderKeyAndDatasetKey(@Param("datasetKey") String datasetKey, @Param("providerKey") String providerKey);
+    @Select("SELECT * FROM SurveyData WHERE datasetKey = #{datasetKey}")
+    List<Survey> selectSurveysWithNoStatsByDatasetKey(String datasetKey);
+    
+    @Select("SELECT * FROM SurveyData WHERE datasetKey = #{datasetKey} AND providerKey = #{providerKey}")
+    Survey selectSurveyWithNoStatsByProviderKeyAndDatasetKey(@Param("datasetKey") String datasetKey, @Param("providerKey") String providerKey);
     
 }
