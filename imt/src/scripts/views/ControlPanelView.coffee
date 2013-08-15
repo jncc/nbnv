@@ -12,7 +12,6 @@ define [
   initialize:->
     do @render
     do @$el.hide
-#    do @updateVisiblity # update state for the first time
     do @updatePickerState
 
     @listenTo @model, 'change:controlPanelVisible', @updateVisiblity
@@ -22,8 +21,6 @@ define [
 
   render: ->
     @$el.html controlPanel()
-#    @$el.tabs() #Turn the control panel into jquery tabs
-#    @$('.controlPanelTabs').html controlPanel()
     @$('.controlPanelTabs').tabs() #Turn the control panel into jquery tabs
 
     @legendView = new LegendView
@@ -39,7 +36,6 @@ define [
       el: @$('.picker')
 
   updateVisiblity:->
-#    if @model.get "controlPanelVisible" then do @$el.show else do @$el.hide
     @$el.toggle("slide", {direction: 'right'})
 
   updatePickerState:->
@@ -56,6 +52,5 @@ define [
 
     if isOnPickerTab and @model.getPicker().hasResults()
       @$el.animate width:800
-      @$('.controlPanelTabs').animate width:800
     else
       @$el.animate width:357
