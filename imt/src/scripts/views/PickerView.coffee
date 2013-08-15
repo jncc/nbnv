@@ -14,12 +14,15 @@ define [
 
     @listenTo @model, 'change:resultsForLayers', @render
 
-  clearResults: -> do @model.clearResults
+  clearResults: -> 
+    do @model.clearResults
+    @model.set 'isPicking', true #put the map back into picking mode
 
   render: ->
     @$el.html template hasResults: @model.hasResults()
 
     if @model.hasResults()
+      @model.set 'isPicking', false # now we have some results, disable picking
       resultsDiv = @$('.results')
       resultsForLayers = @model.getResultsForLayers()
 
