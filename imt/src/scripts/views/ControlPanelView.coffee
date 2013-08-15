@@ -11,14 +11,18 @@ define [
 
   initialize:->
     do @render
-    do @updateVisiblity # update state for the first time
+    do @$el.hide
+#    do @updateVisiblity # update state for the first time
 
     @listenTo @model, 'change:controlPanelVisible', @updateVisiblity
     @listenTo @model.getPicker(), 'change:hasResults', @updateIsPicking
 
+
   render: ->
     @$el.html controlPanel()
-    @$el.tabs() #Turn the control panel into jquery tabs
+#    @$el.tabs() #Turn the control panel into jquery tabs
+#    @$('.controlPanelTabs').html controlPanel()
+    @$('.controlPanelTabs').tabs() #Turn the control panel into jquery tabs
 
     @legendView = new LegendView
       collection: @model.getLayers()
@@ -33,17 +37,20 @@ define [
       el: @$('.picker')
 
   updateVisiblity:->
-    if @model.get "controlPanelVisible" then do @$el.show else do @$el.hide
+#    if @model.get "controlPanelVisible" then do @$el.show else do @$el.hide
+    @$el.toggle("slide", {direction: 'right'})
 
   ###
   Determine if the picker tab has been selected. If it has
   put the map into picking mode
   ###
   updateIsPicking: ->
-    isOnPickerTab = @$el.tabs( "option", "active" ) is 2 #picker is on second tab
+#    isOnPickerTab = @$el.tabs( "option", "active" ) is 2 #picker is on second tab
+    isOnPickerTab = @$('.controlPanelTabs').tabs( "option", "active" ) is 2 #picker is on second tab
     @model.getPicker().set "isPicking", isOnPickerTab
 
     if isOnPickerTab and @model.getPicker().hasResults()
       @$el.animate width:800
+      @$('.controlPanelTabs').animate width:800
     else
-      @$el.animate width:350
+      @$el.animate width:357

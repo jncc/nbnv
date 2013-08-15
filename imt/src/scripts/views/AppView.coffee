@@ -20,16 +20,20 @@ define [
     @$el.addClass "interactiveMapTool"
     do @render
 
-    @listenTo @model, 'change:controlPanelVisible', @renderControlPanelToggle
+#    @listenTo @model, 'change:controlPanelVisible', @renderControlPanelToggle
 
   toggleControlPanel :->
       @model.set "controlPanelVisible", not @model.get "controlPanelVisible"
 
-  renderControlPanelToggle:-> 
-    if @model.get 'controlPanelVisible' 
-      @$('.controlPanelToggle').addClass 'active'
-    else
-      @$('.controlPanelToggle').removeClass 'active'
+#  renderControlPanelToggle:-> 
+#    if @model.get 'controlPanelVisible' 
+#      @$('.controlPanelToggle').addClass 'active'
+#      @$('.icon-chevron-left').addClass 'icon-chevron-right'
+#      @$('.icon-chevron-left').removeClass 'icon-chevron-left'
+#    else
+#      @$('.controlPanelToggle').removeClass 'active'
+#      @$('.icon-chevron-right').addClass 'icon-chevron-left'
+#      @$('.icon-chevron-right').removeClass 'icon-chevron-right'
 
   render: ->
     @$el.html imtScaffolding()
@@ -53,4 +57,4 @@ define [
       model: @model.getCurrentUser()
       el: @$('.userView')
 
-    do @renderControlPanelToggle #update the state of the control panel button
+#    do @renderControlPanelToggle #update the state of the control panel button
