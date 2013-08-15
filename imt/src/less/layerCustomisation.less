@@ -1,5 +1,4 @@
 .layerCustomisation {
-
   //Heading for filters and customisations
   h5 {
     border-bottom: 1px solid #aaa;
@@ -8,7 +7,7 @@
 
   //Colour picker
   .colourPicker {
-    height: 90px;
+    height: 115px;;
     .preview-container {
       float:left;
       height:80px;
@@ -49,10 +48,19 @@
 
   //Dataset selector
   .datasets {
-    height: 200px;
-    overflow-y: scroll;
+    position: relative;
+    .toggle-container { 
+      position: absolute;
+      top: 0;
+      right: 0;
+      input { margin: 0 2px; }
+    }
+    .datasets-container {
+      height: 200px;
+      overflow-y: scroll;
 
-    input { float: left;}
-    span.title { display: block; margin-left:2em; }
+      input { float: left;}
+      span.title { display: block; margin-left:2em; }
+    }
   }
 }

@@ -20,25 +20,21 @@ define [
 
   render:->
     if @model.isStyleable
-      $('<h5>').html('What colour should the layer be?').appendTo @$el
       @colorView = new ColourSelectorView
         model: @model
         el: $('<div>').appendTo @$el
 
     if @model.isGridLayer
-      $('<h5>').html('Which grid should records be mapped at?').appendTo @$el
       @resolutionView = new ResolutionSelectorView
         model: @model
         el: $('<div>').appendTo @$el
 
     if @model.isTemporalFilterable
-      $('<h5>').html('Which years would you like to see records from?').appendTo @$el
       @temporalView = new TemporalFilterView
         model: @model
         el: $('<div>').appendTo @$el
 
     if @model.isDatasetFilterable
-      $('<h5>').html('Which datasets should be used?').appendTo @$el
       @datasetsView = new DatasetSelectorView
         collection: @model.availableDatasets
         el: $('<div>').appendTo @$el
