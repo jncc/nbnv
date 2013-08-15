@@ -20,8 +20,9 @@ define [
                         name: val[0].attributes.organisationName
                         href: val[0].attributes.organisationHref
                         id: val[0].attributes.organisationID
-                        datasets: val
+                        datasets: _(val).sortBy('title')
                       )
+                      .sortBy('name')
                       .value()
 
     @$el.html template organisations: organisations
