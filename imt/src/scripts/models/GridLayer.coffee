@@ -19,8 +19,8 @@ define [
   ###
   getCurrentResolution: ->
     resolution = @get "resolution"
-    if @get "isPolygon" then "Polygon" else 
-    if resolution is 'auto' then @get 'autoResolution'
+    if @get "isPolygon" then "Polygon" 
+    else if resolution is 'auto' then @get 'autoResolution'
     else resolution
 
   ###

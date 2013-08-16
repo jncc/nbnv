@@ -36,7 +36,7 @@ define [
     # order is maintained
     _.each layersToFetch, (layer) -> 
       promise = do layer.fetch
-      promise.done -> layers.add layer
+      promise.done -> layers.add layer, addOtherTypes: true
 
 
   singleSpeciesLayer: (query) -> new SingleSpeciesLayer 

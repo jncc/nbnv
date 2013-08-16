@@ -5,8 +5,9 @@ define [
   "cs!models/mixins/DatasetFilterMixin"
   "cs!models/mixins/PolygonFillMixin"
   "cs!collections/TaxonObservations"
+  "cs!models/TaxonObservationTypes"
   "cs!helpers/Globals"
-], (_, GridLayer, TemporalFilterMixin, DatasetFilterMixin, PolygonFillMixin, TaxonObservations, Globals) -> GridLayer.extend _.extend {}, TemporalFilterMixin, DatasetFilterMixin, PolygonFillMixin,
+], (_, GridLayer, TemporalFilterMixin, DatasetFilterMixin, PolygonFillMixin, TaxonObservations, TaxonObservationTypes, Globals) -> GridLayer.extend _.extend {}, TemporalFilterMixin, DatasetFilterMixin, PolygonFillMixin,
   defaults:
     opacity: 1
     visibility: true
@@ -43,6 +44,10 @@ define [
     startYear: @getStartDate() #Temporal mixin handles this value
     endYear : @getEndDate() #Temporal mixin handles this value
     datasetKey: @get("datasets")
+
+  getTaxonObservationTypes: -> new TaxonObservationTypes {},
+    ptvk: @id
+    instance: @
 
   ###
   Define what this layer is mapping
