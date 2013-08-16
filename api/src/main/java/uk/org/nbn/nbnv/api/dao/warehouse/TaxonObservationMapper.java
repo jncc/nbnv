@@ -36,10 +36,10 @@ public interface TaxonObservationMapper {
     public List<TaxonObservation> selectByPTVK(@Param("id") String id, @Param("userKey") int userKey);
     
     @Select("SELECT TOP 1 absence FROM UserTaxonObservationData WHERE pTaxonVersionKey = #{id} AND userID = #{userKey} AND absence = #{absence}")
-    public Integer pTVKHasAbsence(@Param("id") String id, @Param("userKey") int userKey, @Param("absence") int absence);
+    public Integer pTVKHasGridAbsence(@Param("id") String id, @Param("userKey") int userKey, @Param("absence") int absence);
     
-    @Select("SELECT TOP 1 siteKey FROM UserTaxonObservationData WHERE pTaxonVersionKey = #{id} AND userID = #{userKey} AND siteKey IS NOT NULL")
-    public Integer pTVKHasPolygon(@Param("id") String id, @Param("userKey") int userKey);
+    @Select("SELECT TOP 1 siteKey FROM UserTaxonObservationData WHERE pTaxonVersionKey = #{id} AND userID = #{userKey} AND siteKey IS NOT NULL AND absence = #{absence}")
+    public Integer pTVKHasPolygonAbsence(@Param("id") String id, @Param("userKey") int userKey, @Param("absence") int absence);
     
     @SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectRecords")
     public List<TaxonObservation> selectObservationRecordsByFilter(

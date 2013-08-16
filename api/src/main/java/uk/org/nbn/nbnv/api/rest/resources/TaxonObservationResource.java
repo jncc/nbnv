@@ -17,6 +17,8 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.StreamingOutput;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.org.nbn.nbnv.api.dao.providers.ProviderHelper;
@@ -103,8 +105,8 @@ public class TaxonObservationResource extends AbstractResource {
     }
     
     /**
-     * Returns if a TVK has presence records associated with it which are 
-     * accessible by the current user
+     * Returns a JSONObject which states if a TVK has presence,absence and polygon records associated 
+     * with it which are accessible by the current user
      * 
      * @param user The current user
      * @param taxonVersionKey The TVK to be searched
@@ -115,47 +117,14 @@ public class TaxonObservationResource extends AbstractResource {
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("/{ptvk : [A-Z]{3}SYS[0-9]{10}}/hasPresence")
-    public boolean taxonHasPresence(@TokenUser() User user, @PathParam("ptvk") String taxonVersionKey) {
-        return (observationMapper.pTVKHasAbsence(taxonVersionKey, user.getId(), 0) != null);
+    @Path("/{ptvk : [A-Z]{3}SYS[0-9]{10}}/types")
+    public JSONObject taxonHasPresence(@TokenUser() User user, @PathParam("ptvk") String taxonVersionKey) throws JSONException {
+        return new JSONObject()
+                .put("hasGridAbsence", observationMapper.pTVKHasGridAbsence(taxonVersionKey, user.getId(), 1) != null)
+                .put("hasGridPresence", observationMapper.pTVKHasGridAbsence(taxonVersionKey, user.getId(), 0) != null)
+                .put("hasPolygonAbsence", observationMapper.pTVKHasPolygonAbsence(taxonVersionKey, user.getId(), 1) != null)
+                .put("hasPolygonPresence", observationMapper.pTVKHasPolygonAbsence(taxonVersionKey, user.getId(), 0) != null);
     }
-    
-    /**
-     * Returns if a TVK has absence records associated with it which are 
-     * accessible by the current user
-     * 
-     * @param user The current user
-     * @param taxonVersionKey The TVK to be searched
-     * @return If any absence records exist
-     * 
-     * @response.representation.200.qname boolean
-     * @response.representation.200.mediaType application/json
-     */
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path("/{ptvk : [A-Z]{3}SYS[0-9]{10}}/hasAbsence")
-    public boolean taxonHasAbsence(@TokenUser() User user, @PathParam("ptvk") String taxonVersionKey) {
-        return (observationMapper.pTVKHasAbsence(taxonVersionKey, user.getId(), 1) != null);
-    }
-    
-    /**
-     * Returns if a TVK has polygon records associated with it which are 
-     * accessible by the current user
-     * 
-     * @param user The current user
-     * @param taxonVersionKey The TVK to be searched
-     * @return If any polygon records exist
-     * 
-     * @response.representation.200.qname boolean
-     * @response.representation.200.mediaType application/json
-     */
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path("/{ptvk : [A-Z]{3}SYS[0-9]{10}}/hasPolygon")
-    public boolean taxonHasPolygon(@TokenUser() User user, @PathParam("ptvk") String taxonVersionKey) {
-        return (observationMapper.pTVKHasPolygon(taxonVersionKey, user.getId()) != null);
-    }
-
 
     /*
      * Needs InjectorProvider to work
