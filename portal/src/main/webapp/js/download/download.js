@@ -16,6 +16,7 @@ nbn.nbnv.ui.download = function (json, div) {
     this.div.append(reason._renderPanel());
     this.div.append(spatial._renderHeader());
     this.div.append(spatial._renderPanel());
+    spatial._postRender();
     this.div.append(taxon._renderHeader());
     this.div.append(taxon._renderPanel());
     this.div.append(year._renderHeader());

@@ -11,6 +11,16 @@ import uk.org.nbn.nbnv.api.rest.resources.ObservationResourceDefaults;
 
 public class GridMapSquareProvider {
 
+    public String searchForMatchingResolutions(Map<String, Object> params) {
+        BEGIN();
+        SELECT("g.identifier");
+        FROM("GridSquareFeatureData g");
+        WHERE("g.identifier LIKE '%" + params.get("term") + "%'");
+        WHERE("g.resolution = '" + params.get("resolution") + "'");
+        ORDER_BY("g.identifier");
+        return SQL();
+    }
+    
     public String gridMapSquares(Map<String, Object> params) {
         BEGIN();
         SELECT("DISTINCT fd.identifier gridref");
