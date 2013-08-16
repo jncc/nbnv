@@ -3,7 +3,7 @@ define [
   'backbone'
   "cs!helpers/Globals"
 ], (_, Backbone, Globals) -> Backbone.Model.extend 
-  url: -> Globals.api "taxonObservations/#{@ptvk}/types"
+  url: -> Globals.api "taxonObservations/#{@id}/types"
 
   ###
   Define the list of the different types of layer
@@ -14,22 +14,22 @@ define [
                 {relates: "hasPolygonAbsence", isPresence: false, isPolygon: true}
                 {relates: "hasPolygonPresence", isPresence: true, isPolygon: true}]
 
-  initialize: (attr, options) ->
-    @ptvk = options.ptvk
-    @instance = options.instance
+  initialize: (attr) ->
+    @defaultLayer = attr.defaultLayer
+    Backbone.Model.prototype.initialize @, arguments
   
   ###
   Return an array of SingleSpeciesLayers which represent the different
-  types of layers (other than the one represented by instance) which are 
+  types of layers (other than the one represented by defaultLayer) which are 
   stored on the gateway for the given taxon.
   ###
   getOtherLayers: ->
-    #Determine the type of the instance
-    flags = _.pick @instance.attributes, 'isPolygon', 'isPresence'
-    instanceType = _.findWhere(@layerTypes, flags).relates
-
+    #Determine the type of the defaultLayer
+    flags = _.pick @defaultLayer.attributes, 'isPolygon', 'isPresence'
+    defaultLayerType = _.findWhere(@layerTypes, flags).relates
+    
     _.chain(@layerTypes)
       .filter((curr) => @get curr.relates) #filter out the the map types which don't exist for this taxon
-      .reject((curr) -> curr.relates is instanceType)
-      .map( (ele)=> @instance.clone().set ele)
+      .reject((curr) -> curr.relates is defaultLayerType)
+      .map( (ele)=> @defaultLayer.clone().set ele)
       .value()
