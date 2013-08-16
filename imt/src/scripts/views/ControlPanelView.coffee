@@ -17,6 +17,7 @@ define [
     @listenTo @model, 'change:controlPanelVisible', @updateVisiblity
     @listenTo @model.getPicker(), 'change:hasResults', @updateIsPicking
     @listenTo @model.getLayers(), 'add remove reset', @updatePickerState
+    @listenTo @model.getLayers(), 'add', @activateLegend
 
   render: ->
     @$el.html controlPanel()
@@ -42,6 +43,9 @@ define [
     state = if @model.getPicker().getPickableLayers().length is 0 then "disable" else "enable"
     @$('.controlPanelTabs').tabs state, 2
 
+  activateLegend: ->
+    @$('.controlPanelTabs').tabs("option", "active", 0)
+
   ###
   Determine if the picker tab has been selected. If it has
   put the map into picking mode
@@ -53,4 +57,5 @@ define [
     if isOnPickerTab and @model.getPicker().hasResults()
       @$el.animate width:800
     else
+      @model.getPicker().clearResults()
       @$el.animate width:357
