@@ -22,4 +22,4 @@ set POWERSHELL_PUBLISH=$deploymentParams = @{}; ^
 		-ConnectionURI http://%SERVER%:5985/WSMAN ^
 		-Credential $Cred;
 
-powershell -command "%POWERSHELL_PUBLISH%" < NUL
+powershell.bat "%POWERSHELL_PUBLISH%"

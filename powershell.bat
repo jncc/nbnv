@@ -2,4 +2,4 @@
 
 REM A simple wrapper so that bamboo can execute powershell commands
 
-powershell -command "%1" < NUL
+powershell.exe -command "%1" < NUL
