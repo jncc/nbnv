@@ -31,7 +31,7 @@ public class Solr {
         public SolrBuilder query(String q) {
             if(q!=null && !q.isEmpty()) {
                 query.setQuery(q);
-                query.setParam("defType", "dismax");
+                query.setParam("defType", "edismax");
                 query.setParam("qf", "name^3 taxonCode");
                 query.setParam("q.op", "AND");
             }
