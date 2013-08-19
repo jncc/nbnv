@@ -5,7 +5,7 @@ define [
 ], (_, Backbone, template) -> Backbone.View.extend
 
   initialize: ->
-    @listenTo @collection, 'add remove change:usedDatasets', @render
+    @listenTo @collection, 'add remove reset change:usedDatasets', @render
 
   ###
   This datasets view renders the datasets which are currently

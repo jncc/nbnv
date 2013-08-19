@@ -35,6 +35,7 @@ define [
       @listenTo @model, "change:baseLayer", @updateBaseLayer
       @listenTo @model.getLayers(), "add", @addLayer
       @listenTo @model.getLayers(), "position", @positionLayer
+      @listenTo @model.getLayers(), "reset", @resetLayers
       @listenTo @model.getLayers(), "remove", @removeLayer
       @listenTo @model.getPicker(), "change:isPicking", @toggleDrawing
 
@@ -82,6 +83,13 @@ define [
     Remove the wms layer associated with the given layer
     ###
     removeLayer: (layer)-> @map.removeLayer layer._openlayersWMS
+
+    ###
+    Remove all the old wms layers and replace with the reset collection
+    ###
+    resetLayers: (layers, options) ->
+      _.each options.previousModels, (layer) => @removeLayer layer
+      layers.forEach (layer) => @addLayer layer
 
     ###
     Event listener for viewport changes on the model. Update the Openlayers Map
