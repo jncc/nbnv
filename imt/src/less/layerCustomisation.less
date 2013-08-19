@@ -12,7 +12,7 @@
       float:left;
       height:80px;
       width:80px;
-      background: #ffffff url('../img/colourPickerTransparent.png') repeat;
+      background: #ffffff data-uri('../img/colourPicker/fullTransparent.png') repeat;
       border: 1px black solid;
 
       .preview {
@@ -27,16 +27,15 @@
         height: 21px;
         span { margin-right: 8px; }
         div {
-          background: none;
-          background-image: url('../img/colourPicker.png');
           float: right;
           width: 215px;
           margin-top:6px;
         }
 
-        .sat-slider { background-position: 0 -9px; }
-        .lum-slider { background-position: 0 -18px; }
-        .opacity-slider { background-position: 0 -27px; }
+        .hue-slider { background: white data-uri('../img/colourPicker/hue.png') repeat;}
+        .sat-slider { background: white data-uri('../img/colourPicker/sat.png') repeat;}
+        .lum-slider { background: white data-uri('../img/colourPicker/lum.png') repeat;}
+        .opacity-slider { background: white data-uri('../img/colourPicker/opacity.png') repeat;}
       }
     }
   }
