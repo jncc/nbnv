@@ -2,6 +2,7 @@ package uk.org.nbn.nbnv.api.rest.resources;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -230,7 +231,7 @@ public class TaxonObservationResource extends AbstractResource {
             public void write(OutputStream out) throws IOException, WebApplicationException {
                 ZipOutputStream zip = new ZipOutputStream(out);
                 String title = "Species list download";
-                addSpecies(zip, user, startYear, endYear, datasetKeys, taxa, spatialRelationship, siteKey, sensitive, designation, taxonOutputGroup, gridRef, polygon);
+                addObservations(zip, user, startYear, endYear, datasetKeys, taxa, spatialRelationship, siteKey, sensitive, designation, taxonOutputGroup, gridRef, polygon);
                 addReadMe(zip, title, user, startYear, endYear, datasetKeys, spatialRelationship, siteKey, sensitive, designation, taxonOutputGroup);
                 addDatasetMetadata(zip, user, startYear, endYear, datasetKeys, taxa, spatialRelationship, siteKey, sensitive, designation, taxonOutputGroup, gridRef, polygon);
                 zip.flush();
@@ -901,6 +902,71 @@ public class TaxonObservationResource extends AbstractResource {
             values.add(taxon.getPTaxonVersionKey());
             downloadHelper.writelnCsv(zip, values);
         }
+    }
+    
+    private void addObservations(ZipOutputStream zip, User user, int startYear, int endYear, List<String> datasetKeys, List<String> taxa, String spatialRelationship, String featureID, boolean sensitive, String designation, String taxonOutputGroup, String gridRef, String polygon) throws IOException {
+        List<TaxonObservationDownload> observations = observationMapper.selectDownloadableRecords(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon);
+        zip.putNextEntry(new ZipEntry("Observations.csv"));
+        ArrayList<String> values = new ArrayList<String>();
+        values.add("observationID");
+        values.add("recordKey");
+        values.add("organisationName");
+        values.add("datasetKey");
+        values.add("surveyKey");
+        values.add("sampleKey");
+        values.add("gridReference");
+        values.add("precision");
+        values.add("siteKey");
+        values.add("siteName");
+        values.add("featureKey");
+        values.add("startDate");
+        values.add("endDate");
+        values.add("dateType");
+        values.add("recorder");
+        values.add("determiner");
+        values.add("pTaxonVersionKey");
+        values.add("taxonName");
+        values.add("authority");
+        values.add("commonName");
+        values.add("taxonGroup");
+        values.add("sensitive");
+        values.add("zeroAbundance");
+        values.add("fullVersion");
+        values.add("useConstraints");
+        downloadHelper.writelnCsv(zip, values);
+        
+        SimpleDateFormat df = new SimpleDateFormat("dd-mm-yyyy");
+        
+        for(TaxonObservationDownload observation : observations) {
+            values = new ArrayList<String>();
+            values.add(Integer.toString(observation.getObservationID()));
+            values.add(observation.getObservationKey());
+            values.add(observation.getOrganisationName());
+            values.add(observation.getDatasetKey());
+            values.add(observation.getSurveyKey());
+            values.add(observation.getSampleKey());
+            values.add(observation.getGridReference());
+            values.add(observation.getPrecision());
+            values.add(observation.getSiteKey());
+            values.add(observation.getSiteName());
+            values.add(observation.getFeatureKey());
+            values.add(df.format(observation.getStartDate()));
+            values.add(df.format(observation.getEndDate()));
+            values.add(observation.getDateType());
+            values.add(observation.getRecorder());
+            values.add(observation.getDeterminer());
+            values.add(observation.getpTaxonVersionKey());
+            values.add(observation.getpTaxonName());
+            values.add(observation.getAuthority());
+            values.add(observation.getCommonName());
+            values.add(observation.getTaxonGroup());
+            values.add(observation.isSensitive() ? "1" : "0");
+            values.add(observation.isZeroAbundance() ? "1" : "0");
+            values.add(observation.isFullVersion()? "1" : "0");
+            values.add(observation.getUseConstraints());
+            downloadHelper.writelnCsv(zip, values);
+        }
+        
     }
 
     /**

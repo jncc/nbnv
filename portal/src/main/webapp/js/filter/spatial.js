@@ -252,7 +252,11 @@ nbn.nbnv.ui.filter.spatial = function(json) {
         if (this._all) {
             return '';
         }
-        return "spatialRelationship=" + this._matchType + ",siteKey=" + this._feature;
+        if (this._siteFilter) {
+            return "spatialRelationship=" + this._matchType + ",siteKey=" + this._feature;
+        }
+        this._feature = $('#gridRefSelector').val();
+        return "spatialRelationship=" + this._matchType + ",gridRef=" + this._feature;
     };
 
     this.getError = function() {

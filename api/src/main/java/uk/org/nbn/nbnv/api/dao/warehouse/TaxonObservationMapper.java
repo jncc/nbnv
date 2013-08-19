@@ -15,6 +15,7 @@ import uk.org.nbn.nbnv.api.model.TaxonDataset;
 import uk.org.nbn.nbnv.api.model.TaxonDatasetWithQueryStats;
 import uk.org.nbn.nbnv.api.model.TaxonObservation;
 import uk.org.nbn.nbnv.api.model.TaxonObservationAttributeValue;
+import uk.org.nbn.nbnv.api.model.TaxonObservationDownload;
 import uk.org.nbn.nbnv.api.model.TaxonOutputGroup;
 import uk.org.nbn.nbnv.api.model.TaxonOutputGroupWithQueryStats;
 import uk.org.nbn.nbnv.api.model.TaxonWithQueryStats;
@@ -290,4 +291,18 @@ public interface TaxonObservationMapper {
             , @Param("gridRef") String gridRef
             , @Param("polygon") String polygon);
     
+    @SelectProvider(type= TaxonObservationProvider.class, method="filteredDownloadRecrods")
+    public List<TaxonObservationDownload> selectDownloadableRecords(
+            @Param("user") User user
+            , @Param("startYear") Integer startYear
+            , @Param("endYear") Integer endYear
+            , @Param("datasetKey") List<String> datasetKey
+            , @Param("ptvk") List<String> ptvk
+            , @Param("spatialRelationship") String spatialRelationship
+            , @Param("featureID") String featureId
+            , @Param("sensitive") Boolean sensitive
+            , @Param("designation") String designation
+            , @Param("taxonOutputGroup") String taxonOutputGroup
+            , @Param("gridRef") String gridRef
+            , @Param("polygon") String polygon);
 }

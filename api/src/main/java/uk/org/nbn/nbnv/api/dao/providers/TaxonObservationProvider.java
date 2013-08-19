@@ -13,6 +13,48 @@ import uk.org.nbn.nbnv.api.rest.resources.ObservationResourceDefaults;
  */
 public class TaxonObservationProvider {
 
+    public String filteredDownloadRecrods(Map<String, Object> params) {
+        String from = createSelectDownload(params, "o.*");
+        BEGIN();
+        SELECT("obs.id as observationID, "
+                + "obs.observationKey, "
+                + "od.name as organisationName, "
+                + "obs.datasetKey, "
+                + "o.surveyKey, "
+                + "obs.sampleKey, "
+                + "fd.label as gridReference, "
+                + "r.label as [precision], "
+                + "obs.siteID as siteKey, "
+                + "sd.name as siteName, "
+                + "obs.featureID as featureKey, "
+                + "obs.startDate, "
+                + "obs.endDate, "
+                + "dt.label as dateType, "
+                + "rd.name as recorder, "
+                + "rdd.name as determiner, "
+                + "obs.pTaxonVersionKey, "
+                + "td.name as taxonName, "
+                + "td.authority, "
+                + "tdd.name as commonName, "
+                + "togd.name as taxonGroup, "
+                + "obs.sensitive, "
+                + "obs.absence as zeroAbundance, "
+                + "dd.useConstraints as useConstraint");
+        FROM(from);
+        JOIN("TaxonData td ON t.pTaxonVersionKey = td.taxonVersionKey");
+        JOIN("TaxonData tdd ON td.commonNameTaxonVersionKey = tdd.taxonVersionKey");
+        JOIN("TaxonOutputGroupData togd ON td.taxonOutputGroupKey = togd.[key]");
+        JOIN("DatasetData dd ON t.datasetKey = dd.[key]");
+        JOIN("OrganisationData od ON dd.organisationID = od.id");
+        JOIN("FeatureData fd ON t.featureID = fd.id");
+        JOIN("Resolution r ON fd.resolutionID = r.id");
+        JOIN("SiteData sd ON t.siteID = sd.id");
+        JOIN("DateType dt ON t.dateTypeKey = dt.[key]");
+        JOIN("RecorderData rd ON t.recorderID = rd.id");
+        JOIN("RecorderData rdd ON t.determinerID = rdd.id");
+        return SQL();
+    }
+    
     public String filteredSelectRecords(Map<String, Object> params) {
         String from = createSelect(params, "o.*");
         BEGIN();
@@ -200,7 +242,7 @@ public class TaxonObservationProvider {
         FROM(from);
         return SQL();
     }
-
+    
     String createSelect(Map<String, Object> params, String fields) {
         String publicSelect = createSelectQuery(params, false, fields);
         String fullSelect = createSelectQuery(params, true, fields);
@@ -210,6 +252,12 @@ public class TaxonObservationProvider {
     String createSelectEnhanced(Map<String, Object> params, String fields) {
         String fullSelect = createSelectAllRecordsQuery(params, fields);
         return "(" + fullSelect + ") obs";
+    }
+    
+    String createSelectDownload(Map<String, Object> params, String fields) {
+        String publicSelect = createSelectQuery(params, false, fields + ", 0 as fullVersion");
+        String fullSelect = createSelectQuery(params, true, fields + ", 1 as fullVersion");
+        return "(" + fullSelect + " UNION ALL " + publicSelect + ") obs";
     }
 
     String createSelectQuery(Map<String, Object> params, boolean full, String fields) {
@@ -300,7 +348,7 @@ public class TaxonObservationProvider {
         if (params.containsKey("absence")) {
             WHERE("o.absence = #{absence}");
         }
-
+        
         return SQL();
     }
 
