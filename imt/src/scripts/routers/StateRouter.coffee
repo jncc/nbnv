@@ -11,23 +11,42 @@ define [
   routes:
     "*data" : "updateModel"
 
+  layerTypes: []
+
   initialize: (options) ->
     @model = options.model
+
+    @layerTypes.push constr: HabitatLayer, parser: @parseHabitatLayer, shrinker: @miniHabitatLayer
+    @layerTypes.push constr: SiteBoundaryLayer, parser: @parseSiteBoundaryLayer, shrinker: @miniSiteBoundaryLayer
+    @layerTypes.push constr: SingleSpeciesLayer, parser: @parseSingleSpeciesLayer, shrinker: @miniSingleSpeciesLayer
+    @layerTypes.push constr: DatasetSpeciesDensityLayer, parser: @parseDatasetsSpeciesDensityLayer, shrinker: @miniDatasetsSpeciesDensityLayer
+    @layerTypes.push constr: DesignationSpeciesDensityLayer, parser: @parseDesignationSpeciesDensityLayer, shrinker: @miniDesignationSpeciesDensityLayer
+
     @listenTo @model.getLayers(), 'add remove position', @updateRoute
 
   updateModel:(route)->
     if route?
-      sites = _.map route.split('!'), (layerDef)=> @parseLayerDef layerDef
+      sites = _.map route.split('!'), (layerDef) => @parseLayerDef layerDef
       layers = @model.getLayers()
-      
+      console.log sites
       $.when
         .apply($, _.map sites, (layer) -> do layer.fetch)
         .then(-> layers.reset sites, routing: true)
 
+
   updateRoute: (layer, collection, options) ->
-    #if not options.routing
-      #state = @model.getLayers().pluck('key').join ','
-      #@navigate state
+    if not options.routing
+      @navigate @model
+                  .getLayers()
+                  .map((layer) => 
+                    #Find the correct shrinker and shrink
+                    layerType = _.find(@layerTypes, (type) -> layer instanceof type.constr)
+                    shrunkLayer = layerType.shrinker.call this, layer #shrink in the context of the router
+                    #Create the control rixit
+                    layerControl = shrunkLayer.options * 8 + _.indexOf @layerTypes, layerType
+                    @fromNumber(layerControl) + shrunkLayer.layerDef #concat to layerDef
+                  )
+                  .join '!'
 
   ###
   There are currently 5 different types of Layer which can be added to the map:
@@ -43,17 +62,10 @@ define [
   in the correct context.
   ###
   parseLayerDef: (layerDef) ->
-    layerTypes =
-      0 : @parseHabitatLayer
-      1 : @parseSiteBoundaryLayer
-      2 : @parseSingleSpeciesLayer
-      3 : @parseDatasetsSpeciesDensityLayer
-      4 : @parseDesignationSpeciesDensityLayer
-
     layerDefNumber = @toNumber layerDef[0]
     layerOptions = Math.floor layerDefNumber / 8 #Get the 3 high order bits
     layerType = layerDefNumber & 0x03 #Get the 3 low order bits
-    layerTypes[layerType].call @, layerDef.substring(1), layerOptions
+    @layerTypes[layerType].parser.call @, layerDef.substring(1), layerOptions
 
   ###
   
@@ -63,7 +75,6 @@ define [
     parts = layerDef.split(',')
     style = @parseStyle parts[1] if parts.length is 2
     new SiteBoundaryLayer _.extend key: @parseDatasetKey(parts[0]), style
-
 
   ###
   The layer definition of the single species takes the following form :
@@ -88,28 +99,41 @@ define [
 
     new SingleSpeciesLayer layerConfig
 
-  parseFilterOptions: (options) -> styleFilter: false, yearFilter: false
+  miniSingleSpeciesLayer: (layer) -> 
+    attr = layer.attributes
+    options: @miniFilterOptions layer
+    layerDef: "#{@miniLayerConfig(attr)}#{@miniTaxonVersionKey(layer.id)}"
+
+  parseFilterOptions: (options) -> 
+    styleFilter: options & 0x02 is 0x02, 
+    yearFilter: options & 0x01 is 0x01
+
+  miniFilterOptions: (layer) ->
+    options = 0
+    options += 0x01 if layer.isYearFiltering()
+    options += 0x02 if layer.isUsingCustomColour() or layer.getOpacity() isnt 1
+    return options
 
   #This list can hold up to 8 values
   tvkProviders : ['NHM','NBN','BMS','EHS']
 
   ###
-  7 rixits maximum
+  6 rixits maximum
   ###
   parseTaxonVersionKey: (miniTVK) ->
     return miniTVK if miniTVK.length is 16 # If the representation is 16 chars long, treat as normal key
 
     lastCharater = miniTVK.substring(miniTVK.length - 1)
-    provider = @toNumber(lastCharater) & 0x07
-    numeric = Math.floor((@toNumber miniTVK) / 8)
+    provider = @toNumber(lastCharater) & 0x03
+    numeric = Math.floor((@toNumber miniTVK) / 4)
     @tvkProviders[provider] + "SYS" + @leadingZeros numeric.toString(), 10
 
   miniTaxonVersionKey: (tvk) ->
-    return tvk if not /(NHM|NBN|BMS|EHS)[0-9]{10}/.test tvk #Check if the tvk is minifiable
+    return tvk if not /(NHM|NBN|BMS|EHS)(SYS)[0-9]{10}/.test tvk #Check if the tvk is minifiable
 
-    type = _.indexOf @tvkProviders, tvk.substring(0, 3) #get the 3bit provider
-    numeric = parseInt tvk.substring(3)
-    @fromNumber numeric * 8 + type
+    type = _.indexOf @tvkProviders, tvk.substring(0, 3) #get the 2bit provider
+    numeric = parseInt tvk.substring(6)
+    @fromNumber numeric * 4 + type
 
   datasetTypes : ['HL','GA','SB']
 

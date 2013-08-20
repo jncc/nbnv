@@ -7,11 +7,13 @@ define [
 
   latestRecordDate: new Date().getFullYear()
 
-  initialize: () ->
+  initialize: ->
 
-  getStartDate: () -> @get "startDate" if @get("startDate") > @earliestRecordDate
+  getStartDate: -> @get "startDate" if @get("startDate") > @earliestRecordDate
 
-  getEndDate: () -> @get "endDate" if @get("endDate") < @latestRecordDate
+  getEndDate: -> @get "endDate" if @get("endDate") < @latestRecordDate
+
+  isYearFiltering: -> @getStartDate()? or @getEndDate()?
 
   ###
   Check if the values start date and end date are valid. If not

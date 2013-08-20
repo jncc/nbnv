@@ -5,11 +5,23 @@ define [
 ], ($, polygonFill, polygonHatching) ->
   isStyleable: true #expose that this layer is styleable
 
-  initialize: () ->
-    @set "colour", $.md5(@id).substring 0, 6 if not @has 'colour'
+  initialize: ->
+    @set "colour", @getDefaultColour() if not @has 'colour'
 
     @on 'change:colour change:symbol', -> @trigger 'change:legendIcon'
     @on 'change:colour change:symbol change:layer', -> @trigger 'change:sld'
+
+
+  ###
+  Generates a default colour for this layer based on the md5 hash 
+  of the layers id
+  ###
+  getDefaultColour: -> $.md5(@id).substring 0, 6
+
+  ###
+  Checks if the current colour is different to the default colour
+  ###
+  isUsingCustomColour: -> @getDefaultColour() is @get "colour"
 
   ###
   The following method will work out the sld template which
