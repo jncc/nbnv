@@ -6,7 +6,7 @@ define [
   isStyleable: true #expose that this layer is styleable
 
   initialize: () ->
-    @set "colour", $.md5(@id).substring 0, 6
+    @set "colour", $.md5(@id).substring 0, 6 if not @has 'colour'
 
     @on 'change:colour change:symbol', -> @trigger 'change:legendIcon'
     @on 'change:colour change:symbol change:layer', -> @trigger 'change:sld'

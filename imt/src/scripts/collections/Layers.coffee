@@ -24,9 +24,11 @@ define [
 
   initialize: ->
     #When a layer is added, synchronize that layer to this layers state
-    @on "add", @_syncLayer
+    syncAllLayers = => @forEach (layer) => @_syncLayer(layer) 
     @on "add", @_addOtherTypes
-    @listenTo @state, "change", => @forEach (layer) => @_syncLayer(layer)
+    @on "add", @_syncLayer
+    @on "reset", syncAllLayers
+    @listenTo @state, "change", syncAllLayers
 
   ###
   Moves an existing element in the the collection from position index 
