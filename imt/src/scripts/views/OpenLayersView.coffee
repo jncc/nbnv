@@ -67,10 +67,8 @@ define [
     addLayer: (layer)-> 
       @map.addLayer layer._openlayersWMS = OpenLayersLayerFactory.createLayer(layer)
       #move the new layer to below the drawing layer(s). this can be done by setting
-      #the index of the new layer to the size of the collection. Length will be one 
-      #than the last index of the collection, and will therefore will accomodate the 
-      #base layer
-      @map.setLayerIndex layer._openlayersWMS, @model.getLayers().length
+      #the index of the new layer to the amount of layers - 2.
+      @map.setLayerIndex layer._openlayersWMS, @map.getNumLayers() - 2
 
     ###
     Listens to when layers have been repositioned. Notify the OpenLayers Map and set the 
