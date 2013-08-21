@@ -69,6 +69,6 @@ define [
   expandDatasetKey: (miniDatasetKey) ->
     return miniDatasetKey if miniDatasetKey.length is 8  #If the representation is 8 chars long, treat as normal key
     lastCharater = miniDatasetKey.substring(miniDatasetKey.length - 1)  #Get the last character from the miniDatasetKey, this holds the type
-    type = @toNumber(lastCharater) & 0x03                               #Get the type as an id
+    type = Numbers.fromBase64(lastCharater) & 0x03                               #Get the type as an id
     numeric = Math.floor Numbers.fromBase64(miniDatasetKey) / 4         #Remove the last 2 bits from the number
     "#{DATASET_TYPES[type]}#{Numbers.pad numeric, 6}"                   #0 pad the number to make it 6 chars long

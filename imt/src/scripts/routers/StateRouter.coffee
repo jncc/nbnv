@@ -27,7 +27,7 @@ define [
     @layerTypes.push constr: DatasetSpeciesDensityLayer, parser: @parseDatasetsSpeciesDensityLayer, shrinker: @miniDatasetsSpeciesDensityLayer
     @layerTypes.push constr: DesignationSpeciesDensityLayer, parser: @parseDesignationSpeciesDensityLayer, shrinker: @miniDesignationSpeciesDensityLayer
 
-    @listenTo @model.getLayers(), 'add remove position change:colour change:startDate change:endDate change:resolution', @updateRoute
+    @listenTo @model.getLayers(), 'add remove position change:colour change:usedDatasets change:startDate change:endDate change:resolution', @updateRoute
 
   updateModel:(route)->
     if route?
@@ -62,7 +62,7 @@ define [
   * DesignationSpeciesDensityLayer - 0b100
 
   The different type of layers are represented in low order of bits of the first
-  base64 character of the layerDef. These leaves the 3 high order bits available
+  base64 character of the layerDef. This leaves the 3 high order bits available
   for customisation of the layer. See the relevant function to find the definition
   in the correct context.
   ###
@@ -72,8 +72,8 @@ define [
     layerType = layerDefNumber & 0x03 #Get the 3 low order bits
     @layerTypes[layerType].parser.call @, layerDef.substring(1), layerOptions
 
+
   ###
-  
   @param layerDef The definition for this site boundary layer, emiting the control charater
   ###
   parseSiteBoundaryLayer: (layerDef, options) ->
@@ -100,7 +100,7 @@ define [
     _.extend layerConfig, Styles.expandStyle parts.shift() if filterOptions.styleFilter
     _.extend layerConfig, Years.expandYearRange parts.shift() if filterOptions.yearFilter
 
-    layerConfig.datasets = _.map parts, (key) => @parseDatasetKey key
+    layerConfig.datasets = _.map parts, (key) => Keys.expandDatasetKey key
 
     new SingleSpeciesLayer layerConfig
 
@@ -109,7 +109,7 @@ define [
     layerParts = ["#{Resolutions.shrinkResolution(attr)}#{Keys.shrinkTVK(layer.id)}"]
     layerParts.push "#{Styles.shrinkStyle(attr)}" if layer.isUsingCustomColour() or layer.getOpacity() isnt 1
     layerParts.push "#{Years.shrinkYearRange(attr)}" if layer.isYearFiltering()
-    layerParts = layerParts.concat _.map attr.datasets, (key) => @miniDatasetKey key
+    layerParts = layerParts.concat _.map attr.datasets, (key) => Keys.shrinkDatasetKey key
 
     options: @miniFilterOptions layer
     layerDef: layerParts.join ','
@@ -119,8 +119,33 @@ define [
     yearFilter: (options & 0x01) is 0x01
 
   miniFilterOptions: (layer) ->
-    console.log layer.isYearFiltering()
     options = 0
     options += 0x01 if layer.isYearFiltering()
-    options += 0x02 if layer.isUsingCustomColour() or layer.getOpacity() isnt 1
+    options += 0x02 if layer.isUsingCustomColour?() or layer.getOpacity() isnt 1
     return options
+
+  ###
+  This router handles the conversion of the state of the map to a minimal url safe string
+  representation. The url should represent :
+  * The current map viewport
+  * The Background Layer Selected
+  * The Layers and their respective state (filters, styling etc)
+
+  From the above we can propose a simple structure for the url:
+    [VIEWPORT][BACKGROUND_LAYER][LAYER_1]![LAYER_2]...![LAYER_N]
+
+  There are two types of layer which we add to the map; Observation and Context layers.
+  To simplify to url encoding scheme, the layers which fall into each type are handled by
+  the same logic. When processing each layer component, it is necessary to be able to 
+  distinguish what type of layer it is we need to create/serialize. This layer type is represented
+  in the first 3 bits of the Base64 didgit of the Layer def, such that the bit mask 0b000111
+  will obtain in.
+
+  The 3 bits of the layer allow for upto 8 different layer definitions 
+
+  First lets look at the Observation Layers.
+
+  Observation layers (SingleSpeciesLayer, DatasetSpeciesLayer, DesignationSpeciesLayer) can be 
+  represented
+  ###
+
