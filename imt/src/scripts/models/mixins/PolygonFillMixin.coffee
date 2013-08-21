@@ -21,7 +21,7 @@ define [
   ###
   Checks if the current colour is different to the default colour
   ###
-  isUsingCustomColour: -> @getDefaultColour() is @get "colour"
+  isUsingCustomColour: -> @getDefaultColour() isnt @get "colour"
 
   ###
   The following method will work out the sld template which

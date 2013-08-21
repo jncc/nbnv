@@ -7,7 +7,12 @@ define [
   'cs!models/DesignationSpeciesDensityLayer'
   'cs!models/HabitatLayer'
   'cs!models/SiteBoundaryLayer'
-], ($, _, Backbone, SingleSpeciesLayer, DatasetSpeciesDensityLayer, DesignationSpeciesDensityLayer, HabitatLayer, SiteBoundaryLayer) -> Backbone.Router.extend
+  'cs!helpers/Numbers'
+  'cs!helpers/representations/Keys'
+  'cs!helpers/representations/Resolutions'
+  'cs!helpers/representations/Styles'
+  'cs!helpers/representations/Years'
+], ($, _, Backbone, SingleSpeciesLayer, DatasetSpeciesDensityLayer, DesignationSpeciesDensityLayer, HabitatLayer, SiteBoundaryLayer, Numbers, Keys, Resolutions, Styles, Years) -> Backbone.Router.extend
   routes:
     "*data" : "updateModel"
 
@@ -22,19 +27,19 @@ define [
     @layerTypes.push constr: DatasetSpeciesDensityLayer, parser: @parseDatasetsSpeciesDensityLayer, shrinker: @miniDatasetsSpeciesDensityLayer
     @layerTypes.push constr: DesignationSpeciesDensityLayer, parser: @parseDesignationSpeciesDensityLayer, shrinker: @miniDesignationSpeciesDensityLayer
 
-    @listenTo @model.getLayers(), 'add remove position', @updateRoute
+    @listenTo @model.getLayers(), 'add remove position change:colour change:startDate change:endDate change:resolution', @updateRoute
 
   updateModel:(route)->
     if route?
       sites = _.map route.split('!'), (layerDef) => @parseLayerDef layerDef
       layers = @model.getLayers()
-      console.log sites
+
       $.when
         .apply($, _.map sites, (layer) -> do layer.fetch)
         .then(-> layers.reset sites, routing: true)
 
 
-  updateRoute: (layer, collection, options) ->
+  updateRoute: (changed..., options) ->
     if not options.routing
       @navigate @model
                   .getLayers()
@@ -44,7 +49,7 @@ define [
                     shrunkLayer = layerType.shrinker.call this, layer #shrink in the context of the router
                     #Create the control rixit
                     layerControl = shrunkLayer.options * 8 + _.indexOf @layerTypes, layerType
-                    @fromNumber(layerControl) + shrunkLayer.layerDef #concat to layerDef
+                    Numbers.toBase64(layerControl) + shrunkLayer.layerDef #concat to layerDef
                   )
                   .join '!'
 
@@ -62,7 +67,7 @@ define [
   in the correct context.
   ###
   parseLayerDef: (layerDef) ->
-    layerDefNumber = @toNumber layerDef[0]
+    layerDefNumber = Numbers.fromBase64 layerDef[0]
     layerOptions = Math.floor layerDefNumber / 8 #Get the 3 high order bits
     layerType = layerDefNumber & 0x03 #Get the 3 low order bits
     @layerTypes[layerType].parser.call @, layerDef.substring(1), layerOptions
@@ -89,11 +94,11 @@ define [
     filterOptions = @parseFilterOptions options
     parts = layerDef.substring(1).split ','
 
-    layerConfig = @parseLayerConfig layerDef.substring 0, 1
-    layerConfig.ptaxonVersionKey = @parseTaxonVersionKey parts.shift()
+    layerConfig = Resolutions.expandResolution layerDef.substring 0, 1
+    layerConfig.ptaxonVersionKey = Keys.expandTVK parts.shift()
 
-    _.extend layerConfig, @parseStyle parts.shift() if filterOptions.styleFilter
-    _.extend layerConfig, @parseYearRange parts.shift() if filterOptions.yearFilter
+    _.extend layerConfig, Styles.expandStyle parts.shift() if filterOptions.styleFilter
+    _.extend layerConfig, Years.expandYearRange parts.shift() if filterOptions.yearFilter
 
     layerConfig.datasets = _.map parts, (key) => @parseDatasetKey key
 
@@ -101,154 +106,21 @@ define [
 
   miniSingleSpeciesLayer: (layer) -> 
     attr = layer.attributes
+    layerParts = ["#{Resolutions.shrinkResolution(attr)}#{Keys.shrinkTVK(layer.id)}"]
+    layerParts.push "#{Styles.shrinkStyle(attr)}" if layer.isUsingCustomColour() or layer.getOpacity() isnt 1
+    layerParts.push "#{Years.shrinkYearRange(attr)}" if layer.isYearFiltering()
+    layerParts = layerParts.concat _.map attr.datasets, (key) => @miniDatasetKey key
+
     options: @miniFilterOptions layer
-    layerDef: "#{@miniLayerConfig(attr)}#{@miniTaxonVersionKey(layer.id)}"
+    layerDef: layerParts.join ','
 
   parseFilterOptions: (options) -> 
-    styleFilter: options & 0x02 is 0x02, 
-    yearFilter: options & 0x01 is 0x01
+    styleFilter: (options & 0x02) is 0x02
+    yearFilter: (options & 0x01) is 0x01
 
   miniFilterOptions: (layer) ->
+    console.log layer.isYearFiltering()
     options = 0
     options += 0x01 if layer.isYearFiltering()
     options += 0x02 if layer.isUsingCustomColour() or layer.getOpacity() isnt 1
     return options
-
-  #This list can hold up to 8 values
-  tvkProviders : ['NHM','NBN','BMS','EHS']
-
-  ###
-  6 rixits maximum
-  ###
-  parseTaxonVersionKey: (miniTVK) ->
-    return miniTVK if miniTVK.length is 16 # If the representation is 16 chars long, treat as normal key
-
-    lastCharater = miniTVK.substring(miniTVK.length - 1)
-    provider = @toNumber(lastCharater) & 0x03
-    numeric = Math.floor((@toNumber miniTVK) / 4)
-    @tvkProviders[provider] + "SYS" + @leadingZeros numeric.toString(), 10
-
-  miniTaxonVersionKey: (tvk) ->
-    return tvk if not /(NHM|NBN|BMS|EHS)(SYS)[0-9]{10}/.test tvk #Check if the tvk is minifiable
-
-    type = _.indexOf @tvkProviders, tvk.substring(0, 3) #get the 2bit provider
-    numeric = parseInt tvk.substring(6)
-    @fromNumber numeric * 4 + type
-
-  datasetTypes : ['HL','GA','SB']
-
-  ###
-  The 2 low order bits of the minDatasetKey represent the type of dataset key,
-  these are defined as:
-  * HL - 0b00
-  * GA - 0b01
-  * SB - 0b10
-  In the case of legacy, the high order bits will be looked up and resolved from
-  the legacy array. The others will convert the highorder bits to a numeric value
-  which will at max be 6 digits. This will then be appended (with trailing zeros)
-  to its respective prefix.
-  ###
-  parseDatasetKey: (miniDatasetKey) ->
-    return miniDatasetKey if miniDatasetKey.length is 8  #If the representation is 8 chars long, treat as normal key
-
-    lastCharater = miniDatasetKey.substring(miniDatasetKey.length - 1)
-    type = @toNumber(lastCharater) & 0x03 #get type
-    numeric = Math.floor((@toNumber miniDatasetKey) / 4)
-    @datasetTypes[type] + @leadingZeros numeric.toString(), 6
-
-  miniDatasetKey: (datasetKey) ->
-    return datasetKey if not /(GA|HL|SB)[0-9]{6}/.test datasetKey #check if we can shrink the key
-
-    type = _.indexOf @datasetTypes, datasetKey.substring(0, 2) #get the 2 bit dataset type
-    numeric = parseInt datasetKey.substring(2)
-    @fromNumber numeric * 4 + type
-
-  parseYearRange: (miniYearRangeRixits) ->
-    miniYearRange = @toNumber minYearRangeRixits
-    startDate: Math.floor miniYearRange / 512 # shift by 9 bits
-    endDate: miniYearRange & 0x1FF #mask with last 9 bits
-
-  ###
-  The earliest year which can be recorded on the nbn gateway is 1600.
-  If we subtract this value from the start year and end year we can represent
-  a year range of 1600 - 2112 in 18bits (3 base64 chars)
-  ###
-  miniYearRange: (yearRange) ->
-    miniYearRange = yearRange.startDate * 512 + yearRange.endDate
-    @fromNumber miniYearRange
-
-  resolutions: ['10km', '2km', '1km', '100m', 'auto']
-
-  ###
-  The selected resolution of a map can either be one of the following: 
-  * 10km - 0
-  * 2km - 1
-  * 1km - 2
-  * 100m - 3
-  * auto - 4
-  * Polygon (inferred from other values) - 5
-
-  The 6 options can be represented as a 3 bit number, however each has an absence flag.
-  Therefore the layers to be requested can be represented as a 4 bit number (or one rixit)
-  ###
-  miniLayerConfig: (layer) ->
-    resolution = if layer.isPolygon then 5 else _.indexOf @resolutions, layer.resolution
-    @fromNumber resolution * 2 + (1 & layer.isPresence) #shift 1 bit for the presence/absence flag
-
-  parseLayerConfig: (miniResolution) ->
-    resolution = Math.floor miniResolution / 2
-
-    isPolygon: resolution is '5'
-    isPresence: (miniResolution & 0x1) is 1 #mask to get the presence absence flag, turn to boolean
-    resolution: @resolutions[resolution] if resolution isnt 5
-
-  ###
-  The style component is represented as a 30 bit number, this is so that it always neatly
-  fits into 5 rixits. 8 bits for the r,g,b values and 6 for the opacity level
-  ###
-  parseStyle: (minStyleRixits) ->
-    minValue = @toNumber minStyleRixits
-    colour = Math.floor(minValue / 64).toString 16 #Shift 6 bits and hex
-    opacity : (minValue & 0x3F) / 63 #mask with last 6 digits, convert to [0..1]
-    colour : @leadingZeros colour, 6
-  
-  ###
-  Convert the style to a base64 encoded string
-  ###
-  miniStyle: (style) ->
-    rgb = parseInt style.colour, 16
-    opacity = Math.floor(style.opacity * 63)
-    @fromNumber rgb * 64 + opacity
-
-  ###
-  A simple function to add leading zeros to a String representation of a 
-  Number
-  ###
-  leadingZeros : (str, length) ->
-    while str.length < length
-      str = '0' + str
-    return str
-
-  ###
-  Number to base64 implementation taken from here stackoverflow
-  http://stackoverflow.com/questions/6213227/fastest-way-to-convert-a-number-to-radix-64-in-javascript
-  ###
-  _Rixits : "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz+/",
-  
-  fromNumber : (number) -> 
-    throw "Can't represent negative numbers now" if number < 0
-    residual = Math.floor number
-    result = ''
-    while (true)
-      rixit = residual % 64
-      result = @_Rixits.charAt(rixit) + result
-      residual = Math.floor residual / 64
-      break if residual is 0
-    return result;
-
-  toNumber : (rixits) ->
-    result = 0
-    rixits = rixits.split ''
-    for e in rixits
-      result = (result * 64) + @_Rixits.indexOf e
-    return result;
