@@ -108,7 +108,7 @@ $REGISTERED_BUILDS = @{
 		"services" = @("Tomcat7-data.nbn.org.uk");
 		"obtain" = { 
 			param($build_number);
-			$data["NBNV-IMPORTER-UI"] = GetBuild "NBN-IMPORTERSNAP" $build_number "Spatial-Importer-UI/importer.war"
+			$data["NBNV-IMPORTER-UI"] = GetBuild "NBN-IMPORTERSNAP" $build_number "Importer-UI/importer.war"
 		};
 		"deploy" = { Deploy $data["NBNV-IMPORTER-UI"] "data" "importer" }
 	};
