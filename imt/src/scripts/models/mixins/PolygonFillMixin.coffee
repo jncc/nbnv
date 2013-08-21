@@ -21,7 +21,7 @@ define [
   ###
   Checks if the current colour is different to the default colour
   ###
-  isUsingCustomColour: -> @getDefaultColour() isnt @get "colour"
+  isDefaultAppearance: -> @getDefaultColour() is @get("colour") and @get("opacity") is @defaults.opacity
 
   ###
   The following method will work out the sld template which

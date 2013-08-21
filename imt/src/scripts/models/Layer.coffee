@@ -29,6 +29,11 @@ define [
   getOpacity: -> @get "opacity"
 
   ###
+  Checks if the appearance of this layer has been changed since it was constructed
+  ###
+  isDefaultAppearance: -> @get("opacity") is @defaults.opacity
+
+  ###
   Check if this layer is visible and should be renedered
   ###
   isVisible: -> @get "visibility"

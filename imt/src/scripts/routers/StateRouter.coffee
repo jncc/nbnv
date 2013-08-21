@@ -21,17 +21,37 @@ define [
   initialize: (options) ->
     @model = options.model
 
-    @layerTypes.push constr: HabitatLayer, parser: @parseHabitatLayer, shrinker: @miniHabitatLayer
-    @layerTypes.push constr: SiteBoundaryLayer, parser: @parseSiteBoundaryLayer, shrinker: @miniSiteBoundaryLayer
-    @layerTypes.push constr: SingleSpeciesLayer, parser: @parseSingleSpeciesLayer, shrinker: @miniSingleSpeciesLayer
-    @layerTypes.push constr: DatasetSpeciesDensityLayer, parser: @parseDatasetsSpeciesDensityLayer, shrinker: @miniDatasetsSpeciesDensityLayer
-    @layerTypes.push constr: DesignationSpeciesDensityLayer, parser: @parseDesignationSpeciesDensityLayer, shrinker: @miniDesignationSpeciesDensityLayer
+    observationLayerTypes = [
+      {constr: SingleSpeciesLayer,              expandKey: Keys.expandTVK,        shrinkKey: Keys.shrinkTVK }
+      {constr: DatasetSpeciesDensityLayer,      expandKey: Keys.expandDatasetKey, shrinkKey: Keys.shrinkDatasetKey }
+      { 
+        constr: DesignationSpeciesDensityLayer,  
+        expandKey: (key) -> key,          
+        shrinkKey: expandKey: (key) -> key
+      }
+    ]
 
+    contextLayerTypes = [HabitatLayer, SiteBoundaryLayer]
+
+    _.each observationLayerTypes, (type) =>
+      reader =  parser: @parseObservationLayer, shrinker: @shrinkObservationLayer
+      @layerTypes.push _.extend reader, type
+
+    _.each contextLayerTypes, (type) =>
+      reader =  parser: @parseContextLayer, shrinker: @shrinkContextLayer, expandKey: Keys.expandDatasetKey, shrinkKey: Keys.shrinkDatasetKey, constr: type
+      @layerTypes.push _.extend reader, type
+    
     @listenTo @model.getLayers(), 'add remove position change:colour change:usedDatasets change:startDate change:endDate change:resolution', @updateRoute
 
   updateModel:(route)->
     if route?
-      sites = _.map route.split('!'), (layerDef) => @parseLayerDef layerDef
+      sites = _.map route.split('!'), (layerDef) => 
+        layerDefNumber = Numbers.fromBase64 layerDef[0]
+        layerOptions = Math.floor layerDefNumber / 8 #Get the 3 high order bits
+        layerType = layerDefNumber & 0x07 #Get the 3 low order bits
+
+        @layerTypes[layerType].parser.call @, @layerTypes[layerType], layerDef.substring(1), layerOptions
+
       layers = @model.getLayers()
 
       $.when
@@ -46,83 +66,12 @@ define [
                   .map((layer) => 
                     #Find the correct shrinker and shrink
                     layerType = _.find(@layerTypes, (type) -> layer instanceof type.constr)
-                    shrunkLayer = layerType.shrinker.call this, layer #shrink in the context of the router
+                    shrunkLayer = layerType.shrinker.call this, layerType, layer #shrink in the context of the router
                     #Create the control rixit
                     layerControl = shrunkLayer.options * 8 + _.indexOf @layerTypes, layerType
                     Numbers.toBase64(layerControl) + shrunkLayer.layerDef #concat to layerDef
                   )
                   .join '!'
-
-  ###
-  There are currently 5 different types of Layer which can be added to the map:
-  * HabitatLayer - 0b000
-  * SiteBoundaryLayer - 0b001
-  * SingleSpeciesLayer - 0b010
-  * DatasetSpeciesDensityLayer - 0b011
-  * DesignationSpeciesDensityLayer - 0b100
-
-  The different type of layers are represented in low order of bits of the first
-  base64 character of the layerDef. This leaves the 3 high order bits available
-  for customisation of the layer. See the relevant function to find the definition
-  in the correct context.
-  ###
-  parseLayerDef: (layerDef) ->
-    layerDefNumber = Numbers.fromBase64 layerDef[0]
-    layerOptions = Math.floor layerDefNumber / 8 #Get the 3 high order bits
-    layerType = layerDefNumber & 0x03 #Get the 3 low order bits
-    @layerTypes[layerType].parser.call @, layerDef.substring(1), layerOptions
-
-
-  ###
-  @param layerDef The definition for this site boundary layer, emiting the control charater
-  ###
-  parseSiteBoundaryLayer: (layerDef, options) ->
-    parts = layerDef.split(',')
-    style = @parseStyle parts[1] if parts.length is 2
-    new SiteBoundaryLayer _.extend key: @parseDatasetKey(parts[0]), style
-
-  ###
-  The layer definition of the single species takes the following form :
-  [CONFIG_RIXIT][MINI_TVK][,STYLE][,YEAR][,DATASET_1]...[,DATASET_N]
-  The presence of the style and year filters is dictated by the given options
-  3 bit number:
-  0b100 - reserved
-  0b010 - style filter
-  0b001 - year filter
-  ###
-  parseSingleSpeciesLayer: (layerDef, options) ->
-    filterOptions = @parseFilterOptions options
-    parts = layerDef.substring(1).split ','
-
-    layerConfig = Resolutions.expandResolution layerDef.substring 0, 1
-    layerConfig.ptaxonVersionKey = Keys.expandTVK parts.shift()
-
-    _.extend layerConfig, Styles.expandStyle parts.shift() if filterOptions.styleFilter
-    _.extend layerConfig, Years.expandYearRange parts.shift() if filterOptions.yearFilter
-
-    layerConfig.datasets = _.map parts, (key) => Keys.expandDatasetKey key
-
-    new SingleSpeciesLayer layerConfig
-
-  miniSingleSpeciesLayer: (layer) -> 
-    attr = layer.attributes
-    layerParts = ["#{Resolutions.shrinkResolution(attr)}#{Keys.shrinkTVK(layer.id)}"]
-    layerParts.push "#{Styles.shrinkStyle(attr)}" if layer.isUsingCustomColour() or layer.getOpacity() isnt 1
-    layerParts.push "#{Years.shrinkYearRange(attr)}" if layer.isYearFiltering()
-    layerParts = layerParts.concat _.map attr.datasets, (key) => Keys.shrinkDatasetKey key
-
-    options: @miniFilterOptions layer
-    layerDef: layerParts.join ','
-
-  parseFilterOptions: (options) -> 
-    styleFilter: (options & 0x02) is 0x02
-    yearFilter: (options & 0x01) is 0x01
-
-  miniFilterOptions: (layer) ->
-    options = 0
-    options += 0x01 if layer.isYearFiltering()
-    options += 0x02 if layer.isUsingCustomColour?() or layer.getOpacity() isnt 1
-    return options
 
   ###
   This router handles the conversion of the state of the map to a minimal url safe string
@@ -139,13 +88,90 @@ define [
   the same logic. When processing each layer component, it is necessary to be able to 
   distinguish what type of layer it is we need to create/serialize. This layer type is represented
   in the first 3 bits of the Base64 didgit of the Layer def, such that the bit mask 0b000111
-  will obtain in.
+  will obtain in. This allows for 8 different Layer Types, at the time of writting there are only 5.
 
-  The 3 bits of the layer allow for upto 8 different layer definitions 
-
-  First lets look at the Observation Layers.
-
-  Observation layers (SingleSpeciesLayer, DatasetSpeciesLayer, DesignationSpeciesLayer) can be 
-  represented
+  The since we are only using the first 3 bits of the first Base64 digit to represent the type of layer,
+  there are a spare 3 bits which can be used for layer customisation.
   ###
 
+
+  ###
+  Observation layers
+
+  An observation layer component is composed in the form :
+    [RESOLUTIONS][KEY][,STYLE][,YEAR][,DATASET_1]...[,DATASET_N]
+
+  In the above format, the 'STYLE' and 'YEAR' parameters are optional, there presence
+  is dictated in the 3 bit options for this layer. In a observation layer the options
+  number represents :
+    0b100 - reserved
+    0b010 - style filter
+    0b001 - year filter
+
+  The following is the general code for reading this type of component
+  ###
+  parseObservationLayer: (layerType, layerDef, options) ->
+    filterOptions = @parseFilterOptions options #read the filter options
+    parts = layerDef.substring(1).split ','
+
+    layerConfig = Resolutions.expandResolution layerDef[0]
+
+    #Load the key for this type of layer and set it to this layers idAttribute
+    layerConfig[layerType.constr.prototype.idAttribute] = layerType.expandKey parts.shift() 
+    _.extend layerConfig, Styles.expandStyle parts.shift() if filterOptions.styleFilter
+    _.extend layerConfig, Years.expandYearRange parts.shift() if filterOptions.yearFilter
+
+    layerConfig.datasets = _.map parts, (key) => Keys.expandDatasetKey key
+    new layerType.constr layerConfig
+
+  ###
+  And then writing this component
+  ###
+  shrinkObservationLayer: (layerType, layer) -> 
+    attr = layer.attributes
+    layerParts = ["#{Resolutions.shrinkResolution(attr)}#{layerType.shrinkKey(layer.id)}"]
+    layerParts.push "#{Styles.shrinkStyle(attr)}" if not layer.isDefaultAppearance()
+    layerParts.push "#{Years.shrinkYearRange(attr)}" if layer.isYearFiltering()
+    layerParts = layerParts.concat _.map attr.datasets, (key) => Keys.shrinkDatasetKey key
+
+    options: @miniFilterOptions layer
+    layerDef: layerParts.join ','
+
+  ###
+  Next we come on to the simpler types of layers, the context layers. These layers are represented 
+  in the form:
+    [KEY][,STYLE]
+
+  The 3bit options are not used for these types of layer. If a style is to be applied, this will be detected
+  by the presence of a ',' in the component.
+
+  The following is the general code for reading this type of component 
+  ###
+  parseContextLayer: (layerType, layerDef, options) ->
+    parts = layerDef.split ','
+    layerConfig = {} #Create somewhere to put the configuration to build
+    layerConfig[layerType.constr.prototype.idAttribute] = layerType.expandKey parts[0] 
+    _.extend layerConfig, Styles.expandStyle parts[1] if parts.length is 2
+
+    return new layerType.constr layerConfig
+
+  ###
+  And then writing this component
+  ###
+  shrinkContextLayer: (layerType, layer) ->
+    attr = layer.attributes
+    layerParts = ["#{layerType.shrinkKey(layer.id)}"]
+    layerParts.push "#{Styles.shrinkStyle(attr)}" if not layer.isDefaultAppearance()
+
+    options: 0,
+    layerDef: layerParts.join ','
+    
+  parseFilterOptions: (options) -> 
+    styleFilter: (options & 0x02) is 0x02
+    yearFilter: (options & 0x01) is 0x01
+
+  miniFilterOptions: (layer) ->
+    options = 0
+    options += 0x01 if layer.isYearFiltering()
+    options += 0x02 if not layer.isDefaultAppearance()
+    return options
