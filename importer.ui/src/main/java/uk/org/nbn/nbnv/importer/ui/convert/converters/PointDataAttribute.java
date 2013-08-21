@@ -41,9 +41,9 @@ public class PointDataAttribute extends ConverterStep {
 //            }
 //        }
 //        
-//        if (eastColumn >= 0 && northColumn >= 0 && srsColumn >= 0) {
-//            return true;
-//        }
+        if (eastColumn >= 0 && northColumn >= 0 && srsColumn >= 0) {
+            return true;
+        }
         
         return false;
     }
