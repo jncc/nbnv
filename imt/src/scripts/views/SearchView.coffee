@@ -14,19 +14,17 @@ define [
 
   initialize: ->
     #Create a select2 infinite scrolling search widget on the input field
-     $('<input type="text">')
-        .appendTo @$el
-        .select2
-          placeholder: 'Add species, habitats and site boundaries to the map'
-          minimumInputLength: 2
-          ajax:
-            url: Globals.api "search"
-            quietMillis: 100
-            data: _.bind( @request, @)
-            results: @processResults
-          formatResult: _.bind( @renderResult, @)
-          dropdownCssClass: "bigdrop"
-          escapeMarkup: (m)-> m
+    @$el.select2
+      placeholder: 'Add species, habitats and site boundaries to the map'
+      minimumInputLength: 2
+      ajax:
+        url: Globals.api "search"
+        quietMillis: 100
+        data: _.bind( @request, @)
+        results: @processResults
+      formatResult: _.bind( @renderResult, @)
+      dropdownCssClass: "bigdrop"
+      escapeMarkup: (m)-> m
 
   ###
   Populate a query to send to the search end point
@@ -56,7 +54,7 @@ define [
   Clear the selection after it has been handled to show the placeholder
   text again
   ###
-  clear: -> @$('input').select2 'data', null
+  clear: -> @$el.select2 'data', null
 
   renderResult: (item)-> "<b>#{item.searchMatchTitle}</b><br>#{@formatResult(item)}"
 
