@@ -22,7 +22,7 @@ define [
 
   updateModel:(route)->
     if route?
-      state = @getCurrentState(route)
+      state = @getStateFromRoute(route)
       layers = @model.getLayers()
 
       $.when
@@ -98,7 +98,7 @@ define [
   miniFilterOptions: (layer) ->
     options = 0
     options += 0x01 if layer.isYearFiltering()
-    options += 0x02 if layer.isUsingCustomColour?() or layer.getOpacity() isnt 1
+    options += 0x02 if not layer.isDefaultAppearance()
     return options
 
   ###
@@ -176,7 +176,7 @@ define [
         layerType = _.find(@layerTypes, (type) -> layer instanceof type.constr)
         shrinker = if layerType.isObservation then @shrinkObservationLayer else @shrinkContextLayer
         shrunkLayer = shrinker.call @, layerType, layer #shrink in the context of the router
-        #Create the control rixit
+        #Create the control digit
         layerControl = shrunkLayer.options * 8 + _.indexOf @layerTypes, layerType
         Numbers.toBase64(layerControl) + shrunkLayer.layerDef #concat to layerDef
       )
@@ -187,10 +187,10 @@ define [
   a given route. Note that the layers will be represented by their Backbone.Model, but will 
   need to be fetched before applying to the map
   ###
-  getCurrentState: (route) ->
+  getStateFromRoute: (route) ->
     layers: _.map route.split('!'), (layerDef) => 
-        layerDefNumber = Numbers.fromBase64 layerDef[0]
-        layerOptions = Math.floor layerDefNumber / 8 #Get the 3 high order bits
-        layerType = layerDefNumber & 0x07 #Get the 3 low order bits
+        layerDefDigit = Numbers.fromBase64 layerDef[0]
+        layerOptions = Math.floor layerDefDigit / 8 #Get the 3 high order bits
+        layerType = layerDefDigit & 0x07 #Get the 3 low order bits
         parser = if @layerTypes[layerType].isObservation then @parseObservationLayer else @parseContextLayer
         parser.call @, @layerTypes[layerType], layerDef.substring(1), layerOptions
