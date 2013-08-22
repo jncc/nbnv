@@ -16,62 +16,22 @@ define [
   routes:
     "*data" : "updateModel"
 
-  layerTypes: []
-
   initialize: (options) ->
-    @model = options.model
-
-    observationLayerTypes = [
-      {constr: SingleSpeciesLayer,              expandKey: Keys.expandTVK,        shrinkKey: Keys.shrinkTVK }
-      {constr: DatasetSpeciesDensityLayer,      expandKey: Keys.expandDatasetKey, shrinkKey: Keys.shrinkDatasetKey }
-      { 
-        constr: DesignationSpeciesDensityLayer,  
-        expandKey: (key) -> key,          
-        shrinkKey: expandKey: (key) -> key
-      }
-    ]
-
-    contextLayerTypes = [HabitatLayer, SiteBoundaryLayer]
-
-    _.each observationLayerTypes, (type) =>
-      reader =  parser: @parseObservationLayer, shrinker: @shrinkObservationLayer
-      @layerTypes.push _.extend reader, type
-
-    _.each contextLayerTypes, (type) =>
-      reader =  parser: @parseContextLayer, shrinker: @shrinkContextLayer, expandKey: Keys.expandDatasetKey, shrinkKey: Keys.shrinkDatasetKey, constr: type
-      @layerTypes.push _.extend reader, type
-    
+    @model = options.model    
     @listenTo @model.getLayers(), 'add remove position change:colour change:usedDatasets change:startDate change:endDate change:resolution', @updateRoute
 
   updateModel:(route)->
     if route?
-      sites = _.map route.split('!'), (layerDef) => 
-        layerDefNumber = Numbers.fromBase64 layerDef[0]
-        layerOptions = Math.floor layerDefNumber / 8 #Get the 3 high order bits
-        layerType = layerDefNumber & 0x07 #Get the 3 low order bits
-
-        @layerTypes[layerType].parser.call @, @layerTypes[layerType], layerDef.substring(1), layerOptions
-
+      state = @getCurrentState(route)
       layers = @model.getLayers()
 
       $.when
-        .apply($, _.map sites, (layer) -> do layer.fetch)
-        .then(-> layers.reset sites, routing: true)
-
+        .apply($, _.map state.layers, (layer) -> do layer.fetch)  #Fetch the layers
+        .then(-> layers.reset state.layers, routing: true)        #Reset the apps layers to the new layers
 
   updateRoute: (changed..., options) ->
     if not options.routing
-      @navigate @model
-                  .getLayers()
-                  .map((layer) => 
-                    #Find the correct shrinker and shrink
-                    layerType = _.find(@layerTypes, (type) -> layer instanceof type.constr)
-                    shrunkLayer = layerType.shrinker.call this, layerType, layer #shrink in the context of the router
-                    #Create the control rixit
-                    layerControl = shrunkLayer.options * 8 + _.indexOf @layerTypes, layerType
-                    Numbers.toBase64(layerControl) + shrunkLayer.layerDef #concat to layerDef
-                  )
-                  .join '!'
+      @navigate @getCurrentRoute()
 
   ###
   This router handles the conversion of the state of the map to a minimal url safe string
@@ -125,7 +85,25 @@ define [
     new layerType.constr layerConfig
 
   ###
-  And then writing this component
+  As already stated, the 3 bit options for an observation layer dictate if styling or
+  year filtering is being applied. We can read this out from the number using:
+  ###
+  parseFilterOptions: (options) -> 
+    styleFilter: (options & 0x02) is 0x02
+    yearFilter: (options & 0x01) is 0x01
+
+  ###
+  To write it
+  ###
+  miniFilterOptions: (layer) ->
+    options = 0
+    options += 0x01 if layer.isYearFiltering()
+    options += 0x02 if layer.isUsingCustomColour?() or layer.getOpacity() isnt 1
+    return options
+
+  ###
+  That defines how we can read the observation layers, we now need to be able to write
+  out the string to match the format above.
   ###
   shrinkObservationLayer: (layerType, layer) -> 
     attr = layer.attributes
@@ -165,13 +143,54 @@ define [
 
     options: 0,
     layerDef: layerParts.join ','
-    
-  parseFilterOptions: (options) -> 
-    styleFilter: (options & 0x02) is 0x02
-    yearFilter: (options & 0x01) is 0x01
 
-  miniFilterOptions: (layer) ->
-    options = 0
-    options += 0x01 if layer.isYearFiltering()
-    options += 0x02 if not layer.isDefaultAppearance()
-    return options
+  ###
+  At this point we have all the parts in place to be able to parse the different types
+  of layers. However these functions require the definitions of the layers which we
+  can read and write along with their respective constructor, key reader/writer methods 
+  and a link to the correct shrinking/parsing function. We can define these in an array.
+
+  The position of the definition in the array will dictate the 3 bit value to associate 
+  with the layer
+  ###
+  layerTypes: [
+    {isObservation: true, constr: SingleSpeciesLayer, expandKey: Keys.expandTVK, shrinkKey: Keys.shrinkTVK }
+    {isObservation: true, constr: DatasetSpeciesDensityLayer, expandKey: Keys.expandDatasetKey, shrinkKey: Keys.shrinkDatasetKey }
+    {isObservation: true, constr: DesignationSpeciesDensityLayer, expandKey:((key) -> key), shrinkKey:((key) -> key)}
+    {isObservation: false, constr: HabitatLayer, expandKey: Keys.expandDatasetKey, shrinkKey: Keys.shrinkDatasetKey}
+    {isObservation: false, constr: SiteBoundaryLayer, expandKey: Keys.expandDatasetKey, shrinkKey: Keys.shrinkDatasetKey}
+  ]
+
+  ###
+  We now have an understanding of all the different types of layers and how to read/
+  write a string representation of them. To generate this state url, we can interrogate
+  the @model to get the layers, viewport and background layer to create this state url.
+
+  To do this:
+  ###
+  getCurrentRoute: ->
+    return @model
+      .getLayers()
+      .map((layer) => 
+        #Find the correct shrinker and shrink
+        layerType = _.find(@layerTypes, (type) -> layer instanceof type.constr)
+        shrinker = if layerType.isObservation then @shrinkObservationLayer else @shrinkContextLayer
+        shrunkLayer = shrinker.call @, layerType, layer #shrink in the context of the router
+        #Create the control rixit
+        layerControl = shrunkLayer.options * 8 + _.indexOf @layerTypes, layerType
+        Numbers.toBase64(layerControl) + shrunkLayer.layerDef #concat to layerDef
+      )
+      .join '!'
+
+  ###
+  We can invert this logic to get the viewport, background layer and layers definitions from
+  a given route. Note that the layers will be represented by their Backbone.Model, but will 
+  need to be fetched before applying to the map
+  ###
+  getCurrentState: (route) ->
+    layers: _.map route.split('!'), (layerDef) => 
+        layerDefNumber = Numbers.fromBase64 layerDef[0]
+        layerOptions = Math.floor layerDefNumber / 8 #Get the 3 high order bits
+        layerType = layerDefNumber & 0x07 #Get the 3 low order bits
+        parser = if @layerTypes[layerType].isObservation then @parseObservationLayer else @parseContextLayer
+        parser.call @, @layerTypes[layerType], layerDef.substring(1), layerOptions

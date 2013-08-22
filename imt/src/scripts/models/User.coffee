@@ -16,7 +16,7 @@ define [
   Return the link which should visited in order
   to login to the NBN Gateway and return to the IMT
   ###
-  getSSOHref:-> Globals.portal "User/SSO/Login?redirect=#{document.URL}"
+  getSSOHref:-> Globals.portal "User/SSO/Login?redirect=#{encodeURIComponent document.URL}"
 
   ###
   Determine if the current user is logged in
