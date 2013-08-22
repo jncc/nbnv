@@ -19,6 +19,7 @@ define [
     placeholder = @$('input').attr('placeholder')
     #Create a select2 infinite scrolling search widget on the input field
     @$('input').select2
+      placeholder: ' '
       minimumInputLength: 2
       ajax:
         url: Globals.api "search"
