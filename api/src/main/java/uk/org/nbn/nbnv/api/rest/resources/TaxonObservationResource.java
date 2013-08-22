@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 import javax.ws.rs.DefaultValue;
@@ -18,17 +19,23 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.StreamingOutput;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import uk.org.nbn.nbnv.api.dao.providers.ProviderHelper;
 import uk.org.nbn.nbnv.api.dao.warehouse.DatasetMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.DesignationMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.FeatureMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.OrganisationMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.SiteBoundaryMapper;
+import uk.org.nbn.nbnv.api.dao.warehouse.TaxonObservationAttributeMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.TaxonObservationMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.TaxonOutputGroupMapper;
 import uk.org.nbn.nbnv.api.model.*;
+import uk.org.nbn.nbnv.api.model.meta.RequestDatasetFilterJSON;
+import uk.org.nbn.nbnv.api.model.meta.AccessRequestJSON;
+import uk.org.nbn.nbnv.api.model.meta.DownloadFilterJSON;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenDatasetAdminUser;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
 import uk.org.nbn.nbnv.api.rest.resources.utils.DownloadHelper;
@@ -45,6 +52,7 @@ public class TaxonObservationResource extends AbstractResource {
     @Autowired DownloadHelper downloadHelper;
     @Autowired DesignationMapper designationMapper;
     @Autowired SiteBoundaryMapper siteBoundaryMapper;
+    @Autowired TaxonObservationAttributeMapper taxonObservationAttributeMapper;
     
 
     /**
@@ -215,29 +223,56 @@ public class TaxonObservationResource extends AbstractResource {
     @Produces("application/x-zip-compressed")
     public StreamingOutput getObservationsByFilterZip(            
             @TokenUser(allowPublic = false) final User user,
-            @QueryParam("ptvk") @DefaultValue(ObservationResourceDefaults.defaultTaxa) final List<String> taxa,
-            @QueryParam("designation") @DefaultValue(ObservationResourceDefaults.defaultDesignation) final String designation,
-            @QueryParam("taxonOutputGroup") @DefaultValue(ObservationResourceDefaults.defaultTaxonOutputGroup) final String taxonOutputGroup,
-            @QueryParam("datasetKey") @DefaultValue(ObservationResourceDefaults.defaultDatasetKey) final List<String> datasetKeys,
-            @QueryParam("spatialRelationship") @DefaultValue(ObservationResourceDefaults.SPATIAL_RELATIONSHIP_DEFAULT) final String spatialRelationship,
-            @QueryParam("siteKey") @DefaultValue(ObservationResourceDefaults.defaultFeatureID) final String siteKey,
-            @QueryParam("siteDataset") @DefaultValue(ObservationResourceDefaults.defaultFeatureID) final String siteDataset,
-            @QueryParam("gridRef") @DefaultValue(ObservationResourceDefaults.defaultGridRef) final String gridRef,
-            @QueryParam("startYear") @DefaultValue(ObservationResourceDefaults.defaultStartYear) final int startYear,
-            @QueryParam("endYear") @DefaultValue(ObservationResourceDefaults.defaultEndYear) final int endYear,
-            @QueryParam("sensitive") @DefaultValue(ObservationResourceDefaults.defaultSensitive) final Boolean sensitive,
-            @QueryParam("polygon") @DefaultValue(ObservationResourceDefaults.defaultPolygon) final String polygon) {
+//            @QueryParam("reason") @DefaultValue(ObservationResourceDefaults.defaultReason) final String reason,
+//            @QueryParam("reasonType") @DefaultValue(ObservationResourceDefaults.defaultReasonType) final int reasonType,
+//            @QueryParam("ptvk") @DefaultValue(ObservationResourceDefaults.defaultTaxa) final List<String> taxa,
+//            @QueryParam("designation") @DefaultValue(ObservationResourceDefaults.defaultDesignation) final String designation,
+//            @QueryParam("taxonOutputGroup") @DefaultValue(ObservationResourceDefaults.defaultTaxonOutputGroup) final String taxonOutputGroup,
+//            @QueryParam("datasetKey") @DefaultValue(ObservationResourceDefaults.defaultDatasetKey) final List<String> datasetKeys,
+//            @QueryParam("spatialRelationship") @DefaultValue(ObservationResourceDefaults.SPATIAL_RELATIONSHIP_DEFAULT) final String spatialRelationship,
+//            @QueryParam("siteKey") @DefaultValue(ObservationResourceDefaults.defaultFeatureID) final String siteKey,
+//            @QueryParam("siteDataset") @DefaultValue(ObservationResourceDefaults.defaultFeatureID) final String siteDataset,
+//            @QueryParam("gridRef") @DefaultValue(ObservationResourceDefaults.defaultGridRef) final String gridRef,
+//            @QueryParam("startYear") @DefaultValue(ObservationResourceDefaults.defaultStartYear) final int startYear,
+//            @QueryParam("endYear") @DefaultValue(ObservationResourceDefaults.defaultEndYear) final int endYear,
+//            @QueryParam("sensitive") @DefaultValue(ObservationResourceDefaults.defaultSensitive) final Boolean sensitive,
+//            @QueryParam("polygon") @DefaultValue(ObservationResourceDefaults.defaultPolygon) final String polygon,
+//            @QueryParam("includeAttributes") @DefaultValue(ObservationResourceDefaults.defaultSensitive) final Boolean attributes,
+            @QueryParam("json") final String json) throws IOException {        
+        
         return new StreamingOutput() {
             public void write(OutputStream out) throws IOException, WebApplicationException {
                 ZipOutputStream zip = new ZipOutputStream(out);
-                String title = "Species list download";
-                addObservations(zip, user, startYear, endYear, datasetKeys, taxa, spatialRelationship, siteKey, sensitive, designation, taxonOutputGroup, gridRef, polygon);
-                addReadMe(zip, title, user, startYear, endYear, datasetKeys, spatialRelationship, siteKey, sensitive, designation, taxonOutputGroup);
-                addDatasetMetadata(zip, user, startYear, endYear, datasetKeys, taxa, spatialRelationship, siteKey, sensitive, designation, taxonOutputGroup, gridRef, polygon);
+                String title = "Taxon Observation Download";
+                DownloadFilterJSON filter = parseJSON(json);
+                List<String> taxaList = new ArrayList<String>();
+                taxaList.add(filter.getTaxon().getTvk());
+                addObservations(zip, user, filter.getYear().getStartYear(), 
+                        filter.getYear().getEndYear(), filter.getDataset().getDatasets(), 
+                        taxaList, filter.getSpatial().getMatch(),
+                        filter.getSpatial().getFeature(), Boolean.getBoolean(filter.getSensitive()), 
+                        filter.getTaxon().getDesignation(), filter.getTaxon().getOutput(), 
+                        filter.getSpatial().getGridRef(), filter.getPolygon(), 
+                        Boolean.getBoolean(filter.getIncludeAttributes()));
+                addReadMe(zip, title, user,  filter.getYear().getStartYear(), 
+                        filter.getYear().getEndYear(), filter.getDataset().getDatasets(), filter.getSpatial().getMatch(),
+                        filter.getSpatial().getFeature(), Boolean.getBoolean(filter.getSensitive()), 
+                        filter.getTaxon().getDesignation(), filter.getTaxon().getOutput());
+                addDatasetMetadata(zip, user, filter.getYear().getStartYear(), 
+                        filter.getYear().getEndYear(), filter.getDataset().getDatasets(), 
+                        taxaList, filter.getSpatial().getMatch(),
+                        filter.getSpatial().getFeature(), Boolean.getBoolean(filter.getSensitive()), 
+                        filter.getTaxon().getDesignation(), filter.getTaxon().getOutput(), 
+                        filter.getSpatial().getGridRef(), filter.getPolygon());
                 zip.flush();
                 zip.close();
             }
         };
+    }
+    
+    private DownloadFilterJSON parseJSON(String json) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.readValue(json, DownloadFilterJSON.class);
     }
 
     /**
@@ -904,7 +939,11 @@ public class TaxonObservationResource extends AbstractResource {
         }
     }
     
-    private void addObservations(ZipOutputStream zip, User user, int startYear, int endYear, List<String> datasetKeys, List<String> taxa, String spatialRelationship, String featureID, boolean sensitive, String designation, String taxonOutputGroup, String gridRef, String polygon) throws IOException {
+    private void addObservations(ZipOutputStream zip, User user, int startYear, int endYear, List<String> datasetKeys, List<String> taxa, String spatialRelationship, String featureID, boolean sensitive, String designation, String taxonOutputGroup, String gridRef, String polygon, boolean includeAttributes) throws IOException {
+        
+        List<TaxonObservationAttribute> observationAttributes = new ArrayList<TaxonObservationAttribute>();
+        Map<Integer, Map<Integer, String>> atts = new HashMap<Integer, Map<Integer, String>>();
+        
         List<TaxonObservationDownload> observations = observationMapper.selectDownloadableRecords(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon);
         zip.putNextEntry(new ZipEntry("Observations.csv"));
         ArrayList<String> values = new ArrayList<String>();
@@ -933,6 +972,139 @@ public class TaxonObservationResource extends AbstractResource {
         values.add("zeroAbundance");
         values.add("fullVersion");
         values.add("useConstraints");
+        
+        if (includeAttributes) {
+            ArrayList<Integer> fetchAttributes = new ArrayList<Integer>();
+
+            for(TaxonObservationDownload observation : observations) {
+                if (observation.isFullVersion()) {
+                    fetchAttributes.add(observation.getObservationID());
+                }
+            }
+
+            List<Attribute> attributes = taxonObservationAttributeMapper.getAttributeListForObservations(fetchAttributes);
+            observationAttributes = taxonObservationAttributeMapper.getAttributesForObservations(fetchAttributes);
+            
+            for (TaxonObservationAttribute att : observationAttributes) {
+                Map<Integer, String> temp = atts.get(att.getObservationID());
+
+                if (temp == null) {
+                    temp = new HashMap<Integer, String>();
+                    atts.put(att.getObservationID(), temp);
+                }
+
+                temp.put(att.getAttributeID(), att.getTextValue());
+            }
+        }
+        
+        downloadHelper.writelnCsv(zip, values);
+        
+        SimpleDateFormat df = new SimpleDateFormat("dd-mm-yyyy");
+        
+        for(TaxonObservationDownload observation : observations) {
+            values = new ArrayList<String>();
+            values.add(Integer.toString(observation.getObservationID()));
+            values.add(observation.getObservationKey());
+            values.add(observation.getOrganisationName());
+            values.add(observation.getDatasetKey());
+            values.add(observation.getSurveyKey());
+            values.add(observation.getSampleKey());
+            values.add(observation.getGridReference());
+            values.add(observation.getPrecision());
+            values.add(observation.getSiteKey());
+            values.add(observation.getSiteName());
+            values.add(observation.getFeatureKey());
+            values.add(df.format(observation.getStartDate()));
+            values.add(df.format(observation.getEndDate()));
+            values.add(observation.getDateType());
+            values.add(observation.getRecorder());
+            values.add(observation.getDeterminer());
+            values.add(observation.getpTaxonVersionKey());
+            values.add(observation.getpTaxonName());
+            values.add(observation.getAuthority());
+            values.add(observation.getCommonName());
+            values.add(observation.getTaxonGroup());
+            values.add(observation.isSensitive() ? "1" : "0");
+            values.add(observation.isZeroAbundance() ? "1" : "0");
+            values.add(observation.isFullVersion()? "1" : "0");
+            values.add(observation.getUseConstraints());
+
+            if (includeAttributes) {
+                if (observation.isFullVersion()) {
+                    for (TaxonObservationAttribute att : observationAttributes) {
+                        if (atts.get(observation.getObservationID()).containsKey(att.getAttributeID())) {
+                            values.add(atts.get(observation.getObservationID()).get(att.getAttributeID()));
+                        } else {
+                            values.add("");
+                        }
+                    }
+                } else {
+                    for (int i = 0; i < observationAttributes.size(); i++) {
+                        values.add("");
+                    }
+                }
+            }
+            
+            downloadHelper.writelnCsv(zip, values);
+        }
+    }
+    
+    private void addObservationsWithAttributes(ZipOutputStream zip, User user, int startYear, int endYear, List<String> datasetKeys, List<String> taxa, String spatialRelationship, String featureID, boolean sensitive, String designation, String taxonOutputGroup, String gridRef, String polygon) throws IOException {
+        List<TaxonObservationDownload> observations = observationMapper.selectDownloadableRecords(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon);
+        zip.putNextEntry(new ZipEntry("Observations.csv"));
+        ArrayList<String> values = new ArrayList<String>();
+        values.add("observationID");
+        values.add("recordKey");
+        values.add("organisationName");
+        values.add("datasetKey");
+        values.add("surveyKey");
+        values.add("sampleKey");
+        values.add("gridReference");
+        values.add("precision");
+        values.add("siteKey");
+        values.add("siteName");
+        values.add("featureKey");
+        values.add("startDate");
+        values.add("endDate");
+        values.add("dateType");
+        values.add("recorder");
+        values.add("determiner");
+        values.add("pTaxonVersionKey");
+        values.add("taxonName");
+        values.add("authority");
+        values.add("commonName");
+        values.add("taxonGroup");
+        values.add("sensitive");
+        values.add("zeroAbundance");
+        values.add("fullVersion");
+        values.add("useConstraints");
+        
+        ArrayList<Integer> fetchAttributes = new ArrayList<Integer>();
+        
+        for(TaxonObservationDownload observation : observations) {
+            if (observation.isFullVersion()) {
+                fetchAttributes.add(observation.getObservationID());
+            }
+        }
+        
+        
+        
+        List<Attribute> attributes = taxonObservationAttributeMapper.getAttributeListForObservations(fetchAttributes);
+               
+        List<TaxonObservationAttribute> observationAttributes = taxonObservationAttributeMapper.getAttributesForObservations(fetchAttributes);
+        Map<Integer, Map<Integer, String>> atts = new HashMap<Integer, Map<Integer, String>>();
+        
+        for (TaxonObservationAttribute att : observationAttributes) {
+            Map<Integer, String> temp = atts.get(att.getObservationID());
+            
+            if (temp == null) {
+                temp = new HashMap<Integer, String>();
+                atts.put(att.getObservationID(), temp);
+            }
+            
+            temp.put(att.getAttributeID(), att.getTextValue());
+        }
+        
         downloadHelper.writelnCsv(zip, values);
         
         SimpleDateFormat df = new SimpleDateFormat("dd-mm-yyyy");
@@ -965,6 +1137,20 @@ public class TaxonObservationResource extends AbstractResource {
             values.add(observation.isFullVersion()? "1" : "0");
             values.add(observation.getUseConstraints());
             downloadHelper.writelnCsv(zip, values);
+            
+            if (observation.isFullVersion()) {
+                for (TaxonObservationAttribute att : observationAttributes) {
+                    if (atts.get(observation.getObservationID()).containsKey(att.getAttributeID())) {
+                        values.add(atts.get(observation.getObservationID()).get(att.getAttributeID()));
+                    } else {
+                        values.add("");
+                    }
+                }
+            } else {
+                for (int i = 0; i < observationAttributes.size(); i++) {
+                    values.add("");
+                }
+            }
         }
         
     }

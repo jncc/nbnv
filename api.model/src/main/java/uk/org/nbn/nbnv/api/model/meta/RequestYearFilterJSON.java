@@ -8,7 +8,7 @@ package uk.org.nbn.nbnv.api.model.meta;
  *
  * @author paulbe
  */
-public class AccessRequestYearFilterJSON extends AccessRequestFilterJSON {
+public class RequestYearFilterJSON extends AccessRequestFilterJSON {
     private int startYear = -1; //Default: No filter
     private int endYear = -1; //Default: No filter
 

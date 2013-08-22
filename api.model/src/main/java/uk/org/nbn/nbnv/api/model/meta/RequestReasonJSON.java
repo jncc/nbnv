@@ -8,7 +8,7 @@ package uk.org.nbn.nbnv.api.model.meta;
  *
  * @author Paul Gilbertson
  */
-public class AccessRequestReasonJSON {
+public class RequestReasonJSON {
     private int purpose;
     private int organisationID = -1;
     private int userID = -1;

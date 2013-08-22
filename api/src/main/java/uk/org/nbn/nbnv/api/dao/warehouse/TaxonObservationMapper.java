@@ -291,7 +291,7 @@ public interface TaxonObservationMapper {
             , @Param("gridRef") String gridRef
             , @Param("polygon") String polygon);
     
-    @SelectProvider(type= TaxonObservationProvider.class, method="filteredDownloadRecrods")
+    @SelectProvider(type= TaxonObservationProvider.class, method="filteredDownloadRecords")
     public List<TaxonObservationDownload> selectDownloadableRecords(
             @Param("user") User user
             , @Param("startYear") Integer startYear

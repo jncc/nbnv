@@ -243,9 +243,10 @@ nbn.nbnv.ui.filter.spatial = function(json) {
     this.getJson = function() {
         if (this._all) {
             return { spatial: { all: true }};
-        } else {
+        } else if (this._siteFilter) {
             return { spatial: { all: false, match: this._matchType, feature: this._feature, dataset: this._dataset }};
         }
+        return { spatial: { all: false, match: this._matchType, gridref: $('#gridRefSelector').val() }};
     };
     
     this.getQueryString = function() {

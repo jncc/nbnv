@@ -8,14 +8,15 @@ package uk.org.nbn.nbnv.api.model.meta;
  *
  * @author Paul Gilbertson
  */
-public class AccessRequestJSON {
+public class DownloadFilterJSON {
     private String sensitive;
+    private String includeAttributes = "false";
+    private String polygon = "";
     private RequestSpatialFilterJSON spatial;
     private RequestTaxonFilterJSON taxon;
     private RequestYearFilterJSON year;
     private RequestDatasetFilterJSON dataset;
     private RequestReasonJSON reason;
-    private AccessRequestTimeLimitJSON time;
 
     /**
      * @return the sensitive
@@ -31,6 +32,22 @@ public class AccessRequestJSON {
         this.sensitive = sensitive;
     }
 
+    public String getIncludeAttributes() {
+        return includeAttributes;
+    }
+
+    public void setIncludeAttributes(String includeAttributes) {
+        this.includeAttributes = includeAttributes;
+    }
+
+    public String getPolygon() {
+        return polygon;
+    }
+
+    public void setPolygon(String polygon) {
+        this.polygon = polygon;
+    }
+    
     /**
      * @return the spatial
      */
@@ -99,19 +116,5 @@ public class AccessRequestJSON {
      */
     public void setReason(RequestReasonJSON reason) {
         this.reason = reason;
-    }
-
-    /**
-     * @return the time
-     */
-    public AccessRequestTimeLimitJSON getTime() {
-        return time;
-    }
-
-    /**
-     * @param time the time to set
-     */
-    public void setTime(AccessRequestTimeLimitJSON time) {
-        this.time = time;
     }
 }

@@ -29,4 +29,16 @@ public interface OperationalTaxonObservationFilterMapper {
     
     @Select("SELECT * FROM TaxonObservationFilter WHERE id = #{id}")
     public TaxonObservationFilter selectById(int id);
+    
+    @Insert("INSERT INTO TaxonObservationDownload VALUES filterID = #{id}, purposeID = #{purposeID}, reason = #{reason}, dowloadTime = GETDATE(), userID = #{userID}, userForOrganisation = #{userForOrganisation}, organisationID = #{organisationID}")
+    public int createDownloadLog(@Param("id") int id, 
+        @Param("purposeID") int purposeID, 
+        @Param("reason") String reason,
+        @Param("userID") int userID,
+        @Param("userForOrganisation") String userForOrganisation,
+        @Param("organisationID") int organisationID);
+    
+    @Insert("INSERT INTO TaxonObservationDownloadStatistics VALUES filterID = #{id}, datasetKey = #{datasetKey}, recordCount = #{recordCount}")
+    public int createDatasetDownloadStats(@Param("id") int id, @Param("datasetKey") String datasetKey, @Param("recordCount") int recordCount);
+
 }

@@ -13,14 +13,14 @@ import uk.org.nbn.nbnv.api.rest.resources.ObservationResourceDefaults;
  */
 public class TaxonObservationProvider {
 
-    public String filteredDownloadRecrods(Map<String, Object> params) {
+    public String filteredDownloadRecords(Map<String, Object> params) {
         String from = createSelectDownload(params, "o.*");
         BEGIN();
         SELECT("obs.id as observationID, "
                 + "obs.observationKey, "
                 + "od.name as organisationName, "
                 + "obs.datasetKey, "
-                + "o.surveyKey, "
+                + "obs.surveyKey, "
                 + "obs.sampleKey, "
                 + "fd.label as gridReference, "
                 + "r.label as [precision], "
@@ -41,17 +41,17 @@ public class TaxonObservationProvider {
                 + "obs.absence as zeroAbundance, "
                 + "dd.useConstraints as useConstraint");
         FROM(from);
-        JOIN("TaxonData td ON t.pTaxonVersionKey = td.taxonVersionKey");
-        JOIN("TaxonData tdd ON td.commonNameTaxonVersionKey = tdd.taxonVersionKey");
-        JOIN("TaxonOutputGroupData togd ON td.taxonOutputGroupKey = togd.[key]");
-        JOIN("DatasetData dd ON t.datasetKey = dd.[key]");
-        JOIN("OrganisationData od ON dd.organisationID = od.id");
-        JOIN("FeatureData fd ON t.featureID = fd.id");
-        JOIN("Resolution r ON fd.resolutionID = r.id");
-        JOIN("SiteData sd ON t.siteID = sd.id");
-        JOIN("DateType dt ON t.dateTypeKey = dt.[key]");
-        JOIN("RecorderData rd ON t.recorderID = rd.id");
-        JOIN("RecorderData rdd ON t.determinerID = rdd.id");
+        INNER_JOIN("TaxonData td ON obs.pTaxonVersionKey = td.taxonVersionKey");
+        INNER_JOIN("TaxonData tdd ON td.commonNameTaxonVersionKey = tdd.taxonVersionKey");
+        INNER_JOIN("TaxonOutputGroupData togd ON td.taxonOutputGroupKey = togd.[key]");
+        INNER_JOIN("DatasetData dd ON obs.datasetKey = dd.[key]");
+        INNER_JOIN("OrganisationData od ON dd.organisationID = od.id");
+        INNER_JOIN("FeatureData fd ON obs.featureID = fd.id");
+        INNER_JOIN("Resolution r ON fd.resolutionID = r.id");
+        INNER_JOIN("DateType dt ON obs.dateTypeKey = dt.[key]");
+        LEFT_OUTER_JOIN("SiteData sd ON obs.siteID = sd.id");
+        LEFT_OUTER_JOIN("RecorderData rd ON obs.recorderID = rd.id");
+        LEFT_OUTER_JOIN("RecorderData rdd ON obs.determinerID = rdd.id");
         return SQL();
     }
     
@@ -337,7 +337,7 @@ public class TaxonObservationProvider {
         if (params.containsKey("gridRef") && params.get("gridRef") != null && !"".equals((String) params.get("gridRef"))) {
             INNER_JOIN("GridTree gt ON gt.featureID = o.featureID");
             INNER_JOIN("GridSquareFeatureData gsfd ON gsfd.id = gt.parentFeatureID");
-            WHERE("gsfd.label = #{gridRef}");
+            WHERE("gsfd.identifier = #{gridRef}");
         }
 
         if (params.containsKey("taxonOutputGroup") && params.get("taxonOutputGroup") != null && !"".equals((String) params.get("taxonOutputGroup"))) {

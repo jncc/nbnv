@@ -32,7 +32,14 @@ nbn.nbnv.ui.download = function (json, div) {
         queryString.push(year.getQueryString());
         queryString.push(dataset.getQueryString());
         
-        alert("/TaxonObservations/Download?" + queryString.filter(function(n){return n;}).join());
+        var j = { sensitive: 'sans', includeAttributes: 'true'};
+        $.extend(j, reason.getJson());        
+        $.extend(j, taxon.getJson());
+        $.extend(j, spatial.getJson());
+        $.extend(j, year.getJson());        
+        $.extend(j, dataset.getJson());        
+        
+        alert('/TaxonObservations/Download?json=' + JSON.stringify(j));
     }));
 
     this.div.accordion({
