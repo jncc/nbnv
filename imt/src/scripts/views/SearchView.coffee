@@ -1,11 +1,10 @@
 define [
-  "jquery",
-  "underscore",
-  "backbone",
-  "cs!helpers/Globals",
-  "text!templates/SearchView.html",
+  "jquery"
+  "underscore"
+  "backbone"
+  "cs!helpers/Globals"
   "select2"
-], ($, _, Backbone, Globals, template)-> Backbone.View.extend
+], ($, _, Backbone, Globals)-> Backbone.View.extend
 
   events: 
     "select2-selecting": "select"
@@ -14,21 +13,20 @@ define [
   rows: 20
 
   initialize: ->
-    @$el.html template
-
-    placeholder = @$('input').attr('placeholder')
     #Create a select2 infinite scrolling search widget on the input field
-    @$('input').select2
-      placeholder: ' '
-      minimumInputLength: 2
-      ajax:
-        url: Globals.api "search"
-        quietMillis: 100
-        data: _.bind( @request, @)
-        results: @processResults
-      formatResult: _.bind( @renderResult, @)
-      dropdownCssClass: "bigdrop"
-      escapeMarkup: (m)-> m
+     $('<input type="text">')
+        .appendTo @$el
+        .select2
+          placeholder: 'Add species, habitats and site boundaries to the map'
+          minimumInputLength: 2
+          ajax:
+            url: Globals.api "search"
+            quietMillis: 100
+            data: _.bind( @request, @)
+            results: @processResults
+          formatResult: _.bind( @renderResult, @)
+          dropdownCssClass: "bigdrop"
+          escapeMarkup: (m)-> m
 
   ###
   Populate a query to send to the search end point
