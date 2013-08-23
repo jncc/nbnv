@@ -54,7 +54,7 @@ define [
 
       #Zoom to the same viewport as before reprojection (Ticket #1249)
       if oldProjection.getCode() isnt @map.getProjectionObject().getCode()
-        @zoomToViewport null, viewport, showAll: false
+        @zoomToViewport null, oldViewport, showAll: false
 
     ###
     If the picker is in picking mode then enable the drawing control
