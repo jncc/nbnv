@@ -13,7 +13,7 @@ define [
         portal: "dev-data.nbn.org.uk" 
       when "staging-data.nbn.org.uk" 
         api: "staging-data.nbn.org.uk/api"
-        gis: "gis.testnbn.net"
+        gis: "staging-gis.nbn.org.uk"
         portal: "staging-data.nbn.org.uk" 
       else  
         api: "data.nbn.org.uk/api"
