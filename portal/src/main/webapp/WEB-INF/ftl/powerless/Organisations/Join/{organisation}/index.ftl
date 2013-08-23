@@ -1,6 +1,6 @@
 <@template.master title="NBN Gateway - Join An Organisation"
     javascripts=["/js/jquery-ui-1.8.23.custom.min.js/","/js/joinRequest/join.js","/js/dialog_spinner.js"] 
-    csss=["http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/themes/smoothness/jquery-ui.css","/css/dialog-spinner.css"] >
+    csss=["//ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/themes/smoothness/jquery-ui.css","/css/dialog-spinner.css"] >
 
     <#assign organisations=json.readURL("${api}/organisations/joinable")>
     <#assign selected="">

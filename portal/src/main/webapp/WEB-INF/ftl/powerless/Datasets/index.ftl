@@ -1,6 +1,6 @@
 <@template.master title="NBN Gateway - Datasets" 
     javascripts=["/js/jquery.dataTables.min.js","/js/enable-datasets-datatable.js"] 
-    csss=["http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/themes/smoothness/jquery-ui.css"] >
+    csss=["//ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/themes/smoothness/jquery-ui.css"] >
 
     <#assign datasets=json.readURL("${api}/datasets")>
     <div>
