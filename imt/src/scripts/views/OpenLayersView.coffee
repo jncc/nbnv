@@ -23,8 +23,8 @@ define [
         theme: null,
         layers: [OpenLayersLayerFactory.getBaseLayer( @model.get "baseLayer" ), @drawingLayer],
         eventListeners: 
-          moveend : => @model.set "viewport", do @getOpenlayersViewport
-          zoomend: => @model.getLayers().setZoom(do @map.getZoom)
+          moveend: => @model.set "viewport", do @getOpenlayersViewport
+          zoomend: => @model.getLayers().setZoom do @map.getZoom
 
       @map.addControl(@drawingControl)
       #If base layer changes, drawing layer might need to be reprojected
@@ -43,8 +43,7 @@ define [
     Create an openlayers version of the desired baselayer
     ###
     updateBaseLayer: (evt, baselayer) -> 
-      centre = @map.getCenter()
-      zoom = @map.getZoom()
+      oldViewport = @model.get 'viewport'
       oldProjection = @map.getProjectionObject()
 
       @map.removeLayer @map.baseLayer #remove the current baseLayer
@@ -52,7 +51,10 @@ define [
 
       #Fix the Openlayers bugs 
       @map.setLayerIndex @map.baseLayer, 0 #move the baselayer to the 0th position
-      @map.setCenter centre.transform(oldProjection, @map.getProjectionObject()), zoom #(Ticket #1249)
+
+      #Zoom to the same viewport as before reprojection (Ticket #1249)
+      if oldProjection.getCode() isnt @map.getProjectionObject().getCode()
+        @zoomToViewport null, viewport, showAll: false
 
     ###
     If the picker is in picking mode then enable the drawing control

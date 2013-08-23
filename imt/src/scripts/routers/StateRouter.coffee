@@ -20,26 +20,21 @@ define [
 
   initialize: (options) ->
     @model = options.model
-    @listenTo @model, 'change:viewport', _.debounce @updateRoute, 300
+    @listenTo @model, 'change:viewport', _.debounce @updateRoute, 2000
+    @listenTo @model, 'change:baseLayer', @updateRoute
     @listenTo @model.getLayers(), 'add remove position change:colour change:usedDatasets change:startDate change:endDate change:resolution', @updateRoute
 
   updateModel:(route)->
     if route?
       state = @getStateFromRoute(route) #load the state from the url
-      @model.set _.omit state, 'layers'
+      @model.set _.omit(state, 'layers'), routing:true
       layers = @model.getLayers()
 
       $.when
         .apply($, _.map state.layers, (layer) -> do layer.fetch)  #Fetch the layers
         .then(-> layers.reset state.layers, routing: true)        #Reset the apps layers to the new layers
-    else
-      @model.set 'viewport', @model.defaults.viewport   #go to the default viewport
-      @model.set 'baseLayer', @model.defaults.baseLayer #go to the default baseLayer
-      do @model.getLayers().reset                       #remove all layers
 
-  updateRoute: (changed..., options) ->
-    if not options.routing
-      @navigate @getCurrentRoute()
+  updateRoute: (changed..., options) -> @navigate @getCurrentRoute() if not options.routing
 
   ###
   This router handles the conversion of the state of the map to a minimal url safe string
