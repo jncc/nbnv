@@ -15,6 +15,8 @@ define [
 
   isYearFiltering: -> @getStartDate()? or @getEndDate()?
 
+  getYearFilter: -> (@get "startDate") + "-" + (@get "endDate")
+
   ###
   Check if the values start date and end date are valid. If not
   return an errors array with objects who have the name 'temporalFilter'

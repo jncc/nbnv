@@ -53,8 +53,9 @@ define [
   Define what this layer is mapping
   ###
   mapOf:-> 
-    type = if @get "isPresence" then "occurrence" else "absence"
-    "#{type} records"
+    type = if @get "isPresence" then "presence" else "absence"
+    yearFilter = if @isYearFiltering() then '(' + @getYearFilter() + ')' else ''
+    "#{type} records #{yearFilter}"
 
   ###
   Workout which symbol to use and then set as the symbol attribute
