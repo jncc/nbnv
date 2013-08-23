@@ -54,7 +54,7 @@ define [
   ###
   mapOf:-> 
     type = if @get "isPresence" then "presence" else "absence"
-    yearFilter = if @isYearFiltering() then '(' + @getYearFilter() + ')' else ''
+    yearFilter = if @isYearFiltering() then ' for year range ' + @getYearFilter() else ''
     "#{type} records #{yearFilter}"
 
   ###
