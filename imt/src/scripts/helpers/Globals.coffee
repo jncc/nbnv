@@ -12,9 +12,9 @@ define [
         gis: "dev-gis.nbn.org.uk"
         portal: "dev-data.nbn.org.uk" 
       when "staging-data.nbn.org.uk" 
-        api: "staging.testnbn.net/api"
+        api: "staging-data.nbn.org.uk/api"
         gis: "gis.testnbn.net"
-        portal: "staging.testnbn.net" 
+        portal: "staging-data.nbn.org.uk" 
       else  
         api: "data.nbn.org.uk/api"
         gis: "gis.nbn.org.uk"
