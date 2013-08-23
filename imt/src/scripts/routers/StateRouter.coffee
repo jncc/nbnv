@@ -8,30 +8,33 @@ define [
   'cs!models/HabitatLayer'
   'cs!models/SiteBoundaryLayer'
   'cs!helpers/Numbers'
+  'cs!helpers/representations/BaseLayers'
   'cs!helpers/representations/Keys'
   'cs!helpers/representations/Resolutions'
   'cs!helpers/representations/Styles'
   'cs!helpers/representations/Years'
-], ($, _, Backbone, SingleSpeciesLayer, DatasetSpeciesDensityLayer, DesignationSpeciesDensityLayer, HabitatLayer, SiteBoundaryLayer, Numbers, Keys, Resolutions, Styles, Years) -> Backbone.Router.extend
+  'cs!helpers/representations/Viewports'
+], ($, _, Backbone, SingleSpeciesLayer, DatasetSpeciesDensityLayer, DesignationSpeciesDensityLayer, HabitatLayer, SiteBoundaryLayer, Numbers, BaseLayers, Keys, Resolutions, Styles, Years, Viewports) -> Backbone.Router.extend
   routes:
     "*data" : "updateModel"
 
   initialize: (options) ->
-    @model = options.model    
+    @model = options.model
+    @listenTo @model, 'change:viewport', _.debounce @updateRoute, 2000
+    @listenTo @model, 'change:baseLayer', @updateRoute
     @listenTo @model.getLayers(), 'add remove position change:colour change:usedDatasets change:startDate change:endDate change:resolution', @updateRoute
 
   updateModel:(route)->
     if route?
-      state = @getStateFromRoute(route)
+      state = @getStateFromRoute(route) #load the state from the url
+      @model.set _.omit(state, 'layers'), routing:true
       layers = @model.getLayers()
 
       $.when
         .apply($, _.map state.layers, (layer) -> do layer.fetch)  #Fetch the layers
         .then(-> layers.reset state.layers, routing: true)        #Reset the apps layers to the new layers
 
-  updateRoute: (changed..., options) ->
-    if not options.routing
-      @navigate @getCurrentRoute()
+  updateRoute: (changed..., options) -> @navigate @getCurrentRoute() if not options.routing
 
   ###
   This router handles the conversion of the state of the map to a minimal url safe string
@@ -41,7 +44,7 @@ define [
   * The Layers and their respective state (filters, styling etc)
 
   From the above we can propose a simple structure for the url:
-    [VIEWPORT][BACKGROUND_LAYER][LAYER_1]![LAYER_2]...![LAYER_N]
+    [BACKGROUND_LAYER][VIEWPORT]![LAYER_1]![LAYER_2]...![LAYER_N]
 
   There are two types of layer which we add to the map; Observation and Context layers.
   To simplify to url encoding scheme, the layers which fall into each type are handled by
@@ -169,7 +172,9 @@ define [
   To do this:
   ###
   getCurrentRoute: ->
-    return @model
+    baseLayerChar = BaseLayers.shrinkBaseLayer @model.get 'baseLayer'
+    viewport = Viewports.shrinkViewport @model.get 'viewport'
+    layers = @model
       .getLayers()
       .map((layer) => 
         #Find the correct shrinker and shrink
@@ -182,13 +187,19 @@ define [
       )
       .join '!'
 
+    "#{baseLayerChar}#{viewport}" + if layers then "!#{layers}" else ''
+
   ###
   We can invert this logic to get the viewport, background layer and layers definitions from
   a given route. Note that the layers will be represented by their Backbone.Model, but will 
   need to be fetched before applying to the map
   ###
   getStateFromRoute: (route) ->
-    layers: _.map route.split('!'), (layerDef) => 
+    parts = route.substring(1).split('!') #remove the baseLayer character and split around !
+
+    baseLayer: BaseLayers.expandBaseLayer route.substring 0, 1
+    viewport: Viewports.expandViewport parts[0]
+    layers: _.map parts.slice(1), (layerDef) => 
         layerDefDigit = Numbers.fromBase64 layerDef[0]
         layerOptions = Math.floor layerDefDigit / 8 #Get the 3 high order bits
         layerType = layerDefDigit & 0x07 #Get the 3 low order bits

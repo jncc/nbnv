@@ -7,7 +7,7 @@ define [
 ], (_, Backbone, Layers, User, Picker) -> Backbone.Model.extend 
   defaults :
     viewport: 
-      minX:  -14.489099982674913
+      minX: -14.489099982674913
       maxX: 7.87906407581859
       minY: 49.825193671965025
       maxY: 59.45733404137668

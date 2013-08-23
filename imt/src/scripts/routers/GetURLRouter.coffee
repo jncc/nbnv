@@ -14,7 +14,7 @@ define [
     query = @createQueryObject(queryString)
 
     @model.set "baseLayer", query.baselayer if query.baselayer?
-    @model.set "viewport", @getBBox query.bbox if query.bbox? 
+    @model.set "viewport", @getBBox(query.bbox), showAll: true if query.bbox? 
     @getLayers @model.getLayers(), query
 
   getLayers: (layers, query)->
