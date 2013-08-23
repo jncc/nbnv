@@ -9,20 +9,20 @@ define [
     switch window.location.host
       when "localhost:8080", "dev-data.nbn.org.uk" 
         api: "dev-data.nbn.org.uk/api"
-        gis: "dev-data.nbn.org.uk/gis"
+        gis: "dev-gis.nbn.org.uk"
         portal: "dev-data.nbn.org.uk" 
       when "staging.testnbn.net" 
         api: "staging.testnbn.net/api"
-        gis: "staging.testnbn.net/gis"
+        gis: "gis.testnbn.net"
         portal: "staging.testnbn.net" 
       else  
         api: "data.nbn.org.uk/api"
-        gis: "data.nbn.org.uk/gis"
+        gis: "gis.nbn.org.uk"
         portal: "data.nbn.org.uk"
 
-  api: (path) -> "http://#{@servers.api}/#{path}?callback=?"
-  gis: (path, attr) -> "http://#{@servers.gis}/#{path}?#{@_buildQueryString(attr)}"
-  portal: (path) -> "http://#{@servers.portal}/#{path}"
+  api: (path) -> "https://#{@servers.api}/#{path}?callback=?"
+  gis: (path, attr) -> "https://#{@servers.gis}/#{path}?#{@_buildQueryString(attr)}"
+  portal: (path) -> "https://#{@servers.portal}/#{path}"
   
   ###
   The following function will build a query string from an object of
