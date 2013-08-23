@@ -23,14 +23,14 @@ define [
         theme: null,
         layers: [OpenLayersLayerFactory.getBaseLayer( @model.get "baseLayer" ), @drawingLayer],
         eventListeners: 
-          moveend : => @model.set("viewport", do @getOpenlayersViewport)
+          moveend : => @model.set "viewport", do @getOpenlayersViewport
           zoomend: => @model.getLayers().setZoom(do @map.getZoom)
 
       @map.addControl(@drawingControl)
       #If base layer changes, drawing layer might need to be reprojected
       @map.events.register "changebaselayer", @map, @drawingLayer.update 
       
-      @zoomToViewport(null, @model.get "viewport")
+      @zoomToViewport null, @model.get("viewport"), showAll: true
       @listenTo @model, "change:viewport", @zoomToViewport
       @listenTo @model, "change:baseLayer", @updateBaseLayer
       @listenTo @model.getLayers(), "add", @addLayer
@@ -90,12 +90,13 @@ define [
       layers.forEach (layer) => @addLayer layer
 
     ###
-    Event listener for viewport changes on the model. Update the Openlayers Map
+    Event listener for viewport changes on the model. Update the Openlayers Map.
     ###
-    zoomToViewport: (evt, viewport) ->
-      extent = @map.getExtent();
-      #Check if view port is already and is not the same as the openlayers viewport
-      @map.zoomToExtent @getOpenlayersBounds(viewport) if not extent? or not _.isEqual( viewport, @getOpenlayersViewport() )
+    zoomToViewport: (evt, viewport, options) ->
+      extent = @map.getExtent()
+      if not extent? or not _.isEqual( viewport, @getOpenlayersViewport() )
+        #Check if view port already set is not the same as the openlayers viewport
+        @map.zoomToExtent @getOpenlayersBounds(viewport), not options.showAll
 
     ###
     Translate the given viewport which is in 4326 into an openlayers bounds in the
