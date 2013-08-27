@@ -13,8 +13,10 @@ define [
   rows: 20
 
   initialize: ->
+    @select2El = $('<input type="text">').appendTo @$el
+
     #Create a select2 infinite scrolling search widget on the input field
-    @$el.select2
+    @select2El.select2
       placeholder: 'Add species, habitats and site boundaries to the map'
       minimumInputLength: 2
       ajax:
@@ -55,7 +57,7 @@ define [
   Clear the selection after it has been handled to show the placeholder
   text again
   ###
-  clear: -> @$el.select2 'data', null
+  clear: -> @select2El.select2 'data', null
 
   renderResult: (item)-> "<b>#{item.searchMatchTitle}</b><br>#{@formatResult(item)}"
 
