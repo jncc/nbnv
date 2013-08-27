@@ -246,18 +246,7 @@ nbn.nbnv.ui.filter.spatial = function(json) {
         } else if (this._siteFilter) {
             return { spatial: { all: false, match: this._matchType, feature: this._feature, dataset: this._dataset }};
         }
-        return { spatial: { all: false, match: this._matchType, gridref: $('#gridRefSelector').val() }};
-    };
-    
-    this.getQueryString = function() {
-        if (this._all) {
-            return '';
-        }
-        if (this._siteFilter) {
-            return "spatialRelationship=" + this._matchType + ",siteKey=" + this._feature;
-        }
-        this._feature = $('#gridRefSelector').val();
-        return "spatialRelationship=" + this._matchType + ",gridRef=" + this._feature;
+        return { spatial: { all: false, match: this._matchType, gridRef: $('#gridRefSelector').val() }};
     };
 
     this.getError = function() {

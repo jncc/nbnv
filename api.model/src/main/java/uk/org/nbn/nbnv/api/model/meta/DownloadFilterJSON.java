@@ -10,13 +10,12 @@ package uk.org.nbn.nbnv.api.model.meta;
  */
 public class DownloadFilterJSON {
     private String sensitive;
-    private String includeAttributes = "false";
     private String polygon = "";
     private RequestSpatialFilterJSON spatial;
     private RequestTaxonFilterJSON taxon;
     private RequestYearFilterJSON year;
     private RequestDatasetFilterJSON dataset;
-    private RequestReasonJSON reason;
+    private DownloadReasonJSON reason;
 
     /**
      * @return the sensitive
@@ -30,14 +29,6 @@ public class DownloadFilterJSON {
      */
     public void setSensitive(String sensitive) {
         this.sensitive = sensitive;
-    }
-
-    public String getIncludeAttributes() {
-        return includeAttributes;
-    }
-
-    public void setIncludeAttributes(String includeAttributes) {
-        this.includeAttributes = includeAttributes;
     }
 
     public String getPolygon() {
@@ -107,14 +98,14 @@ public class DownloadFilterJSON {
     /**
      * @return the reason
      */
-    public RequestReasonJSON getReason() {
+    public DownloadReasonJSON getReason() {
         return reason;
     }
 
     /**
      * @param reason the reason to set
      */
-    public void setReason(RequestReasonJSON reason) {
+    public void setReason(DownloadReasonJSON reason) {
         this.reason = reason;
     }
 }

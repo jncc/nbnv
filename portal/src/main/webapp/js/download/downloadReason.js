@@ -21,6 +21,7 @@ nbn.nbnv.ui.downloadReason = function(json) {
     this._purpose = json.reason.purpose;
     this._details = json.reason.details;
     this._perm = false;
+    this._includeAttributes = false;
     
     var username = 'Myself';
     var purposename = 'Personal interest';
@@ -109,8 +110,18 @@ nbn.nbnv.ui.downloadReason = function(json) {
             .append($('<div>').addClass('resulttext').attr('id', 'purposedescription')
                 .append($('<p>').append('Personal interest - ').append(purposes['1'].text))
             ).append($('<div>').addClass('queryBlock')
-                .text("Detailed description of purpose:")
-            ).append(details);
+                .text('Detailed description of purpose:')
+            ).append(details)
+             .append($('<br>'))
+             .append($('<div>').text('Indlude Attributes:'))
+             .append($('<input>')
+                .attr('type', 'checkbox')
+                .attr('name', 'includeattributes')
+                .attr('value', _me._includeAttributes)
+                .change(function() {
+                    _me._includeAttributes = this.checked;
+                })
+            ).append($('<span>').text('Attributes will only be included if you have full access to an observation record'));
 
         return data;
     };
@@ -127,13 +138,9 @@ nbn.nbnv.ui.downloadReason = function(json) {
     
     this.getJson = function() {
         if (this._asID > -1)
-            return { reason: { purpose: this._purpose, details: this._details, organisationID: this._asID }};
+            return { reason: { purpose: this._purpose, details: this._details, organisationID: this._asID, includeAttributes: this._includeAttributes }};
         
-        return { reason: { purpose: this._purpose, details: this._details, userID: nbn.nbnv.userID }};
-    };
-    
-    this.getQueryString = function() {
-        return "purpose=" + this._purpose + ",details=" + this._details;
+        return { reason: { purpose: this._purpose, details: this._details, userID: nbn.nbnv.userID, includeAttributes: this._includeAttributes }};
     };
 
     this.getError = function() {

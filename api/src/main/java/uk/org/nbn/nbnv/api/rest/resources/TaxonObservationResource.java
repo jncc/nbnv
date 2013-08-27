@@ -1,8 +1,5 @@
 package uk.org.nbn.nbnv.api.rest.resources;
 
-import com.sun.jersey.server.linking.LinkFilter;
-import com.sun.jersey.spi.container.ContainerRequest;
-import com.sun.jersey.spi.container.ContainerResponse;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
@@ -13,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -21,11 +17,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
-import org.apache.ibatis.annotations.Param;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -230,30 +223,14 @@ public class TaxonObservationResource extends AbstractResource {
     @Produces("application/x-zip-compressed")
     public StreamingOutput getObservationsByFilterZip(            
             @TokenUser(allowPublic = false) final User user,
-//            @QueryParam("reason") @DefaultValue(ObservationResourceDefaults.defaultReason) final String reason,
-//            @QueryParam("reasonType") @DefaultValue(ObservationResourceDefaults.defaultReasonType) final int reasonType,
-//            @QueryParam("ptvk") @DefaultValue(ObservationResourceDefaults.defaultTaxa) final List<String> taxa,
-//            @QueryParam("designation") @DefaultValue(ObservationResourceDefaults.defaultDesignation) final String designation,
-//            @QueryParam("taxonOutputGroup") @DefaultValue(ObservationResourceDefaults.defaultTaxonOutputGroup) final String taxonOutputGroup,
-//            @QueryParam("datasetKey") @DefaultValue(ObservationResourceDefaults.defaultDatasetKey) final List<String> datasetKeys,
-//            @QueryParam("spatialRelationship") @DefaultValue(ObservationResourceDefaults.SPATIAL_RELATIONSHIP_DEFAULT) final String spatialRelationship,
-//            @QueryParam("siteKey") @DefaultValue(ObservationResourceDefaults.defaultFeatureID) final String siteKey,
-//            @QueryParam("siteDataset") @DefaultValue(ObservationResourceDefaults.defaultFeatureID) final String siteDataset,
-//            @QueryParam("gridRef") @DefaultValue(ObservationResourceDefaults.defaultGridRef) final String gridRef,
-//            @QueryParam("startYear") @DefaultValue(ObservationResourceDefaults.defaultStartYear) final int startYear,
-//            @QueryParam("endYear") @DefaultValue(ObservationResourceDefaults.defaultEndYear) final int endYear,
-//            @QueryParam("sensitive") @DefaultValue(ObservationResourceDefaults.defaultSensitive) final Boolean sensitive,
-//            @QueryParam("polygon") @DefaultValue(ObservationResourceDefaults.defaultPolygon) final String polygon,
-//            @QueryParam("includeAttributes") @DefaultValue(ObservationResourceDefaults.defaultSensitive) final Boolean attributes,
-            @QueryParam("json") String json,
-            @Context HttpServletResponse response) throws IOException {        
+            @QueryParam("json") String json) throws IOException {        
         
         final DownloadFilterJSON dFilter = parseJSON(json);
         TaxonObservationFilter filter = new TaxonObservationFilter();
         filter.setFilterJSON(json);
         filter.setFilterText(Boolean.parseBoolean(dFilter.getSensitive()) ? "All sensitive and non-sensitive records" : "All non-sensitive records");
         oTaxonObservationFilterMapper.createFilter(filter);
-        oTaxonObservationFilterMapper.createDownloadLog(filter.getId(), dFilter.getReason().getPurpose(), dFilter.getReason().getReason(), user.getId());
+        oTaxonObservationFilterMapper.createDownloadLog(filter.getId(), dFilter.getReason().getPurpose(), dFilter.getReason().getDetails(), user.getId());
         
         final int filterID = filter.getId();
         return new StreamingOutput() {
@@ -267,10 +244,10 @@ public class TaxonObservationResource extends AbstractResource {
                 addObservations(zip, user, dFilter.getYear().getStartYear(), 
                         dFilter.getYear().getEndYear(), dFilter.getDataset().getDatasets(), 
                         taxaList, dFilter.getSpatial().getMatch(),
-                        dFilter.getSpatial().getFeature(), Boolean.getBoolean(dFilter.getSensitive()), 
+                        dFilter.getSpatial().getFeature(), dFilter.getSensitive().equals("sans"), 
                         dFilter.getTaxon().getDesignation(), dFilter.getTaxon().getOutput(), 
                         dFilter.getSpatial().getGridRef(), dFilter.getPolygon(), 
-                        Boolean.getBoolean(dFilter.getIncludeAttributes()), filterID);
+                        dFilter.getReason().getIncludeAttributes().equals("true"), filterID);
                 addReadMe(zip, title, user,  dFilter.getYear().getStartYear(), 
                         dFilter.getYear().getEndYear(), dFilter.getDataset().getDatasets(), dFilter.getSpatial().getMatch(),
                         dFilter.getSpatial().getFeature(), Boolean.getBoolean(dFilter.getSensitive()), 
@@ -1029,18 +1006,18 @@ public class TaxonObservationResource extends AbstractResource {
             values.add(observation.getObservationKey());
             values.add(observation.getOrganisationName());
             values.add(observation.getDatasetKey());
-            values.add(observation.getSurveyKey());
-            values.add(observation.getSampleKey());
-            values.add(observation.getGridReference());
-            values.add(observation.getPrecision());
-            values.add(observation.getSiteKey());
-            values.add(observation.getSiteName());
-            values.add(observation.getFeatureKey());
-            values.add(df.format(observation.getStartDate()));
-            values.add(df.format(observation.getEndDate()));
+            values.add(StringUtils.hasText(observation.getSurveyKey()) ? observation.getSurveyKey() : "");
+            values.add(StringUtils.hasText(observation.getSampleKey()) ? observation.getSampleKey() : "");
+            values.add(StringUtils.hasText(observation.getGridReference()) ? observation.getGridReference() : "");
+            values.add(StringUtils.hasText(observation.getPrecision()) ? observation.getPrecision() : "");
+            values.add(StringUtils.hasText(observation.getSiteKey()) ? observation.getSiteKey() : "");
+            values.add(StringUtils.hasText(observation.getSiteName()) ? observation.getSiteName() : "");
+            values.add(StringUtils.hasText(observation.getFeatureKey()) ? observation.getFeatureKey() : "");
+            values.add(observation.getStartDate() != null ? df.format(observation.getStartDate()) : "");
+            values.add(observation.getEndDate() != null ? df.format(observation.getEndDate()) : "");
             values.add(observation.getDateType());
-            values.add(observation.getRecorder());
-            values.add(observation.getDeterminer());
+            values.add(StringUtils.hasText(observation.getRecorder()) ? observation.getRecorder() : "");
+            values.add(StringUtils.hasText(observation.getDeterminer()) ? observation.getDeterminer() : "");
             values.add(observation.getpTaxonVersionKey());
             values.add(observation.getpTaxonName());
             values.add(observation.getAuthority());
@@ -1049,7 +1026,7 @@ public class TaxonObservationResource extends AbstractResource {
             values.add(observation.isSensitive() ? "1" : "0");
             values.add(observation.isZeroAbundance() ? "1" : "0");
             values.add(observation.isFullVersion()? "1" : "0");
-            values.add(observation.getUseConstraints());
+            values.add(StringUtils.hasText(observation.getUseConstraints()) ? observation.getUseConstraints() : "");
 
             if (includeAttributes) {
                 if (observation.isFullVersion()) {

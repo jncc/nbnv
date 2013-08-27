@@ -6,14 +6,17 @@ nbn.nbnv.ui.download = function (json, div) {
     this.div = div;
     
     var reason = new nbn.nbnv.ui.downloadReason(json);
+    var sensitive = new nbn.nbnv.ui.filter.sensitive(json);
     var year = new nbn.nbnv.ui.filter.year(json);
     var spatial = new nbn.nbnv.ui.filter.spatial(json);
     var taxon = new nbn.nbnv.ui.filter.taxon(json);
     var dataset = new nbn.nbnv.ui.filter.dataset(json);
-    var result = new nbn.nbnv.ui.downloadResult(json)
+    var result = new nbn.nbnv.ui.downloadResult(json);
     
     this.div.append(reason._renderHeader());
     this.div.append(reason._renderPanel());
+    this.div.append(sensitive._renderHeader());
+    this.div.append(sensitive._renderPanel());
     this.div.append(spatial._renderHeader());
     this.div.append(spatial._renderPanel());
     spatial._postRender();
@@ -24,22 +27,15 @@ nbn.nbnv.ui.download = function (json, div) {
     this.div.append(dataset._renderHeader());
     this.div.append(dataset._renderPanel());
     this.div.append(result._renderHeader());
-    this.div.append(result._renderPanel(function () {
-        var queryString = [];
-        queryString.push(reason.getQueryString());
-        queryString.push(spatial.getQueryString());
-        queryString.push(taxon.getQueryString());
-        queryString.push(year.getQueryString());
-        queryString.push(dataset.getQueryString());
-        
-        var j = { sensitive: 'sans', includeAttributes: 'true'};
+    this.div.append(result._renderPanel(function () {       
+        var j = sensitive.getJson();
         $.extend(j, reason.getJson());        
         $.extend(j, taxon.getJson());
         $.extend(j, spatial.getJson());
         $.extend(j, year.getJson());        
         $.extend(j, dataset.getJson());        
         
-        alert('/TaxonObservations/Download?json=' + JSON.stringify(j));
+        window.location = nbn.nbnv.api + '/taxonObservations/download?json=' + JSON.stringify(j);
     }));
 
     this.div.accordion({
