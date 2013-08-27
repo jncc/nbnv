@@ -55,6 +55,25 @@ public class TaxonObservationProvider {
         return SQL();
     }
     
+    public String filterSelectedAttributesForDownload(Map<String,Object> params) {
+        String from = createSelectQuery(params, true, "o.id");
+        BEGIN();
+        SELECT("DISTINCT ad.id as attributeID, ad.label, ad.description");
+        FROM("(" + from + ") AS obs");
+        INNER_JOIN("TaxonObservationAttributeData toad ON toad.observationID = obs.id");
+        INNER_JOIN("AttributeData ad ON ad.id = toad.attributeID");
+        return SQL();
+    }
+    
+    public String filterSelectedAttributeDataForDownload(Map<String,Object> params) {
+        String from = createSelectQuery(params, true, "o.id");
+        BEGIN();
+        SELECT("toad.*");
+        FROM("(" + from + ") AS obs");
+        INNER_JOIN("TaxonObservationAttributeData toad ON toad.observationID = obs.id");
+        return SQL();
+    }
+    
     public String filteredSelectRecords(Map<String, Object> params) {
         String from = createSelect(params, "o.*");
         BEGIN();
