@@ -33,6 +33,7 @@ define [
     q: term
     rows: @rows
     start: (page-1)*@rows
+    exclude: 'organisation'
 
   ###
   Assigns an id to each of the results and determines if there are any more
