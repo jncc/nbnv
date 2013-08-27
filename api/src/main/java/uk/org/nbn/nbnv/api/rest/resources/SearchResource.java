@@ -29,6 +29,8 @@ public class SearchResource extends AbstractResource {
      * @param sort If we should sort the results or not
      * @param order The order in which we should sort the results
      * @param q The search term
+     * @param exclude a record type to exclude from the search results (eg the 
+     * IMT requires the exclusion of records that are of type 'organisation')
      * 
      * @return Search Results for this search term
      * 
@@ -44,11 +46,13 @@ public class SearchResource extends AbstractResource {
             @QueryParam("start") @DefaultValue("0") int start,
             @QueryParam("sort") String sort,
             @QueryParam("order") @DefaultValue("asc") SolrQuery.ORDER order,
-            @QueryParam("q") String q
+            @QueryParam("q") String q,
+            @QueryParam("exclude") String exclude
             ) throws SolrServerException {
         return solr
                 .create()
                 .query(q)
+                .excludeByFieldValue("record_type", exclude)
                 .sort(sort, order)
                 .start(start)
                 .rows(rows)
@@ -242,4 +246,5 @@ public class SearchResource extends AbstractResource {
                 .rows(rows)
                 .response();
     }
+
 }

@@ -76,6 +76,11 @@ public class Solr {
             return this;
         }
         
+        public SolrBuilder excludeByFieldValue(String field, String value) {
+            query.addFilterQuery(getExcludedFilter(field, value));
+            return this;
+        }
+        
         public SolrBuilder boostFunction(String function) {
             query.setParam("bf", function);
             return this;
@@ -106,4 +111,16 @@ public class Solr {
         toReturn.append(")");
         return toReturn.toString();
     }
+    
+    private static String getExcludedFilter(String field, String value){
+        if(field == null){
+            throw new IllegalArgumentException("I need a field to work with");
+        }
+        StringBuilder toReturn = new StringBuilder("NOT ");
+        return toReturn.append(field)
+            .append(":")
+            .append(value)
+            .toString();
+    }
+
 }
