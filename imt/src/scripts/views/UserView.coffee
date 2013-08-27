@@ -12,4 +12,6 @@ define [
       surname = @model.get "surname"
       @$el.html "#{forename} #{surname}"
     else
-      @$el.html """<a href="#{@model.getSSOHref()}">Login</a>"""
+      @$el.empty()
+          .append $('<a href="#">Login</a>').click =>
+            window.location.href = @model.getSSOHref() #The sso href changes, get the latest
