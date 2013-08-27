@@ -32,7 +32,7 @@ define [
       el: @$('.datasets')
 
     @pickerView = new PickerView
-      model: @model.getPicker()
+      model: @model
       el: @$('.picker')
 
   updateVisiblity: (speed)->
@@ -52,7 +52,7 @@ define [
   ###
   updateIsPicking: ->
     isOnPickerTab = @$('.controlPanelTabs').tabs( "option", "active" ) is 2 #picker is on second tab
-    @model.getPicker().set "isPicking", isOnPickerTab
+    @model.getPicker().set "isPicking", isOnPickerTab and @model.getCurrentUser().isLoggedIn()
 
     if isOnPickerTab and @model.getPicker().hasResults()
       @$el.animate width:800
