@@ -15,6 +15,7 @@ define [
     do @render
 
     @listenTo @picker, 'change:resultsForLayers', @render
+    @listenTo @model.getCurrentUser(), 'change', @render
 
   clearResults: -> 
     do @picker.clearResults
