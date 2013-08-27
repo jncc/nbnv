@@ -33,5 +33,5 @@ require(['backbone', 'cs!models/App', 'cs!views/AppView', 'cs!routers/StateRoute
   view = new AppView({model : app});
   router = new Router({model: app});
   Backbone.history.start();
-  router.navigate(router.getCurrentRoute(), {replace:true});
+  router.refresh();
 });

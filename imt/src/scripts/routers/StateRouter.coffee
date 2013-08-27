@@ -24,6 +24,14 @@ define [
     @listenTo @model, 'change:baseLayer', @updateRoute
     @listenTo @model.getLayers(), 'add remove position change:colour change:usedDatasets change:startDate change:endDate change:resolution', @updateRoute
 
+  ###
+  Update the url fragment to represent the current state of this router
+  If the url already has a fragment, then the current one is left in place.
+  ###
+  refresh: -> 
+    if not Backbone.history.fragment
+      router.navigate router.getCurrentRoute(), replace:true
+
   updateModel:(route)->
     if route?
       state = @getStateFromRoute(route) #load the state from the url
