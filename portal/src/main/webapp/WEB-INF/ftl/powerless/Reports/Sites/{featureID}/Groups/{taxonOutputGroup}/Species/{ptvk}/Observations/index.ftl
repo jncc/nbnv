@@ -20,6 +20,7 @@
         <div class="tabbed" id="nbn-site-report-filter-container" style="clear:left;">        
             <h3>Download Observations</h3>
             <button id="nbn-download-observations-button">Download</button> Observations
+            <@report_utils.downloadTermsDialogue/>
         </div>
         <div class="tabbed" id="nbn-site-report-filter-container" style="clear:left;">
             <h3>Other Options</h3>

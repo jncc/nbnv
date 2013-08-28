@@ -226,20 +226,33 @@
     }
     
     function setupDownloadRecordsLink() {
-        $('#nbn-download-observations-button').click(function() {
-            var form = $('#nbn-site-report-form');
-            var keyValuePairs = nbn.portal.reports.utils.forms.getKeyValuePairsFromForm(form);
-            window.open('/Download?json={' + 
-                    nbn.portal.reports.utils.forms.getSpatialFeatures(keyValuePairs) + 
-                    ',taxon:{tvk:\'' + form.attr('ptvk') + '\'}' + 
-                    ',dataset:{all:true},' +
-                    nbn.portal.reports.utils.forms.getYearJSON(keyValuePairs) +
-                    '}');
-            return false;
+        $('#nbn-download-observations-button').click(function(e) {
+            $('#nbn-download-terms').dialog({
+                modal: true,
+                width: 800,
+                height: 450,
+                buttons: {
+                    'Accept': function(){
+                        var form = $('#nbn-site-report-form');
+                        var keyValuePairs = nbn.portal.reports.utils.forms.getKeyValuePairsFromForm(form);
+                        window.location = '/Download?json={' + 
+                                nbn.portal.reports.utils.forms.getSpatialFeatures(keyValuePairs) + 
+                                ',taxon:{tvk:\'' + form.attr('ptvk') + '\'}' + 
+                                ',dataset:{all:true},' +
+                                nbn.portal.reports.utils.forms.getYearJSON(keyValuePairs) +
+                                '}';
+                    },
+                    'Cancel': function(){
+                        $(this).dialog("close");
+                    }
+                }
+            });
+            e.preventDefault();
         });
     }
     
     $(document).ready(function(){
+        $('#nbn-download-terms').hide();
         apiServer = $('#nbn-site-report-form').attr('api-server');
         setupFormOnChange();
         setupBetterAccessLink();
