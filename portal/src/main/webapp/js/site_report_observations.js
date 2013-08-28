@@ -63,9 +63,9 @@
                     });
                     $datasetContent.append($table);
                     $dataContainer.append($datasetContent);
-                    if($attributeDropDown){
-                        addAttributeData(dataset.key, $attributeDropDown.val(), queryString);
-                    }
+                    //if($attributeDropDown){
+                    //    addAttributeData(dataset.key, $attributeDropDown.val(), queryString);
+                    //}
                 });
             }else{
                 $dataContainer.append(nbn.portal.reports.utils.forms.getNoRecordsFoundInfoBox());
@@ -87,25 +87,26 @@
     }
     
     function getAccessPositions(taxonDataset){
-        var url = apiServer + '/datasets/' + taxonDataset.key + '/accessPositions';
+        var url = apiServer + '/taxonDatasets/' + taxonDataset.key + '/accessPositions';
         var toReturn = '';
         $.ajax({
             type: 'GET',
             url: url,
             dataType: 'json',
-            success: function(data){
-                if (taxonDataset.publicResolution == "None") { 
+            success: function(data) {
+                if (data.publicAccess == "None") { 
                     toReturn += '<ul><li>No public access'; 
                 } else {
-                    toReturn += '<ul><li>You have public access to records at ' + taxonDataset.publicResolution;
+                    toReturn += '<ul><li>You have public access to records at ' + data.publicAccess;
                 }
                 
-                if(taxonDataset.publicAttribute){
-                    toReturn += ' with record attributes</li>';
-                }
+                // Disabled as we no longer support public attributes
+                //if(taxonDataset.publicAttribute){
+                //    toReturn += ' with record attributes</li>';
+                //}
                 
-                for(var i = 0; i < data.length; i++){
-                    toReturn += '<li>Your enhanced access: ' + data[i] + '</li>';
+                for(var i = 0; i < data.enhanced.length; i++){
+                    toReturn += '<li>Your enhanced access: ' + data.enhanced[i] + '</li>';
                 }
 
                 toReturn += '</ul>';

@@ -17,7 +17,9 @@ import uk.org.nbn.nbnv.api.dao.warehouse.DatasetMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.SurveyMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.TaxonMapper;
 import uk.org.nbn.nbnv.api.model.*;
+import uk.org.nbn.nbnv.api.model.meta.DatasetAccessPositionsJSON;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenTaxonObservationAttributeAdminUser;
+import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
 
 @Component
 @Path("/taxonDatasets")
@@ -138,7 +140,7 @@ public class TaxonDatasetResource extends AbstractResource {
      * 
      * @return A list of attributes in a specific dataset
      * 
-     * @response.representation.200.qname JSONObject
+     * @response.representation.200.qname List<Attribute>
      * @response.representation.200.mediaType application/json
      */
     @GET
@@ -157,6 +159,9 @@ public class TaxonDatasetResource extends AbstractResource {
      * @param id A dataset Key
      * @param attributeID An attribute that resides in this dataset
      * @return 
+     * 
+     * @response.representation.200.qname Attribute
+     * @response.representation.200.mediaType application/json
      */
     @GET
     @Path("/{id}/attributes/{attribute}")
@@ -165,6 +170,19 @@ public class TaxonDatasetResource extends AbstractResource {
         return oAttributeMapper.getDatasetAttribute(attributeID);
     }
     
+    /**
+     * Update an attribute for a given dataset, if the user has permissions to
+     * update this dataset
+     * 
+     * @param user The current user 
+     * @param id The dataset key of the attribute you want to update
+     * @param attributeID The attribute you wish to update
+     * @param description The new description of that attribute
+     * @return The success or failure of this action
+     * 
+     * @response.representation.200.qname int
+     * @response.representation.200.mediaType application/json
+     */
     @POST
     @Path("/{id}/attributes/{attribute}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -174,5 +192,27 @@ public class TaxonDatasetResource extends AbstractResource {
             @PathParam("attribute") int attributeID,
             @FormParam("description") String description) {
         return oAttributeMapper.updateDatasetAttribute(attributeID, description);
+    }
+    
+    /**
+     * Returns a json object detailing the current users access permissions for
+     * a given dataset key
+     * 
+     * @param user The current user
+     * @param datasetKey The dataset you want your access positions for
+     * @return The access positions the current user has over this dataset
+     * 
+     * @response.representation.200.qname DatasetAccessPositionsJSON
+     * @response.representation.200.mediaType application/json
+     */
+    @GET
+    @Path("/{datasetKey}/accessPositions")
+    @Produces(MediaType.APPLICATION_JSON)
+    public DatasetAccessPositionsJSON getAccessPositions(@TokenUser() User user, @PathParam("datasetKey") String datasetKey){
+        DatasetAccessPositionsJSON ret = new DatasetAccessPositionsJSON();
+        ret.setPublicAccess(datasetMapper.selectTaxonDatasetByID(datasetKey).getPublicResolution());
+        ret.setEnhanced(datasetMapper.getDatasetAccessPositions(datasetKey, user.getId()));
+        
+        return ret;
     }
 }
