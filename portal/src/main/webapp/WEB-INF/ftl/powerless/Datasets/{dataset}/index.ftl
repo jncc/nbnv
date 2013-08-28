@@ -2,6 +2,7 @@
 <#assign resolution=json.readURL("${api}/datasets/${URLParameters.dataset}/resolutionData")>
 <#assign provider=json.readURL("${api}/organisations/${dataset.organisationID}")>
 <#assign isAdmin=json.readURL("${api}/datasets/${URLParameters.dataset}/isAdmin")>
+<#assign user=json.readURL("${api}/user")>
 
 <@template.master title="NBN Gateway - Datasets"
     javascripts=["/js/jquery-ui-1.8.23.custom.min.js/"
@@ -112,8 +113,11 @@
                         </tr>
                     </#if>
                 </table>
-                <br />
-                <a href="/Download?json={dataset:{all:false,datasets:['${URLParameters.dataset}']}}">Download Dataset</a>
+                <#if user.id != 1>
+                    <br />
+                    <a id="nbn-download-observations" href="#" data-dataset="${URLParameters.dataset}">Download Dataset</a>
+                    <@report_utils.downloadTermsDialogue/>
+                </#if>
             </div>
             <div id="tabs-2">
                 <table class="nbn-dataset-table nbn-simple-table nbn-metadata-dataset-table">
