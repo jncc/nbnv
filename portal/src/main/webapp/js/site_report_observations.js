@@ -22,7 +22,8 @@
             if(data.length > 0){
                 $.each(data, function(key, dataset){
                     var provider = getProvider(dataset.organisationID);
-                    var $attributeDropDown = getAttributeDropDown(dataset.key, queryString);
+                    // Disabled For Release
+                    //var $attributeDropDown = getAttributeDropDown(dataset.key, queryString);
                     var $datasetContent = $('<div><div/>').addClass('tabbed');
                     $datasetContent.append(getProviderHeading(dataset, provider));
                     var $table = $('<table class="nbn-simple-table"></table>');
@@ -86,7 +87,7 @@
     }
     
     function getAccessPositions(taxonDataset){
-        var url = apiServer + '/taxonDatasets/' + taxonDataset.key + '/accessPositions';
+        var url = apiServer + '/datasets/' + taxonDataset.key + '/accessPositions';
         var toReturn = '';
         $.ajax({
             type: 'GET',
