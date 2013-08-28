@@ -112,6 +112,8 @@
                         </tr>
                     </#if>
                 </table>
+                <br />
+                <a href="/Download?json={dataset:{all:false,datasets:['${URLParameters.dataset}']}}">Download Dataset</a>
             </div>
             <div id="tabs-2">
                 <table class="nbn-dataset-table nbn-simple-table nbn-metadata-dataset-table">

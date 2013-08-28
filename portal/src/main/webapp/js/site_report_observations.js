@@ -198,6 +198,7 @@
             var form = $('#nbn-site-report-form');
             var keyValuePairs = nbn.portal.reports.utils.forms.getKeyValuePairsFromForm(form);
             window.open('/AccessRequest/Create?json={' +
+                    nbn.portal.reports.utils.forms.getSpatialFeatures(keyValuePairs) + ',' +
                     'taxon:{tvk:\'' + form.attr('ptvk') + '\'},' +
                     'dataset:{all:true},' +
                     nbn.portal.reports.utils.forms.getYearJSON(keyValuePairs) +

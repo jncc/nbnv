@@ -512,6 +512,19 @@ public class UserResource extends AbstractResource {
                 .put("success", true)
                 .put("status", "You have successfully modifed your user details")).build();
     }
+    
+    /**
+     * Checks if a user is logged in, used for portal operations
+     * 
+     * @param user The current user must be logged in
+     * @return True if the user is logged in, a forbidden error if not
+     */
+    @GET
+    @Path("/loggedIn")
+    @Produces(MediaType.APPLICATION_JSON)
+    public boolean isLoggedIn(@TokenUser(allowPublic = false) User user) {
+        return true;
+    }
 
 // Function no longer in use
 //    /**
