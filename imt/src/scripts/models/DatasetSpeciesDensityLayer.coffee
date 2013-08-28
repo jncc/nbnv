@@ -20,6 +20,7 @@ define [
   initialize: () ->
     @set "name", @attributes.title
 
+    @on 'change:title', -> @set "name", @attributes.title
     @on 'change:startDate change:endDate', -> @trigger 'change:wms'
     GridLayer.prototype.initialize.call(this, arguments); #call super initialize
     TemporalFilterMixin.initialize.call(this, arguments); #initalize the mixin
