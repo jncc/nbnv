@@ -14,8 +14,7 @@
         ,"/js/filter/sensitive.js"
         ,"/js/download/downloadReason.js"
         ,"/js/download/download.js"
-        ,"/js/download/downloadResult.js"
-        ,"/js/jquery.fileDownload.js"] 
+        ,"/js/download/downloadResult.js"] 
     csss=["http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/themes/smoothness/jquery-ui.css","/css/jquery.qtip.min.css","/css/accessRequest.css"]>
 
     <script>
