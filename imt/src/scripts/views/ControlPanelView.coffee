@@ -8,6 +8,7 @@ define [
 ], ($, Backbone, controlPanel, LegendView, DatasetsView, PickerView) -> Backbone.View.extend
   events :
     "tabsactivate" : "updateIsPicking"
+    "click .hideControlPanel button" : "hideControlPanel"
 
   initialize:->
     do @render
@@ -34,6 +35,8 @@ define [
     @pickerView = new PickerView
       model: @model
       el: @$('.picker')
+
+  hideControlPanel :-> @model.set "controlPanelVisible", false
 
   updateVisiblity: (speed)->
     options = direction: 'right', duration :speed, effect: 'slide'
