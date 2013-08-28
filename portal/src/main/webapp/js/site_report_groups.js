@@ -96,15 +96,13 @@
             var form = $('#nbn-site-report-form');
             var keyValuePairs = nbn.portal.reports.utils.forms.getKeyValuePairsFromForm(form);
             window.open('/Download?json={' + 
-                    getSpatialFeatures(keyValuePairs) + ',' +
+                    nbn.portal.reports.utils.forms.getSpatialFeatures(keyValuePairs) + ',' +
                     nbn.portal.reports.utils.datasetfields.getSelectedDatasetsJSON() + ',' +
                     nbn.portal.reports.utils.forms.getYearJSON(keyValuePairs) +
                     '}');
+            
+            return false;
         });
-    }
-    
-    function getSpatialFeatures(keyPairs) {
-        return 'spatial:{all:false,match:\'' + keyPairs['spatialRelationship'] + '\',feature:\'' + $('#nbn-site-report-form').attr('featureid') + '\',dataset:\'' + $('#nbn-site-report-form').attr('featureid').substring(0,8) + '\'}';
     }
     
     $(document).ready(function(){

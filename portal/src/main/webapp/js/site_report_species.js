@@ -113,10 +113,12 @@
             var form = $('#nbn-site-report-form');
             var keyValuePairs = nbn.portal.reports.utils.forms.getKeyValuePairsFromForm(form);
             window.open('/Download?json={' + 
-                    getSpatialFeatures(keyValuePairs) + ',' +
+                    nbn.portal.reports.utils.forms.getSpatialFeatures(keyValuePairs) + ',' +
                     nbn.portal.reports.utils.datasetfields.getSelectedDatasetsJSON() + ',' +
                     nbn.portal.reports.utils.forms.getYearJSON(keyValuePairs) +
                     '}');
+            
+            return false;
         });
     }
       
@@ -128,6 +130,7 @@
         $('#nbn-download-terms').hide();
         setupFormOnChange();
         setupDownloadSpeciesButton();
+        setupDownloadRecordsLink();
         doFirstVisitToPage();
     });
 })(jQuery);

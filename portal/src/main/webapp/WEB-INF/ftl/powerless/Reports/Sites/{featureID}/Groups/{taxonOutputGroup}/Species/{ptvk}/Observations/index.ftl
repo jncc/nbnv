@@ -20,6 +20,7 @@
             <h3>Other Options</h3>
             <a id="nbn-request-better-access" href="#">Request Better Access</a><br /><br />
             <a id="nbn-interactive-map" href="#">View on IMT</a><br /><br />
+            <button id="nbn-download-observations-button">Download</button> observations<br /><br />
         </div>
         <@report_utils.siteImage locationName=site.label locationID=featureID imageURL=report_utils.getSiteSpeciesImageURL(featureID, taxon.ptaxonVersionKey, startYear, endYear, datasets, spatialRelationship, !is10kmReport)/>
     </form>

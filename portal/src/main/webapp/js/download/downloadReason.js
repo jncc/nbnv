@@ -113,7 +113,7 @@ nbn.nbnv.ui.downloadReason = function(json) {
                 .text('Detailed description of purpose:')
             ).append(details)
              .append($('<br>'))
-             .append($('<div>').text('Indlude Attributes:'))
+             .append($('<div>').text('Include Attributes:'))
              .append($('<input>')
                 .attr('type', 'checkbox')
                 .attr('name', 'includeattributes')

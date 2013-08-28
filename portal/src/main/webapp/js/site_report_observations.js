@@ -223,11 +223,25 @@
         });
     }
     
+    function setupDownloadRecordsLink() {
+        $('#nbn-download-observations-button').click(function() {
+            var form = $('#nbn-site-report-form');
+            var keyValuePairs = nbn.portal.reports.utils.forms.getKeyValuePairsFromForm(form);
+            window.open('/Download?json={' + 
+                    nbn.portal.reports.utils.forms.getSpatialFeatures(keyValuePairs) + 
+                    ',datasets:{all:true},' +
+                    nbn.portal.reports.utils.forms.getYearJSON(keyValuePairs) +
+                    '}');
+            return false;
+        });
+    }
+    
     $(document).ready(function(){
         apiServer = $('#nbn-site-report-form').attr('api-server');
         setupFormOnChange();
         setupBetterAccessLink();
         setupIMTLink();
+        setupDownloadRecordsLink();
         doFirstVisitToPage();
     });
     
