@@ -313,6 +313,30 @@
     function getTaxonJSON() {
         return 'taxon:{tvk:\'' + $('#tvk').val() + '\'}';
     }
+    
+    function setupDownloadRecordsLink() {
+        $('#nbn-download-observations-button').click(function(e) {
+            $('#nbn-download-terms').dialog({
+                modal: true,
+                width: 800,
+                height: 450,
+                buttons: {
+                    'Accept': function(){
+                        var form = $('#nbn-site-report-form');
+                        var keyValuePairs = nbn.portal.reports.utils.forms.getKeyValuePairsFromForm(form);
+                        window.location = '/Download?json={' + 
+                            getTaxonJSON() + ',' +
+                            nbn.portal.reports.utils.datasetfields.getSelectedDatasetsJSON() + ',' +
+                            '}';
+                    },
+                    'Cancel': function(){
+                        $(this).dialog("close");
+                    }
+                }
+            });
+            e.preventDefault();
+        });
+    }
 
     $(document).ready(function(){
         $('#nbn-download-terms').hide();
@@ -322,6 +346,7 @@
         setupDownloadSquaresButton();
         setupIMTLink();
         setupBetterAccessLink();
+        setupDownloadRecordsLink();
         hideBusyImageOnMapLoad();
         addInitialMapImage();
     });
