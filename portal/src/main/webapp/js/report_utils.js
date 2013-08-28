@@ -16,6 +16,9 @@
             return $.isEmptyObject(value) ? defaultText : value;
         },
         getDateText: function(date){
+            if (date === undefined) {
+                return '';
+            }
             return doGetDateText(date);
         },
         isSiteReportFormFieldValid: function($input){

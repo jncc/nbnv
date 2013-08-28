@@ -29,11 +29,11 @@
                 }
                 $.each(data, function(key, val){
                     //Link to observation data disabled for Christmas release 2012
-                    toAppend += "<tr><td><span class='nbn-taxon-name'>" + val.taxon.name + '</span>';
-                    if (val.taxon.commonName)
-                        toAppend += ' [' + val.taxon.commonName + ']';
-                    toAppend += '</td></tr>';
-//                    toAppend += '<tr><td><a href="/Reports/Sites/' + featureID + '/Groups/' + taxonOutputGroupKey + '/Species/'+ val.taxon.ptaxonVersionKey + '/Observations">' + val.taxon.name + '</a></td></tr>';
+//                    toAppend += "<tr><td><span class='nbn-taxon-name'>" + val.taxon.name + '</span>';
+//                    if (val.taxon.commonName)
+//                        toAppend += ' [' + val.taxon.commonName + ']';
+//                    toAppend += '</td></tr>';
+                    toAppend += '<tr><td><a href="/Reports/Sites/' + featureID + '/Groups/' + taxonOutputGroupKey + '/Species/'+ val.taxon.ptaxonVersionKey + '/Observations">' + val.taxon.name + '</a></td></tr>';
                 });
                 toAppend += '</tbody></table>';
             }else{
@@ -106,6 +106,18 @@
             e.preventDefault();
         });
 
+    }
+    
+    function setupDownloadRecordsLink() {
+        $('#nbn-download-observations-button').click(function() {
+            var form = $('#nbn-site-report-form');
+            var keyValuePairs = nbn.portal.reports.utils.forms.getKeyValuePairsFromForm(form);
+            window.open('/Download?json={' + 
+                    getSpatialFeatures(keyValuePairs) + ',' +
+                    nbn.portal.reports.utils.datasetfields.getSelectedDatasetsJSON() + ',' +
+                    nbn.portal.reports.utils.forms.getYearJSON(keyValuePairs) +
+                    '}');
+        });
     }
       
     function doFirstVisitToPage(){

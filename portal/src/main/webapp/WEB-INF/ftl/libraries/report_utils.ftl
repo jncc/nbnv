@@ -116,10 +116,11 @@
             <#if isDownloadButtonNeeded>
                 <fieldset>
                     <legend>Download</legend>
-                    <button id="nbn-site-report-download-button">Download</button> species list
+                    <button id="nbn-site-report-download-button">Download</button> species list<br />
+                    <button id="nbn-download-observations-button">Download</button> observations
                 </fieldset>
             </#if>
-            <#if isMapLinkNeeded || isRequestBetterAccessLinkNeeded>
+            <#if isMapLinkNeeded || isRequestBetterAccessLinkNeeded >
                 <fieldset>
                     <legend>Other Options</legend>
                     <#if isMapLinkNeeded>

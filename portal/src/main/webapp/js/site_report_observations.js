@@ -27,35 +27,37 @@
                     $datasetContent.append(getProviderHeading(dataset, provider));
                     var $table = $('<table class="nbn-simple-table"></table>');
                     var $row = $('<tr></tr>');
+                    $row.append($('<th></th>').text("Grid Reference"));
                     $row.append($('<th></th>').text("Site name"));
-                    $row.append($('<th></th>').text("Location"));
                     $row.append($('<th></th>').text("Start date"));
                     $row.append($('<th></th>').text("End date"));
                     $row.append($('<th></th>').text("Date type"));
                     $row.append($('<th></th>').text("Recorder"));
                     $row.append($('<th></th>').text("Determiner"));
-                    $row.append($('<th></th>').text("Absence"));
                     $row.append($('<th></th>').text("Sensitive"));
-                    $row.append($('<th></th>').text("Public"));
-                    if($attributeDropDown){
-                        $row.append($attributeDropDown);
-                    }
+                    $row.append($('<th></th>').text("Zero Abundance"));
+                    $row.append($('<th></th>').text("Full Version"));
+                    // Disabled For Release
+                    //if($attributeDropDown){
+                    //    $row.append($attributeDropDown);
+                    //}
                     $table.append($row);
                     $.each(dataset.observations, function(key, observation){
                         var $row = $('<tr></tr>');
+                        $row.append($('<td></td>').text(nbn.portal.reports.utils.forms.getDefaultText(observation.location,'Unavailable')));
                         $row.append($('<td></td>').text(nbn.portal.reports.utils.forms.getDefaultText(observation.siteName,'Unavailable')));
-                        $row.append($('<td></td>').text(observation.location));
                         $row.append($('<td></td>').text(nbn.portal.reports.utils.forms.getDateText(new Date(observation.startDate))));
                         $row.append($('<td></td>').text(nbn.portal.reports.utils.forms.getDateText(new Date(observation.endDate))));
                         $row.append($('<td></td>').text(observation.dateTypekey));
                         $row.append($('<td></td>').text(nbn.portal.reports.utils.forms.getDefaultText(observation.recorder,'Unavailable')));
                         $row.append($('<td></td>').text(nbn.portal.reports.utils.forms.getDefaultText(observation.determiner,'Unavailable')));
-                        $row.append($('<td></td>').text(observation.absence));
                         $row.append($('<td></td>').text(observation.sensitive));
-                        $row.append($('<td></td>').text(!observation.fullVersion));
-                        if($attributeDropDown){
-                            $row.append($('<td id="' + observation.observationID + '"></td>').addClass('nbn-attribute-td'));
-                        }
+                        $row.append($('<td></td>').text(observation.absence));
+                        $row.append($('<td></td>').text(observation.fullVersion));
+                        // Disabled For Release
+                        //if($attributeDropDown){
+                        //    $row.append($('<td id="' + observation.observationID + '"></td>').addClass('nbn-attribute-td'));
+                        //}
                         $table.append($row);
                     });
                     $datasetContent.append($table);
