@@ -229,7 +229,8 @@
             var keyValuePairs = nbn.portal.reports.utils.forms.getKeyValuePairsFromForm(form);
             window.open('/Download?json={' + 
                     nbn.portal.reports.utils.forms.getSpatialFeatures(keyValuePairs) + 
-                    ',datasets:{all:true},' +
+                    ',taxon:{tvk:\'' + form.attr('ptvk') + '\'}' + 
+                    ',dataset:{all:true},' +
                     nbn.portal.reports.utils.forms.getYearJSON(keyValuePairs) +
                     '}');
             return false;
