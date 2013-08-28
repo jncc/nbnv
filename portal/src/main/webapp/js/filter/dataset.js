@@ -72,7 +72,6 @@ nbn.nbnv.ui.filter.dataset = function(json) {
                 url: nbn.nbnv.api + '/datasets/' + _me._datasets[0],
                 success: function(data) {
                     datasetAutoComplete.val(data.title);
-                    $('#datasetResult').text('Filter to ' + data.title);
                 }
             });
         }
@@ -376,7 +375,11 @@ nbn.nbnv.ui.filter.dataset = function(json) {
         if (this._all) {
             text = 'All datasets'
         } else if (this._mode == 'single') {
-            text = 'Filter to ' + $('#datasetAutoComplete').val();
+            if ($('#datasetAutoComplete').val() == '') {
+                text = 'Filter to ' + this._datasets;
+            } else {
+                text = 'Filter to ' + $('#datasetAutoComplete').val();
+            }
         } else if (this._fullCount == -1) {
             text = 'Filter to ' + this._datasets.length + ' datasets';
         } else {
