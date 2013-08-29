@@ -1,6 +1,10 @@
-{{#each this}}
-  <div>
-    <input type="checkbox" value="{{key}}" {{#if selected}}checked="checked"{{/if}}>
-    <span class="title"><em>{{organisationName}}</em> - {{title}}</span>
-  </div>
-{{/each}}
+<h5>Which datasets should be used?</h5>
+<div class="toggle-container">Toggle datasets:<input type="checkbox"></input></div>
+<div class="datasets-container">
+  {{#each this}}
+    <div>
+      <input type="checkbox" value="{{key}}" {{#if selected}}checked="checked"{{/if}}>
+      <span class="title"><em>{{organisationName}}</em> - {{title}}</span>
+    </div>
+  {{/each}}
+</div>

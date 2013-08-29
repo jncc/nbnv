@@ -17,7 +17,7 @@
         ,"/js/admin/access/editRequest.js"
         ,"/js/admin/access/requestGrantDialog.js"        
         ,"/js/dialog_spinner.js"] 
-    csss=["http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/themes/smoothness/jquery-ui.css","/css/jquery.qtip.min.css","/css/accessRequest.css","/css/dialog-spinner.css"]>
+    csss=["//ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/themes/smoothness/jquery-ui.css","/css/jquery.qtip.min.css","/css/accessRequest.css","/css/dialog-spinner.css"]>
 
     <script>
         nbn.nbnv.api = '${api}';

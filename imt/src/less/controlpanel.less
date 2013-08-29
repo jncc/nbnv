@@ -1,14 +1,40 @@
-.controlPanel {
+.controlPanelTabs {
   @import "legend";
   @import "picker";
   position: absolute;
-  width: 350px;
-  top: 42px;
+  top: 36px;
   bottom: 0;
+  left: 0;
   right: 0;
   overflow-y: scroll; 
-
   .datasets {
     h2 { line-height: 20px; font-size: 17px;}
   }
+}
+.controlPanel {
+  background-color: white;
+  position: absolute;
+  width: 357px;
+  top: 42px;
+  bottom: 0;
+  right: 0;
+  float: right;
+  z-index: 2;
+  border-radius: 5px;
+}
+.hideControlPanel{
+  float: left;
+  background-color: white;
+  padding: 0.3em;
+}
+.showControlPanel{
+  float: right;
+  z-index: 1;
+  position: absolute;
+  top: 42px;
+  right: 0;
+}
+/*Disable the tabs pointless yellow selected state*/
+.ui-state-active a, .ui-state-hover a {
+    outline: none;
 }

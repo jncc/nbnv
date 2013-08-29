@@ -5,26 +5,38 @@ define [
   "hbs!templates/DatasetSelector"
   "jquery-ui"
 ], ($, _, Backbone, template) -> Backbone.View.extend
+  events:
+    "click .toggle-container":  "updateToggle"
 
   initialize:->
     @listenTo @collection, 'reset', @render #listen to when the collection is loaded
     @listenTo @collection, 'change:selected', @updateCheckbox #listen to when one checkbox has changed
-    @$el.on "click", "input", _.bind @handleClick, @ #add event listener to when checkboxs are clicked
-
+    
     do @render #render for the first time
+
+  ###
+  Apply the current state of the view to the model
+  ###
+  apply :->
+    @$('.datasets-container input').each (i, ele)=>
+      checkbox = $(ele)
+      datasetKey = checkbox.attr "value"
+      @collection.get(datasetKey).set "selected", checkbox.is(':checked')
 
   render:->
     @$el.addClass "datasets"
     @$el.html template @collection.toJSON()
 
-  handleClick: (evt) ->
-    checkbox = $(evt.target)
-    datasetKey = checkbox.attr "value"
-    @collection.get(datasetKey).set "selected", checkbox.is(':checked')
+    allSelected = @$('.datasets-container input[type=checkbox]:not(:checked)').length is 0
+    @$(".toggle-container input").prop "checked", allSelected
+
+  updateToggle: ->
+    toggle = @$(".toggle-container input").is ':checked'
+    @$(".datasets-container input").prop "checked", toggle
 
   ###
   Get the checkbox which relates to the updated model and
   update its checked property
   ###
   updateCheckbox: (model) ->
-    @$("input[value='#{model.id}'']").prop "checked", model.get "selected"
+    @$(".datasets-container input[value='#{model.id}']").prop "checked", model.get "selected"

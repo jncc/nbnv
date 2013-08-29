@@ -24,8 +24,11 @@ define [
 
   initialize: ->
     #When a layer is added, synchronize that layer to this layers state
-    @on "add", (layer) => @_syncLayer(layer)
-    @listenTo @state, "change", => @forEach (layer) => @_syncLayer(layer)
+    syncAllLayers = => @forEach (layer) => @_syncLayer(layer) 
+    @on "add", @_addOtherTypes
+    @on "add", @_syncLayer
+    @on "reset", syncAllLayers
+    @listenTo @state, "change", syncAllLayers
 
   ###
   Moves an existing element in the the collection from position index 
@@ -62,6 +65,12 @@ define [
       else 'Polygon'
 
   _syncLayer: (layer) -> layer.set @state.attributes if layer.isGridLayer
+
+  _addOtherTypes:(layer, collection, options)->
+    if options.addOtherTypes and layer.getTaxonObservationTypes?
+      #get the diferent types of layers available, then add instances of each
+      layer.getTaxonObservationTypes().fetch 
+        success: (types) => @add types.getOtherLayers()
 
   ###
   Gets all the layers used datasets of this collection and return

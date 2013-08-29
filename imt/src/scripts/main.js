@@ -26,9 +26,12 @@ require.config({
   }
 });
 
-require(['backbone', 'cs!models/App', 'cs!views/AppView', 'cs!routers/GetURLRouter'], function(Backbone, App, AppView, GetURLRouter) {
+require(['backbone', 'cs!models/App', 'cs!views/AppView', 'cs!routers/StateRouter', 'cs!routers/GetURLRouter'], function(Backbone, App, AppView, Router, GetURLRouter) {
   app = new App();
-  router = new GetURLRouter({model: app});
+  getMapRouter = new GetURLRouter({model: app});
+  getMapRouter.navigate(location.search);
   view = new AppView({model : app});
-  router.navigate(location.search);
+  router = new Router({model: app});
+  Backbone.history.start();
+  router.refresh();
 });

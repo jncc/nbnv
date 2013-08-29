@@ -12,7 +12,7 @@ define [
     
     @listenTo @availableDatasets, 'reset', @updateAvailableDatasets
     @listenTo @availableDatasets, 'change:selected', @updateSelectedDatasets
-    @listenTo @availableDatasets, 'reset change:selected', -> @trigger 'change:usedDatasets'
+    @listenTo @availableDatasets, 'reset change:selected', (others..., opts) -> @trigger 'change:usedDatasets', opts
     
     do @fetchAvailableDatasets #Prepopulate the datasets list
 

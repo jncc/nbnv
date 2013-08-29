@@ -1,5 +1,5 @@
 <@template.master title="NBN Gateway - Taxon Search" 
-    csss=["http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/themes/smoothness/jquery-ui.css","/css/browsetaxon.css"] 
+    csss=["//ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/themes/smoothness/jquery-ui.css","/css/browsetaxon.css"] 
     javascripts=["/js/jquery.dataTables.min.js",
                 "/js/jquery.nbn_search.js",
                 "/js/jquery.watermark.min.js",

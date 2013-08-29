@@ -22,6 +22,8 @@ define [
 
   clearResults: -> @set "wkt", ""
 
+  getPickableLayers: -> @getLayers().filter((layer) -> layer.getTaxonObservations?)
+
   ###
   The following method will search through the layers and check to see
   if they have a getTaxonObservations method. If they do, a new model will 
@@ -35,11 +37,8 @@ define [
       @set "resultsForLayers", []
     else
       #Object an array of pickerResultsForLayers which i can query
-      resultsForLayers = @getLayers()
-        .chain()
-        .filter( (layer) -> layer.getTaxonObservations? )
+      resultsForLayers = @getPickableLayers()
         .map( (layer) -> layer: layer, records: layer.getTaxonObservations() )
-        .value()
 
       #Fetch all the layers and store the promises in an array
       _.each resultsForLayers, (resultsForLayer) => resultsForLayer.records.fetch

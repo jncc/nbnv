@@ -9,4 +9,7 @@ define [
 
   render: ->
     @$el.html template @collection.toJSON()
-    @$('table').dataTable()
+    @$('table').dataTable
+      "bLengthChange": false
+      "oLanguage":
+        "sSearch": "Search within these results:"

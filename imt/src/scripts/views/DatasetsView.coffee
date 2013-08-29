@@ -5,7 +5,7 @@ define [
 ], (_, Backbone, template) -> Backbone.View.extend
 
   initialize: ->
-    @listenTo @collection, 'add remove change:usedDatasets', @render
+    @listenTo @collection, 'add remove reset change:usedDatasets', @render
 
   ###
   This datasets view renders the datasets which are currently
@@ -20,8 +20,9 @@ define [
                         name: val[0].attributes.organisationName
                         href: val[0].attributes.organisationHref
                         id: val[0].attributes.organisationID
-                        datasets: val
+                        datasets: _(val).sortBy('title')
                       )
+                      .sortBy('name')
                       .value()
 
     @$el.html template organisations: organisations

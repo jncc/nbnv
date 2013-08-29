@@ -10,7 +10,7 @@ define [
   
   initialize: () ->
     @on 'change:resolution change:isPolygon change:autoResolution', -> do @generateLayer
-    @on 'change:resolution change:isPolygon change:autoResolution', -> @trigger 'change:name'
+    @on 'change:resolution change:isPolygon change:autoResolution change:startDate change:endDate', -> @trigger 'change:name'
     @on 'change:resolution change:isPolygon change:autoResolution change:maxResolution', -> @trigger 'change:visibility'
 
   ###
@@ -19,15 +19,15 @@ define [
   ###
   getCurrentResolution: ->
     resolution = @get "resolution"
-    if @get "isPolygon" then "Polygon" else 
-    if resolution is 'auto' then @get 'autoResolution'
+    if @get "isPolygon" then "Polygon" 
+    else if resolution is 'auto' then @get 'autoResolution'
     else resolution
 
   ###
   Generate the label for the grid layer
   ###
   getName: ->
-    "#{@getCurrentResolution()} #{@mapOf()} for #{@attributes.name}"
+    "#{@attributes.name} #{@getCurrentResolution()} #{@mapOf()}"
 
   ###
   Determines if the given layer is currently in range and can be rendered

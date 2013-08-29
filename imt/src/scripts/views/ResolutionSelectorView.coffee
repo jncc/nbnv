@@ -17,7 +17,7 @@ define [
   render:->
     @$el.html template @model
     @$el.addClass "resolution"
-    @$el.buttonset()
+    @$('div').buttonset()
 
   ###
   When the model changes, update the buttonset to reflect

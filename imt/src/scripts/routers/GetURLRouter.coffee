@@ -14,7 +14,7 @@ define [
     query = @createQueryObject(queryString)
 
     @model.set "baseLayer", query.baselayer if query.baselayer?
-    @model.set "viewport", @getBBox query.bbox if query.bbox? 
+    @model.set "viewport", @getBBox(query.bbox), showAll: true if query.bbox? 
     @getLayers @model.getLayers(), query
 
   getLayers: (layers, query)->
@@ -36,7 +36,7 @@ define [
     # order is maintained
     _.each layersToFetch, (layer) -> 
       promise = do layer.fetch
-      promise.done -> layers.add layer
+      promise.done -> layers.add layer, addOtherTypes: true
 
 
   singleSpeciesLayer: (query) -> new SingleSpeciesLayer 

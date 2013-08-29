@@ -5,7 +5,7 @@ define [
 ], (Backbone, LayerCustomisationView, template) -> Backbone.View.extend
 
   events:
-    "click span.icon": "customise"
+    "click button.customise": "customise"
     "click button.destroy": "removeLayer"
 
   initialize: ->

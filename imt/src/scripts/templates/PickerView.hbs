@@ -1,7 +1,12 @@
-{{#if hasResults}}
-  <button type="button" class="btn clearResults">Redraw Selection</button>
-  <div class="results"></div>
+{{#if loggedIn}}
+  {{#if hasResults}}
+    <button type="button" class="btn clearResults">Redraw Selection</button>
+    <div class="results"></div>
+  {{else}}
+    You are now in picking mode, draw something on the map and you will see what
+    records have contributed to your area.
+  {{/if}}
 {{else}}
-  You are now in picking mode, draw something on the map and you will see what
-  records have contributed to your area.
+  In order to use the picking functionality, you must be registered and logged in as
+  an NBN User.
 {{/if}}

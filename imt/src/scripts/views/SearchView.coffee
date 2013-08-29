@@ -1,22 +1,23 @@
 define [
-  "jquery",
-  "underscore",
-  "backbone",
-  "cs!helpers/Globals",
-  "text!templates/SearchView.html",
+  "jquery"
+  "underscore"
+  "backbone"
+  "cs!helpers/Globals"
   "select2"
-], ($, _, Backbone, Globals, template)-> Backbone.View.extend
+], ($, _, Backbone, Globals)-> Backbone.View.extend
 
   events: 
     "select2-selecting": "select"
+    "change": "clear"
 
   rows: 20
 
   initialize: ->
-    @$el.html template
+    @select2El = $('<input type="text">').appendTo @$el
 
     #Create a select2 infinite scrolling search widget on the input field
-    @$('input').select2
+    @select2El.select2
+      placeholder: 'Add species, habitats and site boundaries to the map'
       minimumInputLength: 2
       ajax:
         url: Globals.api "search"
@@ -24,7 +25,6 @@ define [
         data: _.bind( @request, @)
         results: @processResults
       formatResult: _.bind( @renderResult, @)
-      formatSelection: (result) -> result.searchMatchTitle
       dropdownCssClass: "bigdrop"
       escapeMarkup: (m)-> m
 
@@ -35,6 +35,7 @@ define [
     q: term
     rows: @rows
     start: (page-1)*@rows
+    exclude: 'organisation'
 
   ###
   Assigns an id to each of the results and determines if there are any more
@@ -51,6 +52,12 @@ define [
   When an option has been selected. Notify the model
   ###
   select: (event, ui) -> @model.addSearchResult event.object
+  
+  ###
+  Clear the selection after it has been handled to show the placeholder
+  text again
+  ###
+  clear: -> @select2El.select2 'data', null
 
   renderResult: (item)-> "<b>#{item.searchMatchTitle}</b><br>#{@formatResult(item)}"
 
@@ -63,4 +70,4 @@ define [
       when "site boundarydataset" then "Add boundaries of: #{item.searchMatchTitle}"
       when "habitatdataset" then "Add habitat: #{item.searchMatchTitle}"
       when "gridsquarefeature" then "Zoom to the grid square: #{item.searchMatchTitle}"
-      when "siteboundaryfeature" then "Zoom to the boundary: #{item.searchMatchTitle}"
+      when "siteboundaryfeature" then "Zoom to the boundary: #{item.searchMatchTitle}, #{item.descript}"

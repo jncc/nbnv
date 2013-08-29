@@ -23,18 +23,19 @@ define [
         theme: null,
         layers: [OpenLayersLayerFactory.getBaseLayer( @model.get "baseLayer" ), @drawingLayer],
         eventListeners: 
-          moveend : => @model.set("viewport", do @getOpenlayersViewport)
-          zoomend: => @model.getLayers().setZoom(do @map.getZoom)
+          moveend: => @model.set "viewport", do @getOpenlayersViewport
+          zoomend: => @model.getLayers().setZoom do @map.getZoom
 
       @map.addControl(@drawingControl)
       #If base layer changes, drawing layer might need to be reprojected
       @map.events.register "changebaselayer", @map, @drawingLayer.update 
       
-      @zoomToViewport(null, @model.get "viewport")
+      @zoomToViewport null, @model.get("viewport"), showAll: true
       @listenTo @model, "change:viewport", @zoomToViewport
       @listenTo @model, "change:baseLayer", @updateBaseLayer
       @listenTo @model.getLayers(), "add", @addLayer
       @listenTo @model.getLayers(), "position", @positionLayer
+      @listenTo @model.getLayers(), "reset", @resetLayers
       @listenTo @model.getLayers(), "remove", @removeLayer
       @listenTo @model.getPicker(), "change:isPicking", @toggleDrawing
 
@@ -42,8 +43,7 @@ define [
     Create an openlayers version of the desired baselayer
     ###
     updateBaseLayer: (evt, baselayer) -> 
-      centre = @map.getCenter()
-      zoom = @map.getZoom()
+      oldViewport = @model.get 'viewport'
       oldProjection = @map.getProjectionObject()
 
       @map.removeLayer @map.baseLayer #remove the current baseLayer
@@ -51,7 +51,10 @@ define [
 
       #Fix the Openlayers bugs 
       @map.setLayerIndex @map.baseLayer, 0 #move the baselayer to the 0th position
-      @map.setCenter centre.transform(oldProjection, @map.getProjectionObject()), zoom #(Ticket #1249)
+
+      #Zoom to the same viewport as before reprojection (Ticket #1249)
+      if oldProjection.getCode() isnt @map.getProjectionObject().getCode()
+        @zoomToViewport null, oldViewport, showAll: false
 
     ###
     If the picker is in picking mode then enable the drawing control
@@ -66,10 +69,8 @@ define [
     addLayer: (layer)-> 
       @map.addLayer layer._openlayersWMS = OpenLayersLayerFactory.createLayer(layer)
       #move the new layer to below the drawing layer(s). this can be done by setting
-      #the index of the new layer to the size of the collection. Length will be one 
-      #than the last index of the collection, and will therefore will accomodate the 
-      #base layer
-      @map.setLayerIndex layer._openlayersWMS, @model.getLayers().length
+      #the index of the new layer to the amount of layers - 2.
+      @map.setLayerIndex layer._openlayersWMS, @map.getNumLayers() - 2
 
     ###
     Listens to when layers have been repositioned. Notify the OpenLayers Map and set the 
@@ -84,12 +85,20 @@ define [
     removeLayer: (layer)-> @map.removeLayer layer._openlayersWMS
 
     ###
-    Event listener for viewport changes on the model. Update the Openlayers Map
+    Remove all the old wms layers and replace with the reset collection
     ###
-    zoomToViewport: (evt, viewport) ->
-      extent = @map.getExtent();
-      #Check if view port is already and is not the same as the openlayers viewport
-      @map.zoomToExtent @getOpenlayersBounds(viewport) if not extent? or not _.isEqual( viewport, @getOpenlayersViewport() )
+    resetLayers: (layers, options) ->
+      _.each options.previousModels, (layer) => @removeLayer layer
+      layers.forEach (layer) => @addLayer layer
+
+    ###
+    Event listener for viewport changes on the model. Update the Openlayers Map.
+    ###
+    zoomToViewport: (evt, viewport, options) ->
+      extent = @map.getExtent()
+      if not extent? or not _.isEqual( viewport, @getOpenlayersViewport() )
+        #Check if view port already set is not the same as the openlayers viewport
+        @map.zoomToExtent @getOpenlayersBounds(viewport), not options.showAll
 
     ###
     Translate the given viewport which is in 4326 into an openlayers bounds in the

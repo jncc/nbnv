@@ -5,8 +5,9 @@ define [
   "cs!models/mixins/DatasetFilterMixin"
   "cs!models/mixins/PolygonFillMixin"
   "cs!collections/TaxonObservations"
+  "cs!models/TaxonObservationTypes"
   "cs!helpers/Globals"
-], (_, GridLayer, TemporalFilterMixin, DatasetFilterMixin, PolygonFillMixin, TaxonObservations, Globals) -> GridLayer.extend _.extend {}, TemporalFilterMixin, DatasetFilterMixin, PolygonFillMixin,
+], (_, GridLayer, TemporalFilterMixin, DatasetFilterMixin, PolygonFillMixin, TaxonObservations, TaxonObservationTypes, Globals) -> GridLayer.extend _.extend {}, TemporalFilterMixin, DatasetFilterMixin, PolygonFillMixin,
   defaults:
     opacity: 1
     visibility: true
@@ -44,12 +45,17 @@ define [
     endYear : @getEndDate() #Temporal mixin handles this value
     datasetKey: @get("datasets")
 
+  getTaxonObservationTypes: -> new TaxonObservationTypes
+    id: @id
+    defaultLayer: @
+
   ###
   Define what this layer is mapping
   ###
   mapOf:-> 
-    type = if @get "isPresence" then "occurrence" else "absence"
-    "#{type} records"
+    type = if @get "isPresence" then "presence" else "absence"
+    yearFilter = if @isYearFiltering() then ' for year range ' + @getYearFilter() else ''
+    "#{type} records #{yearFilter}"
 
   ###
   Workout which symbol to use and then set as the symbol attribute

@@ -73,12 +73,12 @@ $REGISTERED_BUILDS = @{
 		"deploy" = { Deploy $data["NBNV-PORTAL-API"] "data" "api" }
 	};
 	"gis" = @{
-		"services" = @("Tomcat7-data.nbn.org.uk");
+		"services" = @("Tomcat7-gis.nbn.org.uk");
 		"obtain" = { 
 			param($build_number);
 			$data["NBNV-PORTAL-GIS"] = GetBuild "NBN-FRONTENDSNAP" $build_number "NBN-GIS-War/gis.war"
 		};
-		"deploy" = { Deploy $data["NBNV-PORTAL-GIS"] "data" "gis" }
+		"deploy" = { Deploy $data["NBNV-PORTAL-GIS"] "gis" "ROOT" }
 	};
 	"imt" = @{
 		"services" = @("Tomcat7-data.nbn.org.uk");
@@ -108,7 +108,7 @@ $REGISTERED_BUILDS = @{
 		"services" = @("Tomcat7-data.nbn.org.uk");
 		"obtain" = { 
 			param($build_number);
-			$data["NBNV-IMPORTER-UI"] = GetBuild "NBN-IMPORTERSNAP" $build_number "Spatial-Importer-UI/importer.war"
+			$data["NBNV-IMPORTER-UI"] = GetBuild "NBN-IMPORTERSNAP" $build_number "Importer-UI/importer.war"
 		};
 		"deploy" = { Deploy $data["NBNV-IMPORTER-UI"] "data" "importer" }
 	};

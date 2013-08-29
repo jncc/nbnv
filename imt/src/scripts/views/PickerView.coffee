@@ -10,18 +10,26 @@ define [
     "click .clearResults" : "clearResults"
 
   initialize: ->
+    @picker = @model.getPicker() #maintain a reference to the picker
+
     do @render
 
-    @listenTo @model, 'change:resultsForLayers', @render
+    @listenTo @picker, 'change:resultsForLayers', @render
+    @listenTo @model.getCurrentUser(), 'change', @render
 
-  clearResults: -> do @model.clearResults
+  clearResults: -> 
+    do @picker.clearResults
+    @picker.set 'isPicking', true #put the map back into picking mode
 
   render: ->
-    @$el.html template hasResults: @model.hasResults()
+    @$el.html template 
+      hasResults: @picker.hasResults()
+      loggedIn: @model.getCurrentUser().isLoggedIn()
 
-    if @model.hasResults()
+    if @picker.hasResults()
+      @picker.set 'isPicking', false # now we have some results, disable picking
       resultsDiv = @$('.results')
-      resultsForLayers = @model.getResultsForLayers()
+      resultsForLayers = @picker.getResultsForLayers()
 
       _.each resultsForLayers, (resultsForLayer, index) =>
         resultsDiv.append @createHeader resultsForLayer

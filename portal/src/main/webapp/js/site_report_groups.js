@@ -91,7 +91,6 @@
             e.preventDefault();
         });
     }
-    
     function setupDownloadRecordsLink() {
         $('#nbn-download-observations-button').click(function(e) {
             $('#nbn-download-terms').dialog({
