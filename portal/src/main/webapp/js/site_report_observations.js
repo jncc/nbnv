@@ -194,15 +194,16 @@
     }
     
     function setupBetterAccessLink() {
-        $('#nbn-request-better-access').click(function() {
+        $('#nbn-request-better-access').click(function(e) {
             var form = $('#nbn-site-report-form');
             var keyValuePairs = nbn.portal.reports.utils.forms.getKeyValuePairsFromForm(form);
-            window.open('/AccessRequest/Create?json={' +
-                    nbn.portal.reports.utils.forms.getSpatialFeatures(keyValuePairs) + ',' +
+            window.location = '/AccessRequest/Create?json={' +
+                    nbn.portal.reports.utils.forms.getSpatialFeatures(keyValuePairs, form.attr('gridSquare')) + ',' +
                     'taxon:{tvk:\'' + form.attr('ptvk') + '\'},' +
                     'dataset:{all:true},' +
                     nbn.portal.reports.utils.forms.getYearJSON(keyValuePairs) +
-                    '}');
+                    '}';
+            e.preventDefault();
         });
     }
     
