@@ -30,8 +30,8 @@
         getYearJSON: function(keyPairs) {
             return getYearRange(keyPairs);
         },
-        getSpatialFeatures: function(keyPairs) {
-            return getSpatialFeaturesJSON(keyPairs);
+        getSpatialFeatures: function(keyPairs, gridSquare) {
+            return getSpatialFeaturesJSON(keyPairs, gridSquare);
         }
     });
     
@@ -163,7 +163,10 @@
         }
     }
     
-    function getSpatialFeaturesJSON(keyPairs) {
+    function getSpatialFeaturesJSON(keyPairs, gridSquare) {
+        if (gridSquare === 'true') {
+            return 'spatial:{all:false,match:\'' + keyPairs['spatialRelationship'] + '\',feature:\'' + $('#nbn-site-report-form').attr('featureid') + '\'}';
+        }
         return 'spatial:{all:false,match:\'' + keyPairs['spatialRelationship'] + '\',feature:\'' + $('#nbn-site-report-form').attr('featureid') + '\',dataset:\'' + $('#nbn-site-report-form').attr('featureid').substring(0,8) + '\'}';
     }
     
