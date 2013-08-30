@@ -13,6 +13,7 @@ nbn.nbnv.ui.filter.taxon = function(json) {
     this._taxonName = '';
     this._designation = '';
     this._outputGroup = '';
+    this._orgDesignation = '';
     
     var mode = 'all';
     
@@ -28,6 +29,9 @@ nbn.nbnv.ui.filter.taxon = function(json) {
         } else if (json.taxon.output) {
             mode = 'output';
             this._outputGroupKey = json.taxon.output;
+        } else if (json.taxon.org) {
+            mode = 'org';
+            this._orgDesignation = json.taxon.org;
         }
     }
     
@@ -86,6 +90,29 @@ nbn.nbnv.ui.filter.taxon = function(json) {
             }
         });
         
+        var org = $('<select>')
+            .addClass('selectMaxWidth')
+            .change(function() {
+                var value = $(this).find("option:selected").attr('value');
+                _me._desigCode = value;
+                _me._orgDesignation = $(this).find("option:selected").text();
+            });
+
+        
+        $.ajax({
+            url: nbn.nbnv.api + '/designations/organisation',
+            success: function (data) {
+                $.each(data, function (i, d) {
+                    org.append($('<option>')
+                        .text(d.name)
+                        .attr('value', d.code)
+                    );
+                });
+                
+                org.change();
+            }
+        });
+        
         var output = $('<select>')
             .addClass('selectMaxWidth')
             .change(function() {
@@ -129,6 +156,7 @@ nbn.nbnv.ui.filter.taxon = function(json) {
                         _me._all = true;
                         output.prop('disabled', true);
                         desig.prop('disabled', true);
+                        org.prop('disabled', true);
                         speciesAutoComplete.prop('disabled', true);
                         speciesAutoComplete.val('');
                         output.val(0);
@@ -148,6 +176,7 @@ nbn.nbnv.ui.filter.taxon = function(json) {
                         _me._all = false;
                         output.prop('disabled', true);
                         desig.prop('disabled', true);
+                        org.prop('disabled', true);
                         speciesAutoComplete.prop('disabled', false);
                         output.val(0);
                         desig.val(0);
@@ -167,6 +196,7 @@ nbn.nbnv.ui.filter.taxon = function(json) {
                         _me._all = false;
                         output.prop('disabled', true);
                         desig.prop('disabled', false);
+                        org.prop('disabled', true);
                         speciesAutoComplete.prop('disabled', true);
                         speciesAutoComplete.val('');
                         output.val(0);
@@ -174,6 +204,26 @@ nbn.nbnv.ui.filter.taxon = function(json) {
                 })
             ).append("Designated List ")
             .append(desig);
+    
+        var orgFilterRecords = $('<div>')
+            .append($('<input>')
+                .attr('type', 'radio')
+                .attr('name', 'taxonfilterall')
+                .attr('value', 'orgList')
+                .change(function() {
+                    if (this.checked) {
+                        mode = 'desig';
+                        _me._all = false;
+                        output.prop('disabled', true);
+                        desig.prop('disabled', true)
+                        org.prop('disabled', false);
+                        speciesAutoComplete.prop('disabled', true);
+                        speciesAutoComplete.val('');
+                        output.val(0);
+                    }
+                })
+            ).append("Organisation List ")
+            .append(org);
         
         var outputFilterRecords = $('<div>')
             .append($('<input>')
@@ -186,6 +236,7 @@ nbn.nbnv.ui.filter.taxon = function(json) {
                         _me._all = false;
                         output.prop('disabled', false);
                         desig.prop('disabled', true);
+                        org.prop('disabled', true);
                         speciesAutoComplete.prop('disabled', true);
                         speciesAutoComplete.val('');
                         desig.val(0);
@@ -200,11 +251,13 @@ nbn.nbnv.ui.filter.taxon = function(json) {
             taxonFilterRecords.children('input').attr('checked', 'checked').change();
         } else if (mode == 'desig') {
             desigFilterRecords.children('input').attr('checked', 'checked').change();
+        } else if (mode === 'org') {
+            orgFilterRecords.children('input').attr('checked', 'checked').change();
         } else if (mode == 'output') {
             outputFilterRecords.children('input').attr('checked', 'checked').change();
         }
         
-        dataDiv.append(allRecords).append(taxonFilterRecords).append(desigFilterRecords).append(outputFilterRecords);
+        dataDiv.append(allRecords).append(taxonFilterRecords).append(desigFilterRecords).append(orgFilterRecords).append(outputFilterRecords);
 
         return dataDiv;
     };
@@ -240,7 +293,18 @@ nbn.nbnv.ui.filter.taxon = function(json) {
                 });
             } else {
                 text = this._designation + ' records';
-            }            
+            }  
+        } else if (mode === 'org') {
+            if (this._orgDesignation == '') {
+                $.ajax({
+                    url: nbn.nbnv.api + '/designations/organisation/' + _me._desigCode,
+                    success: function(data) {
+                        $('#taxonResult').text(data.name + ' records');  
+                    }
+                });
+            } else {
+                text = this._orgDesignation + ' records';
+            }  
         } else if (mode == 'output') {
             if (this._outputGroup == '') {
                 $.ajax({

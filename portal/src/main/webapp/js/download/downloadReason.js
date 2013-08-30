@@ -43,7 +43,7 @@ nbn.nbnv.ui.downloadReason = function(json) {
                 });
         
         $.ajax({
-            url: nbn.nbnv.api + '/user/adminOrganisations',
+            url: nbn.nbnv.api + '/user/organisations',
             success: function(orgs) {
                 $.each(orgs, function (i, org) {
                     asSelect.append($('<option>').text(org.name).attr('value', org.id));
@@ -53,6 +53,9 @@ nbn.nbnv.ui.downloadReason = function(json) {
                     asSelect.val(_me._asID);
                     asSelect.change();
                 }
+            },
+            failure: function(data) {
+                alert("error getting orgs")
             }
         })
 

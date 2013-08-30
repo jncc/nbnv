@@ -36,6 +36,14 @@ public interface OperationalTaxonObservationFilterMapper {
         @Param("reason") String reason,
         @Param("userID") int userID);
     
+    @Insert("INSERT INTO TaxonObservationDownload VALUES (#{id}, #{purposeID}, #{reason}, GETDATE(), #{userID}, #{orgName}, #{orgID})")
+    public int createDownloadLogAsOrg(@Param("id") int id, 
+        @Param("purposeID") int purposeID, 
+        @Param("reason") String reason,
+        @Param("userID") int userID,
+        @Param("orgName") String orgName,
+        @Param("orgID") int orgID);
+    
     @Insert("INSERT INTO TaxonObservationDownloadStatistics VALUES (#{id}, #{datasetKey}, #{recordCount})")
     public int createDatasetDownloadStats(@Param("id") int id, @Param("datasetKey") String datasetKey, @Param("recordCount") int recordCount);
 

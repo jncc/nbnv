@@ -42,7 +42,7 @@ public class TaxonObservationProvider {
                 + "dd.useConstraints as useConstraint");
         FROM(from);
         INNER_JOIN("TaxonData td ON obs.pTaxonVersionKey = td.taxonVersionKey");
-        INNER_JOIN("TaxonData tdd ON td.commonNameTaxonVersionKey = tdd.taxonVersionKey");
+        LEFT_OUTER_JOIN("TaxonData tdd ON td.commonNameTaxonVersionKey = tdd.taxonVersionKey");
         INNER_JOIN("TaxonOutputGroupData togd ON td.taxonOutputGroupKey = togd.[key]");
         INNER_JOIN("DatasetData dd ON obs.datasetKey = dd.[key]");
         INNER_JOIN("OrganisationData od ON dd.organisationID = od.id");
@@ -299,7 +299,9 @@ public class TaxonObservationProvider {
             ProviderHelper.addEndYearFilter((Integer) params.get("endYear"));
         }
 
-        ProviderHelper.addDatasetKeysFilter(params);
+        if (params.containsKey("datasetKey") && params.get("datasetKey") != null) {
+            ProviderHelper.addDatasetKeysFilter(params);
+        }
 
         if (params.containsKey("ptvk") && params.get("ptvk") != null && !params.get("ptvk").equals("")) {
             if (params.get("ptvk") instanceof List) {

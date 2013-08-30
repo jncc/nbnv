@@ -40,6 +40,7 @@ import uk.org.nbn.nbnv.api.model.meta.DownloadFilterJSON;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenDatasetAdminUser;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
 import uk.org.nbn.nbnv.api.rest.resources.utils.DownloadHelper;
+import uk.org.nbn.nbnv.api.utils.DownloadUtils;
 
 @Component
 @Path("/taxonObservations")
@@ -55,7 +56,7 @@ public class TaxonObservationResource extends AbstractResource {
     @Autowired SiteBoundaryMapper siteBoundaryMapper;
     @Autowired TaxonObservationAttributeMapper taxonObservationAttributeMapper;
     @Autowired OperationalTaxonObservationFilterMapper oTaxonObservationFilterMapper;
-    
+    @Autowired DownloadUtils downloadUtils;
 
     /**
      * Return a Taxon Observation Record with a specified numerical ID, as long
@@ -195,11 +196,20 @@ public class TaxonObservationResource extends AbstractResource {
             @QueryParam("json") String json) throws IOException {        
         
         final DownloadFilterJSON dFilter = parseJSON(json);
-        TaxonObservationFilter filter = new TaxonObservationFilter();
-        filter.setFilterJSON(json);
-        filter.setFilterText(Boolean.parseBoolean(dFilter.getSensitive()) ? "All sensitive and non-sensitive records" : "All non-sensitive records");
+        TaxonObservationFilter filter = downloadUtils.createFilter(json, dFilter);
+        
         oTaxonObservationFilterMapper.createFilter(filter);
-        oTaxonObservationFilterMapper.createDownloadLog(filter.getId(), dFilter.getReason().getPurpose(), dFilter.getReason().getDetails(), user.getId());
+        if (dFilter.getReason().getOrganisationID() > -1) {
+            // If we are doing the download on behalf of an organisation
+            oTaxonObservationFilterMapper.createDownloadLogAsOrg(filter.getId(), 
+                    dFilter.getReason().getPurpose(), dFilter.getReason().getDetails(), 
+                    user.getId(), organisationMapper.selectByID(
+                        dFilter.getReason().getOrganisationID()).getName(), 
+                    dFilter.getReason().getOrganisationID());
+        } else {
+            // If we are doing the download for personal reasons
+            oTaxonObservationFilterMapper.createDownloadLog(filter.getId(), dFilter.getReason().getPurpose(), dFilter.getReason().getDetails(), user.getId());
+        }
         
         final int filterID = filter.getId();
         return new StreamingOutput() {
@@ -908,7 +918,10 @@ public class TaxonObservationResource extends AbstractResource {
         List<TaxonObservationAttribute> observationAttributes = new ArrayList<TaxonObservationAttribute>();
         Map<Integer, Map<Integer, String>> atts = new HashMap<Integer, Map<Integer, String>>();
         
+        // Get observations for download
         List<TaxonObservationDownload> observations = observationMapper.selectDownloadableRecords(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon);
+        
+        // Push in standard header fields for download
         zip.putNextEntry(new ZipEntry("Observations.csv"));
         ArrayList<String> values = new ArrayList<String>();
         values.add("observationID");
@@ -937,7 +950,9 @@ public class TaxonObservationResource extends AbstractResource {
         values.add("fullVersion");
         values.add("useConstraints");
         
+        // If including attributes then push in the appropriate fields
         if (includeAttributes) {
+            // Find attributes
             attributes = taxonObservationAttributeMapper.getAttributeListForObservations(
                     user, startYear, endYear, datasetKeys, taxa, spatialRelationship,
                     featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon);
@@ -946,12 +961,13 @@ public class TaxonObservationResource extends AbstractResource {
                 values.add(attrib.getLabel());
             }
             
+            // Grab all attributes that match full version records in the list
             observationAttributes = taxonObservationAttributeMapper.getAttributesForObservations(
                     user, startYear, endYear, datasetKeys, taxa, spatialRelationship,
                     featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon);
-            
-            
-            
+
+            // Put attributes into a map structure for retrieval later
+            // Map --> obsID --> Map --> attID --> attVal
             for (TaxonObservationAttribute att : observationAttributes) {
                 Map<Integer, String> temp = atts.get(att.getObservationID());
 
@@ -964,11 +980,12 @@ public class TaxonObservationResource extends AbstractResource {
             }
         }
         
+        // Write headers out
         downloadHelper.writelnCsv(zip, values);
         
         SimpleDateFormat df = new SimpleDateFormat("dd-mm-yyyy");
         HashMap<String, Integer> datasetRecordCounts = new HashMap<String, Integer>();
-        
+
         for(TaxonObservationDownload observation : observations) {
             values = new ArrayList<String>();
             values.add(Integer.toString(observation.getObservationID()));
@@ -990,7 +1007,7 @@ public class TaxonObservationResource extends AbstractResource {
             values.add(observation.getpTaxonVersionKey());
             values.add(observation.getpTaxonName());
             values.add(observation.getAuthority());
-            values.add(observation.getCommonName());
+            values.add(StringUtils.hasText(observation.getCommonName()) ? observation.getCommonName() : "");
             values.add(observation.getTaxonGroup());
             values.add(observation.isSensitive() ? "1" : "0");
             values.add(observation.isZeroAbundance() ? "1" : "0");
