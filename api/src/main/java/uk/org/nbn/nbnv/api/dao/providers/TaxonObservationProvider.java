@@ -39,6 +39,7 @@ public class TaxonObservationProvider {
                 + "togd.name as taxonGroup, "
                 + "obs.sensitive, "
                 + "obs.absence as zeroAbundance, "
+                + "obs.fullVersion, "
                 + "dd.useConstraints as useConstraint");
         FROM(from);
         INNER_JOIN("TaxonData td ON obs.pTaxonVersionKey = td.taxonVersionKey");
@@ -52,7 +53,8 @@ public class TaxonObservationProvider {
         LEFT_OUTER_JOIN("SiteData sd ON obs.siteID = sd.id");
         LEFT_OUTER_JOIN("RecorderData rd ON obs.recorderID = rd.id");
         LEFT_OUTER_JOIN("RecorderData rdd ON obs.determinerID = rdd.id");
-        return SQL();
+        String sql = SQL();
+        return sql;
     }
     
     public String filterSelectedAttributesForDownload(Map<String,Object> params) {
