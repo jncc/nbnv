@@ -358,8 +358,7 @@ public class TaxonObservationProvider {
         
         if (params.containsKey("orgSuppliedList") && (Integer) params.get("orgSuppliedList") > 0) {
             INNER_JOIN("TaxonOrganisationSuppliedTaxonList tostl ON tostl.pTaxonVersionKey = o.pTaxonVersionKey");
-            WHERE("tostl.orgListID = #{orgSuppliedList}");
-                    
+            WHERE("tostl.orgListID = #{orgSuppliedList}");    
         }
 
         if (params.containsKey("gridRef") && params.get("gridRef") != null && !"".equals((String) params.get("gridRef"))) {
@@ -458,6 +457,11 @@ public class TaxonObservationProvider {
             WHERE("td.taxonOutputGroupKey =  #{taxonOutputGroup}");
         }
 
+        if (params.containsKey("orgSuppliedList") && (Integer) params.get("orgSuppliedList") > 0) {
+            INNER_JOIN("TaxonOrganisationSuppliedTaxonList tostl ON tostl.pTaxonVersionKey = o.pTaxonVersionKey");
+            WHERE("tostl.orgListID = #{orgSuppliedList}");    
+        }
+        
         return SQL();
     }
 

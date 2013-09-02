@@ -484,7 +484,7 @@ public class UserAccessRequestResource extends AbstractResource {
         List<String> species = accessRequestUtils.createSpeciesList(accessRequest);        
         List<String> datasets = new ArrayList<String>();
         datasets.add(uar.getDatasetKey());
-        oUserTaxonObservationAccessMapper.removeUserAccess(uar.getUser(), accessRequest.getYear().getStartYear(), accessRequest.getYear().getEndYear(), datasets, species, accessRequest.getSpatial().getMatch(), accessRequest.getSpatial().getFeature(), (accessRequest.getSensitive().equals("sans") ? true : false), accessRequest.getTaxon().getDesignation(), accessRequest.getTaxon().getOutput(), "", "");
+        oUserTaxonObservationAccessMapper.removeUserAccess(uar.getUser(), accessRequest.getYear().getStartYear(), accessRequest.getYear().getEndYear(), datasets, species, accessRequest.getSpatial().getMatch(), accessRequest.getSpatial().getFeature(), (accessRequest.getSensitive().equals("sans") ? true : false), accessRequest.getTaxon().getDesignation(), accessRequest.getTaxon().getOutput(), accessRequest.getTaxon().getOrgSuppliedList(), accessRequest.getSpatial().getGridRef(), "");
 
         
         List<UserAccessRequest> uars = oUserAccessRequestMapper.getGrantedUserRequestsByDataset(uar.getDatasetKey(), uar.getUser().getId());
@@ -524,7 +524,7 @@ public class UserAccessRequestResource extends AbstractResource {
         List<String> species = accessRequestUtils.createSpeciesList(accessRequest);        
         List<String> datasets = new ArrayList<String>();
         datasets.add(uar.getDatasetKey());
-        oUserTaxonObservationAccessMapper.addUserAccess(uar.getUser(), accessRequest.getYear().getStartYear(), accessRequest.getYear().getEndYear(), datasets, species, accessRequest.getSpatial().getMatch(), accessRequest.getSpatial().getFeature(), (accessRequest.getSensitive().equals("sans") ? true : false), accessRequest.getTaxon().getDesignation(), accessRequest.getTaxon().getOutput(), "", "");
+        oUserTaxonObservationAccessMapper.addUserAccess(uar.getUser(), accessRequest.getYear().getStartYear(), accessRequest.getYear().getEndYear(), datasets, species, accessRequest.getSpatial().getMatch(), accessRequest.getSpatial().getFeature(), (accessRequest.getSensitive().equals("sans") ? true : false), accessRequest.getTaxon().getDesignation(), accessRequest.getTaxon().getOutput(), accessRequest.getTaxon().getOrgSuppliedList(), accessRequest.getSpatial().getGridRef(), "");
         return true;
     }
     
