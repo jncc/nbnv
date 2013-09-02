@@ -53,8 +53,7 @@ public class TaxonObservationProvider {
         LEFT_OUTER_JOIN("SiteData sd ON obs.siteID = sd.id");
         LEFT_OUTER_JOIN("RecorderData rd ON obs.recorderID = rd.id");
         LEFT_OUTER_JOIN("RecorderData rdd ON obs.determinerID = rdd.id");
-        String sql = SQL();
-        return sql;
+        return SQL();
     }
     
     public String filterSelectedAttributesForDownload(Map<String,Object> params) {

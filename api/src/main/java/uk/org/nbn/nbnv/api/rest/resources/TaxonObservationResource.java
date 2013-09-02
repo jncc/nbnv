@@ -188,66 +188,6 @@ public class TaxonObservationResource extends AbstractResource {
         return observationMapper.selectObservationRecordsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon);
     }
     
-    @GET
-    @Path("/download")
-    @Produces("application/x-zip-compressed")
-    public StreamingOutput getObservationsByFilterZip(            
-            @TokenUser(allowPublic = false) final User user,
-            @QueryParam("json") String json) throws IOException {        
-        
-        final DownloadFilterJSON dFilter = parseJSON(json);
-        TaxonObservationFilter filter = downloadUtils.createFilter(json, dFilter);
-        
-        oTaxonObservationFilterMapper.createFilter(filter);
-        if (dFilter.getReason().getOrganisationID() > -1) {
-            // If we are doing the download on behalf of an organisation
-            oTaxonObservationFilterMapper.createDownloadLogAsOrg(filter.getId(), 
-                    dFilter.getReason().getPurpose(), dFilter.getReason().getDetails(), 
-                    user.getId(), organisationMapper.selectByID(
-                        dFilter.getReason().getOrganisationID()).getName(), 
-                    dFilter.getReason().getOrganisationID());
-        } else {
-            // If we are doing the download for personal reasons
-            oTaxonObservationFilterMapper.createDownloadLog(filter.getId(), dFilter.getReason().getPurpose(), dFilter.getReason().getDetails(), user.getId());
-        }
-        
-        final int filterID = filter.getId();
-        return new StreamingOutput() {
-            @Override
-            public void write(OutputStream out) throws IOException, WebApplicationException {
-                ZipOutputStream zip = new ZipOutputStream(out);
-                String title = "Taxon Observation Download";
-                
-                List<String> taxaList = new ArrayList<String>();
-                taxaList.add(dFilter.getTaxon().getTvk());
-                addObservations(zip, user, dFilter.getYear().getStartYear(), 
-                        dFilter.getYear().getEndYear(), dFilter.getDataset().getDatasets(), 
-                        taxaList, dFilter.getSpatial().getMatch(),
-                        dFilter.getSpatial().getFeature(), dFilter.getSensitive().equals("sans"), 
-                        dFilter.getTaxon().getDesignation(), dFilter.getTaxon().getOutput(), 
-                        dFilter.getSpatial().getGridRef(), dFilter.getPolygon(), 
-                        dFilter.getReason().getIncludeAttributes().equals("true"), filterID);
-                addReadMe(zip, title, user,  dFilter.getYear().getStartYear(), 
-                        dFilter.getYear().getEndYear(), dFilter.getDataset().getDatasets(), dFilter.getSpatial().getMatch(),
-                        dFilter.getSpatial().getFeature(), Boolean.getBoolean(dFilter.getSensitive()), 
-                        dFilter.getTaxon().getDesignation(), dFilter.getTaxon().getOutput());
-                addDatasetMetadata(zip, user, dFilter.getYear().getStartYear(), 
-                        dFilter.getYear().getEndYear(), dFilter.getDataset().getDatasets(), 
-                        taxaList, dFilter.getSpatial().getMatch(),
-                        dFilter.getSpatial().getFeature(), Boolean.getBoolean(dFilter.getSensitive()), 
-                        dFilter.getTaxon().getDesignation(), dFilter.getTaxon().getOutput(), 
-                        dFilter.getSpatial().getGridRef(), dFilter.getPolygon());
-                zip.flush();
-                zip.close();
-            }
-        };
-    }
-    
-    private DownloadFilterJSON parseJSON(String json) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.readValue(json, DownloadFilterJSON.class);
-    }
-
     /**
      * Return a list of Taxon Observation Attribute Value records that conform
      * to the provided search parameters
@@ -766,6 +706,92 @@ public class TaxonObservationResource extends AbstractResource {
         }
         return groupDatasetsByProvider(datasetsWithQueryStats);
     }
+    
+    /***************************************************************************
+     * Download Functions
+     **************************************************************************/
+    
+    /**
+     * Return a list of taxon observations that match a given filter in the JSON
+     * string supplied, the list is returned as a ZIP file with appropriate 
+     * ReadMes attached and logs the download in the database for stats
+     * 
+     * @param user The current user (must be logged in)
+     * @param json A JSON string representing the filter
+     * @return A ZIP file containing the list of observations and ReadMes
+     * @throws IOException 
+     */
+    @GET
+    @Path("/download")
+    @Produces("application/x-zip-compressed")
+    public StreamingOutput getObservationsByFilterZip(            
+            @TokenUser(allowPublic = false) final User user,
+            @QueryParam("json") String json) throws IOException {        
+        
+        final DownloadFilterJSON dFilter = parseJSON(json);
+        TaxonObservationFilter filter = downloadUtils.createFilter(json, dFilter);
+        
+        oTaxonObservationFilterMapper.createFilter(filter);
+        if (dFilter.getReason().getOrganisationID() > -1) {
+            // If we are doing the download on behalf of an organisation
+            oTaxonObservationFilterMapper.createDownloadLogAsOrg(filter.getId(), 
+                    dFilter.getReason().getPurpose(), dFilter.getReason().getDetails(), 
+                    user.getId(), organisationMapper.selectByID(
+                        dFilter.getReason().getOrganisationID()).getName(), 
+                    dFilter.getReason().getOrganisationID());
+        } else {
+            // If we are doing the download for personal reasons
+            oTaxonObservationFilterMapper.createDownloadLog(filter.getId(), dFilter.getReason().getPurpose(), dFilter.getReason().getDetails(), user.getId());
+        }
+        
+        final int filterID = filter.getId();
+        return new StreamingOutput() {
+            @Override
+            public void write(OutputStream out) throws IOException, WebApplicationException {
+                ZipOutputStream zip = new ZipOutputStream(out);
+                String title = "Taxon Observation Download";
+                
+                List<String> taxaList = new ArrayList<String>();
+                taxaList.add(dFilter.getTaxon().getTvk());
+                // Add the list of observations to the download
+                addObservations(zip, user, dFilter.getYear().getStartYear(), 
+                        dFilter.getYear().getEndYear(), dFilter.getDataset().getDatasets(), 
+                        taxaList, dFilter.getSpatial().getMatch(),
+                        dFilter.getSpatial().getFeature(), dFilter.getSensitive().equals("sans"), 
+                        dFilter.getTaxon().getDesignation(), dFilter.getTaxon().getOutput(), 
+                        dFilter.getSpatial().getGridRef(), dFilter.getPolygon(), 
+                        dFilter.getReason().getIncludeAttributes().equals("true"), filterID);
+                // Add ReadMe to the download
+                addReadMe(zip, title, user,  dFilter.getYear().getStartYear(), 
+                        dFilter.getYear().getEndYear(), dFilter.getDataset().getDatasets(), dFilter.getSpatial().getMatch(),
+                        dFilter.getSpatial().getFeature(), Boolean.getBoolean(dFilter.getSensitive()), 
+                        dFilter.getTaxon().getDesignation(), dFilter.getTaxon().getOutput());
+                // Add Dataset Metadata to the download
+                addDatasetMetadata(zip, user, dFilter.getYear().getStartYear(), 
+                        dFilter.getYear().getEndYear(), dFilter.getDataset().getDatasets(), 
+                        taxaList, dFilter.getSpatial().getMatch(),
+                        dFilter.getSpatial().getFeature(), Boolean.getBoolean(dFilter.getSensitive()), 
+                        dFilter.getTaxon().getDesignation(), dFilter.getTaxon().getOutput(), 
+                        dFilter.getSpatial().getGridRef(), dFilter.getPolygon());
+                zip.flush();
+                zip.close();
+            }
+        };
+    }
+    
+    @GET
+    @Path("/download/report")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<TaxonObservationDownloadsByDataset> getAllAccessibleDownloads() {
+        return null;
+    }
+    
+    @GET
+    @Path("/download/report/{datasetKey : [A-Z][A-Z0-9]{7}}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<TaxonObservationDownload> getAllAccessibleDownloadsByDataset(String datasetKey) {
+        return null;
+    }
 
     /**
      * 
@@ -1113,6 +1139,20 @@ public class TaxonObservationResource extends AbstractResource {
             filters.put("Taxon group key", taxonOutputGroupKey);
         }
         downloadHelper.addReadMe(zip, user, title, filters);
+    }
+    
+    /**
+     * Attempt to parse a DownloadFilterJSON object out from an input JSON
+     * string
+     * 
+     * @param json The string containing the download filter
+     * @return An object representation of the download filter
+     * @throws IOException If the JSON string does not match the input object
+     * throw and error
+     */
+    private DownloadFilterJSON parseJSON(String json) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.readValue(json, DownloadFilterJSON.class);
     }
 }
 

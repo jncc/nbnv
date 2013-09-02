@@ -6,6 +6,7 @@ package uk.org.nbn.nbnv.api.utils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import uk.org.nbn.nbnv.api.dao.warehouse.DesignationMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.SiteBoundaryMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.TaxonMapper;
@@ -52,8 +53,12 @@ public class DownloadJSONToText {
         }
         
         if (!filter.getSpatial().isAll()) {
-            SiteBoundary sb = siteBoundaryMapper.getById(filter.getSpatial().getFeature());
-            text += " " + filter.getSpatial().getMatch() + " the boundary of " + sb.getName();
+            if (StringUtils.hasText(filter.getSpatial().getGridRef())) {
+                text += " " + filter.getSpatial().getMatch() + " the grid square " + filter.getSpatial().getGridRef();
+            } else {
+                SiteBoundary sb = siteBoundaryMapper.getById(filter.getSpatial().getFeature());
+                text += " " + filter.getSpatial().getMatch() + " the boundary of " + sb.getName();
+            }
         }
 
         return text;
