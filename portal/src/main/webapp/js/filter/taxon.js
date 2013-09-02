@@ -13,7 +13,8 @@ nbn.nbnv.ui.filter.taxon = function(json) {
     this._taxonName = '';
     this._designation = '';
     this._outputGroup = '';
-    this._orgDesignation = '';
+    this._orgSuppliedList = -1;
+    this._orgSuppliedListText = '';
     
     var mode = 'all';
     
@@ -29,9 +30,9 @@ nbn.nbnv.ui.filter.taxon = function(json) {
         } else if (json.taxon.output) {
             mode = 'output';
             this._outputGroupKey = json.taxon.output;
-        } else if (json.taxon.org) {
+        } else if (json.taxon.orgSuppliedList) {
             mode = 'org';
-            this._orgDesignation = json.taxon.org;
+            this._orgSuppliedList = json.taxon.orgSuppliedList;
         }
     }
     
@@ -93,19 +94,19 @@ nbn.nbnv.ui.filter.taxon = function(json) {
         var org = $('<select>')
             .addClass('selectMaxWidth')
             .change(function() {
-                var value = $(this).find("option:selected").attr('value');
-                _me._desigCode = value;
-                _me._orgDesignation = $(this).find("option:selected").text();
+                var selected = $(this).find("option:selected");
+                _me._orgSuppliedList = selected.attr('value');
+                _me._orgSuppliedListText = selected.text();
             });
 
         
         $.ajax({
-            url: nbn.nbnv.api + '/designations/organisation',
+            url: nbn.nbnv.api + '/organisationList',
             success: function (data) {
                 $.each(data, function (i, d) {
                     org.append($('<option>')
                         .text(d.name)
-                        .attr('value', d.code)
+                        .attr('value', d.id)
                     );
                 });
                 
@@ -212,7 +213,7 @@ nbn.nbnv.ui.filter.taxon = function(json) {
                 .attr('value', 'orgList')
                 .change(function() {
                     if (this.checked) {
-                        mode = 'desig';
+                        mode = 'org';
                         _me._all = false;
                         output.prop('disabled', true);
                         desig.prop('disabled', true)
@@ -295,15 +296,15 @@ nbn.nbnv.ui.filter.taxon = function(json) {
                 text = this._designation + ' records';
             }  
         } else if (mode === 'org') {
-            if (this._orgDesignation == '') {
+            if (this._orgSuppliedListText == '') {
                 $.ajax({
-                    url: nbn.nbnv.api + '/designations/organisation/' + _me._desigCode,
+                    url: nbn.nbnv.api + '/organisationList/' + _me._orgSuppliedList,
                     success: function(data) {
                         $('#taxonResult').text(data.name + ' records');  
                     }
                 });
             } else {
-                text = this._orgDesignation + ' records';
+                text = this._orgSuppliedListText + ' records';
             }  
         } else if (mode == 'output') {
             if (this._outputGroup == '') {
@@ -328,6 +329,8 @@ nbn.nbnv.ui.filter.taxon = function(json) {
             return { taxon: { all: false, tvk: this._tvk }};
         } else if (mode == 'desig') {
             return { taxon: { all: false, designation: this._desigCode }};
+        } else if (mode == 'org') {
+            return { taxon: { all : false, orgSuppliedList: this._orgSuppliedList }};
         } else if (mode == 'output') {
             return { taxon: { all: false, output: this._outputGroupKey }};
         } else {

@@ -165,7 +165,7 @@
     
     function getSpatialFeaturesJSON(keyPairs, gridSquare) {
         if (gridSquare === 'true') {
-            return 'spatial:{all:false,match:\'' + keyPairs['spatialRelationship'] + '\',feature:\'' + $('#nbn-site-report-form').attr('featureid') + '\'}';
+            return 'spatial:{all:false,match:\'' + keyPairs['spatialRelationship'] + '\',gridRef:\'' + $('#nbn-site-report-form').attr('featureid') + '\'}';
         }
         return 'spatial:{all:false,match:\'' + keyPairs['spatialRelationship'] + '\',feature:\'' + $('#nbn-site-report-form').attr('featureid') + '\',dataset:\'' + $('#nbn-site-report-form').attr('featureid').substring(0,8) + '\'}';
     }

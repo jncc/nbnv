@@ -31,6 +31,7 @@ import uk.org.nbn.nbnv.api.dao.warehouse.DatasetMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.DesignationMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.FeatureMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.OrganisationMapper;
+import uk.org.nbn.nbnv.api.dao.warehouse.OrganisationSuppliedListMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.SiteBoundaryMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.TaxonObservationAttributeMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.TaxonObservationMapper;
@@ -56,6 +57,7 @@ public class TaxonObservationResource extends AbstractResource {
     @Autowired SiteBoundaryMapper siteBoundaryMapper;
     @Autowired TaxonObservationAttributeMapper taxonObservationAttributeMapper;
     @Autowired OperationalTaxonObservationFilterMapper oTaxonObservationFilterMapper;
+    @Autowired OrganisationSuppliedListMapper organisationSuppliedListMapper;
     @Autowired DownloadUtils downloadUtils;
 
     /**
@@ -318,6 +320,7 @@ public class TaxonObservationResource extends AbstractResource {
             @QueryParam("featureID") @DefaultValue(ObservationResourceDefaults.defaultFeatureID) final String featureID,
             @QueryParam("sensitive") @DefaultValue(ObservationResourceDefaults.defaultSensitive) final Boolean sensitive,
             @QueryParam("designation") @DefaultValue(ObservationResourceDefaults.defaultDesignation) final String designation,
+            @QueryParam("organisationList") final int organisationList,
             @QueryParam("taxonOutputGroup") @DefaultValue(ObservationResourceDefaults.defaultTaxonOutputGroup) final String taxonOutputGroup,
             @QueryParam("gridRef") @DefaultValue(ObservationResourceDefaults.defaultGridRef) final String gridRef,
             @QueryParam("polygon") @DefaultValue(ObservationResourceDefaults.defaultPolygon) final String polygon) {
@@ -327,8 +330,8 @@ public class TaxonObservationResource extends AbstractResource {
                 ZipOutputStream zip = new ZipOutputStream(out);
                 String title = "Species list download";
                 addSpecies(zip, user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon);
-                addReadMe(zip, title, user, startYear, endYear, datasetKeys, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup);
-                addDatasetMetadata(zip, user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon);
+                addReadMe(zip, title, user, startYear, endYear, datasetKeys, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, organisationList);
+                addDatasetMetadata(zip, user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, organisationList, gridRef, polygon);
                 zip.flush();
                 zip.close();
             }
@@ -754,25 +757,46 @@ public class TaxonObservationResource extends AbstractResource {
                 List<String> taxaList = new ArrayList<String>();
                 taxaList.add(dFilter.getTaxon().getTvk());
                 // Add the list of observations to the download
-                addObservations(zip, user, dFilter.getYear().getStartYear(), 
-                        dFilter.getYear().getEndYear(), dFilter.getDataset().getDatasets(), 
-                        taxaList, dFilter.getSpatial().getMatch(),
-                        dFilter.getSpatial().getFeature(), dFilter.getSensitive().equals("sans"), 
-                        dFilter.getTaxon().getDesignation(), dFilter.getTaxon().getOutput(), 
-                        dFilter.getSpatial().getGridRef(), dFilter.getPolygon(), 
-                        dFilter.getReason().getIncludeAttributes().equals("true"), filterID);
+                addObservations(zip, user, 
+                        dFilter.getYear().getStartYear(), 
+                        dFilter.getYear().getEndYear(), 
+                        dFilter.getDataset().getDatasets(), 
+                        taxaList, 
+                        dFilter.getSpatial().getMatch(),
+                        dFilter.getSpatial().getFeature(), 
+                        dFilter.getSensitive().equals("sans"), 
+                        dFilter.getTaxon().getDesignation(), 
+                        dFilter.getTaxon().getOutput(), 
+                        dFilter.getTaxon().getOrgSuppliedList(),
+                        dFilter.getSpatial().getGridRef(), 
+                        dFilter.getPolygon(), 
+                        dFilter.getReason().getIncludeAttributes().equals("true"), 
+                        filterID);
                 // Add ReadMe to the download
-                addReadMe(zip, title, user,  dFilter.getYear().getStartYear(), 
-                        dFilter.getYear().getEndYear(), dFilter.getDataset().getDatasets(), dFilter.getSpatial().getMatch(),
-                        dFilter.getSpatial().getFeature(), Boolean.getBoolean(dFilter.getSensitive()), 
-                        dFilter.getTaxon().getDesignation(), dFilter.getTaxon().getOutput());
+                addReadMe(zip, title, user,  
+                        dFilter.getYear().getStartYear(), 
+                        dFilter.getYear().getEndYear(), 
+                        dFilter.getDataset().getDatasets(), 
+                        dFilter.getSpatial().getMatch(),
+                        dFilter.getSpatial().getFeature(), 
+                        Boolean.getBoolean(dFilter.getSensitive()), 
+                        dFilter.getTaxon().getDesignation(), 
+                        dFilter.getTaxon().getOutput(),
+                        dFilter.getTaxon().getOrgSuppliedList());
                 // Add Dataset Metadata to the download
-                addDatasetMetadata(zip, user, dFilter.getYear().getStartYear(), 
-                        dFilter.getYear().getEndYear(), dFilter.getDataset().getDatasets(), 
-                        taxaList, dFilter.getSpatial().getMatch(),
-                        dFilter.getSpatial().getFeature(), Boolean.getBoolean(dFilter.getSensitive()), 
-                        dFilter.getTaxon().getDesignation(), dFilter.getTaxon().getOutput(), 
-                        dFilter.getSpatial().getGridRef(), dFilter.getPolygon());
+                addDatasetMetadata(zip, user, 
+                        dFilter.getYear().getStartYear(), 
+                        dFilter.getYear().getEndYear(), 
+                        dFilter.getDataset().getDatasets(), 
+                        taxaList, 
+                        dFilter.getSpatial().getMatch(),
+                        dFilter.getSpatial().getFeature(), 
+                        Boolean.getBoolean(dFilter.getSensitive()), 
+                        dFilter.getTaxon().getDesignation(), 
+                        dFilter.getTaxon().getOutput(), 
+                        dFilter.getTaxon().getOrgSuppliedList(),
+                        dFilter.getSpatial().getGridRef(), 
+                        dFilter.getPolygon());
                 zip.flush();
                 zip.close();
             }
@@ -938,14 +962,23 @@ public class TaxonObservationResource extends AbstractResource {
         }
     }
     
-    private void addObservations(ZipOutputStream zip, User user, int startYear, int endYear, List<String> datasetKeys, List<String> taxa, String spatialRelationship, String featureID, boolean sensitive, String designation, String taxonOutputGroup, String gridRef, String polygon, boolean includeAttributes, int filterID) throws IOException {
+    private void addObservations(ZipOutputStream zip, User user, 
+            int startYear, int endYear, List<String> datasetKeys, 
+            List<String> taxa, String spatialRelationship, String featureID, 
+            boolean sensitive, String designation, String taxonOutputGroup, 
+            int orgSuppliedList, String gridRef, String polygon, 
+            boolean includeAttributes, int filterID) throws IOException {
         
         List<Attribute> attributes = new ArrayList<Attribute>();
         List<TaxonObservationAttribute> observationAttributes = new ArrayList<TaxonObservationAttribute>();
         Map<Integer, Map<Integer, String>> atts = new HashMap<Integer, Map<Integer, String>>();
         
         // Get observations for download
-        List<TaxonObservationDownload> observations = observationMapper.selectDownloadableRecords(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon);
+        List<TaxonObservationDownload> observations = 
+                observationMapper.selectDownloadableRecords(user, startYear, 
+                endYear, datasetKeys, taxa, spatialRelationship, featureID, 
+                sensitive, designation, taxonOutputGroup, orgSuppliedList,
+                gridRef, polygon);
         
         // Push in standard header fields for download
         zip.putNextEntry(new ZipEntry("Observations.csv"));
@@ -980,8 +1013,9 @@ public class TaxonObservationResource extends AbstractResource {
         if (includeAttributes) {
             // Find attributes
             attributes = taxonObservationAttributeMapper.getAttributeListForObservations(
-                    user, startYear, endYear, datasetKeys, taxa, spatialRelationship,
-                    featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon);
+                    user, startYear, endYear, datasetKeys, taxa, 
+                    spatialRelationship, featureID, sensitive, designation, 
+                    taxonOutputGroup, orgSuppliedList, gridRef, polygon);
             
             for (Attribute attrib : attributes) {
                 values.add(attrib.getLabel());
@@ -1085,7 +1119,12 @@ public class TaxonObservationResource extends AbstractResource {
      * @param gridRef
      * @throws IOException 
      */
-    private void addDatasetMetadata(ZipOutputStream zip, User user, int startYear, int endYear, List<String> datasetKeys, List<String> taxa, String spatialRelationship, String featureID, boolean sensitive, String designation, String taxonOutputGroup, String gridRef, String polygon) throws IOException {
+    private void addDatasetMetadata(ZipOutputStream zip, User user, 
+            int startYear, int endYear, List<String> datasetKeys, 
+            List<String> taxa, String spatialRelationship, String featureID, 
+            boolean sensitive, String designation, String taxonOutputGroup, 
+            int orgSuppliedList, String gridRef, String polygon) 
+            throws IOException {
         List<TaxonDatasetWithQueryStats> datasetsWithQueryStats = observationMapper.selectObservationDatasetsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon);
         downloadHelper.addDatasetWithQueryStatsMetadata(zip, user.getId(), datasetsWithQueryStats);
     }
@@ -1105,7 +1144,11 @@ public class TaxonObservationResource extends AbstractResource {
      * @param taxonOutputGroupKey
      * @throws IOException 
      */
-    private void addReadMe(ZipOutputStream zip, String title, User user, int startYear, int endYear, List<String> datasetKeys, String spatialRelationship, String featureID, boolean sensitive, String designation, String taxonOutputGroupKey) throws IOException{
+    private void addReadMe(ZipOutputStream zip, String title, User user, 
+            int startYear, int endYear, List<String> datasetKeys, 
+            String spatialRelationship, String featureID, boolean sensitive, 
+            String designation, String taxonOutputGroupKey, int orgSuppliedList) 
+            throws IOException{
         
         HashMap<String, String> filters = new HashMap<String, String>();
         if(featureID != null && !featureID.equals(ObservationResourceDefaults.defaultFeatureID)){
@@ -1138,6 +1181,12 @@ public class TaxonObservationResource extends AbstractResource {
             filters.put("Taxon group", taxonOutputGroup.getName());
             filters.put("Taxon group key", taxonOutputGroupKey);
         }
+        if (orgSuppliedList > 0) {
+            OrganisationSuppliedList organisationSuppliedList = organisationSuppliedListMapper.selectByID(orgSuppliedList);
+            filters.put("Organisation Supplied List Code", organisationSuppliedList.getCode());
+            filters.put("Organisation Supplied List", organisationSuppliedList.getName());
+        }
+        
         downloadHelper.addReadMe(zip, user, title, filters);
     }
     

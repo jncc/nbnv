@@ -33,7 +33,7 @@ public class TaxonObservationProvider {
                 + "rd.name as recorder, "
                 + "rdd.name as determiner, "
                 + "obs.pTaxonVersionKey, "
-                + "td.name as taxonName, "
+                + "td.name as pTaxonName, "
                 + "td.authority, "
                 + "tdd.name as commonName, "
                 + "togd.name as taxonGroup, "
@@ -354,6 +354,12 @@ public class TaxonObservationProvider {
         if (params.containsKey("designation") && params.get("designation") != null && !"".equals((String) params.get("designation"))) {
             INNER_JOIN("DesignationTaxonData dtd ON dtd.pTaxonVersionKey = o.pTaxonVersionKey");
             WHERE("dtd.code = #{designation}");
+        }
+        
+        if (params.containsKey("orgSuppliedList") && (Integer) params.get("orgSuppliedList") > 0) {
+            INNER_JOIN("TaxonOrganisationSuppliedTaxonList tostl ON tostl.pTaxonVersionKey = o.pTaxonVersionKey");
+            WHERE("tostl.orgListID = #{orgSuppliedList}");
+                    
         }
 
         if (params.containsKey("gridRef") && params.get("gridRef") != null && !"".equals((String) params.get("gridRef"))) {

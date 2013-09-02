@@ -30,6 +30,7 @@ public interface TaxonObservationAttributeMapper {
             , @Param("sensitive") Boolean sensitive
             , @Param("designation") String designation
             , @Param("taxonOutputGroup") String taxonOutputGroup
+            , @Param("organisationList") int organisationList
             , @Param("gridRef") String gridRef
             , @Param("polygon") String polygon);
     

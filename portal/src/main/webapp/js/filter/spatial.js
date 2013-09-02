@@ -7,17 +7,26 @@ nbn.nbnv.ui.filter.spatial = function(json) {
     if (typeof(json.spatial)==='undefined') { json.spatial = { all: true }; }
     
     this._all = true;
-    this._siteFilter = true;
+    this._mode = '';
     this._matchType = 'within';
     this._feature = -1;
+    this._gridRef = '';
     this._dataset = '';
     this._featureName = '';
     
     if (!json.spatial.all) {
         this._all = false;
         this._matchType = json.spatial.match;
-        this._feature = json.spatial.feature;
-        this._dataset = json.spatial.dataset;
+        
+        if (json.spatial.gridRef) {
+            this._mode = 'gridRef';
+            this._siteFilter = false;
+            this._gridRef = json.spatial.gridRef;
+        } else {
+            this._mode = 'site';
+            this._feature = json.spatial.feature;
+            this._dataset = json.spatial.dataset;   
+        }
     }
     
     this._renderHeader = function() {
@@ -109,8 +118,7 @@ nbn.nbnv.ui.filter.spatial = function(json) {
         
         var gridRefSelector = $('<input>')
                 .attr('type', 'text')
-                .attr('id', 'gridRefSelector')
-            ;
+                .attr('id', 'gridRefSelector');
         
         var gridRef = $('<div>')
             .append($('<input>')
@@ -120,7 +128,7 @@ nbn.nbnv.ui.filter.spatial = function(json) {
                 .change(function() {
                     if (this.checked) {
                         _me._all = false;
-                        _me._siteFilter = false;
+                        _me._mode = 'gridRef';
                         disableSiteSelectors(match, boundary, boundaryTypes);
                         matchGrid.prop('disabled', false);
                         gridRefSelector.prop('disabled', false);
@@ -139,6 +147,7 @@ nbn.nbnv.ui.filter.spatial = function(json) {
                 .change(function() {
                     if (this.checked) {
                         _me._all = true;
+                        _me._mode = 'all';
                         disableSiteSelectors(match, boundary, boundaryTypes);
                         disableGridRefSelectors(matchGrid, gridRefSelector);
                     }
@@ -153,7 +162,7 @@ nbn.nbnv.ui.filter.spatial = function(json) {
                 .change(function() {
                     if (this.checked) {
                         _me._all = false;
-                        _me._siteFilter = true;
+                        _me._mode = 'site';
                         disableGridRefSelectors(matchGrid, gridRefSelector);
                         match.prop('disabled', false);
                         boundary.prop('disabled', false);
@@ -169,11 +178,9 @@ nbn.nbnv.ui.filter.spatial = function(json) {
         if (this._all) {
             allRecords.children('input').attr('checked', 'checked').change();
         } else {
-            if (this._dataset == undefined || 
-                    this._dataset == '' || 
-                    (this._feature != '' && this._dataset == this._feature)) {
+            if (this._gridRef != '') {
                 gridRef.children('input').attr('checked', 'checked').change();
-                gridRefSelector.val(this._feature);
+                gridRefSelector.val(this._gridRef);
             } else {
                 filterRecords.children('input').attr('checked', 'checked').change();
             }
@@ -191,28 +198,28 @@ nbn.nbnv.ui.filter.spatial = function(json) {
     this._onExit = function() {
         var text = '';
         var _me = this;
-        
-        if (!this._all && !this._siteFilter) {
-            this._feature = $('#gridRefSelector').val();
-            this._featureName = $('#gridRefSelector').val();
-        }
-        
+                
         if (this._all) {
             text = 'All areas'
-        } else if (this._featureName == '') {
-            $.ajax({
-                url: nbn.nbnv.api + '/features/' + this._feature,
-                success: function (data) {
-                    $('#spatialResult').text('Records ' + _me._matchType + ' ' + data.label);
-                }
-            });
-        } else {
-            if (_me._siteFilter) {
-                _me._feature = $('#boundarySelect').find("option:selected").attr('value');;
+        } else if (this._mode == 'site')  {
+            if (this._featureName == '') {
+                $.ajax({
+                    url: nbn.nbnv.api + '/features/' + this._feature,
+                    success: function(data) {
+                        $('#spatialResult').text('Records ' + _me._matchType + ' ' + data.label);
+                    }
+                });
             } else {
-                _me.feature = $('#gridRefSelector').val();
+                if (_me._siteFilter) {
+                    _me._feature = $('#boundarySelect').find("option:selected").attr('value');
+                } else {
+                    _me.feature = $('#gridRefSelector').val();
+                }
+                text = 'Records ' + this._matchType + ' ' + this._featureName;
             }
-            text = 'Records ' + this._matchType + ' ' + this._featureName;
+        } else if (this._mode == 'gridRef') {
+            this._gridRef = $('#gridRefSelector').val();
+            text = 'Records ' + this._matchType + ' ' + this._gridRef;
         }
         
         $('#spatialResult').text(text);
@@ -243,10 +250,10 @@ nbn.nbnv.ui.filter.spatial = function(json) {
     this.getJson = function() {
         if (this._all) {
             return { spatial: { all: true }};
-        } else if (this._siteFilter) {
+        } else if (this._mode == 'site') {
             return { spatial: { all: false, match: this._matchType, feature: this._feature, dataset: this._dataset }};
         }
-        return { spatial: { all: false, match: this._matchType, gridRef: $('#gridRefSelector').val() }};
+        return { spatial: { all: false, match: this._matchType, gridRef: this._gridRef }};
     };
 
     this.getError = function() {
