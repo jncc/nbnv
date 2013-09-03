@@ -39,4 +39,25 @@ public interface TaxonNavigationGroupMapper {
     
     @Select("SELECT DISTINCT dtngd.* FROM DesignationTaxonNavigationGroupData dtngd INNER JOIN DesignationData dd ON dtngd.designationID = dd.id WHERE code = #{designationId} AND parentTaxonGroupKey = #{taxonNavigationGroupId} ORDER BY sortOrder ASC")
     List<TaxonNavigationGroup> getChildrenByDesignation(@Param("taxonNavigationGroupId") String taxonNavigationGroupId, @Param("designationId") String designationId);
+    
+    @Select("SELECT tostl.orgListID, tngd.[key], tngd.sortOrder, tngd.name, tngd.[description], tngd.parentTaxonGroupKey, "
+            + "COUNT(DISTINCT t.pTaxonVersionKey) numSpecies FROM [dbo].[TaxonOrganisationSuppliedTaxonList] tostl "
+            + "INNER JOIN [dbo].[TaxonData] t ON tostl.pTaxonVersionKey = t.taxonVersionKey "
+            + "INNER JOIN [dbo].[TaxonNavigationData] tn ON tn.taxonVersionKey = t.pTaxonVersionKey "
+            + "INNER JOIN [dbo].[TaxonNavigationGroupData] tngdp ON tn.taxonNavigationGroupKey = tngdp.[key] "
+            + "INNER JOIN [dbo].[TaxonNavigationGroupData] tngd ON tngd.[key] = tngdp.parentTaxonGroupKey "
+            + "WHERE tostl.orgListID = #{id} "
+            + "GROUP BY tostl.orgListID, tngd.[key], tngd.sortOrder, tngd.name, tngd.[description], tngd.parentTaxonGroupKey "
+            + "ORDER BY sortOrder ASC")
+    List<TaxonNavigationGroup> getTopLevelsByOrganisationListCode(@Param("id") int id);
+    
+    @Select("SELECT tostl.orgListID, tngd.[key], tngd.sortOrder, tngd.name, tngd.[description], tngd.parentTaxonGroupKey, "
+            + "COUNT(DISTINCT t.pTaxonVersionKey) numSpecies FROM [dbo].[TaxonOrganisationSuppliedTaxonList] tostl "
+            + "INNER JOIN [dbo].[TaxonData] t ON tostl.pTaxonVersionKey = t.taxonVersionKey "
+            + "INNER JOIN [dbo].[TaxonNavigationData] tn ON tn.taxonVersionKey = t.pTaxonVersionKey "
+            + "INNER JOIN [dbo].[TaxonNavigationGroupData] tngd ON tn.taxonNavigationGroupKey = tngd.[key] "
+            + "WHERE tostl.orgListID = #{id} AND tngd.parentTaxonGroupKey = #{taxonNavigationGroupId} "
+            + "GROUP BY tostl.orgListID, tngd.[key], tngd.sortOrder, tngd.name, tngd.[description], tngd.parentTaxonGroupKey  "
+            + "ORDER BY sortOrder ASC")
+    List<TaxonNavigationGroup> getChildrenByOrganisationList(@Param("taxonNavigationGroupId") String taxonNavigationGroupId, @Param("id") int id);
 }

@@ -25,7 +25,7 @@
                 <ul>
                     <#assign oLists=json.readURL("${api}/organisationList")>
                     <#list oLists as oList>
-                        <li class="nbn-designation-nested-list"><a title="${oList.description!}" href="/OrganisationList/${oList.code}">${oList.name}</a> : ${oList.code}</li>
+                        <li class="nbn-designation-nested-list"><a title="${oList.description!}" href="/OrganisationTaxonList/${oList.code}">${oList.name}</a> : ${oList.code}</li>
                     </#list>
                 </ul>
             </li>
