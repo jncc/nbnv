@@ -23,4 +23,7 @@ public interface OrganisationSuppliedListMapper {
     
     @Select("SELECT * FROM OrganisationSuppliedTaxonListData WHERE id = #{id}")
     OrganisationSuppliedList selectByID(@Param("id") int id);
+    
+    @Select("SELECT * FROM OrganisationSuppliedTaxonListData WHERE code = #{code}")
+    OrganisationSuppliedList selectByCode(@Param("code") String code);
 }

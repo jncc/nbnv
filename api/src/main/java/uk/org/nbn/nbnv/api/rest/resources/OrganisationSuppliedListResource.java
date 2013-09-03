@@ -27,7 +27,7 @@ public class OrganisationSuppliedListResource {
     
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<OrganisationSuppliedList> getAllOrgSuppliedListsNoData() {
+    public List<OrganisationSuppliedList> getAllOrgSuppliedLists() {
         return organisationSuppliedListMapper.selectAll();
     }
     
@@ -36,5 +36,12 @@ public class OrganisationSuppliedListResource {
     @Produces(MediaType.APPLICATION_JSON)
     public OrganisationSuppliedList getOrgSuppliedListByID(@PathParam("id") int id) {
         return organisationSuppliedListMapper.selectByID(id);
+    }
+      
+    @GET
+    @Path("/code/{code}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public OrganisationSuppliedList getOrgSuppliedListByCode(@PathParam("code") String code) {
+        return organisationSuppliedListMapper.selectByCode(code);
     }
 }
