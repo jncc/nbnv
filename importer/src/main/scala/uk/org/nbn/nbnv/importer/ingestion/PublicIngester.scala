@@ -29,10 +29,6 @@ class PublicIngester @Inject()(log: Logger,
       p.setImportTaxonObservation(o)
       p.setTaxonObservationID(o.getId)
 
-      // set the site - to null if necessary
-      val publicSite = if (metadata.siteIsPublic) o.getSiteID else null
-      p.setSiteID(publicSite)
-
       // set the recorder & determiner - to null if necessary
       val publicRecorder = if (metadata.recorderAndDeterminerArePublic) o.getRecorderID else null
       val publicDeterminer = if (metadata.recorderAndDeterminerArePublic) o.getDeterminerID else null
@@ -47,12 +43,19 @@ class PublicIngester @Inject()(log: Logger,
           val publicInfo = info.getLowerPrecisionGridSquareInfo(metadata.publicPrecision)
           val publicFeature = featureIngester.ensureGridRefFeature(GridRefDef(publicInfo.gridReference, Some(GridTypeDef(publicInfo.projection)), Some(publicInfo.gridReferencePrecision)))
           p.setFeatureID(publicFeature.getId)
+
+          val publicSiteId =  if (metadata.siteIsPublic && info.gridReferencePrecision == publicInfo.gridReferencePrecision) o.getSiteID else null
+          p.setSiteID(publicSiteId)
         }
         case None => {
           // the feature was not a gridsquare feature
           p.setFeatureID(o.getFeatureID)
+
+          val publicSiteId = if (metadata.siteIsPublic) o.getSiteID else null
+          p.setSiteID(publicSiteId)
         }
       }
+
     }
 
     db.repo.getTaxonObservationPublic(o.getId) match {

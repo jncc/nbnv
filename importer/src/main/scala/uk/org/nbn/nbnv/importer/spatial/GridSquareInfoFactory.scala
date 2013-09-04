@@ -27,10 +27,10 @@ class GridSquareInfoFactory @Inject()(db: Database) {
       val targetSrs = db.repo.getSRSForLatLong(longitude, latitude)
 
       targetSrs match {
-      case None => None
       case Some(27700) => Some(BritishGridSquareInfo(latitude, longitude, value.prec))
       case Some(29903) => Some(IrishGridSquareInfo(latitude, longitude, value.prec))
       case Some(23030) => Some(ChannelIslandGridSquareInfo(latitude, longitude, value.prec))
+      case None => None
       }
     }
     else {
