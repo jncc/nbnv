@@ -39,6 +39,7 @@ import uk.org.nbn.nbnv.api.dao.warehouse.TaxonOutputGroupMapper;
 import uk.org.nbn.nbnv.api.model.*;
 import uk.org.nbn.nbnv.api.model.meta.DownloadFilterJSON;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenDatasetAdminUser;
+import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenDatasetOrOrgAdminUser;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
 import uk.org.nbn.nbnv.api.rest.resources.utils.DownloadHelper;
 import uk.org.nbn.nbnv.api.utils.DownloadUtils;
@@ -802,19 +803,13 @@ public class TaxonObservationResource extends AbstractResource {
             }
         };
     }
-    
-    @GET
-    @Path("/download/report")
-    @Produces(MediaType.APPLICATION_JSON)
-    public List<TaxonObservationDownloadsByDataset> getAllAccessibleDownloads() {
-        return null;
-    }
-    
+       
     @GET
     @Path("/download/report/{datasetKey : [A-Z][A-Z0-9]{7}}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<TaxonObservationDownload> getAllAccessibleDownloadsByDataset(String datasetKey) {
-        return null;
+    public List<DownloadReport> getDownloadReportsByDataset(@TokenDatasetOrOrgAdminUser(path = "datasetKey") User user, @PathParam("datasetKey") String datasetKey) {
+        List<DownloadReport> dr = observationMapper.selectDownloadReportsByDataset(datasetKey);
+        return dr;
     }
 
     /**

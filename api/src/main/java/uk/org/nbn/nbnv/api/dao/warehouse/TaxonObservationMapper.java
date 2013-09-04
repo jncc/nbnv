@@ -1,14 +1,17 @@
 package uk.org.nbn.nbnv.api.dao.warehouse;
 
 import java.util.List;
+import org.apache.ibatis.annotations.Many;
 import org.apache.ibatis.annotations.One;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Result;
 import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.SelectProvider;
+import uk.org.nbn.nbnv.api.dao.providers.TaxonObservationDownloadProvider;
 import uk.org.nbn.nbnv.api.dao.providers.TaxonObservationProvider;
 import uk.org.nbn.nbnv.api.model.Dataset;
+import uk.org.nbn.nbnv.api.model.DownloadReport;
 import uk.org.nbn.nbnv.api.model.Organisation;
 import uk.org.nbn.nbnv.api.model.Taxon;
 import uk.org.nbn.nbnv.api.model.TaxonDataset;
@@ -306,4 +309,7 @@ public interface TaxonObservationMapper {
             , @Param("orgSuppliedList") int orgSuppliedList
             , @Param("gridRef") String gridRef
             , @Param("polygon") String polygon);
+    
+    @SelectProvider(type = TaxonObservationDownloadProvider.class, method="selectDownloadReportsForDataset")
+    public List<DownloadReport> selectDownloadReportsByDataset(@Param("datasetKey") String datasetKey);
 }
