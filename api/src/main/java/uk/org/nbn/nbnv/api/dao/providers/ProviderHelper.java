@@ -1,5 +1,8 @@
 package uk.org.nbn.nbnv.api.dao.providers;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import org.springframework.util.StringUtils;
@@ -26,7 +29,14 @@ public class ProviderHelper {
 
     static void addEndYearFilter(Integer endYear) {
         WHERE("YEAR(o.startDate) <= " + endYear);
-
+    }
+    
+    static void addStartDateFilter(String startDate) {
+        WHERE("d.timeDownloaded >= '" + startDate + "'");
+    }
+    
+    static void addEndDateFilter(String endDate) {
+        WHERE("d.timeDownloaded <= '" + endDate + "'");
     }
 
     public static String datasetListToCommaList(List<String> list) {

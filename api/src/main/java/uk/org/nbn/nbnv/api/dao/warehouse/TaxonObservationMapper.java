@@ -1,7 +1,6 @@
 package uk.org.nbn.nbnv.api.dao.warehouse;
 
 import java.util.List;
-import org.apache.ibatis.annotations.Many;
 import org.apache.ibatis.annotations.One;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Result;
@@ -311,5 +310,12 @@ public interface TaxonObservationMapper {
             , @Param("polygon") String polygon);
     
     @SelectProvider(type = TaxonObservationDownloadProvider.class, method="selectDownloadReportsForDataset")
-    public List<DownloadReport> selectDownloadReportsByDataset(@Param("datasetKey") String datasetKey);
+    public List<DownloadReport> selectDownloadReportsByDataset(
+            @Param("datasetKey") String datasetKey,
+            @Param("startYear") String startYear,
+            @Param("endYear") String endYear,
+            @Param("filterID") int filterID,
+            @Param("userID") int userID,
+            @Param("organisationID") int organisationID,
+            @Param("purposeID") int purposeID);
 }

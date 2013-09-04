@@ -462,4 +462,11 @@ public class DatasetResource extends AbstractResource {
         
         return new OpResult("Could not remove the contributing organisation, please try again later");
     }
+    
+    @GET 
+    @Path("/adminableDatasetsByUserAndOrg")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Dataset> getAdminableDatasetsByUserAndOrg(@TokenUser(allowPublic = false) User user) {
+        return datasetAdministratorMapper.getAdminableDatasetsByUserAndOrgs(user.getId());
+    }  
 }

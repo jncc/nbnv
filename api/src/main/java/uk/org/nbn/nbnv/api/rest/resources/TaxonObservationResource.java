@@ -803,13 +803,20 @@ public class TaxonObservationResource extends AbstractResource {
             }
         };
     }
-       
+    
     @GET
     @Path("/download/report/{datasetKey : [A-Z][A-Z0-9]{7}}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<DownloadReport> getDownloadReportsByDataset(@TokenDatasetOrOrgAdminUser(path = "datasetKey") User user, @PathParam("datasetKey") String datasetKey) {
-        List<DownloadReport> dr = observationMapper.selectDownloadReportsByDataset(datasetKey);
-        return dr;
+    public List<DownloadReport> getDownloadReportsByDataset(
+            @TokenDatasetOrOrgAdminUser(path = "datasetKey") User user, 
+            @PathParam("datasetKey") String datasetKey,
+            @QueryParam("startYear") @DefaultValue(ObservationResourceDefaults.defaultStartYear) String startYear,
+            @QueryParam("endYear") @DefaultValue(ObservationResourceDefaults.defaultEndYear) String endYear,
+            @QueryParam("filterID") @DefaultValue(DownloadResourceDefaults.filterID) int filterID,
+            @QueryParam("userID") @DefaultValue(DownloadResourceDefaults.userID) int userID,
+            @QueryParam("organisationID") @DefaultValue(DownloadResourceDefaults.organistionID) int organisationID,
+            @QueryParam("purposeID") @DefaultValue(DownloadResourceDefaults.purposeID) int purposeID) {
+        return observationMapper.selectDownloadReportsByDataset(datasetKey, startYear, endYear, filterID, userID, organisationID, purposeID);
     }
 
     /**
