@@ -18,7 +18,7 @@ class FeatureIngester @Inject()(log: Logger, db: Database, gridSquareInfoFactory
 
     case value: GridRefDef  => ensureGridRefFeature(value)
     case value: BoundaryDef => ensureSiteBoundaryFeature(value)
-    case value: PointDef    => ensureGridRefFeatureByCoordinate(value)
+    case value: PointDef    => ensureGridRefFeatureByCoordinate(value, record.key)
   }
 
   def ensureGridRefFeature(value: GridRefDef) = {
@@ -68,20 +68,20 @@ class FeatureIngester @Inject()(log: Logger, db: Database, gridSquareInfoFactory
     db.repo.getSiteBoundaryFeature(siteBoundaryDatasetKey, providerKey)._1
   }
 
-  private def ensureGridRefFeatureByCoordinate(value: PointDef) = {
+  private def ensureGridRefFeatureByCoordinate(value: PointDef, recordKey: String) = {
 
     val info = gridSquareInfoFactory.getByCoordinate(value)
 
     info match {
       case Some(i) => ensureGridSquareFeatureRecursive(i)._1
-      case None => ensureWgs84PointFeature(value.east, value.north) // no corresponding square; just save the point
+      case None => ensureWgs84PointFeature(value.east, value.north, recordKey) // no corresponding square; just save the point
     }
 
   }
 
-  private def ensureWgs84PointFeature(latitude: Double, longitude: Double) =  {
+  private def ensureWgs84PointFeature(latitude: Double, longitude: Double, recordKey: String) =  {
     val wkt = "POINT(%s %s)".format(longitude, latitude)
-    db.repo.createFeature(wkt, wkt)
+    db.repo.createFeature(wkt, recordKey)
   }
 }
 
