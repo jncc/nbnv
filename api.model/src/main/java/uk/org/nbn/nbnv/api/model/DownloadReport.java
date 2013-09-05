@@ -4,6 +4,7 @@
  */
 package uk.org.nbn.nbnv.api.model;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -29,6 +30,7 @@ public class DownloadReport {
     private String organisationName;
     
     private Date downloadTime;
+    private String downloadTimeString;
 
     private int recordCount;
     private int totalRecords;
@@ -144,6 +146,15 @@ public class DownloadReport {
 
     public void setDownloadTime(Date downloadTime) {
         this.downloadTime = downloadTime;
+        this.downloadTimeString = new SimpleDateFormat("EEE MMM dd yyyy HH:mm:ss '('zzz')'").format(downloadTime);
+    }
+    
+    public String getDownloadTimeString() {
+        return downloadTimeString;
+    }
+
+    public void setDownloadTimeString(String downloadTimeString) {
+        this.downloadTimeString = downloadTimeString;
     }
 
     public int getRecordCount() {
