@@ -81,7 +81,7 @@ class FeatureIngester @Inject()(log: Logger, db: Database, gridSquareInfoFactory
 
   private def ensureWgs84PointFeature(latitude: Double, longitude: Double) =  {
     val wkt = "POINT(%s %s)".format(longitude, latitude)
-    db.repo.createFeature(wkt, "0")
+    db.repo.createFeature(wkt, wkt)
   }
 }
 
