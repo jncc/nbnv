@@ -35,6 +35,7 @@
         <module>documentation</module>
         <module>gis</module>
         <module>importer.orglogo</module>
+        <module>reportMailer</module>
     </modules>
 	
     <build>

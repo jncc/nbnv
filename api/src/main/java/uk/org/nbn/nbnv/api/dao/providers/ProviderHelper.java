@@ -32,11 +32,11 @@ public class ProviderHelper {
     }
     
     static void addStartDateFilter(String startDate) {
-        WHERE("d.timeDownloaded >= '" + startDate + "'");
+        WHERE("todsd.downloadTime >= '" + startDate + "'");
     }
     
     static void addEndDateFilter(String endDate) {
-        WHERE("d.timeDownloaded <= '" + endDate + "'");
+        WHERE("todsd.downloadTime <= '" + endDate + "'");
     }
 
     public static String datasetListToCommaList(List<String> list) {

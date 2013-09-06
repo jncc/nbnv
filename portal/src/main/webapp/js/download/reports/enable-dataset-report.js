@@ -4,22 +4,86 @@ nbn.nbnv = nbn.nbnv || {};
 (function($) {   
     $.fn.dataTableExt.oJUIClasses.sStripeOdd = 'ui-state-highlight';
     $(document).ready(function() {
+        $('#startDate').datepicker({
+            showOtherMonths: true,
+            selectOtherMonths: true,
+            altField: "#startDateHidden",
+            altFormat: "yy-mm-dd",
+            dateFormat: 'dd/mm/yy'
+        });
+        $("#startDate").change(function(){
+            if (!$(this).val()) $("#startDateHidden").val('');
+        });
+
+        $('#endDate').datepicker({
+            showOtherMonths: true,
+            selectOtherMonths: true,
+            altField: "#endDateHidden",
+            altFormat: "yy-mm-dd",            
+            dateFormat: 'dd/mm/yy'
+        });
+        $("#endDate").change(function(){
+            if (!$(this).val()) $("#endDateHidden").val('');
+        });
+        
+        $('#nbn-download-filter').validate({
+            submitHandler: function(form) {
+                var data = { };
+                if ($('#startDateHidden').val() !== undefined && $('startDateHidden').val() !== "") {
+                    data['startDate'] = $('#startDateHidden').val();
+                }
+                if ($('#endDateHidden').val() !== undefined && $('endDateHidden').val() !== "") {
+                    data['endDate'] = $('#endDateHidden').val();                    
+                }
+                if ($('#purposeID').val() > 0) {
+                    data['purposeID'] = $('#purposeID').val();
+                }
+                if ($('#organisationID').val() > 0) {
+                    data['organisationID'] = $('#organisationID').val();
+                }
+                
+                loadTableContent(data);
+                return false;
+            },
+            rules: {
+                startDate: {
+                    date: true
+                },
+                endDate: {
+                    date: true
+                }
+            },
+            messages: {
+                startDate: {
+                    date: 'Must be valid date in the format DD-MM-YYYY'
+                },
+                endDate: {
+                    date: 'Must be valid date in the format DD-MM-YYYY'
+                }
+            }
+        });
+        
+        loadTableContent({});
+    });
+    
+    function loadTableContent(data) {       
         $('.nbn-datatable').each(function(index) {
             var dataset = $(this).data('dataset');
-            $('#nbn-downloads-div-' + dataset).append($('<img>')
+            $('#nbn-downloads-div-' + dataset).empty().append($('<img>')
                     .attr('src', '/img/ajax-loader-medium.gif')
                     .attr('style', 'display:block; margin:auto;'));
             $.ajax({
                 url: nbn.nbnv.api + '/taxonObservations/download/report/' + dataset,
-                success: function (data) {
+                data: data,
+                success: function(data) {
                     downloadForDataset(
                             '#nbn-downloads-div-' + dataset,
-                            'nbn-downloads-table-' + dataset, 
+                            'nbn-downloads-table-' + dataset,
                             data);
                 }
             });
         });
-    });
+    }
     
     function downloadForDataset (divID, tableID, data) {
             var output = $('<table>').addClass('nbn-dataset-table')

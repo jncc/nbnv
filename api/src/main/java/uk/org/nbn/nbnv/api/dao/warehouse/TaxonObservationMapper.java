@@ -312,10 +312,16 @@ public interface TaxonObservationMapper {
     @SelectProvider(type = TaxonObservationDownloadProvider.class, method="selectDownloadReportsForDataset")
     public List<DownloadReport> selectDownloadReportsByDataset(
             @Param("datasetKey") String datasetKey,
-            @Param("startYear") String startYear,
-            @Param("endYear") String endYear,
+            @Param("startDate") String startDate,
+            @Param("endDate") String endDate,
             @Param("filterID") int filterID,
             @Param("userID") int userID,
             @Param("organisationID") int organisationID,
             @Param("purposeID") int purposeID);
+  
+//    Might reactivate this later searches for users that have downloaded from a list of datasets    
+//    @SelectProvider(type=TaxonObservationDownloadProvider.class, method="selectDistinctUsersForDatasets")
+//    public List<User> selectDistinctUsersForDatasets(
+//            @Param("dataset") List<String> datasetKey
+//    );
 }

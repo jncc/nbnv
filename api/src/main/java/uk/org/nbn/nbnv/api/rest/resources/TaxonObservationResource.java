@@ -2,9 +2,11 @@ package uk.org.nbn.nbnv.api.rest.resources;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -810,13 +812,13 @@ public class TaxonObservationResource extends AbstractResource {
     public List<DownloadReport> getDownloadReportsByDataset(
             @TokenDatasetOrOrgAdminUser(path = "datasetKey") User user, 
             @PathParam("datasetKey") String datasetKey,
-            @QueryParam("startYear") @DefaultValue(ObservationResourceDefaults.defaultStartYear) String startYear,
-            @QueryParam("endYear") @DefaultValue(ObservationResourceDefaults.defaultEndYear) String endYear,
+            @QueryParam("startDate") @DefaultValue(DownloadResourceDefaults.defaultStartDate) String startDate,
+            @QueryParam("endDate") @DefaultValue(DownloadResourceDefaults.defaultEndDate) String endDate,
             @QueryParam("filterID") @DefaultValue(DownloadResourceDefaults.filterID) int filterID,
             @QueryParam("userID") @DefaultValue(DownloadResourceDefaults.userID) int userID,
             @QueryParam("organisationID") @DefaultValue(DownloadResourceDefaults.organistionID) int organisationID,
-            @QueryParam("purposeID") @DefaultValue(DownloadResourceDefaults.purposeID) int purposeID) {
-        return observationMapper.selectDownloadReportsByDataset(datasetKey, startYear, endYear, filterID, userID, organisationID, purposeID);
+            @QueryParam("purposeID") @DefaultValue(DownloadResourceDefaults.purposeID) int purposeID) {       
+        return observationMapper.selectDownloadReportsByDataset(datasetKey, startDate, endDate, filterID, userID, organisationID, purposeID);
     }
 
     /**
