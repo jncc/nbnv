@@ -17,6 +17,9 @@ abstract class Metadata {
   val siteIsPublic: Boolean
   val recorderAndDeterminerArePublic: Boolean
   val publicPrecision: Int
+  val administratorForename: String
+  val administratorSurname: String
+  val administratorEmail: String
 
   override def toString = datasetKey
 }
