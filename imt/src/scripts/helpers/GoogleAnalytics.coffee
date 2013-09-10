@@ -15,4 +15,22 @@ define [], ->
   ga 'send', 'pageview'
 
 
+  ###
+  Hook into the various events from the instance of App and View to gather
+  analytics on
+  ###
   listen: (app, view) ->
+    app.getLayers().on "add", (layer) ->
+      ga "send", "event", "layeradded", layer.getName()
+
+    app.getLayers().on "remove", (layer)->
+      ga "send", "event", "layerremoved", layer.getName()
+
+    app.getLayers().on "change:colour", (layer)->
+      ga "send", "event", "styledlayer"
+
+    app.on "change:baseLayer", (app, baseLayer)->
+      ga "send", "event", "baselayerchanged", baseLayer
+
+    app.getPicker().on "change:wkt", (picker, wkt) ->
+      ga "send", "event", "picked", wkt
