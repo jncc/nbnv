@@ -64,7 +64,7 @@ public class TaxonObservationDownloadProvider {
     public String selectOrganisationDownloadStats(Map<String, Object> params) {
         String from = "(" + createFilter(params) + ") AS tods";
         BEGIN();
-        SELECT("TOP 10 tods.organisationID as id, o.name as name, SUM(tods.recordCount) AS total, COUNT(*) AS totalAlt");
+        SELECT("TOP 5 tods.organisationID as id, o.name as name, SUM(tods.recordCount) AS total, COUNT(*) AS totalAlt");
         FROM(from);
         INNER_JOIN("OrganisationData o ON o.id = tods.organisationID");
         GROUP_BY("tods.organisationID, o.name");
@@ -74,7 +74,7 @@ public class TaxonObservationDownloadProvider {
     public String selectUserDownloadStats(Map<String, Object> params) {
         String from = "(" + createFilter(params) + ") AS tods";
         BEGIN();
-        SELECT("TOP 10 tods.userID AS id, tods.forename + ' ' + tods.surname AS name, tods.email AS extra, SUM(tods.recordCount) AS total, COUNT(*) AS totalAlt");
+        SELECT("TOP 5 tods.userID AS id, tods.forename + ' ' + tods.surname AS name, tods.email AS extra, SUM(tods.recordCount) AS total, COUNT(*) AS totalAlt");
         FROM(from);
         GROUP_BY("tods.userID, tods.forename, tods.surname, tods.email");
         return SQL();

@@ -1,10 +1,12 @@
 package uk.org.nbn.nbnv.api.rest.resources;
 
+import freemarker.template.TemplateException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +33,7 @@ import uk.org.nbn.nbnv.api.dao.providers.ProviderHelper;
 import uk.org.nbn.nbnv.api.dao.warehouse.DatasetAdministratorMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.DatasetMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.DesignationMapper;
+import uk.org.nbn.nbnv.api.dao.warehouse.DownloadMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.FeatureMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.OrganisationMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.OrganisationMembershipMapper;
@@ -39,11 +42,12 @@ import uk.org.nbn.nbnv.api.dao.warehouse.SiteBoundaryMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.TaxonObservationAttributeMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.TaxonObservationMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.TaxonOutputGroupMapper;
+import uk.org.nbn.nbnv.api.dao.warehouse.UserMapper;
+import uk.org.nbn.nbnv.api.mail.TemplateMailer;
 import uk.org.nbn.nbnv.api.model.*;
 import uk.org.nbn.nbnv.api.model.meta.DownloadFilterJSON;
 import uk.org.nbn.nbnv.api.model.meta.DownloadStatsJSON;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenDatasetAdminUser;
-import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenDatasetOrOrgAdminUser;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
 import uk.org.nbn.nbnv.api.rest.resources.utils.DownloadHelper;
 import uk.org.nbn.nbnv.api.utils.DownloadUtils;
@@ -66,6 +70,10 @@ public class TaxonObservationResource extends AbstractResource {
     @Autowired OperationalTaxonObservationFilterMapper oTaxonObservationFilterMapper;
     @Autowired OrganisationSuppliedListMapper organisationSuppliedListMapper;
     @Autowired DownloadUtils downloadUtils;
+    @Autowired TemplateMailer templateMailer;
+    @Autowired DownloadMapper downloadMapper;
+    @Autowired UserMapper userMapper;
+    
 
     /**
      * Return a Taxon Observation Record with a specified numerical ID, as long
@@ -736,7 +744,7 @@ public class TaxonObservationResource extends AbstractResource {
     @Produces("application/x-zip-compressed")
     public StreamingOutput getObservationsByFilterZip(            
             @TokenUser(allowPublic = false) final User user,
-            @QueryParam("json") String json) throws IOException {        
+            @QueryParam("json") String json) throws IOException, TemplateException {        
         
         final DownloadFilterJSON dFilter = parseJSON(json);
         TaxonObservationFilter filter = downloadUtils.createFilter(json, dFilter);
@@ -753,6 +761,8 @@ public class TaxonObservationResource extends AbstractResource {
             // If we are doing the download for personal reasons
             oTaxonObservationFilterMapper.createDownloadLog(filter.getId(), dFilter.getReason().getPurpose(), dFilter.getReason().getDetails(), user.getId());
         }
+        
+        mailDatasetDownloadNotifications(filter, dFilter);
         
         final int filterID = filter.getId();
         return new StreamingOutput() {
@@ -1346,6 +1356,47 @@ public class TaxonObservationResource extends AbstractResource {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.readValue(json, DownloadStatsJSON.class);
     }
+    
+    private void mailDatasetDownloadNotifications(TaxonObservationFilter filter, DownloadFilterJSON dFilter) throws IOException, TemplateException {
+        List<String> datasets = dFilter.getDataset().getDatasets();
+
+        Map<Integer, String> purposes = new HashMap<Integer, String>();
+        purposes.put(1, "Personal interest");
+        purposes.put(2, "Educational purposes");
+        purposes.put(3, "Research and scientific analysis");
+        purposes.put(4, "Media publication");
+        purposes.put(5, "Commercial and consultancy work");
+        purposes.put(6, "Professional land management");
+        purposes.put(7, "Data provision and interpretation (commercial)");
+        purposes.put(8, "Data provision and interpretation (non-profit)");
+        purposes.put(9, "Statutory work");
+        
+        for (String dataset : datasets) {
+            List<UserDownloadNotification> users = downloadMapper.getUsersToNotifyForDatasetDownload(dataset);
+            Map<String, Object> message = new HashMap<String, Object>();
+            message.put("portal", properties.getProperty("portal_url"));
+            
+            User downloader = userMapper.getUserById(dFilter.getReason().getUserID());
+            message.put("downloader", downloader.getForename() + " " + downloader.getSurname() + "(" + downloader.getEmail() + ")");
+            
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            message.put("downloadTime", sdf.format(new Date()));
+            
+            message.put("purpose", purposes.get(dFilter.getReason().getPurpose()));
+            message.put("downloadReason", dFilter.getReason().getDetails());
+            message.put("filterText", filter.getFilterText());
+            
+            message.put("dataset", dataset);
+            message.put("datasetName", datasetMapper.selectByDatasetKey(dataset).getTitle());
+            
+            for (UserDownloadNotification user : users) {                
+                message.put("name", user.getForename());
+                templateMailer.send(
+                        "dataset_download_notification.ftl", 
+                        user.getEmail(), 
+                        "NBN Gateway: Someone has downloaded some of your records", 
+                        message);
+            }
+        }
+    }
 }
-
-

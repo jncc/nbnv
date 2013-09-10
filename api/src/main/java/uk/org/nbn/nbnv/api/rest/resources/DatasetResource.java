@@ -541,7 +541,7 @@ public class DatasetResource extends AbstractResource {
     public boolean getDownloadNotificationSetting(
             @TokenDatasetAdminUser(path = "datasetKey") User user,
             @PathParam("datasetKey") String datasetKey) {
-        return downloadMapper.doesUserHaveDownloadNotificationsForDataset(user.getId(), datasetKey);
+        return oDownloadMapper.checkUserNotificationForDatasetDownload(user.getId(), datasetKey);
     }
     
     /**
@@ -559,14 +559,22 @@ public class DatasetResource extends AbstractResource {
     @POST
     @Path("/{datasetKey}/userDownloadNotification")
     @Produces(MediaType.APPLICATION_JSON)
-    public boolean setDownloadNotificationSetting(
+    public Response setDownloadNotificationSetting(
             @TokenDatasetAdminUser(path = "datasetKey") User user,
             @PathParam("datasetKey") String datasetKey,
-            @QueryParam("add") boolean add) {
+            @QueryParam("add") String add) {       
+        if (add.equals("true")) {
+            if (oDownloadMapper.checkUserNotificationForDatasetDownload(user.getId(), datasetKey))
+                return Response.ok().build();
+            if (oDownloadMapper.addUserNotificationForDatasetDownload(user.getId(), datasetKey) == 1) 
+                return Response.ok().build();                   
+        } else {
+            if (oDownloadMapper.checkUserNotificationForDatasetDownload(user.getId(), datasetKey))
+                return Response.ok().build();
+            if (oDownloadMapper.removeUserNotificationForDownload(user.getId(), datasetKey) == 1)
+                return Response.ok().build();
+        }
         
-        if (add) 
-            return oDownloadMapper.addUserNotificationForDatasetDownload(user.getId(), datasetKey);
-        
-        return oDownloadMapper.removeUserNotificationForDownload(user.getId(), datasetKey);
+        return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
     }
 }

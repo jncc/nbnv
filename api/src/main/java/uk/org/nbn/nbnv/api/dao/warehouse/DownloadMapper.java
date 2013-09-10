@@ -8,16 +8,16 @@ import uk.org.nbn.nbnv.api.model.*;
 public interface DownloadMapper {
     
     // Dataset Download Notification Settings
-    @Select("SELECT COUNT(ddnd.*) FROM DatasetDownloadNotificationData ddnd WHERE ddnd.userID = #{userID} AND ddnd.datasetKey = #{datasetKey}")
+    @Select("SELECT COUNT(*) FROM DatasetDownloadNotificationData WHERE userID = #{userID} AND datasetKey = #{datasetKey}")
     public boolean doesUserHaveDownloadNotificationsForDataset(
             @Param("userID") int userID,
             @Param("datasetKey") String datasetKey);
     
-    @Select("SELECT * FROM DatasetDownloadNotificationData ddnd WHERE ddnd.datasetKey = #{datasetKey}")
+    @Select("SELECT * FROM DatasetDownloadNotificationData WHERE datasetKey = #{datasetKey}")
     public List<UserDownloadNotification> getUsersToNotifyForDatasetDownload(
             @Param("datasetKey") String datasetKey);
     
-    @Select("SELECT * FROM DatasetDownloadNotificationData ddnd WHERE ddnd.userID = #{userID}")
+    @Select("SELECT * FROM DatasetDownloadNotificationData WHERE userID = #{userID}")
     public List<UserDownloadNotification> getNotifyingDatasetsForUser (
             @Param("userID") int userID);
 }

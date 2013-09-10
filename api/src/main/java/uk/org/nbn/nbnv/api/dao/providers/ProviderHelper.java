@@ -1,8 +1,5 @@
 package uk.org.nbn.nbnv.api.dao.providers;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import org.springframework.util.StringUtils;

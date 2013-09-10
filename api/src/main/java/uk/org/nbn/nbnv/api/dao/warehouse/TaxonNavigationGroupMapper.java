@@ -41,21 +41,21 @@ public interface TaxonNavigationGroupMapper {
     List<TaxonNavigationGroup> getChildrenByDesignation(@Param("taxonNavigationGroupId") String taxonNavigationGroupId, @Param("designationId") String designationId);
     
     @Select("SELECT tostl.orgListID, tngd.[key], tngd.sortOrder, tngd.name, tngd.[description], tngd.parentTaxonGroupKey, "
-            + "COUNT(DISTINCT t.pTaxonVersionKey) numSpecies FROM [dbo].[TaxonOrganisationSuppliedTaxonList] tostl "
-            + "INNER JOIN [dbo].[TaxonData] t ON tostl.pTaxonVersionKey = t.taxonVersionKey "
-            + "INNER JOIN [dbo].[TaxonNavigationData] tn ON tn.taxonVersionKey = t.pTaxonVersionKey "
-            + "INNER JOIN [dbo].[TaxonNavigationGroupData] tngdp ON tn.taxonNavigationGroupKey = tngdp.[key] "
-            + "INNER JOIN [dbo].[TaxonNavigationGroupData] tngd ON tngd.[key] = tngdp.parentTaxonGroupKey "
+            + "COUNT(DISTINCT t.pTaxonVersionKey) numSpecies FROM TaxonOrganisationSuppliedTaxonList tostl "
+            + "INNER JOIN TaxonData t ON tostl.pTaxonVersionKey = t.taxonVersionKey "
+            + "INNER JOIN TaxonNavigationData tn ON tn.taxonVersionKey = t.pTaxonVersionKey "
+            + "INNER JOIN TaxonNavigationGroupData tngdp ON tn.taxonNavigationGroupKey = tngdp.[key] "
+            + "INNER JOIN TaxonNavigationGroupData tngd ON tngd.[key] = tngdp.parentTaxonGroupKey "
             + "WHERE tostl.orgListID = #{id} "
             + "GROUP BY tostl.orgListID, tngd.[key], tngd.sortOrder, tngd.name, tngd.[description], tngd.parentTaxonGroupKey "
             + "ORDER BY sortOrder ASC")
     List<TaxonNavigationGroup> getTopLevelsByOrganisationListCode(@Param("id") int id);
     
     @Select("SELECT tostl.orgListID, tngd.[key], tngd.sortOrder, tngd.name, tngd.[description], tngd.parentTaxonGroupKey, "
-            + "COUNT(DISTINCT t.pTaxonVersionKey) numSpecies FROM [dbo].[TaxonOrganisationSuppliedTaxonList] tostl "
-            + "INNER JOIN [dbo].[TaxonData] t ON tostl.pTaxonVersionKey = t.taxonVersionKey "
-            + "INNER JOIN [dbo].[TaxonNavigationData] tn ON tn.taxonVersionKey = t.pTaxonVersionKey "
-            + "INNER JOIN [dbo].[TaxonNavigationGroupData] tngd ON tn.taxonNavigationGroupKey = tngd.[key] "
+            + "COUNT(DISTINCT t.pTaxonVersionKey) numSpecies FROM TaxonOrganisationSuppliedTaxonList tostl "
+            + "INNER JOIN TaxonData t ON tostl.pTaxonVersionKey = t.taxonVersionKey "
+            + "INNER JOIN TaxonNavigationData tn ON tn.taxonVersionKey = t.pTaxonVersionKey "
+            + "INNER JOIN TaxonNavigationGroupData tngd ON tn.taxonNavigationGroupKey = tngd.[key] "
             + "WHERE tostl.orgListID = #{id} AND tngd.parentTaxonGroupKey = #{taxonNavigationGroupId} "
             + "GROUP BY tostl.orgListID, tngd.[key], tngd.sortOrder, tngd.name, tngd.[description], tngd.parentTaxonGroupKey  "
             + "ORDER BY sortOrder ASC")

@@ -11,18 +11,20 @@ nbn.nbnv = nbn.nbnv || {};
             
             $('#nbn-download-notification-working').empty()
                     .append($('<img>').attr('src', '/img/ajax-loader.gif'))
-                    .append($('<p>').text('Working....'));
+                    .append($('<span>').text('Working....'));
             $('#nbn-download-notification-checkbox').attr("disabled", true);
-            
+            $('#nbn-download-notification-submit').attr("disabled", true);
+
             $.ajax({
-                url: nbn.nbnv.api + '/dataset/' + nbn.nbnv.dataset + '/userDownloadNotification?add=' +  checked,
+                url: nbn.nbnv.api + '/datasets/' + nbn.nbnv.dataset + '/userDownloadNotification?add=' +  checked,
                 type: 'POST',
                 success: function(data) {
-                    window.reload;
+                    location.reload();
                 },
-                failure: function(data) {
+                error: function(data) {
                     $('#nbn-download-notification-working').empty();
                     $('#nbn-download-notification-checkbox').removeAttr('disabled');
+                    $('#nbn-download-notification-submit').removeAttr('disabled');
                     alert('Failed to change download notification settings for this dataset, please try again later');
                 }
             });
