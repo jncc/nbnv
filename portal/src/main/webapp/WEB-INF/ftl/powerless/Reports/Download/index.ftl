@@ -58,7 +58,6 @@
                 <div class="tabbed nbn-organisation-tabbed nbn-datatable" data-dataset="${dataset.key}">
                     <h3>[${dataset.key}] ${dataset.title}</h3>
                     <div id="nbn-downloads-div-${dataset.key}"></div>
-                    
                 </div>
             </#list>
         <#else>

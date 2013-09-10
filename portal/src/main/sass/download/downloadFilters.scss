@@ -11,18 +11,26 @@
 }
 
 #nbn-download-filters-div {
-    width:45%;
     float:right;
 }
 
 #nbn-download-stats-div {
-    width:45%;
+    width:55%;
     float:left;
     height: 400px;
 }
 
 #nbn-download-results-div {
     clear:both;
+}
+
+.nbn-top-table-head {
+    text-align: center;
+}
+
+.nbn-top-table-div {
+    width: 50%;
+    float: left;
 }
 
 .nbn-download-purpose-span {

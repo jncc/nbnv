@@ -103,12 +103,47 @@ nbn.nbnv = nbn.nbnv || {};
             purposes[this.id - 1] = this.total;
         });
         
+        var userTable = $('<table>')
+                .append($('<tr>').append($('<td>')
+                        .attr('colspan', '4')
+                        .addClass('nbn-top-table-head')
+                        .text('Top User Downloads')))
+                .append($('<tr>')
+                    .append($('<td>').text('#'))
+                    .append($('<td>').text('Name'))
+                    .append($('<td>').text('Downloads'))
+                    .append($('<td>').text('Records'))
+                );
+        var orgTable = $('<table>')
+                .append($('<tr>').append($('<td>')
+                        .attr('colspan', '4')
+                        .addClass('nbn-top-table-head')
+                        .text('Top Organisation Downloads')))
+                .append($('<tr>')
+                    .append($('<td>').text('#'))
+                    .append($('<td>').text('Name'))
+                    .append($('<td>').text('Downloads'))
+                    .append($('<td>').text('Records'))
+                );
+        
         $.each(user, function(index, value) {
-            
+            var i = index + 1;
+            userTable.append($('<tr>')
+                .append($('<td>').text(i))
+                .append($('<td>').text(this.name))
+                .append($('<td>').text(this.totalAlt))
+                .append($('<td>').text(this.total))
+            );
         });
         
         $.each(org, function(index, value) {
-            
+            var i = index + 1;
+            orgTable.append($('<tr>')
+                .append($('<td>').text(i))
+                .append($('<td>').text(this.name))
+                .append($('<td>').text(this.totalAlt))
+                .append($('<td>').text(this.total))
+            );            
         });
         
         var stats = $('<table>')
@@ -140,7 +175,10 @@ nbn.nbnv = nbn.nbnv || {};
         addPurpose(stats, 'Data provision and interpretation (non-profit)', purposes, PURPOSE_DATA_NON_PROFIT - 1);      
         addPurpose(stats, 'Statutory work', purposes, PURPOSE_SATUTORY - 1);      
             
-        $('#downloadStats').empty().append(stats);
+        $('#downloadStats').empty()
+                .append(stats).append($('<br>'))
+                .append($('<div>').addClass('nbn-top-table-div').append(userTable))
+                .append($('<div>').addClass('nbn-top-table-div').append(orgTable));
     }
     
     function addPurpose(parent, text, purposes, index) {
