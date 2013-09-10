@@ -470,22 +470,22 @@ public class DatasetResource extends AbstractResource {
         return new OpResult("Could not remove the contributing organisation, please try again later");
     }
     
-    /**
-     * Return a list of datasets which are adminable by this user as either a
-     * dataset admin or an organisation admin
-     * 
-     * @param user The current user
-     * @return A List of datasets that the current user can administer
-     * 
-     * @response.representation.200.qname List<Dataset>
-     * @response.representation.200.mediaType application/json  
-     */
-    @GET 
-    @Path("/adminableDatasetsByUserAndOrg")
-    @Produces(MediaType.APPLICATION_JSON)
-    public List<Dataset> getAdminableDatasetsByUserAndOrg(@TokenUser(allowPublic = false) User user) {
-        return datasetAdministratorMapper.getAdminableDatasetsByUserAndOrgs(user.getId());
-    }  
+//    /**
+//     * Return a list of datasets which are adminable by this user as either a
+//     * dataset admin or an organisation admin
+//     * 
+//     * @param user The current user
+//     * @return A List of datasets that the current user can administer
+//     * 
+//     * @response.representation.200.qname List<Dataset>
+//     * @response.representation.200.mediaType application/json  
+//     */
+//    @GET 
+//    @Path("/adminableDatasetsByUserAndOrg")
+//    @Produces(MediaType.APPLICATION_JSON)
+//    public List<Dataset> getAdminableDatasetsByUserAndOrg(@TokenUser(allowPublic = false) User user) {
+//        return datasetAdministratorMapper.getAdminableDatasetsByUserAndOrgs(user.getId());
+//    }  
       
     /**
      * Return a list of users to notify when a dataset has been downloaded
@@ -501,7 +501,7 @@ public class DatasetResource extends AbstractResource {
     @Path("/{datasetKey}/downloadNotifications")
     @Produces(MediaType.APPLICATION_JSON)
     public List<UserDownloadNotification> getDownloadNotifcationsForDataset (
-            @TokenDatasetOrOrgAdminUser(path = "datasetKey") User user,
+            @TokenDatasetAdminUser(path = "datasetKey") User user,
             @PathParam("datasetKey") String datasetKey) {
         return downloadMapper.getUsersToNotifyForDatasetDownload(datasetKey);
     }
@@ -539,7 +539,7 @@ public class DatasetResource extends AbstractResource {
     @Path("/{datasetKey}/userDownloadNotification")
     @Produces(MediaType.APPLICATION_JSON)
     public boolean getDownloadNotificationSetting(
-            @TokenDatasetOrOrgAdminUser(path = "datasetKey") User user,
+            @TokenDatasetAdminUser(path = "datasetKey") User user,
             @PathParam("datasetKey") String datasetKey) {
         return downloadMapper.doesUserHaveDownloadNotificationsForDataset(user.getId(), datasetKey);
     }
@@ -560,7 +560,7 @@ public class DatasetResource extends AbstractResource {
     @Path("/{datasetKey}/userDownloadNotification")
     @Produces(MediaType.APPLICATION_JSON)
     public boolean setDownloadNotificationSetting(
-            @TokenDatasetOrOrgAdminUser(path = "datasetKey") User user,
+            @TokenDatasetAdminUser(path = "datasetKey") User user,
             @PathParam("datasetKey") String datasetKey,
             @QueryParam("add") boolean add) {
         

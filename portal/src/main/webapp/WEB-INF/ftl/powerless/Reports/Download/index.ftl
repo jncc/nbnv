@@ -1,4 +1,4 @@
-<#assign datasets=json.readURL("${api}/datasets/adminableDatasetsByUserAndOrg")>
+<#assign datasets=json.readURL("${api}/datasets/adminable")>
 <#assign organisations=json.readURL("${api}/organisations")>
 
 <@template.master title="Download Report By Dataset"

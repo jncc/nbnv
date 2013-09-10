@@ -814,7 +814,7 @@ public class TaxonObservationResource extends AbstractResource {
     @Path("/download/report/{datasetKey : [A-Z][A-Z0-9]{7}}")
     @Produces(MediaType.APPLICATION_JSON)
     public List<DownloadReport> getDownloadReportsByDataset (
-            @TokenDatasetOrOrgAdminUser(path = "datasetKey") User user, 
+            @TokenDatasetAdminUser(path = "datasetKey") User user, 
             @PathParam("datasetKey") String datasetKey,
             @QueryParam("json") String json) throws IOException {
         DownloadStatsJSON stats = parseJSONStats(json);
@@ -836,7 +836,7 @@ public class TaxonObservationResource extends AbstractResource {
         @QueryParam("json") String json) throws IOException {
         DownloadStatsJSON stats = parseJSONStats(json);
         
-        if (userIsDatasetOrOrganisationAdminForDatasets(user, stats.getDataset().getDatasets())) {
+        if (userIsDatasetAdminForDatsets(user, stats.getDataset().getDatasets())) {
             return Response.status(Response.Status.OK).entity(
                     observationMapper.selectDownloadStats(
                     stats.getDataset().getDatasets(),
@@ -856,7 +856,7 @@ public class TaxonObservationResource extends AbstractResource {
             @QueryParam("json") String json) throws IOException {
 
         DownloadStatsJSON stats = parseJSONStats(json);
-        if (userIsDatasetOrOrganisationAdminForDatasets(user, stats.getDataset().getDatasets())) {
+        if (userIsDatasetAdminForDatsets(user, stats.getDataset().getDatasets())) {
             return Response.status(Response.Status.OK).entity(
                     observationMapper.selectUserDownloadStats(
                     stats.getDataset().getDatasets(),
@@ -877,7 +877,7 @@ public class TaxonObservationResource extends AbstractResource {
 
         DownloadStatsJSON stats = parseJSONStats(json);
 
-        if (userIsDatasetOrOrganisationAdminForDatasets(user, stats.getDataset().getDatasets())) {
+        if (userIsDatasetAdminForDatsets(user, stats.getDataset().getDatasets())) {
             return Response.status(Response.Status.OK).entity(
                     observationMapper.selectOrganisationDownloadStats(
                     stats.getDataset().getDatasets(),
@@ -898,7 +898,7 @@ public class TaxonObservationResource extends AbstractResource {
 
         DownloadStatsJSON stats = parseJSONStats(json);
 
-        if (userIsDatasetOrOrganisationAdminForDatasets(user, stats.getDataset().getDatasets())) {
+        if (userIsDatasetAdminForDatsets(user, stats.getDataset().getDatasets())) {
             List<List<DownloadStat>> output = new ArrayList();
             output.add(observationMapper.selectDownloadStats(
                     stats.getDataset().getDatasets(),
@@ -922,23 +922,38 @@ public class TaxonObservationResource extends AbstractResource {
         return Response.status(Response.Status.FORBIDDEN).build();
     }
 
-    private boolean userIsDatasetOrOrganisationAdminForDatasets(User user, List<String> datasetKeys) {
+    private boolean userIsDatasetAdminForDatsets(User user, List<String> datasetKeys) {
         if (datasetKeys != null && !datasetKeys.isEmpty() && user != null) {
-            
             for (String dataset : datasetKeys) {
-                if (datasetAdministratorMapper.isUserDatasetAdministrator(user.getId(), dataset)) {
-                    return true;
-                } else {
-                    Dataset d = datasetMapper.selectByDatasetKey(dataset);
-                    if (organisationMembershipMapper.isUserOrganisationAdmin(user.getId(), d.getOrganisationID())) {
-                        return true;
-                    }
+                if (!datasetAdministratorMapper.isUserDatasetAdministrator(user.getId(), dataset)) {
+                    // We are not a dataset admin of this dataset return false
+                    return false;
                 }
             }
+            // User is a dataset administrator for all given datasets
+            return true;
         }
-        
+        // No datasets supplied or user is null
         return false;
     }
+    
+//    private boolean userIsDatasetOrOrganisationAdminForDatasets(User user, List<String> datasetKeys) {
+//        if (datasetKeys != null && !datasetKeys.isEmpty() && user != null) {
+//            
+//            for (String dataset : datasetKeys) {
+//                if (datasetAdministratorMapper.isUserDatasetAdministrator(user.getId(), dataset)) {
+//                    return true;
+//                } else {
+//                    Dataset d = datasetMapper.selectByDatasetKey(dataset);
+//                    if (organisationMembershipMapper.isUserOrganisationAdmin(user.getId(), d.getOrganisationID())) {
+//                        return true;
+//                    }
+//                }
+//            }
+//        }
+//        
+//        return false;
+//    }
     
     /**
      * 

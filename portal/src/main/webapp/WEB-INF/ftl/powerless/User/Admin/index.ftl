@@ -125,7 +125,8 @@
                         <a href="/Datasets/${r.key}/Attributes/Edit">Edit Attribute Metadata</a><br/>
                         <a href="/AccessRequest/History/${r.key}">View Dataset Access History</a><br/>
                         <a href="/Datasets/${r.key}/Contributing">Add / Remove Contributing Organisations</a><br/>
-                        <a href="/Datasets/${r.key}/Admin">Add / Remove Dataset Administrators</a>                        
+                        <a href="/Datasets/${r.key}/Admin">Add / Remove Dataset Administrators</a>       
+                        <a href="/Datasets/${r.key}/Notifications">Turn On / Off Download Notifications</a>
                     </td>
                 </tr>
             </#list>
