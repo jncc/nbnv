@@ -9,3 +9,22 @@
     width: 300px;
     display: inline-block;
 }
+
+#nbn-download-filters-div {
+    width:45%;
+    float:right;
+}
+
+#nbn-download-stats-div {
+    width:45%;
+    float:left;
+    height: 400px;
+}
+
+#nbn-download-results-div {
+    clear:both;
+}
+
+.nbn-download-purpose-span {
+    padding-left: 5em;
+}

@@ -15,7 +15,7 @@
         nbn.nbnv.api = '${api}';
     </script>
     <h1>Download Report For ${dataset.title}</h1>
-    <div class="tabbed nbn-organisation-tabbed">
+    <div id="nbn-download-filters-div" class="tabbed nbn-organisation-tabbed">
         <h3>Filters</h3>
         <form id="nbn-download-filter">
             <label class="nbn-download-form-filter-label">Start Date: </label>
@@ -49,6 +49,12 @@
             <input type="submit" />
         </form>
     </div>
+    <div id="nbn-download-stats-div" class="tabbed nbn-organisation-tabbed">
+        <h3>Download Statistics</h3>
+        <div id="downloadStats">
+        </div>
+    </div>
+    <div style="clear:both;"></div>
     <div class="tabbed nbn-organisation-tabbed nbn-datatable" data-dataset="${datasetKey}">
         <h3><#if organisation.hasSmallLogo><img alt="${organisation.name}" src="${organisation.smallLogo}"/></#if>${organisation.name} : [${dataset.key}] ${dataset.title}</h2>
         <div id="nbn-downloads-div-${datasetKey}"></div>

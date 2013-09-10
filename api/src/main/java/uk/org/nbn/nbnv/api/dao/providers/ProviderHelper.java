@@ -48,6 +48,11 @@ public class ProviderHelper {
 
         return "('" + StringUtils.collectionToDelimitedString(list, "','") + "')";
     }
+    
+    public static String IntegerListToCommaList(List<Integer> list) {
+        return "('" + StringUtils.collectionToDelimitedString(list, ",") + "')";
+    }
+    
     public static String taxaListToCommaList(List<String> list) {
         for (String d : list) {
             if (!d.matches("[A-Z0-9]{16}")) {

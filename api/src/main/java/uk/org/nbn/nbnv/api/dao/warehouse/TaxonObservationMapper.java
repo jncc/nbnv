@@ -11,6 +11,7 @@ import uk.org.nbn.nbnv.api.dao.providers.TaxonObservationDownloadProvider;
 import uk.org.nbn.nbnv.api.dao.providers.TaxonObservationProvider;
 import uk.org.nbn.nbnv.api.model.Dataset;
 import uk.org.nbn.nbnv.api.model.DownloadReport;
+import uk.org.nbn.nbnv.api.model.DownloadStat;
 import uk.org.nbn.nbnv.api.model.Organisation;
 import uk.org.nbn.nbnv.api.model.Taxon;
 import uk.org.nbn.nbnv.api.model.TaxonDataset;
@@ -311,13 +312,43 @@ public interface TaxonObservationMapper {
     
     @SelectProvider(type = TaxonObservationDownloadProvider.class, method="selectDownloadReportsForDataset")
     public List<DownloadReport> selectDownloadReportsByDataset(
-            @Param("datasetKey") String datasetKey,
+            @Param("datasetKey") List<String> datasetKey,
             @Param("startDate") String startDate,
             @Param("endDate") String endDate,
-            @Param("filterID") int filterID,
-            @Param("userID") int userID,
-            @Param("organisationID") int organisationID,
-            @Param("purposeID") int purposeID);
+            @Param("filterID") List<Integer> filterID,
+            @Param("userID") List<Integer> userID,
+            @Param("organisationID") List<Integer> organisationID,
+            @Param("purposeID") List<Integer> purposeID);
+    
+    @SelectProvider(type = TaxonObservationDownloadProvider.class, method="selectDownloadStats")
+    public List<DownloadStat> selectDownloadStats(
+            @Param("datasetKey") List<String> datasetKey,
+            @Param("startDate") String startDate,
+            @Param("endDate") String endDate,
+            @Param("filterID") List<Integer> filterID,
+            @Param("userID") List<Integer> userID,
+            @Param("organisationID") List<Integer> organisationID,
+            @Param("purposeID") List<Integer> purposeID);
+    
+    @SelectProvider(type = TaxonObservationDownloadProvider.class, method="selectUserDownloadStats")
+    public List<DownloadStat> selectUserDownloadStats(
+            @Param("datasetKey") List<String> datasetKey,
+            @Param("startDate") String startDate,
+            @Param("endDate") String endDate,
+            @Param("filterID") List<Integer> filterID,
+            @Param("userID") List<Integer> userID,
+            @Param("organisationID") List<Integer> organisationID,
+            @Param("purposeID") List<Integer> purposeID);
+    
+    @SelectProvider(type = TaxonObservationDownloadProvider.class, method="selectOrganisationDownloadStats")
+    public List<DownloadStat> selectOrganisationDownloadStats(
+            @Param("datasetKey") List<String> datasetKey,
+            @Param("startDate") String startDate,
+            @Param("endDate") String endDate,
+            @Param("filterID") List<Integer> filterID,
+            @Param("userID") List<Integer> userID,
+            @Param("organisationID") List<Integer> organisationID,
+            @Param("purposeID") List<Integer> purposeID);
   
 //    Might reactivate this later searches for users that have downloaded from a list of datasets    
 //    @SelectProvider(type=TaxonObservationDownloadProvider.class, method="selectDistinctUsersForDatasets")

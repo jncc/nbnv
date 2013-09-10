@@ -2,11 +2,9 @@ package uk.org.nbn.nbnv.api.rest.resources;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +18,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -29,10 +28,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import uk.org.nbn.nbnv.api.dao.core.OperationalTaxonObservationFilterMapper;
 import uk.org.nbn.nbnv.api.dao.providers.ProviderHelper;
+import uk.org.nbn.nbnv.api.dao.warehouse.DatasetAdministratorMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.DatasetMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.DesignationMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.FeatureMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.OrganisationMapper;
+import uk.org.nbn.nbnv.api.dao.warehouse.OrganisationMembershipMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.OrganisationSuppliedListMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.SiteBoundaryMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.TaxonObservationAttributeMapper;
@@ -40,6 +41,7 @@ import uk.org.nbn.nbnv.api.dao.warehouse.TaxonObservationMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.TaxonOutputGroupMapper;
 import uk.org.nbn.nbnv.api.model.*;
 import uk.org.nbn.nbnv.api.model.meta.DownloadFilterJSON;
+import uk.org.nbn.nbnv.api.model.meta.DownloadStatsJSON;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenDatasetAdminUser;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenDatasetOrOrgAdminUser;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
@@ -52,7 +54,9 @@ public class TaxonObservationResource extends AbstractResource {
 
     @Autowired TaxonObservationMapper observationMapper;
     @Autowired OrganisationMapper organisationMapper;
+    @Autowired OrganisationMembershipMapper organisationMembershipMapper;
     @Autowired DatasetMapper datasetMapper;
+    @Autowired DatasetAdministratorMapper datasetAdministratorMapper;
     @Autowired FeatureMapper featureMapper;
     @Autowired TaxonOutputGroupMapper taxonOutputGroupMapper;
     @Autowired DownloadHelper downloadHelper;
@@ -809,18 +813,133 @@ public class TaxonObservationResource extends AbstractResource {
     @GET
     @Path("/download/report/{datasetKey : [A-Z][A-Z0-9]{7}}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<DownloadReport> getDownloadReportsByDataset(
+    public List<DownloadReport> getDownloadReportsByDataset (
             @TokenDatasetOrOrgAdminUser(path = "datasetKey") User user, 
             @PathParam("datasetKey") String datasetKey,
-            @QueryParam("startDate") @DefaultValue(DownloadResourceDefaults.defaultStartDate) String startDate,
-            @QueryParam("endDate") @DefaultValue(DownloadResourceDefaults.defaultEndDate) String endDate,
-            @QueryParam("filterID") @DefaultValue(DownloadResourceDefaults.filterID) int filterID,
-            @QueryParam("userID") @DefaultValue(DownloadResourceDefaults.userID) int userID,
-            @QueryParam("organisationID") @DefaultValue(DownloadResourceDefaults.organistionID) int organisationID,
-            @QueryParam("purposeID") @DefaultValue(DownloadResourceDefaults.purposeID) int purposeID) {       
-        return observationMapper.selectDownloadReportsByDataset(datasetKey, startDate, endDate, filterID, userID, organisationID, purposeID);
+            @QueryParam("json") String json) throws IOException {
+        DownloadStatsJSON stats = parseJSONStats(json);
+        
+        List<String> dList = new ArrayList<String>();
+        dList.add(datasetKey);
+        
+        return observationMapper.selectDownloadReportsByDataset(dList, 
+                stats.getStartDate(), stats.getEndDate(), stats.getFilterID(), 
+                stats.getUserID(), stats.getOrganisationID(), 
+                stats.getPurposeID());
+    }
+    
+    @GET
+    @Path("/download/report/downloadStats")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getDownloadStats(
+        @TokenUser(allowPublic = false) User user, 
+        @QueryParam("json") String json) throws IOException {
+        DownloadStatsJSON stats = parseJSONStats(json);
+        
+        if (userIsDatasetOrOrganisationAdminForDatasets(user, stats.getDataset().getDatasets())) {
+            return Response.status(Response.Status.OK).entity(
+                    observationMapper.selectDownloadStats(
+                    stats.getDataset().getDatasets(),
+                    stats.getStartDate(), stats.getEndDate(),
+                    stats.getFilterID(), stats.getUserID(),
+                    stats.getOrganisationID(), stats.getPurposeID())).build();
+        }
+
+        return Response.status(Response.Status.FORBIDDEN).entity("You do no have administration access to one or more of the selected datasets").build();
     }
 
+    @GET
+    @Path("/download/report/downloadUserStats")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getDownloadUserStats(
+            @TokenUser(allowPublic = false) User user,
+            @QueryParam("json") String json) throws IOException {
+
+        DownloadStatsJSON stats = parseJSONStats(json);
+        if (userIsDatasetOrOrganisationAdminForDatasets(user, stats.getDataset().getDatasets())) {
+            return Response.status(Response.Status.OK).entity(
+                    observationMapper.selectUserDownloadStats(
+                    stats.getDataset().getDatasets(),
+                    stats.getStartDate(), stats.getEndDate(),
+                    stats.getFilterID(), stats.getUserID(),
+                    stats.getOrganisationID(), stats.getPurposeID())).build();
+        }
+
+        return Response.status(Response.Status.FORBIDDEN).build();
+    }
+
+    @GET
+    @Path("/download/report/downloadOrganisationStats")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getDownloadOrganisationStats(
+            @TokenUser(allowPublic = false) User user,
+            @QueryParam("json") String json) throws IOException {
+
+        DownloadStatsJSON stats = parseJSONStats(json);
+
+        if (userIsDatasetOrOrganisationAdminForDatasets(user, stats.getDataset().getDatasets())) {
+            return Response.status(Response.Status.OK).entity(
+                    observationMapper.selectOrganisationDownloadStats(
+                    stats.getDataset().getDatasets(),
+                    stats.getStartDate(), stats.getEndDate(),
+                    stats.getFilterID(), stats.getUserID(),
+                    stats.getOrganisationID(), stats.getPurposeID())).build();
+        }
+
+        return Response.status(Response.Status.FORBIDDEN).build();
+    }
+    
+    @GET
+    @Path("/download/report/combinedStats")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getCombinedDownloadStats(
+            @TokenUser(allowPublic = false) User user,
+            @QueryParam("json") String json) throws IOException {
+
+        DownloadStatsJSON stats = parseJSONStats(json);
+
+        if (userIsDatasetOrOrganisationAdminForDatasets(user, stats.getDataset().getDatasets())) {
+            List<List<DownloadStat>> output = new ArrayList();
+            output.add(observationMapper.selectDownloadStats(
+                    stats.getDataset().getDatasets(),
+                    stats.getStartDate(), stats.getEndDate(),
+                    stats.getFilterID(), stats.getUserID(),
+                    stats.getOrganisationID(), stats.getPurposeID()));
+            output.add(observationMapper.selectUserDownloadStats(
+                    stats.getDataset().getDatasets(),
+                    stats.getStartDate(), stats.getEndDate(),
+                    stats.getFilterID(), stats.getUserID(),
+                    stats.getOrganisationID(), stats.getPurposeID()));
+            output.add(observationMapper.selectOrganisationDownloadStats(
+                    stats.getDataset().getDatasets(),
+                    stats.getStartDate(), stats.getEndDate(),
+                    stats.getFilterID(), stats.getUserID(),
+                    stats.getOrganisationID(), stats.getPurposeID()));
+            
+            return Response.status(Response.Status.OK).entity(output).build();
+        }
+
+        return Response.status(Response.Status.FORBIDDEN).build();
+    }
+
+    private boolean userIsDatasetOrOrganisationAdminForDatasets(User user, List<String> datasetKeys) {
+        if (datasetKeys != null && !datasetKeys.isEmpty() && user != null) {
+            
+            for (String dataset : datasetKeys) {
+                if (datasetAdministratorMapper.isUserDatasetAdministrator(user.getId(), dataset)) {
+                    return true;
+                } else {
+                    Dataset d = datasetMapper.selectByDatasetKey(dataset);
+                    if (organisationMembershipMapper.isUserOrganisationAdmin(user.getId(), d.getOrganisationID())) {
+                        return true;
+                    }
+                }
+            }
+        }
+        
+        return false;
+    }
+    
     /**
      * 
      * @param datasetsWithQueryStats
@@ -1206,6 +1325,11 @@ public class TaxonObservationResource extends AbstractResource {
     private DownloadFilterJSON parseJSON(String json) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.readValue(json, DownloadFilterJSON.class);
+    }
+    
+    private DownloadStatsJSON parseJSONStats(String json) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.readValue(json, DownloadStatsJSON.class);
     }
 }
 

@@ -13,7 +13,7 @@
         nbn.nbnv.api = '${api}';
     </script>
     <h1>Download Report By Dataset</h1>
-    <div class="tabbed nbn-organisation-tabbed">
+    <div id="nbn-download-filters-div" class="tabbed nbn-organisation-tabbed">
         <h3>Filters</h3>
         <form id="nbn-download-filter">
             <label class="nbn-download-form-filter-label">Start Date: </label>
@@ -47,16 +47,21 @@
             <input type="submit" />
         </form>
     </div>
-    <#if datasets?has_content>
-        <#list datasets as dataset>
-            <#assign downloads=json.readURL("${api}/taxonObservations/download/report/${dataset.key}")>
-            <#assign organisation=json.readURL(dataset.organisationHref)>
-            <div class="tabbed nbn-organisation-tabbed nbn-datatable" data-dataset="${dataset.key}">
-                <h3><#if organisation.hasSmallLogo><img alt="${organisation.name}" src="${organisation.smallLogo}"/></#if>${organisation.name} : [${dataset.key}] ${dataset.title}</h2>
-                <div id="nbn-downloads-div-${dataset.key}"></div>
-            </div>
-        </#list>
-    <#else>
-        <p>There are no datasets over which you have enough privileges to view download records</p> 
-    </#if>
+    <div id="nbn-download-stats-div" class="tabbed nbn-organisation-tabbed">
+        <h3>Download Statistics</h3>
+        <div id="downloadStats">
+        </div>
+    </div>
+    <div style="clear:both;">
+        <#if datasets?has_content>
+            <#list datasets as dataset>
+                <div class="tabbed nbn-organisation-tabbed nbn-datatable" data-dataset="${dataset.key}">
+                    <h3> [${dataset.key}] ${dataset.title}</h3>
+                    <img src="/img/ajax-loader-medium.gif" style="display:block; margin:auto;" />
+                </div>
+            </#list>
+        <#else>
+            <p>There are no datasets over which you have enough privileges to view download records</p> 
+        </#if>
+    </div>
 </@template.master>
