@@ -10,6 +10,7 @@ define [
   render: ->
     @$el.html template @collection.toJSON()
     @$('table').dataTable
+      "bJQueryUI": true
       "bLengthChange": false
       "oLanguage":
         "sSearch": "Search within these results:"

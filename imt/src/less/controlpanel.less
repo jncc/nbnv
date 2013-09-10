@@ -6,26 +6,34 @@
   bottom: 0;
   left: 0;
   right: 0;
-  overflow-y: scroll; 
+  border-radius:0;
+  
+  .ui-tabs-panel {
+    position: absolute;
+    top: 40px;
+    bottom: 0px;
+    left:0; 
+    right: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
   .datasets {
     h2 { line-height: 20px; font-size: 17px;}
   }
 }
 .controlPanel {
-  background-color: white;
   position: absolute;
   width: 357px;
-  top: 42px;
+  top: 40px;
   bottom: 0;
   right: 0;
   float: right;
   z-index: 2;
-  border-radius: 5px;
 }
 .hideControlPanel{
-  position:absolute;
-  right:5px;
-  top:3px;
+  position: absolute;
+  right: 3px;
+  top: 6px;
 }
 .showControlPanel{
   float: right;
