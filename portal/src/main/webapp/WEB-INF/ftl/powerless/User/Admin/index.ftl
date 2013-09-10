@@ -107,7 +107,7 @@
         <h3>Manage Your Datasets</h3>
         <p><a href="/AccessRequest/Admin">Manage Access Requests</a></p>
         <p><a href="/AccessRequest/Create/Grant">Create New Dataset Access</a></p>
-        <p>View Download Log</p>
+        <p><a href="/Reports/Download">View Download Log For Your Datasets</a></p>
         <table class="sTable">
             <thead>
                 <tr>
@@ -125,8 +125,9 @@
                         <a href="/Datasets/${r.key}/Attributes/Edit">Edit Attribute Metadata</a><br/>
                         <a href="/AccessRequest/History/${r.key}">View Dataset Access History</a><br/>
                         <a href="/Datasets/${r.key}/Contributing">Add / Remove Contributing Organisations</a><br/>
-                        <a href="/Datasets/${r.key}/Admin">Add / Remove Dataset Administrators</a>       
-                        <a href="/Datasets/${r.key}/Notifications">Turn On / Off Download Notifications</a>
+                        <a href="/Datasets/${r.key}/Admin">Add / Remove Dataset Administrators</a><br/>  
+                        <a href="/Datasets/${r.key}/Notifications">Turn On / Off Download Notifications</a><br/>
+                        <a href="/Reports/Download/${r.key}">View Download Log</a><br/>
                     </td>
                 </tr>
             </#list>
