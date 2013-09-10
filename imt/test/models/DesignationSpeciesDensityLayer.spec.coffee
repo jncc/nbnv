@@ -1,18 +1,16 @@
 define [
-	"cs!models/DesignationSpeciesDensityLayer",
-  "cs!models/mixins/TemporalFilterMixin"
-], (DesignationSpeciesDensityLayer, TemporalFilterMixin)-> 
-  describe "DesignationSpeciesDensityLayer Model", ->
-    designationSpeciesDensityLayer = null
-    
-    beforeEach ->
-      designationSpeciesDensityLayer = new DesignationSpeciesDensityLayer
-  
-    it "Deaults should be set correctly", ->
-      expect(designationSpeciesDensityLayer.get "entityType").toBe "designation"
-      expect(designationSpeciesDensityLayer.get "opacity").toBe 1
-      expect(designationSpeciesDensityLayer.get "visibility").toBeTruthy
-      expect(designationSpeciesDensityLayer.get "resolution").toBe "auto"
-      expect(designationSpeciesDensityLayer.get "isPolygon").not.toBeTruthy
-      expect(designationSpeciesDensityLayer.get "startDate").toBe TemporalFilterMixin.earliestRecordDate
-      expect(designationSpeciesDensityLayer.get "endDate").toBe TemporalFilterMixin.latestRecordDate
+  "cs!models/DesignationSpeciesDensityLayer"
+], (DesignationSpeciesDensityLayer)-> 
+  describe "DesignationSpeciesDensityLayer", ->
+    it "can filter start year", ->
+      layer = new DesignationSpeciesDensityLayer code: "BERN-A1", startDate: 2012
+      expect(layer.getWMS()).toContain "startyear=2012"
+
+    it "can filter end year", ->
+      layer = new DesignationSpeciesDensityLayer code: "BERN-A1", endDate: 2012
+      expect(layer.getWMS()).toContain "endyear=2012"
+
+    it "doesnt apply a temporal filter when default years are used", ->
+      layer = new DesignationSpeciesDensityLayer code: "BERN-A1"
+      expect(layer.getWMS()).not.toContain "endyear"
+      expect(layer.getWMS()).not.toContain "startyear"

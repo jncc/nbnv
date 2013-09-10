@@ -21,8 +21,8 @@ define [
   Apply the current state of the view to the model
   ###
   apply: ->
-    @model.set "startDate", parseInt( @$('.startDate').val() ), validate: true
-    @model.set "endDate", parseInt( @$('.endDate').val() ), validate: true
+    @model.set "startDate", parseInt( @$('.startDate').val(), 10 ), validate: true
+    @model.set "endDate", parseInt( @$('.endDate').val(), 10 ), validate: true
     
   ###
   Set up the html content for this view
