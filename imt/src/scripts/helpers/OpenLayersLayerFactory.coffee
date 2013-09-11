@@ -66,7 +66,7 @@ define [
     layer.on 'change:visibility', -> wmsLayer.setVisibility layer.isVisible()
     layer.on 'change:wms', -> 
       wmsLayer.setUrl layer.getWMS()
-      do wmsLayer.redraw #trigger a redraw of the layer. Openlayers doesn't do this when we update the url
+      wmsLayer.redraw true #trigger a redraw of the layer. Openlayers doesn't do this when we update the url
 
     return wmsLayer
 
