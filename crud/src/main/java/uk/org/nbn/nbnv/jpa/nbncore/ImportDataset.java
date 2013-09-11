@@ -120,6 +120,15 @@ public class ImportDataset implements Serializable {
     private Collection<ImportSite> importSiteCollection;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "importDataset")
     private ImportTaxonDataset importTaxonDataset;
+    @Size(max = 2147483647)
+    @Column(name = "administratorForename")
+    private String administratorForename;
+    @Size(max = 2147483647)
+    @Column(name = "administratorSurname")
+    private String administratorSurname;
+    @Size(max = 2147483647)
+    @Column(name = "administratorEmail")
+    private String administratorEmail;
 
     public ImportDataset() {
     }
@@ -169,7 +178,31 @@ public class ImportDataset implements Serializable {
     public void setTitle(String title) {
         this.title = title;
     }
+    
+    public String getAdministratorEmail() {
+        return administratorEmail;
+    }
 
+    public void setAdministratorEmail(String administratorEmail) {
+        this.administratorEmail = administratorEmail;
+    }
+    
+    public String getAdministratorForename() {
+        return administratorForename;
+    }
+
+    public void setAdministratorForename(String administratorForename) {
+        this.administratorForename = administratorForename;
+    }
+    
+    public String getAdministratorSurname() {
+        return administratorSurname;
+    }
+
+    public void setAdministratorSurname(String administratorSurname) {
+        this.administratorSurname = administratorSurname;
+    }
+    
     public String getDescription() {
         return description;
     }
