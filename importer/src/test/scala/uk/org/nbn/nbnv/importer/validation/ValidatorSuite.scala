@@ -102,6 +102,7 @@ class ValidatorSuite extends BaseFunSuite with BeforeAndAfter{
     when(db.repo).thenReturn(repo)
     when(repo.confirmTaxonVersionKey("NHMSYS0020528265")).thenReturn(true)
     when(repo.confirmUserExistsByEamil("test.user@example.com")).thenReturn(true)
+    when(repo.confirmDatasetExists("Test Identifier")).thenReturn(true)
   }
 
   test("Should validate a set of real records - Head Record Only") {

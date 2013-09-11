@@ -9,8 +9,13 @@ class MetadataValidator (repo: Repository) {
   def validate(metadata: Metadata):  List[Result]  = {
     val results = new ListBuffer[Result]
 
-    val v0 = new Nbnv600Validator(repo)
+    //validate that the dataset key is valid for existing datasets
+    val v0 = new Nbnv604Validator(repo)
     results.append(v0.validate(metadata))
+
+    //validate that the administrator email is valid for new datasets
+    val v1 = new Nbnv600Validator(repo)
+    results.append(v1.validate(metadata))
 
     results.toList
   }
