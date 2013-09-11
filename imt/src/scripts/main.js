@@ -26,7 +26,7 @@ require.config({
   }
 });
 
-require(['backbone', 'cs!models/App', 'cs!views/AppView', 'cs!routers/StateRouter', 'cs!routers/GetURLRouter'], function(Backbone, App, AppView, Router, GetURLRouter) {
+require(['backbone', 'cs!models/App', 'cs!views/AppView', 'cs!routers/StateRouter', 'cs!routers/GetURLRouter', 'cs!helpers/GoogleAnalytics'], function(Backbone, App, AppView, Router, GetURLRouter, GA) {
   app = new App();
   getMapRouter = new GetURLRouter({model: app});
   getMapRouter.navigate(location.search);
@@ -34,4 +34,5 @@ require(['backbone', 'cs!models/App', 'cs!views/AppView', 'cs!routers/StateRoute
   router = new Router({model: app});
   Backbone.history.start();
   router.refresh();
+  GA.listen(app, view);
 });

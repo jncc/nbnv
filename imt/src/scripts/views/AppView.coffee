@@ -7,7 +7,8 @@ define [
   "cs!views/BaseLayerSelectorView",
   "cs!views/ControlPanelView"
   "cs!views/UserView"
-], ($, Backbone, imtScaffolding, OpenLayersView, SearchView, BaseLayerSelectorView, ControlPanelView, UserView) -> Backbone.View.extend
+  "cs!helpers/Globals"
+], ($, Backbone, imtScaffolding, OpenLayersView, SearchView, BaseLayerSelectorView, ControlPanelView, UserView, Globals) -> Backbone.View.extend
   el: '#imt',
 
   events:
@@ -29,7 +30,10 @@ define [
     if @model.get 'controlPanelVisible' then do ele.hide else do ele.show
 
   render: ->
-    @$el.html imtScaffolding()
+    @$el.html imtScaffolding 
+      termsLink: Globals.portal "Terms"
+      currYear: new Date().getFullYear()
+
     @openlayersView = new OpenLayersView
       model: @model
       el: @$('.openlayers')

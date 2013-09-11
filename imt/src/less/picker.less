@@ -14,4 +14,29 @@
     margin-top: 1em;
     margin-bottom: 1em;
   }
+
+
+  table.dataTable {
+    border: 1px #eee solid;
+
+    tbody {color: initial;}
+    thead th {
+      div.DataTables_sort_wrapper {
+        position: relative;
+        padding-right: 20px;
+      }
+
+      div.DataTables_sort_wrapper span {
+        position: absolute;
+        top: 50%;
+        margin-top: -8px;
+        right: 0;
+      }
+    }
+  }
+
+  .records {
+    padding: 0;
+    .ui-corner-tr, .ui-corner-tl, .ui-corner-br, .ui-corner-bl { border-radius: 0;}
+  }
 }
