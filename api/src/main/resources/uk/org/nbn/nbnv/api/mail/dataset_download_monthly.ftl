@@ -7,15 +7,15 @@ You are receiving this email as you are the administrator of a dataset on the NB
 Total Downloads:                                        ${totalDownloads}
 Total Records Downloaded:                               ${totalRecordsDownloaded}
 Records Downloaded for purpose                          
-    Personal interest                                   ${R1} (${P1}%)
-    Educational purposes                                ${R2} (${P2}%)
-    Research and scientific analysis                    ${R3} (${P3}%)
-    Media publication                                   ${R4} (${P4)%)
-    Commercial and consultancy work                     ${R5} (${P5}%)
-    Professional land management                        ${R6} (${P6}%)
-    Data provision and interpretation (commercial)	${R7} (${P7}%)
-    Data provision and interpretation (non-profit)	${R8} (${P8}%)
-    Statutory work                                      ${R9} (${P9}%)
+<#if R1??>    Personal interest                                    ${R1} (${P1}%)</#if>
+<#if R2??>     Educational purposes                                ${R2} (${P2}%)</#if>
+<#if R3??>     Research and scientific analysis                    ${R3} (${P3}%)</#if>
+<#if R4??>     Media publication                                   ${R4} (${P4}%)</#if>
+<#if R5??>     Commercial and consultancy work                     ${R5} (${P5}%)</#if>
+<#if R6??>     Professional land management                        ${R6} (${P6}%)</#if>
+<#if R7??>     Data provision and interpretation (commercial)      ${R7} (${P7}%)</#if>
+<#if R8??>     Data provision and interpretation (non-profit)      ${R8} (${P8}%)</#if>
+<#if R9??>     Statutory work                                      ${R9} (${P9}%)</#if>
 
 Top 5 User Downloaders
 <#list users as user>

@@ -22,6 +22,7 @@ import uk.org.nbn.nbnv.api.model.DownloadStat;
 import uk.org.nbn.nbnv.api.model.User;
 import uk.org.nbn.nbnv.api.model.UserDownloadNotification;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenSystemAdministratorUser;
+import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
 
 @Component
 @Path("/reporting")
@@ -35,14 +36,17 @@ public class ReportingResource extends AbstractResource {
     @GET
     @Path("/monthlyDownload")
     @Produces(MediaType.APPLICATION_JSON)
-    public String sendMontlyDownload(@TokenSystemAdministratorUser User user, int month, int year) throws IOException, TemplateException {
+    public String sendMonthlyDownload(
+            @TokenUser User user,
+            @QueryParam("year") int year,
+            @QueryParam("month") int mongth) throws IOException, TemplateException {
         List<Dataset> datasets = datasetMapper.selectAll();
         
         // Get start and end of selected month
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-mm-dd");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Calendar cal = Calendar.getInstance();
-        cal.set(Calendar.YEAR, year);
-        cal.set(Calendar.MONTH, month);
+        //cal.set(Calendar.YEAR, year);
+        //cal.set(Calendar.MONTH, month);
         cal.set(Calendar.DAY_OF_MONTH, 1);
         String start = sdf.format(new Date(cal.getTimeInMillis()));
         
@@ -78,13 +82,16 @@ public class ReportingResource extends AbstractResource {
             }
             
             data.put("totalDownloads", totalDownloads);
-            data.put("totalRecordDownloaded", totalRecordsDownloaded);
+            data.put("totalRecordsDownloaded", totalRecordsDownloaded);
             
             data.put("users", userStats);
             data.put("orgs", orgStats);
             
-            for (UserDownloadNotification recipient : toNotify) {
-                templateMailer.send("dataset-download-monthly.ftl", recipient.getEmail(), "NBN Gateway: Monthly Dataset Download Statistics", data);
+            if (totalDownloads > 0) {
+                for (UserDownloadNotification recipient : toNotify) {
+                    data.put("name", recipient.getForename());
+                    templateMailer.send("dataset_download_monthly.ftl", recipient.getEmail(), "NBN Gateway: Monthly Dataset Download Statistics", data);
+                }
             }
         }
         

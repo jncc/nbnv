@@ -100,7 +100,7 @@ public class TaxonObservationDownloadProvider {
             ProviderHelper.addStartDateFilter((String) params.get("startDate"));
         }
         if (params.containsKey("endDate") && !params.get("endDate").equals("")) {
-            ProviderHelper.addStartDateFilter((String) params.get("endDate"));
+            ProviderHelper.addEndDateFilter((String) params.get("endDate"));
         }
 
         if (params.containsKey("purposeID") && params.get("purposeID") != null) {
