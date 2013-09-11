@@ -1,14 +1,15 @@
 define [
-  "jquery",
-  "backbone",
-  "hbs!templates/AppScaffolding",
-  "cs!views/OpenLayersView",
-  "cs!views/SearchView",
-  "cs!views/BaseLayerSelectorView",
+  "jquery"
+  "backbone"
+  "hbs!templates/AppScaffolding"
+  "cs!views/OpenLayersView"
+  "cs!views/LoadingView"
+  "cs!views/SearchView"
+  "cs!views/BaseLayerSelectorView"
   "cs!views/ControlPanelView"
   "cs!views/UserView"
   "cs!helpers/Globals"
-], ($, Backbone, imtScaffolding, OpenLayersView, SearchView, BaseLayerSelectorView, ControlPanelView, UserView, Globals) -> Backbone.View.extend
+], ($, Backbone, imtScaffolding, OpenLayersView, LoadingView, SearchView, BaseLayerSelectorView, ControlPanelView, UserView, Globals) -> Backbone.View.extend
   el: '#imt',
 
   events:
@@ -34,6 +35,7 @@ define [
     @$('.termsconditions')
       .removeClass(@model.getBaseLayers().join ' ')
       .addClass(@model.get 'baseLayer')
+
   render: ->
     @$el.html imtScaffolding 
       termsLink: Globals.portal "Terms"
@@ -42,6 +44,10 @@ define [
     @openlayersView = new OpenLayersView
       model: @model
       el: @$('.openlayers')
+
+    @loadingView = new LoadingView
+      model: @model
+      el: @$('.loading-status')
 
     @searchView = new SearchView
       model: @model

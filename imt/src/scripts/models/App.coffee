@@ -15,6 +15,9 @@ define [
     layers: new Layers
     currentUser: new User
     controlPanelVisible: false
+    loading: false
+
+  _loadingCount: 0
 
   initialize: () ->
     do @getCurrentUser().fetch
@@ -43,3 +46,19 @@ define [
     if not searchResult.worldBoundingBox
       @getLayers().add searchResult, addOtherTypes: true
       @set 'controlPanelVisible', true
+
+  ###
+  Various parts of the application can call this method to notfy that a loading event
+  has started. On the condition that the same code will call decreaseLoadingCount
+  when that loading event has completed
+  ###
+  increaseLoadingCount: -> 
+    @_loadingCount++
+    @set 'loading', true
+
+  ###
+  To be called after an increaseLoadingCount has been called
+  ###
+  decreaseLoadingCount: -> 
+    if --@_loadingCount is 0
+      @set 'loading', false

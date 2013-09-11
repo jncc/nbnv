@@ -20,7 +20,7 @@ define [
                                   2.751, 
                                   1.376, 
                                   0.688, 
-                                  0.344],
+                                  0.344]
 
   getBaseLayer: (name) ->
     apiKey = "AnpABRCh8GIf4UnwABXiVK1eqKup7XvvMx2LLM4ijcLv5Ym6OyKm_5KMsFmYvtty"

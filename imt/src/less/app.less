@@ -15,21 +15,15 @@
   @import "layerCustomisation";
   @import "logo";
 
-  .ui-autocomplete {
-    max-height: 100px;
-    overflow-y: auto;
-    /* prevent horizontal scrollbar */
-    overflow-x: hidden;
+  img.loading-status { margin:12px; }
+
+  .termsconditions {
+    position: absolute;
+    bottom: 0;
+    left: 100px;
+    font-size: smaller;
+
+    &.Shaded { color:#333; }
+    &.Hybrid, &.Aerial { color:#DDD; }
   }
-}
-
-.termsconditions {
-  position: absolute;
-  bottom: 0;
-  left: 100px;
-  font-size: smaller;
-
-  &.Shaded { color:#333; }
-
-  &.Hybrid, &.Aerial { color:#DDD; }
 }
