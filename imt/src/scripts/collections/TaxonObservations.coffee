@@ -24,5 +24,7 @@ define [
       startYear: @startYear
       endYear: @endYear
       datasetKey: @datasetKey
+      
+    options.traditional = true
 
     Backbone.Collection.prototype.fetch.call this, options
