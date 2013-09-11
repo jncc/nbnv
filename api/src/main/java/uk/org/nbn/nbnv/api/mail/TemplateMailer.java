@@ -32,10 +32,8 @@ import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 @Component
 public class TemplateMailer {
 
-    @Autowired
-    MailSender mailSender;
-    @Autowired
-    Properties properties;
+    @Autowired MailSender mailSender;
+    @Autowired Properties properties;
     private static Log logger = LogFactory.getLog(TemplateMailer.class);
     private Configuration configuration;
 

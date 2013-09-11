@@ -2,20 +2,34 @@ This is an automatically generated message from the NBN Gateway - PLEASE DO NOT 
 
 Dear ${name}
 
-${requestor} has requested better to become a member of following organisation you administer through the NBN Gateway: ${organisation} 
+You are receiving this email as you are the administrator of a dataset on the NBN Gateway, the following are monthly download statistics for the dataset ${datasetName};
 
-<#if reason??>
-Their reason for joining is as follows: 
-${reason}
-<#else>
-No reason was given by ${requestor}
-</#if>
+Total Downloads:                                        ${totalDownloads}
+Total Records Downloaded:                               ${totalRecordsDownloaded}
+Records Downloaded for purpose                          
+    Personal interest                                   ${R1} (${P1}%)
+    Educational purposes                                ${R2} (${P2}%)
+    Research and scientific analysis                    ${R3} (${P3}%)
+    Media publication                                   ${R4} (${P4)%)
+    Commercial and consultancy work                     ${R5} (${P5}%)
+    Professional land management                        ${R6} (${P6}%)
+    Data provision and interpretation (commercial)	${R7} (${P7}%)
+    Data provision and interpretation (non-profit)	${R8} (${P8}%)
+    Statutory work                                      ${R9} (${P9}%)
 
-As an administrator for this organisation you should respond to this request through your account page of the NBN Gateway website by clicking on the following link: http://staging.testnbn.net/User/Admin. A link to "Manage Organisation Membership" is provided next to the name of your organisation in the "Your Organisation Membership section". You may either accept or decline this request for membership. ${requestor} will then be automatically informed by email 
+Top 5 User Downloaders
+<#list users as user>
+${user.name}    ${user.total} Records   ${user.totalAlt} Downloads
+</#list>
 
-Remember, you will need to LOG IN for the administration controls on this page to appear. If you have forgotten your login details then click on Login link in the top right hand corner and then click on "Can't access your account". Your username or password can then be emailed to you. 
+Top 5 Organisation Downloaders
+<#list orgs as org>
+${org.name}    ${org.total} Records   ${org.totalAlt} Downloads
+</#list>
 
-If you have any questions about managing organisation membership through the NBN Gateway please do not reply to this email but instead contact the NBN Data Access Officer (access@nbn.org.uk). 
+You can see further statistics about individual downloads against this dataset on the download report page at;
+
+${portal}/Reports/Download/${dataset}
 
 Best wishes, 
 NBN Gateway Team 
