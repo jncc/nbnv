@@ -5,7 +5,5 @@ define ["backbone"], (Backbone) -> Backbone.View.extend
     @listenTo @model, 'change:loading', @render
 
   render: () ->
-    if @model.get 'loading'
-      @$el.show()
-    else
-      @$el.hide()
+    targetWidth = if @model.get 'loading' then 16 else 0
+    @$el.stop(true, false).animate width: targetWidth, 'slow'
