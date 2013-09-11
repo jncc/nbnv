@@ -39,6 +39,7 @@ define [
     startYear: @getStartDate() #Temporal mixin handles this value
     endYear : @getEndDate() #Temporal mixin handles this value
     datasetKey: @id
+    availableDatasets: new Backbone.Collection @getUsedDatasets()
 
   ###
   Define what this layer is mapping. Only ever species richness

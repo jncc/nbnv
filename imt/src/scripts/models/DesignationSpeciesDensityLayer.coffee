@@ -45,6 +45,7 @@ define [
     startYear: @getStartDate() #Temporal mixin handles this value
     endYear : @getEndDate() #Temporal mixin handles this value
     datasetKey: @get("datasets")
+    availableDatasets: @availableDatasets
 
   ###
   Define what this layer is mapping. Only ever species richness

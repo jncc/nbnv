@@ -12,14 +12,14 @@ define [
     @startYear = options.startYear
     @endYear = options.endYear
     @datasetKey = options.datasetKey
-    @layer = options.layer
+    #use the given datasets as a lookup to obtain the orgainsation name
+    @availableDatasets = options.availableDatasets 
 
   ###
   Overide the default fetch method so that it supports a
   polygon option which is the wkt of the area to fetch for.
   ###
   fetch: (options) ->
-    #console.log @layer.availableDatasets
     #Modifiy the options.data object
     options.data =
       polygon: options.polygon
@@ -32,3 +32,15 @@ define [
     options.traditional = true
 
     Backbone.Collection.prototype.fetch.call this, options
+
+  ###
+  By using the supplied @availabelDatasets we can make the toJSON response of 
+  this collection more complete. Attach the full dataset definition to the observation
+  ###
+  toJSON: ->
+    observations = Backbone.Collection.prototype.toJSON.apply this, arguments
+    _.each(observations, (observation) => observation.dataset = @availableDatasets
+                                                                  .get(observation.datasetKey)
+                                                                  .toJSON() )
+
+    return observations
