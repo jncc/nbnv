@@ -6,15 +6,22 @@ import uk.org.nbn.nbnv.importer.fidelity.{ResultLevel, Result}
 
 class Nbnv600Validator(repo: Repository) {
   def validate(metadata: Metadata) : Result = {
-    if (! metadata.datasetKey.isEmpty) {
+    if (metadata.datasetKey != null && ! metadata.datasetKey.isEmpty) {
       new Result {
         def level = ResultLevel.DEBUG
         def message = "NBNV-600: This is an existing dataset"
         def reference = metadata.datasetKey
       }
     }
-    else if (metadata.datasetKey.isEmpty && repo.confirmUserExistsByEamil(metadata.administratorEmail))
-    {
+    else if ((metadata.datasetKey == null || metadata.datasetKey.isEmpty) && metadata.administratorEmail.isEmpty) {
+      new Result {
+        def level = ResultLevel.ERROR
+        def message = "NBNV-600: The dataset administrator email address must be provided for new datasets"
+          .format(metadata.administratorForename, metadata.administratorSurname, metadata.administratorSurname)
+        def reference = metadata.datasetKey
+      }
+    }
+    else if ((metadata.datasetKey == null || metadata.datasetKey.isEmpty) && repo.confirmUserExistsByEamil(metadata.administratorEmail)) {
       new Result {
         def level = ResultLevel.DEBUG
         def message = "NBNV-600: This is a new dataset and the administrator exists"
