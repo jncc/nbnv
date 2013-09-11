@@ -22,13 +22,18 @@ define [
     do @render
 
     @listenTo @model, 'change:controlPanelVisible', @renderShowControlPanelBtn
+    @listenTo @model, 'change:baseLayer', @styleTermsLink
 
-  showControlPanel :-> @model.set "controlPanelVisible", true
+  showControlPanel:-> @model.set "controlPanelVisible", true
 
   renderShowControlPanelBtn:-> 
     ele = @$('.showControlPanel button')
     if @model.get 'controlPanelVisible' then do ele.hide else do ele.show
 
+  styleTermsLink: ->
+    @$('.termsconditions')
+      .removeClass(@model.getBaseLayers().join ' ')
+      .addClass(@model.get 'baseLayer')
   render: ->
     @$el.html imtScaffolding 
       termsLink: Globals.portal "Terms"
@@ -55,3 +60,4 @@ define [
       el: @$('.userView')
 
     do @renderShowControlPanelBtn #update the state of the control panel button
+    do @styleTermsLink
