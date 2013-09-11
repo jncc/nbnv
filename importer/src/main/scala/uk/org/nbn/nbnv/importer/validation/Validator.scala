@@ -8,6 +8,7 @@ import org.apache.log4j.Logger
 import uk.org.nbn.nbnv.importer.BadDataException
 import uk.org.nbn.nbnv.importer.records.NbnRecord
 import uk.org.nbn.nbnv.importer.data.{Database}
+import uk.org.nbn.nbnv.importer.metadata.Metadata
 
 // todo: mapping between darwin and nbn terms, separate from reading values, nulls throw?
 // todo: ensure possibility for parallel
@@ -17,7 +18,17 @@ class Validator @Inject()(log: Logger, db: Database ){
 
   private var errors = 0 // count the validation errors
 
-  def validate(archive: Archive) {
+  def validate(archive: Archive, metadata: Metadata) {
+
+    log.info("Validating metadata...")
+
+    val metaValidator = new MetadataValidator(db.repo)
+    val mResults = metaValidator.validate(metadata)
+    for (result <- mResults) processResult(result)
+
+    if (errors > 0) {
+      throw new BadDataException("Failed due to bad metadata")
+    }
 
     log.info("Validating archive...")
 

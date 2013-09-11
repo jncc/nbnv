@@ -7,6 +7,7 @@ import uk.org.nbn.nbnv.importer._
 import java.net.{URI, URL}
 
 
+import metadata.{MetadataParser, MetadataReader}
 import org.gbif.dwc.text.ArchiveFactory
 import scala.collection.JavaConversions._
 import com.google.common.base.Stopwatch
@@ -16,6 +17,7 @@ import org.apache.log4j.Logger
 import data.{Repository, QueryCache, Database}
 import uk.org.nbn.nbnv.PersistenceUtility
 import uk.org.nbn.nbnv.importer.BadDataException
+import uk.org.nbn.nbnv.utility.FileSystem
 
 
 class EndToEndSuiteIT extends BaseFunSuite with ResourceLoader {
@@ -78,8 +80,10 @@ class EndToEndSuiteIT extends BaseFunSuite with ResourceLoader {
     temp.mkdirs()
 
     val archive = ArchiveFactory.openArchive(new File(archiveURL.getFile), temp)
+    val metadataReader = new MetadataReader (new FileSystem, new  MetadataParser)
+    val metadata = metadataReader.read(archive)
 
-    v.validate(archive)
+    v.validate(archive, metadata)
 
     Console.println("time %d".format(watch.elapsedMillis()))
 
