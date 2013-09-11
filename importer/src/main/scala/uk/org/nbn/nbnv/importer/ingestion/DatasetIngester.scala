@@ -113,6 +113,9 @@ class DatasetIngester @Inject()(log: Logger,
     setMetadata(m.useConstraints, d.getUseConstraints, d.setUseConstraints)
     setMetadata(m.additionalInformation, d.getAdditionalInformation, d.setAdditionalInformation)
     setMetadata(m.temporalCoverage, d.getTemporalCoverage, d.setTemporalCoverage)
+    setMetadata(m.administratorForename, d.getAdministratorForename, d.setAdministratorForename)
+    setMetadata(m.administratorSurname, d.getAdministratorSurname, d.setAdministratorSurname)
+    setMetadata(m.administratorEmail, d.getAdministratorEmail, d.setAdministratorEmail)
 
     d.setProviderOrganisationKey(providerOrganisation.getId) // not metadata
 //    d.setOrganisation(providerOrganisation)
