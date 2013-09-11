@@ -5,6 +5,19 @@ object TestData {
     <dataset>
       <alternateIdentifier>Test Identifier</alternateIdentifier>
       <title xml:lang="en">Test Title</title>
+      <creator>
+        <organizationName>Test organisation</organizationName>
+        <electronicMailAddress/>
+      </creator>
+      <metadataProvider>
+        <individualName>
+          <givenName>Test</givenName>
+          <surName>User</surName>
+        </individualName>
+        <organizationName>Test metatdata orga</organizationName>
+        <electronicMailAddress>test.user@example.com</electronicMailAddress>
+        <onlineUrl>http://example.com/</onlineUrl>
+      </metadataProvider>
       <abstract>
         <para>Test Description</para>
       </abstract>

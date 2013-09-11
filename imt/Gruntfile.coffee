@@ -13,7 +13,7 @@ module.exports = (grunt)->
   #Configure tasks
   grunt.initConfig
     jasmine :
-      compile:
+      test:
         options :
           specs : 'test-compiled/**/*spec.js'
           template: require 'grunt-template-jasmine-requirejs'

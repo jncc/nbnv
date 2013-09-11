@@ -20,5 +20,8 @@ class MetadataParserSuite extends BaseFunSuite {
     result.useConstraints should be("Test Use Constraints")
     result.temporalCoverage should be ("Test temporal coverage")
     result.additionalInformation should be ("Test additional info")
+    result.administratorEmail should be ("test.user@example.com")
+    result.administratorForename should be ("Test")
+    result.administratorSurname should be ("User")
   }
 }

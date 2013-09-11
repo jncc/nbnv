@@ -12,7 +12,7 @@ define [
   A shrinkable tvk consistes of A 3 letter provider (@see TVK_PROVIDERS), 
   the characters 'SYS' and then a ten digit number. There are four main tvk
   providers which supply tvks in the above form. Therefore we can represent
-  the providers as a 2 bit number. The 4 supported tvks and there corresponding
+  the providers as a 2 bit number. The 4 supported tvks and their corresponding
   bit ids are:
 
   * NHM - 0b00
@@ -28,7 +28,7 @@ define [
   shrinkTVK: (tvk) ->
     return tvk if not /(NHM|NBN|BMS|EHS)(SYS)[0-9]{10}/.test tvk #Check if the tvk is minifiable
     type = _.indexOf TVK_PROVIDERS, tvk.substring(0, 3)          #Get the 2bit provider
-    numeric = parseInt tvk.substring(6)                          #Convert the last 10 characters of the tvk to a number
+    numeric = parseInt tvk.substring(6), 10                      #Convert the last 10 characters of the tvk to a number
     Numbers.toBase64 numeric * 4 + type                          #Add the type flag to the number and encode
 
   ###
@@ -58,7 +58,7 @@ define [
   shrinkDatasetKey: (datasetKey) ->
     return datasetKey if not /(GA|HL|SB)[0-9]{6}/.test datasetKey #check if we can shrink the key
     type = _.indexOf DATASET_TYPES, datasetKey.substring(0, 2) #get the 2 bit dataset type
-    numeric = parseInt datasetKey.substring(2)
+    numeric = parseInt datasetKey.substring(2), 10
     Numbers.toBase64 numeric * 4 + type
 
   ###
