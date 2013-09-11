@@ -32,7 +32,9 @@ define [
     @$el.addClass "colourPicker"
     @$el.html template()
 
-    @preview = @$('.preview')
+    #apply the same style as the layer to colour picker.
+    #Background colour will be overridden
+    @preview = @$('.preview').css @model.getLegendIcon()
     @hueSlider = @$('.hue-slider').slider sliderOptions
     @satSlider = @$('.sat-slider').slider sliderOptions
     @lumSlider = @$('.lum-slider').slider sliderOptions

@@ -3,10 +3,8 @@
     <button type="button" class="btn clearResults">Redraw Selection</button>
     <div class="results"></div>
   {{else}}
-    You are now in picking mode, draw something on the map and you will see what
-    records have contributed to your area.
+    <div class="notice">Draw a bounding box on the map to view the selected records.</div>
   {{/if}}
 {{else}}
-  In order to use the picking functionality, you must be registered and logged in as
-  an NBN User.
+  <div class="notice">You must be registered and logged in to view records.</div>
 {{/if}}
