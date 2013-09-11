@@ -3,8 +3,9 @@ define [
   "cs!models/GridLayer"
   "cs!models/mixins/TemporalFilterMixin"
   "cs!models/mixins/DatasetFilterMixin"
+  "cs!collections/TaxonObservations"
   "cs!helpers/Globals"
-], (_, GridLayer, TemporalFilterMixin, DatasetFilterMixin, Globals) -> GridLayer.extend _.extend {}, TemporalFilterMixin, DatasetFilterMixin,
+], (_, GridLayer, TemporalFilterMixin, DatasetFilterMixin, TaxonObservations, Globals) -> GridLayer.extend _.extend {}, TemporalFilterMixin, DatasetFilterMixin,
   defaults:
     entityType: 'designation'
     opacity: 1
@@ -38,6 +39,12 @@ define [
   Needed by the DatasetFilterMixin
   ###
   getAvailableDatasetsURL: -> Globals.api "designations/#{@id}/datasets"
+
+  getTaxonObservations: -> new TaxonObservations [],
+    designation: @id
+    startYear: @getStartDate() #Temporal mixin handles this value
+    endYear : @getEndDate() #Temporal mixin handles this value
+    datasetKey: @get("datasets")
 
   ###
   Define what this layer is mapping. Only ever species richness

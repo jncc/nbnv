@@ -44,6 +44,7 @@ define [
     startYear: @getStartDate() #Temporal mixin handles this value
     endYear : @getEndDate() #Temporal mixin handles this value
     datasetKey: @get("datasets")
+    layer: @
 
   getTaxonObservationTypes: -> new TaxonObservationTypes
     id: @id

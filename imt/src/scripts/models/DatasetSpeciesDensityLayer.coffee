@@ -2,8 +2,9 @@ define [
   "cs!models/GridLayer"
   "cs!models/Dataset"
   "cs!models/mixins/TemporalFilterMixin"
+  "cs!collections/TaxonObservations"
   "cs!helpers/Globals"
-], (GridLayer, Dataset, TemporalFilterMixin, Globals) -> GridLayer.extend _.extend {}, TemporalFilterMixin,
+], (GridLayer, Dataset, TemporalFilterMixin, TaxonObservations, Globals) -> GridLayer.extend _.extend {}, TemporalFilterMixin,
   defaults:
     entityType: 'taxondataset'
     opacity: 1
@@ -33,6 +34,11 @@ define [
     background: "linear-gradient(to right, #ffff80 0%, #76130a 100%)"
 
   getUsedDatasets: -> [ new Dataset @attributes ]
+
+  getTaxonObservations: -> new TaxonObservations [],
+    startYear: @getStartDate() #Temporal mixin handles this value
+    endYear : @getEndDate() #Temporal mixin handles this value
+    datasetKey: @id
 
   ###
   Define what this layer is mapping. Only ever species richness
