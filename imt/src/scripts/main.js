@@ -23,7 +23,7 @@ require.config({
     'text' : '../vendor/requirejs-text/text',
     'DataTables': '../vendor/datatables/media/js/jquery.dataTables',
     'jquery' : '../vendor/jquery/jquery',
-    'jquery.ui.touch-punch' : '../vendor/jquery-ui-touch-punch/jquery.ui.touch-punch',
+    'jquery.ui.touch-punch' : '../vendor/jqueryui-touch-punch/jquery.ui.touch-punch',
     'jquery.ui.core': '../vendor/jquery-ui/ui/jquery.ui.core',
     'jquery.ui.mouse': '../vendor/jquery-ui/ui/jquery.ui.mouse',
     'jquery.ui.widget': '../vendor/jquery-ui/ui/jquery.ui.widget',
