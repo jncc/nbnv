@@ -37,9 +37,9 @@ define [
       @set "resultsForLayers", []
     else
       #Object an array of pickerResultsForLayers which i can query
-      resultsForLayers = @getPickableLayers()
-        .map( (layer) -> layer: layer, records: layer.getTaxonObservations() )
+      resultsForLayers = _.map( @getPickableLayers(), (layer) -> layer: layer, records: layer.getTaxonObservations() )
 
+      $('.userView').html("querying")
       #Fetch all the layers and store the promises in an array
       _.each resultsForLayers, (resultsForLayer) => resultsForLayer.records.fetch
         polygon: @get "wkt"
