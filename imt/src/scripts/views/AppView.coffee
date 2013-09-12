@@ -1,7 +1,6 @@
 define [
   "jquery"
   "backbone"
-  "hbs!templates/AppScaffolding"
   "cs!views/OpenLayersView"
   "cs!views/LoadingView"
   "cs!views/SearchView"
@@ -9,7 +8,8 @@ define [
   "cs!views/ControlPanelView"
   "cs!views/UserView"
   "cs!helpers/Globals"
-], ($, Backbone, imtScaffolding, OpenLayersView, LoadingView, SearchView, BaseLayerSelectorView, ControlPanelView, UserView, Globals) -> Backbone.View.extend
+  "tpl!templates/AppScaffolding.tpl"
+], ($, Backbone, OpenLayersView, LoadingView, SearchView, BaseLayerSelectorView, ControlPanelView, UserView, Globals, imtScaffolding) -> Backbone.View.extend
   el: '#imt',
 
   events:

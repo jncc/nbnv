@@ -1,7 +1,6 @@
 require.config({
-  stubModules: ['cs', 'hbs'],
+  stubModules: ['cs', 'tpl'],
   shim: {
-    'handlebars': { exports: 'Handlebars' },
     'openlayers': { exports: 'OpenLayers', deps: ['proj4js']},
     'jquery.ui.core': {deps: ['jquery']},
     'jquery.ui.mouse': {deps: ['jquery.ui.widget']},
@@ -20,8 +19,7 @@ require.config({
   paths: {
     'cs' : '../vendor/require-cs/cs',
     'coffee-script': '../vendor/coffee-script/extras/coffee-script',
-    'hbs' : '../vendor/requirejs-hbs/hbs',
-    'handlebars' : '../vendor/handlebars/Handlebars',
+    'tpl' : '../vendor/requirejs-tpl/tpl',
     'text' : '../vendor/requirejs-text/text',
     'DataTables': '../vendor/datatables/media/js/jquery.dataTables',
     'jquery' : '../vendor/jquery/jquery',

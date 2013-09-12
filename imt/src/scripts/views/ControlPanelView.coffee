@@ -1,6 +1,6 @@
 define [
   "backbone"
-  "hbs!templates/ControlPanel"
+  "tpl!templates/ControlPanel.tpl"
   "cs!views/LegendView"
   "cs!views/DatasetsView"
   "cs!views/PickerView"

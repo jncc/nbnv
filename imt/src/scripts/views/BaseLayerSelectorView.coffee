@@ -2,7 +2,7 @@ define [
   "jquery",
   "underscore",
   "backbone",
-  "hbs!templates/BaseLayersSelector"
+  "tpl!templates/BaseLayersSelector.tpl"
 ], ($, _, Backbone, template)-> Backbone.View.extend
   templateModels :
     "OS" :     obvious: "Outline"

@@ -4,4 +4,4 @@
   <span class="icon"></span>
 </button>
 <button class="destroy btn"><i class="icon-trash"></i></button>
-<p class="description">{{name}}</p>
+<p class="description"><%=name%></p>

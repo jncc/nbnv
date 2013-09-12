@@ -1,7 +1,7 @@
 define [
   "underscore"
   "backbone"
-  "hbs!templates/DatasetSelector"
+  "tpl!templates/DatasetSelector.tpl"
 ], (_, Backbone, template) -> Backbone.View.extend
   events:
     "click .toggle-container":  "updateToggle"

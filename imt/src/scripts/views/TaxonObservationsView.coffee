@@ -1,7 +1,7 @@
 define [
   "jquery"
   "backbone"
-  "hbs!templates/TaxonObservations"
+  "tpl!templates/TaxonObservations.tpl"
   "DataTables"
 ], ($, Backbone, template) -> Backbone.View.extend
   initialize:->

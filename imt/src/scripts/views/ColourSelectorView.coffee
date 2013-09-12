@@ -2,7 +2,7 @@ define [
   "jquery"
   "underscore"
   "backbone"
-  "hbs!templates/ColourSelectorView"
+  "tpl!templates/ColourSelectorView.tpl"
   "jquery.ui.slider"
 ], ($, _, Backbone, template) -> Backbone.View.extend
   ###

@@ -10,14 +10,13 @@
     "select2": "~3.4.1",
     "backbone-amd": "~1.0.0",
     "underscore-amd": "~1.4.4",
-    "requirejs-hbs": "latest",
     "requirejs-text": "~2.0.7",
     "require-cs": "~0.4.4",
-    "handlebars": "~1.0.0",
     "openlayers-js": "http://openlayers.org/api/2.13.1/OpenLayers.js",
     "openlayers-css": "http://openlayers.org/api/2.13.1/theme/default/style.css",
     "proj4js": "http://download.osgeo.org/proj4js/proj4js-1.1.0.zip",
     "bootstrap": "~2.3.2",
-    "jquery-md5": "b985fce4e867773e5fb7a29b4fb5df74c53595d0"
+    "jquery-md5": "b985fce4e867773e5fb7a29b4fb5df74c53595d0",
+    "requirejs-tpl": "*"
   }
 }

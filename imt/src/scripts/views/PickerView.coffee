@@ -2,7 +2,7 @@ define [
   "jquery",
   "backbone",
   "cs!views/TaxonObservationsView"
-  "hbs!templates/PickerView"
+  "tpl!templates/PickerView.tpl"
   "jquery.ui.accordion"
 ], ($, Backbone, TaxonObservationsView, template) -> Backbone.View.extend
 

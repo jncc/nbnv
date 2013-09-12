@@ -1,7 +1,7 @@
 define [
   "underscore"
   "backbone"
-  "hbs!templates/ResolutionSelector"
+  "tpl!templates/ResolutionSelector.tpl"
   "jquery.ui.button"
 ], (_, Backbone, template) -> Backbone.View.extend
 
