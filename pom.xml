@@ -33,8 +33,8 @@
         <module>documentation</module>
         <module>gis</module>
         <module>importer.orglogo</module>
-    <module>reporter-mail</module>
-  </modules>
+        <module>reporter-mail</module>
+    </modules>
 	
     <build>
         <pluginManagement>
