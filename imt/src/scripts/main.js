@@ -47,7 +47,7 @@ require.config({
   waitSeconds:45
 });
 
-require(['backbone', 'cs!models/App', 'cs!views/AppView', 'cs!routers/StateRouter', 'cs!routers/GetURLRouter', 'cs!helpers/GoogleAnalytics'], function(Backbone, App, AppView, Router, GetURLRouter, GA) {
+require(['jquery', 'backbone', 'cs!models/App', 'cs!views/AppView', 'cs!routers/StateRouter', 'cs!routers/GetURLRouter', 'cs!helpers/GoogleAnalytics'], function($, Backbone, App, AppView, Router, GetURLRouter, GA) {
   app = new App();
   getMapRouter = new GetURLRouter({model: app});
   getMapRouter.navigate(location.search);
@@ -56,4 +56,6 @@ require(['backbone', 'cs!models/App', 'cs!views/AppView', 'cs!routers/StateRoute
   Backbone.history.start();
   router.refresh();
   GA.listen(app, view);
+
+  $('#imt').removeClass('loading'); //remove the loading class
 });

@@ -5,7 +5,11 @@
 @import "../vendor/openlayers-css/index.css";
 @import "../vendor/datatables/media/css/jquery.dataTables.css";
 
+//The loading class is present on the body until main.js removes it
+#imt.loading { background: #111 data-uri('../img/loading.png') no-repeat center center fixed; }
+
 .interactiveMapTool {
+  background: black;
   font-size: 62.5%;
   .navbar { position: absolute; left:0; right:0;}
   @import "search";
@@ -26,4 +30,4 @@
     &.Shaded { color:#333; }
     &.Hybrid, &.Aerial { color:#DDD; }
   }
-}
+} 
