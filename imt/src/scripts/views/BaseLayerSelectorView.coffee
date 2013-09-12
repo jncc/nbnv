@@ -1,5 +1,5 @@
 define [
-  "jquery-ui",
+  "jquery",
   "underscore",
   "backbone",
   "hbs!templates/BaseLayersSelector"

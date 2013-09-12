@@ -1,10 +1,8 @@
 define [
-  "jquery"
   "underscore"
   "backbone"
   "hbs!templates/DatasetSelector"
-  "jquery-ui"
-], ($, _, Backbone, template) -> Backbone.View.extend
+], (_, Backbone, template) -> Backbone.View.extend
   events:
     "click .toggle-container":  "updateToggle"
 

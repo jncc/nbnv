@@ -1,10 +1,9 @@
 define [
-  "jquery"
   "underscore"
   "backbone"
   "hbs!templates/ResolutionSelector"
-  "jquery-ui"
-], ($, _, Backbone, template) -> Backbone.View.extend
+  "jquery.ui.button"
+], (_, Backbone, template) -> Backbone.View.extend
 
   events:
     "click input" : "handleButtonClick"

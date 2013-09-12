@@ -3,7 +3,7 @@ define [
   "underscore"
   "backbone"
   "hbs!templates/ColourSelectorView"
-  "jquery-ui"
+  "jquery.ui.slider"
 ], ($, _, Backbone, template) -> Backbone.View.extend
   ###
   Need to hard set the current slider value as the current one represents the old

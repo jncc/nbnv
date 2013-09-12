@@ -1,11 +1,12 @@
 define [
-  "jquery-ui"
   "backbone"
   "hbs!templates/ControlPanel"
   "cs!views/LegendView"
   "cs!views/DatasetsView"
   "cs!views/PickerView"
-], ($, Backbone, controlPanel, LegendView, DatasetsView, PickerView) -> Backbone.View.extend
+  "jquery.ui.tabs"
+  "jquery.ui.effect-slide"
+], (Backbone, controlPanel, LegendView, DatasetsView, PickerView) -> Backbone.View.extend
   events :
     "tabsactivate" : "updateIsPicking"
     "click .hideControlPanel button" : "hideControlPanel"

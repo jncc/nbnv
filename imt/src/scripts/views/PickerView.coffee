@@ -3,7 +3,7 @@ define [
   "backbone",
   "cs!views/TaxonObservationsView"
   "hbs!templates/PickerView"
-  "jquery-ui"
+  "jquery.ui.accordion"
 ], ($, Backbone, TaxonObservationsView, template) -> Backbone.View.extend
 
   events:

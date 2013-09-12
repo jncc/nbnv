@@ -3,7 +3,6 @@ define [
   "underscore"
   "backbone"
   "hbs!templates/TemporalFilter"
-  "jquery-ui"
 ], ($, _, Backbone, template) -> Backbone.View.extend
 
   initialize:->
