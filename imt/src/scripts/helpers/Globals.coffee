@@ -7,11 +7,8 @@ define [
   ###
   servers: 
     switch window.location.host
-      when "localhost:8080", "dev-data.nbn.org.uk" 
-        api: "dev-data.nbn.org.uk/api"
-        gis: "dev-gis.nbn.org.uk"
-        portal: "dev-data.nbn.org.uk" 
-      when "staging-data.nbn.org.uk" 
+      
+      when "localhost:8080","staging-data.nbn.org.uk" 
         api: "staging-data.nbn.org.uk/api"
         gis: "staging-gis.nbn.org.uk"
         portal: "staging-data.nbn.org.uk" 

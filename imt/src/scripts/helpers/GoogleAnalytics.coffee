@@ -11,7 +11,7 @@ define [], ->
   ###
   Register the NBN Gateways urchin key and send a page load
   ###
-  ga 'create', 'UA-1444605-1'
+  ga 'create', 'UA-1444605-1', 'nbn.org.uk'
   ga 'send', 'pageview'
 
 
