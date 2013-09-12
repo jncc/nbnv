@@ -52,6 +52,6 @@ define [
     resultsForLayer.records.on 'sync', -> do loadingIcon.remove
 
     $('<h3>')
-      .append($('<span class="icon">').css resultsForLayer.layer.getLegendIcon())
+      .append($('<span class="icon"></span>').css resultsForLayer.layer.getLegendIcon())
       .append(resultsForLayer.layer.getName())
       .append(loadingIcon)
