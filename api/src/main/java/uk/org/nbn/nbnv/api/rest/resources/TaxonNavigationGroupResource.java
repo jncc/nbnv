@@ -6,6 +6,7 @@ import javax.ws.rs.core.MediaType;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import uk.org.nbn.nbnv.api.dao.warehouse.TaxonNavigationGroupMapper;
 import uk.org.nbn.nbnv.api.model.TaxonNavigationGroup;
 import uk.org.nbn.nbnv.api.solr.Solr;
@@ -62,9 +63,13 @@ public class TaxonNavigationGroupResource extends AbstractResource {
     @GET
     @Path("/topLevels")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<TaxonNavigationGroup> getTopLevelTaxonNavigationGroups(@QueryParam("designationId") String designationId) {
+    public List<TaxonNavigationGroup> getTopLevelTaxonNavigationGroups(
+            @QueryParam("designationId") String designationId,
+            @QueryParam("organisationListId") int organisationListId) {
         if (designationId != null) {
             return mapper.getTopLevelsByDesignationID(designationId);
+        } else if (organisationListId > 0) {
+            return mapper.getTopLevelsByOrganisationListCode(organisationListId);
         } else {
             return mapper.getTopLevels();
         }
@@ -88,7 +93,7 @@ public class TaxonNavigationGroupResource extends AbstractResource {
     public List<TaxonNavigationGroup> getTopLevelTaxonNavigationGroupsByDesignation(@PathParam("designationId") String id) {
         return mapper.getTopLevelsByDesignationID(id);
     }
-
+    
     /**
      * Return a solr response returning Taxa within a Taxon Navigation Group
      * 

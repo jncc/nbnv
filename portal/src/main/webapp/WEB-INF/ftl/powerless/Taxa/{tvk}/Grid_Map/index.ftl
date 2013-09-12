@@ -71,15 +71,13 @@
             <fieldset>
                 <legend>Download</legend>
                 <button id="nbn-grid-map-squares-download">Download</button> <span id="nbn-grid-map-resolution-download-text">10km</span> squares within selected dates
+                <button id="nbn-download-observations-button">Download</button> Download Observations
                 <@report_utils.downloadTermsDialogue/>
             </fieldset>
 
             <fieldset>
-                <legend>Interactive Map</legend>
-                <a id="nbn-interactive-map" href="#">View on Interactive Map</a>
-            </fieldset>
-            <fieldset>
-                <legend>Request Better Access</legend>
+                <legend>Other Options</legend>
+                <a id="nbn-interactive-map" href="#">View on Interactive Map</a><br />
                 <a id="nbn-request-better-access" href="#">Request Better Access</a>
             </fieldset>
 

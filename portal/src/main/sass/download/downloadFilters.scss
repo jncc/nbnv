@@ -1,0 +1,38 @@
+@import "_nbn-colour-scheme";
+
+.nbn-download-form-filter-label {
+    width: 100px;
+    display: inline-block;
+}
+
+.nbn-download-form-filter-select {
+    width: 300px;
+    display: inline-block;
+}
+
+#nbn-download-filters-div {
+    float:right;
+}
+
+#nbn-download-stats-div {
+    width:55%;
+    float:left;
+    height: 400px;
+}
+
+#nbn-download-results-div {
+    clear:both;
+}
+
+.nbn-top-table-head {
+    text-align: center;
+}
+
+.nbn-top-table-div {
+    width: 50%;
+    float: left;
+}
+
+.nbn-download-purpose-span {
+    padding-left: 5em;
+}

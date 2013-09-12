@@ -25,6 +25,12 @@ public interface TaxonMapper {
     @Select("SELECT t.taxonVersionKey, t.pTaxonVersionKey, name, authority, languageKey, taxonOutputGroupKey FROM DesignationTaxonData dtd INNER JOIN TaxonData t ON dtd.pTaxonVersionKey = t.taxonVersionKey INNER JOIN TaxonNavigationData tnd ON t.pTaxonVersionKey = tnd.taxonVersionKey WHERE code = #{designationId} AND tnd.taxonNavigationGroupKey = #{taxonNavigationGroupId} order by name")
     List<Taxon> selectByDesignationAndTaxonNavigationGroup(@Param("designationId") String designationId, @Param("taxonNavigationGroupId") String taxonNavigationGroupId);
     
+    @Select("SELECT taxonVersionKey, t.pTaxonVersionKey, name, authority, languageKey, taxonOutputGroupKey from TaxonOrganisationSuppliedTaxonList tostl INNER JOIN TaxonData t on tostl.pTaxonVersionKey = t.taxonVersionKey where tostl.orgListID = #{id}")
+    List<Taxon> selectByOrganisationListID(@Param("id") int id);
+    
+    @Select("SELECT t.taxonVersionKey, t.pTaxonVersionKey, name, authority, languageKey, taxonOutputGroupKey FROM TaxonOrganisationSuppliedTaxonList tostl INNER JOIN TaxonData t ON tostl.pTaxonVersionKey = t.taxonVersionKey INNER JOIN TaxonNavigationData tnd ON t.pTaxonVersionKey = tnd.taxonVersionKey WHERE tostl.orgListID = #{id} AND tnd.taxonNavigationGroupKey = #{taxonNavigationGroupId} order by name")
+    List<Taxon> selectByOrganisationListIDAndTaxonNavigationGroup(@Param("id") int id, @Param("taxonNavigationGroupId") String taxonNavigationGroupId);
+    
     @Select("SELECT st.*, ct.name AS commonName "
             + "FROM TaxonData t "
             + "INNER JOIN TaxonData st ON st.pTaxonVersionKey = t.pTaxonVersionKey "

@@ -10,11 +10,11 @@ package uk.org.nbn.nbnv.api.model.meta;
  */
 public class AccessRequestJSON {
     private String sensitive;
-    private AccessRequestSpatialFilterJSON spatial;
-    private AccessRequestTaxonFilterJSON taxon;
-    private AccessRequestYearFilterJSON year;
-    private AccessRequestDatasetFilterJSON dataset;
-    private AccessRequestReasonJSON reason;
+    private RequestSpatialFilterJSON spatial;
+    private RequestTaxonFilterJSON taxon;
+    private RequestYearFilterJSON year;
+    private RequestDatasetFilterJSON dataset;
+    private RequestReasonJSON reason;
     private AccessRequestTimeLimitJSON time;
 
     /**
@@ -34,70 +34,70 @@ public class AccessRequestJSON {
     /**
      * @return the spatial
      */
-    public AccessRequestSpatialFilterJSON getSpatial() {
+    public RequestSpatialFilterJSON getSpatial() {
         return spatial;
     }
 
     /**
      * @param spatial the spatial to set
      */
-    public void setSpatial(AccessRequestSpatialFilterJSON spatial) {
+    public void setSpatial(RequestSpatialFilterJSON spatial) {
         this.spatial = spatial;
     }
 
     /**
      * @return the taxon
      */
-    public AccessRequestTaxonFilterJSON getTaxon() {
+    public RequestTaxonFilterJSON getTaxon() {
         return taxon;
     }
 
     /**
      * @param taxon the taxon to set
      */
-    public void setTaxon(AccessRequestTaxonFilterJSON taxon) {
+    public void setTaxon(RequestTaxonFilterJSON taxon) {
         this.taxon = taxon;
     }
 
     /**
      * @return the year
      */
-    public AccessRequestYearFilterJSON getYear() {
+    public RequestYearFilterJSON getYear() {
         return year;
     }
 
     /**
      * @param year the year to set
      */
-    public void setYear(AccessRequestYearFilterJSON year) {
+    public void setYear(RequestYearFilterJSON year) {
         this.year = year;
     }
 
     /**
      * @return the dataset
      */
-    public AccessRequestDatasetFilterJSON getDataset() {
+    public RequestDatasetFilterJSON getDataset() {
         return dataset;
     }
 
     /**
      * @param dataset the dataset to set
      */
-    public void setDataset(AccessRequestDatasetFilterJSON dataset) {
+    public void setDataset(RequestDatasetFilterJSON dataset) {
         this.dataset = dataset;
     }
 
     /**
      * @return the reason
      */
-    public AccessRequestReasonJSON getReason() {
+    public RequestReasonJSON getReason() {
         return reason;
     }
 
     /**
      * @param reason the reason to set
      */
-    public void setReason(AccessRequestReasonJSON reason) {
+    public void setReason(RequestReasonJSON reason) {
         this.reason = reason;
     }
 

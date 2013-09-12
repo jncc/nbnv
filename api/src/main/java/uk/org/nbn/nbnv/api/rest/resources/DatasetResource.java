@@ -10,6 +10,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.apache.abdera.Abdera;
@@ -19,9 +20,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.org.nbn.nbnv.api.dao.core.OperationalDatasetContributingOrganisationMapper;
 import uk.org.nbn.nbnv.api.dao.core.OperationalDatasetMapper;
+import uk.org.nbn.nbnv.api.dao.core.OperationalDownloadMapper;
 import uk.org.nbn.nbnv.api.dao.core.OperationalSurveyMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.DatasetAdministratorMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.DatasetMapper;
+import uk.org.nbn.nbnv.api.dao.warehouse.DownloadMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.OrganisationMapper;
 import uk.org.nbn.nbnv.api.model.Dataset;
 import uk.org.nbn.nbnv.api.model.DatasetAdministrator;
@@ -29,10 +32,12 @@ import uk.org.nbn.nbnv.api.model.DatasetResolutionRecordCount;
 import uk.org.nbn.nbnv.api.model.Organisation;
 import uk.org.nbn.nbnv.api.model.Survey;
 import uk.org.nbn.nbnv.api.model.User;
+import uk.org.nbn.nbnv.api.model.UserDownloadNotification;
 import uk.org.nbn.nbnv.api.model.meta.ContributingOrganisation;
 import uk.org.nbn.nbnv.api.model.meta.DatasetAdminMembershipJSON;
 import uk.org.nbn.nbnv.api.model.meta.OpResult;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenDatasetAdminUser;
+import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenDatasetOrOrgAdminUser;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenDatasetSurveyAdminUser;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
 import uk.org.nbn.nbnv.api.solr.SolrResolver;
@@ -46,6 +51,8 @@ public class DatasetResource extends AbstractResource {
     @Autowired OperationalSurveyMapper oSurveyMapper;
     @Autowired OrganisationMapper organisationMapper;
     @Autowired OperationalDatasetContributingOrganisationMapper oDatasetContributingOrganisationMapper;
+    @Autowired DownloadMapper downloadMapper;
+    @Autowired OperationalDownloadMapper oDownloadMapper;
     
     /**
      * Returns a list of all datasets from the data warehouse
@@ -281,10 +288,13 @@ public class DatasetResource extends AbstractResource {
     @Path("/{datasetKey}/removeAdmin")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public OpResult removeDatasetAdmin(@TokenDatasetAdminUser(path = "datasetKey") User user, @PathParam("datasetKey") String datasetKey, DatasetAdminMembershipJSON data) {
+    public OpResult removeDatasetAdmin(@TokenDatasetAdminUser(path = "datasetKey") User user, @PathParam("datasetKey") String datasetKey, DatasetAdminMembershipJSON data) {        
         int result = datasetAdministratorMapper.removeDatasetAdministrator(data.getUserID(), datasetKey);
         
         if (result == 1) {
+            if (downloadMapper.doesUserHaveDownloadNotificationsForDataset(data.getUserID(), datasetKey)) {
+                oDownloadMapper.removeUserNotificationForDownload(data.getUserID(), datasetKey);
+            }
             return new OpResult();
         }
         
@@ -461,5 +471,112 @@ public class DatasetResource extends AbstractResource {
             return new OpResult();
         
         return new OpResult("Could not remove the contributing organisation, please try again later");
+    }
+    
+//    /**
+//     * Return a list of datasets which are adminable by this user as either a
+//     * dataset admin or an organisation admin
+//     * 
+//     * @param user The current user
+//     * @return A List of datasets that the current user can administer
+//     * 
+//     * @response.representation.200.qname List<Dataset>
+//     * @response.representation.200.mediaType application/json  
+//     */
+//    @GET 
+//    @Path("/adminableDatasetsByUserAndOrg")
+//    @Produces(MediaType.APPLICATION_JSON)
+//    public List<Dataset> getAdminableDatasetsByUserAndOrg(@TokenUser(allowPublic = false) User user) {
+//        return datasetAdministratorMapper.getAdminableDatasetsByUserAndOrgs(user.getId());
+//    }  
+      
+    /**
+     * Return a list of users to notify when a dataset has been downloaded
+     * 
+     * @param user The current user, must have admin rights over the dataset
+     * @param datasetKey The dataset key being downloaded
+     * @return A list of users to notify
+     * 
+     * @response.representation.200.qname List<UserDownloadNotification>
+     * @response.representation.200.mediaType application/json  
+     */
+    @GET
+    @Path("/{datasetKey}/downloadNotifications")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<UserDownloadNotification> getDownloadNotifcationsForDataset (
+            @TokenDatasetAdminUser(path = "datasetKey") User user,
+            @PathParam("datasetKey") String datasetKey) {
+        return downloadMapper.getUsersToNotifyForDatasetDownload(datasetKey);
+    }
+    
+    /**
+     * Return a list of datasets that the user currently has download 
+     * notifications switched on for
+     * 
+     * @param user The current user
+     * @return A list of datasets that user wants notifications for
+     * 
+     * @response.representation.200.qname List<UserDownloadNotification>
+     * @response.representation.200.mediaType application/json  
+     */
+    @GET
+    @Path("/myDownloadNotifications")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<UserDownloadNotification> getDownloadNotificationsForUser (
+            @TokenUser(allowPublic = false) User user) {
+        return downloadMapper.getNotifyingDatasetsForUser(user.getId());
+    }
+    
+    /**
+     * Return if the current user has download notifications enabled or not for
+     * the specified dataset
+     * 
+     * @param user The current user
+     * @param datasetKey A datasetKey
+     * @return If the current user has download notifications for this dataset
+     * 
+     * @response.representation.200.qname boolean
+     * @response.representation.200.mediaType application/json  
+     */
+    @GET
+    @Path("/{datasetKey}/userDownloadNotification")
+    @Produces(MediaType.APPLICATION_JSON)
+    public boolean getDownloadNotificationSetting(
+            @TokenDatasetAdminUser(path = "datasetKey") User user,
+            @PathParam("datasetKey") String datasetKey) {
+        return oDownloadMapper.checkUserNotificationForDatasetDownload(user.getId(), datasetKey);
+    }
+    
+    /**
+     * Add or remove download notifications for the current user if they are
+     * a dataset admin or org admin for this dataset
+     * 
+     * @param user The current user
+     * @param datasetKey A datasetKey
+     * @param add True to add notifications and false to remove them
+     * @return Success or failure of the operation
+     * 
+     * @response.representation.200.qname boolean
+     * @response.representation.200.mediaType application/json  
+     */
+    @POST
+    @Path("/{datasetKey}/userDownloadNotification")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response setDownloadNotificationSetting(
+            @TokenDatasetAdminUser(path = "datasetKey") User user,
+            @PathParam("datasetKey") String datasetKey,
+            @QueryParam("add") String add) {       
+        if (add.equals("true")) {
+            if (oDownloadMapper.checkUserNotificationForDatasetDownload(user.getId(), datasetKey))
+                return Response.ok().build();
+            if (oDownloadMapper.addUserNotificationForDatasetDownload(user.getId(), datasetKey) == 1) 
+                return Response.ok().build();                   
+        } else {
+            if (oDownloadMapper.checkUserNotificationForDatasetDownload(user.getId(), datasetKey)) {
+                oDownloadMapper.removeUserNotificationForDownload(user.getId(), datasetKey);
+            }
+        }
+        
+        return Response.ok().build();
     }
 }

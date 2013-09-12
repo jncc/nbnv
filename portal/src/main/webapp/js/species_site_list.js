@@ -21,9 +21,7 @@
                 numSites = data.length;
                 toAppend += '<table id="nbn-species-table" class="nbn-simple-table"><thead><tr><th>Site name</th><th>Dataset</th><th>Category</th></thead><tbody>';
                 $.each(data, function(key, val){
-                    //Observations disabled for Christmas release 2012
-                    toAppend += '<tr><td><a href="/Reports/Sites/' + val.identifier + '/Groups/' + taxonOutputGroupKey + '/Species">' + val.name + '</a></td>';
-//                    toAppend += '<tr><td><a href="/Reports/Sites/' + val.identifier + '/Groups/' + taxonOutputGroupKey + '/Species/' + ptvk + '/Observations">' + val.name + '</a></td>';
+                    toAppend += '<tr><td><a href="/Reports/Sites/' + val.identifier + '/Groups/' + taxonOutputGroupKey + '/Species/' + ptvk + '/Observations">' + val.name + '</a></td>';
                     toAppend += '<td><a href="/Datasets/' + val.siteBoundaryDatasetKey + '">' + val.siteBoundaryDataset.title + '</a></td>';
                     toAppend += '<td>' + val.siteBoundaryCategory.name + '</td></tr>';
                 });

@@ -10,7 +10,7 @@ import java.util.List;
  *
  * @author Paul Gilbertson
  */
-public class AccessRequestDatasetFilterJSON extends AccessRequestFilterJSON {
+public class RequestDatasetFilterJSON extends AccessRequestFilterJSON {
     private List<String> datasets;
     private boolean secret;
 

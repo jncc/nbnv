@@ -16,5 +16,7 @@ public class ObservationResourceDefaults {
     public static final String defaultFeatureID = "";
     public static final String defaultAttributeID = "-1";
     public static final String defaultPolygon = "";
+    public static final String defaultReason = "";
+    public static final String defaultReasonType = "-1";
 
 }

@@ -29,11 +29,11 @@
                 }
                 $.each(data, function(key, val){
                     //Link to observation data disabled for Christmas release 2012
-                    toAppend += "<tr><td><span class='nbn-taxon-name'>" + val.taxon.name + '</span>';
-                    if (val.taxon.commonName)
-                        toAppend += ' [' + val.taxon.commonName + ']';
-                    toAppend += '</td></tr>';
-//                    toAppend += '<tr><td><a href="/Reports/Sites/' + featureID + '/Groups/' + taxonOutputGroupKey + '/Species/'+ val.taxon.ptaxonVersionKey + '/Observations">' + val.taxon.name + '</a></td></tr>';
+//                    toAppend += "<tr><td><span class='nbn-taxon-name'>" + val.taxon.name + '</span>';
+//                    if (val.taxon.commonName)
+//                        toAppend += ' [' + val.taxon.commonName + ']';
+//                    toAppend += '</td></tr>';
+                    toAppend += '<tr><td><a href="/Reports/Sites/' + featureID + '/Groups/' + taxonOutputGroupKey + '/Species/'+ val.taxon.ptaxonVersionKey + '/Observations">' + val.taxon.name + '</a></td></tr>';
                 });
                 toAppend += '</tbody></table>';
             }else{
@@ -107,6 +107,45 @@
         });
 
     }
+    
+    function setupBetterAccessLink() {
+        $('#nbn-request-better-access').click(function(e) {
+            var form = $('#nbn-site-report-form');
+            var keyValuePairs = nbn.portal.reports.utils.forms.getKeyValuePairsFromForm(form);
+            window.location = '/AccessRequest/Create?json={' + 
+                'taxon:{all:false,output:\'' + form.attr('taxonOutputGroupKey') + '\'},' +
+                nbn.portal.reports.utils.forms.getSpatialFeatures(keyValuePairs, form.attr('gridSquare')) + ',' +
+                nbn.portal.reports.utils.datasetfields.getSelectedDatasetsJSON() + ',' +
+                nbn.portal.reports.utils.forms.getYearJSON(keyValuePairs) + '}';
+            e.preventDefault();
+        });
+    }
+    
+    function setupDownloadRecordsLink() {
+        $('#nbn-download-observations-button').click(function(e) {
+            $('#nbn-download-terms').dialog({
+                modal: true,
+                width: 800,
+                height: 450,
+                buttons: {
+                    'Accept': function(){
+                        var form = $('#nbn-site-report-form');
+                        var keyValuePairs = nbn.portal.reports.utils.forms.getKeyValuePairsFromForm(form);
+                        window.location = '/Download?json={' + 
+                                'taxon:{all:false,output:\'' + form.attr('taxonOutputGroupKey') + '\'},' +
+                                nbn.portal.reports.utils.forms.getSpatialFeatures(keyValuePairs, form.attr('gridSquare')) + ',' +
+                                nbn.portal.reports.utils.datasetfields.getSelectedDatasetsJSON() + ',' +
+                                nbn.portal.reports.utils.forms.getYearJSON(keyValuePairs) +
+                                '}';
+                    },
+                    'Cancel': function(){
+                        $(this).dialog("close");
+                    }
+                }
+            });
+            e.preventDefault();
+        });
+    }
       
     function doFirstVisitToPage(){
         refreshSpeciesData($('#nbn-site-report-form'));
@@ -116,6 +155,8 @@
         $('#nbn-download-terms').hide();
         setupFormOnChange();
         setupDownloadSpeciesButton();
+        setupDownloadRecordsLink();
+        setupBetterAccessLink();
         doFirstVisitToPage();
     });
 })(jQuery);

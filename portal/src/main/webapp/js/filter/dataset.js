@@ -47,7 +47,7 @@ nbn.nbnv.ui.filter.dataset = function(json) {
                 }
             });
             
-        var datasetAutoComplete = $('<input>').addClass('selectMaxWidth')
+        var datasetAutoComplete = $('<input>').attr('id','datasetAutoComplete').addClass('selectMaxWidth')
             .autocomplete({
                 source: function(request, response) {
                     $.getJSON(nbn.nbnv.api + '/search/taxonDatasets?q=' + request.term, function(data) {
@@ -374,6 +374,12 @@ nbn.nbnv.ui.filter.dataset = function(json) {
         
         if (this._all) {
             text = 'All datasets'
+        } else if (this._mode == 'single') {
+            if ($('#datasetAutoComplete').val() == '') {
+                text = 'Filter to ' + this._datasets;
+            } else {
+                text = 'Filter to ' + $('#datasetAutoComplete').val();
+            }
         } else if (this._fullCount == -1) {
             text = 'Filter to ' + this._datasets.length + ' datasets';
         } else {
@@ -396,7 +402,7 @@ nbn.nbnv.ui.filter.dataset = function(json) {
             return { dataset : { all: false, datasets : this._datasets } };
         }
     }
-    
+
     this.getError = function() {
         if (!this._all && this._datasets.length < 1) { return [ 'You must select at least one dataset' ]; }
         return [];

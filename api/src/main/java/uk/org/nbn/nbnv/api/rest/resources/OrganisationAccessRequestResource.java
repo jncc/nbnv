@@ -542,7 +542,7 @@ public class OrganisationAccessRequestResource extends AbstractResource {
         List<String> species = accessRequestUtils.createSpeciesList(accessRequest);        
         List<String> datasets = new ArrayList<String>();
         datasets.add(uar.getDatasetKey());
-        oOrganisationTaxonObservationAccessMapper.removeOrganisationAccess(uar.getOrganisation(), accessRequest.getYear().getStartYear(), accessRequest.getYear().getEndYear(), datasets, species, accessRequest.getSpatial().getMatch(), accessRequest.getSpatial().getFeature(), (accessRequest.getSensitive().equals("sans") ? true : false), accessRequest.getTaxon().getDesignation(), accessRequest.getTaxon().getOutput(), "", "");
+        oOrganisationTaxonObservationAccessMapper.removeOrganisationAccess(uar.getOrganisation(), accessRequest.getYear().getStartYear(), accessRequest.getYear().getEndYear(), datasets, species, accessRequest.getSpatial().getMatch(), accessRequest.getSpatial().getFeature(), (accessRequest.getSensitive().equals("sans") ? true : false), accessRequest.getTaxon().getDesignation(), accessRequest.getTaxon().getOutput(), accessRequest.getTaxon().getOrgSuppliedList(), accessRequest.getSpatial().getGridRef(), "");
 
         List<OrganisationAccessRequest> uars = oOrganisationAccessRequestMapper.getGrantedOrganisationRequestsByDataset(uar.getDatasetKey(), uar.getOrganisation().getId());
         
@@ -577,7 +577,7 @@ public class OrganisationAccessRequestResource extends AbstractResource {
         List<String> species = accessRequestUtils.createSpeciesList(accessRequest);        
         List<String> datasets = new ArrayList<String>();
         datasets.add(uar.getDatasetKey());
-        oOrganisationTaxonObservationAccessMapper.addOrganisationAccess(uar.getOrganisation(), accessRequest.getYear().getStartYear(), accessRequest.getYear().getEndYear(), datasets, species, accessRequest.getSpatial().getMatch(), accessRequest.getSpatial().getFeature(), (accessRequest.getSensitive().equals("sans") ? true : false), accessRequest.getTaxon().getDesignation(), accessRequest.getTaxon().getOutput(), "", "");
+        oOrganisationTaxonObservationAccessMapper.addOrganisationAccess(uar.getOrganisation(), accessRequest.getYear().getStartYear(), accessRequest.getYear().getEndYear(), datasets, species, accessRequest.getSpatial().getMatch(), accessRequest.getSpatial().getFeature(), (accessRequest.getSensitive().equals("sans") ? true : false), accessRequest.getTaxon().getDesignation(), accessRequest.getTaxon().getOutput(), accessRequest.getTaxon().getOrgSuppliedList(), accessRequest.getSpatial().getGridRef(), "");
         return true;
     }
     
