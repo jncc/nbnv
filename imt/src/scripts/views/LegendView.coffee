@@ -1,8 +1,9 @@
 define [
+  'jquery'
   "backbone"
   "cs!views/LegendElementView"
-  "jquery-ui"
-], (Backbone, LegendElementView, $) -> Backbone.View.extend
+  "jquery.ui.sortable"
+], ($, Backbone, LegendElementView) -> Backbone.View.extend
 
   initialize: ->
     @listenTo @collection, 'add', @addLayer
@@ -14,7 +15,6 @@ define [
       update: (event, ui) =>
         newPosition = (@collection.length - 1) - ui.item.index()
         @collection.position @_oldPosition, newPosition
-    @$el.disableSelection()
 
   addLayer: (layer) -> 
     layer._legendElementView = new LegendElementView

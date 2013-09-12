@@ -1,8 +1,8 @@
 <StyledLayerDescriptor version="1.0.0">
   <NamedLayer>
-  <Name>{{layer}}</Name>
+  <Name><%=layer%></Name>
   <UserStyle>
-    <Title>{{layer}}</Title>
+    <Title><%=layer%></Title>
       <FeatureTypeStyle>
         <Rule>
           <PolygonSymbolizer>
@@ -22,7 +22,7 @@
                   <Mark>
                     <WellKnownName>x</WellKnownName>
                     <Fill>
-                      <CssParameter name="fill">#{{colour}}</CssParameter>
+                      <CssParameter name="fill">#<%=colour%></CssParameter>
                     </Fill>
                   </Mark>
                   <Size>8.0</Size>

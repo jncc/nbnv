@@ -1,7 +1,7 @@
 define [
   "backbone"
   "cs!views/LayerCustomisationView"
-  "hbs!templates/LegendElement"
+  "tpl!templates/LegendElement.tpl"
 ], (Backbone, LayerCustomisationView, template) -> Backbone.View.extend
 
   events:

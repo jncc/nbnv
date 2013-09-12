@@ -14,6 +14,7 @@ import uk.org.nbn.nbnv.importer.BadDataException
 import org.gbif.utils.file.ClosableIterator
 import uk.org.nbn.nbnv.importer.utility.extClosableIterator
 import uk.org.nbn.nbnv.importer.spatial.GridSquareInfoFactory
+import uk.org.nbn.nbnv.importer.metadata.{TestData, MetadataParser, Metadata}
 
 class ValidatorSuite extends BaseFunSuite with BeforeAndAfter{
   var archive: Archive = _
@@ -28,9 +29,13 @@ class ValidatorSuite extends BaseFunSuite with BeforeAndAfter{
   val repo = mock[Repository]
   val db = mock[Database]
   val log : Logger = mock[Logger]
+  var metadata: Metadata = _
 
 
   before {
+    val metadataParser = new MetadataParser
+    metadata = metadataParser.parse(TestData.validMetadataXml)
+
     starRec1 = mock[StarRecord]
     coreArchive1 = mock[Record]
     when(coreArchive1.value(DwcTerm.occurrenceID)).thenReturn("CI00000300000TNL")
@@ -96,6 +101,8 @@ class ValidatorSuite extends BaseFunSuite with BeforeAndAfter{
 
     when(db.repo).thenReturn(repo)
     when(repo.confirmTaxonVersionKey("NHMSYS0020528265")).thenReturn(true)
+    when(repo.confirmUserExistsByEamil("test.user@example.com")).thenReturn(true)
+    when(repo.confirmDatasetExists("Test Identifier")).thenReturn(true)
   }
 
   test("Should validate a set of real records - Head Record Only") {
@@ -105,7 +112,7 @@ class ValidatorSuite extends BaseFunSuite with BeforeAndAfter{
 
   test("Should Validate a couple of records - Set of 2 Records") {
     val validator = new Validator(log, db)
-    validator.validate(archive)
+    validator.validate(archive, metadata)
   }
 
   test("Should validate a valid record but error on a missing id") {
@@ -114,7 +121,7 @@ class ValidatorSuite extends BaseFunSuite with BeforeAndAfter{
 
     val validator = new Validator(log, db)
     val throws = intercept[BadDataException] {
-      validator.validate(archive)
+      validator.validate(archive, metadata)
     }
     throws should not be (null)
   }
@@ -123,7 +130,7 @@ class ValidatorSuite extends BaseFunSuite with BeforeAndAfter{
     when(coreArchive2.value(DwcTerm.occurrenceID)).thenReturn("CI00000300000TNL")
     val validator = new Validator(log, db)
     val throws = intercept[BadDataException] {
-      validator.validate(archive)
+      validator.validate(archive, metadata)
     }
     throws should not be (null)
   }
@@ -135,7 +142,7 @@ class ValidatorSuite extends BaseFunSuite with BeforeAndAfter{
 
     val validator = new Validator(log, db)
     val throws = intercept[BadDataException] {
-      validator.validate(archive)
+      validator.validate(archive, metadata)
     }
     throws should not be (null)
   }
@@ -149,7 +156,7 @@ class ValidatorSuite extends BaseFunSuite with BeforeAndAfter{
     when(repo.confirmSiteBoundary("DS123456","PK123")).thenReturn(true)
 
     val validator = new Validator(log, db)
-    validator.validate(archive)
+    validator.validate(archive, metadata)
   }
 
   test("Should validate with a valid lat/long val") {
@@ -166,7 +173,7 @@ class ValidatorSuite extends BaseFunSuite with BeforeAndAfter{
     when(coreArchive2.value(DwcTerm.verbatimSRS)).thenReturn("4326")
 
     val validator = new Validator(log, db)
-    validator.validate(archive)
+    validator.validate(archive, metadata)
   }
 
   test("Should validate records with valid locations lat long") {
@@ -189,7 +196,7 @@ class ValidatorSuite extends BaseFunSuite with BeforeAndAfter{
     when(coreArchive2.value(DwcTerm.verbatimSRS)).thenReturn("4326")
 
     val validator = new Validator(log, db)
-    validator.validate(archive)
+    validator.validate(archive, metadata)
   }
 
   test("Should validate records with valid datesets D / DD") {
@@ -198,7 +205,7 @@ class ValidatorSuite extends BaseFunSuite with BeforeAndAfter{
     when(rec2.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateTypeCode")).thenReturn("DD")
 
     val validator = new Validator(log, db)
-    validator.validate(archive)
+    validator.validate(archive, metadata)
   }
 
   test("Should validate records with valid datesets D / O") {
@@ -207,7 +214,7 @@ class ValidatorSuite extends BaseFunSuite with BeforeAndAfter{
     when(rec2.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateTypeCode")).thenReturn("O")
 
     val validator = new Validator(log, db)
-    validator.validate(archive)
+    validator.validate(archive, metadata)
   }
 
   test("Should validate records with valid datesets D / OO") {
@@ -216,7 +223,7 @@ class ValidatorSuite extends BaseFunSuite with BeforeAndAfter{
     when(rec2.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateTypeCode")).thenReturn("OO")
 
     val validator = new Validator(log, db)
-    validator.validate(archive)
+    validator.validate(archive, metadata)
   }
 
   test("Should validate records with valid datesets D / P") {
@@ -225,7 +232,7 @@ class ValidatorSuite extends BaseFunSuite with BeforeAndAfter{
     when(rec2.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateTypeCode")).thenReturn("P")
 
     val validator = new Validator(log, db)
-    validator.validate(archive)
+    validator.validate(archive, metadata)
   }
 
   test("Should validate records with valid datesets D / Y") {
@@ -234,7 +241,7 @@ class ValidatorSuite extends BaseFunSuite with BeforeAndAfter{
     when(rec2.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateTypeCode")).thenReturn("Y")
 
     val validator = new Validator(log, db)
-    validator.validate(archive)
+    validator.validate(archive, metadata)
   }
 
   test("Should validate records with valid datesets D / YY") {
@@ -243,6 +250,6 @@ class ValidatorSuite extends BaseFunSuite with BeforeAndAfter{
     when(rec2.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateTypeCode")).thenReturn("YY")
 
     val validator = new Validator(log, db)
-    validator.validate(archive)
+    validator.validate(archive, metadata)
   }
 }

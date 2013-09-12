@@ -22,7 +22,7 @@ define [
     @model = options.model
     @listenTo @model, 'change:viewport', _.debounce @updateRoute, 2000
     @listenTo @model, 'change:baseLayer', @updateRoute
-    @listenTo @model.getLayers(), 'add remove position change:colour change:usedDatasets change:startDate change:endDate change:resolution', @updateRoute
+    @listenTo @model.getLayers(), 'add remove position change:colour change:usedDatasets change:startDate change:endDate change:resolution', _.debounce @updateRoute, 100
 
   ###
   Update the url fragment to represent the current state of this router

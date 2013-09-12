@@ -17,19 +17,22 @@ define [
         handlerOptions: sides: 4
 
       @map = new OpenLayers.Map
-        div: @el,
-        maxExtent: new OpenLayers.Bounds(-20037508.34,-20037508.34,20037508.34,20037508.34),
-        displayProjection: new OpenLayers.Projection("EPSG:3857"),
-        theme: null,
-        layers: [OpenLayersLayerFactory.getBaseLayer( @model.get "baseLayer" ), @drawingLayer],
+        div: @el
+        maxExtent: new OpenLayers.Bounds(-20037508.34,-20037508.34,20037508.34,20037508.34)
+        displayProjection: new OpenLayers.Projection("EPSG:3857")
+        theme: null
         eventListeners: 
           moveend: => @model.set "viewport", do @getOpenlayersViewport
           zoomend: => @model.getLayers().setZoom do @map.getZoom
 
-      @map.addControl(@drawingControl)
       #If base layer changes, drawing layer might need to be reprojected
-      @map.events.register "changebaselayer", @map, @drawingLayer.update 
-      
+      @map.events.register "changebaselayer", @drawingLayer, @drawingLayer.update 
+      @map.events.register 'preaddlayer', @, @registerLoadingState
+
+      #Add the layers and drawing control after the loading listener has been set up
+      @map.addLayers [OpenLayersLayerFactory.getBaseLayer( @model.get "baseLayer" ), @drawingLayer]
+      @map.addControl(@drawingControl)
+
       @zoomToViewport null, @model.get("viewport"), showAll: true
       @listenTo @model, "change:viewport", @zoomToViewport
       @listenTo @model, "change:baseLayer", @updateBaseLayer
@@ -39,6 +42,14 @@ define [
       @listenTo @model.getLayers(), "remove", @removeLayer
       @listenTo @model.getPicker(), "change:isPicking", @toggleDrawing
 
+    ###
+    Register the loading events of the given openlayers layer to the application model
+    ###
+    registerLoadingState: (evt) ->
+      if evt.layer
+        evt.layer.events.register 'loadstart', @model, @model.increaseLoadingCount
+        evt.layer.events.register 'loadend', @model, @model.decreaseLoadingCount
+      
     ###
     Create an openlayers version of the desired baselayer
     ###
@@ -67,7 +78,7 @@ define [
     the Backbone layer model for easy removing at a later date
     ###
     addLayer: (layer)-> 
-      @map.addLayer layer._openlayersWMS = OpenLayersLayerFactory.createLayer(layer)
+      @map.addLayer layer._openlayersWMS = OpenLayersLayerFactory.createLayer layer
       #move the new layer to below the drawing layer(s). this can be done by setting
       #the index of the new layer to the amount of layers - 2.
       @map.setLayerIndex layer._openlayersWMS, @map.getNumLayers() - 2

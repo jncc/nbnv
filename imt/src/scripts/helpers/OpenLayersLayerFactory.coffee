@@ -20,7 +20,7 @@ define [
                                   2.751, 
                                   1.376, 
                                   0.688, 
-                                  0.344],
+                                  0.344]
 
   getBaseLayer: (name) ->
     apiKey = "AnpABRCh8GIf4UnwABXiVK1eqKup7XvvMx2LLM4ijcLv5Ym6OyKm_5KMsFmYvtty"
@@ -66,7 +66,7 @@ define [
     layer.on 'change:visibility', -> wmsLayer.setVisibility layer.isVisible()
     layer.on 'change:wms', -> 
       wmsLayer.setUrl layer.getWMS()
-      do wmsLayer.redraw #trigger a redraw of the layer. Openlayers doesn't do this when we update the url
+      wmsLayer.redraw true #trigger a redraw of the layer. Openlayers doesn't do this when we update the url
 
     return wmsLayer
 

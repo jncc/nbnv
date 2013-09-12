@@ -1,13 +1,13 @@
 <StyledLayerDescriptor version="1.0.0">
   <NamedLayer>
-  <Name>{{layer}}</Name>
+  <Name><%=layer%></Name>
   <UserStyle>
-    <Title>{{layer}}</Title>
+    <Title><%=layer%></Title>
       <FeatureTypeStyle>
         <Rule>
           <PolygonSymbolizer>
              <Fill>
-               <CssParameter name="fill">#{{colour}}</CssParameter>
+               <CssParameter name="fill">#<%=colour%></CssParameter>
              </Fill>
              <Stroke>
                <CssParameter name="stroke">#000000</CssParameter>
