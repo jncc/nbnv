@@ -288,10 +288,13 @@ public class DatasetResource extends AbstractResource {
     @Path("/{datasetKey}/removeAdmin")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public OpResult removeDatasetAdmin(@TokenDatasetAdminUser(path = "datasetKey") User user, @PathParam("datasetKey") String datasetKey, DatasetAdminMembershipJSON data) {
+    public OpResult removeDatasetAdmin(@TokenDatasetAdminUser(path = "datasetKey") User user, @PathParam("datasetKey") String datasetKey, DatasetAdminMembershipJSON data) {        
         int result = datasetAdministratorMapper.removeDatasetAdministrator(data.getUserID(), datasetKey);
         
         if (result == 1) {
+            if (downloadMapper.doesUserHaveDownloadNotificationsForDataset(data.getUserID(), datasetKey)) {
+                oDownloadMapper.removeUserNotificationForDownload(data.getUserID(), datasetKey);
+            }
             return new OpResult();
         }
         
@@ -569,12 +572,11 @@ public class DatasetResource extends AbstractResource {
             if (oDownloadMapper.addUserNotificationForDatasetDownload(user.getId(), datasetKey) == 1) 
                 return Response.ok().build();                   
         } else {
-            if (oDownloadMapper.checkUserNotificationForDatasetDownload(user.getId(), datasetKey))
-                return Response.ok().build();
-            if (oDownloadMapper.removeUserNotificationForDownload(user.getId(), datasetKey) == 1)
-                return Response.ok().build();
+            if (oDownloadMapper.checkUserNotificationForDatasetDownload(user.getId(), datasetKey)) {
+                oDownloadMapper.removeUserNotificationForDownload(user.getId(), datasetKey);
+            }
         }
         
-        return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        return Response.ok().build();
     }
 }
