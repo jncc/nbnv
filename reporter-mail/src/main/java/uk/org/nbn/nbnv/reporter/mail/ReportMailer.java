@@ -31,7 +31,7 @@ public class ReportMailer {
     public ReportMailer() {
         props = new Properties();
         try {
-            props.load(new FileInputStream(new File("reportMailer.properties")));
+            props.load(new FileInputStream(new File("C:\\reportMailer.properties")));
         } catch (FileNotFoundException ex) {
             System.err.println("FAILURE: Could not find properties file");
             System.exit(1);
@@ -98,9 +98,12 @@ public class ReportMailer {
      */
     private void processEmails(int month, int year) {
         WebResource webResource = client.resource(props.getProperty("api_url") + "/reporting/monthlyDownload?month=" + month + "&year=" + year);
+        WebResource.Builder builder = webResource.getRequestBuilder();
+        builder = builder.cookie(authCookie);       
+        
         System.out.println("API Sending Emails....");
-        webResource.cookie(authCookie);
-        ClientResponse response = webResource.accept("application/json")
+
+        ClientResponse response = builder.accept("application/json")
                 .get(ClientResponse.class);
 
         if (response.getStatus() != 200) {

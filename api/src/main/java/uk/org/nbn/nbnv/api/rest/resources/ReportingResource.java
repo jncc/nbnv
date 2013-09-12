@@ -37,16 +37,16 @@ public class ReportingResource extends AbstractResource {
     @Path("/monthlyDownload")
     @Produces(MediaType.APPLICATION_JSON)
     public String sendMonthlyDownload(
-            @TokenUser User user,
+            @TokenSystemAdministratorUser User user,
             @QueryParam("year") int year,
-            @QueryParam("month") int mongth) throws IOException, TemplateException {
+            @QueryParam("month") int month) throws IOException, TemplateException {
         List<Dataset> datasets = datasetMapper.selectAll();
         
         // Get start and end of selected month
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Calendar cal = Calendar.getInstance();
-        //cal.set(Calendar.YEAR, year);
-        //cal.set(Calendar.MONTH, month);
+        cal.set(Calendar.YEAR, year);
+        cal.set(Calendar.MONTH, month);
         cal.set(Calendar.DAY_OF_MONTH, 1);
         String start = sdf.format(new Date(cal.getTimeInMillis()));
         
