@@ -8,7 +8,7 @@ define [
     @listenTo @collection, 'sync', @render
 
   render: ->
-    @$el.html template @collection.toJSON()
+    @$el.html template observations: @collection.toJSON()
     @$('table').dataTable
       "bJQueryUI": true
       "bLengthChange": false

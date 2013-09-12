@@ -10,14 +10,14 @@
     </tr>
   </thead>
   <tbody>
-    <% _.each(this, function(observation){ %>
+    <% _.each(observations, function(observation){ %>
       <tr>
         <td><a href="<%=observation.dataset.href%>" target="_blank"><%=observation.dataset.organisationName%></a></td>
-        <td><%=location%></td>
-        <td><%=siteName%></td>
-        <td><%=startDate%></td>
-        <td><%=endDate%></td>
-        <td><%=recorder%></td>
+        <td><%=observation.location%></td>
+        <td><%=observation.siteName%></td>
+        <td><%=observation.startDate%></td>
+        <td><%=observation.endDate%></td>
+        <td><%=observation.recorder%></td>
       </tr>
     <%});%>
   </tbody>

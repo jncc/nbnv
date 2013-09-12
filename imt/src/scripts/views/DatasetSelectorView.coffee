@@ -23,7 +23,7 @@ define [
 
   render:->
     @$el.addClass "datasets"
-    @$el.html template @collection.toJSON()
+    @$el.html template datasets: @collection.toJSON()
 
     allSelected = @$('.datasets-container input[type=checkbox]:not(:checked)').length is 0
     @$(".toggle-container input").prop "checked", allSelected
