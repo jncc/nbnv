@@ -1,7 +1,7 @@
 define [
   "jquery-md5"
-  "hbs!templates/slds/Default"
-  "hbs!templates/slds/Hatching"
+  "tpl!templates/slds/Default.tpl"
+  "tpl!templates/slds/Hatching.tpl"
 ], ($, polygonFill, polygonHatching) ->
   isStyleable: true #expose that this layer is styleable
 

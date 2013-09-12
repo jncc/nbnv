@@ -1,10 +1,8 @@
 define [
-  "jquery"
   "underscore"
   "backbone"
-  "hbs!templates/DatasetSelector"
-  "jquery-ui"
-], ($, _, Backbone, template) -> Backbone.View.extend
+  "tpl!templates/DatasetSelector.tpl"
+], (_, Backbone, template) -> Backbone.View.extend
   events:
     "click .toggle-container":  "updateToggle"
 
@@ -25,7 +23,7 @@ define [
 
   render:->
     @$el.addClass "datasets"
-    @$el.html template @collection.toJSON()
+    @$el.html template datasets: @collection.toJSON()
 
     allSelected = @$('.datasets-container input[type=checkbox]:not(:checked)').length is 0
     @$(".toggle-container input").prop "checked", allSelected

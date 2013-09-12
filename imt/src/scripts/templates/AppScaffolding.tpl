@@ -17,4 +17,4 @@
     </button>
   </div>
 </div>
-<span class="termsconditions">&copy; National Biodiversity Network {{currYear}} - <a href="{{termsLink}}">Terms &amp; Conditions</a></span>
+<span class="termsconditions">&copy; National Biodiversity Network <%=currYear%> - <a href="<%=termsLink%>">Terms &amp; Conditions</a></span>

@@ -5,6 +5,7 @@ define [
   "cs!views/ResolutionSelectorView"
   "cs!views/TemporalFilterView"
   "cs!views/DatasetSelectorView"
+  "jquery.ui.dialog"
 ], ($, Backbone, ColourSelectorView, ResolutionSelectorView, TemporalFilterView, DatasetSelectorView) -> Backbone.View.extend
   ###
   The role of this view is to determine which sub customisation

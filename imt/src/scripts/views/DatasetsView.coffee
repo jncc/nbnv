@@ -1,7 +1,7 @@
 define [
   "underscore"
   "backbone"
-  "hbs!templates/DatasetAcknowledgment"
+  "tpl!templates/DatasetAcknowledgment.tpl"
 ], (_, Backbone, template) -> Backbone.View.extend
 
   initialize: ->
