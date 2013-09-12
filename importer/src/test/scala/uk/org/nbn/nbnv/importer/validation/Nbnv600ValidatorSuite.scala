@@ -43,7 +43,51 @@ class Nbnv600ValidatorSuite extends BaseFunSuite {
     r.level should  be (ResultLevel.DEBUG)
   }
 
-  test("should not validate a vaild email for a new dataset identified by a null key") {
+  test("should not validate a blank email for a new dataset identified by an empty key") {
+    val validEmail = ""
+    when(metadata.datasetKey).thenReturn("")
+    when(metadata.administratorEmail).thenReturn(validEmail)
+
+    val v = new Nbnv600Validator(repo)
+    val r = v.validate(metadata)
+
+    r.level should  be (ResultLevel.ERROR)
+  }
+
+  test("should not validate a null email for a new dataset identified by an empty key") {
+    val validEmail = null
+    when(metadata.datasetKey).thenReturn("")
+    when(metadata.administratorEmail).thenReturn(validEmail)
+
+    val v = new Nbnv600Validator(repo)
+    val r = v.validate(metadata)
+
+    r.level should  be (ResultLevel.ERROR)
+  }
+
+  test("should not validate a blank email for a new dataset identified by an null key") {
+    val validEmail = ""
+    when(metadata.datasetKey).thenReturn(null)
+    when(metadata.administratorEmail).thenReturn(validEmail)
+
+    val v = new Nbnv600Validator(repo)
+    val r = v.validate(metadata)
+
+    r.level should  be (ResultLevel.ERROR)
+  }
+
+  test("should not validate a null email for a new dataset identified by an null key") {
+    val validEmail = null
+    when(metadata.datasetKey).thenReturn(null)
+    when(metadata.administratorEmail).thenReturn(validEmail)
+
+    val v = new Nbnv600Validator(repo)
+    val r = v.validate(metadata)
+
+    r.level should  be (ResultLevel.ERROR)
+  }
+
+  test("should not validate an invaild email for a new dataset identified by a null key") {
     val invalidEmail = "invalid.email@example.com"
     when(metadata.administratorEmail).thenReturn(invalidEmail)
     when(repo.confirmUserExistsByEamil(invalidEmail)).thenReturn(false)
@@ -54,7 +98,7 @@ class Nbnv600ValidatorSuite extends BaseFunSuite {
     r.level should  be (ResultLevel.ERROR)
   }
 
-  test("should not validate a vaild email for a new dataset identified by an empty key") {
+  test("should not validate an invaild email for a new dataset identified by an empty key") {
     val invalidEmail = "invalid.email@example.com"
     when(metadata.datasetKey).thenReturn("")
     when(metadata.administratorEmail).thenReturn(invalidEmail)
