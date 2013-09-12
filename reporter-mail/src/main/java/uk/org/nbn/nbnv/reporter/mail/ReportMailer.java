@@ -31,9 +31,9 @@ public class ReportMailer {
     public ReportMailer() {
         props = new Properties();
         try {
-            props.load(new FileInputStream(new File("C:\\reportMailer.properties")));
+            props.load(new FileInputStream(new File("reportMailer.properties")));
         } catch (FileNotFoundException ex) {
-            System.err.println("FAILURE: Could not find properties file");
+            System.err.println("FAILURE: Could not find properties file, reportMailer.properties needs to located in the same folder as the jar");
             System.exit(1);
         } catch (IOException ex) {
             System.err.println("FAILURE: Unknown error occured");
