@@ -13,7 +13,8 @@ class Nbnv600Validator(repo: Repository) {
         def reference = metadata.datasetKey
       }
     }
-    else if ((metadata.datasetKey == null || metadata.datasetKey.isEmpty) && metadata.administratorEmail.isEmpty) {
+    else if ((metadata.datasetKey == null || metadata.datasetKey.isEmpty)
+      && (metadata.administratorEmail == null || metadata.administratorEmail.isEmpty)) {
       new Result {
         def level = ResultLevel.ERROR
         def message = "NBNV-600: The dataset administrator email address must be provided for new datasets"
