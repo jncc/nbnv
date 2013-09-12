@@ -37,7 +37,9 @@ define [
       @set "resultsForLayers", []
     else
       #Object an array of pickerResultsForLayers which i can query
-      resultsForLayers = _.map( @getPickableLayers(), (layer) -> layer: layer, records: layer.getTaxonObservations() )
+      resultsForLayers = _.map @getPickableLayers(), (layer) -> 
+                                                        layer: layer, 
+                                                        records: layer.getTaxonObservations() 
 
       #Fetch all the layers and store the promises in an array
       _.each resultsForLayers, (resultsForLayer) => resultsForLayer.records.fetch
