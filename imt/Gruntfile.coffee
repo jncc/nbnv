@@ -1,5 +1,6 @@
 module.exports = (grunt)->
   #Load grunt tasks
+  grunt.loadNpmTasks 'grunt-bower-task'
   grunt.loadNpmTasks 'grunt-contrib-requirejs'
   grunt.loadNpmTasks 'grunt-contrib-jasmine'
   grunt.loadNpmTasks 'grunt-contrib-copy'
@@ -13,6 +14,13 @@ module.exports = (grunt)->
 
   #Configure tasks
   grunt.initConfig
+    bower: 
+      install: 
+        options: 
+          install: true
+          copy: true
+          verbose: true
+
     jasmine :
       test:
         options :
@@ -74,11 +82,7 @@ module.exports = (grunt)->
       development: 
         options: port: 8080, base: 'src'
 
-  #Define grunt tasks  
-  grunt.registerTask 'bower-install', ->
-    require('bower').commands.install().on('end', do @async)
-
-  grunt.registerTask 'prep', ['clean', 'bower-install']
+  grunt.registerTask 'prep', ['clean', 'bower:install']
   grunt.registerTask 'test', ['clean:test', 'coffee', 'jasmine']
   grunt.registerTask 'develop', ['connect', 'less', 'watch']
   grunt.registerTask 'build', ['less', 'test', 'copy', 'cssmin', 'requirejs']

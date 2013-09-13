@@ -12,12 +12,14 @@
     "underscore-amd": "~1.4.4",
     "requirejs-text": "~2.0.7",
     "require-cs": "~0.4.4",
-    "openlayers-js": "http://openlayers.org/api/2.13.1/OpenLayers.js",
-    "openlayers-css": "http://openlayers.org/api/2.13.1/theme/default/style.css",
+    "openlayers": "http://openlayers.org/download/OpenLayers-2.13.1.tar.gz",
     "proj4js": "http://download.osgeo.org/proj4js/proj4js-1.1.0.zip",
     "bootstrap": "~2.3.2",
     "jquery-md5": "b985fce4e867773e5fb7a29b4fb5df74c53595d0",
     "requirejs-tpl": "7438735aa84b76af0fb266d8373b5fbaab2a1a03",
     "jqueryui-touch-punch": "72d67b63c98a6d9c324881343fcd423b88939ccf"
+  },
+  "resolutions": {
+    "coffee-script": "~1.6.3"
   }
 }
