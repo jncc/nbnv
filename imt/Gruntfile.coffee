@@ -46,7 +46,8 @@ module.exports = (grunt)->
     
     cssmin: 
       build:
-        files: 'dist/css/app.css': ['dist/css/app.css']
+        src: 'dist/css/app.css'
+        dest: 'dist/css/app.css'
     
     watch: 
       files: "src/less/*"
