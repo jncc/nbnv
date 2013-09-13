@@ -152,7 +152,7 @@ class ValidatorSuite extends BaseFunSuite with BeforeAndAfter{
     when(rec.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/gridReferenceType")).thenReturn(null)
     when(rec.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/gridReferencePrecisionRaw")).thenReturn(null)
 
-    when(rec.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/featureKey")).thenReturn("DS123456PK123")
+    when(rec.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/siteFeatureKey")).thenReturn("DS123456PK123")
     when(repo.confirmSiteBoundary("DS123456","PK123")).thenReturn(true)
 
     val validator = new Validator(log, db)

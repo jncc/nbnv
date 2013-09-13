@@ -57,6 +57,7 @@ public class NXFParser {
         NXFtoDWCAMapping.put("COMMONNAME", DarwinCoreField.TAXONNAME);
         NXFtoDWCAMapping.put("TAXONNAME", DarwinCoreField.TAXONNAME);
         NXFtoDWCAMapping.put("DATE", DarwinCoreField.EVENTDATE);
+        NXFtoDWCAMapping.put("FEATUREKEY", DarwinCoreField.SITEFEATUREKEY);
     }
 
     public NXFParser(File file) throws FileNotFoundException {

@@ -64,7 +64,7 @@ class NbnRecord(record: StarRecord) {
   def gridReferencePrecision    = gridReferencePrecisionRaw map { _.toInt }
   def gridReferencePrecisionRaw = parseOptional(extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/gridReferencePrecision"))
 
-  def featureKey             = parseOptional(extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/featureKey"))
+  def featureKey             = parseOptional(extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/siteFeatureKey"))
 
   /// Returns Some(value) if the string is not null or empty, otherwise None.
   def parseOptional(value: String) = Option(value).filter(_.trim.nonEmpty)

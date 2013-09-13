@@ -38,6 +38,10 @@ class Validator @Inject()(log: Logger, db: Database ){
     val results = validator.validate(archive)
     for (result <- results) processResult(result)
 
+    if (errors > 0) {
+      throw new BadDataException("Failed due to invalid data file structure")
+    }
+
 
     // (2) archive scoped / aggregate value validation (e.g. no duplicate record keys)
     // This currently won't work because of case
