@@ -6,6 +6,7 @@ module.exports = (grunt)->
   grunt.loadNpmTasks 'grunt-contrib-connect'
   grunt.loadNpmTasks 'grunt-contrib-clean'
   grunt.loadNpmTasks 'grunt-contrib-less'
+  grunt.loadNpmTasks 'grunt-contrib-cssmin'
   grunt.loadNpmTasks 'grunt-contrib-watch'
   grunt.loadNpmTasks 'grunt-contrib-compress'
   grunt.loadNpmTasks 'grunt-contrib-coffee'
@@ -29,7 +30,7 @@ module.exports = (grunt)->
         src: ['**/*.coffee']
         dest: 'test-compiled'
         ext: '.spec.js'
-
+    
     requirejs: 
       compile: 
         options: 
@@ -40,9 +41,13 @@ module.exports = (grunt)->
           mainConfigFile: 'dist/scripts/main.js'
 
     less: 
-      development: 
+      development:
         files: 'src/css/app.css' : 'src/less/app.less'
-
+    
+    cssmin: 
+      build:
+        files: 'dist/css/app.css': ['dist/css/app.css']
+    
     watch: 
       files: "src/less/*"
       tasks: ["less"]
@@ -75,6 +80,6 @@ module.exports = (grunt)->
   grunt.registerTask 'prep', ['clean', 'bower-install']
   grunt.registerTask 'test', ['clean:test', 'coffee', 'jasmine']
   grunt.registerTask 'develop', ['connect', 'less', 'watch']
-  grunt.registerTask 'build', ['less', 'test', 'copy', 'requirejs']
+  grunt.registerTask 'build', ['less', 'test', 'copy', 'cssmin', 'requirejs']
   grunt.registerTask 'package', ['build', 'compress']
   grunt.registerTask 'default', ['prep', 'package'] #register the default task as build
