@@ -7,14 +7,18 @@ import org.apache.ibatis.annotations.Result;
 import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.SelectProvider;
+import uk.org.nbn.nbnv.api.dao.providers.TaxonObservationDownloadProvider;
 import uk.org.nbn.nbnv.api.dao.providers.TaxonObservationProvider;
 import uk.org.nbn.nbnv.api.model.Dataset;
+import uk.org.nbn.nbnv.api.model.DownloadReport;
+import uk.org.nbn.nbnv.api.model.DownloadStat;
 import uk.org.nbn.nbnv.api.model.Organisation;
 import uk.org.nbn.nbnv.api.model.Taxon;
 import uk.org.nbn.nbnv.api.model.TaxonDataset;
 import uk.org.nbn.nbnv.api.model.TaxonDatasetWithQueryStats;
 import uk.org.nbn.nbnv.api.model.TaxonObservation;
 import uk.org.nbn.nbnv.api.model.TaxonObservationAttributeValue;
+import uk.org.nbn.nbnv.api.model.TaxonObservationDownload;
 import uk.org.nbn.nbnv.api.model.TaxonOutputGroup;
 import uk.org.nbn.nbnv.api.model.TaxonOutputGroupWithQueryStats;
 import uk.org.nbn.nbnv.api.model.TaxonWithQueryStats;
@@ -290,4 +294,65 @@ public interface TaxonObservationMapper {
             , @Param("gridRef") String gridRef
             , @Param("polygon") String polygon);
     
+    @SelectProvider(type= TaxonObservationProvider.class, method="filteredDownloadRecords")
+    public List<TaxonObservationDownload> selectDownloadableRecords(
+            @Param("user") User user
+            , @Param("startYear") Integer startYear
+            , @Param("endYear") Integer endYear
+            , @Param("datasetKey") List<String> datasetKey
+            , @Param("ptvk") List<String> ptvk
+            , @Param("spatialRelationship") String spatialRelationship
+            , @Param("featureID") String featureId
+            , @Param("sensitive") Boolean sensitive
+            , @Param("designation") String designation
+            , @Param("taxonOutputGroup") String taxonOutputGroup
+            , @Param("orgSuppliedList") int orgSuppliedList
+            , @Param("gridRef") String gridRef
+            , @Param("polygon") String polygon);
+    
+    @SelectProvider(type = TaxonObservationDownloadProvider.class, method="selectDownloadReportsForDataset")
+    public List<DownloadReport> selectDownloadReportsByDataset(
+            @Param("datasetKey") List<String> datasetKey,
+            @Param("startDate") String startDate,
+            @Param("endDate") String endDate,
+            @Param("filterID") List<Integer> filterID,
+            @Param("userID") List<Integer> userID,
+            @Param("organisationID") List<Integer> organisationID,
+            @Param("purposeID") List<Integer> purposeID);
+    
+    @SelectProvider(type = TaxonObservationDownloadProvider.class, method="selectDownloadStats")
+    public List<DownloadStat> selectDownloadStats(
+            @Param("datasetKey") List<String> datasetKey,
+            @Param("startDate") String startDate,
+            @Param("endDate") String endDate,
+            @Param("filterID") List<Integer> filterID,
+            @Param("userID") List<Integer> userID,
+            @Param("organisationID") List<Integer> organisationID,
+            @Param("purposeID") List<Integer> purposeID);
+    
+    @SelectProvider(type = TaxonObservationDownloadProvider.class, method="selectUserDownloadStats")
+    public List<DownloadStat> selectUserDownloadStats(
+            @Param("datasetKey") List<String> datasetKey,
+            @Param("startDate") String startDate,
+            @Param("endDate") String endDate,
+            @Param("filterID") List<Integer> filterID,
+            @Param("userID") List<Integer> userID,
+            @Param("organisationID") List<Integer> organisationID,
+            @Param("purposeID") List<Integer> purposeID);
+    
+    @SelectProvider(type = TaxonObservationDownloadProvider.class, method="selectOrganisationDownloadStats")
+    public List<DownloadStat> selectOrganisationDownloadStats(
+            @Param("datasetKey") List<String> datasetKey,
+            @Param("startDate") String startDate,
+            @Param("endDate") String endDate,
+            @Param("filterID") List<Integer> filterID,
+            @Param("userID") List<Integer> userID,
+            @Param("organisationID") List<Integer> organisationID,
+            @Param("purposeID") List<Integer> purposeID);
+  
+//    Might reactivate this later searches for users that have downloaded from a list of datasets    
+//    @SelectProvider(type=TaxonObservationDownloadProvider.class, method="selectDistinctUsersForDatasets")
+//    public List<User> selectDistinctUsersForDatasets(
+//            @Param("dataset") List<String> datasetKey
+//    );
 }

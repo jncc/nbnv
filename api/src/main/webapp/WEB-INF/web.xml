@@ -25,7 +25,7 @@
         </init-param>
         <init-param>
             <param-name>com.sun.jersey.spi.container.ContainerResponseFilters</param-name>
-            <param-value>com.sun.jersey.server.linking.LinkFilter;uk.org.nbn.nbnv.api.rest.filters.JsonpResponseFilter</param-value>
+            <param-value>uk.org.nbn.nbnv.api.rest.filters.PatchedLinkFilter;uk.org.nbn.nbnv.api.rest.filters.JsonpResponseFilter</param-value>
         </init-param>
         <init-param>
             <param-name>com.sun.jersey.config.property.WadlGeneratorConfig</param-name>

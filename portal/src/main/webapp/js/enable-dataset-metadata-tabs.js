@@ -7,7 +7,10 @@
  */
 (function($){
     $(document).ready(function(){
-
+        // Setup Download Link
+        $('#nbn-download-terms').hide();
+        setupDownloadRecordsLink();
+        
         $.fn.dataTableExt.oJUIClasses.sStripeOdd = 'ui-state-highlight';
         
         $('#nbn-tabs').bind('tabsload', function(event, ui){
@@ -201,6 +204,25 @@
     
     function applyTableEvenRowStyle(){
         $(".nbn-simple-table tr:even").addClass("ui-state-highlight");
+    }
+    
+    function setupDownloadRecordsLink() {
+        $('#nbn-download-observations').click(function(e) {
+            $('#nbn-download-terms').dialog({
+                modal: true,
+                width: 800,
+                height: 450,
+                buttons: {
+                    'Accept': function(){
+                        window.location = '/Download?json={dataset:{all:false,datasets:[\'' + $('#nbn-download-observations').data('dataset') + '\']}}';
+                    },
+                    'Cancel': function(){
+                        $(this).dialog("close");
+                    }
+                }
+            });
+            e.preventDefault();
+        });
     }
     
 })(jQuery);

@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.StreamingOutput;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -33,6 +34,13 @@ public class GridMapSquareResource extends AbstractResource {
     @Autowired TaxonMapper taxonMapper;
     @Autowired DownloadHelper downloadHelper;
 
+    @GET
+    @Path("/search")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<GridMapSquare> searchForGridSquares(@QueryParam("term") String term, @QueryParam("resolution") String resolution) {
+        return gridMapSquareMapper.searchForMatchingResolutions(term, resolution);
+    }
+    
     /**
      * Returns a zip file containing a list of grid map squares filtered by the
      * given parameters, specifically the Taxon Version Key supplied

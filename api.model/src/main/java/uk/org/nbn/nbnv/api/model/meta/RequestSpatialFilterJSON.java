@@ -8,10 +8,11 @@ package uk.org.nbn.nbnv.api.model.meta;
  *
  * @author paulbe
  */
-public class AccessRequestSpatialFilterJSON extends AccessRequestFilterJSON {
+public class RequestSpatialFilterJSON extends AccessRequestFilterJSON {
     private String feature = "";
     private String match = "overlap";
     private String dataset = "";
+    private String gridRef = "";
 
     /**
      * @return the feature
@@ -53,5 +54,13 @@ public class AccessRequestSpatialFilterJSON extends AccessRequestFilterJSON {
      */
     public void setDataset(String dataset) {
         this.dataset = dataset;
+    }
+
+    public String getGridRef() {
+        return gridRef;
+    }
+
+    public void setGridRef(String gridRef) {
+        this.gridRef = gridRef;
     }
 }

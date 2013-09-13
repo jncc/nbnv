@@ -26,7 +26,14 @@ public class ProviderHelper {
 
     static void addEndYearFilter(Integer endYear) {
         WHERE("YEAR(o.startDate) <= " + endYear);
-
+    }
+    
+    static void addStartDateFilter(String startDate) {
+        WHERE("todsd.downloadTime >= '" + startDate + "'");
+    }
+    
+    static void addEndDateFilter(String endDate) {
+        WHERE("todsd.downloadTime <= '" + endDate + "'");
     }
 
     public static String datasetListToCommaList(List<String> list) {
@@ -38,6 +45,11 @@ public class ProviderHelper {
 
         return "('" + StringUtils.collectionToDelimitedString(list, "','") + "')";
     }
+    
+    public static String IntegerListToCommaList(List<Integer> list) {
+        return "('" + StringUtils.collectionToDelimitedString(list, ",") + "')";
+    }
+    
     public static String taxaListToCommaList(List<String> list) {
         for (String d : list) {
             if (!d.matches("[A-Z0-9]{16}")) {

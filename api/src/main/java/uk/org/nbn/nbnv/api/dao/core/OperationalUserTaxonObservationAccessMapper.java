@@ -28,6 +28,7 @@ public interface OperationalUserTaxonObservationAccessMapper {
             , @Param("sensitive") Boolean sensitive
             , @Param("designation") String designation
             , @Param("taxonOutputGroup") String taxonOutputGroup
+            , @Param("orgSuppliedList") int orgSuppliedList
             , @Param("gridRef") String gridRef
             , @Param("polygon") String polygon);
 
@@ -43,6 +44,7 @@ public interface OperationalUserTaxonObservationAccessMapper {
             , @Param("sensitive") Boolean sensitive
             , @Param("designation") String designation
             , @Param("taxonOutputGroup") String taxonOutputGroup
+            , @Param("orgSuppliedList") int orgSuppliedList
             , @Param("gridRef") String gridRef
             , @Param("polygon") String polygon);
 }

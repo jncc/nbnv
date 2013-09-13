@@ -3,11 +3,10 @@
     <head>
         <title>NBN Gateway - Interactive Map Tool</title>
 		<link rel="stylesheet" type="text/css" href="css/app.css">
-        <script data-main="scripts/main" src="vendor/requirejs/require.js"></script>
     </head>
-    <body id="imt">
+    <body id="imt" class="loading">
         <noscript>
-            <div id="unavailable">
+            <div id="unavailable" class="hero-unit">
                 <div class="container">
                     <div class="header">The Interactive Map Tool requires JavaScript</div>
                     <p class="message">It appears that you don't have JavaScript enabled. This is essential for the interactive map to function correctly. Please enable JavaScript and then refresh the page.</p>
@@ -15,5 +14,6 @@
                 </div>
             </div>
         </noscript>
+        <script data-main="scripts/main" src="vendor/requirejs/require.js"></script>
     </body>
 </html>

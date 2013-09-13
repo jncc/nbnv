@@ -8,10 +8,11 @@ package uk.org.nbn.nbnv.api.model.meta;
  *
  * @author paulbe
  */
-public class AccessRequestTaxonFilterJSON extends AccessRequestFilterJSON {
+public class RequestTaxonFilterJSON extends AccessRequestFilterJSON {
     private String tvk = "";
     private String designation = "";
     private String output = "";
+    private int orgSuppliedList;
 
     /**
      * @return the tvk
@@ -54,5 +55,12 @@ public class AccessRequestTaxonFilterJSON extends AccessRequestFilterJSON {
     public void setOutput(String output) {
         this.output = output;
     }
-    
+
+    public int getOrgSuppliedList() {
+        return orgSuppliedList;
+    }
+
+    public void setOrgSuppliedList(int orgSuppliedList) {
+        this.orgSuppliedList = orgSuppliedList;
+    }
 }

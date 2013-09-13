@@ -60,4 +60,7 @@ public interface DatasetAdministratorMapper {
     
     @Delete("DELETE FROM DatasetAdministrator WHERE userID = #{userKey} AND datasetKey = #{datasetKey}")
     int removeDatasetAdministrator(@Param("userKey") int userKey, @Param("datasetKey") String datasetKey);
+    
+    @Select("SELECT DISTINCT dd.* FROM ((SELECT dd.[key] FROM DatasetData dd INNER JOIN OrganisationMembershipData omd ON omd.organisationID = dd.organisationID WHERE omd.userID = #{userID} AND omd.[role] = 'administrator') UNION ALL (SELECT da.[datasetKey] as [key] FROM DatasetAdministrator da WHERE da.userID = #{userID})) keys INNER JOIN DatasetData dd ON dd.[key] = keys.[key]")
+    List<Dataset> getAdminableDatasetsByUserAndOrgs(@Param("userID") int userID);
 }

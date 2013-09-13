@@ -6,10 +6,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation which is to be used in jersey methods to obtain a user who is 
- * logged in and has the System Administrator role
+ * Annotation which is to be used in jersey methods to obtain a user
  * @author Chris Johnson
  */
 @Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface TokenSystemAdministratorUser {}
+public @interface TokenSystemAdministratorUser { }

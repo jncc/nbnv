@@ -7,11 +7,14 @@ package uk.org.nbn.nbnv.api.utils;
 import java.text.SimpleDateFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import uk.org.nbn.nbnv.api.dao.warehouse.DesignationMapper;
+import uk.org.nbn.nbnv.api.dao.warehouse.OrganisationSuppliedListMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.SiteBoundaryMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.TaxonMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.TaxonOutputGroupMapper;
 import uk.org.nbn.nbnv.api.model.Designation;
+import uk.org.nbn.nbnv.api.model.OrganisationSuppliedList;
 import uk.org.nbn.nbnv.api.model.SiteBoundary;
 import uk.org.nbn.nbnv.api.model.Taxon;
 import uk.org.nbn.nbnv.api.model.TaxonOutputGroup;
@@ -27,6 +30,7 @@ public class AccessRequestJSONToText {
     @Autowired DesignationMapper designationMapper;
     @Autowired TaxonOutputGroupMapper outputGroupMapper;
     @Autowired SiteBoundaryMapper siteBoundaryMapper;
+    @Autowired OrganisationSuppliedListMapper organisationSuppliedListMapper;
 
     public String convert(AccessRequestJSON ar) {
         String text = null;
@@ -50,11 +54,18 @@ public class AccessRequestJSONToText {
         } else if (!ar.getTaxon().isAll() && !ar.getTaxon().getOutput().isEmpty()) {
             TaxonOutputGroup o = outputGroupMapper.getById(ar.getTaxon().getOutput());
             text += " for " + o.getName() + " species";
+        }  else if (!ar.getTaxon().isAll() && ar.getTaxon().getOrgSuppliedList() > 0) {
+            OrganisationSuppliedList l = organisationSuppliedListMapper.selectByID(ar.getTaxon().getOrgSuppliedList());
+            text += " for species in the list \"" + l.getName() + "\"  provided by " + l.getOrganisationName();
         }
 
         if (!ar.getSpatial().isAll()) {
-            SiteBoundary sb = siteBoundaryMapper.getById(ar.getSpatial().getFeature());
-            text += " " + ar.getSpatial().getMatch() + " the boundary of " + sb.getName();
+            if (StringUtils.hasText(ar.getSpatial().getGridRef())) {
+                text += " " + ar.getSpatial().getMatch() + " the grid square " + ar.getSpatial().getGridRef();
+            } else {
+                SiteBoundary sb = siteBoundaryMapper.getById(ar.getSpatial().getFeature());
+                text += " " + ar.getSpatial().getMatch() + " the boundary of " + sb.getName();
+            }
         }
 
         if (!ar.getTime().isAll()) {

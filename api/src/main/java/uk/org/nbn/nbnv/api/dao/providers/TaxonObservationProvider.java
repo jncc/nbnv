@@ -13,6 +13,68 @@ import uk.org.nbn.nbnv.api.rest.resources.ObservationResourceDefaults;
  */
 public class TaxonObservationProvider {
 
+    public String filteredDownloadRecords(Map<String, Object> params) {
+        String from = createSelectDownload(params, "o.*");
+        BEGIN();
+        SELECT("obs.id as observationID, "
+                + "obs.observationKey, "
+                + "od.name as organisationName, "
+                + "obs.datasetKey, "
+                + "obs.surveyKey, "
+                + "obs.sampleKey, "
+                + "fd.label as gridReference, "
+                + "r.label as [precision], "
+                + "obs.siteID as siteKey, "
+                + "sd.name as siteName, "
+                + "obs.featureID as featureKey, "
+                + "obs.startDate, "
+                + "obs.endDate, "
+                + "dt.label as dateType, "
+                + "rd.name as recorder, "
+                + "rdd.name as determiner, "
+                + "obs.pTaxonVersionKey, "
+                + "td.name as pTaxonName, "
+                + "td.authority, "
+                + "tdd.name as commonName, "
+                + "togd.name as taxonGroup, "
+                + "obs.sensitive, "
+                + "obs.absence as zeroAbundance, "
+                + "obs.fullVersion, "
+                + "dd.useConstraints as useConstraint");
+        FROM(from);
+        INNER_JOIN("TaxonData td ON obs.pTaxonVersionKey = td.taxonVersionKey");
+        LEFT_OUTER_JOIN("TaxonData tdd ON td.commonNameTaxonVersionKey = tdd.taxonVersionKey");
+        INNER_JOIN("TaxonOutputGroupData togd ON td.taxonOutputGroupKey = togd.[key]");
+        INNER_JOIN("DatasetData dd ON obs.datasetKey = dd.[key]");
+        INNER_JOIN("OrganisationData od ON dd.organisationID = od.id");
+        INNER_JOIN("FeatureData fd ON obs.featureID = fd.id");
+        INNER_JOIN("Resolution r ON fd.resolutionID = r.id");
+        INNER_JOIN("DateType dt ON obs.dateTypeKey = dt.[key]");
+        LEFT_OUTER_JOIN("SiteData sd ON obs.siteID = sd.id");
+        LEFT_OUTER_JOIN("RecorderData rd ON obs.recorderID = rd.id");
+        LEFT_OUTER_JOIN("RecorderData rdd ON obs.determinerID = rdd.id");
+        return SQL();
+    }
+    
+    public String filterSelectedAttributesForDownload(Map<String,Object> params) {
+        String from = createSelectQuery(params, true, "o.id");
+        BEGIN();
+        SELECT("DISTINCT ad.id as attributeID, ad.label, ad.description");
+        FROM("(" + from + ") AS obs");
+        INNER_JOIN("TaxonObservationAttributeData toad ON toad.observationID = obs.id");
+        INNER_JOIN("AttributeData ad ON ad.id = toad.attributeID");
+        return SQL();
+    }
+    
+    public String filterSelectedAttributeDataForDownload(Map<String,Object> params) {
+        String from = createSelectQuery(params, true, "o.id");
+        BEGIN();
+        SELECT("toad.*");
+        FROM("(" + from + ") AS obs");
+        INNER_JOIN("TaxonObservationAttributeData toad ON toad.observationID = obs.id");
+        return SQL();
+    }
+    
     public String filteredSelectRecords(Map<String, Object> params) {
         String from = createSelect(params, "o.*");
         BEGIN();
@@ -200,7 +262,7 @@ public class TaxonObservationProvider {
         FROM(from);
         return SQL();
     }
-
+    
     String createSelect(Map<String, Object> params, String fields) {
         String publicSelect = createSelectQuery(params, false, fields);
         String fullSelect = createSelectQuery(params, true, fields);
@@ -210,6 +272,12 @@ public class TaxonObservationProvider {
     String createSelectEnhanced(Map<String, Object> params, String fields) {
         String fullSelect = createSelectAllRecordsQuery(params, fields);
         return "(" + fullSelect + ") obs";
+    }
+    
+    String createSelectDownload(Map<String, Object> params, String fields) {
+        String publicSelect = createSelectQuery(params, false, fields + ", 0 as fullVersion");
+        String fullSelect = createSelectQuery(params, true, fields + ", 1 as fullVersion");
+        return "(" + fullSelect + " UNION ALL " + publicSelect + ") obs";
     }
 
     String createSelectQuery(Map<String, Object> params, boolean full, String fields) {
@@ -232,7 +300,9 @@ public class TaxonObservationProvider {
             ProviderHelper.addEndYearFilter((Integer) params.get("endYear"));
         }
 
-        ProviderHelper.addDatasetKeysFilter(params);
+        if (params.containsKey("datasetKey") && params.get("datasetKey") != null) {
+            ProviderHelper.addDatasetKeysFilter(params);
+        }
 
         if (params.containsKey("ptvk") && params.get("ptvk") != null && !params.get("ptvk").equals("")) {
             if (params.get("ptvk") instanceof List) {
@@ -285,11 +355,16 @@ public class TaxonObservationProvider {
             INNER_JOIN("DesignationTaxonData dtd ON dtd.pTaxonVersionKey = o.pTaxonVersionKey");
             WHERE("dtd.code = #{designation}");
         }
+        
+        if (params.containsKey("orgSuppliedList") && (Integer) params.get("orgSuppliedList") > 0) {
+            INNER_JOIN("TaxonOrganisationSuppliedTaxonList tostl ON tostl.pTaxonVersionKey = o.pTaxonVersionKey");
+            WHERE("tostl.orgListID = #{orgSuppliedList}");    
+        }
 
         if (params.containsKey("gridRef") && params.get("gridRef") != null && !"".equals((String) params.get("gridRef"))) {
             INNER_JOIN("GridTree gt ON gt.featureID = o.featureID");
             INNER_JOIN("GridSquareFeatureData gsfd ON gsfd.id = gt.parentFeatureID");
-            WHERE("gsfd.label = #{gridRef}");
+            WHERE("gsfd.identifier = #{gridRef}");
         }
 
         if (params.containsKey("taxonOutputGroup") && params.get("taxonOutputGroup") != null && !"".equals((String) params.get("taxonOutputGroup"))) {
@@ -300,7 +375,7 @@ public class TaxonObservationProvider {
         if (params.containsKey("absence")) {
             WHERE("o.absence = #{absence}");
         }
-
+        
         return SQL();
     }
 
@@ -382,6 +457,11 @@ public class TaxonObservationProvider {
             WHERE("td.taxonOutputGroupKey =  #{taxonOutputGroup}");
         }
 
+        if (params.containsKey("orgSuppliedList") && (Integer) params.get("orgSuppliedList") > 0) {
+            INNER_JOIN("TaxonOrganisationSuppliedTaxonList tostl ON tostl.pTaxonVersionKey = o.pTaxonVersionKey");
+            WHERE("tostl.orgListID = #{orgSuppliedList}");    
+        }
+        
         return SQL();
     }
 

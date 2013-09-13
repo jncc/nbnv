@@ -8,12 +8,13 @@ package uk.org.nbn.nbnv.api.model.meta;
  *
  * @author Paul Gilbertson
  */
-public class AccessRequestReasonJSON {
+public class DownloadReasonJSON {
     private int purpose;
     private int organisationID = -1;
     private int userID = -1;
     private String details;
     private String reason;
+    private String includeAttributes;
 
     /**
      * @return the purpose
@@ -83,5 +84,13 @@ public class AccessRequestReasonJSON {
      */
     public void setReason(String reason) {
         this.reason = reason;
+    }
+
+    public String getIncludeAttributes() {
+        return includeAttributes;
+    }
+
+    public void setIncludeAttributes(String includeAttributes) {
+        this.includeAttributes = includeAttributes;
     }
 }

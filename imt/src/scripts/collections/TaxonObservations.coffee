@@ -16,6 +16,12 @@ define [
     @availableDatasets = options.availableDatasets 
 
   ###
+  Check to see if this collection is populated based on a restriction to a 
+  single taxon
+  ###
+  isFilteredByTaxon: -> @ptvk?
+
+  ###
   Overide the default fetch method so that it supports a
   polygon option which is the wkt of the area to fetch for.
   ###

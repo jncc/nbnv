@@ -28,7 +28,8 @@ public interface OperationalUserMapper {
     @Select("Select * from \"User\" where email = #{email}")
     public User getUserFromEmail(@Param("email") String username);
 
-    @Select("SELECT COUNT(*) FROM UserRoleSystemAdministrator WHERE userKey = #{id}")
+    //@Select("SELECT COUNT(*) FROM UserRoleSystemAdministrator WHERE userKey = #{id}") TABLE DOES NOT EXIST
+    @Select("SELECT COUNT(*) FROM \"User\" WHERE id = #{id} AND userTypeID = 3")
     public boolean isUserSystemAdministrator(@Param("id") int id);
 
     @Select("SELECT d.* FROM DatasetData d INNER JOIN DatasetAdministrator da ON da.datasetKey = d.[key] WHERE da.userID = #{id}")
