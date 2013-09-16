@@ -257,7 +257,7 @@ nbn.nbnv.ui.filter.spatial = function(json) {
     };
 
     this.getError = function() {
-        if (!this._siteFilter && !this._all) {
+        if (!this._siteFilter && !this._all && this._mode == 'gridRef') {
             this._feature = $('#gridRefSelector').val();
             if (!(new RegExp('^[HJNOST][A-Z](\\d\\d)$','i').test(this._feature) || 
                     new RegExp('^[A-HJ-Z](\\d\\d)$','i').test(this._feature) || 
