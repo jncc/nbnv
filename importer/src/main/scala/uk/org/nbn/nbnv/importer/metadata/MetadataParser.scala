@@ -36,7 +36,7 @@ class MetadataParser {
       val additionalInformation = getAdditionalData("additionalInformation:")
       val publicPrecision = getAdditionalData("publicPrecision:").maybeInt.getOrElse(0)
       val recorderAndDeterminerArePublic = getAdditionalData("recorderAndDeterminerNamesArePublic:").maybeBoolean.getOrElse(false)
-      val siteIsPublic = getAdditionalData("siteNameIsPublic:").maybeBoolean.getOrElse(false)
+      val siteNameIsPublic = getAdditionalData("siteNameIsPublic:").maybeBoolean.getOrElse(false)
       val administratorForename = (dataset \ "metadataProvider" \ "individualName" \ "givenName").text.trim
       val administratorSurname = (dataset \ "metadataProvider" \ "individualName" \ "surName").text.trim
       val administratorEmail = (dataset \ "metadataProvider" \ "electronicMailAddress").text.trim
