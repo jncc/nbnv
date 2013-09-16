@@ -1191,7 +1191,7 @@ public class TaxonObservationResource extends AbstractResource {
         // Write headers out
         downloadHelper.writelnCsv(zip, values);
         
-        SimpleDateFormat df = new SimpleDateFormat("dd-mm-yyyy");
+        SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
         HashMap<String, Integer> datasetRecordCounts = new HashMap<String, Integer>();
 
         for(TaxonObservationDownload observation : observations) {
