@@ -762,7 +762,7 @@ public class TaxonObservationResource extends AbstractResource {
             oTaxonObservationFilterMapper.createDownloadLog(filter.getId(), dFilter.getReason().getPurpose(), dFilter.getReason().getDetails(), user.getId());
         }
         
-        mailDatasetDownloadNotifications(filter, dFilter);
+        mailDatasetDownloadNotifications(filter, dFilter, user);
         
         final int filterID = filter.getId();
         return new StreamingOutput() {
@@ -1357,7 +1357,7 @@ public class TaxonObservationResource extends AbstractResource {
         return mapper.readValue(json, DownloadStatsJSON.class);
     }
     
-    private void mailDatasetDownloadNotifications(TaxonObservationFilter filter, DownloadFilterJSON dFilter) throws IOException, TemplateException {
+    private void mailDatasetDownloadNotifications(TaxonObservationFilter filter, DownloadFilterJSON dFilter, User user) throws IOException, TemplateException {
         List<String> datasets = dFilter.getDataset().getDatasets();
 
         Map<Integer, String> purposes = new HashMap<Integer, String>();
@@ -1376,8 +1376,12 @@ public class TaxonObservationResource extends AbstractResource {
             Map<String, Object> message = new HashMap<String, Object>();
             message.put("portal", properties.getProperty("portal_url"));
             
-            User downloader = userMapper.getUserById(dFilter.getReason().getUserID());
-            message.put("downloader", downloader.getForename() + " " + downloader.getSurname() + "(" + downloader.getEmail() + ")");
+            message.put("downloader", user.getForename() + " " + user.getSurname() + "(" + user.getEmail() + ")");
+            
+            if (dFilter.getReason().getOrganisationID() > -1) {
+                Organisation org = organisationMapper.selectByID(dFilter.getReason().getOrganisationID());
+                message.put("dorg", org.getName());
+            }
             
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             message.put("downloadTime", sdf.format(new Date()));
@@ -1389,11 +1393,11 @@ public class TaxonObservationResource extends AbstractResource {
             message.put("dataset", dataset);
             message.put("datasetName", datasetMapper.selectByDatasetKey(dataset).getTitle());
             
-            for (UserDownloadNotification user : users) {                
-                message.put("name", user.getForename());
+            for (UserDownloadNotification nuser : users) {                
+                message.put("name", nuser.getForename());
                 templateMailer.send(
                         "dataset_download_notification.ftl", 
-                        user.getEmail(), 
+                        nuser.getEmail(), 
                         "NBN Gateway: Someone has downloaded some of your records", 
                         message);
             }
