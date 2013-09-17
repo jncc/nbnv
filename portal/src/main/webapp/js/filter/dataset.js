@@ -232,7 +232,17 @@ nbn.nbnv.ui.filter.dataset = function(json) {
         }
         
         if (!json.year.all) { filter.startYear = json.year.startYear; filter.endYear = json.year.endYear; }
-        if (!json.spatial.all) { filter.featureID = json.spatial.feature; filter.spatialRelationship = json.spatial.matchType; }
+        
+        if (!json.spatial.all) { 
+            filter.spatialRelationship = json.spatial.matchType; 
+            
+            if (json.spatial.featureID) {
+                filter.featureID = json.spatial.feature; 
+            } else if (json.spatial.gridRef) {
+                filter.gridRef = json.spatial.gridRef;
+            }
+        }
+        
         if (json.sensitive == 'sans') { filter.sensitive = 'true'; }
 
         $.ajax({

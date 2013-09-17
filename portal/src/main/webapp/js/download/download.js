@@ -56,7 +56,7 @@ nbn.nbnv.ui.download = function (json, div) {
                 $.extend(j, spatial.getJson());
                 $.extend(j, year.getJson());
 
-                dataset.setupTable(j, '/taxonObservations/datasets/requestable');
+                dataset.setupTable(j, '/taxonObservations/datasets');
                 dataset._onEnter();
             } else if (newFilter == 'result') {
                 var error = [];
