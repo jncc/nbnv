@@ -1358,7 +1358,25 @@ public class TaxonObservationResource extends AbstractResource {
     }
     
     private void mailDatasetDownloadNotifications(TaxonObservationFilter filter, DownloadFilterJSON dFilter, User user) throws IOException, TemplateException {
-        List<String> datasets = dFilter.getDataset().getDatasets();
+        List<String> datasets = null;
+        
+        if (dFilter.getDataset().isAll()) {
+            List<String> species = null;
+            datasets = new ArrayList<String>();
+            if (dFilter.getTaxon().getTvk() != null && !dFilter.getTaxon().getTvk().isEmpty()) {
+                species = new ArrayList<String>();
+                species.add(dFilter.getTaxon().getTvk());
+            }
+
+            List<TaxonDatasetWithQueryStats> selectObservationDatasetsByFilter = observationMapper.selectObservationDatasetsByFilter(user, dFilter.getYear().getStartYear(), dFilter.getYear().getEndYear(), new ArrayList<String>(), species, dFilter.getSpatial().getMatch(), dFilter.getSpatial().getFeature(), (dFilter.getSensitive().equals("sans") ? true : false), dFilter.getTaxon().getDesignation(), dFilter.getTaxon().getOutput(), "", "");
+
+            for (TaxonDatasetWithQueryStats tdwqs : selectObservationDatasetsByFilter) {
+                datasets.add(tdwqs.getDatasetKey());
+            }
+
+        } else {
+            datasets = dFilter.getDataset().getDatasets();
+        }
 
         Map<Integer, String> purposes = new HashMap<Integer, String>();
         purposes.put(1, "Personal interest");
