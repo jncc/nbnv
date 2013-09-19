@@ -228,6 +228,8 @@ nbn.nbnv.ui.filter.dataset = function(json) {
                 filter.designation = json.taxon.designation;
             } else if (json.taxon.output) {
                 filter.taxonOutputGroup = json.taxon.output;
+            } else if (json.taxon.orgSuppliedList > -1) {
+                filter.orgSuppliedList = json.taxon.orgSuppliedList;
             }
         }
         
