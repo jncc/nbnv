@@ -193,7 +193,7 @@
 <#macro taxonPageLinks links celink name>
     <div class="tabbed nbn-taxon-page-taxonomy-container">
         <h3>External Links</h3>
-        <#if links?has_content || celink?has_content>
+        <#if links?has_content || celink?size != 0>
             <table>
                 <#if links?has_content>
                 <#list links as link>
@@ -202,7 +202,7 @@
                     </tr>
                 </#list>
                 </#if>
-                <#if celink.total_results != 0>
+                <#if celink?size != 0>
                     <tr>
                         <td><a href="${celink.results_url}" target="_blank">ConservationEvidence.com has ${celink.total_results} articles on ${name}</a></td>
                     </tr>
