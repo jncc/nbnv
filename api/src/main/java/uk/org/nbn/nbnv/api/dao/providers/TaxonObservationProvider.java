@@ -305,13 +305,14 @@ public class TaxonObservationProvider {
         }
 
         if (params.containsKey("ptvk") && params.get("ptvk") != null && !params.get("ptvk").equals("")) {
+            INNER_JOIN("TaxonTree tt ON tt.childPTVK = o.pTaxonVersionKey");
             if (params.get("ptvk") instanceof List) {
                 List<String> ptvkArgs = (List<String>) params.get("ptvk");
                 if (ptvkArgs.size() > 0 && !"".equals(ptvkArgs.get(0))) {
-                    WHERE("pTaxonVersionKey IN " + taxaListToCommaList((List<String>) params.get("ptvk")));
+                    WHERE("tt.nodePTVK IN " + taxaListToCommaList((List<String>) params.get("ptvk")));
                 }
             } else {
-                WHERE("pTaxonVersionKey = '" + params.get("ptvk") + "'");
+                WHERE("tt.nodePTVK = '" + params.get("ptvk") + "'");
             }
         }
 
@@ -395,13 +396,14 @@ public class TaxonObservationProvider {
         ProviderHelper.addDatasetKeysFilter(params);
 
         if (params.containsKey("ptvk") && params.get("ptvk") != null && !params.get("ptvk").equals("")) {
+            INNER_JOIN("TaxonTree tt ON tt.childPTVK = o.pTaxonVersionKey");
             if (params.get("ptvk") instanceof List) {
                 List<String> ptvkArgs = (List<String>) params.get("ptvk");
                 if (ptvkArgs.size() > 0 && !"".equals(ptvkArgs.get(0))) {
-                    WHERE("pTaxonVersionKey IN " + taxaListToCommaList((List<String>) params.get("ptvk")));
+                    WHERE("tt.nodePTVK IN " + taxaListToCommaList((List<String>) params.get("ptvk")));
                 }
             } else {
-                WHERE("pTaxonVersionKey = '" + params.get("ptvk") + "'");
+                WHERE("tt.nodePTVK = '" + params.get("ptvk") + "'");
             }
         }
 
