@@ -81,10 +81,13 @@ nbn.nbnv.ui.filter.taxon = function(json) {
             url: nbn.nbnv.api + '/designations',
             success: function (data) {
                 $.each(data, function (i, d) {
-                    desig.append($('<option>')
+                    var opt = $('<option>')
                         .text(d.name)
                         .attr('value', d.code)
-                    );
+                    
+                    if (_me._desigCode == d.code) { opt.attr('selected', 'selected'); }
+                    
+                    desig.append(opt);
                 });
                 
                 desig.change();
@@ -104,10 +107,13 @@ nbn.nbnv.ui.filter.taxon = function(json) {
             url: nbn.nbnv.api + '/organisationList',
             success: function (data) {
                 $.each(data, function (i, d) {
-                    org.append($('<option>')
+                    var opt = $('<option>')
                         .text(d.name)
                         .attr('value', d.id)
-                    );
+
+                    if (_me._orgSuppliedList == d.id) { opt.attr('selected', 'selected'); }
+                    
+                    org.append(opt);
                 });
                 
                 org.change();
@@ -126,10 +132,13 @@ nbn.nbnv.ui.filter.taxon = function(json) {
             url: nbn.nbnv.api + '/taxonOutputGroups',
             success: function (data) {
                 $.each(data, function (i, grp) {
-                    output.append($('<option>')
+                    var opt = $('<option>')
                         .text(grp.name)
                         .attr('value', grp.key)
-                    );
+                        
+                    if (_me._outputGroupKey == grp.key) { opt.attr('selected', 'selected'); }
+                    
+                    output.append(opt);
                 });
                 
                 output.change();
