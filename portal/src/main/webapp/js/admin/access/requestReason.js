@@ -91,7 +91,7 @@ nbn.nbnv.ui.requestReason = function(json) {
                 
         var details = $('<textarea>')
                 .attr('cols', '75')
-                .attr('rows', '15')
+                .attr('rows', '10')
                 .watermark("Please enter details here")
                 .change(function() {
                     _me._details = $(this).val();
