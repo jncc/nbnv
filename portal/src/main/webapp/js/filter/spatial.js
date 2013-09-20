@@ -118,6 +118,7 @@ nbn.nbnv.ui.filter.spatial = function(json) {
         
         var gridRefSelector = $('<input>')
                 .attr('type', 'text')
+                .attr('length', '4')
                 .attr('id', 'gridRefSelector');
         
         var gridRef = $('<div>')
@@ -136,8 +137,8 @@ nbn.nbnv.ui.filter.spatial = function(json) {
                 })
             ).append("Records that are ")
             .append(matchGrid)
-            .append(' the Grid Reference ')
-            .append($('<div>').append($('<span>').addClass('comboSpan').text('Grid Reference:')).append(gridRefSelector));
+            .append(' the 10km square ')
+            .append(gridRefSelector);
     
         var allRecords = $('<div>')
             .append($('<input>')
@@ -186,7 +187,7 @@ nbn.nbnv.ui.filter.spatial = function(json) {
             }
         }
         
-        dataDiv.append(allRecords).append(filterRecords).append(gridRef);
+        dataDiv.append(allRecords).append(gridRef).append(filterRecords);
         
         return dataDiv;
     };
