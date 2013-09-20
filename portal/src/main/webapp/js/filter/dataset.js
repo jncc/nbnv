@@ -382,13 +382,21 @@ nbn.nbnv.ui.filter.dataset = function(json) {
     };
     
     this._onExit = function() {
+        var _me = this;
         var text = '';
         
         if (this._all) {
             text = 'All datasets'
         } else if (this._mode == 'single') {
             if ($('#datasetAutoComplete').val() == '') {
-                text = 'Filter to ' + this._datasets;
+                $.ajax({
+                    url: nbn.nbnv.api + '/datasets/' + _me._datasets[0],
+                    success: function(data) {
+                        text = 'Filter to ' + data.title;
+                        $('#datasetResult').text(text);
+                    }
+                });
+
             } else {
                 text = 'Filter to ' + $('#datasetAutoComplete').val();
             }
