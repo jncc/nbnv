@@ -28,11 +28,11 @@
         getSelectedDatasets: function(){
             var datasets = [];
             if ($('#nbn-select-datasets-orderby').val() === '1') {
-                datasets = $.map($('#nbn-dataset-ordered-table-byrecord input[name=datasetKey][type=checkbox]:checked'), function() {
+                var datasets = $('#nbn-dataset-ordered-table-byrecord input[name=datasetKey][type=checkbox]:checked').map(function() {
                     return $(this).attr("value");
                 }).get();
             } else if ($('#nbn-select-datasets-orderby').val() === '2') {
-                datasets = $.map($('#nbn-dataset-ordered-table-byname input[name=datasetKey][type=checkbox]:checked'), function() {
+                var datasets = $('#nbn-dataset-ordered-table-byname input[name=datasetKey][type=checkbox]:checked').map(function() {
                     return $(this).attr("value");
                 }).get();
             }
