@@ -28,19 +28,20 @@
         getSelectedDatasets: function(){
             var datasets = [];
             if ($('#nbn-select-datasets-orderby').val() === '1') {
-                var datasets = $('#nbn-dataset-ordered-table-byrecord input[name=datasetKey][type=checkbox]:checked').map(function() {
+                datasets = $.map($('#nbn-dataset-ordered-table-byrecord input[name=datasetKey][type=checkbox]:checked'), function() {
                     return $(this).attr("value");
                 }).get();
             } else if ($('#nbn-select-datasets-orderby').val() === '2') {
-                var datasets = $('#nbn-dataset-ordered-table-byname input[name=datasetKey][type=checkbox]:checked').map(function() {
+                datasets = $.map($('#nbn-dataset-ordered-table-byname input[name=datasetKey][type=checkbox]:checked'), function() {
                     return $(this).attr("value");
                 }).get();
             }
             return datasets;
         },
         getSelectedDatasetsJSON: function() {
+            var datasets = nbn.portal.reports.utils.datasetfields.getSelectedDatasets();
             return 'dataset:{all:false,datasets:[' + 
-                        nbn.portal.reports.utils.datasetfields.getSelectedDatasets().map(function(element) { 
+                        $.map(datasets, function(element) { 
                             return '\'' + String(element) + '\'';
                         }) + ']}';
         }
