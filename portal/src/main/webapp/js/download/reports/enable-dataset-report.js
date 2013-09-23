@@ -130,7 +130,7 @@ nbn.nbnv = nbn.nbnv || {};
             var i = index + 1;
             userTable.append($('<tr>')
                 .append($('<td>').text(i))
-                .append($('<td>').text(this.name))
+                .append($('<td>').append($('<a>').attr('href', '/User/' + this.id).attr('target', '_blank').text(this.name)))
                 .append($('<td>').text(this.totalAlt))
                 .append($('<td>').text(this.total))
             );
@@ -140,43 +140,43 @@ nbn.nbnv = nbn.nbnv || {};
             var i = index + 1;
             orgTable.append($('<tr>')
                 .append($('<td>').text(i))
-                .append($('<td>').text(this.name))
+                .append($('<td>').append($('<a>').attr('href', '/Organisations/' + this.id).attr('target', '_blank').text(this.name)))
                 .append($('<td>').text(this.totalAlt))
                 .append($('<td>').text(this.total))
             );            
         });
         
-        var stats = $('<table>')
+        var statsTable = $('<table>');
         
-        stats.append($('<tr>')
+        statsTable.append($('<tr>')
                 .append($('<td>').text('Total Downloads'))
                 .append($('<td>').text(downloads))
         );
             
-        stats.append($('<tr>')
+        statsTable.append($('<tr>')
                 .append($('<td>').text('Total Records Downloaded'))
                 .append($('<td>').text(records))
         );
             
-        stats.append($('<tr>'));
+        statsTable.append($('<tr>'));
             
-        stats.append($('<tr>')
+        statsTable.append($('<tr>')
                 .append($('<td>').text('Records Downloaded for purpose'))
                 .append($('<td>').text())
         );
             
-        addPurpose(stats, 'Personal interest', purposes, PURPOSE_PERSONAL - 1);         
-        addPurpose(stats, 'Educational purposes', purposes, PURPOSE_EDUCATION - 1);      
-        addPurpose(stats, 'Research and scientific analysis', purposes, PURPOSE_RESEARCH - 1);      
-        addPurpose(stats, 'Media publication', purposes, PURPOSE_MEDIA - 1);      
-        addPurpose(stats, 'Commercial and consultancy work', purposes, PURPOSE_COMMERCIAL_NGO - 1);      
-        addPurpose(stats, 'Professional land management', purposes, PURPOSE_LAND_MANAGEMENT - 1);      
-        addPurpose(stats, 'Data provision and interpretation (commercial)', purposes, PURPOSE_DATA_COMMERCIAL - 1);      
-        addPurpose(stats, 'Data provision and interpretation (non-profit)', purposes, PURPOSE_DATA_NON_PROFIT - 1);      
-        addPurpose(stats, 'Statutory work', purposes, PURPOSE_SATUTORY - 1);      
+        addPurpose(statsTable, 'Personal interest', purposes, PURPOSE_PERSONAL - 1);         
+        addPurpose(statsTable, 'Educational purposes', purposes, PURPOSE_EDUCATION - 1);      
+        addPurpose(statsTable, 'Research and scientific analysis', purposes, PURPOSE_RESEARCH - 1);      
+        addPurpose(statsTable, 'Media publication', purposes, PURPOSE_MEDIA - 1);      
+        addPurpose(statsTable, 'Commercial and consultancy work', purposes, PURPOSE_COMMERCIAL_NGO - 1);      
+        addPurpose(statsTable, 'Professional land management', purposes, PURPOSE_LAND_MANAGEMENT - 1);      
+        addPurpose(statsTable, 'Data provision and interpretation (commercial)', purposes, PURPOSE_DATA_COMMERCIAL - 1);      
+        addPurpose(statsTable, 'Data provision and interpretation (non-profit)', purposes, PURPOSE_DATA_NON_PROFIT - 1);      
+        addPurpose(statsTable, 'Statutory work', purposes, PURPOSE_SATUTORY - 1);      
             
         $('#downloadStats').empty()
-                .append(stats).append($('<br>'))
+                .append(statsTable).append($('<br>'))
                 .append($('<div>').addClass('nbn-top-table-div').append(userTable))
                 .append($('<div>').addClass('nbn-top-table-div').append(orgTable));
     }
@@ -236,8 +236,8 @@ nbn.nbnv = nbn.nbnv || {};
             var outputBody = $('<tbody>');
             $.each(data, function(key, value){
                 outputBody.append($('<tr>')
-                    .append($('<td>').text(value.forename + ' ' + value.surname))
-                    .append($('<td>').text(value.organisationName))
+                    .append($('<td>').append($('<a>').attr('href', '/User/' + value.userID).attr('target', '_blank').text(value.forename + ' ' + value.surname)))
+                    .append($('<td>').append($('<a>').attr('href', '/Organisations/' + value.organisationID).attr('target', '_blank').text(value.organisationName)))
                     .append($('<td>').text(value.downloadTimeString))
                     .append($('<td>').text(value.filterText))
                     .append($('<td>').text(value.purpose))
