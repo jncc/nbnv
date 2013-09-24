@@ -3,7 +3,7 @@ nbn.nbnv = nbn.nbnv || {};
 nbn.nbnv.ui = nbn.nbnv.ui || {};
 nbn.nbnv.ui.filter = nbn.nbnv.ui.filter || {};
 
-nbn.nbnv.ui.filter.dataset = function(json) {
+nbn.nbnv.ui.filter.dataset = function(json, isForDownload) {
     if (typeof(json.dataset) === 'undefined') { json.dataset = { all: true }; }
     
     this._all = true;
@@ -12,6 +12,7 @@ nbn.nbnv.ui.filter.dataset = function(json) {
     this._mode = 'all';
     this._secret = true;
     this._useSecret = false;
+    this._isForDownload = isForDownload;
     
     if (!json.dataset.all) {
         this._all = false;
@@ -192,7 +193,7 @@ nbn.nbnv.ui.filter.dataset = function(json) {
         
         var filter = {};
         
-        if (json.spatial.all) {
+        if (json.spatial.all || this._isForDownload) {
             $('#datasetfiltersecretblock').hide();
             this._useSecret = false;
         } else {
