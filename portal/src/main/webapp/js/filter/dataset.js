@@ -239,7 +239,7 @@ nbn.nbnv.ui.filter.dataset = function(json, isForDownload) {
         if (!json.spatial.all) { 
             filter.spatialRelationship = json.spatial.matchType; 
             
-            if (json.spatial.featureID) {
+            if (json.spatial.feature) {
                 filter.featureID = json.spatial.feature; 
             } else if (json.spatial.gridRef) {
                 filter.gridRef = json.spatial.gridRef;
