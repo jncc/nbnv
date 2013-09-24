@@ -28,12 +28,10 @@
                     toAppend += '<table id="nbn-species-table" class="nbn-simple-table"><tbody>';
                 }
                 $.each(data, function(key, val){
-                    //Link to observation data disabled for Christmas release 2012
-//                    toAppend += "<tr><td><span class='nbn-taxon-name'>" + val.taxon.name + '</span>';
-//                    if (val.taxon.commonName)
-//                        toAppend += ' [' + val.taxon.commonName + ']';
-//                    toAppend += '</td></tr>';
-                    toAppend += '<tr><td><a href="/Reports/Sites/' + featureID + '/Groups/' + taxonOutputGroupKey + '/Species/'+ val.taxon.ptaxonVersionKey + '/Observations">' + val.taxon.name + '</a></td></tr>';
+                    toAppend += '<tr><td><a href="/Reports/Sites/' + featureID + '/Groups/' + taxonOutputGroupKey + '/Species/'+ val.taxon.ptaxonVersionKey + '/Observations">' + "<span class='nbn-taxon-name'>" + val.taxon.name + '</span>';
+                    if (val.taxon.commonName)
+                        toAppend += ' [' + val.taxon.commonName + ']';
+                    toAppend += '</a></td></tr>';
                 });
                 toAppend += '</tbody></table>';
             }else{
