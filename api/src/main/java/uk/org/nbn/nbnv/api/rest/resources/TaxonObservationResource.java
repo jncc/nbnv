@@ -1219,9 +1219,9 @@ public class TaxonObservationResource extends AbstractResource {
             values.add(observation.getAuthority());
             values.add(StringUtils.hasText(observation.getCommonName()) ? observation.getCommonName() : "");
             values.add(observation.getTaxonGroup());
-            values.add(observation.isSensitive() ? "1" : "0");
-            values.add(observation.isZeroAbundance() ? "1" : "0");
-            values.add(observation.isFullVersion()? "1" : "0");
+            values.add(observation.isSensitive() ? "true" : "false");
+            values.add(observation.isZeroAbundance() ? "true" : "false");
+            values.add(observation.isFullVersion()? "true" : "false");
             values.add(StringUtils.hasText(observation.getUseConstraints()) ? observation.getUseConstraints() : "");
 
             if (includeAttributes) {
