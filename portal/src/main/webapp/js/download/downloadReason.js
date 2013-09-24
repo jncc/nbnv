@@ -116,15 +116,16 @@ nbn.nbnv.ui.downloadReason = function(json) {
                 .text('Detailed description of purpose:')
             ).append(details)
              .append($('<br>'))
-             .append($('<div>').text('Include Attributes:'))
-             .append($('<input>')
-                .attr('type', 'checkbox')
-                .attr('name', 'includeattributes')
-                .attr('value', _me._includeAttributes)
-                .change(function() {
-                    _me._includeAttributes = this.checked;
-                })
-            ).append($('<span>').text('Attributes will only be included if you have full access to an observation record'));
+             .append($('<div>')
+                .append($('<input>')
+                   .attr('type', 'checkbox')
+                   .attr('name', 'includeattributes')
+                   .attr('value', _me._includeAttributes)
+                   .change(function() {
+                       _me._includeAttributes = this.checked;
+                   })
+             ).append('Include record attributes'));
+            
 
         return data;
     };
