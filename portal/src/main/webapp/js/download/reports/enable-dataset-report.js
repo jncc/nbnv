@@ -96,6 +96,8 @@ nbn.nbnv = nbn.nbnv || {};
         var downloads = 0;
         var purposes = [0,0,0,0,0,0,0,0,0];
         
+        user.sort(function(a, b) { return ((a.total < b.total) ? 1 : ((a.total > b.total) ? -1 : ((a.totalAlt < b.totalAlt) ? 1 : ((a.totalAlt > b.totalAlt) ? -1 : 0))))});
+        org.sort(function(a, b) { return ((a.total < b.total) ? 1 : ((a.total > b.total) ? -1 : ((a.totalAlt < b.totalAlt) ? 1 : ((a.totalAlt > b.totalAlt) ? -1 : 0))))});
         
         $.each(stats, function(index, value) {
             records += this.total;
@@ -149,19 +151,19 @@ nbn.nbnv = nbn.nbnv || {};
         var statsTable = $('<table>');
         
         statsTable.append($('<tr>')
-                .append($('<td>').text('Total Downloads'))
+                .append($('<th>').text('Total Downloads'))
                 .append($('<td>').text(downloads))
         );
             
         statsTable.append($('<tr>')
-                .append($('<td>').text('Total Records Downloaded'))
+                .append($('<th>').text('Total Records Downloaded'))
                 .append($('<td>').text(records))
         );
             
         statsTable.append($('<tr>'));
             
         statsTable.append($('<tr>')
-                .append($('<td>').text('Records Downloaded for purpose'))
+                .append($('<th>').text('Records Downloaded per Purpose'))
                 .append($('<td>').text())
         );
             
@@ -183,8 +185,8 @@ nbn.nbnv = nbn.nbnv || {};
     
     function addPurpose(parent, text, purposes, index) {
         parent.append($('<tr>')
-                .append($('<td>').append($('<span>').addClass("nbn-download-purpose-span").text(text)))
-                .append($('<td>').text(purposes[index - 1]))
+                .append($('<td>').addClass("nbn-download-purpose-span").text(text))
+                .append($('<td>').text(purposes[index]))
         );   
     }
     
