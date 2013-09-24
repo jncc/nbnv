@@ -1418,7 +1418,7 @@ public class TaxonObservationResource extends AbstractResource {
                 templateMailer.send(
                         "dataset_download_notification.ftl", 
                         nuser.getEmail(), 
-                        "NBN Gateway: Someone has downloaded some of your records", 
+                        "NBN Gateway: User downloaded records", 
                         message);
             }
         }

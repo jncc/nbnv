@@ -14,7 +14,7 @@ You can see further statistics about this download on the download report page a
 
 ${portal}/Reports/Download/${dataset}
 
-If you no longer wish to receive these notifications please change the notification setting through your User Control Panel.
+If you no longer wish to receive these notifications please change the notification setting through your NBN Gateway account page.
 
 Best wishes, 
 NBN Gateway Team 
