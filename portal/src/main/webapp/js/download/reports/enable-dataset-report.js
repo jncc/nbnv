@@ -247,7 +247,7 @@ nbn.nbnv = nbn.nbnv || {};
                     .append($('<td>').text(value.recordCount 
                         + ' records from this dataset in this download. This is ' 
                         + (value.recordCount / value.totalRecords * 100).toFixed(1)
-                        + '% of this dataset and this compromises '
+                        + '% of this dataset and this comprises '
                         + (value.recordCount / value.totalDownloaded * 100).toFixed(1)
                         + '% of the download')
                     )
