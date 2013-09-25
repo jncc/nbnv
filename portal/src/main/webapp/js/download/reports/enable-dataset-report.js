@@ -111,10 +111,10 @@ nbn.nbnv = nbn.nbnv || {};
                         .addClass('nbn-top-table-head')
                         .text('Top User Downloads')))
                 .append($('<tr>')
-                    .append($('<td>').text('#'))
-                    .append($('<td>').text('Name'))
-                    .append($('<td>').text('Downloads'))
-                    .append($('<td>').text('Records'))
+                    .append($('<td>').addClass('nbn-top-table-subhead').text('#'))
+                    .append($('<td>').addClass('nbn-top-table-subhead').text('Name'))
+                    .append($('<td>').addClass('nbn-top-table-subhead').text('Downloads'))
+                    .append($('<td>').addClass('nbn-top-table-subhead').text('Records'))
                 );
         var orgTable = $('<table>')
                 .append($('<tr>').append($('<td>')
@@ -122,10 +122,10 @@ nbn.nbnv = nbn.nbnv || {};
                         .addClass('nbn-top-table-head')
                         .text('Top Organisation Downloads')))
                 .append($('<tr>')
-                    .append($('<td>').text('#'))
-                    .append($('<td>').text('Name'))
-                    .append($('<td>').text('Downloads'))
-                    .append($('<td>').text('Records'))
+                    .append($('<td>').addClass('nbn-top-table-subhead').text('#'))
+                    .append($('<td>').addClass('nbn-top-table-subhead').text('Name'))
+                    .append($('<td>').addClass('nbn-top-table-subhead').text('Downloads'))
+                    .append($('<td>').addClass('nbn-top-table-subhead').text('Records'))
                 );
         
         $.each(user, function(index, value) {
