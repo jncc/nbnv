@@ -124,7 +124,7 @@
                 <fieldset>
                     <legend>Other Options</legend>
                     <#if isMapLinkNeeded>
-                        <a href="#" id="nbn-interactive-map">View on IMT</a><br />
+                        <a href="#" id="nbn-interactive-map">View on Interactive Map</a><br />
                     </#if>
                     <#if isRequestBetterAccessLinkNeeded>
                         <a href="#" id="nbn-request-better-access">Request Better Access</a>

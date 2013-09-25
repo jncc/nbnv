@@ -25,7 +25,7 @@
         <div class="tabbed" id="nbn-site-report-filter-container" style="clear:left;">
             <h3>Other Options</h3>
             <a id="nbn-request-better-access" href="#">Request Better Access</a><br /><br />
-            <a id="nbn-interactive-map" href="#">View on IMT</a><br /><br />
+            <a id="nbn-interactive-map" href="#">View on Interactive Map</a><br /><br />
         </div>
         <@report_utils.siteImage locationName=site.label locationID=featureID imageURL=report_utils.getSiteSpeciesImageURL(featureID, taxon.ptaxonVersionKey, startYear, endYear, datasets, spatialRelationship, !is10kmReport)/>
     </form>
