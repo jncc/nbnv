@@ -71,7 +71,7 @@
             <fieldset>
                 <legend>Download</legend>
                 <button id="nbn-grid-map-squares-download">Download</button> <span id="nbn-grid-map-resolution-download-text">10km</span> squares within selected dates
-                <button id="nbn-download-observations-button">Download</button> Download Observations
+                <button id="nbn-download-observations-button">Download</button> Download Records
                 <@report_utils.downloadTermsDialogue/>
             </fieldset>
 

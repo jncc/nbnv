@@ -18,8 +18,8 @@
     <form id="nbn-site-report-form" featureID="${featureID}" ptvk="${URLParameters.ptvk}" api-server="${api}" gridSquare="${is10kmReport?string}">
         <@report_utils.site_report_filters requestParameters=RequestParameters args={"taxon":taxon} location=site.label isSpatialRelationshipNeeded=true isDesignationNeeded=false isDatasetNeeded=false/>
         <div class="tabbed" id="nbn-site-report-filter-container" style="clear:left;">        
-            <h3>Download Observations</h3>
-            <button id="nbn-download-observations-button">Download</button> Observations
+            <h3>Download Records</h3>
+            <button id="nbn-download-observations-button">Download</button> Records
             <@report_utils.downloadTermsDialogue/>
         </div>
         <div class="tabbed" id="nbn-site-report-filter-container" style="clear:left;">
