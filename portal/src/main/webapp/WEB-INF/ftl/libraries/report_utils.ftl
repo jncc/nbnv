@@ -241,7 +241,7 @@
         </#if>
         <#if accessPositions?has_content>
             <#list accessPositions as accessPosition>
-                <li>Your enhanced access: ${accessPosition}
+                <li>${accessPosition.owner} enhanced access: ${accessPosition.filterText}
             </#list>
         </#if>
     </ul>
