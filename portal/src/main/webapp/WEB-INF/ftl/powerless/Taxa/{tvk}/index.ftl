@@ -71,6 +71,7 @@
             <tr><th>Rank:</th><td>${taxon.rank}</td></tr>
             <tr><th>Name Form:</th><td>${taxon.versionForm}</td></tr>
             <#if !json.isNull(outputGroup)><tr><th>Output Group:</th><td>${outputGroup.name}</td></tr></#if>
+            <tr><th>Taxon Reference:</th><td>${taxon_utils.getLongName(taxon)}, ${taxon.taxonVersionKey}</td></tr>
         </table>
     </div>
 </#macro>
