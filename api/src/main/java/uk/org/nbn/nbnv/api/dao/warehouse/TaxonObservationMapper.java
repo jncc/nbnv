@@ -178,7 +178,8 @@ public interface TaxonObservationMapper {
             , @Param("designation") String designation
             , @Param("taxonOutputGroup") String taxonOutputGroup
             , @Param("gridRef") String gridRef
-            , @Param("polygon") String polygon);
+            , @Param("polygon") String polygon
+            , @Param("orgSuppliedList") int orgSuppliedList);
     
     @SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectAllDatasets")
     @Results(value = {

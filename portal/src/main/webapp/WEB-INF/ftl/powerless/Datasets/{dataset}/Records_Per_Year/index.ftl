@@ -52,7 +52,7 @@
                                         </tr>
                             </#if>
                                         <tr>
-                                            <td class="ui-state-highlight">${recordsPerYear.year}</td>
+                                            <td class="ui-state-highlight">${recordsPerYear.year?c}</td>
                                             <td class="ui-state-highlight">${recordsPerYear.recordCount}</td>
                                         </tr>
                             <#if (recordsPerYear_index + 1) % numRows == 0>

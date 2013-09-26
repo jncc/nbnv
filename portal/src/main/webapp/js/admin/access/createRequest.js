@@ -9,7 +9,7 @@ nbn.nbnv.ui.createRequest = function (json, div) {
     var year = new nbn.nbnv.ui.filter.year(json);
     var spatial = new nbn.nbnv.ui.filter.spatial(json);
     var taxon = new nbn.nbnv.ui.filter.taxon(json);
-    var dataset = new nbn.nbnv.ui.filter.dataset(json);
+    var dataset = new nbn.nbnv.ui.filter.dataset(json, false);
     var timeLimit = new nbn.nbnv.ui.timeLimit(json);
     var result = new nbn.nbnv.ui.requestResult(json);
 

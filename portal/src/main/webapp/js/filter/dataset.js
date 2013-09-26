@@ -3,7 +3,7 @@ nbn.nbnv = nbn.nbnv || {};
 nbn.nbnv.ui = nbn.nbnv.ui || {};
 nbn.nbnv.ui.filter = nbn.nbnv.ui.filter || {};
 
-nbn.nbnv.ui.filter.dataset = function(json) {
+nbn.nbnv.ui.filter.dataset = function(json, isForDownload) {
     if (typeof(json.dataset) === 'undefined') { json.dataset = { all: true }; }
     
     this._all = true;
@@ -12,6 +12,7 @@ nbn.nbnv.ui.filter.dataset = function(json) {
     this._mode = 'all';
     this._secret = true;
     this._useSecret = false;
+    this._isForDownload = isForDownload;
     
     if (!json.dataset.all) {
         this._all = false;
@@ -192,7 +193,7 @@ nbn.nbnv.ui.filter.dataset = function(json) {
         
         var filter = {};
         
-        if (json.spatial.all) {
+        if (json.spatial.all || this._isForDownload) {
             $('#datasetfiltersecretblock').hide();
             this._useSecret = false;
         } else {
@@ -228,11 +229,23 @@ nbn.nbnv.ui.filter.dataset = function(json) {
                 filter.designation = json.taxon.designation;
             } else if (json.taxon.output) {
                 filter.taxonOutputGroup = json.taxon.output;
+            } else if (json.taxon.orgSuppliedList > -1) {
+                filter.orgSuppliedList = json.taxon.orgSuppliedList;
             }
         }
         
         if (!json.year.all) { filter.startYear = json.year.startYear; filter.endYear = json.year.endYear; }
-        if (!json.spatial.all) { filter.featureID = json.spatial.feature; filter.spatialRelationship = json.spatial.matchType; }
+        
+        if (!json.spatial.all) { 
+            filter.spatialRelationship = json.spatial.matchType; 
+            
+            if (json.spatial.feature) {
+                filter.featureID = json.spatial.feature; 
+            } else if (json.spatial.gridRef) {
+                filter.gridRef = json.spatial.gridRef;
+            }
+        }
+        
         if (json.sensitive == 'sans') { filter.sensitive = 'true'; }
 
         $.ajax({
@@ -370,13 +383,21 @@ nbn.nbnv.ui.filter.dataset = function(json) {
     };
     
     this._onExit = function() {
+        var _me = this;
         var text = '';
         
         if (this._all) {
             text = 'All datasets'
         } else if (this._mode == 'single') {
             if ($('#datasetAutoComplete').val() == '') {
-                text = 'Filter to ' + this._datasets;
+                $.ajax({
+                    url: nbn.nbnv.api + '/datasets/' + _me._datasets[0],
+                    success: function(data) {
+                        text = 'Filter to ' + data.title;
+                        $('#datasetResult').text(text);
+                    }
+                });
+
             } else {
                 text = 'Filter to ' + $('#datasetAutoComplete').val();
             }

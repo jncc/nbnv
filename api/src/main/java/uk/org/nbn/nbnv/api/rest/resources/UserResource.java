@@ -45,6 +45,8 @@ import uk.org.nbn.nbnv.api.mail.TemplateMailer;
 import uk.org.nbn.nbnv.api.model.Dataset;
 import uk.org.nbn.nbnv.api.model.Organisation;
 import uk.org.nbn.nbnv.api.model.User;
+import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenAnyDatasetOrOrgAdminUser;
+import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenDatasetOrOrgAdminUser;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
 
 /**
@@ -526,6 +528,20 @@ public class UserResource extends AbstractResource {
         return true;
     }
 
+    @GET
+    @Path("/{userID}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public User getUserDetails(@TokenAnyDatasetOrOrgAdminUser User user, @PathParam("userID") int userID) {
+        return userMapper.getUserById(userID);
+    }
+    
+    @GET
+    @Path("/{userID}/organisations")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Organisation> getUserOrganisationsForOtherUser(@TokenAnyDatasetOrOrgAdminUser User user, @PathParam("userID") int userID) {
+        return organisationMapper.selectByUser(userID);
+    }
+    
 // Function no longer in use
 //    /**
 //     * Change the email subscription settings of the current user from the user

@@ -106,7 +106,7 @@
                 //}
                 
                 for(var i = 0; i < data.enhanced.length; i++){
-                    toReturn += '<li>Your enhanced access: ' + data.enhanced[i] + '</li>';
+                    toReturn += '<li>' + data.enhanced[i].owner + ' enhanced access: ' + data.enhanced[i].filterText + '</li>';
                 }
 
                 toReturn += '</ul>';

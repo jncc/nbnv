@@ -26,6 +26,7 @@ import uk.org.nbn.nbnv.api.dao.warehouse.DatasetAdministratorMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.DatasetMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.DownloadMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.OrganisationMapper;
+import uk.org.nbn.nbnv.api.model.AccessPosition;
 import uk.org.nbn.nbnv.api.model.Dataset;
 import uk.org.nbn.nbnv.api.model.DatasetAdministrator;
 import uk.org.nbn.nbnv.api.model.DatasetResolutionRecordCount;
@@ -37,7 +38,6 @@ import uk.org.nbn.nbnv.api.model.meta.ContributingOrganisation;
 import uk.org.nbn.nbnv.api.model.meta.DatasetAdminMembershipJSON;
 import uk.org.nbn.nbnv.api.model.meta.OpResult;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenDatasetAdminUser;
-import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenDatasetOrOrgAdminUser;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenDatasetSurveyAdminUser;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
 import uk.org.nbn.nbnv.api.solr.SolrResolver;
@@ -208,7 +208,7 @@ public class DatasetResource extends AbstractResource {
     @GET
     @Path("/{datasetKey}/accessPositions")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<String> getAttributesByDatasetKey(@TokenUser() User user, @PathParam("datasetKey") String datasetKey){
+    public List<AccessPosition> getAttributesByDatasetKey(@TokenUser() User user, @PathParam("datasetKey") String datasetKey){
         return datasetMapper.getDatasetAccessPositions(datasetKey, user.getId());
     }
     

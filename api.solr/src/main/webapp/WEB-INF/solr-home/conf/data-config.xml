@@ -13,7 +13,7 @@
             <field column="record_id" template="DESIGNATION-${designation.code}" />
             <field column="record_type" template="designation" />
         </entity>
-        <entity name="gridsquarefeature" query="Select geom.STCentroid().STX AS location_0_coordinate, geom.STCentroid().STY AS location_1_coordinate,* From GridSquareFeatureData" transformer="TemplateTransformer">
+        <entity name="gridsquarefeature" query="Select geom.STCentroid().STX AS location_0_coordinate, geom.STCentroid().STY AS location_1_coordinate,* From GridSquareFeatureData gsfd WHERE gsfd.resolutionID = 1" transformer="TemplateTransformer">
             <field column="record_id" template="FEATURE-${gridsquarefeature.label}" />
             <field column="record_type" template="gridsquarefeature" />
             <field column="name" template="${gridsquarefeature.label}" />

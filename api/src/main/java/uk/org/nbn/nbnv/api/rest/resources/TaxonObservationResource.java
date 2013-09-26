@@ -435,10 +435,11 @@ public class TaxonObservationResource extends AbstractResource {
             @QueryParam("sensitive") @DefaultValue(ObservationResourceDefaults.defaultSensitive) Boolean sensitive,
             @QueryParam("designation") @DefaultValue(ObservationResourceDefaults.defaultDesignation) String designation,
             @QueryParam("taxonOutputGroup") @DefaultValue(ObservationResourceDefaults.defaultTaxonOutputGroup) String taxonOutputGroup,
+            @QueryParam("orgSuppliedList") @DefaultValue(ObservationResourceDefaults.defaultOrgSuppliedList) int orgSuppliedList,
             @QueryParam("gridRef") @DefaultValue(ObservationResourceDefaults.defaultGridRef) String gridRef,
             @QueryParam("polygon") @DefaultValue(ObservationResourceDefaults.defaultPolygon) String polygon) {
         //TODO: squareBlurring(?)
-        return observationMapper.selectObservationDatasetsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon);
+        return observationMapper.selectObservationDatasetsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon, orgSuppliedList);
     }
 
     /**
@@ -711,11 +712,12 @@ public class TaxonObservationResource extends AbstractResource {
             @QueryParam("sensitive") @DefaultValue(ObservationResourceDefaults.defaultSensitive) Boolean sensitive,
             @QueryParam("designation") @DefaultValue(ObservationResourceDefaults.defaultDesignation) String designation,
             @QueryParam("taxonOutputGroup") @DefaultValue(ObservationResourceDefaults.defaultTaxonOutputGroup) String taxonOutputGroup,
+            @QueryParam("orgSuppliedList") @DefaultValue(ObservationResourceDefaults.defaultOrgSuppliedList) int orgSuppliedList,
             @QueryParam("gridRef") @DefaultValue(ObservationResourceDefaults.defaultGridRef) String gridRef,
             @QueryParam("polygon") @DefaultValue(ObservationResourceDefaults.defaultPolygon) String polygon,
             @QueryParam("returnAccessPositions") @DefaultValue("") String getPerm) {
         //TODO: squareBlurring(?)
-        List<TaxonDatasetWithQueryStats> datasetsWithQueryStats = observationMapper.selectObservationDatasetsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon);
+        List<TaxonDatasetWithQueryStats> datasetsWithQueryStats = observationMapper.selectObservationDatasetsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon, orgSuppliedList);
 
         if (getPerm.equalsIgnoreCase("true")) {
             for (TaxonDatasetWithQueryStats d : datasetsWithQueryStats) {
@@ -762,7 +764,7 @@ public class TaxonObservationResource extends AbstractResource {
             oTaxonObservationFilterMapper.createDownloadLog(filter.getId(), dFilter.getReason().getPurpose(), dFilter.getReason().getDetails(), user.getId());
         }
         
-        mailDatasetDownloadNotifications(filter, dFilter);
+        mailDatasetDownloadNotifications(filter, dFilter, user);
         
         final int filterID = filter.getId();
         return new StreamingOutput() {
@@ -1191,7 +1193,7 @@ public class TaxonObservationResource extends AbstractResource {
         // Write headers out
         downloadHelper.writelnCsv(zip, values);
         
-        SimpleDateFormat df = new SimpleDateFormat("dd-mm-yyyy");
+        SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
         HashMap<String, Integer> datasetRecordCounts = new HashMap<String, Integer>();
 
         for(TaxonObservationDownload observation : observations) {
@@ -1217,9 +1219,9 @@ public class TaxonObservationResource extends AbstractResource {
             values.add(observation.getAuthority());
             values.add(StringUtils.hasText(observation.getCommonName()) ? observation.getCommonName() : "");
             values.add(observation.getTaxonGroup());
-            values.add(observation.isSensitive() ? "1" : "0");
-            values.add(observation.isZeroAbundance() ? "1" : "0");
-            values.add(observation.isFullVersion()? "1" : "0");
+            values.add(observation.isSensitive() ? "true" : "false");
+            values.add(observation.isZeroAbundance() ? "true" : "false");
+            values.add(observation.isFullVersion()? "true" : "false");
             values.add(StringUtils.hasText(observation.getUseConstraints()) ? observation.getUseConstraints() : "");
 
             if (includeAttributes) {
@@ -1273,7 +1275,7 @@ public class TaxonObservationResource extends AbstractResource {
             boolean sensitive, String designation, String taxonOutputGroup, 
             int orgSuppliedList, String gridRef, String polygon) 
             throws IOException {
-        List<TaxonDatasetWithQueryStats> datasetsWithQueryStats = observationMapper.selectObservationDatasetsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon);
+        List<TaxonDatasetWithQueryStats> datasetsWithQueryStats = observationMapper.selectObservationDatasetsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon, orgSuppliedList);
         downloadHelper.addDatasetWithQueryStatsMetadata(zip, user.getId(), datasetsWithQueryStats);
     }
     
@@ -1357,8 +1359,26 @@ public class TaxonObservationResource extends AbstractResource {
         return mapper.readValue(json, DownloadStatsJSON.class);
     }
     
-    private void mailDatasetDownloadNotifications(TaxonObservationFilter filter, DownloadFilterJSON dFilter) throws IOException, TemplateException {
-        List<String> datasets = dFilter.getDataset().getDatasets();
+    private void mailDatasetDownloadNotifications(TaxonObservationFilter filter, DownloadFilterJSON dFilter, User user) throws IOException, TemplateException {
+        List<String> datasets = null;
+        
+        if (dFilter.getDataset().isAll()) {
+            List<String> species = null;
+            datasets = new ArrayList<String>();
+            if (dFilter.getTaxon().getTvk() != null && !dFilter.getTaxon().getTvk().isEmpty()) {
+                species = new ArrayList<String>();
+                species.add(dFilter.getTaxon().getTvk());
+            }
+
+            List<TaxonDatasetWithQueryStats> selectObservationDatasetsByFilter = observationMapper.selectObservationDatasetsByFilter(user, dFilter.getYear().getStartYear(), dFilter.getYear().getEndYear(), new ArrayList<String>(), species, dFilter.getSpatial().getMatch(), dFilter.getSpatial().getFeature(), (dFilter.getSensitive().equals("sans") ? true : false), dFilter.getTaxon().getDesignation(), dFilter.getTaxon().getOutput(), "", "", dFilter.getTaxon().getOrgSuppliedList());
+
+            for (TaxonDatasetWithQueryStats tdwqs : selectObservationDatasetsByFilter) {
+                datasets.add(tdwqs.getDatasetKey());
+            }
+
+        } else {
+            datasets = dFilter.getDataset().getDatasets();
+        }
 
         Map<Integer, String> purposes = new HashMap<Integer, String>();
         purposes.put(1, "Personal interest");
@@ -1376,8 +1396,12 @@ public class TaxonObservationResource extends AbstractResource {
             Map<String, Object> message = new HashMap<String, Object>();
             message.put("portal", properties.getProperty("portal_url"));
             
-            User downloader = userMapper.getUserById(dFilter.getReason().getUserID());
-            message.put("downloader", downloader.getForename() + " " + downloader.getSurname() + "(" + downloader.getEmail() + ")");
+            message.put("downloader", user.getForename() + " " + user.getSurname() + "(" + user.getEmail() + ")");
+            
+            if (dFilter.getReason().getOrganisationID() > -1) {
+                Organisation org = organisationMapper.selectByID(dFilter.getReason().getOrganisationID());
+                message.put("dorg", org.getName());
+            }
             
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             message.put("downloadTime", sdf.format(new Date()));
@@ -1389,12 +1413,12 @@ public class TaxonObservationResource extends AbstractResource {
             message.put("dataset", dataset);
             message.put("datasetName", datasetMapper.selectByDatasetKey(dataset).getTitle());
             
-            for (UserDownloadNotification user : users) {                
-                message.put("name", user.getForename());
+            for (UserDownloadNotification nuser : users) {                
+                message.put("name", nuser.getForename());
                 templateMailer.send(
                         "dataset_download_notification.ftl", 
-                        user.getEmail(), 
-                        "NBN Gateway: Someone has downloaded some of your records", 
+                        nuser.getEmail(), 
+                        "NBN Gateway: User downloaded records", 
                         message);
             }
         }

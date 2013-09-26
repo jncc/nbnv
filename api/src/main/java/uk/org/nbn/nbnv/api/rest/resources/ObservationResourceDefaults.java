@@ -12,6 +12,7 @@ public class ObservationResourceDefaults {
     public static final String defaultSensitive = "1";
     public static final String defaultDesignation = "";
     public static final String defaultTaxonOutputGroup = "";
+    public static final String defaultOrgSuppliedList = "-1";
     public static final String defaultGridRef = "";
     public static final String defaultFeatureID = "";
     public static final String defaultAttributeID = "-1";
