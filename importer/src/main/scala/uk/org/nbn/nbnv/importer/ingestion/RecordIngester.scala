@@ -31,11 +31,8 @@ class RecordIngester @Inject()(log: Logger,
     //val sample = sampleIngester.stageSample(record.sampleKey, survey)
     val site = siteIngester.upsertSite(record.siteKey, record.siteName, dataset.getImportDataset)
 
-
     val feature = featureIngester.ensureFeature(record)
 
-    val taxon = db.repo.getTaxon(record.taxonVersionKey)
-    val dateType = db.repo.getDateType(record.dateType)
     val determiner = if (record.determiner.isDefined) {
         db.repo.getFirstImportRecorder(record.determiner.get)
       }
@@ -57,7 +54,7 @@ class RecordIngester @Inject()(log: Logger,
       o.setAbsenceRecord(record.absence)
       o.setDateStart(startDate getOrElse null)
       o.setDateEnd(endDate getOrElse null)
-      o.setDateTypeKey(dateType.getKey)
+      o.setDateTypeKey(record.dateType) //confirmed by NBNV-78 validator
       o.setDeterminerID(determiner getOrElse null)
       o.setFeatureID(feature.getId)
       o.setProviderKey(record.key)
@@ -65,7 +62,7 @@ class RecordIngester @Inject()(log: Logger,
       o.setSampleID(sample)
       o.setSensitiveRecord(record.sensitiveOccurrence)
       o.setSiteID(site.orNull)
-      o.setTaxonVersionKey(taxon.getTaxonVersionKey)
+      o.setTaxonVersionKey(record.taxonVersionKey)
     }
 
     val observation = db.repo.getTaxonObservation(record.key, sample) match {
