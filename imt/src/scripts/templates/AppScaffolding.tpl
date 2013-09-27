@@ -4,7 +4,7 @@
 
 <div class="navbar navbar-inverse row-fluid">
   <div class="navbar-inner">
-    <img src="img/nbnLogo.png" class="logo"/>
+    <a href="http://data.nbn.org.uk"><img src="img/nbnLogo.png" class="logo"/></a>
     <div class="navbar-form span9"><div class="search"></div></div>
       <ul class="nav pull-right">
         <li><div class="navbar-text userView"></div></li>
