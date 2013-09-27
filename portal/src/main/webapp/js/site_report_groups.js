@@ -18,6 +18,7 @@
         $.getJSON(url, function(data){
             if(data.length > 0){
                 toAppend += '<ul>';
+                data.sort(function(a, b) { return ((a.taxonOutputGroup.name < b.taxonOutputGroup.name) ? -1 : ((a.taxonOutputGroup.name > b.taxonOutputGroup.name) ? 1 : 0)); });
                 $.each(data, function(key, val){
                     toAppend += '<li><a href="/Reports/Sites/' + featureID + '/Groups/' + val.taxonOutputGroup.key + '/Species">' + val.taxonOutputGroup.name + '</a>';
                 });
