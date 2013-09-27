@@ -146,7 +146,6 @@
     <div class="tabbed nbn-taxon-page-taxonomy-container">
         <h3>Designations</h3>
         <#if des?has_content>
-            <h4>Current designation(s)</h4>
             <#assign w = 0 />
             <table class="nbn-dataset-table nbn-simple-table">
                 <#list des?sort_by("startDate")?reverse as d>
@@ -156,8 +155,6 @@
                         <td width="25%"><a href="/Designation_Categories/${d.designation.code}">${d.designation.name}</a></td>
                         <td style="width: 110px;">
                             <#if d.startDate??>From: ${d.startDate}</#if>
-                            <#if d.startDate?? && d.endDate??><br/></#if>
-                            <#if d.endDate??>Until: ${d.endDate}</#if>
                         </td>
                         <td><#if d.source??>${d.source}</#if></td>
                     </tr>
@@ -167,7 +164,7 @@
                     <tr><td>None</td></tr>
                 </#if>
             </table>
-            <h4>Archived designation(s)</h4>
+<!--            <h4>Archived designation(s)</h4>
             <#assign w = 0 />
             <table class="nbn-dataset-table nbn-simple-table">
                 <#list ades?sort_by("endDate")?reverse as d>
@@ -187,7 +184,7 @@
                 <#if w == 0>
                     <tr><td>None</td></tr>
                 </#if>
-            </table>
+            </table> -->
         <#else>
             <div>None</div>
         </#if>
