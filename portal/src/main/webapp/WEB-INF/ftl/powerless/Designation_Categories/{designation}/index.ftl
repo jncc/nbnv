@@ -23,7 +23,7 @@
                 </tr>
                 <tr>
                     <th>Interactive species richness map for this designation:</th>
-                    <td><a href="//data.nbn.org.uk/imt/?mode=DESIGNATION&designation=${designation.label}" target="_blank">Go to map</a></td>
+                    <td><a href="/imt/?mode=DESIGNATION&designation=${designation.label}" target="_blank">Go to map</a></td>
                 </tr>
                 <tr>
                     <th>Groups that have species with this designation:</th>

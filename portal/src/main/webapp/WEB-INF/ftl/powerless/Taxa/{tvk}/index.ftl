@@ -48,10 +48,13 @@
 
 <#macro taxonPageNBNLinks taxon>
     <div class="tabbed nbn-taxon-page-right-container">
-        <h3>Explore Records</h3>
+        <h3>Explore and Download Records</h3>
         <div class="nbn-taxon-page-list"><a href="/Taxa/${taxon.taxonVersionKey}/Grid_Map"><img src="/img/taxonPage/grid.png" class="nbn-taxon-page-link-img" />Grid Map</a></div>
         <div class="nbn-taxon-page-list"><a href="/imt/?mode=SPECIES&species=${taxon.taxonVersionKey}"><img src="/img/taxonPage/imt.png" class="nbn-taxon-page-link-img" />Interactive Map</a></div>
         <div class="nbn-taxon-page-list"><a href="/Taxa/${taxon.taxonVersionKey}/Site_Boundaries"><img src="/img/taxonPage/site.png" class="nbn-taxon-page-link-img" />List of sites</a></div>
+        <div class="nbn-taxon-page-list"><a href="#" id="nbn-download-observations-button"><img src="/img/taxonPage/download.png" class="nbn-taxon-page-link-img" />Download Records</a></div>
+        <input type="hidden" id="tvk" name="tvk" value="${tvk}" />
+        <@report_utils.downloadTermsDialogue/>
     </div>
 </#macro>
 
@@ -143,7 +146,6 @@
     <div class="tabbed nbn-taxon-page-taxonomy-container">
         <h3>Designations</h3>
         <#if des?has_content>
-            <h4>Current designation(s)</h4>
             <#assign w = 0 />
             <table class="nbn-dataset-table nbn-simple-table">
                 <#list des?sort_by("startDate")?reverse as d>
@@ -153,8 +155,6 @@
                         <td width="25%"><a href="/Designation_Categories/${d.designation.code}">${d.designation.name}</a></td>
                         <td style="width: 110px;">
                             <#if d.startDate??>From: ${d.startDate}</#if>
-                            <#if d.startDate?? && d.endDate??><br/></#if>
-                            <#if d.endDate??>Until: ${d.endDate}</#if>
                         </td>
                         <td><#if d.source??>${d.source}</#if></td>
                     </tr>
@@ -164,7 +164,7 @@
                     <tr><td>None</td></tr>
                 </#if>
             </table>
-            <h4>Archived designation(s)</h4>
+<!--            <h4>Archived designation(s)</h4>
             <#assign w = 0 />
             <table class="nbn-dataset-table nbn-simple-table">
                 <#list ades?sort_by("endDate")?reverse as d>
@@ -184,7 +184,7 @@
                 <#if w == 0>
                     <tr><td>None</td></tr>
                 </#if>
-            </table>
+            </table> -->
         <#else>
             <div>None</div>
         </#if>

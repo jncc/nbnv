@@ -37,10 +37,36 @@
         $('#nbn-grid-map-image').attr('src','/img/ajax-loader-medium.gif');
         $('#nbn-grid-map-image').attr('src',getURL($('#nbn-grid-map-container')));
     }
-    
+
+    function setupDownloadRecordsLink() {
+        $('#nbn-download-observations-button').click(function(e) {
+            $('#nbn-download-terms').dialog({
+                modal: true,
+                width: 800,
+                height: 450,
+                buttons: {
+                    'Accept': function(){
+                        window.location = '/Download?json={' + 
+                            getTaxonJSON() + '}';
+                    },
+                    'Cancel': function(){
+                        $(this).dialog("close");
+                    }
+                }
+            });
+            e.preventDefault();
+        });
+    }
+
+    function getTaxonJSON() {
+        return 'taxon:{tvk:\'' + $('#tvk').val() + '\'}';
+    }
+
     $(document).ready(function(){
         hideBusyImageOnMapLoad();
         addInitialMapImage();
+        $('#nbn-download-terms').hide();
+        setupDownloadRecordsLink();
     });
         
 })(jQuery);
