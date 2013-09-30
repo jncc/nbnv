@@ -89,7 +89,7 @@ class EndToEndSuiteIT extends BaseFunSuite with ResourceLoader {
 
   }
 
-  ignore("should import a valid archive") {
+  test("should import a valid archive") {
 
     val archive = resource("/archives/valid.zip")
 
