@@ -12,7 +12,7 @@ namespace uk.org.nbn.nbnv.ImporterPollingService.Service
             var di = new DirectoryInfo(inputFolder);
 
             var q = from fi in di.EnumerateFiles(pattern)
-                    orderby fi.CreationTime descending 
+                    orderby fi.CreationTime 
                     select fi;
 
             return q.ToList();
