@@ -12,7 +12,7 @@ namespace uk.org.nbn.nbnv.ImporterPollingService.Service
             var config = new ServiceConfiguration()
                 {
                     ImporterCommandLine = ConfigurationManager.AppSettings["ImporterCommandLine"],
-                    UpdatesFolder = ConfigurationManager.AppSettings["UpdatesFolder"],
+                    NewOrReplaceFolder = ConfigurationManager.AppSettings["NewOrReplaceFolder"],
                     AppendsFolder = ConfigurationManager.AppSettings["AppendsFolder"],
                     ImporterLogFolder = ConfigurationManager.AppSettings["ImporterLogFolder"],
                     ResultFolder = ConfigurationManager.AppSettings["ResultFolder"],

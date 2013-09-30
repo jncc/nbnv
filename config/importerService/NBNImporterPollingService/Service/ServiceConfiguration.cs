@@ -6,7 +6,7 @@ namespace uk.org.nbn.nbnv.ImporterPollingService.Service
 
         public string ImporterLogFolder { get; set; }
 
-        public string UpdatesFolder { get; set; }
+        public string NewOrReplaceFolder { get; set; }
 
         public string ResultFolder { get; set; }
 

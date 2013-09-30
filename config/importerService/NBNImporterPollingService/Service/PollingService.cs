@@ -46,7 +46,7 @@ namespace uk.org.nbn.nbnv.ImporterPollingService.Service
             {
                 try
                 {
-                    ImportFromFolder(config, log, config.UpdatesFolder, ImportMode.Update);
+                    ImportFromFolder(config, log, config.NewOrReplaceFolder, ImportMode.NewOrReplace);
                     ImportFromFolder(config, log, config.AppendsFolder, ImportMode.Append);
                 }
                 catch (Exception e)

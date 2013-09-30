@@ -11,7 +11,7 @@ namespace uk.org.nbn.nbnv.ImporterPollingService.Service
 {
     public enum ImportMode
     {
-        Update
+        NewOrReplace
         , Append
     }
 
@@ -67,7 +67,7 @@ namespace uk.org.nbn.nbnv.ImporterPollingService.Service
 
             switch (mode)
             {
-                case ImportMode.Update:
+                case ImportMode.NewOrReplace:
                     cl = cl.Replace("%mode%", "full");
                     break;
                 case ImportMode.Append:
