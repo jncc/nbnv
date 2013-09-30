@@ -12,7 +12,7 @@
     "underscore-amd": "~1.4.4",
     "requirejs-text": "~2.0.7",
     "require-cs": "~0.4.4",
-    "openlayers": "http://openlayers.org/download/OpenLayers-2.13.1.tar.gz",
+    "openlayers": "~2.13.1",
     "proj4js": "http://download.osgeo.org/proj4js/proj4js-1.1.0.zip",
     "bootstrap": "~2.3.2",
     "jquery-md5": "b985fce4e867773e5fb7a29b4fb5df74c53595d0",
