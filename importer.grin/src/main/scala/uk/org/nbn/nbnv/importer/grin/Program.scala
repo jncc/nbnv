@@ -53,9 +53,9 @@ class Program @Inject() (log: Logger, options: Options, db: Database, ingester: 
 
       val t = db.em.getTransaction
 
-      val ingester = new FeatureIngester(log, db, new GridSquareInfoFactory(db))
-
       withTransaction(t, options.whatIf) {
+
+        val ingester = new FeatureIngester(log, db, new GridSquareInfoFactory(db))
 
         for ((ref, i) <- g) {
           log.info("Importing grid ref '%s'".format(ref))
