@@ -14,6 +14,7 @@
     ,"/js/admin/access/requestGrantDialog.js"
     ,"/js/admin/access/requestDenyDialog.js"
     ,"/js/admin/access/requestRevokeDialog.js"
+    ,"/js/admin/access/requestInfoDialogs.js"
     ,"/js/dialog_spinner.js"
     ]
     csss=["//ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/themes/smoothness/jquery-ui.css","/css/dialog-spinner.css"]>
@@ -99,7 +100,7 @@
             <#list oUserRequests as r>
             <tr>
                 <td>
-                    ${r.user.forename} ${r.user.surname}
+                    <a class="nbn-request-username" title="View User Information" href="" data-email="${r.user.email}" data-id="${r.user.id?c}">${r.user.forename} ${r.user.surname}</a>
                 </td>
                 <td>
                     ${r.dataset.title}
@@ -124,7 +125,7 @@
             <#list oOrgRequests as r>
             <tr>
                 <td>
-                    ${r.organisation.name}
+                    <a class="nbn-request-orgname" data-contact="${r.organisation.contactEmail}" data-contact-name="${r.organisation.contactName}" title="View Organisation Information" href="">${r.organisation.name}</a>
                 </td>
                 <td>
                     ${r.dataset.title}
@@ -166,7 +167,7 @@
             <#list gUserRequests as r>
             <tr>
                 <td>
-                    ${r.user.forename} ${r.user.surname}
+                    <a class="nbn-request-username" title="View User Information" href="" data-email="${r.user.email}" data-id="${r.user.id?c}">${r.user.forename} ${r.user.surname}</a>
                 </td>
                 <td>
                     ${r.dataset.title}
@@ -194,7 +195,7 @@
             <#list gOrgRequests as r>
             <tr>
                 <td>
-                    ${r.organisation.name}
+                    <a class="nbn-request-orgname" data-contact="${r.organisation.contactEmail}" data-contact-name="${r.organisation.contactName}" title="View Organisation Information" href="">${r.organisation.name}</a>
                 </td>
                 <td>
                     ${r.dataset.title}
@@ -238,7 +239,7 @@
             <#list dUserRequests as r>
             <tr>
                 <td>
-                    ${r.user.forename} ${r.user.surname}
+                    <a class="nbn-request-username" title="View User Information" href="" data-email="${r.user.email}" data-id="${r.user.id?c}">${r.user.forename} ${r.user.surname}</a>
                 </td>
                 <td>
                     ${r.dataset.title}
@@ -263,7 +264,7 @@
             <#list dOrgRequests as r>
             <tr>
                 <td>
-                    ${r.organisation.name}
+                    <a class="nbn-request-orgname" data-contact="${r.organisation.contactEmail}" data-contact-name="${r.organisation.contactName}" title="View Organisation Information" href="">${r.organisation.name}</a>
                 </td>
                 <td>
                     ${r.dataset.title}
@@ -287,4 +288,37 @@
             </#list>
         </tbody>
     </table>
+    <div id="nbn-further-info-user" title="User Information" style="display:none">
+        <table class="nbn-dataset-table">
+            <tr>
+                <td>User Name:</td>
+                <td id="nbn-further-info-user-name"></td>
+            </tr>
+            <tr>
+                <td>Email:</td>
+                <td id="nbn-further-info-user-email"></td>
+            </tr>
+            <tr><td></td><td></td></tr>
+            <tr>
+                <td id="nbn-further-info-user-org-desc">Organisation Memberships:</td>
+                <td id="nbn-further-info-user-orgs"></td>
+            </tr>
+        </table>        
+    </div>
+    <div id="nbn-further-info-org" title="Organisation Information" style="display:none">
+        <table class="nbn-dataset-table">
+            <tr>
+                <td>Organisation Name:</td>
+                <td id="nbn-further-info-org-name"></td>
+            </tr>
+            <tr>
+                <td>Organisation Contact:</td>
+                <td id="nbn-further-info-org-contact-name"></td>
+            </tr>
+            <tr>
+                <td>Organisation Contact Email:</td>
+                <td id="nbn-further-info-org-contact"></td>
+            </tr>
+        </table>
+    </div>
 </@template.master>
