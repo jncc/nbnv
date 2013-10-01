@@ -37,6 +37,11 @@ object Program {
   }
 }
 
+/*#### NOTE!!!!:
+This uses the database configuration from the importer project.
+  * Connection information is specified in importer/src/main/resources/importer.properties NOT in this project
+  * the project must be packaged with dependencies use the following maven command
+  *   mvn clean package -pl importer.grin -am */
 class Program @Inject() (log: Logger, options: Options, db: Database, ingester: FeatureIngester) {
 
   def run() {
