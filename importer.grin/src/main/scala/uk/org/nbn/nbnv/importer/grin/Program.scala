@@ -37,6 +37,11 @@ object Program {
   }
 }
 
+/*#### NOTE!!!!:
+This uses the database configuration from the importer project.
+  * Connection information is specified in importer/src/main/resources/importer.properties NOT in this project
+  * the project must be packaged with dependencies use the following maven command
+  *   mvn clean package -pl importer.grin -am */
 class Program @Inject() (log: Logger, options: Options, db: Database, ingester: FeatureIngester) {
 
   def run() {
@@ -53,9 +58,9 @@ class Program @Inject() (log: Logger, options: Options, db: Database, ingester: 
 
       val t = db.em.getTransaction
 
-      val ingester = new FeatureIngester(log, db, new GridSquareInfoFactory(db))
-
       withTransaction(t, options.whatIf) {
+
+        val ingester = new FeatureIngester(log, db, new GridSquareInfoFactory(db))
 
         for ((ref, i) <- g) {
           log.info("Importing grid ref '%s'".format(ref))
