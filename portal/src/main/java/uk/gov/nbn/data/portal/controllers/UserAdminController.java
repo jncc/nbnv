@@ -37,18 +37,18 @@ public class UserAdminController {
     @Autowired
     WebResource resource;
 
-    @RequestMapping(method = RequestMethod.GET)
-    public ModelAndView getUserLandingPage() {
-        User currentUser = resource.path("user/full")
-                .accept(MediaType.APPLICATION_JSON)
-                .get(User.class);
-
-        if (isNotPublicUser(currentUser)) {
-            return new ModelAndView("userLanding");
-        }
-
-        return ssoRedirect("/User", "You need to be logged in to view the user landing page.");
-    }
+//    @RequestMapping(method = RequestMethod.GET)
+//    public ModelAndView getUserLandingPage() {
+//        User currentUser = resource.path("user/full")
+//                .accept(MediaType.APPLICATION_JSON)
+//                .get(User.class);
+//
+//        if (isNotPublicUser(currentUser)) {
+//            return new ModelAndView("userLanding");
+//        }
+//
+//        return ssoRedirect("/User", "You need to be logged in to view the user landing page.");
+//    }
 
     @RequestMapping(value = "Modify", method = RequestMethod.GET)
     public ModelAndView getUserModifyPage() {
