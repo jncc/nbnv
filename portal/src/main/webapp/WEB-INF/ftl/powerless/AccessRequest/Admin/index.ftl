@@ -65,10 +65,40 @@
                 "bSortClasses": false,
                 "sPaginationType": "full_numbers",
                 "aLengthMenu": [[10,25,50,100,-1],[10,25,50,100,"All"]],
-                "aoColumns": [{"sWidth": "15%"}, {"sWidth": "20%"}, {"sWidth": "25%"}, {"sWidth": "28%"}, {"sWidth": "7%"}, {"sWidth": "5%"}]
+                "aoColumns": [
+                    {"sWidth": "15%"}, 
+                    {"sWidth": "20%"}, 
+                    {"sWidth": "21%"}, 
+                    {"sWidth": "25%"}, 
+                    {"sWidth": "7%"}, 
+                    {"sWidth": "5%"}
+                ]
             });
 
             $('.results').dataTable({
+                "aaSorting": [[5, "desc"]],
+                "bAutoWidth": true,
+                "bFilter": false,
+                "bJQueryUI": true,
+                "iDisplayLength": 25,
+                "bSortClasses": false,
+                "sPaginationType": "full_numbers",
+                "aLengthMenu": [[10,25,50,100,-1],[10,25,50,100,"All"]],
+                "aoColumns": [
+                    {"sWidth":"11%"},
+                    {"sWidth":"15%"},
+                    {"sWidth":"15%"},
+                    {"sWidth":"7%", "iDataSort": 9},
+                    {"sWidth":"15%"},
+                    {"sWidth":"7%"},
+                    {"sWidth":"15%"},
+                    {"sWidth":"7%"},
+                    {"sWidth":"5%"},
+                    {"bVisible" : false }                    
+                ]
+            });
+
+            $('.dresults').dataTable({
                 "aaSorting": [[4, "desc"]],
                 "bAutoWidth": true,
                 "bFilter": false,
@@ -76,7 +106,16 @@
                 "iDisplayLength": 25,
                 "bSortClasses": false,
                 "sPaginationType": "full_numbers",
-                "aLengthMenu": [[10,25,50,100,-1],[10,25,50,100,"All"]]
+                "aLengthMenu": [[10,25,50,100,-1],[10,25,50,100,"All"]],
+                "aoColumns": [
+                    {"sWidth": "15%"}, 
+                    {"sWidth": "18%"}, 
+                    {"sWidth": "15%"}, 
+                    {"sWidth": "15%"}, 
+                    {"sWidth": "7%"}, 
+                    {"sWidth": "15%"},
+                    {"sWidth": "7%"}
+                ]
             });
         });
     </script>
@@ -103,7 +142,7 @@
                     <a class="nbn-request-username" title="View User Information" href="" data-email="${r.user.email}" data-id="${r.user.id?c}">${r.user.forename} ${r.user.surname}</a>
                 </td>
                 <td>
-                    ${r.dataset.title}
+                    <a href=${r.dataset.href}>${r.dataset.title}</a>
                 </td>
                 <td>
                     ${r.filter.filterText}
@@ -128,7 +167,7 @@
                     <a class="nbn-request-orgname" data-id="${r.organisation.id?c}" title="View Organisation Information" href="">${r.organisation.name}</a>
                 </td>
                 <td>
-                    ${r.dataset.title}
+                    <a href=${r.dataset.href}>${r.dataset.title}</a>
                 </td>
                 <td>
                     ${r.filter.filterText}
@@ -156,11 +195,13 @@
                 <th style="width: 15%">User</th>
                 <th>Dataset</th>
                 <th>Data Request</th>
+                <th>Request Expires</th>
                 <th>Request Reason</th>
                 <th>Request Date</th>
                 <th>Response Reason</th>
                 <th>Response Date</th>
                 <th>Action</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -170,10 +211,13 @@
                     <a class="nbn-request-username" title="View User Information" href="" data-email="${r.user.email}" data-id="${r.user.id?c}">${r.user.forename} ${r.user.surname}</a>
                 </td>
                 <td>
-                    ${r.dataset.title}
+                    <a href=${r.dataset.href}>${r.dataset.title}</a>
                 </td>
                 <td>
                     ${r.filter.filterText}
+                </td>
+                <td>
+                    <#if r.accessExpires??>${r.accessExpires}<#else>Indefinitely</#if>
                 </td>
                 <td>
                     ${r.requestReason}
@@ -190,6 +234,7 @@
                 <td>
                     <a class="revokelink" href="#" request="${r.filter.id?c}">Revoke</a>
                 </td>
+                <td><#if r.accessExpires??>${r.accessExpires}</#if></td>
             </tr>
             </#list>
             <#list gOrgRequests as r>
@@ -198,10 +243,13 @@
                     <a class="nbn-request-orgname" data-id="${r.organisation.id?c}" title="View Organisation Information" href="">${r.organisation.name}</a>
                 </td>
                 <td>
-                    ${r.dataset.title}
+                    <a href=${r.dataset.href}>${r.dataset.title}</a>
                 </td>
                 <td>
                     ${r.filter.filterText}
+                </td>
+                <td>
+                    <#if r.accessExpires??>${r.accessExpires}<#else>Indefinitely</#if>
                 </td>
                 <td>
                     ${r.requestReason}
@@ -218,12 +266,13 @@
                 <td>
                     <a class="revokelink" href="#" request="${r.filter.id?c}">Revoke</a>
                 </td>
+                <td><#if r.accessExpires??>${r.accessExpires}</#if></td>
             </tr>
             </#list>
         </tbody>
     </table>
     <h1>Denied Access Requests</h1>
-    <table class="results">
+    <table class="dresults">
         <thead>
             <tr>
                 <th style="width: 15%">User</th>
@@ -242,7 +291,7 @@
                     <a class="nbn-request-username" title="View User Information" href="" data-email="${r.user.email}" data-id="${r.user.id?c}">${r.user.forename} ${r.user.surname}</a>
                 </td>
                 <td>
-                    ${r.dataset.title}
+                    <a href=${r.dataset.href}>${r.dataset.title}</a>
                 </td>
                 <td>
                     ${r.filter.filterText}
@@ -267,7 +316,7 @@
                     <a class="nbn-request-orgname" data-id="${r.organisation.id?c}" title="View Organisation Information" href="">${r.organisation.name}</a>
                 </td>
                 <td>
-                    ${r.dataset.title}
+                    <a href=${r.dataset.href}>${r.dataset.title}</a>
                 </td>
                 <td>
                     ${r.filter.filterText}
