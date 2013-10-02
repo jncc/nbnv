@@ -23,9 +23,10 @@
                     { "sWidth": "20%" },
                     { "sWidth": "22%" },
                     { "sWidth": "22%" },
-                    { "sWidth": "7%" },
+                    { "sWidth": "7%", "iDataSort": 6 },
                     { "sWidth": "22%" },
-                    { "sWidth": "7%" }
+                    { "sWidth": "7%" },
+                    { "bVisible" : false }
                 ]
             });
             $('#granted').dataTable({
@@ -41,11 +42,12 @@
                     { "sWidth": "15%" },
                     { "sWidth": "16%" },
                     { "sWidth": "16%" },
-                    { "sWidth": "7%" },
+                    { "sWidth": "7%", "iDataSort": 8 },
                     { "sWidth": "16%" },
                     { "sWidth": "7%" },
                     { "sWidth": "16%" },
-                    { "sWidth": "7%" }
+                    { "sWidth": "7%" },
+                    { "bVisible" : false }
                 ]
             });
         });
@@ -62,6 +64,7 @@
                 <th>Request Expires</th>
                 <th>Request Reason</th>
                 <th>Request Date</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -77,7 +80,7 @@
                     ${r.filter.filterText}
                 </td>
                 <td>
-                    <#if r.accessExpires??>${r.accessExpires}</#if>
+                    <#if r.accessExpires??>${r.accessExpires}<#else>Indefinitely</#if>
                 </td>
                 <td>
                     ${r.requestReason}
@@ -85,6 +88,7 @@
                 <td>
                     ${r.requestDate}
                 </td>
+                <td><#if r.accessExpires??>${r.accessExpires}</#if></td>
             </tr>
             </#list>
             <#list pOrgRequests as r>
@@ -99,7 +103,7 @@
                     ${r.filter.filterText}
                 </td>
                 <td>
-                    <#if r.accessExpires??>${r.accessExpires}</#if>
+                    <#if r.accessExpires??>${r.accessExpires}<#else>Indefinitely</#if>
                 </td>
                 <td>
                     ${r.requestReason}
@@ -107,6 +111,7 @@
                 <td>
                     ${r.requestDate}
                 </td>
+                <td><#if r.accessExpires??>${r.accessExpires}</#if></td>
             </tr>
             </#list>
         </tbody>
@@ -123,6 +128,7 @@
                 <th>Request Date</th>
                 <th>Response Reason</th>
                 <th>Response Date</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -138,7 +144,7 @@
                     ${r.filter.filterText}
                 </td>
                 <td>
-                    <#if r.accessExpires??>${r.accessExpires}</#if>
+                    <#if r.accessExpires??>${r.accessExpires}<#else>Indefinitely</#if>
                 </td>
                 <td>
                     ${r.requestReason}
@@ -152,6 +158,7 @@
                 <td>
                     ${r.responseDate}
                 </td>
+                <td><#if r.accessExpires??>${r.accessExpires}</#if></td>
             </tr>
             </#list>
             <#list gOrgRequests as r>
@@ -166,7 +173,7 @@
                     ${r.filter.filterText}
                 </td>
                 <td>
-                    <#if r.accessExpires??>${r.accessExpires}</#if>
+                    <#if r.accessExpires??>${r.accessExpires}<#else>Indefinitely</#if>
                 </td>
                 <td>
                     ${r.requestReason}
@@ -180,6 +187,7 @@
                 <td>
                     ${r.responseDate}
                 </td>
+                <td><#if r.accessExpires??>${r.accessExpires}</#if></td>
             </tr>
             </#list>
         </tbody>
