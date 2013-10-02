@@ -10,27 +10,56 @@
     <script>
         $(function(){
             $.fn.dataTableExt.oJUIClasses.sStripeOdd = 'ui-state-highlight';
-            $('.results').dataTable({
-                "aaSorting": [[4, "desc"]],
+            $('#pending').dataTable({
+                "aaSorting": [[5, "desc"]],
                 "bAutoWidth": true,
                 "bFilter": false,
                 "bJQueryUI": true,
                 "iDisplayLength": 25,
                 "bSortClasses": false,
                 "sPaginationType": "full_numbers",
-                "aLengthMenu": [[10,25,50,100,-1],[10,25,50,100,"All"]]
+                "aLengthMenu": [[10,25,50,100,-1],[10,25,50,100,"All"]],
+                "aoColumns": [
+                    { "sWidth": "20%" },
+                    { "sWidth": "22%" },
+                    { "sWidth": "22%" },
+                    { "sWidth": "7%" },
+                    { "sWidth": "22%" },
+                    { "sWidth": "7%" }
+                ]
+            });
+            $('#granted').dataTable({
+                "aaSorting": [[5, "desc"]],
+                "bAutoWidth": true,
+                "bFilter": false,
+                "bJQueryUI": true,
+                "iDisplayLength": 25,
+                "bSortClasses": false,
+                "sPaginationType": "full_numbers",
+                "aLengthMenu": [[10,25,50,100,-1],[10,25,50,100,"All"]],
+                "aoColumns": [
+                    { "sWidth": "15%" },
+                    { "sWidth": "16%" },
+                    { "sWidth": "16%" },
+                    { "sWidth": "7%" },
+                    { "sWidth": "16%" },
+                    { "sWidth": "7%" },
+                    { "sWidth": "16%" },
+                    { "sWidth": "7%" }
+                ]
             });
         });
     </script>
     <h1>Your Access Requests</h1>
     <p>Your pending and granted enhanced access requests are displayed in the tables below.</p>
     <h1>Pending Access Requests</h1>
-    <table class="results">
+    <table id="pending" class="results">
         <thead>
             <tr>
                 <th style="width: 15%">User</th>
                 <th>Dataset</th>
                 <th>Data Request</th>
+                <th>Request Expires</th>
                 <th>Request Reason</th>
                 <th>Request Date</th>
             </tr>
@@ -46,6 +75,9 @@
                 </td>
                 <td>
                     ${r.filter.filterText}
+                </td>
+                <td>
+                    <#if r.accessExpires??>${r.accessExpires}</#if>
                 </td>
                 <td>
                     ${r.requestReason}
@@ -67,6 +99,9 @@
                     ${r.filter.filterText}
                 </td>
                 <td>
+                    <#if r.accessExpires??>${r.accessExpires}</#if>
+                </td>
+                <td>
                     ${r.requestReason}
                 </td>
                 <td>
@@ -77,12 +112,13 @@
         </tbody>
     </table>
     <h1>Granted Access Requests</h1>
-    <table class="results">
+    <table id="granted" class="results">
         <thead>
             <tr>
                 <th style="width: 15%">User</th>
                 <th>Dataset</th>
                 <th>Data Request</th>
+                <th>Request Expires</th>
                 <th>Request Reason</th>
                 <th>Request Date</th>
                 <th>Response Reason</th>
@@ -100,6 +136,9 @@
                 </td>
                 <td>
                     ${r.filter.filterText}
+                </td>
+                <td>
+                    <#if r.accessExpires??>${r.accessExpires}</#if>
                 </td>
                 <td>
                     ${r.requestReason}
@@ -125,6 +164,9 @@
                 </td>
                 <td>
                     ${r.filter.filterText}
+                </td>
+                <td>
+                    <#if r.accessExpires??>${r.accessExpires}</#if>
                 </td>
                 <td>
                     ${r.requestReason}
