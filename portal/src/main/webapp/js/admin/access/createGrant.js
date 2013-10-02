@@ -6,6 +6,7 @@ nbn.nbnv.ui.createGrant = function (json, div) {
     this.div = div;
     
     var reason = new nbn.nbnv.ui.requestPickUserReason(json);
+    reason.setGrant(true);
     var sensitive = new nbn.nbnv.ui.filter.sensitive(json);
     var year = new nbn.nbnv.ui.filter.year(json);
     var spatial = new nbn.nbnv.ui.filter.spatial(json);
