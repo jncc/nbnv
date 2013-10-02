@@ -1,5 +1,6 @@
 <#assign datasetKey=URLParameters.datasetKey>
 <#assign dataset=json.readURL("${api}/datasets/${datasetKey}")>
+<#assign admins=json.readURL("${api}/datasets/${datasetKey}/admins")>
 <#assign organisation=json.readURL("${dataset.organisationHref}")>
 <#assign organisations=json.readURL("${api}/organisations")>
 
