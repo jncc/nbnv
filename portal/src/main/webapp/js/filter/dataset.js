@@ -343,7 +343,12 @@ nbn.nbnv.ui.filter.dataset = function(json, isForDownload) {
                     "bSortClasses": false,
                     "sDom": '<"dsfilter-toolbar">frtip',
                     "sPaginationType": "full_numbers",
-                    "aLengthMenu": [[10,25,50,100,-1],[10,25,50,100,"All"]]
+                    "aLengthMenu": [[10,25,50,100,-1],[10,25,50,100,"All"]],
+                    "aoColumns": [
+                        {"sWidth":"7%"},
+                        {"sWidth":"83%"},
+                        {"sWidth":"10%"}
+                    ]
                 });
                 
                 $("div.dsfilter-toolbar").append($('<button>')
