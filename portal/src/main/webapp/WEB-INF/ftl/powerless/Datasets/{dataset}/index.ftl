@@ -113,7 +113,7 @@
                         </tr>
                     </#if>
                 </table>
-                <#if user.id != 1>
+                <#if user.id != 1 && dataset.typeName = "Taxon">
                     <br />
                     <a id="nbn-download-observations" href="#" data-dataset="${URLParameters.dataset}">Download Dataset</a>
                     <@report_utils.downloadTermsDialogue/>

@@ -96,6 +96,8 @@ nbn.nbnv = nbn.nbnv || {};
         var downloads = 0;
         var purposes = [0,0,0,0,0,0,0,0,0];
         
+        user.sort(function(a, b) { return ((a.total < b.total) ? 1 : ((a.total > b.total) ? -1 : ((a.totalAlt < b.totalAlt) ? 1 : ((a.totalAlt > b.totalAlt) ? -1 : 0))))});
+        org.sort(function(a, b) { return ((a.total < b.total) ? 1 : ((a.total > b.total) ? -1 : ((a.totalAlt < b.totalAlt) ? 1 : ((a.totalAlt > b.totalAlt) ? -1 : 0))))});
         
         $.each(stats, function(index, value) {
             records += this.total;
@@ -109,10 +111,10 @@ nbn.nbnv = nbn.nbnv || {};
                         .addClass('nbn-top-table-head')
                         .text('Top User Downloads')))
                 .append($('<tr>')
-                    .append($('<td>').text('#'))
-                    .append($('<td>').text('Name'))
-                    .append($('<td>').text('Downloads'))
-                    .append($('<td>').text('Records'))
+                    .append($('<td>').addClass('nbn-top-table-subhead').text('#'))
+                    .append($('<td>').addClass('nbn-top-table-subhead').text('Name'))
+                    .append($('<td>').addClass('nbn-top-table-subhead').text('Downloads'))
+                    .append($('<td>').addClass('nbn-top-table-subhead').text('Records'))
                 );
         var orgTable = $('<table>')
                 .append($('<tr>').append($('<td>')
@@ -120,17 +122,17 @@ nbn.nbnv = nbn.nbnv || {};
                         .addClass('nbn-top-table-head')
                         .text('Top Organisation Downloads')))
                 .append($('<tr>')
-                    .append($('<td>').text('#'))
-                    .append($('<td>').text('Name'))
-                    .append($('<td>').text('Downloads'))
-                    .append($('<td>').text('Records'))
+                    .append($('<td>').addClass('nbn-top-table-subhead').text('#'))
+                    .append($('<td>').addClass('nbn-top-table-subhead').text('Name'))
+                    .append($('<td>').addClass('nbn-top-table-subhead').text('Downloads'))
+                    .append($('<td>').addClass('nbn-top-table-subhead').text('Records'))
                 );
         
         $.each(user, function(index, value) {
             var i = index + 1;
             userTable.append($('<tr>')
                 .append($('<td>').text(i))
-                .append($('<td>').text(this.name))
+                .append($('<td>').append($('<a>').attr('href', '/User/' + this.id).attr('target', '_blank').text(this.name)))
                 .append($('<td>').text(this.totalAlt))
                 .append($('<td>').text(this.total))
             );
@@ -140,51 +142,51 @@ nbn.nbnv = nbn.nbnv || {};
             var i = index + 1;
             orgTable.append($('<tr>')
                 .append($('<td>').text(i))
-                .append($('<td>').text(this.name))
+                .append($('<td>').append($('<a>').attr('href', '/Organisations/' + this.id).attr('target', '_blank').text(this.name)))
                 .append($('<td>').text(this.totalAlt))
                 .append($('<td>').text(this.total))
             );            
         });
         
-        var stats = $('<table>')
+        var statsTable = $('<table>');
         
-        stats.append($('<tr>')
-                .append($('<td>').text('Total Downloads'))
+        statsTable.append($('<tr>')
+                .append($('<th>').text('Total Downloads'))
                 .append($('<td>').text(downloads))
         );
             
-        stats.append($('<tr>')
-                .append($('<td>').text('Total Records Downloaded'))
+        statsTable.append($('<tr>')
+                .append($('<th>').text('Total Records Downloaded'))
                 .append($('<td>').text(records))
         );
             
-        stats.append($('<tr>'));
+        statsTable.append($('<tr>'));
             
-        stats.append($('<tr>')
-                .append($('<td>').text('Records Downloaded for purpose'))
+        statsTable.append($('<tr>')
+                .append($('<th>').text('Records Downloaded per Purpose'))
                 .append($('<td>').text())
         );
             
-        addPurpose(stats, 'Personal interest', purposes, PURPOSE_PERSONAL - 1);         
-        addPurpose(stats, 'Educational purposes', purposes, PURPOSE_EDUCATION - 1);      
-        addPurpose(stats, 'Research and scientific analysis', purposes, PURPOSE_RESEARCH - 1);      
-        addPurpose(stats, 'Media publication', purposes, PURPOSE_MEDIA - 1);      
-        addPurpose(stats, 'Commercial and consultancy work', purposes, PURPOSE_COMMERCIAL_NGO - 1);      
-        addPurpose(stats, 'Professional land management', purposes, PURPOSE_LAND_MANAGEMENT - 1);      
-        addPurpose(stats, 'Data provision and interpretation (commercial)', purposes, PURPOSE_DATA_COMMERCIAL - 1);      
-        addPurpose(stats, 'Data provision and interpretation (non-profit)', purposes, PURPOSE_DATA_NON_PROFIT - 1);      
-        addPurpose(stats, 'Statutory work', purposes, PURPOSE_SATUTORY - 1);      
+        addPurpose(statsTable, 'Personal interest', purposes, PURPOSE_PERSONAL - 1);         
+        addPurpose(statsTable, 'Educational purposes', purposes, PURPOSE_EDUCATION - 1);      
+        addPurpose(statsTable, 'Research and scientific analysis', purposes, PURPOSE_RESEARCH - 1);      
+        addPurpose(statsTable, 'Media publication', purposes, PURPOSE_MEDIA - 1);      
+        addPurpose(statsTable, 'Commercial and consultancy work', purposes, PURPOSE_COMMERCIAL_NGO - 1);      
+        addPurpose(statsTable, 'Professional land management', purposes, PURPOSE_LAND_MANAGEMENT - 1);      
+        addPurpose(statsTable, 'Data provision and interpretation (commercial)', purposes, PURPOSE_DATA_COMMERCIAL - 1);      
+        addPurpose(statsTable, 'Data provision and interpretation (non-profit)', purposes, PURPOSE_DATA_NON_PROFIT - 1);      
+        addPurpose(statsTable, 'Statutory work', purposes, PURPOSE_SATUTORY - 1);      
             
         $('#downloadStats').empty()
-                .append(stats).append($('<br>'))
+                .append(statsTable).append($('<br>'))
                 .append($('<div>').addClass('nbn-top-table-div').append(userTable))
                 .append($('<div>').addClass('nbn-top-table-div').append(orgTable));
     }
     
     function addPurpose(parent, text, purposes, index) {
         parent.append($('<tr>')
-                .append($('<td>').append($('<span>').addClass("nbn-download-purpose-span").text(text)))
-                .append($('<td>').text(purposes[index - 1]))
+                .append($('<td>').addClass("nbn-download-purpose-span").text(text))
+                .append($('<td>').text(purposes[index]))
         );   
     }
     
@@ -236,17 +238,17 @@ nbn.nbnv = nbn.nbnv || {};
             var outputBody = $('<tbody>');
             $.each(data, function(key, value){
                 outputBody.append($('<tr>')
-                    .append($('<td>').text(value.forename + ' ' + value.surname))
-                    .append($('<td>').text(value.organisationName))
+                    .append($('<td>').append($('<a>').attr('href', '/User/' + value.userID).attr('target', '_blank').text(value.forename + ' ' + value.surname)))
+                    .append($('<td>').append($('<a>').attr('href', '/Organisations/' + value.organisationID).attr('target', '_blank').text(value.organisationName)))
                     .append($('<td>').text(value.downloadTimeString))
                     .append($('<td>').text(value.filterText))
                     .append($('<td>').text(value.purpose))
                     .append($('<td>').text(value.reason))
                     .append($('<td>').text(value.recordCount 
                         + ' records from this dataset in this download. This is ' 
-                        + (value.recordCount / value.totalRecords * 100)
-                        + '% of this dataset and this compromises '
-                        + (value.totalDownloaded / value.recordCount * 100)
+                        + (value.recordCount / value.totalRecords * 100).toFixed(1)
+                        + '% of this dataset and this comprises '
+                        + (value.recordCount / value.totalDownloaded * 100).toFixed(1)
                         + '% of the download')
                     )
                 );

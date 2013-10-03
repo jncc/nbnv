@@ -12,32 +12,9 @@
     }
     
     $(document).ready(function(){
-        $('#nbn-add-contrib-org').autocomplete({
-            source: $('#nbn-add-contrib-org').data('url'),
-            minLength: 3,
-            select: function(event, ui) {
-                event.preventDefault();
-                $('#nbn-add-contrib-org').val(ui.item.name);
-                $('#nbn-add-contrib-org').text(ui.item.name);
-                $('#nbn-add-contrib-org-id').val(ui.item.id);
-            }
-        })
-        .data('autocomplete')._renderItem = function(ul, item) {
-            var re = new RegExp(this.term, 'i');
-            var html = '';
-            if (item.abbreviation !== undefined) {
-                html = '<a><strong style="font-size: small;">' + replaceTerm(item.name, re) + '</strong><br /><span style="font-size: small;">' + replaceTerm(item.abbreviation, re) + '</span></a>'
-            } else {
-                html = '<a><strong style="font-size: small;">' + replaceTerm(item.name, re) + '</strong></a>'
-            }
-            return $('<li></li>')
-                    .data('item.autocomplete', item)
-                    .append(html)
-                    .appendTo(ul);
-        };
         
         $('#nbn-add-contrib-org-submit').click(function(e) {
-            var org = $('#nbn-add-contrib-org').text();
+            var org = $("#nbn-add-contrib-org option:selected").text()
             $('#nbn-add-contrib-org-dialog-name').text(org);
 
             $('#nbn-add-contrib-org-submit-dialog').dialog({
@@ -45,13 +22,13 @@
                 width: 400,
                 modal: true,
                 buttons: {
-                    'Add User': function() {
+                    'Add Organisation': function() {
                         displaySendingRequestDialog('Adding Organisation');
                         $.ajax({
                             type: 'PUT',
                             contentType: "application/json; charset=utf-8",
                             url: $('#nbn-add-contrib-org-submit').data('url'),
-                            data: JSON.stringify({orgID: $('#nbn-add-contrib-org-id').val()}),
+                            data: JSON.stringify({orgID: $("#nbn-add-contrib-org option:selected").val()}),
                             dataType: "json",
                             success: function(result) {
                                 if (result.result) {

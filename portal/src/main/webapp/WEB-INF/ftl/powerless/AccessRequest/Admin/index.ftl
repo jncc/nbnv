@@ -14,6 +14,7 @@
     ,"/js/admin/access/requestGrantDialog.js"
     ,"/js/admin/access/requestDenyDialog.js"
     ,"/js/admin/access/requestRevokeDialog.js"
+    ,"/js/admin/access/requestInfoDialogs.js"
     ,"/js/dialog_spinner.js"
     ]
     csss=["//ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/themes/smoothness/jquery-ui.css","/css/dialog-spinner.css"]>
@@ -64,10 +65,40 @@
                 "bSortClasses": false,
                 "sPaginationType": "full_numbers",
                 "aLengthMenu": [[10,25,50,100,-1],[10,25,50,100,"All"]],
-                "aoColumns": [{"sWidth": "15%"}, {"sWidth": "20%"}, {"sWidth": "25%"}, {"sWidth": "28%"}, {"sWidth": "7%"}, {"sWidth": "5%"}]
+                "aoColumns": [
+                    {"sWidth": "15%"}, 
+                    {"sWidth": "20%"}, 
+                    {"sWidth": "21%"}, 
+                    {"sWidth": "25%"}, 
+                    {"sWidth": "7%"}, 
+                    {"sWidth": "5%"}
+                ]
             });
 
             $('.results').dataTable({
+                "aaSorting": [[5, "desc"]],
+                "bAutoWidth": true,
+                "bFilter": false,
+                "bJQueryUI": true,
+                "iDisplayLength": 25,
+                "bSortClasses": false,
+                "sPaginationType": "full_numbers",
+                "aLengthMenu": [[10,25,50,100,-1],[10,25,50,100,"All"]],
+                "aoColumns": [
+                    {"sWidth":"11%"},
+                    {"sWidth":"15%"},
+                    {"sWidth":"15%"},
+                    {"sWidth":"7%", "iDataSort": 9},
+                    {"sWidth":"15%"},
+                    {"sWidth":"7%"},
+                    {"sWidth":"15%"},
+                    {"sWidth":"7%"},
+                    {"sWidth":"5%"},
+                    {"bVisible" : false }                    
+                ]
+            });
+
+            $('.dresults').dataTable({
                 "aaSorting": [[4, "desc"]],
                 "bAutoWidth": true,
                 "bFilter": false,
@@ -75,7 +106,16 @@
                 "iDisplayLength": 25,
                 "bSortClasses": false,
                 "sPaginationType": "full_numbers",
-                "aLengthMenu": [[10,25,50,100,-1],[10,25,50,100,"All"]]
+                "aLengthMenu": [[10,25,50,100,-1],[10,25,50,100,"All"]],
+                "aoColumns": [
+                    {"sWidth": "15%"}, 
+                    {"sWidth": "18%"}, 
+                    {"sWidth": "15%"}, 
+                    {"sWidth": "15%"}, 
+                    {"sWidth": "7%"}, 
+                    {"sWidth": "15%"},
+                    {"sWidth": "7%"}
+                ]
             });
         });
     </script>
@@ -99,10 +139,10 @@
             <#list oUserRequests as r>
             <tr>
                 <td>
-                    ${r.user.forename} ${r.user.surname}
+                    <a class="nbn-request-username" title="View User Information" href="" data-email="${r.user.email}" data-id="${r.user.id?c}">${r.user.forename} ${r.user.surname}</a>
                 </td>
                 <td>
-                    ${r.dataset.title}
+                    <a href=${r.dataset.href}>${r.dataset.title}</a>
                 </td>
                 <td>
                     ${r.filter.filterText}
@@ -124,10 +164,10 @@
             <#list oOrgRequests as r>
             <tr>
                 <td>
-                    ${r.organisation.name}
+                    <a class="nbn-request-orgname" data-id="${r.organisation.id?c}" title="View Organisation Information" href="">${r.organisation.name}</a>
                 </td>
                 <td>
-                    ${r.dataset.title}
+                    <a href=${r.dataset.href}>${r.dataset.title}</a>
                 </td>
                 <td>
                     ${r.filter.filterText}
@@ -155,24 +195,29 @@
                 <th style="width: 15%">User</th>
                 <th>Dataset</th>
                 <th>Data Request</th>
+                <th>Request Expires</th>
                 <th>Request Reason</th>
                 <th>Request Date</th>
                 <th>Response Reason</th>
                 <th>Response Date</th>
                 <th>Action</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
             <#list gUserRequests as r>
             <tr>
                 <td>
-                    ${r.user.forename} ${r.user.surname}
+                    <a class="nbn-request-username" title="View User Information" href="" data-email="${r.user.email}" data-id="${r.user.id?c}">${r.user.forename} ${r.user.surname}</a>
                 </td>
                 <td>
-                    ${r.dataset.title}
+                    <a href=${r.dataset.href}>${r.dataset.title}</a>
                 </td>
                 <td>
                     ${r.filter.filterText}
+                </td>
+                <td>
+                    <#if r.accessExpires??>${r.accessExpires}<#else>Indefinitely</#if>
                 </td>
                 <td>
                     ${r.requestReason}
@@ -189,18 +234,22 @@
                 <td>
                     <a class="revokelink" href="#" request="${r.filter.id?c}">Revoke</a>
                 </td>
+                <td><#if r.accessExpires??>${r.accessExpires}</#if></td>
             </tr>
             </#list>
             <#list gOrgRequests as r>
             <tr>
                 <td>
-                    ${r.organisation.name}
+                    <a class="nbn-request-orgname" data-id="${r.organisation.id?c}" title="View Organisation Information" href="">${r.organisation.name}</a>
                 </td>
                 <td>
-                    ${r.dataset.title}
+                    <a href=${r.dataset.href}>${r.dataset.title}</a>
                 </td>
                 <td>
                     ${r.filter.filterText}
+                </td>
+                <td>
+                    <#if r.accessExpires??>${r.accessExpires}<#else>Indefinitely</#if>
                 </td>
                 <td>
                     ${r.requestReason}
@@ -217,12 +266,13 @@
                 <td>
                     <a class="revokelink" href="#" request="${r.filter.id?c}">Revoke</a>
                 </td>
+                <td><#if r.accessExpires??>${r.accessExpires}</#if></td>
             </tr>
             </#list>
         </tbody>
     </table>
     <h1>Denied Access Requests</h1>
-    <table class="results">
+    <table class="dresults">
         <thead>
             <tr>
                 <th style="width: 15%">User</th>
@@ -238,10 +288,10 @@
             <#list dUserRequests as r>
             <tr>
                 <td>
-                    ${r.user.forename} ${r.user.surname}
+                    <a class="nbn-request-username" title="View User Information" href="" data-email="${r.user.email}" data-id="${r.user.id?c}">${r.user.forename} ${r.user.surname}</a>
                 </td>
                 <td>
-                    ${r.dataset.title}
+                    <a href=${r.dataset.href}>${r.dataset.title}</a>
                 </td>
                 <td>
                     ${r.filter.filterText}
@@ -263,10 +313,10 @@
             <#list dOrgRequests as r>
             <tr>
                 <td>
-                    ${r.organisation.name}
+                    <a class="nbn-request-orgname" data-id="${r.organisation.id?c}" title="View Organisation Information" href="">${r.organisation.name}</a>
                 </td>
                 <td>
-                    ${r.dataset.title}
+                    <a href=${r.dataset.href}>${r.dataset.title}</a>
                 </td>
                 <td>
                     ${r.filter.filterText}
@@ -287,4 +337,23 @@
             </#list>
         </tbody>
     </table>
+    <div id="nbn-further-info-user" title="User Information" style="display:none">
+        <table class="nbn-dataset-table">
+            <tr>
+                <td>User Name:</td>
+                <td id="nbn-further-info-user-name"></td>
+            </tr>
+            <tr>
+                <td>Email:</td>
+                <td id="nbn-further-info-user-email"></td>
+            </tr>
+            <tr><td></td><td></td></tr>
+            <tr>
+                <td id="nbn-further-info-user-org-desc">Organisation Memberships:</td>
+                <td id="nbn-further-info-user-orgs"></td>
+            </tr>
+        </table>        
+    </div>
+    <div id="nbn-further-info-org" title="Organisation Information" style="display:none">
+    </div>
 </@template.master>

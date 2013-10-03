@@ -25,7 +25,11 @@
 }
 
 .nbn-top-table-head {
-    text-align: center;
+    font-weight: bold;
+}
+
+.nbn-top-table-subhead {
+    font-style: italic;
 }
 
 .nbn-top-table-div {
@@ -34,5 +38,5 @@
 }
 
 .nbn-download-purpose-span {
-    padding-left: 5em;
+    padding-left: 2.5em;
 }

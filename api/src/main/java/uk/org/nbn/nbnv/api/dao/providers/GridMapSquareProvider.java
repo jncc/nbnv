@@ -42,11 +42,12 @@ public class GridMapSquareProvider {
     private void createGenericQuery(Map<String, Object> params) {
         FROM("UserTaxonObservationData o");
         INNER_JOIN("GridTree gt ON o.featureID = gt.featureID");
+        INNER_JOIN("TaxonTree tt ON tt.childPTVK = o.pTaxonVersionKey");
         INNER_JOIN("FeatureData fd ON gt.parentFeatureID = fd.id");
         INNER_JOIN("Resolution r ON fd.resolutionID = r.id");
         addViceCounty(params);
         WHERE("o.userID = #{user.id}");
-        WHERE("o.pTaxonVersionKey = #{ptvk}");
+        WHERE("tt.nodePTVK = #{ptvk}");
         WHERE("r.label = #{resolution}");
         if (params.containsKey("absence")) {
             WHERE("o.absence = #{absence}");

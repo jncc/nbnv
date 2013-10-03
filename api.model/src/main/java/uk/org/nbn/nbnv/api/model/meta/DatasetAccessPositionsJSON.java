@@ -5,6 +5,7 @@
 package uk.org.nbn.nbnv.api.model.meta;
 
 import java.util.List;
+import uk.org.nbn.nbnv.api.model.AccessPosition;
 
 /**
  *
@@ -12,7 +13,7 @@ import java.util.List;
  */
 public class DatasetAccessPositionsJSON {
     private String publicAccess;
-    private List<String> enhanced;
+    private List<AccessPosition> enhanced;
 
     public String getPublicAccess() {
         return publicAccess;
@@ -22,11 +23,11 @@ public class DatasetAccessPositionsJSON {
         this.publicAccess = publicAccess;
     }
 
-    public List<String> getEnhanced() {
+    public List<AccessPosition> getEnhanced() {
         return enhanced;
     }
 
-    public void setEnhanced(List<String> enhanced) {
+    public void setEnhanced(List<AccessPosition> enhanced) {
         this.enhanced = enhanced;
     }
 }

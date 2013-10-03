@@ -18,6 +18,7 @@ import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.org.nbn.nbnv.api.dao.core.OperationalDatasetAdministratorMapper;
 import uk.org.nbn.nbnv.api.dao.core.OperationalDatasetContributingOrganisationMapper;
 import uk.org.nbn.nbnv.api.dao.core.OperationalDatasetMapper;
 import uk.org.nbn.nbnv.api.dao.core.OperationalDownloadMapper;
@@ -26,6 +27,7 @@ import uk.org.nbn.nbnv.api.dao.warehouse.DatasetAdministratorMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.DatasetMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.DownloadMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.OrganisationMapper;
+import uk.org.nbn.nbnv.api.model.AccessPosition;
 import uk.org.nbn.nbnv.api.model.Dataset;
 import uk.org.nbn.nbnv.api.model.DatasetAdministrator;
 import uk.org.nbn.nbnv.api.model.DatasetResolutionRecordCount;
@@ -37,7 +39,6 @@ import uk.org.nbn.nbnv.api.model.meta.ContributingOrganisation;
 import uk.org.nbn.nbnv.api.model.meta.DatasetAdminMembershipJSON;
 import uk.org.nbn.nbnv.api.model.meta.OpResult;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenDatasetAdminUser;
-import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenDatasetOrOrgAdminUser;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenDatasetSurveyAdminUser;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
 import uk.org.nbn.nbnv.api.solr.SolrResolver;
@@ -47,6 +48,7 @@ import uk.org.nbn.nbnv.api.solr.SolrResolver;
 public class DatasetResource extends AbstractResource {
     @Autowired OperationalDatasetMapper oDatasetMapper;
     @Autowired DatasetAdministratorMapper datasetAdministratorMapper;
+    @Autowired OperationalDatasetAdministratorMapper oDatasetAdministratorMapper;
     @Autowired DatasetMapper datasetMapper;
     @Autowired OperationalSurveyMapper oSurveyMapper;
     @Autowired OrganisationMapper organisationMapper;
@@ -208,7 +210,7 @@ public class DatasetResource extends AbstractResource {
     @GET
     @Path("/{datasetKey}/accessPositions")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<String> getAttributesByDatasetKey(@TokenUser() User user, @PathParam("datasetKey") String datasetKey){
+    public List<AccessPosition> getAttributesByDatasetKey(@TokenUser() User user, @PathParam("datasetKey") String datasetKey){
         return datasetMapper.getDatasetAccessPositions(datasetKey, user.getId());
     }
     
@@ -275,7 +277,7 @@ public class DatasetResource extends AbstractResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public OpResult addDatasetAdmin(@TokenDatasetAdminUser(path = "datasetKey") User user, @PathParam("datasetKey") String datasetKey, DatasetAdminMembershipJSON data) {
-        int result = datasetAdministratorMapper.insertNewDatasetAdministrator(data.getUserID(), datasetKey);
+        int result = oDatasetAdministratorMapper.insertNewDatasetAdministrator(data.getUserID(), datasetKey);
         
         if (result == 1) {
             return new OpResult();
@@ -289,7 +291,7 @@ public class DatasetResource extends AbstractResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public OpResult removeDatasetAdmin(@TokenDatasetAdminUser(path = "datasetKey") User user, @PathParam("datasetKey") String datasetKey, DatasetAdminMembershipJSON data) {        
-        int result = datasetAdministratorMapper.removeDatasetAdministrator(data.getUserID(), datasetKey);
+        int result = oDatasetAdministratorMapper.removeDatasetAdministrator(data.getUserID(), datasetKey);
         
         if (result == 1) {
             if (downloadMapper.doesUserHaveDownloadNotificationsForDataset(data.getUserID(), datasetKey)) {

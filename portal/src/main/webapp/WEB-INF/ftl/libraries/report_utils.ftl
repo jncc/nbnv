@@ -28,6 +28,10 @@
 </#macro>
 
 <#macro ordered_datasets providersWithQueryStats requestParameters>
+    <#assign selected = []>
+    <#if requestParameters.selectedDatasets?has_content>
+        <#assign selected = requestParameters.selectedDatasets?split(",")>
+    </#if>
             <table class="nbn-simple-table" id="nbn-report-dataset-table">
                 <tr><td class="nbn-dataset-table-heading"></td><td class="nbn-dataset-table-heading">Dataset title</td><td class="nbn-dataset-table-heading">Dataset access</td></tr>
     <#list providersWithQueryStats as providerWithQueryStats>
@@ -42,10 +46,11 @@
         <#assign datasetsWithQueryStats=providerWithQueryStats.datasetsWithQueryStats>
         <#--All datasets will be checked by default unless dataset keys are found-->
         <#assign checked = "checked">
+
         <#list datasetsWithQueryStats as datasetWithQueryStats>
             <tr>
-                <#if requestParameters.datasetKey?has_content>
-                    <#assign checked = requestParameters.datasetKey?seq_contains(datasetWithQueryStats.datasetKey)?string("checked","")>
+                <#if selected?has_content>
+                    <#assign checked = selected?seq_contains(datasetWithQueryStats.datasetKey)?string("checked","")>
                 </#if>
                 <td><input type="checkbox" name="datasetKey" value="${datasetWithQueryStats.datasetKey}" ${checked}></td>
                 <td><a href="/Datasets/${datasetWithQueryStats.datasetKey}">${datasetWithQueryStats.taxonDataset.title}</a> (${datasetWithQueryStats.querySpecificObservationCount})</td>
@@ -56,6 +61,7 @@
         </#list>
     </#list>
             </table>
+
 </#macro>
 
 <#macro unavailable_datasets unavailableDatasets>
@@ -124,7 +130,7 @@
                 <fieldset>
                     <legend>Other Options</legend>
                     <#if isMapLinkNeeded>
-                        <a href="#" id="nbn-interactive-map">View on IMT</a><br />
+                        <a href="#" id="nbn-interactive-map">View on Interactive Map</a><br />
                     </#if>
                     <#if isRequestBetterAccessLinkNeeded>
                         <a href="#" id="nbn-request-better-access">Request Better Access</a>
@@ -241,7 +247,7 @@
         </#if>
         <#if accessPositions?has_content>
             <#list accessPositions as accessPosition>
-                <li>Your enhanced access: ${accessPosition}
+                <li>${accessPosition.owner} enhanced access: ${accessPosition.filterText}
             </#list>
         </#if>
     </ul>

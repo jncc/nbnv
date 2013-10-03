@@ -14,7 +14,7 @@ abstract class Metadata {
   val dataQuality: String
   val temporalCoverage: String
   val additionalInformation: String
-  val siteIsPublic: Boolean
+  val siteNameIsPublic: Boolean
   val recorderAndDeterminerArePublic: Boolean
   val publicPrecision: Int
   val administratorForename: String
