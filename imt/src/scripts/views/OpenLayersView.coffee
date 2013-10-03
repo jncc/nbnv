@@ -14,7 +14,7 @@ define [
     initialize: ->
       @drawingLayer = OpenLayersLayerFactory.getDrawingLayer @model.getPicker()
       @drawingControl = new OpenLayers.Control.DrawFeature @drawingLayer, OpenLayers.Handler.RegularPolygon,
-        handlerOptions: sides: 4
+        handlerOptions: sides: 4, irregular: true
 
       @map = new OpenLayers.Map
         div: @el
