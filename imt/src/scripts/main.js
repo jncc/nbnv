@@ -41,7 +41,7 @@ require.config({
     'jquery-md5': '../vendor/jquery-md5/jquery.md5',
     'underscore': '../vendor/underscore-amd/underscore',
     'backbone': '../vendor/backbone-amd/backbone',
-    'openlayers': '../vendor/openlayers-js/index',
+    'openlayers': '../vendor/OpenLayers-custom',
     'proj4js' : '../vendor/proj4js/lib/proj4js-combined',
     'select2' : '../vendor/select2/select2'
   },
