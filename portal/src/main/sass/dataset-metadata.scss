@@ -5,3 +5,13 @@ body{
         }
     }
 }
+
+.nbn-gridmap-div {
+    display: inline;
+}
+
+.nbn-gridmap-legend-div {
+    display: inline-block;
+    zoom: 1;
+    *display: inline;
+}

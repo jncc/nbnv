@@ -150,10 +150,10 @@
                     </table>
                     <h1>Species Richness Map</h1>
                     <div class="nbn-grid-map">
-                        <div style="display: inline;">
+                        <div class="nbn-gridmap-div">
                             <img class="map" src="${gis}/DatasetSpeciesDensity/${dataset.key}/map?imagesize=4" alt="Species Richness for ${dataset.title}">
                         </div>
-                        <div style="display: inline-block;">
+                        <div class="nbn-gridmap-legend-div">
                             <p>Number of Species</p>
                             <img class="legend" src="${gis}/DatasetSpeciesDensity/${dataset.key}/legend" alt="Species Richness for ${dataset.title}">
                         </div>
