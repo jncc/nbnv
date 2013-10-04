@@ -41,7 +41,7 @@ require.config({
     'jquery-md5': '../vendor/jquery-md5/jquery.md5',
     'underscore': '../vendor/underscore-amd/underscore',
     'backbone': '../vendor/backbone-amd/backbone',
-    'openlayers': '../vendor/openlayers-js/index',
+    'openlayers': '../vendor/OpenLayers-custom',
     'proj4js' : '../vendor/proj4js/lib/proj4js-combined',
     'select2' : '../vendor/select2/select2'
   },
@@ -50,8 +50,10 @@ require.config({
 
 require(['jquery', 'backbone', 'cs!models/App', 'cs!views/AppView', 'cs!routers/StateRouter', 'cs!routers/GetURLRouter', 'cs!helpers/GoogleAnalytics'], function($, Backbone, App, AppView, Router, GetURLRouter, GA) {
   app = new App();
-  getMapRouter = new GetURLRouter({model: app});
-  getMapRouter.navigate(location.search);
+  if(!window.location.hash) {
+    getMapRouter = new GetURLRouter({model: app});
+    getMapRouter.navigate(location.search);
+  }
   view = new AppView({model : app});
   router = new Router({model: app});
   Backbone.history.start();
