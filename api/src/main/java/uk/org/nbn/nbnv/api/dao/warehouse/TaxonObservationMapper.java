@@ -58,7 +58,8 @@ public interface TaxonObservationMapper {
             , @Param("designation") String designation
             , @Param("taxonOutputGroup") String taxonOutputGroup
             , @Param("gridRef") String gridRef
-            , @Param("polygon") String polygon);
+            , @Param("polygon") String polygon
+            , @Param("absence") Boolean absence);
     
     @SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectRequestableRecordIDs")
     public List<Integer> selectRequestableObservationRecordIDsByFilter(

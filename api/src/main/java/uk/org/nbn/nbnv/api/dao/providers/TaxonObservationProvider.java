@@ -376,8 +376,12 @@ public class TaxonObservationProvider {
             WHERE("td.taxonOutputGroupKey =  #{taxonOutputGroup}");
         }
         
-        if (params.containsKey("absence")) {
-            WHERE("o.absence = #{absence}");
+        if (params.containsKey("absence") && params.get("absence") != null){
+            if((Boolean) params.get("absence")){
+                WHERE("absence = 1");
+            } else {
+                WHERE("absence = 0");
+            }
         }
         
         return SQL();

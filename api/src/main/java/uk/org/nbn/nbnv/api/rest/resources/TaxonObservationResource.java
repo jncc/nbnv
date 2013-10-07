@@ -179,6 +179,9 @@ public class TaxonObservationResource extends AbstractResource {
      * @param taxonOutputGroup Any required taxon output groups
      * @param gridRef Any grid references to search within
      * @param polygon WKT WGS-84 polygon filter
+     * @param absence Whether the results should be limited to just absence records (true) 
+     * or just presence records (false).  If this parameter is missing then both absence 
+     * and presence records are returned.  Valid values are 'true' and 'false'
      * 
      * @return A list of Taxon Observations conforming to the provided search
      * parameters
@@ -200,9 +203,10 @@ public class TaxonObservationResource extends AbstractResource {
             @QueryParam("designation") @DefaultValue(ObservationResourceDefaults.defaultDesignation) String designation,
             @QueryParam("taxonOutputGroup") @DefaultValue(ObservationResourceDefaults.defaultTaxonOutputGroup) String taxonOutputGroup,
             @QueryParam("gridRef") @DefaultValue(ObservationResourceDefaults.defaultGridRef) String gridRef,
-            @QueryParam("polygon") @DefaultValue(ObservationResourceDefaults.defaultPolygon) String polygon) {
+            @QueryParam("polygon") @DefaultValue(ObservationResourceDefaults.defaultPolygon) String polygon,
+            @QueryParam("absence") Boolean absence) {
         //TODO: squareBlurring(?)
-        return observationMapper.selectObservationRecordsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon);
+        return observationMapper.selectObservationRecordsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon, absence);
     }
     
     /**
