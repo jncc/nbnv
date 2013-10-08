@@ -40,10 +40,10 @@ public interface TaxonObservationMapper {
     public List<TaxonObservation> selectByPTVK(@Param("id") String id, @Param("userKey") int userKey);
     
     @Select("SELECT TOP 1 absence FROM UserTaxonObservationData WHERE pTaxonVersionKey = #{id} AND userID = #{userKey} AND absence = #{absence}")
-    public Integer pTVKHasGridAbsence(@Param("id") String id, @Param("userKey") int userKey, @Param("absence") int absence);
+    public Integer pTVKHasGridAbsence(@Param("id") String id, @Param("userKey") int userKey, @Param("absence") Boolean absence);
     
     @Select("SELECT TOP 1 absence FROM UserTaxonObservationData WHERE pTaxonVersionKey = #{id} AND userID = #{userKey} AND polygonKey IS NOT NULL AND absence = #{absence}")
-    public Integer pTVKHasPolygonAbsence(@Param("id") String id, @Param("userKey") int userKey, @Param("absence") int absence);
+    public Integer pTVKHasPolygonAbsence(@Param("id") String id, @Param("userKey") int userKey, @Param("absence") Boolean absence);
     
     @SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectRecords")
     public List<TaxonObservation> selectObservationRecordsByFilter(
@@ -58,7 +58,8 @@ public interface TaxonObservationMapper {
             , @Param("designation") String designation
             , @Param("taxonOutputGroup") String taxonOutputGroup
             , @Param("gridRef") String gridRef
-            , @Param("polygon") String polygon);
+            , @Param("polygon") String polygon
+            , @Param("absence") Boolean absence);
     
     @SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectRequestableRecordIDs")
     public List<Integer> selectRequestableObservationRecordIDsByFilter(
@@ -139,7 +140,7 @@ public interface TaxonObservationMapper {
             , @Param("taxonOutputGroup") String taxonOutputGroup
             , @Param("gridRef") String gridRef
             , @Param("polygon") String polygon
-            , @Param("absence") int absence);
+            , @Param("absence") Boolean absence);
     
     @SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectGroups")
     @Results(value = {
@@ -159,7 +160,7 @@ public interface TaxonObservationMapper {
             , @Param("taxonOutputGroup") String taxonOutputGroup
             , @Param("gridRef") String gridRef
             , @Param("polygon") String polygon
-            , @Param("absence") int absence);
+            , @Param("absence") Boolean absence);
     
     @SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectDatasets")
     @Results(value = {
