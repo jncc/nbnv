@@ -37,10 +37,8 @@
 	<div id="accordion">
             <div class="link-header">Welcome</div>
             <div class="link-content">
-<p>This is the first release of the new version of the NBN Gateway.  Whilst it is available for you to try out, it is still undergoing development and we are currently working to improve performance. </p>
-<p>If you want to access or use data please use the <a href="http://data.nbn.org.uk/">current NBN Gateway</a></p>
-<p><h3>Your views</h3></p>
-<p>As part of the technical work is to address <a href="http://data.nbn.org.uk/Documentation/NBN_Gateway_Documentation/NBNGatewayVIssues.pdf">known issues</a> and implement planned functionality and enhancements, we would be very interested in your views on how the site could be improved. Please send comments and suggestions to <a href="mailto:access@nbn.org.uk">access@nbn.org.uk</a>.</p>
+<p>This is the National Biodiversity Network's Gateway. Use it to explore UK biodiversity data, as contributed by participating <a href="/Organisations">data providers</a>.</p>
+<p>Please post your comments and suggestions on the <a href="http://forums.nbn.org.uk/viewforum.php?id=22">NBN Forum</a>.</p>
 
             </div>
 
