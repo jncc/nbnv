@@ -20,11 +20,11 @@
                     <tr class="nbn-acknowledgment-entryRow">
                         <#if datasetStats_index == 0>
                             <td class="nbn-acknowledgment-datasetProvider" rowspan="${provider.datasetsWithQueryStats?size}">
-                                <a href="${properties.portal}/Organisations/${provider.organisation.id}">${provider.organisation.name}</a>
+                                <a href="${provider.organisation.href}">${provider.organisation.name}</a>
                             </td>
                         </#if>
                         <td class="nbn-acknowledgment-datasetTitle">
-                            <a href="${properties.portal}/Datasets/${datasetStats.dataset.key}">${datasetStats.dataset.title}</a>
+                            <a href="${datasetStats.taxonDataset.href}">${datasetStats.taxonDataset.title}</a>
                         </td>
                     </tr>
                 </#list>
