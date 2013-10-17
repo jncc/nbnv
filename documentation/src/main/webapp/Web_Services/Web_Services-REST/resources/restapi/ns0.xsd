@@ -1,0 +1,677 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="accessPosition" type="accessPosition"/>
+  <xs:element name="accessRequest" type="accessRequest"/>
+  <xs:element name="attribute" type="attribute"/>
+  <xs:element name="boundingBox" type="boundingBox"/>
+  <xs:element name="dataset" type="dataset"/>
+  <xs:element name="datasetAdministrator" type="datasetAdministrator"/>
+  <xs:element name="datasetResolutionRecordCount" type="datasetResolutionRecordCount"/>
+  <xs:element name="dateTypeStats" type="dateTypeStats"/>
+  <xs:element name="designation" type="designation"/>
+  <xs:element name="designationCategory" type="designationCategory"/>
+  <xs:element name="downloadReport" type="downloadReport"/>
+  <xs:element name="downloadStat" type="downloadStat"/>
+  <xs:element name="feature" type="feature"/>
+  <xs:element name="gridMapSquare" type="gridMapSquare"/>
+  <xs:element name="habitatDataset" type="habitatDataset"/>
+  <xs:element name="habitatFeature" type="habitatFeature"/>
+  <xs:element name="organisationAccessRequest" type="organisationAccessRequest"/>
+  <xs:element name="organisationAccessRequestAuditHistory" type="organisationAccessRequestAuditHistory"/>
+  <xs:element name="organisationJoinRequest" type="organisationJoinRequest"/>
+  <xs:element name="organisationMembership" type="organisationMembership"/>
+  <xs:element name="organisationSuppliedList" type="organisationSuppliedList"/>
+  <xs:element name="providerWithQueryStats" type="providerWithQueryStats"/>
+  <xs:element name="sample" type="sample"/>
+  <xs:element name="siteBoundary" type="siteBoundary"/>
+  <xs:element name="siteBoundaryCategory" type="siteBoundaryCategory"/>
+  <xs:element name="siteBoundaryDataset" type="siteBoundaryDataset"/>
+  <xs:element name="survey" type="survey"/>
+  <xs:element name="taxon" type="taxon"/>
+  <xs:element name="taxonDataset" type="taxonDataset"/>
+  <xs:element name="taxonDatasetWithQueryStats" type="taxonDatasetWithQueryStats"/>
+  <xs:element name="taxonDesignation" type="taxonDesignation"/>
+  <xs:element name="taxonNavigationGroup" type="taxonNavigationGroup"/>
+  <xs:element name="taxonObseravtionDownload" type="taxonObseravtionDownload"/>
+  <xs:element name="taxonObservation" type="taxonObservation"/>
+  <xs:element name="taxonObservationAttribute" type="taxonObservationAttribute"/>
+  <xs:element name="taxonObservationAttributeValue" type="taxonObservationAttributeValue"/>
+  <xs:element name="taxonObservationDownload" type="taxonObservationDownload"/>
+  <xs:element name="taxonObservationFilter" type="taxonObservationFilter"/>
+  <xs:element name="taxonOutputGroup" type="taxonOutputGroup"/>
+  <xs:element name="taxonOutputGroupWithQueryStats" type="taxonOutputGroupWithQueryStats"/>
+  <xs:element name="taxonWebLink" type="taxonWebLink"/>
+  <xs:element name="taxonWithDatasetStats" type="taxonWithDatasetStats"/>
+  <xs:element name="taxonWithQueryStats" type="taxonWithQueryStats"/>
+  <xs:element name="user" type="user"/>
+  <xs:element name="userAccessRequest" type="userAccessRequest"/>
+  <xs:element name="userAccessRequestAuditHistory" type="userAccessRequestAuditHistory"/>
+  <xs:element name="userDownloadNotification" type="userDownloadNotification"/>
+  <xs:element name="yearStats" type="yearStats"/>
+  <xs:element name="contributingOrganisation" type="contributingOrganisation"/>
+  <xs:element name="datasetAccessPositionsJSON" type="datasetAccessPositionsJSON"/>
+  <xs:element name="datasetAdminMembershipJSON" type="datasetAdminMembershipJSON"/>
+  <xs:element name="opResult" type="opResult"/>
+  <xs:element name="organisationAddRemoveUserJSON" type="organisationAddRemoveUserJSON"/>
+  <xs:element name="organisationJoinRequestJSON" type="organisationJoinRequestJSON"/>
+  <xs:element name="userRoleChangeJSON" type="userRoleChangeJSON"/>
+  <xs:complexType name="accessPosition">
+    <xs:sequence>
+      <xs:element name="owner" type="xs:string" minOccurs="0"/>
+      <xs:element name="filterText" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="accessRequest">
+    <xs:sequence>
+      <xs:element name="responseTypeID" type="xs:int" minOccurs="1"/>
+      <xs:element name="filter" type="taxonObservationFilter" minOccurs="0"/>
+      <xs:element name="requestDate" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="dataset" type="dataset" minOccurs="0"/>
+      <xs:element name="requestPurposeLabel" type="xs:string" minOccurs="0"/>
+      <xs:element name="responseDate" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="requestReason" type="xs:string" minOccurs="0"/>
+      <xs:element name="responseReason" type="xs:string" minOccurs="0"/>
+      <xs:element name="sensitiveRequest" type="xs:boolean" minOccurs="1"/>
+      <xs:element name="datasetKey" type="xs:string" minOccurs="0"/>
+      <xs:element name="accessExpires" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="requestPurposeID" type="xs:int" minOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="attribute">
+    <xs:sequence>
+      <xs:element name="label" type="xs:string" minOccurs="0"/>
+      <xs:element name="description" type="xs:string" minOccurs="0"/>
+      <xs:element name="attributeID" type="xs:int" minOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="boundingBox">
+    <xs:sequence>
+      <xs:element name="maxY" type="xs:decimal" minOccurs="0"/>
+      <xs:element name="maxX" type="xs:decimal" minOccurs="0"/>
+      <xs:element name="epsgCode" type="xs:string" minOccurs="0"/>
+      <xs:element name="minY" type="xs:decimal" minOccurs="0"/>
+      <xs:element name="minX" type="xs:decimal" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="dataset">
+    <xs:sequence>
+      <xs:element name="organisation" type="organisation" minOccurs="0"/>
+      <xs:element name="href" type="xs:string" minOccurs="0"/>
+      <xs:element name="dateUploaded" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="title" type="xs:string" minOccurs="0"/>
+      <xs:element name="typeName" type="xs:string" minOccurs="0"/>
+      <xs:element name="updateFrequency" type="xs:string" minOccurs="0"/>
+      <xs:element name="organisationName" type="xs:string" minOccurs="0"/>
+      <xs:element name="conditionsAccepted" type="xs:boolean" minOccurs="1"/>
+      <xs:element name="metadataLastEdited" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="captureMethod" type="xs:string" minOccurs="0"/>
+      <xs:element name="organisationID" type="xs:int" minOccurs="1"/>
+      <xs:element name="contributingOrganisations" type="organisation" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="description" type="xs:string" minOccurs="0"/>
+      <xs:element name="key" type="xs:string" minOccurs="0"/>
+      <xs:element name="useConstraints" type="xs:string" minOccurs="0"/>
+      <xs:element name="quality" type="xs:string" minOccurs="0"/>
+      <xs:element name="geographicalCoverage" type="xs:string" minOccurs="0"/>
+      <xs:element name="accessConstraints" type="xs:string" minOccurs="0"/>
+      <xs:element name="temporalCoverage" type="xs:string" minOccurs="0"/>
+      <xs:element name="additionalInformation" type="xs:string" minOccurs="0"/>
+      <xs:element name="organisationHref" type="xs:string" minOccurs="0"/>
+      <xs:element name="purpose" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="datasetAdministrator">
+    <xs:sequence>
+      <xs:element name="dataset" type="dataset" minOccurs="0"/>
+      <xs:element name="user" type="user" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="datasetResolutionRecordCount">
+    <xs:sequence>
+      <xs:element name="datasetKey" type="xs:string" minOccurs="0"/>
+      <xs:element name="resolutionID" type="xs:int" minOccurs="1"/>
+      <xs:element name="label" type="xs:string" minOccurs="0"/>
+      <xs:element name="count" type="xs:int" minOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="dateTypeStats">
+    <xs:sequence>
+      <xs:element name="dateTypeName" type="xs:string" minOccurs="0"/>
+      <xs:element name="recordCount" type="xs:int" minOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="designation">
+    <xs:sequence>
+      <xs:element name="href" type="xs:string" minOccurs="0"/>
+      <xs:element name="designationCategoryID" type="xs:int" minOccurs="1"/>
+      <xs:element name="name" type="xs:string" minOccurs="0"/>
+      <xs:element name="description" type="xs:string" minOccurs="0"/>
+      <xs:element name="id" type="xs:int" minOccurs="1"/>
+      <xs:element name="code" type="xs:string" minOccurs="0"/>
+      <xs:element name="label" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="designationCategory">
+    <xs:sequence>
+      <xs:element name="id" type="xs:int" minOccurs="1"/>
+      <xs:element name="label" type="xs:string" minOccurs="0"/>
+      <xs:element name="sortOrder" type="xs:int" minOccurs="1"/>
+      <xs:element name="description" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="downloadReport">
+    <xs:sequence>
+      <xs:element name="email" type="xs:string" minOccurs="0"/>
+      <xs:element name="datasetKey" type="xs:string" minOccurs="0"/>
+      <xs:element name="userID" type="xs:int" minOccurs="1"/>
+      <xs:element name="organisationName" type="xs:string" minOccurs="0"/>
+      <xs:element name="purposeID" type="xs:int" minOccurs="1"/>
+      <xs:element name="totalDownloaded" type="xs:int" minOccurs="1"/>
+      <xs:element name="downloadTimeString" type="xs:string" minOccurs="0"/>
+      <xs:element name="organisationID" type="xs:int" minOccurs="1"/>
+      <xs:element name="totalRecords" type="xs:int" minOccurs="1"/>
+      <xs:element name="reason" type="xs:string" minOccurs="0"/>
+      <xs:element name="forename" type="xs:string" minOccurs="0"/>
+      <xs:element name="recordCount" type="xs:int" minOccurs="1"/>
+      <xs:element name="surname" type="xs:string" minOccurs="0"/>
+      <xs:element name="filterJSON" type="xs:string" minOccurs="0"/>
+      <xs:element name="downloadTime" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="filterID" type="xs:string" minOccurs="0"/>
+      <xs:element name="purpose" type="xs:string" minOccurs="0"/>
+      <xs:element name="filterText" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="downloadStat">
+    <xs:sequence>
+      <xs:element name="total" type="xs:int" minOccurs="1"/>
+      <xs:element name="extra" type="xs:string" minOccurs="0"/>
+      <xs:element name="id" type="xs:int" minOccurs="1"/>
+      <xs:element name="totalAlt" type="xs:int" minOccurs="1"/>
+      <xs:element name="name" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="feature">
+    <xs:sequence>
+      <xs:element name="identifier" type="xs:string" minOccurs="0"/>
+      <xs:element name="nativeBoundingBox" type="boundingBox" minOccurs="0"/>
+      <xs:element name="href" type="xs:string" minOccurs="0"/>
+      <xs:element name="label" type="xs:string" minOccurs="0"/>
+      <xs:element name="type" type="xs:string" minOccurs="0"/>
+      <xs:element name="worldBoundingBox" type="boundingBox" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="gridMapSquare">
+    <xs:sequence>
+      <xs:element name="gridRef" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="habitatDataset">
+    <xs:sequence>
+      <xs:element name="organisationName" type="xs:string" minOccurs="0"/>
+      <xs:element name="description" type="xs:string" minOccurs="0"/>
+      <xs:element name="datasetKey" type="xs:string" minOccurs="0"/>
+      <xs:element name="title" type="xs:string" minOccurs="0"/>
+      <xs:element name="habitatCategoryName" type="xs:string" minOccurs="0"/>
+      <xs:element name="organisationID" type="xs:int" minOccurs="1"/>
+      <xs:element name="dateUploaded" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="habitatCategory" type="xs:int" minOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="habitatFeature">
+    <xs:sequence>
+      <xs:element name="formattedUploadDate" type="xs:string" minOccurs="0"/>
+      <xs:element name="identifier" type="xs:string" minOccurs="0"/>
+      <xs:element name="providerKey" type="xs:string" minOccurs="0"/>
+      <xs:element name="datasetHref" type="xs:string" minOccurs="0"/>
+      <xs:element name="uploadDate" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="habitatDatasetKey" type="xs:string" minOccurs="0"/>
+      <xs:element name="datasetTitle" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="organisation">
+    <xs:sequence>
+      <xs:element name="id" type="xs:int" minOccurs="1"/>
+      <xs:element name="allowPublicRegistration" type="xs:boolean" minOccurs="1"/>
+      <xs:element name="name" type="xs:string" minOccurs="0"/>
+      <xs:element name="href" type="xs:string" minOccurs="0"/>
+      <xs:element name="phone" type="xs:string" minOccurs="0"/>
+      <xs:element name="summary" type="xs:string" minOccurs="0"/>
+      <xs:element name="hasSmallLogo" type="xs:boolean" minOccurs="1"/>
+      <xs:element name="website" type="xs:string" minOccurs="0"/>
+      <xs:element name="hasLogo" type="xs:boolean" minOccurs="1"/>
+      <xs:element name="abbreviation" type="xs:string" minOccurs="0"/>
+      <xs:element name="contactName" type="xs:string" minOccurs="0"/>
+      <xs:element name="logo" type="xs:string" minOccurs="0"/>
+      <xs:element name="smallLogo" type="xs:string" minOccurs="0"/>
+      <xs:element name="postcode" type="xs:string" minOccurs="0"/>
+      <xs:element name="contactEmail" type="xs:string" minOccurs="0"/>
+      <xs:element name="address" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="organisationAccessRequest">
+    <xs:complexContent>
+      <xs:extension base="accessRequest">
+        <xs:sequence>
+          <xs:element name="organisation" type="organisation" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="organisationAccessRequestAuditHistory">
+    <xs:sequence>
+      <xs:element name="actioner" type="user" minOccurs="0"/>
+      <xs:element name="timestamp" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="id" type="xs:int" minOccurs="1"/>
+      <xs:element name="request" type="organisationAccessRequest" minOccurs="0"/>
+      <xs:element name="action" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="organisationJoinRequest">
+    <xs:sequence>
+      <xs:element name="requestDate" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="requestReason" type="xs:string" minOccurs="0"/>
+      <xs:element name="responseReason" type="xs:string" minOccurs="0"/>
+      <xs:element name="organisation" type="organisation" minOccurs="0"/>
+      <xs:element name="responseDate" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="user" type="user" minOccurs="0"/>
+      <xs:element name="id" type="xs:int" minOccurs="1"/>
+      <xs:element name="responseTypeID" type="xs:int" minOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="organisationMembership">
+    <xs:sequence>
+      <xs:element name="user" type="user" minOccurs="0"/>
+      <xs:element name="role" type="role" minOccurs="0"/>
+      <xs:element name="organisation" type="organisation" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:simpleType name="role">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="member"/>
+      <xs:enumeration value="administrator"/>
+      <xs:enumeration value="lead"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:complexType name="organisationSuppliedList">
+    <xs:sequence>
+      <xs:element name="pTVKs" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="code" type="xs:string" minOccurs="0"/>
+      <xs:element name="description" type="xs:string" minOccurs="0"/>
+      <xs:element name="name" type="xs:string" minOccurs="0"/>
+      <xs:element name="dateUploaded" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="organisationName" type="xs:string" minOccurs="0"/>
+      <xs:element name="id" type="xs:int" minOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="providerWithQueryStats">
+    <xs:sequence>
+      <xs:element name="organisation" type="organisation" minOccurs="0"/>
+      <xs:element name="querySpecificObservationCount" type="xs:int" minOccurs="1"/>
+      <xs:element name="organisationID" type="xs:int" minOccurs="1"/>
+      <xs:element name="datasetsWithQueryStats" type="taxonDatasetWithQueryStats" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="sample">
+    <xs:sequence>
+      <xs:element name="sampleID" type="xs:int" minOccurs="1"/>
+      <xs:element name="surveyID" type="xs:int" minOccurs="1"/>
+      <xs:element name="temporalCoverage" type="xs:string" minOccurs="0"/>
+      <xs:element name="sampleKey" type="xs:string" minOccurs="0"/>
+      <xs:element name="geographicalCoverage" type="xs:string" minOccurs="0"/>
+      <xs:element name="description" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="siteBoundary">
+    <xs:sequence>
+      <xs:element name="siteBoundaryCategoryId" type="xs:int" minOccurs="1"/>
+      <xs:element name="featureID" type="xs:int" minOccurs="1"/>
+      <xs:element name="siteBoundaryDataset" type="siteBoundaryDataset" minOccurs="0"/>
+      <xs:element name="siteBoundaryCategory" type="siteBoundaryCategory" minOccurs="0"/>
+      <xs:element name="name" type="xs:string" minOccurs="0"/>
+      <xs:element name="siteBoundaryDatasetKey" type="xs:string" minOccurs="0"/>
+      <xs:element name="identifier" type="xs:string" minOccurs="0"/>
+      <xs:element name="description" type="xs:string" minOccurs="0"/>
+      <xs:element name="providerKey" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="siteBoundaryCategory">
+    <xs:sequence>
+      <xs:element name="name" type="xs:string" minOccurs="0"/>
+      <xs:element name="id" type="xs:int" minOccurs="1"/>
+      <xs:element name="siteBoundaryDatasets" type="siteBoundaryDataset" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="siteBoundaryDataset">
+    <xs:sequence>
+      <xs:element name="siteBoundaryCategoryName" type="xs:string" minOccurs="0"/>
+      <xs:element name="dateUploaded" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="organisationName" type="xs:string" minOccurs="0"/>
+      <xs:element name="nameField" type="xs:string" minOccurs="0"/>
+      <xs:element name="siteBoundaryCategory" type="xs:int" minOccurs="1"/>
+      <xs:element name="title" type="xs:string" minOccurs="0"/>
+      <xs:element name="datasetKey" type="xs:string" minOccurs="0"/>
+      <xs:element name="description" type="xs:string" minOccurs="0"/>
+      <xs:element name="organisationID" type="xs:int" minOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="survey">
+    <xs:sequence>
+      <xs:element name="geographicalCoverage" type="xs:string" minOccurs="0"/>
+      <xs:element name="id" type="xs:int" minOccurs="1"/>
+      <xs:element name="surveyKey" type="xs:string" minOccurs="0"/>
+      <xs:element name="sampleCount" type="xs:int" minOccurs="1"/>
+      <xs:element name="temporalCoverage" type="xs:string" minOccurs="0"/>
+      <xs:element name="speciesCount" type="xs:int" minOccurs="1"/>
+      <xs:element name="datasetKey" type="xs:string" minOccurs="0"/>
+      <xs:element name="dataQuality" type="xs:string" minOccurs="0"/>
+      <xs:element name="dataCaptureMethod" type="xs:string" minOccurs="0"/>
+      <xs:element name="providerKey" type="xs:string" minOccurs="0"/>
+      <xs:element name="description" type="xs:string" minOccurs="0"/>
+      <xs:element name="title" type="xs:string" minOccurs="0"/>
+      <xs:element name="additionalInformation" type="xs:string" minOccurs="0"/>
+      <xs:element name="purpose" type="xs:string" minOccurs="0"/>
+      <xs:element name="recordCount" type="xs:int" minOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="taxon">
+    <xs:sequence>
+      <xs:element name="taxonOutputGroupName" type="xs:string" minOccurs="0"/>
+      <xs:element name="name" type="xs:string" minOccurs="0"/>
+      <xs:element name="authority" type="xs:string" minOccurs="0"/>
+      <xs:element name="nameStatus" type="xs:string" minOccurs="0"/>
+      <xs:element name="taxonVersionKey" type="xs:string" minOccurs="0"/>
+      <xs:element name="taxonOutputGroupKey" type="xs:string" minOccurs="0"/>
+      <xs:element name="languageKey" type="xs:string" minOccurs="0"/>
+      <xs:element name="gatewayRecordCount" type="xs:long" minOccurs="1"/>
+      <xs:element name="rank" type="xs:string" minOccurs="0"/>
+      <xs:element name="organismKey" type="xs:string" minOccurs="0"/>
+      <xs:element name="commonName" type="xs:string" minOccurs="0"/>
+      <xs:element name="PTaxonVersionKey" type="xs:string" minOccurs="0"/>
+      <xs:element name="versionForm" type="xs:string" minOccurs="0"/>
+      <xs:element name="commonNameTaxonVersionKey" type="xs:string" minOccurs="0"/>
+      <xs:element name="href" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="taxonDataset">
+    <xs:complexContent>
+      <xs:extension base="dataset">
+        <xs:sequence>
+          <xs:element name="recordsPerYear" type="yearStats" minOccurs="0" maxOccurs="unbounded"/>
+          <xs:element name="surveys" type="survey" minOccurs="0" maxOccurs="unbounded"/>
+          <xs:element name="publicAttribute" type="xs:boolean" minOccurs="1"/>
+          <xs:element name="speciesCount" type="xs:int" minOccurs="1"/>
+          <xs:element name="maxResolution" type="xs:string" minOccurs="0"/>
+          <xs:element name="datasetKey" type="xs:string" minOccurs="0"/>
+          <xs:element name="taxa" type="taxonWithDatasetStats" minOccurs="0" maxOccurs="unbounded"/>
+          <xs:element name="publicResolution" type="xs:string" minOccurs="0"/>
+          <xs:element name="observations" type="taxonObservation" minOccurs="0" maxOccurs="unbounded"/>
+          <xs:element name="dateTypeStats" type="dateTypeStats" minOccurs="0" maxOccurs="unbounded"/>
+          <xs:element name="allowRecordValidation" type="xs:boolean" minOccurs="1"/>
+          <xs:element name="recordCount" type="xs:int" minOccurs="1"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="taxonDatasetWithQueryStats">
+    <xs:sequence>
+      <xs:element name="taxonDataset" type="taxonDataset" minOccurs="0"/>
+      <xs:element name="datasetKey" type="xs:string" minOccurs="0"/>
+      <xs:element name="querySpecificSensitiveObservationCount" type="xs:int" minOccurs="1"/>
+      <xs:element name="accessPositions" type="accessPosition" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="querySpecificObservationCount" type="xs:int" minOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="taxonDesignation">
+    <xs:sequence>
+      <xs:element name="source" type="xs:string" minOccurs="0"/>
+      <xs:element name="endDate" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="designation" type="designation" minOccurs="0"/>
+      <xs:element name="statusConstraint" type="xs:string" minOccurs="0"/>
+      <xs:element name="startDate" type="xs:dateTime" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="taxonNavigationGroup">
+    <xs:sequence>
+      <xs:element name="numSpecies" type="xs:int" minOccurs="1"/>
+      <xs:element name="sortOrder" type="xs:int" minOccurs="1"/>
+      <xs:element name="parentTaxonGroupKey" type="xs:string" minOccurs="0"/>
+      <xs:element name="children" type="taxonNavigationGroup" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="name" type="xs:string" minOccurs="0"/>
+      <xs:element name="description" type="xs:string" minOccurs="0"/>
+      <xs:element name="key" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="taxonObseravtionDownload">
+    <xs:sequence>
+      <xs:element name="purposeID" type="xs:int" minOccurs="1"/>
+      <xs:element name="filterJSON" type="xs:string" minOccurs="0"/>
+      <xs:element name="reason" type="xs:string" minOccurs="0"/>
+      <xs:element name="purpose" type="xs:string" minOccurs="0"/>
+      <xs:element name="email" type="xs:string" minOccurs="0"/>
+      <xs:element name="organisationID" type="xs:int" minOccurs="1"/>
+      <xs:element name="surname" type="xs:string" minOccurs="0"/>
+      <xs:element name="recordCount" type="xs:int" minOccurs="1"/>
+      <xs:element name="filterText" type="xs:string" minOccurs="0"/>
+      <xs:element name="forename" type="xs:string" minOccurs="0"/>
+      <xs:element name="datasetKey" type="xs:string" minOccurs="0"/>
+      <xs:element name="filterID" type="xs:string" minOccurs="0"/>
+      <xs:element name="userID" type="xs:int" minOccurs="1"/>
+      <xs:element name="organisationName" type="xs:string" minOccurs="0"/>
+      <xs:element name="totalDownloaded" type="xs:int" minOccurs="1"/>
+      <xs:element name="totalRecords" type="xs:int" minOccurs="1"/>
+      <xs:element name="downloadTime" type="xs:dateTime" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="taxonObservation">
+    <xs:sequence>
+      <xs:element name="fullVersion" type="xs:boolean" minOccurs="1"/>
+      <xs:element name="recorder" type="xs:string" minOccurs="0"/>
+      <xs:element name="location" type="xs:string" minOccurs="0"/>
+      <xs:element name="dateType" type="xs:string" minOccurs="0"/>
+      <xs:element name="gridRef" type="xs:string" minOccurs="0"/>
+      <xs:element name="observationKey" type="xs:string" minOccurs="0"/>
+      <xs:element name="pTaxonVersionKey" type="xs:string" minOccurs="0"/>
+      <xs:element name="taxonVersionKey" type="xs:string" minOccurs="0"/>
+      <xs:element name="observationID" type="xs:int" minOccurs="1"/>
+      <xs:element name="datasetKey" type="xs:string" minOccurs="0"/>
+      <xs:element name="pTaxonName" type="xs:string" minOccurs="0"/>
+      <xs:element name="endDate" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="polygonKey" type="xs:string" minOccurs="0"/>
+      <xs:element name="projection" type="xs:string" minOccurs="0"/>
+      <xs:element name="pTaxonAuthority" type="xs:string" minOccurs="0"/>
+      <xs:element name="determiner" type="xs:string" minOccurs="0"/>
+      <xs:element name="sampleKey" type="xs:string" minOccurs="0"/>
+      <xs:element name="absence" type="xs:boolean" minOccurs="1"/>
+      <xs:element name="surveyKey" type="xs:string" minOccurs="0"/>
+      <xs:element name="startDate" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="siteKey" type="xs:string" minOccurs="0"/>
+      <xs:element name="siteName" type="xs:string" minOccurs="0"/>
+      <xs:element name="featureID" type="xs:int" minOccurs="1"/>
+      <xs:element name="sensitive" type="xs:boolean" minOccurs="1"/>
+      <xs:element name="resolution" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="taxonObservationAttribute">
+    <xs:sequence>
+      <xs:element name="observationID" type="xs:int" minOccurs="1"/>
+      <xs:element name="attributeID" type="xs:int" minOccurs="1"/>
+      <xs:element name="textValue" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="taxonObservationAttributeValue">
+    <xs:sequence>
+      <xs:element name="label" type="xs:string" minOccurs="0"/>
+      <xs:element name="textValue" type="xs:string" minOccurs="0"/>
+      <xs:element name="description" type="xs:string" minOccurs="0"/>
+      <xs:element name="observationID" type="xs:int" minOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="taxonObservationDownload">
+    <xs:sequence>
+      <xs:element name="observationID" type="xs:int" minOccurs="1"/>
+      <xs:element name="dateType" type="xs:string" minOccurs="0"/>
+      <xs:element name="fullVersion" type="xs:boolean" minOccurs="1"/>
+      <xs:element name="taxonGroup" type="xs:string" minOccurs="0"/>
+      <xs:element name="commonName" type="xs:string" minOccurs="0"/>
+      <xs:element name="organisationName" type="xs:string" minOccurs="0"/>
+      <xs:element name="startDate" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="datasetKey" type="xs:string" minOccurs="0"/>
+      <xs:element name="useConstraints" type="xs:string" minOccurs="0"/>
+      <xs:element name="endDate" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="siteKey" type="xs:string" minOccurs="0"/>
+      <xs:element name="precision" type="xs:string" minOccurs="0"/>
+      <xs:element name="pTaxonName" type="xs:string" minOccurs="0"/>
+      <xs:element name="pTaxonVersionKey" type="xs:string" minOccurs="0"/>
+      <xs:element name="surveyKey" type="xs:string" minOccurs="0"/>
+      <xs:element name="zeroAbundance" type="xs:boolean" minOccurs="1"/>
+      <xs:element name="authority" type="xs:string" minOccurs="0"/>
+      <xs:element name="gridReference" type="xs:string" minOccurs="0"/>
+      <xs:element name="observationKey" type="xs:string" minOccurs="0"/>
+      <xs:element name="recorder" type="xs:string" minOccurs="0"/>
+      <xs:element name="sampleKey" type="xs:string" minOccurs="0"/>
+      <xs:element name="sensitive" type="xs:boolean" minOccurs="1"/>
+      <xs:element name="determiner" type="xs:string" minOccurs="0"/>
+      <xs:element name="featureKey" type="xs:string" minOccurs="0"/>
+      <xs:element name="siteName" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="taxonObservationFilter">
+    <xs:sequence>
+      <xs:element name="id" type="xs:int" minOccurs="1"/>
+      <xs:element name="filterJSON" type="xs:string" minOccurs="0"/>
+      <xs:element name="filterText" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="taxonOutputGroup">
+    <xs:sequence>
+      <xs:element name="sortOrder" type="xs:int" minOccurs="1"/>
+      <xs:element name="parentTaxonGroupKey" type="xs:string" minOccurs="0"/>
+      <xs:element name="description" type="xs:string" minOccurs="0"/>
+      <xs:element name="key" type="xs:string" minOccurs="0"/>
+      <xs:element name="name" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="taxonOutputGroupWithQueryStats">
+    <xs:sequence>
+      <xs:element name="querySpecificSpeciesCount" type="xs:int" minOccurs="1"/>
+      <xs:element name="taxonOutputGroupKey" type="xs:string" minOccurs="0"/>
+      <xs:element name="taxonOutputGroup" type="taxonOutputGroup" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="taxonWebLink">
+    <xs:sequence>
+      <xs:element name="description" type="xs:string" minOccurs="0"/>
+      <xs:element name="link" type="xs:string" minOccurs="0"/>
+      <xs:element name="active" type="xs:boolean" minOccurs="1"/>
+      <xs:element name="taxon" type="taxon" minOccurs="0"/>
+      <xs:element name="id" type="xs:int" minOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="taxonWithDatasetStats">
+    <xs:complexContent>
+      <xs:extension base="taxon">
+        <xs:sequence>
+          <xs:element name="datasetKey" type="xs:string" minOccurs="0"/>
+          <xs:element name="observationCount" type="xs:int" minOccurs="1"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="taxonWithQueryStats">
+    <xs:sequence>
+      <xs:element name="taxonVersionKey" type="xs:string" minOccurs="0"/>
+      <xs:element name="querySpecificObservationCount" type="xs:int" minOccurs="1"/>
+      <xs:element name="taxon" type="taxon" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="user">
+    <xs:sequence>
+      <xs:element name="email" type="xs:string" minOccurs="0"/>
+      <xs:element name="forename" type="xs:string" minOccurs="0"/>
+      <xs:element name="surname" type="xs:string" minOccurs="0"/>
+      <xs:element name="subscribedToAdminMails" type="xs:boolean" minOccurs="1"/>
+      <xs:element name="username" type="xs:string" minOccurs="0"/>
+      <xs:element name="allowEmailAlerts" type="xs:boolean" minOccurs="1"/>
+      <xs:element name="password" type="xs:string" minOccurs="0"/>
+      <xs:element name="id" type="xs:int" minOccurs="1"/>
+      <xs:element name="phone" type="xs:string" minOccurs="0"/>
+      <xs:element name="subscribedToNBNMarketting" type="xs:boolean" minOccurs="1"/>
+      <xs:element name="registrationDate" type="xs:dateTime" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="userAccessRequest">
+    <xs:complexContent>
+      <xs:extension base="accessRequest">
+        <xs:sequence>
+          <xs:element name="user" type="user" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="userAccessRequestAuditHistory">
+    <xs:sequence>
+      <xs:element name="request" type="userAccessRequest" minOccurs="0"/>
+      <xs:element name="id" type="xs:int" minOccurs="1"/>
+      <xs:element name="action" type="xs:string" minOccurs="0"/>
+      <xs:element name="actioner" type="user" minOccurs="0"/>
+      <xs:element name="timestamp" type="xs:dateTime" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="userDownloadNotification">
+    <xs:sequence>
+      <xs:element name="datasetName" type="xs:string" minOccurs="0"/>
+      <xs:element name="userID" type="xs:int" minOccurs="1"/>
+      <xs:element name="datasetKey" type="xs:string" minOccurs="0"/>
+      <xs:element name="surname" type="xs:string" minOccurs="0"/>
+      <xs:element name="email" type="xs:string" minOccurs="0"/>
+      <xs:element name="forename" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="yearStats">
+    <xs:sequence>
+      <xs:element name="year" type="xs:int" minOccurs="1"/>
+      <xs:element name="recordCount" type="xs:int" minOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="contributingOrganisation">
+    <xs:sequence>
+      <xs:element name="orgID" type="xs:int" minOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="datasetAccessPositionsJSON">
+    <xs:sequence>
+      <xs:element name="publicAccess" type="xs:string" minOccurs="0"/>
+      <xs:element name="enhanced" type="accessPosition" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="datasetAdminMembershipJSON">
+    <xs:sequence>
+      <xs:element name="userID" type="xs:int" minOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="opResult">
+    <xs:sequence>
+      <xs:element name="reason" type="xs:string" minOccurs="0"/>
+      <xs:element name="result" type="xs:boolean" minOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="organisationAddRemoveUserJSON">
+    <xs:sequence>
+      <xs:element name="userID" type="xs:int" minOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="organisationJoinRequestJSON">
+    <xs:sequence>
+      <xs:element name="responseType" type="xs:int" minOccurs="1"/>
+      <xs:element name="organisationID" type="xs:int" minOccurs="1"/>
+      <xs:element name="userID" type="xs:int" minOccurs="1"/>
+      <xs:element name="id" type="xs:int" minOccurs="1"/>
+      <xs:element name="reason" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="userRoleChangeJSON">
+    <xs:sequence>
+      <xs:element name="userID" type="xs:int" minOccurs="1"/>
+      <xs:element name="role" type="xs:int" minOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>

@@ -1,0 +1,1069 @@
+<!doctype html>
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if lt IE 7 ]> <html class="no-js ie6" lang="en"> <![endif]-->
+<!--[if IE 7 ]>    <html class="no-js ie7" lang="en"> <![endif]-->
+<!--[if IE 8 ]>    <html class="no-js ie8" lang="en"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+
+  <!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame
+       Remove this if you use the .htaccess -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+  <title>OrganisationMembershipResource</title>
+
+  <!-- Mobile viewport optimized: j.mp/bplateviewport -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- CSS: implied media="all" -->
+  <link rel="stylesheet" href="css/style.css?v=2">
+  <link rel="stylesheet" href="css/prettify.css">
+
+  <!-- All JavaScript at the bottom, except for Modernizr which enables HTML5 elements & feature detects -->
+  <script src="js/libs/modernizr-1.7.min.js"></script>
+
+</head>
+
+<body class="home">
+
+  <div class="container">
+    <header>
+      <div id="header" class="column first last span-20">
+        <div id="site-name" class="column span-18 append-1 prepend-1 first last"><a href="index.html">OrganisationMembershipResource</a></div>
+        <div id="primary" class="column span-18 append-1 prepend-1 first last">
+          <ul class="navigation">
+            <li id="nav-rest"><a href="rest.html">REST</a></li>
+            <li id="nav-data"><a href="model.html">Data Model</a></li>
+          </ul>
+        </div>
+        <div>
+          <ul class="xbreadcrumbs" id="breadcrumbs">
+            <li>
+              <a href="index.html" class="home">Home</a> &gt;
+            </li>
+            <li>
+              <a href="rest.html">REST</a> &gt;
+              <ul>
+                <li><a href="model.html">Data Model</a></li>
+                <li><a href="rest.html">REST</a></li>
+              </ul>
+            </li>
+            <li class="current">
+              <a href="resource_OrganisationMembershipResource.html">OrganisationMembershipResource</a>
+              <ul>
+                <li><a href="resource_DatasetResource.html">DatasetResource</a></li>
+                <li><a href="resource_DesignationCategoryResource.html">DesignationCategoryResource</a></li>
+                <li><a href="resource_DesignationResource.html">DesignationResource</a></li>
+                <li><a href="resource_FeatureResource.html">FeatureResource</a></li>
+                <li><a href="resource_GridMapSquareResource.html">GridMapSquareResource</a></li>
+                <li><a href="resource_HabitatDatasetResource.html">HabitatDatasetResource</a></li>
+                <li><a href="resource_HabitatFeatureResource.html">HabitatFeatureResource</a></li>
+                <li><a href="resource_OrganisationAccessRequestResource.html">OrganisationAccessRequestResource</a></li>
+                <li><a href="resource_OrganisationMembershipResource.html">OrganisationMembershipResource</a></li>
+                <li><a href="resource_OrganisationResource.html">OrganisationResource</a></li>
+                <li><a href="resource_OrganisationSuppliedListResource.html">OrganisationSuppliedListResource</a></li>
+                <li><a href="resource_ReportingResource.html">ReportingResource</a></li>
+                <li><a href="resource_SearchResource.html">SearchResource</a></li>
+                <li><a href="resource_SiteBoundaryCategoryResource.html">SiteBoundaryCategoryResource</a></li>
+                <li><a href="resource_SiteBoundaryDatasetResource.html">SiteBoundaryDatasetResource</a></li>
+                <li><a href="resource_StatisticsResource.html">StatisticsResource</a></li>
+                <li><a href="resource_TaxonDatasetResource.html">TaxonDatasetResource</a></li>
+                <li><a href="resource_TaxonNavigationGroupResource.html">TaxonNavigationGroupResource</a></li>
+                <li><a href="resource_TaxonObservationResource.html">TaxonObservationResource</a></li>
+                <li><a href="resource_TaxonOutputGroupResource.html">TaxonOutputGroupResource</a></li>
+                <li><a href="resource_TaxonResource.html">TaxonResource</a></li>
+                <li><a href="resource_UserAccessRequestResource.html">UserAccessRequestResource</a></li>
+                <li><a href="resource_UserResource.html">UserResource</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </header>
+    <div id="main" class="column first last span-20">
+      <h1>OrganisationMembershipResource</h1>
+
+      <p></p>
+      <p>The following resources are applicable:</p>
+      <ul>
+        <li><a href="#path__organisationMemberships.html">/organisationMemberships</a></li>
+        <li><a href="#path__organisationMemberships_-id-.html">/organisationMemberships/{id}</a></li>
+        <li><a href="#path__organisationMemberships_-id-_-user-.html">/organisationMemberships/{id}/{user}</a></li>
+        <li><a href="#path__organisationMemberships_-id-_-user-_isadmin.html">/organisationMemberships/{id}/{user}/isadmin</a></li>
+        <li><a href="#path__organisationMemberships_-id-_-user-_isMember.html">/organisationMemberships/{id}/{user}/isMember</a></li>
+        <li><a href="#path__organisationMemberships_-id-_addUser.html">/organisationMemberships/{id}/addUser</a></li>
+        <li><a href="#path__organisationMemberships_-id-_join.html">/organisationMemberships/{id}/join</a></li>
+        <li><a href="#path__organisationMemberships_-id-_modifyUserRole.html">/organisationMemberships/{id}/modifyUserRole</a></li>
+        <li><a href="#path__organisationMemberships_-id-_removeUser.html">/organisationMemberships/{id}/removeUser</a></li>
+        <li><a href="#path__organisationMemberships_-id-_requests.html">/organisationMemberships/{id}/requests</a></li>
+        <li><a href="#path__organisationMemberships_request_-id-.html">/organisationMemberships/request/{id}</a></li>
+        <li><a href="#path__organisationMemberships_requests.html">/organisationMemberships/requests</a></li>
+      </ul>
+      <a name="path__organisationMemberships.html"></a>
+      <h1>/organisationMemberships</h1>
+      <p class="note">Mount Point: <a href="../api/organisationMemberships">/api/organisationMemberships</a></p>
+      <a name="GET"></a>
+      <h2>GET</h2>
+      <p>
+            Return a list of all organisation memberships from the data warehouse
+          </p>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td><a href="el_ns0_organisationMembership.html">organisationMembership</a></td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/json</td>
+        </tr>
+      </table>
+      <p>A list of all organisation memberships from the data warehouse</p>
+      <h3>Status Codes</h3>
+      <table>
+        <tr>
+          <th>code</th>
+          <th>description</th>
+        </tr>
+        <tr>
+          <td>200</td>
+          <td>
+            Successfully returned list of all organisation memberships
+          </td>
+        </tr>
+      </table>
+      <a name="path__organisationMemberships_-id-.html"></a>
+      <h1>/organisationMemberships/{id}</h1>
+      <p class="note">Mount Point: <a href="../api/organisationMemberships/{id}">/api/organisationMemberships/{id}</a></p>
+      <a name="GET"></a>
+      <h2>GET</h2>
+      <p>
+            Return a list of organisation memberships for a given organisation from
+the core database
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>id</td>
+          <td>
+            An organisation ID
+          </td>
+          <td>path</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td><a href="el_ns0_organisationMembership.html">organisationMembership</a></td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/json</td>
+        </tr>
+      </table>
+      <p>A list of organisation memberships for a given organisation from
+the core database</p>
+      <h3>Status Codes</h3>
+      <table>
+        <tr>
+          <th>code</th>
+          <th>description</th>
+        </tr>
+        <tr>
+          <td>200</td>
+          <td>
+            Succesfully returned all organsiation memberships for the specified organisation
+          </td>
+        </tr>
+      </table>
+      <a name="path__organisationMemberships_-id-_-user-.html"></a>
+      <h1>/organisationMemberships/{id}/{user}</h1>
+      <p class="note">Mount Point: <a href="../api/organisationMemberships/{id}/{user}">/api/organisationMemberships/{id}/{user}</a></p>
+      <a name="GET"></a>
+      <h2>GET</h2>
+      <p>
+            Return the organisation membership details for a given user and
+organisation from the core database
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>id</td>
+          <td>
+            An organisation ID
+          </td>
+          <td>path</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>user</td>
+          <td>
+            A Users ID
+          </td>
+          <td>path</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td><a href="el_ns0_organisationMembership.html">organisationMembership</a></td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/json</td>
+        </tr>
+      </table>
+      <p>The organisation membership details for a given user and
+organisation from the core database</p>
+      <h3>Status Codes</h3>
+      <table>
+        <tr>
+          <th>code</th>
+          <th>description</th>
+        </tr>
+        <tr>
+          <td>200</td>
+          <td>
+            Successfully returned request user organisation membership
+          </td>
+        </tr>
+      </table>
+      <a name="path__organisationMemberships_-id-_-user-_isadmin.html"></a>
+      <h1>/organisationMemberships/{id}/{user}/isadmin</h1>
+      <p class="note">Mount Point: <a href="../api/organisationMemberships/{id}/{user}/isadmin">/api/organisationMemberships/{id}/{user}/isadmin</a></p>
+      <a name="GET"></a>
+      <h2>GET</h2>
+      <p>
+            Return true if a user is an admin of a given organisation from the core
+database
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>id</td>
+          <td>
+            An organisation ID
+          </td>
+          <td>path</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>user</td>
+          <td>
+            A Users ID
+          </td>
+          <td>path</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td>(custom)</td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/json</td>
+        </tr>
+      </table>
+      <p>True if a user is an admin of a given organisation from the core
+database</p>
+      <h3>Status Codes</h3>
+      <table>
+        <tr>
+          <th>code</th>
+          <th>description</th>
+        </tr>
+        <tr>
+          <td>200</td>
+          <td>
+            Returned if the selected user is an admin of this organisation
+          </td>
+        </tr>
+      </table>
+      <a name="path__organisationMemberships_-id-_-user-_isMember.html"></a>
+      <h1>/organisationMemberships/{id}/{user}/isMember</h1>
+      <p class="note">Mount Point: <a href="../api/organisationMemberships/{id}/{user}/isMember">/api/organisationMemberships/{id}/{user}/isMember</a></p>
+      <a name="GET"></a>
+      <h2>GET</h2>
+      <p>
+            Return true if a user is a member of a given organisation from the core
+database
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>id</td>
+          <td>
+            An organisation ID
+          </td>
+          <td>path</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>user</td>
+          <td>
+            A Users ID
+          </td>
+          <td>path</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td>(custom)</td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/json</td>
+        </tr>
+      </table>
+      <p>True if a user is a member of a given organisation from the core
+database</p>
+      <h3>Status Codes</h3>
+      <table>
+        <tr>
+          <th>code</th>
+          <th>description</th>
+        </tr>
+        <tr>
+          <td>200</td>
+          <td>
+            Returned if the selected user is a member of this organisation
+          </td>
+        </tr>
+      </table>
+      <a name="path__organisationMemberships_-id-_addUser.html"></a>
+      <h1>/organisationMemberships/{id}/addUser</h1>
+      <p class="note">Mount Point: <a href="../api/organisationMemberships/{id}/addUser">/api/organisationMemberships/{id}/addUser</a></p>
+      <a name="POST"></a>
+      <h2>POST</h2>
+      <p>
+            Add a user directly to the organisation from the admin panel, requires a
+user who has admin rights over the organisation
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>user</td>
+          <td>
+            The current user (Must be an admin or returns 403 Forbidden)
+(Injected Token no need to pass)
+          </td>
+          <td>tokenorganisationuser</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>id</td>
+          <td>
+            An organisation ID
+          </td>
+          <td>path</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Request Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td><a href="el_ns0_organisationAddRemoveUserJSON.html">organisationAddRemoveUserJSON</a></td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/json</td>
+        </tr>
+      </table>
+      <p>The user to be added to the organisation</p>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td>(custom)</td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>*/*<br/>application/xml<br/></td>
+        </tr>
+      </table>
+      <p>A Response object detailing the success or failure of the action</p>
+      <h3>Status Codes</h3>
+      <table>
+        <tr>
+          <th>code</th>
+          <th>description</th>
+        </tr>
+        <tr>
+          <td>200</td>
+          <td>
+            Operation completed successfully
+          </td>
+        </tr>
+        <tr>
+          <td>403</td>
+          <td>
+            The current user is not an organisation administrator
+          </td>
+        </tr>
+      </table>
+      <a name="path__organisationMemberships_-id-_join.html"></a>
+      <h1>/organisationMemberships/{id}/join</h1>
+      <p class="note">Mount Point: <a href="../api/organisationMemberships/{id}/join">/api/organisationMemberships/{id}/join</a></p>
+      <a name="GET"></a>
+      <h2>GET</h2>
+      <p>
+            Get any active request (i.e. responseTypeID is NULL) for the current user
+of the specified organisation
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>user</td>
+          <td>
+            The current user (must be an admin) (Injected Token no need
+to pass)
+          </td>
+          <td>tokenuser</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>id</td>
+          <td>
+            The organisation id
+          </td>
+          <td>path</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td><a href="el_ns0_organisationJoinRequest.html">organisationJoinRequest</a></td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/json</td>
+        </tr>
+      </table>
+      <p>An Organisation Join Request made by the user for the specified
+organisation or a null response ID if no request has been made</p>
+      <h3>Status Codes</h3>
+      <table>
+        <tr>
+          <th>code</th>
+          <th>description</th>
+        </tr>
+        <tr>
+          <td>200</td>
+          <td>
+            Successfully returned selected join request for this user and the selected organisation OR may contain error, check returned object
+          </td>
+        </tr>
+      </table>
+      <a name="PUT"></a>
+      <h2>PUT</h2>
+      <p>
+            Create a new organisation join request for a given organisation, return a
+status code
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>user</td>
+          <td>
+            The current user (Injected Token no need to pass)
+          </td>
+          <td>tokenuser</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>id</td>
+          <td>
+            The Organisation ID
+          </td>
+          <td>path</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Request Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td><a href="el_ns0_organisationJoinRequestJSON.html">organisationJoinRequestJSON</a></td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/json</td>
+        </tr>
+      </table>
+      <p>A JSON packet containing a reason for the request</p>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td>(custom)</td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>*/*<br/>application/xml<br/></td>
+        </tr>
+      </table>
+      <p>A Response object detailing the success or failure of the action</p>
+      <h3>Status Codes</h3>
+      <table>
+        <tr>
+          <th>code</th>
+          <th>description</th>
+        </tr>
+        <tr>
+          <td>201</td>
+          <td>
+            Successfully created this join request
+          </td>
+        </tr>
+        <tr>
+          <td>303</td>
+          <td>
+            A request to join this organisation already exists
+          </td>
+        </tr>
+        <tr>
+          <td>400</td>
+          <td>
+            The current user is already a member of this organisation
+          </td>
+        </tr>
+        <tr>
+          <td>403</td>
+          <td>
+            The current user is not logged in
+          </td>
+        </tr>
+      </table>
+      <a name="path__organisationMemberships_-id-_modifyUserRole.html"></a>
+      <h1>/organisationMemberships/{id}/modifyUserRole</h1>
+      <p class="note">Mount Point: <a href="../api/organisationMemberships/{id}/modifyUserRole">/api/organisationMemberships/{id}/modifyUserRole</a></p>
+      <a name="POST"></a>
+      <h2>POST</h2>
+      <p>
+            Modify an existing users role in an organisation
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>user</td>
+          <td>
+            The current user (must be an admin) (Injected Token no need
+to pass)
+          </td>
+          <td>tokenorganisationuser</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>id</td>
+          <td>
+            The organisation ID
+          </td>
+          <td>path</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Request Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td><a href="el_ns0_userRoleChangeJSON.html">userRoleChangeJSON</a></td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/json</td>
+        </tr>
+      </table>
+      <p>A JSON data packet containing the user to modified and their
+new role</p>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td>(custom)</td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>*/*<br/>application/xml<br/></td>
+        </tr>
+      </table>
+      <p>A Response object detailing the success or failure of the action</p>
+      <h3>Status Codes</h3>
+      <table>
+        <tr>
+          <th>code</th>
+          <th>description</th>
+        </tr>
+        <tr>
+          <td>200</td>
+          <td>
+            Successfully modified user role
+          </td>
+        </tr>
+        <tr>
+          <td>403</td>
+          <td>
+            The current user is not an organisation administrator
+          </td>
+        </tr>
+      </table>
+      <a name="path__organisationMemberships_-id-_removeUser.html"></a>
+      <h1>/organisationMemberships/{id}/removeUser</h1>
+      <p class="note">Mount Point: <a href="../api/organisationMemberships/{id}/removeUser">/api/organisationMemberships/{id}/removeUser</a></p>
+      <a name="POST"></a>
+      <h2>POST</h2>
+      <p>
+            Remove the specified user from a given organisation if the current user
+is an org admin
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>user</td>
+          <td>
+            The current user (must be an admin) (Injected Token no need
+to pass)
+          </td>
+          <td>tokenorganisationuser</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>id</td>
+          <td>
+            The organisation ID
+          </td>
+          <td>path</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Request Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td><a href="el_ns0_organisationAddRemoveUserJSON.html">organisationAddRemoveUserJSON</a></td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/json</td>
+        </tr>
+      </table>
+      <p>A JSON data packet containing the user to removed</p>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td>(custom)</td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>*/*<br/>application/xml<br/></td>
+        </tr>
+      </table>
+      <p>A Response object detailing the success or failure of the action</p>
+      <h3>Status Codes</h3>
+      <table>
+        <tr>
+          <th>code</th>
+          <th>description</th>
+        </tr>
+        <tr>
+          <td>200</td>
+          <td>
+            Successfully removed user from organistaion
+          </td>
+        </tr>
+        <tr>
+          <td>403</td>
+          <td>
+            The current user is not an organisation administrator
+          </td>
+        </tr>
+      </table>
+      <a name="path__organisationMemberships_-id-_requests.html"></a>
+      <h1>/organisationMemberships/{id}/requests</h1>
+      <p class="note">Mount Point: <a href="../api/organisationMemberships/{id}/requests">/api/organisationMemberships/{id}/requests</a></p>
+      <a name="GET"></a>
+      <h2>GET</h2>
+      <p>
+            Return all active requests to join this organisation (i.e. have
+responseTypeID of NULL) if the user is the org admin of the specified
+organisation
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>user</td>
+          <td>
+            The Current user (must be an admin) (Injected Token no need
+to pass)
+          </td>
+          <td>tokenorganisationuser</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>id</td>
+          <td>
+            The Organisation ID
+          </td>
+          <td>path</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td>(custom)</td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/json</td>
+        </tr>
+      </table>
+      <p>A Response object detailing the success or failure of the action</p>
+      <h3>Status Codes</h3>
+      <table>
+        <tr>
+          <th>code</th>
+          <th>description</th>
+        </tr>
+        <tr>
+          <td>200</td>
+          <td>
+            Successfully returned all active join requests for this organisation
+          </td>
+        </tr>
+        <tr>
+          <td>403</td>
+          <td>
+            The current user is not an admin for this organisation
+          </td>
+        </tr>
+      </table>
+      <a name="path__organisationMemberships_request_-id-.html"></a>
+      <h1>/organisationMemberships/request/{id}</h1>
+      <p class="note">Mount Point: <a href="../api/organisationMemberships/request/{id}">/api/organisationMemberships/request/{id}</a></p>
+      <a name="GET"></a>
+      <h2>GET</h2>
+      <p>
+            Return a specific request by its ID, if the user can access it i.e. org
+Admin or requesting user otherwise return a 403 Forbidden error
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>user</td>
+          <td>
+            The Current User (must be an admin or requesting user)
+(Injected Token no need to pass)
+          </td>
+          <td>tokenorganisationjoinrequestuser</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>id</td>
+          <td>
+            The request id
+          </td>
+          <td>path</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td><a href="el_ns0_organisationJoinRequest.html">organisationJoinRequest</a></td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/json</td>
+        </tr>
+      </table>
+      <p>A specific organisation join request by its ID, if the user can
+access it</p>
+      <h3>Status Codes</h3>
+      <table>
+        <tr>
+          <th>code</th>
+          <th>description</th>
+        </tr>
+        <tr>
+          <td>200</td>
+          <td>
+            Successfully returned the requested join request
+          </td>
+        </tr>
+        <tr>
+          <td>403</td>
+          <td>
+            The current user does not have any rights over this join request (i.e. is neither the requestor or a member of the organisation in question)
+          </td>
+        </tr>
+      </table>
+      <a name="POST"></a>
+      <h2>POST</h2>
+      <p>
+            Post a response to an existing organisation join request, can be either
+an accept / deny (org admin) or a withdraw (requesting User), if the call
+has is incorrect (json passed is wrong) return a BAD_REQUEST response. If
+the request is made by someone who is neither the requesting user or an
+org admin of the organisation in this request then a FORBIDDEN response
+should be shown.
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>user</td>
+          <td>
+            The current user (Injected Token no need to pass)
+          </td>
+          <td>tokenorganisationjoinrequestuser</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>id</td>
+          <td>
+            The id of the request in the database
+          </td>
+          <td>path</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Request Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td><a href="el_ns0_organisationJoinRequestJSON.html">organisationJoinRequestJSON</a></td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/json</td>
+        </tr>
+      </table>
+      <p>A JSON data packet containing information about the type of
+response and associated reasons for it</p>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td>(custom)</td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>*/*<br/>application/xml<br/></td>
+        </tr>
+      </table>
+      <p>A Response object detailing the success or failure of the action</p>
+      <h3>Status Codes</h3>
+      <table>
+        <tr>
+          <th>code</th>
+          <th>description</th>
+        </tr>
+        <tr>
+          <td>200</td>
+          <td>
+            Accepted or denied join request successfully
+          </td>
+        </tr>
+        <tr>
+          <td>202</td>
+          <td>
+            Accepted or denied join request successfully, but could not send notification email
+          </td>
+        </tr>
+        <tr>
+          <td>400</td>
+          <td>
+            Request was not well formed, please correct it and try again
+          </td>
+        </tr>
+        <tr>
+          <td>403</td>
+          <td>
+            The current user does not have any rights over this join request (i.e. is neither the requestor or a member of the organisation in question)
+          </td>
+        </tr>
+      </table>
+      <a name="path__organisationMemberships_requests.html"></a>
+      <h1>/organisationMemberships/requests</h1>
+      <p class="note">Mount Point: <a href="../api/organisationMemberships/requests">/api/organisationMemberships/requests</a></p>
+      <a name="GET"></a>
+      <h2>GET</h2>
+      <p>
+            Return all active requests to join organisations
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>user</td>
+          <td>
+            The Current user (Injected Token no need to pass)
+          </td>
+          <td>tokenuser</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td><a href="el_ns0_organisationJoinRequest.html">organisationJoinRequest</a></td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/json</td>
+        </tr>
+      </table>
+      <p>The list of open organisation requests</p>
+      <h3>Status Codes</h3>
+      <table>
+        <tr>
+          <th>code</th>
+          <th>description</th>
+        </tr>
+        <tr>
+          <td>200</td>
+          <td>
+            Successfully returned the current users active join requests
+          </td>
+        </tr>
+        <tr>
+          <td>403</td>
+          <td>
+            The current user is not logged in
+          </td>
+        </tr>
+      </table>
+
+      <div class="clear" />
+    </div>
+    <footer>
+      <div id="footer">
+        Generated by <a href="http://enunciate.codehaus.org">Enunciate</a>.
+      </div>
+    </footer>
+  </div> <!--! end of #container -->
+
+  <!-- JavaScript at the bottom for fast page loading -->
+
+  <!-- Grab Google CDN's jQuery, with a protocol relative URL; fall back to local if necessary -->
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.js"></script>
+  <script>window.jQuery || document.write("<script src='js/libs/jquery-1.5.1.min.js'>\x3C/script>")</script>
+
+  <!--manage the navigation menu-->
+  <script src="js/libs/xbreadcrumbs.js"></script>
+  <script>
+    $(function() {
+      $('#breadcrumbs').xBreadcrumbs();
+    });
+  </script>
+
+
+  <!-- prettify code blocks. see http://code.google.com/p/google-code-prettify/ -->
+  <script src="js/libs/prettify/prettify.js"></script>
+  <script>
+    $(function() {
+      prettyPrint();
+    });
+  </script>
+
+  <!--[if lt IE 7 ]>
+    <script src="js/libs/dd_belatedpng.js"></script>
+    <script>DD_belatedPNG.fix("img, .png_bg"); // Fix any <img> or .png_bg bg-images. Also, please read goo.gl/mZiyb </script>
+  <![endif]-->
+
+</body>
+</html>
