@@ -43,41 +43,41 @@ needs 1.0.0 support or different EPSG formats please relay your request to the d
 
 There are three sets of services. The general format of the service URL is:
 
-<nbn:prettyprint-code lang="url">http://gis.nbn.org.uk/arcgis/rest/services/grids/__SERVICETYPE__/__REQUIREDNBNKEY__/WMSServer?</nbn:prettyprint-code>
+<nbn:prettyprint-code lang="url">http://gis.nbn.org.uk/__SERVICETYPE__/__REQUIREDNBNKEY__/WMSServer?</nbn:prettyprint-code>
 
 The following service types with their corresponding required NBN Key are
 
 * __Single Species Mapping__ (NBN Key = TaxonVersionKey)  
     eg. WMS URL for single species layer for Aeshna isosceles  
-<nbn:prettyprint-code lang="url">http://gis.nbn.org.uk/arcgis/rest/services/grids/SingleSpeciesMap/NBNSYS0000005629/WMSServer?</nbn:prettyprint-code>
+<nbn:prettyprint-code lang="url">http://gis.nbn.org.uk/SingleSpecies/NBNSYS0000005629/WMSServer?</nbn:prettyprint-code>
 
 * __Single Dataset Mapping__ (NBN Key = DatasetKey)
     eg. WMS URL for single dataset mapping for Terrestrial Heteroptera Recording
     Scheme's dataset "iSpot (2008-2010): Shieldbugs & allied species
-<nbn:prettyprint-code lang="url">http://gis.nbn.org.uk/arcgis/rest/services/grids/DatasetSpeciesDensityMap/GA000858/WMSServer?</nbn:prettyprint-code>
+<nbn:prettyprint-code lang="url">http://gis.nbn.org.uk/DatasetSpeciesDensity/GA000858/WMSServer?</nbn:prettyprint-code>
 
 * __Designation Mapping__ (NBN Key = Designation Abbreviation Code)
     eg. WMS URL for designation mapping for EC CITES Annex A
-<nbn:prettyprint-code lang="url">http://gis.nbn.org.uk/arcgis/rest/services/grids/DesignationSpeciesDensityMap/ECCITES-A/WMSServer?</nbn:prettyprint-code>
+<nbn:prettyprint-code lang="url">http://gis.nbn.org.uk/DesignationSpeciesDensity/ECCITES-A/WMSServer?</nbn:prettyprint-code>
 
 
 This base URL can be augmented with a number of additional filters
 
 * __username and userkey__ - Allows a user to login to the Gateway to gain better maps  
     eg. To use 'test' account  
-<nbn:prettyprint-code lang="url">http://gis.nbn.org.uk/arcgis/rest/services/grids/DatasetSpeciesDensityMap/GA000858/WMSServer?username=test&userkey=HASHED_PASSWORD</nbn:prettyprint-code>
+<nbn:prettyprint-code lang="url">http://gis.nbn.org.uk/DatasetSpeciesDensity/GA000858/WMSServer?username=test&userkey=HASHED_PASSWORD</nbn:prettyprint-code>
 
 * __startyear__ - Filter out early records by year
     eg. To filter out all records before 2005
-<nbn:prettyprint-code lang="url">http://gis.nbn.org.uk/arcgis/rest/services/grids/DatasetSpeciesDensityMap/GA000858/WMSServer?startyear=2005</nbn:prettyprint-code>
+<nbn:prettyprint-code lang="url">http://gis.nbn.org.uk/DatasetSpeciesDensity/GA000858/WMSServer?startyear=2005</nbn:prettyprint-code>
 
 * __endyear__ - Filter out later records by year
     eg. To filter out all records after 1992
-<nbn:prettyprint-code lang="url">http://gis.nbn.org.uk/arcgis/rest/services/grids/DatasetSpeciesDensityMap/GA000858/WMSServer?endyear=1992</nbn:prettyprint-code>
+<nbn:prettyprint-code lang="url">http://gis.nbn.org.uk/DatasetSpeciesDensity/GA000858/WMSServer?endyear=1992</nbn:prettyprint-code>
 
 * __datasets__ - Limit results to specific datasets (not used in single dataset mapping)
     eg. To utilise only the Dragonfly Recording Network dataset in mapping Aeshna isosceles
-<nbn:prettyprint-code lang="url">http://gis.nbn.org.uk/arcgis/rest/services/grids/SingleSpeciesMap/NBNSYS0000005629/WMSServer?datasets=GA000012</nbn:prettyprint-code>
+<nbn:prettyprint-code lang="url">http://gis.nbn.org.uk/SingleSpecies/NBNSYS0000005629/WMSServer?datasets=GA000012</nbn:prettyprint-code>
 
 * __abundance__ - Filters to show presence, absence or both types of record. (Only for Single Species Mapping)
     Valid values for this parameter are
@@ -86,7 +86,7 @@ This base URL can be augmented with a number of additional filters
     * __absence__ - Only shows Absence records
 
     eg. To only see absence records for *Tetrao tetrix*  
-<nbn:prettyprint-code lang="url">http://gis.nbn.org.uk/arcgis/rest/services/grids/SingleSpeciesMap/NHMSYS0000530658/WMSServer?abundance=absence</nbn:prettyprint-code>
+<nbn:prettyprint-code lang="url">http://gis.nbn.org.uk/SingleSpecies/NHMSYS0000530658/WMSServer?abundance=absence</nbn:prettyprint-code>
 
 ##Using WMS Parameters to request maps
 
@@ -113,14 +113,9 @@ The __required__ parameters for a basic __WMS GetMap__ v1.3.0 request are:
         </td></tr>
     <tr><th>BBOX</th><td>A bounding box of the form minx, miny, maxx, maxy</td><td>Provide British National Grid or Lat/Long coordinates depending on SRS</td></tr>
     <tr><th>FORMAT</th><td>image/png | image/jpeg | image/gif</td><td>png is recommended for best quality image.</td></tr>
-    <tr><th>LAYERS</th><td>0,1,2,3</td><td>
+    <tr><th>LAYERS</th><td>Grid-10km,Grid-2km,Grid-1km,Grid-100m</td><td>
             <p>These are the map layers which can be requested in the WMS GetMap request. You can request just one, or any combination of them.</p>
-            <ul>
-                <li>0 = 100m squares</li>
-                <li>1 = 1km squares</li>
-                <li>2 = 2km squares</li>
-                <li>3 = 10km squares</li>
-            </ul>
+            <p>The wms also has a selection of context layers and nested layers to request just presence or absence records at each resolution. To see the full list of layers please obtain the GetCapabilities for this wms.</p>
         </td></tr>
     <tr><th>WIDTH</th><td>width of required map in pixels</td><td>Used to adjust the size of map you want in your application / website.</td></tr>
     <tr><th>HEIGHT</th><td>height of required map in pixels</td><td>Used to adjust the size of map you want in your application / website.</td></tr>
@@ -130,7 +125,7 @@ The __required__ parameters for a basic __WMS GetMap__ v1.3.0 request are:
 An example request url which queries the WMS directly for the Terrestrial Heteroptera
 Recording Scheme's dataset "__iSpot (2008-2010): Shieldbugs & allied species__" 10km square layer
 
-<nbn:prettyprint-code lang="url">http://gis.nbn.org.uk/arcgis/rest/services/grids/DatasetSpeciesDensityMap/GA000858/WMSServer?REQUEST=GetMap&SERVICE=WMS&VERSION=1.3.0&BBOX=0,0,700000,900000&WIDTH=640&HEIGHT=640&CRS=EPSG:27700&FORMAT=image/png&LAYERS=3</nbn:prettyprint-code>
+<nbn:prettyprint-code lang="url">http://gis.nbn.org.uk/DatasetSpeciesDensity/GA000858/WMSServer?REQUEST=GetMap&SERVICE=WMS&VERSION=1.3.0&BBOX=0,0,700000,900000&WIDTH=640&HEIGHT=640&CRS=EPSG:27700&FORMAT=image/png&LAYERS=Grid-10km</nbn:prettyprint-code>
 
 #Finding NBN Keys
 
