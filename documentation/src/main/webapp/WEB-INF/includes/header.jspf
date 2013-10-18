@@ -2,10 +2,10 @@
 <ul class="navigation">
     <li class="first"><a href="/">NBN Gateway Home</a></li>
     <li><a href="http://nbn.org.uk">The NBN</a></li>
-    <li><a href="/datasetInfo/datasetTypeList.jsp" >Browse Datasets</a></li>
-    <li><a href="/directory/browseTGLevel1.jsp?dataFilter=1">Browse Species</a></li>
-    <li><a href="/directory/browseASLevel1.jsp">Browse Sites</a></li>
-    <li><a href="/directory/browseDesignations.jsp">Browse Designations</a></li>
+    <li><a href="/Datasets">Browse Datasets</a></li>
+    <li><a href="/Taxa">Browse Species</a></li>
+    <li><a href="/Site_Datasets">Browse Sites</a></li>
+    <li><a href="/Designation_Categories">Browse Designations</a></li>
     <li><a href="/Documentation">Documentation</a></li>
-    <li><a href="#" onclick="window.open('/userInfo/enterFeedback.jsp', 'userReport', 'width=550,height=500,scrollbars=0,resizable=0,status=1,left=120,top=120,screenX=120,screenY=120');">Feedback</a></li>
+    <li><a href="http://forums.nbn.org.uk">Forum</a></li>
 </ul> 
