@@ -4,30 +4,23 @@
  */
 package uk.gov.nbn.data.portal.controllers;
 
-import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import uk.org.nbn.nbnv.api.model.BoundingBox;
-import uk.org.nbn.nbnv.api.model.Dataset;
 import uk.org.nbn.nbnv.api.model.Feature;
-import uk.org.nbn.nbnv.api.model.Organisation;
-import uk.org.nbn.nbnv.api.model.OrganisationAccessRequest;
 import uk.org.nbn.nbnv.api.model.TaxonDataset;
 import uk.org.nbn.nbnv.api.model.TaxonDatasetWithQueryStats;
-import uk.org.nbn.nbnv.api.model.User;
-import uk.org.nbn.nbnv.api.model.UserAccessRequest;
 
 /**
  *
@@ -44,27 +37,27 @@ public class EasyMapController {
     
     @RequestMapping(value = "/EasyMap", method = RequestMethod.GET)
     public ModelAndView getCreatePage(
-            @QueryParam("tvk") String tvk
-            ,@QueryParam("ds") String datasets
-            ,@QueryParam("res") String gridResolution
-            ,@QueryParam("w") Integer mapWidth
-            ,@QueryParam("h") Integer mapHeight
-            ,@QueryParam("gd") String gridOverlay
-            ,@QueryParam("bg") String mapBackground
-            ,@QueryParam("vc") Integer viceCountyId
-            ,@QueryParam("b0from") Integer band0StartDate
-            ,@QueryParam("b0to") Integer band0EndDate
-            ,@QueryParam("b0fill") String band0Fill
-            ,@QueryParam("b0bord") String band0Border
-            ,@QueryParam("b1from") Integer band1StartDate
-            ,@QueryParam("b1to") Integer band1EndDate
-            ,@QueryParam("b1fill") String band1Fill
-            ,@QueryParam("b1bord") String band1Border
-            ,@QueryParam("b2from") Integer band2StartDate
-            ,@QueryParam("b2to") Integer band2EndDate
-            ,@QueryParam("b2fill") String band2Fill
-            ,@QueryParam("b2bord") String band2Border
-            ,@QueryParam("zoom") String zoomLocation) {
+            @RequestParam(value="tvk") String tvk
+            ,@RequestParam(value="ds", required=false) String datasets
+            ,@RequestParam(value="res", required=false) String gridResolution
+            ,@RequestParam(value="w", required=false) Integer mapWidth
+            ,@RequestParam(value="h", required=false) Integer mapHeight
+            ,@RequestParam(value="gd", required=false) String gridOverlay
+            ,@RequestParam(value="bg", required=false) String mapBackground
+            ,@RequestParam(value="vc", required=false) Integer viceCountyId
+            ,@RequestParam(value="b0from", required=false) Integer band0StartDate
+            ,@RequestParam(value="b0to", required=false) Integer band0EndDate
+            ,@RequestParam(value="b0fill", required=false) String band0Fill
+            ,@RequestParam(value="b0bord", required=false) String band0Border
+            ,@RequestParam(value="b1from", required=false) Integer band1StartDate
+            ,@RequestParam(value="b1to", required=false) Integer band1EndDate
+            ,@RequestParam(value="b1fill", required=false) String band1Fill
+            ,@RequestParam(value="b1bord", required=false) String band1Border
+            ,@RequestParam(value="b2from", required=false) Integer band2StartDate
+            ,@RequestParam(value="b2to", required=false) Integer band2EndDate
+            ,@RequestParam(value="b2fill", required=false) String band2Fill
+            ,@RequestParam(value="b2bord", required=false) String band2Border
+            ,@RequestParam(value="zoom", required=false) String zoomLocation) {
         
         Map<String, Object> model = new HashMap<String, Object>();
         
@@ -169,9 +162,9 @@ public class EasyMapController {
         p = p + "gb-coast,ireland-coast";
         
         if (mapBackground != null) {
-            if (mapBackground == "os") {
+            if ("os".equals(mapBackground)) {
                 p = p + ",OS-Scale-Dependent";
-            } else if (mapBackground == "vc") {
+            } else if ("vc".equals(mapBackground)) {
                 p = p + ",Vice-counties";
             } else {
                 errors.add("Invalid map background specified");
@@ -181,11 +174,11 @@ public class EasyMapController {
         String resolutionPrefix = "";
         if (gridResolution == null || gridResolution.isEmpty()) {
             resolutionPrefix = "Grid-10km";
-        } else if (gridResolution == "100m") {
+        } else if ("100m".equals(gridResolution)) {
             resolutionPrefix = "Grid-100m";
-        } else if (gridResolution == "1km") {
+        } else if ("1km".equals(gridResolution)) {
             resolutionPrefix = "Grid-1km";
-        } else if (gridResolution == "2km") {
+        } else if ("2km".equals(gridResolution)) {
             resolutionPrefix = "Grid-2km";
         } else {
             errors.add("Invalid grid resolution has been specified");
