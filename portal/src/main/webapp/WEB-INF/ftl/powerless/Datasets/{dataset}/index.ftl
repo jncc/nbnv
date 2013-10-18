@@ -79,10 +79,10 @@
                         <th>Geographical coverage</th>
                         <td>${dataset.geographicalCoverage!"Not available"}</td>
                     </tr>
-                    <tr>
+                    <!--<tr>
                         <th>View in interactive map</th>
                         <td><a href="<@hrefForDatasetOnIMT dataset/>">Map link</a></td>
-                    </tr>
+                    </tr>-->
                     <tr>
                         <th>Temporal coverage</th>
                         <td>${dataset.temporalCoverage!"Not available"}</td>
