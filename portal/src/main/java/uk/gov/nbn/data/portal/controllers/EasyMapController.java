@@ -22,6 +22,7 @@ import org.springframework.web.servlet.ModelAndView;
 import uk.org.nbn.nbnv.api.model.BoundingBox;
 import uk.org.nbn.nbnv.api.model.Dataset;
 import uk.org.nbn.nbnv.api.model.Feature;
+import uk.org.nbn.nbnv.api.model.Organisation;
 import uk.org.nbn.nbnv.api.model.OrganisationAccessRequest;
 import uk.org.nbn.nbnv.api.model.TaxonDataset;
 import uk.org.nbn.nbnv.api.model.TaxonDatasetWithQueryStats;
@@ -294,9 +295,10 @@ public class EasyMapController {
             TaxonDataset dataset = datasetAndStats.getTaxonDataset();
             
             String datasetTitle = dataset.getTitle();
-            String orgName = dataset.getOrganisation().getName();
             
-            results.add(orgName + " " + datasetTitle);
+            String orgName = dataset.getOrganisationName();
+            
+            results.add(orgName + " - " + datasetTitle);
         }
         
         return results;
