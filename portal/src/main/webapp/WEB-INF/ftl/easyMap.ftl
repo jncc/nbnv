@@ -7,12 +7,12 @@
          <li>${error}</li>
     </#list>
 <#else>
-    https://staging-gis.nbn.org.uk/SingleSpecies/${tvk}?${wmsParameters}
+    <p><a href="https://staging-gis.nbn.org.uk/SingleSpecies/${tvk}?${wmsParameters}">https://staging-gis.nbn.org.uk/SingleSpecies/${tvk}?${wmsParameters}</a></p>
     <img src=${gis}/SingleSpecies/${tvk}?${wmsParameters}/>
     <br/>
-    Dataset List
+    The following datasets are included:
     <br/>
-     <#list datasets as datset>
+     <#list datasets as dataset>
          <li>${dataset}</li>
     </#list>
 </#if>
