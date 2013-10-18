@@ -151,6 +151,47 @@ public class UserResource extends AbstractResource {
                 (remember) ? tokenTTL / 1000 : NewCookie.DEFAULT_MAX_AGE, false))
                 .build();
     }
+    
+    /**
+     * Log the indicated user into the system, via a POST
+     * 
+     * @param username The username of the user
+     * @param password The password of the user
+     * @param remember Whether the browser should remember this data (stay 
+     * logged in)
+     * 
+     * @return A Response object detailing the success or failure of the action
+     * 
+     * @throws InvalidCredentialsException Credentials are invalid (incorrect
+     * username / password)
+     * @throws InvalidTokenException Token is invalid
+     * @throws ExpiredTokenException Token has expired
+     * 
+     * @response.representation.200.qname Response
+     * @response.representation.200.mediaType application/json
+     */
+    @POST
+    @Path("/login")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response createTokenCookiePOST (
+            @FormParam("username") String username,
+            @FormParam("password") String password,
+            @DefaultValue("false") @QueryParam("remember") Boolean remember) throws InvalidCredentialsException, InvalidTokenException, ExpiredTokenException {
+        Token token = tokenAuth.generateToken(username, password, tokenTTL);
+
+        Map<String, Object> toReturn = new HashMap<String, Object>();
+        toReturn.put("success", true);
+        toReturn.put("user", tokenAuth.getUser(token));
+        toReturn.put("token", token.getBytes());
+
+        return Response.ok(toReturn)
+                .cookie(new NewCookie(
+                tokenCookieKey,
+                Base64.encodeBase64URLSafeString(token.getBytes()),
+                "/", domain, "authentication token",
+                (remember) ? tokenTTL / 1000 : NewCookie.DEFAULT_MAX_AGE, false))
+                .build();
+    }    
 
     /**
      * Change the current users password
