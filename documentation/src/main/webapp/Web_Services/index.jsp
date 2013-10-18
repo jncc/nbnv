@@ -5,6 +5,10 @@
 <t:webserviceDocumentationPage>
 	<jsp:attribute name="body">
         <nbn:markdown>
+#Documentation under review
+
+Please note that the documentation is still being reviewed at this time and as such some documentation may be out of date or missing, we apologise for this and are working to update the documentation right now!            
+            
 #Web Services Documentation
 
 Welcome to the NBN Gateways Web Services Documentation, here you will be able to find
