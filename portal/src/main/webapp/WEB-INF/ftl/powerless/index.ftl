@@ -65,7 +65,7 @@ Explore and map grid squares for a particular [species](/Taxa).
         </div>
     </div>
 
-    <div id="statistics">
+   <!-- <div id="statistics">
         <h1>Gateway Statistics</h1>
         <table>
             <#list statistics?keys as stat>
@@ -78,7 +78,7 @@ Explore and map grid squares for a particular [species](/Taxa).
                 <td colspan="2"><a href="/AccessRequest/Create">Request Better Access</a></td>
             </tr>
         </table>
-    </div>
+    </div> -->
 
     <div id="news-container">
         <h1><a title="RSS" href="${api}/datasets/latest.rss">RSS</a><a href="/Datasets">Latest Datasets</a></h1>
@@ -87,11 +87,11 @@ Explore and map grid squares for a particular [species](/Taxa).
                 <#assign organisation = json.readURL(dataset.organisationHref)>
 
                 <li>
-                    <h3>
+                    
                         <#if organisation.smallLogo??>
-                            <img src="${organisation.smallLogo}"> 
+                            <img style="float:left; padding-right:5px;" src="${organisation.smallLogo}"> 
                         </#if>
-                        ${organisation.name} Dataset Updated: ${dataset.formattedDateUploaded}</h3>
+                    <h3>${organisation.name} Dataset Updated: ${dataset.formattedDateUploaded}</h3>
                     <a href="${dataset.href}">${dataset.title}</a> 
                 </li>
 
