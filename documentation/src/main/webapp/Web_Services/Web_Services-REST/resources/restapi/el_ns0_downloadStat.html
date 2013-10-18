@@ -144,6 +144,97 @@
   &quot;extra&quot; : &quot;...&quot;
 }</code>
 
+	<div>
+		<h2 id="stats">Stats call</h2>
+		<p>This call returns general statistics about a series of downloads (i.e. dataset + any filters), it aggregates stats into the following categories;</p>
+		<table>
+			<tr>
+				<th>Purpose ID</th>
+				<th>Purpose</th>
+			</tr>
+			<tr>
+				<td>1</td>
+				<td>Personal interest</td>
+			</tr>
+			<tr>
+				<td>2</td>
+				<td>Educational purposes</td>
+			</tr>
+			<tr>
+				<td>3</td>
+				<td>Research and scientific analysis</td>
+			</tr>
+			<tr>
+				<td>4</td>
+				<td>Media publication</td>
+			</tr>
+			<tr>
+				<td>5</td>
+				<td>Commercial and consultancy work</td>
+			</tr>
+			<tr>
+				<td>6</td>
+				<td>Professional land management</td>
+			</tr>
+			<tr>
+				<td>7</td>
+				<td>Data provision and interpretation (commercial)</td>
+			</tr>
+			<tr>
+				<td>8</td>
+				<td>Data provision and interpretation (non-profit)</td>
+			</tr>
+			<tr>
+				<td>9</td>
+				<td>Statutory work</td>
+			</tr>
+		</table>
+		<p>The id in this case matches one of the given purposes and the name is the label of that purpose</p>
+		<p>The total variable represents the total number of records downloaded for this purpose matching the given filters</p>
+		<p>The totalAlt variable represents the total number of downloads for this purpose matching the given filters</p>
+		<p>The extra variable will be blank</p>
+		<h3>Example JSON</h3>
+		<code class="prettyprint lang-js">[{
+  &quot;id&quot; : 1,
+  &quot;name&quot; : &quot;Personal interest&quot;,
+  &quot;total&quot; : 32,
+  &quot;totalAlt&quot; : 2
+},
+{
+  &quot;id&quot; : 4,
+  &quot;name&quot; : &quot;Media publication&quot;,
+  &quot;total&quot; : 512,
+  &quot;totalAlt&quot; : 4
+}]</code>
+		<h3 id="user">User Stats call</h3>
+		<p>This call returns a set of stats for the top 5 users for downloads which match the given filters</p>
+		<p>The id in this case matches the userID of the user and the name is the name of that user</p>
+		<p>The total variable represents the total number of records downloaded by this user matching the given filters</p>
+		<p>The totalAlt variable represents the total number of downloads by this user matching the given filters</p>
+		<p>The extra variable is the email of that user</p>		
+		<code class="prettyprint lang-js">[{
+  &quot;id&quot; : 1,
+  &quot;name&quot; : &quot;Test User&quot;,
+  &quot;total&quot; : 32,
+  &quot;totalAlt&quot; : 1,
+  &quot;extra&quot; : &quot;test@email.com&quot;
+}, ...]</code>		
+		<h3 id="org">Organisation Stats call</h3>
+		<p>This call returns a set of stats for the top 5 organisations for downloads which match the given filters</p>
+		<p>The id in this case matches the organisationID of the organisation and the name is the name of that organisation</p>
+		<p>The total variable represents the total number of records downloaded by this organisation matching the given filters</p>
+		<p>The totalAlt variable represents the total number of downloads by this organisation matching the given filters</p>
+		<p>The extra variable will be blank</p>		
+		<code class="prettyprint lang-js">[{
+  &quot;id&quot; : 1,
+  &quot;name&quot; : &quot;Test Org&quot;,
+  &quot;total&quot; : 32,
+  &quot;totalAlt&quot; : 1,
+  &quot;extra&quot; : &quot;test@email.com&quot;
+}, ...]</code>	
+		<h2 id="combined">Combined Stats call</h2>
+		<p>This call returns a set of above three calls in one JSON array, the first being a call to the stats resource, the second a call to the users resource and the third being a call to the organisations resource</p>
+	</div>
       <div class="clear" />
     </div>
     <footer>
