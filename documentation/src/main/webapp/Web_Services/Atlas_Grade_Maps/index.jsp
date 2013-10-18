@@ -200,4 +200,8 @@ private static String getHashText(String password) throws NoSuchAlgorithmExcepti
             <div>
                 <nbn:prettyprint-code lang="url">http://gis.nbn.org.uk/SingleSpecies/NHMSYS0000459714/atlas/circle/map?background=gb100kgrid&startyear=1990&endyear=2000&fillcolour=00ffff&outlinecolour=000000&imagesize=14&format=gif&datasets=GA000091,GA000482</nbn:prettyprint-code>
                 <p class="description"></p>
-                <img height="405" width="300" src="http://gis.nbn.org.uk/SingleSpecies/NHMSYS0000459714/atlas/circle/map?background=gb100kgrid&startyear=1990&endyear=2000&fillcolour=00ffff&outlinecolour=000000&imagesize=9&format=gif&datasets=GA000091,GA000482SingleSpecies
+                <img height="405" width="300" src="http://gis.nbn.org.uk/SingleSpecies/NHMSYS0000459714/atlas/circle/map?background=gb100kgrid&startyear=1990&endyear=2000&fillcolour=00ffff&outlinecolour=000000&imagesize=9&format=gif&datasets=GA000091,GA000482">
+            </div>
+        </div>
+    </jsp:attribute>
+</t:webserviceDocumentationPage>
