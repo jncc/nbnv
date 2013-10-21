@@ -18,10 +18,10 @@ class Nbnv61Validator {
     val key = record.core.value(DwcTerm.occurrenceID)
 
     //duplicates NBNV-55
-    if (key == "") {
+    if (key == null || key == "") {
       new Result {
         def level = ResultLevel.ERROR
-        def message = "NBNV-61: Key is blank"
+        def message = "NBNV-61: Key is blank, check for blank records at the end of the file"
         def reference = key
       }
     } else if (keyTree.contains(key)) {

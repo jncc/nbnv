@@ -29,6 +29,13 @@ public interface OrganisationMembershipMapper {
     })
     List<OrganisationMembership> selectByUser(@Param("userKey") int userKey);
 
+    @Select("SELECT userID, organisationID, role FROM OrganisationMembershipData WHERE userID = #{userKey} AND (role = 'lead' OR role = 'administrator')")
+    @Results(value = {
+        @Result(property="user", column="userID", javaType=User.class, one=@One(select="uk.org.nbn.nbnv.api.dao.warehouse.UserMapper.getUserById")),
+        @Result(property="organisation", column="organisationID", javaType=Organisation.class, one=@One(select="uk.org.nbn.nbnv.api.dao.warehouse.OrganisationMapper.selectByID"))           
+    })
+    List<OrganisationMembership> selectAdminOrganisationsByUser(@Param("userKey") int userKey);
+
     @Select("SELECT userID, organisationID, role FROM OrganisationMembershipData WHERE organisationID = #{organisationID}")
     @Results(value = {
         @Result(property="user", column="userID", javaType=User.class, one=@One(select="uk.org.nbn.nbnv.api.dao.warehouse.UserMapper.getUserById")),

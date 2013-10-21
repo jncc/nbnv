@@ -45,6 +45,7 @@ define [
     endYear : @getEndDate() #Temporal mixin handles this value
     datasetKey: @get("datasets")
     availableDatasets: @availableDatasets
+    absence: if @get "isPresence" then "false" else "true"
 
   getTaxonObservationTypes: -> new TaxonObservationTypes
     id: @id

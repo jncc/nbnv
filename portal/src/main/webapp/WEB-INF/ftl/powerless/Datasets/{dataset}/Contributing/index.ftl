@@ -3,11 +3,17 @@
 <@template.master title="Contributing Organisations for ${dataset.title}"
     javascripts=["/js/jquery-ui-1.8.23.custom.min.js","/js/jquery.dataTables.min.js","/js/admin/contributing.js","/js/dialog_spinner.js"] 
     csss=["/css/smoothness/jquery-ui-1.8.23.custom.css", "/css/admin-controls.css", "/css/dialog-spinner.css"]>
+
+    <#assign organisations=json.readURL("${api}/organisations")>
+
     <h1>Manage Contributing Organisations for ${dataset.title}</h1>
     <div id="nbn-contributing-org-add_tab" class="tabbed">
         <h3>Add Contributing Organisation</h3>
-        <input id="nbn-add-contrib-org" type="text" data-url="${api}/organisations/search" />
-        <input id="nbn-add-contrib-org-id" type="hidden" />
+        <select id="nbn-add-contrib-org">
+            <#list organisations?sort_by("name") as org>
+            <option value="${org.id}">${org.name}</option>
+            </#list>
+        </select>
         <input id="nbn-add-contrib-org-submit" type="button" data-url="${api}/datasets/${dataset.key}/contributing" value="Add Contributing Organisation" />
     </div>
     <div id="nbn-contributing-org-remove_tab" class="tabbed">

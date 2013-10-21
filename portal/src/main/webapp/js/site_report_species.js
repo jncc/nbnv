@@ -28,12 +28,10 @@
                     toAppend += '<table id="nbn-species-table" class="nbn-simple-table"><tbody>';
                 }
                 $.each(data, function(key, val){
-                    //Link to observation data disabled for Christmas release 2012
-//                    toAppend += "<tr><td><span class='nbn-taxon-name'>" + val.taxon.name + '</span>';
-//                    if (val.taxon.commonName)
-//                        toAppend += ' [' + val.taxon.commonName + ']';
-//                    toAppend += '</td></tr>';
-                    toAppend += '<tr><td><a href="/Reports/Sites/' + featureID + '/Groups/' + taxonOutputGroupKey + '/Species/'+ val.taxon.ptaxonVersionKey + '/Observations">' + val.taxon.name + '</a></td></tr>';
+                    toAppend += '<tr><td><a href="/Reports/Sites/' + featureID + '/Groups/' + taxonOutputGroupKey + '/Species/'+ val.taxon.ptaxonVersionKey + '/Observations'+ getLinkQueryString(queryString) + '">' + "<span class='nbn-taxon-name'>" + val.taxon.name + '</span>';
+                    if (val.taxon.commonName)
+                        toAppend += ' [' + val.taxon.commonName + ']';
+                    toAppend += '</a></td></tr>';
                 });
                 toAppend += '</tbody></table>';
             }else{
@@ -44,7 +42,15 @@
             if(numSpecies > datatableDisplayThreshold){
                 addDataTable();
             }
+            
         });
+    }
+    
+    
+    function getLinkQueryString(queryString) {
+        return queryString +
+            '&selectedDatasets=' +  
+            nbn.portal.reports.utils.datasetfields.getSelectedDatasets();
     }
     
     function addDataTable(){

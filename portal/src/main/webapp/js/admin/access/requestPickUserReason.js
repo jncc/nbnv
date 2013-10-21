@@ -23,6 +23,7 @@ nbn.nbnv.ui.requestPickUserReason = function(json) {
     this._reason = '';
     this._details = json.reason.details;
     this._perm = false;
+    this._grant = false;
     
     var username = 'Myself';
     var purposename = 'Personal interest';
@@ -194,9 +195,13 @@ nbn.nbnv.ui.requestPickUserReason = function(json) {
         
         return { reason: { purpose: this._purpose, details: this._details, reason: this._reason, userID: this._asID }};
     };
+    
+    this.setGrant = function(grant) {
+        this._grant = grant;
+    }
 
     this.getError = function() {
-        if (this._details == '') { return ['Please enter detailed reason for the request']; }
+        if (this._details == '' && ! this._grant) { return ['Please enter detailed reason for the request']; }
         if (this._asID == -1) { return ['Missing user or organisation to grant access to']}
         
         return [];

@@ -12,12 +12,14 @@
     "grunt-contrib-requirejs": "~0.4.1",
     "grunt-template-jasmine-requirejs": "~0.1.2",
     "grunt-contrib-copy": "~0.4.1",
-    "bower": "~0.10.0",
+    "bower": "~1.2.7",
     "grunt-contrib-connect": "~0.3.0",
     "grunt-contrib-clean": "~0.4.1",
     "grunt-contrib-less": "~0.7.0",
     "grunt-contrib-watch": "~0.4.4",
     "grunt-contrib-compress": "~0.5.2",
-    "grunt-contrib-coffee": "~0.7.0"
+    "grunt-contrib-coffee": "~0.7.0",
+    "grunt-contrib-cssmin": "~0.6.1",
+    "grunt-combine-harvester": "~0.1.0"
   }
 }

@@ -14,6 +14,13 @@ define [
     @datasetKey = options.datasetKey
     #use the given datasets as a lookup to obtain the orgainsation name
     @availableDatasets = options.availableDatasets 
+    @absence = options.absence
+
+  ###
+  Check to see if this collection is populated based on a restriction to a 
+  single taxon
+  ###
+  isFilteredByTaxon: -> @ptvk?
 
   ###
   Overide the default fetch method so that it supports a
@@ -28,6 +35,7 @@ define [
       startYear: @startYear
       endYear: @endYear
       datasetKey: @datasetKey
+      absence: @absence
 
     options.traditional = true
 

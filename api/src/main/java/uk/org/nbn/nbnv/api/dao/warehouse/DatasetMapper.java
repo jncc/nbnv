@@ -62,8 +62,8 @@ public interface DatasetMapper {
     @SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectDatasetsProviderNotInstantiated")
     List<Dataset> selectDatasetsForTaxonViewableByUser(@Param("user") User user, @Param("ptvk") String pTaxonVersionKey);
     
-    @Select("SELECT filterText FROM UserAccessPosition uap WHERE datasetKey = #{datasetKey} AND userID = #{userID}")
-    List<String> getDatasetAccessPositions(@Param("datasetKey") String datasetKey, @Param("userID") int userID); 
+    @Select("SELECT owner, filterText FROM UserAccessPosition uap WHERE datasetKey = #{datasetKey} AND userID = #{userID}")
+    List<AccessPosition> getDatasetAccessPositions(@Param("datasetKey") String datasetKey, @Param("userID") int userID); 
     
     @Select("SELECT drrcd.datasetKey, drrcd.count, r.label, r.id AS resolutionID FROM DatasetResolutionRecordCountData drrcd LEFT JOIN Resolution r ON r.label = drrcd.label WHERE datasetKey = #{datasetKey}")
     List<DatasetResolutionRecordCount> getResolutionData(@Param("datasetKey") String datasetKey);

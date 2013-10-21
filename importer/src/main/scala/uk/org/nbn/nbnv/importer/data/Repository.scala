@@ -11,19 +11,28 @@ import uk.org.nbn.nbnv.{SpatialQueries, StoredProcedureLibrary}
 
 class Repository (log: Logger, em: EntityManager, cache: QueryCache) extends ControlAbstractions {
   def confirmDatasetExists(datasetKey: String): Boolean = {
-    val query = em.createQuery("select count(d.key) from Dataset d where d.key = :key")
-    query.setParameter("key", datasetKey)
+    val q = "select count(d.key) from Dataset d where d.key = :key"
 
-    val count = query.getSingleResult.asInstanceOf[Long]
-    if (count > 0 ) true else false
+    cacheSingle(q, datasetKey) {
+      val query = em.createQuery(q)
+      query.setParameter("key", datasetKey)
+
+      val count = query.getSingleResult.asInstanceOf[Long]
+      if (count > 0 ) true else false
+    }
   }
 
   def confirmUserExistsByEamil(email: String): Boolean = {
-    val query = em.createQuery("select count(u.id) from User u where u.email = :email")
-    query.setParameter("email", email)
 
-    val count = query.getSingleResult.asInstanceOf[Long]
-    if (count > 0) true else false
+    val q = "select count(u.id) from User u where u.email = :email"
+
+    cacheSingle(q, email) {
+      val query = em.createQuery(q)
+      query.setParameter("email", email)
+
+      val count = query.getSingleResult.asInstanceOf[Long]
+      if (count > 0) true else false
+    }
   }
 
   def getImportSiteByName(name: String, dataset: ImportDataset): Option[ImportSite] = {
@@ -168,24 +177,10 @@ class Repository (log: Logger, em: EntityManager, cache: QueryCache) extends Con
     }
   }
 
-  def getDateType(key: String) = {
-
-    cacheSingle("getDateType", key) {
-      em.findSingle(classOf[DateType], key)
-    }
-  }
-
   def getFeature(id: Int) = {
 
     cacheSingle("getFeature", id.toString) {
       em.findSingle(classOf[Feature], id)
-    }
-  }
-
-  def getTaxon(key: String) = {
-
-    cacheSingle("getTaxon", key) {
-      em.findSingle(classOf[Taxon], key)
     }
   }
 

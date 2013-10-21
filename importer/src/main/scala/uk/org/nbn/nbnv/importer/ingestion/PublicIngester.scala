@@ -44,15 +44,14 @@ class PublicIngester @Inject()(log: Logger,
           val publicFeature = featureIngester.ensureGridRefFeature(GridRefDef(publicInfo.gridReference, Some(GridTypeDef(publicInfo.projection)), Some(publicInfo.gridReferencePrecision)))
           p.setFeatureID(publicFeature.getId)
 
-          val publicSiteId =  if (metadata.siteIsPublic && info.gridReferencePrecision == publicInfo.gridReferencePrecision) o.getSiteID else null
+          val publicSiteId =  if (info.gridReferencePrecision == publicInfo.gridReferencePrecision) o.getSiteID else null
           p.setSiteID(publicSiteId)
         }
         case None => {
           // the feature was not a gridsquare feature
           p.setFeatureID(o.getFeatureID)
 
-          val publicSiteId = if (metadata.siteIsPublic) o.getSiteID else null
-          p.setSiteID(publicSiteId)
+          p.setSiteID(o.getSiteID)
         }
       }
 

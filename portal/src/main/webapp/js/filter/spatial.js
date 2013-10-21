@@ -118,6 +118,7 @@ nbn.nbnv.ui.filter.spatial = function(json) {
         
         var gridRefSelector = $('<input>')
                 .attr('type', 'text')
+                .attr('length', '4')
                 .attr('id', 'gridRefSelector');
         
         var gridRef = $('<div>')
@@ -136,8 +137,8 @@ nbn.nbnv.ui.filter.spatial = function(json) {
                 })
             ).append("Records that are ")
             .append(matchGrid)
-            .append(' the Grid Reference ')
-            .append($('<div>').append($('<span>').addClass('comboSpan').text('Grid Reference:')).append(gridRefSelector));
+            .append(' the 10km square ')
+            .append(gridRefSelector);
     
         var allRecords = $('<div>')
             .append($('<input>')
@@ -186,7 +187,7 @@ nbn.nbnv.ui.filter.spatial = function(json) {
             }
         }
         
-        dataDiv.append(allRecords).append(filterRecords).append(gridRef);
+        dataDiv.append(allRecords).append(gridRef).append(filterRecords);
         
         return dataDiv;
     };
@@ -257,7 +258,7 @@ nbn.nbnv.ui.filter.spatial = function(json) {
     };
 
     this.getError = function() {
-        if (!this._siteFilter && !this._all) {
+        if (!this._siteFilter && !this._all && this._mode == 'gridRef') {
             this._feature = $('#gridRefSelector').val();
             if (!(new RegExp('^[HJNOST][A-Z](\\d\\d)$','i').test(this._feature) || 
                     new RegExp('^[A-HJ-Z](\\d\\d)$','i').test(this._feature) || 

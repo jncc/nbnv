@@ -18,8 +18,9 @@
         $.getJSON(url, function(data){
             if(data.length > 0){
                 toAppend += '<ul>';
+                data.sort(function(a, b) { return ((a.taxonOutputGroup.name < b.taxonOutputGroup.name) ? -1 : ((a.taxonOutputGroup.name > b.taxonOutputGroup.name) ? 1 : 0)); });
                 $.each(data, function(key, val){
-                    toAppend += '<li><a href="/Reports/Sites/' + featureID + '/Groups/' + val.taxonOutputGroup.key + '/Species">' + val.taxonOutputGroup.name + '</a>';
+                    toAppend += '<li><a class="nbn-drilldown-link" href="/Reports/Sites/' + featureID + '/Groups/' + val.taxonOutputGroup.key + '/Species' + getLinkQueryString(queryString) + '">' + val.taxonOutputGroup.name + '</a>';
                 });
                 toAppend += '</ul>';
             }else{
@@ -29,6 +30,13 @@
             $($dataContainer).append(toAppend);
         });
     }
+    
+    function getLinkQueryString(queryString) {
+        return queryString +
+            '&selectedDatasets=' +  
+            nbn.portal.reports.utils.datasetfields.getSelectedDatasets();
+    }
+    
     
     function setupFormOnChange(){
         //The map should refresh when any form field is changed and has valid data
@@ -115,6 +123,8 @@
             e.preventDefault();
         });
     }
+    
+
     
     $(document).ready(function(){
         $('#nbn-download-terms').hide();

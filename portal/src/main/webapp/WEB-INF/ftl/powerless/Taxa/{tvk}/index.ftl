@@ -8,6 +8,7 @@
 <#assign children=json.readURL("${api}/taxa/${tvk}/children")>
 <#assign datasets=json.readURL("${api}/taxa/${tvk}/datasets")>
 <#assign weblinks=json.readURL("${api}/taxa/${tvk}/weblinks")>
+<#assign celink=json.readURL("http://www.conservationevidence.com/binomial/search?name=${taxon.name?url('ISO-8859-1')}")> 
 <#assign output=json.readURL("${api}/taxonOutputGroups/${taxon.taxonOutputGroupKey}")>
 
 <@template.master title="NBN Gateway - Taxon"
@@ -22,7 +23,7 @@
         <#if taxon.taxonVersionKey == ptaxon.taxonVersionKey>
             <@taxonPageSynonyms syn=synonyms/>
             <@taxonPageDesignations des=designations ades=arcdesignations/>
-            <@taxonPageLinks links=weblinks/>
+            <@taxonPageLinks links=weblinks celink=celink name=taxon.name/>
         </#if>
         <@taxonPageNBNLinks taxon=ptaxon/>
         <#if taxon.taxonVersionKey == ptaxon.taxonVersionKey>
@@ -47,10 +48,13 @@
 
 <#macro taxonPageNBNLinks taxon>
     <div class="tabbed nbn-taxon-page-right-container">
-        <h3>Explore Records</h3>
+        <h3>Explore and Download Records</h3>
         <div class="nbn-taxon-page-list"><a href="/Taxa/${taxon.taxonVersionKey}/Grid_Map"><img src="/img/taxonPage/grid.png" class="nbn-taxon-page-link-img" />Grid Map</a></div>
         <div class="nbn-taxon-page-list"><a href="/imt/?mode=SPECIES&species=${taxon.taxonVersionKey}"><img src="/img/taxonPage/imt.png" class="nbn-taxon-page-link-img" />Interactive Map</a></div>
         <div class="nbn-taxon-page-list"><a href="/Taxa/${taxon.taxonVersionKey}/Site_Boundaries"><img src="/img/taxonPage/site.png" class="nbn-taxon-page-link-img" />List of sites</a></div>
+        <div class="nbn-taxon-page-list"><a href="#" id="nbn-download-observations-button"><img src="/img/taxonPage/download.png" class="nbn-taxon-page-link-img" />Download Records</a></div>
+        <input type="hidden" id="tvk" name="tvk" value="${tvk}" />
+        <@report_utils.downloadTermsDialogue/>
     </div>
 </#macro>
 
@@ -70,6 +74,7 @@
             <tr><th>Rank:</th><td>${taxon.rank}</td></tr>
             <tr><th>Name Form:</th><td>${taxon.versionForm}</td></tr>
             <#if !json.isNull(outputGroup)><tr><th>Output Group:</th><td>${outputGroup.name}</td></tr></#if>
+            <tr><th>Taxon Reference:</th><td>${taxon_utils.getLongName(taxon)}, ${taxon.taxonVersionKey}</td></tr>
         </table>
     </div>
 </#macro>
@@ -141,7 +146,6 @@
     <div class="tabbed nbn-taxon-page-taxonomy-container">
         <h3>Designations</h3>
         <#if des?has_content>
-            <h4>Current designation(s)</h4>
             <#assign w = 0 />
             <table class="nbn-dataset-table nbn-simple-table">
                 <#list des?sort_by("startDate")?reverse as d>
@@ -151,8 +155,6 @@
                         <td width="25%"><a href="/Designation_Categories/${d.designation.code}">${d.designation.name}</a></td>
                         <td style="width: 110px;">
                             <#if d.startDate??>From: ${d.startDate}</#if>
-                            <#if d.startDate?? && d.endDate??><br/></#if>
-                            <#if d.endDate??>Until: ${d.endDate}</#if>
                         </td>
                         <td><#if d.source??>${d.source}</#if></td>
                     </tr>
@@ -162,7 +164,7 @@
                     <tr><td>None</td></tr>
                 </#if>
             </table>
-            <h4>Archived designation(s)</h4>
+<!--            <h4>Archived designation(s)</h4>
             <#assign w = 0 />
             <table class="nbn-dataset-table nbn-simple-table">
                 <#list ades?sort_by("endDate")?reverse as d>
@@ -182,23 +184,30 @@
                 <#if w == 0>
                     <tr><td>None</td></tr>
                 </#if>
-            </table>
+            </table> -->
         <#else>
             <div>None</div>
         </#if>
     </div>
 </#macro>
 
-<#macro taxonPageLinks links>
+<#macro taxonPageLinks links celink name>
     <div class="tabbed nbn-taxon-page-taxonomy-container">
         <h3>External Links</h3>
-        <#if links?has_content>
+        <#if links?has_content || celink?size != 0>
             <table>
+                <#if links?has_content>
                 <#list links as link>
                     <tr>
                         <td><a href="<#if !link.link?starts_with("http")>http://</#if>${link.link}" target="_blank">${link.description}</a></td>
                     </tr>
                 </#list>
+                </#if>
+                <#if celink?size != 0>
+                    <tr>
+                        <td><a href="${celink.results_url}" target="_blank">ConservationEvidence.com has ${celink.total_results} articles on ${name}</a></td>
+                    </tr>
+                </#if>
             </table>
         <#else>
             None

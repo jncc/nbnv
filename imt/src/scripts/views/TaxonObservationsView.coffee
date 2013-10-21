@@ -8,7 +8,10 @@ define [
     @listenTo @collection, 'sync', @render
 
   render: ->
-    @$el.html template observations: @collection.toJSON()
+    @$el.html template
+      observations: @collection.toJSON()
+      isFilteredByTaxon: @collection.isFilteredByTaxon()
+      
     @$('table').dataTable
       "bJQueryUI": true
       "bLengthChange": false

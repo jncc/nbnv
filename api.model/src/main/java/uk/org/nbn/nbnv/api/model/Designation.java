@@ -12,7 +12,7 @@ public class Designation {
     private int designationCategoryID;
     private String description;
     
-    @Ref(value="${resource.portalUrl}/Designations/${instance.id}", style=Style.RELATIVE_PATH) 
+    @Ref(value="${resource.portalUrl}/Designation_Categories/${instance.label}", style=Style.RELATIVE_PATH) 
     private URI href;
 
     public Designation() {}

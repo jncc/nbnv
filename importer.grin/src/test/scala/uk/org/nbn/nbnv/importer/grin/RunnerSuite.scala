@@ -10,6 +10,7 @@ import uk.org.nbn.nbnv.PersistenceUtility
 import uk.org.nbn.nbnv.importer.Settings
 import uk.org.nbn.nbnv.importer.data.{QueryCache, Repository}
 import org.apache.log4j.Logger
+import java.net.URL
 
 @RunWith(classOf[JUnitRunner])
 class RunnerSuite extends FunSuite with ShouldMatchers with MockitoSugar with ResourceLoader {
@@ -18,6 +19,17 @@ class RunnerSuite extends FunSuite with ShouldMatchers with MockitoSugar with Re
   ignore("run the grid importer") {
 
     val dataPath = resource("/gridrefs.csv")
+
+
+
+    val options = Options(dataPath = dataPath.getFile, whatIf = true)
+
+    val program = Program.create(options)
+    program.run()
+  }
+
+  ignore("should import grids from a file") {
+    val dataPath = new URL("file:///C://Working//grintest//NewCutDownGrids.csv")
 
     val options = Options(dataPath = dataPath.getFile, whatIf = true)
 

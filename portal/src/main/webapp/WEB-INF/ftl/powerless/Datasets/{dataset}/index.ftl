@@ -79,10 +79,10 @@
                         <th>Geographical coverage</th>
                         <td>${dataset.geographicalCoverage!"Not available"}</td>
                     </tr>
-                    <tr>
+                    <!--<tr>
                         <th>View in interactive map</th>
                         <td><a href="<@hrefForDatasetOnIMT dataset/>">Map link</a></td>
-                    </tr>
+                    </tr>-->
                     <tr>
                         <th>Temporal coverage</th>
                         <td>${dataset.temporalCoverage!"Not available"}</td>
@@ -113,7 +113,7 @@
                         </tr>
                     </#if>
                 </table>
-                <#if user.id != 1>
+                <#if user.id != 1 && dataset.typeName = "Taxon">
                     <br />
                     <a id="nbn-download-observations" href="#" data-dataset="${URLParameters.dataset}">Download Dataset</a>
                     <@report_utils.downloadTermsDialogue/>
@@ -150,8 +150,13 @@
                     </table>
                     <h1>Species Richness Map</h1>
                     <div class="nbn-grid-map">
-                        <img class="map" src="${gis}/DatasetSpeciesDensity/${dataset.key}/map?imagesize=4" alt="Species Richness for ${dataset.title}">
-                        <img class="legend" src="${gis}/DatasetSpeciesDensity/${dataset.key}/legend" alt="Species Richness for ${dataset.title}">
+                        <div class="nbn-gridmap-div">
+                            <img class="map" src="${gis}/DatasetSpeciesDensity/${dataset.key}/map?imagesize=4" alt="Species Richness for ${dataset.title}">
+                        </div>
+                        <div class="nbn-gridmap-legend-div">
+                            <p>Number of Species</p>
+                            <img class="legend" src="${gis}/DatasetSpeciesDensity/${dataset.key}/legend" alt="Species Richness for ${dataset.title}">
+                        </div>
                     </div>
                 </div>
             </#if>

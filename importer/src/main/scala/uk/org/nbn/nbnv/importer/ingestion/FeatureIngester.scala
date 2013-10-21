@@ -39,7 +39,7 @@ class FeatureIngester @Inject()(log: Logger, db: Database, gridSquareInfoFactory
       log.debug("Creating grid ref '%s'.".format(info.gridReference))
 
       // the feature doesn't exist, so we need to create it
-      val f = db.repo.createFeature(info.wgs84Polygon, "0")
+      val f = db.repo.createFeature(info.wgs84Polygon, info.gridReference)
       val projection = db.repo.getProjection(info.projection)
       val resolution = db.repo.getResolution(info.gridReferencePrecision)
       val gs = db.repo.createGridRef(f, info.gridReference, resolution, projection, info.sourceProjectionPolygon)

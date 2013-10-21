@@ -1,4 +1,6 @@
-<@template.master title="NBN Gateway - designation">
+<@template.master title="NBN Gateway - designation" 
+    csss=["/css/smoothness/jquery-ui-1.8.23.custom.css"]
+    javascripts=["/js/download/designations/designationDownload.js"]>
 
     <#assign designationId="${URLParameters.designation}">
     <#assign designation=json.readURL("${api}/designations/${designationId}")>
@@ -23,7 +25,7 @@
                 </tr>
                 <tr>
                     <th>Interactive species richness map for this designation:</th>
-                    <td><a href="//data.nbn.org.uk/imt/?mode=DESIGNATION&designation=${designation.label}" target="_blank">Go to map</a></td>
+                    <td><a href="/imt/?mode=DESIGNATION&designation=${designation.label}" target="_blank">Go to map</a></td>
                 </tr>
                 <tr>
                     <th>Groups that have species with this designation:</th>
@@ -47,8 +49,15 @@
                         </ul>
                     </td>
                 </tr>
+                <tr>
+                    <th></th>
+                    <td><a id="nbn-designation-download-link" href="#" data-code="${designationId}">Download Records</a></td>
+                </tr>
             </table>
             <p class="nbn-designation-footer">All designation information on the NBN Gateway is collated and supplied by the <a href="http://jncc.defra.gov.uk/page-5546">Joint Nature Conservation Committee (JNCC)</a></p>
+        </div>
+        <div style="display:none;">
+            <@report_utils.downloadTermsDialogue/>
         </div>
 
 </@template.master>

@@ -13,7 +13,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.org.nbn.nbnv.api.dao.warehouse.DatasetMapper;
-import uk.org.nbn.nbnv.api.model.Dataset;
+import uk.org.nbn.nbnv.api.model.AccessPosition;
 import uk.org.nbn.nbnv.api.model.TaxonDatasetWithQueryStats;
 import uk.org.nbn.nbnv.api.model.TaxonDataset;
 import uk.org.nbn.nbnv.api.model.User;
@@ -100,19 +100,19 @@ public class DownloadHelper {
     }
 
     private void addAccessPositions(ZipOutputStream zip, int userID, TaxonDataset taxonDataset) throws IOException {
-        List<String> accessPositions = datasetMapper.getDatasetAccessPositions(taxonDataset.getDatasetKey(), userID);
+        List<AccessPosition> accessPositions = datasetMapper.getDatasetAccessPositions(taxonDataset.getDatasetKey(), userID);
         boolean first = true;
         int counter = 1;
         writeln(zip, "Public access to this data is:");
         writeln(zip, "    Resolution: " + taxonDataset.getPublicResolution());
         writeln(zip, "    View attributes: " + taxonDataset.isPublicAttribute());
         if (accessPositions != null && accessPositions.size() > 0) {
-            for (String accessPosition : accessPositions) {
+            for (AccessPosition accessPosition : accessPositions) {
                 if (first) {
                     writeln(zip, "You have been granted the following access to this dataset:");
                     first = false;
                 }
-                writeln(zip, "    " + counter++ + ": " + accessPosition);
+                writeln(zip, "    " + counter++ + ": " + accessPosition.getOwner() + " enhanced access - " + accessPosition.getFilterText());
             }
         } else {
         }

@@ -38,6 +38,10 @@ class Validator @Inject()(log: Logger, db: Database ){
     val results = validator.validate(archive)
     for (result <- results) processResult(result)
 
+    if (errors > 0) {
+      throw new BadDataException("Failed due to invalid data file structure, see log for details")
+    }
+
 
     // (2) archive scoped / aggregate value validation (e.g. no duplicate record keys)
     // This currently won't work because of case
@@ -53,7 +57,7 @@ class Validator @Inject()(log: Logger, db: Database ){
     }
 
     if (errors > 0) {
-      throw new BadDataException("Failed due to duplicated records")
+      throw new BadDataException("Failed due to duplicated or incorrectly identified records, see log for details")
     }
 
     // (3) record-scoped
@@ -149,7 +153,7 @@ class Validator @Inject()(log: Logger, db: Database ){
     log.info("Validation complete. %d validation errors".format(errors))
 
     if (errors > 0) {
-      throw new BadDataException("Failed due to validation errors")
+      throw new BadDataException("Failed due to validation errors, see log for details")
     }
   }
 

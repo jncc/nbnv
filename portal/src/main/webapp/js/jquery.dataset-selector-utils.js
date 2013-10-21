@@ -39,8 +39,9 @@
             return datasets;
         },
         getSelectedDatasetsJSON: function() {
+            var datasets = nbn.portal.reports.utils.datasetfields.getSelectedDatasets();
             return 'dataset:{all:false,datasets:[' + 
-                        nbn.portal.reports.utils.datasetfields.getSelectedDatasets().map(function(element) { 
+                        $.map(datasets, function(element) { 
                             return '\'' + String(element) + '\'';
                         }) + ']}';
         }

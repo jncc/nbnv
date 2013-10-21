@@ -10,7 +10,7 @@ nbn.nbnv.ui.download = function (json, div) {
     var year = new nbn.nbnv.ui.filter.year(json);
     var spatial = new nbn.nbnv.ui.filter.spatial(json);
     var taxon = new nbn.nbnv.ui.filter.taxon(json);
-    var dataset = new nbn.nbnv.ui.filter.dataset(json);
+    var dataset = new nbn.nbnv.ui.filter.dataset(json, true);
     var result = new nbn.nbnv.ui.downloadResult(json);
     
     this.div.append(reason._renderHeader());
@@ -56,7 +56,7 @@ nbn.nbnv.ui.download = function (json, div) {
                 $.extend(j, spatial.getJson());
                 $.extend(j, year.getJson());
 
-                dataset.setupTable(j, '/taxonObservations/datasets/requestable');
+                dataset.setupTable(j, '/taxonObservations/datasets');
                 dataset._onEnter();
             } else if (newFilter == 'result') {
                 var error = [];

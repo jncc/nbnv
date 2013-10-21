@@ -4,6 +4,9 @@
       <th>Organisation</th>
       <th>Location</th>
       <th>Site Name</th>
+      <% if(!isFilteredByTaxon) { %>
+        <th>Taxon Name</th>
+      <%}%>
       <th>Start Date</th>
       <th>End Date</th>
       <th>Recorder</th>
@@ -15,6 +18,9 @@
         <td><a href="<%=observation.dataset.href%>" target="_blank"><%=observation.dataset.organisationName%></a></td>
         <td><%=observation.location%></td>
         <td><%=observation.siteName%></td>
+        <% if(!isFilteredByTaxon) { %>
+          <td><%=observation.pTaxonName%> <%=observation.pTaxonAuthority%></td>
+        <%}%>
         <td><%=observation.startDate%></td>
         <td><%=observation.endDate%></td>
         <td><%=observation.recorder%></td>

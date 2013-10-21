@@ -308,10 +308,12 @@ public class TaxonObservationProvider {
             if (params.get("ptvk") instanceof List) {
                 List<String> ptvkArgs = (List<String>) params.get("ptvk");
                 if (ptvkArgs.size() > 0 && !"".equals(ptvkArgs.get(0))) {
-                    WHERE("pTaxonVersionKey IN " + taxaListToCommaList((List<String>) params.get("ptvk")));
+                    INNER_JOIN("TaxonTree tt ON tt.childPTVK = o.pTaxonVersionKey");
+                    WHERE("tt.nodePTVK IN " + taxaListToCommaList((List<String>) params.get("ptvk")));
                 }
             } else {
-                WHERE("pTaxonVersionKey = '" + params.get("ptvk") + "'");
+                INNER_JOIN("TaxonTree tt ON tt.childPTVK = o.pTaxonVersionKey");
+                WHERE("tt.nodePTVK = '" + params.get("ptvk") + "'");
             }
         }
 
@@ -352,12 +354,14 @@ public class TaxonObservationProvider {
         }
 
         if (params.containsKey("designation") && params.get("designation") != null && !"".equals((String) params.get("designation"))) {
-            INNER_JOIN("DesignationTaxonData dtd ON dtd.pTaxonVersionKey = o.pTaxonVersionKey");
+            INNER_JOIN("TaxonTree ttdtd ON ttdtd.childPTVK = o.pTaxonVersionKey");
+            INNER_JOIN("DesignationTaxonData dtd ON dtd.pTaxonVersionKey = ttdtd.nodePTVK");
             WHERE("dtd.code = #{designation}");
         }
         
         if (params.containsKey("orgSuppliedList") && (Integer) params.get("orgSuppliedList") > 0) {
-            INNER_JOIN("TaxonOrganisationSuppliedTaxonList tostl ON tostl.pTaxonVersionKey = o.pTaxonVersionKey");
+            INNER_JOIN("TaxonTree tttostl ON tttostl.childPTVK = o.pTaxonVersionKey");
+            INNER_JOIN("TaxonOrganisationSuppliedTaxonList tostl ON tostl.pTaxonVersionKey = tttostl.nodePTVK");
             WHERE("tostl.orgListID = #{orgSuppliedList}");    
         }
 
@@ -372,8 +376,12 @@ public class TaxonObservationProvider {
             WHERE("td.taxonOutputGroupKey =  #{taxonOutputGroup}");
         }
         
-        if (params.containsKey("absence")) {
-            WHERE("o.absence = #{absence}");
+        if (params.containsKey("absence") && params.get("absence") != null){
+            if((Boolean) params.get("absence")){
+                WHERE("absence = 1");
+            } else {
+                WHERE("absence = 0");
+            }
         }
         
         return SQL();
@@ -395,13 +403,14 @@ public class TaxonObservationProvider {
         ProviderHelper.addDatasetKeysFilter(params);
 
         if (params.containsKey("ptvk") && params.get("ptvk") != null && !params.get("ptvk").equals("")) {
+            INNER_JOIN("TaxonTree tt ON tt.childPTVK = o.pTaxonVersionKey");
             if (params.get("ptvk") instanceof List) {
                 List<String> ptvkArgs = (List<String>) params.get("ptvk");
                 if (ptvkArgs.size() > 0 && !"".equals(ptvkArgs.get(0))) {
-                    WHERE("pTaxonVersionKey IN " + taxaListToCommaList((List<String>) params.get("ptvk")));
+                    WHERE("tt.nodePTVK IN " + taxaListToCommaList((List<String>) params.get("ptvk")));
                 }
             } else {
-                WHERE("pTaxonVersionKey = '" + params.get("ptvk") + "'");
+                WHERE("tt.nodePTVK = '" + params.get("ptvk") + "'");
             }
         }
 
@@ -441,24 +450,21 @@ public class TaxonObservationProvider {
             WHERE("sensitive = 0");
         }
 
-        if (params.containsKey("designation") && params.get("designation") != null && !"".equals((String) params.get("designation"))) {
-            INNER_JOIN("DesignationTaxonData dtd ON dtd.pTaxonVersionKey = o.pTaxonVersionKey");
-            WHERE("dtd.code = #{designation}");
-        }
-
         if (params.containsKey("gridRef") && params.get("gridRef") != null && !"".equals((String) params.get("gridRef"))) {
             INNER_JOIN("GridTree gt ON gt.featureID = o.featureID");
             INNER_JOIN("GridSquareFeatureData gsfd ON gsfd.id = gt.parentFeatureID");
             WHERE("gsfd.label = #{gridRef}");
         }
 
-        if (params.containsKey("taxonOutputGroup") && params.get("taxonOutputGroup") != null && !"".equals((String) params.get("taxonOutputGroup"))) {
-            INNER_JOIN("TaxonData td ON td.taxonVersionKey = o.pTaxonVersionKey");
-            WHERE("td.taxonOutputGroupKey =  #{taxonOutputGroup}");
+        if (params.containsKey("designation") && params.get("designation") != null && !"".equals((String) params.get("designation"))) {
+            INNER_JOIN("TaxonTree ttdtd ON ttdtd.childPTVK = o.pTaxonVersionKey");
+            INNER_JOIN("DesignationTaxonData dtd ON dtd.pTaxonVersionKey = ttdtd.nodePTVK");
+            WHERE("dtd.code = #{designation}");
         }
-
+        
         if (params.containsKey("orgSuppliedList") && (Integer) params.get("orgSuppliedList") > 0) {
-            INNER_JOIN("TaxonOrganisationSuppliedTaxonList tostl ON tostl.pTaxonVersionKey = o.pTaxonVersionKey");
+            INNER_JOIN("TaxonTree tttostl ON tttostl.childPTVK = o.pTaxonVersionKey");
+            INNER_JOIN("TaxonOrganisationSuppliedTaxonList tostl ON tostl.pTaxonVersionKey = tttostl.nodePTVK");
             WHERE("tostl.orgListID = #{orgSuppliedList}");    
         }
         
