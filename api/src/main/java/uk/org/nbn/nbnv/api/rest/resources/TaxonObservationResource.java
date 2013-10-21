@@ -1100,6 +1100,8 @@ public class TaxonObservationResource extends AbstractResource {
         values.add("Authority");
         values.add("CommonName");
         values.add("PreferredTaxonVersionKey");
+        values.add("TaxonGroupKey");
+        values.add("TaxonGroup");
         downloadHelper.writelnCsv(zip, values);
         for (TaxonWithQueryStats taxonWithStats : taxaWithStats) {
             Taxon taxon = taxonWithStats.getTaxon();
@@ -1112,6 +1114,8 @@ public class TaxonObservationResource extends AbstractResource {
                 values.add("");
             }
             values.add(taxon.getPTaxonVersionKey());
+            values.add(taxon.getTaxonOutputGroupKey());
+            values.add(taxon.getTaxonOutputGroupName());
             downloadHelper.writelnCsv(zip, values);
         }
     }
