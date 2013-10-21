@@ -25,6 +25,7 @@
             <script type="text/javascript">
                 $(document).ready(function() {
                     $.cookiesDirective({
+                        message: 'We use cookies on this site to enhance your user experience.',
                         explicitConsent: false, // false allows implied consent
                         position: 'top', // top or bottom of viewport
                         privacyPolicyUri: '/Terms/Privacy'
