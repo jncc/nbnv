@@ -1,0 +1,2 @@
+http://data.nbn.org.uk/recordcleaner/rules/BBS/BBS_IDifficulty.zip#Bryophyte ID Difficulty#08/05/2012
+http://data.nbn.org.uk/recordcleaner/rules/BBS/BBS Bryophyte Rules.zip#Bryophyte range and seasonal recording periods#08/05/2012

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<updates patchnumber="20130531">
+  <file name="UpdatesLog">
+    <server>AppFiles/UpdatesLog.txt</server>
+    <local>UpdatesLog.txt</local>
+    <version>20130531</version>
+  </file>
+  <file name="MainApp">
+    <server>AppFiles/NBNRecordCleaner.zip</server>
+    <local>NBNRecordCleaner.zip</local>
+    <version>85</version>
+  </file>
+   <file name="MasterSpeciesList">
+    <server>TestData/MasterSpeciesList.keep.zip</server>
+    <local>%TESTFILES%MasterSpeciesList.keep.zip</local>
+    <version>20130403</version>
+  </file>
+  <file name="ConnectionSettings">
+    <server>UserSettings/ConnectionSettings.zip</server>
+    <local>ConnectionSettings.zip</local>
+    <version>20111209</version>
+  </file>
+  <file name="ExcelLibrary">
+    <server>AppFiles/ExcelLibrary.zip</server>
+    <local>ExcelLibrary.zip</local>
+    <version>20121019</version>
+  </file>
+</updates>

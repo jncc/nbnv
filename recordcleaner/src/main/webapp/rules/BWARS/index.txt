@@ -1,0 +1,2 @@
+http://data.nbn.org.uk/recordcleaner/rules/BWARS/BWARS_IDifficulty.zip#Bees, Wasps and Ants ID Difficulty#17/07/2013
+http://data.nbn.org.uk/recordcleaner/rules/BWARS/BWARS Bees, Wasps and Ants rules.zip#Bees, Wasps and Ants range, seasonal periods and additional rules#17/07/2013

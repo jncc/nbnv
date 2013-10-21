@@ -1,0 +1,5 @@
+http://data.nbn.org.uk/recordcleaner/rules/NBNT/Demonstration range rules.zip#Demonstration range rules#18/08/2011
+http://data.nbn.org.uk/recordcleaner/rules/NBNT/Demonstration species list.zip#Demonstration species list#18/08/2011
+http://data.nbn.org.uk/recordcleaner/rules/NBNT/Demonstration period rules.zip#Demonstration period rules#18/08/2011
+
+

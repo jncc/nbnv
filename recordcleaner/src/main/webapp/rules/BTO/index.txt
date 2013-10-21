@@ -1,0 +1,2 @@
+http://data.nbn.org.uk/recordcleaner/rules/BTO/BTO_IDifficulty.zip#Bird ID Difficulty#04/05/2011
+http://data.nbn.org.uk/recordcleaner/rules/BTO/BTO Bird rules.zip#Bird recording and flight periods#15/01/2013

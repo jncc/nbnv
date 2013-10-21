@@ -1,0 +1,2 @@
+http://data.nbn.org.uk/recordcleaner/rules/MBA/MBA_IDifficulty.zip#Marine ID Difficulty#07/08/2013
+http://data.nbn.org.uk/recordcleaner/rules/MBA/MBA Marine Rules.zip#Marine range, recording periods and additional rules#21/08/2013
