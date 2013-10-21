@@ -753,7 +753,7 @@ public class TaxonObservationResource extends AbstractResource {
             @QueryParam("json") String json) throws IOException, TemplateException {        
         
         final DownloadFilterJSON dFilter = parseJSON(json);
-        TaxonObservationFilter filter = downloadUtils.createFilter(json, dFilter);
+        final TaxonObservationFilter filter = downloadUtils.createFilter(json, dFilter);
         
         oTaxonObservationFilterMapper.createFilter(filter);
         if (dFilter.getReason().getOrganisationID() > -1) {
@@ -768,7 +768,7 @@ public class TaxonObservationResource extends AbstractResource {
             oTaxonObservationFilterMapper.createDownloadLog(filter.getId(), dFilter.getReason().getPurpose(), dFilter.getReason().getDetails(), user.getId());
         }
         
-        mailDatasetDownloadNotifications(filter, dFilter, user);
+        //mailDatasetDownloadNotifications(filter, dFilter, user);
         
         final int filterID = filter.getId();
         return new StreamingOutput() {
@@ -780,6 +780,7 @@ public class TaxonObservationResource extends AbstractResource {
                 List<String> taxaList = new ArrayList<String>();
                 taxaList.add(dFilter.getTaxon().getTvk());
                 // Add the list of observations to the download
+                try {
                 addObservations(zip, user, 
                         dFilter.getYear().getStartYear(), 
                         dFilter.getYear().getEndYear(), 
@@ -794,7 +795,10 @@ public class TaxonObservationResource extends AbstractResource {
                         dFilter.getSpatial().getGridRef(), 
                         dFilter.getPolygon(), 
                         dFilter.getReason().getIncludeAttributes().equals("true"), 
-                        filterID);
+                        filterID, filter, dFilter);
+                } catch (TemplateException ex) {
+                    throw new IOException(ex);
+                }
                 // Add ReadMe to the download
                 addReadMe(zip, title, user,  
                         dFilter.getYear().getStartYear(), 
@@ -1125,7 +1129,8 @@ public class TaxonObservationResource extends AbstractResource {
             List<String> taxa, String spatialRelationship, String featureID, 
             boolean sensitive, String designation, String taxonOutputGroup, 
             int orgSuppliedList, String gridRef, String polygon, 
-            boolean includeAttributes, int filterID) throws IOException {
+            boolean includeAttributes, int filterID, TaxonObservationFilter filter, DownloadFilterJSON dFilter) throws IOException, TemplateException {
+        
         
         List<Attribute> attributes = new ArrayList<Attribute>();
         List<TaxonObservationAttribute> observationAttributes = new ArrayList<TaxonObservationAttribute>();
@@ -1258,6 +1263,7 @@ public class TaxonObservationResource extends AbstractResource {
         
         for (String key : datasetRecordCounts.keySet()) {
             oTaxonObservationFilterMapper.createDatasetDownloadStats(filterID, key, datasetRecordCounts.get(key));
+            mailDatasetDownloadNotification(filter, dFilter, key, user);
         }
     }
 
@@ -1365,6 +1371,49 @@ public class TaxonObservationResource extends AbstractResource {
     private DownloadStatsJSON parseJSONStats(String json) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.readValue(json, DownloadStatsJSON.class);
+    }
+    
+    private void mailDatasetDownloadNotification(TaxonObservationFilter filter, DownloadFilterJSON dFilter, String dataset, User user) throws IOException, TemplateException {
+        Map<Integer, String> purposes = new HashMap<Integer, String>();
+        purposes.put(1, "Personal interest");
+        purposes.put(2, "Educational purposes");
+        purposes.put(3, "Research and scientific analysis");
+        purposes.put(4, "Media publication");
+        purposes.put(5, "Commercial and consultancy work");
+        purposes.put(6, "Professional land management");
+        purposes.put(7, "Data provision and interpretation (commercial)");
+        purposes.put(8, "Data provision and interpretation (non-profit)");
+        purposes.put(9, "Statutory work");
+        
+        List<UserDownloadNotification> users = downloadMapper.getUsersToNotifyForDatasetDownload(dataset);
+        Map<String, Object> message = new HashMap<String, Object>();
+        message.put("portal", properties.getProperty("portal_url"));
+
+        message.put("downloader", user.getForename() + " " + user.getSurname() + "(" + user.getEmail() + ")");
+
+        if (dFilter.getReason().getOrganisationID() > -1) {
+            Organisation org = organisationMapper.selectByID(dFilter.getReason().getOrganisationID());
+            message.put("dorg", org.getName());
+        }
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        message.put("downloadTime", sdf.format(new Date()));
+
+        message.put("purpose", purposes.get(dFilter.getReason().getPurpose()));
+        message.put("downloadReason", dFilter.getReason().getDetails());
+        message.put("filterText", filter.getFilterText());
+
+        message.put("dataset", dataset);
+        message.put("datasetName", datasetMapper.selectByDatasetKey(dataset).getTitle());
+
+        for (UserDownloadNotification nuser : users) {                
+            message.put("name", nuser.getForename());
+            templateMailer.send(
+                    "dataset_download_notification.ftl", 
+                    nuser.getEmail(), 
+                    "NBN Gateway: User downloaded records", 
+                    message);
+        }
     }
     
     private void mailDatasetDownloadNotifications(TaxonObservationFilter filter, DownloadFilterJSON dFilter, User user) throws IOException, TemplateException {
