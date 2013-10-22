@@ -1,6 +1,6 @@
 <@template.error title="National Biodiversity Network Gateway - Internal Server Error">
     <@markdown>
-#D'oh. Something went wrong.
+#Server Error
 
 An issue has occurred on the NBN Gateway which means we are unable to satisfy 
 your request. If you continually see this message, please notify us using the
