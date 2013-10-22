@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -19,6 +20,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
@@ -750,8 +752,9 @@ public class TaxonObservationResource extends AbstractResource {
     @Produces("application/x-zip-compressed")
     public StreamingOutput getObservationsByFilterZip(            
             @TokenUser(allowPublic = false) final User user,
-            @QueryParam("json") String json) throws IOException, TemplateException {        
-        
+            @QueryParam("json") String json,
+            @Context HttpServletResponse response) throws IOException, TemplateException {        
+        response.setHeader("Set-Cookie", "fileDownload=true; path=/");
         final DownloadFilterJSON dFilter = parseJSON(json);
         final TaxonObservationFilter filter = downloadUtils.createFilter(json, dFilter);
         

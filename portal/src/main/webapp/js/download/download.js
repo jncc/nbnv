@@ -35,7 +35,13 @@ nbn.nbnv.ui.download = function (json, div) {
         $.extend(j, year.getJson());        
         $.extend(j, dataset.getJson());        
         
-        window.location = nbn.nbnv.api + '/taxonObservations/download?json=' + JSON.stringify(j);
+        $.fileDownload(nbn.nbnv.api + '/taxonObservations/download?json=' + JSON.stringify(j), {
+            preparingMessageHtml: 'We are preparing your download, please wait <br/><img style="display:block;margin-left: auto;margin-right: auto;" src="/img/ajax-loader-medium.gif" />',
+            failMessageHtml: 'There was a problem generating your download, please try again.'
+        })
+        
+        return false;
+        //window.location = nbn.nbnv.api + '/taxonObservations/download?json=' + JSON.stringify(j);
     }));
 
     this.div.accordion({
