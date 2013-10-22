@@ -4,6 +4,11 @@
         csss=["/css/homepage.css"]>
     <h1>Welcome to the NBN Gateway</h1>
 
+    <#if welcomeText?has_content>
+        <div class="welcometext">
+            ${welcomeText}
+        </div>
+    </#if>
 
     <div id="slidorion">
 	<div id="slider">
