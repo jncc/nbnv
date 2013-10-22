@@ -10,6 +10,8 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import uk.org.nbn.nbnv.api.model.BoundingBox;
 import uk.org.nbn.nbnv.api.model.Feature;
+import uk.org.nbn.nbnv.api.model.Taxon;
 import uk.org.nbn.nbnv.api.model.TaxonDataset;
 import uk.org.nbn.nbnv.api.model.TaxonDatasetWithQueryStats;
 
@@ -37,6 +40,7 @@ public class EasyMapController {
     
     @RequestMapping(value = "/EasyMap", method = RequestMethod.GET)
     public ModelAndView getCreatePage(
+            HttpServletRequest request,
             @RequestParam(value="tvk") String tvk
             ,@RequestParam(value="ds", required=false) String datasets
             ,@RequestParam(value="res", required=false) String gridResolution
@@ -57,16 +61,25 @@ public class EasyMapController {
             ,@RequestParam(value="b2to", required=false) Integer band2EndDate
             ,@RequestParam(value="b2fill", required=false) String band2Fill
             ,@RequestParam(value="b2bord", required=false) String band2Border
-            ,@RequestParam(value="zoom", required=false) String zoomLocation) {
+            ,@RequestParam(value="zoom", required=false) String zoomLocation
+            ,@RequestParam(value="title", required=false) String titleType
+            ,@RequestParam(value="ref", required=false) Integer displayDatasets
+            ,@RequestParam(value="maponly", required=false) Integer onlyDisplayMap
+            ,@RequestParam(value="logo", required=false) Integer displayLogo
+            ,@RequestParam(value="css", required=false) String css
+            ,@RequestParam(value="terms", required=false) Integer displayTerms
+            ,@RequestParam(value="link", required=false) String displayImtLink) {
         
         Map<String, Object> model = new HashMap<String, Object>();
         
         //check if tvk is valid and return error page.
         if (tvk == null || tvk.isEmpty()) {
             errors.add("You must supply a tvk");
-        } else {
-            model.put("tvk", tvk);
+            model.put("errors", errors);
+            return new ModelAndView("easyMap", model);
         }
+
+        model.put("tvk", tvk);
         
         //create wms query string
         String wmsParameters = "abundance=presence&FORMAT=image%2Fpng&TRANSPARENT=TRUE&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&STYLES=&SRS=EPSG%3A27700";
@@ -100,8 +113,8 @@ public class EasyMapController {
             wmsParameters = wmsParameters + getBandingParameters(
                 (band1StartDate != null && band1StartDate > 0) ? band1StartDate : 1,
                 (band1EndDate != null && band1EndDate > 0) ? band1StartDate : Calendar.getInstance().get(Calendar.YEAR),
-                (band1Border != null && !"".equals(band1Border)) ? band1Border : defaultBorderColour,
-                (band1Fill != null && !"".equals(band1Fill)) ? band1Fill : band1DefaultFill
+                (band1Border != null && !band1Border.isEmpty()) ? band1Border : defaultBorderColour,
+                (band1Fill != null && !band1Fill.isEmpty()) ? band1Fill : band1DefaultFill
             );
         }
         
@@ -109,25 +122,55 @@ public class EasyMapController {
             wmsParameters = wmsParameters + getBandingParameters(
                 (band2StartDate != null && band2StartDate > 0) ? band2StartDate : 1,
                 (band2EndDate != null && band2EndDate > 0) ? band2StartDate : Calendar.getInstance().get(Calendar.YEAR),
-                (band2Border != null && !"".equals(band2Border)) ? band2Border : defaultBorderColour,
-                (band2Fill != null && !"".equals(band2Fill)) ? band2Fill : band2DefaultFill
+                (band2Border != null && !band2Border.isEmpty()) ? band2Border : defaultBorderColour,
+                (band2Fill != null && !band2Fill.isEmpty()) ? band2Fill : band2DefaultFill
             );
         }
         
         model.put("wmsParameters",wmsParameters);
         
-        Integer minDate = getMinDate(band0StartDate, band1StartDate, band2StartDate);
-        Integer maxDate = getMaxDate(band0StartDate, band1StartDate, band2StartDate);        
+        if (css != null && !css.isEmpty()) model.put("css", css);
         
-        //set mindate to 1AD if not provided
-        minDate = (minDate == 0 ? 1 : minDate);
+        if (onlyDisplayMap == null || onlyDisplayMap == 0) {
+
+            //get datasets list
+            if (displayDatasets == null || displayDatasets == 1) {
+                Integer minDate = getMinDate(band0StartDate, band1StartDate, band2StartDate);
+                Integer maxDate = getMaxDate(band0StartDate, band1StartDate, band2StartDate);        
+
+                //set mindate to 1AD if not provided
+                minDate = (minDate == 0 ? 1 : minDate);
+
+                //set maxDate to current year if not provided
+                maxDate = (maxDate == 0 ? Calendar.getInstance().get(Calendar.YEAR) : maxDate);
+                List<String> datasetList = getDatasets(minDate, maxDate, tvk, viceCountyId, datasets);
+                model.put("datasets", datasetList); 
+            } else if (displayDatasets != 0 ) {
+                errors.add("Invalid value for ref parameter");
+            }
+
+            //Get page title
+            String pageTitle = getPageTitle(titleType, tvk);
+            if (! pageTitle.isEmpty()) model.put("pageTitle", pageTitle);
+            
+            //show logo
+            if (displayLogo == null || displayLogo == 1) {
+                model.put("showLogo", "1");
+            } 
+            
+            if (displayTerms == null || "0".equals(displayTerms)) {
+                model.put("showTC", "1");
+            }
+            
+            //get parameters for link to imt
+            if (displayImtLink == null || !"0".equals(displayImtLink)) {
+                String imtLinkParams = getImtLinkParams(tvk, request);
+                model.put("imtLinkParms", imtLinkParams);
+            }
         
-        //set maxDate to current year if not provided
-        maxDate = (maxDate == 0 ? Calendar.getInstance().get(Calendar.YEAR) : maxDate);
-        
-        List<String> datasetList = getDatasets(minDate, maxDate, tvk, viceCountyId, datasets);
-        
-        model.put("datasets", datasetList);
+        } else if (onlyDisplayMap > 1) {
+            errors.add("Invalid value for maponly");
+        }
         
         //add errors to model if any    
         if (! errors.isEmpty()){
@@ -174,11 +217,11 @@ public class EasyMapController {
         String resolutionPrefix = "";
         if (gridResolution == null || gridResolution.isEmpty()) {
             resolutionPrefix = "Grid-10km";
-        } else if ("100m".equals(gridResolution)) {
+        } else if ("100m".equalsIgnoreCase(gridResolution)) {
             resolutionPrefix = "Grid-100m";
-        } else if ("1km".equals(gridResolution)) {
+        } else if ("1km".equalsIgnoreCase(gridResolution)) {
             resolutionPrefix = "Grid-1km";
-        } else if ("2km".equals(gridResolution)) {
+        } else if ("2km".equalsIgnoreCase(gridResolution)) {
             resolutionPrefix = "Grid-2km";
         } else {
             errors.add("Invalid grid resolution has been specified");
@@ -227,15 +270,15 @@ public class EasyMapController {
         //NB. all SRS 27700
         if ("england".equals(location)) {
             b = "80000,0,660000,660000";
-        } else if ("scotland".equals(location)) {
+        } else if ("scotland".equalsIgnoreCase(location)) {
             b = "50000,520000,480000,1230000";
-        } else if ("wales".equals(location)) {
+        } else if ("wales".equalsIgnoreCase(location)) {
             b = "160000,160000,360000,400000";
-        } else if ("highland".equals(location)) {
+        } else if ("highland".equalsIgnoreCase(location)) {
             b = "100000,730000,350000,990000";
-        } else if ("sco-mainland".equals(location)) {
+        } else if ("sco-mainland".equalsIgnoreCase(location)) {
             b = "110000,525000,420000,980000";
-        } else if ("outer-heb".equals(location)) {
+        } else if ("outer-heb".equalsIgnoreCase(location)) {
             b = "0,770000,160000,970000";
         } else {
             errors.add("unknown zoom location");
@@ -295,5 +338,45 @@ public class EasyMapController {
         }
         
         return results;
+    }
+
+    private String getPageTitle(String titleType, String tvk) {
+        String title = "";
+        
+        
+        if (titleType != null && "0".equals(titleType)) { 
+            return title;
+        }
+         
+        Taxon taxon = resource.path("/taxa/" + tvk)
+            .accept(MediaType.APPLICATION_JSON)
+            .get(Taxon.class);
+
+        if (titleType == null || titleType.isEmpty() || "sci".equalsIgnoreCase(titleType)) {
+            title = taxon.getName();
+        } else if ("com".equalsIgnoreCase(titleType)) {
+            title = taxon.getCommonName();
+        } else {
+            errors.add("Unknown value for title parameter");
+        }
+        
+        return title;
+    }
+
+    private String getImtLinkParams(String tvk, HttpServletRequest request) {
+        String params = "mode=SPECIES&species=" + tvk; 
+        for(Entry<String, String[]> entry : ((Map<String, String[]>)request.getParameterMap()).entrySet()) {
+            if (entry.getKey().startsWith("link_")) {
+                String param = entry.getKey().substring(5);
+                params = "&" + param + "=";
+
+                for (String value : entry.getValue()) {
+                    params = value + ",";
+                }
+                
+                params = params.substring(0,(params.length() - 1));
+            }
+        }
+        return params;
     }
 }
