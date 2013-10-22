@@ -4,6 +4,11 @@
         csss=["/css/homepage.css"]>
     <h1>Welcome to the NBN Gateway</h1>
 
+    <#if welcomeText?has_content>
+        <div class="welcometext">
+            ${welcomeText}
+        </div>
+    </#if>
 
     <div id="slidorion">
 	<div id="slider">
@@ -38,6 +43,7 @@
             <div class="link-header">Welcome</div>
             <div class="link-content">
 <p>This is the National Biodiversity Network's Gateway. Use it to explore UK biodiversity data, as contributed by participating <a href="/Organisations">data providers</a>.</p>
+<p>The previous version of the NBN Gateway is no longer being updated but can still be accessed <a href="http://old-data.nbn.org.uk">here</a>.</p>
 <p>Please post your comments and suggestions on the <a href="http://forums.nbn.org.uk/viewforum.php?id=22">NBN Forum</a>.</p>
 
             </div>
@@ -65,7 +71,7 @@ Explore and map grid squares for a particular [species](/Taxa).
         </div>
     </div>
 
-    <div id="statistics">
+   <!-- <div id="statistics">
         <h1>Gateway Statistics</h1>
         <table>
             <#list statistics?keys as stat>
@@ -78,7 +84,7 @@ Explore and map grid squares for a particular [species](/Taxa).
                 <td colspan="2"><a href="/AccessRequest/Create">Request Better Access</a></td>
             </tr>
         </table>
-    </div>
+    </div> -->
 
     <div id="news-container">
         <h1><a title="RSS" href="${api}/datasets/latest.rss">RSS</a><a href="/Datasets">Latest Datasets</a></h1>
@@ -87,11 +93,11 @@ Explore and map grid squares for a particular [species](/Taxa).
                 <#assign organisation = json.readURL(dataset.organisationHref)>
 
                 <li>
-                    <h3>
+                    
                         <#if organisation.smallLogo??>
-                            <img src="${organisation.smallLogo}"> 
+                            <img style="float:left; padding-right:5px;" src="${organisation.smallLogo}"> 
                         </#if>
-                        ${organisation.name} Dataset Updated: ${dataset.formattedDateUploaded}</h3>
+                    <h3>${organisation.name} Dataset Updated: ${dataset.formattedDateUploaded}</h3>
                     <a href="${dataset.href}">${dataset.title}</a> 
                 </li>
 

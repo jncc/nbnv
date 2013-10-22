@@ -25,7 +25,7 @@ Here are some examples of what these web services make possible:
 * review the taxonomy for a species or sub-species.
 
 ##REST Service API
-You can view the current version of the API [here](resources/restapi/index.html)
+The NBN REST service produces JSON objects as output so any program that needs to work with the API only needs the ability to parse JSON return values. You can view the API [here](resources/restapi/index.html), each resource deals with a subset of the NBN functions.
 
 You can download a copy of the API for the NBN Rest service [here](resources/restapi.zip)
 

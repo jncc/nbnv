@@ -1,5 +1,3 @@
-### TEST MAIL AS PART OF THE NBN GATEWAY V TRIAL ###
-
 This is an automatically generated message from the NBN Gateway - DO NOT REPLY. 
 
 Dear ${rName},

@@ -287,7 +287,7 @@ public class TaxonResource extends AbstractResource {
             @QueryParam("designation") @DefaultValue(ObservationResourceDefaults.defaultDesignation) String designation,
             @QueryParam("taxonOutputGroup") @DefaultValue(ObservationResourceDefaults.defaultTaxonOutputGroup) String taxonOutputGroup,
             @QueryParam("gridRef") @DefaultValue(ObservationResourceDefaults.defaultGridRef) String gridRef) {
-        return siteBoundaryMapper.getByTaxonVersionKey(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, 0);
+        return siteBoundaryMapper.getByTaxonVersionKey(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, false);
     }
 
     /**
@@ -441,7 +441,7 @@ public class TaxonResource extends AbstractResource {
      * @throws IOException 
      */
     private void addSites(ZipOutputStream zip, User user, int startYear, int endYear, List<String> datasetKeys, List<String> taxa, String spatialRelationship, String featureID, boolean sensitive, String designation, String taxonOutputGroup, String gridRef) throws IOException {
-        List<SiteBoundary> sites = siteBoundaryMapper.getByTaxonVersionKey(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, 0);
+        List<SiteBoundary> sites = siteBoundaryMapper.getByTaxonVersionKey(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, false);
         zip.putNextEntry(new ZipEntry("SiteList.csv"));
         ArrayList<String> values = new ArrayList<String>();
         values.add("Site Name");

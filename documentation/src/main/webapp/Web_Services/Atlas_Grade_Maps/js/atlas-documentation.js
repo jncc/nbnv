@@ -19,7 +19,7 @@ $(document).ready(function(){
 		var _example = createURLQuerySample($('#interactive-md5Generator'));
 		_example.contentStart.before($('<div>').nbn_loginGenerator({generate: function(evt, response) {
 			var joinedResponse = nbn.util.ArrayTools.fromObject(response).join('&'); _example.query.html(joinedResponse);
-			var URL = 'http://gis.nbn.org.uk/arcgis/atlas/SingleSpeciesMap/NHMSYS0000459714/map?' + joinedResponse;
+			var URL = 'https://gis.nbn.org.uk/SingleSpecies/NHMSYS0000459714/atlas/circle/map?' + joinedResponse;
 			_example.url.html(URL).attr('href',URL);
 		}}));
 	})();
@@ -29,7 +29,7 @@ $(document).ready(function(){
 		_example.contentStart.before($('<div>').nbn_colourPicker({
 			change: function(evt, hex) {
 				_example.query.html('fillcolour=' + hex + ' or outlinecolour=' + hex);
-				var URL = 'http://gis.nbn.org.uk/arcgis/atlas/SingleSpeciesMap/NHMSYS0000459714/map?fillcolour=' + hex;
+				var URL = 'https://gis.nbn.org.uk/SingleSpecies/NHMSYS0000459714/atlas/circle/map?fillcolour=' + hex;
 				_example.url.html(URL).attr('href',URL);
 			}
 		}));
