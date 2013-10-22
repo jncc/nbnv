@@ -368,10 +368,10 @@ public class EasyMapController {
         for(Entry<String, String[]> entry : ((Map<String, String[]>)request.getParameterMap()).entrySet()) {
             if (entry.getKey().startsWith("link_")) {
                 String param = entry.getKey().substring(5);
-                params = "&" + param + "=";
+                params = params + "&" + param + "=";
 
                 for (String value : entry.getValue()) {
-                    params = value + ",";
+                    params = params + value + ",";
                 }
                 
                 params = params.substring(0,(params.length() - 1));

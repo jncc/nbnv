@@ -19,11 +19,11 @@
         <#if showTC??>
             <p>The National Biodiversity Network records are shown on the map below. (See <a href="/Terms" target="_blank">terms and conditions</a>)</p>
         </#if>
-        <img src=${gis}/SingleSpecies/${tvk}?${wmsParameters}/>
+        <img src="${gis}/SingleSpecies/${tvk}?${wmsParameters}"/>
         <#if imtLinkParms??>
+            <br>
             <a href="/imt?${imtLinkParms}" target="_blank">Open interactive map in new window</a>
         </#if>
-        <br/>
         <#if datasets??>
             <p>The following datasets are included:</p>
             <#list datasets as dataset>
@@ -31,7 +31,7 @@
             </#list>
         </#if>
         <#if showLogo??>
-           <img src="/images/NBNPower.gif">
+            <a href="/"><img src="/images/NBNPower.gif"></a>
         </#if>
     </span></div>
 </#if>
