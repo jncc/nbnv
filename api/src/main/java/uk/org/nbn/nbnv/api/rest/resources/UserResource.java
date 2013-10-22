@@ -173,6 +173,7 @@ public class UserResource extends AbstractResource {
     @POST
     @Path("/login")
     @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public Response createTokenCookiePOST (
             @FormParam("username") String username,
             @FormParam("password") String password,

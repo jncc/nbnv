@@ -54,5 +54,5 @@ public interface SiteBoundaryMapper {
             @Param("designation") String designation, 
             @Param("taxonOutputGroup") String taxonOutputGroup, 
             @Param("gridRef") String gridRef,
-            @Param("absence") int absence);
+            @Param("absence") boolean absence);
 }

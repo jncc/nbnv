@@ -28,6 +28,7 @@ public class PowerlessSpringMVCConfig {
     @Value("${gis}") String gis;
     @Value("${gaProp}") String gaProp;
     @Value("${gauProp}") String gauProp;
+    @Value("${welcomeText}") String welcomeText;
     @Autowired ServletContext context;
     
     public PowerlessSpringMVCConfig(FreeMarkerConfigurer configurer) {
@@ -44,6 +45,7 @@ public class PowerlessSpringMVCConfig {
         config.setSharedVariable("gis", gis);
         config.setSharedVariable("gaProp", gaProp);
         config.setSharedVariable("gauProp", gauProp);
+        config.setSharedVariable("welcomeText", welcomeText);
         config.setSharedVariable("markdown", new MarkDownDirectiveModel());
         // TODO: Need to make a decision if we need commas, etc... in numbers as 
         // its all to easy to have an error creep up on us much later on, this 

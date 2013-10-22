@@ -5,9 +5,9 @@
 <t:webserviceDocumentationPage>
     <jsp:attribute name="head">
         <link rel="stylesheet" href="css/atlas-documentation.css" type="text/css" />
-        <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/themes/start/jquery-ui.css" type="text/css" />
-        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
-        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/jquery-ui.min.js"></script>
+        <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/themes/start/jquery-ui.css" type="text/css" />
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/jquery-ui.min.js"></script>
         <script type="text/javascript" src="js/atlas-documentation-min.js"></script>
     </jsp:attribute>
     <jsp:attribute name="body">
@@ -21,7 +21,7 @@
                 <li><em>Legend</em> which produces a legend graphic which corresponds to a <em>Map</em> image request</li>
             </ul>
             <p>The URL to an atlas grade mapping service is in the form:</p>
-            <nbn:prettyprint-code lang="url">http://gis.nbn.org.uk/SingleSpecies/&lt;TAXONVERSIONKEY&gt;/atlas/circle/&lt;service&gt;</nbn:prettyprint-code>
+            <nbn:prettyprint-code lang="url">https://gis.nbn.org.uk/SingleSpecies/&lt;TAXONVERSIONKEY&gt;/atlas/circle/&lt;service&gt;</nbn:prettyprint-code>
             <p>"&lt;TAXONVERSIONKEY&gt;" is the Taxon Version Key for a Taxon which is to be mapped and "&lt;service&gt;" is the requested service. Taxon Version Keys for a required Taxon can be obtained from the NBN Web services, specifically the <a href="../Web_Services-SOAP/Actual_Services/Taxonomy_and_Species_Search/">Taxonomy & Species Search</a> web service.</p>
             <p>Each of these services allows for control in the form of HTTP parameter arguments. The parameters which are acceptable differ depending on which service is being addressed. The details of valid parameters for each service are documented below.</p>
             <p>The valid values for "&lt;service&gt;" are map, legend and acknowledgment.</p>
@@ -48,7 +48,7 @@
                     <div class="nbn-atlas-applicable">map and acknowledgement</div>
                     <p>The datasets parameter can take a comma separated value of dataset keys which limit the data used to create the map or acknowledgement list to the corresponding specified datasets. A datasets dataset key can be obtained from the NBN Gateway metadata page for the specified dataset. For example the dataset key for <a href="http://data.nbn.org.uk/datasetInfo/taxonDataset.jsp?refID=5&list=1&sort=0&dsKey=GA000466">Demonstration dataset for record access on the NBN Gateway</a> is GA000466.</p>
                     <p>The following example is a map service request for "Canadian Goose" limited to the "Biodiversity in Glasgow (BiG) Project" and "Suffolk Biological Records Centre (SBRC) dataset" provided by "British Trust for Ornithology" and "Suffolk Biological Records Centre" respectively.</p>
-                    <nbn:prettyprint-code lang="url">http://gis.nbn.org.uk/SingleSpecies/NBNSYS0000000009/atlas/circle/map?datasets=GA000623,GA000652</nbn:prettyprint-code>
+                    <nbn:prettyprint-code lang="url">https://gis.nbn.org.uk/SingleSpecies/NBNSYS0000000009/atlas/circle/map?datasets=GA000623,GA000652</nbn:prettyprint-code>
                 </li>
                 <li class="parameter-section">
                     <h2>startyear & end year</h2>
@@ -85,7 +85,7 @@ private static String getHashText(String password) throws NoSuchAlgorithmExcepti
                     <div class="nbn-atlas-applicable">map and legend</div>
                     <p>The fillcolour and outlinecolour parameters alter the fill and outline colour of a symbol used in the atlas map service.</p>
                     <p>Valid values for these parameters are 6 digit RGB hex codes (000000 - FFFFFF). Below is an example call of these being used.</p>
-                    <nbn:prettyprint-code lang="url">http://gis.nbn.org.uk/SingleSpecies/NHMSYS0000459714/atlas/circle/map?fillcolour=00ffff&outlinecolour=e2e2e2</nbn:prettyprint-code>
+                    <nbn:prettyprint-code lang="url">https://gis.nbn.org.uk/SingleSpecies/NHMSYS0000459714/atlas/circle/map?fillcolour=00ffff&outlinecolour=e2e2e2</nbn:prettyprint-code>
                     <p>The default value for both parameters is '000000' the hex value for black. You may use the interactive <a href="#interactive-colourGenerator">colour picker</a> to generate a colour.</p>
                 </li>
                 <li class="parameter-section">
@@ -135,7 +135,7 @@ private static String getHashText(String password) throws NoSuchAlgorithmExcepti
                     </ul>
                     <p class="warning">Please note that JPEG is a lossy compression format, and as such may produce artefacts which are unacceptable for publication. To avoid this, it is recommended that the requested format is 'png'</p>
                     <p>The following is a request for a map image of Hippocrepis in the gif format</p>
-                    <nbn:prettyprint-code lang="url">http://gis.nbn.org.uk/SingleSpecies/NHMSYS0000459714/atlas/circle/map?format=gif</nbn:prettyprint-code>
+                    <nbn:prettyprint-code lang="url">https://gis.nbn.org.uk/SingleSpecies/NHMSYS0000459714/atlas/circle/map?format=gif</nbn:prettyprint-code>
                 </li>
                 <li class="parameter-section">
                     <h2>css</h2>
@@ -176,7 +176,7 @@ private static String getHashText(String password) throws NoSuchAlgorithmExcepti
 </body>
                     </nbn:prettyprint-code>
                     <p>You can see the default view of the acknowledgment service when no css is provided in the following sample</p>
-                    <iframe src="http://gis.nbn.org.uk/SingleSpecies/NHMSYS0000459714/atlas/circle/acknowledgement" height="300" width="500"></iframe>
+                    <iframe src="https://gis.nbn.org.uk/SingleSpecies/NHMSYS0000459714/atlas/circle/acknowledgement" height="300" width="500"></iframe>
                 </li>
             </ul>
         </div>
@@ -198,6 +198,10 @@ private static String getHashText(String password) throws NoSuchAlgorithmExcepti
             <h1>Examples</h1>
             <p>The following are some complete example URL calls to the Atlas map service, along with a description and what they return.</p>
             <div>
-                <nbn:prettyprint-code lang="url">http://gis.nbn.org.uk/SingleSpecies/NHMSYS0000459714/atlas/circle/map?background=gb100kgrid&startyear=1990&endyear=2000&fillcolour=00ffff&outlinecolour=000000&imagesize=14&format=gif&datasets=GA000091,GA000482</nbn:prettyprint-code>
+                <nbn:prettyprint-code lang="url">https://gis.nbn.org.uk/SingleSpecies/NHMSYS0000459714/atlas/circle/map?background=gb100kgrid&startyear=1990&endyear=2000&fillcolour=00ffff&outlinecolour=000000&imagesize=14&format=gif&datasets=GA000091,GA000482</nbn:prettyprint-code>
                 <p class="description"></p>
-                <img height="405" width="300" src="http://gis.nbn.org.uk/SingleSpecies/NHMSYS0000459714/atlas/circle/map?background=gb100kgrid&startyear=1990&endyear=2000&fillcolour=00ffff&outlinecolour=000000&imagesize=9&format=gif&datasets=GA000091,GA000482SingleSpecies
+                <img height="405" width="300" src="https://gis.nbn.org.uk/SingleSpecies/NHMSYS0000459714/atlas/circle/map?background=gb100kgrid&startyear=1990&endyear=2000&fillcolour=00ffff&outlinecolour=000000&imagesize=9&format=gif&datasets=GA000091,GA000482">
+            </div>
+        </div>
+    </jsp:attribute>
+</t:webserviceDocumentationPage>

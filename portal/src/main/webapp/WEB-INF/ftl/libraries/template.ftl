@@ -25,6 +25,7 @@
             <script type="text/javascript">
                 $(document).ready(function() {
                     $.cookiesDirective({
+                        message: 'We use cookies on this site to enhance your user experience.',
                         explicitConsent: false, // false allows implied consent
                         position: 'top', // top or bottom of viewport
                         privacyPolicyUri: '/Terms/Privacy'
@@ -42,7 +43,7 @@
             <script type="text/javascript">
                 <!-- Google Classic Analytics -->
                 var _gaq = _gaq || [];
-                _gaq.push(['_setAccount', 'UA-1444605-6']);
+                _gaq.push(['_setAccount', '${gaProp}']);
                 _gaq.push(['_trackPageview']);
 
                 (function() {
@@ -58,7 +59,7 @@
                     m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
                 })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-                ga('create', 'UA-1444605-5', 'nbn.org.uk');
+                ga('create', '${gauProp}', 'nbn.org.uk');
                 ga('send', 'pageview');
                 <!-- End Google Universal Analytics -->
             </script>    

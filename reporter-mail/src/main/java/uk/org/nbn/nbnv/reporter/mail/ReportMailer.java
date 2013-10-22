@@ -7,6 +7,7 @@ package uk.org.nbn.nbnv.reporter.mail;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.core.util.MultivaluedMapImpl;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.Properties;
 import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.NewCookie;
 
 /**
@@ -44,8 +46,11 @@ public class ReportMailer {
 
         System.out.println("Attempting to log into API....");
 
-        WebResource webResource = client.resource(props.getProperty("api_url") + "/user/login?username=" + props.getProperty("username") + "&password=" + props.getProperty("password"));
-        ClientResponse response = webResource.get(ClientResponse.class);
+        WebResource webResource = client.resource(props.getProperty("api_url") + "/user/login");
+        MultivaluedMap<String, String> formData = new MultivaluedMapImpl();
+        formData.add("username", props.getProperty("username"));
+        formData.add("password", props.getProperty("password"));
+        ClientResponse response = webResource.type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post(ClientResponse.class, formData);
 
         if (response.getStatus() != 200) {
             throw new RuntimeException("FAILURE : API login with code : " + response.getStatus() + "\n     " + response.getEntity(String.class));
