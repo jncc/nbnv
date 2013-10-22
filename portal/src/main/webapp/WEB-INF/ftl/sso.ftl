@@ -3,7 +3,7 @@
     <@markdown>
 #Login to the NBN Gateway
 
-Please enter your username and password in order to login to the NBN Gateway 
+Please enter your username and password in order to login to the NBN Gateway. **Both the Username and Password fields are case sensitive**. To check you are entering your details correctly click 'Can't access your account' and enter your username and password exactly as displayed within the resulting email.
     </@markdown>
     
     <form id="login-form" action="/User/SSO/Login" method="POST">
