@@ -64,6 +64,14 @@ $REGISTERED_BUILDS = @{
 		};
 		"deploy" = { Deploy $data["NBNV-DOCUMENTATION"] "data" "Documentation"}
 	};
+	"recordcleaner" = @{
+		"services" = @("Tomcat7-data.nbn.org.uk");
+		"obtain" = { 
+			param($build_number);
+			$data["NBNV-RECORDCLEANER"] = GetBuild "NBN-FRONTENDSNAP" $build_number "NBN-RecordCleaner-War/nbnv-recordcleaner-1.0-SNAPSHOT.war" "war"
+		};
+		"deploy" = { Deploy $data["NBNV-RECORDCLEANER"] "data" "RecordCleaner"}
+	};
 	"api" = @{
 		"services" = @("Tomcat7-data.nbn.org.uk");
 		"obtain" = { 
