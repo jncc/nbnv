@@ -5,9 +5,10 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>JSP Page</title>
+        <title>NBN Record Cleaner tool update site</title>
     </head>
     <body>
-        <h1>Hello World!</h1>
+        <h1>NBN Record Cleaner tool update site</h1>
+        <p>This site provides automatic updates to the application itself and to core lookup files.</p>
     </body>
 </html>
