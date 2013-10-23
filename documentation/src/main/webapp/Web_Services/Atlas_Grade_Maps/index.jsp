@@ -46,7 +46,7 @@
                 <li class="parameter-section">
                     <h2>datasets</h2>
                     <div class="nbn-atlas-applicable">map and acknowledgement</div>
-                    <p>The datasets parameter can take a comma separated value of dataset keys which limit the data used to create the map or acknowledgement list to the corresponding specified datasets. A datasets dataset key can be obtained from the NBN Gateway metadata page for the specified dataset. For example the dataset key for <a href="http://data.nbn.org.uk/datasetInfo/taxonDataset.jsp?refID=5&list=1&sort=0&dsKey=GA000466">Demonstration dataset for record access on the NBN Gateway</a> is GA000466.</p>
+                    <p>The datasets parameter can take a comma separated value of dataset keys which limit the data used to create the map or acknowledgement list to the corresponding specified datasets. A datasets dataset key can be obtained from the NBN Gateway metadata page for the specified dataset. For example the dataset key for <a href="/Datasets/GA000466">Demonstration dataset for record access on the NBN Gateway</a> is GA000466.</p>
                     <p>The following example is a map service request for "Canadian Goose" limited to the "Biodiversity in Glasgow (BiG) Project" and "Suffolk Biological Records Centre (SBRC) dataset" provided by "British Trust for Ornithology" and "Suffolk Biological Records Centre" respectively.</p>
                     <nbn:prettyprint-code lang="url">https://gis.nbn.org.uk/SingleSpecies/NBNSYS0000000009/atlas/circle/map?datasets=GA000623,GA000652</nbn:prettyprint-code>
                 </li>
@@ -58,7 +58,7 @@
                         <li><em>endyear</em> - defaults to current year</li>
                     </ul>
                     <p>The start year and end year parameters allow for temporal filtering of records. In order to guarantee a valid response the value for both of these parameters must be an integer between 1800 to the current year, where the startyear is less than or equal to the endyear.</p>
-                    <p>For more information in this area, please view the Date Filtering document which can be found <a href="http://www.nbn.org.uk/Guidebooks/Web-services-documentation/Resources/download-documents.aspx">here</a></p>
+                    <p>For more information in this area, please view the Date Filtering document which can be found <a href="/Documentation/Web_Services/Web_Services-SOAP/Resources/resources/DateFiltering.pdf">here</a></p>
                 </li>
                 <li class="parameter-section">
                     <h2>username & userkey</h2>
@@ -155,19 +155,19 @@ private static String getHashText(String password) throws NoSuchAlgorithmExcepti
         </tr>
         <tr class="nbn-acknowledgment-entryRow">
             <td class="nbn-acknowledgment-datasetProvider" rowspan="2">
-                <a href="http://data.nbn.org.uk/organisation/organisation.jsp?orgKey=3">
+                <a href="https://data.nbn.org.uk/Organisations/3">
                     Botanical Society of the British Isles
                 </a>
             </td>
             <td class="nbn-acknowledgment-datasetTitle">
-                <a href="http://data.nbn.org.uk/datasetInfo/taxonDataset.jsp?dsKey=GA000091">
+                <a href="https://data.nbn.org.uk/Datasets/GA000091">
                     Vascular Plants Database
                 </a>
             </td>
         </tr>
         <tr class="nbn-acknowledgment-entryRow">
             <td class="nbn-acknowledgment-datasetTitle">
-                <a href="http://data.nbn.org.uk/datasetInfo/taxonDataset.jsp?dsKey=GA000477">
+                <a href="https://data.nbn.org.uk/Datasets/GA000477">
                     Vascular Plants Database additions since 2000
                 </a>
             </td>
