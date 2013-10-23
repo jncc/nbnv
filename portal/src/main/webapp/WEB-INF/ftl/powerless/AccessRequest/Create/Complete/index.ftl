@@ -34,7 +34,7 @@
                 },
                 error: function() {
                     $('#submit-status').html('');
-                    $('#submit-status').append("Your access request has failed to be submitted correctly. This isn't good. Please submit a screenshot of this page to access@nbn.org.uk and we will look into it.")
+                    $('#submit-status').append("Your access request has failed to be submitted correctly. Please submit a screenshot of this page to access@nbn.org.uk and we will look into it.")
                         .append($('<p>')
                             .append('${data}')
                         );
