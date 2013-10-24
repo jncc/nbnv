@@ -31,7 +31,7 @@
             </#list>
         </#if>
         <#if showLogo??>
-            <a href="/"><img src="/images/NBNPower.gif"></a>
+            <a href="/" target="_blank"><img src="/images/NBNPower.gif"></a>
         </#if>
     </span></div>
 </#if>
