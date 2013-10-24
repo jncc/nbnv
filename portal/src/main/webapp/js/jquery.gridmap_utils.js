@@ -75,13 +75,7 @@
                 }
             });
             keyValuePairs['background'] = toReturn;
-        }
-        
-        //The dataset key argument is 'datasets', whereas the generic table of datasets uses 'datasetKey' - this needs changing
-        if(keyValuePairs.hasOwnProperty('datasetKey')){
-            keyValuePairs['datasets'] = keyValuePairs['datasetKey'];
-            delete keyValuePairs['datasetKey'];
-        }
+        }       
 
         //Remove the hidden tvk, just used to get the tvk from the path of the page request to here
         delete keyValuePairs['tvk'];
@@ -276,7 +270,7 @@
                         var tvk = $('#tvk').val(); 
                         var keyValuePairs = nbn.portal.reports.utils.forms.getKeyValuePairsFromForm($form);
                         var keyValuePairsWithBusinessLogic = getKeyValuePairsWithBusinessLogic(keyValuePairs);
-                        var queryString = nbn.portal.reports.utils.forms.getQueryStringFromKeyValuePairs(keyValuePairsWithBusinessLogic, true);
+                        var queryString = nbn.portal.reports.utils.forms.getQueryStringFromKeyValuePairs(keyValuePairsWithBusinessLogic, false);
                         var url = $form.attr('api-server') + '/gridMapSquares/' + tvk + queryString;
                         nbn.portal.reports.utils.datasetfields.doSelectDatasetKeys();
                         $(this).dialog("close");
