@@ -754,8 +754,18 @@ public class TaxonObservationResource extends AbstractResource {
             @TokenUser(allowPublic = false) final User user,
             @QueryParam("json") String json,
             @Context HttpServletResponse response) throws IOException, TemplateException {        
+        // Allows the fileDownload javascript to close the waiting window when
+        // the download is finished, required cookie, but doesn't stick around
+        // long
         response.setHeader("Set-Cookie", "fileDownload=true; path=/");
-        final DownloadFilterJSON dFilter = parseJSON(json);
+        
+        // Fix to prevent someone injecting somone elses user id into 
+        // the download request, doesn't give them that persons access but it
+        // would report the download as being done by that user
+        DownloadFilterJSON rawFilter = parseJSON(json);        
+        rawFilter.getReason().setUserID(user.getId());
+        
+        final DownloadFilterJSON dFilter = rawFilter;
         final TaxonObservationFilter filter = downloadUtils.createFilter(json, dFilter);
         
         oTaxonObservationFilterMapper.createFilter(filter);
