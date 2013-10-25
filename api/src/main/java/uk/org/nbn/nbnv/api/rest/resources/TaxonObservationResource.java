@@ -27,6 +27,7 @@ import javax.ws.rs.core.StreamingOutput;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.ObjectWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -764,9 +765,10 @@ public class TaxonObservationResource extends AbstractResource {
         // would report the download as being done by that user
         DownloadFilterJSON rawFilter = parseJSON(json);        
         rawFilter.getReason().setUserID(user.getId());
+        ObjectWriter ow = new ObjectMapper().writer();
         
         final DownloadFilterJSON dFilter = rawFilter;
-        final TaxonObservationFilter filter = downloadUtils.createFilter(json, dFilter);
+        final TaxonObservationFilter filter = downloadUtils.createFilter(ow.writeValueAsString(dFilter), dFilter);
         
         oTaxonObservationFilterMapper.createFilter(filter);
         if (dFilter.getReason().getOrganisationID() > -1) {
