@@ -158,7 +158,7 @@ public class EasyMapController {
                 model.put("showLogo", "1");
             } 
             
-            if (displayTerms == null || "0".equals(displayTerms)) {
+            if (displayTerms == null || !"0".equals(displayTerms)) {
                 model.put("showTC", "1");
             }
             
