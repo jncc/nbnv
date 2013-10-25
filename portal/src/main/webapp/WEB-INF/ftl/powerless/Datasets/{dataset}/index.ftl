@@ -126,7 +126,9 @@
                         <td>
                             <@report_utils.datasetAccessPositionByDatasetKey datasetKey=dataset.key/>
                             <br/>
-                            <div><a href="/AccessRequest/Create?json={dataset:{all:false,datasets:['${dataset.key}']}}">Request Better Access</a></div>
+                            <#if dataset.typeName == "Taxon"> 
+                                <div><a href="/AccessRequest/Create?json={dataset:{all:false,datasets:['${dataset.key}']}}">Request Better Access</a></div>
+                            </#if>
                         </td>
                     </tr>
                     <tr>
