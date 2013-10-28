@@ -290,7 +290,7 @@ public class TaxonObservationProvider {
         } else {
             SELECT(fields + ", 0 AS fullVersion");
             FROM("TaxonObservationDataPublic o");
-            WHERE("o.id NOT IN ( SELECT utoa.observationID FROM UserTaxonObservationID utoa WHERE utoa.userID = #{user.id} OR uota.userID = 1)");
+            WHERE("o.id NOT IN ( SELECT utoa.observationID FROM UserTaxonObservationID utoa WHERE utoa.userID = #{user.id} OR utoa.userID = 1)");
         }
 
         if (params.containsKey("startYear") && (Integer) params.get("startYear") > -1) {
