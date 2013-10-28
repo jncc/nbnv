@@ -13,7 +13,6 @@ import uk.org.nbn.nbnv.api.model.Organisation;
 import uk.org.nbn.nbnv.api.model.TaxonDatasetWithQueryStats;
 import uk.org.nbn.nbnv.api.model.TaxonObservationFilter;
 import uk.org.nbn.nbnv.api.model.User;
-import uk.org.nbn.nbnv.api.model.meta.AccessRequestJSON;
 import uk.org.nbn.nbnv.api.model.meta.DownloadFilterJSON;
 
 /**

@@ -12,7 +12,7 @@ public class RequestTaxonFilterJSON extends AccessRequestFilterJSON {
     private String tvk = "";
     private String designation = "";
     private String output = "";
-    private int orgSuppliedList;
+    private int orgSuppliedList = -1;
 
     /**
      * @return the tvk

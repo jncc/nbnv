@@ -275,8 +275,8 @@ public class TaxonObservationProvider {
     }
     
     String createSelectDownload(Map<String, Object> params, String fields) {
-        String publicSelect = createSelectQuery(params, false, fields + ", 0 as fullVersion");
-        String fullSelect = createSelectQuery(params, true, fields + ", 1 as fullVersion");
+        String publicSelect = createSelectQuery(params, false, fields);
+        String fullSelect = createSelectQuery(params, true, fields);
         return "(" + fullSelect + " UNION ALL " + publicSelect + ") obs";
     }
 
