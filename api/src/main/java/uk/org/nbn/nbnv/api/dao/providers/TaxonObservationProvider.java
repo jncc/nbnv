@@ -275,20 +275,20 @@ public class TaxonObservationProvider {
     }
     
     String createSelectDownload(Map<String, Object> params, String fields) {
-        String publicSelect = createSelectQuery(params, false, fields + ", 0 as fullVersion");
-        String fullSelect = createSelectQuery(params, true, fields + ", 1 as fullVersion");
+        String publicSelect = createSelectQuery(params, false, fields);
+        String fullSelect = createSelectQuery(params, true, fields);
         return "(" + fullSelect + " UNION ALL " + publicSelect + ") obs";
     }
 
     String createSelectQuery(Map<String, Object> params, boolean full, String fields) {
         BEGIN();
         if (full) {
-            SELECT(fields);
+            SELECT(fields + ", 1 AS fullVersion");
             FROM("TaxonObservationDataEnhanced o");
             INNER_JOIN("UserTaxonObservationID utoa ON utoa.observationID = o.id ");
             WHERE("(utoa.userID = #{user.id} OR utoa.userID = 1)");
         } else {
-            SELECT(fields);
+            SELECT(fields + ", 0 AS fullVersion");
             FROM("TaxonObservationDataPublic o");
             WHERE("o.id NOT IN ( SELECT utoa.observationID FROM UserTaxonObservationID utoa WHERE utoa.userID = #{user.id} OR utoa.userID = 1)");
         }
