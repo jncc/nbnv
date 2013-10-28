@@ -27,6 +27,7 @@ import javax.ws.rs.core.StreamingOutput;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.ObjectWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -754,9 +755,20 @@ public class TaxonObservationResource extends AbstractResource {
             @TokenUser(allowPublic = false) final User user,
             @QueryParam("json") String json,
             @Context HttpServletResponse response) throws IOException, TemplateException {        
+        // Allows the fileDownload javascript to close the waiting window when
+        // the download is finished, required cookie, but doesn't stick around
+        // long
         response.setHeader("Set-Cookie", "fileDownload=true; path=/");
-        final DownloadFilterJSON dFilter = parseJSON(json);
-        final TaxonObservationFilter filter = downloadUtils.createFilter(json, dFilter);
+        
+        // Fix to prevent someone injecting somone elses user id into 
+        // the download request, doesn't give them that persons access but it
+        // would report the download as being done by that user
+        DownloadFilterJSON rawFilter = parseJSON(json);        
+        rawFilter.getReason().setUserID(user.getId());
+        ObjectWriter ow = new ObjectMapper().writer();
+        
+        final DownloadFilterJSON dFilter = rawFilter;
+        final TaxonObservationFilter filter = downloadUtils.createFilter(ow.writeValueAsString(dFilter), dFilter);
         
         oTaxonObservationFilterMapper.createFilter(filter);
         if (dFilter.getReason().getOrganisationID() > -1) {
