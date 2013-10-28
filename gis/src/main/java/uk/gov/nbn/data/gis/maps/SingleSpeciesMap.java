@@ -23,7 +23,6 @@ import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.Select;
-import org.jooq.Table;
 import static uk.gov.nbn.data.dao.jooq.Tables.*;
 
 import org.jooq.util.sqlserver.SQLServerFactory;
@@ -167,10 +166,10 @@ public class SingleSpeciesMap {
                 .selectDistinct((Field<Integer>)nested.getField(0))
                 .from(nested);
 
-        return MapHelper.getMapData(FEATUREDATA.GEOM, FEATUREDATA.IDENTIFIER, 4326 ,create
-            .select(FEATUREDATA.GEOM, FEATUREDATA.IDENTIFIER, FEATUREDATA.LABEL)
-            .from(FEATUREDATA)
-            .join(dNested).on(FEATUREDATA.ID.eq((Field<Integer>)dNested.getField(0))));
+        return MapHelper.getMapData(FEATURE.GEOM, FEATURE.IDENTIFIER, 4326 ,create
+            .select(FEATURE.GEOM, FEATURE.IDENTIFIER)
+            .from(FEATURE)
+            .join(dNested).on(FEATURE.ID.eq((Field<Integer>)dNested.getField(0))));
            
     }
     

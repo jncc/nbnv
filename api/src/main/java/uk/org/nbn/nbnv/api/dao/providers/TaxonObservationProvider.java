@@ -282,14 +282,15 @@ public class TaxonObservationProvider {
 
     String createSelectQuery(Map<String, Object> params, boolean full, String fields) {
         BEGIN();
-        SELECT(fields);
         if (full) {
+            SELECT(fields + ", 1 AS fullVersion");
             FROM("TaxonObservationDataEnhanced o");
             INNER_JOIN("UserTaxonObservationID utoa ON utoa.observationID = o.id ");
-            WHERE("utoa.userID = #{user.id}");
+            WHERE("(utoa.userID = #{user.id} OR utoa.userID = 1)");
         } else {
+            SELECT(fields + ", 0 AS fullVersion");
             FROM("TaxonObservationDataPublic o");
-            WHERE("o.id NOT IN ( SELECT utoa.observationID FROM UserTaxonObservationID utoa WHERE utoa.userID = #{user.id} )");
+            WHERE("o.id NOT IN ( SELECT utoa.observationID FROM UserTaxonObservationID utoa WHERE utoa.userID = #{user.id} OR utoa.userID = 1)");
         }
 
         if (params.containsKey("startYear") && (Integer) params.get("startYear") > -1) {
