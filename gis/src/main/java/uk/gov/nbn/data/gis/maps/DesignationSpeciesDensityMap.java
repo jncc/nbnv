@@ -131,13 +131,13 @@ public class DesignationSpeciesDensityMap {
                         .from(observations)
                         .groupBy(observations.getField(0));
 
-                return MapHelper.getMapData(FEATUREDATA.GEOM, FEATUREDATA.IDENTIFIER, 4326, create
+                return MapHelper.getMapData(FEATURE.GEOM, FEATURE.IDENTIFIER, 4326, create
                         .select(
-                        FEATUREDATA.GEOM,
-                        FEATUREDATA.IDENTIFIER,
+                        FEATURE.GEOM,
+                        FEATURE.IDENTIFIER,
                         squares.getField("species"))
                         .from(squares)
-                        .join(FEATUREDATA).on(FEATUREDATA.ID.eq((Field<Integer>) squares.getField(0))));
+                        .join(FEATURE).on(FEATURE.ID.eq((Field<Integer>) squares.getField(0))));
             }
         });
         return new MapFileModel("DesignationSpeciesDensity.map", data);
