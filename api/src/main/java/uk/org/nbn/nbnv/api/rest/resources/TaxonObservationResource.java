@@ -539,7 +539,7 @@ public class TaxonObservationResource extends AbstractResource {
         //TODO: squareBlurring(?)
         
         // Stop leaking dataset info when spatial filter applied. Fixes issue species info fishing
-        if (sensitive && !featureID.equals(ObservationResourceDefaults.defaultFeatureID)) {
+        if (sensitive && (!featureID.equals(ObservationResourceDefaults.defaultFeatureID) || !gridRef.equals(ObservationResourceDefaults.defaultGridRef))) {
             sensitive = Boolean.FALSE;
         }
         
