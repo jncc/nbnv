@@ -49,7 +49,7 @@ public class GridMapSquareResource extends AbstractResource {
      * @param ptvk The Taxon Version Key we are looking for
      * @param resolution What resolution we are looking for
      * @param bands A list of bands
-     * @param datasetKeys A list of datasets to restrict the search to
+     * @param datasets A list of datasets to restrict the search to
      * @param viceCountyIdentifier An identifier for a Vice County
      * 
      * @return A zip containing a list of grid squares filtered by the given
@@ -68,15 +68,15 @@ public class GridMapSquareResource extends AbstractResource {
             @PathParam("ptvk") final String ptvk,
             @QueryParam("resolution") @DefaultValue("") final String resolution,
             @QueryParam("band") @DefaultValue("") final List<String> bands,
-            @QueryParam("datasetKey") @DefaultValue(ObservationResourceDefaults.defaultDatasetKey) final List<String> datasetKeys,
+            @QueryParam("datasets") @DefaultValue(ObservationResourceDefaults.defaultDatasetKey) final List<String> datasets,
             @QueryParam("feature") @DefaultValue(ObservationResourceDefaults.defaultFeatureID) final String viceCountyIdentifier)
             throws IOException {
         return new StreamingOutput() {
             public void write(OutputStream out) throws IOException, WebApplicationException {
                 ZipOutputStream zip = new ZipOutputStream(out);
                 addReadMe(zip, user, ptvk, resolution, bands);
-                addGridRefs(zip, user, ptvk, resolution, bands, datasetKeys, viceCountyIdentifier);
-                addDatasetMetadata(zip, user, ptvk, resolution, bands, datasetKeys, viceCountyIdentifier);
+                addGridRefs(zip, user, ptvk, resolution, bands, datasets, viceCountyIdentifier);
+                addDatasetMetadata(zip, user, ptvk, resolution, bands, datasets, viceCountyIdentifier);
                 zip.flush();
                 zip.close();
             }
