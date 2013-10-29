@@ -11,8 +11,8 @@ import java.util.Map;
 import java.util.Properties;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
@@ -34,8 +34,8 @@ public class TemplateMailer {
 
     @Autowired MailSender mailSender;
     @Autowired Properties properties;
-    private static Log logger = LogFactory.getLog(TemplateMailer.class);
     private Configuration configuration;
+    private static Logger logger = LoggerFactory.getLogger(TemplateMailer.class);
 
     public TemplateMailer() {
         configuration = new Configuration();
