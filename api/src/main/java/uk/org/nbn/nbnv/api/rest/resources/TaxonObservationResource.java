@@ -28,6 +28,8 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.ObjectWriter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -77,6 +79,7 @@ public class TaxonObservationResource extends AbstractResource {
     @Autowired DownloadMapper downloadMapper;
     @Autowired UserMapper userMapper;
     
+    private Logger logger = LoggerFactory.getLogger(TaxonObservationResource.class);
 
     /**
      * Return a Taxon Observation Record with a specified numerical ID, as long
@@ -754,7 +757,10 @@ public class TaxonObservationResource extends AbstractResource {
     public StreamingOutput getObservationsByFilterZip(            
             @TokenUser(allowPublic = false) final User user,
             @QueryParam("json") String json,
-            @Context HttpServletResponse response) throws IOException, TemplateException {        
+            @Context HttpServletResponse response) throws IOException, TemplateException {    
+        
+        logger.info("Taxon Observation Download Started");
+        
         // Allows the fileDownload javascript to close the waiting window when
         // the download is finished, required cookie, but doesn't stick around
         // long
@@ -1278,6 +1284,7 @@ public class TaxonObservationResource extends AbstractResource {
         
         for (String key : datasetRecordCounts.keySet()) {
             oTaxonObservationFilterMapper.createDatasetDownloadStats(filterID, key, datasetRecordCounts.get(key));
+            logger.info("Taxon Observation Download Sending email for dataset " + key);
             mailDatasetDownloadNotification(filter, dFilter, key, user);
         }
     }
