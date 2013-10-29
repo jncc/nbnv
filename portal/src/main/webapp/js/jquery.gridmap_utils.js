@@ -76,7 +76,13 @@
             });
             keyValuePairs['background'] = toReturn;
         }       
-
+        
+        //The dataset key argument is 'datasets', whereas the generic table of datasets uses 'datasetKey' - this needs changing
+        if(keyValuePairs.hasOwnProperty('datasetKey')){
+            keyValuePairs['datasets'] = keyValuePairs['datasetKey'];
+            delete keyValuePairs['datasetKey'];
+        }
+        
         //Remove the hidden tvk, just used to get the tvk from the path of the page request to here
         delete keyValuePairs['tvk'];
         
