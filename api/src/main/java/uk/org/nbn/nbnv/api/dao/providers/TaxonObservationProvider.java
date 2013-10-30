@@ -94,7 +94,7 @@ public class TaxonObservationProvider {
         BEGIN();
         SELECT("obs.id");
         FROM(from);
-        WHERE("obs.id NOT IN ( SELECT utoa.observationID FROM UserTaxonObservationID utoa WHERE utoa.userID = #{user.id} )");
+        WHERE("obs.id NOT IN ( SELECT utoa.observationID FROM UserTaxonObservationID utoa WHERE utoa.userID IN (#{user.id}, 1) )");
         return SQL();
     }
 
@@ -175,7 +175,7 @@ public class TaxonObservationProvider {
         BEGIN();
         SELECT("obs.datasetKey, COUNT(*) querySpecificObservationCount, SUM(CAST(obs.sensitive AS int)) querySpecificSensitiveObservationCount");
         FROM(from);
-        WHERE("obs.id NOT IN ( SELECT utoa.observationID FROM UserTaxonObservationID utoa WHERE utoa.userID = #{user.id} OR utoa.userID = 1)");
+        WHERE("obs.id NOT IN ( SELECT utoa.observationID FROM UserTaxonObservationID utoa WHERE utoa.userID IN (#{user.id}, 1))");
         GROUP_BY("obs.datasetKey");
         return SQL();
     }
@@ -196,7 +196,7 @@ public class TaxonObservationProvider {
         BEGIN();
         SELECT("obs.datasetKey, COUNT(*) querySpecificObservationCount");
         FROM(from);
-        WHERE("obs.id NOT IN ( SELECT utoa.observationID FROM UserTaxonObservationID utoa WHERE utoa.userID = #{user.id} OR utoa.userID = 1)");
+        WHERE("obs.id NOT IN ( SELECT utoa.observationID FROM UserTaxonObservationID utoa WHERE utoa.userID IN (#{user.id}, 1))");
         WHERE("obs.sensitive = 1");
         GROUP_BY("obs.datasetKey");
         return SQL();
