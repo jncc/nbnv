@@ -93,11 +93,15 @@
                 height: 450,
                 buttons: {
                     'Accept': function(){
-                        var $form = $('#nbn-site-report-form');
+                        var $form = $('#nbn-site-report-form'); 
+                        // Get selected datasets workaround - TODO: Fix this properly
+                        var datasets = nbn.portal.reports.utils.datasetfields.getSelectedDatasets();
                         nbn.portal.reports.utils.datasetfields.doDeselectDatasetKeys();
                         var keyValuePairs = nbn.portal.reports.utils.forms.getKeyValuePairsFromForm($form);
                         keyValuePairs.featureID = $form.attr("featureID");
                         keyValuePairs.taxonOutputGroup = $form.attr("taxonOutputGroupKey");
+                        // Get selected datasets workaround - TODO: Fix this properly
+                        keyValuePairs.datasetKey = datasets;
                         var queryString = nbn.portal.reports.utils.forms.getQueryStringFromKeyValuePairs(keyValuePairs, false);
                         var url = $form.attr('api-server') + '/taxonObservations/species/download/' + queryString;
                         nbn.portal.reports.utils.datasetfields.doSelectDatasetKeys();
