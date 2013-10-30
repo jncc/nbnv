@@ -47,5 +47,5 @@
     </script>
     <h1>Access Request Submission</h1>
     <p id="submit-status">Submitting request...</p>
-    <p id="submit-link"><a href="/User/Admin">Return to My Account</a></p>
+    <p id="submit-link"><a href="/User">Return to My Account</a></p>
 </@template.master>
