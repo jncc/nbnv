@@ -286,11 +286,11 @@ public class TaxonObservationProvider {
             SELECT(fields + ", 1 AS fullVersion");
             FROM("TaxonObservationDataEnhanced o");
             INNER_JOIN("UserTaxonObservationID utoa ON utoa.observationID = o.id ");
-            WHERE("(utoa.userID = #{user.id} OR utoa.userID = 1)");
+            WHERE("(utoa.userID = #{user.id})");
         } else {
             SELECT(fields + ", 0 AS fullVersion");
             FROM("TaxonObservationDataPublic o");
-            WHERE("o.id NOT IN ( SELECT utoa.observationID FROM UserTaxonObservationID utoa WHERE utoa.userID = #{user.id} OR utoa.userID = 1)");
+            WHERE("o.id NOT IN ( SELECT utoa.observationID FROM UserTaxonObservationID utoa WHERE utoa.userID = #{user.id})");
         }
 
         if (params.containsKey("startYear") && (Integer) params.get("startYear") > -1) {
