@@ -10,7 +10,7 @@ ${reason}
 The request is for:
 ${details}
 
-As an administrator for this dataset you should respond to this request through the administration pages of the NBN Gateway website by clicking on the following link : http://staging.testnbn.net/AccessRequest/Admin . On this page you will be able to grant, deny or edit this access request. ${rName} will then be automatically informed by email. You may alternatively close the request in which case they will not be informed. Please note if you can not find this request within the pending access requests then it may have been already dealt with by another administrator.
+As an administrator for this dataset you should respond to this request through the administration pages of the NBN Gateway website by clicking on the following link : https://data.nbn.org.uk/AccessRequest/Admin . On this page you will be able to grant, deny or edit this access request. ${rName} will then be automatically informed by email. You may alternatively close the request in which case they will not be informed. Please note if you can not find this request within the pending access requests then it may have been already dealt with by another administrator.
 
 Remember, you will need to LOG IN for the administration controls on this page to appear. If you have forgotten your login details then click on Login link in the top right hand corner and then click on "Can't access your account". Your username or password can then be emailed to you. 
 
