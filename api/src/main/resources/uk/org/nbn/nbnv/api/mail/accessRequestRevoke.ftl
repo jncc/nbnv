@@ -2,7 +2,7 @@ This is an automatically generated message from the NBN Gateway - DO NOT REPLY.
 
 Dear ${rName}, 
 
-Your enhanced access to the dataset ${dataset} held on the NBN Gateway has expired or been removed. As a result your access to this dataset has been reduced to the level provided to the public. If you wish to re-apply for enhanced access to this dataset you may do so through the NBN Gateway access request page, available by clicking on the following link : http://staging.testnbn.net/AccessRequest/Create . 
+Your enhanced access to the dataset ${dataset} held on the NBN Gateway has expired or been removed. As a result your access to this dataset has been reduced to the level provided to the public. If you wish to re-apply for enhanced access to this dataset you may do so through the NBN Gateway access request page, available by clicking on the following link : https://data.nbn.org.uk/AccessRequest/Create . 
 
 The access level was:
 ${details}
