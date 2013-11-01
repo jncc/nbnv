@@ -190,7 +190,7 @@
 </#function>
 
 <#function getSiteSpeciesImageURL locationID ptvk startYear endYear datasets spatialRelationship showBoundary>
-    <#assign toReturn="${gis}/SiteReport/${locationID}/${ptvk}?mode=map&LAYER=OS-Scale-Dependent&LAYERS=Records&startyear=${startYear}&endyear=${endYear}&spatialRelationship=${spatialRelationship}">
+    <#assign toReturn="${gis}/SiteReport/${locationID}/${ptvk}?mode=map&LAYER=OS-Scale-Dependent&LAYERS=Records&spatialRelationship=${spatialRelationship}">
     <#if datasets??>
         <#assign datasetKeys="">
         <#list datasets as dataset>
@@ -200,6 +200,12 @@
             </#if>
         </#list>
         <#assign toReturn = toReturn + "&" + datasetKeys>
+    </#if>
+    <#if startYear?? && startYear?has_content>
+        <#assign toReturn = toReturn + "&startYear=" + startYear>
+    </#if>
+    <#if endYear?? && endYear?has_content>
+        <#assign toReturn = toReturn + "&endYear=" + endYear>
     </#if>
     <#if showBoundary>
         <#assign toReturn = toReturn + "&LAYER=Selected-Feature">
