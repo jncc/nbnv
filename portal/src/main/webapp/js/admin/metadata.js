@@ -7,7 +7,7 @@
             url: $('#nbn-metadata-update').attr('url'),
             data: $('#nbn-metadata-update').serialize(),
             success: function(result) {
-                window.location = "/User/Admin";
+                window.location = "/Datasets/" + $('#nbn-form-submit').data('dataset');
             },
             error: function(result) {
                 $("#nbn-waiting-note").hide()
