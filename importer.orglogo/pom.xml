@@ -48,7 +48,7 @@
                             </descriptorRefs>
                             <archive>
                                 <manifest>
-                                    <mainClass>com.jncc.old.OLD</mainClass>
+                                    <mainClass>uk.org.nbn.importer.orglogo.OLD</mainClass>
                                 </manifest>
                             </archive>
                         </configuration>
