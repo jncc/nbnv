@@ -1,7 +1,7 @@
 (function($){
     function submit() {
         $('#nbn-form-submit').attr('disabled','disabled');
-        $("#nbn-waiting-note").show()
+        $("#nbn-waiting-note").show();
         $.ajax({ 
             type: 'POST',
             url: $('#nbn-metadata-update').attr('url'),
@@ -10,7 +10,7 @@
                 window.location = "/Datasets/" + $('#nbn-form-submit').data('dataset');
             },
             error: function(result) {
-                $("#nbn-waiting-note").hide()
+                $("#nbn-waiting-note").hide();
                 alert("An unknown error occured while submitting these changes, please try again later");
             }
         });
