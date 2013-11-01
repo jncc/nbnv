@@ -1261,7 +1261,8 @@ public class TaxonObservationResource extends AbstractResource {
             if (includeAttributes) {
                 if (observation.isFullVersion()) {
                     for (Attribute att : attributes) {
-                        if (atts.get(observation.getObservationID()).containsKey(att.getAttributeID())) {
+                        if (atts.containsKey(observation.getObservationID()) 
+                                && atts.get(observation.getObservationID()).containsKey(att.getAttributeID())) {
                             values.add(atts.get(observation.getObservationID()).get(att.getAttributeID()));
                         } else {
                             values.add("");
