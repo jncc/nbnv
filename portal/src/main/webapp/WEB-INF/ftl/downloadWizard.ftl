@@ -21,6 +21,7 @@
     <script>
         nbn.nbnv.api = '${api}';
         nbn.nbnv.userID = ${user.id?c};
+        nbn.nbnv.isDownload = true;
 	
 	$(function() {
             var json = ${data};

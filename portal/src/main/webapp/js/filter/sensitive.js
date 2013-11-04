@@ -29,7 +29,13 @@ nbn.nbnv.ui.filter.sensitive = function(json) {
         
         var data = $('<div>')
             .append("All ")
-            .append(select).append(" records");
+            .append(select).append(" records")
+    
+        if (nbn.nbnv.isDownload) {
+            data.append(
+                $('<p>').text('If you have not been granted access to sensitive records, these will not be included in the download.')
+            );
+        }
         
         return data;
     };

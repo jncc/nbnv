@@ -116,6 +116,7 @@
                 <#if user.id != 1 && dataset.typeName = "Taxon">
                     <br />
                     <a id="nbn-download-observations" href="#" data-dataset="${URLParameters.dataset}">Download Dataset</a>
+                    <p>Before downloading records from this dataset, you can click on 'Access and Constraints' to check your level of access to the data and apply for better access if necessary</p>
                     <@report_utils.downloadTermsDialogue/>
                 </#if>
             </div>
