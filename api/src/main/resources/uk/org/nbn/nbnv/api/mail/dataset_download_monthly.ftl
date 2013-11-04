@@ -7,7 +7,7 @@ You are receiving this email as you are the administrator of a dataset on the NB
 Total Downloads:                                        ${totalDownloads}
 Total Records Downloaded:                               ${totalRecordsDownloaded}
 Records Downloaded for purpose                          
-<#if R1??>    Personal interest                                    ${R1} (${P1}%)</#if>
+<#if R1??>     Personal interest                                   ${R1} (${P1}%)</#if>
 <#if R2??>     Educational purposes                                ${R2} (${P2}%)</#if>
 <#if R3??>     Research and scientific analysis                    ${R3} (${P3}%)</#if>
 <#if R4??>     Media publication                                   ${R4} (${P4}%)</#if>
