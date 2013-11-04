@@ -8,7 +8,7 @@
 <#assign children=json.readURL("${api}/taxa/${tvk}/children")>
 <#assign datasets=json.readURL("${api}/taxa/${tvk}/datasets")>
 <#assign weblinks=json.readURL("${api}/taxa/${tvk}/weblinks")>
-<#assign celink=json.readURL("http://www.conservationevidence.com/binomial/search?name=${taxon.name?url('ISO-8859-1')}")> 
+<#--<#assign celink=json.readURL("http://www.conservationevidence.com/binomial/search?name=${taxon.name?url('ISO-8859-1')}")> -->
 <#assign output=json.readURL("${api}/taxonOutputGroups/${taxon.taxonOutputGroupKey}")>
 
 <@template.master title="NBN Gateway - Taxon"
@@ -23,7 +23,7 @@
         <#if taxon.taxonVersionKey == ptaxon.taxonVersionKey>
             <@taxonPageSynonyms syn=synonyms/>
             <@taxonPageDesignations des=designations ades=arcdesignations/>
-            <@taxonPageLinks links=weblinks celink=celink name=taxon.name/>
+            <#--<@taxonPageLinks links=weblinks celink=celink name=taxon.name/>-->
         </#if>
         <@taxonPageNBNLinks taxon=ptaxon/>
         <#if taxon.taxonVersionKey == ptaxon.taxonVersionKey>
