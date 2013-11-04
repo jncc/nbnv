@@ -96,7 +96,7 @@ public class TaxonObservationResource extends AbstractResource {
     @GET
     @Path("/{id : \\d+}")
     @Produces(MediaType.APPLICATION_JSON)
-    public TaxonObservation getObservation(@TokenUser() User user, @PathParam("id") int id) {
+    public TaxonObservation getObservation(@TokenUser(allowPublic = false) User user, @PathParam("id") int id) {
         return observationMapper.selectById(id, user.getId());
     }
 
@@ -115,7 +115,7 @@ public class TaxonObservationResource extends AbstractResource {
     @GET
     @Path("/{datasetKey : [A-Z][A-Z0-9]{7}}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<TaxonObservation> getObservationsByDataset(@TokenUser() User user, @PathParam("datasetKey") String datasetKey) {
+    public List<TaxonObservation> getObservationsByDataset(@TokenUser(allowPublic = false) User user, @PathParam("datasetKey") String datasetKey) {
         return observationMapper.selectByDataset(datasetKey, user.getId());
     }
 
@@ -135,7 +135,7 @@ public class TaxonObservationResource extends AbstractResource {
     @GET
     @Path("/{ptvk : [A-Z]{3}SYS[0-9]{10}}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<TaxonObservation> getObservationsByTaxon(@TokenUser() User user, @PathParam("ptvk") String ptvk) {
+    public List<TaxonObservation> getObservationsByTaxon(@TokenUser(allowPublic = false) User user, @PathParam("ptvk") String ptvk) {
         return observationMapper.selectByPTVK(ptvk, user.getId());
     }
     
@@ -198,7 +198,7 @@ public class TaxonObservationResource extends AbstractResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public List<TaxonObservation> getObservationsByFilter(
-            @TokenUser() User user,
+            @TokenUser(allowPublic = false) User user,
             @QueryParam("startYear") @DefaultValue(ObservationResourceDefaults.defaultStartYear) int startYear,
             @QueryParam("endYear") @DefaultValue(ObservationResourceDefaults.defaultEndYear) int endYear,
             @QueryParam("datasetKey") @DefaultValue(ObservationResourceDefaults.defaultDatasetKey) List<String> datasetKeys,
@@ -244,7 +244,7 @@ public class TaxonObservationResource extends AbstractResource {
     @Path("/{datasetKey : [A-Z][A-Z0-9]{7}}/attributes/{attributeID: [0-9]{1,10}}")
     @Produces(MediaType.APPLICATION_JSON)
     public List<TaxonObservationAttributeValue> getOneObservationAttributeByFilter(
-            @TokenUser() User user,
+            @TokenUser(allowPublic = false) User user,
             @PathParam("datasetKey") @DefaultValue(ObservationResourceDefaults.defaultDatasetKey) String datasetKey,
             @PathParam("attributeID") @DefaultValue(ObservationResourceDefaults.defaultAttributeID) int attributeID,
             @QueryParam("startYear") @DefaultValue(ObservationResourceDefaults.defaultStartYear) int startYear,
