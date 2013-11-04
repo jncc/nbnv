@@ -6,9 +6,11 @@ You are receiving this email as you have requested to be notified if any user do
 
 ${downloadReason}
 
-The filters used in this download where as follows;
+The filters used in this download were as follows;
 
 ${filterText}
+
+If your dataset includes sensitive records, these will only have been included in the download if you have already granted access to sensitive records to this user, or to an organisation of which this user is a member.
 
 You can see further statistics about this download on the download report page at;
 
