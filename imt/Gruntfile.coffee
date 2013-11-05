@@ -69,6 +69,7 @@ module.exports = (grunt)->
             'src/vendor/openlayers/lib/OpenLayers/Handler/RegularPolygon.js'
             'src/vendor/openlayers/lib/OpenLayers/Layer/Vector.js'
             'src/vendor/openlayers/lib/OpenLayers/Renderer/SVG.js'
+            'src/vendor/openlayers/lib/OpenLayers/Renderer/VML.js'
             'src/vendor/openlayers/lib/OpenLayers/Renderer/Canvas.js'
             'src/vendor/openlayers/lib/OpenLayers/Protocol/HTTP.js'
             'src/vendor/openlayers/lib/OpenLayers/Strategy/Fixed.js'
