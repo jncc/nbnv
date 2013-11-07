@@ -103,6 +103,7 @@ public class OrganisationAccessRequestResource extends AbstractResource {
         
         if (!accessRequest.getSpatial().isAll() && !accessRequest.getDataset().isSecret()) {
             accessRequest.setSensitive("ns");
+            json = json.replace(":\"sans\"", ":\"ns\"");
         }
 
         TaxonObservationFilter filter = accessRequestUtils.createFilter(json, accessRequest);
