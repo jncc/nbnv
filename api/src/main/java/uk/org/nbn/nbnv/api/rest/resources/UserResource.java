@@ -369,7 +369,7 @@ public class UserResource extends AbstractResource {
         toReturn.put("user", User.PUBLIC_USER);
 
         return Response.ok(toReturn)
-                .cookie(new NewCookie(tokenCookieKey, null, "/", domain, null, 0, false))
+                .header("Set-Cookie", String.format("%s=;Version=1;Domain=%s;Path=/;Expires=Thu, 01-Jan-1970 00:00:01 GMT",tokenCookieKey, domain))
                 .build();
     }
 
