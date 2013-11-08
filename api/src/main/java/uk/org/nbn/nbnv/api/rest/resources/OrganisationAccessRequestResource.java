@@ -522,9 +522,7 @@ public class OrganisationAccessRequestResource extends AbstractResource {
      * @throws ParseException 
      */
     private Response revokeRequest(User user, int filterID, String reason) throws IOException, TemplateException {
-        stripAccess(filterID);
-        oOrganisationAccessRequestMapper.revokeRequest(filterID, reason, new Date(new java.util.Date().getTime()));
-        oOrganisationAccessRequestAuditHistoryMapper.addHistory(filterID, user.getId(), "Revoke action");
+        stripAccess(filterID, user, reason);
         mailRequestRevoke(oOrganisationAccessRequestMapper.getRequest(filterID), reason);
         return Response.status(Response.Status.OK).entity("{}").build();
     }
@@ -536,7 +534,7 @@ public class OrganisationAccessRequestResource extends AbstractResource {
      * @return A boolean denoting the success of this operation
      * @throws IOException 
      */
-    private boolean stripAccess(int id) throws IOException {
+    private boolean stripAccess(int id, User user, String reason) throws IOException {
         OrganisationAccessRequest uar = oOrganisationAccessRequestMapper.getRequest(id);
         AccessRequestJSON accessRequest = parseJSON(uar.getFilter().getFilterJSON());
 
@@ -544,6 +542,9 @@ public class OrganisationAccessRequestResource extends AbstractResource {
         List<String> datasets = new ArrayList<String>();
         datasets.add(uar.getDatasetKey());
         oOrganisationTaxonObservationAccessMapper.removeOrganisationAccess(uar.getOrganisation(), accessRequest.getYear().getStartYear(), accessRequest.getYear().getEndYear(), datasets, species, accessRequest.getSpatial().getMatch(), accessRequest.getSpatial().getFeature(), (accessRequest.getSensitive().equals("sans") ? true : false), accessRequest.getTaxon().getDesignation(), accessRequest.getTaxon().getOutput(), accessRequest.getTaxon().getOrgSuppliedList(), accessRequest.getSpatial().getGridRef(), "");
+
+        oOrganisationAccessRequestMapper.revokeRequest(id, reason, new Date(new java.util.Date().getTime()));
+        oOrganisationAccessRequestAuditHistoryMapper.addHistory(id, user.getId(), "Revoke action");
 
         List<OrganisationAccessRequest> uars = oOrganisationAccessRequestMapper.getGrantedOrganisationRequestsByDataset(uar.getDatasetKey(), uar.getOrganisation().getId());
         

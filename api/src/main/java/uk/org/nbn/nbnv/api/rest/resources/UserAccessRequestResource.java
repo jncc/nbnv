@@ -462,9 +462,7 @@ public class UserAccessRequestResource extends AbstractResource {
      * @return A Response object detailing the result of the operation
      */
     private Response revokeRequest(User user, int filterID, String reason) throws IOException, TemplateException {
-        stripAccess(filterID);
-        oUserAccessRequestMapper.revokeRequest(filterID, reason, new Date(new java.util.Date().getTime()));
-        oUserAccessRequestAuditHistoryMapper.addHistory(filterID, user.getId(), "Revoke action");
+        stripAccess(filterID, user, reason);
         mailRequestRevoke(oUserAccessRequestMapper.getRequest(filterID), reason);
         return Response.status(Response.Status.OK).entity("{}").build();
     }
@@ -478,7 +476,7 @@ public class UserAccessRequestResource extends AbstractResource {
      * 
      * @throws IOException An Error occurred mapping a JSON string to an object
      */
-    private boolean stripAccess(int id) throws IOException {
+    private boolean stripAccess(int id, User user, String reason) throws IOException {
         UserAccessRequest uar = oUserAccessRequestMapper.getRequest(id);
         AccessRequestJSON accessRequest = parseJSON(uar.getFilter().getFilterJSON());
 
@@ -486,8 +484,10 @@ public class UserAccessRequestResource extends AbstractResource {
         List<String> datasets = new ArrayList<String>();
         datasets.add(uar.getDatasetKey());
         oUserTaxonObservationAccessMapper.removeUserAccess(uar.getUser(), accessRequest.getYear().getStartYear(), accessRequest.getYear().getEndYear(), datasets, species, accessRequest.getSpatial().getMatch(), accessRequest.getSpatial().getFeature(), (accessRequest.getSensitive().equals("sans") ? true : false), accessRequest.getTaxon().getDesignation(), accessRequest.getTaxon().getOutput(), accessRequest.getTaxon().getOrgSuppliedList(), accessRequest.getSpatial().getGridRef(), "");
-
         
+        oUserAccessRequestMapper.revokeRequest(id, reason, new Date(new java.util.Date().getTime()));
+        oUserAccessRequestAuditHistoryMapper.addHistory(id, user.getId(), "Revoke action");
+
         List<UserAccessRequest> uars = oUserAccessRequestMapper.getGrantedUserRequestsByDataset(uar.getDatasetKey(), uar.getUser().getId());
         
         for (UserAccessRequest req : uars) {
