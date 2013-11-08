@@ -30,6 +30,12 @@ nbn.nbnv.ui.filter.sensitive = function(json) {
         var data = $('<div>')
             .append("All ")
             .append(select).append(" records");
+    
+        if (nbn.nbnv.isDownload) {
+            data.append(
+                $('<p>').text('If you have not been granted access to sensitive records, these will not be included in the download.')
+            );
+        }
         
         return data;
     };
@@ -41,9 +47,9 @@ nbn.nbnv.ui.filter.sensitive = function(json) {
     this._onExit = function() {
         var text = '';
         
-        if (this._value == 'ns') {
+        if (this._value === 'ns') {
             text = 'Non-sensitive records';
-        } else if (this._value == 'sans') {
+        } else if (this._value === 'sans') {
             text = 'Sensitive and non-sensitive records';
         }
         
