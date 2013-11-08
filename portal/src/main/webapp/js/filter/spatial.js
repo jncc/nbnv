@@ -180,12 +180,12 @@ nbn.nbnv.ui.filter.spatial = function(json) {
             .append($('<div>').append($('<span>').addClass('comboSpan').text('Site List:')).append(boundaryTypes))
             .append($('<div>').append($('<span>').addClass('comboSpan').text('Site:')).append(boundary));
 
-        if (this._all) {
+        if (_me._all) {
             allRecords.children('input').attr('checked', 'checked').change();
         } else {
-            if (this._gridRef != '') {
-                gridRef.children('input').attr('checked', 'checked').change();
-                gridRefSelector.val(this._gridRef);
+            if (_me._gridRef !== '') {
+                gridRef.children('input:radio').attr('checked', 'checked').change();
+                gridRefSelector.val(_me._gridRef);
             } else {
                 filterRecords.children('input').attr('checked', 'checked').change();
             }
