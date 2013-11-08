@@ -56,7 +56,16 @@ nbn.nbnv.ui.requestEditResult = function(endpoint, dataset, datasetEndpoint, gra
         }
         
         if (!json.year.all) { filter.startYear = json.year.startYear; filter.endYear = json.year.endYear; }
-        if (!json.spatial.all) { filter.featureID = json.spatial.feature; filter.spatialRelationship = json.spatial.matchType; }
+        if (!json.spatial.all) { 
+            filter.spatialRelationship = json.spatial.matchType; 
+            
+            if (json.spatial.feature) {
+                filter.featureID = json.spatial.feature; 
+            } else if (json.spatial.gridRef) {
+                filter.gridRef = json.spatial.gridRef;
+            }
+        }
+        
         if (json.sensitive == 'sans') { filter.sensitive = 'true'; }
         filter.datasetKey = dataset;
 
