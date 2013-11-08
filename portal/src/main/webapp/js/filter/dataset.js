@@ -101,18 +101,14 @@ nbn.nbnv.ui.filter.dataset = function(json, isForDownload) {
                 .attr('value', 'all')
                 .change(function() {
                     if (this.checked) {
-                        var dTable = $('#datasetfiltertable').dataTable();
                         _me._all = true;
                         _me._mode = 'all';
                         datasetAutoComplete.prop('disabled', true);
                         datasetAutoComplete.val('');
 
-                        if (dTable.data() != null) {
-                            $('#dsfilter-sa').prop('disabled', true);
-                            $('#dsfilter-da').prop('disabled', true);
-                            dTable.$('tr').find(":checkbox").prop('disabled', false);
-                            dTable.$('tr').find(":checkbox").prop('checked', true);                        
-                        }
+                        $('#dsfilter-sa').prop('disabled', true);
+                        $('#dsfilter-da').prop('disabled', true);
+                        $('#datasetfiltertable').find(":checkbox").prop('disabled', true);
                     }
                 })
             ).append('All datasets');
@@ -125,17 +121,13 @@ nbn.nbnv.ui.filter.dataset = function(json, isForDownload) {
                 .attr('value', 'single')
                 .change(function() {
                     if (this.checked) {
-                        var dTable = $('#datasetfiltertable').dataTable();
                         _me._all = false;
                         _me._mode = 'single';
                         datasetAutoComplete.prop('disabled', false);
                         
-                        if (dTable.data() != null) {
-                            $('#dsfilter-sa').prop('disabled', true);
-                            $('#dsfilter-da').prop('disabled', true);
-                            dTable.$('tr').find(":checkbox").prop('disabled', true);
-                            dTable.$('tr').find(":checkbox").prop('checked', true);                        
-                        }
+                        $('#dsfilter-sa').prop('disabled', true);
+                        $('#dsfilter-da').prop('disabled', true);
+                        $('#datasetfiltertable').find(":checkbox").prop('disabled', true);
                     }
                 })
             ).append('Single Dataset ').append(datasetAutoComplete);
@@ -147,18 +139,14 @@ nbn.nbnv.ui.filter.dataset = function(json, isForDownload) {
                 .attr('value', 'filter')
                 .change(function() {
                     if (this.checked) {
-                        var dTable = $('#datasetfiltertable').dataTable();
                         _me._all = false;
                         _me._mode = 'filter';
                         datasetAutoComplete.prop('disabled', true);
                         datasetAutoComplete.val('');
                         
-                        if (dTable.data() != null) {
-                            $('#dsfilter-sa').prop('disabled', false);
-                            $('#dsfilter-da').prop('disabled', false);
-                            dTable.$('tr').find(":checkbox").prop('disabled', false);
-                            dTable.$('tr').find(":checkbox").prop('checked', true);                        
-                        }
+                        $('#dsfilter-sa').prop('disabled', false);
+                        $('#dsfilter-da').prop('disabled', false);
+                        $('#datasetfiltertable').find(":checkbox").prop('disabled', false);
                     }
                 })
             ).append("Dataset List ")
@@ -190,6 +178,8 @@ nbn.nbnv.ui.filter.dataset = function(json, isForDownload) {
         
         datasetTable.html('');
         datasetTable.append('Loading');
+        
+        _me.datasetTableLoading = true;
         
         var filter = {};
         
@@ -290,7 +280,7 @@ nbn.nbnv.ui.filter.dataset = function(json, isForDownload) {
                                         _me._dropDataset($(this).attr('name'));
                                 });
                     
-                    if (_me._all || $.inArray(td.taxonDataset.key, dataf) > -1) {
+                    if (_me._all ||  dataf.length === 0 || $.inArray(td.taxonDataset.key, dataf) > -1) {
                         cb.attr("checked", "true");
                     }
                     
@@ -332,6 +322,8 @@ nbn.nbnv.ui.filter.dataset = function(json, isForDownload) {
                     }
                 });
                 
+                $("input:radio[name='datasetfilterall'][value='filter']").prop('disabled', false);
+                
                 datasetTable.append(tbody);
                 datasetTable.dataTable({
                     "aaSorting": [[1, "asc"]],
@@ -369,6 +361,11 @@ nbn.nbnv.ui.filter.dataset = function(json, isForDownload) {
                         })
                     );
 
+                if ($("input:radio[name='datasetfilterall'][value='filter']").attr("checked") === "checked") {
+                    $('#dsfilter-sa').prop('disabled', false);
+                    $('#dsfilter-da').prop('disabled', false);
+                    $('#datasetfiltertable').find(":checkbox").prop('disabled', false);
+                }
             }
         });
     };
