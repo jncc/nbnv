@@ -123,7 +123,6 @@ nbn.nbnv.ui.filter.spatial = function(json) {
                 .change(function() {
                     var value = $(this).val();
                     _me._gridRef = value;
-                    alert(value);
                 });
         
         var gridRef = $('<div>')
