@@ -469,6 +469,11 @@ public class TaxonObservationProvider {
             WHERE("tostl.orgListID = #{orgSuppliedList}");    
         }
         
+        if (params.containsKey("taxonOutputGroup") && params.get("taxonOutputGroup") != null && !"".equals((String) params.get("taxonOutputGroup"))) {
+            INNER_JOIN("TaxonData td ON td.taxonVersionKey = o.pTaxonVersionKey");
+            WHERE("td.taxonOutputGroupKey =  #{taxonOutputGroup}");
+        }
+
         return SQL();
     }
 
