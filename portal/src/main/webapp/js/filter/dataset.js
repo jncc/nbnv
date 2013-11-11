@@ -85,6 +85,7 @@ nbn.nbnv.ui.filter.dataset = function(json, isForDownload) {
                 .attr('type', 'checkbox')
                 .attr('name', 'datasetfiltersecret')
                 .attr('value', 'secret')
+                .attr('checked', '')
                 .change(function() {
                     _me._secret = this.checked;
                 })
