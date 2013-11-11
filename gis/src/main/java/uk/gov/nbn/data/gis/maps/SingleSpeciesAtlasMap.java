@@ -5,23 +5,21 @@ import com.sun.jersey.api.client.WebResource;
 import java.awt.Color;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import uk.gov.nbn.data.gis.processor.Acknowledgement;
-import uk.gov.nbn.data.gis.processor.MapFileModel;
-import uk.gov.nbn.data.gis.processor.MapService;
-import uk.gov.nbn.data.gis.processor.MapContainer;
-import uk.gov.nbn.data.gis.processor.GridMap;
-import uk.gov.nbn.data.gis.processor.GridMap.Extent;
-import uk.gov.nbn.data.gis.processor.GridMap.GridLayer;
-import uk.gov.nbn.data.gis.processor.GridMap.Resolution;
-import uk.gov.nbn.data.gis.providers.TokenUserProvider;
-import uk.gov.nbn.data.gis.providers.annotations.DefaultValue;
-import uk.gov.nbn.data.gis.providers.annotations.PathParam;
-import uk.gov.nbn.data.gis.providers.annotations.QueryParam;
-import uk.gov.nbn.data.gis.providers.annotations.ServiceURL;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
+import uk.ac.ceh.dynamo.DynamoMap;
+import uk.ac.ceh.dynamo.DynamoMap.Extent;
+import uk.ac.ceh.dynamo.DynamoMap.GridLayer;
+import uk.ac.ceh.dynamo.DynamoMap.Resolution;
+import uk.ac.ceh.dynamo.arguments.annotations.ServiceURL;
+import uk.gov.nbn.data.gis.config.TokenUserArgumentResolver;
 import uk.org.nbn.nbnv.api.model.ProviderWithQueryStats;
 import uk.org.nbn.nbnv.api.model.User;
 
@@ -38,8 +36,8 @@ import uk.org.nbn.nbnv.api.model.User;
  *  symbol (As part of the url call)
  * @author Christopher Johnson
  */
-@Component
-@MapContainer("SingleSpecies")
+@Controller
+@RequestMapping("SingleSpecies")
 public class SingleSpeciesAtlasMap {
     private static final String TEN_KM_LAYER_NAME = "Grid-10km";
     private static final String TWO_KM_LAYER_NAME = "Grid-2km";
@@ -56,8 +54,8 @@ public class SingleSpeciesAtlasMap {
         LAYERS = new String[]{TEN_KM_LAYER_NAME, TWO_KM_LAYER_NAME, ONE_KM_LAYER_NAME, ONE_HUNDRED_M_LAYER_NAME};
     }
     
-    @MapService("{taxonVersionKey}/atlas/{symbol}")
-    @GridMap(
+    @RequestMapping("{taxonVersionKey}/atlas/{symbol}")
+    @DynamoMap(
         layers={
             @GridLayer(name="10km",     layer=TEN_KM_LAYER_NAME,        resolution=Resolution.TEN_KM),
             @GridLayer(name="2km",      layer=TWO_KM_LAYER_NAME,        resolution=Resolution.TWO_KM),
@@ -68,20 +66,19 @@ public class SingleSpeciesAtlasMap {
         extents= {
             @Extent(name="gbi",     epsgCode="EPSG:27700", extent={-250000, -50000, 750000, 1300000})
         }
-    )    
-    @Acknowledgement(method="getDatasetProviders")
-    public MapFileModel getSingleSpeciesSymbologyModel(
+    )
+    public ModelAndView getSingleSpeciesSymbologyModel(
             final User user,
-            GridMap gridMapDefinition,
+            DynamoMap gridMapDefinition,
             @ServiceURL String mapServiceURL,
-            @PathParam(key="taxonVersionKey", validation="[A-Z][A-Z0-9]{15}") final String key,
-            @PathParam(key="symbol", validation="(circle)") String symbol,
-            @QueryParam(key="datasets", validation="^[A-Z0-9]{8}$") final List<String> datasetKeys,
-            @QueryParam(key="startyear", validation="[0-9]{4}") final String startYear,
-            @QueryParam(key="endyear", validation="[0-9]{4}") final String endYear,
-            @QueryParam(key="fillcolour", validation="[0-9a-fA-F]{6}") @DefaultValue("000000") String fillColour,
-            @QueryParam(key="outlinecolour", validation="[0-9a-fA-F]{6}") @DefaultValue("000000") String outlineColour,
-            @QueryParam(key="REQUEST") String request
+            @PathVariable("taxonVersionKey")/*, validation="[A-Z][A-Z0-9]{15}")*/ final String key,
+            @PathVariable("symbol")/*, validation="(circle)")*/ String symbol,
+            @RequestParam(value="datasets", required=false)/*validation="^[A-Z0-9]{8}$")*/ final List<String> datasetKeys,
+            @RequestParam(value="startyear", required=false)/*, validation="[0-9]{4}")*/ final String startYear,
+            @RequestParam(value="endyear", required=false)/*, validation="[0-9]{4}")*/ final String endYear,
+            @RequestParam(value="fillcolour", required=false, defaultValue="000000")/*, validation="[0-9a-fA-F]{6}")*/ String fillColour,
+            @RequestParam(value="outlinecolour", required=false, defaultValue="000000")/*, validation="[0-9a-fA-F]{6}")*/ String outlineColour,
+            @RequestParam(value="REQUEST", required=false) String request
             ) {
         HashMap<String, Object> data = new HashMap<String, Object>();
         
@@ -100,16 +97,18 @@ public class SingleSpeciesAtlasMap {
         data.put("mapServiceURL", mapServiceURL);
         data.put("properties", properties);
         data.put("layerGenerator", SingleSpeciesMap.getSingleSpeciesResolutionDataGenerator(key, user, datasetKeys, startYear, endYear, false));
-        return new MapFileModel("SingleSpeciesSymbology.map",data);
+        return new ModelAndView("SingleSpeciesSymbology.map",data);
     }
     
-    
-    public List<ProviderWithQueryStats> getDatasetProviders(
+    @RequestMapping("{taxonVersionKey}/atlas/{symbol}/acknowledgement")
+    public ModelAndView getDatasetProviders(
+            @ServiceURL String url,
             HttpServletRequest request,
-            @PathParam(key="taxonVersionKey", validation="[A-Z][A-Z0-9]{15}") final String key,
-            @QueryParam(key="datasets", validation="^[A-Z0-9]{8}$") final List<String> datasetKeys,
-            @QueryParam(key="startyear", validation="[0-9]{4}") final String startYear,
-            @QueryParam(key="endyear", validation="[0-9]{4}") final String endYear) {
+            @PathVariable("taxonVersionKey")/*, validation="[A-Z][A-Z0-9]{15}")*/ final String key,
+            @RequestParam(value="datasets", required=false)/*validation="^[A-Z0-9]{8}$")*/ final List<String> datasetKeys,
+            @RequestParam(value="startyear", required=false)/*, validation="[0-9]{4}")*/ final String startYear,
+            @RequestParam(value="endyear", required=false)/*, validation="[0-9]{4}")*/ final String endYear,
+            @RequestParam(value="css", required=false) String css) {
         
         WebResource ackResource = resource
                 .path("taxonObservations")
@@ -132,6 +131,14 @@ public class SingleSpeciesAtlasMap {
         }
         
         GenericType<List<ProviderWithQueryStats>> type = new GenericType<List<ProviderWithQueryStats>>() {};
-        return TokenUserProvider.getTokenUserWebResourceBuilder(ackResource, request).get(type);
+        
+        
+        Map<String, Object> data = new HashMap<String, Object>();
+        data.put("externalCss", css);
+        data.put("url", url);
+        data.put("properties", properties);
+        data.put("providers", TokenUserArgumentResolver.getTokenUserWebResourceBuilder(ackResource, request).get(type));
+        
+        return new ModelAndView("acknowledgement", data);
     }
 }

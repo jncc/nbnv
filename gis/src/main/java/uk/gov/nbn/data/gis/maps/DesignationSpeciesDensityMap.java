@@ -9,14 +9,7 @@ import java.util.Map;
 import java.util.Properties;
 import org.jooq.util.sqlserver.SQLServerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import uk.gov.nbn.data.gis.maps.MapHelper.ResolutionDataGenerator;
-import uk.gov.nbn.data.gis.processor.MapFileModel;
-import uk.gov.nbn.data.gis.processor.MapService;
-import uk.gov.nbn.data.gis.processor.MapContainer;
-import uk.gov.nbn.data.gis.providers.annotations.PathParam;
-import uk.gov.nbn.data.gis.providers.annotations.QueryParam;
-import uk.gov.nbn.data.gis.providers.annotations.ServiceURL;
 import uk.org.nbn.nbnv.api.model.User;
 import org.jooq.Condition;
 import org.jooq.Field;
@@ -25,7 +18,15 @@ import org.jooq.Select;
 import org.jooq.SelectHavingStep;
 import static uk.gov.nbn.data.dao.jooq.Tables.*;
 import static org.jooq.impl.Factory.*;
-import uk.gov.nbn.data.gis.processor.GridMap;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
+import uk.ac.ceh.dynamo.DynamoMap;
+import uk.ac.ceh.dynamo.DynamoMap.GridLayer;
+import uk.ac.ceh.dynamo.DynamoMap.Resolution;
+import uk.ac.ceh.dynamo.arguments.annotations.ServiceURL;
 
 /**
  * The following represents a Map service for DesignationSpeciesDensity
@@ -35,8 +36,8 @@ import uk.gov.nbn.data.gis.processor.GridMap;
  *
  * @author Christopher Johnson
  */
-@Component
-@MapContainer("DesignationSpeciesDensity")
+@Controller
+@RequestMapping("DesignationSpeciesDensity")
 public class DesignationSpeciesDensityMap {
 
     private static final String TEN_KM_LAYER_NAME = "Grid-10km";
@@ -67,22 +68,22 @@ public class DesignationSpeciesDensityMap {
     @Autowired
     Properties properties;
 
-    @MapService("{designationKey}")
-    @GridMap(
+    @RequestMapping("{designationKey}")
+    @DynamoMap(
         layers = {
-        @GridMap.GridLayer(name = "10km", layer = TEN_KM_LAYER_NAME, resolution = GridMap.Resolution.TEN_KM),
-        @GridMap.GridLayer(name = "2km", layer = TWO_KM_LAYER_NAME, resolution = GridMap.Resolution.TWO_KM),
-        @GridMap.GridLayer(name = "1km", layer = ONE_KM_LAYER_NAME, resolution = GridMap.Resolution.ONE_KM),
-        @GridMap.GridLayer(name = "100m", layer = ONE_HUNDRED_M_LAYER_NAME, resolution = GridMap.Resolution.ONE_HUNDRED_METERS)
+        @GridLayer(name = "10km", layer = TEN_KM_LAYER_NAME, resolution = Resolution.TEN_KM),
+        @GridLayer(name = "2km", layer = TWO_KM_LAYER_NAME, resolution = Resolution.TWO_KM),
+        @GridLayer(name = "1km", layer = ONE_KM_LAYER_NAME, resolution = Resolution.ONE_KM),
+        @GridLayer(name = "100m", layer = ONE_HUNDRED_M_LAYER_NAME, resolution = Resolution.ONE_HUNDRED_METERS)
     },
     defaultLayer = "10km")
-    public MapFileModel getDesignationMapModel(
+    public ModelAndView getDesignationMapModel(
             final User user,
             @ServiceURL String mapServiceURL,
-            @QueryParam(key = "datasets", validation = "^[A-Z0-9]{8}$") final List<String> datasetKeys,
-            @QueryParam(key = "startyear", validation = "[0-9]{4}") final String startYear,
-            @QueryParam(key = "endyear", validation = "[0-9]{4}") final String endYear,
-            @PathParam(key = "designationKey", validation = "^[A-Z0-9.()/_\\-]+$") final String key) {
+            @RequestParam(value = "datasets", required=false)/*validation = "^[A-Z0-9]{8}$")*/ final List<String> datasetKeys,
+            @RequestParam(value = "startyear", required=false)/*validation = "[0-9]{4}")*/ final String startYear,
+            @RequestParam(value = "endyear", required=false)/*validation = "[0-9]{4}"*/ final String endYear,
+            @PathVariable("designationKey")/*, validation = "^[A-Z0-9.()/_\\-]+$")*/ final String key) {
 
         HashMap<String, Object> data = new HashMap<String, Object>();
         data.put("layers", LAYERS.keySet());
@@ -140,6 +141,6 @@ public class DesignationSpeciesDensityMap {
                         .join(FEATURE).on(FEATURE.ID.eq((Field<Integer>) squares.getField(0))));
             }
         });
-        return new MapFileModel("DesignationSpeciesDensity.map", data);
+        return new ModelAndView("DesignationSpeciesDensity.map", data);
     }
 }

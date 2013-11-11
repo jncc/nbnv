@@ -7,27 +7,23 @@ import java.util.List;
 import java.util.Properties;
 import javax.ws.rs.core.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import uk.gov.nbn.data.gis.processor.MapFileModel;
-import uk.gov.nbn.data.gis.processor.MapService;
-import uk.gov.nbn.data.gis.processor.MapContainer;
-import uk.gov.nbn.data.gis.providers.annotations.ServiceURL;
 import uk.org.nbn.nbnv.api.model.SiteBoundaryDataset;
-
 import static uk.gov.nbn.data.dao.jooq.Tables.*;
 import org.jooq.util.sqlserver.SQLServerFactory;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
+import uk.ac.ceh.dynamo.arguments.annotations.ServiceURL;
 import uk.gov.nbn.data.gis.maps.cache.ShapefileStore;
 import uk.gov.nbn.data.gis.maps.colour.ColourHelper;
-import uk.gov.nbn.data.gis.providers.annotations.DefaultValue;
-import uk.gov.nbn.data.gis.providers.annotations.QueryParam;
 /**
  * The following map service will make a call to the data api as defined in
  * the gis.properties to retrieve the most upto-date list of site boundary 
  * datasets. This will then be used to create the layers for the map file
  * @author Christopher Johnson
  */
-@Component
-@MapContainer("SiteBoundaryDatasets")
+@Controller
 public class SiteBoundaryDatasetsMap {
     @Autowired Properties properties;
     @Autowired WebResource dataApi;
@@ -47,10 +43,11 @@ public class SiteBoundaryDatasetsMap {
         }
     }
     
-    @MapService
-    public MapFileModel getSiteBoundariesModel(
+    
+    @RequestMapping("SiteBoundaryDatasets")
+    public ModelAndView getSiteBoundariesModel(
             @ServiceURL String mapServiceURL, 
-            @QueryParam(key="SRS") @DefaultValue("EPSG:4326") String srs) {
+            @RequestParam(value="SRS", required=false, defaultValue="EPSG:4326") String srs) {
         List<SiteBoundaryDataset> datasets = dataApi
                         .path("siteBoundaryDatasets")
                         .accept(MediaType.APPLICATION_JSON) 
@@ -65,6 +62,6 @@ public class SiteBoundaryDatasetsMap {
         data.put("siteBoundaries", datasets);
         data.put("colours", colours);
 
-        return new MapFileModel("SiteBoundaryDatasets.map",data);
+        return new ModelAndView("SiteBoundaryDatasets.map",data);
     }
 }

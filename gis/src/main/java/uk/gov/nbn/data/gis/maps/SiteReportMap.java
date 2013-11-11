@@ -7,19 +7,17 @@ import java.util.List;
 import java.util.Properties;
 import org.jooq.Condition;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import uk.gov.nbn.data.gis.processor.MapContainer;
-import uk.gov.nbn.data.gis.processor.MapFileModel;
-import uk.gov.nbn.data.gis.processor.MapService;
-import uk.gov.nbn.data.gis.providers.annotations.DefaultValue;
-import uk.gov.nbn.data.gis.providers.annotations.PathParam;
-import uk.gov.nbn.data.gis.providers.annotations.QueryParam;
-import uk.gov.nbn.data.gis.providers.annotations.ServiceURL;
 import uk.org.nbn.nbnv.api.model.BoundingBox;
 import uk.org.nbn.nbnv.api.model.Feature;
 import uk.org.nbn.nbnv.api.model.User;
 import static uk.gov.nbn.data.dao.jooq.Tables.*;
 import org.jooq.util.sqlserver.SQLServerFactory;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
+import uk.ac.ceh.dynamo.arguments.annotations.ServiceURL;
 
 /**
  * The following map container will create two map services. The first being a 
@@ -29,35 +27,35 @@ import org.jooq.util.sqlserver.SQLServerFactory;
  * features displayed
  * @author Christopher Johnson
  */
-@Component
-@MapContainer("SiteReport")
+@Controller
+@RequestMapping("SiteReport")
 public class SiteReportMap {
     @Autowired WebResource resource;    
     @Autowired Properties properties;
     
-    @MapService("{featureID}")
-    public MapFileModel getFeatureMap(
+    @RequestMapping("{featureID}")
+    public ModelAndView getFeatureMap(
             @ServiceURL String mapServiceURL,
-            @PathParam(key="featureID") String featureID) {        
+            @PathVariable("featureID") String featureID) {        
         HashMap<String, Object> data = new HashMap<String, Object>();
         data.put("extent", getNativeBoundingBox(featureID));
         data.put("mapServiceURL", mapServiceURL);
         data.put("properties", properties);
         data.put("featureData", MapHelper.getSelectedFeatureData(featureID));
         data.put("featureID", featureID);
-        return new MapFileModel("SiteReport.map",data);
+        return new ModelAndView("SiteReport.map",data);
     }
     
-    @MapService("{featureID}/{taxonVersionKey}")
-    public MapFileModel getSiteReport(
+    @RequestMapping("{featureID}/{taxonVersionKey}")
+    public ModelAndView getSiteReport(
             User user,
             @ServiceURL String mapServiceURL,
-            @PathParam(key="featureID") String featureID,
-            @PathParam(key="taxonVersionKey", validation="[A-Z][A-Z0-9]{15}") String taxonKey,
-            @QueryParam(key="datasets", validation="^[A-Z0-9]{8}$") List<String> datasetKeys,
-            @QueryParam(key="startyear", validation="[0-9]{4}") String startYear,
-            @QueryParam(key="endyear", validation="[0-9]{4}") String endYear,
-            @QueryParam(key="spatialRelationship", validation="(overlap)|(within)") @DefaultValue("overlap") String spatialRelation) {
+            @PathVariable("featureID") String featureID,
+            @PathVariable("taxonVersionKey")/*, validation="[A-Z][A-Z0-9]{15}")*/ String taxonKey,
+            @RequestParam(value="datasets", required=false)/*validation="^[A-Z0-9]{8}$")*/ List<String> datasetKeys,
+            @RequestParam(value="startyear", required=false)/*validation="[0-9]{4}")*/ String startYear,
+            @RequestParam(value="endyear", required=false)/*validation="[0-9]{4}") */String endYear,
+            @RequestParam(value="spatialRelationship", required=false, defaultValue="overlap")/*validation="(overlap)|(within)") */ String spatialRelation) {
         
         HashMap<String, Object> data = new HashMap<String, Object>();
         
@@ -90,7 +88,7 @@ public class SiteReportMap {
             .join(FEATUREDATA).on(FEATUREDATA.ID.eq(USERTAXONOBSERVATIONDATA.FEATUREID))
             .where(condition)
         ));
-        return new MapFileModel("SiteReport.map",data);
+        return new ModelAndView("SiteReport.map",data);
     }
     
     

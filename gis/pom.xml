@@ -30,23 +30,22 @@
         <!-- Spring 3 dependencies -->
         <dependency>
             <groupId>org.springframework</groupId>
-            <artifactId>spring-core</artifactId>
-            <version>${spring.version}</version>
+            <artifactId>spring-context-support</artifactId>
+            <version>3.2.2.RELEASE</version>
         </dependency>
+        
+        <!--CEH Dynamo Mapping-->
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-            <version>${spring.version}</version>
+            <groupId>uk.ac.ceh.components</groupId>
+            <artifactId>dynamo-mapping</artifactId>
+            <version>1.0.18-SNAPSHOT</version>
         </dependency>
+        
+        <!-- Hibernate Validator -->
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-web</artifactId>
-            <version>${spring.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-webmvc</artifactId>
-            <version>${spring.version}</version>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>4.2.0.Final</version>
         </dependency>
         
         <dependency>
@@ -74,16 +73,12 @@
             <artifactId>jooq</artifactId>
             <version>2.5.0</version>
         </dependency>
-        <dependency>
-            <groupId>org.json</groupId>
-            <artifactId>json</artifactId>
-            <version>20090211</version>
-        </dependency>
             
+        <!-- Servlet -->
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
-            <version>2.5</version>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-servlet-api</artifactId>
+            <version>7.0.32</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
@@ -96,6 +91,7 @@
                 <version>2.3</version>
                 <configuration>
                     <warName>gis</warName>
+                    <failOnMissingWebXml>false</failOnMissingWebXml>
                 </configuration>
             </plugin>
             <plugin>
@@ -108,7 +104,7 @@
                 <executions>
                     <execution>
                         <goals>
-                            <goal>generate</goal>
+                            <!--<goal>generate</goal>-->
                         </goals>
                         <!-- Specify the plugin configuration -->
                         <configuration>

@@ -14,11 +14,11 @@
             <tr><th>Service</th><th>Query params</th><th>User login</th></tr>
             <#list mapMethods as mapMethod>
                 <tr>
-                    <td>${mapMethod.service.path}</td>
+                    <td>${mapMethod.service}</td>
                     <td>
                         <ul>
                             <#list mapMethod.queryParams as queryParam>
-                                <li>${queryParam.key()}</li>
+                                <li>${queryParam.value()}</li>
                             </#list>
                         </ul>
                     </td>
