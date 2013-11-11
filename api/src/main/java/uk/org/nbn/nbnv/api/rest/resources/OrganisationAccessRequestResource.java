@@ -112,6 +112,13 @@ public class OrganisationAccessRequestResource extends AbstractResource {
 
         if (accessRequest.getDataset().isSecret()) {
             List<String> sensitive = accessRequestUtils.createSensitiveDatasetList(accessRequest, species, org);
+            
+            for (String datasetKey : datasets) {
+                if (sensitive.contains(datasetKey)) {
+                    sensitive.remove(datasetKey);
+                }
+            }
+
             for (String datasetKey : sensitive) {
                 oTaxonObservationFilterMapper.createFilter(filter);
                 oOrganisationAccessRequestMapper.createRequest(filter.getId(), org.getId(), datasetKey, accessRequest.getReason().getPurpose(), accessRequest.getReason().getDetails(), new Date(new java.util.Date().getTime()), true);
