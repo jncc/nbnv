@@ -50,41 +50,31 @@ nbn.nbnv.ui.dialog.requestEditGrantDialog = function() {
                 buttons: { 
                     "Edit And Grant Request": function() {
                         displaySendingRequestDialog('Working...');
+                        
+                        var url = null;
+                        var filter = {action: "grant", reason: _me.reason, json: _me.json, rawJSON: JSON.stringify(_me.json)};
+                        
+                        if (!_me.timeLimit._all) {
+                            filter.expires = _me.timeLimit.getJson().time.date.format('DD/MM/YYYY');
+                        }
+                        
+                        if (_me.orgReq) {
+                            url = nbn.nbnv.api + '/organisation/organisationAccesses/requests/' + _me.requestID;
+                        } else {
+                            url = nbn.nbnv.api + '/user/userAccesses/requests/' + _me.requestID;
+                        }
+                        
                         $.ajax({
                             type: "PUT", 
-                            url: nbn.nbnv.api + _me.editEndpoint + '/' + _me.requestID, 
+                            url: url, 
                             contentType: 'application/json', 
                             processData: false, 
-                            data: JSON.stringify(_me.json), 
+                            data: JSON.stringify(filter), 
                             success: function(data) {
-                                var filter = {action: "grant", reason: _me.reason};
-                                var url;
-
-                                if (_me.orgReq) {
-                                    url = nbn.nbnv.api + '/organisation/organisationAccesses/requests/' + _me.requestID;
-                                } else {
-                                    url = nbn.nbnv.api + '/user/userAccesses/requests/' + _me.requestID;
-                                }
-
-                                if (!_me.timeLimit._all) {
-                                    filter.expires = _me.timeLimit.getJson().time.date.format('DD/MM/YYYY');
-                                }
-
-                                $.ajax({
-                                    type: 'POST',
-                                    url: url,
-                                    data: filter,
-                                    success: function() {
-                                        document.location = '/AccessRequest/Admin';
-                                    },
-                                    error: function() {
-                                        alert('There was a problem granting request with id: ' + _me.requestID + '\nIf this error persists, please contact NBN support');
-                                        document.location.reload(true);
-                                    }
-                                });
+                                document.location = '/AccessRequest/Admin';
                             },
                             error: function(data) {
-                                alert('There was a problem editing the request with id: ' + _me.requestID + '\nIf this error persists, please contact NBN support');
+                                alert('There was a problem editing or granting the request with id: ' + _me.requestID + '\nIf this error persists, please contact NBN support');
                                 document.location.reload(true);
                             }
                         });                        
