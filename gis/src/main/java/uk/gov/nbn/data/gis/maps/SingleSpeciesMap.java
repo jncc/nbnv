@@ -3,21 +3,11 @@ package uk.gov.nbn.data.gis.maps;
 import com.sun.jersey.api.client.WebResource;
 import java.awt.Color;
 import java.util.*;
+import javax.validation.Valid;
+import javax.validation.constraints.Pattern;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import uk.gov.nbn.data.gis.maps.MapHelper.ResolutionDataGenerator;
 import uk.gov.nbn.data.gis.maps.colour.Band;
-import uk.gov.nbn.data.gis.processor.MapFileModel;
-import uk.gov.nbn.data.gis.processor.MapService;
-import uk.gov.nbn.data.gis.processor.MapContainer;
-import uk.gov.nbn.data.gis.processor.GridMap;
-import uk.gov.nbn.data.gis.processor.GridMap.Layer;
-import uk.gov.nbn.data.gis.processor.GridMap.GridLayer;
-import uk.gov.nbn.data.gis.processor.GridMap.Resolution;
-import uk.gov.nbn.data.gis.providers.annotations.DefaultValue;
-import uk.gov.nbn.data.gis.providers.annotations.PathParam;
-import uk.gov.nbn.data.gis.providers.annotations.QueryParam;
-import uk.gov.nbn.data.gis.providers.annotations.ServiceURL;
 import uk.org.nbn.nbnv.api.model.User;
 import org.jooq.Condition;
 import org.jooq.Field;
@@ -26,6 +16,16 @@ import org.jooq.Select;
 import static uk.gov.nbn.data.dao.jooq.Tables.*;
 
 import org.jooq.util.sqlserver.SQLServerFactory;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
+import uk.ac.ceh.dynamo.DynamoMap;
+import uk.ac.ceh.dynamo.DynamoMap.GridLayer;
+import uk.ac.ceh.dynamo.DynamoMap.Layer;
+import uk.ac.ceh.dynamo.DynamoMap.Resolution;
+import uk.ac.ceh.dynamo.arguments.annotations.ServiceURL;
 
 /**
  * The following represents a Map service for SingleSpecies
@@ -37,8 +37,8 @@ import org.jooq.util.sqlserver.SQLServerFactory;
  *  taxonVersionKey (As part of the url call)
  * @author Christopher Johnson
  */
-@Component
-@MapContainer("SingleSpecies")
+@Controller
+@RequestMapping("SingleSpecies")
 public class SingleSpeciesMap {
     private static final String TEN_KM_LAYER_NAME = "Grid-10km";
     private static final String TWO_KM_LAYER_NAME = "Grid-2km";
@@ -68,8 +68,8 @@ public class SingleSpeciesMap {
         LAYERS.put(NONE_GRID_LAYER_NAME, -1);
     }
     
-    @MapService("{taxonVersionKey}")
-    @GridMap(
+    @RequestMapping("{taxonVersionKey}")
+    @DynamoMap(
         layers={
             @GridLayer(name="10km",     layer=TEN_KM_LAYER_NAME,        resolution=Resolution.TEN_KM),
             @GridLayer(name="2km",      layer=TWO_KM_LAYER_NAME,        resolution=Resolution.TWO_KM),
@@ -79,16 +79,17 @@ public class SingleSpeciesMap {
         defaultLayer="10km",
         overlays=@Layer(name="feature", layers="Selected-Feature" )
     )
-    public MapFileModel getSingleSpeciesModel(
+    @Valid
+    public ModelAndView getSingleSpeciesModel(
             final User user,
             @ServiceURL String mapServiceURL,
-            @PathParam(key="taxonVersionKey", validation="[A-Z][A-Z0-9]{15}") final String key,
-            @QueryParam(key="datasets", validation="^[A-Z0-9]{8}$") final List<String> datasetKeys,
-            @QueryParam(key="startyear", validation="[0-9]{4}") final String startYear,
-            @QueryParam(key="endyear", validation="[0-9]{4}") final String endYear,
-            @QueryParam(key="abundance", validation="(all)|(presence)|(absence)") @DefaultValue("presence") String abundance,
-            @QueryParam(key="feature") String featureID,
-            @QueryParam(key="band", commaSeperated=false) List<Band> bands
+            @PathVariable("taxonVersionKey") /*, validation="[A-Z][A-Z0-9]{15}")*/ final String key,
+            @RequestParam(value="datasets", required=false)/* validation="^[A-Z0-9]{8}$")*/ final List<String> datasetKeys,
+            @RequestParam(value="startyear", required=false) @Pattern(regexp="[0-9]{4}")/* validation="[0-9]{4}")*/ final String startYear,
+            @RequestParam(value="endyear", required=false)/* validation="[0-9]{4}")*/ final String endYear,
+            @RequestParam(value="abundance", required=false, defaultValue="presence")/* validation="(all)|(presence)|(absence)")*/ String abundance,
+            @RequestParam(value="feature", required=false) String featureID,
+            @RequestParam(value="band", required=false) List<Band> bands
             ) {
         HashMap<String, Object> data = new HashMap<String, Object>();
         boolean absence = abundance.equals("all") || abundance.equals("absence");
@@ -109,7 +110,7 @@ public class SingleSpeciesMap {
                 return getSQL(key, user, datasetKeys, dateBand.getStartYear(), dateBand.getEndYear(), false, layerName);
             }
         });
-        return new MapFileModel("SingleSpecies.map",data);
+        return new ModelAndView("SingleSpecies.map",data);
     }
     
     public interface SingleSpeciesBandSqlGenerator {
