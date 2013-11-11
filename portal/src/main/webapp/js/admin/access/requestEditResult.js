@@ -10,7 +10,7 @@ nbn.nbnv.ui.requestEditResult = function(endpoint, dataset, datasetEndpoint, gra
 
     this._renderHeader = function() {
         return $('<h3>').attr('filtertype', 'result')
-            .append($('<span>').addClass('filterheader').append('Request Actions'))
+            .append($('<span>').addClass('filterheader').append('Request Actions'));
     };
     
     this._renderPanel = function() {
@@ -67,7 +67,7 @@ nbn.nbnv.ui.requestEditResult = function(endpoint, dataset, datasetEndpoint, gra
             }
         }
         
-        if (json.sensitive == 'sans') { filter.sensitive = 'true'; }
+        if (json.sensitive === 'sans') { filter.sensitive = 'true'; }
         filter.datasetKey = dataset;
 
         $.ajax({
