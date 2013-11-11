@@ -197,7 +197,6 @@ public class UserAccessRequestResource extends AbstractResource {
 
         
         return acceptRequest(user, filterID, editAccessRequest.getReason(), editAccessRequest.getExpires(), false);
-        //return Response.status(Response.Status.OK).entity("{}").build();
     }
 
     /**

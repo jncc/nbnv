@@ -46,6 +46,7 @@ import uk.org.nbn.nbnv.api.model.OrganisationMembership;
 import uk.org.nbn.nbnv.api.model.TaxonObservationFilter;
 import uk.org.nbn.nbnv.api.model.User;
 import uk.org.nbn.nbnv.api.model.meta.AccessRequestJSON;
+import uk.org.nbn.nbnv.api.model.meta.EditAccessRequestJSON;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenDatasetAdminUser;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenOrganisationAccessRequestAdminUser;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenOrganisationUser;
@@ -188,19 +189,21 @@ public class OrganisationAccessRequestResource extends AbstractResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     @Transactional
-    public Response editRequest(@TokenOrganisationAccessRequestAdminUser(path="id") User user, @PathParam("id") int filterID, String json) throws IOException {
-        AccessRequestJSON accessRequest = parseJSON(json);
+    public Response editAndGrantRequest(@TokenOrganisationAccessRequestAdminUser(path="id") User user, @PathParam("id") int filterID, String json) throws IOException, ParseException, TemplateException {
+        ObjectMapper mapper = new ObjectMapper();        
+        EditAccessRequestJSON editAccessRequest = mapper.readValue(json, EditAccessRequestJSON.class);
+        AccessRequestJSON accessRequest = editAccessRequest.getJson();
 
         // Fail if this is an user request
         if (accessRequest.getReason().getOrganisationID() == -1) {
             return Response.serverError().build();
         }
-        TaxonObservationFilter filter = accessRequestUtils.createFilter(json, accessRequest);
+        TaxonObservationFilter filter = accessRequestUtils.createFilter(editAccessRequest.getRawJSON(), accessRequest);
         TaxonObservationFilter orig = oTaxonObservationFilterMapper.selectById(filterID);
         oTaxonObservationFilterMapper.editFilter(filterID, filter.getFilterText(), filter.getFilterJSON());
         oOrganisationAccessRequestAuditHistoryMapper.addHistory(filterID, user.getId(), "Edit request to: '" + filter.getFilterText() + "', from: '" + orig.getFilterText() + "'");
 
-        return Response.status(Response.Status.OK).entity("{}").build();
+        return acceptRequest(user, filterID, editAccessRequest.getReason(), editAccessRequest.getExpires(), false);
     }
     
     /**
