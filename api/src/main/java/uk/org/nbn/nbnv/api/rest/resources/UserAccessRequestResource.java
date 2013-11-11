@@ -30,6 +30,7 @@ import uk.org.nbn.nbnv.api.dao.core.OperationalUserAccessRequestAuditHistoryMapp
 import uk.org.nbn.nbnv.api.dao.core.OperationalUserAccessRequestMapper;
 import uk.org.nbn.nbnv.api.dao.core.OperationalUserTaxonObservationAccessMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.DatasetAdministratorMapper;
+import uk.org.nbn.nbnv.api.dao.warehouse.TaxonObservationMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.UserMapper;
 import uk.org.nbn.nbnv.api.mail.TemplateMailer;
 import uk.org.nbn.nbnv.api.model.DatasetAdministrator;
@@ -58,7 +59,7 @@ public class UserAccessRequestResource extends AbstractResource {
     @Autowired UserMapper userMapper;
     @Autowired AccessRequestUtils accessRequestUtils;
     @Autowired TemplateMailer mailer;
-    
+    @Autowired TaxonObservationMapper observationMapper;
     /**
      * Create a Access Request for a user
      * 
@@ -409,8 +410,34 @@ public class UserAccessRequestResource extends AbstractResource {
      * @throws ParseException The expires string was in an incorrect format
      */
     private Response acceptRequest(User user, int filterID, String reason, String expires, boolean proactive) throws ParseException, IOException, TemplateException {
-        giveAccess(filterID);
+        UserAccessRequest uar = oUserAccessRequestMapper.getRequest(filterID);
+        AccessRequestJSON json = parseJSON(uar.getFilter().getFilterJSON());
+        boolean sensitive = json.getSensitive().equals("sans");
         
+        if (json.getSensitive().equals("sans") && 
+                (!json.getSpatial().getFeature().equals(ObservationResourceDefaults.defaultFeatureID) || 
+                 !json.getSpatial().getGridRef().equals(ObservationResourceDefaults.defaultGridRef))) {
+            sensitive = Boolean.FALSE;
+        }
+        
+        List<String> tvks = new ArrayList<String>();
+        tvks.add(json.getTaxon().getTvk()); 
+        List<String> datasets = new ArrayList<String>();
+        datasets.add(uar.getDatasetKey());
+        
+        if (observationMapper.selectRequestableObservationDatasetsByFilter(user, 
+                json.getYear().getStartYear(), json.getYear().getEndYear(), datasets, 
+                tvks, json.getSpatial().getMatch(), json.getSpatial().getFeature(), 
+                sensitive, json.getTaxon().getDesignation(), json.getTaxon().getOutput(), 
+                json.getSpatial().getGridRef(), json.getSpatial().getPolygon()
+            ).get(0).getQuerySpecificObservationCount() <= 0) {
+            return Response.status(Response.Status.BAD_REQUEST).entity(
+                    "Zero records affected by this access request, we suggest "
+                    + "closing this request").build();
+        } 
+        
+        giveAccess(filterID);
+
         if (expires.isEmpty()) {
             oUserAccessRequestMapper.acceptRequest(filterID, reason, new Date(new java.util.Date().getTime()));
         } else {
@@ -421,7 +448,7 @@ public class UserAccessRequestResource extends AbstractResource {
 
         oUserAccessRequestAuditHistoryMapper.addHistory(filterID, user.getId(), "Accept request");
         mailRequestGrant(oUserAccessRequestMapper.getRequest(filterID), reason, proactive);
-        return Response.status(Response.Status.OK).entity("{}").build();
+        return Response.status(Response.Status.OK).entity("{}").build();   
     }
 
     /**
