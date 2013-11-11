@@ -10,7 +10,7 @@ nbn.nbnv.ui.filter.dataset = function(json, isForDownload) {
     this._datasets = [];
     this._fullCount = -1;
     this._mode = 'all';
-    this._secret = true;
+    this._secret = false;
     this._useSecret = false;
     this.datasetTableLoading = true;
     this._isForDownload = isForDownload;
@@ -85,7 +85,6 @@ nbn.nbnv.ui.filter.dataset = function(json, isForDownload) {
                 .attr('type', 'checkbox')
                 .attr('name', 'datasetfiltersecret')
                 .attr('value', 'secret')
-                .attr('checked', '')
                 .change(function() {
                     _me._secret = this.checked;
                 })
@@ -203,7 +202,7 @@ nbn.nbnv.ui.filter.dataset = function(json, isForDownload) {
             this._useSecret = false;
         } else {
             $('#datasetfiltersecretblock').show();
-            this._useSecret = true;
+            this._useSecret = false;
         }
         
         if (json.taxon.all && json.spatial.all) {
