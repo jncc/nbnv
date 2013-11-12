@@ -16,12 +16,11 @@
 
     <import resource="classpath:app-config.xml"/>
 
-    <bean id="warehouseDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-        <property name="driverClassName" value="com.microsoft.sqlserver.jdbc.SQLServerDriver" />
-        <property name="url" value="${db_warehouse_url}" />
-        <property name="username" value="${db_warehouse_username}" />
-        <property name="password" value="${db_warehouse_password}" />
-    </bean>
+    <bean id="warehouseDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"
+        destroy-method="close" p:driverClass="com.microsoft.sqlserver.jdbc.SQLServerDriver"
+        p:jdbcUrl="${db_warehouse_url}" p:user="${db_warehouse_username}" p:password="${db_warehouse_password}" 
+        p:acquireIncrement="10" p:idleConnectionTestPeriod="3600" p:maxPoolSize="200"
+        p:maxStatements="32000" p:minPoolSize="10" />
     
     <bean id="coreDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"
         destroy-method="close" p:driverClass="com.microsoft.sqlserver.jdbc.SQLServerDriver"
