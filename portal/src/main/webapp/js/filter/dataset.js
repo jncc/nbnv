@@ -468,8 +468,7 @@ nbn.nbnv.ui.filter.dataset = function(json, isForDownload) {
     }
 
     this.getError = function() {
-        if ((this._useSecret && !this._secret && !this._all && this._datasets.length < 1) 
-                || (!this._useSecret && !this._all && this._datasets.length < 1)) { return [ 'You must select at least one dataset' ]; }
+        if (!this._all && this._datasets.length < 1) { return [ 'You must select at least one dataset' ]; }
         return [];
     };
 };
