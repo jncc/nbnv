@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.validation.beanvalidation.MethodValidationPostProcessor;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
@@ -58,6 +59,11 @@ public class ApplicationConfig extends WebMvcConfigurerAdapter {
     @Bean
     public MapServerViewResolver configureMapServerViewResolver() throws IOException {
         return new MapServerViewResolver(new File(context.getRealPath("WEB-INF/maps")), new URL("http://localhost:9000/fcgi-bin/mapserv.exe"));
+    }
+    
+    @Bean
+    public MethodValidationPostProcessor methodValidationPostProcessor() {
+        return new MethodValidationPostProcessor();
     }
     
     @Override

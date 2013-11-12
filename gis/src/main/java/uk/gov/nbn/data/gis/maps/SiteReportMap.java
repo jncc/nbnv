@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
+import javax.validation.constraints.Pattern;
 import org.jooq.Condition;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.org.nbn.nbnv.api.model.BoundingBox;
@@ -13,11 +14,13 @@ import uk.org.nbn.nbnv.api.model.User;
 import static uk.gov.nbn.data.dao.jooq.Tables.*;
 import org.jooq.util.sqlserver.SQLServerFactory;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import uk.ac.ceh.dynamo.arguments.annotations.ServiceURL;
+import uk.gov.nbn.data.gis.validation.Datasets;
 
 /**
  * The following map container will create two map services. The first being a 
@@ -28,6 +31,7 @@ import uk.ac.ceh.dynamo.arguments.annotations.ServiceURL;
  * @author Christopher Johnson
  */
 @Controller
+@Validated
 @RequestMapping("SiteReport")
 public class SiteReportMap {
     @Autowired WebResource resource;    
@@ -51,11 +55,11 @@ public class SiteReportMap {
             User user,
             @ServiceURL String mapServiceURL,
             @PathVariable("featureID") String featureID,
-            @PathVariable("taxonVersionKey")/*, validation="[A-Z][A-Z0-9]{15}")*/ String taxonKey,
-            @RequestParam(value="datasets", required=false)/*validation="^[A-Z0-9]{8}$")*/ List<String> datasetKeys,
-            @RequestParam(value="startyear", required=false)/*validation="[0-9]{4}")*/ String startYear,
-            @RequestParam(value="endyear", required=false)/*validation="[0-9]{4}") */String endYear,
-            @RequestParam(value="spatialRelationship", required=false, defaultValue="overlap")/*validation="(overlap)|(within)") */ String spatialRelation) {
+            @PathVariable("taxonVersionKey") @Pattern(regexp="[A-Z][A-Z0-9]{15}") String taxonKey,
+            @RequestParam(value="datasets", required=false) @Datasets List<String> datasetKeys,
+            @RequestParam(value="startyear", required=false) @Pattern(regexp="[0-9]{4}") String startYear,
+            @RequestParam(value="endyear", required=false) @Pattern(regexp="[0-9]{4}") String endYear,
+            @RequestParam(value="spatialRelationship", required=false, defaultValue="overlap") @Pattern(regexp="(overlap)|(within)") String spatialRelation) {
         
         HashMap<String, Object> data = new HashMap<String, Object>();
         

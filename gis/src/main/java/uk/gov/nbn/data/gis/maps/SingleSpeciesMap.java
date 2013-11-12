@@ -3,7 +3,6 @@ package uk.gov.nbn.data.gis.maps;
 import com.sun.jersey.api.client.WebResource;
 import java.awt.Color;
 import java.util.*;
-import javax.validation.Valid;
 import javax.validation.constraints.Pattern;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.gov.nbn.data.gis.maps.MapHelper.ResolutionDataGenerator;
@@ -17,6 +16,7 @@ import static uk.gov.nbn.data.dao.jooq.Tables.*;
 
 import org.jooq.util.sqlserver.SQLServerFactory;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -26,6 +26,7 @@ import uk.ac.ceh.dynamo.DynamoMap.GridLayer;
 import uk.ac.ceh.dynamo.DynamoMap.Layer;
 import uk.ac.ceh.dynamo.DynamoMap.Resolution;
 import uk.ac.ceh.dynamo.arguments.annotations.ServiceURL;
+import uk.gov.nbn.data.gis.validation.Datasets;
 
 /**
  * The following represents a Map service for SingleSpecies
@@ -38,6 +39,7 @@ import uk.ac.ceh.dynamo.arguments.annotations.ServiceURL;
  * @author Christopher Johnson
  */
 @Controller
+@Validated
 @RequestMapping("SingleSpecies")
 public class SingleSpeciesMap {
     private static final String TEN_KM_LAYER_NAME = "Grid-10km";
@@ -79,15 +81,14 @@ public class SingleSpeciesMap {
         defaultLayer="10km",
         overlays=@Layer(name="feature", layers="Selected-Feature" )
     )
-    @Valid
     public ModelAndView getSingleSpeciesModel(
             final User user,
             @ServiceURL String mapServiceURL,
-            @PathVariable("taxonVersionKey") /*, validation="[A-Z][A-Z0-9]{15}")*/ final String key,
-            @RequestParam(value="datasets", required=false)/* validation="^[A-Z0-9]{8}$")*/ final List<String> datasetKeys,
-            @RequestParam(value="startyear", required=false) @Pattern(regexp="[0-9]{4}")/* validation="[0-9]{4}")*/ final String startYear,
-            @RequestParam(value="endyear", required=false)/* validation="[0-9]{4}")*/ final String endYear,
-            @RequestParam(value="abundance", required=false, defaultValue="presence")/* validation="(all)|(presence)|(absence)")*/ String abundance,
+            @PathVariable("taxonVersionKey") @Pattern(regexp="[A-Z][A-Z0-9]{15}") final String key,
+            @RequestParam(value="datasets", required=false) @Datasets final List<String> datasetKeys,
+            @RequestParam(value="startyear", required=false) @Pattern(regexp="[0-9]{4}") final String startYear,
+            @RequestParam(value="endyear", required=false) @Pattern(regexp="[0-9]{4}") final String endYear,
+            @RequestParam(value="abundance", required=false, defaultValue="presence") @Pattern(regexp="(all)|(presence)|(absence)") String abundance,
             @RequestParam(value="feature", required=false) String featureID,
             @RequestParam(value="band", required=false) List<Band> bands
             ) {
