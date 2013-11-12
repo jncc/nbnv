@@ -43,6 +43,20 @@ nbn.nbnv.ui.createRequest = function (json, div) {
             var newFilter = ui.newHeader.attr('filtertype');
             var oldFilter = ui.oldHeader.attr('filtertype');
 
+            if (oldFilter == 'year') {
+                year._onExit();
+            } else if (oldFilter == 'spatial') {
+                spatial._onExit();
+            } else if (oldFilter == 'taxon') {
+                taxon._onExit();
+            } else if (oldFilter == 'dataset') {
+                dataset._onExit();
+            } else if (oldFilter == 'timeLimit') {
+                timeLimit._onExit();
+            } else if (oldFilter == 'reason') {
+                reason._onExit();
+            }
+
             if (newFilter == 'year') {
                 year._onEnter();
             } else if (newFilter == 'spatial') {
@@ -64,6 +78,7 @@ nbn.nbnv.ui.createRequest = function (json, div) {
             } else if (newFilter == 'result') {
                 var error = [];
                 $.merge(error, reason.getError());
+                $.merge(error, dataset.getError());
                 $.merge(error, taxon.getError());
                 $.merge(error, spatial.getError());
                 $.merge(error, year.getError());
@@ -72,20 +87,6 @@ nbn.nbnv.ui.createRequest = function (json, div) {
                 if (dataset._all && taxon._all && spatial._all) { $.merge(error, ['You may not request access for all datasets on the Gateway. Please apply one filter.']); }
                 
                 result._onEnter(reason._perm, error);
-            }
-
-            if (oldFilter == 'year') {
-                year._onExit();
-            } else if (oldFilter == 'spatial') {
-                spatial._onExit();
-            } else if (oldFilter == 'taxon') {
-                taxon._onExit();
-            } else if (oldFilter == 'dataset') {
-                dataset._onExit();
-            } else if (oldFilter == 'timeLimit') {
-                timeLimit._onExit();
-            } else if (oldFilter == 'reason') {
-                reason._onExit();
             }
         }
     });
