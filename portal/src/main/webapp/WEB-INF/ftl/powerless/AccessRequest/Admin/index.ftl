@@ -44,16 +44,16 @@
 
             close = new nbn.nbnv.ui.dialog.requestCloseDialog();
             close._render();
-            $('.closelink').click(function() { close.show($(this).attr("request"), jsonCache[$(this).attr("request")]); });
+            $('.closelink').click(function() { close.show($(this).attr("request"), jsonCache[$(this).attr("request")]); return false; });
             grant = new nbn.nbnv.ui.dialog.requestGrantDialog();
             grant._render();
-            $('.grantlink').click(function() { grant.show($(this).attr("request"), jsonCache[$(this).attr("request")], $(this).attr("dataset"), '/taxonObservations/datasets/' + $(this).attr("dataset") + '/requestable'); });
+            $('.grantlink').click(function() { grant.show($(this).attr("request"), jsonCache[$(this).attr("request")], $(this).attr("dataset"), '/taxonObservations/datasets/' + $(this).attr("dataset") + '/requestable'); return false; });
             deny = new nbn.nbnv.ui.dialog.requestDenyDialog();
             deny._render();
-            $('.denylink').click(function() { deny.show($(this).attr("request"), jsonCache[$(this).attr("request")], $(this).attr("dataset"), '/taxonObservations/datasets/' + $(this).attr("dataset") + '/requestable'); });
+            $('.denylink').click(function() { deny.show($(this).attr("request"), jsonCache[$(this).attr("request")], $(this).attr("dataset"), '/taxonObservations/datasets/' + $(this).attr("dataset") + '/requestable'); return false; });
             revoke = new nbn.nbnv.ui.dialog.requestRevokeDialog();
             revoke._render();
-            $('.revokelink').click(function() { revoke.show($(this).attr("request"), jsonCache[$(this).attr("request")]); });
+            $('.revokelink').click(function() { revoke.show($(this).attr("request"), jsonCache[$(this).attr("request")]); return false;});
 
             $.fn.dataTableExt.oJUIClasses.sStripeOdd = 'ui-state-highlight';
             $('.presults').dataTable({
