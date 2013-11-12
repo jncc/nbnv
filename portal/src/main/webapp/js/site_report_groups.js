@@ -13,7 +13,6 @@
         //Get data from api and add to container
         var keyValuePairsFromForm = nbn.portal.reports.utils.forms.getKeyValuePairsFromForm(form);
         keyValuePairsFromForm['featureID'] = featureID;
-        delete keyValuePairsFromForm['datasetKey'];
         var queryString = nbn.portal.reports.utils.forms.getQueryStringFromKeyValuePairs(keyValuePairsFromForm, false);
         var url = form.attr('api-server') + '/taxonObservations/groups' + queryString;
         $.getJSON(url, function(data){
@@ -21,7 +20,8 @@
                 toAppend += '<ul>';
                 data.sort(function(a, b) { return ((a.taxonOutputGroup.name < b.taxonOutputGroup.name) ? -1 : ((a.taxonOutputGroup.name > b.taxonOutputGroup.name) ? 1 : 0)); });
                 $.each(data, function(key, val){
-                    toAppend += '<li><a class="nbn-drilldown-link" href="/Reports/Sites/' + featureID + '/Groups/' + val.taxonOutputGroup.key + '/Species' + getLinkQueryString(queryString) + '">' + val.taxonOutputGroup.name + '</a>';
+                    
+                    toAppend += '<li><a class="nbn-drilldown-link" href="/Reports/Sites/' + featureID + '/Groups/' + val.taxonOutputGroup.key + '/Species' + getLinkQueryString(keyValuePairsFromForm) + '">' + val.taxonOutputGroup.name + '</a>';
                 });
                 toAppend += '</ul>';
             }else{
@@ -32,7 +32,10 @@
         });
     }
     
-    function getLinkQueryString(queryString) {
+    function getLinkQueryString(keyValuePairsFromForm) {
+        delete keyValuePairsFromForm['datasetKey'];
+        var queryString = nbn.portal.reports.utils.forms.getQueryStringFromKeyValuePairs(keyValuePairsFromForm, false);
+        
         return queryString +
             '&selectedDatasets=' +  
             nbn.portal.reports.utils.datasetfields.getSelectedDatasets();
