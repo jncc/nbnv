@@ -1,6 +1,14 @@
 <#assign user=json.readURL("${api}/user") />
 <#if RequestParameters.json?has_content><#assign data="${RequestParameters.json}" /><#else><#assign data="{}" /></#if>
 
+<@template.master title="NBN Gateway - Download Records">
+    <h1>Download Functionality Temporarily Suspended</h1>
+    <p>We have temporarily suspended the download wizard functionality while we investigate an issue</p>
+
+</@template.master>
+
+<#--
+
 <@template.master title="NBN Gateway - Download Records"
     javascripts=[
         "/js/admin/access/util/jquery.qtip.min.js"
@@ -15,7 +23,7 @@
         ,"/js/download/downloadReason.js"
         ,"/js/download/download.js"
         ,"/js/download/downloadResult.js"
-        ,"/js/jquery.fileDownload.js"] 
+        ,"/js/jquery.fileDownload.js"]
     csss=["//ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/themes/smoothness/jquery-ui.css","/css/jquery.qtip.min.css","/css/accessRequest.css"]>
 
     <script>
@@ -33,3 +41,5 @@
     <div id="filter"></div>
     
 </@template.master>
+
+-->
