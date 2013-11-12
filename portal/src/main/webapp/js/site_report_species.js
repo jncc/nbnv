@@ -15,6 +15,7 @@
         var keyValuePairsFromForm = nbn.portal.reports.utils.forms.getKeyValuePairsFromForm(form);
         keyValuePairsFromForm['featureID'] = featureID;
         keyValuePairsFromForm['taxonOutputGroup'] = taxonOutputGroupKey;
+        delete keyValuePairsFromForm['datasetKey'];
         var queryString = nbn.portal.reports.utils.forms.getQueryStringFromKeyValuePairs(keyValuePairsFromForm, false);
         var url = form.attr('api-server') + '/taxonObservations/species' + queryString;
         var numSpecies = 0;
