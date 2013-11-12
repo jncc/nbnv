@@ -15,7 +15,6 @@
         var keyValuePairsFromForm = nbn.portal.reports.utils.forms.getKeyValuePairsFromForm(form);
         keyValuePairsFromForm['featureID'] = featureID;
         keyValuePairsFromForm['taxonOutputGroup'] = taxonOutputGroupKey;
-        delete keyValuePairsFromForm['datasetKey'];
         var queryString = nbn.portal.reports.utils.forms.getQueryStringFromKeyValuePairs(keyValuePairsFromForm, false);
         var url = form.attr('api-server') + '/taxonObservations/species' + queryString;
         var numSpecies = 0;
@@ -29,7 +28,7 @@
                     toAppend += '<table id="nbn-species-table" class="nbn-simple-table"><tbody>';
                 }
                 $.each(data, function(key, val){
-                    toAppend += '<tr><td><a href="/Reports/Sites/' + featureID + '/Groups/' + taxonOutputGroupKey + '/Species/'+ val.taxon.ptaxonVersionKey + '/Observations'+ getLinkQueryString(queryString) + '">' + "<span class='nbn-taxon-name'>" + val.taxon.name + '</span>';
+                    toAppend += '<tr><td><a href="/Reports/Sites/' + featureID + '/Groups/' + taxonOutputGroupKey + '/Species/'+ val.taxon.ptaxonVersionKey + '/Observations'+ getLinkQueryString(keyValuePairsFromForm) + '">' + "<span class='nbn-taxon-name'>" + val.taxon.name + '</span>';
                     if (val.taxon.commonName)
                         toAppend += ' [' + val.taxon.commonName + ']';
                     toAppend += '</a></td></tr>';
@@ -48,7 +47,10 @@
     }
     
     
-    function getLinkQueryString(queryString) {
+    function getLinkQueryString(keyValuePairsFromForm) {
+        delete keyValuePairsFromForm['datasetKey'];
+        var queryString = nbn.portal.reports.utils.forms.getQueryStringFromKeyValuePairs(keyValuePairsFromForm, false);
+        
         return queryString +
             '&selectedDatasets=' +  
             nbn.portal.reports.utils.datasetfields.getSelectedDatasets();

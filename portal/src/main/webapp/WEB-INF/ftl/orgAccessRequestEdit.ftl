@@ -12,7 +12,7 @@
         ,"/js/filter/dataset.js"
         ,"/js/filter/sensitive.js"
         ,"/js/admin/access/requestDetails.js"
-        ,"/js/admin/access/requestEditResult.js"
+        ,"/js/admin/access/requestEditGrantDialog.js"
         ,"/js/admin/access/timeLimit.js"
         ,"/js/admin/access/editRequest.js"] 
     csss=["//ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/themes/smoothness/jquery-ui.css","/css/jquery.qtip.min.css","/css/accessRequest.css"]>
