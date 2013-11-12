@@ -46,6 +46,7 @@ import uk.org.nbn.nbnv.api.model.OrganisationMembership;
 import uk.org.nbn.nbnv.api.model.TaxonObservationFilter;
 import uk.org.nbn.nbnv.api.model.User;
 import uk.org.nbn.nbnv.api.model.meta.AccessRequestJSON;
+import uk.org.nbn.nbnv.api.model.meta.EditAccessRequestJSON;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenDatasetAdminUser;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenOrganisationAccessRequestAdminUser;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenOrganisationUser;
@@ -112,6 +113,13 @@ public class OrganisationAccessRequestResource extends AbstractResource {
 
         if (accessRequest.getDataset().isSecret()) {
             List<String> sensitive = accessRequestUtils.createSensitiveDatasetList(accessRequest, species, org);
+            
+            for (String datasetKey : datasets) {
+                if (sensitive.contains(datasetKey)) {
+                    sensitive.remove(datasetKey);
+                }
+            }
+
             for (String datasetKey : sensitive) {
                 oTaxonObservationFilterMapper.createFilter(filter);
                 oOrganisationAccessRequestMapper.createRequest(filter.getId(), org.getId(), datasetKey, accessRequest.getReason().getPurpose(), accessRequest.getReason().getDetails(), new Date(new java.util.Date().getTime()), true);
@@ -181,19 +189,21 @@ public class OrganisationAccessRequestResource extends AbstractResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     @Transactional
-    public Response editRequest(@TokenOrganisationAccessRequestAdminUser(path="id") User user, @PathParam("id") int filterID, String json) throws IOException {
-        AccessRequestJSON accessRequest = parseJSON(json);
+    public Response editAndGrantRequest(@TokenOrganisationAccessRequestAdminUser(path="id") User user, @PathParam("id") int filterID, String json) throws IOException, ParseException, TemplateException {
+        ObjectMapper mapper = new ObjectMapper();        
+        EditAccessRequestJSON editAccessRequest = mapper.readValue(json, EditAccessRequestJSON.class);
+        AccessRequestJSON accessRequest = editAccessRequest.getJson();
 
         // Fail if this is an user request
         if (accessRequest.getReason().getOrganisationID() == -1) {
             return Response.serverError().build();
         }
-        TaxonObservationFilter filter = accessRequestUtils.createFilter(json, accessRequest);
+        TaxonObservationFilter filter = accessRequestUtils.createFilter(editAccessRequest.getRawJSON(), accessRequest);
         TaxonObservationFilter orig = oTaxonObservationFilterMapper.selectById(filterID);
         oTaxonObservationFilterMapper.editFilter(filterID, filter.getFilterText(), filter.getFilterJSON());
         oOrganisationAccessRequestAuditHistoryMapper.addHistory(filterID, user.getId(), "Edit request to: '" + filter.getFilterText() + "', from: '" + orig.getFilterText() + "'");
 
-        return Response.status(Response.Status.OK).entity("{}").build();
+        return acceptRequest(user, filterID, editAccessRequest.getReason(), editAccessRequest.getExpires(), false);
     }
     
     /**
@@ -522,9 +532,7 @@ public class OrganisationAccessRequestResource extends AbstractResource {
      * @throws ParseException 
      */
     private Response revokeRequest(User user, int filterID, String reason) throws IOException, TemplateException {
-        stripAccess(filterID);
-        oOrganisationAccessRequestMapper.revokeRequest(filterID, reason, new Date(new java.util.Date().getTime()));
-        oOrganisationAccessRequestAuditHistoryMapper.addHistory(filterID, user.getId(), "Revoke action");
+        stripAccess(filterID, user, reason);
         mailRequestRevoke(oOrganisationAccessRequestMapper.getRequest(filterID), reason);
         return Response.status(Response.Status.OK).entity("{}").build();
     }
@@ -536,7 +544,7 @@ public class OrganisationAccessRequestResource extends AbstractResource {
      * @return A boolean denoting the success of this operation
      * @throws IOException 
      */
-    private boolean stripAccess(int id) throws IOException {
+    private boolean stripAccess(int id, User user, String reason) throws IOException {
         OrganisationAccessRequest uar = oOrganisationAccessRequestMapper.getRequest(id);
         AccessRequestJSON accessRequest = parseJSON(uar.getFilter().getFilterJSON());
 
@@ -544,6 +552,9 @@ public class OrganisationAccessRequestResource extends AbstractResource {
         List<String> datasets = new ArrayList<String>();
         datasets.add(uar.getDatasetKey());
         oOrganisationTaxonObservationAccessMapper.removeOrganisationAccess(uar.getOrganisation(), accessRequest.getYear().getStartYear(), accessRequest.getYear().getEndYear(), datasets, species, accessRequest.getSpatial().getMatch(), accessRequest.getSpatial().getFeature(), (accessRequest.getSensitive().equals("sans") ? true : false), accessRequest.getTaxon().getDesignation(), accessRequest.getTaxon().getOutput(), accessRequest.getTaxon().getOrgSuppliedList(), accessRequest.getSpatial().getGridRef(), "");
+
+        oOrganisationAccessRequestMapper.revokeRequest(id, reason, new Date(new java.util.Date().getTime()));
+        oOrganisationAccessRequestAuditHistoryMapper.addHistory(id, user.getId(), "Revoke action");
 
         List<OrganisationAccessRequest> uars = oOrganisationAccessRequestMapper.getGrantedOrganisationRequestsByDataset(uar.getDatasetKey(), uar.getOrganisation().getId());
         

@@ -3,12 +3,19 @@ nbn.nbnv = nbn.nbnv || {};
 nbn.nbnv.ui = nbn.nbnv.ui || {};
 nbn.nbnv.ui.dialog = nbn.nbnv.ui.dialog || {};
 
-nbn.nbnv.ui.dialog.requestGrantDialog = function() {
+nbn.nbnv.ui.dialog.requestEditGrantDialog = function() {
     this.requestID =  -1;
     this.div = null;
     this.reason = '';
     this.timeLimit = null;
     this.orgReq = false;
+    
+    // Edit Parameters
+    this.json = null;
+    this.dataset = null;
+    this.datasetEndpont = null;
+    this.editEndpoint = null;
+    
     
     this._render = function() {
         var _me = this;
@@ -41,10 +48,15 @@ nbn.nbnv.ui.dialog.requestGrantDialog = function() {
                 autoOpen: false,
                 width: 650,
                 buttons: { 
-                    "Grant Request": function() {
+                    "Edit And Grant Request": function() {
                         displaySendingRequestDialog('Working...');
-                        var filter = { action: "grant", reason: _me.reason };
-                        var url;
+                        
+                        var url = null;
+                        var filter = {action: "grant", reason: _me.reason, json: _me.json, rawJSON: JSON.stringify(_me.json)};
+                        
+                        if (!_me.timeLimit._all) {
+                            filter.expires = _me.timeLimit.getJson().time.date.format('DD/MM/YYYY');
+                        }
                         
                         if (_me.orgReq) {
                             url = nbn.nbnv.api + '/organisation/organisationAccesses/requests/' + _me.requestID;
@@ -52,17 +64,20 @@ nbn.nbnv.ui.dialog.requestGrantDialog = function() {
                             url = nbn.nbnv.api + '/user/userAccesses/requests/' + _me.requestID;
                         }
                         
-                        if (!_me.timeLimit._all) {
-                            filter.expires = _me.timeLimit.getJson().time.date.format('DD/MM/YYYY');
-                        }
-                        
                         $.ajax({
-                            type: 'POST',
-                            url: url,
-                            data: filter,
-                            success: function () { document.location.reload(true); },
-                            error: function () { alert("Problem with request id: " + _me.requestID); document.location.reload(true);  }
-                        });
+                            type: "PUT", 
+                            url: url, 
+                            contentType: 'application/json', 
+                            processData: false, 
+                            data: JSON.stringify(filter), 
+                            success: function(data) {
+                                document.location = '/AccessRequest/Admin';
+                            },
+                            error: function(data) {
+                                alert('There was a problem editing or granting the request with id: ' + _me.requestID + '\nIf this error persists, please contact NBN support');
+                                document.location.reload(true);
+                            }
+                        });                        
                     }, Cancel: function() { 
                         $(this).dialog("close"); 
                     }
@@ -70,8 +85,13 @@ nbn.nbnv.ui.dialog.requestGrantDialog = function() {
             });
     };
     
-    this.show = function(id, json, dataset, datasetEndpoint) {
+    this.show = function(id, json, dataset, datasetEndpoint, editEndpoint) {        
         $('.ui-dialog-buttonpane button:contains("Grant Request")').button('disable');
+        
+        this.json = json;
+        this.dataset = dataset;
+        this.datasetEndpoint = datasetEndpoint;
+        this.editEndpoint = editEndpoint;
         
         this.requestID = id;
         this.timeLimit = new nbn.nbnv.ui.timeLimit(json);
@@ -82,7 +102,7 @@ nbn.nbnv.ui.dialog.requestGrantDialog = function() {
         $('#granteffect').empty().append($('<img>').attr('src', '/img/ajax-loader.gif')).append('  Loading request record coverage');
         $('#grantanonwarn').hide();
         
-        if ('organisationID' in json.reason && json.reason.organisationID != -1) { this.orgReq = true; } else { this.orgReq = false; }
+        if ('organisationID' in json.reason && json.reason.organisationID !== -1) { this.orgReq = true; } else { this.orgReq = false; }
         
         if (!json.taxon.all) { 
             if (json.taxon.tvk) {
@@ -105,7 +125,7 @@ nbn.nbnv.ui.dialog.requestGrantDialog = function() {
             }
         }
 
-        if (json.sensitive == 'sans') { filter.sensitive = 'true'; }
+        if (json.sensitive === 'sans') { filter.sensitive = 'true'; }
         filter.datasetKey = dataset;
 
         $.ajax({
@@ -117,7 +137,7 @@ nbn.nbnv.ui.dialog.requestGrantDialog = function() {
                 if (datasets.length > 0) {
                     $('#granteffect').append('This request covers ' + datasets[0].querySpecificObservationCount + ' of ' + datasets[0].taxonDataset.recordCount + ' records in the dataset, ' + datasets[0].querySpecificSensitiveObservationCount + ' are sensitive records');
                     
-                    if (!json.spatial.all && datasets[0].querySpecificObservationCount == datasets[0].querySpecificSensitiveObservationCount) {
+                    if (!json.spatial.all && datasets[0].querySpecificObservationCount === datasets[0].querySpecificSensitiveObservationCount) {
                         $('#grantanonwarn').show();
                     } 
 
@@ -134,4 +154,4 @@ nbn.nbnv.ui.dialog.requestGrantDialog = function() {
 
         this.div.dialog("open");
     };
-}
+};

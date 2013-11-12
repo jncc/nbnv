@@ -10,7 +10,7 @@ nbn.nbnv.ui.requestEditResult = function(endpoint, dataset, datasetEndpoint, gra
 
     this._renderHeader = function() {
         return $('<h3>').attr('filtertype', 'result')
-            .append($('<span>').addClass('filterheader').append('Request Actions'))
+            .append($('<span>').addClass('filterheader').append('Request Actions'));
     };
     
     this._renderPanel = function() {
@@ -43,7 +43,8 @@ nbn.nbnv.ui.requestEditResult = function(endpoint, dataset, datasetEndpoint, gra
     this.setupData = function(json, dataset, datasetEndpoint) {
         var filter = {};
         $('#recordcounts').html('');
-        $('#recordcounts').text('Loading request record coverage')
+        $('#recordcounts').empty().append($('<img>').attr('src', '/img/ajax-loader.gif')).append('  Loading request record coverage');
+        $('#changebtn').button('disable');
         
         if (!json.taxon.all) { 
             if (json.taxon.tvk) {
@@ -56,8 +57,17 @@ nbn.nbnv.ui.requestEditResult = function(endpoint, dataset, datasetEndpoint, gra
         }
         
         if (!json.year.all) { filter.startYear = json.year.startYear; filter.endYear = json.year.endYear; }
-        if (!json.spatial.all) { filter.featureID = json.spatial.feature; filter.spatialRelationship = json.spatial.matchType; }
-        if (json.sensitive == 'sans') { filter.sensitive = 'true'; }
+        if (!json.spatial.all) { 
+            filter.spatialRelationship = json.spatial.matchType; 
+            
+            if (json.spatial.feature) {
+                filter.featureID = json.spatial.feature; 
+            } else if (json.spatial.gridRef) {
+                filter.gridRef = json.spatial.gridRef;
+            }
+        }
+        
+        if (json.sensitive === 'sans') { filter.sensitive = 'true'; }
         filter.datasetKey = dataset;
 
         $.ajax({
@@ -66,6 +76,7 @@ nbn.nbnv.ui.requestEditResult = function(endpoint, dataset, datasetEndpoint, gra
             success: function(datasets) { 
                 $('#recordcounts').html('');
                 $('#recordcounts').append('This request covers ' + datasets[0].querySpecificObservationCount + ' of ' + datasets[0].taxonDataset.recordCount + ' records in the dataset, ' + datasets[0].querySpecificSensitiveObservationCount + ' are sensitive records');
+                $('#changebtn').button('enable');
             }
         });
     };
@@ -74,19 +85,8 @@ nbn.nbnv.ui.requestEditResult = function(endpoint, dataset, datasetEndpoint, gra
         var _me = this;
         
         $('#changebtn').click(function() {
-            $('#editWaitingWindow').dialog('show');
-            $.ajax({
-                type: "PUT"
-                , url: nbn.nbnv.api + _me._endpoint + '/' + id
-                , contentType: 'application/json'
-                , processData: false
-                , data: JSON.stringify(json)
-                , success: function(data) {
-                    $('#editWaitingWindow').dialog('hide');
-                    _me._grantDialog.show(id, json, _me._dataset, '/taxonObservations/datasets/' + _me._dataset + '/requestable');
-                }
-            })
-        })
+            _me._grantDialog.show(id, json, _me._dataset, '/taxonObservations/datasets/' + _me._dataset + '/requestable', _me._endpoint);
+        });
     };
     
     this._onExit = function() {

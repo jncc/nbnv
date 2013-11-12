@@ -13,6 +13,7 @@
         //Get data from api and add to container
         var keyValuePairsFromForm = nbn.portal.reports.utils.forms.getKeyValuePairsFromForm(form);
         keyValuePairsFromForm['featureID'] = featureID;
+        delete keyValuePairsFromForm['datasetKey'];
         var queryString = nbn.portal.reports.utils.forms.getQueryStringFromKeyValuePairs(keyValuePairsFromForm, false);
         var url = form.attr('api-server') + '/taxonObservations/groups' + queryString;
         $.getJSON(url, function(data){

@@ -119,7 +119,11 @@ nbn.nbnv.ui.filter.spatial = function(json) {
         var gridRefSelector = $('<input>')
                 .attr('type', 'text')
                 .attr('length', '4')
-                .attr('id', 'gridRefSelector');
+                .attr('id', 'gridRefSelector')
+                .change(function() {
+                    var value = $(this).val();
+                    _me._gridRef = value;
+                });
         
         var gridRef = $('<div>')
             .append($('<input>')
@@ -176,12 +180,12 @@ nbn.nbnv.ui.filter.spatial = function(json) {
             .append($('<div>').append($('<span>').addClass('comboSpan').text('Site List:')).append(boundaryTypes))
             .append($('<div>').append($('<span>').addClass('comboSpan').text('Site:')).append(boundary));
 
-        if (this._all) {
+        if (_me._all) {
             allRecords.children('input').attr('checked', 'checked').change();
         } else {
-            if (this._gridRef != '') {
-                gridRef.children('input').attr('checked', 'checked').change();
-                gridRefSelector.val(this._gridRef);
+            if (_me._gridRef !== '') {
+                gridRef.children('input:radio').attr('checked', 'checked').change();
+                gridRefSelector.val(_me._gridRef);
             } else {
                 filterRecords.children('input').attr('checked', 'checked').change();
             }
@@ -227,7 +231,7 @@ nbn.nbnv.ui.filter.spatial = function(json) {
     };
     
     this._postRender = function() {
-        $('#gridRefSelector').autocomplete({
+/*        $('#gridRefSelector').autocomplete({
                 source: nbn.nbnv.api + "/gridMapSquares/search?resolution=10km",
                 minLength: 3,
                 select: function(event, ui) {
@@ -245,7 +249,7 @@ nbn.nbnv.ui.filter.spatial = function(json) {
                         .data('item.autocomplete', item)
                         .append('<a><strong style="font-size: small;">' + item.gridRef + '</strong></a>')
                         .appendTo(ul);
-        };
+        }; */
     };
     
     this.getJson = function() {
