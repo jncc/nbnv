@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import javax.validation.constraints.Pattern;
 import org.jooq.util.sqlserver.SQLServerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.gov.nbn.data.gis.maps.MapHelper.ResolutionDataGenerator;
@@ -19,6 +20,7 @@ import org.jooq.SelectHavingStep;
 import static uk.gov.nbn.data.dao.jooq.Tables.*;
 import static org.jooq.impl.Factory.*;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -37,6 +39,7 @@ import uk.ac.ceh.dynamo.arguments.annotations.ServiceURL;
  * @author Christopher Johnson
  */
 @Controller
+@Validated
 @RequestMapping("DatasetSpeciesDensity")
 public class DatasetSpeciesDensityMap {
 
@@ -80,9 +83,9 @@ public class DatasetSpeciesDensityMap {
     public ModelAndView getDatasetMapModel(
             final User user,
             @ServiceURL String mapServiceURL,
-            @RequestParam(value="startyear", required=false)/*, validation = "[0-9]{4}")*/ final String startYear,
-            @RequestParam(value="endyear", required=false)/*, validation = "[0-9]{4}")*/ final String endYear,
-            @PathVariable("datasetKey")/*, validation = "^[A-Z0-9]{8}$")*/ final String key) {
+            @RequestParam(value="startyear", required=false) @Pattern(regexp="[0-9]{4}") final String startYear,
+            @RequestParam(value="endyear", required=false) @Pattern(regexp="[0-9]{4}") final String endYear,
+            @PathVariable("datasetKey") @Pattern(regexp="^[A-Z0-9]{8}$") final String key) {
 
         HashMap<String, Object> data = new HashMap<String, Object>();
         data.put("layers", LAYERS.keySet());

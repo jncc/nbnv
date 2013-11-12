@@ -8,8 +8,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.Pattern;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,6 +22,7 @@ import uk.ac.ceh.dynamo.DynamoMap.GridLayer;
 import uk.ac.ceh.dynamo.DynamoMap.Resolution;
 import uk.ac.ceh.dynamo.arguments.annotations.ServiceURL;
 import uk.gov.nbn.data.gis.config.TokenUserArgumentResolver;
+import uk.gov.nbn.data.gis.validation.Datasets;
 import uk.org.nbn.nbnv.api.model.ProviderWithQueryStats;
 import uk.org.nbn.nbnv.api.model.User;
 
@@ -37,6 +40,7 @@ import uk.org.nbn.nbnv.api.model.User;
  * @author Christopher Johnson
  */
 @Controller
+@Validated
 @RequestMapping("SingleSpecies")
 public class SingleSpeciesAtlasMap {
     private static final String TEN_KM_LAYER_NAME = "Grid-10km";
@@ -71,13 +75,13 @@ public class SingleSpeciesAtlasMap {
             final User user,
             DynamoMap gridMapDefinition,
             @ServiceURL String mapServiceURL,
-            @PathVariable("taxonVersionKey")/*, validation="[A-Z][A-Z0-9]{15}")*/ final String key,
-            @PathVariable("symbol")/*, validation="(circle)")*/ String symbol,
-            @RequestParam(value="datasets", required=false)/*validation="^[A-Z0-9]{8}$")*/ final List<String> datasetKeys,
-            @RequestParam(value="startyear", required=false)/*, validation="[0-9]{4}")*/ final String startYear,
-            @RequestParam(value="endyear", required=false)/*, validation="[0-9]{4}")*/ final String endYear,
-            @RequestParam(value="fillcolour", required=false, defaultValue="000000")/*, validation="[0-9a-fA-F]{6}")*/ String fillColour,
-            @RequestParam(value="outlinecolour", required=false, defaultValue="000000")/*, validation="[0-9a-fA-F]{6}")*/ String outlineColour,
+            @PathVariable("taxonVersionKey") @Pattern(regexp="[A-Z][A-Z0-9]{15}") final String key,
+            @PathVariable("symbol") @Pattern(regexp="(circle)") String symbol,
+            @RequestParam(value="datasets", required=false) @Datasets final List<String> datasetKeys,
+            @RequestParam(value="startyear", required=false) @Pattern(regexp="[0-9]{4}") final String startYear,
+            @RequestParam(value="endyear", required=false) @Pattern(regexp="[0-9]{4}") final String endYear,
+            @RequestParam(value="fillcolour", required=false, defaultValue="000000") @Pattern(regexp="[0-9a-fA-F]{6}") String fillColour,
+            @RequestParam(value="outlinecolour", required=false, defaultValue="000000") @Pattern(regexp="[0-9a-fA-F]{6}") String outlineColour,
             @RequestParam(value="REQUEST", required=false) String request
             ) {
         HashMap<String, Object> data = new HashMap<String, Object>();
@@ -104,10 +108,10 @@ public class SingleSpeciesAtlasMap {
     public ModelAndView getDatasetProviders(
             @ServiceURL String url,
             HttpServletRequest request,
-            @PathVariable("taxonVersionKey")/*, validation="[A-Z][A-Z0-9]{15}")*/ final String key,
-            @RequestParam(value="datasets", required=false)/*validation="^[A-Z0-9]{8}$")*/ final List<String> datasetKeys,
-            @RequestParam(value="startyear", required=false)/*, validation="[0-9]{4}")*/ final String startYear,
-            @RequestParam(value="endyear", required=false)/*, validation="[0-9]{4}")*/ final String endYear,
+            @PathVariable("taxonVersionKey") @Pattern(regexp="[A-Z][A-Z0-9]{15}") final String key,
+            @RequestParam(value="datasets", required=false) @Datasets final List<String> datasetKeys,
+            @RequestParam(value="startyear", required=false) @Pattern(regexp="[0-9]{4}") final String startYear,
+            @RequestParam(value="endyear", required=false) @Pattern(regexp="[0-9]{4}") final String endYear,
             @RequestParam(value="css", required=false) String css) {
         
         WebResource ackResource = resource
