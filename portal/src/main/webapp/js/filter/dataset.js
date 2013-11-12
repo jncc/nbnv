@@ -202,7 +202,7 @@ nbn.nbnv.ui.filter.dataset = function(json, isForDownload) {
             this._useSecret = false;
         } else {
             $('#datasetfiltersecretblock').show();
-            this._useSecret = false;
+            this._useSecret = true;
         }
         
         if (json.taxon.all && json.spatial.all) {
