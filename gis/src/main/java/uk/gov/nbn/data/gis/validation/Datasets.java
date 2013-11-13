@@ -14,11 +14,11 @@ import javax.validation.Payload;
  */
 @Target( { ElementType.METHOD, ElementType.FIELD, ElementType.ANNOTATION_TYPE, ElementType.PARAMETER })
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = ListPatternConstraintValidator.class)
+@Constraint(validatedBy = DatasetsConstraintValidator.class)
 @Documented
 public @interface Datasets {
     
-    String message() default "{javax.validation.constraints.Pattern.message}";
+    String message() default "{uk.gov.nbn.data.gis.validation.Datasets.message}";
 
     Class<?>[] groups() default {};
 
