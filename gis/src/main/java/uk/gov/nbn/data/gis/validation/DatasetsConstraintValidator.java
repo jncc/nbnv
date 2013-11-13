@@ -21,13 +21,15 @@ public class DatasetsConstraintValidator implements ConstraintValidator<Datasets
     public boolean isValid(List<String> datasetKeys, ConstraintValidatorContext context) {
         context.disableDefaultConstraintViolation(); //Disable the default message
         boolean valid = true;
-        for(String key : datasetKeys) {
-            if(!datasetKeyPattern.matcher(key).matches()) {
-                //Just set the violation as the failed dataset key
-                context.buildConstraintViolationWithTemplate( key )
-                        .addConstraintViolation();
-                
-                valid = false;
+        if(datasetKeys != null) { //only validate if not null
+            for(String key : datasetKeys) {
+                if(!datasetKeyPattern.matcher(key).matches()) {
+                    //Just set the violation as the failed dataset key
+                    context.buildConstraintViolationWithTemplate( key )
+                            .addConstraintViolation();
+
+                    valid = false;
+                }
             }
         }
         return valid;
