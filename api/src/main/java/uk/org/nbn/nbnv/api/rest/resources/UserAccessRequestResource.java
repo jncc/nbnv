@@ -25,6 +25,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import uk.org.nbn.nbnv.api.dao.core.OperationalTaxonObservationFilterMapper;
 import uk.org.nbn.nbnv.api.dao.core.OperationalUserAccessRequestAuditHistoryMapper;
 import uk.org.nbn.nbnv.api.dao.core.OperationalUserAccessRequestMapper;
@@ -90,6 +91,31 @@ public class UserAccessRequestResource extends AbstractResource {
         if (accessRequest.getDataset().isAll() && accessRequest.getTaxon().isAll() && accessRequest.getSpatial().isAll()) {
             return Response.serverError().build();
         }
+        
+        // Check the dataset filter for validitiy
+        if (!accessRequest.getDataset().isAll() 
+                && (accessRequest.getDataset().getDatasets() == null 
+                    || accessRequest.getDataset().getDatasets().isEmpty() 
+                    || !listHasAtLeastOneText(accessRequest.getDataset().getDatasets()))) {
+            return Response.serverError().entity("Cannot use a dataset filter with no datasets selected").build();
+        }
+        
+        // Check for a valid spatial filter
+        if (!accessRequest.getSpatial().isAll() 
+                && !StringUtils.hasText(accessRequest.getSpatial().getGridRef())
+                && !(StringUtils.hasText(accessRequest.getSpatial().getFeature()) 
+                     && StringUtils.hasText(accessRequest.getSpatial().getDataset()))) {
+             return Response.serverError().entity("Cannot use a spatial filter without a gridRef or feature and dataset").build();
+        } 
+        
+        // Check for a valid taxon filter
+        if (!accessRequest.getTaxon().isAll()
+                && !StringUtils.hasText(accessRequest.getTaxon().getTvk())
+                && !StringUtils.hasText(accessRequest.getTaxon().getOutput())
+                && !StringUtils.hasText(accessRequest.getTaxon().getDesignation())
+                && accessRequest.getTaxon().getOrgSuppliedList() == -1) {
+            return Response.serverError().entity("Cannot use a taxon filter without a ptvk, a designation, an output group or an organisation supplied list").build();
+        }        
         
         if (!accessRequest.getSpatial().isAll() && !accessRequest.getDataset().isSecret()) {
             accessRequest.setSensitive("ns");
@@ -637,4 +663,13 @@ public class UserAccessRequestResource extends AbstractResource {
         mailer.send("accessRequestRevoke.ftl", request.getUser().getEmail(), "NBN Gateway: Access request removed", message);
     }
 
+    private boolean listHasAtLeastOneText(List<String> input) {       
+        for (String item : input) {
+            if (StringUtils.hasText(item)) {
+                return true;
+            }
+        }
+        
+        return false;
+    }        
 }
