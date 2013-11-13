@@ -1,15 +1,12 @@
 package uk.gov.nbn.data.gis.maps;
 
-import com.sun.jersey.api.client.WebResource;
-import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 import javax.validation.constraints.Pattern;
 import org.jooq.Condition;
 import org.springframework.beans.factory.annotation.Autowired;
-import uk.org.nbn.nbnv.api.model.BoundingBox;
-import uk.org.nbn.nbnv.api.model.Feature;
+import uk.ac.ceh.dynamo.BoundingBox;
 import uk.org.nbn.nbnv.api.model.User;
 import static uk.gov.nbn.data.dao.jooq.Tables.*;
 import org.jooq.util.sqlserver.SQLServerFactory;
@@ -19,6 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import uk.ac.ceh.dynamo.FeatureResolver;
 import uk.ac.ceh.dynamo.arguments.annotations.ServiceURL;
 import uk.gov.nbn.data.gis.validation.Datasets;
 
@@ -34,7 +32,7 @@ import uk.gov.nbn.data.gis.validation.Datasets;
 @Validated
 @RequestMapping("SiteReport")
 public class SiteReportMap {
-    @Autowired WebResource resource;    
+    @Autowired FeatureResolver resolver;
     @Autowired Properties properties;
     
     @RequestMapping("{featureID}")
@@ -97,32 +95,6 @@ public class SiteReportMap {
     
     
     private BoundingBox getNativeBoundingBox(String featureId) {
-        return getBufferedBoundingBox(
-                resource
-                    .path("features")
-                    .path(featureId)
-                    .get(Feature.class)
-                    .getNativeBoundingBox(), 0.05);
-    }
-    
-    /**
-     * The following method will buffer a given bounding box in all directions by
-     * a factor of bufferFactor.
-     * @param buffer The boundingbox to buffer
-     * @param bufferFactor The factor to buffer in all directions. 0.05 will will 
-     *  buffer 5% for a given dimension in all directions
-     * @return A buffered bounding box
-     */
-    private static BoundingBox getBufferedBoundingBox(BoundingBox buffer, double bufferFactor) {
-        double xDistance = buffer.getMaxX().subtract(buffer.getMinX()).abs().doubleValue();
-        double yDistance = buffer.getMaxY().subtract(buffer.getMinY()).abs().doubleValue();
-        BigDecimal xBuffer = new BigDecimal(xDistance*bufferFactor);
-        BigDecimal yBuffer = new BigDecimal(yDistance*bufferFactor);
-        return new BoundingBox(
-                buffer.getEpsgCode(), 
-                buffer.getMinX().subtract(xBuffer), 
-                buffer.getMinY().subtract(yBuffer), 
-                buffer.getMaxX().add(xBuffer), 
-                buffer.getMaxY().add(yBuffer));
+        return resolver.getFeature(featureId).getBufferedBoundingBox(0.05);
     }
 }
