@@ -93,7 +93,6 @@ public class SiteReportMap {
         return new ModelAndView("SiteReport.map",data);
     }
     
-    
     private BoundingBox getNativeBoundingBox(String featureId) {
         return resolver.getFeature(featureId).getBufferedBoundingBox(0.05);
     }
