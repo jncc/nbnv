@@ -2,6 +2,7 @@ package uk.org.nbn.nbnv.api.rest.resources;
 
 import freemarker.template.TemplateException;
 import java.io.IOException;
+import java.io.InvalidObjectException;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -774,6 +775,19 @@ public class TaxonObservationResource extends AbstractResource {
         ObjectWriter ow = new ObjectMapper().writer();
         
         final DownloadFilterJSON dFilter = rawFilter;
+        
+        // Check the filter for validity
+        if (dFilter.getDataset().isAll() && dFilter.getTaxon().isAll() && dFilter.getSpatial().isAll()) {
+            logger.info("Download supplied with no filter (dataset, spatial or taxon), throwing error");
+            throw new InvalidObjectException("Must have at least one of the following filters; dataset, spatial or taxon");
+        }
+                
+        // Check the dataset filter for validitiy
+        if (!dFilter.getDataset().isAll() && dFilter.getDataset().getDatasets().isEmpty()) {
+            logger.info("Download supplied with an invalid dataset filter (no datasets selected), throwing error");
+            throw new InvalidObjectException("Cannot use a dataset filter without at least one dataset selected");
+        }
+        
         final TaxonObservationFilter filter = downloadUtils.createFilter(ow.writeValueAsString(dFilter), dFilter);
         
         oTaxonObservationFilterMapper.createFilter(filter);
