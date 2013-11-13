@@ -211,9 +211,30 @@ public class TaxonObservationResource extends AbstractResource {
             @QueryParam("taxonOutputGroup") @DefaultValue(ObservationResourceDefaults.defaultTaxonOutputGroup) String taxonOutputGroup,
             @QueryParam("gridRef") @DefaultValue(ObservationResourceDefaults.defaultGridRef) String gridRef,
             @QueryParam("polygon") @DefaultValue(ObservationResourceDefaults.defaultPolygon) String polygon,
-            @QueryParam("absence") Boolean absence) {
+            @QueryParam("absence") Boolean absence) throws IllegalArgumentException {
         //TODO: squareBlurring(?)
+        // Stop users being able to request all records that they have access to at the same time
+        if (!listHasAtLeastOneText(taxa)
+                && !StringUtils.hasText(designation)
+                && !StringUtils.hasText(taxonOutputGroup)
+                && !listHasAtLeastOneText(datasetKeys)
+                && !StringUtils.hasText(featureID) 
+                && !StringUtils.hasText(gridRef) 
+                && !StringUtils.hasText(polygon)) {
+            throw new IllegalArgumentException("Must Supply at least one type of filter; dataset (key list), spatial(featureID, gridRef or polygon) or taxon (PTVK list, Output Group, Designation or Organisation Supplied List)");    
+        }
+        
         return observationMapper.selectObservationRecordsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon, absence);
+    }
+    
+    private boolean listHasAtLeastOneText(List<String> input) {       
+        for (String item : input) {
+            if (StringUtils.hasText(item)) {
+                return true;
+            }
+        }
+        
+        return false;
     }
     
     /**
