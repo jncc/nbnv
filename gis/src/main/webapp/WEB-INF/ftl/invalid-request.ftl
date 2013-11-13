@@ -11,9 +11,9 @@
             <#list exception.getConstraintViolations() as constraint>
                 <li>
                     <#if constraint.getInvalidValue()?is_string>
-                        ${constraint.getInvalidValue()}
-                    <#elseif constraint.getInvalidValue()?is_sequence>
-                        ${constraint.getInvalidValue()?join(' ')}
+                        ${constraint.getInvalidValue()} 
+                    <#else>
+                        ${constraint.getMessage()}
                     </#if>
                 </li>
             </#list>
