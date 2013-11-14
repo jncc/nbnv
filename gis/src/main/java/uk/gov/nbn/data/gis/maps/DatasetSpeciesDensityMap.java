@@ -7,18 +7,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import javax.validation.constraints.Pattern;
-import org.jooq.util.sqlserver.SQLServerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.gov.nbn.data.gis.maps.MapHelper.ResolutionDataGenerator;
 import uk.gov.nbn.data.gis.maps.colour.ColourHelper.ColourRampGenerator;
 import uk.org.nbn.nbnv.api.model.User;
 import org.jooq.Condition;
-import org.jooq.Field;
-import org.jooq.Record;
+import org.jooq.DSLContext;
+import org.jooq.Record2;
 import org.jooq.Select;
 import org.jooq.SelectHavingStep;
 import static uk.gov.nbn.data.dao.jooq.Tables.*;
-import static org.jooq.impl.Factory.*;
+import static org.jooq.impl.DSL.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -96,7 +95,7 @@ public class DatasetSpeciesDensityMap {
         data.put("layerGenerator", new ResolutionDataGenerator() {
             @Override
             public String getData(String layerName) {
-                SQLServerFactory create = new SQLServerFactory();
+                DSLContext create = MapHelper.getContext();
                 Condition publicCondition =
                         DATASETMAPPINGDATAPUBLIC.ABSENCE.eq(false)
                         .and(DATASETMAPPINGDATAPUBLIC.DATASETKEY.eq(key))
@@ -110,7 +109,7 @@ public class DatasetSpeciesDensityMap {
                         .and(USERTAXONOBSERVATIONID.USERID.eq(user.getId()));
                 enhancedCondition = MapHelper.createTemporalSegment(enhancedCondition, startYear, endYear, DATASETMAPPINGDATAENHANCED.STARTDATE, DATASETMAPPINGDATAENHANCED.ENDDATE);
 
-                Select<Record> observations = create
+                Select<Record2<Integer, String>> observations = create
                         .select(
                         DATASETMAPPINGDATAPUBLIC.FEATUREID,
                         DATASETMAPPINGDATAPUBLIC.PTAXONVERSIONKEY)
@@ -125,14 +124,14 @@ public class DatasetSpeciesDensityMap {
                         .where(enhancedCondition));
                 
                 SelectHavingStep squares = create
-                        .select((Field<Integer>)observations.getField(0).as("featureID"), countDistinct(observations.getField(1)).as("species"))
+                        .select(observations.field(0).as("featureID"), countDistinct(observations.field(1)).as("species"))
                         .from(observations)
-                        .groupBy(observations.getField(0));
+                        .groupBy(observations.field(0));
 
                 return MapHelper.getMapData(FEATURE.GEOM, FEATURE.IDENTIFIER, 4326, create
-                        .select(FEATURE.GEOM, FEATURE.IDENTIFIER, squares.getField("species"))
+                        .select(FEATURE.GEOM, FEATURE.IDENTIFIER, squares.field("species"))
                         .from(squares)
-                        .join(FEATURE).on(FEATURE.ID.eq((Field<Integer>)squares.getField(0))));
+                        .join(FEATURE).on(FEATURE.ID.eq(squares.field(0))));
             }
         });
         return new ModelAndView("DatasetSpeciesDensity.map", data);

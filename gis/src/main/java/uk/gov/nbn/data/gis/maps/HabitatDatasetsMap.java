@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 import javax.ws.rs.core.MediaType;
-import org.jooq.util.sqlserver.SQLServerFactory;
+import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,7 +34,7 @@ public class HabitatDatasetsMap {
     
     public static class LayerGenerator {
         public String getData(String habitat) {
-            SQLServerFactory create = new SQLServerFactory();
+            DSLContext create = MapHelper.getContext();
             return MapHelper.getMapData(HABITATFEATUREFEATUREDATA.GEOM, HABITATFEATUREFEATUREDATA.IDENTIFIER, 4326, create.
                 select(HABITATFEATUREFEATUREDATA.GEOM, HABITATFEATUREFEATUREDATA.IDENTIFIER)
                 .from(HABITATFEATUREFEATUREDATA)

@@ -71,7 +71,7 @@
         <dependency>
             <groupId>org.jooq</groupId>
             <artifactId>jooq</artifactId>
-            <version>2.5.0</version>
+            <version>3.1.0</version>
         </dependency>
             
         <!-- Servlet -->
@@ -98,7 +98,7 @@
                 <!-- Specify the maven code generator plugin -->
                 <groupId>org.jooq</groupId>
                 <artifactId>jooq-codegen-maven</artifactId>
-                <version>2.5.0</version>
+                <version>3.1.0</version>
 
                 <!-- The plugin should hook into the generate goal -->
                 <executions>
@@ -106,38 +106,40 @@
                         <goals>
                             <goal>generate</goal>
                         </goals>
-                        <!-- Specify the plugin configuration -->
-                        <configuration>
-
-                            <!-- JDBC connection parameters -->
-                            <jdbc>
-                                <driver>com.microsoft.sqlserver.jdbc.SQLServerDriver</driver>
-                                <url>jdbc:sqlserver://nbn-b.nerc-lancaster.ac.uk;databaseName=NBNWarehouse</url>
-                                <user>NBNGIS</user>
-                                <password>MoreSilenceCookOver2013</password>
-                            </jdbc>
-
-                            <!-- Generator parameters -->
-                            <generator>
-                                <name>org.jooq.util.DefaultGenerator</name>
-                                <database>
-                                    <name>org.jooq.util.sqlserver.SQLServerDatabase</name>
-                                    <includes>.*</includes>
-                                    <excludes></excludes>
-                                    <inputSchema>dbo</inputSchema>
-                                </database>
-                                <generate>
-                                    <relations>true</relations>
-                                    <deprecated>false</deprecated>
-                                </generate>
-                                <target>
-                                    <packageName>uk.gov.nbn.data.dao.jooq</packageName>
-                                    <directory>${project.build.directory}/generated-sources/jooq</directory>
-                                </target>
-                            </generator>
-                        </configuration>
                     </execution>
                 </executions>
+                
+                <!-- Specify the plugin configuration -->
+                <configuration>
+
+                    <!-- JDBC connection parameters -->
+                    <jdbc>
+                        <driver>com.microsoft.sqlserver.jdbc.SQLServerDriver</driver>
+                        <url>jdbc:sqlserver://nbn-b.nerc-lancaster.ac.uk;databaseName=NBNWarehouse</url>
+                        <user>NBNGIS</user>
+                        <password>MoreSilenceCookOver2013</password>
+                    </jdbc>
+
+                    <!-- Generator parameters -->
+                    <generator>
+                        <name>org.jooq.util.DefaultGenerator</name>
+                        <database>
+                            <name>org.jooq.util.sqlserver.SQLServerDatabase</name>
+                            <includes>.*</includes>
+                            <excludes></excludes>
+                            <inputSchema>dbo</inputSchema>
+                        </database>
+                        <generate>
+                            <relations>true</relations>
+                            <deprecated>false</deprecated>
+                        </generate>
+                        <target>
+                            <packageName>uk.gov.nbn.data.dao.jooq</packageName>
+                            <directory>${project.build.directory}/generated-sources/jooq</directory>
+                        </target>
+                    </generator>
+                </configuration>
+                    
                 <dependencies>
                     <dependency>
                         <groupId>com.microsoft.sqlserver</groupId>

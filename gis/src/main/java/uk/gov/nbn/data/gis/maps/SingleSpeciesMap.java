@@ -9,12 +9,12 @@ import uk.gov.nbn.data.gis.maps.MapHelper.ResolutionDataGenerator;
 import uk.gov.nbn.data.gis.maps.colour.Band;
 import uk.org.nbn.nbnv.api.model.User;
 import org.jooq.Condition;
+import org.jooq.DSLContext;
 import org.jooq.Field;
-import org.jooq.Record;
+import org.jooq.Record1;
 import org.jooq.Select;
+import org.jooq.SelectJoinStep;
 import static uk.gov.nbn.data.dao.jooq.Tables.*;
-
-import org.jooq.util.sqlserver.SQLServerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -138,7 +138,7 @@ public class SingleSpeciesMap {
                                     List<String> datasetKeys, 
                                     String startYear, String endYear, 
                                     boolean absence, String layerName) {
-        SQLServerFactory create = new SQLServerFactory();
+        DSLContext create = MapHelper.getContext();
         Condition publicCondition = TAXONTREE.NODEPTVK.eq(taxonKey)
                 .and(MAPPINGDATAPUBLIC.ABSENCE.eq(absence))
                 .and(MAPPINGDATAPUBLIC.RESOLUTIONID.eq(LAYERS.get(layerName)));
@@ -152,7 +152,7 @@ public class SingleSpeciesMap {
         enhancedCondition = MapHelper.createTemporalSegment(enhancedCondition, startYear, endYear, MAPPINGDATAENHANCED.STARTDATE, MAPPINGDATAENHANCED.ENDDATE);
         enhancedCondition = MapHelper.createInDatasetsSegment(enhancedCondition, MAPPINGDATAENHANCED.DATASETKEY, datasetKeys);
 
-        Select<Record> nested = create
+        Select<Record1<Integer>> nested = create
                     .select(MAPPINGDATAPUBLIC.FEATUREID.as("FEATUREID"))
                     .from(MAPPINGDATAPUBLIC)
                     .join(TAXONTREE).on(TAXONTREE.CHILDPTVK.eq(MAPPINGDATAPUBLIC.PTAXONVERSIONKEY))
@@ -164,14 +164,14 @@ public class SingleSpeciesMap {
                         .join(USERTAXONOBSERVATIONID).on(USERTAXONOBSERVATIONID.OBSERVATIONID.eq(MAPPINGDATAENHANCED.ID))
                         .where(enhancedCondition)
                     );
-        Select<Record> dNested = create
-                .selectDistinct((Field<Integer>)nested.getField(0))
+        SelectJoinStep<Record1<Integer>> dNested = create
+                .selectDistinct((Field<Integer>)nested.field(0))
                 .from(nested);
 
         return MapHelper.getMapData(FEATURE.GEOM, FEATURE.IDENTIFIER, 4326 ,create
             .select(FEATURE.GEOM, FEATURE.IDENTIFIER)
             .from(FEATURE)
-            .join(dNested).on(FEATURE.ID.eq((Field<Integer>)dNested.getField(0))));
+            .join(dNested).on(FEATURE.ID.eq((Field<Integer>)dNested.field(0))));
            
     }
     
