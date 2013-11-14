@@ -36,9 +36,9 @@
         
         <!--CEH Dynamo Mapping-->
         <dependency>
-            <groupId>uk.ac.ceh.components</groupId>
+            <groupId>uk.ac.ceh</groupId>
             <artifactId>dynamo-mapping</artifactId>
-            <version>1.0.18-SNAPSHOT</version>
+            <version>0.1</version>
         </dependency>
         
         <!-- Hibernate Validator -->
@@ -104,7 +104,7 @@
                 <executions>
                     <execution>
                         <goals>
-                            <!--<goal>generate</goal>-->
+                            <goal>generate</goal>
                         </goals>
                         <!-- Specify the plugin configuration -->
                         <configuration>
