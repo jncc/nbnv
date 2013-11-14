@@ -5,11 +5,11 @@ import java.util.List;
 import java.util.Properties;
 import javax.validation.constraints.Pattern;
 import org.jooq.Condition;
+import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ceh.dynamo.BoundingBox;
 import uk.org.nbn.nbnv.api.model.User;
 import static uk.gov.nbn.data.dao.jooq.Tables.*;
-import org.jooq.util.sqlserver.SQLServerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -61,7 +61,7 @@ public class SiteReportMap {
         
         HashMap<String, Object> data = new HashMap<String, Object>();
         
-        SQLServerFactory create = new SQLServerFactory();
+        DSLContext create = MapHelper.getContext();
         Condition condition = USERTAXONOBSERVATIONDATA.PTAXONVERSIONKEY.eq(taxonKey)
                 .and(USERTAXONOBSERVATIONDATA.USERID.eq(user.getId()))
                 .and(USERTAXONOBSERVATIONDATA.FEATUREID.in(

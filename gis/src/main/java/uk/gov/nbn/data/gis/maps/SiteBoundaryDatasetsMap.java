@@ -6,10 +6,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 import javax.ws.rs.core.MediaType;
+import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.org.nbn.nbnv.api.model.SiteBoundaryDataset;
 import static uk.gov.nbn.data.dao.jooq.Tables.*;
-import org.jooq.util.sqlserver.SQLServerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -33,7 +33,7 @@ public class SiteBoundaryDatasetsMap {
     
     public static class LayerGenerator {
         public String getData(String siteBoundary) {
-            SQLServerFactory create = new SQLServerFactory();
+            DSLContext create = MapHelper.getContext();
             return MapHelper.getMapData(SITEBOUNDARYFEATUREDATA.GEOM, SITEBOUNDARYFEATUREDATA.IDENTIFIER, 4326, create.
                 select(SITEBOUNDARYFEATUREDATA.GEOM, SITEBOUNDARYFEATUREDATA.IDENTIFIER)
                 .from(SITEBOUNDARYFEATUREDATA)
