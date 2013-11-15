@@ -26,6 +26,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,7 +38,6 @@ import uk.org.nbn.nbnv.api.dao.core.OperationalOrganisationTaxonObservationAcces
 import uk.org.nbn.nbnv.api.dao.core.OperationalTaxonObservationFilterMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.DatasetAdministratorMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.OrganisationMapper;
-import uk.org.nbn.nbnv.api.dao.warehouse.OrganisationMembershipMapper;
 import uk.org.nbn.nbnv.api.mail.TemplateMailer;
 import uk.org.nbn.nbnv.api.model.DatasetAdministrator;
 import uk.org.nbn.nbnv.api.model.Organisation;
@@ -59,7 +60,7 @@ import uk.org.nbn.nbnv.api.utils.AccessRequestUtils;
  */
 @Component
 @Path("/organisation/organisationAccesses")
-public class OrganisationAccessRequestResource extends AbstractResource {
+public class OrganisationAccessRequestResource extends RequestResource {
     @Autowired OperationalTaxonObservationFilterMapper oTaxonObservationFilterMapper;
     @Autowired OperationalOrganisationAccessRequestMapper oOrganisationAccessRequestMapper;
     @Autowired OperationalOrganisationTaxonObservationAccessMapper oOrganisationTaxonObservationAccessMapper;
@@ -69,6 +70,8 @@ public class OrganisationAccessRequestResource extends AbstractResource {
     @Autowired OperationalOrganisationMembershipMapper oOrganisationMembershipMapper;
     @Autowired AccessRequestUtils accessRequestUtils;
     @Autowired TemplateMailer mailer;
+    
+    private Logger logger = LoggerFactory.getLogger(OrganisationAccessRequestResource.class);
     
     /**
      * Create an Organisation Access Request for data
@@ -96,9 +99,8 @@ public class OrganisationAccessRequestResource extends AbstractResource {
             return Response.serverError().build();
         }
 
-        if (accessRequest.getDataset().isAll() && accessRequest.getTaxon().isAll() && accessRequest.getSpatial().isAll()) {
-            return Response.serverError().build();
-        }
+        // Basic filter validity checks
+        checkJSONFilterForValidity(accessRequest);
         
         Organisation org = organisationMapper.selectByID(accessRequest.getReason().getOrganisationID());
         
@@ -129,10 +131,19 @@ public class OrganisationAccessRequestResource extends AbstractResource {
         }
 
         for (String datasetKey : datasets) {
-            oTaxonObservationFilterMapper.createFilter(filter);
-            oOrganisationAccessRequestMapper.createRequest(filter.getId(), org.getId(), datasetKey, accessRequest.getReason().getPurpose(), accessRequest.getReason().getDetails(), new Date(new java.util.Date().getTime()), false);
-            oOrganisationAccessRequestAuditHistoryMapper.addHistory(filter.getId(), user.getId(), "Created request for: '" + filter.getFilterText() + "'");
-            mailRequestCreate(oOrganisationAccessRequestMapper.getRequest(filter.getId()), user);
+            try {
+                oTaxonObservationFilterMapper.createFilter(filter);
+                // Check that at least one record would be granted by this access request being granted
+                checkForRecordsReturnedSingleDataset(user, accessRequest, datasetKey);
+                oOrganisationAccessRequestMapper.createRequest(filter.getId(), org.getId(), datasetKey, accessRequest.getReason().getPurpose(), accessRequest.getReason().getDetails(), new Date(new java.util.Date().getTime()), false);
+                oOrganisationAccessRequestAuditHistoryMapper.addHistory(filter.getId(), user.getId(), "Created request for: '" + filter.getFilterText() + "'");
+                mailRequestCreate(oOrganisationAccessRequestMapper.getRequest(filter.getId()), user);
+            } catch (IllegalArgumentException ex) {
+                    logger.info("Could not create request for: '" 
+                        + filter.getFilterText() + "' / '" 
+                        + filter.getFilterJSON() + "' on dataset "
+                        + datasetKey + " :- Zero Records would be granted with this request");
+            }
         }
 
         return Response.status(Response.Status.OK).entity("{}").build();
@@ -155,6 +166,11 @@ public class OrganisationAccessRequestResource extends AbstractResource {
         if (!datasetAdministratorMapper.isUserDatasetAdministrator(user.getId(), accessRequest.getDataset().getDatasets().get(0))) {
             return Response.serverError().build();
         }
+        
+        // Basic filter validity checks
+        checkJSONFilterForValidity(accessRequest);    
+        // Check that at least one record would be granted by this access request being granted
+        checkForRecordsReturnedSingleDataset(user, accessRequest, accessRequest.getDataset().getDatasets().get(0));
 
         TaxonObservationFilter filter = accessRequestUtils.createFilter(json, accessRequest);
         List<String> datasets = accessRequest.getDataset().getDatasets();
@@ -171,7 +187,7 @@ public class OrganisationAccessRequestResource extends AbstractResource {
     }
 
     /**
-     * Edit an existing Organisation Access Request for data
+     * Edit and grant existing Organisation Access Request for data
      * 
      * @param user The current user (Must be logged in)
      * @param filterID Filter ID for a TaxonObservationFilter
@@ -198,6 +214,12 @@ public class OrganisationAccessRequestResource extends AbstractResource {
         if (accessRequest.getReason().getOrganisationID() == -1) {
             return Response.serverError().build();
         }
+        
+        // Basic filter validity checks
+        checkJSONFilterForValidity(accessRequest);
+        // Check that at least one record would be granted by this access request being granted
+        checkForRecordsReturnedSingleDataset(user, accessRequest, accessRequest.getDataset().getDatasets().get(0));
+        
         TaxonObservationFilter filter = accessRequestUtils.createFilter(editAccessRequest.getRawJSON(), accessRequest);
         TaxonObservationFilter orig = oTaxonObservationFilterMapper.selectById(filterID);
         oTaxonObservationFilterMapper.editFilter(filterID, filter.getFilterText(), filter.getFilterJSON());
@@ -479,7 +501,15 @@ public class OrganisationAccessRequestResource extends AbstractResource {
      * @throws ParseException 
      */
     private Response acceptRequest(User user, int filterID, String reason, String expires, boolean proactive) throws ParseException, IOException, TemplateException {
-        giveAccess(filterID);
+        OrganisationAccessRequest oar = oOrganisationAccessRequestMapper.getRequest(filterID);
+        
+        AccessRequestJSON accessRequestJSON = parseJSON(oar.getFilter().getFilterJSON());
+        // Basic filter validity checks
+        checkJSONFilterForValidity(accessRequestJSON);
+        // Check that at least one record would be granted by this access request being granted
+        checkForRecordsReturnedSingleDataset(user, accessRequestJSON, oar.getDatasetKey());
+        
+        giveAccess(oar);
         
         if (expires.isEmpty()) {
             oOrganisationAccessRequestMapper.acceptRequest(filterID, reason, new Date(new java.util.Date().getTime()));

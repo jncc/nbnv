@@ -13,7 +13,6 @@ public class DownloadReasonJSON {
     private int organisationID = -1;
     private int userID = -1;
     private String details;
-    private String reason;
     private String includeAttributes;
 
     /**
@@ -70,20 +69,6 @@ public class DownloadReasonJSON {
      */
     public void setUserID(int userID) {
         this.userID = userID;
-    }
-
-    /**
-     * @return the reason
-     */
-    public String getReason() {
-        return reason;
-    }
-
-    /**
-     * @param reason the reason to set
-     */
-    public void setReason(String reason) {
-        this.reason = reason;
     }
 
     public String getIncludeAttributes() {
