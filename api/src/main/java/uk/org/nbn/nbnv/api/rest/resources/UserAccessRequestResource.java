@@ -25,7 +25,6 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 import uk.org.nbn.nbnv.api.dao.core.OperationalTaxonObservationFilterMapper;
 import uk.org.nbn.nbnv.api.dao.core.OperationalUserAccessRequestAuditHistoryMapper;
 import uk.org.nbn.nbnv.api.dao.core.OperationalUserAccessRequestMapper;
@@ -35,6 +34,7 @@ import uk.org.nbn.nbnv.api.dao.warehouse.TaxonObservationMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.UserMapper;
 import uk.org.nbn.nbnv.api.mail.TemplateMailer;
 import uk.org.nbn.nbnv.api.model.DatasetAdministrator;
+import uk.org.nbn.nbnv.api.model.TaxonDatasetWithQueryStats;
 import uk.org.nbn.nbnv.api.model.TaxonObservationFilter;
 import uk.org.nbn.nbnv.api.model.User;
 import uk.org.nbn.nbnv.api.model.UserAccessRequest;
@@ -52,7 +52,7 @@ import uk.org.nbn.nbnv.api.utils.AccessRequestUtils;
  */
 @Component
 @Path("/user/userAccesses")
-public class UserAccessRequestResource extends AbstractResource {
+public class UserAccessRequestResource extends RequestResource {
     @Autowired OperationalTaxonObservationFilterMapper oTaxonObservationFilterMapper;
     @Autowired OperationalUserAccessRequestMapper oUserAccessRequestMapper;
     @Autowired OperationalUserTaxonObservationAccessMapper oUserTaxonObservationAccessMapper;
@@ -88,34 +88,7 @@ public class UserAccessRequestResource extends AbstractResource {
             return Response.serverError().build();
         }
         
-        if (accessRequest.getDataset().isAll() && accessRequest.getTaxon().isAll() && accessRequest.getSpatial().isAll()) {
-            return Response.serverError().build();
-        }
-        
-        // Check the dataset filter for validitiy
-        if (!accessRequest.getDataset().isAll() 
-                && (accessRequest.getDataset().getDatasets() == null 
-                    || accessRequest.getDataset().getDatasets().isEmpty() 
-                    || !listHasAtLeastOneText(accessRequest.getDataset().getDatasets()))) {
-            return Response.serverError().entity("Cannot use a dataset filter with no datasets selected").build();
-        }
-        
-        // Check for a valid spatial filter
-        if (!accessRequest.getSpatial().isAll() 
-                && !StringUtils.hasText(accessRequest.getSpatial().getGridRef())
-                && !(StringUtils.hasText(accessRequest.getSpatial().getFeature()) 
-                     && StringUtils.hasText(accessRequest.getSpatial().getDataset()))) {
-             return Response.serverError().entity("Cannot use a spatial filter without a gridRef or feature and dataset").build();
-        } 
-        
-        // Check for a valid taxon filter
-        if (!accessRequest.getTaxon().isAll()
-                && !StringUtils.hasText(accessRequest.getTaxon().getTvk())
-                && !StringUtils.hasText(accessRequest.getTaxon().getOutput())
-                && !StringUtils.hasText(accessRequest.getTaxon().getDesignation())
-                && accessRequest.getTaxon().getOrgSuppliedList() == -1) {
-            return Response.serverError().entity("Cannot use a taxon filter without a ptvk, a designation, an output group or an organisation supplied list").build();
-        }        
+        checkAccessJSONFilter(accessRequest.getDataset(), accessRequest.getSpatial(), accessRequest.getTaxon());
         
         if (!accessRequest.getSpatial().isAll() && !accessRequest.getDataset().isSecret()) {
             accessRequest.setSensitive("ns");
@@ -171,6 +144,8 @@ public class UserAccessRequestResource extends AbstractResource {
         if (!datasetAdministratorMapper.isUserDatasetAdministrator(user.getId(), accessRequest.getDataset().getDatasets().get(0))) {
             return Response.serverError().build();
         }
+        
+        checkAccessJSONFilter(accessRequest.getDataset(), accessRequest.getSpatial(), accessRequest.getTaxon());
 
         TaxonObservationFilter filter = accessRequestUtils.createFilter(json, accessRequest);
         List<String> datasets = accessRequest.getDataset().getDatasets();
@@ -208,21 +183,32 @@ public class UserAccessRequestResource extends AbstractResource {
     @Transactional
     public Response editAndGrantRequest(@TokenAccessRequestAdminUser(path="id") User user, 
         @PathParam("id") int filterID, String json) throws IOException, ParseException, TemplateException {
-        
+        UserAccessRequest uar = oUserAccessRequestMapper.getRequest(filterID);
         ObjectMapper mapper = new ObjectMapper();        
         EditAccessRequestJSON editAccessRequest = mapper.readValue(json, EditAccessRequestJSON.class);
         AccessRequestJSON accessRequest = editAccessRequest.getJson();
+
+        List<TaxonDatasetWithQueryStats> requestable = 
+                getRequestableDatasets(user, accessRequest.getDataset(), accessRequest.getSpatial(), accessRequest.getTaxon(), accessRequest.getYear(), accessRequest.getSensitive(), uar.getDatasetKey());
+        
+        checkAccessJSONFilter(accessRequest.getDataset(), accessRequest.getSpatial(), accessRequest.getTaxon());
         
         // Fail if this is an organisation request
         if (accessRequest.getReason().getOrganisationID() > -1) {
             return Response.serverError().build();
         }
+        
+        if (!doRecordsExistForThisRequest(requestable)) {
+            return Response.status(Response.Status.BAD_REQUEST).entity(
+                    "Zero records affected by this access request, we suggest "
+                    + "closing this request").build();
+        }
+
         TaxonObservationFilter filter = accessRequestUtils.createFilter(editAccessRequest.getRawJSON(), accessRequest);
         TaxonObservationFilter orig = oTaxonObservationFilterMapper.selectById(filterID);
         oTaxonObservationFilterMapper.editFilter(filterID, filter.getFilterText(), filter.getFilterJSON());
         oUserAccessRequestAuditHistoryMapper.addHistory(filterID, user.getId(), "Edit request to: '" + filter.getFilterText() + "', from: '" + orig.getFilterText() + "'");
 
-        
         return acceptRequest(user, filterID, editAccessRequest.getReason(), editAccessRequest.getExpires(), false);
     }
 
@@ -451,25 +437,8 @@ public class UserAccessRequestResource extends AbstractResource {
     private Response acceptRequest(User user, int filterID, String reason, String expires, boolean proactive) throws ParseException, IOException, TemplateException {
         UserAccessRequest uar = oUserAccessRequestMapper.getRequest(filterID);
         AccessRequestJSON json = parseJSON(uar.getFilter().getFilterJSON());
-        boolean sensitive = json.getSensitive().equals("sans");
         
-        if (json.getSensitive().equals("sans") && 
-                (!json.getSpatial().getFeature().equals(ObservationResourceDefaults.defaultFeatureID) || 
-                 !json.getSpatial().getGridRef().equals(ObservationResourceDefaults.defaultGridRef))) {
-            sensitive = Boolean.FALSE;
-        }
-        
-        List<String> tvks = new ArrayList<String>();
-        tvks.add(json.getTaxon().getTvk()); 
-        List<String> datasets = new ArrayList<String>();
-        datasets.add(uar.getDatasetKey());
-        
-        if (observationMapper.selectRequestableObservationDatasetsByFilter(user, 
-                json.getYear().getStartYear(), json.getYear().getEndYear(), datasets, 
-                tvks, json.getSpatial().getMatch(), json.getSpatial().getFeature(), 
-                sensitive, json.getTaxon().getDesignation(), json.getTaxon().getOutput(), 
-                json.getSpatial().getGridRef(), json.getSpatial().getPolygon()
-            ).get(0).getQuerySpecificObservationCount() <= 0) {
+        if (!doRecordsExistForThisRequest(getRequestableDatasets(user, json.getDataset(), json.getSpatial(), json.getTaxon(), json.getYear(), json.getSensitive(), uar.getDatasetKey()))) {
             return Response.status(Response.Status.BAD_REQUEST).entity(
                     "Zero records affected by this access request, we suggest "
                     + "closing this request").build();
@@ -662,14 +631,4 @@ public class UserAccessRequestResource extends AbstractResource {
         message.put("dataset", request.getDataset().getTitle());
         mailer.send("accessRequestRevoke.ftl", request.getUser().getEmail(), "NBN Gateway: Access request removed", message);
     }
-
-    private boolean listHasAtLeastOneText(List<String> input) {       
-        for (String item : input) {
-            if (StringUtils.hasText(item)) {
-                return true;
-            }
-        }
-        
-        return false;
-    }        
 }
