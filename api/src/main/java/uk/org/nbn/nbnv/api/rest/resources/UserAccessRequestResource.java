@@ -22,6 +22,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,11 +32,9 @@ import uk.org.nbn.nbnv.api.dao.core.OperationalUserAccessRequestAuditHistoryMapp
 import uk.org.nbn.nbnv.api.dao.core.OperationalUserAccessRequestMapper;
 import uk.org.nbn.nbnv.api.dao.core.OperationalUserTaxonObservationAccessMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.DatasetAdministratorMapper;
-import uk.org.nbn.nbnv.api.dao.warehouse.TaxonObservationMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.UserMapper;
 import uk.org.nbn.nbnv.api.mail.TemplateMailer;
 import uk.org.nbn.nbnv.api.model.DatasetAdministrator;
-import uk.org.nbn.nbnv.api.model.TaxonDatasetWithQueryStats;
 import uk.org.nbn.nbnv.api.model.TaxonObservationFilter;
 import uk.org.nbn.nbnv.api.model.User;
 import uk.org.nbn.nbnv.api.model.UserAccessRequest;
@@ -61,7 +61,9 @@ public class UserAccessRequestResource extends RequestResource {
     @Autowired UserMapper userMapper;
     @Autowired AccessRequestUtils accessRequestUtils;
     @Autowired TemplateMailer mailer;
-    @Autowired TaxonObservationMapper observationMapper;
+    
+    private Logger logger = LoggerFactory.getLogger(UserAccessRequestResource.class);
+    
     /**
      * Create a Access Request for a user
      * 
@@ -88,7 +90,8 @@ public class UserAccessRequestResource extends RequestResource {
             return Response.serverError().build();
         }
         
-        checkAccessJSONFilter(accessRequest.getDataset(), accessRequest.getSpatial(), accessRequest.getTaxon());
+        // Basic check for JSON validity
+        checkJSONFilterForValidity(accessRequest);
         
         if (!accessRequest.getSpatial().isAll() && !accessRequest.getDataset().isSecret()) {
             accessRequest.setSensitive("ns");
@@ -117,11 +120,22 @@ public class UserAccessRequestResource extends RequestResource {
         }
                 
         for (String datasetKey : datasets) {
-            oTaxonObservationFilterMapper.createFilter(filter);
-            oUserAccessRequestMapper.createRequest(filter.getId(), user.getId(), datasetKey, accessRequest.getReason().getPurpose(), accessRequest.getReason().getDetails(), new Date(new java.util.Date().getTime()), false);
-            oUserAccessRequestAuditHistoryMapper.addHistory(filter.getId(), user.getId(), "Created request for: '" + filter.getFilterText() + "'");
-            
-            mailRequestCreate(oUserAccessRequestMapper.getRequest(filter.getId()));
+            try {
+                oTaxonObservationFilterMapper.createFilter(filter);
+                
+                // Check that at least one record would be granted by this access request being granted
+                checkForRecordsReturnedSingleDataset(user, accessRequest, datasetKey);
+                
+                oUserAccessRequestMapper.createRequest(filter.getId(), user.getId(), datasetKey, accessRequest.getReason().getPurpose(), accessRequest.getReason().getDetails(), new Date(new java.util.Date().getTime()), false);
+                oUserAccessRequestAuditHistoryMapper.addHistory(filter.getId(), user.getId(), "Created request for: '" + filter.getFilterText() + "'");
+
+                mailRequestCreate(oUserAccessRequestMapper.getRequest(filter.getId()));
+            } catch (IllegalArgumentException ex) {
+                logger.info("Could not create request for: '" 
+                        + filter.getFilterText() + "' / '" 
+                        + filter.getFilterJSON() + "' on dataset "
+                        + datasetKey + " :- Zero Records would be granted with this request");
+            }            
         }
 
         return Response.status(Response.Status.OK).entity("{}").build();
@@ -145,7 +159,10 @@ public class UserAccessRequestResource extends RequestResource {
             return Response.serverError().build();
         }
         
-        checkAccessJSONFilter(accessRequest.getDataset(), accessRequest.getSpatial(), accessRequest.getTaxon());
+        // Basic check for JSON validity
+        checkJSONFilterForValidity(accessRequest);       
+        // Check that at least one record would be granted by this access request being granted
+        checkForRecordsReturnedSingleDataset(user, accessRequest, accessRequest.getDataset().getDatasets().get(0));
 
         TaxonObservationFilter filter = accessRequestUtils.createFilter(json, accessRequest);
         List<String> datasets = accessRequest.getDataset().getDatasets();
@@ -183,32 +200,27 @@ public class UserAccessRequestResource extends RequestResource {
     @Transactional
     public Response editAndGrantRequest(@TokenAccessRequestAdminUser(path="id") User user, 
         @PathParam("id") int filterID, String json) throws IOException, ParseException, TemplateException {
-        UserAccessRequest uar = oUserAccessRequestMapper.getRequest(filterID);
+        
         ObjectMapper mapper = new ObjectMapper();        
         EditAccessRequestJSON editAccessRequest = mapper.readValue(json, EditAccessRequestJSON.class);
         AccessRequestJSON accessRequest = editAccessRequest.getJson();
-
-        List<TaxonDatasetWithQueryStats> requestable = 
-                getRequestableDatasets(user, accessRequest.getDataset(), accessRequest.getSpatial(), accessRequest.getTaxon(), accessRequest.getYear(), accessRequest.getSensitive(), uar.getDatasetKey());
-        
-        checkAccessJSONFilter(accessRequest.getDataset(), accessRequest.getSpatial(), accessRequest.getTaxon());
         
         // Fail if this is an organisation request
         if (accessRequest.getReason().getOrganisationID() > -1) {
             return Response.serverError().build();
         }
         
-        if (!doRecordsExistForThisRequest(requestable)) {
-            return Response.status(Response.Status.BAD_REQUEST).entity(
-                    "Zero records affected by this access request, we suggest "
-                    + "closing this request").build();
-        }
-
+        // Basic check for JSON validity
+        checkJSONFilterForValidity(accessRequest);
+        // Check that at least one record would be granted by this access request being granted
+        checkForRecordsReturnedSingleDataset(user, accessRequest, accessRequest.getDataset().getDatasets().get(0));
+        
         TaxonObservationFilter filter = accessRequestUtils.createFilter(editAccessRequest.getRawJSON(), accessRequest);
         TaxonObservationFilter orig = oTaxonObservationFilterMapper.selectById(filterID);
         oTaxonObservationFilterMapper.editFilter(filterID, filter.getFilterText(), filter.getFilterJSON());
         oUserAccessRequestAuditHistoryMapper.addHistory(filterID, user.getId(), "Edit request to: '" + filter.getFilterText() + "', from: '" + orig.getFilterText() + "'");
 
+        
         return acceptRequest(user, filterID, editAccessRequest.getReason(), editAccessRequest.getExpires(), false);
     }
 
@@ -436,16 +448,16 @@ public class UserAccessRequestResource extends RequestResource {
      */
     private Response acceptRequest(User user, int filterID, String reason, String expires, boolean proactive) throws ParseException, IOException, TemplateException {
         UserAccessRequest uar = oUserAccessRequestMapper.getRequest(filterID);
-        AccessRequestJSON json = parseJSON(uar.getFilter().getFilterJSON());
         
-        if (!doRecordsExistForThisRequest(getRequestableDatasets(user, json.getDataset(), json.getSpatial(), json.getTaxon(), json.getYear(), json.getSensitive(), uar.getDatasetKey()))) {
-            return Response.status(Response.Status.BAD_REQUEST).entity(
-                    "Zero records affected by this access request, we suggest "
-                    + "closing this request").build();
-        } 
+        AccessRequestJSON accessRequest = parseJSON(uar.getFilter().getFilterJSON());
         
-        giveAccess(filterID);
-
+        // Basic check for JSON validity
+        checkJSONFilterForValidity(accessRequest);
+        // Check that at least one record would be granted by this access request being granted
+        checkForRecordsReturnedSingleDataset(user, accessRequest, uar.getDatasetKey());
+        
+        giveAccess(uar);
+        
         if (expires.isEmpty()) {
             oUserAccessRequestMapper.acceptRequest(filterID, reason, new Date(new java.util.Date().getTime()));
         } else {
@@ -456,7 +468,7 @@ public class UserAccessRequestResource extends RequestResource {
 
         oUserAccessRequestAuditHistoryMapper.addHistory(filterID, user.getId(), "Accept request");
         mailRequestGrant(oUserAccessRequestMapper.getRequest(filterID), reason, proactive);
-        return Response.status(Response.Status.OK).entity("{}").build();   
+        return Response.status(Response.Status.OK).entity("{}").build();
     }
 
     /**
@@ -631,4 +643,5 @@ public class UserAccessRequestResource extends RequestResource {
         message.put("dataset", request.getDataset().getTitle());
         mailer.send("accessRequestRevoke.ftl", request.getUser().getEmail(), "NBN Gateway: Access request removed", message);
     }
+
 }

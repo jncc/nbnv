@@ -26,6 +26,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,7 +44,6 @@ import uk.org.nbn.nbnv.api.model.Organisation;
 import uk.org.nbn.nbnv.api.model.OrganisationAccessRequest;
 import uk.org.nbn.nbnv.api.model.OrganisationAccessRequestAuditHistory;
 import uk.org.nbn.nbnv.api.model.OrganisationMembership;
-import uk.org.nbn.nbnv.api.model.TaxonDatasetWithQueryStats;
 import uk.org.nbn.nbnv.api.model.TaxonObservationFilter;
 import uk.org.nbn.nbnv.api.model.User;
 import uk.org.nbn.nbnv.api.model.meta.AccessRequestJSON;
@@ -70,6 +71,8 @@ public class OrganisationAccessRequestResource extends RequestResource {
     @Autowired AccessRequestUtils accessRequestUtils;
     @Autowired TemplateMailer mailer;
     
+    private Logger logger = LoggerFactory.getLogger(OrganisationAccessRequestResource.class);
+    
     /**
      * Create an Organisation Access Request for data
      * 
@@ -96,7 +99,8 @@ public class OrganisationAccessRequestResource extends RequestResource {
             return Response.serverError().build();
         }
 
-        checkAccessJSONFilter(accessRequest.getDataset(), accessRequest.getSpatial(), accessRequest.getTaxon());
+        // Basic filter validity checks
+        checkJSONFilterForValidity(accessRequest);
         
         Organisation org = organisationMapper.selectByID(accessRequest.getReason().getOrganisationID());
         
@@ -127,10 +131,19 @@ public class OrganisationAccessRequestResource extends RequestResource {
         }
 
         for (String datasetKey : datasets) {
-            oTaxonObservationFilterMapper.createFilter(filter);
-            oOrganisationAccessRequestMapper.createRequest(filter.getId(), org.getId(), datasetKey, accessRequest.getReason().getPurpose(), accessRequest.getReason().getDetails(), new Date(new java.util.Date().getTime()), false);
-            oOrganisationAccessRequestAuditHistoryMapper.addHistory(filter.getId(), user.getId(), "Created request for: '" + filter.getFilterText() + "'");
-            mailRequestCreate(oOrganisationAccessRequestMapper.getRequest(filter.getId()), user);
+            try {
+                oTaxonObservationFilterMapper.createFilter(filter);
+                // Check that at least one record would be granted by this access request being granted
+                checkForRecordsReturnedSingleDataset(user, accessRequest, datasetKey);
+                oOrganisationAccessRequestMapper.createRequest(filter.getId(), org.getId(), datasetKey, accessRequest.getReason().getPurpose(), accessRequest.getReason().getDetails(), new Date(new java.util.Date().getTime()), false);
+                oOrganisationAccessRequestAuditHistoryMapper.addHistory(filter.getId(), user.getId(), "Created request for: '" + filter.getFilterText() + "'");
+                mailRequestCreate(oOrganisationAccessRequestMapper.getRequest(filter.getId()), user);
+            } catch (IllegalArgumentException ex) {
+                    logger.info("Could not create request for: '" 
+                        + filter.getFilterText() + "' / '" 
+                        + filter.getFilterJSON() + "' on dataset "
+                        + datasetKey + " :- Zero Records would be granted with this request");
+            }
         }
 
         return Response.status(Response.Status.OK).entity("{}").build();
@@ -154,7 +167,10 @@ public class OrganisationAccessRequestResource extends RequestResource {
             return Response.serverError().build();
         }
         
-        checkAccessJSONFilter(accessRequest.getDataset(), accessRequest.getSpatial(), accessRequest.getTaxon());
+        // Basic filter validity checks
+        checkJSONFilterForValidity(accessRequest);    
+        // Check that at least one record would be granted by this access request being granted
+        checkForRecordsReturnedSingleDataset(user, accessRequest, accessRequest.getDataset().getDatasets().get(0));
 
         TaxonObservationFilter filter = accessRequestUtils.createFilter(json, accessRequest);
         List<String> datasets = accessRequest.getDataset().getDatasets();
@@ -171,7 +187,7 @@ public class OrganisationAccessRequestResource extends RequestResource {
     }
 
     /**
-     * Edit an existing Organisation Access Request for data
+     * Edit and grant existing Organisation Access Request for data
      * 
      * @param user The current user (Must be logged in)
      * @param filterID Filter ID for a TaxonObservationFilter
@@ -190,24 +206,19 @@ public class OrganisationAccessRequestResource extends RequestResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Transactional
     public Response editAndGrantRequest(@TokenOrganisationAccessRequestAdminUser(path="id") User user, @PathParam("id") int filterID, String json) throws IOException, ParseException, TemplateException {
-        OrganisationAccessRequest oar = oOrganisationAccessRequestMapper.getRequest(filterID);
         ObjectMapper mapper = new ObjectMapper();        
         EditAccessRequestJSON editAccessRequest = mapper.readValue(json, EditAccessRequestJSON.class);
         AccessRequestJSON accessRequest = editAccessRequest.getJson();
-        
-        List<TaxonDatasetWithQueryStats> requestable = getRequestableDatasets(user, accessRequest.getDataset(), accessRequest.getSpatial(), accessRequest.getTaxon(), accessRequest.getYear(), accessRequest.getSensitive(), oar.getDatasetKey());
-        checkAccessJSONFilter(accessRequest.getDataset(), accessRequest.getSpatial(), accessRequest.getTaxon());
 
         // Fail if this is an user request
         if (accessRequest.getReason().getOrganisationID() == -1) {
             return Response.serverError().build();
         }
         
-        if (!doRecordsExistForThisRequest(requestable)) {
-            return Response.status(Response.Status.BAD_REQUEST).entity(
-                    "Zero records affected by this access request, we suggest "
-                    + "closing this request").build();
-        }
+        // Basic filter validity checks
+        checkJSONFilterForValidity(accessRequest);
+        // Check that at least one record would be granted by this access request being granted
+        checkForRecordsReturnedSingleDataset(user, accessRequest, accessRequest.getDataset().getDatasets().get(0));
         
         TaxonObservationFilter filter = accessRequestUtils.createFilter(editAccessRequest.getRawJSON(), accessRequest);
         TaxonObservationFilter orig = oTaxonObservationFilterMapper.selectById(filterID);
@@ -491,15 +502,14 @@ public class OrganisationAccessRequestResource extends RequestResource {
      */
     private Response acceptRequest(User user, int filterID, String reason, String expires, boolean proactive) throws ParseException, IOException, TemplateException {
         OrganisationAccessRequest oar = oOrganisationAccessRequestMapper.getRequest(filterID);
-        AccessRequestJSON json = parseJSON(oar.getFilter().getFilterJSON());
         
-        if (!doRecordsExistForThisRequest(getRequestableDatasets(user, json.getDataset(), json.getSpatial(), json.getTaxon(), json.getYear(), json.getSensitive(), oar.getDatasetKey()))) {
-            return Response.status(Response.Status.BAD_REQUEST).entity(
-                    "Zero records affected by this access request, we suggest "
-                    + "closing this request").build();
-        }
+        AccessRequestJSON accessRequestJSON = parseJSON(oar.getFilter().getFilterJSON());
+        // Basic filter validity checks
+        checkJSONFilterForValidity(accessRequestJSON);
+        // Check that at least one record would be granted by this access request being granted
+        checkForRecordsReturnedSingleDataset(user, accessRequestJSON, oar.getDatasetKey());
         
-        giveAccess(filterID);
+        giveAccess(oar);
         
         if (expires.isEmpty()) {
             oOrganisationAccessRequestMapper.acceptRequest(filterID, reason, new Date(new java.util.Date().getTime()));
@@ -689,5 +699,5 @@ public class OrganisationAccessRequestResource extends RequestResource {
         for (OrganisationMembership admin : admins) {
             mailer.send("accessRequestRevoke.ftl", admin.getUser().getEmail(), "NBN Gateway: Access request removed", message);
         }
-    }     
+    }
 }
