@@ -60,7 +60,7 @@ import uk.org.nbn.nbnv.api.utils.DownloadUtils;
 
 @Component
 @Path("/taxonObservations")
-public class TaxonObservationResource extends AbstractResource {
+public class TaxonObservationResource extends RequestResource {
 
     @Autowired TaxonObservationMapper observationMapper;
     @Autowired OrganisationMapper organisationMapper;
@@ -797,17 +797,8 @@ public class TaxonObservationResource extends AbstractResource {
         
         final DownloadFilterJSON dFilter = rawFilter;
         
-        // Check the filter for validity
-        if (dFilter.getDataset().isAll() && dFilter.getTaxon().isAll() && dFilter.getSpatial().isAll()) {
-            logger.info("Download supplied with no filter (dataset, spatial or taxon), throwing error");
-            throw new InvalidObjectException("Must have at least one of the following filters; dataset, spatial or taxon");
-        }
-                
-        // Check the dataset filter for validitiy
-        if (!dFilter.getDataset().isAll() && dFilter.getDataset().getDatasets().isEmpty()) {
-            logger.info("Download supplied with an invalid dataset filter (no datasets selected), throwing error");
-            throw new InvalidObjectException("Cannot use a dataset filter without at least one dataset selected");
-        }
+        // Check the filter for validity (Basic)
+        checkJSONFilterForValidity(dFilter);
         
         final TaxonObservationFilter filter = downloadUtils.createFilter(ow.writeValueAsString(dFilter), dFilter);
         
