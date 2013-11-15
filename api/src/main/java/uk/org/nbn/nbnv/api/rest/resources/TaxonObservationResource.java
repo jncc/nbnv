@@ -227,6 +227,16 @@ public class TaxonObservationResource extends RequestResource {
         return observationMapper.selectObservationRecordsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon, absence);
     }
     
+    private boolean listHasAtLeastOneText(List<String> input) {       
+        for (String item : input) {
+            if (StringUtils.hasText(item)) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
     /**
      * Return a list of Taxon Observation Attribute Value records that conform
      * to the provided search parameters
@@ -787,8 +797,8 @@ public class TaxonObservationResource extends RequestResource {
         
         final DownloadFilterJSON dFilter = rawFilter;
         
-        checkAccessJSONFilter(dFilter.getDataset(), dFilter.getSpatial(), dFilter.getTaxon());
-        validateCompleteDatasetFilter(getRequestableDatasets(user, dFilter.getDataset(), dFilter.getSpatial(), dFilter.getTaxon(), dFilter.getYear(), dFilter.getSensitive(), ""), dFilter.getDataset());
+        // Check the filter for validity (Basic)
+        checkJSONFilterForValidity(dFilter);
         
         final TaxonObservationFilter filter = downloadUtils.createFilter(ow.writeValueAsString(dFilter), dFilter);
         

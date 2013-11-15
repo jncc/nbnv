@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package uk.org.nbn.nbnv.api.rest.resources;
 
 import java.util.ArrayList;
@@ -11,10 +7,7 @@ import org.springframework.util.StringUtils;
 import uk.org.nbn.nbnv.api.dao.warehouse.TaxonObservationMapper;
 import uk.org.nbn.nbnv.api.model.TaxonDatasetWithQueryStats;
 import uk.org.nbn.nbnv.api.model.User;
-import uk.org.nbn.nbnv.api.model.meta.RequestDatasetFilterJSON;
-import uk.org.nbn.nbnv.api.model.meta.RequestSpatialFilterJSON;
-import uk.org.nbn.nbnv.api.model.meta.RequestTaxonFilterJSON;
-import uk.org.nbn.nbnv.api.model.meta.RequestYearFilterJSON;
+import uk.org.nbn.nbnv.api.model.meta.BaseFilterJSON;
 
 /**
  *
@@ -22,106 +15,75 @@ import uk.org.nbn.nbnv.api.model.meta.RequestYearFilterJSON;
  */
 public class RequestResource extends AbstractResource {
     
-    @Autowired TaxonObservationMapper observationMapper;
+    @Autowired TaxonObservationMapper taxonObservationMapper;
     
-    protected void checkAccessJSONFilter(RequestDatasetFilterJSON datasetFilter,  
-            RequestSpatialFilterJSON spatialFilter, 
-            RequestTaxonFilterJSON taxonFilter) throws IllegalArgumentException {
-        if (datasetFilter.isAll() && taxonFilter.isAll() && spatialFilter.isAll()) {
-            throw new IllegalArgumentException("Must specify at least one of the following filters; Dataset, Spatial or Taxon");
+    /**
+     * Check a JSON filter for basic structural validity, throws an error if the
+     * filter does not pass the basic checks
+     * 
+     * @param filter The JSON filter to check for validity
+     * @throws IllegalArgumentException Contains the error that caused the 
+     * filter to fail its validation
+     */
+    protected void checkJSONFilterForValidity(BaseFilterJSON filter) throws IllegalArgumentException {
+        if (filter.getDataset().isAll() 
+                && filter.getSpatial().isAll() 
+                && filter.getTaxon().isAll()) {
+            throw new IllegalArgumentException("Cannot use a filter without at least ONE of the following filters; dataset, spatial or taxon");
         }
         
-        // Check the dataset filter for validitiy
-        if (!datasetFilter.isAll() 
-                && (datasetFilter.getDatasets() == null 
-                    || datasetFilter.getDatasets().isEmpty() 
-                    || !listHasAtLeastOneText(datasetFilter.getDatasets()))) {
-            throw new IllegalArgumentException("Cannot use a dataset filter with no datasets selected");
-        }     
-        
-        // Check for a valid spatial filter
-        if (!spatialFilter.isAll() 
-                && !StringUtils.hasText(spatialFilter.getGridRef())
-                && !(StringUtils.hasText(spatialFilter.getFeature()) 
-                     && StringUtils.hasText(spatialFilter.getDataset()))) {
-             throw new IllegalArgumentException("Cannot use a spatial filter without a gridRef or feature and dataset");
-        } 
-        
-        // Check for a valid taxon filter
-        if (!taxonFilter.isAll()
-                && !StringUtils.hasText(taxonFilter.getTvk())
-                && !StringUtils.hasText(taxonFilter.getOutput())
-                && !StringUtils.hasText(taxonFilter.getDesignation())
-                && taxonFilter.getOrgSuppliedList() == -1) {
-            throw new IllegalArgumentException("Cannot use a taxon filter without a ptvk, a designation, an output group or an organisation supplied list");
-        }                      
-        
-        // Check for valid combinations, dataset list may only come through if a
-        // taxon or spatial filter is applied
-        if ((!datasetFilter.isAll() && datasetFilter.getDatasets().size() > 1)
-                && (taxonFilter.isAll() && spatialFilter.isAll())) {
-            throw new IllegalArgumentException("Cannot specify more than one dataset without a valid taxon or spatial filter");
+        if (!filter.getDataset().isAll() 
+                && (filter.getDataset().getDatasets() == null
+                    || filter.getDataset().getDatasets().isEmpty())) {
+            throw new IllegalArgumentException("Cannot use a dataset filter without supplying at least one dataset key");
         }
-    }    
-    
-    protected void validateCompleteDatasetFilter(List<TaxonDatasetWithQueryStats> datasets, RequestDatasetFilterJSON datasetsFilter) {
-        if (!datasetsFilter.isAll() && datasetsFilter.getDatasets().size() > 1) {
-            List <String> tDatasets = new ArrayList<String>();
-            for (TaxonDatasetWithQueryStats dataset : datasets) {
-                tDatasets.add(dataset.getDatasetKey());
-            }
-
-            for (String dataset : datasetsFilter.getDatasets()) {
-                if (!tDatasets.contains(dataset)) {
-                    throw new IllegalArgumentException("Request contains datasets, not matching the requestable datasets");
-                }
-            }
+        
+        if (!filter.getSpatial().isAll()
+                && !StringUtils.hasText(filter.getSpatial().getGridRef())
+                && !(StringUtils.hasText(filter.getSpatial().getFeature()) && StringUtils.hasText(filter.getSpatial().getDataset()))) {
+            throw new IllegalArgumentException("Cannot use a spatial filter without supplying at least a grid reference or a feature ID and its dataset");
+        }
+        
+        if (!filter.getTaxon().isAll()
+                && !StringUtils.hasText(filter.getTaxon().getTvk())
+                && !StringUtils.hasText(filter.getTaxon().getDesignation())
+                && !StringUtils.hasText(filter.getTaxon().getOutput())
+                && filter.getTaxon().getOrgSuppliedList() == -1) {
+            throw new IllegalArgumentException("Cannot use a taxon filter without supplying at least a TVK, designation, output group or an organisation supplied list ID");
+        }
+        
+        if ((!filter.getDataset().isAll() && filter.getDataset().getDatasets().size() > 1)
+                && filter.getTaxon().isAll()
+                && filter.getSpatial().isAll()) {
+            throw new IllegalArgumentException("Cannot select more than one dataset without a valid taxon or spatial filter");
         }
     }
     
-    protected void validateCompleteDatasetFilterSingle(List<TaxonDatasetWithQueryStats> datasets, String datasetKey) {
-        List <String> tDatasets = new ArrayList<String>();
-        for (TaxonDatasetWithQueryStats dataset : datasets) {
-            tDatasets.add(dataset.getDatasetKey());
-        }
-        
-        if (!tDatasets.contains(datasetKey)) {
-            throw new IllegalArgumentException("Request contains datasets, not matching the requestable datasets");
-        }
-    }
-    
-    protected List<TaxonDatasetWithQueryStats> getRequestableDatasets(User user, 
-            RequestDatasetFilterJSON datasetFilter,  
-            RequestSpatialFilterJSON spatialFilter, 
-            RequestTaxonFilterJSON taxonFilter,
-            RequestYearFilterJSON yearFilter,
-            String sensitiveStr, String datasetKey) {
-        
-        boolean sensitive = sensitiveStr.equals("sans");
-        
+    /**
+     * Checks a request to see if it would return any records, 
+     * 
+     * @param user
+     * @param filter
+     * @param datasetKey 
+     */
+    protected void checkForRecordsReturnedSingleDataset(User user, BaseFilterJSON filter, String datasetKey) {
         List<String> tvks = new ArrayList<String>();
-        tvks.add(taxonFilter.getTvk()); 
-        
+        tvks.add(filter.getTaxon().getTvk());
         List<String> datasets = new ArrayList<String>();
+        datasets.add(datasetKey);
         
-        if (StringUtils.hasText(datasetKey)) {
-            datasets.add(datasetKey);
-        } else if (!datasetFilter.isAll() && datasetFilter.getDatasets().size() > 0) {
-            datasets = datasetFilter.getDatasets();
+        List<TaxonDatasetWithQueryStats> stats = taxonObservationMapper
+                .selectRequestableObservationDatasetsByFilter(user, 
+                filter.getYear().getStartYear(), filter.getYear().getEndYear(), 
+                datasets, tvks, filter.getSpatial().getMatch(), 
+                filter.getSpatial().getFeature(), 
+                filter.getSensitive().equals("sans"), 
+                filter.getTaxon().getDesignation(), 
+                filter.getTaxon().getOutput(), filter.getSpatial().getGridRef(), 
+                "");
+        
+        if (stats.isEmpty()) {
+            throw new IllegalArgumentException("This action would grant access to zero records, we recommend closing this request");
         }
-        
-        return observationMapper.selectRequestableObservationDatasetsByFilter(user, 
-                yearFilter.getStartYear(), yearFilter.getEndYear(), datasets, 
-                tvks, spatialFilter.getMatch(), spatialFilter.getFeature(), 
-                sensitive, taxonFilter.getDesignation(), taxonFilter.getOutput(), 
-                spatialFilter.getGridRef(), "");
     }
-    
-    protected boolean doRecordsExistForThisRequest(List<TaxonDatasetWithQueryStats> datasets) {
-        if (datasets.isEmpty()) {
-            return false;
-        } 
-        
-        return true;
-    }      
 }
