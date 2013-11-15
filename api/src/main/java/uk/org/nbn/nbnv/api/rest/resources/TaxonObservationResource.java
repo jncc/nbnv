@@ -60,7 +60,7 @@ import uk.org.nbn.nbnv.api.utils.DownloadUtils;
 
 @Component
 @Path("/taxonObservations")
-public class TaxonObservationResource extends AbstractResource {
+public class TaxonObservationResource extends RequestResource {
 
     @Autowired TaxonObservationMapper observationMapper;
     @Autowired OrganisationMapper organisationMapper;
@@ -225,16 +225,6 @@ public class TaxonObservationResource extends AbstractResource {
         }
         
         return observationMapper.selectObservationRecordsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon, absence);
-    }
-    
-    private boolean listHasAtLeastOneText(List<String> input) {       
-        for (String item : input) {
-            if (StringUtils.hasText(item)) {
-                return true;
-            }
-        }
-        
-        return false;
     }
     
     /**
@@ -797,37 +787,10 @@ public class TaxonObservationResource extends AbstractResource {
         
         final DownloadFilterJSON dFilter = rawFilter;
         
-        // Check the filter for validity
-        if (dFilter.getDataset().isAll() && dFilter.getTaxon().isAll() && dFilter.getSpatial().isAll()) {
-            logger.info("Download supplied with no filter (dataset, spatial or taxon), throwing error");
-            throw new InvalidObjectException("Must have at least one of the following filters; dataset, spatial or taxon");
-        }
-                // Check the dataset filter for validitiy
-        if (!dFilter.getDataset().isAll() 
-                && (dFilter.getDataset().getDatasets() == null 
-                    || dFilter.getDataset().getDatasets().isEmpty() 
-                    || !listHasAtLeastOneText(dFilter.getDataset().getDatasets()))) {
-            logger.info("Download supplied with an invalid dataset filter (no datasets selected), throwing error");
-            throw new IllegalArgumentException("Cannot use a dataset filter without at least one dataset selected");
-        }
+        checkAccessJSONFilter(dFilter.getDataset(), dFilter.getSpatial(), dFilter.getTaxon());
+        validateCompleteDatasetFilter(getRequestableDatasets(user, dFilter.getDataset(), dFilter.getSpatial(), dFilter.getTaxon(), dFilter.getYear(), dFilter.getSensitive(), ""), dFilter.getDataset());
         
-        // Check for a valid spatial filter
-        if (!dFilter.getSpatial().isAll() 
-                && !StringUtils.hasText(dFilter.getSpatial().getGridRef())
-                && !(StringUtils.hasText(dFilter.getSpatial().getFeature()) 
-                     && StringUtils.hasText(dFilter.getSpatial().getDataset()))) {
-            throw new IllegalArgumentException("Cannot use a spatial filter without a gridRef or feature and dataset");
-        } 
-        
-        // Check for a valid taxon filter
-        if (!dFilter.getTaxon().isAll()
-                && !StringUtils.hasText(dFilter.getTaxon().getTvk())
-                && !StringUtils.hasText(dFilter.getTaxon().getOutput())
-                && !StringUtils.hasText(dFilter.getTaxon().getDesignation())
-                && dFilter.getTaxon().getOrgSuppliedList() == -1) {
-            throw new IllegalArgumentException("Cannot use a taxon filter without a ptvk, a designation, an output group or an organisation supplied list");
-        }
-                final TaxonObservationFilter filter = downloadUtils.createFilter(ow.writeValueAsString(dFilter), dFilter);
+        final TaxonObservationFilter filter = downloadUtils.createFilter(ow.writeValueAsString(dFilter), dFilter);
         
         oTaxonObservationFilterMapper.createFilter(filter);
         if (dFilter.getReason().getOrganisationID() > -1) {
@@ -1556,14 +1519,4 @@ public class TaxonObservationResource extends AbstractResource {
             }
         }
     }
-    
-    private boolean listHasAtLeastOneText(List<String> input) {       
-        for (String item : input) {
-            if (StringUtils.hasText(item)) {
-                return true;
-            }
-        }
-        
-        return false;
-    }    
 }

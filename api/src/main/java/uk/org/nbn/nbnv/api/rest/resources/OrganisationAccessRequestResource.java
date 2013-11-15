@@ -29,7 +29,6 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 import uk.org.nbn.nbnv.api.dao.core.OperationalOrganisationAccessRequestAuditHistoryMapper;
 import uk.org.nbn.nbnv.api.dao.core.OperationalOrganisationAccessRequestMapper;
 import uk.org.nbn.nbnv.api.dao.core.OperationalOrganisationMembershipMapper;
@@ -37,13 +36,13 @@ import uk.org.nbn.nbnv.api.dao.core.OperationalOrganisationTaxonObservationAcces
 import uk.org.nbn.nbnv.api.dao.core.OperationalTaxonObservationFilterMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.DatasetAdministratorMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.OrganisationMapper;
-import uk.org.nbn.nbnv.api.dao.warehouse.OrganisationMembershipMapper;
 import uk.org.nbn.nbnv.api.mail.TemplateMailer;
 import uk.org.nbn.nbnv.api.model.DatasetAdministrator;
 import uk.org.nbn.nbnv.api.model.Organisation;
 import uk.org.nbn.nbnv.api.model.OrganisationAccessRequest;
 import uk.org.nbn.nbnv.api.model.OrganisationAccessRequestAuditHistory;
 import uk.org.nbn.nbnv.api.model.OrganisationMembership;
+import uk.org.nbn.nbnv.api.model.TaxonDatasetWithQueryStats;
 import uk.org.nbn.nbnv.api.model.TaxonObservationFilter;
 import uk.org.nbn.nbnv.api.model.User;
 import uk.org.nbn.nbnv.api.model.meta.AccessRequestJSON;
@@ -60,7 +59,7 @@ import uk.org.nbn.nbnv.api.utils.AccessRequestUtils;
  */
 @Component
 @Path("/organisation/organisationAccesses")
-public class OrganisationAccessRequestResource extends AbstractResource {
+public class OrganisationAccessRequestResource extends RequestResource {
     @Autowired OperationalTaxonObservationFilterMapper oTaxonObservationFilterMapper;
     @Autowired OperationalOrganisationAccessRequestMapper oOrganisationAccessRequestMapper;
     @Autowired OperationalOrganisationTaxonObservationAccessMapper oOrganisationTaxonObservationAccessMapper;
@@ -97,34 +96,7 @@ public class OrganisationAccessRequestResource extends AbstractResource {
             return Response.serverError().build();
         }
 
-        if (accessRequest.getDataset().isAll() && accessRequest.getTaxon().isAll() && accessRequest.getSpatial().isAll()) {
-            return Response.serverError().build();
-        }
-        
-        // Check the dataset filter for validitiy
-        if (!accessRequest.getDataset().isAll() 
-                && (accessRequest.getDataset().getDatasets() == null 
-                    || accessRequest.getDataset().getDatasets().isEmpty() 
-                    || !listHasAtLeastOneText(accessRequest.getDataset().getDatasets()))) {
-            return Response.serverError().entity("Cannot use a dataset filter with no datasets selected").build();
-        }     
-        
-        // Check for a valid spatial filter
-        if (!accessRequest.getSpatial().isAll() 
-                && !StringUtils.hasText(accessRequest.getSpatial().getGridRef())
-                && !(StringUtils.hasText(accessRequest.getSpatial().getFeature()) 
-                     && StringUtils.hasText(accessRequest.getSpatial().getDataset()))) {
-             return Response.serverError().entity("Cannot use a spatial filter without a gridRef or feature and dataset").build();
-        } 
-        
-        // Check for a valid taxon filter
-        if (!accessRequest.getTaxon().isAll()
-                && !StringUtils.hasText(accessRequest.getTaxon().getTvk())
-                && !StringUtils.hasText(accessRequest.getTaxon().getOutput())
-                && !StringUtils.hasText(accessRequest.getTaxon().getDesignation())
-                && accessRequest.getTaxon().getOrgSuppliedList() == -1) {
-            return Response.serverError().entity("Cannot use a taxon filter without a ptvk, a designation, an output group or an organisation supplied list").build();
-        }              
+        checkAccessJSONFilter(accessRequest.getDataset(), accessRequest.getSpatial(), accessRequest.getTaxon());
         
         Organisation org = organisationMapper.selectByID(accessRequest.getReason().getOrganisationID());
         
@@ -181,6 +153,8 @@ public class OrganisationAccessRequestResource extends AbstractResource {
         if (!datasetAdministratorMapper.isUserDatasetAdministrator(user.getId(), accessRequest.getDataset().getDatasets().get(0))) {
             return Response.serverError().build();
         }
+        
+        checkAccessJSONFilter(accessRequest.getDataset(), accessRequest.getSpatial(), accessRequest.getTaxon());
 
         TaxonObservationFilter filter = accessRequestUtils.createFilter(json, accessRequest);
         List<String> datasets = accessRequest.getDataset().getDatasets();
@@ -216,14 +190,25 @@ public class OrganisationAccessRequestResource extends AbstractResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Transactional
     public Response editAndGrantRequest(@TokenOrganisationAccessRequestAdminUser(path="id") User user, @PathParam("id") int filterID, String json) throws IOException, ParseException, TemplateException {
+        OrganisationAccessRequest oar = oOrganisationAccessRequestMapper.getRequest(filterID);
         ObjectMapper mapper = new ObjectMapper();        
         EditAccessRequestJSON editAccessRequest = mapper.readValue(json, EditAccessRequestJSON.class);
         AccessRequestJSON accessRequest = editAccessRequest.getJson();
+        
+        List<TaxonDatasetWithQueryStats> requestable = getRequestableDatasets(user, accessRequest.getDataset(), accessRequest.getSpatial(), accessRequest.getTaxon(), accessRequest.getYear(), accessRequest.getSensitive(), oar.getDatasetKey());
+        checkAccessJSONFilter(accessRequest.getDataset(), accessRequest.getSpatial(), accessRequest.getTaxon());
 
         // Fail if this is an user request
         if (accessRequest.getReason().getOrganisationID() == -1) {
             return Response.serverError().build();
         }
+        
+        if (!doRecordsExistForThisRequest(requestable)) {
+            return Response.status(Response.Status.BAD_REQUEST).entity(
+                    "Zero records affected by this access request, we suggest "
+                    + "closing this request").build();
+        }
+        
         TaxonObservationFilter filter = accessRequestUtils.createFilter(editAccessRequest.getRawJSON(), accessRequest);
         TaxonObservationFilter orig = oTaxonObservationFilterMapper.selectById(filterID);
         oTaxonObservationFilterMapper.editFilter(filterID, filter.getFilterText(), filter.getFilterJSON());
@@ -505,6 +490,15 @@ public class OrganisationAccessRequestResource extends AbstractResource {
      * @throws ParseException 
      */
     private Response acceptRequest(User user, int filterID, String reason, String expires, boolean proactive) throws ParseException, IOException, TemplateException {
+        OrganisationAccessRequest oar = oOrganisationAccessRequestMapper.getRequest(filterID);
+        AccessRequestJSON json = parseJSON(oar.getFilter().getFilterJSON());
+        
+        if (!doRecordsExistForThisRequest(getRequestableDatasets(user, json.getDataset(), json.getSpatial(), json.getTaxon(), json.getYear(), json.getSensitive(), oar.getDatasetKey()))) {
+            return Response.status(Response.Status.BAD_REQUEST).entity(
+                    "Zero records affected by this access request, we suggest "
+                    + "closing this request").build();
+        }
+        
         giveAccess(filterID);
         
         if (expires.isEmpty()) {
@@ -695,15 +689,5 @@ public class OrganisationAccessRequestResource extends AbstractResource {
         for (OrganisationMembership admin : admins) {
             mailer.send("accessRequestRevoke.ftl", admin.getUser().getEmail(), "NBN Gateway: Access request removed", message);
         }
-    }
-    
-    private boolean listHasAtLeastOneText(List<String> input) {       
-        for (String item : input) {
-            if (StringUtils.hasText(item)) {
-                return true;
-            }
-        }
-        
-        return false;
-    }        
+    }     
 }
