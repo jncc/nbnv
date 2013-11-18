@@ -2,7 +2,6 @@ package uk.org.nbn.nbnv.api.rest.resources;
 
 import freemarker.template.TemplateException;
 import java.io.IOException;
-import java.io.InvalidObjectException;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -219,22 +218,20 @@ public class TaxonObservationResource extends RequestResource {
                 && !StringUtils.hasText(taxonOutputGroup)
                 && !listHasAtLeastOneText(datasetKeys)
                 && !StringUtils.hasText(featureID) 
-                && !StringUtils.hasText(gridRef) 
-                && !StringUtils.hasText(polygon)) {
+                && !StringUtils.hasText(gridRef)) {
             throw new IllegalArgumentException("Must Supply at least one type of filter; dataset (key list), spatial(featureID, gridRef or polygon) or taxon (PTVK list, Output Group, Designation or Organisation Supplied List)");    
         }
         
-        return observationMapper.selectObservationRecordsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon, absence);
-    }
-    
-    private boolean listHasAtLeastOneText(List<String> input) {       
-        for (String item : input) {
-            if (StringUtils.hasText(item)) {
-                return true;
-            }
+        if (datasetKeys.size() > 1 
+                && !listHasAtLeastOneText(taxa)
+                && !StringUtils.hasText(designation)
+                && !StringUtils.hasText(taxonOutputGroup)
+                && !StringUtils.hasText(featureID) 
+                && !StringUtils.hasText(gridRef)) {
+            throw new IllegalArgumentException("Must supply a spatial or taxon filter with more than one dataset");
         }
         
-        return false;
+        return observationMapper.selectObservationRecordsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon, absence);
     }
     
     /**
