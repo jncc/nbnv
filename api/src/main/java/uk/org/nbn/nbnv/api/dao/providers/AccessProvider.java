@@ -28,7 +28,7 @@ public class AccessProvider {
         BEGIN();
         SELECT("obs.id");
         FROM(from);
-        WHERE("obs.id NOT IN ( SELECT utoa.observationID FROM UserTaxonObservationID utoa WHERE utoa.userID = #{user.id} )");
+        WHERE("obs.id IN ( SELECT utoa.observationID FROM UserTaxonObservationID utoa WHERE utoa.userID = #{user.id} )");
         return "DELETE FROM UserTaxonObservationAccess WHERE userID = #{user.id} AND observationID IN (" + SQL() + ")" ;
     }
 
@@ -48,7 +48,7 @@ public class AccessProvider {
         BEGIN();
         SELECT("obs.id");
         FROM(from);
-        WHERE("obs.id NOT IN ( SELECT utoa.observationID FROM OrganisationTaxonObservationID utoa WHERE utoa.organisationID = #{organisation.id} )");
+        WHERE("obs.id IN ( SELECT utoa.observationID FROM OrganisationTaxonObservationID utoa WHERE utoa.organisationID = #{organisation.id} )");
         return "DELETE FROM OrganisationTaxonObservationAccess WHERE organisationID = #{organisation.id} AND observationID IN (" + SQL() + ")" ;
     }
 }
