@@ -3,7 +3,7 @@
 <#assign isAdmin=json.readURL("${api}/datasets/${datasetId}/isAdmin")>
 <ul id="nbn-surveys" class="collapsible-list">
     <#list surveys as survey>
-        <li class="nbn-designation-category-heading-strong"><#if survey.description??>${survey.title?has_content?string(survey.description,"No Title Supplied")}<#else>No Title Supplied</#if>
+        <li class="nbn-designation-category-heading-strong"><#if survey.title??>${survey.title?has_content?string(survey.title,"No Title Supplied")}<#else>No Title Supplied</#if>
             <ul>
                 <li>
                     <table class="nbn-survey-table ui-state-highlight">
