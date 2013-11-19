@@ -153,6 +153,17 @@ public interface OperationalOrganisationAccessRequestMapper {
         @Result(property="datasetKey", column="datasetKey")
     })
     public OrganisationAccessRequest getRequest(int id);
+
+    @Select("SELECT uar.* FROM OrganisationAccessRequest uar "
+            + "WHERE uar.datasetKey = #{dataset} AND responseTypeID = 1")
+    @Results(value = {
+        @Result(property="filter", column="filterID", javaType=TaxonObservationFilter.class, one=@One(select="uk.org.nbn.nbnv.api.dao.core.OperationalTaxonObservationFilterMapper.selectById")),
+        @Result(property="organisation", column="organisationID", javaType=Organisation.class, one=@One(select="uk.org.nbn.nbnv.api.dao.core.OperationalOrganisationMapper.selectByID")),
+        @Result(property="dataset", column="datasetKey", javaType=Dataset.class, one=@One(select="uk.org.nbn.nbnv.api.dao.core.OperationalDatasetMapper.selectByDatasetKey")),
+        @Result(property="requestPurposeLabel", column="requestPurposeID", javaType=String.class, one=@One(select="uk.org.nbn.nbnv.api.dao.core.AccessRequestPurposeMapper.getPurposeText")),
+        @Result(property="datasetKey", column="datasetKey")
+    })
+    public List<OrganisationAccessRequest> getGrantedRequestsByDataset(@Param("dataset") String datasetKey);
     
     @Update("UPDATE OrganisationAccessRequest SET responseTypeID = 1, responseReason = #{responseReason}, responseDate = #{responseDate} "
             + "WHERE filterID = #{filterID}")

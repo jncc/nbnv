@@ -50,6 +50,7 @@ import uk.org.nbn.nbnv.api.model.meta.EditAccessRequestJSON;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenDatasetAdminUser;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenOrganisationAccessRequestAdminUser;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenOrganisationUser;
+import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenSystemAdministratorUser;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
 import uk.org.nbn.nbnv.api.utils.AccessRequestUtils;
 
@@ -447,7 +448,21 @@ public class OrganisationAccessRequestResource extends AbstractResource {
             return Response.serverError().build();
         }
     }
-
+/**
+     * SysAdmin function to reset accesses
+     * @param user
+     * @param dataset
+     * @return
+     * @throws IOException 
+     */
+    @GET
+    @Path("/reset/{dataset}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response resetDatasetAccess(@TokenSystemAdministratorUser() User user, @PathParam("dataset") String dataset) throws IOException {
+        resetAllAccess(dataset);
+        return Response.ok().build();
+    }
+    
     /**
      * Returns an audit history listing all organisational access changes made to a dataset
      * 
@@ -537,6 +552,17 @@ public class OrganisationAccessRequestResource extends AbstractResource {
         return Response.status(Response.Status.OK).entity("{}").build();
     }
 
+    private boolean resetAllAccess(String dataset) throws IOException {
+        oOrganisationTaxonObservationAccessMapper.removeAllOrganisationAccessForDataset(dataset);
+        List<OrganisationAccessRequest> uars = oOrganisationAccessRequestMapper.getGrantedRequestsByDataset(dataset);
+        
+        for (OrganisationAccessRequest req : uars) {
+            giveAccess(req);
+        }
+        return true;
+        
+    }
+    
     /**
      * Strip access granted by a particular request
      * 

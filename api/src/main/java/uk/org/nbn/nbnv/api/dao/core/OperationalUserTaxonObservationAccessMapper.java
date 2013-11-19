@@ -5,6 +5,7 @@
 package uk.org.nbn.nbnv.api.dao.core;
 
 import java.util.List;
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.DeleteProvider;
 import org.apache.ibatis.annotations.InsertProvider;
 import org.apache.ibatis.annotations.Param;
@@ -47,4 +48,7 @@ public interface OperationalUserTaxonObservationAccessMapper {
             , @Param("orgSuppliedList") int orgSuppliedList
             , @Param("gridRef") String gridRef
             , @Param("polygon") String polygon);
+    
+    @Delete("DELETE FROM UserTaxonObservationAccess WHERE observationID IN (SELECT obs.id FROM TaxonObservationDataEnhanced WHERE datasetKey = #{datasetKey}) AND userID > 1")
+    public void removeAllUserAccessForDataset(@Param("datasetKey") String datasetKey);
 }
