@@ -305,7 +305,9 @@
         $('#nbn-request-better-access').click(function() {
             window.location = '/AccessRequest/Create?json={' + 
                     getTaxonJSON() + ',' +
-                    nbn.portal.reports.utils.datasetfields.getSelectedDatasetsJSON() +
+                    // Disabled as it selects publicly applicable
+                    //nbn.portal.reports.utils.datasetfields.getSelectedDatasetsJSON() +
+                    '{dataset:{all:true}' +
                     '}';
         });
     }
