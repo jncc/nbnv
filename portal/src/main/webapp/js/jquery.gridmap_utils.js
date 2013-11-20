@@ -307,7 +307,7 @@
                     getTaxonJSON() + ',' +
                     // Disabled as it selects publicly applicable
                     //nbn.portal.reports.utils.datasetfields.getSelectedDatasetsJSON() +
-                    '{dataset:{all:true}}' +
+                    'dataset:{all:true}' +
                     '}';
         });
     }
