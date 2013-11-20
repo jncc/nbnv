@@ -27,7 +27,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "RecordingEntity.findAll", query = "SELECT r FROM RecordingEntity r"),
-    @NamedQuery(name = "RecordingEntity.findByRecordedName", query = "SELECT r FROM RecordingEntity r WHERE r.recordedName = :recordedName"),
+    @NamedQuery(name = "RecordingEntity.findByRecordedName", query = "SELECT r FROM RecordingEntity r WHERE r.name = :recordedName"),
     @NamedQuery(name = "RecordingEntity.findByDangerous", query = "SELECT r FROM RecordingEntity r WHERE r.dangerous = :dangerous")})
 public class RecordingEntity implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -35,7 +35,7 @@ public class RecordingEntity implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 255)
-    @Column(name = "recordedName")
+    @Column(name = "name")
     private String recordedName;
     @Basic(optional = false)
     @NotNull
