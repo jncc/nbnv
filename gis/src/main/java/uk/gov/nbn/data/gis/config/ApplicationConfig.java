@@ -7,7 +7,6 @@ import com.sun.jersey.api.json.JSONConfiguration;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import javax.servlet.ServletContext;
@@ -15,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.json.MappingJacksonHttpMessageConverter;
 import org.springframework.validation.beanvalidation.MethodValidationPostProcessor;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -23,11 +24,10 @@ import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver;
 import uk.ac.ceh.dynamo.BoundingBox;
 import uk.ac.ceh.dynamo.MapServerViewResolver;
-import uk.ac.ceh.dynamo.arguments.ServiceURLArgumentResolver;
-import uk.ac.ceh.dynamo.DynamoMapRequestMappingHandlerMapping;
 import uk.ac.ceh.dynamo.FeatureResolver;
-import uk.ac.ceh.dynamo.arguments.DynamoMapArgumentResolver;
-import uk.ac.ceh.dynamo.arguments.QueryParameterResolver;
+import uk.ac.ceh.dynamo.GridMapRequestMappingHandlerMapping;
+import uk.ac.ceh.dynamo.arguments.GridMapArgumentResolver;
+import uk.ac.ceh.dynamo.arguments.ServiceURLArgumentResolver;
 import uk.gov.nbn.data.properties.PropertiesReader;
 import uk.org.nbn.nbnv.api.model.Feature;
 
@@ -37,7 +37,7 @@ import uk.org.nbn.nbnv.api.model.Feature;
  */
 @Configuration
 @EnableWebMvc
-@ComponentScan(basePackages = {"uk.gov.nbn.data.gis","uk.ac.ceh.dynamo.providers"})
+@ComponentScan(basePackages = {"uk.gov.nbn.data.gis"})
 public class ApplicationConfig extends WebMvcConfigurerAdapter {     
     @Autowired ServletContext context;
     
@@ -56,9 +56,20 @@ public class ApplicationConfig extends WebMvcConfigurerAdapter {
         return configurer;
     }
     
+    @Override
+    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+        converters.add(new MappingJacksonJsonpHttpMessageConverter());
+        converters.add(new MappingJacksonHttpMessageConverter());
+    }
+    
     @Bean
     public MapServerViewResolver configureMapServerViewResolver() throws IOException {
-        return new MapServerViewResolver(new File(context.getRealPath("WEB-INF/maps")), new URL("http://localhost:9000/fcgi-bin/mapserv.exe"));
+        return new MapServerViewResolver(new File(context.getRealPath("WEB-INF/maps")), new URL(properties().getProperty("mapserver")));
+    }
+    
+    @Bean
+    public GridMapRequestMappingHandlerMapping gridMap() {
+        return new GridMapRequestMappingHandlerMapping();
     }
     
     @Bean
@@ -69,22 +80,14 @@ public class ApplicationConfig extends WebMvcConfigurerAdapter {
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
         try {
-            TokenUserArgumentResolver resolver = new TokenUserArgumentResolver(client());
-            List<QueryParameterResolver> queryParamResolvers = new ArrayList<QueryParameterResolver>();
-            queryParamResolvers.add(resolver);
-
-            argumentResolvers.add(new ServiceURLArgumentResolver(queryParamResolvers));
-            argumentResolvers.add(new DynamoMapArgumentResolver());
-            argumentResolvers.add(resolver);
+            TokenUserArgumentResolver tokenUserArgumentResolver = new TokenUserArgumentResolver(client());
+            argumentResolvers.add(tokenUserArgumentResolver);
+            argumentResolvers.add(new GridMapArgumentResolver());
+            argumentResolvers.add(new ServiceURLArgumentResolver(tokenUserArgumentResolver));
         }
         catch(IOException io) {
             throw new RuntimeException(io);
         }
-    }
-    
-    @Bean
-    public DynamoMapRequestMappingHandlerMapping gridMap() {
-        return new DynamoMapRequestMappingHandlerMapping();
     }
     
     @Bean
