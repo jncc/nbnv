@@ -7,7 +7,7 @@ import uk.org.nbn.nbnv.importer.fidelity.{ResultLevel, Result}
 import org.apache.log4j.Logger
 import uk.org.nbn.nbnv.importer.BadDataException
 import uk.org.nbn.nbnv.importer.records.NbnRecord
-import uk.org.nbn.nbnv.importer.data.{Database}
+import uk.org.nbn.nbnv.importer.data.Database
 import uk.org.nbn.nbnv.importer.metadata.Metadata
 
 // todo: mapping between darwin and nbn terms, separate from reading values, nulls throw?
@@ -69,7 +69,7 @@ class Validator @Inject()(log: Logger, db: Database ){
     for ((record, i) <- archive.iteratorRaw.zipWithIndex) {
 
       if (i % 100 == 99) {
-        log.info("Validated %d records".format(i))
+        log.info("Validated %d records".format(i+1))
       }
 
       val nbnRecord = new NbnRecord(record)
