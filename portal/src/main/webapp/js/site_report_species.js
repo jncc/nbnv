@@ -130,7 +130,7 @@
                 nbn.portal.reports.utils.forms.getSpatialFeatures(keyValuePairs, form.attr('gridSquare')) + ',' +
                 // Disabled as creates requests for all public datasets explicitly
                 // nbn.portal.reports.utils.datasetfields.getSelectedDatasetsJSON() + ',' +
-                '{dataset:{all:true}' +
+                '{dataset:{all:true}},' +
                 nbn.portal.reports.utils.forms.getYearJSON(keyValuePairs) + '}';
             e.preventDefault();
         });
