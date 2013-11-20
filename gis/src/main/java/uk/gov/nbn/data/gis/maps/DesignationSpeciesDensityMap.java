@@ -25,9 +25,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-import uk.ac.ceh.dynamo.DynamoMap;
-import uk.ac.ceh.dynamo.DynamoMap.GridLayer;
-import uk.ac.ceh.dynamo.DynamoMap.Resolution;
+import uk.ac.ceh.dynamo.GridMap;
+import uk.ac.ceh.dynamo.GridMap.GridLayer;
+import uk.ac.ceh.dynamo.GridMap.Resolution;
 import uk.ac.ceh.dynamo.arguments.annotations.ServiceURL;
 import uk.gov.nbn.data.gis.validation.Datasets;
 
@@ -73,7 +73,7 @@ public class DesignationSpeciesDensityMap {
     Properties properties;
 
     @RequestMapping("{designationKey}")
-    @DynamoMap(
+    @GridMap(
         layers = {
         @GridLayer(name = "10km", layer = TEN_KM_LAYER_NAME, resolution = Resolution.TEN_KM),
         @GridLayer(name = "2km", layer = TWO_KM_LAYER_NAME, resolution = Resolution.TWO_KM),

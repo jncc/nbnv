@@ -25,7 +25,6 @@ import uk.org.nbn.nbnv.api.model.User;
 public class WelcomePageController {
     @Autowired @Qualifier("requestMappingHandlerMapping") RequestMappingHandlerMapping handlerMapping;
     
-    
     @RequestMapping("/")
     public ModelAndView produceWelcomePage() {
         List<Map<String, Object>> methods = new ArrayList<Map<String, Object>>();
