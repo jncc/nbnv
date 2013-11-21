@@ -11,6 +11,8 @@ import org.apache.log4j.Logger
 import uk.org.nbn.nbnv.importer.data.Database
 import com.google.common.base.Stopwatch
 import uk.org.nbn.nbnv.jpa.nbncore.{ImportTaxonDataset, TaxonDataset}
+import com.sun.jersey.api.client.{ClientResponse, WebResource}
+import javax.ws.rs.core.MediaType
 
 /// Performs the interaction with the NBN core database.
 
@@ -23,7 +25,8 @@ class Ingester @Inject()(options: Options,
                          sampleIngester: SampleIngester,
                          siteIngester: SiteIngester,
                          recorderIngester: RecorderIngester,
-                         featureIngester: FeatureIngester) {
+                         featureIngester: FeatureIngester,
+                         webResource: WebResource) {
 
   val watch = new Stopwatch()
 
@@ -101,9 +104,25 @@ class Ingester @Inject()(options: Options,
     val i = watch.elapsedMillis()
     db.repo.importTaxonObservationsAndRelatedRecords()
     log.info("Imported records in %d seconds".format((watch.elapsedMillis() - i) / 1000))
+
   }
 
-  
+
+  def callApiEndpoints(datasetKey: String) {
+    val oaPath = "/organisation/orgnisationAccesses/reset/%s".format(datasetKey)
+
+    val oaResponse = webResource.path(oaPath).accept(MediaType.APPLICATION_JSON).get(classOf[ClientResponse])
+
+    if (oaResponse.getStatus != 200) throw new Exception("Error reseting organisation access")
+
+    val uaPath = "/user/userAccesses/reset/%s".format(datasetKey)
+
+    val uaResponse = webResource.path(uaPath).accept(MediaType.APPLICATION_JSON).get(classOf[ClientResponse])
+
+    if (uaResponse.getStatus != 200) throw new Exception("Error reseting user access")
+
+  }
+
   def ingest(archive: Archive, metadata: Metadata) {
 
     def finaliseTransaction(t: EntityTransaction) {
@@ -157,8 +176,16 @@ class Ingester @Inject()(options: Options,
       finaliseImport(metadata)
 
       finaliseTransaction(t2)
+
     }
     log.info("Step 2 Complete: Imported data into core tables")
+
+    if (options.target >= Target.commit && ! metadata.datasetKey.isEmpty()) {
+
+      callApiEndpoints(metadata.datasetKey)
+
+      log.info("Step 3 Complete: Called API endpoints to finalise reimport of dataset")
+    }
 
     db.em.close()
   }
