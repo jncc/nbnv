@@ -6,6 +6,7 @@ import uk.org.nbn.nbnv.importer.testing.BaseFunSuite
 import uk.org.nbn.nbnv.importer.utility.ResourceLoader
 import uk.org.nbn.nbnv.importer._
 import ingestion.FeatureIngester
+import jersey.WebResourceFactory
 import records.BoundaryDef
 import spatial.GridSquareInfoFactory
 import uk.org.nbn.nbnv.importer.testing.BaseFunSuite
@@ -13,6 +14,8 @@ import uk.org.nbn.nbnv.importer.utility.ResourceLoader
 import data.{QueryCache, Database, Repository, KeyGenerator}
 import org.apache.log4j.Logger
 import uk.org.nbn.nbnv.PersistenceUtility
+import javax.ws.rs.core.MediaType
+import com.sun.jersey.api.client.ClientResponse
 
 class PartialSmokeSuiteIT extends BaseFunSuite with ResourceLoader {
 
@@ -57,6 +60,17 @@ class PartialSmokeSuiteIT extends BaseFunSuite with ResourceLoader {
     def f = fixture
 
     f.db.repo.importTaxonObservationsAndRelatedRecords()
+  }
+
+//  Requires the web services to be availbe at the url set in api.url (importer.properties test resource)
+  test("can call web resource")  {
+    val resource = WebResourceFactory.getWebResource()
+
+    val oaPath = "/organisation/orgnisationAccesses/reset/GA001280"
+
+    val oaResponse = resource.path(oaPath).accept(MediaType.APPLICATION_JSON).get(classOf[ClientResponse])
+
+    oaResponse.getStatus() should be (200)
   }
 
 }

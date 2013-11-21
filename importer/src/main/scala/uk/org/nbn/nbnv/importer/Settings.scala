@@ -13,6 +13,7 @@ object Settings {
   // provide statically-bound access to settings
   // ...
   def myTestSetting = map.getProperty("my.test.setting")
+  def apiUrl = map.getProperty("api.url")
 
 }
 
