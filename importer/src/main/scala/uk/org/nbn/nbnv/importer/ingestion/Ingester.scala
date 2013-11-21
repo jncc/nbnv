@@ -109,7 +109,7 @@ class Ingester @Inject()(options: Options,
 
 
   def callApiEndpoints(datasetKey: String) {
-    val oaPath = "/organisation/orgnisationAccesses/reset/%s".format(datasetKey)
+    val oaPath = "/organisation/organisationAccesses/reset/%s".format(datasetKey)
 
     val oaResponse = webResource.path(oaPath).accept(MediaType.APPLICATION_JSON).get(classOf[ClientResponse])
 
