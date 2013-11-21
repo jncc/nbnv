@@ -8,7 +8,7 @@ package uk.org.nbn.nbnv.api.model.meta;
  *
  * @author Matt Debont
  */
-public class BaseFilterJSON {
+public abstract class BaseFilterJSON {
     protected String sensitive;
     protected String polygon = "";
     protected RequestSpatialFilterJSON spatial;
@@ -63,4 +63,6 @@ public class BaseFilterJSON {
     public void setDataset(RequestDatasetFilterJSON dataset) {
         this.dataset = dataset;
     }
+    
+    public abstract BaseFilterJSON toBaseFilter();
 }

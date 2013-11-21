@@ -50,6 +50,7 @@ import uk.org.nbn.nbnv.api.dao.warehouse.TaxonOutputGroupMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.UserMapper;
 import uk.org.nbn.nbnv.api.mail.TemplateMailer;
 import uk.org.nbn.nbnv.api.model.*;
+import uk.org.nbn.nbnv.api.model.meta.BaseFilterJSON;
 import uk.org.nbn.nbnv.api.model.meta.DownloadFilterJSON;
 import uk.org.nbn.nbnv.api.model.meta.DownloadStatsJSON;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenDatasetAdminUser;

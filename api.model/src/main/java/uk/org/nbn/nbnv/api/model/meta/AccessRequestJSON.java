@@ -39,4 +39,9 @@ public class AccessRequestJSON extends BaseFilterJSON {
     public void setTime(AccessRequestTimeLimitJSON time) {
         this.time = time;
     }
+    
+    @Override
+    public BaseFilterJSON toBaseFilter() {
+        return this;
+    }
 }
