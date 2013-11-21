@@ -14,8 +14,10 @@ import uk.org.nbn.nbnv.importer.utility.ResourceLoader
 import data.{QueryCache, Database, Repository, KeyGenerator}
 import org.apache.log4j.Logger
 import uk.org.nbn.nbnv.PersistenceUtility
-import javax.ws.rs.core.MediaType
+import javax.ws.rs.core.{NewCookie, MediaType}
 import com.sun.jersey.api.client.ClientResponse
+import com.sun.jersey.core.util.MultivaluedMapImpl
+import scala.collection.JavaConversions._
 
 class PartialSmokeSuiteIT extends BaseFunSuite with ResourceLoader {
 
@@ -63,14 +65,32 @@ class PartialSmokeSuiteIT extends BaseFunSuite with ResourceLoader {
   }
 
 //  Requires the web services to be availbe at the url set in api.url (importer.properties test resource)
-  test("can call web resource")  {
+  ignore("can call web resource")  {
     val resource = WebResourceFactory.getWebResource()
 
-    val oaPath = "/organisation/orgnisationAccesses/reset/GA001280"
+    val formData = new MultivaluedMapImpl()
 
-    val oaResponse = resource.path(oaPath).accept(MediaType.APPLICATION_JSON).get(classOf[ClientResponse])
+    formData.add("username", "matt.debont")
+    formData.add("password", "v8PK4Iz9J$g0G@U")
+
+    val acResponse = resource.path("/user/login").`type`(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post(classOf[ClientResponse], formData);
+
+    val cookies  = acResponse.getCookies
+
+    val authCookie  = cookies.find(c => c.getName == "nbn.token_key").head
+
+    val oaPath = "/user/userAccesses/reset/GA001280"
+
+//    val oaPath = "/organisation/organisationAccesses/reset/GA001280"
+
+    val oaResponse = resource.path(oaPath).cookie(authCookie).accept(MediaType.APPLICATION_JSON).get(classOf[ClientResponse])
 
     oaResponse.getStatus() should be (200)
+
+    val logOutResponse = resource.path("/user/logout").cookie(authCookie).accept(MediaType.APPLICATION_JSON).get(classOf[ClientResponse])
+
+    logOutResponse.getStatus() should be (200)
+
   }
 
 }

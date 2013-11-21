@@ -49,5 +49,5 @@ public interface OperationalOrganisationTaxonObservationAccessMapper {
             , @Param("gridRef") String gridRef
             , @Param("polygon") String polygon);
 
-    @Delete("DELETE FROM OrganisationTaxonObservationAccess WHERE observationID IN (SELECT obs.id FROM TaxonObservationDataEnhanced WHERE datasetKey = #{datasetKey})")
+    @Delete("DELETE FROM OrganisationTaxonObservationAccess WHERE observationID IN (SELECT obs.id FROM TaxonObservationDataEnhanced obs WHERE datasetKey = #{datasetKey})")
     public void removeAllOrganisationAccessForDataset(@Param("datasetKey") String datasetKey);}
