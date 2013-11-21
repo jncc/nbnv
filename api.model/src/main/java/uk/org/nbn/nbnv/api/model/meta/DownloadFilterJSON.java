@@ -24,4 +24,9 @@ public class DownloadFilterJSON extends BaseFilterJSON {
     public void setReason(DownloadReasonJSON reason) {
         this.reason = reason;
     }
+    
+    @Override
+    public BaseFilterJSON toBaseFilter() {
+        return this;
+    }
 }
