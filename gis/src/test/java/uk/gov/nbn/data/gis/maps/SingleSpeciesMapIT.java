@@ -14,7 +14,7 @@ import uk.ac.ceh.dynamo.GridSquare;
  * 
  * @author Christopher Johnson
  */
-public class SingleSpeciesMapTest extends AbstractGridMapIT {
+public class SingleSpeciesMapIT extends AbstractGridMapIT {
     
     @Test
     public void publicUserCannotSeeTreeCreeperInGA000466() throws IOException {
@@ -107,7 +107,7 @@ public class SingleSpeciesMapTest extends AbstractGridMapIT {
         
         //Then
         List<GridSquare> gridSquares = image.getGridSquaresByColour(Color.YELLOW);
-        assertEquals("Expected 3 10km grid squares to have been set", 3, gridSquares.size());
+        assertEquals("Expected 1 10km grid squares to have been set", 1, gridSquares.size());
     }
     
     @Test
@@ -123,7 +123,7 @@ public class SingleSpeciesMapTest extends AbstractGridMapIT {
         
         //Then
         List<GridSquare> gridSquares = image.getGridSquaresByColour(Color.YELLOW);
-        assertEquals("Expected 3 10km grid squares to have been set", 3, gridSquares.size());
+        assertEquals("Expected 4 10km grid squares to have been set", 4, gridSquares.size());
     }
     
     @Test
