@@ -99,6 +99,19 @@ public class OSModernMapTest {
     }
     
     @Test
+    public void checkThatTheTestMapWorksFromTheInteractiveMapTool() throws MalformedURLException {
+        //Given
+        String referrer = "http://dev-data.nbn.org.uk/imt";
+        String hostname = "dev-gis.nbn.org.uk";
+        
+        //When
+        boolean validRequest = mapService.isValidRequest(referrer, hostname);
+        
+        //Then
+        assertTrue("Expected request to be valid", validRequest);
+    }
+    
+    @Test
     public void checkThatTheMapCantBeHotLinkedFromGoogle() throws MalformedURLException {
         //Given
         String referrer = "http://www.google.com";
