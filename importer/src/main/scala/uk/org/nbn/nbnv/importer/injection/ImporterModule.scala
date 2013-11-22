@@ -6,7 +6,6 @@ import uk.org.nbn.nbnv.importer.{Options, Settings}
 import uk.org.nbn.nbnv.importer.logging.Log
 import org.apache.log4j.Level
 import uk.org.nbn.nbnv.importer.data.{Repository, Database, QueryCache}
-import uk.org.nbn.nbnv.importer.jersey.WebResourceFactory
 
 
 class ImporterModule(options: Options) extends AbstractModule {
@@ -28,7 +27,4 @@ class ImporterModule(options: Options) extends AbstractModule {
 
   @Provides
   def getDatabase = db
-
-  @Provides
-  def getWebResource = WebResourceFactory.getWebResource()
 }
