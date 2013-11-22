@@ -27,12 +27,13 @@ nbn.nbnv.ui.requestResult = function() {
         data.html('');
         
         if (permissionNeeded) {
-            data.append("You have requested full access to the records detailed above and permission to use these records for commercial or research purposes.  If your request is granted, this constitutes written permission to use the data as described.  Please ensure your use of the data complies with the ")
-                .append($('<a>').attr('href', '/Terms').text('NBN Gateway Terms and Conditions.'))
-                .append(", for example by crediting data providers in any report or publication.  Click 'Submit' to send this request to all dataset administrators.  You will be notified by e-mail when your request has been dealt with.");
+            data.append('<p>You are requesting full access to the records as detailed above and permission to use these records for commercial or research purposes. If your request is granted, this constitutes written permission to use the data as described.</p>')
+                .append('<p><span style="font-weight:bold;">Please check that you have used the appropriate filters within each of the above sections to only request access to the records that you require.</span> On clicking submit your request will then be sent to the relevant dataset administrators.</p>')
+                .append('<p>Please ensure your use of the data complies with the <a href="/Terms">NBN Gateway Terms and Conditions</a>, for example by crediting data providers in any report or publication.</p>');
         } else {
-            data.append("You have requested full access to the records detailed above.  Click 'Submit' to send this request to all dataset administrators.  You will be notified by e-mail when your request has been dealt with.  Please ensure your use of the data complies with the ")
-                .append($('<a>').attr('href', '/Terms').text('NBN Gateway Terms and Conditions.'));
+            data.append('<p>You are requesting full access to the records as detailed above.</p>')
+                .append('<p><span style="font-weight:bold;">Please check that you have used the appropriate filters within each of the above sections to only request access to the records that you require.</span> On clicking submit your request will then be sent to the relevant dataset administrators.</p>')
+                .append('<p>Please ensure your use of the data complies with the <a href="/Terms">NBN Gateway Terms and Conditions</a></p>');
         }
         
         var errorDiv = $('#resulterrortext');
