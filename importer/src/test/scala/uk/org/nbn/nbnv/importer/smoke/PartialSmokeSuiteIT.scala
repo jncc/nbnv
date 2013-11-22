@@ -1,12 +1,9 @@
 package uk.org.nbn.nbnv.importer.smoke
 
 
-import java.io.File
-import uk.org.nbn.nbnv.importer.testing.BaseFunSuite
-import uk.org.nbn.nbnv.importer.utility.ResourceLoader
 import uk.org.nbn.nbnv.importer._
 import ingestion.FeatureIngester
-import jersey.WebResourceFactory
+import jersey.WebApi
 import records.BoundaryDef
 import spatial.GridSquareInfoFactory
 import uk.org.nbn.nbnv.importer.testing.BaseFunSuite
@@ -14,10 +11,11 @@ import uk.org.nbn.nbnv.importer.utility.ResourceLoader
 import data.{QueryCache, Database, Repository, KeyGenerator}
 import org.apache.log4j.Logger
 import uk.org.nbn.nbnv.PersistenceUtility
-import javax.ws.rs.core.{NewCookie, MediaType}
-import com.sun.jersey.api.client.ClientResponse
-import com.sun.jersey.core.util.MultivaluedMapImpl
-import scala.collection.JavaConversions._
+import com.sun.jersey.api.client.{Client, ClientResponse, WebResource}
+import uk.org.nbn.nbnv.importer.Settings
+import com.sun.jersey.api.client.config.DefaultClientConfig
+import com.sun.jersey.api.json.JSONConfiguration
+
 
 class PartialSmokeSuiteIT extends BaseFunSuite with ResourceLoader {
 
@@ -64,33 +62,12 @@ class PartialSmokeSuiteIT extends BaseFunSuite with ResourceLoader {
     f.db.repo.importTaxonObservationsAndRelatedRecords()
   }
 
-//  Requires the web services to be availbe at the url set in api.url (importer.properties test resource)
-  ignore("can call web resource")  {
-    val resource = WebResourceFactory.getWebResource()
-
-    val formData = new MultivaluedMapImpl()
-
-    formData.add("username", "matt.debont")
-    formData.add("password", "v8PK4Iz9J$g0G@U")
-
-    val acResponse = resource.path("/user/login").`type`(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post(classOf[ClientResponse], formData);
-
-    val cookies  = acResponse.getCookies
-
-    val authCookie  = cookies.find(c => c.getName == "nbn.token_key").head
-
-    val oaPath = "/user/userAccesses/reset/GA001280"
-
-//    val oaPath = "/organisation/organisationAccesses/reset/GA001280"
-
-    val oaResponse = resource.path(oaPath).cookie(authCookie).accept(MediaType.APPLICATION_JSON).get(classOf[ClientResponse])
-
-    oaResponse.getStatus() should be (200)
-
-    val logOutResponse = resource.path("/user/logout").cookie(authCookie).accept(MediaType.APPLICATION_JSON).get(classOf[ClientResponse])
-
-    logOutResponse.getStatus() should be (200)
-
+  ignore("should call web services") {
+    val api = new WebApi
+    api.resetDatasetAccess("GA001280")
   }
+
+
+
 
 }

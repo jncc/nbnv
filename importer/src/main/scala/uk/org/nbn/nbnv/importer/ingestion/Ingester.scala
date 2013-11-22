@@ -11,8 +11,9 @@ import org.apache.log4j.Logger
 import uk.org.nbn.nbnv.importer.data.Database
 import com.google.common.base.Stopwatch
 import uk.org.nbn.nbnv.jpa.nbncore.{ImportTaxonDataset, TaxonDataset}
-import com.sun.jersey.api.client.{ClientResponse, WebResource}
+import com.sun.jersey.api.client.ClientResponse
 import javax.ws.rs.core.MediaType
+import uk.org.nbn.nbnv.importer.jersey.WebApi
 
 /// Performs the interaction with the NBN core database.
 
@@ -26,7 +27,7 @@ class Ingester @Inject()(options: Options,
                          siteIngester: SiteIngester,
                          recorderIngester: RecorderIngester,
                          featureIngester: FeatureIngester,
-                         webResource: WebResource) {
+                         api: WebApi) {
 
   val watch = new Stopwatch()
 
@@ -108,21 +109,6 @@ class Ingester @Inject()(options: Options,
   }
 
 
-  def callApiEndpoints(datasetKey: String) {
-    val oaPath = "/organisation/organisationAccesses/reset/%s".format(datasetKey)
-
-    val oaResponse = webResource.path(oaPath).accept(MediaType.APPLICATION_JSON).get(classOf[ClientResponse])
-
-    if (oaResponse.getStatus != 200) throw new Exception("Error reseting organisation access")
-
-    val uaPath = "/user/userAccesses/reset/%s".format(datasetKey)
-
-    val uaResponse = webResource.path(uaPath).accept(MediaType.APPLICATION_JSON).get(classOf[ClientResponse])
-
-    if (uaResponse.getStatus != 200) throw new Exception("Error reseting user access")
-
-  }
-
   def ingest(archive: Archive, metadata: Metadata) {
 
     def finaliseTransaction(t: EntityTransaction) {
@@ -181,10 +167,16 @@ class Ingester @Inject()(options: Options,
     log.info("Step 2 Complete: Imported data into core tables")
 
     if (options.target >= Target.commit && ! metadata.datasetKey.isEmpty()) {
+      try {
+        api.resetDatasetAccess(metadata.datasetKey)
 
-      callApiEndpoints(metadata.datasetKey)
-
-      log.info("Step 3 Complete: Called API endpoints to finalise reimport of dataset")
+        log.info("Step 3 Complete: Called API endpoints to reset dataset access")
+      }
+      catch {
+        case e: Throwable => {
+          log.warn("Step 3 Failed: An error occured when callling the API to rest access for dataset %s".format(metadata.datasetKey), e)
+        }
+      }
     }
 
     db.em.close()
