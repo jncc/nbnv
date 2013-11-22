@@ -157,18 +157,30 @@ public class MetadataController {
                     String str = strIt.next().trim();
                     if (str.startsWith("Version ")) {
                         Pattern pat;
-                        pat = Pattern.compile("([0-9]+)\\.([0-9]+)");
+                        pat = Pattern.compile("([0-9]+)(\\.([0-9]+))?");
                         Matcher matcher = pat.matcher(str);
                         if (matcher.find()) {
                             int major = Integer.parseInt(matcher.group(1));
-                            int minor = Integer.parseInt(matcher.group(2));
+                            int minor = 0;
+                            try {
+                                minor = Integer.parseInt(matcher.group(3));
+                            } catch(NumberFormatException ex) {
+                                // No number available or an unknown number
+                            }
 
                             version = Float.parseFloat(Integer.toString(major) + "." + Integer.toString(minor));
 
                             importer = getDocumentImporter(major, minor);
 
                             if (importer == null) {
-                               throw new POIImportError("We do not currently support Version " + version + " of the Metadata Import Word Document");
+                                if (minor > 0) {
+                                    messages.add("Could not find a supporting word importer for " + version + " using deafult " + Integer.toString(major) + ".0 importer");
+                                    minor = 0;
+                                    importer = getDocumentImporter(major, minor);
+                                }
+                                if (importer == null) {
+                                    throw new POIImportError("We do not currently support Version " + version + " of the Metadata Import Word Document");
+                                }
                             }
                         }
                     }
