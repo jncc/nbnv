@@ -53,4 +53,10 @@ class PartialSmokeSuiteIT extends BaseFunSuite with ResourceLoader {
     ex.message should include ("Expected one result for 'THISDOES|NOTEXIST', but found none")
   }
 
+  ignore("ingester sproc should throw exception when failing"){
+    def f = fixture
+
+    f.db.repo.importTaxonObservationsAndRelatedRecords()
+  }
+
 }

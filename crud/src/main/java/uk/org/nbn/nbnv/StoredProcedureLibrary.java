@@ -129,15 +129,23 @@ public class StoredProcedureLibrary {
         session.executeQuery(query);
     }
 
-    public void importTaxonObservationsAndRelatedRecords() {
+    public void importTaxonObservationsAndRelatedRecords() throws Exception {
         StoredProcedureCall call = new StoredProcedureCall();
         call.setProcedureName("import_ImportTaxonObservationsAndRelatedRecords");
+        call.addNamedOutputArgument(
+                "Result",      // procedure parameter name
+                "Result",      // out argument field name
+                Integer.class  // Java type corresponding to type returned by procedure
+        );
 
-        DataModifyQuery query = new DataModifyQuery();
+        ValueReadQuery query = new ValueReadQuery();
         query.setCall(call);
 
         Session session = getSession();
-        session.executeQuery(query);
+//        int i = session.executeNonSelectingCall(call);
+        Integer result = (Integer) session.executeQuery(query);
+
+        if (result > 0) throw new Exception("The import_ImportTaxonObservationsAndRelatedRecords failed. Rerun sproc manually for details.");
     }
 
     private Session getSession() {
