@@ -7,25 +7,29 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import org.jooq.util.sqlserver.SQLServerFactory;
+import javax.validation.constraints.Pattern;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import uk.gov.nbn.data.gis.maps.MapHelper.ResolutionDataGenerator;
-import uk.gov.nbn.data.gis.processor.MapFileModel;
-import uk.gov.nbn.data.gis.processor.MapService;
-import uk.gov.nbn.data.gis.processor.MapContainer;
-import uk.gov.nbn.data.gis.providers.annotations.PathParam;
-import uk.gov.nbn.data.gis.providers.annotations.QueryParam;
-import uk.gov.nbn.data.gis.providers.annotations.ServiceURL;
 import uk.org.nbn.nbnv.api.model.User;
 import org.jooq.Condition;
+import org.jooq.DSLContext;
 import org.jooq.Field;
-import org.jooq.Record;
+import org.jooq.Record2;
 import org.jooq.Select;
 import org.jooq.SelectHavingStep;
 import static uk.gov.nbn.data.dao.jooq.Tables.*;
-import static org.jooq.impl.Factory.*;
-import uk.gov.nbn.data.gis.processor.GridMap;
+import static org.jooq.impl.DSL.*;
+import org.springframework.stereotype.Controller;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
+import uk.ac.ceh.dynamo.GridMap;
+import uk.ac.ceh.dynamo.GridMap.GridLayer;
+import uk.ac.ceh.dynamo.GridMap.Resolution;
+import uk.ac.ceh.dynamo.arguments.annotations.ServiceURL;
+import uk.gov.nbn.data.gis.validation.Datasets;
 
 /**
  * The following represents a Map service for DesignationSpeciesDensity
@@ -35,8 +39,9 @@ import uk.gov.nbn.data.gis.processor.GridMap;
  *
  * @author Christopher Johnson
  */
-@Component
-@MapContainer("DesignationSpeciesDensity")
+@Controller
+@Validated
+@RequestMapping("DesignationSpeciesDensity")
 public class DesignationSpeciesDensityMap {
 
     private static final String TEN_KM_LAYER_NAME = "Grid-10km";
@@ -67,22 +72,22 @@ public class DesignationSpeciesDensityMap {
     @Autowired
     Properties properties;
 
-    @MapService("{designationKey}")
+    @RequestMapping("{designationKey}")
     @GridMap(
         layers = {
-        @GridMap.GridLayer(name = "10km", layer = TEN_KM_LAYER_NAME, resolution = GridMap.Resolution.TEN_KM),
-        @GridMap.GridLayer(name = "2km", layer = TWO_KM_LAYER_NAME, resolution = GridMap.Resolution.TWO_KM),
-        @GridMap.GridLayer(name = "1km", layer = ONE_KM_LAYER_NAME, resolution = GridMap.Resolution.ONE_KM),
-        @GridMap.GridLayer(name = "100m", layer = ONE_HUNDRED_M_LAYER_NAME, resolution = GridMap.Resolution.ONE_HUNDRED_METERS)
+        @GridLayer(name = "10km", layer = TEN_KM_LAYER_NAME, resolution = Resolution.TEN_KM),
+        @GridLayer(name = "2km", layer = TWO_KM_LAYER_NAME, resolution = Resolution.TWO_KM),
+        @GridLayer(name = "1km", layer = ONE_KM_LAYER_NAME, resolution = Resolution.ONE_KM),
+        @GridLayer(name = "100m", layer = ONE_HUNDRED_M_LAYER_NAME, resolution = Resolution.ONE_HUNDRED_METERS)
     },
     defaultLayer = "10km")
-    public MapFileModel getDesignationMapModel(
+    public ModelAndView getDesignationMapModel(
             final User user,
             @ServiceURL String mapServiceURL,
-            @QueryParam(key = "datasets", validation = "^[A-Z0-9]{8}$") final List<String> datasetKeys,
-            @QueryParam(key = "startyear", validation = "[0-9]{4}") final String startYear,
-            @QueryParam(key = "endyear", validation = "[0-9]{4}") final String endYear,
-            @PathParam(key = "designationKey", validation = "^[A-Z0-9.()/_\\-]+$") final String key) {
+            @RequestParam(value = "datasets", required=false) @Datasets final List<String> datasetKeys,
+            @RequestParam(value = "startyear", required=false) @Pattern(regexp="[0-9]{4}") final String startYear,
+            @RequestParam(value = "endyear", required=false) @Pattern(regexp="[0-9]{4}") final String endYear,
+            @PathVariable("designationKey") @Pattern(regexp="^[A-Z0-9.()/_\\-]+$") final String key) {
 
         HashMap<String, Object> data = new HashMap<String, Object>();
         data.put("layers", LAYERS.keySet());
@@ -93,7 +98,7 @@ public class DesignationSpeciesDensityMap {
         data.put("layerGenerator", new ResolutionDataGenerator() {
             @Override
             public String getData(String layerName) {
-                SQLServerFactory create = new SQLServerFactory();
+                DSLContext create = MapHelper.getContext();
 
                 Condition publicCondition =
                         MAPPINGDATAPUBLIC.ABSENCE.eq(false)
@@ -110,7 +115,7 @@ public class DesignationSpeciesDensityMap {
                 enhancedCondition = MapHelper.createTemporalSegment(enhancedCondition, startYear, endYear, MAPPINGDATAENHANCED.STARTDATE, MAPPINGDATAENHANCED.ENDDATE);
                 enhancedCondition = MapHelper.createInDatasetsSegment(enhancedCondition, MAPPINGDATAENHANCED.DATASETKEY, datasetKeys);
 
-                Select<Record> observations = create
+                Select<Record2<Integer, String>> observations = create
                         .select(
                         MAPPINGDATAPUBLIC.FEATUREID,
                         MAPPINGDATAPUBLIC.PTAXONVERSIONKEY)
@@ -127,19 +132,19 @@ public class DesignationSpeciesDensityMap {
                         .where(enhancedCondition));
 
                 SelectHavingStep squares = create
-                        .select((Field<Integer>) observations.getField(0).as("featureID"), countDistinct(observations.getField(1)).as("species"))
+                        .select(observations.field(0).as("featureID"), countDistinct(observations.field(1)).as("species"))
                         .from(observations)
-                        .groupBy(observations.getField(0));
+                        .groupBy(observations.field(0));
 
                 return MapHelper.getMapData(FEATURE.GEOM, FEATURE.IDENTIFIER, 4326, create
                         .select(
                         FEATURE.GEOM,
                         FEATURE.IDENTIFIER,
-                        squares.getField("species"))
+                        squares.field("species"))
                         .from(squares)
-                        .join(FEATURE).on(FEATURE.ID.eq((Field<Integer>) squares.getField(0))));
+                        .join(FEATURE).on(FEATURE.ID.eq((Field<Integer>) squares.field(0))));
             }
         });
-        return new MapFileModel("DesignationSpeciesDensity.map", data);
+        return new ModelAndView("DesignationSpeciesDensity.map", data);
     }
 }

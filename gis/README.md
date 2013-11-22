@@ -37,3 +37,26 @@ of mapserver.
 PATH System Enviroment Variable. At the time of writing this 
 application uses the msplugin_mssql2008.dll. To use this add 
 $MAPSERVER$\Apache\specialplugins to the PATH variable
+
+# Cached layers
+
+The gis application requires the property **contextLayersLocation** the location 
+of this property must exists and should have some pre generated context layers in.
+
+The layers you will need are :
+
+* gb_10k_grid
+* gb_10k_grid_ireland_cutout
+* gb_100k_grid
+* gb_100k_grid_ireland_cutout
+* gb_coast
+* gb_coast_with_100k_grid
+* ireland_10k_grid
+* ireland_10k_grid_gb_cutout
+* ireland_100k_grid
+* ireland_100k_grid_gb_cutout
+* ireland_coast
+* ireland_coast_with_100k_grid
+* vice_counties
+
+You should be able to obtain these from one of the live gis servers
