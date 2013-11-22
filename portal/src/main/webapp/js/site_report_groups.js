@@ -101,7 +101,9 @@
             var keyValuePairs = nbn.portal.reports.utils.forms.getKeyValuePairsFromForm(form);
             window.location = '/AccessRequest/Create?json={' + 
                     nbn.portal.reports.utils.forms.getSpatialFeatures(keyValuePairs, form.attr('gridSquare')) + ',' +
-                    nbn.portal.reports.utils.datasetfields.getSelectedDatasetsJSON() + ',' +
+                    // Disabled as creates requests for all public datasets explicitly
+                    // nbn.portal.reports.utils.datasetfields.getSelectedDatasetsJSON() + ',' +
+                    'dataset:{all:true},' +
                     nbn.portal.reports.utils.forms.getYearJSON(keyValuePairs) +
                     '}';
             e.preventDefault();

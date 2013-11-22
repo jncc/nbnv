@@ -6,28 +6,28 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import org.jooq.util.sqlserver.SQLServerFactory;
+import javax.validation.constraints.Pattern;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import uk.gov.nbn.data.gis.maps.MapHelper.ResolutionDataGenerator;
 import uk.gov.nbn.data.gis.maps.colour.ColourHelper.ColourRampGenerator;
-import uk.gov.nbn.data.gis.processor.GridMap;
-import uk.gov.nbn.data.gis.processor.GridMap.GridLayer;
-import uk.gov.nbn.data.gis.processor.GridMap.Resolution;
-import uk.gov.nbn.data.gis.processor.MapFileModel;
-import uk.gov.nbn.data.gis.processor.MapService;
-import uk.gov.nbn.data.gis.processor.MapContainer;
-import uk.gov.nbn.data.gis.providers.annotations.PathParam;
-import uk.gov.nbn.data.gis.providers.annotations.QueryParam;
-import uk.gov.nbn.data.gis.providers.annotations.ServiceURL;
 import uk.org.nbn.nbnv.api.model.User;
 import org.jooq.Condition;
-import org.jooq.Field;
-import org.jooq.Record;
+import org.jooq.DSLContext;
+import org.jooq.Record2;
 import org.jooq.Select;
 import org.jooq.SelectHavingStep;
 import static uk.gov.nbn.data.dao.jooq.Tables.*;
-import static org.jooq.impl.Factory.*;
+import static org.jooq.impl.DSL.*;
+import org.springframework.stereotype.Controller;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
+import uk.ac.ceh.dynamo.GridMap;
+import uk.ac.ceh.dynamo.GridMap.GridLayer;
+import uk.ac.ceh.dynamo.GridMap.Resolution;
+import uk.ac.ceh.dynamo.arguments.annotations.ServiceURL;
 
 /**
  * The following represents a Map service for DatasetSpeciesDensitys
@@ -37,8 +37,9 @@ import static org.jooq.impl.Factory.*;
  *
  * @author Christopher Johnson
  */
-@Component
-@MapContainer("DatasetSpeciesDensity")
+@Controller
+@Validated
+@RequestMapping("DatasetSpeciesDensity")
 public class DatasetSpeciesDensityMap {
 
     private static final String TEN_KM_LAYER_NAME = "Grid-10km";
@@ -69,7 +70,7 @@ public class DatasetSpeciesDensityMap {
     @Autowired
     Properties properties;
 
-    @MapService("{datasetKey}")
+    @RequestMapping("{datasetKey}")
     @GridMap(
         layers = {
         @GridLayer(name = "10km", layer = TEN_KM_LAYER_NAME, resolution = Resolution.TEN_KM),
@@ -78,12 +79,12 @@ public class DatasetSpeciesDensityMap {
         @GridLayer(name = "100m", layer = ONE_HUNDRED_M_LAYER_NAME, resolution = Resolution.ONE_HUNDRED_METERS)
     },
     defaultLayer = "10km")
-    public MapFileModel getDatasetMapModel(
+    public ModelAndView getDatasetMapModel(
             final User user,
             @ServiceURL String mapServiceURL,
-            @QueryParam(key = "startyear", validation = "[0-9]{4}") final String startYear,
-            @QueryParam(key = "endyear", validation = "[0-9]{4}") final String endYear,
-            @PathParam(key = "datasetKey", validation = "^[A-Z0-9]{8}$") final String key) {
+            @RequestParam(value="startyear", required=false) @Pattern(regexp="[0-9]{4}") final String startYear,
+            @RequestParam(value="endyear", required=false) @Pattern(regexp="[0-9]{4}") final String endYear,
+            @PathVariable("datasetKey") @Pattern(regexp="^[A-Z0-9]{8}$") final String key) {
 
         HashMap<String, Object> data = new HashMap<String, Object>();
         data.put("layers", LAYERS.keySet());
@@ -94,7 +95,7 @@ public class DatasetSpeciesDensityMap {
         data.put("layerGenerator", new ResolutionDataGenerator() {
             @Override
             public String getData(String layerName) {
-                SQLServerFactory create = new SQLServerFactory();
+                DSLContext create = MapHelper.getContext();
                 Condition publicCondition =
                         DATASETMAPPINGDATAPUBLIC.ABSENCE.eq(false)
                         .and(DATASETMAPPINGDATAPUBLIC.DATASETKEY.eq(key))
@@ -108,7 +109,7 @@ public class DatasetSpeciesDensityMap {
                         .and(USERTAXONOBSERVATIONID.USERID.eq(user.getId()));
                 enhancedCondition = MapHelper.createTemporalSegment(enhancedCondition, startYear, endYear, DATASETMAPPINGDATAENHANCED.STARTDATE, DATASETMAPPINGDATAENHANCED.ENDDATE);
 
-                Select<Record> observations = create
+                Select<Record2<Integer, String>> observations = create
                         .select(
                         DATASETMAPPINGDATAPUBLIC.FEATUREID,
                         DATASETMAPPINGDATAPUBLIC.PTAXONVERSIONKEY)
@@ -123,16 +124,16 @@ public class DatasetSpeciesDensityMap {
                         .where(enhancedCondition));
                 
                 SelectHavingStep squares = create
-                        .select((Field<Integer>)observations.getField(0).as("featureID"), countDistinct(observations.getField(1)).as("species"))
+                        .select(observations.field(0).as("featureID"), countDistinct(observations.field(1)).as("species"))
                         .from(observations)
-                        .groupBy(observations.getField(0));
+                        .groupBy(observations.field(0));
 
                 return MapHelper.getMapData(FEATURE.GEOM, FEATURE.IDENTIFIER, 4326, create
-                        .select(FEATURE.GEOM, FEATURE.IDENTIFIER, squares.getField("species"))
+                        .select(FEATURE.GEOM, FEATURE.IDENTIFIER, squares.field("species"))
                         .from(squares)
-                        .join(FEATURE).on(FEATURE.ID.eq((Field<Integer>)squares.getField(0))));
+                        .join(FEATURE).on(FEATURE.ID.eq(squares.field(0))));
             }
         });
-        return new MapFileModel("DatasetSpeciesDensity.map", data);
+        return new ModelAndView("DatasetSpeciesDensity.map", data);
     }
 }
