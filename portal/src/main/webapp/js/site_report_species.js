@@ -128,7 +128,9 @@
             window.location = '/AccessRequest/Create?json={' + 
                 'taxon:{all:false,output:\'' + form.attr('taxonOutputGroupKey') + '\'},' +
                 nbn.portal.reports.utils.forms.getSpatialFeatures(keyValuePairs, form.attr('gridSquare')) + ',' +
-                nbn.portal.reports.utils.datasetfields.getSelectedDatasetsJSON() + ',' +
+                // Disabled as creates requests for all public datasets explicitly
+                // nbn.portal.reports.utils.datasetfields.getSelectedDatasetsJSON() + ',' +
+                'dataset:{all:true},' +
                 nbn.portal.reports.utils.forms.getYearJSON(keyValuePairs) + '}';
             e.preventDefault();
         });
