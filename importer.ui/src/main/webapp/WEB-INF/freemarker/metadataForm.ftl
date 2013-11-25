@@ -195,13 +195,25 @@
             function disableOptions() {
                 $("#metadata\\.recordAtts0").attr('disabled', 'disabled');
                 $("#metadata\\.recorderNames0").attr('disabled', 'disabled');
+                $("#metadata\\.recordAtts2").attr('disabled', 'disabled');
+                $("#metadata\\.recorderNames2").attr('disabled', 'disabled');
                 $("#metadata\\.recordAtts0").prop('checked', false);
                 $("#metadata\\.recorderNames0").prop('checked', false);
+                $("#metadata\\.recordAtts1").prop('checked', false);
+                $("#metadata\\.recorderNames1").prop('checked', false);
+                $("#metadata\\.recordAtts2").prop('checked', false);
+                $("#metadata\\.recorderNames2").prop('checked', false);
+                
+                // Pre-Select No
+                $("#metadata\\.recordAtts1").prop('checked', true);
+                $("#metadata\\.recorderNames1").prop('checked', true);
             }
 
             function enableOptions() {
                 $("#metadata\\.recorderNames0").removeAttr('disabled');
                 $("#metadata\\.recordAtts0").removeAttr('disabled');
+                $("#metadata\\.recorderNames2").removeAttr('disabled');
+                $("#metadata\\.recordAtts2").removeAttr('disabled');
             }
 
             $("#metadata\\.geographicalRes0").click(function() {
