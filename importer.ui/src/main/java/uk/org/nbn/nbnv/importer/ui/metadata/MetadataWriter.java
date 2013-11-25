@@ -124,7 +124,7 @@ public class MetadataWriter {
         if (ds.getRecordAtts().equals("null")) {
             ds.setRecordAtts("false");
         }
-        ir.appendChild(formatParaTag(doc, "recordAttributes: " + ds.getRecordAtts()));
+        ir.appendChild(formatParaTag(doc, "recordAttributesArePublic: " + ds.getRecordAtts()));
         return ir;
     }      
 
