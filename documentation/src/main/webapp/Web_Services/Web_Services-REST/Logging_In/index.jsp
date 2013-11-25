@@ -49,7 +49,8 @@ public class JerseyClientPost {
 
         List&lt;NewCookie&gt; cookies = response.getCookies();
         for (NewCookie c : cookies) {
-            if (c.getName().equals(props.get("sso_token_key"))) {
+            // Cookie name that we are after is "nbn.token_key"
+            if (c.getName().equals("nbn.token_key")) {
                 authCookie = c;
             }
         }
