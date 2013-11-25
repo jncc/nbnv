@@ -10,6 +10,11 @@ import uk.org.nbn.nbnv.importer.BadDataException
 import uk.org.nbn.nbnv.{SpatialQueries, StoredProcedureLibrary}
 
 class Repository (log: Logger, em: EntityManager, cache: QueryCache) extends ControlAbstractions {
+  def setDatasetPublic(datasetKey: String) {
+    val sprocs = new StoredProcedureLibrary(em)
+    sprocs.setDatasetPublic(datasetKey)
+  }
+
   def confirmDatasetExists(datasetKey: String): Boolean = {
     val q = "select count(d.key) from Dataset d where d.key = :key"
 
@@ -93,7 +98,7 @@ class Repository (log: Logger, em: EntityManager, cache: QueryCache) extends Con
     sprocs.deleteTaxonObservationsAndRelatedRecords(datasetKey)
   }
 
-  def importTaxonObservationsAndRelatedRecords() {
+  def importTaxonObservationsAndRelatedRecords() = {
     val sprocs = new StoredProcedureLibrary(em)
     sprocs.importTaxonObservationsAndRelatedRecords
   }
