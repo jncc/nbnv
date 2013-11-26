@@ -20,7 +20,7 @@ class Nbnv76Validator extends DateFormatValidator {
       val r1 = new Result {
         def level: ResultLevel.ResultLevel = ResultLevel.ERROR
         def reference: String = record.key
-        def message: String = "%s: No start date should be specified for date type '%s'".format(code, record.dateType)
+        def message: String = "%s: A start date must not be specified for date type '%s'".format(code, record.dateType)
       }
 
       results.append(r1)
