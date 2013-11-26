@@ -90,9 +90,7 @@ class DatasetIngester @Inject()(log: Logger,
       td.setPublicResolutionID(resolutionId)
     }
 
-
-    // default .. to be read from extra metadata.
-    // ...could be more columns like this
     td.setAllowRecordValidation(true)
+    td.setPublicAttribute(m.attributesArePublic)
   }
 }
