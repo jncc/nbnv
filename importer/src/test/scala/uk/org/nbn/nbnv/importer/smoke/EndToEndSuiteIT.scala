@@ -22,10 +22,10 @@ import uk.org.nbn.nbnv.utility.FileSystem
 
 class EndToEndSuiteIT extends BaseFunSuite with ResourceLoader {
 
-  def fixture(archiveURL: URL) = new {
+  def fixture(archiveURL: URL, target: Target.Value = Target.ingest) = new {
 
     val archive = archiveURL
-    val options = Options(archivePath = archive.getFile, target = Target.ingest)
+    val options = Options(archivePath = archive.getFile, target = target)
 
     val importer = Importer.createImporter(options)
   }
@@ -35,7 +35,7 @@ class EndToEndSuiteIT extends BaseFunSuite with ResourceLoader {
 
 
     val archive = new URL("file:///C://Working//eptest//archive_NBNGatewa_19112013_115318taxonname.zip")
-    val f = fixture(archive)
+    val f = fixture(archive, Target.commit)
     f.importer.run()
   }
 
