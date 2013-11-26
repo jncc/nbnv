@@ -14,6 +14,13 @@ class Nbnv78Validator {
         def message: String = "NBNV-78: Validated: Found a valid date type"
       }
     }
+    case null => {
+      new Result {
+        def level: ResultLevel.ResultLevel = ResultLevel.ERROR
+        def reference: String = record.key
+        def message: String = "NBNV-78: A vague date type must be specified"
+      }
+    }
     case _ => {
       new Result {
         def level: ResultLevel.ResultLevel = ResultLevel.ERROR
