@@ -53,7 +53,7 @@ class DateValidator {
     case "Y"  => (new Nbnv284Validator).validate(record)
     case "DD" => (new Nbnv195Validator).validate(record)
     case "O" | "M"=> (new Nbnv74Validator).validate(record)
-    case "OO" | "MM" => (new Nbnv196Validator).validate(record)
+    case "P" | "OO" | "MM" => (new Nbnv196Validator).validate(record)
     case "ND" | "U" => (new Nbnv77Validator).validate(record)
     case "YY" => (new Nbnv197Validator).validate(record)
   }
