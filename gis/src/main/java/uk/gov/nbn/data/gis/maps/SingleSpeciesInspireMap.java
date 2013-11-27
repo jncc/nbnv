@@ -57,7 +57,7 @@ public class SingleSpeciesInspireMap {
         data.put("properties", properties);
         data.put("title", "Test");
         data.put("layerGenerator", SingleSpeciesMap.getSingleSpeciesResolutionDataGenerator(key, user, null, null, null, false));
-        return new ModelAndView("SingleSpecies.map",data);
+        return new ModelAndView("SingleSpeciesInspire.map",data);
     }
 
 }
