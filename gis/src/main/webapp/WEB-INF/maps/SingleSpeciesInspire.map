@@ -19,23 +19,8 @@
 
         PROJECTION                                  "init=epsg:4326"         END
         
-    [#list layers as layer_name]
-                [@layer group=layer_name name="Presence" data=presencelayerGenerator.getData(layer_name)]
-                    NAME               "${layer_name} Species Presence"
-                    STYLE
-                        COLOR          80 80 80
-                        OUTLINECOLOR   0 0 0
-                        WIDTH          1
-                    END
-                [/@layer]
-    [/#list]
-    END
-
-[#-- Definition of a Single species layer, All single species layers consist of grouped layers --]
-[#macro layer group name data]
     LAYER
-        NAME                        "${group}_${name}"
-        GROUP                       "${group}"
+        NAME                        "SD.${speciesCode}"
         TYPE                        POLYGON
         STATUS                      OFF
         CONNECTIONTYPE              PLUGIN
@@ -47,7 +32,7 @@
         EXTENT                      -180 -90 180 90
 
         METADATA
-            "wms_title"             "${group}_${name}"
+            "wms_title"             "Species Distribution (of ${speciesName})"
             "wms_include_items"     "all"
         END
 
@@ -55,6 +40,17 @@
                                     "init=epsg:4326"
         END
 
-        CLASS [#nested] END
+        CLASS 
+                    NAME               "${layer_name} Species Presence"
+                    STYLE
+                        COLOR          80 80 80
+                        OUTLINECOLOR   0 0 0
+                        WIDTH          1
+                    END
+        END
     END
-[/#macro]
+
+
+                [/@layer]
+    [/#list]
+    END
