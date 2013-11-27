@@ -22,8 +22,8 @@ class Nbnv75Validator extends DateFormatValidator {
     if (record.endDate.isDefined) {
       val r1 = new Result {
         def level: ResultLevel.ResultLevel = ResultLevel.ERROR
-        def reference: String = record.dateType
-        def message: String = "%s: No end date should be specified for date type '%s'".format(code, record.dateType)
+        def reference: String = record.key
+        def message: String = "%s: An end date must not be specified for date type '%s'".format(code, record.dateType)
       }
 
       results.append(r1)
@@ -42,7 +42,7 @@ class Nbnv75Validator extends DateFormatValidator {
       if (record.startDate.get.compareTo(startOfYear.getTime) != 0) {
         val r3 = new Result {
           def level: ResultLevel.ResultLevel = ResultLevel.ERROR
-          def reference: String = "Record: " + record.key
+          def reference: String = record.key
           def message: String = "%s: The start date is not the start of the year %s".format(code, startOfYear.get(Calendar.YEAR).toString)
         }
 
@@ -53,7 +53,7 @@ class Nbnv75Validator extends DateFormatValidator {
     if (results.find(r => r.level == ResultLevel.ERROR).isEmpty) {
       val r3 = new Result {
         def level: ResultLevel.ResultLevel = ResultLevel.DEBUG
-        def reference: String = "Record: " + record.key
+        def reference: String = record.key
         def message: String = "Validated: The dates are valid for date type '%s'".format(record.dateType)
       }
 

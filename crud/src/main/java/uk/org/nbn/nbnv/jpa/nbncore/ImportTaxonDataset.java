@@ -55,6 +55,10 @@ public class ImportTaxonDataset implements Serializable {
     @NotNull
     @Column(name = "publicAttribute")
     private boolean publicAttribute;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "publicRecorder")
+    private boolean publicRecorder;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "datasetKey")
     private Collection<ImportSurvey> importSurveyCollection;
     @JoinColumn(name = "datasetKey", referencedColumnName = "key", insertable = false, updatable = false)
@@ -106,7 +110,15 @@ public class ImportTaxonDataset implements Serializable {
     public void setPublicAttribute(boolean publicAttribute) {
         this.publicAttribute = publicAttribute;
     }
+    
+    public boolean getPublicRecorder() {
+        return publicRecorder;
+    }
 
+    public void setPublicRecorder(boolean publicRecorder) {
+        this.publicRecorder = publicRecorder;
+    }
+    
     @XmlTransient
     public Collection<ImportSurvey> getImportSurveyCollection() {
         return importSurveyCollection;

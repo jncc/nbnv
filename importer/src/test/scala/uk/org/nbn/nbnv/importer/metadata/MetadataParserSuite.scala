@@ -23,5 +23,7 @@ class MetadataParserSuite extends BaseFunSuite {
     result.administratorEmail should be ("test.user@example.com")
     result.administratorForename should be ("Test")
     result.administratorSurname should be ("User")
+    result.recorderAndDeterminerArePublic should be (false)
+    result.attributesArePublic should be (false)
   }
 }
