@@ -14,15 +14,15 @@ class Nbnv68Validator {
     val resultList = new ListBuffer[Result]
 
     if (record.startDateRaw.isDefined)
-      resultList.append(validateDate(record.startDateRaw.get, "Start", record.key))
+      resultList.append(validateDate(record.startDateRaw.get, "start", record.key))
 
     if (record.endDateRaw.isDefined)
-      resultList.append(validateDate(record.endDateRaw.get, "End",record.key))
+      resultList.append(validateDate(record.endDateRaw.get, "end",record.key))
 
     resultList
   }
 
-  private def validateDate(dateString: String, resultPrefix: String, recordKey: String) = {
+  private def validateDate(dateString: String, dateFieldName: String, recordKey: String) = {
     val validFormats = List("dd/MM/yyyy", "dd-MM-yyyy", "yyyy/MM/dd", "yyyy-MM-dd", "dd MMM yyyy", "MMM yyyy", "yyyy")
 
     var isValid = dateString.isValidDate(validFormats)
@@ -31,13 +31,13 @@ class Nbnv68Validator {
       new Result {
         def level: ResultLevel.ResultLevel = ResultLevel.DEBUG
         def reference: String = recordKey
-        def message: String = "NBNV-68: Validated: '%s' date is a valid date format".format(resultPrefix)
+        def message: String = "NBNV-68: Validated: '%s' date is a valid date format for the %s date".format(dateString, dateFieldName)
       }
     } else {
       new Result {
         def level: ResultLevel.ResultLevel = ResultLevel.ERROR
         def reference: String = recordKey
-        def message: String = "NBNV-68: '%s' is not a valid date format".format(resultPrefix)
+        def message: String = "NBNV-68: '%s' is not a valid date format for the %s date".format(dateString, dateFieldName)
       }
     }
   }

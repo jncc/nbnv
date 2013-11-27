@@ -5,7 +5,7 @@ import org.gbif.dwc.terms.DwcTerm
 import org.gbif.dwc.text.StarRecord
 import uk.org.nbn.nbnv.importer.BadDataException
 import util.parsing.json.JSON
-import java.util.Date
+import java.util.{Calendar, Date}
 import uk.org.nbn.nbnv.importer.utility.StringParsing._
 
 /// Wraps a Darwin record in NBN clothing.
@@ -50,11 +50,11 @@ class NbnRecord(record: StarRecord) {
   def srsRaw =             parseOptional(record.core.value(DwcTerm.verbatimSRS))
   def attributes =         attributeMap
 
-  private def eventDate = parseOptional(record.core.value(DwcTerm.eventDate))
-  def startDateRaw      = parseOptional(extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateStart")).orElse(eventDate)
-  def startDate         = parseDate(startDateRaw)
+  def eventDateRaw      = parseOptional(record.core.value(DwcTerm.eventDate))
+  def startDateRaw      = parseOptional(extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateStart"))
+  def startDate         = parseDate(startDateRaw.orElse(eventDateRaw))
   def endDateRaw        = parseOptional(extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateEnd"))
-  def endDate           = parseDate(endDateRaw)
+  def endDate           = parseDate(endDateRaw,true)
 
   def sensitiveOccurrenceRaw    = parseOptional(extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/sensitiveOccurrence"))
   def sensitiveOccurrence       = sensitiveOccurrenceRaw map { _.toBoolean } getOrElse false
@@ -76,21 +76,45 @@ class NbnRecord(record: StarRecord) {
   }
 
   def dateType  = {
-    if (eventDate.isDefined) "D"
+    if (eventDateRaw.isDefined) "D"
     else extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateTypeCode")
   }
 
-  private def parseDate(dateString: Option[String]): Option[Date] = {
+  //getEndDate parses MM yyyy and yyyy to end of year / month rather then start as default
+  private def parseDate(dateString: Option[String], getEndDate: Boolean = false): Option[Date] = {
 
     dateString match {
       case Some(ds) => {
 
         var date : Option[Date] = None
 
-        List("dd/MM/yyyy", "dd-MM-yyyy", "yyyy/MM/dd", "yyyy-MM-dd", "dd MMM yyyy", "MMM yyyy", "yyyy")
+        List("dd/MM/yyyy", "dd-MM-yyyy", "yyyy/MM/dd", "yyyy-MM-dd", "dd MMM yyyy")
           .toStream
           .takeWhile(_ => date == None)
           .foreach(df => date = ds.maybeDate(df))
+
+        val cal = Calendar.getInstance
+
+        if (date == None) {
+          date = ds.maybeDate("MMM yyyy")
+          if (date != None && getEndDate) {
+           cal.setTime(date.get)
+           cal.set(Calendar.DATE, cal.getActualMaximum(Calendar.DATE))
+           date = Some(cal.getTime)
+          }
+        }
+
+        if (date == None) {
+          date = ds.maybeDate("yyyy")
+          if(date != None && getEndDate) {
+            cal.setTime(date.get)
+            cal.add(Calendar.YEAR, 1)
+            cal.set(Calendar.DAY_OF_YEAR,1)
+            cal.add(Calendar.DAY_OF_WEEK, -1)
+
+            date = Some(cal.getTime)
+          }
+        }
 
         date
       }

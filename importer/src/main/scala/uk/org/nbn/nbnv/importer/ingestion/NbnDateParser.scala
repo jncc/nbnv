@@ -94,7 +94,7 @@ class NbnDateParser {
 
         (Some(startOfMonth), Some(endOfMonth))
       }
-      case "MM" | "OO" => {
+      case "MM" | "OO" | "P" => {
         val periodStart = startDate.getOrElse(
           throw new BadDataException("No start date. A start date must be specified for dateType '%s'".format(dateType))
         )

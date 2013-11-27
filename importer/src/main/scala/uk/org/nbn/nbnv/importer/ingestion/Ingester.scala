@@ -92,7 +92,7 @@ class Ingester @Inject()(options: Options,
       }
   }
 
-  def finaliseImport(metadata: Metadata)
+  def finaliseImport(metadata: Metadata) : String =
   {
     if (options.mode == Mode.full) {
       log.info("Deleting existing records...")
@@ -103,11 +103,20 @@ class Ingester @Inject()(options: Options,
     log.info("Importing records...")
 
     val i = watch.elapsedMillis()
-    db.repo.importTaxonObservationsAndRelatedRecords()
+    val datasetKey = db.repo.importTaxonObservationsAndRelatedRecords()
     log.info("Imported records in %d seconds".format((watch.elapsedMillis() - i) / 1000))
-
+    datasetKey
   }
 
+
+  def checkAndSetDatasetAsPublic(metadata: Metadata, datasetKey: String) {
+    if (metadata.publicPrecision == 100 &&
+      metadata.recorderAndDeterminerArePublic &&
+      metadata.attributesArePublic) {
+
+      db.repo.setDatasetPublic(datasetKey)
+    }
+  }
 
   def ingest(archive: Archive, metadata: Metadata) {
 
@@ -154,12 +163,15 @@ class Ingester @Inject()(options: Options,
 
     val t2 = db.em.getTransaction
 
+    var datasetKey = ""
     //Importing data into database
     withEntityTransaction(t2) {
 
       t2.begin()
 
-      finaliseImport(metadata)
+      datasetKey = finaliseImport(metadata)
+
+      checkAndSetDatasetAsPublic(metadata, datasetKey)
 
       finaliseTransaction(t2)
 
@@ -180,6 +192,8 @@ class Ingester @Inject()(options: Options,
     }
 
     db.em.close()
+
+    if (datasetKey != "") log.info("Processed dataset key: %s".format(datasetKey))
   }
 
   def withEntityTransaction(t: EntityTransaction)(f: => Unit) {

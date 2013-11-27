@@ -50,6 +50,12 @@ object TestData {
       <additionalInfo>
         <para>additionalInformation: Test additional info</para>
       </additionalInfo>
+      <additionalInfo>
+        <para>recorderAndDeterminerNamesArePublic: false</para>
+      </additionalInfo>
+      <additionalInfo>
+        <para>recordAttributesArePublic: false</para>
+      </additionalInfo>
     </dataset>
   </eml>
 }

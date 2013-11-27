@@ -129,9 +129,32 @@ public class StoredProcedureLibrary {
         session.executeQuery(query);
     }
 
-    public void importTaxonObservationsAndRelatedRecords() throws Exception {
+    public String importTaxonObservationsAndRelatedRecords() throws Exception {
         StoredProcedureCall call = new StoredProcedureCall();
         call.setProcedureName("import_ImportTaxonObservationsAndRelatedRecords");
+        call.addNamedOutputArgument(
+                "Result",      // procedure parameter name
+                "Result",      // out argument field name
+                String.class  // Java type corresponding to type returned by procedure
+        );
+
+        ValueReadQuery query = new ValueReadQuery();
+        query.setCall(call);
+
+        Session session = getSession();
+//        int i = session.executeNonSelectingCall(call);
+        String result = (String) session.executeQuery(query);
+
+        //result will begin with "Error" if the sproc has failed
+        if (result.startsWith("Error")) throw new Exception("The import_ImportTaxonObservationsAndRelatedRecords stored procedure failed. Error: " + result);
+
+        //else result will be the dataset key.
+        return result;
+    }
+
+    public void setDatasetPublic(String datasetKey) throws Exception {
+        StoredProcedureCall call = new StoredProcedureCall();
+        call.setProcedureName("import_SetDatasetPublic");
         call.addNamedOutputArgument(
                 "Result",      // procedure parameter name
                 "Result",      // out argument field name
@@ -142,10 +165,10 @@ public class StoredProcedureLibrary {
         query.setCall(call);
 
         Session session = getSession();
-//        int i = session.executeNonSelectingCall(call);
         Integer result = (Integer) session.executeQuery(query);
 
-        if (result > 0) throw new Exception("The import_ImportTaxonObservationsAndRelatedRecords failed. Rerun sproc manually for details.");
+        //result will begin with "Error" if the sproc has failed
+        if (result > 0 ) throw new Exception("The import_SetDatasetPublic sproc failed");
     }
 
     private Session getSession() {
