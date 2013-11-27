@@ -22,6 +22,15 @@
                 "wms_onlineresource"                              "${mapServiceURL}"
                 "wms_srs"                                         "EPSG:29903 EPSG:27700 EPSG:4326 EPSG:3857"
                 "wms_enable_request"                              "*"
+                [#if enableINSPIRE]
+                "wms_inspire_capabilities"                        "embed"
+                "wms_languages"                                   "eng"
+                "wms_inspire_keyword"                             "infoMapAccessService"
+                "wms_keywordlist_ISO_items"                       "infoMapAccessService"
+                "wms_keywordlist_vocabulary"                      "ISO"
+                "wms_fees"                                        "conditions unknown"
+                "wms_accessconstraints"                           "None"
+                [/#if]
             END
         END
 
