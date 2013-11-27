@@ -56,7 +56,9 @@ public class SingleSpeciesInspireMap {
         data.put("mapServiceURL", mapServiceURL);
         data.put("properties", properties);
         data.put("title", "Test");
-        data.put("presencelayerGenerator", SingleSpeciesMap.getSingleSpeciesResolutionDataGenerator(key, user, null, null, null, false));
+        data.put("speciesCode", "FluffyBunny");
+        data.put("speciesName", "Fluffy Bunnyius");
+        data.put("data", SingleSpeciesMap.getSingleSpeciesResolutionDataGenerator(key, user, null, null, null, false).getData("Grid-10km"));
         return new ModelAndView("SingleSpeciesInspire.map",data);
     }
 
