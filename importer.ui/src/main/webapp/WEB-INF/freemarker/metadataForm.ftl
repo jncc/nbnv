@@ -186,6 +186,13 @@
         <script>
             $(document).ready(function() {
                 $("#uploadSpinner").hide();
+                
+                if ($("#metadata\\.geographicalRes1").prop('checked') ||
+                    $("#metadata\\.geographicalRes2").prop('checked') ||
+                    $("#metadata\\.geographicalRes3").prop('checked') ||
+                    $("#metadata\\.geographicalRes4").prop('checked')) {
+                    disableOptions();
+                }
             });
 
             $("#uploadMetadataButton").click(function() {
@@ -231,6 +238,7 @@
             $("#metadata\\.geographicalRes4").click(function() {
                 disableOptions();
             });
+
         </script>
     </body>
 </html>
