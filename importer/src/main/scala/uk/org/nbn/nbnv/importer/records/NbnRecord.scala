@@ -50,9 +50,9 @@ class NbnRecord(record: StarRecord) {
   def srsRaw =             parseOptional(record.core.value(DwcTerm.verbatimSRS))
   def attributes =         attributeMap
 
-  private def eventDate = parseOptional(record.core.value(DwcTerm.eventDate))
-  def startDateRaw      = parseOptional(extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateStart")).orElse(eventDate)
-  def startDate         = parseDate(startDateRaw)
+  def eventDateRaw      = parseOptional(record.core.value(DwcTerm.eventDate))
+  def startDateRaw      = parseOptional(extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateStart"))
+  def startDate         = parseDate(startDateRaw.orElse(eventDateRaw))
   def endDateRaw        = parseOptional(extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateEnd"))
   def endDate           = parseDate(endDateRaw,true)
 
@@ -76,7 +76,7 @@ class NbnRecord(record: StarRecord) {
   }
 
   def dateType  = {
-    if (eventDate.isDefined) "D"
+    if (eventDateRaw.isDefined) "D"
     else extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateTypeCode")
   }
 
