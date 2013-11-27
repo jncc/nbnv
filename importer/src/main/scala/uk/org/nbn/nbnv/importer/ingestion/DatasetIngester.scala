@@ -92,5 +92,6 @@ class DatasetIngester @Inject()(log: Logger,
 
     td.setAllowRecordValidation(true)
     td.setPublicAttribute(m.attributesArePublic)
+    td.setPublicRecorder(m.recorderAndDeterminerArePublic)
   }
 }
