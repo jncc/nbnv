@@ -219,6 +219,8 @@ public class MetadataController {
             
             metadataForm.setMetadata(meta);
             
+            metadataForm = cleanMetadataTextInputs(metadataForm);
+            
             if (!((mappings.get(importer.ORG_NAME) == null || mappings.get(importer.ORG_NAME).trim().isEmpty()))) {
                 for (Organisation org : metadataForm.getOrganisationList()) {
                     if (org.getName().equals(mappings.get(importer.ORG_NAME))) {
