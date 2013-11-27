@@ -104,13 +104,15 @@ public class MetadataController {
             // Set the Level of Public Access options  
             if (dataset.getTaxonDataset() != null) {
                 if (dataset.getTaxonDataset().getPublicResolution() != null) {
-                    metadata.setGeographicalRes(dataset.getTaxonDataset().getPublicResolution().getAccuracy().toString());
+                    if (dataset.getTaxonDataset().getPublicResolution().getId() > 0) {
+                        metadata.setGeographicalRes(dataset.getTaxonDataset().getPublicResolution().getAccuracy().toString());
+                    } else {
+                        metadata.setGeographicalRes("null");
+                    }
                 }
-
-                boolean v = dataset.getTaxonDataset().getPublicAttribute();
                 
                 metadata.setRecordAtts(dataset.getTaxonDataset().getPublicAttribute() ? "true" : "false");
-                //metadata.setRecorderNames(dataset.getTaxonDataset().getPublicAttribute() ? "true" : "false"); // TODO Need to ensure this is correct behaviour
+                metadata.setRecorderNames(dataset.getTaxonDataset().getPublicRecorder() ? "true" : "false");
             }
             
             metadata.setDatasetID(dataset.getKey());
@@ -289,6 +291,8 @@ public class MetadataController {
     @RequestMapping(value="/metadataProcess.html", method = RequestMethod.POST, params="submit")
     public ModelAndView uploadFile(@ModelAttribute("org") Organisation organisation, @ModelAttribute("metadataForm") @Valid MetadataForm metadataForm, BindingResult result, @RequestParam("organisationID") String organisationID) {
 
+        metadataForm = cleanMetadataTextInputs(metadataForm);
+        
         metadataForm.getMetadata().setOrganisationID(Integer.parseInt(organisationID));
         
         if (metadataForm.getMetadata().getOrganisationID() == -404) {
@@ -394,5 +398,25 @@ public class MetadataController {
             }
         }
         return null;
+    }
+    
+    private MetadataForm cleanMetadataTextInputs(MetadataForm metadataForm) {
+        
+        Metadata metadata = metadataForm.getMetadata();
+        
+        metadata.setAccess(metadata.getAccess().replaceAll("âââââ", "").trim());
+        metadata.setDatasetAdminEmail(metadata.getDatasetAdminEmail().replaceAll("âââââ", "").trim());
+        metadata.setDatasetAdminName(metadata.getDatasetAdminName().replaceAll("âââââ", "").trim());
+        metadata.setDatasetAdminPhone(metadata.getDatasetAdminPhone().replaceAll("âââââ", "").trim());
+        metadata.setDescription(metadata.getDescription().replaceAll("âââââ", "").trim());
+        metadata.setGeographic(metadata.getGeographic().replaceAll("âââââ", "").trim());
+        metadata.setInfo(metadata.getInfo().replaceAll("âââââ", "").trim());
+        metadata.setMethods(metadata.getMethods().replaceAll("âââââ", "").trim());
+        metadata.setPurpose(metadata.getPurpose().replaceAll("âââââ", "").trim());
+        metadata.setQuality(metadata.getQuality().replaceAll("âââââ", "").trim());
+        metadata.setTemporal(metadata.getTemporal().replaceAll("âââââ", "").trim());
+        metadata.setUse(metadata.getUse().replaceAll("âââââ", "").trim());
+        
+        return metadataForm;
     }
 }

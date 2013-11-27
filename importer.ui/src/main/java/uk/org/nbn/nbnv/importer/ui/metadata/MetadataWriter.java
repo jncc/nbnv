@@ -82,7 +82,6 @@ public class MetadataWriter {
         dataset.appendChild(createIntRightsNode(doc, ds));
         dataset.appendChild(createCoverageNode(doc, ds, startDate, endDate));
         dataset.appendChild(createPurposeNode(doc, ds));
-        //dataset.appendChild(createContactNode(doc, ds));
         dataset.appendChild(createMethodsNode(doc, ds));
         dataset.appendChild(createTemporalNode(doc, ds));
         dataset.appendChild(createInfoNode(doc, ds));
@@ -176,9 +175,11 @@ public class MetadataWriter {
         url.setTextContent(org.getWebsite());
         creator.appendChild(url);
         
+        /**
         Element id = doc.createElement("userId");
         id.setTextContent(Integer.toString(ds.getDatasetAdminID()));
         creator.appendChild(id);
+        */
 
         return creator;
     }
@@ -294,16 +295,6 @@ public class MetadataWriter {
         }
 
         return coverage;
-    }
-
-    private static Element createContactNode(Document doc, Dataset ds) {
-        Element contact = doc.createElement("contact");
-        contact.appendChild(createNameNode(doc, ds.admin));
-        Element email = doc.createElement("electronicMailAddress");
-        email.setTextContent(ds.admin.emailAddress);
-        contact.appendChild(email);
-
-        return contact;
     }
     */
 

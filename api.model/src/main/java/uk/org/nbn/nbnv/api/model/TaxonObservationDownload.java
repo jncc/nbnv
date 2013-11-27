@@ -32,6 +32,7 @@ public class TaxonObservationDownload {
     private boolean sensitive;
     private boolean zeroAbundance;
     private boolean fullVersion;
+    private boolean publicAttribute;
     private String useConstraints;
     
     public TaxonObservationDownload() {
@@ -236,5 +237,13 @@ public class TaxonObservationDownload {
 
     public void setUseConstraints(String useConstraints) {
         this.useConstraints = useConstraints;
+    }
+
+    public boolean isPublicAttribute() {
+        return publicAttribute;
+    }
+
+    public void setPublicAttribute(boolean publicAttribute) {
+        this.publicAttribute = publicAttribute;
     }
 }
