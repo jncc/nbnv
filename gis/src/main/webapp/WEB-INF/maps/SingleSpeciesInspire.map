@@ -41,7 +41,7 @@
         END
 
         CLASS 
-                    NAME               "${layer_name} Species Presence"
+                    NAME               "default"
                     STYLE
                         COLOR          80 80 80
                         OUTLINECOLOR   0 0 0
