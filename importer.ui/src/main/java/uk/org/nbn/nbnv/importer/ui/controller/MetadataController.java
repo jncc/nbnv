@@ -104,13 +104,15 @@ public class MetadataController {
             // Set the Level of Public Access options  
             if (dataset.getTaxonDataset() != null) {
                 if (dataset.getTaxonDataset().getPublicResolution() != null) {
-                    metadata.setGeographicalRes(dataset.getTaxonDataset().getPublicResolution().getAccuracy().toString());
+                    if (dataset.getTaxonDataset().getPublicResolution().getId() > 0) {
+                        metadata.setGeographicalRes(dataset.getTaxonDataset().getPublicResolution().getAccuracy().toString());
+                    } else {
+                        metadata.setGeographicalRes("null");
+                    }
                 }
-
-                boolean v = dataset.getTaxonDataset().getPublicAttribute();
                 
                 metadata.setRecordAtts(dataset.getTaxonDataset().getPublicAttribute() ? "true" : "false");
-                //metadata.setRecorderNames(dataset.getTaxonDataset().getPublicAttribute() ? "true" : "false"); // TODO Need to ensure this is correct behaviour
+                metadata.setRecorderNames(dataset.getTaxonDataset().getPublicRecorder() ? "true" : "false");
             }
             
             metadata.setDatasetID(dataset.getKey());
