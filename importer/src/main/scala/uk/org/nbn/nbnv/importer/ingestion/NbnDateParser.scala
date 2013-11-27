@@ -6,6 +6,9 @@ import uk.org.nbn.nbnv.importer.BadDataException
 import scala.Some
 import uk.org.nbn.nbnv.importer.BadDataException
 
+//NBNV-794 - The list of allowable date types was reduced from that shown below. The restriction is enforced by
+//the Nbnv78Validator.
+
 //<D	Before Date – end date only
 //<Y	Before Year- end date only
 //>D	After Date – start date only
