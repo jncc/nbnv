@@ -4,13 +4,18 @@
  */
 package uk.org.nbn.nbnv.importer.ui.util.wordImporter;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import uk.org.nbn.nbnv.importer.ui.util.POIImportError;
 
 /**
@@ -110,6 +115,31 @@ public class WordImporter_3_0 implements WordImporter {
                             // to check our exceptions list
                             if (origStr.contains("I read and understood the NBN Gateway Data Provider Agreement and agree, on behalf of the data provider named in section A, to submit the dataset described in section D to the NBN Trust under this agreement.")) {
                                 // Not invalid just the declaration, do some processing here
+                                String pStr = origStr.replaceAll("\\p{C}", "");
+                                
+                                Pattern matchEx = Pattern.compile("^(I,  )(FORMTEXT (.*)\\. \\[INSERT NAME\\])(, hereby confirm that on  )(FORMTEXT (.*) \\[dd/mm/yyyy\\])( I read and understood the NBN Gateway Data Provider Agreement and agree, on behalf of the data provider named in section A, to submit the dataset described in section D to the NBN Trust under this agreement\\.)$");
+                                Matcher matcher = matchEx.matcher(pStr);
+                                if (matcher.find()) {
+                                    SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+
+                                    String o = matcher.group(3).replaceAll("âââââ", "").trim();
+                                    
+                                    if (matcher.group(3).replaceAll("âââââ", "").replaceAll("     ", "").trim().isEmpty()) {
+                                        errors.add("Warning no name signed for document");
+                                    }
+                                    if (matcher.group(6).replaceAll("âââââ", "").replaceAll("     ", "").trim().isEmpty()) {
+                                        errors.add("Warning no date signed for document");
+                                    }
+                                    try {
+                                        if (df.parse(matcher.group(6).replaceAll("âââââ", "").replaceAll("     ", "")).after(new Date())) {
+                                            errors.add("Signed date is after today");
+                                        }
+                                    } catch(ParseException ex) {
+                                        errors.add("Signed date string is not a valid date: " + matcher.group(6));
+                                    }                                    
+                                } else {
+                                    errors.add("Could not find signature block for document");
+                                }      
                             } else {
                                 // Reset iterator to the correct place
                                 strIt = strList.listIterator(cursor);                                
