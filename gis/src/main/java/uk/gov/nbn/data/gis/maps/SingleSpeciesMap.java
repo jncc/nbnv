@@ -100,7 +100,6 @@ public class SingleSpeciesMap {
         data.put("osRequiredLayers", getOSRequiredLayers(LAYERS.keySet(), presence, absence, bands));
         data.put("enableAbsence", absence);
         data.put("enablePresence", presence);
-        data.put("enableINSPIRE", true);
         data.put("bands", bands);
         data.put("mapServiceURL", mapServiceURL);
         data.put("featureData", MapHelper.getSelectedFeatureData(featureID));

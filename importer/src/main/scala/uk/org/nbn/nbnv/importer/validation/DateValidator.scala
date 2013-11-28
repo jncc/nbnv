@@ -51,6 +51,8 @@ class DateValidator {
     resultList
   }
 
+  //NBNV-794 - The list of allowable date types was reduced from that shown below. The restriction is enforced by
+  //the Nbnv78Validator.
   def validateAccordingToType(record: NbnRecord): List[Result] =  record.dateType match {
     case "<D" => (new Nbnv194Validator).validate(record)
     case "D" => (new Nbnv73Validator).validate(record)

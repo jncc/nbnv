@@ -27,7 +27,9 @@ abstract class DateFormatValidator {
       }
 
       results.append(r1)
-    } else if (startDateRequired && record.startDateRaw.get.isValidDate(validDateFormats) == false) {
+    } else if (startDateRequired &&
+      ((record.startDateRaw.isDefined && record.startDateRaw.get.isValidDate(validDateFormats) == false)
+        || (record.eventDateRaw.isDefined && record.eventDateRaw.get.isValidDate(validDateFormats) == false))) {
       val r2 = new Result {
         def level: ResultLevel.ResultLevel = ResultLevel.ERROR
         def reference: String = record.key
