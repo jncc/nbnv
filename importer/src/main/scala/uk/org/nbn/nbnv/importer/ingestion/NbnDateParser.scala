@@ -6,6 +6,9 @@ import uk.org.nbn.nbnv.importer.BadDataException
 import scala.Some
 import uk.org.nbn.nbnv.importer.BadDataException
 
+//NBNV-794 - The list of allowable date types was reduced from that shown below. The restriction is enforced by
+//the Nbnv78Validator.
+
 //<D	Before Date – end date only
 //<Y	Before Year- end date only
 //>D	After Date – start date only
@@ -94,7 +97,7 @@ class NbnDateParser {
 
         (Some(startOfMonth), Some(endOfMonth))
       }
-      case "MM" | "OO" => {
+      case "MM" | "OO" | "P" => {
         val periodStart = startDate.getOrElse(
           throw new BadDataException("No start date. A start date must be specified for dateType '%s'".format(dateType))
         )

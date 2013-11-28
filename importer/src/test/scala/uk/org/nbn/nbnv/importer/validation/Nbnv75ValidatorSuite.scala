@@ -17,6 +17,7 @@ class Nbnv75ValidatorSuite extends BaseFunSuite with BeforeAndAfter {
 
   test("should validate if the start date supplied is the start of the year") {
     when(record.endDate).thenReturn(None)
+    when(record.eventDateRaw).thenReturn(None)
     when(record.startDateRaw).thenReturn(Some("01/01/1997"))
     when(record.startDate).thenReturn("01/01/1997".maybeDate("dd/MM/yyyy"))
 
@@ -28,6 +29,7 @@ class Nbnv75ValidatorSuite extends BaseFunSuite with BeforeAndAfter {
 
   test("should validate if the start date is just a year") {
     when(record.endDate).thenReturn(None)
+    when(record.eventDateRaw).thenReturn(None)
     when(record.startDateRaw).thenReturn(Some("1997"))
     when(record.startDate).thenReturn("1997".maybeDate("yyyy"))
 
@@ -39,6 +41,7 @@ class Nbnv75ValidatorSuite extends BaseFunSuite with BeforeAndAfter {
 
   test("should not validate if a end date is given") {
     when(record.endDate).thenReturn("31/12/1997".maybeDate("dd/MM/yyyy"))
+    when(record.eventDateRaw).thenReturn(None)
     when(record.startDateRaw).thenReturn(Some("01/01/1997"))
     when(record.startDate).thenReturn("01/01/1997".maybeDate("dd/MM/yyyy"))
 
@@ -50,6 +53,7 @@ class Nbnv75ValidatorSuite extends BaseFunSuite with BeforeAndAfter {
 
   test("should not validate if the start date is not the start of the year") {
     when(record.endDate).thenReturn(None)
+    when(record.eventDateRaw).thenReturn(None)
     when(record.startDateRaw).thenReturn(Some("03/01/1997"))
     when(record.startDate).thenReturn("03/01/1997".maybeDate("dd/MM/yyyy"))
 

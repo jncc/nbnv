@@ -50,6 +50,21 @@ public class RegistrationController {
         return new ModelAndView("register", "user", newUser);
     }
     
+    @RequestMapping(value = "/User/Activate/{username}/Process", method = RequestMethod.GET)
+    public ModelAndView activateUserAlt(
+            @PathVariable("username") String username,
+            @RequestParam("code") String activationCode ) {
+        ClientResponse activationResponse = resource.path("user/activations")
+                                                  .path(username)
+                                                  .put(ClientResponse.class, activationCode);
+        if(activationResponse.getClientResponseStatus() == Status.OK) {
+            return new ModelAndView("activated");
+        }
+        else {
+            return new ModelAndView("error", "status", activationResponse.getEntity(JSONObject.class));
+        }
+    }
+    
     @RequestMapping(value = "/User/Activate/{username}", method = RequestMethod.GET)
     public ModelAndView activateUser(
             @PathVariable("username") String username,
@@ -63,5 +78,5 @@ public class RegistrationController {
         else {
             return new ModelAndView("error", "status", activationResponse.getEntity(JSONObject.class));
         }
-    }
+    }    
 }

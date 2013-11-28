@@ -49,6 +49,6 @@ public interface OperationalUserTaxonObservationAccessMapper {
             , @Param("gridRef") String gridRef
             , @Param("polygon") String polygon);
     
-    @Delete("DELETE FROM UserTaxonObservationAccess WHERE observationID IN (SELECT obs.id FROM TaxonObservationDataEnhanced WHERE datasetKey = #{datasetKey}) AND userID > 1")
+    @Delete("DELETE FROM UserTaxonObservationAccess WHERE observationID IN (SELECT obs.id FROM TaxonObservationDataEnhanced obs WHERE datasetKey = #{datasetKey}) AND userID > 1")
     public void removeAllUserAccessForDataset(@Param("datasetKey") String datasetKey);
 }

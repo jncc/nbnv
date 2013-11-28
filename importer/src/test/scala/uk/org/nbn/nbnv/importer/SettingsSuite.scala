@@ -8,4 +8,10 @@ class SettingsSuite extends BaseFunSuite {
 
     Settings.myTestSetting should be ("don't-delete-this")
   }
+
+  test("should be able to read apiUrl from a settings property")
+  {
+    Settings.apiUrl should be ("http://localhost:8084/api")
+  }
+
 }

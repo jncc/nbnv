@@ -1283,7 +1283,7 @@ public class TaxonObservationResource extends RequestResource {
             values.add(StringUtils.hasText(observation.getUseConstraints()) ? observation.getUseConstraints() : "");
 
             if (includeAttributes) {
-                if (observation.isFullVersion()) {
+                if (observation.isFullVersion() || observation.isPublicAttribute()) {
                     for (Attribute att : attributes) {
                         if (atts.containsKey(observation.getObservationID()) 
                                 && atts.get(observation.getObservationID()).containsKey(att.getAttributeID())) {
