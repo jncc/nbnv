@@ -149,6 +149,10 @@ nbn.nbnv.ui.filter.dataset = function(json, isForDownload) {
                 .attr('value', 'filter')
                 .change(function() {
                     if (this.checked) {
+                        if (!_me._all && _me._mode === 'single') {
+                            _me._datasets = [];
+                        }
+                        
                         _me._all = false;
                         _me._mode = 'filter';
                         datasetAutoComplete.prop('disabled', true);
@@ -222,6 +226,7 @@ nbn.nbnv.ui.filter.dataset = function(json, isForDownload) {
                     )
                 );
             $("input:radio[name='datasetfilterall'][value='filter']").prop('disabled', true);
+            _me.resetSingleSelected(dataf);          
             return;
         }
         $("input:radio[name='datasetfilterall'][value='filter']").prop('disabled', false);
@@ -281,7 +286,7 @@ nbn.nbnv.ui.filter.dataset = function(json, isForDownload) {
                         return 1;
 
                     return 0;
-                })
+                });
                 
                 $.each(datasets, function(id, td) {
                     var cb = $('<input>')
@@ -396,7 +401,16 @@ nbn.nbnv.ui.filter.dataset = function(json, isForDownload) {
                 }
             }
         });
+        
+        _me.resetSingleSelected(dataf);
     };
+    
+    this.resetSingleSelected = function(dataf) {
+        // Push back single dataset into _datasets if we have them selected
+        if ($("input:radio[name='datasetfilterall'][value='single']").prop('checked')) {
+            this._datasets = dataf;
+        }              
+    }
     
     this._addDataset = function(dataset) {
         this._datasets.push(dataset);
