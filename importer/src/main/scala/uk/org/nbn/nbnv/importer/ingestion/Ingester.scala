@@ -11,6 +11,9 @@ import org.apache.log4j.Logger
 import uk.org.nbn.nbnv.importer.data.Database
 import com.google.common.base.Stopwatch
 import uk.org.nbn.nbnv.jpa.nbncore.{ImportTaxonDataset, TaxonDataset}
+import com.sun.jersey.api.client.ClientResponse
+import javax.ws.rs.core.MediaType
+import uk.org.nbn.nbnv.importer.jersey.WebApi
 
 /// Performs the interaction with the NBN core database.
 
@@ -23,7 +26,8 @@ class Ingester @Inject()(options: Options,
                          sampleIngester: SampleIngester,
                          siteIngester: SiteIngester,
                          recorderIngester: RecorderIngester,
-                         featureIngester: FeatureIngester) {
+                         featureIngester: FeatureIngester,
+                         api: WebApi) {
 
   val watch = new Stopwatch()
 
@@ -88,7 +92,7 @@ class Ingester @Inject()(options: Options,
       }
   }
 
-  def finaliseImport(metadata: Metadata)
+  def finaliseImport(metadata: Metadata) : String =
   {
     if (options.mode == Mode.full) {
       log.info("Deleting existing records...")
@@ -99,11 +103,21 @@ class Ingester @Inject()(options: Options,
     log.info("Importing records...")
 
     val i = watch.elapsedMillis()
-    db.repo.importTaxonObservationsAndRelatedRecords()
+    val datasetKey = db.repo.importTaxonObservationsAndRelatedRecords()
     log.info("Imported records in %d seconds".format((watch.elapsedMillis() - i) / 1000))
+    datasetKey
   }
 
-  
+
+  def checkAndSetDatasetAsPublic(metadata: Metadata, datasetKey: String) {
+    if (metadata.publicPrecision == 100 &&
+      metadata.recorderAndDeterminerArePublic &&
+      metadata.attributesArePublic) {
+
+      db.repo.setDatasetPublic(datasetKey)
+    }
+  }
+
   def ingest(archive: Archive, metadata: Metadata) {
 
     def finaliseTransaction(t: EntityTransaction) {
@@ -149,18 +163,37 @@ class Ingester @Inject()(options: Options,
 
     val t2 = db.em.getTransaction
 
+    var datasetKey = ""
     //Importing data into database
     withEntityTransaction(t2) {
 
       t2.begin()
 
-      finaliseImport(metadata)
+      datasetKey = finaliseImport(metadata)
+
+      checkAndSetDatasetAsPublic(metadata, datasetKey)
 
       finaliseTransaction(t2)
+
     }
     log.info("Step 2 Complete: Imported data into core tables")
 
+    if (options.target >= Target.commit && ! metadata.datasetKey.isEmpty()) {
+      try {
+        api.resetDatasetAccess(metadata.datasetKey)
+
+        log.info("Step 3 Complete: Called API endpoints to reset dataset access")
+      }
+      catch {
+        case e: Throwable => {
+          log.warn("Step 3 Failed: An error occured when callling the API to rest access for dataset %s".format(metadata.datasetKey), e)
+        }
+      }
+    }
+
     db.em.close()
+
+    if (datasetKey != "") log.info("Processed dataset key: %s".format(datasetKey))
   }
 
   def withEntityTransaction(t: EntityTransaction)(f: => Unit) {

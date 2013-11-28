@@ -40,6 +40,7 @@ public class TaxonObservationProvider {
                 + "obs.sensitive, "
                 + "obs.absence as zeroAbundance, "
                 + "obs.fullVersion, "
+                + "taxondd.publicAttribute, "
                 + "dd.useConstraints as useConstraint");
         FROM(from);
         INNER_JOIN("TaxonData td ON obs.pTaxonVersionKey = td.taxonVersionKey");
@@ -50,6 +51,7 @@ public class TaxonObservationProvider {
         INNER_JOIN("FeatureData fd ON obs.featureID = fd.id");
         INNER_JOIN("Resolution r ON fd.resolutionID = r.id");
         INNER_JOIN("DateType dt ON obs.dateTypeKey = dt.[key]");
+        INNER_JOIN("TaxonDatasetData taxondd ON obs.datasetKey = taxondd.datasetKey");
         LEFT_OUTER_JOIN("SiteData sd ON obs.siteID = sd.id");
         LEFT_OUTER_JOIN("RecorderData rd ON obs.recorderID = rd.id");
         LEFT_OUTER_JOIN("RecorderData rdd ON obs.determinerID = rdd.id");
@@ -57,21 +59,22 @@ public class TaxonObservationProvider {
     }
     
     public String filterSelectedAttributesForDownload(Map<String,Object> params) {
-        String from = createSelectQuery(params, true, "o.id");
+        String from = createSelect(params, "DISTINCT o.datasetKey");
         BEGIN();
         SELECT("DISTINCT ad.id as attributeID, ad.label, ad.description");
-        FROM("(" + from + ") AS obs");
-        INNER_JOIN("TaxonObservationAttributeData toad ON toad.observationID = obs.id");
-        INNER_JOIN("AttributeData ad ON ad.id = toad.attributeID");
+        FROM(from);
+        INNER_JOIN("AttributeData ad ON ad.datasetKey = obs.datasetKey");
         return SQL();
     }
     
     public String filterSelectedAttributeDataForDownload(Map<String,Object> params) {
-        String from = createSelectQuery(params, true, "o.id");
+        String from = createSelect(params, "o.id, o.datasetKey");
         BEGIN();
         SELECT("toad.*");
-        FROM("(" + from + ") AS obs");
+        FROM(from);
         INNER_JOIN("TaxonObservationAttributeData toad ON toad.observationID = obs.id");
+        INNER_JOIN("TaxonDatasetData tdd ON tdd.datasetKey = obs.datasetKey");
+        WHERE ("tdd.publicAttribute = 1 OR obs.fullVersion = 1");
         return SQL();
     }
     

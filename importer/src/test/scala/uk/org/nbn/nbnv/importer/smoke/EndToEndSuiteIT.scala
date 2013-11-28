@@ -22,20 +22,18 @@ import uk.org.nbn.nbnv.utility.FileSystem
 
 class EndToEndSuiteIT extends BaseFunSuite with ResourceLoader {
 
-  def fixture(archiveURL: URL) = new {
+  def fixture(archiveURL: URL, target: Target.Value = Target.ingest) = new {
 
     val archive = archiveURL
-    val options = Options(archivePath = archive.getFile, target = Target.ingest)
+    val options = Options(archivePath = archive.getFile, target = target)
 
     val importer = Importer.createImporter(options)
   }
 
   // change from 'ignore' to 'test' to run the importer against an archive within your IDE
   ignore("import an archive") {
-
-
-    val archive = new URL("file:///C://Working//nbnv-779//archive_NBNGatewa_14112013_022817.zip")
-    val f = fixture(archive)
+    val archive = new URL("file:///C://Working//nbnv-794 datetypevalidation//archive_NBNGatewa_19112013_120941DateTypesDates.zip")
+    val f = fixture(archive, Target.validate)
     f.importer.run()
   }
 

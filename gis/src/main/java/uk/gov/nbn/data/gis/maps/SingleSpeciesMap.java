@@ -3,29 +3,30 @@ package uk.gov.nbn.data.gis.maps;
 import com.sun.jersey.api.client.WebResource;
 import java.awt.Color;
 import java.util.*;
+import javax.validation.constraints.Pattern;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import uk.gov.nbn.data.gis.maps.MapHelper.ResolutionDataGenerator;
 import uk.gov.nbn.data.gis.maps.colour.Band;
-import uk.gov.nbn.data.gis.processor.MapFileModel;
-import uk.gov.nbn.data.gis.processor.MapService;
-import uk.gov.nbn.data.gis.processor.MapContainer;
-import uk.gov.nbn.data.gis.processor.GridMap;
-import uk.gov.nbn.data.gis.processor.GridMap.Layer;
-import uk.gov.nbn.data.gis.processor.GridMap.GridLayer;
-import uk.gov.nbn.data.gis.processor.GridMap.Resolution;
-import uk.gov.nbn.data.gis.providers.annotations.DefaultValue;
-import uk.gov.nbn.data.gis.providers.annotations.PathParam;
-import uk.gov.nbn.data.gis.providers.annotations.QueryParam;
-import uk.gov.nbn.data.gis.providers.annotations.ServiceURL;
 import uk.org.nbn.nbnv.api.model.User;
 import org.jooq.Condition;
+import org.jooq.DSLContext;
 import org.jooq.Field;
-import org.jooq.Record;
+import org.jooq.Record1;
 import org.jooq.Select;
+import org.jooq.SelectJoinStep;
 import static uk.gov.nbn.data.dao.jooq.Tables.*;
-
-import org.jooq.util.sqlserver.SQLServerFactory;
+import org.springframework.stereotype.Controller;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
+import uk.ac.ceh.dynamo.GridMap;
+import uk.ac.ceh.dynamo.GridMap.GridLayer;
+import uk.ac.ceh.dynamo.GridMap.Layer;
+import uk.ac.ceh.dynamo.GridMap.Resolution;
+import uk.ac.ceh.dynamo.arguments.annotations.ServiceURL;
+import uk.gov.nbn.data.gis.validation.Datasets;
 
 /**
  * The following represents a Map service for SingleSpecies
@@ -37,8 +38,9 @@ import org.jooq.util.sqlserver.SQLServerFactory;
  *  taxonVersionKey (As part of the url call)
  * @author Christopher Johnson
  */
-@Component
-@MapContainer("SingleSpecies")
+@Controller
+@Validated
+@RequestMapping("SingleSpecies")
 public class SingleSpeciesMap {
     private static final String TEN_KM_LAYER_NAME = "Grid-10km";
     private static final String TWO_KM_LAYER_NAME = "Grid-2km";
@@ -68,7 +70,7 @@ public class SingleSpeciesMap {
         LAYERS.put(NONE_GRID_LAYER_NAME, -1);
     }
     
-    @MapService("{taxonVersionKey}")
+    @RequestMapping("{taxonVersionKey}")
     @GridMap(
         layers={
             @GridLayer(name="10km",     layer=TEN_KM_LAYER_NAME,        resolution=Resolution.TEN_KM),
@@ -79,16 +81,16 @@ public class SingleSpeciesMap {
         defaultLayer="10km",
         overlays=@Layer(name="feature", layers="Selected-Feature" )
     )
-    public MapFileModel getSingleSpeciesModel(
+    public ModelAndView getSingleSpeciesModel(
             final User user,
             @ServiceURL String mapServiceURL,
-            @PathParam(key="taxonVersionKey", validation="[A-Z][A-Z0-9]{15}") final String key,
-            @QueryParam(key="datasets", validation="^[A-Z0-9]{8}$") final List<String> datasetKeys,
-            @QueryParam(key="startyear", validation="[0-9]{4}") final String startYear,
-            @QueryParam(key="endyear", validation="[0-9]{4}") final String endYear,
-            @QueryParam(key="abundance", validation="(all)|(presence)|(absence)") @DefaultValue("presence") String abundance,
-            @QueryParam(key="feature") String featureID,
-            @QueryParam(key="band", commaSeperated=false) List<Band> bands
+            @PathVariable("taxonVersionKey") @Pattern(regexp="[A-Z][A-Z0-9]{15}") final String key,
+            @RequestParam(value="datasets", required=false) @Datasets final List<String> datasetKeys,
+            @RequestParam(value="startyear", required=false) @Pattern(regexp="[0-9]{4}") final String startYear,
+            @RequestParam(value="endyear", required=false) @Pattern(regexp="[0-9]{4}") final String endYear,
+            @RequestParam(value="abundance", required=false, defaultValue="presence") @Pattern(regexp="(all)|(presence)|(absence)") String abundance,
+            @RequestParam(value="feature", required=false) String featureID,
+            @RequestParam(value="band", required=false) List<Band> bands
             ) {
         HashMap<String, Object> data = new HashMap<String, Object>();
         boolean absence = abundance.equals("all") || abundance.equals("absence");
@@ -109,7 +111,7 @@ public class SingleSpeciesMap {
                 return getSQL(key, user, datasetKeys, dateBand.getStartYear(), dateBand.getEndYear(), false, layerName);
             }
         });
-        return new MapFileModel("SingleSpecies.map",data);
+        return new ModelAndView("SingleSpecies.map",data);
     }
     
     public interface SingleSpeciesBandSqlGenerator {
@@ -136,7 +138,7 @@ public class SingleSpeciesMap {
                                     List<String> datasetKeys, 
                                     String startYear, String endYear, 
                                     boolean absence, String layerName) {
-        SQLServerFactory create = new SQLServerFactory();
+        DSLContext create = MapHelper.getContext();
         Condition publicCondition = TAXONTREE.NODEPTVK.eq(taxonKey)
                 .and(MAPPINGDATAPUBLIC.ABSENCE.eq(absence))
                 .and(MAPPINGDATAPUBLIC.RESOLUTIONID.eq(LAYERS.get(layerName)));
@@ -150,7 +152,7 @@ public class SingleSpeciesMap {
         enhancedCondition = MapHelper.createTemporalSegment(enhancedCondition, startYear, endYear, MAPPINGDATAENHANCED.STARTDATE, MAPPINGDATAENHANCED.ENDDATE);
         enhancedCondition = MapHelper.createInDatasetsSegment(enhancedCondition, MAPPINGDATAENHANCED.DATASETKEY, datasetKeys);
 
-        Select<Record> nested = create
+        Select<Record1<Integer>> nested = create
                     .select(MAPPINGDATAPUBLIC.FEATUREID.as("FEATUREID"))
                     .from(MAPPINGDATAPUBLIC)
                     .join(TAXONTREE).on(TAXONTREE.CHILDPTVK.eq(MAPPINGDATAPUBLIC.PTAXONVERSIONKEY))
@@ -162,14 +164,14 @@ public class SingleSpeciesMap {
                         .join(USERTAXONOBSERVATIONID).on(USERTAXONOBSERVATIONID.OBSERVATIONID.eq(MAPPINGDATAENHANCED.ID))
                         .where(enhancedCondition)
                     );
-        Select<Record> dNested = create
-                .selectDistinct((Field<Integer>)nested.getField(0))
+        SelectJoinStep<Record1<Integer>> dNested = create
+                .selectDistinct((Field<Integer>)nested.field(0))
                 .from(nested);
 
         return MapHelper.getMapData(FEATURE.GEOM, FEATURE.IDENTIFIER, 4326 ,create
             .select(FEATURE.GEOM, FEATURE.IDENTIFIER)
             .from(FEATURE)
-            .join(dNested).on(FEATURE.ID.eq((Field<Integer>)dNested.getField(0))));
+            .join(dNested).on(FEATURE.ID.eq((Field<Integer>)dNested.field(0))));
            
     }
     
