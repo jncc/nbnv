@@ -12,6 +12,7 @@ class Nbnv73ValidatorSuite extends BaseFunSuite {
   test("Should validate if only a start date is given") {
     val record = mock[NbnRecord]
     val startDateRaw = "03/08/2011"
+    when(record.eventDateRaw).thenReturn(None)
     when(record.startDateRaw).thenReturn(Some(startDateRaw))
     when(record.startDate).thenReturn(startDateRaw.maybeDate("dd/MM/yyyy"))
     when(record.endDate).thenReturn(None)
@@ -27,6 +28,7 @@ class Nbnv73ValidatorSuite extends BaseFunSuite {
   test("Should validate when start/end date are the same") {
     val record = mock[NbnRecord]
     val startDateRaw = "03/08/2011"
+    when(record.eventDateRaw).thenReturn(None)
     when(record.startDateRaw).thenReturn(Some(startDateRaw))
     when(record.startDate).thenReturn(startDateRaw.maybeDate("dd/MM/yyyy"))
     when(record.endDateRaw).thenReturn(Some(startDateRaw))
@@ -43,6 +45,7 @@ class Nbnv73ValidatorSuite extends BaseFunSuite {
   test("Should not validate when start / end date are not the same") {
     val record = mock[NbnRecord]
     val startDateRaw = "03/08/2011"
+    when(record.eventDateRaw).thenReturn(None)
     when(record.startDateRaw).thenReturn(Some(startDateRaw))
     when(record.startDate).thenReturn(startDateRaw.maybeDate("dd/MM/yyyy"))
 
@@ -61,6 +64,7 @@ class Nbnv73ValidatorSuite extends BaseFunSuite {
   test("Should not validate a start date that is too vague") {
     val record = mock[NbnRecord]
     val startDateRaw = "08 2011"
+    when(record.eventDateRaw).thenReturn(None)
     when(record.startDateRaw).thenReturn(Some(startDateRaw))
     when(record.startDate).thenReturn(startDateRaw.maybeDate("MM yyyy"))
     when(record.endDate).thenReturn(None)
@@ -76,6 +80,7 @@ class Nbnv73ValidatorSuite extends BaseFunSuite {
   test("Should not validate a start date year that is too vague") {
     val record = mock[NbnRecord]
     val startDateRaw = "21/08/11"
+    when(record.eventDateRaw).thenReturn(None)
     when(record.startDateRaw).thenReturn(Some(startDateRaw))
     when(record.startDate).thenReturn(startDateRaw.maybeDate("dd/MM/yy"))
 

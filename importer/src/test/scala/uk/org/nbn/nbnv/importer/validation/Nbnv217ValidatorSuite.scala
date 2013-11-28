@@ -17,6 +17,7 @@ class Nbnv217ValidatorSuite extends BaseFunSuite with BeforeAndAfter {
   }
 
   test("should validate a start date that specifies a day") {
+    when(record.eventDateRaw).thenReturn(None)
     when(record.endDate).thenReturn(None)
     when(record.startDateRaw).thenReturn(Some("12/11/2012"))
     when(record.startDate).thenReturn("12/11/2012".maybeDate("dd/MM/yyyy"))
@@ -28,6 +29,7 @@ class Nbnv217ValidatorSuite extends BaseFunSuite with BeforeAndAfter {
   }
 
   test("should not validate if no start date is supplied") {
+    when(record.eventDateRaw).thenReturn(None)
     when(record.endDate).thenReturn(None)
     when(record.startDate).thenReturn(None)
     when(record.startDateRaw).thenReturn(None)
@@ -39,6 +41,7 @@ class Nbnv217ValidatorSuite extends BaseFunSuite with BeforeAndAfter {
   }
 
   test("should not validate if an end date is supplied") {
+    when(record.eventDateRaw).thenReturn(None)
     when(record.endDate).thenReturn("12/11/2012".maybeDate("dd/MM/yyyy"))
     when(record.startDate).thenReturn("12/11/2012".maybeDate("dd/MM/yyyy"))
     when(record.startDateRaw).thenReturn(Some("12/11/2012"))
@@ -50,6 +53,7 @@ class Nbnv217ValidatorSuite extends BaseFunSuite with BeforeAndAfter {
   }
 
   test("should not validate if too vague a date is given") {
+    when(record.eventDateRaw).thenReturn(None)
     when(record.endDate).thenReturn(None)
     when(record.startDate).thenReturn("11 2012".maybeDate("MM yyyy"))
     when(record.startDateRaw).thenReturn(Some("11 2012"))
