@@ -155,17 +155,22 @@ public class StoredProcedureLibrary {
     public void setDatasetPublic(String datasetKey) throws Exception {
         StoredProcedureCall call = new StoredProcedureCall();
         call.setProcedureName("import_SetDatasetPublic");
+        call.addNamedArgument("datasetKey", "datasetKey");
         call.addNamedOutputArgument(
-                "Result",      // procedure parameter name
-                "Result",      // out argument field name
+                "result",      // procedure parameter name
+                "result",      // out argument field name
                 Integer.class  // Java type corresponding to type returned by procedure
         );
 
         ValueReadQuery query = new ValueReadQuery();
         query.setCall(call);
+        query.addArgument("datasetKey");
+
+        List arguments = new ArrayList();
+        arguments.add(datasetKey);
 
         Session session = getSession();
-        Integer result = (Integer) session.executeQuery(query);
+        Integer result = (Integer) session.executeQuery(query, arguments);
 
         //result will begin with "Error" if the sproc has failed
         if (result > 0 ) throw new Exception("The import_SetDatasetPublic sproc failed");
