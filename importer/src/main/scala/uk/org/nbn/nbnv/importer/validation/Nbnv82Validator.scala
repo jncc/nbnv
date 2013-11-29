@@ -4,6 +4,7 @@ import uk.org.nbn.nbnv.importer.records.NbnRecord
 import uk.org.nbn.nbnv.importer.fidelity.{ResultLevel, Result}
 
 class Nbnv82Validator {
+  val code = "NBNV-82"
 
   def validate(record: NbnRecord) = {
     var count = 0
@@ -23,21 +24,21 @@ class Nbnv82Validator {
     if (count > 1) {
       new Result {
         def level = ResultLevel.ERROR
-        def message = "NBNV-82: More than one definition of a spatial reference has been supplied for record with key %s".format(record.key)
+        def message = "%s: More than one definition of a spatial reference has been supplied".format(code)
         def reference = record.key
       }
     }
     else if (count < 1) {
       new Result {
         def level = ResultLevel.ERROR
-        def message = "NBNV-82: At least one definition of a spatial reference must be supplied for record with key %s".format(record.key)
+        def message = "%s: At least one definition of a spatial reference must be supplied".format(code)
         def reference = record.key
       }
     }
     else {
       new Result {
         def level = ResultLevel.DEBUG
-        def message = "NBNV-82: Validated: Only one spatial reference definistion has been supplied"
+        def message = "%s: Validated: Only one spatial reference definistion has been supplied".format(code)
         def reference = record.key
       }
     }

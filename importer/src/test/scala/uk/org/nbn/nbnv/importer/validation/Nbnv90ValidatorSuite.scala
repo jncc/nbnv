@@ -25,12 +25,11 @@ class Nbnv90ValidatorSuite extends BaseFunSuite {
 
     val v = new Nbnv90Validator(factory)
     val results = v.validate(record)
-    val result = results.find(r => r.level == ResultLevel.ERROR)
 
-    result should be (None)
+    results.find(r => r.level == ResultLevel.ERROR) should be ('empty)
   }
 
-  test("should validate if no target precision is requested") {
+  test("should not validate if a precision is not specified") {
     val gsi = mock[GridSquareInfo]
     when(gsi.gridReferencePrecision).thenReturn(100)
 
@@ -43,9 +42,8 @@ class Nbnv90ValidatorSuite extends BaseFunSuite {
 
     val v = new Nbnv90Validator(factory)
     val results = v.validate(record)
-    val result = results.find(r => r.level == ResultLevel.ERROR)
 
-    result should be (None)
+    results.find(r => r.level == ResultLevel.ERROR) should not be ('empty)
   }
 
   test("should not validate 1000m grid ref increased to 100m") {
@@ -61,9 +59,7 @@ class Nbnv90ValidatorSuite extends BaseFunSuite {
 
     val v = new Nbnv90Validator(factory)
     val results = v.validate(record)
-    val result = results.find(r => r.level == ResultLevel.ERROR)
-
-    result should not be (None)
+    results.find(r => r.level == ResultLevel.ERROR) should not be ('empty)
   }
 
   test("should warn but not error if target precision is less then 100 and grid ref precision is 100") {
@@ -80,11 +76,9 @@ class Nbnv90ValidatorSuite extends BaseFunSuite {
     val v = new Nbnv90Validator(factory)
     val results = v.validate(record)
 
-    val error = results.find(r => r.level == ResultLevel.ERROR)
-    error should be (None)
+    results.find(r => r.level == ResultLevel.ERROR) should be ('empty)
 
-    val warn = results.find(r => r.level == ResultLevel.WARN)
-    warn should not be (None)
+    results.find(r => r.level == ResultLevel.WARN) should not be ('empty)
   }
 
   test("should warn and error if target precision is less then 100 and grid ref precision is greater than 100") {
@@ -101,14 +95,12 @@ class Nbnv90ValidatorSuite extends BaseFunSuite {
     val v = new Nbnv90Validator(factory)
     val results = v.validate(record)
 
-    val error = results.find(r => r.level == ResultLevel.ERROR)
-    error should not be (None)
+    results.find(r => r.level == ResultLevel.ERROR) should not be ('empty)
 
-    val warn = results.find(r => r.level == ResultLevel.WARN)
-    warn should not be (None)
+    results.find(r => r.level == ResultLevel.WARN) should not be ('empty)
   }
 
-  test("should error if target precision is greater then 10,000m") {
+  test("should error if precision is lower then 10,000m") {
     val factory = mock[GridSquareInfoFactory]
     val record = mock[NbnRecord]
     when(record.gridReferenceRaw).thenReturn(Some(knownGridRef_1000m))
@@ -117,8 +109,6 @@ class Nbnv90ValidatorSuite extends BaseFunSuite {
     val v = new Nbnv90Validator(factory)
     val results = v.validate(record)
 
-    val error = results.find(r => r.level == ResultLevel.ERROR)
-    error should not be (None)
-
+    results.find(r => r.level == ResultLevel.ERROR) should not be ('empty)
   }
 }

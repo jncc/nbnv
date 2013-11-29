@@ -6,6 +6,8 @@ import uk.org.nbn.nbnv.importer.spatial.GridSquareInfoFactory
 import collection.mutable.ListBuffer
 
 class Nbnv90Validator (factory: GridSquareInfoFactory) {
+  val code = "NBNV-90"
+
   def validate(record: NbnRecord) = {
 
     val results = new ListBuffer[Result]
@@ -13,9 +15,9 @@ class Nbnv90Validator (factory: GridSquareInfoFactory) {
     if (record.gridReferencePrecision.isEmpty) {
       val r2 =
         new Result {
-          def level = ResultLevel.DEBUG
+          def level = ResultLevel.ERROR
           def reference = record.key
-          def message = "NBNV-90: Validated: No target precision specified"
+          def message = "%s: The grid reference precision must be specified".format(code)
         }
       results.append(r2)
     }
@@ -26,7 +28,7 @@ class Nbnv90Validator (factory: GridSquareInfoFactory) {
           new Result {
             def level = ResultLevel.WARN
             def reference = record.key
-            def message = "NBNV-90: The target precision is less than 100m and will be rounded up to the maximum precision of 100m"
+            def message = "%s: The precision is less than 100m and will be rounded up to the maximum precision of 100m".format(code)
           }
 
         results.append(r1)
@@ -37,7 +39,7 @@ class Nbnv90Validator (factory: GridSquareInfoFactory) {
           new Result {
             def level = ResultLevel.ERROR
             def reference = record.key
-            def message = "NBNV-90: Target precision is lower than minimum allowed precision of 10,000m"
+            def message = "%s: The precision is lower than minimum allowed precision of 10,000m".format(code)
            }
         results.append(r3)
       }
@@ -51,7 +53,7 @@ class Nbnv90Validator (factory: GridSquareInfoFactory) {
             new Result {
               def level = ResultLevel.DEBUG
               def reference = record.key
-              def message = "NBNV-90: Validated: Precision is less than or equal to the grid referance precision"
+              def message = "%s: Validated: Precision is less than or equal to the grid referance precision".format(code)
             }
           results.append(r4)
         }
@@ -60,7 +62,7 @@ class Nbnv90Validator (factory: GridSquareInfoFactory) {
             new Result {
               def level = ResultLevel.ERROR
               def reference = record.key
-              def message = "NBNV-90: The precision '%s' is higher then the precision of the grid referance '%s'".format(record.gridReferencePrecision, record.gridReferenceRaw)
+              def message = "%s: The precision '%s' is higher then the precision of the grid referance '%s'".format(code, record.gridReferencePrecision, record.gridReferenceRaw)
             }
           results.append(r5)
         }
