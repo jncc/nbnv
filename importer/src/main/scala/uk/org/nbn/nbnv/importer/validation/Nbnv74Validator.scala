@@ -35,7 +35,7 @@ class Nbnv74Validator extends DateFormatValidator {
         val r2 = new Result {
           def level: ResultLevel.ResultLevel = ResultLevel.ERROR
           def reference: String = record.key
-          def message: String = "%s: The start date is not the start of the month".format(code)
+          def message: String = "%s: The start date is not the start of the month of %s".format(code, month.get(Calendar.MONTH).toString)
         }
 
         results.append(r2)
@@ -49,7 +49,7 @@ class Nbnv74Validator extends DateFormatValidator {
           val r3 = new Result {
             def level: ResultLevel.ResultLevel = ResultLevel.ERROR
             def reference: String = record.key
-            def message: String = "%s: The end date is specified but it is not the end of the month".format(code)
+            def message: String = "%s: The end date is specified but it is not the end of the month of %s".format(code, month.get(Calendar.MONTH).toString)
           }
 
           results.append(r3)
