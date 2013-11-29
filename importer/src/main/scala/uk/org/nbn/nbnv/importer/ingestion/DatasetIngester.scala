@@ -40,8 +40,6 @@ class DatasetIngester @Inject()(log: Logger,
   def setDatasetValues(d: ImportDataset, m: Metadata) = {
 
     val providerOrganisation = db.repo.getOrganisation(m.datasetProviderName)
-//    val datasetUpdateFrequency = db.em.getReference(classOf[DatasetUpdateFrequency], "012")
-//    val datasetType = db.em.getReference(classOf[DatasetType], 'T')
 
     // we have to record when certain fields change
     var metadataChanged = false
@@ -61,17 +59,16 @@ class DatasetIngester @Inject()(log: Logger,
     setMetadata(m.useConstraints, d.getUseConstraints, d.setUseConstraints)
     setMetadata(m.additionalInformation, d.getAdditionalInformation, d.setAdditionalInformation)
     setMetadata(m.temporalCoverage, d.getTemporalCoverage, d.setTemporalCoverage)
-    setMetadata(m.administratorForename, d.getAdministratorForename, d.setAdministratorForename)
-    setMetadata(m.administratorSurname, d.getAdministratorSurname, d.setAdministratorSurname)
-    setMetadata(m.administratorEmail, d.getAdministratorEmail, d.setAdministratorEmail)
+
+    d.setAdministratorEmail(m.administratorEmail)
+    d.setAdministratorSurname(m.administratorSurname)
+    d.setAdministratorForename(m.administratorForename)
 
     d.setProviderOrganisationKey(providerOrganisation.getId) // not metadata
-//    d.setOrganisation(providerOrganisation)
     d.setDatasetTypeKey('T') // never changes, always 'T'
-//    d.setDatasetType(datasetType)
     d.setDateUploaded(Clock.nowUtc) // eventDate of this import
     d.setUpdateFrequencyCode("012") // never changes, always '012'
-//    d.setDatasetUpdateFrequency(datasetUpdateFrequency) // never changes, always '012'
+
 
     if (metadataChanged)
       d.setMetadataLastEdited(Clock.nowUtc)
