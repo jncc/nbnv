@@ -14,7 +14,7 @@
             <td>${attribute.label}</td>
             <td>${attribute.description?has_content?string(attribute.description,"Description not available")}</td>
             <#if isAdmin>
-            <td style="width:100px; text-alight:right;"><a href="/Datasets/${datasetId}/Attributes/${attribute.attributeID}">Modify Attribute</a></td>
+            <td style="width:100px; text-alight:right;"><a href="/Datasets/${datasetId}/Attributes/${attribute.attributeID?c}">Modify Attribute</a></td>
             </#if>
         </tr>
         
