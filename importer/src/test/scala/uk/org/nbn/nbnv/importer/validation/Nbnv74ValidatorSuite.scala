@@ -50,56 +50,50 @@ class Nbnv74ValidatorSuite extends BaseFunSuite with BeforeAndAfter {
     val r = validator.validate(record)
     r.find(r => r.level == ResultLevel.ERROR) should be ('empty)
   }
-//
-//  test("Should validate a valid OO type date set") {
-//    when(record.dateType).thenReturn("OO")
-//    when(record.startDate).thenReturn(new SimpleDateFormat("dd/MM/yyyy").parse("01/10/2012"))
-//    when(record.endDate).thenReturn(new SimpleDateFormat("dd/MM/yyyy").parse("30/11/2012"))
-//
-//    val r = validator.validate(record)
-//    r.level should be (ResultLevel.DEBUG)
-//  }
-//
-//  test("Should not validate an invalid O type date set") {
-//    when(record.dateType).thenReturn("O")
-//    when(record.startDate).thenReturn(new SimpleDateFormat("dd/MM/yyyy").parse("01/10/2012"))
-//    when(record.endDate).thenReturn(new SimpleDateFormat("dd/MM/yyyy").parse("30/11/2012"))
-//
-//    var r = validator.validate(record)
-//    r.level should be (ResultLevel.ERROR)
-//
-//    when(record.startDate).thenReturn(new SimpleDateFormat("dd/MM/yyyy").parse("01/10/2012"))
-//    when(record.endDate).thenReturn(new SimpleDateFormat("dd/MM/yyyy").parse("09/10/2012"))
-//
-//    r = validator.validate(record)
-//    r.level should be (ResultLevel.ERROR)
-//
-//    when(record.startDate).thenReturn(new SimpleDateFormat("dd/MM/yyyy").parse("02/10/2012"))
-//    when(record.endDate).thenReturn(new SimpleDateFormat("dd/MM/yyyy").parse("31/10/2012"))
-//
-//    r = validator.validate(record)
-//    r.level should be (ResultLevel.ERROR)
-//  }
-//
-//  test("Should not validate an invalid OO type date set") {
-//    when(record.dateType).thenReturn("OO")
-//    when(record.startDate).thenReturn(new SimpleDateFormat("dd/MM/yyyy").parse("01/10/2012"))
-//    when(record.endDate).thenReturn(new SimpleDateFormat("dd/MM/yyyy").parse("09/10/2012"))
-//
-//    var r = validator.validate(record)
-//    r.level should be (ResultLevel.ERROR)
-//
-//    when(record.startDate).thenReturn(new SimpleDateFormat("dd/MM/yyyy").parse("02/10/2012"))
-//    when(record.endDate).thenReturn(new SimpleDateFormat("dd/MM/yyyy").parse("31/10/2012"))
-//
-//    r = validator.validate(record)
-//    r.level should be (ResultLevel.ERROR)
-//  }
-//
-//  test("Should not validate a non O / OO type date set") {
-//    when(record.dateType).thenReturn("D")
-//
-//    val r = validator.validate(record)
-//    r.level should be (ResultLevel.ERROR)
-//  }
+
+  test("Should not validate a start date that is not the start of the month") {
+    val startDateString = "02/02/2005"
+    val endDateString = "28/02/2005"
+
+    when(record.dateType).thenReturn("O")
+    when(record.eventDateRaw).thenReturn(None)
+    when(record.startDateRaw).thenReturn(Option(startDateString))
+    when(record.startDate).thenReturn(Option( new SimpleDateFormat("dd/MM/yyyy").parse(startDateString)))
+    when(record.endDateRaw).thenReturn(Option(endDateString))
+    when(record.endDate).thenReturn(Option(new SimpleDateFormat("dd/MM/yyyy").parse(endDateString)))
+
+    val r = validator.validate(record)
+    r.find(r => r.level == ResultLevel.ERROR) should not be ('empty)
+  }
+
+  test("should not validate an end date that is not the end of the month") {
+    val startDateString = "01/02/2005"
+    val endDateString = "24/02/2005"
+
+    when(record.dateType).thenReturn("O")
+    when(record.eventDateRaw).thenReturn(None)
+    when(record.startDateRaw).thenReturn(Option(startDateString))
+    when(record.startDate).thenReturn(Option( new SimpleDateFormat("dd/MM/yyyy").parse(startDateString)))
+    when(record.endDateRaw).thenReturn(Option(endDateString))
+    when(record.endDate).thenReturn(Option(new SimpleDateFormat("dd/MM/yyyy").parse(endDateString)))
+
+    val r = validator.validate(record)
+    r.find(r => r.level == ResultLevel.ERROR) should not be ('empty)
+  }
+
+  test("should not validate an end date for a different month") {
+    val startDateString = "01/02/2005"
+    val endDateString = "31/03/2005"
+
+    when(record.dateType).thenReturn("O")
+    when(record.eventDateRaw).thenReturn(None)
+    when(record.startDateRaw).thenReturn(Option(startDateString))
+    when(record.startDate).thenReturn(Option( new SimpleDateFormat("dd/MM/yyyy").parse(startDateString)))
+    when(record.endDateRaw).thenReturn(Option(endDateString))
+    when(record.endDate).thenReturn(Option(new SimpleDateFormat("dd/MM/yyyy").parse(endDateString)))
+
+    val r = validator.validate(record)
+    r.find(r => r.level == ResultLevel.ERROR) should not be ('empty)
+  }
+
 }

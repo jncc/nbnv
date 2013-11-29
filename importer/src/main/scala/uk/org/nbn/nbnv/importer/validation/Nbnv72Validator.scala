@@ -11,11 +11,11 @@ class Nbnv72Validator {
 
     if (record.startDate.isDefined && record.endDate.isDefined) {
 
-      if (record.startDate.get.after(record.endDate.get)) {
+      if (record.startDate.get.compareTo(record.endDate.get) > 0 ) {
         new Result {
           def level: ResultLevel.ResultLevel = ResultLevel.ERROR
           def reference: String = record.key
-          def message: String = "NBNV-72: Start date is before end date"
+          def message: String = "NBNV-72: End date is before start date"
         }
       } else {
         new Result {

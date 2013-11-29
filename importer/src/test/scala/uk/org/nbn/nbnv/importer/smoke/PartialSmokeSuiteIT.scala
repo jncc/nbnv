@@ -67,6 +67,11 @@ class PartialSmokeSuiteIT extends BaseFunSuite with ResourceLoader {
     api.resetDatasetAccess("GA001280")
   }
 
+  ignore("check call to set dateset public"){
+    val f = fixture
+    f.db.repo.setDatasetPublic("GA001268")
+  }
+
 
 
 

@@ -19,7 +19,6 @@ class SurveyIngester @Inject()(db: Database, log: Logger) {
 
       val s = new ImportSurvey()
       s.setProviderKey(key)
-      s.setTitle(key)
       s.setDatasetKey(dataset)
       db.em.persist(s)
     }
