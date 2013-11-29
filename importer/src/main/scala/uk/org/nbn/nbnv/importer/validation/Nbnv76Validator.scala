@@ -29,9 +29,7 @@ class Nbnv76Validator extends DateFormatValidator {
     val r2 = validateDate(record,false,true,validFormats)
     results.appendAll(r2)
 
-    //no errors and is not one of the vague date formats like MM yyyy or yyyy
-    if (results.find(r => r.level == ResultLevel.ERROR).isEmpty
-      && record.endDateRaw.get.matches("""(^\d{2}\s\d{4}$|^\d{4}$)""") == false) {
+    if (record.endDate.isDefined) {
       val endOfYear = Calendar.getInstance()
       endOfYear.setTime(record.endDate.get)
       endOfYear.set(Calendar.DAY_OF_YEAR, endOfYear.getActualMaximum(Calendar.DAY_OF_YEAR))

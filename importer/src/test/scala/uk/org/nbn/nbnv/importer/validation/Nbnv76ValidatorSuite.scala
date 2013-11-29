@@ -16,21 +16,21 @@ class Nbnv76ValidatorSuite extends BaseFunSuite with BeforeAndAfter {
     when(record.key).thenReturn("1")
   }
 
-  test("should validate if the end date supplied is the end of the year") {
-    when(record.startDate).thenReturn(None)
+  test("should record 2 valdiation errors if the start date is defined and the end date is not the end of the year"){
+    when(record.startDate).thenReturn("01/01/1997".maybeDate("dd/MM/yyyy"))
     when(record.endDateRaw).thenReturn(Some("31/12/1997"))
-    when(record.endDate).thenReturn("31/12/1997".maybeDate("dd/MM/yyyy"))
+    when(record.endDate).thenReturn("30/12/1997".maybeDate("dd/MM/yyyy"))
 
     val v = new Nbnv76Validator
     val r = v.validate(record)
 
-    r.find(r => r.level == ResultLevel.ERROR) should be ('empty)
+    r.count(r => r.level == ResultLevel.ERROR) should be (2)
   }
 
-  test("should validate if the end date is just a year") {
+  test("should validate if the end date supplied is the end of the year") {
     when(record.startDate).thenReturn(None)
-    when(record.endDateRaw).thenReturn(Some("1997"))
-    when(record.endDate).thenReturn("1997".maybeDate("yyyy"))
+    when(record.endDateRaw).thenReturn(Some("31/12/1997"))
+    when(record.endDate).thenReturn("31/12/1997".maybeDate("dd/MM/yyyy"))
 
     val v = new Nbnv76Validator
     val r = v.validate(record)

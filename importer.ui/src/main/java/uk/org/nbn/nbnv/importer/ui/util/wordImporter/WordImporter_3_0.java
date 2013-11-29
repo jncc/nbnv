@@ -79,7 +79,7 @@ public class WordImporter_3_0 implements WordImporter {
                     // Store cursor index for next val
                     int cursor = strIt.nextIndex();
 
-                    str = str.replaceAll("^.*" + INPUT_TEXT, "").trim();
+                    str = str.replaceAll("^.*" + INPUT_TEXT, "").replaceAll("âââââ", "").replaceAll("     ", "").trim();
                     // Copy over to handle multi-line inputs
                     field = str;
 

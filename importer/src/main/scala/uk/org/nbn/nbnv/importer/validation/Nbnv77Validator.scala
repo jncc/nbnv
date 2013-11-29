@@ -13,16 +13,7 @@ class Nbnv77Validator {
         new Result {
           def level: ResultLevel.ResultLevel = ResultLevel.ERROR
           def reference: String = record.key
-          def message: String = "A start date should not be specified for date type '%s'".format(record.dateType)
-        })
-    }
-
-    if (record.endDate.isDefined) {
-      results.append(
-        new Result {
-          def level: ResultLevel.ResultLevel = ResultLevel.ERROR
-          def reference: String = record.key
-          def message: String = "An end date should not be specified for date type '%s'".format(record.dateType)
+          def message: String = "NBNV-77: A start date should not be specified for date type '%s'".format(record.dateType)
         })
     }
 
@@ -31,7 +22,7 @@ class Nbnv77Validator {
         new Result {
           def level: ResultLevel.ResultLevel = ResultLevel.DEBUG
           def reference: String = record.key
-          def message: String = "Validated: no date is required for date types '%s'".format(record.dateType)
+          def message: String = "NBNV-77 Validated: no date is required for date types '%s'".format(record.dateType)
         })
     }
 

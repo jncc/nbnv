@@ -6,7 +6,7 @@ import javax.ws.rs.core.{NewCookie, MediaType}
 import scala.collection.JavaConversions._
 import uk.org.nbn.nbnv.importer.Settings
 import com.sun.jersey.api.client.config.DefaultClientConfig
-import com.sun.jersey.api.json.JSONConfiguration
+import com.sun.jersey.api.json._
 
 
 class WebApi() {

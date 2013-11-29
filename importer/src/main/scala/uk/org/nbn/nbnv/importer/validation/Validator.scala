@@ -74,6 +74,11 @@ class Validator @Inject()(log: Logger, db: Database ){
 
       val nbnRecord = new NbnRecord(record)
 
+      //validate RecordKey is provided
+      val v9 = new Nbnv163Validator
+      val r9results = v9.validate(nbnRecord, i)
+      for (result <- r9results) processResult(result)
+
       //validate SurveyKey length
       val v0 = new Nbnv62Validator
       val r0 = v0.validate(nbnRecord)
@@ -118,11 +123,6 @@ class Validator @Inject()(log: Logger, db: Database ){
       val v8 = new Nbnv92Validator
       val r8 = v8.validate(nbnRecord)
       processResult(r8)
-
-      //validate RecordKey is provided
-      val v9 = new Nbnv163Validator
-      val r9 = v9.validate(nbnRecord)
-      processResult(r9)
 
       // Validates a set of dates
       val dv = new DateValidator
