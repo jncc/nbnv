@@ -406,18 +406,18 @@ public class MetadataController {
         
         Metadata metadata = metadataForm.getMetadata();
         
-        metadata.setAccess(metadata.getAccess().replaceAll("âââââ", "").trim());
-        metadata.setDatasetAdminEmail(metadata.getDatasetAdminEmail().replaceAll("âââââ", "").trim());
-        metadata.setDatasetAdminName(metadata.getDatasetAdminName().replaceAll("âââââ", "").trim());
-        metadata.setDatasetAdminPhone(metadata.getDatasetAdminPhone().replaceAll("âââââ", "").trim());
-        metadata.setDescription(metadata.getDescription().replaceAll("âââââ", "").trim());
-        metadata.setGeographic(metadata.getGeographic().replaceAll("âââââ", "").trim());
-        metadata.setInfo(metadata.getInfo().replaceAll("âââââ", "").trim());
-        metadata.setMethods(metadata.getMethods().replaceAll("âââââ", "").trim());
-        metadata.setPurpose(metadata.getPurpose().replaceAll("âââââ", "").trim());
-        metadata.setQuality(metadata.getQuality().replaceAll("âââââ", "").trim());
-        metadata.setTemporal(metadata.getTemporal().replaceAll("âââââ", "").trim());
-        metadata.setUse(metadata.getUse().replaceAll("âââââ", "").trim());
+        metadata.setAccess(metadata.getAccess().replaceAll("âââââ", "").replaceAll("     ", "").trim());
+        metadata.setDatasetAdminEmail(metadata.getDatasetAdminEmail().replaceAll("âââââ", "").replaceAll("     ", "").trim());
+        metadata.setDatasetAdminName(metadata.getDatasetAdminName().replaceAll("âââââ", "").replaceAll("     ", "").trim());
+        metadata.setDatasetAdminPhone(metadata.getDatasetAdminPhone().replaceAll("âââââ", "").replaceAll("     ", "").trim());
+        metadata.setDescription(metadata.getDescription().replaceAll("âââââ", "").replaceAll("     ", "").trim());
+        metadata.setGeographic(metadata.getGeographic().replaceAll("âââââ", "").replaceAll("     ", "").trim());
+        metadata.setInfo(metadata.getInfo().replaceAll("âââââ", "").replaceAll("     ", "").trim());
+        metadata.setMethods(metadata.getMethods().replaceAll("âââââ", "").replaceAll("     ", "").trim());
+        metadata.setPurpose(metadata.getPurpose().replaceAll("âââââ", "").replaceAll("     ", "").trim());
+        metadata.setQuality(metadata.getQuality().replaceAll("âââââ", "").replaceAll("     ", "").trim());
+        metadata.setTemporal(metadata.getTemporal().replaceAll("âââââ", "").replaceAll("     ", "").trim());
+        metadata.setUse(metadata.getUse().replaceAll("âââââ", "").replaceAll("     ", "").trim());
         
         return metadataForm;
     }
