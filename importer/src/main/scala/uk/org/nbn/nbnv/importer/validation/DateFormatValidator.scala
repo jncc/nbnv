@@ -33,7 +33,7 @@ abstract class DateFormatValidator {
       val r2 = new Result {
         def level: ResultLevel.ResultLevel = ResultLevel.ERROR
         def reference: String = record.key
-        def message: String = "%s: The start date is not specific enough for date type '%s'".format(code, record.dateType)
+        def message: String = "%s: The start date format is not valid for date type '%s'".format(code, record.dateType)
       }
 
       results.append(r2)
@@ -52,7 +52,7 @@ abstract class DateFormatValidator {
       val r4 = new Result {
         def level: ResultLevel.ResultLevel = ResultLevel.ERROR
         def reference: String = record.key
-        def message: String = "%s: The end date is not specific enough for date type '%s'".format(code, record.dateType)
+        def message: String = "%s: The end date format is not valid for date type '%s'".format(code, record.dateType)
       }
 
       results.append(r4)
