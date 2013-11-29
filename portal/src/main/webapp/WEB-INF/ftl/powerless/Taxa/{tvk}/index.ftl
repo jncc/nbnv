@@ -8,7 +8,6 @@
 <#assign children=json.readURL("${api}/taxa/${tvk}/children")>
 <#assign datasets=json.readURL("${api}/taxa/${tvk}/datasets")>
 <#assign weblinks=json.readURL("${api}/taxa/${tvk}/weblinks")>
-<#--<#assign celink=json.readURL("http://www.conservationevidence.com/binomial/search?name=${taxon.name?url('ISO-8859-1')}")> -->
 <#assign output=json.readURL("${api}/taxonOutputGroups/${taxon.taxonOutputGroupKey}")>
 
 <@template.master title="NBN Gateway - Taxon"
