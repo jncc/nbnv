@@ -51,7 +51,7 @@ public class UserCookieLoginTest {
             .accept(MediaType.APPLICATION_JSON)
             .get(User.class);
        
-        assertEquals("The username was invalid", user.getUsername(), username);
+        assertEquals("The username was invalid", username, user.getUsername());
     }
     
     @Test

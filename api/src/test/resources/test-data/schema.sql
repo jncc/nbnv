@@ -209,3 +209,30 @@ CREATE TABLE DatasetContributingOrganisation (
     organisationID int NOT NULL,
     PRIMARY KEY (datasetKey, organisationID)
 );
+
+CREATE TABLE "User" (
+    id int NOT NULL,
+    username varchar(40) NOT NULL,
+    password_sha1 varbinary(8000) NOT NULL,
+    password_md5_sha1 varbinary(8000) NOT NULL,
+    userTypeID int NOT NULL,
+    forename varchar(25) NOT NULL,
+    surname varchar(25) NOT NULL,
+    phone varchar(15) NULL,
+    email varchar(70) NOT NULL,
+    active bit NOT NULL,
+    activationKey char(12) NOT NULL,
+    invalidEmail bit NOT NULL,
+    allowEmailAlerts bit NOT NULL,
+    subscribedToAdminMails bit NOT NULL,
+    subscribedToNBNMarketting bit NOT NULL,
+    bannedFromValidation bit NOT NULL,
+    englishNameOrder bit NOT NULL,
+    registrationDate datetime NULL,
+    lastLoggedIn datetime NULL,
+    PRIMARY KEY (id)
+);
+
+CREATE FUNCTION GETDATE()
+    RETURNS TIMESTAMP
+    RETURN CURRENT_DATE

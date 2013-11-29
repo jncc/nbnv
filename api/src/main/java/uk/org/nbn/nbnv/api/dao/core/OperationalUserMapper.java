@@ -76,4 +76,7 @@ public interface OperationalUserMapper {
 
     @Select("SELECT * FROM (SELECT * from \"User\" WHERE forename LIKE #{term} OR surname LIKE #{term} OR email LIKE #{term} OR (forename + ' ' + surname) LIKE #{term}) AS temp WHERE NOT EXISTS (SELECT 1 FROM DatasetAdministrator WHERE userID = id AND datasetKey = #{datasetKey}) ORDER BY forename, surname")
     public List<User> searchForUserExcludeDatasetAdmins(@Param("term") String term, @Param("datasetKey") String datasetKey);
+    
+    @Update("UPDATE \"User\" SET lastLoggedIn = GETDATE() WHERE username = #{username}")
+    public void userLoggedIn(@Param("username") String username);
 }
