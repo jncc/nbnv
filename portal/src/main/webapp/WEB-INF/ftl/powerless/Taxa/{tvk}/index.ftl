@@ -12,7 +12,12 @@
 <#assign output=json.readURL("${api}/taxonOutputGroups/${taxon.taxonOutputGroupKey}")>
 
 <@template.master title="NBN Gateway - Taxon"
-    javascripts=["/js/jquery-ui-1.8.23.custom.min.js","/js/jquery.dataTables.min.js","/js/taxon-page-utils.js","/js/report_utils.js"]
+    javascripts=[
+        "/js/jquery-ui-1.8.23.custom.min.js",
+        "/js/jquery.dataTables.min.js",
+        "/js/taxon-page-utils.js",
+        "/js/report_utils.js",
+        "/js/taxon/conservationEvidence.js"]
     csss=["/css/smoothness/jquery-ui-1.8.23.custom.css","/css/taxon-page.css"]>
     <h1>${taxon_utils.getLongName(taxon)}</h1>
     <div>
@@ -23,7 +28,7 @@
         <#if taxon.taxonVersionKey == ptaxon.taxonVersionKey>
             <@taxonPageSynonyms syn=synonyms/>
             <@taxonPageDesignations des=designations ades=arcdesignations/>
-            <#--<@taxonPageLinks links=weblinks celink=celink name=taxon.name/>-->
+            <@taxonPageLinks links=weblinks name=taxon.name/>
         </#if>
         <@taxonPageNBNLinks taxon=ptaxon/>
         <#if taxon.taxonVersionKey == ptaxon.taxonVersionKey>
@@ -191,27 +196,21 @@
     </div>
 </#macro>
 
-<#macro taxonPageLinks links celink name>
-    <div class="tabbed nbn-taxon-page-taxonomy-container">
+<#macro taxonPageLinks links name>
+    <div id="externalLinksDiv" class="tabbed nbn-taxon-page-taxonomy-container" data-taxonprint="${taxon.name}" data-taxon="${taxon.name?url('ISO-8859-1')}">
         <h3>External Links</h3>
-        <#if links?has_content || celink?size != 0>
-            <table>
-                <#if links?has_content>
+        <table id="externalLinksTable">
+            <#if links?has_content>
                 <#list links as link>
                     <tr>
                         <td><a href="<#if !link.link?starts_with("http")>http://</#if>${link.link}" target="_blank">${link.description}</a></td>
                     </tr>
                 </#list>
-                </#if>
-                <#if celink?size != 0>
-                    <tr>
-                        <td><a href="${celink.results_url}" target="_blank">ConservationEvidence.com has ${celink.total_results} articles on ${name}</a></td>
-                    </tr>
-                </#if>
-            </table>
-        <#else>
-            None
-        </#if>
+            </#if>
+        </table>
+        <div id="externalLoading" class="nbn-taxon-page-taxonomy-container" style="padding-bottom:5px;">
+            <p><span style="padding-right:5px;"><img src="/img/ajax-loader.gif" /></span>Loading Conservation Evidence Link</p>
+        </div>
     </div>
 </#macro>
 
