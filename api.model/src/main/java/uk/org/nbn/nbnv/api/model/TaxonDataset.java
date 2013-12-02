@@ -1,12 +1,10 @@
 package uk.org.nbn.nbnv.api.model;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class TaxonDataset extends Dataset{
     private String datasetKey, maxResolution, publicResolution;
-    private boolean allowRecordValidation, publicAttribute;
+    private boolean allowRecordValidation, publicAttribute, publicRecorder;
     private int recordCount, speciesCount;
     private List<TaxonWithDatasetStats> taxa;
     private List<YearStats> recordsPerYear;
@@ -123,5 +121,13 @@ public class TaxonDataset extends Dataset{
 
     public void setPublicAttribute(boolean publicAttribute) {
         this.publicAttribute = publicAttribute;
+    }
+
+    public boolean isPublicRecorder() {
+        return publicRecorder;
+    }
+
+    public void setPublicRecorder(boolean publicRecorder) {
+        this.publicRecorder = publicRecorder;
     }
 }
