@@ -245,8 +245,16 @@
             <#else>
                 records available at ${dataset.publicResolution}
             </#if>
-            <#if dataset.publicAttribute>
-                with attributes
+            <#if dataset.publicRecorder>
+                <#if dataset.publicAttribute>
+                    with recorder names and attributes
+                <#else>
+                    with recorder names 
+                </#if>
+            <#else>
+                <#if dataset.publicAttribute>
+                    with attributes
+                </#if>
             </#if>
         <#else>
             all polygons
