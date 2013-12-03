@@ -85,7 +85,7 @@ class NbnRecord(record: StarRecord) {
 
         var date : Option[Date] = None
 
-        List("dd/MM/yyyy", "dd-MM-yyyy", "yyyy/MM/dd", "yyyy-MM-dd", "dd MMM yyyy")
+        List("dd/MM/yyyy", "dd-MM-yyyy", "yyyy/MM/dd", "yyyy-MM-dd", "dd MMM yyyy","dd-MMM-yyyy","dd/MMM/yyyy")
           .toStream
           .takeWhile(_ => date == None)
           .foreach(df => date = ds.maybeDate(df))
