@@ -419,7 +419,7 @@ public class EasyMapController {
 
     private String getFeatureParam(Feature vcFeature) {
         String param = "";
-        if (vcFeature != null) param =  "&feature=" + vcFeature.getIdentifier();
+        if (vcFeature != null) param = "&feature=" + vcFeature.getIdentifier();
         return param;
     }
 
