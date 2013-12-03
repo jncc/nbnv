@@ -5,10 +5,17 @@ import uk.org.nbn.nbnv.importer.records.NbnRecord
 import org.mockito.Mockito._
 import uk.org.nbn.nbnv.importer.utility.StringParsing._
 import uk.org.nbn.nbnv.importer.fidelity.ResultLevel
+import org.scalatest.BeforeAndAfter
 
-class Nbnv196ValidatorSuite extends BaseFunSuite {
-  val record = mock[NbnRecord]
-  val v = new Nbnv196Validator
+class Nbnv196ValidatorSuite extends BaseFunSuite with BeforeAndAfter {
+  var record : NbnRecord = _
+  var v : Nbnv196Validator = _
+
+  before {
+    record = mock[NbnRecord]
+    v = new Nbnv196Validator
+  }
+
 
   test("should validate a start date that is the start of the month and an end date that is the end of the month") {
     when(record.eventDateRaw).thenReturn(None)
