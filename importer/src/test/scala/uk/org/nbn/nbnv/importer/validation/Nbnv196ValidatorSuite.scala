@@ -78,17 +78,29 @@ class Nbnv196ValidatorSuite extends BaseFunSuite {
     errors.count(x => true) should be (1)
   }
 
-  test("should not validate an end date that is in a different year from the start date") {
+  test("should not validate an end date that is in the same month and year as the start date") {
     when(record.eventDateRaw).thenReturn(None)
     when(record.startDateRaw).thenReturn(Some("01/02/2012"))
     when(record.startDate).thenReturn("01/02/2012".maybeDate("dd/MM/yyyy"))
-    when(record.endDateRaw).thenReturn(Some("30/11/2013"))
-    when(record.endDate).thenReturn("30/11/2013".maybeDate("dd/MM/yyyy"))
+    when(record.endDateRaw).thenReturn(Some("29/02/2012"))
+    when(record.endDate).thenReturn("29/02/2012".maybeDate("dd/MM/yyyy"))
 
     var results = v.validate(record)
 
     val errors = results.find(r => r.level == ResultLevel.ERROR)
     errors  should not be ('empty)
     errors.count(x => true) should be (1)
+  }
+
+  test("should validate an end date that is in the same month and a different year as the start date") {
+    when(record.eventDateRaw).thenReturn(None)
+    when(record.startDateRaw).thenReturn(Some("01/02/2012"))
+    when(record.startDate).thenReturn("01/02/2012".maybeDate("dd/MM/yyyy"))
+    when(record.endDateRaw).thenReturn(Some("28/02/2013"))
+    when(record.endDate).thenReturn("28/02/2013".maybeDate("dd/MM/yyyy"))
+
+    var results = v.validate(record)
+
+    results.find(r => r.level == ResultLevel.ERROR) should be ('empty)
   }
 }

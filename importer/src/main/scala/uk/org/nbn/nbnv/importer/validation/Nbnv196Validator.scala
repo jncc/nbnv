@@ -48,11 +48,13 @@ class Nbnv196Validator extends DateFormatValidator {
         results.append(r3)
       }
 
-      if (startMonth.get(Calendar.YEAR) != endMonth.get(Calendar.YEAR)) {
+      startMonth.set(Calendar.DAY_OF_MONTH, startMonth.getActualMaximum(Calendar.DAY_OF_MONTH))
+
+      if (record.endDate.get.compareTo(startMonth.getTime) == 0) {
         val r4 = new Result {
           def level: ResultLevel.ResultLevel = ResultLevel.ERROR
           def reference: String = record.key
-          def message: String = "%s: The end date is not in the same year as the start date".format(code)
+          def message: String = "%s: The start and end date are from the same month".format(code)
         }
         results.append(r4)
       }
