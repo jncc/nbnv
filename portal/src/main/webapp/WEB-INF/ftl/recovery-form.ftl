@@ -1,12 +1,19 @@
 <#assign form=JspTaglibs["http://www.springframework.org/tags/form"] />
 
-<@template.master title="NBN Gateway - Recover your details">
+<@template.master title="NBN Gateway - Recover your details"
+    csss=["/css/errorClass.css"]>
     <@markdown>
 #Can't Access your account?
 
 If you can't access your account then please fill in the form below to resolve
 the issue.
     </@markdown>
+
+    <#if recoveryRequest.errorOutput?? && recoveryRequest.errorOutput?has_content>
+        <div class="errors">
+            <p>${recoveryRequest.errorOutput}</p>
+        </div>
+    </#if>
 
     <@form.form method="POST" id="recovery-form" commandName="recoveryRequest" action="/User/Recovery">
         <@form.errors path="*" cssClass="message error" element="div" />
