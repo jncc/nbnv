@@ -33,6 +33,7 @@ import uk.org.nbn.nbnv.api.model.TaxonDatasetWithQueryStats;
 public class EasyMapController {
     @Autowired WebResource resource;
     private List<String> errors;
+    private String viceCountyDataset = "GA000344";
     
     public EasyMapController() {
         errors = new ArrayList<String>();
@@ -78,22 +79,42 @@ public class EasyMapController {
             model.put("errors", errors);
             return new ModelAndView("easyMap", model);
         }
-
+        
         model.put("tvk", tvk);
+       
         
         //create wms query string
         String wmsParameters = "abundance=presence&FORMAT=image%2Fpng&TRANSPARENT=TRUE&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&STYLES=&SRS=EPSG%3A27700";
         
+        if (!(datasets == null || datasets.isEmpty())) wmsParameters = wmsParameters + "&datasets=" + datasets;
+
         wmsParameters = wmsParameters + getMapSizeParam(mapWidth, mapHeight);
         
-        boolean showBand1 = showBand(band1StartDate, band1EndDate);
-        boolean showBand2 = showBand(band2StartDate, band2EndDate);
+        boolean showBand1 = shouldShowBand(band1StartDate, band1EndDate);
+        boolean showBand2 = shouldShowBand(band2StartDate, band2EndDate);
         boolean showFeatureLayer = (viceCountyId != null &&  viceCountyId > 0);
         
-        wmsParameters = wmsParameters + getMapLayersParam(showFeatureLayer, showBand1, showBand2, mapBackground, gridResolution);
+        wmsParameters = wmsParameters + getMapLayersParam(showFeatureLayer, showBand1, showBand2, mapBackground, gridResolution, gridOverlay);
        
         Feature vcFeature = null;
         if (showFeatureLayer) vcFeature = getViceCountyFeature(viceCountyId);
+        
+        //check if we have any matching datasets        
+        Integer minDate = getMinDate(band0StartDate, band1StartDate, band2StartDate);
+        //set mindate to 1AD if not provided
+        minDate = (minDate == 0 ? 1 : minDate);
+        
+        Integer maxDate = getMaxDate(band0EndDate, band1EndDate, band2EndDate);        
+       //set maxDate to current year if not provided
+        maxDate = (maxDate == 0 ? Calendar.getInstance().get(Calendar.YEAR) : maxDate);
+        
+        String featureIdentifier = vcFeature != null ? vcFeature.getIdentifier() : null;
+        TaxonDatasetWithQueryStats[] TaxonDatasetList = getDatasets(minDate, maxDate, tvk, featureIdentifier, datasets);
+        if (TaxonDatasetList == null || TaxonDatasetList.length == 0 ){
+            errors.add("No data returned for the criteria you have specified");
+            model.put("errors", errors);
+            return new ModelAndView("easyMap", model);
+        }
         
         wmsParameters = wmsParameters + getBoundingBoxParam(vcFeature, zoomLocation);
         
@@ -104,7 +125,7 @@ public class EasyMapController {
         
         wmsParameters = wmsParameters + getBandingParameters(
                 (band0StartDate != null && band0StartDate > 0) ? band0StartDate : 1,
-                (band0EndDate != null && band0EndDate > 0) ? band0StartDate : Calendar.getInstance().get(Calendar.YEAR),
+                (band0EndDate != null && band0EndDate > 0) ? band0EndDate : Calendar.getInstance().get(Calendar.YEAR),
                 (band0Border != null && !band0Border.isEmpty()) ? band0Border : defaultBorderColour,
                 (band0Fill != null && !band0Fill.isEmpty()) ? band0Fill : band0DefaultFill
         );
@@ -112,7 +133,7 @@ public class EasyMapController {
         if (showBand1) {
             wmsParameters = wmsParameters + getBandingParameters(
                 (band1StartDate != null && band1StartDate > 0) ? band1StartDate : 1,
-                (band1EndDate != null && band1EndDate > 0) ? band1StartDate : Calendar.getInstance().get(Calendar.YEAR),
+                (band1EndDate != null && band1EndDate > 0) ? band1EndDate : Calendar.getInstance().get(Calendar.YEAR),
                 (band1Border != null && !band1Border.isEmpty()) ? band1Border : defaultBorderColour,
                 (band1Fill != null && !band1Fill.isEmpty()) ? band1Fill : band1DefaultFill
             );
@@ -121,12 +142,12 @@ public class EasyMapController {
         if (showBand2) {
             wmsParameters = wmsParameters + getBandingParameters(
                 (band2StartDate != null && band2StartDate > 0) ? band2StartDate : 1,
-                (band2EndDate != null && band2EndDate > 0) ? band2StartDate : Calendar.getInstance().get(Calendar.YEAR),
+                (band2EndDate != null && band2EndDate > 0) ? band2EndDate : Calendar.getInstance().get(Calendar.YEAR),
                 (band2Border != null && !band2Border.isEmpty()) ? band2Border : defaultBorderColour,
                 (band2Fill != null && !band2Fill.isEmpty()) ? band2Fill : band2DefaultFill
             );
         }
-        
+
         model.put("wmsParameters",wmsParameters);
         
         if (css != null && !css.isEmpty()) model.put("css", css);
@@ -135,15 +156,8 @@ public class EasyMapController {
 
             //get datasets list
             if (displayDatasets == null || displayDatasets == 1) {
-                Integer minDate = getMinDate(band0StartDate, band1StartDate, band2StartDate);
-                Integer maxDate = getMaxDate(band0StartDate, band1StartDate, band2StartDate);        
 
-                //set mindate to 1AD if not provided
-                minDate = (minDate == 0 ? 1 : minDate);
-
-                //set maxDate to current year if not provided
-                maxDate = (maxDate == 0 ? Calendar.getInstance().get(Calendar.YEAR) : maxDate);
-                List<String> datasetList = getDatasets(minDate, maxDate, tvk, viceCountyId, datasets);
+                List<String> datasetList = getDatasetList(TaxonDatasetList);
                 model.put("datasets", datasetList); 
             } else if (displayDatasets != 0 ) {
                 errors.add("Invalid value for ref parameter");
@@ -198,16 +212,28 @@ public class EasyMapController {
         return p;
     }
 
-    private String getMapLayersParam(boolean showFeatureLayer, boolean showBand1, boolean showBand2, String mapBackground, String gridResolution) {
+    private String getMapLayersParam(boolean showFeatureLayer, boolean showBand1, boolean showBand2, String mapBackground, String gridResolution, String gridOverlay) {
         String p = "&LAYERS=";
         
         //Always show country outlines
-        p = p + "gb-coast,ireland-coast";
+        if (gridOverlay == null || gridOverlay.isEmpty()) {
+            p = p + "gb-coast,ireland-coast";
+        } else if ("10km".equalsIgnoreCase(gridOverlay)) {
+            p = p + "GB-Ten-km-Grid,gb-coast,ireland-coast,Ireland-Ten-km-Grid";
+        } else if ("100km".equalsIgnoreCase(gridOverlay)) {
+            p = p + "GB-Coast-with-Hundred-km-Grid,Ireland-Coast-with-Hundred-km-Grid";
+        } else if ("10km_100km".equalsIgnoreCase(gridOverlay)) {
+            p = p + "GB-Coast-with-Hundred-km-Grid,Ireland-Coast-with-Hundred-km-Grid,GB-Ten-km-Grid,Ireland-Ten-km-Grid";
+        } else {
+            errors.add("Invalid grid overlay resolution");
+        }
+        
+        
         
         if (mapBackground != null) {
-            if ("os".equals(mapBackground)) {
+            if ("os".equalsIgnoreCase(mapBackground)) {
                 p = p + ",OS-Scale-Dependent";
-            } else if ("vc".equals(mapBackground)) {
+            } else if ("vc".equalsIgnoreCase(mapBackground)) {
                 p = p + ",Vice-counties";
             } else {
                 errors.add("Invalid map background specified");
@@ -257,7 +283,7 @@ public class EasyMapController {
     }
 
     private Feature getViceCountyFeature(Integer viceCountyId) {
-        String path = "/features/" + viceCountyId.toString();
+        String path = "/features/" + viceCountyDataset + viceCountyId.toString();
         
         return resource.path(path)
             .accept(MediaType.APPLICATION_JSON)
@@ -291,7 +317,7 @@ public class EasyMapController {
         return "&band=" + String.format("%04d", startDate) + "-" + String.format("%04d", endDate) + "," + fillColour + "," + borderColour;        
     }
 
-    private boolean showBand(Integer StartDate, Integer EndDate) {
+    private boolean shouldShowBand(Integer StartDate, Integer EndDate) {
         if (StartDate != null && StartDate > 0) return true;
         if (EndDate != null && EndDate > 0) return true;
         return false;
@@ -313,17 +339,22 @@ public class EasyMapController {
         return Math.max(a, Math.max(b,c));
     }
 
-    private List<String> getDatasets(Integer startYear, Integer endYear, String tvk, Integer featureId, String datasets) {
+    private TaxonDatasetWithQueryStats[] getDatasets(Integer startYear, Integer endYear, String tvk, String featureIdentifier, String datasets) {
         if (tvk == null || tvk.isEmpty()) return null; //need a tvk.
                 
         TaxonDatasetWithQueryStats[] datasetList = resource.path("/taxonObservations/datasets")
             .queryParam("ptvk", tvk)
             .queryParam("startYear", String.format("%04d", startYear))
             .queryParam("endYear", String.format("%04d", endYear))
-            .queryParam("featureID", (featureId != null ? featureId.toString() : ""))
+            .queryParam("featureID", (featureIdentifier != null ? featureIdentifier : ""))
             .queryParam("datasetKey", (datasets != null ? datasets : ""))
             .accept(MediaType.APPLICATION_JSON)
             .get(TaxonDatasetWithQueryStats[].class);
+        
+        return datasetList;
+    }
+    
+    private List<String> getDatasetList(TaxonDatasetWithQueryStats[] datasetList ) {                
         
         ArrayList<String> results = new ArrayList<String>();
         
@@ -339,7 +370,7 @@ public class EasyMapController {
         
         return results;
     }
-
+    
     private String getPageTitle(String titleType, String tvk) {
         String title = "";
         
@@ -379,4 +410,6 @@ public class EasyMapController {
         }
         return params;
     }
+
+
 }
