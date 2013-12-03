@@ -99,6 +99,12 @@ public class EasyMapController {
         Feature vcFeature = null;
         if (showFeatureLayer) vcFeature = getViceCountyFeature(viceCountyId);
         
+        if (viceCountyId != null && viceCountyId > 1 && vcFeature == null) {
+            errors.add("Invalid vice county id");
+        }
+
+        wmsParameters = wmsParameters + getFeatureParam(vcFeature);
+        
         //check if we have any matching datasets        
         Integer minDate = getMinDate(band0StartDate, band1StartDate, band2StartDate);
         //set mindate to 1AD if not provided
@@ -409,6 +415,12 @@ public class EasyMapController {
             }
         }
         return params;
+    }
+
+    private String getFeatureParam(Feature vcFeature) {
+        String param = "";
+        if (vcFeature != null) param =  "&feature=" + vcFeature.getIdentifier();
+        return param;
     }
 
 
