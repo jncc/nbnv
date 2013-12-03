@@ -99,7 +99,7 @@ public class EasyMapController {
         Feature vcFeature = null;
         if (showFeatureLayer) vcFeature = getViceCountyFeature(viceCountyId);
         
-        if (viceCountyId != null && viceCountyId > 1 && vcFeature == null) {
+        if (viceCountyId != null && viceCountyId > 0 && vcFeature == null) {
             errors.add("Invalid vice county id");
         }
 
