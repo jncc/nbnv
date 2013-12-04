@@ -227,12 +227,10 @@
         <span id="nbn-site-image-copyright">&copy; Crown copyright and database rights 2011 Ordnance Survey [100017955]</span>
 </#macro>
 
-<#macro datasetAccessPositionByDatasetKey datasetKey>
-    <#assign dataset=json.readURL("${api}/datasets/${datasetKey}")>
+<#macro datasetAccessPositionByDatasetKey dataset taxonDataset>
     <#if dataset.typeName == "Taxon">
-        <#assign dataset=json.readURL("${api}/taxonDatasets/${datasetKey}")>
+        <@datasetAccessPositions dataset=taxonDataset/>
     </#if>
-    <@datasetAccessPositions dataset=dataset/>
 </#macro>
 
 <#macro datasetAccessPositions dataset>
