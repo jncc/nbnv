@@ -14,6 +14,7 @@ import org.jooq.Field;
 import org.jooq.Record1;
 import org.jooq.Select;
 import org.jooq.SelectJoinStep;
+import org.jooq.impl.DSL;
 import static uk.gov.nbn.data.dao.jooq.Tables.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
@@ -104,11 +105,11 @@ public class SingleSpeciesMap {
         data.put("mapServiceURL", mapServiceURL);
         data.put("featureData", MapHelper.getSelectedFeatureData(featureID));
         data.put("properties", properties);
-        data.put("absenceLayerGenerator", getSingleSpeciesResolutionDataGenerator(key, user, datasetKeys, startYear, endYear, true));
-        data.put("presencelayerGenerator", getSingleSpeciesResolutionDataGenerator(key, user, datasetKeys, startYear, endYear, false));
+        data.put("absenceLayerGenerator", getSingleSpeciesResolutionDataGenerator(FEATURE.GEOM, key, user, datasetKeys, startYear, endYear, true));
+        data.put("presencelayerGenerator", getSingleSpeciesResolutionDataGenerator(FEATURE.GEOM, key, user, datasetKeys, startYear, endYear, false));
         data.put("bandLayerGenerator", new SingleSpeciesBandSqlGenerator() {
             @Override public String getData(String layerName, Band dateBand) {
-                return getSQL(key, user, datasetKeys, dateBand.getStartYear(), dateBand.getEndYear(), false, layerName);
+                return getSQL(FEATURE.GEOM, key, user, datasetKeys, dateBand.getStartYear(), dateBand.getEndYear(), false, layerName);
             }
         });
         return new ModelAndView("SingleSpecies.map",data);
@@ -120,6 +121,7 @@ public class SingleSpeciesMap {
     
     //Factored out the single species resolution data generator so that it can be used by the atlas map
     static ResolutionDataGenerator getSingleSpeciesResolutionDataGenerator(
+            final Field<?> geometry,
             final String taxonKey, 
             final User user, 
             final List<String> datasetKeys, 
@@ -128,13 +130,13 @@ public class SingleSpeciesMap {
             final boolean absence) {
         return new ResolutionDataGenerator() {
             @Override public String getData(String layerName) {
-                return getSQL(taxonKey, user, datasetKeys, startYear, endYear, absence, layerName);
+                return getSQL(geometry, taxonKey, user, datasetKeys, startYear, endYear, absence, layerName);
             }
         };
-    }
-            
+    }      
     
-    private static String getSQL(   String taxonKey, User user, 
+    private static String getSQL(   Field<?> geometry,
+                                    String taxonKey, User user, 
                                     List<String> datasetKeys, 
                                     String startYear, String endYear, 
                                     boolean absence, String layerName) {
@@ -167,9 +169,9 @@ public class SingleSpeciesMap {
         SelectJoinStep<Record1<Integer>> dNested = create
                 .selectDistinct((Field<Integer>)nested.field(0))
                 .from(nested);
-
-        return MapHelper.getMapData(FEATURE.GEOM, FEATURE.IDENTIFIER, 4326 ,create
-            .select(FEATURE.GEOM, FEATURE.IDENTIFIER)
+        
+        return MapHelper.getMapData(geometry, FEATURE.IDENTIFIER, 4326 ,create
+            .select(geometry, FEATURE.IDENTIFIER)
             .from(FEATURE)
             .join(dNested).on(FEATURE.ID.eq((Field<Integer>)dNested.field(0))));
            

@@ -40,9 +40,15 @@ class DateValidator {
       val v5 = new Nbnv72Validator
       val r5 = v5.validate(record)
       resultList.append(r5)
+
+      // If the event date is defined then the date type should only be D
+      val v6 = new Nbnv840Validator
+      val r6 = v6.validate(record)
+      resultList.append(r6)
     }
 
     if (resultList.find(r => r.level == ResultLevel.ERROR).isEmpty) {
+
       // We should only carry on if we have a set of valid dates otherwise these tests make no sense anymore
       val results = validateAccordingToType(record)
       resultList.appendAll(results)
