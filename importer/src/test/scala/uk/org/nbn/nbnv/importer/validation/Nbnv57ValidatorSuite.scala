@@ -21,8 +21,8 @@ class Nbnv57ValidatorSuite extends BaseFunSuite  {
 
   test("Nbnv57 should not validate if no eventDate field is specified") {
     val record = mock[NbnRecord]
-    when(record.startDateRaw).thenReturn(null)
-    when(record.endDateRaw).thenReturn(null)
+    when(record.startDateRaw).thenReturn(None)
+    when(record.endDateRaw).thenReturn(None)
     when(record.dateType).thenReturn(null)
 
     val v = new Nbnv57Validator

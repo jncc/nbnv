@@ -10,7 +10,7 @@ class Nbnv197Validator extends DateFormatValidator {
   def code = "NBNV-197"
 
   def validate(record: NbnRecord) = {
-    val validFormats = List("dd/MM/yyyy", "dd-MM-yyyy", "yyyy/MM/dd", "yyyy-MM-dd", "dd MMM yyyy", "MMM yyyy", "yyyy")
+    val validFormats = List("dd/MM/yyyy", "dd-MM-yyyy", "yyyy/MM/dd", "yyyy-MM-dd","dd-MMM-yyyy","dd/MMM/yyyy","dd MMM yyyy", "MMM yyyy", "yyyy")
 
     val results = new ListBuffer[Result]
     results.appendAll(validateDate(record, true, true, validFormats))

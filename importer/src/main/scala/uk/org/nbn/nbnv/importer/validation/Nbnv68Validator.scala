@@ -23,7 +23,7 @@ class Nbnv68Validator {
   }
 
   private def validateDate(dateString: String, dateFieldName: String, recordKey: String) = {
-    val validFormats = List("dd/MM/yyyy", "dd-MM-yyyy", "yyyy/MM/dd", "yyyy-MM-dd", "dd MMM yyyy", "MMM yyyy", "yyyy")
+    val validFormats = List("dd/MM/yyyy", "dd-MM-yyyy", "yyyy/MM/dd", "yyyy-MM-dd", "dd MMM yyyy","dd-MMM-yyyy","dd/MMM/yyyy", "MMM yyyy", "yyyy")
 
     var isValid = dateString.isValidDate(validFormats)
 

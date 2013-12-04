@@ -7,7 +7,7 @@ class Nbnv78Validator {
 
   // Record DateType must be one of the following
   def validate(record: NbnRecord) = record.dateType match {
-    case "D" | "DD" | "O" | "OO" | "P" | "Y" | "-Y" | "YY" | "ND" | "U" => {
+    case "D" | "DD" | "O" | "OO" | "Y" | "-Y" | "YY" | "ND" | "U" => {
       new Result {
         def level: ResultLevel.ResultLevel = ResultLevel.DEBUG
         def reference: String = record.key
