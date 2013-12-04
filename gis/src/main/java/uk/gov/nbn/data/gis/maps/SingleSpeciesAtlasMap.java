@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.Properties;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Pattern;
+import org.jooq.Field;
+import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
@@ -48,6 +50,8 @@ public class SingleSpeciesAtlasMap {
     private static final String ONE_KM_LAYER_NAME = "Grid-1km";
     private static final String ONE_HUNDRED_M_LAYER_NAME = "Grid-100m";
     private static final int SYMBOLOGY_OUTLINE_WIDTH_DENOMINATOR = 10;
+    
+    private static final Field<?> GEOM_CENTROID = DSL.field("geom.STCentroid()").as("geom");
     
     private static final String[] LAYERS;
     
@@ -100,7 +104,7 @@ public class SingleSpeciesAtlasMap {
         data.put("outlineWidthDenominator", SYMBOLOGY_OUTLINE_WIDTH_DENOMINATOR);
         data.put("mapServiceURL", mapServiceURL);
         data.put("properties", properties);
-        data.put("layerGenerator", SingleSpeciesMap.getSingleSpeciesResolutionDataGenerator(key, user, datasetKeys, startYear, endYear, false));
+        data.put("layerGenerator", SingleSpeciesMap.getSingleSpeciesResolutionDataGenerator(GEOM_CENTROID, key, user, datasetKeys, startYear, endYear, false));
         return new ModelAndView("SingleSpeciesSymbology.map",data);
     }
     
