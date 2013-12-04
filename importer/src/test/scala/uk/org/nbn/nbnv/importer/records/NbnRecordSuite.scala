@@ -78,7 +78,7 @@ class NbnRecordSuite extends BaseFunSuite with BeforeAndAfter {
     when(rec.value(DwcTerm.eventDate)).thenReturn("19/07/2001")
     when(ext.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateStart")).thenReturn(null)
     when(ext.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateEnd")).thenReturn(null)
-    when(ext.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateTypeCode")).thenReturn(null)
+    when(ext.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateTypeCode")).thenReturn("D")
 
     record = createRecord
 

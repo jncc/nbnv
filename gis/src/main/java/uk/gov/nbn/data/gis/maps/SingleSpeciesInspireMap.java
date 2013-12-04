@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import uk.ac.ceh.dynamo.GridMap;
 import uk.ac.ceh.dynamo.arguments.annotations.ServiceURL;
+import static uk.gov.nbn.data.dao.jooq.Tables.FEATURE;
 import uk.org.nbn.nbnv.api.model.User;
 
 /**
@@ -58,7 +59,7 @@ public class SingleSpeciesInspireMap {
         data.put("title", "Test");
         data.put("speciesCode", "FluffyBunny");
         data.put("speciesName", "Fluffy Bunnyius");
-        data.put("data", SingleSpeciesMap.getSingleSpeciesResolutionDataGenerator(key, user, null, null, null, false).getData("Grid-10km"));
+        data.put("data", SingleSpeciesMap.getSingleSpeciesResolutionDataGenerator(FEATURE.GEOM, key, user, null, null, null, false).getData("Grid-10km"));
         return new ModelAndView("SingleSpeciesInspire.map",data);
     }
 

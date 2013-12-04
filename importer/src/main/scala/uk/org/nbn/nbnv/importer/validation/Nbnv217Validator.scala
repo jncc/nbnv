@@ -22,7 +22,7 @@ class Nbnv217Validator extends DateFormatValidator {
     }
     else {
 
-      val validFormats = List("dd/MM/yyyy", "dd-MM-yyyy", "yyyy/MM/dd", "yyyy-MM-dd", "dd MMM yyyy")
+      val validFormats = List("dd/MM/yyyy", "dd-MM-yyyy", "yyyy/MM/dd", "yyyy-MM-dd", "dd MMM yyyy","dd-MMM-yyyy","dd/MMM/yyyy")
 
       results.appendAll(validateDate(record,true,false,validFormats))
     }

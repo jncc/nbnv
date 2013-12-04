@@ -75,10 +75,7 @@ class NbnRecord(record: StarRecord) {
     case _ => throw new BadDataException("Invalid occurrence status '%s'".format(s))
   }
 
-  def dateType  = {
-    if (eventDateRaw.isDefined) "D"
-    else extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateTypeCode")
-  }
+  def dateType = extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateTypeCode")
 
   //getEndDate parses MM yyyy and yyyy to end of year / month rather then start as default
   private def parseDate(dateString: Option[String], getEndDate: Boolean = false): Option[Date] = {
@@ -88,7 +85,7 @@ class NbnRecord(record: StarRecord) {
 
         var date : Option[Date] = None
 
-        List("dd/MM/yyyy", "dd-MM-yyyy", "yyyy/MM/dd", "yyyy-MM-dd", "dd MMM yyyy")
+        List("dd/MM/yyyy", "dd-MM-yyyy", "yyyy/MM/dd", "yyyy-MM-dd", "dd MMM yyyy","dd-MMM-yyyy","dd/MMM/yyyy")
           .toStream
           .takeWhile(_ => date == None)
           .foreach(df => date = ds.maybeDate(df))
