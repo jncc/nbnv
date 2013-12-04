@@ -1,16 +1,22 @@
 package uk.org.nbn.nbnv.api.rest.resources;
 
+import java.util.Properties;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.org.nbn.nbnv.api.dao.warehouse.StatisticsMapper;
 
 @Component
 @Path("/statistics")
 public class StatisticsResource extends AbstractResource {
+    
+    @Autowired StatisticsMapper statisticsMapper;
+    @Autowired Properties properties;
     
     /**
      * Return a set of statistics about the current status of the NBN records
@@ -29,8 +35,8 @@ public class StatisticsResource extends AbstractResource {
     public JSONObject getDatasetList() throws JSONException {
         //TODO populate this from the database
         return new JSONObject()
-                .put("Datasets", 799)
-                .put("Species records", 80682782)
-                .put("Updated Dictionary", "2nd May 2012");
+                .put("Datasets", statisticsMapper.getRowCount("TaxonDatasetData"))
+                .put("Species records", statisticsMapper.getRowCount("TaxonObservationDataEnhanced"))
+                .put("Updated Dictionary", properties.get("species_dictionary_updated"));
     }
 }
