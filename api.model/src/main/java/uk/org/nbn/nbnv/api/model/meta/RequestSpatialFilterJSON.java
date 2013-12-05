@@ -13,7 +13,6 @@ public class RequestSpatialFilterJSON extends AccessRequestFilterJSON {
     private String match = "overlap";
     private String dataset = "";
     private String gridRef = "";
-    private String polygon = "";
 
     /**
      * @return the feature
@@ -63,13 +62,5 @@ public class RequestSpatialFilterJSON extends AccessRequestFilterJSON {
 
     public void setGridRef(String gridRef) {
         this.gridRef = gridRef;
-    }
-
-    public String getPolygon() {
-        return polygon;
-    }
-
-    public void setPolygon(String polygon) {
-        this.polygon = polygon;
     }
 }

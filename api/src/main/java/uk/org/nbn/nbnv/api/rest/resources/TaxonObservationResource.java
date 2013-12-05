@@ -2,7 +2,6 @@ package uk.org.nbn.nbnv.api.rest.resources;
 
 import freemarker.template.TemplateException;
 import java.io.IOException;
-import java.io.InvalidObjectException;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -60,7 +59,7 @@ import uk.org.nbn.nbnv.api.utils.DownloadUtils;
 
 @Component
 @Path("/taxonObservations")
-public class TaxonObservationResource extends AbstractResource {
+public class TaxonObservationResource extends RequestResource {
 
     @Autowired TaxonObservationMapper observationMapper;
     @Autowired OrganisationMapper organisationMapper;
@@ -219,22 +218,20 @@ public class TaxonObservationResource extends AbstractResource {
                 && !StringUtils.hasText(taxonOutputGroup)
                 && !listHasAtLeastOneText(datasetKeys)
                 && !StringUtils.hasText(featureID) 
-                && !StringUtils.hasText(gridRef) 
-                && !StringUtils.hasText(polygon)) {
+                && !StringUtils.hasText(gridRef)) {
             throw new IllegalArgumentException("Must Supply at least one type of filter; dataset (key list), spatial(featureID, gridRef or polygon) or taxon (PTVK list, Output Group, Designation or Organisation Supplied List)");    
         }
         
-        return observationMapper.selectObservationRecordsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon, absence);
-    }
-    
-    private boolean listHasAtLeastOneText(List<String> input) {       
-        for (String item : input) {
-            if (StringUtils.hasText(item)) {
-                return true;
-            }
+        if (datasetKeys.size() > 1 
+                && !listHasAtLeastOneText(taxa)
+                && !StringUtils.hasText(designation)
+                && !StringUtils.hasText(taxonOutputGroup)
+                && !StringUtils.hasText(featureID) 
+                && !StringUtils.hasText(gridRef)) {
+            throw new IllegalArgumentException("Must supply a spatial or taxon filter with more than one dataset");
         }
         
-        return false;
+        return observationMapper.selectObservationRecordsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon, absence);
     }
     
     /**
@@ -797,17 +794,8 @@ public class TaxonObservationResource extends AbstractResource {
         
         final DownloadFilterJSON dFilter = rawFilter;
         
-        // Check the filter for validity
-        if (dFilter.getDataset().isAll() && dFilter.getTaxon().isAll() && dFilter.getSpatial().isAll()) {
-            logger.info("Download supplied with no filter (dataset, spatial or taxon), throwing error");
-            throw new InvalidObjectException("Must have at least one of the following filters; dataset, spatial or taxon");
-        }
-                
-        // Check the dataset filter for validitiy
-        if (!dFilter.getDataset().isAll() && dFilter.getDataset().getDatasets().isEmpty()) {
-            logger.info("Download supplied with an invalid dataset filter (no datasets selected), throwing error");
-            throw new InvalidObjectException("Cannot use a dataset filter without at least one dataset selected");
-        }
+        // Check the filter for validity (Basic)
+        checkJSONFilterForValidity(dFilter);
         
         final TaxonObservationFilter filter = downloadUtils.createFilter(ow.writeValueAsString(dFilter), dFilter);
         
