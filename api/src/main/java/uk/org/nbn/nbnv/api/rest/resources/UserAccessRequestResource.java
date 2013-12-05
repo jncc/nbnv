@@ -212,11 +212,11 @@ public class UserAccessRequestResource extends RequestResource {
         if (accessRequest.getReason().getOrganisationID() > -1) {
             return Response.serverError().build();
         }
-        
+               
         // Basic check for JSON validity
         checkJSONFilterForValidity(accessRequest);
-        // Check that at least one record would be granted by this access request being granted
-        checkForRecordsReturnedSingleDataset(user, accessRequest, accessRequest.getDataset().getDatasets().get(0));
+        // Check that at least one record would be granted by this access request being granted for the public user
+        checkForRecordsReturnedSingleDataset(User.PUBLIC_USER, accessRequest, accessRequest.getDataset().getDatasets().get(0));
         
         TaxonObservationFilter filter = accessRequestUtils.createFilter(editAccessRequest.getRawJSON(), accessRequest);
         TaxonObservationFilter orig = oTaxonObservationFilterMapper.selectById(filterID);
@@ -468,11 +468,11 @@ public class UserAccessRequestResource extends RequestResource {
         UserAccessRequest uar = oUserAccessRequestMapper.getRequest(filterID);
         
         AccessRequestJSON accessRequest = parseJSON(uar.getFilter().getFilterJSON());
-        
+             
         // Basic check for JSON validity
         checkJSONFilterForValidity(accessRequest);
         // Check that at least one record would be granted by this access request being granted
-        checkForRecordsReturnedSingleDataset(user, accessRequest, uar.getDatasetKey());
+        checkForRecordsReturnedSingleDataset(User.PUBLIC_USER, accessRequest, uar.getDatasetKey());
         
         giveAccess(uar);
         

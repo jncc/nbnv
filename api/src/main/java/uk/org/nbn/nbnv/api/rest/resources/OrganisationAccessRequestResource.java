@@ -223,7 +223,7 @@ public class OrganisationAccessRequestResource extends RequestResource {
         // Basic filter validity checks
         checkJSONFilterForValidity(accessRequest);
         // Check that at least one record would be granted by this access request being granted
-        checkForRecordsReturnedSingleDataset(user, accessRequest, accessRequest.getDataset().getDatasets().get(0));
+        checkForRecordsReturnedSingleDataset(User.PUBLIC_USER, accessRequest, accessRequest.getDataset().getDatasets().get(0));
         
         TaxonObservationFilter filter = accessRequestUtils.createFilter(editAccessRequest.getRawJSON(), accessRequest);
         TaxonObservationFilter orig = oTaxonObservationFilterMapper.selectById(filterID);
@@ -526,7 +526,7 @@ public class OrganisationAccessRequestResource extends RequestResource {
         // Basic filter validity checks
         checkJSONFilterForValidity(accessRequestJSON);
         // Check that at least one record would be granted by this access request being granted
-        checkForRecordsReturnedSingleDataset(user, accessRequestJSON, oar.getDatasetKey());
+        checkForRecordsReturnedSingleDataset(User.PUBLIC_USER, accessRequestJSON, oar.getDatasetKey());
         
         giveAccess(oar);
         
