@@ -3,11 +3,12 @@
     the Charity Commission under number 1082163.
 
 2.	Our registered office is at: 
- 
-        3-5 High Pavement,  
-        The Lace Market,  
-        Nottingham,  
-        NG1 1HF,  
+
+        Broadway Business Centre
+        32a Stoney Street,
+        The Lace Market,
+        Nottingham,
+        NG1 1LL,
         United Kingdom.
 
 3.  If you wish to raise any query, please contact "gateway@nbn.org.uk"

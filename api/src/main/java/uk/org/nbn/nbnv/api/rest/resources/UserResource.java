@@ -142,6 +142,8 @@ public class UserResource extends AbstractResource {
         toReturn.put("success", true);
         toReturn.put("user", tokenAuth.getUser(token));
         toReturn.put("token", token.getBytes());
+        
+        oUserMapper.userLoggedIn(username);
 
         return Response.ok(toReturn)
                 .cookie(new NewCookie(
@@ -185,6 +187,8 @@ public class UserResource extends AbstractResource {
         toReturn.put("user", tokenAuth.getUser(token));
         toReturn.put("token", token.getBytes());
 
+        oUserMapper.userLoggedIn(username);
+        
         return Response.ok(toReturn)
                 .cookie(new NewCookie(
                 tokenCookieKey,
