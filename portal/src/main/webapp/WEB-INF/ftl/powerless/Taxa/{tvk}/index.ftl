@@ -205,11 +205,13 @@
                         <td><a href="<#if !link.link?starts_with("http")>http://</#if>${link.link}" target="_blank">${link.description}</a></td>
                     </tr>
                 </#list>
+            <#else>
+                <tr><td>None</td></tr>
             </#if>
         </table>
-        <div id="externalLoading" class="nbn-taxon-page-taxonomy-container" style="padding-bottom:5px;">
+        <!--<div id="externalLoading" class="nbn-taxon-page-taxonomy-container" style="padding-bottom:5px;">
             <p><span style="padding-right:5px;"><img src="/img/ajax-loader.gif" /></span>Loading Conservation Evidence Link</p>
-        </div>
+        </div>-->
     </div>
 </#macro>
 
