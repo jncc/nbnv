@@ -103,6 +103,11 @@ public class UserAccessRequestResource extends RequestResource {
         List<String> species = accessRequestUtils.createSpeciesList(accessRequest);        
         List<String> datasets = accessRequestUtils.createDatasetList(accessRequest, species, user);
         
+        for (String datasetKey : datasets) {
+            // Check that at least one record would be granted by this access request being granted
+            checkForRecordsReturnedSingleDataset(user, accessRequest, datasetKey);
+        }   
+        
         if (accessRequest.getDataset().isSecret()) {
             List<String> sensitive = accessRequestUtils.createSensitiveDatasetList(accessRequest, species, user);
             
@@ -118,15 +123,12 @@ public class UserAccessRequestResource extends RequestResource {
                 oUserAccessRequestAuditHistoryMapper.addHistory(filter.getId(), user.getId(), "Created request for: '" + filter.getFilterText() + "'");
                 mailRequestCreate(oUserAccessRequestMapper.getRequest(filter.getId()));
             }
-        }
-                
+        }     
+                       
         for (String datasetKey : datasets) {
             try {
                 oTaxonObservationFilterMapper.createFilter(filter);
-                
-                // Check that at least one record would be granted by this access request being granted
-                checkForRecordsReturnedSingleDataset(user, accessRequest, datasetKey);
-                
+
                 oUserAccessRequestMapper.createRequest(filter.getId(), user.getId(), datasetKey, accessRequest.getReason().getPurpose(), accessRequest.getReason().getDetails(), new Date(new java.util.Date().getTime()), false);
                 oUserAccessRequestAuditHistoryMapper.addHistory(filter.getId(), user.getId(), "Created request for: '" + filter.getFilterText() + "'");
 
