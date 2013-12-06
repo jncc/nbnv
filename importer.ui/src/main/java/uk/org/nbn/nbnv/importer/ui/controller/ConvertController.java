@@ -87,7 +87,7 @@ public class ConvertController {
             Organisation org = (Organisation) q.getSingleResult();
             
             MetadataWriter mw = new MetadataWriter(metadata);
-            mw.datasetToEML(metadataForm.getMetadata(), org, rc.getStartDate(), rc.getEndDate());
+            mw.datasetToEML(metadataForm.getMetadata(), org, rc.getStartDate(), rc.getEndDate(), metadataForm.getDatasetUpdate());
             
             ArchiveWriter aw = new ArchiveWriter();
             errors.addAll(aw.createArchive(out, meta, metadata, archive));

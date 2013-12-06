@@ -4,7 +4,6 @@ import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
@@ -35,14 +34,22 @@ public class CredentialsRecoveryController {
     @RequestMapping(value = "/User/Recovery", method = RequestMethod.POST)
     public ModelAndView registerUser(@Valid RecoveryRequest recovery, BindingResult result) {
         if(!result.hasErrors()) {
+            ClientResponse response;
+            
             if(recovery.getForgotten().equals("password")) {
-                resource.path("user/mail/password").post(ClientResponse.class,recovery.getEmail());
+                response = resource.path("user/mail/password").post(ClientResponse.class,recovery.getEmail());
             }
             else {
-                resource.path("user/mail/username").post(ClientResponse.class,recovery.getEmail());
+                response = resource.path("user/mail/username").post(ClientResponse.class,recovery.getEmail());
             }
-            //Go to the recovery-success page regardless of if it was successful
-            return new ModelAndView("recovery-success");
+            
+            if (response.getClientResponseStatus().equals(ClientResponse.Status.NOT_FOUND)) {                
+                recovery.setErrorOutput("No user exists with this email address, please check that the address is correct and resubmit the password recovery form");
+                return new ModelAndView("recovery-form", "recoveryRequest", recovery);
+            } else {
+                //Go to the recovery-success page regardless of if it was successful
+                return new ModelAndView("recovery-success");
+            }
         }
         else {
             return new ModelAndView("recovery-form", "recoveryRequest", recovery);
@@ -84,6 +91,8 @@ public class CredentialsRecoveryController {
         @NotEmpty
         @Pattern(regexp = "(username)|(password)")
         private String forgotten;
+        
+        private String errorOutput = "";
 
         public String getEmail() {
             return email;
@@ -99,6 +108,14 @@ public class CredentialsRecoveryController {
 
         public void setForgotten(String forgotten) {
             this.forgotten = forgotten;
+        }
+
+        public String getErrorOutput() {
+            return errorOutput;
+        }
+
+        public void setErrorOutput(String errorOutput) {
+            this.errorOutput = errorOutput;
         }
     }
 }

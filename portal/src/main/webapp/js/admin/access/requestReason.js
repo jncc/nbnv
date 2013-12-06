@@ -110,7 +110,8 @@ nbn.nbnv.ui.requestReason = function(json) {
                 .append($('<p>').append('Personal interest - ').append(purposes['1'].text))
             ).append($('<div>').addClass('queryBlock')
                 .text("Detailed description of purpose:")
-            ).append(details);
+            ).append(details)
+             .append($('<p>').text('Please note this information will be sent to the data provider(s) who may contact you for further details'));
 
         return data;
     };

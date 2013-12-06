@@ -2,7 +2,7 @@ This is an automatically generated message from the NBN Gateway - PLEASE DO NOT 
 
 Dear ${name}
 
-${requestor} has requested better to become a member of following organisation you administer through the NBN Gateway: ${organisation} 
+${requestor} has requested to become a member of following organisation you administer through the NBN Gateway: ${organisation} 
 
 <#if reason??>
 Their reason for joining is as follows: 

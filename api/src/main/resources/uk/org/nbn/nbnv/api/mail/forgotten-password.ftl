@@ -1,10 +1,6 @@
 Dear ${name}
 
-Below is your password resetting token
-
-${token}
-
-You can reset your token here
+Please click on the link below to enter a new password for your NBN Gateway account. 
 
 ${portal}/User/Recovery/Password?reset=${token}
 

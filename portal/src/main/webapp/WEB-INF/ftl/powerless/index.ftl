@@ -71,7 +71,7 @@ Explore and map grid squares for a particular [species](/Taxa).
         </div>
     </div>
 
-   <!-- <div id="statistics">
+    <div id="statistics">
         <h1>Gateway Statistics</h1>
         <table>
             <#list statistics?keys as stat>
@@ -84,7 +84,7 @@ Explore and map grid squares for a particular [species](/Taxa).
                 <td colspan="2"><a href="/AccessRequest/Create">Request Better Access</a></td>
             </tr>
         </table>
-    </div> -->
+    </div>
 
     <div id="news-container">
         <h1><a title="RSS" href="${api}/datasets/latest.rss">RSS</a><a href="/Datasets">Latest Datasets</a></h1>

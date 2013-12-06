@@ -22,6 +22,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,7 +53,7 @@ import uk.org.nbn.nbnv.api.utils.AccessRequestUtils;
  */
 @Component
 @Path("/user/userAccesses")
-public class UserAccessRequestResource extends AbstractResource {
+public class UserAccessRequestResource extends RequestResource {
     @Autowired OperationalTaxonObservationFilterMapper oTaxonObservationFilterMapper;
     @Autowired OperationalUserAccessRequestMapper oUserAccessRequestMapper;
     @Autowired OperationalUserTaxonObservationAccessMapper oUserTaxonObservationAccessMapper;
@@ -60,6 +62,8 @@ public class UserAccessRequestResource extends AbstractResource {
     @Autowired UserMapper userMapper;
     @Autowired AccessRequestUtils accessRequestUtils;
     @Autowired TemplateMailer mailer;
+    
+    private Logger logger = LoggerFactory.getLogger(UserAccessRequestResource.class);
     
     /**
      * Create a Access Request for a user
@@ -87,9 +91,8 @@ public class UserAccessRequestResource extends AbstractResource {
             return Response.serverError().build();
         }
         
-        if (accessRequest.getDataset().isAll() && accessRequest.getTaxon().isAll() && accessRequest.getSpatial().isAll()) {
-            return Response.serverError().build();
-        }
+        // Basic check for JSON validity
+        checkJSONFilterForValidity(accessRequest);
         
         if (!accessRequest.getSpatial().isAll() && !accessRequest.getDataset().isSecret()) {
             accessRequest.setSensitive("ns");
@@ -99,6 +102,11 @@ public class UserAccessRequestResource extends AbstractResource {
         TaxonObservationFilter filter = accessRequestUtils.createFilter(json, accessRequest);
         List<String> species = accessRequestUtils.createSpeciesList(accessRequest);        
         List<String> datasets = accessRequestUtils.createDatasetList(accessRequest, species, user);
+        
+        for (String datasetKey : datasets) {
+            // Check that at least one record would be granted by this access request being granted
+            checkForRecordsReturnedSingleDataset(user, accessRequest, datasetKey);
+        }   
         
         if (accessRequest.getDataset().isSecret()) {
             List<String> sensitive = accessRequestUtils.createSensitiveDatasetList(accessRequest, species, user);
@@ -115,14 +123,22 @@ public class UserAccessRequestResource extends AbstractResource {
                 oUserAccessRequestAuditHistoryMapper.addHistory(filter.getId(), user.getId(), "Created request for: '" + filter.getFilterText() + "'");
                 mailRequestCreate(oUserAccessRequestMapper.getRequest(filter.getId()));
             }
-        }
-                
+        }     
+                       
         for (String datasetKey : datasets) {
-            oTaxonObservationFilterMapper.createFilter(filter);
-            oUserAccessRequestMapper.createRequest(filter.getId(), user.getId(), datasetKey, accessRequest.getReason().getPurpose(), accessRequest.getReason().getDetails(), new Date(new java.util.Date().getTime()), false);
-            oUserAccessRequestAuditHistoryMapper.addHistory(filter.getId(), user.getId(), "Created request for: '" + filter.getFilterText() + "'");
-            
-            mailRequestCreate(oUserAccessRequestMapper.getRequest(filter.getId()));
+            try {
+                oTaxonObservationFilterMapper.createFilter(filter);
+
+                oUserAccessRequestMapper.createRequest(filter.getId(), user.getId(), datasetKey, accessRequest.getReason().getPurpose(), accessRequest.getReason().getDetails(), new Date(new java.util.Date().getTime()), false);
+                oUserAccessRequestAuditHistoryMapper.addHistory(filter.getId(), user.getId(), "Created request for: '" + filter.getFilterText() + "'");
+
+                mailRequestCreate(oUserAccessRequestMapper.getRequest(filter.getId()));
+            } catch (IllegalArgumentException ex) {
+                logger.info("Could not create request for: '" 
+                        + filter.getFilterText() + "' / '" 
+                        + filter.getFilterJSON() + "' on dataset "
+                        + datasetKey + " :- Zero Records would be granted with this request");
+            }            
         }
 
         return Response.status(Response.Status.OK).entity("{}").build();
@@ -145,6 +161,11 @@ public class UserAccessRequestResource extends AbstractResource {
         if (!datasetAdministratorMapper.isUserDatasetAdministrator(user.getId(), accessRequest.getDataset().getDatasets().get(0))) {
             return Response.serverError().build();
         }
+        
+        // Basic check for JSON validity
+        checkJSONFilterForValidity(accessRequest);       
+        // Check that at least one record would be granted by this access request being granted
+        checkForRecordsReturnedSingleDataset(user, accessRequest, accessRequest.getDataset().getDatasets().get(0));
 
         TaxonObservationFilter filter = accessRequestUtils.createFilter(json, accessRequest);
         List<String> datasets = accessRequest.getDataset().getDatasets();
@@ -191,6 +212,12 @@ public class UserAccessRequestResource extends AbstractResource {
         if (accessRequest.getReason().getOrganisationID() > -1) {
             return Response.serverError().build();
         }
+               
+        // Basic check for JSON validity
+        checkJSONFilterForValidity(accessRequest);
+        // Check that at least one record would be granted by this access request being granted for the public user
+        checkForRecordsReturnedSingleDataset(User.PUBLIC_USER, accessRequest, accessRequest.getDataset().getDatasets().get(0));
+        
         TaxonObservationFilter filter = accessRequestUtils.createFilter(editAccessRequest.getRawJSON(), accessRequest);
         TaxonObservationFilter orig = oTaxonObservationFilterMapper.selectById(filterID);
         oTaxonObservationFilterMapper.editFilter(filterID, filter.getFilterText(), filter.getFilterJSON());
@@ -438,7 +465,16 @@ public class UserAccessRequestResource extends AbstractResource {
      * @throws ParseException The expires string was in an incorrect format
      */
     private Response acceptRequest(User user, int filterID, String reason, String expires, boolean proactive) throws ParseException, IOException, TemplateException {
-        giveAccess(filterID);
+        UserAccessRequest uar = oUserAccessRequestMapper.getRequest(filterID);
+        
+        AccessRequestJSON accessRequest = parseJSON(uar.getFilter().getFilterJSON());
+             
+        // Basic check for JSON validity
+        checkJSONFilterForValidity(accessRequest);
+        // Check that at least one record would be granted by this access request being granted
+        checkForRecordsReturnedSingleDataset(User.PUBLIC_USER, accessRequest, uar.getDatasetKey());
+        
+        giveAccess(uar);
         
         if (expires.isEmpty()) {
             oUserAccessRequestMapper.acceptRequest(filterID, reason, new Date(new java.util.Date().getTime()));

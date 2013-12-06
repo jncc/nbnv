@@ -49,9 +49,9 @@
             </fieldset>
             <fieldset>
                 <legend>Date ranges and colours</legend>
-                <@yearRangeText layerNum="1" hexColour="#ffff00" checkedText="checked"/> (top)<br/>
+                <@yearRangeText layerNum="1" hexColour="#ffff00" checkedText="checked"/> (bottom)<br/>
                 <@yearRangeText layerNum="2" hexColour="#ff7f00" checkedText=""/> (middle)<br/>
-                <@yearRangeText layerNum="3" hexColour="#ff0000" checkedText=""/> (bottom)<br/>
+                <@yearRangeText layerNum="3" hexColour="#ff0000" checkedText=""/> (top)<br/>
                 Show outline: <input type='checkbox' id='nbn-show-outline' name='showOutline' checked colourPickerId='nbn-colour-picker-outline'><span class="nbn-form-label">&nbsp;&nbsp;&nbsp;&nbsp;Outline colour: </span><@colourPicker idSuffix="-outline" hexColour="#000000"/>
 
             </fieldset>
