@@ -2,7 +2,7 @@ package uk.org.nbn.nbnv.importer.ingestion
 
 import org.mockito.Mockito._
 import javax.persistence.{EntityTransaction, EntityManager}
-import uk.org.nbn.nbnv.importer.metadata.Metadata
+import uk.org.nbn.nbnv.importer.metadata.{Mode, Metadata}
 import org.gbif.dwc.text.{StarRecord, Archive}
 import org.gbif.utils.file.ClosableIterator
 import uk.org.nbn.nbnv.importer.testing.BaseFunSuite
@@ -40,6 +40,7 @@ class IngesterSuite extends BaseFunSuite {
 
     val metadata = mock[Metadata]
     when(metadata.datasetKey).thenReturn("")
+    when(metadata.importType).thenReturn(Some(Mode.upsert))
 
     val db = new Database(em, mock[Repository], mock[QueryCache])
 

@@ -17,6 +17,10 @@ class MetadataValidator (repo: Repository) {
     val v1 = new Nbnv600Validator(repo)
     results.append(v1.validate(metadata))
 
+    //valdiate that the import type is specified in the metadata
+    val v2 = new NbnvXXXValidator
+    results.append(v2.validate(metadata))
+
     results.toList
   }
 
