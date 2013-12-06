@@ -40,7 +40,7 @@ class MetadataParser {
       val administratorForename = (dataset \ "metadataProvider" \ "individualName" \ "givenName").text.trim
       val administratorSurname = (dataset \ "metadataProvider" \ "individualName" \ "surName").text.trim
       val administratorEmail = (dataset \ "metadataProvider" \ "electronicMailAddress").text.trim
-      val importType = getAdditionalData("importType:")
+      val importType = Mode.stringToMaybeValue(getAdditionalData("importType:"))
     }
 
   }
