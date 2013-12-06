@@ -131,7 +131,7 @@ public class MetadataWriter {
     
     private Element createUpdateNode(Document doc, boolean isUpdate) {
         Element ir = doc.createElement("additionalInfo");
-        ir.appendChild(formatParaTag(doc, "importType: " + (isUpdate ? "append" : "new")));
+        ir.appendChild(formatParaTag(doc, "importType: " + (isUpdate ? "append" : "upsert")));
         return ir;
     }
 
