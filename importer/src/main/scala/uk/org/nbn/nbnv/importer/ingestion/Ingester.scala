@@ -191,7 +191,15 @@ class Ingester @Inject()(options: Options,
 
     db.em.close()
 
-    if (datasetKey != "") log.info("Processed dataset key: %s".format(datasetKey))
+    if (datasetKey != "") {
+      val modeString = metadata.importType match {
+        case Some(Mode.upsert) => "new or update (upsert)"
+        case Some(Mode.append) => "append"
+        case _ => "something went wrong"
+      }
+
+      log.info("Processed dataset key: %s, Import type: %s".format(datasetKey, modeString))
+    }
   }
 
   def withEntityTransaction(t: EntityTransaction)(f: => Unit) {
