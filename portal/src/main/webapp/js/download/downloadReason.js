@@ -115,6 +115,7 @@ nbn.nbnv.ui.downloadReason = function(json) {
             ).append($('<div>').addClass('queryBlock')
                 .text('Detailed description of purpose:')
             ).append(details)
+             .append($('<p>').text('Please note this information will be sent to the data provider(s) who may contact you for further details'))
              .append($('<br>'))
              .append($('<div>')
                 .append($('<input>')

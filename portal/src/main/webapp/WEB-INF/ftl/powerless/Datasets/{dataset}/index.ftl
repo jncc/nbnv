@@ -1,4 +1,5 @@
 <#assign dataset=json.readURL("${api}/datasets/${URLParameters.dataset}")>
+<#assign taxonDataset=json.readURL("${api}/taxonDatasets/${URLParameters.dataset}")>
 <#assign resolution=json.readURL("${api}/datasets/${URLParameters.dataset}/resolutionData")>
 <#assign provider=json.readURL("${api}/organisations/${dataset.organisationID}")>
 <#assign isAdmin=json.readURL("${api}/datasets/${URLParameters.dataset}/isAdmin")>
@@ -125,9 +126,9 @@
                     <tr>
                         <th>Your access</th>
                         <td>
-                            <@report_utils.datasetAccessPositionByDatasetKey datasetKey=dataset.key/>
+                            <@report_utils.datasetAccessPositionByDatasetKey dataset=dataset taxonDataset=taxonDataset/>
                             <br/>
-                            <#if dataset.typeName == "Taxon"> 
+                            <#if dataset.typeName == "Taxon" && (taxonDataset.publicResolution != "100m" || !taxonDataset.publicRecorder || !taxonDataset.publicAttribute)> 
                                 <div><a href="/AccessRequest/Create?json={dataset:{all:false,datasets:['${dataset.key}']}}">Request Better Access</a></div>
                             </#if>
                         </td>
