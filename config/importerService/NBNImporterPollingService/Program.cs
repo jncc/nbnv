@@ -49,8 +49,7 @@ namespace uk.org.nbn.nbnv.ImporterPollingService
         {
             var fsm = new FileSystemManger();
 
-            fsm.EnsureFolder(_config.NewOrReplaceFolder);
-            fsm.EnsureFolder(_config.AppendsFolder);
+            fsm.EnsureFolder(_config.SourceFolder);
             fsm.EnsureFolder(_config.ImporterLogFolder);
             fsm.EnsureFolder(_config.ResultFolder);
             fsm.EnsureFolder(_config.TempFolder);
