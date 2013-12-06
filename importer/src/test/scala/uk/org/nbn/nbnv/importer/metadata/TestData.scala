@@ -56,6 +56,9 @@ object TestData {
       <additionalInfo>
         <para>recordAttributesArePublic: false</para>
       </additionalInfo>
+      <additionalInfo>
+        <para>importType: new</para>
+      </additionalInfo>
     </dataset>
   </eml>
 }
