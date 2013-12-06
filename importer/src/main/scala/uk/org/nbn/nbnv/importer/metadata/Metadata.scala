@@ -20,6 +20,7 @@ abstract class Metadata {
   val administratorForename: String
   val administratorSurname: String
   val administratorEmail: String
+  val importType: String
 
   override def toString = datasetKey
 }
