@@ -171,6 +171,14 @@
                         </span> <br /> <br />
                     </fieldset>                
 
+                    <fieldset>
+                        <legend>Insert Type</legend>
+                        <span class="formfield">
+                            <@spring.formRadioButtons 'metadataForm.insertType', referenceData.insertType, ' ' />
+                            <@spring.showErrors "" "error" />
+                        </span>
+                    </fieldset>
+
                     <p>
                         <input type="submit" name="submit" value="Submit Metadata" />
                         <input type="submit" name="clearForm" value="Clear Form" />

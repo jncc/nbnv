@@ -35,7 +35,7 @@ public class MetadataWriter {
         this.metadata = metadata;
     }
     
-    public String datasetToEML(Metadata ds, Organisation org, Date startDate, Date endDate, boolean isUpdate) throws Exception {
+    public String datasetToEML(Metadata ds, Organisation org, Date startDate, Date endDate, boolean isUpsert) throws Exception {
         BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(metadata), "UTF8"));
 
         DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
@@ -88,7 +88,7 @@ public class MetadataWriter {
         dataset.appendChild(createInfoNode(doc, ds));
         dataset.appendChild(createPublicAccessResNode(doc, ds));
         dataset.appendChild(createRecorderNameNode(doc, ds));
-        dataset.appendChild(createUpdateNode(doc, isUpdate));
+        dataset.appendChild(createUpdateNode(doc, isUpsert));
         dataset.appendChild(createRecordAttsNode(doc, ds));
 
         TransformerFactory tfac = TransformerFactory.newInstance();
@@ -129,9 +129,9 @@ public class MetadataWriter {
         return ir;
     }      
     
-    private Element createUpdateNode(Document doc, boolean isUpdate) {
+    private Element createUpdateNode(Document doc, boolean isUpsert) {
         Element ir = doc.createElement("additionalInfo");
-        ir.appendChild(formatParaTag(doc, "importType: " + (isUpdate ? "append" : "upsert")));
+        ir.appendChild(formatParaTag(doc, "importType: " + (isUpsert ? "upsert" : "append")));
         return ir;
     }
 
