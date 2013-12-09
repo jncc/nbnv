@@ -399,7 +399,11 @@ public class UserResource extends AbstractResource {
             UnsupportedEncodingException, IOException, TemplateException, JSONException, NoSuchAlgorithmException {
         //Perform some checks to before hitting database constraints. 
         //Would be better to read the status from a constraint violation
-        //and report on this     
+        //and report on this
+        
+        // Trim username to prevent PEBKAC issues
+        newUser.setUsername(newUser.getUsername().trim());        
+        
         if (userMapper.getUser(newUser.getUsername()) != null) {
             throw new IllegalArgumentException("The specified username is already taken");
         } else if (userMapper.getUserFromEmail(newUser.getEmail()) != null) {

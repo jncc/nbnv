@@ -22,6 +22,7 @@
                 if ($.trim($('#phone').val()) === '') {
                     $('#phone').val('No number avail');
                 }
+                $('#username').val($.trim($('#username').val()));
                 form.submit();
             },
             invalidHandler: function() {
