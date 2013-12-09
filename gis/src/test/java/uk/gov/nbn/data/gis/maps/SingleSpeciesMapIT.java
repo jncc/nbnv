@@ -15,7 +15,21 @@ import uk.ac.ceh.dynamo.GridSquare;
  * @author Christopher Johnson
  */
 public class SingleSpeciesMapIT extends AbstractGridMapIT {
-    
+    @Test
+    public void checkThatWeCanGridMapWithGif() throws IOException {
+        //Given (Tree Creeper in GA000466)
+        WebResource mapServer = gis.path("SingleSpecies/NHMSYS0000530266/map")
+                                    .queryParam("datasets", "GA000466")
+                                    .queryParam("format", "gif");
+        
+        //When
+        GridMapImage image = gridMap(mapServer).build();
+        
+        //Then
+        List<GridSquare> gridSquares = image.getGridSquaresByColour(Color.YELLOW);
+        assertTrue("Didn't expect to find any records highlighed yellow", gridSquares.isEmpty());
+    }
+     
     @Test
     public void publicUserCannotSeeTreeCreeperInGA000466() throws IOException {
         //Given
