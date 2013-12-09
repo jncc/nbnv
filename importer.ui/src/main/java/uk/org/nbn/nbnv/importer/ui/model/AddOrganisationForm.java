@@ -22,6 +22,8 @@ public class AddOrganisationForm {
     private CommonsMultipartFile imageData;
     private String logo = "";
     private String logoSmall = "";
+    private int adminID = -1;
+    private String organisationAdmin = "";
 
     public AddOrganisationForm () {
         this.organisation = new Organisation();
@@ -104,5 +106,21 @@ public class AddOrganisationForm {
 
     public void setLogoSmall(String logoSmall) {
         this.logoSmall = logoSmall;
+    }
+
+    public int getAdminID() {
+        return adminID;
+    }
+
+    public void setAdminID(int adminID) {
+        this.adminID = adminID;
+    }
+
+    public String getOrganisationAdmin() {
+        return organisationAdmin;
+    }
+
+    public void setOrganisationAdmin(String organisationAdmin) {
+        this.organisationAdmin = organisationAdmin;
     }
 }

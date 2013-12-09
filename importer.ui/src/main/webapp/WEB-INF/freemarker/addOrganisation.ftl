@@ -75,11 +75,18 @@
                     <span class="formlabel"><label for="allowPublicRegistration" path="organisation">Allow Public Registration</label></span>
                     <span class="formfield"><@spring.formCheckbox "orgForm.organisation.allowPublicRegistration", "" /></span>
                 </p>
-
+            </fieldset>
+            <fieldset>
+                <legend>Enter the Email address of the organisation administrator</legend>
                 <p>
-                    <input type="submit" name="submit" value="Submit" />
+                    <span class="formlabel"><label for="organisationAdmin" path="organisation">Organisation Admins Email</label></span>
+                    <span class="formfield"><@spring.formInput "orgForm.organisationAdmin" "class='wide' length='200'"/></span></span>                    
                 </p>
             </fieldset>
+
+            <p>
+                <input type="submit" name="submit" value="Submit" />
+            </p>
             
         </form>
     </body>

@@ -4,11 +4,16 @@
  */
 package uk.org.nbn.nbnv.importer.ui.validators;
 
+import java.util.List;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 import uk.org.nbn.nbnv.importer.ui.model.AddOrganisationForm;
+import uk.org.nbn.nbnv.importer.ui.util.DatabaseConnection;
 import uk.org.nbn.nbnv.jpa.nbncore.Organisation;
+import uk.org.nbn.nbnv.jpa.nbncore.User;
 
 /**
  *
@@ -40,6 +45,19 @@ public class AddOrganisationFormValidator implements Validator {
         try {
             errors.pushNestedPath("organisation");
             ValidationUtils.invokeValidator(this.organisationValidator, form.getOrganisation(), errors);
+            
+            EntityManager em = DatabaseConnection.getInstance().createEntityManager();
+            Query q = em.createNamedQuery("User.findByEmail");
+            q.setParameter("email", form.getOrganisationAdmin());
+
+            List res = q.getResultList();
+            if (res.size() == 1) {
+                User user = (User) res.get(0);
+                form.setAdminID(user.getId());
+            } else {
+                errors.rejectValue("organisationAdminEmail", "organisationAdminEmail.notFound");
+            }
+            
         } finally {
             errors.popNestedPath();
         }
