@@ -385,10 +385,16 @@ public class MetadataController {
         recNames.put("false","No");
         recNames.put("null","N/A");
         
+        Map<String, String> insertType = new LinkedHashMap<String, String>();
+        insertType.put("new", "New");
+        insertType.put("append", "Append");
+        insertType.put("update", "Update");
+        
         Map<String, Object> ref = new HashMap<String, Object>();
         ref.put("geoMap", geoMap);
         ref.put("recAtts", recAtts);
         ref.put("recNames", recNames);
+        ref.put("insertType", insertType);
         
         return ref;
     }    

@@ -6,7 +6,6 @@ package uk.org.nbn.nbnv.importer.ui.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -28,6 +27,7 @@ public class MetadataForm implements Serializable {
     private boolean orgError = false;
     private boolean datasetError = false;
     private boolean datasetUpdate = false;
+    private String insertType = "new";
     
     public MetadataForm() {
         
@@ -139,6 +139,14 @@ public class MetadataForm implements Serializable {
     
     public boolean getDatasetUpdate() {
         return this.datasetUpdate;
+    }
+
+    public String getInsertType() {
+        return insertType;
+    }
+
+    public void setInsertType(String insertType) {
+        this.insertType = insertType;
     }
     
     public void resetForm() {
