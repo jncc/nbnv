@@ -70,6 +70,7 @@ public class OrganisationValidator implements Validator {
         
         // Address Validators
         // TODO: Required as per Metada Form / Paul concerned about DPA so left as optional
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "address", "address.notFound");
         
         // UK Postcode Validator
         // Required 
@@ -78,6 +79,7 @@ public class OrganisationValidator implements Validator {
         //if (!pattern.matcher(org.getPostcode()).matches()) {
         //     errors.rejectValue("postcode", "postcode.invalid");
         //}        
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "postcode", "postcode.notFound");
         
         // Phone Number Validator
         // Required
