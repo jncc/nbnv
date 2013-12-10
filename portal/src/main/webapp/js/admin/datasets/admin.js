@@ -11,7 +11,7 @@
             select: function(event, ui) {
                 event.preventDefault();
                 $('#nbn-dataset-add-admin').val(ui.item.forename + ' ' + ui.item.surname);
-                $('#nbn-dataset-add-admin').text(ui.item.forename + ' ' + ui.item.surname);
+                //$('#nbn-dataset-add-admin').text(ui.item.forename + ' ' + ui.item.surname);
                 $('#nbn-dataset-add-admin-id').val(ui.item.id);
             }
         })
