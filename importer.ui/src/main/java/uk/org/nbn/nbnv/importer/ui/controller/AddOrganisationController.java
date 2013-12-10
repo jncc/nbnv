@@ -12,7 +12,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import org.apache.commons.codec.binary.Base64;
@@ -117,7 +116,7 @@ public class AddOrganisationController {
         orgForm.getOrganisation().setLogo(org.getLogo());
         orgForm.getOrganisation().setLogoSmall(org.getLogoSmall());
         
-        org = null;
+        org = new Organisation();
         metadataForm.setStoredOrg(false);
 
         // Write validated organisation to the database
