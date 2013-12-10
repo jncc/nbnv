@@ -55,7 +55,7 @@ public class AddOrganisationFormValidator implements Validator {
                 User user = (User) res.get(0);
                 form.setAdminID(user.getId());
             } else {
-                errors.rejectValue("organisationAdminEmail", "organisationAdminEmail.notFound");
+                errors.rejectValue("organisationAdmin", "organisationAdmin.notFound");
             }
             
         } finally {

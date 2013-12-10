@@ -12,6 +12,7 @@ import javax.persistence.Query;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
+import uk.org.nbn.nbnv.importer.ui.model.OrganisationImport;
 import uk.org.nbn.nbnv.importer.ui.util.DatabaseConnection;
 import uk.org.nbn.nbnv.jpa.nbncore.Organisation;
 
@@ -23,7 +24,7 @@ public class OrganisationValidator implements Validator {
 
     @Override
     public boolean supports(Class<?> type) {
-        return Organisation.class.equals(type);
+        return Organisation.class.equals(type) || OrganisationImport.class.equals(type);
     }
 
     @Override
@@ -70,6 +71,7 @@ public class OrganisationValidator implements Validator {
         
         // Address Validators
         // TODO: Required as per Metada Form / Paul concerned about DPA so left as optional
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "address", "address.notFound");
         
         // UK Postcode Validator
         // Required 
@@ -78,6 +80,7 @@ public class OrganisationValidator implements Validator {
         //if (!pattern.matcher(org.getPostcode()).matches()) {
         //     errors.rejectValue("postcode", "postcode.invalid");
         //}        
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "postcode", "postcode.notFound");
         
         // Phone Number Validator
         // Required

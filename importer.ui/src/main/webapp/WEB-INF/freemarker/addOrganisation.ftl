@@ -80,7 +80,8 @@
                 <legend>Enter the Email address of the organisation administrator</legend>
                 <p>
                     <span class="formlabel"><label for="organisationAdmin" path="organisation">Organisation Admins Email</label></span>
-                    <span class="formfield"><@spring.formInput "orgForm.organisationAdmin" "class='wide' length='200'"/></span></span>                    
+                    <span class="formfield"><@spring.formInput "orgForm.organisationAdmin" "class='wide' length='200'"/></span>                
+                    <@spring.showErrors "" "error" />
                 </p>
             </fieldset>
 
