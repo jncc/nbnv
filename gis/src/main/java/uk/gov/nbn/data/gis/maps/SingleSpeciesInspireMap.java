@@ -5,9 +5,9 @@
 package uk.gov.nbn.data.gis.maps;
 
 import com.sun.jersey.api.client.WebResource;
-import java.awt.Color;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Properties;
 import javax.validation.constraints.Pattern;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,8 +50,10 @@ public class SingleSpeciesInspireMap {
             @PathVariable("taxonVersionKey") @Pattern(regexp="[A-Z][A-Z0-9]{15}") final String key,
             @RequestParam(value="REQUEST", required=false) String request
             ) {
-        HashMap<String, Object> data = new HashMap<String, Object>();
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-mm-dd");
         
+        HashMap<String, Object> data = new HashMap<String, Object>();
         
         data.put("layers", gridMapDefinition.layers());
         data.put("mapServiceURL", mapServiceURL);
@@ -59,6 +61,8 @@ public class SingleSpeciesInspireMap {
         data.put("title", "Test");
         data.put("speciesCode", "FluffyBunny");
         data.put("speciesName", "Fluffy Bunnyius");
+        data.put("resourceURL", "https://data.nbn.org.uk/api/taxa/" + key + "/inspire");
+        data.put("date", sdf.format(new Date()));
         data.put("data", SingleSpeciesMap.getSingleSpeciesResolutionDataGenerator(FEATURE.GEOM, key, user, null, null, null, false).getData("Grid-10km"));
         return new ModelAndView("SingleSpeciesInspire.map",data);
     }

@@ -16,10 +16,15 @@
                 "wms_enable_request"                              "*"
                 "wms_inspire_capabilities"                        "embed"
                 "wms_languages"                                   "eng"
-                "wms_inspire_resourcelocator"                     "http://myinspireresource" #URL for ResourceLocator
+                "wms_inspire_resourcelocator"                     "${resourceURL}" #URL for ResourceLocator
                 "wms_inspire_keyword"                             "infoMapAccessService" #value according "classification of spatial data services"
                 "wms_keywordlist_ISO_items"                       "infoMapAccessService"
                 "wms_keywordlist_vocabulary"                      "ISO"
+                "wms_inspire_temporal_reference"                  "${date}"
+                "wms_inspire_mpoc_name"                           "NBN Gateway"    #point of contact
+                "wms_inspire_mpoc_email"                          "support@nbn.org.uk" #point of contact
+                "wms_contactorganization"                         "National Biodiversity Network"
+                "wms_contactposition"                             "owner"  
                 "wms_fees"                                        "no conditions apply"         #value either "no conditions apply"|default "conditions unknown"|<specific conditions>
                 "wms_accessconstraints"                           "None"          #value according ISO 19115 (MD_RestrictionCode codelist) or default "None"
             END
