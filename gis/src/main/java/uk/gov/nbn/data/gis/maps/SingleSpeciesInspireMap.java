@@ -51,7 +51,7 @@ public class SingleSpeciesInspireMap {
             @RequestParam(value="REQUEST", required=false) String request
             ) {
 
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-mm-dd");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         
         HashMap<String, Object> data = new HashMap<String, Object>();
         

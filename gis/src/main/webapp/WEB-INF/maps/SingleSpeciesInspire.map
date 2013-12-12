@@ -25,6 +25,7 @@
                 "wms_inspire_mpoc_name"                           "NBN Support"    #point of contact
                 "wms_inspire_mpoc_email"                          "support@nbn.org.uk" #point of contact
                 "wms_contactperson"                               "NBN Support"
+                "wms_contactelectronicmailaddress"                "support@nbn.org.uk"
                 "wms_contactorganization"                         "National Biodiversity Network"
                 "wms_contactposition"                             "owner"  
                 "wms_fees"                                        "no conditions apply"         #value either "no conditions apply"|default "conditions unknown"|<specific conditions>
