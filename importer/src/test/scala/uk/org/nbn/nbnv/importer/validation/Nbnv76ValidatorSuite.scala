@@ -62,7 +62,7 @@ class Nbnv76ValidatorSuite extends BaseFunSuite with BeforeAndAfter {
     r.find(r => r.level == ResultLevel.ERROR) should not be ('empty)
   }
 
-  test("should not validate if the end date supplied is not the end of the current year and is in the future") {
+  test("should not validate if the end date supplied is  the end of year in the future") {
     when(record.startDate).thenReturn(None)
     when(record.endDateRaw).thenReturn(Some("31/12/9999"))
     when(record.endDate).thenReturn("31/12/9999".maybeDate("dd/MM/yyyy"))
