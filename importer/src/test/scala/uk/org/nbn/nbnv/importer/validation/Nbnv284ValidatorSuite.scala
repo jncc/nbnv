@@ -7,6 +7,8 @@ import org.scalatest.BeforeAndAfter
 import org.junit.BeforeClass
 import uk.org.nbn.nbnv.importer.records.NbnRecord
 import uk.org.nbn.nbnv.importer.fidelity.ResultLevel
+import java.util.{Date, Calendar}
+import java.text.SimpleDateFormat
 
 class Nbnv284ValidatorSuite extends BaseFunSuite with BeforeAndAfter {
 
@@ -89,5 +91,42 @@ class Nbnv284ValidatorSuite extends BaseFunSuite with BeforeAndAfter {
 
     results.find(r => r.level == ResultLevel.ERROR) should not be ('empty)
   }
+
+  test("should not validate if the end date supplied is  the end of year in the future") {
+    when(record.eventDateRaw).thenReturn(None)
+    when(record.startDateRaw).thenReturn(Some("01/01/9999"))
+    when(record.startDate).thenReturn("01/01/9999".maybeDate("dd/MM/yyyy"))
+    when(record.endDateRaw).thenReturn(Some("31/12/9999"))
+    when(record.endDate).thenReturn("31/12/9999".maybeDate("dd/MM/yyyy"))
+
+    val r = v.validate(record)
+
+    r.find(r => r.level == ResultLevel.ERROR) should not be ('empty)
+  }
+
+  test("should validate if the end date supplied is the end of the current year") {
+
+    val currentCal = Calendar.getInstance()
+    currentCal.setTime(new Date())
+
+    val df = new SimpleDateFormat("dd/MM/yyyy")
+
+    currentCal.set(Calendar.DAY_OF_YEAR, currentCal.getActualMinimum(Calendar.DAY_OF_YEAR))
+
+    when(record.eventDateRaw).thenReturn(None)
+    when(record.startDateRaw).thenReturn(Some(df.format(currentCal.getTime)))
+    when(record.startDate).thenReturn(Some(currentCal.getTime))
+
+    currentCal.set(Calendar.DAY_OF_YEAR, currentCal.getActualMaximum(Calendar.DAY_OF_YEAR))
+
+    when(record.endDateRaw).thenReturn(Some(df.format(currentCal.getTime)))
+    when(record.endDate).thenReturn(Some(currentCal.getTime))
+
+    val r = v.validate(record)
+
+    r.find(r => r.level == ResultLevel.ERROR) should be ('empty)
+  }
+
+
 
 }

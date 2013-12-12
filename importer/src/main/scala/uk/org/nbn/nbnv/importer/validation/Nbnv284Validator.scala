@@ -3,7 +3,7 @@ package uk.org.nbn.nbnv.importer.validation
 import uk.org.nbn.nbnv.importer.records.NbnRecord
 import collection.mutable.ListBuffer
 import uk.org.nbn.nbnv.importer.fidelity.{ResultLevel, Result}
-import java.util.Calendar
+import java.util.{Date, Calendar}
 
 //validate "Y" date type
 //todo: write some tests for this
@@ -25,37 +25,43 @@ class Nbnv284Validator extends DateFormatValidator {
       year.set(Calendar.DAY_OF_YEAR, 1)
 
       if (record.startDate.get.compareTo(year.getTime) != 0) {
-        val r3 = new Result {
+        results.append(new Result {
           def level: ResultLevel.ResultLevel = ResultLevel.ERROR
           def reference: String = record.key
           def message: String = "%s: The start date is not the start of the year %s".format(code, year.get(Calendar.YEAR).toString)
-        }
-
-        results.append(r3)
+        })
       }
 
       if (record.endDate.isDefined) {
         year.set(Calendar.DAY_OF_YEAR, year.getActualMaximum(Calendar.DAY_OF_YEAR))
         if (record.endDate.get.compareTo(year.getTime) != 0) {
-          val r3 = new Result {
+          results.append(new Result {
             def level: ResultLevel.ResultLevel = ResultLevel.ERROR
             def reference: String = record.key
             def message: String = "%s: The end date is not the end of the year %s".format(code, year.get(Calendar.YEAR).toString)
-          }
+          })
+        }
 
-          results.append(r3)
+        val currentCal = Calendar.getInstance()
+        currentCal.setTime(new Date())
+        currentCal.set(Calendar.DAY_OF_YEAR, currentCal.getActualMaximum(Calendar.DAY_OF_YEAR))
+
+        if (record.endDate.get.after(currentCal.getTime)) {
+          results.append(new Result {
+            def level: ResultLevel.ResultLevel = ResultLevel.ERROR
+            def reference: String = record.key
+            def message: String = "%s: The end date cannot be after the end of the current year".format(code)
+          })
         }
       }
     }
 
     if (results.find(r => r.level == ResultLevel.ERROR).isEmpty) {
-      val r4 = new Result {
+      results.append(new Result {
         def level: ResultLevel.ResultLevel = ResultLevel.DEBUG
         def reference: String = record.key
         def message: String = "%s: Validated: The dates are valid for date type '%s'".format(code, record.dateType)
-      }
-
-      results.append(r4)
+      })
     }
 
     results.toList
