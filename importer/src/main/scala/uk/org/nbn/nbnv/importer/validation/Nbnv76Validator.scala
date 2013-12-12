@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat
 import java.awt.CardLayout
 import java.util.Calendar
 import collection.mutable.ListBuffer
+import java.util.Date
 
 //validate the <Y ad -Y date types
 class Nbnv76Validator extends DateFormatValidator {
@@ -35,14 +36,25 @@ class Nbnv76Validator extends DateFormatValidator {
       endOfYear.set(Calendar.DAY_OF_YEAR, endOfYear.getActualMaximum(Calendar.DAY_OF_YEAR))
 
       if (record.endDate.get.compareTo(endOfYear.getTime) != 0) {
-        val r3 = new Result {
+        results.append(new Result {
           def level: ResultLevel.ResultLevel = ResultLevel.ERROR
           def reference: String = record.key
           def message: String = "%s: The end date is not the end of the year %s".format(code, endOfYear.get(Calendar.YEAR).toString)
-        }
-
-        results.append(r3)
+        })
       }
+
+      val currentCal = Calendar.getInstance()
+      currentCal.setTime(new Date())
+      currentCal.set(Calendar.DAY_OF_YEAR, currentCal.getActualMaximum(Calendar.DAY_OF_YEAR))
+
+      if (record.endDate.get.after(currentCal.getTime)) {
+        results.append(new Result {
+          def level: ResultLevel.ResultLevel = ResultLevel.ERROR
+          def reference: String = record.key
+          def message: String = "%s: The end date cannot be after the end of the current year".format(code)
+        })
+      }
+
     }
 
     if (results.find(r => r.level == ResultLevel.ERROR).isEmpty) {

@@ -6,6 +6,8 @@ import uk.org.nbn.nbnv.importer.records.NbnRecord
 import org.mockito.Mockito._
 import uk.org.nbn.nbnv.importer.utility.StringParsing._
 import uk.org.nbn.nbnv.importer.fidelity.{Result, ResultLevel}
+import java.util.{Date, Calendar}
+import java.text.SimpleDateFormat
 
 class Nbnv76ValidatorSuite extends BaseFunSuite with BeforeAndAfter {
 
@@ -59,4 +61,34 @@ class Nbnv76ValidatorSuite extends BaseFunSuite with BeforeAndAfter {
 
     r.find(r => r.level == ResultLevel.ERROR) should not be ('empty)
   }
+
+  test("should not validate if the end date supplied is not the end of the current year and is in the future") {
+    when(record.startDate).thenReturn(None)
+    when(record.endDateRaw).thenReturn(Some("31/12/9999"))
+    when(record.endDate).thenReturn("31/12/9999".maybeDate("dd/MM/yyyy"))
+
+    val v = new Nbnv76Validator
+    val r = v.validate(record)
+
+    r.find(r => r.level == ResultLevel.ERROR) should not be ('empty)
+  }
+
+  test("should validate if the end date supplied is the end of the current year") {
+
+    val currentCal = Calendar.getInstance()
+    currentCal.setTime(new Date())
+    currentCal.set(Calendar.DAY_OF_YEAR, currentCal.getActualMaximum(Calendar.DAY_OF_YEAR))
+
+    val df = new SimpleDateFormat("dd/MM/yyyy");
+
+    when(record.startDate).thenReturn(None)
+    when(record.endDateRaw).thenReturn(Some(df.format(currentCal.getTime))) //satisfies the need for a date string
+    when(record.endDate).thenReturn(Some(currentCal.getTime))
+
+    val v = new Nbnv76Validator
+    val r = v.validate(record)
+
+    r.find(r => r.level == ResultLevel.ERROR) should be ('empty)
+  }
+
 }
