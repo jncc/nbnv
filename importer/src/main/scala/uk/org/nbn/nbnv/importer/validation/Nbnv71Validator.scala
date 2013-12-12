@@ -22,7 +22,7 @@ class Nbnv71Validator {
       new Result {
         def level: ResultLevel.ResultLevel = ResultLevel.ERROR
         def reference: String = record.key
-        def message: String = "NBNV-71: Start date is in the future"
+        def message: String = "NBNV-71: Start date must not be in the future"
       }
 
     } else {
