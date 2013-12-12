@@ -18,7 +18,7 @@ public class DateTypePToOO extends ConverterStep {
     private int dateTypeColumn;    
     
     public DateTypePToOO() {
-        super(ConverterStep.MODIFY);
+        super(ConverterStep.MODIFY ^ ConverterStep.RUN_FIRST);
     }
     
     @Override
