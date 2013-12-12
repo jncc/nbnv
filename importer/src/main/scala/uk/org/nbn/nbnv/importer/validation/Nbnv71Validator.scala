@@ -19,29 +19,28 @@ class Nbnv71Validator {
     val resultList = new ListBuffer[Result]
 
     if (record.startDate.isDefined && record.startDate.get.after(current)) {
-      val r1 = new Result {
+      new Result {
         def level: ResultLevel.ResultLevel = ResultLevel.ERROR
         def reference: String = record.key
         def message: String = "NBNV-71: Start date is in the future"
       }
 
-      resultList.append(r1)
-    }
-
-    if (record.endDate.isDefined && record.endDate.get.after(current)) {
-      val r2 = new Result {
-        def level: ResultLevel.ResultLevel = ResultLevel.ERROR
+    } else {
+      new Result {
+        def level: ResultLevel.ResultLevel = ResultLevel.DEBUG
         def reference: String = record.key
-        def message: String = "NBNV-71: End date is in the future"
+        def message: String = "NBNV-71:The start date is not in the future"
       }
-
-      resultList.append(r2)
     }
 
-    resultList
+
+
+//    if (record.endDate.isDefined && record.endDate.get.after(current)) {
+//      val r2 = new Result {
+//        def level: ResultLevel.ResultLevel = ResultLevel.ERROR
+//        def reference: String = record.key
+//        def message: String = "NBNV-71: End date is in the future"
+//      }
+//    }
   }
-
-
-
-
 }
