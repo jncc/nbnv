@@ -20,9 +20,11 @@
                 "wms_inspire_keyword"                             "infoMapAccessService" #value according "classification of spatial data services"
                 "wms_keywordlist_ISO_items"                       "infoMapAccessService"
                 "wms_keywordlist_vocabulary"                      "ISO"
+                "wms_inspire_metadatadate"                        "${date}"
                 "wms_inspire_temporal_reference"                  "${date}"
-                "wms_inspire_mpoc_name"                           "NBN Gateway"    #point of contact
+                "wms_inspire_mpoc_name"                           "NBN Support"    #point of contact
                 "wms_inspire_mpoc_email"                          "support@nbn.org.uk" #point of contact
+                "wms_contactperson"                               "NBN Support"
                 "wms_contactorganization"                         "National Biodiversity Network"
                 "wms_contactposition"                             "owner"  
                 "wms_fees"                                        "no conditions apply"         #value either "no conditions apply"|default "conditions unknown"|<specific conditions>
