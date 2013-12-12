@@ -12,10 +12,13 @@ import java.text.SimpleDateFormat
 class Nbnv76ValidatorSuite extends BaseFunSuite with BeforeAndAfter {
 
   var record: NbnRecord = _
+  var v: Nbnv76Validator = _
 
   before {
     record = mock[NbnRecord]
     when(record.key).thenReturn("1")
+    v = new Nbnv76Validator
+
   }
 
   test("should record 2 valdiation errors if the start date is defined and the end date is not the end of the year"){
@@ -23,7 +26,6 @@ class Nbnv76ValidatorSuite extends BaseFunSuite with BeforeAndAfter {
     when(record.endDateRaw).thenReturn(Some("31/12/1997"))
     when(record.endDate).thenReturn("30/12/1997".maybeDate("dd/MM/yyyy"))
 
-    val v = new Nbnv76Validator
     val r = v.validate(record)
 
     r.count(r => r.level == ResultLevel.ERROR) should be (2)
@@ -34,7 +36,6 @@ class Nbnv76ValidatorSuite extends BaseFunSuite with BeforeAndAfter {
     when(record.endDateRaw).thenReturn(Some("31/12/1997"))
     when(record.endDate).thenReturn("31/12/1997".maybeDate("dd/MM/yyyy"))
 
-    val v = new Nbnv76Validator
     val r = v.validate(record)
 
     r.find(r => r.level == ResultLevel.ERROR) should be ('empty)
@@ -45,7 +46,6 @@ class Nbnv76ValidatorSuite extends BaseFunSuite with BeforeAndAfter {
     when(record.endDateRaw).thenReturn(Some("31/12/1997"))
     when(record.endDate).thenReturn("31/12/1997".maybeDate("dd/MM/yyyy"))
 
-    val v = new Nbnv76Validator
     val r = v.validate(record)
 
     r.find(r => r.level == ResultLevel.ERROR) should not be ('empty)
@@ -56,7 +56,6 @@ class Nbnv76ValidatorSuite extends BaseFunSuite with BeforeAndAfter {
     when(record.endDateRaw).thenReturn(Some("30/12/1997"))
     when(record.endDate).thenReturn("30/12/1997".maybeDate("dd/MM/yyyy"))
 
-    val v = new Nbnv76Validator
     val r = v.validate(record)
 
     r.find(r => r.level == ResultLevel.ERROR) should not be ('empty)
@@ -67,7 +66,6 @@ class Nbnv76ValidatorSuite extends BaseFunSuite with BeforeAndAfter {
     when(record.endDateRaw).thenReturn(Some("31/12/9999"))
     when(record.endDate).thenReturn("31/12/9999".maybeDate("dd/MM/yyyy"))
 
-    val v = new Nbnv76Validator
     val r = v.validate(record)
 
     r.find(r => r.level == ResultLevel.ERROR) should not be ('empty)
@@ -85,7 +83,6 @@ class Nbnv76ValidatorSuite extends BaseFunSuite with BeforeAndAfter {
     when(record.endDateRaw).thenReturn(Some(df.format(currentCal.getTime))) //satisfies the need for a date string
     when(record.endDate).thenReturn(Some(currentCal.getTime))
 
-    val v = new Nbnv76Validator
     val r = v.validate(record)
 
     r.find(r => r.level == ResultLevel.ERROR) should be ('empty)
