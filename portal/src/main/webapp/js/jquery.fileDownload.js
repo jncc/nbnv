@@ -65,7 +65,7 @@ $.extend({
             //Args:
             //  url - the original url attempted
             //
-            successCallback: function (url) { },
+            successCallback: function (responseHtml, url) { },
 
             //
             //a function to call after a file download dialog/ribbon has appeared
@@ -179,14 +179,14 @@ $.extend({
 
             },
 
-            onSuccess: function (url) {
+            onSuccess: function (responseHtml, url) {
 
                 //remove the perparing message if it was specified
                 if ($preparingDialog) {
                     $preparingDialog.dialog('close');
                 };
 
-                settings.successCallback(url);
+                settings.successCallback(responseHtml, url);
 
                 deferred.resolve(url);
             },
@@ -320,8 +320,17 @@ $.extend({
             //has the cookie been written due to a file download occuring?
             if (document.cookie.indexOf(settings.cookieName + "=" + settings.cookieValue) != -1) {
 
+                var formDoc = downloadWindow ? downloadWindow.document : getiframeDocument($iframe);
+                var errorText = "";
+
+                try {
+                    errorText = formDoc.body.childNodes[0].childNodes[0].data;
+                } catch (err) {
+                    
+                }
+
                 //execute specified callback
-                internalCallbacks.onSuccess(fileUrl);
+                internalCallbacks.onSuccess(errorText, fileUrl);
 
                 //remove the cookie and iframe
                 document.cookie = settings.cookieName + "=; expires=" + new Date(1000).toUTCString() + "; path=" + settings.cookiePath;
