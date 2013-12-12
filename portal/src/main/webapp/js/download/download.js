@@ -36,11 +36,22 @@ nbn.nbnv.ui.download = function (json, div) {
         $.extend(j, dataset.getJson());        
         
         $('#resultsubmitbtn').attr("disabled", true);
-        
+
+        $('#preparing-download-dialog').dialog({modal: true});
+              
         $.fileDownload(nbn.nbnv.api + '/taxonObservations/download?json=' + JSON.stringify(j), {
-            preparingMessageHtml: 'We are preparing your download, please wait <br/><img style="display:block;margin-left: auto;margin-right: auto;" src="/img/ajax-loader-medium.gif" />',
-            failMessageHtml: 'There was a problem generating your download, please try again.'
-        })
+            successCallback: function(responseHtml, url) {
+                $('#preparing-download-dialog').dialog('close');
+            },
+            failCallback: function (responseHtml, url) {
+                $('#preparing-download-dialog').dialog('close');
+                $('#error-download-reason').html(responseHtml);
+                $('#error-download-dialog').dialog({modal: true});
+            }
+        });
+        
+//            preparingMessageHtml: 'We are preparing your download, please wait <br/><img style="display:block;margin-left: auto;margin-right: auto;" src="/img/ajax-loader-medium.gif" />',,
+//            failMessageHtml: 'There was a problem generating your download, please try again.'        
         
         return false;
     }));
@@ -51,25 +62,25 @@ nbn.nbnv.ui.download = function (json, div) {
             var newFilter = ui.newHeader.attr('filtertype');
             var oldFilter = ui.oldHeader.attr('filtertype');
 
-            if (oldFilter == 'year') {
+            if (oldFilter === 'year') {
                 year._onExit();
-            } else if (oldFilter == 'spatial') {
+            } else if (oldFilter === 'spatial') {
                 spatial._onExit();
-            } else if (oldFilter == 'taxon') {
+            } else if (oldFilter === 'taxon') {
                 taxon._onExit();
-            } else if (oldFilter == 'dataset') {
+            } else if (oldFilter === 'dataset') {
                 dataset._onExit();
-            } else if (oldFilter == 'reason') {
+            } else if (oldFilter === 'reason') {
                 reason._onExit();
             }
 
-            if (newFilter == 'year') {
+            if (newFilter === 'year') {
                 year._onEnter();
-            } else if (newFilter == 'spatial') {
+            } else if (newFilter === 'spatial') {
                 spatial._onEnter();
-            } else if (newFilter == 'taxon') {
+            } else if (newFilter === 'taxon') {
                 taxon._onEnter();
-            } else if (newFilter == 'dataset') {
+            } else if (newFilter === 'dataset') {
                 var j = { sensitive: 'sans' };
                 $.extend(j, taxon.getJson());
                 $.extend(j, spatial.getJson());
@@ -77,7 +88,7 @@ nbn.nbnv.ui.download = function (json, div) {
 
                 dataset.setupTable(j, '/taxonObservations/datasets');
                 dataset._onEnter();
-            } else if (newFilter == 'result') {
+            } else if (newFilter === 'result') {
                 var error = [];
                 $.merge(error, dataset.getError());
                 $.merge(error, taxon.getError());
