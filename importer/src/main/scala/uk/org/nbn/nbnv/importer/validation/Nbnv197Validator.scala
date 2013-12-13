@@ -2,7 +2,7 @@ package uk.org.nbn.nbnv.importer.validation
 
 import uk.org.nbn.nbnv.importer.records.NbnRecord
 import uk.org.nbn.nbnv.importer.fidelity.{Result, ResultLevel}
-import java.util.Calendar
+import java.util.{Date, Calendar}
 import collection.mutable.ListBuffer
 
 
@@ -61,6 +61,18 @@ class Nbnv197Validator extends DateFormatValidator {
           def message: String = "%s: The end date must be the end of the year for date type code '%s'".format(code, record.dateType)
         }
         results.append(r2)
+      }
+
+      val currentCal = Calendar.getInstance()
+      currentCal.setTime(new Date())
+      currentCal.set(Calendar.DAY_OF_YEAR, currentCal.getActualMaximum(Calendar.DAY_OF_YEAR))
+
+      if (record.endDate.get.after(currentCal.getTime)) {
+        results.append(new Result {
+          def level: ResultLevel.ResultLevel = ResultLevel.ERROR
+          def reference: String = record.key
+          def message: String = "%s: The end date cannot be after the end of the current year".format(code)
+        })
       }
     }
 
