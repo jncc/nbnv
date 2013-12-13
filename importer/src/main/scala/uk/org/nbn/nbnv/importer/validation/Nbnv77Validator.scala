@@ -7,13 +7,31 @@ import collection.mutable.ListBuffer
 class Nbnv77Validator {
   def validate(record: NbnRecord) = {
     val results = new ListBuffer[Result]
+    val code = "NBNV-77"
 
-    if (record.startDate.isDefined) {
+    if (record.eventDateRaw.isDefined) {
       results.append(
         new Result {
           def level: ResultLevel.ResultLevel = ResultLevel.ERROR
           def reference: String = record.key
-          def message: String = "NBNV-77: A start date should not be specified for date type '%s'".format(record.dateType)
+          def message: String = "%s: A date should not be specified for date type '%s'".format(code, record.dateType)
+        })
+    }
+    else if (record.startDate.isDefined) {
+      results.append(
+        new Result {
+          def level: ResultLevel.ResultLevel = ResultLevel.ERROR
+          def reference: String = record.key
+          def message: String = "%s: A start date should not be specified for date type '%s'".format(code, record.dateType)
+        })
+    }
+
+    if (record.endDate.isDefined) {
+      results.append(
+        new Result {
+          def level: ResultLevel.ResultLevel = ResultLevel.ERROR
+          def reference: String = record.key
+          def message: String = "%s: An end date should not be specified for date type '%s'".format(code, record.dateType)
         })
     }
 
@@ -22,7 +40,7 @@ class Nbnv77Validator {
         new Result {
           def level: ResultLevel.ResultLevel = ResultLevel.DEBUG
           def reference: String = record.key
-          def message: String = "NBNV-77 Validated: no date is required for date types '%s'".format(record.dateType)
+          def message: String = "%s Validated: no date is required for date types '%s'".format(code, record.dateType)
         })
     }
 

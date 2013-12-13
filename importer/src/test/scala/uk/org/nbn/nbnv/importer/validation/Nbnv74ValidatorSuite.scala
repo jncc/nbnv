@@ -6,6 +6,8 @@ import uk.org.nbn.nbnv.importer.records.NbnRecord
 import java.text.SimpleDateFormat
 import uk.org.nbn.nbnv.importer.fidelity.ResultLevel
 import org.scalatest.BeforeAndAfter
+import uk.org.nbn.nbnv.importer.utility.StringParsing._
+import java.util.{Date, Calendar}
 
 /**
  * Created By: Matt Debont
@@ -13,12 +15,12 @@ import org.scalatest.BeforeAndAfter
  */
 class Nbnv74ValidatorSuite extends BaseFunSuite with BeforeAndAfter {
 
-
-  val validator = new Nbnv74Validator
+  var validator : Nbnv74Validator = _
   var record: NbnRecord = _
 
   before {
     record = mock[NbnRecord]
+    validator = new Nbnv74Validator
   }
 
   test("Should validate a valid O type date set for a leap year") {
@@ -94,6 +96,43 @@ class Nbnv74ValidatorSuite extends BaseFunSuite with BeforeAndAfter {
 
     val r = validator.validate(record)
     r.find(r => r.level == ResultLevel.ERROR) should not be ('empty)
+  }
+
+  test("should not validate an end date that is beyond the end of the current year") {
+    val startDateString = "01/02/9999"
+    val endDateString = "28/02/9999"
+
+    when(record.dateType).thenReturn("O")
+    when(record.eventDateRaw).thenReturn(None)
+    when(record.startDateRaw).thenReturn(Option(startDateString))
+    when(record.startDate).thenReturn(startDateString.maybeDate("dd/MM/yyyy"))
+    when(record.endDateRaw).thenReturn(Option(endDateString))
+    when(record.endDate).thenReturn(endDateString.maybeDate("dd/MM/yyyy"))
+
+    val r = validator.validate(record)
+    r.find(r => r.level == ResultLevel.ERROR) should not be ('empty)
+  }
+
+  test("should validate and end date that is the end of the current year") {
+    val currentCal = Calendar.getInstance()
+    currentCal.setTime(new Date())
+
+    val df = new SimpleDateFormat("dd/MM/yyyy")
+
+    currentCal.set(Calendar.DAY_OF_YEAR, currentCal.getActualMaximum(Calendar.DAY_OF_YEAR))
+
+    when(record.endDateRaw).thenReturn(Some(df.format(currentCal.getTime)))
+    when(record.endDate).thenReturn(Some(currentCal.getTime))
+
+    currentCal.set(Calendar.DAY_OF_MONTH, currentCal.getActualMinimum(Calendar.DAY_OF_MONTH))
+
+    when(record.eventDateRaw).thenReturn(None)
+    when(record.startDateRaw).thenReturn(Some(df.format(currentCal.getTime)))
+    when(record.startDate).thenReturn(Some(currentCal.getTime))
+
+    val r = validator.validate(record)
+
+    r.find(r => r.level == ResultLevel.ERROR) should be ('empty)
   }
 
 }

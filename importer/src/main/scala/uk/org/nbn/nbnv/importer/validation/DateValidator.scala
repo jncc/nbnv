@@ -31,10 +31,10 @@ class DateValidator {
     }
 
     if (resultList.find(r => r.level == ResultLevel.ERROR).isEmpty) {
-      // Check if any of the supplied dates are in the future
+      // Check if any of the start date is in the future
       val v4 = new Nbnv71Validator
       val r4 = v4.validate(record)
-      resultList.appendAll(r4)
+      resultList.append(r4)
 
       // The start date should not be before the end date, can however be the same
       val v5 = new Nbnv72Validator

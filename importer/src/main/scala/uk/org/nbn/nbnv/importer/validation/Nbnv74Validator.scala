@@ -4,7 +4,7 @@ import uk.org.nbn.nbnv.importer.records.NbnRecord
 import uk.org.nbn.nbnv.importer.fidelity.{ResultLevel, Result}
 import uk.org.nbn.nbnv.importer.utility.StringParsing._
 import collection.mutable.ListBuffer
-import java.util.Calendar
+import java.util.{Date, Calendar}
 
 /**
  * Created By: Matt Debont
@@ -32,13 +32,11 @@ class Nbnv74Validator extends DateFormatValidator {
       month.set(Calendar.DAY_OF_MONTH, 1)
 
       if (record.startDate.get.compareTo(month.getTime) != 0) {
-        val r2 = new Result {
+        results.append(new Result {
           def level: ResultLevel.ResultLevel = ResultLevel.ERROR
           def reference: String = record.key
           def message: String = "%s: The start date is not the start of the month of %s".format(code, month.get(Calendar.MONTH).toString)
-        }
-
-        results.append(r2)
+        })
       }
 
       //if specified end date is end of month
@@ -46,13 +44,23 @@ class Nbnv74Validator extends DateFormatValidator {
         month.set(Calendar.DAY_OF_MONTH, month.getActualMaximum(Calendar.DAY_OF_MONTH))
 
         if (record.endDate.get.compareTo(month.getTime) != 0 ) {
-          val r3 = new Result {
+          results.append(new Result {
             def level: ResultLevel.ResultLevel = ResultLevel.ERROR
             def reference: String = record.key
             def message: String = "%s: The end date is specified but it is not the end of the month of %s".format(code, month.get(Calendar.MONTH).toString)
-          }
+          })
+        }
 
-          results.append(r3)
+        val currentCal = Calendar.getInstance()
+        currentCal.setTime(new Date())
+        currentCal.set(Calendar.DAY_OF_YEAR, currentCal.getActualMaximum(Calendar.DAY_OF_YEAR))
+
+        if (record.endDate.get.after(currentCal.getTime)) {
+          results.append(new Result {
+            def level: ResultLevel.ResultLevel = ResultLevel.ERROR
+            def reference: String = record.key
+            def message: String = "NBNV-71: End date is in the future"
+          })
         }
       }
     }
