@@ -1,13 +1,14 @@
 package uk.org.nbn.nbnv.api.rest.resources;
 
+import freemarker.template.Configuration;
+import freemarker.template.TemplateException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -15,19 +16,22 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.StreamingOutput;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
+import org.springframework.util.StringUtils;
 import uk.org.nbn.nbnv.api.dao.providers.ProviderHelper;
 import uk.org.nbn.nbnv.api.dao.warehouse.DatasetMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.DesignationMapper;
+import uk.org.nbn.nbnv.api.dao.warehouse.OrganisationMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.SiteBoundaryMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.TaxonMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.TaxonObservationMapper;
 import uk.org.nbn.nbnv.api.model.Dataset;
 import uk.org.nbn.nbnv.api.model.Designation;
+import uk.org.nbn.nbnv.api.model.Organisation;
 import uk.org.nbn.nbnv.api.model.SiteBoundary;
 import uk.org.nbn.nbnv.api.model.Taxon;
 import uk.org.nbn.nbnv.api.model.TaxonDatasetWithQueryStats;
@@ -50,6 +54,7 @@ public class TaxonResource extends AbstractResource {
     @Autowired SiteBoundaryMapper siteBoundaryMapper;
     @Autowired DownloadHelper downloadHelper;
     @Autowired TaxonObservationMapper observationMapper;
+    @Autowired OrganisationMapper organisationMapper;
 
     /**
      * Return a specific Taxon record from the data warehouse
@@ -67,6 +72,43 @@ public class TaxonResource extends AbstractResource {
     @SolrResolver("TAXON")
     public Taxon getTaxon(@PathParam("taxonVersionKey") String taxonVersionKey) {
         return taxonMapper.getTaxon(taxonVersionKey);
+    }
+
+    /**
+     * Return a specific Taxon record from the data warehouse
+     * 
+     * @param taxonVersionKey A Taxon Version Key denoting a Taxon Record
+     * 
+     * @return A Taxon Record
+     * 
+     * @response.representation.200.qname Taxon
+     * @response.representation.200.mediaType application/json;charset=utf-8
+     */
+    @GET
+    @Produces(MediaType.APPLICATION_XML + ";charset=utf-8")
+    @Path("{taxonVersionKey}/inspire")
+    public String getTaxonInspire(@PathParam("taxonVersionKey") String taxonVersionKey) throws IOException, TemplateException {
+        Configuration configuration = new Configuration();
+        configuration.setClassForTemplateLoading(TaxonResource.class, "");
+
+        Map<String, Object> data = new HashMap <String, Object>();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        
+        List<Organisation> orgs = organisationMapper.selectOrganisationsContributingToTaxon(taxonVersionKey);
+        List<String> orgNames = new ArrayList();
+        for (Organisation org : orgs) {
+            orgNames.add(org.getName());
+        }
+
+        data.put("date", sdf.format(new Date()));
+        data.put("key", taxonVersionKey);
+        data.put("taxon", taxonMapper.getTaxon(taxonVersionKey));
+        data.put("contribs", StringUtils.collectionToDelimitedString(orgNames, ", "));
+        data.put("restrictions", "###TODO");
+        data.put("lineage", "###TODO");
+        
+        return FreeMarkerTemplateUtils.processTemplateIntoString(
+                configuration.getTemplate("dataset.ftl"), data);
     }
 
     /**
