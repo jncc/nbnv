@@ -24,19 +24,17 @@ class Nbnv197Validator extends DateFormatValidator {
       val startOfyear = startCal.getTime
 
       if (startOfyear.compareTo(record.startDate.get) == 0) {
-        val r1 = new Result {
+        results.append(new Result {
           def level: ResultLevel.ResultLevel = ResultLevel.DEBUG
           def reference: String = record.key
           def message: String = "%s: The start date is the start of the year as required for date type code '%s'".format(code, record.dateType)
-        }
-        results.append(r1)
+        })
       } else {
-        val r1 = new Result {
+        results.append(new Result {
           def level: ResultLevel.ResultLevel = ResultLevel.ERROR
           def reference: String = record.key
           def message: String = "%s: The start date must be the start of the year for date type code '%s'".format(code, record.dateType)
-        }
-        results.append(r1)
+        })
       }
 
       val endCal = Calendar.getInstance
@@ -48,19 +46,26 @@ class Nbnv197Validator extends DateFormatValidator {
       val endOfYear = endCal.getTime
 
       if (endOfYear.compareTo(record.endDate.get) == 0) {
-        val r2 = new Result {
+        results.append( new Result {
           def level: ResultLevel.ResultLevel = ResultLevel.DEBUG
           def reference: String = record.key
           def message: String = "%s: The end date is the end of the year as required for date type code '%s'".format(code, record.dateType)
-        }
-        results.append(r2)
+        })
       } else {
-        val r2 = new Result {
+        results.append(new Result {
           def level: ResultLevel.ResultLevel = ResultLevel.ERROR
           def reference: String = record.key
           def message: String = "%s: The end date must be the end of the year for date type code '%s'".format(code, record.dateType)
-        }
-        results.append(r2)
+        })
+      }
+
+      startCal.set(Calendar.DAY_OF_YEAR,startCal.getActualMaximum(Calendar.DAY_OF_YEAR))
+      if (endOfYear.compareTo(startCal.getTime) == 0) {
+        results.append(new Result {
+          def level: ResultLevel.ResultLevel = ResultLevel.ERROR
+          def reference: String = record.key
+          def message: String = "%s: The end date is in the same year as the start date".format(code)
+        })
       }
 
       val currentCal = Calendar.getInstance()

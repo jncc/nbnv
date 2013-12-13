@@ -18,18 +18,6 @@ class Nbnv197ValidatorSuite extends BaseFunSuite with BeforeAndAfter {
     v = new Nbnv197Validator
   }
 
-  test("should validate a start date and end date of the same year") {
-    when(record.eventDateRaw).thenReturn(None)
-    when(record.startDateRaw).thenReturn(Some("01/01/2011"))
-    when(record.startDate).thenReturn("01/01/2011".maybeDate("dd/MM/yyyy"))
-    when(record.endDateRaw).thenReturn(Some("31/12/2011"))
-    when(record.endDate).thenReturn("31/12/2011".maybeDate("dd/MM/yyyy"))
-
-    val r = v.validate(record)
-
-    r.find(r => r.level == ResultLevel.ERROR) should be ('empty)
-  }
-
   test("should validate a start date and end date of different years") {
     when(record.eventDateRaw).thenReturn(None)
     when(record.startDateRaw).thenReturn(Some("01/01/2001"))
@@ -42,10 +30,46 @@ class Nbnv197ValidatorSuite extends BaseFunSuite with BeforeAndAfter {
     r.find(r => r.level == ResultLevel.ERROR) should be ('empty)
   }
 
-  test("should validate a start date and end date of a leap year"){
+  test("should not validate a start date and end date of the same year") {
     when(record.eventDateRaw).thenReturn(None)
-    when(record.startDateRaw).thenReturn(Some("01/01/2012"))
-    when(record.startDate).thenReturn("01/01/2012".maybeDate("dd/MM/yyyy"))
+    when(record.startDateRaw).thenReturn(Some("01/01/2011"))
+    when(record.startDate).thenReturn("01/01/2011".maybeDate("dd/MM/yyyy"))
+    when(record.endDateRaw).thenReturn(Some("31/12/2011"))
+    when(record.endDate).thenReturn("31/12/2011".maybeDate("dd/MM/yyyy"))
+
+    val r = v.validate(record)
+
+    r.find(r => r.level == ResultLevel.ERROR) should not be ('empty)
+  }
+
+  test("should validate a start date that is in a leap year") {
+    when(record.eventDateRaw).thenReturn(None)
+    when(record.startDateRaw).thenReturn(Some("01/01/2008"))
+    when(record.startDate).thenReturn("01/01/2008".maybeDate("dd/MM/yyyy"))
+    when(record.endDateRaw).thenReturn(Some("31/12/2011"))
+    when(record.endDate).thenReturn("31/12/2011".maybeDate("dd/MM/yyyy"))
+
+    val r = v.validate(record)
+
+    r.find(r => r.level == ResultLevel.ERROR) should be ('empty)
+  }
+
+  test("should validate an end date that is in a leap year") {
+    when(record.eventDateRaw).thenReturn(None)
+    when(record.startDateRaw).thenReturn(Some("01/01/2009"))
+    when(record.startDate).thenReturn("01/01/2009".maybeDate("dd/MM/yyyy"))
+    when(record.endDateRaw).thenReturn(Some("31/12/2012"))
+    when(record.endDate).thenReturn("31/12/2012".maybeDate("dd/MM/yyyy"))
+
+    val r = v.validate(record)
+
+    r.find(r => r.level == ResultLevel.ERROR) should be ('empty)
+  }
+
+  test("should validate a start date and end date that are in leap years"){
+    when(record.eventDateRaw).thenReturn(None)
+    when(record.startDateRaw).thenReturn(Some("01/01/2008"))
+    when(record.startDate).thenReturn("01/01/2008".maybeDate("dd/MM/yyyy"))
     when(record.endDateRaw).thenReturn(Some("31/12/2012"))
     when(record.endDate).thenReturn("31/12/2012".maybeDate("dd/MM/yyyy"))
 
@@ -80,8 +104,8 @@ class Nbnv197ValidatorSuite extends BaseFunSuite with BeforeAndAfter {
 
   test("should not validate a start date that is not the start of the year") {
     when(record.eventDateRaw).thenReturn(None)
-    when(record.startDateRaw).thenReturn(Some("21/01/2012"))
-    when(record.startDate).thenReturn("21/01/2012".maybeDate("dd/MM/yyyy"))
+    when(record.startDateRaw).thenReturn(Some("21/01/2011"))
+    when(record.startDate).thenReturn("21/01/2011".maybeDate("dd/MM/yyyy"))
     when(record.endDateRaw).thenReturn(Some("31/12/2012"))
     when(record.endDate).thenReturn("31/12/2012".maybeDate("dd/MM/yyyy"))
 
@@ -92,8 +116,8 @@ class Nbnv197ValidatorSuite extends BaseFunSuite with BeforeAndAfter {
 
   test("should not validate an end date that is not the end of the year") {
     when(record.eventDateRaw).thenReturn(None)
-    when(record.startDateRaw).thenReturn(Some("01/01/2012"))
-    when(record.startDate).thenReturn("01/01/2012".maybeDate("dd/MM/yyyy"))
+    when(record.startDateRaw).thenReturn(Some("01/01/2011"))
+    when(record.startDate).thenReturn("01/01/2011".maybeDate("dd/MM/yyyy"))
     when(record.endDateRaw).thenReturn(Some("09/12/2012"))
     when(record.endDate).thenReturn("09/12/2012".maybeDate("dd/MM/yyyy"))
 
@@ -116,8 +140,8 @@ class Nbnv197ValidatorSuite extends BaseFunSuite with BeforeAndAfter {
 
   test("should validate an end date that is the end of the current year") {
     when(record.eventDateRaw).thenReturn(None)
-    when(record.startDateRaw).thenReturn(Some("01/01/2012"))
-    when(record.startDate).thenReturn("01/01/2012".maybeDate("dd/MM/yyyy"))
+    when(record.startDateRaw).thenReturn(Some("01/01/2001"))
+    when(record.startDate).thenReturn("01/01/2001".maybeDate("dd/MM/yyyy"))
 
     val currentCal = Calendar.getInstance()
     currentCal.setTime(new Date())
