@@ -32,15 +32,5 @@ class Nbnv71Validator {
         def message: String = "NBNV-71:The start date is not in the future"
       }
     }
-
-
-
-//    if (record.endDate.isDefined && record.endDate.get.after(current)) {
-//      val r2 = new Result {
-//        def level: ResultLevel.ResultLevel = ResultLevel.ERROR
-//        def reference: String = record.key
-//        def message: String = "NBNV-71: End date is in the future"
-//      }
-//    }
   }
 }
