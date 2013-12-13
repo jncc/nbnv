@@ -6,6 +6,8 @@ import org.mockito.Mockito._
 import uk.org.nbn.nbnv.importer.utility.StringParsing._
 import uk.org.nbn.nbnv.importer.fidelity.ResultLevel
 import org.scalatest.BeforeAndAfter
+import java.util.{Date, Calendar}
+import java.text.SimpleDateFormat
 
 class Nbnv196ValidatorSuite extends BaseFunSuite with BeforeAndAfter {
   var record : NbnRecord = _
@@ -109,5 +111,39 @@ class Nbnv196ValidatorSuite extends BaseFunSuite with BeforeAndAfter {
     var results = v.validate(record)
 
     results.find(r => r.level == ResultLevel.ERROR) should be ('empty)
+  }
+
+  test("should not validate an end date past the end of the current year")
+  {
+    when(record.eventDateRaw).thenReturn(None)
+    when(record.startDateRaw).thenReturn(Some("01/02/2013"))
+    when(record.startDate).thenReturn("01/02/2013".maybeDate("dd/MM/yyyy"))
+    when(record.endDateRaw).thenReturn(Some("30/11/9999"))
+    when(record.endDate).thenReturn("30/11/9999".maybeDate("dd/MM/yyyy"))
+
+    var results = v.validate(record)
+
+    results.find(r => r.level == ResultLevel.ERROR) should not be ('empty)
+  }
+
+  test("should validate an end date that is the end of the current year")
+  {
+    when(record.eventDateRaw).thenReturn(None)
+    when(record.startDateRaw).thenReturn(Some("01/02/2013"))
+    when(record.startDate).thenReturn("01/02/2013".maybeDate("dd/MM/yyyy"))
+
+    val currentCal = Calendar.getInstance()
+    currentCal.setTime(new Date())
+
+    val df = new SimpleDateFormat("dd/MM/yyyy")
+
+    currentCal.set(Calendar.DAY_OF_YEAR, currentCal.getActualMaximum(Calendar.DAY_OF_YEAR))
+
+    when(record.endDateRaw).thenReturn(Some(df.format(currentCal.getTime)))
+    when(record.endDate).thenReturn(Some(currentCal.getTime))
+
+    val r = v.validate(record)
+
+    r.find(r => r.level == ResultLevel.ERROR) should be ('empty)
   }
 }
