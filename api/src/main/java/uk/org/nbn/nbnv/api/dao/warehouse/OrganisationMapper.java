@@ -38,4 +38,7 @@ public interface OrganisationMapper {
 
     @Select("SELECT org.* FROM OrganisationData org INNER JOIN OrganisationMembershipData omd ON omd.organisationID = org.id WHERE omd.userID = #{id} AND (omd.role = 'administrator' OR omd.role = 'lead')")
     List<Organisation> selectByAdminUser(int id);
+    
+    @Select("SELECT DISTINCT orgd.* FROM TaxonDatasetTaxonData tdtd INNER JOIN DatasetData dd ON dd.[key] = tdtd.datasetKey INNER JOIN OrganisationData orgd ON orgd.id = dd.organisationID WHERE tdtd.pTaxonVersionKey = #{id}")
+    List<Organisation> selectOrganisationsContributingToTaxon(String id);
 }
