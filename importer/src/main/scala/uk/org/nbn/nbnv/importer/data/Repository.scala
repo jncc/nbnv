@@ -41,7 +41,7 @@ class Repository (log: Logger, em: EntityManager, cache: QueryCache) extends Con
   }
 
   def getImportSiteByName(name: String, dataset: ImportDataset): Option[ImportSite] = {
-    val q = "select s from ImportSite s where s.name = :name and s.datasetKey = :dataset "
+    val q = "select s from ImportSite s where s.name = :name and s.datasetKey = :dataset and s.providerKey is null"
 
     cacheSome(q, name, dataset.getKey) {
 
