@@ -35,7 +35,7 @@ public interface OperationalUserMapper {
     @Select("SELECT d.* FROM DatasetData d INNER JOIN DatasetAdministrator da ON da.datasetKey = d.[key] WHERE da.userID = #{id}")
     public List<Dataset> getDatasetsUserAdmins(@Param("id") int id);
 
-    @Select("SELECT * from \"User\" WHERE forename LIKE #{term} OR surname LIKE #{term} OR email LIKE #{term} OR (forename + ' ' + surname) LIKE #{term} ORDER BY forename, surname")
+    @Select("SELECT u.id, u.forename, u.surname, u.email from \"User\" u WHERE forename LIKE #{term} OR surname LIKE #{term} OR email LIKE #{term} OR (forename + ' ' + surname) LIKE #{term} ORDER BY forename, surname")
     public List<User> searchForUser(@Param("term") String term);
     
     @Update("UPDATE \"User\" " +
@@ -71,10 +71,10 @@ public interface OperationalUserMapper {
     @Update("UPDATE \"User\" SET subscribedToNBNMarketting = #{nbnMarketing} WHERE id = #{id}") 
     public void updateUserEmailSettings(@Param("id") int id, @Param("nbnMarketing") int nbnMarketing);
     
-    @Select("SELECT * FROM (SELECT * from \"User\" WHERE forename LIKE #{term} OR surname LIKE #{term} OR email LIKE #{term} OR (forename + ' ' + surname) LIKE #{term}) AS temp WHERE NOT EXISTS (SELECT 1 FROM UserOrganisationMembership WHERE userID = id AND organisationID = #{organisation}) ORDER BY forename, surname")
+    @Select("SELECT u.id, u.forename, u.surname, u.email FROM (SELECT * from \"User\" WHERE forename LIKE #{term} OR surname LIKE #{term} OR email LIKE #{term} OR (forename + ' ' + surname) LIKE #{term}) AS u WHERE NOT EXISTS (SELECT 1 FROM UserOrganisationMembership WHERE userID = id AND organisationID = #{organisation}) ORDER BY forename, surname")
     public List<User> searchForUserExcludeOrganisationMembers(@Param("term") String term, @Param("organisation") int organisationId);
 
-    @Select("SELECT * FROM (SELECT * from \"User\" WHERE forename LIKE #{term} OR surname LIKE #{term} OR email LIKE #{term} OR (forename + ' ' + surname) LIKE #{term}) AS temp WHERE NOT EXISTS (SELECT 1 FROM DatasetAdministrator WHERE userID = id AND datasetKey = #{datasetKey}) ORDER BY forename, surname")
+    @Select("SELECT u.id, u.forename, u.surname, u.email FROM (SELECT * from \"User\" WHERE forename LIKE #{term} OR surname LIKE #{term} OR email LIKE #{term} OR (forename + ' ' + surname) LIKE #{term}) AS u WHERE NOT EXISTS (SELECT 1 FROM DatasetAdministrator WHERE userID = id AND datasetKey = #{datasetKey}) ORDER BY forename, surname")
     public List<User> searchForUserExcludeDatasetAdmins(@Param("term") String term, @Param("datasetKey") String datasetKey);
     
     @Update("UPDATE \"User\" SET lastLoggedIn = GETDATE() WHERE username = #{username}")
