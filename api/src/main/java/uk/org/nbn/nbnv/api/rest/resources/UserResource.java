@@ -526,7 +526,7 @@ public class UserResource extends AbstractResource {
     @GET
     @Path("/search")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<User> searchForUserByPartial(@TokenUser(allowPublic=false) User user, @QueryParam("term") String term, @QueryParam("organisation") int orgId, @QueryParam("dataset") String dataset) {
+    public List<User> searchForUserByPartial(@TokenAnyDatasetOrOrgAdminUser User user, @QueryParam("term") String term, @QueryParam("organisation") int orgId, @QueryParam("dataset") String dataset) {
         if (dataset != null && !dataset.equals("")) {
             return oUserMapper.searchForUserExcludeDatasetAdmins(term, dataset);
         }
