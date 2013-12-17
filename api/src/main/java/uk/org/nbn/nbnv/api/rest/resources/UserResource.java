@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -30,6 +31,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import uk.org.nbn.nbnv.api.authentication.TokenResetCredentials;
 import uk.org.nbn.nbnv.api.authentication.ExpiredTokenException;
 import uk.org.nbn.nbnv.api.authentication.InvalidCredentialsException;
@@ -46,7 +48,6 @@ import uk.org.nbn.nbnv.api.model.Dataset;
 import uk.org.nbn.nbnv.api.model.Organisation;
 import uk.org.nbn.nbnv.api.model.User;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenAnyDatasetOrOrgAdminUser;
-import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenDatasetOrOrgAdminUser;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
 
 /**
@@ -526,11 +527,17 @@ public class UserResource extends AbstractResource {
     @GET
     @Path("/search")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<User> searchForUserByPartial(@TokenUser(allowPublic=false) User user, @QueryParam("term") String term, @QueryParam("organisation") int orgId, @QueryParam("dataset") String dataset) {
-        if (dataset != null && !dataset.equals("")) {
-            return oUserMapper.searchForUserExcludeDatasetAdmins(term, dataset);
+    public List<User> searchForUserByPartial(@TokenAnyDatasetOrOrgAdminUser User user, @QueryParam("term") String term, @QueryParam("organisation") int orgId, @QueryParam("dataset") String dataset) {
+        if (StringUtils.hasText(term)) {
+            if (dataset != null && !dataset.equals("")) {
+                return oUserMapper.searchForUserExcludeDatasetAdmins("%" + term + "%", dataset);
+            }
+            if (orgId > 0) {
+                return oUserMapper.searchForUserExcludeOrganisationMembers("%" + term + "%", orgId);
+            }
+            return oUserMapper.searchForUser("%" + term + "%");
         }
-       return oUserMapper.searchForUserExcludeOrganisationMembers("%" + term + "%", orgId);
+        return new ArrayList<User>();
     }
 
     /**
