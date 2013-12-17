@@ -105,7 +105,7 @@ public class UserAccessRequestResource extends RequestResource {
         
         for (String datasetKey : datasets) {
             // Check that at least one record would be granted by this access request being granted
-            checkForRecordsReturnedSingleDataset(user, accessRequest, datasetKey);
+            checkForRecordsReturnedSingleDataset(User.PUBLIC_USER, accessRequest, datasetKey);
         }   
         
         if (accessRequest.getDataset().isSecret()) {
@@ -165,7 +165,7 @@ public class UserAccessRequestResource extends RequestResource {
         // Basic check for JSON validity
         checkJSONFilterForValidity(accessRequest);       
         // Check that at least one record would be granted by this access request being granted
-        checkForRecordsReturnedSingleDataset(user, accessRequest, accessRequest.getDataset().getDatasets().get(0));
+        checkForRecordsReturnedSingleDataset(User.PUBLIC_USER, accessRequest, accessRequest.getDataset().getDatasets().get(0));
 
         TaxonObservationFilter filter = accessRequestUtils.createFilter(json, accessRequest);
         List<String> datasets = accessRequest.getDataset().getDatasets();
