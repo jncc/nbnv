@@ -70,8 +70,12 @@ namespace uk.org.nbn.nbnv.ImporterPollingService.Service
 
             foreach (var f in files)
             {
+                //  move file to temp folder
+                fileSystemManager.MoveFileToLocation(f, config.TempFolder);
+
                 //  clear log folder down
                 fileSystemManager.ClearFilesInFolder(config.ImporterLogFolder);
+
                 //  run importer
                 importerManager.RunImport(f.FullName);
 
