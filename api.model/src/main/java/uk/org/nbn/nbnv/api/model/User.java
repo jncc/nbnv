@@ -39,6 +39,7 @@ public class User {
     private boolean allowEmailAlerts;
     private boolean subscribedToAdminMails;
     private boolean subscribedToNBNMarketting;
+    private boolean active;
 
     public String getPassword() {
         return password;
@@ -126,6 +127,14 @@ public class User {
 
     public void setSubscribedToNBNMarketting(boolean subscribedToNBNMarketting) {
         this.subscribedToNBNMarketting = subscribedToNBNMarketting;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
     @Override public boolean equals(Object o) {

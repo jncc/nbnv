@@ -15,6 +15,17 @@ INSERT INTO UserData (
     44, 'Test', 'User', 'tester2', 'test2@user.com', NULL, NULL
 );
 
+INSERT INTO "User" (
+    id, username, password_sha1, password_md5_sha1, userTypeID, forename, surname,
+    phone, email, active, activationKey, invalidEmail, allowEmailAlerts, subscribedToAdminMails,
+    subscribedToNBNMarketting, bannedFromValidation, englishNameOrder, registrationDate,
+    lastLoggedIn
+) VALUES (
+    44, 'tester2', x'5BAA61E4C9B93F3F0682250B6CF8331B7EE68FD8', x'3E3295D135520D1F6D1FDCB183AE356C48ECB8FD', 
+    1, 'Test', 'User', 'Phone', 'test2@user.com', 1, '0000000', 0, 1, 1, 1, 0, 1, CURRENT_DATE,
+    CURRENT_DATE
+);
+
 --Create an authentication user table with a single userid "43" and a password of "password
 INSERT INTO UserTokenAuthenticationData (
     id, username_sha1, password_sha1, password_md5_sha1 
