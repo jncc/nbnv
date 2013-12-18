@@ -17,7 +17,9 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.DefaultValue;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -214,6 +216,85 @@ public class TaxonObservationResource extends RequestResource {
             @QueryParam("gridRef") @DefaultValue(ObservationResourceDefaults.defaultGridRef) String gridRef,
             @QueryParam("polygon") @DefaultValue(ObservationResourceDefaults.defaultPolygon) String polygon,
             @QueryParam("absence") Boolean absence) throws IllegalArgumentException {
+        return retreiveObservationsRecordsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon, absence);
+    }
+    
+    /**
+     * Returns a list of Taxon Observations matching the given serach parameters
+     * 
+     * @param user The current user, determines what datasets they have access 
+     * to
+     * @param startYear The start year of the desired range
+     * @param endYear The end year of the desired range
+     * @param datasetKeys Datasets to search in
+     * @param taxa Taxon Version Keys to search for
+     * @param spatialRelationship Any spatial relationship information required
+     * @param featureID Any required feature ID
+     * @param sensitive If the results should include sensitive records or not
+     * @param designation Any required designations
+     * @param taxonOutputGroup Any required taxon output groups
+     * @param gridRef Any grid references to search within
+     * @param polygon WKT WGS-84 polygon filter
+     * @param absence Whether the results should be limited to just absence records (true) 
+     * or just presence records (false).  If this parameter is missing then both absence 
+     * and presence records are returned.  Valid values are 'true' and 'false'
+     * 
+     * @return A list of Taxon Observations conforming to the provided search
+     * parameters
+     * 
+     * @response.representation.200.qname List<TaxonObservation>
+     * @response.representation.200.mediaType application/json
+     */    
+    @POST 
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<TaxonObservation> getObservationsByFilterViaPOST(
+            @TokenUser(allowPublic = false) User user,
+            @FormParam("startYear") @DefaultValue(ObservationResourceDefaults.defaultStartYear) int startYear,
+            @FormParam("endYear") @DefaultValue(ObservationResourceDefaults.defaultEndYear) int endYear,
+            @FormParam("datasetKey") @DefaultValue(ObservationResourceDefaults.defaultDatasetKey) List<String> datasetKeys,
+            @FormParam("ptvk") @DefaultValue(ObservationResourceDefaults.defaultTaxa) List<String> taxa,
+            @FormParam("spatialRelationship") @DefaultValue(ObservationResourceDefaults.SPATIAL_RELATIONSHIP_DEFAULT) String spatialRelationship,
+            @FormParam("featureID") @DefaultValue(ObservationResourceDefaults.defaultFeatureID) String featureID,
+            @FormParam("sensitive") @DefaultValue(ObservationResourceDefaults.defaultSensitive) Boolean sensitive,
+            @FormParam("designation") @DefaultValue(ObservationResourceDefaults.defaultDesignation) String designation,
+            @FormParam("taxonOutputGroup") @DefaultValue(ObservationResourceDefaults.defaultTaxonOutputGroup) String taxonOutputGroup,
+            @FormParam("gridRef") @DefaultValue(ObservationResourceDefaults.defaultGridRef) String gridRef,
+            @FormParam("polygon") @DefaultValue(ObservationResourceDefaults.defaultPolygon) String polygon,
+            @FormParam("absence") Boolean absence) throws IllegalArgumentException {
+        return retreiveObservationsRecordsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon, absence);
+    }
+    
+    /**
+     * Returns a list of Taxon Observations matching the given serach parameters
+     * 
+     * @param user The current user, determines what datasets they have access 
+     * to
+     * @param startYear The start year of the desired range
+     * @param endYear The end year of the desired range
+     * @param datasetKeys Datasets to search in
+     * @param taxa Taxon Version Keys to search for
+     * @param spatialRelationship Any spatial relationship information required
+     * @param featureID Any required feature ID
+     * @param sensitive If the results should include sensitive records or not
+     * @param designation Any required designations
+     * @param taxonOutputGroup Any required taxon output groups
+     * @param gridRef Any grid references to search within
+     * @param polygon WKT WGS-84 polygon filter
+     * @param absence Whether the results should be limited to just absence records (true) 
+     * or just presence records (false).  If this parameter is missing then both absence 
+     * and presence records are returned.  Valid values are 'true' and 'false'
+     * 
+     * @return A list of Taxon Observations conforming to the provided search
+     * parameters
+     * 
+     * @response.representation.200.qname List<TaxonObservation>
+     * @response.representation.200.mediaType application/json
+     */    
+    private List<TaxonObservation> retreiveObservationsRecordsByFilter(
+            User user, int startYear, int endYear, List<String> datasetKeys, 
+            List<String> taxa, String spatialRelationship, String featureID, 
+            Boolean sensitive, String designation, String taxonOutputGroup,
+            String gridRef, String polygon, Boolean absence) throws IllegalArgumentException {
         //TODO: squareBlurring(?)
         
         if (StringUtils.hasText(polygon)) {
@@ -250,7 +331,7 @@ public class TaxonObservationResource extends RequestResource {
             throw new IllegalArgumentException("Must supply a spatial or taxon filter with more than one dataset");
         }
         
-        return observationMapper.selectObservationRecordsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon, absence);
+        return observationMapper.selectObservationRecordsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon, absence);        
     }
     
     /**
