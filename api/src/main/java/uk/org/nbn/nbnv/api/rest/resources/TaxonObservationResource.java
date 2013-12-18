@@ -1,5 +1,8 @@
 package uk.org.nbn.nbnv.api.rest.resources;
 
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.io.ParseException;
+import com.vividsolutions.jts.io.WKTReader;
 import freemarker.template.TemplateException;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -212,13 +215,28 @@ public class TaxonObservationResource extends RequestResource {
             @QueryParam("polygon") @DefaultValue(ObservationResourceDefaults.defaultPolygon) String polygon,
             @QueryParam("absence") Boolean absence) throws IllegalArgumentException {
         //TODO: squareBlurring(?)
+        
+        if (StringUtils.hasText(polygon)) {
+            WKTReader reader = new WKTReader();
+            try {
+                Geometry geom = reader.read(polygon);
+                double area = geom.getArea();
+                if (geom.getArea() > 900000) {
+                    throw new IllegalArgumentException("Polygon must be smaller than 900km2");
+                }
+            } catch (ParseException ex) {
+                throw new IllegalArgumentException("Polygon WKT is not valid");
+            }
+        }
+        
         // Stop users being able to request all records that they have access to at the same time
         if (!listHasAtLeastOneText(taxa)
                 && !StringUtils.hasText(designation)
                 && !StringUtils.hasText(taxonOutputGroup)
                 && !listHasAtLeastOneText(datasetKeys)
                 && !StringUtils.hasText(featureID) 
-                && !StringUtils.hasText(gridRef)) {
+                && !StringUtils.hasText(gridRef)
+                && !StringUtils.hasText(polygon)) {
             throw new IllegalArgumentException("Must Supply at least one type of filter; dataset (key list), spatial(featureID, gridRef or polygon) or taxon (PTVK list, Output Group, Designation or Organisation Supplied List)");    
         }
         
@@ -227,7 +245,8 @@ public class TaxonObservationResource extends RequestResource {
                 && !StringUtils.hasText(designation)
                 && !StringUtils.hasText(taxonOutputGroup)
                 && !StringUtils.hasText(featureID) 
-                && !StringUtils.hasText(gridRef)) {
+                && !StringUtils.hasText(gridRef)
+                && !StringUtils.hasText(polygon)) {
             throw new IllegalArgumentException("Must supply a spatial or taxon filter with more than one dataset");
         }
         
