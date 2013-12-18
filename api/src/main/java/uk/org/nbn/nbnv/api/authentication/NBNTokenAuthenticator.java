@@ -8,6 +8,7 @@ import java.util.Properties;
 import javax.crypto.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.org.nbn.nbnv.api.dao.core.OperationalUserAuthenticationMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.UserAuthenticationMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.UserMapper;
 import uk.org.nbn.nbnv.api.model.User;
@@ -30,6 +31,7 @@ public class NBNTokenAuthenticator implements TokenAuthenticator {
     private final TokenGenerator generator;
     
     @Autowired UserAuthenticationMapper userAuthentication;
+    @Autowired OperationalUserAuthenticationMapper oUserAuthentication;
     @Autowired UserMapper userMapper;
     
     
@@ -59,11 +61,15 @@ public class NBNTokenAuthenticator implements TokenAuthenticator {
         try {
             MessageDigest credentialsDigest = MessageDigest.getInstance(CREDENTIALS_DIGEST);
             byte[] usernameHash = credentialsDigest.digest(username.getBytes(STRING_ENCODING));
-            User user = userAuthentication.getUser(usernameHash, credentialsDigest.digest(password.getBytes(STRING_ENCODING)));
-            if(user != null) //check credentials are okay
-                return generator.generateToken(getIntAsBuffer(user.getId()), ttl);
-            else
+            User user = oUserAuthentication.getUser(usernameHash, credentialsDigest.digest(password.getBytes(STRING_ENCODING)));
+            if(user != null) { //check credentials are okay 
+                if (user.isActive()) {
+                    return generator.generateToken(getIntAsBuffer(user.getId()), ttl);
+                }
+                throw new InvalidCredentialsException("User has not been activated");
+            } else {
                 throw new InvalidCredentialsException("Invalid username and/or password");
+            }
         } catch (InvalidKeyException ex) {
             throw new RuntimeException("A configuration error has occurred", ex);
         } catch (NoSuchAlgorithmException ex) {

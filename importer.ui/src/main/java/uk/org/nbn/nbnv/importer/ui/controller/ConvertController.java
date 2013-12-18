@@ -65,7 +65,7 @@ public class ConvertController {
                                 archiveName = String.format("archive_%s_%s_%s.zip", 
                         ((organisation.getAbbreviation() == null || 
                          organisation.getAbbreviation().trim().isEmpty()) ? 
-                         organisation.getName().substring(0, 10).replace(" ", "") : 
+                         organisation.getName().substring(0, Math.min(organisation.getName().length(), 10)).replace(" ", "") : 
                          organisation.getAbbreviation()),
                         metadataForm.getMetadata().getDatasetID(),
                         new SimpleDateFormat("ddMMyyyy_hhmmss").format(new Date()));
@@ -73,7 +73,7 @@ public class ConvertController {
                 archiveName = String.format("archive_%s_%s.zip", 
                         ((organisation.getAbbreviation() == null || 
                          organisation.getAbbreviation().trim().isEmpty()) ? 
-                         organisation.getName().substring(0, 10).replace(" ", "") : 
+                         organisation.getName().substring(0, Math.min(organisation.getName().length(), 10)).replace(" ", "") : 
                          organisation.getAbbreviation()),
                         new SimpleDateFormat("ddMMyyyy_hhmmss").format(new Date()));
             }
@@ -87,7 +87,8 @@ public class ConvertController {
             Organisation org = (Organisation) q.getSingleResult();
             
             MetadataWriter mw = new MetadataWriter(metadata);
-            mw.datasetToEML(metadataForm.getMetadata(), org, rc.getStartDate(), rc.getEndDate());
+            mw.datasetToEML(metadataForm.getMetadata(), org, rc.getStartDate(), rc.getEndDate(), 
+                    !metadataForm.getInsertType().equals("append"));
             
             ArchiveWriter aw = new ArchiveWriter();
             errors.addAll(aw.createArchive(out, meta, metadata, archive));

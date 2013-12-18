@@ -4,6 +4,7 @@ import uk.org.nbn.nbnv.importer.records.NbnRecord
 import uk.org.nbn.nbnv.importer.fidelity.{ResultLevel, Result}
 import uk.org.nbn.nbnv.importer.utility.StringParsing._
 import collection.mutable.ListBuffer
+import java.util.Date
 
 //validate the "<D" date type
 class Nbnv194Validator extends DateFormatValidator {
@@ -25,6 +26,14 @@ class Nbnv194Validator extends DateFormatValidator {
       val validFormats = List("dd/MM/yyyy", "dd-MM-yyyy", "yyyy/MM/dd", "yyyy-MM-dd", "dd MMM yyyy","dd-MMM-yyyy","dd/MMM/yyyy")
 
       results.appendAll(validateDate(record,false,true,validFormats))
+
+      if (record.endDate.isDefined && record.endDate.get.after(new Date())) {
+        results.append(new Result {
+          def level: ResultLevel.ResultLevel = ResultLevel.ERROR
+          def reference: String = record.key
+          def message: String = "%s: The end date must not be in the future".format(code)
+        })
+      }
     }
 
     results.toList

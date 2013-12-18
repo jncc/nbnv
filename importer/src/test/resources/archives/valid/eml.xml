@@ -68,5 +68,8 @@
 <additionalInfo>
 <para>recorderAndDeterminerNamesArePublic: true</para>
 </additionalInfo>
+<additionalInfo>
+<para>importType: upsert</para>
+</additionalInfo>
 </dataset>
 </eml:eml>

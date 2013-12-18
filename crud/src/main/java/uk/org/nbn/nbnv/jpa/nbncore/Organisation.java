@@ -93,6 +93,8 @@ public class Organisation implements Serializable {
     private Collection<Dataset> datasetCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "organisation")
     private Collection<UserOrganisationMembership> userOrganisationMembershipCollection;
+    @Transient
+    private String organisationAdmin;
 
     public Organisation() {
     }
@@ -280,5 +282,14 @@ public class Organisation implements Serializable {
     public String toString() {
         return "uk.org.nbn.nbnv.jpa.nbncore.Organisation[ id=" + id + " ]";
     }
-    
+
+    @Transient
+    public String getOrganisationAdmin() {
+        return organisationAdmin;
+    }
+
+    @Transient
+    public void setOrganisationAdmin(String organisationAdmin) {
+        this.organisationAdmin = organisationAdmin;
+    }
 }

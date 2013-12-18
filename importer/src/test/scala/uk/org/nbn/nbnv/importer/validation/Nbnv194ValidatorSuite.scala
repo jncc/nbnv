@@ -58,4 +58,15 @@ class Nbnv194ValidatorSuite extends BaseFunSuite with BeforeAndAfter {
 
     r.find(r => r.level == ResultLevel.ERROR) should not be ('empty)
   }
+
+  test("should not validate end dates in the future") {
+    when(record.startDate).thenReturn(None)
+    when(record.endDateRaw).thenReturn(Some("12/11/9999"))
+    when(record.endDate).thenReturn("12/11/9999".maybeDate("dd/MM/yyyy"))
+
+    val v = new Nbnv194Validator
+    val r = v.validate(record)
+
+    r.find(r => r.level == ResultLevel.ERROR) should not be ('empty)
+  }
 }

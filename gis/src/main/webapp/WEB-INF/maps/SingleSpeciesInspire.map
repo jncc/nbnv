@@ -1,4 +1,4 @@
-[#ftl]
+
     MAP
         IMAGETYPE                                             PNG
         SIZE                                                  2800 2800
@@ -11,9 +11,27 @@
             IMAGEURL                                            "/ms_tmp/"
             METADATA
                 "wms_title"                                       "${title}"
+                "wms_abstract"                                    "This service maps OSGB and OSNI 10km grid squares for ${speciesName}. These squares were derived from the observations of ${speciesName} submitted to the National Biodiversity Network. For this dataset, only publically accessible records were used. As not all available data have been made accessible in this way, the data may only represent a partial representation of currently accepted distribution of this species within the UK. Additionally the records have been aggregated to the 10km resolution and are unlikely to be suitable for more local applications."
                 "wms_onlineresource"                              "${mapServiceURL}"
-                "wms_srs"                                         "EPSG:29903 EPSG:27700 EPSG:4326 EPSG:3857"
+                #"wms_srs"                                         "EPSG:29903 EPSG:27700 EPSG:4326 EPSG:3857"
+                "wms_srs"                                         "EPSG:4326"
                 "wms_enable_request"                              "*"
+                "wms_inspire_capabilities"                        "embed"
+                "wms_languages"                                   "eng"
+                "wms_inspire_resourcelocator"                     "${resourceURL}" #URL for ResourceLocator
+                "wms_inspire_keyword"                             "infoMapAccessService" #value according "classification of spatial data services"
+                "wms_keywordlist_ISO_items"                       "infoMapAccessService"
+                "wms_keywordlist_vocabulary"                      "ISO"
+                "wms_inspire_metadatadate"                        "${date}"
+                "wms_inspire_temporal_reference"                  "${date}"
+                "wms_inspire_mpoc_name"                           "NBN Support"    #point of contact
+                "wms_inspire_mpoc_email"                          "support@nbn.org.uk" #point of contact
+                "wms_contactperson"                               "NBN Support"
+                "wms_contactelectronicmailaddress"                "support@nbn.org.uk"
+                "wms_contactorganization"                         "National Biodiversity Network"
+                "wms_contactposition"                             "owner"  
+                "wms_fees"                                        "no conditions apply"         #value either "no conditions apply"|default "conditions unknown"|<specific conditions>
+                "wms_accessconstraints"                           "None"          #value according ISO 19115 (MD_RestrictionCode codelist) or default "None"
             END
         END
 
@@ -41,7 +59,7 @@
         END
 
         CLASS 
-                    NAME               "default"
+                    NAME               "inspire_common:DEFAULT"
                     STYLE
                         COLOR          80 80 80
                         OUTLINECOLOR   0 0 0
@@ -49,5 +67,4 @@
                     END
         END
     END
-
-    END
+END
