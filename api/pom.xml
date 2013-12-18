@@ -271,5 +271,12 @@
             <artifactId>c3p0</artifactId>
             <version>0.9.2.1</version>
         </dependency>
+        
+        <!-- Java Topology Suite -->
+        <dependency>
+            <groupId>com.vividsolutions</groupId>
+            <artifactId>jts</artifactId>
+            <version>1.13</version>
+        </dependency>
     </dependencies>
 </project>
