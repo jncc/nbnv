@@ -34,10 +34,6 @@
                 },
                 surname: {
                     required: true
-                },
-                email: {
-                    required: true,
-                    email: true
                 }
             },
             messages: {
@@ -46,7 +42,21 @@
                 },
                 surname: {
                     required: 'Please enter your Last Name'
-                },
+                }
+            }
+        });
+        
+        $('modify-email-form').validate({
+            submitHandler: function(form) {
+                form.submit();
+            }, 
+            rules: {
+                email: {
+                    required: true,
+                    email: true
+                }
+            },
+            messages: {
                 email: {
                     required: 'Please enter an email address',
                     email: 'Please enter a valid email address'
