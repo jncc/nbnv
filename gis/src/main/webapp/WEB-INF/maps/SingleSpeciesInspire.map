@@ -1,4 +1,4 @@
-[#ftl]
+
     MAP
         IMAGETYPE                                             PNG
         SIZE                                                  2800 2800
@@ -11,8 +11,10 @@
             IMAGEURL                                            "/ms_tmp/"
             METADATA
                 "wms_title"                                       "${title}"
+                "wms_abstract"                                    "This service maps OSGB and OSNI 10km grid squares for ${speciesName}. These squares were derived from the observations of ${taxon.name} submitted to the National Biodiversity Network. For this dataset, only publically accessible records were used. As not all available data have been made accessible in this way, the data may only represent a partial representation of currently accepted distribution of this species within the UK. Additionally the records have been aggregated to the 10km resolution and are unlikely to be suitable for more local applications."
                 "wms_onlineresource"                              "${mapServiceURL}"
-                "wms_srs"                                         "EPSG:29903 EPSG:27700 EPSG:4326 EPSG:3857"
+                #"wms_srs"                                         "EPSG:29903 EPSG:27700 EPSG:4326 EPSG:3857"
+                "wms_srs"                                         "EPSG:4326"
                 "wms_enable_request"                              "*"
                 "wms_inspire_capabilities"                        "embed"
                 "wms_languages"                                   "eng"
@@ -57,7 +59,7 @@
         END
 
         CLASS 
-                    NAME               "default"
+                    NAME               "inspire_common:DEFAULT"
                     STYLE
                         COLOR          80 80 80
                         OUTLINECOLOR   0 0 0
@@ -65,5 +67,4 @@
                     END
         END
     END
-
-    END
+END

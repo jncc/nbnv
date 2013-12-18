@@ -74,7 +74,7 @@
 </gmd:citation>
 <gmd:abstract>
 <gco:CharacterString>
-This service maps OSGB and OSNI 10km OSGB and OSNI grid squares for ${taxon.name}. These squares were derived from the observations of ${taxon.name} submitted to the National Biodiversity Network. For this dataset, only publically accessible records were used. As not all available data have been made accessible in this way, the data may only represent a partial representation of currently accepted distribution of this species within the UK. Additionally the records have been aggregated to the 10km resolution and are unlikely to be suitable for more local applications.
+This service maps OSGB and OSNI 10km grid squares for ${taxon.name}. These squares were derived from the observations of ${taxon.name} submitted to the National Biodiversity Network. For this dataset, only publically accessible records were used. As not all available data have been made accessible in this way, the data may only represent a partial representation of currently accepted distribution of this species within the UK. Additionally the records have been aggregated to the 10km resolution and are unlikely to be suitable for more local applications.
 
 The following organisations provided data that contributed to this dataset: ${contribs?xml}
 </gco:CharacterString>
