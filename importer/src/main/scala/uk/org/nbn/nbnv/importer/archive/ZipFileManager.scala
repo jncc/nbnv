@@ -10,7 +10,7 @@ import java.io.OutputStream
 import java.io.File
 import com.google.inject.Inject
 import org.apache.log4j.Logger
-import collection.mutable.ListBuffer
+import collection.mutable.Map
 
 class ZipFileManager @Inject()(log: Logger) {
 
@@ -32,8 +32,8 @@ class ZipFileManager @Inject()(log: Logger) {
 
   private def getZipEntryInputStream(zipFile: ZipFile)(entry: ZipEntry) = zipFile.getInputStream(entry)
 
-  private def unzipAllFiles(zipFile: ZipFile, inputGetter: (ZipEntry) => InputStream, targetFolder: File): List[File] = {
-    val unzippedFiles = new ListBuffer[File]
+  private def unzipAllFiles(zipFile: ZipFile, inputGetter: (ZipEntry) => InputStream, targetFolder: File): Map[String, String] = {
+    val unzippedFiles = Map.empty[String,String]
 
     zipFile.entries.foreach(entry => {
       if (entry.isDirectory) {
@@ -42,11 +42,11 @@ class ZipFileManager @Inject()(log: Logger) {
       else {
         val newFile = new File(targetFolder, entry.getName)
         saveFile(inputGetter(entry), new FileOutputStream(newFile))
-        unzippedFiles.append(newFile)
+        unzippedFiles += newFile.getName -> newFile.getAbsolutePath
       }
     })
 
-    return unzippedFiles.toList
+    return unzippedFiles
   }
 
   private def saveFile(fis: InputStream, fos: OutputStream) = {
