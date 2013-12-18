@@ -14,6 +14,21 @@
         FONTSET                                               "fonts/fontset"
         EXTENT                                                -180 -90 180 90
 
+		[#-- 
+			Explictially defining gif as an output format. According to 
+			http://mapserver.org/mapfile/outputformat.html this should be 
+			implicitally defined. This was spotted when migrating to version 
+			6.4 of mapserver (NBNV-822). To check if gif output is working,
+			you can use grid mapping @ SingleSpecies/NBNSYS0000003278/map?format=gif
+		--]
+		OUTPUTFORMAT
+		  NAME "gif"
+		  DRIVER GD/GIF
+		  MIMETYPE "image/gif"
+		  IMAGEMODE PC256
+		  EXTENSION "gif"
+		END
+
         WEB
             IMAGEPATH                                           "/ms4w/tmp/ms_tmp/"
             IMAGEURL                                            "/ms_tmp/"

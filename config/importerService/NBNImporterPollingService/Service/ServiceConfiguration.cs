@@ -6,7 +6,7 @@ namespace uk.org.nbn.nbnv.ImporterPollingService.Service
 
         public string ImporterLogFolder { get; set; }
 
-        public string NewOrReplaceFolder { get; set; }
+        public string SourceFolder { get; set; }
 
         public string ResultFolder { get; set; }
 
@@ -17,7 +17,5 @@ namespace uk.org.nbn.nbnv.ImporterPollingService.Service
         public string JavaExePath { get; set; }
 
         public LogLevel LogThreshold { get; set; }
-
-        public string AppendsFolder { get; set; }
     }
 }

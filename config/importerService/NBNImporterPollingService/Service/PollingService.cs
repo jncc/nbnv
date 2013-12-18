@@ -46,8 +46,7 @@ namespace uk.org.nbn.nbnv.ImporterPollingService.Service
             {
                 try
                 {
-                    ImportFromFolder(config, log, config.NewOrReplaceFolder, ImportMode.NewOrReplace);
-                    ImportFromFolder(config, log, config.AppendsFolder, ImportMode.Append);
+                    ImportFromFolder(config, log, config.SourceFolder);
                 }
                 catch (Exception e)
                 {
@@ -62,7 +61,7 @@ namespace uk.org.nbn.nbnv.ImporterPollingService.Service
   
         }
 
-        private void ImportFromFolder(ServiceConfiguration config, ILog log, string sourceFolder, ImportMode mode)
+        private void ImportFromFolder(ServiceConfiguration config, ILog log, string sourceFolder)
         {
             var fileSystemManager = new FileSystemManger();
             var importerManager = new ImporterManager(config, fileSystemManager, log);
@@ -71,13 +70,17 @@ namespace uk.org.nbn.nbnv.ImporterPollingService.Service
 
             foreach (var f in files)
             {
+                //  move file to temp folder
+                fileSystemManager.MoveFileToLocation(f, config.TempFolder);
+
                 //  clear log folder down
                 fileSystemManager.ClearFilesInFolder(config.ImporterLogFolder);
+
                 //  run importer
-                importerManager.RunImport(f.FullName, mode);
+                importerManager.RunImport(f.FullName);
 
                 //  create results sub folder
-                var folderForResults = fileSystemManager.CreateSubFolderForResults(config.ResultFolder, f, mode);
+                var folderForResults = fileSystemManager.CreateSubFolderForResults(config.ResultFolder, f);
 
                 //  move file from source folder to results folder
                 fileSystemManager.MoveFileToLocation(f, folderForResults);

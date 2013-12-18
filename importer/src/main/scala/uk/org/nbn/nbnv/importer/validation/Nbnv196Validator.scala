@@ -3,7 +3,7 @@ package uk.org.nbn.nbnv.importer.validation
 import uk.org.nbn.nbnv.importer.records.NbnRecord
 import collection.mutable.ListBuffer
 import uk.org.nbn.nbnv.importer.fidelity.{ResultLevel, Result}
-import java.util.Calendar
+import java.util.{Date, Calendar}
 
 //validate OO and MM
 
@@ -57,6 +57,18 @@ class Nbnv196Validator extends DateFormatValidator {
           def message: String = "%s: The start and end date are from the same month".format(code)
         }
         results.append(r4)
+      }
+
+      val currentCal = Calendar.getInstance()
+      currentCal.setTime(new Date())
+      currentCal.set(Calendar.DAY_OF_YEAR, currentCal.getActualMaximum(Calendar.DAY_OF_YEAR))
+
+      if (record.endDate.get.after(currentCal.getTime)) {
+        results.append(new Result {
+          def level: ResultLevel.ResultLevel = ResultLevel.ERROR
+          def reference: String = record.key
+          def message: String = "%s: The end date cannot be after the end of the current year".format(code)
+        })
       }
 
     }

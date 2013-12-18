@@ -4,6 +4,7 @@
         <title>Metadata Entry</title>
         <link rel="stylesheet" type="text/css" href="/importer/importer.css" />
         <script type="text/javascript" src="/importer/jquery.js"></script>
+        <script type="text/javascript" src="/importer/metadata.js"></script>
     </head>
     <body>
         <div id="optionHead">
@@ -81,6 +82,7 @@
                         <#else>
                             <input type="submit" name="addOrganisation" value="Add Organisation" />
                         </#if>
+                        <p id="selectedOrgID">No Organisation Selected</p>
                     </p>
                     <p>
                         <span class="formlabel"><label for="description" path="metadata">Description</label></span>
@@ -170,6 +172,14 @@
                             <@spring.showErrors "" "error" />
                         </span> <br /> <br />
                     </fieldset>                
+
+                    <fieldset>
+                        <legend>Insert Type</legend>
+                        <span class="formfield">
+                            <@spring.formRadioButtons 'metadataForm.insertType', referenceData.insertType, ' ' />
+                            <@spring.showErrors "" "error" />
+                        </span>
+                    </fieldset>
 
                     <p>
                         <input type="submit" name="submit" value="Submit Metadata" />

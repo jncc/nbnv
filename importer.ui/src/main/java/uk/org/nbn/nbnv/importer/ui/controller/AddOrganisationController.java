@@ -40,6 +40,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import uk.org.nbn.nbnv.jpa.nbncore.Organisation;
+import uk.org.nbn.nbnv.jpa.nbncore.UserOrganisationMembership;
+import uk.org.nbn.nbnv.jpa.nbncore.UserOrganisationRole;
 
 /**
  *
@@ -122,6 +124,13 @@ public class AddOrganisationController {
         em.getTransaction().begin();
         em.persist(orgForm.getOrganisation());
         em.getTransaction().commit();      
+        
+        // Persist the administrator of this organisation into the database
+        UserOrganisationMembership membership = new UserOrganisationMembership(orgForm.getAdminID(), orgForm.getOrganisation().getId());
+        membership.setUserOrganisationRole(new UserOrganisationRole(2));
+        em.getTransaction().begin();
+        em.persist(membership);
+        em.getTransaction().commit();
         
         metadataForm.getMetadata().setOrganisationID(orgForm.getOrganisation().getId());
         metadataForm.updateOrganisationList();

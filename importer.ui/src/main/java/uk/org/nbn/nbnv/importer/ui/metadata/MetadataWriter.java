@@ -24,6 +24,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import uk.org.nbn.nbnv.importer.ui.model.Metadata;
+import uk.org.nbn.nbnv.importer.ui.model.MetadataForm;
 import uk.org.nbn.nbnv.importer.ui.util.DatabaseConnection;
 import uk.org.nbn.nbnv.jpa.nbncore.Organisation;
 
@@ -34,7 +35,7 @@ public class MetadataWriter {
         this.metadata = metadata;
     }
     
-    public String datasetToEML(Metadata ds, Organisation org, Date startDate, Date endDate) throws Exception {
+    public String datasetToEML(Metadata ds, Organisation org, Date startDate, Date endDate, boolean isUpsert) throws Exception {
         BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(metadata), "UTF8"));
 
         DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
@@ -87,6 +88,7 @@ public class MetadataWriter {
         dataset.appendChild(createInfoNode(doc, ds));
         dataset.appendChild(createPublicAccessResNode(doc, ds));
         dataset.appendChild(createRecorderNameNode(doc, ds));
+        dataset.appendChild(createUpdateNode(doc, isUpsert));
         dataset.appendChild(createRecordAttsNode(doc, ds));
 
         TransformerFactory tfac = TransformerFactory.newInstance();
@@ -126,6 +128,12 @@ public class MetadataWriter {
         ir.appendChild(formatParaTag(doc, "recordAttributesArePublic: " + ds.getRecordAtts()));
         return ir;
     }      
+    
+    private Element createUpdateNode(Document doc, boolean isUpsert) {
+        Element ir = doc.createElement("additionalInfo");
+        ir.appendChild(formatParaTag(doc, "importType: " + (isUpsert ? "upsert" : "append")));
+        return ir;
+    }
 
     private Element formatParaTag(Document doc, String text) {
         Element para = doc.createElement("para");

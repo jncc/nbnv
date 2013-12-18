@@ -17,8 +17,9 @@
             <li><a href="#tabs-2">Change Password</a></li>
         </ul>
         <div id="tabs-1">
-            <@form.form method="POST" id="modify-details-form" commandName="user" action="/User/Modify">
+            <@form.form method="POST" id="modify-details-form" commandName="user" action="/User/Modify">    
                 <@form.errors path="*" cssClass="message error" element="div" />
+                <h3>Modify User Details</h3>
                 <table class="nbn-simple-table">
                     <tr>
                         <td class="firstCol"><label for="forename">First Name</label></td>
@@ -29,18 +30,26 @@
                         <td><@form.input path="surname"/></td>
                     </tr>
                     <tr>
-                        <td class="firstCol"><label for="email">E-mail</label></td>
-                        <td><@form.input path="email"/></td>
-                    </tr>
-                    <tr>
                         <td class="firstCol"><label for="phone">Phone</label></td>
                         <td><@form.input path="phone"/></td>
                     </tr>   
                 </table>
 
                 <@form.hidden path="username" />
+                <@form.hidden path="email" />
                 <@form.hidden path="password" id="default_password"/>
                 <input type="submit" value="Change User Details" />
+            </@form.form>
+
+            <h3>Change Email Address</h3>
+            <@form.form method="POST" id="modify-email-form" commandName="user" action="/User/Modify">
+                <table class="nbn-simple-table">
+                    <tr>
+                        <td class="firstCol"><label for="email">E-mail</label></td>
+                        <td><@form.input path="email"/></td>
+                    </tr>
+                </table>
+                <input type="submit" name="changeEmail" value="Change Email Address" />
             </@form.form>
         </div>
 

@@ -103,6 +103,11 @@ public class UserAccessRequestResource extends RequestResource {
         List<String> species = accessRequestUtils.createSpeciesList(accessRequest);        
         List<String> datasets = accessRequestUtils.createDatasetList(accessRequest, species, user);
         
+        for (String datasetKey : datasets) {
+            // Check that at least one record would be granted by this access request being granted
+            checkForRecordsReturnedSingleDataset(User.PUBLIC_USER, accessRequest, datasetKey);
+        }   
+        
         if (accessRequest.getDataset().isSecret()) {
             List<String> sensitive = accessRequestUtils.createSensitiveDatasetList(accessRequest, species, user);
             
@@ -118,15 +123,12 @@ public class UserAccessRequestResource extends RequestResource {
                 oUserAccessRequestAuditHistoryMapper.addHistory(filter.getId(), user.getId(), "Created request for: '" + filter.getFilterText() + "'");
                 mailRequestCreate(oUserAccessRequestMapper.getRequest(filter.getId()));
             }
-        }
-                
+        }     
+                       
         for (String datasetKey : datasets) {
             try {
                 oTaxonObservationFilterMapper.createFilter(filter);
-                
-                // Check that at least one record would be granted by this access request being granted
-                checkForRecordsReturnedSingleDataset(user, accessRequest, datasetKey);
-                
+
                 oUserAccessRequestMapper.createRequest(filter.getId(), user.getId(), datasetKey, accessRequest.getReason().getPurpose(), accessRequest.getReason().getDetails(), new Date(new java.util.Date().getTime()), false);
                 oUserAccessRequestAuditHistoryMapper.addHistory(filter.getId(), user.getId(), "Created request for: '" + filter.getFilterText() + "'");
 
@@ -163,7 +165,7 @@ public class UserAccessRequestResource extends RequestResource {
         // Basic check for JSON validity
         checkJSONFilterForValidity(accessRequest);       
         // Check that at least one record would be granted by this access request being granted
-        checkForRecordsReturnedSingleDataset(user, accessRequest, accessRequest.getDataset().getDatasets().get(0));
+        checkForRecordsReturnedSingleDataset(User.PUBLIC_USER, accessRequest, accessRequest.getDataset().getDatasets().get(0));
 
         TaxonObservationFilter filter = accessRequestUtils.createFilter(json, accessRequest);
         List<String> datasets = accessRequest.getDataset().getDatasets();
@@ -210,11 +212,11 @@ public class UserAccessRequestResource extends RequestResource {
         if (accessRequest.getReason().getOrganisationID() > -1) {
             return Response.serverError().build();
         }
-        
+               
         // Basic check for JSON validity
         checkJSONFilterForValidity(accessRequest);
-        // Check that at least one record would be granted by this access request being granted
-        checkForRecordsReturnedSingleDataset(user, accessRequest, accessRequest.getDataset().getDatasets().get(0));
+        // Check that at least one record would be granted by this access request being granted for the public user
+        checkForRecordsReturnedSingleDataset(User.PUBLIC_USER, accessRequest, accessRequest.getDataset().getDatasets().get(0));
         
         TaxonObservationFilter filter = accessRequestUtils.createFilter(editAccessRequest.getRawJSON(), accessRequest);
         TaxonObservationFilter orig = oTaxonObservationFilterMapper.selectById(filterID);
@@ -466,11 +468,11 @@ public class UserAccessRequestResource extends RequestResource {
         UserAccessRequest uar = oUserAccessRequestMapper.getRequest(filterID);
         
         AccessRequestJSON accessRequest = parseJSON(uar.getFilter().getFilterJSON());
-        
+             
         // Basic check for JSON validity
         checkJSONFilterForValidity(accessRequest);
         // Check that at least one record would be granted by this access request being granted
-        checkForRecordsReturnedSingleDataset(user, accessRequest, uar.getDatasetKey());
+        checkForRecordsReturnedSingleDataset(User.PUBLIC_USER, accessRequest, uar.getDatasetKey());
         
         giveAccess(uar);
         

@@ -115,6 +115,11 @@ public class OrganisationAccessRequestResource extends RequestResource {
         List<String> species = accessRequestUtils.createSpeciesList(accessRequest);        
         List<String> datasets = accessRequestUtils.createDatasetList(accessRequest, species, org);
 
+        for (String datasetKey : datasets) {
+            // Check that at least one record would be granted by this access request being granted
+            checkForRecordsReturnedSingleDataset(user.PUBLIC_USER, accessRequest, datasetKey);
+        }           
+        
         if (accessRequest.getDataset().isSecret()) {
             List<String> sensitive = accessRequestUtils.createSensitiveDatasetList(accessRequest, species, org);
             
@@ -135,8 +140,6 @@ public class OrganisationAccessRequestResource extends RequestResource {
         for (String datasetKey : datasets) {
             try {
                 oTaxonObservationFilterMapper.createFilter(filter);
-                // Check that at least one record would be granted by this access request being granted
-                checkForRecordsReturnedSingleDataset(user, accessRequest, datasetKey);
                 oOrganisationAccessRequestMapper.createRequest(filter.getId(), org.getId(), datasetKey, accessRequest.getReason().getPurpose(), accessRequest.getReason().getDetails(), new Date(new java.util.Date().getTime()), false);
                 oOrganisationAccessRequestAuditHistoryMapper.addHistory(filter.getId(), user.getId(), "Created request for: '" + filter.getFilterText() + "'");
                 mailRequestCreate(oOrganisationAccessRequestMapper.getRequest(filter.getId()), user);
@@ -172,7 +175,7 @@ public class OrganisationAccessRequestResource extends RequestResource {
         // Basic filter validity checks
         checkJSONFilterForValidity(accessRequest);    
         // Check that at least one record would be granted by this access request being granted
-        checkForRecordsReturnedSingleDataset(user, accessRequest, accessRequest.getDataset().getDatasets().get(0));
+        checkForRecordsReturnedSingleDataset(user.PUBLIC_USER, accessRequest, accessRequest.getDataset().getDatasets().get(0));
 
         TaxonObservationFilter filter = accessRequestUtils.createFilter(json, accessRequest);
         List<String> datasets = accessRequest.getDataset().getDatasets();
@@ -220,7 +223,7 @@ public class OrganisationAccessRequestResource extends RequestResource {
         // Basic filter validity checks
         checkJSONFilterForValidity(accessRequest);
         // Check that at least one record would be granted by this access request being granted
-        checkForRecordsReturnedSingleDataset(user, accessRequest, accessRequest.getDataset().getDatasets().get(0));
+        checkForRecordsReturnedSingleDataset(User.PUBLIC_USER, accessRequest, accessRequest.getDataset().getDatasets().get(0));
         
         TaxonObservationFilter filter = accessRequestUtils.createFilter(editAccessRequest.getRawJSON(), accessRequest);
         TaxonObservationFilter orig = oTaxonObservationFilterMapper.selectById(filterID);
@@ -523,7 +526,7 @@ public class OrganisationAccessRequestResource extends RequestResource {
         // Basic filter validity checks
         checkJSONFilterForValidity(accessRequestJSON);
         // Check that at least one record would be granted by this access request being granted
-        checkForRecordsReturnedSingleDataset(user, accessRequestJSON, oar.getDatasetKey());
+        checkForRecordsReturnedSingleDataset(User.PUBLIC_USER, accessRequestJSON, oar.getDatasetKey());
         
         giveAccess(oar);
         

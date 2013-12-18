@@ -28,11 +28,11 @@ namespace uk.org.nbn.nbnv.ImporterPollingService.Service
             }
         }
 
-        public string CreateSubFolderForResults(string targetFolder, FileInfo file, ImportMode mode)
+        public string CreateSubFolderForResults(string targetFolder, FileInfo file)
         {
             var di = new DirectoryInfo(targetFolder);
 
-            var newFolderName = Path.GetFileNameWithoutExtension(file.FullName) + "-" + mode.ToString() + "-" + GetCurrentTimestamp();
+            var newFolderName = Path.GetFileNameWithoutExtension(file.FullName) + "-" + GetCurrentTimestamp();
 
             var resultDi = di.CreateSubdirectory(newFolderName);
             return resultDi.FullName;

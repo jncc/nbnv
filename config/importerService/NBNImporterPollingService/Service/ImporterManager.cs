@@ -9,12 +9,6 @@ using log4net;
 
 namespace uk.org.nbn.nbnv.ImporterPollingService.Service
 {
-    public enum ImportMode
-    {
-        NewOrReplace
-        , Append
-    }
-
     public class ImporterManager
     {
         private readonly ServiceConfiguration _configuration;
@@ -28,7 +22,7 @@ namespace uk.org.nbn.nbnv.ImporterPollingService.Service
             _log = log;
         }
 
-        public void RunImport(string importFile, ImportMode mode)
+        public void RunImport(string importFile)
         {
             var p = new Process
                 {
@@ -38,7 +32,7 @@ namespace uk.org.nbn.nbnv.ImporterPollingService.Service
                             RedirectStandardOutput = true,
                             FileName = _configuration.JavaExePath,
                             Arguments = GetCommandLineArguments(_configuration.ImporterCommandLine, importFile, _configuration.ImporterLogFolder,
-                            _configuration.TempFolder, mode)
+                            _configuration.TempFolder)
 
                         }
                 };
@@ -58,24 +52,12 @@ namespace uk.org.nbn.nbnv.ImporterPollingService.Service
             _log.InfoFormat("Finished processing file {0}", importFile);
         }
 
-        private string GetCommandLineArguments(string rawCommandLine, string importFile, string logFolder, string tempFolder, ImportMode mode)
+        private string GetCommandLineArguments(string rawCommandLine, string importFile, string logFolder, string tempFolder)
         {
             var cl = " -jar " + rawCommandLine;
             cl = cl.Replace("%importfile%", importFile);
             cl = cl.Replace("%logfolder%", logFolder);
             cl = cl.Replace("%tempfolder%", tempFolder);
-
-            switch (mode)
-            {
-                case ImportMode.NewOrReplace:
-                    cl = cl.Replace("%mode%", "full");
-                    break;
-                case ImportMode.Append:
-                    cl = cl.Replace("%mode%", "incremental");
-                    break;
-                default:
-                    throw new Exception("Invalid import mode");
-            }
 
             return cl;
         }

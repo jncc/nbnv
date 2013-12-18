@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -30,6 +31,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import uk.org.nbn.nbnv.api.authentication.TokenResetCredentials;
 import uk.org.nbn.nbnv.api.authentication.ExpiredTokenException;
 import uk.org.nbn.nbnv.api.authentication.InvalidCredentialsException;
@@ -37,6 +39,7 @@ import uk.org.nbn.nbnv.api.authentication.InvalidTokenException;
 import uk.org.nbn.nbnv.api.authentication.Token;
 import uk.org.nbn.nbnv.api.authentication.TokenAuthenticator;
 import uk.org.nbn.nbnv.api.dao.core.OperationalOrganisationMapper;
+import uk.org.nbn.nbnv.api.dao.core.OperationalUserEmailModifyMapper;
 import uk.org.nbn.nbnv.api.dao.core.OperationalUserMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.OrganisationMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.UserAuthenticationMapper;
@@ -45,8 +48,8 @@ import uk.org.nbn.nbnv.api.mail.TemplateMailer;
 import uk.org.nbn.nbnv.api.model.Dataset;
 import uk.org.nbn.nbnv.api.model.Organisation;
 import uk.org.nbn.nbnv.api.model.User;
+import uk.org.nbn.nbnv.api.model.UserEmailModify;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenAnyDatasetOrOrgAdminUser;
-import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenDatasetOrOrgAdminUser;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
 
 /**
@@ -68,6 +71,7 @@ public class UserResource extends AbstractResource {
     @Autowired OperationalOrganisationMapper oOrganisationMapper;
     @Autowired OperationalUserMapper oUserMapper;
     @Autowired UserAuthenticationMapper userAuthenticationMapper;
+    @Autowired OperationalUserEmailModifyMapper oUserEmailModifyMapper;
     @Autowired TemplateMailer mailer;
 
     @Autowired
@@ -399,7 +403,11 @@ public class UserResource extends AbstractResource {
             UnsupportedEncodingException, IOException, TemplateException, JSONException, NoSuchAlgorithmException {
         //Perform some checks to before hitting database constraints. 
         //Would be better to read the status from a constraint violation
-        //and report on this     
+        //and report on this
+        
+        // Trim username to prevent PEBKAC issues
+        newUser.setUsername(newUser.getUsername().trim());        
+        
         if (userMapper.getUser(newUser.getUsername()) != null) {
             throw new IllegalArgumentException("The specified username is already taken");
         } else if (userMapper.getUserFromEmail(newUser.getEmail()) != null) {
@@ -522,11 +530,17 @@ public class UserResource extends AbstractResource {
     @GET
     @Path("/search")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<User> searchForUserByPartial(@TokenUser(allowPublic=false) User user, @QueryParam("term") String term, @QueryParam("organisation") int orgId, @QueryParam("dataset") String dataset) {
-        if (dataset != null && !dataset.equals("")) {
-            return oUserMapper.searchForUserExcludeDatasetAdmins(term, dataset);
+    public List<User> searchForUserByPartial(@TokenAnyDatasetOrOrgAdminUser User user, @QueryParam("term") String term, @QueryParam("organisation") int orgId, @QueryParam("dataset") String dataset) {
+        if (StringUtils.hasText(term)) {
+            if (dataset != null && !dataset.equals("")) {
+                return oUserMapper.searchForUserExcludeDatasetAdmins("%" + term + "%", dataset);
+            }
+            if (orgId > 0) {
+                return oUserMapper.searchForUserExcludeOrganisationMembers("%" + term + "%", orgId);
+            }
+            return oUserMapper.searchForUser("%" + term + "%");
         }
-       return oUserMapper.searchForUserExcludeOrganisationMembers("%" + term + "%", orgId);
+        return new ArrayList<User>();
     }
 
     /**
@@ -549,16 +563,98 @@ public class UserResource extends AbstractResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response modifyExistingUser(@TokenUser(allowPublic = false) User user, @Valid User modified) throws JSONException {
 
-        if (!user.getEmail().equals(modified.getEmail())
-                && oUserMapper.getUserFromEmail(modified.getEmail()) != null) {
-            throw new IllegalArgumentException("The specified e-mail address is already registered to another user.");
-        }
-
-        oUserMapper.updateUserDetails(user.getId(), modified.getForename(), modified.getSurname(), modified.getEmail(), modified.getPhone());
+        oUserMapper.updateUserDetails(user.getId(), modified.getForename(), modified.getSurname(), modified.getPhone());
 
         return Response.ok(new JSONObject()
                 .put("success", true)
                 .put("status", "You have successfully modifed your user details")).build();
+    }
+    
+    /**
+     * Post an update to your users email address, this is a two stage process
+     * and will not alter the email address until it has been confirmed by the
+     * user using an activation key sent to the new email address
+     * 
+     * @param user The current user, must be logged in (Injected Token no need to pass)
+     * @param email The new email for this user
+     * @return A success or failure message depending on the outcome
+     * 
+     * @throws IOException
+     * @throws TemplateException
+     * @throws JSONException 
+     */
+    @POST
+    @Path("/modify/email")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response modifyExistingUsersEmail(@TokenUser(allowPublic = false) User user, String email) throws IOException, TemplateException, JSONException {
+        if (user.getEmail().equals(email)
+                && oUserMapper.getUserFromEmail(email) != null) {
+            throw new IllegalArgumentException("The specified e-mail address is already registered to another user.");
+        }
+        
+        if (oUserEmailModifyMapper.getModificationForUser(user) != null) {
+            oUserEmailModifyMapper.removeModification(user);
+        }
+        
+        String key =  RandomStringUtils.randomAlphanumeric(12);
+        oUserEmailModifyMapper.modifyEmail(user, email, key);
+        
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("mod", oUserEmailModifyMapper.getModificationForUser(user));
+        map.put("user", user);
+        map.put("portal", properties.getProperty("portal_url"));
+        
+        mailer.send("emailModifyOldEmail.ftl", email, "Updating your Email Address", map);
+        mailer.send("emailModifyNewEmail.ftl", email, "Updating your Email Address", map);
+        
+        return Response.ok(new JSONObject()
+                .put("success", true)
+                .put("status", "Successfully put in email update ready for activation")).build();
+    }
+
+    /**
+     * Second stage of the email modification process, confirms that the user
+     * has actually requested this modification, using the activation key sent 
+     * to the new users email address
+     * 
+     * @param user The current user, must be logged in (Injected Token no need to pass)
+     * @param email The new email address that the user wants to change to
+     * @param key The activation key from the email sent to the new users email account
+     * @return The success or failure of this operation
+     * 
+     * @throws IOException
+     * @throws TemplateException
+     * @throws JSONException 
+     */
+    @GET
+    @Path("/modify/email/activate/{key}")
+    public Response confirmEmailModification(@TokenUser(allowPublic = false) User user, @PathParam("email") String email, @PathParam("key") String key) throws IOException, TemplateException, JSONException {
+        UserEmailModify mod = oUserEmailModifyMapper.getModificationForUser(user);
+        
+        if (mod == null) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("No email modification pending for this user").build();
+        }
+        
+        if (!mod.getActivationKey().equals(key)) {
+            return Response.status(Response.Status.FORBIDDEN).entity("Given key is not equal to the one held on record").build();
+        }
+        
+        if (!mod.getUser().equals(user)) {
+            return Response.status(Response.Status.FORBIDDEN).entity("This modification request is not for this user").build();
+        }
+        
+        oUserEmailModifyMapper.updateEmailAddress(user);
+        oUserEmailModifyMapper.removeModification(user);
+        
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("user", user);
+        map.put("mod", mod);
+        
+        mailer.send("emailModifySuccess.ftl", user.getEmail(), "Your Email Address has been successfully changed", map);
+        
+        return Response.ok(new JSONObject()
+                .put("success", true)
+                .put("status", "You have successfully modifed your email address")).build();
     }
     
     /**

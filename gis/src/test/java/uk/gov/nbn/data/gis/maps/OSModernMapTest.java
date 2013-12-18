@@ -173,6 +173,5 @@ public class OSModernMapTest {
         
         //Then
         assertFalse("Expected result to be invalid", validRequest);
-        //Then
     }
 }
