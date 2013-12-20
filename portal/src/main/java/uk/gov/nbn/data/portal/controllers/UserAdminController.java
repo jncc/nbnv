@@ -19,8 +19,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import uk.gov.nbn.data.portal.controllers.models.ChangePassword;
 import uk.gov.nbn.data.portal.controllers.models.builders.UserAdminModelBuilder;
@@ -36,7 +39,6 @@ public class UserAdminController {
 
     @Autowired
     WebResource resource;
-    
 
     @RequestMapping(value = "Modify", method = RequestMethod.GET)
     public ModelAndView getUserModifyPage() {
@@ -171,6 +173,71 @@ public class UserAdminController {
         }
 
         return ssoRedirect("/User/Modify", "You need to be logged in to view the user modify page.");
+    }
+
+    @RequestMapping(value = "Modify", method = RequestMethod.POST, params = "changeEmail")
+    public ModelAndView startEmailModification(@ModelAttribute("user") User user, Model model, BindingResult result) {
+        User currentUser = resource.path("user/full")
+                .accept(MediaType.APPLICATION_JSON)
+                .get(User.class);
+
+        if (currentUser.equals(User.PUBLIC_USER)) {
+            return ssoRedirect("/User/Modify", "You must be logged in to change your email");
+        }
+
+        ClientResponse response = resource.path("/user/modify/email")
+                .entity(user.getEmail())
+                .post(ClientResponse.class);
+
+        user.setId(currentUser.getId());
+        user.setUsername(currentUser.getUsername());
+        user.setForename(currentUser.getForename());
+        user.setSurname(currentUser.getSurname());
+        user.setPhone(currentUser.getPhone());
+        
+        if (response.getClientResponseStatus() == ClientResponse.Status.OK) {
+            return new UserAdminModelBuilder()
+                    .view("userModify")
+                    .user(user)
+                    .changePassword(user.getUsername())
+                    .successMessage("You will shortly receive an email at " + user.getEmail() + " with further instructions")
+                    .build();
+        }
+
+        result.addError(new ObjectError(result.getObjectName(), "Email Address is already in use"));
+
+        return new UserAdminModelBuilder()
+                .view("userModify")
+                .user(user)
+                .changePassword(user.getUsername())
+                .build();
+    }
+
+    @RequestMapping(value = "Email/Activate/{key}", method = RequestMethod.GET)
+    public ModelAndView completeEmailModification(
+            @PathVariable("key") String key) {
+        User currentUser = resource.path("user")
+                .accept(MediaType.APPLICATION_JSON)
+                .get(User.class);
+
+        if (currentUser.equals(User.PUBLIC_USER)) {
+            return ssoRedirect("/User/Email/Activate/" + key, "You must be logged in to change your email");
+        }
+        
+        ClientResponse response = resource.path("user/modify/email")
+                .path("activate")
+                .path(key)
+                .get(ClientResponse.class);
+
+        if (response.getClientResponseStatus() == ClientResponse.Status.OK) {
+            return new ModelAndView("emailChangeSuccess");
+        }
+
+        if (response.getClientResponseStatus() == ClientResponse.Status.FORBIDDEN) {
+            return new ModelAndView("invalidEmailChangeRequest");
+        }
+
+        return new ModelAndView("noEmailChangePending");
     }
 
     private boolean isNotPublicUser(User currentUser) {

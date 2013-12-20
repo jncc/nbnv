@@ -34,7 +34,7 @@ public class SingleSpeciesInspireMap {
     @Autowired Properties properties;
     
     @RequestMapping("{taxonVersionKey}/inspire")
-    @GridMap(
+/*    @GridMap(
         layers={
             @GridMap.GridLayer(name="10km",     layer="Species Distribution",        resolution=GridMap.Resolution.TEN_KM),
         },
@@ -42,7 +42,7 @@ public class SingleSpeciesInspireMap {
         extents= {
             @GridMap.Extent(name="gbi",     epsgCode="EPSG:27700", extent={-250000, -50000, 750000, 1300000})
         }
-    )
+    ) */
     public ModelAndView getSingleSpeciesInspireModel(
             final User user,
             GridMap gridMapDefinition,
@@ -55,10 +55,10 @@ public class SingleSpeciesInspireMap {
         
         HashMap<String, Object> data = new HashMap<String, Object>();
         
-        data.put("layers", gridMapDefinition.layers());
+//        data.put("layers", gridMapDefinition.layers());
         data.put("mapServiceURL", mapServiceURL);
         data.put("properties", properties);
-        data.put("title", "Test");
+        data.put("title", "Fluffy Bunnyius" + " " + "CJ 2300" + " - Available Species Distribution for the UK");
         data.put("speciesCode", "FluffyBunny");
         data.put("speciesName", "Fluffy Bunnyius");
         data.put("resourceURL", "https://data.nbn.org.uk/api/taxa/" + key + "/inspire");

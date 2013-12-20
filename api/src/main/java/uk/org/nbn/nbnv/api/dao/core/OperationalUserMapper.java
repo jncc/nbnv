@@ -65,8 +65,8 @@ public interface OperationalUserMapper {
     @Insert("UPDATE \"User\" SET active = 1 WHERE username = #{username} AND active = 0 AND activationKey = #{code}")
     int activateNewUser( @Param("username") String username, @Param("code") String code);
     
-    @Update("UPDATE \"User\" SET forename = #{forename}, surname = #{surname}, email = #{email}, phone = #{phone} WHERE id = #{id}")
-    public void updateUserDetails(@Param("id") int id, @Param("forename") String forename, @Param("surname") String surname, @Param("email") String email, @Param("phone") String phone);
+    @Update("UPDATE \"User\" SET forename = #{forename}, surname = #{surname}, phone = #{phone} WHERE id = #{id}")
+    public void updateUserDetails(@Param("id") int id, @Param("forename") String forename, @Param("surname") String surname, @Param("phone") String phone);
     
     @Update("UPDATE \"User\" SET subscribedToNBNMarketting = #{nbnMarketing} WHERE id = #{id}") 
     public void updateUserEmailSettings(@Param("id") int id, @Param("nbnMarketing") int nbnMarketing);
