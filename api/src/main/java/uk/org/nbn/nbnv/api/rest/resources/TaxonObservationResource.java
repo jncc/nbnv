@@ -1,8 +1,5 @@
 package uk.org.nbn.nbnv.api.rest.resources;
 
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.io.ParseException;
-import com.vividsolutions.jts.io.WKTReader;
 import freemarker.template.TemplateException;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -48,6 +45,7 @@ import uk.org.nbn.nbnv.api.dao.warehouse.FeatureMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.OrganisationMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.OrganisationMembershipMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.OrganisationSuppliedListMapper;
+import uk.org.nbn.nbnv.api.dao.warehouse.PolygonUtilsMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.SiteBoundaryMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.TaxonObservationAttributeMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.TaxonObservationMapper;
@@ -83,6 +81,7 @@ public class TaxonObservationResource extends RequestResource {
     @Autowired TemplateMailer templateMailer;
     @Autowired DownloadMapper downloadMapper;
     @Autowired UserMapper userMapper;
+    @Autowired PolygonUtilsMapper polygonUtilsMapper;
     
     private Logger logger = LoggerFactory.getLogger(TaxonObservationResource.class);
 
@@ -298,16 +297,15 @@ public class TaxonObservationResource extends RequestResource {
         //TODO: squareBlurring(?)
         
         if (StringUtils.hasText(polygon)) {
-            WKTReader reader = new WKTReader();
-            try {
-                Geometry geom = reader.read(polygon);
-                double area = geom.getArea();
-                if (geom.getArea() > 900000) {
-                    throw new IllegalArgumentException("Polygon must be smaller than 900km2");
-                }
-            } catch (ParseException ex) {
-                throw new IllegalArgumentException("Polygon WKT is not valid");
-            }
+           try {
+               double polygonArea = polygonUtilsMapper.getAreaFromWKT(polygon);
+               double maxPolygonArea = Double.parseDouble(properties.getProperty("max_polygon"));
+               if (polygonArea > maxPolygonArea) {
+                   throw new IllegalArgumentException("Supplied polygon's area is greater than the maximum allowed area; was " + polygonArea + "m\u00B2 but must be less than " + maxPolygonArea + "m\u00B2");
+               }
+           } catch (Exception ex) {
+               throw new IllegalArgumentException("Supplied polygon could not be correctly interpreted as a Geography data type;\n" + ex.getLocalizedMessage());
+           }
         }
         
         // Stop users being able to request all records that they have access to at the same time
