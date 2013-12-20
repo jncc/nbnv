@@ -10,21 +10,32 @@ class ArchiveManager @Inject()(options: Options
                                , zipFileManager: ZipFileManager
                                , log: Logger
                                , metadataParser: ArchiveMetadataParser
-                               , fs: FileSystem) {
+                               , fs: FileSystem
+                                , dfp: DataFileParser) {
+
+  var isOpen = false
 
   def open()  {
     //Open zip file
     log.info("Opening archive %s".format(options.archivePath))
     val archiveFiles = zipFileManager.unZip(options.archivePath, options.tempDir)
+    log.debug("Archive unzipped to temp folder %s".format(options.tempDir))
 
     //Read archive meta data file
     val xml = fs.loadXml(archiveFiles.metadata)
     val metadata = metadataParser.getMetadata(xml)
+    log.debug("Read Metadata")
 
+    dfp.open(archiveFiles.data, metadata)
+    isOpen = true
   }
 
-  def records() : Seq[NbnRecord] = { List[NbnRecord]() }
-  //Read mapping
+  def records() : Seq[NbnRecord] = {
+    if (!isOpen) throw new IllegalStateException("The archive has not been opened")
+
+    List[NbnRecord]()
+  }
+
   //if has headers skip line on
   //read line into raw record using mapping
   //cl

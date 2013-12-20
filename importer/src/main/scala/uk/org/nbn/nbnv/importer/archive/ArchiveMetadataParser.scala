@@ -28,7 +28,8 @@ class ArchiveMetadataParser  {
     }
 
     new ArchiveMetadata {
-      val SkipHeaderLines: Option[Int] = (xml \ "core" \ "@ignoreHeaderLines").text.maybeInt
+      val fieldSeparator: String = (xml \ "core" \ "@fieldsTerminatedBy").text
+      val skipHeaderLines: Option[Int] = (xml \ "core" \ "@ignoreHeaderLines").text.maybeInt
       val date: Option[Int] = getCoreField("eventDate")
       val startDate: Option[Int] = getExtensionField("eventDateStart")
       val gridReferenceType: Option[Int] = getExtensionField("gridReferenceType")

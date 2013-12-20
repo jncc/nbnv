@@ -12,6 +12,10 @@ class ArchiveMetadataParserSuite extends BaseFunSuite {
 
     val result = amp.getMetadata(xml)
 
+    result.fieldSeparator should be ("\\t")
+
+    result.skipHeaderLines should be (Some(1))
+
     result.date should be (Some(22))
     result.startDate should be (Some(3))
     result.gridReferenceType should be (Some(10))
