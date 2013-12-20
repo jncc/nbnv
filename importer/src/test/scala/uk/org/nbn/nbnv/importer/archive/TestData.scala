@@ -21,6 +21,7 @@ object TestData {
       <field index="20" term="http://rs.tdwg.org/dwc/terms/verbatimLongitude"/>
       <field index="21" term="http://rs.tdwg.org/dwc/terms/verbatimLatitude"/>
       <field index="22" term="http://rs.tdwg.org/dwc/terms/eventDate"/>
+      <field index="23" term="http://rs.tdwg.org/dwc/terms/occurrenceStatus"/>
     </core>
     <extension encoding="UTF-8" fieldsEnclosedBy="" fieldsTerminatedBy="\t" ignoreHeaderLines="1" linesTerminatedBy="\r\n" rowType="http://rs.nbn.org.uk/dwc/nxf/0.1/terms/nxfOccurrence">
       <files>
