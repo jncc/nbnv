@@ -75,14 +75,11 @@ public class TaxonResource extends AbstractResource {
     }
 
     /**
-     * Return a specific Taxon record from the data warehouse
+     * Return a specific INSPIRE Taxon Dataset record from the data warehouse
      * 
      * @param taxonVersionKey A Taxon Version Key denoting a Taxon Record
      * 
-     * @return A Taxon Record
-     * 
-     * @response.representation.200.qname Taxon
-     * @response.representation.200.mediaType application/json;charset=utf-8
+     * @return GEMINI2.1 Dataset Metadata
      */
     @GET
     @Produces(MediaType.APPLICATION_XML + ";charset=utf-8")
@@ -104,13 +101,42 @@ public class TaxonResource extends AbstractResource {
         data.put("key", taxonVersionKey);
         data.put("taxon", taxonMapper.getTaxon(taxonVersionKey));
         data.put("contribs", StringUtils.collectionToDelimitedString(orgNames, ", "));
-        data.put("restrictions", "###TODO");
-        data.put("lineage", "###TODO");
         
         return FreeMarkerTemplateUtils.processTemplateIntoString(
                 configuration.getTemplate("dataset.ftl"), data);
     }
 
+    /**
+     * Return a specific INSPIRE Taxon Dataset record from the data warehouse
+     * 
+     * @param taxonVersionKey A Taxon Version Key denoting a Taxon Record
+     * 
+     * @return GEMINI2.1 Dataset Metadata
+     */
+    @GET
+    @Produces(MediaType.APPLICATION_XML + ";charset=utf-8")
+    @Path("{taxonVersionKey}/inspire/service")
+    public String getTaxonInspireService(@PathParam("taxonVersionKey") String taxonVersionKey) throws IOException, TemplateException {
+        Configuration configuration = new Configuration();
+        configuration.setClassForTemplateLoading(TaxonResource.class, "");
+
+        Map<String, Object> data = new HashMap <String, Object>();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        
+        List<Organisation> orgs = organisationMapper.selectOrganisationsContributingToTaxon(taxonVersionKey);
+        List<String> orgNames = new ArrayList();
+        for (Organisation org : orgs) {
+            orgNames.add(org.getName());
+        }
+
+        data.put("date", sdf.format(new Date()));
+        data.put("key", taxonVersionKey);
+        data.put("taxon", taxonMapper.getTaxon(taxonVersionKey));
+        data.put("contribs", StringUtils.collectionToDelimitedString(orgNames, ", "));
+        
+        return FreeMarkerTemplateUtils.processTemplateIntoString(
+                configuration.getTemplate("service.ftl"), data);
+    }
     /**
      * Return a list of Taxon Records which are synonymous with the specified 
      * Taxon Record
