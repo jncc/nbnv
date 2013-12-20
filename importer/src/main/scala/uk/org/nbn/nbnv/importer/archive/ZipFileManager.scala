@@ -26,8 +26,14 @@ class ZipFileManager @Inject()(log: Logger) {
       target.mkdir()
     }
 
+    val fileMap = unzipAllFiles(zipFile, getZipEntryInputStream(zipFile)_,target )
 
-    unzipAllFiles(zipFile, getZipEntryInputStream(zipFile)_,target )
+    new ArchiveFilePaths {
+      val metadata: String = fileMap("eml.xml")
+      val data: String = fileMap("data.tab")
+      val fieldMap: String = fileMap("meta.xml")
+    }
+
   }
 
   private def getZipEntryInputStream(zipFile: ZipFile)(entry: ZipEntry) = zipFile.getInputStream(entry)
@@ -43,6 +49,7 @@ class ZipFileManager @Inject()(log: Logger) {
         val newFile = new File(targetFolder, entry.getName)
         saveFile(inputGetter(entry), new FileOutputStream(newFile))
         unzippedFiles += newFile.getName -> newFile.getAbsolutePath
+        log.debug("Unzipped %s to %s".format(newFile.getName, newFile.getAbsolutePath))
       }
     })
 
