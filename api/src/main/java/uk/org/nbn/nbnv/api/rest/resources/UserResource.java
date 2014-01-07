@@ -604,7 +604,7 @@ public class UserResource extends AbstractResource {
         map.put("user", user);
         map.put("portal", properties.getProperty("portal_url"));
         
-        mailer.send("emailModifyOldEmail.ftl", email, "Updating your Email Address", map);
+        mailer.send("emailModifyOldEmail.ftl", user.getEmail(), "Updating your Email Address", map);
         mailer.send("emailModifyNewEmail.ftl", email, "Updating your Email Address", map);
         
         return Response.ok(new JSONObject()
