@@ -1,6 +1,7 @@
 package uk.org.nbn.nbnv.importer.archive
 
 abstract class ArchiveMetadata {
+  val fields : Int
   val fieldSeparator : String
   val skipHeaderLines : Option[Int]
   val key: Option[Int]
