@@ -1,4 +1,4 @@
-package uk.org.nbn.nbnv.importer.darwin
+package uk.org.nbn.nbnv.importer.archive
 
 object NbnFields extends Enumeration {
   type NbnFields = Value
@@ -11,7 +11,11 @@ object NbnFields extends Enumeration {
   , siteName
   , recorder
   , determiner
-  , attributeJSON
+  , east
+  , north
+  , srs
+  , attributes
+  , date
   , startDate
   , endDate
   , dateType
@@ -19,5 +23,6 @@ object NbnFields extends Enumeration {
   , gridReferenceType
   , gridReference
   , gridReferencePrecision
+  , featureKey
   = Value
 }
