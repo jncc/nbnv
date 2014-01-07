@@ -28,6 +28,7 @@ class ArchiveMetadataParser  {
     }
 
     new ArchiveMetadata {
+      val fields: Int = (xml \\ "field").length // the number of defined fields
       val fieldSeparator: String = (xml \ "core" \ "@fieldsTerminatedBy").text
       val skipHeaderLines: Option[Int] = (xml \ "core" \ "@ignoreHeaderLines").text.maybeInt
       val date: Option[Int] = getCoreField("eventDate")
