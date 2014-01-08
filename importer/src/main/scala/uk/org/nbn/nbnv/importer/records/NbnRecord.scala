@@ -44,6 +44,27 @@ abstract class NbnRecord2() {
   val gridReferencePrecision : Option[Int]
   val gridReferencePrecisionRaw : Option[String]
   val featureKey : Option[String]
+  val dateType : Option[String]
+
+  def feature = {
+    if (gridReferenceRaw.isDefined)
+      GridRefDef(gridReferenceRaw.get, parseSpatialSystem, gridReferencePrecision)
+    else if (featureKey.isDefined)
+      BoundaryDef(featureKey.get)
+    else if (east.isDefined && north.isDefined && (srs.isDefined || gridReferenceTypeRaw.isDefined))
+      PointDef(east.get, north.get, parseSpatialSystem.get, gridReferencePrecision)
+    else
+      throw new BadDataException("Couldn't parse feature.")
+  }
+
+  private def parseSpatialSystem = {
+    if (gridReferenceTypeRaw.isDefined)
+      Some(GridTypeDef(gridReferenceTypeRaw.get))
+    else if (srs.isDefined)
+      Some(SrsDef(srs.get))
+    else
+      None
+  }
 }
 
 class NbnRecord(record: StarRecord) {
