@@ -9,6 +9,43 @@ import java.util.{Calendar, Date}
 import uk.org.nbn.nbnv.importer.utility.StringParsing._
 
 /// Wraps a Darwin record in NBN clothing.
+
+abstract class NbnRecord2() {
+  val key : String
+  val absenceRaw : Option[String]
+  val absence : Boolean
+  val surveyKey : Option[String]
+  val sampleKey : Option[String]
+  val taxonVersionKey : Option[String]
+  val siteKey : Option[String]
+  val siteName : Option[String]
+  val recorder : Option[String]
+  val determiner : Option[String]
+  val eastRaw : Option[String]
+  val east : Option[Double]
+  val northRaw : Option[String]
+  val north : Option[Double]
+  val srs : Option[Int]
+  val srsRaw : Option[String]
+  val attributesRaw : Option[String]
+  val attributes : Map[String, String]
+
+  val eventDateRaw : Option[String]
+  val startDateRaw : Option[String]
+  val startDate : Option[Date]
+  val endDateRaw : Option[String]
+  val endDate : Option[Date]
+
+  val sensitiveOccurrenceRaw : Option[String]
+  val sensitiveOccurrence : Boolean
+
+  val gridReferenceTypeRaw : Option[String]
+  val gridReferenceRaw : Option[String]
+  val gridReferencePrecision : Option[Int]
+  val gridReferencePrecisionRaw : Option[String]
+  val featureKey : Option[String]
+}
+
 class NbnRecord(record: StarRecord) {
 
   // TODO: THIS CLASS NEEDS TO BE SPLIT INTO AT LEAST TWO; ONE FOR VALIDATION AND ONE FOR INGESTION
@@ -49,6 +86,7 @@ class NbnRecord(record: StarRecord) {
   def srs =                parseOptional(record.core.value(DwcTerm.verbatimSRS)) map { s => s.toInt }
   def srsRaw =             parseOptional(record.core.value(DwcTerm.verbatimSRS))
   def attributes =         attributeMap
+  def attributesRaw =      parseOptional(attributeJson)
 
   def eventDateRaw      = parseOptional(record.core.value(DwcTerm.eventDate))
   def startDateRaw      = parseOptional(extension.value("http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateStart"))

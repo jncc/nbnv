@@ -30,14 +30,9 @@ class ArchiveManager @Inject()(options: Options
     isOpen = true
   }
 
-  def records() : Seq[NbnRecord] = {
+  def records() : Iterator[NbnRecord] = {
     if (!isOpen) throw new IllegalStateException("The archive has not been opened")
 
-    List[NbnRecord]()
+    dfp.records
   }
-
-  //if has headers skip line on
-  //read line into raw record using mapping
-  //cl
-
 }

@@ -7,7 +7,7 @@ import uk.org.nbn.nbnv.importer.{BadDataException, Options}
 import java.io
 import io.File
 
-class DataFileParser @Inject()(options: Options) {
+class DataFileParser @Inject()(options: Options, recordFactory : NbnRecordFactory) {
   var isOpen = false
   var csvReader : CSVReader = _
   var metadata : ArchiveMetadata = _
@@ -22,10 +22,10 @@ class DataFileParser @Inject()(options: Options) {
   def records : Iterator[NbnRecord] = {
     if (!isOpen) throw new IllegalStateException("The data file has not been opened")
 
-    csvReader.iterator.map{l =>
-      if (l.length != metadata.fields) throw new BadDataException("The record at row %d does not contain %d fields".format(0,metadata.fields))
+    csvReader.iterator.zipWithIndex.map{ case (rawData, i) =>
+      if (rawData.length != metadata.fields) throw new BadDataException("The record at row %d does not contain %d fields".format(i + 1,metadata.fields))
 
-      new NbnRecord(null)
+      recordFactory.makeRecord(rawData, metadata)
     }
   }
 }
