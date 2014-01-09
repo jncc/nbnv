@@ -14,15 +14,15 @@ class DataFileParser @Inject()(options: Options, recordFactory : NbnRecordFactor
 
   def open(dataFilePath: String, metadata: ArchiveMetadata) {
     this.metadata = metadata
-    csvReader = new CSVReader(new File(dataFilePath),options)
+    csvReader = new CSVReader(new File(dataFilePath))
 
     isOpen = true
   }
 
-  def records : Iterator[NbnRecord] = {
+  def records : Iterable[NbnRecord] = {
     if (!isOpen) throw new IllegalStateException("The data file has not been opened")
 
-    csvReader.iterator.zipWithIndex.map{ case (rawData, i) =>
+    csvReader.drop(1).zipWithIndex.map{ case (rawData, i) =>
       if (rawData.length != metadata.fields) throw new BadDataException("The record at row %d does not contain %d fields".format(i + 1,metadata.fields))
 
       recordFactory.makeRecord(rawData, metadata)
