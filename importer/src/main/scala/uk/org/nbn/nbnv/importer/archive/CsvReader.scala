@@ -10,8 +10,10 @@ import uk.org.nbn.nbnv.importer.Options
 class CSVReader(file:File, options: Options) extends Iterable[List[String]]{
 
   def iterator = new Iterator[List[String]]{
-    private lazy val reader = new CsvListReader(new FileReader(file),CsvPreference.EXCEL_PREFERENCE)
-//    private lazy val reader = new CsvMapReader(new FileReader(file),CsvPreference.EXCEL_PREFERENCE)
+    //we could read these from the metadata but for the moment it's static
+    private lazy val prefs = new CsvPreference.Builder('"', '\t', "\r\n").build()
+    private lazy val reader = new CsvListReader(new FileReader(file),prefs)
+
     reader.getHeader(true)
 
     private var current:List[String] = null
