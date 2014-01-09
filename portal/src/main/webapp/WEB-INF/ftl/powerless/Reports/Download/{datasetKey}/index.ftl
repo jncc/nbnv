@@ -2,12 +2,13 @@
 <#assign dataset=json.readURL("${api}/datasets/${datasetKey}")>
 <#assign admins=json.readURL("${api}/datasets/${datasetKey}/admins")>
 <#assign organisation=json.readURL("${dataset.organisationHref}")>
+<#assign organisations=json.readURL("${api}/organisations")>
 
-<@template.master title="Portal Download Report For ${dataset.title}"
+<@template.master title="Download Report For ${dataset.title}"
     javascripts=[
         "/js/jquery.dataTables.min.js",
         "/js/jquery.validate.min.js",
-        "/js/download/reports/enable-dataset-portal-report.js"] 
+        "/js/download/reports/enable-dataset-report.js"] 
     csss=[
         "//ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/themes/smoothness/jquery-ui.css",
         "/css/download/downloadFilters.css"]>
@@ -24,18 +25,39 @@
             <label class="nbn-download-form-filter-label">End Date: </label>
             <input type="text" id="endDate" name="endDate" />
             <input type="hidden" id="endDateHidden" name="endDateHidden" /><br />
+            <label class="nbn-download-form-filter-label">Purpose: </label>
+            <select id="purposeID" class="nbn-download-form-filter-select">
+                <option value="-1">Any</option>
+                <option value="1">Personal interest</option>
+                <option value="2">Educational purposes</option>
+                <option value="3">Research and scientific analysis</option>
+                <option value="4">Media publication</option>
+                <option value="5">Commercial and consultancy work</option>
+                <option value="6">Professional land management</option>
+                <option value="7">Data provision and interpretation (commercial)</option>
+                <option value="8">Data provision and interpretation (non-profit)</option>
+                <option value="9">Statutory work</option>
+            </select><br />
+
+            <label class="nbn-download-form-filter-label">Organisation: </label>
+            <select id="organisationID" class="nbn-download-form-filter-select">
+                <option value="-1">Any</option>
+                <#list organisations as org>
+                    <option value="${org.id}">${org.name}</option>
+                </#list>
+            </select><br />      
+
             <input type="submit" />
         </form>
     </div>
     <div id="nbn-download-stats-div" class="tabbed nbn-organisation-tabbed">
-        <h3>Information</h3>
-        <p>The views shown below are all cases where a user has viewed record data through either the portal or directly through the API, rather than through the the provided download wizard. This can only be done from the Taxon Observations Pages where are user selects an individual species or via the interactive mapper. When users use the API they can also view record data, so these views are also recorded here.</p>
-        <p>These views are all attached to the filters that were used to view these records and how many records were viewed, we cannot however record the use of the records through this system. The level of access given to the records is determined by the level of access granted to the user in question at the time the view occurred.</p>
+        <h3>Download Statistics</h3>
+        <div id="downloadStats">
+        </div>
     </div>
     <div style="clear:both;"></div>
     <div class="tabbed nbn-organisation-tabbed nbn-datatable" data-dataset="${datasetKey}">
         <h3><#if organisation.hasSmallLogo><img alt="${organisation.name}" src="${organisation.smallLogo}"/></#if>${organisation.name} : [${dataset.key}] ${dataset.title}</h2>
         <div id="nbn-downloads-div-${datasetKey}"></div>
     </div>  
-    <@dialog_utils.userInfoDialog />
 </@template.master>
