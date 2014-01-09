@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.FormParam;
@@ -35,6 +36,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+import uk.org.nbn.nbnv.api.dao.core.OperationalApiObservationViewMapper;
 import uk.org.nbn.nbnv.api.dao.core.OperationalTaxonObservationFilterMapper;
 import uk.org.nbn.nbnv.api.dao.providers.ProviderHelper;
 import uk.org.nbn.nbnv.api.dao.warehouse.DatasetAdministratorMapper;
@@ -53,12 +55,14 @@ import uk.org.nbn.nbnv.api.dao.warehouse.TaxonOutputGroupMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.UserMapper;
 import uk.org.nbn.nbnv.api.mail.TemplateMailer;
 import uk.org.nbn.nbnv.api.model.*;
+import uk.org.nbn.nbnv.api.model.meta.DatasetRecordCount;
 import uk.org.nbn.nbnv.api.model.meta.DownloadFilterJSON;
 import uk.org.nbn.nbnv.api.model.meta.DownloadStatsJSON;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenDatasetAdminUser;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
 import uk.org.nbn.nbnv.api.rest.resources.utils.DownloadHelper;
 import uk.org.nbn.nbnv.api.utils.DownloadUtils;
+import uk.org.nbn.nbnv.api.utils.FilterToText;
 
 @Component
 @Path("/taxonObservations")
@@ -82,6 +86,8 @@ public class TaxonObservationResource extends RequestResource {
     @Autowired DownloadMapper downloadMapper;
     @Autowired UserMapper userMapper;
     @Autowired PolygonUtilsMapper polygonUtilsMapper;
+    @Autowired OperationalApiObservationViewMapper oApiObservationViewMapper;
+    @Autowired FilterToText filterToText;
     
     private Logger logger = LoggerFactory.getLogger(TaxonObservationResource.class);
 
@@ -90,6 +96,7 @@ public class TaxonObservationResource extends RequestResource {
      * as the user is authorised to view this record
      * 
      * @param user The current User
+     * @param request The incoming HTTP request (Auto-injected no need to pass)
      * @param id A numerical ID for an observation record
      * 
      * @return The requested Taxon Observation Record
@@ -100,8 +107,16 @@ public class TaxonObservationResource extends RequestResource {
     @GET
     @Path("/{id : \\d+}")
     @Produces(MediaType.APPLICATION_JSON)
-    public TaxonObservation getObservation(@TokenUser(allowPublic = false) User user, @PathParam("id") int id) {
-        return observationMapper.selectById(id, user.getId());
+    public TaxonObservation getObservation(
+            @TokenUser(allowPublic = false) User user, 
+            @Context HttpServletRequest request, 
+            @PathParam("id") int id) {
+        TaxonObservation obs = observationMapper.selectById(id, user.getId());
+        if (obs != null) {
+            int pID = oApiObservationViewMapper.addAPIObservationView(user, request.getRemoteAddr(), "Single Record with the ID " + id);
+            oApiObservationViewMapper.addAPIObservationViewStats(pID, obs.getDatasetKey(), 1);
+        }
+        return obs;
     }
 
     /**
@@ -109,6 +124,7 @@ public class TaxonObservationResource extends RequestResource {
      * long as the user is authorised to view them
      * 
      * @param user The current user
+     * @param request The incoming HTTP request (Auto-injected no need to pass)
      * @param datasetKey A dataset key
      * 
      * @return A list of Taxon Observation Records in the specified dataset
@@ -119,7 +135,28 @@ public class TaxonObservationResource extends RequestResource {
     @GET
     @Path("/{datasetKey : [A-Z][A-Z0-9]{7}}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<TaxonObservation> getObservationsByDataset(@TokenUser(allowPublic = false) User user, @PathParam("datasetKey") String datasetKey) {
+    public List<TaxonObservation> getObservationsByDataset(
+            @TokenUser(allowPublic = false) User user, 
+            @Context HttpServletRequest request,
+            @PathParam("datasetKey") String datasetKey) {
+        List<String> datasetKeys = new ArrayList<String>();
+        datasetKeys.add(datasetKey);
+
+        writeAPIViewRecordToDatabase(user, request.getRemoteAddr(),
+                Integer.parseInt(ObservationResourceDefaults.defaultStartYear), 
+                Integer.parseInt(ObservationResourceDefaults.defaultEndYear), 
+                datasetKeys, 
+                new ArrayList<String>(), 
+                ObservationResourceDefaults.SPATIAL_RELATIONSHIP_DEFAULT, 
+                ObservationResourceDefaults.defaultFeatureID, 
+                Boolean.parseBoolean(ObservationResourceDefaults.defaultSensitive), 
+                ObservationResourceDefaults.defaultDesignation,
+                ObservationResourceDefaults.defaultTaxonOutputGroup,
+                Integer.parseInt(ObservationResourceDefaults.defaultOrgSuppliedList),
+                ObservationResourceDefaults.defaultGridRef, 
+                ObservationResourceDefaults.defaultPolygon, 
+                false);        
+                
         return observationMapper.selectByDataset(datasetKey, user.getId());
     }
 
@@ -128,6 +165,7 @@ public class TaxonObservationResource extends RequestResource {
      * that the current user has access to
      * 
      * @param user The current user
+     * @param request The incoming HTTP request (Auto-injected no need to pass)
      * @param ptvk The Taxon Version Key to search for
      * 
      * @return A List of Taxon Observations containing the specified Taxon 
@@ -139,7 +177,28 @@ public class TaxonObservationResource extends RequestResource {
     @GET
     @Path("/{ptvk : [A-Z]{3}SYS[0-9]{10}}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<TaxonObservation> getObservationsByTaxon(@TokenUser(allowPublic = false) User user, @PathParam("ptvk") String ptvk) {
+    public List<TaxonObservation> getObservationsByTaxon(
+            @TokenUser(allowPublic = false) User user, 
+            @Context HttpServletRequest request, 
+            @PathParam("ptvk") String ptvk) {
+        List<String> ptvks = new ArrayList<String>();
+        ptvks.add(ptvk);
+        
+        writeAPIViewRecordToDatabase(user, request.getRemoteAddr(),
+                Integer.parseInt(ObservationResourceDefaults.defaultStartYear), 
+                Integer.parseInt(ObservationResourceDefaults.defaultEndYear), 
+                new ArrayList<String>(), 
+                ptvks, 
+                ObservationResourceDefaults.SPATIAL_RELATIONSHIP_DEFAULT, 
+                ObservationResourceDefaults.defaultFeatureID, 
+                Boolean.parseBoolean(ObservationResourceDefaults.defaultSensitive), 
+                ObservationResourceDefaults.defaultDesignation,
+                ObservationResourceDefaults.defaultTaxonOutputGroup,
+                Integer.parseInt(ObservationResourceDefaults.defaultOrgSuppliedList),
+                ObservationResourceDefaults.defaultGridRef, 
+                ObservationResourceDefaults.defaultPolygon, 
+                false);
+        
         return observationMapper.selectByPTVK(ptvk, user.getId());
     }
     
@@ -178,6 +237,7 @@ public class TaxonObservationResource extends RequestResource {
      * 
      * @param user The current user, determines what datasets they have access 
      * to
+     * @param request The incoming HTTP request (Auto-injected no need to pass)
      * @param startYear The start year of the desired range
      * @param endYear The end year of the desired range
      * @param datasetKeys Datasets to search in
@@ -203,6 +263,7 @@ public class TaxonObservationResource extends RequestResource {
     @Produces(MediaType.APPLICATION_JSON)
     public List<TaxonObservation> getObservationsByFilter(
             @TokenUser(allowPublic = false) User user,
+            @Context HttpServletRequest request,
             @QueryParam("startYear") @DefaultValue(ObservationResourceDefaults.defaultStartYear) int startYear,
             @QueryParam("endYear") @DefaultValue(ObservationResourceDefaults.defaultEndYear) int endYear,
             @QueryParam("datasetKey") @DefaultValue(ObservationResourceDefaults.defaultDatasetKey) List<String> datasetKeys,
@@ -212,10 +273,11 @@ public class TaxonObservationResource extends RequestResource {
             @QueryParam("sensitive") @DefaultValue(ObservationResourceDefaults.defaultSensitive) Boolean sensitive,
             @QueryParam("designation") @DefaultValue(ObservationResourceDefaults.defaultDesignation) String designation,
             @QueryParam("taxonOutputGroup") @DefaultValue(ObservationResourceDefaults.defaultTaxonOutputGroup) String taxonOutputGroup,
+            @QueryParam("orgSuppliedList") @DefaultValue(ObservationResourceDefaults.defaultOrgSuppliedList) int orgSuppliedList,
             @QueryParam("gridRef") @DefaultValue(ObservationResourceDefaults.defaultGridRef) String gridRef,
             @QueryParam("polygon") @DefaultValue(ObservationResourceDefaults.defaultPolygon) String polygon,
-            @QueryParam("absence") Boolean absence) throws IllegalArgumentException {
-        return retreiveObservationsRecordsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon, absence);
+            @QueryParam("absence") Boolean absence) throws IllegalArgumentException {        
+        return retreiveObservationsRecordsByFilter(user, request.getRemoteAddr(), startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, orgSuppliedList, gridRef, polygon, absence);
     }
     
     /**
@@ -248,6 +310,7 @@ public class TaxonObservationResource extends RequestResource {
     @Produces(MediaType.APPLICATION_JSON)
     public List<TaxonObservation> getObservationsByFilterViaPOST(
             @TokenUser(allowPublic = false) User user,
+            @Context HttpServletRequest request,
             @FormParam("startYear") @DefaultValue(ObservationResourceDefaults.defaultStartYear) int startYear,
             @FormParam("endYear") @DefaultValue(ObservationResourceDefaults.defaultEndYear) int endYear,
             @FormParam("datasetKey") @DefaultValue(ObservationResourceDefaults.defaultDatasetKey) List<String> datasetKeys,
@@ -257,10 +320,11 @@ public class TaxonObservationResource extends RequestResource {
             @FormParam("sensitive") @DefaultValue(ObservationResourceDefaults.defaultSensitive) Boolean sensitive,
             @FormParam("designation") @DefaultValue(ObservationResourceDefaults.defaultDesignation) String designation,
             @FormParam("taxonOutputGroup") @DefaultValue(ObservationResourceDefaults.defaultTaxonOutputGroup) String taxonOutputGroup,
+            @FormParam("orgSuppliedList") @DefaultValue(ObservationResourceDefaults.defaultOrgSuppliedList) int orgSuppliedList,
             @FormParam("gridRef") @DefaultValue(ObservationResourceDefaults.defaultGridRef) String gridRef,
             @FormParam("polygon") @DefaultValue(ObservationResourceDefaults.defaultPolygon) String polygon,
             @FormParam("absence") Boolean absence) throws IllegalArgumentException {
-        return retreiveObservationsRecordsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon, absence);
+        return retreiveObservationsRecordsByFilter(user, request.getRemoteAddr(), startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, orgSuppliedList, gridRef, polygon, absence);
     }
     
     /**
@@ -290,10 +354,11 @@ public class TaxonObservationResource extends RequestResource {
      * @response.representation.200.mediaType application/json
      */    
     private List<TaxonObservation> retreiveObservationsRecordsByFilter(
-            User user, int startYear, int endYear, List<String> datasetKeys, 
+            User user, String ip, int startYear, int endYear, List<String> datasetKeys, 
             List<String> taxa, String spatialRelationship, String featureID, 
             Boolean sensitive, String designation, String taxonOutputGroup,
-            String gridRef, String polygon, Boolean absence) throws IllegalArgumentException {
+            int orgSuppliedList, String gridRef, String polygon, 
+            Boolean absence) throws IllegalArgumentException {
         //TODO: squareBlurring(?)
         
         if (StringUtils.hasText(polygon)) {
@@ -329,7 +394,31 @@ public class TaxonObservationResource extends RequestResource {
             throw new IllegalArgumentException("Must supply a spatial or taxon filter with more than one dataset");
         }
         
+        writeAPIViewRecordToDatabase(user, ip, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, orgSuppliedList, gridRef, polygon, absence);
+        
         return observationMapper.selectObservationRecordsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon, absence);        
+    }
+    
+    private void writeAPIViewRecordToDatabase(
+            User user, String ip, int startYear, int endYear, List<String> datasetKeys, 
+            List<String> taxa, String spatialRelationship, String featureID, 
+            Boolean sensitive, String designation, String taxonOutputGroup,
+            int orgSuppliedList, String gridRef, String polygon, 
+            Boolean absence) {
+        String filterText = filterToText.convert(startYear, endYear, 
+                datasetKeys, taxa, spatialRelationship, featureID, sensitive, 
+                designation, taxonOutputGroup, orgSuppliedList, gridRef, 
+                polygon, absence);
+        
+        List<DatasetRecordCount> counts = observationMapper.getRecordCountsForFilterByDataset(
+                user, startYear, endYear, datasetKeys, taxa, 
+                spatialRelationship, featureID, sensitive, designation, 
+                taxonOutputGroup, orgSuppliedList, gridRef, polygon, absence); 
+        
+        int viewID = oApiObservationViewMapper.addAPIObservationView(user, ip, filterText);
+        for (DatasetRecordCount count : counts) {
+            oApiObservationViewMapper.addAPIObservationViewStats(viewID, count.getDataset(), count.getCount());
+        }
     }
     
     /**
