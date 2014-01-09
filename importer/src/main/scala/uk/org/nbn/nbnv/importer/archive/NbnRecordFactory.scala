@@ -22,6 +22,10 @@ class NbnRecordFactory @Inject()(log: Logger) {
 
     def getData(fieldIndex: Option[Int]) : Option[String] = {
       if (!fieldIndex.isDefined) { None }
+      else if (fieldIndex.get > (rawData.length - 1)) {
+        log.debug("The field index %d exceeds the number of fields in the row".format(fieldIndex))
+        None
+      }
       else {
         Option(rawData(fieldIndex.get)).filter(_.trim.nonEmpty)
       }

@@ -30,7 +30,7 @@ class ArchiveManager @Inject()(options: Options
     isOpen = true
   }
 
-  def records() : Iterator[NbnRecord] = {
+  def records() : Iterable[NbnRecord] = {
     if (!isOpen) throw new IllegalStateException("The archive has not been opened")
 
     dfp.records
