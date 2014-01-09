@@ -10,18 +10,25 @@ import java.util.Date;
  *
  * @author Matt Debont
  */
-public class PortalDownload {
+public class ApiObservationViewStatistic {
+    private int viewID;
     private int userID;
-    private String forename;
+    private String forname;
     private String surname;
     private String email;
-    
     private String ip;
     private String filterText;
-    
     private Date downloadTime;
-    
     private int downloaded;
+    private int recordCount;
+
+    public int getViewID() {
+        return viewID;
+    }
+
+    public void setViewID(int viewID) {
+        this.viewID = viewID;
+    }
 
     public int getUserID() {
         return userID;
@@ -31,12 +38,12 @@ public class PortalDownload {
         this.userID = userID;
     }
 
-    public String getForename() {
-        return forename;
+    public String getForname() {
+        return forname;
     }
 
-    public void setForename(String forename) {
-        this.forename = forename;
+    public void setForname(String forname) {
+        this.forname = forname;
     }
 
     public String getSurname() {
@@ -85,5 +92,13 @@ public class PortalDownload {
 
     public void setDownloaded(int downloaded) {
         this.downloaded = downloaded;
+    }
+
+    public int getRecordCount() {
+        return recordCount;
+    }
+
+    public void setRecordCount(int recordCount) {
+        this.recordCount = recordCount;
     }
 }

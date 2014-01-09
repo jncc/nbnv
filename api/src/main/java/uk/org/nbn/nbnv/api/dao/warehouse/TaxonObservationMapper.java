@@ -23,6 +23,7 @@ import uk.org.nbn.nbnv.api.model.TaxonOutputGroup;
 import uk.org.nbn.nbnv.api.model.TaxonOutputGroupWithQueryStats;
 import uk.org.nbn.nbnv.api.model.TaxonWithQueryStats;
 import uk.org.nbn.nbnv.api.model.User;
+import uk.org.nbn.nbnv.api.model.meta.DatasetRecordCount;
 
 /**
  *
@@ -351,6 +352,23 @@ public interface TaxonObservationMapper {
             @Param("userID") List<Integer> userID,
             @Param("organisationID") List<Integer> organisationID,
             @Param("purposeID") List<Integer> purposeID);
+    
+    @SelectProvider(type = TaxonObservationProvider.class, method = "getFilteredRecordCountByDataset")
+    public List<DatasetRecordCount> getRecordCountsForFilterByDataset(
+            @Param("user") User user
+            , @Param("startYear") Integer startYear
+            , @Param("endYear") Integer endYear
+            , @Param("datasetKey") List<String> datasetKey
+            , @Param("ptvk") List<String> ptvk
+            , @Param("spatialRelationship") String spatialRelationship
+            , @Param("featureID") String featureId
+            , @Param("sensitive") Boolean sensitive
+            , @Param("designation") String designation
+            , @Param("taxonOutputGroup") String taxonOutputGroup
+            , @Param("orgSuppliedList") int orgSuppliedList
+            , @Param("gridRef") String gridRef
+            , @Param("polygon") String polygon
+            , @Param("absence") Boolean absence);
   
 //    Might reactivate this later searches for users that have downloaded from a list of datasets    
 //    @SelectProvider(type=TaxonObservationDownloadProvider.class, method="selectDistinctUsersForDatasets")

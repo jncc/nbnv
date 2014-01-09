@@ -123,6 +123,15 @@ public class TaxonObservationProvider {
         ORDER_BY("obs.datasetKey");
         return SQL();
     }
+    
+    public String getFilteredRecordCountByDataset(Map<String, Object> params) {
+        String from = createSelect(params, "o.id, o.datasetKey");
+        BEGIN();
+        SELECT("obs.datasetKey, BIG_COUNT(*) AS count");
+        FROM(from);
+        GROUP_BY("obs.datasetKey");
+        return SQL();
+    }
 
     public String filteredSelectOneAttribute(Map<String, Object> params) {
         String from = createSelect(params, "o.observationID");
