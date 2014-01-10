@@ -6,7 +6,7 @@ import org.apache.log4j.Logger
 import uk.org.nbn.nbnv.importer.records.NbnRecord
 import uk.org.nbn.nbnv.utility.FileSystem
 
-class ArchiveManager @Inject()(options: Options
+class Archive @Inject()(options: Options
                                , zipFileManager: ZipFileManager
                                , log: Logger
                                , metadataParser: ArchiveMetadataParser
