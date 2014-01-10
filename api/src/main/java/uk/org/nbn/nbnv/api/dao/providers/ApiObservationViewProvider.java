@@ -19,14 +19,14 @@ public class ApiObservationViewProvider {
         WHERE("aovsd.datasetKey = #{datasetKey}");
         
         if (params.containsKey("startDate") && !params.get("startDate").equals("")) {
-            WHERE("aovsd.downloadTime >= '" + params.get("startDate") + "'");
+            WHERE("aovsd.viewTime >= '" + params.get("startDate") + "'");
         }
         if (params.containsKey("endDate") && !params.get("endDate").equals("")) {
-            WHERE("aovsd.downloadTime <= '" + params.get("endDate") + "'");
+            WHERE("aovsd.viewTime <= '" + params.get("endDate") + "'");
         }
         
-        ORDER_BY("aovsd.downloadDate DESC");
-
+        ORDER_BY("aovsd.viewTime DESC");
+        
         return SQL();
     }
     

@@ -113,8 +113,9 @@ public class TaxonObservationResource extends RequestResource {
             @PathParam("id") int id) {
         TaxonObservation obs = observationMapper.selectById(id, user.getId());
         if (obs != null) {
-            int pID = oApiObservationViewMapper.addAPIObservationView(user, request.getRemoteAddr(), "Single Record with the ID " + id);
-            oApiObservationViewMapper.addAPIObservationViewStats(pID, obs.getDatasetKey(), 1);
+            ApiObservationView view = new ApiObservationView(user.getId(), request.getRemoteAddr(), "Single Record with the ID " + id, 1);
+            oApiObservationViewMapper.addAPIObservationView(view);
+            oApiObservationViewMapper.addAPIObservationViewStats(view.getId(), obs.getDatasetKey(), 1);
         }
         return obs;
     }
@@ -415,9 +416,15 @@ public class TaxonObservationResource extends RequestResource {
                 spatialRelationship, featureID, sensitive, designation, 
                 taxonOutputGroup, orgSuppliedList, gridRef, polygon, absence); 
         
-        int viewID = oApiObservationViewMapper.addAPIObservationView(user, ip, filterText);
+        int total = 0;
         for (DatasetRecordCount count : counts) {
-            oApiObservationViewMapper.addAPIObservationViewStats(viewID, count.getDataset(), count.getCount());
+            total += count.getCount();
+        }
+        
+        ApiObservationView view = new ApiObservationView(user.getId(), ip, filterText, total);
+        oApiObservationViewMapper.addAPIObservationView(view);
+        for (DatasetRecordCount count : counts) {
+            oApiObservationViewMapper.addAPIObservationViewStats(view.getId(), count.getDatasetKey(), count.getCount());
         }
     }
     
