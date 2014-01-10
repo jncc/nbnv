@@ -20,8 +20,8 @@ import uk.org.nbn.nbnv.api.model.Organisation;
  */
 public interface OperationalDatasetMapper {
     @Update("UPDATE Dataset SET title = #{title}, description = #{description}, dataCaptureMethod = #{captureMethod}, purpose = #{purpose}, geographicalCoverage = #{geographicalCoverage}, "
-            + " dataQuality = #{quality}, additionalInformation = #{additionalInformation}, accessConstraints = #{accessConstraints}, useConstraints = #{useConstraints}, temporalCoverage = #{temporalCoverage} "
-            + " WHERE [key] = #{key}")
+            + " dataQuality = #{quality}, additionalInformation = #{additionalInformation}, accessConstraints = #{accessConstraints}, useConstraints = #{useConstraints}, temporalCoverage = #{temporalCoverage}, "
+            + " metadataLastEdited = GETDATE() WHERE [key] = #{key}")
     public int updateDataset(Dataset dataset);
 
     @Select("SELECT * FROM DatasetData WHERE DatasetData.\"key\" = #{key}")
