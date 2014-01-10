@@ -12,18 +12,21 @@ import java.util.Date;
  */
 public class ApiObservationView {
     private int id;
-    private int userID;
-    private String forename;
-    private String surname;
-    private String email;
-    
+    private int userID;    
     private String ip;
     private String filterText;
-    
-    private Date downloadTime;
-    
-    private int downloaded;
+    private Date viewTime;
+    private int viewed;
 
+    public ApiObservationView() {}
+    
+    public ApiObservationView(int userID, String ip, String filterText, int viewed) {
+        this.userID = userID;
+        this.ip = ip;
+        this.filterText = filterText;
+        this.viewed = viewed;
+    }
+    
     public int getId() {
         return id;
     }
@@ -38,30 +41,6 @@ public class ApiObservationView {
 
     public void setUserID(int userID) {
         this.userID = userID;
-    }
-
-    public String getForename() {
-        return forename;
-    }
-
-    public void setForename(String forename) {
-        this.forename = forename;
-    }
-
-    public String getSurname() {
-        return surname;
-    }
-
-    public void setSurname(String surname) {
-        this.surname = surname;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public String getIp() {
@@ -80,19 +59,19 @@ public class ApiObservationView {
         this.filterText = filterText;
     }
 
-    public Date getDownloadTime() {
-        return downloadTime;
+    public Date getViewTime() {
+        return viewTime;
     }
 
-    public void setDownloadTime(Date downloadTime) {
-        this.downloadTime = downloadTime;
+    public void setViewTime(Date viewTime) {
+        this.viewTime = viewTime;
     }
 
-    public int getDownloaded() {
-        return downloaded;
+    public int getViewed() {
+        return viewed;
     }
 
-    public void setDownloaded(int downloaded) {
-        this.downloaded = downloaded;
+    public void setViewed(int viewed) {
+        this.viewed = viewed;
     }
 }

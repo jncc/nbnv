@@ -12,7 +12,7 @@ public interface ApiObservationViewMapper {
     //@Select("SELECT * FROM GenericDownloadStatisticsData gdsd WHERE gdsd.datasetKey = #{datasetKey}  ORDER BY gdsd.downloadDate DESC")
     @SelectProvider(type = ApiObservationViewProvider.class, method = "selectApiObservationViewsByDataset")
     public List<ApiObservationViewStatistic> getApiObservationViewStatisticsForDataset(
-            @Param("dataset") String dataset, 
+            @Param("datasetKey") String datasetKey, 
             @Param("startDate") String startDate, 
             @Param("endDate") String endDate);
     

@@ -17,9 +17,10 @@ public class ApiObservationViewStatistic {
     private String surname;
     private String email;
     private String ip;
+    private String datasetKey;
     private String filterText;
-    private Date downloadTime;
-    private int downloaded;
+    private Date viewTime;
+    private int viewed;
     private int recordCount;
 
     public int getViewID() {
@@ -70,6 +71,14 @@ public class ApiObservationViewStatistic {
         this.ip = ip;
     }
 
+    public String getDatasetKey() {
+        return datasetKey;
+    }
+
+    public void setDatasetKey(String datasetKey) {
+        this.datasetKey = datasetKey;
+    }
+
     public String getFilterText() {
         return filterText;
     }
@@ -78,20 +87,20 @@ public class ApiObservationViewStatistic {
         this.filterText = filterText;
     }
 
-    public Date getDownloadTime() {
-        return downloadTime;
+    public Date getViewTime() {
+        return viewTime;
     }
 
-    public void setDownloadTime(Date downloadTime) {
-        this.downloadTime = downloadTime;
+    public void setViewTime(Date viewTime) {
+        this.viewTime = viewTime;
     }
 
-    public int getDownloaded() {
-        return downloaded;
+    public int getViewed() {
+        return viewed;
     }
 
-    public void setDownloaded(int downloaded) {
-        this.downloaded = downloaded;
+    public void setViewed(int viewed) {
+        this.viewed = viewed;
     }
 
     public int getRecordCount() {

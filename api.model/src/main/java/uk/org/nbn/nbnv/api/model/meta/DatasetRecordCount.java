@@ -10,18 +10,18 @@ package uk.org.nbn.nbnv.api.model.meta;
  */
 public class DatasetRecordCount {
 
-    private String dataset;
+    private String datasetKey;
     private int count;
 
     public DatasetRecordCount() {
     }
 
-    public String getDataset() {
-        return dataset;
+    public String getDatasetKey() {
+        return datasetKey;
     }
 
-    public void setDataset(String dataset) {
-        this.dataset = dataset;
+    public void setDatasetKey(String datasetKey) {
+        this.datasetKey = datasetKey;
     }
 
     public int getCount() {

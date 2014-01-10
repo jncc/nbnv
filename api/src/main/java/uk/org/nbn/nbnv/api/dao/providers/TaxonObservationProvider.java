@@ -127,7 +127,7 @@ public class TaxonObservationProvider {
     public String getFilteredRecordCountByDataset(Map<String, Object> params) {
         String from = createSelect(params, "o.id, o.datasetKey");
         BEGIN();
-        SELECT("obs.datasetKey, BIG_COUNT(*) AS count");
+        SELECT("obs.datasetKey, COUNT_BIG(*) AS \'count\'");
         FROM(from);
         GROUP_BY("obs.datasetKey");
         return SQL();
