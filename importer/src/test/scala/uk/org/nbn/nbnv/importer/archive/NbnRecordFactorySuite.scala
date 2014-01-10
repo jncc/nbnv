@@ -14,7 +14,7 @@ class NbnRecordFactorySuite extends BaseFunSuite with BeforeAndAfter {
     factory = new NbnRecordFactory(log)
   }
 
-  test("should parse a valid record") {
+  test("should parse a record") {
     val rawRecord = List(
       "CI00000300000TNR",
       "CI0000030000000A",
@@ -39,7 +39,8 @@ class NbnRecordFactorySuite extends BaseFunSuite with BeforeAndAfter {
       "-0.22174100",
       "52.585667",
       "13/07/2001",
-      "FeatureKeyTest"
+      "FeatureKeyTest",
+      "absence"
     )
 
     val metadata = new ArchiveMetadata {
@@ -54,26 +55,27 @@ class NbnRecordFactorySuite extends BaseFunSuite with BeforeAndAfter {
       val determiner: Option[Int] = Some(14)
       val recorder: Option[Int] = Some(13)
       val featureKey: Option[Int] = Some(23)
-      val siteKey: Option[Int] = None
+      val siteKey: Option[Int] = Some(8)
       val fields: Int = 24
-      val attributes: Option[Int] = None
-      val srs: Option[Int] = None
-      val fieldSeparator: String = ""
-      val taxonVersionKey: Option[Int] = None
-      val north: Option[Int] = None
-      val dateType: Option[Int] = None
-      val endDate: Option[Int] = None
-      val gridReference: Option[Int] = None
-      val absence: Option[Int] = None
-      val surveyKey: Option[Int] = None
-      val east: Option[Int] = None
-      val sampleKey: Option[Int] = None
+      val attributes: Option[Int] = Some(18)
+      val srs: Option[Int] = Some(19)
+      val fieldSeparator: String = "\\t"
+      val taxonVersionKey: Option[Int] = Some(6)
+      val north: Option[Int] = Some(21)
+      val dateType: Option[Int] = Some(5)
+      val endDate: Option[Int] = Some(4)
+      val gridReference: Option[Int] = Some(11)
+      val absence: Option[Int] = Some(24)
+      val surveyKey: Option[Int] = Some(1)
+      val east: Option[Int] = Some(20)
+      val sampleKey: Option[Int] = Some(2)
     }
 
     var record = factory.makeRecord(rawRecord, metadata)
 
     record.eventDateRaw should be (Some("13/07/2001"))
     record.startDateRaw should be (Some("19/07/2001"))
+    record.endDateRaw should be (Some("21/07/2001"))
     record.gridReferenceTypeRaw should be (None)
     record.sensitiveOccurrenceRaw should be (Some("false"))
     record.sensitiveOccurrence should be (false)
@@ -84,6 +86,25 @@ class NbnRecordFactorySuite extends BaseFunSuite with BeforeAndAfter {
     record.determiner should be (Some("Robert Merritt dt"))
     record.recorder should be (Some("Robert Merritt"))
     record.featureKey should be (Some("FeatureKeyTest"))
+    record.siteKey should be (Some("CI0000030000034X"))
+    record.attributesRaw should be (Some("{\"Abundance\":\"\",\"Comment\":\"\",\"SampleMethod\":\"Field Observation\"}"))
+    record.attributes.size should be (3)
+    record.attributes("SampleMethod") should be ("Field Observation")
+    record.srsRaw should be (Some("4326"))
+    record.srs should be (Some(4326))
+    record.taxonVersionKey should be (Some("NBNSYS0000006640"))
+    record.northRaw should be (Some("52.585667"))
+    record.north should be (Some(52.585667))
+    record.eastRaw should be (Some("-0.22174100"))
+    record.east should be (Some(-0.22174100))
+    record.dateType should be (Some("D"))
+    record.gridReferenceRaw should be (None)
+    record.absenceRaw should be (Some("absence"))
+    record.absence should be (true)
+    record.surveyKey should be (Some("CI0000030000000A"))
+    record.sampleKey should be (Some("CI000003000003T3"))
+
+    
   }
 
 }
