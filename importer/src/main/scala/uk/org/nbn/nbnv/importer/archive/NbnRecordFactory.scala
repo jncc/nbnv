@@ -18,12 +18,12 @@ import scala.Some
 import uk.org.nbn.nbnv.importer.records.PointDef
 
 class NbnRecordFactory @Inject()(log: Logger) {
-  def makeRecord(rawData: List[String], metadata: ArchiveMetadata) : NbnRecord = {
+  def makeRecord(rawData: List[String], metadata: ArchiveMetadata) : NbnRecord2 = {
 
     def getData(fieldIndex: Option[Int]) : Option[String] = {
       if (!fieldIndex.isDefined) { None }
       else if (fieldIndex.get > (rawData.length - 1)) {
-        log.debug("The field index %d exceeds the number of fields in the row".format(fieldIndex))
+        log.warn("The field index %d exceeds the number of fields in the row".format(fieldIndex))
         None
       }
       else {
@@ -135,9 +135,6 @@ class NbnRecordFactory @Inject()(log: Logger) {
       val featureKey = getData(metadata.featureKey)
       val dateType = getData(metadata.dateType)
     }
-
-    //todo: get rid of this temp return type.
-    new NbnRecord(null)
   }
 
 
