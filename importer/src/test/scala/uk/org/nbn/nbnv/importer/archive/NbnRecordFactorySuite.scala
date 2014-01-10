@@ -103,8 +103,6 @@ class NbnRecordFactorySuite extends BaseFunSuite with BeforeAndAfter {
     record.absence should be (true)
     record.surveyKey should be (Some("CI0000030000000A"))
     record.sampleKey should be (Some("CI000003000003T3"))
-
-    
   }
 
 }
