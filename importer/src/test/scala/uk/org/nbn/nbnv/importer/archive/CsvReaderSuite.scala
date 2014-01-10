@@ -8,7 +8,7 @@ class CsvReaderSuite extends BaseFunSuite with ResourceLoader {
 
   def fixture() = new {
     val dataFilePath = resource("/archives/valid/data.tab")
-    val csvReader = new CSVReader(new File(dataFilePath.getFile))
+    val csvReader = new CsvReader(new File(dataFilePath.getFile))
   }
 
   test("should read records") {
