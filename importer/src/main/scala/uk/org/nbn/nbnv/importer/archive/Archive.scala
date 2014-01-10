@@ -3,7 +3,7 @@ package uk.org.nbn.nbnv.importer.archive
 import com.google.inject.Inject
 import uk.org.nbn.nbnv.importer.{BadDataException, Options}
 import org.apache.log4j.Logger
-import uk.org.nbn.nbnv.importer.records.NbnRecord
+import uk.org.nbn.nbnv.importer.records.{NbnRecord2, NbnRecord}
 import uk.org.nbn.nbnv.utility.FileSystem
 
 class Archive @Inject()(options: Options
@@ -30,7 +30,7 @@ class Archive @Inject()(options: Options
     isOpen = true
   }
 
-  def records() : Iterable[NbnRecord] = {
+  def records() : Iterable[NbnRecord2] = {
     if (!isOpen) throw new IllegalStateException("The archive has not been opened")
 
     dfp.records
