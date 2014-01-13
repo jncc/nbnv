@@ -1,29 +1,32 @@
 package uk.org.nbn.nbnv.importer.archive
 
-import uk.org.nbn.nbnv.importer.records.NbnRecord
+import uk.org.nbn.nbnv.importer.records.{NbnRecord2, NbnRecord}
 import io.Source
 import com.google.inject.Inject
 import uk.org.nbn.nbnv.importer.{BadDataException, Options}
 import java.io
 import io.File
+import org.apache.log4j.Logger
 
-class DataFileParser @Inject()(options: Options, recordFactory : NbnRecordFactory) {
+class DataFileParser @Inject()(options: Options, recordFactory : NbnRecordFactory, log : Logger) {
   var isOpen = false
   var csvReader : CSVReader = _
   var metadata : ArchiveMetadata = _
 
   def open(dataFilePath: String, metadata: ArchiveMetadata) {
     this.metadata = metadata
-    csvReader = new CSVReader(new File(dataFilePath),options)
+    csvReader = new CSVReader(new File(dataFilePath))
 
     isOpen = true
   }
 
-  def records : Iterator[NbnRecord] = {
+  def records : Iterable[NbnRecord2] = {
     if (!isOpen) throw new IllegalStateException("The data file has not been opened")
 
-    csvReader.iterator.zipWithIndex.map{ case (rawData, i) =>
-      if (rawData.length != metadata.fields) throw new BadDataException("The record at row %d does not contain %d fields".format(i + 1,metadata.fields))
+    csvReader.drop(metadata.skipHeaderLines.getOrElse(0)).zipWithIndex.map{ case (rawData, i) =>
+      if (rawData.length != metadata.fields) {
+        log.warn("The record at row %d does not contain %d fields".format(i + 1,metadata.fields))
+      }
 
       recordFactory.makeRecord(rawData, metadata)
     }
