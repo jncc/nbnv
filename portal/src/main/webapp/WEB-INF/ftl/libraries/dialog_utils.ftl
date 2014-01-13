@@ -1,6 +1,5 @@
 <#macro userInfoDialog> 
     <div id="nbn-further-info-user" title="User Information" style="display:none">
-        <script type="text/javascript" src="/js/dialog_utils.js" />
         <table class="nbn-dataset-table">
             <tr>
                 <td>User Name:</td>

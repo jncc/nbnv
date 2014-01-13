@@ -14,10 +14,10 @@ import static org.apache.ibatis.jdbc.SelectBuilder.*;
 public class ApiObservationViewProvider {
     public String selectApiObservationViewsByDataset(Map<String, Object> params) {
         BEGIN();
-        SELECT("*");
+        SELECT("aovsd.*, tdd.recordCount AS totalDatasetRecords");
         FROM("ApiObservationViewStatisticsData aovsd");
         WHERE("aovsd.datasetKey = #{datasetKey}");
-        
+        INNER_JOIN("TaxonDatasetData tdd ON tdd.datasetKey = aovsd.datasetKey");
         if (params.containsKey("startDate") && !params.get("startDate").equals("")) {
             WHERE("aovsd.viewTime >= '" + params.get("startDate") + "'");
         }

@@ -8,7 +8,8 @@
     javascripts=[
         "/js/jquery.dataTables.min.js",
         "/js/jquery.validate.min.js",
-        "/js/download/reports/enable-dataset-report.js"] 
+        "/js/download/reports/enable-dataset-report.js",
+        "/js/dialog_utils.js"] 
     csss=[
         "//ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/themes/smoothness/jquery-ui.css",
         "/css/download/downloadFilters.css"]>
@@ -60,4 +61,5 @@
         <h3><#if organisation.hasSmallLogo><img alt="${organisation.name}" src="${organisation.smallLogo}"/></#if>${organisation.name} : [${dataset.key}] ${dataset.title}</h2>
         <div id="nbn-downloads-div-${datasetKey}"></div>
     </div>  
+    <@dialog_utils.userInfoDialog />
 </@template.master>

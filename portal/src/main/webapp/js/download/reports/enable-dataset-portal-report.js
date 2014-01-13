@@ -27,20 +27,20 @@ nbn.nbnv = nbn.nbnv || {};
             if (!$(this).val())
                 $("#endDateHidden").val('');
         });
+        
+        var startDate = "";
+        var endDate = "";
 
         $('#nbn-download-filter').validate({
             submitHandler: function(form) {
-                var data = {};
                 if ($('#startDateHidden').val() !== undefined && $('startDateHidden').val() !== "") {
-                    data['startDate'] = $('#startDateHidden').val();
+                    startDate = $('#startDateHidden').val();
                 }
                 if ($('#endDateHidden').val() !== undefined && $('endDateHidden').val() !== "") {
-                    data['endDate'] = $('#endDateHidden').val();
+                    endDate = $('#endDateHidden').val();
                 }
 
-                data['dataset'] = {'datasets': getDatasets()};
-
-                loadTableContent(data);
+                loadTableContent(startDate, endDate);
                 return false;
             },
             rules: {
@@ -61,7 +61,7 @@ nbn.nbnv = nbn.nbnv || {};
             }
         });
 
-        loadTableContent({'dataset': {'datasets': getDatasets()}});
+        loadTableContent(startDate,endDate);
     });
 
     function getDatasets() {
@@ -73,8 +73,10 @@ nbn.nbnv = nbn.nbnv || {};
         return d;
     }
 
-    function loadTableContent(data) {
-        var qString = '?json=' + JSON.stringify(data);
+    function loadTableContent(startDate, endDate) {
+        var qString = "";
+        if (startDate !== "" && endDate !== "")
+            qString = "?startDate=" + startDate + "&endDate=" + endDate;
 
         $('.nbn-datatable').each(function(index) {
             var dataset = $(this).data('dataset');
@@ -82,7 +84,7 @@ nbn.nbnv = nbn.nbnv || {};
                     .attr('src', '/img/ajax-loader-medium.gif')
                     .attr('style', 'display:block; margin:auto;'));
             $.ajax({
-                url: nbn.nbnv.api + '/Download/Portal/' + dataset + qString,
+                url: nbn.nbnv.api + '/apiViews/' + dataset + qString,
                 success: function(data) {
                     downloadForDataset(
                             '#nbn-downloads-div-' + dataset,
@@ -107,22 +109,25 @@ nbn.nbnv = nbn.nbnv || {};
         var outputBody = $('<tbody>');
         $.each(data, function(key, value) {
             outputBody.append($('<tr>')
-                    //.append($('<td>').append($('<a>').attr('href', '/User/' + value.userID).attr('target', '_blank').text(value.forename + ' ' + value.surname)))
-                    .append($('<td>').append($('<p>').text(value.forename + ' ' + value.surname).attr('class', 'userLink').data('email', value.email).data('id', value.id)))
+                    .append($('<td>').append($('<a>').text(value.forename + ' ' + value.surname).attr('class', 'nbn-request-username').attr('data-email', value.email).attr('data-id', value.userID).attr('href', '#')))
                     .append($('<td>').text(value.ip))
                     .append($('<td>').text(value.filterText))
-                    .append($('<td>').text(value.downloadTimeString))
+                    .append($('<td>').text(value.viewTimeString))
                     .append($('<td>').text(value.recordCount
                     + ' records from this dataset in this view. This is '
-                    + (value.recordCount / value.totalRecords * 100).toFixed(1)
+                    + ((value.recordCount / value.totalDatasetRecords) * 100).toFixed(1)
                     + '% of this dataset and this comprises '
-                    + (value.recordCount / value.downloaded * 100).toFixed(1)
+                    + ((value.recordCount / value.viewed) * 100).toFixed(1)
                     + '% of the view')
                     )
-                    );
+                );
         });
 
         $(divID).empty().append(output.append(outputBody));
+        
+        // Setup user information dialogs - External Dependency (dialog_utils.js)
+        setupUsernameDialog(nbn.nbnv.api);
+        
         generateDownloadReportDatatable('#' + tableID);
     }
     function generateDownloadReportDatatable(tableID) {
@@ -132,12 +137,12 @@ nbn.nbnv = nbn.nbnv || {};
             "iDisplayLength": 25,
             "bSortClasses": false,
             "sPaginationType": "full_numbers",
-            "aLengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]]//,
-//                "aoColumnDefs": [
-//                    {"sWidth": "10%", "aTargets": [0, 2]},
-//                    {"sWidth": "13%", "aTargets": [1, 4]},
-//                    {"sWidth": "18%", "aTargets": [3, 5, 6]}
-//                ]
+            "aLengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]],
+                "aoColumnDefs": [
+                    {"sWidth": "15%", "aTargets": [0, 1, 3]},
+                    {"sWidth": "30%", "aTargets": [2]},
+                    {"sWidth": "25%", "aTargets": [4]}
+                ]
         });
     }
 

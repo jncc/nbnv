@@ -4,6 +4,7 @@
  */
 package uk.org.nbn.nbnv.api.model;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -13,15 +14,17 @@ import java.util.Date;
 public class ApiObservationViewStatistic {
     private int viewID;
     private int userID;
-    private String forname;
+    private String forename;
     private String surname;
     private String email;
     private String ip;
     private String datasetKey;
     private String filterText;
     private Date viewTime;
+    private String viewTimeString;
     private int viewed;
     private int recordCount;
+    private int totalDatasetRecords;
 
     public int getViewID() {
         return viewID;
@@ -39,12 +42,12 @@ public class ApiObservationViewStatistic {
         this.userID = userID;
     }
 
-    public String getForname() {
-        return forname;
+    public String getForename() {
+        return forename;
     }
 
-    public void setForname(String forname) {
-        this.forname = forname;
+    public void setForename(String forename) {
+        this.forename = forename;
     }
 
     public String getSurname() {
@@ -93,6 +96,15 @@ public class ApiObservationViewStatistic {
 
     public void setViewTime(Date viewTime) {
         this.viewTime = viewTime;
+        this.viewTimeString = new SimpleDateFormat("EEE MMM dd yyyy HH:mm:ss '('zzz')'").format(viewTime);
+    }
+
+    public String getViewTimeString() {
+        return viewTimeString;
+    }
+
+    public void setViewTimeString(String viewTimeString) {
+        this.viewTimeString = viewTimeString;
     }
 
     public int getViewed() {
@@ -109,5 +121,13 @@ public class ApiObservationViewStatistic {
 
     public void setRecordCount(int recordCount) {
         this.recordCount = recordCount;
+    }
+
+    public int getTotalDatasetRecords() {
+        return totalDatasetRecords;
+    }
+
+    public void setTotalDatasetRecords(int totalDatasetRecords) {
+        this.totalDatasetRecords = totalDatasetRecords;
     }
 }

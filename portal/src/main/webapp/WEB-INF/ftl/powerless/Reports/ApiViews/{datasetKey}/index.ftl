@@ -7,7 +7,8 @@
     javascripts=[
         "/js/jquery.dataTables.min.js",
         "/js/jquery.validate.min.js",
-        "/js/download/reports/enable-dataset-portal-report.js"] 
+        "/js/download/reports/enable-dataset-portal-report.js",
+        "/js/dialog_utils.js"] 
     csss=[
         "//ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/themes/smoothness/jquery-ui.css",
         "/css/download/downloadFilters.css"]>
@@ -27,7 +28,7 @@
             <input type="submit" />
         </form>
     </div>
-    <div id="nbn-download-stats-div" class="tabbed nbn-organisation-tabbed">
+    <div id="nbn-information-div" class="tabbed nbn-organisation-tabbed">
         <h3>Information</h3>
         <p>The views shown below are all cases where a user has viewed record data through either the portal or directly through the API, rather than through the the provided download wizard. This can only be done from the Taxon Observations Pages where are user selects an individual species or via the interactive mapper. When users use the API they can also view record data, so these views are also recorded here.</p>
         <p>These views are all attached to the filters that were used to view these records and how many records were viewed, we cannot however record the use of the records through this system. The level of access given to the records is determined by the level of access granted to the user in question at the time the view occurred.</p>
