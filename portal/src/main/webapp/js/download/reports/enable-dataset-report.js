@@ -238,7 +238,8 @@ nbn.nbnv = nbn.nbnv || {};
             var outputBody = $('<tbody>');
             $.each(data, function(key, value){
                 outputBody.append($('<tr>')
-                    .append($('<td>').append($('<a>').attr('href', '/User/' + value.userID).attr('target', '_blank').text(value.forename + ' ' + value.surname)))
+                    .append($('<td>').append($('<a>').text(value.forename + ' ' + value.surname).attr('href', '#').attr('class', 'nbn-request-username').attr('data-id', value.userID).attr('data-email', value.email)))
+                    //.append($('<td>').append($('<a>').attr('href', '/User/' + value.userID).attr('target', '_blank').text(value.forename + ' ' + value.surname)))
                     .append($('<td>').append($('<a>').attr('href', '/Organisations/' + value.organisationID).attr('target', '_blank').text(value.organisationName)))
                     .append($('<td>').text(value.downloadTimeString))
                     .append($('<td>').text(value.filterText))
@@ -253,8 +254,9 @@ nbn.nbnv = nbn.nbnv || {};
                     )
                 );
             });
-            
             $(divID).empty().append(output.append(outputBody));
+            // Setup user information dialogs - External Dependency (dialog_utils.js)
+            setupUsernameDialog(nbn.nbnv.api);
             generateDownloadReportDatatable('#' + tableID);
         }
         function generateDownloadReportDatatable(tableID) {
