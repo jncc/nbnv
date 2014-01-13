@@ -11,16 +11,25 @@ import uk.org.nbn.nbnv.importer.data.Repository
 class Nbnv64Validator (repo: Repository) {
   def validate(record: NbnRecord) = {
 
-    if (repo.confirmTaxonVersionKey(record.taxonVersionKey)) {
+    val code = "NBNV-64"
+
+    if (!record.taxonVersionKey.isDefined) {
+      new Result {
+        def level = ResultLevel.ERROR
+        def message = "%s: A taxon version key must be provided.".format(code)
+        def reference = record.key
+      }
+    } else
+    if (repo.confirmTaxonVersionKey(record.taxonVersionKey.get)) {
       new Result {
         def level = ResultLevel.DEBUG
-        def message = "NBNV-64: Validated: TaxonVersionKey '%s' exists.".format(record.taxonVersionKey)
+        def message = "%s: Validated: TaxonVersionKey '%s' exists.".format(code, record.taxonVersionKey.get)
         def reference = record.key
       }
     } else {
       new Result {
         def level = ResultLevel.ERROR
-        def message = "NBNV-64: TaxonVersionKey '%s' must exist.".format(record.taxonVersionKey)
+        def message = "%s: TaxonVersionKey '%s' must exist.".format(record.taxonVersionKey.get)
         def reference = record.key
       }
     }

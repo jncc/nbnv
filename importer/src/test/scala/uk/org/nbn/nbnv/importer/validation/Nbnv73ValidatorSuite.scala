@@ -17,7 +17,7 @@ class Nbnv73ValidatorSuite extends BaseFunSuite {
     when(record.startDate).thenReturn(startDateRaw.maybeDate("dd/MM/yyyy"))
     when(record.endDate).thenReturn(None)
     when(record.endDateRaw).thenReturn(None)
-    when(record.dateType).thenReturn("D")
+    when(record.dateType).thenReturn(Some("D"))
 
     val v = new Nbnv73Validator
     val results = v.validate(record)
@@ -33,7 +33,7 @@ class Nbnv73ValidatorSuite extends BaseFunSuite {
     when(record.startDate).thenReturn(startDateRaw.maybeDate("dd/MM/yyyy"))
     when(record.endDateRaw).thenReturn(Some(startDateRaw))
     when(record.endDate).thenReturn(startDateRaw.maybeDate("dd/MM/yyyy"))
-    when(record.dateType).thenReturn("D")
+    when(record.dateType).thenReturn(Some("D"))
 
 
     val v = new Nbnv73Validator
@@ -53,7 +53,7 @@ class Nbnv73ValidatorSuite extends BaseFunSuite {
     when(record.endDateRaw).thenReturn(Some(endDateRaw))
     when(record.endDate).thenReturn(endDateRaw.maybeDate("dd/MM/yyyy"))
 
-    when(record.dateType).thenReturn("D")
+    when(record.dateType).thenReturn(Some("D"))
 
     val v = new Nbnv73Validator
     val results = v.validate(record)
@@ -69,7 +69,7 @@ class Nbnv73ValidatorSuite extends BaseFunSuite {
     when(record.startDate).thenReturn(startDateRaw.maybeDate("MM yyyy"))
     when(record.endDate).thenReturn(None)
     when(record.endDateRaw).thenReturn(None)
-    when(record.dateType).thenReturn("D")
+    when(record.dateType).thenReturn(Some("D"))
 
     val v = new Nbnv73Validator
     val results = v.validate(record)
@@ -87,7 +87,7 @@ class Nbnv73ValidatorSuite extends BaseFunSuite {
     when(record.endDate).thenReturn(None)
     when(record.endDateRaw).thenReturn(None)
 
-    when(record.dateType).thenReturn("D")
+    when(record.dateType).thenReturn(Some("D"))
 
     val v = new Nbnv73Validator
     val results = v.validate(record)

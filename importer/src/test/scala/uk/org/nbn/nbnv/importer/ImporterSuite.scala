@@ -1,5 +1,6 @@
 package uk.org.nbn.nbnv.importer
 
+import archive.Archive
 import darwin.ArchiveManager
 import ingestion.Ingester
 import org.apache.log4j.Logger
@@ -8,7 +9,6 @@ import org.mockito.Matchers._
 import testing.BaseFunSuite
 import uk.org.nbn.nbnv.importer.metadata.MetadataReader
 import javax.persistence.{EntityManager, EntityTransaction}
-import org.gbif.dwc.text.Archive
 import utility.Stopwatch
 import validation.Validator
 
@@ -20,9 +20,6 @@ class ImporterSuite extends BaseFunSuite  {
 
     val log = mock[Logger]
     val archive = mock[Archive]
-
-    val archiveManager = mock[ArchiveManager]
-    when(archiveManager.open()).thenReturn(archive)
     
     val metadataReader = mock[MetadataReader]
 
@@ -33,7 +30,7 @@ class ImporterSuite extends BaseFunSuite  {
     val validator = mock[Validator]
 
     // act
-    val importer = new Importer(Options(), log, new Stopwatch(), archiveManager, metadataReader, validator, ingester)
+    val importer = new Importer(Options(), log, new Stopwatch(), archive, metadataReader, validator, ingester)
     importer.run()
 
     // assert
