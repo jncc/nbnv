@@ -36,7 +36,10 @@ class IngesterSuite extends BaseFunSuite {
     val webApi = mock[WebApi]
 
     val archive = mock[Archive]
+    val iteratorWithIndex = mock[Iterable[(NbnRecord, Int)]]
     val iterator = mock[Iterable[NbnRecord]]
+    when(iterator.zipWithIndex).thenReturn(iteratorWithIndex)
+
     when(archive.records())thenReturn(iterator)
 
     val metadata = mock[Metadata]
