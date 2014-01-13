@@ -27,7 +27,7 @@ nbn.nbnv = nbn.nbnv || {};
             if (!$(this).val())
                 $("#endDateHidden").val('');
         });
-        
+
         var startDate = "";
         var endDate = "";
 
@@ -61,8 +61,32 @@ nbn.nbnv = nbn.nbnv || {};
             }
         });
 
-        loadTableContent(startDate,endDate);
+        loadTableContent(startDate, endDate);
     });
+
+    function activateDownloadLink(linkID, dataset, startDate, endDate) {
+        $(linkID).click(function(e) {
+            var url = nbn.nbnv.api + '/apiViews/' + dataset + '/csv';
+            
+            if (startDate !== "" && endDate !== "") {
+                url = url + '?startDate=' + startDate + "&endDate=" + endDate; 
+            }
+            
+            $('#preparing-download-dialog').dialog({modal: true});
+            
+            $.fileDownload(url, {
+                successCallback: function(responseHtml, url) {
+                    $('#preparing-download-dialog').dialog('close');
+                },
+                failCallback: function(responseHtml, url) {
+                    $('#preparing-download-dialog').dialog('close');
+                    $('#error-download-reason').html(responseHtml);
+                    $('#error-download-dialog').dialog({modal: true});
+                }
+            });
+            e.preventDefault();
+        });
+    }
 
     function getDatasets() {
 
@@ -77,9 +101,12 @@ nbn.nbnv = nbn.nbnv || {};
         var qString = "";
         if (startDate !== "" && endDate !== "")
             qString = "?startDate=" + startDate + "&endDate=" + endDate;
-
+        
         $('.nbn-datatable').each(function(index) {
             var dataset = $(this).data('dataset');
+            
+            activateDownloadLink('#downloadFor' + dataset,dataset, startDate, endDate);
+            
             $('#nbn-downloads-div-' + dataset).empty().append($('<img>')
                     .attr('src', '/img/ajax-loader-medium.gif')
                     .attr('style', 'display:block; margin:auto;'));
@@ -120,14 +147,14 @@ nbn.nbnv = nbn.nbnv || {};
                     + ((value.recordCount / value.viewed) * 100).toFixed(1)
                     + '% of the view')
                     )
-                );
+                    );
         });
 
         $(divID).empty().append(output.append(outputBody));
-        
+
         // Setup user information dialogs - External Dependency (dialog_utils.js)
         setupUsernameDialog(nbn.nbnv.api);
-        
+
         generateDownloadReportDatatable('#' + tableID);
     }
     function generateDownloadReportDatatable(tableID) {
@@ -138,15 +165,15 @@ nbn.nbnv = nbn.nbnv || {};
             "bSortClasses": false,
             "sPaginationType": "full_numbers",
             "aLengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]],
-                "aoColumnDefs": [
-                    {"sWidth": "15%", "aTargets": [0, 1, 3]},
-                    {"sWidth": "30%", "aTargets": [2]},
-                    {"sWidth": "25%", "aTargets": [4]}
-                ]
+            "aoColumnDefs": [
+                {"sWidth": "15%", "aTargets": [0, 1, 3]},
+                {"sWidth": "30%", "aTargets": [2]},
+                {"sWidth": "25%", "aTargets": [4]}
+            ]
         });
     }
 
- 
+
 })(jQuery);
 
 
