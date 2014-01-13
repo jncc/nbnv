@@ -1068,6 +1068,15 @@ public class TaxonObservationResource extends RequestResource {
         };
     }
     
+    /**
+     * Returns a list of download reports for the specified dataset
+     * 
+     * @param user The current user must be an admin of the dataset (Injected token no need to pass)
+     * @param datasetKey A dataset key
+     * @param json A JSON object containing a set of filters to run the query on
+     * @return
+     * @throws IOException 
+     */
     @GET
     @Path("/download/report/{datasetKey : [A-Z][A-Z0-9]{7}}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -1086,6 +1095,95 @@ public class TaxonObservationResource extends RequestResource {
                 stats.getPurposeID());
     }
     
+    /**
+     * Returns a list of download reports for the specified dataset as a CSV
+     * 
+     * @param user The current user must be an admin of the dataset (Injected token no need to pass)
+     * @param datasetKey A dataset key
+     * @param json A JSON object containing a set of filters to run the query on
+     * @return
+     * @throws IOException 
+     */
+//    @GET
+//    @Path("/download/report/{datasetKey : [A-Z][A-Z0-9]{7}}/csv")
+//    @Produces("application/x-zip-compressed")
+//    public StreamingOutput getDownloadReportsByDatasetAsCSV (
+//            @TokenDatasetAdminUser(path = "datasetKey") final User user, 
+//            @PathParam("datasetKey") final String datasetKey,
+//            @QueryParam("json") final String json) throws IOException {
+//
+//        return new StreamingOutput() {
+//            @Override
+//            public void write(OutputStream out) throws IOException, WebApplicationException {
+//                DownloadStatsJSON stats = parseJSONStats(json);
+//
+//                List<String> dList = new ArrayList<String>();
+//                dList.add(datasetKey);
+//
+//                List<DownloadReport> reports = observationMapper.selectDownloadReportsByDataset(dList, 
+//                        stats.getStartDate(), stats.getEndDate(), stats.getFilterID(), 
+//                        stats.getUserID(), stats.getOrganisationID(), 
+//                        stats.getPurposeID());
+//                
+//                ZipOutputStream zip = new ZipOutputStream(out);
+//
+//                zip.putNextEntry(new ZipEntry("DownloadReportsFor" + datasetKey + ".csv"));
+//                
+//                List<String> values = new ArrayList<String>();              
+//                values.add("filterID");
+//                values.add("datasetKey");
+//                values.add("userID");
+//                values.add("forename");
+//                values.add("surname");
+//                values.add("email");
+//                values.add("organisationID");
+//                values.add("organisationName");                
+//                values.add("purposeID");
+//                values.add("purpose");
+//                values.add("reason");
+//                values.add("filterJSON");
+//                values.add("filterText");
+//                values.add("downloadTime");
+//                values.add("recordCount");
+//                values.add("totalRecords");
+//                values.add("totalDownloaded");
+//                
+//                downloadHelper.writelnCsv(zip, values);
+//                
+//                for (DownloadReport report : reports) {
+//                    values = new ArrayList<String>();
+//                    
+//                    values.add(report.getFilterID());
+//                    values.add(report.getDatasetKey());
+//                    values.add(report.getUserID() > 0 ? Integer.toString(report.getUserID()) : "");
+//                    values.add(report.getForename());
+//                    values.add(report.getSurname());
+//                    values.add(report.getEmail());
+//                    values.add(report.getOrganisationID() > 0 ? Integer.toString(report.getOrganisationID()) : "");
+//                    values.add(report.getOrganisationName());
+//                    values.add(Integer.toString(report.getPurposeID()));
+//                    values.add(report.getPurpose());
+//                    values.add(report.getReason());
+//                    values.add(report.getFilterJSON());
+//                    values.add(report.getFilterText());
+//                    values.add(report.getDownloadTimeString());
+//                    values.add(Integer.toString(report.getRecordCount()));
+//                    values.add(Integer.toString(report.getTotalRecords()));
+//                    values.add(Integer.toString(report.getTotalDownloaded()));
+//                    
+//                    downloadHelper.writelnCsv(zip, values);
+//                }
+//            }
+//        };
+//    }    
+    
+    /**
+     * 
+     * @param user
+     * @param json
+     * @return
+     * @throws IOException 
+     */
     @GET
     @Path("/download/report/downloadStats")
     @Produces(MediaType.APPLICATION_JSON)
@@ -1106,6 +1204,13 @@ public class TaxonObservationResource extends RequestResource {
         return Response.status(Response.Status.FORBIDDEN).entity("You do no have administration access to one or more of the selected datasets").build();
     }
 
+    /**
+     * 
+     * @param user
+     * @param json
+     * @return
+     * @throws IOException 
+     */
     @GET
     @Path("/download/report/downloadUserStats")
     @Produces(MediaType.APPLICATION_JSON)
@@ -1126,6 +1231,13 @@ public class TaxonObservationResource extends RequestResource {
         return Response.status(Response.Status.FORBIDDEN).build();
     }
 
+    /**
+     * 
+     * @param user
+     * @param json
+     * @return
+     * @throws IOException 
+     */
     @GET
     @Path("/download/report/downloadOrganisationStats")
     @Produces(MediaType.APPLICATION_JSON)
@@ -1147,6 +1259,17 @@ public class TaxonObservationResource extends RequestResource {
         return Response.status(Response.Status.FORBIDDEN).build();
     }
     
+    /**
+     * Returns a set of combined statistics about requested datasets specified
+     * in the json parameter along with other filters, these include top 5 
+     * downloaders (organisation and user) and other statistics that help create
+     * the download reports pages
+     * 
+     * @param user The current user (must be admin of all datasets specified in the JSON) (Injected token no need to pass)
+     * @param json The JSON object determining the datasets and filters used
+     * @return A list of combined stats (general statistics, user stats and organisation stats)
+     * @throws IOException 
+     */
     @GET
     @Path("/download/report/combinedStats")
     @Produces(MediaType.APPLICATION_JSON)
