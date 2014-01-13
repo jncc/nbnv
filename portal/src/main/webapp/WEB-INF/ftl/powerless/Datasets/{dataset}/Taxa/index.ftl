@@ -15,7 +15,7 @@
                 <td><a class="nbn-datatable-anchor" href="/Taxa/${taxon.taxonVersionKey}">${taxon_utils.getLongName(taxon)}</a></td>
                 <td>${taxon.taxonVersionKey}</td>
                 <td>${taxon.taxonOutputGroupName}</td>
-                <td>${taxon.observationCount}</td>
+                <td>${taxon.observationCount?c}</td>
             </tr>
         </#list>
     </tbody>
