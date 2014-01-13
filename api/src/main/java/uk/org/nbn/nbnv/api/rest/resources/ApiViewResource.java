@@ -25,7 +25,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.org.nbn.nbnv.api.dao.core.OperationalApiObservationViewMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.ApiObservationViewMapper;
-import uk.org.nbn.nbnv.api.model.ApiObservationView;
 import uk.org.nbn.nbnv.api.model.ApiObservationViewStatistic;
 import uk.org.nbn.nbnv.api.model.User;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenDatasetAdminUser;
@@ -42,6 +41,17 @@ public class ApiViewResource extends AbstractResource {
     @Autowired OperationalApiObservationViewMapper oApiObservationViewMapper;
     @Autowired DownloadHelper downloadHelper;
 
+    /**
+     * Return a list of api observation views which give the filters used and 
+     * the number of records viewed at via the API, includes portal operations
+     * which return full records to the user.
+     * 
+     * @param user The current user, must be admin of the dataset (Injected token no need to pass)
+     * @param datasetKey The dataset key of the dataset
+     * @param startDate (Optional) A start date to search for views from (must have an end date)
+     * @param endDate (Optional) An end date to search for views until (must have a start date)
+     * @return A list of ApiObservationViewStatistic's for this dataset and any date filters
+     */
     @GET
     @Path("/{datasetKey : [A-Z][A-Z0-9]{7}}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -52,7 +62,18 @@ public class ApiViewResource extends AbstractResource {
             @QueryParam("endDate") @DefaultValue("") String endDate) {
         return apiObservationViewMapper.getApiObservationViewStatisticsForDataset(datasetKey, startDate, endDate);
     }
-
+    
+    /**
+     * Return a zip file containing a CSV list of api observation views which 
+     * give the filters used and the number of records viewed at via the API, 
+     * includes portal operations which return full records to the user.
+     * 
+     * @param user The current user, must be admin of the dataset (Injected token no need to pass)
+     * @param datasetKey The dataset key of the dataset
+     * @param startDate (Optional) A start date to search for views from (must have an end date)
+     * @param endDate (Optional) An end date to search for views until (must have a start date)
+     * @return A ZIP file containing a CSV list of ApiObservationViewStatistic's for this dataset and any date filters
+     */    
     @GET
     @Path("/{datasetKey : [A-Z][A-Z0-9]{7}}/csv")
     @Produces("application/x-zip-compressed")
