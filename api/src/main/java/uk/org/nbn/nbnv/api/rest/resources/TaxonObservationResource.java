@@ -1019,21 +1019,21 @@ public class TaxonObservationResource extends RequestResource {
                 taxaList.add(dFilter.getTaxon().getTvk());
                 // Add the list of observations to the download
                 try {
-                addObservations(zip, user, 
-                        dFilter.getYear().getStartYear(), 
-                        dFilter.getYear().getEndYear(), 
-                        dFilter.getDataset().getDatasets(), 
-                        taxaList, 
-                        dFilter.getSpatial().getMatch(),
-                        dFilter.getSpatial().getFeature(), 
-                        dFilter.getSensitive().equals("sans"), 
-                        dFilter.getTaxon().getDesignation(), 
-                        dFilter.getTaxon().getOutput(), 
-                        dFilter.getTaxon().getOrgSuppliedList(),
-                        dFilter.getSpatial().getGridRef(), 
-                        dFilter.getPolygon(), 
-                        dFilter.getReason().getIncludeAttributes().equals("true"), 
-                        filterID, filter, dFilter);
+                    addObservations(zip, user, 
+                            dFilter.getYear().getStartYear(), 
+                            dFilter.getYear().getEndYear(), 
+                            dFilter.getDataset().getDatasets(), 
+                            taxaList, 
+                            dFilter.getSpatial().getMatch(),
+                            dFilter.getSpatial().getFeature(), 
+                            dFilter.getSensitive().equals("sans"), 
+                            dFilter.getTaxon().getDesignation(), 
+                            dFilter.getTaxon().getOutput(), 
+                            dFilter.getTaxon().getOrgSuppliedList(),
+                            dFilter.getSpatial().getGridRef(), 
+                            dFilter.getPolygon(), 
+                            dFilter.getReason().getIncludeAttributes().equals("true"), 
+                            filterID, filter, dFilter);
                 } catch (TemplateException ex) {
                     throw new IOException(ex);
                 }

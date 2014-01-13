@@ -17,3 +17,15 @@
         </table>        
     </div>
 </#macro>
+
+<#macro downloadDialogs>
+    <div id="preparing-download-dialog" title="Preparing Download..." style="display: none;">
+        <p>We are preparing your download, please wait</p>
+        <img style="display:block;margin-left: auto;margin-right: auto;" src="/img/ajax-loader-medium.gif" />
+    </div>
+
+    <div id="error-download-dialog" style="display:none;">
+        <p>There was a problem generating your download:</p>
+        <p id="error-download-reason"></p>
+    </div>
+</#macro>
