@@ -120,7 +120,10 @@ public class AttributeConcatenationTest {
         
         instance.modifyRow(row);
         
-        Assert.assertEquals("mapping", new JSONObject(row.get(1)).keys().next());
+        String json = row.get(1).replace("\"\"","\"");
+        json = json.substring(1, json.length() - 1);
+        
+        Assert.assertEquals("mapping", new JSONObject(json).keys().next());
         
     }
 }
