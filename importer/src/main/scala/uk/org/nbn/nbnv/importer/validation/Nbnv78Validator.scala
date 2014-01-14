@@ -1,20 +1,20 @@
 package uk.org.nbn.nbnv.importer.validation
 
-import uk.org.nbn.nbnv.importer.records.NbnRecord
 import uk.org.nbn.nbnv.importer.fidelity.{ResultLevel, Result}
+import uk.org.nbn.nbnv.importer.records.NbnRecord
 
 class Nbnv78Validator {
 
   // Record DateType must be one of the following
   def validate(record: NbnRecord) = record.dateType match {
-    case "D" | "DD" | "O" | "OO" | "Y" | "-Y" | "YY" | "ND" | "U" => {
+    case Some("D") | Some("DD") | Some("O") | Some("OO") | Some("Y") | Some("-Y") | Some("YY") | Some("ND") | Some("U") => {
       new Result {
         def level: ResultLevel.ResultLevel = ResultLevel.DEBUG
         def reference: String = record.key
         def message: String = "NBNV-78: Validated: Found a valid date type"
       }
     }
-    case null => {
+    case None => {
       new Result {
         def level: ResultLevel.ResultLevel = ResultLevel.ERROR
         def reference: String = record.key

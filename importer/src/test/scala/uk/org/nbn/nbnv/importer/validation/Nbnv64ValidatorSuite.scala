@@ -7,12 +7,13 @@ import uk.org.nbn.nbnv.importer.records.NbnRecord
 import uk.org.nbn.nbnv.importer.fidelity.ResultLevel
 
 class Nbnv64ValidatorSuite extends BaseFunSuite {
-  test("Nvnv64 should validate know tvk") {
+
+  test("should validate know tvk") {
     val repo = mock[Repository]
     when(repo.confirmTaxonVersionKey("some tvk")).thenReturn(true)
 
     val record = mock[NbnRecord]
-    when(record.taxonVersionKey).thenReturn("some tvk")
+    when(record.taxonVersionKey).thenReturn(Some("some tvk"))
 
     val v = new Nbnv64Validator(repo)
     val r = v.validate(record)
@@ -20,12 +21,24 @@ class Nbnv64ValidatorSuite extends BaseFunSuite {
     r.level should be (ResultLevel.DEBUG)
   }
 
-  test("Nvnv64 should not validate unknown tvk") {
+  test("should not validate unknown tvk") {
     val repo = mock[Repository]
     when(repo.confirmTaxonVersionKey("some tvk")).thenReturn(false)
 
     val record = mock[NbnRecord]
-    when(record.taxonVersionKey).thenReturn("some tvk")
+    when(record.taxonVersionKey).thenReturn(Some("some tvk"))
+
+    val v = new Nbnv64Validator(repo)
+    val r = v.validate(record)
+
+    r.level should be (ResultLevel.ERROR)
+  }
+
+  test("should not validate when no tvk is provided") {
+    val repo = mock[Repository]
+
+    val record = mock[NbnRecord]
+    when(record.taxonVersionKey).thenReturn(None)
 
     val v = new Nbnv64Validator(repo)
     val r = v.validate(record)

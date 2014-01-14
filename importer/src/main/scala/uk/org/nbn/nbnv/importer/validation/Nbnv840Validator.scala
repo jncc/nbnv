@@ -9,12 +9,12 @@ class Nbnv840Validator {
   def validate(record: NbnRecord) = {
     if (record.eventDateRaw.isDefined) {
       record.dateType match {
-        case null => new Result {
+        case None => new Result {
           def level: ResultLevel.ResultLevel = ResultLevel.ERROR
           def reference: String = record.key
           def message: String = "%s: A date type of 'D' must be supplied for event dates".format(code)
         }
-        case "D" => new Result {
+        case Some("D") => new Result {
             def level: ResultLevel.ResultLevel = ResultLevel.DEBUG
             def reference: String = record.key
             def message: String = "%s: Validated: The date type 'D' has been supplied for a singel event date".format(code)

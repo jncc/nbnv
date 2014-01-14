@@ -47,14 +47,14 @@ class RecordIngester @Inject()(log: Logger,
         None
       }
 
-    val (startDate, endDate) = dateParser.parse(record.dateType, record.startDate, record.endDate)
+    val (startDate, endDate) = dateParser.parse(record.dateType.get, record.startDate, record.endDate)
 
     def update(o: ImportTaxonObservation) {
 
       o.setAbsenceRecord(record.absence)
       o.setDateStart(startDate getOrElse null)
       o.setDateEnd(endDate getOrElse null)
-      o.setDateTypeKey(record.dateType) //confirmed by NBNV-78 validator
+      o.setDateTypeKey(record.dateType.get) //confirmed by NBNV-78 validator
       o.setDeterminerID(determiner getOrElse null)
       o.setFeatureID(feature.getId)
       o.setProviderKey(record.key)
@@ -62,7 +62,7 @@ class RecordIngester @Inject()(log: Logger,
       o.setSampleID(sample)
       o.setSensitiveRecord(record.sensitiveOccurrence)
       o.setSiteID(site.orNull)
-      o.setTaxonVersionKey(record.taxonVersionKey)
+      o.setTaxonVersionKey(record.taxonVersionKey.get)
     }
 
     val observation = db.repo.getTaxonObservation(record.key, sample) match {

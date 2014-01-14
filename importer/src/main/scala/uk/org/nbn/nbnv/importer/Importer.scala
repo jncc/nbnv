@@ -1,6 +1,6 @@
 package uk.org.nbn.nbnv.importer
 
-import darwin.ArchiveManager
+import archive.Archive
 import ingestion._
 import injection.ImporterModule
 import uk.org.nbn.nbnv.importer.metadata.MetadataReader
@@ -41,7 +41,7 @@ object Importer {
 class Importer @Inject()(options:        Options,
                          log:            Logger,
                          stopwatch:      Stopwatch,
-                         archiveManager: ArchiveManager,
+                         archive:        Archive,
                          metadataReader: MetadataReader,
                          validator:      Validator,
                          ingester:       Ingester) {
@@ -56,8 +56,8 @@ class Importer @Inject()(options:        Options,
       val stopwatch = new Stopwatch().start()
 
       // open the archive and read the metadata
-      val archive = archiveManager.open()
-      val metadata = metadataReader.read(archive)
+      archive.open()
+      val metadata = metadataReader.read(archive.getArchiveFiles.metadata)
 
       // validate
       if (options.target >= Target.validate) {
