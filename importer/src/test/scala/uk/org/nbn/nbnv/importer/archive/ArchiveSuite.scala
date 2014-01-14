@@ -7,6 +7,7 @@ import uk.org.nbn.nbnv.importer.{Target, Options}
 import org.apache.log4j.Logger
 import xml.Elem
 import uk.org.nbn.nbnv.utility.FileSystem
+import uk.org.nbn.nbnv.importer.records.NbnRecord
 
 class ArchiveSuite extends BaseFunSuite {
   def fixture = new {
@@ -32,7 +33,9 @@ class ArchiveSuite extends BaseFunSuite {
     val metadataParser = mock[ArchiveMetadataParser]
     when(metadataParser.getMetadata(xml)).thenReturn(archiveMetadata)
 
+    val records = mock[Iterable[NbnRecord]]
     val dfp = mock[DataFileParser]
+    when(dfp.records).thenReturn(records)
 
     val archive = new Archive(options,zfm, log, metadataParser, fileSystem, dfp)
   }
@@ -55,5 +58,30 @@ class ArchiveSuite extends BaseFunSuite {
     val files = f.archive.getArchiveFiles()
     files should be (f.files)
 
+  }
+
+  test("should return itterator if archive has been opened") {
+    val f = fixture
+
+    f.archive.open
+    val r = f.archive.records
+
+    r should be (f.records)
+  }
+
+  test("should fail if trying to read the archive when it has not been opened") {
+    val f = fixture
+
+    intercept[IllegalStateException] {
+      f.archive.records
+    }
+
+    intercept[IllegalStateException] {
+      f.archive.getArchiveMetadata
+    }
+
+    intercept[IllegalStateException] {
+      f.archive.getArchiveFiles
+    }
   }
 }
