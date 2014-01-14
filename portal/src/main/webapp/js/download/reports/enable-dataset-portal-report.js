@@ -159,7 +159,7 @@ nbn.nbnv = nbn.nbnv || {};
     }
     function generateDownloadReportDatatable(tableID) {
         $(tableID).dataTable({
-            "aaSorting": [[2, "desc"]],
+            "aaSorting": [[3, "desc"]],
             "bJQueryUI": true,
             "iDisplayLength": 25,
             "bSortClasses": false,
