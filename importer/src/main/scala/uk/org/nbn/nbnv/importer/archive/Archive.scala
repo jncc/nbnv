@@ -17,10 +17,10 @@ class Archive @Inject()(options: Options
   private var metadata : ArchiveMetadata = _
   private var archiveFiles : ArchiveFilePaths = _
 
-  def open()  {
+  def open(archivePath: String)  {
     //Open zip file
-    log.info("Opening archive %s".format(options.archivePath))
-    archiveFiles = zipFileManager.unZip(options.archivePath, options.tempDir)
+    log.info("Opening archive %s".format(archivePath))
+    archiveFiles = zipFileManager.unZip(archivePath, options.tempDir)
     log.debug("Archive unzipped to temp folder %s".format(options.tempDir))
 
     //Read archive meta data file
