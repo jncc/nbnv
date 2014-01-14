@@ -37,56 +37,56 @@ class EndToEndSuiteIT extends BaseFunSuite with ResourceLoader {
     f.importer.run()
   }
 
-  ignore("Make reader sloooooowww") {
-    val archiveURL = new URL("file:///C://Working//bwarstst//archive_BWARS_10000R.zip")
-
-    val watch = new Stopwatch()
-
-    watch.start()
-    val temp = new File("./temp")
-    temp.mkdirs()
-
-    val archive = ArchiveFactory.openArchive(new File(archiveURL.getFile), temp)
-
-    for ((record, i) <- archive.iteratorRaw.zipWithIndex) {
-      //get the first extension this will fail
-//      Console.println("Record index %d".format(i))
-      var nbnRecord = new NbnRecord(record);
-//      Console.println("key: %s".format(nbnRecord.key))
-    }
-
-    Console.println("time %d".format(watch.elapsedMillis()))
-  }
-
-  ignore("Validation speed")  {
-
-    val log = mock[Logger]
-
-
-    val em = new PersistenceUtility().createEntityManagerFactory(Settings.map).createEntityManager
-    val qc = new QueryCache(log)
-    val db = new Database(em, new Repository(log, em, qc), qc)
-
-    val v = new Validator(log,db)
-
+//  ignore("Make reader sloooooowww") {
 //    val archiveURL = new URL("file:///C://Working//bwarstst//archive_BWARS_10000R.zip")
-    val archiveURL = new URL("file:///C://Working//bwarstst//archive_BWARS_19062013_121028.zip")
+//
+//    val watch = new Stopwatch()
+//
+//    watch.start()
+//    val temp = new File("./temp")
+//    temp.mkdirs()
+//
+//    val archive = ArchiveFactory.openArchive(new File(archiveURL.getFile), temp)
+//
+//    for ((record, i) <- archive.iteratorRaw.zipWithIndex) {
+//      //get the first extension this will fail
+////      Console.println("Record index %d".format(i))
+//      var nbnRecord = new NbnRecord(record);
+////      Console.println("key: %s".format(nbnRecord.key))
+//    }
+//
+//    Console.println("time %d".format(watch.elapsedMillis()))
+//  }
 
-    val watch = new Stopwatch()
-
-    watch.start()
-    val temp = new File("./temp")
-    temp.mkdirs()
-
-    val archive = ArchiveFactory.openArchive(new File(archiveURL.getFile), temp)
-    val metadataReader = new MetadataReader (new FileSystem, new  MetadataParser)
-    val metadata = metadataReader.read(archive)
-
-    v.validate(archive, metadata)
-
-    Console.println("time %d".format(watch.elapsedMillis()))
-
-  }
+//  ignore("Validation speed")  {
+//
+//    val log = mock[Logger]
+//
+//
+//    val em = new PersistenceUtility().createEntityManagerFactory(Settings.map).createEntityManager
+//    val qc = new QueryCache(log)
+//    val db = new Database(em, new Repository(log, em, qc), qc)
+//
+//    val v = new Validator(log,db)
+//
+////    val archiveURL = new URL("file:///C://Working//bwarstst//archive_BWARS_10000R.zip")
+//    val archiveURL = new URL("file:///C://Working//bwarstst//archive_BWARS_19062013_121028.zip")
+//
+//    val watch = new Stopwatch()
+//
+//    watch.start()
+//    val temp = new File("./temp")
+//    temp.mkdirs()
+//
+//    val archive = ArchiveFactory.openArchive(new File(archiveURL.getFile), temp)
+//    val metadataReader = new MetadataReader (new FileSystem, new  MetadataParser)
+//    val metadata = metadataReader.read(archive)
+//
+//    v.validate(archive, metadata)
+//
+//    Console.println("time %d".format(watch.elapsedMillis()))
+//
+//  }
 
   test("should import a valid archive") {
 
