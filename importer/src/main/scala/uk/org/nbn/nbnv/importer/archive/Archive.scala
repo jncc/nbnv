@@ -24,11 +24,12 @@ class Archive @Inject()(options: Options
     log.debug("Archive unzipped to temp folder %s".format(options.tempDir))
 
     //Read archive meta data file
-    val xml = fs.loadXml(archiveFiles.metadata)
+    val xml = fs.loadXml(archiveFiles.archiveMetadata)
     metadata = metadataParser.getMetadata(xml)
     log.debug("Read Metadata")
 
     dfp.open(archiveFiles.data, metadata)
+    log.debug("Opened data file")
     isOpen = true
   }
 
