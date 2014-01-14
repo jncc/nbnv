@@ -56,7 +56,7 @@ class Importer @Inject()(options:        Options,
       val stopwatch = new Stopwatch().start()
 
       // open the archive and read the metadata
-      archive.open()
+      archive.open(options.archivePath)
       val metadata = metadataReader.read(archive.getArchiveFiles.metadata)
 
       // validate
