@@ -78,9 +78,49 @@ nbn.nbnv = nbn.nbnv || {};
                 }
             }
         });
+        
+        setupCSVDownloadLinks();
 
         loadTableContent({'dataset' : { 'datasets' : getDatasets() }});
     });
+    
+    function setupCSVDownloadLinks() {
+        $('.downloadCSV').click(function(e) {
+            var data = { };
+            data['dataset'] = { 'datasets' : [$(this).data('dataset')] };
+            if ($('#startDateHidden').val() !== undefined && $('startDateHidden').val() !== "") {
+                data['startDate'] = $('#startDateHidden').val();
+            }
+            if ($('#endDateHidden').val() !== undefined && $('endDateHidden').val() !== "") {
+                data['endDate'] = $('#endDateHidden').val();                    
+            }
+            if ($('#purposeID').val() > 0) {
+                data['purposeID'] = [$('#purposeID').val()];
+            } else {
+                data['purposeID'] = [];
+            }
+            if ($('#organisationID').val() > 0) {
+                data['organisationID'] = [$('#organisationID').val()];
+            } else {
+                data['organisationID'] = [];
+            }
+            
+            var qString = '?json=' + JSON.stringify(data);
+
+            $.fileDownload(nbn.nbnv.api + '/taxonObservations/download/report/' + $(this).data('dataset') + '/csv' + qString, {
+                successCallback: function(responseHtml, url) {
+                    $('#preparing-download-dialog').dialog('close');
+                },
+                failCallback: function(responseHtml, url) {
+                    $('#preparing-download-dialog').dialog('close');
+                    $('#error-download-reason').html(responseHtml);
+                    $('#error-download-dialog').dialog({modal: true});
+                }
+            });         
+            
+            e.preventDefault();
+        });
+    }
     
     function getDatasets() {
         
@@ -239,7 +279,6 @@ nbn.nbnv = nbn.nbnv || {};
             $.each(data, function(key, value){
                 outputBody.append($('<tr>')
                     .append($('<td>').append($('<a>').text(value.forename + ' ' + value.surname).attr('href', '#').attr('class', 'nbn-request-username').attr('data-id', value.userID).attr('data-email', value.email)))
-                    //.append($('<td>').append($('<a>').attr('href', '/User/' + value.userID).attr('target', '_blank').text(value.forename + ' ' + value.surname)))
                     .append($('<td>').append($('<a>').attr('href', '/Organisations/' + value.organisationID).attr('target', '_blank').text(value.organisationName)))
                     .append($('<td>').text(value.downloadTimeString))
                     .append($('<td>').text(value.filterText))
