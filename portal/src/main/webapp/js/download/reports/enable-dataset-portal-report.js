@@ -88,15 +88,6 @@ nbn.nbnv = nbn.nbnv || {};
         });
     }
 
-    function getDatasets() {
-
-        var d = [];
-        $('.nbn-datatable').each(function(index, value) {
-            d.push($(this).data('dataset'));
-        });
-        return d;
-    }
-
     function loadTableContent(startDate, endDate) {
         var qString = "";
         if (startDate !== "" && endDate !== "")
@@ -172,8 +163,6 @@ nbn.nbnv = nbn.nbnv || {};
             ]
         });
     }
-
-
 })(jQuery);
 
 
