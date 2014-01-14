@@ -2,13 +2,13 @@ package uk.org.nbn.nbnv.importer.validation
 
 import scala.collection.JavaConversions._
 import com.google.inject.Inject
-import org.gbif.dwc.text.Archive
 import uk.org.nbn.nbnv.importer.fidelity.{ResultLevel, Result}
 import org.apache.log4j.Logger
 import uk.org.nbn.nbnv.importer.BadDataException
 import uk.org.nbn.nbnv.importer.records.NbnRecord
 import uk.org.nbn.nbnv.importer.data.Database
 import uk.org.nbn.nbnv.importer.metadata.Metadata
+import uk.org.nbn.nbnv.importer.archive.Archive
 
 // todo: mapping between darwin and nbn terms, separate from reading values, nulls throw?
 // todo: ensure possibility for parallel
@@ -32,8 +32,6 @@ class Validator @Inject()(log: Logger, db: Database ){
 
     log.info("Validating archive...")
 
-    //    (1) head scoped / required - can't validate darwin mappings for validation.
-    //      ask gbif to alter reader to isMapped or list of defined mappings. at the mo we're checking for null in first record. perhaps null means not mapped
     val validator = new ArchiveHeadValidator
     val results = validator.validate(archive)
     for (result <- results) processResult(result)
@@ -42,37 +40,16 @@ class Validator @Inject()(log: Logger, db: Database ){
       throw new BadDataException("Failed due to invalid data file structure, see log for details")
     }
 
-
-    // (2) archive scoped / aggregate value validation (e.g. no duplicate record keys)
-    // This currently won't work because of case
-//    val aggregateValidators = List(new Nbnv61Validator)
-
-
-
     val duplicateValidator = new Nbnv61Validator
 
-    for ((record, i) <- archive.iteratorRaw.zipWithIndex) {
-      val result2 = duplicateValidator.processRecord(record)
-      processResult(result2)
-    }
-
-    if (errors > 0) {
-      throw new BadDataException("Failed due to duplicated or incorrectly identified records, see log for details")
-    }
-
-    // (3) record-scoped
-    // parsing/conversions - don't want to duplicate the parsing logic
-    // size (length)
-    // lookups (range) (e.g. checking real taxon key)
-
-
-    for ((record, i) <- archive.iteratorRaw.zipWithIndex) {
+    for ((nbnRecord, i) <- archive.records.zipWithIndex) {
 
       if (i % 100 == 99) {
         log.info("Validated %d records".format(i+1))
       }
 
-      val nbnRecord = new NbnRecord(record)
+      val dupeResult = duplicateValidator.processRecord(nbnRecord)
+      processResult(dupeResult)
 
       //validate RecordKey is provided
       val v9 = new Nbnv163Validator
@@ -137,18 +114,7 @@ class Validator @Inject()(log: Logger, db: Database ){
       val oav = new ObservationAttributeValidator
       val oavResults = oav.validate(nbnRecord)
       for (result <- oavResults) processResult(result)
-
-//      // call aggregation callbacks
-//      for (v <- aggregateValidators) {
-//        val result = v.processRecord(nbnRecord)
-//        processResult(result)
-//      }
-
     }
-
-//    for (v <- aggregateValidators) {
-//      v.notifyComplete()
-//    }
 
     log.info("Validation complete. %d validation errors".format(errors))
 

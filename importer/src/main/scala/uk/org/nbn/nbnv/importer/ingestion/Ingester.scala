@@ -3,7 +3,6 @@ package uk.org.nbn.nbnv.importer.ingestion
 import scala.collection.JavaConversions._
 import javax.persistence.EntityTransaction
 import uk.org.nbn.nbnv.importer.records.NbnRecord
-import org.gbif.dwc.text.Archive
 import uk.org.nbn.nbnv.importer.metadata.{Mode, Metadata}
 import uk.org.nbn.nbnv.importer.{Target, Options}
 import com.google.inject.Inject
@@ -12,6 +11,7 @@ import uk.org.nbn.nbnv.importer.data.Database
 import com.google.common.base.Stopwatch
 import uk.org.nbn.nbnv.jpa.nbncore.ImportTaxonDataset
 import uk.org.nbn.nbnv.importer.jersey.WebApi
+import uk.org.nbn.nbnv.importer.archive.Archive
 
 /// Performs the interaction with the NBN core database.
 
@@ -36,9 +36,8 @@ class Ingester @Inject()(options: Options,
 
   def stageSurveys(archive: Archive, dataset: ImportTaxonDataset) {
     log.debug("Ingesting surveys...")
-    for ((record, i) <- archive.iteratorRaw.zipWithIndex) {
-      val rec = new NbnRecord(record)
-      surveyIngester.stageSurvey(rec.surveyKey, dataset)
+    for ((record, i) <- archive.records.zipWithIndex) {
+      surveyIngester.stageSurvey(record.surveyKey, dataset)
 
       logProgress(i)
     }
@@ -50,10 +49,9 @@ class Ingester @Inject()(options: Options,
 
   def stageSamples(archive: Archive, dataset: ImportTaxonDataset) {
     log.debug("Ingesting samples...")
-    for ((record, i) <- archive.iteratorRaw.zipWithIndex) {
-      val rec = new NbnRecord(record)
-      val survey = db.repo.getImportSurvey((rec.surveyKey getOrElse "1"),dataset )
-      sampleIngester.stageSample(rec.sampleKey, survey.get)
+    for ((record, i) <- archive.records.zipWithIndex) {
+      val survey = db.repo.getImportSurvey((record.surveyKey getOrElse "1"),dataset )
+      sampleIngester.stageSample(record.sampleKey, survey.get)
 
       logProgress(i)
     }
@@ -64,10 +62,9 @@ class Ingester @Inject()(options: Options,
   
   def stageRecorders(archive: Archive) {
     log.debug("Ingesting recorders...")
-    for ((record, i) <- archive.iteratorRaw.zipWithIndex) {
-      val rec = new NbnRecord(record)
-      recorderIngester.ensureRecorder(rec.determiner)
-      recorderIngester.ensureRecorder(rec.recorder)
+    for ((record, i) <- archive.records.zipWithIndex) {
+      recorderIngester.ensureRecorder(record.determiner)
+      recorderIngester.ensureRecorder(record.recorder)
 
       logProgress(i)
     }
@@ -77,9 +74,9 @@ class Ingester @Inject()(options: Options,
   
   def upsertRecords(archive: Archive, dataset: ImportTaxonDataset, metadata: Metadata) {
     log.debug("Ingesting records...")
-     for ((record, i) <- archive.iteratorRaw.zipWithIndex) {
+     for ((record, i) <- archive.records.zipWithIndex) {
 
-        recordIngester.insertRecord(new NbnRecord(record), dataset, metadata)
+        recordIngester.insertRecord(record, dataset, metadata)
         logProgress(i)
 
         // every 100 records, fully clear the data context to prevent observed JPA slowdown

@@ -1,9 +1,9 @@
 package uk.org.nbn.nbnv.importer.archive
 
 import com.google.inject.Inject
-import uk.org.nbn.nbnv.importer.{BadDataException, Options}
+import uk.org.nbn.nbnv.importer.Options
 import org.apache.log4j.Logger
-import uk.org.nbn.nbnv.importer.records.{NbnRecord2, NbnRecord}
+import uk.org.nbn.nbnv.importer.records.NbnRecord
 import uk.org.nbn.nbnv.utility.FileSystem
 
 class Archive @Inject()(options: Options
@@ -11,28 +11,43 @@ class Archive @Inject()(options: Options
                                , log: Logger
                                , metadataParser: ArchiveMetadataParser
                                , fs: FileSystem
-                                , dfp: DataFileParser) {
+                               , dfp: DataFileParser) {
 
-  var isOpen = false
+  private var isOpen = false
+  private var metadata : ArchiveMetadata = _
+  private var archiveFiles : ArchiveFilePaths = _
 
   def open()  {
     //Open zip file
     log.info("Opening archive %s".format(options.archivePath))
-    val archiveFiles = zipFileManager.unZip(options.archivePath, options.tempDir)
+    archiveFiles = zipFileManager.unZip(options.archivePath, options.tempDir)
     log.debug("Archive unzipped to temp folder %s".format(options.tempDir))
 
     //Read archive meta data file
-    val xml = fs.loadXml(archiveFiles.metadata)
-    val metadata = metadataParser.getMetadata(xml)
+    val xml = fs.loadXml(archiveFiles.archiveMetadata)
+    metadata = metadataParser.getMetadata(xml)
     log.debug("Read Metadata")
 
     dfp.open(archiveFiles.data, metadata)
+    log.debug("Opened data file")
     isOpen = true
   }
 
-  def records() : Iterable[NbnRecord2] = {
+  def records() : Iterable[NbnRecord] = {
     if (!isOpen) throw new IllegalStateException("The archive has not been opened")
 
     dfp.records
+  }
+
+  def getArchiveMetadata() : ArchiveMetadata = {
+    if (!isOpen) throw new IllegalStateException("The archive has not been opened")
+
+    metadata
+  }
+
+  def getArchiveFiles() : ArchiveFilePaths = {
+    if (!isOpen) throw new IllegalStateException("The archive has not been opened")
+
+    archiveFiles
   }
 }

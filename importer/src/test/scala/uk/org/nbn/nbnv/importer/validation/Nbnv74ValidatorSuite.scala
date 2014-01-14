@@ -27,7 +27,7 @@ class Nbnv74ValidatorSuite extends BaseFunSuite with BeforeAndAfter {
     val startDateString = "01/02/2004"
     val endDateString = "29/02/2004"
 
-    when(record.dateType).thenReturn("O")
+    when(record.dateType).thenReturn(Some("O"))
     when(record.startDateRaw).thenReturn(Option(startDateString))
     when(record.eventDateRaw).thenReturn(None)
     when(record.startDate).thenReturn(Option( new SimpleDateFormat("dd/MM/yyyy").parse(startDateString)))
@@ -42,7 +42,7 @@ class Nbnv74ValidatorSuite extends BaseFunSuite with BeforeAndAfter {
     val startDateString = "01/02/2005"
     val endDateString = "28/02/2005"
 
-    when(record.dateType).thenReturn("O")
+    when(record.dateType).thenReturn(Some("O"))
     when(record.eventDateRaw).thenReturn(None)
     when(record.startDateRaw).thenReturn(Option(startDateString))
     when(record.startDate).thenReturn(Option( new SimpleDateFormat("dd/MM/yyyy").parse(startDateString)))
@@ -57,7 +57,7 @@ class Nbnv74ValidatorSuite extends BaseFunSuite with BeforeAndAfter {
     val startDateString = "02/02/2005"
     val endDateString = "28/02/2005"
 
-    when(record.dateType).thenReturn("O")
+    when(record.dateType).thenReturn(Some("O"))
     when(record.eventDateRaw).thenReturn(None)
     when(record.startDateRaw).thenReturn(Option(startDateString))
     when(record.startDate).thenReturn(Option( new SimpleDateFormat("dd/MM/yyyy").parse(startDateString)))
@@ -72,7 +72,7 @@ class Nbnv74ValidatorSuite extends BaseFunSuite with BeforeAndAfter {
     val startDateString = "01/02/2005"
     val endDateString = "24/02/2005"
 
-    when(record.dateType).thenReturn("O")
+    when(record.dateType).thenReturn(Some("O"))
     when(record.eventDateRaw).thenReturn(None)
     when(record.startDateRaw).thenReturn(Option(startDateString))
     when(record.startDate).thenReturn(Option( new SimpleDateFormat("dd/MM/yyyy").parse(startDateString)))
@@ -87,7 +87,7 @@ class Nbnv74ValidatorSuite extends BaseFunSuite with BeforeAndAfter {
     val startDateString = "01/02/2005"
     val endDateString = "31/03/2005"
 
-    when(record.dateType).thenReturn("O")
+    when(record.dateType).thenReturn(Some("O"))
     when(record.eventDateRaw).thenReturn(None)
     when(record.startDateRaw).thenReturn(Option(startDateString))
     when(record.startDate).thenReturn(Option( new SimpleDateFormat("dd/MM/yyyy").parse(startDateString)))
@@ -102,7 +102,7 @@ class Nbnv74ValidatorSuite extends BaseFunSuite with BeforeAndAfter {
     val startDateString = "01/02/9999"
     val endDateString = "28/02/9999"
 
-    when(record.dateType).thenReturn("O")
+    when(record.dateType).thenReturn(Some("O"))
     when(record.eventDateRaw).thenReturn(None)
     when(record.startDateRaw).thenReturn(Option(startDateString))
     when(record.startDate).thenReturn(startDateString.maybeDate("dd/MM/yyyy"))

@@ -18,7 +18,7 @@ import scala.Some
 import uk.org.nbn.nbnv.importer.records.PointDef
 
 class NbnRecordFactory @Inject()(log: Logger) {
-  def makeRecord(rawData: List[String], metadata: ArchiveMetadata) : NbnRecord2 = {
+  def makeRecord(rawData: List[String], metadata: ArchiveMetadata) : NbnRecord = {
 
     def getData(fieldIndex: Option[Int]) : Option[String] = {
       if (!fieldIndex.isDefined) { None }
@@ -102,7 +102,7 @@ class NbnRecordFactory @Inject()(log: Logger) {
       }
     }
 
-    new NbnRecord2 {
+    new NbnRecord {
       val key = getData(metadata.key).get
       val absenceRaw = getData(metadata.absence)
       val absence = parseOccurrenceStatus(getData(metadata.absence))

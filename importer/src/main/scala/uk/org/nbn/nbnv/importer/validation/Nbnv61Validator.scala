@@ -7,18 +7,19 @@ import org.gbif.dwc.terms.DwcTerm
 import collection.mutable
 import collection.immutable.TreeSet
 
-
+//todo: Requires test suite
 //class Nbnv61Validator extends AggregateValidator {
 class Nbnv61Validator {
 
   var keyTree = new TreeSet[String]()
 
 
-  def processRecord(record: StarRecord) = {
-    val key = record.core.value(DwcTerm.occurrenceID)
+  def processRecord(record: NbnRecord) = {
+
+    val key = record.key
 
     //duplicates NBNV-55
-    if (key == null || key == "") {
+    if (key == None) {
       new Result {
         def level = ResultLevel.ERROR
         def message = "NBNV-61: Key is blank, check for blank records at the end of the file"

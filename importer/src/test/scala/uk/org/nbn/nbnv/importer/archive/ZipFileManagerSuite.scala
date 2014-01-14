@@ -20,7 +20,7 @@ class ZipFileManagerSuite extends BaseFunSuite with BeforeAndAfter with Resource
 
   test("should extract meta.xml") {
     val result = zfm.unZip(archive.getFile, "./temp")
-    result.fieldMap should endWith ("meta.xml")
+    result.archiveMetadata should endWith ("meta.xml")
     result.metadata should endWith ("eml.xml")
     result.data should endWith ("data.tab")
   }
