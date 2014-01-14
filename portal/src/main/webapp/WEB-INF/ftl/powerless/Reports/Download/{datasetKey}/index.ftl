@@ -9,7 +9,7 @@
         "/js/jquery.dataTables.min.js",
         "/js/jquery.validate.min.js",
         "/js/download/reports/enable-dataset-report.js",
-        "/js/dialog_utils.js"] 
+        "/js/dialog_utils.js", "/js/jquery.fileDownload.js"] 
     csss=[
         "//ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/themes/smoothness/jquery-ui.css",
         "/css/download/downloadFilters.css"]>
@@ -58,8 +58,9 @@
     </div>
     <div style="clear:both;"></div>
     <div class="tabbed nbn-organisation-tabbed nbn-datatable" data-dataset="${datasetKey}">
-        <h3><#if organisation.hasSmallLogo><img alt="${organisation.name}" src="${organisation.smallLogo}"/></#if>${organisation.name} : [${dataset.key}] ${dataset.title}</h2>
+        <h3><#if organisation.hasSmallLogo><img alt="${organisation.name}" src="${organisation.smallLogo}"/></#if>${organisation.name} : [${dataset.key}] ${dataset.title}<span style="float:right;"><a href="#" class="downloadCSV" data-dataset="${dataset.key}">Download CSV</a></span></h3>
         <div id="nbn-downloads-div-${datasetKey}"></div>
     </div>  
     <@dialog_utils.userInfoDialog />
+    <@dialog_utils.downloadDialogs />
 </@template.master>
