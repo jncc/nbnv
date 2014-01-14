@@ -69,6 +69,6 @@ public class AttributeConcatenation extends ConverterStep {
             }
         }
         
-        row.add(obj.toString());
+        row.add("\"" + obj.toString().replace("\"", "\"\"") + "\"");
     }
 }
