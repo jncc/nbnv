@@ -6,14 +6,17 @@ import uk.org.nbn.nbnv.importer.Options
 import java.io.File
 import org.apache.log4j.Logger
 
-class DataFileParser @Inject()(options: Options, recordFactory : NbnRecordFactory, log : Logger) {
+class DataFileParser @Inject()(options: Options
+                               , recordFactory : NbnRecordFactory
+                               , log : Logger
+                               , readerFactory : CsvReaderFactory) {
   var isOpen = false
   var csvReader : CsvReader = _
   var metadata : ArchiveMetadata = _
 
   def open(dataFilePath: String, metadata: ArchiveMetadata) {
     this.metadata = metadata
-    csvReader = new CsvReader(new File(dataFilePath))
+    csvReader = readerFactory.openCsvReader(dataFilePath)
 
     isOpen = true
   }

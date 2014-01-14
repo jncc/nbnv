@@ -1,7 +1,6 @@
 package uk.org.nbn.nbnv.importer.archive
 
 import org.mockito.Mockito._
-import org.mockito.Matchers._
 import uk.org.nbn.nbnv.importer.testing.BaseFunSuite
 import uk.org.nbn.nbnv.importer.{Target, Options}
 import org.apache.log4j.Logger
