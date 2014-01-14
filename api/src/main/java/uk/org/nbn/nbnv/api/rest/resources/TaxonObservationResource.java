@@ -1107,78 +1107,81 @@ public class TaxonObservationResource extends RequestResource {
      * @return
      * @throws IOException 
      */
-//    @GET
-//    @Path("/download/report/{datasetKey : [A-Z][A-Z0-9]{7}}/csv")
-//    @Produces("application/x-zip-compressed")
-//    public StreamingOutput getDownloadReportsByDatasetAsCSV (
-//            @TokenDatasetAdminUser(path = "datasetKey") final User user, 
-//            @PathParam("datasetKey") final String datasetKey,
-//            @QueryParam("json") final String json) throws IOException {
-//
-//        return new StreamingOutput() {
-//            @Override
-//            public void write(OutputStream out) throws IOException, WebApplicationException {
-//                DownloadStatsJSON stats = parseJSONStats(json);
-//
-//                List<String> dList = new ArrayList<String>();
-//                dList.add(datasetKey);
-//
-//                List<DownloadReport> reports = observationMapper.selectDownloadReportsByDataset(dList, 
-//                        stats.getStartDate(), stats.getEndDate(), stats.getFilterID(), 
-//                        stats.getUserID(), stats.getOrganisationID(), 
-//                        stats.getPurposeID());
-//                
-//                ZipOutputStream zip = new ZipOutputStream(out);
-//
-//                zip.putNextEntry(new ZipEntry("DownloadReportsFor" + datasetKey + ".csv"));
-//                
-//                List<String> values = new ArrayList<String>();              
-//                values.add("filterID");
-//                values.add("datasetKey");
-//                values.add("userID");
-//                values.add("forename");
-//                values.add("surname");
-//                values.add("email");
-//                values.add("organisationID");
-//                values.add("organisationName");                
-//                values.add("purposeID");
-//                values.add("purpose");
-//                values.add("reason");
-//                values.add("filterJSON");
-//                values.add("filterText");
-//                values.add("downloadTime");
-//                values.add("recordCount");
-//                values.add("totalRecords");
-//                values.add("totalDownloaded");
-//                
-//                downloadHelper.writelnCsv(zip, values);
-//                
-//                for (DownloadReport report : reports) {
-//                    values = new ArrayList<String>();
-//                    
-//                    values.add(report.getFilterID());
-//                    values.add(report.getDatasetKey());
-//                    values.add(report.getUserID() > 0 ? Integer.toString(report.getUserID()) : "");
-//                    values.add(report.getForename());
-//                    values.add(report.getSurname());
-//                    values.add(report.getEmail());
-//                    values.add(report.getOrganisationID() > 0 ? Integer.toString(report.getOrganisationID()) : "");
-//                    values.add(report.getOrganisationName());
-//                    values.add(Integer.toString(report.getPurposeID()));
-//                    values.add(report.getPurpose());
-//                    values.add(report.getReason());
-//                    values.add(report.getFilterJSON());
-//                    values.add(report.getFilterText());
-//                    values.add(report.getDownloadTimeString());
-//                    values.add(Integer.toString(report.getRecordCount()));
-//                    values.add(Integer.toString(report.getTotalRecords()));
-//                    values.add(Integer.toString(report.getTotalDownloaded()));
-//                    
-//                    downloadHelper.writelnCsv(zip, values);
-//                }
-//            }
-//        };
-//    }    
+    @GET
+    @Path("/download/report/{datasetKey : [A-Z][A-Z0-9]{7}}/csv")
+    @Produces("application/x-zip-compressed")
+    public StreamingOutput getDownloadReportsByDatasetAsCSV (
+            @TokenDatasetAdminUser(path = "datasetKey") final User user, 
+            @PathParam("datasetKey") final String datasetKey,
+            @QueryParam("json") final String json) throws IOException {
+
+        return new StreamingOutput() {
+            @Override
+            public void write(OutputStream out) throws IOException, WebApplicationException {
+                DownloadStatsJSON stats = parseJSONStats(json);
+
+                List<String> dList = new ArrayList<String>();
+                dList.add(datasetKey);
+
+                List<DownloadReport> reports = observationMapper.selectDownloadReportsByDataset(dList, 
+                        stats.getStartDate(), stats.getEndDate(), stats.getFilterID(), 
+                        stats.getUserID(), stats.getOrganisationID(), 
+                        stats.getPurposeID());
+                
+                ZipOutputStream zip = new ZipOutputStream(out);
+
+                zip.putNextEntry(new ZipEntry("DownloadReportsFor" + datasetKey + ".csv"));
+                
+                List<String> values = new ArrayList<String>();              
+                values.add("filterID");
+                values.add("datasetKey");
+                values.add("userID");
+                values.add("forename");
+                values.add("surname");
+                values.add("email");
+                values.add("organisationID");
+                values.add("organisationName");                
+                values.add("purposeID");
+                values.add("purpose");
+                values.add("reason");
+                values.add("filterJSON");
+                values.add("filterText");
+                values.add("downloadTime");
+                values.add("recordCount");
+                values.add("totalRecords");
+                values.add("totalDownloaded");
+                
+                downloadHelper.writelnCsv(zip, values);
+                
+                for (DownloadReport report : reports) {
+                    values = new ArrayList<String>();
+                    
+                    values.add(report.getFilterID());
+                    values.add(report.getDatasetKey());
+                    values.add(report.getUserID() > 0 ? Integer.toString(report.getUserID()) : "");
+                    values.add(report.getForename());
+                    values.add(report.getSurname());
+                    values.add(report.getEmail());
+                    values.add(report.getOrganisationID() > 0 ? Integer.toString(report.getOrganisationID()) : "");
+                    values.add(report.getOrganisationName());
+                    values.add(Integer.toString(report.getPurposeID()));
+                    values.add(report.getPurpose());
+                    values.add(report.getReason());
+                    values.add(report.getFilterJSON());
+                    values.add(report.getFilterText());
+                    values.add(report.getDownloadTimeString());
+                    values.add(Integer.toString(report.getRecordCount()));
+                    values.add(Integer.toString(report.getTotalRecords()));
+                    values.add(Integer.toString(report.getTotalDownloaded()));
+                    
+                    downloadHelper.writelnCsv(zip, values);
+                }
+                
+                zip.flush();
+                zip.close();                
+            }
+        };
+    }    
     
     /**
      * 
