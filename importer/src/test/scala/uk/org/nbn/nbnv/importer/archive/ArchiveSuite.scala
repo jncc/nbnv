@@ -43,7 +43,7 @@ class ArchiveSuite extends BaseFunSuite {
   test("should initialise correctly when an archive is opened") {
     val f = fixture
 
-    f.archive.open()
+    f.archive.open(f.options.archivePath)
 
     //verfiy the calls are placed correctly
     verify(f.zfm).unZip(f.archivePath, f.options.tempDir)
@@ -63,7 +63,7 @@ class ArchiveSuite extends BaseFunSuite {
   test("should return itterator if archive has been opened") {
     val f = fixture
 
-    f.archive.open
+    f.archive.open(f.archivePath)
     val r = f.archive.records
 
     r should be (f.records)
