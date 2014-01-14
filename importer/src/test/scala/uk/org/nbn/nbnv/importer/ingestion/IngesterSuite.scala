@@ -3,14 +3,15 @@ package uk.org.nbn.nbnv.importer.ingestion
 import org.mockito.Mockito._
 import javax.persistence.{EntityTransaction, EntityManager}
 import uk.org.nbn.nbnv.importer.metadata.{Mode, Metadata}
-import org.gbif.dwc.text.{StarRecord, Archive}
 import org.gbif.utils.file.ClosableIterator
 import uk.org.nbn.nbnv.importer.testing.BaseFunSuite
 import uk.org.nbn.nbnv.importer.{Target, Options}
 import org.apache.log4j.Logger
 import uk.org.nbn.nbnv.importer.data.{QueryCache, Repository, Database}
-import com.sun.jersey.api.client.WebResource
+
 import uk.org.nbn.nbnv.importer.jersey.WebApi
+import uk.org.nbn.nbnv.importer.archive.Archive
+import uk.org.nbn.nbnv.importer.records.NbnRecord
 
 class IngesterSuite extends BaseFunSuite {
 
@@ -35,8 +36,11 @@ class IngesterSuite extends BaseFunSuite {
     val webApi = mock[WebApi]
 
     val archive = mock[Archive]
-    val iterator = mock[ClosableIterator[StarRecord]]
-    when(archive.iteratorRaw).thenReturn(iterator)
+    val iteratorWithIndex = mock[Iterable[(NbnRecord, Int)]]
+    val iterator = mock[Iterable[NbnRecord]]
+    when(iterator.zipWithIndex).thenReturn(iteratorWithIndex)
+
+    when(archive.records())thenReturn(iterator)
 
     val metadata = mock[Metadata]
     when(metadata.datasetKey).thenReturn("")

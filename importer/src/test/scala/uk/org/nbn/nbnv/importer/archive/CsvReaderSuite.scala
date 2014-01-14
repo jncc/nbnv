@@ -4,11 +4,12 @@ import uk.org.nbn.nbnv.importer.testing.BaseFunSuite
 import uk.org.nbn.nbnv.importer.utility.ResourceLoader
 import java.io.File
 
+//This test suit is dependant on the data in the test data file
 class CsvReaderSuite extends BaseFunSuite with ResourceLoader {
 
   def fixture() = new {
     val dataFilePath = resource("/archives/valid/data.tab")
-    val csvReader = new CSVReader(new File(dataFilePath.getFile))
+    val csvReader = new CsvReader(new File(dataFilePath.getFile))
   }
 
   test("should read records") {
@@ -26,5 +27,11 @@ class CsvReaderSuite extends BaseFunSuite with ResourceLoader {
     f.csvReader.drop(1).zipWithIndex.map{case (record, index) =>
       record.length should be (22)
     }
+  }
+
+  test("should read the json correctly") {
+    val f = fixture()
+    val record = f.csvReader.drop(1).head
+    record(18) should be ("{\"Abundance\":\"\",\"Comment\":\"\",\"SampleMethod\":\"Field Observation\"}")
   }
 }
