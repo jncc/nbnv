@@ -9,6 +9,7 @@ object StringParsing {
   implicit def stringToMaybeParsableString(s: String) = new MaybeParsableString(s)
 
   class MaybeParsableString(s: String) {
+    def maybeDouble = try { Some(s.toDouble) } catch { case ex: NumberFormatException => None }
     def maybeInt = try { Some(s.toInt) } catch { case ex: NumberFormatException => None }
     def maybeBoolean = try { Some(s.toBoolean) } catch { case ex: IllegalArgumentException => None }
     def maybeDate(dateFormat: String) = {

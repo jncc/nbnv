@@ -92,6 +92,20 @@ class NbnRecordFactory @Inject()(log: Logger) {
       }
     }
 
+    def parseSensitiveOccurrence(rawOccurrence : Option[String]) : Boolean = {
+      if (rawOccurrence.isDefined) {
+        val value = rawOccurrence.get.maybeBoolean
+
+        if (value.isDefined && value.get == true) {
+          true
+        } else {
+          false
+        }
+      } else {
+        false
+      }
+    }
+
     new NbnRecord {
       val key = getData(metadata.key).get
       val absenceRaw = getData(metadata.absence)
@@ -104,10 +118,10 @@ class NbnRecordFactory @Inject()(log: Logger) {
       val recorder = getData(metadata.recorder)
       val determiner = getData(metadata.determiner)
       val eastRaw = getData(metadata.east)
-      val east = getData(metadata.east) map { s => s.toDouble }
+      val east = getData(metadata.east) map { _.maybeDouble } getOrElse None
       val northRaw = getData(metadata.north)
-      val north = getData(metadata.north) map { s => s.toDouble }
-      val srs = getData(metadata.srs) map { s => s.toInt }
+      val north = getData(metadata.north) map { _.maybeDouble } getOrElse None
+      val srs = getData(metadata.srs) map { _.maybeInt } getOrElse None
       val srsRaw = getData(metadata.srs)
       val attributesRaw = getData(metadata.attributes)
       val attributes = getAttributes(getData(metadata.attributes))
@@ -117,10 +131,10 @@ class NbnRecordFactory @Inject()(log: Logger) {
       val endDateRaw = getData(metadata.endDate)
       val endDate = parseDate(getData(metadata.endDate))
       val sensitiveOccurrenceRaw = getData(metadata.sensitiveOccurrence)
-      val sensitiveOccurrence = getData(metadata.sensitiveOccurrence) map { _.toBoolean } getOrElse false
+      val sensitiveOccurrence = parseSensitiveOccurrence(getData(metadata.sensitiveOccurrence))
       val gridReferenceTypeRaw = getData(metadata.gridReferenceType)
       val gridReferenceRaw = getData(metadata.gridReference)
-      val gridReferencePrecision = getData(metadata.gridReferencePrecision) map { _.toInt }
+      val gridReferencePrecision = getData(metadata.gridReferencePrecision) map { _.maybeInt } getOrElse None
       val gridReferencePrecisionRaw = getData(metadata.gridReferencePrecision)
       val featureKey = getData(metadata.featureKey)
       val dateType = getData(metadata.dateType)
