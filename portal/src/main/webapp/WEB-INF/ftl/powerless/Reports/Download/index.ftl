@@ -29,7 +29,7 @@
                 <option value="2">Educational purposes</option>
                 <option value="3">Research and scientific analysis</option>
                 <option value="4">Media publication</option>
-                <option value="5">Commercial and consultancy work</option>
+                <option value="5">Conservation NGO work</option>
                 <option value="6">Professional land management</option>
                 <option value="7">Data provision and interpretation (commercial)</option>
                 <option value="8">Data provision and interpretation (non-profit)</option>

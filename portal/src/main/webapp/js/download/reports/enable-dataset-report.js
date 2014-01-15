@@ -211,7 +211,7 @@ nbn.nbnv = nbn.nbnv || {};
         addPurpose(statsTable, 'Educational purposes', purposes, PURPOSE_EDUCATION - 1);      
         addPurpose(statsTable, 'Research and scientific analysis', purposes, PURPOSE_RESEARCH - 1);      
         addPurpose(statsTable, 'Media publication', purposes, PURPOSE_MEDIA - 1);      
-        addPurpose(statsTable, 'Commercial and consultancy work', purposes, PURPOSE_COMMERCIAL_NGO - 1);      
+        addPurpose(statsTable, 'Conservation NGO work', purposes, PURPOSE_COMMERCIAL_NGO - 1);      
         addPurpose(statsTable, 'Professional land management', purposes, PURPOSE_LAND_MANAGEMENT - 1);      
         addPurpose(statsTable, 'Data provision and interpretation (commercial)', purposes, PURPOSE_DATA_COMMERCIAL - 1);      
         addPurpose(statsTable, 'Data provision and interpretation (non-profit)', purposes, PURPOSE_DATA_NON_PROFIT - 1);      
