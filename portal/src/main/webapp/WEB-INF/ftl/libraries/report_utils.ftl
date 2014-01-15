@@ -194,7 +194,7 @@
     <#if datasets??>
         <#assign datasetKeys="">
         <#list datasets as dataset>
-            <#assign datasetKeys = datasetKeys + dataset.key>
+            <#assign datasetKeys = datasetKeys + dataset.datasetKey>
             <#if dataset_has_next>
                 <#assign datasetKeys = datasetKeys + ",">
             </#if>

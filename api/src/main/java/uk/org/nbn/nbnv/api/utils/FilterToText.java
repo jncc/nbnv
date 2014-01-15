@@ -82,12 +82,13 @@ public class FilterToText {
             OrganisationSuppliedList l = organisationSuppliedListMapper.selectByID(orgSuppliedList);
             text += " for species in the list \"" + l.getName() + "\"  provided by " + l.getOrganisationName();
         }
-
+    
         if (StringUtils.hasText(gridRef)) {
             text += " " + spatialRelationship + " the grid square " + gridRef;
         } else if (StringUtils.hasText(featureID)) {
             SiteBoundary sb = siteBoundaryMapper.getById(featureID);
-            text += " " + spatialRelationship + " the boundary of " + sb.getName();
+            String boundary = sb == null ? featureID : sb.getName();
+            text += " " + spatialRelationship + " the boundary of " + boundary;
         }
         
         if (datasetKeys != null && !datasetKeys.isEmpty()) {
