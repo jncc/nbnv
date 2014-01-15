@@ -6,20 +6,10 @@ import org.apache.log4j.Logger
 import com.google.inject.Inject
 import java.util.{Calendar, Date}
 import uk.org.nbn.nbnv.importer.utility.StringParsing._
-import scala.Some
-import uk.org.nbn.nbnv.importer.BadDataException
-import uk.org.nbn.nbnv.importer.BadDataException
-import scala.Some
-import uk.org.nbn.nbnv.importer.records.GridRefDef
-import uk.org.nbn.nbnv.importer.records.GridTypeDef
-import uk.org.nbn.nbnv.importer.BadDataException
-import uk.org.nbn.nbnv.importer.records.BoundaryDef
-import scala.Some
-import uk.org.nbn.nbnv.importer.records.PointDef
 
 class NbnRecordFactory @Inject()(log: Logger) {
-  def makeRecord(rawData: List[String], metadata: ArchiveMetadata) : NbnRecord = {
 
+  def makeRecord(rawData: List[String], metadata: ArchiveMetadata) : NbnRecord = {
     def getData(fieldIndex: Option[Int]) : Option[String] = {
       if (!fieldIndex.isDefined) { None }
       else if (fieldIndex.get > (rawData.length - 1)) {
