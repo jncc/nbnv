@@ -13,7 +13,7 @@ class NbnRecordFactory @Inject()(log: Logger) {
     def getData(fieldIndex: Option[Int]) : Option[String] = {
       if (!fieldIndex.isDefined) { None }
       else if (fieldIndex.get > (rawData.length - 1)) {
-        log.warn("The field index %d exceeds the number of fields in the row".format(fieldIndex))
+        log.warn("The field index %d exceeds the number of fields in the row".format(fieldIndex.get))
         None
       }
       else {
