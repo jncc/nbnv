@@ -1,6 +1,5 @@
 package uk.org.nbn.nbnv.api.model;
 
-import java.util.List;
 import javax.validation.constraints.Size;
 
 public class Survey {

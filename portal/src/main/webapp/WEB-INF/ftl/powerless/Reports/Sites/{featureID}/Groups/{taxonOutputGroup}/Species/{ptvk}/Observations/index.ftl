@@ -1,6 +1,6 @@
 <#assign featureID=URLParameters.featureID>
 <#assign requestParametersExtended = RequestParameters + {"featureID":[featureID],"ptvk":[URLParameters.ptvk]}>
-<#assign datasets=json.readURL("${api}/taxonObservations/datasets/observations",requestParametersExtended)>
+<#assign datasets=json.readURL("${api}/taxonObservations/datasets",requestParametersExtended)>
 <#assign taxon=json.readURL("${api}/taxa/${URLParameters.ptvk}")>
 <#assign site=json.readURL("${api}/features/${featureID}")>
 <#assign startYear=RequestParameters.startYear?has_content?string(RequestParameters.startYear[0]!"1600","1600")>

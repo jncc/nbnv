@@ -5,6 +5,7 @@
 package uk.org.nbn.nbnv.api.dao.core;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.List;
 import org.apache.ibatis.annotations.*;
 import uk.org.nbn.nbnv.api.model.Dataset;
@@ -25,7 +26,7 @@ public interface OperationalUserAccessRequestMapper {
             , @Param("datasetKey") String datasetKey
             , @Param("requestPurposeID") int requestPurposeID
             , @Param("requestReason") String requestReason
-            , @Param("requestDate") Date requestDate
+            , @Param("requestDate") Timestamp requestDate
             , @Param("sensitive") boolean sensitiveRequest);
 
     @Select("SELECT uar.* FROM UserAccessRequest uar "
@@ -146,14 +147,14 @@ public interface OperationalUserAccessRequestMapper {
     public int acceptRequest(
             @Param("filterID") int filterID
             , @Param("responseReason") String responseReason
-            , @Param("responseDate") Date responseDate);
+            , @Param("responseDate") Timestamp responseDate);
 
     @Update("UPDATE UserAccessRequest SET responseTypeID = 1, responseReason = #{responseReason}, responseDate = #{responseDate}, accessExpires = #{expiresDate} "
             + "WHERE filterID = #{filterID}")
     public int acceptRequestWithExpires(
             @Param("filterID") int filterID
             , @Param("responseReason") String responseReason
-            , @Param("responseDate") Date responseDate
+            , @Param("responseDate") Timestamp responseDate
             , @Param("expiresDate") Date expiresDate);
 
     @Update("UPDATE UserAccessRequest SET responseTypeID = 2, responseReason = #{responseReason}, responseDate = #{responseDate} "
@@ -161,19 +162,19 @@ public interface OperationalUserAccessRequestMapper {
     public int denyRequest(
             @Param("filterID") int filterID
             , @Param("responseReason") String responseReason
-            , @Param("responseDate") Date responseDate);
+            , @Param("responseDate") Timestamp responseDate);
 
     @Update("UPDATE UserAccessRequest SET responseTypeID = 3, responseReason = #{responseReason}, responseDate = #{responseDate} "
             + "WHERE filterID = #{filterID}")
     public int closeRequest(
             @Param("filterID") int filterID
             , @Param("responseReason") String responseReason
-            , @Param("responseDate") Date responseDate);
+            , @Param("responseDate") Timestamp responseDate);
 
     @Update("UPDATE UserAccessRequest SET responseTypeID = 4, responseReason = #{responseReason}, responseDate = #{responseDate} "
             + "WHERE filterID = #{filterID}")
     public int revokeRequest(
             @Param("filterID") int filterID
             , @Param("responseReason") String responseReason
-            , @Param("responseDate") Date responseDate);
+            , @Param("responseDate") Timestamp responseDate);
 }

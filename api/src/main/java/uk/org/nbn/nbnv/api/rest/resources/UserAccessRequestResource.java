@@ -3,6 +3,7 @@ package uk.org.nbn.nbnv.api.rest.resources;
 import freemarker.template.TemplateException;
 import java.io.IOException;
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -119,7 +120,7 @@ public class UserAccessRequestResource extends RequestResource {
             
             for (String datasetKey : sensitive) {
                 oTaxonObservationFilterMapper.createFilter(filter);
-                oUserAccessRequestMapper.createRequest(filter.getId(), user.getId(), datasetKey, accessRequest.getReason().getPurpose(), accessRequest.getReason().getDetails(), new Date(new java.util.Date().getTime()), true);
+                oUserAccessRequestMapper.createRequest(filter.getId(), user.getId(), datasetKey, accessRequest.getReason().getPurpose(), accessRequest.getReason().getDetails(), new Timestamp(new java.util.Date().getTime()), true);
                 oUserAccessRequestAuditHistoryMapper.addHistory(filter.getId(), user.getId(), "Created request for: '" + filter.getFilterText() + "'");
                 mailRequestCreate(oUserAccessRequestMapper.getRequest(filter.getId()));
             }
@@ -129,7 +130,7 @@ public class UserAccessRequestResource extends RequestResource {
             try {
                 oTaxonObservationFilterMapper.createFilter(filter);
 
-                oUserAccessRequestMapper.createRequest(filter.getId(), user.getId(), datasetKey, accessRequest.getReason().getPurpose(), accessRequest.getReason().getDetails(), new Date(new java.util.Date().getTime()), false);
+                oUserAccessRequestMapper.createRequest(filter.getId(), user.getId(), datasetKey, accessRequest.getReason().getPurpose(), accessRequest.getReason().getDetails(), new Timestamp(new java.util.Date().getTime()), false);
                 oUserAccessRequestAuditHistoryMapper.addHistory(filter.getId(), user.getId(), "Created request for: '" + filter.getFilterText() + "'");
 
                 mailRequestCreate(oUserAccessRequestMapper.getRequest(filter.getId()));
@@ -173,7 +174,7 @@ public class UserAccessRequestResource extends RequestResource {
         
         for (String datasetKey : datasets) {
             oTaxonObservationFilterMapper.createFilter(filter);
-            oUserAccessRequestMapper.createRequest(filter.getId(), accessRequest.getReason().getUserID(), datasetKey, accessRequest.getReason().getPurpose(), accessRequest.getReason().getDetails(), new Date(new java.util.Date().getTime()), false);
+            oUserAccessRequestMapper.createRequest(filter.getId(), accessRequest.getReason().getUserID(), datasetKey, accessRequest.getReason().getPurpose(), accessRequest.getReason().getDetails(), new Timestamp(new java.util.Date().getTime()), false);
             oUserAccessRequestAuditHistoryMapper.addHistory(filter.getId(), user.getId(), "Created request for " + reqUser.getForename() + ' ' + reqUser.getSurname() + " of: '" + filter.getFilterText() + "'");
             acceptRequest(user, filter.getId(), accessRequest.getReason().getReason(), accessRequest.getTime().isAll() ? "" : accessRequest.getTime().getDate().toString(), true);
         }
@@ -477,11 +478,11 @@ public class UserAccessRequestResource extends RequestResource {
         giveAccess(uar);
         
         if (expires.isEmpty()) {
-            oUserAccessRequestMapper.acceptRequest(filterID, reason, new Date(new java.util.Date().getTime()));
+            oUserAccessRequestMapper.acceptRequest(filterID, reason, new Timestamp(new java.util.Date().getTime()));
         } else {
             DateFormat df = new SimpleDateFormat("dd/mm/yyyy");
             java.util.Date expiresDate = df.parse(expires);
-            oUserAccessRequestMapper.acceptRequestWithExpires(filterID, reason, new Date(new java.util.Date().getTime()), new Date(expiresDate.getTime()));
+            oUserAccessRequestMapper.acceptRequestWithExpires(filterID, reason, new Timestamp(new java.util.Date().getTime()), new Date(expiresDate.getTime()));
         }
 
         oUserAccessRequestAuditHistoryMapper.addHistory(filterID, user.getId(), "Accept request");
@@ -498,7 +499,7 @@ public class UserAccessRequestResource extends RequestResource {
      * @return A Response object detailing the result of the operation
      */
     private Response denyRequest(User user, int filterID, String reason) throws IOException, TemplateException {
-        oUserAccessRequestMapper.denyRequest(filterID, reason, new Date(new java.util.Date().getTime()));
+        oUserAccessRequestMapper.denyRequest(filterID, reason, new Timestamp(new java.util.Date().getTime()));
         oUserAccessRequestAuditHistoryMapper.addHistory(filterID, user.getId(), "Deny request");
         mailRequestDeny(oUserAccessRequestMapper.getRequest(filterID), reason);
         return Response.status(Response.Status.OK).entity("{}").build();
@@ -513,7 +514,7 @@ public class UserAccessRequestResource extends RequestResource {
      * @return A Response object detailing the result of the operation
      */
     private Response closeRequest(User user, int filterID, String reason) {
-        oUserAccessRequestMapper.closeRequest(filterID, reason, new Date(new java.util.Date().getTime()));
+        oUserAccessRequestMapper.closeRequest(filterID, reason, new Timestamp(new java.util.Date().getTime()));
         oUserAccessRequestAuditHistoryMapper.addHistory(filterID, user.getId(), "Close request");
         return Response.status(Response.Status.OK).entity("{}").build();
     }
@@ -562,7 +563,7 @@ public class UserAccessRequestResource extends RequestResource {
         datasets.add(uar.getDatasetKey());
         oUserTaxonObservationAccessMapper.removeUserAccess(uar.getUser(), accessRequest.getYear().getStartYear(), accessRequest.getYear().getEndYear(), datasets, species, accessRequest.getSpatial().getMatch(), accessRequest.getSpatial().getFeature(), (accessRequest.getSensitive().equals("sans") ? true : false), accessRequest.getTaxon().getDesignation(), accessRequest.getTaxon().getOutput(), accessRequest.getTaxon().getOrgSuppliedList(), accessRequest.getSpatial().getGridRef(), "");
         
-        oUserAccessRequestMapper.revokeRequest(id, reason, new Date(new java.util.Date().getTime()));
+        oUserAccessRequestMapper.revokeRequest(id, reason, new Timestamp(new java.util.Date().getTime()));
         oUserAccessRequestAuditHistoryMapper.addHistory(id, user.getId(), "Revoke action");
 
         List<UserAccessRequest> uars = oUserAccessRequestMapper.getGrantedUserRequestsByDataset(uar.getDatasetKey(), uar.getUser().getId());

@@ -7,6 +7,7 @@ package uk.org.nbn.nbnv.api.rest.resources;
 import freemarker.template.TemplateException;
 import java.io.IOException;
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -47,7 +48,6 @@ import uk.org.nbn.nbnv.api.model.OrganisationMembership;
 import uk.org.nbn.nbnv.api.model.TaxonObservationFilter;
 import uk.org.nbn.nbnv.api.model.User;
 import uk.org.nbn.nbnv.api.model.meta.AccessRequestJSON;
-import uk.org.nbn.nbnv.api.model.meta.BaseFilterJSON;
 import uk.org.nbn.nbnv.api.model.meta.EditAccessRequestJSON;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenDatasetAdminUser;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenOrganisationAccessRequestAdminUser;
@@ -131,7 +131,7 @@ public class OrganisationAccessRequestResource extends RequestResource {
 
             for (String datasetKey : sensitive) {
                 oTaxonObservationFilterMapper.createFilter(filter);
-                oOrganisationAccessRequestMapper.createRequest(filter.getId(), org.getId(), datasetKey, accessRequest.getReason().getPurpose(), accessRequest.getReason().getDetails(), new Date(new java.util.Date().getTime()), true);
+                oOrganisationAccessRequestMapper.createRequest(filter.getId(), org.getId(), datasetKey, accessRequest.getReason().getPurpose(), accessRequest.getReason().getDetails(), new Timestamp(new java.util.Date().getTime()), true);
                 oOrganisationAccessRequestAuditHistoryMapper.addHistory(filter.getId(), user.getId(), "Created request for: '" + filter.getFilterText() + "'");
                 mailRequestCreate(oOrganisationAccessRequestMapper.getRequest(filter.getId()), user);
             }
@@ -140,7 +140,7 @@ public class OrganisationAccessRequestResource extends RequestResource {
         for (String datasetKey : datasets) {
             try {
                 oTaxonObservationFilterMapper.createFilter(filter);
-                oOrganisationAccessRequestMapper.createRequest(filter.getId(), org.getId(), datasetKey, accessRequest.getReason().getPurpose(), accessRequest.getReason().getDetails(), new Date(new java.util.Date().getTime()), false);
+                oOrganisationAccessRequestMapper.createRequest(filter.getId(), org.getId(), datasetKey, accessRequest.getReason().getPurpose(), accessRequest.getReason().getDetails(), new Timestamp(new java.util.Date().getTime()), false);
                 oOrganisationAccessRequestAuditHistoryMapper.addHistory(filter.getId(), user.getId(), "Created request for: '" + filter.getFilterText() + "'");
                 mailRequestCreate(oOrganisationAccessRequestMapper.getRequest(filter.getId()), user);
             } catch (IllegalArgumentException ex) {
@@ -182,7 +182,7 @@ public class OrganisationAccessRequestResource extends RequestResource {
         
         for (String datasetKey : datasets) {
             oTaxonObservationFilterMapper.createFilter(filter);
-            oOrganisationAccessRequestMapper.createRequest(filter.getId(), accessRequest.getReason().getOrganisationID(), datasetKey, accessRequest.getReason().getPurpose(), accessRequest.getReason().getDetails(), new Date(new java.util.Date().getTime()), false);
+            oOrganisationAccessRequestMapper.createRequest(filter.getId(), accessRequest.getReason().getOrganisationID(), datasetKey, accessRequest.getReason().getPurpose(), accessRequest.getReason().getDetails(), new Timestamp(new java.util.Date().getTime()), false);
             Organisation org = organisationMapper.selectByID(accessRequest.getReason().getOrganisationID());
             oOrganisationAccessRequestAuditHistoryMapper.addHistory(filter.getId(), user.getId(), "Created request for " + org.getName() + " of: '" + filter.getFilterText() + "'");
             acceptRequest(user, filter.getId(), accessRequest.getReason().getReason(), accessRequest.getTime().isAll() ? "" : accessRequest.getTime().getDate().toString(), true);
@@ -531,11 +531,11 @@ public class OrganisationAccessRequestResource extends RequestResource {
         giveAccess(oar);
         
         if (expires.isEmpty()) {
-            oOrganisationAccessRequestMapper.acceptRequest(filterID, reason, new Date(new java.util.Date().getTime()));
+            oOrganisationAccessRequestMapper.acceptRequest(filterID, reason, new Timestamp(new java.util.Date().getTime()));
         } else {
             DateFormat df = new SimpleDateFormat("dd/mm/yyyy");
             java.util.Date expiresDate = df.parse(expires);
-            oOrganisationAccessRequestMapper.acceptRequestWithExpires(filterID, reason, new Date(new java.util.Date().getTime()), new Date(expiresDate.getTime()));
+            oOrganisationAccessRequestMapper.acceptRequestWithExpires(filterID, reason, new Timestamp(new java.util.Date().getTime()), new Date(expiresDate.getTime()));
         }
 
         oOrganisationAccessRequestAuditHistoryMapper.addHistory(filterID, user.getId(), "Accept request");
@@ -552,7 +552,7 @@ public class OrganisationAccessRequestResource extends RequestResource {
      * @throws ParseException 
      */
     private Response denyRequest(User user, int filterID, String reason) throws IOException, TemplateException {
-        oOrganisationAccessRequestMapper.denyRequest(filterID, reason, new Date(new java.util.Date().getTime()));
+        oOrganisationAccessRequestMapper.denyRequest(filterID, reason, new Timestamp(new java.util.Date().getTime()));
         oOrganisationAccessRequestAuditHistoryMapper.addHistory(filterID, user.getId(), "Deny request");            
         mailRequestDeny(oOrganisationAccessRequestMapper.getRequest(filterID), reason);
         return Response.status(Response.Status.OK).entity("{}").build();
@@ -567,7 +567,7 @@ public class OrganisationAccessRequestResource extends RequestResource {
      * @throws ParseException
      */
     private Response closeRequest(User user, int filterID, String reason) {
-        oOrganisationAccessRequestMapper.closeRequest(filterID, reason, new Date(new java.util.Date().getTime()));
+        oOrganisationAccessRequestMapper.closeRequest(filterID, reason, new Timestamp(new java.util.Date().getTime()));
         oOrganisationAccessRequestAuditHistoryMapper.addHistory(filterID, user.getId(), "Close request");            
         return Response.status(Response.Status.OK).entity("{}").build();
     }
@@ -613,7 +613,7 @@ public class OrganisationAccessRequestResource extends RequestResource {
         datasets.add(uar.getDatasetKey());
         oOrganisationTaxonObservationAccessMapper.removeOrganisationAccess(uar.getOrganisation(), accessRequest.getYear().getStartYear(), accessRequest.getYear().getEndYear(), datasets, species, accessRequest.getSpatial().getMatch(), accessRequest.getSpatial().getFeature(), (accessRequest.getSensitive().equals("sans") ? true : false), accessRequest.getTaxon().getDesignation(), accessRequest.getTaxon().getOutput(), accessRequest.getTaxon().getOrgSuppliedList(), accessRequest.getSpatial().getGridRef(), "");
 
-        oOrganisationAccessRequestMapper.revokeRequest(id, reason, new Date(new java.util.Date().getTime()));
+        oOrganisationAccessRequestMapper.revokeRequest(id, reason, new Timestamp(new java.util.Date().getTime()));
         oOrganisationAccessRequestAuditHistoryMapper.addHistory(id, user.getId(), "Revoke action");
 
         List<OrganisationAccessRequest> uars = oOrganisationAccessRequestMapper.getGrantedOrganisationRequestsByDataset(uar.getDatasetKey(), uar.getOrganisation().getId());
