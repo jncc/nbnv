@@ -28,7 +28,7 @@ class NbnRecordFactory @Inject()(log: Logger) {
           case "presence" => false
           case "absence" => true
           case _ => {
-            log.debug("Invalid Occurence status in record '%s'. Data should be rejected by validation".format(getData(metadata.key)))
+            log.debug("Invalid Occurence status in record '%s'. Data should be rejected by validation".format(getData(metadata.key).getOrElse("<Blank Key>")))
             false
           }
         }
@@ -44,7 +44,7 @@ class NbnRecordFactory @Inject()(log: Logger) {
         }
         catch {
           case e: Throwable => {
-            log.debug("Improperly formed JSON attribute list in record '%s'. Data should be rejected by validation".format(getData(metadata.key)))
+            log.debug("Improperly formed JSON attribute list in record '%s'. Data should be rejected by validation".format(getData(metadata.key).getOrElse("<Blank Key>")))
             Map.empty[String, String]
           }
         }
