@@ -329,106 +329,6 @@ public class TaxonObservationResource extends RequestResource {
     }
     
     /**
-     * Returns a list of Taxon Observations matching the given serach parameters
-     * 
-     * @param user The current user, determines what datasets they have access 
-     * to
-     * @param startYear The start year of the desired range
-     * @param endYear The end year of the desired range
-     * @param datasetKeys Datasets to search in
-     * @param taxa Taxon Version Keys to search for
-     * @param spatialRelationship Any spatial relationship information required
-     * @param featureID Any required feature ID
-     * @param sensitive If the results should include sensitive records or not
-     * @param designation Any required designations
-     * @param taxonOutputGroup Any required taxon output groups
-     * @param gridRef Any grid references to search within
-     * @param polygon WKT WGS-84 polygon filter
-     * @param absence Whether the results should be limited to just absence records (true) 
-     * or just presence records (false).  If this parameter is missing then both absence 
-     * and presence records are returned.  Valid values are 'true' and 'false'
-     * 
-     * @return A list of Taxon Observations conforming to the provided search
-     * parameters
-     * 
-     * @response.representation.200.qname List<TaxonObservation>
-     * @response.representation.200.mediaType application/json
-     */    
-    private List<TaxonObservation> retreiveObservationsRecordsByFilter(
-            User user, String ip, int startYear, int endYear, List<String> datasetKeys, 
-            List<String> taxa, String spatialRelationship, String featureID, 
-            Boolean sensitive, String designation, String taxonOutputGroup,
-            int orgSuppliedList, String gridRef, String polygon, 
-            Boolean absence) throws IllegalArgumentException {
-        //TODO: squareBlurring(?)
-        
-        if (StringUtils.hasText(polygon)) {
-           try {
-               double polygonArea = polygonUtilsMapper.getAreaFromWKT(polygon);
-               double maxPolygonArea = Double.parseDouble(properties.getProperty("max_polygon"));
-               if (polygonArea > maxPolygonArea) {
-                   throw new IllegalArgumentException("Supplied polygon's area is greater than the maximum allowed area; was " + polygonArea + "m\u00B2 but must be less than " + maxPolygonArea + "m\u00B2");
-               }
-           } catch (Exception ex) {
-               throw new IllegalArgumentException("Supplied polygon could not be correctly interpreted as a Geography data type;\n" + ex.getLocalizedMessage());
-           }
-        }
-        
-        // Stop users being able to request all records that they have access to at the same time
-        if (!listHasAtLeastOneText(taxa)
-                && !StringUtils.hasText(designation)
-                && !StringUtils.hasText(taxonOutputGroup)
-                && !listHasAtLeastOneText(datasetKeys)
-                && !StringUtils.hasText(featureID) 
-                && !StringUtils.hasText(gridRef)
-                && !StringUtils.hasText(polygon)) {
-            throw new IllegalArgumentException("Must Supply at least one type of filter; dataset (key list), spatial(featureID, gridRef or polygon) or taxon (PTVK list, Output Group, Designation or Organisation Supplied List)");    
-        }
-        
-        if (datasetKeys.size() > 1 
-                && !listHasAtLeastOneText(taxa)
-                && !StringUtils.hasText(designation)
-                && !StringUtils.hasText(taxonOutputGroup)
-                && !StringUtils.hasText(featureID) 
-                && !StringUtils.hasText(gridRef)
-                && !StringUtils.hasText(polygon)) {
-            throw new IllegalArgumentException("Must supply a spatial or taxon filter with more than one dataset");
-        }
-        
-        writeAPIViewRecordToDatabase(user, ip, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, orgSuppliedList, gridRef, polygon, absence);
-        
-        return observationMapper.selectObservationRecordsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon, absence);        
-    }
-    
-    private void writeAPIViewRecordToDatabase(
-            User user, String ip, int startYear, int endYear, List<String> datasetKeys, 
-            List<String> taxa, String spatialRelationship, String featureID, 
-            Boolean sensitive, String designation, String taxonOutputGroup,
-            int orgSuppliedList, String gridRef, String polygon, 
-            Boolean absence) {
-        String filterText = filterToText.convert(startYear, endYear, 
-                datasetKeys, taxa, spatialRelationship, featureID, sensitive, 
-                designation, taxonOutputGroup, orgSuppliedList, gridRef, 
-                polygon, absence);
-        
-        List<DatasetRecordCount> counts = observationMapper.getRecordCountsForFilterByDataset(
-                user, startYear, endYear, datasetKeys, taxa, 
-                spatialRelationship, featureID, sensitive, designation, 
-                taxonOutputGroup, orgSuppliedList, gridRef, polygon, absence); 
-        
-        int total = 0;
-        for (DatasetRecordCount count : counts) {
-            total += count.getCount();
-        }
-        
-        ApiObservationView view = new ApiObservationView(user.getId(), ip, filterText, total);
-        oApiObservationViewMapper.addAPIObservationView(view);
-        for (DatasetRecordCount count : counts) {
-            oApiObservationViewMapper.addAPIObservationViewStats(view.getId(), count.getDatasetKey(), count.getCount());
-        }
-    }
-    
-    /**
      * Return a list of Taxon Observation Attribute Value records that conform
      * to the provided search parameters
      * 
@@ -564,6 +464,7 @@ public class TaxonObservationResource extends RequestResource {
             @QueryParam("polygon") @DefaultValue(ObservationResourceDefaults.defaultPolygon) final String polygon) {
         //TODO: squareBlurring(?)
         return new StreamingOutput() {
+            @Override
             public void write(OutputStream out) throws IOException, WebApplicationException {
                 ZipOutputStream zip = new ZipOutputStream(out);
                 String title = "Species list download";
@@ -1748,7 +1649,7 @@ public class TaxonObservationResource extends RequestResource {
         purposes.put(2, "Educational purposes");
         purposes.put(3, "Research and scientific analysis");
         purposes.put(4, "Media publication");
-        purposes.put(5, "Commercial and consultancy work");
+        purposes.put(5, "Conservation NGO work");
         purposes.put(6, "Professional land management");
         purposes.put(7, "Data provision and interpretation (commercial)");
         purposes.put(8, "Data provision and interpretation (non-profit)");
@@ -1811,7 +1712,7 @@ public class TaxonObservationResource extends RequestResource {
         purposes.put(2, "Educational purposes");
         purposes.put(3, "Research and scientific analysis");
         purposes.put(4, "Media publication");
-        purposes.put(5, "Commercial and consultancy work");
+        purposes.put(5, "Conservation NGO work");
         purposes.put(6, "Professional land management");
         purposes.put(7, "Data provision and interpretation (commercial)");
         purposes.put(8, "Data provision and interpretation (non-profit)");
@@ -1849,4 +1750,124 @@ public class TaxonObservationResource extends RequestResource {
             }
         }
     }
+    
+    /**
+     * Returns a list of Taxon Observations matching the given serach parameters
+     * 
+     * @param user The current user, determines what datasets they have access 
+     * to
+     * @param startYear The start year of the desired range
+     * @param endYear The end year of the desired range
+     * @param datasetKeys Datasets to search in
+     * @param taxa Taxon Version Keys to search for
+     * @param spatialRelationship Any spatial relationship information required
+     * @param featureID Any required feature ID
+     * @param sensitive If the results should include sensitive records or not
+     * @param designation Any required designations
+     * @param taxonOutputGroup Any required taxon output groups
+     * @param gridRef Any grid references to search within
+     * @param polygon WKT WGS-84 polygon filter
+     * @param absence Whether the results should be limited to just absence records (true) 
+     * or just presence records (false).  If this parameter is missing then both absence 
+     * and presence records are returned.  Valid values are 'true' and 'false'
+     * 
+     * @return A list of Taxon Observations conforming to the provided search
+     * parameters
+     * 
+     * @response.representation.200.qname List<TaxonObservation>
+     * @response.representation.200.mediaType application/json
+     */    
+    private List<TaxonObservation> retreiveObservationsRecordsByFilter(
+            User user, String ip, int startYear, int endYear, List<String> datasetKeys, 
+            List<String> taxa, String spatialRelationship, String featureID, 
+            Boolean sensitive, String designation, String taxonOutputGroup,
+            int orgSuppliedList, String gridRef, String polygon, 
+            Boolean absence) throws IllegalArgumentException {
+        //TODO: squareBlurring(?)
+        
+        if (StringUtils.hasText(polygon)) {
+           try {
+               double polygonArea = polygonUtilsMapper.getAreaFromWKT(polygon);
+               double maxPolygonArea = Double.parseDouble(properties.getProperty("max_polygon"));
+               if (polygonArea > maxPolygonArea) {
+                   throw new IllegalArgumentException("Supplied polygon's area is greater than the maximum allowed area; was " + polygonArea + "m\u00B2 but must be less than " + maxPolygonArea + "m\u00B2");
+               }
+           } catch (Exception ex) {
+               throw new IllegalArgumentException("Supplied polygon could not be correctly interpreted as a Geography data type;\n" + ex.getLocalizedMessage());
+           }
+        }
+        
+        // Stop users being able to request all records that they have access to at the same time
+        if (!listHasAtLeastOneText(taxa)
+                && !StringUtils.hasText(designation)
+                && !StringUtils.hasText(taxonOutputGroup)
+                && !listHasAtLeastOneText(datasetKeys)
+                && !StringUtils.hasText(featureID) 
+                && !StringUtils.hasText(gridRef)
+                && !StringUtils.hasText(polygon)) {
+            throw new IllegalArgumentException("Must Supply at least one type of filter; dataset (key list), spatial(featureID, gridRef or polygon) or taxon (PTVK list, Output Group, Designation or Organisation Supplied List)");    
+        }
+        
+        if (datasetKeys.size() > 1 
+                && !listHasAtLeastOneText(taxa)
+                && !StringUtils.hasText(designation)
+                && !StringUtils.hasText(taxonOutputGroup)
+                && !StringUtils.hasText(featureID) 
+                && !StringUtils.hasText(gridRef)
+                && !StringUtils.hasText(polygon)) {
+            throw new IllegalArgumentException("Must supply a spatial or taxon filter with more than one dataset");
+        }
+        
+        writeAPIViewRecordToDatabase(user, ip, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, orgSuppliedList, gridRef, polygon, absence);
+        
+        return observationMapper.selectObservationRecordsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon, absence);        
+    }
+    
+    /**
+     * Writes a record of any taxon observation records being viewed through the 
+     * API 
+     * 
+     * @param user The user who initiated this request
+     * @param ip The IP of the user who initiated this request
+     * @param startYear The start year filter used in this request
+     * @param endYear The end year filter used in this request
+     * @param datasetKeys The datasetKeys filter used in this request
+     * @param taxa The taxa filter used in this request
+     * @param spatialRelationship The spatialRelationship filter used in this request
+     * @param featureID The featureID filter used in this request
+     * @param sensitive The sensitive records filter used in this request
+     * @param designation The designation filter used in this request
+     * @param taxonOutputGroup The taxon output group filter used in this request
+     * @param orgSuppliedList The organisation supplied list filter used in this request
+     * @param gridRef The Grid Reference filter used in this request
+     * @param polygon The Polygon filter used in this request
+     * @param absence The Absence Record filter used in this request 
+     */
+    private void writeAPIViewRecordToDatabase(
+            User user, String ip, int startYear, int endYear, List<String> datasetKeys, 
+            List<String> taxa, String spatialRelationship, String featureID, 
+            Boolean sensitive, String designation, String taxonOutputGroup,
+            int orgSuppliedList, String gridRef, String polygon, 
+            Boolean absence) {
+        String filterText = filterToText.convert(startYear, endYear, 
+                datasetKeys, taxa, spatialRelationship, featureID, sensitive, 
+                designation, taxonOutputGroup, orgSuppliedList, gridRef, 
+                polygon, absence);
+        
+        List<DatasetRecordCount> counts = observationMapper.getRecordCountsForFilterByDataset(
+                user, startYear, endYear, datasetKeys, taxa, 
+                spatialRelationship, featureID, sensitive, designation, 
+                taxonOutputGroup, orgSuppliedList, gridRef, polygon, absence); 
+        
+        int total = 0;
+        for (DatasetRecordCount count : counts) {
+            total += count.getCount();
+        }
+        
+        ApiObservationView view = new ApiObservationView(user.getId(), ip, filterText, total);
+        oApiObservationViewMapper.addAPIObservationView(view);
+        for (DatasetRecordCount count : counts) {
+            oApiObservationViewMapper.addAPIObservationViewStats(view.getId(), count.getDatasetKey(), count.getCount());
+        }
+    }    
 }
