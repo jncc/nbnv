@@ -24,12 +24,12 @@ class DataFileParser @Inject()(options: Options
   def records : Iterable[NbnRecord] = {
     if (!isOpen) throw new IllegalStateException("The data file has not been opened")
 
-    csvReader.drop(metadata.skipHeaderLines.getOrElse(0)).view.zipWithIndex.map({ case (rawData, i) =>
-      if (rawData.length < metadata.fields) {
-        log.warn("The record at row %d contains less fields then the %d mapped fields".format(i + 1,metadata.fields))
+    csvReader.drop(metadata.skipHeaderLines.getOrElse(0)).view.zipWithIndex.map({ case (row, rowNumber) =>
+      if (row.length < metadata.fields) {
+        log.warn("The record at row %d contains less fields then the %d mapped fields".format(rowNumber + 1,metadata.fields))
       }
 
-      recordFactory.makeRecord(rawData, metadata)
+      recordFactory.makeRecord(row, metadata)
     }).view
   }
 }
