@@ -172,11 +172,13 @@ public class UserAccessRequestResource extends RequestResource {
         List<String> datasets = accessRequest.getDataset().getDatasets();
         User reqUser = userMapper.getUserById(accessRequest.getReason().getUserID());
         
+        DateFormat df = new SimpleDateFormat("dd/mm/yyyy");
+        
         for (String datasetKey : datasets) {
             oTaxonObservationFilterMapper.createFilter(filter);
             oUserAccessRequestMapper.createRequest(filter.getId(), accessRequest.getReason().getUserID(), datasetKey, accessRequest.getReason().getPurpose(), accessRequest.getReason().getDetails(), new Timestamp(new java.util.Date().getTime()), false);
             oUserAccessRequestAuditHistoryMapper.addHistory(filter.getId(), user.getId(), "Created request for " + reqUser.getForename() + ' ' + reqUser.getSurname() + " of: '" + filter.getFilterText() + "'");
-            acceptRequest(user, filter.getId(), accessRequest.getReason().getReason(), accessRequest.getTime().isAll() ? "" : accessRequest.getTime().getDate().toString(), true);
+            acceptRequest(user, filter.getId(), accessRequest.getReason().getReason(), accessRequest.getTime().isAll() ? "" : df.format(accessRequest.getTime().getDate()), true);
         }
 
         return Response.status(Response.Status.OK).entity("{}").build();
