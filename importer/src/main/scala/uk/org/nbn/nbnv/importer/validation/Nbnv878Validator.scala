@@ -14,7 +14,7 @@ class Nbnv878Validator {
       new Result {
         def level: ResultLevel.ResultLevel = ResultLevel.DEBUG
         def reference: String = record.key
-        def message: String = "%s: The JSON attribute list is well formed and parseable".format(code)
+        def message: String = "%s: No JSON attributes are defined".format(code)
       }
     } else {
       try {
@@ -33,7 +33,7 @@ class Nbnv878Validator {
           new Result {
             def level: ResultLevel.ResultLevel = ResultLevel.ERROR
             def reference: String = record.key
-            def message: String = "%s: The JSON attribute list is incorrectly formed and cannote be parsed".format(code)
+            def message: String = "%s: The JSON attribute list is incorrectly formed and can't be parsed".format(code)
           }
         }
       }
