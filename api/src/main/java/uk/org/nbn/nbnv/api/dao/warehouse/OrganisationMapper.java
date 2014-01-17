@@ -27,6 +27,9 @@ public interface OrganisationMapper {
     @Select(SELECT_ALL + " WHERE id = #{id}")
     Organisation selectByID(int id);
     
+    @Select(SELECT_ALL + " WHERE ((SELECT COUNT(*) FROM DatasetData dd WHERE organisationID = id) > 0)")
+    List<Organisation> selectAllContributing();
+    
     @Select("SELECT logo FROM OrganisationData WHERE id = #{id}")
     Object selectLogoByOrganisationID(int id);
     
