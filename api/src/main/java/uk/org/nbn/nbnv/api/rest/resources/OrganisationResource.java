@@ -53,6 +53,22 @@ public class OrganisationResource extends AbstractResource {
     public List<Organisation> get() {
         return organisationMapper.selectAll();
     }
+    
+    /**
+     * Get a list of all organisation from the data warehouse that have 
+     * contributed at least 1 dataset
+     * 
+     * @return  A list of organisations that have at least 1 dataset
+     * 
+     * @response.representation.200.qname List<Organisation>
+     * @response.representation.200.mediaType application/json* 
+     */
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/contributing")
+    public List<Organisation> getContributingOrgs() {
+        return organisationMapper.selectAllContributing();
+    }
 
     /**
      * Search for organisations based on name and abbreviation
