@@ -1036,21 +1036,17 @@ public class TaxonObservationResource extends RequestResource {
                 List<String> values = new ArrayList<String>();              
                 values.add("filterID");
                 values.add("datasetKey");
-                values.add("userID");
                 values.add("forename");
                 values.add("surname");
                 values.add("email");
-                values.add("organisationID");
                 values.add("organisationName");                
-                values.add("purposeID");
                 values.add("purpose");
                 values.add("reason");
-                values.add("filterJSON");
-                values.add("filterText");
+                values.add("download");
                 values.add("downloadTime");
-                values.add("recordCount");
-                values.add("totalRecords");
-                values.add("totalDownloaded");
+                values.add("totalDownloadedInThisDataset");
+                values.add("totalRecordsInDataset");
+                values.add("totalDownloadedInThisDownload");
                 
                 downloadHelper.writelnCsv(zip, values);
                 
@@ -1059,16 +1055,12 @@ public class TaxonObservationResource extends RequestResource {
                     
                     values.add(report.getFilterID());
                     values.add(report.getDatasetKey());
-                    values.add(report.getUserID() > 0 ? Integer.toString(report.getUserID()) : "");
                     values.add(report.getForename());
                     values.add(report.getSurname());
                     values.add(report.getEmail());
-                    values.add(report.getOrganisationID() > 0 ? Integer.toString(report.getOrganisationID()) : "");
-                    values.add(report.getOrganisationName());
-                    values.add(Integer.toString(report.getPurposeID()));
+                    values.add(StringUtils.hasText(report.getOrganisationName()) ? report.getOrganisationName() : "");
                     values.add(report.getPurpose());
                     values.add(report.getReason());
-                    values.add(report.getFilterJSON());
                     values.add(report.getFilterText());
                     values.add(report.getDownloadTimeString());
                     values.add(Integer.toString(report.getRecordCount()));

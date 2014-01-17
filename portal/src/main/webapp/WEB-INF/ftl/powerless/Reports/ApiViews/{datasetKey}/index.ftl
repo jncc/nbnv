@@ -3,7 +3,7 @@
 <#assign admins=json.readURL("${api}/datasets/${datasetKey}/admins")>
 <#assign organisation=json.readURL("${dataset.organisationHref}")>
 
-<@template.master title="Portal Download Report For ${dataset.title}"
+<@template.master title="View Report For ${dataset.title}"
     javascripts=[
         "/js/jquery.dataTables.min.js",
         "/js/jquery.validate.min.js",
@@ -15,7 +15,7 @@
     <script>
         nbn.nbnv.api = '${api}';
     </script>
-    <h1>Download Report For ${dataset.title}</h1>
+    <h1>View Report For ${dataset.title}</h1>
     <div id="nbn-download-filters-div" class="tabbed nbn-organisation-tabbed">
         <h3>Filters</h3>
         <form id="nbn-download-filter">
@@ -30,8 +30,8 @@
     </div>
     <div id="nbn-information-div" class="tabbed nbn-organisation-tabbed">
         <h3>Information</h3>
-        <p>The views shown below are all cases where a user has viewed record data through either the portal or directly through the API, rather than through the the provided download wizard. This can only be done from the Taxon Observations Pages where are user selects an individual species or via the interactive mapper. When users use the API they can also view record data, so these views are also recorded here.</p>
-        <p>These views are all attached to the filters that were used to view these records and how many records were viewed, we cannot however record the use of the records through this system. The level of access given to the records is determined by the level of access granted to the user in question at the time the view occurred.</p>
+        <p>This table displays all cases where a user has viewed records either through the Gateway reporting pages, for example the interactive mapping tool or directly through the REST services, rather than downloaded records through the Gateway’s download wizard as recorded in the <a href="https://data.nbn.org.uk/Reports/Download">download log</a>.</p>
+        <p>Included in the table are the filter used to view the records, when the records were viewed and number of records viewed at the granted level of access. The category and reason of use are not recorded when viewing records on the NBN Gateway or through the REST services so this information is not available in this log.</p>
     </div>
     <div style="clear:both;"></div>
     <div class="tabbed nbn-organisation-tabbed nbn-datatable" data-dataset="${datasetKey}">
