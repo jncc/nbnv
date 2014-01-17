@@ -5,8 +5,8 @@
 
 <div id="nbn-temporal-chart" datasetkey=${datasetId} "/>
 
-<div id="nbn-chart-tooltip">Tip: zoom to data by drawing a rectangle on the chart (hold down mouse button and drag), double click to reset.</div>
-
+<div id="nbn-chart-tooltip"></div>
+<div class="nbn-chart-tooltip">Tip: zoom to data by drawing a rectangle on the chart (hold down mouse button and drag), double click to reset.</div>
 <table class="nbn-dataset-table nbn-simple-table">
     <tr>
         <th>Data provider's comments</th>
