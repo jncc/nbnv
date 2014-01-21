@@ -24,7 +24,7 @@ class DataFileParser @Inject()(options: Options
   def records : Iterable[NbnRecord] = {
     if (!isOpen) throw new IllegalStateException("The data file has not been opened")
 
-    csvReader.drop(metadata.skipHeaderLines.getOrElse(0)).view.zipWithIndex.map({ case (row, rowNumber) =>
+    csvReader.view.drop(metadata.skipHeaderLines.getOrElse(0)).zipWithIndex.map({ case (row, rowNumber) =>
       if (row.length < metadata.fields) {
         log.warn("The record at row %d contains less fields then the %d mapped fields".format(rowNumber + 1,metadata.fields))
       }
