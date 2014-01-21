@@ -69,7 +69,7 @@ public class FilterToText {
             List<String> taxaList = new ArrayList<String>();
             for (String tvk : taxa) {
                 Taxon t = taxonMapper.getTaxon(tvk);
-                taxaList.add(t.getName() + " " + t.getAuthority() + "(" + tvk + ")");
+                taxaList.add(t.getName() + " (" + t.getAuthority()+ ")");
             }
             text += " for " + StringUtils.collectionToDelimitedString(taxaList, " and ");
         } else if (StringUtils.hasText(designation)) {

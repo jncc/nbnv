@@ -44,20 +44,8 @@ nbn.nbnv = nbn.nbnv || {};
                 return false;
             },
             rules: {
-                startDate: {
-                    date: true
-                },
-                endDate: {
-                    date: true
-                }
             },
             messages: {
-                startDate: {
-                    date: 'Must be valid date in the format DD-MM-YYYY'
-                },
-                endDate: {
-                    date: 'Must be valid date in the format DD-MM-YYYY'
-                }
             }
         });
 
@@ -120,8 +108,8 @@ nbn.nbnv = nbn.nbnv || {};
                 .append($('<tr>')
                 .append($('<th>').text('User'))
                 .append($('<th>').text('IP Address'))
-                .append($('<th>').text('Filter'))
                 .append($('<th>').text('Date'))
+                .append($('<th>').text('View'))
                 .append($('<th>').text('Statistics'))
                 ));
         var outputBody = $('<tbody>');
@@ -129,8 +117,8 @@ nbn.nbnv = nbn.nbnv || {};
             outputBody.append($('<tr>')
                     .append($('<td>').append($('<a>').text(value.forename + ' ' + value.surname).attr('class', 'nbn-request-username').attr('data-email', value.email).attr('data-id', value.userID).attr('href', '#')))
                     .append($('<td>').text(value.ip))
-                    .append($('<td>').text(value.filterText))
                     .append($('<td>').text(value.viewTimeString))
+                    .append($('<td>').text(value.filterText))
                     .append($('<td>').text(value.recordCount
                     + ' records from this dataset in this view. This is '
                     + ((value.recordCount / value.totalDatasetRecords) * 100).toFixed(1)
@@ -150,15 +138,15 @@ nbn.nbnv = nbn.nbnv || {};
     }
     function generateDownloadReportDatatable(tableID) {
         $(tableID).dataTable({
-            "aaSorting": [[3, "desc"]],
+            "aaSorting": [[2, "desc"]],
             "bJQueryUI": true,
             "iDisplayLength": 25,
             "bSortClasses": false,
             "sPaginationType": "full_numbers",
             "aLengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]],
             "aoColumnDefs": [
-                {"sWidth": "15%", "aTargets": [0, 1, 3]},
-                {"sWidth": "30%", "aTargets": [2]},
+                {"sWidth": "15%", "aTargets": [0, 1, 2]},
+                {"sWidth": "30%", "aTargets": [3]},
                 {"sWidth": "25%", "aTargets": [4]}
             ]
         });

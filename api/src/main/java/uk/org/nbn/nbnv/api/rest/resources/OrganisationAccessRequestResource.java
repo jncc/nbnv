@@ -175,17 +175,19 @@ public class OrganisationAccessRequestResource extends RequestResource {
         // Basic filter validity checks
         checkJSONFilterForValidity(accessRequest);    
         // Check that at least one record would be granted by this access request being granted
-        checkForRecordsReturnedSingleDataset(user.PUBLIC_USER, accessRequest, accessRequest.getDataset().getDatasets().get(0));
+        checkForRecordsReturnedSingleDataset(User.PUBLIC_USER, accessRequest, accessRequest.getDataset().getDatasets().get(0));
 
         TaxonObservationFilter filter = accessRequestUtils.createFilter(json, accessRequest);
         List<String> datasets = accessRequest.getDataset().getDatasets();
+        
+        DateFormat df = new SimpleDateFormat("dd/mm/yyyy");
         
         for (String datasetKey : datasets) {
             oTaxonObservationFilterMapper.createFilter(filter);
             oOrganisationAccessRequestMapper.createRequest(filter.getId(), accessRequest.getReason().getOrganisationID(), datasetKey, accessRequest.getReason().getPurpose(), accessRequest.getReason().getDetails(), new Timestamp(new java.util.Date().getTime()), false);
             Organisation org = organisationMapper.selectByID(accessRequest.getReason().getOrganisationID());
             oOrganisationAccessRequestAuditHistoryMapper.addHistory(filter.getId(), user.getId(), "Created request for " + org.getName() + " of: '" + filter.getFilterText() + "'");
-            acceptRequest(user, filter.getId(), accessRequest.getReason().getReason(), accessRequest.getTime().isAll() ? "" : accessRequest.getTime().getDate().toString(), true);
+            acceptRequest(user, filter.getId(), accessRequest.getReason().getReason(), accessRequest.getTime().isAll() ? "" : df.format(accessRequest.getTime().getDate()), true);
         }
 
         return Response.status(Response.Status.OK).entity("{}").build();

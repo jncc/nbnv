@@ -9,7 +9,7 @@
     <h1>${organisation.name}</h1>
     <div class="tabbed nbn-organisation-tabbed">
         <h3>Summary</h3>
-        <img class="nbn-align-img-right" src="${api}/organisations/${organisation.id}/logo" />${organisation.summary}
+        <img class="nbn-align-img-right" src="${api}/organisations/${organisation.id}/logo" /><#if organisation.summary?has_content>${organisation.summary}<#else>No summary provided by this organisation</#if>
     </div>
     <div class="tabbed nbn-organisation-tabbed">
         <h3>Contact details</h3>

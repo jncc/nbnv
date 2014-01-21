@@ -62,20 +62,8 @@ nbn.nbnv = nbn.nbnv || {};
                 return false;
             },
             rules: {
-                startDate: {
-                    date: true
-                },
-                endDate: {
-                    date: true
-                }
             },
             messages: {
-                startDate: {
-                    date: 'Must be valid date in the format DD-MM-YYYY'
-                },
-                endDate: {
-                    date: 'Must be valid date in the format DD-MM-YYYY'
-                }
             }
         });
         
