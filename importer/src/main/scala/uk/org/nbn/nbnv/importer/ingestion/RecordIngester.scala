@@ -40,7 +40,7 @@ class RecordIngester @Inject()(log: Logger,
         None
       }
 
-    val recorder = if (record.determiner.isDefined) {
+    val recorder = if (record.recorder.isDefined) {
         db.repo.getFirstImportRecorder(record.recorder.get)
       }
       else {
