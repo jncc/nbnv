@@ -3,7 +3,7 @@
     csss=["//ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/themes/smoothness/jquery-ui.css"] >
 
     
-    <#assign organisations=json.readURL("${api}/organisations")>
+    <#assign organisations=json.readURL("${api}/organisations/contributing")>
 
     <h1>Organisations</h1>
     <div>

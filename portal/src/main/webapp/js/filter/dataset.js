@@ -20,7 +20,7 @@ nbn.nbnv.ui.filter.dataset = function(json, isForDownload) {
         this._datasets = json.dataset.datasets;
         this._secret = json.dataset.secret;
         
-        if (this._datasets.length == 1) { this._mode = 'single'; } else { this._mode = 'filter'; }
+        if (this._datasets.length === 1) { this._mode = 'single'; } else { this._mode = 'filter'; }
     }
     
     this._renderHeader = function() {
@@ -53,7 +53,7 @@ nbn.nbnv.ui.filter.dataset = function(json, isForDownload) {
             .autocomplete({
                 source: function(request, response) {
                     $.getJSON(nbn.nbnv.api + '/search/taxonDatasets?q=' + request.term, function(data) {
-                        response($.map(data.results, function(item) { item.value = item.title; return item; }))
+                        response($.map(data.results, function(item) { item.value = item.title; return item; }));
                     });
                 },
                 select: function(event, ui) {
@@ -69,7 +69,7 @@ nbn.nbnv.ui.filter.dataset = function(json, isForDownload) {
                 .appendTo(ul);
             };
 
-        if (this._mode == 'single') {
+        if (this._mode === 'single') {
             $.ajax({
                 url: nbn.nbnv.api + '/datasets/' + _me._datasets[0],
                 success: function(data) {
@@ -255,7 +255,7 @@ nbn.nbnv.ui.filter.dataset = function(json, isForDownload) {
             }
         }
         
-        if (json.sensitive == 'sans') { filter.sensitive = 'true'; }
+        if (json.sensitive === 'sans') { filter.sensitive = 'true'; }
 
         $.ajax({
             url: nbn.nbnv.api + endpoint,
@@ -304,7 +304,7 @@ nbn.nbnv.ui.filter.dataset = function(json, isForDownload) {
                         cb.attr("checked", "true");
                     }
                     
-                    if (_me._mode != filter) {
+                    if (_me._mode !== filter) {
                         cb.prop('disabled', true);
                     }
                     
@@ -332,7 +332,8 @@ nbn.nbnv.ui.filter.dataset = function(json, isForDownload) {
                                 })
                             )
                         ).append($('<td>')
-                            .append(td.querySpecificObservationCount + (td.querySpecificSensitiveObservationCount > 0?' (' + td.querySpecificSensitiveObservationCount + ' sensitive)':''))
+                            //.append(td.querySpecificObservationCount + (td.querySpecificSensitiveObservationCount > 0?' (' + td.querySpecificSensitiveObservationCount + ' sensitive)':''))
+                            .append(td.querySpecificObservationCount)
                         );
                         
                     tbody.append(dr);
@@ -373,7 +374,7 @@ nbn.nbnv.ui.filter.dataset = function(json, isForDownload) {
                             _me._datasets = [];
                             $.each(dTable.$('tr').find(":checkbox:checked"), function(index, value) {
                                 _me._addDataset(value.name);
-                            })
+                            });
                         })
                     ).append($('<button>')
                         .text('Deselect All')
@@ -410,11 +411,11 @@ nbn.nbnv.ui.filter.dataset = function(json, isForDownload) {
         if ($("input:radio[name='datasetfilterall'][value='single']").prop('checked')) {
             this._datasets = dataf;
         }              
-    }
+    };
     
     this._addDataset = function(dataset) {
         this._datasets.push(dataset);
-        if (this._datasets.length == this._fullCount) { this._all = true; }
+        if (this._datasets.length === this._fullCount) { this._all = true; }
     };
     
     this._dropDataset = function(dataset) {
@@ -444,9 +445,9 @@ nbn.nbnv.ui.filter.dataset = function(json, isForDownload) {
         var text = '';
         
         if (this._all) {
-            text = 'All datasets'
-        } else if (this._mode == 'single') {
-            if ($('#datasetAutoComplete').val() == '') {
+            text = 'All datasets';
+        } else if (this._mode === 'single') {
+            if ($('#datasetAutoComplete').val() === '') {
                 $.ajax({
                     url: nbn.nbnv.api + '/datasets/' + _me._datasets[0],
                     success: function(data) {
@@ -458,7 +459,7 @@ nbn.nbnv.ui.filter.dataset = function(json, isForDownload) {
             } else {
                 text = 'Filter to ' + $('#datasetAutoComplete').val();
             }
-        } else if (this._fullCount == -1) {
+        } else if (this._fullCount === -1) {
             text = 'Filter to ' + this._datasets.length + ' datasets';
         } else {
             text = 'Filter to ' + this._datasets.length + ' of ' + this._fullCount + ' datasets';
@@ -479,7 +480,7 @@ nbn.nbnv.ui.filter.dataset = function(json, isForDownload) {
             }
             return { dataset : { all: false, datasets : this._datasets } };
         }
-    }
+    };
 
     this.getError = function() {
         if (!this._all && this._datasets.length < 1) { return [ 'You must select at least one dataset' ]; }

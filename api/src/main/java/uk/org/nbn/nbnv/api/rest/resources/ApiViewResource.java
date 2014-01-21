@@ -99,17 +99,17 @@ public class ApiViewResource extends AbstractResource {
                 List<String> values = new ArrayList<String>();
                 
                 values.add("viewID");
-                values.add("userID");
+                values.add("datasetKey");
                 values.add("forename");
                 values.add("surname");
                 values.add("email");
                 values.add("ip");
-                values.add("datasetKey");
-                values.add("filterText");
+                values.add("View");
                 values.add("viewTime");
-                values.add("viewedRecordsInDataset");
+                values.add("totalviewedRecordsInThisDataset");
+                values.add("totalRecordsInDataset");
                 values.add("totalViewedRecordsInThisView");
-                values.add("totalDatasetRecords");
+                
                 
                 downloadHelper.writelnCsv(zip, values);
                 
@@ -118,17 +118,17 @@ public class ApiViewResource extends AbstractResource {
                 for (ApiObservationViewStatistic view : views) {
                     values = new ArrayList<String>();
                     values.add(Integer.toString(view.getViewID()));
-                    values.add(Integer.toString(view.getUserID()));
+                    values.add(view.getDatasetKey());
                     values.add(view.getForename());
                     values.add(view.getSurname());
                     values.add(view.getEmail());
                     values.add(view.getIp());
-                    values.add(view.getDatasetKey());
                     values.add(view.getFilterText());
                     values.add(view.getViewTimeString());
-                    values.add(Integer.toString(view.getViewed()));
                     values.add(Integer.toString(view.getRecordCount()));
                     values.add(Integer.toString(view.getTotalDatasetRecords()));
+                    values.add(Integer.toString(view.getViewed()));
+                    
                     
                     downloadHelper.writelnCsv(zip, values);
                 }

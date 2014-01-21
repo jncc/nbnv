@@ -587,8 +587,7 @@ public class UserResource extends AbstractResource {
     @Path("/modify/email")
     @Produces(MediaType.APPLICATION_JSON)
     public Response modifyExistingUsersEmail(@TokenUser(allowPublic = false) User user, String email) throws IOException, TemplateException, JSONException {
-        if (user.getEmail().equals(email)
-                && oUserMapper.getUserFromEmail(email) != null) {
+        if (user.getEmail().equals(email) || oUserMapper.getUserFromEmail(email) != null) {
             throw new IllegalArgumentException("The specified e-mail address is already registered to another user.");
         }
         

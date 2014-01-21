@@ -127,8 +127,8 @@
                         <a href="/Datasets/${r.key}/Contributing">Add / Remove Contributing Organisations</a><br/>
                         <a href="/Datasets/${r.key}/Admin">Add / Remove Dataset Administrators</a><br/>  
                         <a href="/Datasets/${r.key}/Notifications">Turn On / Off Download Notifications</a><br/>
-                        <a href="/Reports/Download/${r.key}">View Download Log</a><br/>
-                        <a href="/Reports/ApiViews/${r.key}">View API Record Views</a><br/>
+                        <a href="/Reports/Download/${r.key}">Download Log</a><br/>
+                        <a href="/Reports/ApiViews/${r.key}">View and REST services Log</a><br/>
                     </td>
                 </tr>
             </#list>
