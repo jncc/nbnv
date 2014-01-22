@@ -5,9 +5,8 @@ import com.google.inject.Inject
 
 
 class QueryCache (log: Logger) {
-  log.debug("New query cache")
 
-  val map = scala.collection.mutable.Map[String, Any]()
+  val map = scala.collection.mutable.HashMap[String, Any]()
 
   def get[T](key: String) =  {
 
