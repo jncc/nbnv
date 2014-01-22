@@ -23,7 +23,7 @@ define [
                                   0.344]
 
   getBaseLayer: (name) ->
-    apiKey = "AnpABRCh8GIf4UnwABXiVK1eqKup7XvvMx2LLM4ijcLv5Ym6OyKm_5KMsFmYvtty"
+    apiKey = "AuM6oU6uK5RCeun_EdVR4jc4ifOVUuGdtoiW0gx7vxjRD-iNT8zzCXzxKrj9tvfG"
     switch name
       when "Shaded" then return new OpenLayers.Layer.Bing( type: "Road", key: apiKey, projection: new OpenLayers.Projection("EPSG:3857") )
       when "Hybrid" then return new OpenLayers.Layer.Bing( type: "AerialWithLabels", key: apiKey, projection: new OpenLayers.Projection("EPSG:3857") )
