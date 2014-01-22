@@ -16,7 +16,7 @@ case class Options(archivePath: String  = "specify-an-archive-path.zip",
                    logLevel:    String  = "INFO",
                    logDir:      String  = ".",
                    tempDir:     String  = "./temp",
-                   flush:       Int = 100)
+                   flush:       Int = 25)
 {
   override def toString = {
     Map(
@@ -53,7 +53,7 @@ object Options {
       case "-logdir"   :: v :: tail => process(options.copy(logDir = v), tail)
       case "-loglevel" :: v :: tail => process(options.copy(logLevel = v), tail)
       case "-target"   :: v :: tail => process(options.copy(target = Target.withName(v.toLowerCase)), tail)
-      case "-flush"  :: v :: tail => process(options.copy(flush = v.maybeInt.getOrElse(100)), tail)
+      case "-flush"  :: v :: tail => process(options.copy(flush = v.maybeInt.getOrElse(25)), tail)
       case v                :: tail => process(options.copy(archivePath = v), tail)
     }
     args match {
