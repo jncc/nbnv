@@ -72,7 +72,7 @@ class Ingester @Inject()(options: Options,
     db.flushAndClear()
   }
   
-  def upsertRecords(archive: Archive, dataset: ImportTaxonDataset, metadata: Metadata) {
+  def stageRecords(archive: Archive, dataset: ImportTaxonDataset, metadata: Metadata) {
     log.debug("Ingesting records...")
      for ((record, i) <- archive.records.zipWithIndex) {
 
@@ -81,7 +81,7 @@ class Ingester @Inject()(options: Options,
 
         // every 100 records, fully clear the data context to prevent observed JPA slowdown
         // (using Seq.grouped eats the entire GBIF iterator for reason!)
-        if (i % 100 == 99) {
+        if (i % 10000 == 99) {
           db.flushAndClear()
         }
       }
@@ -150,7 +150,7 @@ class Ingester @Inject()(options: Options,
       stageRecorders(archive)
 
       // insert records
-      upsertRecords(archive, dataset, metadata)
+      stageRecords(archive, dataset, metadata)
 
       t1.commit()
     }

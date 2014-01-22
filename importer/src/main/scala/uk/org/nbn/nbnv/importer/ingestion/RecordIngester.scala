@@ -26,9 +26,9 @@ class RecordIngester @Inject()(log: Logger,
     log.info("Upserting record %s".format(record.key))
     
     val survey = db.repo.getImportSurvey(record.surveyKey getOrElse "1", dataset).get
-    //val survey = surveyIngester.stageSurvey(record.surveyKey, dataset)
+
     val sample = db.repo.getImportSample(record.sampleKey getOrElse "1", survey).get
-    //val sample = sampleIngester.stageSample(record.sampleKey, survey)
+
     val site = siteIngester.upsertSite(record.siteKey, record.siteName, dataset.getImportDataset)
 
     val feature = featureIngester.ensureFeature(record)
@@ -65,20 +65,12 @@ class RecordIngester @Inject()(log: Logger,
       o.setTaxonVersionKey(record.taxonVersionKey.get)
     }
 
-    val observation = db.repo.getTaxonObservation(record.key, sample) match {
-      case Some(o) => {
-        update(o)
-        o
-      }
-      case None => {
-        val o = new ImportTaxonObservation
-        update(o)
-        db.em.persist(o)
-        db.flushAndClear()
-        o
-
-      }
-    }
+    val observation = new ImportTaxonObservation
+    update(observation)
+    db.em.persist(observation)
+    db.em.flush()
+//    db.flushAndClear()
+    observation
 
     attributeIngester.ingestAttributes(record, observation, dataset)
 

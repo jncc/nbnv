@@ -18,7 +18,7 @@ class AttributeIngester @Inject()(log: Logger, db: Database){
 
     // clear the collection of existing attributes (this is for records that are being re-imported)
     // todo: will this really do anything? reimported datasets will be deleted first, so the auto-gen'd PKs will be new
-    observation.getImportTaxonObservationAttributeCollection.clear()
+    //    observation.getImportTaxonObservationAttributeCollection.clear()
 
     for ((attributeLabel, value) <- record.attributes) {
 
