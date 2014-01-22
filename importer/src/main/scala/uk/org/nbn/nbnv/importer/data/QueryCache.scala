@@ -5,6 +5,7 @@ import com.google.inject.Inject
 
 
 class QueryCache (log: Logger) {
+  log.debug("New query cache")
 
   val map = scala.collection.mutable.Map[String, Any]()
 
@@ -18,7 +19,7 @@ class QueryCache (log: Logger) {
   def put(key: String, o: Any) {
 
     // simple caching policy to begin with - if the cache gets too big, clear it!
-    if (map.size > 1000) {
+    if (map.size > 1000000000) {
       map.clear()
     }
 

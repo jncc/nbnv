@@ -57,28 +57,13 @@ class PublicIngester @Inject()(log: Logger,
 
     }
 
-    db.repo.getTaxonObservationPublic(o.getId) match {
-      case Some(p) => {
-        // delete the public record if it's become sensitive
-        if (o.getSensitiveRecord) {
-          log.debug("Deleting public record...")
-          db.em.remove(p)
-        } else {
-          log.debug("Updating public record...")
-          update(p)
-        }
-      }
-      case None => {
-        // don't create the public record if it is sensitive
-        if (o.getSensitiveRecord) {
-          log.debug("Not creating public record (sensitive=true).")
-        } else {
-          log.debug("Creating public record...")
-          val p = new ImportTaxonObservationPublic
-          update(p)
-          db.em.persist(p)
-        }
-      }
+    if (o.getSensitiveRecord) {
+      log.debug("Not creating public record (sensitive=true).")
+    } else {
+      log.debug("Creating public record...")
+      val p = new ImportTaxonObservationPublic
+      update(p)
+      db.em.persist(p)
     }
   }
 }
