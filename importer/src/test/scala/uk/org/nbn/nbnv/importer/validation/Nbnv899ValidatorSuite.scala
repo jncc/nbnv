@@ -6,13 +6,13 @@ import uk.org.nbn.nbnv.importer.metadata.{Mode, Metadata}
 import org.mockito.Mockito._
 import uk.org.nbn.nbnv.importer.fidelity.ResultLevel
 
-class NbnvXXXValidatorSuite extends BaseFunSuite with BeforeAndAfter {
+class Nbnv899ValidatorSuite extends BaseFunSuite with BeforeAndAfter {
   var metadata: Metadata = _
-  var v : NbnvXXXValidator = _
+  var v : Nbnv899Validator = _
 
   before {
     metadata = mock[Metadata]
-    v = new NbnvXXXValidator
+    v = new Nbnv899Validator
   }
 
   test("should validate a valid importType value") {

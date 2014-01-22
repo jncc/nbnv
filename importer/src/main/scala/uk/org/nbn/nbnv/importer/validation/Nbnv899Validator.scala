@@ -3,7 +3,7 @@ package uk.org.nbn.nbnv.importer.validation
 import uk.org.nbn.nbnv.importer.metadata.Metadata
 import uk.org.nbn.nbnv.importer.fidelity.{ResultLevel, Result}
 
-class NbnvXXXValidator {
+class Nbnv899Validator {
   val code = "NBNV-XXX"
 
   def validate(metadata: Metadata): Result = {

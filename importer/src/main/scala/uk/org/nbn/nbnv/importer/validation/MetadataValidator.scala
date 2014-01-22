@@ -18,7 +18,7 @@ class MetadataValidator (repo: Repository) {
     results.append(v1.validate(metadata))
 
     //valdiate that the import type is specified in the metadata
-    val v2 = new NbnvXXXValidator
+    val v2 = new Nbnv899Validator
     results.append(v2.validate(metadata))
 
     results.toList
