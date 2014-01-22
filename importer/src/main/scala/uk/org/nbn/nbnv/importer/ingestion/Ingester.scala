@@ -81,7 +81,7 @@ class Ingester @Inject()(options: Options,
 
         // every 100 records, fully clear the data context to prevent observed JPA slowdown
         // (using Seq.grouped eats the entire GBIF iterator for reason!)
-        if (i % 10000 == 99) {
+        if (i % options.flush == 0) {
           db.flushAndClear()
         }
       }
