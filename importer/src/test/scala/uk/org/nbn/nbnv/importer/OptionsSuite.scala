@@ -37,13 +37,13 @@ class OptionsSuite extends BaseFunSuite {
     }
   }
 
-  test("should default to flush value of 100 if no argument is provided") {
+  test("should default to flush value of 25 if no argument is provided") {
     val valid = List("-logDir", logDir, "-tempDir", tempDir, "-target", Target.validate.toString, archivePath)
     val result = Options.parse(valid)
 
     result match {
       case OptionsSuccess(options) => {
-        options.flush should be (100)
+        options.flush should be (25)
       }
       case _ => fail()
     }
