@@ -12,6 +12,6 @@ import org.apache.ibatis.annotations.Select;
  * @author Matt Debont
  */
 public interface PolygonUtilsMapper {
-    @Select("SELECT geography::STGeomFromText('#{polygon}', 4326).STArea()")
+    @Select("SELECT geography::STGeomFromText(#{polygon}, 4326).STArea()")
     public double getAreaFromWKT(@Param("polygon") String polygon);
 }
