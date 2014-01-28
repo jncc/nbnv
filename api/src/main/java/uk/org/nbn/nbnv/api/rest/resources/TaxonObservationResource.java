@@ -277,7 +277,7 @@ public class TaxonObservationResource extends RequestResource {
             @QueryParam("orgSuppliedList") @DefaultValue(ObservationResourceDefaults.defaultOrgSuppliedList) int orgSuppliedList,
             @QueryParam("gridRef") @DefaultValue(ObservationResourceDefaults.defaultGridRef) String gridRef,
             @QueryParam("polygon") @DefaultValue(ObservationResourceDefaults.defaultPolygon) String polygon,
-            @QueryParam("absence") Boolean absence) throws IllegalArgumentException {        
+            @QueryParam("absence") @DefaultValue(ObservationResourceDefaults.defaultAbsence) Boolean absence) throws IllegalArgumentException {        
         return retreiveObservationsRecordsByFilter(user, request.getRemoteAddr(), startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, orgSuppliedList, gridRef, polygon, absence);
     }
     
@@ -324,7 +324,7 @@ public class TaxonObservationResource extends RequestResource {
             @FormParam("orgSuppliedList") @DefaultValue(ObservationResourceDefaults.defaultOrgSuppliedList) int orgSuppliedList,
             @FormParam("gridRef") @DefaultValue(ObservationResourceDefaults.defaultGridRef) String gridRef,
             @FormParam("polygon") @DefaultValue(ObservationResourceDefaults.defaultPolygon) String polygon,
-            @FormParam("absence") Boolean absence) throws IllegalArgumentException {
+            @FormParam("absence") @DefaultValue(ObservationResourceDefaults.defaultAbsence) Boolean absence) throws IllegalArgumentException {
         return retreiveObservationsRecordsByFilter(user, request.getRemoteAddr(), startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, orgSuppliedList, gridRef, polygon, absence);
     }
     
