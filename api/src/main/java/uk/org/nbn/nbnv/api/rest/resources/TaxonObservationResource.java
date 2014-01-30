@@ -1792,7 +1792,7 @@ public class TaxonObservationResource extends RequestResource {
         if (!listHasAtLeastOneText(taxa)
                 && !StringUtils.hasText(designation)
                 && !StringUtils.hasText(taxonOutputGroup)
-                && orgSuppliedList > 0
+                && orgSuppliedList < 1
                 && !listHasAtLeastOneText(datasetKeys)
                 && !StringUtils.hasText(featureID) 
                 && !StringUtils.hasText(gridRef)
@@ -1804,7 +1804,7 @@ public class TaxonObservationResource extends RequestResource {
                 && !listHasAtLeastOneText(taxa)
                 && !StringUtils.hasText(designation)
                 && !StringUtils.hasText(taxonOutputGroup)
-                && orgSuppliedList > 0
+                && orgSuppliedList < 1
                 && !StringUtils.hasText(featureID) 
                 && !StringUtils.hasText(gridRef)
                 && !StringUtils.hasText(polygon)) {
@@ -1824,15 +1824,15 @@ public class TaxonObservationResource extends RequestResource {
             if (!listHasAtLeastOneText(taxa)
                     && !StringUtils.hasText(designation)
                     && !StringUtils.hasText(taxonOutputGroup)
-                    && orgSuppliedList > 0
+                    && orgSuppliedList < 1
                     && !listHasAtLeastOneText(datasetKeys)) {
-                maxPolygonArea = Double.parseDouble(properties.getProperty("max_polygon_with_filter"));
-            } else {
                 maxPolygonArea = Double.parseDouble(properties.getProperty("max_polygon_no_filter"));
                 message = " Please include a taxonomic or dataset filter to increase the maximum search area.";
+            } else {
+                maxPolygonArea = Double.parseDouble(properties.getProperty("max_polygon_with_filter"));
             }
             if (polygonArea > maxPolygonArea) {
-                throw new IllegalArgumentException("Supplied polygon's area is greater than the maximum allowed area; was " + polygonArea + "m\u00B2 but must be less than " + maxPolygonArea + "m\u00B2." + message);
+                throw new IllegalArgumentException("Supplied polygon's area is greater than the maximum allowed area; was " + Double.toString(polygonArea) + "m^2 but must be less than " + Double.toString(maxPolygonArea) + "m^2." + message);
             }
         } catch (Exception ex) {
             throw new IllegalArgumentException("Supplied polygon could not be correctly interpreted as a Geography data type;\n" + ex.getLocalizedMessage());
