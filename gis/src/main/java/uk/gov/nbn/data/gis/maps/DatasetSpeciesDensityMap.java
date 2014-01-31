@@ -131,7 +131,7 @@ public class DatasetSpeciesDensityMap {
                 return MapHelper.getMapData(FEATURE.GEOM, FEATURE.IDENTIFIER, 4326, create
                         .select(FEATURE.GEOM, FEATURE.IDENTIFIER, squares.field("species"))
                         .from(squares)
-                        .join(FEATURE).on(FEATURE.ID.eq(squares.field(0))));
+                        .join(FEATURE.with("INDEX(sidx_feature_geom)")).on(FEATURE.ID.eq(squares.field(0))));
             }
         });
         return new ModelAndView("DatasetSpeciesDensity.map", data);
