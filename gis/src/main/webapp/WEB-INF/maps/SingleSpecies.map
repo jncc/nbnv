@@ -61,7 +61,7 @@
         PLUGIN                      "msplugin_mssql2008.dll"
         CONNECTION                  "${properties.spatialConnection}"
         PROCESSING                  "CLOSE_CONNECTION=DEFER"
-        DATA                        "${data}"
+        DATA                        "${data} using index sidx_Feature_geom"
         TEMPLATE                    "dummy.txt"
         EXTENT                      -180 -90 180 90
 
