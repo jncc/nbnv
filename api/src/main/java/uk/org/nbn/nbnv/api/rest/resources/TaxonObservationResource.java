@@ -1865,6 +1865,15 @@ public class TaxonObservationResource extends RequestResource {
             Boolean sensitive, String designation, String taxonOutputGroup,
             int orgSuppliedList, String gridRef, String polygon, 
             Boolean absence) {
+        
+        if (taxa.size() == 1 && !StringUtils.hasText(taxa.get(0))) {
+            taxa = new ArrayList<String>();
+        }
+        
+        if (datasetKeys.size() == 1 && !StringUtils.hasText(datasetKeys.get(0))) {
+            datasetKeys = new ArrayList<String>();
+        }        
+        
         String filterText = filterToText.convert(startYear, endYear, 
                 datasetKeys, taxa, spatialRelationship, featureID, sensitive, 
                 designation, taxonOutputGroup, orgSuppliedList, gridRef, 
