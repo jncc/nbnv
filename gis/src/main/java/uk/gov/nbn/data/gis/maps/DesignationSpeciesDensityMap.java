@@ -142,7 +142,7 @@ public class DesignationSpeciesDensityMap {
                         FEATURE.IDENTIFIER,
                         squares.field("species"))
                         .from(squares)
-                        .join(FEATURE).on(FEATURE.ID.eq((Field<Integer>) squares.field(0))));
+                        .join(FEATURE.with("INDEX(sidx_feature_geom)")).on(FEATURE.ID.eq((Field<Integer>) squares.field(0))));
             }
         });
         return new ModelAndView("DesignationSpeciesDensity.map", data);
