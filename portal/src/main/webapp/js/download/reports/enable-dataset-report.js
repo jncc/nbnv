@@ -124,8 +124,8 @@ nbn.nbnv = nbn.nbnv || {};
         var downloads = 0;
         var purposes = [0,0,0,0,0,0,0,0,0];
         
-        user.sort(function(a, b) { return ((a.total < b.total) ? 1 : ((a.total > b.total) ? -1 : ((a.totalAlt < b.totalAlt) ? 1 : ((a.totalAlt > b.totalAlt) ? -1 : 0))))});
-        org.sort(function(a, b) { return ((a.total < b.total) ? 1 : ((a.total > b.total) ? -1 : ((a.totalAlt < b.totalAlt) ? 1 : ((a.totalAlt > b.totalAlt) ? -1 : 0))))});
+        user.sort(function(a, b) { return ((a.total < b.total) ? 1 : ((a.total > b.total) ? -1 : ((a.totalAlt < b.totalAlt) ? 1 : ((a.totalAlt > b.totalAlt) ? -1 : 0))));});
+        org.sort(function(a, b) { return ((a.total < b.total) ? 1 : ((a.total > b.total) ? -1 : ((a.totalAlt < b.totalAlt) ? 1 : ((a.totalAlt > b.totalAlt) ? -1 : 0))));});
         
         $.each(stats, function(index, value) {
             records += this.total;
@@ -160,7 +160,7 @@ nbn.nbnv = nbn.nbnv || {};
             var i = index + 1;
             userTable.append($('<tr>')
                 .append($('<td>').text(i))
-                .append($('<td>').append($('<a>').attr('href', '/User/' + this.id).attr('target', '_blank').text(this.name)))
+                .append($('<td>').append($('<a>').attr('href', '#').attr('class', 'nbn-request-username').attr('data-id', this.id).attr('data-email', this.extra).text(this.name)))
                 .append($('<td>').text(this.totalAlt))
                 .append($('<td>').text(this.total))
             );
@@ -209,6 +209,9 @@ nbn.nbnv = nbn.nbnv || {};
                 .append(statsTable).append($('<br>'))
                 .append($('<div>').addClass('nbn-top-table-div').append(userTable))
                 .append($('<div>').addClass('nbn-top-table-div').append(orgTable));
+        
+        // Setup user information dialogs - External Dependency (dialog_utils.js)
+        setupUsernameDialog(nbn.nbnv.api);        
     }
     
     function addPurpose(parent, text, purposes, index) {
