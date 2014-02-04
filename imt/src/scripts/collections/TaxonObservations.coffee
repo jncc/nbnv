@@ -47,8 +47,13 @@ define [
   ###
   toJSON: ->
     observations = Backbone.Collection.prototype.toJSON.apply this, arguments
-    _.each(observations, (observation) => observation.dataset = @availableDatasets
-                                                                  .get(observation.datasetKey)
-                                                                  .toJSON() )
-
-    return observations
+    if observations.length == 1 && observations[0].hasOwnProperty("success") && observations[0].success == false
+      window.apiFailed = true
+      window.apiFailureMessage = observations[0].status
+      window.apiFailureMessageDisplayed = false   
+    else
+      _.each(observations, (observation) => observation.dataset = @availableDatasets
+                                                                    .get(observation.datasetKey)
+                                                                    .toJSON() )
+      return observations
+    return []

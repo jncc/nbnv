@@ -1832,10 +1832,10 @@ public class TaxonObservationResource extends RequestResource {
                 maxPolygonArea = Double.parseDouble(properties.getProperty("max_polygon_with_filter"));
             }
             if (polygonArea > maxPolygonArea) {
-                throw new IllegalArgumentException("Supplied polygon's area is greater than the maximum allowed area; was " + Double.toString(polygonArea) + "m^2 but must be less than " + Double.toString(maxPolygonArea) + "m^2." + message);
+                throw new IllegalArgumentException(String.format("Supplied polygon's area is greater than the maximum allowed area, was %.0f km^2 but must be less than %.0f km^2.%s", polygonArea / 1000000, maxPolygonArea / 1000000, message));
             }
         } catch (Exception ex) {
-            throw new IllegalArgumentException("Supplied polygon could not be correctly interpreted as a Geography data type;\n" + ex.getLocalizedMessage());
+            throw new IllegalArgumentException(ex.getLocalizedMessage());
         }
     }
     
