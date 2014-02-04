@@ -40,6 +40,9 @@ class Ingester @Inject()(options: Options,
       surveyIngester.stageSurvey(record.surveyKey, dataset)
 
       logProgress(i)
+      if (i % options.flush == 0) {
+        db.flushAndClear()
+      }
     }
 
     //Save all the surveys
@@ -54,6 +57,9 @@ class Ingester @Inject()(options: Options,
       sampleIngester.stageSample(record.sampleKey, survey.get)
 
       logProgress(i)
+      if (i % options.flush == 0) {
+        db.flushAndClear()
+      }
     }
 
     //Save all the surveys
@@ -67,6 +73,10 @@ class Ingester @Inject()(options: Options,
       recorderIngester.ensureRecorder(record.recorder)
 
       logProgress(i)
+
+      if (i % options.flush == 0) {
+        db.flushAndClear()
+      }
     }
    
     db.flushAndClear()
@@ -79,12 +89,13 @@ class Ingester @Inject()(options: Options,
         recordIngester.insertRecord(record, dataset, metadata)
         logProgress(i)
 
-        // every 100 records, fully clear the data context to prevent observed JPA slowdown
-        // (using Seq.grouped eats the entire GBIF iterator for reason!)
+        // every x records, fully clear the data context to prevent observed JPA slowdown
         if (i % options.flush == 0) {
           db.flushAndClear()
         }
       }
+
+    db.flushAndClear()
   }
 
   def finaliseImport(metadata: Metadata) : String =
