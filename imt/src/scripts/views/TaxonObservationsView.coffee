@@ -7,13 +7,18 @@ define [
   initialize:->
     @listenTo @collection, 'sync', @render
 
-  render: ->
+  render: ->  
     @$el.html template
       observations: @collection.toJSON()
       isFilteredByTaxon: @collection.isFilteredByTaxon()
-      
+
     @$('table').dataTable
       "bJQueryUI": true
       "bLengthChange": false
       "oLanguage":
         "sSearch": "Search within these results:"
+    
+    if (window.apiFailed && !window.apiFailureMessageDisplayed)
+      window.apiFailureMessageDisplayed = true
+      $(".polygonErrorMessage").text  window.apiFailureMessage
+    return []        
