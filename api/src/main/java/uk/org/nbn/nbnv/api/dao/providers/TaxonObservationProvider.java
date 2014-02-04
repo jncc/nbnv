@@ -351,7 +351,7 @@ public class TaxonObservationProvider {
             if (params.containsKey("spatialRelationship") && params.get("spatialRelationship") != null) {
                 spatialRelationship = (String) params.get("spatialRelationship");
             }
-            INNER_JOIN("FeatureData ftd ON ftd.id = o.featureID");
+            INNER_JOIN("Feature ftd WITH(INDEX(sidx_Feature_geom)) ON ftd.id = o.featureID");
             if (ObservationResourceDefaults.SPATIAL_RELATIONSHIP_WITHIN.equals(spatialRelationship)) {
                 WHERE("ftd.geom.STWithin(geometry::STGeomFromText(#{polygon}, 4326)) = 1");
             } else {
@@ -449,7 +449,7 @@ public class TaxonObservationProvider {
             if (params.containsKey("spatialRelationship") && params.get("spatialRelationship") != null) {
                 spatialRelationship = (String) params.get("spatialRelationship");
             }
-            INNER_JOIN("FeatureData ftd ON ftd.id = o.featureID");
+            INNER_JOIN("Feature ftd WITH(INDEX(sidx_Feature_geom)) ON ftd.id = o.featureID");
             if (ObservationResourceDefaults.SPATIAL_RELATIONSHIP_WITHIN.equals(spatialRelationship)) {
                 WHERE("ftd.geom.STWithin(geometry::STGeomFromText(#{polygon}, 4326)) = 1");
             } else {

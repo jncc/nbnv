@@ -11,9 +11,11 @@ The IMT is a built using [grunt](http://gruntjs.com) and therefore requires [nod
         npm install -g grunt-cli
 		
 ### Gotchas
-By default bower will try to pull git repositories over port 9418, default for *git://* scheme. If you are behind a firewall which blocks this port then you may want to :
+1. By default bower will try to pull git repositories over port 9418, default for *git://* scheme. If you are behind a firewall which blocks this port then you may want to :
 
         git config --global url."https://".insteadOf git://
+		
+2. Make sure to run in a Git Bash window or similar UNIX type console as Windows Command Prompts do not play nice with bower / grunt / node.js
 	
 Once this has been done, grab the git repository and then :
 
