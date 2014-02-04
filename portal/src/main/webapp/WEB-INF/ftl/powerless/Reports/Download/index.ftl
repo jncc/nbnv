@@ -5,7 +5,8 @@
     javascripts=[
         "/js/jquery.dataTables.min.js",
         "/js/jquery.validate.min.js",
-        "/js/download/reports/enable-dataset-report.js"] 
+        "/js/download/reports/enable-dataset-report.js",
+        "/js/dialog_utils.js", "/js/jquery.fileDownload.js"]
     csss=[
         "//ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/themes/smoothness/jquery-ui.css",
         "/css/download/downloadFilters.css"]>
@@ -64,4 +65,6 @@
             <p>There are no datasets over which you have enough privileges to view download records</p> 
         </#if>
     </div>
+    <@dialog_utils.userInfoDialog />
+    <@dialog_utils.downloadDialogs />
 </@template.master>
