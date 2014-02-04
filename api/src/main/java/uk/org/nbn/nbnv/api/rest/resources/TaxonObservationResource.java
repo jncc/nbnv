@@ -277,7 +277,7 @@ public class TaxonObservationResource extends RequestResource {
             @QueryParam("orgSuppliedList") @DefaultValue(ObservationResourceDefaults.defaultOrgSuppliedList) int orgSuppliedList,
             @QueryParam("gridRef") @DefaultValue(ObservationResourceDefaults.defaultGridRef) String gridRef,
             @QueryParam("polygon") @DefaultValue(ObservationResourceDefaults.defaultPolygon) String polygon,
-            @QueryParam("absence") Boolean absence) throws IllegalArgumentException {        
+            @QueryParam("absence") @DefaultValue(ObservationResourceDefaults.defaultAbsence) Boolean absence) throws IllegalArgumentException {        
         return retreiveObservationsRecordsByFilter(user, request.getRemoteAddr(), startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, orgSuppliedList, gridRef, polygon, absence);
     }
     
@@ -324,7 +324,7 @@ public class TaxonObservationResource extends RequestResource {
             @FormParam("orgSuppliedList") @DefaultValue(ObservationResourceDefaults.defaultOrgSuppliedList) int orgSuppliedList,
             @FormParam("gridRef") @DefaultValue(ObservationResourceDefaults.defaultGridRef) String gridRef,
             @FormParam("polygon") @DefaultValue(ObservationResourceDefaults.defaultPolygon) String polygon,
-            @FormParam("absence") Boolean absence) throws IllegalArgumentException {
+            @FormParam("absence") @DefaultValue(ObservationResourceDefaults.defaultAbsence) Boolean absence) throws IllegalArgumentException {
         return retreiveObservationsRecordsByFilter(user, request.getRemoteAddr(), startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, orgSuppliedList, gridRef, polygon, absence);
     }
     
@@ -412,10 +412,17 @@ public class TaxonObservationResource extends RequestResource {
             @QueryParam("sensitive") @DefaultValue(ObservationResourceDefaults.defaultSensitive) Boolean sensitive,
             @QueryParam("designation") @DefaultValue(ObservationResourceDefaults.defaultDesignation) String designation,
             @QueryParam("taxonOutputGroup") @DefaultValue(ObservationResourceDefaults.defaultTaxonOutputGroup) String taxonOutputGroup,
+            @QueryParam("orgSuppliedList") @DefaultValue(ObservationResourceDefaults.defaultOrgSuppliedList) int orgSuppliedList,
             @QueryParam("gridRef") @DefaultValue(ObservationResourceDefaults.defaultGridRef) String gridRef,
             @QueryParam("polygon") @DefaultValue(ObservationResourceDefaults.defaultPolygon) String polygon) {
         //TODO: squareBlurring(?)
-        List<TaxonWithQueryStats> toReturn = observationMapper.selectObservationSpeciesByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon, false);
+        
+//        // Check size of polygon
+//        if (StringUtils.hasText(polygon)) {
+//            checkPolygonMaxSize(polygon, taxa, designation, taxonOutputGroup, orgSuppliedList, datasetKeys);
+//        }
+        
+        List<TaxonWithQueryStats> toReturn = observationMapper.selectObservationSpeciesByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, orgSuppliedList, gridRef, polygon, false);
         Collections.sort(toReturn);
         return toReturn;
     }
@@ -458,7 +465,7 @@ public class TaxonObservationResource extends RequestResource {
             @QueryParam("featureID") @DefaultValue(ObservationResourceDefaults.defaultFeatureID) final String featureID,
             @QueryParam("sensitive") @DefaultValue(ObservationResourceDefaults.defaultSensitive) final Boolean sensitive,
             @QueryParam("designation") @DefaultValue(ObservationResourceDefaults.defaultDesignation) final String designation,
-            @QueryParam("organisationList") final int organisationList,
+            @QueryParam("orgSuppliedList") @DefaultValue(ObservationResourceDefaults.defaultOrgSuppliedList) final int orgSuppliedList,
             @QueryParam("taxonOutputGroup") @DefaultValue(ObservationResourceDefaults.defaultTaxonOutputGroup) final String taxonOutputGroup,
             @QueryParam("gridRef") @DefaultValue(ObservationResourceDefaults.defaultGridRef) final String gridRef,
             @QueryParam("polygon") @DefaultValue(ObservationResourceDefaults.defaultPolygon) final String polygon) {
@@ -468,9 +475,9 @@ public class TaxonObservationResource extends RequestResource {
             public void write(OutputStream out) throws IOException, WebApplicationException {
                 ZipOutputStream zip = new ZipOutputStream(out);
                 String title = "Species list download";
-                addSpecies(zip, user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon);
-                addReadMe(zip, title, user, startYear, endYear, datasetKeys, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, organisationList);
-                addDatasetMetadata(zip, user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, organisationList, gridRef, polygon);
+                addSpecies(zip, user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, orgSuppliedList, gridRef, polygon);
+                addReadMe(zip, title, user, startYear, endYear, datasetKeys, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, orgSuppliedList);
+                addDatasetMetadata(zip, user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, orgSuppliedList, gridRef, polygon);
                 zip.flush();
                 zip.close();
             }
@@ -1356,8 +1363,8 @@ public class TaxonObservationResource extends RequestResource {
      * @param gridRef
      * @throws IOException 
      */
-    private void addSpecies(ZipOutputStream zip, User user, int startYear, int endYear, List<String> datasetKeys, List<String> taxa, String spatialRelationship, String featureID, boolean sensitive, String designation, String taxonOutputGroup, String gridRef, String polygon) throws IOException {
-        List<TaxonWithQueryStats> taxaWithStats = observationMapper.selectObservationSpeciesByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon, false);
+    private void addSpecies(ZipOutputStream zip, User user, int startYear, int endYear, List<String> datasetKeys, List<String> taxa, String spatialRelationship, String featureID, boolean sensitive, String designation, String taxonOutputGroup, int orgSuppliedList, String gridRef, String polygon) throws IOException {
+        List<TaxonWithQueryStats> taxaWithStats = observationMapper.selectObservationSpeciesByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, orgSuppliedList, gridRef, polygon, false);
         zip.putNextEntry(new ZipEntry("TaxonList.csv"));
         ArrayList<String> values = new ArrayList<String>();
         values.add("TaxonName");
@@ -1778,21 +1785,14 @@ public class TaxonObservationResource extends RequestResource {
         //TODO: squareBlurring(?)
         
         if (StringUtils.hasText(polygon)) {
-           try {
-               double polygonArea = polygonUtilsMapper.getAreaFromWKT(polygon);
-               double maxPolygonArea = Double.parseDouble(properties.getProperty("max_polygon"));
-               if (polygonArea > maxPolygonArea) {
-                   throw new IllegalArgumentException("Supplied polygon's area is greater than the maximum allowed area; was " + polygonArea + "m\u00B2 but must be less than " + maxPolygonArea + "m\u00B2");
-               }
-           } catch (Exception ex) {
-               throw new IllegalArgumentException("Supplied polygon could not be correctly interpreted as a Geography data type;\n" + ex.getLocalizedMessage());
-           }
+           checkPolygonMaxSize(polygon, taxa, designation, taxonOutputGroup, orgSuppliedList, datasetKeys);
         }
         
         // Stop users being able to request all records that they have access to at the same time
         if (!listHasAtLeastOneText(taxa)
                 && !StringUtils.hasText(designation)
                 && !StringUtils.hasText(taxonOutputGroup)
+                && orgSuppliedList < 1
                 && !listHasAtLeastOneText(datasetKeys)
                 && !StringUtils.hasText(featureID) 
                 && !StringUtils.hasText(gridRef)
@@ -1804,6 +1804,7 @@ public class TaxonObservationResource extends RequestResource {
                 && !listHasAtLeastOneText(taxa)
                 && !StringUtils.hasText(designation)
                 && !StringUtils.hasText(taxonOutputGroup)
+                && orgSuppliedList < 1
                 && !StringUtils.hasText(featureID) 
                 && !StringUtils.hasText(gridRef)
                 && !StringUtils.hasText(polygon)) {
@@ -1813,6 +1814,29 @@ public class TaxonObservationResource extends RequestResource {
         writeAPIViewRecordToDatabase(user, ip, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, orgSuppliedList, gridRef, polygon, absence);
         
         return observationMapper.selectObservationRecordsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon, absence);        
+    }
+    
+    private void checkPolygonMaxSize(String polygon, List<String> taxa, String designation, String taxonOutputGroup, int orgSuppliedList, List<String> datasetKeys) {
+        try {
+            double polygonArea = polygonUtilsMapper.getAreaFromWKT(polygon);
+            double maxPolygonArea;
+            String message = "";
+            if (!listHasAtLeastOneText(taxa)
+                    && !StringUtils.hasText(designation)
+                    && !StringUtils.hasText(taxonOutputGroup)
+                    && orgSuppliedList < 1
+                    && !listHasAtLeastOneText(datasetKeys)) {
+                maxPolygonArea = Double.parseDouble(properties.getProperty("max_polygon_no_filter"));
+                message = " Please include a taxonomic or dataset filter to increase the maximum search area.";
+            } else {
+                maxPolygonArea = Double.parseDouble(properties.getProperty("max_polygon_with_filter"));
+            }
+            if (polygonArea > maxPolygonArea) {
+                throw new IllegalArgumentException("Supplied polygon's area is greater than the maximum allowed area; was " + Double.toString(polygonArea) + "m^2 but must be less than " + Double.toString(maxPolygonArea) + "m^2." + message);
+            }
+        } catch (Exception ex) {
+            throw new IllegalArgumentException("Supplied polygon could not be correctly interpreted as a Geography data type;\n" + ex.getLocalizedMessage());
+        }
     }
     
     /**
@@ -1841,6 +1865,15 @@ public class TaxonObservationResource extends RequestResource {
             Boolean sensitive, String designation, String taxonOutputGroup,
             int orgSuppliedList, String gridRef, String polygon, 
             Boolean absence) {
+        
+        if (taxa.size() == 1 && !StringUtils.hasText(taxa.get(0))) {
+            taxa = new ArrayList<String>();
+        }
+        
+        if (datasetKeys.size() == 1 && !StringUtils.hasText(datasetKeys.get(0))) {
+            datasetKeys = new ArrayList<String>();
+        }        
+        
         String filterText = filterToText.convert(startYear, endYear, 
                 datasetKeys, taxa, spatialRelationship, featureID, sensitive, 
                 designation, taxonOutputGroup, orgSuppliedList, gridRef, 

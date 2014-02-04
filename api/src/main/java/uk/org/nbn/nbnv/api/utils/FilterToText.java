@@ -66,12 +66,16 @@ public class FilterToText {
         }
 
         if (taxa != null && !taxa.isEmpty()) {
-            List<String> taxaList = new ArrayList<String>();
-            for (String tvk : taxa) {
-                Taxon t = taxonMapper.getTaxon(tvk);
-                taxaList.add(t.getName() + " (" + t.getAuthority()+ ")");
+            if (StringUtils.hasText(taxa.get(0))) {
+                List<String> taxaList = new ArrayList<String>();
+                for (String tvk : taxa) {
+                    if (StringUtils.hasText(tvk)) {
+                        Taxon t = taxonMapper.getTaxon(tvk);
+                        taxaList.add(t.getName() + " (" + t.getAuthority()+ ")");
+                    }
+                }
+                text += " for " + StringUtils.collectionToDelimitedString(taxaList, " and ");
             }
-            text += " for " + StringUtils.collectionToDelimitedString(taxaList, " and ");
         } else if (StringUtils.hasText(designation)) {
             Designation d = designationMapper.selectByID(designation);
             text += " for " + d.getName() + " species";
