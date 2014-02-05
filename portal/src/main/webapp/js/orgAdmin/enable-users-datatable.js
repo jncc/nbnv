@@ -1,3 +1,6 @@
+window.nbn = window.nbn || {};
+nbn.nbnv = nbn.nbnv || {};
+
 (function($) {
     var uTable;
 
@@ -6,9 +9,11 @@
         $('.nbn-org-user-remove').click(function(e) {
             var name = $(this).data('name');
             var id = $(this).data('id');
+            var email = $(this).data('email');
 
             $('#nbn-org-remove-confirm-name').text(name);
-
+            $('#nbn-org-remove-confirm-email').text(email);
+            
             $("#dialog-remove-confirm").dialog({
                 resizable: false,
                 width: 400,
@@ -36,15 +41,18 @@
                     }
                 }
             });
+            
+            e.preventDefault();
         });
 
         $('.nbn-org-user-role').click(function(e) {
             var name = $(this).data('name');
             var id = $(this).data('id');
             var roleId = $(this).data('role');
+            var email = $(this).data('email');
 
             $('#nbn-org-role-change-select').val(roleId).attr('selected', true);
-            $('#nbn-org-role-change-name').text(name);
+            $('#nbn-org-role-change-name').text(name + '(' + email + ')');
 
             $("#dialog-role-choice").dialog({
                 resizable: false,
@@ -60,6 +68,8 @@
                     }
                 }
             });
+            
+            e.preventDefault();
         });
 
         uTable = $('#nbn-users-datatable').dataTable({
@@ -74,6 +84,9 @@
                 {"bSortable": false, "aTargets": [3, 4]}
             ]
         });
+        
+        // Setup user information dialogs - External Dependency (dialog_utils.js)
+        setupUsernameDialog(nbn.nbnv.api);   
     });
 
     function showRoleConfirm(id, name) {
