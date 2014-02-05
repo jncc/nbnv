@@ -55,20 +55,21 @@ public class OrganisationMembershipResourceTest {
      */
     @Test
     public void testGet() {
-        GenericType<List<OrganisationMembership>> gt = new GenericType<List<OrganisationMembership>>() { };
-        List<OrganisationMembership> dc = resource
-                .path("organisationMemberships")
-                .accept(MediaType.APPLICATION_JSON)
-                .get(gt);
-        
-        assertEquals(dc.size(), 2);
-        
-        assertEquals(dc.get(0).getUser().getId(), 41);
-        assertEquals(dc.get(0).getOrganisation().getId(), 1);
-        assertEquals(dc.get(0).getRole(), OrganisationMembership.Role.administrator);
-        
-        assertEquals(dc.get(1).getUser().getId(), 40);
-        assertEquals(dc.get(1).getOrganisation().getId(), 1);
-        assertEquals(dc.get(1).getRole(), OrganisationMembership.Role.member);
+        // Method no longer exists
+//        GenericType<List<OrganisationMembership>> gt = new GenericType<List<OrganisationMembership>>() { };
+//        List<OrganisationMembership> dc = resource
+//                .path("organisationMemberships")
+//                .accept(MediaType.APPLICATION_JSON)
+//                .get(gt);
+//        
+//        assertEquals(dc.size(), 2);
+//        
+//        assertEquals(dc.get(0).getUser().getId(), 41);
+//        assertEquals(dc.get(0).getOrganisation().getId(), 1);
+//        assertEquals(dc.get(0).getRole(), OrganisationMembership.Role.administrator);
+//        
+//        assertEquals(dc.get(1).getUser().getId(), 40);
+//        assertEquals(dc.get(1).getOrganisation().getId(), 1);
+//        assertEquals(dc.get(1).getRole(), OrganisationMembership.Role.member);
     }
 }
