@@ -9,7 +9,7 @@
         <tbody>
             <tr>
                 <td>
-                    <p>Request to join made by ${username} (${requestingUser.email}) on ${request.requestDate}</p>
+                    <p>Request to join made by ${username} (${requestingUser.email}) on ${request.requestDate?number_to_date}</p>
                 </td>
             </tr>
             <tr>
@@ -38,14 +38,14 @@
                     </div>
                     <#break>
                 <#case 1>
-                    <p>Request has been accepted on ${request.responseDate}<p>
+                    <p>Request has been accepted on ${request.responseDate?number_to_date}<p>
                     <p>${request.responseReason}</p>
                     <#break>
                 <#case 3>
-                    <p>You withdrew this request on ${request.responseDate}</p>
+                    <p>You withdrew this request on ${request.responseDate?number_to_date}</p>
                     <#break>
                 <#default>
-                    <p>Your request to join this organisation was rejected on ${request.responseDate} for the following reason;<p>
+                    <p>Your request to join this organisation was rejected on ${request.responseDate?number_to_date} for the following reason;<p>
                     <p>${request.responseReason}</p>
             </#switch>
         </div>
@@ -66,22 +66,22 @@
                     <#break>
                 <#case 1>
                     <#if request.responseReason?length == 0>
-                        <p>Request was accepted on ${request.responseDate} and no reason was given.<p>
+                        <p>Request was accepted on ${request.responseDate?number_to_date} and no reason was given.<p>
                         <p>${request.responseReason}</p>
                     <#else>
-                        <p>Request has been accepted on ${request.responseDate}<p>
+                        <p>Request has been accepted on ${request.responseDate?number_to_date}<p>
                         <p>${request.responseReason}</p>
                     </#if>
                     <#break>
                 <#case 3>
-                    <p>Request was withdrawn by the user on ${request.responseDate}</p>
+                    <p>Request was withdrawn by the user on ${request.responseDate?number_to_date}</p>
                     <#break>
                 <#default>
                     <#if request.responseReason?length == 0>
-                        <p>Request was rejected on ${request.responseDate} and no reason was given.<p>
+                        <p>Request was rejected on ${request.responseDate?number_to_date} and no reason was given.<p>
                         <p>${request.responseReason}</p>
                     <#else>
-                        <p>Request was rejected on ${request.responseDate} for the following reason;<p>
+                        <p>Request was rejected on ${request.responseDate?number_to_date} for the following reason;<p>
                         <p>${request.responseReason}</p>
                     </#if>
             </#switch>        

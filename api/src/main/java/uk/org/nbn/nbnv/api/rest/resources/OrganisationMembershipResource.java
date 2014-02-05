@@ -68,6 +68,8 @@ public class OrganisationMembershipResource extends AbstractResource {
      * Return a list of organisation memberships for a given organisation from 
      * the core database
      * 
+     * @param user The current user (must be an admin) (Injected Token no need 
+     * to pass)
      * @param id An organisation ID
      * 
      * @return A list of organisation memberships for a given organisation from 
@@ -87,6 +89,8 @@ public class OrganisationMembershipResource extends AbstractResource {
      * Return the organisation membership details for a given user and 
      * organisation from the core database
      * 
+     * @param user The current user (must be an admin of any dataset or 
+     * organisation) (Injected Token no need to pass)
      * @param id An organisation ID
      * @param user A Users ID
      * 
@@ -111,8 +115,8 @@ public class OrganisationMembershipResource extends AbstractResource {
      * Return true if a user is a member of a given organisation from the core 
      * database
      * 
+     * @param user The current user (Injected Token no need to pass)
      * @param id An organisation ID
-     * @param user A Users ID     
      * 
      * @return True if a user is a member of a given organisation from the core 
      * database
@@ -145,11 +149,11 @@ public class OrganisationMembershipResource extends AbstractResource {
      * @response.representation.200.mediaType application/json
      */    
     @GET
-    @Path("/{id}/{user}/isadmin")
+    @Path("/{id}/isadmin")
     @Produces(MediaType.APPLICATION_JSON)
-    public boolean isUserOrgAdmin(@PathParam("id") int id, @PathParam("user") int user) {
-        if (oOrganisationMembershipMapper.isUserMemberOfOrganisation(user, id)) {
-            if (oOrganisationMembershipMapper.selectByUserAndOrganisation(user, id).getRole() == OrganisationMembership.Role.administrator) {
+    public boolean isUserOrgAdmin(@TokenUser(allowPublic = false) User user, @PathParam("id") int id) {
+        if (oOrganisationMembershipMapper.isUserMemberOfOrganisation(user.getId(), id)) {
+            if (oOrganisationMembershipMapper.selectByUserAndOrganisation(user.getId(), id).getRole() == OrganisationMembership.Role.administrator) {
                 return true;
             }
         }
