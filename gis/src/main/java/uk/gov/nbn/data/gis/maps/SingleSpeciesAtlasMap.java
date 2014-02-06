@@ -9,7 +9,12 @@ import java.util.Map;
 import java.util.Properties;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Pattern;
+import org.jooq.Condition;
+import org.jooq.DSLContext;
 import org.jooq.Field;
+import org.jooq.Record1;
+import org.jooq.Select;
+import org.jooq.SelectJoinStep;
 import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -25,6 +30,7 @@ import uk.ac.ceh.dynamo.GridMap.Resolution;
 import uk.ac.ceh.dynamo.arguments.annotations.ServiceURL;
 import uk.gov.nbn.data.gis.config.TokenUserArgumentResolver;
 import uk.gov.nbn.data.gis.validation.Datasets;
+import static uk.gov.nbn.data.dao.jooq.Tables.*;
 import uk.org.nbn.nbnv.api.model.ProviderWithQueryStats;
 import uk.org.nbn.nbnv.api.model.User;
 
@@ -104,7 +110,7 @@ public class SingleSpeciesAtlasMap {
         data.put("outlineWidthDenominator", SYMBOLOGY_OUTLINE_WIDTH_DENOMINATOR);
         data.put("mapServiceURL", mapServiceURL);
         data.put("properties", properties);
-        data.put("layerGenerator", SingleSpeciesMap.getSingleSpeciesResolutionDataGenerator(GEOM_CENTROID, key, user, datasetKeys, startYear, endYear, false));
+        data.put("layerGenerator", getSingleSpeciesAtlasResolutionDataGenerator(GEOM_CENTROID, key, user, datasetKeys, startYear, endYear, false));
         return new ModelAndView("SingleSpeciesSymbology.map",data);
     }
     
@@ -149,4 +155,62 @@ public class SingleSpeciesAtlasMap {
         
         return new ModelAndView("acknowledgement", data);
     }
+    
+    static MapHelper.ResolutionDataGenerator getSingleSpeciesAtlasResolutionDataGenerator(
+            final Field<?> geometry,
+            final String taxonKey, 
+            final User user, 
+            final List<String> datasetKeys, 
+            final String startYear, 
+            final String endYear,
+            final boolean absence) {
+        return new MapHelper.ResolutionDataGenerator() {
+            @Override public String getData(String layerName) {
+                return getSQL(geometry, taxonKey, user, datasetKeys, startYear, endYear, absence, layerName);
+            }
+        };
+    }      
+    
+    private static String getSQL(   Field<?> geometry,
+                                    String taxonKey, User user, 
+                                    List<String> datasetKeys, 
+                                    String startYear, String endYear, 
+                                    boolean absence, String layerName) {
+        DSLContext create = MapHelper.getContext();
+        Condition publicCondition = TAXONTREE.NODEPTVK.eq(taxonKey)
+                .and(MAPPINGDATAPUBLIC.ABSENCE.eq(absence))
+                .and(MAPPINGDATAPUBLIC.RESOLUTIONID.eq(LAYERS.get(layerName)));
+        publicCondition = MapHelper.createTemporalSegment(publicCondition, startYear, endYear, MAPPINGDATAPUBLIC.STARTDATE, MAPPINGDATAPUBLIC.ENDDATE);
+        publicCondition = MapHelper.createInDatasetsSegment(publicCondition, MAPPINGDATAPUBLIC.DATASETKEY, datasetKeys);
+
+        Condition enhancedCondition = TAXONTREE.NODEPTVK.eq(taxonKey)
+                .and(USERTAXONOBSERVATIONID.USERID.eq(user.getId()))
+                .and(MAPPINGDATAENHANCED.ABSENCE.eq(absence))
+                .and(MAPPINGDATAENHANCED.RESOLUTIONID.eq(LAYERS.get(layerName)));
+        enhancedCondition = MapHelper.createTemporalSegment(enhancedCondition, startYear, endYear, MAPPINGDATAENHANCED.STARTDATE, MAPPINGDATAENHANCED.ENDDATE);
+        enhancedCondition = MapHelper.createInDatasetsSegment(enhancedCondition, MAPPINGDATAENHANCED.DATASETKEY, datasetKeys);
+
+        Select<Record1<Integer>> nested = create
+                    .select(MAPPINGDATAPUBLIC.FEATUREID.as("FEATUREID"))
+                    .from(MAPPINGDATAPUBLIC)
+                    .join(TAXONTREE).on(TAXONTREE.CHILDPTVK.eq(MAPPINGDATAPUBLIC.PTAXONVERSIONKEY))
+                    .where(publicCondition)
+                    .unionAll(create
+                        .select(MAPPINGDATAENHANCED.FEATUREID)
+                        .from(MAPPINGDATAENHANCED)
+                        .join(TAXONTREE).on(TAXONTREE.CHILDPTVK.eq(MAPPINGDATAENHANCED.PTAXONVERSIONKEY))
+                        .join(USERTAXONOBSERVATIONID).on(USERTAXONOBSERVATIONID.OBSERVATIONID.eq(MAPPINGDATAENHANCED.ID))
+                        .where(enhancedCondition)
+                    );
+        SelectJoinStep<Record1<Integer>> dNested = create
+                .selectDistinct((Field<Integer>)nested.field(0))
+                .from(nested);
+        
+        return MapHelper.getMapData(geometry, FEATURE.IDENTIFIER, 4326 ,create
+            .select(geometry, FEATURE.IDENTIFIER)
+            .from(FEATURE)
+            .join(dNested).on(FEATURE.ID.eq((Field<Integer>)dNested.field(0))));
+           
+    }
+
 }
