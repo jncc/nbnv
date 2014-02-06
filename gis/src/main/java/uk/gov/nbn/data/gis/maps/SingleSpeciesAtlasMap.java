@@ -60,6 +60,15 @@ public class SingleSpeciesAtlasMap {
     private static final Field<?> GEOM_CENTROID = DSL.field("geom.STCentroid()").as("geom");
     
     private static final String[] LAYERS;
+    private static final Map<String, Integer> LAYERSINFO;
+
+    static {
+        LAYERSINFO = new HashMap<String, Integer>();
+        LAYERSINFO.put(TEN_KM_LAYER_NAME, 1);
+        LAYERSINFO.put(TWO_KM_LAYER_NAME, 2);
+        LAYERSINFO.put(ONE_KM_LAYER_NAME, 3);
+        LAYERSINFO.put(ONE_HUNDRED_M_LAYER_NAME, 4);
+    }
     
     @Autowired WebResource resource;
     @Autowired Properties properties;
@@ -179,14 +188,14 @@ public class SingleSpeciesAtlasMap {
         DSLContext create = MapHelper.getContext();
         Condition publicCondition = TAXONTREE.NODEPTVK.eq(taxonKey)
                 .and(MAPPINGDATAPUBLIC.ABSENCE.eq(absence))
-                .and(MAPPINGDATAPUBLIC.RESOLUTIONID.eq(LAYERS.get(layerName)));
+                .and(MAPPINGDATAPUBLIC.RESOLUTIONID.eq(LAYERSINFO.get(layerName)));
         publicCondition = MapHelper.createTemporalSegment(publicCondition, startYear, endYear, MAPPINGDATAPUBLIC.STARTDATE, MAPPINGDATAPUBLIC.ENDDATE);
         publicCondition = MapHelper.createInDatasetsSegment(publicCondition, MAPPINGDATAPUBLIC.DATASETKEY, datasetKeys);
 
         Condition enhancedCondition = TAXONTREE.NODEPTVK.eq(taxonKey)
                 .and(USERTAXONOBSERVATIONID.USERID.eq(user.getId()))
                 .and(MAPPINGDATAENHANCED.ABSENCE.eq(absence))
-                .and(MAPPINGDATAENHANCED.RESOLUTIONID.eq(LAYERS.get(layerName)));
+                .and(MAPPINGDATAENHANCED.RESOLUTIONID.eq(LAYERSINFO.get(layerName)));
         enhancedCondition = MapHelper.createTemporalSegment(enhancedCondition, startYear, endYear, MAPPINGDATAENHANCED.STARTDATE, MAPPINGDATAENHANCED.ENDDATE);
         enhancedCondition = MapHelper.createInDatasetsSegment(enhancedCondition, MAPPINGDATAENHANCED.DATASETKEY, datasetKeys);
 
