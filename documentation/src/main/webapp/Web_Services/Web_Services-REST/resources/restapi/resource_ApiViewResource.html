@@ -11,7 +11,7 @@
        Remove this if you use the .htaccess -->
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 
-  <title>SiteBoundaryDatasetResource</title>
+  <title>ApiViewResource</title>
 
   <!-- Mobile viewport optimized: j.mp/bplateviewport -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -30,7 +30,7 @@
   <div class="container">
     <header>
       <div id="header" class="column first last span-20">
-        <div id="site-name" class="column span-18 append-1 prepend-1 first last"><a href="index.html">SiteBoundaryDatasetResource</a></div>
+        <div id="site-name" class="column span-18 append-1 prepend-1 first last"><a href="index.html">ApiViewResource</a></div>
         <div id="primary" class="column span-18 append-1 prepend-1 first last">
           <ul class="navigation">
             <li id="nav-rest"><a href="rest.html">REST</a></li>
@@ -50,7 +50,7 @@
               </ul>
             </li>
             <li class="current">
-              <a href="resource_SiteBoundaryDatasetResource.html">SiteBoundaryDatasetResource</a>
+              <a href="resource_ApiViewResource.html">ApiViewResource</a>
               <ul>
                 <li><a href="resource_ApiViewResource.html">ApiViewResource</a></li>
                 <li><a href="resource_DatasetResource.html">DatasetResource</a></li>
@@ -83,55 +83,23 @@
       </div>
     </header>
     <div id="main" class="column first last span-20">
-      <h1>SiteBoundaryDatasetResource</h1>
+      <h1>ApiViewResource</h1>
 
       <p></p>
       <p>The following resources are applicable:</p>
       <ul>
-        <li><a href="#path__siteBoundaryDatasets.html">/siteBoundaryDatasets</a></li>
-        <li><a href="#path__siteBoundaryDatasets_-id-.html">/siteBoundaryDatasets/{id}</a></li>
-        <li><a href="#path__siteBoundaryDatasets_-id-_siteBoundaries.html">/siteBoundaryDatasets/{id}/siteBoundaries</a></li>
+        <li><a href="#path__apiViews_-datasetKey -.html">/apiViews/{datasetKey }</a></li>
+        <li><a href="#path__apiViews_-datasetKey -_csv.html">/apiViews/{datasetKey }/csv</a></li>
       </ul>
-      <a name="path__siteBoundaryDatasets.html"></a>
-      <h1>/siteBoundaryDatasets</h1>
-      <p class="note">Mount Point: <a href="../api/siteBoundaryDatasets">/api/siteBoundaryDatasets</a></p>
+      <a name="path__apiViews_-datasetKey -.html"></a>
+      <h1>/apiViews/{datasetKey }</h1>
+      <p class="note">Mount Point: <a href="../api/apiViews/{datasetKey }">/api/apiViews/{datasetKey }</a></p>
       <a name="GET"></a>
       <h2>GET</h2>
       <p>
-            Return a list of all Site Boundary Datasets from the data warehouse
-          </p>
-      <h3>Response Body</h3>
-      <table>
-        <tr>
-          <td align="right">element:</td>
-          <td><a href="el_ns0_siteBoundaryDataset.html">siteBoundaryDataset</a></td>
-        </tr>
-        <tr>
-          <td align="right">media types:</td>
-          <td>application/json</td>
-        </tr>
-      </table>
-      <p>A list of all Site Boundary Datasets from the data warehouse</p>
-      <h3>Status Codes</h3>
-      <table>
-        <tr>
-          <th>code</th>
-          <th>description</th>
-        </tr>
-        <tr>
-          <td>200</td>
-          <td>
-            Successfully returned list of all site boundary datasets
-          </td>
-        </tr>
-      </table>
-      <a name="path__siteBoundaryDatasets_-id-.html"></a>
-      <h1>/siteBoundaryDatasets/{id}</h1>
-      <p class="note">Mount Point: <a href="../api/siteBoundaryDatasets/{id}">/api/siteBoundaryDatasets/{id}</a></p>
-      <a name="GET"></a>
-      <h2>GET</h2>
-      <p>
-            Returns a specific Site Boundary Dataset from the data warehouse
+            Return a list of api observation views which give the filters used and
+the number of records viewed at via the API, includes portal operations
+which return full records to the user.
           </p>
       <h3>Parameters</h3>
       <table>
@@ -142,11 +110,35 @@
           <th>default</th>
         </tr>
         <tr>
-          <td>id</td>
+          <td>user</td>
           <td>
-            A Site Boundary Dataset ID
+            The current user, must be admin of the dataset (Injected token no need to pass)
+          </td>
+          <td>tokendatasetadminuser</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>datasetKey</td>
+          <td>
+            The dataset key of the dataset
           </td>
           <td>path</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>startDate</td>
+          <td>
+            (Optional) A start date to search for views from (must have an end date)
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>endDate</td>
+          <td>
+            (Optional) An end date to search for views until (must have a start date)
+          </td>
+          <td>query</td>
           <td></td>
         </tr>
       </table>
@@ -154,14 +146,14 @@
       <table>
         <tr>
           <td align="right">element:</td>
-          <td><a href="el_ns0_siteBoundaryDataset.html">siteBoundaryDataset</a></td>
+          <td><a href="el_ns0_apiObservationViewStatistic.html">apiObservationViewStatistic</a></td>
         </tr>
         <tr>
           <td align="right">media types:</td>
           <td>application/json</td>
         </tr>
       </table>
-      <p>A specific Site Boundary Dataset from the data warehouse</p>
+      <p>A list of ApiObservationViewStatistic's for this dataset and any date filters</p>
       <h3>Status Codes</h3>
       <table>
         <tr>
@@ -171,17 +163,19 @@
         <tr>
           <td>200</td>
           <td>
-            Successfully returned the requested site boundary dataset
+            Successfully returned a list of all API observation view statisics, grouped by dataset
           </td>
         </tr>
       </table>
-      <a name="path__siteBoundaryDatasets_-id-_siteBoundaries.html"></a>
-      <h1>/siteBoundaryDatasets/{id}/siteBoundaries</h1>
-      <p class="note">Mount Point: <a href="../api/siteBoundaryDatasets/{id}/siteBoundaries">/api/siteBoundaryDatasets/{id}/siteBoundaries</a></p>
+      <a name="path__apiViews_-datasetKey -_csv.html"></a>
+      <h1>/apiViews/{datasetKey }/csv</h1>
+      <p class="note">Mount Point: <a href="../api/apiViews/{datasetKey }/csv">/api/apiViews/{datasetKey }/csv</a></p>
       <a name="GET"></a>
       <h2>GET</h2>
       <p>
-            Return a list of Site Boundaries associated with a specified Dataset
+            Return a zip file containing a CSV list of api observation views which
+give the filters used and the number of records viewed at via the API,
+includes portal operations which return full records to the user.
           </p>
       <h3>Parameters</h3>
       <table>
@@ -192,11 +186,35 @@
           <th>default</th>
         </tr>
         <tr>
-          <td>id</td>
+          <td>user</td>
           <td>
-            A dataset Key
+            The current user, must be admin of the dataset (Injected token no need to pass)
+          </td>
+          <td>tokendatasetadminuser</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>datasetKey</td>
+          <td>
+            The dataset key of the dataset
           </td>
           <td>path</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>startDate</td>
+          <td>
+            (Optional) A start date to search for views from (must have an end date)
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>endDate</td>
+          <td>
+            (Optional) An end date to search for views until (must have a start date)
+          </td>
+          <td>query</td>
           <td></td>
         </tr>
       </table>
@@ -204,14 +222,14 @@
       <table>
         <tr>
           <td align="right">element:</td>
-          <td><a href="el_ns0_siteBoundary.html">siteBoundary</a></td>
+          <td>(custom)</td>
         </tr>
         <tr>
           <td align="right">media types:</td>
-          <td>application/json</td>
+          <td>application/x-zip-compressed</td>
         </tr>
       </table>
-      <p>A list of Site Boundaries associated with a specified Dataset</p>
+      <p>A ZIP file containing a CSV list of ApiObservationViewStatistic's for this dataset and any date filters</p>
       <h3>Status Codes</h3>
       <table>
         <tr>
@@ -221,7 +239,7 @@
         <tr>
           <td>200</td>
           <td>
-            Successfully returned list of all site boundaries in this category
+            Successfully returned a list of all API observation view statisics, grouped by dataset as a CSV file
           </td>
         </tr>
       </table>

@@ -60,6 +60,8 @@
               <ul>
                 <li><a href="ns0_accessPosition.html">accessPosition</a></li>
                 <li><a href="ns0_accessRequest.html">accessRequest</a></li>
+                <li><a href="ns0_apiObservationView.html">apiObservationView</a></li>
+                <li><a href="ns0_apiObservationViewStatistic.html">apiObservationViewStatistic</a></li>
                 <li><a href="ns0_attribute.html">attribute</a></li>
                 <li><a href="ns0_boundingBox.html">boundingBox</a></li>
                 <li><a href="ns0_contributingOrganisation.html">contributingOrganisation</a></li>
@@ -98,7 +100,6 @@
                 <li><a href="ns0_taxonDatasetWithQueryStats.html">taxonDatasetWithQueryStats</a></li>
                 <li><a href="ns0_taxonDesignation.html">taxonDesignation</a></li>
                 <li><a href="ns0_taxonNavigationGroup.html">taxonNavigationGroup</a></li>
-                <li><a href="ns0_taxonObseravtionDownload.html">taxonObseravtionDownload</a></li>
                 <li><a href="ns0_taxonObservation.html">taxonObservation</a></li>
                 <li><a href="ns0_taxonObservationAttribute.html">taxonObservationAttribute</a></li>
                 <li><a href="ns0_taxonObservationAttributeValue.html">taxonObservationAttributeValue</a></li>
@@ -113,6 +114,7 @@
                 <li><a href="ns0_userAccessRequest.html">userAccessRequest</a></li>
                 <li><a href="ns0_userAccessRequestAuditHistory.html">userAccessRequestAuditHistory</a></li>
                 <li><a href="ns0_userDownloadNotification.html">userDownloadNotification</a></li>
+                <li><a href="ns0_userEmailModify.html">userEmailModify</a></li>
                 <li><a href="ns0_userRoleChangeJSON.html">userRoleChangeJSON</a></li>
                 <li><a href="ns0_yearStats.html">yearStats</a></li>
               </ul>
@@ -134,56 +136,6 @@
         </tr>
       </table>
 
-      <h2>XML</h2>
-      <h3>Elements</h3>
-      <table>
-        <tr>
-          <th>name (type)</th>
-          <th>min/max<br/>occurs</th>
-          <th>description</th>
-        </tr>
-        <tr>
-          <td>
-            taxonDataset (<a href="ns0_taxonDataset.html">taxonDataset</a>)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            datasetKey (string)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            querySpecificSensitiveObservationCount (int)
-          </td>
-          <td>1/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            accessPositions (<a href="ns0_accessPosition.html">accessPosition</a>)
-          </td>
-          <td>0/unbounded</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            querySpecificObservationCount (int)
-          </td>
-          <td>1/1</td>
-          <td>
-          </td>
-        </tr>
-      </table>
-
       <h2>JSON</h2>
       <table>
         <tr>
@@ -192,44 +144,40 @@
           <th>description</th>
         </tr>
         <tr>
-          <td>taxonDataset</td>
-          <td>
-              taxonDataset (<a href="ns0_taxonDataset.html">taxonDataset</a>)
-          </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
           <td>datasetKey</td>
           <td>
               datasetKey (string)
           </td>
+          <td>The dataset key of this taxon dataset</td>
+        </tr>
+        <tr>
+          <td>taxonDataset</td>
           <td>
+              taxonDataset (<a href="ns0_taxonDataset.html">taxonDataset</a>)
           </td>
+          <td>The taxon dataset itself</td>
+        </tr>		
+        <tr>
+          <td>accessPositions</td>
+          <td>
+              array of accessPositions (<a href="ns0_accessPosition.html">accessPosition</a>)
+          </td>
+          <td>Any access positions that the current user has over this dataset</td>
         </tr>
         <tr>
           <td>querySpecificSensitiveObservationCount</td>
           <td>
               querySpecificSensitiveObservationCount (int)
           </td>
-          <td>
-          </td>
+          <td>A count of sensitive observations matching the filters given</td>
         </tr>
-        <tr>
-          <td>accessPositions</td>
-          <td>
-              array of accessPositions (<a href="ns0_accessPosition.html">accessPosition</a>)
-          </td>
-          <td>
-          </td>
-        </tr>
+		
         <tr>
           <td>querySpecificObservationCount</td>
           <td>
               querySpecificObservationCount (int)
           </td>
-          <td>
-          </td>
+          <td>A count of observations matching the filters given</td>
         </tr>
       </table>
 

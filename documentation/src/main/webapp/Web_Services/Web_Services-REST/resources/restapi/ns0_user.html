@@ -60,6 +60,8 @@
               <ul>
                 <li><a href="ns0_accessPosition.html">accessPosition</a></li>
                 <li><a href="ns0_accessRequest.html">accessRequest</a></li>
+                <li><a href="ns0_apiObservationView.html">apiObservationView</a></li>
+                <li><a href="ns0_apiObservationViewStatistic.html">apiObservationViewStatistic</a></li>
                 <li><a href="ns0_attribute.html">attribute</a></li>
                 <li><a href="ns0_boundingBox.html">boundingBox</a></li>
                 <li><a href="ns0_contributingOrganisation.html">contributingOrganisation</a></li>
@@ -98,7 +100,6 @@
                 <li><a href="ns0_taxonDatasetWithQueryStats.html">taxonDatasetWithQueryStats</a></li>
                 <li><a href="ns0_taxonDesignation.html">taxonDesignation</a></li>
                 <li><a href="ns0_taxonNavigationGroup.html">taxonNavigationGroup</a></li>
-                <li><a href="ns0_taxonObseravtionDownload.html">taxonObseravtionDownload</a></li>
                 <li><a href="ns0_taxonObservation.html">taxonObservation</a></li>
                 <li><a href="ns0_taxonObservationAttribute.html">taxonObservationAttribute</a></li>
                 <li><a href="ns0_taxonObservationAttributeValue.html">taxonObservationAttributeValue</a></li>
@@ -113,6 +114,7 @@
                 <li><a href="ns0_userAccessRequest.html">userAccessRequest</a></li>
                 <li><a href="ns0_userAccessRequestAuditHistory.html">userAccessRequestAuditHistory</a></li>
                 <li><a href="ns0_userDownloadNotification.html">userDownloadNotification</a></li>
+                <li><a href="ns0_userEmailModify.html">userEmailModify</a></li>
                 <li><a href="ns0_userRoleChangeJSON.html">userRoleChangeJSON</a></li>
                 <li><a href="ns0_yearStats.html">yearStats</a></li>
               </ul>
@@ -134,104 +136,6 @@
         </tr>
       </table>
 
-      <h2>XML</h2>
-      <h3>Elements</h3>
-      <table>
-        <tr>
-          <th>name (type)</th>
-          <th>min/max<br/>occurs</th>
-          <th>description</th>
-        </tr>
-        <tr>
-          <td>
-            email (string)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            forename (string)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            surname (string)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            subscribedToAdminMails (boolean)
-          </td>
-          <td>1/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            username (string)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            allowEmailAlerts (boolean)
-          </td>
-          <td>1/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            password (string)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            id (int)
-          </td>
-          <td>1/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            phone (string)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            subscribedToNBNMarketting (boolean)
-          </td>
-          <td>1/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            registrationDate (dateTime)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-      </table>
-
       <h2>JSON</h2>
       <table>
         <tr>
@@ -240,92 +144,81 @@
           <th>description</th>
         </tr>
         <tr>
-          <td>email</td>
+          <td>id</td>
           <td>
-              email (string)
+              id (int)
           </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>forename</td>
-          <td>
-              forename (string)
-          </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>surname</td>
-          <td>
-              surname (string)
-          </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>subscribedToAdminMails</td>
-          <td>
-              subscribedToAdminMails (boolean)
-          </td>
-          <td>
-          </td>
+          <td>The ID of this user</td>
         </tr>
         <tr>
           <td>username</td>
           <td>
               username (string)
           </td>
+          <td>The users username</td>
+        </tr>
+		<tr>
+          <td>forename</td>
           <td>
+              forename (string)
           </td>
+          <td>The forename of this user</td>
+        </tr>		
+        <tr>
+          <td>surname</td>
+          <td>
+              surname (string)
+          </td>
+          <td>The surname of this user</td>
         </tr>
         <tr>
-          <td>allowEmailAlerts</td>
+          <td>email</td>
           <td>
-              allowEmailAlerts (boolean)
+              email (string)
           </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>password</td>
-          <td>
-              password (string)
-          </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>id</td>
-          <td>
-              id (int)
-          </td>
-          <td>
-          </td>
+          <td>The email address of this user</td>
         </tr>
         <tr>
           <td>phone</td>
           <td>
               phone (string)
           </td>
+          <td>The phone number of this user</td>
+        </tr>        
+        <tr>
+          <td>active</td>
           <td>
+              active (boolean)
           </td>
+          <td>If this user is active or not</td>
         </tr>
         <tr>
+          <td>allowEmailAlerts</td>
+          <td>
+              allowEmailAlerts (boolean)
+          </td>
+          <td>Not Used</td>
+        </tr>
+		<tr>
           <td>subscribedToNBNMarketting</td>
           <td>
               subscribedToNBNMarketting (boolean)
           </td>
-          <td>
-          </td>
-        </tr>
+          <td>Not Used</td>
+        </tr>		
         <tr>
+          <td>subscribedToAdminMails</td>
+          <td>
+              subscribedToAdminMails (boolean)
+          </td>
+          <td>Not Used</td>
+        </tr>
+		<tr>
           <td>registrationDate</td>
           <td>
               registrationDate (dateTime)
           </td>
-          <td>
-          </td>
+          <td>The date that this user first registered</td>
         </tr>
       </table>
 

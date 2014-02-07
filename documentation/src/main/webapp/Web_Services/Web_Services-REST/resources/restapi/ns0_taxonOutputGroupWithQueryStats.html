@@ -60,6 +60,8 @@
               <ul>
                 <li><a href="ns0_accessPosition.html">accessPosition</a></li>
                 <li><a href="ns0_accessRequest.html">accessRequest</a></li>
+                <li><a href="ns0_apiObservationView.html">apiObservationView</a></li>
+                <li><a href="ns0_apiObservationViewStatistic.html">apiObservationViewStatistic</a></li>
                 <li><a href="ns0_attribute.html">attribute</a></li>
                 <li><a href="ns0_boundingBox.html">boundingBox</a></li>
                 <li><a href="ns0_contributingOrganisation.html">contributingOrganisation</a></li>
@@ -98,7 +100,6 @@
                 <li><a href="ns0_taxonDatasetWithQueryStats.html">taxonDatasetWithQueryStats</a></li>
                 <li><a href="ns0_taxonDesignation.html">taxonDesignation</a></li>
                 <li><a href="ns0_taxonNavigationGroup.html">taxonNavigationGroup</a></li>
-                <li><a href="ns0_taxonObseravtionDownload.html">taxonObseravtionDownload</a></li>
                 <li><a href="ns0_taxonObservation.html">taxonObservation</a></li>
                 <li><a href="ns0_taxonObservationAttribute.html">taxonObservationAttribute</a></li>
                 <li><a href="ns0_taxonObservationAttributeValue.html">taxonObservationAttributeValue</a></li>
@@ -113,6 +114,7 @@
                 <li><a href="ns0_userAccessRequest.html">userAccessRequest</a></li>
                 <li><a href="ns0_userAccessRequestAuditHistory.html">userAccessRequestAuditHistory</a></li>
                 <li><a href="ns0_userDownloadNotification.html">userDownloadNotification</a></li>
+                <li><a href="ns0_userEmailModify.html">userEmailModify</a></li>
                 <li><a href="ns0_userRoleChangeJSON.html">userRoleChangeJSON</a></li>
                 <li><a href="ns0_yearStats.html">yearStats</a></li>
               </ul>
@@ -134,40 +136,6 @@
         </tr>
       </table>
 
-      <h2>XML</h2>
-      <h3>Elements</h3>
-      <table>
-        <tr>
-          <th>name (type)</th>
-          <th>min/max<br/>occurs</th>
-          <th>description</th>
-        </tr>
-        <tr>
-          <td>
-            querySpecificSpeciesCount (int)
-          </td>
-          <td>1/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            taxonOutputGroupKey (string)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            taxonOutputGroup (<a href="ns0_taxonOutputGroup.html">taxonOutputGroup</a>)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-      </table>
-
       <h2>JSON</h2>
       <table>
         <tr>
@@ -176,28 +144,25 @@
           <th>description</th>
         </tr>
         <tr>
-          <td>querySpecificSpeciesCount</td>
-          <td>
-              querySpecificSpeciesCount (int)
-          </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
           <td>taxonOutputGroupKey</td>
           <td>
               taxonOutputGroupKey (string)
           </td>
-          <td>
-          </td>
-        </tr>
+          <td>The taxon Output Group Key in question</td>
+        </tr>		
         <tr>
           <td>taxonOutputGroup</td>
           <td>
               taxonOutputGroup (<a href="ns0_taxonOutputGroup.html">taxonOutputGroup</a>)
           </td>
+          <td>An object containing further information about this output group</td>
+        </tr>
+        <tr>
+          <td>querySpecificSpeciesCount</td>
           <td>
+              querySpecificSpeciesCount (int)
           </td>
+          <td>The number of query specific observations returned in this group</td>
         </tr>
       </table>
 

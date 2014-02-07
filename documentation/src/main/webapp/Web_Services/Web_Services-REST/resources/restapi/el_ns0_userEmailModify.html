@@ -11,7 +11,7 @@
        Remove this if you use the .htaccess -->
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 
-  <title>providerWithQueryStats</title>
+  <title>userEmailModify</title>
 
   <!-- Mobile viewport optimized: j.mp/bplateviewport -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -30,7 +30,7 @@
   <div class="container">
     <header>
       <div id="header" class="column first last span-20">
-        <div id="site-name" class="column span-18 append-1 prepend-1 first last"><a href="index.html">providerWithQueryStats</a></div>
+        <div id="site-name" class="column span-18 append-1 prepend-1 first last"><a href="index.html">userEmailModify</a></div>
         <div id="primary" class="column span-18 append-1 prepend-1 first last">
           <ul class="navigation">
             <li id="nav-rest"><a href="rest.html">REST</a></li>
@@ -56,7 +56,7 @@
               </ul>
             </li>
             <li class="current">
-              <a href="el_ns0_providerWithQueryStats.html">providerWithQueryStats element</a>
+              <a href="el_ns0_userEmailModify.html">userEmailModify element</a>
               <ul>
                 <li><a href="el_ns0_accessPosition.html">accessPosition element</a></li>
                 <li><a href="el_ns0_accessRequest.html">accessRequest element</a></li>
@@ -123,11 +123,11 @@
       </div>
     </header>
     <div id="main" class="column first last span-20">
-      <h1>providerWithQueryStats element</h1>
+      <h1>userEmailModify element</h1>
       <table>
         <tr>
           <td align="right">Type:</td>
-          <td><a href="ns0_providerWithQueryStats.html">providerWithQueryStats</a></td>
+          <td><a href="ns0_userEmailModify.html">userEmailModify</a></td>
         </tr>
         <tr>
           <td align="right">Namespace:</td>
@@ -140,172 +140,22 @@
       </table>
       <h2>Example JSON</h2>
       <code class="prettyprint lang-js">{
-	&quot;organisationID&quot; : ...,
-	&quot;organisation&quot; : {
+	&quot;user&quot; : {
 		&quot;id&quot; : ...,
-		&quot;name&quot; : &quot;...&quot;,
-		&quot;abbreviation&quot; : &quot;...&quot;,
-		&quot;href&quot; : &quot;...&quot;,
-		&quot;summary&quot; : &quot;...&quot;,
-		&quot;contactName&quot; : &quot;...&quot;,
-		&quot;contactEmail&quot; : &quot;...&quot;,
-		&quot;website&quot; : &quot;...&quot;,
-		&quot;address&quot; : &quot;...&quot;,
-		&quot;postcode&quot; : &quot;...&quot;,
+		&quot;username&quot; : &quot;...&quot;,
+		&quot;forename&quot; : &quot;...&quot;,
+		&quot;surname&quot; : &quot;...&quot;,
+		&quot;email&quot; : &quot;...&quot;,
 		&quot;phone&quot; : &quot;...&quot;,
-		&quot;allowPublicRegistration&quot; : false,
-		&quot;logo&quot; : &quot;...&quot;,
-		&quot;smallLogo&quot; : &quot;...&quot;,
-		&quot;hasLogo&quot; : false,
-		&quot;hasSmallLogo&quot; : false
-	}	  
-	&quot;datasetsWithQueryStats&quot; : [ {
-		&quot;datasetKey&quot; : &quot;...&quot;
-		&quot;taxonDataset&quot; : {
-			&quot;key&quot; : &quot;...&quot;,
-			&quot;datasetKey&quot; : &quot;...&quot;,
-			&quot;title&quot; : &quot;...&quot;,
-			&quot;href&quot; : &quot;...&quot;,		
-			&quot;description&quot; : &quot;...&quot;,
-			&quot;typeName&quot; : &quot;...&quot;,
-			&quot;surveys&quot; : [ {
-				&quot;id&quot; : ...,
-				&quot;surveyKey&quot; : &quot;...&quot;,
-				&quot;providerKey&quot; : &quot;...&quot;,
-				&quot;datasetKey&quot; : &quot;...&quot;,
-				&quot;title&quot; : &quot;...&quot;,
-				&quot;description&quot; : &quot;...&quot;,
-				&quot;purpose&quot; : &quot;...&quot;,
-				&quot;geographicalCoverage&quot; : &quot;...&quot;,
-				&quot;temporalCoverage&quot; : &quot;...&quot;,
-				&quot;dataQuality&quot; : &quot;...&quot;,
-				&quot;additionalInformation&quot; : &quot;...&quot;,
-				&quot;dataCaptureMethod&quot; : &quot;...&quot;,
-				&quot;sampleCount&quot; : ...,
-				&quot;speciesCount&quot; : ...,
-				&quot;recordCount&quot; : ...
-			}, ... ],
-			&quot;organisationID&quot; : ...,
-			&quot;organisationName&quot; : &quot;...&quot;,
-			&quot;organisationHref&quot; : &quot;...&quot;,
-			&quot;organisation&quot; : {
-				&quot;id&quot; : ...,
-				&quot;name&quot; : &quot;...&quot;,
-				&quot;abbreviation&quot; : &quot;...&quot;,
-				&quot;href&quot; : &quot;...&quot;,
-				&quot;summary&quot; : &quot;...&quot;,
-				&quot;contactName&quot; : &quot;...&quot;,
-				&quot;contactEmail&quot; : &quot;...&quot;,
-				&quot;website&quot; : &quot;...&quot;,
-				&quot;address&quot; : &quot;...&quot;,
-				&quot;postcode&quot; : &quot;...&quot;,
-				&quot;phone&quot; : &quot;...&quot;,
-				&quot;allowPublicRegistration&quot; : false,
-				&quot;logo&quot; : &quot;...&quot;,
-				&quot;smallLogo&quot; : &quot;...&quot;,
-				&quot;hasLogo&quot; : false,
-				&quot;hasSmallLogo&quot; : false
-			},
-			&quot;contributingOrganisations&quot; : [ {
-				&quot;id&quot; : ...,
-				&quot;name&quot; : &quot;...&quot;,
-				&quot;abbreviation&quot; : &quot;...&quot;,
-				&quot;href&quot; : &quot;...&quot;,
-				&quot;summary&quot; : &quot;...&quot;,
-				&quot;contactName&quot; : &quot;...&quot;,
-				&quot;contactEmail&quot; : &quot;...&quot;,
-				&quot;website&quot; : &quot;...&quot;,
-				&quot;address&quot; : &quot;...&quot;,
-				&quot;postcode&quot; : &quot;...&quot;,
-				&quot;phone&quot; : &quot;...&quot;,
-				&quot;allowPublicRegistration&quot; : false,
-				&quot;logo&quot; : &quot;...&quot;,
-				&quot;smallLogo&quot; : &quot;...&quot;,
-				&quot;hasLogo&quot; : false,
-				&quot;hasSmallLogo&quot; : false
-			}, ... ],			
-			&quot;taxa&quot; : [ {
-				&quot;taxonVersionKey&quot; : &quot;...&quot;,
-				&quot;organismKey&quot; : &quot;...&quot;,
-				&quot;name&quot; : &quot;...&quot;,
-				&quot;authority&quot; : &quot;...&quot;,
-				&quot;rank&quot; : &quot;...&quot;,
-				&quot;taxonOutputGroupKey&quot; : &quot;...&quot;,
-				&quot;taxonOutputGroupName&quot; : &quot;...&quot;,
-				&quot;PTaxonVersionKey&quot; : &quot;...&quot;,
-				&quot;commonNameTaxonVersionKey&quot; : &quot;...&quot;,
-				&quot;commonName&quot; : &quot;...&quot;,
-				&quot;href&quot; : &quot;...&quot;,
-				&quot;languageKey&quot; : &quot;...&quot;,
-				&quot;nameStatus&quot; : &quot;...&quot;,
-				&quot;versionForm&quot; : &quot;...&quot;,
-				&quot;gatewayRecordCount&quot; : ...,	  
-				&quot;datasetKey&quot; : &quot;...&quot;,
-				&quot;observationCount&quot; : ...
-			}, ... ],			
-			&quot;observations&quot; : [ {
-				&quot;observationID&quot; : ...,
-				&quot;observationKey&quot; : &quot;...&quot;,
-				&quot;taxonVersionKey&quot; : &quot;...&quot;,
-				&quot;pTaxonVersionKey&quot; : &quot;...&quot;,
-				&quot;pTaxonName&quot; : &quot;...&quot;,
-				&quot;pTaxonAuthority&quot; : &quot;...&quot;,
-				&quot;datasetKey&quot; : &quot;...&quot;,
-				&quot;surveyKey&quot; : &quot;...&quot;,
-				&quot;sampleKey&quot; : &quot;...&quot;,
-				&quot;recorder&quot; : &quot;...&quot;,
-				&quot;determiner&quot; : &quot;...&quot;,
-				&quot;startDate&quot; : &quot;...&quot;,
-				&quot;endDate&quot; : &quot;...&quot;,
-				&quot;dateType&quot; : &quot;...&quot;,
-				&quot;featureID&quot; : ...,
-				&quot;location&quot; : &quot;...&quot;,
-				&quot;gridRef&quot; : &quot;...&quot;,
-				&quot;siteKey&quot; : &quot;...&quot;,
-				&quot;siteName&quot; : &quot;...&quot;
-				&quot;polygonKey&quot; : &quot;...&quot;,
-				&quot;resolution&quot; : &quot;...&quot;,
-				&quot;projection&quot; : &quot;...&quot;,
-				&quot;sensitive&quot; : false,
-				&quot;absence&quot; : false,
-				&quot;fullVersion&quot; : false
-			}, ... ],
-			&quot;recordsPerYear&quot; : [ {
-				&quot;recordCount&quot; : ...,
-				&quot;year&quot; : ...
-			}, ... ],
-			&quot;dateTypeStats&quot; : [ {
-				&quot;recordCount&quot; : ...,
-				&quot;dateTypeName&quot; : &quot;...&quot;
-			}, ... ],
-			&quot;publicAttribute&quot; : false,
-			&quot;publicRecorder&quot; : false,
-			&quot;publicResolution&quot; : &quot;...&quot;,
-			&quot;maxResolution&quot; : &quot;...&quot;,
-			&quot;purpose&quot; : &quot;...&quot;,
-			&quot;captureMethod&quot; : &quot;...&quot;,
-			&quot;geographicalCoverage&quot; : &quot;...&quot;,
-			&quot;temporalCoverage&quot; : &quot;...&quot;,
-			&quot;quality&quot; : &quot;...&quot;,
-			&quot;additionalInformation&quot; : &quot;...&quot;,
-			&quot;accessConstraints&quot; : &quot;...&quot;,
-			&quot;useConstraints&quot; : &quot;...&quot;			
-			&quot;conditionsAccepted&quot; : false,
-			&quot;allowRecordValidation&quot; : false,
-			&quot;dateUploaded&quot; : &quot;...&quot;,
-			&quot;updateFrequency&quot; : &quot;...&quot;,
-			&quot;metadataLastEdited&quot; : &quot;...&quot;,
-			&quot;speciesCount&quot; : ...,	
-			&quot;recordCount&quot; : ...
-		},
-		&quot;accessPositions&quot; : [ {
-			&quot;filterText&quot; : &quot;...&quot;,
-			&quot;owner&quot; : &quot;...&quot;
-		}, ... ],
-		&quot;querySpecificSensitiveObservationCount&quot; : ...,
-		&quot;querySpecificObservationCount&quot; : ...
-	}, ... ],
-	&quot;querySpecificObservationCount&quot; : ...,
+		&quot;active&quot; : false,
+		&quot;allowEmailAlerts&quot; : false,
+		&quot;subscribedToNBNMarketting&quot; : false,
+		&quot;subscribedToAdminMails&quot; : false,
+		&quot;registrationDate&quot; : &quot;...&quot;
+	},
+	&quot;newEmail&quot; : &quot;...&quot;,
+	&quot;activationKey&quot; : &quot;...&quot;,
+	&quot;requestDate&quot; : &quot;...&quot;
 }</code>
 
       <div class="clear" />
