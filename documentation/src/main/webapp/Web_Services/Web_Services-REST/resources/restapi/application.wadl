@@ -70,19 +70,6 @@
         </wadl:response>
       </wadl:method>
     </wadl:resource>
-    <wadl:resource path="/api/organisationMemberships">
-      <wadl:method name="GET">
-        <wadl:doc>
-          <![CDATA[Return a list of all organisation memberships from the data warehouse]]>
-        </wadl:doc>
-        <wadl:response>
-          <wadl:doc>
-            <![CDATA[A list of all organisation memberships from the data warehouse]]>
-          </wadl:doc>
-          <wadl:representation mediaType="application/json"/>
-        </wadl:response>
-      </wadl:method>
-    </wadl:resource>
     <wadl:resource path="/api/organisations">
       <wadl:method name="GET">
         <wadl:doc>
@@ -173,9 +160,7 @@ IMT requires the exclusion of records that are of type 'organisation')]]>
     <wadl:resource path="/api/statistics">
       <wadl:method name="GET">
         <wadl:doc>
-          <![CDATA[Return a set of statistics about the current status of the NBN records
-
-TODO populate this from the database]]>
+          <![CDATA[Return a set of statistics about the current status of the NBN records]]>
         </wadl:doc>
         <wadl:response>
           <wadl:doc>
@@ -311,6 +296,7 @@ records]]>
               <![CDATA[Any required taxon output groups]]>
             </wadl:doc>
           </wadl:param>
+          <wadl:param name="orgSuppliedList" style="query"/>
           <wadl:param name="gridRef" style="query">
             <wadl:doc>
               <![CDATA[Any grid references to search within]]>
@@ -329,6 +315,19 @@ and presence records are returned.  Valid values are 'true' and 'false']]>
             </wadl:doc>
           </wadl:param>
         </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[A list of Taxon Observations conforming to the provided search
+parameters]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+      <wadl:method name="POST">
+        <wadl:doc>
+          <![CDATA[Returns a list of Taxon Observations matching the given serach parameters]]>
+        </wadl:doc>
+        <wadl:request/>
         <wadl:response>
           <wadl:doc>
             <![CDATA[A list of Taxon Observations conforming to the provided search
@@ -383,10 +382,42 @@ parameters]]>
         </wadl:response>
       </wadl:method>
     </wadl:resource>
+    <wadl:resource path="/api/apiViews/{datasetKey }">
+      <wadl:param name="datasetKey" style="template">
+        <wadl:doc>
+          <![CDATA[The dataset key of the dataset]]>
+        </wadl:doc>
+      </wadl:param>
+      <wadl:method name="GET">
+        <wadl:doc>
+          <![CDATA[Return a list of api observation views which give the filters used and
+the number of records viewed at via the API, includes portal operations
+which return full records to the user.]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:param name="startDate" style="query">
+            <wadl:doc>
+              <![CDATA[(Optional) A start date to search for views from (must have an end date)]]>
+            </wadl:doc>
+          </wadl:param>
+          <wadl:param name="endDate" style="query">
+            <wadl:doc>
+              <![CDATA[(Optional) An end date to search for views until (must have a start date)]]>
+            </wadl:doc>
+          </wadl:param>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[A list of ApiObservationViewStatistic's for this dataset and any date filters]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+    </wadl:resource>
     <wadl:resource path="/api/datasets/adminable">
       <wadl:method name="GET">
         <wadl:doc>
-          <![CDATA[Returns a list of datasets the user can admin]]>
+          <![CDATA[Returns a list of datasets the user is administrator of]]>
         </wadl:doc>
         <wadl:request/>
         <wadl:response>
@@ -438,8 +469,8 @@ notifications switched on for]]>
         </wadl:response>
       </wadl:method>
     </wadl:resource>
-    <wadl:resource path="/api/datasets/{datasetKey}">
-      <wadl:param name="datasetKey" style="template">
+    <wadl:resource path="/api/datasets/{id}">
+      <wadl:param name="id" style="template">
         <wadl:doc>
           <![CDATA[ID of a dataset i.e. GA000466]]>
         </wadl:doc>
@@ -601,7 +632,7 @@ given parameters, specifically the Taxon Version Key supplied]]>
               <![CDATA[A list of bands]]>
             </wadl:doc>
           </wadl:param>
-          <wadl:param name="datasetKey" style="query">
+          <wadl:param name="datasets" style="query">
             <wadl:doc>
               <![CDATA[A list of datasets to restrict the search to]]>
             </wadl:doc>
@@ -708,6 +739,20 @@ the core database]]>
           <wadl:doc>
             <![CDATA[A list of organisation memberships for a given organisation from
 the core database]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+    </wadl:resource>
+    <wadl:resource path="/api/organisations/contributing">
+      <wadl:method name="GET">
+        <wadl:doc>
+          <![CDATA[Get a list of all organisation from the data warehouse that have
+contributed at least 1 dataset]]>
+        </wadl:doc>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[A list of organisations that have at least 1 dataset]]>
           </wadl:doc>
           <wadl:representation mediaType="application/json"/>
         </wadl:response>
@@ -1362,6 +1407,7 @@ by species, conforming to the provided search parameters]]>
               <![CDATA[Any required taxon output groups]]>
             </wadl:doc>
           </wadl:param>
+          <wadl:param name="orgSuppliedList" style="query"/>
           <wadl:param name="gridRef" style="query">
             <wadl:doc>
               <![CDATA[Any grid references to search within]]>
@@ -1622,6 +1668,25 @@ logged in)]]>
           <wadl:representation mediaType="application/json"/>
         </wadl:response>
       </wadl:method>
+      <wadl:method name="POST">
+        <wadl:doc>
+          <![CDATA[Log the indicated user into the system, via a POST]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:param name="remember" style="query">
+            <wadl:doc>
+              <![CDATA[Whether the browser should remember this data (stay
+logged in)]]>
+            </wadl:doc>
+          </wadl:param>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[A Response object detailing the success or failure of the action]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
     </wadl:resource>
     <wadl:resource path="/api/user/logout">
       <wadl:method name="GET">
@@ -1702,17 +1767,52 @@ of the specified organisation]]>
     <wadl:resource path="/api/user/{userID}">
       <wadl:param name="userID" style="template">
         <wadl:doc>
-          <![CDATA[The user ID to search for]]>
+          <![CDATA[The id of a user to get details for]]>
         </wadl:doc>
       </wadl:param>
       <wadl:method name="GET">
         <wadl:doc>
-          <![CDATA[Return the details of the selected user if the current user is an admin
-of any organisation or dataset]]>
+          <![CDATA[Get a set of limited user details about a given user, used for dataset
+and organisation admin functions]]>
         </wadl:doc>
         <wadl:request/>
         <wadl:response>
+          <wadl:doc>
+            <![CDATA[A limited set of details about the user]]>
+          </wadl:doc>
           <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+    </wadl:resource>
+    <wadl:resource path="/api/apiViews/{datasetKey }/csv">
+      <wadl:param name="datasetKey" style="template">
+        <wadl:doc>
+          <![CDATA[The dataset key of the dataset]]>
+        </wadl:doc>
+      </wadl:param>
+      <wadl:method name="GET">
+        <wadl:doc>
+          <![CDATA[Return a zip file containing a CSV list of api observation views which
+give the filters used and the number of records viewed at via the API,
+includes portal operations which return full records to the user.]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:param name="startDate" style="query">
+            <wadl:doc>
+              <![CDATA[(Optional) A start date to search for views from (must have an end date)]]>
+            </wadl:doc>
+          </wadl:param>
+          <wadl:param name="endDate" style="query">
+            <wadl:doc>
+              <![CDATA[(Optional) An end date to search for views until (must have a start date)]]>
+            </wadl:doc>
+          </wadl:param>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[A ZIP file containing a CSV list of ApiObservationViewStatistic's for this dataset and any date filters]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/x-zip-compressed"/>
         </wadl:response>
       </wadl:method>
     </wadl:resource>
@@ -1728,9 +1828,6 @@ of any organisation or dataset]]>
         </wadl:doc>
         <wadl:request/>
         <wadl:response>
-          <wadl:doc>
-            <![CDATA[A list of attributes relating to the specified dataset]]>
-          </wadl:doc>
           <wadl:representation mediaType="application/json"/>
         </wadl:response>
       </wadl:method>
@@ -1743,19 +1840,18 @@ of any organisation or dataset]]>
       </wadl:param>
       <wadl:method name="POST">
         <wadl:doc>
-          <![CDATA[Add an admin user to the selected dataset, if the current user is already
-an admin of this dataset]]>
+          <![CDATA[Add a selected user as  dataset admin, the current user must be a
+dataset admin to do this]]>
         </wadl:doc>
         <wadl:request>
           <wadl:doc>
-            <![CDATA[JSON object containing a userID of the user who is being
-added as an admin]]>
+            <![CDATA[A DatasetAdminMembershipJSON object detailing the user to be made an admin]]>
           </wadl:doc>
           <wadl:representation mediaType="application/json"/>
         </wadl:request>
         <wadl:response>
           <wadl:doc>
-            <![CDATA[OpResult object detailing the success or failure of an operation]]>
+            <![CDATA[An OpResult detailing the success or failure of the operation]]>
           </wadl:doc>
           <wadl:representation mediaType="application/json"/>
         </wadl:response>
@@ -1815,35 +1911,12 @@ and admin of that dataset.]]>
       </wadl:param>
       <wadl:method name="GET">
         <wadl:doc>
-          <![CDATA[Return a list of users to notify when a dataset has been downloaded, if
-the requesting user is not an admin of this dataset return a 403
-Forbidden]]>
+          <![CDATA[Return a list of users to notify when a dataset has been downloaded]]>
         </wadl:doc>
         <wadl:request/>
         <wadl:response>
           <wadl:doc>
             <![CDATA[A list of users to notify]]>
-          </wadl:doc>
-          <wadl:representation mediaType="application/json"/>
-        </wadl:response>
-      </wadl:method>
-    </wadl:resource>
-    <wadl:resource path="/api/datasets/{datasetKey}/edit">
-      <wadl:param name="datasetKey" style="template">
-        <wadl:doc>
-          <![CDATA[ID of a dataset i.e. GA000466]]>
-        </wadl:doc>
-      </wadl:param>
-      <wadl:method name="GET">
-        <wadl:doc>
-          <![CDATA[Returns a selected dataset from the core database if the current user is
-an admin of the specified dataset otherwise returns a 403 Forbidden error]]>
-        </wadl:doc>
-        <wadl:request/>
-        <wadl:response>
-          <wadl:doc>
-            <![CDATA[A selected dataset from the core database if the current user is
-an admin of the specified dataset]]>
           </wadl:doc>
           <wadl:representation mediaType="application/json"/>
         </wadl:response>
@@ -1878,20 +1951,18 @@ dataset / survey metadata]]>
       </wadl:param>
       <wadl:method name="POST">
         <wadl:doc>
-          <![CDATA[Removes admin rights of a selected user over a dataset, only if the
-current user is an admin of the selected dataset, can remove your own
-rights]]>
+          <![CDATA[Remove the selected user as  dataset admin, the current user must be a
+dataset admin to do this, you can remove your own admin rights]]>
         </wadl:doc>
         <wadl:request>
           <wadl:doc>
-            <![CDATA[JSON object containing a userID of the user whose admin
-rights are being removed]]>
+            <![CDATA[A DatasetAdminMembershipJSON object detailing the user to be have admin rights revoked]]>
           </wadl:doc>
           <wadl:representation mediaType="application/json"/>
         </wadl:request>
         <wadl:response>
           <wadl:doc>
-            <![CDATA[OpResult object detailing the success or failure of an operation]]>
+            <![CDATA[An OpResult detailing the success or failure of the operation]]>
           </wadl:doc>
           <wadl:representation mediaType="application/json"/>
         </wadl:response>
@@ -1952,6 +2023,27 @@ a dataset admin or org admin for this dataset]]>
         <wadl:response>
           <wadl:doc>
             <![CDATA[Success or failure of the operation]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+    </wadl:resource>
+    <wadl:resource path="/api/datasets/{id}/edit">
+      <wadl:param name="id" style="template">
+        <wadl:doc>
+          <![CDATA[ID of a dataset i.e. GA000466]]>
+        </wadl:doc>
+      </wadl:param>
+      <wadl:method name="GET">
+        <wadl:doc>
+          <![CDATA[Returns a selected dataset from the core database if the current user is
+an admin of the specified dataset otherwise returns a 403 Forbidden error]]>
+        </wadl:doc>
+        <wadl:request/>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[A selected dataset from the core database if the current user is
+an admin of the specified dataset]]>
           </wadl:doc>
           <wadl:representation mediaType="application/json"/>
         </wadl:response>
@@ -2190,6 +2282,48 @@ user who has admin rights over the organisation]]>
         </wadl:response>
       </wadl:method>
     </wadl:resource>
+    <wadl:resource path="/api/organisationMemberships/{id}/isMember">
+      <wadl:param name="id" style="template">
+        <wadl:doc>
+          <![CDATA[An organisation ID]]>
+        </wadl:doc>
+      </wadl:param>
+      <wadl:method name="GET">
+        <wadl:doc>
+          <![CDATA[Return true if a user is a member of a given organisation from the core
+database]]>
+        </wadl:doc>
+        <wadl:request/>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[True if a user is a member of a given organisation from the core
+database]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+    </wadl:resource>
+    <wadl:resource path="/api/organisationMemberships/{id}/isadmin">
+      <wadl:param name="id" style="template">
+        <wadl:doc>
+          <![CDATA[An organisation ID]]>
+        </wadl:doc>
+      </wadl:param>
+      <wadl:method name="GET">
+        <wadl:doc>
+          <![CDATA[Return true if a user is an admin of a given organisation from the core
+database]]>
+        </wadl:doc>
+        <wadl:request/>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[True if a user is an admin of a given organisation from the core
+database]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+    </wadl:resource>
     <wadl:resource path="/api/organisationMemberships/{id}/join">
       <wadl:param name="id" style="template">
         <wadl:doc>
@@ -2309,11 +2443,7 @@ organisation]]>
           <![CDATA[An organisation ID]]>
         </wadl:doc>
       </wadl:param>
-      <wadl:param name="user" style="template">
-        <wadl:doc>
-          <![CDATA[A Users ID]]>
-        </wadl:doc>
-      </wadl:param>
+      <wadl:param name="user" style="template"/>
       <wadl:method name="GET">
         <wadl:doc>
           <![CDATA[Return the organisation membership details for a given user and
@@ -2555,6 +2685,25 @@ Taxon Record]]>
             <![CDATA[A List of Taxon Designations that apply to a specified record]]>
           </wadl:doc>
           <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+    </wadl:resource>
+    <wadl:resource path="/api/taxa/{taxonVersionKey}/inspire">
+      <wadl:param name="taxonVersionKey" style="template">
+        <wadl:doc>
+          <![CDATA[A Taxon Version Key denoting a Taxon Record]]>
+        </wadl:doc>
+      </wadl:param>
+      <wadl:method name="GET">
+        <wadl:doc>
+          <![CDATA[Return a specific INSPIRE Taxon Dataset record from the data warehouse]]>
+        </wadl:doc>
+        <wadl:request/>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[GEMINI2.1 Dataset Metadata]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml"/>
         </wadl:response>
       </wadl:method>
     </wadl:resource>
@@ -2970,6 +3119,7 @@ parameters]]>
               <![CDATA[Any required taxon output groups]]>
             </wadl:doc>
           </wadl:param>
+          <wadl:param name="orgSuppliedList" style="query"/>
           <wadl:param name="gridRef" style="query">
             <wadl:doc>
               <![CDATA[Any grid references to search within]]>
@@ -3110,7 +3260,7 @@ search parameters]]>
               <![CDATA[Any required designations]]>
             </wadl:doc>
           </wadl:param>
-          <wadl:param name="organisationList" style="query"/>
+          <wadl:param name="orgSuppliedList" style="query"/>
           <wadl:param name="taxonOutputGroup" style="query">
             <wadl:doc>
               <![CDATA[Any required taxon output groups]]>
@@ -3224,6 +3374,28 @@ username form]]>
         </wadl:response>
       </wadl:method>
     </wadl:resource>
+    <wadl:resource path="/api/user/modify/email">
+      <wadl:method name="POST">
+        <wadl:doc>
+          <![CDATA[Post an update to your users email address, this is a two stage process
+and will not alter the email address until it has been confirmed by the
+user using an activation key sent to the new email address]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:doc>
+            <![CDATA[The new email for this user]]>
+          </wadl:doc>
+          <wadl:representation mediaType="*/*"/>
+          <wadl:representation mediaType="application/xml"/>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[A success or failure message depending on the outcome]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+    </wadl:resource>
     <wadl:resource path="/api/user/passwords/change">
       <wadl:method name="PUT">
         <wadl:doc>
@@ -3292,16 +3464,19 @@ details]]>
     <wadl:resource path="/api/user/{userID}/organisations">
       <wadl:param name="userID" style="template">
         <wadl:doc>
-          <![CDATA[The user ID to search for]]>
+          <![CDATA[The id of the user to get a list of organisations for]]>
         </wadl:doc>
       </wadl:param>
       <wadl:method name="GET">
         <wadl:doc>
-          <![CDATA[Return the details of the selected users organisation memberships if the
-current user is an admin of any organisation or dataset]]>
+          <![CDATA[Get a list of organisations for which a given user is a member, used for
+dataset and organisation admin functions]]>
         </wadl:doc>
         <wadl:request/>
         <wadl:response>
+          <wadl:doc>
+            <![CDATA[A list of organisations that the user is a member of]]>
+          </wadl:doc>
           <wadl:representation mediaType="application/json"/>
         </wadl:response>
       </wadl:method>
@@ -3474,7 +3649,7 @@ Organisations that a user administers]]>
       </wadl:param>
       <wadl:method name="PUT">
         <wadl:doc>
-          <![CDATA[Edit an existing Organisation Access Request for data]]>
+          <![CDATA[Edit and grant existing Organisation Access Request for data]]>
         </wadl:doc>
         <wadl:request>
           <wadl:doc>
@@ -3510,6 +3685,18 @@ Organisations that a user administers]]>
           <wadl:doc>
             <![CDATA[A Response object detailing the success or failure of the action]]>
           </wadl:doc>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+    </wadl:resource>
+    <wadl:resource path="/api/organisation/organisationAccesses/reset/{dataset}">
+      <wadl:param name="dataset" style="template"/>
+      <wadl:method name="GET">
+        <wadl:doc>
+          <![CDATA[SysAdmin function to reset accesses]]>
+        </wadl:doc>
+        <wadl:request/>
+        <wadl:response>
           <wadl:representation mediaType="application/json"/>
         </wadl:response>
       </wadl:method>
@@ -3561,58 +3748,6 @@ taxon navigation group ID]]>
         </wadl:response>
       </wadl:method>
     </wadl:resource>
-    <wadl:resource path="/api/organisationMemberships/{id}/{user}/isMember">
-      <wadl:param name="id" style="template">
-        <wadl:doc>
-          <![CDATA[An organisation ID]]>
-        </wadl:doc>
-      </wadl:param>
-      <wadl:param name="user" style="template">
-        <wadl:doc>
-          <![CDATA[A Users ID]]>
-        </wadl:doc>
-      </wadl:param>
-      <wadl:method name="GET">
-        <wadl:doc>
-          <![CDATA[Return true if a user is a member of a given organisation from the core
-database]]>
-        </wadl:doc>
-        <wadl:request/>
-        <wadl:response>
-          <wadl:doc>
-            <![CDATA[True if a user is a member of a given organisation from the core
-database]]>
-          </wadl:doc>
-          <wadl:representation mediaType="application/json"/>
-        </wadl:response>
-      </wadl:method>
-    </wadl:resource>
-    <wadl:resource path="/api/organisationMemberships/{id}/{user}/isadmin">
-      <wadl:param name="id" style="template">
-        <wadl:doc>
-          <![CDATA[An organisation ID]]>
-        </wadl:doc>
-      </wadl:param>
-      <wadl:param name="user" style="template">
-        <wadl:doc>
-          <![CDATA[A Users ID]]>
-        </wadl:doc>
-      </wadl:param>
-      <wadl:method name="GET">
-        <wadl:doc>
-          <![CDATA[Return true if a user is an admin of a given organisation from the core
-database]]>
-        </wadl:doc>
-        <wadl:request/>
-        <wadl:response>
-          <wadl:doc>
-            <![CDATA[True if a user is an admin of a given organisation from the core
-database]]>
-          </wadl:doc>
-          <wadl:representation mediaType="application/json"/>
-        </wadl:response>
-      </wadl:method>
-    </wadl:resource>
     <wadl:resource path="/api/taxa/{taxonVersionKey}/designations/archive">
       <wadl:param name="taxonVersionKey" style="template">
         <wadl:doc>
@@ -3631,6 +3766,25 @@ specified Taxon Record]]>
 record]]>
           </wadl:doc>
           <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+    </wadl:resource>
+    <wadl:resource path="/api/taxa/{taxonVersionKey}/inspire/service">
+      <wadl:param name="taxonVersionKey" style="template">
+        <wadl:doc>
+          <![CDATA[A Taxon Version Key denoting a Taxon Record]]>
+        </wadl:doc>
+      </wadl:param>
+      <wadl:method name="GET">
+        <wadl:doc>
+          <![CDATA[Return a specific INSPIRE Taxon Dataset record from the data warehouse]]>
+        </wadl:doc>
+        <wadl:request/>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[GEMINI2.1 Dataset Metadata]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/xml"/>
         </wadl:response>
       </wadl:method>
     </wadl:resource>
@@ -4105,7 +4259,7 @@ granted]]>
       </wadl:param>
       <wadl:method name="PUT">
         <wadl:doc>
-          <![CDATA[Edit an existing User Access Request]]>
+          <![CDATA[Edit and then grant an existing User Access Request]]>
         </wadl:doc>
         <wadl:request>
           <wadl:doc>
@@ -4145,6 +4299,18 @@ the request, otherwise return a 403 Forbidden error]]>
           <wadl:doc>
             <![CDATA[A Response object detailing the success or failure of the action]]>
           </wadl:doc>
+          <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+    </wadl:resource>
+    <wadl:resource path="/api/user/userAccesses/reset/{dataset}">
+      <wadl:param name="dataset" style="template"/>
+      <wadl:method name="GET">
+        <wadl:doc>
+          <![CDATA[SysAdmin function to reset accesses]]>
+        </wadl:doc>
+        <wadl:request/>
+        <wadl:response>
           <wadl:representation mediaType="application/json"/>
         </wadl:response>
       </wadl:method>
@@ -4276,6 +4442,61 @@ organisation that are pending]]>
 organisation that are pending]]>
           </wadl:doc>
           <wadl:representation mediaType="application/json"/>
+        </wadl:response>
+      </wadl:method>
+    </wadl:resource>
+    <wadl:resource path="/api/taxonObservations/download/report/{datasetKey }/csv">
+      <wadl:param name="datasetKey" style="template">
+        <wadl:doc>
+          <![CDATA[A dataset key i.e. GA000466]]>
+        </wadl:doc>
+      </wadl:param>
+      <wadl:method name="GET">
+        <wadl:doc>
+          <![CDATA[Return a complete list of download reports for the selected dataset as a
+CSV file, the current user must be an admin of this dataset]]>
+        </wadl:doc>
+        <wadl:request>
+          <wadl:param name="json" style="query">
+            <wadl:doc>
+              <![CDATA[JSON object containing a download stats query, please see
+<a href="downloadStatsJSON.html">Additional Documentation</a> for more
+details]]>
+            </wadl:doc>
+          </wadl:param>
+        </wadl:request>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[A list of download reports for this dataset]]>
+          </wadl:doc>
+          <wadl:representation mediaType="application/x-zip-compressed"/>
+        </wadl:response>
+      </wadl:method>
+    </wadl:resource>
+    <wadl:resource path="/api/user/modify/email/activate/{key}">
+      <wadl:param name="email" style="template">
+        <wadl:doc>
+          <![CDATA[The new email address that the user wants to change to]]>
+        </wadl:doc>
+      </wadl:param>
+      <wadl:param name="key" style="template">
+        <wadl:doc>
+          <![CDATA[The activation key from the email sent to the new users email account]]>
+        </wadl:doc>
+      </wadl:param>
+      <wadl:method name="GET">
+        <wadl:doc>
+          <![CDATA[Second stage of the email modification process, confirms that the user
+has actually requested this modification, using the activation key sent
+to the new users email address]]>
+        </wadl:doc>
+        <wadl:request/>
+        <wadl:response>
+          <wadl:doc>
+            <![CDATA[The success or failure of this operation]]>
+          </wadl:doc>
+          <wadl:representation mediaType="*/*"/>
+          <wadl:representation mediaType="application/xml"/>
         </wadl:response>
       </wadl:method>
     </wadl:resource>

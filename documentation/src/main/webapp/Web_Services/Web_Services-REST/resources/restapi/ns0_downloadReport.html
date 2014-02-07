@@ -60,6 +60,8 @@
               <ul>
                 <li><a href="ns0_accessPosition.html">accessPosition</a></li>
                 <li><a href="ns0_accessRequest.html">accessRequest</a></li>
+                <li><a href="ns0_apiObservationView.html">apiObservationView</a></li>
+                <li><a href="ns0_apiObservationViewStatistic.html">apiObservationViewStatistic</a></li>
                 <li><a href="ns0_attribute.html">attribute</a></li>
                 <li><a href="ns0_boundingBox.html">boundingBox</a></li>
                 <li><a href="ns0_contributingOrganisation.html">contributingOrganisation</a></li>
@@ -98,7 +100,6 @@
                 <li><a href="ns0_taxonDatasetWithQueryStats.html">taxonDatasetWithQueryStats</a></li>
                 <li><a href="ns0_taxonDesignation.html">taxonDesignation</a></li>
                 <li><a href="ns0_taxonNavigationGroup.html">taxonNavigationGroup</a></li>
-                <li><a href="ns0_taxonObseravtionDownload.html">taxonObseravtionDownload</a></li>
                 <li><a href="ns0_taxonObservation.html">taxonObservation</a></li>
                 <li><a href="ns0_taxonObservationAttribute.html">taxonObservationAttribute</a></li>
                 <li><a href="ns0_taxonObservationAttributeValue.html">taxonObservationAttributeValue</a></li>
@@ -113,6 +114,7 @@
                 <li><a href="ns0_userAccessRequest.html">userAccessRequest</a></li>
                 <li><a href="ns0_userAccessRequestAuditHistory.html">userAccessRequestAuditHistory</a></li>
                 <li><a href="ns0_userDownloadNotification.html">userDownloadNotification</a></li>
+                <li><a href="ns0_userEmailModify.html">userEmailModify</a></li>
                 <li><a href="ns0_userRoleChangeJSON.html">userRoleChangeJSON</a></li>
                 <li><a href="ns0_yearStats.html">yearStats</a></li>
               </ul>
@@ -141,92 +143,7 @@
           <th>type</th>
           <th>description</th>
         </tr>
-		<tr>
-          <td>userID</td>
-          <td>
-              userID (int)
-          </td>
-          <td>The ID of the user who downloaded the records</td>
-        </tr>
-		<tr>
-          <td>forename</td>
-          <td>
-              forename (string)
-          </td>
-          <td>The forename of the user who downloaded the records</td>
-        </tr>
-		<tr>
-          <td>surname</td>
-          <td>
-              surname (string)
-          </td>
-          <td>The surname of the user who downloaded the records</td>
-        </tr>
         <tr>
-          <td>email</td>
-          <td>
-              email (string)
-          </td>
-          <td>The email address of the user who downloaded the records</td>
-        </tr>
-		<tr>
-          <td>organisationID</td>
-          <td>
-              organisationID (int)
-          </td>
-          <td>The ID of the organisation that the download was made for (Optional)</td>
-        </tr>
-		<tr>
-          <td>organisationName</td>
-          <td>
-              organisationName (string)
-          </td>
-          <td>The name of the organisation that the download was made for (Optional)</td>
-        </tr>
-		<tr>
-          <td>purposeID</td>
-          <td>
-              purposeID (int)
-          </td>
-          <td>
-			A purpose ID;
-			<ul>
-				<li>0 -</li>
-				<li>1 -</li>
-				<li>2 -</li>
-				<li>3 -</li>
-				<li>4 -</li>
-				<li>5 -</li>
-				<li>6 -</li>
-				<li>7 -</li>
-				<li>8 -</li>
-				<li>9 -</li>
-			</ul>
-		  </td>
-        </tr>
-		<tr>
-          <td>reason</td>
-          <td>
-              reason (string)
-          </td>
-          <td>The reason for this download</td>
-        </tr>
-		<tr>
-          <td>purpose</td>
-          <td>
-              purpose (string)
-          </td>
-          <td>(Not Used)</td>
-        </tr>
-		
-        <tr>
-          <td>datasetKey</td>
-          <td>
-              datasetKey (string)
-          </td>
-          <td>The dataset Key of the dataset downloaded from (more than one download report is possible per download, handled on per dataset)</td>
-        </tr>
-		<tr>
           <td>filterID</td>
           <td>
               filterID (string)
@@ -246,22 +163,98 @@
               filterText (string)
           </td>
           <td>A text representation of the filter used for this download</td>
-        </tr>      
-        <tr>
-          <td>totalDownloaded</td>
-          <td>
-              totalDownloaded (int)
-          </td>
-          <td>The total number of records in this download</td>
         </tr>
 		<tr>
+          <td>userID</td>
+          <td>
+              userID (int)
+          </td>
+          <td>The ID of the user who downloaded the records</td>
+        </tr>
+        <tr>
+          <td>forename</td>
+          <td>
+              forename (string)
+          </td>
+          <td>The forename of the user who downloaded the records</td>
+        </tr>
+        <tr>
+          <td>surname</td>
+          <td>
+              surname (string)
+          </td>
+          <td>The surname of the user who downloaded the records</td>
+        </tr>
+        <tr>
+          <td>email</td>
+          <td>
+              email (string)
+          </td>
+          <td>The email address of the user who downloaded the records</td>
+        </tr>
+        <tr>
+          <td>organisationID</td>
+          <td>
+              organisationID (int)
+          </td>
+          <td>The ID of the organisation that the download was made for (Optional)</td>
+        </tr>		
+        <tr>
+          <td>organisationName</td>
+          <td>
+              organisationName (string)
+          </td>
+          <td>The name of the organisation that the download was made for (Optional)</td>
+        </tr>		
+		<tr>
+          <td>datasetKey</td>
+          <td>
+              datasetKey (string)
+          </td>
+          <td>The dataset Key of the dataset downloaded from (more than one download report is possible per download, handled on per dataset)</td>
+        </tr>
+        <tr>
+          <td>purposeID</td>
+          <td>
+              purposeID (int)
+          </td>
+         <td>
+			A purpose ID;
+			<ul>
+				<li>1 - Personal interest</li>
+				<li>2 - Educational purposes</li>
+				<li>3 - Research and scientific analysis</li>
+				<li>4 - Media publication</li>
+				<li>5 - Conservation NGO work</li>
+				<li>6 - Professional land management</li>
+				<li>7 - Data provision and interpretation (commercial)</li>
+				<li>8 - Data provision and interpretation (non-profit)</li>
+				<li>9 - Statutory work</li>
+			</ul>
+		  </td>
+        </tr>
+        <tr>
+          <td>purpose</td>
+          <td>
+              purpose (string)
+          </td>
+          <td>(Not Used)</td>
+        </tr>
+        <tr>
+          <td>reason</td>
+          <td>
+              reason (string)
+          </td>
+          <td>The reason for this download</td>
+        </tr>		
+        <tr>
           <td>recordCount</td>
           <td>
               recordCount (int)
           </td>
           <td>The total number of records downloaded from this dataset in this download</td>
         </tr>
-		<tr>
+        <tr>
           <td>totalRecords</td>
           <td>
               totalRecords (int)
@@ -269,6 +262,13 @@
           <td>The total number of records in this dataset</td>
         </tr>
 		<tr>
+          <td>totalDownloaded</td>
+          <td>
+              totalDownloaded (int)
+          </td>
+          <td>The total number of records in this download</td>
+        </tr>
+        <tr>
           <td>downloadTime</td>
           <td>
               downloadTime (dateTime)

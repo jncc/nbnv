@@ -52,6 +52,7 @@
             <li class="current">
               <a href="resource_OrganisationMembershipResource.html">OrganisationMembershipResource</a>
               <ul>
+                <li><a href="resource_ApiViewResource.html">ApiViewResource</a></li>
                 <li><a href="resource_DatasetResource.html">DatasetResource</a></li>
                 <li><a href="resource_DesignationCategoryResource.html">DesignationCategoryResource</a></li>
                 <li><a href="resource_DesignationResource.html">DesignationResource</a></li>
@@ -87,12 +88,11 @@
       <p></p>
       <p>The following resources are applicable:</p>
       <ul>
-        <li><a href="#path__organisationMemberships.html">/organisationMemberships</a></li>
         <li><a href="#path__organisationMemberships_-id-.html">/organisationMemberships/{id}</a></li>
         <li><a href="#path__organisationMemberships_-id-_-user-.html">/organisationMemberships/{id}/{user}</a></li>
-        <li><a href="#path__organisationMemberships_-id-_-user-_isadmin.html">/organisationMemberships/{id}/{user}/isadmin</a></li>
-        <li><a href="#path__organisationMemberships_-id-_-user-_isMember.html">/organisationMemberships/{id}/{user}/isMember</a></li>
         <li><a href="#path__organisationMemberships_-id-_addUser.html">/organisationMemberships/{id}/addUser</a></li>
+        <li><a href="#path__organisationMemberships_-id-_isadmin.html">/organisationMemberships/{id}/isadmin</a></li>
+        <li><a href="#path__organisationMemberships_-id-_isMember.html">/organisationMemberships/{id}/isMember</a></li>
         <li><a href="#path__organisationMemberships_-id-_join.html">/organisationMemberships/{id}/join</a></li>
         <li><a href="#path__organisationMemberships_-id-_modifyUserRole.html">/organisationMemberships/{id}/modifyUserRole</a></li>
         <li><a href="#path__organisationMemberships_-id-_removeUser.html">/organisationMemberships/{id}/removeUser</a></li>
@@ -100,39 +100,6 @@
         <li><a href="#path__organisationMemberships_request_-id-.html">/organisationMemberships/request/{id}</a></li>
         <li><a href="#path__organisationMemberships_requests.html">/organisationMemberships/requests</a></li>
       </ul>
-      <a name="path__organisationMemberships.html"></a>
-      <h1>/organisationMemberships</h1>
-      <p class="note">Mount Point: <a href="../api/organisationMemberships">/api/organisationMemberships</a></p>
-      <a name="GET"></a>
-      <h2>GET</h2>
-      <p>
-            Return a list of all organisation memberships from the data warehouse
-          </p>
-      <h3>Response Body</h3>
-      <table>
-        <tr>
-          <td align="right">element:</td>
-          <td><a href="el_ns0_organisationMembership.html">organisationMembership</a></td>
-        </tr>
-        <tr>
-          <td align="right">media types:</td>
-          <td>application/json</td>
-        </tr>
-      </table>
-      <p>A list of all organisation memberships from the data warehouse</p>
-      <h3>Status Codes</h3>
-      <table>
-        <tr>
-          <th>code</th>
-          <th>description</th>
-        </tr>
-        <tr>
-          <td>200</td>
-          <td>
-            Successfully returned list of all organisation memberships
-          </td>
-        </tr>
-      </table>
       <a name="path__organisationMemberships_-id-.html"></a>
       <h1>/organisationMemberships/{id}</h1>
       <p class="note">Mount Point: <a href="../api/organisationMemberships/{id}">/api/organisationMemberships/{id}</a></p>
@@ -149,6 +116,15 @@ the core database
           <th>description</th>
           <th>type</th>
           <th>default</th>
+        </tr>
+        <tr>
+          <td>user</td>
+          <td>
+            The current user (must be an admin) (Injected Token no need
+to pass)
+          </td>
+          <td>tokenorganisationuser</td>
+          <td></td>
         </tr>
         <tr>
           <td>id</td>
@@ -184,6 +160,12 @@ the core database</p>
             Succesfully returned all organsiation memberships for the specified organisation
           </td>
         </tr>
+        <tr>
+          <td>403</td>
+          <td>
+            The user is not an administrator of this organisation
+          </td>
+        </tr>
       </table>
       <a name="path__organisationMemberships_-id-_-user-.html"></a>
       <h1>/organisationMemberships/{id}/{user}</h1>
@@ -203,6 +185,14 @@ organisation from the core database
           <th>default</th>
         </tr>
         <tr>
+          <td>user</td>
+          <td>
+            A Users ID
+          </td>
+          <td>tokenanydatasetororgadminuser</td>
+          <td></td>
+        </tr>
+        <tr>
           <td>id</td>
           <td>
             An organisation ID
@@ -213,7 +203,7 @@ organisation from the core database
         <tr>
           <td>user</td>
           <td>
-            A Users ID
+            (no documentation provided)
           </td>
           <td>path</td>
           <td></td>
@@ -244,124 +234,10 @@ organisation from the core database</p>
             Successfully returned request user organisation membership
           </td>
         </tr>
-      </table>
-      <a name="path__organisationMemberships_-id-_-user-_isadmin.html"></a>
-      <h1>/organisationMemberships/{id}/{user}/isadmin</h1>
-      <p class="note">Mount Point: <a href="../api/organisationMemberships/{id}/{user}/isadmin">/api/organisationMemberships/{id}/{user}/isadmin</a></p>
-      <a name="GET"></a>
-      <h2>GET</h2>
-      <p>
-            Return true if a user is an admin of a given organisation from the core
-database
-          </p>
-      <h3>Parameters</h3>
-      <table>
         <tr>
-          <th>name</th>
-          <th>description</th>
-          <th>type</th>
-          <th>default</th>
-        </tr>
-        <tr>
-          <td>id</td>
+          <td>403</td>
           <td>
-            An organisation ID
-          </td>
-          <td>path</td>
-          <td></td>
-        </tr>
-        <tr>
-          <td>user</td>
-          <td>
-            A Users ID
-          </td>
-          <td>path</td>
-          <td></td>
-        </tr>
-      </table>
-      <h3>Response Body</h3>
-      <table>
-        <tr>
-          <td align="right">element:</td>
-          <td>(custom)</td>
-        </tr>
-        <tr>
-          <td align="right">media types:</td>
-          <td>application/json</td>
-        </tr>
-      </table>
-      <p>True if a user is an admin of a given organisation from the core
-database</p>
-      <h3>Status Codes</h3>
-      <table>
-        <tr>
-          <th>code</th>
-          <th>description</th>
-        </tr>
-        <tr>
-          <td>200</td>
-          <td>
-            Returned if the selected user is an admin of this organisation
-          </td>
-        </tr>
-      </table>
-      <a name="path__organisationMemberships_-id-_-user-_isMember.html"></a>
-      <h1>/organisationMemberships/{id}/{user}/isMember</h1>
-      <p class="note">Mount Point: <a href="../api/organisationMemberships/{id}/{user}/isMember">/api/organisationMemberships/{id}/{user}/isMember</a></p>
-      <a name="GET"></a>
-      <h2>GET</h2>
-      <p>
-            Return true if a user is a member of a given organisation from the core
-database
-          </p>
-      <h3>Parameters</h3>
-      <table>
-        <tr>
-          <th>name</th>
-          <th>description</th>
-          <th>type</th>
-          <th>default</th>
-        </tr>
-        <tr>
-          <td>id</td>
-          <td>
-            An organisation ID
-          </td>
-          <td>path</td>
-          <td></td>
-        </tr>
-        <tr>
-          <td>user</td>
-          <td>
-            A Users ID
-          </td>
-          <td>path</td>
-          <td></td>
-        </tr>
-      </table>
-      <h3>Response Body</h3>
-      <table>
-        <tr>
-          <td align="right">element:</td>
-          <td>(custom)</td>
-        </tr>
-        <tr>
-          <td align="right">media types:</td>
-          <td>application/json</td>
-        </tr>
-      </table>
-      <p>True if a user is a member of a given organisation from the core
-database</p>
-      <h3>Status Codes</h3>
-      <table>
-        <tr>
-          <th>code</th>
-          <th>description</th>
-        </tr>
-        <tr>
-          <td>200</td>
-          <td>
-            Returned if the selected user is a member of this organisation
+            The current user is not an administrator of any dataset or organisation
           </td>
         </tr>
       </table>
@@ -440,6 +316,138 @@ user who has admin rights over the organisation
           <td>403</td>
           <td>
             The current user is not an organisation administrator
+          </td>
+        </tr>
+      </table>
+      <a name="path__organisationMemberships_-id-_isadmin.html"></a>
+      <h1>/organisationMemberships/{id}/isadmin</h1>
+      <p class="note">Mount Point: <a href="../api/organisationMemberships/{id}/isadmin">/api/organisationMemberships/{id}/isadmin</a></p>
+      <a name="GET"></a>
+      <h2>GET</h2>
+      <p>
+            Return true if a user is an admin of a given organisation from the core
+database
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>user</td>
+          <td>
+            The current user (Injected Token no need to pass)
+          </td>
+          <td>tokenuser</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>id</td>
+          <td>
+            An organisation ID
+          </td>
+          <td>path</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td>(custom)</td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/json</td>
+        </tr>
+      </table>
+      <p>True if a user is an admin of a given organisation from the core
+database</p>
+      <h3>Status Codes</h3>
+      <table>
+        <tr>
+          <th>code</th>
+          <th>description</th>
+        </tr>
+        <tr>
+          <td>200</td>
+          <td>
+            Returned if the selected user is an admin of this organisation
+          </td>
+        </tr>
+        <tr>
+          <td>401</td>
+          <td>
+            No current user is logged in
+          </td>
+        </tr>
+      </table>
+      <a name="path__organisationMemberships_-id-_isMember.html"></a>
+      <h1>/organisationMemberships/{id}/isMember</h1>
+      <p class="note">Mount Point: <a href="../api/organisationMemberships/{id}/isMember">/api/organisationMemberships/{id}/isMember</a></p>
+      <a name="GET"></a>
+      <h2>GET</h2>
+      <p>
+            Return true if a user is a member of a given organisation from the core
+database
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>user</td>
+          <td>
+            The current user (Injected Token no need to pass)
+          </td>
+          <td>tokenuser</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>id</td>
+          <td>
+            An organisation ID
+          </td>
+          <td>path</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td>(custom)</td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/json</td>
+        </tr>
+      </table>
+      <p>True if a user is a member of a given organisation from the core
+database</p>
+      <h3>Status Codes</h3>
+      <table>
+        <tr>
+          <th>code</th>
+          <th>description</th>
+        </tr>
+        <tr>
+          <td>200</td>
+          <td>
+            Returned if the selected user is a member of this organisation
+          </td>
+        </tr>
+        <tr>
+          <td>401</td>
+          <td>
+            No current user is logged in
           </td>
         </tr>
       </table>

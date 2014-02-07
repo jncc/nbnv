@@ -52,6 +52,7 @@
             <li class="current">
               <a href="resource_DatasetResource.html">DatasetResource</a>
               <ul>
+                <li><a href="resource_ApiViewResource.html">ApiViewResource</a></li>
                 <li><a href="resource_DatasetResource.html">DatasetResource</a></li>
                 <li><a href="resource_DesignationCategoryResource.html">DesignationCategoryResource</a></li>
                 <li><a href="resource_DesignationResource.html">DesignationResource</a></li>
@@ -88,19 +89,19 @@
       <p>The following resources are applicable:</p>
       <ul>
         <li><a href="#path__datasets.html">/datasets</a></li>
-        <li><a href="#path__datasets_-datasetKey-.html">/datasets/{datasetKey}</a></li>
         <li><a href="#path__datasets_-datasetKey-_accessPositions.html">/datasets/{datasetKey}/accessPositions</a></li>
         <li><a href="#path__datasets_-datasetKey-_addAdmin.html">/datasets/{datasetKey}/addAdmin</a></li>
         <li><a href="#path__datasets_-datasetKey-_admins.html">/datasets/{datasetKey}/admins</a></li>
         <li><a href="#path__datasets_-datasetKey-_contributing.html">/datasets/{datasetKey}/contributing</a></li>
         <li><a href="#path__datasets_-datasetKey-_contributing_-id-.html">/datasets/{datasetKey}/contributing/{id}</a></li>
         <li><a href="#path__datasets_-datasetKey-_downloadNotifications.html">/datasets/{datasetKey}/downloadNotifications</a></li>
-        <li><a href="#path__datasets_-datasetKey-_edit.html">/datasets/{datasetKey}/edit</a></li>
         <li><a href="#path__datasets_-datasetKey-_isAdmin.html">/datasets/{datasetKey}/isAdmin</a></li>
         <li><a href="#path__datasets_-datasetKey-_removeAdmin.html">/datasets/{datasetKey}/removeAdmin</a></li>
         <li><a href="#path__datasets_-datasetKey-_resolutionData.html">/datasets/{datasetKey}/resolutionData</a></li>
         <li><a href="#path__datasets_-datasetKey-_surveys_-survey-.html">/datasets/{datasetKey}/surveys/{survey}</a></li>
         <li><a href="#path__datasets_-datasetKey-_userDownloadNotification.html">/datasets/{datasetKey}/userDownloadNotification</a></li>
+        <li><a href="#path__datasets_-id-.html">/datasets/{id}</a></li>
+        <li><a href="#path__datasets_-id-_edit.html">/datasets/{id}/edit</a></li>
         <li><a href="#path__datasets_adminable.html">/datasets/adminable</a></li>
         <li><a href="#path__datasets_latest.html">/datasets/latest</a></li>
         <li><a href="#path__datasets_latest.rss.html">/datasets/latest.rss</a></li>
@@ -136,206 +137,6 @@
           <td>200</td>
           <td>
             Successfully returned list of datasets
-          </td>
-        </tr>
-      </table>
-      <a name="path__datasets_-datasetKey-.html"></a>
-      <h1>/datasets/{datasetKey}</h1>
-      <p class="note">Mount Point: <a href="../api/datasets/{datasetKey}">/api/datasets/{datasetKey}</a></p>
-      <a name="GET"></a>
-      <h2>GET</h2>
-      <p>
-            Returns a specific dataset from the data warehouse
-          </p>
-      <h3>Parameters</h3>
-      <table>
-        <tr>
-          <th>name</th>
-          <th>description</th>
-          <th>type</th>
-          <th>default</th>
-        </tr>
-        <tr>
-          <td>datasetKey</td>
-          <td>
-            ID of a dataset i.e. GA000466
-          </td>
-          <td>path</td>
-          <td></td>
-        </tr>
-      </table>
-      <h3>Response Body</h3>
-      <table>
-        <tr>
-          <td align="right">element:</td>
-          <td><a href="el_ns0_dataset.html">dataset</a></td>
-        </tr>
-        <tr>
-          <td align="right">media types:</td>
-          <td>application/json</td>
-        </tr>
-      </table>
-      <p>A specific dataset from the data warehouse</p>
-      <h3>Status Codes</h3>
-      <table>
-        <tr>
-          <th>code</th>
-          <th>description</th>
-        </tr>
-        <tr>
-          <td>200</td>
-          <td>
-            Found and returned dataset
-          </td>
-        </tr>
-        <tr>
-          <td>204</td>
-          <td>
-            No dataset with this key exists
-          </td>
-        </tr>
-      </table>
-      <a name="POST"></a>
-      <h2>POST</h2>
-      <p>
-            If the current user is an admin of the specified dataset update the
-dataset metadata with the values contained in the POSTed form otherwise
-returns a 403 Forbidden error
-          </p>
-      <h3>Parameters</h3>
-      <table>
-        <tr>
-          <th>name</th>
-          <th>description</th>
-          <th>type</th>
-          <th>default</th>
-        </tr>
-        <tr>
-          <td>admin</td>
-          <td>
-            The Current User if they are a dataset admin for this
-dataset or throw a 403 Forbidden error (Injected Token no need to pass)
-          </td>
-          <td>tokendatasetadminuser</td>
-          <td></td>
-        </tr>
-        <tr>
-          <td>datasetKey</td>
-          <td>
-            Key of a dataset i.e. GA000466
-          </td>
-          <td>path</td>
-          <td></td>
-        </tr>
-        <tr>
-          <td>title</td>
-          <td>
-            The dataset title
-          </td>
-          <td>form</td>
-          <td></td>
-        </tr>
-        <tr>
-          <td>description</td>
-          <td>
-            The dataset description
-          </td>
-          <td>form</td>
-          <td></td>
-        </tr>
-        <tr>
-          <td>captureMethod</td>
-          <td>
-            The dataset Capture Method
-          </td>
-          <td>form</td>
-          <td></td>
-        </tr>
-        <tr>
-          <td>purpose</td>
-          <td>
-            The datasets Purpose
-          </td>
-          <td>form</td>
-          <td></td>
-        </tr>
-        <tr>
-          <td>geographicalCoverage</td>
-          <td>
-            The Geographical Coverage of the dataset
-          </td>
-          <td>form</td>
-          <td></td>
-        </tr>
-        <tr>
-          <td>quality</td>
-          <td>
-            The quality of recording in this dataset
-          </td>
-          <td>form</td>
-          <td></td>
-        </tr>
-        <tr>
-          <td>additionalInformation</td>
-          <td>
-            Any Additional Information about this dataset
-          </td>
-          <td>form</td>
-          <td></td>
-        </tr>
-        <tr>
-          <td>accessConstraints</td>
-          <td>
-            Any Access Constraints applicable to this dataset
-          </td>
-          <td>form</td>
-          <td></td>
-        </tr>
-        <tr>
-          <td>useConstraints</td>
-          <td>
-            Any Use Constraints applicable to this dataset
-          </td>
-          <td>form</td>
-          <td></td>
-        </tr>
-        <tr>
-          <td>temporalCoverage</td>
-          <td>
-            The Temporal Coverage of this dataset
-          </td>
-          <td>form</td>
-          <td></td>
-        </tr>
-      </table>
-      <h3>Response Body</h3>
-      <table>
-        <tr>
-          <td align="right">element:</td>
-          <td><a href="el_ns0_opResult.html">opResult</a></td>
-        </tr>
-        <tr>
-          <td align="right">media types:</td>
-          <td>application/json<br/></td>
-        </tr>
-      </table>
-      <p>An OpResult detailing the success or failure of the action</p>
-      <h3>Status Codes</h3>
-      <table>
-        <tr>
-          <th>code</th>
-          <th>description</th>
-        </tr>
-        <tr>
-          <td>200</td>
-          <td>
-            Operation completed but may have failed, details in OpResult
-          </td>
-        </tr>
-        <tr>
-          <td>403</td>
-          <td>
-            You do not have administration rights over this dataset
           </td>
         </tr>
       </table>
@@ -383,7 +184,7 @@ dataset or throw a 403 Forbidden error (Injected Token no need to pass)
           <td>application/json</td>
         </tr>
       </table>
-      <p>A list of attributes relating to the specified dataset</p>
+      <p>(no documentation provided)</p>
       <h3>Status Codes</h3>
       <table>
         <tr>
@@ -403,8 +204,8 @@ dataset or throw a 403 Forbidden error (Injected Token no need to pass)
       <a name="POST"></a>
       <h2>POST</h2>
       <p>
-            Add an admin user to the selected dataset, if the current user is already
-an admin of this dataset
+            Add a selected user as  dataset admin, the current user must be a
+dataset admin to do this
           </p>
       <h3>Parameters</h3>
       <table>
@@ -417,7 +218,7 @@ an admin of this dataset
         <tr>
           <td>user</td>
           <td>
-            The current user (Injected Token no need to pass)
+            The current user, must be admin of this dataset (Injected Token no need to pass)
           </td>
           <td>tokendatasetadminuser</td>
           <td></td>
@@ -442,8 +243,7 @@ an admin of this dataset
           <td>application/json</td>
         </tr>
       </table>
-      <p>JSON object containing a userID of the user who is being
-added as an admin</p>
+      <p>A DatasetAdminMembershipJSON object detailing the user to be made an admin</p>
       <h3>Response Body</h3>
       <table>
         <tr>
@@ -455,7 +255,7 @@ added as an admin</p>
           <td>application/json</td>
         </tr>
       </table>
-      <p>OpResult object detailing the success or failure of an operation</p>
+      <p>An OpResult detailing the success or failure of the operation</p>
       <h3>Status Codes</h3>
       <table>
         <tr>
@@ -560,7 +360,7 @@ and admin of that dataset.
         <tr>
           <td>user</td>
           <td>
-            The current user (Injected Token no need to pass)
+            The current user, must be a dataset admin (Injected Token no need to pass)
           </td>
           <td>tokendatasetadminuser</td>
           <td></td>
@@ -638,7 +438,7 @@ current user is a dataset admin
         <tr>
           <td>user</td>
           <td>
-            The current user (Injected Token no need to pass)
+            The current user, must be a dataset admin (Injected Token no need to pass)
           </td>
           <td>tokendatasetadminuser</td>
           <td></td>
@@ -697,9 +497,7 @@ current user is a dataset admin
       <a name="GET"></a>
       <h2>GET</h2>
       <p>
-            Return a list of users to notify when a dataset has been downloaded, if
-the requesting user is not an admin of this dataset return a 403
-Forbidden
+            Return a list of users to notify when a dataset has been downloaded
           </p>
       <h3>Parameters</h3>
       <table>
@@ -712,7 +510,7 @@ Forbidden
         <tr>
           <td>user</td>
           <td>
-            The current user (Injected Token no need to pass)
+            The current user, must have admin rights over the dataset (Injected Token no need to pass)
           </td>
           <td>tokendatasetadminuser</td>
           <td></td>
@@ -754,79 +552,6 @@ Forbidden
           <td>403</td>
           <td>
             Current user is not an admin for this dataset
-          </td>
-        </tr>
-      </table>
-      <a name="path__datasets_-datasetKey-_edit.html"></a>
-      <h1>/datasets/{datasetKey}/edit</h1>
-      <p class="note">Mount Point: <a href="../api/datasets/{datasetKey}/edit">/api/datasets/{datasetKey}/edit</a></p>
-      <a name="GET"></a>
-      <h2>GET</h2>
-      <p>
-            Returns a selected dataset from the core database if the current user is
-an admin of the specified dataset otherwise returns a 403 Forbidden error
-          </p>
-      <h3>Parameters</h3>
-      <table>
-        <tr>
-          <th>name</th>
-          <th>description</th>
-          <th>type</th>
-          <th>default</th>
-        </tr>
-        <tr>
-          <td>admin</td>
-          <td>
-            The Current User if they are a dataset admin for this
-dataset or throw a 403 Forbidden error (Injected Token no need to pass)
-          </td>
-          <td>tokendatasetadminuser</td>
-          <td></td>
-        </tr>
-        <tr>
-          <td>datasetKey</td>
-          <td>
-            ID of a dataset i.e. GA000466
-          </td>
-          <td>path</td>
-          <td></td>
-        </tr>
-      </table>
-      <h3>Response Body</h3>
-      <table>
-        <tr>
-          <td align="right">element:</td>
-          <td><a href="el_ns0_dataset.html">dataset</a></td>
-        </tr>
-        <tr>
-          <td align="right">media types:</td>
-          <td>application/json</td>
-        </tr>
-      </table>
-      <p>A selected dataset from the core database if the current user is
-an admin of the specified dataset</p>
-      <h3>Status Codes</h3>
-      <table>
-        <tr>
-          <th>code</th>
-          <th>description</th>
-        </tr>
-        <tr>
-          <td>200</td>
-          <td>
-            Found and returned dataset
-          </td>
-        </tr>
-        <tr>
-          <td>204</td>
-          <td>
-            No dataset with this key exists
-          </td>
-        </tr>
-        <tr>
-          <td>403</td>
-          <td>
-            You do not have admin rights over this dataset
           </td>
         </tr>
       </table>
@@ -902,9 +627,8 @@ dataset / survey metadata
       <a name="POST"></a>
       <h2>POST</h2>
       <p>
-            Removes admin rights of a selected user over a dataset, only if the
-current user is an admin of the selected dataset, can remove your own
-rights
+            Remove the selected user as  dataset admin, the current user must be a
+dataset admin to do this, you can remove your own admin rights
           </p>
       <h3>Parameters</h3>
       <table>
@@ -917,7 +641,7 @@ rights
         <tr>
           <td>user</td>
           <td>
-            The current user (Injected Token no need to pass)
+            The current user, must be admin of this dataset (Injected Token no need to pass)
           </td>
           <td>tokendatasetadminuser</td>
           <td></td>
@@ -942,8 +666,7 @@ rights
           <td>application/json</td>
         </tr>
       </table>
-      <p>JSON object containing a userID of the user whose admin
-rights are being removed</p>
+      <p>A DatasetAdminMembershipJSON object detailing the user to be have admin rights revoked</p>
       <h3>Response Body</h3>
       <table>
         <tr>
@@ -955,7 +678,7 @@ rights are being removed</p>
           <td>application/json</td>
         </tr>
       </table>
-      <p>OpResult object detailing the success or failure of an operation</p>
+      <p>An OpResult detailing the success or failure of the operation</p>
       <h3>Status Codes</h3>
       <table>
         <tr>
@@ -1053,7 +776,7 @@ specified parent dataset otherwise return a 403 Forbidden error
         <tr>
           <td>user</td>
           <td>
-            The current user (Injected Token no need to pass)
+            The Current User if dataset admin, or return a 403 Forbidden (Injected Token no need to pass)
           </td>
           <td>tokendatasetsurveyadminuser</td>
           <td></td>
@@ -1123,7 +846,7 @@ specified surveys metadata with the values contained in the POSTed form
         <tr>
           <td>user</td>
           <td>
-            The current user (Injected Token no need to pass)
+            (no documentation provided)
           </td>
           <td>tokendatasetsurveyadminuser</td>
           <td></td>
@@ -1260,7 +983,7 @@ the specified dataset
         <tr>
           <td>user</td>
           <td>
-            The current user (Injected Token no need to pass)
+            The current user
           </td>
           <td>tokendatasetadminuser</td>
           <td></td>
@@ -1375,13 +1098,286 @@ a dataset admin or org admin for this dataset
           </td>
         </tr>
       </table>
+      <a name="path__datasets_-id-.html"></a>
+      <h1>/datasets/{id}</h1>
+      <p class="note">Mount Point: <a href="../api/datasets/{id}">/api/datasets/{id}</a></p>
+      <a name="GET"></a>
+      <h2>GET</h2>
+      <p>
+            Returns a specific dataset from the data warehouse
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>id</td>
+          <td>
+            ID of a dataset i.e. GA000466
+          </td>
+          <td>path</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td><a href="el_ns0_dataset.html">dataset</a></td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/json</td>
+        </tr>
+      </table>
+      <p>A specific dataset from the data warehouse</p>
+      <h3>Status Codes</h3>
+      <table>
+        <tr>
+          <th>code</th>
+          <th>description</th>
+        </tr>
+        <tr>
+          <td>200</td>
+          <td>
+            Found and returned dataset
+          </td>
+        </tr>
+        <tr>
+          <td>204</td>
+          <td>
+            No dataset with this key exists
+          </td>
+        </tr>
+      </table>
+      <a name="POST"></a>
+      <h2>POST</h2>
+      <p>
+            If the current user is an admin of the specified dataset update the
+dataset metadata with the values contained in the POSTed form otherwise
+returns a 403 Forbidden error
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>admin</td>
+          <td>
+            The Current User if they are a dataset admin for this
+dataset or throw a 403 Forbidden error (Injected Token no need to pass)
+          </td>
+          <td>tokendatasetadminuser</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>id</td>
+          <td>
+            Key of a dataset i.e. GA000466
+          </td>
+          <td>path</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>title</td>
+          <td>
+            The dataset title
+          </td>
+          <td>form</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>description</td>
+          <td>
+            The dataset description
+          </td>
+          <td>form</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>captureMethod</td>
+          <td>
+            The dataset Capture Method
+          </td>
+          <td>form</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>purpose</td>
+          <td>
+            The datasets Purpose
+          </td>
+          <td>form</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>geographicalCoverage</td>
+          <td>
+            The Geographical Coverage of the dataset
+          </td>
+          <td>form</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>quality</td>
+          <td>
+            The quality of recording in this dataset
+          </td>
+          <td>form</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>additionalInformation</td>
+          <td>
+            Any Additional Information about this dataset
+          </td>
+          <td>form</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>accessConstraints</td>
+          <td>
+            Any Access Constraints applicable to this dataset
+          </td>
+          <td>form</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>useConstraints</td>
+          <td>
+            Any Use Constraints applicable to this dataset
+          </td>
+          <td>form</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>temporalCoverage</td>
+          <td>
+            The Temporal Coverage of this dataset
+          </td>
+          <td>form</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td><a href="el_ns0_opResult.html">opResult</a></td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/json<br/></td>
+        </tr>
+      </table>
+      <p>An OpResult detailing the success or failure of the action</p>
+      <h3>Status Codes</h3>
+      <table>
+        <tr>
+          <th>code</th>
+          <th>description</th>
+        </tr>
+        <tr>
+          <td>200</td>
+          <td>
+            Operation completed but may have failed, details in OpResult
+          </td>
+        </tr>
+        <tr>
+          <td>403</td>
+          <td>
+            You do not have administration rights over this dataset
+          </td>
+        </tr>
+      </table>
+      <a name="path__datasets_-id-_edit.html"></a>
+      <h1>/datasets/{id}/edit</h1>
+      <p class="note">Mount Point: <a href="../api/datasets/{id}/edit">/api/datasets/{id}/edit</a></p>
+      <a name="GET"></a>
+      <h2>GET</h2>
+      <p>
+            Returns a selected dataset from the core database if the current user is
+an admin of the specified dataset otherwise returns a 403 Forbidden error
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>admin</td>
+          <td>
+            The Current User if they are a dataset admin for this
+dataset or throw a 403 Forbidden error (Injected Token no need to pass)
+          </td>
+          <td>tokendatasetadminuser</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>id</td>
+          <td>
+            ID of a dataset i.e. GA000466
+          </td>
+          <td>path</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td><a href="el_ns0_dataset.html">dataset</a></td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/json</td>
+        </tr>
+      </table>
+      <p>A selected dataset from the core database if the current user is
+an admin of the specified dataset</p>
+      <h3>Status Codes</h3>
+      <table>
+        <tr>
+          <th>code</th>
+          <th>description</th>
+        </tr>
+        <tr>
+          <td>200</td>
+          <td>
+            Found and returned dataset
+          </td>
+        </tr>
+        <tr>
+          <td>204</td>
+          <td>
+            No dataset with this key exists
+          </td>
+        </tr>
+        <tr>
+          <td>403</td>
+          <td>
+            You do not have admin rights over this dataset
+          </td>
+        </tr>
+      </table>
       <a name="path__datasets_adminable.html"></a>
       <h1>/datasets/adminable</h1>
       <p class="note">Mount Point: <a href="../api/datasets/adminable">/api/datasets/adminable</a></p>
       <a name="GET"></a>
       <h2>GET</h2>
       <p>
-            Returns a list of datasets the user can admin
+            Returns a list of datasets the user is administrator of
           </p>
       <h3>Parameters</h3>
       <table>

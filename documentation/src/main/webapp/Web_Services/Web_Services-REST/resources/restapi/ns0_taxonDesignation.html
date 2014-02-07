@@ -60,6 +60,8 @@
               <ul>
                 <li><a href="ns0_accessPosition.html">accessPosition</a></li>
                 <li><a href="ns0_accessRequest.html">accessRequest</a></li>
+                <li><a href="ns0_apiObservationView.html">apiObservationView</a></li>
+                <li><a href="ns0_apiObservationViewStatistic.html">apiObservationViewStatistic</a></li>
                 <li><a href="ns0_attribute.html">attribute</a></li>
                 <li><a href="ns0_boundingBox.html">boundingBox</a></li>
                 <li><a href="ns0_contributingOrganisation.html">contributingOrganisation</a></li>
@@ -98,7 +100,6 @@
                 <li><a href="ns0_taxonDatasetWithQueryStats.html">taxonDatasetWithQueryStats</a></li>
                 <li><a href="ns0_taxonDesignation.html">taxonDesignation</a></li>
                 <li><a href="ns0_taxonNavigationGroup.html">taxonNavigationGroup</a></li>
-                <li><a href="ns0_taxonObseravtionDownload.html">taxonObseravtionDownload</a></li>
                 <li><a href="ns0_taxonObservation.html">taxonObservation</a></li>
                 <li><a href="ns0_taxonObservationAttribute.html">taxonObservationAttribute</a></li>
                 <li><a href="ns0_taxonObservationAttributeValue.html">taxonObservationAttributeValue</a></li>
@@ -113,6 +114,7 @@
                 <li><a href="ns0_userAccessRequest.html">userAccessRequest</a></li>
                 <li><a href="ns0_userAccessRequestAuditHistory.html">userAccessRequestAuditHistory</a></li>
                 <li><a href="ns0_userDownloadNotification.html">userDownloadNotification</a></li>
+                <li><a href="ns0_userEmailModify.html">userEmailModify</a></li>
                 <li><a href="ns0_userRoleChangeJSON.html">userRoleChangeJSON</a></li>
                 <li><a href="ns0_yearStats.html">yearStats</a></li>
               </ul>
@@ -134,56 +136,6 @@
         </tr>
       </table>
 
-      <h2>XML</h2>
-      <h3>Elements</h3>
-      <table>
-        <tr>
-          <th>name (type)</th>
-          <th>min/max<br/>occurs</th>
-          <th>description</th>
-        </tr>
-        <tr>
-          <td>
-            source (string)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            endDate (dateTime)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            designation (<a href="ns0_designation.html">designation</a>)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            statusConstraint (string)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            startDate (dateTime)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-      </table>
-
       <h2>JSON</h2>
       <table>
         <tr>
@@ -192,44 +144,39 @@
           <th>description</th>
         </tr>
         <tr>
-          <td>source</td>
-          <td>
-              source (string)
-          </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>endDate</td>
-          <td>
-              endDate (dateTime)
-          </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
           <td>designation</td>
           <td>
               designation (<a href="ns0_designation.html">designation</a>)
           </td>
+          <td>Information about the designation itself</td>
+        </tr>
+        <tr>
+          <td>source</td>
           <td>
+              source (string)
           </td>
+          <td>Any source data</td>
         </tr>
         <tr>
           <td>statusConstraint</td>
           <td>
               statusConstraint (string)
           </td>
-          <td>
-          </td>
+          <td>Any status constraints</td>
         </tr>
         <tr>
           <td>startDate</td>
           <td>
               startDate (dateTime)
           </td>
+          <td>The date at which this designation became valid</td>
+        </tr>		
+        <tr>
+          <td>endDate</td>
           <td>
+              endDate (dateTime)
           </td>
+          <td>The date at which this designation was replaced (No date if the designation is still valid)</td>
         </tr>
       </table>
 

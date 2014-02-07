@@ -11,7 +11,7 @@
        Remove this if you use the .htaccess -->
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 
-  <title>datasetAccessPositionsJSON</title>
+  <title>userEmailModify</title>
 
   <!-- Mobile viewport optimized: j.mp/bplateviewport -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -30,7 +30,7 @@
   <div class="container">
     <header>
       <div id="header" class="column first last span-20">
-        <div id="site-name" class="column span-18 append-1 prepend-1 first last"><a href="index.html">datasetAccessPositionsJSON</a></div>
+        <div id="site-name" class="column span-18 append-1 prepend-1 first last"><a href="index.html">userEmailModify</a></div>
         <div id="primary" class="column span-18 append-1 prepend-1 first last">
           <ul class="navigation">
             <li id="nav-rest"><a href="rest.html">REST</a></li>
@@ -56,7 +56,7 @@
               </ul>
             </li>
             <li class="current">
-              <a href="ns0_datasetAccessPositionsJSON.html">datasetAccessPositionsJSON</a>
+              <a href="ns0_userEmailModify.html">userEmailModify</a>
               <ul>
                 <li><a href="ns0_accessPosition.html">accessPosition</a></li>
                 <li><a href="ns0_accessRequest.html">accessRequest</a></li>
@@ -124,7 +124,7 @@
       </div>
     </header>
     <div id="main" class="column first last span-20">
-      <h1>datasetAccessPositionsJSON</h1>
+      <h1>userEmailModify</h1>
       <table>
         <tr>
           <td align="right">Namespace:</td>
@@ -144,18 +144,32 @@
           <th>description</th>
         </tr>
         <tr>
-          <td>publicAccess</td>
+          <td>user</td>
           <td>
-              publicAccess (string)
+              user (<a href="ns0_user.html">user</a>)
           </td>
-          <td>The level of public access to this dataset</td>
+          <td>The user changing their email</td>
         </tr>		
         <tr>
-          <td>enhanced</td>
+          <td>newEmail</td>
           <td>
-              array of enhanced (<a href="ns0_accessPosition.html">accessPosition</a>)
+              newEmail (string)
           </td>
-          <td>Any Enhanced levels of access for this dataset</td>
+           <td>The new email for this user</td>
+        </tr>
+        <tr>
+          <td>activationKey</td>
+          <td>
+              activationKey (string)
+          </td>
+          <td>The activation key for this email change</td>
+        </tr>
+        <tr>
+          <td>requestDate</td>
+          <td>
+              requestDate (dateTime)
+          </td>
+          <td>The date this request was made</td>
         </tr>
       </table>
 

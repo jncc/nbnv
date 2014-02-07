@@ -11,7 +11,7 @@
        Remove this if you use the .htaccess -->
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 
-  <title>datasetAccessPositionsJSON</title>
+  <title>apiObservationView</title>
 
   <!-- Mobile viewport optimized: j.mp/bplateviewport -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -30,7 +30,7 @@
   <div class="container">
     <header>
       <div id="header" class="column first last span-20">
-        <div id="site-name" class="column span-18 append-1 prepend-1 first last"><a href="index.html">datasetAccessPositionsJSON</a></div>
+        <div id="site-name" class="column span-18 append-1 prepend-1 first last"><a href="index.html">apiObservationView</a></div>
         <div id="primary" class="column span-18 append-1 prepend-1 first last">
           <ul class="navigation">
             <li id="nav-rest"><a href="rest.html">REST</a></li>
@@ -56,7 +56,7 @@
               </ul>
             </li>
             <li class="current">
-              <a href="ns0_datasetAccessPositionsJSON.html">datasetAccessPositionsJSON</a>
+              <a href="ns0_apiObservationView.html">apiObservationView</a>
               <ul>
                 <li><a href="ns0_accessPosition.html">accessPosition</a></li>
                 <li><a href="ns0_accessRequest.html">accessRequest</a></li>
@@ -124,7 +124,7 @@
       </div>
     </header>
     <div id="main" class="column first last span-20">
-      <h1>datasetAccessPositionsJSON</h1>
+      <h1>apiObservationView</h1>
       <table>
         <tr>
           <td align="right">Namespace:</td>
@@ -144,20 +144,48 @@
           <th>description</th>
         </tr>
         <tr>
-          <td>publicAccess</td>
+          <td>id</td>
           <td>
-              publicAccess (string)
+              id (int)
           </td>
-          <td>The level of public access to this dataset</td>
-        </tr>		
-        <tr>
-          <td>enhanced</td>
-          <td>
-              array of enhanced (<a href="ns0_accessPosition.html">accessPosition</a>)
-          </td>
-          <td>Any Enhanced levels of access for this dataset</td>
+          <td>An ID for this particular API view</td>
         </tr>
-      </table>
+        <tr>
+          <td>userID</td>
+          <td>
+              userID (int)
+          </td>
+          <td>The ID of the user who viewed the data</td>
+        </tr>
+        <tr>
+          <td>ip</td>
+          <td>
+              ip (string)
+          </td>
+          <td>The IP from which this request was received</td>
+        </tr>
+        <tr>
+          <td>filterText</td>
+          <td>
+              filterText (string)
+          </td>
+          <td>Text describing the filters used in this API view</td>
+        </tr>
+        <tr>
+          <td>viewed</td>
+          <td>
+              viewed (int)
+          </td>
+          <td>The total number of records viewed in this API view</td>
+        </tr>
+        <tr>
+          <td>viewTime</td>
+          <td>
+              viewTime (dateTime)
+          </td>
+          <td>The time at which this request was received</td>
+        </tr>		
+	</table>
 
       <div class="clear" />
     </div>

@@ -60,6 +60,8 @@
               <ul>
                 <li><a href="ns0_accessPosition.html">accessPosition</a></li>
                 <li><a href="ns0_accessRequest.html">accessRequest</a></li>
+                <li><a href="ns0_apiObservationView.html">apiObservationView</a></li>
+                <li><a href="ns0_apiObservationViewStatistic.html">apiObservationViewStatistic</a></li>
                 <li><a href="ns0_attribute.html">attribute</a></li>
                 <li><a href="ns0_boundingBox.html">boundingBox</a></li>
                 <li><a href="ns0_contributingOrganisation.html">contributingOrganisation</a></li>
@@ -98,7 +100,6 @@
                 <li><a href="ns0_taxonDatasetWithQueryStats.html">taxonDatasetWithQueryStats</a></li>
                 <li><a href="ns0_taxonDesignation.html">taxonDesignation</a></li>
                 <li><a href="ns0_taxonNavigationGroup.html">taxonNavigationGroup</a></li>
-                <li><a href="ns0_taxonObseravtionDownload.html">taxonObseravtionDownload</a></li>
                 <li><a href="ns0_taxonObservation.html">taxonObservation</a></li>
                 <li><a href="ns0_taxonObservationAttribute.html">taxonObservationAttribute</a></li>
                 <li><a href="ns0_taxonObservationAttributeValue.html">taxonObservationAttributeValue</a></li>
@@ -113,6 +114,7 @@
                 <li><a href="ns0_userAccessRequest.html">userAccessRequest</a></li>
                 <li><a href="ns0_userAccessRequestAuditHistory.html">userAccessRequestAuditHistory</a></li>
                 <li><a href="ns0_userDownloadNotification.html">userDownloadNotification</a></li>
+                <li><a href="ns0_userEmailModify.html">userEmailModify</a></li>
                 <li><a href="ns0_userRoleChangeJSON.html">userRoleChangeJSON</a></li>
                 <li><a href="ns0_yearStats.html">yearStats</a></li>
               </ul>
@@ -134,136 +136,6 @@
         </tr>
       </table>
 
-      <h2>XML</h2>
-      <h3>Elements</h3>
-      <table>
-        <tr>
-          <th>name (type)</th>
-          <th>min/max<br/>occurs</th>
-          <th>description</th>
-        </tr>
-        <tr>
-          <td>
-            geographicalCoverage (string)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            id (int)
-          </td>
-          <td>1/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            surveyKey (string)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            sampleCount (int)
-          </td>
-          <td>1/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            temporalCoverage (string)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            speciesCount (int)
-          </td>
-          <td>1/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            datasetKey (string)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            dataQuality (string)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            dataCaptureMethod (string)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            providerKey (string)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            description (string)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            title (string)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            additionalInformation (string)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            purpose (string)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            recordCount (int)
-          </td>
-          <td>1/1</td>
-          <td>
-          </td>
-        </tr>
-      </table>
-
       <h2>JSON</h2>
       <table>
         <tr>
@@ -271,125 +143,110 @@
           <th>type</th>
           <th>description</th>
         </tr>
-        <tr>
-          <td>geographicalCoverage</td>
-          <td>
-              geographicalCoverage (string)
-          </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
+		<tr>
           <td>id</td>
           <td>
               id (int)
           </td>
-          <td>
-          </td>
-        </tr>
+          <td>The ID of this survey</td>
+        </tr>        
         <tr>
           <td>surveyKey</td>
           <td>
               surveyKey (string)
           </td>
-          <td>
-          </td>
+          <td>The key that identifies this survey</td>
         </tr>
-        <tr>
-          <td>sampleCount</td>
+		<tr>
+          <td>providerKey</td>
           <td>
-              sampleCount (int)
+              providerKey (string)
           </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>temporalCoverage</td>
-          <td>
-              temporalCoverage (string)
-          </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>speciesCount</td>
-          <td>
-              speciesCount (int)
-          </td>
-          <td>
-          </td>
-        </tr>
+          <td>Any key provided by the supplier of this survey</td>
+        </tr>		
         <tr>
           <td>datasetKey</td>
           <td>
               datasetKey (string)
           </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>dataQuality</td>
-          <td>
-              dataQuality (string)
-          </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>dataCaptureMethod</td>
-          <td>
-              dataCaptureMethod (string)
-          </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>providerKey</td>
-          <td>
-              providerKey (string)
-          </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>description</td>
-          <td>
-              description (string)
-          </td>
-          <td>
-          </td>
+          <td>The dataset which contains this survey</td>
         </tr>
         <tr>
           <td>title</td>
           <td>
               title (string)
           </td>
-          <td>
-          </td>
+          <td>The title of this survey</td>
         </tr>
         <tr>
-          <td>additionalInformation</td>
+          <td>description</td>
           <td>
-              additionalInformation (string)
+              description (string)
           </td>
-          <td>
-          </td>
+          <td>A description of this survey</td>
         </tr>
         <tr>
           <td>purpose</td>
           <td>
               purpose (string)
           </td>
+          <td>The purpose of this survey</td>
+        </tr>
+		<tr>
+          <td>geographicalCoverage</td>
           <td>
+              geographicalCoverage (string)
           </td>
+          <td>A description of the geographical coverage of data in this survey</td>
+        </tr>
+		<tr>
+          <td>temporalCoverage</td>
+          <td>
+              temporalCoverage (string)
+          </td>
+          <td>A description of the temporal coverage of data in this survey</td>
+        </tr>
+		<tr>
+          <td>dataQuality</td>
+          <td>
+              dataQuality (string)
+          </td>
+          <td>Any information about the quality of data in this survey</td>
+        </tr>
+		<tr>
+          <td>additionalInformation</td>
+          <td>
+              additionalInformation (string)
+          </td>
+          <td>Any additional information about the data in this survey</td>
+        </tr>
+		<tr>
+          <td>dataCaptureMethod</td>
+          <td>
+              dataCaptureMethod (string)
+          </td>
+          <td>Any data about the methods used to capture data in this survey</td>
+        </tr>
+        <tr>
+          <td>sampleCount</td>
+          <td>
+              sampleCount (int)
+          </td>
+          <td>The number of samples in this survey</td>
+        </tr>
+        <tr>
+          <td>speciesCount</td>
+          <td>
+              speciesCount (int)
+          </td>
+          <td>The number of species in this survey</td>
         </tr>
         <tr>
           <td>recordCount</td>
           <td>
               recordCount (int)
           </td>
-          <td>
-          </td>
+          <td>The number of records in this survey</td>
         </tr>
       </table>
 

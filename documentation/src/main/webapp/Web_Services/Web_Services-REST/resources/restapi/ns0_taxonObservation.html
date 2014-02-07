@@ -60,6 +60,8 @@
               <ul>
                 <li><a href="ns0_accessPosition.html">accessPosition</a></li>
                 <li><a href="ns0_accessRequest.html">accessRequest</a></li>
+                <li><a href="ns0_apiObservationView.html">apiObservationView</a></li>
+                <li><a href="ns0_apiObservationViewStatistic.html">apiObservationViewStatistic</a></li>
                 <li><a href="ns0_attribute.html">attribute</a></li>
                 <li><a href="ns0_boundingBox.html">boundingBox</a></li>
                 <li><a href="ns0_contributingOrganisation.html">contributingOrganisation</a></li>
@@ -98,7 +100,6 @@
                 <li><a href="ns0_taxonDatasetWithQueryStats.html">taxonDatasetWithQueryStats</a></li>
                 <li><a href="ns0_taxonDesignation.html">taxonDesignation</a></li>
                 <li><a href="ns0_taxonNavigationGroup.html">taxonNavigationGroup</a></li>
-                <li><a href="ns0_taxonObseravtionDownload.html">taxonObseravtionDownload</a></li>
                 <li><a href="ns0_taxonObservation.html">taxonObservation</a></li>
                 <li><a href="ns0_taxonObservationAttribute.html">taxonObservationAttribute</a></li>
                 <li><a href="ns0_taxonObservationAttributeValue.html">taxonObservationAttributeValue</a></li>
@@ -113,6 +114,7 @@
                 <li><a href="ns0_userAccessRequest.html">userAccessRequest</a></li>
                 <li><a href="ns0_userAccessRequestAuditHistory.html">userAccessRequestAuditHistory</a></li>
                 <li><a href="ns0_userDownloadNotification.html">userDownloadNotification</a></li>
+                <li><a href="ns0_userEmailModify.html">userEmailModify</a></li>
                 <li><a href="ns0_userRoleChangeJSON.html">userRoleChangeJSON</a></li>
                 <li><a href="ns0_yearStats.html">yearStats</a></li>
               </ul>
@@ -133,217 +135,7 @@
           <td><a href="ns0.xsd">ns0.xsd</a></td>
         </tr>
       </table>
-
-      <h2>XML</h2>
-      <h3>Elements</h3>
-      <table>
-        <tr>
-          <th>name (type)</th>
-          <th>min/max<br/>occurs</th>
-          <th>description</th>
-        </tr>
-        <tr>
-          <td>
-            fullVersion (boolean)
-          </td>
-          <td>1/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            recorder (string)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            location (string)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            dateType (string)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            gridRef (string)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            observationKey (string)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            pTaxonVersionKey (string)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            taxonVersionKey (string)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            observationID (int)
-          </td>
-          <td>1/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            datasetKey (string)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            pTaxonName (string)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            endDate (dateTime)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            polygonKey (string)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            projection (string)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            pTaxonAuthority (string)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            determiner (string)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            sampleKey (string)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            absence (boolean)
-          </td>
-          <td>1/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            surveyKey (string)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            startDate (dateTime)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            siteKey (string)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            siteName (string)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            featureID (int)
-          </td>
-          <td>1/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            sensitive (boolean)
-          </td>
-          <td>1/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            resolution (string)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-      </table>
-
+	  
       <h2>JSON</h2>
       <table>
         <tr>
@@ -352,204 +144,179 @@
           <th>description</th>
         </tr>
         <tr>
-          <td>fullVersion</td>
+          <td>observationID</td>
           <td>
-              fullVersion (boolean)
+              observationID (int)
           </td>
-          <td>
-          </td>
+          <td>An ID for this observation</td>
         </tr>
-        <tr>
-          <td>recorder</td>
-          <td>
-              recorder (string)
-          </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>location</td>
-          <td>
-              location (string)
-          </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>dateType</td>
-          <td>
-              dateType (string)
-          </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>gridRef</td>
-          <td>
-              gridRef (string)
-          </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
+		<tr>
           <td>observationKey</td>
           <td>
               observationKey (string)
           </td>
+          <td>A Key given to an observation</td>
+        </tr>
+		<tr>
+          <td>taxonVersionKey</td>
           <td>
+              taxonVersionKey (string)
           </td>
+          <td>The taxon version key of the species in this observation</td>
         </tr>
         <tr>
           <td>pTaxonVersionKey</td>
           <td>
               pTaxonVersionKey (string)
           </td>
-          <td>
-          </td>
-        </tr>
+          <td>The preferred taxon version key of the species in this observation</td>
+        </tr>		
         <tr>
-          <td>taxonVersionKey</td>
+          <td>pTaxonName</td>
           <td>
-              taxonVersionKey (string)
+              pTaxonName (string)
           </td>
-          <td>
-          </td>
-        </tr>
+          <td>The preferred taxon name of this species in this observation</td>
+        </tr>		
         <tr>
-          <td>observationID</td>
+          <td>pTaxonAuthority</td>
           <td>
-              observationID (int)
+              pTaxonAuthority (string)
           </td>
-          <td>
-          </td>
+          <td>The preferred taxon authority of the species in this observation</td>
         </tr>
         <tr>
           <td>datasetKey</td>
           <td>
               datasetKey (string)
           </td>
+          <td>The dataset key that this observation is part of</td>
+        </tr>		
+		<tr>
+          <td>surveyKey</td>
           <td>
+              surveyKey (string)
           </td>
-        </tr>
-        <tr>
-          <td>pTaxonName</td>
-          <td>
-              pTaxonName (string)
-          </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>endDate</td>
-          <td>
-              endDate (dateTime)
-          </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>polygonKey</td>
-          <td>
-              polygonKey (string)
-          </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>projection</td>
-          <td>
-              projection (string)
-          </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>pTaxonAuthority</td>
-          <td>
-              pTaxonAuthority (string)
-          </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>determiner</td>
-          <td>
-              determiner (string)
-          </td>
-          <td>
-          </td>
+          <td>A survey key that this observation is part of</td>
         </tr>
         <tr>
           <td>sampleKey</td>
           <td>
               sampleKey (string)
           </td>
-          <td>
-          </td>
-        </tr>
+          <td>A sample key that this observation is part of</td>
+        </tr>		
         <tr>
-          <td>absence</td>
+          <td>recorder</td>
           <td>
-              absence (boolean)
+              recorder (string)
           </td>
-          <td>
-          </td>
-        </tr>
+          <td>The person or entity that recorded this observation</td>
+        </tr>		
         <tr>
-          <td>surveyKey</td>
+          <td>determiner</td>
           <td>
-              surveyKey (string)
+              determiner (string)
           </td>
-          <td>
-          </td>
+          <td>The person or entity that determined the validity of this observation</td>
         </tr>
         <tr>
           <td>startDate</td>
           <td>
               startDate (dateTime)
           </td>
+          <td>The start date associated with this record</td>
+        </tr>
+		<tr>
+          <td>endDate</td>
           <td>
+              endDate (dateTime)
           </td>
+         <td>The end date associated with this record</td>
         </tr>
         <tr>
-          <td>siteKey</td>
+          <td>dateType</td>
           <td>
-              siteKey (string)
+              dateType (string)
           </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>siteName</td>
-          <td>
-              siteName (string)
-          </td>
-          <td>
-          </td>
-        </tr>
+          <td>The type of date against which this observation was recorded</td>
+        </tr>		
         <tr>
           <td>featureID</td>
           <td>
               featureID (int)
           </td>
+          <td>The ID of the feature that this record is associated with</td>
+        </tr>
+        <tr>
+          <td>location</td>
           <td>
+              location (string)
           </td>
+          <td>The location that this record is associated with</td>
+        </tr>		
+        <tr>
+          <td>gridRef</td>
+          <td>
+              gridRef (string)
+          </td>
+          <td>The grid reference that this record is associated with</td>
+        </tr>
+		<tr>
+          <td>siteKey</td>
+          <td>
+              siteKey (string)
+          </td>
+          <td>A site key for a site at which this record is associated with</td>
+        </tr>		
+		<tr>
+          <td>siteName</td>
+          <td>
+              siteName (string)
+          </td>
+          <td>A site name for a site at which this record is associated with</td>
+        </tr>
+        <tr>
+          <td>polygonKey</td>
+          <td>
+              polygonKey (string)
+          </td>
+          <td>A key for a custom polygon against which this record is associated with</td>
+        </tr>			
+        <tr>
+          <td>resolution</td>
+          <td>
+              resolution (string)
+          </td>
+          <td>The resolution that the record was recorded at i.e. 1km, 10km, etc...</td>
+        </tr>
+        <tr>
+          <td>projection</td>
+          <td>
+              projection (string)
+          </td>
+          <td>The projection in which this location is stored i.e. OSGB, OSI</td>
         </tr>
         <tr>
           <td>sensitive</td>
           <td>
               sensitive (boolean)
           </td>
-          <td>
-          </td>
+          <td>If the observation is a sensitive record or not</td>
         </tr>
         <tr>
-          <td>resolution</td>
+          <td>absence</td>
           <td>
-              resolution (string)
+              absence (boolean)
           </td>
+          <td>If the observation is an absence or zero presence record</td>
+        </tr>
+        <tr>
+          <td>fullVersion</td>
           <td>
+              fullVersion (boolean)
           </td>
+          <td>If this version is the full complete version of this record or a limited view</td>
         </tr>
       </table>
 
