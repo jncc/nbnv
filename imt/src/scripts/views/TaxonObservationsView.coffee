@@ -18,7 +18,8 @@ define [
       "oLanguage":
         "sSearch": "Search within these results:"
     
-    if (window.apiFailed && !window.apiFailureMessageDisplayed)
-      window.apiFailureMessageDisplayed = true
-      $(".polygonErrorMessage").text  window.apiFailureMessage
+    if (@collection.apiFailed)
+      $(".polygonErrorMessage").text  @collection.apiFailureMessage
+    else
+      $(".polygonErrorMessage").clear
     return []        

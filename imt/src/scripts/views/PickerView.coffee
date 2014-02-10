@@ -54,5 +54,6 @@ define [
     $('<h3>')
       .append($('<span class="icon"></span>').css resultsForLayer.layer.getLegendIcon())
       .append(resultsForLayer.layer.getName())
-      .append($('<p class="polygonErrorMessage"></p>'))
       .append(loadingIcon)
+      .append($('<p class="polygonErrorMessage"></p>'))
+      
