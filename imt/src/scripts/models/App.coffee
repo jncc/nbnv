@@ -21,11 +21,7 @@ define [
 
   initialize: () ->
     do @getCurrentUser().fetch
-    @set "picker", new Picker layers: @getLayers()
-    # Set up some global variables that are used
-    window.apiFailed = false
-    window.apiFailureMessage = ""
-    window.apiFailureMessageDisplayed = false    
+    @set "picker", new Picker layers: @getLayers()  
 
   ###
   Returns the user whose access is currently being used

@@ -15,6 +15,8 @@ define [
     #use the given datasets as a lookup to obtain the orgainsation name
     @availableDatasets = options.availableDatasets 
     @absence = options.absence
+    @apiFailed = false
+    @apiFailureMessage = ""
 
   ###
   Check to see if this collection is populated based on a restriction to a 
@@ -48,10 +50,11 @@ define [
   toJSON: ->
     observations = Backbone.Collection.prototype.toJSON.apply this, arguments
     if observations.length == 1 && observations[0].hasOwnProperty("success") && observations[0].success == false
-      window.apiFailed = true
-      window.apiFailureMessage = observations[0].status
-      window.apiFailureMessageDisplayed = false   
+      @apiFailed = true
+      @apiFailureMessage = observations[0].status
     else
+      @apiFailed = false
+      @apiFailureMessage = ""
       _.each(observations, (observation) => observation.dataset = @availableDatasets
                                                                     .get(observation.datasetKey)
                                                                     .toJSON() )
