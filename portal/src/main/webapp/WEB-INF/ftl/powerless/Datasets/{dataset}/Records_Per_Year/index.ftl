@@ -10,7 +10,7 @@
 <table class="nbn-dataset-table nbn-simple-table">
     <tr>
         <th>Data provider's comments</th>
-        <td colspan=2>${dataset.temporalCoverage}</td>
+        <td colspan=2>${dataset.temporalCoverage!"Not available"}</td>
     </tr>
     <tr>
         <th>Date range of all records</th>
