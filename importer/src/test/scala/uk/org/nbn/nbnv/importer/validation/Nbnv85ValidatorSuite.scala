@@ -15,7 +15,7 @@ class Nbnv85ValidatorSuite extends BaseFunSuite {
     val v = new Nbnv85Validator
     val r = v.validate(rec)
 
-    r.level should be (ResultLevel.DEBUG)
+    r.find(r => r.level == ResultLevel.ERROR) should be ('empty)
   }
 
   test("should validate a decimal easting and northing"){
@@ -26,7 +26,7 @@ class Nbnv85ValidatorSuite extends BaseFunSuite {
     val v = new Nbnv85Validator
     val r = v.validate(rec)
 
-    r.level should be (ResultLevel.DEBUG)
+    r.find(r => r.level == ResultLevel.ERROR) should be ('empty)
   }
 
   test("should not validate negative values"){
@@ -37,7 +37,7 @@ class Nbnv85ValidatorSuite extends BaseFunSuite {
     val v = new Nbnv85Validator
     val r = v.validate(rec)
 
-    r.level should be (ResultLevel.ERROR)
+    r.find(r => r.level == ResultLevel.ERROR) should not be ('empty)
   }
 
 
@@ -49,7 +49,7 @@ class Nbnv85ValidatorSuite extends BaseFunSuite {
     val v = new Nbnv85Validator
     val r = v.validate(rec)
 
-    r.level should be (ResultLevel.ERROR)
+    r.find(r => r.level == ResultLevel.ERROR) should not be ('empty)
   }
 
   test("should not validate a non numeric norhing") {
@@ -60,7 +60,7 @@ class Nbnv85ValidatorSuite extends BaseFunSuite {
     val v = new Nbnv85Validator
     val r = v.validate(rec)
 
-    r.level should be (ResultLevel.ERROR)
+    r.find(r => r.level == ResultLevel.ERROR) should not be ('empty)
   }
 
 }
