@@ -1,11 +1,15 @@
 <@template.master title="NBN Gateway - Organisations Administration"
-    javascripts=["/js/jquery-ui-1.8.23.custom.min.js/","/js/enable-dataset-metadata-tabs.js","/js/jquery.dataTables.min.js","/js/orgAdmin/enable-users-datatable.js","/js/orgAdmin/enable-join-datatable.js","/js/orgAdmin/enable-direct-add-user.js","/js/jquery.validate.min.js","/js/orgAdmin/enable-metadata-edit.js","/js/dialog_spinner.js"]
+    javascripts=["/js/jquery-ui-1.8.23.custom.min.js/","/js/enable-dataset-metadata-tabs.js","/js/jquery.dataTables.min.js","/js/orgAdmin/enable-users-datatable.js","/js/orgAdmin/enable-join-datatable.js","/js/orgAdmin/enable-direct-add-user.js","/js/jquery.validate.min.js","/js/orgAdmin/enable-metadata-edit.js","/js/dialog_spinner.js","/js/dialog_utils.js"]
     csss=["/css/smoothness/jquery-ui-1.8.23.custom.css","/css/organisation.css","/css/org-admin.css","/css/dialog-spinner.css"]>
 
     <#assign organisationId="${.data_model['organisationID']}">
     <#assign organisation=json.readURL("${api}/organisations/${organisationId}/metadata")>
     <#assign users=json.readURL("${api}/organisationMemberships/${organisationId}")>
     <#assign joinRequests=json.readURL("${api}/organisationMemberships/${organisationId}/requests")>
+
+    <script>
+        nbn.nbnv.api = '${api}';
+    </script>
 
     <h1>${organisation.name}</h1>
     <div id="nbn-tabs">
@@ -73,7 +77,7 @@
     </div>
 
     <div id="dialog-remove-confirm" title="Revoke this users membership?" style="display:none;">
-        <p><span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0;"></span>Are you sure you want to revoke <span id="nbn-org-remove-confirm-name"></span>'s membership?</p>
+        <p><span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0;"></span>Are you sure you want to revoke <span id="nbn-org-remove-confirm-name"></span>'s (<span id="nbn-org-remove-confirm-email"></span>) membership?</p>
     </div>
 
     <div id="dialog-role-choice" title="Change Member's Role" style="display:none;">
@@ -91,6 +95,8 @@
     <div id="nbn-org-add-user-dialog" title="Add Member to Organisation" style="display:none;">
         <p><span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0;"></span>Are you sure you want to add <span id="nbn-org-add-user-dialog-name"></span> to this organisation?</p>
     </div>
+
+    <@dialog_utils.userInfoDialog />
     
 </@template.master>
 
@@ -117,15 +123,15 @@
         <#list users as user>
             <tr>
                 <td class="nbn-org-user-id-td">${user.key?string("0")}</td>
-                <td class="nbn-org-user-name-td"><span class="emailTooltip" title="${user.email}">${user.name}</span></td>
+                <td class="nbn-org-user-name-td"><a href="#" class="nbn-request-username emailTooltip" data-id="${user.key?string("0")}" data-email="${user.email}" title="${user.email}">${user.name}</a></td>
                 <td class="nbn-org-user-role-td">
                     <#if user.role == "administrator">Administrator<#elseif user.role == "lead">Lead<#else>Member</#if>
                 </td>
                 <td class="nbn-org-user-modify-td">
-                    <a href="#" class="nbn-org-user-role" style="float:right;" data-name="${user.name}" data-id="${user.key?string("0")}" data-role="<#if user.role == "administrator">2<#elseif user.role == "lead">3<#else>1</#if>">Change Member's Role</a> 
+                    <a href="#" class="nbn-org-user-role" style="float:right;" data-name="${user.name}" data-id="${user.key?string("0")}" data-email="${user.email}" data-role="<#if user.role == "administrator">2<#elseif user.role == "lead">3<#else>1</#if>">Change Member's Role</a> 
                 </td>
                 <td class="nbn-org-user-remove-td">
-                    <a href="#" class="nbn-org-user-remove" style="float:right;" data-id="${user.key?string("0")}" data-name="${user.name}">Revoke Membership</a>
+                    <a href="#" class="nbn-org-user-remove" style="float:right;" data-id="${user.key?string("0")}" data-name="${user.name}" data-email="${user.email}">Revoke Membership</a>
                 </td>
             </tr>
         </#list>
@@ -156,7 +162,7 @@
         <#list requests as request>
             <tr>
                 <td class="nbn-org-user-join-id-td">${request.key?string("0")}</td>
-                <td class="nbn-org-user-join-name-td"><span class="emailTooltip" title="${request.email}">${request.name}</span></td>
+                <td class="nbn-org-user-join-name-td"><a href="#" class="nbn-request-username emailTooltip" data-id="${request.key?string("0")}" data-email="${request.email}" title="${request.email}">${request.name}</a></td>
                 <td class="nbn-org-user-join-request-text-td">${request.text}</td>
                 <td class="nbn-org-user-join-request-date-td">${request.date}</td>
                 <td class="nbn-org-user-join-request-view-td"><a href="/Organisations/JoinRequest/${request.key?string("0")}">Action this request</a></td>

@@ -52,6 +52,7 @@
             <li class="current">
               <a href="resource_UserAccessRequestResource.html">UserAccessRequestResource</a>
               <ul>
+                <li><a href="resource_ApiViewResource.html">ApiViewResource</a></li>
                 <li><a href="resource_DatasetResource.html">DatasetResource</a></li>
                 <li><a href="resource_DesignationCategoryResource.html">DesignationCategoryResource</a></li>
                 <li><a href="resource_DesignationResource.html">DesignationResource</a></li>
@@ -96,6 +97,7 @@
         <li><a href="#path__user_userAccesses_requests_granted.html">/user/userAccesses/requests/granted</a></li>
         <li><a href="#path__user_userAccesses_requests_history_-dataset-.html">/user/userAccesses/requests/history/{dataset}</a></li>
         <li><a href="#path__user_userAccesses_requests_pending.html">/user/userAccesses/requests/pending</a></li>
+        <li><a href="#path__user_userAccesses_reset_-dataset-.html">/user/userAccesses/reset/{dataset}</a></li>
       </ul>
       <a name="path__user_userAccesses_requests.html"></a>
       <h1>/user/userAccesses/requests</h1>
@@ -116,7 +118,8 @@
         <tr>
           <td>user</td>
           <td>
-            The current user (Must be logged in)
+            The current user (Must be logged in) (Injected Token no need
+to pass)
           </td>
           <td>tokenuser</td>
           <td></td>
@@ -189,7 +192,8 @@ details</p>
         <tr>
           <td>user</td>
           <td>
-            The current user (Must be logged in)
+            The current user (Must be logged in) (Injected Token no need
+to pass)
           </td>
           <td>tokenuser</td>
           <td></td>
@@ -240,7 +244,7 @@ details</p>
       <a name="PUT"></a>
       <h2>PUT</h2>
       <p>
-            Edit an existing User Access Request
+            Edit and then grant an existing User Access Request
           </p>
       <h3>Parameters</h3>
       <table>
@@ -254,7 +258,7 @@ details</p>
           <td>user</td>
           <td>
             The current user (Must have admin rights over the specified
-Access Request)
+Access Request) (Injected Token no need to pass)
           </td>
           <td>tokenaccessrequestadminuser</td>
           <td></td>
@@ -337,7 +341,7 @@ admin rights over that request, otherwise return a 403 Forbidden error
           <td>user</td>
           <td>
             The current User (Must have admin rights over the specified
-user access request)
+user access request) (Injected Token no need to pass)
           </td>
           <td>tokenaccessrequestadminuser</td>
           <td></td>
@@ -400,6 +404,7 @@ the request, otherwise return a 403 Forbidden error
           <td>user</td>
           <td>
             The current user (Must have admin rights over the request)
+(Injected Token no need to pass)
           </td>
           <td>tokenaccessrequestadminuser</td>
           <td></td>
@@ -487,7 +492,8 @@ the request, otherwise return a 403 Forbidden error
         <tr>
           <td>user</td>
           <td>
-            The current user (Must be logged in)
+            The current user (Must be logged in) (Injected Token no need
+to pass)
           </td>
           <td>tokenuser</td>
           <td></td>
@@ -544,7 +550,8 @@ and have been denied
         <tr>
           <td>user</td>
           <td>
-            (no documentation provided)
+            The current user (Must be logged in) (Injected Token no need
+to pass)
           </td>
           <td>tokenuser</td>
           <td></td>
@@ -602,7 +609,8 @@ admin of the provided dataset
         <tr>
           <td>user</td>
           <td>
-            The current user (must be dataset admin)
+            The current user (must be dataset admin) (Injected Token no
+need to pass)
           </td>
           <td>tokenuser</td>
           <td></td>
@@ -676,7 +684,8 @@ and have been granted
         <tr>
           <td>user</td>
           <td>
-            The current user (Must be logged in)
+            The current user (Must be logged in) (Injected Token no need
+to pass)
           </td>
           <td>tokenuser</td>
           <td></td>
@@ -734,7 +743,8 @@ and are pending
         <tr>
           <td>user</td>
           <td>
-            The current user (Must be logged in)
+            The current user (Must be logged in) (Injected Token no need
+to pass)
           </td>
           <td>tokenuser</td>
           <td></td>
@@ -791,7 +801,8 @@ and are still pending</p>
         <tr>
           <td>user</td>
           <td>
-            The current user (Must be logged in)
+            The current user (Must be logged in) (Injected Token no need
+to pass)
           </td>
           <td>tokenuser</td>
           <td></td>
@@ -848,7 +859,7 @@ granted</p>
         <tr>
           <td>user</td>
           <td>
-            A dataset administrator
+            A dataset administrator (Injected Token no need to pass)
           </td>
           <td>tokendatasetadminuser</td>
           <td></td>
@@ -912,7 +923,8 @@ granted</p>
         <tr>
           <td>user</td>
           <td>
-            The current user (Must be logged in)
+            The current user (Must be logged in) (Injected Token no need
+to pass)
           </td>
           <td>tokenuser</td>
           <td></td>
@@ -949,6 +961,51 @@ granted</p>
           </td>
         </tr>
       </table>
+      <a name="path__user_userAccesses_reset_-dataset-.html"></a>
+      <h1>/user/userAccesses/reset/{dataset}</h1>
+      <p class="note">Mount Point: <a href="../api/user/userAccesses/reset/{dataset}">/api/user/userAccesses/reset/{dataset}</a></p>
+      <a name="GET"></a>
+      <h2>GET</h2>
+      <p>
+            SysAdmin function to reset accesses
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>user</td>
+          <td>
+            (Injected Token no need to pass)
+          </td>
+          <td>tokensystemadministratoruser</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>dataset</td>
+          <td>
+            (no documentation provided)
+          </td>
+          <td>path</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td>(custom)</td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/json</td>
+        </tr>
+      </table>
+      <p>(no documentation provided)</p>
 
       <div class="clear" />
     </div>

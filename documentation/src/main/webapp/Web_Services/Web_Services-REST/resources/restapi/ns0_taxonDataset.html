@@ -60,6 +60,8 @@
               <ul>
                 <li><a href="ns0_accessPosition.html">accessPosition</a></li>
                 <li><a href="ns0_accessRequest.html">accessRequest</a></li>
+                <li><a href="ns0_apiObservationView.html">apiObservationView</a></li>
+                <li><a href="ns0_apiObservationViewStatistic.html">apiObservationViewStatistic</a></li>
                 <li><a href="ns0_attribute.html">attribute</a></li>
                 <li><a href="ns0_boundingBox.html">boundingBox</a></li>
                 <li><a href="ns0_contributingOrganisation.html">contributingOrganisation</a></li>
@@ -98,7 +100,6 @@
                 <li><a href="ns0_taxonDatasetWithQueryStats.html">taxonDatasetWithQueryStats</a></li>
                 <li><a href="ns0_taxonDesignation.html">taxonDesignation</a></li>
                 <li><a href="ns0_taxonNavigationGroup.html">taxonNavigationGroup</a></li>
-                <li><a href="ns0_taxonObseravtionDownload.html">taxonObseravtionDownload</a></li>
                 <li><a href="ns0_taxonObservation.html">taxonObservation</a></li>
                 <li><a href="ns0_taxonObservationAttribute.html">taxonObservationAttribute</a></li>
                 <li><a href="ns0_taxonObservationAttributeValue.html">taxonObservationAttributeValue</a></li>
@@ -113,6 +114,7 @@
                 <li><a href="ns0_userAccessRequest.html">userAccessRequest</a></li>
                 <li><a href="ns0_userAccessRequestAuditHistory.html">userAccessRequestAuditHistory</a></li>
                 <li><a href="ns0_userDownloadNotification.html">userDownloadNotification</a></li>
+                <li><a href="ns0_userEmailModify.html">userEmailModify</a></li>
                 <li><a href="ns0_userRoleChangeJSON.html">userRoleChangeJSON</a></li>
                 <li><a href="ns0_yearStats.html">yearStats</a></li>
               </ul>
@@ -138,112 +140,6 @@
         </tr>
       </table>
 
-      <h2>XML</h2>
-      <h3>Elements</h3>
-      <table>
-        <tr>
-          <th>name (type)</th>
-          <th>min/max<br/>occurs</th>
-          <th>description</th>
-        </tr>
-        <tr>
-          <td>
-            recordsPerYear (<a href="ns0_yearStats.html">yearStats</a>)
-          </td>
-          <td>0/unbounded</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            surveys (<a href="ns0_survey.html">survey</a>)
-          </td>
-          <td>0/unbounded</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            publicAttribute (boolean)
-          </td>
-          <td>1/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            speciesCount (int)
-          </td>
-          <td>1/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            maxResolution (string)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            datasetKey (string)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            taxa (<a href="ns0_taxonWithDatasetStats.html">taxonWithDatasetStats</a>)
-          </td>
-          <td>0/unbounded</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            publicResolution (string)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            observations (<a href="ns0_taxonObservation.html">taxonObservation</a>)
-          </td>
-          <td>0/unbounded</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            dateTypeStats (<a href="ns0_dateTypeStats.html">dateTypeStats</a>)
-          </td>
-          <td>0/unbounded</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            allowRecordValidation (boolean)
-          </td>
-          <td>1/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            recordCount (int)
-          </td>
-          <td>1/1</td>
-          <td>
-          </td>
-        </tr>
-      </table>
-
       <h2>JSON</h2>
       <table>
         <tr>
@@ -251,101 +147,96 @@
           <th>type</th>
           <th>description</th>
         </tr>
-        <tr>
-          <td>recordsPerYear</td>
+		<tr>
+          <td>datasetKey</td>
           <td>
-              array of recordsPerYear (<a href="ns0_yearStats.html">yearStats</a>)
+              datasetKey (string)
           </td>
-          <td>
-          </td>
+          <td>The Key that identifies this dataset</td>
         </tr>
         <tr>
           <td>surveys</td>
           <td>
               array of surveys (<a href="ns0_survey.html">survey</a>)
           </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>publicAttribute</td>
-          <td>
-              publicAttribute (boolean)
-          </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>speciesCount</td>
-          <td>
-              speciesCount (int)
-          </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>maxResolution</td>
-          <td>
-              maxResolution (string)
-          </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>datasetKey</td>
-          <td>
-              datasetKey (string)
-          </td>
-          <td>
-          </td>
+          <td>A list of surveys that contribute to this dataset</td>
         </tr>
         <tr>
           <td>taxa</td>
           <td>
               array of taxa (<a href="ns0_taxonWithDatasetStats.html">taxonWithDatasetStats</a>)
           </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>publicResolution</td>
-          <td>
-              publicResolution (string)
-          </td>
-          <td>
-          </td>
-        </tr>
+          <td>A list of taxa in this dataset</td>
+        </tr>	
         <tr>
           <td>observations</td>
           <td>
               array of observations (<a href="ns0_taxonObservation.html">taxonObservation</a>)
           </td>
+          <td>A list of observations in this dataset</td>
+        </tr>		
+        <tr>
+          <td>recordsPerYear</td>
           <td>
+              array of recordsPerYear (<a href="ns0_yearStats.html">yearStats</a>)
           </td>
+          <td>Statistics about the number of records per year in this dataset</td>
         </tr>
         <tr>
           <td>dateTypeStats</td>
           <td>
               array of dateTypeStats (<a href="ns0_dateTypeStats.html">dateTypeStats</a>)
           </td>
+          <td>The statistics about date types used for observations in this dataset</td>
+        </tr>
+        <tr>
+          <td>publicAttribute</td>
           <td>
+              publicAttribute (boolean)
           </td>
+          <td>Whether attributes are publicly available</td>
+        </tr>
+        <tr>
+          <td>publicRecorder</td>
+          <td>
+              publicRecorder (boolean)
+          </td>
+          <td>Whether recorder names are publicly available</td>
+        </tr>
+        <tr>
+          <td>publicResolution</td>
+          <td>
+              publicResolution (string)
+          </td>
+          <td>The public level of resolution in this dataset</td>
+        </tr>		
+        <tr>
+          <td>maxResolution</td>
+          <td>
+              maxResolution (string)
+          </td>
+          <td>The maximum resolution of records in this dataset</td>
         </tr>
         <tr>
           <td>allowRecordValidation</td>
           <td>
               allowRecordValidation (boolean)
           </td>
+          <td>Whether we allow record validation in this dataset</td>
+        </tr>
+		<tr>
+          <td>speciesCount</td>
           <td>
+              speciesCount (int)
           </td>
+          <td>The number of species in this dataset matching the filters</td>
         </tr>
         <tr>
           <td>recordCount</td>
           <td>
               recordCount (int)
           </td>
-          <td>
-          </td>
+          <td>The number of observation records in this dataset matching the filters</td>
         </tr>
       </table>
 

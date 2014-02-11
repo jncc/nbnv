@@ -60,6 +60,8 @@
               <ul>
                 <li><a href="ns0_accessPosition.html">accessPosition</a></li>
                 <li><a href="ns0_accessRequest.html">accessRequest</a></li>
+                <li><a href="ns0_apiObservationView.html">apiObservationView</a></li>
+                <li><a href="ns0_apiObservationViewStatistic.html">apiObservationViewStatistic</a></li>
                 <li><a href="ns0_attribute.html">attribute</a></li>
                 <li><a href="ns0_boundingBox.html">boundingBox</a></li>
                 <li><a href="ns0_contributingOrganisation.html">contributingOrganisation</a></li>
@@ -98,7 +100,6 @@
                 <li><a href="ns0_taxonDatasetWithQueryStats.html">taxonDatasetWithQueryStats</a></li>
                 <li><a href="ns0_taxonDesignation.html">taxonDesignation</a></li>
                 <li><a href="ns0_taxonNavigationGroup.html">taxonNavigationGroup</a></li>
-                <li><a href="ns0_taxonObseravtionDownload.html">taxonObseravtionDownload</a></li>
                 <li><a href="ns0_taxonObservation.html">taxonObservation</a></li>
                 <li><a href="ns0_taxonObservationAttribute.html">taxonObservationAttribute</a></li>
                 <li><a href="ns0_taxonObservationAttributeValue.html">taxonObservationAttributeValue</a></li>
@@ -113,6 +114,7 @@
                 <li><a href="ns0_userAccessRequest.html">userAccessRequest</a></li>
                 <li><a href="ns0_userAccessRequestAuditHistory.html">userAccessRequestAuditHistory</a></li>
                 <li><a href="ns0_userDownloadNotification.html">userDownloadNotification</a></li>
+                <li><a href="ns0_userEmailModify.html">userEmailModify</a></li>
                 <li><a href="ns0_userRoleChangeJSON.html">userRoleChangeJSON</a></li>
                 <li><a href="ns0_yearStats.html">yearStats</a></li>
               </ul>
@@ -141,69 +143,62 @@
           <th>type</th>
           <th>description</th>
         </tr>
-		<tr>
+        <tr>
           <td>key</td>
           <td>
               key (string)
           </td>
           <td>The key for this dataset i.e. GA000466</td>
         </tr>
-		<tr>
+        <tr>
           <td>title</td>
           <td>
               title (string)
           </td>
           <td>The title of this dataset</td>
         </tr>
-		<tr>
+        <tr>
           <td>description</td>
           <td>
               description (string)
           </td>
           <td>Any description of this dataset</td>
         </tr>
-		<tr>
+        <tr>
           <td>href</td>
           <td>
               href (string)
           </td>
           <td>A URL pointing to this dataset on the NBN Gateway</td>
         </tr>
-		<tr>
-          <td>dateUploaded</td>
-          <td>
-              dateUploaded (dateTime)
-          </td>
-          <td>The date that this dataset was uploaded onto the NBN Gateway</td>
-        </tr>
-		<tr>
+        <tr>
           <td>typeName</td>
           <td>
               typeName (string)
           </td>
           <td>The type of this dataset</td>
-        </tr>
-		<tr>
+        </tr>		
+        <tr>
           <td>organisationID</td>
           <td>
               organisationID (int)
           </td>
           <td>The ID of the organisation that owns this dataset</td>
         </tr>
-		<tr>
+        <tr>
           <td>organisationName</td>
           <td>
               organisationName (string)
           </td>
           <td>The name of the organisation that owns this dataset</td>
         </tr>
-		<tr>
+        <tr>
           <td>organisationHref</td>
           <td>
               organisationHref (string)
           </td>
           <td>A URL pointing to this organisation on the NBN Gateway</td>
-        </tr>
+        </tr>		
         <tr>
           <td>organisation</td>
           <td>
@@ -211,28 +206,28 @@
           </td>
           <td>The owning organisation of this dataset</td>
         </tr>
-		<tr>
+        <tr>
           <td>contributingOrganisations</td>
           <td>
               array of contributingOrganisations (<a href="ns0_organisation.html">organisation</a>)
           </td>
           <td>Any organisations which have contributed to this dataset aside from the owning organisation</td>
         </tr>
-		<tr>
+        <tr>
           <td>purpose</td>
           <td>
               purpose (string)
           </td>
           <td>The purpose of this dataset</td>
-        </tr>
+        </tr>		
         <tr>
           <td>captureMethod</td>
           <td>
               captureMethod (string)
           </td>
           <td>How Records where captured for this dataset</td>
-        </tr>
-        <tr>
+		</tr>	
+		<tr>
           <td>geographicalCoverage</td>
           <td>
               geographicalCoverage (string)
@@ -246,35 +241,35 @@
           </td>
           <td>Any temporal information about this dataset</td>
         </tr>
-		<tr>
+        <tr>
           <td>quality</td>
           <td>
               quality (string)
           </td>
           <td>The quality of this dataset</td>
         </tr>
-		<tr>
+        <tr>
           <td>additionalInformation</td>
           <td>
               additionalInformation (string)
           </td>
           <td>Any additional information about this dataset</td>
         </tr>
-		<tr>
+        <tr>
           <td>accessConstraints</td>
           <td>
               accessConstraints (string)
           </td>
-          <td>Any access constraints to records in this dataset</td>
-        </tr>
-		<tr>
+         <td>Any access constraints to records in this dataset</td>
+        </tr>		
+        <tr>
           <td>useConstraints</td>
           <td>
               useConstraints (string)
           </td>
           <td>Any use constraints on the use of records in this dataset</td>
-        </tr>
-        <tr>
+        </tr>		
+		<tr>
           <td>conditionsAccepted</td>
           <td>
               conditionsAccepted (boolean)
@@ -282,6 +277,13 @@
           <td>
           </td>
         </tr>
+        <tr>
+          <td>dateUploaded</td>
+          <td>
+              dateUploaded (dateTime)
+          </td>
+          <td>The date that this dataset was uploaded onto the NBN Gateway</td>
+        </tr>		
         <tr>
           <td>updateFrequency</td>
           <td>

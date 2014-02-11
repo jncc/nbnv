@@ -21,7 +21,7 @@ define [
 
   initialize: () ->
     do @getCurrentUser().fetch
-    @set "picker", new Picker layers: @getLayers()
+    @set "picker", new Picker layers: @getLayers()  
 
   ###
   Returns the user whose access is currently being used

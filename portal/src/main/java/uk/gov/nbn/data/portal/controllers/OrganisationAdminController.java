@@ -33,7 +33,7 @@ public class OrganisationAdminController {
                 .get(User.class);
 
         if (currentUser.getId() != User.PUBLIC_USER_ID) {
-            if (isUserOrgAdmin(currentUser, id)) {
+            if (isUserOrgAdmin(id)) {
                 model.addAttribute("organisationID", id);
                 return new ModelAndView("organisationAdmin");
             }
@@ -47,8 +47,8 @@ public class OrganisationAdminController {
         throw new ForbiddenException();
     }
 
-    private boolean isUserOrgAdmin(User user, int orgId) {
-        if (resource.path(String.format("organisationMemberships/%d/%d/isadmin", orgId, user.getId()))
+    private boolean isUserOrgAdmin(int orgId) {
+        if (resource.path(String.format("organisationMemberships/%d/isadmin", orgId))
                 .accept(MediaType.APPLICATION_JSON)
                 .get(boolean.class)) {
             return true;

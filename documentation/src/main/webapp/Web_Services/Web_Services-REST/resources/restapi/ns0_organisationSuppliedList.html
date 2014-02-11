@@ -60,6 +60,8 @@
               <ul>
                 <li><a href="ns0_accessPosition.html">accessPosition</a></li>
                 <li><a href="ns0_accessRequest.html">accessRequest</a></li>
+                <li><a href="ns0_apiObservationView.html">apiObservationView</a></li>
+                <li><a href="ns0_apiObservationViewStatistic.html">apiObservationViewStatistic</a></li>
                 <li><a href="ns0_attribute.html">attribute</a></li>
                 <li><a href="ns0_boundingBox.html">boundingBox</a></li>
                 <li><a href="ns0_contributingOrganisation.html">contributingOrganisation</a></li>
@@ -98,7 +100,6 @@
                 <li><a href="ns0_taxonDatasetWithQueryStats.html">taxonDatasetWithQueryStats</a></li>
                 <li><a href="ns0_taxonDesignation.html">taxonDesignation</a></li>
                 <li><a href="ns0_taxonNavigationGroup.html">taxonNavigationGroup</a></li>
-                <li><a href="ns0_taxonObseravtionDownload.html">taxonObseravtionDownload</a></li>
                 <li><a href="ns0_taxonObservation.html">taxonObservation</a></li>
                 <li><a href="ns0_taxonObservationAttribute.html">taxonObservationAttribute</a></li>
                 <li><a href="ns0_taxonObservationAttributeValue.html">taxonObservationAttributeValue</a></li>
@@ -113,6 +114,7 @@
                 <li><a href="ns0_userAccessRequest.html">userAccessRequest</a></li>
                 <li><a href="ns0_userAccessRequestAuditHistory.html">userAccessRequestAuditHistory</a></li>
                 <li><a href="ns0_userDownloadNotification.html">userDownloadNotification</a></li>
+                <li><a href="ns0_userEmailModify.html">userEmailModify</a></li>
                 <li><a href="ns0_userRoleChangeJSON.html">userRoleChangeJSON</a></li>
                 <li><a href="ns0_yearStats.html">yearStats</a></li>
               </ul>
@@ -134,72 +136,6 @@
         </tr>
       </table>
 
-      <h2>XML</h2>
-      <h3>Elements</h3>
-      <table>
-        <tr>
-          <th>name (type)</th>
-          <th>min/max<br/>occurs</th>
-          <th>description</th>
-        </tr>
-        <tr>
-          <td>
-            pTVKs (string)
-          </td>
-          <td>0/unbounded</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            code (string)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            description (string)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            name (string)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            dateUploaded (dateTime)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            organisationName (string)
-          </td>
-          <td>0/1</td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            id (int)
-          </td>
-          <td>1/1</td>
-          <td>
-          </td>
-        </tr>
-      </table>
-
       <h2>JSON</h2>
       <table>
         <tr>
@@ -208,60 +144,53 @@
           <th>description</th>
         </tr>
         <tr>
-          <td>pTVKs</td>
+          <td>id</td>
           <td>
-              array of pTVKs (string)
+              id (int)
           </td>
+          <td>The ID of this list</td>
+        </tr>		
+        <tr>
+          <td>name</td>
           <td>
+              name (string)
           </td>
+          <td>A name given to this list</td>
         </tr>
         <tr>
           <td>code</td>
           <td>
               code (string)
           </td>
-          <td>
-          </td>
-        </tr>
+          <td>Any shortened code or abbreviation given to this list</td>
+        </tr>		
         <tr>
           <td>description</td>
           <td>
               description (string)
           </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>name</td>
-          <td>
-              name (string)
-          </td>
-          <td>
-          </td>
-        </tr>
-        <tr>
-          <td>dateUploaded</td>
-          <td>
-              dateUploaded (dateTime)
-          </td>
-          <td>
-          </td>
+          <td>Any descriptive text for this list</td>
         </tr>
         <tr>
           <td>organisationName</td>
           <td>
               organisationName (string)
           </td>
-          <td>
-          </td>
+          <td>The organisation who supplied this list</td>
         </tr>
         <tr>
-          <td>id</td>
+          <td>pTVKs</td>
           <td>
-              id (int)
+              array of pTVKs (string)
           </td>
+          <td>A list of all pTVKs that are included in this list</td>
+        </tr>
+        <tr>
+          <td>dateUploaded</td>
           <td>
+              dateUploaded (dateTime)
           </td>
+          <td>The date and time that this list was uploaded to the gateway</td>
         </tr>
       </table>
 

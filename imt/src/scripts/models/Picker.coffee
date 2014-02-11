@@ -35,7 +35,7 @@ define [
   updateResultsForLayers: ->
     if not @get "wkt"
       @set "resultsForLayers", []
-    else
+    else  
       #Object an array of pickerResultsForLayers which i can query
       resultsForLayers = _.map @getPickableLayers(), (layer) -> 
                                                         layer: layer, 
