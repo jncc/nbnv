@@ -116,14 +116,15 @@ public class AttributeConcatenationTest {
         instance.modifyHeader(columns);
         
         List<String> row = new ArrayList<String>();
-        row.add("test");
+        row.add("test \\ \"");
         
         instance.modifyRow(row);
         
-        String json = row.get(1).replace("\"\"","\"");
-        json = json.substring(1, json.length() - 1);
+        String json = row.get(1);
         
-        Assert.assertEquals("mapping", new JSONObject(json).keys().next());
+        JSONObject obj = new JSONObject(json);
         
+        Assert.assertEquals("mapping", obj.keys().next());
+        //Assert.assertEquals("test \\ \"", obj.get("mapping"));
     }
 }
