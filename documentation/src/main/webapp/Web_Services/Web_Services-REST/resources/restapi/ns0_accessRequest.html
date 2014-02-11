@@ -60,6 +60,8 @@
               <ul>
                 <li><a href="ns0_accessPosition.html">accessPosition</a></li>
                 <li><a href="ns0_accessRequest.html">accessRequest</a></li>
+                <li><a href="ns0_apiObservationView.html">apiObservationView</a></li>
+                <li><a href="ns0_apiObservationViewStatistic.html">apiObservationViewStatistic</a></li>
                 <li><a href="ns0_attribute.html">attribute</a></li>
                 <li><a href="ns0_boundingBox.html">boundingBox</a></li>
                 <li><a href="ns0_contributingOrganisation.html">contributingOrganisation</a></li>
@@ -98,7 +100,6 @@
                 <li><a href="ns0_taxonDatasetWithQueryStats.html">taxonDatasetWithQueryStats</a></li>
                 <li><a href="ns0_taxonDesignation.html">taxonDesignation</a></li>
                 <li><a href="ns0_taxonNavigationGroup.html">taxonNavigationGroup</a></li>
-                <li><a href="ns0_taxonObseravtionDownload.html">taxonObseravtionDownload</a></li>
                 <li><a href="ns0_taxonObservation.html">taxonObservation</a></li>
                 <li><a href="ns0_taxonObservationAttribute.html">taxonObservationAttribute</a></li>
                 <li><a href="ns0_taxonObservationAttributeValue.html">taxonObservationAttributeValue</a></li>
@@ -113,6 +114,7 @@
                 <li><a href="ns0_userAccessRequest.html">userAccessRequest</a></li>
                 <li><a href="ns0_userAccessRequestAuditHistory.html">userAccessRequestAuditHistory</a></li>
                 <li><a href="ns0_userDownloadNotification.html">userDownloadNotification</a></li>
+                <li><a href="ns0_userEmailModify.html">userEmailModify</a></li>
                 <li><a href="ns0_userRoleChangeJSON.html">userRoleChangeJSON</a></li>
                 <li><a href="ns0_yearStats.html">yearStats</a></li>
               </ul>
@@ -147,28 +149,30 @@
               requestPurposeID (int)
           </td>
           <td>The ID of the request purpose type</td>
-        </tr>		
-        <tr>
+        </tr>
+		<tr>
           <td>requestPurposeLabel</td>
           <td>
               requestPurposeLabel (string)
+          </td>
           </td>The requests purpose, given by the requestor</td>
         </tr>
-        <tr>
+		<tr>
           <td>requestReason</td>
           <td>
               requestReason (string)
           </td>
           <td>The reason for this request, given by requestor</td>
-        </tr>   
-		<tr>
+        </tr>     
+        <tr>
           <td>requestDate</td>
           <td>
               requestDate (dateTime)
           </td>
-          <td>The date this request was made</td>
+          <td>
+          </td>
         </tr>
-		<tr>
+        <tr>
           <td>filter</td>
           <td>
               filter (<a href="ns0_taxonObservationFilter.html">taxonObservationFilter</a>)
@@ -181,7 +185,7 @@
               datasetKey (string)
           </td>
           <td>The dataset key of the dataset this request applies to</td>
-        </tr>		
+        </tr>
         <tr>
           <td>dataset</td>
           <td>
@@ -189,7 +193,6 @@
           </td>
           <td>The dataset which this request applies to</td>
         </tr>
-	
         <tr>
           <td>sensitiveRequest</td>
           <td>
@@ -198,19 +201,12 @@
           <td>If this request includes access to sensitive records or not</td>
         </tr>
         <tr>
-          <td>accessExpires</td>
-          <td>
-              accessExpires (dateTime)
-          </td>
-          <td>When this request will expire (Optional)</td>
-        </tr>		
-        <tr>
           <td>responseTypeID</td>
           <td>
               responseTypeID (int)
           </td>
           <td>The Response Type ID (defines what response if any has been given to this request)</td>
-        </tr>
+        </tr>		
 		<tr>
           <td>responseReason</td>
           <td>
@@ -223,8 +219,15 @@
           <td>
               responseDate (dateTime)
           </td>
-          <td>The date which this request was responded to if it has been responded to</td>
+		  <td>The date which this request was responded to if it has been responded to</td>
         </tr>
+        <tr>
+          <td>accessExpires</td>
+          <td>
+              accessExpires (dateTime)
+          </td>
+           <td>When this request will expire (Optional)</td>
+        </tr>		
       </table>
 
       <div class="clear" />

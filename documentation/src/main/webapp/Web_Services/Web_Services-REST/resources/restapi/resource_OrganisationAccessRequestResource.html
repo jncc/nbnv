@@ -52,6 +52,7 @@
             <li class="current">
               <a href="resource_OrganisationAccessRequestResource.html">OrganisationAccessRequestResource</a>
               <ul>
+                <li><a href="resource_ApiViewResource.html">ApiViewResource</a></li>
                 <li><a href="resource_DatasetResource.html">DatasetResource</a></li>
                 <li><a href="resource_DesignationCategoryResource.html">DesignationCategoryResource</a></li>
                 <li><a href="resource_DesignationResource.html">DesignationResource</a></li>
@@ -99,6 +100,7 @@
         <li><a href="#path__organisation_organisationAccesses_requests_granted.html">/organisation/organisationAccesses/requests/granted</a></li>
         <li><a href="#path__organisation_organisationAccesses_requests_history_-dataset-.html">/organisation/organisationAccesses/requests/history/{dataset}</a></li>
         <li><a href="#path__organisation_organisationAccesses_requests_pending.html">/organisation/organisationAccesses/requests/pending</a></li>
+        <li><a href="#path__organisation_organisationAccesses_reset_-dataset-.html">/organisation/organisationAccesses/reset/{dataset}</a></li>
       </ul>
       <a name="path__organisation_organisationAccesses_-id-_requests.html"></a>
       <h1>/organisation/organisationAccesses/{id}/requests</h1>
@@ -386,7 +388,7 @@ details</p>
       <a name="PUT"></a>
       <h2>PUT</h2>
       <p>
-            Edit an existing Organisation Access Request for data
+            Edit and grant existing Organisation Access Request for data
           </p>
       <h3>Parameters</h3>
       <table>
@@ -474,7 +476,7 @@ to pass)
           <td>user</td>
           <td>
             The Current User (checked for dataset administration rights
-to the dataset within an access request as specified as a path param id)
+to the dataset within an access request as specified as a path param id
 (Injected Token no need to pass)
           </td>
           <td>tokenorganisationaccessrequestadminuser</td>
@@ -1094,6 +1096,51 @@ to pass)
           </td>
         </tr>
       </table>
+      <a name="path__organisation_organisationAccesses_reset_-dataset-.html"></a>
+      <h1>/organisation/organisationAccesses/reset/{dataset}</h1>
+      <p class="note">Mount Point: <a href="../api/organisation/organisationAccesses/reset/{dataset}">/api/organisation/organisationAccesses/reset/{dataset}</a></p>
+      <a name="GET"></a>
+      <h2>GET</h2>
+      <p>
+            SysAdmin function to reset accesses
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>user</td>
+          <td>
+            (no documentation provided)
+          </td>
+          <td>tokensystemadministratoruser</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>dataset</td>
+          <td>
+            (no documentation provided)
+          </td>
+          <td>path</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td>(custom)</td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/json</td>
+        </tr>
+      </table>
+      <p>(no documentation provided)</p>
 
       <div class="clear" />
     </div>

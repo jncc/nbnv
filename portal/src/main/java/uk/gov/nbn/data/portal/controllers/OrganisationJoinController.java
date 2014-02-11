@@ -59,7 +59,7 @@ public class OrganisationJoinController {
                 OrganisationJoinRequest request = resource.path(String.format("organisationMemberships/request/%d", id))
                         .accept(MediaType.APPLICATION_JSON)
                         .get(OrganisationJoinRequest.class);
-                if (isUserOrgAdminOrRequestor(id, request)) {
+                if (isUserOrgAdminOrRequestor(request)) {
                     model.addAttribute("organisationID", request.getOrganisation().getId());
                     model.addAttribute("requestID", id);
 
@@ -79,7 +79,7 @@ public class OrganisationJoinController {
         }
     }
 
-    private boolean isUserOrgAdminOrRequestor(int id, OrganisationJoinRequest request) {
+    private boolean isUserOrgAdminOrRequestor(OrganisationJoinRequest request) {
         User currentUser = resource.path("user")
                 .accept(MediaType.APPLICATION_JSON)
                 .get(User.class);
@@ -88,7 +88,7 @@ public class OrganisationJoinController {
             return true;
         }
 
-        if (resource.path(String.format("organisationMemberships/%d/%d/isadmin", request.getOrganisation().getId(), currentUser.getId()))
+        if (resource.path(String.format("organisationMemberships/%d/isadmin", request.getOrganisation().getId()))
                 .accept(MediaType.APPLICATION_JSON)
                 .get(boolean.class)) {
             return true;

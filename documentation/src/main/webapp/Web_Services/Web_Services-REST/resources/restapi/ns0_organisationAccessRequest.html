@@ -60,6 +60,8 @@
               <ul>
                 <li><a href="ns0_accessPosition.html">accessPosition</a></li>
                 <li><a href="ns0_accessRequest.html">accessRequest</a></li>
+                <li><a href="ns0_apiObservationView.html">apiObservationView</a></li>
+                <li><a href="ns0_apiObservationViewStatistic.html">apiObservationViewStatistic</a></li>
                 <li><a href="ns0_attribute.html">attribute</a></li>
                 <li><a href="ns0_boundingBox.html">boundingBox</a></li>
                 <li><a href="ns0_contributingOrganisation.html">contributingOrganisation</a></li>
@@ -98,7 +100,6 @@
                 <li><a href="ns0_taxonDatasetWithQueryStats.html">taxonDatasetWithQueryStats</a></li>
                 <li><a href="ns0_taxonDesignation.html">taxonDesignation</a></li>
                 <li><a href="ns0_taxonNavigationGroup.html">taxonNavigationGroup</a></li>
-                <li><a href="ns0_taxonObseravtionDownload.html">taxonObseravtionDownload</a></li>
                 <li><a href="ns0_taxonObservation.html">taxonObservation</a></li>
                 <li><a href="ns0_taxonObservationAttribute.html">taxonObservationAttribute</a></li>
                 <li><a href="ns0_taxonObservationAttributeValue.html">taxonObservationAttributeValue</a></li>
@@ -113,6 +114,7 @@
                 <li><a href="ns0_userAccessRequest.html">userAccessRequest</a></li>
                 <li><a href="ns0_userAccessRequestAuditHistory.html">userAccessRequestAuditHistory</a></li>
                 <li><a href="ns0_userDownloadNotification.html">userDownloadNotification</a></li>
+                <li><a href="ns0_userEmailModify.html">userEmailModify</a></li>
                 <li><a href="ns0_userRoleChangeJSON.html">userRoleChangeJSON</a></li>
                 <li><a href="ns0_yearStats.html">yearStats</a></li>
               </ul>
@@ -144,74 +146,14 @@
           <th>property</th>
           <th>type</th>
           <th>description</th>
-        </tr>	
-		<tr>
-			<td>requestPurposeID</td>
-			<td>requestPurposeID (int)</td>
-			<td>The ID of the request purpose type for this request</td>
-		</tr>
-		<tr>
-			<td>requestPurposeLabel</td>
-			<td>requestPurposeLabel (string)</td>
-			<td>The type of the request purpose type for this request</td>
-		</tr>
-		<tr>
-			<td>requestReason</td>
-			<td>requestReason (string)</td>
-			<td>The reason for this request</td>
-		</tr>
-		<tr>
-			<td>filter</td>
-			<td>filter (<a href="ns0_taxonObservationFilter.html">taxonObservationFilter</a>)</td>
-			<td>The ID of the request purpose type for this request</td>
-		</tr>		
-		<tr>
-			<td>sensitiveRequest</td>
-			<td>sensitiveRequest (boolean)</td>
-			<td>If this request include sensitive records or not</td>
-		</tr>		
-		<tr>
-			<td>requestDate</td>
-			<td>requestDate (dateTime)</td>
-			<td>A timestamp of when this request was made</td>
-		</tr>		
-		<tr>
-			<td>datasetKey</td>
-			<td>datasetKey (string)</td>
-			<td>The key of the dataset this request needs access for</td>
-		</tr>				
+        </tr>
         <tr>
-			<td>dataset</td>
-			<td>dataset (<a href="ns0_dataset.html">dataset</a>)</td>
-			<td>The dataset this request needs access for</td>
-		</tr>				
-		<tr>
           <td>organisation</td>
           <td>
               organisation (<a href="ns0_organisation.html">organisation</a>)
           </td>
           <td>The organisation that this request has been made on behalf of</td>
         </tr>
-		<tr>
-			<td>responseTypeID</td>
-			<td>responseTypeID (int)</td>
-			<td>The ID of the response type for this request, determines if the request was approved or not</td>
-		</tr>		
-		<tr>
-			<td>responseReason</td>
-			<td>responseReason (string)</td>
-			<td>Any reason given for the rejection or approval of this request</td>
-		</tr>		
-		<tr>
-			<td>responseDate</td>
-			<td>responseDate (dateTime)</td>
-			<td>A timestamp of when the response to this request was made</td>
-		</tr>		
-		<tr>
-			<td>accessExpires</td>
-			<td>accessExpires (dateTime)</td>
-			<td>An optional timestamp of when this request will expire</td>
-		</tr>				
       </table>
 
       <div class="clear" />

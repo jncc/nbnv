@@ -52,6 +52,7 @@
             <li class="current">
               <a href="resource_UserResource.html">UserResource</a>
               <ul>
+                <li><a href="resource_ApiViewResource.html">ApiViewResource</a></li>
                 <li><a href="resource_DatasetResource.html">DatasetResource</a></li>
                 <li><a href="resource_DesignationCategoryResource.html">DesignationCategoryResource</a></li>
                 <li><a href="resource_DesignationResource.html">DesignationResource</a></li>
@@ -100,6 +101,8 @@
         <li><a href="#path__user_mail_password.html">/user/mail/password</a></li>
         <li><a href="#path__user_mail_username.html">/user/mail/username</a></li>
         <li><a href="#path__user_modify.html">/user/modify</a></li>
+        <li><a href="#path__user_modify_email.html">/user/modify/email</a></li>
+        <li><a href="#path__user_modify_email_activate_-key-.html">/user/modify/email/activate/{key}</a></li>
         <li><a href="#path__user_organisations.html">/user/organisations</a></li>
         <li><a href="#path__user_passwords_change.html">/user/passwords/change</a></li>
         <li><a href="#path__user_passwords_change_-username-.html">/user/passwords/change/{username}</a></li>
@@ -209,8 +212,8 @@
       <a name="GET"></a>
       <h2>GET</h2>
       <p>
-            Return the details of the selected user if the current user is an admin
-of any organisation or dataset
+            Get a set of limited user details about a given user, used for dataset
+and organisation admin functions
           </p>
       <h3>Parameters</h3>
       <table>
@@ -223,8 +226,8 @@ of any organisation or dataset
         <tr>
           <td>user</td>
           <td>
-            The current user (Must be org / dataset admin) (Injected
-Token no need to pass)
+            The current user must be logged in and a dataset or
+organisation admin (Injected Token no need to pass)
           </td>
           <td>tokenanydatasetororgadminuser</td>
           <td></td>
@@ -232,7 +235,7 @@ Token no need to pass)
         <tr>
           <td>userID</td>
           <td>
-            The user ID to search for
+            The id of a user to get details for
           </td>
           <td>path</td>
           <td></td>
@@ -249,7 +252,7 @@ Token no need to pass)
           <td>application/json</td>
         </tr>
       </table>
-      <p>(no documentation provided)</p>
+      <p>A limited set of details about the user</p>
       <h3>Status Codes</h3>
       <table>
         <tr>
@@ -281,8 +284,8 @@ Token no need to pass)
       <a name="GET"></a>
       <h2>GET</h2>
       <p>
-            Return the details of the selected users organisation memberships if the
-current user is an admin of any organisation or dataset
+            Get a list of organisations for which a given user is a member, used for
+dataset and organisation admin functions
           </p>
       <h3>Parameters</h3>
       <table>
@@ -295,8 +298,8 @@ current user is an admin of any organisation or dataset
         <tr>
           <td>user</td>
           <td>
-            The current user (Must be org / dataset admin) (Injected
-Token no need to pass)
+            The current user must be logged in and a dataset or
+organisation admin (Injected Token no need to pass)
           </td>
           <td>tokenanydatasetororgadminuser</td>
           <td></td>
@@ -304,7 +307,7 @@ Token no need to pass)
         <tr>
           <td>userID</td>
           <td>
-            The user ID to search for
+            The id of the user to get a list of organisations for
           </td>
           <td>path</td>
           <td></td>
@@ -314,14 +317,14 @@ Token no need to pass)
       <table>
         <tr>
           <td align="right">element:</td>
-          <td>(custom)</td>
+          <td><a href="el_ns0_organisation.html">organisation</a></td>
         </tr>
         <tr>
           <td align="right">media types:</td>
           <td>application/json</td>
         </tr>
       </table>
-      <p>(no documentation provided)</p>
+      <p>A list of organisations that the user is a member of</p>
       <h3>Status Codes</h3>
       <table>
         <tr>
@@ -503,7 +506,7 @@ to pass)
       <table>
         <tr>
           <td align="right">element:</td>
-          <td>(custom)</td>
+          <td><a href="el_ns0_organisation.html">organisation</a></td>
         </tr>
         <tr>
           <td align="right">media types:</td>
@@ -606,8 +609,7 @@ database
         <tr>
           <td>user</td>
           <td>
-            The current user must be logged in (Injected Token no need to
-pass)
+            The current user must be logged in (Injected Token no need to pass)
           </td>
           <td>tokenuser</td>
           <td></td>
@@ -647,10 +649,74 @@ pass)
       <a name="path__user_login.html"></a>
       <h1>/user/login</h1>
       <p class="note">Mount Point: <a href="../api/user/login">/api/user/login</a></p>
+      <a name="GET"></a>
+      <h2>GET</h2>
+      <p>
+            Log the indicated user into the system
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>username</td>
+          <td>
+            The username of the user
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>password</td>
+          <td>
+            The password of the user
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>remember</td>
+          <td>
+            Whether the browser should remember this data (stay
+logged in)
+          </td>
+          <td>query</td>
+          <td>false</td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td>(custom)</td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/json</td>
+        </tr>
+      </table>
+      <p>A Response object detailing the success or failure of the action</p>
+      <h3>Status Codes</h3>
+      <table>
+        <tr>
+          <th>code</th>
+          <th>description</th>
+        </tr>
+        <tr>
+          <td>200</td>
+          <td>
+            Successfully logged in
+          </td>
+        </tr>
+      </table>
       <a name="POST"></a>
       <h2>POST</h2>
       <p>
-            Log the indicated user into the system
+            Log the indicated user into the system, via a POST
           </p>
       <h3>Parameters</h3>
       <table>
@@ -694,7 +760,7 @@ logged in)
         </tr>
         <tr>
           <td align="right">media types:</td>
-          <td>application/json</td>
+          <td>application/json<br/></td>
         </tr>
       </table>
       <p>A Response object detailing the success or failure of the action</p>
@@ -707,7 +773,13 @@ logged in)
         <tr>
           <td>200</td>
           <td>
-            Successfully logged in
+            Succesfully completed operation
+          </td>
+        </tr>
+        <tr>
+          <td>403</td>
+          <td>
+            The current user is not logged in
           </td>
         </tr>
       </table>
@@ -925,6 +997,150 @@ form</p>
           </td>
         </tr>
       </table>
+      <a name="path__user_modify_email.html"></a>
+      <h1>/user/modify/email</h1>
+      <p class="note">Mount Point: <a href="../api/user/modify/email">/api/user/modify/email</a></p>
+      <a name="POST"></a>
+      <h2>POST</h2>
+      <p>
+            Post an update to your users email address, this is a two stage process
+and will not alter the email address until it has been confirmed by the
+user using an activation key sent to the new email address
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>user</td>
+          <td>
+            The current user, must be logged in (Injected Token no need to pass)
+          </td>
+          <td>tokenuser</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Request Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td>(custom)</td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>*/*<br/>application/xml<br/></td>
+        </tr>
+      </table>
+      <p>The new email for this user</p>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td>(custom)</td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/json</td>
+        </tr>
+      </table>
+      <p>A success or failure message depending on the outcome</p>
+      <h3>Status Codes</h3>
+      <table>
+        <tr>
+          <th>code</th>
+          <th>description</th>
+        </tr>
+        <tr>
+          <td>200</td>
+          <td>
+            Operation completed successfully, check response for failures if any
+          </td>
+        </tr>
+        <tr>
+          <td>403</td>
+          <td>
+            The current user is not logged in
+          </td>
+        </tr>
+      </table>
+      <a name="path__user_modify_email_activate_-key-.html"></a>
+      <h1>/user/modify/email/activate/{key}</h1>
+      <p class="note">Mount Point: <a href="../api/user/modify/email/activate/{key}">/api/user/modify/email/activate/{key}</a></p>
+      <a name="GET"></a>
+      <h2>GET</h2>
+      <p>
+            Second stage of the email modification process, confirms that the user
+has actually requested this modification, using the activation key sent
+to the new users email address
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>user</td>
+          <td>
+            The current user, must be logged in (Injected Token no need to pass)
+          </td>
+          <td>tokenuser</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>email</td>
+          <td>
+            The new email address that the user wants to change to
+          </td>
+          <td>path</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>key</td>
+          <td>
+            The activation key from the email sent to the new users email account
+          </td>
+          <td>path</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td>(custom)</td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>*/*<br/>application/xml</td>
+        </tr>
+      </table>
+      <p>The success or failure of this operation</p>
+      <h3>Status Codes</h3>
+      <table>
+        <tr>
+          <th>code</th>
+          <th>description</th>
+        </tr>
+        <tr>
+          <td>200</td>
+          <td>
+            Operation completed successfully, check response for failures if any
+          </td>
+        </tr>
+        <tr>
+          <td>403</td>
+          <td>
+            The current user is not logged in
+          </td>
+        </tr>
+      </table>
       <a name="path__user_organisations.html"></a>
       <h1>/user/organisations</h1>
       <p class="note">Mount Point: <a href="../api/user/organisations">/api/user/organisations</a></p>
@@ -955,7 +1171,7 @@ to pass)
       <table>
         <tr>
           <td align="right">element:</td>
-          <td>(custom)</td>
+          <td><a href="el_ns0_organisation.html">organisation</a></td>
         </tr>
         <tr>
           <td align="right">media types:</td>
@@ -1001,7 +1217,7 @@ to pass)
         <tr>
           <td>user</td>
           <td>
-            The current user
+            The current user (Injected Token no need to pass)
           </td>
           <td>tokenuser</td>
           <td></td>
@@ -1202,7 +1418,7 @@ of the specified organisation
             The current user (Must be logged in) (Injected Token no need
 to pass)
           </td>
-          <td>tokenuser</td>
+          <td>tokenanydatasetororgadminuser</td>
           <td></td>
         </tr>
         <tr>

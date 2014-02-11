@@ -22,6 +22,9 @@ public interface OperationalUserMapper {
     @Select("SELECT * from \"User\" WHERE id = #{id}")
     public User getUserById(@Param("id") int id);
     
+    @Select("SELECT id, forename, surname, email from \"User\" WHERE id = #{id}")
+    public User getLimitedUserByID(@Param("id") int id);
+    
     @Select("Select * from \"User\" where username = #{username}")
     public User getUser(@Param("username") String username);
 

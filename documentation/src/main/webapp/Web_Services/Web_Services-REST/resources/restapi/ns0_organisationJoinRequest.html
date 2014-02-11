@@ -60,6 +60,8 @@
               <ul>
                 <li><a href="ns0_accessPosition.html">accessPosition</a></li>
                 <li><a href="ns0_accessRequest.html">accessRequest</a></li>
+                <li><a href="ns0_apiObservationView.html">apiObservationView</a></li>
+                <li><a href="ns0_apiObservationViewStatistic.html">apiObservationViewStatistic</a></li>
                 <li><a href="ns0_attribute.html">attribute</a></li>
                 <li><a href="ns0_boundingBox.html">boundingBox</a></li>
                 <li><a href="ns0_contributingOrganisation.html">contributingOrganisation</a></li>
@@ -98,7 +100,6 @@
                 <li><a href="ns0_taxonDatasetWithQueryStats.html">taxonDatasetWithQueryStats</a></li>
                 <li><a href="ns0_taxonDesignation.html">taxonDesignation</a></li>
                 <li><a href="ns0_taxonNavigationGroup.html">taxonNavigationGroup</a></li>
-                <li><a href="ns0_taxonObseravtionDownload.html">taxonObseravtionDownload</a></li>
                 <li><a href="ns0_taxonObservation.html">taxonObservation</a></li>
                 <li><a href="ns0_taxonObservationAttribute.html">taxonObservationAttribute</a></li>
                 <li><a href="ns0_taxonObservationAttributeValue.html">taxonObservationAttributeValue</a></li>
@@ -113,6 +114,7 @@
                 <li><a href="ns0_userAccessRequest.html">userAccessRequest</a></li>
                 <li><a href="ns0_userAccessRequestAuditHistory.html">userAccessRequestAuditHistory</a></li>
                 <li><a href="ns0_userDownloadNotification.html">userDownloadNotification</a></li>
+                <li><a href="ns0_userEmailModify.html">userEmailModify</a></li>
                 <li><a href="ns0_userRoleChangeJSON.html">userRoleChangeJSON</a></li>
                 <li><a href="ns0_yearStats.html">yearStats</a></li>
               </ul>
@@ -147,22 +149,29 @@
               id (int)
           </td>
           <td>The ID of this join request</td>
-        </tr>
+        </tr>		
         <tr>
           <td>requestReason</td>
           <td>
               requestReason (string)
           </td>
           <td>Any reason given by the user for needing to join this organisation</td>
-        </tr>		
+        </tr>
         <tr>
           <td>requestDate</td>
           <td>
               requestDate (dateTime)
           </td>
           <td>A timestamp of when this join request was made</td>
+        </tr>		
+        <tr>
+          <td>user</td>
+          <td>
+              user (<a href="ns0_user.html">user</a>)
+          </td>
+          <td>The user who wishes to join this organisation</td>
         </tr>
-		<tr>
+        <tr>
           <td>organisation</td>
           <td>
               organisation (<a href="ns0_organisation.html">organisation</a>)
@@ -170,25 +179,18 @@
           <td>The organisation that this user wishes to join</td>
         </tr>
         <tr>
-          <td>user</td>
-          <td>
-              user (<a href="ns0_user.html">user</a>)
-          </td>
-          <td>The user who wishes to join this organisation</td>
-        </tr>	
-		<tr>
           <td>responseTypeID</td>
           <td>
               responseTypeID (int)
           </td>
           <td>An ID of the response type given to this request (if any)</td>
-        </tr>
+        </tr>		
         <tr>
           <td>responseReason</td>
           <td>
               responseReason (string)
           </td>
-          <td>Any reason for the response given to this request (if any)</td>
+          <td>A reason for the response given to this request (if any)</td>
         </tr>
         <tr>
           <td>responseDate</td>

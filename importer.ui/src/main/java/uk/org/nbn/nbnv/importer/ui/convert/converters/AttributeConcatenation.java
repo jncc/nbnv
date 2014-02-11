@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 import uk.org.nbn.nbnv.importer.ui.convert.BadDataException;
@@ -62,13 +63,13 @@ public class AttributeConcatenation extends ConverterStep {
         
         for (int c : columnList.keySet()) {
             try {
-                obj.put(columnList.get(c), row.get(c));
+                obj.put(columnList.get(c), StringEscapeUtils.escapeJson(row.get(c)));
             } catch (JSONException ex) {
                 Logger.getLogger(AttributeConcatenation.class.getName()).log(Level.SEVERE, null, ex);
                 throw new BadDataException(ex);
             }
         }
         
-        row.add("\"" + obj.toString().replace("\"", "\"\"") + "\"");
+        row.add(obj.toString());
     }
 }

@@ -18,6 +18,9 @@ public interface UserMapper {
 
     @Select("SELECT * from UserData WHERE id = #{id}")
     public User getUserById(@Param("id") int id);
+    
+    @Select("SELECT id, forename, surname, email from UserData Where id = #{id}")
+    public User getLimitedUserById(@Param("id") int id);
 
     @Select("Select * from UserData where username = #{username}")
     public User getUser(@Param("username") String username);

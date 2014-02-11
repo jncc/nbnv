@@ -6,7 +6,6 @@ package uk.org.nbn.nbnv.api.rest.resources;
 
 import freemarker.template.TemplateException;
 import java.io.IOException;
-import java.net.SocketException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +31,7 @@ import uk.org.nbn.nbnv.api.model.User;
 import uk.org.nbn.nbnv.api.model.meta.OrganisationAddRemoveUserJSON;
 import uk.org.nbn.nbnv.api.model.meta.OrganisationJoinRequestJSON;
 import uk.org.nbn.nbnv.api.model.meta.UserRoleChangeJSON;
+import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenAnyDatasetOrOrgAdminUser;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenOrganisationJoinRequestUser;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenOrganisationUser;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
@@ -58,16 +58,18 @@ public class OrganisationMembershipResource extends AbstractResource {
      * @response.representation.200.qname List<OrganisationMembership>
      * @response.representation.200.mediaType application/json
      */
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public List<OrganisationMembership> get() {
-        return organisationMembershipMapper.selectAll();
-    }
+//    @GET
+//    @Produces(MediaType.APPLICATION_JSON)
+//    public List<OrganisationMembership> get() {
+//        return organisationMembershipMapper.selectAll();
+//    }
 
     /**
      * Return a list of organisation memberships for a given organisation from 
      * the core database
      * 
+     * @param user The current user (must be an admin) (Injected Token no need 
+     * to pass)
      * @param id An organisation ID
      * 
      * @return A list of organisation memberships for a given organisation from 
@@ -79,7 +81,7 @@ public class OrganisationMembershipResource extends AbstractResource {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<OrganisationMembership> get(@PathParam("id") int id) {
+    public List<OrganisationMembership> get(@TokenOrganisationUser(path = "id", roles = OrganisationMembership.Role.administrator) User user, @PathParam("id") int id) {
         return oOrganisationMembershipMapper.selectByOrganisation(id);
     }
 
@@ -87,6 +89,8 @@ public class OrganisationMembershipResource extends AbstractResource {
      * Return the organisation membership details for a given user and 
      * organisation from the core database
      * 
+     * @param user The current user (must be an admin of any dataset or 
+     * organisation) (Injected Token no need to pass)
      * @param id An organisation ID
      * @param user A Users ID
      * 
@@ -99,9 +103,9 @@ public class OrganisationMembershipResource extends AbstractResource {
     @GET
     @Path("/{id}/{user}")
     @Produces(MediaType.APPLICATION_JSON)
-    public OrganisationMembership getSpecificUser(@PathParam("id") int id, @PathParam("user") int user) {
-        if (oOrganisationMembershipMapper.isUserMemberOfOrganisation(user, id)) {
-            return oOrganisationMembershipMapper.selectByUserAndOrganisation(user, id);
+    public OrganisationMembership getSpecificUser(@TokenAnyDatasetOrOrgAdminUser() User user, @PathParam("id") int id, @PathParam("user") int userID) {
+        if (oOrganisationMembershipMapper.isUserMemberOfOrganisation(userID, id)) {
+            return oOrganisationMembershipMapper.selectByUserAndOrganisation(userID, id);
         }
 
         return null;
@@ -111,8 +115,8 @@ public class OrganisationMembershipResource extends AbstractResource {
      * Return true if a user is a member of a given organisation from the core 
      * database
      * 
+     * @param user The current user (Injected Token no need to pass)
      * @param id An organisation ID
-     * @param user A Users ID     
      * 
      * @return True if a user is a member of a given organisation from the core 
      * database
@@ -121,11 +125,11 @@ public class OrganisationMembershipResource extends AbstractResource {
      * @response.representation.200.mediaType application/json
      */
     @GET
-    @Path("/{id}/{user}/isMember")
+    @Path("/{id}/isMember")
     @Produces(MediaType.APPLICATION_JSON)
-    public boolean isMemberOfOrganisation(@PathParam("id") int id, @PathParam("user") int user) {
-        if (oOrganisationMembershipMapper.isUserMemberOfOrganisation(user, id)) {
-            return oOrganisationMembershipMapper.isUserMemberOfOrganisation(user, id);
+    public boolean isMemberOfOrganisation(@TokenUser(allowPublic = false) User user, @PathParam("id") int id) {
+        if (oOrganisationMembershipMapper.isUserMemberOfOrganisation(user.getId(), id)) {
+            return oOrganisationMembershipMapper.isUserMemberOfOrganisation(user.getId(), id);
         }
 
         return false;
@@ -145,11 +149,11 @@ public class OrganisationMembershipResource extends AbstractResource {
      * @response.representation.200.mediaType application/json
      */    
     @GET
-    @Path("/{id}/{user}/isadmin")
+    @Path("/{id}/isadmin")
     @Produces(MediaType.APPLICATION_JSON)
-    public boolean isUserOrgAdmin(@PathParam("id") int id, @PathParam("user") int user) {
-        if (oOrganisationMembershipMapper.isUserMemberOfOrganisation(user, id)) {
-            if (oOrganisationMembershipMapper.selectByUserAndOrganisation(user, id).getRole() == OrganisationMembership.Role.administrator) {
+    public boolean isUserOrgAdmin(@TokenUser(allowPublic = false) User user, @PathParam("id") int id) {
+        if (oOrganisationMembershipMapper.isUserMemberOfOrganisation(user.getId(), id)) {
+            if (oOrganisationMembershipMapper.selectByUserAndOrganisation(user.getId(), id).getRole() == OrganisationMembership.Role.administrator) {
                 return true;
             }
         }
@@ -162,6 +166,7 @@ public class OrganisationMembershipResource extends AbstractResource {
      * user who has admin rights over the organisation
      * 
      * @param user The current user (Must be an admin or returns 403 Forbidden)
+     * (Injected Token no need to pass)
      * @param orgId An organisation ID
      * @param data The user to be added to the organisation
      * 
@@ -181,7 +186,8 @@ public class OrganisationMembershipResource extends AbstractResource {
     /**
      * Modify an existing users role in an organisation
      *
-     * @param user The current user (must be an admin)
+     * @param user The current user (must be an admin) (Injected Token no need 
+     * to pass)
      * @param orgId The organisation ID
      * @param data A JSON data packet containing the user to modified and their
      * new role
@@ -203,7 +209,8 @@ public class OrganisationMembershipResource extends AbstractResource {
      * Remove the specified user from a given organisation if the current user
      * is an org admin
      *
-     * @param user The current user (must be an admin)
+     * @param user The current user (must be an admin) (Injected Token no need 
+     * to pass)
      * @param orgId The organisation ID
      * @param data A JSON data packet containing the user to removed
      * 
@@ -224,7 +231,8 @@ public class OrganisationMembershipResource extends AbstractResource {
      * Get any active request (i.e. responseTypeID is NULL) for the current user
      * of the specified organisation
      *
-     * @param user The current user (must be an admin)
+     * @param user The current user (must be an admin) (Injected Token no need 
+     * to pass)
      * @param orgID The organisation id
      * 
      * @return An Organisation Join Request made by the user for the specified
@@ -236,7 +244,7 @@ public class OrganisationMembershipResource extends AbstractResource {
     @GET
     @Path("/{id}/join")
     @Produces(MediaType.APPLICATION_JSON)
-    public OrganisationJoinRequest get(@TokenUser(allowPublic = false) User user, @PathParam("id") int orgID) {
+    public OrganisationJoinRequest getJoinRequests(@TokenUser(allowPublic = false) User user, @PathParam("id") int orgID) {
         if (oOrganisationJoinRequestMapper.activeOrganisationJoinRequestByUserExists(user.getId(), orgID)) {
             return oOrganisationJoinRequestMapper.getActiveJoinRequestByUserAndOrganisation(user.getId(), orgID);
         }
@@ -252,7 +260,7 @@ public class OrganisationMembershipResource extends AbstractResource {
      * Create a new organisation join request for a given organisation, return a
      * status code
      *
-     * @param user The current user
+     * @param user The current user (Injected Token no need to pass)
      * @param orgID The Organisation ID
      * @param data A JSON packet containing a reason for the request
      * 
@@ -295,7 +303,8 @@ public class OrganisationMembershipResource extends AbstractResource {
      * responseTypeID of NULL) if the user is the org admin of the specified
      * organisation
      *
-     * @param user The Current user (must be an admin)
+     * @param user The Current user (must be an admin) (Injected Token no need 
+     * to pass)
      * @param orgId The Organisation ID
      * 
      * @return A Response object detailing the success or failure of the action
@@ -313,7 +322,7 @@ public class OrganisationMembershipResource extends AbstractResource {
     /**
      * Return all active requests to join organisations
      *
-     * @param user The Current user
+     * @param user The Current user (Injected Token no need to pass)
      * 
      * @return The list of open organisation requests
      * 
@@ -331,7 +340,8 @@ public class OrganisationMembershipResource extends AbstractResource {
      * Return a specific request by its ID, if the user can access it i.e. org
      * Admin or requesting user otherwise return a 403 Forbidden error
      *
-     * @param user The Current User (must be an admin or requesting user)
+     * @param user The Current User (must be an admin or requesting user) 
+     * (Injected Token no need to pass)
      * @param reqId The request id
      * 
      * @return A specific organisation join request by its ID, if the user can 
@@ -355,7 +365,7 @@ public class OrganisationMembershipResource extends AbstractResource {
      * org admin of the organisation in this request then a FORBIDDEN response
      * should be shown.
      *
-     * @param user The current user
+     * @param user The current user (Injected Token no need to pass)
      * @param id The id of the request in the database
      * @param data A JSON data packet containing information about the type of
      * response and associated reasons for it

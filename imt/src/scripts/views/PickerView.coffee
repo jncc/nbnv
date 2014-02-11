@@ -25,7 +25,7 @@ define [
     @$el.html template 
       hasResults: @picker.hasResults()
       loggedIn: @model.getCurrentUser().isLoggedIn()
-
+      
     if @picker.hasResults()
       @picker.set 'isPicking', false # now we have some results, disable picking
       resultsDiv = @$('.results')
@@ -55,3 +55,5 @@ define [
       .append($('<span class="icon"></span>').css resultsForLayer.layer.getLegendIcon())
       .append(resultsForLayer.layer.getName())
       .append(loadingIcon)
+      .append($('<p class="polygonErrorMessage"></p>'))
+      

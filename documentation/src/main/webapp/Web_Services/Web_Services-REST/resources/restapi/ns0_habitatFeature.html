@@ -60,6 +60,8 @@
               <ul>
                 <li><a href="ns0_accessPosition.html">accessPosition</a></li>
                 <li><a href="ns0_accessRequest.html">accessRequest</a></li>
+                <li><a href="ns0_apiObservationView.html">apiObservationView</a></li>
+                <li><a href="ns0_apiObservationViewStatistic.html">apiObservationViewStatistic</a></li>
                 <li><a href="ns0_attribute.html">attribute</a></li>
                 <li><a href="ns0_boundingBox.html">boundingBox</a></li>
                 <li><a href="ns0_contributingOrganisation.html">contributingOrganisation</a></li>
@@ -98,7 +100,6 @@
                 <li><a href="ns0_taxonDatasetWithQueryStats.html">taxonDatasetWithQueryStats</a></li>
                 <li><a href="ns0_taxonDesignation.html">taxonDesignation</a></li>
                 <li><a href="ns0_taxonNavigationGroup.html">taxonNavigationGroup</a></li>
-                <li><a href="ns0_taxonObseravtionDownload.html">taxonObseravtionDownload</a></li>
                 <li><a href="ns0_taxonObservation.html">taxonObservation</a></li>
                 <li><a href="ns0_taxonObservationAttribute.html">taxonObservationAttribute</a></li>
                 <li><a href="ns0_taxonObservationAttributeValue.html">taxonObservationAttributeValue</a></li>
@@ -113,6 +114,7 @@
                 <li><a href="ns0_userAccessRequest.html">userAccessRequest</a></li>
                 <li><a href="ns0_userAccessRequestAuditHistory.html">userAccessRequestAuditHistory</a></li>
                 <li><a href="ns0_userDownloadNotification.html">userDownloadNotification</a></li>
+                <li><a href="ns0_userEmailModify.html">userEmailModify</a></li>
                 <li><a href="ns0_userRoleChangeJSON.html">userRoleChangeJSON</a></li>
                 <li><a href="ns0_yearStats.html">yearStats</a></li>
               </ul>
@@ -161,14 +163,14 @@
               habitatDatasetKey (string)
           </td>
           <td>The key of the habitat dataset that contains this feature</td>
-        </tr>
-		<tr>
+        </tr>		
+        <tr>
           <td>datasetTitle</td>
           <td>
               datasetTitle (string)
           </td>
           <td>The title of the dataset that contains this feature</td>
-        </tr>				
+        </tr>
         <tr>
           <td>datasetHref</td>
           <td>
@@ -177,18 +179,18 @@
           <td>A URL pointing to the dataset that contains this feature on the NBN Gateway</td>
         </tr>		
         <tr>
+          <td>uploadDate</td>
+          <td>
+              uploadDate (dateTime)
+          </td>
+         <td>A timestamp of the time that this habitat feature was uploaded</td>
+        </tr>
+        <tr>
           <td>formattedUploadDate</td>
           <td>
               formattedUploadDate (string)
           </td>
           <td>The date that this habitat feature was uploaded (human readable)</td>
-        </tr>
-        <tr>
-          <td>uploadDate</td>
-          <td>
-              uploadDate (dateTime)
-          </td>
-          <td>A timestamp of the time that this habitat feature was uploaded</td>
         </tr>
       </table>
 

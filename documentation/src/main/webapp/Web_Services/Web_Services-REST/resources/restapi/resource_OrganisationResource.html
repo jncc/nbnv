@@ -52,6 +52,7 @@
             <li class="current">
               <a href="resource_OrganisationResource.html">OrganisationResource</a>
               <ul>
+                <li><a href="resource_ApiViewResource.html">ApiViewResource</a></li>
                 <li><a href="resource_DatasetResource.html">DatasetResource</a></li>
                 <li><a href="resource_DesignationCategoryResource.html">DesignationCategoryResource</a></li>
                 <li><a href="resource_DesignationResource.html">DesignationResource</a></li>
@@ -94,6 +95,7 @@
         <li><a href="#path__organisations_-id-_logo.html">/organisations/{id}/logo</a></li>
         <li><a href="#path__organisations_-id-_logosmall.html">/organisations/{id}/logosmall</a></li>
         <li><a href="#path__organisations_-id-_metadata.html">/organisations/{id}/metadata</a></li>
+        <li><a href="#path__organisations_contributing.html">/organisations/contributing</a></li>
         <li><a href="#path__organisations_joinable.html">/organisations/joinable</a></li>
         <li><a href="#path__organisations_search.html">/organisations/search</a></li>
       </ul>
@@ -109,7 +111,7 @@
       <table>
         <tr>
           <td align="right">element:</td>
-          <td>(custom)</td>
+          <td><a href="el_ns0_organisation.html">organisation</a></td>
         </tr>
         <tr>
           <td align="right">media types:</td>
@@ -159,7 +161,7 @@
       <table>
         <tr>
           <td align="right">element:</td>
-          <td>(custom)</td>
+          <td><a href="el_ns0_organisation.html">organisation</a></td>
         </tr>
         <tr>
           <td align="right">media types:</td>
@@ -422,7 +424,7 @@ organisation) (Injected Token no need to pass)
       <table>
         <tr>
           <td align="right">element:</td>
-          <td>(custom)</td>
+          <td><a href="el_ns0_organisation.html">organisation</a></td>
         </tr>
         <tr>
           <td align="right">media types:</td>
@@ -584,6 +586,40 @@ specified organisation, otherwise return a 403 Forbidden error
           </td>
         </tr>
       </table>
+      <a name="path__organisations_contributing.html"></a>
+      <h1>/organisations/contributing</h1>
+      <p class="note">Mount Point: <a href="../api/organisations/contributing">/api/organisations/contributing</a></p>
+      <a name="GET"></a>
+      <h2>GET</h2>
+      <p>
+            Get a list of all organisation from the data warehouse that have
+contributed at least 1 dataset
+          </p>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td><a href="el_ns0_organisation.html">organisation</a></td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/json</td>
+        </tr>
+      </table>
+      <p>A list of organisations that have at least 1 dataset</p>
+      <h3>Status Codes</h3>
+      <table>
+        <tr>
+          <th>code</th>
+          <th>description</th>
+        </tr>
+        <tr>
+          <td>200</td>
+          <td>
+            Successfully returned a list of all contributing organisations
+          </td>
+        </tr>
+      </table>
       <a name="path__organisations_joinable.html"></a>
       <h1>/organisations/joinable</h1>
       <p class="note">Mount Point: <a href="../api/organisations/joinable">/api/organisations/joinable</a></p>
@@ -615,7 +651,7 @@ or cannot join
       <table>
         <tr>
           <td align="right">element:</td>
-          <td>(custom)</td>
+          <td><a href="el_ns0_organisation.html">organisation</a></td>
         </tr>
         <tr>
           <td align="right">media types:</td>
@@ -671,7 +707,7 @@ or cannot join
       <table>
         <tr>
           <td align="right">element:</td>
-          <td>(custom)</td>
+          <td><a href="el_ns0_organisation.html">organisation</a></td>
         </tr>
         <tr>
           <td align="right">media types:</td>

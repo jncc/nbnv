@@ -52,6 +52,7 @@
             <li class="current">
               <a href="resource_TaxonObservationResource.html">TaxonObservationResource</a>
               <ul>
+                <li><a href="resource_ApiViewResource.html">ApiViewResource</a></li>
                 <li><a href="resource_DatasetResource.html">DatasetResource</a></li>
                 <li><a href="resource_DesignationCategoryResource.html">DesignationCategoryResource</a></li>
                 <li><a href="resource_DesignationResource.html">DesignationResource</a></li>
@@ -100,6 +101,7 @@
         <li><a href="#path__taxonObservations_datasets_requestable.html">/taxonObservations/datasets/requestable</a></li>
         <li><a href="#path__taxonObservations_download.html">/taxonObservations/download</a></li>
         <li><a href="#path__taxonObservations_download_report_-datasetKey -.html">/taxonObservations/download/report/{datasetKey }</a></li>
+        <li><a href="#path__taxonObservations_download_report_-datasetKey -_csv.html">/taxonObservations/download/report/{datasetKey }/csv</a></li>
         <li><a href="#path__taxonObservations_download_report_combinedStats.html">/taxonObservations/download/report/combinedStats</a></li>
         <li><a href="#path__taxonObservations_download_report_downloadOrganisationStats.html">/taxonObservations/download/report/downloadOrganisationStats</a></li>
         <li><a href="#path__taxonObservations_download_report_downloadStats.html">/taxonObservations/download/report/downloadStats</a></li>
@@ -208,6 +210,14 @@ to (Injected Token no need to pass)
           <td></td>
         </tr>
         <tr>
+          <td>orgSuppliedList</td>
+          <td>
+            (no documentation provided)
+          </td>
+          <td>query</td>
+          <td>-1</td>
+        </tr>
+        <tr>
           <td>gridRef</td>
           <td>
             Any grid references to search within
@@ -231,7 +241,162 @@ or just presence records (false).  If this parameter is missing then both absenc
 and presence records are returned.  Valid values are 'true' and 'false'
           </td>
           <td>query</td>
+          <td>0</td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td><a href="el_ns0_taxonObservation.html">taxonObservation</a></td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/json</td>
+        </tr>
+      </table>
+      <p>A list of Taxon Observations conforming to the provided search
+parameters</p>
+      <h3>Status Codes</h3>
+      <table>
+        <tr>
+          <th>code</th>
+          <th>description</th>
+        </tr>
+        <tr>
+          <td>200</td>
+          <td>
+            Successfully returned a list of taxon observations which match the given filter
+          </td>
+        </tr>
+      </table>
+      <a name="POST"></a>
+      <h2>POST</h2>
+      <p>
+            Returns a list of Taxon Observations matching the given serach parameters
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>user</td>
+          <td>
+            The current user, determines what datasets they have access
+to (Injected Token no need to pass)
+          </td>
+          <td>tokenuser</td>
           <td></td>
+        </tr>
+        <tr>
+          <td>startYear</td>
+          <td>
+            The start year of the desired range
+          </td>
+          <td>form</td>
+          <td>-1</td>
+        </tr>
+        <tr>
+          <td>endYear</td>
+          <td>
+            The end year of the desired range
+          </td>
+          <td>form</td>
+          <td>-1</td>
+        </tr>
+        <tr>
+          <td>datasetKey</td>
+          <td>
+            Datasets to search in
+          </td>
+          <td>form</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>ptvk</td>
+          <td>
+            Taxon Version Keys to search for
+          </td>
+          <td>form</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>spatialRelationship</td>
+          <td>
+            Any spatial relationship information required
+          </td>
+          <td>form</td>
+          <td>overlap</td>
+        </tr>
+        <tr>
+          <td>featureID</td>
+          <td>
+            Any required feature ID
+          </td>
+          <td>form</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>sensitive</td>
+          <td>
+            If the results should include sensitive records or not
+          </td>
+          <td>form</td>
+          <td>1</td>
+        </tr>
+        <tr>
+          <td>designation</td>
+          <td>
+            Any required designations
+          </td>
+          <td>form</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>taxonOutputGroup</td>
+          <td>
+            Any required taxon output groups
+          </td>
+          <td>form</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>orgSuppliedList</td>
+          <td>
+            (no documentation provided)
+          </td>
+          <td>form</td>
+          <td>-1</td>
+        </tr>
+        <tr>
+          <td>gridRef</td>
+          <td>
+            Any grid references to search within
+          </td>
+          <td>form</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>polygon</td>
+          <td>
+            WKT WGS-84 polygon filter
+          </td>
+          <td>form</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>absence</td>
+          <td>
+            Whether the results should be limited to just absence records (true)
+or just presence records (false).  If this parameter is missing then both absence
+and presence records are returned.  Valid values are 'true' and 'false'
+          </td>
+          <td>form</td>
+          <td>0</td>
         </tr>
       </table>
       <h3>Response Body</h3>
@@ -607,7 +772,7 @@ with it which are accessible by the current user
         <tr>
           <td>user</td>
           <td>
-            The current user (Injected Token no need to pass)
+            The current user  (Injected Token no need to pass)
           </td>
           <td>tokenuser</td>
           <td></td>
@@ -1177,6 +1342,14 @@ to (Injected Token no need to pass)
           <td></td>
         </tr>
         <tr>
+          <td>orgSuppliedList</td>
+          <td>
+            (no documentation provided)
+          </td>
+          <td>query</td>
+          <td>-1</td>
+        </tr>
+        <tr>
           <td>gridRef</td>
           <td>
             Any grid references to search within
@@ -1505,6 +1678,82 @@ details
           </td>
         </tr>
       </table>
+      <a name="path__taxonObservations_download_report_-datasetKey -_csv.html"></a>
+      <h1>/taxonObservations/download/report/{datasetKey }/csv</h1>
+      <p class="note">Mount Point: <a href="../api/taxonObservations/download/report/{datasetKey }/csv">/api/taxonObservations/download/report/{datasetKey }/csv</a></p>
+      <a name="GET"></a>
+      <h2>GET</h2>
+      <p>
+            Return a complete list of download reports for the selected dataset as a
+CSV file, the current user must be an admin of this dataset
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>user</td>
+          <td>
+            The current user (Must be dataset admin) (Injected Token no
+need to pass)
+          </td>
+          <td>tokendatasetadminuser</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>datasetKey</td>
+          <td>
+            A dataset key i.e. GA000466
+          </td>
+          <td>path</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>json</td>
+          <td>
+            JSON object containing a download stats query, please see
+<a href="downloadStatsJSON.html">Additional Documentation</a> for more
+details
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td>(custom)</td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/x-zip-compressed</td>
+        </tr>
+      </table>
+      <p>A list of download reports for this dataset</p>
+      <h3>Status Codes</h3>
+      <table>
+        <tr>
+          <th>code</th>
+          <th>description</th>
+        </tr>
+        <tr>
+          <td>200</td>
+          <td>
+            Return a list of download reports for the given dataset and constrained by the given JSON filter
+          </td>
+        </tr>
+        <tr>
+          <td>403</td>
+          <td>
+            The current user is not a dataset admin of this dataset
+          </td>
+        </tr>
+      </table>
       <a name="path__taxonObservations_download_report_combinedStats.html"></a>
       <h1>/taxonObservations/download/report/combinedStats</h1>
       <p class="note">Mount Point: <a href="../api/taxonObservations/download/report/combinedStats">/api/taxonObservations/download/report/combinedStats</a></p>
@@ -1704,13 +1953,13 @@ details
         <tr>
           <td>200</td>
           <td>
-            Successfully returned a set of download statistics
+            Successfully returned the user download stats for the given filter
           </td>
         </tr>
         <tr>
           <td>403</td>
           <td>
-            The current user is not admin of all requested datasets
+            The current user is not logged in
           </td>
         </tr>
       </table>
@@ -2182,6 +2431,14 @@ to (Injected Token no need to pass)
           <td></td>
         </tr>
         <tr>
+          <td>orgSuppliedList</td>
+          <td>
+            (no documentation provided)
+          </td>
+          <td>query</td>
+          <td>-1</td>
+        </tr>
+        <tr>
           <td>gridRef</td>
           <td>
             Any grid references to search within
@@ -2316,12 +2573,12 @@ to (Injected Token no need to pass)
           <td></td>
         </tr>
         <tr>
-          <td>organisationList</td>
+          <td>orgSuppliedList</td>
           <td>
             (no documentation provided)
           </td>
           <td>query</td>
-          <td></td>
+          <td>-1</td>
         </tr>
         <tr>
           <td>taxonOutputGroup</td>

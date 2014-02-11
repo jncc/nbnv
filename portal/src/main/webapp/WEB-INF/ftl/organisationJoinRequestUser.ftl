@@ -5,7 +5,7 @@
     <#assign organisationId="${.data_model['organisationID']}">
     <#assign organisation=json.readURL("${api}/organisations/${organisationId}")>
     <#assign user=json.readURL("${api}/user")>
-    <#assign isMember=json.readURL("${api}/organisationMemberships/${organisationId}/${user.id?string('0')}/isMember")>
+    <#assign isMember=json.readURL("${api}/organisationMemberships/${organisationId}/isMember")>
     <#assign request=json.readURL("${api}/organisationMemberships/${organisationId}/join")>
 
     <#if isMember>
