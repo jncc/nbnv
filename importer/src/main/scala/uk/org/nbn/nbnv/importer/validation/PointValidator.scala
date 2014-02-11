@@ -14,7 +14,6 @@ class PointValidator {
     val r1 = v1.validate(record)
     resultList.append(r1)
 
-
     //If no errors so far test point validity
     if (resultList.find(r => r.level == ResultLevel.ERROR) == None) {
       //if WGS84 Lat Long
@@ -22,13 +21,13 @@ class PointValidator {
         //check the lat long are valid numeric values
         val v2 = new Nbnv84Validator
         val r2 = v2.validate(record)
-        resultList.append(r2)
+        resultList.appendAll(r2)
 
-        if (r2.level == ResultLevel.DEBUG) {
+        if (resultList.find(r => r.level == ResultLevel.ERROR) == None) {
           //check lat long falls with in supported range of values
           val v3 = new Nbnv86Validator
           val r3 = v3.validate(record)
-          resultList.append(r3)
+          resultList.appendAll(r3)
         }
       }
       //else one of the supported grid ref systems
@@ -36,9 +35,9 @@ class PointValidator {
         //check the values of east and north are positive numeric values
         val v4 = new Nbnv85Validator
         val r4 = v4.validate(record)
-        resultList.append(r4)
+        resultList.appendAll(r4)
 
-        if (r4.level == ResultLevel.DEBUG) {
+        if (resultList.find(r => r.level == ResultLevel.ERROR) == None) {
           //check that easting northing fall within specified grid system
           val v5 = new Nbnv87Validator
           val r5 = v5.validate(record)
