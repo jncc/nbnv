@@ -1,35 +1,47 @@
 package uk.org.nbn.nbnv.importer.validation
 
-import uk.org.nbn.nbnv.importer.data.Database
 import uk.org.nbn.nbnv.importer.records.NbnRecord
-import uk.org.nbn.nbnv.importer.spatial.GridSquareInfoFactory
 import uk.org.nbn.nbnv.importer.fidelity.{ResultLevel, Result}
+import uk.org.nbn.nbnv.importer.utility.StringParsing._
+import collection.mutable.ListBuffer
 
 //validate that the easting and northing a
 class Nbnv85Validator() {
   def validate(record: NbnRecord) = {
 
-    if ((record.eastRaw.get matches """^\d+(\.\d+)*$""") == false) {
-      new Result {
+    val results = new ListBuffer[Result]
+    val code = "NBNV-85"
+
+    if (!(record.eastRaw.isDefined && record.eastRaw.get.maybeDouble.isDefined && record.eastRaw.get.maybeDouble.get > 0 )) {
+      results.append(new Result {
         def level = ResultLevel.ERROR
-        def message = "NBNV-85: The value of east is not a numeric easting: %s".format(record.eastRaw.get)
+        def message = "%s: East must be a positive numeric value".format(code)
         def reference = record.key
-      }
-    }
-    else if ((record.northRaw.get matches """^\d+(\.\d+)*$""") == false) {
-      new Result {
-        def level = ResultLevel.ERROR
-        def message = "NBNV-85: The value of north is not a numeric northing: %s".format(record.northRaw.get)
-        def reference = record.key
-      }
+      })
     }
     else  {
-      new Result {
+      results.append(new Result {
         def level = ResultLevel.DEBUG
-        def message = "NBNV-85: Validated: East and North are numeric"
+        def message = "%s: Validated: East and North are numeric".format(code)
         def reference = record.key
-      }
+      })
     }
 
+    if (!(record.northRaw.isDefined && record.northRaw.get.maybeDouble.isDefined && record.northRaw.get.maybeDouble.get > 0)) {
+      results.append( new Result {
+        def level = ResultLevel.ERROR
+        def message = "%s: North must be a positive numeric value".format(code)
+        def reference = record.key
+      })
+    }
+    else  {
+      results.append( new Result {
+        def level = ResultLevel.DEBUG
+        def message = "%s: Validated: East and North are numeric".format(code)
+        def reference = record.key
+      })
+    }
+
+    results.toList
   }
 }
