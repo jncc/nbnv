@@ -32,6 +32,7 @@
 <!-- Scan sql session factories beans -->  
     <bean id="warehouseSqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
         <property name="dataSource" ref="warehouseDataSource" />
+        <property name="configLocation" value="classpath:mybatis-warehouse.xml"/>
     </bean>
     <bean id="coreSqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
         <property name="dataSource" ref="coreDataSource" />
