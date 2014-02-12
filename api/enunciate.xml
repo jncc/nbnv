@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<enunciate xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://enunciate.codehaus.org/schemas/enunciate-1.21.xsd">
+	<!-- <webapp mergeWebXML="src/main/webapp/WEB-INF/web.xml" /> -->
+   
+  
+	<services>
+		<rest defaultRestSubcontext="api/">
+			<custom-resource-parameter-annotation qualifiedName="uk.org.nbn.nbnv.api.rest.providers.annotations.TokenAccessRequestAdminUser"/>
+			<custom-resource-parameter-annotation qualifiedName="uk.org.nbn.nbnv.api.rest.providers.annotations.TokenAnyDatasetOrOrgAdminUser"/>
+			<custom-resource-parameter-annotation qualifiedName="uk.org.nbn.nbnv.api.rest.providers.annotations.TokenDatasetAdminUser"/>
+			<custom-resource-parameter-annotation qualifiedName="uk.org.nbn.nbnv.api.rest.providers.annotations.TokenDatasetOrOrgAdminUser"/>
+			<custom-resource-parameter-annotation qualifiedName="uk.org.nbn.nbnv.api.rest.providers.annotations.TokenDatasetSurveyAdminUser"/>
+			<custom-resource-parameter-annotation qualifiedName="uk.org.nbn.nbnv.api.rest.providers.annotations.TokenOrganisationAccessRequestAdminUser"/>
+			<custom-resource-parameter-annotation qualifiedName="uk.org.nbn.nbnv.api.rest.providers.annotations.TokenOrganisationJoinRequestUser"/>
+			<custom-resource-parameter-annotation qualifiedName="uk.org.nbn.nbnv.api.rest.providers.annotations.TokenOrganisationUser"/>
+			<custom-resource-parameter-annotation qualifiedName="uk.org.nbn.nbnv.api.rest.providers.annotations.TokenSystemAdministratorUser"/>
+			<custom-resource-parameter-annotation qualifiedName="uk.org.nbn.nbnv.api.rest.providers.annotations.TokenTaxonObservationAttributeAdminUser"/>
+			<custom-resource-parameter-annotation qualifiedName="uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser"/>
+		</rest>
+	</services>
+	
+	<api-import pattern="uk.org.nbn.nbnv.api.model.*" />
+	<api-import pattern="uk.org.nbn.nbnv.api.rest.resources.*" />
+	
+	<api-classes>
+		<include pattern="uk.org.nbn.nbnv.api.rest.resources.*" />
+		<include pattern="uk.org.nbn.nbnv.api.model.*" />
+	</api-classes>
+
+	<modules>
+		<docs docsDir="restapi" title="NBN Gateway V - REST API" includeExampleXml="false" />	
+		<c disabled="true" />
+		<csharp disabled="true" />
+		<java-client disabled="true" />
+		<obj-c disabled="true" />
+		<php disabled="true" />
+		<xml disabled="false" />
+		<ruby disabled="true" />
+	</modules>
+
+</enunciate>
