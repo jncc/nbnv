@@ -13,11 +13,13 @@ class NbnRecordFactory @Inject()(log: Logger) {
     def getData(fieldIndex: Option[Int]) : Option[String] = {
       if (!fieldIndex.isDefined) { None }
       else if (fieldIndex.get > (rawData.length - 1)) {
-        log.warn("The field index %d exceeds the number of fields in the row".format(fieldIndex.get))
+        //A peculiarity of .split (used in CsvReader) means that a sequence of blank fields are
+        //truncated
+//        log.warn("The field index %d exceeds the number of fields in the row".format(fieldIndex.get))
         None
       }
       else {
-        Option(rawData(fieldIndex.get)).filter(_.trim.nonEmpty)
+        Option(rawData(fieldIndex.get).trim.replaceAll("^\"|\"$", "")).filter(_.nonEmpty)
       }
     }
 

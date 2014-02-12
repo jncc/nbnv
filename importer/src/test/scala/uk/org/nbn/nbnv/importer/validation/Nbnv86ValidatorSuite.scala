@@ -8,69 +8,69 @@ import uk.org.nbn.nbnv.importer.fidelity.ResultLevel
 
 class Nbnv86ValidatorSuite extends BaseFunSuite {
 
-  test("should validate a posititve latitude <= 90 and a positive longitude <= 180") {
+  test("should validate a posititve latitude <=62 and a positive longitude <= 13") {
     val rec = mock[NbnRecord]
-    when(rec.east).thenReturn(Some(180.0))
-    when(rec.north).thenReturn(Some(90.0))
+    when(rec.east).thenReturn(Some(13.0))
+    when(rec.north).thenReturn(Some(62.0))
 
     val v = new Nbnv86Validator
     val r = v.validate(rec)
 
-    r.level should be (ResultLevel.DEBUG)
+    r.find(r => r.level == ResultLevel.ERROR) should be ('empty)
   }
 
-  test("should validate a negative latitude >= -90 and a positive longitude >= -180") {
+  test("should validate a positive latitude >= 48 and a negative longitude >= -14") {
     val rec = mock[NbnRecord]
-    when(rec.east).thenReturn(Some(-180.0))
-    when(rec.north).thenReturn(Some(-90.0))
+    when(rec.east).thenReturn(Some(-14.0))
+    when(rec.north).thenReturn(Some(48.0))
 
     val v = new Nbnv86Validator
     val r = v.validate(rec)
 
-    r.level should be (ResultLevel.DEBUG)
+    r.find(r => r.level == ResultLevel.ERROR) should be ('empty)
   }
 
-  test("should not validate a latitude > 90") {
+  test("should not validate a latitude > 62") {
     val rec = mock[NbnRecord]
-    when(rec.east).thenReturn(Some(180.0))
-    when(rec.north).thenReturn(Some(95.0))
+    when(rec.east).thenReturn(Some(13.0))
+    when(rec.north).thenReturn(Some(62.1))
 
     val v = new Nbnv86Validator
     val r = v.validate(rec)
 
-    r.level should be (ResultLevel.ERROR)
+    r.find(r => r.level == ResultLevel.ERROR) should not be ('empty)
   }
 
-  test("should not validate a latitude < -90") {
+  test("should not validate a latitude < 48") {
     val rec = mock[NbnRecord]
-    when(rec.east).thenReturn(Some(180.0))
-    when(rec.north).thenReturn(Some(-95.0))
+    when(rec.east).thenReturn(Some(13.0))
+    when(rec.north).thenReturn(Some(47.9999))
 
     val v = new Nbnv86Validator
     val r = v.validate(rec)
 
-    r.level should be (ResultLevel.ERROR)
+    r.find(r => r.level == ResultLevel.ERROR) should not be ('empty)
   }
 
-  test("should not validate a longitude > 180") {
+  test("should not validate a longitude > 13") {
     val rec = mock[NbnRecord]
-    when(rec.east).thenReturn(Some(185.0))
-    when(rec.north).thenReturn(Some(90.0))
+    when(rec.east).thenReturn(Some(13.1))
+    when(rec.north).thenReturn(Some(62.0))
 
     val v = new Nbnv86Validator
     val r = v.validate(rec)
 
-    r.level should be (ResultLevel.ERROR)
+    r.find(r => r.level == ResultLevel.ERROR) should not be ('empty)
   }
 
-  test("should not validate a longitude < -180") {
+  test("should not validate a longitude < -14") {
     val rec = mock[NbnRecord]
-    when(rec.east).thenReturn(Some(-185.0))
-    when(rec.north).thenReturn(Some(90.0))
+    when(rec.east).thenReturn(Some(-14.1))
+    when(rec.north).thenReturn(Some(62.0))
 
     val v = new Nbnv86Validator
     val r = v.validate(rec)
 
-    r.level should be (ResultLevel.ERROR)
+    r.find(r => r.level == ResultLevel.ERROR) should not be ('empty)
   }
 }
