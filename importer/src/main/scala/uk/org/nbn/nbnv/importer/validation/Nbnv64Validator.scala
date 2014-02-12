@@ -29,7 +29,7 @@ class Nbnv64Validator (repo: Repository) {
     } else {
       new Result {
         def level = ResultLevel.ERROR
-        def message = "%s: TaxonVersionKey '%s' must exist.".format(record.taxonVersionKey.get)
+        def message = "%s: TaxonVersionKey '%s' must exist.".format(code, record.taxonVersionKey.get)
         def reference = record.key
       }
     }
