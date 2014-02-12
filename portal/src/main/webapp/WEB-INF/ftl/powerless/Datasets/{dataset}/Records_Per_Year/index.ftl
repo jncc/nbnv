@@ -3,7 +3,7 @@
 <#assign recordsPerYears=json.readURL("${api}/taxonDatasets/${datasetId}/recordsPerYear")>
 <#assign recordsPerDateTypes=json.readURL("${api}/taxonDatasets/${datasetId}/recordsPerDateType")>
 
-<div id="nbn-temporal-chart" datasetkey=${datasetId} "/>
+<div id="nbn-temporal-chart" datasetkey="${datasetId}"/>
 
 <div id="nbn-chart-tooltip"></div>
 <div class="nbn-chart-tooltip">Tip: zoom to data by drawing a rectangle on the chart (hold down mouse button and drag), double click to reset.</div>
