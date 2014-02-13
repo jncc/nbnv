@@ -32,12 +32,25 @@
 
                     $('#submit-link').show();
                 },
-                error: function() {
+                error: function(error) {
                     $('#submit-status').html('');
-                    $('#submit-status').append("Your access request has failed to be submitted correctly. Please submit a screenshot of this page to access@nbn.org.uk and we will look into it.")
-                        .append($('<p>')
-                            .append('${data}')
-                        );
+                    
+                    var obj = JSON.parse(error.responseText);
+
+                    if (obj.status.match('^Zero records would be granted in')) {
+                        $('#submit-status').append(obj.status + ', please amend your request and re-submit. If you believe this was in error please submit a screenshot of this page to access@nbn.org.uk and we will look into it')
+                            .append($('<p>').text(error.responseText))
+                            .append($('<p>')
+                                .append('${data}')
+                            );
+                    }
+                    else {
+                        $('#submit-status').append("Your access request has failed to be submitted correctly. Please submit a screenshot of this page to access@nbn.org.uk and we will look into it.")
+                            .append($('<p>').text(error.responseText))
+                            .append($('<p>')
+                                .append('${data}')
+                            );
+                    }
 
                     $('#submit-link').show();
                 }
