@@ -83,7 +83,7 @@ public class RequestResource extends AbstractResource {
                 "");
         
         if (stats.isEmpty()) {
-            throw new IllegalArgumentException("This action would grant access to zero records, we recommend closing this request");
+            throw new IllegalArgumentException("Zero records would be granted in " + datasetKey);
         }
     }
 }
