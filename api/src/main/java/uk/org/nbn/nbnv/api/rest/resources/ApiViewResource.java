@@ -88,6 +88,8 @@ public class ApiViewResource extends AbstractResource {
         // the download is finished, required cookie, but doesn't stick around
         // long
         response.setHeader("Set-Cookie", "fileDownload=true; path=/");
+        // Set the filename to get around a bug with Firefox not adding the extension properly
+        response.setHeader("Content-Disposition", String.format("attachment; filename=\"%s_view_stats.zip\"", datasetKey));
 
         return new StreamingOutput() {
             @Override

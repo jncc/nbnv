@@ -10,7 +10,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.StreamingOutput;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,6 +66,7 @@ public class GridMapSquareResource extends AbstractResource {
     @Produces("application/x-zip-compressed")
     @Path("{ptvk : [A-Z]{3}SYS[0-9]{10}}")
     public StreamingOutput getGridMapSquares(
+            @Context HttpServletResponse response,
             @TokenUser() final User user,
             @PathParam("ptvk") final String ptvk,
             @QueryParam("resolution") @DefaultValue("") final String resolution,
@@ -71,7 +74,13 @@ public class GridMapSquareResource extends AbstractResource {
             @QueryParam("datasets") @DefaultValue(ObservationResourceDefaults.defaultDatasetKey) final List<String> datasets,
             @QueryParam("feature") @DefaultValue(ObservationResourceDefaults.defaultFeatureID) final String viceCountyIdentifier)
             throws IOException {
+        
+        // Set the filename to get around a bug with Firefox not adding the extension properly
+        response.setHeader("Content-Disposition", String.format("attachment; filename=\"%s_grid_squares.zip\"", ptvk));
+        
         return new StreamingOutput() {
+            
+            @Override
             public void write(OutputStream out) throws IOException, WebApplicationException {
                 ZipOutputStream zip = new ZipOutputStream(out);
                 addReadMe(zip, user, ptvk, resolution, bands);
