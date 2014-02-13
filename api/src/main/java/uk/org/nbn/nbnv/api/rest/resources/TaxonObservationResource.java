@@ -456,6 +456,7 @@ public class TaxonObservationResource extends RequestResource {
     @Path("/species/download")
     @Produces("application/x-zip-compressed")
     public StreamingOutput getSpeciesDownloadByFilter(
+            @Context HttpServletResponse response,
             @TokenUser() final User user,
             @QueryParam("startYear") @DefaultValue(ObservationResourceDefaults.defaultStartYear) final int startYear,
             @QueryParam("endYear") @DefaultValue(ObservationResourceDefaults.defaultEndYear) final int endYear,
@@ -470,6 +471,9 @@ public class TaxonObservationResource extends RequestResource {
             @QueryParam("gridRef") @DefaultValue(ObservationResourceDefaults.defaultGridRef) final String gridRef,
             @QueryParam("polygon") @DefaultValue(ObservationResourceDefaults.defaultPolygon) final String polygon) {
         //TODO: squareBlurring(?)
+        // Set the filename to get around a bug with Firefox not adding the extension properly
+        response.setHeader("Content-Disposition", "attachment; filename=\"species_download.zip\"");
+        
         return new StreamingOutput() {
             @Override
             public void write(OutputStream out) throws IOException, WebApplicationException {
@@ -889,6 +893,8 @@ public class TaxonObservationResource extends RequestResource {
         // the download is finished, required cookie, but doesn't stick around
         // long
         response.setHeader("Set-Cookie", "fileDownload=true; path=/");
+        // Set the filename to get around a bug with Firefox not adding the extension properly
+        response.setHeader("Content-Disposition", "attachment; filename=\"observation_download.zip\"");
         
         // Fix to prevent someone injecting somone elses user id into 
         // the download request, doesn't give them that persons access but it
@@ -1019,10 +1025,14 @@ public class TaxonObservationResource extends RequestResource {
     @Path("/download/report/{datasetKey : [A-Z][A-Z0-9]{7}}/csv")
     @Produces("application/x-zip-compressed")
     public StreamingOutput getDownloadReportsByDatasetAsCSV (
+            @Context HttpServletResponse response,
             @TokenDatasetAdminUser(path = "datasetKey") final User user, 
             @PathParam("datasetKey") final String datasetKey,
             @QueryParam("json") final String json) throws IOException {
 
+        // Set the filename to get around a bug with Firefox not adding the extension properly
+        response.setHeader("Content-Disposition", String.format("attachment; filename=\"%s_download_report.zip\"", datasetKey));
+        
         return new StreamingOutput() {
             @Override
             public void write(OutputStream out) throws IOException, WebApplicationException {
