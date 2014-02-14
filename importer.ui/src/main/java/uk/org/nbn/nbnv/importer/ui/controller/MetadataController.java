@@ -1,6 +1,7 @@
 package uk.org.nbn.nbnv.importer.ui.controller;
 
 import java.io.IOException;
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -202,20 +203,20 @@ public class MetadataController {
             messages.addAll(errors);
             Metadata meta = new Metadata();
             
-            meta.setAccess(mappings.get(importer.META_ACCESS_CONSTRAINT));
-            meta.setDescription(mappings.get(importer.META_DESC));
-            meta.setGeographic(mappings.get(importer.META_GEOCOVER));
-            meta.setInfo(mappings.get(importer.META_ADDITIONAL_INFO));
-            meta.setMethods(mappings.get(importer.META_CAPTURE_METHOD));
-            meta.setPurpose(mappings.get(importer.META_PURPOSE));
-            meta.setQuality(mappings.get(importer.META_DATA_CONFIDENCE));
-            meta.setTemporal(mappings.get(importer.META_TEMPORAL));
-            meta.setTitle(mappings.get(importer.META_TITLE));
-            meta.setUse(mappings.get(importer.META_USE_CONSTRAINT));
-            meta.setDatasetAdminName(mappings.get(importer.META_NAME));
-            meta.setDatasetAdminPhone(mappings.get(importer.META_CONTACT_PHONE));
-            meta.setDatasetAdminEmail(mappings.get(importer.META_EMAIL));
-            meta.setDatasetID(metadataForm.getMetadata().getDatasetID());
+            meta.setAccess(normalizeAndTrim(mappings.get(importer.META_ACCESS_CONSTRAINT)));
+            meta.setDescription(normalizeAndTrim(mappings.get(importer.META_DESC)));
+            meta.setGeographic(normalizeAndTrim(mappings.get(importer.META_GEOCOVER)));
+            meta.setInfo(normalizeAndTrim(mappings.get(importer.META_ADDITIONAL_INFO)));
+            meta.setMethods(normalizeAndTrim(mappings.get(importer.META_CAPTURE_METHOD)));
+            meta.setPurpose(normalizeAndTrim(mappings.get(importer.META_PURPOSE)));
+            meta.setQuality(normalizeAndTrim(mappings.get(importer.META_DATA_CONFIDENCE)));
+            meta.setTemporal(normalizeAndTrim(mappings.get(importer.META_TEMPORAL)));
+            meta.setTitle(normalizeAndTrim(mappings.get(importer.META_TITLE)));
+            meta.setUse(normalizeAndTrim(mappings.get(importer.META_USE_CONSTRAINT)));
+            meta.setDatasetAdminName(normalizeAndTrim(mappings.get(importer.META_NAME)));
+            meta.setDatasetAdminPhone(normalizeAndTrim(mappings.get(importer.META_CONTACT_PHONE)));
+            meta.setDatasetAdminEmail(normalizeAndTrim(mappings.get(importer.META_EMAIL)));
+            meta.setDatasetID(normalizeAndTrim(metadataForm.getMetadata().getDatasetID()));
             
             metadataForm.setMetadata(meta);
             
@@ -231,18 +232,18 @@ public class MetadataController {
 
                 if (meta.getOrganisationID() == -1) {
                     organisation = new Organisation();
-                    organisation.setAbbreviation(mappings.get(importer.ORG_ABBREVIATION));
-                    organisation.setAddress(mappings.get(importer.ORG_ADDRESS));
+                    organisation.setAbbreviation(normalizeAndTrim(mappings.get(importer.ORG_ABBREVIATION)));
+                    organisation.setAddress(mappings.get(normalizeAndTrim(importer.ORG_ADDRESS)));
                     organisation.setAllowPublicRegistration(false);
-                    organisation.setContactEmail(mappings.get(importer.ORG_EMAIL));
-                    organisation.setContactName(mappings.get(importer.ORG_CONTACT_NAME));
+                    organisation.setContactEmail(normalizeAndTrim(mappings.get(importer.ORG_EMAIL)));
+                    organisation.setContactName(normalizeAndTrim(mappings.get(importer.ORG_CONTACT_NAME)));
                     //organisation.setLogo(mappings.get(importer.ORG_LOGO)); // Need to figure out how to import logos
                     //organisation.setLogoSmall(mappings.get(importer.ORG_LOGO)); // Need to figure out how to import logos
-                    organisation.setName(mappings.get(importer.ORG_NAME));
-                    organisation.setPhone(mappings.get(importer.ORG_PHONE));
-                    organisation.setPostcode(mappings.get(importer.ORG_POSTCODE));
-                    organisation.setSummary(mappings.get(importer.ORG_DESC));
-                    organisation.setWebsite(mappings.get(importer.ORG_WEBSITE));
+                    organisation.setName(normalizeAndTrim(mappings.get(importer.ORG_NAME)));
+                    organisation.setPhone(normalizeAndTrim(mappings.get(importer.ORG_PHONE)));
+                    organisation.setPostcode(normalizeAndTrim(mappings.get(importer.ORG_POSTCODE)));
+                    organisation.setSummary(normalizeAndTrim(mappings.get(importer.ORG_DESC)));
+                    organisation.setWebsite(normalizeAndTrim(mappings.get(importer.ORG_WEBSITE)));
                     
                     metadataForm.setStoredOrg(true);
                     messages.add("Found an unknown organisation with the name " + organisation.getName() + ", please click Import Organisation to import this as a new Organisation or select the correct Organisation from the drop down list");
@@ -412,19 +413,24 @@ public class MetadataController {
         
         Metadata metadata = metadataForm.getMetadata();
         
-        metadata.setAccess(metadata.getAccess().replaceAll("âââââ", "").replaceAll("     ", "").trim());
-        metadata.setDatasetAdminEmail(metadata.getDatasetAdminEmail().replaceAll("âââââ", "").replaceAll("     ", "").trim());
-        metadata.setDatasetAdminName(metadata.getDatasetAdminName().replaceAll("âââââ", "").replaceAll("     ", "").trim());
-        metadata.setDatasetAdminPhone(metadata.getDatasetAdminPhone().replaceAll("âââââ", "").replaceAll("     ", "").trim());
-        metadata.setDescription(metadata.getDescription().replaceAll("âââââ", "").replaceAll("     ", "").trim());
-        metadata.setGeographic(metadata.getGeographic().replaceAll("âââââ", "").replaceAll("     ", "").trim());
-        metadata.setInfo(metadata.getInfo().replaceAll("âââââ", "").replaceAll("     ", "").trim());
-        metadata.setMethods(metadata.getMethods().replaceAll("âââââ", "").replaceAll("     ", "").trim());
-        metadata.setPurpose(metadata.getPurpose().replaceAll("âââââ", "").replaceAll("     ", "").trim());
-        metadata.setQuality(metadata.getQuality().replaceAll("âââââ", "").replaceAll("     ", "").trim());
-        metadata.setTemporal(metadata.getTemporal().replaceAll("âââââ", "").replaceAll("     ", "").trim());
-        metadata.setUse(metadata.getUse().replaceAll("âââââ", "").replaceAll("     ", "").trim());
-        
+        metadata.setAccess(normalizeAndTrim(metadata.getAccess()));
+        metadata.setDatasetAdminEmail(normalizeAndTrim(metadata.getDatasetAdminEmail()));
+        metadata.setDatasetAdminName(normalizeAndTrim(metadata.getDatasetAdminName()));
+        metadata.setDatasetAdminPhone(normalizeAndTrim(metadata.getDatasetAdminPhone()));
+        metadata.setDescription(normalizeAndTrim(metadata.getDescription()));
+        metadata.setGeographic(normalizeAndTrim(metadata.getGeographic()));
+        metadata.setInfo(normalizeAndTrim(metadata.getInfo().trim()));
+        metadata.setMethods(normalizeAndTrim(metadata.getMethods()));
+        metadata.setPurpose(normalizeAndTrim(metadata.getPurpose()));
+        metadata.setQuality(normalizeAndTrim(metadata.getQuality()));
+        metadata.setTemporal(normalizeAndTrim(metadata.getTemporal()));
+        metadata.setUse(normalizeAndTrim(metadata.getUse()));
+        //metadata.setUse(Normalizer.normalize(metadata.getUse(), Normalizer.Form.NFD).replaceAll("âââââ", "").replaceAll("     ", "").trim()); 
+       
         return metadataForm;
+    }
+    
+    private String normalizeAndTrim(String input) {
+        return Normalizer.normalize(input.trim(), Normalizer.Form.NFKD).replaceAll("âââââ", "").replaceAll("     ", "");
     }
 }
