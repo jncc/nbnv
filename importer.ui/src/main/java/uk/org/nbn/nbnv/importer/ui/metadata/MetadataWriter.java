@@ -114,7 +114,7 @@ public class MetadataWriter {
     private Element createRecorderNameNode(Document doc, Metadata ds) {
         Element ir = doc.createElement("additionalInfo");
         if (ds.getRecorderNames().equals("null")) {
-            ds.setRecorderNames("false");
+            ds.setRecorderNames("");
         }
         ir.appendChild(formatParaTag(doc, "recorderAndDeterminerNamesArePublic: " + ds.getRecorderNames()));
         return ir;
@@ -123,7 +123,7 @@ public class MetadataWriter {
     private Element createRecordAttsNode(Document doc, Metadata ds) {
         Element ir = doc.createElement("additionalInfo");
         if (ds.getRecordAtts().equals("null")) {
-            ds.setRecordAtts("false");
+            ds.setRecordAtts("");
         }
         ir.appendChild(formatParaTag(doc, "recordAttributesArePublic: " + ds.getRecordAtts()));
         return ir;
