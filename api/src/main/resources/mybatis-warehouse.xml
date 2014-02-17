@@ -4,6 +4,5 @@
 <configuration>
     <settings>
         <setting name="cacheEnabled" value="false" />
-        <setting name="localCacheScope" value="STATEMENT" />
     </settings>
 </configuration>
