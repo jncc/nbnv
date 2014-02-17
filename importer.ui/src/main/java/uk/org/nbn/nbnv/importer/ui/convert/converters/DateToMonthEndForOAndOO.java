@@ -22,6 +22,7 @@ import uk.org.nbn.nbnv.importer.ui.parser.DarwinCoreField;
  */
 public class DateToMonthEndForOAndOO extends ConverterStep {
 
+    private int idColumn = -1;
     private int dateTypeColumn;
     private int startDateColumn;
     private int endDateColumn;
@@ -37,7 +38,11 @@ public class DateToMonthEndForOAndOO extends ConverterStep {
         types.add(new SimpleDateFormat("yyyy/MM/dd"));
         types.add(new SimpleDateFormat("yyyy-MM-dd"));
         types.add(new SimpleDateFormat("dd MMM yyyy"));
-        types.add(new SimpleDateFormat("MMM yyyy"));   
+        types.add(new SimpleDateFormat("MMM yyyy"));
+        
+        for (SimpleDateFormat type : types) {
+            type.setLenient(false);
+        }
     }
 
     @Override
@@ -56,6 +61,9 @@ public class DateToMonthEndForOAndOO extends ConverterStep {
             }
             if (cm.getField() == DarwinCoreField.EVENTDATEEND) {
                 endDateColumn = cm.getColumnNumber();
+            }
+            if (cm.getField() == DarwinCoreField.OCCURRENCEID) {
+                idColumn = cm.getColumnNumber();
             }
         }
         
@@ -103,7 +111,11 @@ public class DateToMonthEndForOAndOO extends ConverterStep {
             }
             
             if (!matchedType) {
-                throw new BadDataException("Dates did not match any known or supported date types");
+                if (idColumn >= 0) {
+                    throw new BadDataException("Dates were not valid - ID: " + row.get(idColumn) + "\tStart:" + row.get(startDateColumn) + " End:" + row.get(endDateColumn));
+                } else {
+                    throw new BadDataException("Dates were not valid - Start:" + row.get(startDateColumn) + " End:" + row.get(endDateColumn));
+                }
             }            
         }
     }
