@@ -9,7 +9,7 @@
                     <table class="nbn-survey-table ui-state-highlight">
                         <tr><th>Survey Key</th><td>${survey.providerKey}</td></tr>                        
                         <tr><th>Description</th><td><#if survey.description??>${survey.description?has_content?string(survey.description,"Description not available")}<#else>Description not available</#if></td></tr>
-                        <tr><th>Geographical Coverage</th><td><#if survey.geograhpicalCoverage??>${survey.geograhpicalCoverage?has_content?string(survey.geograhpicalCoverage, "None Supplied")}<#else>None Supplied</#if></td></tr>
+                        <tr><th>Geographical Coverage</th><td><#if survey.geographicalCoverage??>${survey.geographicalCoverage?has_content?string(survey.geographicalCoverage, "None Supplied")}<#else>None Supplied</#if></td></tr>
                         <tr><th>Temporal Coverage</th><td><#if survey.temporalCoverage??>${survey.temporalCoverage?has_content?string(survey.temporalCoverage, "None Supplied")}<#else>None Supplied</#if></td></tr>
                         <tr><th>Data Capture Method</th><td><#if survey.dataCaptureMethod??>${survey.dataCaptureMethod?has_content?string(survey.dataCaptureMethod, "None Supplied")}<#else>None Supplied</#if></td></tr>
                         <tr><th>Purpose</th><td><#if survey.purpose??>${survey.purpose?has_content?string(survey.purpose, "None Supplied")}<#else>None Supplied</#if></td></tr>
