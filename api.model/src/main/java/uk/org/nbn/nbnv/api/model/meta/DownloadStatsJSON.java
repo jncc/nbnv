@@ -6,11 +6,13 @@ package uk.org.nbn.nbnv.api.model.meta;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
  * @author Matt Debont
  */
+@XmlRootElement
 public class DownloadStatsJSON {
     private RequestDatasetFilterJSON dataset;
     private String startDate = "";

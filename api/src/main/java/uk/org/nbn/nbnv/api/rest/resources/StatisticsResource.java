@@ -5,6 +5,8 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import org.codehaus.enunciate.jaxrs.ResponseCode;
+import org.codehaus.enunciate.jaxrs.StatusCodes;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +23,6 @@ public class StatisticsResource extends AbstractResource {
     /**
      * Return a set of statistics about the current status of the NBN records
      * 
-     * TODO populate this from the database
-     * 
      * @return A set of statistics about the current status of the NBN records
      * 
      * @throws JSONException 
@@ -31,6 +31,9 @@ public class StatisticsResource extends AbstractResource {
      * @response.representation.200.mediaType application/json
      */
     @GET
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Succesfully returned statistics for site")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public JSONObject getDatasetList() throws JSONException {
         //TODO populate this from the database

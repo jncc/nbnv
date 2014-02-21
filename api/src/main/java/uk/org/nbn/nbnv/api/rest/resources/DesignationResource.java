@@ -3,6 +3,9 @@ package uk.org.nbn.nbnv.api.rest.resources;
 import java.util.List;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import org.codehaus.enunciate.jaxrs.ResponseCode;
+import org.codehaus.enunciate.jaxrs.StatusCodes;
+import org.codehaus.enunciate.jaxrs.TypeHint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.org.nbn.nbnv.api.dao.warehouse.DatasetMapper;
@@ -37,6 +40,10 @@ public class DesignationResource extends AbstractResource {
      * @response.representation.200.mediaType application/json
      */
     @GET
+    @TypeHint(Designation.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned a list of all designations")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public List<Designation> getDesignationList() {
         return designationMapper.selectAll();
@@ -54,6 +61,11 @@ public class DesignationResource extends AbstractResource {
      */
     @GET
     @Path("/{id}")
+    @TypeHint(Designation.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Succesfully returned selected designation"),
+        @ResponseCode(code = 204, condition = "Could not find the requested designation")
+    })    
     @Produces(MediaType.APPLICATION_JSON)
     @SolrResolver("DESIGNATION")
     public Designation getDesignation(@PathParam("id") String id) {
@@ -74,6 +86,11 @@ public class DesignationResource extends AbstractResource {
      */
     @GET
     @Path("/{id}/designationCategories")
+    @TypeHint(DesignationCategory.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned a list of designation categories that this designation belongs to"),
+        @ResponseCode(code = 204, condition = "Could not find the requested designation")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public DesignationCategory getDesignationCategory(@PathParam("id") String id) {
         return designationCategoryMapper.selectByDesignationID(id);
@@ -94,6 +111,11 @@ public class DesignationResource extends AbstractResource {
      */
     @GET
     @Path("/{id}/datasets")
+    @TypeHint(Designation.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned a list of datasets that contain records in this designation"),
+        @ResponseCode(code = 204, condition = "Could not find the requested designation")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public List<Dataset> getDesignationDatasets(@TokenUser User user, @PathParam("id") String designation) {
         return datasetMapper.selectDatasetsInDesignationViewableByUser(user, designation);
@@ -117,6 +139,11 @@ public class DesignationResource extends AbstractResource {
      */
     @GET
     @Path("/{id}/species")
+    @TypeHint(Taxon.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned a list of taxa that this designation contains"),
+        @ResponseCode(code = 204, condition = "Could not find the requested designation")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public List<Taxon> getSpeciesByDesignationAndTaxonNavigationGroup(@PathParam("id") String id, @QueryParam("taxonNavigationGroupId") String taxonNavigationGroupId) {
         if(taxonNavigationGroupId != null){
@@ -141,11 +168,15 @@ public class DesignationResource extends AbstractResource {
      */
     @GET
     @Path("{id}/taxonNavigationGroups/{taxonNavigationGroupId}")
+    @TypeHint(TaxonNavigationGroup.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned a taxon navigation group within this designation"),
+        @ResponseCode(code = 204, condition = "Could not find the requested designation or taxon navigation group id")
+    })    
     @Produces(MediaType.APPLICATION_JSON)
     public TaxonNavigationGroup getTaxonNavigationGroupByDesignation(@PathParam("id") String id, @PathParam("taxonNavigationGroupId") String taxonNavigationGroupId){
         TaxonNavigationGroup toReturn = taxonNavigationGroupMapper.getTaxonNavigationGroup(taxonNavigationGroupId);
         toReturn.setChildren(taxonNavigationGroupMapper.getChildrenByDesignation(taxonNavigationGroupId, id));
         return toReturn;
     }
-
 }

@@ -2,11 +2,13 @@ package uk.org.nbn.nbnv.api.model;
 
 import java.util.Date;
 import java.util.List;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
  * @author Matt Debont
  */
+@XmlRootElement
 public class OrganisationSuppliedList {
     private int id;
     private String organisationName;

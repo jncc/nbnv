@@ -5,11 +5,13 @@
 package uk.org.nbn.nbnv.api.model.meta;
 
 import java.util.List;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
  * @author Paul Gilbertson
  */
+@XmlRootElement
 public class RequestDatasetFilterJSON extends AccessRequestFilterJSON {
     private List<String> datasets;
     private boolean secret;

@@ -21,6 +21,9 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.StreamingOutput;
+import org.codehaus.enunciate.jaxrs.ResponseCode;
+import org.codehaus.enunciate.jaxrs.StatusCodes;
+import org.codehaus.enunciate.jaxrs.TypeHint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.org.nbn.nbnv.api.dao.core.OperationalApiObservationViewMapper;
@@ -54,6 +57,10 @@ public class ApiViewResource extends AbstractResource {
      */
     @GET
     @Path("/{datasetKey : [A-Z][A-Z0-9]{7}}")
+    @TypeHint(ApiObservationViewStatistic.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned a list of all API observation view statisics, grouped by dataset")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public List<ApiObservationViewStatistic> getApiObserationViewStatisticsByDataset(
             @TokenDatasetAdminUser(path = "datasetKey") User user,
@@ -76,6 +83,9 @@ public class ApiViewResource extends AbstractResource {
      */    
     @GET
     @Path("/{datasetKey : [A-Z][A-Z0-9]{7}}/csv")
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned a list of all API observation view statisics, grouped by dataset as a CSV file")
+    })    
     @Produces("application/x-zip-compressed")
     public StreamingOutput getApiObserationViewStatisticsByDatasetAsCSV(
             @TokenDatasetAdminUser(path = "datasetKey") final User user,

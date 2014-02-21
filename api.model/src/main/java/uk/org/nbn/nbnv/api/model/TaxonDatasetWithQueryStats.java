@@ -1,7 +1,9 @@
 package uk.org.nbn.nbnv.api.model;
 
 import java.util.List;
+import javax.xml.bind.annotation.XmlRootElement;
 
+@XmlRootElement
 public class TaxonDatasetWithQueryStats implements Comparable<TaxonDatasetWithQueryStats>{
     
     private String datasetKey;

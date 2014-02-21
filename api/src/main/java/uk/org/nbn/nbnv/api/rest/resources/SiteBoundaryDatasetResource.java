@@ -6,6 +6,9 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import org.codehaus.enunciate.jaxrs.ResponseCode;
+import org.codehaus.enunciate.jaxrs.StatusCodes;
+import org.codehaus.enunciate.jaxrs.TypeHint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.org.nbn.nbnv.api.dao.warehouse.SiteBoundaryDatasetMapper;
@@ -29,6 +32,10 @@ public class SiteBoundaryDatasetResource extends AbstractResource {
      * @response.representation.200.mediaType application/json
      */
     @GET
+    @TypeHint(SiteBoundaryDataset.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned list of all site boundary datasets")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public List<SiteBoundaryDataset> get(){
         return SiteBoundaryDatasetMapper.get();
@@ -46,6 +53,10 @@ public class SiteBoundaryDatasetResource extends AbstractResource {
      */
     @GET
     @Path("/{id}")
+    @TypeHint(SiteBoundaryDataset.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned the requested site boundary dataset")
+    })  
     @Produces(MediaType.APPLICATION_JSON)
     public SiteBoundaryDataset getSiteBoundaryDataset(@PathParam("id") String id){
         return SiteBoundaryDatasetMapper.getByDatasetKey(id);
@@ -63,6 +74,10 @@ public class SiteBoundaryDatasetResource extends AbstractResource {
      */
     @GET
     @Path("/{id}/siteBoundaries")
+    @TypeHint(SiteBoundary.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned list of all site boundaries in this category")
+    })    
     @Produces(MediaType.APPLICATION_JSON)
     public List<SiteBoundary> getSiteBoundariesByDataset(@PathParam("id") String id){
         return siteBoundaryMapper.getByDatasetKey(id);

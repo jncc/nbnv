@@ -1,11 +1,13 @@
 package uk.org.nbn.nbnv.api.model;
 
 import java.util.Date;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
  * @author Matt Debont
  */
+@XmlRootElement
 public class TaxonObservationDownload {
     
     private int observationID;

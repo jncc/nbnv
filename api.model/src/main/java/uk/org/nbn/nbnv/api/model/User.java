@@ -1,6 +1,7 @@
 package uk.org.nbn.nbnv.api.model;
 
 import java.util.Date;
+import javax.xml.bind.annotation.XmlRootElement;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -8,6 +9,7 @@ import org.hibernate.validator.constraints.NotEmpty;
  * A simple class to hold the details of a nbn user
  * @author Christopher Johnson
  */
+@XmlRootElement
 public class User {
     public static final int PUBLIC_USER_ID = 1;
     public static final User PUBLIC_USER;

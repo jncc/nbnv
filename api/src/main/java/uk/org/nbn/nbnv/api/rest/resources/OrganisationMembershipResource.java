@@ -18,6 +18,9 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import org.codehaus.enunciate.jaxrs.ResponseCode;
+import org.codehaus.enunciate.jaxrs.StatusCodes;
+import org.codehaus.enunciate.jaxrs.TypeHint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.org.nbn.nbnv.api.dao.core.OperationalOrganisationJoinRequestMapper;
@@ -80,6 +83,11 @@ public class OrganisationMembershipResource extends AbstractResource {
      */
     @GET
     @Path("/{id}")
+    @TypeHint(OrganisationMembership.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Succesfully returned all organsiation memberships for the specified organisation"),
+        @ResponseCode(code = 403, condition = "The user is not an administrator of this organisation")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public List<OrganisationMembership> get(@TokenOrganisationUser(path = "id", roles = OrganisationMembership.Role.administrator) User user, @PathParam("id") int id) {
         return oOrganisationMembershipMapper.selectByOrganisation(id);
@@ -102,6 +110,11 @@ public class OrganisationMembershipResource extends AbstractResource {
      */
     @GET
     @Path("/{id}/{user}")
+    @TypeHint(OrganisationMembership.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned request user organisation membership"),
+        @ResponseCode(code = 403, condition = "The current user is not an administrator of any dataset or organisation")
+    })    
     @Produces(MediaType.APPLICATION_JSON)
     public OrganisationMembership getSpecificUser(@TokenAnyDatasetOrOrgAdminUser() User user, @PathParam("id") int id, @PathParam("user") int userID) {
         if (oOrganisationMembershipMapper.isUserMemberOfOrganisation(userID, id)) {
@@ -126,6 +139,10 @@ public class OrganisationMembershipResource extends AbstractResource {
      */
     @GET
     @Path("/{id}/isMember")
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Returned if the selected user is a member of this organisation"),
+        @ResponseCode(code = 401, condition = "No current user is logged in")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public boolean isMemberOfOrganisation(@TokenUser(allowPublic = false) User user, @PathParam("id") int id) {
         if (oOrganisationMembershipMapper.isUserMemberOfOrganisation(user.getId(), id)) {
@@ -139,8 +156,8 @@ public class OrganisationMembershipResource extends AbstractResource {
      * Return true if a user is an admin of a given organisation from the core 
      * database
      * 
+     * @param user The current user (Injected Token no need to pass)
      * @param id An organisation ID
-     * @param user A Users ID     
      * 
      * @return True if a user is an admin of a given organisation from the core 
      * database
@@ -150,6 +167,10 @@ public class OrganisationMembershipResource extends AbstractResource {
      */    
     @GET
     @Path("/{id}/isadmin")
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Returned if the selected user is an admin of this organisation"),
+        @ResponseCode(code = 401, condition = "No current user is logged in")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public boolean isUserOrgAdmin(@TokenUser(allowPublic = false) User user, @PathParam("id") int id) {
         if (oOrganisationMembershipMapper.isUserMemberOfOrganisation(user.getId(), id)) {
@@ -177,6 +198,10 @@ public class OrganisationMembershipResource extends AbstractResource {
      */
     @POST
     @Path("/{id}/addUser")
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Operation completed successfully"),
+        @ResponseCode(code = 403, condition = "The current user is not an organisation administrator")
+    })
     @Consumes(MediaType.APPLICATION_JSON)
     public Response addUserFromAdminPanel(@TokenOrganisationUser(path = "id", roles = OrganisationMembership.Role.administrator) User user, @PathParam("id") int orgId, OrganisationAddRemoveUserJSON data) {
         oOrganisationMembershipMapper.addUser(data.getUserID(), orgId);
@@ -199,6 +224,10 @@ public class OrganisationMembershipResource extends AbstractResource {
      */
     @POST
     @Path("/{id}/modifyUserRole")
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully modified user role"),
+        @ResponseCode(code = 403, condition = "The current user is not an organisation administrator")
+    })    
     @Consumes(MediaType.APPLICATION_JSON)
     public Response modifyUserRole(@TokenOrganisationUser(path = "id", roles = OrganisationMembership.Role.administrator) User user, @PathParam("id") int orgId, UserRoleChangeJSON data) {
         oOrganisationMembershipMapper.changeUserRole(data.getRole(), data.getUserID(), orgId);
@@ -220,6 +249,10 @@ public class OrganisationMembershipResource extends AbstractResource {
      * @response.representation.200.mediaType application/json
      */
     @POST
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully removed user from organistaion"),
+        @ResponseCode(code = 403, condition = "The current user is not an organisation administrator")
+    })
     @Path("/{id}/removeUser")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response modifyUserRole(@TokenOrganisationUser(path = "id", roles = OrganisationMembership.Role.administrator) User user, @PathParam("id") int orgId, OrganisationAddRemoveUserJSON data) {
@@ -243,6 +276,10 @@ public class OrganisationMembershipResource extends AbstractResource {
      */
     @GET
     @Path("/{id}/join")
+    @TypeHint(OrganisationJoinRequest.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned selected join request for this user and the selected organisation OR may contain error, check returned object")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public OrganisationJoinRequest getJoinRequests(@TokenUser(allowPublic = false) User user, @PathParam("id") int orgID) {
         if (oOrganisationJoinRequestMapper.activeOrganisationJoinRequestByUserExists(user.getId(), orgID)) {
@@ -271,6 +308,12 @@ public class OrganisationMembershipResource extends AbstractResource {
      */
     @PUT
     @Path("/{id}/join")
+    @StatusCodes({
+        @ResponseCode(code = 201, condition = "Successfully created this join request"),
+        @ResponseCode(code = 303, condition = "A request to join this organisation already exists"),
+        @ResponseCode(code = 400, condition = "The current user is already a member of this organisation"),
+        @ResponseCode(code = 403, condition = "The current user is not logged in")
+    })
     @Consumes(MediaType.APPLICATION_JSON)
     public Response create(@TokenUser(allowPublic = false) User user, @PathParam("id") int orgID, OrganisationJoinRequestJSON data) throws IOException, TemplateException {
         if (oOrganisationMembershipMapper.isUserMemberOfOrganisation(user.getId(), orgID)) {
@@ -314,6 +357,10 @@ public class OrganisationMembershipResource extends AbstractResource {
      */
     @GET
     @Path("/{id}/requests")
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned all active join requests for this organisation"),
+        @ResponseCode(code = 403, condition = "The current user is not an admin for this organisation")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public Response getActiveJoinRequests(@TokenOrganisationUser(path = "id", roles = OrganisationMembership.Role.administrator) User user, @PathParam("id") int orgId) {
         return Response.status(Response.Status.OK).entity(oOrganisationJoinRequestMapper.getActiveJoinRequestsByOrganisation(orgId)).build();
@@ -331,6 +378,11 @@ public class OrganisationMembershipResource extends AbstractResource {
      */
     @GET
     @Path("/requests")
+    @TypeHint(OrganisationJoinRequest.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned the current users active join requests"),
+        @ResponseCode(code = 403, condition = "The current user is not logged in")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public List<OrganisationJoinRequest> getUserActiveRequest(@TokenUser(allowPublic=false) User user) {
         return oOrganisationJoinRequestMapper.getActiveJoinRequestsByUser(user.getId());
@@ -353,6 +405,11 @@ public class OrganisationMembershipResource extends AbstractResource {
     @GET
     @Path("/request/{id}")
     @Produces(MediaType.APPLICATION_JSON)
+    @TypeHint(OrganisationJoinRequest.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned the requested join request"),
+        @ResponseCode(code = 403, condition = "The current user does not have any rights over this join request (i.e. is neither the requestor or a member of the organisation in question)")
+    })
     public OrganisationJoinRequest getJoinRequestByID(@TokenOrganisationJoinRequestUser(path = "id") User user, @PathParam("id") int reqId) {
         return oOrganisationJoinRequestMapper.getJoinRequestByID(reqId);
     }
@@ -380,6 +437,12 @@ public class OrganisationMembershipResource extends AbstractResource {
      */
     @POST
     @Path("/request/{id}")
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Accepted or denied join request successfully"),
+        @ResponseCode(code = 202, condition = "Accepted or denied join request successfully, but could not send notification email"),
+        @ResponseCode(code = 400, condition = "Request was not well formed, please correct it and try again"),
+        @ResponseCode(code = 403, condition = "The current user does not have any rights over this join request (i.e. is neither the requestor or a member of the organisation in question)")
+    })
     @Consumes(MediaType.APPLICATION_JSON)
     public Response action(@TokenOrganisationJoinRequestUser(path = "id") User user, @PathParam("id") int id, OrganisationJoinRequestJSON data) throws IOException, TemplateException {
         OrganisationJoinRequest request = oOrganisationJoinRequestMapper.getJoinRequestByID(id);

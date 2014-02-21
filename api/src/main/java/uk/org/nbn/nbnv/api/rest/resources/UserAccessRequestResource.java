@@ -22,6 +22,9 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import org.codehaus.enunciate.jaxrs.ResponseCode;
+import org.codehaus.enunciate.jaxrs.StatusCodes;
+import org.codehaus.enunciate.jaxrs.TypeHint;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,8 +72,11 @@ public class UserAccessRequestResource extends RequestResource {
     /**
      * Create a Access Request for a user
      * 
-     * @param user The current user (Must be logged in)
-     * @param json The Access Request wrapped up as a JSON object
+     * @param user The current user (Must be logged in) (Injected Token no need 
+     * to pass)
+     * @param json JSON object containing an access request, please see 
+     * <a href="accessRequestJSON.html">Additional Documentation</a> for more
+     * details
      * 
      * @return A Response object detailing the success or failure of the action
      * 
@@ -81,6 +87,11 @@ public class UserAccessRequestResource extends RequestResource {
      */
     @PUT
     @Path("/requests")
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully created the user access request"),
+        @ResponseCode(code = 403, condition = "The current user is not logged in"),
+        @ResponseCode(code = 500, condition = "The JSON filter was not correctly formed, please check the filter and try again")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     @Transactional
@@ -145,8 +156,32 @@ public class UserAccessRequestResource extends RequestResource {
         return Response.status(Response.Status.OK).entity("{}").build();
     }
     
+    /**
+     * Create and proactively grant a user access request, if the user is an 
+     * admin of the provided dataset
+     * 
+     * @param user The current user (must be dataset admin) (Injected Token no 
+     * need to pass)
+     * @param json JSON object containing an access request, please see 
+     * <a href="accessRequestJSON.html">Additional Documentation</a> for more
+     * details
+     * 
+     * @return
+     * 
+     * @throws IOException
+     * @throws ParseException
+     * @throws TemplateException 
+     * 
+     * @response.representation.200.qname Response
+     * @response.representation.200.mediaType application/json
+     */
     @PUT
     @Path("/requests/admin/granted")
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully created the user access request"),
+        @ResponseCode(code = 403, condition = "The current user is not logged in"),
+        @ResponseCode(code = 500, condition = "The JSON filter was not correctly formed, please check the filter and try again")
+    })    
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     @Transactional
@@ -188,9 +223,11 @@ public class UserAccessRequestResource extends RequestResource {
      * Edit and then grant an existing User Access Request 
      * 
      * @param user The current user (Must have admin rights over the specified 
-     * Access Request)
+     * Access Request) (Injected Token no need to pass)
      * @param filterID A filter ID for this request
-     * @param json A JSON wrapper for an access request object
+     * @param json JSON object containing an access request, please see 
+     * <a href="accessRequestJSON.html">Additional Documentation</a> for more
+     * details
      * 
      * @return A Response object detailing the success or failure of the action
      * 
@@ -201,6 +238,11 @@ public class UserAccessRequestResource extends RequestResource {
      */
     @PUT
     @Path("/requests/{id}")
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully created the user access request"),
+        @ResponseCode(code = 403, condition = "The current user does not have admin rights over this access request"),
+        @ResponseCode(code = 500, condition = "The JSON filter was not correctly formed, please check the filter and try again")
+    })        
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     @Transactional
@@ -233,7 +275,8 @@ public class UserAccessRequestResource extends RequestResource {
     /**
      * Return a list of access requests made by a user
      * 
-     * @param user The current user (Must be logged in)
+     * @param user The current user (Must be logged in) (Injected Token no need 
+     * to pass)
      * 
      * @return A List of User Access Requests made by a user
      * 
@@ -244,6 +287,11 @@ public class UserAccessRequestResource extends RequestResource {
      */
     @GET
     @Path("/requests")
+    @TypeHint(UserAccessRequest.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned all access requests for this user"),
+        @ResponseCode(code = 403, condition = "The current user is not logged in")
+    })        
     @Produces(MediaType.APPLICATION_JSON)
     public List<UserAccessRequest> getRequests(@TokenUser(allowPublic=false) User user) throws IOException {
         return oUserAccessRequestMapper.getUserRequests(user.getId());
@@ -252,7 +300,8 @@ public class UserAccessRequestResource extends RequestResource {
     /**
      * Return a list of access requests made by a user that have been granted
      * 
-     * @param user The current user (Must be logged in)
+     * @param user The current user (Must be logged in) (Injected Token no need 
+     * to pass)
      * 
      * @return A List of User Access Requests made by a user that have been 
      * granted
@@ -264,6 +313,11 @@ public class UserAccessRequestResource extends RequestResource {
      */
     @GET
     @Path("/requests/granted")
+    @TypeHint(UserAccessRequest.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned all granted access requests for this user"),
+        @ResponseCode(code = 403, condition = "The current user is not logged in")
+    })    
     @Produces(MediaType.APPLICATION_JSON)
     public List<UserAccessRequest> getGrantedRequests(@TokenUser(allowPublic=false) User user) throws IOException {
         return oUserAccessRequestMapper.getGrantedUserRequests(user.getId());
@@ -272,7 +326,8 @@ public class UserAccessRequestResource extends RequestResource {
     /**
      * Return a list of access requests made by a user that are pending
      * 
-     * @param user The current user (Must be logged in)
+     * @param user The current user (Must be logged in) (Injected Token no need 
+     * to pass)
      * 
      * @return A List of User Access Requests made by a user that are pending
      * 
@@ -283,6 +338,11 @@ public class UserAccessRequestResource extends RequestResource {
      */
     @GET
     @Path("/requests/pending")
+    @TypeHint(UserAccessRequest.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned all pending access requests for this user"),
+        @ResponseCode(code = 403, condition = "The current user is not logged in")
+    })    
     @Produces(MediaType.APPLICATION_JSON)
     public List<UserAccessRequest> getPendingRequests(@TokenUser(allowPublic=false) User user) throws IOException {
         return oUserAccessRequestMapper.getPendingUserRequests(user.getId());
@@ -291,7 +351,8 @@ public class UserAccessRequestResource extends RequestResource {
     /**
      * Return a list of access requests made that a user has admin rights over
      * 
-     * @param user The current user (Must be logged in)
+     * @param user The current user (Must be logged in) (Injected Token no need 
+     * to pass)
      * 
      * @return A List of User Access Requests that a user has admin rights over
      * 
@@ -300,6 +361,11 @@ public class UserAccessRequestResource extends RequestResource {
      */
     @GET
     @Path("/requests/admin")
+    @TypeHint(UserAccessRequest.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned all adminable access requests for this user"),
+        @ResponseCode(code = 403, condition = "The current user is not logged in")
+    })    
     @Produces(MediaType.APPLICATION_JSON)
     public List<UserAccessRequest> getRequestsForAdmin(@TokenUser(allowPublic=false) User user) {
         return oUserAccessRequestMapper.getAdminableRequests(user.getId());
@@ -309,7 +375,8 @@ public class UserAccessRequestResource extends RequestResource {
      * Return a list of access requests made that a user has admin rights over 
      * and are pending
      * 
-     * @param user The current user (Must be logged in)
+     * @param user The current user (Must be logged in) (Injected Token no need 
+     * to pass)
      * 
      * @return A List of User Access Requests that a user has admin rights over 
      * and are still pending
@@ -319,6 +386,11 @@ public class UserAccessRequestResource extends RequestResource {
      */
     @GET
     @Path("/requests/admin/pending")
+    @TypeHint(UserAccessRequest.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned all pending adminable access requests for this user"),
+        @ResponseCode(code = 403, condition = "The current user is not logged in")
+    })  
     @Produces(MediaType.APPLICATION_JSON)
     public List<UserAccessRequest> getRequestsPendingForAdmin(@TokenUser(allowPublic=false) User user) {
         return oUserAccessRequestMapper.getPendingAdminableRequests(user.getId());
@@ -328,7 +400,8 @@ public class UserAccessRequestResource extends RequestResource {
      * Return a list of access requests made that a user has admin rights over
      * and have been granted
      * 
-     * @param user The current user (Must be logged in)
+     * @param user The current user (Must be logged in) (Injected Token no need 
+     * to pass)
      * 
      * @return A List of User Access Requests that a user has admin rights over 
      * and have been granted
@@ -338,6 +411,11 @@ public class UserAccessRequestResource extends RequestResource {
      */
     @GET
     @Path("/requests/admin/granted")
+    @TypeHint(UserAccessRequest.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned all granted adminable access requests for this user"),
+        @ResponseCode(code = 403, condition = "The current user is not logged in")
+    })     
     @Produces(MediaType.APPLICATION_JSON)
     public List<UserAccessRequest> getRequestsGrantedForAdmin(@TokenUser(allowPublic=false) User user) {
         return oUserAccessRequestMapper.getGrantedAdminableRequests(user.getId());
@@ -347,7 +425,8 @@ public class UserAccessRequestResource extends RequestResource {
      * Return a list of access requests made that a user has admin rights over
      * and have been denied
      * 
-     * @param user
+     * @param user The current user (Must be logged in) (Injected Token no need 
+     * to pass)
      * 
      * @return A List of User Access Requests that a user has admin rights over 
      * and have been denied
@@ -357,6 +436,11 @@ public class UserAccessRequestResource extends RequestResource {
      */
     @GET
     @Path("/requests/admin/denied")
+    @TypeHint(UserAccessRequest.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned all denied adminable access requests for this user"),
+        @ResponseCode(code = 403, condition = "The current user is not logged in")
+    })    
     @Produces(MediaType.APPLICATION_JSON)
     public List<UserAccessRequest> getRequestsDeniedForAdmin(@TokenUser(allowPublic=false) User user) {
         return oUserAccessRequestMapper.getDeniedAdminableRequests(user.getId());
@@ -367,7 +451,7 @@ public class UserAccessRequestResource extends RequestResource {
      * admin rights over that request, otherwise return a 403 Forbidden error
      * 
      * @param user The current User (Must have admin rights over the specified
-     * user access request)
+     * user access request) (Injected Token no need to pass)
      * @param filterID A filter ID identifying a request
      * 
      * @return A User Access Request that a user has admin rights over
@@ -377,6 +461,11 @@ public class UserAccessRequestResource extends RequestResource {
      */
     @GET
     @Path("/requests/{id}")
+    @TypeHint(UserAccessRequest.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned the requested access request"),
+        @ResponseCode(code = 403, condition = "The current user has no admin rights over this request")
+    })  
     @Produces(MediaType.APPLICATION_JSON)
     public UserAccessRequest getRequest(@TokenAccessRequestAdminUser(path="id") User user
             , @PathParam("id") int filterID) {
@@ -387,7 +476,8 @@ public class UserAccessRequestResource extends RequestResource {
      * Update a specified User Access Request if the user has admin rights over
      * the request, otherwise return a 403 Forbidden error
      * 
-     * @param user The current user (Must have admin rights over the request)
+     * @param user The current user (Must have admin rights over the request) 
+     * (Injected Token no need to pass)
      * @param filterID A filter ID identifying a request
      * @param action What action to take in this update
      * @param reason The reason that this action has been taken
@@ -402,6 +492,10 @@ public class UserAccessRequestResource extends RequestResource {
      */
     @POST
     @Path("/requests/{id}")
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully completed operation"),
+        @ResponseCode(code = 403, condition = "The current user has no admin rights over this request")
+    })   
     @Produces(MediaType.APPLICATION_JSON)
     public Response updateRequest(@TokenAccessRequestAdminUser(path="id") User user
             , @PathParam("id") int filterID
@@ -423,7 +517,7 @@ public class UserAccessRequestResource extends RequestResource {
       
     /**
      * SysAdmin function to reset accesses
-     * @param user
+     * @param user (Injected Token no need to pass)
      * @param dataset
      * @return
      * @throws IOException 
@@ -439,7 +533,7 @@ public class UserAccessRequestResource extends RequestResource {
         /**
      * Returns an audit history listing all organisational access changes made to a dataset
      * 
-     * @param user A dataset administrator
+     * @param user A dataset administrator (Injected Token no need to pass)
      * @param dataset The dataset being queried
      * 
      * @return A list of history elements
@@ -449,6 +543,11 @@ public class UserAccessRequestResource extends RequestResource {
      */
     @GET
     @Path("/requests/history/{dataset}")
+    @TypeHint(UserAccessRequestAuditHistory.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned the audit history for this dataset"),
+        @ResponseCode(code = 403, condition = "The current user has no admin rights over this request")
+    }) 
     @Produces(MediaType.APPLICATION_JSON)
     public List<UserAccessRequestAuditHistory> getHistory(@TokenDatasetAdminUser(path="dataset") User user, @PathParam("dataset") String dataset) {
         return oUserAccessRequestAuditHistoryMapper.getHistory(dataset);

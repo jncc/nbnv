@@ -4,10 +4,13 @@
  */
 package uk.org.nbn.nbnv.api.model.meta;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 /**
  *
  * @author Matt Debont
  */
+@XmlRootElement
 public abstract class BaseFilterJSON {
     protected String sensitive;
     protected String polygon = "";

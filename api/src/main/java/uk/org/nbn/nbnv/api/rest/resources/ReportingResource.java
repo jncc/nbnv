@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Map;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import org.codehaus.enunciate.jaxrs.ResponseCode;
+import org.codehaus.enunciate.jaxrs.StatusCodes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.org.nbn.nbnv.api.dao.warehouse.DatasetMapper;
@@ -22,7 +24,6 @@ import uk.org.nbn.nbnv.api.model.DownloadStat;
 import uk.org.nbn.nbnv.api.model.User;
 import uk.org.nbn.nbnv.api.model.UserDownloadNotification;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenSystemAdministratorUser;
-import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
 
 @Component
 @Path("/reporting")
@@ -35,6 +36,10 @@ public class ReportingResource extends AbstractResource {
     
     @GET
     @Path("/monthlyDownload")
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully sent the monthly download report out to all dataset admins"),
+        @ResponseCode(code = 403, condition = "The current user is not a system administrator")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public String sendMonthlyDownload(
             @TokenSystemAdministratorUser User user,

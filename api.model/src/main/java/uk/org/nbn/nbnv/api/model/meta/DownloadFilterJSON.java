@@ -4,10 +4,13 @@
  */
 package uk.org.nbn.nbnv.api.model.meta;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 /**
  *
  * @author Paul Gilbertson
  */
+@XmlRootElement
 public class DownloadFilterJSON extends BaseFilterJSON {
     private DownloadReasonJSON reason;
 

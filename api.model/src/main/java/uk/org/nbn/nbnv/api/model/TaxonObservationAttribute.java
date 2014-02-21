@@ -4,10 +4,13 @@
  */
 package uk.org.nbn.nbnv.api.model;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 /**
  *
  * @author Matt Debont
  */
+@XmlRootElement
 public class TaxonObservationAttribute {
     private int observationID;
     private int attributeID;

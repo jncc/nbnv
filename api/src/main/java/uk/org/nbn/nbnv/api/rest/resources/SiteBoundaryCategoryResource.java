@@ -6,10 +6,12 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import org.codehaus.enunciate.jaxrs.ResponseCode;
+import org.codehaus.enunciate.jaxrs.StatusCodes;
+import org.codehaus.enunciate.jaxrs.TypeHint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.org.nbn.nbnv.api.dao.warehouse.SiteBoundaryCategoryMapper;
-import uk.org.nbn.nbnv.api.dao.warehouse.SiteBoundaryDatasetMapper;
 import uk.org.nbn.nbnv.api.model.SiteBoundaryCategory;
 
 @Component
@@ -27,6 +29,10 @@ public class SiteBoundaryCategoryResource extends AbstractResource {
      * @response.representation.200.mediaType application/json
      */
     @GET
+    @TypeHint(SiteBoundaryCategory.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned list of all site boundary categories")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public List<SiteBoundaryCategory> get(){
         List<SiteBoundaryCategory> toReturn = siteBoundaryCategoryMapper.get();
@@ -45,6 +51,10 @@ public class SiteBoundaryCategoryResource extends AbstractResource {
      */
     @GET
     @Path("/{id}")
+    @TypeHint(SiteBoundaryCategory.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned the requested site boundary category")
+    })    
     @Produces(MediaType.APPLICATION_JSON)
     public SiteBoundaryCategory getByID(@PathParam("id") int id){
         return siteBoundaryCategoryMapper.getByID(id);

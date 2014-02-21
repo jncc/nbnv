@@ -1,7 +1,9 @@
 package uk.org.nbn.nbnv.api.model;
 
 import java.util.List;
+import javax.xml.bind.annotation.XmlRootElement;
 
+@XmlRootElement
 public class TaxonNavigationGroup {
     private String key;
     private int sortOrder;

@@ -5,11 +5,13 @@
 package uk.org.nbn.nbnv.api.model.meta;
 
 import java.util.Date;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
  * @author paulbe
  */
+@XmlRootElement
 public class AccessRequestTimeLimitJSON extends AccessRequestFilterJSON {
     private Date date;
 

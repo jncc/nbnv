@@ -4,10 +4,13 @@
  */
 package uk.org.nbn.nbnv.api.model;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 /**
  *
  * @author paulbe
  */
+@XmlRootElement
 public class DatasetResolutionRecordCount {
     private String datasetKey;
     private String label;

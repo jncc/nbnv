@@ -26,6 +26,9 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import org.codehaus.enunciate.jaxrs.ResponseCode;
+import org.codehaus.enunciate.jaxrs.StatusCodes;
+import org.codehaus.enunciate.jaxrs.TypeHint;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,8 +81,11 @@ public class OrganisationAccessRequestResource extends RequestResource {
     /**
      * Create an Organisation Access Request for data
      * 
-     * @param user The current user (Must be logged in)
-     * @param json JSON object containing an access request
+     * @param user The current user (Must be logged in) (Injected Token no need 
+     * to pass)
+     * @param json JSON object containing an access request, please see 
+     * <a href="accessRequestJSON.html">Additional Documentation</a> for more
+     * details
      * 
      * @return A Response object detailing the success or failure of the action
      * 
@@ -90,6 +96,10 @@ public class OrganisationAccessRequestResource extends RequestResource {
      */
     @PUT
     @Path("/requests")
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Organisation Access Request was successfully created"),
+        @ResponseCode(code = 500, condition = "There was an issue with the request, please verify access request was correct and try again")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     @Transactional
@@ -154,8 +164,32 @@ public class OrganisationAccessRequestResource extends RequestResource {
         return Response.status(Response.Status.OK).entity("{}").build();
     }
     
+    /**
+     * Proactively grant an organisation access according to a given json string
+     * if the current user administrates the datasets in the request otherwise
+     * throw an error
+     * 
+     * @param user The current user (Must be logged in) (Injected Token no need 
+     * to pass)
+     * @param json JSON object containing an access request, please see 
+     * <a href="accessRequestJSON.html">Additional Documentation</a> for more
+     * details
+     * 
+     * @return A Response object detailing the success or failure of the action
+     * 
+     * @throws IOException
+     * @throws ParseException
+     * @throws TemplateException 
+     * 
+     * @response.representation.200.qname Response
+     * @response.representation.200.mediaType application/json
+     */
     @PUT
     @Path("/requests/admin/granted")
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Organisation Access Request was successfully created and proactively granted"),
+        @ResponseCode(code = 500, condition = "There was an issue with the request, please verify access request was correct and try again")
+    })    
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     @Transactional
@@ -196,7 +230,8 @@ public class OrganisationAccessRequestResource extends RequestResource {
     /**
      * Edit and grant existing Organisation Access Request for data
      * 
-     * @param user The current user (Must be logged in)
+     * @param user The current user (Must be logged in) (Injected Token no need 
+     * to pass)
      * @param filterID Filter ID for a TaxonObservationFilter
      * @param json JSON containing an access request
      * 
@@ -209,6 +244,10 @@ public class OrganisationAccessRequestResource extends RequestResource {
      */
     @PUT
     @Path("/requests/{id}")
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Organisation Access Request was successfully edited"),
+        @ResponseCode(code = 500, condition = "There was an issue with the request, please verify access request was correct and try again")
+    })   
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     @Transactional
@@ -239,7 +278,8 @@ public class OrganisationAccessRequestResource extends RequestResource {
      * Returns a list of all Organisation Access Requests for 
      * organisations that a user is a member of and have been granted
      * 
-     * @param user The current user 
+     * @param user The current user (Must be logged in) (Injected Token no need 
+     * to pass)
      * 
      * @return A list of all Organisation Access Requests for a given 
      * organisation that have been granted
@@ -251,6 +291,10 @@ public class OrganisationAccessRequestResource extends RequestResource {
      */
     @GET
     @Path("/requests/granted")
+    @TypeHint(OrganisationAccessRequest.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Succesfully returned a list of all granted Organisation Access Requests which were actionable by this user")
+    }) 
     @Produces(MediaType.APPLICATION_JSON)
     public List<OrganisationAccessRequest> getGrantedRequests(@TokenUser(allowPublic=false) User user) throws IOException {
         return oOrganisationAccessRequestMapper.getUserGrantedOrganisationRequests(user.getId());
@@ -260,8 +304,8 @@ public class OrganisationAccessRequestResource extends RequestResource {
      * Returns a list of all Organisation Access Requests for a given 
      * organisation
      * 
-     * @param user The current user if they are an organisation admin for the 
-     * supplied organisation ID, or returns a 403 Forbidden error
+     * @param user The current user (Must be logged in and an admin of this 
+     * organisation) (Injected Token no need to pass)
      * @param orgID An Organisation ID
      * 
      * @return A list of all Organisation Access Requests for a given 
@@ -274,6 +318,11 @@ public class OrganisationAccessRequestResource extends RequestResource {
      */
     @GET
     @Path("/{id}/requests")
+    @TypeHint(OrganisationAccessRequest.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Succesfully returned a list of all Organisation Access Requests which are actionable by this user for the selected organisation"),
+        @ResponseCode(code = 403, condition = "The current user is not an admin of this organisation")
+    })        
     @Produces(MediaType.APPLICATION_JSON)
     public List<OrganisationAccessRequest> getRequests(@TokenOrganisationUser(path="id", roles = OrganisationMembership.Role.administrator) User user, @PathParam("id") int orgID) throws IOException {
         return oOrganisationAccessRequestMapper.getOrganisationRequests(orgID);
@@ -283,8 +332,8 @@ public class OrganisationAccessRequestResource extends RequestResource {
      * Returns a list of all Organisation Access Requests for a given 
      * organisation that have been granted
      * 
-     * @param user The current user if they are an organisation admin for the 
-     * supplied organisation ID, or returns a 403 Forbidden error
+     * @param user The current user (Must be logged in and an admin of this 
+     * organisation) (Injected Token no need to pass)
      * @param orgID An Organisation ID
      * 
      * @return A list of all Organisation Access Requests for a given 
@@ -297,6 +346,11 @@ public class OrganisationAccessRequestResource extends RequestResource {
      */
     @GET
     @Path("{id}/requests/granted")
+    @TypeHint(OrganisationAccessRequest.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Succesfully returned a list of all granted Organisation Access Requests which are actionable by this user for the selected organisation"),
+        @ResponseCode(code = 403, condition = "The current user is not an admin of this organisation")
+    })        
     @Produces(MediaType.APPLICATION_JSON)
     public List<OrganisationAccessRequest> getGrantedRequests(@TokenOrganisationUser(path="id", roles = OrganisationMembership.Role.administrator) User user, @PathParam("id") int orgID) throws IOException {
         return oOrganisationAccessRequestMapper.getGrantedOrganisationRequests(orgID);
@@ -306,8 +360,8 @@ public class OrganisationAccessRequestResource extends RequestResource {
      * Returns a list of all Organisation Access Requests for a given 
      * organisation that are pending
      * 
-     * @param user The current user if they are an organisation admin for the 
-     * supplied organisation ID, or returns a 403 Forbidden error
+     * @param user The current user (Must be logged in and an admin of this 
+     * organisation) (Injected Token no need to pass)
      * @param orgID An Organisation ID
      * 
      * @return A list of all Organisation Access Requests for a given 
@@ -320,6 +374,11 @@ public class OrganisationAccessRequestResource extends RequestResource {
      */
     @GET
     @Path("{id}/requests/pending")
+    @TypeHint(OrganisationAccessRequest.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Succesfully returned a list of all pending Organisation Access Requests which are actionable by this user for the selected organisation"),
+        @ResponseCode(code = 403, condition = "The current user is not an admin of this organisation")
+    })     
     @Produces(MediaType.APPLICATION_JSON)
     public List<OrganisationAccessRequest> getPendingRequests(@TokenOrganisationUser(path="id", roles = OrganisationMembership.Role.administrator) User user, @PathParam("id") int orgID) throws IOException {
         return oOrganisationAccessRequestMapper.getPendingOrganisationRequests(orgID);
@@ -329,7 +388,8 @@ public class OrganisationAccessRequestResource extends RequestResource {
      * Returns a list of all pending Organisation Access Requests for 
      * Organisations that a user administers
      * 
-     * @param user The current user if they are an organisation admin 
+     * @param user The current user (Must be logged in) (Injected Token no need 
+     * to pass)
      * 
      * @return A list of all pending Organisation Access Requests 
      * 
@@ -340,6 +400,11 @@ public class OrganisationAccessRequestResource extends RequestResource {
      */
     @GET
     @Path("/requests/pending")
+    @TypeHint(OrganisationAccessRequest.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Succesfully returned a list of all pending Organisation Access Requests which were created by this user"),
+        @ResponseCode(code = 403, condition = "The current user is not logged in")
+    })    
     @Produces(MediaType.APPLICATION_JSON)
     public List<OrganisationAccessRequest> getPendingRequests(@TokenUser(allowPublic=false) User user) throws IOException {
         return oOrganisationAccessRequestMapper.getUserPendingOrganisationRequests(user.getId());
@@ -349,7 +414,8 @@ public class OrganisationAccessRequestResource extends RequestResource {
      * Returns a List of Organisation Access Requests for which the current user
      * has admin rights
      * 
-     * @param user The current user (Must be logged in)
+     * @param user The current user (Must be logged in) (Injected Token no need 
+     * to pass)
      * 
      * @return A List of Organisation Access Requests for which the current user
      * has admin rights
@@ -357,8 +423,13 @@ public class OrganisationAccessRequestResource extends RequestResource {
      * @response.representation.200.qname List<OrganisationAccessRequest>
      * @response.representation.200.mediaType application/json
      */
-    @GET
+    @GET 
     @Path("/requests/admin")
+    @TypeHint(OrganisationAccessRequest.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Succesfully returned a list of all Organisation Access Requests which are adminable by this user"),
+        @ResponseCode(code = 403, condition = "The current user is not logged in")
+    })         
     @Produces(MediaType.APPLICATION_JSON)
     public List<OrganisationAccessRequest> getRequestsForAdmin(@TokenUser(allowPublic=false) User user) {
         return oOrganisationAccessRequestMapper.getAdminableRequests(user.getId());
@@ -368,7 +439,8 @@ public class OrganisationAccessRequestResource extends RequestResource {
      * Returns a List of Organisation Access Requests which are pending and the
      * current user has admin rights over
      * 
-     * @param user The current user (Must be logged in)
+     * @param user The current user (Must be logged in) (Injected Token no need 
+     * to pass)
      * 
      * @return A List of Organisation Access Requests which are pending and the
      * current user has admin rights over
@@ -378,6 +450,11 @@ public class OrganisationAccessRequestResource extends RequestResource {
      */
     @GET
     @Path("/requests/admin/pending")
+    @TypeHint(OrganisationAccessRequest.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Succesfully returned a list of all pending Organisation Access Requests which are adminable by this user"),
+        @ResponseCode(code = 403, condition = "The current user is not logged in")
+    })      
     @Produces(MediaType.APPLICATION_JSON)
     public List<OrganisationAccessRequest> getRequestsPendingForAdmin(@TokenUser(allowPublic=false) User user) {
         return oOrganisationAccessRequestMapper.getPendingAdminableRequests(user.getId());
@@ -387,7 +464,8 @@ public class OrganisationAccessRequestResource extends RequestResource {
      * Returns a List of Organisation Access Requests which have been granted 
      * and the current user has admin rights over
      * 
-     * @param user The current user (Must be logged in)
+     * @param user The current user (Must be logged in) (Injected Token no need 
+     * to pass)
      * 
      * @return A List of Organisation Access Requests which have been granted 
      * and the current user has admin rights over
@@ -397,6 +475,11 @@ public class OrganisationAccessRequestResource extends RequestResource {
      */
     @GET
     @Path("/requests/admin/granted")
+    @TypeHint(OrganisationAccessRequest.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Succesfully returned a list of all granted Organisation Access Requests which are adminable by this user"),
+        @ResponseCode(code = 403, condition = "The current user is not logged in")
+    }) 
     @Produces(MediaType.APPLICATION_JSON)
     public List<OrganisationAccessRequest> getRequestsGrantedForAdmin(@TokenUser(allowPublic=false) User user) {
         return oOrganisationAccessRequestMapper.getGrantedAdminableRequests(user.getId());
@@ -406,7 +489,8 @@ public class OrganisationAccessRequestResource extends RequestResource {
      * Returns a List of Organisation Access Requests which have been denied 
      * and the current user has admin rights over
      * 
-     * @param user The current user (Must be logged in)
+     * @param user The current user (Must be logged in) (Injected Token no need 
+     * to pass)
      * 
      * @return A List of Organisation Access Requests which have been denied 
      * and the current user has admin rights over
@@ -416,6 +500,11 @@ public class OrganisationAccessRequestResource extends RequestResource {
      */
     @GET
     @Path("/requests/admin/denied")
+    @TypeHint(OrganisationAccessRequest.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Succesfully returned a list of all denied Organisation Access Requests which are adminable by this user"),
+        @ResponseCode(code = 403, condition = "The current user is not logged in")
+    })    
     @Produces(MediaType.APPLICATION_JSON)
     public List<OrganisationAccessRequest> getRequestsDeniedForAdmin(@TokenUser(allowPublic=false) User user) {
         return oOrganisationAccessRequestMapper.getDeniedAdminableRequests(user.getId());
@@ -426,6 +515,7 @@ public class OrganisationAccessRequestResource extends RequestResource {
      * 
      * @param user The Current User (checked for dataset administration rights 
      * to the dataset within an access request as specified as a path param id
+     * (Injected Token no need to pass)
      * @param filterID The filter ID for this request
      * 
      * @return An Organisation Access Request with a specific filter ID
@@ -435,6 +525,11 @@ public class OrganisationAccessRequestResource extends RequestResource {
      */
     @GET
     @Path("/requests/{id}")
+    @TypeHint(OrganisationAccessRequest.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Succesfully returned the specified Organisation Access Request if the user has access to it"),
+        @ResponseCode(code = 403, condition = "Current user does not have rights to this organisation access request")
+    })      
     @Produces(MediaType.APPLICATION_JSON)
     public OrganisationAccessRequest getRequest(@TokenOrganisationAccessRequestAdminUser(path="id") User user, @PathParam("id") int filterID) {
         return oOrganisationAccessRequestMapper.getRequest(filterID);
@@ -443,7 +538,8 @@ public class OrganisationAccessRequestResource extends RequestResource {
     /**
      * Update a specified Organisation Access Request 
      * 
-     * @param user The current user (must have admin rights over the request)
+     * @param user The current user (must have admin rights over the request) 
+     * (Injected Token no need to pass)
      * @param filterID The filter ID for this request
      * @param action The action to take on this request
      * @param reason The reason this action has been taken
@@ -458,6 +554,11 @@ public class OrganisationAccessRequestResource extends RequestResource {
      */
     @POST
     @Path("/requests/{id}")
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Operation was successfully completed"),
+        @ResponseCode(code = 403, condition = "Current user does not have rights over this request"),
+        @ResponseCode(code = 500, condition = "Operation was not successfully compelted, ensure the request was correctly formed")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public Response updateRequest(@TokenOrganisationAccessRequestAdminUser(path="id") User user
             , @PathParam("id") int filterID
@@ -476,7 +577,8 @@ public class OrganisationAccessRequestResource extends RequestResource {
             return Response.serverError().build();
         }
     }
-/**
+
+    /**
      * SysAdmin function to reset accesses
      * @param user
      * @param dataset
@@ -494,7 +596,8 @@ public class OrganisationAccessRequestResource extends RequestResource {
     /**
      * Returns an audit history listing all organisational access changes made to a dataset
      * 
-     * @param user A dataset administrator
+     * @param user Current User (Must be a dataset administrator) (Injected 
+     * Token no need to pass)
      * @param dataset The dataset being queried
      * 
      * @return A list of history elements
@@ -504,6 +607,11 @@ public class OrganisationAccessRequestResource extends RequestResource {
      */
     @GET
     @Path("/requests/history/{dataset}")
+    @TypeHint(OrganisationAccessRequestAuditHistory.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Succesfully returned a list of audit history objects"),
+        @ResponseCode(code = 403, condition = "The current user does not have rights over this dataset")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public List<OrganisationAccessRequestAuditHistory> getHistory(@TokenDatasetAdminUser(path="dataset") User user, @PathParam("dataset") String dataset) {
         return oOrganisationAccessRequestAuditHistoryMapper.getHistory(dataset);

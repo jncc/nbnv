@@ -15,6 +15,9 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.StreamingOutput;
+import org.codehaus.enunciate.jaxrs.ResponseCode;
+import org.codehaus.enunciate.jaxrs.StatusCodes;
+import org.codehaus.enunciate.jaxrs.TypeHint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.org.nbn.nbnv.api.dao.providers.ProviderHelper;
@@ -36,8 +39,24 @@ public class GridMapSquareResource extends AbstractResource {
     @Autowired TaxonMapper taxonMapper;
     @Autowired DownloadHelper downloadHelper;
 
+    /**
+     * Returns a list of grid squares matching a name and / or resolution 
+     * parameter
+     * 
+     * @param term The partial term to search for
+     * @param resolution The resolution to search for (10km, 2km, 1km or 100m)
+     * 
+     * @return A list of matching grid squares
+     * 
+     * @response.representation.200.qname GridMapSquare
+     * @response.representation.200.mediaType application/json
+     */
     @GET
     @Path("/search")
+    @TypeHint(GridMapSquare.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Succesfully returned a list of matching grid squares")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public List<GridMapSquare> searchForGridSquares(@QueryParam("term") String term, @QueryParam("resolution") String resolution) {
         return gridMapSquareMapper.searchForMatchingResolutions(term, resolution);
@@ -48,6 +67,7 @@ public class GridMapSquareResource extends AbstractResource {
      * given parameters, specifically the Taxon Version Key supplied
      * 
      * @param user The current user (determines what records are available)
+     * (Injected Token no need to pass)
      * @param ptvk The Taxon Version Key we are looking for
      * @param resolution What resolution we are looking for
      * @param bands A list of bands

@@ -1,7 +1,9 @@
 package uk.org.nbn.nbnv.api.model;
 
+import javax.xml.bind.annotation.XmlRootElement;
 import org.hibernate.validator.constraints.NotEmpty;
 
+@XmlRootElement
 public class SiteBoundary {
     
     @NotEmpty

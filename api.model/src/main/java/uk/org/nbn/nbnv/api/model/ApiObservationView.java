@@ -5,11 +5,13 @@
 package uk.org.nbn.nbnv.api.model;
 
 import java.util.Date;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
  * @author Matt Debont
  */
+@XmlRootElement
 public class ApiObservationView {
     private int id;
     private int userID;    

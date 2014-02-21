@@ -18,6 +18,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
+import org.codehaus.enunciate.jaxrs.ResponseCode;
+import org.codehaus.enunciate.jaxrs.StatusCodes;
+import org.codehaus.enunciate.jaxrs.TypeHint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
@@ -69,6 +72,10 @@ public class TaxonResource extends AbstractResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
     @Path("{taxonVersionKey}")
+    @TypeHint(Taxon.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned the requested taxon data")
+    })
     @SolrResolver("TAXON")
     public Taxon getTaxon(@PathParam("taxonVersionKey") String taxonVersionKey) {
         return taxonMapper.getTaxon(taxonVersionKey);
@@ -82,8 +89,11 @@ public class TaxonResource extends AbstractResource {
      * @return GEMINI2.1 Dataset Metadata
      */
     @GET
-    @Produces(MediaType.APPLICATION_XML + ";charset=utf-8")
     @Path("{taxonVersionKey}/inspire")
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned the requested taxon data as an INSPIRE request")
+    })  
+    @Produces(MediaType.APPLICATION_XML + ";charset=utf-8")
     public String getTaxonInspire(@PathParam("taxonVersionKey") String taxonVersionKey) throws IOException, TemplateException {
         Configuration configuration = new Configuration();
         configuration.setClassForTemplateLoading(TaxonResource.class, "");
@@ -114,8 +124,11 @@ public class TaxonResource extends AbstractResource {
      * @return GEMINI2.1 Dataset Metadata
      */
     @GET
-    @Produces(MediaType.APPLICATION_XML + ";charset=utf-8")
     @Path("{taxonVersionKey}/inspire/service")
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned the requested taxon data as an INSPIRE request")
+    })  
+    @Produces(MediaType.APPLICATION_XML + ";charset=utf-8")
     public String getTaxonInspireService(@PathParam("taxonVersionKey") String taxonVersionKey) throws IOException, TemplateException {
         Configuration configuration = new Configuration();
         configuration.setClassForTemplateLoading(TaxonResource.class, "");
@@ -149,8 +162,12 @@ public class TaxonResource extends AbstractResource {
      * @response.representation.200.mediaType application/json;charset=utf-8
      */
     @GET
-    @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
     @Path("{taxonVersionKey}/synonyms")
+    @TypeHint(Taxon.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned a list of synonyms pf the requested taxon data")
+    })  
+    @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
     public List<Taxon> getTaxonSynonyms(@PathParam("taxonVersionKey") String taxonVersionKey) {
         return taxonMapper.selectSynonymsByTVK(taxonVersionKey);
     }
@@ -166,8 +183,12 @@ public class TaxonResource extends AbstractResource {
      * @response.representation.200.mediaType application/json;charset=utf-8
      */
     @GET
-    @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
     @Path("{taxonVersionKey}/parent")
+    @TypeHint(Taxon.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned the parent of the requested taxon")
+    })    
+    @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
     public Taxon getTaxonParent(@PathParam("taxonVersionKey") String taxonVersionKey) {
         return taxonMapper.getParentTaxon(taxonVersionKey);
     }
@@ -183,8 +204,13 @@ public class TaxonResource extends AbstractResource {
      * @response.representation.200.mediaType application/json;charset=utf-8
      */
     @GET
-    @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
+ 
     @Path("{taxonVersionKey}/children")
+    @TypeHint(Taxon.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned a list of the children of the requested taxon")
+    })        
+    @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")    
     public List<Taxon> getTaxonChildren(@PathParam("taxonVersionKey") String taxonVersionKey) {
         return taxonMapper.selectChildrenByTVK(taxonVersionKey);
     }
@@ -201,8 +227,12 @@ public class TaxonResource extends AbstractResource {
      * @response.representation.200.mediaType application/json;charset=utf-8
      */
     @GET
-    @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
     @Path("{taxonVersionKey}/taxonomy")
+    @TypeHint(Taxon.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned a list of taxon denoting the ancestry of the requested taxon")
+    })  
+    @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")    
     public List<Taxon> getTaxonAncestry(@PathParam("taxonVersionKey") String taxonVersionKey) {
         return taxonMapper.selectAncestryByTVK(taxonVersionKey);
     }
@@ -219,8 +249,12 @@ public class TaxonResource extends AbstractResource {
      * @response.representation.200.mediaType application/json;charset=utf-8
      */
     @GET
-    @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
     @Path("{taxonVersionKey}/designations")
+    @TypeHint(TaxonDesignation.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned a list of designations that requested taxon is part of")
+    })  
+    @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")    
     public List<TaxonDesignation> getTaxonDesignations(@PathParam("taxonVersionKey") String taxonVersionKey) {
         return designationMapper.selectByTaxonVersionKey(taxonVersionKey);
     }
@@ -238,8 +272,12 @@ public class TaxonResource extends AbstractResource {
      * @response.representation.200.mediaType application/json;charset=utf-8
      */
     @GET
-    @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
     @Path("{taxonVersionKey}/designations/archive")
+    @TypeHint(TaxonDesignation.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned a list of archive designations that requested taxon is part of")
+    })  
+    @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")    
     public List<TaxonDesignation> getArchiveTaxonDesignations(@PathParam("taxonVersionKey") String taxonVersionKey) {
         return designationMapper.selectArchiveByTaxonVersionKey(taxonVersionKey);
     }
@@ -258,8 +296,12 @@ public class TaxonResource extends AbstractResource {
      * @response.representation.200.mediaType application/json;charset=utf-8
      */
     @GET
-    @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
     @Path("/{taxonVersionKey}/datasets")
+    @TypeHint(Dataset.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned a list of taxon datasets that requested taxon is part of")
+    })    
+    @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
     public List<Dataset> getDatasetListForTaxonViewableByUser(@TokenUser User user, @PathParam("taxonVersionKey") String taxonVersionKey) {
         return datasetMapper.selectDatasetsForTaxonViewableByUser(user, taxonVersionKey);
     }
@@ -275,8 +317,12 @@ public class TaxonResource extends AbstractResource {
      * @response.representation.200.mediaType application/json;charset=utf-8
      */
     @GET
-    @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
     @Path("/{taxonVersionKey}/weblinks")
+    @TypeHint(TaxonWebLink.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned a list of web links for a taxon")
+    })  
+    @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
     public List<TaxonWebLink> getTaxonWebLinks(@PathParam("taxonVersionKey") String taxonVersionKey) {
         return taxonMapper.getActiveWebLinksByTVK(taxonVersionKey);
     }
@@ -302,6 +348,9 @@ public class TaxonResource extends AbstractResource {
      * @response.representation.200.mediaType application/json;charset=utf-8
      */
     @GET
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned a SOLR response for taxa matching the given query")
+    })    
     @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
     public SolrResponse getTaxa(
             @QueryParam("rows") @DefaultValue("20") int rows,
@@ -341,8 +390,12 @@ public class TaxonResource extends AbstractResource {
      * @response.representation.200.mediaType application/json;charset=utf-8
      */
     @GET
-    @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
     @Path("/{taxonVersionKey}/siteBoundaries")
+    @TypeHint(SiteBoundary.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned a list of site boundaries that requested taxon is recorded in")
+    })        
+    @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
     public List<SiteBoundary> getSiteBoundaries(
             @TokenUser() User user,
             @QueryParam("startYear") @DefaultValue(ObservationResourceDefaults.defaultStartYear) int startYear,
@@ -381,8 +434,12 @@ public class TaxonResource extends AbstractResource {
      * @response.representation.200.mediaType application/x-zip-compressed
      */
     @GET
-    @Produces("application/x-zip-compressed")
     @Path("/{taxonVersionKey}/siteBoundaries/download")
+    @TypeHint(SiteBoundary.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned a zipped list of site boundaries that requested taxon is part of")
+    })        
+    @Produces("application/x-zip-compressed")
     public Response getSiteBoundariesDownload(
             @TokenUser() final User user,
             @QueryParam("startYear") @DefaultValue(ObservationResourceDefaults.defaultStartYear) final int startYear,

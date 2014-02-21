@@ -1,5 +1,8 @@
 package uk.org.nbn.nbnv.api.model;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement
 public class TaxonWithQueryStats implements Comparable<TaxonWithQueryStats>{
     
     private String taxonVersionKey;

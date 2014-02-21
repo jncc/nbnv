@@ -1,7 +1,9 @@
 package uk.org.nbn.nbnv.api.model;
 
 import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlRootElement;
 
+@XmlRootElement
 public class Survey {
 
     private String datasetKey, surveyKey, description,
