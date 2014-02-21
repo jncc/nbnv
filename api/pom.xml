@@ -70,8 +70,24 @@
                     <useStandardDocletOptions>false</useStandardDocletOptions>
                     <additionalparam>-output ${project.build.outputDirectory}/resourcedoc.xml</additionalparam>
                 </configuration>
-
             </plugin>
+<!--            <plugin>
+                <groupId>org.codehaus.enunciate</groupId>
+                <artifactId>maven-enunciate-plugin</artifactId>
+                <version>1.27</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>docs</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <configFile>enunciate.xml</configFile>
+                </configuration>
+            </plugin>            -->
         </plugins>
     </build>
         
@@ -271,5 +287,12 @@
             <artifactId>c3p0</artifactId>
             <version>0.9.2.1</version>
         </dependency>
+        
+        <!-- Ennunciate Annotations -->
+        <dependency> 
+            <groupId>org.codehaus.enunciate</groupId> 
+            <artifactId>enunciate-core-annotations</artifactId> 
+            <version>1.27</version> 
+        </dependency>          
     </dependencies>
 </project>

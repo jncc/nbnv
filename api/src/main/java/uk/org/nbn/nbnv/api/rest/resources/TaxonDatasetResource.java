@@ -9,6 +9,9 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import org.codehaus.enunciate.jaxrs.ResponseCode;
+import org.codehaus.enunciate.jaxrs.StatusCodes;
+import org.codehaus.enunciate.jaxrs.TypeHint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.org.nbn.nbnv.api.dao.core.OperationalAttributeMapper;
@@ -40,6 +43,10 @@ public class TaxonDatasetResource extends AbstractResource {
      * @response.representation.200.mediaType application/json
      */
     @GET
+    @TypeHint(TaxonDataset.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned a list of all Taxon Datasets")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public List<TaxonDataset> getDatasetList(){
         return datasetMapper.selectAllTaxonDatasets();
@@ -57,6 +64,10 @@ public class TaxonDatasetResource extends AbstractResource {
      */
     @GET
     @Path("/{id}")
+    @TypeHint(TaxonDataset.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned the requested Taxon Dataset")
+    })    
     @Produces(MediaType.APPLICATION_JSON)
     public TaxonDataset getTaxonDatasetByID(@PathParam("id") String id){
         TaxonDataset toReturn = datasetMapper.selectTaxonDatasetByID(id);
@@ -77,6 +88,10 @@ public class TaxonDatasetResource extends AbstractResource {
      */
     @GET
     @Path("/{id}/taxa")
+    @TypeHint(TaxonWithDatasetStats.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned a list of all Taxon Dataset statistics")
+    })   
     @Produces(MediaType.APPLICATION_JSON)
     public List<TaxonWithDatasetStats> getTaxaByDatasetKey(@PathParam("id") String id){
         return taxonMapper.selectByDatasetKey(id);
@@ -94,13 +109,17 @@ public class TaxonDatasetResource extends AbstractResource {
      */
     @GET
     @Path("/{id}/recordsPerYear")
+    @TypeHint(YearStats.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned a list of yearly statistics for a taxon dataset")
+    })    
     @Produces(MediaType.APPLICATION_JSON)
     public List<YearStats> getRecordsPerYearByDatasetKey(@PathParam("id") String id){
         return datasetMapper.selectRecordsPerYear(id);
     }
     
     /**
-     * Return a list of records per date for a specific dataset
+     * Return a list of statistics per date type for a specific dataset
      * 
      * @param id A dataset key
      * 
@@ -111,6 +130,10 @@ public class TaxonDatasetResource extends AbstractResource {
      */
     @GET
     @Path("/{id}/recordsPerDateType")
+    @TypeHint(DateTypeStats.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned a list of statistics per date type for a taxon dataset")
+    })  
     @Produces(MediaType.APPLICATION_JSON)
     public List<DateTypeStats> getDateTypeRecordCountsByDatasetKey(@PathParam("id") String id){
         return datasetMapper.selectRecordCountPerDateTypeByDatasetKey(id);
@@ -128,6 +151,10 @@ public class TaxonDatasetResource extends AbstractResource {
      */
     @GET
     @Path("/{id}/surveys")
+    @TypeHint(Survey.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned a list of surveys in a taxon dataset")
+    })   
     @Produces(MediaType.APPLICATION_JSON)
     public List<Survey> getSurveysByDatasetKey(@PathParam("id") String id){
         return surveyMapper.selectSurveysByDatasetKey(id);
@@ -145,6 +172,10 @@ public class TaxonDatasetResource extends AbstractResource {
      */
     @GET
     @Path("/{id}/attributes")
+    @TypeHint(Attribute.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned a list of attributes for a taxon dataset")
+    })    
     @Produces(MediaType.APPLICATION_JSON)
     public List<Attribute> getAttributesByDatasetKey(@PathParam("id") String id){
         return attributeMapper.selectAttributesByDatasetKey(id);
@@ -155,7 +186,8 @@ public class TaxonDatasetResource extends AbstractResource {
      * contains this attribute (attributes in this case are related to Taxon
      * Observations)
      * 
-     * @param user The current user (Must be an admin of this dataset)
+     * @param user The current user (Must be an admin of this dataset) (Injected 
+     * Token no need to pass)
      * @param id A dataset Key
      * @param attributeID An attribute that resides in this dataset
      * @return 
@@ -165,6 +197,11 @@ public class TaxonDatasetResource extends AbstractResource {
      */
     @GET
     @Path("/{id}/attributes/{attribute}")
+    @TypeHint(Attribute.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned the requested attribute from a taxon dataset"),
+        @ResponseCode(code = 403, condition = "The current user does not have admin rights over the dataset")
+    })  
     @Produces(MediaType.APPLICATION_JSON)
     public Attribute getAttributeByID(@TokenTaxonObservationAttributeAdminUser(dataset = "id", attribute = "attribute") User user, @PathParam("id") String id, @PathParam("attribute") int attributeID) {
         return oAttributeMapper.getDatasetAttribute(attributeID);
@@ -174,7 +211,8 @@ public class TaxonDatasetResource extends AbstractResource {
      * Update an attribute for a given dataset, if the user has permissions to
      * update this dataset
      * 
-     * @param user The current user 
+     * @param user The current user (Must be an admin of this dataset) (Injected 
+     * Token no need to pass)
      * @param id The dataset key of the attribute you want to update
      * @param attributeID The attribute you wish to update
      * @param description The new description of that attribute
@@ -185,6 +223,10 @@ public class TaxonDatasetResource extends AbstractResource {
      */
     @POST
     @Path("/{id}/attributes/{attribute}")
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Succesfully updated attribute"),
+        @ResponseCode(code = 403, condition = "The current user does not have admin rights over this attribute")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public int updateAttributeByID(@TokenTaxonObservationAttributeAdminUser(dataset = "id", attribute = "attribute") User user, 
@@ -198,7 +240,7 @@ public class TaxonDatasetResource extends AbstractResource {
      * Returns a json object detailing the current users access permissions for
      * a given dataset key
      * 
-     * @param user The current user
+     * @param user The current user (Injected Token no need to pass)
      * @param datasetKey The dataset you want your access positions for
      * @return The access positions the current user has over this dataset
      * 
@@ -207,6 +249,10 @@ public class TaxonDatasetResource extends AbstractResource {
      */
     @GET
     @Path("/{datasetKey}/accessPositions")
+    @TypeHint(DatasetAccessPositionsJSON.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned the current users dataset access positions for the selcted dataset")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public DatasetAccessPositionsJSON getAccessPositions(@TokenUser() User user, @PathParam("datasetKey") String datasetKey){
         DatasetAccessPositionsJSON ret = new DatasetAccessPositionsJSON();

@@ -1,11 +1,13 @@
 package uk.org.nbn.nbnv.api.model;
 
 import java.math.BigDecimal;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
  * @author Administrator
  */
+@XmlRootElement
 public class BoundingBox {
     private BigDecimal minX,minY,maxX,maxY;
     private String epsgCode;

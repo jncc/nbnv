@@ -5,11 +5,14 @@
 package uk.org.nbn.nbnv.api.model;
 
 import java.sql.Date;
+//import java.util.Date;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
  * @author Paul Gilbertson
  */
+@XmlRootElement
 public class TaxonDesignation {
     private Designation designation;
     private Date startDate;

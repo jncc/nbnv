@@ -4,10 +4,13 @@
  */
 package uk.org.nbn.nbnv.api.model.meta;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 /**
  *
  * @author Matt Debont
  */
+@XmlRootElement
 public class OrganisationJoinRequestJSON {
     private int id;
     private int userID;

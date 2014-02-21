@@ -27,6 +27,9 @@ import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.RandomStringUtils;
+import org.codehaus.enunciate.jaxrs.ResponseCode;
+import org.codehaus.enunciate.jaxrs.StatusCodes;
+import org.codehaus.enunciate.jaxrs.TypeHint;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,7 +87,7 @@ public class UserResource extends AbstractResource {
     /**
      * Return details about the current user from the data warehouse
      * 
-     * @param user The current user
+     * @param user The current user (Injected Token no need to pass)
      * 
      * @return The current user
      * 
@@ -92,6 +95,10 @@ public class UserResource extends AbstractResource {
      * @response.representation.200.mediaType application/json
      */
     @GET
+    @TypeHint(User.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned the current user")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public User getDetails(@TokenUser User user) {
         return user;
@@ -100,8 +107,8 @@ public class UserResource extends AbstractResource {
     /**
      * Return full up to date details about the current user from the core 
      * database
-     * 
-     * @param user The current user
+     *  
+     * @param user The current user (Injected Token no need to pass)
      * 
      * @return The most upto date data about the current user
      * 
@@ -110,6 +117,11 @@ public class UserResource extends AbstractResource {
      */
     @GET
     @Path("/full")
+    @TypeHint(User.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned the current user"),
+        @ResponseCode(code = 403, condition = "The current user is not logged in")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public User getFullDetails(@TokenUser(allowPublic = false) User user) {
         return oUserMapper.getUserById(user.getId());
@@ -118,7 +130,7 @@ public class UserResource extends AbstractResource {
     /**
      * Log the indicated user into the system
      * 
-     * @param username The username of the user
+     * @param username The username of the user 
      * @param password The password of the user
      * @param remember Whether the browser should remember this data (stay 
      * logged in)
@@ -135,6 +147,9 @@ public class UserResource extends AbstractResource {
      */
     @GET
     @Path("/login")
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully logged in")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public Response createTokenCookie(
             @QueryParam("username") String username,
@@ -178,6 +193,10 @@ public class UserResource extends AbstractResource {
      */
     @POST
     @Path("/login")
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Succesfully completed operation"),
+        @ResponseCode(code = 403, condition = "The current user is not logged in")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public Response createTokenCookiePOST (
@@ -205,7 +224,7 @@ public class UserResource extends AbstractResource {
     /**
      * Change the current users password
      * 
-     * @param user The current user
+     * @param user The current user (Injected Token no need to pass)
      * @param password The new password to change to
      * 
      * @return A Response object detailing the success or failure of the action
@@ -218,6 +237,10 @@ public class UserResource extends AbstractResource {
      */
     @PUT
     @Path("/passwords/change")
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Succesfully completed operation"),
+        @ResponseCode(code = 403, condition = "The current user is not logged in")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public Response setUserPassword(
             @TokenUser(allowPublic = false) User user,
@@ -233,7 +256,7 @@ public class UserResource extends AbstractResource {
     /**
      * Change the current users password from the user panel
      * 
-     * @param user The current user
+     * @param user The current user (Injected Token no need to pass)
      * @param password The new password
      * 
      * @return A Response object detailing the success or failure of the action
@@ -246,6 +269,10 @@ public class UserResource extends AbstractResource {
      */
     @POST
     @Path("/passwords/change")
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Succesfully completed operation"),
+        @ResponseCode(code = 403, condition = "The current user is not logged in")
+    })
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
     public Response setUserPasswordPost(
@@ -273,6 +300,10 @@ public class UserResource extends AbstractResource {
      */
     @POST
     @Path("/passwords/change/{username}")
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Succesfully completed operation"),
+        @ResponseCode(code = 403, condition = "The current user is not logged in")
+    })
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
     public Response setUserPassword(
@@ -301,6 +332,10 @@ public class UserResource extends AbstractResource {
      */
     @POST
     @Path("/mail/password")
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully changed password"),
+        @ResponseCode(code = 404, condition = "No known user with this username")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public Response requestPasswordReset(String emailAddress) throws JSONException, InvalidCredentialsException, IOException, TemplateException {
         User user = userMapper.getUserFromEmail(emailAddress);
@@ -340,6 +375,10 @@ public class UserResource extends AbstractResource {
      */
     @POST
     @Path("/mail/username")
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully changed password"),
+        @ResponseCode(code = 404, condition = "No known user with this email")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public Response getUsername(String emailAddress) throws JSONException, IOException, TemplateException {
         User user = userMapper.getUserFromEmail(emailAddress);
@@ -370,6 +409,9 @@ public class UserResource extends AbstractResource {
      */
     @GET
     @Path("/logout")
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully logged out")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public Response destroyTokenCookie() {
         Map<String, Object> toReturn = new HashMap<String, Object>();
@@ -398,6 +440,10 @@ public class UserResource extends AbstractResource {
      * @response.representation.200.mediaType application/json
      */
     @POST
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully registered new user"),
+        @ResponseCode(code = 500, condition = "Username or email is already in use")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public Response registerNewUser(@Valid User newUser) throws
             UnsupportedEncodingException, IOException, TemplateException, JSONException, NoSuchAlgorithmException {
@@ -449,6 +495,10 @@ public class UserResource extends AbstractResource {
      */
     @PUT
     @Path("/activations/{username}")
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully activated user"),
+        @ResponseCode(code = 403, condition = "Activation code was not valid for the given username")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public Response activateUser(@PathParam("username") String username, String activationCode) throws JSONException {
         if (oUserMapper.activateNewUser(username, activationCode) == 1) {
@@ -466,7 +516,8 @@ public class UserResource extends AbstractResource {
      * Return a list of all datasets which the current user has admin rights
      * over
      * 
-     * @param user The current user (Must be logged in)
+     * @param user The current user (Must be logged in) (Injected Token no need 
+     * to pass)
      * 
      * @return A List of Datasets that this user has admin rights over
      * 
@@ -475,6 +526,11 @@ public class UserResource extends AbstractResource {
      */
     @GET
     @Path("/adminDatasets")
+    @TypeHint(Dataset.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned a list of all datasets for which this user is an admin"),
+        @ResponseCode(code = 403, condition = "The current user is not logged in")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public List<Dataset> getUserAdminDatasets(@TokenUser(allowPublic = false) User user) {
         return userMapper.getDatasetsUserAdmins(user.getId());
@@ -483,7 +539,8 @@ public class UserResource extends AbstractResource {
     /**
      * Return a list of organisations of which the current user is a member
      * 
-     * @param user The current user (Must be logged in)
+     * @param user The current user (Must be logged in) (Injected Token no need 
+     * to pass)
      * 
      * @return a List of Organisations that the user is a member of
      * 
@@ -492,6 +549,11 @@ public class UserResource extends AbstractResource {
      */
     @GET
     @Path("/organisations")
+    @TypeHint(Organisation.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned a list of all organisations of which this user is a member"),
+        @ResponseCode(code = 403, condition = "The current user is not logged in")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public List<Organisation> getUserOrganisations(@TokenUser(allowPublic = false) User user) {
         return organisationMapper.selectByUser(user.getId());
@@ -500,7 +562,8 @@ public class UserResource extends AbstractResource {
     /**
      * Return a list of organisations of which the current user has admin rights
      * 
-     * @param user The current user (Must be logged in)
+     * @param user The current user (Must be logged in) (Injected Token no need 
+     * to pass)
      * 
      * @return A list of organisations that the user is an admin of
      * 
@@ -509,6 +572,11 @@ public class UserResource extends AbstractResource {
      */
     @GET
     @Path("/adminOrganisations")
+    @TypeHint(Organisation.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned a list of all organisations of which this user is an admin"),
+        @ResponseCode(code = 403, condition = "The current user is not logged in")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public List<Organisation> getUserAdminOrganisations(@TokenUser(allowPublic = false) User user) {
         return organisationMapper.selectByAdminUser(user.getId());
@@ -518,7 +586,8 @@ public class UserResource extends AbstractResource {
      * Search for users in the core database, excluding those who are members
      * of the specified organisation
      * 
-     * @param user The current user (Must be logged in)
+     * @param user The current user (Must be logged in) (Injected Token no need 
+     * to pass)
      * @param term The search term (username, first name, last name or email)
      * @param orgId An organisation ID
      * 
@@ -529,6 +598,11 @@ public class UserResource extends AbstractResource {
      */
     @GET
     @Path("/search")
+    @TypeHint(User.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned a list of all users matching the partial term"),
+        @ResponseCode(code = 403, condition = "The current user is not logged in")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public List<User> searchForUserByPartial(@TokenAnyDatasetOrOrgAdminUser User user, @QueryParam("term") String term, @QueryParam("organisation") int orgId, @QueryParam("dataset") String dataset) {
         if (StringUtils.hasText(term)) {
@@ -547,7 +621,8 @@ public class UserResource extends AbstractResource {
      * Modify the currently logged in user with new details from the user modify
      * form in the user admin section
      * 
-     * @param user The current user (Must be logged in)
+     * @param user The current user (Must be logged in) (Injected Token no need 
+     * to pass)
      * @param modified A user with modified user details from the user modify 
      * form
      * 
@@ -560,6 +635,11 @@ public class UserResource extends AbstractResource {
      */
     @POST
     @Path("/modify")
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully modifed user"),
+        @ResponseCode(code = 403, condition = "The current user is not logged in"),
+        @ResponseCode(code = 500, condition = "Tried to use an email address that is already in use by another user")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public Response modifyExistingUser(@TokenUser(allowPublic = false) User user, @Valid User modified) throws JSONException {
 
@@ -582,9 +662,16 @@ public class UserResource extends AbstractResource {
      * @throws IOException
      * @throws TemplateException
      * @throws JSONException 
+     * 
+     * @response.representation.200.qname Response
+     * @response.representation.200.mediaType application/json
      */
     @POST
     @Path("/modify/email")
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Operation completed successfully, check response for failures if any"),
+        @ResponseCode(code = 403, condition = "The current user is not logged in")
+    })    
     @Produces(MediaType.APPLICATION_JSON)
     public Response modifyExistingUsersEmail(@TokenUser(allowPublic = false) User user, String email) throws IOException, TemplateException, JSONException {
         if (user.getEmail().equals(email) || oUserMapper.getUserFromEmail(email) != null) {
@@ -624,9 +711,16 @@ public class UserResource extends AbstractResource {
      * @throws IOException
      * @throws TemplateException
      * @throws JSONException 
+     * 
+     * @response.representation.200.qname Response
+     * @response.representation.200.mediaType application/json
      */
     @GET
     @Path("/modify/email/activate/{key}")
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Operation completed successfully, check response for failures if any"),
+        @ResponseCode(code = 403, condition = "The current user is not logged in")
+    }) 
     public Response confirmEmailModification(@TokenUser(allowPublic = false) User user, @PathParam("email") String email, @PathParam("key") String key) throws IOException, TemplateException, JSONException {
         UserEmailModify mod = oUserEmailModifyMapper.getModificationForUser(user);
         
@@ -659,25 +753,70 @@ public class UserResource extends AbstractResource {
     /**
      * Checks if a user is logged in, used for portal operations
      * 
-     * @param user The current user must be logged in
+     * @param user The current user must be logged in (Injected Token no need to pass)
      * @return True if the user is logged in, a forbidden error if not
+     * 
+     * @response.representation.200.qname Boolean
+     * @response.representation.200.mediaType application/json
      */
     @GET
     @Path("/loggedIn")
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "The current user is logged in"),
+        @ResponseCode(code = 403, condition = "The current user is not logged in")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public boolean isLoggedIn(@TokenUser(allowPublic = false) User user) {
         return true;
     }
 
+    /**
+     * Get a set of limited user details about a given user, used for dataset
+     * and organisation admin functions
+     * 
+     * @param user The current user must be logged in and a dataset or 
+     * organisation admin (Injected Token no need to pass)
+     * @param userID The id of a user to get details for
+     * 
+     * @return A limited set of details about the user
+     * 
+     * @response.representation.200.qname User
+     * @response.representation.200.mediaType application/json
+     */
     @GET
     @Path("/{userID}")
+    @TypeHint(User.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned the requested user details"),
+        @ResponseCode(code = 203, condition = "User does not exist"),
+        @ResponseCode(code = 403, condition = "The current user is not an admin of any dataset or organisation")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public User getUserDetails(@TokenAnyDatasetOrOrgAdminUser User user, @PathParam("userID") int userID) {
         return userMapper.getLimitedUserById(userID);
     }
     
+    /**
+     * Get a list of organisations for which a given user is a member, used for 
+     * dataset and organisation admin functions
+     * 
+     * @param user The current user must be logged in and a dataset or 
+     * organisation admin (Injected Token no need to pass)
+     * @param userID The id of the user to get a list of organisations for
+     * 
+     * @return A list of organisations that the user is a member of
+     * 
+     * @response.representation.200.qname List<Organisation>
+     * @response.representation.200.mediaType application/json
+     */
     @GET
     @Path("/{userID}/organisations")
+    @TypeHint(Organisation.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned a list of organisation memberships for the requested user"),
+        @ResponseCode(code = 203, condition = "User does not exist"),
+        @ResponseCode(code = 403, condition = "The current user is not an admin of any dataset or organisation")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public List<Organisation> getUserOrganisationsForOtherUser(@TokenAnyDatasetOrOrgAdminUser User user, @PathParam("userID") int userID) {
         return organisationMapper.selectByUser(userID);

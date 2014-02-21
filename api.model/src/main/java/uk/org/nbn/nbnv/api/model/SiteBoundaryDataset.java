@@ -1,7 +1,9 @@
 package uk.org.nbn.nbnv.api.model;
 
 import java.util.Date;
+import javax.xml.bind.annotation.XmlRootElement;
 
+@XmlRootElement
 public class SiteBoundaryDataset {
     
     private String datasetKey;

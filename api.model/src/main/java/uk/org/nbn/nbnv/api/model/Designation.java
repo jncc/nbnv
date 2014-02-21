@@ -3,7 +3,9 @@ package uk.org.nbn.nbnv.api.model;
 import com.sun.jersey.server.linking.Ref;
 import com.sun.jersey.server.linking.Ref.Style;
 import java.net.URI;
+import javax.xml.bind.annotation.XmlRootElement;
 
+@XmlRootElement
 public class Designation {
     private int id;
     private String name;

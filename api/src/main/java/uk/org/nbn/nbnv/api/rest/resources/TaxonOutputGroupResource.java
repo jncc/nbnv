@@ -6,6 +6,9 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import org.codehaus.enunciate.jaxrs.ResponseCode;
+import org.codehaus.enunciate.jaxrs.StatusCodes;
+import org.codehaus.enunciate.jaxrs.TypeHint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.org.nbn.nbnv.api.dao.warehouse.TaxonOutputGroupMapper;
@@ -26,6 +29,10 @@ public class TaxonOutputGroupResource extends AbstractResource {
      * @response.representation.200.mediaType application/json
      */
     @GET
+    @TypeHint(TaxonOutputGroup.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned a list of all taxon output groups")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public List<TaxonOutputGroup> getTaxonOutputGroups() {
         return taxonOutputGroupMapper.selectAll();
@@ -43,6 +50,10 @@ public class TaxonOutputGroupResource extends AbstractResource {
      */
     @GET
     @Path("/{id}")
+    @TypeHint(TaxonOutputGroup.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned the requested taxon output group")
+    })   
     @Produces(MediaType.APPLICATION_JSON)
     public TaxonOutputGroup getTaxonOutputGroup(@PathParam("id") String id) {
         return taxonOutputGroupMapper.getById(id);

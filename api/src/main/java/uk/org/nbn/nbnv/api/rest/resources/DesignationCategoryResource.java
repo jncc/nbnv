@@ -6,6 +6,9 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import org.codehaus.enunciate.jaxrs.ResponseCode;
+import org.codehaus.enunciate.jaxrs.StatusCodes;
+import org.codehaus.enunciate.jaxrs.TypeHint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.org.nbn.nbnv.api.dao.warehouse.DesignationCategoryMapper;
@@ -28,6 +31,10 @@ public class DesignationCategoryResource extends AbstractResource {
      * @response.representation.200.mediaType application/json
      */
     @GET
+    @TypeHint(DesignationCategory.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Succesdfully returned a list of all designation categories")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public List<DesignationCategory> getDesignationCategory() { 
         return desigCat.selectAll();
@@ -45,6 +52,11 @@ public class DesignationCategoryResource extends AbstractResource {
      */
     @GET
     @Path("/{id}")
+    @TypeHint(DesignationCategory.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned the selected designation category"),
+        @ResponseCode(code = 204, condition = "Could not find the requested designation category")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public DesignationCategory getDesignationCategoryByID(@PathParam("id") int id) { 
         return desigCat.selectByID(id);
@@ -62,6 +74,11 @@ public class DesignationCategoryResource extends AbstractResource {
      */
     @GET
     @Path("/{id}/designations")
+    @TypeHint(Designation.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned all designations in the selected designation category"),
+        @ResponseCode(code = 204, condition = "Could not find the requested designation category")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public List<Designation> getDesignationByCategoryID(@PathParam("id") int id) { 
         return desig.selectByCategoryID(id);
@@ -80,6 +97,11 @@ public class DesignationCategoryResource extends AbstractResource {
      */
     @GET
     @Path("/{id}/designations/{designationId}")
+    @TypeHint(Designation.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Succesfully returned selected designation in the selected designation category"),
+        @ResponseCode(code = 204, condition = "Could not find the requested designation in this designation category")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public Designation getDesignationByCategoryIDAndID(@PathParam("id") int id, @PathParam("designationId") String designationId) { 
         return desig.selectByIDAndCategoryID(designationId, id);

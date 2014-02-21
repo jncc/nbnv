@@ -6,6 +6,9 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import org.codehaus.enunciate.jaxrs.ResponseCode;
+import org.codehaus.enunciate.jaxrs.StatusCodes;
+import org.codehaus.enunciate.jaxrs.TypeHint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.org.nbn.nbnv.api.dao.warehouse.FeatureMapper;
@@ -37,6 +40,11 @@ public class FeatureResource extends AbstractResource {
      */
     @GET
     @Path("/{id: [0-9]+}")
+    @TypeHint(Feature.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned the requested feature"),
+        @ResponseCode(code = 204, condition = "Could not find the requested feature")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public Feature getFeatureId(@PathParam("id") int featureId) {
         return featureMapper.getFeatureID(featureId);
@@ -54,6 +62,11 @@ public class FeatureResource extends AbstractResource {
      */
     @GET
     @Path("/{id}")
+    @TypeHint(Feature.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned the requested feature"),
+        @ResponseCode(code = 204, condition = "Could not find the requested feature")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     @SolrResolver("FEATURE")
     public Feature getFeature(@PathParam("id") String featureId) {
@@ -61,8 +74,7 @@ public class FeatureResource extends AbstractResource {
     }
     
     /**
-     * Return a list of all Site Boundaries from the data warehouse (Should this 
-     * be here?)
+     * Return a list of all Site Boundaries from the data warehouse 
      * 
      * @return A list of all Site Boundaries from the data warehouse
      * 
@@ -71,6 +83,10 @@ public class FeatureResource extends AbstractResource {
      */
     @GET
     @Path("/siteBoundaries")
+    @TypeHint(Feature.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned the list of all site boundaries")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public List<SiteBoundary> getSiteBoundaries() {
         return siteBoundaryMapper.getAll();

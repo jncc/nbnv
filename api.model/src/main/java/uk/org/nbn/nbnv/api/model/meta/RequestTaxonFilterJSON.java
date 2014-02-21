@@ -4,10 +4,13 @@
  */
 package uk.org.nbn.nbnv.api.model.meta;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 /**
  *
  * @author paulbe
  */
+@XmlRootElement
 public class RequestTaxonFilterJSON extends AccessRequestFilterJSON {
     private String tvk = "";
     private String designation = "";

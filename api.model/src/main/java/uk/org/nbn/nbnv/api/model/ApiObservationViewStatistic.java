@@ -6,11 +6,13 @@ package uk.org.nbn.nbnv.api.model;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
  * @author Matt Debont
  */
+@XmlRootElement
 public class ApiObservationViewStatistic {
     private int viewID;
     private int userID;

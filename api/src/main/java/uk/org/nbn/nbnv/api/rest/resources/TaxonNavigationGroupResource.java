@@ -4,9 +4,11 @@ import java.util.List;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import org.apache.solr.client.solrj.SolrServerException;
+import org.codehaus.enunciate.jaxrs.ResponseCode;
+import org.codehaus.enunciate.jaxrs.StatusCodes;
+import org.codehaus.enunciate.jaxrs.TypeHint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 import uk.org.nbn.nbnv.api.dao.warehouse.TaxonNavigationGroupMapper;
 import uk.org.nbn.nbnv.api.model.TaxonNavigationGroup;
 import uk.org.nbn.nbnv.api.solr.Solr;
@@ -26,6 +28,10 @@ public class TaxonNavigationGroupResource extends AbstractResource {
      * @response.representation.200.mediaType application/json
      */
     @GET
+    @TypeHint(TaxonNavigationGroup.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned a list of all Taxon Navigation Groups")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public List<TaxonNavigationGroup> getTaxonNavigationGroups() {
         return mapper.selectAll();
@@ -43,6 +49,10 @@ public class TaxonNavigationGroupResource extends AbstractResource {
      */
     @GET
     @Path("/{id}")
+    @TypeHint(TaxonNavigationGroup.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned the requested Taxon Navigation Group")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public TaxonNavigationGroup getTaxonNavigationGroup(@PathParam("id") String id) {
         return mapper.getTaxonNavigationGroup(id);
@@ -62,6 +72,10 @@ public class TaxonNavigationGroupResource extends AbstractResource {
      */
     @GET
     @Path("/topLevels")
+    @TypeHint(TaxonNavigationGroup.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned a list of all the top level Taxon Navigation Groups")
+    })    
     @Produces(MediaType.APPLICATION_JSON)
     public List<TaxonNavigationGroup> getTopLevelTaxonNavigationGroups(
             @QueryParam("designationId") String designationId,
@@ -89,6 +103,10 @@ public class TaxonNavigationGroupResource extends AbstractResource {
      */
     @GET
     @Path("/topLevels/designations/{designationId}")
+    @TypeHint(TaxonNavigationGroup.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned a list of all the top level Taxon Navigation Groups assocatied with a designation")
+    })    
     @Produces(MediaType.APPLICATION_JSON)
     public List<TaxonNavigationGroup> getTopLevelTaxonNavigationGroupsByDesignation(@PathParam("designationId") String id) {
         return mapper.getTopLevelsByDesignationID(id);
@@ -110,6 +128,9 @@ public class TaxonNavigationGroupResource extends AbstractResource {
      */
     @GET
     @Path("/{id}/species")
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned a SOLR response for searchable taxa matching the search parameters")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public SolrResponse getTaxa(
             @PathParam("id") String taxonGroup,

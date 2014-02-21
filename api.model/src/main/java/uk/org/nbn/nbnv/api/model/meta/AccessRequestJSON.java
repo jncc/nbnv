@@ -4,10 +4,13 @@
  */
 package uk.org.nbn.nbnv.api.model.meta;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 /**
  *
  * @author Paul Gilbertson
  */
+@XmlRootElement
 public class AccessRequestJSON extends BaseFilterJSON {
     private RequestReasonJSON reason;
     private AccessRequestTimeLimitJSON time;

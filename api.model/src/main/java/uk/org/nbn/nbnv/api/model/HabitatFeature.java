@@ -4,7 +4,9 @@ import com.sun.jersey.server.linking.Ref;
 import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import javax.xml.bind.annotation.XmlRootElement;
 
+@XmlRootElement
 public class HabitatFeature {
     
     @Ref(value="${resource.portalUrl}/Datasets/${instance.habitatDatasetKey}", style=Ref.Style.RELATIVE_PATH) 

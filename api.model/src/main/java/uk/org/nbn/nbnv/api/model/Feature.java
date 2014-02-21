@@ -2,11 +2,13 @@ package uk.org.nbn.nbnv.api.model;
 
 import com.sun.jersey.server.linking.Ref;
 import java.net.URI;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
  * @author Christopher Johnson
  */
+@XmlRootElement
 public class Feature {
     @Ref(value="${resource.portalUrl}/Reports/Sites/${instance.identifier}/Groups", style=Ref.Style.RELATIVE_PATH) 
     private URI href;

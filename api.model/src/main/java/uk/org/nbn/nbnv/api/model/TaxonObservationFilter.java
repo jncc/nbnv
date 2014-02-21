@@ -4,10 +4,13 @@
  */
 package uk.org.nbn.nbnv.api.model;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 /**
  *
  * @author Paul Gilbertson
  */
+@XmlRootElement
 public class TaxonObservationFilter {
     private int id;
     private String filterJSON;

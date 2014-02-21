@@ -5,7 +5,9 @@ import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import javax.xml.bind.annotation.XmlRootElement;
 
+@XmlRootElement
 public class Dataset {
     @Ref(value="${resource.portalUrl}/Datasets/${instance.key}", style=Ref.Style.RELATIVE_PATH) 
     private URI href;

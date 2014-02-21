@@ -9,6 +9,8 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
+import org.codehaus.enunciate.jaxrs.ResponseCode;
+import org.codehaus.enunciate.jaxrs.StatusCodes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.org.nbn.nbnv.api.solr.Solr;
@@ -40,6 +42,9 @@ public class SearchResource extends AbstractResource {
      * @response.representation.200.mediaType application/json
      */
     @GET
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned SOLR results across all searchable objects for a given term")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public SolrResponse searchAll(
             @QueryParam("rows") @DefaultValue("25") int rows,
@@ -79,6 +84,9 @@ public class SearchResource extends AbstractResource {
      */
     @GET
     @Path("/siteDatasets/{datasetKey}")
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned SOLR results across all searchable site datasets for a given term")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public SolrResponse searchSiteDataset(
             @PathParam("datasetKey") String datasetKey,
@@ -115,6 +123,9 @@ public class SearchResource extends AbstractResource {
      */
     @GET
     @Path("/siteBoundaries")
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned SOLR results across all searchable site boundaries for a given term")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public SolrResponse searchSiteBoundaries(
             @QueryParam("rows") @DefaultValue("10") int rows,
@@ -149,6 +160,9 @@ public class SearchResource extends AbstractResource {
      */
     @GET
     @Path("/designations")
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned SOLR results across all searchable designations for a given term")
+    })    
     @Produces(MediaType.APPLICATION_JSON)
     public SolrResponse searchDesignations(
             @QueryParam("rows") @DefaultValue("25") int rows,
@@ -186,6 +200,9 @@ public class SearchResource extends AbstractResource {
      */
     @GET
     @Path("/taxonDatasets")
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned SOLR results across all searchable taxon datasets for a given term")
+    })  
     @Produces(MediaType.APPLICATION_JSON)
     public SolrResponse searchDatasets(
             @QueryParam("rows") @DefaultValue("25") int rows,
@@ -225,6 +242,9 @@ public class SearchResource extends AbstractResource {
      */
     @GET
     @Path("/taxa")
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned SOLR results across all searchable taxa for a given term")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public SolrResponse searchTaxa(
             @QueryParam("rows") @DefaultValue("25") int rows,

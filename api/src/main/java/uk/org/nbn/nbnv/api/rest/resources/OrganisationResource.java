@@ -14,6 +14,9 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import org.codehaus.enunciate.jaxrs.ResponseCode;
+import org.codehaus.enunciate.jaxrs.StatusCodes;
+import org.codehaus.enunciate.jaxrs.TypeHint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.org.nbn.nbnv.api.dao.core.OperationalOrganisationMapper;
@@ -49,6 +52,10 @@ public class OrganisationResource extends AbstractResource {
      * @response.representation.200.mediaType application/json
      */
     @GET
+    @TypeHint(Organisation.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned a list of all organisations")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public List<Organisation> get() {
         return organisationMapper.selectAll();
@@ -64,8 +71,12 @@ public class OrganisationResource extends AbstractResource {
      * @response.representation.200.mediaType application/json* 
      */
     @GET
-    @Produces(MediaType.APPLICATION_JSON)
     @Path("/contributing")
+    @TypeHint(Organisation.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned a list of all contributing organisations")
+    })
+    @Produces(MediaType.APPLICATION_JSON)
     public List<Organisation> getContributingOrgs() {
         return organisationMapper.selectAllContributing();
     }
@@ -80,6 +91,10 @@ public class OrganisationResource extends AbstractResource {
      */
     @GET
     @Path("/search")
+    @TypeHint(Organisation.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned a list of all organisations, matching the given search term")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public List<Organisation> searchForOrgByPartial(@QueryParam("term") String term) {
        return oOrganisationMapper.searchForOrganisation("%" + term + "%");
@@ -90,7 +105,7 @@ public class OrganisationResource extends AbstractResource {
      * excludes any organisation of which the current user is already a member
      * or cannot join
      * 
-     * @param user The current user
+     * @param user The current user (Injected Token no need to pass)
      * @return A list of organisations that the current user can join
      * 
      * @response.representation.200.qname List<Organisation>
@@ -98,6 +113,11 @@ public class OrganisationResource extends AbstractResource {
      */
     @GET
     @Path("/joinable")
+    @TypeHint(Organisation.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned a list of all organisations that are joinable by the current user"),
+        @ResponseCode(code = 403, condition = "The current user is not logged in")
+    })    
     @Produces(MediaType.APPLICATION_JSON)
     public List<Organisation> getJoinableOrganisations(@TokenUser(allowPublic = false) User user) {
         return oOrganisationMapper.getJoinableOrganisations(user.getId());
@@ -115,6 +135,10 @@ public class OrganisationResource extends AbstractResource {
      */
     @GET
     @Path("/{id}")
+    @TypeHint(Organisation.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned the selected organisation")
+    })  
     @Produces(MediaType.APPLICATION_JSON)
     @SolrResolver("ORGANISATION")
     public Organisation getByID(@PathParam("id") int id) {
@@ -127,7 +151,7 @@ public class OrganisationResource extends AbstractResource {
      * error
      *
      * @param user The current user (Must be organisation admin of this
-     * organisation)
+     * organisation) (Injected Token no need to pass)
      * @param id An organisation ID
      *
      * @return A specified organisation from the core database
@@ -137,6 +161,11 @@ public class OrganisationResource extends AbstractResource {
      */
     @GET
     @Path("/{id}/metadata")
+    @TypeHint(Organisation.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned the selected organisation"),
+        @ResponseCode(code = 403, condition = "The current user is not and admin of the selected organisation")
+    })    
     @Produces(MediaType.APPLICATION_JSON)
     public Organisation getFullMetadata(
             @TokenOrganisationUser(path = "id", roles = OrganisationMembership.Role.administrator) User user,
@@ -149,6 +178,7 @@ public class OrganisationResource extends AbstractResource {
      * specified organisation, otherwise return a 403 Forbidden error
      * 
      * @param user The current user (Must be an admin of this organisation)
+     * (Injected Token no need to pass)
      * @param id The id of an organisation
      * @param name The name of the organisation
      * @param abbreviation The abbreviation of the organisation
@@ -167,6 +197,11 @@ public class OrganisationResource extends AbstractResource {
      */
     @POST
     @Path("/{id}/metadata")
+    @TypeHint(OpResult.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully completed operation, may have failed check the OpResult for details"),
+        @ResponseCode(code = 403, condition = "The current user is not and admin of the selected organisation")
+    })   
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
     public OpResult updateOrganistionMetadata(
@@ -226,6 +261,10 @@ public class OrganisationResource extends AbstractResource {
      */
     @GET
     @Path("/{id}/datasets")
+    @TypeHint(Dataset.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned a list of datasets owned by this organisation")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public List<Dataset> getDatasetsByID(@PathParam("id") int id) {
         return datasetMapper.selectByOrganisationID(id);
@@ -245,6 +284,10 @@ public class OrganisationResource extends AbstractResource {
      */
     @GET
     @Path("/{id}/contributedDatasets")
+    @TypeHint(Dataset.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned a list of datasets that this organisation contributes to")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public List<Dataset> getContributedDatasetsByID(@PathParam("id") int id) {
         return datasetMapper.selectContributedByOrganisationID(id);
@@ -262,6 +305,9 @@ public class OrganisationResource extends AbstractResource {
      */
     @GET
     @Path("/{id}/logo")
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned the logo for this organisation")
+    })
     @Produces("image/jpg")
     public Object getLogo(@PathParam("id") int id) {
         return organisationMapper.selectLogoByOrganisationID(id);
@@ -279,6 +325,9 @@ public class OrganisationResource extends AbstractResource {
      */
     @GET
     @Path("/{id}/logosmall")
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned the small version of the logo for this organisation")
+    })    
     @Produces("image/png")
     public Object getLogoSmall(@PathParam("id") int id) {
         return organisationMapper.selectLogoSmallByOrganisationID(id);

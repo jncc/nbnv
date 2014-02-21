@@ -1,11 +1,14 @@
 package uk.org.nbn.nbnv.api.model;
 
 import java.sql.Date;
+//import java.util.Date;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
  * @author Matt Debont
  */
+@XmlRootElement
 public class OrganisationJoinRequest {
 
     private int id;

@@ -1,9 +1,12 @@
 package uk.org.nbn.nbnv.api.model;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 /**
  *
  * @author Matt Debont
  */
+@XmlRootElement
 public class DownloadStat {
     private int id;
     private String name;

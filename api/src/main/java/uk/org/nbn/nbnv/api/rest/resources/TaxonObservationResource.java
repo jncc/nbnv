@@ -27,6 +27,9 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
+import org.codehaus.enunciate.jaxrs.ResponseCode;
+import org.codehaus.enunciate.jaxrs.StatusCodes;
+import org.codehaus.enunciate.jaxrs.TypeHint;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -95,7 +98,7 @@ public class TaxonObservationResource extends RequestResource {
      * Return a Taxon Observation Record with a specified numerical ID, as long
      * as the user is authorised to view this record
      * 
-     * @param user The current User
+     * @param user The current User (Injected Token no need to pass)
      * @param request The incoming HTTP request (Auto-injected no need to pass)
      * @param id A numerical ID for an observation record
      * 
@@ -106,6 +109,10 @@ public class TaxonObservationResource extends RequestResource {
      */
     @GET
     @Path("/{id : \\d+}")
+    @TypeHint(TaxonObservation.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Succesfully returned the requested taxon observation, access determined by the current user")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public TaxonObservation getObservation(
             @TokenUser(allowPublic = false) User user, 
@@ -124,7 +131,7 @@ public class TaxonObservationResource extends RequestResource {
      * Returns a List of Taxon Observation Records in a specified dataset as 
      * long as the user is authorised to view them
      * 
-     * @param user The current user
+     * @param user The current user (Injected Token no need to pass)
      * @param request The incoming HTTP request (Auto-injected no need to pass)
      * @param datasetKey A dataset key
      * 
@@ -135,6 +142,10 @@ public class TaxonObservationResource extends RequestResource {
      */
     @GET
     @Path("/{datasetKey : [A-Z][A-Z0-9]{7}}")
+    @TypeHint(TaxonObservation.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Succesfully returned a list of taxon observations in this dataset")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public List<TaxonObservation> getObservationsByDataset(
             @TokenUser(allowPublic = false) User user, 
@@ -165,7 +176,7 @@ public class TaxonObservationResource extends RequestResource {
      * Returns a list of Taxon Observations about a specific Taxon Version Key 
      * that the current user has access to
      * 
-     * @param user The current user
+     * @param user The current user (Injected Token no need to pass)
      * @param request The incoming HTTP request (Auto-injected no need to pass)
      * @param ptvk The Taxon Version Key to search for
      * 
@@ -177,6 +188,10 @@ public class TaxonObservationResource extends RequestResource {
      */
     @GET
     @Path("/{ptvk : [A-Z]{3}SYS[0-9]{10}}")
+    @TypeHint(TaxonObservation.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Succesfully returned a list of taxon observations for this PTVK")
+    })    
     @Produces(MediaType.APPLICATION_JSON)
     public List<TaxonObservation> getObservationsByTaxon(
             @TokenUser(allowPublic = false) User user, 
@@ -207,15 +222,20 @@ public class TaxonObservationResource extends RequestResource {
      * Returns a JSONObject which states if a TVK has presence,absence and polygon records associated 
      * with it which are accessible by the current user
      * 
-     * @param user The current user
+     * @param user The current user  (Injected Token no need to pass)
      * @param taxonVersionKey The TVK to be searched
-     * @return If any presence records exist
+     *
+     * @return A JSON object containing if the PTVK has absence / presence 
+     * records associated with it
      * 
      * @response.representation.200.qname boolean
      * @response.representation.200.mediaType application/json
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned if the PTVK has absence, presence and polygon records")
+    })
     @Path("/{ptvk : [A-Z]{3}SYS[0-9]{10}}/types")
     public JSONObject taxonHasPresence(@TokenUser() User user, @PathParam("ptvk") String taxonVersionKey) throws JSONException {
         return new JSONObject()
@@ -237,7 +257,7 @@ public class TaxonObservationResource extends RequestResource {
      * Returns a list of Taxon Observations matching the given serach parameters
      * 
      * @param user The current user, determines what datasets they have access 
-     * to
+     * to (Injected Token no need to pass)
      * @param request The incoming HTTP request (Auto-injected no need to pass)
      * @param startYear The start year of the desired range
      * @param endYear The end year of the desired range
@@ -261,6 +281,10 @@ public class TaxonObservationResource extends RequestResource {
      * @response.representation.200.mediaType application/json
      */
     @GET
+    @TypeHint(TaxonObservation.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned a list of taxon observations which match the given filter")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public List<TaxonObservation> getObservationsByFilter(
             @TokenUser(allowPublic = false) User user,
@@ -285,7 +309,7 @@ public class TaxonObservationResource extends RequestResource {
      * Returns a list of Taxon Observations matching the given serach parameters
      * 
      * @param user The current user, determines what datasets they have access 
-     * to
+     * to (Injected Token no need to pass)
      * @param startYear The start year of the desired range
      * @param endYear The end year of the desired range
      * @param datasetKeys Datasets to search in
@@ -308,6 +332,10 @@ public class TaxonObservationResource extends RequestResource {
      * @response.representation.200.mediaType application/json
      */    
     @POST 
+    @TypeHint(TaxonObservation.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned a list of taxon observations which match the given filter")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public List<TaxonObservation> getObservationsByFilterViaPOST(
             @TokenUser(allowPublic = false) User user,
@@ -333,7 +361,7 @@ public class TaxonObservationResource extends RequestResource {
      * to the provided search parameters
      * 
      * @param user The current user, determines what datasets they have access 
-     * to
+     * to (Injected Token no need to pass)
      * @param datasetKey The Dataset to search in
      * @param attributeID An attribute that the records should have
      * @param startYear The start year of the desired range
@@ -355,6 +383,10 @@ public class TaxonObservationResource extends RequestResource {
      */
     @GET
     @Path("/{datasetKey : [A-Z][A-Z0-9]{7}}/attributes/{attributeID: [0-9]{1,10}}")
+    @TypeHint(TaxonObservationAttributeValue.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned a list of taxon observation attribute values which match the given filter")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public List<TaxonObservationAttributeValue> getOneObservationAttributeByFilter(
             @TokenUser(allowPublic = false) User user,
@@ -379,7 +411,7 @@ public class TaxonObservationResource extends RequestResource {
      * by species, conforming to the provided search parameters
      * 
      * @param user The current user, determines what datasets they have access 
-     * to
+     * to (Injected Token no need to pass)
      * @param startYear The start year of the desired range
      * @param endYear The end year of the desired range
      * @param datasetKeys Datasets to search in
@@ -400,6 +432,10 @@ public class TaxonObservationResource extends RequestResource {
      */
     @GET
     @Path("/species")
+    @TypeHint(TaxonWithQueryStats.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned a list of taxon with statistics which match the given filter")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public List<TaxonWithQueryStats> getObservationSpeciesByFilter(
             @TokenUser() User user,
@@ -433,7 +469,7 @@ public class TaxonObservationResource extends RequestResource {
      * search parameters
      * 
      * @param user The current user, determines what datasets they have access 
-     * to
+     * to (Injected Token no need to pass)
      * @param startYear The start year of the desired range
      * @param endYear The end year of the desired range
      * @param datasetKeys Datasets to search in
@@ -454,6 +490,9 @@ public class TaxonObservationResource extends RequestResource {
      */
     @GET
     @Path("/species/download")
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully created a download of taxon observations which match the given filter")
+    })
     @Produces("application/x-zip-compressed")
     public StreamingOutput getSpeciesDownloadByFilter(
             @Context HttpServletResponse response,
@@ -493,7 +532,7 @@ public class TaxonObservationResource extends RequestResource {
      * parameters
      * 
      * @param user The current user, determines what datasets they have access 
-     * to
+     * to (Injected Token no need to pass)
      * @param startYear The start year of the desired range
      * @param endYear The end year of the desired range
      * @param datasetKeys Datasets to search in
@@ -514,6 +553,10 @@ public class TaxonObservationResource extends RequestResource {
      */
     @GET
     @Path("/groups")
+    @TypeHint(TaxonOutputGroupWithQueryStats.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Succesfully returned a list of taxon output groups with statistics matching the filter")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public List<TaxonOutputGroupWithQueryStats> getObservationGroupsByFilter(
             @TokenUser() User user,
@@ -537,7 +580,7 @@ public class TaxonObservationResource extends RequestResource {
      * parameters
      * 
      * @param user The current user, determines what datasets they have access 
-     * to
+     * to (Injected Token no need to pass)
      * @param startYear The start year of the desired range
      * @param endYear The end year of the desired range
      * @param datasetKeys Datasets to search in
@@ -558,6 +601,10 @@ public class TaxonObservationResource extends RequestResource {
      */
     @GET
     @Path("/datasets")
+    @TypeHint(TaxonDatasetWithQueryStats.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Succesfully returned a list of taxon datasets with query statistics that match the filter")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public List<TaxonDatasetWithQueryStats> getObservationDatasetsByFilter(
             @TokenUser() User user,
@@ -582,7 +629,7 @@ public class TaxonObservationResource extends RequestResource {
      * parameters
      * 
      * @param user The current user, determines what datasets they have access 
-     * to
+     * to (Injected Token no need to pass)
      * @param startYear The start year of the desired range
      * @param endYear The end year of the desired range
      * @param datasetKeys Datasets to search in
@@ -603,6 +650,10 @@ public class TaxonObservationResource extends RequestResource {
      */
     @GET
     @Path("/datasets/all")
+    @TypeHint(TaxonDatasetWithQueryStats.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned a list of all taxon datasets with their query stats matching the filter")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public List<TaxonDatasetWithQueryStats> getAllObservationDatasetsByFilter(
             @TokenUser() User user,
@@ -626,7 +677,7 @@ public class TaxonObservationResource extends RequestResource {
      * by the given parameters
      * 
      * @param user The current user, determines what datasets they have access 
-     * to
+     * to (Injected Token no need to pass)
      * @param startYear The start year of the desired range
      * @param endYear The end year of the desired range
      * @param datasetKeys Datasets to search in
@@ -647,6 +698,10 @@ public class TaxonObservationResource extends RequestResource {
      */
     @GET
     @Path("/datasets/requestable")
+    @TypeHint(TaxonDatasetWithQueryStats.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned a list of all taxon datasets with their query stats matching the filter")
+    })   
     @Produces(MediaType.APPLICATION_JSON)
     public List<TaxonDatasetWithQueryStats> getRequestableObservationDatasetsByFilter(
             @TokenUser() User user,
@@ -676,7 +731,7 @@ public class TaxonObservationResource extends RequestResource {
      * by the given parameters and a single dataset
      * 
      * @param user The current user, determines what datasets they have access 
-     * to
+     * to (Injected Token no need to pass)
      * @param startYear The start year of the desired range
      * @param endYear The end year of the desired range
      * @param datasetKey Dataset to search in
@@ -697,6 +752,10 @@ public class TaxonObservationResource extends RequestResource {
      */
     @GET
     @Path("/datasets/{datasetKey : [A-Z][A-Z0-9]{7}}/requestable")
+    @TypeHint(TaxonDatasetWithQueryStats.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned a list of all taxon datasets with their query stats matching the filter")
+    })    
     @Produces(MediaType.APPLICATION_JSON)
     public List<TaxonDatasetWithQueryStats> getRequestableObservationDetailsForDatasetByFilter(
             @TokenDatasetAdminUser(path="datasetKey") User user,
@@ -723,7 +782,7 @@ public class TaxonObservationResource extends RequestResource {
      * parameters in unavailable datasets
      * 
      * @param user The current user, determines what datasets they have access 
-     * to
+     * to (Injected Token no need to pass)
      * @param startYear The start year of the desired range
      * @param endYear The end year of the desired range
      * @param datasetKeys Datasets to search in
@@ -744,6 +803,10 @@ public class TaxonObservationResource extends RequestResource {
      */
     @GET
     @Path("/unavailableDatasets")
+    @TypeHint(TaxonDatasetWithQueryStats.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned a list of all taxon datasets with their query stats matching the filter")
+    })   
     @Produces(MediaType.APPLICATION_JSON)
     public List<TaxonDatasetWithQueryStats> getUnavailableDatasetsByFilter(
             @TokenUser() User user,
@@ -767,7 +830,7 @@ public class TaxonObservationResource extends RequestResource {
      * parameters
      * 
      * @param user The current user, determines what datasets they have access 
-     * to
+     * to (Injected Token no need to pass)
      * @param startYear The start year of the desired range
      * @param endYear The end year of the desired range
      * @param datasetKeys Datasets to search in
@@ -788,6 +851,10 @@ public class TaxonObservationResource extends RequestResource {
      */
     @GET
     @Path("/datasets/observations")
+    @TypeHint(TaxonDataset.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned a list of all taxon datasets matching the filter")
+    })    
     @Produces(MediaType.APPLICATION_JSON)
     public List<TaxonDataset> getDatasetsWithObservationsByFilter(
             @TokenUser(allowPublic=false) User user,
@@ -815,7 +882,7 @@ public class TaxonObservationResource extends RequestResource {
      * parameters
      * 
      * @param user The current user, determines what datasets they have access 
-     * to
+     * to (Injected Token no need to pass)
      * @param startYear The start year of the desired range
      * @param endYear The end year of the desired range
      * @param datasetKeys Datasets to search in
@@ -838,6 +905,10 @@ public class TaxonObservationResource extends RequestResource {
      */
     @GET
     @Path("/providers")
+    @TypeHint(ProviderWithQueryStats.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned a list of providers with their query stats matching the filter")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public List<ProviderWithQueryStats> getObservationProvidersByFilter(
             @TokenUser() User user,
@@ -874,13 +945,24 @@ public class TaxonObservationResource extends RequestResource {
      * string supplied, the list is returned as a ZIP file with appropriate 
      * ReadMes attached and logs the download in the database for stats
      * 
-     * @param user The current user (must be logged in)
-     * @param json A JSON string representing the filter
+     * @param user The current user (must be logged in) (Injected Token no need 
+     * to pass)
+     * @param json JSON object containing a download request, please see 
+     * <a href="downloadRequestJSON.html">Additional Documentation</a> for more
+     * details
+     * 
      * @return A ZIP file containing the list of observations and ReadMes
      * @throws IOException 
+     * 
+     * @response.representation.200.qname StreamingOutput
+     * @response.representation.200.mediaType application/x-zip-compressed
      */
     @GET
     @Path("/download")
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Succesfully returned a zip file containing the taxon observations records indicated by the given JSON"),
+        @ResponseCode(code = 403, condition = "The current user is not logged in")
+    })
     @Produces("application/x-zip-compressed")
     public StreamingOutput getObservationsByFilterZip(            
             @TokenUser(allowPublic = false) final User user,
@@ -986,16 +1068,30 @@ public class TaxonObservationResource extends RequestResource {
     }
     
     /**
-     * Returns a list of download reports for the specified dataset
+     * Return a complete list of download reports for the selected dataset, the
+     * current user must be an admin of this dataset
      * 
-     * @param user The current user must be an admin of the dataset (Injected token no need to pass)
-     * @param datasetKey A dataset key
-     * @param json A JSON object containing a set of filters to run the query on
-     * @return
+     * @param user The current user (Must be dataset admin) (Injected Token no 
+     * need to pass)
+     * @param datasetKey A dataset key i.e. GA000466
+     * @param json JSON object containing a download stats query, please see 
+     * <a href="downloadStatsJSON.html">Additional Documentation</a> for more
+     * details
+     * 
+     * @return A list of download reports for this dataset
+     * 
      * @throws IOException 
+     * 
+     * @response.representation.200.qname StreamingOutput
+     * @response.representation.200.mediaType application/x-zip-compressed
      */
     @GET
     @Path("/download/report/{datasetKey : [A-Z][A-Z0-9]{7}}")
+    @TypeHint(DownloadReport.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Return a list of download reports for the given dataset and constrained by the given JSON filter"),
+        @ResponseCode(code = 403, condition = "The current user is not a dataset admin of this dataset")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public List<DownloadReport> getDownloadReportsByDataset (
             @TokenDatasetAdminUser(path = "datasetKey") User user, 
@@ -1013,16 +1109,29 @@ public class TaxonObservationResource extends RequestResource {
     }
     
     /**
-     * Returns a list of download reports for the specified dataset as a CSV
+     * Return a complete list of download reports for the selected dataset as a 
+     * CSV file, the current user must be an admin of this dataset
      * 
-     * @param user The current user must be an admin of the dataset (Injected token no need to pass)
-     * @param datasetKey A dataset key
-     * @param json A JSON object containing a set of filters to run the query on
-     * @return
+     * @param user The current user (Must be dataset admin) (Injected Token no 
+     * need to pass)
+     * @param datasetKey A dataset key i.e. GA000466
+     * @param json JSON object containing a download stats query, please see 
+     * <a href="downloadStatsJSON.html">Additional Documentation</a> for more
+     * details
+     * 
+     * @return A list of download reports for this dataset
+     * 
      * @throws IOException 
+     * 
+     * @response.representation.200.qname StreamingOutput
+     * @response.representation.200.mediaType application/x-zip-compressed
      */
     @GET
     @Path("/download/report/{datasetKey : [A-Z][A-Z0-9]{7}}/csv")
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Return a list of download reports for the given dataset and constrained by the given JSON filter"),
+        @ResponseCode(code = 403, condition = "The current user is not a dataset admin of this dataset")
+    })
     @Produces("application/x-zip-compressed")
     public StreamingOutput getDownloadReportsByDatasetAsCSV (
             @Context HttpServletResponse response,
@@ -1094,14 +1203,30 @@ public class TaxonObservationResource extends RequestResource {
     }    
     
     /**
+     * Return a set of download statistics matching the given input parameters,
+     * only if the current user is administrator of all supplied datasets
      * 
-     * @param user
-     * @param json
-     * @return
+     * @param user The current user (Must be dataset admin of all requested
+     * datasets) (Injected Token no need to pass)
+     * @param json JSON object containing a download stats query, please see 
+     * <a href="downloadStatsJSON.html">Additional Documentation</a> for more
+     * details
+     * 
+     * @return A set of download stats matching the query see 
+     * <a href="el_ns0_downloadStat.html#stats">Additional Details</a> for more
+     * 
      * @throws IOException 
+     * 
+     * @response.representation.200.qname Response
+     * @response.representation.200.mediaType application/x-zip-compressed
      */
     @GET
     @Path("/download/report/downloadStats")
+    @TypeHint(DownloadStat.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned the user download stats for the given filter"),
+        @ResponseCode(code = 403, condition = "The current user is not logged in")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public Response getDownloadStats(
         @TokenUser(allowPublic = false) User user, 
@@ -1121,14 +1246,31 @@ public class TaxonObservationResource extends RequestResource {
     }
 
     /**
+     * Return a set of download statistics for user downloads matching the given 
+     * input parameters, only if the current user is administrator of all 
+     * supplied datasets
      * 
-     * @param user
-     * @param json
-     * @return
+     * @param user The current user (Must be dataset admin of all requested
+     * datasets) (Injected Token no need to pass)
+     * @param json JSON object containing a download stats query, please see 
+     * <a href="downloadStatsJSON.html">Additional Documentation</a> for more
+     * details
+     * 
+     * @return A set of download stats matching the query see 
+     * <a href="el_ns0_downloadStat.html#user">Additional Details</a> for more
+     * 
      * @throws IOException 
+     * 
+     * @response.representation.200.qname Response
+     * @response.representation.200.mediaType application/x-zip-compressed
      */
     @GET
     @Path("/download/report/downloadUserStats")
+    @TypeHint(DownloadStat.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned the user download stats for the given filter"),
+        @ResponseCode(code = 403, condition = "The current user is not logged in")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public Response getDownloadUserStats(
             @TokenUser(allowPublic = false) User user,
@@ -1148,14 +1290,31 @@ public class TaxonObservationResource extends RequestResource {
     }
 
     /**
+     * Return a set of download statistics for organisation downloads matching 
+     * the given input parameters, only if the current user is administrator 
+     * of all supplied datasets
      * 
-     * @param user
-     * @param json
-     * @return
+     * @param user The current user (Must be dataset admin of all requested
+     * datasets) (Injected Token no need to pass)
+     * @param json JSON object containing a download stats query, please see 
+     * <a href="downloadStatsJSON.html">Additional Documentation</a> for more
+     * details
+     * 
+     * @return A set of download stats matching the query see 
+     * <a href="el_ns0_downloadStat.html#org">Additional Details</a> for more
+     * 
      * @throws IOException 
+     * 
+     * @response.representation.200.qname Response
+     * @response.representation.200.mediaType application/x-zip-compressed
      */
     @GET
     @Path("/download/report/downloadOrganisationStats")
+    @TypeHint(DownloadStat.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned the organisation download stats for the given filter"),
+        @ResponseCode(code = 403, condition = "The current user is not logged in")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public Response getDownloadOrganisationStats(
             @TokenUser(allowPublic = false) User user,
@@ -1176,18 +1335,31 @@ public class TaxonObservationResource extends RequestResource {
     }
     
     /**
-     * Returns a set of combined statistics about requested datasets specified
-     * in the json parameter along with other filters, these include top 5 
-     * downloaders (organisation and user) and other statistics that help create
-     * the download reports pages
+     * Return a set of download statistics for all types of downloads (stat, 
+     * user and org) matching the given input parameters, only if the current 
+     * user is administrator of all supplied datasets
      * 
-     * @param user The current user (must be admin of all datasets specified in the JSON) (Injected token no need to pass)
-     * @param json The JSON object determining the datasets and filters used
-     * @return A list of combined stats (general statistics, user stats and organisation stats)
+     * @param user The current user (Must be dataset admin of all requested
+     * datasets) (Injected Token no need to pass)
+     * @param json JSON object containing a download stats query, please see 
+     * <a href="downloadStatsJSON.html">Additional Documentation</a> for more
+     * details
+     * 
+     * @return A set of download stats matching the query see 
+     * <a href="el_ns0_downloadStat.html#combined">Additional Details</a> for more
+     * 
      * @throws IOException 
+     * 
+     * @response.representation.200.qname Response
+     * @response.representation.200.mediaType application/x-zip-compressed
      */
     @GET
     @Path("/download/report/combinedStats")
+    @TypeHint(DownloadStat.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned the combined download stats for the given filter"),
+        @ResponseCode(code = 403, condition = "The current user is not logged in")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public Response getCombinedDownloadStats(
             @TokenUser(allowPublic = false) User user,
@@ -1219,6 +1391,14 @@ public class TaxonObservationResource extends RequestResource {
         return Response.status(Response.Status.FORBIDDEN).build();
     }
 
+    /**
+     * Check if a user is a dataset admin for a given list of dataset keys
+     * 
+     * @param user The current user
+     * @param datasetKeys A list of dataset keys to check
+     * 
+     * @return  False if not admin of all datasets, true otherwise
+     */
     private boolean userIsDatasetAdminForDatsets(User user, List<String> datasetKeys) {
         if (datasetKeys != null && !datasetKeys.isEmpty() && user != null) {
             for (String dataset : datasetKeys) {

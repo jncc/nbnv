@@ -11,6 +11,9 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import org.codehaus.enunciate.jaxrs.ResponseCode;
+import org.codehaus.enunciate.jaxrs.StatusCodes;
+import org.codehaus.enunciate.jaxrs.TypeHint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.org.nbn.nbnv.api.dao.warehouse.OrganisationSuppliedListMapper;
@@ -41,6 +44,10 @@ public class OrganisationSuppliedListResource extends AbstractResource {
      * @response.representation.200.mediaType application/json
      */
     @GET
+    @TypeHint(OrganisationSuppliedList.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned a list of all organisation supplied taxon lists")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public List<OrganisationSuppliedList> getAllOrgSuppliedLists() {
         return organisationSuppliedListMapper.selectAll();
@@ -57,6 +64,10 @@ public class OrganisationSuppliedListResource extends AbstractResource {
      */
     @GET
     @Path("/{id}")
+    @TypeHint(OrganisationSuppliedList.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned the selected organisation supplied taxon list")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public OrganisationSuppliedList getOrgSuppliedListByID(@PathParam("id") int id) {
         return organisationSuppliedListMapper.selectByID(id);
@@ -74,6 +85,10 @@ public class OrganisationSuppliedListResource extends AbstractResource {
      */
     @GET
     @Path("/code/{code}")
+    @TypeHint(OrganisationSuppliedList.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned the selected organisation supplied taxon list")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public OrganisationSuppliedList getOrgSuppliedListByCode(@PathParam("code") String code) {
         return organisationSuppliedListMapper.selectByCode(code);
@@ -94,6 +109,10 @@ public class OrganisationSuppliedListResource extends AbstractResource {
      */
     @GET
     @Path("{id}/taxonNavigationGroups/{taxonNavigationGroupId}")
+    @TypeHint(TaxonNavigationGroup.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned the selected taxon navigation group from the selected organisation supplied taxon list")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public TaxonNavigationGroup getTaxonNavigationGroupByOrganisationList(@PathParam("id") int id, @PathParam("taxonNavigationGroupId") String taxonNavigationGroupId){
         TaxonNavigationGroup toReturn = taxonNavigationGroupMapper.getTaxonNavigationGroup(taxonNavigationGroupId);
@@ -119,6 +138,10 @@ public class OrganisationSuppliedListResource extends AbstractResource {
      */
     @GET
     @Path("/{id}/species")
+    @TypeHint(Taxon.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned the taxons from the selected organisation supplied taxon list")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public List<Taxon> getSpeciesByDesignationAndTaxonNavigationGroup(@PathParam("id") int id, @QueryParam("taxonNavigationGroupId") String taxonNavigationGroupId) {
         if(taxonNavigationGroupId != null){

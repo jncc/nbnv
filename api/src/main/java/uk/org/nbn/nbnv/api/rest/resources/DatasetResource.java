@@ -16,6 +16,9 @@ import javax.ws.rs.core.Response;
 import org.apache.abdera.Abdera;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
+import org.codehaus.enunciate.jaxrs.ResponseCode;
+import org.codehaus.enunciate.jaxrs.StatusCodes;
+import org.codehaus.enunciate.jaxrs.TypeHint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.org.nbn.nbnv.api.dao.core.OperationalDatasetAdministratorMapper;
@@ -65,6 +68,10 @@ public class DatasetResource extends AbstractResource {
      * @response.representation.200.mediaType application/json
      */
     @GET
+    @TypeHint(Dataset.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned list of datasets")
+    })    
     @Produces(MediaType.APPLICATION_JSON)
     public List<Dataset> getDatasetList(){
         return datasetMapper.selectAll();
@@ -82,6 +89,11 @@ public class DatasetResource extends AbstractResource {
      */
     @GET
     @Path("/{id}")
+    @TypeHint(Dataset.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Found and returned dataset"),
+        @ResponseCode(code = 204, condition = "No dataset with this key exists")    
+    })    
     @Produces(MediaType.APPLICATION_JSON)
     @SolrResolver("DATASET")
     public Dataset getDatasetByID(@PathParam("id") String id){
@@ -93,7 +105,7 @@ public class DatasetResource extends AbstractResource {
      * an admin of the specified dataset otherwise returns a 403 Forbidden error
      * 
      * @param admin The Current User if they are a dataset admin for this 
-     * dataset or throw a 403 Forbidden error
+     * dataset or throw a 403 Forbidden error (Injected Token no need to pass)
      * @param id ID of a dataset i.e. GA000466
      * 
      * @return A selected dataset from the core database if the current user is
@@ -104,6 +116,12 @@ public class DatasetResource extends AbstractResource {
      */
     @GET
     @Path("/{id}/edit")
+    @TypeHint(Dataset.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Found and returned dataset"),
+        @ResponseCode(code = 204, condition = "No dataset with this key exists"),
+        @ResponseCode(code = 403, condition = "You do not have admin rights over this dataset")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public Dataset getEditDatasetByID(@TokenDatasetAdminUser(path="id") User admin, @PathParam("id") String id){
         return oDatasetMapper.selectByDatasetKey(id);
@@ -119,6 +137,10 @@ public class DatasetResource extends AbstractResource {
      */
     @GET
     @Path("/latest")
+    @TypeHint(Dataset.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned list of 10 most recently uploaded datasets")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public List<Dataset> getLastUpdatedDatasets() {
         return datasetMapper.getLatestUploaded();
@@ -134,6 +156,9 @@ public class DatasetResource extends AbstractResource {
      */
     @GET
     @Path("/latest.rss")
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned rss feed")
+    })    
     @Produces("application/atom+xml")  
     public Feed getLastUpdatedDatasetsFeed() {
         Feed toReturn = new Abdera().getFactory().newFeed();
@@ -152,7 +177,7 @@ public class DatasetResource extends AbstractResource {
      * returns a 403 Forbidden error
      * 
      * @param admin The Current User if they are a dataset admin for this 
-     * dataset or throw a 403 Forbidden error
+     * dataset or throw a 403 Forbidden error (Injected Token no need to pass)
      * @param datasetKey Key of a dataset i.e. GA000466
      * @param title The dataset title
      * @param description The dataset description
@@ -172,6 +197,11 @@ public class DatasetResource extends AbstractResource {
      */
     @POST
     @Path("/{id}")
+    @TypeHint(OpResult.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Operation completed but may have failed, details in OpResult"),
+        @ResponseCode(code = 403, condition = "You do not have administration rights over this dataset")
+    })    
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public OpResult updateDataset(@TokenDatasetAdminUser(path="id") User admin, @PathParam("id") String datasetKey
@@ -199,7 +229,7 @@ public class DatasetResource extends AbstractResource {
     /**
      * Returns a list of attributes relating to the specified dataset
      * 
-     * @param user The Current user
+     * @param user The Current user (Injected Token no need to pass)
      * @param datasetKey Key of a dataset i.e. GA000466
      * 
      * @result A list of attributes relating to the specified dataset
@@ -209,6 +239,10 @@ public class DatasetResource extends AbstractResource {
      */
     @GET
     @Path("/{datasetKey}/accessPositions")
+    @TypeHint(AccessPosition.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned list of access positions that the current user has over this dataset")
+    })     
     @Produces(MediaType.APPLICATION_JSON)
     public List<AccessPosition> getAttributesByDatasetKey(@TokenUser() User user, @PathParam("datasetKey") String datasetKey){
         return datasetMapper.getDatasetAccessPositions(datasetKey, user.getId());
@@ -228,6 +262,11 @@ public class DatasetResource extends AbstractResource {
      */
     @GET
     @Path("/{datasetKey}/resolutionData")
+    @TypeHint(DatasetResolutionRecordCount.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned a count of records at each resolution in this dataset"),
+        @ResponseCode(code = 204, condition = "No dataset with this key exists")
+    })      
     @Produces(MediaType.APPLICATION_JSON)
     public List<DatasetResolutionRecordCount> getDatasetResolution(@PathParam("datasetKey") String datasetKey) {
         return datasetMapper.getResolutionData(datasetKey);
@@ -237,8 +276,8 @@ public class DatasetResource extends AbstractResource {
      * Return boolean stating if the user is an administrator of this dataset
      * used in the freemarker templates to optionally include links to edit
      * dataset / survey metadata
-     * 
-     * @param user The Current User
+     *  
+     * @param user The Current User (Injected Token no need to pass)
      * @param datasetKey Key of a dataset i.e. GA000466
      * 
      * @return True if the user is admin of this dataset
@@ -248,6 +287,11 @@ public class DatasetResource extends AbstractResource {
      */
     @GET
     @Path("/{datasetKey}/isAdmin")
+    @TypeHint(Boolean.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "The user is an admin of the selected dataset"),
+        @ResponseCode(code = 403, condition = "The user is not an admin of the selected dataset")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public boolean isDatasetAdmin(@TokenUser User user, @PathParam("datasetKey") String datasetKey) {
         return datasetAdministratorMapper.isUserDatasetAdministrator(user.getId(), datasetKey);
@@ -257,7 +301,7 @@ public class DatasetResource extends AbstractResource {
      * Return a list of admin users for the specified dataset if the requesting
      * user is an admin themselves
      * 
-     * @param user The Current User
+     * @param user The Current User (Injected Token no need to pass)
      * @param datasetKey Key of a dataset i.e. GA000466
      * 
      * @return True if the user is admin of this dataset
@@ -267,13 +311,36 @@ public class DatasetResource extends AbstractResource {
      */
     @GET
     @Path("/{datasetKey}/admins")
+    @TypeHint(DatasetAdministrator.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned a list of admins for this dataset"),
+        @ResponseCode(code = 403, condition = "The user is not an admin of the selected dataset")
+    })    
     @Produces(MediaType.APPLICATION_JSON)
     public List<DatasetAdministrator> getDatasetAdmins(@TokenDatasetAdminUser(path = "datasetKey") User user, @PathParam("datasetKey") String datasetKey) {
         return datasetAdministratorMapper.selectByDataset(datasetKey);
     }
     
+    /**
+     * Add a selected user as  dataset admin, the current user must be a 
+     * dataset admin to do this
+     * 
+     * @param user The current user, must be admin of this dataset (Injected Token no need to pass)
+     * @param datasetKey Key of a dataset i.e. GA000466
+     * @param data A DatasetAdminMembershipJSON object detailing the user to be made an admin
+     *
+     * @return An OpResult detailing the success or failure of the operation
+     * 
+     * @response.representation.200.qname OpResult
+     * @response.representation.200.mediaType application/json
+     */
     @POST 
     @Path("/{datasetKey}/addAdmin")
+    @TypeHint(OpResult.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Operation has been carried out, may have failed however, check the contents of the OpResult"),
+        @ResponseCode(code = 403, condition = "Current user is not an admin of this dataset")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public OpResult addDatasetAdmin(@TokenDatasetAdminUser(path = "datasetKey") User user, @PathParam("datasetKey") String datasetKey, DatasetAdminMembershipJSON data) {
@@ -286,8 +353,26 @@ public class DatasetResource extends AbstractResource {
         return new OpResult("Could not give the selected user admin rights, possibly an admin already");
     };
     
+    /**
+     * Remove the selected user as  dataset admin, the current user must be a 
+     * dataset admin to do this, you can remove your own admin rights
+     * 
+     * @param user The current user, must be admin of this dataset (Injected Token no need to pass)
+     * @param datasetKey Key of a dataset i.e. GA000466
+     * @param data A DatasetAdminMembershipJSON object detailing the user to be have admin rights revoked
+     *
+     * @return An OpResult detailing the success or failure of the operation
+     * 
+     * @response.representation.200.qname OpResult
+     * @response.representation.200.mediaType application/json
+     */    
     @POST
     @Path("/{datasetKey}/removeAdmin")
+    @TypeHint(OpResult.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Operation has been carried out, may have failed however, check the contents of the OpResult"),
+        @ResponseCode(code = 403, condition = "Current user is not an admin of this dataset")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public OpResult removeDatasetAdmin(@TokenDatasetAdminUser(path = "datasetKey") User user, @PathParam("datasetKey") String datasetKey, DatasetAdminMembershipJSON data) {        
@@ -304,9 +389,9 @@ public class DatasetResource extends AbstractResource {
     }
     
     /**
-     * Returns a list of datasets the user can admin
+     * Returns a list of datasets the user is administrator of
      * 
-     * @param user The current user
+     * @param user The current user (Injected Token no need to pass)
      *
      * @return List of datasets
      * 
@@ -315,6 +400,10 @@ public class DatasetResource extends AbstractResource {
      */
     @GET
     @Path("/adminable")
+    @TypeHint(Dataset.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned a list of the current users adminable datasets")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public List<Dataset> adminableDatasets(@TokenUser(allowPublic=false) User user) {
         return datasetAdministratorMapper.selectDatasetsByUser(user.getId());
@@ -327,7 +416,7 @@ public class DatasetResource extends AbstractResource {
      * Get survey metadata from the core database if the user is an admin of the
      * specified parent dataset otherwise return a 403 Forbidden error
      * 
-     * @param user The Current User if dataset admin, or return a 403 Forbidden
+     * @param user The Current User if dataset admin, or return a 403 Forbidden (Injected Token no need to pass)
      * @param datasetKey Key of a dataset i.e. GA000466
      * @param survey Key of a survey belonging to that dataset
      * 
@@ -338,7 +427,12 @@ public class DatasetResource extends AbstractResource {
      */
     @GET
     @Path("/{datasetKey}/surveys/{survey}")
-    @Produces("application/json")
+    @TypeHint(Survey.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned the survey metadata"),
+        @ResponseCode(code = 403, condition = "Current user is not an admin for the dataset containing this survey or the survey itself")
+    })
+    @Produces(MediaType.APPLICATION_JSON)
     public Survey getJson(@TokenDatasetSurveyAdminUser(dataset = "datasetKey", survey = "survey") User user, 
             @PathParam("datasetKey") String datasetKey, @PathParam("survey") int survey) {
         return oSurveyMapper.getSurveyById(survey);
@@ -349,7 +443,7 @@ public class DatasetResource extends AbstractResource {
      * specified surveys metadata with the values contained in the POSTed form
      * 
      * @param admin The Current User if they are a dataset admin for this 
-     * dataset or throw a 403 Forbidden error
+     * dataset or throw a 403 Forbidden error (Injected Token no need to pass)
      * @param datasetKey Key of the parent dataset i.e. GA000466
      * @param survey Key of the survey to have its metadata edited
      * @param title The survey title
@@ -368,6 +462,11 @@ public class DatasetResource extends AbstractResource {
      */
     @POST
     @Path("/{datasetKey}/surveys/{survey}")
+    @TypeHint(Survey.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Operation completed successfully"),
+        @ResponseCode(code = 403, condition = "Current user is not an admin for the dataset containing this survey or the survey itself")
+    })
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
     public Response putJson(@TokenDatasetSurveyAdminUser(dataset = "datasetKey", survey = "survey") User user,
@@ -395,7 +494,7 @@ public class DatasetResource extends AbstractResource {
      * Adds a new contributing organisation to a dataset, if the current user is
      * and admin of that dataset.
      * 
-     * @param user The current user, must be a dataset admin
+     * @param user The current user, must be a dataset admin (Injected Token no need to pass)
      * @param datasetKey The selected dataset to add a contributing org to
      * @param data JSON datapacket containing the organisation id, ie. 
      * {orgID: 1}
@@ -406,6 +505,11 @@ public class DatasetResource extends AbstractResource {
      */
     @PUT
     @Path("/{datasetKey}/contributing")
+    @TypeHint(OpResult.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Operation returned, may have failed, check the OpResult"),
+        @ResponseCode(code = 403, condition = "Current user is not an admin of this dataset")
+    })
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public OpResult addNewContributingOrganisation(
@@ -436,7 +540,7 @@ public class DatasetResource extends AbstractResource {
      * Removes an existing contributing organisation to a dataset, if the 
      * current user is a dataset admin
      * 
-     * @param user The current user, must be a dataset admin
+     * @param user The current user, must be a dataset admin (Injected Token no need to pass)
      * @param datasetKey The selected dataset
      * @param id The organisation ID to be removed from contributing org list
      * @return The success or failure of this operation
@@ -446,6 +550,11 @@ public class DatasetResource extends AbstractResource {
      */
     @DELETE
     @Path("/{datasetKey}/contributing/{id}")
+    @TypeHint(OpResult.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Operation returned, may have failed, check the OpResult"),
+        @ResponseCode(code = 403, condition = "Current user is not an admin of this dataset")
+    })
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public OpResult removeContributingOrganisation(
@@ -479,7 +588,7 @@ public class DatasetResource extends AbstractResource {
 //     * Return a list of datasets which are adminable by this user as either a
 //     * dataset admin or an organisation admin
 //     * 
-//     * @param user The current user
+//     * @param user The current user (Injected Token no need to pass)
 //     * @return A List of datasets that the current user can administer
 //     * 
 //     * @response.representation.200.qname List<Dataset>
@@ -495,7 +604,7 @@ public class DatasetResource extends AbstractResource {
     /**
      * Return a list of users to notify when a dataset has been downloaded
      * 
-     * @param user The current user, must have admin rights over the dataset
+     * @param user The current user, must have admin rights over the dataset (Injected Token no need to pass)
      * @param datasetKey The dataset key being downloaded
      * @return A list of users to notify
      * 
@@ -504,6 +613,11 @@ public class DatasetResource extends AbstractResource {
      */
     @GET
     @Path("/{datasetKey}/downloadNotifications")
+    @TypeHint(UserDownloadNotification.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned a list of users to notify"),
+        @ResponseCode(code = 403, condition = "Current user is not an admin for this dataset")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public List<UserDownloadNotification> getDownloadNotifcationsForDataset (
             @TokenDatasetAdminUser(path = "datasetKey") User user,
@@ -515,7 +629,7 @@ public class DatasetResource extends AbstractResource {
      * Return a list of datasets that the user currently has download 
      * notifications switched on for
      * 
-     * @param user The current user
+     * @param user The current user (Injected Token no need to pass)
      * @return A list of datasets that user wants notifications for
      * 
      * @response.representation.200.qname List<UserDownloadNotification>
@@ -523,6 +637,11 @@ public class DatasetResource extends AbstractResource {
      */
     @GET
     @Path("/myDownloadNotifications")
+    @TypeHint(UserDownloadNotification.class)
+    @StatusCodes({
+       @ResponseCode(code = 200, condition = "Successfully returned a list of datasets to send notifcations to, for the current user"),
+       @ResponseCode(code = 403, condition = "Current user is not logged in")
+    }) 
     @Produces(MediaType.APPLICATION_JSON)
     public List<UserDownloadNotification> getDownloadNotificationsForUser (
             @TokenUser(allowPublic = false) User user) {
@@ -542,6 +661,11 @@ public class DatasetResource extends AbstractResource {
      */
     @GET
     @Path("/{datasetKey}/userDownloadNotification")
+    @TypeHint(Boolean.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned a boolean value denoting if the current user has download notifcations turned on for this dataset"),
+        @ResponseCode(code = 403, condition = "Current user is not an admin of the dataset")
+    })  
     @Produces(MediaType.APPLICATION_JSON)
     public boolean getDownloadNotificationSetting(
             @TokenDatasetAdminUser(path = "datasetKey") User user,
@@ -553,7 +677,7 @@ public class DatasetResource extends AbstractResource {
      * Add or remove download notifications for the current user if they are
      * a dataset admin or org admin for this dataset
      * 
-     * @param user The current user
+     * @param user The current user (Injected Token no need to pass)
      * @param datasetKey A datasetKey
      * @param add True to add notifications and false to remove them
      * @return Success or failure of the operation
@@ -563,6 +687,10 @@ public class DatasetResource extends AbstractResource {
      */
     @POST
     @Path("/{datasetKey}/userDownloadNotification")
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully updated download notifications setting"),
+        @ResponseCode(code = 403, condition = "Current user is not an admin of the dataset")
+    })   
     @Produces(MediaType.APPLICATION_JSON)
     public Response setDownloadNotificationSetting(
             @TokenDatasetAdminUser(path = "datasetKey") User user,
