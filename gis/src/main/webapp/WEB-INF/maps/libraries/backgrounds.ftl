@@ -86,8 +86,7 @@
         NAME                                                "Selected-Feature"
         TYPE                                                POLYGON
         STATUS                                              OFF
-        CONNECTIONTYPE                                      PLUGIN
-        PLUGIN                                              "msplugin_mssql2008.dll"
+        CONNECTIONTYPE                                      OGR
         CONNECTION                                          "${spatialConnection}"
         PROCESSING                                          "CLOSE_CONNECTION=DEFER"
         OPACITY                                             60

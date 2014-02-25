@@ -7,8 +7,7 @@
             NAME                                                "${layer}"
             TYPE                                                POLYGON
             STATUS                                              OFF
-            CONNECTIONTYPE                                      PLUGIN
-            PLUGIN                                              "msplugin_mssql2008.dll"
+            CONNECTIONTYPE                                      OGR
             CONNECTION                                          "${properties.spatialConnection}"
             DATA                                                "${layerGenerator.getData(layer)}"
             PROCESSING                                          "CLOSE_CONNECTION=DEFER"
