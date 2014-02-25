@@ -176,7 +176,7 @@ public class SingleSpeciesMap {
         
         return MapHelper.getMapData(geometry, FEATURE.IDENTIFIER, 4326 ,create
             .select(geometry, FEATURE.IDENTIFIER)
-            .from(FEATURE.with("INDEX(sidx_Feature_geom)"))
+            .from(FEATURE)
             .join(dNested).on(FEATURE.ID.eq((Field<Integer>)dNested.field(0))));
            
     }

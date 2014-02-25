@@ -14,8 +14,7 @@
             [@shapefile shapefiles.getProjections(name) projections?keys?first/]
         [/#if]
     [#else]
-        CONNECTIONTYPE          PLUGIN
-        PLUGIN                  "msplugin_mssql2008.dll"
+        CONNECTIONTYPE          OGR
         CONNECTION              "${properties.spatialConnection}"
         PROCESSING              "CLOSE_CONNECTION=DEFER"
         EXTENT                  -180 -90 180 90

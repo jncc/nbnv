@@ -9,8 +9,7 @@
             NAME                                                "${layer.layer()}"
             TYPE                                                POINT
             STATUS                                              OFF
-            CONNECTIONTYPE                                      PLUGIN
-            PLUGIN                                              "msplugin_mssql2008.dll"
+            CONNECTIONTYPE                                      OGR
             CONNECTION                                          "${properties.spatialConnection}"
             PROCESSING                                          "CLOSE_CONNECTION=DEFER"
             DATA                                                "${layerGenerator.getData(layer.layer())}"

@@ -21,14 +21,7 @@ import static uk.gov.nbn.data.dao.jooq.Tables.*;
 public class MapHelper {
     
     public static String getMapData(Field<?> geomField, Field<?> uniqueField, int srid, Query query) {
-        return new StringBuilder(geomField.getName())
-                .append(" from (")
-                .append(query.getSQL(ParamType.INLINED))
-                .append(") AS foo USING UNIQUE ")
-                .append(uniqueField.getName())
-                .append(" USING SRID=")
-                .append(srid)
-                .toString();
+        return query.getSQL(ParamType.INLINED);
     }
     
     /**Get the DSLContext for the dialect of the sqlserver**/
