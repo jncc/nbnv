@@ -52,24 +52,24 @@ public class DateToMonthEndForOAndOO extends ConverterStep {
 
     @Override
     public boolean isStepNeeded(List<ColumnMapping> columns) {
-        for (ColumnMapping cm : columns) {
-            if (cm.getField() == DarwinCoreField.EVENTDATETYPECODE) {
-                dateTypeColumn = cm.getColumnNumber();
-            }
-            if (cm.getField() == DarwinCoreField.EVENTDATESTART) {
-                startDateColumn = cm.getColumnNumber();
-            }
-            if (cm.getField() == DarwinCoreField.EVENTDATEEND) {
-                endDateColumn = cm.getColumnNumber();
-            }
-            if (cm.getField() == DarwinCoreField.OCCURRENCEID) {
-                idColumn = cm.getColumnNumber();
-            }
-        }
-        
-        if (dateTypeColumn > 0 && startDateColumn > 0 && endDateColumn > 0) {
-            return true;
-        }
+//        for (ColumnMapping cm : columns) {
+//            if (cm.getField() == DarwinCoreField.EVENTDATETYPECODE) {
+//                dateTypeColumn = cm.getColumnNumber();
+//            }
+//            if (cm.getField() == DarwinCoreField.EVENTDATESTART) {
+//                startDateColumn = cm.getColumnNumber();
+//            }
+//            if (cm.getField() == DarwinCoreField.EVENTDATEEND) {
+//                endDateColumn = cm.getColumnNumber();
+//            }
+//            if (cm.getField() == DarwinCoreField.OCCURRENCEID) {
+//                idColumn = cm.getColumnNumber();
+//            }
+//        }
+//        
+//        if (dateTypeColumn > 0 && startDateColumn > 0 && endDateColumn > 0) {
+//            return true;
+//        }
         
         return false;
     }
