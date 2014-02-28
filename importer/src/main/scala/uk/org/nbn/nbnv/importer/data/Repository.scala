@@ -10,6 +10,19 @@ import uk.org.nbn.nbnv.importer.BadDataException
 import uk.org.nbn.nbnv.{SpatialQueries, StoredProcedureLibrary}
 
 class Repository (log: Logger, em: EntityManager, cache: QueryCache) extends ControlAbstractions {
+  def getSurvey(surveyKey: String, taxonDatasetKey: String) = {
+    val q = "SELECT s FROM Survey s WHERE s.providerKey = :providerKey AND s.taxonDataset.datasetKey = :taxonDatasetKey"
+
+    cacheSome(q, surveyKey, taxonDatasetKey) {
+
+      val query = em.createQuery(q, classOf[Survey])
+      query.setParameter("providerKey", surveyKey)
+      query.setParameter("taxonDatasetKey", taxonDatasetKey)
+
+      query.getSingleOrNone
+    }
+  }
+
   def setDatasetPublic(datasetKey: String) {
     val sprocs = new StoredProcedureLibrary(em)
     sprocs.setDatasetPublic(datasetKey)

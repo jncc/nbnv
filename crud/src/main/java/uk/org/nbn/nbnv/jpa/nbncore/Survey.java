@@ -26,7 +26,11 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Survey.findByTitle", query = "SELECT s FROM Survey s WHERE s.title = :title"),
     @NamedQuery(name = "Survey.findByDescription", query = "SELECT s FROM Survey s WHERE s.description = :description"),
     @NamedQuery(name = "Survey.findByGeographicalCoverage", query = "SELECT s FROM Survey s WHERE s.geographicalCoverage = :geographicalCoverage"),
-    @NamedQuery(name = "Survey.findByTemporalCoverage", query = "SELECT s FROM Survey s WHERE s.temporalCoverage = :temporalCoverage")})
+    @NamedQuery(name = "Survey.findByTemporalCoverage", query = "SELECT s FROM Survey s WHERE s.temporalCoverage = :temporalCoverage"),
+    @NamedQuery(name = "Survey.findByDataCaptureMethod", query = "SELECT s FROM Survey s WHERE s.dataCaptureMethod = :dataCaptureMethod"),
+    @NamedQuery(name = "Survey.findByPurpose", query = "SELECT s FROM Survey s WHERE s.purpose = :purpose"),
+    @NamedQuery(name = "Survey.findByDataQuality", query = "SELECT s FROM Survey s WHERE s.dataQuality = :dataQuality"),
+    @NamedQuery(name = "Survey.findByAdditionalInformation", query = "SELECT s FROM Survey s WHERE s.additionalInformation = :additionalInformation")})
 public class Survey implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -49,6 +53,18 @@ public class Survey implements Serializable {
     @Size(max = 2147483647)
     @Column(name = "temporalCoverage")
     private String temporalCoverage;
+    @Size(max = 2147483647)
+    @Column(name = "dataCaptureMethod")
+    private String dataCaptureMethod;
+    @Size(max = 2147483647)
+    @Column(name = "purpose")
+    private String purpose;
+    @Size(max = 2147483647)
+    @Column(name = "dataQuality")
+    private String dataQuality;
+    @Size(max = 2147483647)
+    @Column(name = "additionalInformation")
+    private String additionalInformation;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "survey")
     private Collection<Sample> sampleCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "survey")
@@ -112,6 +128,37 @@ public class Survey implements Serializable {
         this.temporalCoverage = temporalCoverage;
     }
 
+    public String getDataCaptureMethod() {
+        return dataCaptureMethod;
+    }
+
+    public void setDataCaptureMethod(String dataCaptureMethod) {
+        this.dataCaptureMethod = dataCaptureMethod;
+    }
+
+    public String getPurpose() {
+        return purpose;
+    }
+
+    public void setPurpose(String purpose) {
+        this.purpose = purpose;
+    }
+
+    public String getDataQuality() {
+        return dataQuality;
+    }
+
+    public void setDataQuality(String dataQuality) {
+        this.dataQuality = dataQuality;
+    }
+
+    public String getAdditionalInformation() {
+        return additionalInformation;
+    }
+
+    public void setAdditionalInformation(String additionalInformation) {
+        this.additionalInformation = additionalInformation;
+    }
     @XmlTransient
     public Collection<Sample> getSampleCollection() {
         return sampleCollection;
