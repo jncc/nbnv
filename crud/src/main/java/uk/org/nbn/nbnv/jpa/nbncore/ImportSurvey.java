@@ -38,7 +38,11 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "ImportSurvey.findByTitle", query = "SELECT i FROM ImportSurvey i WHERE i.title = :title"),
     @NamedQuery(name = "ImportSurvey.findByDescription", query = "SELECT i FROM ImportSurvey i WHERE i.description = :description"),
     @NamedQuery(name = "ImportSurvey.findByGeographicalCoverage", query = "SELECT i FROM ImportSurvey i WHERE i.geographicalCoverage = :geographicalCoverage"),
-    @NamedQuery(name = "ImportSurvey.findByTemporalCoverage", query = "SELECT i FROM ImportSurvey i WHERE i.temporalCoverage = :temporalCoverage")})
+    @NamedQuery(name = "ImportSurvey.findByTemporalCoverage", query = "SELECT i FROM ImportSurvey i WHERE i.temporalCoverage = :temporalCoverage"),
+    @NamedQuery(name = "ImportSurvey.findByDataCaptureMethod", query = "SELECT i FROM ImportSurvey i WHERE i.dataCaptureMethod = :dataCaptureMethod"),
+    @NamedQuery(name = "ImportSurvey.findByPurpose", query = "SELECT i FROM ImportSurvey i WHERE i.purpose = :purpose"),
+    @NamedQuery(name = "ImportSurvey.findByDataQuality", query = "SELECT i FROM ImportSurvey i WHERE i.dataQuality = :dataQuality"),
+    @NamedQuery(name = "ImportSurvey.findByAdditionalInformation", query = "SELECT i FROM ImportSurvey i WHERE i.additionalInformation = :additionalInformation")})
 public class ImportSurvey implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -61,6 +65,18 @@ public class ImportSurvey implements Serializable {
     @Size(max = 2147483647)
     @Column(name = "temporalCoverage")
     private String temporalCoverage;
+    @Size(max = 2147483647)
+    @Column(name = "dataCaptureMethod")
+    private String dataCaptureMethod;
+    @Size(max = 2147483647)
+    @Column(name = "purpose")
+    private String purpose;
+    @Size(max = 2147483647)
+    @Column(name = "dataQuality")
+    private String dataQuality;
+    @Size(max = 2147483647)
+    @Column(name = "additionalInformation")
+    private String additionalInformation;
     @JoinColumn(name = "datasetKey", referencedColumnName = "datasetKey")
     @ManyToOne(optional = false)
     private ImportTaxonDataset datasetKey;
@@ -120,6 +136,38 @@ public class ImportSurvey implements Serializable {
 
     public void setTemporalCoverage(String temporalCoverage) {
         this.temporalCoverage = temporalCoverage;
+    }
+
+    public String getDataCaptureMethod() {
+        return dataCaptureMethod;
+    }
+
+    public void setDataCaptureMethod(String dataCaptureMethod) {
+        this.dataCaptureMethod = dataCaptureMethod;
+    }
+
+    public String getPurpose() {
+        return purpose;
+    }
+
+    public void setPurpose(String purpose) {
+        this.purpose = purpose;
+    }
+
+    public String getDataQuality() {
+        return dataQuality;
+    }
+
+    public void setDataQuality(String dataQuality) {
+        this.dataQuality = dataQuality;
+    }
+
+    public String getAdditionalInformation() {
+        return additionalInformation;
+    }
+
+    public void setAdditionalInformation(String additionalInformation) {
+        this.additionalInformation = additionalInformation;
     }
 
     public ImportTaxonDataset getDatasetKey() {

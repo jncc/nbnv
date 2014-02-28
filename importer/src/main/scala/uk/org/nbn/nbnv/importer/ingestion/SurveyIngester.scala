@@ -20,6 +20,22 @@ class SurveyIngester @Inject()(db: Database, log: Logger) {
       val s = new ImportSurvey()
       s.setProviderKey(key)
       s.setDatasetKey(dataset)
+
+      //read in existing metadata if any
+      db.repo.getSurvey(key, dataset.getDatasetKey) match {
+        case Some(os) => {
+          s.setTitle(os.getTitle)
+          s.setDescription(os.getDescription)
+          s.setGeographicalCoverage(os.getGeographicalCoverage)
+          s.setTemporalCoverage(os.getTemporalCoverage)
+          s.setDataCaptureMethod(os.getDataCaptureMethod)
+          s.setPurpose(os.getPurpose)
+          s.setDataQuality(os.getDataQuality)
+          s.setAdditionalInformation(os.getAdditionalInformation)
+        }
+        case None => None
+      }
+
       db.em.persist(s)
     }
   }
