@@ -42,12 +42,12 @@ class Nbnv840ValidatorSuite extends BaseFunSuite with BeforeAndAfter {
     r.level should be (ResultLevel.ERROR)
   }
 
-  test("should not validate a record that has an event date and no date type") {
+  test("should validate a record that has an event date and no date type") {
     when(record.eventDateRaw).thenReturn(Some("01/02/2012"))
     when(record.dateType).thenReturn(None)
 
     val r = v.validate(record)
 
-    r.level should be (ResultLevel.ERROR)
+    r.level should be (ResultLevel.DEBUG)
   }
 }
