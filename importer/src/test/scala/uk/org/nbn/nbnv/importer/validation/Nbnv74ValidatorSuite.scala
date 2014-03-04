@@ -21,6 +21,7 @@ class Nbnv74ValidatorSuite extends BaseFunSuite with BeforeAndAfter {
   before {
     record = mock[NbnRecord]
     validator = new Nbnv74Validator
+    when(record.dateType).thenReturn(Some("O"))
   }
 
   test("Should validate a valid O type date set for a leap year") {

@@ -17,6 +17,7 @@ class Nbnv76ValidatorSuite extends BaseFunSuite with BeforeAndAfter {
   before {
     record = mock[NbnRecord]
     when(record.key).thenReturn("1")
+    when(record.dateType).thenReturn(Some("<Y"))
     v = new Nbnv76Validator
 
   }

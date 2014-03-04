@@ -5,7 +5,6 @@ import uk.org.nbn.nbnv.importer.utility.StringParsing._
 import uk.org.nbn.nbnv.importer.fidelity.{ResultLevel, Result}
 import collection.mutable.ListBuffer
 
-//todo:needs some tests
 class Nbnv68Validator {
 
   // Record Date must be of a valid format
@@ -18,6 +17,9 @@ class Nbnv68Validator {
 
     if (record.endDateRaw.isDefined)
       resultList.append(validateDate(record.endDateRaw.get, "end",record.key))
+
+    if (record.eventDateRaw.isDefined)
+      resultList.append(validateDate(record.eventDateRaw.get, "event",record.key))
 
     resultList
   }

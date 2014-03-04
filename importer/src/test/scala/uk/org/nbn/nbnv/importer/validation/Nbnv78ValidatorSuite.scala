@@ -10,8 +10,6 @@ class Nbnv78ValidatorSuite extends BaseFunSuite {
   val record = mock[NbnRecord]
 
   test("Should validate a correct DateType") {
-    when(record.eventDateRaw).thenReturn(None)
-
     when(record.dateType).thenReturn(Some("D"))
     var r = validator.validate(record)
     r.level should be (ResultLevel.DEBUG)
@@ -38,26 +36,16 @@ class Nbnv78ValidatorSuite extends BaseFunSuite {
   }
 
   test("Should not validate an invalid DateType") {
-    when(record.eventDateRaw).thenReturn(None)
-
     when(record.dateType).thenReturn(Some("X"))
     var r = validator.validate(record)
     r.level should be (ResultLevel.ERROR)
   }
 
-  test("Should not validate if no date type is supplied and the date is not an event date") {
-    when(record.eventDateRaw).thenReturn(None)
-
+  test("Should not validate if no date type is supplied") {
     when(record.dateType).thenReturn(None)
     var r = validator.validate(record)
     r.level should be (ResultLevel.ERROR)
   }
 
-  test("Should validate if no date type is supplied and the date is an event date") {
-    when(record.eventDateRaw).thenReturn(Some("01-JAN-2002"))
 
-    when(record.dateType).thenReturn(None)
-    var r = validator.validate(record)
-    r.level should be (ResultLevel.DEBUG)
-  }
 }
