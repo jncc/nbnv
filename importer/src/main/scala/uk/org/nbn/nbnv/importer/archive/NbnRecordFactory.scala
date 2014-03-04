@@ -108,6 +108,17 @@ class NbnRecordFactory @Inject()(log: Logger) {
       }
     }
 
+    def getDateType() : Option[String] = {
+      getData(metadata.dateType) match {
+        case Some(d) => Some(d)
+        case None => {
+          //If event date is defined default to date type D if no other has been specified.
+          if (getData(metadata.date).isDefined) Some("D")
+          else None
+        }
+      }
+    }
+
     new NbnRecord {
       val key = getData(metadata.key).get
       val absenceRaw = getData(metadata.absence)
@@ -139,7 +150,8 @@ class NbnRecordFactory @Inject()(log: Logger) {
       val gridReferencePrecision = getData(metadata.gridReferencePrecision) map { _.maybeInt } getOrElse None
       val gridReferencePrecisionRaw = getData(metadata.gridReferencePrecision)
       val featureKey = getData(metadata.featureKey)
-      val dateType = getData(metadata.dateType)
+      val dateType = getDateType
+      val dateTypeRaw = getData(metadata.dateType)
     }
   }
 

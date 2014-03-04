@@ -45,6 +45,7 @@ abstract class NbnRecord() {
   val gridReferencePrecisionRaw : Option[String]
   val featureKey : Option[String]
   val dateType : Option[String]
+  val dateTypeRaw : Option[String]
 
   def feature = {
     if (gridReferenceRaw.isDefined)

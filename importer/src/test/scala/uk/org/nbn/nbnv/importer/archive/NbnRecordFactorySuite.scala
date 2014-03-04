@@ -75,7 +75,7 @@ class NbnRecordFactorySuite extends BaseFunSuite with BeforeAndAfter {
       "absence"
     )
 
-    var record = factory.makeRecord(rawRecord, f.metadata)
+    val record = factory.makeRecord(rawRecord, f.metadata)
 
     record.eventDateRaw should be (Some("13/07/2001"))
     record.startDateRaw should be (Some("19/07/2001"))
@@ -141,7 +141,7 @@ class NbnRecordFactorySuite extends BaseFunSuite with BeforeAndAfter {
       "absence"
     )
 
-    var record = factory.makeRecord(rawRecord, f.metadata)
+    val record = factory.makeRecord(rawRecord, f.metadata)
 
     record.east should be (None)
     record.eastRaw should be (Some("badEast"))
@@ -194,11 +194,48 @@ class NbnRecordFactorySuite extends BaseFunSuite with BeforeAndAfter {
       "absence"
     )
 
-    var record = factory.makeRecord(rawRecord, f.metadata)
+    val record = factory.makeRecord(rawRecord, f.metadata)
 
     record.siteName should be (Some("Sherwood Forest Holiday Village: lake 4"))
 
     record.gridReferenceTypeRaw should be (None)
+  }
+
+  test("should set date type to D where event date is set and no date type is supplied") {
+    val f = fixture()
+
+    val rawRecord = List(
+      "CI00000300000TNR",
+      "CI0000030000000A",
+      "CI000003000003T3",
+      "",
+      "",
+      "",
+      "NBNSYS0000006640",
+      "badOccurrence",
+      "CI0000030000034X",
+      "\"Sherwood Forest Holiday Village: lake 4\"",
+      "\"\"",
+      "",
+      "badPrecision",
+      "Robert Merritt",
+      "Robert Merritt dt",
+      "Field Observation",
+      "",
+      "",
+      "{\"Abundance\":\"\",\"Comment\":\"\",\"SampleMethod\":\"Field Observation\"}",
+      "badSRS",
+      "badEast",
+      "badNorth",
+      "13/07/2001",
+      "FeatureKeyTest",
+      "absence"
+    )
+
+    val record = factory.makeRecord(rawRecord, f.metadata)
+
+    record.dateTypeRaw should be (None)
+    record.dateType should be (Some("D"))
   }
 
 
