@@ -1,5 +1,6 @@
 package uk.org.nbn.nbnv.importer.ui.convert.converters;
 
+import java.text.Normalizer;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,7 +64,10 @@ public class AttributeConcatenation extends ConverterStep {
         
         for (int c : columnList.keySet()) {
             try {
-                obj.put(columnList.get(c), StringEscapeUtils.escapeJson(row.get(c)));
+                obj.put(columnList.get(c), Normalizer.normalize(row.get(c).trim(), Normalizer.Form.NFD)
+                        .replaceAll("\\p{InCombiningDiacriticalMarks}+", "")
+                        .replaceAll("[^\\p{ASCII}]", "")
+                        .replaceAll("^\"|\"$", ""));
             } catch (JSONException ex) {
                 Logger.getLogger(AttributeConcatenation.class.getName()).log(Level.SEVERE, null, ex);
                 throw new BadDataException(ex);
