@@ -23,8 +23,8 @@ class EndToEndSuiteIT extends BaseFunSuite with ResourceLoader {
 
   // change from 'ignore' to 'test' to run the importer against an archive within your IDE
   ignore("import an archive") {
-    val archive = new URL("file:///C://Working//nbnv-908//archive_KMBRC_12122013_035923_S41.zip")
-    val f = fixture(archive, Target.ingest)
+    val archive = new URL("file:///C://Working//nbnv-929//archive_DBRC_28022014_122140.zip")
+    val f = fixture(archive, Target.validate)
     f.importer.run()
   }
 

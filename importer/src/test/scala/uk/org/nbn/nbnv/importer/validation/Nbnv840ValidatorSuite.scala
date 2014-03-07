@@ -17,7 +17,7 @@ class Nbnv840ValidatorSuite extends BaseFunSuite with BeforeAndAfter {
 
   test("should validate a record that does not have an event date defined") {
     when(record.eventDateRaw).thenReturn(None)
-    when(record.dateType).thenReturn(Some("D"))
+    when(record.dateTypeRaw).thenReturn(Some("D"))
 
     val r = v.validate(record)
 
@@ -26,7 +26,7 @@ class Nbnv840ValidatorSuite extends BaseFunSuite with BeforeAndAfter {
 
   test("should validate a record that has an event date and a date type of 'D") {
     when(record.eventDateRaw).thenReturn(Some("01/02/2012"))
-    when(record.dateType).thenReturn(Some("D"))
+    when(record.dateTypeRaw).thenReturn(Some("D"))
 
     val r = v.validate(record)
 
@@ -35,19 +35,19 @@ class Nbnv840ValidatorSuite extends BaseFunSuite with BeforeAndAfter {
 
   test("should not validate a record that has an event date and a date type that is not 'D'") {
     when(record.eventDateRaw).thenReturn(Some("01/02/2012"))
-    when(record.dateType).thenReturn(Some("DD"))
+    when(record.dateTypeRaw).thenReturn(Some("DD"))
 
     val r = v.validate(record)
 
     r.level should be (ResultLevel.ERROR)
   }
 
-  test("should not validate a record that has an event date and no date type") {
+  test("should validate a record that has an event date and no date type") {
     when(record.eventDateRaw).thenReturn(Some("01/02/2012"))
-    when(record.dateType).thenReturn(None)
+    when(record.dateTypeRaw).thenReturn(None)
 
     val r = v.validate(record)
 
-    r.level should be (ResultLevel.ERROR)
+    r.level should be (ResultLevel.DEBUG)
   }
 }

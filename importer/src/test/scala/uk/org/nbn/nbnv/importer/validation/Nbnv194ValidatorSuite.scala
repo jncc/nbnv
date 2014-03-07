@@ -13,6 +13,7 @@ class Nbnv194ValidatorSuite extends BaseFunSuite with BeforeAndAfter {
   before {
     record = mock[NbnRecord]
     when(record.key).thenReturn("1")
+    when(record.dateType).thenReturn(Some("<D"))
   }
 
   test("should validate a valid end date that specifies a day") {
