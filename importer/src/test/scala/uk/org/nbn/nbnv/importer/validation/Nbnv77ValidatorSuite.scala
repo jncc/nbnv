@@ -14,6 +14,7 @@ class Nbnv77ValidatorSuite extends BaseFunSuite with BeforeAndAfter {
   before {
     record = mock[NbnRecord]
     validator = new Nbnv77Validator
+    when(record.dateType).thenReturn(Some("U"))
   }
 
   test("Should allow a record to have blank dates") {

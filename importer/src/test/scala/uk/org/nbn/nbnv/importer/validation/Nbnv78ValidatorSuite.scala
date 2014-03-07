@@ -46,4 +46,6 @@ class Nbnv78ValidatorSuite extends BaseFunSuite {
     var r = validator.validate(record)
     r.level should be (ResultLevel.ERROR)
   }
+
+
 }

@@ -18,6 +18,7 @@ class Nbnv284ValidatorSuite extends BaseFunSuite with BeforeAndAfter {
   before {
     record = mock[NbnRecord]
     v = new Nbnv284Validator
+    when(record.dateType).thenReturn(Some("Y"))
   }
 
   test("should validate a start date that is the start of the year and no end date") {

@@ -16,6 +16,7 @@ class Nbnv196ValidatorSuite extends BaseFunSuite with BeforeAndAfter {
   before {
     record = mock[NbnRecord]
     v = new Nbnv196Validator
+    when(record.dateType).thenReturn(Some("OO"))
   }
 
 
