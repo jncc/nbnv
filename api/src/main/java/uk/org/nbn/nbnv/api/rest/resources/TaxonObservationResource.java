@@ -1,5 +1,6 @@
 package uk.org.nbn.nbnv.api.rest.resources;
 
+import com.sun.jersey.api.core.InjectParam;
 import freemarker.template.TemplateException;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -12,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.DefaultValue;
@@ -27,6 +29,8 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
 import org.codehaus.enunciate.jaxrs.ResponseCode;
 import org.codehaus.enunciate.jaxrs.StatusCodes;
 import org.codehaus.enunciate.jaxrs.TypeHint;
@@ -34,6 +38,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.ObjectWriter;
+import org.mybatis.spring.SqlSessionFactoryBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +47,7 @@ import org.springframework.util.StringUtils;
 import uk.org.nbn.nbnv.api.dao.core.OperationalApiObservationViewMapper;
 import uk.org.nbn.nbnv.api.dao.core.OperationalTaxonObservationFilterMapper;
 import uk.org.nbn.nbnv.api.dao.providers.ProviderHelper;
+import uk.org.nbn.nbnv.api.dao.providers.TaxonObservationProvider;
 import uk.org.nbn.nbnv.api.dao.warehouse.DatasetAdministratorMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.DatasetMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.DesignationMapper;
@@ -64,6 +70,7 @@ import uk.org.nbn.nbnv.api.model.meta.DownloadStatsJSON;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenDatasetAdminUser;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
 import uk.org.nbn.nbnv.api.rest.resources.utils.DownloadHelper;
+import uk.org.nbn.nbnv.api.rest.resources.utils.TaxonObservationDownloadHandler;
 import uk.org.nbn.nbnv.api.utils.DownloadUtils;
 import uk.org.nbn.nbnv.api.utils.FilterToText;
 
@@ -1018,7 +1025,7 @@ public class TaxonObservationResource extends RequestResource {
                 taxaList.add(dFilter.getTaxon().getTvk());
                 // Add the list of observations to the download
                 try {
-                    addObservations(zip, user, 
+                    addObservationsWithHandler(zip, user, 
                             dFilter.getYear().getStartYear(), 
                             dFilter.getYear().getEndYear(), 
                             dFilter.getDataset().getDatasets(), 
@@ -1034,6 +1041,8 @@ public class TaxonObservationResource extends RequestResource {
                             dFilter.getReason().getIncludeAttributes().equals("true"), 
                             filterID, filter, dFilter);
                 } catch (TemplateException ex) {
+                    throw new IOException(ex);
+                } catch (Exception ex) {
                     throw new IOException(ex);
                 }
                 // Add ReadMe to the download
@@ -1725,6 +1734,115 @@ public class TaxonObservationResource extends RequestResource {
             mailDatasetDownloadNotification(filter, dFilter, key, user);
         }
     }
+    
+    @Resource(name = "warehouseSqlSessionFactory") private SqlSessionFactory warehouseSqlSessionFactory;
+       
+    private void addObservationsWithHandler(ZipOutputStream zip, User user, 
+            int startYear, int endYear, List<String> datasetKeys, 
+            List<String> taxa, String spatialRelationship, String featureID, 
+            boolean sensitive, String designation, String taxonOutputGroup, 
+            int orgSuppliedList, String gridRef, String polygon, 
+            boolean includeAttributes, int filterID, TaxonObservationFilter filter, DownloadFilterJSON dFilter) 
+            throws IOException, TemplateException, Exception {
+
+        List<Attribute> attributes = new ArrayList<Attribute>();
+        List<TaxonObservationAttribute> observationAttributes = new ArrayList<TaxonObservationAttribute>();
+        Map<Integer, Map<Integer, String>> atts = new HashMap<Integer, Map<Integer, String>>();
+           
+        // Push in standard header fields for download
+        zip.putNextEntry(new ZipEntry("Observations.csv"));
+        ArrayList<String> values = new ArrayList<String>();
+        values.add("observationID");
+        values.add("recordKey");
+        values.add("organisationName");
+        values.add("datasetKey");
+        values.add("surveyKey");
+        values.add("sampleKey");
+        values.add("gridReference");
+        values.add("precision");
+        values.add("siteKey");
+        values.add("siteName");
+        values.add("featureKey");
+        values.add("startDate");
+        values.add("endDate");
+        values.add("dateType");
+        values.add("recorder");
+        values.add("determiner");
+        values.add("pTaxonVersionKey");
+        values.add("taxonName");
+        values.add("authority");
+        values.add("commonName");
+        values.add("taxonGroup");
+        values.add("sensitive");
+        values.add("zeroAbundance");
+        values.add("fullVersion");
+        
+        // If including attributes then push in the appropriate fields
+        if (includeAttributes) {
+            // Find attributes
+            attributes = taxonObservationAttributeMapper.getAttributeListForObservations(
+                    user, startYear, endYear, datasetKeys, taxa, 
+                    spatialRelationship, featureID, sensitive, designation, 
+                    taxonOutputGroup, orgSuppliedList, gridRef, polygon);
+            
+            for (Attribute attrib : attributes) {
+                values.add(attrib.getLabel());
+            }
+            
+            // Grab all attributes that match full version records in the list
+            observationAttributes = taxonObservationAttributeMapper.getAttributesForObservations(
+                    user, startYear, endYear, datasetKeys, taxa, spatialRelationship,
+                    featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon);
+
+            // Put attributes into a map structure for retrieval later
+            // Map --> obsID --> Map --> attID --> attVal
+            for (TaxonObservationAttribute att : observationAttributes) {
+                Map<Integer, String> temp = atts.get(att.getObservationID());
+
+                if (temp == null) {
+                    temp = new HashMap<Integer, String>();
+                    atts.put(att.getObservationID(), temp);
+                }
+
+                temp.put(att.getAttributeID(), att.getTextValue());
+            }
+        }
+        
+        // Write headers out
+        downloadHelper.writelnCsv(zip, values);
+             
+        TaxonObservationDownloadHandler handler = new TaxonObservationDownloadHandler(zip, includeAttributes, attributes, atts, downloadHelper);
+        
+        SqlSession sess = warehouseSqlSessionFactory.openSession();
+        TaxonObservationMapper mapper = sess.getMapper(TaxonObservationMapper.class);
+        TaxonObservationProvider provider = new TaxonObservationProvider();
+        Map<String, Object> map = new HashMap<String, Object>();
+        
+        map.put("user", user);
+        map.put("startYear", startYear);
+        map.put("endYear", endYear);
+        map.put("datasetKey", datasetKeys);
+        map.put("ptvk", taxa);
+        map.put("spatialRelationship", spatialRelationship);
+        map.put("featureID", featureID);
+        map.put("sensitive", sensitive);
+        map.put("designation", designation);
+        map.put("taxonOutputGroup", taxonOutputGroup);
+        map.put("orgSuppliedList", orgSuppliedList);
+        map.put("gridRef", gridRef);
+        map.put("polygon", polygon);
+
+        sess.select("selectDownloadableRecords", map, handler);
+        sess.close();
+        
+        Map<String, Integer> datasetRecordCounts = handler.returnDatasetRecordCounts();
+        
+        for (String key : datasetRecordCounts.keySet()) {
+            oTaxonObservationFilterMapper.createDatasetDownloadStats(filterID, key, datasetRecordCounts.get(key));
+            logger.info("Taxon Observation Download Sending email for dataset " + key);
+            mailDatasetDownloadNotification(filter, dFilter, key, user);
+        }
+    }    
 
     /**
      * 
