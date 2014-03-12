@@ -1025,7 +1025,7 @@ public class TaxonObservationResource extends RequestResource {
                 taxaList.add(dFilter.getTaxon().getTvk());
                 // Add the list of observations to the download
                 try {
-                    addObservationsWithHandler(zip, user, 
+                    addObservations(zip, user, 
                             dFilter.getYear().getStartYear(), 
                             dFilter.getYear().getEndYear(), 
                             dFilter.getDataset().getDatasets(), 
