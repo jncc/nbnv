@@ -40,8 +40,7 @@ public class TaxonObservationProvider {
                 + "obs.sensitive, "
                 + "obs.absence as zeroAbundance, "
                 + "obs.fullVersion, "
-                + "taxondd.publicAttribute, "
-                + "dd.useConstraints as useConstraint");
+                + "taxondd.publicAttribute");
         FROM(from);
         INNER_JOIN("TaxonData td ON obs.pTaxonVersionKey = td.taxonVersionKey");
         LEFT_OUTER_JOIN("TaxonData tdd ON td.commonNameTaxonVersionKey = tdd.taxonVersionKey");
