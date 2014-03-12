@@ -29,7 +29,7 @@ public class AttributeConcatenation extends ConverterStep {
     
     @Override
     public String getName() {
-        return "Concatenate attributes";
+        return "Concatenate attributes, forced ascii, removed unicode characters and trimmed to 255";
     }
 
     @Override
@@ -64,10 +64,11 @@ public class AttributeConcatenation extends ConverterStep {
         
         for (int c : columnList.keySet()) {
             try {
-                obj.put(columnList.get(c), Normalizer.normalize(row.get(c).trim(), Normalizer.Form.NFD)
+                String attrib = Normalizer.normalize(row.get(c).trim(), Normalizer.Form.NFD)
                         .replaceAll("\\p{InCombiningDiacriticalMarks}+", "")
                         .replaceAll("[^\\p{ASCII}]", "")
-                        .replaceAll("^\"|\"$", ""));
+                        .replaceAll("^\"|\"$", "");
+                obj.put(columnList.get(c), attrib.substring(0, Math.min(attrib.length(), 255)));
             } catch (JSONException ex) {
                 Logger.getLogger(AttributeConcatenation.class.getName()).log(Level.SEVERE, null, ex);
                 throw new BadDataException(ex);
