@@ -37,6 +37,11 @@
     <bean id="coreSqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
         <property name="dataSource" ref="coreDataSource" />
     </bean>
+<!--    
+    <bean name="taxonObservationResource" 
+          class="uk.org.nbn.nbnv.api.rest.resources.TaxonObservationResource" 
+          p:warehouseDao-ref="warehouseSqlSessionFactory">
+    </bean>-->
 
 <!-- Scan MyBatis interface Mappers and create as beans-->  
     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
