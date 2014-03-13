@@ -1,6 +1,5 @@
 package uk.org.nbn.nbnv.api.rest.resources;
 
-import com.sun.jersey.api.core.InjectParam;
 import freemarker.template.TemplateException;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -39,7 +38,6 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.ObjectWriter;
-import org.mybatis.spring.SqlSessionFactoryBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +46,6 @@ import org.springframework.util.StringUtils;
 import uk.org.nbn.nbnv.api.dao.core.OperationalApiObservationViewMapper;
 import uk.org.nbn.nbnv.api.dao.core.OperationalTaxonObservationFilterMapper;
 import uk.org.nbn.nbnv.api.dao.providers.ProviderHelper;
-import uk.org.nbn.nbnv.api.dao.providers.TaxonObservationProvider;
 import uk.org.nbn.nbnv.api.dao.warehouse.DatasetAdministratorMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.DatasetMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.DesignationMapper;
@@ -100,6 +97,8 @@ public class TaxonObservationResource extends RequestResource {
     @Autowired PolygonUtilsMapper polygonUtilsMapper;
     @Autowired OperationalApiObservationViewMapper oApiObservationViewMapper;
     @Autowired FilterToText filterToText;
+    // Inject reference to the warehouse sql session factory set up
+    @Resource(name = "warehouseSqlSessionFactory") private SqlSessionFactory warehouseSqlSessionFactory;
     
     private Logger logger = LoggerFactory.getLogger(TaxonObservationResource.class);
 
@@ -1027,7 +1026,7 @@ public class TaxonObservationResource extends RequestResource {
                 taxaList.add(dFilter.getTaxon().getTvk());
                 // Add the list of observations to the download
                 try {
-                    addObservations(zip, user, 
+                    addObservationsWithHandler(zip, user, 
                             dFilter.getYear().getStartYear(), 
                             dFilter.getYear().getEndYear(), 
                             dFilter.getDataset().getDatasets(), 
@@ -1638,7 +1637,6 @@ public class TaxonObservationResource extends RequestResource {
         values.add("sensitive");
         values.add("zeroAbundance");
         values.add("fullVersion");
-        values.add("useConstraints");
         
         // If including attributes then push in the appropriate fields
         if (includeAttributes) {
@@ -1735,9 +1733,7 @@ public class TaxonObservationResource extends RequestResource {
             mailDatasetDownloadNotification(filter, dFilter, key, user);
         }
     }
-    
-    @Resource(name = "warehouseSqlSessionFactory") private SqlSessionFactory warehouseSqlSessionFactory;
-       
+
     private void addObservationsWithHandler(ZipOutputStream zip, User user, 
             int startYear, int endYear, List<String> datasetKeys, 
             List<String> taxa, String spatialRelationship, String featureID, 
