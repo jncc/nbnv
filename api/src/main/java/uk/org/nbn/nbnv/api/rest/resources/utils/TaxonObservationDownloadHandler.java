@@ -13,7 +13,6 @@ import java.util.Map;
 import java.util.zip.ZipOutputStream;
 import org.apache.ibatis.session.ResultContext;
 import org.apache.ibatis.session.ResultHandler;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import uk.org.nbn.nbnv.api.model.Attribute;
 import uk.org.nbn.nbnv.api.model.TaxonObservationDownload;
@@ -76,7 +75,6 @@ public class TaxonObservationDownloadHandler implements ResultHandler {
         values.add(observation.isSensitive() ? "true" : "false");
         values.add(observation.isZeroAbundance() ? "true" : "false");
         values.add(observation.isFullVersion() ? "true" : "false");
-        values.add(StringUtils.hasText(observation.getUseConstraints()) ? observation.getUseConstraints() : "");
 
         if (includeAttributes) {
             if (observation.isFullVersion() || observation.isPublicAttribute()) {
