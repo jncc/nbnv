@@ -1,12 +1,17 @@
-    #nbn-grid-map-filter-container{
-        width: 33%;
+    .nbn-grid-filter-container{
         float: left;
+    }
+
+    #nbn-grid-filters-container{
+	width: 33%;
+	display: inline-block
     }
 
     #nbn-grid-map-container{
         width: 62%;
         display: inline-block;
         position: relative;
+	vertical-align: top;
     }
 
     #nbn-dataset-selector-container{
@@ -26,4 +31,13 @@
 
     .nbn-map-image-container-startup-height{
         height: 700px;
+    }
+
+    .nbn-grid-layer-label{
+	display: inline-block;
+	width: 45px;
+    }
+
+    #nbn-grid-outline-input{
+	padding-left: 105px;
     }

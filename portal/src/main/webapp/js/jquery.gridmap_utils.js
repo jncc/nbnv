@@ -339,9 +339,14 @@
             e.preventDefault();
         });
     }
+    
+    function doTabs(){
+	$('.nbn-tabs').tabs();
+    }
 
     $(document).ready(function(){
         $('#nbn-download-terms').hide();
+	doTabs();
         setupFormOnChange();
         setupColourPickers();
         setupRegionVCInteractions();
