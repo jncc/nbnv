@@ -3,7 +3,7 @@
     }
 
     #nbn-grid-filters-container{
-	width: 33%;
+	width: 35%;
 	display: inline-block
     }
 
@@ -33,11 +33,21 @@
         height: 700px;
     }
 
-    .nbn-grid-layer-label{
+    .nbn-date-layer-label{
 	display: inline-block;
 	width: 45px;
     }
 
-    #nbn-grid-outline-input{
-	padding-left: 105px;
+    .nbn-quality-layer-label{
+	display: inline-block;
+	width: 70px;
+    }
+
+    .nbn-tabs{
+	font-size: 13px !important;
+	font-family: Arial,Helvetica,sans-serif !important;
+    }
+
+    .nbn-quality-color-picker{
+	padding-left: 30px;
     }

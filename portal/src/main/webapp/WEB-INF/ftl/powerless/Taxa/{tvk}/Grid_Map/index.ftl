@@ -54,17 +54,20 @@
                 <legend>Date ranges and colours</legend>
 		<div class="nbn-tabs">
 		    <ul>
-			<li><a href="#tabs-1">Quality</a></li>
-			<li><a href="#tabs-2">Dates</a></li>
+			<li><a href="#tabs-1">Dates</a></li>
+			<li><a href="#tabs-2">Quality</a></li>
 		    </ul>
 		    <div id="tabs-1">
-			<@yearRangeText layerNum="3" hexColour="#ff0000" checkedText="" layerPosition="Top"/><br/>
-			<@yearRangeText layerNum="2" hexColour="#ff7f00" checkedText="" layerPosition="Middle"/><br/>
-			<@yearRangeText layerNum="1" hexColour="#ffff00" checkedText="checked" layerPosition="Bottom"/><br/>
-			<div id="nbn-grid-outline-input">Outline <input type='checkbox' id='nbn-show-outline' name='showOutline' checked colourPickerId='nbn-colour-picker-outline'><span class="nbn-form-label"> colour: </span><@colourPicker idSuffix="-outline" hexColour="#000000"/></div>
+			<@yearRange layerNum="3" hexColour="#ff0000" checkedText="" layerPosition="Top"/><br/>
+			<@yearRange layerNum="2" hexColour="#ff7f00" checkedText="" layerPosition="Middle"/><br/>
+			<@yearRange layerNum="1" hexColour="#ffff00" checkedText="checked" layerPosition="Bottom"/><br/>
+			<div><span class="nbn-date-layer-label">Outline:</span> <input type='checkbox' id='nbn-show-outline' name='showOutline' checked colourPickerId='nbn-colour-picker-outline'><@colourPicker idSuffix="-outline" hexColour="#000000"/></div>
 		    </div>
 		    <div id="tabs-2">
-			Hello world
+			<@recordStatus status="Verified" hexColour="#0000ff" checkedText=""/><br/>
+			<@recordStatus status="Incorrect" hexColour="#ff0000" checkedText=""/><br/>
+			<@recordStatus status="Unverified" hexColour="#cccccc" checkedText=""/><br/>
+			<div><span class="nbn-quality-layer-label">Outline:</span> <input type='checkbox' id='nbn-show-outline_quality' name='showOutlineQuality' checked colourPickerId='nbn-colour-picker-outline'><span class='nbn-quality-color-picker'><@colourPicker idSuffix="-outline" hexColour="#000000"/></span></div>
 		    </div>
 		</div>
             </fieldset>
@@ -87,7 +90,7 @@
     <div class="tabbed" id="nbn-grid-filter-container">
             <h3>Extras</h3>
             <fieldset>
-                <legend>Download</legend>
+                <legend>Downloads</legend>
                 <button id="nbn-grid-map-squares-download">Download <span id="nbn-grid-map-resolution-download-text">10km</span> squares</button>
                 <button id="nbn-download-observations-button">Download records</button>
                 <@report_utils.downloadTermsDialogue/>
@@ -110,15 +113,21 @@
     </div>
 </#macro>
 
-<#macro yearRangeText layerNum hexColour checkedText layerPosition>
+<#macro yearRange layerNum hexColour checkedText layerPosition>
     <#assign currentYear=.now?string("yyyy")>
-    <span class="nbn-grid-layer-label">${layerPosition}:</span>
+    <span class="nbn-date-layer-label">${layerPosition}:</span>
     <input type='checkbox' name='gridLayer${layerNum}' value='gridLayer${layerNum}' ${checkedText} colourPickerId='nbn-colour-picker-${layerNum}'>
     from 
     <input type='text' name='startYear${layerNum}' value='1600' class='nbn-year-input'> 
     to 
     <input type='text' name='endYear${layerNum}' value='${currentYear}' class='nbn-year-input'>
     <@colourPicker idSuffix='-'+layerNum hexColour=hexColour/>
+</#macro>
+
+<#macro recordStatus status hexColour checkedText>
+    <span class="nbn-quality-layer-label">${status}:</span>
+    <input type='checkbox' name='gridLayerStatus${status}' value='gridLayerStatus${status}' ${checkedText} colourPickerId='nbn-colour-picker${status}'>
+    <span class='nbn-quality-color-picker'><@colourPicker idSuffix='-'+status hexColour=hexColour/></span>
 </#macro>
 
 <#macro colourPicker idSuffix hexColour>
