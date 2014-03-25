@@ -24,6 +24,12 @@ public interface GridMapSquareMapper {
             @Param("viceCountyIdentifier") String viceCountyIdentifier,
             @Param("absence") int absence);
     
+    @SelectProvider(type=GridMapSquareProvider.class, method="gridMapSquaresInspire")
+    List<GridMapSquare> getGridMapSquaresLimitedFilter(
+            @Param("user") User user,
+            @Param("ptvk") String ptvk,
+            @Param("resolution") String resolution);
+    
     @SelectProvider(type=GridMapSquareProvider.class, method="gridMapDatasets")
     List<TaxonDataset> getGridMapDatasets(
             @Param("user") User user, 
