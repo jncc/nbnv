@@ -29,4 +29,13 @@
 
     <h1>Request Enhanced Access</h1>
     <div id="filter"></div>
+
+    <div id="waiting-dialog" title="Processing Request" style="display:none;">
+        <p>We are currently processing your request, please do not refresh or leave this page</p>
+        <img src="/img/ajax-loader-medium.gif" style="display: block; margin-left: auto; margin-right: auto;"/>
+    </div>
+
+    <div id="finished-dialog" title="Processed Request" style="display:none;">
+        <p id="finished-dialog-text"></p>
+    </div>
 </@template.master>
