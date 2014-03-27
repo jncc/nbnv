@@ -129,7 +129,7 @@
                     <!-- JDBC connection parameters -->
                     <jdbc>
                         <driver>com.microsoft.sqlserver.jdbc.SQLServerDriver</driver>
-                        <url>jdbc:sqlserver://nbn-b.nerc-lancaster.ac.uk;databaseName=NBNWarehouse</url>
+                        <url>jdbc:sqlserver://nbn-b.nerc-lancaster.ac.uk;databaseName=NBNWarehouseSingleDbTest</url>
                         <user>NBNGIS</user>
                         <password>MoreSilenceCookOver2013</password>
                     </jdbc>

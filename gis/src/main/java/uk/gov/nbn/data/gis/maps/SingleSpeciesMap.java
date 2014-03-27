@@ -17,6 +17,7 @@ import org.jooq.SelectJoinStep;
 import org.jooq.impl.DSL;
 import static uk.gov.nbn.data.dao.jooq.Tables.*;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -43,12 +44,14 @@ import uk.gov.nbn.data.gis.validation.Datasets;
 @Validated
 @RequestMapping("SingleSpecies")
 public class SingleSpeciesMap {
+    public static final List<Integer> DEFAULT_VERIFICATION_KEYS = Arrays.asList(1,3,4);
+    private static final String DEFAULT_VERIFICATION_KEYS_STR = "1,3,4";
+
     private static final String TEN_KM_LAYER_NAME = "Grid-10km";
     private static final String TWO_KM_LAYER_NAME = "Grid-2km";
     private static final String ONE_KM_LAYER_NAME = "Grid-1km";
     private static final String ONE_HUNDRED_M_LAYER_NAME = "Grid-100m";
     private static final String NONE_GRID_LAYER_NAME = "None-Grid";
-    
     private static final Map<String,Color> COLOURS;
     private static final Map<String, Integer> LAYERS;
     
@@ -91,7 +94,8 @@ public class SingleSpeciesMap {
             @RequestParam(value="endyear", required=false) @Pattern(regexp="[0-9]{4}") final String endYear,
             @RequestParam(value="abundance", required=false, defaultValue="presence") @Pattern(regexp="(all)|(presence)|(absence)") String abundance,
             @RequestParam(value="feature", required=false) String featureID,
-            @RequestParam(value="band", required=false) List<Band> bands
+            @RequestParam(value="band", required=false) List<Band> bands,
+	    @RequestParam(value="verification", required=false, defaultValue=DEFAULT_VERIFICATION_KEYS_STR) final List<Integer> verificationKeys
             ) {
         HashMap<String, Object> data = new HashMap<String, Object>();
         boolean absence = abundance.equals("all") || abundance.equals("absence");
@@ -105,11 +109,11 @@ public class SingleSpeciesMap {
         data.put("mapServiceURL", mapServiceURL);
         data.put("featureData", MapHelper.getSelectedFeatureData(featureID));
         data.put("properties", properties);
-        data.put("absenceLayerGenerator", getSingleSpeciesResolutionDataGenerator(FEATURE.GEOM, key, user, datasetKeys, startYear, endYear, true));
-        data.put("presencelayerGenerator", getSingleSpeciesResolutionDataGenerator(FEATURE.GEOM, key, user, datasetKeys, startYear, endYear, false));
+        data.put("absenceLayerGenerator", getSingleSpeciesResolutionDataGenerator(FEATURE.GEOM, key, user, datasetKeys, startYear, endYear, true, verificationKeys));
+        data.put("presencelayerGenerator", getSingleSpeciesResolutionDataGenerator(FEATURE.GEOM, key, user, datasetKeys, startYear, endYear, false, verificationKeys));
         data.put("bandLayerGenerator", new SingleSpeciesBandSqlGenerator() {
             @Override public String getData(String layerName, Band dateBand) {
-                return getSQL(FEATURE.GEOM, key, user, datasetKeys, dateBand.getStartYear(), dateBand.getEndYear(), false, layerName);
+                return getSQL(FEATURE.GEOM, key, user, datasetKeys, dateBand.getStartYear(), dateBand.getEndYear(), false, layerName, verificationKeys);
             }
         });
         return new ModelAndView("SingleSpecies.map",data);
@@ -127,10 +131,11 @@ public class SingleSpeciesMap {
             final List<String> datasetKeys, 
             final String startYear, 
             final String endYear,
-            final boolean absence) {
+            final boolean absence,
+	    final List<Integer> verificationKeys) {
         return new ResolutionDataGenerator() {
             @Override public String getData(String layerName) {
-                return getSQL(geometry, taxonKey, user, datasetKeys, startYear, endYear, absence, layerName);
+                return getSQL(geometry, taxonKey, user, datasetKeys, startYear, endYear, absence, layerName, verificationKeys);
             }
         };
     }      
@@ -139,13 +144,15 @@ public class SingleSpeciesMap {
                                     String taxonKey, User user, 
                                     List<String> datasetKeys, 
                                     String startYear, String endYear, 
-                                    boolean absence, String layerName) {
+                                    boolean absence, String layerName,
+				    List<Integer> verificationKeys) {
         DSLContext create = MapHelper.getContext();
         Condition publicCondition = TAXONTREE.NODEPTVK.eq(taxonKey)
                 .and(MAPPINGDATAPUBLIC.ABSENCE.eq(absence))
                 .and(MAPPINGDATAPUBLIC.RESOLUTIONID.eq(LAYERS.get(layerName)));
         publicCondition = MapHelper.createTemporalSegment(publicCondition, startYear, endYear, MAPPINGDATAPUBLIC.STARTDATE, MAPPINGDATAPUBLIC.ENDDATE);
         publicCondition = MapHelper.createInDatasetsSegment(publicCondition, MAPPINGDATAPUBLIC.DATASETKEY, datasetKeys);
+	publicCondition = MapHelper.createInIntegerFieldSegment(publicCondition, MAPPINGDATAPUBLIC.VERIFICATION, verificationKeys);
 
         Condition enhancedCondition = TAXONTREE.NODEPTVK.eq(taxonKey)
                 .and(USERTAXONOBSERVATIONID.USERID.eq(user.getId()))
@@ -153,6 +160,7 @@ public class SingleSpeciesMap {
                 .and(MAPPINGDATAENHANCED.RESOLUTIONID.eq(LAYERS.get(layerName)));
         enhancedCondition = MapHelper.createTemporalSegment(enhancedCondition, startYear, endYear, MAPPINGDATAENHANCED.STARTDATE, MAPPINGDATAENHANCED.ENDDATE);
         enhancedCondition = MapHelper.createInDatasetsSegment(enhancedCondition, MAPPINGDATAENHANCED.DATASETKEY, datasetKeys);
+	enhancedCondition = MapHelper.createInIntegerFieldSegment(enhancedCondition, MAPPINGDATAENHANCED.VERIFICATION, verificationKeys);
 
         Select<Record1<Integer>> nested = create
                     .select(MAPPINGDATAPUBLIC.FEATUREID.as("FEATUREID"))

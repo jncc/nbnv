@@ -72,6 +72,15 @@ public class MapHelper {
         }
     }
     
+    static Condition createInIntegerFieldSegment(Condition currentCond, Field<Integer> field, List<Integer> values){
+	if(values != null && !values.isEmpty()){
+	    return currentCond.and(field.in(values));
+	}
+	else {
+	    return currentCond;
+	}
+    }
+    
     static String getSelectedFeatureData(String selectedFeature) {
         if(selectedFeature != null) {
             return MapHelper.getMapData(FEATUREDATA.GEOM, FEATUREDATA.ID, 4326, getContext()
