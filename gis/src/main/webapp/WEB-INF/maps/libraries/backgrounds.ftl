@@ -33,7 +33,7 @@
         END
         TYPE RASTER
         STATUS ON
-        TILEINDEX "${location}/OS/Modern/250k/index.shp"
+        TILEINDEX "${location}/OS/Modern/250k/unix-index.shp"
         TILEITEM "Location"
         PROJECTION
             "init=epsg:27700"   ##recommended
@@ -52,7 +52,7 @@
         END
         TYPE RASTER
         STATUS ON
-        TILEINDEX "${location}/OS/Modern/50k/index.shp"
+        TILEINDEX "${location}/OS/Modern/50k/unix-index.shp"
         TILEITEM "Location"
         PROJECTION
             "init=epsg:27700"   ##recommended
@@ -71,7 +71,7 @@
         END
         TYPE RASTER
         STATUS ON
-        TILEINDEX "${location}/OS/Modern/25k/index.shp"
+        TILEINDEX "${location}/OS/Modern/25k/unix-index.shp"
         TILEITEM "Location"
         PROJECTION
             "init=epsg:27700"   ##recommended
