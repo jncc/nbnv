@@ -204,7 +204,7 @@
     }
     
     function setupColourPickers(){
-        $('#nbn-colour-picker-1, #nbn-colour-picker-2, #nbn-colour-picker-3, #nbn-colour-picker-outline').each(function(){
+        $('#nbn-colour-picker-1, #nbn-colour-picker-2, #nbn-colour-picker-3, #nbn-colour-picker-outline, #nbn-colour-picker-Verified, #nbn-colour-picker-Incorrect, #nbn-colour-picker-Uncertain, #nbn-colour-picker-Unverified, #nbn-colour-picker-outline-quality').each(function(){
             $(this).ColorPicker(getColourPickerOptions($(this).attr('id')));
         });
     }

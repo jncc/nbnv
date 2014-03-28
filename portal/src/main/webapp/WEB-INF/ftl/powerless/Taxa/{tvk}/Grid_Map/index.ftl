@@ -54,7 +54,7 @@
 		<div class="nbn-tabs">
 		    <ul>
 			<li><a href="#tabs-1">Dates</a></li>
-			<li><a href="#tabs-2">Quality</a></li>
+			<li><a href="#tabs-2">Verification</a></li>
 		    </ul>
 		    <div id="tabs-1">
 			<@yearRange layerNum="3" hexColour="#ff0000" checkedText="" layerPosition="Top"/><br/>
@@ -63,10 +63,11 @@
 			<div><span class="nbn-date-layer-label">Outline:</span> <input type='checkbox' id='nbn-show-outline' name='showOutline' checked colourPickerId='nbn-colour-picker-outline'><@colourPicker idSuffix="-outline" hexColour="#000000"/></div>
 		    </div>
 		    <div id="tabs-2">
-			<@recordStatus status="Verified" hexColour="#0000ff" checkedText=""/><br/>
-			<@recordStatus status="Incorrect" hexColour="#ff0000" checkedText=""/><br/>
-			<@recordStatus status="Unverified" hexColour="#cccccc" checkedText=""/><br/>
-			<div><span class="nbn-quality-layer-label">Outline:</span> <input type='checkbox' id='nbn-show-outline_quality' name='showOutlineQuality' checked colourPickerId='nbn-colour-picker-outline'><span class='nbn-quality-color-picker'><@colourPicker idSuffix="-outline" hexColour="#000000"/></span></div>
+			<@verificationStatus status="Verified" value=1 hexColour="#0000ff" checkedText=""/><br/>
+			<@verificationStatus status="Incorrect" value=2 hexColour="#ff0000" checkedText=""/><br/>
+			<@verificationStatus status="Uncertain" value=3 hexColour="#cccccc" checkedText=""/><br/>
+			<@verificationStatus status="Unverified" value=4 hexColour="#cccccc" checkedText=""/><br/>
+			<div><span class="nbn-quality-layer-label">Outline:</span> <input type='checkbox' id='nbn-show-outline_quality' name='showOutlineQuality' checked colourPickerId='nbn-colour-picker-outline-quality'><span class='nbn-quality-color-picker'><@colourPicker idSuffix="-outline-quality" hexColour="#000000"/></span></div>
 		    </div>
 		</div>
             </fieldset>
@@ -123,9 +124,10 @@
     <@colourPicker idSuffix='-'+layerNum hexColour=hexColour/>
 </#macro>
 
-<#macro recordStatus status hexColour checkedText>
+<#macro verificationStatus status value hexColour checkedText>
     <span class="nbn-quality-layer-label">${status}:</span>
-    <input type='checkbox' name='gridLayerStatus${status}' value='gridLayerStatus${status}' ${checkedText} colourPickerId='nbn-colour-picker${status}'>
+<!--    <input type='checkbox' name='gridLayerStatus${status}' value='gridLayerStatus${status}' ${checkedText} colourPickerId='nbn-colour-picker${status}'>-->
+    <input type='checkbox' name='verification' value='${value}' ${checkedText}>
     <span class='nbn-quality-color-picker'><@colourPicker idSuffix='-'+status hexColour=hexColour/></span>
 </#macro>
 
