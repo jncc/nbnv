@@ -1,6 +1,7 @@
 package uk.gov.nbn.data.gis.maps;
 
 import java.sql.Date;
+import java.util.Arrays;
 import java.util.List;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
@@ -19,16 +20,11 @@ import static uk.gov.nbn.data.dao.jooq.Tables.*;
  * @author Chris Johnson
  */
 public class MapHelper {
+
+    private static final List<Integer> DEFAULT_VERIFICATION_KEYS = Arrays.asList(1,3,4);
     
     public static String getMapData(Field<?> geomField, Field<?> uniqueField, int srid, Query query) {
-        return new StringBuilder(geomField.getName())
-                .append(" from (")
-                .append(query.getSQL(ParamType.INLINED))
-                .append(") AS foo USING UNIQUE ")
-                .append(uniqueField.getName())
-                .append(" USING SRID=")
-                .append(srid)
-                .toString();
+        return query.getSQL(ParamType.INLINED);
     }
     
     /**Get the DSLContext for the dialect of the sqlserver**/
@@ -77,6 +73,15 @@ public class MapHelper {
         else {
             return currentCond;
         }
+    }
+    
+    static Condition createInValidationKeysSegment(Condition currentCond, Field<Integer> field, List<Integer> values){
+	if(values != null && !values.isEmpty()){
+	    return currentCond.and(field.in(values));
+	}
+	else {
+	    return currentCond.and(field.in(DEFAULT_VERIFICATION_KEYS));
+	}
     }
     
     static String getSelectedFeatureData(String selectedFeature) {

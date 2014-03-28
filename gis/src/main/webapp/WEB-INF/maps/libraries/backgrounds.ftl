@@ -33,7 +33,7 @@
         END
         TYPE RASTER
         STATUS ON
-        TILEINDEX "${location}/OS/Modern/250k/index.shp"
+        TILEINDEX "${location}/OS/Modern/250k/unix-index.shp"
         TILEITEM "Location"
         PROJECTION
             "init=epsg:27700"   ##recommended
@@ -52,7 +52,7 @@
         END
         TYPE RASTER
         STATUS ON
-        TILEINDEX "${location}/OS/Modern/50k/index.shp"
+        TILEINDEX "${location}/OS/Modern/50k/unix-index.shp"
         TILEITEM "Location"
         PROJECTION
             "init=epsg:27700"   ##recommended
@@ -71,7 +71,7 @@
         END
         TYPE RASTER
         STATUS ON
-        TILEINDEX "${location}/OS/Modern/25k/index.shp"
+        TILEINDEX "${location}/OS/Modern/25k/unix-index.shp"
         TILEITEM "Location"
         PROJECTION
             "init=epsg:27700"   ##recommended
@@ -86,8 +86,7 @@
         NAME                                                "Selected-Feature"
         TYPE                                                POLYGON
         STATUS                                              OFF
-        CONNECTIONTYPE                                      PLUGIN
-        PLUGIN                                              "msplugin_mssql2008.dll"
+        CONNECTIONTYPE                                      OGR
         CONNECTION                                          "${spatialConnection}"
         PROCESSING                                          "CLOSE_CONNECTION=DEFER"
         OPACITY                                             60
