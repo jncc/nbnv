@@ -14,10 +14,8 @@ import org.jooq.Field;
 import org.jooq.Record1;
 import org.jooq.Select;
 import org.jooq.SelectJoinStep;
-import org.jooq.impl.DSL;
 import static uk.gov.nbn.data.dao.jooq.Tables.*;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -44,9 +42,6 @@ import uk.gov.nbn.data.gis.validation.Datasets;
 @Validated
 @RequestMapping("SingleSpecies")
 public class SingleSpeciesMap {
-    public static final List<Integer> DEFAULT_VERIFICATION_KEYS = Arrays.asList(1,3,4);
-    private static final String DEFAULT_VERIFICATION_KEYS_STR = "1,3,4";
-
     private static final String TEN_KM_LAYER_NAME = "Grid-10km";
     private static final String TWO_KM_LAYER_NAME = "Grid-2km";
     private static final String ONE_KM_LAYER_NAME = "Grid-1km";
@@ -95,7 +90,7 @@ public class SingleSpeciesMap {
             @RequestParam(value="abundance", required=false, defaultValue="presence") @Pattern(regexp="(all)|(presence)|(absence)") String abundance,
             @RequestParam(value="feature", required=false) String featureID,
             @RequestParam(value="band", required=false) List<Band> bands,
-	    @RequestParam(value="verification", required=false, defaultValue=DEFAULT_VERIFICATION_KEYS_STR) final List<Integer> verificationKeys
+	    @RequestParam(value="verification", required=false) final List<Integer> verificationKeys
             ) {
         HashMap<String, Object> data = new HashMap<String, Object>();
         boolean absence = abundance.equals("all") || abundance.equals("absence");
@@ -152,7 +147,7 @@ public class SingleSpeciesMap {
                 .and(MAPPINGDATAPUBLIC.RESOLUTIONID.eq(LAYERS.get(layerName)));
         publicCondition = MapHelper.createTemporalSegment(publicCondition, startYear, endYear, MAPPINGDATAPUBLIC.STARTDATE, MAPPINGDATAPUBLIC.ENDDATE);
         publicCondition = MapHelper.createInDatasetsSegment(publicCondition, MAPPINGDATAPUBLIC.DATASETKEY, datasetKeys);
-	publicCondition = MapHelper.createInIntegerFieldSegment(publicCondition, MAPPINGDATAPUBLIC.VERIFICATION, verificationKeys);
+	publicCondition = MapHelper.createInValidationKeysSegment(publicCondition, MAPPINGDATAPUBLIC.VERIFICATION, verificationKeys);
 
         Condition enhancedCondition = TAXONTREE.NODEPTVK.eq(taxonKey)
                 .and(USERTAXONOBSERVATIONID.USERID.eq(user.getId()))
@@ -160,7 +155,7 @@ public class SingleSpeciesMap {
                 .and(MAPPINGDATAENHANCED.RESOLUTIONID.eq(LAYERS.get(layerName)));
         enhancedCondition = MapHelper.createTemporalSegment(enhancedCondition, startYear, endYear, MAPPINGDATAENHANCED.STARTDATE, MAPPINGDATAENHANCED.ENDDATE);
         enhancedCondition = MapHelper.createInDatasetsSegment(enhancedCondition, MAPPINGDATAENHANCED.DATASETKEY, datasetKeys);
-	enhancedCondition = MapHelper.createInIntegerFieldSegment(enhancedCondition, MAPPINGDATAENHANCED.VERIFICATION, verificationKeys);
+	enhancedCondition = MapHelper.createInValidationKeysSegment(enhancedCondition, MAPPINGDATAENHANCED.VERIFICATION, verificationKeys);
 
         Select<Record1<Integer>> nested = create
                     .select(MAPPINGDATAPUBLIC.FEATUREID.as("FEATUREID"))

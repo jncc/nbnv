@@ -57,12 +57,12 @@ public class SingleSpeciesInspireMap {
         
         data.put("mapServiceURL", mapServiceURL);
         data.put("properties", properties);
-        data.put("title", "Fluffy Bunnyius" + " " + "CJ 2300" + " - Available Species Distribution for the UK");
-        data.put("speciesCode", "FluffyBunny");
-        data.put("speciesName", "Fluffy Bunnyius");
+        data.put("title", "Species name" + " " + "CJ 2300" + " - Available Species Distribution for the UK");
+        data.put("speciesCode", "SpeciesCode");
+        data.put("speciesName", "Species Name");
         data.put("resourceURL", "https://data.nbn.org.uk/api/taxa/" + key + "/inspire");
         data.put("date", sdf.format(new Date()));
-	data.put("data", SingleSpeciesMap.getSingleSpeciesResolutionDataGenerator(FEATURE.GEOM, key, user, null, null, null, false, SingleSpeciesMap.DEFAULT_VERIFICATION_KEYS).getData("Grid-10km"));
+	data.put("data", SingleSpeciesMap.getSingleSpeciesResolutionDataGenerator(FEATURE.GEOM, key, user, null, null, null, false, null).getData("Grid-10km"));
         return new ModelAndView("SingleSpeciesInspire.map",data);
     }
 
