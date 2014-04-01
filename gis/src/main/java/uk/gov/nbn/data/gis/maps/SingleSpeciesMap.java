@@ -26,6 +26,7 @@ import uk.ac.ceh.dynamo.GridMap.GridLayer;
 import uk.ac.ceh.dynamo.GridMap.Layer;
 import uk.ac.ceh.dynamo.GridMap.Resolution;
 import uk.ac.ceh.dynamo.arguments.annotations.ServiceURL;
+import uk.gov.nbn.data.gis.maps.colour.Verification;
 import uk.gov.nbn.data.gis.validation.Datasets;
 
 /**
@@ -90,7 +91,7 @@ public class SingleSpeciesMap {
             @RequestParam(value="abundance", required=false, defaultValue="presence") @Pattern(regexp="(all)|(presence)|(absence)") String abundance,
             @RequestParam(value="feature", required=false) String featureID,
             @RequestParam(value="band", required=false) List<Band> bands,
-	    @RequestParam(value="verification", required=false) final List<Integer> verificationKeys
+	    @RequestParam(value="verification", required=false) final List<Verification> verifications
             ) {
         HashMap<String, Object> data = new HashMap<String, Object>();
         boolean absence = abundance.equals("all") || abundance.equals("absence");
@@ -101,14 +102,20 @@ public class SingleSpeciesMap {
         data.put("enableAbsence", absence);
         data.put("enablePresence", presence);
         data.put("bands", bands);
+	data.put("verifications", verifications);
         data.put("mapServiceURL", mapServiceURL);
         data.put("featureData", MapHelper.getSelectedFeatureData(featureID));
         data.put("properties", properties);
-        data.put("absenceLayerGenerator", getSingleSpeciesResolutionDataGenerator(FEATURE.GEOM, key, user, datasetKeys, startYear, endYear, true, verificationKeys));
-        data.put("presencelayerGenerator", getSingleSpeciesResolutionDataGenerator(FEATURE.GEOM, key, user, datasetKeys, startYear, endYear, false, verificationKeys));
+        data.put("absenceLayerGenerator", getSingleSpeciesResolutionDataGenerator(FEATURE.GEOM, key, user, datasetKeys, startYear, endYear, true, getVerificationKeys(verifications)));
+        data.put("presencelayerGenerator", getSingleSpeciesResolutionDataGenerator(FEATURE.GEOM, key, user, datasetKeys, startYear, endYear, false, getVerificationKeys(verifications)));
         data.put("bandLayerGenerator", new SingleSpeciesBandSqlGenerator() {
             @Override public String getData(String layerName, Band dateBand) {
-                return getSQL(FEATURE.GEOM, key, user, datasetKeys, dateBand.getStartYear(), dateBand.getEndYear(), false, layerName, verificationKeys);
+                return getSQL(FEATURE.GEOM, key, user, datasetKeys, dateBand.getStartYear(), dateBand.getEndYear(), false, layerName, getVerificationKeys(verifications));
+            }
+        });
+        data.put("verificationLayerGenerator", new SingleSpeciesVerificationSqlGenerator() {
+            @Override public String getData(String layerName, Verification verificationStatus) {
+                return getSQL(FEATURE.GEOM, key, user, datasetKeys, null, null, false, layerName, Arrays.asList(verificationStatus.getStatus().getKey()));
             }
         });
         return new ModelAndView("SingleSpecies.map",data);
@@ -116,6 +123,10 @@ public class SingleSpeciesMap {
     
     public interface SingleSpeciesBandSqlGenerator {
         public String getData(String layerName, Band dateBand);
+    }
+    
+    public interface SingleSpeciesVerificationSqlGenerator {
+        public String getData(String layerName, Verification verificationStatus);
     }
     
     //Factored out the single species resolution data generator so that it can be used by the atlas map
@@ -172,7 +183,7 @@ public class SingleSpeciesMap {
         SelectJoinStep<Record1<Integer>> dNested = create
                 .selectDistinct((Field<Integer>)nested.field(0))
                 .from(nested);
-        
+	
         return MapHelper.getMapData(geometry, FEATURE.IDENTIFIER, 4326 ,create
             .select(geometry, FEATURE.IDENTIFIER)
             .from(FEATURE)
@@ -200,5 +211,13 @@ public class SingleSpeciesMap {
             }
         }
         return toReturn;
+    }
+    
+    private List<Integer> getVerificationKeys(List<Verification> verifications){
+	List<Integer> toReturn = new ArrayList<Integer>();
+	for(Verification verification : verifications){
+	    toReturn.add(verification.getStatus().getKey());
+	}
+	return toReturn;
     }
 }

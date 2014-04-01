@@ -19,6 +19,18 @@
                     END
                 [/@layer]
             [/#list]
+	[#elseif verifications?? && verifications?first.coloured] [#--Do we need to draw Verifcation layers?--]
+            [#list verifications as verification]
+
+                [@layer group=layer_name name="Verification_${verification_index}" data=verificationLayerGenerator.getData(layer_name, verification)]
+                    NAME                "Verification layer ${verification.expression}"
+                    STYLE
+                        COLOR           ${verification.fillColour.red} ${verification.fillColour.green} ${verification.fillColour.blue}
+                        OUTLINECOLOR    ${verification.outlineColour.red} ${verification.outlineColour.green} ${verification.outlineColour.blue}
+                        WIDTH           1
+                    END
+                [/@layer]
+            [/#list]
         [#else]
             [#if enablePresence]
                 [@layer group=layer_name name="Presence" data=presencelayerGenerator.getData(layer_name)]
