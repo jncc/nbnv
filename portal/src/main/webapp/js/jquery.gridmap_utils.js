@@ -43,22 +43,72 @@
         }
         
         //Add the year bands formatted for the grid map service
-        var showOutline = keyValuePairs.hasOwnProperty('showOutline');
-        for(var i=1; i<4; i++){
-            if(keyValuePairs.hasOwnProperty('gridLayer' + i)){
-                var fillColour = $('#value-nbn-colour-picker-' + i).val();
-                var outlineColour = fillColour;
-                if(showOutline){
-                    outlineColour = $('#value-nbn-colour-picker-outline').val();
-                }
-                keyValuePairs['band' + i] = keyValuePairs['startYear' + i] + '-' + keyValuePairs['endYear' + i] + ',' + fillColour.replace("#","") + ',' + outlineColour.replace("#","");
-            }
-            delete keyValuePairs['gridLayer' + i];
-            delete keyValuePairs['startYear' + i];
-            delete keyValuePairs['endYear' + i];
-            delete keyValuePairs['value-nbn-colour-picker-' + i];
+	var isVerificationTabSelected = 'nbn-verification-tab' === $('.ui-tabs-selected')[0].children[0].id;
+	var showOutline = keyValuePairs.hasOwnProperty('showOutline');
+	for(var i=1; i<4; i++){
+	    if(!isVerificationTabSelected){
+		if(keyValuePairs.hasOwnProperty('gridLayer' + i)){
+		    var fillColour = $('#value-nbn-colour-picker-' + i).val();
+		    var outlineColour = fillColour;
+		    if(showOutline){
+			outlineColour = $('#value-nbn-colour-picker-outline').val();
+		    }
+		    keyValuePairs['band' + i] = keyValuePairs['startYear' + i] + '-' + keyValuePairs['endYear' + i] + ',' + fillColour.replace("#","") + ',' + outlineColour.replace("#","");
+		}
+	    }
+	    delete keyValuePairs['gridLayer' + i];
+	    delete keyValuePairs['startYear' + i];
+	    delete keyValuePairs['endYear' + i];
+	    delete keyValuePairs['value-nbn-colour-picker-' + i];
         }
-        
+	
+	//Add the verifications,	
+	var $verificationCheckboxes = $("input[name='verificationCheckBox']:checked");
+	var showOutlineVerification = keyValuePairs.hasOwnProperty('showOutlineVerification');
+	var verificationValues = [];
+	var outlineColourVerification = $('#value-nbn-colour-picker-outline-verification').val().replace("#","");
+	$.each($verificationCheckboxes, function(index, value){
+	    var verificationKey = $(value).val();
+	    if(isVerificationTabSelected){
+		var fillColour;
+		switch(verificationKey){
+		    case '1':
+			fillColour = $('#value-nbn-colour-picker-Verified').val().replace("#","");
+			break;
+		    case '2':
+			fillColour = $('#value-nbn-colour-picker-Incorrect').val().replace("#","");
+			break;
+		    case '3':
+			fillColour = $('#value-nbn-colour-picker-Uncertain').val().replace("#","");
+			break;
+		    case '4':
+			fillColour = $('#value-nbn-colour-picker-Unverified').val().replace("#","");
+			break;
+		}
+		if(!showOutlineVerification){
+		    outlineColourVerification = fillColour;
+		}
+		verificationValues.push(verificationKey + ',' + fillColour + ',' + outlineColourVerification);
+	    }else{
+		verificationValues.push(verificationKey);
+	    }
+	});
+	//Order is important when displaying verification layers
+	//1(verified) overlays 2(incorrect) overlays 3(uncertain) overlays 4(unverified)
+	if(isVerificationTabSelected){
+	    verificationValues.sort().reverse();
+	    $.each(verificationValues, function(index, verificationValue){
+		keyValuePairs['verification' + index] = verificationValue;
+	    });
+	}else{
+	    keyValuePairs['verification'] = verificationValues;
+	}
+	delete keyValuePairs['value-nbn-colour-picker-Verified'];
+	delete keyValuePairs['value-nbn-colour-picker-Incorrect'];
+	delete keyValuePairs['value-nbn-colour-picker-Uncertain'];
+	delete keyValuePairs['value-nbn-colour-picker-Unverified'];
+	delete keyValuePairs['value-nbn-colour-picker-outline-verification'];
+
         //There is a specific order that background layers should be requested to force
         //some layers to be drawn over others
         //eg - if OS is used as a background it must appear first to force vector layers to be drawn over it and not be obscured by it
@@ -86,10 +136,10 @@
         //Remove the hidden tvk, just used to get the tvk from the path of the page request to here
         delete keyValuePairs['tvk'];
         
-        //Remove the hidden outline colour
+        //Remove the outline colour
         delete keyValuePairs['value-nbn-colour-picker-outline'];
         delete keyValuePairs['showOutline'];
-
+	
         return keyValuePairs;
     }
         
@@ -204,13 +254,14 @@
     }
     
     function setupColourPickers(){
-        $('#nbn-colour-picker-1, #nbn-colour-picker-2, #nbn-colour-picker-3, #nbn-colour-picker-outline, #nbn-colour-picker-Verified, #nbn-colour-picker-Incorrect, #nbn-colour-picker-Uncertain, #nbn-colour-picker-Unverified, #nbn-colour-picker-outline-quality').each(function(){
+        $('#nbn-colour-picker-1, #nbn-colour-picker-2, #nbn-colour-picker-3, #nbn-colour-picker-outline, #nbn-colour-picker-Verified, #nbn-colour-picker-Incorrect, #nbn-colour-picker-Uncertain, #nbn-colour-picker-Unverified, #nbn-colour-picker-outline-verification').each(function(){
             $(this).ColorPicker(getColourPickerOptions($(this).attr('id')));
         });
     }
     
     function doOnChange(){
         var $form = $('#nbn-grid-map-form');
+	
             
         //Apply any rules eg, must have at least one year band selected
         applyRules();
