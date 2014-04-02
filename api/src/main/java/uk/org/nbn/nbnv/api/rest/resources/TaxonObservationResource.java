@@ -46,6 +46,7 @@ import org.springframework.util.StringUtils;
 import uk.org.nbn.nbnv.api.dao.core.OperationalApiObservationViewMapper;
 import uk.org.nbn.nbnv.api.dao.core.OperationalTaxonObservationFilterMapper;
 import uk.org.nbn.nbnv.api.dao.providers.ProviderHelper;
+import uk.org.nbn.nbnv.api.dao.warehouse.AttributeMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.DatasetAdministratorMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.DatasetMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.DesignationMapper;
@@ -97,6 +98,7 @@ public class TaxonObservationResource extends RequestResource {
     @Autowired PolygonUtilsMapper polygonUtilsMapper;
     @Autowired OperationalApiObservationViewMapper oApiObservationViewMapper;
     @Autowired FilterToText filterToText;
+    @Autowired AttributeMapper attributeMapper;
     // Inject reference to the warehouse sql session factory set up
     @Resource(name = "warehouseSqlSessionFactory") private SqlSessionFactory warehouseSqlSessionFactory;
     
@@ -1776,16 +1778,6 @@ public class TaxonObservationResource extends RequestResource {
         
         // If including attributes then push in the appropriate fields
         if (includeAttributes) {
-            // Find attributes
-            attributes = taxonObservationAttributeMapper.getAttributeListForObservations(
-                    user, startYear, endYear, datasetKeys, taxa, 
-                    spatialRelationship, featureID, sensitive, designation, 
-                    taxonOutputGroup, orgSuppliedList, gridRef, polygon);
-            
-            for (Attribute attrib : attributes) {
-                values.add(attrib.getLabel());
-            }
-            
             // Grab all attributes that match full version records in the list
             SqlSession attributeSession = warehouseSqlSessionFactory.openSession();
             // Bind mapper to session
@@ -1798,6 +1790,13 @@ public class TaxonObservationResource extends RequestResource {
                     attHandler, attributeSession, "getAttributesForObservations");
             
             atts = attHandler.getObservationAttributes();
+
+            // Pull out list of attributes and get the data for them
+            attributes = attributeMapper.selectAttributesByIDs(attHandler.getAttributeIDs());
+            
+            for (Attribute attrib : attributes) {
+                values.add(attrib.getLabel());
+            }            
         }
         
         // Write headers out
