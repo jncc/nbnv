@@ -2,7 +2,7 @@ window.nbn = window.nbn || {};
 nbn.nbnv = nbn.nbnv || {};
 nbn.nbnv.ui = nbn.nbnv.ui || {};
 
-nbn.nbnv.ui.createRequest = function (json, div) {
+nbn.nbnv.ui.createRequest = function (json, div) {    
     this.div = div;
     
     var reason = new nbn.nbnv.ui.requestReason(json);
@@ -34,7 +34,76 @@ nbn.nbnv.ui.createRequest = function (json, div) {
         $.extend(j, year.getJson());        
         $.extend(j, dataset.getJson());        
         $.extend(j, timeLimit.getJson());    
-        window.location = "/AccessRequest/Create/Complete?json=" + JSON.stringify(j);
+        
+        var userUrl = nbn.nbnv.api + '/user/userAccesses/requests';
+        var orgUrl = nbn.nbnv.api + '/organisation/organisationAccesses/requests';
+        var url = ('organisationID' in j.reason && j.reason.organisationID !== -1) ? orgUrl : userUrl;
+        
+        $('#waiting-dialog').dialog({
+            closeOnEscape: false,
+            buttons: null,
+            modal: true,
+            resizable: false,
+            dialogClass: "noclose"
+        });
+        
+        $.ajax({
+                type: "PUT",
+                url: url,
+                contentType: 'application/json',
+                processData: false,
+                data: JSON.stringify(j),
+                success: function() {
+                    $('#finished-dialog-text').html(
+                            '<p>Your access request has successfully been submitted and sent to all the relevant dataset administrators.</p>' +
+                            '<p>A summary of this request has been added to your list of pending access requests, available through your user account page. You will be notified of the dataset administrators decisions (either accepting or rejecting your request) for each dataset by email.</p>' +
+                            '<p>Please ensure your use of the data complies with the <a href="/Terms">NBN Gateway Terms and Conditions</a>.</p>'
+                    );
+                            
+                    $('#waiting-dialog').dialog('close');
+                    
+                    $('#finished-dialog').dialog({
+                        width: 800,
+                        closeOnEscape: false,
+                        modal: true,
+                        resizable: false,
+                        dialogClass: "noclose",
+                        buttons: { 'Return to my account' : function() {  window.location = '/User'; } }                        
+                    });
+                },
+                error: function(error) {
+                    $('#finished-dialog-text').html('');
+                    
+                    var obj = JSON.parse(error.responseText);
+                    
+                    if (obj.status.match('^Zero records would be granted in')) {
+                        $('#finished-dialog-text').append(obj.status + ', please amend your request and re-submit. If you believe this was in error please submit this information to access@nbn.org.uk and we will look into it')
+                            .append($('<p>').text(error.responseText))
+                            .append($('<p>')
+                                .append(JSON.stringify(j))
+                            );
+                    }
+                    else {
+                        $('#finished-dialog-text').append("Your access request has failed to be submitted correctly. Please submit this information to access@nbn.org.uk and we will look into it.")
+                            .append($('<p>').text(error.responseText))
+                            .append($('<p>')
+                                .append(JSON.stringify(j))
+                            );
+                    }
+
+                    $('#waiting-dialog').dialog('close');
+
+                    $('#finished-dialog').dialog({
+                        width: 800,           
+                        title: 'An error has occured',
+                        closeOnEscape: false,
+                        modal: true,
+                        resizable: false,
+                        dialogClass: "noclose",
+                        buttons: { 'Return to my account' : function() {  window.location = '/User'; } }                        
+                    });
+                }
+            });        
     }));
 
     this.div.accordion({

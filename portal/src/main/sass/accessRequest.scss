@@ -47,3 +47,8 @@
     float: left !important;
     margin-top: 15px;
 }
+
+.noclose .ui-dialog-titlebar-close
+{
+    display:none;
+}

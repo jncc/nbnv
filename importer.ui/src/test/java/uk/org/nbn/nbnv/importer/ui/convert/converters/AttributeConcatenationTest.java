@@ -50,7 +50,7 @@ public class AttributeConcatenationTest {
         System.out.println("getName");
 
         AttributeConcatenation instance = new AttributeConcatenation();
-        String expResult = "Concatenate attributes";
+        String expResult = "Concatenate attributes, forced ascii, removed unicode characters and trimmed to 255";
         String result = instance.getName();
         assertEquals(expResult, result);
     }

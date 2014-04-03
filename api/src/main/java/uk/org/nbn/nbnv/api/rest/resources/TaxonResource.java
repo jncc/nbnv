@@ -28,12 +28,14 @@ import org.springframework.util.StringUtils;
 import uk.org.nbn.nbnv.api.dao.providers.ProviderHelper;
 import uk.org.nbn.nbnv.api.dao.warehouse.DatasetMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.DesignationMapper;
+import uk.org.nbn.nbnv.api.dao.warehouse.GridMapSquareMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.OrganisationMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.SiteBoundaryMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.TaxonMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.TaxonObservationMapper;
 import uk.org.nbn.nbnv.api.model.Dataset;
 import uk.org.nbn.nbnv.api.model.Designation;
+import uk.org.nbn.nbnv.api.model.GridMapSquare;
 import uk.org.nbn.nbnv.api.model.Organisation;
 import uk.org.nbn.nbnv.api.model.SiteBoundary;
 import uk.org.nbn.nbnv.api.model.Taxon;
@@ -58,6 +60,7 @@ public class TaxonResource extends AbstractResource {
     @Autowired DownloadHelper downloadHelper;
     @Autowired TaxonObservationMapper observationMapper;
     @Autowired OrganisationMapper organisationMapper;
+    @Autowired GridMapSquareMapper gridSquareMapper;
 
     /**
      * Return a specific Taxon record from the data warehouse
@@ -150,6 +153,43 @@ public class TaxonResource extends AbstractResource {
         return FreeMarkerTemplateUtils.processTemplateIntoString(
                 configuration.getTemplate("service.ftl"), data);
     }
+    
+    /**
+     * Returns a list of distinct 10km squares that contain the specified TVK at 
+     * a public level of access
+     * 
+     * @param taxonVersionKey
+     * @return A list of 10km squares
+     */
+    @GET
+    @Path("{taxonVersionKey}/inspire/10km")
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned the requested list of 10km public access grid squares for this Taxon")
+    }) 
+    @Produces("text/csv")
+    public String get10kmSquaresForTaxon(
+            @Context HttpServletResponse response,
+            @PathParam("taxonVersionKey") final String taxonVersionKey) {
+        
+        // Set the filename to get around a bug with Firefox not adding the extension properly
+        response.setHeader("Content-Disposition", String.format("attachment; filename=\"%s_10km_Squares.csv\"", taxonVersionKey));
+        
+        List<GridMapSquare> squares = 
+                gridSquareMapper.getGridMapSquaresLimitedFilter(User.PUBLIC_USER, taxonVersionKey, "10km");
+        String out = "";
+        boolean first = true;
+        for (GridMapSquare square : squares) {
+            if (first) {
+                first = false;
+            } else {
+                out += "\r\n";
+            }
+            out += square.getGridRef();
+        }
+        
+        return out;
+    }
+    
     /**
      * Return a list of Taxon Records which are synonymous with the specified 
      * Taxon Record
