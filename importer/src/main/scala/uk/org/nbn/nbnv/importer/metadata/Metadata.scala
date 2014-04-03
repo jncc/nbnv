@@ -17,8 +17,6 @@ abstract class Metadata {
   val recorderAndDeterminerArePublic: Boolean
   val attributesArePublic: Boolean
   val publicPrecision: Int
-  val administratorForename: String
-  val administratorSurname: String
   val administratorEmail: String
   val importType: Option[Mode.Value]
 

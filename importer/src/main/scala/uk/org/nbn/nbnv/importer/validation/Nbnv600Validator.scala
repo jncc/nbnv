@@ -18,7 +18,6 @@ class Nbnv600Validator(repo: Repository) {
       new Result {
         def level = ResultLevel.ERROR
         def message = "NBNV-600: The dataset administrator email address must be provided for new datasets"
-          .format(metadata.administratorForename, metadata.administratorSurname, metadata.administratorSurname)
         def reference = metadata.datasetKey
       }
     }
@@ -32,8 +31,8 @@ class Nbnv600Validator(repo: Repository) {
     else {
       new Result {
         def level = ResultLevel.ERROR
-        def message = "NBNV-600: The user %s %s (%s) does not exist and cannot be set as the dataset administrator"
-          .format(metadata.administratorForename, metadata.administratorSurname, metadata.administratorSurname)
+        def message = "NBNV-600: The user email (%s) does not exist and cannot be set as the dataset administrator"
+          .format(metadata.administratorEmail)
         def reference = metadata.datasetKey
       }
     }
