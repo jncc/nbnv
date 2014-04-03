@@ -21,6 +21,14 @@ class MetadataValidator (repo: Repository) {
     val v2 = new Nbnv899Validator
     results.append(v2.validate(metadata))
 
+    //validate the dataset title
+    val v3 = new Nbnv951Validator
+    results.append(v3.validate(metadata))
+
+    //validate the administrator email
+    val v4 = new Nbnv953Validator
+    results.append(v4.validate(metadata))
+
     results.toList
   }
 
