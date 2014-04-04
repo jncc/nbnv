@@ -13,6 +13,7 @@ import org.jooq.conf.ParamType;
 import org.jooq.impl.DSL;
 import static org.jooq.impl.DSL.*;
 import static uk.gov.nbn.data.dao.jooq.Tables.*;
+import uk.gov.nbn.data.gis.maps.colour.Band;
 
 /**
  * The following class provides methods which can be used to inject SQL filters
@@ -38,14 +39,41 @@ public class MapHelper {
     public interface ResolutionDataGenerator {
         String getData(String layerName);
     }
-    
+
+    static Condition createTemporalSegments(Condition currentCond, List<Band> dates, Field<? extends Date> startDateField, Field<? extends Date> endDateField) {
+	if(dates != null && !dates.isEmpty()){
+	    Condition a = getTemporalSegment(dates.get(0).getStartYear(),dates.get(0).getEndYear(),startDateField,endDateField);
+	    Condition b = (dates.get(1) != null) ? getTemporalSegment(dates.get(1).getStartYear(),dates.get(1).getEndYear(),startDateField,endDateField) : null;
+	    Condition c = (dates.get(2) != null) ? getTemporalSegment(dates.get(2).getStartYear(),dates.get(2).getEndYear(),startDateField,endDateField) : null;
+	    switch (dates.size()){
+		case 1:
+		    currentCond = currentCond.and(a);
+		    break;
+		case 2:
+		    currentCond = currentCond.and(a.or(b));
+		    break;
+		case 3:
+		    currentCond = currentCond.and(a.or(b).or(c));
+		    break;
+	    }
+	    return currentCond;
+	}else{
+	    return currentCond;
+	}
+    }
+        
+    private static Condition getTemporalSegment(String startYear, String endYear, Field<? extends Date> startDateField, Field<? extends Date> endDateField) {
+	Condition startYearCond = extract(startDateField,DatePart.YEAR)
+	    .greaterOrEqual(Integer.parseInt(startYear));
+	return createEndYearSegment(startYearCond, endDateField, endYear);
+    }
+        
     static Condition createTemporalSegment(Condition currentCond, String startYear, String endYear, Field<? extends Date> startDateField, Field<? extends Date> endDateField) {
         return createEndYearSegment(createStartYearSegment(currentCond, startDateField, startYear), endDateField, endYear);
     }
     
     private static Condition createStartYearSegment(Condition currentCond, Field<? extends Date> startDateField, String startYear) {
         if(startYear != null) {
-            
             return currentCond.and(
                 extract(startDateField,DatePart.YEAR)
                 .greaterOrEqual(Integer.parseInt(startYear)));

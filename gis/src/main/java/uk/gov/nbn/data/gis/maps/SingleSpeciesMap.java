@@ -110,12 +110,12 @@ public class SingleSpeciesMap {
         data.put("presencelayerGenerator", getSingleSpeciesResolutionDataGenerator(FEATURE.GEOM, key, user, datasetKeys, startYear, endYear, false, getVerificationKeys(verifications)));
         data.put("bandLayerGenerator", new SingleSpeciesBandSqlGenerator() {
             @Override public String getData(String layerName, Band dateBand) {
-                return getSQL(FEATURE.GEOM, key, user, datasetKeys, dateBand.getStartYear(), dateBand.getEndYear(), false, layerName, getVerificationKeys(verifications));
+                return getSQL(FEATURE.GEOM, key, user, datasetKeys, dateBand.getStartYear(), dateBand.getEndYear(), false, layerName, getVerificationKeys(verifications), null);
             }
         });
         data.put("verificationLayerGenerator", new SingleSpeciesVerificationSqlGenerator() {
-            @Override public String getData(String layerName, Verification verificationStatus) {
-                return getSQL(FEATURE.GEOM, key, user, datasetKeys, null, null, false, layerName, Arrays.asList(verificationStatus.getStatus().getKey()));
+            @Override public String getData(String layerName, List<Band> dateBands, Verification verificationStatus) {
+                return getSQL(FEATURE.GEOM, key, user, datasetKeys, null, null, false, layerName, Arrays.asList(verificationStatus.getStatus().getKey()), dateBands);
             }
         });
         return new ModelAndView("SingleSpecies.map",data);
@@ -126,7 +126,7 @@ public class SingleSpeciesMap {
     }
     
     public interface SingleSpeciesVerificationSqlGenerator {
-        public String getData(String layerName, Verification verificationStatus);
+        public String getData(String layerName, List<Band> dateBands, Verification verificationStatus);
     }
     
     //Factored out the single species resolution data generator so that it can be used by the atlas map
@@ -141,7 +141,7 @@ public class SingleSpeciesMap {
 	    final List<Integer> verificationKeys) {
         return new ResolutionDataGenerator() {
             @Override public String getData(String layerName) {
-                return getSQL(geometry, taxonKey, user, datasetKeys, startYear, endYear, absence, layerName, verificationKeys);
+                return getSQL(geometry, taxonKey, user, datasetKeys, startYear, endYear, absence, layerName, verificationKeys, null);
             }
         };
     }      
@@ -151,12 +151,18 @@ public class SingleSpeciesMap {
                                     List<String> datasetKeys, 
                                     String startYear, String endYear, 
                                     boolean absence, String layerName,
-				    List<Integer> verificationKeys) {
+				    List<Integer> verificationKeys,
+				    List<Band> dateBands) {
+	boolean isMultipleDates = !(dateBands == null || dateBands.isEmpty());
         DSLContext create = MapHelper.getContext();
         Condition publicCondition = TAXONTREE.NODEPTVK.eq(taxonKey)
                 .and(MAPPINGDATAPUBLIC.ABSENCE.eq(absence))
                 .and(MAPPINGDATAPUBLIC.RESOLUTIONID.eq(LAYERS.get(layerName)));
-        publicCondition = MapHelper.createTemporalSegment(publicCondition, startYear, endYear, MAPPINGDATAPUBLIC.STARTDATE, MAPPINGDATAPUBLIC.ENDDATE);
+	if(isMultipleDates){
+	    publicCondition = MapHelper.createTemporalSegments(publicCondition, dateBands, MAPPINGDATAPUBLIC.STARTDATE, MAPPINGDATAPUBLIC.ENDDATE);
+	}else{
+	    publicCondition = MapHelper.createTemporalSegment(publicCondition, startYear, endYear, MAPPINGDATAPUBLIC.STARTDATE, MAPPINGDATAPUBLIC.ENDDATE);
+	}
         publicCondition = MapHelper.createInDatasetsSegment(publicCondition, MAPPINGDATAPUBLIC.DATASETKEY, datasetKeys);
 	publicCondition = MapHelper.createInValidationKeysSegment(publicCondition, MAPPINGDATAPUBLIC.VERIFICATION, verificationKeys);
 
@@ -164,7 +170,11 @@ public class SingleSpeciesMap {
                 .and(USERTAXONOBSERVATIONID.USERID.eq(user.getId()))
                 .and(MAPPINGDATAENHANCED.ABSENCE.eq(absence))
                 .and(MAPPINGDATAENHANCED.RESOLUTIONID.eq(LAYERS.get(layerName)));
-        enhancedCondition = MapHelper.createTemporalSegment(enhancedCondition, startYear, endYear, MAPPINGDATAENHANCED.STARTDATE, MAPPINGDATAENHANCED.ENDDATE);
+	if(isMultipleDates){
+	    enhancedCondition = MapHelper.createTemporalSegments(enhancedCondition, dateBands, MAPPINGDATAENHANCED.STARTDATE, MAPPINGDATAENHANCED.ENDDATE);
+	}else{
+	    enhancedCondition = MapHelper.createTemporalSegment(enhancedCondition, startYear, endYear, MAPPINGDATAENHANCED.STARTDATE, MAPPINGDATAENHANCED.ENDDATE);
+	}
         enhancedCondition = MapHelper.createInDatasetsSegment(enhancedCondition, MAPPINGDATAENHANCED.DATASETKEY, datasetKeys);
 	enhancedCondition = MapHelper.createInValidationKeysSegment(enhancedCondition, MAPPINGDATAENHANCED.VERIFICATION, verificationKeys);
 
