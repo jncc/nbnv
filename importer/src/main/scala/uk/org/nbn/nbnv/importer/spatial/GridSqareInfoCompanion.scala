@@ -33,7 +33,7 @@ trait GridSqareInfoCompanion {
   }
 
   def apply(latitude : Double, longitude: Double, precision : Option[Int]) : GridSquareInfo = {
-    val (easting, northing) = reprojectToWgs84(latitude, longitude, getEpsgCode)
+    val (easting, northing) = reprojectFromWgs84(latitude, longitude, getEpsgCode)
 
     //wrap up invalid easting and northing in more relevant error
     try {
@@ -41,7 +41,7 @@ trait GridSqareInfoCompanion {
     }
     catch {
       case ife: BadDataException =>
-        throw new BadDataException("Lat '%s' 'Lng are not in the '%s' projection".format(latitude, longitude, getEpsgCode))
+        throw new BadDataException("Lat '%s', Lng '%s' are not in the '%s' projection".format(latitude, longitude, getEpsgCode))
       case e: Throwable => throw e
     }
   }
@@ -58,8 +58,7 @@ trait GridSqareInfoCompanion {
     }
   }
 
-
-  private def reprojectToWgs84(lat: Double, lng: Double, targetEpsgCode : Int) : (Int, Int) = {
+  private def reprojectFromWgs84(lat: Double, lng: Double, targetEpsgCode : Int) : (Int, Int) = {
     val latLngGdp = new GeneralDirectPosition(lat, lng)
 
     //Get the Source CRS to WGS84 transformation operation
@@ -71,7 +70,9 @@ trait GridSqareInfoCompanion {
     //Get the coordinates in WGS84 lat lng
     val eastingNorthing = transformer.transform(latLngGdp, latLngGdp).getCoordinates
 
-    //floor the value to find the closest bottom left grid corner
-    (eastingNorthing(0).floor.toInt, eastingNorthing(1).floor.toInt)
+    val easting = eastingNorthing(0).floor.toInt
+    val northing = eastingNorthing(1).floor.toInt
+
+    (easting, northing)
   }
 }

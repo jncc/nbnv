@@ -134,7 +134,7 @@ class GridSquareInfoFactorySuite extends BaseFunSuite{
     gs.gridReference should be ("WV596477")
   }
 
-  test("should give none for grid ref outside of supported grid systems") {
+  test("smoke test - should give none for a lat long outside of supported grid systems") {
     val db = (new DataAccessLayer).getDatabase
     val fac = new GridSquareInfoFactory(db)
 
@@ -142,4 +142,17 @@ class GridSquareInfoFactorySuite extends BaseFunSuite{
 
     nullGS should be (None)
   }
+
+  test("smoke test - should give a grid ref for lng -2.201783333 lat 49.7293") {
+    //nbnv-954 gives rise to a perculular situation in which a lat long fall inside of a grid ref system spatially
+    // but gives rise to a grid square that falls outside of the accepted range. In this caes the system shoudl return none
+    val db = (new DataAccessLayer).getDatabase
+    val fac = new GridSquareInfoFactory(db)
+
+    val gs = fac.getByCoordinate(makePoint(-2.201783333,49.7293,4326)).get
+
+    gs.projection should be ("ED50")
+    gs.gridReference should be ("WA576090")
+  }
+
 }

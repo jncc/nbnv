@@ -5,6 +5,7 @@ import collection.mutable.ListBuffer
 import uk.org.nbn.nbnv.importer.fidelity.{ResultLevel, Result}
 import uk.org.nbn.nbnv.importer.spatial.GridSquareInfoFactory
 import uk.org.nbn.nbnv.importer.data.Database
+import org.apache.log4j.Logger
 
 class GridReferenceValidator (db: Database) {
   def validate(record: NbnRecord) = {
