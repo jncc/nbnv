@@ -47,23 +47,19 @@
 	var isVerificationTabSelected = 'nbn-verification-tab' === $('.ui-tabs-selected')[0].children[0].id;
 	var showOutline = keyValuePairs.hasOwnProperty('showOutline');
 	for(var i=1; i<4; i++){
-//	    if(!isVerificationTabSelected){
 		if(keyValuePairs.hasOwnProperty('gridLayer' + i)){
 		    var fillColour = $('#value-nbn-colour-picker-' + i).val();
 		    var outlineColour = fillColour;
 		    if(showOutline){
 			outlineColour = $('#value-nbn-colour-picker-outline').val();
 		    }
-console.log('adding band' + i);
 		    keyValuePairs['band' + i] = keyValuePairs['startYear' + i] + '-' + keyValuePairs['endYear' + i] + ',' + fillColour.replace("#","") + ',' + outlineColour.replace("#","");
 		}
-//	    }
 	    delete keyValuePairs['gridLayer' + i];
 	    delete keyValuePairs['startYear' + i];
 	    delete keyValuePairs['endYear' + i];
 	    delete keyValuePairs['value-nbn-colour-picker-' + i];
         }
-console.log(keyValuePairs);
 
 	//Add the verifications,	
 	var $verificationCheckboxes = $("input[name='verificationCheckBox']:checked");
