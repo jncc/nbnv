@@ -207,7 +207,7 @@ public class UserAccessRequestResource extends RequestResource {
         List<String> datasets = accessRequest.getDataset().getDatasets();
         User reqUser = userMapper.getUserById(accessRequest.getReason().getUserID());
         
-        DateFormat df = new SimpleDateFormat("dd/mm/yyyy");
+        DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
         
         for (String datasetKey : datasets) {
             oTaxonObservationFilterMapper.createFilter(filter);
@@ -581,7 +581,7 @@ public class UserAccessRequestResource extends RequestResource {
         if (expires.isEmpty()) {
             oUserAccessRequestMapper.acceptRequest(filterID, reason, new Timestamp(new java.util.Date().getTime()));
         } else {
-            DateFormat df = new SimpleDateFormat("dd/mm/yyyy");
+            DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
             java.util.Date expiresDate = df.parse(expires);
             oUserAccessRequestMapper.acceptRequestWithExpires(filterID, reason, new Timestamp(new java.util.Date().getTime()), new Date(expiresDate.getTime()));
         }
