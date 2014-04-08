@@ -214,7 +214,7 @@ public class OrganisationAccessRequestResource extends RequestResource {
         TaxonObservationFilter filter = accessRequestUtils.createFilter(json, accessRequest);
         List<String> datasets = accessRequest.getDataset().getDatasets();
         
-        DateFormat df = new SimpleDateFormat("dd/mm/yyyy");
+        DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
         
         for (String datasetKey : datasets) {
             oTaxonObservationFilterMapper.createFilter(filter);
@@ -643,7 +643,7 @@ public class OrganisationAccessRequestResource extends RequestResource {
         if (expires.isEmpty()) {
             oOrganisationAccessRequestMapper.acceptRequest(filterID, reason, new Timestamp(new java.util.Date().getTime()));
         } else {
-            DateFormat df = new SimpleDateFormat("dd/mm/yyyy");
+            DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
             java.util.Date expiresDate = df.parse(expires);
             oOrganisationAccessRequestMapper.acceptRequestWithExpires(filterID, reason, new Timestamp(new java.util.Date().getTime()), new Date(expiresDate.getTime()));
         }
