@@ -35,6 +35,8 @@
         <module>importer.orglogo</module>
         <module>reporter-mail</module>
         <module>recordcleaner</module>
+        <module>reseter.datasetAccess</module>
+        <module>revoker</module>
     </modules>
 	
     <build>
