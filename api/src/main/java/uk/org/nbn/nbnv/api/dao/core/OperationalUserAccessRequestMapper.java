@@ -142,6 +142,14 @@ public interface OperationalUserAccessRequestMapper {
     })
     public List<UserAccessRequest> getGrantedRequestsByDataset(@Param("dataset") String datasetKey);
 
+    @Select("SELECT uar.filterID FROM UserAccessRequest uar WHERE uar.accessExpires < GETDATE() AND responseTypeID = 1")
+    @Results(value = {
+        @Result(property="filter", column="filterID", javaType=TaxonObservationFilter.class, one=@One(select="uk.org.nbn.nbnv.api.dao.core.OperationalTaxonObservationFilterMapper.selectById")),
+        @Result(property="user", column="userID", javaType=User.class, one=@One(select="uk.org.nbn.nbnv.api.dao.core.OperationalUserMapper.getUserById")),
+        @Result(property="datasetKey", column="datasetKey")
+    })
+    public List<UserAccessRequest> getExpiredRequests();
+    
     @Update("UPDATE UserAccessRequest SET responseTypeID = 1, responseReason = #{responseReason}, responseDate = #{responseDate} "
             + "WHERE filterID = #{filterID}")
     public int acceptRequest(

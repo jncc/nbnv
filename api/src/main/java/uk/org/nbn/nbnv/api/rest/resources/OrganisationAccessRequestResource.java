@@ -598,6 +598,51 @@ public class OrganisationAccessRequestResource extends RequestResource {
     }
     
     /**
+     * SysAdmin function to get all expired access requests, used to find expired
+     * requests
+     * 
+     * @param user The system admin user who called this endpoint
+     * 
+     * @return A List of expired organisation access requests
+     */
+    @GET
+    @Path("/expired")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<OrganisationAccessRequest> getExpired(@TokenSystemAdministratorUser User user) {
+        return oOrganisationAccessRequestMapper.getExpiredRequests();
+    }
+    
+    /**
+     * SysAdmin function to revoke access, typically called for expirations
+     * 
+     * @param user The system admin who called this endpoint
+     * @param filterID The filterID of the request to be expired
+     *
+     * @return If the revoke action was a success
+     */
+    @POST
+    @Path("/requests/revoke/{id}")
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully completed operation"),
+        @ResponseCode(code = 403, condition = "The current user has no admin rights over this request")
+    })   
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response sysAdminRevoke(
+            @TokenSystemAdministratorUser User user, 
+            @PathParam("id") int filterID) {
+        try {
+            revokeRequest(user, filterID, "Request Expired");
+        } catch (IOException ex) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ex.toString()).build();
+        } catch (TemplateException ex) {
+            return Response.status(Response.Status.ACCEPTED).entity(ex.toString()).build();
+        } catch (Exception ex) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ex.toString()).build();
+        }
+        return Response.ok("Successfully Revoked Request").build();
+    }    
+    
+    /**
      * Returns an audit history listing all organisational access changes made to a dataset
      * 
      * @param user Current User (Must be a dataset administrator) (Injected 
