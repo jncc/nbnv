@@ -84,13 +84,15 @@ public class ResetDatasetAccess {
     private boolean resetDatasetAccess(List<String> datasets) {
 
         for (String dataset : datasets) {
+            log.debug("Reseting Access for " + dataset);
             WebResource webResource = client.resource(props.getProperty("api_url")
                     + "/user/userAccesses/reset/" + dataset);
             WebResource.Builder builder = webResource.getRequestBuilder();
             builder = builder.cookie(authCookie);
 
-            ClientResponse resp = builder.accept("application/json").post(ClientResponse.class);
+            ClientResponse resp = builder.accept("application/json").get(ClientResponse.class);
             if (resp.getStatus() != 200) {
+                log.debug("Failed to reset User Access for " + dataset + " :: " + resp.getEntity(String.class));
                 return false;
             }
 
@@ -99,8 +101,9 @@ public class ResetDatasetAccess {
             builder = webResource.getRequestBuilder();
             builder = builder.cookie(authCookie);
 
-            resp = builder.accept("application/json").post(ClientResponse.class);
+            resp = builder.accept("application/json").get(ClientResponse.class);
             if (resp.getStatus() != 200) {
+                log.debug("Failed to reset Organisation Access for " + dataset + " :: " + resp.getEntity(String.class));
                 return false;
             }
         }
