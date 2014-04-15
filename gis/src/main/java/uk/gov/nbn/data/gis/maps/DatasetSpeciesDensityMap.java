@@ -114,14 +114,17 @@ public class DatasetSpeciesDensityMap {
                         DATASETMAPPINGDATAPUBLIC.FEATUREID,
                         DATASETMAPPINGDATAPUBLIC.PTAXONVERSIONKEY)
                         .from(DATASETMAPPINGDATAPUBLIC)
-                        .where(publicCondition)
-                        .unionAll(create
+                        .where(publicCondition);
+                
+                if (User.PUBLIC_USER != user) {
+                    observations.unionAll(create
                         .select(
                         DATASETMAPPINGDATAENHANCED.FEATUREID,
                         DATASETMAPPINGDATAENHANCED.PTAXONVERSIONKEY)
                         .from(DATASETMAPPINGDATAENHANCED)
                         .join(USERTAXONOBSERVATIONID).on(USERTAXONOBSERVATIONID.OBSERVATIONID.eq(DATASETMAPPINGDATAENHANCED.ID))
                         .where(enhancedCondition));
+                }
                 
                 SelectHavingStep squares = create
                         .select(observations.field(0).as("featureID"), countDistinct(observations.field(1)).as("species"))
