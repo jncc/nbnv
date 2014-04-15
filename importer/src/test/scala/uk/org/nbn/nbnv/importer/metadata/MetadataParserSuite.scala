@@ -21,8 +21,6 @@ class MetadataParserSuite extends BaseFunSuite {
     result.temporalCoverage should be ("Test temporal coverage")
     result.additionalInformation should be ("Test additional info")
     result.administratorEmail should be ("test.user@example.com")
-    result.administratorForename should be ("Test")
-    result.administratorSurname should be ("User")
     result.recorderAndDeterminerArePublic should be (false)
     result.attributesArePublic should be (false)
     result.importType should be (Some(Mode.upsert))

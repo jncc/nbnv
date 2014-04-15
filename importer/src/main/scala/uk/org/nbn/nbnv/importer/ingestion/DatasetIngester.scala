@@ -61,8 +61,6 @@ class DatasetIngester @Inject()(log: Logger,
     setMetadata(m.temporalCoverage, d.getTemporalCoverage, d.setTemporalCoverage)
 
     d.setAdministratorEmail(m.administratorEmail)
-    d.setAdministratorSurname(m.administratorSurname)
-    d.setAdministratorForename(m.administratorForename)
 
     d.setProviderOrganisationKey(providerOrganisation.getId) // not metadata
     d.setDatasetTypeKey('T') // never changes, always 'T'

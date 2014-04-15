@@ -167,6 +167,14 @@ public interface OperationalOrganisationAccessRequestMapper {
     })
     public List<OrganisationAccessRequest> getGrantedRequestsByDataset(@Param("dataset") String datasetKey);
     
+    @Select("SELECT oar.filterID FROM OrganisationAccessRequest oar WHERE oar.accessExpires < GETDATE() AND responseTypeID = 1")
+    @Results(value = {
+        @Result(property="filter", column="filterID", javaType=TaxonObservationFilter.class, one=@One(select="uk.org.nbn.nbnv.api.dao.core.OperationalTaxonObservationFilterMapper.selectById")),
+        @Result(property="organisation", column="organisationID", javaType=Organisation.class, one=@One(select="uk.org.nbn.nbnv.api.dao.core.OperationalOrganisationMapper.selectByID")),
+        @Result(property="datasetKey", column="datasetKey")
+    })    
+    public List<OrganisationAccessRequest> getExpiredRequests();
+    
     @Update("UPDATE OrganisationAccessRequest SET responseTypeID = 1, responseReason = #{responseReason}, responseDate = #{responseDate} "
             + "WHERE filterID = #{filterID}")
     public int acceptRequest(

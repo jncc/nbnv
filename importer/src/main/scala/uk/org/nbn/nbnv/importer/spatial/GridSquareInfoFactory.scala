@@ -4,6 +4,7 @@ import uk.org.nbn.nbnv.importer.BadDataException
 import com.google.inject.Inject
 import uk.org.nbn.nbnv.importer.data.Database
 import uk.org.nbn.nbnv.importer.records.{GridTypeDef, SrsDef, GridRefDef, PointDef}
+import org.apache.log4j.Logger
 
 class GridSquareInfoFactory @Inject()(db: Database) {
 
@@ -26,19 +27,29 @@ class GridSquareInfoFactory @Inject()(db: Database) {
       val latitude = value.north
       val targetSrs = db.repo.getSRSForLatLong(longitude, latitude)
 
-      targetSrs match {
-      case Some(27700) => Some(BritishGridSquareInfo(latitude, longitude, value.prec))
-      case Some(29903) => Some(IrishGridSquareInfo(latitude, longitude, value.prec))
-      case Some(23030) => Some(ChannelIslandGridSquareInfo(latitude, longitude, value.prec))
-      case None => None
+      try {
+        targetSrs match {
+          case Some(27700) => Some(BritishGridSquareInfo(latitude, longitude, value.prec))
+          case Some(29903) => Some(IrishGridSquareInfo(latitude, longitude, value.prec))
+          case Some(23030) => Some(ChannelIslandGridSquareInfo(latitude, longitude, value.prec))
+          case None => None
+          case _ => throw new BadDataException("Database identified unhandled spatial reference system")
+        }
       }
+      catch {
+        case ife: BadDataException => {
+          None
+        } //Lat long may fall in the grid ref system but grid ref may not be in the valid rage.
+        case e: Throwable => throw e
+      }
+
     }
     else {
       srs match {
         case 27700 => Some(BritishGridSquareInfo(value.east.toInt, value.north.toInt, value.prec))
         case 29903 => Some(IrishGridSquareInfo(value.east.toInt, value.north.toInt, value.prec))
         case 23030 => Some(ChannelIslandGridSquareInfo(value.east.toInt, value.north.toInt, value.prec))
-        case _ => throw new BadDataException("Unknown spatial referene system")
+        case _ => throw new BadDataException("Unknown spatial reference system")
       }
     }
   }
