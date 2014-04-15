@@ -9,7 +9,9 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.MediaType;
@@ -27,11 +29,14 @@ public class ResetDatasetAccess {
     private Client client;
     private Properties props;
     private Cookie authCookie;
+    private Map<String, Boolean[]> failureMap;
 
     static Logger log = Logger.getLogger(
             ResetDatasetAccess.class.getName());
     
     public ResetDatasetAccess() {
+        failureMap = new HashMap<String, Boolean[]>();
+        
         props = new Properties();
         try {
             props = PropertiesReader.getEffectiveProperties("datasetAccess.properties");
@@ -83,6 +88,8 @@ public class ResetDatasetAccess {
 
     private boolean resetDatasetAccess(List<String> datasets) {
 
+        boolean retVal = true;
+        
         for (String dataset : datasets) {
             WebResource webResource = client.resource(props.getProperty("api_url")
                     + "/user/userAccesses/reset/" + dataset);
@@ -93,7 +100,9 @@ public class ResetDatasetAccess {
             ClientResponse resp = builder.accept("application/json").get(ClientResponse.class);
             if (resp.getStatus() != 200) {
                 log.debug("Failed to reset User Access for " + dataset + " :: " + resp.getEntity(String.class));
-                return false;
+                retVal = false;
+                Boolean[] arr = {false, true};
+                failureMap.put(dataset, arr);
             }
 
             webResource = client.resource(props.getProperty("api_url")
@@ -105,11 +114,20 @@ public class ResetDatasetAccess {
             resp = builder.accept("application/json").get(ClientResponse.class);
             if (resp.getStatus() != 200) {
                 log.debug("Failed to reset Organisation Access for " + dataset + " :: " + resp.getEntity(String.class));
-                return false;
+                retVal = false;
+                Boolean[] arr = {true, false};
+                if (failureMap.containsKey(dataset)) {
+                    arr[0] = false;
+                }
+                failureMap.put(dataset, arr);
             }
         }
 
-        return true;
+        return retVal;
+    }
+    
+    private Map<String, Boolean[]> getFailureMap() {
+        return failureMap;
     }
 
     /**
@@ -126,7 +144,14 @@ public class ResetDatasetAccess {
                 List<String> datasets = resetDatasetAccess.getDatasets(path);
                 log.debug("Retrieved Datasets...");
                 log.debug("Got " + datasets);
-                resetDatasetAccess.resetDatasetAccess(datasets);
+                if (resetDatasetAccess.resetDatasetAccess(datasets)) {
+                    System.exit(0);
+                } else {
+                    Map<String, Boolean[]> map = resetDatasetAccess.getFailureMap();
+                    for (String dataset : map.keySet()) {
+                        System.err.println("Failed " + dataset + " :: User " + map.get(dataset)[0] + " :: Organisation " + map.get(dataset)[1]);
+                    }
+                }
             } catch (FileNotFoundException ex) {
                 System.err.println("Could not find file at " + path + " :: " + ex.getLocalizedMessage());
                 System.exit(1);

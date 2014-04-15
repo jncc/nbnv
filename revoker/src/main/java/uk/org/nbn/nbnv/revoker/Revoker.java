@@ -94,12 +94,12 @@ public class Revoker {
 
                 log.debug("Revoking filterID " + request.getFilter().getId());
 
-    //            ClientResponse resp = builder.accept("application/json").post(ClientResponse.class);
-    //            if (resp.getStatus() != 200) {
-    //                log.error("Could not revoke filter with ID " + request.getFilter().getId());
-    //                log.error(resp.getEntity(String.class));
-    //                retVal = false;
-    //            }
+                ClientResponse resp = builder.accept("application/json").post(ClientResponse.class);
+                if (resp.getStatus() != 200) {
+                    log.error("Could not revoke filter with ID " + request.getFilter().getId());
+                    log.error(resp.getEntity(String.class));
+                    retVal = false;
+                }
 
                 log.debug("Revoked filterID " + request.getFilter().getId());
             }
@@ -134,12 +134,12 @@ public class Revoker {
 
                 log.debug("Revoking filterID " + request.getFilter().getId());
 
-//            ClientResponse resp = builder.accept("application/json").post(ClientResponse.class);
-//            if (resp.getStatus() != 200) {
-//                log.error("Could not revoke filter with ID " + request.getFilter().getId());
-//                log.error(resp.getEntity(String.class));
-//                retVal = false;
-//            }
+            ClientResponse resp = builder.accept("application/json").post(ClientResponse.class);
+            if (resp.getStatus() != 200) {
+                log.error("Could not revoke filter with ID " + request.getFilter().getId());
+                log.error(resp.getEntity(String.class));
+                retVal = false;
+            }
 
                 log.debug("Revoked filterID " + request.getFilter().getId());
             }
