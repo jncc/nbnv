@@ -1,5 +1,6 @@
 package uk.org.nbn.nbnv.api.dao.providers;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import org.springframework.util.StringUtils;
@@ -26,6 +27,29 @@ public class ProviderHelper {
 
     static void addEndYearFilter(Integer endYear) {
         WHERE("YEAR(o.startDate) <= " + endYear);
+    }
+    
+    static void addVerifications(List<Integer> verificationKeys){
+	WHERE(String.format("verification in (%s)", StringUtils.collectionToDelimitedString(verificationKeys,",")));
+    }
+    
+    static void addYearRanges(List<String> bands){
+	if(bands != null && !bands.isEmpty()){
+	    String yearRange = "(YEAR(o.startDate) <= %s AND YEAR(o.endDate) >= %s)";
+	    StringBuilder forWhere = new StringBuilder("(");
+	    switch(bands.size()){
+		case 3:
+		    forWhere.append(String.format(yearRange,getStartYear(bands.get(2)).toString(),getEndYear(bands.get(2)).toString())).append(" OR ");
+		case 2:
+		    forWhere.append(String.format(yearRange,getStartYear(bands.get(1)).toString(),getEndYear(bands.get(1)).toString())).append(" OR ");
+		case 1:
+		    forWhere.append(String.format(yearRange,getStartYear(bands.get(0)).toString(),getEndYear(bands.get(0)).toString()));
+	    }
+	    forWhere.append(")");
+	    WHERE(forWhere.toString());
+	}else{
+	    throw new IllegalArgumentException("No year band arguments supplied, a 'band' argument is required (eg band=2000-2012,ff0000,000000)");
+	}
     }
     
     static void addStartDateFilter(String startDate) {

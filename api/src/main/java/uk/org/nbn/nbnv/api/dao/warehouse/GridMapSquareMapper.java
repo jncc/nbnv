@@ -19,10 +19,12 @@ public interface GridMapSquareMapper {
             @Param("user") User user, 
             @Param("ptvk") String ptvk, 
             @Param("resolution") String resolution, 
-            @Param("band") String band, 
+            @Param("bands") List<String> bands, 
             @Param("datasetKey") List<String> datasetKey,
             @Param("viceCountyIdentifier") String viceCountyIdentifier,
-            @Param("absence") int absence);
+            @Param("absence") int absence,
+	    @Param("verificationKeys") List<Integer> verificationKeys,
+	    @Param("isGroupByDate") boolean isGroupByDate);
     
     @SelectProvider(type=GridMapSquareProvider.class, method="gridMapDatasets")
     List<TaxonDataset> getGridMapDatasets(

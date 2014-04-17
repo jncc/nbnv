@@ -25,7 +25,8 @@ public class GridMapSquareProvider {
         BEGIN();
         SELECT("DISTINCT fd.identifier gridref");
         createGenericQuery(params);
-        addYearBand(params);
+//        addYearBand(params);
+	addYearBandOrVerificationStatus(params);
         return SQL();
     }
 
@@ -55,13 +56,42 @@ public class GridMapSquareProvider {
         ProviderHelper.addDatasetKeysFilter(params);
     }
 
-    //Here is an example year band: 2000-2012,ff0000,000000
-    private void addYearBand(Map<String, Object> params) {
-        if (params.containsKey("band") && !params.get("band").equals("")) {
-            addYearRange(ProviderHelper.getStartYear((String) params.get("band")), ProviderHelper.getEndYear((String) params.get("band")));
-        } else {
-            throw new IllegalArgumentException("No year band arguments supplied, a 'band' argument is required (eg band=2000-2012,ff0000,000000)");
-        }
+//    //Here is an example year band: 2000-2012,ff0000,000000
+//    private void addYearBand(Map<String, Object> params) {
+//        if (params.containsKey("band") && !params.get("band").equals("")) {
+//            addYearRange(ProviderHelper.getStartYear((String) params.get("band")), ProviderHelper.getEndYear((String) params.get("band")));
+//        } else {
+//            throw new IllegalArgumentException("No year band arguments supplied, a 'band' argument is required (eg band=2000-2012,ff0000,000000)");
+//        }
+//    }
+
+    private void addYearBandOrVerificationStatus(Map<String, Object> params){
+	List<String> bands = null;
+	List<Integer> verificationKeys = null;
+	Boolean isGroupByDate = null;
+	if(params.containsKey("bands")){
+	    bands = (List<String>)params.get("bands");
+	}
+	if (bands == null || bands.isEmpty()) {
+	    throw new IllegalArgumentException("No year band arguments supplied, a 'band' argument is required (eg band=2000-2012,ff0000,000000)");
+	}
+	if(params.containsKey("verificationKeys")){
+	    verificationKeys = (List<Integer>)params.get("verificationKeys");
+	}
+	if (verificationKeys == null || verificationKeys.isEmpty()) {
+	    throw new IllegalArgumentException("No verification keys supplied, at least one is required (values are 1-4)");
+	}
+	if(params.containsKey("isGroupByDate")){
+	    isGroupByDate = (Boolean)params.get("isGroupByDate");
+	}else{
+	    throw new IllegalArgumentException("No isGroupByDate argument supplied.");
+	}
+	if(isGroupByDate){
+	    addYearRange(ProviderHelper.getStartYear(bands.get(0)), ProviderHelper.getEndYear(bands.get(0)));
+	}else{
+	    ProviderHelper.addYearRanges(bands);
+	}
+	ProviderHelper.addVerifications(verificationKeys);
     }
 
     private void addYearRange(Integer startYear, Integer endYear) {

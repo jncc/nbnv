@@ -107,6 +107,7 @@
 	delete keyValuePairs['value-nbn-colour-picker-Uncertain'];
 	delete keyValuePairs['value-nbn-colour-picker-Unverified'];
 	delete keyValuePairs['value-nbn-colour-picker-outline-verification'];
+	delete keyValuePairs['verificationCheckBox'];
 
         //There is a specific order that background layers should be requested to force
         //some layers to be drawn over others
@@ -391,7 +392,11 @@
     }
     
     function doTabs(){
-	$('.nbn-tabs').tabs();
+	$('.nbn-tabs').tabs({
+	    select: function(event, ui){
+		doOnChange();
+	    }
+	});
     }
 
     $(document).ready(function(){
