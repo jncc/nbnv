@@ -224,10 +224,12 @@ public class SingleSpeciesMap {
     }
     
     private List<Integer> getVerificationKeys(List<Verification> verifications){
-	List<Integer> toReturn = new ArrayList<Integer>();
-	for(Verification verification : verifications){
-	    toReturn.add(verification.getStatus().getKey());
-	}
-	return toReturn;
+        List<Integer> toReturn = new ArrayList<Integer>();
+        if(verifications != null && !verifications.isEmpty()){
+            for(Verification verification : verifications){
+                toReturn.add(verification.getStatus().getKey());
+            }
+        }
+        return toReturn;
     }
 }

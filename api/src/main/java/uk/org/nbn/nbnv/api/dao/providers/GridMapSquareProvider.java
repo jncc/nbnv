@@ -25,7 +25,6 @@ public class GridMapSquareProvider {
         BEGIN();
         SELECT("DISTINCT fd.identifier gridref");
         createGenericQuery(params);
-//        addYearBand(params);
 	addYearBandOrVerificationStatus(params);
         return SQL();
     }
@@ -55,15 +54,6 @@ public class GridMapSquareProvider {
         }
         ProviderHelper.addDatasetKeysFilter(params);
     }
-
-//    //Here is an example year band: 2000-2012,ff0000,000000
-//    private void addYearBand(Map<String, Object> params) {
-//        if (params.containsKey("band") && !params.get("band").equals("")) {
-//            addYearRange(ProviderHelper.getStartYear((String) params.get("band")), ProviderHelper.getEndYear((String) params.get("band")));
-//        } else {
-//            throw new IllegalArgumentException("No year band arguments supplied, a 'band' argument is required (eg band=2000-2012,ff0000,000000)");
-//        }
-//    }
 
     private void addYearBandOrVerificationStatus(Map<String, Object> params){
 	List<String> bands = null;
