@@ -136,64 +136,34 @@ public class GridMapSquareResource extends AbstractResource {
         }
         downloadHelper.addReadMe(zip, user, title, filters);
     }
-
-    /**
-     * 
-     * @param zip
-     * @param user
-     * @param ptvk
-     * @param resolution
-     * @param bands
-     * @param datasetKey
-     * @param viceCountyIdentifier
-     * @throws IOException 
-     */
     private void addGridRefs(ZipOutputStream zip, User user, String ptvk, String resolution, List<String> bands, List<String> datasetKey, String viceCountyIdentifier, List<String> verifications) throws IOException {
 	List<Integer> verificationKeys = getVerificationKeys(verifications);
 	boolean isGroupByDate = isGroupByDate(verifications);
 	if(isGroupByDate){
 	    for (String band : bands) {
 		if (!"".equals(band)) {
-		    addGridRefsForYearBand(zip, user, ptvk, resolution, band, datasetKey, viceCountyIdentifier, verificationKeys);
+		    String title = "GridSquares_" + band.substring(0,band.indexOf(","));
+		    fetchAndAppendGridRefs(zip, user, ptvk, resolution, Arrays.asList(band), datasetKey, viceCountyIdentifier, verificationKeys, title, isGroupByDate);
 		} else {
 		    throw new IllegalArgumentException("No year band arguments supplied, at least one 'band' argument is required (eg band=2000-2012,ff0000,000000)");
 		}
 	    }
 	}else{
 	    for (Integer verificationKey : verificationKeys){
-		addGridRefsForVerification(zip, user, ptvk, resolution, bands, datasetKey, viceCountyIdentifier, verificationKey);
+		String title = "GridSquares_" + verificationKey;
+		fetchAndAppendGridRefs(zip, user, ptvk, resolution, bands, datasetKey, viceCountyIdentifier, Arrays.asList(verificationKey), title, isGroupByDate);
 	    }
 	    
 	}
     }
 
     /**
-     * 
-     * @param zip
-     * @param user
-     * @param ptvk
-     * @param resolution
-     * @param band example year band: 2000-2012,ff0000,000000
-     * @param datasetKeys
-     * @param viceCountyIdentifier
-     * @throws IOException 
-     */
-    private void addGridRefsForYearBand(ZipOutputStream zip, User user, String ptvk, String resolution, String band, List<String> datasetKeys, String viceCountyIdentifier, List<Integer> verificationKeys) throws IOException {
-        List<String> bands = Arrays.asList(band.substring(0,band.indexOf(",")));
-        String yearRange = band.substring(0,band.indexOf(","));
-        zip.putNextEntry(new ZipEntry("GridSquares_" + yearRange + ".csv"));
-        List<GridMapSquare> gridMapSquares = gridMapSquareMapper.getGridMapSquares(user, ptvk, resolution, bands, datasetKeys, viceCountyIdentifier, 0, verificationKeys, true);
-        downloadHelper.writeln(zip, "GridSquares");
-        for (GridMapSquare gridMapSquare : gridMapSquares) {
-            downloadHelper.writeln(zip, gridMapSquare.getGridRef());
-        }
-        zip.flush();
-    }
-
-    private void addGridRefsForVerification(ZipOutputStream zip, User user, String ptvk, String resolution, List<String> bands, List<String> datasetKeys, String viceCountyIdentifier, Integer verificationKey) throws IOException {
-	List<Integer> verificationKeys = Arrays.asList(verificationKey);
-        zip.putNextEntry(new ZipEntry("Verification_" + verificationKey + ".csv"));
-        List<GridMapSquare> gridMapSquares = gridMapSquareMapper.getGridMapSquares(user, ptvk, resolution, bands, datasetKeys, viceCountyIdentifier, 0, verificationKeys, false);
+    * @param bands list of Strings with year range and colours, eg: 2000-2012,ff0000,000000
+    * @param list of verification statuses either with colours (eg 1,ff0000,00ff00), or without (eg 1)
+    */
+    private void fetchAndAppendGridRefs(ZipOutputStream zip, User user, String ptvk, String resolution, List<String> bands, List<String> datasetKeys, String viceCountyIdentifier, List<Integer> verificationKeys, String title, boolean isGroupByDate) throws IOException {
+        zip.putNextEntry(new ZipEntry(title + ".csv"));
+        List<GridMapSquare> gridMapSquares = gridMapSquareMapper.getGridMapSquares(user, ptvk, resolution, bands, datasetKeys, viceCountyIdentifier, 0, verificationKeys, isGroupByDate);
         downloadHelper.writeln(zip, "GridSquares");
         for (GridMapSquare gridMapSquare : gridMapSquares) {
             downloadHelper.writeln(zip, gridMapSquare.getGridRef());
