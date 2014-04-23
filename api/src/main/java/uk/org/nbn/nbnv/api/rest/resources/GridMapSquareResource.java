@@ -32,6 +32,7 @@ import uk.org.nbn.nbnv.api.model.TaxonDataset;
 import uk.org.nbn.nbnv.api.model.User;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
 import uk.org.nbn.nbnv.api.rest.resources.utils.DownloadHelper;
+import uk.org.nbn.nbnv.api.utils.Status;
 
 @Component
 @Path("/gridMapSquares")
@@ -150,10 +151,9 @@ public class GridMapSquareResource extends AbstractResource {
 	    }
 	}else{
 	    for (Integer verificationKey : verificationKeys){
-		String title = "GridSquares_" + verificationKey;
+		String title = "GridSquares_" + Status.get(verificationKey);
 		fetchAndAppendGridRefs(zip, user, ptvk, resolution, bands, datasetKey, viceCountyIdentifier, Arrays.asList(verificationKey), title, isGroupByDate);
 	    }
-	    
 	}
     }
 

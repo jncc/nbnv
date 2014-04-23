@@ -72,10 +72,10 @@ public class MapHelper {
         return createEndYearSegment(createStartYearSegment(currentCond, startDateField, startYear), endDateField, endYear);
     }
     
-    private static Condition createStartYearSegment(Condition currentCond, Field<? extends Date> startDateField, String startYear) {
+    private static Condition createStartYearSegment(Condition currentCond, Field<? extends Date> endDateField, String startYear) {
         if(startYear != null) {
             return currentCond.and(
-                extract(startDateField,DatePart.YEAR)
+                extract(endDateField,DatePart.YEAR)
                 .greaterOrEqual(Integer.parseInt(startYear)));
         }
         else {
@@ -83,10 +83,10 @@ public class MapHelper {
         }
     }
     
-    private static Condition createEndYearSegment(Condition currentCond, Field<? extends Date> endDateField, String endYear) {
+    private static Condition createEndYearSegment(Condition currentCond, Field<? extends Date> startDateField, String endYear) {
         if(endYear != null) {
             return currentCond.and(
-                extract(endDateField,DatePart.YEAR)
+                extract(startDateField,DatePart.YEAR)
                 .lessOrEqual(Integer.parseInt(endYear)));
         }
         else {
@@ -103,7 +103,7 @@ public class MapHelper {
         }
     }
     
-    static Condition createInValidationKeysSegment(Condition currentCond, Field<Integer> field, List<Integer> values){
+    static Condition createInVerificationKeysSegment(Condition currentCond, Field<Integer> field, List<Integer> values){
 	if(values != null && !values.isEmpty()){
 	    return currentCond.and(field.in(values));
 	}

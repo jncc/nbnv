@@ -40,7 +40,7 @@
             <artifactId>dynamo-mapping</artifactId>
             <version>0.6</version>
         </dependency>
-        
+                
         <!-- Hibernate Validator -->
         <dependency>
             <groupId>org.hibernate</groupId>
@@ -94,7 +94,7 @@
             <version>3.2.2.RELEASE</version>
             <scope>test</scope>
         </dependency>
-            
+
     </dependencies>
     
     <build>

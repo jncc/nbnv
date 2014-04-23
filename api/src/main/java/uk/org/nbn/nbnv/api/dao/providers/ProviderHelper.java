@@ -35,7 +35,7 @@ public class ProviderHelper {
     
     static void addYearRanges(List<String> bands){
 	if(bands != null && !bands.isEmpty()){
-	    String yearRange = "(YEAR(o.startDate) <= %s AND YEAR(o.endDate) >= %s)";
+	    String yearRange = "(YEAR(o.endDate) >= %s AND YEAR(o.startDate) <= %s)";
 	    StringBuilder forWhere = new StringBuilder("(");
 	    switch(bands.size()){
 		case 3:
