@@ -3,6 +3,7 @@ package uk.org.nbn.nbnv.api.rest.resources;
 import freemarker.template.TemplateException;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -71,6 +72,7 @@ import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
 import uk.org.nbn.nbnv.api.rest.resources.utils.DownloadHelper;
 import uk.org.nbn.nbnv.api.rest.resources.utils.TaxonObservationAttributeHandler;
 import uk.org.nbn.nbnv.api.rest.resources.utils.TaxonObservationDownloadHandler;
+import uk.org.nbn.nbnv.api.rest.resources.utils.TaxonObservationHandler;
 import uk.org.nbn.nbnv.api.utils.DownloadUtils;
 import uk.org.nbn.nbnv.api.utils.FilterToText;
 
@@ -291,12 +293,11 @@ public class TaxonObservationResource extends RequestResource {
      * @response.representation.200.mediaType application/json
      */
     @GET
-    @TypeHint(TaxonObservation.class)
     @StatusCodes({
         @ResponseCode(code = 200, condition = "Successfully returned a list of taxon observations which match the given filter")
     })
     @Produces(MediaType.APPLICATION_JSON)
-    public List<TaxonObservation> getObservationsByFilter(
+    public StreamingOutput getObservationsByFilter(
             @TokenUser(allowPublic = false) User user,
             @Context HttpServletRequest request,
             @QueryParam("startYear") @DefaultValue(ObservationResourceDefaults.defaultStartYear) int startYear,
@@ -311,10 +312,12 @@ public class TaxonObservationResource extends RequestResource {
             @QueryParam("orgSuppliedList") @DefaultValue(ObservationResourceDefaults.defaultOrgSuppliedList) int orgSuppliedList,
             @QueryParam("gridRef") @DefaultValue(ObservationResourceDefaults.defaultGridRef) String gridRef,
             @QueryParam("polygon") @DefaultValue(ObservationResourceDefaults.defaultPolygon) String polygon,
-            @QueryParam("absence") @DefaultValue(ObservationResourceDefaults.defaultAbsence) Boolean absence) throws IllegalArgumentException {        
-        return retreiveObservationsRecordsByFilter(user, request.getRemoteAddr(), startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, orgSuppliedList, gridRef, polygon, absence);
+            @QueryParam("absence") @DefaultValue(ObservationResourceDefaults.defaultAbsence) Boolean absence,
+            @QueryParam("callback") @DefaultValue("") String callback,
+            @QueryParam("includeAttributes") @DefaultValue("false") Boolean includeAttributes) throws IllegalArgumentException {
+        return retrieveStreamingObservations(user, request, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, orgSuppliedList, gridRef, polygon, absence, callback, includeAttributes);
     }
-    
+
     /**
      * Returns a list of Taxon Observations matching the given serach parameters
      * 
@@ -347,7 +350,7 @@ public class TaxonObservationResource extends RequestResource {
         @ResponseCode(code = 200, condition = "Successfully returned a list of taxon observations which match the given filter")
     })
     @Produces(MediaType.APPLICATION_JSON)
-    public List<TaxonObservation> getObservationsByFilterViaPOST(
+    public StreamingOutput getObservationsByFilterViaPOST(
             @TokenUser(allowPublic = false) User user,
             @Context HttpServletRequest request,
             @FormParam("startYear") @DefaultValue(ObservationResourceDefaults.defaultStartYear) int startYear,
@@ -362,8 +365,81 @@ public class TaxonObservationResource extends RequestResource {
             @FormParam("orgSuppliedList") @DefaultValue(ObservationResourceDefaults.defaultOrgSuppliedList) int orgSuppliedList,
             @FormParam("gridRef") @DefaultValue(ObservationResourceDefaults.defaultGridRef) String gridRef,
             @FormParam("polygon") @DefaultValue(ObservationResourceDefaults.defaultPolygon) String polygon,
-            @FormParam("absence") @DefaultValue(ObservationResourceDefaults.defaultAbsence) Boolean absence) throws IllegalArgumentException {
-        return retreiveObservationsRecordsByFilter(user, request.getRemoteAddr(), startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, orgSuppliedList, gridRef, polygon, absence);
+            @FormParam("absence") @DefaultValue(ObservationResourceDefaults.defaultAbsence) Boolean absence,
+            @FormParam("callback") @DefaultValue("") String callback,
+            @FormParam("includeAttributes") @DefaultValue("false") Boolean includeAttributes) throws IllegalArgumentException {
+        return retrieveStreamingObservations(user, request, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, orgSuppliedList, gridRef, polygon, absence, callback, includeAttributes);
+    }
+    
+    private StreamingOutput retrieveStreamingObservations (
+            final User user, final HttpServletRequest request, final int startYear,
+            final int endYear, final List<String> datasetKeys, final List<String> taxa, 
+            final String spatialRelationship, final String featureID, final Boolean sensitive,
+            final String designation, final String taxonOutputGroup, final int orgSuppliedList,
+            final String gridRef, final String polygon, final Boolean absence, final String callback,
+            final boolean includeAttributes) {
+        if (StringUtils.hasText(polygon)) {
+           checkPolygonMaxSize(polygon, taxa, designation, taxonOutputGroup, orgSuppliedList, datasetKeys);
+        }
+        
+        // Stop users being able to request all records that they have access to at the same time
+        if (!listHasAtLeastOneText(taxa)
+                && !StringUtils.hasText(designation)
+                && !StringUtils.hasText(taxonOutputGroup)
+                && orgSuppliedList < 1
+                && !listHasAtLeastOneText(datasetKeys)
+                && !StringUtils.hasText(featureID) 
+                && !StringUtils.hasText(gridRef)
+                && !StringUtils.hasText(polygon)) {
+            throw new IllegalArgumentException("Must Supply at least one type of filter; dataset (key list), spatial(featureID, gridRef or polygon) or taxon (PTVK list, Output Group, Designation or Organisation Supplied List)");    
+        }
+        
+        if (datasetKeys.size() > 1 
+                && !listHasAtLeastOneText(taxa)
+                && !StringUtils.hasText(designation)
+                && !StringUtils.hasText(taxonOutputGroup)
+                && orgSuppliedList < 1
+                && !StringUtils.hasText(featureID) 
+                && !StringUtils.hasText(gridRef)
+                && !StringUtils.hasText(polygon)) {
+            throw new IllegalArgumentException("Must supply a spatial or taxon filter with more than one dataset");
+        }
+        
+        writeAPIViewRecordToDatabase(user, request.getRemoteAddr(), startYear, 
+                endYear, datasetKeys, taxa, spatialRelationship, featureID, 
+                sensitive, designation, taxonOutputGroup, orgSuppliedList, 
+                gridRef, polygon, absence);  
+
+        return new StreamingOutput() {
+
+            @Override
+            public void write(OutputStream out) throws IOException, WebApplicationException {
+                PrintWriter writer = new PrintWriter(out);
+                
+                writer.print("[");
+                
+                SqlSession session = warehouseSqlSessionFactory.openSession();
+                session.getMapper(TaxonObservationMapper.class);
+                
+                sendRequestWithHandler(user, startYear, endYear, datasetKeys, 
+                        taxa, spatialRelationship, featureID, sensitive, 
+                        designation, taxonOutputGroup, orgSuppliedList, gridRef, 
+                        polygon, new TaxonObservationHandler(writer, includeAttributes), 
+                        session, "selectObservationRecordsByFilter");
+                
+                session.close();
+                
+                writer.print("]");
+                
+                if (StringUtils.hasText(callback) && callback.startsWith("jQuery")) {
+                    writer.print(")");
+                }
+                
+                writer.flush();
+                out.flush();
+                out.close();
+            }
+        };
     }
     
     /**
