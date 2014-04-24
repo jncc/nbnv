@@ -1,6 +1,7 @@
 package uk.org.nbn.nbnv.api.model;
 
 import java.sql.Date;
+import java.util.Map;
 //import java.util.Date;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -36,6 +37,9 @@ public class TaxonObservation {
     private String determiner;
     private boolean sensitive;
     private boolean absence;
+    private boolean publicAttribute;
+    private String attrStr;
+    private Map<String, String> attributes;
 
     public int getObservationID() {
         return observationID;
@@ -249,5 +253,29 @@ public class TaxonObservation {
      */
     public void setResolution(String resolution) {
         this.resolution = resolution;
+    }
+
+    public boolean isPublicAttribute() {
+        return publicAttribute;
+    }
+
+    public void setPublicAttribute(boolean publicAttributes) {
+        this.publicAttribute = publicAttributes;
+    }
+
+    public String getAttrStr() {
+        return attrStr;
+    }
+
+    public void setAttrStr(String attrStr) {
+        this.attrStr = attrStr;
+    }
+
+    public Map<String, String> getAttributes() {
+        return attributes;
+    }
+
+    public void setAttributes(Map<String, String> attributes) {
+        this.attributes = attributes;
     }
 }
