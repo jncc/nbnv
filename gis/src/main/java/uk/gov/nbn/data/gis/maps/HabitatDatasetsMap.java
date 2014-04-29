@@ -15,7 +15,6 @@ import org.springframework.web.servlet.ModelAndView;
 import uk.ac.ceh.dynamo.arguments.annotations.ServiceURL;
 import uk.org.nbn.nbnv.api.model.HabitatDataset;
 import static uk.gov.nbn.data.dao.jooq.Tables.*;
-import uk.gov.nbn.data.gis.maps.cache.ShapefileStore;
 import uk.gov.nbn.data.gis.maps.colour.ColourHelper;
 
 /**
@@ -28,7 +27,6 @@ import uk.gov.nbn.data.gis.maps.colour.ColourHelper;
 public class HabitatDatasetsMap {
     @Autowired Properties properties;
     @Autowired WebResource dataApi;
-    @Autowired ShapefileStore shapes;
     @Autowired ColourHelper colours;
     private final LayerGenerator layerGenerator = new LayerGenerator();
     
@@ -45,8 +43,7 @@ public class HabitatDatasetsMap {
     }
     
     @RequestMapping("HabitatDatasets")
-    public ModelAndView getSiteBoundariesModel(@ServiceURL String mapServiceURL, 
-            @RequestParam(value="SRS",defaultValue="EPSG:4326", required=false) String srs) {
+    public ModelAndView getSiteBoundariesModel(@ServiceURL String mapServiceURL) {
         List<HabitatDataset> datasets = dataApi
                         .path("habitatDatasets")
                         .accept(MediaType.APPLICATION_JSON) 
@@ -54,8 +51,6 @@ public class HabitatDatasetsMap {
         
         HashMap<String, Object> data = new HashMap<String, Object>();
         data.put("layerGenerator", layerGenerator);
-        data.put("srs", srs);
-        data.put("shapes", shapes);
         data.put("mapServiceURL", mapServiceURL);
         data.put("properties", properties);
         data.put("habitats", datasets);
