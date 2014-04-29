@@ -21,7 +21,7 @@ import static uk.gov.nbn.data.dao.jooq.Tables.*;
  */
 public class MapHelper {
     
-    public static String getMapData(Field<?> geomField, Field<?> uniqueField, int srid, Query query) {
+    public static String getMapData(Query query) {
         return query.getSQL(ParamType.INLINED);
     }
     
@@ -75,7 +75,7 @@ public class MapHelper {
     
     static String getSelectedFeatureData(String selectedFeature) {
         if(selectedFeature != null) {
-            return MapHelper.getMapData(FEATUREDATA.GEOM, FEATUREDATA.ID, 4326, getContext()
+            return MapHelper.getMapData(getContext()
                 .select(FEATUREDATA.ID, FEATUREDATA.GEOM)
                 .from(FEATUREDATA)
                 .where(FEATUREDATA.IDENTIFIER.eq(selectedFeature))

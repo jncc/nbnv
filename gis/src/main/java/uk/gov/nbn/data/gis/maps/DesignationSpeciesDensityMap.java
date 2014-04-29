@@ -145,7 +145,7 @@ public class DesignationSpeciesDensityMap {
                         .from(observations)
                         .groupBy(observations.field(0));
 
-                return baker.getData(MapHelper.getMapData(FEATURE.GEOM, FEATURE.IDENTIFIER, 4326, create
+                return baker.getData(MapHelper.getMapData(create
                         .select(
                         FEATURE.GEOM,
                         FEATURE.IDENTIFIER,

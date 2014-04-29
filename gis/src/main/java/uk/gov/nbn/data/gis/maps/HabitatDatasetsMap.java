@@ -49,7 +49,7 @@ public class HabitatDatasetsMap {
             @Override
             public String getData(String habitat) throws BreadException {
                 DSLContext create = MapHelper.getContext();
-                return baker.getData(MapHelper.getMapData(HABITATFEATUREFEATUREDATA.GEOM, HABITATFEATUREFEATUREDATA.IDENTIFIER, 4326, create.
+                return baker.getData(MapHelper.getMapData(create.
                     select(HABITATFEATUREFEATUREDATA.GEOM, HABITATFEATUREFEATUREDATA.IDENTIFIER)
                     .from(HABITATFEATUREFEATUREDATA)
                     .join(HABITATFEATUREDATA).on(HABITATFEATUREDATA.FEATUREID.eq(HABITATFEATUREFEATUREDATA.ID))
