@@ -57,9 +57,9 @@
 			<li><a href="#tabs-2" id="nbn-verification-tab">Verification</a></li>
 		    </ul>
 		    <div id="tabs-1">
-			<@yearRange layerNum="3" hexColour="#ff0000" checkedText="" layerPosition="Top"/><br/>
+			<@yearRange layerNum="1" hexColour="#ffff00" checkedText="checked" layerPosition="Top"/><br/>
 			<@yearRange layerNum="2" hexColour="#ff7f00" checkedText="" layerPosition="Middle"/><br/>
-			<@yearRange layerNum="1" hexColour="#ffff00" checkedText="checked" layerPosition="Bottom"/><br/>
+			<@yearRange layerNum="3" hexColour="#ff0000" checkedText="" layerPosition="Bottom"/><br/>
 			<div><span class="nbn-date-layer-label">Outline:</span> <input type='checkbox' id='nbn-show-outline' name='showOutline' checked colourPickerId='nbn-colour-picker-outline'><@colourPicker idSuffix="-outline" hexColour="#000000"/></div>
 		    </div>
 		    <div id="tabs-2">

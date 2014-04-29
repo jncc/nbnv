@@ -46,7 +46,7 @@
         //Add the year bands formatted for the grid map service
 	var isVerificationTabSelected = 'nbn-verification-tab' === $('.ui-tabs-selected')[0].children[0].id;
 	var showOutline = keyValuePairs.hasOwnProperty('showOutline');
-	for(var i=1; i<4; i++){
+	for(var i=3; i>0; i--){
 		if(keyValuePairs.hasOwnProperty('gridLayer' + i)){
 		    var fillColour = $('#value-nbn-colour-picker-' + i).val();
 		    var outlineColour = fillColour;
