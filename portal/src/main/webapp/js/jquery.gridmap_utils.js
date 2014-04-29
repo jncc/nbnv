@@ -37,7 +37,7 @@
         
         //Vice county - remove the feature argument generated when Vice County value is 'none',
         //otherwise we are zooming to a vice county so add overlay=feature to highlight the vc
-        if(keyValuePairs.hasOwnProperty('feature') && keyValuePairs['feature'].toUpperCase()=='NONE'){
+        if(keyValuePairs.hasOwnProperty('feature') && keyValuePairs['feature'].toUpperCase()==='NONE'){
             delete keyValuePairs['feature'];
         }else{
             keyValuePairs['overlay'] = 'feature';
@@ -163,7 +163,7 @@
                 $('#' + colourPickerId + ' div').css('backgroundColor', '#' + hex);
                 $('#value-' + colourPickerId).attr('value',hex);
             }
-        }
+        };
     }
         
     function colorToHex(color) {
@@ -184,7 +184,7 @@
         var tvk = $('#tvk').val();
         var feature = $('#nbn-vice-county-selector').val().toUpperCase();
         var url = $form.attr('gis-server') + '/SingleSpecies/' + tvk + '/resolutions?callback=?';
-        if(feature != 'NONE'){
+        if(feature !== 'NONE'){
             url += '&feature=' + feature;
         }
         return $.getJSON(url, function(json){
@@ -196,7 +196,7 @@
             var isSelectedMatchFound = false;
             $.each(resolutions, function(index, resolution){
                 var selected = '';
-                if(resolution == selectedResolution){
+                if(resolution === selectedResolution){
                     selected = ' selected="selected"';
                     isSelectedMatchFound = true;
                 }
@@ -224,7 +224,7 @@
         }
         
         //There must be at least one verification status - if none are selected then turn on defaults: verified(1), uncertain(3), unverified(4)
-        if($("INPUT[name='verificationCheckBox']:checked").size() == 0){
+        if($("INPUT[name='verificationCheckBox']:checked").size() === 0){
             $("INPUT[name='verificationCheckBox'][value=1]").attr('checked', 'checked');
             $("INPUT[name='verificationCheckBox'][value=3]").attr('checked', 'checked');
             $("INPUT[name='verificationCheckBox'][value=4]").attr('checked', 'checked');
@@ -237,7 +237,7 @@
         $('#nbn-grid-map-10k-grid').val(nationalExtentOptions[nationalExtent].grid10k);
         
         //There should be at least one background layer (eg coastlines)
-        if($("INPUT:checked[name='background'][type='checkbox']").length == 0){
+        if($("INPUT:checked[name='background'][type='checkbox']").length === 0){
             $('#nbn-grid-map-coastline').prop('checked',true);
         }
         
@@ -248,7 +248,7 @@
         //If Ireland is selected, then disable os and vc checkboxes
         $('#nbn-region-selector').change(function(){
             $('#nbn-vice-county-selector').val("none");
-            var disableNonIrishLayers = ($('#nbn-region-selector').val().toUpperCase() == 'IRELAND');
+            var disableNonIrishLayers = ($('#nbn-region-selector').val().toUpperCase() === 'IRELAND');
             $('#nbn-grid-map-vicecounty').prop('disabled', disableNonIrishLayers);
             $('#nbn-grid-map-os').prop('disabled', disableNonIrishLayers);
         });
@@ -283,21 +283,21 @@
 
             //Turn on all datasets if they are all off
             nbn.portal.reports.utils.datasetfields.doSelectDatasetKeys();
-        })   
+        });   
     }
     
     function setupFormOnChange(){
         //The map should refresh when any form field is changed
         //except when the nbn-select-datasets-auto check box is deselected
         $('#nbn-grid-map-form :input').change(function(){
-            if(($(this).attr('id')!='nbn-select-datasets-auto') || ($('#nbn-select-datasets-auto').is(':checked'))){
+            if(($(this).attr('id')!=='nbn-select-datasets-auto') || ($('#nbn-select-datasets-auto').is(':checked'))){
                 var $input = $(this);
                 if(nbn.portal.reports.utils.forms.isGridMapFormFieldValid($input)){
                     doOnChange();
                 }
             }
             //Update resolution text used on data download section
-            if($(this).attr('id') == 'nbn-grid-map-resolution'){
+            if($(this).attr('id') === 'nbn-grid-map-resolution'){
                 $('#nbn-grid-map-resolution-download-text').text($(this).val());
             }
         });
