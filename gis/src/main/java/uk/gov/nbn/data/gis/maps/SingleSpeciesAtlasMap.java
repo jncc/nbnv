@@ -17,6 +17,7 @@ import org.jooq.Select;
 import org.jooq.SelectJoinStep;
 import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,6 +29,8 @@ import uk.ac.ceh.dynamo.GridMap.Extent;
 import uk.ac.ceh.dynamo.GridMap.GridLayer;
 import uk.ac.ceh.dynamo.GridMap.Resolution;
 import uk.ac.ceh.dynamo.arguments.annotations.ServiceURL;
+import uk.ac.ceh.dynamo.bread.Baker;
+import uk.ac.ceh.dynamo.bread.BreadException;
 import uk.gov.nbn.data.gis.config.TokenUserArgumentResolver;
 import uk.gov.nbn.data.gis.validation.Datasets;
 import static uk.gov.nbn.data.dao.jooq.Tables.*;
@@ -72,6 +75,7 @@ public class SingleSpeciesAtlasMap {
     
     @Autowired WebResource resource;
     @Autowired Properties properties;
+    @Autowired @Qualifier("taxonLayerBaker") Baker baker;
     
     static {
         LAYERS = new String[]{TEN_KM_LAYER_NAME, TWO_KM_LAYER_NAME, ONE_KM_LAYER_NAME, ONE_HUNDRED_M_LAYER_NAME};
@@ -119,7 +123,7 @@ public class SingleSpeciesAtlasMap {
         data.put("outlineWidthDenominator", SYMBOLOGY_OUTLINE_WIDTH_DENOMINATOR);
         data.put("mapServiceURL", mapServiceURL);
         data.put("properties", properties);
-        data.put("layerGenerator", getSingleSpeciesAtlasResolutionDataGenerator(GEOM_CENTROID, key, user, datasetKeys, startYear, endYear, false));
+        data.put("layerGenerator", getSingleSpeciesAtlasResolutionDataGenerator(baker, GEOM_CENTROID, key, user, datasetKeys, startYear, endYear, false));
         return new ModelAndView("SingleSpeciesSymbology.map",data);
     }
     
@@ -165,7 +169,8 @@ public class SingleSpeciesAtlasMap {
         return new ModelAndView("acknowledgement", data);
     }
     
-    static MapHelper.ResolutionDataGenerator getSingleSpeciesAtlasResolutionDataGenerator(
+    static MapHelper.LayerDataGenerator getSingleSpeciesAtlasResolutionDataGenerator(
+            final Baker baker,
             final Field<?> geometry,
             final String taxonKey, 
             final User user, 
@@ -173,9 +178,9 @@ public class SingleSpeciesAtlasMap {
             final String startYear, 
             final String endYear,
             final boolean absence) {
-        return new MapHelper.ResolutionDataGenerator() {
-            @Override public String getData(String layerName) {
-                return getSQL(geometry, taxonKey, user, datasetKeys, startYear, endYear, absence, layerName);
+        return new MapHelper.LayerDataGenerator() {
+            @Override public String getData(String layerName) throws BreadException {
+                return baker.getData(getSQL(geometry, taxonKey, user, datasetKeys, startYear, endYear, absence, layerName));
             }
         };
     }      

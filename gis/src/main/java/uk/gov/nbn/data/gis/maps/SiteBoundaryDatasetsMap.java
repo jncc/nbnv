@@ -8,6 +8,7 @@ import java.util.Properties;
 import javax.ws.rs.core.MediaType;
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import uk.org.nbn.nbnv.api.model.SiteBoundaryDataset;
 import static uk.gov.nbn.data.dao.jooq.Tables.*;
 import org.springframework.stereotype.Controller;
@@ -15,6 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import uk.ac.ceh.dynamo.arguments.annotations.ServiceURL;
+import uk.ac.ceh.dynamo.bread.Baker;
+import uk.ac.ceh.dynamo.bread.BreadException;
+import uk.gov.nbn.data.gis.maps.MapHelper.LayerDataGenerator;
 import uk.gov.nbn.data.gis.maps.colour.ColourHelper;
 /**
  * The following map service will make a call to the data api as defined in
@@ -27,21 +31,8 @@ public class SiteBoundaryDatasetsMap {
     @Autowired Properties properties;
     @Autowired WebResource dataApi;
     @Autowired ColourHelper colours;
-    private final LayerGenerator layerGenerator = new LayerGenerator();
-    
-    public static class LayerGenerator {
-        public String getData(String siteBoundary) {
-            DSLContext create = MapHelper.getContext();
-            return MapHelper.getMapData(SITEBOUNDARYFEATUREDATA.GEOM, SITEBOUNDARYFEATUREDATA.IDENTIFIER, 4326, create.
-                select(SITEBOUNDARYFEATUREDATA.GEOM, SITEBOUNDARYFEATUREDATA.IDENTIFIER)
-                .from(SITEBOUNDARYFEATUREDATA)
-                .join(SITEBOUNDARYDATA).on(SITEBOUNDARYDATA.FEATUREID.eq(SITEBOUNDARYFEATUREDATA.ID))
-                .where(SITEBOUNDARYDATA.SITEBOUNDARYDATASETKEY.eq(siteBoundary))
-            );
-        }
-    }
-    
-    
+    @Autowired @Qualifier("contextLayerBaker") Baker baker;
+        
     @RequestMapping("SiteBoundaryDatasets")
     public ModelAndView getSiteBoundariesModel(
             @ServiceURL String mapServiceURL) {
@@ -51,12 +42,23 @@ public class SiteBoundaryDatasetsMap {
                         .get(new GenericType<List<SiteBoundaryDataset>>() { });
         
         HashMap<String, Object> data = new HashMap<String, Object>();
-        data.put("layerGenerator", layerGenerator);
         data.put("mapServiceURL", mapServiceURL);
         data.put("properties", properties);
         data.put("siteBoundaries", datasets);
         data.put("colours", colours);
-
+        data.put("layerGenerator", new LayerDataGenerator(){
+            @Override
+            public String getData(String siteBoundary) {
+                DSLContext create = MapHelper.getContext();
+                return MapHelper.getMapData(SITEBOUNDARYFEATUREDATA.GEOM, SITEBOUNDARYFEATUREDATA.IDENTIFIER, 4326, create.
+                    select(SITEBOUNDARYFEATUREDATA.GEOM, SITEBOUNDARYFEATUREDATA.IDENTIFIER)
+                    .from(SITEBOUNDARYFEATUREDATA)
+                    .join(SITEBOUNDARYDATA).on(SITEBOUNDARYDATA.FEATUREID.eq(SITEBOUNDARYFEATUREDATA.ID))
+                    .where(SITEBOUNDARYDATA.SITEBOUNDARYDATASETKEY.eq(siteBoundary))
+                );
+            }
+        });
+        
         return new ModelAndView("SiteBoundaryDatasets.map",data);
     }
 }

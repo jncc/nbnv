@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Properties;
 import javax.validation.constraints.Pattern;
 import org.springframework.beans.factory.annotation.Autowired;
-import uk.gov.nbn.data.gis.maps.MapHelper.ResolutionDataGenerator;
+import uk.gov.nbn.data.gis.maps.MapHelper.LayerDataGenerator;
 import uk.org.nbn.nbnv.api.model.User;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
@@ -19,6 +19,7 @@ import org.jooq.Select;
 import org.jooq.SelectHavingStep;
 import static uk.gov.nbn.data.dao.jooq.Tables.*;
 import static org.jooq.impl.DSL.*;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,6 +30,8 @@ import uk.ac.ceh.dynamo.GridMap;
 import uk.ac.ceh.dynamo.GridMap.GridLayer;
 import uk.ac.ceh.dynamo.GridMap.Resolution;
 import uk.ac.ceh.dynamo.arguments.annotations.ServiceURL;
+import uk.ac.ceh.dynamo.bread.Baker;
+import uk.ac.ceh.dynamo.bread.BreadException;
 import uk.gov.nbn.data.gis.validation.Datasets;
 
 /**
@@ -71,6 +74,8 @@ public class DesignationSpeciesDensityMap {
     }
     @Autowired
     Properties properties;
+    
+    @Autowired @Qualifier("taxonLayerBaker") Baker baker;
 
     @RequestMapping("{designationKey}")
     @GridMap(
@@ -95,9 +100,9 @@ public class DesignationSpeciesDensityMap {
         data.put("buckets", BUCKETS);
         data.put("mapServiceURL", mapServiceURL);
         data.put("properties", properties);
-        data.put("layerGenerator", new ResolutionDataGenerator() {
+        data.put("layerGenerator", new LayerDataGenerator() {
             @Override
-            public String getData(String layerName) {
+            public String getData(String layerName) throws BreadException {
                 DSLContext create = MapHelper.getContext();
 
                 Condition publicCondition =
@@ -140,13 +145,13 @@ public class DesignationSpeciesDensityMap {
                         .from(observations)
                         .groupBy(observations.field(0));
 
-                return MapHelper.getMapData(FEATURE.GEOM, FEATURE.IDENTIFIER, 4326, create
+                return baker.getData(MapHelper.getMapData(FEATURE.GEOM, FEATURE.IDENTIFIER, 4326, create
                         .select(
                         FEATURE.GEOM,
                         FEATURE.IDENTIFIER,
                         squares.field("species"))
                         .from(squares)
-                        .join(FEATURE).on(FEATURE.ID.eq((Field<Integer>) squares.field(0))));
+                        .join(FEATURE).on(FEATURE.ID.eq((Field<Integer>) squares.field(0)))));
             }
         });
         return new ModelAndView("DesignationSpeciesDensity.map", data);
