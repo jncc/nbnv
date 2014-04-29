@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -500,8 +501,8 @@ public class TaxonObservationResource extends RequestResource {
      * to (Injected Token no need to pass)
      * @param startYear The start year of the desired range
      * @param endYear The end year of the desired range
-     * @param datasetKeys Datasets to search in
-     * @param taxa Taxon Version Keys to search for
+     * @param datasetKeys Datasets to search in (...&datasetKey=GA000001,...,GA00000X&...)
+     * @param taxa Taxon Version Keys to search for (...&taxa=TVK1,...,TVKX&...)
      * @param spatialRelationship Any spatial relationship information required
      * @param featureID Any required feature ID
      * @param sensitive If the results should include sensitive records or not
@@ -544,11 +545,112 @@ public class TaxonObservationResource extends RequestResource {
 //            checkPolygonMaxSize(polygon, taxa, designation, taxonOutputGroup, orgSuppliedList, datasetKeys);
 //        }
         
-        List<TaxonWithQueryStats> toReturn = observationMapper.selectObservationSpeciesByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, orgSuppliedList, gridRef, polygon, false);
-        Collections.sort(toReturn);
-        return toReturn;
+        // Allow for both traditional lists to come in and for CSV lists to 
+        // shorten the URL
+        taxa = checkForCommaDelimited(taxa);
+        datasetKeys = checkForCommaDelimited(datasetKeys);
+        
+        return getSpecies(user, startYear, endYear, datasetKeys, taxa, 
+                spatialRelationship, featureID, sensitive, designation, 
+                orgSuppliedList, taxonOutputGroup, gridRef, polygon);
     }
-
+    
+    /**
+     * Returns a list of Taxon With Query Stats, essentially Taxon Observations
+     * by species, conforming to the provided search parameters
+     * 
+     * @param user The current user, determines what datasets they have access 
+     * to (Injected Token no need to pass)
+     * @param startYear The start year of the desired range
+     * @param endYear The end year of the desired range
+     * @param datasetKeys Datasets to search in (...&datasetKey=GA000001,...,GA00000X&...)
+     * @param taxa Taxon Version Keys to search for (...&taxa=TVK1,...,TVKX&...)
+     * @param spatialRelationship Any spatial relationship information required
+     * @param featureID Any required feature ID
+     * @param sensitive If the results should include sensitive records or not
+     * @param designation Any required designations
+     * @param taxonOutputGroup Any required taxon output groups
+     * @param gridRef Any grid references to search within
+     * @param polygon WKT WGS-84 polygon filter
+     * 
+     * @return A List of TaxonWithQueryStats conforming to the provided search
+     * parameters
+     * 
+     * @response.representation.200.qname List<TaxonWithQueryStats>
+     * @response.representation.200.mediaType application/json
+     */
+    @POST
+    @Path("/species")
+    @TypeHint(TaxonWithQueryStats.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned a list of taxon with statistics which match the given filter")
+    })
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<TaxonWithQueryStats> getObservationSpeciesByFilterPOST(
+            @TokenUser() User user,
+            @QueryParam("startYear") @DefaultValue(ObservationResourceDefaults.defaultStartYear) int startYear,
+            @QueryParam("endYear") @DefaultValue(ObservationResourceDefaults.defaultEndYear) int endYear,
+            @QueryParam("datasetKey") @DefaultValue(ObservationResourceDefaults.defaultDatasetKey) List<String> datasetKeys,
+            @QueryParam("ptvk") @DefaultValue(ObservationResourceDefaults.defaultTaxa) List<String> taxa,
+            @QueryParam("spatialRelationship") @DefaultValue(ObservationResourceDefaults.SPATIAL_RELATIONSHIP_DEFAULT) String spatialRelationship,
+            @QueryParam("featureID") @DefaultValue(ObservationResourceDefaults.defaultFeatureID) String featureID,
+            @QueryParam("sensitive") @DefaultValue(ObservationResourceDefaults.defaultSensitive) Boolean sensitive,
+            @QueryParam("designation") @DefaultValue(ObservationResourceDefaults.defaultDesignation) String designation,
+            @QueryParam("taxonOutputGroup") @DefaultValue(ObservationResourceDefaults.defaultTaxonOutputGroup) String taxonOutputGroup,
+            @QueryParam("orgSuppliedList") @DefaultValue(ObservationResourceDefaults.defaultOrgSuppliedList) int orgSuppliedList,
+            @QueryParam("gridRef") @DefaultValue(ObservationResourceDefaults.defaultGridRef) String gridRef,
+            @QueryParam("polygon") @DefaultValue(ObservationResourceDefaults.defaultPolygon) String polygon) {
+        //TODO: squareBlurring(?)
+        
+//        // Check size of polygon
+//        if (StringUtils.hasText(polygon)) {
+//            checkPolygonMaxSize(polygon, taxa, designation, taxonOutputGroup, orgSuppliedList, datasetKeys);
+//        }
+        
+        // Allow for both traditional lists to come in and for CSV lists to 
+        // shorten the URL
+        taxa = checkForCommaDelimited(taxa);
+        datasetKeys = checkForCommaDelimited(datasetKeys);
+        
+        return getSpecies(user, startYear, endYear, datasetKeys, taxa, 
+                spatialRelationship, featureID, sensitive, designation, 
+                orgSuppliedList, taxonOutputGroup, gridRef, polygon);
+    }    
+    
+    /** 
+     * Helper function to return species for GET / POST requests
+     * 
+     * @param user The current user, determines what datasets they have access 
+     * to (Injected Token no need to pass)
+     * @param startYear The start year of the desired range
+     * @param endYear The end year of the desired range
+     * @param datasetKeys Datasets to search in (...&datasetKey=GA000001,...,GA00000X&...)
+     * @param taxa Taxon Version Keys to search for (...&taxa=TVK1,...,TVKX&...)
+     * @param spatialRelationship Any spatial relationship information required
+     * @param featureID Any required feature ID
+     * @param sensitive If the results should include sensitive records or not
+     * @param designation Any required designations
+     * @param taxonOutputGroup Any required taxon output groups
+     * @param gridRef Any grid references to search within
+     * @param polygon WKT WGS-84 polygon filter
+     * 
+     * @return A List of TaxonWithQueryStats conforming to the provided search
+     * parameters
+     */
+    private List<TaxonWithQueryStats> getSpecies( User user, int startYear, 
+            int endYear, List<String> datasetKeys, List<String> taxa, 
+            String spatialRelationship, String featureID, Boolean sensitive, 
+            String designation, int orgSuppliedList, String taxonOutputGroup,
+            String gridRef, String polygon) {
+        List<TaxonWithQueryStats> toReturn = 
+                observationMapper.selectObservationSpeciesByFilter(user, 
+                    startYear, endYear, datasetKeys, taxa, spatialRelationship, 
+                    featureID, sensitive, designation, taxonOutputGroup, 
+                    orgSuppliedList, gridRef, polygon, false);
+        Collections.sort(toReturn);
+        return toReturn;        
+    }    
+    
     /**
      * Returns a zip file containing a list of Taxon With Query Stats, 
      * essentially Taxon Observations by species, conforming to the provided 
@@ -585,8 +687,8 @@ public class TaxonObservationResource extends RequestResource {
             @TokenUser() final User user,
             @QueryParam("startYear") @DefaultValue(ObservationResourceDefaults.defaultStartYear) final int startYear,
             @QueryParam("endYear") @DefaultValue(ObservationResourceDefaults.defaultEndYear) final int endYear,
-            @QueryParam("datasetKey") @DefaultValue(ObservationResourceDefaults.defaultDatasetKey) final List<String> datasetKeys,
-            @QueryParam("ptvk") @DefaultValue(ObservationResourceDefaults.defaultTaxa) final List<String> taxa,
+            @QueryParam("datasetKey") @DefaultValue(ObservationResourceDefaults.defaultDatasetKey) List<String> datasetKeysIn,
+            @QueryParam("ptvk") @DefaultValue(ObservationResourceDefaults.defaultTaxa) List<String> taxaIn,
             @QueryParam("spatialRelationship") @DefaultValue(ObservationResourceDefaults.SPATIAL_RELATIONSHIP_DEFAULT) final String spatialRelationship,
             @QueryParam("featureID") @DefaultValue(ObservationResourceDefaults.defaultFeatureID) final String featureID,
             @QueryParam("sensitive") @DefaultValue(ObservationResourceDefaults.defaultSensitive) final Boolean sensitive,
@@ -599,6 +701,107 @@ public class TaxonObservationResource extends RequestResource {
         // Set the filename to get around a bug with Firefox not adding the extension properly
         response.setHeader("Content-Disposition", "attachment; filename=\"species_download.zip\"");
         
+        // Allow for both traditional lists to come in and for CSV lists to 
+        // shorten the URL
+        List<String> taxa = checkForCommaDelimited(taxaIn);
+        List<String> datasetKeys = checkForCommaDelimited(datasetKeysIn);
+        
+        return getSpeciesDowload(user, startYear, endYear, datasetKeys, 
+                taxa, spatialRelationship, featureID, sensitive, designation, 
+                orgSuppliedList, taxonOutputGroup, gridRef, polygon);
+    }
+
+    /**
+     * Returns a zip file containing a list of Taxon With Query Stats, 
+     * essentially Taxon Observations by species, conforming to the provided 
+     * search parameters. The same method as the GET request, for use with 
+     * filters that would be longer than the Max URL limit some browsers
+     * 
+     * @param user The current user, determines what datasets they have access 
+     * to (Injected Token no need to pass)
+     * @param startYear The start year of the desired range
+     * @param endYear The end year of the desired range
+     * @param datasetKeys Datasets to search in
+     * @param taxa Taxon Version Keys to search for
+     * @param spatialRelationship Any spatial relationship information required
+     * @param featureID Any required feature ID
+     * @param sensitive If the results should include sensitive records or not
+     * @param designation Any required designations
+     * @param taxonOutputGroup Any required taxon output groups
+     * @param gridRef Any grid references to search within
+     * @param polygon WKT WGS-84 polygon filter
+     * 
+     * @return A Zip file containing a list of TaxonWithQueryStats conforming to 
+     * the provided search parameters
+     * 
+     * @response.representation.200.qname StreamingOutput
+     * @response.representation.200.mediaType application/x-zip-compressed
+     */    
+    @POST
+    @Path("/species/download")
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully created a download of taxon observations which match the given filter")
+    })
+    @Produces("application/x-zip-compressed")
+    public StreamingOutput getSpeciesDownloadByFilterPOST(
+            @Context HttpServletResponse response,
+            @TokenUser() final User user,
+            @QueryParam("startYear") @DefaultValue(ObservationResourceDefaults.defaultStartYear) final int startYear,
+            @QueryParam("endYear") @DefaultValue(ObservationResourceDefaults.defaultEndYear) final int endYear,
+            @QueryParam("datasetKey") @DefaultValue(ObservationResourceDefaults.defaultDatasetKey) List<String> datasetKeysIn,
+            @QueryParam("ptvk") @DefaultValue(ObservationResourceDefaults.defaultTaxa) List<String> taxaIn,
+            @QueryParam("spatialRelationship") @DefaultValue(ObservationResourceDefaults.SPATIAL_RELATIONSHIP_DEFAULT) final String spatialRelationship,
+            @QueryParam("featureID") @DefaultValue(ObservationResourceDefaults.defaultFeatureID) final String featureID,
+            @QueryParam("sensitive") @DefaultValue(ObservationResourceDefaults.defaultSensitive) final Boolean sensitive,
+            @QueryParam("designation") @DefaultValue(ObservationResourceDefaults.defaultDesignation) final String designation,
+            @QueryParam("orgSuppliedList") @DefaultValue(ObservationResourceDefaults.defaultOrgSuppliedList) final int orgSuppliedList,
+            @QueryParam("taxonOutputGroup") @DefaultValue(ObservationResourceDefaults.defaultTaxonOutputGroup) final String taxonOutputGroup,
+            @QueryParam("gridRef") @DefaultValue(ObservationResourceDefaults.defaultGridRef) final String gridRef,
+            @QueryParam("polygon") @DefaultValue(ObservationResourceDefaults.defaultPolygon) final String polygon) {
+        //TODO: squareBlurring(?)
+        // Set the filename to get around a bug with Firefox not adding the extension properly
+        response.setHeader("Content-Disposition", "attachment; filename=\"species_download.zip\"");
+        
+        // Allow for both traditional lists to come in and for CSV lists to 
+        // shorten the URL
+        List<String> taxa = checkForCommaDelimited(taxaIn);
+        List<String> datasetKeys = checkForCommaDelimited(datasetKeysIn);
+        
+        return getSpeciesDowload(user, startYear, endYear, datasetKeys, 
+                taxa, spatialRelationship, featureID, sensitive, designation, 
+                orgSuppliedList, taxonOutputGroup, gridRef, polygon);
+    }   
+    
+    /**
+     * Helper function that returns a zip file containing a list of Taxon With 
+     * Query Stats, i.e. a species list, for both POST and GET methods above to
+     * cope with long URL's
+     * 
+     * @param user The current user, determines what datasets they have access 
+     * to (Injected Token no need to pass)
+     * @param startYear The start year of the desired range
+     * @param endYear The end year of the desired range
+     * @param datasetKeys Datasets to search in
+     * @param taxa Taxon Version Keys to search for
+     * @param spatialRelationship Any spatial relationship information required
+     * @param featureID Any required feature ID
+     * @param sensitive If the results should include sensitive records or not
+     * @param designation Any required designations
+     * @param taxonOutputGroup Any required taxon output groups
+     * @param gridRef Any grid references to search within
+     * @param polygon WKT WGS-84 polygon filter
+     * 
+     * @return A Zip file containing a list of TaxonWithQueryStats conforming to 
+     * the provided search parameters
+     */    
+    private StreamingOutput getSpeciesDowload(final User user, 
+            final int startYear, final int endYear, 
+            final List<String> datasetKeys, final List<String> taxa, 
+            final String spatialRelationship, final String featureID,
+            final Boolean sensitive, final String designation, 
+            final int orgSuppliedList, final String taxonOutputGroup,
+            final String gridRef, final String polygon) {
+        
         return new StreamingOutput() {
             @Override
             public void write(OutputStream out) throws IOException, WebApplicationException {
@@ -610,7 +813,7 @@ public class TaxonObservationResource extends RequestResource {
                 zip.flush();
                 zip.close();
             }
-        };
+        };        
     }
 
     /**
@@ -658,6 +861,11 @@ public class TaxonObservationResource extends RequestResource {
             @QueryParam("gridRef") @DefaultValue(ObservationResourceDefaults.defaultGridRef) String gridRef,
             @QueryParam("polygon") @DefaultValue(ObservationResourceDefaults.defaultPolygon) String polygon) {
         //TODO: squareBlurring(?)
+        // Allow for both traditional lists to come in and for CSV lists to 
+        // shorten the URL
+        taxa = checkForCommaDelimited(taxa);
+        datasetKeys = checkForCommaDelimited(datasetKeys);
+        
         return observationMapper.selectObservationGroupsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon, false);
     }
 
@@ -2285,4 +2493,23 @@ public class TaxonObservationResource extends RequestResource {
             oApiObservationViewMapper.addAPIObservationViewStats(view.getId(), count.getDatasetKey(), count.getCount());
         }
     }    
+    
+    /**
+     * Helper function, if the string list only has one input and its a CSV 
+     * styled input then return that as a list otherwise return the input list
+     * 
+     * @param input A list of strings
+     * @return The same list of strings, or a list of string based on the first
+     * element of the list 
+     */
+    private List<String> checkForCommaDelimited(List<String> input) {
+        if (input.size() == 1) {
+            List<String> i = new ArrayList<String>(Arrays.asList(StringUtils.commaDelimitedListToStringArray(input.get(0))));
+            if (i.size() > 1) {
+                return i;
+            }
+        }
+        
+        return input;
+    }
 }
