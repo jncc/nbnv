@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import uk.ac.ceh.dynamo.arguments.annotations.ServiceURL;
-import uk.gov.nbn.data.gis.maps.cache.ShapefileStore;
 import uk.gov.nbn.data.gis.maps.colour.ColourHelper;
 /**
  * The following map service will make a call to the data api as defined in
@@ -27,7 +26,6 @@ import uk.gov.nbn.data.gis.maps.colour.ColourHelper;
 public class SiteBoundaryDatasetsMap {
     @Autowired Properties properties;
     @Autowired WebResource dataApi;
-    @Autowired ShapefileStore shapes;
     @Autowired ColourHelper colours;
     private final LayerGenerator layerGenerator = new LayerGenerator();
     
@@ -46,8 +44,7 @@ public class SiteBoundaryDatasetsMap {
     
     @RequestMapping("SiteBoundaryDatasets")
     public ModelAndView getSiteBoundariesModel(
-            @ServiceURL String mapServiceURL, 
-            @RequestParam(value="SRS", required=false, defaultValue="EPSG:4326") String srs) {
+            @ServiceURL String mapServiceURL) {
         List<SiteBoundaryDataset> datasets = dataApi
                         .path("siteBoundaryDatasets")
                         .accept(MediaType.APPLICATION_JSON) 
@@ -55,8 +52,6 @@ public class SiteBoundaryDatasetsMap {
         
         HashMap<String, Object> data = new HashMap<String, Object>();
         data.put("layerGenerator", layerGenerator);
-        data.put("srs", srs);
-        data.put("shapes", shapes);
         data.put("mapServiceURL", mapServiceURL);
         data.put("properties", properties);
         data.put("siteBoundaries", datasets);

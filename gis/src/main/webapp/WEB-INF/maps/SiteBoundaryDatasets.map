@@ -9,8 +9,12 @@
             NAME                        "${dataset.datasetKey}"
             TYPE                        POLYGON
             STATUS                      OFF
-            
-            [@layers.data layerGenerator shapes dataset.datasetKey srs/]
+            EXTENT                      -180 -90 180 90
+            DATA                        "${layerGenerator.getData(dataset.datasetKey)}"
+
+            PROJECTION 
+                "init=epsg:4326" 
+            END
 
             TEMPLATE                    "dummy.txt"
 
