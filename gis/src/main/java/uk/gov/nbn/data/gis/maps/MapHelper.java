@@ -11,6 +11,7 @@ import org.jooq.SQLDialect;
 import org.jooq.conf.ParamType;
 import org.jooq.impl.DSL;
 import static org.jooq.impl.DSL.*;
+import uk.ac.ceh.dynamo.bread.BreadException;
 import static uk.gov.nbn.data.dao.jooq.Tables.*;
 
 /**
@@ -32,8 +33,8 @@ public class MapHelper {
     /**The following interface enables anonymous implementations for creating
      * SQL Expressions in Map Server Templates
      **/
-    public interface ResolutionDataGenerator {
-        String getData(String layerName);
+    public interface LayerDataGenerator {
+        String getData(String layerName) throws BreadException;
     }
     
     static Condition createTemporalSegment(Condition currentCond, String startYear, String endYear, Field<? extends Date> startDateField, Field<? extends Date> endDateField) {
