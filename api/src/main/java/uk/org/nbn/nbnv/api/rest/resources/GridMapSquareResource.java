@@ -109,7 +109,7 @@ public class GridMapSquareResource extends AbstractResource {
             public void write(OutputStream out) throws IOException, WebApplicationException {
                 ZipOutputStream zip = new ZipOutputStream(out);
                 try{
-                    addReadMe(zip, user, ptvk, resolution, bands);
+                    addReadMe(zip, user, ptvk, resolution, bands, verifications);
                     addGridRefs(zip, user, ptvk, resolution, bands, datasets, viceCountyIdentifier, verifications);
                     addDatasetMetadata(zip, user, ptvk, resolution, bands, datasets, viceCountyIdentifier, verifications);
                 }finally{
@@ -129,7 +129,7 @@ public class GridMapSquareResource extends AbstractResource {
      * @param bands
      * @throws IOException 
      */
-    private void addReadMe(ZipOutputStream zip, User user, String ptvk, String resolution, List<String> bands) throws IOException {
+    private void addReadMe(ZipOutputStream zip, User user, String ptvk, String resolution, List<String> bands, List<String> verifications) throws IOException {
         Taxon taxon = taxonMapper.getTaxon(ptvk);
         String title = "Grid map square download from the NBN Gateway";
         HashMap<String, String> filters = new HashMap<String, String>();
@@ -138,6 +138,10 @@ public class GridMapSquareResource extends AbstractResource {
         int i = 1;
         for(String band: bands){
             filters.put("Year range " + i++, band.substring(0,band.indexOf(",")));
+        }
+        i=1;
+        for(Integer verificationKey : getVerificationKeys(verifications)){
+            filters.put("Verification status " + i++, Status.get(verificationKey).name());
         }
         downloadHelper.addReadMe(zip, user, title, filters);
     }
