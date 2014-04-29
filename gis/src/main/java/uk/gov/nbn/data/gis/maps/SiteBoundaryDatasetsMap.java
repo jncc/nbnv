@@ -50,7 +50,7 @@ public class SiteBoundaryDatasetsMap {
             @Override
             public String getData(String siteBoundary) {
                 DSLContext create = MapHelper.getContext();
-                return MapHelper.getMapData(SITEBOUNDARYFEATUREDATA.GEOM, SITEBOUNDARYFEATUREDATA.IDENTIFIER, 4326, create.
+                return MapHelper.getMapData(create.
                     select(SITEBOUNDARYFEATUREDATA.GEOM, SITEBOUNDARYFEATUREDATA.IDENTIFIER)
                     .from(SITEBOUNDARYFEATUREDATA)
                     .join(SITEBOUNDARYDATA).on(SITEBOUNDARYDATA.FEATUREID.eq(SITEBOUNDARYFEATUREDATA.ID))

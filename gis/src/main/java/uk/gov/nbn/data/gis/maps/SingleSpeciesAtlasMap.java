@@ -226,7 +226,7 @@ public class SingleSpeciesAtlasMap {
                 .selectDistinct((Field<Integer>)nested.field(0))
                 .from(nested);
         
-        return MapHelper.getMapData(geometry, FEATURE.IDENTIFIER, 4326 ,create
+        return MapHelper.getMapData(create
             .select(geometry, FEATURE.IDENTIFIER)
             .from(FEATURE)
             .join(dNested).on(FEATURE.ID.eq((Field<Integer>)dNested.field(0))));
