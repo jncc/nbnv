@@ -223,6 +223,13 @@
             $("INPUT[name='gridLayer1'][type='checkbox']").prop('checked',true);
         }
         
+        //There must be at least one verification status - if none are selected then turn on defaults: verified(1), uncertain(3), unverified(4)
+        if($("INPUT[name='verificationCheckBox']:checked").size() == 0){
+            $("INPUT[name='verificationCheckBox'][value=1]").attr('checked', 'checked');
+            $("INPUT[name='verificationCheckBox'][value=3]").attr('checked', 'checked');
+            $("INPUT[name='verificationCheckBox'][value=4]").attr('checked', 'checked');
+        }
+        
         //Set grid and coast check boxes to their region specific values
         var nationalExtent = $('#nbn-region-selector').val();
         $('#nbn-grid-map-coastline').val(nationalExtentOptions[nationalExtent].coastline);
