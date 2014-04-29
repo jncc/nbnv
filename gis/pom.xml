@@ -38,7 +38,7 @@
         <dependency>
             <groupId>uk.ac.ceh</groupId>
             <artifactId>dynamo-mapping</artifactId>
-            <version>0.6</version>
+            <version>0.7-SNAPSHOT</version>
         </dependency>
         
         <!-- Hibernate Validator -->
