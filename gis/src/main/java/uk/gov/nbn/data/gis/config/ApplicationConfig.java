@@ -28,6 +28,9 @@ import uk.ac.ceh.dynamo.FeatureResolver;
 import uk.ac.ceh.dynamo.GridMapRequestMappingHandlerMapping;
 import uk.ac.ceh.dynamo.arguments.GridMapArgumentResolver;
 import uk.ac.ceh.dynamo.arguments.ServiceURLArgumentResolver;
+import uk.ac.ceh.dynamo.bread.Baker;
+import uk.ac.ceh.dynamo.bread.ShapefileGenerator;
+import uk.gov.nbn.data.gis.maps.cache.FixedClimate;
 import uk.gov.nbn.data.properties.PropertiesReader;
 import uk.org.nbn.nbnv.api.model.Feature;
 
@@ -124,5 +127,31 @@ public class ApplicationConfig extends WebMvcConfigurerAdapter {
     @Bean
     public Properties properties() throws IOException {
         return PropertiesReader.getEffectiveProperties("gis.properties");
-    } 
+    }
+    
+    
+    @Bean ShapefileGenerator shapefileGenerator() throws IOException {
+        Properties properties = properties();
+        return new ShapefileGenerator(  properties.getProperty("ogr2ogr"),
+                                        properties.getProperty("spatialConnection"),
+                                        Integer.parseInt(properties.getProperty("ogr2ogrProcessLimit")));
+    }
+    
+    @Bean
+    public Baker taxonLayerBaker() throws IOException {
+        File cache = new File(properties().getProperty("bread.taxon.cacheDir"));
+        long staleTime = Long.parseLong(properties().getProperty("bread.taxon.staleTime"));
+        long rottenTime = Long.parseLong(properties().getProperty("bread.taxon.rottenTime"));
+        
+        return new Baker(new FixedClimate(), cache, shapefileGenerator(), staleTime, rottenTime );
+    }
+    
+    @Bean 
+    public Baker contextLayerBaker() throws IOException {
+        File cache = new File(properties().getProperty("bread.context.cacheDir"));
+        long staleTime = Long.parseLong(properties().getProperty("bread.context.staleTime"));
+        long rottenTime = Long.parseLong(properties().getProperty("bread.context.rottenTime"));
+        
+        return new Baker(new FixedClimate(), cache, shapefileGenerator(), staleTime, rottenTime );
+    }
 }
