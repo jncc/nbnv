@@ -2,6 +2,7 @@ package uk.org.nbn.nbnv.api.rest.resources;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -107,11 +108,14 @@ public class GridMapSquareResource extends AbstractResource {
             @Override
             public void write(OutputStream out) throws IOException, WebApplicationException {
                 ZipOutputStream zip = new ZipOutputStream(out);
-                addReadMe(zip, user, ptvk, resolution, bands);
-                addGridRefs(zip, user, ptvk, resolution, bands, datasets, viceCountyIdentifier, verifications);
-                addDatasetMetadata(zip, user, ptvk, resolution, bands, datasets, viceCountyIdentifier);
-                zip.flush();
-                zip.close();
+                try{
+                    addReadMe(zip, user, ptvk, resolution, bands);
+                    addGridRefs(zip, user, ptvk, resolution, bands, datasets, viceCountyIdentifier, verifications);
+                    addDatasetMetadata(zip, user, ptvk, resolution, bands, datasets, viceCountyIdentifier, verifications);
+                }finally{
+                    zip.flush();
+                    zip.close();
+                }
             }
         };
     }
@@ -137,14 +141,15 @@ public class GridMapSquareResource extends AbstractResource {
         }
         downloadHelper.addReadMe(zip, user, title, filters);
     }
-    private void addGridRefs(ZipOutputStream zip, User user, String ptvk, String resolution, List<String> bands, List<String> datasetKey, String viceCountyIdentifier, List<String> verifications) throws IOException {
+    
+    private void addGridRefs(ZipOutputStream zip, User user, String ptvk, String resolution, List<String> bands, List<String> datasetKeys, String viceCountyIdentifier, List<String> verifications) throws IOException {
 	List<Integer> verificationKeys = getVerificationKeys(verifications);
 	boolean isGroupByDate = isGroupByDate(verifications);
 	if(isGroupByDate){
 	    for (String band : bands) {
 		if (!"".equals(band)) {
 		    String title = "GridSquares_" + band.substring(0,band.indexOf(","));
-		    fetchAndAppendGridRefs(zip, user, ptvk, resolution, Arrays.asList(band), datasetKey, viceCountyIdentifier, verificationKeys, title, isGroupByDate);
+		    fetchAndAppendGridRefs(zip, user, ptvk, resolution, Arrays.asList(band), datasetKeys, viceCountyIdentifier, verificationKeys, title, isGroupByDate);
 		} else {
 		    throw new IllegalArgumentException("No year band arguments supplied, at least one 'band' argument is required (eg band=2000-2012,ff0000,000000)");
 		}
@@ -152,7 +157,7 @@ public class GridMapSquareResource extends AbstractResource {
 	}else{
 	    for (Integer verificationKey : verificationKeys){
 		String title = "GridSquares_" + Status.get(verificationKey);
-		fetchAndAppendGridRefs(zip, user, ptvk, resolution, bands, datasetKey, viceCountyIdentifier, Arrays.asList(verificationKey), title, isGroupByDate);
+		fetchAndAppendGridRefs(zip, user, ptvk, resolution, bands, datasetKeys, viceCountyIdentifier, Arrays.asList(verificationKey), title, isGroupByDate);
 	    }
 	}
     }
@@ -182,8 +187,10 @@ public class GridMapSquareResource extends AbstractResource {
      * @param viceCountyIdentifier
      * @throws IOException 
      */
-    private void addDatasetMetadata(ZipOutputStream zip, User user, String ptvk, String resolution, List<String> bands, List<String> datasetKeys, String viceCountyIdentifier) throws IOException {
-        List<TaxonDataset> taxonDatasets = gridMapSquareMapper.getGridMapDatasets(user, ptvk, resolution, getStartYear(bands), getEndYear(bands), datasetKeys, viceCountyIdentifier);
+    private void addDatasetMetadata(ZipOutputStream zip, User user, String ptvk, String resolution, List<String> bands, List<String> datasetKeys, String viceCountyIdentifier, List<String> verifications) throws IOException {
+	List<Integer> verificationKeys = getVerificationKeys(verifications);
+	boolean isGroupByDate = isGroupByDate(verifications);
+        List<TaxonDataset> taxonDatasets = gridMapSquareMapper.getGridMapDatasets(user, ptvk, resolution, bands, datasetKeys, viceCountyIdentifier, verificationKeys, isGroupByDate);
         downloadHelper.addDatasetMetadata(zip, user.getId(), taxonDatasets);
     }
     

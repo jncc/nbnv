@@ -20,7 +20,7 @@ public interface GridMapSquareMapper {
             @Param("ptvk") String ptvk, 
             @Param("resolution") String resolution, 
             @Param("bands") List<String> bands, 
-            @Param("datasetKey") List<String> datasetKey,
+            @Param("datasetKeys") List<String> datasetKeys,
             @Param("viceCountyIdentifier") String viceCountyIdentifier,
             @Param("absence") int absence,
 	    @Param("verificationKeys") List<Integer> verificationKeys,
@@ -31,11 +31,12 @@ public interface GridMapSquareMapper {
             @Param("user") User user, 
             @Param("ptvk") String ptvk, 
             @Param("resolution") String resolution, 
-            @Param("startYear") Integer startYear, 
-            @Param("endYear") Integer endYear, 
-            @Param("datasetKey") List<String> datasetKey,
-            @Param("viceCountyIdentifier") String viceCountyIdentifier);
-    
+            @Param("bands") List<String> bands, 
+            @Param("datasetKeys") List<String> datasetKeys,
+            @Param("viceCountyIdentifier") String viceCountyIdentifier,
+	    @Param("verificationKeys") List<Integer> verificationKeys,
+	    @Param("isGroupByDate") boolean isGroupByDate);
+
     @SelectProvider(type=GridMapSquareProvider.class, method="searchForMatchingResolutions")
     @Results({
         @Result(

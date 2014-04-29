@@ -9,14 +9,14 @@ import static org.apache.ibatis.jdbc.SelectBuilder.*;
 public class ProviderHelper {
 
     static void addDatasetKeysFilter(Map<String, Object> params) {
-        if (params.containsKey("datasetKey") && !params.get("datasetKey").equals("")) {
-            if (params.get("datasetKey") instanceof List) {
-                List<String> datasetArgs = (List<String>) params.get("datasetKey");
+        if (params.containsKey("datasetKeys") && !params.get("datasetKeys").equals("")) {
+            if (params.get("datasetKeys") instanceof List) {
+                List<String> datasetArgs = (List<String>) params.get("datasetKeys");
                 if (datasetArgs.size() > 0 && !"".equals(datasetArgs.get(0))) {
-                    WHERE("o.datasetKey IN " + datasetListToCommaList((List<String>) params.get("datasetKey")));
+                    WHERE("o.datasetKey IN " + datasetListToCommaList((List<String>) params.get("datasetKeys")));
                 }
             } else {
-                WHERE("o.datasetKey = '" + params.get("datasetKey") + "'");
+                WHERE("o.datasetKey = '" + params.get("datasetKeys") + "'");
             }
         }
     }

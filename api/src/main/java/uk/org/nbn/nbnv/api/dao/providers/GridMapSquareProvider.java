@@ -28,14 +28,14 @@ public class GridMapSquareProvider {
 	addYearBandOrVerificationStatus(params);
         return SQL();
     }
-
+    
     public String gridMapDatasets(Map<String, Object> params) {
         BEGIN();
         SELECT("DISTINCT dd.*, tdd.*, tdd.label publicResolution");
         createGenericQuery(params);
-        INNER_JOIN("DatasetData dd ON o.datasetKey = dd.\"key\"");
-        INNER_JOIN("TaxonDatasetData tdd ON dd.\"key\" = tdd.datasetKey");
-        addYearRange((Integer) params.get("startYear"), (Integer) params.get("endYear"));
+        addYearBandOrVerificationStatus(params);
+        LEFT_OUTER_JOIN("DatasetData dd ON o.datasetKey = dd.\"key\"");
+        LEFT_OUTER_JOIN("TaxonDatasetData tdd ON dd.\"key\" = tdd.datasetKey");
         return SQL();
     }
 
@@ -63,17 +63,20 @@ public class GridMapSquareProvider {
 	    bands = (List<String>)params.get("bands");
 	}
 	if (bands == null || bands.isEmpty()) {
+            System.out.println("No year band arguments supplied, a 'band' argument is required (eg band=2000-2012,ff0000,000000)");
 	    throw new IllegalArgumentException("No year band arguments supplied, a 'band' argument is required (eg band=2000-2012,ff0000,000000)");
 	}
 	if(params.containsKey("verificationKeys")){
 	    verificationKeys = (List<Integer>)params.get("verificationKeys");
 	}
 	if (verificationKeys == null || verificationKeys.isEmpty()) {
+            System.out.println("No verification keys supplied, at least one is required (values are 1-4)");
 	    throw new IllegalArgumentException("No verification keys supplied, at least one is required (values are 1-4)");
 	}
 	if(params.containsKey("isGroupByDate")){
 	    isGroupByDate = (Boolean)params.get("isGroupByDate");
 	}else{
+            System.out.println("No isGroupByDate argument supplied.");
 	    throw new IllegalArgumentException("No isGroupByDate argument supplied.");
 	}
 	if(isGroupByDate){
@@ -82,7 +85,7 @@ public class GridMapSquareProvider {
 	    ProviderHelper.addYearRanges(bands);
 	}
 	ProviderHelper.addVerifications(verificationKeys);
-    }
+   }
 
     private void addYearRange(Integer startYear, Integer endYear) {
         ProviderHelper.addStartYearFilter(startYear);
