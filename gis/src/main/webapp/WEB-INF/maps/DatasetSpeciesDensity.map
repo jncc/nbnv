@@ -7,10 +7,7 @@
             NAME                                                "${layer}"
             TYPE                                                POLYGON
             STATUS                                              OFF
-            CONNECTIONTYPE                                      OGR
-            CONNECTION                                          "${properties.spatialConnection}"
             DATA                                                "${layerGenerator.getData(layer)}"
-            PROCESSING                                          "CLOSE_CONNECTION=DEFER"
             TEMPLATE                                            "dummy.txt"
             EXTENT                                              -180 -90 180 90
 
