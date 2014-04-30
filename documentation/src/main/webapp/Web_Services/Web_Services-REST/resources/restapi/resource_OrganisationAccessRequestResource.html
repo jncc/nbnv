@@ -91,6 +91,7 @@
         <li><a href="#path__organisation_organisationAccesses_-id-_requests.html">/organisation/organisationAccesses/{id}/requests</a></li>
         <li><a href="#path__organisation_organisationAccesses_-id-_requests_granted.html">/organisation/organisationAccesses/{id}/requests/granted</a></li>
         <li><a href="#path__organisation_organisationAccesses_-id-_requests_pending.html">/organisation/organisationAccesses/{id}/requests/pending</a></li>
+        <li><a href="#path__organisation_organisationAccesses_expired.html">/organisation/organisationAccesses/expired</a></li>
         <li><a href="#path__organisation_organisationAccesses_requests.html">/organisation/organisationAccesses/requests</a></li>
         <li><a href="#path__organisation_organisationAccesses_requests_-id-.html">/organisation/organisationAccesses/requests/{id}</a></li>
         <li><a href="#path__organisation_organisationAccesses_requests_admin.html">/organisation/organisationAccesses/requests/admin</a></li>
@@ -100,6 +101,7 @@
         <li><a href="#path__organisation_organisationAccesses_requests_granted.html">/organisation/organisationAccesses/requests/granted</a></li>
         <li><a href="#path__organisation_organisationAccesses_requests_history_-dataset-.html">/organisation/organisationAccesses/requests/history/{dataset}</a></li>
         <li><a href="#path__organisation_organisationAccesses_requests_pending.html">/organisation/organisationAccesses/requests/pending</a></li>
+        <li><a href="#path__organisation_organisationAccesses_requests_revoke_-id-.html">/organisation/organisationAccesses/requests/revoke/{id}</a></li>
         <li><a href="#path__organisation_organisationAccesses_reset_-dataset-.html">/organisation/organisationAccesses/reset/{dataset}</a></li>
       </ul>
       <a name="path__organisation_organisationAccesses_-id-_requests.html"></a>
@@ -303,6 +305,44 @@ organisation that are pending</p>
           </td>
         </tr>
       </table>
+      <a name="path__organisation_organisationAccesses_expired.html"></a>
+      <h1>/organisation/organisationAccesses/expired</h1>
+      <p class="note">Mount Point: <a href="../api/organisation/organisationAccesses/expired">/api/organisation/organisationAccesses/expired</a></p>
+      <a name="GET"></a>
+      <h2>GET</h2>
+      <p>
+            SysAdmin function to get all expired access requests, used to find expired
+requests
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>user</td>
+          <td>
+            The system admin user who called this endpoint
+          </td>
+          <td>tokensystemadministratoruser</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td>(custom)</td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/json</td>
+        </tr>
+      </table>
+      <p>A List of expired organisation access requests</p>
       <a name="path__organisation_organisationAccesses_requests.html"></a>
       <h1>/organisation/organisationAccesses/requests</h1>
       <p class="note">Mount Point: <a href="../api/organisation/organisationAccesses/requests">/api/organisation/organisationAccesses/requests</a></p>
@@ -1093,6 +1133,70 @@ to pass)
           <td>403</td>
           <td>
             The current user is not logged in
+          </td>
+        </tr>
+      </table>
+      <a name="path__organisation_organisationAccesses_requests_revoke_-id-.html"></a>
+      <h1>/organisation/organisationAccesses/requests/revoke/{id}</h1>
+      <p class="note">Mount Point: <a href="../api/organisation/organisationAccesses/requests/revoke/{id}">/api/organisation/organisationAccesses/requests/revoke/{id}</a></p>
+      <a name="POST"></a>
+      <h2>POST</h2>
+      <p>
+            SysAdmin function to revoke access, typically called for expirations
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>user</td>
+          <td>
+            The system admin who called this endpoint
+          </td>
+          <td>tokensystemadministratoruser</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>id</td>
+          <td>
+            The filterID of the request to be expired
+          </td>
+          <td>path</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td>(custom)</td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/json</td>
+        </tr>
+      </table>
+      <p>If the revoke action was a success</p>
+      <h3>Status Codes</h3>
+      <table>
+        <tr>
+          <th>code</th>
+          <th>description</th>
+        </tr>
+        <tr>
+          <td>200</td>
+          <td>
+            Successfully completed operation
+          </td>
+        </tr>
+        <tr>
+          <td>403</td>
+          <td>
+            The current user has no admin rights over this request
           </td>
         </tr>
       </table>

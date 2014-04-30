@@ -510,6 +510,8 @@ public class TaxonObservationResource extends RequestResource {
      * @param taxonOutputGroup Any required taxon output groups
      * @param gridRef Any grid references to search within
      * @param polygon WKT WGS-84 polygon filter
+     * @param excludeResolutions A list of resolutions to filter out i.e. 
+     * ...&excludeResolutions=10km,2km&... limited to 10km, 2km, 1km and 100m
      * 
      * @return A List of TaxonWithQueryStats conforming to the provided search
      * parameters
@@ -575,6 +577,8 @@ public class TaxonObservationResource extends RequestResource {
      * @param taxonOutputGroup Any required taxon output groups
      * @param gridRef Any grid references to search within
      * @param polygon WKT WGS-84 polygon filter
+     * @param excludeResolutions A list of resolutions to filter out i.e. 
+     * ...&excludeResolutions=10km,2km&... limited to 10km, 2km, 1km and 100m
      * 
      * @return A List of TaxonWithQueryStats conforming to the provided search
      * parameters
@@ -639,6 +643,8 @@ public class TaxonObservationResource extends RequestResource {
      * @param taxonOutputGroup Any required taxon output groups
      * @param gridRef Any grid references to search within
      * @param polygon WKT WGS-84 polygon filter
+     * @param excludeResolutions A list of resolutions to filter out i.e. 
+     * ...&excludeResolutions=10km,2km&... limited to 10km, 2km, 1km and 100m
      * 
      * @return A List of TaxonWithQueryStats conforming to the provided search
      * parameters
@@ -675,6 +681,8 @@ public class TaxonObservationResource extends RequestResource {
      * @param taxonOutputGroup Any required taxon output groups
      * @param gridRef Any grid references to search within
      * @param polygon WKT WGS-84 polygon filter
+     * @param excludeResolutions A list of resolutions to filter out i.e. 
+     * ...&excludeResolutions=10km,2km&... limited to 10km, 2km, 1km and 100m
      * 
      * @return A Zip file containing a list of TaxonWithQueryStats conforming to 
      * the provided search parameters
@@ -738,6 +746,8 @@ public class TaxonObservationResource extends RequestResource {
      * @param taxonOutputGroup Any required taxon output groups
      * @param gridRef Any grid references to search within
      * @param polygon WKT WGS-84 polygon filter
+     * @param excludeResolutions A list of resolutions to filter out i.e. 
+     * ...&excludeResolutions=10km,2km&... limited to 10km, 2km, 1km and 100m
      * 
      * @return A Zip file containing a list of TaxonWithQueryStats conforming to 
      * the provided search parameters
@@ -800,6 +810,8 @@ public class TaxonObservationResource extends RequestResource {
      * @param taxonOutputGroup Any required taxon output groups
      * @param gridRef Any grid references to search within
      * @param polygon WKT WGS-84 polygon filter
+     * @param excludeResolutions A list of resolutions to filter out i.e. 
+     * ...&excludeResolutions=10km,2km&... limited to 10km, 2km, 1km and 100m
      * 
      * @return A Zip file containing a list of TaxonWithQueryStats conforming to 
      * the provided search parameters

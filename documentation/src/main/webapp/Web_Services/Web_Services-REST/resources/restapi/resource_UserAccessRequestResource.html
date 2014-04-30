@@ -88,6 +88,7 @@
       <p></p>
       <p>The following resources are applicable:</p>
       <ul>
+        <li><a href="#path__user_userAccesses_expired.html">/user/userAccesses/expired</a></li>
         <li><a href="#path__user_userAccesses_requests.html">/user/userAccesses/requests</a></li>
         <li><a href="#path__user_userAccesses_requests_-id-.html">/user/userAccesses/requests/{id}</a></li>
         <li><a href="#path__user_userAccesses_requests_admin.html">/user/userAccesses/requests/admin</a></li>
@@ -97,8 +98,47 @@
         <li><a href="#path__user_userAccesses_requests_granted.html">/user/userAccesses/requests/granted</a></li>
         <li><a href="#path__user_userAccesses_requests_history_-dataset-.html">/user/userAccesses/requests/history/{dataset}</a></li>
         <li><a href="#path__user_userAccesses_requests_pending.html">/user/userAccesses/requests/pending</a></li>
+        <li><a href="#path__user_userAccesses_requests_revoke_-id-.html">/user/userAccesses/requests/revoke/{id}</a></li>
         <li><a href="#path__user_userAccesses_reset_-dataset-.html">/user/userAccesses/reset/{dataset}</a></li>
       </ul>
+      <a name="path__user_userAccesses_expired.html"></a>
+      <h1>/user/userAccesses/expired</h1>
+      <p class="note">Mount Point: <a href="../api/user/userAccesses/expired">/api/user/userAccesses/expired</a></p>
+      <a name="GET"></a>
+      <h2>GET</h2>
+      <p>
+            SysAdmin function to get all expired access requests, used to find expired
+requests
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>user</td>
+          <td>
+            The system admin user who called this endpoint
+          </td>
+          <td>tokensystemadministratoruser</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td>(custom)</td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/json</td>
+        </tr>
+      </table>
+      <p>A List of expired organisation access requests</p>
       <a name="path__user_userAccesses_requests.html"></a>
       <h1>/user/userAccesses/requests</h1>
       <p class="note">Mount Point: <a href="../api/user/userAccesses/requests">/api/user/userAccesses/requests</a></p>
@@ -958,6 +998,70 @@ to pass)
           <td>403</td>
           <td>
             The current user is not logged in
+          </td>
+        </tr>
+      </table>
+      <a name="path__user_userAccesses_requests_revoke_-id-.html"></a>
+      <h1>/user/userAccesses/requests/revoke/{id}</h1>
+      <p class="note">Mount Point: <a href="../api/user/userAccesses/requests/revoke/{id}">/api/user/userAccesses/requests/revoke/{id}</a></p>
+      <a name="POST"></a>
+      <h2>POST</h2>
+      <p>
+            SysAdmin function to revoke access, typically called for expirations
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>user</td>
+          <td>
+            The system admin who called this endpoint
+          </td>
+          <td>tokensystemadministratoruser</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>id</td>
+          <td>
+            The filterID of the request to be expired
+          </td>
+          <td>path</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td>(custom)</td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/json</td>
+        </tr>
+      </table>
+      <p>If the revoke action was a success</p>
+      <h3>Status Codes</h3>
+      <table>
+        <tr>
+          <th>code</th>
+          <th>description</th>
+        </tr>
+        <tr>
+          <td>200</td>
+          <td>
+            Successfully completed operation
+          </td>
+        </tr>
+        <tr>
+          <td>403</td>
+          <td>
+            The current user has no admin rights over this request
           </td>
         </tr>
       </table>
