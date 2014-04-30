@@ -8,6 +8,8 @@ public class TaxonWithQueryStats implements Comparable<TaxonWithQueryStats>{
     private String taxonVersionKey;
     private int querySpecificObservationCount;
     private Taxon taxon;
+    private int minYear;
+    private int maxYear;
     
     public TaxonWithQueryStats(){}
     
@@ -39,6 +41,22 @@ public class TaxonWithQueryStats implements Comparable<TaxonWithQueryStats>{
 
     public void setTaxon(Taxon taxon) {
         this.taxon = taxon;
+    }
+
+    public int getMinYear() {
+        return minYear;
+    }
+
+    public void setMinYear(int minYear) {
+        this.minYear = minYear;
+    }
+
+    public int getMaxYear() {
+        return maxYear;
+    }
+
+    public void setMaxYear(int maxYear) {
+        this.maxYear = maxYear;
     }
 
     @Override

@@ -157,9 +157,9 @@ public class TaxonObservationProvider {
     }
 
     public String filteredSelectSpecies(Map<String, Object> params) {
-        String from = createSelect(params, "o.pTaxonVersionKey");
+        String from = createSelect(params, "o.pTaxonVersionKey, o.startDate, o.endDate");
         BEGIN();
-        SELECT("obs.pTaxonVersionKey, COUNT(*) querySpecificObservationCount");
+        SELECT("obs.pTaxonVersionKey, COUNT(*) querySpecificObservationCount,  YEAR(MIN(obs.startDate)) minYear, YEAR(MAX(obs.endDate)) maxYear");
         FROM(from);
         GROUP_BY("obs.pTaxonVersionKey");
         return SQL();
@@ -395,6 +395,21 @@ public class TaxonObservationProvider {
                 WHERE("absence = 1");
             } else {
                 WHERE("absence = 0");
+            }
+        }
+        
+        if (params.containsKey("excludeResolutions") && params.get("excludeResolutions") != null) {
+            if (params.get("excludeResolutions") instanceof List) {
+                List<String> args = (List<String>) params.get("excludeResolutions");
+                if (args.size() > 0 && !"".equals(args.get(0))) {
+                    INNER_JOIN("FeatureData fdex ON fdex.id = o.featureID");
+                    INNER_JOIN("Resolution r ON r.id = fdex.resolutionID");
+                    WHERE("r.label NOT IN ('" + StringUtils.collectionToDelimitedString(args, "','") + "')");
+                }
+            } else if (StringUtils.hasText(params.get("excludeResolutions").toString())) {
+                INNER_JOIN("FeatureData fdex ON fdex.id = o.featureID");
+                INNER_JOIN("Resolution r ON r.id = fdex.resolutionID");
+                WHERE("r.label IS NOT '" + params.get("excludeResolutions") + "'");
             }
         }
         

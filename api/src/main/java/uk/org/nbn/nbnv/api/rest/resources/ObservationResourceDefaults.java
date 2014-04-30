@@ -20,5 +20,5 @@ public class ObservationResourceDefaults {
     public static final String defaultReason = "";
     public static final String defaultReasonType = "-1";
     public static final String defaultAbsence = "0";
-
+    public static final String defaultExcludeResolutions = "";
 }

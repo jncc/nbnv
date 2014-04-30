@@ -537,7 +537,8 @@ public class TaxonObservationResource extends RequestResource {
             @QueryParam("taxonOutputGroup") @DefaultValue(ObservationResourceDefaults.defaultTaxonOutputGroup) String taxonOutputGroup,
             @QueryParam("orgSuppliedList") @DefaultValue(ObservationResourceDefaults.defaultOrgSuppliedList) int orgSuppliedList,
             @QueryParam("gridRef") @DefaultValue(ObservationResourceDefaults.defaultGridRef) String gridRef,
-            @QueryParam("polygon") @DefaultValue(ObservationResourceDefaults.defaultPolygon) String polygon) {
+            @QueryParam("polygon") @DefaultValue(ObservationResourceDefaults.defaultPolygon) String polygon,
+            @QueryParam("excludeResolutions") @DefaultValue(ObservationResourceDefaults.defaultExcludeResolutions) List<String> excludeResolutions) {
         //TODO: squareBlurring(?)
         
 //        // Check size of polygon
@@ -549,10 +550,12 @@ public class TaxonObservationResource extends RequestResource {
         // shorten the URL
         taxa = checkForCommaDelimited(taxa);
         datasetKeys = checkForCommaDelimited(datasetKeys);
+        excludeResolutions = checkForCommaDelimited(excludeResolutions);
         
         return getSpecies(user, startYear, endYear, datasetKeys, taxa, 
                 spatialRelationship, featureID, sensitive, designation, 
-                orgSuppliedList, taxonOutputGroup, gridRef, polygon);
+                orgSuppliedList, taxonOutputGroup, gridRef, polygon,
+                excludeResolutions);
     }
     
     /**
@@ -599,7 +602,8 @@ public class TaxonObservationResource extends RequestResource {
             @QueryParam("taxonOutputGroup") @DefaultValue(ObservationResourceDefaults.defaultTaxonOutputGroup) String taxonOutputGroup,
             @QueryParam("orgSuppliedList") @DefaultValue(ObservationResourceDefaults.defaultOrgSuppliedList) int orgSuppliedList,
             @QueryParam("gridRef") @DefaultValue(ObservationResourceDefaults.defaultGridRef) String gridRef,
-            @QueryParam("polygon") @DefaultValue(ObservationResourceDefaults.defaultPolygon) String polygon) {
+            @QueryParam("polygon") @DefaultValue(ObservationResourceDefaults.defaultPolygon) String polygon,
+            @QueryParam("excludeResolutions") @DefaultValue(ObservationResourceDefaults.defaultExcludeResolutions) List<String> excludeResolutions) {
         //TODO: squareBlurring(?)
         
 //        // Check size of polygon
@@ -611,10 +615,12 @@ public class TaxonObservationResource extends RequestResource {
         // shorten the URL
         taxa = checkForCommaDelimited(taxa);
         datasetKeys = checkForCommaDelimited(datasetKeys);
+        excludeResolutions = checkForCommaDelimited(excludeResolutions);
         
         return getSpecies(user, startYear, endYear, datasetKeys, taxa, 
                 spatialRelationship, featureID, sensitive, designation, 
-                orgSuppliedList, taxonOutputGroup, gridRef, polygon);
+                orgSuppliedList, taxonOutputGroup, gridRef, polygon,
+                excludeResolutions);
     }    
     
     /** 
@@ -641,12 +647,12 @@ public class TaxonObservationResource extends RequestResource {
             int endYear, List<String> datasetKeys, List<String> taxa, 
             String spatialRelationship, String featureID, Boolean sensitive, 
             String designation, int orgSuppliedList, String taxonOutputGroup,
-            String gridRef, String polygon) {
+            String gridRef, String polygon, List<String> excludeResolutions) {
         List<TaxonWithQueryStats> toReturn = 
                 observationMapper.selectObservationSpeciesByFilter(user, 
                     startYear, endYear, datasetKeys, taxa, spatialRelationship, 
                     featureID, sensitive, designation, taxonOutputGroup, 
-                    orgSuppliedList, gridRef, polygon, false);
+                    orgSuppliedList, gridRef, polygon, false, excludeResolutions);
         Collections.sort(toReturn);
         return toReturn;        
     }    
@@ -687,8 +693,8 @@ public class TaxonObservationResource extends RequestResource {
             @TokenUser() final User user,
             @QueryParam("startYear") @DefaultValue(ObservationResourceDefaults.defaultStartYear) final int startYear,
             @QueryParam("endYear") @DefaultValue(ObservationResourceDefaults.defaultEndYear) final int endYear,
-            @QueryParam("datasetKey") @DefaultValue(ObservationResourceDefaults.defaultDatasetKey) List<String> datasetKeysIn,
-            @QueryParam("ptvk") @DefaultValue(ObservationResourceDefaults.defaultTaxa) List<String> taxaIn,
+            @QueryParam("datasetKey") @DefaultValue(ObservationResourceDefaults.defaultDatasetKey) List<String> datasetKeys,
+            @QueryParam("ptvk") @DefaultValue(ObservationResourceDefaults.defaultTaxa) List<String> taxa,
             @QueryParam("spatialRelationship") @DefaultValue(ObservationResourceDefaults.SPATIAL_RELATIONSHIP_DEFAULT) final String spatialRelationship,
             @QueryParam("featureID") @DefaultValue(ObservationResourceDefaults.defaultFeatureID) final String featureID,
             @QueryParam("sensitive") @DefaultValue(ObservationResourceDefaults.defaultSensitive) final Boolean sensitive,
@@ -696,19 +702,21 @@ public class TaxonObservationResource extends RequestResource {
             @QueryParam("orgSuppliedList") @DefaultValue(ObservationResourceDefaults.defaultOrgSuppliedList) final int orgSuppliedList,
             @QueryParam("taxonOutputGroup") @DefaultValue(ObservationResourceDefaults.defaultTaxonOutputGroup) final String taxonOutputGroup,
             @QueryParam("gridRef") @DefaultValue(ObservationResourceDefaults.defaultGridRef) final String gridRef,
-            @QueryParam("polygon") @DefaultValue(ObservationResourceDefaults.defaultPolygon) final String polygon) {
+            @QueryParam("polygon") @DefaultValue(ObservationResourceDefaults.defaultPolygon) final String polygon,
+            @QueryParam("excludeResolutions") @DefaultValue(ObservationResourceDefaults.defaultExcludeResolutions) List<String> excludeResolutions) {
         //TODO: squareBlurring(?)
         // Set the filename to get around a bug with Firefox not adding the extension properly
         response.setHeader("Content-Disposition", "attachment; filename=\"species_download.zip\"");
         
         // Allow for both traditional lists to come in and for CSV lists to 
         // shorten the URL
-        List<String> taxa = checkForCommaDelimited(taxaIn);
-        List<String> datasetKeys = checkForCommaDelimited(datasetKeysIn);
+        taxa = checkForCommaDelimited(taxa);
+        datasetKeys = checkForCommaDelimited(datasetKeys);
+        excludeResolutions = checkForCommaDelimited(excludeResolutions);
         
         return getSpeciesDowload(user, startYear, endYear, datasetKeys, 
                 taxa, spatialRelationship, featureID, sensitive, designation, 
-                orgSuppliedList, taxonOutputGroup, gridRef, polygon);
+                orgSuppliedList, taxonOutputGroup, gridRef, polygon, excludeResolutions);
     }
 
     /**
@@ -745,31 +753,33 @@ public class TaxonObservationResource extends RequestResource {
     @Produces("application/x-zip-compressed")
     public StreamingOutput getSpeciesDownloadByFilterPOST(
             @Context HttpServletResponse response,
-            @TokenUser() final User user,
-            @QueryParam("startYear") @DefaultValue(ObservationResourceDefaults.defaultStartYear) final int startYear,
-            @QueryParam("endYear") @DefaultValue(ObservationResourceDefaults.defaultEndYear) final int endYear,
-            @QueryParam("datasetKey") @DefaultValue(ObservationResourceDefaults.defaultDatasetKey) List<String> datasetKeysIn,
-            @QueryParam("ptvk") @DefaultValue(ObservationResourceDefaults.defaultTaxa) List<String> taxaIn,
-            @QueryParam("spatialRelationship") @DefaultValue(ObservationResourceDefaults.SPATIAL_RELATIONSHIP_DEFAULT) final String spatialRelationship,
-            @QueryParam("featureID") @DefaultValue(ObservationResourceDefaults.defaultFeatureID) final String featureID,
-            @QueryParam("sensitive") @DefaultValue(ObservationResourceDefaults.defaultSensitive) final Boolean sensitive,
-            @QueryParam("designation") @DefaultValue(ObservationResourceDefaults.defaultDesignation) final String designation,
-            @QueryParam("orgSuppliedList") @DefaultValue(ObservationResourceDefaults.defaultOrgSuppliedList) final int orgSuppliedList,
-            @QueryParam("taxonOutputGroup") @DefaultValue(ObservationResourceDefaults.defaultTaxonOutputGroup) final String taxonOutputGroup,
-            @QueryParam("gridRef") @DefaultValue(ObservationResourceDefaults.defaultGridRef) final String gridRef,
-            @QueryParam("polygon") @DefaultValue(ObservationResourceDefaults.defaultPolygon) final String polygon) {
+            @TokenUser() User user,
+            @QueryParam("startYear") @DefaultValue(ObservationResourceDefaults.defaultStartYear) int startYear,
+            @QueryParam("endYear") @DefaultValue(ObservationResourceDefaults.defaultEndYear) int endYear,
+            @QueryParam("datasetKey") @DefaultValue(ObservationResourceDefaults.defaultDatasetKey) List<String> datasetKeys,
+            @QueryParam("ptvk") @DefaultValue(ObservationResourceDefaults.defaultTaxa) List<String> taxa,
+            @QueryParam("spatialRelationship") @DefaultValue(ObservationResourceDefaults.SPATIAL_RELATIONSHIP_DEFAULT) String spatialRelationship,
+            @QueryParam("featureID") @DefaultValue(ObservationResourceDefaults.defaultFeatureID) String featureID,
+            @QueryParam("sensitive") @DefaultValue(ObservationResourceDefaults.defaultSensitive) Boolean sensitive,
+            @QueryParam("designation") @DefaultValue(ObservationResourceDefaults.defaultDesignation) String designation,
+            @QueryParam("orgSuppliedList") @DefaultValue(ObservationResourceDefaults.defaultOrgSuppliedList) int orgSuppliedList,
+            @QueryParam("taxonOutputGroup") @DefaultValue(ObservationResourceDefaults.defaultTaxonOutputGroup) String taxonOutputGroup,
+            @QueryParam("gridRef") @DefaultValue(ObservationResourceDefaults.defaultGridRef) String gridRef,
+            @QueryParam("polygon") @DefaultValue(ObservationResourceDefaults.defaultPolygon) String polygon,
+            @QueryParam("excludeResolutions") @DefaultValue(ObservationResourceDefaults.defaultExcludeResolutions) List<String> excludeResolutions) {
         //TODO: squareBlurring(?)
         // Set the filename to get around a bug with Firefox not adding the extension properly
         response.setHeader("Content-Disposition", "attachment; filename=\"species_download.zip\"");
         
         // Allow for both traditional lists to come in and for CSV lists to 
         // shorten the URL
-        List<String> taxa = checkForCommaDelimited(taxaIn);
-        List<String> datasetKeys = checkForCommaDelimited(datasetKeysIn);
+        taxa = checkForCommaDelimited(taxa);
+        datasetKeys = checkForCommaDelimited(datasetKeys);
+        excludeResolutions = checkForCommaDelimited(excludeResolutions);
         
         return getSpeciesDowload(user, startYear, endYear, datasetKeys, 
                 taxa, spatialRelationship, featureID, sensitive, designation, 
-                orgSuppliedList, taxonOutputGroup, gridRef, polygon);
+                orgSuppliedList, taxonOutputGroup, gridRef, polygon, excludeResolutions);
     }   
     
     /**
@@ -800,16 +810,17 @@ public class TaxonObservationResource extends RequestResource {
             final String spatialRelationship, final String featureID,
             final Boolean sensitive, final String designation, 
             final int orgSuppliedList, final String taxonOutputGroup,
-            final String gridRef, final String polygon) {
+            final String gridRef, final String polygon, 
+            final List<String> excludeResolutions) {
         
         return new StreamingOutput() {
             @Override
             public void write(OutputStream out) throws IOException, WebApplicationException {
                 ZipOutputStream zip = new ZipOutputStream(out);
                 String title = "Species list download";
-                addSpecies(zip, user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, orgSuppliedList, gridRef, polygon);
-                addReadMe(zip, title, user, startYear, endYear, datasetKeys, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, orgSuppliedList);
-                addDatasetMetadata(zip, user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, orgSuppliedList, gridRef, polygon);
+                addSpecies(zip, user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, orgSuppliedList, gridRef, polygon, excludeResolutions);
+                addReadMe(zip, title, user, startYear, endYear, datasetKeys, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, orgSuppliedList, excludeResolutions);
+                addDatasetMetadata(zip, user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, orgSuppliedList, gridRef, polygon, null);
                 zip.flush();
                 zip.close();
             }
@@ -915,7 +926,7 @@ public class TaxonObservationResource extends RequestResource {
             @QueryParam("gridRef") @DefaultValue(ObservationResourceDefaults.defaultGridRef) String gridRef,
             @QueryParam("polygon") @DefaultValue(ObservationResourceDefaults.defaultPolygon) String polygon) {
         //TODO: squareBlurring(?)
-        return observationMapper.selectObservationDatasetsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon, orgSuppliedList);
+        return observationMapper.selectObservationDatasetsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon, orgSuppliedList, null);
     }
 
     /**
@@ -1220,7 +1231,7 @@ public class TaxonObservationResource extends RequestResource {
             @QueryParam("polygon") @DefaultValue(ObservationResourceDefaults.defaultPolygon) String polygon,
             @QueryParam("returnAccessPositions") @DefaultValue("") String getPerm) {
         //TODO: squareBlurring(?)
-        List<TaxonDatasetWithQueryStats> datasetsWithQueryStats = observationMapper.selectObservationDatasetsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon, orgSuppliedList);
+        List<TaxonDatasetWithQueryStats> datasetsWithQueryStats = observationMapper.selectObservationDatasetsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon, orgSuppliedList, null);
 
         if (getPerm.equalsIgnoreCase("true")) {
             for (TaxonDatasetWithQueryStats d : datasetsWithQueryStats) {
@@ -1342,7 +1353,8 @@ public class TaxonObservationResource extends RequestResource {
                         Boolean.getBoolean(dFilter.getSensitive()), 
                         dFilter.getTaxon().getDesignation(), 
                         dFilter.getTaxon().getOutput(),
-                        dFilter.getTaxon().getOrgSuppliedList());
+                        dFilter.getTaxon().getOrgSuppliedList(),
+                        null);
                 // Add Dataset Metadata to the download
                 addDatasetMetadata(zip, user, 
                         dFilter.getYear().getStartYear(), 
@@ -1356,7 +1368,7 @@ public class TaxonObservationResource extends RequestResource {
                         dFilter.getTaxon().getOutput(), 
                         dFilter.getTaxon().getOrgSuppliedList(),
                         dFilter.getSpatial().getGridRef(), 
-                        dFilter.getPolygon());
+                        dFilter.getPolygon(), null);
                 zip.flush();
                 zip.close();
             }
@@ -1849,8 +1861,8 @@ public class TaxonObservationResource extends RequestResource {
      * @param gridRef
      * @throws IOException 
      */
-    private void addSpecies(ZipOutputStream zip, User user, int startYear, int endYear, List<String> datasetKeys, List<String> taxa, String spatialRelationship, String featureID, boolean sensitive, String designation, String taxonOutputGroup, int orgSuppliedList, String gridRef, String polygon) throws IOException {
-        List<TaxonWithQueryStats> taxaWithStats = observationMapper.selectObservationSpeciesByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, orgSuppliedList, gridRef, polygon, false);
+    private void addSpecies(ZipOutputStream zip, User user, int startYear, int endYear, List<String> datasetKeys, List<String> taxa, String spatialRelationship, String featureID, boolean sensitive, String designation, String taxonOutputGroup, int orgSuppliedList, String gridRef, String polygon, List<String> excludeResolutions) throws IOException {
+        List<TaxonWithQueryStats> taxaWithStats = observationMapper.selectObservationSpeciesByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, orgSuppliedList, gridRef, polygon, false, excludeResolutions);
         zip.putNextEntry(new ZipEntry("TaxonList.csv"));
         ArrayList<String> values = new ArrayList<String>();
         values.add("TaxonName");
@@ -1859,6 +1871,8 @@ public class TaxonObservationResource extends RequestResource {
         values.add("PreferredTaxonVersionKey");
         values.add("TaxonGroupKey");
         values.add("TaxonGroup");
+        values.add("Records From");
+        values.add("Records To");
         downloadHelper.writelnCsv(zip, values);
         for (TaxonWithQueryStats taxonWithStats : taxaWithStats) {
             Taxon taxon = taxonWithStats.getTaxon();
@@ -1873,6 +1887,8 @@ public class TaxonObservationResource extends RequestResource {
             values.add(taxon.getPTaxonVersionKey());
             values.add(taxon.getTaxonOutputGroupKey());
             values.add(taxon.getTaxonOutputGroupName());
+            values.add(taxonWithStats.getMinYear() > 0 ? Integer.toString(taxonWithStats.getMinYear()) : "");
+            values.add(taxonWithStats.getMaxYear() > 0 ? Integer.toString(taxonWithStats.getMaxYear()) : "");
             downloadHelper.writelnCsv(zip, values);
         }
     }
@@ -2154,9 +2170,9 @@ public class TaxonObservationResource extends RequestResource {
             int startYear, int endYear, List<String> datasetKeys, 
             List<String> taxa, String spatialRelationship, String featureID, 
             boolean sensitive, String designation, String taxonOutputGroup, 
-            int orgSuppliedList, String gridRef, String polygon) 
+            int orgSuppliedList, String gridRef, String polygon, List<String> excludeResolutions) 
             throws IOException {
-        List<TaxonDatasetWithQueryStats> datasetsWithQueryStats = observationMapper.selectObservationDatasetsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon, orgSuppliedList);
+        List<TaxonDatasetWithQueryStats> datasetsWithQueryStats = observationMapper.selectObservationDatasetsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon, orgSuppliedList, excludeResolutions);
         downloadHelper.addDatasetWithQueryStatsMetadata(zip, user.getId(), datasetsWithQueryStats);
     }
     
@@ -2178,7 +2194,8 @@ public class TaxonObservationResource extends RequestResource {
     private void addReadMe(ZipOutputStream zip, String title, User user, 
             int startYear, int endYear, List<String> datasetKeys, 
             String spatialRelationship, String featureID, boolean sensitive, 
-            String designation, String taxonOutputGroupKey, int orgSuppliedList) 
+            String designation, String taxonOutputGroupKey, int orgSuppliedList,
+            List<String> excludeResolutions) 
             throws IOException{
         
         HashMap<String, String> filters = new HashMap<String, String>();
@@ -2216,6 +2233,9 @@ public class TaxonObservationResource extends RequestResource {
             OrganisationSuppliedList organisationSuppliedList = organisationSuppliedListMapper.selectByID(orgSuppliedList);
             filters.put("Organisation Supplied List Code", organisationSuppliedList.getCode());
             filters.put("Organisation Supplied List", organisationSuppliedList.getName());
+        }
+        if (excludeResolutions != null && excludeResolutions.size() > 0) {
+            filters.put("Exluding records with the following resolutions", StringUtils.collectionToCommaDelimitedString(excludeResolutions));
         }
         
         downloadHelper.addReadMe(zip, user, title, filters);
@@ -2294,7 +2314,7 @@ public class TaxonObservationResource extends RequestResource {
                 species.add(dFilter.getTaxon().getTvk());
             }
 
-            List<TaxonDatasetWithQueryStats> selectObservationDatasetsByFilter = observationMapper.selectObservationDatasetsByFilter(user, dFilter.getYear().getStartYear(), dFilter.getYear().getEndYear(), new ArrayList<String>(), species, dFilter.getSpatial().getMatch(), dFilter.getSpatial().getFeature(), (dFilter.getSensitive().equals("sans") ? true : false), dFilter.getTaxon().getDesignation(), dFilter.getTaxon().getOutput(), "", "", dFilter.getTaxon().getOrgSuppliedList());
+            List<TaxonDatasetWithQueryStats> selectObservationDatasetsByFilter = observationMapper.selectObservationDatasetsByFilter(user, dFilter.getYear().getStartYear(), dFilter.getYear().getEndYear(), new ArrayList<String>(), species, dFilter.getSpatial().getMatch(), dFilter.getSpatial().getFeature(), (dFilter.getSensitive().equals("sans") ? true : false), dFilter.getTaxon().getDesignation(), dFilter.getTaxon().getOutput(), "", "", dFilter.getTaxon().getOrgSuppliedList(), null);
 
             for (TaxonDatasetWithQueryStats tdwqs : selectObservationDatasetsByFilter) {
                 datasets.add(tdwqs.getDatasetKey());
