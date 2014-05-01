@@ -65,10 +65,10 @@ public class ConvertController {
                                 archiveName = String.format("archive_%s_%s_%s.zip", 
                         ((organisation.getAbbreviation() == null || 
                          organisation.getAbbreviation().trim().isEmpty()) ? 
-                         organisation.getName().substring(0, Math.min(organisation.getName().length(), 10)).replace(" ", "") : 
+                         organisation.getName().substring(0, Math.min(organisation.getName().length(), 10)) : 
                          organisation.getAbbreviation()),
                         metadataForm.getMetadata().getDatasetID(),
-                        new SimpleDateFormat("ddMMyyyy_hhmmss").format(new Date()));
+                        new SimpleDateFormat("ddMMyyyy_hhmmss").format(new Date())).replaceAll(" ", "_");
             } else {
                 archiveName = String.format("archive_%s_%s.zip", 
                         ((organisation.getAbbreviation() == null || 
