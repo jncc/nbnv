@@ -13,6 +13,8 @@
         //Get data from api and add to container
         var keyValuePairsFromForm = nbn.portal.reports.utils.forms.getKeyValuePairsFromForm(form);
         keyValuePairsFromForm['featureID'] = featureID;
+        // Get selected datasets workaround - TODO: Fix this properly
+        keyValuePairsFromForm['datasetKey'] = keyValuePairsFromForm['datasetKey'].join();
         var queryString = nbn.portal.reports.utils.forms.getQueryStringFromKeyValuePairs(keyValuePairsFromForm, false);
         var url = form.attr('api-server') + '/taxonObservations/groups' + queryString;
         $.getJSON(url, function(data){
@@ -74,7 +76,7 @@
                         keyValuePairs.featureID = $form.attr("featureID");
 //                        keyValuePairs.taxonOutputGroup = $form.attr("taxonOutputGroupKey");
                         // Get selected datasets workaround - TODO: Fix this properly
-                        keyValuePairs.datasetKey = datasets;
+                        keyValuePairs.datasetKey = datasets.join();
                         var queryString = nbn.portal.reports.utils.forms.getQueryStringFromKeyValuePairs(keyValuePairs, false);
                         var url = $form.attr('api-server') + '/taxonObservations/species/download/' + queryString;
                         nbn.portal.reports.utils.datasetfields.doSelectDatasetKeys();

@@ -182,14 +182,18 @@ public class SingleSpeciesMap {
                     .select(MAPPINGDATAPUBLIC.FEATUREID.as("FEATUREID"))
                     .from(MAPPINGDATAPUBLIC)
                     .join(TAXONTREE).on(TAXONTREE.CHILDPTVK.eq(MAPPINGDATAPUBLIC.PTAXONVERSIONKEY))
-                    .where(publicCondition)
-                    .unionAll(create
+                    .where(publicCondition);
+        
+        if (User.PUBLIC_USER != user) {
+            nested.unionAll(create
                         .select(MAPPINGDATAENHANCED.FEATUREID)
                         .from(MAPPINGDATAENHANCED)
                         .join(TAXONTREE).on(TAXONTREE.CHILDPTVK.eq(MAPPINGDATAENHANCED.PTAXONVERSIONKEY))
                         .join(USERTAXONOBSERVATIONID).on(USERTAXONOBSERVATIONID.OBSERVATIONID.eq(MAPPINGDATAENHANCED.ID))
                         .where(enhancedCondition)
                     );
+        }
+        
         SelectJoinStep<Record1<Integer>> dNested = create
                 .selectDistinct((Field<Integer>)nested.field(0))
                 .from(nested);

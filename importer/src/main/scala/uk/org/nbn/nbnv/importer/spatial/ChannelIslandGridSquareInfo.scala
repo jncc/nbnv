@@ -12,20 +12,21 @@ object ChannelIslandGridSquareInfo extends GridSqareInfoCompanion {
   protected def getEpsgCode = 23030
 
   protected def getGridSquareByEastingNorthing(east: Int, north: Int, precision: Option[Int]) ={
+    val eastStr = east.toString
+    val northStr = north.toString
+
     val gridLetters =
-      north / 100000 match {
-        case 55 => "WA"
-        case 54 => "WV"
+      northStr.substring(0,2) match {
+        case "55" => "WA"
+        case "54" => "WV"
         case _ => throw throw new BadDataException("The easing and northing (%s,%s) are not within the Channel Islands grid".format(east,north))
       }
 
-    val eastPart = east - 500000
-    val northPart = gridLetters match {
-      case "WA" => (north - 5500000).toString
-      case "WV" => (north - 5400000).toString
-    }
+    val eastPart = eastStr.substring(1,eastStr.length - 1)
+    val northPart = northStr.substring(2, northStr.length - 1)
 
     val gridRef = gridLetters + eastPart + northPart
+
     create(gridRef, precision)
   }
 }

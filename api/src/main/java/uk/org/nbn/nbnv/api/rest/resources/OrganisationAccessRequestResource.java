@@ -12,6 +12,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +31,8 @@ import org.codehaus.enunciate.jaxrs.ResponseCode;
 import org.codehaus.enunciate.jaxrs.StatusCodes;
 import org.codehaus.enunciate.jaxrs.TypeHint;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.ObjectWriter;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +54,7 @@ import uk.org.nbn.nbnv.api.model.OrganisationMembership;
 import uk.org.nbn.nbnv.api.model.TaxonObservationFilter;
 import uk.org.nbn.nbnv.api.model.User;
 import uk.org.nbn.nbnv.api.model.meta.AccessRequestJSON;
+import uk.org.nbn.nbnv.api.model.meta.AccessRequestModifiedTimeJSON;
 import uk.org.nbn.nbnv.api.model.meta.EditAccessRequestJSON;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenDatasetAdminUser;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenOrganisationAccessRequestAdminUser;
@@ -214,7 +218,7 @@ public class OrganisationAccessRequestResource extends RequestResource {
         TaxonObservationFilter filter = accessRequestUtils.createFilter(json, accessRequest);
         List<String> datasets = accessRequest.getDataset().getDatasets();
         
-        DateFormat df = new SimpleDateFormat("dd/mm/yyyy");
+        DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
         
         for (String datasetKey : datasets) {
             oTaxonObservationFilterMapper.createFilter(filter);
@@ -594,6 +598,51 @@ public class OrganisationAccessRequestResource extends RequestResource {
     }
     
     /**
+     * SysAdmin function to get all expired access requests, used to find expired
+     * requests
+     * 
+     * @param user The system admin user who called this endpoint
+     * 
+     * @return A List of expired organisation access requests
+     */
+    @GET
+    @Path("/expired")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<OrganisationAccessRequest> getExpired(@TokenSystemAdministratorUser User user) {
+        return oOrganisationAccessRequestMapper.getExpiredRequests();
+    }
+    
+    /**
+     * SysAdmin function to revoke access, typically called for expirations
+     * 
+     * @param user The system admin who called this endpoint
+     * @param filterID The filterID of the request to be expired
+     *
+     * @return If the revoke action was a success
+     */
+    @POST
+    @Path("/requests/revoke/{id}")
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully completed operation"),
+        @ResponseCode(code = 403, condition = "The current user has no admin rights over this request")
+    })   
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response sysAdminRevoke(
+            @TokenSystemAdministratorUser User user, 
+            @PathParam("id") int filterID) {
+        try {
+            revokeRequest(user, filterID, "Request Expired");
+        } catch (IOException ex) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ex.toString()).build();
+        } catch (TemplateException ex) {
+            return Response.status(Response.Status.ACCEPTED).entity(ex.toString()).build();
+        } catch (Exception ex) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ex.toString()).build();
+        }
+        return Response.ok("Successfully Revoked Request").build();
+    }    
+    
+    /**
      * Returns an audit history listing all organisational access changes made to a dataset
      * 
      * @param user Current User (Must be a dataset administrator) (Injected 
@@ -643,8 +692,35 @@ public class OrganisationAccessRequestResource extends RequestResource {
         if (expires.isEmpty()) {
             oOrganisationAccessRequestMapper.acceptRequest(filterID, reason, new Timestamp(new java.util.Date().getTime()));
         } else {
-            DateFormat df = new SimpleDateFormat("dd/mm/yyyy");
+            DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+            DateFormat db_df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX");
             java.util.Date expiresDate = df.parse(expires);
+                
+            Calendar expiresCal = Calendar.getInstance();
+            Calendar requestCal = Calendar.getInstance();
+            expiresCal.setTime(expiresDate);
+            requestCal.setTime(accessRequestJSON.getTime().getDate());
+            
+            if (!(expiresCal.get(Calendar.YEAR) == requestCal.get(Calendar.YEAR)
+                    && expiresCal.get(Calendar.DAY_OF_YEAR) == requestCal.get(Calendar.DAY_OF_YEAR))) {
+            
+                String origText = oar.getFilter().getFilterText();
+
+                accessRequestJSON.getTime().setAll(false);
+                accessRequestJSON.getTime().setDate(expiresDate);
+
+                AccessRequestModifiedTimeJSON json = new AccessRequestModifiedTimeJSON(accessRequestJSON, db_df.format(expiresDate));
+
+                ObjectMapper om = new ObjectMapper();
+                // Stop nulls being pushed out to the json output
+                om.setSerializationInclusion(JsonSerialize.Inclusion.NON_NULL);
+                ObjectWriter ow = om.writer();
+
+                TaxonObservationFilter filter = accessRequestUtils.createFilter(ow.writeValueAsString(json), accessRequestJSON);
+
+                oTaxonObservationFilterMapper.editFilter(filterID, filter.getFilterText(), ow.writeValueAsString(json));
+                oOrganisationAccessRequestAuditHistoryMapper.addHistory(filterID, user.getId(), "Edit request to: '" + filter.getFilterText() + "', from: '" + origText + "'");
+            }
             oOrganisationAccessRequestMapper.acceptRequestWithExpires(filterID, reason, new Timestamp(new java.util.Date().getTime()), new Date(expiresDate.getTime()));
         }
 

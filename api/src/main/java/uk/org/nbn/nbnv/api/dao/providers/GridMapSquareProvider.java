@@ -29,6 +29,13 @@ public class GridMapSquareProvider {
         return SQL();
     }
     
+    public String gridMapSquaresInspire(Map<String, Object> params) {
+        BEGIN();
+        SELECT("DISTINCT fd.identifier gridref");
+        createInspireQuery(params);
+        return SQL();
+    }
+
     public String gridMapDatasets(Map<String, Object> params) {
         BEGIN();
         SELECT("DISTINCT dd.*, tdd.*, tdd.label publicResolution");
@@ -39,6 +46,18 @@ public class GridMapSquareProvider {
         return SQL();
     }
 
+    private void createInspireQuery(Map<String, Object> params) {
+        FROM("UserTaxonObservationData o");
+        INNER_JOIN("GridTree gt ON o.featureID = gt.featureID");
+        INNER_JOIN("TaxonTree tt ON tt.childPTVK = o.pTaxonVersionKey");
+        INNER_JOIN("FeatureData fd ON gt.parentFeatureID = fd.id");
+        INNER_JOIN("Resolution r ON fd.resolutionID = r.id");
+        WHERE("o.userID = #{user.id}");
+        WHERE("tt.nodePTVK = #{ptvk}");
+        WHERE("r.label = #{resolution}");
+        WHERE("o.absence = 0");
+    }
+    
     private void createGenericQuery(Map<String, Object> params) {
         FROM("UserTaxonObservationData o");
         INNER_JOIN("GridTree gt ON o.featureID = gt.featureID");

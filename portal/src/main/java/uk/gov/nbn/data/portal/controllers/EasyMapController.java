@@ -4,6 +4,7 @@
  */
 package uk.gov.nbn.data.portal.controllers;
 
+import com.sun.jersey.api.client.UniformInterfaceException;
 import com.sun.jersey.api.client.WebResource;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -15,10 +16,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import uk.gov.nbn.data.portal.exceptions.InvalidFeatureIdentifierException;
 import uk.org.nbn.nbnv.api.model.BoundingBox;
 import uk.org.nbn.nbnv.api.model.Feature;
 import uk.org.nbn.nbnv.api.model.Taxon;
@@ -69,9 +72,14 @@ public class EasyMapController {
             ,@RequestParam(value="logo", required=false) Integer displayLogo
             ,@RequestParam(value="css", required=false) String css
             ,@RequestParam(value="terms", required=false) Integer displayTerms
-            ,@RequestParam(value="link", required=false) String displayImtLink) {
+            ,@RequestParam(value="link", required=false) String displayImtLink
+            ,@RequestParam(value="bl", required=false) String bottomLeft
+            ,@RequestParam(value="tr", required=false) String topRight
+            ,@RequestParam(value="blCoord", required=false) String bottomLeftCoord
+            ,@RequestParam(value="trCoord", required=false) String topRightCoord) {
         
         Map<String, Object> model = new HashMap<String, Object>();
+        errors = new ArrayList<String>();
         
         //check if tvk is valid and return error page.
         if (tvk == null || tvk.isEmpty()) {
@@ -121,8 +129,16 @@ public class EasyMapController {
             model.put("errors", errors);
             return new ModelAndView("easyMap", model);
         }
-        
-        wmsParameters = wmsParameters + getBoundingBoxParam(vcFeature, zoomLocation);
+        try {
+            wmsParameters = wmsParameters + 
+                    getBoundingBoxParam(vcFeature, zoomLocation, bottomLeft, 
+                                        topRight, bottomLeftCoord, 
+                                        topRightCoord);
+        } catch (InvalidFeatureIdentifierException ex) {
+            errors.add("Could not find a feature with the identifier " + ex.getIdentifier() + " :: " + ex.getLocalizedMessage());
+            model.put("errors", errors);
+            return new ModelAndView("easyMap", model);
+        }
         
         String defaultBorderColour = "000000";
         String band0DefaultFill = "FF0000";
@@ -270,7 +286,9 @@ public class EasyMapController {
         return p;
     }
 
-    private String getBoundingBoxParam(Feature vcFeature, String zoomLocation) {
+    private String getBoundingBoxParam(Feature vcFeature, String zoomLocation, 
+            String bottomLeft, String topRight, String bottomLeftCoords, 
+            String topRightCoords) throws InvalidFeatureIdentifierException {
         String p = "&BBOX=";
         
         if (vcFeature != null) {
@@ -281,11 +299,35 @@ public class EasyMapController {
             p = p + "," + bbox.getMaxY().toString();
         } else if (zoomLocation != null && !zoomLocation.isEmpty()) {
             p = p + getCustomBoundingBox(zoomLocation);
+        } else if (StringUtils.hasText(bottomLeft) && StringUtils.hasText(topRight)) {
+            Feature bottom = getFeatureByIdentifier(bottomLeft);
+            Feature top = getFeatureByIdentifier(topRight);
+            
+            p = p + bottom.getNativeBoundingBox().getMinX() + ","
+                    + bottom.getNativeBoundingBox().getMinY() + ","
+                    + top.getNativeBoundingBox().getMaxX() + ","
+                    + top.getNativeBoundingBox().getMaxY();
+        } else if (bottomLeftCoords != null && !bottomLeftCoords.isEmpty() && topRightCoords != null && !topRightCoords.isEmpty()) {
+            p = p + bottomLeftCoords + "," + topRightCoords;
         } else {
             p = p + "-200000,-200000,1070000,1070000";
         }
         
         return p;
+    }
+    
+    private Feature getFeatureByIdentifier(String identifier) throws InvalidFeatureIdentifierException {
+        try {
+            String path = "/features/" + identifier;
+
+            return resource.path(path)
+                .accept(MediaType.APPLICATION_JSON)
+                .get(Feature.class);
+        } catch (UniformInterfaceException ex) {
+            InvalidFeatureIdentifierException invalid = new InvalidFeatureIdentifierException(ex.getLocalizedMessage());
+            invalid.setIdentifier(identifier);
+            throw invalid;
+        }
     }
 
     private Feature getViceCountyFeature(Integer viceCountyId) {
@@ -347,13 +389,22 @@ public class EasyMapController {
 
     private TaxonDatasetWithQueryStats[] getDatasets(Integer startYear, Integer endYear, String tvk, String featureIdentifier, String datasets) {
         if (tvk == null || tvk.isEmpty()) return null; //need a tvk.
-                
-        TaxonDatasetWithQueryStats[] datasetList = resource.path("/taxonObservations/datasets")
+        
+        WebResource localResource = resource.path("/taxonObservations/datasets")
             .queryParam("ptvk", tvk)
             .queryParam("startYear", String.format("%04d", startYear))
             .queryParam("endYear", String.format("%04d", endYear))
-            .queryParam("featureID", (featureIdentifier != null ? featureIdentifier : ""))
-            .queryParam("datasetKey", (datasets != null ? datasets : ""))
+            .queryParam("featureID", (featureIdentifier != null ? featureIdentifier : ""));
+        
+        // Handle list of datasets
+        if (StringUtils.hasText(datasets)) {
+            String[] datasetList = StringUtils.commaDelimitedListToStringArray(datasets);
+            for (String ds : datasetList) {
+                localResource = localResource.queryParam("datasetKey", ds);
+            }
+        }
+        
+        TaxonDatasetWithQueryStats[] datasetList = localResource
             .accept(MediaType.APPLICATION_JSON)
             .get(TaxonDatasetWithQueryStats[].class);
         

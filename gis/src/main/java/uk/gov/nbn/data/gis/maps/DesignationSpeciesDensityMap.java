@@ -121,8 +121,11 @@ public class DesignationSpeciesDensityMap {
                         MAPPINGDATAPUBLIC.PTAXONVERSIONKEY)
                         .from(MAPPINGDATAPUBLIC)
                         .join(DESIGNATIONTAXONDATA).on(DESIGNATIONTAXONDATA.PTAXONVERSIONKEY.eq(MAPPINGDATAPUBLIC.PTAXONVERSIONKEY))
-                        .where(publicCondition)
-                        .unionAll(create
+                        .where(publicCondition);
+                
+                        
+                if (User.PUBLIC_USER != user) {
+                    observations.unionAll(create
                         .select(
                         MAPPINGDATAENHANCED.FEATUREID,
                         MAPPINGDATAENHANCED.PTAXONVERSIONKEY)
@@ -130,7 +133,8 @@ public class DesignationSpeciesDensityMap {
                         .join(DESIGNATIONTAXONDATA).on(DESIGNATIONTAXONDATA.PTAXONVERSIONKEY.eq(MAPPINGDATAENHANCED.PTAXONVERSIONKEY))
                         .join(USERTAXONOBSERVATIONID).on(USERTAXONOBSERVATIONID.OBSERVATIONID.eq(MAPPINGDATAENHANCED.ID))
                         .where(enhancedCondition));
-
+                }
+                
                 SelectHavingStep squares = create
                         .select(observations.field(0).as("featureID"), countDistinct(observations.field(1)).as("species"))
                         .from(observations)

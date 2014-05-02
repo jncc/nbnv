@@ -69,7 +69,6 @@ class RecordIngester @Inject()(log: Logger,
     update(observation)
     db.em.persist(observation)
     db.em.flush()
-//    db.flushAndClear()
 
     attributeIngester.ingestAttributes(record, observation, dataset)
 
