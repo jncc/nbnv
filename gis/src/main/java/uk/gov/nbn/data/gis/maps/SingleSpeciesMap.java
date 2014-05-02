@@ -164,7 +164,7 @@ public class SingleSpeciesMap {
 	    publicCondition = MapHelper.createTemporalSegment(publicCondition, startYear, endYear, MAPPINGDATAPUBLIC.STARTDATE, MAPPINGDATAPUBLIC.ENDDATE);
 	}
         publicCondition = MapHelper.createInDatasetsSegment(publicCondition, MAPPINGDATAPUBLIC.DATASETKEY, datasetKeys);
-	publicCondition = MapHelper.createInVerificationKeysSegment(publicCondition, MAPPINGDATAPUBLIC.VERIFICATION, verificationKeys);
+	publicCondition = MapHelper.createInVerificationKeysSegment(publicCondition, MAPPINGDATAPUBLIC.VERIFICATIONID, verificationKeys);
 
         Condition enhancedCondition = TAXONTREE.NODEPTVK.eq(taxonKey)
                 .and(USERTAXONOBSERVATIONID.USERID.eq(user.getId()))
@@ -176,7 +176,7 @@ public class SingleSpeciesMap {
 	    enhancedCondition = MapHelper.createTemporalSegment(enhancedCondition, startYear, endYear, MAPPINGDATAENHANCED.STARTDATE, MAPPINGDATAENHANCED.ENDDATE);
 	}
         enhancedCondition = MapHelper.createInDatasetsSegment(enhancedCondition, MAPPINGDATAENHANCED.DATASETKEY, datasetKeys);
-	enhancedCondition = MapHelper.createInVerificationKeysSegment(enhancedCondition, MAPPINGDATAENHANCED.VERIFICATION, verificationKeys);
+	enhancedCondition = MapHelper.createInVerificationKeysSegment(enhancedCondition, MAPPINGDATAENHANCED.VERIFICATIONID, verificationKeys);
 
         Select<Record1<Integer>> nested = create
                     .select(MAPPINGDATAPUBLIC.FEATUREID.as("FEATUREID"))

@@ -30,7 +30,7 @@ public class ProviderHelper {
     }
     
     static void addVerifications(List<Integer> verificationKeys){
-	WHERE(String.format("verification in (%s)", StringUtils.collectionToDelimitedString(verificationKeys,",")));
+	WHERE(String.format("verificationID in (%s)", StringUtils.collectionToDelimitedString(verificationKeys,",")));
     }
     
     static void addYearRanges(List<String> bands){

@@ -35,6 +35,7 @@ public class TaxonObservationDownload {
     private boolean zeroAbundance;
     private boolean fullVersion;
     private boolean publicAttribute;
+    private String verification;
     
     public TaxonObservationDownload() {
         this.fullVersion = false;
@@ -238,5 +239,13 @@ public class TaxonObservationDownload {
 
     public void setPublicAttribute(boolean publicAttribute) {
         this.publicAttribute = publicAttribute;
+    }
+
+    public String getVerification() {
+        return verification;
+    }
+
+    public void setVerification(String verification) {
+        this.verification = verification;
     }
 }
