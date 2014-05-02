@@ -27,8 +27,8 @@ import uk.ac.ceh.dynamo.GridMap.GridLayer;
 import uk.ac.ceh.dynamo.GridMap.Layer;
 import uk.ac.ceh.dynamo.GridMap.Resolution;
 import uk.ac.ceh.dynamo.arguments.annotations.ServiceURL;
-import uk.ac.ceh.dynamo.bread.Baker;
 import uk.ac.ceh.dynamo.bread.BreadException;
+import uk.ac.ceh.dynamo.bread.ShapefileBakery;
 import uk.gov.nbn.data.gis.validation.Datasets;
 
 /**
@@ -56,7 +56,7 @@ public class SingleSpeciesMap {
     
     @Autowired WebResource resource;
     @Autowired Properties properties;
-    @Autowired @Qualifier("taxonLayerBaker") Baker baker;
+    @Autowired @Qualifier("taxonLayerBaker") ShapefileBakery bakery;
     
     static {
         COLOURS = new HashMap<String, Color>();
@@ -108,11 +108,11 @@ public class SingleSpeciesMap {
         data.put("mapServiceURL", mapServiceURL);
         data.put("featureData", MapHelper.getSelectedFeatureData(featureID));
         data.put("properties", properties);
-        data.put("absenceLayerGenerator", getSingleSpeciesResolutionDataGenerator(baker, FEATURE.GEOM, key, user, datasetKeys, startYear, endYear, true));
-        data.put("presencelayerGenerator", getSingleSpeciesResolutionDataGenerator(baker, FEATURE.GEOM, key, user, datasetKeys, startYear, endYear, false));
+        data.put("absenceLayerGenerator", getSingleSpeciesResolutionDataGenerator(bakery, FEATURE.GEOM, key, user, datasetKeys, startYear, endYear, true));
+        data.put("presencelayerGenerator", getSingleSpeciesResolutionDataGenerator(bakery, FEATURE.GEOM, key, user, datasetKeys, startYear, endYear, false));
         data.put("bandLayerGenerator", new SingleSpeciesBandSqlGenerator() {
             @Override public String getData(String layerName, Band dateBand) throws BreadException {
-                return baker.getData(getSQL(FEATURE.GEOM, key, user, datasetKeys, dateBand.getStartYear(), dateBand.getEndYear(), false, layerName));
+                return bakery.getData(getSQL(FEATURE.GEOM, key, user, datasetKeys, dateBand.getStartYear(), dateBand.getEndYear(), false, layerName));
             }
         });
         return new ModelAndView("SingleSpecies.map",data);
@@ -124,7 +124,7 @@ public class SingleSpeciesMap {
     
     //Factored out the single species resolution data generator so that it can be used by the atlas map
     static LayerDataGenerator getSingleSpeciesResolutionDataGenerator(
-            final Baker baker,
+            final ShapefileBakery bakery,
             final Field<?> geometry,
             final String taxonKey, 
             final User user, 
@@ -134,7 +134,7 @@ public class SingleSpeciesMap {
             final boolean absence) {
         return new LayerDataGenerator() {
             @Override public String getData(String layerName) throws BreadException {
-                return baker.getData(getSQL(geometry, taxonKey, user, datasetKeys, startYear, endYear, absence, layerName));
+                return bakery.getData(getSQL(geometry, taxonKey, user, datasetKeys, startYear, endYear, absence, layerName));
             }
         };
     }      

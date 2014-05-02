@@ -28,9 +28,10 @@ import uk.ac.ceh.dynamo.FeatureResolver;
 import uk.ac.ceh.dynamo.GridMapRequestMappingHandlerMapping;
 import uk.ac.ceh.dynamo.arguments.GridMapArgumentResolver;
 import uk.ac.ceh.dynamo.arguments.ServiceURLArgumentResolver;
-import uk.ac.ceh.dynamo.bread.Baker;
+import uk.ac.ceh.dynamo.bread.BreadSliceCountClimate;
+import uk.ac.ceh.dynamo.bread.ShapefileBakery;
 import uk.ac.ceh.dynamo.bread.ShapefileGenerator;
-import uk.gov.nbn.data.gis.maps.cache.FixedClimate;
+import uk.ac.ceh.dynamo.bread.UpdatableClimate;
 import uk.gov.nbn.data.properties.PropertiesReader;
 import uk.org.nbn.nbnv.api.model.Feature;
 
@@ -138,20 +139,21 @@ public class ApplicationConfig extends WebMvcConfigurerAdapter {
     }
     
     @Bean
-    public Baker taxonLayerBaker() throws IOException {
+    public ShapefileBakery taxonLayerBaker() throws IOException {
         File cache = new File(properties().getProperty("bread.taxon.cacheDir"));
         long staleTime = Long.parseLong(properties().getProperty("bread.taxon.staleTime"));
         long rottenTime = Long.parseLong(properties().getProperty("bread.taxon.rottenTime"));
+        int maxBreadSliceCount = Integer.parseInt(properties().getProperty("bread.taxon.maxSliceCount"));
         
-        return new Baker(new FixedClimate(), cache, shapefileGenerator(), staleTime, rottenTime );
+        return new ShapefileBakery(cache, new BreadSliceCountClimate(maxBreadSliceCount), shapefileGenerator(), staleTime, rottenTime );
     }
     
     @Bean 
-    public Baker contextLayerBaker() throws IOException {
+    public ShapefileBakery contextLayerBaker() throws IOException {
         File cache = new File(properties().getProperty("bread.context.cacheDir"));
         long staleTime = Long.parseLong(properties().getProperty("bread.context.staleTime"));
         long rottenTime = Long.parseLong(properties().getProperty("bread.context.rottenTime"));
         
-        return new Baker(new FixedClimate(), cache, shapefileGenerator(), staleTime, rottenTime );
+        return new ShapefileBakery(cache, new UpdatableClimate(1), shapefileGenerator(), staleTime, rottenTime );
     }
 }

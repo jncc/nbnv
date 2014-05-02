@@ -29,8 +29,8 @@ import uk.ac.ceh.dynamo.GridMap.Extent;
 import uk.ac.ceh.dynamo.GridMap.GridLayer;
 import uk.ac.ceh.dynamo.GridMap.Resolution;
 import uk.ac.ceh.dynamo.arguments.annotations.ServiceURL;
-import uk.ac.ceh.dynamo.bread.Baker;
 import uk.ac.ceh.dynamo.bread.BreadException;
+import uk.ac.ceh.dynamo.bread.ShapefileBakery;
 import uk.gov.nbn.data.gis.config.TokenUserArgumentResolver;
 import uk.gov.nbn.data.gis.validation.Datasets;
 import static uk.gov.nbn.data.dao.jooq.Tables.*;
@@ -75,7 +75,7 @@ public class SingleSpeciesAtlasMap {
     
     @Autowired WebResource resource;
     @Autowired Properties properties;
-    @Autowired @Qualifier("taxonLayerBaker") Baker baker;
+    @Autowired @Qualifier("taxonLayerBaker") ShapefileBakery bakery;
     
     static {
         LAYERS = new String[]{TEN_KM_LAYER_NAME, TWO_KM_LAYER_NAME, ONE_KM_LAYER_NAME, ONE_HUNDRED_M_LAYER_NAME};
@@ -123,7 +123,7 @@ public class SingleSpeciesAtlasMap {
         data.put("outlineWidthDenominator", SYMBOLOGY_OUTLINE_WIDTH_DENOMINATOR);
         data.put("mapServiceURL", mapServiceURL);
         data.put("properties", properties);
-        data.put("layerGenerator", getSingleSpeciesAtlasResolutionDataGenerator(baker, GEOM_CENTROID, key, user, datasetKeys, startYear, endYear, false));
+        data.put("layerGenerator", getSingleSpeciesAtlasResolutionDataGenerator(bakery, GEOM_CENTROID, key, user, datasetKeys, startYear, endYear, false));
         return new ModelAndView("SingleSpeciesSymbology.map",data);
     }
     
@@ -170,7 +170,7 @@ public class SingleSpeciesAtlasMap {
     }
     
     static MapHelper.LayerDataGenerator getSingleSpeciesAtlasResolutionDataGenerator(
-            final Baker baker,
+            final ShapefileBakery bakery,
             final Field<?> geometry,
             final String taxonKey, 
             final User user, 
@@ -180,7 +180,7 @@ public class SingleSpeciesAtlasMap {
             final boolean absence) {
         return new MapHelper.LayerDataGenerator() {
             @Override public String getData(String layerName) throws BreadException {
-                return baker.getData(getSQL(geometry, taxonKey, user, datasetKeys, startYear, endYear, absence, layerName));
+                return bakery.getData(getSQL(geometry, taxonKey, user, datasetKeys, startYear, endYear, absence, layerName));
             }
         };
     }      
