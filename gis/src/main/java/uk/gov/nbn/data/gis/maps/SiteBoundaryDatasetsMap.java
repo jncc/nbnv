@@ -13,11 +13,9 @@ import uk.org.nbn.nbnv.api.model.SiteBoundaryDataset;
 import static uk.gov.nbn.data.dao.jooq.Tables.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import uk.ac.ceh.dynamo.arguments.annotations.ServiceURL;
-import uk.ac.ceh.dynamo.bread.Baker;
-import uk.ac.ceh.dynamo.bread.BreadException;
+import uk.ac.ceh.dynamo.bread.Bakery;
 import uk.gov.nbn.data.gis.maps.MapHelper.LayerDataGenerator;
 import uk.gov.nbn.data.gis.maps.colour.ColourHelper;
 /**
@@ -31,7 +29,7 @@ public class SiteBoundaryDatasetsMap {
     @Autowired Properties properties;
     @Autowired WebResource dataApi;
     @Autowired ColourHelper colours;
-    @Autowired @Qualifier("contextLayerBaker") Baker baker;
+    @Autowired @Qualifier("contextLayerBaker") Bakery baker;
         
     @RequestMapping("SiteBoundaryDatasets")
     public ModelAndView getSiteBoundariesModel(

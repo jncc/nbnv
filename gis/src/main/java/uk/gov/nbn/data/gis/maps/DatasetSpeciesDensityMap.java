@@ -29,8 +29,8 @@ import uk.ac.ceh.dynamo.GridMap;
 import uk.ac.ceh.dynamo.GridMap.GridLayer;
 import uk.ac.ceh.dynamo.GridMap.Resolution;
 import uk.ac.ceh.dynamo.arguments.annotations.ServiceURL;
-import uk.ac.ceh.dynamo.bread.Baker;
 import uk.ac.ceh.dynamo.bread.BreadException;
+import uk.ac.ceh.dynamo.bread.ShapefileBakery;
 
 /**
  * The following represents a Map service for DatasetSpeciesDensitys
@@ -73,7 +73,7 @@ public class DatasetSpeciesDensityMap {
     @Autowired
     Properties properties;
 
-    @Autowired @Qualifier("taxonLayerBaker") Baker baker;
+    @Autowired @Qualifier("taxonLayerBaker") ShapefileBakery bakery;
     
     @RequestMapping("{datasetKey}")
     @GridMap(
@@ -136,7 +136,7 @@ public class DatasetSpeciesDensityMap {
                         .from(observations)
                         .groupBy(observations.field(0));
 
-                return baker.getData(MapHelper.getMapData(create
+                return bakery.getData(MapHelper.getMapData(create
                         .select(FEATURE.GEOM, FEATURE.IDENTIFIER, squares.field("species"))
                         .from(squares)
                         .join(FEATURE).on(FEATURE.ID.eq(squares.field(0)))));

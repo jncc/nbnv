@@ -30,8 +30,9 @@ import uk.ac.ceh.dynamo.GridMap;
 import uk.ac.ceh.dynamo.GridMap.GridLayer;
 import uk.ac.ceh.dynamo.GridMap.Resolution;
 import uk.ac.ceh.dynamo.arguments.annotations.ServiceURL;
-import uk.ac.ceh.dynamo.bread.Baker;
+import uk.ac.ceh.dynamo.bread.Bakery;
 import uk.ac.ceh.dynamo.bread.BreadException;
+import uk.ac.ceh.dynamo.bread.ShapefileBakery;
 import uk.gov.nbn.data.gis.validation.Datasets;
 
 /**
@@ -75,7 +76,7 @@ public class DesignationSpeciesDensityMap {
     @Autowired
     Properties properties;
     
-    @Autowired @Qualifier("taxonLayerBaker") Baker baker;
+    @Autowired @Qualifier("taxonLayerBaker") ShapefileBakery bakery;
 
     @RequestMapping("{designationKey}")
     @GridMap(
@@ -145,7 +146,7 @@ public class DesignationSpeciesDensityMap {
                         .from(observations)
                         .groupBy(observations.field(0));
 
-                return baker.getData(MapHelper.getMapData(create
+                return bakery.getData(MapHelper.getMapData(create
                         .select(
                         FEATURE.GEOM,
                         FEATURE.IDENTIFIER,

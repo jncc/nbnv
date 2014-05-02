@@ -13,8 +13,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 import uk.ac.ceh.dynamo.arguments.annotations.ServiceURL;
-import uk.ac.ceh.dynamo.bread.Baker;
+import uk.ac.ceh.dynamo.bread.Bakery;
 import uk.ac.ceh.dynamo.bread.BreadException;
+import uk.ac.ceh.dynamo.bread.ShapefileBakery;
 import uk.org.nbn.nbnv.api.model.HabitatDataset;
 import static uk.gov.nbn.data.dao.jooq.Tables.*;
 import uk.gov.nbn.data.gis.maps.MapHelper.LayerDataGenerator;
@@ -31,7 +32,7 @@ public class HabitatDatasetsMap {
     @Autowired Properties properties;
     @Autowired WebResource dataApi;
     @Autowired ColourHelper colours;
-    @Autowired @Qualifier("contextLayerBaker") Baker baker;
+    @Autowired @Qualifier("contextLayerBaker") ShapefileBakery bakery;
     
     @RequestMapping("HabitatDatasets")
     public ModelAndView getSiteBoundariesModel(@ServiceURL String mapServiceURL) {
@@ -49,7 +50,7 @@ public class HabitatDatasetsMap {
             @Override
             public String getData(String habitat) throws BreadException {
                 DSLContext create = MapHelper.getContext();
-                return baker.getData(MapHelper.getMapData(create.
+                return bakery.getData(MapHelper.getMapData(create.
                     select(HABITATFEATUREFEATUREDATA.GEOM, HABITATFEATUREFEATUREDATA.IDENTIFIER)
                     .from(HABITATFEATUREFEATUREDATA)
                     .join(HABITATFEATUREDATA).on(HABITATFEATUREDATA.FEATUREID.eq(HABITATFEATUREFEATUREDATA.ID))

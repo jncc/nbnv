@@ -20,8 +20,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import uk.ac.ceh.dynamo.GridMap;
 import uk.ac.ceh.dynamo.arguments.annotations.ServiceURL;
-import uk.ac.ceh.dynamo.bread.Baker;
 import uk.ac.ceh.dynamo.bread.BreadException;
+import uk.ac.ceh.dynamo.bread.ShapefileBakery;
 import static uk.gov.nbn.data.dao.jooq.Tables.FEATURE;
 import uk.org.nbn.nbnv.api.model.User;
 
@@ -35,7 +35,7 @@ import uk.org.nbn.nbnv.api.model.User;
 public class SingleSpeciesInspireMap {
     @Autowired WebResource resource;
     @Autowired Properties properties;
-    @Autowired @Qualifier("taxonLayerBaker") Baker baker;
+    @Autowired @Qualifier("taxonLayerBaker") ShapefileBakery bakery;
     
     @RequestMapping("{taxonVersionKey}/inspire")
 /*    @GridMap(
@@ -67,7 +67,7 @@ public class SingleSpeciesInspireMap {
         data.put("speciesName", "Fluffy Bunnyius");
         data.put("resourceURL", "https://data.nbn.org.uk/api/taxa/" + key + "/inspire");
         data.put("date", sdf.format(new Date()));
-        data.put("data", SingleSpeciesMap.getSingleSpeciesResolutionDataGenerator(baker, FEATURE.GEOM, key, user, null, null, null, false).getData("Grid-10km"));
+        data.put("data", SingleSpeciesMap.getSingleSpeciesResolutionDataGenerator(bakery, FEATURE.GEOM, key, user, null, null, null, false).getData("Grid-10km"));
         return new ModelAndView("SingleSpeciesInspire.map",data);
     }
 
