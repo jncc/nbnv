@@ -1,6 +1,5 @@
 [#ftl]
 [#import "libraries/template.ftl" as template]
-[#import "libraries/layers.ftl" as layers]
 
 [@template.master title="Site Boundary Dataset Map"]
     [#list siteBoundaries as dataset]
