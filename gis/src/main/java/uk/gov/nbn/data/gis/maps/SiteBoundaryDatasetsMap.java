@@ -15,7 +15,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 import uk.ac.ceh.dynamo.arguments.annotations.ServiceURL;
-import uk.ac.ceh.dynamo.bread.Bakery;
+import uk.ac.ceh.dynamo.bread.BreadException;
+import uk.ac.ceh.dynamo.bread.ShapefileBakery;
 import uk.gov.nbn.data.gis.maps.MapHelper.LayerDataGenerator;
 import uk.gov.nbn.data.gis.maps.colour.ColourHelper;
 /**
@@ -29,7 +30,7 @@ public class SiteBoundaryDatasetsMap {
     @Autowired Properties properties;
     @Autowired WebResource dataApi;
     @Autowired ColourHelper colours;
-    @Autowired @Qualifier("contextLayerBaker") Bakery baker;
+    @Autowired @Qualifier("contextLayerBaker") ShapefileBakery bakery;
         
     @RequestMapping("SiteBoundaryDatasets")
     public ModelAndView getSiteBoundariesModel(
@@ -46,14 +47,14 @@ public class SiteBoundaryDatasetsMap {
         data.put("colours", colours);
         data.put("layerGenerator", new LayerDataGenerator(){
             @Override
-            public String getData(String siteBoundary) {
+            public String getData(String siteBoundary) throws BreadException {
                 DSLContext create = MapHelper.getContext();
-                return MapHelper.getMapData(create.
+                return bakery.getData(MapHelper.getMapData(create.
                     select(SITEBOUNDARYFEATUREDATA.GEOM, SITEBOUNDARYFEATUREDATA.IDENTIFIER)
                     .from(SITEBOUNDARYFEATUREDATA)
                     .join(SITEBOUNDARYDATA).on(SITEBOUNDARYDATA.FEATUREID.eq(SITEBOUNDARYFEATUREDATA.ID))
                     .where(SITEBOUNDARYDATA.SITEBOUNDARYDATASETKEY.eq(siteBoundary))
-                );
+                ));
             }
         });
         
