@@ -28,10 +28,10 @@ import uk.ac.ceh.dynamo.FeatureResolver;
 import uk.ac.ceh.dynamo.GridMapRequestMappingHandlerMapping;
 import uk.ac.ceh.dynamo.arguments.GridMapArgumentResolver;
 import uk.ac.ceh.dynamo.arguments.ServiceURLArgumentResolver;
-import uk.ac.ceh.dynamo.bread.BreadSliceCountClimate;
+import uk.ac.ceh.dynamo.bread.BreadSliceCountClimateMeter;
 import uk.ac.ceh.dynamo.bread.ShapefileBakery;
 import uk.ac.ceh.dynamo.bread.ShapefileGenerator;
-import uk.ac.ceh.dynamo.bread.UpdatableClimate;
+import uk.ac.ceh.dynamo.bread.UpdatableClimateMeter;
 import uk.gov.nbn.data.properties.PropertiesReader;
 import uk.org.nbn.nbnv.api.model.Feature;
 
@@ -145,7 +145,7 @@ public class ApplicationConfig extends WebMvcConfigurerAdapter {
         long rottenTime = Long.parseLong(properties().getProperty("bread.taxon.rottenTime"));
         int maxBreadSliceCount = Integer.parseInt(properties().getProperty("bread.taxon.maxSliceCount"));
         
-        return new ShapefileBakery(cache, new BreadSliceCountClimate(maxBreadSliceCount), shapefileGenerator(), staleTime, rottenTime );
+        return new ShapefileBakery(cache, new BreadSliceCountClimateMeter(maxBreadSliceCount), shapefileGenerator(), staleTime, rottenTime );
     }
     
     @Bean 
@@ -154,6 +154,6 @@ public class ApplicationConfig extends WebMvcConfigurerAdapter {
         long staleTime = Long.parseLong(properties().getProperty("bread.context.staleTime"));
         long rottenTime = Long.parseLong(properties().getProperty("bread.context.rottenTime"));
         
-        return new ShapefileBakery(cache, new UpdatableClimate(1), shapefileGenerator(), staleTime, rottenTime );
+        return new ShapefileBakery(cache, new UpdatableClimateMeter(1), shapefileGenerator(), staleTime, rottenTime );
     }
 }
