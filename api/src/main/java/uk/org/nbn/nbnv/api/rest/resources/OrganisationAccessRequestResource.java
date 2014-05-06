@@ -25,6 +25,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.codehaus.enunciate.jaxrs.ResponseCode;
@@ -576,7 +577,7 @@ public class OrganisationAccessRequestResource extends RequestResource {
         } else if ("close".equalsIgnoreCase(action)) {
             return closeRequest(user, filterID, reason);
         } else if ("revoke".equalsIgnoreCase(action)) {
-            return revokeRequest(user, filterID, reason);
+            return revokeRequest(user, filterID, reason, false);
         } else {
             return Response.serverError().build();
         }
@@ -629,9 +630,10 @@ public class OrganisationAccessRequestResource extends RequestResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response sysAdminRevoke(
             @TokenSystemAdministratorUser User user, 
-            @PathParam("id") int filterID) {
+            @PathParam("id") int filterID,
+            @QueryParam("silent") @DefaultValue("false") boolean silent) {
         try {
-            revokeRequest(user, filterID, "Request Expired");
+            revokeRequest(user, filterID, "Request Expired", silent);
         } catch (IOException ex) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ex.toString()).build();
         } catch (TemplateException ex) {
@@ -766,9 +768,11 @@ public class OrganisationAccessRequestResource extends RequestResource {
      * @return Response to be passed back to the user
      * @throws ParseException 
      */
-    private Response revokeRequest(User user, int filterID, String reason) throws IOException, TemplateException {
+    private Response revokeRequest(User user, int filterID, String reason, boolean silent) throws IOException, TemplateException {
         stripAccess(filterID, user, reason);
-        mailRequestRevoke(oOrganisationAccessRequestMapper.getRequest(filterID), reason);
+        if (!silent) {
+            mailRequestRevoke(oOrganisationAccessRequestMapper.getRequest(filterID), reason);
+        }
         return Response.status(Response.Status.OK).entity("{}").build();
     }
 
