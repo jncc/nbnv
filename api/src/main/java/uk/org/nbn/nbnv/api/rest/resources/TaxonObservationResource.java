@@ -2025,12 +2025,11 @@ public class TaxonObservationResource extends RequestResource {
             List<String> taxa, String spatialRelationship, String featureID, 
             boolean sensitive, String designation, String taxonOutputGroup, 
             int orgSuppliedList, String gridRef, String polygon, 
-            boolean includeAttributes, int filterID, TaxonObservationFilter filter, DownloadFilterJSON dFilter) 
+            boolean includeAttributes, int filterID, 
+            TaxonObservationFilter filter, DownloadFilterJSON dFilter) 
             throws IOException, TemplateException, Exception {
 
         List<Attribute> attributes = new ArrayList<Attribute>();
-        List<TaxonObservationAttribute> observationAttributes = new ArrayList<TaxonObservationAttribute>();
-        Map<Integer, Map<Integer, String>> atts = new HashMap<Integer, Map<Integer, String>>();
            
         // Push in standard header fields for download
         zip.putNextEntry(new ZipEntry("Observations.csv"));
@@ -2062,21 +2061,10 @@ public class TaxonObservationResource extends RequestResource {
         
         // If including attributes then push in the appropriate fields
         if (includeAttributes) {
-            // Grab all attributes that match full version records in the list
-            SqlSession attributeSession = warehouseSqlSessionFactory.openSession();
-            // Bind mapper to session
-            attributeSession.getMapper(TaxonObservationAttributeMapper.class);
-            TaxonObservationAttributeHandler attHandler = new TaxonObservationAttributeHandler();
-                        
-            sendRequestWithHandler(user, startYear, endYear, datasetKeys, taxa, 
-                    spatialRelationship, featureID, sensitive, designation, 
-                    taxonOutputGroup, orgSuppliedList, gridRef, polygon, 
-                    attHandler, attributeSession, "getAttributesForObservations");
-            
-            atts = attHandler.getObservationAttributes();
-
-            // Pull out list of attributes and get the data for them
-            attributes = attributeMapper.selectAttributesByIDs(attHandler.getAttributeIDs());
+            attributes = taxonObservationAttributeMapper.getAttributeListForObservations(
+                      user, startYear, endYear, datasetKeys, taxa, 
+                      spatialRelationship, featureID, sensitive, designation, 
+                      taxonOutputGroup, orgSuppliedList, gridRef, polygon);
             
             for (Attribute attrib : attributes) {
                 values.add(attrib.getLabel());
@@ -2086,7 +2074,7 @@ public class TaxonObservationResource extends RequestResource {
         // Write headers out
         downloadHelper.writelnCsv(zip, values);
              
-        TaxonObservationDownloadHandler handler = new TaxonObservationDownloadHandler(zip, includeAttributes, attributes, atts, downloadHelper);
+        TaxonObservationDownloadHandler handler = new TaxonObservationDownloadHandler(zip, includeAttributes, attributes, downloadHelper);
         
         SqlSession sess = warehouseSqlSessionFactory.openSession();
         // Bind mapper to session
