@@ -30,6 +30,7 @@ import org.codehaus.enunciate.jaxrs.TypeHint;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.ObjectWriter;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
+import org.javatuples.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -560,7 +561,7 @@ public class UserAccessRequestResource extends RequestResource {
      *
      * @return If the revoke action was a success
      */    
-    @POST
+    @GET
     @Path("/requests/revoke/{id}")
     @StatusCodes({
         @ResponseCode(code = 200, condition = "Successfully completed operation"),
@@ -581,6 +582,39 @@ public class UserAccessRequestResource extends RequestResource {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ex.toString()).build();
         }
         return Response.ok("Successfully Revoked Request").build();
+    }
+    
+    @GET
+    @Path("/revokeExpired")
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully completed oeration"),
+        @ResponseCode(code = 403, condition = "Current user has no sysadmin rights")
+    })
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response sysAdminRevoke(
+            @TokenSystemAdministratorUser User user,
+            @QueryParam("silent") @DefaultValue("false") boolean silent) {
+        List<UserAccessRequest> expired = oUserAccessRequestMapper.getExpiredRequests();
+        List<Pair<UserAccessRequest, String>> failed = new ArrayList<Pair<UserAccessRequest, String>>();
+        for (UserAccessRequest req : expired) {
+            try {
+                revokeRequest(user, req.getFilter().getId(), "Request Expired", silent);
+            } catch (IOException ex) {
+                failed.add(new Pair(req, "IOException"));
+            } catch (TemplateException ex) {
+                failed.add(new Pair(req, "TemplateException"));
+            } catch (Exception ex) {
+                failed.add(new Pair(req, "Exception"));
+            }
+        }
+        if (failed.size() > 0) {
+            String failStr = "The following requests failed;\n";
+            for (Pair<UserAccessRequest, String> failure : failed) {
+                failStr += failure.getValue0().getFilter().getId() + " - " + failure.getValue1() + "\n";
+            }
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(failStr).build();
+        } 
+        return Response.ok("Successfully revoked " + expired.size() + " requests").build();
     }
     
     /**
