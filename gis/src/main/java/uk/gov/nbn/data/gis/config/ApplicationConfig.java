@@ -4,12 +4,20 @@ import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
 import com.sun.jersey.api.json.JSONConfiguration;
+import com.sun.jersey.client.apache4.ApacheHttpClient4Handler;
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Properties;
 import javax.servlet.ServletContext;
+import org.apache.http.HttpHost;
+import org.apache.http.conn.routing.HttpRoute;
+import org.apache.http.impl.client.BasicCookieStore;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -28,6 +36,10 @@ import uk.ac.ceh.dynamo.FeatureResolver;
 import uk.ac.ceh.dynamo.GridMapRequestMappingHandlerMapping;
 import uk.ac.ceh.dynamo.arguments.GridMapArgumentResolver;
 import uk.ac.ceh.dynamo.arguments.ServiceURLArgumentResolver;
+import uk.ac.ceh.dynamo.bread.BreadSliceCountClimateMeter;
+import uk.ac.ceh.dynamo.bread.ShapefileBakery;
+import uk.ac.ceh.dynamo.bread.ShapefileGenerator;
+import uk.ac.ceh.dynamo.bread.UpdatableClimateMeter;
 import uk.gov.nbn.data.properties.PropertiesReader;
 import uk.org.nbn.nbnv.api.model.Feature;
 
@@ -63,8 +75,8 @@ public class ApplicationConfig extends WebMvcConfigurerAdapter {
     }
     
     @Bean
-    public MapServerViewResolver configureMapServerViewResolver() throws IOException {
-        return new MapServerViewResolver(new File(context.getRealPath("WEB-INF/maps")), new URL(properties().getProperty("mapserver")));
+    public MapServerViewResolver configureMapServerViewResolver() throws IOException, URISyntaxException {
+        return new MapServerViewResolver(httpClient(), new File(context.getRealPath("WEB-INF/maps")), new URI(properties().getProperty("mapserver")));
     }
     
     @Bean
@@ -112,17 +124,57 @@ public class ApplicationConfig extends WebMvcConfigurerAdapter {
     }
     
     @Bean
+    public CloseableHttpClient httpClient() throws IOException {
+        PoolingHttpClientConnectionManager connPool = new PoolingHttpClientConnectionManager();
+        connPool.setMaxTotal(Integer.parseInt(properties().getProperty("httpclient.maxConnections")));
+        connPool.setDefaultMaxPerRoute(Integer.parseInt(properties().getProperty("httpclient.maxPerRoute")));
+        
+        return HttpClients.custom()
+                          .setConnectionManager(connPool)
+                          .build();
+    }
+    
+    @Bean
     public WebResource client() throws IOException {
         final DefaultClientConfig config = new DefaultClientConfig();
         config.getFeatures()
                 .put(JSONConfiguration.FEATURE_POJO_MAPPING, Boolean.TRUE);
-
-        Client client = Client.create(config);
+        ApacheHttpClient4Handler apacheHandler = new ApacheHttpClient4Handler(httpClient(), 
+                                                                              new BasicCookieStore(), 
+                                                                              true);
+        Client client = new Client(apacheHandler, config);
         return client.resource(properties().getProperty("api"));     
     }
     
     @Bean
     public Properties properties() throws IOException {
         return PropertiesReader.getEffectiveProperties("gis.properties");
-    } 
+    }
+    
+    
+    @Bean ShapefileGenerator shapefileGenerator() throws IOException {
+        Properties properties = properties();
+        return new ShapefileGenerator(  properties.getProperty("ogr2ogr.location"),
+                                        properties.getProperty("spatialConnection"),
+                                        Integer.parseInt(properties.getProperty("ogr2ogr.limit")));
+    }
+    
+    @Bean
+    public ShapefileBakery taxonLayerBaker() throws IOException {
+        File cache = new File(properties().getProperty("bread.taxon.cacheDir"));
+        long staleTime = Long.parseLong(properties().getProperty("bread.taxon.staleTime"));
+        long rottenTime = Long.parseLong(properties().getProperty("bread.taxon.rottenTime"));
+        int maxBreadSliceCount = Integer.parseInt(properties().getProperty("bread.taxon.maxSliceCount"));
+        
+        return new ShapefileBakery(cache, new BreadSliceCountClimateMeter(maxBreadSliceCount), shapefileGenerator(), staleTime, rottenTime );
+    }
+    
+    @Bean 
+    public ShapefileBakery contextLayerBaker() throws IOException {
+        File cache = new File(properties().getProperty("bread.context.cacheDir"));
+        long staleTime = Long.parseLong(properties().getProperty("bread.context.staleTime"));
+        long rottenTime = Long.parseLong(properties().getProperty("bread.context.rottenTime"));
+        
+        return new ShapefileBakery(cache, new UpdatableClimateMeter(1), shapefileGenerator(), staleTime, rottenTime );
+    }
 }
