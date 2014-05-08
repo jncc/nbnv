@@ -36,7 +36,7 @@
         <module>reporter-mail</module>
         <module>recordcleaner</module>
         <module>reseter.datasetAccess</module>
-        <module>revoker</module>
+        <module>api-poker</module>
     </modules>
 	
     <build>

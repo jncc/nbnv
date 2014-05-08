@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package uk.org.nbn.nbnv.revoker.model;
+package uk.org.nbn.nbnv.api.poker.model;
 
 //import java.sql.Date;
 import java.util.Date;
