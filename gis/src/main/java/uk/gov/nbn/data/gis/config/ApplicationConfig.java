@@ -4,12 +4,20 @@ import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
 import com.sun.jersey.api.json.JSONConfiguration;
+import com.sun.jersey.client.apache4.ApacheHttpClient4Handler;
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Properties;
 import javax.servlet.ServletContext;
+import org.apache.http.HttpHost;
+import org.apache.http.conn.routing.HttpRoute;
+import org.apache.http.impl.client.BasicCookieStore;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -67,8 +75,8 @@ public class ApplicationConfig extends WebMvcConfigurerAdapter {
     }
     
     @Bean
-    public MapServerViewResolver configureMapServerViewResolver() throws IOException {
-        return new MapServerViewResolver(new File(context.getRealPath("WEB-INF/maps")), new URL(properties().getProperty("mapserver")));
+    public MapServerViewResolver configureMapServerViewResolver() throws IOException, URISyntaxException {
+        return new MapServerViewResolver(httpClient(), new File(context.getRealPath("WEB-INF/maps")), new URI(properties().getProperty("mapserver")));
     }
     
     @Bean
@@ -116,12 +124,25 @@ public class ApplicationConfig extends WebMvcConfigurerAdapter {
     }
     
     @Bean
+    public CloseableHttpClient httpClient() throws IOException {
+        PoolingHttpClientConnectionManager connPool = new PoolingHttpClientConnectionManager();
+        connPool.setMaxTotal(Integer.parseInt(properties().getProperty("httpclient.maxConnections")));
+        connPool.setDefaultMaxPerRoute(Integer.parseInt(properties().getProperty("httpclient.maxPerRoute")));
+        
+        return HttpClients.custom()
+                          .setConnectionManager(connPool)
+                          .build();
+    }
+    
+    @Bean
     public WebResource client() throws IOException {
         final DefaultClientConfig config = new DefaultClientConfig();
         config.getFeatures()
                 .put(JSONConfiguration.FEATURE_POJO_MAPPING, Boolean.TRUE);
-
-        Client client = Client.create(config);
+        ApacheHttpClient4Handler apacheHandler = new ApacheHttpClient4Handler(httpClient(), 
+                                                                              new BasicCookieStore(), 
+                                                                              true);
+        Client client = new Client(apacheHandler, config);
         return client.resource(properties().getProperty("api"));     
     }
     
