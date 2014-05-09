@@ -11,6 +11,7 @@ import org.jooq.SQLDialect;
 import org.jooq.conf.ParamType;
 import org.jooq.impl.DSL;
 import static org.jooq.impl.DSL.*;
+import uk.ac.ceh.dynamo.bread.BreadException;
 import static uk.gov.nbn.data.dao.jooq.Tables.*;
 
 /**
@@ -20,15 +21,8 @@ import static uk.gov.nbn.data.dao.jooq.Tables.*;
  */
 public class MapHelper {
     
-    public static String getMapData(Field<?> geomField, Field<?> uniqueField, int srid, Query query) {
-        return new StringBuilder(geomField.getName())
-                .append(" from (")
-                .append(query.getSQL(ParamType.INLINED))
-                .append(") AS foo USING UNIQUE ")
-                .append(uniqueField.getName())
-                .append(" USING SRID=")
-                .append(srid)
-                .toString();
+    public static String getMapData(Query query) {
+        return query.getSQL(ParamType.INLINED);
     }
     
     /**Get the DSLContext for the dialect of the sqlserver**/
@@ -39,8 +33,8 @@ public class MapHelper {
     /**The following interface enables anonymous implementations for creating
      * SQL Expressions in Map Server Templates
      **/
-    public interface ResolutionDataGenerator {
-        String getData(String layerName);
+    public interface LayerDataGenerator {
+        String getData(String layerName) throws BreadException;
     }
     
     static Condition createTemporalSegment(Condition currentCond, String startYear, String endYear, Field<? extends Date> startDateField, Field<? extends Date> endDateField) {
@@ -81,7 +75,7 @@ public class MapHelper {
     
     static String getSelectedFeatureData(String selectedFeature) {
         if(selectedFeature != null) {
-            return MapHelper.getMapData(FEATUREDATA.GEOM, FEATUREDATA.ID, 4326, getContext()
+            return MapHelper.getMapData(getContext()
                 .select(FEATUREDATA.ID, FEATUREDATA.GEOM)
                 .from(FEATUREDATA)
                 .where(FEATUREDATA.IDENTIFIER.eq(selectedFeature))

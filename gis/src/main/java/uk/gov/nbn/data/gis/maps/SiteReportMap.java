@@ -84,7 +84,7 @@ public class SiteReportMap {
         data.put("featureData", MapHelper.getSelectedFeatureData(featureID));
         data.put("featureID", featureID);
         data.put("taxonVersionKey", taxonKey);
-        data.put("recordsData", MapHelper.getMapData(FEATUREDATA.GEOM, USERTAXONOBSERVATIONDATA.FEATUREID, 4326, create.
+        data.put("recordsData", MapHelper.getMapData(create.
             select(USERTAXONOBSERVATIONDATA.FEATUREID, FEATUREDATA.GEOM, FEATUREDATA.RESOLUTIONID, USERTAXONOBSERVATIONDATA.ABSENCE)
             .from(USERTAXONOBSERVATIONDATA)
             .join(FEATUREDATA).on(FEATUREDATA.ID.eq(USERTAXONOBSERVATIONDATA.FEATUREID))
