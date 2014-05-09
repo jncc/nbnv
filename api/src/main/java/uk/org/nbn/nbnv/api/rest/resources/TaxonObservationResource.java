@@ -71,7 +71,6 @@ import uk.org.nbn.nbnv.api.model.meta.DownloadStatsJSON;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenDatasetAdminUser;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
 import uk.org.nbn.nbnv.api.rest.resources.utils.DownloadHelper;
-import uk.org.nbn.nbnv.api.rest.resources.utils.TaxonObservationAttributeHandler;
 import uk.org.nbn.nbnv.api.rest.resources.utils.TaxonObservationDownloadHandler;
 import uk.org.nbn.nbnv.api.rest.resources.utils.TaxonObservationHandler;
 import uk.org.nbn.nbnv.api.utils.DownloadUtils;
@@ -286,6 +285,10 @@ public class TaxonObservationResource extends RequestResource {
      * @param absence Whether the results should be limited to just absence records (true) 
      * or just presence records (false).  If this parameter is missing then both absence 
      * and presence records are returned.  Valid values are 'true' and 'false'
+     * @param callback Fix for jQuery callbacks not working entirely well with
+     * streaming, do not use unless with jQuery callbacks
+     * @param includeAttributes Includes attributes with this request, if you 
+     * have access to them, as a list of key pair values
      * 
      * @return A list of Taxon Observations conforming to the provided search
      * parameters
@@ -330,7 +333,8 @@ public class TaxonObservationResource extends RequestResource {
      * @param taxa Taxon Version Keys to search for
      * @param spatialRelationship Any spatial relationship information required
      * @param featureID Any required feature ID
-     * @param sensitive If the results should include sensitive records or not
+     * @param sensitive If the results should include sensitive records or not.
+     * Valid values are 'true' and 'false'
      * @param designation Any required designations
      * @param taxonOutputGroup Any required taxon output groups
      * @param gridRef Any grid references to search within
@@ -338,6 +342,10 @@ public class TaxonObservationResource extends RequestResource {
      * @param absence Whether the results should be limited to just absence records (true) 
      * or just presence records (false).  If this parameter is missing then both absence 
      * and presence records are returned.  Valid values are 'true' and 'false'
+     * @param callback Fix for jQuery callbacks not working entirely well with
+     * streaming, do not use unless with jQuery callbacks
+     * @param includeAttributes Includes attributes with this request, if you 
+     * have access to them, as a list of key pair values
      * 
      * @return A list of Taxon Observations conforming to the provided search
      * parameters

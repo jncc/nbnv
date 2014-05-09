@@ -95,6 +95,7 @@
         <li><a href="#path__taxa_-taxonVersionKey-_designations.html">/taxa/{taxonVersionKey}/designations</a></li>
         <li><a href="#path__taxa_-taxonVersionKey-_designations_archive.html">/taxa/{taxonVersionKey}/designations/archive</a></li>
         <li><a href="#path__taxa_-taxonVersionKey-_inspire.html">/taxa/{taxonVersionKey}/inspire</a></li>
+        <li><a href="#path__taxa_-taxonVersionKey-_inspire_10km.html">/taxa/{taxonVersionKey}/inspire/10km</a></li>
         <li><a href="#path__taxa_-taxonVersionKey-_inspire_service.html">/taxa/{taxonVersionKey}/inspire/service</a></li>
         <li><a href="#path__taxa_-taxonVersionKey-_parent.html">/taxa/{taxonVersionKey}/parent</a></li>
         <li><a href="#path__taxa_-taxonVersionKey-_siteBoundaries.html">/taxa/{taxonVersionKey}/siteBoundaries</a></li>
@@ -516,6 +517,57 @@ record</p>
           </td>
         </tr>
       </table>
+      <a name="path__taxa_-taxonVersionKey-_inspire_10km.html"></a>
+      <h1>/taxa/{taxonVersionKey}/inspire/10km</h1>
+      <p class="note">Mount Point: <a href="../api/taxa/{taxonVersionKey}/inspire/10km">/api/taxa/{taxonVersionKey}/inspire/10km</a></p>
+      <a name="GET"></a>
+      <h2>GET</h2>
+      <p>
+            Returns a list of distinct 10km squares that contain the specified TVK at
+a public level of access
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>taxonVersionKey</td>
+          <td>
+            (no documentation provided)
+          </td>
+          <td>path</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td>(custom)</td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>text/csv</td>
+        </tr>
+      </table>
+      <p>A list of 10km squares</p>
+      <h3>Status Codes</h3>
+      <table>
+        <tr>
+          <th>code</th>
+          <th>description</th>
+        </tr>
+        <tr>
+          <td>200</td>
+          <td>
+            Successfully returned the requested list of 10km public access grid squares for this Taxon
+          </td>
+        </tr>
+      </table>
       <a name="path__taxa_-taxonVersionKey-_inspire_service.html"></a>
       <h1>/taxa/{taxonVersionKey}/inspire/service</h1>
       <p class="note">Mount Point: <a href="../api/taxa/{taxonVersionKey}/inspire/service">/api/taxa/{taxonVersionKey}/inspire/service</a></p>
@@ -695,7 +747,7 @@ given search parameters
             If the records should be sensitive or not
           </td>
           <td>query</td>
-          <td>1</td>
+          <td>true</td>
         </tr>
         <tr>
           <td>designation</td>
@@ -826,7 +878,7 @@ records defined by the given search parameters
             If the records should be sensitive or not
           </td>
           <td>query</td>
-          <td>1</td>
+          <td>true</td>
         </tr>
         <tr>
           <td>designation</td>
