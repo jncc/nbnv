@@ -71,7 +71,6 @@ import uk.org.nbn.nbnv.api.model.meta.DownloadStatsJSON;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenDatasetAdminUser;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
 import uk.org.nbn.nbnv.api.rest.resources.utils.DownloadHelper;
-import uk.org.nbn.nbnv.api.rest.resources.utils.TaxonObservationAttributeHandler;
 import uk.org.nbn.nbnv.api.rest.resources.utils.TaxonObservationDownloadHandler;
 import uk.org.nbn.nbnv.api.rest.resources.utils.TaxonObservationHandler;
 import uk.org.nbn.nbnv.api.utils.DownloadUtils;
@@ -286,6 +285,10 @@ public class TaxonObservationResource extends RequestResource {
      * @param absence Whether the results should be limited to just absence records (true) 
      * or just presence records (false).  If this parameter is missing then both absence 
      * and presence records are returned.  Valid values are 'true' and 'false'
+     * @param callback Fix for jQuery callbacks not working entirely well with
+     * streaming, do not use unless with jQuery callbacks
+     * @param includeAttributes Includes attributes with this request, if you 
+     * have access to them, as a list of key pair values
      * 
      * @return A list of Taxon Observations conforming to the provided search
      * parameters
@@ -330,7 +333,8 @@ public class TaxonObservationResource extends RequestResource {
      * @param taxa Taxon Version Keys to search for
      * @param spatialRelationship Any spatial relationship information required
      * @param featureID Any required feature ID
-     * @param sensitive If the results should include sensitive records or not
+     * @param sensitive If the results should include sensitive records or not.
+     * Valid values are 'true' and 'false'
      * @param designation Any required designations
      * @param taxonOutputGroup Any required taxon output groups
      * @param gridRef Any grid references to search within
@@ -338,6 +342,10 @@ public class TaxonObservationResource extends RequestResource {
      * @param absence Whether the results should be limited to just absence records (true) 
      * or just presence records (false).  If this parameter is missing then both absence 
      * and presence records are returned.  Valid values are 'true' and 'false'
+     * @param callback Fix for jQuery callbacks not working entirely well with
+     * streaming, do not use unless with jQuery callbacks
+     * @param includeAttributes Includes attributes with this request, if you 
+     * have access to them, as a list of key pair values
      * 
      * @return A list of Taxon Observations conforming to the provided search
      * parameters
@@ -2053,12 +2061,11 @@ public class TaxonObservationResource extends RequestResource {
             List<String> taxa, String spatialRelationship, String featureID, 
             boolean sensitive, String designation, String taxonOutputGroup, 
             int orgSuppliedList, String gridRef, String polygon, 
-            boolean includeAttributes, int filterID, TaxonObservationFilter filter, DownloadFilterJSON dFilter) 
+            boolean includeAttributes, int filterID, 
+            TaxonObservationFilter filter, DownloadFilterJSON dFilter) 
             throws IOException, TemplateException, Exception {
 
         List<Attribute> attributes = new ArrayList<Attribute>();
-        List<TaxonObservationAttribute> observationAttributes = new ArrayList<TaxonObservationAttribute>();
-        Map<Integer, Map<Integer, String>> atts = new HashMap<Integer, Map<Integer, String>>();
            
         // Push in standard header fields for download
         zip.putNextEntry(new ZipEntry("Observations.csv"));
@@ -2090,21 +2097,10 @@ public class TaxonObservationResource extends RequestResource {
         
         // If including attributes then push in the appropriate fields
         if (includeAttributes) {
-            // Grab all attributes that match full version records in the list
-            SqlSession attributeSession = warehouseSqlSessionFactory.openSession();
-            // Bind mapper to session
-            attributeSession.getMapper(TaxonObservationAttributeMapper.class);
-            TaxonObservationAttributeHandler attHandler = new TaxonObservationAttributeHandler();
-                        
-            sendRequestWithHandler(user, startYear, endYear, datasetKeys, taxa, 
-                    spatialRelationship, featureID, sensitive, designation, 
-                    taxonOutputGroup, orgSuppliedList, gridRef, polygon, 
-                    attHandler, attributeSession, "getAttributesForObservations");
-            
-            atts = attHandler.getObservationAttributes();
-
-            // Pull out list of attributes and get the data for them
-            attributes = attributeMapper.selectAttributesByIDs(attHandler.getAttributeIDs());
+            attributes = taxonObservationAttributeMapper.getAttributeListForObservations(
+                      user, startYear, endYear, datasetKeys, taxa, 
+                      spatialRelationship, featureID, sensitive, designation, 
+                      taxonOutputGroup, orgSuppliedList, gridRef, polygon);
             
             for (Attribute attrib : attributes) {
                 values.add(attrib.getLabel());
@@ -2114,7 +2110,7 @@ public class TaxonObservationResource extends RequestResource {
         // Write headers out
         downloadHelper.writelnCsv(zip, values);
              
-        TaxonObservationDownloadHandler handler = new TaxonObservationDownloadHandler(zip, includeAttributes, attributes, atts, downloadHelper);
+        TaxonObservationDownloadHandler handler = new TaxonObservationDownloadHandler(zip, includeAttributes, attributes, downloadHelper);
         
         SqlSession sess = warehouseSqlSessionFactory.openSession();
         // Bind mapper to session

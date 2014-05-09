@@ -41,10 +41,6 @@
         NAME                        "SD.${speciesCode}"
         TYPE                        POLYGON
         STATUS                      OFF
-        CONNECTIONTYPE              PLUGIN
-        PLUGIN                      "msplugin_mssql2008.dll"
-        CONNECTION                  "${properties.spatialConnection}"
-        PROCESSING                  "CLOSE_CONNECTION=DEFER"
         DATA                        "${data}"
         TEMPLATE                    "dummy.txt"
         EXTENT                      -180 -90 180 90

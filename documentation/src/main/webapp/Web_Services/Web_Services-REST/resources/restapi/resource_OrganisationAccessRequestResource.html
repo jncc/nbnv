@@ -103,6 +103,7 @@
         <li><a href="#path__organisation_organisationAccesses_requests_pending.html">/organisation/organisationAccesses/requests/pending</a></li>
         <li><a href="#path__organisation_organisationAccesses_requests_revoke_-id-.html">/organisation/organisationAccesses/requests/revoke/{id}</a></li>
         <li><a href="#path__organisation_organisationAccesses_reset_-dataset-.html">/organisation/organisationAccesses/reset/{dataset}</a></li>
+        <li><a href="#path__organisation_organisationAccesses_revokeExpired.html">/organisation/organisationAccesses/revokeExpired</a></li>
       </ul>
       <a name="path__organisation_organisationAccesses_-id-_requests.html"></a>
       <h1>/organisation/organisationAccesses/{id}/requests</h1>
@@ -1168,6 +1169,14 @@ to pass)
           <td>path</td>
           <td></td>
         </tr>
+        <tr>
+          <td>silent</td>
+          <td>
+            (no documentation provided)
+          </td>
+          <td>query</td>
+          <td>false</td>
+        </tr>
       </table>
       <h3>Response Body</h3>
       <table>
@@ -1245,6 +1254,67 @@ to pass)
         </tr>
       </table>
       <p>(no documentation provided)</p>
+      <a name="path__organisation_organisationAccesses_revokeExpired.html"></a>
+      <h1>/organisation/organisationAccesses/revokeExpired</h1>
+      <p class="note">Mount Point: <a href="../api/organisation/organisationAccesses/revokeExpired">/api/organisation/organisationAccesses/revokeExpired</a></p>
+      <a name="GET"></a>
+      <h2>GET</h2>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>user</td>
+          <td>
+            (no documentation provided)
+          </td>
+          <td>tokensystemadministratoruser</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>silent</td>
+          <td>
+            (no documentation provided)
+          </td>
+          <td>query</td>
+          <td>false</td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td>(custom)</td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/json</td>
+        </tr>
+      </table>
+      <p>(no documentation provided)</p>
+      <h3>Status Codes</h3>
+      <table>
+        <tr>
+          <th>code</th>
+          <th>description</th>
+        </tr>
+        <tr>
+          <td>200</td>
+          <td>
+            Successfully completed oeration
+          </td>
+        </tr>
+        <tr>
+          <td>403</td>
+          <td>
+            Current user has no sysadmin rights
+          </td>
+        </tr>
+      </table>
 
       <div class="clear" />
     </div>

@@ -26,16 +26,14 @@ public class TaxonObservationDownloadHandler implements ResultHandler {
     final private ZipOutputStream zip;
     final private boolean includeAttributes;
     final private List<Attribute> attributes;
-    final private Map<Integer, Map<Integer, String>> obsAtrribute;
     private Map<String, Integer> datasetRecordCounts;
     private SimpleDateFormat df;
     private DownloadHelper downloadHelper;
 
-    public TaxonObservationDownloadHandler(ZipOutputStream zip, boolean includeAttributes, List<Attribute> attributes, Map<Integer, Map<Integer, String>> obsAtrribute, DownloadHelper downloadHelper) {
+    public TaxonObservationDownloadHandler(ZipOutputStream zip, boolean includeAttributes, List<Attribute> attributes, DownloadHelper downloadHelper) {
         this.zip = zip;
         this.includeAttributes = includeAttributes;
         this.attributes = attributes;
-        this.obsAtrribute = obsAtrribute;
         this.datasetRecordCounts = new HashMap<String, Integer>();
         this.df = new SimpleDateFormat("dd/MM/yyyy");
         this.downloadHelper = downloadHelper;
@@ -48,9 +46,8 @@ public class TaxonObservationDownloadHandler implements ResultHandler {
     @Override
     public void handleResult(ResultContext context) {
         TaxonObservationDownload observation = (TaxonObservationDownload) context.getResultObject();
+        
         List<String> values = new ArrayList<String>();
-
-        values = new ArrayList<String>();
         values.add(Integer.toString(observation.getObservationID()));
         values.add(observation.getObservationKey());
         values.add(observation.getOrganisationName());
@@ -78,16 +75,23 @@ public class TaxonObservationDownloadHandler implements ResultHandler {
 
         if (includeAttributes) {
             if (observation.isFullVersion() || observation.isPublicAttribute()) {
+                Map<String, String> obsAttribs = new HashMap<String, String>();
+
+                String[] attVals = org.apache.commons.lang.StringUtils.split(observation.getAttrStr(), "¦");
+                for (String attVal : attVals) {
+                    String[] vals = org.apache.commons.lang.StringUtils.split(attVal, "¬");
+                    obsAttribs.put(vals[0], vals[1]);
+                }
+                
                 for (Attribute att : attributes) {
-                    if (obsAtrribute.containsKey(observation.getObservationID())
-                            && obsAtrribute.get(observation.getObservationID()).containsKey(att.getAttributeID())) {
-                        values.add(obsAtrribute.get(observation.getObservationID()).get(att.getAttributeID()));
+                    if (obsAttribs.containsKey(att.getLabel())) {
+                        values.add(obsAttribs.get(att.getLabel()));
                     } else {
                         values.add("");
                     }
                 }
             } else {
-                for (int i = 0; i < obsAtrribute.size(); i++) {
+                for (int i = 0; i < attributes.size(); i++) {
                     values.add("");
                 }
             }
