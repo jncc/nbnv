@@ -9,8 +9,8 @@ class OutputHolderSet(TaskSet):
   def imageGetCheck(self, uri, name):
     start_time = time.time()
     with self.client.get(uri, name=name, catch_response=True) as response:
-      if response.headers['content-type'] != 'image/png;charset=ISO-8859-1':
-        response.failure(cgi.escape(response.content))
+      if response.headers.get('content-type', "") != 'image/png;charset=ISO-8859-1':
+        response.failure("No image")
 
   # The zoom value here is offset by 4 e.g. zoom 0 = 4
   def randomBBox(self, zoom):
@@ -54,11 +54,11 @@ class OutputHolderSet(TaskSet):
 #Define Brains
 class SingleSpeciesBrain(OutputHolderSet):
   def on_start(self):
-    self.tvk = "NHMSYS%010d" % random.randint(0, 532935)		
+    self.tvk = "NHMSYS%010d" % random.randint(0, 532935)
 
   @task
   def imtView(self):
-    for i in range(24):
+    for i in range(4):
       self.wmsTile('/SingleSpecies/' + self.tvk + '?abundance=presence&')
 	  
 class DatasetDensityBrain(OutputHolderSet):
@@ -71,9 +71,9 @@ class DatasetDensityBrain(OutputHolderSet):
       self.wmsTile('/DatasetDensity/' + self.datasetKey)
 
 class UserBehavior(OutputHolderSet):
-	tasks = {SingleSpeciesBrain:1, DatasetDensityBrain:1}
+	tasks = {SingleSpeciesBrain:1}
 
 class WebsiteUser(HttpLocust):
     task_set = UserBehavior
     min_wait=1000
-    max_wait=1500
+    max_wait=15000
