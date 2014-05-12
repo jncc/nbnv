@@ -140,7 +140,7 @@ public class ApplicationConfig extends WebMvcConfigurerAdapter {
         config.getFeatures()
                 .put(JSONConfiguration.FEATURE_POJO_MAPPING, Boolean.TRUE);
         ApacheHttpClient4Handler apacheHandler = new ApacheHttpClient4Handler(httpClient(), 
-                                                                              new BasicCookieStore(), 
+                                                                              null, 
                                                                               true);
         Client client = new Client(apacheHandler, config);
         return client.resource(properties().getProperty("api"));     
