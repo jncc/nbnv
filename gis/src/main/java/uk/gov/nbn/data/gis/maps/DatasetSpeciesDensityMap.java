@@ -122,7 +122,7 @@ public class DatasetSpeciesDensityMap {
                         .where(publicCondition);
                 
                 if (!User.PUBLIC_USER.equals(user)) {
-                    observations.unionAll(create
+                    observations = observations.unionAll(create
                         .select(
                         DATASETMAPPINGDATAENHANCED.FEATUREID,
                         DATASETMAPPINGDATAENHANCED.PTAXONVERSIONKEY)
