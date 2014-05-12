@@ -211,7 +211,7 @@ public class SingleSpeciesAtlasMap {
                     .where(publicCondition);
         
         
-                if (User.PUBLIC_USER != user) {
+                if (!User.PUBLIC_USER.equals(user))  {
                     nested.unionAll(create
                         .select(MAPPINGDATAENHANCED.FEATUREID)
                         .from(MAPPINGDATAENHANCED)
