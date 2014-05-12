@@ -131,7 +131,7 @@ public class DesignationSpeciesDensityMap {
                 
                         
                 if (!User.PUBLIC_USER.equals(user))  {
-                    observations.unionAll(create
+                    observations = observations.unionAll(create
                         .select(
                         MAPPINGDATAENHANCED.FEATUREID,
                         MAPPINGDATAENHANCED.PTAXONVERSIONKEY)

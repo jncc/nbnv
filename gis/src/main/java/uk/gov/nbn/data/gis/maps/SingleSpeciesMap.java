@@ -165,7 +165,7 @@ public class SingleSpeciesMap {
                     .where(publicCondition);
         
         if (!User.PUBLIC_USER.equals(user))  {
-            nested.unionAll(create
+            nested = nested.unionAll(create
                         .select(MAPPINGDATAENHANCED.FEATUREID)
                         .from(MAPPINGDATAENHANCED)
                         .join(TAXONTREE).on(TAXONTREE.CHILDPTVK.eq(MAPPINGDATAENHANCED.PTAXONVERSIONKEY))
