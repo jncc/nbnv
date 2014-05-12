@@ -130,7 +130,7 @@ public class DesignationSpeciesDensityMap {
                         .where(publicCondition);
                 
                         
-                if (User.PUBLIC_USER != user) {
+                if (!User.PUBLIC_USER.equals(user))  {
                     observations.unionAll(create
                         .select(
                         MAPPINGDATAENHANCED.FEATUREID,
