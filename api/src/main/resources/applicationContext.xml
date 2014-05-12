@@ -27,5 +27,6 @@
         p:jdbcUrl="${db_core_url}" p:user="${db_core_username}" p:password="${db_core_password}" 
         p:acquireIncrement="10" p:idleConnectionTestPeriod="3600" p:maxPoolSize="200"
         p:maxStatements="32000" p:minPoolSize="10" />
-
+       
+    <bean id="revokeService" class="uk.org.nbn.nbnv.api.services.RevokeAccessService" />
 </beans>
