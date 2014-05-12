@@ -155,6 +155,7 @@ public class ApplicationConfig extends WebMvcConfigurerAdapter {
     @Bean ShapefileGenerator shapefileGenerator() throws IOException {
         Properties properties = properties();
         return new ShapefileGenerator(  properties.getProperty("ogr2ogr.location"),
+                                        properties.getProperty("shptree.location"),
                                         properties.getProperty("spatialConnection"),
                                         Integer.parseInt(properties.getProperty("ogr2ogr.limit")));
     }
