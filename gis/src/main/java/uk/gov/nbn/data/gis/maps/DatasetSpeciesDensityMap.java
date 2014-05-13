@@ -107,13 +107,6 @@ public class DatasetSpeciesDensityMap {
                         .and(DATASETMAPPINGDATAPUBLIC.RESOLUTIONID.eq(LAYERS.get(layerName)));
                 publicCondition = MapHelper.createTemporalSegment(publicCondition, startYear, endYear, DATASETMAPPINGDATAPUBLIC.STARTDATE, DATASETMAPPINGDATAPUBLIC.ENDDATE);
 
-                Condition enhancedCondition =
-                        DATASETMAPPINGDATAENHANCED.ABSENCE.eq(false)
-                        .and(DATASETMAPPINGDATAENHANCED.DATASETKEY.eq(key))
-                        .and(DATASETMAPPINGDATAENHANCED.RESOLUTIONID.eq(LAYERS.get(layerName)))
-                        .and(USERTAXONOBSERVATIONID.USERID.eq(user.getId()));
-                enhancedCondition = MapHelper.createTemporalSegment(enhancedCondition, startYear, endYear, DATASETMAPPINGDATAENHANCED.STARTDATE, DATASETMAPPINGDATAENHANCED.ENDDATE);
-
                 Select<Record2<Integer, String>> observations = create
                         .select(
                         DATASETMAPPINGDATAPUBLIC.FEATUREID,
@@ -121,8 +114,15 @@ public class DatasetSpeciesDensityMap {
                         .from(DATASETMAPPINGDATAPUBLIC)
                         .where(publicCondition);
                 
-                if (User.PUBLIC_USER != user) {
-                    observations.unionAll(create
+                if (!User.PUBLIC_USER.equals(user)) {
+                    Condition enhancedCondition =
+                            DATASETMAPPINGDATAENHANCED.ABSENCE.eq(false)
+                            .and(DATASETMAPPINGDATAENHANCED.DATASETKEY.eq(key))
+                            .and(DATASETMAPPINGDATAENHANCED.RESOLUTIONID.eq(LAYERS.get(layerName)))
+                            .and(USERTAXONOBSERVATIONID.USERID.eq(user.getId()));
+                    enhancedCondition = MapHelper.createTemporalSegment(enhancedCondition, startYear, endYear, DATASETMAPPINGDATAENHANCED.STARTDATE, DATASETMAPPINGDATAENHANCED.ENDDATE);
+
+                    observations = observations.unionAll(create
                         .select(
                         DATASETMAPPINGDATAENHANCED.FEATUREID,
                         DATASETMAPPINGDATAENHANCED.PTAXONVERSIONKEY)

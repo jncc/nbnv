@@ -150,22 +150,22 @@ public class SingleSpeciesMap {
                 .and(MAPPINGDATAPUBLIC.RESOLUTIONID.eq(LAYERS.get(layerName)));
         publicCondition = MapHelper.createTemporalSegment(publicCondition, startYear, endYear, MAPPINGDATAPUBLIC.STARTDATE, MAPPINGDATAPUBLIC.ENDDATE);
         publicCondition = MapHelper.createInDatasetsSegment(publicCondition, MAPPINGDATAPUBLIC.DATASETKEY, datasetKeys);
-
-        Condition enhancedCondition = TAXONTREE.NODEPTVK.eq(taxonKey)
-                .and(USERTAXONOBSERVATIONID.USERID.eq(user.getId()))
-                .and(MAPPINGDATAENHANCED.ABSENCE.eq(absence))
-                .and(MAPPINGDATAENHANCED.RESOLUTIONID.eq(LAYERS.get(layerName)));
-        enhancedCondition = MapHelper.createTemporalSegment(enhancedCondition, startYear, endYear, MAPPINGDATAENHANCED.STARTDATE, MAPPINGDATAENHANCED.ENDDATE);
-        enhancedCondition = MapHelper.createInDatasetsSegment(enhancedCondition, MAPPINGDATAENHANCED.DATASETKEY, datasetKeys);
-
+        
         Select<Record1<Integer>> nested = create
                     .select(MAPPINGDATAPUBLIC.FEATUREID.as("FEATUREID"))
                     .from(MAPPINGDATAPUBLIC)
                     .join(TAXONTREE).on(TAXONTREE.CHILDPTVK.eq(MAPPINGDATAPUBLIC.PTAXONVERSIONKEY))
                     .where(publicCondition);
         
-        if (User.PUBLIC_USER != user) {
-            nested.unionAll(create
+        if (!User.PUBLIC_USER.equals(user))  {
+            Condition enhancedCondition = TAXONTREE.NODEPTVK.eq(taxonKey)
+                .and(USERTAXONOBSERVATIONID.USERID.eq(user.getId()))
+                .and(MAPPINGDATAENHANCED.ABSENCE.eq(absence))
+                .and(MAPPINGDATAENHANCED.RESOLUTIONID.eq(LAYERS.get(layerName)));
+            enhancedCondition = MapHelper.createTemporalSegment(enhancedCondition, startYear, endYear, MAPPINGDATAENHANCED.STARTDATE, MAPPINGDATAENHANCED.ENDDATE);
+            enhancedCondition = MapHelper.createInDatasetsSegment(enhancedCondition, MAPPINGDATAENHANCED.DATASETKEY, datasetKeys);
+
+            nested = nested.unionAll(create
                         .select(MAPPINGDATAENHANCED.FEATUREID)
                         .from(MAPPINGDATAENHANCED)
                         .join(TAXONTREE).on(TAXONTREE.CHILDPTVK.eq(MAPPINGDATAENHANCED.PTAXONVERSIONKEY))

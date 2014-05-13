@@ -113,14 +113,7 @@ public class DesignationSpeciesDensityMap {
                 publicCondition = MapHelper.createTemporalSegment(publicCondition, startYear, endYear, MAPPINGDATAPUBLIC.STARTDATE, MAPPINGDATAPUBLIC.ENDDATE);
                 publicCondition = MapHelper.createInDatasetsSegment(publicCondition, MAPPINGDATAPUBLIC.DATASETKEY, datasetKeys);
 
-                Condition enhancedCondition =
-                        MAPPINGDATAENHANCED.ABSENCE.eq(false)
-                        .and(DESIGNATIONTAXONDATA.CODE.eq(key))
-                        .and(USERTAXONOBSERVATIONID.USERID.eq(user.getId()))
-                        .and(MAPPINGDATAENHANCED.RESOLUTIONID.eq(LAYERS.get(layerName)));
-                enhancedCondition = MapHelper.createTemporalSegment(enhancedCondition, startYear, endYear, MAPPINGDATAENHANCED.STARTDATE, MAPPINGDATAENHANCED.ENDDATE);
-                enhancedCondition = MapHelper.createInDatasetsSegment(enhancedCondition, MAPPINGDATAENHANCED.DATASETKEY, datasetKeys);
-
+                
                 Select<Record2<Integer, String>> observations = create
                         .select(
                         MAPPINGDATAPUBLIC.FEATUREID,
@@ -129,9 +122,16 @@ public class DesignationSpeciesDensityMap {
                         .join(DESIGNATIONTAXONDATA).on(DESIGNATIONTAXONDATA.PTAXONVERSIONKEY.eq(MAPPINGDATAPUBLIC.PTAXONVERSIONKEY))
                         .where(publicCondition);
                 
-                        
-                if (User.PUBLIC_USER != user) {
-                    observations.unionAll(create
+                if (!User.PUBLIC_USER.equals(user))  {
+                    Condition enhancedCondition =
+                            MAPPINGDATAENHANCED.ABSENCE.eq(false)
+                            .and(DESIGNATIONTAXONDATA.CODE.eq(key))
+                            .and(USERTAXONOBSERVATIONID.USERID.eq(user.getId()))
+                            .and(MAPPINGDATAENHANCED.RESOLUTIONID.eq(LAYERS.get(layerName)));
+                    enhancedCondition = MapHelper.createTemporalSegment(enhancedCondition, startYear, endYear, MAPPINGDATAENHANCED.STARTDATE, MAPPINGDATAENHANCED.ENDDATE);
+                    enhancedCondition = MapHelper.createInDatasetsSegment(enhancedCondition, MAPPINGDATAENHANCED.DATASETKEY, datasetKeys);
+
+                    observations = observations.unionAll(create
                         .select(
                         MAPPINGDATAENHANCED.FEATUREID,
                         MAPPINGDATAENHANCED.PTAXONVERSIONKEY)
