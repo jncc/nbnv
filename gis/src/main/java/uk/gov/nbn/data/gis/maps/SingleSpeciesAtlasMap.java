@@ -197,13 +197,6 @@ public class SingleSpeciesAtlasMap {
         publicCondition = MapHelper.createTemporalSegment(publicCondition, startYear, endYear, MAPPINGDATAPUBLIC.STARTDATE, MAPPINGDATAPUBLIC.ENDDATE);
         publicCondition = MapHelper.createInDatasetsSegment(publicCondition, MAPPINGDATAPUBLIC.DATASETKEY, datasetKeys);
 
-        Condition enhancedCondition = TAXONTREE.NODEPTVK.eq(taxonKey)
-                .and(USERTAXONOBSERVATIONID.USERID.eq(user.getId()))
-                .and(MAPPINGDATAENHANCED.ABSENCE.eq(absence))
-                .and(MAPPINGDATAENHANCED.RESOLUTIONID.eq(LAYERSINFO.get(layerName)));
-        enhancedCondition = MapHelper.createTemporalSegment(enhancedCondition, startYear, endYear, MAPPINGDATAENHANCED.STARTDATE, MAPPINGDATAENHANCED.ENDDATE);
-        enhancedCondition = MapHelper.createInDatasetsSegment(enhancedCondition, MAPPINGDATAENHANCED.DATASETKEY, datasetKeys);
-
         Select<Record1<Integer>> nested = create
                     .select(MAPPINGDATAPUBLIC.FEATUREID.as("FEATUREID"))
                     .from(MAPPINGDATAPUBLIC)
@@ -211,16 +204,23 @@ public class SingleSpeciesAtlasMap {
                     .where(publicCondition);
         
         
-                if (!User.PUBLIC_USER.equals(user))  {
-                    nested = nested.unionAll(create
-                        .select(MAPPINGDATAENHANCED.FEATUREID)
-                        .from(MAPPINGDATAENHANCED)
-                        .join(TAXONTREE).on(TAXONTREE.CHILDPTVK.eq(MAPPINGDATAENHANCED.PTAXONVERSIONKEY))
-                        .join(USERTAXONOBSERVATIONID).on(USERTAXONOBSERVATIONID.OBSERVATIONID.eq(MAPPINGDATAENHANCED.ID))
-                        .where(enhancedCondition)
-                    );
-                    
-                }
+        if (!User.PUBLIC_USER.equals(user))  {
+            Condition enhancedCondition = TAXONTREE.NODEPTVK.eq(taxonKey)
+                    .and(USERTAXONOBSERVATIONID.USERID.eq(user.getId()))
+                    .and(MAPPINGDATAENHANCED.ABSENCE.eq(absence))
+                    .and(MAPPINGDATAENHANCED.RESOLUTIONID.eq(LAYERSINFO.get(layerName)));
+            enhancedCondition = MapHelper.createTemporalSegment(enhancedCondition, startYear, endYear, MAPPINGDATAENHANCED.STARTDATE, MAPPINGDATAENHANCED.ENDDATE);
+            enhancedCondition = MapHelper.createInDatasetsSegment(enhancedCondition, MAPPINGDATAENHANCED.DATASETKEY, datasetKeys);
+
+            nested = nested.unionAll(create
+                .select(MAPPINGDATAENHANCED.FEATUREID)
+                .from(MAPPINGDATAENHANCED)
+                .join(TAXONTREE).on(TAXONTREE.CHILDPTVK.eq(MAPPINGDATAENHANCED.PTAXONVERSIONKEY))
+                .join(USERTAXONOBSERVATIONID).on(USERTAXONOBSERVATIONID.OBSERVATIONID.eq(MAPPINGDATAENHANCED.ID))
+                .where(enhancedCondition)
+            );
+
+        }
                 
         SelectJoinStep<Record1<Integer>> dNested = create
                 .selectDistinct((Field<Integer>)nested.field(0))
