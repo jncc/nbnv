@@ -1,6 +1,7 @@
 package uk.gov.nbn.data.gis.maps;
 
 import java.sql.Date;
+import java.util.Arrays;
 import java.util.List;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
