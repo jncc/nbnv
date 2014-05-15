@@ -1,7 +1,6 @@
 package uk.gov.nbn.data.gis.maps;
 
 import java.sql.Date;
-import java.util.Arrays;
 import java.util.List;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
@@ -12,6 +11,7 @@ import org.jooq.SQLDialect;
 import org.jooq.conf.ParamType;
 import org.jooq.impl.DSL;
 import static org.jooq.impl.DSL.*;
+import uk.ac.ceh.dynamo.bread.BreadException;
 import static uk.gov.nbn.data.dao.jooq.Tables.*;
 import uk.gov.nbn.data.gis.maps.colour.Band;
 
@@ -24,7 +24,7 @@ public class MapHelper {
 
     private static final List<Integer> DEFAULT_VERIFICATION_KEYS = Arrays.asList(1,3,4);
     
-    public static String getMapData(Field<?> geomField, Field<?> uniqueField, int srid, Query query) {
+    public static String getMapData(Query query) {
         return query.getSQL(ParamType.INLINED);
     }
     
@@ -36,9 +36,10 @@ public class MapHelper {
     /**The following interface enables anonymous implementations for creating
      * SQL Expressions in Map Server Templates
      **/
-    public interface ResolutionDataGenerator {
-        String getData(String layerName);
+    public interface LayerDataGenerator {
+        String getData(String layerName) throws BreadException;
     }
+    
 
     static Condition createTemporalSegments(Condition currentCond, List<Band> dates, Field<? extends Date> startDateField, Field<? extends Date> endDateField) {
 	if(dates != null && !dates.isEmpty()){
@@ -83,10 +84,10 @@ public class MapHelper {
         }
     }
     
-    private static Condition createEndYearSegment(Condition currentCond, Field<? extends Date> startDateField, String endYear) {
+    private static Condition createEndYearSegment(Condition currentCond, Field<? extends Date> endDateField, String endYear) {
         if(endYear != null) {
             return currentCond.and(
-                extract(startDateField,DatePart.YEAR)
+                extract(endDateField,DatePart.YEAR)
                 .lessOrEqual(Integer.parseInt(endYear)));
         }
         else {
@@ -114,7 +115,7 @@ public class MapHelper {
     
     static String getSelectedFeatureData(String selectedFeature) {
         if(selectedFeature != null) {
-            return MapHelper.getMapData(FEATUREDATA.GEOM, FEATUREDATA.ID, 4326, getContext()
+            return MapHelper.getMapData(getContext()
                 .select(FEATUREDATA.ID, FEATUREDATA.GEOM)
                 .from(FEATUREDATA)
                 .where(FEATUREDATA.IDENTIFIER.eq(selectedFeature))

@@ -39,7 +39,8 @@ public class TaxonObservationProvider {
                 + "obs.absence as zeroAbundance, "
                 + "obs.fullVersion, "
                 + "taxondd.publicAttribute, "
-                + "v.verification");
+                + "v.verification, "
+                + "toac.attribs as attrStr");
         FROM(from);
         INNER_JOIN("TaxonData td ON obs.pTaxonVersionKey = td.taxonVersionKey");
         LEFT_OUTER_JOIN("TaxonData tdd ON td.commonNameTaxonVersionKey = tdd.taxonVersionKey");
@@ -54,6 +55,7 @@ public class TaxonObservationProvider {
         LEFT_OUTER_JOIN("RecorderData rd ON obs.recorderID = rd.id");
         LEFT_OUTER_JOIN("RecorderData rdd ON obs.determinerID = rdd.id");
         LEFT_OUTER_JOIN("VerificationCodes v ON obs.verificationID = v.id");
+        LEFT_OUTER_JOIN("TaxonObservationAttributeConcat toac ON toac.id = obs.id");
         return SQL();
     }
     

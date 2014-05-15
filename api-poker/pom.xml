@@ -9,11 +9,11 @@
     </parent>
     
     <groupId>uk.org.nbn</groupId>
-    <artifactId>nbnv-revoker</artifactId>
+    <artifactId>nbnv-api-poker</artifactId>
     <version>0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>${project.artifactId}-${project.version}</name>
+    <name>nbnv-api-poker-0.1-SNAPSHOT</name>
     <url>http://maven.apache.org</url>
 
     <properties>
@@ -62,7 +62,7 @@
                     <archive> 
                         <manifest>
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries> 
-                            <mainClass>uk.org.nbn.nbnv.revoker.Revoker</mainClass> 
+                            <mainClass>uk.org.nbn.nbnv.api.poker.Poker</mainClass> 
                             <addClasspath>true</addClasspath> 
                             <classpathPrefix>lib/</classpathPrefix> 
                         </manifest> 

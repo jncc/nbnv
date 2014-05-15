@@ -191,7 +191,7 @@ to (Injected Token no need to pass)
             If the results should include sensitive records or not
           </td>
           <td>query</td>
-          <td>1</td>
+          <td>true</td>
         </tr>
         <tr>
           <td>designation</td>
@@ -241,14 +241,32 @@ or just presence records (false).  If this parameter is missing then both absenc
 and presence records are returned.  Valid values are 'true' and 'false'
           </td>
           <td>query</td>
-          <td>0</td>
+          <td>false</td>
+        </tr>
+        <tr>
+          <td>callback</td>
+          <td>
+            Fix for jQuery callbacks not working entirely well with
+streaming, do not use unless with jQuery callbacks
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>includeAttributes</td>
+          <td>
+            Includes attributes with this request, if you
+have access to them, as a list of key pair values
+          </td>
+          <td>query</td>
+          <td>false</td>
         </tr>
       </table>
       <h3>Response Body</h3>
       <table>
         <tr>
           <td align="right">element:</td>
-          <td><a href="el_ns0_taxonObservation.html">taxonObservation</a></td>
+          <td>(custom)</td>
         </tr>
         <tr>
           <td align="right">media types:</td>
@@ -343,10 +361,11 @@ to (Injected Token no need to pass)
         <tr>
           <td>sensitive</td>
           <td>
-            If the results should include sensitive records or not
+            If the results should include sensitive records or not.
+Valid values are 'true' and 'false'
           </td>
           <td>form</td>
-          <td>1</td>
+          <td>true</td>
         </tr>
         <tr>
           <td>designation</td>
@@ -396,7 +415,25 @@ or just presence records (false).  If this parameter is missing then both absenc
 and presence records are returned.  Valid values are 'true' and 'false'
           </td>
           <td>form</td>
-          <td>0</td>
+          <td>false</td>
+        </tr>
+        <tr>
+          <td>callback</td>
+          <td>
+            Fix for jQuery callbacks not working entirely well with
+streaming, do not use unless with jQuery callbacks
+          </td>
+          <td>form</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>includeAttributes</td>
+          <td>
+            Includes attributes with this request, if you
+have access to them, as a list of key pair values
+          </td>
+          <td>form</td>
+          <td>false</td>
         </tr>
       </table>
       <h3>Response Body</h3>
@@ -572,7 +609,7 @@ to (Injected Token no need to pass)
             If the results should include sensitive records or not
           </td>
           <td>query</td>
-          <td>1</td>
+          <td>true</td>
         </tr>
         <tr>
           <td>designation</td>
@@ -892,7 +929,7 @@ to (Injected Token no need to pass)
             If the results should include sensitive records or not
           </td>
           <td>query</td>
-          <td>1</td>
+          <td>true</td>
         </tr>
         <tr>
           <td>designation</td>
@@ -1041,7 +1078,7 @@ to (Injected Token no need to pass)
             If the results should include sensitive records or not
           </td>
           <td>query</td>
-          <td>1</td>
+          <td>true</td>
         </tr>
         <tr>
           <td>designation</td>
@@ -1182,7 +1219,7 @@ to (Injected Token no need to pass)
             If the results should include sensitive records or not
           </td>
           <td>query</td>
-          <td>1</td>
+          <td>true</td>
         </tr>
         <tr>
           <td>designation</td>
@@ -1323,7 +1360,7 @@ to (Injected Token no need to pass)
             If the results should include sensitive records or not
           </td>
           <td>query</td>
-          <td>1</td>
+          <td>true</td>
         </tr>
         <tr>
           <td>designation</td>
@@ -1472,7 +1509,7 @@ to (Injected Token no need to pass)
             If the results should include sensitive records or not
           </td>
           <td>query</td>
-          <td>1</td>
+          <td>true</td>
         </tr>
         <tr>
           <td>designation</td>
@@ -2113,7 +2150,7 @@ to (Injected Token no need to pass)
             If the results should include sensitive records or not
           </td>
           <td>query</td>
-          <td>1</td>
+          <td>true</td>
         </tr>
         <tr>
           <td>designation</td>
@@ -2254,7 +2291,7 @@ to (Injected Token no need to pass)
             If the results should include sensitive records or not
           </td>
           <td>query</td>
-          <td>1</td>
+          <td>true</td>
         </tr>
         <tr>
           <td>designation</td>
@@ -2377,7 +2414,7 @@ to (Injected Token no need to pass)
         <tr>
           <td>datasetKey</td>
           <td>
-            Datasets to search in
+            Datasets to search in (...&datasetKey=GA000001,...,GA00000X&...)
           </td>
           <td>query</td>
           <td></td>
@@ -2385,7 +2422,7 @@ to (Injected Token no need to pass)
         <tr>
           <td>ptvk</td>
           <td>
-            Taxon Version Keys to search for
+            Taxon Version Keys to search for (...&taxa=TVK1,...,TVKX&...)
           </td>
           <td>query</td>
           <td></td>
@@ -2412,7 +2449,153 @@ to (Injected Token no need to pass)
             If the results should include sensitive records or not
           </td>
           <td>query</td>
-          <td>1</td>
+          <td>true</td>
+        </tr>
+        <tr>
+          <td>designation</td>
+          <td>
+            Any required designations
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>taxonOutputGroup</td>
+          <td>
+            Any required taxon output groups
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>orgSuppliedList</td>
+          <td>
+            (no documentation provided)
+          </td>
+          <td>query</td>
+          <td>-1</td>
+        </tr>
+        <tr>
+          <td>gridRef</td>
+          <td>
+            Any grid references to search within
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>polygon</td>
+          <td>
+            WKT WGS-84 polygon filter
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td><a href="el_ns0_taxonWithQueryStats.html">taxonWithQueryStats</a></td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/json</td>
+        </tr>
+      </table>
+      <p>A List of TaxonWithQueryStats conforming to the provided search
+parameters</p>
+      <h3>Status Codes</h3>
+      <table>
+        <tr>
+          <th>code</th>
+          <th>description</th>
+        </tr>
+        <tr>
+          <td>200</td>
+          <td>
+            Successfully returned a list of taxon with statistics which match the given filter
+          </td>
+        </tr>
+      </table>
+      <a name="POST"></a>
+      <h2>POST</h2>
+      <p>
+            Returns a list of Taxon With Query Stats, essentially Taxon Observations
+by species, conforming to the provided search parameters
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>user</td>
+          <td>
+            The current user, determines what datasets they have access
+to (Injected Token no need to pass)
+          </td>
+          <td>tokenuser</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>startYear</td>
+          <td>
+            The start year of the desired range
+          </td>
+          <td>query</td>
+          <td>-1</td>
+        </tr>
+        <tr>
+          <td>endYear</td>
+          <td>
+            The end year of the desired range
+          </td>
+          <td>query</td>
+          <td>-1</td>
+        </tr>
+        <tr>
+          <td>datasetKey</td>
+          <td>
+            Datasets to search in (...&datasetKey=GA000001,...,GA00000X&...)
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>ptvk</td>
+          <td>
+            Taxon Version Keys to search for (...&taxa=TVK1,...,TVKX&...)
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>spatialRelationship</td>
+          <td>
+            Any spatial relationship information required
+          </td>
+          <td>query</td>
+          <td>overlap</td>
+        </tr>
+        <tr>
+          <td>featureID</td>
+          <td>
+            Any required feature ID
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>sensitive</td>
+          <td>
+            If the results should include sensitive records or not
+          </td>
+          <td>query</td>
+          <td>true</td>
         </tr>
         <tr>
           <td>designation</td>
@@ -2527,7 +2710,7 @@ to (Injected Token no need to pass)
         <tr>
           <td>datasetKey</td>
           <td>
-            Datasets to search in
+            (no documentation provided)
           </td>
           <td>query</td>
           <td></td>
@@ -2535,7 +2718,7 @@ to (Injected Token no need to pass)
         <tr>
           <td>ptvk</td>
           <td>
-            Taxon Version Keys to search for
+            (no documentation provided)
           </td>
           <td>query</td>
           <td></td>
@@ -2562,7 +2745,155 @@ to (Injected Token no need to pass)
             If the results should include sensitive records or not
           </td>
           <td>query</td>
-          <td>1</td>
+          <td>true</td>
+        </tr>
+        <tr>
+          <td>designation</td>
+          <td>
+            Any required designations
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>orgSuppliedList</td>
+          <td>
+            (no documentation provided)
+          </td>
+          <td>query</td>
+          <td>-1</td>
+        </tr>
+        <tr>
+          <td>taxonOutputGroup</td>
+          <td>
+            Any required taxon output groups
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>gridRef</td>
+          <td>
+            Any grid references to search within
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>polygon</td>
+          <td>
+            WKT WGS-84 polygon filter
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+      </table>
+      <h3>Response Body</h3>
+      <table>
+        <tr>
+          <td align="right">element:</td>
+          <td>(custom)</td>
+        </tr>
+        <tr>
+          <td align="right">media types:</td>
+          <td>application/x-zip-compressed</td>
+        </tr>
+      </table>
+      <p>A Zip file containing a list of TaxonWithQueryStats conforming to
+the provided search parameters</p>
+      <h3>Status Codes</h3>
+      <table>
+        <tr>
+          <th>code</th>
+          <th>description</th>
+        </tr>
+        <tr>
+          <td>200</td>
+          <td>
+            Successfully created a download of taxon observations which match the given filter
+          </td>
+        </tr>
+      </table>
+      <a name="POST"></a>
+      <h2>POST</h2>
+      <p>
+            Returns a zip file containing a list of Taxon With Query Stats,
+essentially Taxon Observations by species, conforming to the provided
+search parameters. The same method as the GET request, for use with
+filters that would be longer than the Max URL limit some browsers
+          </p>
+      <h3>Parameters</h3>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>description</th>
+          <th>type</th>
+          <th>default</th>
+        </tr>
+        <tr>
+          <td>user</td>
+          <td>
+            The current user, determines what datasets they have access
+to (Injected Token no need to pass)
+          </td>
+          <td>tokenuser</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>startYear</td>
+          <td>
+            The start year of the desired range
+          </td>
+          <td>query</td>
+          <td>-1</td>
+        </tr>
+        <tr>
+          <td>endYear</td>
+          <td>
+            The end year of the desired range
+          </td>
+          <td>query</td>
+          <td>-1</td>
+        </tr>
+        <tr>
+          <td>datasetKey</td>
+          <td>
+            (no documentation provided)
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>ptvk</td>
+          <td>
+            (no documentation provided)
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>spatialRelationship</td>
+          <td>
+            Any spatial relationship information required
+          </td>
+          <td>query</td>
+          <td>overlap</td>
+        </tr>
+        <tr>
+          <td>featureID</td>
+          <td>
+            Any required feature ID
+          </td>
+          <td>query</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>sensitive</td>
+          <td>
+            If the results should include sensitive records or not
+          </td>
+          <td>query</td>
+          <td>true</td>
         </tr>
         <tr>
           <td>designation</td>
@@ -2711,7 +3042,7 @@ to (Injected Token no need to pass)
             If the results should include sensitive records or not
           </td>
           <td>query</td>
-          <td>1</td>
+          <td>true</td>
         </tr>
         <tr>
           <td>designation</td>

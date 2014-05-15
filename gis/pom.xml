@@ -38,7 +38,7 @@
         <dependency>
             <groupId>uk.ac.ceh</groupId>
             <artifactId>dynamo-mapping</artifactId>
-            <version>0.6</version>
+            <version>1.2</version>
         </dependency>
                 
         <!-- Hibernate Validator -->
@@ -51,6 +51,11 @@
         <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-json</artifactId>
+            <version>${jersey.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.jersey.contribs</groupId>
+            <artifactId>jersey-apache-client4</artifactId>
             <version>${jersey.version}</version>
         </dependency>
         <dependency>

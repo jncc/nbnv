@@ -16,6 +16,7 @@
         END
         TYPE RASTER
         STATUS ON
+        PROCESSING "RESAMPLE=AVERAGE"
         DATA "${location}/OS/Modern/MiniScale/raster/MiniScale_(no_grid)_R13.tif"
         PROJECTION
             "init=epsg:27700"   ##recommended
@@ -33,7 +34,8 @@
         END
         TYPE RASTER
         STATUS ON
-        TILEINDEX "${location}/OS/Modern/250k/unix-index.shp"
+        PROCESSING "RESAMPLE=AVERAGE"
+        TILEINDEX "${location}/OS/Modern/250k/index.shp"
         TILEITEM "Location"
         PROJECTION
             "init=epsg:27700"   ##recommended
@@ -52,7 +54,8 @@
         END
         TYPE RASTER
         STATUS ON
-        TILEINDEX "${location}/OS/Modern/50k/unix-index.shp"
+        PROCESSING "RESAMPLE=AVERAGE"
+        TILEINDEX "${location}/OS/Modern/50k/index.shp"
         TILEITEM "Location"
         PROJECTION
             "init=epsg:27700"   ##recommended
@@ -71,7 +74,8 @@
         END
         TYPE RASTER
         STATUS ON
-        TILEINDEX "${location}/OS/Modern/25k/unix-index.shp"
+        PROCESSING "RESAMPLE=AVERAGE"
+        TILEINDEX "${location}/OS/Modern/25k/index.shp"
         TILEITEM "Location"
         PROJECTION
             "init=epsg:27700"   ##recommended

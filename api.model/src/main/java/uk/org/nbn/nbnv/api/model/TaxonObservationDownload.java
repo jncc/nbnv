@@ -1,6 +1,7 @@
 package uk.org.nbn.nbnv.api.model;
 
 import java.util.Date;
+import java.util.Map;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -36,6 +37,7 @@ public class TaxonObservationDownload {
     private boolean fullVersion;
     private boolean publicAttribute;
     private String verification;
+    private String attrStr;
     
     public TaxonObservationDownload() {
         this.fullVersion = false;
@@ -247,5 +249,13 @@ public class TaxonObservationDownload {
 
     public void setVerification(String verification) {
         this.verification = verification;
+    }
+
+    public String getAttrStr() {
+        return attrStr;
+    }
+
+    public void setAttrStr(String attrStr) {
+        this.attrStr = attrStr;
     }
 }

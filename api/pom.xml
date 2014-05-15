@@ -293,6 +293,14 @@
             <groupId>org.codehaus.enunciate</groupId> 
             <artifactId>enunciate-core-annotations</artifactId> 
             <version>1.27</version> 
-        </dependency>
+        </dependency>     
+        
+        <!-- Tuples -->
+        <dependency>
+            <groupId>org.javatuples</groupId>
+            <artifactId>javatuples</artifactId>
+            <version>1.2</version>
+            <scope>compile</scope>
+        </dependency>     
     </dependencies>
 </project>

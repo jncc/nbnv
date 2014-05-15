@@ -9,7 +9,7 @@ public class ObservationResourceDefaults {
     public static final String defaultEndYear = "-1";
     public static final String defaultDatasetKey = "";
     public static final String defaultTaxa = "";
-    public static final String defaultSensitive = "1";
+    public static final String defaultSensitive = "true";
     public static final String defaultDesignation = "";
     public static final String defaultTaxonOutputGroup = "";
     public static final String defaultOrgSuppliedList = "-1";
@@ -19,6 +19,6 @@ public class ObservationResourceDefaults {
     public static final String defaultPolygon = "";
     public static final String defaultReason = "";
     public static final String defaultReasonType = "-1";
-    public static final String defaultAbsence = "0";
+    public static final String defaultAbsence = "false";
 
 }

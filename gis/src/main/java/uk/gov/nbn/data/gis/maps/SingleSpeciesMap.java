@@ -5,7 +5,7 @@ import java.awt.Color;
 import java.util.*;
 import javax.validation.constraints.Pattern;
 import org.springframework.beans.factory.annotation.Autowired;
-import uk.gov.nbn.data.gis.maps.MapHelper.ResolutionDataGenerator;
+import uk.gov.nbn.data.gis.maps.MapHelper.LayerDataGenerator;
 import uk.gov.nbn.data.gis.maps.colour.Band;
 import uk.org.nbn.nbnv.api.model.User;
 import org.jooq.Condition;
@@ -14,6 +14,7 @@ import org.jooq.Field;
 import org.jooq.Record1;
 import org.jooq.Select;
 import org.jooq.SelectJoinStep;
+import org.springframework.beans.factory.annotation.Qualifier;
 import static uk.gov.nbn.data.dao.jooq.Tables.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
@@ -27,6 +28,8 @@ import uk.ac.ceh.dynamo.GridMap.Layer;
 import uk.ac.ceh.dynamo.GridMap.Resolution;
 import uk.ac.ceh.dynamo.arguments.annotations.ServiceURL;
 import uk.gov.nbn.data.gis.maps.colour.Verification;
+import uk.ac.ceh.dynamo.bread.BreadException;
+import uk.ac.ceh.dynamo.bread.ShapefileBakery;
 import uk.gov.nbn.data.gis.validation.Datasets;
 
 /**
@@ -53,6 +56,7 @@ public class SingleSpeciesMap {
     
     @Autowired WebResource resource;
     @Autowired Properties properties;
+    @Autowired @Qualifier("taxonLayerBaker") ShapefileBakery bakery;
     
     static {
         COLOURS = new HashMap<String, Color>();
@@ -102,15 +106,17 @@ public class SingleSpeciesMap {
         data.put("enableAbsence", absence);
         data.put("enablePresence", presence);
         data.put("bands", bands);
-	data.put("verifications", verifications);
+		data.put("verifications", verifications);
         data.put("mapServiceURL", mapServiceURL);
         data.put("featureData", MapHelper.getSelectedFeatureData(featureID));
         data.put("properties", properties);
         data.put("absenceLayerGenerator", getSingleSpeciesResolutionDataGenerator(FEATURE.GEOM, key, user, datasetKeys, startYear, endYear, true, getVerificationKeys(verifications)));
+        data.put("absenceLayerGenerator", getSingleSpeciesResolutionDataGenerator(bakery, FEATURE.GEOM, key, user, datasetKeys, startYear, endYear, true));
         data.put("presencelayerGenerator", getSingleSpeciesResolutionDataGenerator(FEATURE.GEOM, key, user, datasetKeys, startYear, endYear, false, getVerificationKeys(verifications)));
+        data.put("presencelayerGenerator", getSingleSpeciesResolutionDataGenerator(bakery, FEATURE.GEOM, key, user, datasetKeys, startYear, endYear, false));
         data.put("bandLayerGenerator", new SingleSpeciesBandSqlGenerator() {
-            @Override public String getData(String layerName, Band dateBand) {
-                return getSQL(FEATURE.GEOM, key, user, datasetKeys, dateBand.getStartYear(), dateBand.getEndYear(), false, layerName, getVerificationKeys(verifications), null);
+            @Override public String getData(String layerName, Band dateBand) throws BreadException {
+				return bakery.getData(getSQL(FEATURE.GEOM, key, user, datasetKeys, dateBand.getStartYear(), dateBand.getEndYear(), false, layerName, getVerificationKeys(verifications), null));
             }
         });
         data.put("verificationLayerGenerator", new SingleSpeciesVerificationSqlGenerator() {
@@ -122,7 +128,7 @@ public class SingleSpeciesMap {
     }
     
     public interface SingleSpeciesBandSqlGenerator {
-        public String getData(String layerName, Band dateBand);
+        public String getData(String layerName, Band dateBand) throws BreadException;
     }
     
     public interface SingleSpeciesVerificationSqlGenerator {
@@ -130,7 +136,8 @@ public class SingleSpeciesMap {
     }
     
     //Factored out the single species resolution data generator so that it can be used by the atlas map
-    static ResolutionDataGenerator getSingleSpeciesResolutionDataGenerator(
+    static LayerDataGenerator getSingleSpeciesResolutionDataGenerator(
+            final ShapefileBakery bakery,
             final Field<?> geometry,
             final String taxonKey, 
             final User user, 
@@ -139,9 +146,9 @@ public class SingleSpeciesMap {
             final String endYear,
             final boolean absence,
 	    final List<Integer> verificationKeys) {
-        return new ResolutionDataGenerator() {
-            @Override public String getData(String layerName) {
-                return getSQL(geometry, taxonKey, user, datasetKeys, startYear, endYear, absence, layerName, verificationKeys, null);
+        return new LayerDataGenerator() {
+            @Override public String getData(String layerName) throws BreadException {
+                return bakery.getData(getSQL(geometry, taxonKey, user, datasetKeys, startYear, endYear, absence, layerName, verificationKeys, null));
             }
         };
     }      
@@ -151,32 +158,32 @@ public class SingleSpeciesMap {
                                     List<String> datasetKeys, 
                                     String startYear, String endYear, 
                                     boolean absence, String layerName,
-				    List<Integer> verificationKeys,
-				    List<Band> dateBands) {
-	boolean isMultipleDates = !(dateBands == null || dateBands.isEmpty());
+									List<Integer> verificationKeys,
+								List<Band> dateBands) {
+		boolean isMultipleDates = !(dateBands == null || dateBands.isEmpty());
         DSLContext create = MapHelper.getContext();
         Condition publicCondition = TAXONTREE.NODEPTVK.eq(taxonKey)
-                .and(MAPPINGDATAPUBLIC.ABSENCE.eq(absence))
-                .and(MAPPINGDATAPUBLIC.RESOLUTIONID.eq(LAYERS.get(layerName)));
-	if(isMultipleDates){
-	    publicCondition = MapHelper.createTemporalSegments(publicCondition, dateBands, MAPPINGDATAPUBLIC.STARTDATE, MAPPINGDATAPUBLIC.ENDDATE);
-	}else{
-	    publicCondition = MapHelper.createTemporalSegment(publicCondition, startYear, endYear, MAPPINGDATAPUBLIC.STARTDATE, MAPPINGDATAPUBLIC.ENDDATE);
-	}
-        publicCondition = MapHelper.createInDatasetsSegment(publicCondition, MAPPINGDATAPUBLIC.DATASETKEY, datasetKeys);
-	publicCondition = MapHelper.createInVerificationKeysSegment(publicCondition, MAPPINGDATAPUBLIC.VERIFICATIONID, verificationKeys);
+			.and(MAPPINGDATAPUBLIC.ABSENCE.eq(absence))
+			.and(MAPPINGDATAPUBLIC.RESOLUTIONID.eq(LAYERS.get(layerName)));
+		if(isMultipleDates){
+			publicCondition = MapHelper.createTemporalSegments(publicCondition, dateBands, MAPPINGDATAPUBLIC.STARTDATE, MAPPINGDATAPUBLIC.ENDDATE);
+		}else{
+			publicCondition = MapHelper.createTemporalSegment(publicCondition, startYear, endYear, MAPPINGDATAPUBLIC.STARTDATE, MAPPINGDATAPUBLIC.ENDDATE);
+		}
+			publicCondition = MapHelper.createInDatasetsSegment(publicCondition, MAPPINGDATAPUBLIC.DATASETKEY, datasetKeys);
+		publicCondition = MapHelper.createInVerificationKeysSegment(publicCondition, MAPPINGDATAPUBLIC.VERIFICATIONID, verificationKeys);
 
-        Condition enhancedCondition = TAXONTREE.NODEPTVK.eq(taxonKey)
-                .and(USERTAXONOBSERVATIONID.USERID.eq(user.getId()))
-                .and(MAPPINGDATAENHANCED.ABSENCE.eq(absence))
-                .and(MAPPINGDATAENHANCED.RESOLUTIONID.eq(LAYERS.get(layerName)));
-	if(isMultipleDates){
-	    enhancedCondition = MapHelper.createTemporalSegments(enhancedCondition, dateBands, MAPPINGDATAENHANCED.STARTDATE, MAPPINGDATAENHANCED.ENDDATE);
-	}else{
-	    enhancedCondition = MapHelper.createTemporalSegment(enhancedCondition, startYear, endYear, MAPPINGDATAENHANCED.STARTDATE, MAPPINGDATAENHANCED.ENDDATE);
-	}
+			Condition enhancedCondition = TAXONTREE.NODEPTVK.eq(taxonKey)
+					.and(USERTAXONOBSERVATIONID.USERID.eq(user.getId()))
+					.and(MAPPINGDATAENHANCED.ABSENCE.eq(absence))
+					.and(MAPPINGDATAENHANCED.RESOLUTIONID.eq(LAYERS.get(layerName)));
+		if(isMultipleDates){
+			enhancedCondition = MapHelper.createTemporalSegments(enhancedCondition, dateBands, MAPPINGDATAENHANCED.STARTDATE, MAPPINGDATAENHANCED.ENDDATE);
+		}else{
+			enhancedCondition = MapHelper.createTemporalSegment(enhancedCondition, startYear, endYear, MAPPINGDATAENHANCED.STARTDATE, MAPPINGDATAENHANCED.ENDDATE);
+		}
         enhancedCondition = MapHelper.createInDatasetsSegment(enhancedCondition, MAPPINGDATAENHANCED.DATASETKEY, datasetKeys);
-	enhancedCondition = MapHelper.createInVerificationKeysSegment(enhancedCondition, MAPPINGDATAENHANCED.VERIFICATIONID, verificationKeys);
+		enhancedCondition = MapHelper.createInVerificationKeysSegment(enhancedCondition, MAPPINGDATAENHANCED.VERIFICATIONID, verificationKeys);
 
         Select<Record1<Integer>> nested = create
                     .select(MAPPINGDATAPUBLIC.FEATUREID.as("FEATUREID"))
@@ -184,8 +191,15 @@ public class SingleSpeciesMap {
                     .join(TAXONTREE).on(TAXONTREE.CHILDPTVK.eq(MAPPINGDATAPUBLIC.PTAXONVERSIONKEY))
                     .where(publicCondition);
         
-        if (User.PUBLIC_USER != user) {
-            nested.unionAll(create
+        if (!User.PUBLIC_USER.equals(user))  {
+            Condition enhancedCondition = TAXONTREE.NODEPTVK.eq(taxonKey)
+                .and(USERTAXONOBSERVATIONID.USERID.eq(user.getId()))
+                .and(MAPPINGDATAENHANCED.ABSENCE.eq(absence))
+                .and(MAPPINGDATAENHANCED.RESOLUTIONID.eq(LAYERS.get(layerName)));
+            enhancedCondition = MapHelper.createTemporalSegment(enhancedCondition, startYear, endYear, MAPPINGDATAENHANCED.STARTDATE, MAPPINGDATAENHANCED.ENDDATE);
+            enhancedCondition = MapHelper.createInDatasetsSegment(enhancedCondition, MAPPINGDATAENHANCED.DATASETKEY, datasetKeys);
+
+            nested = nested.unionAll(create
                         .select(MAPPINGDATAENHANCED.FEATUREID)
                         .from(MAPPINGDATAENHANCED)
                         .join(TAXONTREE).on(TAXONTREE.CHILDPTVK.eq(MAPPINGDATAENHANCED.PTAXONVERSIONKEY))
@@ -198,7 +212,7 @@ public class SingleSpeciesMap {
                 .selectDistinct((Field<Integer>)nested.field(0))
                 .from(nested);
 	
-        return MapHelper.getMapData(geometry, FEATURE.IDENTIFIER, 4326 ,create
+        return MapHelper.getMapData(create
             .select(geometry, FEATURE.IDENTIFIER)
             .from(FEATURE)
             .join(dNested).on(FEATURE.ID.eq((Field<Integer>)dNested.field(0))));

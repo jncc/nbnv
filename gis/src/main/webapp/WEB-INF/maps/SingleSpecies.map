@@ -8,25 +8,13 @@
     END
 
     [#list layers as layer_name]
-        [#if bands?? && !verifications?first.coloured] [#--If banding is enabled, create lots of layers and group them to the given layer--]
+        [#if bands??] [#--If banding is enabled, create lots of layers and group them to the given layer--]
             [#list bands as band]
                 [@layer group=layer_name name="Band_${band_index}" data=bandLayerGenerator.getData(layer_name, band)]
                     NAME                "Presence Year Band ${band.expression}"
                     STYLE
                         COLOR           ${band.fillColour.red} ${band.fillColour.green} ${band.fillColour.blue}
                         OUTLINECOLOR    ${band.outlineColour.red} ${band.outlineColour.green} ${band.outlineColour.blue}
-                        WIDTH           1
-                    END
-                [/@layer]
-            [/#list]
-	[#elseif verifications?? && verifications?first.coloured] [#--Do we need to draw Verifcation layers?--]
-            [#list verifications as verification]
-
-                [@layer group=layer_name name="Verification_${verification_index}" data=verificationLayerGenerator.getData(layer_name, bands, verification)]
-                    NAME                "Verification layer ${verification.expression}"
-                    STYLE
-                        COLOR           ${verification.fillColour.red} ${verification.fillColour.green} ${verification.fillColour.blue}
-                        OUTLINECOLOR    ${verification.outlineColour.red} ${verification.outlineColour.green} ${verification.outlineColour.blue}
                         WIDTH           1
                     END
                 [/@layer]
@@ -69,9 +57,6 @@
         GROUP                       "${group}"
         TYPE                        POLYGON
         STATUS                      OFF
-        CONNECTIONTYPE              OGR
-        CONNECTION                  "${properties.spatialConnection}"
-        PROCESSING                  "CLOSE_CONNECTION=DEFER"
         DATA                        "${data}"
         TEMPLATE                    "dummy.txt"
         EXTENT                      -180 -90 180 90
