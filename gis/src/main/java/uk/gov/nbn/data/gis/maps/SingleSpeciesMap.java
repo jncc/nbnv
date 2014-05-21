@@ -106,7 +106,7 @@ public class SingleSpeciesMap {
         data.put("enableAbsence", absence);
         data.put("enablePresence", presence);
         data.put("bands", bands);
-		data.put("verifications", verifications);
+        data.put("verifications", verifications);
         data.put("mapServiceURL", mapServiceURL);
         data.put("featureData", MapHelper.getSelectedFeatureData(featureID));
         data.put("properties", properties);
