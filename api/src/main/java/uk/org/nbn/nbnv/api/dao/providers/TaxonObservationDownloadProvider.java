@@ -68,6 +68,7 @@ public class TaxonObservationDownloadProvider {
         FROM(from);
         INNER_JOIN("OrganisationData o ON o.id = tods.organisationID");
         GROUP_BY("tods.organisationID, o.name");
+        ORDER_BY("total DESC, totalAlt DESC");
         return SQL();
     }
     
@@ -77,6 +78,7 @@ public class TaxonObservationDownloadProvider {
         SELECT("TOP 5 tods.userID AS id, tods.forename + ' ' + tods.surname AS name, tods.email AS extra, SUM(tods.recordCount) AS total, COUNT(*) AS totalAlt");
         FROM(from);
         GROUP_BY("tods.userID, tods.forename, tods.surname, tods.email");
+        ORDER_BY("total DESC, totalAlt DESC");
         return SQL();
     }
     
