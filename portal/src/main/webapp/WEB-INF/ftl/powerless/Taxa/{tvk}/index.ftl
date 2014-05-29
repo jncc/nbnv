@@ -1,4 +1,5 @@
 <#assign tvk=URLParameters.tvk>
+<#assign requestParametersExtended = RequestParameters + {"ptvk":[tvk]}>
 <#assign taxon=json.readURL("${api}/taxa/${tvk}")>
 <#assign ptaxon=json.readURL("${api}/taxa/${taxon.ptaxonVersionKey}")>
 <#assign synonyms=json.readURL("${api}/taxa/${tvk}/synonyms")>
@@ -9,6 +10,7 @@
 <#assign datasets=json.readURL("${api}/taxa/${tvk}/datasets")>
 <#assign weblinks=json.readURL("${api}/taxa/${tvk}/weblinks")>
 <#assign output=json.readURL("${api}/taxonOutputGroups/${taxon.taxonOutputGroupKey}")>
+<#assign unavailableDatasets=json.readURL("${api}/taxonObservations/unavailableDatasets",requestParametersExtended)>
 
 <@template.master title="NBN Gateway - Taxon"
     javascripts=[
@@ -37,6 +39,7 @@
     <#if taxon.taxonVersionKey == ptaxon.taxonVersionKey>
         <@taxonPageDatasets datasets=datasets/>
     </#if>
+	<@report_utils.unavailable_datasets unavailableDatasets=unavailableDatasets/>
     <div align="center">
         <a href="http://www.nhm.ac.uk/" target="_blank"><img src="/img/taxonPage/nhm_new.gif" alt="Natural History Museum logo" width="135" height="85" border="0" /></a>
         <a href="http://www.jncc.gov.uk/page-5546" target="_blank"><img src="/img/taxonPage/jncc.gif" alt="Joint Nature Conservation Committee logo" width="150" height="66" border="0" /></a>
