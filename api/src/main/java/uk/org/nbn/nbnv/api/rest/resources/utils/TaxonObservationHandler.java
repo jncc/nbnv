@@ -48,9 +48,8 @@ public class TaxonObservationHandler implements ResultHandler {
                 String[] vals = StringUtils.split(attVal, "¬");
                 observation.getAttributes().put(vals[0], vals[1]);
             }
-            
-            observation.setAttrStr(null);
-        }
+        } 
+        observation.setAttrStr(null);
         
         try {
             if (firstRecord) {
