@@ -81,8 +81,14 @@ public class TaxonObservationDownloadHandler implements ResultHandler {
                         StringUtils.hasText(observation.getAttrStr()) ? 
                             observation.getAttrStr() : "", "¦");
                 for (String attVal : attVals) {
-                    String[] vals = org.apache.commons.lang.StringUtils.split(attVal, "¬");
-                    obsAttribs.put(vals[0], vals[1]);
+                    if (StringUtils.hasText(attVal)) {
+                        String[] vals = org.apache.commons.lang.StringUtils.split(attVal, "¬");
+                        if (vals.length == 2) {
+                            obsAttribs.put(vals[0], vals[1]);
+                        } else if (vals.length == 1) {
+                            obsAttribs.put(vals[0], "");
+                        }
+                    }
                 }
                 
                 for (Attribute att : attributes) {
