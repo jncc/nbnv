@@ -433,7 +433,7 @@ public class TaxonObservationResource extends RequestResource {
                 sendRequestWithHandler(user, startYear, endYear, datasetKeys, 
                         taxa, spatialRelationship, featureID, sensitive, 
                         designation, taxonOutputGroup, orgSuppliedList, gridRef, 
-                        polygon, new TaxonObservationHandler(writer, includeAttributes), 
+                        polygon, absence, new TaxonObservationHandler(writer, includeAttributes), 
                         session, "selectObservationRecordsByFilter");
                 
                 session.close();
@@ -2090,8 +2090,8 @@ public class TaxonObservationResource extends RequestResource {
         
         sendRequestWithHandler(user, startYear, endYear, datasetKeys, taxa, 
                 spatialRelationship, featureID, sensitive, designation, 
-                taxonOutputGroup, orgSuppliedList, gridRef, polygon, handler, 
-                sess, "selectDownloadableRecords");
+                taxonOutputGroup, orgSuppliedList, gridRef, polygon, null, 
+                handler, sess, "selectDownloadableRecords");
         
         Map<String, Integer> datasetRecordCounts = handler.returnDatasetRecordCounts();
         
@@ -2106,7 +2106,7 @@ public class TaxonObservationResource extends RequestResource {
             int startYear, int endYear, List<String> datasetKeys, 
             List<String> taxa, String spatialRelationship, String featureID, 
             boolean sensitive, String designation, String taxonOutputGroup, 
-            int orgSuppliedList, String gridRef, String polygon,
+            int orgSuppliedList, String gridRef, String polygon, Boolean absence,
             ResultHandler handler, SqlSession session, String sqlQuery) {
         
         
@@ -2125,6 +2125,7 @@ public class TaxonObservationResource extends RequestResource {
         map.put("orgSuppliedList", orgSuppliedList);
         map.put("gridRef", gridRef);
         map.put("polygon", polygon);
+        map.put("absence", absence);
         
         session.select(sqlQuery, map, handler);
         session.close();
