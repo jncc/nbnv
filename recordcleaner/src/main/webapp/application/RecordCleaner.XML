@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<updates patchnumber="20130531">
+<updates patchnumber="20140603">
   <file name="UpdatesLog">
     <server>AppFiles/UpdatesLog.txt</server>
     <local>UpdatesLog.txt</local>
-    <version>20130531</version>
+    <version>20140603</version>
   </file>
   <file name="MainApp">
     <server>AppFiles/NBNRecordCleaner.zip</server>
@@ -13,7 +13,7 @@
    <file name="MasterSpeciesList">
     <server>TestData/MasterSpeciesList.keep.zip</server>
     <local>%TESTFILES%MasterSpeciesList.keep.zip</local>
-    <version>20130403</version>
+    <version>20140603</version>
   </file>
   <file name="ConnectionSettings">
     <server>UserSettings/ConnectionSettings.zip</server>
