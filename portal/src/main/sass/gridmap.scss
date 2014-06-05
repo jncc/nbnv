@@ -1,12 +1,17 @@
-    #nbn-grid-map-filter-container{
-        width: 33%;
+    .nbn-grid-filter-container{
         float: left;
+    }
+
+    #nbn-grid-filters-container{
+	width: 35%;
+	display: inline-block
     }
 
     #nbn-grid-map-container{
         width: 62%;
         display: inline-block;
         position: relative;
+	vertical-align: top;
     }
 
     #nbn-dataset-selector-container{
@@ -26,4 +31,23 @@
 
     .nbn-map-image-container-startup-height{
         height: 700px;
+    }
+
+    .nbn-date-layer-label{
+	display: inline-block;
+	width: 45px;
+    }
+
+    .nbn-quality-layer-label{
+	display: inline-block;
+	width: 70px;
+    }
+
+    .nbn-tabs{
+	font-size: 13px !important;
+	font-family: Arial,Helvetica,sans-serif !important;
+    }
+
+    .nbn-quality-color-picker{
+	padding-left: 30px;
     }

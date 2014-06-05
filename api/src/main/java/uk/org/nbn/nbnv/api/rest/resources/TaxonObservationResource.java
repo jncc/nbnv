@@ -1718,24 +1718,6 @@ public class TaxonObservationResource extends RequestResource {
         return false;
     }
     
-//    private boolean userIsDatasetOrOrganisationAdminForDatasets(User user, List<String> datasetKeys) {
-//        if (datasetKeys != null && !datasetKeys.isEmpty() && user != null) {
-//            
-//            for (String dataset : datasetKeys) {
-//                if (datasetAdministratorMapper.isUserDatasetAdministrator(user.getId(), dataset)) {
-//                    return true;
-//                } else {
-//                    Dataset d = datasetMapper.selectByDatasetKey(dataset);
-//                    if (organisationMembershipMapper.isUserOrganisationAdmin(user.getId(), d.getOrganisationID())) {
-//                        return true;
-//                    }
-//                }
-//            }
-//        }
-//        
-//        return false;
-//    }
-    
     /**
      * 
      * @param datasetsWithQueryStats
@@ -2066,6 +2048,7 @@ public class TaxonObservationResource extends RequestResource {
         values.add("sensitive");
         values.add("zeroAbundance");
         values.add("fullVersion");
+        values.add("verification");
         
         // If including attributes then push in the appropriate fields
         if (includeAttributes) {

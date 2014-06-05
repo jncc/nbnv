@@ -72,6 +72,7 @@ public class TaxonObservationDownloadHandler implements ResultHandler {
         values.add(observation.isSensitive() ? "true" : "false");
         values.add(observation.isZeroAbundance() ? "true" : "false");
         values.add(observation.isFullVersion() ? "true" : "false");
+        values.add(observation.getVerification());
 
         if (includeAttributes) {
             if (observation.isFullVersion() || observation.isPublicAttribute()) {

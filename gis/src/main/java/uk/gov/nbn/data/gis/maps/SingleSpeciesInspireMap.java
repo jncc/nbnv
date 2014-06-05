@@ -59,15 +59,14 @@ public class SingleSpeciesInspireMap {
         
         HashMap<String, Object> data = new HashMap<String, Object>();
         
-//        data.put("layers", gridMapDefinition.layers());
         data.put("mapServiceURL", mapServiceURL);
         data.put("properties", properties);
-        data.put("title", "Fluffy Bunnyius" + " " + "CJ 2300" + " - Available Species Distribution for the UK");
-        data.put("speciesCode", "FluffyBunny");
-        data.put("speciesName", "Fluffy Bunnyius");
+        data.put("title", "Species name" + " " + "CJ 2300" + " - Available Species Distribution for the UK");
+        data.put("speciesCode", "SpeciesCode");
+        data.put("speciesName", "Species Name");
         data.put("resourceURL", "https://data.nbn.org.uk/api/taxa/" + key + "/inspire");
         data.put("date", sdf.format(new Date()));
-        data.put("data", SingleSpeciesMap.getSingleSpeciesResolutionDataGenerator(bakery, FEATURE.GEOM, key, user, null, null, null, false).getData("Grid-10km"));
+        data.put("data", SingleSpeciesMap.getSingleSpeciesResolutionDataGenerator(bakery, FEATURE.GEOM, key, user, null, null, null, false, null).getData("Grid-10km"));
         return new ModelAndView("SingleSpeciesInspire.map",data);
     }
 

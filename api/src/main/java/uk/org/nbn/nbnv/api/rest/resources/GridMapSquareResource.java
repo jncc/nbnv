@@ -2,8 +2,11 @@ package uk.org.nbn.nbnv.api.rest.resources;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -30,6 +33,7 @@ import uk.org.nbn.nbnv.api.model.TaxonDataset;
 import uk.org.nbn.nbnv.api.model.User;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
 import uk.org.nbn.nbnv.api.rest.resources.utils.DownloadHelper;
+import uk.org.nbn.nbnv.api.utils.Status;
 
 @Component
 @Path("/gridMapSquares")
@@ -92,10 +96,11 @@ public class GridMapSquareResource extends AbstractResource {
             @QueryParam("resolution") @DefaultValue("") final String resolution,
             @QueryParam("band") @DefaultValue("") final List<String> bands,
             @QueryParam("datasets") @DefaultValue(ObservationResourceDefaults.defaultDatasetKey) final List<String> datasets,
-            @QueryParam("feature") @DefaultValue(ObservationResourceDefaults.defaultFeatureID) final String viceCountyIdentifier)
+            @QueryParam("feature") @DefaultValue(ObservationResourceDefaults.defaultFeatureID) final String viceCountyIdentifier,
+            @QueryParam("verification") @DefaultValue("") final List<String> verifications)
             throws IOException {
-        
-        // Set the filename to get around a bug with Firefox not adding the extension properly
+	
+	// Set the filename to get around a bug with Firefox not adding the extension properly
         response.setHeader("Content-Disposition", String.format("attachment; filename=\"%s_grid_squares.zip\"", ptvk));
         
         return new StreamingOutput() {
@@ -103,11 +108,14 @@ public class GridMapSquareResource extends AbstractResource {
             @Override
             public void write(OutputStream out) throws IOException, WebApplicationException {
                 ZipOutputStream zip = new ZipOutputStream(out);
-                addReadMe(zip, user, ptvk, resolution, bands);
-                addGridRefs(zip, user, ptvk, resolution, bands, datasets, viceCountyIdentifier);
-                addDatasetMetadata(zip, user, ptvk, resolution, bands, datasets, viceCountyIdentifier);
-                zip.flush();
-                zip.close();
+                try{
+                    addReadMe(zip, user, ptvk, resolution, bands, verifications);
+                    addGridRefs(zip, user, ptvk, resolution, bands, datasets, viceCountyIdentifier, verifications);
+                    addDatasetMetadata(zip, user, ptvk, resolution, bands, datasets, viceCountyIdentifier, verifications);
+                }finally{
+                    zip.flush();
+                    zip.close();
+                }
             }
         };
     }
@@ -121,63 +129,57 @@ public class GridMapSquareResource extends AbstractResource {
      * @param bands
      * @throws IOException 
      */
-    private void addReadMe(ZipOutputStream zip, User user, String ptvk, String resolution, List<String> bands) throws IOException {
+    private void addReadMe(ZipOutputStream zip, User user, String ptvk, String resolution, List<String> bands, List<String> verifications) throws IOException {
         Taxon taxon = taxonMapper.getTaxon(ptvk);
         String title = "Grid map square download from the NBN Gateway";
         HashMap<String, String> filters = new HashMap<String, String>();
         filters.put("Taxon", taxon.getName() + " " + taxon.getAuthority());
-        filters.put("Resolution: ", resolution);
+        filters.put("Resolution ", resolution);
         int i = 1;
         for(String band: bands){
             filters.put("Year range " + i++, band.substring(0,band.indexOf(",")));
         }
+        i=1;
+        for(Integer verificationKey : getVerificationKeys(verifications)){
+            filters.put("Verification status " + i++, Status.get(verificationKey).name());
+        }
         downloadHelper.addReadMe(zip, user, title, filters);
     }
-
-    /**
-     * 
-     * @param zip
-     * @param user
-     * @param ptvk
-     * @param resolution
-     * @param bands
-     * @param datasetKey
-     * @param viceCountyIdentifier
-     * @throws IOException 
-     */
-    private void addGridRefs(ZipOutputStream zip, User user, String ptvk, String resolution, List<String> bands, List<String> datasetKey, String viceCountyIdentifier) throws IOException {
-        for (String band : bands) {
-            if (!"".equals(band)) {
-                addGridRefsForYearBand(zip, user, ptvk, resolution, band, datasetKey, viceCountyIdentifier);
-            } else {
-                throw new IllegalArgumentException("No year band arguments supplied, at least one 'band' argument is required (eg band=2000-2012,ff0000,000000)");
-            }
-        }
+    
+    private void addGridRefs(ZipOutputStream zip, User user, String ptvk, String resolution, List<String> bands, List<String> datasetKeys, String viceCountyIdentifier, List<String> verifications) throws IOException {
+	List<Integer> verificationKeys = getVerificationKeys(verifications);
+	boolean isGroupByDate = isGroupByDate(verifications);
+	if(isGroupByDate){
+	    for (String band : bands) {
+		if (!"".equals(band)) {
+		    String title = "GridSquares_" + band.substring(0,band.indexOf(","));
+		    fetchAndAppendGridRefs(zip, user, ptvk, resolution, Arrays.asList(band), datasetKeys, viceCountyIdentifier, verificationKeys, title, isGroupByDate);
+		} else {
+		    throw new IllegalArgumentException("No year band arguments supplied, at least one 'band' argument is required (eg band=2000-2012,ff0000,000000)");
+		}
+	    }
+	}else{
+	    for (Integer verificationKey : verificationKeys){
+		String title = "GridSquares_" + Status.get(verificationKey);
+		fetchAndAppendGridRefs(zip, user, ptvk, resolution, bands, datasetKeys, viceCountyIdentifier, Arrays.asList(verificationKey), title, isGroupByDate);
+	    }
+	}
     }
 
     /**
-     * 
-     * @param zip
-     * @param user
-     * @param ptvk
-     * @param resolution
-     * @param band
-     * @param datasetKeys
-     * @param viceCountyIdentifier
-     * @throws IOException 
-     */
-    private void addGridRefsForYearBand(ZipOutputStream zip, User user, String ptvk, String resolution, String band, List<String> datasetKeys, String viceCountyIdentifier) throws IOException {
-        //Example year band: 2000-2012,ff0000,000000
-        String yearRange = band.substring(0,band.indexOf(","));
-        zip.putNextEntry(new ZipEntry("GridSquares_" + yearRange + ".csv"));
-        List<GridMapSquare> gridMapSquares = gridMapSquareMapper.getGridMapSquares(user, ptvk, resolution, band, datasetKeys, viceCountyIdentifier, 0);
+    * @param bands list of Strings with year range and colours, eg: 2000-2012,ff0000,000000
+    * @param list of verification statuses either with colours (eg 1,ff0000,00ff00), or without (eg 1)
+    */
+    private void fetchAndAppendGridRefs(ZipOutputStream zip, User user, String ptvk, String resolution, List<String> bands, List<String> datasetKeys, String viceCountyIdentifier, List<Integer> verificationKeys, String title, boolean isGroupByDate) throws IOException {
+        zip.putNextEntry(new ZipEntry(title + ".csv"));
+        List<GridMapSquare> gridMapSquares = gridMapSquareMapper.getGridMapSquares(user, ptvk, resolution, bands, datasetKeys, viceCountyIdentifier, 0, verificationKeys, isGroupByDate);
         downloadHelper.writeln(zip, "GridSquares");
         for (GridMapSquare gridMapSquare : gridMapSquares) {
             downloadHelper.writeln(zip, gridMapSquare.getGridRef());
         }
         zip.flush();
     }
-
+	
     /**
      * 
      * @param zip
@@ -189,8 +191,10 @@ public class GridMapSquareResource extends AbstractResource {
      * @param viceCountyIdentifier
      * @throws IOException 
      */
-    private void addDatasetMetadata(ZipOutputStream zip, User user, String ptvk, String resolution, List<String> bands, List<String> datasetKeys, String viceCountyIdentifier) throws IOException {
-        List<TaxonDataset> taxonDatasets = gridMapSquareMapper.getGridMapDatasets(user, ptvk, resolution, getStartYear(bands), getEndYear(bands), datasetKeys, viceCountyIdentifier);
+    private void addDatasetMetadata(ZipOutputStream zip, User user, String ptvk, String resolution, List<String> bands, List<String> datasetKeys, String viceCountyIdentifier, List<String> verifications) throws IOException {
+	List<Integer> verificationKeys = getVerificationKeys(verifications);
+	boolean isGroupByDate = isGroupByDate(verifications);
+        List<TaxonDataset> taxonDatasets = gridMapSquareMapper.getGridMapDatasets(user, ptvk, resolution, bands, datasetKeys, viceCountyIdentifier, verificationKeys, isGroupByDate);
         downloadHelper.addDatasetMetadata(zip, user.getId(), taxonDatasets);
     }
     
@@ -233,5 +237,58 @@ public class GridMapSquareResource extends AbstractResource {
         }
         return toReturn;
     }
+    
+    /*
+     * Returns true if the output should contain one file per date band, 
+     * otherwise false (which indicates one file per verification status).
+     * The test relies on a colour being found in the Verification argument (eg 1,ff0000,00ff00),
+     * which indicates the user was looking at verifications on the map
+     * rather than date bands.
+     */
+    private boolean isGroupByDate(List<String> verifications){
+	if(verifications == null || verifications.isEmpty()){
+	    return true;
+	}else{
+	    String verificationPattern = "[1-4],[0-9a-fA-F]{6},[0-9a-fA-F]{6}";
+	    return !verifications.get(0).matches(verificationPattern);
+	}
+    }
+
+    private List<Integer> getVerificationKeys(List<String> verifications){
+	List<Integer> defaultVerificationKeys = Arrays.asList(1,3,4);
+	if(isValidVerifications(verifications)){
+	    if(verifications != null && !verifications.isEmpty()){
+		List<Integer> toReturn = new ArrayList<Integer>();
+		for(String verification : verifications){
+		    toReturn.add(Integer.parseInt(verification.substring(0,1)));
+		}
+		return toReturn;
+	    }else{
+		return defaultVerificationKeys;
+	    }
+	}else{
+	    throw new IllegalArgumentException("At least one  Validation argument is incorrect, it should be either a  verification key in the range 1-4, or a verification key with fill and outline rgb hex colours separated by commas (eg 2,0000ff,00ff00)");
+	}
+    }
+    
+    /*
+     * Tests for valid verifications, the allowed values are:
+     * - null or empty
+     * - Integers in range 1-4
+     * - Integers in range 1-4 followed fill and outline rgb hex colour comma separated (eg 2,ff0000,00ff00)
+     */
+    private boolean isValidVerifications(List<String> verifications){
+	boolean toReturn = false;
+	if(verifications != null && !verifications.isEmpty()){
+	    String validVerification = "[1-4](,[0-9a-fA-F]{6},[0-9a-fA-F]{6})?";
+	    for(String verification : verifications){
+		toReturn = toReturn || verification.matches(validVerification);
+	    }
+	}else{
+	    toReturn = true;
+	}
+	return toReturn;
+    }
+    
     
 }
