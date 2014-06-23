@@ -8,13 +8,13 @@
         <a href="Source_Code" target="_blank"><h2>NBN Client Source Code</h2></a>
         <p>Source code for the data classes:</p>
         <ul>
-            <li><a href="Source/Java/TaxonWithQueryStats" target="_blank">TaxonWithQueryStats and Taxon</a></li>
-            <li><a href="Source/Java/TaxonDatasetWithQueryStats" target="_blank">TaxonDatasetWithQueryStats and TaxonDataset</a></li>
-            <li><a href="Source/Java/TaxonOutputGroup" target="_blank">TaxonOutputGroup</a></li>
-            <li><a href="Source/Java/SiteBoundary" target="_blank">SiteBoundary</a></li>
-            <li><a href="Source/Java/SearchResult" target="_blank">SearchResult and Result</a></li>
-            <li><a href="Source/Java/TaxonObservation" target="_blank">TaxonObservation</a></li>
-            <li><a href="Source/Java/Designation" target="_blank">Designation</a></li>
+            <li><a href="../Source/Java/TaxonWithQueryStats" target="_blank">TaxonWithQueryStats and Taxon</a></li>
+            <li><a href="../Source/Java/TaxonDatasetWithQueryStats" target="_blank">TaxonDatasetWithQueryStats and TaxonDataset</a></li>
+            <li><a href="../Source/Java/TaxonOutputGroup" target="_blank">TaxonOutputGroup</a></li>
+            <li><a href="../Source/Java/SiteBoundary" target="_blank">SiteBoundary</a></li>
+            <li><a href="../Source/Java/SearchResult" target="_blank">SearchResult and Result</a></li>
+            <li><a href="../Source/Java/TaxonObservation" target="_blank">TaxonObservation</a></li>
+            <li><a href="../Source/Java/Designation" target="_blank">Designation</a></li>
         </ul>
         <p>External libraries used:</p>
         <ul>
