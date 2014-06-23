@@ -18,7 +18,7 @@ public class Navigation extends SimpleTagSupport {
     };
 
     private static final int INFINITE_DEPTH = -1;
-    private int maximumDepth = 3;
+    private int maximumDepth = INFINITE_DEPTH;
     
     private ServletContext context;
     private boolean createTitle = true;
