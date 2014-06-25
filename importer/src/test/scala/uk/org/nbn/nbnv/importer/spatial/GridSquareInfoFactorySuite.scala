@@ -155,4 +155,13 @@ class GridSquareInfoFactorySuite extends BaseFunSuite{
     gs.gridReference should be ("WA576090")
   }
 
+  test("nbnv-989 - should give none for lat lng 49.766795 -7.557257784") {
+    val db = (new DataAccessLayer).getDatabase
+    val fac = new GridSquareInfoFactory(db)
+
+    val nullGS = fac.getByCoordinate(makePoint(-7.557257784,49.766795,4326))
+
+    nullGS should be (None)
+  }
+
 }

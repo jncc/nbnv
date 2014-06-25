@@ -25,6 +25,7 @@
     function getURL(form){
         var tvk = $('#tvk').val(); 
         var keyValuePairs = nbn.portal.reports.utils.forms.getKeyValuePairsFromForm(form);
+	
         var keyValuePairsWithBusinessLogic = getKeyValuePairsWithBusinessLogic(keyValuePairs);
         var queryString = nbn.portal.reports.utils.forms.getQueryStringFromKeyValuePairs(keyValuePairsWithBusinessLogic, true);
         return form.attr('gis-server') + '/SingleSpecies/' + tvk + '/map' + queryString;
@@ -36,29 +37,78 @@
         
         //Vice county - remove the feature argument generated when Vice County value is 'none',
         //otherwise we are zooming to a vice county so add overlay=feature to highlight the vc
-        if(keyValuePairs.hasOwnProperty('feature') && keyValuePairs['feature'].toUpperCase()=='NONE'){
+        if(keyValuePairs.hasOwnProperty('feature') && keyValuePairs['feature'].toUpperCase()==='NONE'){
             delete keyValuePairs['feature'];
         }else{
             keyValuePairs['overlay'] = 'feature';
         }
         
         //Add the year bands formatted for the grid map service
-        var showOutline = keyValuePairs.hasOwnProperty('showOutline');
-        for(var i=1; i<4; i++){
-            if(keyValuePairs.hasOwnProperty('gridLayer' + i)){
-                var fillColour = $('#value-nbn-colour-picker-' + i).val();
-                var outlineColour = fillColour;
-                if(showOutline){
-                    outlineColour = $('#value-nbn-colour-picker-outline').val();
-                }
-                keyValuePairs['band' + i] = keyValuePairs['startYear' + i] + '-' + keyValuePairs['endYear' + i] + ',' + fillColour.replace("#","") + ',' + outlineColour.replace("#","");
-            }
-            delete keyValuePairs['gridLayer' + i];
-            delete keyValuePairs['startYear' + i];
-            delete keyValuePairs['endYear' + i];
-            delete keyValuePairs['value-nbn-colour-picker-' + i];
+	var isVerificationTabSelected = 'nbn-verification-tab' === $('.ui-tabs-selected')[0].children[0].id;
+	var showOutline = keyValuePairs.hasOwnProperty('showOutline');
+	for(var i=3; i>0; i--){
+		if(keyValuePairs.hasOwnProperty('gridLayer' + i)){
+		    var fillColour = $('#value-nbn-colour-picker-' + i).val();
+		    var outlineColour = fillColour;
+		    if(showOutline){
+			outlineColour = $('#value-nbn-colour-picker-outline').val();
+		    }
+		    keyValuePairs['band' + i] = keyValuePairs['startYear' + i] + '-' + keyValuePairs['endYear' + i] + ',' + fillColour.replace("#","") + ',' + outlineColour.replace("#","");
+		}
+	    delete keyValuePairs['gridLayer' + i];
+	    delete keyValuePairs['startYear' + i];
+	    delete keyValuePairs['endYear' + i];
+	    delete keyValuePairs['value-nbn-colour-picker-' + i];
         }
-        
+
+	//Add the verifications,	
+	var $verificationCheckboxes = $("input[name='verificationCheckBox']:checked");
+	var showOutlineVerification = keyValuePairs.hasOwnProperty('showOutlineVerification');
+	var verificationValues = [];
+	var outlineColourVerification = $('#value-nbn-colour-picker-outline-verification').val().replace("#","");
+	$.each($verificationCheckboxes, function(index, value){
+	    var verificationKey = $(value).val();
+	    if(isVerificationTabSelected){
+		var fillColour;
+		switch(verificationKey){
+		    case '1':
+			fillColour = $('#value-nbn-colour-picker-Verified').val().replace("#","");
+			break;
+		    case '2':
+			fillColour = $('#value-nbn-colour-picker-Incorrect').val().replace("#","");
+			break;
+		    case '3':
+			fillColour = $('#value-nbn-colour-picker-Uncertain').val().replace("#","");
+			break;
+		    case '4':
+			fillColour = $('#value-nbn-colour-picker-Unverified').val().replace("#","");
+			break;
+		}
+		if(!showOutlineVerification){
+		    outlineColourVerification = fillColour;
+		}
+		verificationValues.push(verificationKey + ',' + fillColour + ',' + outlineColourVerification);
+	    }else{
+		verificationValues.push(verificationKey);
+	    }
+	});
+	//Order is important when displaying verification layers
+	//1(verified) overlays 2(incorrect) overlays 3(uncertain) overlays 4(unverified)
+	if(isVerificationTabSelected){
+	    verificationValues.sort().reverse();
+	    $.each(verificationValues, function(index, verificationValue){
+		keyValuePairs['verification' + index] = verificationValue;
+	    });
+	}else{
+	    keyValuePairs['verification'] = verificationValues;
+	}
+	delete keyValuePairs['value-nbn-colour-picker-Verified'];
+	delete keyValuePairs['value-nbn-colour-picker-Incorrect'];
+	delete keyValuePairs['value-nbn-colour-picker-Uncertain'];
+	delete keyValuePairs['value-nbn-colour-picker-Unverified'];
+	delete keyValuePairs['value-nbn-colour-picker-outline-verification'];
+	delete keyValuePairs['verificationCheckBox'];
+
         //There is a specific order that background layers should be requested to force
         //some layers to be drawn over others
         //eg - if OS is used as a background it must appear first to force vector layers to be drawn over it and not be obscured by it
@@ -86,10 +136,10 @@
         //Remove the hidden tvk, just used to get the tvk from the path of the page request to here
         delete keyValuePairs['tvk'];
         
-        //Remove the hidden outline colour
+        //Remove the outline colour
         delete keyValuePairs['value-nbn-colour-picker-outline'];
         delete keyValuePairs['showOutline'];
-
+	
         return keyValuePairs;
     }
         
@@ -113,7 +163,7 @@
                 $('#' + colourPickerId + ' div').css('backgroundColor', '#' + hex);
                 $('#value-' + colourPickerId).attr('value',hex);
             }
-        }
+        };
     }
         
     function colorToHex(color) {
@@ -134,7 +184,7 @@
         var tvk = $('#tvk').val();
         var feature = $('#nbn-vice-county-selector').val().toUpperCase();
         var url = $form.attr('gis-server') + '/SingleSpecies/' + tvk + '/resolutions?callback=?';
-        if(feature != 'NONE'){
+        if(feature !== 'NONE'){
             url += '&feature=' + feature;
         }
         return $.getJSON(url, function(json){
@@ -146,7 +196,7 @@
             var isSelectedMatchFound = false;
             $.each(resolutions, function(index, resolution){
                 var selected = '';
-                if(resolution == selectedResolution){
+                if(resolution === selectedResolution){
                     selected = ' selected="selected"';
                     isSelectedMatchFound = true;
                 }
@@ -173,6 +223,13 @@
             $("INPUT[name='gridLayer1'][type='checkbox']").prop('checked',true);
         }
         
+        //There must be at least one verification status - if none are selected then turn on defaults: verified(1), uncertain(3), unverified(4)
+        if($("INPUT[name='verificationCheckBox']:checked").size() === 0){
+            $("INPUT[name='verificationCheckBox'][value=1]").attr('checked', 'checked');
+            $("INPUT[name='verificationCheckBox'][value=3]").attr('checked', 'checked');
+            $("INPUT[name='verificationCheckBox'][value=4]").attr('checked', 'checked');
+        }
+        
         //Set grid and coast check boxes to their region specific values
         var nationalExtent = $('#nbn-region-selector').val();
         $('#nbn-grid-map-coastline').val(nationalExtentOptions[nationalExtent].coastline);
@@ -180,7 +237,7 @@
         $('#nbn-grid-map-10k-grid').val(nationalExtentOptions[nationalExtent].grid10k);
         
         //There should be at least one background layer (eg coastlines)
-        if($("INPUT:checked[name='background'][type='checkbox']").length == 0){
+        if($("INPUT:checked[name='background'][type='checkbox']").length === 0){
             $('#nbn-grid-map-coastline').prop('checked',true);
         }
         
@@ -191,7 +248,7 @@
         //If Ireland is selected, then disable os and vc checkboxes
         $('#nbn-region-selector').change(function(){
             $('#nbn-vice-county-selector').val("none");
-            var disableNonIrishLayers = ($('#nbn-region-selector').val().toUpperCase() == 'IRELAND');
+            var disableNonIrishLayers = ($('#nbn-region-selector').val().toUpperCase() === 'IRELAND');
             $('#nbn-grid-map-vicecounty').prop('disabled', disableNonIrishLayers);
             $('#nbn-grid-map-os').prop('disabled', disableNonIrishLayers);
         });
@@ -204,13 +261,14 @@
     }
     
     function setupColourPickers(){
-        $('#nbn-colour-picker-1, #nbn-colour-picker-2, #nbn-colour-picker-3, #nbn-colour-picker-outline').each(function(){
+        $('#nbn-colour-picker-1, #nbn-colour-picker-2, #nbn-colour-picker-3, #nbn-colour-picker-outline, #nbn-colour-picker-Verified, #nbn-colour-picker-Incorrect, #nbn-colour-picker-Uncertain, #nbn-colour-picker-Unverified, #nbn-colour-picker-outline-verification').each(function(){
             $(this).ColorPicker(getColourPickerOptions($(this).attr('id')));
         });
     }
     
     function doOnChange(){
         var $form = $('#nbn-grid-map-form');
+	
             
         //Apply any rules eg, must have at least one year band selected
         applyRules();
@@ -225,21 +283,21 @@
 
             //Turn on all datasets if they are all off
             nbn.portal.reports.utils.datasetfields.doSelectDatasetKeys();
-        })   
+        });   
     }
     
     function setupFormOnChange(){
         //The map should refresh when any form field is changed
         //except when the nbn-select-datasets-auto check box is deselected
         $('#nbn-grid-map-form :input').change(function(){
-            if(($(this).attr('id')!='nbn-select-datasets-auto') || ($('#nbn-select-datasets-auto').is(':checked'))){
+            if(($(this).attr('id')!=='nbn-select-datasets-auto') || ($('#nbn-select-datasets-auto').is(':checked'))){
                 var $input = $(this);
                 if(nbn.portal.reports.utils.forms.isGridMapFormFieldValid($input)){
                     doOnChange();
                 }
             }
             //Update resolution text used on data download section
-            if($(this).attr('id') == 'nbn-grid-map-resolution'){
+            if($(this).attr('id') === 'nbn-grid-map-resolution'){
                 $('#nbn-grid-map-resolution-download-text').text($(this).val());
             }
         });
@@ -339,9 +397,18 @@
             e.preventDefault();
         });
     }
+    
+    function doTabs(){
+	$('.nbn-tabs').tabs({
+	    select: function(event, ui){
+		doOnChange();
+	    }
+	});
+    }
 
     $(document).ready(function(){
         $('#nbn-download-terms').hide();
+	doTabs();
         setupFormOnChange();
         setupColourPickers();
         setupRegionVCInteractions();

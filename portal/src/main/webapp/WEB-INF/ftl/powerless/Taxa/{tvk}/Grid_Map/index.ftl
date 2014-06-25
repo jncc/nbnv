@@ -3,14 +3,16 @@
 <#assign providersWithQueryStats=json.readURL("${api}/taxonObservations/providers",requestParametersExtended)>
 <#assign taxon=json.readURL("${api}/taxa/${tvk}")>
 <#assign unavailableDatasets=json.readURL("${api}/taxonObservations/unavailableDatasets",requestParametersExtended)>
-
 <@template.master title="NBN Grid Map" 
     javascripts=["/js/jquery.dataset-selector-utils.js","/js/jquery.gridmap_utils.js","/js/report_utils.js","/js/colourpicker/colorpicker.js"]
     csss=["/css/report.css","/css/gridmap.css","/css/colourpicker/colorpicker.css","/css/smoothness/jquery-ui-1.8.23.custom.css"]>
     
     <h1>Grid map for ${taxon_utils.getLongName(taxon)}</h1>
     <form target="" id="nbn-grid-map-form" gis-server="${gis}" api-server="${api}">
-        <@gridMapFilters/>
+	<div id="nbn-grid-filters-container">
+	    <@gridMapFilters/>
+	    <@gridMapExtras/>
+	</div>
         <@gridMapContents tvk=tvk/>
         <@mdcontent.smallCaveat/>
         <div style="width: 100%">
@@ -22,7 +24,7 @@
 </@template.master>
 
 <#macro gridMapFilters>
-    <div class="tabbed" id="nbn-grid-map-filter-container">
+    <div class="tabbed" id="nbn-grid-filter-container">
             <h3>Controls</h3>
 
             <input type="hidden" id="tvk" name="tvk" value="${tvk}">
@@ -49,11 +51,25 @@
             </fieldset>
             <fieldset>
                 <legend>Date ranges and colours</legend>
-                <@yearRangeText layerNum="1" hexColour="#ffff00" checkedText="checked"/> (bottom)<br/>
-                <@yearRangeText layerNum="2" hexColour="#ff7f00" checkedText=""/> (middle)<br/>
-                <@yearRangeText layerNum="3" hexColour="#ff0000" checkedText=""/> (top)<br/>
-                Show outline: <input type='checkbox' id='nbn-show-outline' name='showOutline' checked colourPickerId='nbn-colour-picker-outline'><span class="nbn-form-label">&nbsp;&nbsp;&nbsp;&nbsp;Outline colour: </span><@colourPicker idSuffix="-outline" hexColour="#000000"/>
-
+		<div class="nbn-tabs">
+		    <ul>
+			<li><a href="#tabs-1" id="nbn-date-tab">Dates</a></li>
+			<li><a href="#tabs-2" id="nbn-verification-tab">Verification</a></li>
+		    </ul>
+		    <div id="tabs-1">
+			<@yearRange layerNum="1" hexColour="#ffff00" checkedText="checked" layerPosition="Top"/><br/>
+			<@yearRange layerNum="2" hexColour="#ff7f00" checkedText="" layerPosition="Middle"/><br/>
+			<@yearRange layerNum="3" hexColour="#ff0000" checkedText="" layerPosition="Bottom"/><br/>
+			<div><span class="nbn-date-layer-label">Outline:</span> <input type='checkbox' id='nbn-show-outline' name='showOutline' checked colourPickerId='nbn-colour-picker-outline'><@colourPicker idSuffix="-outline" hexColour="#000000"/></div>
+		    </div>
+		    <div id="tabs-2">
+			<@verificationStatus status="Verified" value=1 hexColour="#0000ff" checkedText="checked"/><br/>
+			<@verificationStatus status="Incorrect" value=2 hexColour="#ff0000" checkedText=""/><br/>
+			<@verificationStatus status="Uncertain" value=3 hexColour="#cccccc" checkedText="checked"/><br/>
+			<@verificationStatus status="Unverified" value=4 hexColour="#cccccc" checkedText="checked"/><br/>
+			<div><span class="nbn-quality-layer-label">Outline:</span> <input type='checkbox' id='nbn-verification-outline-checkbox' name='showOutlineVerification' checked colourPickerId='nbn-colour-picker-outline-verification'><span class='nbn-quality-color-picker'><@colourPicker idSuffix="-outline-verification" hexColour="#000000"/></span></div>
+		    </div>
+		</div>
             </fieldset>
             <fieldset>
                 <legend>Overlays and backgrounds</legend>
@@ -67,11 +83,16 @@
                     <input type="checkbox" id="nbn-grid-map-10k-grid" value="gbi10kextent" name="background">10km grid
                 </div>
             </fieldset>
+    </div>
+</#macro>
 
+<#macro gridMapExtras>
+    <div class="tabbed" id="nbn-grid-filter-container">
+            <h3>Extras</h3>
             <fieldset>
-                <legend>Download</legend>
-                <button id="nbn-grid-map-squares-download">Download</button> <span id="nbn-grid-map-resolution-download-text">10km</span> squares within selected dates
-                <button id="nbn-download-observations-button">Download</button> Download Records
+                <legend>Downloads</legend>
+                <button id="nbn-grid-map-squares-download">Download <span id="nbn-grid-map-resolution-download-text">10km</span> squares</button>
+                <button id="nbn-download-observations-button">Download records</button>
                 <@report_utils.downloadTermsDialogue/>
             </fieldset>
 
@@ -80,7 +101,6 @@
                 <a id="nbn-interactive-map" href="#">View on Interactive Map</a><br />
                 <a id="nbn-request-better-access" href="#">Request Better Access</a>
             </fieldset>
-
     </div>
 </#macro>
 
@@ -93,15 +113,22 @@
     </div>
 </#macro>
 
-<#macro yearRangeText layerNum hexColour checkedText>
+<#macro yearRange layerNum hexColour checkedText layerPosition>
     <#assign currentYear=.now?string("yyyy")>
-    Date ${layerNum}
+    <span class="nbn-date-layer-label">${layerPosition}:</span>
     <input type='checkbox' name='gridLayer${layerNum}' value='gridLayer${layerNum}' ${checkedText} colourPickerId='nbn-colour-picker-${layerNum}'>
     from 
     <input type='text' name='startYear${layerNum}' value='1600' class='nbn-year-input'> 
     to 
     <input type='text' name='endYear${layerNum}' value='${currentYear}' class='nbn-year-input'>
     <@colourPicker idSuffix='-'+layerNum hexColour=hexColour/>
+</#macro>
+
+<#macro verificationStatus status value hexColour checkedText>
+    <span class="nbn-quality-layer-label">${status}:</span>
+<!--    <input type='checkbox' name='gridLayerStatus${status}' value='gridLayerStatus${status}' ${checkedText} colourPickerId='nbn-colour-picker${status}'>-->
+    <input type='checkbox' name='verificationCheckBox' value='${value}' ${checkedText} colourPickerId='nbn-colour-picker-${status}'>
+    <span class='nbn-quality-color-picker'><@colourPicker idSuffix='-'+status hexColour=hexColour/></span>
 </#macro>
 
 <#macro colourPicker idSuffix hexColour>

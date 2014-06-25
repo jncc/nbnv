@@ -1,5 +1,6 @@
 package uk.org.nbn.nbnv.api.dao.providers;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import org.springframework.util.StringUtils;
@@ -8,14 +9,14 @@ import static org.apache.ibatis.jdbc.SelectBuilder.*;
 public class ProviderHelper {
 
     static void addDatasetKeysFilter(Map<String, Object> params) {
-        if (params.containsKey("datasetKey") && !params.get("datasetKey").equals("")) {
-            if (params.get("datasetKey") instanceof List) {
-                List<String> datasetArgs = (List<String>) params.get("datasetKey");
+        if (params.containsKey("datasetKeys") && !params.get("datasetKeys").equals("")) {
+            if (params.get("datasetKeys") instanceof List) {
+                List<String> datasetArgs = (List<String>) params.get("datasetKeys");
                 if (datasetArgs.size() > 0 && !"".equals(datasetArgs.get(0))) {
-                    WHERE("o.datasetKey IN " + datasetListToCommaList((List<String>) params.get("datasetKey")));
+                    WHERE("o.datasetKey IN " + datasetListToCommaList((List<String>) params.get("datasetKeys")));
                 }
             } else {
-                WHERE("o.datasetKey = '" + params.get("datasetKey") + "'");
+                WHERE("o.datasetKey = '" + params.get("datasetKeys") + "'");
             }
         }
     }
@@ -26,6 +27,29 @@ public class ProviderHelper {
 
     static void addEndYearFilter(Integer endYear) {
         WHERE("YEAR(o.startDate) <= " + endYear);
+    }
+    
+    static void addVerifications(List<Integer> verificationKeys){
+	WHERE(String.format("verificationID in (%s)", StringUtils.collectionToDelimitedString(verificationKeys,",")));
+    }
+    
+    static void addYearRanges(List<String> bands){
+	if(bands != null && !bands.isEmpty()){
+	    String yearRange = "(YEAR(o.endDate) >= %s AND YEAR(o.startDate) <= %s)";
+	    StringBuilder forWhere = new StringBuilder("(");
+	    switch(bands.size()){
+		case 3:
+		    forWhere.append(String.format(yearRange,getStartYear(bands.get(2)).toString(),getEndYear(bands.get(2)).toString())).append(" OR ");
+		case 2:
+		    forWhere.append(String.format(yearRange,getStartYear(bands.get(1)).toString(),getEndYear(bands.get(1)).toString())).append(" OR ");
+		case 1:
+		    forWhere.append(String.format(yearRange,getStartYear(bands.get(0)).toString(),getEndYear(bands.get(0)).toString()));
+	    }
+	    forWhere.append(")");
+	    WHERE(forWhere.toString());
+	}else{
+	    throw new IllegalArgumentException("No year band arguments supplied, a 'band' argument is required (eg band=2000-2012,ff0000,000000)");
+	}
     }
     
     static void addStartDateFilter(String startDate) {

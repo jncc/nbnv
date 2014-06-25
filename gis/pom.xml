@@ -40,7 +40,7 @@
             <artifactId>dynamo-mapping</artifactId>
             <version>1.2</version>
         </dependency>
-        
+                
         <!-- Hibernate Validator -->
         <dependency>
             <groupId>org.hibernate</groupId>
@@ -99,7 +99,7 @@
             <version>3.2.2.RELEASE</version>
             <scope>test</scope>
         </dependency>
-            
+
     </dependencies>
     
     <build>
@@ -134,7 +134,7 @@
                     <!-- JDBC connection parameters -->
                     <jdbc>
                         <driver>com.microsoft.sqlserver.jdbc.SQLServerDriver</driver>
-                        <url>jdbc:sqlserver://nbn-b.nerc-lancaster.ac.uk;databaseName=NBNWarehouse</url>
+                        <url>jdbc:sqlserver://nbn-b.nerc-lancaster.ac.uk;databaseName=NBNWarehouseSingleDbTest</url>
                         <user>NBNGIS</user>
                         <password>MoreSilenceCookOver2013</password>
                     </jdbc>
