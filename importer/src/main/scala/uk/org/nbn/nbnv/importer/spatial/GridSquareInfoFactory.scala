@@ -40,6 +40,9 @@ class GridSquareInfoFactory @Inject()(db: Database) {
         case ife: BadDataException => {
           None
         } //Lat long may fall in the grid ref system but grid ref may not be in the valid rage.
+        case iae: IllegalArgumentException => {
+          None
+        }
         case e: Throwable => throw e
       }
 

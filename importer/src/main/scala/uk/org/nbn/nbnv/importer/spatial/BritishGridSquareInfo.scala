@@ -97,8 +97,6 @@ class BritishGridSquareInfo(gridRef : String, precision: Option[Int]) extends Gr
 
   protected def getDintyRegex = GridRefPatterns.ukDintyGridRef
 
-
-
   //Returns the grid reference precision in meters
   protected def getPrecision(gridReference : String) = {
     if (gridReference.matches("""^[HNOST]$""")) {
