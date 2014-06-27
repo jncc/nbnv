@@ -14,7 +14,14 @@
         var keyValuePairsFromForm = nbn.portal.reports.utils.forms.getKeyValuePairsFromForm(form);
         keyValuePairsFromForm['featureID'] = featureID;
         // Get selected datasets workaround - TODO: Fix this properly
-        keyValuePairsFromForm['datasetKey'] = keyValuePairsFromForm['datasetKey'].join();
+        if (keyValuePairsFromForm['datasetKey'] !== undefined && keyValuePairsFromForm['datasetKey'].length > 0) {
+            if( typeof keyValuePairsFromForm['datasetKey'] === 'string' ) {
+                keyValuePairsFromForm['datasetKey'] = [ keyValuePairsFromForm['datasetKey'] ];
+            }
+            keyValuePairsFromForm['datasetKey'] = keyValuePairsFromForm['datasetKey'].join();
+        } else {
+            keyValuePairsFromForm['datasetKey'] = [];
+        }
         var queryString = nbn.portal.reports.utils.forms.getQueryStringFromKeyValuePairs(keyValuePairsFromForm, false);
         var url = form.attr('api-server') + '/taxonObservations/groups' + queryString;
         $.getJSON(url, function(data){
@@ -51,10 +58,7 @@
             var $input = $(this);
             if(($input.attr('id')!='nbn-select-datasets-auto') || ($('#nbn-select-datasets-auto').is(':checked'))){
                 if(nbn.portal.reports.utils.forms.isSiteReportFormFieldValid($input)){
-                    //Requires jquery.dataset-selector-utils.js
-                    nbn.portal.reports.utils.datasetfields.doDeselectDatasetKeys();
                     refreshGroupData($('#nbn-site-report-form'));
-                    nbn.portal.reports.utils.datasetfields.doSelectDatasetKeys();
                 }
             }
         });
@@ -71,7 +75,6 @@
                         var $form = $('#nbn-site-report-form'); 
                         // Get selected datasets workaround - TODO: Fix this properly
                         var datasets = nbn.portal.reports.utils.datasetfields.getSelectedDatasets();
-                        nbn.portal.reports.utils.datasetfields.doDeselectDatasetKeys();
                         var keyValuePairs = nbn.portal.reports.utils.forms.getKeyValuePairsFromForm($form);
                         keyValuePairs.featureID = $form.attr("featureID");
 //                        keyValuePairs.taxonOutputGroup = $form.attr("taxonOutputGroupKey");
@@ -79,7 +82,6 @@
                         keyValuePairs.datasetKey = datasets.join();
                         var queryString = nbn.portal.reports.utils.forms.getQueryStringFromKeyValuePairs(keyValuePairs, false);
                         var url = $form.attr('api-server') + '/taxonObservations/species/download/' + queryString;
-                        nbn.portal.reports.utils.datasetfields.doSelectDatasetKeys();
                         $(this).dialog("close");
                         window.location = url;
                     },
