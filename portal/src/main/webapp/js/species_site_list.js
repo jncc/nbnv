@@ -61,13 +61,9 @@
         //except when the nbn-select-datasets-auto check box is deselected
         $('#nbn-species-site-list-form :input').change(function(){
             var $input = $(this);
-            if(($input.attr('id')!='nbn-select-datasets-auto') || ($('#nbn-select-datasets-auto').is(':checked'))){
-                if(nbn.portal.reports.utils.forms.isSiteReportFormFieldValid($input)){
-                    //Requires jquery.dataset-selector-utils.js
-                    nbn.portal.reports.utils.datasetfields.doDeselectDatasetKeys();
-                    refreshSiteListData($('#nbn-species-site-list-form'));
-                    nbn.portal.reports.utils.datasetfields.doSelectDatasetKeys();
-                }
+            if(nbn.portal.reports.utils.forms.isSiteReportFormFieldValid($input)){
+                //Requires jquery.dataset-selector-utils.js
+                refreshSiteListData($('#nbn-species-site-list-form'));
             }
         });
     }
@@ -82,13 +78,11 @@
                     'Accept': function(){
                         var $form = $('#nbn-species-site-list-form');
                         var ptvk = $('#nbn-species-site-list-form').attr('ptvk');
-                        nbn.portal.reports.utils.datasetfields.doDeselectDatasetKeys();
                         var keyValuePairs = nbn.portal.reports.utils.forms.getKeyValuePairsFromForm($form);
 //                        keyValuePairs.featureID = $form.attr("featureID");
 //                        keyValuePairs.taxonOutputGroup = $form.attr("taxonOutputGroupKey");
                         var queryString = nbn.portal.reports.utils.forms.getQueryStringFromKeyValuePairs(keyValuePairs, false);
                         var url = $form.attr('api-server') + '/taxa/' + ptvk + '/siteBoundaries/download/' + queryString;
-                        nbn.portal.reports.utils.datasetfields.doSelectDatasetKeys();
                         $(this).dialog("close");
                         window.location = url;
                     },

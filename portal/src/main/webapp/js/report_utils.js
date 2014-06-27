@@ -64,7 +64,7 @@
     }
 
     function isSiteReportValidYear(year){
-        return year=='' || isGridMapValidYear(year);
+        return year === '' || isGridMapValidYear(year);
     }
 
     function isGridMapValidYear(year){
@@ -88,7 +88,7 @@
         var formObjArray = form.serializeArray();
         var toReturn = {};
         $.each(formObjArray, function(i, obj){
-            if(toReturn[obj.name] == undefined)
+            if(toReturn[obj.name] === undefined)
                 toReturn[obj.name] = obj.value;
             else if (toReturn[obj.name] instanceof Array)
                 toReturn[obj.name].push(obj.value);
@@ -107,8 +107,8 @@
             }else{
                 queryString += ampersand + getArgsForQueryString(name, value);
             }
-            if(ampersand==""){
-                ampersand="&";
+            if(ampersand === ""){
+                ampersand = "&";
             }
         });
         //Unfortunately the 'band' argument is used mutliple times in the query string
@@ -116,7 +116,7 @@
         //an edit now
         var pattern = /band[0-9]/g;
         var toReturn = queryString.replace(pattern,'band');
-        if(toReturn != ''){
+        if(toReturn !== ''){
             toReturn = '?' + toReturn;
         }
         return toReturn;
@@ -131,10 +131,10 @@
     function getArgsForQueryString(name, value){
         if(value instanceof Array){
             var ampersand = '';
-            var toReturn = ''
+            var toReturn = '';
             $.each(value, function(index, value){
                 toReturn += ampersand + name + '=' + value;
-                if(ampersand == ''){
+                if(ampersand === ''){
                     ampersand = '&';
                 }
             });
@@ -149,10 +149,10 @@
     }
     
     function getYearRange(keyPairs) {
-        if (keyPairs['startYear'] != undefined &&
-                keyPairs['startYear'] != '' && 
-                keyPairs['endYear'] != undefined && 
-                keyPairs['endYear'] != '') {
+        if (keyPairs['startYear'] !== undefined &&
+                keyPairs['startYear'] !== '' && 
+                keyPairs['endYear'] !== undefined && 
+                keyPairs['endYear'] !== '') {
             return 'year:{all:false,startYear:' + 
                     keyPairs['startYear'] + 
                     ',endYear:' + 
