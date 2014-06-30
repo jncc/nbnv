@@ -150,7 +150,6 @@ class EndToEndSuiteIT extends BaseFunSuite with ResourceLoader {
 
     val archive = resource("/archives/valid.zip")
 
-
     val f = fixture(archive)
     f.importer.run()
   }
