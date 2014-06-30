@@ -41,6 +41,7 @@ class Validator @Inject()(log: Logger, db: Database ){
     }
 
     val duplicateValidator = new Nbnv61Validator
+    val duplicateSiteKeyValidator = new DuplicateSiteKeyValidator
 
     for ((nbnRecord, i) <- archive.records.zipWithIndex) {
 
@@ -48,6 +49,7 @@ class Validator @Inject()(log: Logger, db: Database ){
         log.info("Validated %d records".format(i+1))
       }
 
+      //check for duplicate record keys
       val dupeResult = duplicateValidator.processRecord(nbnRecord)
       processResult(dupeResult)
 
@@ -81,16 +83,6 @@ class Validator @Inject()(log: Logger, db: Database ){
       val r4 = v4.validate(nbnRecord)
       processResult(r4)
 
-      //validate SiteKey length
-      val v5 = new Nbnv79Validator
-      val r5 = v5.validate(nbnRecord)
-      processResult(r5)
-
-      //validate SiteName field
-      val v6 = new Nbnv80Validator
-      val r6 = v6.validate(nbnRecord)
-      processResult(r6)
-
       //validate Recorder field length
       val v7 = new Nbnv91Validator
       val r7 = v7.validate(nbnRecord)
@@ -100,6 +92,11 @@ class Validator @Inject()(log: Logger, db: Database ){
       val v8 = new Nbnv92Validator
       val r8 = v8.validate(nbnRecord)
       processResult(r8)
+
+      //validate site definition
+      val siteValidator = new SiteValidator(duplicateSiteKeyValidator)
+      val siteValidationResults = siteValidator.validate(nbnRecord)
+      for (result <- siteValidationResults) processResult(result)
 
       // Validates a set of dates
       val dv = new DateValidator
