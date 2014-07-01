@@ -1,51 +1,58 @@
-(function($){
-    
-    function refreshSpeciesData(form){
+(function($) {
+
+    function refreshSpeciesData(form) {
         var $dataContainer = $('#nbn-site-report-data-container');
         var featureID = form.attr('featureID');
         var taxonOutputGroupKey = form.attr('taxonOutputGroupKey');
-       
+
         //Add title and busy image to data container whilst getting data
         var toAppend = '<h3>Species</h3>';
         $dataContainer.empty();
         $dataContainer.append(toAppend);
         $dataContainer.append('<img src="/img/ajax-loader-medium.gif" class="nbn-centre-element">');
-        
+
         //Get data from api and add to container
         var keyValuePairsFromForm = nbn.portal.reports.utils.forms.getKeyValuePairsFromForm(form);
         keyValuePairsFromForm['featureID'] = featureID;
         keyValuePairsFromForm['taxonOutputGroup'] = taxonOutputGroupKey;
-        // Get selected datasets workaround - TODO: Fix this properly
-        keyValuePairsFromForm['datasetKey'] = keyValuePairsFromForm['datasetKey'].join();
-        var queryString = nbn.portal.reports.utils.forms.getQueryStringFromKeyValuePairs(keyValuePairsFromForm, false);
-        var url = form.attr('api-server') + '/taxonObservations/species' + queryString;
-        var numSpecies = 0;
-        var datatableDisplayThreshold = 10;
-        $.getJSON(url, function(data){
-            if(data.length > 0){
-                numSpecies = data.length;
-                if(numSpecies > datatableDisplayThreshold){
-                    toAppend += '<table id="nbn-species-table" class="nbn-simple-table"><thead><tr><th>Sort</th></thead><tbody>';
-                }else{
-                    toAppend += '<table id="nbn-species-table" class="nbn-simple-table"><tbody>';
+        keyValuePairsFromForm['datasetKey'] = nbn.portal.reports.utils.datasetfields.getSelectedDatasetsJoined();
+        
+        // If we have more than one dataset selected then proceed otherwise skip 
+        // call to api
+        if (keyValuePairsFromForm['datasetKey'] !== undefined && keyValuePairsFromForm['datasetKey'].length > 0) {
+            var queryString = nbn.portal.reports.utils.forms.getQueryStringFromKeyValuePairs(keyValuePairsFromForm, false);
+            var url = form.attr('api-server') + '/taxonObservations/species' + queryString;
+            var numSpecies = 0;
+            var datatableDisplayThreshold = 10;
+            $.getJSON(url, function(data) {
+                if (data.length > 0) {
+                    numSpecies = data.length;
+                    if (numSpecies > datatableDisplayThreshold) {
+                        toAppend += '<table id="nbn-species-table" class="nbn-simple-table"><thead><tr><th>Sort</th></thead><tbody>';
+                    } else {
+                        toAppend += '<table id="nbn-species-table" class="nbn-simple-table"><tbody>';
+                    }
+                    $.each(data, function(key, val) {
+                        toAppend += '<tr><td><a href="/Reports/Sites/' + featureID + '/Groups/' + taxonOutputGroupKey + '/Species/' + val.taxon.ptaxonVersionKey + '/Observations' + getLinkQueryString(keyValuePairsFromForm) + '">' + "<span class='nbn-taxon-name'>" + val.taxon.name + '</span>';
+                        if (val.taxon.commonName)
+                            toAppend += ' [' + val.taxon.commonName + ']';
+                        toAppend += '</a></td></tr>';
+                    });
+                    toAppend += '</tbody></table>';
+                } else {
+                    toAppend += nbn.portal.reports.utils.forms.getNoRecordsFoundInfoBox();
                 }
-                $.each(data, function(key, val){
-                    toAppend += '<tr><td><a href="/Reports/Sites/' + featureID + '/Groups/' + taxonOutputGroupKey + '/Species/'+ val.taxon.ptaxonVersionKey + '/Observations'+ getLinkQueryString(keyValuePairsFromForm) + '">' + "<span class='nbn-taxon-name'>" + val.taxon.name + '</span>';
-                    if (val.taxon.commonName)
-                        toAppend += ' [' + val.taxon.commonName + ']';
-                    toAppend += '</a></td></tr>';
-                });
-                toAppend += '</tbody></table>';
-            }else{
-                toAppend += nbn.portal.reports.utils.forms.getNoRecordsFoundInfoBox();
-            }
+                $dataContainer.empty();
+                $($dataContainer).append(toAppend);
+                if (numSpecies > datatableDisplayThreshold) {
+                    addDataTable();
+                }
+            });
+        } else {
             $dataContainer.empty();
+            toAppend += nbn.portal.reports.utils.forms.getNoRecordsFoundInfoBox();
             $($dataContainer).append(toAppend);
-            if(numSpecies > datatableDisplayThreshold){
-                addDataTable();
-            }
-            
-        });
+        }
     }
     
     
@@ -79,13 +86,8 @@
         //except when the nbn-select-datasets-auto check box is deselected
         $('#nbn-site-report-form :input').change(function(){
             var $input = $(this);
-            if(($input.attr('id')!='nbn-select-datasets-auto') || ($('#nbn-select-datasets-auto').is(':checked'))){
-                if(nbn.portal.reports.utils.forms.isSiteReportFormFieldValid($input)){
-                    //Requires jquery.dataset-selector-utils.js
-                    nbn.portal.reports.utils.datasetfields.doDeselectDatasetKeys();
-                    refreshSpeciesData($('#nbn-site-report-form'));
-                    nbn.portal.reports.utils.datasetfields.doSelectDatasetKeys();
-                }
+            if(nbn.portal.reports.utils.forms.isSiteReportFormFieldValid($input)){
+                refreshSpeciesData($('#nbn-site-report-form'));
             }
         });
     }
@@ -99,17 +101,12 @@
                 buttons: {
                     'Accept': function(){
                         var $form = $('#nbn-site-report-form'); 
-                        // Get selected datasets workaround - TODO: Fix this properly
-                        var datasets = nbn.portal.reports.utils.datasetfields.getSelectedDatasets();
-                        nbn.portal.reports.utils.datasetfields.doDeselectDatasetKeys();
                         var keyValuePairs = nbn.portal.reports.utils.forms.getKeyValuePairsFromForm($form);
-                        keyValuePairs.featureID = $form.attr("featureID");
-                        keyValuePairs.taxonOutputGroup = $form.attr("taxonOutputGroupKey");
-                        // Get selected datasets workaround - TODO: Fix this properly
-                        keyValuePairs.datasetKey = datasets.join();
+                        keyValuePairs['featureID'] = $form.attr("featureID");
+                        keyValuePairs['taxonOutputGroup'] = $form.attr("taxonOutputGroupKey");
+                        keyValuePairs['datasetKey'] = nbn.portal.reports.utils.datasetfields.getSelectedDatasetsJoined();
                         var queryString = nbn.portal.reports.utils.forms.getQueryStringFromKeyValuePairs(keyValuePairs, false);
                         var url = $form.attr('api-server') + '/taxonObservations/species/download/' + queryString;
-                        nbn.portal.reports.utils.datasetfields.doSelectDatasetKeys();
                         $(this).dialog("close");
                         window.location = url;
                     },
@@ -133,7 +130,8 @@
                 // Disabled as creates requests for all public datasets explicitly
                 // nbn.portal.reports.utils.datasetfields.getSelectedDatasetsJSON() + ',' +
                 'dataset:{all:true},' +
-                nbn.portal.reports.utils.forms.getYearJSON(keyValuePairs) + '}';
+                nbn.portal.reports.utils.forms.getYearJSON(keyValuePairs) + ',' +
+                nbn.portal.reports.utils.forms.getTaxonFilter(keyValuePairs) + '}';
             e.preventDefault();
         });
     }
@@ -152,7 +150,8 @@
                                 'taxon:{all:false,output:\'' + form.attr('taxonOutputGroupKey') + '\'},' +
                                 nbn.portal.reports.utils.forms.getSpatialFeatures(keyValuePairs, form.attr('gridSquare')) + ',' +
                                 nbn.portal.reports.utils.datasetfields.getSelectedDatasetsJSON() + ',' +
-                                nbn.portal.reports.utils.forms.getYearJSON(keyValuePairs) +
+                                nbn.portal.reports.utils.forms.getYearJSON(keyValuePairs) + ',' +
+                                nbn.portal.reports.utils.forms.getTaxonFilter(keyValuePairs) +
                                 '}';
                     },
                     'Cancel': function(){
