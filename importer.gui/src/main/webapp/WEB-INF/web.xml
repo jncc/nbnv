@@ -33,4 +33,8 @@
     <welcome-file-list>
         <welcome-file>app/index.html</welcome-file>
     </welcome-file-list>
+    <mime-mapping>
+        <extension>ico</extension>
+        <mime-type>image/x-icon</mime-type>
+    </mime-mapping>
 </web-app>

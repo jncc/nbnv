@@ -3,10 +3,10 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>uk.org.nbn</groupId>
     <artifactId>nbnv-importer-gui</artifactId>
-    <version>0.1-SNAPSHOT</version>
+    <version>000001</version>
     <packaging>war</packaging>
 
-    <name>${project.artifactId}-${project.version}</name>
+    <name>${project.artifactId}</name>
     <url>http://maven.apache.org</url>
 
     <properties>
@@ -42,6 +42,12 @@
         </dependency>
 
         <dependency>
+            <groupId>org.threeten</groupId>
+            <artifactId>threetenbp</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
             <version>${spring.version}</version>
@@ -63,7 +69,7 @@
     </dependencies>
 
     <build>
-        <finalName>importer.gui</finalName>
+        <finalName>${name}##${version}</finalName>
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+
+<html xmlns:ng="http://angularjs.org"> <!-- required for ie7 -->
+<!-- do not use custom element tags such as <ng:view> (use the attribute version <div ng-view> instead -->
+<head>
+   <link type="text/css" rel="stylesheet" href="/app/css/bootstrap.cosmo.min.css">
+    <!--<link type="text/css" rel="stylesheet" href="/app/css/bootstrap.flatly.min.css">-->
+    <!--<link type="text/css" rel="stylesheet" href="/app/css/bootstrap.cerulean.min.css">     -->
+    <!--<link type="text/css" rel="stylesheet" href="/app/css/bootstrap.simplex.min.css">-->
+    <link rel="shortcut icon" type="image/png" href="/app/img/favicon.ico">
+    <!--[if lte IE 7]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/json3/3.3.2/json3.min.js"></script>
+    <![endif]-->
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.18/angular.min.js"></script>
+    <script src="/app/js/index.js"></script>
+
+    <title>Importer</title>
+</head>
+<body id="ng-app" ng-app="importer">
+<div class="row">
+    <div class="span4 offset1"><img class="brand" src="/app/img/logo.jpg"/></div>
+    <div class="span4 "><h2>IMPORTER</h2></div>
+    <div class="span2">hello</div>
+</div>
+<div class="row">
+    <div class="span10 offset1">
+        <div class="navbar" >
+            <div class="navbar-inner">
+                <ul class="nav">
+                    <li class="active"><a href="#">Dataset </a></li>
+                    <li><a href="#">Metadata Form</a></li>
+                    <li><a href="#">Existing Dataset</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="span12 offset2">
+        {{ 'World' | greet }}
+        </div>
+    </div>
+</body>
+</html>

@@ -15,4 +15,9 @@ public class HelloController {
 		model.addAttribute("message", "Hello world!");
 		return "hello";
 	}
+
+   /* @RequestMapping("/favicon.ico")
+    String favicon() {
+        return "forward:/app/img/favicon.ico";
+    }*/
 }
