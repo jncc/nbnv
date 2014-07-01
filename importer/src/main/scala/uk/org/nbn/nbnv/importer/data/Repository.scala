@@ -10,6 +10,18 @@ import uk.org.nbn.nbnv.importer.BadDataException
 import uk.org.nbn.nbnv.{SpatialQueries, StoredProcedureLibrary}
 
 class Repository (log: Logger, em: EntityManager, cache: QueryCache) extends ControlAbstractions {
+  def confirmOrganisationExits(name: String) = {
+    val q = "select count(o.id) from Organisation o where o.name = :name"
+
+    cacheSingle(q, name) {
+      val query = em.createQuery(q)
+      query.setParameter("name", name)
+
+      val count = query.getSingleResult.asInstanceOf[Long]
+      if (count > 0) true else false
+    }
+  }
+
   def getSurvey(surveyKey: String, taxonDatasetKey: String) = {
     val q = "SELECT s FROM Survey s WHERE s.providerKey = :providerKey AND s.taxonDataset.datasetKey = :taxonDatasetKey"
 
