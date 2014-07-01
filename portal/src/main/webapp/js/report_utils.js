@@ -32,6 +32,9 @@
         },
         getSpatialFeatures: function(keyPairs, gridSquare) {
             return getSpatialFeaturesJSON(keyPairs, gridSquare);
+        },
+        getTaxonFilter: function(keyPairs) {
+            return getTaxonFilterValue(keyPairs);
         }
     });
     
@@ -168,6 +171,14 @@
             return 'spatial:{all:false,match:\'' + keyPairs['spatialRelationship'] + '\',gridRef:\'' + $('#nbn-site-report-form').attr('featureid') + '\'}';
         }
         return 'spatial:{all:false,match:\'' + keyPairs['spatialRelationship'] + '\',feature:\'' + $('#nbn-site-report-form').attr('featureid') + '\',dataset:\'' + $('#nbn-site-report-form').attr('featureid').substring(0,8) + '\'}';
+    }
+    
+    function getTaxonFilterValue(keyPairs) {
+        if (keyPairs['designation'] !== undefined &&
+            keyPairs['designation'] !== '') {
+            return 'taxon:{all:false,designation:\'' + keyPairs['designation'] + '\'}';
+        }
+        return 'taxon:{all:true}';
     }
     
 })(jQuery);
