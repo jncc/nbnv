@@ -117,7 +117,6 @@
             });
             e.preventDefault();
         });
-
     }
     
     function setupBetterAccessLink() {
@@ -130,8 +129,7 @@
                 // Disabled as creates requests for all public datasets explicitly
                 // nbn.portal.reports.utils.datasetfields.getSelectedDatasetsJSON() + ',' +
                 'dataset:{all:true},' +
-                nbn.portal.reports.utils.forms.getYearJSON(keyValuePairs) + ',' +
-                nbn.portal.reports.utils.forms.getTaxonFilter(keyValuePairs) + '}';
+                nbn.portal.reports.utils.forms.getYearJSON(keyValuePairs) + '}';
             e.preventDefault();
         });
     }
