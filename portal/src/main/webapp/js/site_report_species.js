@@ -148,8 +148,7 @@
                                 'taxon:{all:false,output:\'' + form.attr('taxonOutputGroupKey') + '\'},' +
                                 nbn.portal.reports.utils.forms.getSpatialFeatures(keyValuePairs, form.attr('gridSquare')) + ',' +
                                 nbn.portal.reports.utils.datasetfields.getSelectedDatasetsJSON() + ',' +
-                                nbn.portal.reports.utils.forms.getYearJSON(keyValuePairs) + ',' +
-                                nbn.portal.reports.utils.forms.getTaxonFilter(keyValuePairs) +
+                                nbn.portal.reports.utils.forms.getYearJSON(keyValuePairs) +
                                 '}';
                     },
                     'Cancel': function(){
