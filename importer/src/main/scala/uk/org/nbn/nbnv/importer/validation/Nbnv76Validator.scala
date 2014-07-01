@@ -35,11 +35,15 @@ class Nbnv76Validator extends DateFormatValidator {
       endOfYear.setTime(record.endDate.get)
       endOfYear.set(Calendar.DAY_OF_YEAR, endOfYear.getActualMaximum(Calendar.DAY_OF_YEAR))
 
+
+
       if (record.endDate.get.compareTo(endOfYear.getTime) != 0) {
+        val dateFormat = new SimpleDateFormat("yyyy")
+
         results.append(new Result {
           def level: ResultLevel.ResultLevel = ResultLevel.ERROR
           def reference: String = record.key
-          def message: String = "%s: The end date is not the end of the year %s".format(code, endOfYear.get(Calendar.YEAR).toString)
+          def message: String = "%s: The end date is not the end of the year %s".format(code, dateFormat.format(endOfYear.getTime))
         })
       }
 
