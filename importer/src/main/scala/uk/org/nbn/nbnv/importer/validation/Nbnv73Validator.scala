@@ -29,7 +29,7 @@ class Nbnv73Validator extends DateFormatValidator {
         new Result {
           def level: ResultLevel.ResultLevel = ResultLevel.ERROR
           def reference: String = record.key
-          def message: String = "%s: An end date has been specified but it is not the same as the start date 'D'".format(code)
+          def message: String = "%s: An end date has been specified but it is not the same as the start date".format(code)
         })
     }
 
