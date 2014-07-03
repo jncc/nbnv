@@ -5,7 +5,7 @@
     <#assign designationId="${URLParameters.designation}">
     <#assign designation=json.readURL("${api}/designations/${designationId}")>
     <#assign designationCategory=json.readURL("${api}/designationCategories/${designation.designationCategoryID}")>
-    <#assign topLevelTaxonNavigationGroups=json.readURL("${api}/taxonNavigationGroups/topLevels", {"designationId" : designationId })>
+    <#assign topLevelTaxonNavigationGroups=json.readURL("${api}/taxonNavigationGroups/topLevels/designations/${designationId}")>
 
     <div id="nbn-designation-content">
         <h4>${designation.name}</h4>
