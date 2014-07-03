@@ -78,7 +78,7 @@ public class DesignationSpeciesDensityMap {
     
     @Autowired @Qualifier("taxonLayerBaker") ShapefileBakery bakery;
 
-    @RequestMapping("{designationKey}")
+    @RequestMapping("{designationKey:.+}")
     @GridMap(
         layers = {
         @GridLayer(name = "10km", layer = TEN_KM_LAYER_NAME, resolution = Resolution.TEN_KM),
