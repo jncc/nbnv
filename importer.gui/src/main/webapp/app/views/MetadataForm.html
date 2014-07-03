@@ -1,0 +1,12 @@
+<div class="row">
+    <div class="span10 offset1">
+        <form name="form" novalidate ng-controller="MetadataController"  class="form-inline">
+            <input ng-model="form.metadata.title" ng-required="true" class="input-small" placeholder="Title" />
+            <select ng-model="form.metadata.title.organisation" ng-options="organisation.name for organisation in form.AllOrganisations"></select><br>
+            <ul class="example-animate-container">
+                <li class="animate-repeat" ng-repeat="o in form.allOrganisations">{{ o.name }}</li>
+                </ul>
+            <textarea ng-model="form.metadata.description" rows="3"></textarea>
+        </form>
+    </div>
+</div>

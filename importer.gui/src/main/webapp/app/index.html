@@ -8,6 +8,7 @@
     <!--<link type="text/css" rel="stylesheet" href="/app/css/bootstrap.cerulean.min.css">     -->
     <!--<link type="text/css" rel="stylesheet" href="/app/css/bootstrap.simplex.min.css">-->
     <link type="text/css" rel="stylesheet" href="/app/css/bootstrap.css">
+    <link type="text/css" rel="stylesheet" href="/app/css/app.css">
     <link rel="shortcut icon" type="image/png" href="/app/img/favicon.ico">
     <!-- this is served as static resource -->
     <!--[if lte IE 7]>
@@ -25,31 +26,8 @@
     <div class="span4 "><h2>IMPORTER</h2></div>
     <div class="span2">hello</div>
 </div>
-<div ng-controller="ViewController as view">
-    <div class="row">
-        <div class="span10 offset1">
-            <ul class="nav nav-pills">
-                <li><a href ng-class="{active : view.isSelected(1)}" ng-click="view.selectView(1)">Dataset </a></li>
-                <li><a href ng-class="{active : view.isSelected(2)}" ng-click="view.selectView(2)">Metadata Form</a>
-                </li>
-                <li><a href ng-class="{active : view.isSelected(3)}" ng-click="view.selectView(3)">Existing Dataset</a>
-                </li>
-            </ul>
-        </div>
-    </div>
-    <div class="row">
-        <div class="span10 offset1">
-            <div ng-show="view.isSelected(1)">
-                1. This is : {{ view.selectedView }}
-            </div>
-            <div ng-show="view.isSelected(2)">
-                2. This is : {{ view.selectedView }}
-            </div>
-            <div ng-show="view.isSelected(3)">
-                3. This is : {{ view.selectedView }}
-            </div>
-        </div>
-    </div>
-</div>
+<!--<div ng-include src="'views/navbar.html'"></div> -->
+<div ng-include src="'/app/views/MetadataForm.html'"></div>
+
 </body>
 </html>

@@ -25,7 +25,14 @@
             return this.selectedView === currentView;
         }
     });
-    importerModule.controller('MetaDataController', function () {
+    // change thsi to $scope
+    importerModule.controller('MetadataController', function () {
+        this.allOrganisations = {};
+        this.allOrganisations = [{name:"test"}, {name:"alpha"}, {name:"beta"}];
+        var arrayLength = this.allOrganisations.length;
+        for (var i = 0; i < arrayLength; i++) {
+            alert(this.allOrganisations[i].name);
+        }
         this.metadata = {};
         this.metadata.title = "";
         this.metadata.organisation = "";
@@ -49,14 +56,6 @@
         this.metadata.insertionType = ""; // radio button
 
 
-
-
-        this.selectView = function(selectedView){
-            this.selectedView = selectedView;
-        }
-        this.isSelected = function(currentView){
-            return this.selectedView === currentView;
-        }
     });
 
 // configure the module.
