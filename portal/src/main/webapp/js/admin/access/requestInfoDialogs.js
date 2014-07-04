@@ -18,6 +18,7 @@ window.nbn = window.nbn || {};
                         $.each(data, function(index, value) {
                            orgs.append($('<span>').text(value.name)).append($('<br />'));
                         });
+                        $('#nbn-further-info-user-org-desc').text('Organisation Memberships:');
                         $('#nbn-further-info-user-orgs').empty().append(orgs);
                     } else {
                         $('#nbn-further-info-user-org-desc').text('User is not a member of any organisations');
