@@ -42,6 +42,9 @@ public interface OrganisationMembershipMapper {
         @Result(property="organisation", column="organisationID", javaType=Organisation.class, one=@One(select="uk.org.nbn.nbnv.api.dao.warehouse.OrganisationMapper.selectByID"))
     })
     List<OrganisationMembership> selectByOrganisation(@Param("organisationID") int organisationID);
+    
+    @Select("SELECT ud.forename, ud.surname, ud.email FROM UserData ud INNER JOIN OrganisationMembershipData omd ON omd.userID = ud.id WHERE organisationID = #{organisationID}")
+    List<User> selectUserListByOrganisation(@Param("organisationID") int organisationID);
 
     @Select("SELECT userID, organisationID, role FROM OrganisationMembershipData WHERE userID = #{userKey} AND organisationID = #{organisationID}")
     @Results(value = {

@@ -92,6 +92,18 @@ public class OrganisationMembershipResource extends AbstractResource {
     public List<OrganisationMembership> get(@TokenOrganisationUser(path = "id", roles = OrganisationMembership.Role.administrator) User user, @PathParam("id") int id) {
         return oOrganisationMembershipMapper.selectByOrganisation(id);
     }
+    
+    @GET
+    @Path("/{id}/users")
+    @TypeHint(User.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned all organisation members for specified organistion"),
+        @ResponseCode(code = 403, condition = "The user is not an administrator of any organisation or dataset")
+    })
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<User> getUserList(@TokenAnyDatasetOrOrgAdminUser() User user, @PathParam("id") int id) {
+        return organisationMembershipMapper.selectUserListByOrganisation(id);
+    }
 
     /**
      * Return the organisation membership details for a given user and 
