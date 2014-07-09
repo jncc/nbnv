@@ -1,12 +1,104 @@
-<div class="row">
-    <div class="span10 offset1">
-        <form name="form" novalidate ng-controller="MetadataController"  class="form-inline">
-            <input ng-model="form.metadata.title" ng-required="true" class="input-small" placeholder="Title" />
-            <select ng-model="form.metadata.title.organisation" ng-options="organisation.name for organisation in form.AllOrganisations"></select><br>
-            <ul class="example-animate-container">
-                <li class="animate-repeat" ng-repeat="o in form.allOrganisations">{{ o.name }}</li>
-                </ul>
-            <textarea ng-model="form.metadata.description" rows="3"></textarea>
-        </form>
+<form name="form" novalidate ng-controller="MetadataController" class="form-inline">
+
+    <div class="row">
+        <div class="span5 offset1">
+            <input ng-model="form.metadata.title" ng-required="true" class="input-small" placeholder="Title"/>
+            <select ng-model="form.metadata.organisation"
+                    ng-options="organisation.name for organisation in allOrganisations">
+                <option value="" ng-disabled="true">-- Select organisation --</option>
+            </select>
+        </div>
+        <div class="span5 pagination-centered">
+                <button class="btn btn-danger">Reset</button>
+                <button class="btn btn-success" ng-disabled="form.$invalid">Submit</button>
+        </div>
     </div>
-</div>
+
+    <div class="row marginTop10px">
+        <div class="span10 offset1">
+            <textarea class="width40" ng-required="true" placeholder="Enter description here" ng-model="form.metadata.description" rows="3"></textarea>
+            <textarea class="width40" ng-required="true" placeholder="Methods of data capture" ng-model="form.metadata.methodsOfDataCapture"
+                      rows="3"></textarea>
+        </div>
+    </div>
+
+    <div class="row marginTop10px">
+        <div class="span10 offset1">
+            <textarea class="width40" ng-required="true" placeholder="Purpose of data capture" ng-model="form.metadata.purposeOfDataCapture"
+                      rows="3"></textarea>
+            <textarea class="width40" ng-required="true" placeholder="Geographical coverage" ng-model="form.metadata.geographicalCoverage"
+                      rows="3"></textarea>
+        </div>
+    </div>
+
+    <div class="row marginTop10px">
+        <div class="span10 offset1">
+            <textarea class="width40" ng-required="true" placeholder="Temporal coverage" ng-model="form.metadata.temporalCoverage" rows="3"></textarea>
+            <textarea class="width40" ng-required="true" placeholder="Data Quality" ng-model="form.metadata.dataQuality" rows="3"></textarea>
+        </div>
+    </div>
+
+    <div class="row marginTop10px">
+        <div class="span10 offset1">
+            <textarea class="width40" ng-required="true" placeholder="Use Constraints" ng-model="form.metadata.useConstraints" rows="3"></textarea>
+            <textarea class="width40" ng-required="true" placeholder="Access Constraints" ng-model="form.metadata.useConstraints" rows="3"></textarea>
+        </div>
+    </div>
+
+    <div class="row marginTop10px">
+        <div class="span10 offset1">
+            <input placeholder="Name" ng-required="true" ng-model="form.metadata.adminDetails.name"/>
+            <input type="email" ng-required="true" placeholder="E-mail" ng-model="form.metadata.adminDetails.email"/>
+            <input placeholder="Telephone #" ng-required="true" ng-model="form.metadata.adminDetails.phone"/>
+        </div>
+    </div>
+
+    <div class="row marginTop10px">
+        <div class="span5 offset1 pagination-centered">
+            <label for="geoBtnGroupDiv"><span class="badge">Geographic Resolution</span></label>
+            <div id="geoBtnGroupDiv" class="btn-group" data-toggle="buttons-radio">
+                <button type="button" class="btn">Full</button>
+                <button type="button" class="btn">1Km²</button>
+                <button type="button" class="btn">2Km²</button>
+                <button type="button" class="btn">10Km²</button>
+                <button type="button" class="btn">No Access</button>
+            </div>
+        </div>
+        <div class="span4 pagination-centered">
+            <label for="recordAttrBtnGroupDiv"><span class="badge">Record Attributes</span></label>
+            <br/>
+            <div id="geoBtnGroupDiv" class="btn-group" data-toggle="buttons-radio">
+                <button type="button" class="btn">Yes</button>
+                <button type="button" class="btn">No</button>
+                <button type="button" class="btn">N/A</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="row marginTop10px">
+        <div class="span5 offset1 pagination-centered">
+            <label for="recorderNamesBtnGroupDiv"><span class="badge">Recorder Names</span></label>
+            <br/>
+            <div id="geoBtnGroupDiv" class="btn-group" data-toggle="buttons-radio">
+                <button class="btn">Yes</button>
+                <button class="btn">No</button>
+                <button class="btn">N/A</button>
+            </div>
+        </div>
+
+        <div class="span4 pagination-centered">
+            <label for="insertTypeBtnGroupDiv"><span class="badge">Insert Type</span></label>
+            <br/>
+            <div id="geoBtnGroupDiv" class="btn-group" data-toggle="buttons-radio">
+                <button class="btn active">New</button>
+                <button class="btn">Append</button>
+                <button class="btn">Update</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="row marginTop10px">
+
+    </div>
+
+</form>

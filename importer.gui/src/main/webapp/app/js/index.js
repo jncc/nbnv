@@ -26,13 +26,13 @@
         }
     });
     // change thsi to $scope
-    importerModule.controller('MetadataController', function () {
-        this.allOrganisations = {};
-        this.allOrganisations = [{name:"test"}, {name:"alpha"}, {name:"beta"}];
-        var arrayLength = this.allOrganisations.length;
+    importerModule.controller('MetadataController', function ($scope) {
+        $scope.allOrganisations = {};
+        $scope.allOrganisations = [{name:"test"}, {name:"alpha"}, {name:"beta"}];
+        /*var arrayLength = this.allOrganisations.length;
         for (var i = 0; i < arrayLength; i++) {
             alert(this.allOrganisations[i].name);
-        }
+        } */
         this.metadata = {};
         this.metadata.title = "";
         this.metadata.organisation = "";

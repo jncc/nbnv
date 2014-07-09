@@ -23,6 +23,7 @@
         <module>crud</module>
         <module>importer</module>
         <module>importer.grin</module>
+        <module>importer.gui</module>
         <module>importer.ui</module>
         <module>importer.spatial.ui</module>
         <module>rs</module>
