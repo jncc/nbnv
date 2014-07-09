@@ -3,23 +3,17 @@ package uk.org.nbn.nbnv.importer.ui.controller;
 import java.io.IOException;
 import java.text.Normalizer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import org.apache.poi.hwpf.HWPFDocument;
-import org.apache.poi.hwpf.extractor.WordExtractor;
 import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.reflections.Reflections;
 import org.springframework.stereotype.Controller;
@@ -35,18 +29,21 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
+import uk.org.nbn.nbnv.importer.s1.utils.database.DatabaseConnection;
+import uk.org.nbn.nbnv.importer.s1.utils.errors.NotHarvestedError;
+import uk.org.nbn.nbnv.importer.s1.utils.errors.POIImportError;
 import uk.org.nbn.nbnv.importer.ui.convert.RunConversions;
-import uk.org.nbn.nbnv.importer.ui.model.Metadata;
-import uk.org.nbn.nbnv.importer.ui.model.MetadataForm;
+
 import uk.org.nbn.nbnv.importer.ui.model.UploadItem;
-import uk.org.nbn.nbnv.importer.ui.util.DatabaseConnection;
-import uk.org.nbn.nbnv.importer.ui.util.POIImportError;
-import uk.org.nbn.nbnv.importer.ui.util.wordImporter.WordImporter;
-import uk.org.nbn.nbnv.importer.ui.validators.MetadataFormValidator;
-import uk.org.nbn.nbnv.importer.ui.validators.MetadataValidator;
 import uk.org.nbn.nbnv.jpa.nbncore.Dataset;
 import uk.org.nbn.nbnv.jpa.nbncore.Organisation;
 import uk.org.nbn.nbnv.jpa.nbncore.User;
+import uk.org.nbn.nbnv.importer.s1.utils.metadata.harvester.MetadataHarvester;
+import uk.org.nbn.nbnv.importer.s1.utils.model.Metadata;
+import uk.org.nbn.nbnv.importer.s1.utils.model.MetadataForm;
+import uk.org.nbn.nbnv.importer.s1.utils.validators.MetadataFormValidator;
+import uk.org.nbn.nbnv.importer.s1.utils.validators.MetadataValidator;
+import uk.org.nbn.nbnv.importer.s1.utils.wordImporter.WordImporter;
 
 /**
  *
@@ -80,6 +77,7 @@ public class MetadataController {
             Query q = em.createNamedQuery("Dataset.findByKey");
             q.setParameter("key", metadata.getDatasetID());
             Dataset dataset = ((List<Dataset>) q.getResultList()).get(0);
+            em.close();
 
             metadata.setTitle(dataset.getTitle());
             metadata.setOrganisationID(dataset.getOrganisation().getId());
@@ -136,101 +134,27 @@ public class MetadataController {
             }           
             return new ModelAndView("metadataForm", "metadataForm", metadataForm);
         }
-
+        
         List<String> messages = new ArrayList<String>();
         
-        try {           
-            HWPFDocument doc = new HWPFDocument(uploadItem.getFileData().getInputStream());
-            WordExtractor ext = new WordExtractor(doc);
-            String[] strs = ext.getParagraphText();
-            
-            // Catch some of the annoying cases where inputs are followed by
-            // paragraphs of text, as we are using \r\n to seperate out the 
-            // inputs
-
-            List<String> strList = Arrays.asList(strs);
-            ListIterator<String> strIt = strList.listIterator();
-            
-            // Check the version number of the document to make sure we 
-            // can read it
-            Float version = null;
-            WordImporter importer = null;
-            while(strIt.hasNext() && version == null) {
-                try {
-                    String str = strIt.next().trim();
-                    if (str.startsWith("Version ")) {
-                        Pattern pat;
-                        pat = Pattern.compile("([0-9]+)(\\.([0-9]+))?");
-                        Matcher matcher = pat.matcher(str);
-                        if (matcher.find()) {
-                            int major = Integer.parseInt(matcher.group(1));
-                            int minor = 0;
-                            try {
-                                minor = Integer.parseInt(matcher.group(3));
-                            } catch(NumberFormatException ex) {
-                                // No number available or an unknown number
-                            }
-
-                            version = Float.parseFloat(Integer.toString(major) + "." + Integer.toString(minor));
-
-                            importer = getDocumentImporter(major, minor);
-
-                            if (importer == null) {
-                                if (minor > 0) {
-                                    messages.add("Could not find a supporting word importer for " + version + " using deafult " + Integer.toString(major) + ".0 importer");
-                                    minor = 0;
-                                    importer = getDocumentImporter(major, minor);
-                                }
-                                if (importer == null) {
-                                    throw new POIImportError("We do not currently support Version " + version + " of the Metadata Import Word Document");
-                                }
-                            }
-                        }
-                    }
-                } catch (NumberFormatException ex) {
-                    throw new POIImportError("Could not find a valid version number, are you sure this is a metadata import form?");
-                }
-            }
-            
-            if (version == null && importer == null) {
-                throw new POIImportError("Could not find a version number in the document are you sure this is a metadata import form?");
-            }
-
-            List<String> errors = new ArrayList<String>();
-            
-            Map<String, String> mappings = importer.parseDocument(strList, strIt, new HashMap<String, String>(), errors);
-            messages.addAll(importer.getDefaultMessages());
-            messages.addAll(errors);
-            Metadata meta = new Metadata();
-            
-            meta.setAccess(normalizeAndTrim(mappings.get(importer.META_ACCESS_CONSTRAINT)));
-            meta.setDescription(normalizeAndTrim(mappings.get(importer.META_DESC)));
-            meta.setGeographic(normalizeAndTrim(mappings.get(importer.META_GEOCOVER)));
-            meta.setInfo(normalizeAndTrim(mappings.get(importer.META_ADDITIONAL_INFO)));
-            meta.setMethods(normalizeAndTrim(mappings.get(importer.META_CAPTURE_METHOD)));
-            meta.setPurpose(normalizeAndTrim(mappings.get(importer.META_PURPOSE)));
-            meta.setQuality(normalizeAndTrim(mappings.get(importer.META_DATA_CONFIDENCE)));
-            meta.setTemporal(normalizeAndTrim(mappings.get(importer.META_TEMPORAL)));
-            meta.setTitle(normalizeAndTrim(mappings.get(importer.META_TITLE)));
-            meta.setUse(normalizeAndTrim(mappings.get(importer.META_USE_CONSTRAINT)));
-            meta.setDatasetAdminName(normalizeAndTrim(mappings.get(importer.META_NAME)));
-            meta.setDatasetAdminPhone(normalizeAndTrim(mappings.get(importer.META_CONTACT_PHONE)));
-            meta.setDatasetAdminEmail(normalizeAndTrim(mappings.get(importer.META_EMAIL)));
-            meta.setDatasetID(normalizeAndTrim(metadataForm.getMetadata().getDatasetID()));
-            
-            metadataForm.setMetadata(meta);
-            
+        try {                      
+            MetadataHarvester harvester = new MetadataHarvester();
+            messages = harvester.harvest(uploadItem.getFileData(), 
+                    metadataForm.getMetadata().getDatasetID());
+            metadataForm.setMetadata(harvester.getMetadata());
             metadataForm = cleanMetadataTextInputs(metadataForm);
+            Map<String, String> mappings = harvester.getMappings();
+            WordImporter importer = harvester.getImporter();
             
-            if (!((mappings.get(importer.ORG_NAME) == null || mappings.get(importer.ORG_NAME).trim().isEmpty()))) {
+            if (!((mappings.get(WordImporter.ORG_NAME) == null || mappings.get(WordImporter.ORG_NAME).trim().isEmpty()))) {
                 for (Organisation org : metadataForm.getOrganisationList()) {
                     if (org.getName().equals(mappings.get(importer.ORG_NAME))) {
-                        meta.setOrganisationID(org.getId());
+                        metadataForm.getMetadata().setOrganisationID(org.getId());
                         break;
                     }
                 }
 
-                if (meta.getOrganisationID() == -1) {
+                if (metadataForm.getMetadata().getOrganisationID() == -1) {
                     organisation = new Organisation();
                     organisation.setAbbreviation(normalizeAndTrim(mappings.get(importer.ORG_ABBREVIATION)));
                     organisation.setAddress(mappings.get(normalizeAndTrim(importer.ORG_ADDRESS)));
@@ -262,6 +186,8 @@ public class MetadataController {
             messages.add("EXCEPTION: Parse exception not a valid Word .doc file : " + ex.getMessage());
         } catch (POIImportError ex) {
             messages.add("EXCEPTION: POI Word Parsing exception : " + ex.getMessage());
+        } catch(NotHarvestedError ex) {
+            messages.add("EXCEPTION: Did not harvest word document, document not passed to harvester?");
         } catch (OfficeXmlFileException ex) {
             messages.add("EXCEPTION: POI Word Parsing exception either the supplied file is not a Word .doc file --- Full error is - " + ex.getMessage());
         }

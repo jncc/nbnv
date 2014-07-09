@@ -18,7 +18,7 @@ import java.util.logging.Logger;
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Ignore;
-import uk.org.nbn.nbnv.importer.ui.model.MetadataForm;
+import uk.org.nbn.nbnv.importer.s1.utils.model.MetadataForm;
 import uk.org.nbn.nbnv.importer.ui.parser.ColumnMapping;
 
 /**
