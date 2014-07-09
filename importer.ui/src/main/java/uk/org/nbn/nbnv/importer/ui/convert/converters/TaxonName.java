@@ -6,11 +6,11 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import uk.org.nbn.nbnv.importer.s1.utils.database.DatabaseConnection;
 import uk.org.nbn.nbnv.importer.ui.convert.BadDataException;
 import uk.org.nbn.nbnv.importer.ui.convert.ConverterStep;
 import uk.org.nbn.nbnv.importer.ui.parser.ColumnMapping;
 import uk.org.nbn.nbnv.importer.ui.parser.DarwinCoreField;
-import uk.org.nbn.nbnv.importer.ui.util.DatabaseConnection;
 import uk.org.nbn.nbnv.jpa.nbncore.RecordingEntity;
 
 /**
@@ -79,8 +79,9 @@ public class TaxonName extends ConverterStep {
             Query q =  em.createNamedQuery("RecordingEntity.findByRecordedName");
             q.setParameter("name", origVal);
 
-
             List<RecordingEntity> res = q.getResultList();
+            
+            em.close();
 
             if (res.isEmpty()) {
                 throw new BadDataException("No matching names found for: " + origVal);

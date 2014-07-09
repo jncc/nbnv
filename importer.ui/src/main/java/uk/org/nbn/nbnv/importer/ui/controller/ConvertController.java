@@ -23,13 +23,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
+import uk.org.nbn.nbnv.importer.s1.utils.database.DatabaseConnection;
+import uk.org.nbn.nbnv.importer.s1.utils.model.MetadataForm;
 import uk.org.nbn.nbnv.importer.ui.archive.ArchiveWriter;
 import uk.org.nbn.nbnv.importer.ui.convert.ConverterStep;
 import uk.org.nbn.nbnv.importer.ui.convert.RunConversions;
 import uk.org.nbn.nbnv.importer.ui.metadata.MetadataWriter;
 import uk.org.nbn.nbnv.importer.ui.model.ConvertResults;
-import uk.org.nbn.nbnv.importer.ui.model.MetadataForm;
-import uk.org.nbn.nbnv.importer.ui.util.DatabaseConnection;
 import uk.org.nbn.nbnv.jpa.nbncore.Organisation;
 
 /**
@@ -78,13 +78,14 @@ public class ConvertController {
                         new SimpleDateFormat("ddMMyyyy_hhmmss").format(new Date()));
             }
             File archive = File.createTempFile("nbnimporter", archiveName);
-                        
+
             List<String> errors = rc.run(out, meta, args);
             
             EntityManager em = DatabaseConnection.getInstance().createEntityManager();
             Query q = em.createNamedQuery("Organisation.findById");
             q.setParameter("id", organisation.getId());
             Organisation org = (Organisation) q.getSingleResult();
+            em.close();
             
             MetadataWriter mw = new MetadataWriter(metadata);
             mw.datasetToEML(metadataForm.getMetadata(), org, rc.getStartDate(), rc.getEndDate(), 

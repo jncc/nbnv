@@ -26,11 +26,6 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
-import uk.org.nbn.nbnv.importer.ui.model.AddOrganisationForm;
-import uk.org.nbn.nbnv.importer.ui.model.MetadataForm;
-import uk.org.nbn.nbnv.importer.ui.util.DatabaseConnection;
-import uk.org.nbn.nbnv.importer.ui.validators.AddOrganisationFormValidator;
-import uk.org.nbn.nbnv.importer.ui.validators.OrganisationValidator;
 import org.imgscalr.Scalr;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -39,6 +34,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
+import uk.org.nbn.nbnv.importer.s1.utils.database.DatabaseConnection;
+import uk.org.nbn.nbnv.importer.s1.utils.model.AddOrganisationForm;
+import uk.org.nbn.nbnv.importer.s1.utils.model.MetadataForm;
+import uk.org.nbn.nbnv.importer.s1.utils.validators.AddOrganisationFormValidator;
+import uk.org.nbn.nbnv.importer.s1.utils.validators.OrganisationValidator;
 import uk.org.nbn.nbnv.jpa.nbncore.Organisation;
 import uk.org.nbn.nbnv.jpa.nbncore.UserOrganisationMembership;
 import uk.org.nbn.nbnv.jpa.nbncore.UserOrganisationRole;
@@ -131,6 +131,8 @@ public class AddOrganisationController {
         em.getTransaction().begin();
         em.persist(membership);
         em.getTransaction().commit();
+        
+        em.close();
         
         metadataForm.getMetadata().setOrganisationID(orgForm.getOrganisation().getId());
         metadataForm.updateOrganisationList();

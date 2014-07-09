@@ -23,9 +23,8 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import uk.org.nbn.nbnv.importer.ui.model.Metadata;
-import uk.org.nbn.nbnv.importer.ui.model.MetadataForm;
-import uk.org.nbn.nbnv.importer.ui.util.DatabaseConnection;
+import uk.org.nbn.nbnv.importer.s1.utils.database.DatabaseConnection;
+import uk.org.nbn.nbnv.importer.s1.utils.model.Metadata;
 import uk.org.nbn.nbnv.jpa.nbncore.Organisation;
 
 public class MetadataWriter {
@@ -153,7 +152,7 @@ public class MetadataWriter {
         Element email = doc.createElement("electronicMailAddress");
         email.setTextContent(org.getContactEmail());
         creator.appendChild(email);
-
+        em.close();
         return creator;
     }
     
