@@ -14,7 +14,7 @@
     $(document).ready(function(){
         
         $('#nbn-add-contrib-org-submit').click(function(e) {
-            var org = $("#nbn-add-contrib-org option:selected").text()
+            var org = $("#nbn-add-contrib-org option:selected").text();
             $('#nbn-add-contrib-org-dialog-name').text(org);
 
             $('#nbn-add-contrib-org-submit-dialog').dialog({
