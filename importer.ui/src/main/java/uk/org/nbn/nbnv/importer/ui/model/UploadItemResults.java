@@ -5,8 +5,8 @@
 package uk.org.nbn.nbnv.importer.ui.model;
 
 import java.util.List;
-import uk.org.nbn.nbnv.importer.ui.parser.ColumnMapping;
-import uk.org.nbn.nbnv.importer.ui.parser.DarwinCoreField;
+import uk.org.nbn.nbnv.importer.s1.utils.parser.ColumnMapping;
+import uk.org.nbn.nbnv.importer.s1.utils.parser.DarwinCoreField;
 
 /**
  *
