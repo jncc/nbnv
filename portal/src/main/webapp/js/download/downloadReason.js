@@ -55,9 +55,9 @@ nbn.nbnv.ui.downloadReason = function(json) {
                 }
             },
             failure: function(data) {
-                alert("error getting orgs")
+                alert("error getting orgs");
             }
-        })
+        });
 
         var purpose = $('<select>')
                 .append($('<option>').text('Personal interest').attr('value', '1'))
@@ -101,7 +101,7 @@ nbn.nbnv.ui.downloadReason = function(json) {
                     _me._details = $(this).val();
                 });
         
-        if (this._details != '') { details.text(this._details); }
+        if (this._details !== '') { details.text(this._details); }
         
         var data = $('<div>')
             .append($('<div>')
@@ -143,13 +143,13 @@ nbn.nbnv.ui.downloadReason = function(json) {
     
     this.getJson = function() {
         if (this._asID > -1)
-            return { reason: { purpose: this._purpose, details: this._details, organisationID: this._asID, includeAttributes: this._includeAttributes }};
+            return { reason: { purpose: this._purpose, details: encodeURIComponent(this._details), organisationID: this._asID, includeAttributes: this._includeAttributes }};
         
-        return { reason: { purpose: this._purpose, details: this._details, userID: nbn.nbnv.userID, includeAttributes: this._includeAttributes }};
+        return { reason: { purpose: this._purpose, details: encodeURIComponent(this._details), userID: nbn.nbnv.userID, includeAttributes: this._includeAttributes }};
     };
 
     this.getError = function() {
-        if (this._details == '') { return ['Please enter detailed reason for this download']; }
+        if (this._details === '') { return ['Please enter detailed reason for this download']; }
         
         return [];
     };

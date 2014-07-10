@@ -128,13 +128,13 @@ nbn.nbnv.ui.requestReason = function(json) {
     
     this.getJson = function() {
         if (this._asID > -1)
-            return { reason: { purpose: this._purpose, details: this._details, organisationID: this._asID }};
+            return { reason: { purpose: this._purpose, details: encodeURIComponent(this._details), organisationID: this._asID }};
         
-        return { reason: { purpose: this._purpose, details: this._details, userID: nbn.nbnv.userID }};
+        return { reason: { purpose: this._purpose, details: encodeURIComponent(this._details), userID: nbn.nbnv.userID }};
     };
 
     this.getError = function() {
-        if (this._details == '') { return ['Please enter detailed reason for your request']; }
+        if (this._details === '') { return ['Please enter detailed reason for your request']; }
         
         return [];
     };
