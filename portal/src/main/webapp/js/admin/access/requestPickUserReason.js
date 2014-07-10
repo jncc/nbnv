@@ -191,9 +191,9 @@ nbn.nbnv.ui.requestPickUserReason = function(json) {
     
     this.getJson = function() {
         if (!this._user)
-            return { reason: { purpose: this._purpose, details: this._details, reason: this._reason, organisationID: this._asID }};
+            return { reason: { purpose: this._purpose, details: encodeURIComponent(this._details), reason: encodeURIComponent(this._reason), organisationID: this._asID }};
         
-        return { reason: { purpose: this._purpose, details: this._details, reason: this._reason, userID: this._asID }};
+        return { reason: { purpose: this._purpose, details: encodeURIComponent(this._details), reason: encodeURIComponent(this._reason), userID: this._asID }};
     };
     
     this.setGrant = function(grant) {
@@ -201,8 +201,8 @@ nbn.nbnv.ui.requestPickUserReason = function(json) {
     }
 
     this.getError = function() {
-        if (this._details == '' && ! this._grant) { return ['Please enter detailed reason for the request']; }
-        if (this._asID == -1) { return ['Missing user or organisation to grant access to']}
+        if (this._details === '' && ! this._grant) { return ['Please enter detailed reason for the request']; }
+        if (this._asID === -1) { return ['Missing user or organisation to grant access to']}
         
         return [];
     };
