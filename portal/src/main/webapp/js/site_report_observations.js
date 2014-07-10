@@ -82,7 +82,7 @@
                         toReturn += '<a href="/Organisations/' + dataset.organisationID + '">' + provider.name + '</a></tr>' +
                         '<tr><td>Your access:</td><td>';
                         toReturn += getAccessPositions(dataset);
-                        '</tr></td>'
+                        '</tr></td>';
         return toReturn;
     }
     
@@ -94,7 +94,7 @@
             url: url,
             dataType: 'json',
             success: function(data) {
-                if (data.publicAccess == "None") { 
+                if (data.publicAccess === "None") { 
                     toReturn += '<ul><li>No public access'; 
                 } else {
                     toReturn += '<ul><li>You have public access to records at ' + data.publicAccess;
@@ -213,10 +213,10 @@
             var keyValuePairs = nbn.portal.reports.utils.forms.getKeyValuePairsFromForm(form);
             var url = '/imt?mode=SPECIES&species=' + 
                     form.attr('ptvk');
-            if (keyValuePairs['startYear'] != undefined &&
-                keyValuePairs['startYear'] != '' && 
-                keyValuePairs['endYear'] != undefined && 
-                keyValuePairs['endYear'] != '') {
+            if (keyValuePairs['startYear'] !== undefined &&
+                keyValuePairs['startYear'] !== '' && 
+                keyValuePairs['endYear'] !== undefined && 
+                keyValuePairs['endYear'] !== '') {
                 url = url + '&startyear=' + 
                     keyValuePairs['startYear'] + 
                     '&endyear=' + 

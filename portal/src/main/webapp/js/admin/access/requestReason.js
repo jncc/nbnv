@@ -53,7 +53,7 @@ nbn.nbnv.ui.requestReason = function(json) {
                     asSelect.change();
                 }
             }
-        })
+        });
 
         var purpose = $('<select>')
                 .append($('<option>').text('Personal interest').attr('value', '1'))
@@ -97,7 +97,7 @@ nbn.nbnv.ui.requestReason = function(json) {
                     _me._details = $(this).val();
                 });
         
-        if (this._details != '') { details.text(this._details); }
+        if (this._details !== '') { details.text(this._details); }
         
         var data = $('<div>')
             .append($('<div>')
