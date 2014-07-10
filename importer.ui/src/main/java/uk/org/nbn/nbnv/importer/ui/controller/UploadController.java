@@ -22,8 +22,8 @@ import org.springframework.web.servlet.ModelAndView;
 import uk.org.nbn.nbnv.importer.s1.utils.model.MetadataForm;
 import uk.org.nbn.nbnv.importer.ui.model.UploadItem;
 import uk.org.nbn.nbnv.importer.ui.model.UploadItemResults;
-import uk.org.nbn.nbnv.importer.ui.parser.DarwinCoreField;
-import uk.org.nbn.nbnv.importer.ui.parser.NXFParser;
+import uk.org.nbn.nbnv.importer.s1.utils.parser.DarwinCoreField;
+import uk.org.nbn.nbnv.importer.s1.utils.parser.NXFParser;
 import uk.org.nbn.nbnv.jpa.nbncore.Organisation;
 
 /**
