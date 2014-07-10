@@ -37,7 +37,8 @@
         <module>recordcleaner</module>
         <module>reseter.datasetAccess</module>
         <module>api-poker</module>
-    </modules>
+        <module>importer.s1.utils</module>
+  </modules>
 	
     <build>
         <pluginManagement>

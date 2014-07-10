@@ -1,7 +1,7 @@
 <#macro dataset_table providersWithQueryStats requestParameters>
     <#if providersWithQueryStats?has_content>
         <div class="tabbed tabbed-reports-dataset-table" id="nbn-dataset-selector-container">
-            <h3>Data providers and their datasets that contribute to this page (number of records)<span id="nbn-select-datasets-text">Select or deselect all datasets: <input type="checkbox" name="nbn-select-datasets-auto" id="nbn-select-datasets-auto"/></span><br />Sort by: <select id="nbn-select-datasets-orderby"><option value="1">Number of Records</option><option value="2">Organisation Name</option></select></span> </h3>
+            <h3>Data providers and their datasets that contribute to this page (number of records)<span id="nbn-select-datasets-text"><input id="nbn-select-all-datasets" type="button" value="Select All"/><input id="nbn-deselect-all-datasets" type="button" value="Deselect All"/></span><br />Sort by: <select id="nbn-select-datasets-orderby"><option value="1">Number of Records</option><option value="2">Organisation Name</option></select></span> </h3>
                 <div id="nbn-dataset-ordered-table-byrecord">
                     <@ordered_datasets providersWithQueryStats=providersWithQueryStats?sort_by('querySpecificObservationCount')?reverse requestParameters=requestParameters />
                 </div>

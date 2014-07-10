@@ -1,5 +1,7 @@
 package uk.org.nbn.nbnv.importer.validation
 
+import java.text.SimpleDateFormat
+
 import uk.org.nbn.nbnv.importer.records.NbnRecord
 import uk.org.nbn.nbnv.importer.fidelity.{ResultLevel, Result}
 import uk.org.nbn.nbnv.importer.utility.StringParsing._
@@ -40,10 +42,12 @@ class Nbnv75Validator extends DateFormatValidator {
       startOfYear.set(Calendar.DAY_OF_YEAR, 1)
 
       if (record.startDate.get.compareTo(startOfYear.getTime) != 0) {
+        val dateFormat = new SimpleDateFormat("yyyy")
+
         val r3 = new Result {
           def level: ResultLevel.ResultLevel = ResultLevel.ERROR
           def reference: String = record.key
-          def message: String = "%s: The start date is not the start of the year %s".format(code, startOfYear.get(Calendar.YEAR).toString)
+          def message: String = "%s: The start date is not the start of the year %s".format(code, dateFormat.format(startOfYear.getTime))
         }
 
         results.append(r3)

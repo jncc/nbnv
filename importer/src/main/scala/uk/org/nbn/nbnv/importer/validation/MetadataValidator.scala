@@ -29,6 +29,10 @@ class MetadataValidator (repo: Repository) {
     val v4 = new Nbnv953Validator
     results.append(v4.validate(metadata))
 
+    //validate the org name exists
+    val v5 = new Nbnv763Validator(repo)
+    results.append(v5.validate(metadata))
+
     results.toList
   }
 
