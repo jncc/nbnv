@@ -61,9 +61,9 @@ nbn.nbnv.ui.requestDetails = function(json, username) {
     
     this.getJson = function() {
         if (this._asID > -1)
-            return { reason: { purpose: this._purpose, details: encodeURIComponent(this._details), organisationID: this._asID }};
+            return { reason: { purpose: this._purpose, details: (this._details), organisationID: this._asID }};
         
-        return { reason: { purpose: this._purpose, details: encodeURIComponent(this._details) }};
+        return { reason: { purpose: this._purpose, details: (this._details) }};
     };
 
     this.getError = function() {
