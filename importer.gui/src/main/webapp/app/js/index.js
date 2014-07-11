@@ -1,17 +1,5 @@
 (function () {
-    /*var importerModule = angular.module('importer', ['ngRoute', 'ngAnimate']);
-        .config(['$routeProvider', '$locationProvider',
-            function ($routeProvider, $locationProvider) {
-                $routeProvider
-                    .when('/View/:name', {
-                        templateUrl: 'View.html',
-                        controller: 'ViewController',
-                        controllerAs: 'view'
-                    });
 
-                // configure html5 to get links working on jsfiddle
-                $locationProvider.html5Mode(true);
-            }])*/
     var importerModule = angular.module('importer', []);
 
     importerModule.controller('ViewController', function () {
@@ -25,44 +13,53 @@
             return this.selectedView === currentView;
         }
     });
-    // change thsi to $scope
-    importerModule.controller('MetadataController', function ($scope) {
+
+    importerModule.controller('MetadataController', function ($scope, $http) {
         $scope.allOrganisations = {};
         $scope.allOrganisations = [{name:"test"}, {name:"alpha"}, {name:"beta"}];
-        /*var arrayLength = this.allOrganisations.length;
-        for (var i = 0; i < arrayLength; i++) {
-            alert(this.allOrganisations[i].name);
-        } */
-        this.metadata = {};
-        this.metadata.title = "";
-        this.metadata.organisation = "";
-        this.metadata.description = "";
-        this.metadata.methodsOfDataCapture = "";
-        this.metadata.purposeOfDataCapture = "";
-        this.metadata.geographicalCoverage = "";
-        this.metadata.temporalCoverage = "";
-        this.metadata.dataQuality = "";
-        this.metadata.additionalInfo = "";
-        this.metadata.useConstraints = "";
-        this.metadata.accessConstraints = "";
-        this.metadata.adminDetails = {};
-        this.metadata.adminDetails.name = "";
-        this.metadata.adminDetails.phone = "";
-        this.metadata.adminDetails.email = "";
-        this.metadata.access = {};
-        this.metadata.resolution = ""; // radio button
-        this.metadata.recordAttributes = ""; // radio button
-        this.metadata.recorderNames = ""; // radio button
-        this.metadata.insertionType = ""; // radio button
 
-
-    });
-
-// configure the module.
-// in this example we will create a greeting filter
-    importerModule.filter('greet', function () {
-        return function (name) {
-            return 'Hello, ' + name + '!';
+        $scope.resetMetadata = function(){
+            $scope.metadata = {};
+            $scope.metadata.title = "";
+            $scope.metadata.organisation = "";
+            $scope.metadata.description = "";
+            $scope.metadata.methodsOfDataCapture = "";
+            $scope.metadata.purposeOfDataCapture = "";
+            $scope.metadata.geographicalCoverage = "";
+            $scope.metadata.temporalCoverage = "";
+            $scope.metadata.dataQuality = "";
+            $scope.metadata.additionalInfo = "";
+            $scope.metadata.useConstraints = "";
+            $scope.metadata.accessConstraints = "";
+            $scope.metadata.geographicResolution = "";
+            $scope.metadata.adminDetails = {};
+            $scope.metadata.adminDetails.name = "";
+            $scope.metadata.adminDetails.phone = "";
+            $scope.metadata.adminDetails.email = "";
+            $scope.metadata.access = {};
+            $scope.metadata.resolution = ""; // radio button
+            $scope.metadata.recordAttributes = ""; // radio button
+            $scope.metadata.recorderNames = ""; // radio button
+            $scope.metadata.insertionType = ""; // radio button
         };
+
+        $scope.resetMetadata(); // call it to perform initialization
+
+        $scope.updateGeoResolution = function(key, value){
+            $scope.metadata[key] = value;
+        }
+
+        $scope.upload = function() {
+            console.log(JSON.stringify($scope.metadata));
+            $http({
+                method : 'POST',
+                url : '/rest/upload-metadata',
+                headers: {'Content-Type' : 'application/json'},
+                data : $scope.metadata
+            })
+        }
+
     });
+
+    var resetMetadata
 })();

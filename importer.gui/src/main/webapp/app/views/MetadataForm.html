@@ -1,4 +1,4 @@
-<form name="form" novalidate ng-controller="MetadataController" class="form-inline">
+<form name="form" novalidate ng-controller="MetadataController" ng-submit="upload()" class="form-inline">
 
     <div class="row">
         <div class="span5 offset1">
@@ -41,7 +41,7 @@
     <div class="row marginTop10px">
         <div class="span10 offset1">
             <textarea class="width40" ng-required="true" placeholder="Use Constraints" ng-model="form.metadata.useConstraints" rows="3"></textarea>
-            <textarea class="width40" ng-required="true" placeholder="Access Constraints" ng-model="form.metadata.useConstraints" rows="3"></textarea>
+            <textarea class="width40" ng-required="true" placeholder="Access Constraints" ng-model="form.metadata.accessConstraints" rows="3"></textarea>
         </div>
     </div>
 
@@ -57,20 +57,20 @@
         <div class="span5 offset1 pagination-centered">
             <label for="geoBtnGroupDiv"><span class="badge">Geographic Resolution</span></label>
             <div id="geoBtnGroupDiv" class="btn-group" data-toggle="buttons-radio">
-                <button type="button" class="btn">Full</button>
-                <button type="button" class="btn">1Km²</button>
-                <button type="button" class="btn">2Km²</button>
-                <button type="button" class="btn">10Km²</button>
-                <button type="button" class="btn">No Access</button>
+                <button type="button" ng-click="updateForm('geographicResolution','Full')" class="btn">Full</button>
+                <button type="button" ng-click="updateForm('geographicResolution','1Km²')" class="btn">1Km²</button>
+                <button type="button" ng-click="updateForm('geographicResolution','2Km²')" class="btn">2Km²</button>
+                <button type="button" ng-click="updateForm('geographicResolution','10Km²')" class="btn">10Km²</button>
+                <button type="button" ng-click="updateForm('geographicResolution', 'No Access')" class="btn">No Access</button>
             </div>
         </div>
         <div class="span4 pagination-centered">
             <label for="recordAttrBtnGroupDiv"><span class="badge">Record Attributes</span></label>
             <br/>
             <div id="geoBtnGroupDiv" class="btn-group" data-toggle="buttons-radio">
-                <button type="button" class="btn">Yes</button>
-                <button type="button" class="btn">No</button>
-                <button type="button" class="btn">N/A</button>
+                <button type="button" ng-click="updateForm('recordAttributes', 'true')" class="btn">Yes</button>
+                <button type="button" ng-click="updateForm('recordAttributes', 'false')" class="btn">No</button>
+                <button type="button" ng-click="updateForm('recordAttributes', 'N/A')"  class="btn">N/A</button>
             </div>
         </div>
     </div>
@@ -80,9 +80,9 @@
             <label for="recorderNamesBtnGroupDiv"><span class="badge">Recorder Names</span></label>
             <br/>
             <div id="geoBtnGroupDiv" class="btn-group" data-toggle="buttons-radio">
-                <button class="btn">Yes</button>
-                <button class="btn">No</button>
-                <button class="btn">N/A</button>
+                <button type="button" ng-click="updateForm('recorderNames', 'true')" class="btn">Yes</button>
+                <button type="button" ng-click="updateForm('recorderNames', 'false')" class="btn">No</button>
+                <button  ng-click="updateForm('recorderNames', 'N/A')" class="btn">N/A</button>
             </div>
         </div>
 
@@ -90,9 +90,9 @@
             <label for="insertTypeBtnGroupDiv"><span class="badge">Insert Type</span></label>
             <br/>
             <div id="geoBtnGroupDiv" class="btn-group" data-toggle="buttons-radio">
-                <button class="btn active">New</button>
-                <button class="btn">Append</button>
-                <button class="btn">Update</button>
+                <button  type="button" ng-click="updateForm('insertType', 'true')" class="btn active">New</button>
+                <button  type="button"  ng-click="updateForm('insertType', 'true')" class="btn">Append</button>
+                <button  type="button"  ng-click="updateForm('insertType', 'true')" class="btn">Update</button>
             </div>
         </div>
     </div>
