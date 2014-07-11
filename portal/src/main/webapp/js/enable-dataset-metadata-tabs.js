@@ -14,23 +14,23 @@
         $.fn.dataTableExt.oJUIClasses.sStripeOdd = 'ui-state-highlight';
         
         $('#nbn-tabs').bind('tabsload', function(event, ui){
-            var elementForRender = 'nbn-species-datatable'
+            var elementForRender = 'nbn-species-datatable';
             if($(ui.panel).find('#' + elementForRender).length > 0){
                 renderSpecies(elementForRender);
             }
-            elementForRender = 'nbn-temporal-chart'
+            elementForRender = 'nbn-temporal-chart';
             if($(ui.panel).find('#' + elementForRender).length > 0){
                 renderTemporal(elementForRender);
             }
-            elementForRender = 'nbn-surveys'
+            elementForRender = 'nbn-surveys';
             if($(ui.panel).find('#' + elementForRender).length > 0){
                 renderSurveys();
             }
-            elementForRender = 'nbn-attributes'
+            elementForRender = 'nbn-attributes';
             if($(ui.panel).find('#' + elementForRender).length > 0){
                 renderAttributes();
             }
-            elementForRender = 'nbn-site-boundaries'
+            elementForRender = 'nbn-site-boundaries';
             if($(ui.panel).find('#' + elementForRender).length > 0){
                 renderSiteBoundaries(elementForRender);
             }

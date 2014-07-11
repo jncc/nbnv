@@ -106,7 +106,7 @@ nbn.nbnv.ui.requestPickUserReason = function(json) {
                     _me._details = $(this).val();
                 });
         
-        if (this._details != '') { details.text(this._details); }
+        if (this._details !== '') { details.text(this._details); }
         
         var reason = $('<textarea>')
                 .attr('cols', '75')
@@ -116,7 +116,7 @@ nbn.nbnv.ui.requestPickUserReason = function(json) {
                     _me._reason = $(this).val();
                 });
         
-        if (this._reason != '') { reason.text(this._reason); }
+        if (this._reason !== '') { reason.text(this._reason); }
 
         var userPick = $('<div>')
             .append($('<input>')
@@ -191,18 +191,18 @@ nbn.nbnv.ui.requestPickUserReason = function(json) {
     
     this.getJson = function() {
         if (!this._user)
-            return { reason: { purpose: this._purpose, details: this._details, reason: this._reason, organisationID: this._asID }};
+            return { reason: { purpose: this._purpose, details: (this._details), reason: (this._reason), organisationID: this._asID }};
         
-        return { reason: { purpose: this._purpose, details: this._details, reason: this._reason, userID: this._asID }};
+        return { reason: { purpose: this._purpose, details: (this._details), reason: (this._reason), userID: this._asID }};
     };
     
     this.setGrant = function(grant) {
         this._grant = grant;
-    }
+    };
 
     this.getError = function() {
-        if (this._details == '' && ! this._grant) { return ['Please enter detailed reason for the request']; }
-        if (this._asID == -1) { return ['Missing user or organisation to grant access to']}
+        if (this._details === '' && ! this._grant) { return ['Please enter detailed reason for the request']; }
+        if (this._asID === -1) { return ['Missing user or organisation to grant access to']; }
         
         return [];
     };
