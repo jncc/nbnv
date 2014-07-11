@@ -22,7 +22,7 @@ nbn.nbnv.ui.requestDetails = function(json, username) {
 
     this._renderHeader = function() {
         return $('<h3>').attr('filtertype', 'reason')
-            .append($('<span>').addClass('filterheader').append('Access Request Details'))
+            .append($('<span>').addClass('filterheader').append('Access Request Details'));
     };
     
     this._renderPanel = function() {
@@ -61,9 +61,9 @@ nbn.nbnv.ui.requestDetails = function(json, username) {
     
     this.getJson = function() {
         if (this._asID > -1)
-            return { reason: { purpose: this._purpose, details: this._details, organisationID: this._asID }};
+            return { reason: { purpose: this._purpose, details: (this._details), organisationID: this._asID }};
         
-        return { reason: { purpose: this._purpose, details: this._details }};
+        return { reason: { purpose: this._purpose, details: (this._details) }};
     };
 
     this.getError = function() {

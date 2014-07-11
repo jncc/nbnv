@@ -85,7 +85,7 @@ nbn.nbnv.ui.timeLimit = function(json) {
         var text = '';
         
         if (this._all) {
-            text = 'Indefinitely'
+            text = 'Indefinitely';
         } else {
             text = this._date.format('DD/MM/YYYY');
         }

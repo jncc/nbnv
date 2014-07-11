@@ -66,6 +66,6 @@
         $('input[type=checkbox][name=datasetKey]').click(function() {
             $('input[type=checkbox][name=datasetKey][value=' + $(this).attr('value') + ']')
                     .prop('checked', $(this).prop('checked'));
-        })
+        });
     });
 })(jQuery);

@@ -61,9 +61,9 @@ nbn.nbnv.ui.filter.spatial = function(json) {
                         $.each(data, function(id, sb) {
                             var option = $('<option>')
                                 .text(sb.name)
-                                .attr('value', sb.identifier)
+                                .attr('value', sb.identifier);
                                 
-                            if (_me._feature == sb.identifier) {
+                            if (_me._feature === sb.identifier) {
                                 option.attr("selected","selected");
                             }
                             
@@ -83,7 +83,7 @@ nbn.nbnv.ui.filter.spatial = function(json) {
                         .text(sbd.title)
                         .attr('value', sbd.datasetKey);
                     
-                    if (_me._dataset == sbd.datasetKey) {
+                    if (_me._dataset === sbd.datasetKey) {
                         option.attr("selected", "selected");
                     }
                     
@@ -205,9 +205,9 @@ nbn.nbnv.ui.filter.spatial = function(json) {
         var _me = this;
                 
         if (this._all) {
-            text = 'All areas'
-        } else if (this._mode == 'site')  {
-            if (this._featureName == '') {
+            text = 'All areas';
+        } else if (this._mode === 'site')  {
+            if (this._featureName === '') {
                 $.ajax({
                     url: nbn.nbnv.api + '/features/' + this._feature,
                     success: function(data) {
@@ -222,7 +222,7 @@ nbn.nbnv.ui.filter.spatial = function(json) {
                 }
                 text = 'Records ' + this._matchType + ' ' + this._featureName;
             }
-        } else if (this._mode == 'gridRef') {
+        } else if (this._mode === 'gridRef') {
             this._gridRef = $('#gridRefSelector').val();
             text = 'Records ' + this._matchType + ' ' + this._gridRef;
         }
@@ -255,14 +255,14 @@ nbn.nbnv.ui.filter.spatial = function(json) {
     this.getJson = function() {
         if (this._all) {
             return { spatial: { all: true }};
-        } else if (this._mode == 'site') {
+        } else if (this._mode === 'site') {
             return { spatial: { all: false, match: this._matchType, feature: this._feature, dataset: this._dataset }};
         }
         return { spatial: { all: false, match: this._matchType, gridRef: this._gridRef }};
     };
 
     this.getError = function() {
-        if (!this._siteFilter && !this._all && this._mode == 'gridRef') {
+        if (!this._siteFilter && !this._all && this._mode === 'gridRef') {
             this._feature = $('#gridRefSelector').val();
             if (!(new RegExp('^[HJNOST][A-Z](\\d\\d)$','i').test(this._feature) || 
                     new RegExp('^[A-HJ-Z](\\d\\d)$','i').test(this._feature) || 

@@ -5,7 +5,7 @@
         ac.autocomplete({
                 source: function(request, response) {
                     $.getJSON(ac.attr('api')+ '?q=' + request.term, function(data) {
-                        response($.map(data.results, function(item) { item.value = item.name; return item; }))
+                        response($.map(data.results, function(item) { item.value = item.name; return item; }));
                     });
                 },
                 select: function(event, ui) {
