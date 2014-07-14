@@ -169,7 +169,7 @@ public class UserResource extends AbstractResource {
                 tokenCookieKey,
                 Base64.encodeBase64URLSafeString(token.getBytes()),
                 "/", domain, "authentication token",
-                (remember) ? tokenTTL / 1000 : NewCookie.DEFAULT_MAX_AGE, false))
+                (remember) ? tokenTTL / 1000 : NewCookie.DEFAULT_MAX_AGE, true))
                 .build();
     }
     
