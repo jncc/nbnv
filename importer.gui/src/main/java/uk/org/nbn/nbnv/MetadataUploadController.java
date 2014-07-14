@@ -1,9 +1,8 @@
 package uk.org.nbn.nbnv;
 
-import org.springframework.stereotype.Controller;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-import javax.xml.ws.Response;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,13 +12,17 @@ import java.util.List;
  *         Time: 11:41
  */
 @RestController
-@RequestMapping(value = "/rest")     // every method return value is responsebody
 public class MetadataUploadController {
 
-    @RequestMapping(value= "/upload-metadata",  method = RequestMethod.POST)
+    @RequestMapping(value= Url.uploadMetadata,  method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE,  produces = MediaType.APPLICATION_JSON_VALUE)
     public Boolean uploadMetadata(@RequestBody MetadataForm metadataForm){
         Logger.info("uploading metadata : {0}", metadataForm.getTitle());
         return true;
+    };
+    @RequestMapping(value= Url.downloadMetadataSample,  method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public MetadataForm downloadSample(){
+        Logger.info("downloading test sample data");
+        return new MetadataForm().SampleTestData();
     };
 
     @RequestMapping("/dataset-names")

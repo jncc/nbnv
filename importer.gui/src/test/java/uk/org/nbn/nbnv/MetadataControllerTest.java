@@ -13,19 +13,19 @@ import org.springframework.web.context.WebApplicationContext;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
 @ContextConfiguration("classpath:/test-context.xml")
 public class MetadataControllerTest {
-    private MockMvc mockMvc;
-
-    @SuppressWarnings("SpringJavaAutowiringInspection")
+    //    @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
     protected WebApplicationContext wac;
+    private MockMvc mockMvc;
 
     @Before
     public void setup() {
@@ -34,38 +34,36 @@ public class MetadataControllerTest {
 
     @Test
     public void testUpload() throws Exception {
+        String testJson = new MetadataForm().SampleTestData().toJson();
+    //        Logger.info("test json is :" + testJson);
+
+        mockMvc.perform(
+                post(Url.uploadMetadata)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(testJson))
+//                .andDo(print())
+                .andExpect(status().isOk());
+
+    }
+    @Test
+    public void testDownloadSample() throws Exception {
+        mockMvc.perform(
+                get(Url.downloadMetadataSample).accept(MediaType.APPLICATION_JSON))
+                .andExpect(new DefaultResultMatcher(MetadataForm.class));
+    }
+
+    @Test
+    public void testBasic() throws Exception {
+        String testJson = "false";
         // just checking spring is set up ok
         mockMvc.perform(
-                    post("/hello")
-                    .accept(MediaType.APPLICATION_JSON)
-                    .content(MediaType.APPLICATION_JSON_VALUE)
-                    .content()
-                )
-                .andExpect(status().isOk())
-                .andExpect(view().name("hello"));
-    }
-    /** there must be an easier way than this*/
-    private String getMetadataJson(){
-        return  "{\"title\":\"mytitle\"" +
-                ",\"organisation\":\"myOrganisation\"" +
-                ",\"description\":\"myDesc\"" +
-                ",\"methodsOfDataCapture\":\"myMethods of data capture\"" +
-                ",\"purposeOfDataCapture\":\"my puprose of data caprutre\"" +
-                ",\"geographicalCoverage\":\"my geo coverage\"" +
-                ",\"temporalCoverage\":\"my temp caoveral\"" +
-                ",\"dataQuality\":\"my data quality\"" +
-                ",\"additionalInfo\":\"my addtional info\"" +
-                ",\"useConstraints\":\"my use constraints\"" +
-                ",\"accessConstraints\":\"my access cosntraints \"" +
-                ",\"geographicResolution\":\" my geo resolution\"" +
-                ",\"adminDetails\":" +
-                    "{\"name\":\"my admin name\"" +
-                    ",\"phone\":\"my phone \"" +
-                    ",\"email\":\"my tel 12345\"}" +
-                ",\"access\":{}\"" +
-                ",\"resolution\":\"\"" +
-                ",\"recordAttributes\":\"\"" +
-                ",\"recorderNames\":\"\"" +
-                ",\"insertionType\":\"\"}";
+                post(Url.basic)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(testJson))
+                .andDo(print())
+                .andExpect(status().isOk());
+
     }
 }
