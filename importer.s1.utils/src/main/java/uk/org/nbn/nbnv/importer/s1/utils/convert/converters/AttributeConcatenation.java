@@ -70,7 +70,7 @@ public class AttributeConcatenation extends ConverterStep {
                 obj.put(columnList.get(c), attrib.substring(0, Math.min(attrib.length(), 255)));
             } catch (JSONException ex) {
                 Logger.getLogger(AttributeConcatenation.class.getName()).log(Level.SEVERE, null, ex);
-                throw new BadDataException(ex);
+                throw new BadDataException("Could not normalize and trim the attribute value in the following input - " + row.get(c));
             }
         }
         
