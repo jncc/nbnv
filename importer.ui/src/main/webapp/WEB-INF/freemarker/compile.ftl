@@ -16,6 +16,12 @@
                 <li>${result}</li>
             </#list>
         </ul>
+        <p>Warnings:</p>
+        <ul>
+            <#list model.warnings as result>
+                <li>${result}</li>
+            </#list>
+        </ul>
         <p>Result:</p>
         <form action="download.html" method="POST">
             <input type="hidden" name="file" value="${model.archive}"/>
