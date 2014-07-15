@@ -1,8 +1,11 @@
 package uk.org.nbn.nbnv;
 
 import org.springframework.http.MediaType;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,12 +15,16 @@ import java.util.List;
  *         Time: 11:41
  */
 @RestController
-public class MetadataUploadController {
-
+public class MetadataUploadController extends ErrorHandling{
+    @InitBinder
+    protected void initBinder(WebDataBinder binder) {
+        binder.addValidators(new MetadataFormValidator());
+    }
     @RequestMapping(value= Url.uploadMetadata,  method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE,  produces = MediaType.APPLICATION_JSON_VALUE)
-    public Boolean uploadMetadata(@RequestBody MetadataForm metadataForm){
+    public BindingResult uploadMetadata(@Valid @RequestBody MetadataForm metadataForm, WebDataBinder binder){
         Logger.info("uploading metadata : {0}", metadataForm.getTitle());
-        return true;
+        return binder.getBindingResult();
+
     };
     @RequestMapping(value= Url.downloadMetadataSample,  method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public MetadataForm downloadSample(){

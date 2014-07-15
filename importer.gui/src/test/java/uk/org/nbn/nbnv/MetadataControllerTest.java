@@ -14,7 +14,6 @@ import org.springframework.web.context.WebApplicationContext;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
@@ -44,8 +43,26 @@ public class MetadataControllerTest {
                         .content(testJson))
 //                .andDo(print())
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    public void testValidationFail() throws Exception {
+        MetadataForm metadataForm = new MetadataForm().SampleTestData();
+        metadataForm.setAdminName(null);
+
+        String testJson = metadataForm.toJson();
+        //        Logger.info("test json is :" + testJson);
+
+        mockMvc.perform(
+                post(Url.uploadMetadata)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(testJson))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
 
     }
+
     @Test
     public void testDownloadSample() throws Exception {
         mockMvc.perform(

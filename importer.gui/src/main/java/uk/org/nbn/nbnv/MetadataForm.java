@@ -1,6 +1,5 @@
 package uk.org.nbn.nbnv;
 
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -100,12 +99,12 @@ public class MetadataForm implements JsonBean {
         this.insertionType = builder.insertionType;
         this.methodsOfDataCapture = builder.methodsOfDataCapture;
         this.purposeOfDataCapture = builder.purposeOfDataCapture;
-        this.organisation = builder.organsiation;
+        this.organisation = builder.organisation;
         this.recordAttributes = builder.recordAttributes;
         this.recorderNames = builder.recorderNames;
-
         this.temporalCoverage = builder.temporalCoverage;
         this.title = builder.title;
+        this.useConstraints = builder.useConstraints;
 
     }
 
@@ -116,7 +115,6 @@ public class MetadataForm implements JsonBean {
     @Override
     public MetadataForm SampleTestData() {
         return new Builder()
-                .access("test access")
                 .accessConstraints("test access constraints")
                 .additionalInfo("test additonal information")
                 .adminEmail("test@googel.com")
@@ -133,7 +131,8 @@ public class MetadataForm implements JsonBean {
                 .recorderNames("record names")
                 .temporalCoverage("temporal coverage")
                 .title("my title")
-                .useContraints("use constraints")
+                .useConstraints("use constraints")
+                .organisation("test org")
                 .build();
 
     }
@@ -230,7 +229,7 @@ public class MetadataForm implements JsonBean {
     }
 
     public String getAccessConstraints() {
-        return accessConstraints;
+        return this.accessConstraints;
     }
 
     public void setAccessConstraints(String accessConstraints) {
@@ -269,19 +268,19 @@ public class MetadataForm implements JsonBean {
         this.insertionType = insertionType;
     }
 
-    public String getName() {
+    public String getAdminName() {
         return adminName;
     }
 
-    public void setName(String name) {
+    public void setAdminName(String name) {
         this.adminName = name;
     }
 
-    public String getPhone() {
+    public String getAdminPhone() {
         return adminPhone;
     }
 
-    public void setPhone(String adminPhone) {
+    public void setAdminPhone(String adminPhone) {
         this.adminPhone = adminPhone;
     }
 
@@ -295,7 +294,7 @@ public class MetadataForm implements JsonBean {
 
     private static class Builder {
         private String title;
-        private String organsiation;
+        private String organisation;
         private String description;
         private String methodsOfDataCapture;
         private String purposeOfDataCapture;
@@ -303,13 +302,12 @@ public class MetadataForm implements JsonBean {
         private String temporalCoverage;
         private String dataQuality;
         private String additionalInfo;
-        private String useContraints;
+        private String useConstraints;
         private String accessConstraints;
         private String geographicalResolution;
         private String adminName;
         private String adminPhone;
         private String adminEmail;
-        private String access;
         private String recordAttributes;
         private String recorderNames;
         private String insertionType;
@@ -322,8 +320,8 @@ public class MetadataForm implements JsonBean {
             return this;
         }
 
-        public Builder organsiation(String organsiation) {
-            this.organsiation = organsiation;
+        public Builder organisation(String organisation) {
+            this.organisation = organisation;
             return this;
         }
 
@@ -362,8 +360,8 @@ public class MetadataForm implements JsonBean {
             return this;
         }
 
-        public Builder useContraints(String useContraints) {
-            this.useContraints = useContraints;
+        public Builder useConstraints(String useConstraints) {
+            this.useConstraints = useConstraints;
             return this;
         }
 
@@ -389,11 +387,6 @@ public class MetadataForm implements JsonBean {
 
         public Builder adminEmail(String adminEmail) {
             this.adminEmail = adminEmail;
-            return this;
-        }
-
-        public Builder access(String access) {
-            this.access = access;
             return this;
         }
 

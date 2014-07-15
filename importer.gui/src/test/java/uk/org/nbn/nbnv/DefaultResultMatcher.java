@@ -11,11 +11,13 @@ import org.springframework.test.web.servlet.ResultMatcher;
  *         Time: 16:27
  */
 public class DefaultResultMatcher<T extends JsonBean> implements ResultMatcher {
-        private final Class<T> clazz;
-    public DefaultResultMatcher(Class<T> clazz){
+    private final Class<T> clazz;
+
+    public DefaultResultMatcher(Class<T> clazz) {
         this.clazz = clazz;
 
     }
+
     @Override
     public void match(MvcResult result) throws Exception {
         HttpStatus actualStatus = HttpStatus.valueOf(result.getResponse().getStatus());
