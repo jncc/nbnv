@@ -21,7 +21,7 @@ class Nbnv159Validator () {
     def fail  = {
       new Result {
         def level = ResultLevel.ERROR
-        def message = "NBNV-159: Grid refernce '%s' does not match the spatial system".format(record.gridReferenceRaw.get)
+        def message = "NBNV-159: Grid reference '%s' does not match the spatial system".format(record.gridReferenceRaw.get)
         def reference = record.key
       }
     }

@@ -16,6 +16,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.springframework.util.StringUtils;
@@ -23,8 +24,8 @@ import uk.org.nbn.nbnv.importer.s1.utils.errors.AmbiguousDataException;
 import uk.org.nbn.nbnv.importer.s1.utils.errors.BadDataException;
 import uk.org.nbn.nbnv.importer.s1.utils.convert.ConverterStep;
 import uk.org.nbn.nbnv.importer.s1.utils.convert.StepOrderer;
+import uk.org.nbn.nbnv.importer.s1.utils.errors.ImportWarningException;
 import uk.org.nbn.nbnv.importer.s1.utils.errors.UnsatisfiableDependencyError;
-import uk.org.nbn.nbnv.importer.s1.utils.model.MetadataForm;
 import uk.org.nbn.nbnv.importer.s1.utils.parser.ColumnMapping;
 import uk.org.nbn.nbnv.importer.s1.utils.parser.DarwinCoreField;
 import uk.org.nbn.nbnv.importer.s1.utils.parser.NXFParser;
@@ -43,12 +44,9 @@ public class RunConversions {
         "MMM yyyy", 
         "yyyy"};
     private List<String> dateFormats = Arrays.asList(validDates);
-    
-    private List<ConverterStep> steps = new ArrayList<ConverterStep>();
-    private List<ColumnMapping> mappings;
+
     private NXFParser nxfParser;
     private int organisation;
-    private MetadataForm metadataForm;
     private StepOrderer stepOrderer;
     
     private int startDateCol = -1;
@@ -63,10 +61,9 @@ public class RunConversions {
      * @param organisation Optional input to determine if organisational dependent steps need to run
      * @throws IOException 
      */
-    public RunConversions(File in, int organisation, MetadataForm metadataForm) throws IOException {
+    public RunConversions(File in, int organisation) throws IOException {
         this.nxfParser = new NXFParser(in);
         this.organisation = organisation;
-        this.metadataForm = metadataForm;
     }
 
     private void modifyColumns(List<ConverterStep> steps, List<ColumnMapping> mappings) {
@@ -81,14 +78,16 @@ public class RunConversions {
         }
     }
     
-    public List<String> run(File out, File meta, Map<String, String> args) throws IOException {
+    public Map<String, List<String>> run(File out, File meta, Map<String, String> args) throws IOException {
         List<String> errors = new ArrayList<String>();
+        List<String> warnings = new ArrayList<String>();
         BufferedWriter w = null;
 
         try {
             w = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(out), "UTF8"));
 
-            getMappings(args);
+            List<ColumnMapping> mappings = getMappings(args);
+            int initialColumns = mappings.size();
             
             stepOrderer = new StepOrderer(organisation);
             stepOrderer.getSteps(mappings);
@@ -104,17 +103,32 @@ public class RunConversions {
             w.newLine();
             
             List<String> row;
+            int currentRow = 2; // Start from second line (headers already dealt with)
             while ((row = nxfParser.readDataLine()) != null) {
                 try {
+                    if (row.size() < initialColumns) {
+                        throw new BadDataException("Expected " + initialColumns + " columns of data, found " + row.size());
+                    }
+                    
                     updateStartEndDates(row);
                     modifyRow(stepOrderer.getSteps(), row);
+                    
+                    if (row.size() > initialColumns) {
+                        throw new ImportWarningException("Expected " + initialColumns + " columns of data, found " + row.size() + "");
+                    }
+                        
                 } catch (AmbiguousDataException ex) { 
-                    errors.add("Ambiguous Data: " + ex.getMessage());
+                    errors.add("Ambiguous Data (Line " + currentRow + ") : " + ex.getMessage());
                 } catch (BadDataException ex) {
-                    errors.add("Bad Data: " + ex.getMessage());
+                    errors.add("Bad Data (Line " + currentRow + ") : " + ex.getMessage());
+                } catch (ImportWarningException ex) {
+                    warnings.add("Import Warning (Line " + currentRow + ") : " + ex.getMessage());
+                } finally {
+                    w.write(StringUtils.collectionToDelimitedString(row, "\t"));
+                    w.newLine();
+                    // Increment row counter
+                    currentRow++;
                 }
-                w.write(StringUtils.collectionToDelimitedString(row, "\t"));
-                w.newLine();
             }
 
             MetaWriter mw = new MetaWriter();
@@ -128,7 +142,11 @@ public class RunConversions {
                 w.close();
             }
         }
-        return errors;
+        
+        Map<String, List<String>> results = new HashMap<String, List<String>>();
+        results.put("errors", errors);
+        results.put("warnings", warnings);
+        return results;
     }
 
     private void updateStartEndDates(List<String> row) {
@@ -164,9 +182,9 @@ public class RunConversions {
         return endDate;
     }
 
-    private void getMappings(Map<String, String> args) throws IOException, FileNotFoundException {
-        mappings = nxfParser.parseHeaders();
-        for (ColumnMapping cm : mappings) {
+    private List<ColumnMapping> getMappings(Map<String, String> args) throws IOException, FileNotFoundException {
+        List<ColumnMapping> columnMappings = nxfParser.parseHeaders();
+        for (ColumnMapping cm : columnMappings) {
             if (args.containsKey(Integer.toString(cm.getColumnNumber()))) {
                 cm.setField(DarwinCoreField.valueOf(args.get(Integer.toString(cm.getColumnNumber()))));
                 if (cm.getField() == DarwinCoreField.EVENTDATESTART) {
@@ -176,6 +194,7 @@ public class RunConversions {
                 }
             }
         }
+        return columnMappings;
     }
        
     public List<ConverterStep> getSteps() {

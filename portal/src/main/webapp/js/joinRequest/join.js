@@ -1,7 +1,7 @@
 (function($) {
     $(document).ready(function() {
         $('#nbn-org-join-request-submit').click(function(e) {
-            if ($('#combobox').val() == -1) {
+            if ($('#combobox').val() === -1) {
                 alert("Please Select an Organisation!");
             } else {
                 var org = $('#combobox').val();
@@ -28,7 +28,7 @@
                                 },
                                 error: function(request, error) {
                                     $('#nbn-org-join-request-dialog').dialog('close');
-                                    if (request.status == 303) {
+                                    if (request.status === 303) {
                                         $('#nbn-org-join-request-exists-dialog').dialog({
                                             resizable: false,
                                             width: 400,
@@ -43,7 +43,7 @@
                                                 }
                                             }
                                         });
-                                    } else if (request.status == 400) {
+                                    } else if (request.status === 400) {
                                         $('#nbn-org-member-already-dialog').dialog({
                                             resizable: false,
                                             width: 400,
