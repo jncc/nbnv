@@ -28,7 +28,7 @@ class Nbnv90Validator (factory: GridSquareInfoFactory) {
           new Result {
             def level = ResultLevel.WARN
             def reference = record.key
-            def message = "%s: The precision is less than 100m and will be rounded up to the maximum precision of 100m".format(code)
+            def message = "%s: The precision is more than 100m and will be rounded down to the maximum precision of 100m".format(code)
           }
 
         results.append(r1)

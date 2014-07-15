@@ -10,21 +10,21 @@ class Nbnv604Validator (repo: Repository) {
       new Result {
         def level = ResultLevel.DEBUG
         def message = "NBNV-604: This is a new dataset"
-        def reference = ""
+        def reference = "metadata"
       }
     }
     else if (! repo.confirmDatasetExists(metadata.datasetKey) ) {
       new Result {
         def level = ResultLevel.ERROR
         def message = "NBNV-604: The dataset key %s does not exist".format(metadata.datasetKey)
-        def reference = metadata.datasetKey
+        def reference = "metadata"
       }
     }
     else {
       new Result {
         def level = ResultLevel.DEBUG
         def message = "NBNV-604: The dataset key %s exists".format(metadata.datasetKey)
-        def reference = metadata.datasetKey
+        def reference = "netadata"
       }
     }
   }

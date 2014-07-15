@@ -12,7 +12,7 @@ class Nbnv951Validator {
       new Result {
         def level = ResultLevel.ERROR
         def message = "%s: A dataset title must be provided".format(code)
-        def reference = "Metadata"
+        def reference = "metadata"
       }
     } else {
       val validator = new LengthValidator()
