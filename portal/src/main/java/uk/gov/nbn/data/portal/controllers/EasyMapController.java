@@ -87,7 +87,7 @@ public class EasyMapController {
      * @param cssUrl The external css to proxy
      * @return a https secured proxy or the original url
      */
-    public String getCSSURL(String cssUrl) throws UnsupportedEncodingException {
+    private String getCSSURL(String cssUrl) throws UnsupportedEncodingException {
         if(cssUrl.startsWith("https")) {
             return cssUrl;
         }
