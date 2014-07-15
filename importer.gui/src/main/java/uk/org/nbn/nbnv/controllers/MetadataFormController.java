@@ -25,10 +25,9 @@ public class MetadataFormController extends ErrorHandling{
         binder.addValidators(new MetadataFormValidator());
     }
     @RequestMapping(value= Url.uploadMetadata,  method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE,  produces = MediaType.APPLICATION_JSON_VALUE)
-    public BindingResult uploadMetadata(@Valid @RequestBody MetadataForm metadataForm, WebDataBinder binder){
+    public Boolean uploadMetadata(@Valid @RequestBody MetadataForm metadataForm, WebDataBinder binder){
         Logger.info("uploading metadata : {0}", metadataForm.getTitle());
-        return binder.getBindingResult();
-
+        return true;
     };
     @RequestMapping(value= Url.downloadMetadataSample,  method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public MetadataForm downloadSample(){

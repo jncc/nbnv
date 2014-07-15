@@ -14,6 +14,7 @@ import uk.org.nbn.nbnv.domain.MetadataForm;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
@@ -33,14 +34,16 @@ public class MetadataControllerTest {
 
     @Test
     public void testUpload() throws Exception {
-        String testJson = new MetadataForm().SampleTestData().toJson();
+        MetadataForm metadataForm = new MetadataForm().SampleTestData();
+        metadataForm.setAdminEmail(null);
+        String json = metadataForm.toJson();
 
         mockMvc.perform(
                 post(Url.uploadMetadata)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(testJson))
-//                .andDo(print())
+                        .content(json))
+                .andDo(print())
                 .andExpect(status().isOk());
     }
 
