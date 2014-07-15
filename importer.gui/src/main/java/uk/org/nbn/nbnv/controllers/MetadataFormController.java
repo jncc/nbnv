@@ -1,9 +1,13 @@
-package uk.org.nbn.nbnv;
+package uk.org.nbn.nbnv.controllers;
 
 import org.springframework.http.MediaType;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
+import uk.org.nbn.nbnv.Logger;
+import uk.org.nbn.nbnv.domain.MetadataForm;
+import uk.org.nbn.nbnv.Url;
+import uk.org.nbn.nbnv.validators.MetadataFormValidator;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -15,7 +19,7 @@ import java.util.List;
  *         Time: 11:41
  */
 @RestController
-public class MetadataUploadController extends ErrorHandling{
+public class MetadataFormController extends ErrorHandling{
     @InitBinder
     protected void initBinder(WebDataBinder binder) {
         binder.addValidators(new MetadataFormValidator());

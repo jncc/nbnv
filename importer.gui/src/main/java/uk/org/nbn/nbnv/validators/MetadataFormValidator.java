@@ -1,8 +1,10 @@
-package uk.org.nbn.nbnv;
+package uk.org.nbn.nbnv.validators;
 
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
+import uk.org.nbn.nbnv.Logger;
+import uk.org.nbn.nbnv.domain.MetadataForm;
 
 import java.beans.IntrospectionException;
 import java.beans.Introspector;

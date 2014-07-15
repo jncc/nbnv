@@ -1,4 +1,4 @@
-package uk.org.nbn.nbnv;
+package uk.org.nbn.nbnv.controllers;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
@@ -7,14 +7,15 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import uk.org.nbn.nbnv.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * include javadoc
+ * Extend this for default exception handling
  */
-public class ErrorHandling {
+public abstract class ErrorHandling {
 
     /**
      * Default for all validation errors
@@ -29,7 +30,7 @@ public class ErrorHandling {
         List<String> messages = new ArrayList<String>(fieldErrors.size());
         for(FieldError fieldError : fieldErrors){
             messages.add(fieldError.getCode());
-            Logger.warn("Validation failed, and was handled by informing user : " +fieldError.getCode());
+            Logger.warn("Validation failed, and was handled by informing user : " + fieldError.getCode());
         }
         return messages;
     }

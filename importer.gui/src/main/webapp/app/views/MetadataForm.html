@@ -67,7 +67,7 @@
         <div class="span4 pagination-centered">
             <label for="recordAttrBtnGroupDiv"><span class="badge">Record Attributes</span></label>
             <br/>
-            <div id="geoBtnGroupDiv" class="btn-group" data-toggle="buttons-radio">
+            <div id="recordAttrBtnGroupDiv" class="btn-group" data-toggle="buttons-radio">
                 <button type="button" ng-click="updateForm('recordAttributes', 'true')" class="btn">Yes</button>
                 <button type="button" ng-click="updateForm('recordAttributes', 'false')" class="btn">No</button>
                 <button type="button" ng-click="updateForm('recordAttributes', 'N/A')"  class="btn">N/A</button>
@@ -79,7 +79,7 @@
         <div class="span5 offset1 pagination-centered">
             <label for="recorderNamesBtnGroupDiv"><span class="badge">Recorder Names</span></label>
             <br/>
-            <div id="geoBtnGroupDiv" class="btn-group" data-toggle="buttons-radio">
+            <div id="recorderNamesBtnGroupDiv" class="btn-group" data-toggle="buttons-radio">
                 <button type="button" ng-click="updateForm('recorderNames', 'true')" class="btn">Yes</button>
                 <button type="button" ng-click="updateForm('recorderNames', 'false')" class="btn">No</button>
                 <button  ng-click="updateForm('recorderNames', 'N/A')" class="btn">N/A</button>
@@ -89,7 +89,7 @@
         <div class="span4 pagination-centered">
             <label for="insertTypeBtnGroupDiv"><span class="badge">Insert Type</span></label>
             <br/>
-            <div id="geoBtnGroupDiv" class="btn-group" data-toggle="buttons-radio">
+            <div id="insertTypeBtnGroupDiv" class="btn-group" data-toggle="buttons-radio">
                 <button  type="button" ng-click="updateForm('insertType', 'true')" class="btn active">New</button>
                 <button  type="button"  ng-click="updateForm('insertType', 'true')" class="btn">Append</button>
                 <button  type="button"  ng-click="updateForm('insertType', 'true')" class="btn">Update</button>
@@ -100,5 +100,5 @@
     <div class="row marginTop10px">
 
     </div>
-
+    <button  type="button"  ng-click="getSample()" class="btn">Sample</button>
 </form>

@@ -4,6 +4,7 @@ import org.junit.Assert;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultMatcher;
+import uk.org.nbn.nbnv.domain.JsonBean;
 
 /**
  * @author stephen batty

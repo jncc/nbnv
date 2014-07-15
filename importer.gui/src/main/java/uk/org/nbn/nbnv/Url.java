@@ -6,7 +6,7 @@ package uk.org.nbn.nbnv;
  *         Time: 15:18
  */
 public class Url {
-    public static final String uploadMetadata = "/rest/upload-metadata";
-    public static final String downloadMetadataSample = "/rest/download-metadata-sample";
+    public static final String uploadMetadata = "/rest/metadata/upload";
+    public static final String downloadMetadataSample = "/rest/metadata/download-sample";
     public static final String basic = "/rest/basic";
 }

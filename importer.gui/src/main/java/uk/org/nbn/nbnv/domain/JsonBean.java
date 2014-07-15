@@ -1,4 +1,4 @@
-package uk.org.nbn.nbnv;
+package uk.org.nbn.nbnv.domain;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 

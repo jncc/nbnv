@@ -10,10 +10,10 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
+import uk.org.nbn.nbnv.domain.MetadataForm;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
@@ -21,7 +21,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 @WebAppConfiguration
 @ContextConfiguration("classpath:/test-context.xml")
 public class MetadataControllerTest {
-    //    @SuppressWarnings("SpringJavaAutowiringInspection")
+
     @Autowired
     protected WebApplicationContext wac;
     private MockMvc mockMvc;
@@ -34,7 +34,6 @@ public class MetadataControllerTest {
     @Test
     public void testUpload() throws Exception {
         String testJson = new MetadataForm().SampleTestData().toJson();
-    //        Logger.info("test json is :" + testJson);
 
         mockMvc.perform(
                 post(Url.uploadMetadata)
@@ -49,16 +48,13 @@ public class MetadataControllerTest {
     public void testValidationFail() throws Exception {
         MetadataForm metadataForm = new MetadataForm().SampleTestData();
         metadataForm.setAdminName(null);
-
         String testJson = metadataForm.toJson();
-        //        Logger.info("test json is :" + testJson);
-
         mockMvc.perform(
                 post(Url.uploadMetadata)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(testJson))
-                .andDo(print())
+//                .andDo(print())
                 .andExpect(status().isBadRequest());
 
     }
@@ -68,19 +64,5 @@ public class MetadataControllerTest {
         mockMvc.perform(
                 get(Url.downloadMetadataSample).accept(MediaType.APPLICATION_JSON))
                 .andExpect(new DefaultResultMatcher(MetadataForm.class));
-    }
-
-    @Test
-    public void testBasic() throws Exception {
-        String testJson = "false";
-        // just checking spring is set up ok
-        mockMvc.perform(
-                post(Url.basic)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(testJson))
-                .andDo(print())
-                .andExpect(status().isOk());
-
     }
 }
