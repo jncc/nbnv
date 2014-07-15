@@ -14,6 +14,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -26,7 +27,6 @@ import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -60,7 +60,9 @@ public class EasyMapController {
         //Open a connection to the host
         URLConnection connection = new URL(css).openConnection();
         //Set the headers from the host
-        for(Entry<String, List<String>> header : connection.getHeaderFields().entrySet()) {
+        Map<String, List<String>> headers = new HashMap<String, List<String>>(connection.getHeaderFields());
+        headers.put("Content-Type", Arrays.asList("text/css")); //Force a css content type
+        for(Entry<String, List<String>> header : headers.entrySet()) {
             for(String value :header.getValue()) {
                 response.addHeader(header.getKey(), value);
             }
