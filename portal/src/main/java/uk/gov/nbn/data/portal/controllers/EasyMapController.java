@@ -6,20 +6,31 @@ package uk.gov.nbn.data.portal.controllers;
 
 import com.sun.jersey.api.client.UniformInterfaceException;
 import com.sun.jersey.api.client.WebResource;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.MediaType;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import uk.gov.nbn.data.portal.exceptions.InvalidFeatureIdentifierException;
 import uk.org.nbn.nbnv.api.model.BoundingBox;
@@ -40,6 +51,51 @@ public class EasyMapController {
     
     public EasyMapController() {
         errors = new ArrayList<String>();
+    }
+    
+    @RequestMapping(value = "/EasyMap/css")
+    @ResponseBody
+    public void proxyCSS(HttpServletResponse response, 
+                         @RequestParam(value="url") String css) throws IOException {
+        //Open a connection to the host
+        URLConnection connection = new URL(css).openConnection();
+        //Set the headers from the host
+        Map<String, List<String>> headers = new HashMap<String, List<String>>(connection.getHeaderFields());
+        headers.put("Content-Type", Arrays.asList("text/css")); //Force a css content type
+        for(Entry<String, List<String>> header : headers.entrySet()) {
+            for(String value :header.getValue()) {
+                response.addHeader(header.getKey(), value);
+            }
+        }
+        //Copy the content
+        InputStream in = connection.getInputStream();
+        try {
+            OutputStream out = response.getOutputStream();
+            try {
+                IOUtils.copyLarge(in, out);
+            }
+            finally {
+                out.flush();
+                out.close();
+            }
+        } finally {
+            in.close();
+        }
+    }
+    
+    /**
+     * Determine if the url is already https, if it is we can leave it as is. Else,
+     * lets proxy it
+     * @param cssUrl The external css to proxy
+     * @return a https secured proxy or the original url
+     */
+    private String getCSSURL(String cssUrl) throws UnsupportedEncodingException {
+        if(cssUrl.startsWith("https")) {
+            return cssUrl;
+        }
+        else {
+            return "/EasyMap/css?url=" + URLEncoder.encode(cssUrl, "UTF-8");
+        }
     }
     
     @RequestMapping(value = "/EasyMap", method = RequestMethod.GET)
@@ -76,7 +132,7 @@ public class EasyMapController {
             ,@RequestParam(value="bl", required=false) String bottomLeft
             ,@RequestParam(value="tr", required=false) String topRight
             ,@RequestParam(value="blCoord", required=false) String bottomLeftCoord
-            ,@RequestParam(value="trCoord", required=false) String topRightCoord) {
+            ,@RequestParam(value="trCoord", required=false) String topRightCoord) throws UnsupportedEncodingException {
         
         Map<String, Object> model = new HashMap<String, Object>();
         errors = new ArrayList<String>();
@@ -172,7 +228,7 @@ public class EasyMapController {
 
         model.put("wmsParameters",wmsParameters);
         
-        if (css != null && !css.isEmpty()) model.put("css", css);
+        if (css != null && !css.isEmpty()) model.put("css", getCSSURL(css));
         
         if (onlyDisplayMap == null || onlyDisplayMap == 0) {
 
