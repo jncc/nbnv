@@ -20,14 +20,14 @@ class Nbnv78Validator {
       new Result {
         def level: ResultLevel.ResultLevel = ResultLevel.ERROR
         def reference: String = record.key
-        def message: String = "%s: A vague date type must be specified".format(code)
+        def message: String = "%s: A DateType is required for this record".format(code)
       }
     }
     case _ => {
       new Result {
         def level: ResultLevel.ResultLevel = ResultLevel.ERROR
         def reference: String = record.key
-        def message: String = "%s: Unrecognised vague date type '%s'".format(code, record.dateType)
+        def message: String = "%s: The DateType, %s is not one of the recognised types used in the NBN Exchange Format".format(code, record.dateType)
       }
     }
   }

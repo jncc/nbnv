@@ -32,7 +32,7 @@ class Nbnv196Validator extends DateFormatValidator {
         val r2 = new Result {
           def level: ResultLevel.ResultLevel = ResultLevel.ERROR
           def reference: String = record.key
-          def message: String = "%s: The start date is not the start of the month of %s".format(code, dateFormat.format(startMonth.getTime))
+          def message: String = "%s: The StartDate must be the first day of a month for a date with DateType '%s'".format(code, record.dateType)
         }
 
         results.append(r2)
@@ -46,7 +46,7 @@ class Nbnv196Validator extends DateFormatValidator {
         val r3 = new Result {
           def level: ResultLevel.ResultLevel = ResultLevel.ERROR
           def reference: String = record.key
-          def message: String = "%s: The end date is not the end of the month of %s".format(code, dateFormat.format(endMonth.getTime))
+          def message: String = "%s: The EndDate must be the last day of the month, %s specified for a date with DateType '%s'".format(code, dateFormat.format(endMonth.getTime), record.dateType)
         }
 
         results.append(r3)
@@ -58,7 +58,7 @@ class Nbnv196Validator extends DateFormatValidator {
         val r4 = new Result {
           def level: ResultLevel.ResultLevel = ResultLevel.ERROR
           def reference: String = record.key
-          def message: String = "%s: The start and end date are from the same month".format(code)
+          def message: String = "%s: The StartDate and EndDate must occur in different months for a date with DateType '%s'".format(code, record.dateType)
         }
         results.append(r4)
       }
@@ -71,7 +71,7 @@ class Nbnv196Validator extends DateFormatValidator {
         results.append(new Result {
           def level: ResultLevel.ResultLevel = ResultLevel.ERROR
           def reference: String = record.key
-          def message: String = "%s: The end date cannot be after the end of the current year".format(code)
+          def message: String = "%s: The EndDate must not be in a future year".format(code)
         })
       }
 

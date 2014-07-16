@@ -7,19 +7,21 @@ import uk.org.nbn.nbnv.importer.spatial.{UnknownGrid, GridSystem}
 
 //validate if a recognised SRS or grid ref type is supplied.
 class Nbnv185Validator {
+  val code = "NBNV-185"
+
   def validate(record: NbnRecord) = {
     if (record.srsRaw.isDefined) {
       record.srsRaw match {
         case Some("27700") | Some("29903") | Some("23030") | Some("4326") =>
           new Result {
             def level = ResultLevel.DEBUG
-            def message = "NBNV-185: Validated: A recognised SRS was provided"
+            def message = "%s: Validated: A recognised SRS was provided".format(code)
             def reference = record.key
           }
          case _ =>
             new Result {
               def level = ResultLevel.ERROR
-              def message = "NBNV-185: Unrecognised SRS '%s'".format(record.srsRaw.get)
+              def message = "%s: The Projection, %s is not one of the recognised types used in the NBN Exchange Format".format(record.srsRaw.get).format(code)
               def reference = record.key
             }
         }
@@ -29,13 +31,13 @@ class Nbnv185Validator {
         case UnknownGrid =>
           new Result {
             def level = ResultLevel.ERROR
-            def message = "NBNV-185: Unrecognised grid reference type '%s'".format(record.gridReferenceTypeRaw.get)
+            def message = "%s: The Projection, %s is not one of the recognised types used in the NBN Exchange Format".format(code, record.gridReferenceTypeRaw.get)
             def reference = record.key
           }
         case _ =>
           new Result {
             def level = ResultLevel.DEBUG
-            def message = "NBNV-185: Validated: A recognised grid reference type was provided"
+            def message = "%s: Validated: A recognised grid reference type was provided".format(code)
             def reference = record.key
           }
       }
@@ -43,7 +45,7 @@ class Nbnv185Validator {
     else {
       new Result {
         def level = ResultLevel.ERROR
-        def message = "NBNV-185: The spatial reference system or grid system type must be specified"
+        def message = "%s: The Projection is required for this record".format(code)
         def reference = record.key
       }
     }

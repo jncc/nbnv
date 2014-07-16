@@ -15,7 +15,7 @@ class Nbnv85Validator() {
     if (!(record.eastRaw.isDefined && record.eastRaw.get.maybeDouble.isDefined && record.eastRaw.get.maybeDouble.get > 0 )) {
       results.append(new Result {
         def level = ResultLevel.ERROR
-        def message = "%s: East must be a positive numeric value".format(code)
+        def message = "%s: Easting must be a positive number".format(code)
         def reference = record.key
       })
     }
@@ -30,7 +30,7 @@ class Nbnv85Validator() {
     if (!(record.northRaw.isDefined && record.northRaw.get.maybeDouble.isDefined && record.northRaw.get.maybeDouble.get > 0)) {
       results.append( new Result {
         def level = ResultLevel.ERROR
-        def message = "%s: North must be a positive numeric value".format(code)
+        def message = "%s: Northing must be positive number".format(code)
         def reference = record.key
       })
     }

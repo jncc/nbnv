@@ -16,10 +16,9 @@ class Nbnv899Validator {
     } else {
       new Result {
         def level = ResultLevel.ERROR
-        def message = "%s: A valid import type has not been defined".format(code)
+        def message = "%s: The type of import is required".format(code)
         def reference = "metadata"
       }
     }
   }
-
 }
