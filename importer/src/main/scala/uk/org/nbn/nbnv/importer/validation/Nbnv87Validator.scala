@@ -12,6 +12,8 @@ import javax.swing.event.ChangeEvent
 
 //todo refactor this sh*t code
 class Nbnv87Validator {
+  val code="NBNV-87"
+
   def validate(record: NbnRecord) = {
     val point = record.feature.asInstanceOf[PointDef]
 
@@ -32,7 +34,7 @@ class Nbnv87Validator {
       new Result {
         def level = ResultLevel.ERROR
         def reference = record.key
-        def message = "NBNV-87: An unknonw grid reference system or srs has been supplied"
+        def message = "%s: The Projection is not one of the recognised types used in the NBN Exchange Format".format(code)
       }
     }
     else {
@@ -47,7 +49,7 @@ class Nbnv87Validator {
         new Result {
           def level = ResultLevel.DEBUG
           def reference = record.key
-          def message = "NBNV-87: Validated: The easting and northing are valid for the specified SRS"
+          def message = "%s: Validated: The easting and northing are valid for the specified SRS".format(code)
         }
       }
       else {
@@ -55,8 +57,8 @@ class Nbnv87Validator {
           def level = ResultLevel.ERROR
           def reference = record.key
           def message = error match {
-            case Some(e) => "NBNV-87: " + e
-            case None    => "NBNV-87: The easting and northing are invalid for the supplied srs"
+            case Some(e) => "%s: %s".format(code, e)
+            case None    => "%s: The Easting and Northing are invalid for the supplied Projection".format(code)
           }
         }
       }

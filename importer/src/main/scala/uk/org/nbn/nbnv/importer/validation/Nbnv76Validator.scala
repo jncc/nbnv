@@ -43,7 +43,7 @@ class Nbnv76Validator extends DateFormatValidator {
         results.append(new Result {
           def level: ResultLevel.ResultLevel = ResultLevel.ERROR
           def reference: String = record.key
-          def message: String = "%s: The end date is not the end of the year %s".format(code, dateFormat.format(endOfYear.getTime))
+          def message: String = "%s: The EndDate must be the last day of the year for a date with DateType '%s'".format(code, record.dateType)
         })
       }
 
@@ -55,7 +55,7 @@ class Nbnv76Validator extends DateFormatValidator {
         results.append(new Result {
           def level: ResultLevel.ResultLevel = ResultLevel.ERROR
           def reference: String = record.key
-          def message: String = "%s: The end date cannot be after the end of the current year".format(code)
+          def message: String = "%s: The EndDate must not be in a future year".format(code)
         })
       }
 

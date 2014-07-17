@@ -21,7 +21,7 @@ class Nbnv763Validator(repo: Repository) {
     } else {
       new Result {
         def level = ResultLevel.ERROR
-        def message = "%s: The organisation '%s' does not exist in the database".format(code, metadata.datasetProviderName)
+        def message = "%s: The organisation name, %s is not on the NBN Gateway. The organisation must be registered on the NBN Gateway first".format(code, metadata.datasetProviderName)
         def reference = metadata.datasetKey
       }
     }

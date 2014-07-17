@@ -16,7 +16,7 @@ class Nbnv64Validator (repo: Repository) {
     if (!record.taxonVersionKey.isDefined) {
       new Result {
         def level = ResultLevel.ERROR
-        def message = "%s: A taxon version key must be provided.".format(code)
+        def message = "%s: A TaxonVersionKey is required for this record".format(code)
         def reference = record.key
       }
     } else
@@ -29,7 +29,7 @@ class Nbnv64Validator (repo: Repository) {
     } else {
       new Result {
         def level = ResultLevel.ERROR
-        def message = "%s: TaxonVersionKey '%s' does not exist.".format(code, record.taxonVersionKey.get)
+        def message = "%s: The TaxonVersionKey, %s is not on the NBN Gateway".format(code, record.taxonVersionKey.get)
         def reference = record.key
       }
     }

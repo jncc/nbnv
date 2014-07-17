@@ -8,12 +8,15 @@ import uk.org.nbn.nbnv.importer.records.NbnRecord
 
 //validate grid ref against type
 class Nbnv159Validator () {
+
+  val code = "NBNV-159"
+
   def validate(record: NbnRecord)  = {
 
     def success = {
       new Result {
         def level = ResultLevel.DEBUG
-        def message = "NBNV-159: Validated: Grid refernce '%s' is valid for the specified spatial system".format(record.gridReferenceRaw.get)
+        def message = "%s: Validated: Grid refernce '%s' is valid for the specified spatial system".format(code, record.gridReferenceRaw.get)
         def reference = record.key
       }
     }
@@ -21,7 +24,7 @@ class Nbnv159Validator () {
     def fail  = {
       new Result {
         def level = ResultLevel.ERROR
-        def message = "NBNV-159: Grid reference '%s' does not match the spatial system".format(record.gridReferenceRaw.get)
+        def message = "%s: The GridReference, %s is invalid for the supplied Projection".format(code, record.gridReferenceRaw.get)
         def reference = record.key
       }
     }
@@ -52,7 +55,7 @@ class Nbnv159Validator () {
         case UnknownGrid => {
           new Result {
             def level = ResultLevel.ERROR
-            def message = "NBNV-159: Grid refernce type or srs is not recognised"
+            def message = "%s: The Projection is not one of the recognised types used in the NBN Exchange Format".format(code)
             def reference = record.key
           }
         }
@@ -61,7 +64,7 @@ class Nbnv159Validator () {
     else {
       new Result {
         def level = ResultLevel.ERROR
-        def message = "NBNV-159: Grid reference type not specified"
+        def message = "%s: The Projection is required for this record".format(code)
         def reference = record.key
       }
     }

@@ -16,7 +16,7 @@ class DuplicateSiteKeyValidator {
       if(record.siteName.getOrElse(record.siteKey.get) != siteKeyMap(record.siteKey.get)) {
         new Result {
           def level = ResultLevel.ERROR
-          def message = "%s: The site key '%s' is already defined for a site called '%s'".format(code, record.siteKey.get, siteKeyMap(record.siteKey.get))
+          def message = "%s: The SiteKey, %s has already been used for SiteName, %s".format(code, record.siteKey.get, siteKeyMap(record.siteKey.get))
           def reference = record.key
         }
       } else {

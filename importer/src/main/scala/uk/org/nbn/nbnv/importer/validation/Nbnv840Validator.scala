@@ -22,7 +22,7 @@ class Nbnv840Validator {
         case _ => new Result {
           def level: ResultLevel.ResultLevel = ResultLevel.ERROR
           def reference: String = record.key
-          def message: String = "%s: The date type '%s' is not valid for single event dates".format(code, record.dateType)
+          def message: String = "%s: The DateType, %s is not correct for the provided date".format(code, record.dateType)
         }
       }
     } else {

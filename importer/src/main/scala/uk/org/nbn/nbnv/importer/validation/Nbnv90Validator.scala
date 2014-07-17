@@ -17,7 +17,7 @@ class Nbnv90Validator (factory: GridSquareInfoFactory) {
         new Result {
           def level = ResultLevel.ERROR
           def reference = record.key
-          def message = "%s: The grid reference precision must be specified".format(code)
+          def message = "%s: The Precision is required for this record".format(code)
         }
       results.append(r2)
     }
@@ -28,7 +28,7 @@ class Nbnv90Validator (factory: GridSquareInfoFactory) {
           new Result {
             def level = ResultLevel.WARN
             def reference = record.key
-            def message = "%s: The precision is more than 100m and will be rounded down to the maximum precision of 100m".format(code)
+            def message = "%s: Note that the GridReference, having a higher precision than the maximum 100m allowed on the NBN Gateway, has been blurred to 100m".format(code)
           }
 
         results.append(r1)
@@ -39,7 +39,7 @@ class Nbnv90Validator (factory: GridSquareInfoFactory) {
           new Result {
             def level = ResultLevel.ERROR
             def reference = record.key
-            def message = "%s: The precision is lower than minimum allowed precision of 10,000m".format(code)
+            def message = "%s: The Precision of the record is lower than the maximum 10KM allowed on the NBN Gateway".format(code)
            }
         results.append(r3)
       }
@@ -62,7 +62,7 @@ class Nbnv90Validator (factory: GridSquareInfoFactory) {
             new Result {
               def level = ResultLevel.ERROR
               def reference = record.key
-              def message = "%s: The precision '%s' is higher then the precision of the grid referance '%s'".format(code, record.gridReferencePrecision, record.gridReferenceRaw)
+              def message = "%s: The Precision, %s must not be higher than that of the GridReference, %s".format(code, record.gridReferencePrecision, record.gridReferenceRaw)
             }
           results.append(r5)
         }
