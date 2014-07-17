@@ -107,22 +107,22 @@ public class RunConversions {
             while ((row = nxfParser.readDataLine()) != null) {
                 try {
                     if (row.size() < initialColumns) {
-                        throw new BadDataException("Expected " + initialColumns + " columns of data, found " + row.size());
+                        throw new BadDataException(row.size() + " columns found, less than the expected " + initialColumns);
                     }
                     
                     updateStartEndDates(row);
                     modifyRow(stepOrderer.getSteps(), row);
                     
                     if (row.size() > initialColumns) {
-                        throw new ImportWarningException("Expected " + initialColumns + " columns of data, found " + row.size() + "");
+                        throw new ImportWarningException(row.size() + " columns found on line, more than the expected " + initialColumns);
                     }
                         
                 } catch (AmbiguousDataException ex) { 
-                    errors.add("Ambiguous Data (Line " + currentRow + ") : " + ex.getMessage());
+                    errors.add("(Line " + currentRow + ") : " + ex.getMessage());
                 } catch (BadDataException ex) {
-                    errors.add("Bad Data (Line " + currentRow + ") : " + ex.getMessage());
+                    errors.add("(Line " + currentRow + ") : " + ex.getMessage());
                 } catch (ImportWarningException ex) {
-                    warnings.add("Import Warning (Line " + currentRow + ") : " + ex.getMessage());
+                    warnings.add("(Line " + currentRow + ") : " + ex.getMessage());
                 } finally {
                     w.write(StringUtils.collectionToDelimitedString(row, "\t"));
                     w.newLine();
@@ -136,7 +136,7 @@ public class RunConversions {
         } catch (IOException ex) {
             errors.add("IOException: " + ex.getMessage());
         } catch(UnsatisfiableDependencyError ex) {
-            errors.add("UnsatsifiableDependencyError: " + ex.getMessage());
+            errors.add("Unsatsifiable Dependency Error: " + ex.getMessage());
         } finally {
             if (w != null) {
                 w.close();

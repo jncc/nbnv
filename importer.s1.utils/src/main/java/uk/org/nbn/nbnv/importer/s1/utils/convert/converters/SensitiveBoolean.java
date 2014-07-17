@@ -46,7 +46,7 @@ public class SensitiveBoolean extends ConverterStep {
         } else if (data.equalsIgnoreCase("F") || data.equalsIgnoreCase("false") || data.equalsIgnoreCase("no")) {
             row.set(column, "false");
         } else {
-            throw new BadDataException("Bad sensitive entry: " + data);
+            throw new BadDataException("Sensitive, '"  + data + "' is not an accepted value in the NBN Exchange Format");
         }
     }
 

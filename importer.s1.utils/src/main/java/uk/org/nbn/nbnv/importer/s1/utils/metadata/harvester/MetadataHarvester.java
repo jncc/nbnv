@@ -23,7 +23,6 @@ import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import uk.org.nbn.nbnv.importer.s1.utils.errors.NotHarvestedError;
 import uk.org.nbn.nbnv.importer.s1.utils.errors.POIImportError;
 import uk.org.nbn.nbnv.importer.s1.utils.model.Metadata;
-import uk.org.nbn.nbnv.importer.s1.utils.model.MetadataForm;
 import uk.org.nbn.nbnv.importer.s1.utils.tools.TextTools;
 import uk.org.nbn.nbnv.importer.s1.utils.wordImporter.WordImporter;
 
@@ -77,23 +76,23 @@ public class MetadataHarvester {
 
                         if (importer == null) {
                             if (minor > 0) {
-                                messages.add("Could not find a supporting word importer for " + version + " using deafult " + Integer.toString(major) + ".0 importer");
+                                messages.add("Version " + version + " of Metadata form not supported");
                                 minor = 0;
                                 importer = getDocumentImporter(major, minor);
                             }
                             if (importer == null) {
-                                throw new POIImportError("We do not currently support Version " + version + " of the Metadata Import Word Document");
+                                throw new POIImportError("Unable to read Metadata form, version " + version + " of form not supported");
                             }
                         }
                     }
                 }
             } catch (NumberFormatException ex) {
-                throw new POIImportError("Could not find a valid version number, are you sure this is a metadata import form?");
+                throw new POIImportError("Unable to read Metadata form, version number of form not found");
             }
         }
 
         if (version == null && importer == null) {
-            throw new POIImportError("Could not find a version number in the document are you sure this is a metadata import form?");
+            throw new POIImportError("Unable to read Metadata form, version number of form not found");
         }
 
         List<String> errors = new ArrayList<String>();
