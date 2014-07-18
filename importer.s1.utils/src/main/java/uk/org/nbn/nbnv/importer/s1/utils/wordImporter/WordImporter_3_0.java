@@ -48,8 +48,7 @@ public class WordImporter_3_0 implements WordImporter {
         stringSet = new HashSet<String>(Arrays.asList(stringsHWPF));
         
         defaultMessages = new ArrayList<String>();
-        defaultMessages.add("Checkboxes for level of public access could not be imported, please select them manually");
-        
+        defaultMessages.add("Unable to read level of public access please fill these in manually");
     }
     
     
@@ -121,30 +120,28 @@ public class WordImporter_3_0 implements WordImporter {
                                 Matcher matcher = matchEx.matcher(pStr);
                                 if (matcher.find()) {
                                     SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-
-                                    String o = matcher.group(3).replaceAll("âââââ", "").trim();
                                     
                                     if (matcher.group(3).replaceAll("âââââ", "").replaceAll("     ", "").trim().isEmpty()) {
-                                        errors.add("Warning no name signed for document");
+                                        errors.add("No name provided in the NBN Gateway Data Provider Agreement section of Metadata form");
                                     }
                                     if (matcher.group(6).replaceAll("âââââ", "").replaceAll("     ", "").trim().isEmpty()) {
-                                        errors.add("Warning no date signed for document");
+                                        errors.add("No date provided in the NBN Gateway Data Provider Agreement section of Metadata form");
                                     }
                                     try {
                                         if (df.parse(matcher.group(6).replaceAll("âââââ", "").replaceAll("     ", "")).after(new Date())) {
-                                            errors.add("Signed date is after today");
+                                            errors.add("Future date provided in the NBN Gateway Data Provider Agreement section of Metadata form");
                                         }
                                     } catch(ParseException ex) {
-                                        errors.add("Signed date string is not a valid date: " + matcher.group(6));
+                                        errors.add("Invalid date provided in the NBN Gateway Data Provider Agreement section of Metadata form: " + matcher.group(6));
                                     }                                    
                                 } else {
-                                    errors.add("Could not find signature block for document");
+                                    errors.add("Unable to read the NBN Gateway Data Provider Agreement section of Metadata form");
                                 }      
                             } else {
                                 // Reset iterator to the correct place
                                 strIt = strList.listIterator(cursor);                                
                                 // No exceptions found We have an odity
-                                throw new POIImportError("Found an input field with an unknown name input was: " + origStr);
+                                throw new POIImportError("Unable to read Metadata form, unknown input field, " + origStr + " in form");
                             }
                         }
                     }
@@ -162,14 +159,14 @@ public class WordImporter_3_0 implements WordImporter {
                     } else {
                         // Reset iterator to the correct place
                         strIt = strList.listIterator(cursor);
-                        throw new POIImportError("Found a duplicate match for key : " + desc);
+                        throw new POIImportError("Unable to read Metadata form, duplicate input field, " + desc + " in form");
                     }
 
                     // Reset iterator to the correct place
                     strIt = strList.listIterator(cursor);
                 }
             } catch (POIImportError ex) {
-                errors.add("POIImporter Error: " + ex.getMessage());
+                errors.add(ex.getMessage());
             }
         }
         

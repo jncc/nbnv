@@ -57,7 +57,7 @@ public class PrecisionNormaliser extends ConverterStep {
             } else if (data <= 10000) {
                 data = 10000;
             } else {
-                throw new BadDataException("Bad precision entry >10000 : " + data);
+                throw new BadDataException("Precision, '" + data + "' is lower than the maximum 10KM allowed on the NBN Gateway");
             }
             
             row.set(column, Integer.toString(data));
