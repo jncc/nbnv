@@ -319,7 +319,7 @@ public class EasyMapController {
         }
         
         String resolutionPrefix = "";
-        if (gridResolution == null || gridResolution.isEmpty()) {
+        if (gridResolution == null || gridResolution.isEmpty() || "10km".equalsIgnoreCase(gridResolution)) {
             resolutionPrefix = "Grid-10km";
         } else if ("100m".equalsIgnoreCase(gridResolution)) {
             resolutionPrefix = "Grid-100m";
