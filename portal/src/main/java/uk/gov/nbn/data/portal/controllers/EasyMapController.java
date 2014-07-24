@@ -4,6 +4,7 @@
  */
 package uk.gov.nbn.data.portal.controllers;
 
+import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.UniformInterfaceException;
 import com.sun.jersey.api.client.WebResource;
 import java.io.IOException;
@@ -23,6 +24,7 @@ import java.util.Map.Entry;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -136,6 +138,8 @@ public class EasyMapController {
         
         Map<String, Object> model = new HashMap<String, Object>();
         errors = new ArrayList<String>();
+        
+        tvk = getPTVK(tvk);
         
         //check if tvk is valid and return error page.
         if (tvk == null || tvk.isEmpty()) {
@@ -276,6 +280,8 @@ public class EasyMapController {
         String p = "&WIDTH=";
         if (mapWidth != null && mapWidth > 0) {
             p = p + mapWidth.toString();
+        } else if (mapHeight != null && mapHeight > 0) {
+            p = p + mapHeight.toString();
         } else {
             p = p + "350";
         }
@@ -283,6 +289,8 @@ public class EasyMapController {
         p = p + "&HEIGHT=";
         if (mapHeight != null && mapHeight > 0) {
             p = p + mapHeight.toString();
+        } else if (mapWidth != null && mapWidth > 0) {
+            p = p + mapWidth.toString();
         } else {
             p = p + "350";
         }
@@ -530,5 +538,22 @@ public class EasyMapController {
         return param;
     }
 
-
+    /**
+     * Return the Preferred TVK of any given TVK
+     * 
+     * @param tvk A Taxon Version Key
+     * @return The Preferred Taxon Version Key of the supplied Key or null if no
+     * matching TVK
+     */
+    private String getPTVK(String tvk) {
+        ClientResponse response = resource.path(String.format("/taxa/%s", tvk))
+                .accept(MediaType.APPLICATION_JSON)
+                .get(ClientResponse.class);
+        
+        if (response.getStatus() == 200) {
+            return response.getEntity(Taxon.class).getPTaxonVersionKey();
+        }
+        
+        return null;
+    }
 }
