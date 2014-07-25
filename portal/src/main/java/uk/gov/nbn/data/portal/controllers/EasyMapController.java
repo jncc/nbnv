@@ -24,7 +24,6 @@ import java.util.Map.Entry;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -374,7 +373,7 @@ public class EasyMapController {
         } else if (bottomLeftCoords != null && !bottomLeftCoords.isEmpty() && topRightCoords != null && !topRightCoords.isEmpty()) {
             p = p + bottomLeftCoords + "," + topRightCoords;
         } else {
-            p = p + "-200000,-200000,1070000,1070000";
+            p = p + "-450000,-200000,950000,1300000";
         }
         
         return p;
