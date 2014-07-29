@@ -48,10 +48,10 @@ import uk.org.nbn.nbnv.api.model.TaxonDatasetWithQueryStats;
 public class EasyMapController {
     @Autowired WebResource resource;
     private List<String> errors;
+    private List<String> warnings;
     private String viceCountyDataset = "GA000344";
     
     public EasyMapController() {
-        errors = new ArrayList<String>();
     }
     
     @RequestMapping(value = "/EasyMap/css")
@@ -137,6 +137,7 @@ public class EasyMapController {
         
         Map<String, Object> model = new HashMap<String, Object>();
         errors = new ArrayList<String>();
+        warnings = new ArrayList<String>();
         
         tvk = getPTVK(tvk);
         
@@ -182,17 +183,14 @@ public class EasyMapController {
         maxDate = (maxDate == 0 ? Calendar.getInstance().get(Calendar.YEAR) : maxDate);
         
         String featureIdentifier = vcFeature != null ? vcFeature.getIdentifier() : null;
-        TaxonDatasetWithQueryStats[] TaxonDatasetList = getDatasets(minDate, maxDate, tvk, featureIdentifier, datasets);
-        if (TaxonDatasetList == null || TaxonDatasetList.length == 0 ){
-            errors.add("No data returned for the criteria you have specified");
-            model.put("errors", errors);
-            return new ModelAndView("easyMap", model);
-        }
+        String bbox;
+        
         try {
-            wmsParameters = wmsParameters + 
-                    getBoundingBoxParam(vcFeature, zoomLocation, bottomLeft, 
+            bbox = getBoundingBoxParam(vcFeature, zoomLocation, bottomLeft, 
                                         topRight, bottomLeftCoord, 
                                         topRightCoord);
+            wmsParameters = wmsParameters + "&BBOX=" + bbox;
+                    
         } catch (InvalidFeatureIdentifierException ex) {
             errors.add("Could not find a feature with the identifier " + ex.getIdentifier() + " :: " + ex.getLocalizedMessage());
             model.put("errors", errors);
@@ -227,19 +225,26 @@ public class EasyMapController {
                 (band2Border != null && !band2Border.isEmpty()) ? band2Border : defaultBorderColour,
                 (band2Fill != null && !band2Fill.isEmpty()) ? band2Fill : band2DefaultFill
             );
-        }
+        }     
 
         model.put("wmsParameters",wmsParameters);
         
-        if (css != null && !css.isEmpty()) model.put("css", getCSSURL(css));
+        if (css != null && !css.isEmpty()) model.put("css", getCSSURL(css));        
         
         if (onlyDisplayMap == null || onlyDisplayMap == 0) {
 
             //get datasets list
             if (displayDatasets == null || displayDatasets == 1) {
+                String[] bp = bbox.split(",");
+                String polygon = String.format("POLYGON((%s %s,%s %s,%s %s,%s %s,%s %s))", bp[0], bp[1], bp[0], bp[3], bp[2], bp[3], bp[2], bp[1], bp[0], bp[1]);
 
-                List<String> datasetList = getDatasetList(TaxonDatasetList);
-                model.put("datasets", datasetList); 
+                TaxonDatasetWithQueryStats[] TaxonDatasetList = getDatasets(minDate, maxDate, tvk, featureIdentifier, datasets, polygon);
+                if (TaxonDatasetList == null || TaxonDatasetList.length == 0) {
+                    warnings.add("No data returned for the criteria you have specified");
+                } else {
+                    List<String> datasetList = getDatasetList(TaxonDatasetList);
+                    model.put("datasets", datasetList);     
+                }                
             } else if (displayDatasets != 0 ) {
                 errors.add("Invalid value for ref parameter");
             }
@@ -268,9 +273,16 @@ public class EasyMapController {
         }
         
         //add errors to model if any    
-        if (! errors.isEmpty()){
+        if (!errors.isEmpty()){
             model.put("errors", errors);
         }
+        //add warnings to model if not mapOnly
+        //Need to find an agreeable way to display warnings like this as it is
+        // useful
+//        if (!warnings.isEmpty() && onlyDisplayMap == null || onlyDisplayMap != 1) {
+//             model.put("warnings", warnings);
+//        }
+        
         //call page
         return new ModelAndView("easyMap", model);
     }
@@ -352,7 +364,7 @@ public class EasyMapController {
     private String getBoundingBoxParam(Feature vcFeature, String zoomLocation, 
             String bottomLeft, String topRight, String bottomLeftCoords, 
             String topRightCoords) throws InvalidFeatureIdentifierException {
-        String p = "&BBOX=";
+        String p = "";
         
         if (vcFeature != null) {
             BoundingBox bbox = vcFeature.getNativeBoundingBox();
@@ -450,7 +462,7 @@ public class EasyMapController {
         return Math.max(a, Math.max(b,c));
     }
 
-    private TaxonDatasetWithQueryStats[] getDatasets(Integer startYear, Integer endYear, String tvk, String featureIdentifier, String datasets) {
+    private TaxonDatasetWithQueryStats[] getDatasets(Integer startYear, Integer endYear, String tvk, String featureIdentifier, String datasets, String polygon) {
         if (tvk == null || tvk.isEmpty()) return null; //need a tvk.
         
         WebResource localResource = resource.path("/taxonObservations/datasets")
@@ -458,6 +470,10 @@ public class EasyMapController {
             .queryParam("startYear", String.format("%04d", startYear))
             .queryParam("endYear", String.format("%04d", endYear))
             .queryParam("featureID", (featureIdentifier != null ? featureIdentifier : ""));
+        
+        if (StringUtils.hasText(polygon)) {
+            localResource = localResource.queryParam("polygon", polygon);
+        }
         
         // Handle list of datasets
         if (StringUtils.hasText(datasets)) {
