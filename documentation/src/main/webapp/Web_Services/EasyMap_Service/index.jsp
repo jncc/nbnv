@@ -59,12 +59,12 @@
             <tr>
                 <td><b>w</b></td>
                 <td>A number up to 800</td>
-                <td>The width, in pixels, of the map. If not specified the width is 350.</td>
+                <td>The width, in pixels, of the map. If neither height or width specified the width is 350. If only a height(h) is specified then that value is used here.</td>
             </tr>
             <tr>
                 <td><b>h</b></td>
                 <td>A number up to 800</td>
-                <td>The height, in pixels, of the map. If not specified the height is 350.</td>
+                <td>The height, in pixels, of the map. If neither height or width specified the width is 350. If only a width(w) is specified then that value is used here.</td>
             </tr>
             <tr>
                 <td><b>gd</b></td>
