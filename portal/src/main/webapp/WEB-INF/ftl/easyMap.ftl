@@ -30,6 +30,12 @@
                  <li>${dataset}</li>
             </#list>
         </#if>
+        <#if warnings??>
+            <br/>We encountered the following errors while generating this map.<br/>
+            <#list warnings as warning>
+                 <li style="color:black !important">${warning}</li>
+            </#list>
+        </#if>
         <#if showLogo??>
             <a href="/" target="_blank"><img src="/images/NBNPower.gif"></a>
         </#if>

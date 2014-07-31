@@ -32,6 +32,9 @@
         },
         getSpatialFeatures: function(keyPairs, gridSquare) {
             return getSpatialFeaturesJSON(keyPairs, gridSquare);
+        },
+        getTaxonFilter: function(keyPairs) {
+            return getTaxonFilterValue(keyPairs);
         }
     });
     
@@ -64,7 +67,7 @@
     }
 
     function isSiteReportValidYear(year){
-        return year==='' || isGridMapValidYear(year);
+        return year === '' || isGridMapValidYear(year);
     }
 
     function isGridMapValidYear(year){
@@ -114,8 +117,7 @@
         //Unfortunately the 'band' and 'verification' arguments are used mutliple times in the query string
         //This didn't fit into the generic form handling implemented here, so needs
         //an edit now
-        var toReturn = queryString.replace(/band[0-9]/g,'band');
-        toReturn = toReturn.replace(/verification[0-9]/g,'verification');
+
         if(toReturn !== ''){
             toReturn = '?' + toReturn;
         }
@@ -168,6 +170,14 @@
             return 'spatial:{all:false,match:\'' + keyPairs['spatialRelationship'] + '\',gridRef:\'' + $('#nbn-site-report-form').attr('featureid') + '\'}';
         }
         return 'spatial:{all:false,match:\'' + keyPairs['spatialRelationship'] + '\',feature:\'' + $('#nbn-site-report-form').attr('featureid') + '\',dataset:\'' + $('#nbn-site-report-form').attr('featureid').substring(0,8) + '\'}';
+    }
+    
+    function getTaxonFilterValue(keyPairs) {
+        if (keyPairs['designation'] !== undefined &&
+            keyPairs['designation'] !== '') {
+            return 'taxon:{all:false,designation:\'' + keyPairs['designation'] + '\'}';
+        }
+        return 'taxon:{all:true}';
     }
     
 })(jQuery);

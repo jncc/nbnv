@@ -8,6 +8,6 @@ import uk.org.nbn.nbnv.importer.fidelity.Result
 class Nbnv55Validator {
   def validate(metadata: ArchiveMetadata): Result = {
     val v = new FieldMappingValidator
-    v.validate("NBNV-55", "Key", metadata.key)
+    v.validate("NBNV-55", "RecordKey", metadata.key)
   }
 }

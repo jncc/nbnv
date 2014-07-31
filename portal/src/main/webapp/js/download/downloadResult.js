@@ -43,5 +43,5 @@ nbn.nbnv.ui.downloadResult = function() {
             $('#resultsubmitbtn').prop('disabled', false);
         }
 
-    }
+    };
 };

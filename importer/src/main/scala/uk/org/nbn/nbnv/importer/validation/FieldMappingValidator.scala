@@ -14,7 +14,7 @@ class FieldMappingValidator {
       new Result {
         def level: ResultLevel.ResultLevel = ResultLevel.ERROR
         def reference: String = fieldName
-        def message: String = "%s: The field '%s' has not been mapped".format(code, fieldName)
+        def message: String = "%s: The '%s' field is required".format(code, fieldName)
       }
     }
   }

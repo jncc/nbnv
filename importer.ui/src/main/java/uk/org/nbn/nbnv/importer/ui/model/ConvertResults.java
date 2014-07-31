@@ -14,6 +14,7 @@ public class ConvertResults {
     private String archive;
     private List<String> steps;
     private List<String> errors;
+    private List<String> warnings;
 
     /**
      * @return the messages
@@ -55,5 +56,13 @@ public class ConvertResults {
      */
     public void setErrors(List<String> errors) {
         this.errors = errors;
+    }
+
+    public List<String> getWarnings() {
+        return warnings;
+    }
+
+    public void setWarnings(List<String> warnings) {
+        this.warnings = warnings;
     }
 }

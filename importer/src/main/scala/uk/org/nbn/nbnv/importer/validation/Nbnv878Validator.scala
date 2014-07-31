@@ -33,7 +33,7 @@ class Nbnv878Validator {
           new Result {
             def level: ResultLevel.ResultLevel = ResultLevel.ERROR
             def reference: String = record.key
-            def message: String = "%s: The JSON attribute list is incorrectly formed and can't be parsed".format(code)
+            def message: String = "%s: One or more record attributes are incorrectly formatted".format(code)
           }
         }
       }

@@ -7,6 +7,6 @@ class Nbnv953Validator {
 
   def validate(metadata: Metadata) = {
     val validator = new LengthValidator()
-    validator.validate(code, metadata.administratorEmail, "AdministratorEmail", metadata.administratorEmail, 70)
+    validator.validate(code, metadata.administratorEmail, "The administrator email address", metadata.administratorEmail, 70)
   }
 }

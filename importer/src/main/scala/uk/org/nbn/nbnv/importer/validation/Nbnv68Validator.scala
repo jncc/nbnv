@@ -39,7 +39,7 @@ class Nbnv68Validator {
       new Result {
         def level: ResultLevel.ResultLevel = ResultLevel.ERROR
         def reference: String = recordKey
-        def message: String = "NBNV-68: '%s' is not a valid date format for the %s date".format(dateString, dateFieldName)
+        def message: String = "NBNV-68: The Date, %s is not in the format required for the NBN Exchange Format".format(dateString)
       }
     }
   }

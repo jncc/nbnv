@@ -1,5 +1,7 @@
 package uk.org.nbn.nbnv.importer.validation
 
+import java.text.SimpleDateFormat
+
 import uk.org.nbn.nbnv.importer.records.NbnRecord
 import collection.mutable.ListBuffer
 import uk.org.nbn.nbnv.importer.fidelity.{ResultLevel, Result}
@@ -24,11 +26,13 @@ class Nbnv196Validator extends DateFormatValidator {
       startMonth.setTime(record.startDate.get)
       startMonth.set(Calendar.DAY_OF_MONTH, 1)
 
+      val dateFormat = new SimpleDateFormat("MMMMM yyyy")
+
       if (record.startDate.get.compareTo(startMonth.getTime) != 0) {
         val r2 = new Result {
           def level: ResultLevel.ResultLevel = ResultLevel.ERROR
           def reference: String = record.key
-          def message: String = "%s: The start date is not the start of the month of %s".format(code, startMonth.get(Calendar.MONTH).toString)
+          def message: String = "%s: The StartDate must be the first day of a month for a date with DateType '%s'".format(code, record.dateType)
         }
 
         results.append(r2)
@@ -42,7 +46,7 @@ class Nbnv196Validator extends DateFormatValidator {
         val r3 = new Result {
           def level: ResultLevel.ResultLevel = ResultLevel.ERROR
           def reference: String = record.key
-          def message: String = "%s: The end date is not the end of the month of %s".format(code, endMonth.get(Calendar.MONTH).toString)
+          def message: String = "%s: The EndDate must be the last day of the month, %s specified for a date with DateType '%s'".format(code, dateFormat.format(endMonth.getTime), record.dateType)
         }
 
         results.append(r3)
@@ -54,7 +58,7 @@ class Nbnv196Validator extends DateFormatValidator {
         val r4 = new Result {
           def level: ResultLevel.ResultLevel = ResultLevel.ERROR
           def reference: String = record.key
-          def message: String = "%s: The start and end date are from the same month".format(code)
+          def message: String = "%s: The StartDate and EndDate must occur in different months for a date with DateType '%s'".format(code, record.dateType)
         }
         results.append(r4)
       }
@@ -67,7 +71,7 @@ class Nbnv196Validator extends DateFormatValidator {
         results.append(new Result {
           def level: ResultLevel.ResultLevel = ResultLevel.ERROR
           def reference: String = record.key
-          def message: String = "%s: The end date cannot be after the end of the current year".format(code)
+          def message: String = "%s: The EndDate must not be in a future year".format(code)
         })
       }
 

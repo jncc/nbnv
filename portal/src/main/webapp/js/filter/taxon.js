@@ -51,7 +51,7 @@ nbn.nbnv.ui.filter.taxon = function(json) {
             .autocomplete({
                 source: function(request, response) {
                     $.getJSON(nbn.nbnv.api + '/taxa?q=' + request.term, function(data) {
-                        response($.map(data.results, function(item) { item.value = item.name; return item; }))
+                        response($.map(data.results, function(item) { item.value = item.name; return item; }));
                     });
                 },
                 select: function(event, ui) {
@@ -83,9 +83,9 @@ nbn.nbnv.ui.filter.taxon = function(json) {
                 $.each(data, function (i, d) {
                     var opt = $('<option>')
                         .text(d.name)
-                        .attr('value', d.code)
+                        .attr('value', d.code);
                     
-                    if (_me._desigCode == d.code) { opt.attr('selected', 'selected'); }
+                    if (_me._desigCode === d.code) { opt.attr('selected', 'selected'); }
                     
                     desig.append(opt);
                 });
@@ -109,9 +109,9 @@ nbn.nbnv.ui.filter.taxon = function(json) {
                 $.each(data, function (i, d) {
                     var opt = $('<option>')
                         .text(d.name)
-                        .attr('value', d.id)
+                        .attr('value', d.id);
 
-                    if (_me._orgSuppliedList == d.id) { opt.attr('selected', 'selected'); }
+                    if (_me._orgSuppliedList === d.id) { opt.attr('selected', 'selected'); }
                     
                     org.append(opt);
                 });
@@ -134,9 +134,9 @@ nbn.nbnv.ui.filter.taxon = function(json) {
                 $.each(data, function (i, grp) {
                     var opt = $('<option>')
                         .text(grp.name)
-                        .attr('value', grp.key)
+                        .attr('value', grp.key);
                         
-                    if (_me._outputGroupKey == grp.key) { opt.attr('selected', 'selected'); }
+                    if (_me._outputGroupKey === grp.key) { opt.attr('selected', 'selected'); }
                     
                     output.append(opt);
                 });
@@ -145,7 +145,7 @@ nbn.nbnv.ui.filter.taxon = function(json) {
             }
         });
         
-        if (this._tvk != '') {
+        if (this._tvk !== '') {
             $.ajax({
                 url: nbn.nbnv.api + '/taxa/' + _me._tvk,
                 success: function(data) {
@@ -225,7 +225,7 @@ nbn.nbnv.ui.filter.taxon = function(json) {
                         mode = 'org';
                         _me._all = false;
                         output.prop('disabled', true);
-                        desig.prop('disabled', true)
+                        desig.prop('disabled', true);
                         org.prop('disabled', false);
                         speciesAutoComplete.prop('disabled', true);
                         speciesAutoComplete.val('');
@@ -255,15 +255,15 @@ nbn.nbnv.ui.filter.taxon = function(json) {
             ).append("Species Group ")
             .append(output);
         
-        if (mode == 'all') {
+        if (mode === 'all') {
             allRecords.children('input').attr('checked', 'checked').change();
-        } else if (mode == 'taxon') {
+        } else if (mode === 'taxon') {
             taxonFilterRecords.children('input').attr('checked', 'checked').change();
-        } else if (mode == 'desig') {
+        } else if (mode === 'desig') {
             desigFilterRecords.children('input').attr('checked', 'checked').change();
         } else if (mode === 'org') {
             orgFilterRecords.children('input').attr('checked', 'checked').change();
-        } else if (mode == 'output') {
+        } else if (mode === 'output') {
             outputFilterRecords.children('input').attr('checked', 'checked').change();
         }
         
@@ -280,10 +280,10 @@ nbn.nbnv.ui.filter.taxon = function(json) {
         var text = '';
         var _me = this;
         
-        if (mode == 'all') {
-            text = 'All species'
-        } else if (mode == 'taxon') {
-            if (this._taxonName == '') {
+        if (mode === 'all') {
+            text = 'All species';
+        } else if (mode === 'taxon') {
+            if (this._taxonName === '') {
                 $.ajax({
                     url: nbn.nbnv.api + '/taxa/' + _me._tvk,
                     success: function(data) {
@@ -293,8 +293,8 @@ nbn.nbnv.ui.filter.taxon = function(json) {
             } else {
                 text = this._taxonName + ' records';
             }
-        } else if (mode == 'desig') {
-            if (this._designation == '') {
+        } else if (mode === 'desig') {
+            if (this._designation === '') {
                 $.ajax({
                     url: nbn.nbnv.api + '/designations/' + _me._desigCode,
                     success: function(data) {
@@ -305,7 +305,7 @@ nbn.nbnv.ui.filter.taxon = function(json) {
                 text = this._designation + ' records';
             }  
         } else if (mode === 'org') {
-            if (this._orgSuppliedListText == '') {
+            if (this._orgSuppliedListText === '') {
                 $.ajax({
                     url: nbn.nbnv.api + '/organisationList/' + _me._orgSuppliedList,
                     success: function(data) {
@@ -315,8 +315,8 @@ nbn.nbnv.ui.filter.taxon = function(json) {
             } else {
                 text = this._orgSuppliedListText + ' records';
             }  
-        } else if (mode == 'output') {
-            if (this._outputGroup == '') {
+        } else if (mode === 'output') {
+            if (this._outputGroup === '') {
                 $.ajax({
                     url: nbn.nbnv.api + '/taxonOutputGroups/' + _me._outputGroupKey,
                     success: function(data) {
@@ -332,15 +332,15 @@ nbn.nbnv.ui.filter.taxon = function(json) {
     };
     
     this.getJson = function() {
-        if (mode == 'all') {
+        if (mode === 'all') {
             return { taxon: { all: true }};
-        } else if (mode == 'taxon') {
+        } else if (mode === 'taxon') {
             return { taxon: { all: false, tvk: this._tvk }};
-        } else if (mode == 'desig') {
+        } else if (mode === 'desig') {
             return { taxon: { all: false, designation: this._desigCode }};
-        } else if (mode == 'org') {
+        } else if (mode === 'org') {
             return { taxon: { all : false, orgSuppliedList: this._orgSuppliedList }};
-        } else if (mode == 'output') {
+        } else if (mode === 'output') {
             return { taxon: { all: false, output: this._outputGroupKey }};
         } else {
             return { taxon: { all: false }};
@@ -350,7 +350,7 @@ nbn.nbnv.ui.filter.taxon = function(json) {
     this.getError = function() {
         var e = [];
         
-        if (mode == 'taxon' && this._tvk == '') { e.push('You must specify a taxon in the taxon filter'); }
+        if (mode === 'taxon' && this._tvk === '') { e.push('You must specify a taxon in the taxon filter'); }
         
         return e;
     };

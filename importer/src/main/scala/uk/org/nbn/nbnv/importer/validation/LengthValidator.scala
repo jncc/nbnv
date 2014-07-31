@@ -13,7 +13,7 @@ class LengthValidator {
     } else if (value != null && value.length < minLength) {
       new Result {
         def level = ResultLevel.ERROR
-        def message = "%s:'%s' is less then the minimum length of %s.".format(code, term, minLength)
+        def message = "%s: %s is less then minimum allowed %s characters".format(code, term, minLength)
         def reference = ref
       }
     } else if (value == null || value.length <= maxLength) {
@@ -26,7 +26,7 @@ class LengthValidator {
     else {
       new Result {
         def level = ResultLevel.ERROR
-        def message = "%s: '%s' is greater then the maximum length of %s".format(code, term, maxLength)
+        def message = "%s: %s is more than the allowed %s characters".format(code, term, maxLength)
         def reference = ref
       }
     }

@@ -4,22 +4,34 @@
  */
 package uk.gov.nbn.data.portal.controllers;
 
+import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.UniformInterfaceException;
 import com.sun.jersey.api.client.WebResource;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.MediaType;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import uk.gov.nbn.data.portal.exceptions.InvalidFeatureIdentifierException;
 import uk.org.nbn.nbnv.api.model.BoundingBox;
@@ -36,10 +48,55 @@ import uk.org.nbn.nbnv.api.model.TaxonDatasetWithQueryStats;
 public class EasyMapController {
     @Autowired WebResource resource;
     private List<String> errors;
+    private List<String> warnings;
     private String viceCountyDataset = "GA000344";
     
     public EasyMapController() {
-        errors = new ArrayList<String>();
+    }
+    
+    @RequestMapping(value = "/EasyMap/css")
+    @ResponseBody
+    public void proxyCSS(HttpServletResponse response, 
+                         @RequestParam(value="url") String css) throws IOException {
+        //Open a connection to the host
+        URLConnection connection = new URL(css).openConnection();
+        //Set the headers from the host
+        Map<String, List<String>> headers = new HashMap<String, List<String>>(connection.getHeaderFields());
+        headers.put("Content-Type", Arrays.asList("text/css")); //Force a css content type
+        for(Entry<String, List<String>> header : headers.entrySet()) {
+            for(String value :header.getValue()) {
+                response.addHeader(header.getKey(), value);
+            }
+        }
+        //Copy the content
+        InputStream in = connection.getInputStream();
+        try {
+            OutputStream out = response.getOutputStream();
+            try {
+                IOUtils.copyLarge(in, out);
+            }
+            finally {
+                out.flush();
+                out.close();
+            }
+        } finally {
+            in.close();
+        }
+    }
+    
+    /**
+     * Determine if the url is already https, if it is we can leave it as is. Else,
+     * lets proxy it
+     * @param cssUrl The external css to proxy
+     * @return a https secured proxy or the original url
+     */
+    private String getCSSURL(String cssUrl) throws UnsupportedEncodingException {
+        if(cssUrl.startsWith("https")) {
+            return cssUrl;
+        }
+        else {
+            return "/EasyMap/css?url=" + URLEncoder.encode(cssUrl, "UTF-8");
+        }
     }
     
     @RequestMapping(value = "/EasyMap", method = RequestMethod.GET)
@@ -76,10 +133,13 @@ public class EasyMapController {
             ,@RequestParam(value="bl", required=false) String bottomLeft
             ,@RequestParam(value="tr", required=false) String topRight
             ,@RequestParam(value="blCoord", required=false) String bottomLeftCoord
-            ,@RequestParam(value="trCoord", required=false) String topRightCoord) {
+            ,@RequestParam(value="trCoord", required=false) String topRightCoord) throws UnsupportedEncodingException {
         
         Map<String, Object> model = new HashMap<String, Object>();
         errors = new ArrayList<String>();
+        warnings = new ArrayList<String>();
+        
+        tvk = getPTVK(tvk);
         
         //check if tvk is valid and return error page.
         if (tvk == null || tvk.isEmpty()) {
@@ -123,17 +183,14 @@ public class EasyMapController {
         maxDate = (maxDate == 0 ? Calendar.getInstance().get(Calendar.YEAR) : maxDate);
         
         String featureIdentifier = vcFeature != null ? vcFeature.getIdentifier() : null;
-        TaxonDatasetWithQueryStats[] TaxonDatasetList = getDatasets(minDate, maxDate, tvk, featureIdentifier, datasets);
-        if (TaxonDatasetList == null || TaxonDatasetList.length == 0 ){
-            errors.add("No data returned for the criteria you have specified");
-            model.put("errors", errors);
-            return new ModelAndView("easyMap", model);
-        }
+        String bbox;
+        
         try {
-            wmsParameters = wmsParameters + 
-                    getBoundingBoxParam(vcFeature, zoomLocation, bottomLeft, 
+            bbox = getBoundingBoxParam(vcFeature, zoomLocation, bottomLeft, 
                                         topRight, bottomLeftCoord, 
                                         topRightCoord);
+            wmsParameters = wmsParameters + "&BBOX=" + bbox;
+                    
         } catch (InvalidFeatureIdentifierException ex) {
             errors.add("Could not find a feature with the identifier " + ex.getIdentifier() + " :: " + ex.getLocalizedMessage());
             model.put("errors", errors);
@@ -168,19 +225,26 @@ public class EasyMapController {
                 (band2Border != null && !band2Border.isEmpty()) ? band2Border : defaultBorderColour,
                 (band2Fill != null && !band2Fill.isEmpty()) ? band2Fill : band2DefaultFill
             );
-        }
+        }     
 
         model.put("wmsParameters",wmsParameters);
         
-        if (css != null && !css.isEmpty()) model.put("css", css);
+        if (css != null && !css.isEmpty()) model.put("css", getCSSURL(css));        
         
         if (onlyDisplayMap == null || onlyDisplayMap == 0) {
 
             //get datasets list
             if (displayDatasets == null || displayDatasets == 1) {
+                String[] bp = bbox.split(",");
+                String polygon = String.format("POLYGON((%s %s,%s %s,%s %s,%s %s,%s %s))", bp[0], bp[1], bp[0], bp[3], bp[2], bp[3], bp[2], bp[1], bp[0], bp[1]);
 
-                List<String> datasetList = getDatasetList(TaxonDatasetList);
-                model.put("datasets", datasetList); 
+                TaxonDatasetWithQueryStats[] TaxonDatasetList = getDatasets(minDate, maxDate, tvk, featureIdentifier, datasets, polygon);
+                if (TaxonDatasetList == null || TaxonDatasetList.length == 0) {
+                    warnings.add("No data returned for the criteria you have specified");
+                } else {
+                    List<String> datasetList = getDatasetList(TaxonDatasetList);
+                    model.put("datasets", datasetList);     
+                }                
             } else if (displayDatasets != 0 ) {
                 errors.add("Invalid value for ref parameter");
             }
@@ -209,9 +273,16 @@ public class EasyMapController {
         }
         
         //add errors to model if any    
-        if (! errors.isEmpty()){
+        if (!errors.isEmpty()){
             model.put("errors", errors);
         }
+        //add warnings to model if not mapOnly
+        //Need to find an agreeable way to display warnings like this as it is
+        // useful
+//        if (!warnings.isEmpty() && onlyDisplayMap == null || onlyDisplayMap != 1) {
+//             model.put("warnings", warnings);
+//        }
+        
         //call page
         return new ModelAndView("easyMap", model);
     }
@@ -220,6 +291,8 @@ public class EasyMapController {
         String p = "&WIDTH=";
         if (mapWidth != null && mapWidth > 0) {
             p = p + mapWidth.toString();
+        } else if (mapHeight != null && mapHeight > 0) {
+            p = p + mapHeight.toString();
         } else {
             p = p + "350";
         }
@@ -227,6 +300,8 @@ public class EasyMapController {
         p = p + "&HEIGHT=";
         if (mapHeight != null && mapHeight > 0) {
             p = p + mapHeight.toString();
+        } else if (mapWidth != null && mapWidth > 0) {
+            p = p + mapWidth.toString();
         } else {
             p = p + "350";
         }
@@ -263,7 +338,7 @@ public class EasyMapController {
         }
         
         String resolutionPrefix = "";
-        if (gridResolution == null || gridResolution.isEmpty()) {
+        if (gridResolution == null || gridResolution.isEmpty() || "10km".equalsIgnoreCase(gridResolution)) {
             resolutionPrefix = "Grid-10km";
         } else if ("100m".equalsIgnoreCase(gridResolution)) {
             resolutionPrefix = "Grid-100m";
@@ -289,7 +364,7 @@ public class EasyMapController {
     private String getBoundingBoxParam(Feature vcFeature, String zoomLocation, 
             String bottomLeft, String topRight, String bottomLeftCoords, 
             String topRightCoords) throws InvalidFeatureIdentifierException {
-        String p = "&BBOX=";
+        String p = "";
         
         if (vcFeature != null) {
             BoundingBox bbox = vcFeature.getNativeBoundingBox();
@@ -310,7 +385,7 @@ public class EasyMapController {
         } else if (bottomLeftCoords != null && !bottomLeftCoords.isEmpty() && topRightCoords != null && !topRightCoords.isEmpty()) {
             p = p + bottomLeftCoords + "," + topRightCoords;
         } else {
-            p = p + "-200000,-200000,1070000,1070000";
+            p = p + "-450000,-200000,950000,1300000";
         }
         
         return p;
@@ -387,7 +462,7 @@ public class EasyMapController {
         return Math.max(a, Math.max(b,c));
     }
 
-    private TaxonDatasetWithQueryStats[] getDatasets(Integer startYear, Integer endYear, String tvk, String featureIdentifier, String datasets) {
+    private TaxonDatasetWithQueryStats[] getDatasets(Integer startYear, Integer endYear, String tvk, String featureIdentifier, String datasets, String polygon) {
         if (tvk == null || tvk.isEmpty()) return null; //need a tvk.
         
         WebResource localResource = resource.path("/taxonObservations/datasets")
@@ -395,6 +470,10 @@ public class EasyMapController {
             .queryParam("startYear", String.format("%04d", startYear))
             .queryParam("endYear", String.format("%04d", endYear))
             .queryParam("featureID", (featureIdentifier != null ? featureIdentifier : ""));
+        
+        if (StringUtils.hasText(polygon)) {
+            localResource = localResource.queryParam("polygon", polygon);
+        }
         
         // Handle list of datasets
         if (StringUtils.hasText(datasets)) {
@@ -474,5 +553,22 @@ public class EasyMapController {
         return param;
     }
 
-
+    /**
+     * Return the Preferred TVK of any given TVK
+     * 
+     * @param tvk A Taxon Version Key
+     * @return The Preferred Taxon Version Key of the supplied Key or null if no
+     * matching TVK
+     */
+    private String getPTVK(String tvk) {
+        ClientResponse response = resource.path(String.format("/taxa/%s", tvk))
+                .accept(MediaType.APPLICATION_JSON)
+                .get(ClientResponse.class);
+        
+        if (response.getStatus() == 200) {
+            return response.getEntity(Taxon.class).getPTaxonVersionKey();
+        }
+        
+        return null;
+    }
 }

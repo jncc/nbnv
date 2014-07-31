@@ -23,13 +23,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
-import uk.org.nbn.nbnv.importer.ui.archive.ArchiveWriter;
-import uk.org.nbn.nbnv.importer.ui.convert.ConverterStep;
+import uk.org.nbn.nbnv.importer.s1.utils.convert.ConverterStep;
+import uk.org.nbn.nbnv.importer.s1.utils.database.DatabaseConnection;
+import uk.org.nbn.nbnv.importer.s1.utils.model.MetadataForm;
+import uk.org.nbn.nbnv.importer.s1.utils.archive.ArchiveWriter;
 import uk.org.nbn.nbnv.importer.ui.convert.RunConversions;
-import uk.org.nbn.nbnv.importer.ui.metadata.MetadataWriter;
+import uk.org.nbn.nbnv.importer.s1.utils.xmlWriters.MetadataWriter;
 import uk.org.nbn.nbnv.importer.ui.model.ConvertResults;
-import uk.org.nbn.nbnv.importer.ui.model.MetadataForm;
-import uk.org.nbn.nbnv.importer.ui.util.DatabaseConnection;
 import uk.org.nbn.nbnv.jpa.nbncore.Organisation;
 
 /**
@@ -53,7 +53,7 @@ public class ConvertController {
             }
             
             File in = new File(args.get("filename"));
-            RunConversions rc = new RunConversions(in, organisation.getId(), metadataForm);
+            RunConversions rc = new RunConversions(in, organisation.getId());
             
             File out = File.createTempFile("nbnimporter", "processed.tab");
             File meta = File.createTempFile("nbnimporter", "meta.xml");
@@ -78,25 +78,26 @@ public class ConvertController {
                         new SimpleDateFormat("ddMMyyyy_hhmmss").format(new Date()));
             }
             File archive = File.createTempFile("nbnimporter", archiveName);
-                        
-            List<String> errors = rc.run(out, meta, args);
+
+            Map<String, List<String>> results = rc.run(out, meta, args);
             
             EntityManager em = DatabaseConnection.getInstance().createEntityManager();
             Query q = em.createNamedQuery("Organisation.findById");
             q.setParameter("id", organisation.getId());
             Organisation org = (Organisation) q.getSingleResult();
+            em.close();
             
             MetadataWriter mw = new MetadataWriter(metadata);
             mw.datasetToEML(metadataForm.getMetadata(), org, rc.getStartDate(), rc.getEndDate(), 
                     !metadataForm.getInsertType().equals("append"));
             
             ArchiveWriter aw = new ArchiveWriter();
-            errors.addAll(aw.createArchive(out, meta, metadata, archive));
+            results.get("errors").addAll(aw.createArchive(out, meta, metadata, archive));
 
             model.setArchive(archive.getAbsolutePath());
             
-            if (errors.isEmpty()) {
-                errors.add("None");
+            if (results.get("errors").isEmpty()) {
+                results.get("errors").add("None");
             }
             
             List<String> steps = new ArrayList<String>();
@@ -104,7 +105,12 @@ public class ConvertController {
                 steps.add(cs.getName());
             }
             
-            model.setErrors(errors);
+            if (results.get("warnings").isEmpty()) {
+                results.get("warnings").add("None");
+            }
+            
+            model.setErrors(results.get("errors"));
+            model.setWarnings(results.get("warnings"));
             model.setSteps(steps);
             return new ModelAndView("compile", "model", model);
         } catch (IOException ex) {

@@ -17,7 +17,7 @@ class Nbnv86Validator {
       results.append(new Result {
         def level: ResultLevel.ResultLevel = ResultLevel.ERROR
         def reference: String = record.key
-        def message: String = "%s: Longitude is not in the range -14 to 13".format(code)
+        def message: String = "%s: Longitude is outside the range of -14 to 13 used by the NBN Gateway".format(code)
       })
     }
     else{
@@ -33,7 +33,7 @@ class Nbnv86Validator {
      results.append( new Result {
         def level: ResultLevel.ResultLevel = ResultLevel.ERROR
         def reference: String = record.key
-        def message: String = "%s: Latitiude is not in the range 48 to 62".format(code)
+        def message: String = "%s: Latitude is outside the range of -48 to 62 used by the NBN Gateway".format(code)
       })
     }
     else{

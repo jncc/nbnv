@@ -30,6 +30,7 @@ namespace uk.org.nbn.nbnv.ImporterPollingService.Service
                         {
                             UseShellExecute = false,
                             RedirectStandardOutput = true,
+                            RedirectStandardError = true,
                             FileName = _configuration.JavaExePath,
                             Arguments = GetCommandLineArguments(_configuration.ImporterCommandLine, importFile, _configuration.ImporterLogFolder,
                             _configuration.TempFolder)
@@ -47,6 +48,7 @@ namespace uk.org.nbn.nbnv.ImporterPollingService.Service
             // p.WaitForExit();
             // Read the output stream first and then wait.
             _fileSystemManger.SaveStreamToFile(p.StandardOutput, _configuration.ImporterLogFolder, "ConsoleOutput.txt");
+            _fileSystemManger.SaveStreamToFile(p.StandardError, _configuration.ImporterLogFolder, "ConsoleErrors.txt");
 
             p.WaitForExit();
             _log.InfoFormat("Finished processing file {0}", importFile);
