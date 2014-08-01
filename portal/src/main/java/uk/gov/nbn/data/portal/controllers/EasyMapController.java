@@ -155,9 +155,7 @@ public class EasyMapController {
         String wmsParameters = "abundance=presence&FORMAT=image%2Fpng&TRANSPARENT=TRUE&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&STYLES=&SRS=EPSG%3A27700";
         
         if (!(datasets == null || datasets.isEmpty())) wmsParameters = wmsParameters + "&datasets=" + datasets;
-
-        wmsParameters = wmsParameters + getMapSizeParam(mapWidth, mapHeight);
-        
+       
         boolean showBand1 = shouldShowBand(band1StartDate, band1EndDate);
         boolean showBand2 = shouldShowBand(band2StartDate, band2EndDate);
         boolean showFeatureLayer = (viceCountyId != null &&  viceCountyId > 0);
@@ -190,6 +188,7 @@ public class EasyMapController {
                                         topRight, bottomLeftCoord, 
                                         topRightCoord);
             wmsParameters = wmsParameters + "&BBOX=" + bbox;
+            wmsParameters = wmsParameters + getMapSizeParam(mapWidth, mapHeight, bbox);
                     
         } catch (InvalidFeatureIdentifierException ex) {
             errors.add("Could not find a feature with the identifier " + ex.getIdentifier() + " :: " + ex.getLocalizedMessage());
@@ -258,7 +257,7 @@ public class EasyMapController {
                 model.put("showLogo", "1");
             } 
             
-            if (displayTerms == null || !"0".equals(displayTerms)) {
+            if (displayTerms == null || displayTerms == 1) {
                 model.put("showTC", "1");
             }
             
@@ -287,12 +286,18 @@ public class EasyMapController {
         return new ModelAndView("easyMap", model);
     }
 
-    private String getMapSizeParam(Integer mapWidth, Integer mapHeight) {
+    private String getMapSizeParam(Integer mapWidth, Integer mapHeight, String bbox) {
+        
+        String[] b = bbox.split(",");
+        Double bbWidth = Double.parseDouble(b[2]) - Double.parseDouble(b[0]);
+        Double bbHeight = Double.parseDouble(b[3]) - Double.parseDouble(b[1]);
+        
         String p = "&WIDTH=";
         if (mapWidth != null && mapWidth > 0) {
             p = p + mapWidth.toString();
         } else if (mapHeight != null && mapHeight > 0) {
-            p = p + mapHeight.toString();
+            p = p + Math.ceil((bbWidth / bbHeight) * mapHeight);
+            //p = p + mapHeight.toString();
         } else {
             p = p + "350";
         }
@@ -301,7 +306,8 @@ public class EasyMapController {
         if (mapHeight != null && mapHeight > 0) {
             p = p + mapHeight.toString();
         } else if (mapWidth != null && mapWidth > 0) {
-            p = p + mapWidth.toString();
+            p = p + Math.ceil((bbHeight / bbWidth) * mapWidth);
+            //p = p + mapWidth.toString();
         } else {
             p = p + "350";
         }
