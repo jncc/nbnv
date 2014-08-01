@@ -20,10 +20,10 @@ import java.util.List;
  */
 @RestController
 public class MetadataFormController extends ErrorHandling{
-    @InitBinder
+    /*@InitBinder
     protected void initBinder(WebDataBinder binder) {
         binder.addValidators(new MetadataFormValidator());
-    }
+    }      */
     @RequestMapping(value= Url.uploadMetadata,  method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE,  produces = MediaType.APPLICATION_JSON_VALUE)
     public Boolean uploadMetadata(@Valid @RequestBody MetadataForm metadataForm, WebDataBinder binder){
         Logger.info("uploading metadata : {0}", metadataForm.getTitle());

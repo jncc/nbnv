@@ -16,6 +16,8 @@ import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,6 +29,7 @@ import uk.org.nbn.nbnv.importer.s1.utils.convert.ConverterStep;
 import uk.org.nbn.nbnv.importer.s1.utils.database.DatabaseConnection;
 import uk.org.nbn.nbnv.importer.s1.utils.model.MetadataForm;
 import uk.org.nbn.nbnv.importer.s1.utils.archive.ArchiveWriter;
+import uk.org.nbn.nbnv.importer.ui.convert.ImporterService;
 import uk.org.nbn.nbnv.importer.ui.convert.RunConversions;
 import uk.org.nbn.nbnv.importer.s1.utils.xmlWriters.MetadataWriter;
 import uk.org.nbn.nbnv.importer.ui.model.ConvertResults;
@@ -39,7 +42,11 @@ import uk.org.nbn.nbnv.jpa.nbncore.Organisation;
 @Controller
 @SessionAttributes({"metadataForm", "org"})
 @RequestMapping("/compile.html")
-public class ConvertController {   
+public class ConvertController {
+
+    @Autowired
+    ImporterService importerService;
+
     @RequestMapping(method= RequestMethod.POST)
     public ModelAndView compile(@RequestParam Map<String, String> args, HttpServletRequest request,  
                                 @ModelAttribute("metadataForm") MetadataForm metadataForm, 
@@ -98,6 +105,7 @@ public class ConvertController {
             
             if (results.get("errors").isEmpty()) {
                 results.get("errors").add("None");
+                importerService.doImport(archive);
             }
             
             List<String> steps = new ArrayList<String>();

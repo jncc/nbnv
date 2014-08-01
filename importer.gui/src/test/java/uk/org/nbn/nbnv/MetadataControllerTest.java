@@ -35,7 +35,7 @@ public class MetadataControllerTest {
     @Test
     public void testUpload() throws Exception {
         MetadataForm metadataForm = new MetadataForm().SampleTestData();
-        metadataForm.setAdminEmail(null);
+        //metadataForm.setAdminEmail(null);
         String json = metadataForm.toJson();
 
         mockMvc.perform(

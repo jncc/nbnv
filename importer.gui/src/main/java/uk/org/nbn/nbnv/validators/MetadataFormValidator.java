@@ -1,5 +1,6 @@
 package uk.org.nbn.nbnv.validators;
 
+import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
@@ -13,6 +14,7 @@ import java.beans.PropertyDescriptor;
 /**
  * include javadoc
  */
+@Component
 public class MetadataFormValidator implements Validator {
     @Override
     public boolean supports(Class<?> clazz) {
