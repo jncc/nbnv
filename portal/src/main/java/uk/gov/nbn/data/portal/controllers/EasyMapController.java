@@ -536,6 +536,12 @@ public class EasyMapController {
             title = taxon.getName();
         } else if ("com".equalsIgnoreCase(titleType)) {
             title = taxon.getCommonName();
+            
+            // Catch null common name
+            if (!StringUtils.hasText(title)) {
+                warnings.add("No common name is available for this Taxon Version Key, defaulting to the scientific name.");
+                title = taxon.getName();
+            }
         } else {
             errors.add("Unknown value for title parameter");
         }
