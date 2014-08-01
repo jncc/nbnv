@@ -147,7 +147,12 @@
             <artifactId>commons-lang3</artifactId>
             <version>3.2.1</version>
         </dependency>
-
+        <!-- includes an email builder, bit sick of spring -->
+        <dependency>
+            <groupId>org.jodd</groupId>
+            <artifactId>jodd</artifactId>
+            <version>3.4.1</version>
+        </dependency>
         <!-- the actual importer -->
         <dependency>
             <groupId>uk.org.nbn</groupId>

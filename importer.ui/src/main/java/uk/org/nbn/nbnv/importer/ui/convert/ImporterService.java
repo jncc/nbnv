@@ -21,13 +21,18 @@ public class ImporterService {
     public boolean doImport(File file) {
         Options options = optionBuilder.build(file);
         Importer importer = Importer.createImporter(options);
+        boolean noUnhandledImporterExceptions = true;
         try {
             importer.run();
         } catch (Exception e) {
             // somethings gone very wrong, but we don't actually care
-            // just send the log file to user, as per success
-            return false;
+            // we still just send the log file to user
+            // an import can fail and not throw and error here, I think, need to check with felix et al
+            noUnhandledImporterExceptions = false;
         }
-        return true;
+
+        return noUnhandledImporterExceptions;
+        // the return value is only useful for testing and is not bubbled up to user
+        // they are are always sent a log file
     }
 }
