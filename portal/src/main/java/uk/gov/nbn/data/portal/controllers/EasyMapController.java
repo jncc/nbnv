@@ -289,15 +289,22 @@ public class EasyMapController {
     private String getMapSizeParam(Integer mapWidth, Integer mapHeight, String bbox) {
         
         String[] b = bbox.split(",");
-        Double bbWidth = Double.parseDouble(b[2]) - Double.parseDouble(b[0]);
-        Double bbHeight = Double.parseDouble(b[3]) - Double.parseDouble(b[1]);
+        Double bbWidth = 1.0;
+        Double bbHeight = 1.0;
+        try {
+            bbWidth = Double.parseDouble(b[2]) - Double.parseDouble(b[0]);
+            bbHeight = Double.parseDouble(b[3]) - Double.parseDouble(b[1]);
+        } catch (NumberFormatException ex) {
+            warnings.add("Could not parse Bounding Box to get Aspect Ratio, falling back to square aspect ratio if missing height or width");
+        } catch (NullPointerException ex) {
+            warnings.add("Supplied Bounding Box was invalid, falling back to square aspect ratio if missing height or width");
+        }
         
         String p = "&WIDTH=";
         if (mapWidth != null && mapWidth > 0) {
             p = p + mapWidth.toString();
         } else if (mapHeight != null && mapHeight > 0) {
             p = p + Math.ceil((bbWidth / bbHeight) * mapHeight);
-            //p = p + mapHeight.toString();
         } else {
             p = p + "350";
         }
