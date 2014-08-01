@@ -5,6 +5,8 @@ import uk.org.nbn.nbnv.importer.records.NbnRecord
 import uk.org.nbn.nbnv.importer.fidelity.{Result, ResultLevel}
 
 class Nbnv88Validator(db: Database) {
+  val code = "NBNV-88"
+
   def validate(record: NbnRecord) = {
     val featureKey = record.featureKey.get
 
@@ -12,7 +14,7 @@ class Nbnv88Validator(db: Database) {
     if (featureKey.length < 9) {
       new Result {
         def level = ResultLevel.ERROR
-        def message = "FeatureKey '%s' is to short to be valid".format(featureKey)
+        def message = "%s: FeatureKey, %s is less than the allowed minimum 9 characters".format(code, featureKey)
         def reference = record.key
       }
     }
@@ -23,14 +25,14 @@ class Nbnv88Validator(db: Database) {
       if (db.repo.confirmSiteBoundary(siteDatasetKey, siteProviderKey)) {
         new Result {
           def level = ResultLevel.DEBUG
-          def message = "NBNV-88: Validated: FeatureKey '%s' exists.".format(featureKey)
+          def message = "%s: Validated: FeatureKey '%s' exists.".format(code, featureKey)
           def reference = record.key
         }
       }
       else {
         new Result {
           def level = ResultLevel.ERROR
-          def message = "NBNV-88: FeatureKey '%s' is invalid".format(featureKey)
+          def message = "%s: The FeatureKey, %s is not on the NBN Gateway".format(code, featureKey)
           def reference = record.key
         }
       }

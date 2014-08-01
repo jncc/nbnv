@@ -75,10 +75,12 @@ public class UpsertMetadataController {
         em.getTransaction().begin();
         
         Dataset d = new Dataset();
+        boolean update = false;
         if (metadataForm.getMetadata().getDatasetID().isEmpty()) {
             d.setKey(generateSBKey(em));
         } else {
             d.setKey(metadataForm.getMetadata().getDatasetID());
+            update = true;
         }
         
         d.setTitle(metadataForm.getMetadata().getTitle());
@@ -102,8 +104,13 @@ public class UpsertMetadataController {
         sd.setDataset(d);
         sd.setDatasetKey(d.getKey());
         
-        em.persist(d);
-        em.persist(sd);
+        if (update) {
+            em.merge(d);
+            em.merge(sd);
+        } else { 
+            em.persist(d);
+            em.persist(sd);
+        }
         
         em.getTransaction().commit();
         
@@ -116,10 +123,12 @@ public class UpsertMetadataController {
         em.getTransaction().begin();
         
         Dataset d = new Dataset();
+        boolean update = false;
         if (metadataForm.getMetadata().getDatasetID().isEmpty()) {
             d.setKey(generateHLKey(em));
         } else {
             d.setKey(metadataForm.getMetadata().getDatasetID());
+            update= true;
         }
         
         d.setTitle(metadataForm.getMetadata().getTitle());
@@ -141,8 +150,13 @@ public class UpsertMetadataController {
         hd.setDatasetKey(d.getKey());
         hd.setHabitatCategory(em.find(HabitatCategory.class, hlForm.getMetadata().getCategory()));
         
-        em.persist(d);
-        em.persist(hd);
+        if (update) {
+            em.merge(d);
+            em.merge(hd);
+        } else {
+            em.persist(d);
+            em.persist(hd);
+        }
         
         em.getTransaction().commit();
         

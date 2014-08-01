@@ -5,12 +5,13 @@ import uk.org.nbn.nbnv.importer.fidelity.{ResultLevel, Result}
 import scala.util.matching.Regex
 
 class Nbnv81Validator {
-  def validate(gridReference: String, recordKey: String) = {
+  val code = "NBNV-81"
 
+  def validate(gridReference: String, recordKey: String) = {
     def success = {
       new Result {
         def level = ResultLevel.DEBUG
-        def message = "NBNV-81: Validated: A valid grid reference was supplied"
+        def message = "%s: Validated: A valid grid reference was supplied".format(code)
         def reference = recordKey
       }
     }
@@ -24,7 +25,7 @@ class Nbnv81Validator {
     else {
       new Result {
         def level = ResultLevel.ERROR
-        def message = "NBNV-81: '%s' is not a valid grid reference".format(gridReference)
+        def message = "%s: The GridReference, %s is not a valid grid reference within the NBN Exchange Format".format(code, gridReference)
         def reference = recordKey
       }
     }

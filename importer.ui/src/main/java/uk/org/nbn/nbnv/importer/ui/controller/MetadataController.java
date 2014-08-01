@@ -183,13 +183,13 @@ public class MetadataController {
             }
             
         } catch (IOException ex) {
-            messages.add("EXCEPTION: Parse exception not a valid Word .doc file : " + ex.getMessage());
+            messages.add("Unable to read Metadata form, invalid .doc word document");
         } catch (POIImportError ex) {
-            messages.add("EXCEPTION: POI Word Parsing exception : " + ex.getMessage());
+            messages.add(ex.getMessage());
         } catch(NotHarvestedError ex) {
-            messages.add("EXCEPTION: Did not harvest word document, document not passed to harvester?");
+            messages.add("Unable to read Metadata form, invalid word document");
         } catch (OfficeXmlFileException ex) {
-            messages.add("EXCEPTION: POI Word Parsing exception either the supplied file is not a Word .doc file --- Full error is - " + ex.getMessage());
+            messages.add("Unable to read Metadata form, invalid word document");
         }
         
         // Return error messages to the interface as well as the data

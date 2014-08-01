@@ -74,4 +74,16 @@
                     
     </dependencies>
 
+    <distributionManagement>
+        <repository>
+            <id>ceh-releases-nexus</id>
+            <url>http://nexus.nerc-lancaster.ac.uk/content/repositories/releases</url>
+        </repository>
+        <snapshotRepository>
+            <uniqueVersion>true</uniqueVersion>
+            <id>ceh-snapshots-nexus</id>
+            <url>http://nexus.nerc-lancaster.ac.uk/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
+
 </project>

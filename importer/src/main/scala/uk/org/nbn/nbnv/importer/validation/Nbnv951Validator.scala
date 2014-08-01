@@ -11,12 +11,12 @@ class Nbnv951Validator {
     if (metadata.datasetTitle == null || metadata.datasetTitle == "") {
       new Result {
         def level = ResultLevel.ERROR
-        def message = "%s: A dataset title must be provided".format(code)
+        def message = "%s: A title for this dataset is required".format(code)
         def reference = "metadata"
       }
     } else {
       val validator = new LengthValidator()
-      validator.validate(code, metadata.datasetTitle, "DatasetTitle", metadata.datasetTitle, 200)
+      validator.validate(code, metadata.datasetTitle, "The dataset title", metadata.datasetTitle, 200)
     }
   }
 }

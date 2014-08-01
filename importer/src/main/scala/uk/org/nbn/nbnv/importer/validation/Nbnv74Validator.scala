@@ -38,7 +38,7 @@ class Nbnv74Validator extends DateFormatValidator {
         results.append(new Result {
           def level: ResultLevel.ResultLevel = ResultLevel.ERROR
           def reference: String = record.key
-          def message: String = "%s: The start date is not the start of the month of %s".format(code, dateFormat.format(month.getTime))
+          def message: String = "%s: The StartDate must be the first day of the specified month for a date with DateType '%s'".format(code, record.dateType)
         })
       }
 
@@ -50,7 +50,7 @@ class Nbnv74Validator extends DateFormatValidator {
           results.append(new Result {
             def level: ResultLevel.ResultLevel = ResultLevel.ERROR
             def reference: String = record.key
-            def message: String = "%s: The end date is specified but it is not the end of the month of %s".format(code, dateFormat.format(month.getTime))
+            def message: String = "%s: The EndDate must be the last day of the specified month for a date with DateType '%s''".format(code, record.dateType)
           })
         }
 
@@ -62,7 +62,7 @@ class Nbnv74Validator extends DateFormatValidator {
           results.append(new Result {
             def level: ResultLevel.ResultLevel = ResultLevel.ERROR
             def reference: String = record.key
-            def message: String = "%s: End date is in the future".format(code)
+            def message: String = "%s: The EndDate must not be in the future".format(code)
           })
         }
       }

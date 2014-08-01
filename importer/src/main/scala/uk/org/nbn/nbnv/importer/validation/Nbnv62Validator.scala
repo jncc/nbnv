@@ -10,6 +10,6 @@ class Nbnv62Validator {
 
   def validate(record: NbnRecord) = {
     val validator = new LengthValidator()
-    validator.validate("NBNV-62", record.key, "SurveyKey", record.surveyKey getOrElse "", 30)
+    validator.validate("NBNV-62", record.key, "This SurveyKey", record.surveyKey getOrElse "", 30)
   }
 }

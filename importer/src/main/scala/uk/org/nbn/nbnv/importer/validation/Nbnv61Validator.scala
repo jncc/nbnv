@@ -16,19 +16,20 @@ class Nbnv61Validator {
 
   def processRecord(record: NbnRecord) = {
 
+    val code = "NBNV-61"
     val key = record.key
 
     //duplicates NBNV-55
     if (key == None) {
       new Result {
         def level = ResultLevel.ERROR
-        def message = "NBNV-61: Key is blank, check for blank records at the end of the file"
+        def message = "%s: The RecordKey field is required".format(code)
         def reference = key
       }
     } else if (keyTree.contains(key)) {
       new Result {
         def level = ResultLevel.ERROR
-        def message = "NBNV-61: Duplicate record key. Key '%s' is not unique".format(key)
+        def message = "%s: The RecordKey, %s already occurs in this dataset. Each recordkey must be unique".format(code,key)
         def reference = key
       }
     }
@@ -37,7 +38,7 @@ class Nbnv61Validator {
 
       new Result {
         def level = ResultLevel.DEBUG
-        def message = "NBNV-61: Validated: Record key '%s' is unique so far.".format(key)
+        def message = "%s: Validated: Record key '%s' is unique so far.".format(code,key)
         def reference = key
       }
     }

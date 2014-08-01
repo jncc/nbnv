@@ -84,24 +84,24 @@ public class TaxonName extends ConverterStep {
             em.close();
 
             if (res.isEmpty()) {
-                throw new BadDataException("No matching names found for: " + origVal);
+                throw new BadDataException("Unable to find TaxonVersionKey for '" + origVal + "', no match found");
             }
             
             if (res.size() > 1) {
-                throw new BadDataException("Possible Ambiguous or Dangerous name found for: " + origVal);
+                throw new BadDataException("Unable to find TaxonVersionKey for '" + origVal + "', multiple matches found");
             }
             
             if (res.size() == 1) {
                 if (res.get(0).getDangerousName().equals("A")) {
-                    throw new BadDataException("Ambiguous name found for: " + origVal);
+                    throw new BadDataException("Unable to find TaxonVersionKey for '" + origVal + "', multiple matches found");
                 }
                 if (res.get(0).getDangerousName().equals("D")) {
-                    throw new BadDataException("Dangerous name found for: " + origVal);
+                    throw new BadDataException("Unable to find TaxonVersionKey for '" + origVal + "', multiple matches found");
                 }
                 if (res.get(0).getDangerousName().equals("M")) {
                     lookup.put(origVal, res.get(0).getTaxon().getTaxonVersionKey());
                 } else {
-                    throw new BadDataException("Name '" + origVal + "' tagged with unkown nameType of " + res.get(0).getDangerousName());
+                    throw new BadDataException("Unable to find TaxonVersionKey for '" + origVal + "', multiple matches found");
                 }
             }
         }

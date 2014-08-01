@@ -46,7 +46,7 @@ public class OccurrenceStatus extends ConverterStep {
         } else if (data.equalsIgnoreCase("F") || data.equalsIgnoreCase("false") || data.equalsIgnoreCase("no") || data.equalsIgnoreCase("present")) {
             row.set(column, "presence");
         } else {
-            throw new BadDataException("Bad zero abundance entry: " + data);
+            throw new BadDataException("ZeroAbundance, '"  + data + "' is not an accepted value in the NBN Exchange Format");
         }
     }
 

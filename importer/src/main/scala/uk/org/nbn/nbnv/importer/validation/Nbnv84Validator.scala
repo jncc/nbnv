@@ -14,7 +14,7 @@ class Nbnv84Validator {
     if (!(record.eastRaw.isDefined && record.eastRaw.get.maybeDouble.isDefined)) {
       results.append( new Result {
         def level = ResultLevel.ERROR
-        def message = "%s: The value of east is not a valid numeric value".format(code)
+        def message = "%s: The East value (Easting or Longitude) must be a numeric value".format(code)
         def reference = record.key
       })
     }
@@ -29,7 +29,7 @@ class Nbnv84Validator {
     if (!(record.northRaw.isDefined && record.northRaw.get.maybeDouble.isDefined)) {
       results.append( new Result {
         def level = ResultLevel.ERROR
-        def message = "%s: The value of north is not a valid numeric value".format(code)
+        def message = "%s: The North value (Northing or Latitude) must be a numeric value".format(code)
         def reference = record.key
       })
     }

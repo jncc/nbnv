@@ -109,11 +109,7 @@ public class DateToMonthEndForOAndOO extends ConverterStep {
             }
             
             if (!matchedType) {
-                if (idColumn >= 0) {
-                    throw new BadDataException("Dates were not valid - ID: " + row.get(idColumn) + "\tStart:" + row.get(startDateColumn) + " End:" + row.get(endDateColumn));
-                } else {
-                    throw new BadDataException("Dates were not valid - Start:" + row.get(startDateColumn) + " End:" + row.get(endDateColumn));
-                }
+                throw new BadDataException("Supplied dates are not valid dates in the NBN Exchange Format [Start:" + row.get(startDateColumn) + " - End:" + row.get(endDateColumn) + "]");
             }            
         }
     }

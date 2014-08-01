@@ -24,21 +24,21 @@ class Nbnv82Validator {
     if (count > 1) {
       new Result {
         def level = ResultLevel.ERROR
-        def message = "%s: More than one definition of a spatial reference has been supplied".format(code)
+        def message = "%s: Either the GridReference or East and North fields or FeatureKey must be supplied for this record".format(code)
         def reference = record.key
       }
     }
     else if (count < 1) {
       new Result {
         def level = ResultLevel.ERROR
-        def message = "%s: At least one definition of a spatial reference must be supplied".format(code)
+        def message = "%s: A spatial reference is required for this record".format(code)
         def reference = record.key
       }
     }
     else {
       new Result {
         def level = ResultLevel.DEBUG
-        def message = "%s: Validated: Only one spatial reference definistion has been supplied".format(code)
+        def message = "%s: Validated: A spatial reference has been supplied".format(code)
         def reference = record.key
       }
     }

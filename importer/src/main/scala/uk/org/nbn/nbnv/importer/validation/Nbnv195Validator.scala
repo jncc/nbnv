@@ -21,7 +21,7 @@ class Nbnv195Validator extends DateFormatValidator {
       results.append(new Result {
         def level: ResultLevel.ResultLevel = ResultLevel.ERROR
         def reference: String = record.key
-        def message: String = "%s: End date is in the future".format(code)
+        def message: String = "%s: The EndDate must not be in the future".format(code)
       })
     }
 

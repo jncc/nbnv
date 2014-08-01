@@ -24,7 +24,7 @@ abstract class DateFormatValidator {
       val r1 = new Result {
         def level: ResultLevel.ResultLevel = ResultLevel.ERROR
         def reference: String = record.key
-        def message: String = "%s: The start date must be specified for date type '%s'".format(code, dateType)
+        def message: String = "%s: A StartDate must be supplied for a date with DateType '%s'".format(code, dateType)
       }
 
       results.append(r1)
@@ -34,7 +34,7 @@ abstract class DateFormatValidator {
       val r2 = new Result {
         def level: ResultLevel.ResultLevel = ResultLevel.ERROR
         def reference: String = record.key
-        def message: String = "%s: The start date format is not valid for date type '%s'".format(code, dateType)
+        def message: String = "%s: The StartDate is not in the format required for the NBN Exchange Format".format(code)
       }
 
       results.append(r2)
@@ -44,7 +44,7 @@ abstract class DateFormatValidator {
       val r3 = new Result {
         def level: ResultLevel.ResultLevel = ResultLevel.ERROR
         def reference: String = record.key
-        def message: String = "%s: The end date must be specified for date type '%s'".format(code, dateType)
+        def message: String = "%s: An EndDate must be supplied for a date with DateType '%s'".format(code, dateType)
       }
 
       results.append(r3)
@@ -53,7 +53,7 @@ abstract class DateFormatValidator {
       val r4 = new Result {
         def level: ResultLevel.ResultLevel = ResultLevel.ERROR
         def reference: String = record.key
-        def message: String = "%s: The end date format is not valid for date type '%s'".format(code, dateType)
+        def message: String = "%s: The EndDate is not in the format required for the NBN Exchange Format".format(code)
       }
 
       results.append(r4)
