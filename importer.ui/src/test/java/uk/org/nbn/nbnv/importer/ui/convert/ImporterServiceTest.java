@@ -23,18 +23,12 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
  *         Date: 30/07/14
  *         Time: 16:45
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@WebAppConfiguration
-@ContextConfiguration("classpath:/test-context.xml")
-public class ImporterServiceTest {
-
-    @Autowired
-    protected WebApplicationContext wac;
+public class ImporterServiceTest extends BaseIntegrationTest {
 
     @Autowired
     private ImporterService importerService;
 
-    private MockMvc mockMvc;
+
     private File testValidFile;
     private File testBadFile;
 
@@ -42,7 +36,7 @@ public class ImporterServiceTest {
 
     @Before
     public void setup() throws IOException {
-        this.mockMvc = webAppContextSetup(this.wac).build();
+        baseSetup();
         Resource validResource = new ClassPathResource("valid.zip");
         validResource.getFile().getParent();
         Resource badResource = new ClassPathResource("justsomerandomfile.zip");

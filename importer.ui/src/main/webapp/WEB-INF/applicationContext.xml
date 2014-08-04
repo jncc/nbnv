@@ -2,6 +2,10 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
-    <context:property-placeholder location="classpath:importer.ui.properties"/>
+
     <!-- Root Context: defines shared resources visible to all other web components -->
+    <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+        <property name="host" value="smtp.nerc-lancaster.ac.uk"/>
+    </bean>
+
 </beans>

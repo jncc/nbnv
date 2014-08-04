@@ -8,7 +8,9 @@
 	<!-- Root Context: defines shared resources visible to all other web components -->
 				
     <context:component-scan base-package="uk.org.nbn.nbnv.importer.ui"/>
-
+    <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+        <property name="host" value="smtp.nerc-lancaster.ac.uk"/>
+    </bean>
     <bean id="freemarkerConfig" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
         <property name="templateLoaderPath" value="/WEB-INF/freemarker/"/>
         <property name="freemarkerSettings">    

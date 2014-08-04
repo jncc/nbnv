@@ -148,10 +148,20 @@
             <version>3.2.1</version>
         </dependency>
         <!-- includes an email builder, bit sick of spring -->
-        <dependency>
+        <!-- <dependency>
             <groupId>org.jodd</groupId>
             <artifactId>jodd</artifactId>
             <version>3.4.1</version>
+        </dependency> -->
+        <dependency>
+            <groupId>javax.mail</groupId>
+            <artifactId>javax.mail-api</artifactId>
+            <version>1.5.2</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.mail</groupId>
+            <artifactId>mail</artifactId>
+            <version>1.4.7</version>
         </dependency>
         <!-- the actual importer -->
         <dependency>
