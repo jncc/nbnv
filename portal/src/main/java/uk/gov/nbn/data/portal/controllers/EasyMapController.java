@@ -447,7 +447,7 @@ public class EasyMapController {
                         BigDecimal.valueOf(ref.getEasting() + adjust),
                         BigDecimal.valueOf(ref.getNorthing() + adjust));
             } else {
-                if (input.matches("^[A-Za-z]{2}[0-9]{2}[A-Za-z]{1}$")) {
+                if (input.matches("^[A-Za-z]{2}[0-9]{2}[A-NP-Za-np-z]{1}$")) {
                     // 2KM square
                     String sixFigure = input.substring(0,3) + 
                             TETRADS.get(input.substring(4,5)).getValue0() + 
