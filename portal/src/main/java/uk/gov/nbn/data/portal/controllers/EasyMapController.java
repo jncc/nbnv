@@ -42,6 +42,7 @@ import uk.org.nbn.nbnv.api.model.TaxonDataset;
 import uk.org.nbn.nbnv.api.model.TaxonDatasetWithQueryStats;
 import uk.me.jstott.jcoord.OSRef;
 import uk.me.jstott.jcoord.IrishRef;
+import org.javatuples.Pair;
 
 /**
  *
@@ -55,6 +56,36 @@ public class EasyMapController {
     private List<String> errors;
     private List<String> warnings;
     private String viceCountyDataset = "GA000344";
+    private static final Map<String, Pair<String, String>> TETRADS;
+
+    static {
+        TETRADS = new HashMap<String, Pair<String, String>>();
+        TETRADS.put("A", new Pair("0", "0"));
+        TETRADS.put("B", new Pair("0", "2"));
+        TETRADS.put("C", new Pair("0", "4"));
+        TETRADS.put("D", new Pair("0", "6"));
+        TETRADS.put("E", new Pair("0", "8"));
+        TETRADS.put("F", new Pair("2", "0"));
+        TETRADS.put("G", new Pair("2", "2"));
+        TETRADS.put("H", new Pair("2", "4"));
+        TETRADS.put("I", new Pair("2", "6"));
+        TETRADS.put("J", new Pair("2", "8"));
+        TETRADS.put("K", new Pair("4", "0"));
+        TETRADS.put("L", new Pair("4", "2"));
+        TETRADS.put("M", new Pair("4", "4"));
+        TETRADS.put("N", new Pair("4", "6"));
+        TETRADS.put("P", new Pair("4", "8"));
+        TETRADS.put("Q", new Pair("6", "0"));
+        TETRADS.put("R", new Pair("6", "2"));
+        TETRADS.put("S", new Pair("6", "4"));
+        TETRADS.put("T", new Pair("6", "5"));
+        TETRADS.put("U", new Pair("6", "8"));
+        TETRADS.put("V", new Pair("8", "0"));
+        TETRADS.put("W", new Pair("8", "2"));
+        TETRADS.put("X", new Pair("8", "4"));
+        TETRADS.put("Y", new Pair("8", "6"));
+        TETRADS.put("Z", new Pair("8", "8"));
+    }
 
     public EasyMapController() {
     }
@@ -416,29 +447,25 @@ public class EasyMapController {
                         BigDecimal.valueOf(ref.getEasting() + adjust),
                         BigDecimal.valueOf(ref.getNorthing() + adjust));
             } else {
-
-                throw new InvalidFeatureIdentifierException("The EasyMap service does not currently support Irish Grid References", input);
-//            IrishRef ref;
-//            // Irish
-//            if (input.length() == 3) {
-//                String sixFigure = input.substring(0, 1) + "00" + input.substring(3,3) + "00";
-//                ref = new IrishRef(sixFigure);
-//                adjust = 10000;
-//            } else if (input.length() == 4) {
-//                String sixFigure = input.substring(0, 2) + "0" + input.substring(3, 4) + "0";
-//                ref = new IrishRef(sixFigure);
-//                adjust = 1000;                
-//            } else if (input.length() == 5) {
-//                ref = new IrishRef(input);
-//            } else {
-//                throw new InvalidFeatureIdentifierException("We do not support more than 100m resolution");
-//            }
-//            
-//             ret =  new BoundingBox("EPSG:27700", 
-//                     BigDecimal.valueOf(ref.getEasting()), 
-//                     BigDecimal.valueOf(ref.getNorthing()), 
-//                     BigDecimal.valueOf(ref.getEasting() + adjust), 
-//                     BigDecimal.valueOf(ref.getNorthing() + adjust));            
+                if (input.matches("^[A-Za-z]{2}[0-9]{2}[A-Za-z]{1}$")) {
+                    // 2KM square
+                    String sixFigure = input.substring(0,3) + 
+                            TETRADS.get(input.substring(4,5)).getValue0() + 
+                            "0" + input.substring(3,4) + 
+                            TETRADS.get(input.substring(4,5)).getValue1() + "0";
+                    OSRef ref = new OSRef(sixFigure);
+                    adjust = 2000;
+                    
+                    ret = new BoundingBox("EPSG:27700",
+                            BigDecimal.valueOf(ref.getEasting()),
+                            BigDecimal.valueOf(ref.getNorthing()),
+                            BigDecimal.valueOf(ref.getEasting() + adjust),
+                            BigDecimal.valueOf(ref.getNorthing() + adjust));                    
+                } else if (input.matches("^[A-Za-z]{1}[0-9]{2,6}[A-Za-z]{0,1}")) {
+                    throw new InvalidFeatureIdentifierException("The EasyMap service does not currently support Irish Grid References", input);
+                } else {
+                    throw new InvalidFeatureIdentifierException("The provided grid reference was not a valid OSGB 10km, 1km or 100m grid square", input);
+                }
             }
         } catch (IllegalArgumentException ex) {
             throw new InvalidFeatureIdentifierException("The provided grid reference was not a valid OSGB 10km, 1km or 100m grid square", input);
