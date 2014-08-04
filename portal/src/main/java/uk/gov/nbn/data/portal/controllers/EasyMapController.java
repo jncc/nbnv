@@ -401,7 +401,7 @@ public class EasyMapController {
                     ref = new OSRef(sixFigure);
                     adjust = 10000;
                 } else if (input.length() == 6) {
-                    String sixFigure = input.substring(0, 4) + "0" + input.substring(5, 6) + "0";
+                    String sixFigure = input.substring(0, 4) + "0" + input.substring(4, 6) + "0";
                     ref = new OSRef(sixFigure);
                     adjust = 1000;
                 } else if (input.length() == 8) {
