@@ -464,11 +464,11 @@ public class EasyMapController {
                 } else if (input.matches("^[A-Za-z]{1}[0-9]{2,6}[A-Za-z]{0,1}")) {
                     throw new InvalidFeatureIdentifierException("The EasyMap service does not currently support Irish Grid References", input);
                 } else {
-                    throw new InvalidFeatureIdentifierException("The provided grid reference was not a valid OSGB 10km, 1km or 100m grid square", input);
+                    throw new InvalidFeatureIdentifierException("The provided grid reference was not a valid OSGB 10km, 2km, 1km or 100m grid square", input);
                 }
             }
         } catch (IllegalArgumentException ex) {
-            throw new InvalidFeatureIdentifierException("The provided grid reference was not a valid OSGB 10km, 1km or 100m grid square", input);
+            throw new InvalidFeatureIdentifierException("The provided grid reference was not a valid OSGB 10km, 2km, 1km or 100m grid square", input);
         }
 
         return ret;
