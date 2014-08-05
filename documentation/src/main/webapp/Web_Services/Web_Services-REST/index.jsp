@@ -5,10 +5,6 @@
 <t:webserviceDocumentationPage>
 	<jsp:attribute name="body">
         <nbn:markdown>
-#Documentation under review
-
-Please note that the documentation is still being reviewed at this time and as such some documentation may be out of date or missing, we apologise for this and are working to update the documentation right now!
-            
 #Introduction
 
 The NBN Gateway web services have been built to allow biological data from the NBN Gateway to be used in websites and applications.

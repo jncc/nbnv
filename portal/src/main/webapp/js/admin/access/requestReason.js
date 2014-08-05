@@ -53,7 +53,7 @@ nbn.nbnv.ui.requestReason = function(json) {
                     asSelect.change();
                 }
             }
-        })
+        });
 
         var purpose = $('<select>')
                 .append($('<option>').text('Personal interest').attr('value', '1'))
@@ -97,7 +97,7 @@ nbn.nbnv.ui.requestReason = function(json) {
                     _me._details = $(this).val();
                 });
         
-        if (this._details != '') { details.text(this._details); }
+        if (this._details !== '') { details.text(this._details); }
         
         var data = $('<div>')
             .append($('<div>')
@@ -128,13 +128,13 @@ nbn.nbnv.ui.requestReason = function(json) {
     
     this.getJson = function() {
         if (this._asID > -1)
-            return { reason: { purpose: this._purpose, details: this._details, organisationID: this._asID }};
+            return { reason: { purpose: this._purpose, details: (this._details), organisationID: this._asID }};
         
-        return { reason: { purpose: this._purpose, details: this._details, userID: nbn.nbnv.userID }};
+        return { reason: { purpose: this._purpose, details: (this._details), userID: nbn.nbnv.userID }};
     };
 
     this.getError = function() {
-        if (this._details == '') { return ['Please enter detailed reason for your request']; }
+        if (this._details === '') { return ['Please enter detailed reason for your request']; }
         
         return [];
     };

@@ -58,9 +58,9 @@ class Nbnv75ValidatorSuite extends BaseFunSuite with BeforeAndAfter {
     when(record.startDateRaw).thenReturn(Some("03/01/1997"))
     when(record.startDate).thenReturn("03/01/1997".maybeDate("dd/MM/yyyy"))
 
-    val v = new Nbnv76Validator
+    val v = new Nbnv75Validator
     val r = v.validate(record)
-
+    
     r.find(r => r.level == ResultLevel.ERROR) should not be ('empty)
   }
 }

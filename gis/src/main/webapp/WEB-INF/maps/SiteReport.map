@@ -19,7 +19,7 @@ MAP
     END
 
     PROJECTION
-        "init=${extent.epsgCode}"
+        "init=${extent.epsgCode?lower_case}"
     END
     
     [@backgrounds.os location=properties.contextLayersLocation requires=[]/]

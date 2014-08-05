@@ -78,7 +78,7 @@ public class DesignationSpeciesDensityMap {
     
     @Autowired @Qualifier("taxonLayerBaker") ShapefileBakery bakery;
 
-    @RequestMapping("{designationKey}")
+    @RequestMapping("{designationKey:.+}")
     @GridMap(
         layers = {
         @GridLayer(name = "10km", layer = TEN_KM_LAYER_NAME, resolution = Resolution.TEN_KM),
@@ -93,7 +93,7 @@ public class DesignationSpeciesDensityMap {
             @RequestParam(value = "datasets", required=false) @Datasets final List<String> datasetKeys,
             @RequestParam(value = "startyear", required=false) @Pattern(regexp="[0-9]{4}") final String startYear,
             @RequestParam(value = "endyear", required=false) @Pattern(regexp="[0-9]{4}") final String endYear,
-            @PathVariable("designationKey") @Pattern(regexp="^[A-Z0-9.()/_\\-]+$") final String key) {
+            @PathVariable("designationKey") @Pattern(regexp="^[A-Z0-9.()/_\\- ]+$") final String key) {
 
         HashMap<String, Object> data = new HashMap<String, Object>();
         data.put("layers", LAYERS.keySet());

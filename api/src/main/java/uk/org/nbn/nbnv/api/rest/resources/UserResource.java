@@ -3,6 +3,8 @@ package uk.org.nbn.nbnv.api.rest.resources;
 import freemarker.template.TemplateException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -35,6 +37,8 @@ import org.codehaus.jettison.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
 import uk.org.nbn.nbnv.api.authentication.TokenResetCredentials;
 import uk.org.nbn.nbnv.api.authentication.ExpiredTokenException;
 import uk.org.nbn.nbnv.api.authentication.InvalidCredentialsException;
@@ -169,7 +173,8 @@ public class UserResource extends AbstractResource {
                 tokenCookieKey,
                 Base64.encodeBase64URLSafeString(token.getBytes()),
                 "/", domain, "authentication token",
-                (remember) ? tokenTTL / 1000 : NewCookie.DEFAULT_MAX_AGE, false))
+                (remember) ? tokenTTL / 1000 : NewCookie.DEFAULT_MAX_AGE, 
+                Boolean.getBoolean(properties.getProperty("secure_cookie", "true"))))
                 .build();
     }
     
@@ -217,7 +222,8 @@ public class UserResource extends AbstractResource {
                 tokenCookieKey,
                 Base64.encodeBase64URLSafeString(token.getBytes()),
                 "/", domain, "authentication token",
-                (remember) ? tokenTTL / 1000 : NewCookie.DEFAULT_MAX_AGE, false))
+                (remember) ? tokenTTL / 1000 : NewCookie.DEFAULT_MAX_AGE, 
+                Boolean.getBoolean(properties.getProperty("secure_cookie", "true"))))
                 .build();
     }    
 
@@ -446,7 +452,7 @@ public class UserResource extends AbstractResource {
     })
     @Produces(MediaType.APPLICATION_JSON)
     public Response registerNewUser(@Valid User newUser) throws
-            UnsupportedEncodingException, IOException, TemplateException, JSONException, NoSuchAlgorithmException {
+            UnsupportedEncodingException, IOException, TemplateException, JSONException, NoSuchAlgorithmException, URISyntaxException {
         //Perform some checks to before hitting database constraints. 
         //Would be better to read the status from a constraint violation
         //and report on this
@@ -472,6 +478,15 @@ public class UserResource extends AbstractResource {
             message.put("portal", properties.getProperty("portal_url"));
             message.put("activationKey", activationKey);
             message.put("username", newUser.getUsername());
+            
+            String host = properties.getProperty("portal_url");
+            UriComponents uriComponents = 
+                    UriComponentsBuilder.newInstance().uri(new URL(host).toURI())
+                    .path(String.format("/User/Activate/%s/Process", newUser.getUsername()))
+                    .queryParam("code", activationKey).build().encode();
+            
+            message.put("activation_url", uriComponents.toUriString());            
+            
             mailer.send("activation.ftl", newUser.getEmail(), "NBN Gateway: Please activate your account", message);
 
             return Response.ok(new JSONObject()

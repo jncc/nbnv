@@ -7,7 +7,7 @@ class Nbnv93Validator {
     val (label, value) = attribute
 
     val validator = new LengthValidator
-    validator.validate("NBNV-93", recordKey, label, value, 255)
+    validator.validate("NBNV-93", recordKey, "The attribute '%s'".format(label), value, 255)
 
   }
 

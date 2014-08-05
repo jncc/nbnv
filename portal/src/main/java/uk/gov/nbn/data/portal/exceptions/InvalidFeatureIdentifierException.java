@@ -11,6 +11,11 @@ package uk.gov.nbn.data.portal.exceptions;
 public class InvalidFeatureIdentifierException extends Exception {
     private String identifier;
     
+    public InvalidFeatureIdentifierException(String message, String identifier) {
+        super(message);
+        this.identifier = identifier;
+    }
+    
     public InvalidFeatureIdentifierException(String message) {
         super(message);
     }

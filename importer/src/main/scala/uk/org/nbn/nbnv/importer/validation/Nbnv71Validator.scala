@@ -12,6 +12,7 @@ import collection.mutable.ListBuffer
  */
 //todo: test this
 class Nbnv71Validator {
+  val code = "NBNV-71"
 
   def validate(record: NbnRecord) = {
     val current = new Date()
@@ -22,14 +23,14 @@ class Nbnv71Validator {
       new Result {
         def level: ResultLevel.ResultLevel = ResultLevel.ERROR
         def reference: String = record.key
-        def message: String = "NBNV-71: Start date must not be in the future"
+        def message: String = "%s: The StartDate must not be in the future".format(code)
       }
 
     } else {
       new Result {
         def level: ResultLevel.ResultLevel = ResultLevel.DEBUG
         def reference: String = record.key
-        def message: String = "NBNV-71:The start date is not in the future"
+        def message: String = "%s1:The start date is not in the future".format(code)
       }
     }
   }

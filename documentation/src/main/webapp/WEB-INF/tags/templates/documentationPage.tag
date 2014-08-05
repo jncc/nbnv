@@ -8,6 +8,16 @@
     <head>
         <link type="text/css" rel="stylesheet" href="/Documentation/css/documentation.css" />
         <script type="text/javascript" src="/Documentation/js/documentation.js"></script>
+        
+        <link href="/Documentation/js/syntaxHighlighter/shCore.css" rel="stylesheet" />
+        <link href="/Documentation/js/syntaxHighlighter/shThemeDefault.css" rel="stylesheet" />
+        <script src="/Documentation/js/syntaxHighlighter/shCore.js"></script>
+        <script src="/Documentation/js/syntaxHighlighter/shBrushCSharp.js"></script>
+        <script src="/Documentation/js/syntaxHighlighter/shBrushPhp.js"></script>
+        <script src="/Documentation/js/syntaxHighlighter/shBrushXml.js"></script>
+        <script src="/Documentation/js/syntaxHighlighter/shBrushJava.js"></script>
+        <script src="/Documentation/js/syntaxHighlighter/shBrushJScript.js"></script>        
+        
         <title>NBN Learning Zone - National Biodiversity Network</title>
         ${head}
     </head>

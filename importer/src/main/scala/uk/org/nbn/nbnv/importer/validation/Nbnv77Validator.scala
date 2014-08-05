@@ -14,7 +14,7 @@ class Nbnv77Validator {
         new Result {
           def level: ResultLevel.ResultLevel = ResultLevel.ERROR
           def reference: String = record.key
-          def message: String = "%s: A date should not be specified for date type '%s'".format(code, record.dateType)
+          def message: String = "%s: The date should not be supplied for a date with DateType '%s'".format(code, record.dateType)
         })
     }
     else if (record.startDate.isDefined) {
@@ -22,7 +22,7 @@ class Nbnv77Validator {
         new Result {
           def level: ResultLevel.ResultLevel = ResultLevel.ERROR
           def reference: String = record.key
-          def message: String = "%s: A start date should not be specified for date type '%s'".format(code, record.dateType)
+          def message: String = "%s: The StartDate should not be supplied for a date with DateType '%s'".format(code, record.dateType)
         })
     }
 
@@ -31,7 +31,7 @@ class Nbnv77Validator {
         new Result {
           def level: ResultLevel.ResultLevel = ResultLevel.ERROR
           def reference: String = record.key
-          def message: String = "%s: An end date should not be specified for date type '%s'".format(code, record.dateType)
+          def message: String = "%s: The EndDate should not be supplied for a date with DateType '%s'".format(code, record.dateType)
         })
     }
 

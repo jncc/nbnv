@@ -26,7 +26,7 @@ public class TaxonObservationHandler implements ResultHandler {
     private boolean includeAttributes;
     private boolean firstRecord;
 
-    public TaxonObservationHandler(PrintWriter out, boolean includeAttributes) {    
+    public TaxonObservationHandler(PrintWriter out, boolean includeAttributes) {
         this.out = out;
         this.includeAttributes = includeAttributes;
         this.firstRecord = true;
@@ -39,19 +39,26 @@ public class TaxonObservationHandler implements ResultHandler {
         // Stop nulls being pushed out to the json output
         om.setSerializationInclusion(JsonSerialize.Inclusion.NON_NULL);
         ObjectWriter ow = om.writer();
-        
+
         if (includeAttributes && (observation.isFullVersion() || observation.isPublicAttribute())) {
             observation.setAttributes(new HashMap<String, String>());
 
-            String[] attVals = StringUtils.split(observation.getAttrStr(), "¦");
+            String[] attVals = org.apache.commons.lang.StringUtils.split(
+                    org.springframework.util.StringUtils.hasText(observation.getAttrStr())
+                    ? observation.getAttrStr() : "", "¦");
             for (String attVal : attVals) {
-                String[] vals = StringUtils.split(attVal, "¬");
-                observation.getAttributes().put(vals[0], vals[1]);
+                if (org.springframework.util.StringUtils.hasText(attVal)) {
+                    String[] vals = org.apache.commons.lang.StringUtils.split(attVal, "¬");
+                    if (vals.length == 2) {
+                        observation.getAttributes().put(vals[0], vals[1]);
+                    } else if (vals.length == 1) {
+                        observation.getAttributes().put(vals[0], "");
+                    }
+                }
             }
-            
-            observation.setAttrStr(null);
         }
-        
+        observation.setAttrStr(null);
+
         try {
             if (firstRecord) {
                 out.print(ow.writeValueAsString(observation));
@@ -59,7 +66,7 @@ public class TaxonObservationHandler implements ResultHandler {
             } else {
                 out.print("," + ow.writeValueAsString(observation));
             }
-        } catch(IOException ex) {
+        } catch (IOException ex) {
             //TODO: DO SOMETHING
         }
     }

@@ -18,6 +18,7 @@ window.nbn = window.nbn || {};
                         $.each(data, function(index, value) {
                            orgs.append($('<span>').text(value.name)).append($('<br />'));
                         });
+                        $('#nbn-further-info-user-org-desc').text('Organisation Memberships:');
                         $('#nbn-further-info-user-orgs').empty().append(orgs);
                     } else {
                         $('#nbn-further-info-user-org-desc').text('User is not a member of any organisations');
@@ -73,19 +74,19 @@ window.nbn = window.nbn || {};
                     
                     $.ajax({
                         type: 'GET',
-                        url: nbn.nbnv.api + "/organisationMemberships/" + id,
+                        url: nbn.nbnv.api + '/organisationMemberships/' + id + '/users',
                         success: function(data) {
                             var members = $('<table>').attr('id', 'nbn-further-info-org-members-table')
                                 .append($('<thead>').append($('<tr>').append($('<th>').text('Member')).append($('<th>').text('Email'))));
                             var users = $('<tbody>');
                             $.each(data, function(index, value) {
                                 users = users.append($('<tr>')
-                                        .append($('<td>').text(value.user.forename + ' ' + value.user.surname))
-                                        .append($('<td>').text(value.user.email)))
+                                        .append($('<td>').text(value.forename + ' ' + value.surname))
+                                        .append($('<td>').text(value.email)))
                             });
                             $('#nbn-further-info-org-members').empty().append(members.append(users));
                             $('#nbn-further-info-org-members-table').dataTable({
-                                "aaSorting": [[1, "desc"]],
+                                "aaSorting": [[1, "asc"]],
                                 "iDisplayLength": 5,
                                 "bJQueryUI": true
                             });

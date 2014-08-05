@@ -37,7 +37,7 @@
         
         //Vice county - remove the feature argument generated when Vice County value is 'none',
         //otherwise we are zooming to a vice county so add overlay=feature to highlight the vc
-        if(keyValuePairs.hasOwnProperty('feature') && keyValuePairs['feature'].toUpperCase()==='NONE'){
+        if(keyValuePairs.hasOwnProperty('feature') && keyValuePairs['feature'].toUpperCase() === 'NONE'){
             delete keyValuePairs['feature'];
         }else{
             keyValuePairs['overlay'] = 'feature';
@@ -129,7 +129,7 @@
         
         //The dataset key argument is 'datasets', whereas the generic table of datasets uses 'datasetKey' - this needs changing
         if(keyValuePairs.hasOwnProperty('datasetKey')){
-            keyValuePairs['datasets'] = keyValuePairs['datasetKey'];
+            keyValuePairs['datasets'] = nbn.portal.reports.utils.datasetfields.getSelectedDatasets();
             delete keyValuePairs['datasetKey'];
         }
         
@@ -268,35 +268,23 @@
     
     function doOnChange(){
         var $form = $('#nbn-grid-map-form');
-	
+
             
         //Apply any rules eg, must have at least one year band selected
         applyRules();
-            
-        //Deselect datasets if all are selected - requires jquery.dataset-selector-utils.js
-        nbn.portal.reports.utils.datasetfields.doDeselectDatasetKeys();
         
         updateResolutionDropDown($form).complete(function(){
             //Do map refresh
             $('#nbn-grid-map-busy-image').show();
             $('#nbn-grid-map-image').attr('src',getURL($form));
-
-            //Turn on all datasets if they are all off
-            nbn.portal.reports.utils.datasetfields.doSelectDatasetKeys();
-        });   
+        });
     }
     
     function setupFormOnChange(){
-        //The map should refresh when any form field is changed
-        //except when the nbn-select-datasets-auto check box is deselected
-        $('#nbn-grid-map-form :input').change(function(){
-            if(($(this).attr('id')!=='nbn-select-datasets-auto') || ($('#nbn-select-datasets-auto').is(':checked'))){
-                var $input = $(this);
-                if(nbn.portal.reports.utils.forms.isGridMapFormFieldValid($input)){
-                    doOnChange();
-                }
-            }
-            //Update resolution text used on data download section
+        $('#nbn-grid-map-form :input').change(function(){            var $input = $(this);
+            if(nbn.portal.reports.utils.forms.isGridMapFormFieldValid($input)){
+                doOnChange();
+            }            //Update resolution text used on data download section
             if($(this).attr('id') === 'nbn-grid-map-resolution'){
                 $('#nbn-grid-map-resolution-download-text').text($(this).val());
             }
@@ -315,9 +303,7 @@
     function addInitialMapImage(){
         $('#nbn-grid-map-busy-image').hide();
         $('#nbn-grid-map-image').attr('src','/img/ajax-loader-medium.gif');
-        nbn.portal.reports.utils.datasetfields.doDeselectDatasetKeys();
         $('#nbn-grid-map-image').attr('src',getURL($('#nbn-grid-map-form')));
-        nbn.portal.reports.utils.datasetfields.doSelectDatasetKeys();
     }
     
     function setupDownloadSquaresButton(){
@@ -330,13 +316,11 @@
                     'Accept': function(){
                         var $form = $('#nbn-grid-map-form');
                         applyRules();
-                        nbn.portal.reports.utils.datasetfields.doDeselectDatasetKeys();
                         var tvk = $('#tvk').val(); 
                         var keyValuePairs = nbn.portal.reports.utils.forms.getKeyValuePairsFromForm($form);
                         var keyValuePairsWithBusinessLogic = getKeyValuePairsWithBusinessLogic(keyValuePairs);
                         var queryString = nbn.portal.reports.utils.forms.getQueryStringFromKeyValuePairs(keyValuePairsWithBusinessLogic, false);
                         var url = $form.attr('api-server') + '/gridMapSquares/' + tvk + queryString;
-                        nbn.portal.reports.utils.datasetfields.doSelectDatasetKeys();
                         $(this).dialog("close");
                         window.location = url;
                     },
@@ -386,7 +370,7 @@
                         var keyValuePairs = nbn.portal.reports.utils.forms.getKeyValuePairsFromForm(form);
                         window.location = '/Download?json={' + 
                             getTaxonJSON() + ',' +
-                            nbn.portal.reports.utils.datasetfields.getSelectedDatasetsJSON() + ',' +
+                            nbn.portal.reports.utils.datasetfields.getSelectedDatasetsJSON() +
                             '}';
                     },
                     'Cancel': function(){

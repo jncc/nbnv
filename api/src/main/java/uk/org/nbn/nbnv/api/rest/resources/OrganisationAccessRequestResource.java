@@ -726,36 +726,30 @@ public class OrganisationAccessRequestResource extends RequestResource {
         giveAccess(oar);
         
         if (expires.isEmpty()) {
+            if (!accessRequestJSON.getTime().isAll()) {
+                editExpiryDate(user, filterID, oar, accessRequestJSON, null);
+            }
             oOrganisationAccessRequestMapper.acceptRequest(filterID, reason, new Timestamp(new java.util.Date().getTime()));
         } else {
             DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-            DateFormat db_df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX");
             java.util.Date expiresDate = df.parse(expires);
                 
             Calendar expiresCal = Calendar.getInstance();
             Calendar requestCal = Calendar.getInstance();
             expiresCal.setTime(expiresDate);
-            requestCal.setTime(accessRequestJSON.getTime().getDate());
             
-            if (!(expiresCal.get(Calendar.YEAR) == requestCal.get(Calendar.YEAR)
-                    && expiresCal.get(Calendar.DAY_OF_YEAR) == requestCal.get(Calendar.DAY_OF_YEAR))) {
-            
-                String origText = oar.getFilter().getFilterText();
+            if (accessRequestJSON.getTime().getDate() != null) {
+                requestCal.setTime(accessRequestJSON.getTime().getDate());
 
-                accessRequestJSON.getTime().setAll(false);
-                accessRequestJSON.getTime().setDate(expiresDate);
-
-                AccessRequestModifiedTimeJSON json = new AccessRequestModifiedTimeJSON(accessRequestJSON, db_df.format(expiresDate));
-
-                ObjectMapper om = new ObjectMapper();
-                // Stop nulls being pushed out to the json output
-                om.setSerializationInclusion(JsonSerialize.Inclusion.NON_NULL);
-                ObjectWriter ow = om.writer();
-
-                TaxonObservationFilter filter = accessRequestUtils.createFilter(ow.writeValueAsString(json), accessRequestJSON);
-
-                oTaxonObservationFilterMapper.editFilter(filterID, filter.getFilterText(), ow.writeValueAsString(json));
-                oOrganisationAccessRequestAuditHistoryMapper.addHistory(filterID, user.getId(), "Edit request to: '" + filter.getFilterText() + "', from: '" + origText + "'");
+                // Check to see if the expiry date has changed or not and change
+                // it if necessary, recording the change
+                if (!(expiresCal.get(Calendar.YEAR) == requestCal.get(Calendar.YEAR)
+                        && expiresCal.get(Calendar.DAY_OF_YEAR) == requestCal.get(Calendar.DAY_OF_YEAR))) {
+                    editExpiryDate(user, filterID, oar, accessRequestJSON, expiresDate);
+                }
+            } else {
+                // Date was not set originally, being set at the admin side only
+                editExpiryDate(user, filterID, oar, accessRequestJSON, expiresDate);
             }
             oOrganisationAccessRequestMapper.acceptRequestWithExpires(filterID, reason, new Timestamp(new java.util.Date().getTime()), new Date(expiresDate.getTime()));
         }
@@ -763,6 +757,32 @@ public class OrganisationAccessRequestResource extends RequestResource {
         oOrganisationAccessRequestAuditHistoryMapper.addHistory(filterID, user.getId(), "Accept request");
         mailRequestGrant(oOrganisationAccessRequestMapper.getRequest(filterID), reason, proactive);
         return Response.status(Response.Status.OK).entity("{}").build();
+    }
+    
+    private void editExpiryDate(User user, int filterID, OrganisationAccessRequest oar, AccessRequestJSON accessRequestJSON, java.util.Date expiresDate) throws IOException {        
+        DateFormat db_df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        String origText = oar.getFilter().getFilterText();
+
+        TaxonObservationFilter filter;
+        
+        ObjectMapper om = new ObjectMapper();
+        // Stop nulls being pushed out to the json output
+        om.setSerializationInclusion(JsonSerialize.Inclusion.NON_NULL);
+        ObjectWriter ow = om.writer();
+        
+        if (expiresDate != null) {
+            accessRequestJSON.getTime().setAll(false);
+            accessRequestJSON.getTime().setDate(expiresDate);
+            // Writes the date as a string rather than a timestamp
+            filter = accessRequestUtils.createFilter(ow.writeValueAsString(new AccessRequestModifiedTimeJSON(accessRequestJSON, db_df.format(expiresDate))), accessRequestJSON);
+        } else {
+            accessRequestJSON.getTime().setAll(true);
+            accessRequestJSON.getTime().setDate(null);
+            filter = accessRequestUtils.createFilter(ow.writeValueAsString(accessRequestJSON), accessRequestJSON);
+        }
+
+        oTaxonObservationFilterMapper.editFilter(filterID, filter.getFilterText(), filter.getFilterJSON());
+        oOrganisationAccessRequestAuditHistoryMapper.addHistory(filterID, user.getId(), "Edit request to: '" + filter.getFilterText() + "', from: '" + origText + "'");        
     }
 
     /**

@@ -21,5 +21,11 @@
             <input type="hidden" name="file" value="${model.archive}"/>
             <input type="submit" value="Download"/>
         </form>
+        <p>Warnings:</p>
+        <ul>
+            <#list model.warnings as result>
+                <li>${result}</li>
+            </#list>
+        </ul>
     </body>
 </html>

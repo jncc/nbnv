@@ -3,6 +3,7 @@
 <%@attribute name="body" required="true"%>
 <%@attribute name="head" %>
 <%@attribute name="navigation" required="true"%>
+<%@attribute name="showContentDiv" %>
 <%@taglib prefix="nbn" uri="/WEB-INF/tlds/nbn-tags.tld" %>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags/templates" %>
 <nbn:toc toc="toc" fragment="frag" depth="1">${body}</nbn:toc>
@@ -12,7 +13,11 @@
         <div id="nbn-page-navigation-menu">${navigation}</div>
         <div id="nbn-page-main-content">
             <div id="nbn-page-breadcrumbs"><%@include file="/WEB-INF/includes/breadcrumbs.jspf"%></div>
-            <div id="nbn-page-main-content-toc"><h2>Contents</h2>${toc}</div>
+            <c:choose>
+                <c:when test="${!showContentDiv.equals('false')}">
+                    <div id="nbn-page-main-content-toc"><h2>Contents</h2>${toc}</div>
+                </c:when>
+            </c:choose>
             ${frag}
         </div>
     </jsp:attribute>

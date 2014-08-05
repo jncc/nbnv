@@ -1,5 +1,7 @@
 package uk.org.nbn.nbnv.importer.validation
 
+import java.text.SimpleDateFormat
+
 import uk.org.nbn.nbnv.importer.records.NbnRecord
 import uk.org.nbn.nbnv.importer.fidelity.{ResultLevel, Result}
 import uk.org.nbn.nbnv.importer.utility.StringParsing._
@@ -12,7 +14,6 @@ import java.util.{Date, Calendar}
  *
  * Check for a valid O / M vague date type
  */
-//todo: write a test for this
 class Nbnv74Validator extends DateFormatValidator {
 
   def code = "NBNV-74"
@@ -31,11 +32,13 @@ class Nbnv74Validator extends DateFormatValidator {
       month.setTime(record.startDate.get)
       month.set(Calendar.DAY_OF_MONTH, 1)
 
+      val dateFormat = new SimpleDateFormat("MMMMM yyyy")
+
       if (record.startDate.get.compareTo(month.getTime) != 0) {
         results.append(new Result {
           def level: ResultLevel.ResultLevel = ResultLevel.ERROR
           def reference: String = record.key
-          def message: String = "%s: The start date is not the start of the month of %s".format(code, month.get(Calendar.MONTH).toString)
+          def message: String = "%s: The StartDate must be the first day of the specified month for a date with DateType '%s'".format(code, record.dateType)
         })
       }
 
@@ -47,7 +50,7 @@ class Nbnv74Validator extends DateFormatValidator {
           results.append(new Result {
             def level: ResultLevel.ResultLevel = ResultLevel.ERROR
             def reference: String = record.key
-            def message: String = "%s: The end date is specified but it is not the end of the month of %s".format(code, month.get(Calendar.MONTH).toString)
+            def message: String = "%s: The EndDate must be the last day of the specified month for a date with DateType '%s''".format(code, record.dateType)
           })
         }
 
@@ -59,7 +62,7 @@ class Nbnv74Validator extends DateFormatValidator {
           results.append(new Result {
             def level: ResultLevel.ResultLevel = ResultLevel.ERROR
             def reference: String = record.key
-            def message: String = "NBNV-71: End date is in the future"
+            def message: String = "%s: The EndDate must not be in the future".format(code)
           })
         }
       }

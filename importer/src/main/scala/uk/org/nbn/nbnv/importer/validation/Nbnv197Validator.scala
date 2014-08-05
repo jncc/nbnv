@@ -33,7 +33,7 @@ class Nbnv197Validator extends DateFormatValidator {
         results.append(new Result {
           def level: ResultLevel.ResultLevel = ResultLevel.ERROR
           def reference: String = record.key
-          def message: String = "%s: The start date must be the start of the year for date type code '%s'".format(code, record.dateType)
+          def message: String = "%s: The StartDate must be the first day of the year for a date with DateType '%s'".format(code, record.dateType)
         })
       }
 
@@ -55,7 +55,7 @@ class Nbnv197Validator extends DateFormatValidator {
         results.append(new Result {
           def level: ResultLevel.ResultLevel = ResultLevel.ERROR
           def reference: String = record.key
-          def message: String = "%s: The end date must be the end of the year for date type code '%s'".format(code, record.dateType)
+          def message: String = "%s: The EndDate must be the last day of the year for a date with DateType '%s'".format(code, record.dateType)
         })
       }
 
@@ -64,7 +64,7 @@ class Nbnv197Validator extends DateFormatValidator {
         results.append(new Result {
           def level: ResultLevel.ResultLevel = ResultLevel.ERROR
           def reference: String = record.key
-          def message: String = "%s: The end date is in the same year as the start date".format(code)
+          def message: String = "%s: The StartDate and EndDate must occur in different years for a date with DateType '%s'".format(code, record.dateType)
         })
       }
 
@@ -76,7 +76,7 @@ class Nbnv197Validator extends DateFormatValidator {
         results.append(new Result {
           def level: ResultLevel.ResultLevel = ResultLevel.ERROR
           def reference: String = record.key
-          def message: String = "%s: The end date cannot be after the end of the current year".format(code)
+          def message: String = "%s: The EndDate must not be in a future year".format(code)
         })
       }
     }

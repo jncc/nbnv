@@ -16,7 +16,7 @@ public class AccessProvider {
         TaxonObservationProvider tobsp = new TaxonObservationProvider();
         String from = tobsp.createSelectEnhanced(params, "o.id");
         BEGIN();
-        SELECT("#{user.id}, obs.id");
+        SELECT("DISTINCT #{user.id}, obs.id");
         FROM(from);
         WHERE("obs.id NOT IN ( SELECT utoa.observationID FROM UserTaxonObservationAccess utoa WHERE utoa.userID = #{user.id} )");
         return "INSERT INTO UserTaxonObservationAccess (userID, observationID) " + SQL();
@@ -36,7 +36,7 @@ public class AccessProvider {
         TaxonObservationProvider tobsp = new TaxonObservationProvider();
         String from = tobsp.createSelectEnhanced(params, "o.id");
         BEGIN();
-        SELECT("#{organisation.id}, obs.id");
+        SELECT("DISTINCT #{organisation.id}, obs.id");
         FROM(from);
         WHERE("obs.id NOT IN ( SELECT utoa.observationID FROM OrganisationTaxonObservationID utoa WHERE utoa.organisationID = #{organisation.id} )");
         return "INSERT INTO OrganisationTaxonObservationAccess (organisationID, observationID) " + SQL();
