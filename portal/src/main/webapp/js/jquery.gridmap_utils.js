@@ -95,12 +95,13 @@
 	//Order is important when displaying verification layers
 	//1(verified) overlays 2(incorrect) overlays 3(uncertain) overlays 4(unverified)
 	if(isVerificationTabSelected){
-	    verificationValues.sort().reverse();
+	    //verificationValues.sort().reverse();
 	    $.each(verificationValues, function(index, verificationValue){
 		keyValuePairs['verification' + index] = verificationValue;
 	    });
 	}else{
-	    keyValuePairs['verification'] = verificationValues;
+	    //keyValuePairs['verification'] = verificationValues;
+            delete keyValuePairs['verification'];
 	}
 	delete keyValuePairs['value-nbn-colour-picker-Verified'];
 	delete keyValuePairs['value-nbn-colour-picker-Incorrect'];

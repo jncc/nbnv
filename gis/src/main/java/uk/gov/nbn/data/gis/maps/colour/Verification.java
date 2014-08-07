@@ -10,7 +10,7 @@ import java.util.Map;
  * the latter is for drawing layers coloured by their verification status.  This class
  * models that information.
  */
-public class Verification {
+public class Verification implements Comparable<Verification>{
     private static final String VERIFICATION_REGEX = "[1-4](,[0-9a-fA-F]{6},[0-9a-fA-F]{6})?";
     
     private final Status status;
@@ -53,6 +53,12 @@ public class Verification {
 
     public Color getOutlineColour() {
         return outlineColour;
+    }
+
+    @Override
+    public int compareTo(Verification o) {
+        // Wrong way round to make 1 on top
+        return Integer.compare(o.getStatus().getKey(), this.getStatus().getKey());
     }
     
     public static enum Status{

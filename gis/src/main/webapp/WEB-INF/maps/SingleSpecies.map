@@ -8,7 +8,7 @@
     END
 
     [#list layers as layer_name]
-        [#if bands?? && !verifications?first.coloured] [#--If banding is enabled, create lots of layers and group them to the given layer--]
+        [#if bands??] [#--If banding is enabled, create lots of layers and group them to the given layer--]
             [#list bands as band]
                 [@layer group=layer_name name="Band_${band_index}" data=bandLayerGenerator.getData(layer_name, band)]
                     NAME                "Presence Year Band ${band.expression}"
@@ -19,7 +19,7 @@
                     END
                 [/@layer]
             [/#list]
-	[#elseif verifications?? && verifications?first.coloured] [#--Do we need to draw Verifcation layers?--]
+	[#elseif verifications??] [#--Do we need to draw Verifcation layers?--]
             [#list verifications as verification]
 
                 [@layer group=layer_name name="Verification_${verification_index}" data=verificationLayerGenerator.getData(layer_name, bands, verification)]

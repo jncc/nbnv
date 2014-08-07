@@ -53,21 +53,21 @@
                 <legend>Date ranges and colours</legend>
 		<div class="nbn-tabs">
 		    <ul>
-			<li><a href="#tabs-1" id="nbn-date-tab">Dates</a></li>
-			<li><a href="#tabs-2" id="nbn-verification-tab">Verification</a></li>
+                        <li><a href="#tabs-1" id="nbn-verification-tab">Verification</a></li>			
+                        <li><a href="#tabs-2" id="nbn-date-tab">Dates</a></li>
 		    </ul>
 		    <div id="tabs-1">
-			<@yearRange layerNum="1" hexColour="#ffff00" checkedText="checked" layerPosition="Top"/><br/>
-			<@yearRange layerNum="2" hexColour="#ff7f00" checkedText="" layerPosition="Middle"/><br/>
-			<@yearRange layerNum="3" hexColour="#ff0000" checkedText="" layerPosition="Bottom"/><br/>
-			<div><span class="nbn-date-layer-label">Outline:</span> <input type='checkbox' id='nbn-show-outline' name='showOutline' checked colourPickerId='nbn-colour-picker-outline'><@colourPicker idSuffix="-outline" hexColour="#000000"/></div>
-		    </div>
-		    <div id="tabs-2">
 			<@verificationStatus status="Verified" value=1 hexColour="#0000ff" checkedText="checked"/><br/>
 			<@verificationStatus status="Incorrect" value=2 hexColour="#ff0000" checkedText=""/><br/>
 			<@verificationStatus status="Uncertain" value=3 hexColour="#cccccc" checkedText="checked"/><br/>
 			<@verificationStatus status="Unverified" value=4 hexColour="#cccccc" checkedText="checked"/><br/>
 			<div><span class="nbn-quality-layer-label">Outline:</span> <input type='checkbox' id='nbn-verification-outline-checkbox' name='showOutlineVerification' checked colourPickerId='nbn-colour-picker-outline-verification'><span class='nbn-quality-color-picker'><@colourPicker idSuffix="-outline-verification" hexColour="#000000"/></span></div>
+		    </div>
+		    <div id="tabs-2">
+			<@yearRange layerNum="1" hexColour="#ffff00" checkedText="checked" layerPosition="Top"/><br/>
+			<@yearRange layerNum="2" hexColour="#ff7f00" checkedText="" layerPosition="Middle"/><br/>
+			<@yearRange layerNum="3" hexColour="#ff0000" checkedText="" layerPosition="Bottom"/><br/>
+			<div><span class="nbn-date-layer-label">Outline:</span> <input type='checkbox' id='nbn-show-outline' name='showOutline' checked colourPickerId='nbn-colour-picker-outline'><@colourPicker idSuffix="-outline" hexColour="#000000"/></div>
 		    </div>
 		</div>
             </fieldset>

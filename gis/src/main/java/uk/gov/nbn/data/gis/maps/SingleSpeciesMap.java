@@ -53,6 +53,7 @@ public class SingleSpeciesMap {
     private static final String NONE_GRID_LAYER_NAME = "None-Grid";
     private static final Map<String,Color> COLOURS;
     private static final Map<String, Integer> LAYERS;
+    private static final List<Verification> DEFAULT_VERIFICATION;
     
     @Autowired WebResource resource;
     @Autowired Properties properties;
@@ -72,6 +73,11 @@ public class SingleSpeciesMap {
         LAYERS.put(ONE_KM_LAYER_NAME, 3);
         LAYERS.put(ONE_HUNDRED_M_LAYER_NAME, 4);
         LAYERS.put(NONE_GRID_LAYER_NAME, -1);
+        
+        DEFAULT_VERIFICATION = new ArrayList<Verification>();
+        DEFAULT_VERIFICATION.add(new Verification("4,cccccc,000000"));
+        DEFAULT_VERIFICATION.add(new Verification("3,cccccc,000000"));
+        DEFAULT_VERIFICATION.add(new Verification("1,0000ff,000000"));
     }
     
     @RequestMapping("{taxonVersionKey}")
@@ -105,8 +111,23 @@ public class SingleSpeciesMap {
         data.put("osRequiredLayers", getOSRequiredLayers(LAYERS.keySet(), presence, absence, bands));
         data.put("enableAbsence", absence);
         data.put("enablePresence", presence);
-        data.put("bands", bands);
-        data.put("verifications", verifications);
+        
+        if (bands == null && verifications == null) {
+            data.put("verifications", DEFAULT_VERIFICATION);    
+            data.put("bands", null);
+        } else if (verifications != null) {
+            // Sort to be always in the correct order rather than relying on the
+            // user
+            Collections.sort(verifications);
+            data.put("verifications", verifications);
+            data.put("bands", null);
+        } else {
+            data.put("verifications", null);
+            data.put("bands", bands);
+        }
+        //data.put("bands", bands);
+        //data.put("verifications", verifications);        
+            
         data.put("mapServiceURL", mapServiceURL);
         data.put("featureData", MapHelper.getSelectedFeatureData(featureID));
         data.put("properties", properties);
