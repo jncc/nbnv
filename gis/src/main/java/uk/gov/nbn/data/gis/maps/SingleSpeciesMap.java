@@ -98,35 +98,41 @@ public class SingleSpeciesMap {
             @RequestParam(value="datasets", required=false) @Datasets final List<String> datasetKeys,
             @RequestParam(value="startyear", required=false) @Pattern(regexp="[0-9]{4}") final String startYear,
             @RequestParam(value="endyear", required=false) @Pattern(regexp="[0-9]{4}") final String endYear,
-            @RequestParam(value="abundance", required=false, defaultValue="presence") @Pattern(regexp="(all)|(presence)|(absence)") String abundance,
+            @RequestParam(value="abundance", required=false) @Pattern(regexp="(all)|(presence)|(absence)") String abundance,
             @RequestParam(value="feature", required=false) String featureID,
             @RequestParam(value="band", required=false) List<Band> bands,
 	    @RequestParam(value="verification", required=false) final List<Verification> verifications
             ) {
         HashMap<String, Object> data = new HashMap<String, Object>();
-        boolean absence = abundance.equals("all") || abundance.equals("absence");
-        boolean presence = abundance.equals("all") || abundance.equals("presence");
+        boolean absence = abundance != null && (abundance.equals("all") || abundance.equals("absence"));
+        boolean presence = abundance != null && (abundance.equals("all") || abundance.equals("presence"));
         data.put("layers", LAYERS.keySet());
         data.put("colours", COLOURS);
         data.put("osRequiredLayers", getOSRequiredLayers(LAYERS.keySet(), presence, absence, bands));
         data.put("enableAbsence", absence);
         data.put("enablePresence", presence);
         
-        if (bands == null && verifications == null) {
+        if (bands == null && verifications == null && !(absence || presence)) {
+            // If no bands, verfication and the absence layer is false then use
+            // default verification layers
             data.put("verifications", DEFAULT_VERIFICATION);    
             data.put("bands", null);
         } else if (verifications != null) {
+            // always use verification if present
             // Sort to be always in the correct order rather than relying on the
             // user
             Collections.sort(verifications);
             data.put("verifications", verifications);
             data.put("bands", null);
-        } else {
+        } else if (bands != null) {
+            // Use bands if no verification given
             data.put("verifications", null);
             data.put("bands", bands);
-        }
-        //data.put("bands", bands);
-        //data.put("verifications", verifications);        
+        } else {
+            // Use presence / absence layers
+            data.put("verifications", null);
+            data.put("bands", null);
+        }     
             
         data.put("mapServiceURL", mapServiceURL);
         data.put("featureData", MapHelper.getSelectedFeatureData(featureID));
