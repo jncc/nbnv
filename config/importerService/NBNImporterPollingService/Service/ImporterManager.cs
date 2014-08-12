@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
+﻿using System.Diagnostics;
+using System.IO;
 using System.Threading.Tasks;
 using log4net;
 
@@ -41,18 +37,35 @@ namespace uk.org.nbn.nbnv.ImporterPollingService.Service
             _log.InfoFormat("Started processsing file {0}",importFile);
 
             _log.DebugFormat("Command line: {0} {1}", p.StartInfo.FileName, p.StartInfo.Arguments);
-            
+
             p.Start();
+
+            using (Task importProcess = Task.Factory.StartNew(p.WaitForExit))
+            using (Task saveStandardOutput = Task.Factory.StartNew(() => SaveOutput(p.StandardOutput, _configuration.ImporterLogFolder, "ConsoleOutput.txt")))
+            using (Task saveStandardError = Task.Factory.StartNew(() => SaveOutput(p.StandardError, _configuration.ImporterLogFolder, "ConsoleErrors.txt")))
+            {
+                Task.WaitAll(importProcess, saveStandardError, saveStandardOutput);
+            }
+
+
+            
             // Do not wait for the child process to exit before
             // reading to the end of its redirected stream.
             // p.WaitForExit();
             // Read the output stream first and then wait.
-            _fileSystemManger.SaveStreamToFile(p.StandardOutput, _configuration.ImporterLogFolder, "ConsoleOutput.txt");
-            _fileSystemManger.SaveStreamToFile(p.StandardError, _configuration.ImporterLogFolder, "ConsoleErrors.txt");
+            //_fileSystemManger.SaveStreamToFile(p.StandardOutput, _configuration.ImporterLogFolder, "ConsoleOutput.txt");
+            //_fileSystemManger.SaveStreamToFile(p.StandardError, _configuration.ImporterLogFolder, "ConsoleErrors.txt");
 
-            p.WaitForExit();
+            //p.WaitForExit();
             _log.InfoFormat("Finished processing file {0}", importFile);
         }
+
+        private static void SaveOutput(StreamReader source, string targetFolder, string targetFile)
+        {
+            var fsm = new FileSystemManger();
+            fsm.SaveStreamToFile(source, targetFolder, targetFile);
+        }
+
 
         private string GetCommandLineArguments(string rawCommandLine, string importFile, string logFolder, string tempFolder)
         {
