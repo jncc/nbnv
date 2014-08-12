@@ -102,12 +102,12 @@ public class DownloadUtils {
     public List<Integer> getRecordSet(DownloadFilterJSON download, List<String> species, String dataset, User user) {
         List<String> datasets = new ArrayList<String>();
         datasets.add(dataset);
-        return taxonObservationMapper.selectRequestableObservationRecordIDsByFilter(user, download.getYear().getStartYear(), download.getYear().getEndYear(), datasets, species, download.getSpatial().getMatch(), download.getSpatial().getFeature(), (download.getSensitive().equals("sans") ? true : false), download.getTaxon().getDesignation(), download.getTaxon().getOutput(), "", "");
+        return taxonObservationMapper.selectRequestableObservationRecordIDsByFilter(user, download.getYear().getStartYear(), download.getYear().getEndYear(), datasets, species, download.getSpatial().getMatch(), download.getSpatial().getFeature(), (download.getSensitive().equals("sans") ? true : false), download.getTaxon().getDesignation(), download.getTaxon().getOutput(), "", "", download.getVerification());
     }
 
     public List<Integer> getRecordSet(DownloadFilterJSON download, List<String> species, String dataset, Organisation org) {
         List<String> datasets = new ArrayList<String>();
         datasets.add(dataset);
-        return taxonObservationMapper.selectRequestableObservationRecordIDsByFilterOrganisation(org, download.getYear().getStartYear(), download.getYear().getEndYear(), datasets, species, download.getSpatial().getMatch(), download.getSpatial().getFeature(), (download.getSensitive().equals("sans") ? true : false), download.getTaxon().getDesignation(), download.getTaxon().getOutput(), "", "");
+        return taxonObservationMapper.selectRequestableObservationRecordIDsByFilterOrganisation(org, download.getYear().getStartYear(), download.getYear().getEndYear(), datasets, species, download.getSpatial().getMatch(), download.getSpatial().getFeature(), (download.getSensitive().equals("sans") ? true : false), download.getTaxon().getDesignation(), download.getTaxon().getOutput(), "", "", download.getVerification());
     }
 }

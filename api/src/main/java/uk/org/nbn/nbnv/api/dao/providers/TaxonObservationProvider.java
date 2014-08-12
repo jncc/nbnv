@@ -400,6 +400,10 @@ public class TaxonObservationProvider {
             }
         }
         
+        if (params.containsKey("verification") && params.get("verification") != null) {
+            WHERE("obs.verificationID IN #{verification}");
+        }
+        
         return SQL();
     }
 

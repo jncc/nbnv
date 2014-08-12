@@ -106,12 +106,12 @@ public class AccessRequestUtils {
     public List<Integer> getRecordSet(AccessRequestJSON accessRequest, List<String> species, String dataset, User user) {
         List<String> datasets = new ArrayList<String>();
         datasets.add(dataset);
-        return taxonObservationMapper.selectRequestableObservationRecordIDsByFilter(user, accessRequest.getYear().getStartYear(), accessRequest.getYear().getEndYear(), datasets, species, accessRequest.getSpatial().getMatch(), accessRequest.getSpatial().getFeature(), (accessRequest.getSensitive().equals("sans") ? true : false), accessRequest.getTaxon().getDesignation(), accessRequest.getTaxon().getOutput(), accessRequest.getSpatial().getGridRef(), "");
+        return taxonObservationMapper.selectRequestableObservationRecordIDsByFilter(user, accessRequest.getYear().getStartYear(), accessRequest.getYear().getEndYear(), datasets, species, accessRequest.getSpatial().getMatch(), accessRequest.getSpatial().getFeature(), (accessRequest.getSensitive().equals("sans") ? true : false), accessRequest.getTaxon().getDesignation(), accessRequest.getTaxon().getOutput(), accessRequest.getSpatial().getGridRef(), "", null);
     }
 
     public List<Integer> getRecordSet(AccessRequestJSON accessRequest, List<String> species, String dataset, Organisation org) {
         List<String> datasets = new ArrayList<String>();
         datasets.add(dataset);
-        return taxonObservationMapper.selectRequestableObservationRecordIDsByFilterOrganisation(org, accessRequest.getYear().getStartYear(), accessRequest.getYear().getEndYear(), datasets, species, accessRequest.getSpatial().getMatch(), accessRequest.getSpatial().getFeature(), (accessRequest.getSensitive().equals("sans") ? true : false), accessRequest.getTaxon().getDesignation(), accessRequest.getTaxon().getOutput(), accessRequest.getSpatial().getGridRef(), "");
+        return taxonObservationMapper.selectRequestableObservationRecordIDsByFilterOrganisation(org, accessRequest.getYear().getStartYear(), accessRequest.getYear().getEndYear(), datasets, species, accessRequest.getSpatial().getMatch(), accessRequest.getSpatial().getFeature(), (accessRequest.getSensitive().equals("sans") ? true : false), accessRequest.getTaxon().getDesignation(), accessRequest.getTaxon().getOutput(), accessRequest.getSpatial().getGridRef(), "", null);
     }
 }

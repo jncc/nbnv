@@ -35,11 +35,11 @@ public interface TaxonObservationMapper {
     @Select("SELECT * FROM UserTaxonObservationData WHERE observationID = #{id} AND userID = #{userKey}")
     public TaxonObservation selectById(@Param("id") int id, @Param("userKey") int userKey);
 
-    @Select("SELECT * FROM UserTaxonObservationData WHERE datasetKey = #{id} AND userID = #{userKey}")
-    public List<TaxonObservation> selectByDataset(@Param("id") String id, @Param("userKey") int userKey);
+    @Select("SELECT * FROM UserTaxonObservationData INNER JOIN VerificationCodes vc ON vc.id = verificationID WHERE datasetKey = #{id} AND userID = #{userKey} AND verificationID IN #{verification}")
+    public List<TaxonObservation> selectByDataset(@Param("id") String id, @Param("userKey") int userKey, @Param("verification") List<Integer> verification);
 
-    @Select("SELECT * FROM UserTaxonObservationData WHERE pTaxonVersionKey = #{id} AND userID = #{userKey}")
-    public List<TaxonObservation> selectByPTVK(@Param("id") String id, @Param("userKey") int userKey);
+    @Select("SELECT * FROM UserTaxonObservationData INNER JOIN VerificationCodes vc ON vc.id = verificationID WHERE pTaxonVersionKey = #{id} AND userID = #{userKey} AND verificationID IN #{verification}")
+    public List<TaxonObservation> selectByPTVK(@Param("id") String id, @Param("userKey") int userKey, @Param("verification") List<Integer> verification);
     
     @Select("SELECT TOP 1 absence FROM UserTaxonObservationData WHERE pTaxonVersionKey = #{id} AND userID = #{userKey} AND absence = #{absence}")
     public Integer pTVKHasGridAbsence(@Param("id") String id, @Param("userKey") int userKey, @Param("absence") Boolean absence);
@@ -61,7 +61,8 @@ public interface TaxonObservationMapper {
             , @Param("taxonOutputGroup") String taxonOutputGroup
             , @Param("gridRef") String gridRef
             , @Param("polygon") String polygon
-            , @Param("absence") Boolean absence);
+            , @Param("absence") Boolean absence
+            , @Param("verification") List<Integer> verification);
     
     @SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectRequestableRecordIDs")
     public List<Integer> selectRequestableObservationRecordIDsByFilter(
@@ -76,7 +77,8 @@ public interface TaxonObservationMapper {
             , @Param("designation") String designation
             , @Param("taxonOutputGroup") String taxonOutputGroup
             , @Param("gridRef") String gridRef
-            , @Param("polygon") String polygon);
+            , @Param("polygon") String polygon
+            , @Param("verification") List<Integer> verification);
 
     @SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectRequestableRecordIDsOrganisation")
     public List<Integer> selectRequestableObservationRecordIDsByFilterOrganisation(
@@ -91,7 +93,8 @@ public interface TaxonObservationMapper {
             , @Param("designation") String designation
             , @Param("taxonOutputGroup") String taxonOutputGroup
             , @Param("gridRef") String gridRef
-            , @Param("polygon") String polygon);
+            , @Param("polygon") String polygon
+            , @Param("verification") List<Integer> verification);
 
     @SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectOneAttribute")
     public List<TaxonObservationAttributeValue> selectObservationAttributeByFilter(
@@ -107,7 +110,8 @@ public interface TaxonObservationMapper {
             , @Param("designation") String designation
             , @Param("taxonOutputGroup") String taxonOutputGroup
             , @Param("gridRef") String gridRef
-            , @Param("polygon") String polygon);
+            , @Param("polygon") String polygon
+            , @Param("verification") List<Integer> verification);
     
     @SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectRecordsOrderedByDataset")
     public List<TaxonObservation> selectObservationsByFilterOrderedByDataset(
@@ -123,7 +127,8 @@ public interface TaxonObservationMapper {
             , @Param("taxonOutputGroup") String taxonOutputGroup
             , @Param("orgSuppliedList") int orgSuppliedList
             , @Param("gridRef") String gridRef
-            , @Param("polygon") String polygon);
+            , @Param("polygon") String polygon
+            , @Param("verification") List<Integer> verification);
     
     @SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectSpecies")
     @Results(value = {
@@ -144,7 +149,8 @@ public interface TaxonObservationMapper {
             , @Param("orgSuppliedList") int orgSuppliedList
             , @Param("gridRef") String gridRef
             , @Param("polygon") String polygon
-            , @Param("absence") Boolean absence);
+            , @Param("absence") Boolean absence
+            , @Param("verification") List<Integer> verification);
     
     @SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectGroups")
     @Results(value = {
@@ -164,7 +170,8 @@ public interface TaxonObservationMapper {
             , @Param("taxonOutputGroup") String taxonOutputGroup
             , @Param("gridRef") String gridRef
             , @Param("polygon") String polygon
-            , @Param("absence") Boolean absence);
+            , @Param("absence") Boolean absence
+            , @Param("verification") List<Integer> verification);
     
     @SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectDatasets")
     @Results(value = {
@@ -184,7 +191,8 @@ public interface TaxonObservationMapper {
             , @Param("taxonOutputGroup") String taxonOutputGroup
             , @Param("gridRef") String gridRef
             , @Param("polygon") String polygon
-            , @Param("orgSuppliedList") int orgSuppliedList);
+            , @Param("orgSuppliedList") int orgSuppliedList
+            , @Param("verification") List<Integer> verification);
     
     @SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectAllDatasets")
     @Results(value = {
@@ -203,7 +211,8 @@ public interface TaxonObservationMapper {
             , @Param("designation") String designation
             , @Param("taxonOutputGroup") String taxonOutputGroup
             , @Param("gridRef") String gridRef
-            , @Param("polygon") String polygon);
+            , @Param("polygon") String polygon
+            , @Param("verification") List<Integer> verification);
 
     @SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectRequestableDatasets")
     @Results(value = {
@@ -315,7 +324,8 @@ public interface TaxonObservationMapper {
             , @Param("taxonOutputGroup") String taxonOutputGroup
             , @Param("orgSuppliedList") int orgSuppliedList
             , @Param("gridRef") String gridRef
-            , @Param("polygon") String polygon);
+            , @Param("polygon") String polygon
+            , @Param("verification") List<Integer> verification);
     
     @SelectProvider(type = TaxonObservationDownloadProvider.class, method="selectDownloadReportsForDataset")
     public List<DownloadReport> selectDownloadReportsByDataset(
@@ -372,7 +382,8 @@ public interface TaxonObservationMapper {
             , @Param("orgSuppliedList") int orgSuppliedList
             , @Param("gridRef") String gridRef
             , @Param("polygon") String polygon
-            , @Param("absence") Boolean absence);
+            , @Param("absence") Boolean absence
+            , @Param("verification") List<Integer> verification);
   
 //    Might reactivate this later searches for users that have downloaded from a list of datasets    
 //    @SelectProvider(type=TaxonObservationDownloadProvider.class, method="selectDistinctUsersForDatasets")

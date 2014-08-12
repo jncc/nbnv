@@ -447,8 +447,9 @@ public class TaxonResource extends AbstractResource {
             @QueryParam("sensitive") @DefaultValue(ObservationResourceDefaults.defaultSensitive) Boolean sensitive,
             @QueryParam("designation") @DefaultValue(ObservationResourceDefaults.defaultDesignation) String designation,
             @QueryParam("taxonOutputGroup") @DefaultValue(ObservationResourceDefaults.defaultTaxonOutputGroup) String taxonOutputGroup,
-            @QueryParam("gridRef") @DefaultValue(ObservationResourceDefaults.defaultGridRef) String gridRef) {
-        return siteBoundaryMapper.getByTaxonVersionKey(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, false);
+            @QueryParam("gridRef") @DefaultValue(ObservationResourceDefaults.defaultGridRef) String gridRef,
+            @QueryParam("verification") @DefaultValue(ObservationResourceDefaults.defaultVerifications) String verification) {
+        return siteBoundaryMapper.getByTaxonVersionKey(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, false, getVerificationIDs(verification));
     }
 
     /**
@@ -493,14 +494,16 @@ public class TaxonResource extends AbstractResource {
             @QueryParam("taxonOutputGroup") @DefaultValue(ObservationResourceDefaults.defaultTaxonOutputGroup) final String taxonOutputGroup,
             @QueryParam("gridRef") @DefaultValue(ObservationResourceDefaults.defaultGridRef) final String gridRef,
             @QueryParam("polygon") @DefaultValue(ObservationResourceDefaults.defaultPolygon) final String polygon,
+            @QueryParam("verification") @DefaultValue(ObservationResourceDefaults.defaultVerifications) String verification,
             @Context HttpServletResponse response) throws IOException {
         try {
             response.setHeader("Content-Disposition", "attachement; filename=\"siteList.zip\"");
             ZipOutputStream zip = new ZipOutputStream(response.getOutputStream());
             String title = "Site list download";
-            addSites(zip, user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef);
-            addReadMe(zip, title, user, startYear, endYear, datasetKeys, spatialRelationship, sensitive, designation, taxa);
-            addDatasetMetadata(zip, user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon);
+            List<Integer> verificationIDs = getVerificationIDs(verification);
+            addSites(zip, user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, verificationIDs);
+            addReadMe(zip, title, user, startYear, endYear, datasetKeys, spatialRelationship, sensitive, designation, taxa, verification);
+            addDatasetMetadata(zip, user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon, verificationIDs);
             zip.flush();
             zip.close();            
         } catch (IOException ex) {
@@ -541,8 +544,8 @@ public class TaxonResource extends AbstractResource {
      * 
      * @throws IOException 
      */
-    private void addDatasetMetadata(ZipOutputStream zip, User user, int startYear, int endYear, List<String> datasetKeys, List<String> taxa, String spatialRelationship, String featureID, boolean sensitive, String designation, String taxonOutputGroup, String gridRef, String polygon) throws IOException {
-        List<TaxonDatasetWithQueryStats> datasetsWithQueryStats = observationMapper.selectObservationDatasetsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon, -1);
+    private void addDatasetMetadata(ZipOutputStream zip, User user, int startYear, int endYear, List<String> datasetKeys, List<String> taxa, String spatialRelationship, String featureID, boolean sensitive, String designation, String taxonOutputGroup, String gridRef, String polygon, List<Integer> verification) throws IOException {
+        List<TaxonDatasetWithQueryStats> datasetsWithQueryStats = observationMapper.selectObservationDatasetsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon, -1, verification);
         downloadHelper.addDatasetWithQueryStatsMetadata(zip, user.getId(), datasetsWithQueryStats);
     }
 
@@ -562,7 +565,7 @@ public class TaxonResource extends AbstractResource {
      * 
      * @throws IOException 
      */
-    private void addReadMe(ZipOutputStream zip, String title, User user, int startYear, int endYear, List<String> datasetKeys, String spatialRelationship, boolean sensitive, String designation, List<String> taxa) throws IOException {
+    private void addReadMe(ZipOutputStream zip, String title, User user, int startYear, int endYear, List<String> datasetKeys, String spatialRelationship, boolean sensitive, String designation, List<String> taxa, String verification) throws IOException {
         HashMap<String, String> filters = new HashMap<String, String>();
         if (taxa != null && taxa.size() > 0 && !((String) taxa.get(0)).equals("")) {
             filters.put("Taxa", ProviderHelper.taxaListToCommaList(taxa));
@@ -605,8 +608,8 @@ public class TaxonResource extends AbstractResource {
      * 
      * @throws IOException 
      */
-    private void addSites(ZipOutputStream zip, User user, int startYear, int endYear, List<String> datasetKeys, List<String> taxa, String spatialRelationship, String featureID, boolean sensitive, String designation, String taxonOutputGroup, String gridRef) throws IOException {
-        List<SiteBoundary> sites = siteBoundaryMapper.getByTaxonVersionKey(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, false);
+    private void addSites(ZipOutputStream zip, User user, int startYear, int endYear, List<String> datasetKeys, List<String> taxa, String spatialRelationship, String featureID, boolean sensitive, String designation, String taxonOutputGroup, String gridRef, List<Integer> verification) throws IOException {
+        List<SiteBoundary> sites = siteBoundaryMapper.getByTaxonVersionKey(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, false, verification);
         zip.putNextEntry(new ZipEntry("SiteList.csv"));
         ArrayList<String> values = new ArrayList<String>();
         values.add("Site Name");
@@ -620,5 +623,5 @@ public class TaxonResource extends AbstractResource {
             values.add(site.getIdentifier());
             downloadHelper.writelnCsv(zip, values);
         }
-    }
+    } 
 }

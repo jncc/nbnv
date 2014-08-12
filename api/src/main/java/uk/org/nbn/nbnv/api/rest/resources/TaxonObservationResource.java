@@ -146,6 +146,10 @@ public class TaxonObservationResource extends RequestResource {
      * @param user The current user (Injected Token no need to pass)
      * @param request The incoming HTTP request (Auto-injected no need to pass)
      * @param datasetKey A dataset key
+     * @param verification A comma separated list of verification statuses to 
+     * filter to, from the list of statuses VERIFIED, INCORRECT, UNCERTAIN and
+     * UNVERIFIED (defaults to VERIFIED, UNCERTAIN and INCORRECT) 
+     * i.e. (...&verification=VERIFIED,UNVERIFIED&...)
      * 
      * @return A list of Taxon Observation Records in the specified dataset
      * 
@@ -162,9 +166,11 @@ public class TaxonObservationResource extends RequestResource {
     public List<TaxonObservation> getObservationsByDataset(
             @TokenUser(allowPublic = false) User user, 
             @Context HttpServletRequest request,
-            @PathParam("datasetKey") String datasetKey) {
+            @PathParam("datasetKey") String datasetKey,
+            @QueryParam("verification") @DefaultValue(ObservationResourceDefaults.defaultVerifications) String verification) {
         List<String> datasetKeys = new ArrayList<String>();
         datasetKeys.add(datasetKey);
+        List<Integer> verificationIDs = getVerificationIDs(verification);
 
         writeAPIViewRecordToDatabase(user, request.getRemoteAddr(),
                 Integer.parseInt(ObservationResourceDefaults.defaultStartYear), 
@@ -179,9 +185,9 @@ public class TaxonObservationResource extends RequestResource {
                 Integer.parseInt(ObservationResourceDefaults.defaultOrgSuppliedList),
                 ObservationResourceDefaults.defaultGridRef, 
                 ObservationResourceDefaults.defaultPolygon, 
-                false);        
+                false, verification);        
                 
-        return observationMapper.selectByDataset(datasetKey, user.getId());
+        return observationMapper.selectByDataset(datasetKey, user.getId(), verificationIDs);
     }
 
     /**
@@ -191,6 +197,10 @@ public class TaxonObservationResource extends RequestResource {
      * @param user The current user (Injected Token no need to pass)
      * @param request The incoming HTTP request (Auto-injected no need to pass)
      * @param ptvk The Taxon Version Key to search for
+     * @param verification A comma separated list of verification statuses to 
+     * filter to, from the list of statuses VERIFIED, INCORRECT, UNCERTAIN and
+     * UNVERIFIED (defaults to VERIFIED, UNCERTAIN and INCORRECT) 
+     * i.e. (...&verification=VERIFIED,UNVERIFIED&...)
      * 
      * @return A List of Taxon Observations containing the specified Taxon 
      * Version Key
@@ -208,9 +218,11 @@ public class TaxonObservationResource extends RequestResource {
     public List<TaxonObservation> getObservationsByTaxon(
             @TokenUser(allowPublic = false) User user, 
             @Context HttpServletRequest request, 
-            @PathParam("ptvk") String ptvk) {
+            @PathParam("ptvk") String ptvk,
+            @QueryParam("verification") @DefaultValue(ObservationResourceDefaults.defaultVerifications) String verification) {
         List<String> ptvks = new ArrayList<String>();
         ptvks.add(ptvk);
+        List<Integer> verificationIDs = getVerificationIDs(verification);
         
         writeAPIViewRecordToDatabase(user, request.getRemoteAddr(),
                 Integer.parseInt(ObservationResourceDefaults.defaultStartYear), 
@@ -225,9 +237,9 @@ public class TaxonObservationResource extends RequestResource {
                 Integer.parseInt(ObservationResourceDefaults.defaultOrgSuppliedList),
                 ObservationResourceDefaults.defaultGridRef, 
                 ObservationResourceDefaults.defaultPolygon, 
-                false);
+                false, verification);
         
-        return observationMapper.selectByPTVK(ptvk, user.getId());
+        return observationMapper.selectByPTVK(ptvk, user.getId(), verificationIDs);
     }
     
     /**
@@ -289,6 +301,10 @@ public class TaxonObservationResource extends RequestResource {
      * streaming, do not use unless with jQuery callbacks
      * @param includeAttributes Includes attributes with this request, if you 
      * have access to them, as a list of key pair values
+     * @param verification A comma separated list of verification statuses to 
+     * filter to, from the list of statuses VERIFIED, INCORRECT, UNCERTAIN and
+     * UNVERIFIED (defaults to VERIFIED, UNCERTAIN and INCORRECT) 
+     * i.e. (...&verification=VERIFIED,UNVERIFIED&...)
      * 
      * @return A list of Taxon Observations conforming to the provided search
      * parameters
@@ -318,8 +334,9 @@ public class TaxonObservationResource extends RequestResource {
             @QueryParam("polygon") @DefaultValue(ObservationResourceDefaults.defaultPolygon) String polygon,
             @QueryParam("absence") @DefaultValue(ObservationResourceDefaults.defaultAbsence) Boolean absence,
             @QueryParam("callback") @DefaultValue("") String callback,
-            @QueryParam("includeAttributes") @DefaultValue("false") Boolean includeAttributes) throws IllegalArgumentException {
-        return retrieveStreamingObservations(user, request, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, orgSuppliedList, gridRef, polygon, absence, callback, includeAttributes);
+            @QueryParam("includeAttributes") @DefaultValue("false") Boolean includeAttributes,
+            @QueryParam("verification") @DefaultValue(ObservationResourceDefaults.defaultVerifications) String verification) throws IllegalArgumentException {
+        return retrieveStreamingObservations(user, request, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, orgSuppliedList, gridRef, polygon, absence, callback, includeAttributes, verification);
     }
 
     /**
@@ -346,6 +363,10 @@ public class TaxonObservationResource extends RequestResource {
      * streaming, do not use unless with jQuery callbacks
      * @param includeAttributes Includes attributes with this request, if you 
      * have access to them, as a list of key pair values
+     * @param verification A comma separated list of verification statuses to 
+     * filter to, from the list of statuses VERIFIED, INCORRECT, UNCERTAIN and
+     * UNVERIFIED (defaults to VERIFIED, UNCERTAIN and INCORRECT) 
+     * i.e. (...&verification=VERIFIED,UNVERIFIED&...)
      * 
      * @return A list of Taxon Observations conforming to the provided search
      * parameters
@@ -376,8 +397,9 @@ public class TaxonObservationResource extends RequestResource {
             @FormParam("polygon") @DefaultValue(ObservationResourceDefaults.defaultPolygon) String polygon,
             @FormParam("absence") @DefaultValue(ObservationResourceDefaults.defaultAbsence) Boolean absence,
             @FormParam("callback") @DefaultValue("") String callback,
-            @FormParam("includeAttributes") @DefaultValue("false") Boolean includeAttributes) throws IllegalArgumentException {
-        return retrieveStreamingObservations(user, request, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, orgSuppliedList, gridRef, polygon, absence, callback, includeAttributes);
+            @FormParam("includeAttributes") @DefaultValue("false") Boolean includeAttributes,
+            @FormParam("verification") @DefaultValue(ObservationResourceDefaults.defaultVerifications) String verification) throws IllegalArgumentException {
+        return retrieveStreamingObservations(user, request, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, orgSuppliedList, gridRef, polygon, absence, callback, includeAttributes, verification);
     }
     
     private StreamingOutput retrieveStreamingObservations (
@@ -386,7 +408,7 @@ public class TaxonObservationResource extends RequestResource {
             final String spatialRelationship, final String featureID, final Boolean sensitive,
             final String designation, final String taxonOutputGroup, final int orgSuppliedList,
             final String gridRef, final String polygon, final Boolean absence, final String callback,
-            final boolean includeAttributes) {
+            final boolean includeAttributes, final String verification) {
         if (StringUtils.hasText(polygon)) {
            checkPolygonMaxSize(polygon, taxa, designation, taxonOutputGroup, orgSuppliedList, datasetKeys);
         }
@@ -414,11 +436,13 @@ public class TaxonObservationResource extends RequestResource {
             throw new IllegalArgumentException("Must supply a spatial or taxon filter with more than one dataset");
         }
         
+        final List<Integer> verificationIDs = getVerificationIDs(verification);
+        
         writeAPIViewRecordToDatabase(user, request.getRemoteAddr(), startYear, 
                 endYear, datasetKeys, taxa, spatialRelationship, featureID, 
                 sensitive, designation, taxonOutputGroup, orgSuppliedList, 
-                gridRef, polygon, absence);  
-
+                gridRef, polygon, absence, verification);  
+        
         return new StreamingOutput() {
 
             @Override
@@ -433,7 +457,8 @@ public class TaxonObservationResource extends RequestResource {
                 sendRequestWithHandler(user, startYear, endYear, datasetKeys, 
                         taxa, spatialRelationship, featureID, sensitive, 
                         designation, taxonOutputGroup, orgSuppliedList, gridRef, 
-                        polygon, absence, new TaxonObservationHandler(writer, includeAttributes), 
+                        polygon, absence, verificationIDs, 
+                        new TaxonObservationHandler(writer, includeAttributes), 
                         session, "selectObservationRecordsByFilter");
                 
                 session.close();
@@ -496,9 +521,10 @@ public class TaxonObservationResource extends RequestResource {
             @QueryParam("designation") @DefaultValue(ObservationResourceDefaults.defaultDesignation) String designation,
             @QueryParam("taxonOutputGroup") @DefaultValue(ObservationResourceDefaults.defaultTaxonOutputGroup) String taxonOutputGroup,
             @QueryParam("gridRef") @DefaultValue(ObservationResourceDefaults.defaultGridRef) String gridRef,
-            @QueryParam("polygon") @DefaultValue(ObservationResourceDefaults.defaultPolygon) String polygon) {
+            @QueryParam("polygon") @DefaultValue(ObservationResourceDefaults.defaultPolygon) String polygon,
+            @QueryParam("verification") @DefaultValue(ObservationResourceDefaults.defaultVerifications) String verification) {
         //TODO: squareBlurring(?)
-        return observationMapper.selectObservationAttributeByFilter(user, datasetKey, attributeID, startYear, endYear, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon);
+        return observationMapper.selectObservationAttributeByFilter(user, datasetKey, attributeID, startYear, endYear, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon, getVerificationIDs(verification));
     }
 
     /**
@@ -545,7 +571,8 @@ public class TaxonObservationResource extends RequestResource {
             @QueryParam("taxonOutputGroup") @DefaultValue(ObservationResourceDefaults.defaultTaxonOutputGroup) String taxonOutputGroup,
             @QueryParam("orgSuppliedList") @DefaultValue(ObservationResourceDefaults.defaultOrgSuppliedList) int orgSuppliedList,
             @QueryParam("gridRef") @DefaultValue(ObservationResourceDefaults.defaultGridRef) String gridRef,
-            @QueryParam("polygon") @DefaultValue(ObservationResourceDefaults.defaultPolygon) String polygon) {
+            @QueryParam("polygon") @DefaultValue(ObservationResourceDefaults.defaultPolygon) String polygon,
+            @QueryParam("verification") @DefaultValue(ObservationResourceDefaults.defaultVerifications) String verification) {
         //TODO: squareBlurring(?)
         
 //        // Check size of polygon
@@ -560,7 +587,7 @@ public class TaxonObservationResource extends RequestResource {
         
         return getSpecies(user, startYear, endYear, datasetKeys, taxa, 
                 spatialRelationship, featureID, sensitive, designation, 
-                orgSuppliedList, taxonOutputGroup, gridRef, polygon);
+                orgSuppliedList, taxonOutputGroup, gridRef, polygon, verification);
     }
     
     /**
@@ -607,7 +634,8 @@ public class TaxonObservationResource extends RequestResource {
             @QueryParam("taxonOutputGroup") @DefaultValue(ObservationResourceDefaults.defaultTaxonOutputGroup) String taxonOutputGroup,
             @QueryParam("orgSuppliedList") @DefaultValue(ObservationResourceDefaults.defaultOrgSuppliedList) int orgSuppliedList,
             @QueryParam("gridRef") @DefaultValue(ObservationResourceDefaults.defaultGridRef) String gridRef,
-            @QueryParam("polygon") @DefaultValue(ObservationResourceDefaults.defaultPolygon) String polygon) {
+            @QueryParam("polygon") @DefaultValue(ObservationResourceDefaults.defaultPolygon) String polygon,
+            @QueryParam("verification") @DefaultValue(ObservationResourceDefaults.defaultVerifications) String verification) {
         //TODO: squareBlurring(?)
         
 //        // Check size of polygon
@@ -622,7 +650,7 @@ public class TaxonObservationResource extends RequestResource {
         
         return getSpecies(user, startYear, endYear, datasetKeys, taxa, 
                 spatialRelationship, featureID, sensitive, designation, 
-                orgSuppliedList, taxonOutputGroup, gridRef, polygon);
+                orgSuppliedList, taxonOutputGroup, gridRef, polygon, verification);
     }    
     
     /** 
@@ -649,12 +677,13 @@ public class TaxonObservationResource extends RequestResource {
             int endYear, List<String> datasetKeys, List<String> taxa, 
             String spatialRelationship, String featureID, Boolean sensitive, 
             String designation, int orgSuppliedList, String taxonOutputGroup,
-            String gridRef, String polygon) {
+            String gridRef, String polygon, String verification) {
         List<TaxonWithQueryStats> toReturn = 
                 observationMapper.selectObservationSpeciesByFilter(user, 
                     startYear, endYear, datasetKeys, taxa, spatialRelationship, 
                     featureID, sensitive, designation, taxonOutputGroup, 
-                    orgSuppliedList, gridRef, polygon, false);
+                    orgSuppliedList, gridRef, polygon, false, 
+                    getVerificationIDs(verification));
         Collections.sort(toReturn);
         return toReturn;        
     }    
@@ -704,7 +733,8 @@ public class TaxonObservationResource extends RequestResource {
             @QueryParam("orgSuppliedList") @DefaultValue(ObservationResourceDefaults.defaultOrgSuppliedList) final int orgSuppliedList,
             @QueryParam("taxonOutputGroup") @DefaultValue(ObservationResourceDefaults.defaultTaxonOutputGroup) final String taxonOutputGroup,
             @QueryParam("gridRef") @DefaultValue(ObservationResourceDefaults.defaultGridRef) final String gridRef,
-            @QueryParam("polygon") @DefaultValue(ObservationResourceDefaults.defaultPolygon) final String polygon) {
+            @QueryParam("polygon") @DefaultValue(ObservationResourceDefaults.defaultPolygon) final String polygon,
+            @QueryParam("verification") @DefaultValue(ObservationResourceDefaults.defaultVerifications) final String verification) {
         //TODO: squareBlurring(?)
         // Set the filename to get around a bug with Firefox not adding the extension properly
         response.setHeader("Content-Disposition", "attachment; filename=\"species_download.zip\"");
@@ -716,7 +746,7 @@ public class TaxonObservationResource extends RequestResource {
         
         return getSpeciesDowload(user, startYear, endYear, datasetKeys, 
                 taxa, spatialRelationship, featureID, sensitive, designation, 
-                orgSuppliedList, taxonOutputGroup, gridRef, polygon);
+                orgSuppliedList, taxonOutputGroup, gridRef, polygon, verification);
     }
 
     /**
@@ -765,7 +795,8 @@ public class TaxonObservationResource extends RequestResource {
             @QueryParam("orgSuppliedList") @DefaultValue(ObservationResourceDefaults.defaultOrgSuppliedList) final int orgSuppliedList,
             @QueryParam("taxonOutputGroup") @DefaultValue(ObservationResourceDefaults.defaultTaxonOutputGroup) final String taxonOutputGroup,
             @QueryParam("gridRef") @DefaultValue(ObservationResourceDefaults.defaultGridRef) final String gridRef,
-            @QueryParam("polygon") @DefaultValue(ObservationResourceDefaults.defaultPolygon) final String polygon) {
+            @QueryParam("polygon") @DefaultValue(ObservationResourceDefaults.defaultPolygon) final String polygon,
+            @QueryParam("verification") @DefaultValue(ObservationResourceDefaults.defaultVerifications) final String verification) {
         //TODO: squareBlurring(?)
         // Set the filename to get around a bug with Firefox not adding the extension properly
         response.setHeader("Content-Disposition", "attachment; filename=\"species_download.zip\"");
@@ -777,7 +808,7 @@ public class TaxonObservationResource extends RequestResource {
         
         return getSpeciesDowload(user, startYear, endYear, datasetKeys, 
                 taxa, spatialRelationship, featureID, sensitive, designation, 
-                orgSuppliedList, taxonOutputGroup, gridRef, polygon);
+                orgSuppliedList, taxonOutputGroup, gridRef, polygon, verification);
     }   
     
     /**
@@ -808,16 +839,16 @@ public class TaxonObservationResource extends RequestResource {
             final String spatialRelationship, final String featureID,
             final Boolean sensitive, final String designation, 
             final int orgSuppliedList, final String taxonOutputGroup,
-            final String gridRef, final String polygon) {
+            final String gridRef, final String polygon, final String verification) {
         
         return new StreamingOutput() {
             @Override
             public void write(OutputStream out) throws IOException, WebApplicationException {
                 ZipOutputStream zip = new ZipOutputStream(out);
                 String title = "Species list download";
-                addSpecies(zip, user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, orgSuppliedList, gridRef, polygon);
-                addReadMe(zip, title, user, startYear, endYear, datasetKeys, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, orgSuppliedList);
-                addDatasetMetadata(zip, user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, orgSuppliedList, gridRef, polygon);
+                addSpecies(zip, user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, orgSuppliedList, gridRef, polygon, verification);
+                addReadMe(zip, title, user, startYear, endYear, datasetKeys, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, orgSuppliedList, verification);
+                addDatasetMetadata(zip, user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, orgSuppliedList, gridRef, polygon, getVerificationIDs(verification));
                 zip.flush();
                 zip.close();
             }
@@ -867,14 +898,15 @@ public class TaxonObservationResource extends RequestResource {
             @QueryParam("designation") @DefaultValue(ObservationResourceDefaults.defaultDesignation) String designation,
             @QueryParam("taxonOutputGroup") @DefaultValue(ObservationResourceDefaults.defaultTaxonOutputGroup) String taxonOutputGroup,
             @QueryParam("gridRef") @DefaultValue(ObservationResourceDefaults.defaultGridRef) String gridRef,
-            @QueryParam("polygon") @DefaultValue(ObservationResourceDefaults.defaultPolygon) String polygon) {
+            @QueryParam("polygon") @DefaultValue(ObservationResourceDefaults.defaultPolygon) String polygon,
+            @QueryParam("verification") @DefaultValue(ObservationResourceDefaults.defaultVerifications) String verification) {
         //TODO: squareBlurring(?)
         // Allow for both traditional lists to come in and for CSV lists to 
         // shorten the URL
         taxa = checkForCommaDelimited(taxa);
         datasetKeys = checkForCommaDelimited(datasetKeys);
         
-        return observationMapper.selectObservationGroupsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon, false);
+        return observationMapper.selectObservationGroupsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon, false, getVerificationIDs(verification));
     }
 
     /**
@@ -921,9 +953,10 @@ public class TaxonObservationResource extends RequestResource {
             @QueryParam("taxonOutputGroup") @DefaultValue(ObservationResourceDefaults.defaultTaxonOutputGroup) String taxonOutputGroup,
             @QueryParam("orgSuppliedList") @DefaultValue(ObservationResourceDefaults.defaultOrgSuppliedList) int orgSuppliedList,
             @QueryParam("gridRef") @DefaultValue(ObservationResourceDefaults.defaultGridRef) String gridRef,
-            @QueryParam("polygon") @DefaultValue(ObservationResourceDefaults.defaultPolygon) String polygon) {
+            @QueryParam("polygon") @DefaultValue(ObservationResourceDefaults.defaultPolygon) String polygon,
+            @QueryParam("verification") @DefaultValue(ObservationResourceDefaults.defaultVerifications) String verification) {
         //TODO: squareBlurring(?)
-        return observationMapper.selectObservationDatasetsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon, orgSuppliedList);
+        return observationMapper.selectObservationDatasetsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon, orgSuppliedList, getVerificationIDs(verification));
     }
 
     /**
@@ -969,9 +1002,10 @@ public class TaxonObservationResource extends RequestResource {
             @QueryParam("designation") @DefaultValue(ObservationResourceDefaults.defaultDesignation) String designation,
             @QueryParam("taxonOutputGroup") @DefaultValue(ObservationResourceDefaults.defaultTaxonOutputGroup) String taxonOutputGroup,
             @QueryParam("gridRef") @DefaultValue(ObservationResourceDefaults.defaultGridRef) String gridRef,
-            @QueryParam("polygon") @DefaultValue(ObservationResourceDefaults.defaultPolygon) String polygon) {
+            @QueryParam("polygon") @DefaultValue(ObservationResourceDefaults.defaultPolygon) String polygon,
+            @QueryParam("verification") @DefaultValue(ObservationResourceDefaults.defaultVerifications) String verification) {
         //TODO: squareBlurring(?)
-        return observationMapper.selectAllObservationDatasetsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon);
+        return observationMapper.selectAllObservationDatasetsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon, getVerificationIDs(verification));
     }
 
     /**
@@ -1172,10 +1206,11 @@ public class TaxonObservationResource extends RequestResource {
             @QueryParam("taxonOutputGroup") @DefaultValue(ObservationResourceDefaults.defaultTaxonOutputGroup) String taxonOutputGroup,
             @QueryParam("orgSuppliedList") @DefaultValue(ObservationResourceDefaults.defaultOrgSuppliedList) int orgSuppliedList,
             @QueryParam("gridRef") @DefaultValue(ObservationResourceDefaults.defaultGridRef) String gridRef,
-            @QueryParam("polygon") @DefaultValue(ObservationResourceDefaults.defaultPolygon) String polygon) {
+            @QueryParam("polygon") @DefaultValue(ObservationResourceDefaults.defaultPolygon) String polygon,
+            @QueryParam("verification") @DefaultValue(ObservationResourceDefaults.defaultVerifications) String verification) {
         //TODO: squareBlurring(?)
-        List<TaxonObservation> taxonObservationsOrderedByDataset = observationMapper.selectObservationsByFilterOrderedByDataset(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, orgSuppliedList, gridRef, polygon);
-        writeAPIViewRecordToDatabase(user, request.getRemoteAddr(), startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, orgSuppliedList, gridRef, polygon, false);
+        List<TaxonObservation> taxonObservationsOrderedByDataset = observationMapper.selectObservationsByFilterOrderedByDataset(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, orgSuppliedList, gridRef, polygon, getVerificationIDs(verification));
+        writeAPIViewRecordToDatabase(user, request.getRemoteAddr(), startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, orgSuppliedList, gridRef, polygon, false, verification);
         return getDatasetsWithObservations(taxonObservationsOrderedByDataset);
     }
 
@@ -1226,9 +1261,10 @@ public class TaxonObservationResource extends RequestResource {
             @QueryParam("orgSuppliedList") @DefaultValue(ObservationResourceDefaults.defaultOrgSuppliedList) int orgSuppliedList,
             @QueryParam("gridRef") @DefaultValue(ObservationResourceDefaults.defaultGridRef) String gridRef,
             @QueryParam("polygon") @DefaultValue(ObservationResourceDefaults.defaultPolygon) String polygon,
-            @QueryParam("returnAccessPositions") @DefaultValue("") String getPerm) {
+            @QueryParam("returnAccessPositions") @DefaultValue("") String getPerm,
+            @QueryParam("verification") @DefaultValue(ObservationResourceDefaults.defaultVerifications) String verification) {
         //TODO: squareBlurring(?)
-        List<TaxonDatasetWithQueryStats> datasetsWithQueryStats = observationMapper.selectObservationDatasetsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon, orgSuppliedList);
+        List<TaxonDatasetWithQueryStats> datasetsWithQueryStats = observationMapper.selectObservationDatasetsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon, orgSuppliedList, getVerificationIDs(verification));
 
         if (getPerm.equalsIgnoreCase("true")) {
             for (TaxonDatasetWithQueryStats d : datasetsWithQueryStats) {
@@ -1334,6 +1370,7 @@ public class TaxonObservationResource extends RequestResource {
                             dFilter.getSpatial().getGridRef(), 
                             dFilter.getPolygon(), 
                             dFilter.getReason().getIncludeAttributes().equals("true"), 
+                            dFilter.getVerification(),
                             filterID, filter, dFilter);
                 } catch (TemplateException ex) {
                     throw new IOException(ex);
@@ -1350,7 +1387,8 @@ public class TaxonObservationResource extends RequestResource {
                         Boolean.getBoolean(dFilter.getSensitive()), 
                         dFilter.getTaxon().getDesignation(), 
                         dFilter.getTaxon().getOutput(),
-                        dFilter.getTaxon().getOrgSuppliedList());
+                        dFilter.getTaxon().getOrgSuppliedList(),
+                        getVerificationFromIDs(dFilter.getVerification()));
                 // Add Dataset Metadata to the download
                 addDatasetMetadata(zip, user, 
                         dFilter.getYear().getStartYear(), 
@@ -1364,7 +1402,7 @@ public class TaxonObservationResource extends RequestResource {
                         dFilter.getTaxon().getOutput(), 
                         dFilter.getTaxon().getOrgSuppliedList(),
                         dFilter.getSpatial().getGridRef(), 
-                        dFilter.getPolygon());
+                        dFilter.getPolygon(), dFilter.getVerification());
                 zip.flush();
                 zip.close();
             }
@@ -1839,8 +1877,8 @@ public class TaxonObservationResource extends RequestResource {
      * @param gridRef
      * @throws IOException 
      */
-    private void addSpecies(ZipOutputStream zip, User user, int startYear, int endYear, List<String> datasetKeys, List<String> taxa, String spatialRelationship, String featureID, boolean sensitive, String designation, String taxonOutputGroup, int orgSuppliedList, String gridRef, String polygon) throws IOException {
-        List<TaxonWithQueryStats> taxaWithStats = observationMapper.selectObservationSpeciesByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, orgSuppliedList, gridRef, polygon, false);
+    private void addSpecies(ZipOutputStream zip, User user, int startYear, int endYear, List<String> datasetKeys, List<String> taxa, String spatialRelationship, String featureID, boolean sensitive, String designation, String taxonOutputGroup, int orgSuppliedList, String gridRef, String polygon, String verification) throws IOException {
+        List<TaxonWithQueryStats> taxaWithStats = observationMapper.selectObservationSpeciesByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, orgSuppliedList, gridRef, polygon, false, getVerificationIDs(verification));
         zip.putNextEntry(new ZipEntry("TaxonList.csv"));
         ArrayList<String> values = new ArrayList<String>();
         values.add("TaxonName");
@@ -1871,7 +1909,7 @@ public class TaxonObservationResource extends RequestResource {
             int startYear, int endYear, List<String> datasetKeys, 
             List<String> taxa, String spatialRelationship, String featureID, 
             boolean sensitive, String designation, String taxonOutputGroup, 
-            int orgSuppliedList, String gridRef, String polygon, 
+            int orgSuppliedList, String gridRef, String polygon, String verification,
             boolean includeAttributes, int filterID, TaxonObservationFilter filter, DownloadFilterJSON dFilter) throws IOException, TemplateException {
         
         
@@ -1884,7 +1922,7 @@ public class TaxonObservationResource extends RequestResource {
                 observationMapper.selectDownloadableRecords(user, startYear, 
                 endYear, datasetKeys, taxa, spatialRelationship, featureID, 
                 sensitive, designation, taxonOutputGroup, orgSuppliedList,
-                gridRef, polygon);
+                gridRef, polygon, getVerificationIDs(verification));
         
         // Push in standard header fields for download
         zip.putNextEntry(new ZipEntry("Observations.csv"));
@@ -1913,6 +1951,7 @@ public class TaxonObservationResource extends RequestResource {
         values.add("sensitive");
         values.add("zeroAbundance");
         values.add("fullVersion");
+        values.add("verification");
         
         // If including attributes then push in the appropriate fields
         if (includeAttributes) {
@@ -1977,6 +2016,7 @@ public class TaxonObservationResource extends RequestResource {
             values.add(observation.isSensitive() ? "true" : "false");
             values.add(observation.isZeroAbundance() ? "true" : "false");
             values.add(observation.isFullVersion()? "true" : "false");
+            values.add(observation.getVerification());
 
             if (includeAttributes) {
                 if (observation.isFullVersion() || observation.isPublicAttribute()) {
@@ -2015,7 +2055,7 @@ public class TaxonObservationResource extends RequestResource {
             List<String> taxa, String spatialRelationship, String featureID, 
             boolean sensitive, String designation, String taxonOutputGroup, 
             int orgSuppliedList, String gridRef, String polygon, 
-            boolean includeAttributes, int filterID, 
+            boolean includeAttributes, List<Integer> verification, int filterID, 
             TaxonObservationFilter filter, DownloadFilterJSON dFilter) 
             throws IOException, TemplateException, Exception {
 
@@ -2074,7 +2114,7 @@ public class TaxonObservationResource extends RequestResource {
         sendRequestWithHandler(user, startYear, endYear, datasetKeys, taxa, 
                 spatialRelationship, featureID, sensitive, designation, 
                 taxonOutputGroup, orgSuppliedList, gridRef, polygon, null, 
-                handler, sess, "selectDownloadableRecords");
+                verification, handler, sess, "selectDownloadableRecords");
         
         Map<String, Integer> datasetRecordCounts = handler.returnDatasetRecordCounts();
         
@@ -2090,7 +2130,8 @@ public class TaxonObservationResource extends RequestResource {
             List<String> taxa, String spatialRelationship, String featureID, 
             boolean sensitive, String designation, String taxonOutputGroup, 
             int orgSuppliedList, String gridRef, String polygon, Boolean absence,
-            ResultHandler handler, SqlSession session, String sqlQuery) {
+            List<Integer> verification, ResultHandler handler, SqlSession session, 
+            String sqlQuery) {
         
         
         Map<String, Object> map = new HashMap<String, Object>();
@@ -2109,6 +2150,7 @@ public class TaxonObservationResource extends RequestResource {
         map.put("gridRef", gridRef);
         map.put("polygon", polygon);
         map.put("absence", absence);
+        map.put("verification", verification);
         
         session.select(sqlQuery, map, handler);
         session.close();
@@ -2134,9 +2176,9 @@ public class TaxonObservationResource extends RequestResource {
             int startYear, int endYear, List<String> datasetKeys, 
             List<String> taxa, String spatialRelationship, String featureID, 
             boolean sensitive, String designation, String taxonOutputGroup, 
-            int orgSuppliedList, String gridRef, String polygon) 
+            int orgSuppliedList, String gridRef, String polygon, List<Integer> verification) 
             throws IOException {
-        List<TaxonDatasetWithQueryStats> datasetsWithQueryStats = observationMapper.selectObservationDatasetsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon, orgSuppliedList);
+        List<TaxonDatasetWithQueryStats> datasetsWithQueryStats = observationMapper.selectObservationDatasetsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon, orgSuppliedList, verification);
         downloadHelper.addDatasetWithQueryStatsMetadata(zip, user.getId(), datasetsWithQueryStats);
     }
     
@@ -2158,7 +2200,8 @@ public class TaxonObservationResource extends RequestResource {
     private void addReadMe(ZipOutputStream zip, String title, User user, 
             int startYear, int endYear, List<String> datasetKeys, 
             String spatialRelationship, String featureID, boolean sensitive, 
-            String designation, String taxonOutputGroupKey, int orgSuppliedList) 
+            String designation, String taxonOutputGroupKey, int orgSuppliedList,
+            String verification) 
             throws IOException{
         
         HashMap<String, String> filters = new HashMap<String, String>();
@@ -2197,6 +2240,7 @@ public class TaxonObservationResource extends RequestResource {
             filters.put("Organisation Supplied List Code", organisationSuppliedList.getCode());
             filters.put("Organisation Supplied List", organisationSuppliedList.getName());
         }
+        filters.put("Record Verification Statuses", verification);
         
         downloadHelper.addReadMe(zip, user, title, filters);
     }
@@ -2274,7 +2318,7 @@ public class TaxonObservationResource extends RequestResource {
                 species.add(dFilter.getTaxon().getTvk());
             }
 
-            List<TaxonDatasetWithQueryStats> selectObservationDatasetsByFilter = observationMapper.selectObservationDatasetsByFilter(user, dFilter.getYear().getStartYear(), dFilter.getYear().getEndYear(), new ArrayList<String>(), species, dFilter.getSpatial().getMatch(), dFilter.getSpatial().getFeature(), (dFilter.getSensitive().equals("sans") ? true : false), dFilter.getTaxon().getDesignation(), dFilter.getTaxon().getOutput(), "", "", dFilter.getTaxon().getOrgSuppliedList());
+            List<TaxonDatasetWithQueryStats> selectObservationDatasetsByFilter = observationMapper.selectObservationDatasetsByFilter(user, dFilter.getYear().getStartYear(), dFilter.getYear().getEndYear(), new ArrayList<String>(), species, dFilter.getSpatial().getMatch(), dFilter.getSpatial().getFeature(), (dFilter.getSensitive().equals("sans") ? true : false), dFilter.getTaxon().getDesignation(), dFilter.getTaxon().getOutput(), "", "", dFilter.getTaxon().getOrgSuppliedList(), dFilter.getVerification());
 
             for (TaxonDatasetWithQueryStats tdwqs : selectObservationDatasetsByFilter) {
                 datasets.add(tdwqs.getDatasetKey());
@@ -2359,7 +2403,7 @@ public class TaxonObservationResource extends RequestResource {
             List<String> taxa, String spatialRelationship, String featureID, 
             Boolean sensitive, String designation, String taxonOutputGroup,
             int orgSuppliedList, String gridRef, String polygon, 
-            Boolean absence) throws IllegalArgumentException {
+            Boolean absence, String verification) throws IllegalArgumentException {
         //TODO: squareBlurring(?)
         
         if (StringUtils.hasText(polygon)) {
@@ -2389,9 +2433,9 @@ public class TaxonObservationResource extends RequestResource {
             throw new IllegalArgumentException("Must supply a spatial or taxon filter with more than one dataset");
         }
         
-        writeAPIViewRecordToDatabase(user, ip, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, orgSuppliedList, gridRef, polygon, absence);
+        writeAPIViewRecordToDatabase(user, ip, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, orgSuppliedList, gridRef, polygon, absence, verification);
         
-        return observationMapper.selectObservationRecordsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon, absence);        
+        return observationMapper.selectObservationRecordsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon, absence, getVerificationIDs(verification));
     }
     
     private void checkPolygonMaxSize(String polygon, List<String> taxa, String designation, String taxonOutputGroup, int orgSuppliedList, List<String> datasetKeys) {
@@ -2442,7 +2486,7 @@ public class TaxonObservationResource extends RequestResource {
             List<String> taxa, String spatialRelationship, String featureID, 
             Boolean sensitive, String designation, String taxonOutputGroup,
             int orgSuppliedList, String gridRef, String polygon, 
-            Boolean absence) {
+            Boolean absence, String verification) {
         
         if (taxa.size() == 1 && !StringUtils.hasText(taxa.get(0))) {
             taxa = new ArrayList<String>();
@@ -2455,12 +2499,12 @@ public class TaxonObservationResource extends RequestResource {
         String filterText = filterToText.convert(startYear, endYear, 
                 datasetKeys, taxa, spatialRelationship, featureID, sensitive, 
                 designation, taxonOutputGroup, orgSuppliedList, gridRef, 
-                polygon, absence);
+                polygon, absence, verification);
         
         List<DatasetRecordCount> counts = observationMapper.getRecordCountsForFilterByDataset(
                 user, startYear, endYear, datasetKeys, taxa, 
                 spatialRelationship, featureID, sensitive, designation, 
-                taxonOutputGroup, orgSuppliedList, gridRef, polygon, absence); 
+                taxonOutputGroup, orgSuppliedList, gridRef, polygon, absence, getVerificationIDs(verification)); 
         
         int total = 0;
         for (DatasetRecordCount count : counts) {
@@ -2492,4 +2536,4 @@ public class TaxonObservationResource extends RequestResource {
         
         return input;
     }
-}
+} 

@@ -46,7 +46,8 @@ public class FilterToText {
             int orgSuppliedList,
             String gridRef,
             String polygon,
-            boolean absence) {
+            boolean absence,
+            String verification) {
         String text;
 
         if (!sensitive) {
@@ -97,6 +98,10 @@ public class FilterToText {
         
         if (datasetKeys != null && !datasetKeys.isEmpty()) {
             text += " for the following datasets; " + StringUtils.collectionToCommaDelimitedString(datasetKeys);
+        }
+        
+        if (StringUtils.hasText(verification)) {
+            text += " for the following record verification statuses; " + verification;
         }
 
         return text;

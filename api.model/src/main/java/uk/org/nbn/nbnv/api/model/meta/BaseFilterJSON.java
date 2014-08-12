@@ -4,6 +4,7 @@
  */
 package uk.org.nbn.nbnv.api.model.meta;
 
+import java.util.List;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -18,6 +19,7 @@ public abstract class BaseFilterJSON {
     protected RequestTaxonFilterJSON taxon;
     protected RequestYearFilterJSON year;
     protected RequestDatasetFilterJSON dataset;
+    protected List<Integer> verification;
 
     public String getSensitive() {
         return sensitive;
@@ -65,6 +67,14 @@ public abstract class BaseFilterJSON {
 
     public void setDataset(RequestDatasetFilterJSON dataset) {
         this.dataset = dataset;
+    }
+
+    public List<Integer> getVerification() {
+        return verification;
+    }
+
+    public void setVerification(List<Integer> verification) {
+        this.verification = verification;
     }
     
     public abstract BaseFilterJSON toBaseFilter();
