@@ -111,9 +111,10 @@ nbn.nbnv.ui.filter.taxon = function(json) {
                         .text(d.name)
                         .attr('value', d.id);
 
-                    if (_me._orgSuppliedList === d.id) { opt.attr('selected', 'selected'); }
+                    if (_me._orgSuppliedList === d.id.toString()) { opt.attr('selected', 'selected'); }
                     
                     org.append(opt);
+                    
                 });
                 
                 org.change();

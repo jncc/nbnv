@@ -53,6 +53,8 @@ nbn.nbnv.ui.requestEditResult = function(endpoint, dataset, datasetEndpoint, gra
                 filter.designation = json.taxon.designation;
             } else if (json.taxon.output) {
                 filter.taxonOutputGroup = json.taxon.output;
+            } else if (json.taxon.orgSuppliedList) {
+                filter.orgSuppliedList = json.taxon.orgSuppliedList;
             }
         }
         

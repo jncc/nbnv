@@ -280,6 +280,7 @@ public class TaxonObservationResource extends RequestResource {
      * @param sensitive If the results should include sensitive records or not
      * @param designation Any required designations
      * @param taxonOutputGroup Any required taxon output groups
+     * @param orgSuppliedList The ID of an organisation supplied list
      * @param gridRef Any grid references to search within
      * @param polygon WKT WGS-84 polygon filter
      * @param absence Whether the results should be limited to just absence records (true) 
@@ -337,6 +338,7 @@ public class TaxonObservationResource extends RequestResource {
      * Valid values are 'true' and 'false'
      * @param designation Any required designations
      * @param taxonOutputGroup Any required taxon output groups
+     * @param orgSuppliedList The ID of an organisation supplied list
      * @param gridRef Any grid references to search within
      * @param polygon WKT WGS-84 polygon filter
      * @param absence Whether the results should be limited to just absence records (true) 
@@ -467,6 +469,7 @@ public class TaxonObservationResource extends RequestResource {
      * @param sensitive If the results should include sensitive records or not
      * @param designation Any required designations
      * @param taxonOutputGroup Any required taxon output groups
+     * @param orgSuppliedList The ID of an organisation supplied list
      * @param gridRef Any grid references to search within
      * @param polygon WKT WGS-84 polygon filter
      * 
@@ -495,10 +498,11 @@ public class TaxonObservationResource extends RequestResource {
             @QueryParam("sensitive") @DefaultValue(ObservationResourceDefaults.defaultSensitive) Boolean sensitive,
             @QueryParam("designation") @DefaultValue(ObservationResourceDefaults.defaultDesignation) String designation,
             @QueryParam("taxonOutputGroup") @DefaultValue(ObservationResourceDefaults.defaultTaxonOutputGroup) String taxonOutputGroup,
+            @QueryParam("orgSuppliedList") @DefaultValue(ObservationResourceDefaults.defaultOrgSuppliedList) int orgSuppliedList,
             @QueryParam("gridRef") @DefaultValue(ObservationResourceDefaults.defaultGridRef) String gridRef,
             @QueryParam("polygon") @DefaultValue(ObservationResourceDefaults.defaultPolygon) String polygon) {
         //TODO: squareBlurring(?)
-        return observationMapper.selectObservationAttributeByFilter(user, datasetKey, attributeID, startYear, endYear, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon);
+        return observationMapper.selectObservationAttributeByFilter(user, datasetKey, attributeID, startYear, endYear, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, orgSuppliedList, gridRef, polygon);
     }
 
     /**
@@ -516,6 +520,7 @@ public class TaxonObservationResource extends RequestResource {
      * @param sensitive If the results should include sensitive records or not
      * @param designation Any required designations
      * @param taxonOutputGroup Any required taxon output groups
+     * @param orgSuppliedList The ID of an organisation supplied list
      * @param gridRef Any grid references to search within
      * @param polygon WKT WGS-84 polygon filter
      * 
@@ -578,6 +583,7 @@ public class TaxonObservationResource extends RequestResource {
      * @param sensitive If the results should include sensitive records or not
      * @param designation Any required designations
      * @param taxonOutputGroup Any required taxon output groups
+     * @param orgSuppliedList The ID of an organisation supplied list
      * @param gridRef Any grid references to search within
      * @param polygon WKT WGS-84 polygon filter
      * 
@@ -639,6 +645,7 @@ public class TaxonObservationResource extends RequestResource {
      * @param sensitive If the results should include sensitive records or not
      * @param designation Any required designations
      * @param taxonOutputGroup Any required taxon output groups
+     * @param orgSuppliedList The ID of an organisation supplied list
      * @param gridRef Any grid references to search within
      * @param polygon WKT WGS-84 polygon filter
      * 
@@ -675,6 +682,7 @@ public class TaxonObservationResource extends RequestResource {
      * @param sensitive If the results should include sensitive records or not
      * @param designation Any required designations
      * @param taxonOutputGroup Any required taxon output groups
+     * @param orgSuppliedList The ID of an organisation supplied list
      * @param gridRef Any grid references to search within
      * @param polygon WKT WGS-84 polygon filter
      * 
@@ -736,6 +744,7 @@ public class TaxonObservationResource extends RequestResource {
      * @param sensitive If the results should include sensitive records or not
      * @param designation Any required designations
      * @param taxonOutputGroup Any required taxon output groups
+     * @param orgSuppliedList The ID of an organisation supplied list
      * @param gridRef Any grid references to search within
      * @param polygon WKT WGS-84 polygon filter
      * 
@@ -796,6 +805,7 @@ public class TaxonObservationResource extends RequestResource {
      * @param sensitive If the results should include sensitive records or not
      * @param designation Any required designations
      * @param taxonOutputGroup Any required taxon output groups
+     * @param orgSuppliedList The ID of an organisation supplied list
      * @param gridRef Any grid references to search within
      * @param polygon WKT WGS-84 polygon filter
      * 
@@ -839,6 +849,7 @@ public class TaxonObservationResource extends RequestResource {
      * @param sensitive If the results should include sensitive records or not
      * @param designation Any required designations
      * @param taxonOutputGroup Any required taxon output groups
+     * @param orgSuppliedList The ID of an organisation supplied list
      * @param gridRef Any grid references to search within
      * @param polygon WKT WGS-84 polygon filter
 
@@ -866,6 +877,7 @@ public class TaxonObservationResource extends RequestResource {
             @QueryParam("sensitive") @DefaultValue(ObservationResourceDefaults.defaultSensitive) Boolean sensitive,
             @QueryParam("designation") @DefaultValue(ObservationResourceDefaults.defaultDesignation) String designation,
             @QueryParam("taxonOutputGroup") @DefaultValue(ObservationResourceDefaults.defaultTaxonOutputGroup) String taxonOutputGroup,
+            @QueryParam("orgSuppliedList") @DefaultValue(ObservationResourceDefaults.defaultOrgSuppliedList) int orgSuppliedList,
             @QueryParam("gridRef") @DefaultValue(ObservationResourceDefaults.defaultGridRef) String gridRef,
             @QueryParam("polygon") @DefaultValue(ObservationResourceDefaults.defaultPolygon) String polygon) {
         //TODO: squareBlurring(?)
@@ -874,7 +886,7 @@ public class TaxonObservationResource extends RequestResource {
         taxa = checkForCommaDelimited(taxa);
         datasetKeys = checkForCommaDelimited(datasetKeys);
         
-        return observationMapper.selectObservationGroupsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon, false);
+        return observationMapper.selectObservationGroupsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, orgSuppliedList, gridRef, polygon, false);
     }
 
     /**
@@ -892,6 +904,7 @@ public class TaxonObservationResource extends RequestResource {
      * @param sensitive If the results should include sensitive records or not
      * @param designation Any required designations
      * @param taxonOutputGroup Any required taxon output groups
+     * @param orgSuppliedList The ID of an organisation supplied list
      * @param gridRef Any grid references to search within
      * @param polygon WKT WGS-84 polygon filter
      * 
@@ -923,7 +936,7 @@ public class TaxonObservationResource extends RequestResource {
             @QueryParam("gridRef") @DefaultValue(ObservationResourceDefaults.defaultGridRef) String gridRef,
             @QueryParam("polygon") @DefaultValue(ObservationResourceDefaults.defaultPolygon) String polygon) {
         //TODO: squareBlurring(?)
-        return observationMapper.selectObservationDatasetsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon, orgSuppliedList);
+        return observationMapper.selectObservationDatasetsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, orgSuppliedList, gridRef, polygon);
     }
 
     /**
@@ -941,6 +954,7 @@ public class TaxonObservationResource extends RequestResource {
      * @param sensitive If the results should include sensitive records or not
      * @param designation Any required designations
      * @param taxonOutputGroup Any required taxon output groups
+     * @param orgSuppliedList The ID of an organisation supplied list
      * @param gridRef Any grid references to search within
      * @param polygon WKT WGS-84 polygon filter
      * 
@@ -968,10 +982,11 @@ public class TaxonObservationResource extends RequestResource {
             @QueryParam("sensitive") @DefaultValue(ObservationResourceDefaults.defaultSensitive) Boolean sensitive,
             @QueryParam("designation") @DefaultValue(ObservationResourceDefaults.defaultDesignation) String designation,
             @QueryParam("taxonOutputGroup") @DefaultValue(ObservationResourceDefaults.defaultTaxonOutputGroup) String taxonOutputGroup,
+            @QueryParam("orgSuppliedList") @DefaultValue(ObservationResourceDefaults.defaultOrgSuppliedList) int orgSuppliedList,
             @QueryParam("gridRef") @DefaultValue(ObservationResourceDefaults.defaultGridRef) String gridRef,
             @QueryParam("polygon") @DefaultValue(ObservationResourceDefaults.defaultPolygon) String polygon) {
         //TODO: squareBlurring(?)
-        return observationMapper.selectAllObservationDatasetsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon);
+        return observationMapper.selectAllObservationDatasetsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, orgSuppliedList, gridRef, polygon);
     }
 
     /**
@@ -989,6 +1004,7 @@ public class TaxonObservationResource extends RequestResource {
      * @param sensitive If the results should include sensitive records or not
      * @param designation Any required designations
      * @param taxonOutputGroup Any required taxon output groups
+     * @param orgSuppliedList The ID of an organisation supplied list
      * @param gridRef Any grid references to search within
      * @param polygon WKT WGS-84 polygon filter
      * 
@@ -1016,6 +1032,7 @@ public class TaxonObservationResource extends RequestResource {
             @QueryParam("sensitive") @DefaultValue(ObservationResourceDefaults.defaultSensitive) Boolean sensitive,
             @QueryParam("designation") @DefaultValue(ObservationResourceDefaults.defaultDesignation) String designation,
             @QueryParam("taxonOutputGroup") @DefaultValue(ObservationResourceDefaults.defaultTaxonOutputGroup) String taxonOutputGroup,
+            @QueryParam("orgSuppliedList") @DefaultValue(ObservationResourceDefaults.defaultOrgSuppliedList) int orgSuppliedList,
             @QueryParam("gridRef") @DefaultValue(ObservationResourceDefaults.defaultGridRef) String gridRef,
             @QueryParam("polygon") @DefaultValue(ObservationResourceDefaults.defaultPolygon) String polygon) {
         //TODO: squareBlurring(?)
@@ -1025,7 +1042,7 @@ public class TaxonObservationResource extends RequestResource {
             sensitive = Boolean.FALSE;
         }
         
-        return observationMapper.selectRequestableObservationDatasetsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon);
+        return observationMapper.selectRequestableObservationDatasetsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, orgSuppliedList, gridRef, polygon);
     }
     
     /**
@@ -1043,6 +1060,7 @@ public class TaxonObservationResource extends RequestResource {
      * @param sensitive If the results should include sensitive records or not
      * @param designation Any required designations
      * @param taxonOutputGroup Any required taxon output groups
+     * @param orgSuppliedList The ID of an organisation supplied list
      * @param gridRef Any grid references to search within
      * @param polygon WKT WGS-84 polygon filter
      * 
@@ -1070,13 +1088,14 @@ public class TaxonObservationResource extends RequestResource {
             @QueryParam("sensitive") @DefaultValue(ObservationResourceDefaults.defaultSensitive) Boolean sensitive,
             @QueryParam("designation") @DefaultValue(ObservationResourceDefaults.defaultDesignation) String designation,
             @QueryParam("taxonOutputGroup") @DefaultValue(ObservationResourceDefaults.defaultTaxonOutputGroup) String taxonOutputGroup,
+            @QueryParam("orgSuppliedList") @DefaultValue(ObservationResourceDefaults.defaultOrgSuppliedList) int orgSuppliedList,
             @QueryParam("gridRef") @DefaultValue(ObservationResourceDefaults.defaultGridRef) String gridRef,
             @QueryParam("polygon") @DefaultValue(ObservationResourceDefaults.defaultPolygon) String polygon) {
         //TODO: squareBlurring(?)
                 
         List<String> datasetKeys = new ArrayList<String>();
         datasetKeys.add(datasetKey);
-        return observationMapper.selectRequestableObservationDatasetsByFilter(User.PUBLIC_USER, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon);
+        return observationMapper.selectRequestableObservationDatasetsByFilter(User.PUBLIC_USER, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, orgSuppliedList, gridRef, polygon);
     }
     
     /**
@@ -1094,6 +1113,7 @@ public class TaxonObservationResource extends RequestResource {
      * @param sensitive If the results should include sensitive records or not
      * @param designation Any required designations
      * @param taxonOutputGroup Any required taxon output groups
+     * @param orgSuppliedList The ID of an organisation supplied list
      * @param gridRef Any grid references to search within
      * @param polygon WKT WGS-84 polygon filter
      * 
@@ -1121,10 +1141,11 @@ public class TaxonObservationResource extends RequestResource {
             @QueryParam("sensitive") @DefaultValue(ObservationResourceDefaults.defaultSensitive) Boolean sensitive,
             @QueryParam("designation") @DefaultValue(ObservationResourceDefaults.defaultDesignation) String designation,
             @QueryParam("taxonOutputGroup") @DefaultValue(ObservationResourceDefaults.defaultTaxonOutputGroup) String taxonOutputGroup,
+            @QueryParam("orgSuppliedList") @DefaultValue(ObservationResourceDefaults.defaultOrgSuppliedList) int orgSuppliedList,
             @QueryParam("gridRef") @DefaultValue(ObservationResourceDefaults.defaultGridRef) String gridRef,
             @QueryParam("polygon") @DefaultValue(ObservationResourceDefaults.defaultPolygon) String polygon) {
         //TODO: squareBlurring(?)
-        return observationMapper.selectUnavailableDatasetsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon);
+        return observationMapper.selectUnavailableDatasetsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, orgSuppliedList, gridRef, polygon);
     }
 
     /**
@@ -1142,6 +1163,7 @@ public class TaxonObservationResource extends RequestResource {
      * @param sensitive If the results should include sensitive records or not
      * @param designation Any required designations
      * @param taxonOutputGroup Any required taxon output groups
+     * @param orgSuppliedList The ID of an organisation supplied list
      * @param gridRef Any grid references to search within
      * @param polygon WKT WGS-84 polygon filter
      * 
@@ -1194,6 +1216,7 @@ public class TaxonObservationResource extends RequestResource {
      * @param sensitive If the results should include sensitive records or not
      * @param designation Any required designations
      * @param taxonOutputGroup Any required taxon output groups
+     * @param orgSuppliedList The ID of an organisation supplied list
      * @param gridRef Any grid references to search within
      * @param polygon WKT WGS-84 polygon filter
      * @param getPerm true / false determines if to not use or use the 
@@ -1228,7 +1251,7 @@ public class TaxonObservationResource extends RequestResource {
             @QueryParam("polygon") @DefaultValue(ObservationResourceDefaults.defaultPolygon) String polygon,
             @QueryParam("returnAccessPositions") @DefaultValue("") String getPerm) {
         //TODO: squareBlurring(?)
-        List<TaxonDatasetWithQueryStats> datasetsWithQueryStats = observationMapper.selectObservationDatasetsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon, orgSuppliedList);
+        List<TaxonDatasetWithQueryStats> datasetsWithQueryStats = observationMapper.selectObservationDatasetsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, orgSuppliedList, gridRef, polygon);
 
         if (getPerm.equalsIgnoreCase("true")) {
             for (TaxonDatasetWithQueryStats d : datasetsWithQueryStats) {
@@ -2153,7 +2176,7 @@ public class TaxonObservationResource extends RequestResource {
             boolean sensitive, String designation, String taxonOutputGroup, 
             int orgSuppliedList, String gridRef, String polygon) 
             throws IOException {
-        List<TaxonDatasetWithQueryStats> datasetsWithQueryStats = observationMapper.selectObservationDatasetsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon, orgSuppliedList);
+        List<TaxonDatasetWithQueryStats> datasetsWithQueryStats = observationMapper.selectObservationDatasetsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, orgSuppliedList, gridRef, polygon);
         downloadHelper.addDatasetWithQueryStatsMetadata(zip, user.getId(), datasetsWithQueryStats);
     }
     
@@ -2291,7 +2314,7 @@ public class TaxonObservationResource extends RequestResource {
                 species.add(dFilter.getTaxon().getTvk());
             }
 
-            List<TaxonDatasetWithQueryStats> selectObservationDatasetsByFilter = observationMapper.selectObservationDatasetsByFilter(user, dFilter.getYear().getStartYear(), dFilter.getYear().getEndYear(), new ArrayList<String>(), species, dFilter.getSpatial().getMatch(), dFilter.getSpatial().getFeature(), (dFilter.getSensitive().equals("sans") ? true : false), dFilter.getTaxon().getDesignation(), dFilter.getTaxon().getOutput(), "", "", dFilter.getTaxon().getOrgSuppliedList());
+            List<TaxonDatasetWithQueryStats> selectObservationDatasetsByFilter = observationMapper.selectObservationDatasetsByFilter(user, dFilter.getYear().getStartYear(), dFilter.getYear().getEndYear(), new ArrayList<String>(), species, dFilter.getSpatial().getMatch(), dFilter.getSpatial().getFeature(), (dFilter.getSensitive().equals("sans") ? true : false), dFilter.getTaxon().getDesignation(), dFilter.getTaxon().getOutput(), dFilter.getTaxon().getOrgSuppliedList(), "", "");
 
             for (TaxonDatasetWithQueryStats tdwqs : selectObservationDatasetsByFilter) {
                 datasets.add(tdwqs.getDatasetKey());
@@ -2359,6 +2382,7 @@ public class TaxonObservationResource extends RequestResource {
      * @param sensitive If the results should include sensitive records or not
      * @param designation Any required designations
      * @param taxonOutputGroup Any required taxon output groups
+     * @param orgSuppliedList The ID of an organisation supplied list
      * @param gridRef Any grid references to search within
      * @param polygon WKT WGS-84 polygon filter
      * @param absence Whether the results should be limited to just absence records (true) 
@@ -2408,7 +2432,7 @@ public class TaxonObservationResource extends RequestResource {
         
         writeAPIViewRecordToDatabase(user, ip, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, orgSuppliedList, gridRef, polygon, absence);
         
-        return observationMapper.selectObservationRecordsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon, absence);        
+        return observationMapper.selectObservationRecordsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, orgSuppliedList, gridRef, polygon, absence);
     }
     
     private void checkPolygonMaxSize(String polygon, List<String> taxa, String designation, String taxonOutputGroup, int orgSuppliedList, List<String> datasetKeys) {
