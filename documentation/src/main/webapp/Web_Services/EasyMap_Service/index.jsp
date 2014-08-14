@@ -59,12 +59,12 @@
             <tr>
                 <td><b>w</b></td>
                 <td>A number up to 800</td>
-                <td>The width, in pixels, of the map. If neither height or width specified the width is 350. If only a height(h) is specified then that value is used here.</td>
+                <td>The width, in pixels, of the map. If neither height or width specified the width is 350. If only a width is specified then the height(h) value is calculated using the aspect ratio of the bounding box for this map.</td>
             </tr>
             <tr>
                 <td><b>h</b></td>
                 <td>A number up to 800</td>
-                <td>The height, in pixels, of the map. If neither height or width specified the width is 350. If only a width(w) is specified then that value is used here.</td>
+                <td>The height, in pixels, of the map. If neither height or width specified the width is 350. If only a height is specified then the width(w) value is calculated using the aspect ratio of the bounding box for this map.</td>
             </tr>
             <tr>
                 <td><b>gd</b></td>
@@ -96,26 +96,30 @@
                 <td><b>zoom</b></td>
                 <td>
                     One of the following
-                    <b>england</b>
-                    <b>scotland</b>
-                    <b>walesbl=</b>
-                    <b>highland</b>
+                    <ul>
+                        <li><b>england</b></li>
+                        <li><b>scotland</b></li>
+                        <li><b>wales</b></li>
+                        <li><b>highland</b></li>
+                        <li><b>sco-mainland</b></li>
+                        <li><b>outer-heb</b></li>
+                    </ul>
                 </td>
                 <td>Zooms the map to the named area.</td>
             </tr>      
             <tr>
                 <td><b>vc</b></td>
-                <td>The number of the vice-county</td>
+                <td>The number of the vice-county.</td>
                 <td>Zooms the map to a particular vice-county as specified.</td>
             </tr>
             <tr>
                 <td><b>bl</b></td>
-                <td><b>Grid reference</b> 10km, 2km or 1km resolution. Not Irish grid references</td>
+                <td><b>Grid reference</b> 10km, 2km or 1km resolution. Not Irish grid references.</td>
                 <td>Defines the bottom left corner of a bounding box. Use with <b>tr</b> parameter.</td>
             </tr>   
             <tr>
                 <td><b>tr</b></td>
-                <td><b>Grid reference</b> 10km, 2km or 1km resolution. Not Irish grid references</td>
+                <td><b>Grid reference</b> 10km, 2km or 1km resolution. Not Irish grid references.</td>
                 <td>Defines the top right hand corner of a bounding box. Use with <b>bl</b> parameter.</td>
             </tr>
             <tr>
@@ -126,7 +130,7 @@
             <tr>
                 <td><b>trCoord</b></td>
                 <td><b>Easting</b>,<b>Northing</b></td>
-                <td>Defines the top right hand corner of a bounding box. Use with <b>blCoord</b> parameter</td>
+                <td>Defines the top right hand corner of a bounding box. Use with <b>blCoord</b> parameter.</td>
             </tr>     
         </table>
 
@@ -142,62 +146,62 @@
             <tr>
                 <td><b>b0from</b></td>
                 <td>A <b>year</b></td>
-                <td>Defines the start year for the lower date layer (inclusive)</td>
+                <td>Defines the start year for the lower date layer (inclusive).</td>
             </tr>
             <tr>
                 <td><b>b0to</b></td>
                 <td>A <b>year</b></td>
-                <td>Defines the end year for the lower date layer (inclusive)</td>
+                <td>Defines the end year for the lower date layer (inclusive).</td>
             </tr>
             <tr>
                 <td><b>b0fill</b></td>
                 <td><b>Hexadecimal</b> colour</td>
-                <td>The fill colour for the lower date layer</td>
+                <td>The fill colour for the lower date layer.</td>
             </tr>
             <tr>
                 <td><b>b0bord</b></td>
                 <td><b>Hexadecimal</b> colour</td>
-                <td>The border colour for the lower date layer</td>
+                <td>The border colour for the lower date layer.</td>
             </tr>
             <tr>
                 <td><b>b1from</b></td>
                 <td>A <b>year</b></td>
-                <td>Defines the start year for the middle date layer (inclusive)</td>
+                <td>Defines the start year for the middle date layer (inclusive).</td>
             </tr>
             <tr>
                 <td><b>b1to</b></td>
                 <td>A <b>year</b></td>
-                <td>Defines the end year for the middle date layer (inclusive)</td>
+                <td>Defines the end year for the middle date layer (inclusive).</td>
             </tr>
             <tr>
                 <td><b>b1fill</b></td>
                 <td><b>Hexadecimal</b> colour</td>
-                <td>The fill colour for the middle date layer</td>
+                <td>The fill colour for the middle date layer.</td>
             </tr>
             <tr>
                 <td><b>b1bord</b></td>
                 <td><b>Hexadecimal</b> colour</td>
-                <td>The border colour for the middle date layer</td>
+                <td>The border colour for the middle date layer.</td>
             </tr>    
             <tr>
                 <td><b>b2from</b></td>
                 <td>A <b>year</b></td>
-                <td>Defines the start year for the top date layer (inclusive)</td>
+                <td>Defines the start year for the top date layer (inclusive).</td>
             </tr>
             <tr>
                 <td><b>b2to</b></td>
                 <td>A <b>year</b></td>
-                <td>Defines the end year for the top date layer (inclusive)</td>
+                <td>Defines the end year for the top date layer (inclusive).</td>
             </tr>
             <tr>
                 <td><b>b2fill</b></td>
                 <td><b>Hexadecimal</b> colour</td>
-                <td>The fill colour for the top date layer</td>
+                <td>The fill colour for the top date layer.</td>
             </tr>
             <tr>
                 <td><b>b2bord</b></td>
                 <td><b>Hexadecimal</b> colour</td>
-                <td>The border colour for the middle date layer</td>
+                <td>The border colour for the middle date layer.</td>
             </tr>    
         </table>
 
@@ -213,12 +217,17 @@
             <tr>
                 <td><b>title</b></td>
                 <td><b>sci</b>, <b>com</b>, <b>0</b></td>
-                <td>Displays either the scientific name or common name as a title or disables it. If omitted the scientific name is displayed</td>
+                <td>Displays either the scientific name or common name as a title or disables it. If omitted the scientific name is displayed.</td>
+            </tr>
+            <tr>
+                <td><b>terms</b></td>
+                <td><b>0</b></td>
+                <td>Disables the terms and conditions link and text above the map. By default the link and text are displayed.</td>
             </tr>
             <tr>
                 <td><b>link</b></td>
                 <td><b>0</b></td>
-                <td>Disables the link to the NBN Gateway interactive map. By default the link is displayed</td>
+                <td>Disables the link to the NBN Gateway interactive map. By default the link is displayed.</td>
             </tr>
             <tr>
                 <td><b>ref</b></td>

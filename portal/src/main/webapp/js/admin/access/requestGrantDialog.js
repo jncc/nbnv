@@ -82,7 +82,7 @@ nbn.nbnv.ui.dialog.requestGrantDialog = function() {
         $('#granteffect').empty().append($('<img>').attr('src', '/img/ajax-loader.gif')).append('  Loading request record coverage');
         $('#grantanonwarn').hide();
         
-        if ('organisationID' in json.reason && json.reason.organisationID != -1) { this.orgReq = true; } else { this.orgReq = false; }
+        if ('organisationID' in json.reason && json.reason.organisationID !== -1) { this.orgReq = true; } else { this.orgReq = false; }
         
         if (!json.taxon.all) { 
             if (json.taxon.tvk) {
@@ -91,6 +91,8 @@ nbn.nbnv.ui.dialog.requestGrantDialog = function() {
                 filter.designation = json.taxon.designation;
             } else if (json.taxon.output) {
                 filter.taxonOutputGroup = json.taxon.output;
+            } else if (json.taxon.orgSuppliedList) {
+                filter.orgSuppliedList = json.taxon.orgSuppliedList;
             }
         }
         
@@ -105,7 +107,7 @@ nbn.nbnv.ui.dialog.requestGrantDialog = function() {
             }
         }
 
-        if (json.sensitive == 'sans') { filter.sensitive = 'true'; }
+        if (json.sensitive === 'sans') { filter.sensitive = 'true'; }
         filter.datasetKey = dataset;
 
         $.ajax({
@@ -117,7 +119,7 @@ nbn.nbnv.ui.dialog.requestGrantDialog = function() {
                 if (datasets.length > 0) {
                     $('#granteffect').append('This request covers ' + datasets[0].querySpecificObservationCount + ' of ' + datasets[0].taxonDataset.recordCount + ' records in the dataset, ' + datasets[0].querySpecificSensitiveObservationCount + ' are sensitive records');
                     
-                    if (!json.spatial.all && datasets[0].querySpecificObservationCount == datasets[0].querySpecificSensitiveObservationCount) {
+                    if (!json.spatial.all && datasets[0].querySpecificObservationCount === datasets[0].querySpecificSensitiveObservationCount) {
                         $('#grantanonwarn').show();
                     } 
 
@@ -134,4 +136,4 @@ nbn.nbnv.ui.dialog.requestGrantDialog = function() {
 
         this.div.dialog("open");
     };
-}
+};

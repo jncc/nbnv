@@ -74,12 +74,15 @@ Explore and map grid squares for a particular [species](/Taxa).
     <div id="statistics">
         <h1>Gateway Statistics</h1>
         <table>
-            <#list statistics?keys as stat>
-                <tr>
-                    <td>${stat}</td>
-                    <td>${statistics[stat]}</td>
-                </tr>
-            </#list>
+			<tr>
+				<td>Datasets</td>
+				<td>${statistics["Datasets"]}</td>
+			</tr>
+			<tr>
+				<td>Updated Dictionary</td>
+				<td>${statistics["Updated Dictionary"]}</td>
+			</tr>
+			
             <tr>
                 <td colspan="2"><a href="/AccessRequest/Create">Request Better Access</a></td>
             </tr>

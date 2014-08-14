@@ -79,8 +79,8 @@ public class RequestResource extends AbstractResource {
                 filter.getSpatial().getFeature(), 
                 filter.getSensitive().equals("sans"), 
                 filter.getTaxon().getDesignation(), 
-                filter.getTaxon().getOutput(), filter.getSpatial().getGridRef(), 
-                "");
+                filter.getTaxon().getOutput(), filter.getTaxon().getOrgSuppliedList(),
+                filter.getSpatial().getGridRef(), "");
         
         if (stats.isEmpty()) {
             throw new IllegalArgumentException("Zero records would be granted in " + datasetKey);
