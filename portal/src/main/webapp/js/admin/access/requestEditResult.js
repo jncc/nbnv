@@ -44,7 +44,7 @@ nbn.nbnv.ui.requestEditResult = function(endpoint, dataset, datasetEndpoint, gra
         var filter = {};
         $('#recordcounts').html('');
         $('#recordcounts').empty().append($('<img>').attr('src', '/img/ajax-loader.gif')).append('  Loading request record coverage');
-        $('#changebtn').button('disable');
+        $('#changebtn').attr('disabled','disabled');
         
         if (!json.taxon.all) { 
             if (json.taxon.tvk) {
@@ -79,11 +79,11 @@ nbn.nbnv.ui.requestEditResult = function(endpoint, dataset, datasetEndpoint, gra
                 if (datasets.length > 0) {
                     $('#recordcounts').html('');
                     $('#recordcounts').append('This request covers ' + datasets[0].querySpecificObservationCount + ' of ' + datasets[0].taxonDataset.recordCount + ' records in the dataset, ' + datasets[0].querySpecificSensitiveObservationCount + ' are sensitive records');
-                    $('#changebtn').button('enable');
+                    $('#changebtn').removeAttr('disabled');
                 } else {
                     $('#recordcounts').html('');
                     $('#recordcounts').append('This request would cover 0 records if submitted');
-                    $('#changebtn').button('disable');                    
+                    $('#changebtn').attr('disabled','disabled');
                 }
             }
         });
