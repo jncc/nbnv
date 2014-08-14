@@ -76,15 +76,22 @@ nbn.nbnv.ui.requestEditResult = function(endpoint, dataset, datasetEndpoint, gra
             url: nbn.nbnv.api + datasetEndpoint,
             data: filter,
             success: function(datasets) { 
-                $('#recordcounts').html('');
-                $('#recordcounts').append('This request covers ' + datasets[0].querySpecificObservationCount + ' of ' + datasets[0].taxonDataset.recordCount + ' records in the dataset, ' + datasets[0].querySpecificSensitiveObservationCount + ' are sensitive records');
-                $('#changebtn').button('enable');
+                if (datasets.length > 0) {
+                    $('#recordcounts').html('');
+                    $('#recordcounts').append('This request covers ' + datasets[0].querySpecificObservationCount + ' of ' + datasets[0].taxonDataset.recordCount + ' records in the dataset, ' + datasets[0].querySpecificSensitiveObservationCount + ' are sensitive records');
+                    $('#changebtn').button('enable');
+                } else {
+                    $('#recordcounts').html('');
+                    $('#recordcounts').append('This request would cover 0 records if submitted');
+                    $('#changebtn').button('disable');                    
+                }
             }
         });
     };
     
     this._onEnter = function(json, id) {
         var _me = this;
+        _me.setupData(json, _me._dataset, '/taxonObservations/datasets/' + _me._dataset + '/requestable');
         
         $('#changebtn').click(function() {
             _me._grantDialog.show(id, json, _me._dataset, '/taxonObservations/datasets/' + _me._dataset + '/requestable', _me._endpoint);
