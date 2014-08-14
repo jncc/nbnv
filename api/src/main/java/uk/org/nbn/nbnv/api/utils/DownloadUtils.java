@@ -47,7 +47,7 @@ public class DownloadUtils {
         List<String> datasets;
 
         if (download.getDataset().isAll()) {
-            List<TaxonDatasetWithQueryStats> selectRequestableObservationDatasetsByFilter = taxonObservationMapper.selectRequestableObservationDatasetsByFilter(user, download.getYear().getStartYear(), download.getYear().getEndYear(), new ArrayList<String>(), species, download.getSpatial().getMatch(), download.getSpatial().getFeature(), (download.getSensitive().equals("sans") ? true : false), download.getTaxon().getDesignation(), download.getTaxon().getOutput(), "", "");
+            List<TaxonDatasetWithQueryStats> selectRequestableObservationDatasetsByFilter = taxonObservationMapper.selectRequestableObservationDatasetsByFilter(user, download.getYear().getStartYear(), download.getYear().getEndYear(), new ArrayList<String>(), species, download.getSpatial().getMatch(), download.getSpatial().getFeature(), (download.getSensitive().equals("sans") ? true : false), download.getTaxon().getDesignation(), download.getTaxon().getOutput(), download.getTaxon().getOrgSuppliedList(), "", "");
             datasets = new ArrayList<String>();
 
             for (TaxonDatasetWithQueryStats tdwqs : selectRequestableObservationDatasetsByFilter) {
@@ -63,7 +63,7 @@ public class DownloadUtils {
     public List<String> createSensitiveDatasetList(DownloadFilterJSON download, List<String> species, User user) {
         List<String> datasets = new ArrayList<String>();
 
-        List<TaxonDatasetWithQueryStats> selectRequestableSensitiveObservationDatasetsByFilter = taxonObservationMapper.selectRequestableSensitiveObservationDatasetsByFilter(user, download.getYear().getStartYear(), download.getYear().getEndYear(), new ArrayList<String>(), species, download.getSpatial().getMatch(), download.getSpatial().getFeature(), (download.getSensitive().equals("sans") ? true : false), download.getTaxon().getDesignation(), download.getTaxon().getOutput(), "", "");
+        List<TaxonDatasetWithQueryStats> selectRequestableSensitiveObservationDatasetsByFilter = taxonObservationMapper.selectRequestableSensitiveObservationDatasetsByFilter(user, download.getYear().getStartYear(), download.getYear().getEndYear(), new ArrayList<String>(), species, download.getSpatial().getMatch(), download.getSpatial().getFeature(), (download.getSensitive().equals("sans") ? true : false), download.getTaxon().getDesignation(), download.getTaxon().getOutput(), download.getTaxon().getOrgSuppliedList(), "", "");
         for (TaxonDatasetWithQueryStats tdwqs : selectRequestableSensitiveObservationDatasetsByFilter) {
             datasets.add(tdwqs.getDatasetKey());
         }
@@ -75,7 +75,7 @@ public class DownloadUtils {
         List<String> datasets;
 
         if (download.getDataset().isAll()) {
-            List<TaxonDatasetWithQueryStats> selectRequestableObservationDatasetsByFilter = taxonObservationMapper.selectRequestableObservationDatasetsByFilterOrganisation(org, download.getYear().getStartYear(), download.getYear().getEndYear(), new ArrayList<String>(), species, download.getSpatial().getMatch(), download.getSpatial().getFeature(), (download.getSensitive().equals("sans") ? true : false), download.getTaxon().getDesignation(), download.getTaxon().getOutput(), "", "");
+            List<TaxonDatasetWithQueryStats> selectRequestableObservationDatasetsByFilter = taxonObservationMapper.selectRequestableObservationDatasetsByFilterOrganisation(org, download.getYear().getStartYear(), download.getYear().getEndYear(), new ArrayList<String>(), species, download.getSpatial().getMatch(), download.getSpatial().getFeature(), (download.getSensitive().equals("sans") ? true : false), download.getTaxon().getDesignation(), download.getTaxon().getOutput(), download.getTaxon().getOrgSuppliedList(), "", "");
             datasets = new ArrayList<String>();
 
             for (TaxonDatasetWithQueryStats tdwqs : selectRequestableObservationDatasetsByFilter) {
@@ -91,7 +91,7 @@ public class DownloadUtils {
     public List<String> createSensitiveDatasetList(DownloadFilterJSON download, List<String> species, Organisation org) {
         List<String> datasets = new ArrayList<String>();
 
-        List<TaxonDatasetWithQueryStats> selectRequestableSensitiveObservationDatasetsByFilter = taxonObservationMapper.selectRequestableSensitiveObservationDatasetsByFilterOrganisation(org, download.getYear().getStartYear(), download.getYear().getEndYear(), new ArrayList<String>(), species, download.getSpatial().getMatch(), download.getSpatial().getFeature(), (download.getSensitive().equals("sans") ? true : false), download.getTaxon().getDesignation(), download.getTaxon().getOutput(), "", "");
+        List<TaxonDatasetWithQueryStats> selectRequestableSensitiveObservationDatasetsByFilter = taxonObservationMapper.selectRequestableSensitiveObservationDatasetsByFilterOrganisation(org, download.getYear().getStartYear(), download.getYear().getEndYear(), new ArrayList<String>(), species, download.getSpatial().getMatch(), download.getSpatial().getFeature(), (download.getSensitive().equals("sans") ? true : false), download.getTaxon().getDesignation(), download.getTaxon().getOutput(), download.getTaxon().getOrgSuppliedList(), "", "");
         for (TaxonDatasetWithQueryStats tdwqs : selectRequestableSensitiveObservationDatasetsByFilter) {
             datasets.add(tdwqs.getDatasetKey());
         }
@@ -102,12 +102,12 @@ public class DownloadUtils {
     public List<Integer> getRecordSet(DownloadFilterJSON download, List<String> species, String dataset, User user) {
         List<String> datasets = new ArrayList<String>();
         datasets.add(dataset);
-        return taxonObservationMapper.selectRequestableObservationRecordIDsByFilter(user, download.getYear().getStartYear(), download.getYear().getEndYear(), datasets, species, download.getSpatial().getMatch(), download.getSpatial().getFeature(), (download.getSensitive().equals("sans") ? true : false), download.getTaxon().getDesignation(), download.getTaxon().getOutput(), "", "", download.getVerification());
+        return taxonObservationMapper.selectRequestableObservationRecordIDsByFilter(user, download.getYear().getStartYear(), download.getYear().getEndYear(), datasets, species, download.getSpatial().getMatch(), download.getSpatial().getFeature(), (download.getSensitive().equals("sans") ? true : false), download.getTaxon().getDesignation(), download.getTaxon().getOutput(), download.getTaxon().getOrgSuppliedList(), "", "", download.getVerification());
     }
 
     public List<Integer> getRecordSet(DownloadFilterJSON download, List<String> species, String dataset, Organisation org) {
         List<String> datasets = new ArrayList<String>();
         datasets.add(dataset);
-        return taxonObservationMapper.selectRequestableObservationRecordIDsByFilterOrganisation(org, download.getYear().getStartYear(), download.getYear().getEndYear(), datasets, species, download.getSpatial().getMatch(), download.getSpatial().getFeature(), (download.getSensitive().equals("sans") ? true : false), download.getTaxon().getDesignation(), download.getTaxon().getOutput(), "", "", download.getVerification());
+        return taxonObservationMapper.selectRequestableObservationRecordIDsByFilterOrganisation(org, download.getYear().getStartYear(), download.getYear().getEndYear(), datasets, species, download.getSpatial().getMatch(), download.getSpatial().getFeature(), (download.getSensitive().equals("sans") ? true : false), download.getTaxon().getDesignation(), download.getTaxon().getOutput(), download.getTaxon().getOrgSuppliedList(), "", "", download.getVerification());
     }
 }

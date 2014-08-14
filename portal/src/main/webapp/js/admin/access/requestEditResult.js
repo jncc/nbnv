@@ -44,7 +44,7 @@ nbn.nbnv.ui.requestEditResult = function(endpoint, dataset, datasetEndpoint, gra
         var filter = {};
         $('#recordcounts').html('');
         $('#recordcounts').empty().append($('<img>').attr('src', '/img/ajax-loader.gif')).append('  Loading request record coverage');
-        $('#changebtn').button('disable');
+        $('#changebtn').attr('disabled','disabled');
         
         if (!json.taxon.all) { 
             if (json.taxon.tvk) {
@@ -53,6 +53,8 @@ nbn.nbnv.ui.requestEditResult = function(endpoint, dataset, datasetEndpoint, gra
                 filter.designation = json.taxon.designation;
             } else if (json.taxon.output) {
                 filter.taxonOutputGroup = json.taxon.output;
+            } else if (json.taxon.orgSuppliedList) {
+                filter.orgSuppliedList = json.taxon.orgSuppliedList;
             }
         }
         
@@ -74,15 +76,22 @@ nbn.nbnv.ui.requestEditResult = function(endpoint, dataset, datasetEndpoint, gra
             url: nbn.nbnv.api + datasetEndpoint,
             data: filter,
             success: function(datasets) { 
-                $('#recordcounts').html('');
-                $('#recordcounts').append('This request covers ' + datasets[0].querySpecificObservationCount + ' of ' + datasets[0].taxonDataset.recordCount + ' records in the dataset, ' + datasets[0].querySpecificSensitiveObservationCount + ' are sensitive records');
-                $('#changebtn').button('enable');
+                if (datasets.length > 0) {
+                    $('#recordcounts').html('');
+                    $('#recordcounts').append('This request covers ' + datasets[0].querySpecificObservationCount + ' of ' + datasets[0].taxonDataset.recordCount + ' records in the dataset, ' + datasets[0].querySpecificSensitiveObservationCount + ' are sensitive records');
+                    $('#changebtn').removeAttr('disabled');
+                } else {
+                    $('#recordcounts').html('');
+                    $('#recordcounts').append('This request would cover 0 records if submitted');
+                    $('#changebtn').attr('disabled','disabled');
+                }
             }
         });
     };
     
     this._onEnter = function(json, id) {
         var _me = this;
+        _me.setupData(json, _me._dataset, '/taxonObservations/datasets/' + _me._dataset + '/requestable');
         
         $('#changebtn').click(function() {
             _me._grantDialog.show(id, json, _me._dataset, '/taxonObservations/datasets/' + _me._dataset + '/requestable', _me._endpoint);

@@ -53,6 +53,7 @@ public interface SiteBoundaryMapper {
             @Param("sensitive") Boolean sensitive, 
             @Param("designation") String designation, 
             @Param("taxonOutputGroup") String taxonOutputGroup, 
+            @Param("orgSuppliedList") int orgSuppliedList, 
             @Param("gridRef") String gridRef,
             @Param("absence") boolean absence,
             @Param("verification") List<Integer> verification);
