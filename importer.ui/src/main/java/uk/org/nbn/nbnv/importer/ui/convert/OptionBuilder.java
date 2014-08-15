@@ -16,7 +16,7 @@ import java.net.URL;
  *         Date: 31/07/14
  *         Time: 11:45
  */
-@Component("optionBuiler")
+@Component("optionBuilder")
 public class OptionBuilder {
 
     public Options build(File file ) {

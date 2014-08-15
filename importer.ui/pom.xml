@@ -174,5 +174,28 @@
             <artifactId>scala-library</artifactId>
         </dependency>
         <!-- actual importer finish -->
+        <!--NBN Gateway API-->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>nbnv-api-model</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <!--NBN Gateway Properties Reader-->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>nbnv-properties</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <!--CEH Dynamo Mapping-->
+        <dependency>
+            <groupId>uk.ac.ceh</groupId>
+            <artifactId>dynamo-mapping</artifactId>
+            <version>1.2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.jersey.contribs</groupId>
+            <artifactId>jersey-apache-client4</artifactId>
+            <version>${jersey.version}</version>
+        </dependency>
     </dependencies>
 </project>
