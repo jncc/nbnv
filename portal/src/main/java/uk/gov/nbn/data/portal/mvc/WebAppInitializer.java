@@ -17,6 +17,7 @@ public class WebAppInitializer implements WebApplicationInitializer {
         rootContext.register(WebConfig.class);
         
         servletContext.addListener(new ContextLoaderListener(rootContext));
+        servletContext.setInitParameter("springJspExpressionSupport", "true");
         
         ServletRegistration.Dynamic dispatcher = servletContext.addServlet("dispatcher", new DispatcherServlet(new GenericWebApplicationContext()));
         dispatcher.setLoadOnStartup(1);
