@@ -12,11 +12,12 @@
         ,"/js/filter/taxon.js"
         ,"/js/filter/dataset.js"
         ,"/js/filter/sensitive.js"
+        ,"/js/filter/verification.js"
         ,"/js/download/downloadReason.js"
         ,"/js/download/download.js"
         ,"/js/download/downloadResult.js"
         ,"/js/jquery.fileDownload.js"] 
-    csss=["//ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/themes/smoothness/jquery-ui.css","/css/jquery.qtip.min.css","/css/accessRequest.css"]>
+    csss=["//ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/themes/smoothness/jquery-ui.css","/css/jquery.qtip.min.css","/css/accessRequest.css","/css/verification.css"]>
 
     <script>
         nbn.nbnv.api = '${api}';

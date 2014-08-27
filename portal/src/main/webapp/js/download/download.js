@@ -11,6 +11,7 @@ nbn.nbnv.ui.download = function (json, div) {
     var spatial = new nbn.nbnv.ui.filter.spatial(json);
     var taxon = new nbn.nbnv.ui.filter.taxon(json);
     var dataset = new nbn.nbnv.ui.filter.dataset(json, true);
+    var verification = new nbn.nbnv.ui.filter.verification(json);
     var result = new nbn.nbnv.ui.downloadResult(json);
     
     this.div.append(reason._renderHeader());
@@ -26,6 +27,9 @@ nbn.nbnv.ui.download = function (json, div) {
     this.div.append(year._renderPanel());
     this.div.append(dataset._renderHeader());
     this.div.append(dataset._renderPanel());
+    this.div.append(verification._renderHeader());
+    this.div.append(verification._renderPanel());
+    verification._postRender();
     this.div.append(result._renderHeader());
     this.div.append(result._renderPanel(function () {       
         var j = sensitive.getJson();
@@ -33,7 +37,8 @@ nbn.nbnv.ui.download = function (json, div) {
         $.extend(j, taxon.getJson());
         $.extend(j, spatial.getJson());
         $.extend(j, year.getJson());        
-        $.extend(j, dataset.getJson());        
+        $.extend(j, dataset.getJson());
+        $.extend(j, verification.getJson());
         
         $('#resultsubmitbtn').attr("disabled", true);
 
@@ -70,6 +75,8 @@ nbn.nbnv.ui.download = function (json, div) {
                 taxon._onExit();
             } else if (oldFilter === 'dataset') {
                 dataset._onExit();
+            } else if (oldFilter === 'verification') {
+                verification._onExit();
             } else if (oldFilter === 'reason') {
                 reason._onExit();
             }
@@ -88,12 +95,15 @@ nbn.nbnv.ui.download = function (json, div) {
 
                 dataset.setupTable(j, '/taxonObservations/datasets');
                 dataset._onEnter();
+            } else if (newFilter === 'verification') {
+                verification._onEnter();
             } else if (newFilter === 'result') {
                 var error = [];
                 $.merge(error, dataset.getError());
                 $.merge(error, taxon.getError());
                 $.merge(error, spatial.getError());
                 $.merge(error, year.getError());
+                $.merge(error, verification.getError());
                 $.merge(error, reason.getError());
                 
                 if (dataset._all && taxon._all && spatial._all) { $.merge(error, ['You may not download all datasets on the Gateway. Please apply at least one filter.']); }

@@ -170,7 +170,7 @@ public class TaxonObservationResource extends RequestResource {
             @QueryParam("verification") @DefaultValue(ObservationResourceDefaults.defaultVerifications) String verification) {
         List<String> datasetKeys = new ArrayList<String>();
         datasetKeys.add(datasetKey);
-        List<Integer> verificatio nIDs = getVerificationIDs(verification);
+        List<Integer> verificationIDs = getVerificationIDs(verification);
 
         writeAPIViewRecordToDatabase(user, request.getRemoteAddr(),
                 Integer.parseInt(ObservationResourceDefaults.defaultStartYear), 
@@ -497,6 +497,10 @@ public class TaxonObservationResource extends RequestResource {
      * @param orgSuppliedList The ID of an organisation supplied list
      * @param gridRef Any grid references to search within
      * @param polygon WKT WGS-84 polygon filter
+     * @param verification A comma separated list of verification statuses to 
+     * filter to, from the list of statuses VERIFIED, INCORRECT, UNCERTAIN and
+     * UNVERIFIED (defaults to VERIFIED, UNCERTAIN and INCORRECT) 
+     * i.e. (...&verification=VERIFIED,UNVERIFIED&...)
      * 
      * @return A list of TaxonObservationAttributeValue Records conforming to 
      * the provided search parameters
@@ -549,6 +553,10 @@ public class TaxonObservationResource extends RequestResource {
      * @param orgSuppliedList The ID of an organisation supplied list
      * @param gridRef Any grid references to search within
      * @param polygon WKT WGS-84 polygon filter
+     * @param verification A comma separated list of verification statuses to 
+     * filter to, from the list of statuses VERIFIED, INCORRECT, UNCERTAIN and
+     * UNVERIFIED (defaults to VERIFIED, UNCERTAIN and INCORRECT) 
+     * i.e. (...&verification=VERIFIED,UNVERIFIED&...)
      * 
      * @return A List of TaxonWithQueryStats conforming to the provided search
      * parameters
@@ -613,6 +621,10 @@ public class TaxonObservationResource extends RequestResource {
      * @param orgSuppliedList The ID of an organisation supplied list
      * @param gridRef Any grid references to search within
      * @param polygon WKT WGS-84 polygon filter
+     * @param verification A comma separated list of verification statuses to 
+     * filter to, from the list of statuses VERIFIED, INCORRECT, UNCERTAIN and
+     * UNVERIFIED (defaults to VERIFIED, UNCERTAIN and INCORRECT) 
+     * i.e. (...&verification=VERIFIED,UNVERIFIED&...)
      * 
      * @return A List of TaxonWithQueryStats conforming to the provided search
      * parameters
@@ -676,6 +688,10 @@ public class TaxonObservationResource extends RequestResource {
      * @param orgSuppliedList The ID of an organisation supplied list
      * @param gridRef Any grid references to search within
      * @param polygon WKT WGS-84 polygon filter
+     * @param verification A comma separated list of verification statuses to 
+     * filter to, from the list of statuses VERIFIED, INCORRECT, UNCERTAIN and
+     * UNVERIFIED (defaults to VERIFIED, UNCERTAIN and INCORRECT) 
+     * i.e. (...&verification=VERIFIED,UNVERIFIED&...)
      * 
      * @return A List of TaxonWithQueryStats conforming to the provided search
      * parameters
@@ -714,6 +730,10 @@ public class TaxonObservationResource extends RequestResource {
      * @param orgSuppliedList The ID of an organisation supplied list
      * @param gridRef Any grid references to search within
      * @param polygon WKT WGS-84 polygon filter
+     * @param verification A comma separated list of verification statuses to 
+     * filter to, from the list of statuses VERIFIED, INCORRECT, UNCERTAIN and
+     * UNVERIFIED (defaults to VERIFIED, UNCERTAIN and INCORRECT) 
+     * i.e. (...&verification=VERIFIED,UNVERIFIED&...)
      * 
      * @return A Zip file containing a list of TaxonWithQueryStats conforming to 
      * the provided search parameters
@@ -777,6 +797,10 @@ public class TaxonObservationResource extends RequestResource {
      * @param orgSuppliedList The ID of an organisation supplied list
      * @param gridRef Any grid references to search within
      * @param polygon WKT WGS-84 polygon filter
+     * @param verification A comma separated list of verification statuses to 
+     * filter to, from the list of statuses VERIFIED, INCORRECT, UNCERTAIN and
+     * UNVERIFIED (defaults to VERIFIED, UNCERTAIN and INCORRECT) 
+     * i.e. (...&verification=VERIFIED,UNVERIFIED&...)
      * 
      * @return A Zip file containing a list of TaxonWithQueryStats conforming to 
      * the provided search parameters
@@ -839,6 +863,10 @@ public class TaxonObservationResource extends RequestResource {
      * @param orgSuppliedList The ID of an organisation supplied list
      * @param gridRef Any grid references to search within
      * @param polygon WKT WGS-84 polygon filter
+     * @param verification A comma separated list of verification statuses to 
+     * filter to, from the list of statuses VERIFIED, INCORRECT, UNCERTAIN and
+     * UNVERIFIED (defaults to VERIFIED, UNCERTAIN and INCORRECT) 
+     * i.e. (...&verification=VERIFIED,UNVERIFIED&...)
      * 
      * @return A Zip file containing a list of TaxonWithQueryStats conforming to 
      * the provided search parameters
@@ -883,7 +911,11 @@ public class TaxonObservationResource extends RequestResource {
      * @param orgSuppliedList The ID of an organisation supplied list
      * @param gridRef Any grid references to search within
      * @param polygon WKT WGS-84 polygon filter
-
+     * @param verification A comma separated list of verification statuses to 
+     * filter to, from the list of statuses VERIFIED, INCORRECT, UNCERTAIN and
+     * UNVERIFIED (defaults to VERIFIED, UNCERTAIN and INCORRECT) 
+     * i.e. (...&verification=VERIFIED,UNVERIFIED&...)
+     * 
      * @return A list of TaxonOutputGroupWithQueryStats based on the provided
      * parameters
      * 
@@ -939,6 +971,10 @@ public class TaxonObservationResource extends RequestResource {
      * @param orgSuppliedList The ID of an organisation supplied list
      * @param gridRef Any grid references to search within
      * @param polygon WKT WGS-84 polygon filter
+     * @param verification A comma separated list of verification statuses to 
+     * filter to, from the list of statuses VERIFIED, INCORRECT, UNCERTAIN and
+     * UNVERIFIED (defaults to VERIFIED, UNCERTAIN and INCORRECT) 
+     * i.e. (...&verification=VERIFIED,UNVERIFIED&...)
      * 
      * @return Return a list of TaxonDatasetWithQueryStats constrained by the given 
      * parameters
@@ -969,7 +1005,7 @@ public class TaxonObservationResource extends RequestResource {
             @QueryParam("polygon") @DefaultValue(ObservationResourceDefaults.defaultPolygon) String polygon,
             @QueryParam("verification") @DefaultValue(ObservationResourceDefaults.defaultVerifications) String verification) {
         //TODO: squareBlurring(?)
-        return observationMapper.selectObservationDatasetsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, orgSuppliedList, gridRef, polygon, orgSuppliedList, getVerificationIDs(verification));
+        return observationMapper.selectObservationDatasetsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, orgSuppliedList, gridRef, polygon, getVerificationIDs(verification));
     }
 
     /**
@@ -990,6 +1026,10 @@ public class TaxonObservationResource extends RequestResource {
      * @param orgSuppliedList The ID of an organisation supplied list
      * @param gridRef Any grid references to search within
      * @param polygon WKT WGS-84 polygon filter
+     * @param verification A comma separated list of verification statuses to 
+     * filter to, from the list of statuses VERIFIED, INCORRECT, UNCERTAIN and
+     * UNVERIFIED (defaults to VERIFIED, UNCERTAIN and INCORRECT) 
+     * i.e. (...&verification=VERIFIED,UNVERIFIED&...)
      * 
      * @return A list of all TaxonDatasetWithQueryStats constrained by the given
      * parameters
@@ -1041,6 +1081,10 @@ public class TaxonObservationResource extends RequestResource {
      * @param orgSuppliedList The ID of an organisation supplied list
      * @param gridRef Any grid references to search within
      * @param polygon WKT WGS-84 polygon filter
+     * @param verification A comma separated list of verification statuses to 
+     * filter to, from the list of statuses VERIFIED, INCORRECT, UNCERTAIN and
+     * UNVERIFIED (defaults to VERIFIED, UNCERTAIN and INCORRECT) 
+     * i.e. (...&verification=VERIFIED,UNVERIFIED&...)
      * 
      * @return A list of all requestable TaxonDatasetWithQueryStats constrained
      * by the given parameters
@@ -1200,6 +1244,10 @@ public class TaxonObservationResource extends RequestResource {
      * @param orgSuppliedList The ID of an organisation supplied list
      * @param gridRef Any grid references to search within
      * @param polygon WKT WGS-84 polygon filter
+     * @param verification A comma separated list of verification statuses to 
+     * filter to, from the list of statuses VERIFIED, INCORRECT, UNCERTAIN and
+     * UNVERIFIED (defaults to VERIFIED, UNCERTAIN and INCORRECT) 
+     * i.e. (...&verification=VERIFIED,UNVERIFIED&...)
      * 
      * @return A list of TaxonDatasets (Observations) constrained by the given
      * parameters
@@ -1256,6 +1304,10 @@ public class TaxonObservationResource extends RequestResource {
      * @param polygon WKT WGS-84 polygon filter
      * @param getPerm true / false determines if to not use or use the 
      * groupDatasetsByProvider method to generate output
+     * @param verification A comma separated list of verification statuses to 
+     * filter to, from the list of statuses VERIFIED, INCORRECT, UNCERTAIN and
+     * UNVERIFIED (defaults to VERIFIED, UNCERTAIN and INCORRECT) 
+     * i.e. (...&verification=VERIFIED,UNVERIFIED&...)
      * 
      * @return A list of ProviderWithQueryStats constrained by the given 
      * parameters
@@ -1287,7 +1339,7 @@ public class TaxonObservationResource extends RequestResource {
             @QueryParam("returnAccessPositions") @DefaultValue("") String getPerm,
             @QueryParam("verification") @DefaultValue(ObservationResourceDefaults.defaultVerifications) String verification) {
         //TODO: squareBlurring(?)
-        List<TaxonDatasetWithQueryStats> datasetsWithQueryStats = observationMapper.selectObservationDatasetsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, orgSuppliedList, gridRef, polygon, orgSuppliedList, getVerificationIDs(verification));
+        List<TaxonDatasetWithQueryStats> datasetsWithQueryStats = observationMapper.selectObservationDatasetsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, orgSuppliedList, gridRef, polygon, getVerificationIDs(verification));
 
         if (getPerm.equalsIgnoreCase("true")) {
             for (TaxonDatasetWithQueryStats d : datasetsWithQueryStats) {
@@ -1393,7 +1445,7 @@ public class TaxonObservationResource extends RequestResource {
                             dFilter.getSpatial().getGridRef(), 
                             dFilter.getPolygon(), 
                             dFilter.getReason().getIncludeAttributes().equals("true"), 
-                            dFilter.getVerification(),
+                            getVerificationIDs(dFilter.getVerification()),
                             filterID, filter, dFilter);
                 } catch (TemplateException ex) {
                     throw new IOException(ex);
@@ -1411,7 +1463,7 @@ public class TaxonObservationResource extends RequestResource {
                         dFilter.getTaxon().getDesignation(), 
                         dFilter.getTaxon().getOutput(),
                         dFilter.getTaxon().getOrgSuppliedList(),
-                        getVerificationFromIDs(dFilter.getVerification()));
+                        StringUtils.collectionToCommaDelimitedString(dFilter.getVerification()));
                 // Add Dataset Metadata to the download
                 addDatasetMetadata(zip, user, 
                         dFilter.getYear().getStartYear(), 
@@ -1425,7 +1477,7 @@ public class TaxonObservationResource extends RequestResource {
                         dFilter.getTaxon().getOutput(), 
                         dFilter.getTaxon().getOrgSuppliedList(),
                         dFilter.getSpatial().getGridRef(), 
-                        dFilter.getPolygon(), dFilter.getVerification());
+                        dFilter.getPolygon(), getVerificationIDs(dFilter.getVerification()));
                 zip.flush();
                 zip.close();
             }
@@ -1898,6 +1950,11 @@ public class TaxonObservationResource extends RequestResource {
      * @param designation
      * @param taxonOutputGroup
      * @param gridRef
+     * @param verification A comma separated list of verification statuses to 
+     * filter to, from the list of statuses VERIFIED, INCORRECT, UNCERTAIN and
+     * UNVERIFIED (defaults to VERIFIED, UNCERTAIN and INCORRECT) 
+     * i.e. (...&verification=VERIFIED,UNVERIFIED&...)
+     * 
      * @throws IOException 
      */
     private void addSpecies(ZipOutputStream zip, User user, int startYear, int endYear, List<String> datasetKeys, List<String> taxa, String spatialRelationship, String featureID, boolean sensitive, String designation, String taxonOutputGroup, int orgSuppliedList, String gridRef, String polygon, String verification) throws IOException {
@@ -1928,150 +1985,177 @@ public class TaxonObservationResource extends RequestResource {
         }
     }
     
-    private void addObservations(ZipOutputStream zip, User user, 
-            int startYear, int endYear, List<String> datasetKeys, 
-            List<String> taxa, String spatialRelationship, String featureID, 
-            boolean sensitive, String designation, String taxonOutputGroup, 
-            int orgSuppliedList, String gridRef, String polygon, String verification,
-            boolean includeAttributes, int filterID, TaxonObservationFilter filter, DownloadFilterJSON dFilter) throws IOException, TemplateException {
-        
-        
-        List<Attribute> attributes = new ArrayList<Attribute>();
-        List<TaxonObservationAttribute> observationAttributes = new ArrayList<TaxonObservationAttribute>();
-        Map<Integer, Map<Integer, String>> atts = new HashMap<Integer, Map<Integer, String>>();
-        
-        // Get observations for download
-        List<TaxonObservationDownload> observations = 
-                observationMapper.selectDownloadableRecords(user, startYear, 
-                endYear, datasetKeys, taxa, spatialRelationship, featureID, 
-                sensitive, designation, taxonOutputGroup, orgSuppliedList,
-                gridRef, polygon, getVerificationIDs(verification));
-        
-        // Push in standard header fields for download
-        zip.putNextEntry(new ZipEntry("Observations.csv"));
-        ArrayList<String> values = new ArrayList<String>();
-        values.add("observationID");
-        values.add("recordKey");
-        values.add("organisationName");
-        values.add("datasetKey");
-        values.add("surveyKey");
-        values.add("sampleKey");
-        values.add("gridReference");
-        values.add("precision");
-        values.add("siteKey");
-        values.add("siteName");
-        values.add("featureKey");
-        values.add("startDate");
-        values.add("endDate");
-        values.add("dateType");
-        values.add("recorder");
-        values.add("determiner");
-        values.add("pTaxonVersionKey");
-        values.add("taxonName");
-        values.add("authority");
-        values.add("commonName");
-        values.add("taxonGroup");
-        values.add("sensitive");
-        values.add("zeroAbundance");
-        values.add("fullVersion");
-        values.add("verification");
-        
-        // If including attributes then push in the appropriate fields
-        if (includeAttributes) {
-            // Find attributes
-            attributes = taxonObservationAttributeMapper.getAttributeListForObservations(
-                    user, startYear, endYear, datasetKeys, taxa, 
-                    spatialRelationship, featureID, sensitive, designation, 
-                    taxonOutputGroup, orgSuppliedList, gridRef, polygon);
-            
-            for (Attribute attrib : attributes) {
-                values.add(attrib.getLabel());
-            }
-            
-            // Grab all attributes that match full version records in the list
-            observationAttributes = taxonObservationAttributeMapper.getAttributesForObservations(
-                    user, startYear, endYear, datasetKeys, taxa, spatialRelationship,
-                    featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon);
-
-            // Put attributes into a map structure for retrieval later
-            // Map --> obsID --> Map --> attID --> attVal
-            for (TaxonObservationAttribute att : observationAttributes) {
-                Map<Integer, String> temp = atts.get(att.getObservationID());
-
-                if (temp == null) {
-                    temp = new HashMap<Integer, String>();
-                    atts.put(att.getObservationID(), temp);
-                }
-
-                temp.put(att.getAttributeID(), att.getTextValue());
-            }
-        }
-        
-        // Write headers out
-        downloadHelper.writelnCsv(zip, values);
-        
-        SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-        HashMap<String, Integer> datasetRecordCounts = new HashMap<String, Integer>();
-
-        for(TaxonObservationDownload observation : observations) {
-            values = new ArrayList<String>();
-            values.add(Integer.toString(observation.getObservationID()));
-            values.add(observation.getObservationKey());
-            values.add(observation.getOrganisationName());
-            values.add(observation.getDatasetKey());
-            values.add(StringUtils.hasText(observation.getSurveyKey()) ? observation.getSurveyKey() : "");
-            values.add(StringUtils.hasText(observation.getSampleKey()) ? observation.getSampleKey() : "");
-            values.add(StringUtils.hasText(observation.getGridReference()) ? observation.getGridReference() : "");
-            values.add(StringUtils.hasText(observation.getPrecision()) ? observation.getPrecision() : "");
-            values.add(StringUtils.hasText(observation.getSiteKey()) ? observation.getSiteKey() : "");
-            values.add(StringUtils.hasText(observation.getSiteName()) ? observation.getSiteName() : "");
-            values.add(StringUtils.hasText(observation.getFeatureKey()) ? observation.getFeatureKey() : "");
-            values.add(observation.getStartDate() != null ? df.format(observation.getStartDate()) : "");
-            values.add(observation.getEndDate() != null ? df.format(observation.getEndDate()) : "");
-            values.add(observation.getDateType());
-            values.add(StringUtils.hasText(observation.getRecorder()) ? observation.getRecorder() : "");
-            values.add(StringUtils.hasText(observation.getDeterminer()) ? observation.getDeterminer() : "");
-            values.add(observation.getpTaxonVersionKey());
-            values.add(observation.getpTaxonName());
-            values.add(observation.getAuthority());
-            values.add(StringUtils.hasText(observation.getCommonName()) ? observation.getCommonName() : "");
-            values.add(observation.getTaxonGroup());
-            values.add(observation.isSensitive() ? "true" : "false");
-            values.add(observation.isZeroAbundance() ? "true" : "false");
-            values.add(observation.isFullVersion()? "true" : "false");
-            values.add(observation.getVerification());
-
-            if (includeAttributes) {
-                if (observation.isFullVersion() || observation.isPublicAttribute()) {
-                    for (Attribute att : attributes) {
-                        if (atts.containsKey(observation.getObservationID()) 
-                                && atts.get(observation.getObservationID()).containsKey(att.getAttributeID())) {
-                            values.add(atts.get(observation.getObservationID()).get(att.getAttributeID()));
-                        } else {
-                            values.add("");
-                        }
-                    }
-                } else {
-                    for (int i = 0; i < observationAttributes.size(); i++) {
-                        values.add("");
-                    }
-                }
-            }
-            
-            downloadHelper.writelnCsv(zip, values);
-            
-            if (datasetRecordCounts.containsKey(observation.getDatasetKey()))
-                datasetRecordCounts.put(observation.getDatasetKey(), datasetRecordCounts.get(observation.getDatasetKey()) + 1);
-            else 
-                datasetRecordCounts.put(observation.getDatasetKey(), 1);
-        }
-        
-        for (String key : datasetRecordCounts.keySet()) {
-            oTaxonObservationFilterMapper.createDatasetDownloadStats(filterID, key, datasetRecordCounts.get(key));
-            logger.info("Taxon Observation Download Sending email for dataset " + key);
-            mailDatasetDownloadNotification(filter, dFilter, key, user);
-        }
-    }
+    /**
+     * 
+     * @param zip
+     * @param user
+     * @param startYear
+     * @param endYear
+     * @param datasetKeys
+     * @param taxa
+     * @param spatialRelationship
+     * @param featureID
+     * @param sensitive
+     * @param designation
+     * @param taxonOutputGroup
+     * @param orgSuppliedList
+     * @param gridRef
+     * @param polygon
+     * @param verification A comma separated list of verification statuses to 
+     * filter to, from the list of statuses VERIFIED, INCORRECT, UNCERTAIN and
+     * UNVERIFIED (defaults to VERIFIED, UNCERTAIN and INCORRECT) 
+     * i.e. (...&verification=VERIFIED,UNVERIFIED&...)
+     * @param includeAttributes
+     * @param filterID
+     * @param filter
+     * @param dFilter
+     * @throws IOException
+     * @throws TemplateException 
+     */
+//    private void addObservations(ZipOutputStream zip, User user, 
+//            int startYear, int endYear, List<String> datasetKeys, 
+//            List<String> taxa, String spatialRelationship, String featureID, 
+//            boolean sensitive, String designation, String taxonOutputGroup, 
+//            int orgSuppliedList, String gridRef, String polygon, String verification,
+//            boolean includeAttributes, int filterID, TaxonObservationFilter filter, DownloadFilterJSON dFilter) throws IOException, TemplateException {
+//        
+//        
+//        List<Attribute> attributes = new ArrayList<Attribute>();
+//        List<TaxonObservationAttribute> observationAttributes = new ArrayList<TaxonObservationAttribute>();
+//        Map<Integer, Map<Integer, String>> atts = new HashMap<Integer, Map<Integer, String>>();
+//        
+//        // Get observations for download
+//        List<TaxonObservationDownload> observations = 
+//                observationMapper.selectDownloadableRecords(user, startYear, 
+//                endYear, datasetKeys, taxa, spatialRelationship, featureID, 
+//                sensitive, designation, taxonOutputGroup, orgSuppliedList,
+//                gridRef, polygon, listToSQLString(getVerificationIDs(verification)));
+//        
+//        // Push in standard header fields for download
+//        zip.putNextEntry(new ZipEntry("Observations.csv"));
+//        ArrayList<String> values = new ArrayList<String>();
+//        values.add("observationID");
+//        values.add("recordKey");
+//        values.add("organisationName");
+//        values.add("datasetKey");
+//        values.add("surveyKey");
+//        values.add("sampleKey");
+//        values.add("gridReference");
+//        values.add("precision");
+//        values.add("siteKey");
+//        values.add("siteName");
+//        values.add("featureKey");
+//        values.add("startDate");
+//        values.add("endDate");
+//        values.add("dateType");
+//        values.add("recorder");
+//        values.add("determiner");
+//        values.add("pTaxonVersionKey");
+//        values.add("taxonName");
+//        values.add("authority");
+//        values.add("commonName");
+//        values.add("taxonGroup");
+//        values.add("sensitive");
+//        values.add("zeroAbundance");
+//        values.add("fullVersion");
+//        values.add("verification");
+//        
+//        // If including attributes then push in the appropriate fields
+//        if (includeAttributes) {
+//            // Find attributes
+//            attributes = taxonObservationAttributeMapper.getAttributeListForObservations(
+//                    user, startYear, endYear, datasetKeys, taxa, 
+//                    spatialRelationship, featureID, sensitive, designation, 
+//                    taxonOutputGroup, orgSuppliedList, gridRef, polygon);
+//            
+//            for (Attribute attrib : attributes) {
+//                values.add(attrib.getLabel());
+//            }
+//            
+//            // Grab all attributes that match full version records in the list
+//            observationAttributes = taxonObservationAttributeMapper.getAttributesForObservations(
+//                    user, startYear, endYear, datasetKeys, taxa, spatialRelationship,
+//                    featureID, sensitive, designation, taxonOutputGroup, gridRef, polygon);
+//
+//            // Put attributes into a map structure for retrieval later
+//            // Map --> obsID --> Map --> attID --> attVal
+//            for (TaxonObservationAttribute att : observationAttributes) {
+//                Map<Integer, String> temp = atts.get(att.getObservationID());
+//
+//                if (temp == null) {
+//                    temp = new HashMap<Integer, String>();
+//                    atts.put(att.getObservationID(), temp);
+//                }
+//
+//                temp.put(att.getAttributeID(), att.getTextValue());
+//            }
+//        }
+//        
+//        // Write headers out
+//        downloadHelper.writelnCsv(zip, values);
+//        
+//        SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+//        HashMap<String, Integer> datasetRecordCounts = new HashMap<String, Integer>();
+//
+//        for(TaxonObservationDownload observation : observations) {
+//            values = new ArrayList<String>();
+//            values.add(Integer.toString(observation.getObservationID()));
+//            values.add(observation.getObservationKey());
+//            values.add(observation.getOrganisationName());
+//            values.add(observation.getDatasetKey());
+//            values.add(StringUtils.hasText(observation.getSurveyKey()) ? observation.getSurveyKey() : "");
+//            values.add(StringUtils.hasText(observation.getSampleKey()) ? observation.getSampleKey() : "");
+//            values.add(StringUtils.hasText(observation.getGridReference()) ? observation.getGridReference() : "");
+//            values.add(StringUtils.hasText(observation.getPrecision()) ? observation.getPrecision() : "");
+//            values.add(StringUtils.hasText(observation.getSiteKey()) ? observation.getSiteKey() : "");
+//            values.add(StringUtils.hasText(observation.getSiteName()) ? observation.getSiteName() : "");
+//            values.add(StringUtils.hasText(observation.getFeatureKey()) ? observation.getFeatureKey() : "");
+//            values.add(observation.getStartDate() != null ? df.format(observation.getStartDate()) : "");
+//            values.add(observation.getEndDate() != null ? df.format(observation.getEndDate()) : "");
+//            values.add(observation.getDateType());
+//            values.add(StringUtils.hasText(observation.getRecorder()) ? observation.getRecorder() : "");
+//            values.add(StringUtils.hasText(observation.getDeterminer()) ? observation.getDeterminer() : "");
+//            values.add(observation.getpTaxonVersionKey());
+//            values.add(observation.getpTaxonName());
+//            values.add(observation.getAuthority());
+//            values.add(StringUtils.hasText(observation.getCommonName()) ? observation.getCommonName() : "");
+//            values.add(observation.getTaxonGroup());
+//            values.add(observation.isSensitive() ? "true" : "false");
+//            values.add(observation.isZeroAbundance() ? "true" : "false");
+//            values.add(observation.isFullVersion()? "true" : "false");
+//            values.add(observation.getVerification());
+//
+//            if (includeAttributes) {
+//                if (observation.isFullVersion() || observation.isPublicAttribute()) {
+//                    for (Attribute att : attributes) {
+//                        if (atts.containsKey(observation.getObservationID()) 
+//                                && atts.get(observation.getObservationID()).containsKey(att.getAttributeID())) {
+//                            values.add(atts.get(observation.getObservationID()).get(att.getAttributeID()));
+//                        } else {
+//                            values.add("");
+//                        }
+//                    }
+//                } else {
+//                    for (int i = 0; i < observationAttributes.size(); i++) {
+//                        values.add("");
+//                    }
+//                }
+//            }
+//            
+//            downloadHelper.writelnCsv(zip, values);
+//            
+//            if (datasetRecordCounts.containsKey(observation.getDatasetKey()))
+//                datasetRecordCounts.put(observation.getDatasetKey(), datasetRecordCounts.get(observation.getDatasetKey()) + 1);
+//            else 
+//                datasetRecordCounts.put(observation.getDatasetKey(), 1);
+//        }
+//        
+//        for (String key : datasetRecordCounts.keySet()) {
+//            oTaxonObservationFilterMapper.createDatasetDownloadStats(filterID, key, datasetRecordCounts.get(key));
+//            logger.info("Taxon Observation Download Sending email for dataset " + key);
+//            mailDatasetDownloadNotification(filter, dFilter, key, user);
+//        }
+//    }
 
     private void addObservationsWithHandler(ZipOutputStream zip, User user, 
             int startYear, int endYear, List<String> datasetKeys, 
@@ -2330,70 +2414,75 @@ public class TaxonObservationResource extends RequestResource {
         }
     }
     
-    private void mailDatasetDownloadNotifications(TaxonObservationFilter filter, DownloadFilterJSON dFilter, User user) throws IOException, TemplateException {
-        List<String> datasets = null;
-        
-        if (dFilter.getDataset().isAll()) {
-            List<String> species = null;
-            datasets = new ArrayList<String>();
-            if (dFilter.getTaxon().getTvk() != null && !dFilter.getTaxon().getTvk().isEmpty()) {
-                species = new ArrayList<String>();
-                species.add(dFilter.getTaxon().getTvk());
-            }
-
-            List<TaxonDatasetWithQueryStats> selectObservationDatasetsByFilter = observationMapper.selectObservationDatasetsByFilter(user, dFilter.getYear().getStartYear(), dFilter.getYear().getEndYear(), new ArrayList<String>(), species, dFilter.getSpatial().getMatch(), dFilter.getSpatial().getFeature(), (dFilter.getSensitive().equals("sans") ? true : false), dFilter.getTaxon().getDesignation(), dFilter.getTaxon().getOutput(), dFilter.getTaxon().getOrgSuppliedList(), dFilter.getVerification(), "", "");
-
-            for (TaxonDatasetWithQueryStats tdwqs : selectObservationDatasetsByFilter) {
-                datasets.add(tdwqs.getDatasetKey());
-            }
-
-        } else {
-            datasets = dFilter.getDataset().getDatasets();
-        }
-
-        Map<Integer, String> purposes = new HashMap<Integer, String>();
-        purposes.put(1, "Personal interest");
-        purposes.put(2, "Educational purposes");
-        purposes.put(3, "Research and scientific analysis");
-        purposes.put(4, "Media publication");
-        purposes.put(5, "Conservation NGO work");
-        purposes.put(6, "Professional land management");
-        purposes.put(7, "Data provision and interpretation (commercial)");
-        purposes.put(8, "Data provision and interpretation (non-profit)");
-        purposes.put(9, "Statutory work");
-        
-        for (String dataset : datasets) {
-            List<UserDownloadNotification> users = downloadMapper.getUsersToNotifyForDatasetDownload(dataset);
-            Map<String, Object> message = new HashMap<String, Object>();
-            message.put("portal", properties.getProperty("portal_url"));
-            
-            message.put("downloader", user.getForename() + " " + user.getSurname() + "(" + user.getEmail() + ")");
-            
-            if (dFilter.getReason().getOrganisationID() > -1) {
-                Organisation org = organisationMapper.selectByID(dFilter.getReason().getOrganisationID());
-                message.put("dorg", org.getName());
-            }
-            
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            message.put("downloadTime", sdf.format(new Date()));
-            
-            message.put("purpose", purposes.get(dFilter.getReason().getPurpose()));
-            message.put("downloadReason", dFilter.getReason().getDetails());
-            message.put("filterText", filter.getFilterText());
-            
-            message.put("dataset", dataset);
-            message.put("datasetName", datasetMapper.selectByDatasetKey(dataset).getTitle());
-            
-            for (UserDownloadNotification nuser : users) {                
-                message.put("name", nuser.getForename());
-                templateMailer.send(
-                        "dataset_download_notification.ftl", 
-                        nuser.getEmail(), 
-                        "NBN Gateway: User downloaded records", 
-                        message);
-            }
-        }
-    }
+//    private void mailDatasetDownloadNotifications(TaxonObservationFilter filter, DownloadFilterJSON dFilter, User user) throws IOException, TemplateException {
+//        List<String> datasets = null;
+//        
+//        if (dFilter.getDataset().isAll()) {
+//            List<String> species = null;
+//            datasets = new ArrayList<String>();
+//            if (dFilter.getTaxon().getTvk() != null && !dFilter.getTaxon().getTvk().isEmpty()) {
+//                species = new ArrayList<String>();
+//                species.add(dFilter.getTaxon().getTvk());
+//            }
+//
+//            List<TaxonDatasetWithQueryStats> selectObservationDatasetsByFilter = observationMapper.selectObservationDatasetsByFilter(
+//                    user, dFilter.getYear().getStartYear(), dFilter.getYear().getEndYear(), 
+//                    new ArrayList<String>(), species, dFilter.getSpatial().getMatch(), 
+//                    dFilter.getSpatial().getFeature(), (dFilter.getSensitive().equals("sans") ? true : false), 
+//                    dFilter.getTaxon().getDesignation(), dFilter.getTaxon().getOutput(), dFilter.getTaxon().getOrgSuppliedList(),
+//                    "", "", getVerificationIDs(dFilter.getVerification()));
+//            
+//            for (TaxonDatasetWithQueryStats tdwqs : selectObservationDatasetsByFilter) {
+//                datasets.add(tdwqs.getDatasetKey());
+//            }
+//
+//        } else {
+//            datasets = dFilter.getDataset().getDatasets();
+//        }
+//
+//        Map<Integer, String> purposes = new HashMap<Integer, String>();
+//        purposes.put(1, "Personal interest");
+//        purposes.put(2, "Educational purposes");
+//        purposes.put(3, "Research and scientific analysis");
+//        purposes.put(4, "Media publication");
+//        purposes.put(5, "Conservation NGO work");
+//        purposes.put(6, "Professional land management");
+//        purposes.put(7, "Data provision and interpretation (commercial)");
+//        purposes.put(8, "Data provision and interpretation (non-profit)");
+//        purposes.put(9, "Statutory work");
+//        
+//        for (String dataset : datasets) {
+//            List<UserDownloadNotification> users = downloadMapper.getUsersToNotifyForDatasetDownload(dataset);
+//            Map<String, Object> message = new HashMap<String, Object>();
+//            message.put("portal", properties.getProperty("portal_url"));
+//            
+//            message.put("downloader", user.getForename() + " " + user.getSurname() + "(" + user.getEmail() + ")");
+//            
+//            if (dFilter.getReason().getOrganisationID() > -1) {
+//                Organisation org = organisationMapper.selectByID(dFilter.getReason().getOrganisationID());
+//                message.put("dorg", org.getName());
+//            }
+//            
+//            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//            message.put("downloadTime", sdf.format(new Date()));
+//            
+//            message.put("purpose", purposes.get(dFilter.getReason().getPurpose()));
+//            message.put("downloadReason", dFilter.getReason().getDetails());
+//            message.put("filterText", filter.getFilterText());
+//            
+//            message.put("dataset", dataset);
+//            message.put("datasetName", datasetMapper.selectByDatasetKey(dataset).getTitle());
+//            
+//            for (UserDownloadNotification nuser : users) {                
+//                message.put("name", nuser.getForename());
+//                templateMailer.send(
+//                        "dataset_download_notification.ftl", 
+//                        nuser.getEmail(), 
+//                        "NBN Gateway: User downloaded records", 
+//                        message);
+//            }
+//        }
+//    }
     
     /**
      * Returns a list of Taxon Observations matching the given serach parameters
@@ -2422,45 +2511,45 @@ public class TaxonObservationResource extends RequestResource {
      * @response.representation.200.qname List<TaxonObservation>
      * @response.representation.200.mediaType application/json
      */    
-    private List<TaxonObservation> retreiveObservationsRecordsByFilter(
-            User user, String ip, int startYear, int endYear, List<String> datasetKeys, 
-            List<String> taxa, String spatialRelationship, String featureID, 
-            Boolean sensitive, String designation, String taxonOutputGroup,
-            int orgSuppliedList, String gridRef, String polygon, 
-            Boolean absence, String verification) throws IllegalArgumentException {
-        //TODO: squareBlurring(?)
-        
-        if (StringUtils.hasText(polygon)) {
-           checkPolygonMaxSize(polygon, taxa, designation, taxonOutputGroup, orgSuppliedList, datasetKeys);
-        }
-        
-        // Stop users being able to request all records that they have access to at the same time
-        if (!listHasAtLeastOneText(taxa)
-                && !StringUtils.hasText(designation)
-                && !StringUtils.hasText(taxonOutputGroup)
-                && orgSuppliedList < 1
-                && !listHasAtLeastOneText(datasetKeys)
-                && !StringUtils.hasText(featureID) 
-                && !StringUtils.hasText(gridRef)
-                && !StringUtils.hasText(polygon)) {
-            throw new IllegalArgumentException("Must Supply at least one type of filter; dataset (key list), spatial(featureID, gridRef or polygon) or taxon (PTVK list, Output Group, Designation or Organisation Supplied List)");    
-        }
-        
-        if (datasetKeys.size() > 1 
-                && !listHasAtLeastOneText(taxa)
-                && !StringUtils.hasText(designation)
-                && !StringUtils.hasText(taxonOutputGroup)
-                && orgSuppliedList < 1
-                && !StringUtils.hasText(featureID) 
-                && !StringUtils.hasText(gridRef)
-                && !StringUtils.hasText(polygon)) {
-            throw new IllegalArgumentException("Must supply a spatial or taxon filter with more than one dataset");
-        }
-        
-        writeAPIViewRecordToDatabase(user, ip, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, orgSuppliedList, gridRef, polygon, absence, verification);
-        
-        return observationMapper.selectObservationRecordsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, orgSuppliedList, gridRef, polygon, absence, getVerificationIDs(verification));
-    }
+//    private List<TaxonObservation> retreiveObservationsRecordsByFilter(
+//            User user, String ip, int startYear, int endYear, List<String> datasetKeys, 
+//            List<String> taxa, String spatialRelationship, String featureID, 
+//            Boolean sensitive, String designation, String taxonOutputGroup,
+//            int orgSuppliedList, String gridRef, String polygon, 
+//            Boolean absence, String verification) throws IllegalArgumentException {
+//        //TODO: squareBlurring(?)
+//        
+//        if (StringUtils.hasText(polygon)) {
+//           checkPolygonMaxSize(polygon, taxa, designation, taxonOutputGroup, orgSuppliedList, datasetKeys);
+//        }
+//        
+//        // Stop users being able to request all records that they have access to at the same time
+//        if (!listHasAtLeastOneText(taxa)
+//                && !StringUtils.hasText(designation)
+//                && !StringUtils.hasText(taxonOutputGroup)
+//                && orgSuppliedList < 1
+//                && !listHasAtLeastOneText(datasetKeys)
+//                && !StringUtils.hasText(featureID) 
+//                && !StringUtils.hasText(gridRef)
+//                && !StringUtils.hasText(polygon)) {
+//            throw new IllegalArgumentException("Must Supply at least one type of filter; dataset (key list), spatial(featureID, gridRef or polygon) or taxon (PTVK list, Output Group, Designation or Organisation Supplied List)");    
+//        }
+//        
+//        if (datasetKeys.size() > 1 
+//                && !listHasAtLeastOneText(taxa)
+//                && !StringUtils.hasText(designation)
+//                && !StringUtils.hasText(taxonOutputGroup)
+//                && orgSuppliedList < 1
+//                && !StringUtils.hasText(featureID) 
+//                && !StringUtils.hasText(gridRef)
+//                && !StringUtils.hasText(polygon)) {
+//            throw new IllegalArgumentException("Must supply a spatial or taxon filter with more than one dataset");
+//        }
+//        
+//        writeAPIViewRecordToDatabase(user, ip, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, orgSuppliedList, gridRef, polygon, absence, verification);
+//        
+//        return observationMapper.selectObservationRecordsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, orgSuppliedList, gridRef, polygon, absence, getVerificationIDs(verification));
+//    }
     
     private void checkPolygonMaxSize(String polygon, List<String> taxa, String designation, String taxonOutputGroup, int orgSuppliedList, List<String> datasetKeys) {
         try {

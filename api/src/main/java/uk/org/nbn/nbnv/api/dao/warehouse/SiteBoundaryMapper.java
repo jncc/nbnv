@@ -51,10 +51,8 @@ public interface SiteBoundaryMapper {
             @Param("spatialRelationship") String spatialRelationship, 
             @Param("featureID") String featureId, 
             @Param("sensitive") Boolean sensitive, 
-            @Param("designation") String designation, 
-            @Param("taxonOutputGroup") String taxonOutputGroup, 
-            @Param("orgSuppliedList") int orgSuppliedList, 
             @Param("gridRef") String gridRef,
+            @Param("polygon") String polygon,
             @Param("absence") boolean absence,
             @Param("verification") List<Integer> verification);
 }

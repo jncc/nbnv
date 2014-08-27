@@ -401,7 +401,11 @@ public class TaxonObservationProvider {
         }
         
         if (params.containsKey("verification") && params.get("verification") != null) {
-            WHERE("obs.verificationID IN #{verification}");
+            if (params.get("verification") instanceof List) {
+                WHERE("o.verificationID IN " + ProviderHelper.verificationListToCommaList((List<Integer>) params.get("verification")));
+            } else {
+                WHERE("o.verificationID = " + params.get("verification"));
+            }
         }
         
         return SQL();

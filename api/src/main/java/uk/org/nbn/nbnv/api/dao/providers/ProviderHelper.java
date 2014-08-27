@@ -9,14 +9,14 @@ import static org.apache.ibatis.jdbc.SelectBuilder.*;
 public class ProviderHelper {
 
     static void addDatasetKeysFilter(Map<String, Object> params) {
-        if (params.containsKey("datasetKeys") && !params.get("datasetKeys").equals("")) {
-            if (params.get("datasetKeys") instanceof List) {
-                List<String> datasetArgs = (List<String>) params.get("datasetKeys");
+        if (params.containsKey("datasetKey") && !params.get("datasetKey").equals("")) {
+            if (params.get("datasetKey") instanceof List) {
+                List<String> datasetArgs = (List<String>) params.get("datasetKey");
                 if (datasetArgs.size() > 0 && !"".equals(datasetArgs.get(0))) {
-                    WHERE("o.datasetKey IN " + datasetListToCommaList((List<String>) params.get("datasetKeys")));
+                    WHERE("o.datasetKey IN " + datasetListToCommaList((List<String>) params.get("datasetKey")));
                 }
             } else {
-                WHERE("o.datasetKey = '" + params.get("datasetKeys") + "'");
+                WHERE("o.datasetKey = '" + params.get("datasetKey") + "'");
             }
         }
     }
@@ -100,6 +100,10 @@ public class ProviderHelper {
             throw new IllegalArgumentException("endYear is incorrect: " + endYear);
         }
         return Integer.parseInt(endYear);
+    }
+    
+    public static String verificationListToCommaList(List<Integer> verifications) {
+        return "(" + StringUtils.collectionToCommaDelimitedString(verifications) + ")";
     }
 
 }

@@ -197,7 +197,6 @@ public interface TaxonObservationMapper {
             , @Param("orgSuppliedList") int orgSuppliedList
             , @Param("gridRef") String gridRef
             , @Param("polygon") String polygon
-            , @Param("orgSuppliedList") int orgSuppliedList
             , @Param("verification") List<Integer> verification);
     
     @SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectAllDatasets")

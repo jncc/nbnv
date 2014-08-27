@@ -19,7 +19,7 @@ public abstract class BaseFilterJSON {
     protected RequestTaxonFilterJSON taxon;
     protected RequestYearFilterJSON year;
     protected RequestDatasetFilterJSON dataset;
-    protected List<Integer> verification;
+    protected List<String> verification;
 
     public String getSensitive() {
         return sensitive;
@@ -69,11 +69,11 @@ public abstract class BaseFilterJSON {
         this.dataset = dataset;
     }
 
-    public List<Integer> getVerification() {
+    public List<String> getVerification() {
         return verification;
     }
 
-    public void setVerification(List<Integer> verification) {
+    public void setVerification(List<String> verification) {
         this.verification = verification;
     }
     
