@@ -38,6 +38,7 @@ public class TaxonObservation {
     private boolean sensitive;
     private boolean absence;
     private boolean publicAttribute;
+    private String verification;
     private String attrStr;
     private Map<String, String> attributes;
 
@@ -261,6 +262,14 @@ public class TaxonObservation {
 
     public void setPublicAttribute(boolean publicAttributes) {
         this.publicAttribute = publicAttributes;
+    }
+
+    public String getVerification() {
+        return verification;
+    }
+
+    public void setVerification(String verification) {
+        this.verification = verification;
     }
 
     public String getAttrStr() {

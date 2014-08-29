@@ -7,12 +7,10 @@ package uk.org.nbn.nbnv.api.rest.resources.utils;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
-import org.apache.commons.lang.StringUtils;
 import org.apache.ibatis.session.ResultContext;
 import org.apache.ibatis.session.ResultHandler;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.ObjectWriter;
-import org.codehaus.jackson.map.SerializationConfig;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import uk.org.nbn.nbnv.api.model.TaxonObservation;
 

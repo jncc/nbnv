@@ -500,6 +500,21 @@ public class TaxonObservationProvider {
 
         return SQL();
     }
+    
+    public String observationsFromUserTaxonObservationData(Map<String, Object> params) {
+        BEGIN();
+        SELECT("o.*, vc.verification");
+        FROM("UserTaxonObservationData o");
+        INNER_JOIN("VerificationCodes vc ON vc.id = o.verificationID");
+        
+        ProviderHelper.addDatasetKeysFilter(params);
+        ProviderHelper.addPTVKFilter(params);
+        ProviderHelper.addVerificationFilter(params);
+        
+        WHERE("(o.userID = #{user.id})");
+        
+        return SQL();
+    }
 
     private String taxaListToCommaList(List<String> list) {
         for (String d : list) {

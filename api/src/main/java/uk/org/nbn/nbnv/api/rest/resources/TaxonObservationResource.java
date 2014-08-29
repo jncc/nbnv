@@ -150,6 +150,8 @@ public class TaxonObservationResource extends RequestResource {
      * filter to, from the list of statuses VERIFIED, INCORRECT, UNCERTAIN and
      * UNVERIFIED (defaults to VERIFIED, UNCERTAIN and INCORRECT) 
      * i.e. (...&verification=VERIFIED,UNVERIFIED&...)
+     * @param callback Fix for jQuery callbacks not working entirely well with
+     * streaming, do not use unless with jQuery callbacks
      * 
      * @return A list of Taxon Observation Records in the specified dataset
      * 
@@ -163,15 +165,20 @@ public class TaxonObservationResource extends RequestResource {
         @ResponseCode(code = 200, condition = "Succesfully returned a list of taxon observations in this dataset")
     })
     @Produces(MediaType.APPLICATION_JSON)
-    public List<TaxonObservation> getObservationsByDataset(
-            @TokenUser(allowPublic = false) User user, 
-            @Context HttpServletRequest request,
-            @PathParam("datasetKey") String datasetKey,
-            @QueryParam("verification") @DefaultValue(ObservationResourceDefaults.defaultVerifications) String verification) {
-        List<String> datasetKeys = new ArrayList<String>();
+    public StreamingOutput getObservationsByDataset(
+            @TokenUser(allowPublic = false) final User user, 
+            @Context final HttpServletRequest request,
+            @PathParam("datasetKey") final String datasetKey,
+            @QueryParam("verification") final @DefaultValue(ObservationResourceDefaults.defaultVerifications) String verification,
+            @QueryParam("callback") final @DefaultValue("") String callback) {
+        final List<String> datasetKeys = new ArrayList<String>();
         datasetKeys.add(datasetKey);
-        List<Integer> verificationIDs = getVerificationIDs(verification);
+        final List<Integer> verificationIDs = getVerificationIDs(verification);
 
+        if(!listHasAtLeastOneText(datasetKeys)) {
+            throw new IllegalArgumentException("You must supply at least one dataset");
+        }
+        
         writeAPIViewRecordToDatabase(user, request.getRemoteAddr(),
                 Integer.parseInt(ObservationResourceDefaults.defaultStartYear), 
                 Integer.parseInt(ObservationResourceDefaults.defaultEndYear), 
@@ -187,7 +194,37 @@ public class TaxonObservationResource extends RequestResource {
                 ObservationResourceDefaults.defaultPolygon, 
                 false, verification);        
                 
-        return observationMapper.selectByDataset(datasetKey, user.getId(), verificationIDs);
+        return new StreamingOutput() {
+
+            @Override
+            public void write(OutputStream out) throws IOException, WebApplicationException {
+                PrintWriter writer = new PrintWriter(out);
+                
+                writer.print("[");
+                
+                SqlSession session = warehouseSqlSessionFactory.openSession();
+                session.getMapper(TaxonObservationMapper.class);
+                
+                Map<String, Object> map = new HashMap<String, Object>();
+
+                map.put("user", user);
+                map.put("datasetKey", datasetKeys);
+                map.put("verification", verificationIDs);
+
+                session.select("getObservationsByDatasets", map, new TaxonObservationHandler(writer, false));
+                session.close();                
+                
+                writer.print("]");
+                
+                if (StringUtils.hasText(callback) && callback.startsWith("jQuery")) {
+                    writer.print(")");
+                }
+                
+                writer.flush();
+                out.flush();
+                out.close();
+            }
+        };
     }
 
     /**
@@ -201,6 +238,8 @@ public class TaxonObservationResource extends RequestResource {
      * filter to, from the list of statuses VERIFIED, INCORRECT, UNCERTAIN and
      * UNVERIFIED (defaults to VERIFIED, UNCERTAIN and INCORRECT) 
      * i.e. (...&verification=VERIFIED,UNVERIFIED&...)
+     * @param callback Fix for jQuery callbacks not working entirely well with
+     * streaming, do not use unless with jQuery callbacks
      * 
      * @return A List of Taxon Observations containing the specified Taxon 
      * Version Key
@@ -215,14 +254,19 @@ public class TaxonObservationResource extends RequestResource {
         @ResponseCode(code = 200, condition = "Succesfully returned a list of taxon observations for this PTVK")
     })    
     @Produces(MediaType.APPLICATION_JSON)
-    public List<TaxonObservation> getObservationsByTaxon(
-            @TokenUser(allowPublic = false) User user, 
-            @Context HttpServletRequest request, 
-            @PathParam("ptvk") String ptvk,
-            @QueryParam("verification") @DefaultValue(ObservationResourceDefaults.defaultVerifications) String verification) {
-        List<String> ptvks = new ArrayList<String>();
+    public StreamingOutput getObservationsByTaxon(
+            @TokenUser(allowPublic = false) final User user, 
+            @Context final HttpServletRequest request, 
+            @PathParam("ptvk") final String ptvk,
+            @QueryParam("verification") final @DefaultValue(ObservationResourceDefaults.defaultVerifications) String verification,
+            @QueryParam("callback") final @DefaultValue("") String callback) {
+        final List<String> ptvks = new ArrayList<String>();
         ptvks.add(ptvk);
-        List<Integer> verificationIDs = getVerificationIDs(verification);
+        final List<Integer> verificationIDs = getVerificationIDs(verification);
+        
+        if(!listHasAtLeastOneText(ptvks)) {
+            throw new IllegalArgumentException("You must supply at least one TVK");
+        }        
         
         writeAPIViewRecordToDatabase(user, request.getRemoteAddr(),
                 Integer.parseInt(ObservationResourceDefaults.defaultStartYear), 
@@ -239,7 +283,38 @@ public class TaxonObservationResource extends RequestResource {
                 ObservationResourceDefaults.defaultPolygon, 
                 false, verification);
         
-        return observationMapper.selectByPTVK(ptvk, user.getId(), verificationIDs);
+        //return observationMapper.selectByPTVK(user, ptvks, verificationIDs);
+        return new StreamingOutput() {
+
+            @Override
+            public void write(OutputStream out) throws IOException, WebApplicationException {
+                PrintWriter writer = new PrintWriter(out);
+                
+                writer.print("[");
+                
+                SqlSession session = warehouseSqlSessionFactory.openSession();
+                session.getMapper(TaxonObservationMapper.class);
+                
+                Map<String, Object> map = new HashMap<String, Object>();
+
+                map.put("user", user);
+                map.put("ptvk", ptvks);
+                map.put("verification", verificationIDs);
+
+                session.select("getObservationsByPTVKs", map, new TaxonObservationHandler(writer, false));
+                session.close();                
+                
+                writer.print("]");
+                
+                if (StringUtils.hasText(callback) && callback.startsWith("jQuery")) {
+                    writer.print(")");
+                }
+                
+                writer.flush();
+                out.flush();
+                out.close();
+            }
+        };        
     }
     
     /**
@@ -403,7 +478,7 @@ public class TaxonObservationResource extends RequestResource {
             @FormParam("verification") @DefaultValue(ObservationResourceDefaults.defaultVerifications) String verification) throws IllegalArgumentException {
         return retrieveStreamingObservations(user, request, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, orgSuppliedList, gridRef, polygon, absence, callback, includeAttributes, verification);
     }
-    
+   
     private StreamingOutput retrieveStreamingObservations (
             final User user, final HttpServletRequest request, final int startYear,
             final int endYear, final List<String> datasetKeys, final List<String> taxa, 

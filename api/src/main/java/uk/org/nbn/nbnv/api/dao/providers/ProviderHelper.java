@@ -20,6 +20,31 @@ public class ProviderHelper {
             }
         }
     }
+    
+    static void addPTVKFilter(Map<String, Object> params) {
+        if (params.containsKey("ptvk") && params.get("ptvk") != null && !params.get("ptvk").equals("")) {
+            if (params.get("ptvk") instanceof List) {
+                List<String> ptvkArgs = (List<String>) params.get("ptvk");
+                if (ptvkArgs.size() > 0 && !"".equals(ptvkArgs.get(0))) {
+                    INNER_JOIN("TaxonTree tt ON tt.childPTVK = o.pTaxonVersionKey");
+                    WHERE("tt.nodePTVK IN " + taxaListToCommaList((List<String>) params.get("ptvk")));
+                }
+            } else {
+                INNER_JOIN("TaxonTree tt ON tt.childPTVK = o.pTaxonVersionKey");
+                WHERE("tt.nodePTVK = '" + params.get("ptvk") + "'");
+            }
+        }        
+    }
+    
+    static void addVerificationFilter(Map<String, Object> params) {
+        if (params.containsKey("verification") && params.get("verification") != null) {
+            if (params.get("verification") instanceof List) {
+                WHERE("o.verificationID IN " + ProviderHelper.verificationListToCommaList((List<Integer>) params.get("verification")));
+            } else {
+                WHERE("o.verificationID = " + params.get("verification"));
+            }
+        }        
+    }
 
     static void addStartYearFilter(Integer startYear) {
         WHERE("YEAR(o.endDate) >= " + startYear);

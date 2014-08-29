@@ -38,6 +38,7 @@
                     $row.append($('<th></th>').text("Sensitive"));
                     $row.append($('<th></th>').text("Zero Abundance"));
                     $row.append($('<th></th>').text("Full Version"));
+                    $row.append($('<th></th>').text("Verification Status"));
                     // Disabled For Release
                     //if($attributeDropDown){
                     //    $row.append($attributeDropDown);
@@ -55,6 +56,7 @@
                         $row.append($('<td></td>').text(observation.sensitive));
                         $row.append($('<td></td>').text(observation.absence));
                         $row.append($('<td></td>').text(observation.fullVersion));
+                        $row.append($('<td></td>').text(observation.verification));
                         // Disabled For Release
                         //if($attributeDropDown){
                         //    $row.append($('<td id="' + observation.observationID + '"></td>').addClass('nbn-attribute-td'));
