@@ -17,7 +17,14 @@
         
         // If we have more than one dataset selected then proceed otherwise skip 
         // call to api
-        if (keyValuePairsFromForm['datasetKey'] !== undefined && keyValuePairsFromForm['datasetKey'].length > 0) {
+        if (keyValuePairsFromForm['datasetKey'] !== undefined && 
+                keyValuePairsFromForm['datasetKey'].length > 0 && 
+                keyValuePairsFromForm['verification'] !== undefined) {
+            // Join array to list if verification is an array (mulitple selected)
+            if ($.isArray(keyValuePairsFromForm['verification'])) {
+                keyValuePairsFromForm['verification'] = keyValuePairsFromForm['verification'].join();
+            }
+            
             var queryString = nbn.portal.reports.utils.forms.getQueryStringFromKeyValuePairs(keyValuePairsFromForm, false);
             var url = form.attr('api-server') + '/taxonObservations/groups' + queryString;
             $.getJSON(url, function(data){
@@ -91,6 +98,7 @@
     }
 
     function doFirstVisitToPage(){
+        nbn.portal.reports.utils.forms.setupVerificationCheckboxesURL();
         refreshGroupData($('#nbn-site-report-form'));
     }
       
@@ -123,7 +131,8 @@
                                 nbn.portal.reports.utils.forms.getSpatialFeatures(keyValuePairs, form.attr('gridSquare')) + ',' +
                                 nbn.portal.reports.utils.datasetfields.getSelectedDatasetsJSON() + ',' +
                                 nbn.portal.reports.utils.forms.getYearJSON(keyValuePairs) + ',' +
-                                nbn.portal.reports.utils.forms.getTaxonFilter(keyValuePairs) +
+                                nbn.portal.reports.utils.forms.getTaxonFilter(keyValuePairs) + ',' +
+                                nbn.portal.reports.utils.forms.getVerificationJSON(keyValuePairs) +
                                 '}';
                     },
                     'Cancel': function(){

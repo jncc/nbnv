@@ -16,14 +16,13 @@ nbn.nbnv.ui.filter.verification = function(json) {
         _me.uncertain = true;
         _me.unverified = true;
     } else {
-        _me.processJSON(json.verification);
+        processJSON(_me, json.verification);
     }
     
-    this.processJSON = function(verification) {
-        var _me = this; 
+    function processJSON(_me, verification) { 
         resetSelected(_me);
         
-        $.each(verification, function(index, value) {
+        $.each(verification.verification, function(index, value) {
            if (value === "VERIFIED")  {
                _me.verified = true;
            } else if (value === "INCORRECT") {
@@ -131,5 +130,5 @@ nbn.nbnv.ui.filter.verification = function(json) {
         _me.incorrect = false;
         _me.uncertain = false;
         _me.unverified = false;
-    }    
+    }        
 };

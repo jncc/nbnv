@@ -84,7 +84,7 @@
     </#if>
 </#macro>
 
-<#macro site_report_filters location requestParameters isSpatialRelationshipNeeded=true isDesignationNeeded=true isDatasetNeeded=true isDownloadButtonNeeded=false isMapLinkNeeded=false isRequestBetterAccessLinkNeeded=false args={}>
+<#macro site_report_filters location requestParameters isSpatialRelationshipNeeded=true isDesignationNeeded=true isDatasetNeeded=true isDownloadButtonNeeded=false isMapLinkNeeded=false isRequestBetterAccessLinkNeeded=false isVerificationNeeded=false args={}>
     <#assign startYear=requestParameters.startYear?has_content?string(requestParameters.startYear[0]!"","")>
     <#assign endYear=requestParameters.endYear?has_content?string(requestParameters.endYear[0]!"","")>
     <#assign spatialRelationship=requestParameters.spatialRelationship?has_content?string(requestParameters.spatialRelationship[0]!"overlap","overlap")>
@@ -117,6 +117,17 @@
                                     <option value="${designation.code}" ${selected}>${designation.name}</option>
                                 </#list>
                             </select><br/>
+                </#if>
+                <#if isVerificationNeeded>
+                    <div>
+                    <div style="float:left; width:30%;">Verification:</div>
+                    <div style="float:left; width:70%">
+                        <input id="verifiedSelector" name="verification" value="VERIFIED" type="checkbox" title="Record has been accepted as true by a verifier or acceptable system."/><label for="verifiedSelector">Verified</label><br/>
+                        <input id="incorrectSelector" name="verification" value="INCORRECT" type="checkbox" title="Record has been accepted as false by a verifier or acceptable system."/><label for="incorrectSelector">Incorrect</label><br/>
+                        <input id="uncertainSelector" name="verification" value="UNCERTAIN" type="checkbox" title="Record has some uncertainty as to its validity."/><label for="uncertainSelector">Uncertain</label><br/>
+                        <input id="unverifiedSelector" name="verification" value="UNVERIFIED" type="checkbox" title="Record has no commentary or validity reports."/><label for="unverifiedSelector">Unverified</label><br/>
+                    </div>
+                    </div>
                 </#if>
             </fieldset>
             <#if isDownloadButtonNeeded>

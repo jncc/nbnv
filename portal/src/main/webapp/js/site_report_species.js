@@ -10,7 +10,7 @@
         $dataContainer.empty();
         $dataContainer.append(toAppend);
         $dataContainer.append('<img src="/img/ajax-loader-medium.gif" class="nbn-centre-element">');
-
+        
         //Get data from api and add to container
         var keyValuePairsFromForm = nbn.portal.reports.utils.forms.getKeyValuePairsFromForm(form);
         keyValuePairsFromForm['featureID'] = featureID;
@@ -19,7 +19,14 @@
         
         // If we have more than one dataset selected then proceed otherwise skip 
         // call to api
-        if (keyValuePairsFromForm['datasetKey'] !== undefined && keyValuePairsFromForm['datasetKey'].length > 0) {
+        if (keyValuePairsFromForm['datasetKey'] !== undefined && 
+                keyValuePairsFromForm['datasetKey'].length > 0 && 
+                keyValuePairsFromForm['verification'] !== undefined) {
+            // Join array to list if verification is an array (mulitple selected)
+            if ($.isArray(keyValuePairsFromForm['verification'])) {
+                keyValuePairsFromForm['verification'] = keyValuePairsFromForm['verification'].join();
+            }
+            
             var queryString = nbn.portal.reports.utils.forms.getQueryStringFromKeyValuePairs(keyValuePairsFromForm, false);
             var url = form.attr('api-server') + '/taxonObservations/species' + queryString;
             var numSpecies = 0;
@@ -58,11 +65,7 @@
     
     function getLinkQueryString(keyValuePairsFromForm) {
         delete keyValuePairsFromForm['datasetKey'];
-        var queryString = nbn.portal.reports.utils.forms.getQueryStringFromKeyValuePairs(keyValuePairsFromForm, false);
-        
-        return queryString +
-            '&selectedDatasets=' +  
-            nbn.portal.reports.utils.datasetfields.getSelectedDatasets();
+        return nbn.portal.reports.utils.forms.getQueryStringFromKeyValuePairs(keyValuePairsFromForm, false);
     }
     
     function addDataTable(){
@@ -105,6 +108,7 @@
                         keyValuePairs['featureID'] = $form.attr("featureID");
                         keyValuePairs['taxonOutputGroup'] = $form.attr("taxonOutputGroupKey");
                         keyValuePairs['datasetKey'] = nbn.portal.reports.utils.datasetfields.getSelectedDatasetsJoined();
+                        keyValuePairs['verification'] = nbn.portal.reports.utils.forms.getVerificationQuerystring(keyValuePairs);
                         var queryString = nbn.portal.reports.utils.forms.getQueryStringFromKeyValuePairs(keyValuePairs, false);
                         var url = $form.attr('api-server') + '/taxonObservations/species/download/' + queryString;
                         $(this).dialog("close");
@@ -126,8 +130,6 @@
             window.location = '/AccessRequest/Create?json={' + 
                 'taxon:{all:false,output:\'' + form.attr('taxonOutputGroupKey') + '\'},' +
                 nbn.portal.reports.utils.forms.getSpatialFeatures(keyValuePairs, form.attr('gridSquare')) + ',' +
-                // Disabled as creates requests for all public datasets explicitly
-                // nbn.portal.reports.utils.datasetfields.getSelectedDatasetsJSON() + ',' +
                 'dataset:{all:true},' +
                 nbn.portal.reports.utils.forms.getYearJSON(keyValuePairs) + '}';
             e.preventDefault();
@@ -148,7 +150,8 @@
                                 'taxon:{all:false,output:\'' + form.attr('taxonOutputGroupKey') + '\'},' +
                                 nbn.portal.reports.utils.forms.getSpatialFeatures(keyValuePairs, form.attr('gridSquare')) + ',' +
                                 nbn.portal.reports.utils.datasetfields.getSelectedDatasetsJSON() + ',' +
-                                nbn.portal.reports.utils.forms.getYearJSON(keyValuePairs) +
+                                nbn.portal.reports.utils.forms.getYearJSON(keyValuePairs) + ',' +
+                                nbn.portal.reports.utils.forms.getVerificationJSON(keyValuePairs) +
                                 '}';
                     },
                     'Cancel': function(){
@@ -161,6 +164,7 @@
     }
       
     function doFirstVisitToPage(){
+        nbn.portal.reports.utils.forms.setupVerificationCheckboxesURL();
         refreshSpeciesData($('#nbn-site-report-form'));
     }
     

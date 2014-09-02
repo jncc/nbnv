@@ -11,68 +11,81 @@
         $dataContainer.empty();
         $dataContainer.append('<img src="/img/ajax-loader-medium.gif" class="nbn-centre-element">');
         
-        //Get data from api and add to container
         var keyValuePairsFromForm = nbn.portal.reports.utils.forms.getKeyValuePairsFromForm(form);
         keyValuePairsFromForm['featureID'] = featureID;
         keyValuePairsFromForm['ptvk'] = ptvk;
-        var queryString = nbn.portal.reports.utils.forms.getQueryStringFromKeyValuePairs(keyValuePairsFromForm, false);
-        var url = apiServer + '/taxonObservations/datasets/observations' + queryString;
-        $.getJSON(url, function(data){
-            $dataContainer.empty();
-            if(data.length > 0){
-                $.each(data, function(key, dataset){
-                    var provider = getProvider(dataset.organisationID);
-                    // Disabled For Release
-                    //var $attributeDropDown = getAttributeDropDown(dataset.key, queryString);
-                    var $datasetContent = $('<div><div/>').addClass('tabbed');
-                    $datasetContent.append(getProviderHeading(dataset, provider));
-                    var $table = $('<table class="nbn-simple-table"></table>');
-                    var $row = $('<tr></tr>');
-                    $row.append($('<th></th>').text("Grid Reference"));
-                    $row.append($('<th></th>').text("Site name"));
-                    $row.append($('<th></th>').text("Start date"));
-                    $row.append($('<th></th>').text("End date"));
-                    $row.append($('<th></th>').text("Date type"));
-                    $row.append($('<th></th>').text("Recorder"));
-                    $row.append($('<th></th>').text("Determiner"));
-                    $row.append($('<th></th>').text("Sensitive"));
-                    $row.append($('<th></th>').text("Zero Abundance"));
-                    $row.append($('<th></th>').text("Full Version"));
-                    $row.append($('<th></th>').text("Verification Status"));
-                    // Disabled For Release
-                    //if($attributeDropDown){
-                    //    $row.append($attributeDropDown);
-                    //}
-                    $table.append($row);
-                    $.each(dataset.observations, function(key, observation){
+        
+        // Sort out the selected verification statuses, if undefined or empty 
+        // then do nothing and display the no records found box
+        if (keyValuePairsFromForm['verification'] !== undefined) {
+            // Join array to list if verification is an array (mulitple selected)
+            if ($.isArray(keyValuePairsFromForm['verification'])) {
+                keyValuePairsFromForm['verification'] = keyValuePairsFromForm['verification'].join();
+            }
+            
+            //Get data from api and add to container
+            var queryString = nbn.portal.reports.utils.forms.getQueryStringFromKeyValuePairs(keyValuePairsFromForm, false);
+            var url = apiServer + '/taxonObservations/datasets/observations' + queryString;
+            $.getJSON(url, function(data){
+                $dataContainer.empty();
+                if(data.length > 0){
+                    $.each(data, function(key, dataset){
+                        var provider = getProvider(dataset.organisationID);
+                        // Disabled For Release
+                        //var $attributeDropDown = getAttributeDropDown(dataset.key, queryString);
+                        var $datasetContent = $('<div><div/>').addClass('tabbed');
+                        $datasetContent.append(getProviderHeading(dataset, provider));
+                        var $table = $('<table class="nbn-simple-table"></table>');
                         var $row = $('<tr></tr>');
-                        $row.append($('<td></td>').text(nbn.portal.reports.utils.forms.getDefaultText(observation.location,'Unavailable')));
-                        $row.append($('<td></td>').text(nbn.portal.reports.utils.forms.getDefaultText(observation.siteName,'Unavailable')));
-                        $row.append($('<td></td>').text(nbn.portal.reports.utils.forms.getDateText(new Date(observation.startDate))));
-                        $row.append($('<td></td>').text(nbn.portal.reports.utils.forms.getDateText(new Date(observation.endDate))));
-                        $row.append($('<td></td>').text(observation.dateTypekey));
-                        $row.append($('<td></td>').text(nbn.portal.reports.utils.forms.getDefaultText(observation.recorder,'Unavailable')));
-                        $row.append($('<td></td>').text(nbn.portal.reports.utils.forms.getDefaultText(observation.determiner,'Unavailable')));
-                        $row.append($('<td></td>').text(observation.sensitive));
-                        $row.append($('<td></td>').text(observation.absence));
-                        $row.append($('<td></td>').text(observation.fullVersion));
-                        $row.append($('<td></td>').text(observation.verification));
+                        $row.append($('<th></th>').text("Grid Reference"));
+                        $row.append($('<th></th>').text("Site name"));
+                        $row.append($('<th></th>').text("Start date"));
+                        $row.append($('<th></th>').text("End date"));
+                        $row.append($('<th></th>').text("Date type"));
+                        $row.append($('<th></th>').text("Recorder"));
+                        $row.append($('<th></th>').text("Determiner"));
+                        $row.append($('<th></th>').text("Sensitive"));
+                        $row.append($('<th></th>').text("Zero Abundance"));
+                        $row.append($('<th></th>').text("Full Version"));
+                        $row.append($('<th></th>').text("Verification Status"));
                         // Disabled For Release
                         //if($attributeDropDown){
-                        //    $row.append($('<td id="' + observation.observationID + '"></td>').addClass('nbn-attribute-td'));
+                        //    $row.append($attributeDropDown);
                         //}
                         $table.append($row);
+                        $.each(dataset.observations, function(key, observation){
+                            var $row = $('<tr></tr>');
+                            $row.append($('<td></td>').text(nbn.portal.reports.utils.forms.getDefaultText(observation.location,'Unavailable')));
+                            $row.append($('<td></td>').text(nbn.portal.reports.utils.forms.getDefaultText(observation.siteName,'Unavailable')));
+                            $row.append($('<td></td>').text(nbn.portal.reports.utils.forms.getDateText(new Date(observation.startDate))));
+                            $row.append($('<td></td>').text(nbn.portal.reports.utils.forms.getDateText(new Date(observation.endDate))));
+                            $row.append($('<td></td>').text(observation.dateTypekey));
+                            $row.append($('<td></td>').text(nbn.portal.reports.utils.forms.getDefaultText(observation.recorder,'Unavailable')));
+                            $row.append($('<td></td>').text(nbn.portal.reports.utils.forms.getDefaultText(observation.determiner,'Unavailable')));
+                            $row.append($('<td></td>').text(observation.sensitive));
+                            $row.append($('<td></td>').text(observation.absence));
+                            $row.append($('<td></td>').text(observation.fullVersion));
+                            $row.append($('<td></td>').text(observation.verification));
+                            // Disabled For Release
+                            //if($attributeDropDown){
+                            //    $row.append($('<td id="' + observation.observationID + '"></td>').addClass('nbn-attribute-td'));
+                            //}
+                            $table.append($row);
+                        });
+                        $datasetContent.append($table);
+                        $dataContainer.append($datasetContent);
+                        //if($attributeDropDown){
+                        //    addAttributeData(dataset.key, $attributeDropDown.val(), queryString);
+                        //}
                     });
-                    $datasetContent.append($table);
-                    $dataContainer.append($datasetContent);
-                    //if($attributeDropDown){
-                    //    addAttributeData(dataset.key, $attributeDropDown.val(), queryString);
-                    //}
-                });
-            }else{
-                $dataContainer.append(nbn.portal.reports.utils.forms.getNoRecordsFoundInfoBox());
-            }
-        });
+                }else{
+                    $dataContainer.append(nbn.portal.reports.utils.forms.getNoRecordsFoundInfoBox());
+                }
+            });            
+        } else {
+            $dataContainer.empty();
+            $dataContainer.append(nbn.portal.reports.utils.forms.getNoRecordsFoundInfoBox());
+        }
     }
     
     function getProviderHeading(dataset, provider){
@@ -192,6 +205,7 @@
     }
 
     function doFirstVisitToPage(){
+        nbn.portal.reports.utils.forms.setupVerificationCheckboxesURL();
         refreshObservationData($('#nbn-site-report-form'));
     }
     
@@ -237,12 +251,13 @@
                 buttons: {
                     'Accept': function(){
                         var form = $('#nbn-site-report-form');
-                        var keyValuePairs = nbn.portal.reports.utils.forms.getKeyValuePairsFromForm(form);
+                        var keyValuePairs = nbn.portal.reports.utils.forms.getKeyValuePairsFromForm(form);                       
                         window.location = '/Download?json={' + 
                                 nbn.portal.reports.utils.forms.getSpatialFeatures(keyValuePairs, form.attr('gridSquare')) + 
                                 ',taxon:{tvk:\'' + form.attr('ptvk') + '\'}' + 
                                 ',dataset:{all:true},' +
-                                nbn.portal.reports.utils.forms.getYearJSON(keyValuePairs) +
+                                nbn.portal.reports.utils.forms.getYearJSON(keyValuePairs) + ',' +
+                                nbn.portal.reports.utils.forms.getVerificationJSON(keyValuePairs) +
                                 '}';
                     },
                     'Cancel': function(){

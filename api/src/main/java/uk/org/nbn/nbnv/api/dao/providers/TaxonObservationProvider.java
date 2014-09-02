@@ -115,11 +115,12 @@ public class TaxonObservationProvider {
     public String filteredSelectRecordsOrderedByDataset(Map<String, Object> params) {
         String from = createSelect(params, "o.*");
         BEGIN();
-        SELECT("obs.*, obs.id AS observationID, f.label AS location, f.resolutionID, r.label AS resolution, si.providerKey AS siteKey, si.name AS siteName, pt.name AS pTaxonName, pt.authority AS pTaxonAuthority, rr.name AS recorder, rd.name AS determiner");
+        SELECT("obs.*, obs.id AS observationID, f.label AS location, f.resolutionID, r.label AS resolution, si.providerKey AS siteKey, si.name AS siteName, pt.name AS pTaxonName, pt.authority AS pTaxonAuthority, rr.name AS recorder, rd.name AS determiner, vc.verification");
         FROM(from);
         INNER_JOIN("FeatureData f ON f.id = obs.featureID");
         INNER_JOIN("Resolution r ON r.id = f.resolutionID");
         INNER_JOIN("TaxonData pt ON pt.taxonVersionKey = obs.pTaxonVersionKey");
+        INNER_JOIN("VerificationCodes vc ON vc.id = obs.verificationID");
         LEFT_OUTER_JOIN("SiteData si ON si.id = obs.siteID");
         LEFT_OUTER_JOIN("RecorderData rr ON rr.id = obs.recorderID");
         LEFT_OUTER_JOIN("RecorderData rd ON rd.id = obs.determinerID");

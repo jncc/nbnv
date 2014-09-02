@@ -16,7 +16,7 @@
     javascripts=["/js/report_utils.js","/js/site_report_observations.js"]>
     <h1>${title}</h1>
     <form id="nbn-site-report-form" featureID="${featureID}" ptvk="${URLParameters.ptvk}" api-server="${api}" gridSquare="${is10kmReport?string}">
-        <@report_utils.site_report_filters requestParameters=RequestParameters args={"taxon":taxon} location=site.label isSpatialRelationshipNeeded=true isDesignationNeeded=false isDatasetNeeded=false/>
+        <@report_utils.site_report_filters requestParameters=RequestParameters args={"taxon":taxon} location=site.label isSpatialRelationshipNeeded=true isDesignationNeeded=false isDatasetNeeded=false isVerificationNeeded=true/>
         <div class="tabbed" id="nbn-site-report-filter-container" style="clear:left;">        
             <h3>Download Records</h3>
             <button id="nbn-download-observations-button">Download</button> Records

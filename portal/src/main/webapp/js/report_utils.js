@@ -35,8 +35,52 @@
         },
         getTaxonFilter: function(keyPairs) {
             return getTaxonFilterValue(keyPairs);
+        },
+        getVerificationJSON: function(keyPairs) {
+            return getVerificationJSON(keyPairs);
+        },
+        getVerificationQuerystring: function(keyPairs) {
+            return getVerificationQuerystring(keyPairs);
+        },
+        setupVerificationCheckboxesURL: function() {
+            setupVerificaitonCheckboxesFromURL();
         }
     });
+    
+    function setupVerificaitonCheckboxesFromURL() {
+        var params = getUrlVars()['verification'];
+        if (params === undefined || params === '') {
+            $('#verifiedSelector').prop('checked', true);
+            $('#uncertainSelector').prop('checked', true);
+            $('#unverifiedSelector').prop('checked', true);
+        } else {
+            $.each(params.split(','), function(key, val){
+               if (val === "VERIFIED") {
+                   $('#verifiedSelector').prop('checked', true);
+               } else if (val === "INCORRECT") {
+                   $('#incorrectSelector').prop('checked', true);
+               } else if (val === "UNCERTAIN") {
+                   $('#uncertainSelector').prop('checked', true);
+               } else if (val === "UNVERIFIED") {
+                   $('#unverifiedSelector').prop('checked', true);
+               }
+            });
+        }
+    }
+    
+    // Read a page's GET URL variables and return them as an associative array.
+    function getUrlVars()
+    {
+        var vars = [], hash;
+        var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+        for (var i = 0; i < hashes.length; i++)
+        {
+            hash = hashes[i].split('=');
+            vars.push(hash[0]);
+            vars[hash[0]] = hash[1];
+        }
+        return vars;
+    }    
     
     function doIsSiteReportFormFieldValid($input){
         if($input.hasClass('nbn-year-input')){
@@ -165,6 +209,22 @@
         } else {
             return 'year:{all:true}';
         }
+    }
+    
+    function getVerificationQuerystring(keyPairs) {
+        if (keyPairs['verification'] !== undefined &&
+                keyPairs['verification'] !== '') {
+            return 'verification=' + keyPairs['verification'].join();
+        }
+        return 'verification=VERIFIED,UNCERTAIN,UNVERIFIED';
+    }
+    
+    function getVerificationJSON(keyPairs) {
+        if (keyPairs['verification'] !== undefined &&
+                keyPairs['verification'] !== '') {
+            return 'verification:{all:false,verification:[\'' + keyPairs['verification'].join('\',\'') + '\']}';
+        }
+        return 'verification:{all:false,verificaiton:[\'VERIFIED\',\'UNCERTAIN\',\'UNVERIFIED\']}';
     }
     
     function getSpatialFeaturesJSON(keyPairs, gridSquare) {
