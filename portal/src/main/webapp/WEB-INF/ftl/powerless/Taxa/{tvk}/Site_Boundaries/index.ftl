@@ -15,6 +15,7 @@
         <div id="nbn-site-list-filter-container">
             <fieldset>
                 <legend>Adjust which species records are used to create the site list</legend>
+                <div>
                 <div id="nbn-year-range-filter">
                     Year range: <input name="startYear" id="startYear" type="textbox" value="${startYear}" class="nbn-year-input"/>
                                 to <input name="endYear" id="endYear" type="textbox" value="${endYear}" class="nbn-year-input"/>
@@ -30,6 +31,16 @@
                             <option value="overlap" selected="selected">Records within or overlapping site</option>
                         </#if>
                     </select><br/>
+                </div>
+                <div style="float: left; width: 25%;">
+                    <div style="float:left; width:30%;">Verification:</div>
+                    <div style="float:left; width:70%">
+                        <input id="verifiedSelector" name="verification" value="VERIFIED" type="checkbox" title="Record has been accepted as true by a verifier or acceptable system."/><label for="verifiedSelector">Verified</label><br/>
+                        <input id="incorrectSelector" name="verification" value="INCORRECT" type="checkbox" title="Record has been accepted as false by a verifier or acceptable system."/><label for="incorrectSelector">Incorrect</label><br/>
+                        <input id="uncertainSelector" name="verification" value="UNCERTAIN" type="checkbox" title="Record has some uncertainty as to its validity."/><label for="uncertainSelector">Uncertain</label><br/>
+                        <input id="unverifiedSelector" name="verification" value="UNVERIFIED" type="checkbox" title="Record has no commentary or validity reports."/><label for="unverifiedSelector">Unverified</label><br/>
+                    </div>
+                </div>
                 </div>
             </fieldset>
             <fieldset>
@@ -48,4 +59,7 @@
     <@report_utils.dataset_table providersWithQueryStats=providersWithQueryStats requestParameters=RequestParameters/>
     </form>
     <@report_utils.downloadTermsDialogue/>
+    <div id="nbn-download-error" style="display: none;" title="An error has occurred">
+        <span id="nbn-download-error-text" />
+    </div>
 </@template.master>

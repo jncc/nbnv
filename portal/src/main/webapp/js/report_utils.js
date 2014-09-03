@@ -40,7 +40,7 @@
             return getVerificationJSON(keyPairs);
         },
         getVerificationQuerystring: function(keyPairs) {
-            return getVerificationQuerystring(keyPairs);
+            return doGetVerificationQuerystring(keyPairs);
         },
         setupVerificationCheckboxesURL: function() {
             setupVerificaitonCheckboxesFromURL();
@@ -211,12 +211,12 @@
         }
     }
     
-    function getVerificationQuerystring(keyPairs) {
+    function doGetVerificationQuerystring(keyPairs) {
         if (keyPairs['verification'] !== undefined &&
                 keyPairs['verification'] !== '') {
-            return 'verification=' + keyPairs['verification'].join();
+            return keyPairs['verification'].join();
         }
-        return 'verification=VERIFIED,UNCERTAIN,UNVERIFIED';
+        return 'VERIFIED,UNCERTAIN,UNVERIFIED';
     }
     
     function getVerificationJSON(keyPairs) {

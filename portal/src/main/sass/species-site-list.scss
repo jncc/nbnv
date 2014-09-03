@@ -8,8 +8,18 @@
 
 #nbn-year-range-filter{
     float: left;
-    margin-left: 10em;
-    margin-right: 10em;
+    width: 25%;
+    margin-left: auto;
+    text-align: center;
+    margin-right: auto;
+}
+
+#nbn-spatial-relationship-filter{
+    width: 50%;
+    float: left;
+    margin-left: auto;
+    text-align: center;
+    margin-right: auto;
 }
 
 #nbn-species-site-list-container{

@@ -8,21 +8,35 @@
         //Add busy image to data container whilst getting data
         $dataContainer.empty();
         $dataContainer.append('<img src="/img/ajax-loader-medium.gif" class="nbn-centre-element">');
-        
         //Get data from api and add to container
-        var keyValuePairsFromForm = nbn.portal.reports.utils.forms.getKeyValuePairsFromForm(form);
-        var queryString = nbn.portal.reports.utils.forms.getQueryStringFromKeyValuePairs(keyValuePairsFromForm, false);
-        var url = form.attr('api-server') + '/taxa/' + ptvk + '/siteBoundaries' + queryString;
-        var toAppend = '';
-        var numSites = 0;
-        var datatableDisplayThreshold = 25;
-        if (nbn.portal.reports.utils.datasetfields.getSelectedDatasetsCount() > 0) {
+        var keyValuePairsFromForm = nbn.portal.reports.utils.forms.getKeyValuePairsFromForm(form);     
+        
+        if (nbn.portal.reports.utils.datasetfields.getSelectedDatasetsCount() > 0 && 
+                keyValuePairsFromForm['verification'] !== undefined) {
+            // Join array to list if verification is an array (mulitple selected)
+            if ($.isArray(keyValuePairsFromForm['verification'])) {
+                keyValuePairsFromForm['verification'] = keyValuePairsFromForm['verification'].join();
+            }            
+            
+            var queryString = nbn.portal.reports.utils.forms.getQueryStringFromKeyValuePairs(keyValuePairsFromForm, false);
+            var url = form.attr('api-server') + '/taxa/' + ptvk + '/siteBoundaries' + queryString;
+            var toAppend = '';
+            var numSites = 0;
+            var datatableDisplayThreshold = 25;            
+            
+            delete keyValuePairsFromForm['datasetKey'];
+            var queryStringReport = nbn.portal.reports.utils.forms.getQueryStringFromKeyValuePairs(keyValuePairsFromForm, false);            
+            
             $.getJSON(url, function(data){
                 if(data.length > 0){
                     numSites = data.length;
                     toAppend += '<table id="nbn-species-table" class="nbn-simple-table"><thead><tr><th>Site name</th><th>Dataset</th><th>Category</th></thead><tbody>';
+                    
+                    
+                    queryString = nbn.portal.reports.utils.forms.getQueryStringFromKeyValuePairs(keyValuePairsFromForm, false);
+                    
                     $.each(data, function(key, val){
-                        toAppend += '<tr><td><a href="/Reports/Sites/' + val.identifier + '/Groups/' + taxonOutputGroupKey + '/Species/' + ptvk + '/Observations">' + val.name + '</a></td>';
+                        toAppend += '<tr><td><a href="/Reports/Sites/' + val.identifier + '/Groups/' + taxonOutputGroupKey + '/Species/' + ptvk + '/Observations' + queryStringReport + '">' + val.name + '</a></td>';
                         toAppend += '<td><a href="/Datasets/' + val.siteBoundaryDatasetKey + '">' + val.siteBoundaryDataset.title + '</a></td>';
                         toAppend += '<td>' + val.siteBoundaryCategory.name + '</td></tr>';
                     });
@@ -74,31 +88,42 @@
 
    function setupDownloadSitesButton(){
         $('#nbn-site-report-download-button').click(function(e){
-            $('#nbn-download-terms').dialog({
-                modal: true,
-                width: 800,
-                height: 450,
-                buttons: {
-                    'Accept': function(){
-                        var $form = $('#nbn-species-site-list-form');
-                        var ptvk = $('#nbn-species-site-list-form').attr('ptvk');
-                        var keyValuePairs = nbn.portal.reports.utils.forms.getKeyValuePairsFromForm($form);
-//                        keyValuePairs.featureID = $form.attr("featureID");
-//                        keyValuePairs.taxonOutputGroup = $form.attr("taxonOutputGroupKey");
-                        keyValuePairs['datasetKey'] = nbn.portal.reports.utils.datasetfields.getSelectedDatasets();
-                        var queryString = nbn.portal.reports.utils.forms.getQueryStringFromKeyValuePairs(keyValuePairs, false);
-                        var url = $form.attr('api-server') + '/taxa/' + ptvk + '/siteBoundaries/download/' + queryString;
-                        $(this).dialog("close");
-                        window.location = url;
-                    },
-                    'Cancel': function(){
-                        $(this).dialog("close");
+            var $form = $('#nbn-species-site-list-form');
+            var ptvk = $('#nbn-species-site-list-form').attr('ptvk');
+            var keyValuePairs = nbn.portal.reports.utils.forms.getKeyValuePairsFromForm($form);
+            
+            if (keyValuePairs['verification'] === undefined) {
+                $('#nbn-download-error').text('You have selected no verification statuses, please select at least one record verification status to continue');
+                $('#nbn-download-error').dialog({
+                    modal: true,
+                    buttons: {
+                        'OK' : function() {
+                            $(this).dialog("close");
+                        }
                     }
-                }
-            });
+                });
+            } else {
+                $('#nbn-download-terms').dialog({
+                    modal: true,
+                    width: 800,
+                    height: 450,
+                    buttons: {
+                        'Accept': function(){
+                            keyValuePairs['datasetKey'] = nbn.portal.reports.utils.datasetfields.getSelectedDatasets();
+                            keyValuePairs['verification'] = nbn.portal.reports.utils.forms.getVerificationQuerystring(keyValuePairs);
+                            var queryString = nbn.portal.reports.utils.forms.getQueryStringFromKeyValuePairs(keyValuePairs, false);
+                            var url = $form.attr('api-server') + '/taxa/' + ptvk + '/siteBoundaries/download/' + queryString;
+                            $(this).dialog("close");
+                            window.location = url;
+                        },
+                        'Cancel': function(){
+                            $(this).dialog("close");
+                        }
+                    }
+                });
+            }
             e.preventDefault();
         });
-
     }
     
     function setupBetterAccessLink() {
@@ -107,19 +132,18 @@
             var keyValuePairs = nbn.portal.reports.utils.forms.getKeyValuePairsFromForm(form);
             window.open('/AccessRequest/Create?json={' +
                     'taxon:{tvk:\'' + form.attr('ptvk') + '\'},' +
-                    // Disabled as it selects publicly applicable
-                    //nbn.portal.reports.utils.datasetfields.getSelectedDatasetsJSON() +
                     'dataset:{all:true},' +
                     nbn.portal.reports.utils.forms.getYearJSON(keyValuePairs) +
                     '}');
         });
     }
 
-    function doFirstVisitToPage(){
+    function doFirstVisitToPage() {
+        nbn.portal.reports.utils.forms.setupVerificationCheckboxesURL();
         refreshSiteListData($('#nbn-species-site-list-form'));
     }
     
-    $(document).ready(function(){
+    $(document).ready(function() {
         $('#nbn-download-terms').hide();
         setupFormOnChange();
         setupDownloadSitesButton();
