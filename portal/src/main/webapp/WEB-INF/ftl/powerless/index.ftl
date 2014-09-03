@@ -13,7 +13,7 @@
     <div id="slidorion">
 	<div id="slider">
             <div class="slide welcome">
-                <img src="/img/slides/welcome.jpg" width="700px" height=400px" />
+                <img src="/img/slides/welcome_special.jpg" width="700px" height=400px" />
             </div>
             
             <div class="slide imt">
@@ -74,15 +74,12 @@ Explore and map grid squares for a particular [species](/Taxa).
     <div id="statistics">
         <h1>Gateway Statistics</h1>
         <table>
-			<tr>
-				<td>Datasets</td>
-				<td>${statistics["Datasets"]}</td>
-			</tr>
-			<tr>
-				<td>Updated Dictionary</td>
-				<td>${statistics["Updated Dictionary"]}</td>
-			</tr>
-			
+            <#list statistics?keys as stat>
+                <tr>
+                    <td>${stat}</td>
+                    <td>${statistics[stat]}</td>
+                </tr>
+            </#list>	
             <tr>
                 <td colspan="2"><a href="/AccessRequest/Create">Request Better Access</a></td>
             </tr>
