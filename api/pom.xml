@@ -301,6 +301,13 @@
             <artifactId>javatuples</artifactId>
             <version>1.2</version>
             <scope>compile</scope>
-        </dependency>     
+        </dependency>   
+        
+        <!-- Online Validator -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>nbnv-importer-s1-utils</artifactId>
+            <version>${project.version}</version>
+        </dependency>  
     </dependencies>
 </project>

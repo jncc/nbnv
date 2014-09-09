@@ -62,4 +62,11 @@ public class ColumnMapping {
     public void setField(DarwinCoreField field) {
         this.field = field;
     }
+    
+    @Override
+    public String toString() {
+        return "{columnNumber:" + columnNumber + ",columnLabel:" + columnLabel +
+                ",term:" + field.getTerm() + ",type" + field.getType().getRowType() +
+                "}";
+    }
 }
