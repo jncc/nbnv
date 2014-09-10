@@ -55,7 +55,9 @@ public class SearchResource extends AbstractResource {
             @QueryParam("q") String q,
             @QueryParam("exclude") String exclude
             ) throws SolrServerException {
-        q = ClientUtils.escapeQueryChars(q.trim());
+        if (q != null) {
+            q = ClientUtils.escapeQueryChars(q.trim());
+        }
         return solr
                 .create()
                 .query(q)
@@ -97,7 +99,9 @@ public class SearchResource extends AbstractResource {
             @QueryParam("bbox") @DefaultValue("-180,-90,180,90") String bbox,
             @QueryParam("q") String q) throws SolrServerException {
         String[] bboxParts = bbox.split(",");
-        q = ClientUtils.escapeQueryChars(q.trim());
+        if (q != null) {
+            q = ClientUtils.escapeQueryChars(q.trim());
+        }        
         return solr
                 .create()
                 .query(q)
@@ -134,7 +138,9 @@ public class SearchResource extends AbstractResource {
             @QueryParam("rows") @DefaultValue("10") int rows,
             @QueryParam("start") @DefaultValue("0") int start,
             @QueryParam("q") String q) throws SolrServerException {
-        q = ClientUtils.escapeQueryChars(q.trim());
+        if (q != null) {
+            q = ClientUtils.escapeQueryChars(q.trim());
+        }    
         return solr
                 .create()
                 .query(q)
@@ -175,7 +181,9 @@ public class SearchResource extends AbstractResource {
             @QueryParam("order") @DefaultValue("asc") SolrQuery.ORDER order,
             @QueryParam("q") String q
             ) throws SolrServerException {
-        q = ClientUtils.escapeQueryChars(q.trim());
+        if (q != null) {
+            q = ClientUtils.escapeQueryChars(q.trim());
+        }    
         return solr
                 .create()
                 .query(q)
@@ -216,7 +224,9 @@ public class SearchResource extends AbstractResource {
             @QueryParam("order") @DefaultValue("asc") SolrQuery.ORDER order,
             @QueryParam("q") String q
             ) throws SolrServerException {
-        q = ClientUtils.escapeQueryChars(q.trim());
+        if (q != null) {
+            q = ClientUtils.escapeQueryChars(q.trim());
+        }    
         return solr
                 .create()
                 .query(q)
@@ -261,7 +271,9 @@ public class SearchResource extends AbstractResource {
             @QueryParam("prefered") @DefaultValue("false") boolean prefered,
             @QueryParam("q") String q
             ) throws SolrServerException {
-        q = ClientUtils.escapeQueryChars(q.trim());
+        if (q != null) {
+            q = ClientUtils.escapeQueryChars(q.trim());
+        }    
         return solr
                 .create()
                 .query(q)
