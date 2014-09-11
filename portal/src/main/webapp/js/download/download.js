@@ -44,7 +44,9 @@ nbn.nbnv.ui.download = function (json, div) {
 
         $('#preparing-download-dialog').dialog({modal: true});
               
-        $.fileDownload(nbn.nbnv.api + '/taxonObservations/download?json=' + JSON.stringify(j), {
+        $.fileDownload(nbn.nbnv.api + '/taxonObservations/download', {
+            httpMethod: 'POST',
+            data: {json: JSON.stringify(j)},
             successCallback: function(responseHtml, url) {
                 $('#preparing-download-dialog').dialog('close');
             },
@@ -54,10 +56,6 @@ nbn.nbnv.ui.download = function (json, div) {
                 $('#error-download-dialog').dialog({modal: true});
             }
         });
-        
-//            preparingMessageHtml: 'We are preparing your download, please wait <br/><img style="display:block;margin-left: auto;margin-right: auto;" src="/img/ajax-loader-medium.gif" />',,
-//            failMessageHtml: 'There was a problem generating your download, please try again.'        
-        
         return false;
     }));
 

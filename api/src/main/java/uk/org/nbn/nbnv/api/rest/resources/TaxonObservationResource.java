@@ -1445,6 +1445,37 @@ public class TaxonObservationResource extends RequestResource {
      * @response.representation.200.qname StreamingOutput
      * @response.representation.200.mediaType application/x-zip-compressed
      */
+    @POST
+    @Path("/download")
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Succesfully returned a zip file containing the taxon observations records indicated by the given JSON"),
+        @ResponseCode(code = 403, condition = "The current user is not logged in")
+    })
+    @Produces("application/x-zip-compressed")
+    public StreamingOutput getObservationsByFilterZipPOST(            
+            @TokenUser(allowPublic = false) User user,
+            @FormParam("json") String json,
+            @Context HttpServletResponse response) throws IOException, TemplateException {    
+        return getObservationByFilterZip(user, json, response);
+    }
+    
+    /**
+     * Return a list of taxon observations that match a given filter in the JSON
+     * string supplied, the list is returned as a ZIP file with appropriate 
+     * ReadMes attached and logs the download in the database for stats
+     * 
+     * @param user The current user (must be logged in) (Injected Token no need 
+     * to pass)
+     * @param json JSON object containing a download request, please see 
+     * <a href="downloadRequestJSON.html">Additional Documentation</a> for more
+     * details
+     * 
+     * @return A ZIP file containing the list of observations and ReadMes
+     * @throws IOException 
+     * 
+     * @response.representation.200.qname StreamingOutput
+     * @response.representation.200.mediaType application/x-zip-compressed
+     */    
     @GET
     @Path("/download")
     @StatusCodes({
@@ -1452,11 +1483,16 @@ public class TaxonObservationResource extends RequestResource {
         @ResponseCode(code = 403, condition = "The current user is not logged in")
     })
     @Produces("application/x-zip-compressed")
-    public StreamingOutput getObservationsByFilterZip(            
-            @TokenUser(allowPublic = false) final User user,
+    public StreamingOutput getObservationsByFilterZipGET(            
+            @TokenUser(allowPublic = false) User user,
             @QueryParam("json") String json,
             @Context HttpServletResponse response) throws IOException, TemplateException {    
-        
+        return getObservationByFilterZip(user, json, response);
+    }    
+    
+    private StreamingOutput getObservationByFilterZip(
+            final User user, String json, HttpServletResponse response) 
+            throws IOException, TemplateException {
         logger.info("Taxon Observation Download Started");
         
         // Allows the fileDownload javascript to close the waiting window when
