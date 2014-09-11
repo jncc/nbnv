@@ -143,9 +143,9 @@ nbn.nbnv.ui.downloadReason = function(json) {
     
     this.getJson = function() {
         if (this._asID > -1)
-            return { reason: { purpose: this._purpose, details: encodeURIComponent(this._details), organisationID: this._asID, includeAttributes: this._includeAttributes }};
+            return { reason: { purpose: this._purpose, details: this._details, organisationID: this._asID, includeAttributes: this._includeAttributes }};
         
-        return { reason: { purpose: this._purpose, details: encodeURIComponent(this._details), userID: nbn.nbnv.userID, includeAttributes: this._includeAttributes }};
+        return { reason: { purpose: this._purpose, details: this._details, userID: nbn.nbnv.userID, includeAttributes: this._includeAttributes }};
     };
 
     this.getError = function() {
