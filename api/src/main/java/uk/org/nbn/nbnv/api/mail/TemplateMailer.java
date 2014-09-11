@@ -14,6 +14,7 @@ import javax.mail.internet.MimeMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
@@ -74,6 +75,11 @@ public class TemplateMailer {
         message.setSubject(subject);
         message.setText(FreeMarkerTemplateUtils.processTemplateIntoString(
                 configuration.getTemplate(template), data), true);
+        
+        if (data.containsKey("attachment")) {
+            FileSystemResource file = new FileSystemResource((String) data.get("attachment"));
+            message.addAttachment("Output.txt", file);
+        }
 
         if ("dev".equals(properties.getProperty("email_mode"))) {
             logger.info("Mail Sent -> <" + to + "> Subject: <" + subject + "> Email Template: " + template);
