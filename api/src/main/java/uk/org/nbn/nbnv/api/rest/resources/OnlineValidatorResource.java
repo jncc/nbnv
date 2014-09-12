@@ -1,20 +1,26 @@
 package uk.org.nbn.nbnv.api.rest.resources;
 
+import com.sun.jersey.core.header.FormDataContentDisposition;
+import com.sun.jersey.multipart.FormDataParam;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.apache.commons.lang.RandomStringUtils;
 import org.springframework.stereotype.Component;
@@ -31,46 +37,47 @@ import uk.org.nbn.nbnv.importer.s1.utils.parser.NXFParser;
 public class OnlineValidatorResource extends AbstractResource {
     
     private Pattern pattern;
+    private static final String UPLOAD = "upload.tab";
     
     public OnlineValidatorResource() {
         pattern = Pattern.compile("^\\d{8}_\\d{6}_(\\d+)_[A-Za-z0-9]{10}$");
     }
     
-    @PUT
-    @Produces(DefaultTypes.JSON)
+    @POST
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
     public Response uploadDataFile(
             @TokenUser(allowPublic = false) User user,
-            @RequestParam("file") MultipartFile file) {
-        if (!file.isEmpty()) {
-            try {
-                byte[] bytes = file.getBytes();
+            @FormDataParam("file") InputStream fileInputStream,
+            @FormDataParam("file") FormDataContentDisposition contentDispositionHeader) {
+        try {
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd_hhmmss");
 
-                SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd_hhmmss");
-                
-                String tmpFolderName = formatter.format(new Date())+ "_" 
-                        + user.getId() + "_" + RandomStringUtils.random(10);
-                
-                String rootPath = properties.getProperty("validatorRoot") + File.separator + "tmp";
-                File dir = new File(rootPath + File.separator + tmpFolderName);
-                if (!dir.exists()) {
-                    dir.mkdirs();
-                }
-                
-                File tmpFile = new File(dir.getAbsolutePath() + File.separator + "upload.tab");
-                BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(tmpFile));
-                stream.write(bytes);
-                stream.close();
-                
-                NXFParser parser = new NXFParser(tmpFile);
-                List<ColumnMapping> headings = parser.parseHeaders();
-                               
-                return Response.ok(headings).build();
+            String tmpFolderName = formatter.format(new Date())+ "_" 
+                    + user.getId() + "_" + RandomStringUtils.random(10);            
             
-            } catch (IOException ex) {
-                return Response.serverError().entity("There was an error while reading the uploaded file: " + ex.getLocalizedMessage()).build();
+            File tmpDir = new File(properties.getProperty("validatorRoot") + File.separator + "tmp" + tmpFolderName);
+            if (!tmpDir.exists()) {
+                tmpDir.mkdirs();
             }
-        } else {
-            return Response.serverError().entity("No file was uploaded").build();
+            File upload = new File(tmpDir.getAbsoluteFile() + File.separator + UPLOAD);
+            
+            OutputStream output = new FileOutputStream(upload);
+            
+            int read=0;
+            byte[] bytes = new byte[1024];
+            
+            while ((read = fileInputStream.read(bytes)) != -1) {
+                output.write(bytes, 0, read);
+            }
+            output.flush();
+            output.close();
+            
+            NXFParser parser = new NXFParser(upload);
+            List<ColumnMapping> headings = parser.parseHeaders();
+
+            return Response.ok(headings).build();            
+        } catch (IOException ex) {
+            return Response.serverError().entity("There was an error while reading the uploaded file: " + ex.getLocalizedMessage()).build();
         }
     }
     

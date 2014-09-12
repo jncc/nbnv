@@ -28,24 +28,24 @@ public class OnlineRecordValidatorQueueService {
     @Scheduled(cron = "0 0 0 * * *")
     public void checkForNewInput() {
         logger.info("Checking for new uploads");
-        if (!runner.isRunning()) {
-            runner.checkForInput();
-        }
+//        if (!runner.isRunning()) {
+//            runner.checkForInput();
+//        }
     }
     
     @Scheduled(cron = "0 0 0 * * *")
     public void deleteOldInputs() {
         logger.info("Cleaning up old uploads that have not been acted on");
         
-        File dir = new File(properties.getProperty("temp"));
-        
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(new Date());
-        cal.add(Calendar.HOUR_OF_DAY, -2);
-        
-        Iterator<File> foldersToDelete = FileUtils.iterateFiles(dir, new AgeFileFilter(cal.getTime()), TRUE);
-        while (foldersToDelete.hasNext()) {
-            foldersToDelete.next().delete();
-        }
+//        File dir = new File(properties.getProperty("temp"));
+//        
+//        Calendar cal = Calendar.getInstance();
+//        cal.setTime(new Date());
+//        cal.add(Calendar.HOUR_OF_DAY, -2);
+//        
+//        Iterator<File> foldersToDelete = FileUtils.iterateFiles(dir, new AgeFileFilter(cal.getTime()), TRUE);
+//        while (foldersToDelete.hasNext()) {
+//            foldersToDelete.next().delete();
+//        }
     }
 }
