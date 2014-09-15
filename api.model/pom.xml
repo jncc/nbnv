@@ -37,5 +37,12 @@
             <artifactId>hibernate-validator</artifactId>
             <version>4.2.0.Final</version>
         </dependency>
+        
+        <!-- Online Validator -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>nbnv-importer-s1-utils</artifactId>
+            <version>${project.version}</version>
+        </dependency> 
     </dependencies>
 </project>

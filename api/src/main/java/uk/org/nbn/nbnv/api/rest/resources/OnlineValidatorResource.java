@@ -2,21 +2,19 @@ package uk.org.nbn.nbnv.api.rest.resources;
 
 import com.sun.jersey.core.header.FormDataContentDisposition;
 import com.sun.jersey.multipart.FormDataParam;
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -24,12 +22,11 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.apache.commons.lang.RandomStringUtils;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
 import uk.org.nbn.nbnv.api.model.User;
+import uk.org.nbn.nbnv.api.model.validator.ValidatorColumnModel;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
 import uk.org.nbn.nbnv.api.rest.resources.utils.DefaultTypes;
-import uk.org.nbn.nbnv.importer.s1.utils.parser.ColumnMapping;
+import uk.org.nbn.nbnv.importer.s1.utils.parser.DarwinCoreField;
 import uk.org.nbn.nbnv.importer.s1.utils.parser.NXFParser;
 
 @Component
@@ -45,6 +42,7 @@ public class OnlineValidatorResource extends AbstractResource {
     
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Produces(DefaultTypes.JSON)
     public Response uploadDataFile(
             @TokenUser(allowPublic = false) User user,
             @FormDataParam("file") InputStream fileInputStream,
@@ -52,10 +50,10 @@ public class OnlineValidatorResource extends AbstractResource {
         try {
             SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd_hhmmss");
 
-            String tmpFolderName = formatter.format(new Date())+ "_" 
-                    + user.getId() + "_" + RandomStringUtils.random(10);            
+            String jobName = formatter.format(new Date())+ "_" 
+                    + user.getId() + "_" + RandomStringUtils.randomAlphanumeric(10);
             
-            File tmpDir = new File(properties.getProperty("validatorRoot") + File.separator + "tmp" + tmpFolderName);
+            File tmpDir = new File(properties.getProperty("validatorRoot") + File.separator + "tmp" + jobName);
             if (!tmpDir.exists()) {
                 tmpDir.mkdirs();
             }
@@ -73,9 +71,13 @@ public class OnlineValidatorResource extends AbstractResource {
             output.close();
             
             NXFParser parser = new NXFParser(upload);
-            List<ColumnMapping> headings = parser.parseHeaders();
+            
+            ValidatorColumnModel model = new ValidatorColumnModel(
+                    jobName,
+                    parser.parseHeaders(),
+                    Arrays.asList(DarwinCoreField.values()));
 
-            return Response.ok(headings).build();            
+            return Response.ok(model).build();            
         } catch (IOException ex) {
             return Response.serverError().entity("There was an error while reading the uploaded file: " + ex.getLocalizedMessage()).build();
         }
