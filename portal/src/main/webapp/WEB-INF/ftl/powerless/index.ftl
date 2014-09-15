@@ -1,4 +1,5 @@
 <#assign statistics = json.readURL("${api}/statistics")/>
+<#assign welcomeText = welcomeTextReader.read()/>
 
 <@template.master title="National Biodiversity Network Gateway"
         csss=["/css/homepage.css"]>
