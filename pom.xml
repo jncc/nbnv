@@ -38,6 +38,7 @@
         <module>reseter.datasetAccess</module>
         <module>api-poker</module>
         <module>importer.s1.utils</module>
+    <module>importer-daemon</module>
   </modules>
 	
     <build>

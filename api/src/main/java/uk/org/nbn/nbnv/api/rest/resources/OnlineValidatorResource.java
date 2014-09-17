@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -20,6 +21,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.springframework.stereotype.Component;
 import uk.org.nbn.nbnv.api.model.User;
@@ -53,7 +55,7 @@ public class OnlineValidatorResource extends AbstractResource {
             String jobName = formatter.format(new Date())+ "_" 
                     + user.getId() + "_" + RandomStringUtils.randomAlphanumeric(10);
             
-            File tmpDir = new File(properties.getProperty("validatorRoot") + File.separator + "tmp" + jobName);
+            File tmpDir = new File(properties.getProperty("validatorRoot") + File.separator + "tmp" + File.separator + jobName);
             if (!tmpDir.exists()) {
                 tmpDir.mkdirs();
             }
@@ -76,6 +78,8 @@ public class OnlineValidatorResource extends AbstractResource {
                     jobName,
                     parser.parseHeaders(),
                     Arrays.asList(DarwinCoreField.values()));
+            
+            parser.closeFile();
 
             return Response.ok(model).build();            
         } catch (IOException ex) {
@@ -88,16 +92,33 @@ public class OnlineValidatorResource extends AbstractResource {
     @Path("/{path}/process")
     public Response processUpload(
             @TokenUser(allowPublic = false) User user,
-            @PathParam("user") int userID,
             @PathParam("path") String path,
             @FormParam("mappings") String mappings) {
         Matcher matcher = pattern.matcher(path);
-        if (matcher.find()) {
-            if (Integer.parseInt(matcher.group(0)) == userID) {
-                File upload = new File(properties.getProperty("temp") + "upload.tab");
+        if (matcher.find()) {           
+            if (Integer.parseInt(matcher.group(1)) == user.getId()) {
+                File jobDir = new File(properties.getProperty("validatorRoot") + File.separator + "tmp" + File.separator + path);
+                File upload = new File(jobDir.getAbsoluteFile() + File.separator + "upload.tab");
 
                 if (upload.exists()) {
+                    try {                    
+                        File queueDir = new File(properties.getProperty("validatorRoot") + File.separator + "queue" + File.separator + path);
+                        File queueFile = new File(queueDir.getAbsoluteFile() + File.separator + "upload.tab");
+                        queueDir.mkdirs();
+
+                        File mappingsFile = new File(queueDir.getAbsoluteFile() + File.separator + "mappings.out");
+                        PrintWriter writer = new PrintWriter(mappingsFile);
                     
+                        writer.write(mappings);
+                        
+                        writer.flush();
+                        writer.close();
+
+                        FileUtils.copyFile(upload, queueFile);
+                        FileUtils.deleteDirectory(jobDir);
+                    } catch (IOException ex) {
+                        
+                    }
                 } else {
                     return Response.status(Response.Status.NOT_FOUND).entity(path + " does not exist").build();
                 }
@@ -121,9 +142,9 @@ public class OnlineValidatorResource extends AbstractResource {
         Matcher matcher = pattern.matcher(path);
         
         if (matcher.find()) {
-            if (Integer.parseInt(matcher.group(0)) == userID) {
-                File dir = new File(properties.getProperty("temp"));
-                File upload = new File(properties.getProperty("temp") + "upload.tab");
+            if (Integer.parseInt(matcher.group(1)) == userID) {
+                File dir = new File(properties.getProperty("validatorRoot") + File.separator + "tmp" + File.separator + path);
+                File upload = new File(properties.getProperty("validatorRoot") + File.separator + "tmp" + File.separator + path + File.separator + "upload.tab");
                 
                 if (dir.exists() && upload.exists()) {
                     if (dir.delete()) {

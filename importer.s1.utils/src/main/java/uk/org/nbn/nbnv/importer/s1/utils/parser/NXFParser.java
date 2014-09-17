@@ -91,4 +91,8 @@ public class NXFParser {
         
         return new ArrayList<String>(Arrays.asList(r.readLine().split("\t", -1)));
     }
+    
+    public void closeFile() throws IOException {
+        r.close();
+    }
 }

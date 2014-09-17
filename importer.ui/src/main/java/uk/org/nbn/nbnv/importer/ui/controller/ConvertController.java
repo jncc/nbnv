@@ -27,7 +27,7 @@ import uk.org.nbn.nbnv.importer.s1.utils.convert.ConverterStep;
 import uk.org.nbn.nbnv.importer.s1.utils.database.DatabaseConnection;
 import uk.org.nbn.nbnv.importer.s1.utils.model.MetadataForm;
 import uk.org.nbn.nbnv.importer.s1.utils.archive.ArchiveWriter;
-import uk.org.nbn.nbnv.importer.ui.convert.RunConversions;
+import uk.org.nbn.nbnv.importer.s1.utils.convert.RunConversions;
 import uk.org.nbn.nbnv.importer.s1.utils.xmlWriters.MetadataWriter;
 import uk.org.nbn.nbnv.importer.ui.model.ConvertResults;
 import uk.org.nbn.nbnv.jpa.nbncore.Organisation;
