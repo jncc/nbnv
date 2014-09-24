@@ -5,13 +5,13 @@ import freemarker.template.TemplateExceptionHandler;
 import freemarker.template.TemplateModelException;
 import java.io.File;
 import java.io.FilenameFilter;
-import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 import uk.gov.nbn.data.powerless.MarkDownDirectiveModel;
+import uk.gov.nbn.data.powerless.WelcomeTextHelper;
 
 /**
  * The following Spring Bean will configure the FreeMarkerConfigurer with any 
@@ -45,7 +45,7 @@ public class PowerlessSpringMVCConfig {
         config.setSharedVariable("gis", gis);
         config.setSharedVariable("gaProp", gaProp);
         config.setSharedVariable("gauProp", gauProp);
-        config.setSharedVariable("welcomeText", welcomeText);
+        config.setSharedVariable("welcomeTextReader", new WelcomeTextHelper(new File(welcomeText)));
         config.setSharedVariable("markdown", new MarkDownDirectiveModel());
         // TODO: Need to make a decision if we need commas, etc... in numbers as 
         // its all to easy to have an error creep up on us much later on, this 
