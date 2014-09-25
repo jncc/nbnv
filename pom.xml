@@ -38,7 +38,8 @@
         <module>reseter.datasetAccess</module>
         <module>api-poker</module>
         <module>importer.s1.utils</module>
-  </modules>
+        <module>nbnv-reseter</module>
+    </modules>
 	
     <build>
         <pluginManagement>
