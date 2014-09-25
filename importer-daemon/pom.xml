@@ -52,11 +52,11 @@
             <artifactId>mail</artifactId>
             <version>1.4.7</version>
         </dependency>
-<!--        <dependency>
+        <dependency>
             <groupId>uk.org.nbn</groupId>
             <artifactId>nbnv-importer</artifactId>
             <version>${project.version}</version>
-        </dependency>-->
+        </dependency>
         <dependency>
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-library</artifactId>

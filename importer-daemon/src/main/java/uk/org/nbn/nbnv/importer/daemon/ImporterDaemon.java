@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +12,8 @@ import java.util.Properties;
 import javax.persistence.EntityManager;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
+import scala.Array;
+import uk.org.nbn.nbnv.importer.Importer;
 import uk.org.nbn.nbnv.importer.s1.utils.archive.ArchiveWriter;
 import uk.org.nbn.nbnv.importer.s1.utils.convert.RunConversions;
 import uk.org.nbn.nbnv.importer.s1.utils.database.DatabaseConnection;
@@ -18,36 +21,51 @@ import uk.org.nbn.nbnv.importer.s1.utils.model.Metadata;
 import uk.org.nbn.nbnv.importer.s1.utils.xmlWriters.MetadataWriter;
 import uk.org.nbn.nbnv.jpa.nbncore.Organisation;
 
+
 /**
  *
  * @author Matt Debont
  */
 public class ImporterDaemon implements Runnable {
-
-    private static final int ORGANISATION = 189;
-    private static final int DATASETADMINID = 15848;
+    
     private Metadata defaultMetadata;
     private Organisation defaultOrganisation;
     private Properties properties;
+    private boolean running;
 
     public ImporterDaemon(Properties properties) {
         this.properties = properties;
         // Setup Database connection
         DatabaseConnection.getInstance(properties);
+        running = true;
     }
     
     @Override
     public void run() {
-        checkForInput();
+        while (running) {
+            try {
+                checkForInput();
+                Thread.sleep(Integer.parseInt(properties.getProperty("defaultSleep")));
+            } catch (InterruptedException ex) {
+                // Nothing should intterupt us except for a call to end
+                running = false;
+            }
+        }
     }
 
-    private void checkForInput() {
+    private boolean checkForInput() {
         File[] jobList = new File(properties.getProperty("validatorRoot") + File.separator + "queue").listFiles();
         if (jobList != null && jobList.length > 0) {
             for (File job : jobList) {
                 readInput(job.getName());
             }
+            
+            // Check for any new input that has come in since we started
+            return checkForInput();
         }
+        
+        // No new Input detected
+        return false;
     }
 
     private void readInput(String jobName) {
@@ -76,7 +94,7 @@ public class ImporterDaemon implements Runnable {
         
         map = mapper.readValue(mappingsIn, new TypeReference<HashMap<String,String>>(){});
 
-        RunConversions rc = new RunConversions(upload, ORGANISATION);
+        RunConversions rc = new RunConversions(upload, Integer.parseInt(properties.getProperty("defaultOrganisationID")));
 
         File output = new File(properties.getProperty("validatorRoot")
                 + File.separator + "queue" + File.separator + jobName
@@ -119,28 +137,52 @@ public class ImporterDaemon implements Runnable {
                 properties.getProperty("validatorRoot") + File.separator
                 + "queue" + File.separator + jobName + File.separator
                 + "archive.zip");
-
-//        Options options = optionBuilder.build(archive);
-//
-//        Importer importer = Importer.createImporter(options);
-//        boolean noUnhandledImporterExceptions = true;
-//        try {
-//            //logger.info("About to run importer");
-//            importer.run();
-//        } catch (Exception e) {
-//            // somethings gone very wrong, but we don't actually care
-//            // we still just send the log file to user
-//            // an import can fail and not throw and error here, I think, need to check with felix et al
-//            //logger.error("The importer failed but we sent the log file to user");
-//            //logger.error(e.getMessage().toString());
-//            noUnhandledImporterExceptions = false;
-//        }
-//
-//        return noUnhandledImporterExceptions;
-//        // the return value is only useful for testing and is not bubbled up to user
-//        // they are are always sent a log file
         
-        return false;
+        File logDir = new File(properties.getProperty("validatorRoot") + File.separator
+                + "queue" + File.separator + jobName + File.separator
+                + "logs");
+        File tmpDir = new File(properties.getProperty("validatorRoot") + File.separator
+                + "queue" + File.separator + jobName + File.separator
+                + "tmp");
+        
+        logDir.mkdirs();
+        tmpDir.mkdirs();
+        
+        
+//        
+//        Options options = new Options(archive.getAbsolutePath(), 
+//                null, "ERROR", logDir.getAbsolutePath(), 
+//                tmpDir.getAbsolutePath(), null);
+//        
+//        Importer importer = Importer.createImporter(options);
+
+        boolean noUnhandledImporterExceptions = true;
+        
+        try {
+            Process tr = Runtime.getRuntime().exec(properties.getProperty("importerLocation") + " " + archive.getAbsolutePath() + " -target validate -logLevel ERROR -logDir " + logDir.getAbsolutePath() + " -tmpDir " + tmpDir.getAbsolutePath());
+            BufferedReader br = new BufferedReader(new InputStreamReader(tr.getInputStream()));
+            String s;
+            while((s = br.readLine()) != null) {
+                // Do nothing waiting for output to end
+            }
+            
+//            Array<String> args = new Array<String>(9);
+//            args.update(0, archive.getAbsolutePath());
+//            args.update(1, "-target");
+//            args.update(2, "validate");
+//            args.update(3, "-logLevel");
+//            args.update(4, "ERROR");
+//            args.update(5, "-logDir");
+//            args.update(6, logDir.getAbsolutePath());
+//            args.update(7, "-tmpDir");
+//            args.update(8, tmpDir.getAbsolutePath());
+//            
+//            Importer.main(args);
+        } catch (Exception ex) {
+            noUnhandledImporterExceptions = false;
+        }
+        
+        return noUnhandledImporterExceptions;
     }
 
     private Metadata getDefaultMetadata() {
@@ -148,7 +190,7 @@ public class ImporterDaemon implements Runnable {
             defaultMetadata = new Metadata();
             defaultMetadata.setAccess("TEST");
             defaultMetadata.setDatasetAdminEmail("noreply@nbn.org.uk");
-            defaultMetadata.setDatasetAdminID(DATASETADMINID);
+            defaultMetadata.setDatasetAdminID(Integer.parseInt(properties.getProperty("defaultUserID")));
             defaultMetadata.setDatasetAdminName("NBN SysAdmin");
             defaultMetadata.setDatasetAdminPhone("Nope");
             defaultMetadata.setDatasetID("");
@@ -157,7 +199,7 @@ public class ImporterDaemon implements Runnable {
             defaultMetadata.setGeographicalRes(null);
             defaultMetadata.setInfo("TEST");
             defaultMetadata.setMethods("TEST");
-            defaultMetadata.setOrganisationID(ORGANISATION);
+            defaultMetadata.setOrganisationID(Integer.parseInt(properties.getProperty("defaultOrganisationID")));
             defaultMetadata.setPurpose("TEST");
             defaultMetadata.setQuality("TEST");
             defaultMetadata.setRecordAtts("false");
@@ -171,8 +213,10 @@ public class ImporterDaemon implements Runnable {
 
     private Organisation getDefaultOrganisation() {
         if (defaultOrganisation == null) {
-            EntityManager em = DatabaseConnection.getInstance().createEntityManager();
-            defaultOrganisation = em.find(Organisation.class, ORGANISATION);
+            EntityManager em = 
+                    DatabaseConnection.getInstance().createEntityManager();
+            defaultOrganisation = em.find(Organisation.class, 
+                    Integer.parseInt(properties.getProperty("defaultOrganisationID")));
         }
         return defaultOrganisation;
     }
