@@ -27,14 +27,15 @@
         <module>importer.spatial.ui</module>
         <module>api.model</module>
         <module>api.solr</module>
-        <module>api</module>
+	<module>api.dao</module>
+	<module>api</module>
         <module>portal</module>
         <module>documentation</module>
         <module>gis</module>
         <module>importer.orglogo</module>
         <module>reporter-mail</module>
         <module>recordcleaner</module>
-        <module>importer.s1.utils</module>
+	<module>importer.s1.utils</module>
   </modules>
 	
     <build>

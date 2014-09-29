@@ -49,6 +49,7 @@ import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
 import uk.org.nbn.nbnv.api.rest.resources.utils.DownloadHelper;
 import uk.org.nbn.nbnv.api.solr.SolrResolver;
 import uk.org.nbn.nbnv.api.solr.SolrResponse;
+import uk.org.nbn.nbnv.api.utils.ObservationResourceDefaults;
 
 @Component
 @Path("/taxa")
