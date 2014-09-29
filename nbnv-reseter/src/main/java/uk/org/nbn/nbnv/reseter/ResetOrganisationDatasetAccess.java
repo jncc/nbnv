@@ -11,23 +11,25 @@ import java.util.ArrayList;
 import java.util.List;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import uk.org.nbn.nbnv.api.dao.core.OperationalOrganisationAccessRequestMapper;
+import uk.org.nbn.nbnv.api.dao.core.OperationalOrganisationTaxonObservationAccessMapper;
 import uk.org.nbn.nbnv.api.model.OrganisationAccessRequest;
 import uk.org.nbn.nbnv.api.model.meta.AccessRequestJSON;
-import uk.org.nbn.nbnv.reseter.dao.core.OperationalOrganisationAccessRequestMapper;
-import uk.org.nbn.nbnv.reseter.dao.core.OperationalOrganisationTaxonObservationAccessMapper;
 import uk.org.nbn.nbnv.reseter.utils.AccessRequestUtils;
 
 /**
  *
  * @author cjohn
  */
+@Component
 public class ResetOrganisationDatasetAccess {
     @Autowired OperationalOrganisationAccessRequestMapper oOrganisationAccessRequestMapper;
     @Autowired OperationalOrganisationTaxonObservationAccessMapper oOrganisationTaxonObservationAccessMapper;
     @Autowired
     AccessRequestUtils accessRequestUtils;
         
-    private boolean resetAllAccess(String dataset) throws IOException {
+    public boolean resetAllAccess(String dataset) throws IOException {
         oOrganisationTaxonObservationAccessMapper.removeAllOrganisationAccessForDataset(dataset);
         List<OrganisationAccessRequest> uars = oOrganisationAccessRequestMapper.getGrantedRequestsByDataset(dataset);
         

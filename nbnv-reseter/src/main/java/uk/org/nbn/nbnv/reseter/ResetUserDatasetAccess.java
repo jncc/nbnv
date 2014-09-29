@@ -5,16 +5,18 @@ import java.util.ArrayList;
 import java.util.List;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import uk.org.nbn.nbnv.api.dao.core.OperationalUserAccessRequestMapper;
+import uk.org.nbn.nbnv.api.dao.core.OperationalUserTaxonObservationAccessMapper;
 import uk.org.nbn.nbnv.api.model.UserAccessRequest;
 import uk.org.nbn.nbnv.api.model.meta.AccessRequestJSON;
-import uk.org.nbn.nbnv.reseter.dao.core.OperationalUserAccessRequestMapper;
-import uk.org.nbn.nbnv.reseter.dao.core.OperationalUserTaxonObservationAccessMapper;
 import uk.org.nbn.nbnv.reseter.utils.AccessRequestUtils;
 
 /**
  *
  * @author cjohn
  */
+@Component
 public class ResetUserDatasetAccess {
     @Autowired
     OperationalUserAccessRequestMapper oUserAccessRequestMapper;
@@ -32,7 +34,7 @@ public class ResetUserDatasetAccess {
      *
      * @throws IOException An Error occurred mapping a JSON string to an object
      */
-    private boolean resetAllAccess(String dataset) throws IOException {
+    public boolean resetAllAccess(String dataset) throws IOException {
         oUserTaxonObservationAccessMapper.removeAllUserAccessForDataset(dataset);
         List<UserAccessRequest> uars = oUserAccessRequestMapper.getGrantedRequestsByDataset(dataset);
 

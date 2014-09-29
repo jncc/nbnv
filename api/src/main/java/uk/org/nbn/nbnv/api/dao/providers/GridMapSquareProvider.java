@@ -1,12 +1,7 @@
 package uk.org.nbn.nbnv.api.dao.providers;
 
-import java.util.List;
 import java.util.Map;
 import static org.apache.ibatis.jdbc.SelectBuilder.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StringUtils;
-import uk.org.nbn.nbnv.api.dao.warehouse.FeatureMapper;
-import uk.org.nbn.nbnv.api.model.Feature;
 import uk.org.nbn.nbnv.api.rest.resources.ObservationResourceDefaults;
 
 public class GridMapSquareProvider {
