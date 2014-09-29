@@ -25,6 +25,11 @@
             <artifactId>nbnv-api-model</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>nbnv-api-dao</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <!--NBN Gateway Properties Reader-->
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -99,4 +104,33 @@
         </snapshotRepository>
     </distributionManagement>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>package-jar-with-dependencies</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <appendAssemblyId>true</appendAssemblyId>
+                            <finalName>NBNV-AccessReseter</finalName>
+                            <descriptorRefs>
+                                <descriptorRef>jar-with-dependencies</descriptorRef>
+                            </descriptorRefs>
+                            <archive>
+                                <manifest>
+                                    <mainClass>uk.org.nbn.nbnv.reseter.Reseter</mainClass>
+                                </manifest>
+                            </archive>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>

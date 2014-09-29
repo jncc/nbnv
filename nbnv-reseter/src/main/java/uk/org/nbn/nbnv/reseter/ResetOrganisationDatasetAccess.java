@@ -16,7 +16,7 @@ import uk.org.nbn.nbnv.api.dao.core.OperationalOrganisationAccessRequestMapper;
 import uk.org.nbn.nbnv.api.dao.core.OperationalOrganisationTaxonObservationAccessMapper;
 import uk.org.nbn.nbnv.api.model.OrganisationAccessRequest;
 import uk.org.nbn.nbnv.api.model.meta.AccessRequestJSON;
-import uk.org.nbn.nbnv.reseter.utils.AccessRequestUtils;
+import uk.org.nbn.nbnv.api.utils.AccessRequestUtils;
 
 /**
  *

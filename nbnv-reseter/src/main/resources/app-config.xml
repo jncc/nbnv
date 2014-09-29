@@ -15,16 +15,17 @@
     <import resource="classpath:app-properties.xml"/>
         
 <!-- Scans the classpath of this application for @Components to deploy as beans -->
-    <context:component-scan base-package="uk.org.nbn.nbnv.reseter" /> 
+    <context:component-scan base-package="uk.org.nbn.nbnv" /> 
 
 <!-- Scan sql session factories beans -->  
     <bean id="coreSqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
         <property name="dataSource" ref="coreDataSource" />
     </bean>
 
-<!-- Scan MyBatis interface Mappers and create as beans-->  
+    <!-- Scan MyBatis interface Mappers and create as beans-->  
+    <!-- Can push warehouse tables here as core contains them as views -->
     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-        <property name="basePackage" value="uk.org.nbn.nbnv.reseter.dao.core"/>
+        <property name="basePackage" value="uk.org.nbn.nbnv.api.dao"/>
         <property name="sqlSessionFactoryBeanName" value="coreSqlSessionFactory" />
     </bean>
 </beans>
