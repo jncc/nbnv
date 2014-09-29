@@ -25,7 +25,6 @@
         <module>importer.grin</module>
         <module>importer.ui</module>
         <module>importer.spatial.ui</module>
-        <module>rs</module>
         <module>api.model</module>
         <module>api.solr</module>
         <module>api</module>
@@ -35,8 +34,6 @@
         <module>importer.orglogo</module>
         <module>reporter-mail</module>
         <module>recordcleaner</module>
-        <module>reseter.datasetAccess</module>
-        <module>api-poker</module>
         <module>importer.s1.utils</module>
   </modules>
 	
