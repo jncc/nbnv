@@ -34,7 +34,6 @@
         <module>portal</module>
         <module>gis</module>
         <module>reporter-mail</module>
-        <module>recordcleaner</module>
         <module>nbnv-resetter</module>
     </modules>
 	
