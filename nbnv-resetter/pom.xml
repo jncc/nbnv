@@ -8,7 +8,7 @@
         <version>0.1-SNAPSHOT</version>
     </parent>
     
-    <artifactId>nbnv-reseter</artifactId>
+    <artifactId>nbnv-resetter</artifactId>
     <packaging>jar</packaging>
     
     <name>${project.artifactId}-${project.version}</name>
@@ -113,13 +113,14 @@
                         </goals>
                         <configuration>
                             <appendAssemblyId>true</appendAssemblyId>
-                            <finalName>NBNV-AccessReseter</finalName>
+                            <finalName>NBNV-AccessResetter</finalName>
                             <descriptorRefs>
                                 <descriptorRef>jar-with-dependencies</descriptorRef>
                             </descriptorRefs>
+                            <appendAssemblyId>false</appendAssemblyId>
                             <archive>
                                 <manifest>
-                                    <mainClass>uk.org.nbn.nbnv.reseter.Reseter</mainClass>
+                                    <mainClass>uk.org.nbn.nbnv.resetter.Resetter</mainClass>
                                 </manifest>
                             </archive>
                         </configuration>

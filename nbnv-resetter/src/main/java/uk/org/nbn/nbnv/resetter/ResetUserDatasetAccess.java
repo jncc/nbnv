@@ -1,4 +1,4 @@
-package uk.org.nbn.nbnv.reseter;
+package uk.org.nbn.nbnv.resetter;
 
 import java.io.IOException;
 import java.util.ArrayList;

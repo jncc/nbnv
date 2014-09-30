@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package uk.org.nbn.nbnv.reseter;
+package uk.org.nbn.nbnv.resetter;
 
 import java.io.IOException;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -11,11 +11,11 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  *
  * @author Matt Debont
  */
-public class Reseter {
+public class Resetter {
     private final ResetUserDatasetAccess userAccessReset;
     private final ResetOrganisationDatasetAccess organisationAccessReset;
     
-    public Reseter() {
+    public Resetter() {
         ClassPathXmlApplicationContext ctx = 
                 new ClassPathXmlApplicationContext("applicationContext.xml");
         this.userAccessReset = ctx.getBean(ResetUserDatasetAccess.class);
@@ -32,10 +32,14 @@ public class Reseter {
     
     public static void main (String[] args) throws IOException {
         if (args.length == 1) {
-            Reseter reset = new Reseter();
+            Resetter reset = new Resetter();
             reset.doOrganisationAccessReset(args[0]);
             reset.doUserAccessReset(args[0]);
         } else {
+            System.out.println("NBNV Dataset Access Reset Tool - Usage:\n" +
+                    "  java -jar NBNV-AccessResetter.jar DatasetKey\n" +
+                    "    DatasetKey    The key of the dataset to reset access for i.e. GA000466"
+            );
             System.exit(-1);
         }
         

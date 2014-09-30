@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package uk.org.nbn.nbnv.reseter;
+package uk.org.nbn.nbnv.resetter;
 
 import java.io.IOException;
 import java.util.ArrayList;
