@@ -14,5 +14,6 @@ object Settings {
   // ...
   def myTestSetting = map.getProperty("my.test.setting")
   def connectionString = map.getProperty("javax.persistence.jdbc.url")
+  def datasetReset = map.getProperty("resetter.path")
 }
 
