@@ -11,7 +11,7 @@
         <version>0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>nbnv-api-model</artifactId>
+    <artifactId>nbnv-api-crud</artifactId>
 
     <name>${project.artifactId}-${project.version}</name>
 
@@ -37,5 +37,32 @@
             <artifactId>hibernate-validator</artifactId>
             <version>4.2.0.Final</version>
         </dependency>
+        
+        <!-- Spring 3 dependencies -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        
+        <!--Database -->        
+        <dependency>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis</artifactId>
+            <version>3.1.1</version>
+        </dependency>
+        
+        <!--Database + Spring-->
+        <dependency>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis-spring</artifactId>
+            <version>1.1.1</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.mybatis.caches</groupId>
+            <artifactId>mybatis-oscache</artifactId>
+            <version>1.0.1</version>
+        </dependency>        
     </dependencies>
 </project>

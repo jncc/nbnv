@@ -27,7 +27,7 @@
         <module>importer.spatial.ui</module>
         <module>api.model</module>
         <module>api.solr</module>
-	<module>api.dao</module>
+	
 	<module>api</module>
         <module>portal</module>
         <module>documentation</module>

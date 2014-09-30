@@ -13,9 +13,6 @@ object Settings {
   // provide statically-bound access to settings
   // ...
   def myTestSetting = map.getProperty("my.test.setting")
-  def apiUrl = map.getProperty("api.url")
-  def apiUser = map.getProperty("api.user")
-  def apiPassword = map.getProperty("api.password")
   def connectionString = map.getProperty("javax.persistence.jdbc.url")
 }
 

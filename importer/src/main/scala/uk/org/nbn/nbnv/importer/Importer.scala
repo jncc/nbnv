@@ -54,7 +54,6 @@ class Importer @Inject()(options:        Options,
       log.info("Options are: \n" + options + "\n\n")
 
       log.info("JDBC Databse Connection: %s".format(Settings.connectionString))
-      log.info("API URL: %s".format(Settings.apiUrl))
 
       val stopwatch = new Stopwatch().start()
 
