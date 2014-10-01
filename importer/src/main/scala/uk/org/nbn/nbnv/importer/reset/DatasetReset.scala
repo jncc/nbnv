@@ -9,7 +9,7 @@ class DatasetReset() {
     val reset = "java -jar '%s' %s".format(Settings.datasetReset, datasetKey)
     val status = reset.!
     if (status != 0) {
-      throw new RuntimeException("failed to import")
+      throw new RuntimeException("Failed to run dataset reset tool, please run manually");
     }
   }
 }
