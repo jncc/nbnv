@@ -9,7 +9,7 @@ import uk.org.nbn.nbnv.importer.{Target, Options}
 import org.apache.log4j.Logger
 import uk.org.nbn.nbnv.importer.data.{QueryCache, Repository, Database}
 
-import uk.org.nbn.nbnv.importer.jersey.WebApi
+import uk.org.nbn.nbnv.importer.reset.DatasetReset
 import uk.org.nbn.nbnv.importer.archive.Archive
 import uk.org.nbn.nbnv.importer.records.NbnRecord
 
@@ -33,7 +33,7 @@ class IngesterSuite extends BaseFunSuite {
     val featureIngester = mock[FeatureIngester]
     val recorderIngester = mock[RecorderIngester]
     val repository = mock[Repository]
-    val webApi = mock[WebApi]
+    val datasetReset = mock[DatasetReset]
 
     val archive = mock[Archive]
     val iteratorWithIndex = mock[Iterable[(NbnRecord, Int)]]
@@ -55,7 +55,7 @@ class IngesterSuite extends BaseFunSuite {
     val f = fixture
 
     // act
-    val ingester = new Ingester(f.options, mock[Logger], f.db, f.datasetIngester, f.recordIngester, f.surveyIngester, f.sampleIngester, f.siteIngester, f.recorderIngester, f.featureIngester, f.webApi)
+    val ingester = new Ingester(f.options, mock[Logger], f.db, f.datasetIngester, f.recordIngester, f.surveyIngester, f.sampleIngester, f.siteIngester, f.recorderIngester, f.featureIngester, f.datasetReset)
     ingester.ingest(f.archive, f.metadata)
 
     // assert
@@ -68,7 +68,7 @@ class IngesterSuite extends BaseFunSuite {
     val f = fixture
 
     // act
-    val ingester = new Ingester(f.options, mock[Logger], f.db, f.datasetIngester, f.recordIngester, f.surveyIngester, f.sampleIngester, f.siteIngester, f.recorderIngester, f.featureIngester, f.webApi)
+    val ingester = new Ingester(f.options, mock[Logger], f.db, f.datasetIngester, f.recordIngester, f.surveyIngester, f.sampleIngester, f.siteIngester, f.recorderIngester, f.featureIngester, f.datasetReset)
     ingester.ingest(f.archive, f.metadata)
 
     // assert
