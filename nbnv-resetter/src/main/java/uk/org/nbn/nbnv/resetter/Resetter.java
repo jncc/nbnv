@@ -32,9 +32,13 @@ public class Resetter {
     
     public static void main (String[] args) throws IOException {
         if (args.length == 1) {
+            System.out.println("Resetting Access to " + args[0]);
             Resetter reset = new Resetter();
+            System.out.println("Resetting Organisation Access to " + args[0]);
             reset.doOrganisationAccessReset(args[0]);
+            System.out.println("Resetting User Access to " + args[0]);
             reset.doUserAccessReset(args[0]);
+            System.out.println("Finished Access Resets for " + args[0]);
         } else {
             System.out.println("NBNV Dataset Access Reset Tool - Usage:\n" +
                     "  java -jar NBNV-AccessResetter.jar DatasetKey\n" +
