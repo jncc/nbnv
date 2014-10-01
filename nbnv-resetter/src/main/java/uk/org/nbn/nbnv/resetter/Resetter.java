@@ -5,6 +5,7 @@
 package uk.org.nbn.nbnv.resetter;
 
 import java.io.IOException;
+import java.util.Properties;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
@@ -34,9 +35,7 @@ public class Resetter {
         if (args.length == 1) {
             System.out.println("Resetting Access to " + args[0]);
             Resetter reset = new Resetter();
-            System.out.println("Resetting Organisation Access to " + args[0]);
-            reset.doOrganisationAccessReset(args[0]);
-            System.out.println("Resetting User Access to " + args[0]);
+            reset.doOrganisationAccessReset(args[0]);            
             reset.doUserAccessReset(args[0]);
             System.out.println("Finished Access Resets for " + args[0]);
         } else {

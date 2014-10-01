@@ -9,6 +9,7 @@ package uk.org.nbn.nbnv.resetter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -26,10 +27,14 @@ import uk.org.nbn.nbnv.api.utils.AccessRequestUtils;
 public class ResetOrganisationDatasetAccess {
     @Autowired OperationalOrganisationAccessRequestMapper oOrganisationAccessRequestMapper;
     @Autowired OperationalOrganisationTaxonObservationAccessMapper oOrganisationTaxonObservationAccessMapper;
-    @Autowired
-    AccessRequestUtils accessRequestUtils;
+    @Autowired AccessRequestUtils accessRequestUtils;
+    @Autowired Properties properties;
         
     public boolean resetAllAccess(String dataset) throws IOException {
+        // One off to get the URL of the database output easily
+        System.out.println("Using Database at URL: " + properties.getProperty("db_core_url"));
+        System.out.println("Resetting Organisation Access to " + dataset);
+        
         oOrganisationTaxonObservationAccessMapper.removeAllOrganisationAccessForDataset(dataset);
         List<OrganisationAccessRequest> uars = oOrganisationAccessRequestMapper.getGrantedRequestsByDataset(dataset);
         

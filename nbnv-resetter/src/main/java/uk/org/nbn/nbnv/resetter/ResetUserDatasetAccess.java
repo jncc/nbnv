@@ -18,12 +18,9 @@ import uk.org.nbn.nbnv.api.utils.AccessRequestUtils;
  */
 @Component
 public class ResetUserDatasetAccess {
-    @Autowired
-    OperationalUserAccessRequestMapper oUserAccessRequestMapper;
-    @Autowired
-    OperationalUserTaxonObservationAccessMapper oUserTaxonObservationAccessMapper;
-    @Autowired
-    AccessRequestUtils accessRequestUtils;
+    @Autowired OperationalUserAccessRequestMapper oUserAccessRequestMapper;
+    @Autowired OperationalUserTaxonObservationAccessMapper oUserTaxonObservationAccessMapper;
+    @Autowired AccessRequestUtils accessRequestUtils;
         
     /**
      * Strip any access given by a User Access Request
@@ -35,6 +32,7 @@ public class ResetUserDatasetAccess {
      * @throws IOException An Error occurred mapping a JSON string to an object
      */
     public boolean resetAllAccess(String dataset) throws IOException {
+        System.out.println("Resetting User Access to " + dataset);
         oUserTaxonObservationAccessMapper.removeAllUserAccessForDataset(dataset);
         List<UserAccessRequest> uars = oUserAccessRequestMapper.getGrantedRequestsByDataset(dataset);
 
