@@ -63,6 +63,13 @@
             <groupId>org.mybatis.caches</groupId>
             <artifactId>mybatis-oscache</artifactId>
             <version>1.0.1</version>
-        </dependency>        
+        </dependency>   
+
+		<!-- Online Validator -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>nbnv-importer-s1-utils</artifactId>
+            <version>${project.version}</version>
+        </dependency>  
     </dependencies>
 </project>
