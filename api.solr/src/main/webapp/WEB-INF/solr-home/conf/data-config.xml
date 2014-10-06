@@ -1,7 +1,7 @@
 <dataConfig>
     <dataSource type="JdbcDataSource"
                 driver="com.microsoft.sqlserver.jdbc.SQLServerDriver"
-                url="jdbc:sqlserver://nbn-master.nerc-lancaster.ac.uk;databaseName=NBNCore" 
+                url="jdbc:sqlserver://nbnwarehouse.nerc-lancaster.ac.uk;databaseName=NBNWarehouseLive" 
                 user="NBNAPI"
                 password="SingLikeTieBarn2013"/>
     <document name="nbn-gateway">
