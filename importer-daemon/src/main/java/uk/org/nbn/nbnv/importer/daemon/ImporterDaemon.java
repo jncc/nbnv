@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,7 +11,7 @@ import java.util.Properties;
 import javax.persistence.EntityManager;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
-import scala.Array;
+import org.springframework.stereotype.Component;
 import uk.org.nbn.nbnv.importer.Importer;
 import uk.org.nbn.nbnv.importer.s1.utils.archive.ArchiveWriter;
 import uk.org.nbn.nbnv.importer.s1.utils.convert.RunConversions;
@@ -26,15 +25,18 @@ import uk.org.nbn.nbnv.jpa.nbncore.Organisation;
  *
  * @author Matt Debont
  */
+@Component
 public class ImporterDaemon implements Runnable {
     
     private Metadata defaultMetadata;
     private Organisation defaultOrganisation;
     private Properties properties;
     private boolean running;
+    private String validatorQueue;
 
     public ImporterDaemon(Properties properties) {
         this.properties = properties;
+        this.validatorQueue = properties.getProperty("outputRoot") + File.separator + "queue" + File.separator;
         // Setup Database connection
         DatabaseConnection.getInstance(properties);
         running = true;
@@ -42,26 +44,26 @@ public class ImporterDaemon implements Runnable {
     
     @Override
     public void run() {
-        while (running) {
-            try {
+        //while (running) {
+        //    try {
                 checkForInput();
-                Thread.sleep(Integer.parseInt(properties.getProperty("defaultSleep")));
-            } catch (InterruptedException ex) {
+        //        Thread.sleep(Integer.parseInt(properties.getProperty("defaultSleep")));
+        //    } catch (InterruptedException ex) {
                 // Nothing should intterupt us except for a call to end
-                running = false;
-            }
-        }
+        //        running = false;
+        //    }
+        //}
     }
 
     private boolean checkForInput() {
-        File[] jobList = new File(properties.getProperty("validatorRoot") + File.separator + "queue").listFiles();
+        File[] jobList = new File(validatorQueue).listFiles();
         if (jobList != null && jobList.length > 0) {
             for (File job : jobList) {
                 readInput(job.getName());
             }
             
             // Check for any new input that has come in since we started
-            return checkForInput();
+            //return checkForInput();
         }
         
         // No new Input detected
@@ -72,7 +74,7 @@ public class ImporterDaemon implements Runnable {
         try {
             File archive = s1Transform(jobName);
             if (archive != null) {
-                //s2validation(jobName);
+                s2validation(jobName);
             } else {
                 
             }
@@ -81,12 +83,10 @@ public class ImporterDaemon implements Runnable {
     }
 
     private File s1Transform(String jobName) throws IOException {
-        File upload = new File(properties.getProperty("validatorRoot")
-                + File.separator + "queue" + File.separator + jobName
-                + File.separator + "upload.tab");
-        File mappings = new File(properties.getProperty("validatorRoot")
-                + File.separator + "queue" + File.separator + jobName
-                + File.separator + "mappings.out");
+        String jobFolder = validatorQueue + jobName + File.separator;
+        
+        File upload = new File(jobFolder + "upload.tab");
+        File mappings = new File(jobFolder + "mappings.out");
 
         String mappingsIn = new BufferedReader(new FileReader(mappings)).readLine();
         Map<String, String> map;
@@ -96,21 +96,15 @@ public class ImporterDaemon implements Runnable {
 
         RunConversions rc = new RunConversions(upload, Integer.parseInt(properties.getProperty("defaultOrganisationID")));
 
-        File output = new File(properties.getProperty("validatorRoot")
-                + File.separator + "queue" + File.separator + jobName
-                + File.separator + "data.tab");
-        File meta = new File(properties.getProperty("validatorRoot")
-                + File.separator + "queue" + File.separator + jobName
-                + File.separator + "meta.xml");
+        File output = new File(jobFolder + "data.tab");
+        File meta = new File(jobFolder + "meta.xml");
 
         Map<String, List<String>> conversionOutput = rc.run(output, meta, map);
         
         if (conversionOutput.containsKey("errors") && conversionOutput.get("errors").size() > 0) {
             
         } else {
-            File metadata = new File(properties.getProperty("validatorRoot")
-                    + File.separator + "queue" + File.separator + jobName
-                    + File.separator + "metadata.xml");
+            File metadata = new File(jobFolder + "metadata.xml");
 
             try {
                 MetadataWriter metadataWriter = new MetadataWriter(metadata);
@@ -119,9 +113,7 @@ public class ImporterDaemon implements Runnable {
                 throw new IOException(ex);
             }
 
-            File zip = new File(properties.getProperty("validatorRoot")
-                    + File.separator + "queue" + File.separator + jobName
-                    + File.separator + "archive.zip");
+            File zip = new File(jobFolder + "archive.zip");
 
             ArchiveWriter aw = new ArchiveWriter();
             aw.createArchive(output, meta, metadata, zip);
@@ -133,51 +125,25 @@ public class ImporterDaemon implements Runnable {
     }
 
     private boolean s2validation(String jobName) {
-        File archive = new File(
-                properties.getProperty("validatorRoot") + File.separator
-                + "queue" + File.separator + jobName + File.separator
-                + "archive.zip");
+        String jobFolder = validatorQueue + jobName + File.separator;
         
-        File logDir = new File(properties.getProperty("validatorRoot") + File.separator
-                + "queue" + File.separator + jobName + File.separator
-                + "logs");
-        File tmpDir = new File(properties.getProperty("validatorRoot") + File.separator
-                + "queue" + File.separator + jobName + File.separator
-                + "tmp");
+        File archive = new File(jobFolder + "archive.zip");
+        
+        File logDir = new File(jobFolder + "logs");
+        File tmpDir = new File(jobFolder + "tmp");
         
         logDir.mkdirs();
         tmpDir.mkdirs();
-        
-        
-//        
-//        Options options = new Options(archive.getAbsolutePath(), 
-//                null, "ERROR", logDir.getAbsolutePath(), 
-//                tmpDir.getAbsolutePath(), null);
-//        
-//        Importer importer = Importer.createImporter(options);
 
         boolean noUnhandledImporterExceptions = true;
         
         try {
-            Process tr = Runtime.getRuntime().exec(properties.getProperty("importerLocation") + " " + archive.getAbsolutePath() + " -target validate -logLevel ERROR -logDir " + logDir.getAbsolutePath() + " -tmpDir " + tmpDir.getAbsolutePath());
-            BufferedReader br = new BufferedReader(new InputStreamReader(tr.getInputStream()));
-            String s;
-            while((s = br.readLine()) != null) {
-                // Do nothing waiting for output to end
-            }
-            
-//            Array<String> args = new Array<String>(9);
-//            args.update(0, archive.getAbsolutePath());
-//            args.update(1, "-target");
-//            args.update(2, "validate");
-//            args.update(3, "-logLevel");
-//            args.update(4, "ERROR");
-//            args.update(5, "-logDir");
-//            args.update(6, logDir.getAbsolutePath());
-//            args.update(7, "-tmpDir");
-//            args.update(8, tmpDir.getAbsolutePath());
-//            
-//            Importer.main(args);
+            String args = archive.getAbsolutePath() 
+                    + " -target " + properties.getProperty("importer.target")
+                    + " -logLevel " + properties.getProperty("importer.log.level") 
+                    + " -logDir " + logDir.getAbsolutePath() 
+                    + " -tempDir " + tmpDir.getAbsolutePath();            
+            Importer.startImporterWithCommandLineTargets(args);
         } catch (Exception ex) {
             noUnhandledImporterExceptions = false;
         }

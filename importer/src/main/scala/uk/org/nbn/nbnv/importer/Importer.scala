@@ -27,6 +27,19 @@ object Importer {
       }
     }
   }
+  
+  def startImporterWithCommandLineTargets(args: String) = {
+    Options.parse(args.split(" ").toList) match {
+      case OptionsSuccess(options) => {
+        val importer = createImporter(options)
+        importer.run()
+      }
+      case OptionsFailure(message) => {
+        println(message)
+        sys.exit(1)
+      }
+    }
+  }
 
   /// Creates an importer instance for real life use
   /// with its dependencies injected.

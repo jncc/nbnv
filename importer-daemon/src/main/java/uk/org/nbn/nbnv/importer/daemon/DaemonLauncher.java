@@ -6,8 +6,7 @@ import java.util.concurrent.Future;
 import org.apache.commons.daemon.Daemon;
 import org.apache.commons.daemon.DaemonContext;
 import org.apache.commons.daemon.DaemonInitException;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import uk.org.nbn.nbnv.importer.daemon.config.ApplicationConfig;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * Hello world!
@@ -18,15 +17,15 @@ public class DaemonLauncher implements Daemon
     private ImporterDaemon daemon;
     private ExecutorService executor;
     private Future<?> future;
-    private AnnotationConfigApplicationContext context;
+    private ClassPathXmlApplicationContext context;
     
     public static void main(String[] args) throws Exception {        
-        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(ApplicationConfig.class);
-        DaemonLauncher launcher = new DaemonLauncher(context);
+        ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext("applicationContext.xml");
+        DaemonLauncher launcher = new DaemonLauncher(ctx);
         launcher.start();
     }
     
-    public DaemonLauncher(AnnotationConfigApplicationContext context) {
+    public DaemonLauncher(ClassPathXmlApplicationContext context) {
         this.context = context;
     }
 
