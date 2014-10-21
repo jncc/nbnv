@@ -14,7 +14,6 @@ import javax.ws.rs.ext.Provider;
 import org.mybatis.spring.MyBatisSystemException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Repository;
 import uk.org.nbn.nbnv.api.rest.resources.utils.throwables.CorelessException;
 
 /**
@@ -22,9 +21,8 @@ import uk.org.nbn.nbnv.api.rest.resources.utils.throwables.CorelessException;
  * @author Matt Debont
  */
 @Provider
-@Repository
 public class MyBatisSystemExceptionMapper implements ExceptionMapper<MyBatisSystemException> {
-    private static Logger logger = LoggerFactory.getLogger(MyBatisSystemExceptionMapper.class);
+    private static final Logger logger = LoggerFactory.getLogger(MyBatisSystemExceptionMapper.class);
 
     @Override
     public Response toResponse(MyBatisSystemException e) {
