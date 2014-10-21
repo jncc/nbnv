@@ -5,7 +5,6 @@
  */
 package uk.org.nbn.nbnv.api.rest.providers;
 
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import javax.ws.rs.core.MediaType;
@@ -14,7 +13,6 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 import org.mybatis.spring.MyBatisSystemException;
 import org.springframework.stereotype.Repository;
-import uk.org.nbn.nbnv.api.rest.resources.utils.throwables.CorelessException;
 
 /**
  *
@@ -22,7 +20,7 @@ import uk.org.nbn.nbnv.api.rest.resources.utils.throwables.CorelessException;
  */
 @Provider
 @Repository
-public class CorelessExceptionMapper implements ExceptionMapper<MyBatisSystemException> {
+public class MyBatisSystemExceptionMapper implements ExceptionMapper<MyBatisSystemException> {
 
     @Override
     public Response toResponse(MyBatisSystemException e) {

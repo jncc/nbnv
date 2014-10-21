@@ -18,6 +18,6 @@ public class CoreDatasource extends TransactionAwareDataSourceProxy {
     
     public CoreDatasource(DataSource datasource, boolean coreless) {
         super(coreless ? new PlaceholderDatasource() : datasource);
-        logger.warn("Coreless datasource is " + coreless + " --------------------------------------------------------");
+        logger.info(coreless ? "Core database is running in coreless mode" : "Core database is running in normal mode");
     }
 }
