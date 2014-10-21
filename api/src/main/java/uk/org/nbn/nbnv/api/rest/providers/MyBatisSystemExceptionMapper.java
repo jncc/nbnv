@@ -12,7 +12,10 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 import org.mybatis.spring.MyBatisSystemException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
+import uk.org.nbn.nbnv.api.rest.resources.utils.throwables.CorelessException;
 
 /**
  *
@@ -21,14 +24,25 @@ import org.springframework.stereotype.Repository;
 @Provider
 @Repository
 public class MyBatisSystemExceptionMapper implements ExceptionMapper<MyBatisSystemException> {
+    private static Logger logger = LoggerFactory.getLogger(MyBatisSystemExceptionMapper.class);
 
     @Override
     public Response toResponse(MyBatisSystemException e) {
         Map<String, Object> toReturn = new HashMap<String, Object>();
         toReturn.put("success", false);
+        
+        if (e.getRootCause() instanceof CorelessException) {
+            toReturn.put("status", "Core Database is offline, please try again later");
+            
+            return Response.status(Response.Status.SERVICE_UNAVAILABLE)
+                    .type(MediaType.APPLICATION_JSON)
+                    .entity(toReturn)
+                    .build();
+        }
+        
         toReturn.put("status", e.getMessage());
         
-        return Response.status(Response.Status.BAD_REQUEST)
+        return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
             .type(MediaType.APPLICATION_JSON)
             .entity(toReturn)
             .build();
