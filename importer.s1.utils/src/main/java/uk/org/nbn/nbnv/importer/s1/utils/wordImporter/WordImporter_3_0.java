@@ -178,10 +178,7 @@ public class WordImporter_3_0 implements WordImporter {
 
     @Override
     public boolean supports(int major, int minor) {
-        if (major == MAJOR && minor == MINOR) {
-            return true;
-        }
-        return false;
+        return major == MAJOR && minor == MINOR;
     }
     
     @Override
