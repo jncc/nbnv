@@ -30,10 +30,13 @@ public class WordImporter_3_0 implements WordImporter {
     // descriptor contained in the valid stringSet
     public static final int WANDER_MAX = 3;
     
-    private Map<String, Integer> longDescCutter;
-    private HashSet<String> stringSet;
+    protected Map<String, Integer> longDescCutter;
+    protected HashSet<String> stringSet;
     
-    private List<String> defaultMessages;
+    protected List<String> defaultMessages;
+    
+    protected final String FORM_SIGNATURE = "^(I,  )(FORMTEXT (.*)\\. \\[INSERT NAME\\])(, hereby confirm that on  )(FORMTEXT (.*) \\[dd/mm/yyyy\\])( I read and understood the NBN Gateway Data Provider Agreement and agree, on behalf of the data provider named in section A, to submit the dataset described in section D to the NBN Trust under this agreement\\.)$";
+    protected final String FORM_SIGNATURE_IDENTIFIER = "I read and understood the NBN Gateway Data Provider Agreement and agree, on behalf of the data provider named in section A, to submit the dataset described in section D to the NBN Trust under this agreement.";    
     
     public WordImporter_3_0() {
         longDescCutter = new HashMap<String, Integer>();
@@ -112,11 +115,11 @@ public class WordImporter_3_0 implements WordImporter {
                         if (!foundDesc) {
                             // Haven't found a valid descriptor so we need
                             // to check our exceptions list
-                            if (origStr.contains("I read and understood the NBN Gateway Data Provider Agreement and agree, on behalf of the data provider named in section A, to submit the dataset described in section D to the NBN Trust under this agreement.")) {
+                            if (origStr.contains(getFormSignatureIdentifier())) {
                                 // Not invalid just the declaration, do some processing here
                                 String pStr = origStr.replaceAll("\\p{C}", "");
                                 
-                                Pattern matchEx = Pattern.compile("^(I,  )(FORMTEXT (.*)\\. \\[INSERT NAME\\])(, hereby confirm that on  )(FORMTEXT (.*) \\[dd/mm/yyyy\\])( I read and understood the NBN Gateway Data Provider Agreement and agree, on behalf of the data provider named in section A, to submit the dataset described in section D to the NBN Trust under this agreement\\.)$");
+                                Pattern matchEx = Pattern.compile(getFormSignature());
                                 Matcher matcher = matchEx.matcher(pStr);
                                 if (matcher.find()) {
                                     SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
@@ -186,4 +189,11 @@ public class WordImporter_3_0 implements WordImporter {
         return defaultMessages;
     }
     
+    protected String getFormSignatureIdentifier() {
+        return FORM_SIGNATURE_IDENTIFIER;
+    }
+    
+    protected String getFormSignature() {
+        return FORM_SIGNATURE;
+    }
 }
