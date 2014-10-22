@@ -4,10 +4,12 @@
  */
 package uk.org.nbn.nbnv.importer.s1.utils.database;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.ResourceBundle;
+import java.util.Properties;
 import javax.persistence.EntityManagerFactory;
+import uk.gov.nbn.data.properties.PropertiesReader;
 import uk.org.nbn.nbnv.PersistenceUtility;
 
 /**
@@ -19,16 +21,21 @@ public class DatabaseConnection {
     private static EntityManagerFactory factory;
 
     public static EntityManagerFactory getInstance() {
-        if (factory == null) {
-            Map<String, String> settings = new HashMap<String, String>();
+        try {
+            Properties properties = PropertiesReader.getEffectiveProperties("settings.properties");
 
-            ResourceBundle bundle = ResourceBundle.getBundle("settings");
-            settings.put("javax.persistence.jdbc.url", bundle.getString("javax.persistence.jdbc.url"));
-            settings.put("javax.persistence.jdbc.user", bundle.getString("javax.persistence.jdbc.user"));
-            settings.put("javax.persistence.jdbc.password", bundle.getString("javax.persistence.jdbc.password"));
+            if (factory == null) {
+                Map<String, String> settings = new HashMap<String, String>();
 
-            factory = new PersistenceUtility().createEntityManagerFactory(settings);
+                settings.put("javax.persistence.jdbc.url", properties.getProperty("javax.persistence.jdbc.url"));
+                settings.put("javax.persistence.jdbc.user", properties.getProperty("javax.persistence.jdbc.user"));
+                settings.put("javax.persistence.jdbc.password", properties.getProperty("javax.persistence.jdbc.password"));
+
+                factory = new PersistenceUtility().createEntityManagerFactory(settings);
+            }
+            return factory;
+        } catch (IOException ex) {
+            return null;
         }
-        return factory;
     }
 }
