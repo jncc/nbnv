@@ -6,12 +6,11 @@ package uk.org.nbn.nbnv.importer.spatial.ui.util.wordImporter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
-import uk.org.nbn.nbnv.importer.spatial.ui.util.POIImportError;
+import uk.org.nbn.nbnv.importer.s1.utils.errors.POIImportError;
 
 /**
  *

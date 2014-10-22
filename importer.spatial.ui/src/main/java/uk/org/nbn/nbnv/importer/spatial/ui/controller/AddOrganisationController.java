@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import uk.org.nbn.nbnv.importer.spatial.ui.model.AddOrganisationForm;
 import uk.org.nbn.nbnv.importer.spatial.ui.model.MetadataForm;
-import uk.org.nbn.nbnv.importer.spatial.ui.util.DatabaseConnection;
 import uk.org.nbn.nbnv.importer.spatial.ui.validators.AddOrganisationFormValidator;
 import uk.org.nbn.nbnv.importer.spatial.ui.validators.OrganisationValidator;
 import org.imgscalr.Scalr;
@@ -34,6 +33,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
+import uk.org.nbn.nbnv.importer.s1.utils.database.DatabaseConnection;
 import uk.org.nbn.nbnv.jpa.nbncore.Organisation;
 
 /**
