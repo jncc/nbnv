@@ -12,7 +12,7 @@ import javax.persistence.Query;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
-import uk.org.nbn.nbnv.importer.spatial.ui.util.DatabaseConnection;
+import uk.org.nbn.nbnv.importer.s1.utils.database.DatabaseConnection;
 import uk.org.nbn.nbnv.jpa.nbncore.Organisation;
 
 /**

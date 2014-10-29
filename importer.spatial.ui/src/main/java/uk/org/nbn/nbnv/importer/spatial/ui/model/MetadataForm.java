@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
-import uk.org.nbn.nbnv.importer.spatial.ui.util.DatabaseConnection;
+import uk.org.nbn.nbnv.importer.s1.utils.database.DatabaseConnection;
 import uk.org.nbn.nbnv.jpa.nbncore.Dataset;
 import uk.org.nbn.nbnv.jpa.nbncore.DatasetType;
 import uk.org.nbn.nbnv.jpa.nbncore.Organisation;

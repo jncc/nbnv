@@ -19,6 +19,7 @@ public class WordImporter_3_1 implements WordImporter {
     private WordImporter importer = new WordImporter_3_0();
     
     public WordImporter_3_1() {
+        
     }
     
     
@@ -29,10 +30,7 @@ public class WordImporter_3_1 implements WordImporter {
 
     @Override
     public boolean supports(int major, int minor) {
-        if (major == MAJOR && minor == MINOR) {
-            return true;
-        }
-        return false;
+        return major == MAJOR && minor == MINOR;
     }
     
     @Override
