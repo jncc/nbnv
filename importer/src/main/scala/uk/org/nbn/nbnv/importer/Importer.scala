@@ -3,6 +3,7 @@ package uk.org.nbn.nbnv.importer
 import archive.Archive
 import ingestion._
 import injection.ImporterModule
+import injection.DaemonImporterModule
 import uk.org.nbn.nbnv.importer.metadata.MetadataReader
 import org.apache.log4j.Logger
 import com.google.inject.{Inject, Guice}
@@ -28,17 +29,29 @@ object Importer {
     }
   }
   
-  def startImporterWithCommandLineTargets(args: String) = {
-    Options.parse(args.split(" ").toList) match {
-      case OptionsSuccess(options) => {
-        val importer = createImporter(options)
-        importer.run()
-      }
-      case OptionsFailure(message) => {
-        println(message)
-        sys.exit(1)
-      }
+  def startImporterFromDaemon(archive: String, target: String, logLevel: String, logDir:String, tempDir:String, logger: Logger) = {   
+    val options = Options(archivePath = archive, target = createTargetFromString(target), logLevel = logLevel, logDir = logDir, tempDir = tempDir)
+    
+    val injector = Guice.createInjector(new DaemonImporterModule(options, logger))
+    val importer = injector.getInstance(classOf[Importer])
+    
+    importer.run()
+  }
+  
+  def createTargetFromString(target: String) : Target.Value = {
+    if (target == "validate")
+      return Target.validate
+    if (target == "verify") {
+      return Target.verify
     }
+    if (target == "ingest") {
+      return Target.ingest
+    }
+    if (target == "commit") {
+      return Target.commit
+    }
+    
+    return Target.validate
   }
 
   /// Creates an importer instance for real life use

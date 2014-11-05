@@ -1,12 +1,15 @@
 package uk.org.nbn.nbnv.importer.daemon;
 
 import java.util.Properties;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 import org.apache.commons.daemon.Daemon;
 import org.apache.commons.daemon.DaemonContext;
 import org.apache.commons.daemon.DaemonInitException;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import uk.org.nbn.nbnv.importer.daemon.mail.TemplateMailer;
 
 /**
  * Hello world!
@@ -15,9 +18,9 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class DaemonLauncher implements Daemon
 {    
     private ImporterDaemon daemon;
-    private ExecutorService executor;
-    private Future<?> future;
-    private ClassPathXmlApplicationContext context;
+    private ScheduledExecutorService sExecutor;
+    private ScheduledFuture scheduledFuture;
+    private final ClassPathXmlApplicationContext context;
     
     public static void main(String[] args) throws Exception {        
         ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext("applicationContext.xml");
@@ -35,22 +38,26 @@ public class DaemonLauncher implements Daemon
 
     @Override
     public void start() throws Exception {        
-        daemon = new ImporterDaemon((Properties) context.getBean("properties"));
-        daemon.run();
-//        executor = Executors.newSingleThreadExecutor();
-//        future = executor.submit(daemon);
-//        executor.
+        Properties properties = (Properties) context.getBean("properties");
+        daemon = new ImporterDaemon(properties, null);
+        //daemon.run();
+        
+        sExecutor = Executors.newSingleThreadScheduledExecutor();
+        scheduledFuture = sExecutor.scheduleAtFixedRate(
+                        daemon, 0, 
+                        Integer.getInteger(properties.getProperty("sleepTime")), 
+                        TimeUnit.MINUTES);
     }
 
     @Override
     public void stop() throws Exception {
-        future.cancel(true);
-        executor.shutdown();
+        scheduledFuture.cancel(true);
+        sExecutor.shutdownNow();
     }
 
     @Override
     public void destroy() {
-        future.cancel(true);
-        executor.shutdown();
+        scheduledFuture.cancel(true);
+        sExecutor.shutdownNow();
     }
 }

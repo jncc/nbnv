@@ -30,34 +30,18 @@ import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
  *
  * @author Christopher Johnson
  */
-@Component
 public class TemplateMailer {
 
-    @Autowired MailSender mailSender;
-    @Autowired Properties properties;
     private Configuration configuration;
     private static Logger logger = LoggerFactory.getLogger(TemplateMailer.class);
+    private final Properties properties;
 
-    public TemplateMailer() {
+    public TemplateMailer(Properties properties) {
+        this.properties = properties;
         configuration = new Configuration();
         configuration.setClassForTemplateLoading(TemplateMailer.class, "");
     }
-
-    public void send(String template, String to, String subject, Map<String, Object> data) throws IOException, TemplateException {
-        SimpleMailMessage test = new SimpleMailMessage();
-        test.setTo(to);
-        test.setSubject(subject);
-        test.setFrom(properties.getProperty("email_from"));
-        test.setText(FreeMarkerTemplateUtils.processTemplateIntoString(
-                configuration.getTemplate(template), data));
-
-        if ("dev".equals(properties.getProperty("email_mode"))) {
-            logger.info("Mail Sent -> <" + to + "> Subject: <" + subject + "> Email Template: " + template);
-        } else {
-            mailSender.send(test);
-        }
-    }
-
+    
     public void sendMime(
             final String template,
             final String to,

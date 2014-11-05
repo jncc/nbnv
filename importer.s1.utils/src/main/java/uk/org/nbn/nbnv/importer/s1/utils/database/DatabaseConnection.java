@@ -22,9 +22,8 @@ public class DatabaseConnection {
 
     public static EntityManagerFactory getInstance() {
         try {
-            Properties properties = PropertiesReader.getEffectiveProperties("settings.properties");
-
             if (factory == null) {
+                Properties properties = PropertiesReader.getEffectiveProperties("settings.properties");
                 Map<String, String> settings = new HashMap<String, String>();
 
                 settings.put("javax.persistence.jdbc.url", properties.getProperty("javax.persistence.jdbc.url"));

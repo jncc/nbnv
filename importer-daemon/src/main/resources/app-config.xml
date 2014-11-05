@@ -19,15 +19,9 @@
 
     <!-- Load the properites -->
     <import resource="classpath:app-properties.xml"/>
-
-    <!-- Configures the @Controller programming model -->
-    <mvc:annotation-driven />
-    
-    <!-- Configures the @Service programming model -->
-    <task:annotation-driven />
         
     <!-- Scans the classpath of this application for @Components to deploy as beans -->
-    <context:component-scan base-package="uk.org.nbn.nbnv.importer.daemon" /> 
+    <context:component-scan base-package="uk.org.nbn.nbnv.importer.daemon" />
     
     <!--E-mailer for the api application -->
     <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
