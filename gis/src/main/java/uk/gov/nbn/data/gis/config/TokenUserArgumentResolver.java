@@ -69,8 +69,8 @@ public class TokenUserArgumentResolver implements HandlerMethodArgumentResolver,
             String credentials = new String(Base64.decodeBase64(base64Credentials));
             String[] values = credentials.split(":",2);
             return toAddTo
-                    .queryParam(USERNAME_KEY, values[0])
-                    .queryParam(MD5_PASSWORD_HASH_KEY, DigestUtils.md5Hex(values[1]));
+                .queryParam(USERNAME_KEY, values[0])
+                .queryParam(MD5_PASSWORD_HASH_KEY, DigestUtils.md5Hex(values[1]));
         }
         return toAddTo;    
     }
