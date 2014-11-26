@@ -110,7 +110,13 @@ public class OnlineValidatorResource extends AbstractResource {
                         PrintWriter writer = new PrintWriter(mappingsFile);
                     
                         writer.write(mappings);
+                        writer.flush();
+                        writer.close();
                         
+                        File infoFile = new File(queueDir.getAbsoluteFile() + File.separator + "info.out");
+                        writer = new PrintWriter(infoFile);
+                        
+                        writer.write("{\"user\":\"" + user.getForename() + "\",\"email\":\"" + user.getEmail() + "\"}");
                         writer.flush();
                         writer.close();
 

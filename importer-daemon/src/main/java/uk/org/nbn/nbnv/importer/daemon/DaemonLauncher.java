@@ -8,6 +8,8 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.daemon.Daemon;
 import org.apache.commons.daemon.DaemonContext;
 import org.apache.commons.daemon.DaemonInitException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import uk.org.nbn.nbnv.importer.daemon.mail.TemplateMailer;
 
@@ -20,32 +22,32 @@ public class DaemonLauncher implements Daemon
     private ImporterDaemon daemon;
     private ScheduledExecutorService sExecutor;
     private ScheduledFuture scheduledFuture;
-    private final ClassPathXmlApplicationContext context;
+    private ClassPathXmlApplicationContext context;
     
     public static void main(String[] args) throws Exception {        
-        ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext("applicationContext.xml");
-        DaemonLauncher launcher = new DaemonLauncher(ctx);
+        DaemonLauncher launcher = new DaemonLauncher();
         launcher.start();
     }
     
-    public DaemonLauncher(ClassPathXmlApplicationContext context) {
-        this.context = context;
+    public DaemonLauncher() throws Exception {
+        this.context = new ClassPathXmlApplicationContext("applicationContext.xml");     
     }
 
     @Override
     public void init(DaemonContext dc) throws DaemonInitException, Exception {
+        this.context = new ClassPathXmlApplicationContext("applicationContext.xml");
     }
 
     @Override
     public void start() throws Exception {        
         Properties properties = (Properties) context.getBean("properties");
-        daemon = new ImporterDaemon(properties, null);
-        //daemon.run();
+        daemon = new ImporterDaemon(properties);
+        context.getAutowireCapableBeanFactory().autowireBeanProperties(daemon, AutowireCapableBeanFactory.AUTOWIRE_BY_NAME, true);
         
         sExecutor = Executors.newSingleThreadScheduledExecutor();
         scheduledFuture = sExecutor.scheduleAtFixedRate(
                         daemon, 0, 
-                        Integer.getInteger(properties.getProperty("sleepTime")), 
+                        30, 
                         TimeUnit.MINUTES);
     }
 
