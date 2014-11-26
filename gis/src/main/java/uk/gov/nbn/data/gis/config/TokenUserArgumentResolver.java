@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MediaType;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
@@ -59,6 +61,16 @@ public class TokenUserArgumentResolver implements HandlerMethodArgumentResolver,
             return toAddTo
                 .queryParam(USERNAME_KEY, request.getParameter(USERNAME_KEY))
                 .queryParam(MD5_PASSWORD_HASH_KEY, request.getParameter(MD5_PASSWORD_HASH_KEY));
+        }
+        String authorization = request.getHeader("Authorization");
+        if(authorization != null && authorization.startsWith("Basic")) {
+            // Authorization: Basic base64credentials
+            String base64Credentials = authorization.substring("Basic".length()).trim();
+            String credentials = new String(Base64.decodeBase64(base64Credentials));
+            String[] values = credentials.split(":",2);
+            return toAddTo
+                    .queryParam(USERNAME_KEY, values[0])
+                    .queryParam(MD5_PASSWORD_HASH_KEY, DigestUtils.md5Hex(values[1]));
         }
         return toAddTo;    
     }
