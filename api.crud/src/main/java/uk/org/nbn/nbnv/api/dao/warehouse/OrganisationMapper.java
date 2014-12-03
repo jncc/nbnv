@@ -6,6 +6,7 @@ package uk.org.nbn.nbnv.api.dao.warehouse;
 
 import java.io.ByteArrayInputStream;
 import java.util.List;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import uk.org.nbn.nbnv.api.model.Organisation;
 
@@ -26,6 +27,9 @@ public interface OrganisationMapper {
     
     @Select(SELECT_ALL + " WHERE id = #{id}")
     Organisation selectByID(int id);
+    
+    @Select("SELECT org.* FROM OrganisationData org WHERE name LIKE #{term} OR abbreviation LIKE #{term}")
+    List<Organisation> searchForOrganisation(@Param("term") String term);        
     
     @Select(SELECT_ALL + " WHERE ((SELECT COUNT(*) FROM DatasetData dd WHERE organisationID = id) > 0)")
     List<Organisation> selectAllContributing();

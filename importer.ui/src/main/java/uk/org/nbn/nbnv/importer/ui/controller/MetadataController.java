@@ -40,6 +40,7 @@ import uk.org.nbn.nbnv.jpa.nbncore.User;
 import uk.org.nbn.nbnv.importer.s1.utils.metadata.harvester.MetadataHarvester;
 import uk.org.nbn.nbnv.importer.s1.utils.model.Metadata;
 import uk.org.nbn.nbnv.importer.s1.utils.model.MetadataForm;
+import uk.org.nbn.nbnv.importer.s1.utils.tools.TextTools;
 import uk.org.nbn.nbnv.importer.s1.utils.validators.MetadataFormValidator;
 import uk.org.nbn.nbnv.importer.s1.utils.validators.MetadataValidator;
 import uk.org.nbn.nbnv.importer.s1.utils.wordImporter.WordImporter;
@@ -138,10 +139,9 @@ public class MetadataController {
         
         try {                      
             MetadataHarvester harvester = new MetadataHarvester();
-            messages = harvester.harvest(uploadItem.getFileData(), 
+            messages = harvester.harvest(uploadItem.getFileData().getInputStream(), 
                     metadataForm.getMetadata().getDatasetID());
-            metadataForm.setMetadata(harvester.getMetadata());
-            metadataForm = cleanMetadataTextInputs(metadataForm);
+            metadataForm.setMetadata(TextTools.cleanMetadataTextInputs(harvester.getMetadata()));
             Map<String, String> mappings = harvester.getMappings();
             WordImporter importer = harvester.getImporter();
             
@@ -155,18 +155,18 @@ public class MetadataController {
 
                 if (metadataForm.getMetadata().getOrganisationID() == -1) {
                     organisation = new Organisation();
-                    organisation.setAbbreviation(normalizeAndTrim(mappings.get(importer.ORG_ABBREVIATION)));
-                    organisation.setAddress(mappings.get(normalizeAndTrim(importer.ORG_ADDRESS)));
+                    organisation.setAbbreviation(TextTools.normalizeAndTrim(mappings.get(importer.ORG_ABBREVIATION)));
+                    organisation.setAddress(mappings.get(TextTools.normalizeAndTrim(importer.ORG_ADDRESS)));
                     organisation.setAllowPublicRegistration(false);
-                    organisation.setContactEmail(normalizeAndTrim(mappings.get(importer.ORG_EMAIL)));
-                    organisation.setContactName(normalizeAndTrim(mappings.get(importer.ORG_CONTACT_NAME)));
+                    organisation.setContactEmail(TextTools.normalizeAndTrim(mappings.get(importer.ORG_EMAIL)));
+                    organisation.setContactName(TextTools.normalizeAndTrim(mappings.get(importer.ORG_CONTACT_NAME)));
                     //organisation.setLogo(mappings.get(importer.ORG_LOGO)); // Need to figure out how to import logos
                     //organisation.setLogoSmall(mappings.get(importer.ORG_LOGO)); // Need to figure out how to import logos
-                    organisation.setName(normalizeAndTrim(mappings.get(importer.ORG_NAME)));
-                    organisation.setPhone(normalizeAndTrim(mappings.get(importer.ORG_PHONE)));
-                    organisation.setPostcode(normalizeAndTrim(mappings.get(importer.ORG_POSTCODE)));
-                    organisation.setSummary(normalizeAndTrim(mappings.get(importer.ORG_DESC)));
-                    organisation.setWebsite(normalizeAndTrim(mappings.get(importer.ORG_WEBSITE)));
+                    organisation.setName(TextTools.normalizeAndTrim(mappings.get(importer.ORG_NAME)));
+                    organisation.setPhone(TextTools.normalizeAndTrim(mappings.get(importer.ORG_PHONE)));
+                    organisation.setPostcode(TextTools.normalizeAndTrim(mappings.get(importer.ORG_POSTCODE)));
+                    organisation.setSummary(TextTools.normalizeAndTrim(mappings.get(importer.ORG_DESC)));
+                    organisation.setWebsite(TextTools.normalizeAndTrim(mappings.get(importer.ORG_WEBSITE)));
                     
                     metadataForm.setStoredOrg(true);
                     messages.add("Found an unknown organisation with the name " + organisation.getName() + ", please click Import Organisation to import this as a new Organisation or select the correct Organisation from the drop down list");
@@ -219,8 +219,7 @@ public class MetadataController {
     @RequestMapping(value="/metadataProcess.html", method = RequestMethod.POST, params="submit")
     public ModelAndView uploadFile(@ModelAttribute("org") Organisation organisation, @ModelAttribute("metadataForm") @Valid MetadataForm metadataForm, BindingResult result, @RequestParam("organisationID") String organisationID) {
 
-        metadataForm = cleanMetadataTextInputs(metadataForm);
-        
+        metadataForm.setMetadata(TextTools.cleanMetadataTextInputs(metadataForm.getMetadata()));
         metadataForm.getMetadata().setOrganisationID(Integer.parseInt(organisationID));
         
         if (metadataForm.getMetadata().getOrganisationID() == -404) {
@@ -332,30 +331,5 @@ public class MetadataController {
             }
         }
         return null;
-    }
-    
-    private MetadataForm cleanMetadataTextInputs(MetadataForm metadataForm) {
-        
-        Metadata metadata = metadataForm.getMetadata();
-        
-        metadata.setAccess(normalizeAndTrim(metadata.getAccess()));
-        metadata.setDatasetAdminEmail(normalizeAndTrim(metadata.getDatasetAdminEmail()));
-        metadata.setDatasetAdminName(normalizeAndTrim(metadata.getDatasetAdminName()));
-        metadata.setDatasetAdminPhone(normalizeAndTrim(metadata.getDatasetAdminPhone()));
-        metadata.setDescription(normalizeAndTrim(metadata.getDescription()));
-        metadata.setGeographic(normalizeAndTrim(metadata.getGeographic()));
-        metadata.setInfo(normalizeAndTrim(metadata.getInfo().trim()));
-        metadata.setMethods(normalizeAndTrim(metadata.getMethods()));
-        metadata.setPurpose(normalizeAndTrim(metadata.getPurpose()));
-        metadata.setQuality(normalizeAndTrim(metadata.getQuality()));
-        metadata.setTemporal(normalizeAndTrim(metadata.getTemporal()));
-        metadata.setUse(normalizeAndTrim(metadata.getUse()));
-        //metadata.setUse(Normalizer.normalize(metadata.getUse(), Normalizer.Form.NFD).replaceAll("âââââ", "").replaceAll("     ", "").trim()); 
-       
-        return metadataForm;
-    }
-    
-    private String normalizeAndTrim(String input) {
-        return Normalizer.normalize(input.trim(), Normalizer.Form.NFKD).replaceAll("âââââ", "").replaceAll("     ", "");
     }
 }

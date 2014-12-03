@@ -80,12 +80,19 @@
         });
     }
 
-    function fileUploaded(event, data) {
+    function fileUploaded(event, data) {      
         var form = $('#headersForm');
         var keys = Object.keys(headings);
 
+        var table = $('<table>').append(
+                $('<tr>').append($('<th>').text('Column'))
+                    .append($('<th>').text('Column Header'))
+                    .append($('<th>').text('Darwin Core Value')));
+
         $.each(data.mappings, function(index, value) {
-            form.append(value['columnNumber'] + ' - ' + value['columnLabel']);
+            var row = $('<tr>');
+            row.append($('<td>').append(value['columnNumber']));
+            row.append($('<td>').append(value['columnLabel']));
             var list = $('<select>').attr('name', value['columnNumber']);
 
             $.each(keys, function(ind, val) {
@@ -95,32 +102,156 @@
                 }
                 list.append(option);
             });
-            form.append(list);
-            form.append($('<br />'));
+            row.append($("<td>").append(list));
+            table.append(row);
         });
+        form.append(table);
         form.attr('job', data.jobName);
-        form.append($('<input>').attr('type', 'submit'));
+        
+        var skip = $('<input>').attr('type', 'submit').attr('value', 'Process without metadata');
+        var add = $('<input>').attr('type', 'submit').attr('value', 'Add metadata');
+        
+        skip.on('click', function(event) {
+            event.stopPropagation();
+            event.preventDefault();             
+            
+            $('#stage3-friendlyName').on('submit', pushToQueue);
+            
+            $('#stage2').hide();
+            $('#stage3-skip').show();
+        });
+        add.on('click', function(event) {
+            event.stopPropagation();
+            event.preventDefault();             
+            
+            $('#metadata').on('submit', pushToQueueMetadata);
+            
+            $('#stage2').hide();
+            $('#stage3-metadata').show();
+        });
+        
+        form.append(skip);
+        form.append(add);
+        
+        $('#stage1').hide();
+        $('#stage2').show();        
     }
-
-    function pushToQueue(event) {
+    
+    function uploadMetadataFile(event) {
         event.stopPropagation(); // Stop stuff happening
         event.preventDefault(); // Totally stop stuff happening
-        
-        var map = {
-            
-        };
 
+        // START A LOADING SPINNER HERE
+
+        // Create a formdata object and add the files
+        var data = new FormData();
+        $.each(files, function(key, value)
+        {
+            data.append('file', value);
+        });
+
+        $.ajax({
+            url: '/api/validator/' + $('#headersForm').attr('job') + '/processMetadata',
+            type: 'POST',
+            data: data,
+            cache: false,
+            dataType: 'json',
+            processData: false, // Don't process the files
+            contentType: false, // Set content type to false as jQuery will tell the server its a query string request
+            success: function(data, textStatus, jqXHR)
+            {
+                if (typeof data.error === 'undefined')
+                {
+                    // Success so call function to process the form
+                    $('#title').val(data['title']);
+                    $('#organisationID').val(data['organisationID']);
+                    $('#description').val(data['description']);
+                    $('#methods').val(data['methods']);
+                    $('#purpose').val(data['purpose']);
+                    $('#geographic').val(data['geographic']);
+                    $('#temporal').val(data['temporal']);
+                    $('#quality').val(data['quality']);
+                    $('#info').val(data['info']);
+                    $('#use').val(data['use']);
+                    $('#access').val(data['access']);
+                    $('#datasetAdminName').val(data['datasetAdminName']);
+                    $('#datasetAdminPhone').val(data['datasetAdminPhone']);
+                    $('#datasetAdminEmail').val(data['datasetAdminEmail']);
+                    $('#geographicalRes').val(data['geographicalRes']);
+                    $('#recordAtts').val(data['recordAtts']);
+                    $('#recorderNames').val(data['recorderNames']);
+                    
+                    //datasetID
+                    //datasetAdminID
+                    //messages
+                }
+                else
+                {
+                    // Handle errors here
+                    console.log('ERRORS: ' + data.error);
+                }
+            },
+            error: function(jqXHR, textStatus, errorThrown)
+            {
+                // Handle errors here
+                console.log('ERRORS: ' + textStatus);
+                // STOP LOADING SPINNER
+            }
+        });        
+    }
+    
+    function pushToQueueMetadata(event) {
+        event.stopPropagation();
+        event.preventDefault();         
+        
+        var x = JSON.stringify($('#metadata').serializeObject());
+        
         $.ajax({
             url: '/api/validator/' + $('#headersForm').attr('job') + '/process',
             type: 'POST',
-            data: {mappings: JSON.stringify($('#headersForm').serializeObject())},
+            data: {mappings: JSON.stringify($('#headersForm').serializeObject()), metadata: JSON.stringify($('#metadata').serializeObject())},
             cache: false,
             success: function(data, textStatus, jqXHR)
             {
                 if (typeof data.error === 'undefined')
                 {
                     // Success so call function to process the form
-                    fileUploaded(event, data);
+                    $('#stage3-metadata').hide();
+                    $('#stage4').show();
+                }
+                else
+                {
+                    // Handle errors here
+                    console.log('ERRORS: ' + data.error);
+                }
+            },
+            error: function(jqXHR, textStatus, errorThrown)
+            {
+                // Handle errors here
+                console.log('ERRORS: ' + textStatus);
+                // STOP LOADING SPINNER
+            }
+        });        
+    }
+
+    function pushToQueue(event) {
+        event.stopPropagation();
+        event.preventDefault(); 
+
+        var friendly = $('#friendlyName').val();
+
+        $.ajax({
+            url: '/api/validator/' + $('#headersForm').attr('job') + '/process',
+            type: 'POST',
+            data: {mappings: JSON.stringify($('#headersForm').serializeObject()), friendlyName: friendly},
+            cache: false,
+            success: function(data, textStatus, jqXHR)
+            {
+                if (typeof data.error === 'undefined')
+                {
+                    // Success so call function to process the form
+                    $('#stage3-skip').hide();
+                    $('#stage4').show();
                 }
                 else
                 {
@@ -157,6 +288,6 @@
     $(document).ready(function() {
         $('input[type=file]').on('change', prepareUpload);
         $('#fileUpload').on('submit', uploadFiles);
-        $('#headersForm').on('submit', pushToQueue);
+        $('#metadataUpload').on('submit', uploadMetadataFile);
     });
 })(jQuery);

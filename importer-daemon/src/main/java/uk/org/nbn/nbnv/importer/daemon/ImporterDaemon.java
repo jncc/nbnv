@@ -156,6 +156,13 @@ public class ImporterDaemon implements Runnable {
         }
     }
 
+    /**
+     * Send an email to the user saying that we have successfully completed the
+     * validation of this dataset, attaches the log file to the email
+     * 
+     * @param jobFolder The path of the folder containing the job
+     * @param logDir The log directory containing the log files for this job
+     */
     private void sendValidationCompleteEmail(String jobFolder, File logDir) {
         try {
             File info = new File(jobFolder + "info.out");

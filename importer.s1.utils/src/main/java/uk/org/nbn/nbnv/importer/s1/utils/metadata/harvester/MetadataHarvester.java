@@ -5,6 +5,7 @@
 package uk.org.nbn.nbnv.importer.s1.utils.metadata.harvester;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -36,10 +37,10 @@ public class MetadataHarvester {
     private Metadata metadata;
     private WordImporter importer;
 
-    public List<String> harvest(CommonsMultipartFile input, String datasetID) throws IOException, POIImportError {
+    public List<String> harvest(InputStream input, String datasetID) throws IOException, POIImportError {
         List<String> messages = new ArrayList<String>();
 
-        HWPFDocument doc = new HWPFDocument(input.getInputStream());
+        HWPFDocument doc = new HWPFDocument(input);
         WordExtractor ext = new WordExtractor(doc);
         String[] strs = ext.getParagraphText();
 
