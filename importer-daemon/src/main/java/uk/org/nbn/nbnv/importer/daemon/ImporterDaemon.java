@@ -23,6 +23,7 @@ import org.apache.commons.compress.archivers.ArchiveStreamFactory;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.compress.utils.IOUtils;
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.FileAppender;
 import org.apache.log4j.Level;
@@ -51,6 +52,7 @@ public class ImporterDaemon implements Runnable {
 
     private Metadata defaultMetadata;
     private Organisation defaultOrganisation;
+    private int defaultOrganisationID;
     private final String validatorQueue;
     private final Logger log = Logger.getLogger(ImporterDaemon.class);
         
@@ -58,6 +60,7 @@ public class ImporterDaemon implements Runnable {
     @Autowired private Properties properties;
 
     public ImporterDaemon(Properties properties) {
+        this.defaultOrganisationID = Integer.parseInt(properties.getProperty("defaultOrganisationID"));
         this.validatorQueue = properties.getProperty("outputRoot") + File.separator + "queue" + File.separator;
         // Setup Database connection
         DatabaseConnection.getInstance(properties);         
@@ -169,22 +172,11 @@ public class ImporterDaemon implements Runnable {
             Map<String, Object> map = readJSONFile(info);
 
             File zip = new File(jobFolder + "output.zip");
-
-            ZipArchiveOutputStream zipOut = new ZipArchiveOutputStream(zip);
-            ArchiveOutputStream logical_zip = new ArchiveStreamFactory().createArchiveOutputStream(ArchiveStreamFactory.ZIP, zipOut);
-
-            for (File file : logDir.listFiles()) {
-                logical_zip.putArchiveEntry(new ZipArchiveEntry(file.getName()));
-
-                FileInputStream input = new FileInputStream(file);
-                IOUtils.copy(input, logical_zip);
-
-                logical_zip.closeArchiveEntry();
-                input.close();
-            }
-            logical_zip.finish();
-            zipOut.close();
-
+            
+            ArchiveWriter archiveWriter = new ArchiveWriter();
+            
+            List<String> errors = archiveWriter.createFolderArchive(logDir, zip);
+            
             map.put("attachment", zip);
 
             mailer.sendMime("validationDone.ftl", (String) map.get("email"), "NBN Dataset Validation has finished", map);
@@ -250,8 +242,9 @@ public class ImporterDaemon implements Runnable {
         for (File file : folder.listFiles()) {
             if (file.isDirectory()) {
                 deleteDirectory(file);
+            } else {
+                file.delete();
             }
-            file.delete();
         }
         folder.delete();
     }
@@ -271,13 +264,21 @@ public class ImporterDaemon implements Runnable {
     private File s1Transform(String jobFolder, File logDir) throws IOException {
         File upload = new File(jobFolder + "upload.tab");
         File mappings = new File(jobFolder + "mappings.out");
+        File info = new File(jobFolder + "info.out");
 
-        String mappingsIn = new BufferedReader(new FileReader(mappings)).readLine();
-        Map<String, String> map;
+        BufferedReader reader = new BufferedReader(new FileReader(mappings));
+        String mappingsIn = reader.readLine();
+        reader.close();        
+        
         ObjectMapper mapper = new ObjectMapper();
-
-        map = mapper.readValue(mappingsIn, new TypeReference<HashMap<String, String>>() {});
-
+        Map<String, String> map = mapper.readValue(mappingsIn, new TypeReference<HashMap<String, String>>() {});
+        
+        reader = new BufferedReader(new FileReader(info));
+        String infoIn = reader.readLine();
+        reader.close();
+        
+        Map<String, String> infoMap = mapper.readValue(infoIn, new TypeReference<HashMap<String, String>>() {});
+        
         RunConversions rc = new RunConversions(upload, Integer.parseInt(properties.getProperty("defaultOrganisationID")));
 
         File output = new File(jobFolder + "data.tab");
@@ -302,7 +303,23 @@ public class ImporterDaemon implements Runnable {
 
             try {
                 MetadataWriter metadataWriter = new MetadataWriter(metadata);
-                metadataWriter.datasetToEML(getDefaultMetadata(), getDefaultOrganisation(), rc.getStartDate(), rc.getEndDate(), true);
+                
+                if (infoMap.containsKey("metadataIncluded") && Boolean.parseBoolean(infoMap.get("metadataIncluded"))) {
+                    File metadataOut = new File(jobFolder + "metadata.out");
+                    
+                    reader = new BufferedReader(new FileReader(metadataOut));
+                    String metadataIn = reader.readLine();
+                    reader.close();
+
+                    Map<String, String> metadataMap = mapper.readValue(metadataIn, new TypeReference<HashMap<String, String>>() {});
+                    
+                    Metadata metaFromFile = new Metadata(metadataMap);
+                    Organisation orgFromFile = getOrganisation(metaFromFile.getOrganisationID());
+                    
+                    metadataWriter.datasetToEML(metaFromFile, orgFromFile, rc.getStartDate(), rc.getEndDate(), true);
+                } else {
+                    metadataWriter.datasetToEML(getDefaultMetadata(), getOrganisation(defaultOrganisationID), rc.getStartDate(), rc.getEndDate(), true);
+                }
             } catch (Exception ex) {
                 throw new IOException(ex);
             }
@@ -377,6 +394,10 @@ public class ImporterDaemon implements Runnable {
                 properties.getProperty("importer.target"),
                 properties.getProperty("importer.log.level"),
                 logDir.getAbsolutePath(), tmpDir.getAbsolutePath(), log);
+        
+        // Ensure we close the appenders so we can delete the files
+        fa.close();
+        ca.close();
     }
 
     private Metadata getDefaultMetadata() {
@@ -405,14 +426,23 @@ public class ImporterDaemon implements Runnable {
         return defaultMetadata;
     }
 
-    private Organisation getDefaultOrganisation() {
-        if (defaultOrganisation == null) {
-            EntityManager em
-                    = DatabaseConnection.getInstance().createEntityManager();
-            defaultOrganisation = em.find(Organisation.class,
-                    Integer.parseInt(properties.getProperty("defaultOrganisationID")));
-            em.close();
+    private Organisation getOrganisation(int id) {
+        Organisation org;
+        if (id == defaultOrganisationID) {
+            if (defaultOrganisation == null) {
+                defaultOrganisation = getOrganisationFromDatabase(id);
+            }
+            return defaultOrganisation;
+        } else {        
+            return getOrganisationFromDatabase(id);
         }
-        return defaultOrganisation;
+    }
+    
+    private Organisation getOrganisationFromDatabase(int id) {
+        EntityManager em
+                = DatabaseConnection.getInstance().createEntityManager();
+        Organisation org = em.find(Organisation.class, id);
+        em.close();
+        return org;
     }
 }

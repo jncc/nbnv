@@ -119,6 +119,7 @@
             
             $('#stage2').hide();
             $('#stage3-skip').show();
+            moveToStage(3);
         });
         add.on('click', function(event) {
             event.stopPropagation();
@@ -128,13 +129,15 @@
             
             $('#stage2').hide();
             $('#stage3-metadata').show();
+            moveToStage(3);
         });
         
         form.append(skip);
         form.append(add);
         
         $('#stage1').hide();
-        $('#stage2').show();        
+        $('#stage2').show();
+        moveToStage(2);
     }
     
     function uploadMetadataFile(event) {
@@ -218,6 +221,7 @@
                     // Success so call function to process the form
                     $('#stage3-metadata').hide();
                     $('#stage4').show();
+                    moveToStage(4);
                 }
                 else
                 {
@@ -252,6 +256,7 @@
                     // Success so call function to process the form
                     $('#stage3-skip').hide();
                     $('#stage4').show();
+                    moveToStage(4);
                 }
                 else
                 {
@@ -284,6 +289,11 @@
         });
         return o;
     };
+    
+    function moveToStage(stage) {
+        $('.stageCounter').css('color','lightgrey');
+        $('#stageCount' + stage).css('color', 'black');
+    }
     
     $(document).ready(function() {
         $('input[type=file]').on('change', prepareUpload);

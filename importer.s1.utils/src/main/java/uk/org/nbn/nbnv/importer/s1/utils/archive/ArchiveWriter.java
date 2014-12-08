@@ -42,6 +42,31 @@ public class ArchiveWriter {
         return errors;
     }
     
+    public List<String> createFolderArchive(File folder, File archive) throws IOException {
+        if (!folder.isDirectory()) {
+            throw new IOException("Supplied folder (" + folder.getPath() + ") is not a folder");
+        }
+        List<String> errors = new ArrayList<String>();
+        ZipOutputStream zout = null;
+        
+        try {
+            zout = new ZipOutputStream(new FileOutputStream(archive));
+            zout.setLevel(Deflater.DEFAULT_COMPRESSION);
+            
+            for (File file : folder.listFiles()) {
+                addFile(zout, file.getName(), file);
+            }
+        } catch (IOException ex) {
+            errors.add(ex.getMessage());
+        } finally {
+            if (zout != null) {
+                zout.close();
+            }
+        }
+        
+        return errors;
+    }
+    
     private void addFile(ZipOutputStream zout, String filename, File file) throws IOException {
         byte[] buf = new byte[1024];
         

@@ -139,6 +139,7 @@ public class RunConversions {
             if (w != null) {
                 w.close();
             }
+            nxfParser.closeFile();
         }
         
         Map<String, List<String>> results = new HashMap<String, List<String>>();

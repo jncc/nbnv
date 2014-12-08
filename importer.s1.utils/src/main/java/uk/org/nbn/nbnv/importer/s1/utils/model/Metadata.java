@@ -5,6 +5,8 @@
 package uk.org.nbn.nbnv.importer.s1.utils.model;
 
 import java.io.Serializable;
+import java.util.Map;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -31,6 +33,46 @@ public class Metadata implements Serializable {
     private int datasetAdminID = -1;    
     private String datasetID = "";
 
+    public Metadata() {
+        
+    }
+    
+    public Metadata(Map<String, String> map) {
+        this.title = getStringFromMap("title", map);
+        this.description = getStringFromMap("description", map);
+        this.methods = getStringFromMap("methods", map);
+        this.purpose = getStringFromMap("purpose", map);
+        this.geographic = getStringFromMap("geographic", map);
+        this.temporal = getStringFromMap("temporal", map);
+        this.quality = getStringFromMap("quality", map);
+        this.info = getStringFromMap("info", map);
+        this.use = getStringFromMap("use", map);
+        this.access = getStringFromMap("access", map);
+        this.organisationID = getIntFromMap("organisationID", map);
+        this.datasetAdminName = getStringFromMap("datasetAdminName", map);
+        this.datasetAdminPhone = getStringFromMap("datasetAdminPhone", map);
+        this.datasetAdminEmail = getStringFromMap("datasetAdminEmail", map);
+        this.geographicalRes = getStringFromMap("geographicalRes", map);
+        this.recordAtts = getStringFromMap("recordAtts", map);
+        this.recorderNames = getStringFromMap("recorderNames", map);
+        this.datasetAdminID = getIntFromMap("datasetAdminID", map);
+        this.datasetID = getStringFromMap("datasetID", map);        
+    }
+    
+    private String getStringFromMap(String key, Map<String, String> map) {
+        if (map.containsKey(key) && !StringUtils.isBlank(map.get(key))) {
+            return map.get(key);
+        }
+        return "";
+    }
+    
+    private int getIntFromMap(String key, Map<String, String> map) {
+        if (map.containsKey(key) && !StringUtils.isBlank(map.get(key))) {
+            return Integer.parseInt(map.get(key));
+        }
+        return -1;
+    }
+    
     public String getTitle() {
         return title;
     }

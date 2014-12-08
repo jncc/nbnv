@@ -5,14 +5,14 @@
     <#assign organisations=json.readURL("${api}/organisations")>
 
     <div id="stage1">
-    <form id="fileUpload">
-        <fieldset>
-            <legend>Upload Data File</legend>
-            <p>Please select the data file that you want to validate, this file must be in the NBN Exchange Format</p>
-            <p>Data File: <input type="file" name="file"></p>
-            <input type="submit" value="Upload File" />
-        </fieldset>
-    </form>
+        <form id="fileUpload">
+            <fieldset>
+                <legend>Upload Data File</legend>
+                <p>Please select the data file that you want to validate, this file must be in the NBN Exchange Format</p>
+                <p>Data File: <input type="file" name="file"></p>
+                <input type="submit" value="Upload File" />
+            </fieldset>
+        </form>
     </div>
         
     <div id="stage2" style="display:none;">
@@ -150,5 +150,14 @@
 
     <div id="stage4" style="display:none;">
         <p>Successfully submitted to queue, you will receive an email when this process is completed</p>
+    </div>
+
+    <div id="stageCounter" style="">
+        <div style="margin: 0 auto; text-align:center">
+            <span id="stageCount1" class="stageCounter" style="padding: 10px; color: black;">1</span>
+            <span id="stageCount2" class="stageCounter" style="padding: 10px; color: lightgrey;">2</span>
+            <span id="stageCount3" class="stageCounter" style="padding: 10px; color: lightgrey;">3</span>
+            <span id="stageCount4" class="stageCounter" style="padding: 10px; color: lightgrey;">4</span>
+        </div>
     </div>
 </@template.master>
