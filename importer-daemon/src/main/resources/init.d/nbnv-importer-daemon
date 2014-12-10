@@ -1,0 +1,74 @@
+#! /bin/sh
+
+### BEGIN INIT INFO
+# Provides:          nbnv_importer_daemon
+# Required-Start:    $local_fs $remote_fs
+# Required-Stop:
+# Default-Start:     2 3 4 5
+# Default-Stop:
+# Short-Description: Validate datasets supplied in a given folder (defined by properties file in /nbnv-settings/
+# Description: Validate datasets supplied in a given folder (defined by properties file in /nbnv-settings/
+### END INIT INFO
+
+. /lib/lsb/init-functions
+
+JAVA_PATH=/usr/bin/java
+APP_PATH=/home/tomcat7/validator/app/importer-daemon.jar
+N=/etc/init.d/nbnv-importer-daemon
+PIDFILE=/var/run/nbnv-importer-deamon.pid
+
+set -e
+
+case "$1" in
+  start)
+	if [ -f $APP_PATH ]
+	then
+		if [ -f $PIDFILE ]
+		then
+			echo "NBNV Importer Daemon is already running"
+		else 
+			echo "Starting NBNV Importer Daemon service"
+			$JAVA_PATH -jar $APP_PATH > /dev/null 2>&1 & 
+			echo $! > $PIDFILE
+			echo "Started NBNV Importer Daemon service"
+		fi
+        fi
+	;;
+  stop)
+	echo Stopping NBNV Importer Daemon service
+	if [ -f $PIDFILE ]
+	then	
+		start-stop-daemon --stop --pidfile "$PIDFILE" \
+        	                PID="`cat $PIDFILE`"
+		rm -rf $PIDFILE
+		echo "Stopped NBNV Importer Daemon service"
+	else 
+		echo "NBNV Importer Daemon service is not running"
+	fi
+	;;
+  reload|restart|force-reload)
+	$0 stop
+	$0 start
+	;;
+  status)
+	if [ -f $PIDFILE ]
+	then
+		if ps -p `cat $PIDFILE` > /dev/null 2&1
+		then
+			echo "NBNV Importer Daemon service is running"
+		else 
+			echo "NBNV Importer Daemon service has a PID file but is not running, cleaning up ..."
+			rm -rf $PIDFILE
+			echo "Cleand up PID File"
+		fi
+	else
+		echo "NBNV Importer Daemon service is not running"
+	fi
+	;;
+  *)
+	echo "Usage: $N {start|stop|restart|force-reload|status}" >&2
+	exit 1
+	;;
+esac
+
+exit 0

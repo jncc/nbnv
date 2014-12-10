@@ -4,9 +4,9 @@
  */
 package uk.org.nbn.nbnv.importer.daemon.mail;
 
-import freemarker.cache.TemplateLoader;
 import freemarker.template.Configuration;
 import freemarker.template.TemplateException;
+import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Properties;
@@ -48,23 +48,25 @@ public class TemplateMailer {
             final String to,
             final String subject,
             final Map<String, Object> data) throws IOException, TemplateException, MessagingException {               
-        MimeMessage mm = mailSender.createMimeMessage();
-        MimeMessageHelper message = new MimeMessageHelper(mm);
-        message.setTo(to);
-        message.setFrom(properties.getProperty("email_from"));
-        message.setSubject(subject);
-        message.setText(FreeMarkerTemplateUtils.processTemplateIntoString(
+        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, true);
+        helper.setTo(to);
+        helper.setFrom(properties.getProperty("email_from"));
+        helper.setSubject(subject);
+        
+        helper.setText(FreeMarkerTemplateUtils.processTemplateIntoString(
                 configuration.getTemplate(template), data), true);
         
+        
         if (data.containsKey("attachment")) {
-            FileSystemResource file = new FileSystemResource((String) data.get("attachment"));
-            message.addAttachment("Output.txt", file);
+            FileSystemResource file = new FileSystemResource((File) data.get("attachment"));
+            helper.addAttachment("output.zip", file);
         }
 
         if ("dev".equals(properties.getProperty("email_mode"))) {
             logger.info("Mail Sent -> <" + to + "> Subject: <" + subject + "> Email Template: " + template);
         } else {
-            mailSender.send(mm);
+            mailSender.send(message);
         }
     }
 }

@@ -42,6 +42,8 @@ import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.type.TypeReference;
+import uk.org.nbn.nbnv.api.dao.warehouse.UserMapper;
 import uk.org.nbn.nbnv.api.model.Organisation;
 import uk.org.nbn.nbnv.importer.s1.utils.tools.TextTools;
 
@@ -49,10 +51,11 @@ import uk.org.nbn.nbnv.importer.s1.utils.tools.TextTools;
 @Path("/validator")
 public class OnlineValidatorResource extends AbstractResource {
 
-    private Pattern pattern;
+    private final Pattern pattern;
     private static final String UPLOAD = "upload.tab";
 
     @Autowired OrganisationMapper organisationMapper;
+    @Autowired UserMapper userMapper;
 
     public OnlineValidatorResource() {
         pattern = Pattern.compile("^\\d{8}_\\d{6}_(\\d+)_[A-Za-z0-9]{10}$");
@@ -181,6 +184,10 @@ public class OnlineValidatorResource extends AbstractResource {
         } else {
             messages.add("Could not detect Organisation, please select it from the list below or add manually");
         }
+        
+        if (mappings.containsKey(WordImporter.META_EMAIL) && !StringUtils.isBlank(mappings.get(WordImporter.META_EMAIL))) {
+            metadata.setDatasetAdminID(userMapper.getUserFromEmail(mappings.get(WordImporter.META_EMAIL)).getId());
+        }
 
         Map<String, String> retVal = new HashMap<String, String>();
 
@@ -223,19 +230,26 @@ public class OnlineValidatorResource extends AbstractResource {
                         writer.flush();
                         writer.close();
                         
+                        Map<String, String> metadataMap = new HashMap<String,String>();
+                        
                         if (!StringUtils.isEmpty(metadata)) {
                             File metadataOut = new File(queueDir.getAbsoluteFile() + File.separator + "metadata.out");
                             writer = new PrintWriter(metadataOut);
                             writer.write(metadata);
                             writer.flush();
                             writer.close();
+                            
+                            ObjectMapper mapper = new ObjectMapper();
+                            metadataMap = mapper.readValue(metadata, new TypeReference<HashMap<String, String>>() {});
                         }
 
                         File infoFile = new File(queueDir.getAbsoluteFile() + File.separator + "info.out");
                         writer = new PrintWriter(infoFile);
 
-                        String infoString = "{\"user\":\"" + user.getForename() + "\",\"email\":\"" + user.getEmail() + "\"" +
-                                (!StringUtils.isEmpty(friendlyName) ? ",\"friendlyName\":\"" + friendlyName + "\"" : "") +
+                        String infoString = "{\"id\":\"" + user.getId() + 
+                                "\",\"user\":\"" + user.getForename() + 
+                                "\",\"email\":\"" + user.getEmail() +
+                                "\",\"friendlyName\":\"" + (!StringUtils.isEmpty(friendlyName) ? friendlyName : metadataMap.get("title")) + "\"" +
                                 (!StringUtils.isEmpty(metadata) ? ",\"metadataIncluded\":\"true\"" : "")
                                 + "}";
                         
@@ -258,7 +272,7 @@ public class OnlineValidatorResource extends AbstractResource {
             return Response.status(Response.Status.NOT_FOUND).entity(path + " is not valid").build();
         }
 
-        return null;
+        return Response.ok("{\"success\":\"true\"}").build();
     }
 
     @POST

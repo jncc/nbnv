@@ -83,22 +83,15 @@
 
                 <fieldset>
                     <legend>Dataset Administrator Details</legend>
-                    <p>
-                        <span class="formlabel"><label for="datasetAdminName" >Name</label></span>
-                        <input id="datasetAdminName" name="datasetAdminName" class="wide" length="200" />
-                    </p>
-
-                    <p>
-                        <span class="formlabel"><label for="datasetAdminPhone" >Phone Number</label></span>
-                        <input id="datasetAdminPhone" name="datasetAdminPhone" class="wide" length=200" />
-                    </p>
-
+                    <p>Please enter the email address of the dataset administrator, they must have an account on the NBN Gatway already</p>
                     <p>
                         <span class="formlabel"><label for="datasetAdminEmail" >E-mail Address</label></span>
                         <input id="datasetAdminEmail" name="datasetAdminEmail" class="wide" length="200" />
                     </p>
 
-                    <input type="hidden" id="datasetAdminID" name="datasetAdminID" "length=100"/>
+                    <input type="hidden" id="datasetAdminName" name="datasetAdminName" class="wide" length="200" />
+                    <input type="hidden" id="datasetAdminPhone" name="datasetAdminPhone" />
+                    <input type="hidden" id="datasetAdminID" name="datasetAdminID" />
                 </fieldset>
 
                 <fieldset>

@@ -78,6 +78,7 @@ public class ArchiveWriter {
             zout.write(buf, 0, len);
         }
         
+        in.close();
         zout.closeEntry();
 
     }

@@ -2,7 +2,6 @@ package uk.org.nbn.nbnv.importer.daemon;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -18,12 +17,6 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.persistence.EntityManager;
-import org.apache.commons.compress.archivers.ArchiveOutputStream;
-import org.apache.commons.compress.archivers.ArchiveStreamFactory;
-import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
-import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
-import org.apache.commons.compress.utils.IOUtils;
-import org.apache.commons.io.FileUtils;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.FileAppender;
 import org.apache.log4j.Level;
@@ -52,7 +45,7 @@ public class ImporterDaemon implements Runnable {
 
     private Metadata defaultMetadata;
     private Organisation defaultOrganisation;
-    private int defaultOrganisationID;
+    private final int defaultOrganisationID;
     private final String validatorQueue;
     private final Logger log = Logger.getLogger(ImporterDaemon.class);
         
@@ -65,14 +58,6 @@ public class ImporterDaemon implements Runnable {
         // Setup Database connection
         DatabaseConnection.getInstance(properties);         
     }    
-    
-//    public ImporterDaemon(Properties properties, TemplateMailer mailer) {
-//        this.properties = properties;
-//        this.validatorQueue = properties.getProperty("outputRoot") + File.separator + "queue" + File.separator;
-//        // Setup Database connection
-//        DatabaseConnection.getInstance(properties);
-//        this.mailer = mailer;
-//    }
 
     /**
      * Start the thread by checking for new input, should be run by a scheduled
@@ -177,11 +162,13 @@ public class ImporterDaemon implements Runnable {
             
             List<String> errors = archiveWriter.createFolderArchive(logDir, zip);
             
+            map.put("datasetName", map.get("friendlyName"));
+            
             map.put("attachment", zip);
 
-            mailer.sendMime("validationDone.ftl", (String) map.get("email"), "NBN Dataset Validation has finished", map);
+            mailer.sendMime("importerSuccess.ftl", (String) map.get("email"), "NBN Dataset Validation has finished", map);
         } catch (Exception ex) {
-            
+            ex.printStackTrace();
         }
     }
 
@@ -318,7 +305,7 @@ public class ImporterDaemon implements Runnable {
                     
                     metadataWriter.datasetToEML(metaFromFile, orgFromFile, rc.getStartDate(), rc.getEndDate(), true);
                 } else {
-                    metadataWriter.datasetToEML(getDefaultMetadata(), getOrganisation(defaultOrganisationID), rc.getStartDate(), rc.getEndDate(), true);
+                    metadataWriter.datasetToEML(getDefaultMetadata(infoMap.get("id")), getOrganisation(defaultOrganisationID), rc.getStartDate(), rc.getEndDate(), true);
                 }
             } catch (Exception ex) {
                 throw new IOException(ex);
@@ -400,12 +387,11 @@ public class ImporterDaemon implements Runnable {
         ca.close();
     }
 
-    private Metadata getDefaultMetadata() {
+    private Metadata getDefaultMetadata(String userID) {
         if (defaultMetadata == null) {
             defaultMetadata = new Metadata();
             defaultMetadata.setAccess("TEST");
             defaultMetadata.setDatasetAdminEmail("noreply@nbn.org.uk");
-            defaultMetadata.setDatasetAdminID(Integer.parseInt(properties.getProperty("defaultUserID")));
             defaultMetadata.setDatasetAdminName("NBN SysAdmin");
             defaultMetadata.setDatasetAdminPhone("Nope");
             defaultMetadata.setDatasetID("");
@@ -423,6 +409,7 @@ public class ImporterDaemon implements Runnable {
             defaultMetadata.setTitle("TEST");
             defaultMetadata.setUse("TEST");
         }
+        defaultMetadata.setDatasetAdminID(Integer.parseInt(userID));
         return defaultMetadata;
     }
 

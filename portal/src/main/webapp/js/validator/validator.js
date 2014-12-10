@@ -1,4 +1,4 @@
-(function($) {
+(function ($) {
 
     // Variable to store your files
     var files;
@@ -45,7 +45,7 @@
 
         // Create a formdata object and add the files
         var data = new FormData();
-        $.each(files, function(key, value)
+        $.each(files, function (key, value)
         {
             data.append('file', value);
         });
@@ -58,7 +58,7 @@
             dataType: 'json',
             processData: false, // Don't process the files
             contentType: false, // Set content type to false as jQuery will tell the server its a query string request
-            success: function(data, textStatus, jqXHR)
+            success: function (data, textStatus, jqXHR)
             {
                 if (typeof data.error === 'undefined')
                 {
@@ -71,7 +71,7 @@
                     console.log('ERRORS: ' + data.error);
                 }
             },
-            error: function(jqXHR, textStatus, errorThrown)
+            error: function (jqXHR, textStatus, errorThrown)
             {
                 // Handle errors here
                 console.log('ERRORS: ' + textStatus);
@@ -80,22 +80,22 @@
         });
     }
 
-    function fileUploaded(event, data) {      
+    function fileUploaded(event, data) {
         var form = $('#headersForm');
         var keys = Object.keys(headings);
 
         var table = $('<table>').append(
                 $('<tr>').append($('<th>').text('Column'))
-                    .append($('<th>').text('Column Header'))
-                    .append($('<th>').text('Darwin Core Value')));
+                .append($('<th>').text('Column Header'))
+                .append($('<th>').text('Darwin Core Value')));
 
-        $.each(data.mappings, function(index, value) {
+        $.each(data.mappings, function (index, value) {
             var row = $('<tr>');
             row.append($('<td>').append(value['columnNumber']));
             row.append($('<td>').append(value['columnLabel']));
             var list = $('<select>').attr('name', value['columnNumber']);
 
-            $.each(keys, function(ind, val) {
+            $.each(keys, function (ind, val) {
                 var option = $('<option>').val(val).text(headings[val]);
                 if (value['field'] === val) {
                     option.attr('selected', 'selected');
@@ -107,39 +107,39 @@
         });
         form.append(table);
         form.attr('job', data.jobName);
-        
+
         var skip = $('<input>').attr('type', 'submit').attr('value', 'Process without metadata');
-        var add = $('<input>').attr('type', 'submit').attr('value', 'Add metadata');
-        
-        skip.on('click', function(event) {
+        //var add = $('<input>').attr('type', 'submit').attr('value', 'Add metadata');
+
+        skip.on('click', function (event) {
             event.stopPropagation();
-            event.preventDefault();             
-            
+            event.preventDefault();
+
             $('#stage3-friendlyName').on('submit', pushToQueue);
-            
+
             $('#stage2').hide();
             $('#stage3-skip').show();
             moveToStage(3);
         });
-        add.on('click', function(event) {
-            event.stopPropagation();
-            event.preventDefault();             
-            
-            $('#metadata').on('submit', pushToQueueMetadata);
-            
-            $('#stage2').hide();
-            $('#stage3-metadata').show();
-            moveToStage(3);
-        });
-        
+//        add.on('click', function (event) {
+//            event.stopPropagation();
+//            event.preventDefault();
+//
+//            $('#metadata').on('submit', pushToQueueMetadata);
+//
+//            $('#stage2').hide();
+//            $('#stage3-metadata').show();
+//            moveToStage(3);
+//        });
+
         form.append(skip);
-        form.append(add);
-        
+        //form.append(add);
+
         $('#stage1').hide();
         $('#stage2').show();
         moveToStage(2);
     }
-    
+
     function uploadMetadataFile(event) {
         event.stopPropagation(); // Stop stuff happening
         event.preventDefault(); // Totally stop stuff happening
@@ -148,7 +148,7 @@
 
         // Create a formdata object and add the files
         var data = new FormData();
-        $.each(files, function(key, value)
+        $.each(files, function (key, value)
         {
             data.append('file', value);
         });
@@ -161,7 +161,7 @@
             dataType: 'json',
             processData: false, // Don't process the files
             contentType: false, // Set content type to false as jQuery will tell the server its a query string request
-            success: function(data, textStatus, jqXHR)
+            success: function (data, textStatus, jqXHR)
             {
                 if (typeof data.error === 'undefined')
                 {
@@ -183,7 +183,7 @@
                     $('#geographicalRes').val(data['geographicalRes']);
                     $('#recordAtts').val(data['recordAtts']);
                     $('#recorderNames').val(data['recorderNames']);
-                    
+
                     //datasetID
                     //datasetAdminID
                     //messages
@@ -194,27 +194,27 @@
                     console.log('ERRORS: ' + data.error);
                 }
             },
-            error: function(jqXHR, textStatus, errorThrown)
+            error: function (jqXHR, textStatus, errorThrown)
             {
                 // Handle errors here
                 console.log('ERRORS: ' + textStatus);
                 // STOP LOADING SPINNER
             }
-        });        
+        });
     }
-    
+
     function pushToQueueMetadata(event) {
         event.stopPropagation();
-        event.preventDefault();         
-        
+        event.preventDefault();
+
         var x = JSON.stringify($('#metadata').serializeObject());
-        
+
         $.ajax({
             url: '/api/validator/' + $('#headersForm').attr('job') + '/process',
             type: 'POST',
             data: {mappings: JSON.stringify($('#headersForm').serializeObject()), metadata: JSON.stringify($('#metadata').serializeObject())},
             cache: false,
-            success: function(data, textStatus, jqXHR)
+            success: function (data, textStatus, jqXHR)
             {
                 if (typeof data.error === 'undefined')
                 {
@@ -229,18 +229,18 @@
                     console.log('ERRORS: ' + data.error);
                 }
             },
-            error: function(jqXHR, textStatus, errorThrown)
+            error: function (jqXHR, textStatus, errorThrown)
             {
                 // Handle errors here
                 console.log('ERRORS: ' + textStatus);
                 // STOP LOADING SPINNER
             }
-        });        
+        });
     }
 
     function pushToQueue(event) {
         event.stopPropagation();
-        event.preventDefault(); 
+        event.preventDefault();
 
         var friendly = $('#friendlyName').val();
 
@@ -249,7 +249,7 @@
             type: 'POST',
             data: {mappings: JSON.stringify($('#headersForm').serializeObject()), friendlyName: friendly},
             cache: false,
-            success: function(data, textStatus, jqXHR)
+            success: function (data, textStatus, jqXHR)
             {
                 if (typeof data.error === 'undefined')
                 {
@@ -264,7 +264,7 @@
                     console.log('ERRORS: ' + data.error);
                 }
             },
-            error: function(jqXHR, textStatus, errorThrown)
+            error: function (jqXHR, textStatus, errorThrown)
             {
                 // Handle errors here
                 console.log('ERRORS: ' + textStatus);
@@ -273,11 +273,11 @@
         });
     }
 
-    $.fn.serializeObject = function()
+    $.fn.serializeObject = function ()
     {
         var o = {};
         var a = this.serializeArray();
-        $.each(a, function() {
+        $.each(a, function () {
             if (o[this.name] !== undefined) {
                 if (!o[this.name].push) {
                     o[this.name] = [o[this.name]];
@@ -289,15 +289,42 @@
         });
         return o;
     };
-    
+
     function moveToStage(stage) {
-        $('.stageCounter').css('color','lightgrey');
+        $('.stageCounter').css('color', 'lightgrey');
         $('#stageCount' + stage).css('color', 'black');
     }
+
+    function setupForm() {
+        $('#datasetAdminEmail').autocomplete({
+            source: '/api/user/search',
+            minLength: 3,
+            select: function(event, ui) {
+                //event.preventDefault();
+                $('datasetAdminName').val(ui.item.forename + ' ' + ui.item.surname);
+                $('datasetAdminName').text(ui.item.forename + ' ' + ui.item.surname);
+                $('datasetAdminEmail').val(ui.item.email);
+                $('datasetAdminEmail').text(ui.item.email);
+                $('datasetAdminID').val(ui.item.id);                
+            }
+        })
+        .data('autocomplete')._renderItem = function(ul, item) {
+            var re = new RegExp(this.term, 'i');
+            return $('<li></li>')
+                    .data('item.autocomplete', item)
+                    .append('<a><strong style="font-size: small;">' + replaceTerm(item.forename + ' ' + item.surname, re) + '</strong><br><span style="font-size: smaller;">' + replaceTerm(item.email, re) + '</span></a>')
+                    .appendTo(ul);
+        };        
+    }
     
-    $(document).ready(function() {
+    function replaceTerm(input, re) {
+        return input.replace(re, '<span style="font-weight:bold;">' + '$&' + '</span>');
+    }    
+
+    $(document).ready(function () {
         $('input[type=file]').on('change', prepareUpload);
         $('#fileUpload').on('submit', uploadFiles);
         $('#metadataUpload').on('submit', uploadMetadataFile);
+        setupForm();
     });
 })(jQuery);

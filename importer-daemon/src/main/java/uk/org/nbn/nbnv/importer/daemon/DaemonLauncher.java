@@ -8,10 +8,8 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.daemon.Daemon;
 import org.apache.commons.daemon.DaemonContext;
 import org.apache.commons.daemon.DaemonInitException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import uk.org.nbn.nbnv.importer.daemon.mail.TemplateMailer;
 
 /**
  * Hello world!
