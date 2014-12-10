@@ -54,7 +54,9 @@ public class ArchiveWriter {
             zout.setLevel(Deflater.DEFAULT_COMPRESSION);
             
             for (File file : folder.listFiles()) {
-                addFile(zout, file.getName(), file);
+                if (file.length() > 0) {
+                    addFile(zout, file.getName(), file);
+                }
             }
         } catch (IOException ex) {
             errors.add(ex.getMessage());

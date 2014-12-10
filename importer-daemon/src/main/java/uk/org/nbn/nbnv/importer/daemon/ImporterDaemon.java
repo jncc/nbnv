@@ -158,6 +158,18 @@ public class ImporterDaemon implements Runnable {
 
             File zip = new File(jobFolder + "output.zip");
             
+            boolean hasLoggedOutput = false;
+            
+            for (File file : logDir.listFiles()) {
+                if (file.getName().endsWith(".log")) {
+                    BufferedReader br = new BufferedReader(new FileReader(file));     
+                    if (br.readLine() != null) {
+                        hasLoggedOutput = true;
+                    }
+                    br.close();
+                }
+            }
+            
             ArchiveWriter archiveWriter = new ArchiveWriter();
             
             List<String> errors = archiveWriter.createFolderArchive(logDir, zip);
@@ -166,7 +178,11 @@ public class ImporterDaemon implements Runnable {
             
             map.put("attachment", zip);
 
-            mailer.sendMime("importerSuccess.ftl", (String) map.get("email"), "NBN Dataset Validation has finished", map);
+            if (hasLoggedOutput) {
+                mailer.sendMime("importerCompletedWithErrors.ftl", (String) map.get("email"), "NBN Dataset Validation has finished with errors", map);
+            } else {
+                mailer.sendMime("importerSuccess.ftl", (String) map.get("email"), "NBN Dataset Validation has finished", map);
+            }
         } catch (Exception ex) {
             ex.printStackTrace();
         }
