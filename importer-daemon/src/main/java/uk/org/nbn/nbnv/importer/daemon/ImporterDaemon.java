@@ -20,6 +20,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.mail.MessagingException;
 import javax.persistence.EntityManager;
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.FileAppender;
 import org.apache.log4j.Level;
@@ -46,15 +47,24 @@ import uk.org.nbn.nbnv.jpa.nbncore.User;
  */
 public class ImporterDaemon implements Runnable {
 
-    private Metadata defaultMetadata;
-    private Organisation defaultOrganisation;
+    @Autowired private Properties properties;
+    
     private final int defaultOrganisationID;
     private final String validatorQueue;
+    private final TemplateMailer mailer;
+    
+    private Metadata defaultMetadata;
+    private Organisation defaultOrganisation;
+    
     private final Logger log = Logger.getLogger(ImporterDaemon.class);
-        
-    private TemplateMailer mailer;
-    @Autowired private Properties properties;
-
+    
+    /**
+     * Basic constructor pass in properties file with configuration options from
+     * DaemonLauncher class
+     * 
+     * @param properties Configuration properties from an external properties file
+     * @throws IOException 
+     */
     public ImporterDaemon(Properties properties) throws IOException {
         this.defaultOrganisationID = Integer.parseInt(properties.getProperty("defaultOrganisationID"));
         this.validatorQueue = properties.getProperty("outputRoot") + File.separator + "queue" + File.separator;
@@ -79,12 +89,14 @@ public class ImporterDaemon implements Runnable {
      * list then check again to see if any new input has appeared on the queue
      * when nothing is left the thread will go to sleep for the period specified
      * in the properties file
-     *
-     * @return Only returns false when there is no more input left to return
      */
     private void checkForInput() {
+        // Grab any waiting input and make sure the list is sorted 
+        // alphabetically to ensure we keep the correct ordering        
         File[] jobList = new File(validatorQueue).listFiles();
         Arrays.sort(jobList);
+        
+        // If we have a waiting job then process the list
         if (jobList != null && jobList.length > 0) {
             for (File job : jobList) {
                 // Get full path of job
@@ -112,48 +124,54 @@ public class ImporterDaemon implements Runnable {
      * @param jobName The path to the folder containing the job
      */
     private void readInput(String jobFolder) throws MissingFileException {
-        File upload = new File(jobFolder + "upload.tab");
-        File mappings = new File(jobFolder + "mappings.out");
-        File info = new File(jobFolder + "info.out");
+        File touched = new File(jobFolder + "TOUCHED");
 
-        if (!upload.exists()) {
-            throw new MissingFileException(upload.getName());
-        }
-        if (!mappings.exists()) {
-            throw new MissingFileException(mappings.getName());
-        }
-        if (!info.exists()) {
-            throw new MissingFileException(info.getName());
-        }
-
-        // Create a directory to store the log files and create it
-        File logDir = new File(jobFolder + "logs");
-        logDir.mkdirs();
-
-        File archive = null;
-        
-        try {
-            // Run the S1 Import and get the archive generated from it
-            archive = s1Transform(jobFolder, logDir);
-        } catch (IOException ex) {
+        if (!touched.exists()) {
+            touched.mkdir();
             
-        }
-
-        boolean error = false;
-        
-        // If the archive is null then the S1 transform failed, otherwise
-        // proceed to the S2 Import
-        if (archive != null) {
-            try {
-                s2validation(jobFolder, logDir);
-            } catch (Exception ex) {
-                // We end up here if a validation error occurs
-                error = true;
-            } finally {
-                sendValidationCompleteEmail(jobFolder, logDir, error);
+            File upload = new File(jobFolder + "upload.tab");
+            File mappings = new File(jobFolder + "mappings.out");
+            File info = new File(jobFolder + "info.out");            
+            
+            if (!upload.exists()) {
+                throw new MissingFileException(upload.getName());
             }
-        } else {
-            throw new MissingFileException(archive.getName());
+            if (!mappings.exists()) {
+                throw new MissingFileException(mappings.getName());
+            }
+            if (!info.exists()) {
+                throw new MissingFileException(info.getName());
+            }
+
+            // Create a directory to store the log files and create it
+            File logDir = new File(jobFolder + "logs");
+            logDir.mkdirs();
+
+            File archive = null;
+
+            try {
+                // Run the S1 Import and get the archive generated from it
+                archive = s1Transform(jobFolder, logDir);
+            } catch (IOException ex) {
+                log.error("Error while reading arhive for S1 import", ex);
+            }
+
+            boolean error = false;
+
+            // If the archive is null then the S1 transform failed, otherwise
+            // proceed to the S2 Import
+            if (archive != null) {
+                try {
+                    s2validation(jobFolder, logDir);
+                } catch (Exception ex) {
+                    // We end up here if a validation error occurs
+                    error = true;
+                } finally {
+                    sendValidationCompleteEmail(jobFolder, logDir, error);
+                }
+            } else {
+                throw new MissingFileException("Archive passed from S1 to S2 importer is null");
+            }
         }
     }
 
@@ -171,24 +189,11 @@ public class ImporterDaemon implements Runnable {
 
             File zip = new File(jobFolder + "output.zip");
             
-//            boolean hasLoggedOutput = false;
-//            
-//            for (File file : logDir.listFiles()) {
-//                if (file.getName().endsWith(".log")) {
-//                    BufferedReader br = new BufferedReader(new FileReader(file));     
-//                    if (br.readLine() != null) {
-//                        hasLoggedOutput = true;
-//                    }
-//                    br.close();
-//                }
-//            }
-            
             ArchiveWriter archiveWriter = new ArchiveWriter();
             
             List<String> errors = archiveWriter.createFolderArchive(logDir, zip);
             
             map.put("datasetName", map.get("friendlyName"));
-            
             map.put("attachment", zip);
 
             if (error) {
@@ -205,6 +210,14 @@ public class ImporterDaemon implements Runnable {
         }
     }
 
+    /**
+     * If the process fails outside the S2 importer then we need to send an 
+     * error message to the user including what logs we have at the time and 
+     * moves the job to the error folder for fault diagnosis
+     * 
+     * @param job The folder containing the failed job
+     * @param errorMessage A short message telling the user what happened
+     */
     private void sendFailureEmail(File job, String errorMessage) {
         String jobFolder = validatorQueue + job.getName() + File.separator;
         File info = new File(jobFolder + "info.out");
@@ -249,11 +262,27 @@ public class ImporterDaemon implements Runnable {
             log.error("An exception has occurred while sending a failure email (email contains: " + errorMessage + " / job: " + job.getName() + ")", ex);
         } catch (NumberFormatException ex) {
             log.error("An exception has occurred while sending a failure email (email contains: " + errorMessage + " / job: " + job.getName() + ")", ex);
-        } finally {
-            // TODO: Move to failure folder
+        } finally {      
+            try {
+                // Move to failure folder
+                File errorDir = new File(properties.getProperty("outputRoot") + File.separator + "error" + File.separator);
+                errorDir.mkdirs();
+                FileUtils.copyDirectoryToDirectory(job, errorDir);
+            } catch (IOException ex) {
+                log.error("Could not copy job folder to failure folder", ex);
+            }
         }
     }
 
+    /**
+     * Reads a file containing a JSON object into a hashmap
+     * 
+     * @param input The file containing the JSON object
+     * @return A JSON object converted to a Map
+     * 
+     * @throws FileNotFoundException Could not find the specified file
+     * @throws IOException An issue occurred while read the specified file
+     */
     private Map<String, Object> readJSONFile(File input) throws FileNotFoundException, IOException {
         BufferedReader reader = new BufferedReader(new FileReader(input));
         String mappingsIn = reader.readLine();
@@ -264,6 +293,10 @@ public class ImporterDaemon implements Runnable {
         });
     }
 
+    /**
+     * Delete the specified directory and all of its contents
+     * @param folder The folder to delete
+     */
     private void deleteDirectory(File folder) {
         for (File file : folder.listFiles()) {
             if (file.isDirectory()) {
@@ -430,6 +463,14 @@ public class ImporterDaemon implements Runnable {
         }
     }
 
+    /**
+     * Return a default metadata file which can be used with any file, creates 
+     * it if it does not already exist otherwise returns the stored object,
+     * modified to include the users ID
+     * 
+     * @param userID The ID of the user submitting this file for validation
+     * @return The default metadata object
+     */
     private Metadata getDefaultMetadata(String userID) {
         if (defaultMetadata == null) {
             defaultMetadata = new Metadata();
@@ -456,6 +497,12 @@ public class ImporterDaemon implements Runnable {
         return defaultMetadata;
     }
 
+    /**
+     * Returns an organisation requested by the given ID
+     * 
+     * @param id The ID of an organisation on the NBN Gateway
+     * @return An object containing the organisations' info
+     */
     private Organisation getOrganisation(int id) {
         Organisation org;
         if (id == defaultOrganisationID) {
@@ -468,6 +515,12 @@ public class ImporterDaemon implements Runnable {
         }
     }
     
+    /**
+     * Returns an organisation from the database by its ID
+     * 
+     * @param id The ID of an organisation on the NBN Gateway
+     * @return An object containing the organisations' info
+     */
     private Organisation getOrganisationFromDatabase(int id) {
         EntityManager em
                 = DatabaseConnection.getInstance().createEntityManager();

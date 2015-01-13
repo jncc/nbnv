@@ -32,12 +32,9 @@ public class TemplateMailer {
     
     private final Configuration configuration;
     private final Properties properties;
-    //private final Properties props;
-    
     private final String host;
     private final int port;
-    
-    private static final Logger logger = Logger.getLogger(TemplateMailer.class);
+    private final Logger logger = Logger.getLogger(TemplateMailer.class);
 
     public TemplateMailer(Properties properties) throws IOException {
         this.properties = properties;
@@ -80,7 +77,6 @@ public class TemplateMailer {
             logger.info("DEV MODE: Mail Sent -> <" + to + "> Subject: <" + subject + "> Email Template: " + template);
         } else {
             mailSender.send(message);
-            logger.info("Mail Sent -> <" + to + "> Subject: <" + subject + "> Email Template: " + template);
         }
     }
 }
