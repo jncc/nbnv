@@ -8,6 +8,11 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.daemon.Daemon;
 import org.apache.commons.daemon.DaemonContext;
 import org.apache.commons.daemon.DaemonInitException;
+import org.apache.log4j.ConsoleAppender;
+import org.apache.log4j.DailyRollingFileAppender;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PatternLayout;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -23,6 +28,24 @@ public class DaemonLauncher implements Daemon
     private ClassPathXmlApplicationContext context;
     
     public static void main(String[] args) throws Exception {        
+        PatternLayout layout = new PatternLayout("[%p] %d %c %M - %m%n");
+        //DailyRollingFileAppender rollingAppender = new DailyRollingFileAppender(layout, "daemon.log", "yyyy-MM-dd");
+        
+        DailyRollingFileAppender rollingAppender = new DailyRollingFileAppender();
+        rollingAppender.setFile("daemon.log");
+        rollingAppender.setDatePattern("'.'yyyy-MM-dd");
+        rollingAppender.setLayout(layout);
+        rollingAppender.activateOptions();
+        
+        ConsoleAppender consoleAppender = new ConsoleAppender();
+        consoleAppender.setLayout(layout);
+        consoleAppender.activateOptions();
+        
+        Logger rootLogger = Logger.getRootLogger();
+        rootLogger.setLevel(Level.INFO);
+        rootLogger.addAppender(rollingAppender);
+        rootLogger.addAppender(consoleAppender);
+        
         DaemonLauncher launcher = new DaemonLauncher();
         launcher.start();
     }
@@ -45,7 +68,7 @@ public class DaemonLauncher implements Daemon
         sExecutor = Executors.newSingleThreadScheduledExecutor();
         scheduledFuture = sExecutor.scheduleAtFixedRate(
                         daemon, 0, 
-                        30, 
+                        Integer.parseInt(properties.getProperty("sleepTime")), 
                         TimeUnit.MINUTES);
     }
 

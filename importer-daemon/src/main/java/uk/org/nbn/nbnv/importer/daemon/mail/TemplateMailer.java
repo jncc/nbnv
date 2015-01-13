@@ -11,14 +11,13 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Properties;
 import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.Transport;
 import javax.mail.internet.MimeMessage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.log4j.Logger;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.stereotype.Component;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 
 /**
@@ -29,16 +28,23 @@ import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
  *
  * @author Matt Debont
  */
-@Component
 public class TemplateMailer {
     
     private final Configuration configuration;
+    private final Properties properties;
+    //private final Properties props;
     
-    private static final Logger logger = LoggerFactory.getLogger(TemplateMailer.class);
-    @Autowired private Properties properties;
-    @Autowired private JavaMailSenderImpl mailSender;
+    private final String host;
+    private final int port;
+    
+    private static final Logger logger = Logger.getLogger(TemplateMailer.class);
 
-    public TemplateMailer() throws IOException {
+    public TemplateMailer(Properties properties) throws IOException {
+        this.properties = properties;
+        
+        host = properties.getProperty("email_host");
+        port = Integer.parseInt(properties.getProperty("email_port"));  
+        
         configuration = new Configuration();
         configuration.setClassForTemplateLoading(TemplateMailer.class, "");
     }
@@ -47,7 +53,14 @@ public class TemplateMailer {
             final String template,
             final String to,
             final String subject,
-            final Map<String, Object> data) throws IOException, TemplateException, MessagingException {               
+            final Map<String, Object> data) throws IOException, TemplateException, MessagingException {     
+        
+        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+        mailSender.setHost(host);
+        mailSender.setPort(port);
+        
+        //Session session = Session.getInstance(props);
+               
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true);
         helper.setTo(to);
@@ -64,9 +77,10 @@ public class TemplateMailer {
         }
 
         if ("dev".equals(properties.getProperty("email_mode"))) {
-            logger.info("Mail Sent -> <" + to + "> Subject: <" + subject + "> Email Template: " + template);
+            logger.info("DEV MODE: Mail Sent -> <" + to + "> Subject: <" + subject + "> Email Template: " + template);
         } else {
             mailSender.send(message);
+            logger.info("Mail Sent -> <" + to + "> Subject: <" + subject + "> Email Template: " + template);
         }
     }
 }

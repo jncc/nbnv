@@ -1,5 +1,6 @@
 package uk.org.nbn.nbnv.importer.daemon;
 
+import freemarker.template.TemplateException;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -9,6 +10,7 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -16,6 +18,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.mail.MessagingException;
 import javax.persistence.EntityManager;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.FileAppender;
@@ -49,12 +52,15 @@ public class ImporterDaemon implements Runnable {
     private final String validatorQueue;
     private final Logger log = Logger.getLogger(ImporterDaemon.class);
         
-    @Autowired private TemplateMailer mailer;
+    private TemplateMailer mailer;
     @Autowired private Properties properties;
 
-    public ImporterDaemon(Properties properties) {
+    public ImporterDaemon(Properties properties) throws IOException {
         this.defaultOrganisationID = Integer.parseInt(properties.getProperty("defaultOrganisationID"));
         this.validatorQueue = properties.getProperty("outputRoot") + File.separator + "queue" + File.separator;
+        
+        mailer = new TemplateMailer(properties);
+        
         // Setup Database connection
         DatabaseConnection.getInstance(properties);         
     }    
@@ -78,6 +84,7 @@ public class ImporterDaemon implements Runnable {
      */
     private void checkForInput() {
         File[] jobList = new File(validatorQueue).listFiles();
+        Arrays.sort(jobList);
         if (jobList != null && jobList.length > 0) {
             for (File job : jobList) {
                 // Get full path of job
@@ -132,15 +139,21 @@ public class ImporterDaemon implements Runnable {
             
         }
 
-        try {
-            // If the archive is null then the S1 transform failed, otherwise
-            // proceed to the S2 Import
-            if (archive != null) {
+        boolean error = false;
+        
+        // If the archive is null then the S1 transform failed, otherwise
+        // proceed to the S2 Import
+        if (archive != null) {
+            try {
                 s2validation(jobFolder, logDir);
-                sendValidationCompleteEmail(jobFolder, logDir);
+            } catch (Exception ex) {
+                // We end up here if a validation error occurs
+                error = true;
+            } finally {
+                sendValidationCompleteEmail(jobFolder, logDir, error);
             }
-        } catch (Exception ex) {
-            
+        } else {
+            throw new MissingFileException(archive.getName());
         }
     }
 
@@ -151,24 +164,24 @@ public class ImporterDaemon implements Runnable {
      * @param jobFolder The path of the folder containing the job
      * @param logDir The log directory containing the log files for this job
      */
-    private void sendValidationCompleteEmail(String jobFolder, File logDir) {
+    private void sendValidationCompleteEmail(String jobFolder, File logDir, boolean error) {
         try {
             File info = new File(jobFolder + "info.out");
             Map<String, Object> map = readJSONFile(info);
 
             File zip = new File(jobFolder + "output.zip");
             
-            boolean hasLoggedOutput = false;
-            
-            for (File file : logDir.listFiles()) {
-                if (file.getName().endsWith(".log")) {
-                    BufferedReader br = new BufferedReader(new FileReader(file));     
-                    if (br.readLine() != null) {
-                        hasLoggedOutput = true;
-                    }
-                    br.close();
-                }
-            }
+//            boolean hasLoggedOutput = false;
+//            
+//            for (File file : logDir.listFiles()) {
+//                if (file.getName().endsWith(".log")) {
+//                    BufferedReader br = new BufferedReader(new FileReader(file));     
+//                    if (br.readLine() != null) {
+//                        hasLoggedOutput = true;
+//                    }
+//                    br.close();
+//                }
+//            }
             
             ArchiveWriter archiveWriter = new ArchiveWriter();
             
@@ -178,13 +191,17 @@ public class ImporterDaemon implements Runnable {
             
             map.put("attachment", zip);
 
-            if (hasLoggedOutput) {
+            if (error) {
                 mailer.sendMime("importerCompletedWithErrors.ftl", (String) map.get("email"), "NBN Dataset Validation has finished with errors", map);
             } else {
                 mailer.sendMime("importerSuccess.ftl", (String) map.get("email"), "NBN Dataset Validation has finished", map);
             }
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        } catch (IOException ex) {
+            log.error("File I/O issue", ex);
+        } catch (TemplateException ex) {
+            log.error("Error while creating email", ex);
+        } catch (MessagingException ex) {
+            log.error("Error while sending email", ex);
         }
     }
 
@@ -224,7 +241,13 @@ public class ImporterDaemon implements Runnable {
                     }
                 }
             }
-        } catch (Exception ex) {
+        } catch (IOException ex) {
+            log.error("An exception has occurred while sending a failure email (email contains: " + errorMessage + " / job: " + job.getName() + ")", ex);
+        } catch (TemplateException ex) {
+            log.error("An exception has occurred while sending a failure email (email contains: " + errorMessage + " / job: " + job.getName() + ")", ex);
+        } catch (MessagingException ex) {
+            log.error("An exception has occurred while sending a failure email (email contains: " + errorMessage + " / job: " + job.getName() + ")", ex);
+        } catch (NumberFormatException ex) {
             log.error("An exception has occurred while sending a failure email (email contains: " + errorMessage + " / job: " + job.getName() + ")", ex);
         } finally {
             // TODO: Move to failure folder
@@ -392,15 +415,19 @@ public class ImporterDaemon implements Runnable {
 
         log.addAppender(ca);
         log.addAppender(fa);
-
-        Importer.startImporterFromDaemon(archive.getAbsolutePath(),
-                properties.getProperty("importer.target"),
-                properties.getProperty("importer.log.level"),
-                logDir.getAbsolutePath(), tmpDir.getAbsolutePath(), log);
         
-        // Ensure we close the appenders so we can delete the files
-        fa.close();
-        ca.close();
+        try {
+            Importer.startImporterFromDaemon(archive.getAbsolutePath(),
+                    properties.getProperty("importer.target"),
+                    properties.getProperty("importer.log.level"),
+                    logDir.getAbsolutePath(), tmpDir.getAbsolutePath(), log);
+        } catch (Exception ex) {
+            throw ex;
+        } finally {        
+            // Ensure we close the appenders so we can delete the files
+            fa.close();
+            ca.close();
+        }
     }
 
     private Metadata getDefaultMetadata(String userID) {

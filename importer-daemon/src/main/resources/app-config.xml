@@ -22,9 +22,4 @@
         
     <!-- Scans the classpath of this application for @Components to deploy as beans -->
     <context:component-scan base-package="uk.org.nbn.nbnv.importer.daemon" />
-    
-    <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
-        <property name="host" value="${email_host}"/>
-        <property name="port" value="${email_port}"/>
-    </bean>    
 </beans>
