@@ -145,6 +145,18 @@
         <p>Successfully submitted to queue, you will receive an email when this process is completed</p>
     </div>
 
+    <div id="waitingDiv" style="display:none;">
+        <div style="margin:0 auto; padding: 20px; text-align:center">
+            <img src="/img/ajax-loader-medium.gif" />
+        </div>
+    </div>
+
+    <div id="errorDiv" style="display:none; color:#555; border-radius:10px; font-family:Tahoma,Geneva,Arial,sans-serif;font-size:11px; padding:10px 10px 10px 36px; margin:10px;">
+        <span id="errorSpan" style="font-weight:bold; text-transform:uppercase; background:#ffecec; border:1px solid #f5aca6;">
+            
+        </span>
+    </div>
+
     <div id="stageCounter" style="">
         <div style="margin: 0 auto; text-align:center">
             <span id="stageCount1" class="stageCounter" style="padding: 10px; color: black;">1</span>
