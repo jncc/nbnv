@@ -87,6 +87,23 @@ public class TaxonResource extends AbstractResource {
     public Taxon getTaxon(@PathParam("taxonVersionKey") String taxonVersionKey) {
         return taxonMapper.getTaxon(taxonVersionKey);
     }
+    
+    /**
+     * Returns the preferred version of this taxon key
+     * 
+     * @param taxonVersionKey
+     * @return 
+     */
+    @GET
+    @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
+    @Path("{taxonVersionKey}/ptvk")
+    @TypeHint(Taxon.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned the requested taxon data")
+    })
+    public Taxon getPreferredTaxon(@PathParam("taxonVersionKey") String taxonVersionKey) {
+        return taxonMapper.getTaxonPreferred(taxonVersionKey);
+    }    
 
     /**
      * Return a specific INSPIRE Taxon Dataset record from the data warehouse
@@ -425,6 +442,7 @@ public class TaxonResource extends AbstractResource {
      * @param featureID Any feature ID's required
      * @param sensitive If the records should be sensitive or not
      * @param gridRef A Grid Reference to search within
+     * @param polygon A WKT WGS84 polygon area to search within
      * 
      * @return A List of Site Boundaries matching the given parameters
      * 
@@ -464,12 +482,13 @@ public class TaxonResource extends AbstractResource {
      * @param spatialRelationship Any spatial relationship requirements
      * @param featureID Any feature ID's required
      * @param sensitive If the records should be sensitive or not
-     * @param designation Any required designations
-     * @param taxonOutputGroup Any Taxon Output Group required
+     * @param polygon A WKT WGS84 polygon area to search within
+     * @param response
      * @param gridRef A Grid Reference to search within
      * 
      * @return A zipped download containing list of Site Boundaries matching the 
      * given parameters
+     * @throws java.io.IOException
      * 
      * @response.representation.200.qname StreamingOutput
      * @response.representation.200.mediaType application/x-zip-compressed
@@ -567,11 +586,11 @@ public class TaxonResource extends AbstractResource {
             filters.put("Taxa", ProviderHelper.taxaListToCommaList(taxa));
         }
 
-        if (!(new Integer(startYear).toString().equals(ObservationResourceDefaults.defaultStartYear))) {
-            filters.put("Start year", new Integer(startYear).toString());
+        if (!(Integer.toString(startYear).equals(ObservationResourceDefaults.defaultStartYear))) {
+            filters.put("Start year", Integer.toString(startYear));
         }
-        if (!(new Integer(endYear).toString().equals(ObservationResourceDefaults.defaultEndYear))) {
-            filters.put("End year", new Integer(endYear).toString());
+        if (!(Integer.toString(endYear).equals(ObservationResourceDefaults.defaultEndYear))) {
+            filters.put("End year", Integer.toString(endYear));
         }
         filters.put("Spatial relationship", spatialRelationship);
         filters.put("Include only sensitive records", Boolean.toString(sensitive));

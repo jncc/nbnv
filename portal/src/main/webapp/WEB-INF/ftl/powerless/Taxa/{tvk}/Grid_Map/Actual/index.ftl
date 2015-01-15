@@ -1,7 +1,7 @@
 <#assign tvk=URLParameters.tvk>
 <#assign requestParametersExtended = RequestParameters + {"ptvk":[tvk]}>
 <#assign providersWithQueryStats=json.readURL("${api}/taxonObservations/providers",requestParametersExtended)>
-<#assign taxon=json.readURL("${api}/taxa/${tvk}/ptvk")>
+<#assign taxon=json.readURL("${api}/taxa/${tvk}")>
 <#assign unavailableDatasets=json.readURL("${api}/taxonObservations/unavailableDatasets",requestParametersExtended)>
 
 <@template.master title="NBN Grid Map" 
