@@ -8,7 +8,11 @@
     javascripts=["/js/jquery.dataset-selector-utils.js","/js/jquery.gridmap_utils.js","/js/report_utils.js","/js/colourpicker/colorpicker.js"]
     csss=["/css/report.css","/css/gridmap.css","/css/colourpicker/colorpicker.css","/css/smoothness/jquery-ui-1.8.23.custom.css"]>
     
-    <h1>Grid map for ${taxon_utils.getLongName(taxon)}</h1>
+    <h1 style="margin:0;">Grid map for ${taxon_utils.getLongName(taxon)}</h1>
+    <#if tvk != taxon.ptaxonVersionKey>
+        <#assign originalTaxon=json.readURL("${api}/taxa/${tvk}")>
+        <h3 style="margin:0 0 20px 0;">Redirected from ${taxon_utils.getLongName(originalTaxon)} (${tvk})</h3>
+    </#if>
     <form target="" id="nbn-grid-map-form" gis-server="${gis}" api-server="${api}">
         <@gridMapFilters/>
         <@gridMapContents tvk=taxon.ptaxonVersionKey/>
