@@ -19,6 +19,15 @@ public interface TaxonMapper {
             "WHERE t.taxonVersionKey = #{id}")
     Taxon getTaxon(String taxonVersionKey);
     
+    @Select("SELECT pt.*, ct.name AS commonName, tog.name AS taxonOutputGroupName, trc.gatewayRecordCount " +
+            "FROM TaxonData t " +
+                "INNER JOIN TaxonData pt ON pt.taxonVersionKey = t.pTaxonVersionKey " +
+                "LEFT JOIN TaxonRecordCountData trc ON trc.pTaxonVersionKey = pt.pTaxonVersionKey " +
+                "INNER JOIN TaxonOutputGroupData tog ON tog.\"key\" = pt.taxonOutputGroupKey " +
+                "LEFT JOIN TaxonData ct ON ct.taxonVersionKey = pt.commonNameTaxonVersionKey " +
+            "WHERE t.taxonVersionKey = #{id}")
+    Taxon getTaxonPreferred(String taxonVersionKey);    
+    
     @Select("SELECT taxonVersionKey, t.pTaxonVersionKey, name, authority, languageKey, taxonOutputGroupKey from DesignationTaxonData dtd inner join TaxonData t on dtd.pTaxonVersionKey = t.taxonVersionKey where code = #{id}")
     List<Taxon> selectByDesignationID(String id);
     

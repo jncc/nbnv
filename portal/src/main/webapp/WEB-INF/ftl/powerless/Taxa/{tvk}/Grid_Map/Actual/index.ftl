@@ -1,7 +1,7 @@
 <#assign tvk=URLParameters.tvk>
-<#assign taxon=json.readURL("${api}/taxa/${tvk}/ptvk")>
-<#assign requestParametersExtended = RequestParameters + {"ptvk":[taxon.ptaxonVersionKey]}>
+<#assign requestParametersExtended = RequestParameters + {"ptvk":[tvk]}>
 <#assign providersWithQueryStats=json.readURL("${api}/taxonObservations/providers",requestParametersExtended)>
+<#assign taxon=json.readURL("${api}/taxa/${tvk}")>
 <#assign unavailableDatasets=json.readURL("${api}/taxonObservations/unavailableDatasets",requestParametersExtended)>
 
 <@template.master title="NBN Grid Map" 
@@ -11,7 +11,7 @@
     <h1>Grid map for ${taxon_utils.getLongName(taxon)}</h1>
     <form target="" id="nbn-grid-map-form" gis-server="${gis}" api-server="${api}">
         <@gridMapFilters/>
-        <@gridMapContents tvk=taxon.ptaxonVersionKey/>
+        <@gridMapContents tvk=tvk/>
         <@mdcontent.smallCaveat/>
         <div style="width: 100%">
             <@report_utils.dataset_table providersWithQueryStats=providersWithQueryStats requestParameters=RequestParameters/>
@@ -25,7 +25,7 @@
     <div class="tabbed" id="nbn-grid-map-filter-container">
             <h3>Controls</h3>
 
-            <input type="hidden" id="tvk" name="tvk" value="${taxon.ptaxonVersionKey}">
+            <input type="hidden" id="tvk" name="tvk" value="${tvk}">
 
             <fieldset>
                 <legend>Resolution</legend>
@@ -78,10 +78,7 @@
             <fieldset>
                 <legend>Other Options</legend>
                 <a id="nbn-interactive-map" href="#">View on Interactive Map</a><br />
-                <a id="nbn-request-better-access" href="#">Request Better Access</a><br />
-                <#if tvk != taxon.ptaxonVersionKey>
-                    <a id="nbn-request-better-access" href="/Taxa/${tvk}/Grid_Map/Actual">View Grid Map for Original Taxon Version Key</a>
-                </#if>
+                <a id="nbn-request-better-access" href="#">Request Better Access</a>
             </fieldset>
 
     </div>
