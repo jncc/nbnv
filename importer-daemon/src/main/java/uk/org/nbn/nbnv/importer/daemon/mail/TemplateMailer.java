@@ -11,8 +11,6 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Properties;
 import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.Transport;
 import javax.mail.internet.MimeMessage;
 import org.apache.log4j.Logger;
 import org.springframework.core.io.FileSystemResource;
@@ -55,8 +53,6 @@ public class TemplateMailer {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
         mailSender.setHost(host);
         mailSender.setPort(port);
-        
-        //Session session = Session.getInstance(props);
                
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true);
@@ -66,7 +62,6 @@ public class TemplateMailer {
         
         helper.setText(FreeMarkerTemplateUtils.processTemplateIntoString(
                 configuration.getTemplate(template), data), true);
-        
         
         if (data.containsKey("attachment")) {
             FileSystemResource file = new FileSystemResource((File) data.get("attachment"));

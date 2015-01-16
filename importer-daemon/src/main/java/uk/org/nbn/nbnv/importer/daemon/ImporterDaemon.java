@@ -48,39 +48,40 @@ import uk.org.nbn.nbnv.jpa.nbncore.User;
 public class ImporterDaemon implements Runnable {
 
     @Autowired private Properties properties;
-    
+
     private final int defaultOrganisationID;
     private final String validatorQueue;
     private final TemplateMailer mailer;
-    
+
     private Metadata defaultMetadata;
     private Organisation defaultOrganisation;
-    
+
     private final Logger log = Logger.getLogger(ImporterDaemon.class);
-    
+
     /**
      * Basic constructor pass in properties file with configuration options from
      * DaemonLauncher class
-     * 
-     * @param properties Configuration properties from an external properties file
-     * @throws IOException 
+     *
+     * @param properties Configuration properties from an external properties
+     * file
+     * @throws IOException
      */
     public ImporterDaemon(Properties properties) throws IOException {
         this.defaultOrganisationID = Integer.parseInt(properties.getProperty("defaultOrganisationID"));
         this.validatorQueue = properties.getProperty("outputRoot") + File.separator + "queue" + File.separator;
-        
+
         mailer = new TemplateMailer(properties);
-        
+
         // Setup Database connection
-        DatabaseConnection.getInstance(properties);         
-    }    
+        DatabaseConnection.getInstance(properties);
+    }
 
     /**
      * Start the thread by checking for new input, should be run by a scheduled
      * task executor
      */
     @Override
-    public void run() {       
+    public void run() {
         checkForInput();
     }
 
@@ -95,13 +96,13 @@ public class ImporterDaemon implements Runnable {
         // alphabetically to ensure we keep the correct ordering        
         File[] jobList = new File(validatorQueue).listFiles();
         Arrays.sort(jobList);
-        
+
         // If we have a waiting job then process the list
         if (jobList != null && jobList.length > 0) {
             for (File job : jobList) {
                 // Get full path of job
                 String jobFolder = validatorQueue + job.getName() + File.separator;
-                
+
                 try {
                     readInput(jobFolder);
                 } catch (MissingFileException ex) {
@@ -124,61 +125,55 @@ public class ImporterDaemon implements Runnable {
      * @param jobName The path to the folder containing the job
      */
     private void readInput(String jobFolder) throws MissingFileException {
-        File touched = new File(jobFolder + "TOUCHED");
+        File upload = new File(jobFolder + "upload.tab");
+        File mappings = new File(jobFolder + "mappings.out");
+        File info = new File(jobFolder + "info.out");
 
-        if (!touched.exists()) {
-            touched.mkdir();
-            
-            File upload = new File(jobFolder + "upload.tab");
-            File mappings = new File(jobFolder + "mappings.out");
-            File info = new File(jobFolder + "info.out");            
-            
-            if (!upload.exists()) {
-                throw new MissingFileException(upload.getName());
-            }
-            if (!mappings.exists()) {
-                throw new MissingFileException(mappings.getName());
-            }
-            if (!info.exists()) {
-                throw new MissingFileException(info.getName());
-            }
+        if (!upload.exists()) {
+            throw new MissingFileException(upload.getName());
+        }
+        if (!mappings.exists()) {
+            throw new MissingFileException(mappings.getName());
+        }
+        if (!info.exists()) {
+            throw new MissingFileException(info.getName());
+        }
 
-            // Create a directory to store the log files and create it
-            File logDir = new File(jobFolder + "logs");
-            logDir.mkdirs();
+        // Create a directory to store the log files and create it
+        File logDir = new File(jobFolder + "logs");
+        logDir.mkdirs();
 
-            File archive = null;
+        File archive = null;
 
-            try {
-                // Run the S1 Import and get the archive generated from it
-                archive = s1Transform(jobFolder, logDir);
-            } catch (IOException ex) {
-                log.error("Error while reading arhive for S1 import", ex);
-            }
+        try {
+            // Run the S1 Import and get the archive generated from it
+            archive = s1Transform(jobFolder, logDir);
+        } catch (IOException ex) {
+            log.error("Error while reading arhive for S1 import", ex);
+        }
 
-            boolean error = false;
+        boolean error = false;
 
             // If the archive is null then the S1 transform failed, otherwise
-            // proceed to the S2 Import
-            if (archive != null) {
-                try {
-                    s2validation(jobFolder, logDir);
-                } catch (Exception ex) {
-                    // We end up here if a validation error occurs
-                    error = true;
-                } finally {
-                    sendValidationCompleteEmail(jobFolder, logDir, error);
-                }
-            } else {
-                throw new MissingFileException("Archive passed from S1 to S2 importer is null");
+        // proceed to the S2 Import
+        if (archive != null) {
+            try {
+                s2validation(jobFolder, logDir);
+            } catch (Exception ex) {
+                // We end up here if a validation error occurs
+                error = true;
+            } finally {
+                sendValidationCompleteEmail(jobFolder, logDir, error);
             }
+        } else {
+            throw new MissingFileException("Archive passed from S1 to S2 importer is null");
         }
     }
 
     /**
      * Send an email to the user saying that we have successfully completed the
      * validation of this dataset, attaches the log file to the email
-     * 
+     *
      * @param jobFolder The path of the folder containing the job
      * @param logDir The log directory containing the log files for this job
      */
@@ -188,11 +183,11 @@ public class ImporterDaemon implements Runnable {
             Map<String, Object> map = readJSONFile(info);
 
             File zip = new File(jobFolder + "output.zip");
-            
+
             ArchiveWriter archiveWriter = new ArchiveWriter();
-            
+
             List<String> errors = archiveWriter.createFolderArchive(logDir, zip);
-            
+
             map.put("datasetName", map.get("friendlyName"));
             map.put("attachment", zip);
 
@@ -211,10 +206,10 @@ public class ImporterDaemon implements Runnable {
     }
 
     /**
-     * If the process fails outside the S2 importer then we need to send an 
-     * error message to the user including what logs we have at the time and 
+     * If the process fails outside the S2 importer then we need to send an
+     * error message to the user including what logs we have at the time and
      * moves the job to the error folder for fault diagnosis
-     * 
+     *
      * @param job The folder containing the failed job
      * @param errorMessage A short message telling the user what happened
      */
@@ -227,11 +222,11 @@ public class ImporterDaemon implements Runnable {
                 Map<String, Object> map = readJSONFile(info);
 
                 SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yy HH:mm:SS");
-                
+
                 BasicFileAttributes attr = Files.readAttributes(job.toPath(), BasicFileAttributes.class);
                 map.put("time", sdf.format(new Date(attr.creationTime().toMillis())));
                 map.put("failMsg", errorMessage);
-                
+
                 mailer.sendMime("processFailure.ftl", (String) map.get("email"), "NBN Gateway Online Validator Failed", (Map<String, Object>) map);
             } else {
                 Matcher matcher = Pattern.compile("^(\\d{8})_(\\d{6})_(\\d+)_[A-Za-z0-9]{10}$").matcher(job.getName());
@@ -241,15 +236,15 @@ public class ImporterDaemon implements Runnable {
                     User user = em.find(User.class,
                             Integer.parseInt(matcher.group(3)));
                     em.close();
-                    
+
                     if (user != null) {
                         Map<String, Object> map = new HashMap<String, Object>();
-                        
-                        String date = matcher.group(1).substring(6) + ":" + matcher.group(1).substring(4,6) + ":" + matcher.group(1).substring(0,4);
-                        String time = matcher.group(2).substring(0,2) + ":" + matcher.group(2).substring(2,4) + ":" + matcher.group(2).substring(4);
+
+                        String date = matcher.group(1).substring(6) + ":" + matcher.group(1).substring(4, 6) + ":" + matcher.group(1).substring(0, 4);
+                        String time = matcher.group(2).substring(0, 2) + ":" + matcher.group(2).substring(2, 4) + ":" + matcher.group(2).substring(4);
                         map.put("time", date + " " + time);
-                        
-                        map.put("failMsg", errorMessage);                        
+
+                        map.put("failMsg", errorMessage);
                         mailer.sendMime("processFailure.ftl", (String) user.getEmail(), "NBN Gateway Online Validator Failed", map);
                     }
                 }
@@ -262,7 +257,7 @@ public class ImporterDaemon implements Runnable {
             log.error("An exception has occurred while sending a failure email (email contains: " + errorMessage + " / job: " + job.getName() + ")", ex);
         } catch (NumberFormatException ex) {
             log.error("An exception has occurred while sending a failure email (email contains: " + errorMessage + " / job: " + job.getName() + ")", ex);
-        } finally {      
+        } finally {
             try {
                 // Move to failure folder
                 File errorDir = new File(properties.getProperty("outputRoot") + File.separator + "error" + File.separator);
@@ -276,10 +271,10 @@ public class ImporterDaemon implements Runnable {
 
     /**
      * Reads a file containing a JSON object into a hashmap
-     * 
+     *
      * @param input The file containing the JSON object
      * @return A JSON object converted to a Map
-     * 
+     *
      * @throws FileNotFoundException Could not find the specified file
      * @throws IOException An issue occurred while read the specified file
      */
@@ -295,6 +290,7 @@ public class ImporterDaemon implements Runnable {
 
     /**
      * Delete the specified directory and all of its contents
+     *
      * @param folder The folder to delete
      */
     private void deleteDirectory(File folder) {
@@ -327,17 +323,19 @@ public class ImporterDaemon implements Runnable {
 
         BufferedReader reader = new BufferedReader(new FileReader(mappings));
         String mappingsIn = reader.readLine();
-        reader.close();        
-        
+        reader.close();
+
         ObjectMapper mapper = new ObjectMapper();
-        Map<String, String> map = mapper.readValue(mappingsIn, new TypeReference<HashMap<String, String>>() {});
-        
+        Map<String, String> map = mapper.readValue(mappingsIn, new TypeReference<HashMap<String, String>>() {
+        });
+
         reader = new BufferedReader(new FileReader(info));
         String infoIn = reader.readLine();
         reader.close();
-        
-        Map<String, String> infoMap = mapper.readValue(infoIn, new TypeReference<HashMap<String, String>>() {});
-        
+
+        Map<String, String> infoMap = mapper.readValue(infoIn, new TypeReference<HashMap<String, String>>() {
+        });
+
         RunConversions rc = new RunConversions(upload, Integer.parseInt(properties.getProperty("defaultOrganisationID")));
 
         File output = new File(jobFolder + "data.tab");
@@ -362,19 +360,20 @@ public class ImporterDaemon implements Runnable {
 
             try {
                 MetadataWriter metadataWriter = new MetadataWriter(metadata);
-                
+
                 if (infoMap.containsKey("metadataIncluded") && Boolean.parseBoolean(infoMap.get("metadataIncluded"))) {
                     File metadataOut = new File(jobFolder + "metadata.out");
-                    
+
                     reader = new BufferedReader(new FileReader(metadataOut));
                     String metadataIn = reader.readLine();
                     reader.close();
 
-                    Map<String, String> metadataMap = mapper.readValue(metadataIn, new TypeReference<HashMap<String, String>>() {});
-                    
+                    Map<String, String> metadataMap = mapper.readValue(metadataIn, new TypeReference<HashMap<String, String>>() {
+                    });
+
                     Metadata metaFromFile = new Metadata(metadataMap);
                     Organisation orgFromFile = getOrganisation(metaFromFile.getOrganisationID());
-                    
+
                     metadataWriter.datasetToEML(metaFromFile, orgFromFile, rc.getStartDate(), rc.getEndDate(), true);
                 } else {
                     metadataWriter.datasetToEML(getDefaultMetadata(infoMap.get("id")), getOrganisation(defaultOrganisationID), rc.getStartDate(), rc.getEndDate(), true);
@@ -448,7 +447,7 @@ public class ImporterDaemon implements Runnable {
 
         log.addAppender(ca);
         log.addAppender(fa);
-        
+
         try {
             Importer.startImporterFromDaemon(archive.getAbsolutePath(),
                     properties.getProperty("importer.target"),
@@ -456,7 +455,7 @@ public class ImporterDaemon implements Runnable {
                     logDir.getAbsolutePath(), tmpDir.getAbsolutePath(), log);
         } catch (Exception ex) {
             throw ex;
-        } finally {        
+        } finally {
             // Ensure we close the appenders so we can delete the files
             fa.close();
             ca.close();
@@ -464,10 +463,10 @@ public class ImporterDaemon implements Runnable {
     }
 
     /**
-     * Return a default metadata file which can be used with any file, creates 
+     * Return a default metadata file which can be used with any file, creates
      * it if it does not already exist otherwise returns the stored object,
      * modified to include the users ID
-     * 
+     *
      * @param userID The ID of the user submitting this file for validation
      * @return The default metadata object
      */
@@ -499,7 +498,7 @@ public class ImporterDaemon implements Runnable {
 
     /**
      * Returns an organisation requested by the given ID
-     * 
+     *
      * @param id The ID of an organisation on the NBN Gateway
      * @return An object containing the organisations' info
      */
@@ -510,14 +509,14 @@ public class ImporterDaemon implements Runnable {
                 defaultOrganisation = getOrganisationFromDatabase(id);
             }
             return defaultOrganisation;
-        } else {        
+        } else {
             return getOrganisationFromDatabase(id);
         }
     }
-    
+
     /**
      * Returns an organisation from the database by its ID
-     * 
+     *
      * @param id The ID of an organisation on the NBN Gateway
      * @return An object containing the organisations' info
      */

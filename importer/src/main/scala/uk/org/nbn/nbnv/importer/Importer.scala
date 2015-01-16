@@ -35,7 +35,7 @@ object Importer {
     val injector = Guice.createInjector(new DaemonImporterModule(options, logger))
     val importer = injector.getInstance(classOf[Importer])
     
-    importer.run()
+    importer.daemonRun()
   }
   
   def createTargetFromString(target: String) : Target.Value = {
@@ -73,9 +73,18 @@ class Importer @Inject()(options:        Options,
                          ingester:       Ingester) {
 
   def run() {
-
     withTopLevelExceptionHandling {
-
+      importerRun(options, log, stopwatch, archive, metadataReader, validator, ingester)
+    }
+  }
+  
+  private def importerRun(options:        Options,
+                         log:            Logger,
+                         stopwatch:      Stopwatch,
+                         archive:        Archive,
+                         metadataReader: MetadataReader,
+                         validator:      Validator,
+                         ingester:       Ingester) {
       log.info("Welcome! Starting the NBN Gateway importer")
       log.info("Options are: \n" + options + "\n\n")
 
@@ -104,10 +113,9 @@ class Importer @Inject()(options:        Options,
       }
 
       log.info("Finished import run in " + stopwatch.elapsedSeconds + " seconds")
-      log.info("Done with archive '%s'".format(options.archivePath))
-    }
-  }
-
+      log.info("Done with archive '%s'".format(options.archivePath))        
+  }  
+  
   private def withTopLevelExceptionHandling(f: => Unit) {
     try { f }
     catch {
@@ -127,5 +135,32 @@ class Importer @Inject()(options:        Options,
         throw e
       }
     }
+  }
+  
+  def daemonRun () {
+    withTopLevelExceptionHandlingDaemon {
+      importerRun(options, log, stopwatch, archive, metadataReader, validator, ingester)
+    }
+  }
+  
+  private def withTopLevelExceptionHandlingDaemon(f: => Unit) {
+    try { f }
+    catch {
+      case e: BadDataException => {
+        log.info("Import run failed", e)
+        throw e
+      }
+      case e: ConstraintViolationException => {
+        log.fatal("Unhandled exception!", e)
+        for (v <- e.getConstraintViolations) {
+          log.info(v.getPropertyPath + v.getMessage)
+        }
+        throw e
+      }
+      case e: Throwable => {
+        log.fatal("Unhandled exception!", e)
+        throw e
+      }
+    }    
   }
 }

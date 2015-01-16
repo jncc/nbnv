@@ -27,7 +27,7 @@
         <module>importer.s1.utils</module>
         <module>importer.spatial.ui</module>
         <module>importer.orglogo</module>
-		<module>importer-daemon</module>
+        <module>importer-daemon</module>
         <module>api</module>
         <module>api.crud</module>
         <module>api.solr</module>
