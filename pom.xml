@@ -24,21 +24,18 @@
         <module>importer</module>
         <module>importer.grin</module>
         <module>importer.ui</module>
-        <module>importer.spatial.ui</module>
-        <module>rs</module>
-        <module>api.model</module>
-        <module>api.solr</module>
-        <module>api</module>
-        <module>portal</module>
-        <module>documentation</module>
-        <module>gis</module>
-        <module>importer.orglogo</module>
-        <module>reporter-mail</module>
-        <module>recordcleaner</module>
-        <module>reseter.datasetAccess</module>
-        <module>api-poker</module>
         <module>importer.s1.utils</module>
-  </modules>
+        <module>importer.spatial.ui</module>
+        <module>importer.orglogo</module>
+        <module>api</module>
+        <module>api.crud</module>
+        <module>api.solr</module>
+        <module>documentation</module>
+        <module>portal</module>
+        <module>gis</module>
+        <module>reporter-mail</module>
+        <module>nbnv-resetter</module>
+    </modules>
 	
     <build>
         <pluginManagement>

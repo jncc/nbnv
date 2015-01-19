@@ -7,7 +7,6 @@ package uk.org.nbn.nbnv.importer.spatial.ui.util.wordImporter;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
-import uk.org.nbn.nbnv.importer.spatial.ui.util.POIImportError;
 
 /**
  *

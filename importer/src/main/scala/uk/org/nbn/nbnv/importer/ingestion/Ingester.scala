@@ -10,8 +10,8 @@ import org.apache.log4j.Logger
 import uk.org.nbn.nbnv.importer.data.Database
 import com.google.common.base.Stopwatch
 import uk.org.nbn.nbnv.jpa.nbncore.ImportTaxonDataset
-import uk.org.nbn.nbnv.importer.jersey.WebApi
 import uk.org.nbn.nbnv.importer.archive.Archive
+import uk.org.nbn.nbnv.importer.reset.DatasetReset
 
 /// Performs the interaction with the NBN core database.
 
@@ -25,7 +25,7 @@ class Ingester @Inject()(options: Options,
                          siteIngester: SiteIngester,
                          recorderIngester: RecorderIngester,
                          featureIngester: FeatureIngester,
-                         api: WebApi) {
+                         datasetReset: DatasetReset ) {
 
   val watch = new Stopwatch()
 
@@ -186,13 +186,13 @@ class Ingester @Inject()(options: Options,
 
     if (options.target >= Target.commit && ! metadata.datasetKey.isEmpty()) {
       try {
-        api.resetDatasetAccess(metadata.datasetKey)
+        datasetReset.resetDatasetAccess(metadata.datasetKey)
 
-        log.info("Step 3 Complete: Called API endpoints to reset dataset access")
+        log.info("Step 3 Complete: Called external reset tool to reset dataset access")
       }
       catch {
         case e: Throwable => {
-          log.warn("Step 3 Failed: An error occured when callling the API to rest access for dataset %s".format(metadata.datasetKey), e)
+          log.warn("Step 3 Failed: An error occured when callling the external reset tool to reset access for dataset %s".format(metadata.datasetKey), e)
         }
       }
     }

@@ -42,7 +42,7 @@ public interface WordImporter {
     public static final String META_TITLE = "Title";
     public static final String META_CONTACT_PHONE = "Telephone Number";
     public static final String META_TEMPORAL = "Temporal Coverage";
-    public static final String META_USE_CONSTRAINT = "Use Constraint";   
+    public static final String META_USE_CONSTRAINT = "Use Constraint";  
     
     // Default descriptors that we are searching for 
     public static final String[] stringsHWPF = {

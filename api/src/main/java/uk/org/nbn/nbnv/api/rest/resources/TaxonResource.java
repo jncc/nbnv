@@ -47,6 +47,7 @@ import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
 import uk.org.nbn.nbnv.api.rest.resources.utils.DownloadHelper;
 import uk.org.nbn.nbnv.api.solr.SolrResolver;
 import uk.org.nbn.nbnv.api.solr.SolrResponse;
+import uk.org.nbn.nbnv.api.utils.ObservationResourceDefaults;
 
 @Component
 @Path("/taxa")
@@ -84,6 +85,23 @@ public class TaxonResource extends AbstractResource {
     public Taxon getTaxon(@PathParam("taxonVersionKey") String taxonVersionKey) {
         return taxonMapper.getTaxon(taxonVersionKey);
     }
+    
+    /**
+     * Returns the preferred version of this taxon key
+     * 
+     * @param taxonVersionKey
+     * @return 
+     */
+    @GET
+    @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
+    @Path("{taxonVersionKey}/ptvk")
+    @TypeHint(Taxon.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned the requested taxon data")
+    })
+    public Taxon getPreferredTaxon(@PathParam("taxonVersionKey") String taxonVersionKey) {
+        return taxonMapper.getTaxonPreferred(taxonVersionKey);
+    }    
 
     /**
      * Return a specific INSPIRE Taxon Dataset record from the data warehouse
@@ -422,6 +440,7 @@ public class TaxonResource extends AbstractResource {
      * @param featureID Any feature ID's required
      * @param sensitive If the records should be sensitive or not
      * @param gridRef A Grid Reference to search within
+     * @param polygon A WKT WGS84 polygon area to search within
      * 
      * @return A List of Site Boundaries matching the given parameters
      * 
@@ -441,13 +460,16 @@ public class TaxonResource extends AbstractResource {
             @QueryParam("endYear") @DefaultValue(ObservationResourceDefaults.defaultEndYear) int endYear,
             @QueryParam("datasetKey") @DefaultValue(ObservationResourceDefaults.defaultDatasetKey) List<String> datasetKeys,
             @PathParam("taxonVersionKey") List<String> taxa,
+            @QueryParam("designation") @DefaultValue(ObservationResourceDefaults.defaultDesignation) String designation,
+            @QueryParam("orgSuppliedList") @DefaultValue(ObservationResourceDefaults.defaultOrgSuppliedList) int orgSuppliedList,
+            @QueryParam("taxonOutputGroup") @DefaultValue(ObservationResourceDefaults.defaultTaxonOutputGroup) String taxonOutputGroup,
             @QueryParam("spatialRelationship") @DefaultValue(ObservationResourceDefaults.SPATIAL_RELATIONSHIP_DEFAULT) String spatialRelationship,
             @QueryParam("featureID") @DefaultValue(ObservationResourceDefaults.defaultFeatureID) String featureID,
             @QueryParam("sensitive") @DefaultValue(ObservationResourceDefaults.defaultSensitive) Boolean sensitive,
             @QueryParam("gridRef") @DefaultValue(ObservationResourceDefaults.defaultGridRef) String gridRef,
             @QueryParam("polygon") @DefaultValue(ObservationResourceDefaults.defaultGridRef) String polygon,
             @QueryParam("verification") @DefaultValue(ObservationResourceDefaults.defaultVerifications) String verification) {
-        return siteBoundaryMapper.getByTaxonVersionKey(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, gridRef, polygon, false, getVerificationIDs(verification));
+        return siteBoundaryMapper.getByTaxonVersionKey(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, orgSuppliedList, gridRef, polygon, false, getVerificationIDs(verification));
     }
 
     /**
@@ -462,10 +484,13 @@ public class TaxonResource extends AbstractResource {
      * @param spatialRelationship Any spatial relationship requirements
      * @param featureID Any feature ID's required
      * @param sensitive If the records should be sensitive or not
+     * @param polygon A WKT WGS84 polygon area to search within
+     * @param response
      * @param gridRef A Grid Reference to search within
      * 
      * @return A zipped download containing list of Site Boundaries matching the 
      * given parameters
+     * @throws java.io.IOException
      * 
      * @response.representation.200.qname StreamingOutput
      * @response.representation.200.mediaType application/x-zip-compressed
@@ -483,6 +508,9 @@ public class TaxonResource extends AbstractResource {
             @QueryParam("endYear") @DefaultValue(ObservationResourceDefaults.defaultEndYear) final int endYear,
             @QueryParam("datasetKey") @DefaultValue(ObservationResourceDefaults.defaultDatasetKey) final List<String> datasetKeys,
             @PathParam("taxonVersionKey") final List<String> taxa,
+            @QueryParam("designation") final String designation,
+            @QueryParam("orgSuppliedList") final int orgSuppliedList,
+            @QueryParam("taxonOutputGroup") final String taxonOutputGroup,
             @QueryParam("spatialRelationship") @DefaultValue(ObservationResourceDefaults.SPATIAL_RELATIONSHIP_DEFAULT) final String spatialRelationship,
             @QueryParam("featureID") @DefaultValue(ObservationResourceDefaults.defaultFeatureID) final String featureID,
             @QueryParam("sensitive") @DefaultValue(ObservationResourceDefaults.defaultSensitive) final Boolean sensitive,
@@ -495,7 +523,7 @@ public class TaxonResource extends AbstractResource {
             ZipOutputStream zip = new ZipOutputStream(response.getOutputStream());
             String title = "Site list download";
             List<Integer> verificationIDs = getVerificationIDs(verification);
-            addSites(zip, user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, gridRef, polygon, verificationIDs);
+            addSites(zip, user, startYear, endYear, datasetKeys, taxa, designation, orgSuppliedList, taxonOutputGroup, spatialRelationship, featureID, sensitive, gridRef, polygon, verificationIDs);
             addReadMe(zip, title, user, startYear, endYear, datasetKeys, spatialRelationship, sensitive, taxa, gridRef, polygon, verification);
             addDatasetMetadata(zip, user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, gridRef, polygon, verificationIDs);
             zip.flush();
@@ -560,11 +588,11 @@ public class TaxonResource extends AbstractResource {
             filters.put("Taxa", ProviderHelper.taxaListToCommaList(taxa));
         }
 
-        if (!(new Integer(startYear).toString().equals(ObservationResourceDefaults.defaultStartYear))) {
-            filters.put("Start year", new Integer(startYear).toString());
+        if (!(Integer.toString(startYear).equals(ObservationResourceDefaults.defaultStartYear))) {
+            filters.put("Start year", Integer.toString(startYear));
         }
-        if (!(new Integer(endYear).toString().equals(ObservationResourceDefaults.defaultEndYear))) {
-            filters.put("End year", new Integer(endYear).toString());
+        if (!(Integer.toString(endYear).equals(ObservationResourceDefaults.defaultEndYear))) {
+            filters.put("End year", Integer.toString(endYear));
         }
         filters.put("Spatial relationship", spatialRelationship);
         filters.put("Include only sensitive records", Boolean.toString(sensitive));
@@ -606,10 +634,11 @@ public class TaxonResource extends AbstractResource {
      */
     private void addSites(
             ZipOutputStream zip, User user, int startYear, int endYear, 
-            List<String> datasetKeys, List<String> taxa, String spatialRelationship, 
-            String featureID, boolean sensitive, String gridRef, String polygon, 
-            List<Integer> verification) throws IOException {
-        List<SiteBoundary> sites = siteBoundaryMapper.getByTaxonVersionKey(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, gridRef, polygon, false, verification);
+            List<String> datasetKeys, List<String> taxa, String designation, 
+            int orgSuppliedList, String taxonOutputGroup,
+            String spatialRelationship, String featureID, boolean sensitive, 
+            String gridRef, String polygon, List<Integer> verification) throws IOException {
+        List<SiteBoundary> sites = siteBoundaryMapper.getByTaxonVersionKey(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, orgSuppliedList, gridRef, polygon, false, verification);
         zip.putNextEntry(new ZipEntry("SiteList.csv"));
         ArrayList<String> values = new ArrayList<String>();
         values.add("Site Name");

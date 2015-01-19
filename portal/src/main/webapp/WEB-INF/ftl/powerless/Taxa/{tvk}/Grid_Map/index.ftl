@@ -1,19 +1,23 @@
 <#assign tvk=URLParameters.tvk>
-<#assign requestParametersExtended = RequestParameters + {"ptvk":[tvk]}>
+<#assign taxon=json.readURL("${api}/taxa/${tvk}/ptvk")>
+<#assign requestParametersExtended = RequestParameters + {"ptvk":[taxon.ptaxonVersionKey]}>
 <#assign providersWithQueryStats=json.readURL("${api}/taxonObservations/providers",requestParametersExtended)>
-<#assign taxon=json.readURL("${api}/taxa/${tvk}")>
 <#assign unavailableDatasets=json.readURL("${api}/taxonObservations/unavailableDatasets",requestParametersExtended)>
 <@template.master title="NBN Grid Map" 
     javascripts=["/js/jquery.dataset-selector-utils.js","/js/jquery.gridmap_utils.js","/js/report_utils.js","/js/colourpicker/colorpicker.js"]
     csss=["/css/report.css","/css/gridmap.css","/css/colourpicker/colorpicker.css","/css/smoothness/jquery-ui-1.8.23.custom.css"]>
     
-    <h1>Grid map for ${taxon_utils.getLongName(taxon)}</h1>
+    <h1 style="margin:0;">Grid map for ${taxon_utils.getLongName(taxon)}</h1>
+    <#if tvk != taxon.ptaxonVersionKey>
+        <#assign originalTaxon=json.readURL("${api}/taxa/${tvk}")>
+        <h3 style="margin:0 0 20px 0;">Redirected from ${taxon_utils.getLongName(originalTaxon)} (${tvk})</h3>
+    </#if>
     <form target="" id="nbn-grid-map-form" gis-server="${gis}" api-server="${api}">
 	<div id="nbn-grid-filters-container">
 	    <@gridMapFilters/>
 	    <@gridMapExtras/>
 	</div>
-        <@gridMapContents tvk=tvk/>
+        <@gridMapContents tvk=taxon.ptaxonVersionKey/>
         <@mdcontent.smallCaveat/>
         <div style="width: 100%">
             <@report_utils.dataset_table providersWithQueryStats=providersWithQueryStats requestParameters=RequestParameters/>
@@ -27,7 +31,7 @@
     <div class="tabbed" id="nbn-grid-filter-container">
             <h3>Controls</h3>
 
-            <input type="hidden" id="tvk" name="tvk" value="${tvk}">
+            <input type="hidden" id="tvk" name="tvk" value="${taxon.ptaxonVersionKey}">
 
             <fieldset>
                 <legend>Resolution</legend>
@@ -99,7 +103,10 @@
             <fieldset>
                 <legend>Other Options</legend>
                 <a id="nbn-interactive-map" href="#">View on Interactive Map</a><br />
-                <a id="nbn-request-better-access" href="#">Request Better Access</a>
+                <a id="nbn-request-better-access" href="#">Request Better Access</a><br />
+                <#if tvk != taxon.ptaxonVersionKey>
+                    <a id="nbn-request-better-access" href="/Taxa/${tvk}/Grid_Map/Actual">View Grid Map for Original Taxon Version Key</a>
+                </#if>
             </fieldset>
     </div>
 </#macro>

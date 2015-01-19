@@ -64,7 +64,7 @@
                                         <option value="<\%= item.getKey() %>" selected="selected"><\%= item.getName() %></option>
                                 <\% } else { %>
                                         <option value="<\%= item.getKey() %>"><\%= item.getName() %></option>
-                                <% }
+                                <\% }
                         } %>
                         </select>
 

@@ -75,6 +75,7 @@ import uk.org.nbn.nbnv.api.rest.resources.utils.TaxonObservationDownloadHandler;
 import uk.org.nbn.nbnv.api.rest.resources.utils.TaxonObservationHandler;
 import uk.org.nbn.nbnv.api.utils.DownloadUtils;
 import uk.org.nbn.nbnv.api.utils.FilterToText;
+import uk.org.nbn.nbnv.api.utils.ObservationResourceDefaults;
 
 @Component
 @Path("/taxonObservations")

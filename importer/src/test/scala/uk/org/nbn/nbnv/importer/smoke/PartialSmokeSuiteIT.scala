@@ -3,7 +3,7 @@ package uk.org.nbn.nbnv.importer.smoke
 
 import uk.org.nbn.nbnv.importer._
 import ingestion.FeatureIngester
-import jersey.WebApi
+import reset.DatasetReset
 import records.BoundaryDef
 import spatial.GridSquareInfoFactory
 import uk.org.nbn.nbnv.importer.testing.BaseFunSuite
@@ -11,10 +11,7 @@ import uk.org.nbn.nbnv.importer.utility.ResourceLoader
 import data.{QueryCache, Database, Repository, KeyGenerator}
 import org.apache.log4j.Logger
 import uk.org.nbn.nbnv.PersistenceUtility
-import com.sun.jersey.api.client.{Client, ClientResponse, WebResource}
 import uk.org.nbn.nbnv.importer.Settings
-import com.sun.jersey.api.client.config.DefaultClientConfig
-import com.sun.jersey.api.json.JSONConfiguration
 
 
 class PartialSmokeSuiteIT extends BaseFunSuite with ResourceLoader {
@@ -62,9 +59,9 @@ class PartialSmokeSuiteIT extends BaseFunSuite with ResourceLoader {
     f.db.repo.importTaxonObservationsAndRelatedRecords()
   }
 
-  ignore("should call web services") {
-    val api = new WebApi
-    api.resetDatasetAccess("GA001280")
+  ignore("should call external dataset access reset tool") {
+    val datasetReset = new DatasetReset
+    datasetReset.resetDatasetAccess("GA001280")
   }
 
   ignore("check call to set dateset public"){
