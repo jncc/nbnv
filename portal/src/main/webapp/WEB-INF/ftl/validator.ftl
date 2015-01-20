@@ -8,16 +8,20 @@
         <form id="fileUpload">
             <fieldset>
                 <legend>Upload Data File</legend>
-                <p>Please select the data file that you want to validate, this file must be in the NBN Exchange Format</p>
-                <p>Data File: <input type="file" name="file"></p>
+                <p>Please select the data file that you want to validate, this file must be in the <a href="http://www.nbn.org.uk/Share-Data/Providing-Data/NBN-Data-Exchange-format.aspx">NBN Exchange Format</a></p>
+                <p><input type="file" name="file"></p>
                 <input type="submit" value="Upload File" />
             </fieldset>
         </form>
     </div>
         
     <div id="stage2" style="display:none;">
-        <form id="headersForm">
-
+        <form>
+            <fieldset>
+                <legend>Match fields to Darwin Core</legend>
+                <p>Please match the fields of the supplied data file to <a href="http://rs.tdwg.org/dwc/">Darwin Core datatypes</a></p>
+                <div id="headersForm"></div>
+            </fieldset>
         </form>
     </div>
 
@@ -133,7 +137,7 @@
             <fieldset>
                 <legend>Add a name for your dataset</legend>
                 <p>
-                    <span class="formlabel"><label for="friendlyName" >Enter a friendly name for this dataset</label></span>
+                    <span class="formlabel"><label for="friendlyName" >Enter a short identifiable name for this dataset</label></span>
                     <input id="friendlyName" class="wide" length=200" />
                 </p>
                 <input id="addFriendlyName" type="submit" name="addFriendlyName" value="Submit for Processing"/>
@@ -142,7 +146,8 @@
     </div>
 
     <div id="stage4" style="display:none;">
-        <p>Successfully submitted to queue, you will receive an email when this process is completed</p>
+        <p>The dataset has been successfully submitted to the queue of datasets waiting to be validated. Once validated you will receive an email outlining any validation issues found with your dataset</p>
+        <p><a href="/Validator">Submit another dataset for processing</a></p>
     </div>
 
     <div id="waitingDiv" style="display:none;">
