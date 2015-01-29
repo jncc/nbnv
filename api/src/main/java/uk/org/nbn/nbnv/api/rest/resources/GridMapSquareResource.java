@@ -17,6 +17,7 @@ import org.codehaus.enunciate.jaxrs.StatusCodes;
 import org.codehaus.enunciate.jaxrs.TypeHint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import uk.org.nbn.nbnv.api.dao.providers.ProviderHelper;
 import uk.org.nbn.nbnv.api.dao.warehouse.GridMapSquareMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.TaxonMapper;
@@ -67,7 +68,7 @@ public class GridMapSquareResource extends AbstractResource {
      * (Injected Token no need to pass)
      * @param ptvk The Taxon Version Key we are looking for
      * @param resolution What resolution we are looking for
-     * @param bands A list of bands
+     * @param bands A list of bands i.e. band=2000-2012,ff0000,000000
      * @param datasets A list of datasets to restrict the search to
      * @param viceCountyIdentifier An identifier for a Vice County
      * 
@@ -86,11 +87,18 @@ public class GridMapSquareResource extends AbstractResource {
             @Context HttpServletResponse response,
             @TokenUser() final User user,
             @PathParam("ptvk") final String ptvk,
-            @QueryParam("resolution") @DefaultValue("") final String resolution,
+            @QueryParam("resolution") @DefaultValue("10km") final String resolution,
             @QueryParam("band") @DefaultValue("") final List<String> bands,
             @QueryParam("datasets") @DefaultValue(ObservationResourceDefaults.defaultDatasetKey) final List<String> datasets,
             @QueryParam("feature") @DefaultValue(ObservationResourceDefaults.defaultFeatureID) final String viceCountyIdentifier)
             throws IOException {
+        
+        // Check bands are valid before we start doing anything
+        for (String band : bands) {
+            if (!StringUtils.hasText(band) && band.matches("\\d{4}\\-\\d{4},[A-Fa-f0-9]{6},[A-Fa-f0-9]{6}")) {
+                throw new IllegalArgumentException("One of the band argument supplied is not valid expected (eg band=2000-2012,ff0000,000000) but found '" + band + "'");
+            }
+        }
         
         // Set the filename to get around a bug with Firefox not adding the extension properly
         response.setHeader("Content-Disposition", String.format("attachment; filename=\"%s_grid_squares.zip\"", ptvk));
@@ -100,8 +108,8 @@ public class GridMapSquareResource extends AbstractResource {
             @Override
             public void write(OutputStream out) throws IOException, WebApplicationException {
                 ZipOutputStream zip = new ZipOutputStream(out);
-                addReadMe(zip, user, ptvk, resolution, bands);
                 addGridRefs(zip, user, ptvk, resolution, bands, datasets, viceCountyIdentifier);
+                addReadMe(zip, user, ptvk, resolution, bands);
                 addDatasetMetadata(zip, user, ptvk, resolution, bands, datasets, viceCountyIdentifier);
                 zip.flush();
                 zip.close();
@@ -147,7 +155,7 @@ public class GridMapSquareResource extends AbstractResource {
             if (!"".equals(band)) {
                 addGridRefsForYearBand(zip, user, ptvk, resolution, band, datasetKey, viceCountyIdentifier);
             } else {
-                throw new IllegalArgumentException("No year band arguments supplied, at least one 'band' argument is required (eg band=2000-2012,ff0000,000000)");
+                throw new IllegalArgumentException("One of the band argument supplied is not valid expected (eg band=2000-2012,ff0000,000000) but found '" + band + "'");
             }
         }
     }
@@ -167,7 +175,7 @@ public class GridMapSquareResource extends AbstractResource {
         //Example year band: 2000-2012,ff0000,000000
         String yearRange = band.substring(0,band.indexOf(","));
         zip.putNextEntry(new ZipEntry("GridSquares_" + yearRange + ".csv"));
-        List<GridMapSquare> gridMapSquares = gridMapSquareMapper.getGridMapSquares(user, ptvk, resolution, band, datasetKeys, viceCountyIdentifier, 0);
+        List<GridMapSquare> gridMapSquares = gridMapSquareMapper.getGridMapSquares(user, ptvk, resolution, ProviderHelper.getStartYear(band), ProviderHelper.getEndYear(band), datasetKeys, viceCountyIdentifier, false);
         downloadHelper.writeln(zip, "GridSquares");
         for (GridMapSquare gridMapSquare : gridMapSquares) {
             downloadHelper.writeln(zip, gridMapSquare.getGridRef());
