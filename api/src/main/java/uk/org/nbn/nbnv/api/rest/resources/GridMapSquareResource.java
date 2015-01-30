@@ -19,8 +19,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import uk.org.nbn.nbnv.api.dao.providers.ProviderHelper;
+import uk.org.nbn.nbnv.api.dao.warehouse.FeatureMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.GridMapSquareMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.TaxonMapper;
+import uk.org.nbn.nbnv.api.model.Feature;
 import uk.org.nbn.nbnv.api.model.GridMapSquare;
 import uk.org.nbn.nbnv.api.model.Taxon;
 import uk.org.nbn.nbnv.api.model.TaxonDataset;
@@ -36,6 +38,7 @@ public class GridMapSquareResource extends AbstractResource {
     @Autowired GridMapSquareMapper gridMapSquareMapper;
     @Autowired TaxonMapper taxonMapper;
     @Autowired DownloadHelper downloadHelper;
+    @Autowired FeatureMapper featureMapper;
 
     /**
      * Returns a list of grid squares matching a name and / or resolution 
@@ -109,7 +112,7 @@ public class GridMapSquareResource extends AbstractResource {
             public void write(OutputStream out) throws IOException, WebApplicationException {
                 ZipOutputStream zip = new ZipOutputStream(out);
                 addGridRefs(zip, user, ptvk, resolution, bands, datasets, viceCountyIdentifier);
-                addReadMe(zip, user, ptvk, resolution, bands);
+                addReadMe(zip, user, ptvk, resolution, bands, viceCountyIdentifier);
                 addDatasetMetadata(zip, user, ptvk, resolution, bands, datasets, viceCountyIdentifier);
                 zip.flush();
                 zip.close();
@@ -126,15 +129,21 @@ public class GridMapSquareResource extends AbstractResource {
      * @param bands
      * @throws IOException 
      */
-    private void addReadMe(ZipOutputStream zip, User user, String ptvk, String resolution, List<String> bands) throws IOException {
+    private void addReadMe(ZipOutputStream zip, User user, String ptvk, String resolution, List<String> bands, String viceCountyIdentifier) throws IOException {
         Taxon taxon = taxonMapper.getTaxon(ptvk);
         String title = "Grid map square download from the NBN Gateway";
         HashMap<String, String> filters = new HashMap<String, String>();
         filters.put("Taxon", taxon.getName() + " " + taxon.getAuthority());
-        filters.put("Resolution: ", resolution);
+        filters.put("Resolution", resolution);
         int i = 1;
         for(String band: bands){
             filters.put("Year range " + i++, band.substring(0,band.indexOf(",")));
+        }
+        if (StringUtils.hasText(viceCountyIdentifier)) {
+            Feature feature = featureMapper.getFeature(viceCountyIdentifier);
+            if (feature != null) {
+                filters.put("Vice County", feature.getLabel());
+            }
         }
         downloadHelper.addReadMe(zip, user, title, filters);
     }
