@@ -1,6 +1,8 @@
 package uk.org.nbn.nbnv.api.rest.resources;
 
+import java.io.IOException;
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
@@ -11,6 +13,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.apache.abdera.Abdera;
@@ -44,6 +47,7 @@ import uk.org.nbn.nbnv.api.model.meta.OpResult;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenDatasetAdminUser;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenDatasetSurveyAdminUser;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
+import uk.org.nbn.nbnv.api.services.DatasetImporterService;
 import uk.org.nbn.nbnv.api.solr.SolrResolver;
 
 @Component
@@ -58,6 +62,7 @@ public class DatasetResource extends AbstractResource {
     @Autowired OperationalDatasetContributingOrganisationMapper oDatasetContributingOrganisationMapper;
     @Autowired DownloadMapper downloadMapper;
     @Autowired OperationalDownloadMapper oDownloadMapper;
+    @Autowired DatasetImporterService importerService;
     
     /**
      * Returns a list of all datasets from the data warehouse
@@ -125,6 +130,18 @@ public class DatasetResource extends AbstractResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Dataset getEditDatasetByID(@TokenDatasetAdminUser(path="id") User admin, @PathParam("id") String id){
         return oDatasetMapper.selectByDatasetKey(id);
+    }
+    
+    @POST
+    @Path("/{id}/data")
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Dataset has been submitted for processing"),
+        @ResponseCode(code = 403, condition = "You do not have admin rights over this dataset"),
+        @ResponseCode(code = 400, condition = "The supplied dataset was not in valid nbn exchange format")
+    })
+    @Produces(MediaType.APPLICATION_JSON)
+    public void importReplaceDataset(@TokenDatasetAdminUser(path="id") User admin, @PathParam("id") String id, @Context HttpServletRequest request) throws IOException {
+        importerService.submitImport(id, request.getInputStream());
     }
     
     /**
