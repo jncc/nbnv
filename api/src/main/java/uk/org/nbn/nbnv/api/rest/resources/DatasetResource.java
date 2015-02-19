@@ -132,18 +132,6 @@ public class DatasetResource extends AbstractResource {
         return oDatasetMapper.selectByDatasetKey(id);
     }
     
-    @POST
-    @Path("/{id}/data")
-    @StatusCodes({
-        @ResponseCode(code = 200, condition = "Dataset has been submitted for processing"),
-        @ResponseCode(code = 403, condition = "You do not have admin rights over this dataset"),
-        @ResponseCode(code = 400, condition = "The supplied dataset was not in valid nbn exchange format")
-    })
-    @Produces(MediaType.APPLICATION_JSON)
-    public void importReplaceDataset(@TokenDatasetAdminUser(path="id") User admin, @PathParam("id") String id, @Context HttpServletRequest request) throws IOException {
-        importerService.submitImport(id, request.getInputStream());
-    }
-    
     /**
      * Returns a list of the last 10 most recently uploaded datasets
      * 
