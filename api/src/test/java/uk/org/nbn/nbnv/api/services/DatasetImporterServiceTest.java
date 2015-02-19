@@ -13,7 +13,6 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.mockito.MockitoAnnotations;
 import uk.org.nbn.nbnv.api.model.ValidationError;
 
 /**
@@ -27,7 +26,6 @@ public class DatasetImporterServiceTest {
     
     @Before
     public void init() {
-        MockitoAnnotations.initMocks(this);
         folder.newFolder("uploads");
         folder.newFolder("queue");
         folder.newFolder("processing");
