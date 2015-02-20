@@ -254,7 +254,7 @@ public class DatasetImporterService {
         
         @Override
         public boolean accept(File pathname) {
-            return pathname.isDirectory() && pathname.getName().startsWith(datasetKey + "-");
+            return pathname.isDirectory() && pathname.getName().toLowerCase().startsWith(datasetKey.toLowerCase() + "-");
         }
     }
 }

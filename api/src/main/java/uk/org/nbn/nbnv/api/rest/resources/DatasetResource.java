@@ -2,7 +2,6 @@ package uk.org.nbn.nbnv.api.rest.resources;
 
 import java.io.IOException;
 import java.util.List;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
@@ -13,7 +12,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.apache.abdera.Abdera;
@@ -36,6 +34,7 @@ import uk.org.nbn.nbnv.api.dao.warehouse.OrganisationMapper;
 import uk.org.nbn.nbnv.api.model.AccessPosition;
 import uk.org.nbn.nbnv.api.model.Dataset;
 import uk.org.nbn.nbnv.api.model.DatasetAdministrator;
+import uk.org.nbn.nbnv.api.model.DatasetImportStatus;
 import uk.org.nbn.nbnv.api.model.DatasetResolutionRecordCount;
 import uk.org.nbn.nbnv.api.model.Organisation;
 import uk.org.nbn.nbnv.api.model.Survey;
@@ -130,6 +129,37 @@ public class DatasetResource extends AbstractResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Dataset getEditDatasetByID(@TokenDatasetAdminUser(path="id") User admin, @PathParam("id") String id){
         return oDatasetMapper.selectByDatasetKey(id);
+    }
+    
+    /**
+     * Query the nbn importer for information relating the the given dataset key.
+     * The information we will get is:
+     *  - if an import is queued up for the given dataset key
+     *  - if an import for the dataset key is currently being processed
+     *  - any known history relating the previously completed imports (e.g. validation errors)
+     * 
+     * @param admin The Current User if they are a dataset admin for this 
+     * dataset or throw a 403 Forbidden error (Injected Token no need to pass)
+     * @param id ID of a dataset i.e. GA000466
+     * 
+     * @return The current state of the importer with regards to the given dataset
+     * 
+     * @response.representation.200.qname DatasetImportStatus
+     * @response.representation.200.mediaType application/json
+     */
+    @GET
+    @Path("/{id}/import")
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "The status of the importer for the given dataset"),
+        @ResponseCode(code = 403, condition = "You do not have admin rights over this dataset")}
+    )
+    @Produces(MediaType.APPLICATION_JSON)
+    public DatasetImportStatus getImportStatus(@TokenDatasetAdminUser(path="id") User admin, @PathParam("id") String id) throws IOException {
+        return new DatasetImportStatus(
+                importerService.isQueued(id),
+                id.equalsIgnoreCase(importerService.getCurrentlyProcessedDataset()),
+                importerService.getImportHistory(id)
+        );
     }
     
     /**
