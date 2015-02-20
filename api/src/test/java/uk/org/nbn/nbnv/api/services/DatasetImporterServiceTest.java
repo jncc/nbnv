@@ -150,6 +150,32 @@ public class DatasetImporterServiceTest {
         assertTrue("Expected datatab to be smaller", dataTab.getSize() < originalArchive.getEntry("data.tab").getSize());
     }
     
+    @Test(expected=IllegalArgumentException.class)
+    public void checkFailsToReprocessSuccessfulImport() throws IOException {
+        //Given
+        File archived = folder.newFolder("completed/valid-201502191415031682");
+        URL testArchive = getClass().getResource("/test-data/valid-import");
+        FileUtils.copyDirectory(new File(testArchive.getFile()), archived);
+        
+        //When
+        service.stripInvalidRecords("valid", "201502191415031682");
+        
+        //Then
+        fail("Expected to fail with an illegal argument exception");
+    }
+    
+    @Test(expected=IllegalArgumentException.class)
+    public void checkFailsToReprocessMissingImport() throws IOException {
+        //Given
+        //Nothing
+        
+        //When
+        service.stripInvalidRecords("missing", "201502191415031682");
+        
+        //Then
+        fail("Expected to fail with an illegal argument exception");
+    }
+    
     @Test(expected=FileAlreadyExistsException.class)
     public void checkThatFailsToProcessArchiveWhenDatasetIsAlreadyOnTheQueue() throws IOException {
         //Given
