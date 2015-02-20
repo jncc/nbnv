@@ -6,11 +6,11 @@ import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import org.apache.commons.io.FileUtils;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.*;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -100,7 +100,7 @@ public class DatasetImporterServiceTest {
         assertEquals("Expected 4 errors", 4, validationErrors.size());
         ValidationError error = validationErrors.get(0);
         
-        assertEquals("Expected to read line number", error.getLineNumber(), 3);
+        assertEquals("Expected to read record key", error.getRecordKey(), "3");
         assertEquals("Expected to read rule", error.getRule(), "NBNV-73");
         assertEquals("Expected to read message", error.getMessage(), "The same date must be used for both the StartDate and EndDate for a date with DateType 'Some(D)'");
     }
@@ -118,5 +118,29 @@ public class DatasetImporterServiceTest {
         //Then
         assertEquals("Has ony entry in map", 1, history.size());
         assertTrue("Has timestamp as key", history.containsKey("201502191415031682"));
+    }
+    
+    @Test
+    public void checkCanStripErrorsFromArchivedImport() throws IOException {
+        //Given
+        File archived = folder.newFolder("completed/invalid-201502191415031682");
+        URL testArchive = getClass().getResource("/test-data/invalid-import");
+        FileUtils.copyDirectory(new File(testArchive.getFile()), archived);
+        
+        ZipFile originalArchive = new ZipFile(new File(archived, "invalid.zip"));
+        
+        //When
+        service.stripInvalidRecords("invalid", "201502191415031682");
+        
+        //Then
+        File queuedImport = new File(folder.getRoot(), "queue/invalid.zip");
+        assertTrue("The queued dataset exists", queuedImport.exists());
+        ZipFile zipFile = new ZipFile(queuedImport);
+        ZipEntry dataTab = zipFile.getEntry("data.tab");
+        assertNotNull("Expected to file data.tab", dataTab);
+        assertNotNull("Expected to file eml.xmk", zipFile.getEntry("eml.xml"));
+        assertNotNull("Expected to file meta.xml", zipFile.getEntry("meta.xml"));
+        assertThat("Expected datatab not to be empty", dataTab.getSize(), not(equalTo(0L)));
+        assertTrue("Expected datatab to be smaller", dataTab.getSize() < originalArchive.getEntry("data.tab").getSize());
     }
 }
