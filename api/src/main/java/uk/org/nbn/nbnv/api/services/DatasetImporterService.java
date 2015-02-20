@@ -2,6 +2,7 @@ package uk.org.nbn.nbnv.api.services;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -10,7 +11,9 @@ import java.nio.file.FileSystems;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Pattern;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +61,25 @@ public class DatasetImporterService {
      */
     public boolean isQueued(String datasetKey) {
         return getImporterPath("queue", datasetKey + ".zip").toFile().exists();
+    }
+    
+    /**
+     * Scan over the completed directory for archived import log files for the given
+     * datasetKey.
+     * @param datasetKey to 
+     * @return the history of all known previous imports for the given datasetKey
+     *  mapped to the import timestamp
+     * @throws java.io.IOException 
+     */
+    public Map<String, List<ValidationError>> getImportHistory(String datasetKey) throws IOException {
+        Map<String, List<ValidationError>> history = new HashMap<>();
+        CompletedLogFilter completedImports = new CompletedLogFilter(datasetKey);
+        File[] completed = getImporterPath("completed").toFile().listFiles(completedImports);
+        for(File importArchive : completed) {
+            String timestamp = importArchive.getName().substring(datasetKey.length() + 1);
+            history.put(timestamp, getValidationErrors(new File(importArchive, "ConsoleOutput.txt")));
+        }
+        return history;
     }
     
     /**
@@ -117,6 +139,19 @@ public class DatasetImporterService {
         @Override
         public boolean accept(File dir, String name) {
             return name.startsWith("log-") && name.endsWith(".log");
+        }
+    }
+    
+    private static class CompletedLogFilter implements FileFilter {
+        private final String datasetKey;
+        
+        public CompletedLogFilter(String datasetKey) {
+            this.datasetKey = datasetKey;
+        }
+        
+        @Override
+        public boolean accept(File pathname) {
+            return pathname.isDirectory() && pathname.getName().startsWith(datasetKey + "-");
         }
     }
 }

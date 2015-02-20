@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
+import org.apache.commons.io.FileUtils;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -88,8 +90,8 @@ public class DatasetImporterServiceTest {
     @Test
     public void checkCanReadValidationErrors() throws IOException {
         //Given
-        URL classLoader = getClass().getResource("/test-data/importerValidationError.log");
-        File validationErrorsLog = new File(classLoader.getFile());
+        URL url = getClass().getResource("/test-data/importerValidationError.log");
+        File validationErrorsLog = new File(url.getFile());
         
         //When
         List<ValidationError> validationErrors = service.getValidationErrors(validationErrorsLog);
@@ -101,5 +103,20 @@ public class DatasetImporterServiceTest {
         assertEquals("Expected to read line number", error.getLineNumber(), 3);
         assertEquals("Expected to read rule", error.getRule(), "NBNV-73");
         assertEquals("Expected to read message", error.getMessage(), "The same date must be used for both the StartDate and EndDate for a date with DateType 'Some(D)'");
+    }
+    
+    @Test
+    public void checkCanReadHistoryOfOldImports() throws IOException {
+        //Given
+        folder.newFolder("completed/myDatasetKey-201502191415031682");
+        URL url = getClass().getResource("/test-data/importerValidationError.log");
+        FileUtils.copyURLToFile(url, folder.newFile("completed/myDatasetKey-201502191415031682/ConsoleOutput.txt"));
+        
+        //When
+        Map<String,List<ValidationError>> history = service.getImportHistory("myDatasetKey");
+        
+        //Then
+        assertEquals("Has ony entry in map", 1, history.size());
+        assertTrue("Has timestamp as key", history.containsKey("201502191415031682"));
     }
 }
