@@ -30,6 +30,7 @@ import java.util.zip.ZipOutputStream;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import uk.org.nbn.nbnv.api.model.ImportStatus;
 import uk.org.nbn.nbnv.api.model.ValidationError;
 
 /**
@@ -47,6 +48,7 @@ public class DatasetImporterService {
     @Autowired Properties properties;
     
     private static final Pattern VALIDATION_LOG_LINE = Pattern.compile("[0-9]{4}-[A-z]{3}-[0-9]{2}\\s[0-9]{2}\\:[0-9]{2}\\:[0-9]{2}\\sERROR\\sValidation.*");
+    private static final Pattern EXCEPTION_LOG_ERROR = Pattern.compile("Exception.*");
     /**
      * Looks in the processing path and determines the dataset which is 
      * currently being processed by the importer service
@@ -83,13 +85,15 @@ public class DatasetImporterService {
      *  mapped to the import timestamp
      * @throws java.io.IOException 
      */
-    public Map<String, List<ValidationError>> getImportHistory(String datasetKey) throws IOException {
-        Map<String, List<ValidationError>> history = new HashMap<>();
+    public Map<String, ImportStatus> getImportHistory(String datasetKey) throws IOException {
+        Map<String, ImportStatus> history = new HashMap<>();
         CompletedLogFilter completedImports = new CompletedLogFilter(datasetKey);
         File[] completed = getImporterPath("completed").toFile().listFiles(completedImports);
         for(File importArchive : completed) {
             String timestamp = importArchive.getName().substring(datasetKey.length() + 1);
-            history.put(timestamp, getValidationErrors(new File(importArchive, "ConsoleOutput.txt")));
+            List<ValidationError> errors = getValidationErrors(new File(importArchive, "ConsoleOutput.txt"));
+            boolean success = isSuccessfulImport(new File(importArchive, "ConsoleErrors.txt"));
+            history.put(timestamp, new ImportStatus(errors, success));
         }
         return history;
     }
@@ -107,8 +111,8 @@ public class DatasetImporterService {
      *  the queue
      */
     public void stripInvalidRecords(String datasetKey, String timestamp) throws IOException, NoSuchFileException, FileAlreadyExistsException {
-        List<ValidationError> errors = getImportHistory(datasetKey).get(timestamp);
-        if(errors == null || errors.isEmpty()) {
+        ImportStatus status = getImportHistory(datasetKey).get(timestamp);
+        if(status == null || status.isSuccess()) {
             throw new IllegalArgumentException("There is no archive which previously failed to import with the given timestamp");
         }
         Path upload = Files.createTempFile(getImporterPath("uploads"), "reimport", ".zip");
@@ -119,7 +123,7 @@ public class DatasetImporterService {
                     out.putNextEntry(new ZipEntry(entry.getName()));
                     InputStream in = zipFile.getInputStream(entry);
                     if(entry.getName().equals("data.tab")) {
-                        copyWithoutValidationErrors(in, out, errors);
+                        copyWithoutValidationErrors(in, out, status.getValidationErrors());
                     }
                     else {
                        IOUtils.copy(in, out); 
@@ -129,6 +133,24 @@ public class DatasetImporterService {
             }
         }
         moveToImportQueue(upload, datasetKey); //A new dataset.zip has been created, pop it onto the queue
+    }
+    
+    /**
+     * Scan the given ConsoleErrors log file for any occurrances of the word
+     * 'Exception'. If present, we assume that the import was a failure
+     * @param consoleErrors 
+     * @return if the consoleErrors log does not have a line which starts with 'Exception'
+     * @throws IOException 
+     */
+    protected boolean isSuccessfulImport(File consoleErrors) throws IOException {
+        try (BufferedReader in = new BufferedReader(new FileReader(consoleErrors))) {
+            while(in.ready()) {
+                if(EXCEPTION_LOG_ERROR.matcher(in.readLine()).matches()) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
     
     /**

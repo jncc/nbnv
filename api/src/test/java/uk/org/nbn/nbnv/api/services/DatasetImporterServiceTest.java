@@ -18,6 +18,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import uk.org.nbn.nbnv.api.model.ImportStatus;
 import uk.org.nbn.nbnv.api.model.ValidationError;
 
 /**
@@ -93,7 +94,7 @@ public class DatasetImporterServiceTest {
     @Test
     public void checkCanReadValidationErrors() throws IOException {
         //Given
-        URL url = getClass().getResource("/test-data/importerValidationError.log");
+        URL url = getClass().getResource("/test-data/invalid-import/ConsoleOutput.txt");
         File validationErrorsLog = new File(url.getFile());
         
         //When
@@ -112,11 +113,13 @@ public class DatasetImporterServiceTest {
     public void checkCanReadHistoryOfOldImports() throws IOException {
         //Given
         folder.newFolder("completed/myDatasetKey-201502191415031682");
-        URL url = getClass().getResource("/test-data/importerValidationError.log");
-        FileUtils.copyURLToFile(url, folder.newFile("completed/myDatasetKey-201502191415031682/ConsoleOutput.txt"));
+        URL output = getClass().getResource("/test-data/invalid-import/ConsoleOutput.txt");
+        FileUtils.copyURLToFile(output, folder.newFile("completed/myDatasetKey-201502191415031682/ConsoleOutput.txt"));
+        URL errors = getClass().getResource("/test-data/invalid-import/ConsoleErrors.txt");
+        FileUtils.copyURLToFile(errors, folder.newFile("completed/myDatasetKey-201502191415031682/ConsoleErrors.txt"));
         
         //When
-        Map<String,List<ValidationError>> history = service.getImportHistory("myDatasetKey");
+        Map<String, ImportStatus> history = service.getImportHistory("myDatasetKey");
         
         //Then
         assertEquals("Has ony entry in map", 1, history.size());
@@ -193,5 +196,32 @@ public class DatasetImporterServiceTest {
             assertFalse("Old file doesn't exist", Files.exists(file));
             throw faee;
         }
+    }
+    
+    @Test
+    public void canDetectImportInErrors() throws IOException {
+        //Given
+        URL url = getClass().getResource("/test-data/invalid-import/ConsoleErrors.txt");
+        File errors = new File(url.getFile());
+        
+        //When
+        boolean success = service.isSuccessfulImport(errors);
+        
+        //Then
+        assertFalse("Should not have been success", success);
+    }
+    
+        
+    @Test
+    public void canDetectSuccessfulImport() throws IOException {
+        //Given
+        URL url = getClass().getResource("/test-data/valid-import/ConsoleErrors.txt");
+        File errors = new File(url.getFile());
+        
+        //When
+        boolean success = service.isSuccessfulImport(errors);
+        
+        //Then
+        assertTrue("Should have been success", success);
     }
 }
