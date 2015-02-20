@@ -3,6 +3,7 @@ package uk.org.nbn.nbnv.api.services;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.FileAlreadyExistsException;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -142,5 +143,21 @@ public class DatasetImporterServiceTest {
         assertNotNull("Expected to file meta.xml", zipFile.getEntry("meta.xml"));
         assertThat("Expected datatab not to be empty", dataTab.getSize(), not(equalTo(0L)));
         assertTrue("Expected datatab to be smaller", dataTab.getSize() < originalArchive.getEntry("data.tab").getSize());
+    }
+    
+    @Test(expected=FileAlreadyExistsException.class)
+    public void checkThatFailsToProcessArchiveWhenDatasetIsAlreadyOnTheQueue() throws IOException {
+        //Given
+        File archived = folder.newFolder("completed/invalid-201502191415031682");
+        URL testArchive = getClass().getResource("/test-data/invalid-import");
+        URL oldImport = getClass().getResource("/test-data/invalid-import/invalid.zip");
+        FileUtils.copyDirectory(new File(testArchive.getFile()), archived);
+        FileUtils.copyFile(new File(oldImport.getFile()), new File(folder.getRoot(), "queue/invalid.zip"));
+        
+        //When
+        service.stripInvalidRecords("invalid", "201502191415031682");
+        
+        //Then
+        fail("Expected to fail with exception");
     }
 }
