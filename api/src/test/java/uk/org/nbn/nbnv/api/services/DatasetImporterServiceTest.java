@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -159,5 +161,37 @@ public class DatasetImporterServiceTest {
         
         //Then
         fail("Expected to fail with exception");
+    }
+    
+    @Test
+    public void checkThatMovesFile() throws IOException {
+        //Given
+        Path file = folder.newFile("uploads/tmpRubbish.file").toPath();
+        
+        //When
+        service.moveToImportQueue(file, "dataset");
+        
+        //Then
+        assertTrue("Dataset.zip exists", new File(folder.getRoot(), "queue/dataset.zip").exists());
+        assertFalse("Old file doesn't exist", Files.exists(file));
+    }
+    
+    @Test(expected=FileAlreadyExistsException.class)
+    public void checkThatOriginalGetsDeletedIfMoveFails() throws IOException {
+        //Given
+        Path file = folder.newFile("uploads/tmpRubbish.file").toPath();
+        folder.newFile("queue/dataset.zip");
+        
+        //When
+        try {
+            service.moveToImportQueue(file, "dataset");
+        }
+        
+        //Then
+        catch(FileAlreadyExistsException faee) {
+            assertTrue("Dataset.zip exists", new File(folder.getRoot(), "queue/dataset.zip").exists());
+            assertFalse("Old file doesn't exist", Files.exists(file));
+            throw faee;
+        }
     }
 }
