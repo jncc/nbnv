@@ -100,14 +100,18 @@ public class DatasetImporterService {
      * 
      * Pop the resultant cleaned archive back onto the import queue
      * @param datasetKey
-     * @param timestamp 
+     * @param timestamp
+     * @throws java.nio.file.NoSuchFileException if no archive is saved for the 
+     *  given timestamp and datasetkey
+     * @throws java.nio.file.FileAlreadyExistsException if a file is already on 
+     *  the queue
      */
-    public void stripInvalidRecords(String datasetKey, String timestamp) throws IOException {
+    public void stripInvalidRecords(String datasetKey, String timestamp) throws IOException, NoSuchFileException, FileAlreadyExistsException {
         List<ValidationError> errors = getImportHistory(datasetKey).get(timestamp);
         if(errors == null || errors.isEmpty()) {
             throw new IllegalArgumentException("There is no archive which previously failed to import with the given timestamp");
         }
-        Path upload = getImporterPath("uploads", datasetKey + ".zip");
+        Path upload = Files.createTempFile(getImporterPath("uploads"), "reimport", ".zip");
         Path archive = getImporterPath("completed", datasetKey + "-" + timestamp, datasetKey + ".zip");
         try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(upload.toFile()))) {
             try (ZipFile zipFile = new ZipFile(archive.toFile())) {
@@ -124,7 +128,7 @@ public class DatasetImporterService {
                 }
             }
         }
-        moveToImportQueue(datasetKey); //A new dataset.zip has been created, pop it onto the queue
+        moveToImportQueue(upload, datasetKey); //A new dataset.zip has been created, pop it onto the queue
     }
     
     /**
@@ -151,15 +155,22 @@ public class DatasetImporterService {
      * importer queue directory. At this point the importer service can kick in
      * and begin the import process.
      * 
-     * @param datasetKey
+     * This method will attempt to delete the original source after it has been 
+     * moved to the importer queue (even if a failure occurs)
+     * 
+     * @param source the new import.zip to move to the queue
+     * @param datasetKey of the dataset to import
      * @throws NoSuchFileException if nothing has been uploaded with the given datasetKey
      * @throws FileAlreadyExistsException if an import for this dataset is already 
      *  in the queue
     */
-    protected void moveToImportQueue(String datasetKey) throws IOException, NoSuchFileException, FileAlreadyExistsException {
-        Path upload = getImporterPath("uploads", datasetKey + ".zip");
-        Path queue = getImporterPath("queue", datasetKey + ".zip");
-        Files.move(upload, queue);
+    protected void moveToImportQueue(Path source, String datasetKey) throws IOException, NoSuchFileException, FileAlreadyExistsException {
+        try {
+            Files.move(source, getImporterPath("queue", datasetKey + ".zip"));
+        }
+        finally {
+            Files.deleteIfExists(source); 
+        }
     }
     
     // Parse the validation error line and turn it into a Validation Error object
