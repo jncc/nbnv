@@ -30,7 +30,7 @@ import java.util.zip.ZipOutputStream;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import uk.org.nbn.nbnv.api.model.ImportStatus;
+import uk.org.nbn.nbnv.api.model.ImporterResult;
 import uk.org.nbn.nbnv.api.model.ValidationError;
 
 /**
@@ -85,15 +85,15 @@ public class DatasetImporterService {
      *  mapped to the import timestamp
      * @throws java.io.IOException 
      */
-    public Map<String, ImportStatus> getImportHistory(String datasetKey) throws IOException {
-        Map<String, ImportStatus> history = new HashMap<>();
+    public Map<String, ImporterResult> getImportHistory(String datasetKey) throws IOException {
+        Map<String, ImporterResult> history = new HashMap<>();
         CompletedLogFilter completedImports = new CompletedLogFilter(datasetKey);
         File[] completed = getImporterPath("completed").toFile().listFiles(completedImports);
         for(File importArchive : completed) {
             String timestamp = importArchive.getName().substring(datasetKey.length() + 1);
             List<ValidationError> errors = getValidationErrors(new File(importArchive, "ConsoleOutput.txt"));
             boolean success = isSuccessfulImport(new File(importArchive, "ConsoleErrors.txt"));
-            history.put(timestamp, new ImportStatus(errors, success));
+            history.put(timestamp, new ImporterResult(errors, success));
         }
         return history;
     }
@@ -111,7 +111,7 @@ public class DatasetImporterService {
      *  the queue
      */
     public void stripInvalidRecords(String datasetKey, String timestamp) throws IOException, NoSuchFileException, FileAlreadyExistsException {
-        ImportStatus status = getImportHistory(datasetKey).get(timestamp);
+        ImporterResult status = getImportHistory(datasetKey).get(timestamp);
         if(status == null || status.isSuccess()) {
             throw new IllegalArgumentException("There is no archive which previously failed to import with the given timestamp");
         }

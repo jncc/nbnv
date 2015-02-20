@@ -18,7 +18,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import uk.org.nbn.nbnv.api.model.ImportStatus;
+import uk.org.nbn.nbnv.api.model.ImporterResult;
 import uk.org.nbn.nbnv.api.model.ValidationError;
 
 /**
@@ -119,7 +119,7 @@ public class DatasetImporterServiceTest {
         FileUtils.copyURLToFile(errors, folder.newFile("completed/myDatasetKey-201502191415031682/ConsoleErrors.txt"));
         
         //When
-        Map<String, ImportStatus> history = service.getImportHistory("myDatasetKey");
+        Map<String, ImporterResult> history = service.getImportHistory("myDatasetKey");
         
         //Then
         assertEquals("Has ony entry in map", 1, history.size());

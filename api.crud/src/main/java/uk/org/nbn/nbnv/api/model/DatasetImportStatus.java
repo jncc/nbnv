@@ -6,9 +6,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class DatasetImportStatus {
     private boolean isOnQueue, isProcessing;
-    private Map<String, ImportStatus> history;
+    private Map<String, ImporterResult> history;
 
-    public DatasetImportStatus(boolean isOnQueue, boolean isProcessing, Map<String, ImportStatus> history) {
+    public DatasetImportStatus(boolean isOnQueue, boolean isProcessing, Map<String, ImporterResult> history) {
         this.isOnQueue = isOnQueue;
         this.isProcessing = isProcessing;
         this.history = history;
@@ -30,11 +30,11 @@ public class DatasetImportStatus {
         this.isProcessing = isProcessing;
     }
 
-    public Map<String, ImportStatus> getHistory() {
+    public Map<String, ImporterResult> getHistory() {
         return history;
     }
 
-    public void setHistory(Map<String, ImportStatus> history) {
+    public void setHistory(Map<String, ImporterResult> history) {
         this.history = history;
     }
     

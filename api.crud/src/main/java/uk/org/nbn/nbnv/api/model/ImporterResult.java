@@ -4,11 +4,11 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
-public class ImportStatus {
+public class ImporterResult {
     private List<ValidationError> validationErrors;
     private boolean success;
     
-    public ImportStatus(List<ValidationError> validationErrors, boolean success) {
+    public ImporterResult(List<ValidationError> validationErrors, boolean success) {
         this.validationErrors = validationErrors;
         this.success = success;
     }
