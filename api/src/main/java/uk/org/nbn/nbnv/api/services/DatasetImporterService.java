@@ -117,22 +117,27 @@ public class DatasetImporterService {
         }
         Path upload = Files.createTempFile(getImporterPath("uploads"), "reimport", ".zip");
         Path archive = getImporterPath("completed", datasetKey + "-" + timestamp, datasetKey + ".zip");
-        try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(upload.toFile()))) {
-            try (ZipFile zipFile = new ZipFile(archive.toFile())) {
-                for(ZipEntry entry : Collections.list(zipFile.entries())) {
-                    out.putNextEntry(new ZipEntry(entry.getName()));
-                    InputStream in = zipFile.getInputStream(entry);
-                    if(entry.getName().equals("data.tab")) {
-                        copyWithoutValidationErrors(in, out, status.getValidationErrors());
+        try {
+            try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(upload.toFile()))) {
+                try (ZipFile zipFile = new ZipFile(archive.toFile())) {
+                    for(ZipEntry entry : Collections.list(zipFile.entries())) {
+                        out.putNextEntry(new ZipEntry(entry.getName()));
+                        InputStream in = zipFile.getInputStream(entry);
+                        if(entry.getName().equals("data.tab")) {
+                            copyWithoutValidationErrors(in, out, status.getValidationErrors());
+                        }
+                        else {
+                           IOUtils.copy(in, out); 
+                        }
+                        out.closeEntry();
                     }
-                    else {
-                       IOUtils.copy(in, out); 
-                    }
-                    out.closeEntry();
                 }
             }
+            Files.move(upload, getImporterPath("queue", datasetKey + ".zip")); //Success. Move to queue
         }
-        moveToImportQueue(upload, datasetKey); //A new dataset.zip has been created, pop it onto the queue
+        finally {
+            Files.deleteIfExists(upload); //Clear up the upload document
+        }
     }
     
     /**
@@ -170,29 +175,6 @@ public class DatasetImporterService {
             }
         }
         return errors;
-    }
-    
-    /**
-     * Moves the prepared dataset import zip from the uploads directory to the 
-     * importer queue directory. At this point the importer service can kick in
-     * and begin the import process.
-     * 
-     * This method will attempt to delete the original source after it has been 
-     * moved to the importer queue (even if a failure occurs)
-     * 
-     * @param source the new import.zip to move to the queue
-     * @param datasetKey of the dataset to import
-     * @throws NoSuchFileException if nothing has been uploaded with the given datasetKey
-     * @throws FileAlreadyExistsException if an import for this dataset is already 
-     *  in the queue
-    */
-    protected void moveToImportQueue(Path source, String datasetKey) throws IOException, NoSuchFileException, FileAlreadyExistsException {
-        try {
-            Files.move(source, getImporterPath("queue", datasetKey + ".zip"));
-        }
-        finally {
-            Files.deleteIfExists(source); 
-        }
     }
     
     // Parse the validation error line and turn it into a Validation Error object

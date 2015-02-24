@@ -193,38 +193,6 @@ public class DatasetImporterServiceTest {
     }
     
     @Test
-    public void checkThatMovesFile() throws IOException {
-        //Given
-        Path file = folder.newFile("uploads/tmpRubbish.file").toPath();
-        
-        //When
-        service.moveToImportQueue(file, "dataset");
-        
-        //Then
-        assertTrue("Dataset.zip exists", new File(folder.getRoot(), "queue/dataset.zip").exists());
-        assertFalse("Old file doesn't exist", Files.exists(file));
-    }
-    
-    @Test(expected=FileAlreadyExistsException.class)
-    public void checkThatOriginalGetsDeletedIfMoveFails() throws IOException {
-        //Given
-        Path file = folder.newFile("uploads/tmpRubbish.file").toPath();
-        folder.newFile("queue/dataset.zip");
-        
-        //When
-        try {
-            service.moveToImportQueue(file, "dataset");
-        }
-        
-        //Then
-        catch(FileAlreadyExistsException faee) {
-            assertTrue("Dataset.zip exists", new File(folder.getRoot(), "queue/dataset.zip").exists());
-            assertFalse("Old file doesn't exist", Files.exists(file));
-            throw faee;
-        }
-    }
-    
-    @Test
     public void canDetectImportInErrors() throws IOException {
         //Given
         URL url = getClass().getResource("/test-data/invalid-import/ConsoleErrors.txt");
