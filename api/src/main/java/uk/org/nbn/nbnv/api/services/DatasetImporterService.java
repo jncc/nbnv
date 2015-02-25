@@ -115,7 +115,7 @@ public class DatasetImporterService {
                 }
                 writer.flush();
                 out.putNextEntry(new ZipEntry("meta.xml"));
-                new NXFFieldMappingXMLWriter(header).writeFieldMappingXml(writer);
+                new NXFFieldMappingXMLWriter(writer).write(header);
                 out.putNextEntry(new ZipEntry("eml.xml"));
                 new EMLWriter(dataset, temporalCoverage.getEarliestDate(), temporalCoverage.getLatestDate()).write(writer);
             }

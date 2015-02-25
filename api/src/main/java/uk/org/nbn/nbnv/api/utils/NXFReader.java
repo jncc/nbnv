@@ -53,7 +53,7 @@ public class NXFReader implements Closeable {
     
     public static class NXFLine {
         private final String line;
-        private NXFLine(String line) {
+        protected NXFLine(String line) {
             this.line = line;
         }
         

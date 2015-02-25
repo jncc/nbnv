@@ -5,7 +5,7 @@
 <location>data.tab</location>
 </files>
 <#list darwinCoreFields as field>
-    <field index="${field.index}" term="${field.term}"/>
+<field index="${field.index}" term="${field.term}"/>
 </#list>
 <id index="${recordKeyCol}"/>
 </core>
@@ -14,7 +14,7 @@
 <location>data.tab</location>
 </files>
 <#list nbnExtensionFields as field>
-    <field index="${field.index}" term="${field.term}"/>
+<field index="${field.index}" term="${field.term}"/>
 </#list>
 <coreid index="${recordKeyCol}"/>
 </extension>
