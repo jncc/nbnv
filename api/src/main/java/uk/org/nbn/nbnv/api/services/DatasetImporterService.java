@@ -117,7 +117,7 @@ public class DatasetImporterService {
                 out.putNextEntry(new ZipEntry("meta.xml"));
                 new NXFFieldMappingXMLWriter(writer).write(header);
                 out.putNextEntry(new ZipEntry("eml.xml"));
-                new EMLWriter(dataset, temporalCoverage.getEarliestDate(), temporalCoverage.getLatestDate()).write(writer);
+                new EMLWriter(writer).write(dataset, temporalCoverage.getEarliestDate(), temporalCoverage.getLatestDate());
             }
             Files.move(upload, getImporterPath("queue", dataset.getKey() + ".zip")); //Success. Move to queue
         }
