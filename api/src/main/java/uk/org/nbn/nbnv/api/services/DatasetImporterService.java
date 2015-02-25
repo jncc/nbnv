@@ -10,6 +10,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.LineNumberReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -100,7 +101,7 @@ public class DatasetImporterService {
     public void importDataset(InputStream nxf, Dataset dataset) throws IOException, TemplateException {
         Path upload = Files.createTempFile(getImporterPath("uploads"), "new", ".zip");
         try {
-            NXFReader nxfReader = new NXFReader(nxf);
+            NXFReader nxfReader = new NXFReader(new LineNumberReader(new InputStreamReader(nxf)));
             NXFLine header = nxfReader.readLine();
             NXFDateCoverageTracker temporalCoverage = new NXFDateCoverageTracker(header);
             try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(upload.toFile()))) {
