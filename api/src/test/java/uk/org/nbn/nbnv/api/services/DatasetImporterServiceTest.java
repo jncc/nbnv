@@ -233,7 +233,7 @@ public class DatasetImporterServiceTest {
         InputStream nxf = getClass().getResourceAsStream("/test-data/GA000466.nxf");
         
         //When
-        service.importDataset(nxf, dataset);
+        service.importDataset(nxf, dataset, true);
         
         //Then
         ZipFile archive = new ZipFile(new File(folder.getRoot(), "queue/GA000466.zip"));

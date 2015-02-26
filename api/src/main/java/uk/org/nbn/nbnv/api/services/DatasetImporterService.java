@@ -22,6 +22,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -107,11 +108,12 @@ public class DatasetImporterService {
      *  - eml.xml  - a representation of the datasets metadata
      *  - meta.xml - data.tabs column mappings to darwin core fields
      * @param nxf
-     * @param dataset 
+     * @param dataset
+     * @param isUpsert if true then import will replace dataset, otherwise it will append
      * @throws IOException if the nxf is not valid, or there was a problem writing the zip
      * @throws TemplateException if there was a problem with an underlying template
      */
-    public void importDataset(InputStream nxf, TaxonDataset dataset) throws IOException, TemplateException {
+    public void importDataset(InputStream nxf, TaxonDataset dataset, boolean isUpsert) throws IOException, TemplateException {
         Path upload = Files.createTempFile(getImporterPath("uploads"), "new", ".zip");
         try {
             NXFReader nxfReader = new NXFReader(new LineNumberReader(new InputStreamReader(nxf)));
@@ -131,7 +133,7 @@ public class DatasetImporterService {
                 new NXFFieldMappingXMLWriter(writer).write(header);
                 writer.flush();
                 out.putNextEntry(new ZipEntry("eml.xml"));
-                new EMLWriter(writer).write(dataset, temporalCoverage.getEarliestDate(), temporalCoverage.getLatestDate());
+                new EMLWriter(writer).write(dataset, temporalCoverage.getEarliestDate(), temporalCoverage.getLatestDate(), isUpsert);
                 writer.flush();
             }
             Files.move(upload, getImporterPath("queue", dataset.getKey() + ".zip")); //Success. Move to queue
