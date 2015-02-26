@@ -12,7 +12,6 @@
 <field index="12" term="http://rs.tdwg.org/dwc/terms/identifiedBy"/>
 <field index="14" term="http://rs.tdwg.org/dwc/terms/locationID"/>
 <field index="15" term="http://rs.tdwg.org/dwc/terms/dynamicProperties"/>
-<field index="16" term="http://rs.tdwg.org/dwc/terms/verbatimSRS"/>
 <id index="0"/>
 </core>
 <extension encoding="UTF-8" fieldsEnclosedBy="" fieldsTerminatedBy="\t" ignoreHeaderLines="1" linesTerminatedBy="\r\n" rowType="http://rs.nbn.org.uk/dwc/nxf/0.1/terms/nxfOccurrence">

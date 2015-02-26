@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.FileAlreadyExistsException;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -231,6 +232,10 @@ public class TaxonDatasetImporterServiceTest {
         InputStream datasetStream = getClass().getResourceAsStream("/test-data/GA000466.json");
         TaxonDataset dataset = new ObjectMapper().readValue(datasetStream, TaxonDataset.class);
         InputStream nxf = getClass().getResourceAsStream("/test-data/GA000466.nxf");
+        
+        Calendar date = Calendar.getInstance();
+        date.set(2014, 11, 05); //Months are zero indexes
+        dataset.setDateUploaded(date.getTime());
         
         //When
         service.importDataset(nxf, dataset, true);

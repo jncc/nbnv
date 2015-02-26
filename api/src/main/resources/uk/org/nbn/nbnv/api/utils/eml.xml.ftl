@@ -9,7 +9,7 @@
 </creator>
 <metadataProvider>
 <individualName>
-<givenName>${dataset.organisation.contactName}</givenName>
+<givenName>${dataset.organisation.contactName?trim}</givenName>
 <surName></surName>
 </individualName>
 <organizationName>${dataset.organisationName}</organizationName>
@@ -22,7 +22,7 @@
 <para>${dataset.description}</para>
 </abstract>
 <intellectualRights>
-<para>${dataset.accessConstraints}</para>
+<para>accessConstraints: ${dataset.accessConstraints} useConstraints: ${dataset.useConstraints}</para>
 </intellectualRights>
 <coverage>
 <geographicCoverage>
@@ -67,7 +67,7 @@
 <para>additionalInformation: ${dataset.additionalInformation}</para>
 </additionalInfo>
 <additionalInfo>
-<para>publicPrecision: ${dataset.publicResolution}</para>
+<para>publicPrecision: ${publicPrecision}</para>
 </additionalInfo>
 <additionalInfo>
 <para>recorderAndDeterminerNamesArePublic: ${dataset.publicRecorder?string("true", "false")}</para>
