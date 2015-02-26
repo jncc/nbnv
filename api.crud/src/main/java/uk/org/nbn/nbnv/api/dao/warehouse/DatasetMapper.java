@@ -43,7 +43,10 @@ public interface DatasetMapper {
     @Select("SELECT *, tdd.label publicResolution FROM DatasetData dd INNER JOIN TaxonDatasetData tdd ON dd.\"key\" = tdd.datasetKey WHERE dd.\"key\" = #{key}")
     @Results(value = {
         @Result(property="speciesCount", column="key", javaType=java.lang.Integer.class, one=@One(select="selectSpeciesCountByDatasetKey")),
-        @Result(property="key", column="key")
+        @Result(property="organisation", column="organisationID", javaType=Organisation.class, one=@One(select="uk.org.nbn.nbnv.api.dao.warehouse.OrganisationMapper.selectByID")),
+        @Result(property="organisationID", column="organisationID"),
+        @Result(property="key", column="key"),
+        @Result(property="contributingOrganisations", column="key", javaType=List.class, many=@Many(select="uk.org.nbn.nbnv.api.dao.warehouse.DatasetContributingOrganisationMapper.selectOrganisationsByDataset"))
     })
     TaxonDataset selectTaxonDatasetByID(String key);
 

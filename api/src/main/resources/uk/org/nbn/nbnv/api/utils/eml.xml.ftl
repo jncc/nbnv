@@ -19,14 +19,14 @@
 <pubDate>${dataset.dateUploaded?date}</pubDate>
 <language>en</language>
 <abstract>
-<para>${description}</para>
+<para>${dataset.description}</para>
 </abstract>
 <intellectualRights>
 <para>${dataset.accessConstraints}</para>
 </intellectualRights>
 <coverage>
 <geographicCoverage>
-<geographicDescription>${dataset.geographicalcoverage}</geographicDescription>
+<geographicDescription>${dataset.geographicalCoverage}</geographicDescription>
 <boundingCoordinates>
 <westBoundingCoordinate>-10</westBoundingCoordinate>
 <eastBoundingCoordinate>10</eastBoundingCoordinate>
@@ -67,16 +67,16 @@
 <para>additionalInformation: ${dataset.additionalInformation}</para>
 </additionalInfo>
 <additionalInfo>
-<para>publicPrecision: ${publicResolution}</para>
+<para>publicPrecision: ${dataset.publicResolution}</para>
 </additionalInfo>
 <additionalInfo>
-<para>recorderAndDeterminerNamesArePublic: ${dataset.publicRecorder?c}</para>
+<para>recorderAndDeterminerNamesArePublic: ${dataset.publicRecorder?string("true", "false")}</para>
 </additionalInfo>
 <additionalInfo>
 <para>importType: ${isUpsert?string("upsert","append")}</para>
 </additionalInfo>
 <additionalInfo>
-<para>recordAttributesArePublic: ${dataset.publicAttribute?c}</para>
+<para>recordAttributesArePublic: ${dataset.publicAttribute?string("true", "false")}</para>
 </additionalInfo>
 </dataset>
 </eml:eml>
