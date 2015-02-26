@@ -28,10 +28,10 @@ import uk.org.nbn.nbnv.api.model.ValidationError;
  *
  * @author cjohn
  */
-public class DatasetImporterServiceTest {
+public class TaxonDatasetImporterServiceTest {
     @Rule public TemporaryFolder folder = new TemporaryFolder();
     
-    private DatasetImporterService service;
+    private TaxonDatasetImporterService service;
     
     @Before
     public void init() {
@@ -40,7 +40,7 @@ public class DatasetImporterServiceTest {
         folder.newFolder("processing");
         folder.newFolder("completed");
         
-        service = new DatasetImporterService();
+        service = new TaxonDatasetImporterService();
         service.properties = new Properties();
         service.properties.setProperty("importer_location", folder.getRoot().getAbsolutePath());
     }

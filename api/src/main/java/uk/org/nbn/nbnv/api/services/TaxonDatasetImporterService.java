@@ -55,7 +55,7 @@ import uk.org.nbn.nbnv.api.utils.NXFReader.NXFLine;
  * @author jcoop
  */
 @Service
-public class DatasetImporterService {
+public class TaxonDatasetImporterService {
     @Autowired Properties properties;
     
     private static final Pattern VALIDATION_LOG_LINE = Pattern.compile("[0-9]{4}-[A-z]{3}-[0-9]{2}\\s[0-9]{2}\\:[0-9]{2}\\:[0-9]{2}\\sERROR\\sValidation.*");
