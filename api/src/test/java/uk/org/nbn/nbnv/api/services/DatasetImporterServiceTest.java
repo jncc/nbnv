@@ -245,4 +245,27 @@ public class DatasetImporterServiceTest {
         assertEquals("Expected to read mappings from archive", expectedMappings, mappings);
         assertEquals("Expected to read eml from archive", expectedEml, eml);
     }
+    
+    @Test
+    public void checkCanRemoveADatasetFromTheQueue() throws IOException {
+        //Given
+        folder.newFile("queue/queuedKey.zip");
+        
+        //When
+        boolean success = service.removeFromQueue("queuedKey");
+        
+        //Then
+        assertTrue("Expected to remove the dataset", success);
+    }
+    
+    @Test
+    public void checkThatFailsWhenRemovingDatasetWhichIsNotInQueue() throws IOException {
+        //Given
+        //Nothing
+        //When
+        boolean success = service.removeFromQueue("somethingNotThere");
+        
+        //Then
+        assertFalse("Can't remove file which is not there", success);
+    }
 }

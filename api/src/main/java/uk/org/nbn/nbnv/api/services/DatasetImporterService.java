@@ -88,6 +88,18 @@ public class DatasetImporterService {
     }
     
     /**
+     * Removes an archive from the queue. This method will return true if the 
+     * operation was successful (e.g. there was a queued dataset to remove)
+     * or false if it failed to delete.
+     * @param datasetKey to remove from the queue
+     * @return if successfully deleted a dataset from the queue
+     * @throws java.io.IOException if an I/O error occurs
+     */
+    public boolean removeFromQueue(String datasetKey) throws IOException {
+        return Files.deleteIfExists(getImporterPath("queue", datasetKey + ".zip"));
+    }
+    
+    /**
      * Given an input stream of the nbn exchange format, we want to create a new
      * Zip Archive which can be passed to the importer for importing. An NBN 
      * Importer archive must contain three files:
