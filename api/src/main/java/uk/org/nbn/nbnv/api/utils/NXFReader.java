@@ -2,24 +2,31 @@ package uk.org.nbn.nbnv.api.utils;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
+ * The following class will read in a NBN Exchange formated file line by line.
  * @author cjohn
  */
 public class NXFReader implements Closeable {
     private final LineNumberReader reader;
     private int columns = -1;
     
-    public NXFReader(InputStream in) {
-        this.reader = new LineNumberReader(new InputStreamReader(in));
+    public NXFReader(LineNumberReader reader) {
+        this.reader = reader;
     }
     
+    /**
+     * Read the current line from the stream and return it as a NXFLine object.
+     * If the amount of columns for this line differs to ones which have been 
+     * previously read, then the method will throw an IOException as the NXF 
+     * stream is corrupt
+     * @return the current line which has been read
+     * @throws IOException if there was a problem reading the line or the line
+     *  contained the wrong amount of columns
+     */
     public NXFLine readLine() throws IOException {
         NXFLine line = new NXFLine(reader.readLine());
         int currLineColumns = line.getColumns().size();
@@ -30,6 +37,11 @@ public class NXFReader implements Closeable {
         return line;
     }
     
+    /**
+     * Check if there is any content on the stream to read
+     * @return true if there are more lines to read
+     * @throws IOException if there was a problem reading from the stream
+     */
     public boolean ready() throws IOException {
         return reader.ready();
     }
@@ -41,7 +53,7 @@ public class NXFReader implements Closeable {
     
     public static class NXFLine {
         private final String line;
-        private NXFLine(String line) {
+        protected NXFLine(String line) {
             this.line = line;
         }
         

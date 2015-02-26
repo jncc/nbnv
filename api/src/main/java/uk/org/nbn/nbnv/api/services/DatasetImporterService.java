@@ -10,6 +10,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.LineNumberReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -34,6 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.org.nbn.nbnv.api.model.Dataset;
 import uk.org.nbn.nbnv.api.model.ImporterResult;
+import uk.org.nbn.nbnv.api.model.TaxonDataset;
 import uk.org.nbn.nbnv.api.model.ValidationError;
 import uk.org.nbn.nbnv.api.utils.EMLWriter;
 import uk.org.nbn.nbnv.api.utils.NXFDateCoverageTracker;
@@ -86,6 +88,18 @@ public class DatasetImporterService {
     }
     
     /**
+     * Removes an archive from the queue. This method will return true if the 
+     * operation was successful (e.g. there was a queued dataset to remove)
+     * or false if it failed to delete.
+     * @param datasetKey to remove from the queue
+     * @return if successfully deleted a dataset from the queue
+     * @throws java.io.IOException if an I/O error occurs
+     */
+    public boolean removeFromQueue(String datasetKey) throws IOException {
+        return Files.deleteIfExists(getImporterPath("queue", datasetKey + ".zip"));
+    }
+    
+    /**
      * Given an input stream of the nbn exchange format, we want to create a new
      * Zip Archive which can be passed to the importer for importing. An NBN 
      * Importer archive must contain three files:
@@ -97,15 +111,15 @@ public class DatasetImporterService {
      * @throws IOException if the nxf is not valid, or there was a problem writing the zip
      * @throws TemplateException if there was a problem with an underlying template
      */
-    public void importDataset(InputStream nxf, Dataset dataset) throws IOException, TemplateException {
+    public void importDataset(InputStream nxf, TaxonDataset dataset) throws IOException, TemplateException {
         Path upload = Files.createTempFile(getImporterPath("uploads"), "new", ".zip");
         try {
-            NXFReader nxfReader = new NXFReader(nxf);
+            NXFReader nxfReader = new NXFReader(new LineNumberReader(new InputStreamReader(nxf)));
             NXFLine header = nxfReader.readLine();
             NXFDateCoverageTracker temporalCoverage = new NXFDateCoverageTracker(header);
             try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(upload.toFile()))) {
-                out.putNextEntry(new ZipEntry("data.tab"));
                 PrintWriter writer = new PrintWriter(new OutputStreamWriter(out));
+                out.putNextEntry(new ZipEntry("data.tab"));
                 writer.println(header.toString());
                 while(nxfReader.ready()) {
                     NXFLine nxfLine = nxfReader.readLine();
@@ -114,9 +128,11 @@ public class DatasetImporterService {
                 }
                 writer.flush();
                 out.putNextEntry(new ZipEntry("meta.xml"));
-                new NXFFieldMappingXMLWriter(header).writeFieldMappingXml(writer);
+                new NXFFieldMappingXMLWriter(writer).write(header);
+                writer.flush();
                 out.putNextEntry(new ZipEntry("eml.xml"));
-                new EMLWriter(dataset, temporalCoverage.getEarliestDate(), temporalCoverage.getLatestDate()).write(writer);
+                new EMLWriter(writer).write(dataset, temporalCoverage.getEarliestDate(), temporalCoverage.getLatestDate());
+                writer.flush();
             }
             Files.move(upload, getImporterPath("queue", dataset.getKey() + ".zip")); //Success. Move to queue
         }

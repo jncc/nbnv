@@ -1,17 +1,19 @@
 package uk.org.nbn.nbnv.api.services;
 
+import freemarker.template.TemplateException;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.FileAlreadyExistsException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.codehaus.jackson.map.ObjectMapper;
 import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.*;
 import org.junit.Before;
@@ -19,6 +21,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import uk.org.nbn.nbnv.api.model.ImporterResult;
+import uk.org.nbn.nbnv.api.model.TaxonDataset;
 import uk.org.nbn.nbnv.api.model.ValidationError;
 
 /**
@@ -205,7 +208,6 @@ public class DatasetImporterServiceTest {
         assertFalse("Should not have been success", success);
     }
     
-        
     @Test
     public void canDetectSuccessfulImport() throws IOException {
         //Given
@@ -217,5 +219,53 @@ public class DatasetImporterServiceTest {
         
         //Then
         assertTrue("Should have been success", success);
+    }
+    
+    @Test
+    public void canQueueUpDatasetUpload() throws IOException, TemplateException {
+        //Given 
+        List<String> expectedDataTab = IOUtils.readLines(getClass().getResourceAsStream("/test-data/GA000466.nxf"));
+        List<String> expectedEml = IOUtils.readLines(getClass().getResourceAsStream("/test-data/GA000466-eml.xml"));
+        List<String> expectedMappings = IOUtils.readLines(getClass().getResourceAsStream("/test-data/GA000466-meta.xml"));
+        
+        InputStream datasetStream = getClass().getResourceAsStream("/test-data/GA000466.json");
+        TaxonDataset dataset = new ObjectMapper().readValue(datasetStream, TaxonDataset.class);
+        InputStream nxf = getClass().getResourceAsStream("/test-data/GA000466.nxf");
+        
+        //When
+        service.importDataset(nxf, dataset);
+        
+        //Then
+        ZipFile archive = new ZipFile(new File(folder.getRoot(), "queue/GA000466.zip"));
+        List<String> dataTab = IOUtils.readLines(archive.getInputStream(archive.getEntry("data.tab")));
+        List<String> eml  = IOUtils.readLines(archive.getInputStream(archive.getEntry("eml.xml")));
+        List<String> mappings  = IOUtils.readLines(archive.getInputStream(archive.getEntry("meta.xml")));
+        
+        assertEquals("Expected to read dataTab from archive", expectedDataTab, dataTab);
+        assertEquals("Expected to read mappings from archive", expectedMappings, mappings);
+        assertEquals("Expected to read eml from archive", expectedEml, eml);
+    }
+    
+    @Test
+    public void checkCanRemoveADatasetFromTheQueue() throws IOException {
+        //Given
+        folder.newFile("queue/queuedKey.zip");
+        
+        //When
+        boolean success = service.removeFromQueue("queuedKey");
+        
+        //Then
+        assertTrue("Expected to remove the dataset", success);
+    }
+    
+    @Test
+    public void checkThatFailsWhenRemovingDatasetWhichIsNotInQueue() throws IOException {
+        //Given
+        //Nothing
+        //When
+        boolean success = service.removeFromQueue("somethingNotThere");
+        
+        //Then
+        assertFalse("Can't remove file which is not there", success);
     }
 }

@@ -49,6 +49,7 @@ public class NXFFieldMappingXMLWriter {
         DARWIN_CORE_FIELDS.put("ZEROABUNDANCE", "http://rs.tdwg.org/dwc/terms/occurrenceStatus");
         DARWIN_CORE_FIELDS.put("SURVEYKEY", "http://rs.tdwg.org/dwc/terms/collectionCode");
         DARWIN_CORE_FIELDS.put("SAMPLEKEY", "http://rs.tdwg.org/dwc/terms/eventID");
+        DARWIN_CORE_FIELDS.put("DYNAMICPROPERTIES", "http://rs.tdwg.org/dwc/terms/dynamicProperties");
 
         NBN_EXTENSION_FIELDS = new HashMap<>();
         NBN_EXTENSION_FIELDS.put("PROJECTION", "http://rs.nbn.org.uk/dwc/nxf/0.1/terms/gridReferenceType");
@@ -61,28 +62,25 @@ public class NXFFieldMappingXMLWriter {
         NBN_EXTENSION_FIELDS.put("FEATUREKEY", "http://rs.nbn.org.uk/dwc/nxf/0.1/terms/siteFeatureKey");
     }
     
-    private final Configuration configuration;
-    private final List<FieldMapping> darwinCore, nbnExtensions;
-    private final int indexCol;
+    private final Template template;
+    private final Writer writer;
     
-    public NXFFieldMappingXMLWriter(NXFLine header) {
-        List<String> columns = header.getColumns(true);
-        
-        this.indexCol = columns.indexOf("RECORDKEY");
-        this.darwinCore = createFieldMappings(columns, DARWIN_CORE_FIELDS);
-        this.nbnExtensions = createFieldMappings(columns, NBN_EXTENSION_FIELDS);
+    public NXFFieldMappingXMLWriter(Writer writer) throws IOException {
+        this.writer = writer;
         
         //Create a freemarker configuration for loading in the template
-        configuration = new Configuration();
+        Configuration configuration = new Configuration();
         configuration.setClassForTemplateLoading(NXFFieldMappingXMLWriter.class, "");
+        this.template = configuration.getTemplate("meta.xml.ftl");
     }
-    
-    public void writeFieldMappingXml(Writer writer) throws IOException, TemplateException {
+        
+    public void write(NXFLine header) throws IOException, TemplateException {
+        List<String> columns = header.getColumns(true);
         Map<String, Object> data = new HashMap<>();
-        data.put("darwinCoreFields", darwinCore);
-        data.put("nbnExtensionFields", nbnExtensions);
-        data.put("recordKeyCol", indexCol);
-        configuration.getTemplate("meta.xml.ftl").process(data, writer);
+        data.put("darwinCoreFields", createFieldMappings(columns, DARWIN_CORE_FIELDS));
+        data.put("nbnExtensionFields", createFieldMappings(columns, NBN_EXTENSION_FIELDS));
+        data.put("recordKeyCol", columns.indexOf("RECORDKEY"));
+        template.process(data, writer);
     }
     
     private List<FieldMapping> createFieldMappings(List<String> columns, Map<String,String> mappings) {

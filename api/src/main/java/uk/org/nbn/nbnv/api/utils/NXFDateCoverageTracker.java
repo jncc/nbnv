@@ -57,11 +57,11 @@ public class NXFDateCoverageTracker {
     public void read(NXFLine line) {
         List<String> data = line.getColumns();
         Date startDate = parseDate(data.get(startDateCol), earliestDate);
-        if(startDate.after(earliestDate)) {
+        if(startDate.before(earliestDate)) {
             earliestDate = startDate;
         }
         Date endDate = parseDate(data.get(endDateCol), latestDate);
-        if(endDate.before(latestDate)) {
+        if(endDate.after(latestDate)) {
             latestDate = endDate;
         }
     }
