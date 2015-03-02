@@ -1,15 +1,23 @@
 package uk.org.nbn.nbnv.api.rest.resources;
 
+import freemarker.template.TemplateException;
 import java.io.IOException;
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
+import static javax.ws.rs.core.Response.Status.CONFLICT;
+import static javax.ws.rs.core.Response.Status.NOT_FOUND;
 import org.codehaus.enunciate.jaxrs.ResponseCode;
 import org.codehaus.enunciate.jaxrs.StatusCodes;
 import org.codehaus.enunciate.jaxrs.TypeHint;
@@ -108,6 +116,70 @@ public class TaxonDatasetResource extends AbstractResource {
                 id.equalsIgnoreCase(importerService.getCurrentlyProcessedDataset()),
                 importerService.getImportHistory(id)
         );
+    }
+    
+    /**
+     * Removes the dataset which is queued for import from the dataset importer
+     * @param admin The Current User if they are a dataset admin for this 
+     * @param id of the dataset to remove from the importer queue
+     * @return an http response
+     * @throws IOException if the system failed to remove the dataset from the queue
+     */
+    @DELETE
+    @Path("/{id}/import")
+    @StatusCodes({
+        @ResponseCode(code = 204, condition = "Removed the dataset queued for import"),
+        @ResponseCode(code = 404, condition = "Dataset was not queued")
+    })
+    public Response removeDatasetFromQueue(@TokenDatasetAdminUser(path="id") User admin, @PathParam("id") String id) throws IOException {
+        if(importerService.removeFromQueue(id)) {
+            return Response.noContent().build();
+        }
+        else {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+    }
+    
+    /**
+     * The following takes an nbn exchange format stream and queues it up ready
+     * to REPLACE the existing dataset.
+     * @param admin The Current User if they are a dataset admin for this 
+     * @param id of the dataset to replace
+     * @param request containing a nbn exchange format file in the body
+     * @return the status of the dataset if successful
+     * @throws TemplateException 
+     */
+    @PUT
+    @Path("/{id}/import")
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Dataset queued for replacement"),
+        @ResponseCode(code = 400, condition = "Failed to upload dataset"),
+        @ResponseCode(code = 404, condition = "No dataset found"),
+        @ResponseCode(code = 409, condition = "Already queued for import")
+    })
+    public Response queueReplacementDataset(@TokenDatasetAdminUser(path="id") User admin, @PathParam("id") String id, HttpServletRequest request) throws TemplateException {
+        return uploadDataset(admin, id, request, true);
+    }
+    
+    /**
+     * The following takes an nbn exchange format stream and queues it up ready
+     * to APPEND to an existing dataset.
+     * @param admin The Current User if they are a dataset admin for this 
+     * @param id of the dataset to replace
+     * @param request containing a nbn exchange format file in the body
+     * @return the status of the dataset if successful
+     * @throws TemplateException 
+     */
+    @POST
+    @Path("/{id}/import")
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Dataset queued for appending"),
+        @ResponseCode(code = 400, condition = "Failed to upload dataset"),
+        @ResponseCode(code = 404, condition = "No dataset found"),
+        @ResponseCode(code = 409, condition = "Already queued for import")
+    })
+    public Response queueAppendDataset(@TokenDatasetAdminUser(path="id") User admin, @PathParam("id") String id, HttpServletRequest request) throws TemplateException {
+        return uploadDataset(admin, id, request, false);
     }
     
     /**
@@ -296,5 +368,27 @@ public class TaxonDatasetResource extends AbstractResource {
         ret.setEnhanced(datasetMapper.getDatasetAccessPositions(datasetKey, user.getId()));
         
         return ret;
+    }
+    
+    private Response uploadDataset(User admin, String id, HttpServletRequest request, boolean upsert) throws TemplateException {
+        TaxonDataset dataset = datasetMapper.selectTaxonDatasetByID(id);
+        if(dataset != null) {
+            if(importerService.isQueued(id)) {
+                return Response.status(CONFLICT)
+                                .entity("This dataset already has an import queued. You will have to delete this first")
+                                .build();
+            }
+            
+            try {
+                importerService.importDataset(request.getInputStream(), dataset, upsert);
+                return Response.ok(getImportStatus(admin,id)).build();
+            }
+            catch(IOException io) {
+                return Response.status(BAD_REQUEST).entity(io.getMessage()).build();
+            }
+        }
+        else {
+            return Response.status(NOT_FOUND).build();
+        }
     }
 }
