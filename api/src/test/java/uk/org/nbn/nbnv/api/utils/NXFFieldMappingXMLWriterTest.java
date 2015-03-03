@@ -23,7 +23,7 @@ public class NXFFieldMappingXMLWriterTest {
         NXFLine header = new NXFLine(
             "RecordKey\tSurveykey\tStartDate\tEndDate\tDateType\tSensitive\t" +
             "TaxonVersionKey\tGridReference\tPrecision\tProjection\tSiteName\t" +
-            "Recorder\tDeterminer\tAbundance\tSiteKey\tDynamicProperties\tSRS");
+            "Recorder\tDeterminer\tAbundance\tSiteKey\tDynamicProperties");
         
         StringWriter writer = new StringWriter();
         NXFFieldMappingXMLWriter xmlWriter = new NXFFieldMappingXMLWriter(writer);

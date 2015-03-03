@@ -2,7 +2,9 @@ package uk.org.nbn.nbnv.api.rest.resources;
 
 import freemarker.template.TemplateException;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -25,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.org.nbn.nbnv.api.dao.core.OperationalAttributeMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.AttributeMapper;
+import uk.org.nbn.nbnv.api.dao.warehouse.DatasetAdministratorMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.DatasetMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.SurveyMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.TaxonMapper;
@@ -43,6 +46,7 @@ public class TaxonDatasetResource extends AbstractResource {
     @Autowired TaxonMapper taxonMapper;
     @Autowired SurveyMapper surveyMapper;
     @Autowired AttributeMapper attributeMapper;
+    @Autowired DatasetAdministratorMapper datasetAdministratorMapper;
     @Autowired OperationalAttributeMapper oAttributeMapper;
     @Autowired TaxonDatasetImporterService importerService;
     
@@ -62,6 +66,55 @@ public class TaxonDatasetResource extends AbstractResource {
     @Produces(MediaType.APPLICATION_JSON)
     public List<TaxonDataset> getDatasetList(){
         return datasetMapper.selectAllTaxonDatasets();
+    }
+    
+    /**
+     * Returns a list of taxon datasets the user is administrator of
+     * 
+     * @param user The current user (Injected Token no need to pass)
+     *
+     * @return List of taxon datasets which the current user can administer
+     * 
+     * @response.representation.200.qname List<Dataset>
+     * @response.representation.200.mediaType application/json
+     */
+    @GET
+    @Path("/adminable")
+    @TypeHint(Dataset.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned a list of the current users adminable datasets")
+    })
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Dataset> adminableDatasets(@TokenUser(allowPublic=false) User user) throws IOException {
+        return datasetAdministratorMapper.selectTaxonDatasetsByUser(user.getId());
+    }
+    
+    /**
+     * Returns the import status information for the current users adminable
+     * datasets which have some import status attributed to them. That is:
+     *  - the dataset is queued for import
+     *  - the dataset is being processed by the importer
+     *  - the dataset has some import results
+     * @param user The current user (Injected Token no need to pass)
+     * @return a list of the import statuses for datasets this user can administrate
+     * @throws IOException 
+     */
+    @GET
+    @Path("/adminable/import")
+    @TypeHint(Dataset.class)
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully returned a list of the current users adminable datasets")
+    })
+    @Produces(MediaType.APPLICATION_JSON)
+    public Map<String,DatasetImportStatus> getImportStatusForAdminableDatasets(@TokenUser(allowPublic=false) User user) throws IOException {
+        Map<String,DatasetImportStatus> toReturn = new HashMap<>();
+        for(Dataset dataset: adminableDatasets(user)) {
+            DatasetImportStatus status = getImportStatus(user, dataset.getKey());
+            if(status.isIsOnQueue() || status.isIsProcessing() || !status.getHistory().isEmpty()) {
+                toReturn.put(dataset.getKey(), status);
+            }
+        }
+        return toReturn;
     }
     
     /**
