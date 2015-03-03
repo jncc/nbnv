@@ -38,7 +38,7 @@ public interface DatasetAdministratorMapper {
     List<Dataset> selectDatasetsByUser(@Param("userKey") int userKey);
     
     @Select("SELECT d.* FROM DatasetAdministrator da INNER JOIN DatasetData d ON da.datasetKey = d.[key] WHERE da.userID = #{userKey} AND d.typeName = 'Taxon'")
-    List<Dataset> selectTaxonDatasetsByUser(@Param("userKey") int userKey);
+    List<TaxonDataset> selectTaxonDatasetsByUser(@Param("userKey") int userKey);
 
     @Select("SELECT * FROM DatasetAdministrator WHERE datasetKey = #{datasetKey}")
     @Results(value={

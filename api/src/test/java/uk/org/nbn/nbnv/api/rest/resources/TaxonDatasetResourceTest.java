@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
@@ -26,6 +27,7 @@ import uk.org.nbn.nbnv.api.model.Dataset;
 import uk.org.nbn.nbnv.api.model.DatasetImportStatus;
 import uk.org.nbn.nbnv.api.model.ImporterResult;
 import uk.org.nbn.nbnv.api.model.TaxonDataset;
+import uk.org.nbn.nbnv.api.model.TaxonDatasetWithImportStatus;
 import uk.org.nbn.nbnv.api.model.User;
 import uk.org.nbn.nbnv.api.services.TaxonDatasetImporterService;
 
@@ -191,8 +193,8 @@ public class TaxonDatasetResourceTest {
     public void checkThatQueuedStatusInformationCanBeGenerated() throws IOException {
         //Given
         User user = mock(User.class);
-        Dataset dataset1 = mock(Dataset.class);
-        Dataset dataset2 = mock(Dataset.class);
+        TaxonDataset dataset1 = mock(TaxonDataset.class);
+        TaxonDataset dataset2 = mock(TaxonDataset.class);
         when(user.getId()).thenReturn(4);
         when(datasetAdministratorMapper.selectTaxonDatasetsByUser(4))
                 .thenReturn(Arrays.asList(dataset1,dataset2));
@@ -202,19 +204,19 @@ public class TaxonDatasetResourceTest {
         when(service.isQueued("GA000001")).thenReturn(true);
         
         //When
-        Map<String, DatasetImportStatus> statuses = resource.getImportStatusForAdminableDatasets(user);
+        List<TaxonDatasetWithImportStatus> statuses = resource.getImportStatusForAdminableDatasets(user);
         
         //Then
         assertEquals("Expected only one dataset", statuses.size(), 1);
-        assertTrue("Expected GA000001 import status to be present", statuses.containsKey("GA000001"));
+        assertEquals("Expected GA000001 import status to be present", statuses.get(0).getDataset().getKey(), "GA000001");
     }
   
     @Test
     public void checkThatProcessingStatusInformationCanBeGenerated() throws IOException {
         //Given
         User user = mock(User.class);
-        Dataset dataset1 = mock(Dataset.class);
-        Dataset dataset2 = mock(Dataset.class);
+        TaxonDataset dataset1 = mock(TaxonDataset.class);
+        TaxonDataset dataset2 = mock(TaxonDataset.class);
         when(user.getId()).thenReturn(4);
         when(datasetAdministratorMapper.selectTaxonDatasetsByUser(4))
                 .thenReturn(Arrays.asList(dataset1,dataset2));
@@ -224,19 +226,19 @@ public class TaxonDatasetResourceTest {
         when(service.getCurrentlyProcessedDataset()).thenReturn("GA000001");
         
         //When
-        Map<String, DatasetImportStatus> statuses = resource.getImportStatusForAdminableDatasets(user);
+        List<TaxonDatasetWithImportStatus> statuses = resource.getImportStatusForAdminableDatasets(user);
         
         //Then
         assertEquals("Expected only one dataset", statuses.size(), 1);
-        assertTrue("Expected GA000001 import status to be present", statuses.containsKey("GA000001"));
+        assertEquals("Expected GA000001 import status to be present", statuses.get(0).getDataset().getKey(), "GA000001");
     }
     
     @Test
     public void checkThatHistoryStatusInformationCanBeGenerated() throws IOException {
         //Given
         User user = mock(User.class);
-        Dataset dataset1 = mock(Dataset.class);
-        Dataset dataset2 = mock(Dataset.class);
+        TaxonDataset dataset1 = mock(TaxonDataset.class);
+        TaxonDataset dataset2 = mock(TaxonDataset.class);
         when(user.getId()).thenReturn(4);
         when(datasetAdministratorMapper.selectTaxonDatasetsByUser(4))
                 .thenReturn(Arrays.asList(dataset1,dataset2));
@@ -249,10 +251,10 @@ public class TaxonDatasetResourceTest {
         when(service.getImportHistory("GA000001")).thenReturn(importerResults);
         
         //When
-        Map<String, DatasetImportStatus> statuses = resource.getImportStatusForAdminableDatasets(user);
+        List<TaxonDatasetWithImportStatus> statuses = resource.getImportStatusForAdminableDatasets(user);
         
         //Then
         assertEquals("Expected only one dataset", statuses.size(), 1);
-        assertTrue("Expected GA000001 import status to be present", statuses.containsKey("GA000001"));
+        assertEquals("Expected GA000001 import status to be present", statuses.get(0).getDataset().getKey(), "GA000001");
     }
 }

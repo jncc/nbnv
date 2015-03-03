@@ -2,9 +2,8 @@ package uk.org.nbn.nbnv.api.rest.resources;
 
 import freemarker.template.TemplateException;
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -85,7 +84,7 @@ public class TaxonDatasetResource extends AbstractResource {
         @ResponseCode(code = 200, condition = "Successfully returned a list of the current users adminable datasets")
     })
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Dataset> adminableDatasets(@TokenUser(allowPublic=false) User user) throws IOException {
+    public List<TaxonDataset> adminableDatasets(@TokenUser(allowPublic=false) User user) throws IOException {
         return datasetAdministratorMapper.selectTaxonDatasetsByUser(user.getId());
     }
     
@@ -106,12 +105,12 @@ public class TaxonDatasetResource extends AbstractResource {
         @ResponseCode(code = 200, condition = "Successfully returned a list of the current users adminable datasets")
     })
     @Produces(MediaType.APPLICATION_JSON)
-    public Map<String,DatasetImportStatus> getImportStatusForAdminableDatasets(@TokenUser(allowPublic=false) User user) throws IOException {
-        Map<String,DatasetImportStatus> toReturn = new HashMap<>();
-        for(Dataset dataset: adminableDatasets(user)) {
+    public List<TaxonDatasetWithImportStatus> getImportStatusForAdminableDatasets(@TokenUser(allowPublic=false) User user) throws IOException {
+        List<TaxonDatasetWithImportStatus> toReturn = new ArrayList<>();
+        for(TaxonDataset dataset: adminableDatasets(user)) {
             DatasetImportStatus status = getImportStatus(user, dataset.getKey());
             if(status.isIsOnQueue() || status.isIsProcessing() || !status.getHistory().isEmpty()) {
-                toReturn.put(dataset.getKey(), status);
+                toReturn.add(new TaxonDatasetWithImportStatus(dataset, status));
             }
         }
         return toReturn;
