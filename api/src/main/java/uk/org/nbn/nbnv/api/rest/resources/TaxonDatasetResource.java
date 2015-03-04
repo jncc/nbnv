@@ -3,7 +3,9 @@ package uk.org.nbn.nbnv.api.rest.resources;
 import freemarker.template.TemplateException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -210,6 +212,7 @@ public class TaxonDatasetResource extends AbstractResource {
         @ResponseCode(code = 404, condition = "No dataset found"),
         @ResponseCode(code = 409, condition = "Already queued for import")
     })
+    @Produces(MediaType.APPLICATION_JSON)
     public Response queueReplacementDataset(@TokenDatasetAdminUser(path="id") User admin, @PathParam("id") String id, @Context HttpServletRequest request) throws TemplateException {
         return uploadDataset(admin, id, request, true);
     }
@@ -231,6 +234,7 @@ public class TaxonDatasetResource extends AbstractResource {
         @ResponseCode(code = 404, condition = "No dataset found"),
         @ResponseCode(code = 409, condition = "Already queued for import")
     })
+    @Produces(MediaType.APPLICATION_JSON)
     public Response queueAppendDataset(@TokenDatasetAdminUser(path="id") User admin, @PathParam("id") String id, @Context HttpServletRequest request) throws TemplateException {
         return uploadDataset(admin, id, request, false);
     }
@@ -428,7 +432,7 @@ public class TaxonDatasetResource extends AbstractResource {
         if(dataset != null) {
             if(importerService.isQueued(id)) {
                 return Response.status(CONFLICT)
-                                .entity("This dataset already has an import queued. You will have to delete this first")
+                                .entity(createErrorResponse("This dataset already has an import queued. You will have to delete this first"))
                                 .build();
             }
             
@@ -437,11 +441,19 @@ public class TaxonDatasetResource extends AbstractResource {
                 return Response.ok(getImportStatus(admin,id)).build();
             }
             catch(IOException io) {
-                return Response.status(BAD_REQUEST).entity(io.getMessage()).build();
+                return Response.status(BAD_REQUEST)
+                        .entity(createErrorResponse(io.getMessage())).build();
             }
         }
         else {
             return Response.status(NOT_FOUND).build();
         }
+    }
+    
+    private Map<String,Object> createErrorResponse(String message) {
+        Map<String,Object> toReturn = new HashMap<>();
+        toReturn.put("success", false);
+        toReturn.put("status", message);
+        return toReturn;
     }
 }
