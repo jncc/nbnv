@@ -9,20 +9,22 @@
   </#if>
   <fieldset>
     <form method="post" enctype="multipart/form-data" action="/Import/Existing">
-    <p>
-      <input type="file" name="file">
-    </p>
-    <p>
-      <select name="key">
-        <#list datasets as dataset>
-         <option value="${dataset.key}">${dataset.key}: ${dataset.title}</option>
-        </#list>
-      </select>
-    </p>
-    <p>
+      <#-- WARNING - This form is processed by the DatasetImporterController. It
+           expects the fields in this order -->
       <input type="hidden" name="isReplace" value="${isReplace?string("true", "false")}">
-      <input type="submit">
-    </p>
+      <p>
+        <select name="key">
+          <#list datasets as dataset>
+           <option value="${dataset.key}">${dataset.key}: ${dataset.title}</option>
+          </#list>
+        </select>
+      </p>
+      <p>
+        <input type="file" name="file">
+      </p>
+      <p>
+        <input type="submit">
+      </p>
     </form>
   </fieldset>
 

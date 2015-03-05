@@ -15,7 +15,7 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJacksonHttpMessageConverter;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
-import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
+import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -45,13 +45,6 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         resolver.setSuffix(".ftl");
         resolver.setContentType("text/html;charset=UTF-8");
         return resolver;
-    }
-    
-    @Bean
-    public MultipartResolver multipartResolver(){
-        CommonsMultipartResolver toReturn = new CommonsMultipartResolver();
-        toReturn.setMaxUploadSize(10_000_000_000L);
-        return toReturn;
     }
     
     @Bean
