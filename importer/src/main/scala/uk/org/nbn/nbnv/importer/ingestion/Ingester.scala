@@ -97,6 +97,11 @@ class Ingester @Inject()(options: Options,
 
     db.flushAndClear()
   }
+  
+  def stageSites() {
+    log.debug("Calculating spatial intersections for new sites...")
+    db.repo.calculateSiteSpatialInteractions
+  }
 
   def finaliseImport(metadata: Metadata) : String =
   {
@@ -163,6 +168,9 @@ class Ingester @Inject()(options: Options,
       // insert records
       stageRecords(archive, dataset, metadata)
 
+      // do spatial calculations
+      stageSites()
+      
       t1.commit()
     }
     log.info("Step 1 Complete: Ingested data into import staging tables")

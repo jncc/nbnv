@@ -110,7 +110,17 @@ class Repository (log: Logger, em: EntityManager, cache: QueryCache) extends Con
   def createFeature(wkt: String, identifier: String) = {
 
     val sprocs = new StoredProcedureLibrary(em)
-    sprocs.createFeature(wkt, identifier)
+    val feature = sprocs.createFeature(wkt, identifier)
+    
+    val importFeature = new ImportFeatures(feature.getId);
+    em.persist(importFeature)
+    
+    feature
+  }
+  
+  def calculateSiteSpatialInteractions() = {
+    val sprocs = new StoredProcedureLibrary(em)
+    sprocs.calculateFeatureSpatialTables
   }
 
   def createGridRef(feature: Feature, gridRef: String , resolution: Resolution , projection: Projection , wkt: String ) : GridSquare = {

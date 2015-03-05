@@ -25,7 +25,7 @@ public class StoredProcedureLibrary {
 //
 //    @NamedStoredProcedureQuery(
 //            name="CREATE_FEATURE_PROCEDURE",
-//            procedureName="import_CreateFeature",
+//            procedureName="import_CreateFeatureWithNoCalculation",
 //            returnsResultSet=false,
 //            parameters={
 //                    @StoredProcedureParameter(queryParameter="wkt",name="p1",direction=Direction.IN,type=Integer.class)
@@ -33,7 +33,7 @@ public class StoredProcedureLibrary {
 //    )
     public Feature createFeature(String wgs84Wkt, String identifier) {
         StoredProcedureCall call = new StoredProcedureCall();
-        call.setProcedureName("import_CreateFeature");
+        call.setProcedureName("import_CreateFeatureWithNoCalculation");
         call.addNamedArgument("wkt", "wgs84wkt");
         call.addNamedArgument("identifier", "identifier");
         call.addNamedOutputArgument(
@@ -58,6 +58,20 @@ public class StoredProcedureLibrary {
         Feature feature =  _em.find(Feature.class,featureId);
 
         return feature;
+    }
+    
+    public void calculateFeatureSpatialTables() {
+        StoredProcedureCall call = new StoredProcedureCall();
+        call.setProcedureName("import_FeatureCalculations");
+        
+        ValueReadQuery query = new ValueReadQuery();
+        query.setCall(call);
+
+        List arguments = new ArrayList();
+
+        Session session = getSession();
+
+        Integer results = (Integer) session.executeQuery(query, arguments);
     }
 
 //    @featureID INT
