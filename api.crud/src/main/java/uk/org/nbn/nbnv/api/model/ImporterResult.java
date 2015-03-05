@@ -6,11 +6,21 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class ImporterResult {
     private List<ValidationError> validationErrors;
+    private String timestamp;
     private boolean success;
+
+    public String getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(String timestamp) {
+        this.timestamp = timestamp;
+    }
     
-    public ImporterResult(List<ValidationError> validationErrors, boolean success) {
+    public ImporterResult(List<ValidationError> validationErrors, boolean success, String timestamp) {
         this.validationErrors = validationErrors;
         this.success = success;
+        this.timestamp = timestamp;
     }
     
     public List<ValidationError> getValidationErrors() {

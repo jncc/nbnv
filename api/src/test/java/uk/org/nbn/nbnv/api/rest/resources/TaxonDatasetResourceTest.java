@@ -3,14 +3,12 @@ package uk.org.nbn.nbnv.api.rest.resources;
 import freemarker.template.TemplateException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 import static org.mockito.Matchers.any;
@@ -23,8 +21,6 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.mock.web.MockHttpServletRequest;
 import uk.org.nbn.nbnv.api.dao.warehouse.DatasetAdministratorMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.DatasetMapper;
-import uk.org.nbn.nbnv.api.model.Dataset;
-import uk.org.nbn.nbnv.api.model.DatasetImportStatus;
 import uk.org.nbn.nbnv.api.model.ImporterResult;
 import uk.org.nbn.nbnv.api.model.TaxonDataset;
 import uk.org.nbn.nbnv.api.model.TaxonDatasetWithImportStatus;
@@ -246,8 +242,8 @@ public class TaxonDatasetResourceTest {
         when(dataset1.getKey()).thenReturn("GA000001");
         when(dataset2.getKey()).thenReturn("GA000002");
         
-        Map<String, ImporterResult> importerResults = new HashMap<>();
-        importerResults.put("TimeStamp", mock(ImporterResult.class));
+        List<ImporterResult> importerResults = new ArrayList<>();
+        importerResults.add(mock(ImporterResult.class));
         when(service.getImportHistory("GA000001")).thenReturn(importerResults);
         
         //When

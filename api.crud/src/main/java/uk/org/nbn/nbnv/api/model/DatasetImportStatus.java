@@ -1,14 +1,14 @@
 package uk.org.nbn.nbnv.api.model;
 
-import java.util.Map;
+import java.util.List;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class DatasetImportStatus {
     private boolean isOnQueue, isProcessing;
-    private Map<String, ImporterResult> history;
+    private List<ImporterResult> history;
 
-    public DatasetImportStatus(boolean isOnQueue, boolean isProcessing, Map<String, ImporterResult> history) {
+    public DatasetImportStatus(boolean isOnQueue, boolean isProcessing, List<ImporterResult> history) {
         this.isOnQueue = isOnQueue;
         this.isProcessing = isProcessing;
         this.history = history;
@@ -30,12 +30,11 @@ public class DatasetImportStatus {
         this.isProcessing = isProcessing;
     }
 
-    public Map<String, ImporterResult> getHistory() {
+    public List<ImporterResult> getHistory() {
         return history;
     }
 
-    public void setHistory(Map<String, ImporterResult> history) {
+    public void setHistory(List<ImporterResult> history) {
         this.history = history;
     }
-    
 }

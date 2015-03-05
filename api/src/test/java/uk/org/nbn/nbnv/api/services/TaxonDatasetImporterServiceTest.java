@@ -8,7 +8,6 @@ import java.net.URL;
 import java.nio.file.FileAlreadyExistsException;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -123,11 +122,11 @@ public class TaxonDatasetImporterServiceTest {
         FileUtils.copyURLToFile(errors, folder.newFile("completed/myDatasetKey-201502191415031682/ConsoleErrors.txt"));
         
         //When
-        Map<String, ImporterResult> history = service.getImportHistory("myDatasetKey");
+        List<ImporterResult> history = service.getImportHistory("myDatasetKey");
         
         //Then
         assertEquals("Has ony entry in map", 1, history.size());
-        assertTrue("Has timestamp as key", history.containsKey("201502191415031682"));
+        assertEquals("Has timestamp as key", history.get(0).getTimestamp(),"201502191415031682");
     }
     
     @Test

@@ -22,9 +22,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
@@ -149,17 +147,26 @@ public class TaxonDatasetImporterService {
      *  mapped to the import timestamp
      * @throws java.io.IOException 
      */
-    public Map<String, ImporterResult> getImportHistory(String datasetKey) throws IOException {
-        Map<String, ImporterResult> history = new HashMap<>();
+    public List<ImporterResult> getImportHistory(String datasetKey) throws IOException {
+        List<ImporterResult> history = new ArrayList<>();
         CompletedLogFilter completedImports = new CompletedLogFilter(datasetKey);
         File[] completed = getImporterPath("completed").toFile().listFiles(completedImports);
         for(File importArchive : completed) {
             String timestamp = importArchive.getName().substring(datasetKey.length() + 1);
             List<ValidationError> errors = getValidationErrors(new File(importArchive, "ConsoleOutput.txt"));
             boolean success = isSuccessfulImport(new File(importArchive, "ConsoleErrors.txt"));
-            history.put(timestamp, new ImporterResult(errors, success));
+            history.add(new ImporterResult(errors, success, timestamp));
         }
         return history;
+    }
+    
+    public ImporterResult getImportHistory(String datasetKey, String timestamp) throws IOException {
+        for(ImporterResult result: getImportHistory(datasetKey)) {
+            if(!result.isSuccess() && timestamp.equals(result.getTimestamp())) {
+                return result;
+            }
+        }
+        throw new IllegalArgumentException("There is no archive which previously failed to import with the given timestamp");
     }
     
     /**
@@ -175,10 +182,7 @@ public class TaxonDatasetImporterService {
      *  the queue
      */
     public void stripInvalidRecords(String datasetKey, String timestamp) throws IOException, NoSuchFileException, FileAlreadyExistsException {
-        ImporterResult status = getImportHistory(datasetKey).get(timestamp);
-        if(status == null || status.isSuccess()) {
-            throw new IllegalArgumentException("There is no archive which previously failed to import with the given timestamp");
-        }
+        ImporterResult status = getImportHistory(datasetKey, timestamp);
         Path upload = Files.createTempFile(getImporterPath("uploads"), "reimport", ".zip");
         Path archive = getImporterPath("completed", datasetKey + "-" + timestamp, datasetKey + ".zip");
         try {

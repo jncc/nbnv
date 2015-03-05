@@ -5,25 +5,31 @@
   <#list statuses as status>
     <div>
       <h2>${status.dataset.key} - ${status.dataset.title}</h2>
-      <#if status.importStatus.isOnQueue>
-        Dataset Queued
-      </#if>
-      <#if status.importStatus.isProcessing>
-        Dataset Processing
-      </#if>
-
-      <#list status.importStatus.history?keys as timestamp>
-        <h3>${timestamp}</h3>
-        <#if status.importStatus.history[timestamp].success>
-          Import was successful
+      <ul>
+        <#if status.importStatus.isOnQueue>
+          <li>Dataset Queued</li>
+        </#if>
+        <#if status.importStatus.isProcessing>
+          <li>Dataset Processing</li>
         </#if>
 
-        <#list status.importStatus.history[timestamp].validationErrors as error>
-           Broken Rule - ${error.rule}
-           Message     - ${error.message}
-           Record Key  - ${error.recordKey}
+        <#list status.importStatus.history as importStatus>
+          <li class="${importStatus.success?string('import-success', 'import-fail')}">
+            ${importStatus.timestamp}
+
+            <table>
+              <tr><th>Record Key</th><th>Rule</th><th>Message</th></tr>
+              <#list importStatus.validationErrors as error>
+                <tr>
+                  <td>${error.recordKey}</td>
+                  <td>${error.rule}</td>
+                  <td>${error.message}</td>
+                </tr>
+              </#list>
+            </table>
+          </li>
         </#list>
-      </#list>
+      </ul>
     </div>
   </#list>
 </@template.master>
