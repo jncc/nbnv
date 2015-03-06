@@ -7,6 +7,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class DatasetImportStatus {
     private boolean isOnQueue, isProcessing;
     private List<ImporterResult> history;
+    
+    public DatasetImportStatus() {}
 
     public DatasetImportStatus(boolean isOnQueue, boolean isProcessing, List<ImporterResult> history) {
         this.isOnQueue = isOnQueue;

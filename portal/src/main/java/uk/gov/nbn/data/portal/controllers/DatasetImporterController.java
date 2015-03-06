@@ -1,10 +1,12 @@
 package uk.gov.nbn.data.portal.controllers;
 
 import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.GenericType;
 import com.sun.jersey.api.client.WebResource;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import uk.org.nbn.nbnv.api.model.TaxonDatasetWithImportStatus;
 
 @Controller
 public class DatasetImporterController {
@@ -65,6 +68,14 @@ public class DatasetImporterController {
         Map<String,Object> data = new HashMap<>();
         data.put("isReplace", isReplace);
         return new ModelAndView("importExistingDataset", data);
+    }
+    
+    @RequestMapping(value="/Import", method = RequestMethod.GET)
+    public ModelAndView getImporterDashboard() {
+        GenericType<List<TaxonDatasetWithImportStatus>> type = new GenericType<List<TaxonDatasetWithImportStatus>>() {};
+        Map<String,Object> data = new HashMap<>();
+        data.put("statuses", resource.path("/taxonDatasets/adminable/import").get(type));
+        return new ModelAndView("importDashboard", data);
     }
     
     private String getFormField(String name, FileItemIterator iterator) throws FileUploadException, IOException {

@@ -10,6 +10,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class TaxonDatasetWithImportStatus {
     private TaxonDataset dataset;
     private DatasetImportStatus importStatus;
+    
+    public TaxonDatasetWithImportStatus() {}
 
     public TaxonDatasetWithImportStatus(TaxonDataset dataset, DatasetImportStatus importStatus) {
         this.dataset = dataset;
