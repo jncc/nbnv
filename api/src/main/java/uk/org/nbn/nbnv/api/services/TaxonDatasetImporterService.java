@@ -160,6 +160,16 @@ public class TaxonDatasetImporterService {
         return history;
     }
     
+    /**
+     * Obtains an importer result for the given dataset key. The one obtained 
+     * will have occurred at the supplied timestamp. If no result importer result
+     * exists an IllegalArgumentException will be thrown
+     * @param datasetKey of the dataset which was imported
+     * @param timestamp of when the import occurred
+     * @return The importer history which occurred at "timestamp" for "datasetkey"
+     * @throws IOException if there was a problem reading the import history
+     * @throws IllegalArgumentException if no importer result exists
+     */
     public ImporterResult getImportHistory(String datasetKey, String timestamp) throws IOException {
         for(ImporterResult result: getImportHistory(datasetKey)) {
             if(!result.isSuccess() && timestamp.equals(result.getTimestamp())) {
