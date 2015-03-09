@@ -39,6 +39,7 @@ import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenDatasetAdminUser;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenTaxonObservationAttributeAdminUser;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
 import uk.org.nbn.nbnv.api.services.TaxonDatasetImporterService;
+import uk.org.nbn.nbnv.api.utils.LimitedLineLengthReader;
 import uk.org.nbn.nbnv.api.utils.NXFReader;
 
 @Component
@@ -437,7 +438,8 @@ public class TaxonDatasetResource extends AbstractResource {
                                 .build();
             }
             
-            try ( NXFReader nxf = new NXFReader(request.getReader()) ) {
+            // Create a nxfreader which will fail when reading lines which are too long
+            try ( NXFReader nxf = new NXFReader(new LimitedLineLengthReader(request.getReader())) ) {
                 importerService.importDataset(nxf, dataset, upsert);
                 return Response.ok(getImportStatus(admin,id)).build();
             }
