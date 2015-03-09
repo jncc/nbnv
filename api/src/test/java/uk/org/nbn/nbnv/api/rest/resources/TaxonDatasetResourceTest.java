@@ -2,7 +2,6 @@ package uk.org.nbn.nbnv.api.rest.resources;
 
 import freemarker.template.TemplateException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -26,6 +25,7 @@ import uk.org.nbn.nbnv.api.model.TaxonDataset;
 import uk.org.nbn.nbnv.api.model.TaxonDatasetWithImportStatus;
 import uk.org.nbn.nbnv.api.model.User;
 import uk.org.nbn.nbnv.api.services.TaxonDatasetImporterService;
+import uk.org.nbn.nbnv.api.utils.NXFReader;
 
 /**
  *
@@ -84,13 +84,14 @@ public class TaxonDatasetResourceTest {
         //Given
         User user = mock(User.class);
         String datasetKey = "TestDataset";
-        HttpServletRequest request = new MockHttpServletRequest();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setContent("dummyContent".getBytes());
         TaxonDataset taxonDataset = mock(TaxonDataset.class);
         when(datasetMapper.selectTaxonDatasetByID("TestDataset")).thenReturn(taxonDataset);
         when(service.isQueued(datasetKey)).thenReturn(false);
         doThrow(new IOException("Invalid nxf"))
                 .when(service)
-                .importDataset(any(InputStream.class), eq(taxonDataset), eq(true));
+                .importDataset(any(NXFReader.class), eq(taxonDataset), eq(true));
         
         //When
         Response response = resource.queueReplacementDataset(user, datasetKey, request);
@@ -104,7 +105,8 @@ public class TaxonDatasetResourceTest {
         //Given
         User user = mock(User.class);
         String datasetKey = "TestDataset";
-        HttpServletRequest request = new MockHttpServletRequest();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setContent("dummyContent".getBytes());
         TaxonDataset taxonDataset = mock(TaxonDataset.class);
         when(datasetMapper.selectTaxonDatasetByID("TestDataset")).thenReturn(taxonDataset);
         when(service.isQueued(datasetKey)).thenReturn(false);
@@ -153,13 +155,14 @@ public class TaxonDatasetResourceTest {
         //Given
         User user = mock(User.class);
         String datasetKey = "TestDataset";
-        HttpServletRequest request = new MockHttpServletRequest();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setContent("dummyContent".getBytes());
         TaxonDataset taxonDataset = mock(TaxonDataset.class);
         when(datasetMapper.selectTaxonDatasetByID("TestDataset")).thenReturn(taxonDataset);
         when(service.isQueued(datasetKey)).thenReturn(false);
         doThrow(new IOException("Invalid nxf"))
                 .when(service)
-                .importDataset(any(InputStream.class), eq(taxonDataset), eq(false));
+                .importDataset(any(NXFReader.class), eq(taxonDataset), eq(false));
         
         //When
         Response response = resource.queueAppendDataset(user, datasetKey, request);
@@ -173,7 +176,8 @@ public class TaxonDatasetResourceTest {
         //Given
         User user = mock(User.class);
         String datasetKey = "TestDataset";
-        HttpServletRequest request = new MockHttpServletRequest();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setContent("dummyContent".getBytes());
         TaxonDataset taxonDataset = mock(TaxonDataset.class);
         when(datasetMapper.selectTaxonDatasetByID("TestDataset")).thenReturn(taxonDataset);
         when(service.isQueued(datasetKey)).thenReturn(false);

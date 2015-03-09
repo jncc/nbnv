@@ -2,6 +2,8 @@ package uk.org.nbn.nbnv.api.rest.resources;
 
 import freemarker.template.TemplateException;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.LineNumberReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -39,6 +41,7 @@ import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenDatasetAdminUser;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenTaxonObservationAttributeAdminUser;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
 import uk.org.nbn.nbnv.api.services.TaxonDatasetImporterService;
+import uk.org.nbn.nbnv.api.utils.NXFReader;
 
 @Component
 @Path("/taxonDatasets")
@@ -437,7 +440,8 @@ public class TaxonDatasetResource extends AbstractResource {
             }
             
             try {
-                importerService.importDataset(request.getInputStream(), dataset, upsert);
+                NXFReader nxf = new NXFReader(new LineNumberReader(new InputStreamReader(request.getInputStream())));
+                importerService.importDataset(nxf, dataset, upsert);
                 return Response.ok(getImportStatus(admin,id)).build();
             }
             catch(IOException io) {

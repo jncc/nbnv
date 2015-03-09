@@ -4,6 +4,8 @@ import freemarker.template.TemplateException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.LineNumberReader;
 import java.net.URL;
 import java.nio.file.FileAlreadyExistsException;
 import java.util.Calendar;
@@ -23,6 +25,7 @@ import org.junit.rules.TemporaryFolder;
 import uk.org.nbn.nbnv.api.model.ImporterResult;
 import uk.org.nbn.nbnv.api.model.TaxonDataset;
 import uk.org.nbn.nbnv.api.model.ValidationError;
+import uk.org.nbn.nbnv.api.utils.NXFReader;
 
 /**
  *
@@ -230,7 +233,8 @@ public class TaxonDatasetImporterServiceTest {
         
         InputStream datasetStream = getClass().getResourceAsStream("/test-data/GA000466.json");
         TaxonDataset dataset = new ObjectMapper().readValue(datasetStream, TaxonDataset.class);
-        InputStream nxf = getClass().getResourceAsStream("/test-data/GA000466.nxf");
+        InputStream nxfFile = getClass().getResourceAsStream("/test-data/GA000466.nxf");
+        NXFReader nxf = new NXFReader(new LineNumberReader(new InputStreamReader(nxfFile)));
         
         Calendar date = Calendar.getInstance();
         date.set(2014, 11, 05); //Months are zero indexes

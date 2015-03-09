@@ -97,7 +97,7 @@ public class TaxonDatasetImporterService {
     }
     
     /**
-     * Given an input stream of the nbn exchange format, we want to create a new
+     * Given an NXFReader of the nbn exchange format, we want to create a new
      * Zip Archive which can be passed to the importer for importing. An NBN 
      * Importer archive must contain three files:
      *  - data.tab - the original nbn exchange format
@@ -109,18 +109,17 @@ public class TaxonDatasetImporterService {
      * @throws IOException if the nxf is not valid, or there was a problem writing the zip
      * @throws TemplateException if there was a problem with an underlying template
      */
-    public void importDataset(InputStream nxf, TaxonDataset dataset, boolean isUpsert) throws IOException, TemplateException {
+    public void importDataset(NXFReader nxf, TaxonDataset dataset, boolean isUpsert) throws IOException, TemplateException {
         Path upload = Files.createTempFile(getImporterPath("uploads"), "new", ".zip");
         try {
-            NXFReader nxfReader = new NXFReader(new LineNumberReader(new InputStreamReader(nxf)));
-            NXFLine header = nxfReader.readLine();
+            NXFLine header = nxf.readLine();
             NXFDateCoverageTracker temporalCoverage = new NXFDateCoverageTracker(header);
             try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(upload.toFile()))) {
                 PrintWriter writer = new PrintWriter(new OutputStreamWriter(out));
                 out.putNextEntry(new ZipEntry("data.tab"));
                 writer.println(header.toString());
-                while(nxfReader.ready()) {
-                    NXFLine nxfLine = nxfReader.readLine();
+                while(nxf.ready()) {
+                    NXFLine nxfLine = nxf.readLine();
                     temporalCoverage.read(nxfLine);     //Update the temporal coverage of the nxf file
                     writer.println(nxfLine.toString()); //Write the original line to the new archive
                 }
