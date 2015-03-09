@@ -3,6 +3,7 @@ package uk.org.nbn.nbnv.api.utils;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.LineNumberReader;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,6 +18,10 @@ public class NXFReader implements Closeable {
     public NXFReader(LineNumberReader reader) {
         this.reader = reader;
     }
+     
+    public NXFReader(Reader reader) {
+        this.reader = new LineNumberReader(reader);
+    }    
     
     /**
      * Read the current line from the stream and return it as a NXFLine object.

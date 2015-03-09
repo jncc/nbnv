@@ -440,7 +440,7 @@ public class TaxonDatasetResource extends AbstractResource {
             }
             
             try {
-                NXFReader nxf = new NXFReader(new LineNumberReader(new InputStreamReader(request.getInputStream())));
+                NXFReader nxf = new NXFReader(new InputStreamReader(request.getInputStream()));
                 importerService.importDataset(nxf, dataset, upsert);
                 return Response.ok(getImportStatus(admin,id)).build();
             }
