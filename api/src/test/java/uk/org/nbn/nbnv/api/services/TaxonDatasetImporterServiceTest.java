@@ -22,6 +22,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import static org.mockito.Mockito.mock;
 import uk.org.nbn.nbnv.api.model.ImporterResult;
 import uk.org.nbn.nbnv.api.model.TaxonDataset;
 import uk.org.nbn.nbnv.api.model.ValidationError;
@@ -130,6 +131,19 @@ public class TaxonDatasetImporterServiceTest {
         //Then
         assertEquals("Has ony entry in map", 1, history.size());
         assertEquals("Has timestamp as key", history.get(0).getTimestamp(),"201502191415031682");
+    }
+    
+    @Test(expected=IllegalArgumentException.class)
+    public void checkThatEmptyReaderResultsInError() throws IOException, TemplateException {
+        //Given
+        NXFReader reader = mock(NXFReader.class);
+        TaxonDataset dataset = mock(TaxonDataset.class);
+        
+        //When
+        service.importDataset(reader, dataset, true);
+        
+        //Then
+        fail("Expected empty reader to throw illegal argument exception");
     }
     
     @Test

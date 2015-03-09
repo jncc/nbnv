@@ -2,6 +2,7 @@ package uk.org.nbn.nbnv.api.rest.resources;
 
 import freemarker.template.TemplateException;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -439,7 +440,7 @@ public class TaxonDatasetResource extends AbstractResource {
             }
             
             // Create a nxfreader which will fail when reading lines which are too long
-            try ( NXFReader nxf = new NXFReader(new LimitedLineLengthReader(request.getReader())) ) {
+            try ( NXFReader nxf = new NXFReader(new LimitedLineLengthReader(new InputStreamReader(request.getInputStream()))) ) {
                 importerService.importDataset(nxf, dataset, upsert);
                 return Response.ok(getImportStatus(admin,id)).build();
             }

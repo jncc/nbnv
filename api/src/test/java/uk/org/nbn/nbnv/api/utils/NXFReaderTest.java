@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.LineNumberReader;
 import java.util.Arrays;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import org.junit.Test;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -54,5 +55,19 @@ public class NXFReaderTest {
         //Then
         assertEquals("Expected the correct data in the header", header.getColumns(), Arrays.asList("First", "Line"));
         assertEquals("Expected the correct data in the first line", data.getColumns(), Arrays.asList("One column", "Two column"));
+    }
+    
+    @Test
+    public void checkThatReaderReturnsNullLineWhenNoDataIsRead() throws IOException {
+        //Given
+        LineNumberReader reader = mock(LineNumberReader.class);
+        NXFReader nxfReader = new NXFReader(reader);
+        when(reader.readLine()).thenReturn(null);
+        
+        //When
+        NXFLine line = nxfReader.readLine();
+        
+        //Then
+        assertNull("Expected no data to be read", line);
     }
 }

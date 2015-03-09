@@ -28,18 +28,24 @@ public class NXFReader implements Closeable {
      * If the amount of columns for this line differs to ones which have been 
      * previously read, then the method will throw an IOException as the NXF 
      * stream is corrupt
-     * @return the current line which has been read
+     * @return the current line which has been read or null if there is no line
      * @throws IOException if there was a problem reading the line or the line
      *  contained the wrong amount of columns
      */
     public NXFLine readLine() throws IOException {
-        NXFLine line = new NXFLine(reader.readLine());
-        int currLineColumns = line.getColumns().size();
-        if(columns != -1 && columns != line.getColumns().size()) {
-            throw new IOException("Line number " + reader.getLineNumber() + " contains the wrong amount of columns");
+        String readLine = reader.readLine();
+        if(readLine != null) {
+            NXFLine line = new NXFLine(readLine);
+            int currLineColumns = line.getColumns().size();
+            if(columns != -1 && columns != line.getColumns().size()) {
+                throw new IOException("Line number " + reader.getLineNumber() + " contains the wrong amount of columns");
+            }
+            columns = currLineColumns;
+            return line;
         }
-        columns = currLineColumns;
-        return line;
+        else {
+            return null;
+        }
     }
     
     /**

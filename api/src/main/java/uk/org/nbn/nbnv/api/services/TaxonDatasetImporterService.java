@@ -113,13 +113,16 @@ public class TaxonDatasetImporterService {
         Path upload = Files.createTempFile(getImporterPath("uploads"), "new", ".zip");
         try {
             NXFLine header = nxf.readLine();
+            if( header == null ) {
+                throw new IllegalArgumentException("The NBN Exchange file was empty");
+            }
             NXFDateCoverageTracker temporalCoverage = new NXFDateCoverageTracker(header);
             try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(upload.toFile()))) {
                 PrintWriter writer = new PrintWriter(new OutputStreamWriter(out));
                 out.putNextEntry(new ZipEntry("data.tab"));
                 writer.println(header.toString());
-                while(nxf.ready()) {
-                    NXFLine nxfLine = nxf.readLine();
+                NXFLine nxfLine;
+                while( (nxfLine = nxf.readLine()) != null ) {
                     temporalCoverage.read(nxfLine);     //Update the temporal coverage of the nxf file
                     writer.println(nxfLine.toString()); //Write the original line to the new archive
                 }
