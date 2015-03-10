@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.net.URL;
 import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.NoSuchFileException;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Properties;
@@ -170,7 +171,7 @@ public class TaxonDatasetImporterServiceTest {
         assertTrue("Expected datatab to be smaller", dataTab.getSize() < originalArchive.getEntry("data.tab").getSize());
     }
     
-    @Test(expected=IllegalArgumentException.class)
+    @Test(expected=NoSuchFileException.class)
     public void checkFailsToReprocessSuccessfulImport() throws IOException {
         //Given
         File archived = folder.newFolder("completed/valid-201502191415031682");
@@ -184,7 +185,7 @@ public class TaxonDatasetImporterServiceTest {
         fail("Expected to fail with an illegal argument exception");
     }
     
-    @Test(expected=IllegalArgumentException.class)
+    @Test(expected=NoSuchFileException.class)
     public void checkFailsToReprocessMissingImport() throws IOException {
         //Given
         //Nothing

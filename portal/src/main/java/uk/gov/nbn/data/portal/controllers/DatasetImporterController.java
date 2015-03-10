@@ -78,6 +78,37 @@ public class DatasetImporterController {
         return new ModelAndView("importDashboard", data);
     }
     
+    @RequestMapping(value="/Import", method = RequestMethod.POST, params="op=delete")
+    public ModelAndView deleteQueuedDataset(@RequestParam("datasetKey") String datasetKey) {
+        ClientResponse response = resource
+                .path(String.format("taxonDatasets/%s/import", datasetKey))
+                .delete(ClientResponse.class);
+        
+        ModelAndView model = getImporterDashboard();
+        switch(response.getStatus()) {
+            case 204: return model.addObject("message", "Dataset: " + datasetKey + " has been removed from the queue");
+            case 404: return model.addObject("error", "Could not find " + datasetKey);
+            default:  return model.addObject("error", "The NBN Gateway API failed. If this continues please contact us using the forums");
+        }
+    }
+    
+    @RequestMapping(value="/Import", method = RequestMethod.POST, params="op=importValid")
+    public ModelAndView continueWithValidRecords(@RequestParam("datasetKey") String datasetKey, @RequestParam("timestamp") String timestamp) {
+        ClientResponse response = resource
+                .path(String.format("taxonDatasets/%s/import/%s", datasetKey, timestamp))
+                .post(ClientResponse.class);
+        
+        ModelAndView model = getImporterDashboard();
+        switch(response.getStatus()) {
+            case 200: return model.addObject("message", "Dataset: " + datasetKey + " has been removed from the queue");
+            case 404: return model.addObject("error", "Could not find an existing import for " + datasetKey + " with the timestamp " + timestamp);
+            case 409: return model.addObject("error", "The dataset " + datasetKey + " is already queued for import. Please delete and try again.");
+            default:  
+                String status = (String)response.getEntity(Map.class).get("status");
+                return model.addObject("error", "The NBN Gateway API failed. If this continues please contact us using the forums. " + status);
+        }
+    }
+    
     private String getFormField(String name, FileItemIterator iterator) throws FileUploadException, IOException {
         FileItemStream field = iterator.next();
         if(field.isFormField() && field.getFieldName().equals(name)) {

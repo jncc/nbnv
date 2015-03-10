@@ -3,6 +3,8 @@ package uk.org.nbn.nbnv.api.rest.resources;
 import freemarker.template.TemplateException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.NoSuchFileException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -240,6 +242,44 @@ public class TaxonDatasetResource extends AbstractResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response queueAppendDataset(@TokenDatasetAdminUser(path="id") User admin, @PathParam("id") String id, @Context HttpServletRequest request) throws TemplateException {
         return uploadDataset(admin, id, request, false);
+    }
+    
+    /**
+     * Takes an import which previously failed (due to validation errors) and 
+     * puts a subset of the records (which are valid) on to the importer queue.
+     * 
+     * If successful, the import status will be returned for the given dataset 
+     * which should identify that there is a dataset in the queue.
+     * @param admin The Current User if they are a dataset admin for this 
+     * @param id of the dataset which failed due to validation errors
+     * @param timestamp of when the dataset import failed due to validation errors
+     * @return an http response
+     * @throws TemplateException 
+     */
+    @POST
+    @Path("/{id}/import/{timestamp}")
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Dataset queued for appending"),
+        @ResponseCode(code = 400, condition = "Failed to generate the new import"),
+        @ResponseCode(code = 404, condition = "Could not find a dataset import for the given timestamp"),
+        @ResponseCode(code = 409, condition = "Already queued for import")
+    })
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response continueWithValidRecords(@TokenDatasetAdminUser(path="id") User admin, @PathParam("id") String id, @PathParam("timestamp") String timestamp) throws TemplateException {
+        try {
+            importerService.stripInvalidRecords(id, timestamp);
+            return Response.ok(getImportStatus(admin,id)).build();
+        }
+        catch(NoSuchFileException ex) {
+            return Response.status(NOT_FOUND).build();
+        }
+        catch(FileAlreadyExistsException faee) {
+            return Response.status(CONFLICT).build();
+        }
+        catch(IOException io) {
+           return Response.status(BAD_REQUEST)
+                        .entity(createErrorResponse(io.getMessage())).build();
+        }
     }
     
     /**

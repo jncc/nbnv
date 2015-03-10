@@ -170,7 +170,7 @@ public class TaxonDatasetImporterService {
      * @param timestamp of when the import occurred
      * @return The importer history which occurred at "timestamp" for "datasetkey"
      * @throws IOException if there was a problem reading the import history
-     * @throws IllegalArgumentException if no importer result exists
+     * @throws NoSuchFileException if no importer result exists
      */
     public ImporterResult getImportHistory(String datasetKey, String timestamp) throws IOException {
         for(ImporterResult result: getImportHistory(datasetKey)) {
@@ -178,7 +178,7 @@ public class TaxonDatasetImporterService {
                 return result;
             }
         }
-        throw new IllegalArgumentException("There is no archive which previously failed to import with the given timestamp");
+        throw new NoSuchFileException("There is no archive which previously failed to import with the given timestamp");
     }
     
     /**
