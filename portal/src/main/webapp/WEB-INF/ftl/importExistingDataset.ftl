@@ -24,6 +24,7 @@
       </p>
       <p>
         <input type="submit">
+        <a href="/Import">Back</a>
       </p>
     </form>
   </fieldset>
