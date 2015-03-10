@@ -18,6 +18,10 @@
   <h1>DASHBOARD!</h1>
   <#if error??><div class="message error">${error!}</div></#if>
   <#if message??><div class="message">${message!}</div></#if>
+
+  <a href="/Import/Existing?isReplace=true">Replace</a>
+  <a href="/Import/Existing?isReplace=false">Append</a>
+
   <#list statuses as status>
     <div class="tabbed">
       <h3>${status.dataset.key} - ${status.dataset.title}</h3>
