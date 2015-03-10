@@ -52,14 +52,12 @@ nbn.nbnv = nbn.nbnv || {};
         loadTableContent(startDate, endDate);
     });
 
-    function activateDownloadLink(linkID, dataset, startDate, endDate) {
-        $(linkID).click(function(e) {
-            var url = nbn.nbnv.api + '/apiViews/' + dataset + '/csv';
-            
-            if (startDate !== "" && endDate !== "") {
-                url = url + '?startDate=' + startDate + "&endDate=" + endDate; 
-            }
-            
+    function activateDownloadLink(linkID, dataset, startDate, endDate) {        
+        var url = nbn.nbnv.api + '/apiViews/' + dataset + '/csv' 
+                + parameterizeQueryString(startDate, endDate);
+        
+        $(linkID).attr('href', url)
+        $(linkID).unbind('click').bind('click', (function(e) {            
             $('#preparing-download-dialog').dialog({modal: true});
             
             $.fileDownload(url, {
@@ -73,13 +71,11 @@ nbn.nbnv = nbn.nbnv || {};
                 }
             });
             e.preventDefault();
-        });
+        }));
     }
 
     function loadTableContent(startDate, endDate) {
-        var qString = "";
-        if (startDate !== "" && endDate !== "")
-            qString = "?startDate=" + startDate + "&endDate=" + endDate;
+        var qString = parameterizeQueryString(startDate, endDate);
         
         $('.nbn-datatable').each(function(index) {
             var dataset = $(this).data('dataset');
@@ -99,6 +95,18 @@ nbn.nbnv = nbn.nbnv || {};
                 }
             });
         });
+    }
+    
+    function parameterizeQueryString(startDate, endDate) {
+        var qString = "";
+        if (startDate !== "" && endDate !== "")
+            qString = "?startDate=" + startDate + "&endDate=" + endDate;
+        else if (startDate !== "")
+            qString = "?startDate=" + startDate;
+        else if (endDate !== "")
+            qString = "?endDate=" + endDate;
+        
+        return qString;
     }
 
     function downloadForDataset(divID, tableID, data) {
