@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 @XmlRootElement
-public class ImporterResult {
+public class ImporterResult implements Comparable<ImporterResult> {
     private List<ValidationError> validationErrors;
     private String timestamp;
     private boolean success;
@@ -49,5 +49,10 @@ public class ImporterResult {
     public Date getTime() throws ParseException {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddhhmmssSSS");
         return formatter.parse(timestamp.substring(0, 17));
+    }
+
+    @Override
+    public int compareTo(ImporterResult o) {
+        return o.timestamp.compareTo(timestamp);
     }
 }

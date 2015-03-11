@@ -10,7 +10,6 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.LineNumberReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -159,6 +158,7 @@ public class TaxonDatasetImporterService {
             boolean success = isSuccessfulImport(new File(importArchive, "ConsoleErrors.txt"));
             history.add(new ImporterResult(errors, success, timestamp));
         }
+        Collections.sort(history); //Sort into the natural history order (Most recent first)
         return history;
     }
     

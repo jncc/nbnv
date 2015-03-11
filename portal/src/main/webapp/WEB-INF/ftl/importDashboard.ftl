@@ -1,6 +1,6 @@
-<#-- 
+<#--
     Creates an form which will perform some operation against the /Import
-    endpoint. The form will contain only hidden fields and a visible submit 
+    endpoint. The form will contain only hidden fields and a visible submit
     button.
 -->
 <#macro importForm label op datasetKey timestamp="">
@@ -14,10 +14,22 @@
   </form>
 </#macro>
 
-<@template.master title="NBN import">
+<#macro importResult icon="" status="" value="" timestamp="">
+  <li class="import-result import-result-${status}">
+    <div class="import-status">
+      <span class="ui-icon ui-icon-${icon}"></span>
+      <span class="import-message">
+        ${value} <#if timestamp?has_content><i> - ${timestamp?datetime}</i></#if>
+      </span>
+    </div>
+    <#nested>
+  </li>
+</#macro>
+
+<@template.master title="NBN import" csss=["//ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/themes/smoothness/jquery-ui.css"]>
   <h1>DASHBOARD!</h1>
   <#if error??><div class="message error">${error!}</div></#if>
-  <#if message??><div class="message">${message!}</div></#if>
+  <#if message??><div class="message info">${message!}</div></#if>
 
   <a href="/Import/Existing?isReplace=true">Replace</a>
   <a href="/Import/Existing?isReplace=false">Append</a>
@@ -27,35 +39,34 @@
       <h3>${status.dataset.key} - ${status.dataset.title}</h3>
       <ul>
         <#if status.importStatus.isOnQueue>
-          <li>
-            Dataset Queued
+          <@importResult icon="clock" status="inprogress" value="Dataset Queued">
             <@importForm "Delete" "delete" status.dataset.key/>
-          </li>
+          </@importResult>
         </#if>
+
         <#if status.importStatus.isProcessing>
-          <li>Dataset Processing</li>
+          <@importResult icon="arrowthickstop-1-n" status="inprogress" value="Dataset Processing"></@importResult>
         </#if>
 
         <#list status.importStatus.history as importStatus>
           <#if importStatus.success>
-            <li class="import-success">${importStatus.time?datetime}</li>
+            <@importResult icon="check" status="success" timestamp=importStatus.time value="Import completed successfully"></@importResult>
+          <#elseif importStatus.validationErrors?has_content>
+            <@importResult icon="notice" status="warning" timestamp=importStatus.time value="Import failed with validation errors">
+              <@importForm "Import valid records" "importValid" status.dataset.key importStatus.timestamp/>
+              <table class="nbn-simple-table">
+                <tr><th>Record Key</th><th>Rule</th><th>Message</th></tr>
+                <#list importStatus.validationErrors as error>
+                  <tr>
+                    <td>${error.recordKey}</td>
+                    <td>${error.rule}</td>
+                    <td>${error.message}</td>
+                  </tr>
+                </#list>
+              </table>
+            </@importResult>
           <#else>
-            <li class="import-fail">
-              ${importStatus.time?datetime}
-              <#if importStatus.validationErrors?has_content>
-                <@importForm "Import valid records" "importValid" status.dataset.key importStatus.timestamp/>
-                <table class="nbn-simple-table">
-                  <tr><th>Record Key</th><th>Rule</th><th>Message</th></tr>
-                  <#list importStatus.validationErrors as error>
-                    <tr>
-                      <td>${error.recordKey}</td>
-                      <td>${error.rule}</td>
-                      <td>${error.message}</td>
-                    </tr>
-                  </#list>
-                </table>
-              </#if>
-            </li>
+            <@importResult icon="alert" status="error" timestamp=importStatus.time value="Import failed. Please contact the NBN Gateway team to help resolve this"></@importResult>
           </#if>
         </#list>
       </ul>
