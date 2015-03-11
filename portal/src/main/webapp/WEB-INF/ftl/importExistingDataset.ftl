@@ -1,4 +1,3 @@
-<#assign user = json.readURL("${api}/user")/>
 <#assign datasets = json.readURL("${api}/user/adminDatasets")/>
 
 <@template.master title="NBN import">
@@ -23,8 +22,8 @@
         <input type="file" name="file">
       </p>
       <p>
-        <input type="submit">
-        <a href="/Import">Back</a>
+        <input type="submit" value="Import Dataset">
+        <a href="/Import">Back to Dashboard</a>
       </p>
     </form>
   </fieldset>
