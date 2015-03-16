@@ -1,5 +1,6 @@
-package uk.org.nbn.nbnv.api.utils;
+package uk.org.nbn.nbnv.api.nxf;
 
+import uk.org.nbn.nbnv.api.nxf.NXFDateCoverageTracker;
 import java.util.Calendar;
 import static java.util.Calendar.DAY_OF_MONTH;
 import static java.util.Calendar.MONTH;
@@ -7,7 +8,7 @@ import static java.util.Calendar.YEAR;
 import java.util.Date;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
-import uk.org.nbn.nbnv.api.utils.NXFReader.NXFLine;
+import uk.org.nbn.nbnv.api.nxf.NXFReader.NXFLine;
 
 /**
  * Beware, in java months start at 0, not 1.

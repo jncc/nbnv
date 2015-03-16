@@ -43,7 +43,7 @@ import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenTaxonObservationAttri
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
 import uk.org.nbn.nbnv.api.services.TaxonDatasetImporterService;
 import uk.org.nbn.nbnv.api.utils.LimitedLineLengthReader;
-import uk.org.nbn.nbnv.api.utils.NXFReader;
+import uk.org.nbn.nbnv.api.nxf.NXFReader;
 
 @Component
 @Path("/taxonDatasets")

@@ -1,4 +1,4 @@
-package uk.org.nbn.nbnv.api.utils;
+package uk.org.nbn.nbnv.api.nxf;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;
@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import uk.org.nbn.nbnv.api.utils.NXFReader.NXFLine;
+import uk.org.nbn.nbnv.api.nxf.NXFReader.NXFLine;
 
 /**
  * The following class will take an NXF Header line which can be used to 

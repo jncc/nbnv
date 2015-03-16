@@ -25,7 +25,7 @@ import uk.org.nbn.nbnv.api.model.TaxonDataset;
 import uk.org.nbn.nbnv.api.model.TaxonDatasetWithImportStatus;
 import uk.org.nbn.nbnv.api.model.User;
 import uk.org.nbn.nbnv.api.services.TaxonDatasetImporterService;
-import uk.org.nbn.nbnv.api.utils.NXFReader;
+import uk.org.nbn.nbnv.api.nxf.NXFReader;
 
 /**
  *

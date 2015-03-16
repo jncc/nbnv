@@ -1,5 +1,6 @@
-package uk.org.nbn.nbnv.api.utils;
+package uk.org.nbn.nbnv.api.nxf;
 
+import uk.org.nbn.nbnv.api.nxf.NXFFieldMappingXMLWriter;
 import freemarker.template.TemplateException;
 import java.io.File;
 import java.io.IOException;
@@ -8,7 +9,7 @@ import java.net.URL;
 import org.apache.commons.io.FileUtils;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
-import uk.org.nbn.nbnv.api.utils.NXFReader.NXFLine;
+import uk.org.nbn.nbnv.api.nxf.NXFReader.NXFLine;
 
 /**
  *

@@ -27,7 +27,7 @@ import static org.mockito.Mockito.mock;
 import uk.org.nbn.nbnv.api.model.ImporterResult;
 import uk.org.nbn.nbnv.api.model.TaxonDataset;
 import uk.org.nbn.nbnv.api.model.ValidationError;
-import uk.org.nbn.nbnv.api.utils.NXFReader;
+import uk.org.nbn.nbnv.api.nxf.NXFReader;
 
 /**
  *

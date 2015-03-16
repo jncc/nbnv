@@ -1,4 +1,4 @@
-package uk.org.nbn.nbnv.api.utils;
+package uk.org.nbn.nbnv.api.nxf;
 
 
 import java.text.DateFormat;
@@ -7,7 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import uk.org.nbn.nbnv.api.utils.NXFReader.NXFLine;
+import uk.org.nbn.nbnv.api.nxf.NXFReader.NXFLine;
 
 /**
  *

@@ -1,5 +1,6 @@
-package uk.org.nbn.nbnv.api.utils;
+package uk.org.nbn.nbnv.api.nxf;
 
+import uk.org.nbn.nbnv.api.nxf.NXFReader;
 import java.io.IOException;
 import java.io.LineNumberReader;
 import java.util.Arrays;
@@ -8,7 +9,7 @@ import static org.junit.Assert.assertNull;
 import org.junit.Test;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import uk.org.nbn.nbnv.api.utils.NXFReader.NXFLine;
+import uk.org.nbn.nbnv.api.nxf.NXFReader.NXFLine;
 
 /**
  *

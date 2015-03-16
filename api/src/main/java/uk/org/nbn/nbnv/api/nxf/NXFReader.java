@@ -1,4 +1,4 @@
-package uk.org.nbn.nbnv.api.utils;
+package uk.org.nbn.nbnv.api.nxf;
 
 import java.io.Closeable;
 import java.io.IOException;
