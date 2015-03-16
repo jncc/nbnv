@@ -23,7 +23,6 @@ import java.util.Map;
  * @author Christopher Johnson
  */
 public class NXFNormaliser {
-    private static final List<String> NXF_HEADINGS = Arrays.asList();
     private final List<String> origHeaders, nxfHeaders, attrHeaders;
 
     /**
@@ -39,9 +38,9 @@ public class NXFNormaliser {
         String cleanedHeader = header.getLine().toUpperCase().replaceAll(" |_|-", "");
         origHeaders = Arrays.asList(cleanedHeader.split("\t"));
         nxfHeaders = new ArrayList<>(origHeaders);
-        nxfHeaders.retainAll(NXF_HEADINGS);
+        nxfHeaders.retainAll(NXFHeading.stringValues());
         attrHeaders = new ArrayList<>(origHeaders);
-        attrHeaders.removeAll(NXF_HEADINGS);
+        attrHeaders.removeAll(NXFHeading.stringValues());
     }
     
     /**
