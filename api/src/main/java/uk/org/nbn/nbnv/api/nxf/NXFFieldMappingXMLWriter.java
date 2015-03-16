@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import uk.org.nbn.nbnv.api.nxf.NXFReader.NXFLine;
 
 /**
  * The following class will take an NXF Header line which can be used to 
@@ -75,7 +74,7 @@ public class NXFFieldMappingXMLWriter {
     }
         
     public void write(NXFLine header) throws IOException, TemplateException {
-        List<String> columns = header.getColumns(true);
+        List<String> columns = header.getValues();
         Map<String, Object> data = new HashMap<>();
         data.put("darwinCoreFields", createFieldMappings(columns, DARWIN_CORE_FIELDS));
         data.put("nbnExtensionFields", createFieldMappings(columns, NBN_EXTENSION_FIELDS));

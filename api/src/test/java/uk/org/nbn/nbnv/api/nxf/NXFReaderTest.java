@@ -1,6 +1,5 @@
 package uk.org.nbn.nbnv.api.nxf;
 
-import uk.org.nbn.nbnv.api.nxf.NXFReader;
 import java.io.IOException;
 import java.io.LineNumberReader;
 import java.util.Arrays;
@@ -9,7 +8,6 @@ import static org.junit.Assert.assertNull;
 import org.junit.Test;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import uk.org.nbn.nbnv.api.nxf.NXFReader.NXFLine;
 
 /**
  *
@@ -54,8 +52,8 @@ public class NXFReaderTest {
         NXFLine data = reader.readLine();
 
         //Then
-        assertEquals("Expected the correct data in the header", header.getColumns(), Arrays.asList("First", "Line"));
-        assertEquals("Expected the correct data in the first line", data.getColumns(), Arrays.asList("One column", "Two column"));
+        assertEquals("Expected the correct data in the header", header.getValues(), Arrays.asList("First", "Line"));
+        assertEquals("Expected the correct data in the first line", data.getValues(), Arrays.asList("One column", "Two column"));
     }
     
     @Test

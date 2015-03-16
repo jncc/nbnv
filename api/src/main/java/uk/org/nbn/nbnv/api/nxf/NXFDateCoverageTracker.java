@@ -7,7 +7,6 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import uk.org.nbn.nbnv.api.nxf.NXFReader.NXFLine;
 
 /**
  *
@@ -29,7 +28,7 @@ public class NXFDateCoverageTracker {
     private Date latestDate;
     
     public NXFDateCoverageTracker(NXFLine header) {
-        List<String> columns = header.getColumns(true);
+        List<String> columns = header.getValues();
         if(columns.contains("STARTDATE") && columns.contains("ENDDATE")) {
             this.startDateCol = columns.indexOf("STARTDATE");
             this.endDateCol   = columns.indexOf("ENDDATE");
@@ -55,7 +54,7 @@ public class NXFDateCoverageTracker {
     }
     
     public void read(NXFLine line) {
-        List<String> data = line.getColumns();
+        List<String> data = line.getValues();
         Date startDate = parseDate(data.get(startDateCol), earliestDate);
         if(startDate.before(earliestDate)) {
             earliestDate = startDate;

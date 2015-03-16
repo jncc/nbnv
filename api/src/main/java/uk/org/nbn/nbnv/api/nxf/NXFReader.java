@@ -4,11 +4,10 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.Reader;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * The following class will read in a NBN Exchange formated file line by line.
+ * It will ensure that the amount of values read per line are the same.
  * @author cjohn
  */
 public class NXFReader implements Closeable {
@@ -36,8 +35,8 @@ public class NXFReader implements Closeable {
         String readLine = reader.readLine();
         if(readLine != null) {
             NXFLine line = new NXFLine(readLine);
-            int currLineColumns = line.getColumns().size();
-            if(columns != -1 && columns != line.getColumns().size()) {
+            int currLineColumns = line.getValues().size();
+            if(columns != -1 && columns != line.getValues().size()) {
                 throw new IOException("Line number " + reader.getLineNumber() + " contains the wrong amount of columns");
             }
             columns = currLineColumns;
@@ -60,46 +59,5 @@ public class NXFReader implements Closeable {
     @Override
     public void close() throws IOException {
         reader.close();
-    }
-    
-    public static class NXFLine {
-        private final String line;
-        protected NXFLine(String line) {
-            this.line = line;
-        }
-        
-        /**
-         * @return the original line read (with tabs in place) from the nxf
-         */
-        @Override
-        public String toString() {
-            return line;
-        }
-        
-        /**
-         * Grabs the columns of this line, splits them and trims the content.
-         * Optionally uppercasing all of the values in the list
-         * @param uppercase if the text in the line should be uppercased
-         * @return the tabbed line split and optionally uppercased
-         */
-        public List<String> getColumns(boolean uppercase) {
-            return splitLine( uppercase ? line.toUpperCase() : line);
-        }
-        
-        /**
-         * Get the columns of data
-         * @return the tabbed line split
-         */
-        public List<String> getColumns() {
-            return getColumns(false);
-        }
-        
-        private List<String> splitLine(String line) {
-            List<String> toReturn = new ArrayList<>();
-            for(String part: line.split("\t")) {
-                toReturn.add(part.trim());
-            }
-            return toReturn;
-        }
     }
 }

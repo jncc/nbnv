@@ -33,11 +33,11 @@ import org.springframework.stereotype.Service;
 import uk.org.nbn.nbnv.api.model.ImporterResult;
 import uk.org.nbn.nbnv.api.model.TaxonDataset;
 import uk.org.nbn.nbnv.api.model.ValidationError;
-import uk.org.nbn.nbnv.api.utils.EMLWriter;
 import uk.org.nbn.nbnv.api.nxf.NXFDateCoverageTracker;
 import uk.org.nbn.nbnv.api.nxf.NXFFieldMappingXMLWriter;
+import uk.org.nbn.nbnv.api.nxf.NXFLine;
 import uk.org.nbn.nbnv.api.nxf.NXFReader;
-import uk.org.nbn.nbnv.api.nxf.NXFReader.NXFLine;
+import uk.org.nbn.nbnv.api.utils.EMLWriter;
 
 /**
  * The following service manages an uploaded dataset file such that an Importer 
