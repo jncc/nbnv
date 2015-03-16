@@ -74,6 +74,7 @@ public class NXFNormaliser {
      */
     public NXFLine normalise(NXFLine line) {
         Map<String, String> data = getData(line);
+        data.put(NXFHeading.SENSITIVE.name(), doBoolean(data.get(NXFHeading.SENSITIVE.name())));
         return null;
     }
     
@@ -88,5 +89,20 @@ public class NXFNormaliser {
     
     private boolean addSRSColumn() {
         return nxfHeaders.contains("GRIDREFCOL") && !nxfHeaders.contains("SRS");
+    }
+    
+    /**
+     * Normalises a string that is masquerading as a boolean
+     * @param toTidy the string that needs normalising to true/false
+     * @return the normalised string
+     */
+    private String doBoolean(String toTidy){
+        if (toTidy.equalsIgnoreCase("T") || toTidy.equalsIgnoreCase("true") || toTidy.equalsIgnoreCase("yes")) {
+            return "true";
+        } else if (toTidy.equalsIgnoreCase("F") || toTidy.equalsIgnoreCase("false") || toTidy.equalsIgnoreCase("no")) {
+            return "false";
+        } else {
+            return toTidy;
+        }
     }
 }

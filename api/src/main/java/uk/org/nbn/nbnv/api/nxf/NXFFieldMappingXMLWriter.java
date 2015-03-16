@@ -27,37 +27,36 @@ public class NXFFieldMappingXMLWriter {
         String VERBATIMLATITUDE = "http://rs.tdwg.org/dwc/terms/verbatimLatitude";
         String VERBATIMLONGITUDE = "http://rs.tdwg.org/dwc/terms/verbatimLongitude";
 
-        DARWIN_CORE_FIELDS.put("RECORDKEY", "http://rs.tdwg.org/dwc/terms/occurrenceID");
-        DARWIN_CORE_FIELDS.put("TAXONVERSIONKEY", "http://rs.tdwg.org/dwc/terms/taxonID");
-        DARWIN_CORE_FIELDS.put("SITEKEY", "http://rs.tdwg.org/dwc/terms/locationID");
-        DARWIN_CORE_FIELDS.put("SITENAME", "http://rs.tdwg.org/dwc/terms/locality");
-        DARWIN_CORE_FIELDS.put("NORTH", VERBATIMLATITUDE);
-        DARWIN_CORE_FIELDS.put("EAST", VERBATIMLONGITUDE);
-        DARWIN_CORE_FIELDS.put("NORTHINGS", VERBATIMLATITUDE);
-        DARWIN_CORE_FIELDS.put("EASTINGS", VERBATIMLONGITUDE);
-        DARWIN_CORE_FIELDS.put("LAT", VERBATIMLATITUDE);
-        DARWIN_CORE_FIELDS.put("LONG", VERBATIMLONGITUDE);
-        DARWIN_CORE_FIELDS.put("LATITUDE", VERBATIMLATITUDE);
-        DARWIN_CORE_FIELDS.put("LONGITUDE", VERBATIMLONGITUDE);
-        DARWIN_CORE_FIELDS.put("SRS", "http://rs.tdwg.org/dwc/terms/verbatimSRS");
-        DARWIN_CORE_FIELDS.put("DATE", "http://rs.tdwg.org/dwc/terms/eventDate");
-        DARWIN_CORE_FIELDS.put("RECORDER", "http://rs.tdwg.org/dwc/terms/recordedBy");
-        DARWIN_CORE_FIELDS.put("DETERMINER", "http://rs.tdwg.org/dwc/terms/identifiedBy");
-        DARWIN_CORE_FIELDS.put("ZEROABUNDANCE", "http://rs.tdwg.org/dwc/terms/occurrenceStatus");
-        DARWIN_CORE_FIELDS.put("SURVEYKEY", "http://rs.tdwg.org/dwc/terms/collectionCode");
-        DARWIN_CORE_FIELDS.put("SAMPLEKEY", "http://rs.tdwg.org/dwc/terms/eventID");
-        DARWIN_CORE_FIELDS.put("DYNAMICPROPERTIES", "http://rs.tdwg.org/dwc/terms/dynamicProperties");
+        DARWIN_CORE_FIELDS.put(NXFHeading.RECORDKEY.name(),"http://rs.tdwg.org/dwc/terms/occurrenceID");
+        DARWIN_CORE_FIELDS.put(NXFHeading.TAXONVERSIONKEY.name(),"http://rs.tdwg.org/dwc/terms/taxonID");
+        DARWIN_CORE_FIELDS.put(NXFHeading.SITEKEY.name(),"http://rs.tdwg.org/dwc/terms/locationID");
+        DARWIN_CORE_FIELDS.put(NXFHeading.SITENAME.name(),"http://rs.tdwg.org/dwc/terms/locality");
+        DARWIN_CORE_FIELDS.put(NXFHeading.NORTH.name(),VERBATIMLATITUDE);
+        DARWIN_CORE_FIELDS.put(NXFHeading.EAST.name(),VERBATIMLONGITUDE);
+        DARWIN_CORE_FIELDS.put(NXFHeading.NORTHINGS.name(),VERBATIMLATITUDE);
+        DARWIN_CORE_FIELDS.put(NXFHeading.EASTINGS.name(),VERBATIMLONGITUDE);
+        DARWIN_CORE_FIELDS.put(NXFHeading.LAT.name(),VERBATIMLATITUDE);
+        DARWIN_CORE_FIELDS.put(NXFHeading.LONG.name(),VERBATIMLONGITUDE);
+        DARWIN_CORE_FIELDS.put(NXFHeading.LATITUDE.name(),VERBATIMLATITUDE);
+        DARWIN_CORE_FIELDS.put(NXFHeading.LONGITUDE.name(),VERBATIMLONGITUDE);
+        DARWIN_CORE_FIELDS.put(NXFHeading.SRS.name(),"http://rs.tdwg.org/dwc/terms/verbatimSRS");
+        DARWIN_CORE_FIELDS.put(NXFHeading.DATE.name(),"http://rs.tdwg.org/dwc/terms/eventDate");
+        DARWIN_CORE_FIELDS.put(NXFHeading.RECORDER.name(),"http://rs.tdwg.org/dwc/terms/recordedBy");
+        DARWIN_CORE_FIELDS.put(NXFHeading.DETERMINER.name(),"http://rs.tdwg.org/dwc/terms/identifiedBy");
+        DARWIN_CORE_FIELDS.put(NXFHeading.ZEROABUNDANCE.name(),"http://rs.tdwg.org/dwc/terms/occurrenceStatus");
+        DARWIN_CORE_FIELDS.put(NXFHeading.SURVEYKEY.name(),"http://rs.tdwg.org/dwc/terms/collectionCode");
+        DARWIN_CORE_FIELDS.put(NXFHeading.SAMPLEKEY.name(),"http://rs.tdwg.org/dwc/terms/eventID");
+        DARWIN_CORE_FIELDS.put(NXFHeading.DYNAMICPROPERTIES.name(),"http://rs.tdwg.org/dwc/terms/dynamicProperties");
 
         NBN_EXTENSION_FIELDS = new HashMap<>();
-        NBN_EXTENSION_FIELDS.put("PROJECTION", "http://rs.nbn.org.uk/dwc/nxf/0.1/terms/gridReferenceType");
-        NBN_EXTENSION_FIELDS.put("SENSITIVE", "http://rs.nbn.org.uk/dwc/nxf/0.1/terms/sensitiveOccurrence");
-        NBN_EXTENSION_FIELDS.put("GRIDREFERENCE", "http://rs.nbn.org.uk/dwc/nxf/0.1/terms/gridReference");
-        NBN_EXTENSION_FIELDS.put("PRECISION", "http://rs.nbn.org.uk/dwc/nxf/0.1/terms/gridReferencePrecision");
-        NBN_EXTENSION_FIELDS.put("DATETYPE", "http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateTypeCode");
-        NBN_EXTENSION_FIELDS.put("STARTDATE", "http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateStart");
-        NBN_EXTENSION_FIELDS.put("ENDDATE", "http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateEnd");
-        NBN_EXTENSION_FIELDS.put("FEATUREKEY", "http://rs.nbn.org.uk/dwc/nxf/0.1/terms/siteFeatureKey");
-    }
+        NBN_EXTENSION_FIELDS.put(NXFHeading.PROJECTION.name(),"http://rs.nbn.org.uk/dwc/nxf/0.1/terms/gridReferenceType");
+        NBN_EXTENSION_FIELDS.put(NXFHeading.SENSITIVE.name(),"http://rs.nbn.org.uk/dwc/nxf/0.1/terms/sensitiveOccurrence");
+        NBN_EXTENSION_FIELDS.put(NXFHeading.GRIDREFERENCE.name(),"http://rs.nbn.org.uk/dwc/nxf/0.1/terms/gridReference");
+        NBN_EXTENSION_FIELDS.put(NXFHeading.PRECISION.name(),"http://rs.nbn.org.uk/dwc/nxf/0.1/terms/gridReferencePrecision");
+        NBN_EXTENSION_FIELDS.put(NXFHeading.DATETYPE.name(),"http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateTypeCode");
+        NBN_EXTENSION_FIELDS.put(NXFHeading.STARTDATE.name(),"http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateStart");
+        NBN_EXTENSION_FIELDS.put(NXFHeading.ENDDATE.name(),"http://rs.nbn.org.uk/dwc/nxf/0.1/terms/eventDateEnd");
+        NBN_EXTENSION_FIELDS.put(NXFHeading.FEATUREKEY.name(),"http://rs.nbn.org.uk/dwc/nxf/0.1/terms/siteFeatureKey");    }
     
     private final Template template;
     private final Writer writer;
