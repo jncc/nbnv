@@ -2,7 +2,9 @@ package uk.org.nbn.nbnv.api.nxf;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * The NBN Exchange Format files which are submitted to the NBN Gateway don't
@@ -31,8 +33,11 @@ public class NXFNormaliser {
      *  column names
      */
     public NXFNormaliser(NXFLine header) {
+        if( header == null ) {
+            throw new IllegalArgumentException("The NBN Exchange file was empty");
+        }
         String cleanedHeader = header.getLine().toUpperCase().replaceAll(" |_|-", "");
-        origHeaders = Arrays.asList(cleanedHeader.split(" \t"));
+        origHeaders = Arrays.asList(cleanedHeader.split("\t"));
         nxfHeaders = new ArrayList<>(origHeaders);
         nxfHeaders.retainAll(NXF_HEADINGS);
         attrHeaders = new ArrayList<>(origHeaders);
@@ -50,7 +55,14 @@ public class NXFNormaliser {
      *  standardised form
     */
     public NXFLine header() {
-        return null;
+        List<String> toReturn = new ArrayList<>(nxfHeaders);
+        if(addSRSColumn()) {
+            toReturn.add("SRS");
+        }
+        if(!attrHeaders.isEmpty()) {
+            toReturn.add("DYNAMICPROPERTIES");
+        }
+        return new NXFLine(toReturn);
     }
 
     /**
@@ -61,6 +73,20 @@ public class NXFNormaliser {
      * @return the normalised line
      */
     public NXFLine normalise(NXFLine line) {
+        Map<String, String> data = getData(line);
         return null;
+    }
+    
+    private Map<String,String> getData(NXFLine line) {
+        Map<String,String> data = new HashMap<>();
+        List<String> values = line.getValues();
+        for(int i=0; i<values.size(); i++) {
+            data.put(origHeaders.get(i), values.get(i));
+        }
+        return data;
+    }
+    
+    private boolean addSRSColumn() {
+        return nxfHeaders.contains("GRIDREFCOL") && !nxfHeaders.contains("SRS");
     }
 }

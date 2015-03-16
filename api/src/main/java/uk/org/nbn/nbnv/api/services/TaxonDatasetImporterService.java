@@ -36,6 +36,7 @@ import uk.org.nbn.nbnv.api.model.ValidationError;
 import uk.org.nbn.nbnv.api.nxf.NXFDateCoverageTracker;
 import uk.org.nbn.nbnv.api.nxf.NXFFieldMappingXMLWriter;
 import uk.org.nbn.nbnv.api.nxf.NXFLine;
+import uk.org.nbn.nbnv.api.nxf.NXFNormaliser;
 import uk.org.nbn.nbnv.api.nxf.NXFReader;
 import uk.org.nbn.nbnv.api.utils.EMLWriter;
 
@@ -111,10 +112,8 @@ public class TaxonDatasetImporterService {
     public void importDataset(NXFReader nxf, TaxonDataset dataset, boolean isUpsert) throws IOException, TemplateException {
         Path upload = Files.createTempFile(getImporterPath("uploads"), "new", ".zip");
         try {
-            NXFLine header = nxf.readLine();
-            if( header == null ) {
-                throw new IllegalArgumentException("The NBN Exchange file was empty");
-            }
+            NXFNormaliser normaliser = new NXFNormaliser(nxf.readLine());
+            NXFLine header = normaliser.header();
             NXFDateCoverageTracker temporalCoverage = new NXFDateCoverageTracker(header);
             try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(upload.toFile()))) {
                 PrintWriter writer = new PrintWriter(new OutputStreamWriter(out));
@@ -122,8 +121,9 @@ public class TaxonDatasetImporterService {
                 writer.println(header.toString());
                 NXFLine nxfLine;
                 while( (nxfLine = nxf.readLine()) != null ) {
-                    temporalCoverage.read(nxfLine);     //Update the temporal coverage of the nxf file
-                    writer.println(nxfLine.toString()); //Write the original line to the new archive
+                    nxfLine = normaliser.normalise(nxfLine); // Normalise the line
+                    temporalCoverage.read(nxfLine);          //Update the temporal coverage of the nxf file
+                    writer.println(nxfLine.toString());      //Write the original line to the new archive
                 }
                 writer.flush();
                 out.putNextEntry(new ZipEntry("meta.xml"));

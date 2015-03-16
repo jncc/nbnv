@@ -24,8 +24,6 @@ public class NXFFieldMappingXMLWriter {
     static {
         DARWIN_CORE_FIELDS = new HashMap<>();
         
-        DARWIN_CORE_FIELDS.put("RECORDKEY", "http://rs.tdwg.org/dwc/terms/occurrenceID");
-        DARWIN_CORE_FIELDS.put("TAXONVERSIONKEY", "http://rs.tdwg.org/dwc/terms/taxonID");
         String VERBATIMLATITUDE = "http://rs.tdwg.org/dwc/terms/verbatimLatitude";
         String VERBATIMLONGITUDE = "http://rs.tdwg.org/dwc/terms/verbatimLongitude";
 
