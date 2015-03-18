@@ -49,14 +49,14 @@ public class NXFNormaliserTest {
         NXFLine data = normaliser.normalise(origData);
         
         //Then
-        assertEquals("Expected header to be DynamicProperties", header.getLine(), "DYNAMICPROPERTIES");
-        assertEquals("Expected json in attribute column", data.getLine(), "{\"ATTRIBUTE1\":\"my data\"}");
+        assertEquals("Expected header to be DynamicProperties", "DYNAMICPROPERTIES", header.getLine());
+        assertEquals("Expected json in attribute column", "{\"ATTRIBUTE1\":\"my data\"}", data.getLine());
     }
     
     @Test
     public void checkThatFillsCreatesSRSColumnIfMissing() {
         //Given
-        NXFLine origHeader = new NXFLine("GRIDREFERENCE");
+        NXFLine origHeader = new NXFLine("PROJECTION");
         NXFNormaliser normaliser = new NXFNormaliser(origHeader);
         
         //When
@@ -65,9 +65,9 @@ public class NXFNormaliserTest {
         NXFLine other = normaliser.normalise(new NXFLine("some unkown type"));
         
         //Then
-        assertEquals("Expected srs column created", header.getLine(), "GRIDREFERENCE\tSRS");
-        assertEquals("Expected srs to be filled in", wgs84.getLine(), "WGS84\t4326");
-        assertEquals("Expected srs to be left blank", other.getLine(), "some unkown type\t");
+        assertEquals("Expected srs column created", "PROJECTION\tSRS", header.getLine());
+        assertEquals("Expected srs to be filled in", "WGS84\t4326", wgs84.getLine());
+        assertEquals("Expected srs to be left blank", "some unkown type\t", other.getLine());
     }
     
     @Test
@@ -82,7 +82,7 @@ public class NXFNormaliserTest {
         NXFLine other = normaliser.normalise(new NXFLine("leave me \t hmm"));
         
         //Then
-        assertEquals("Expected columns in standard order", header.getLine(), "GRIDREFERENCE\tSRS");
+        assertEquals("Expected columns in standard order", "GRIDREFERENCE\tSRS", header.getLine());
         assertEquals("Expected srs to be filled in", wgs84.getLine(), "WGS84\t4326");
         assertEquals("Expected srs to be left as is", other.getLine(), "hmm\tleave me");
     }
@@ -131,11 +131,11 @@ public class NXFNormaliserTest {
         NXFLine absence = normaliser.normalise(new NXFLine("ABSENCE"));
         
         //Then
-        assertEquals("Expected to read absence", t.getLine(), "absence");
-        assertEquals("Expected to read absence", tru.getLine(), "absence");
-        assertEquals("Expected to read absence", yes.getLine(), "absence");
-        assertEquals("Expected to read absence", absent.getLine(), "absence");
-        assertEquals("Expected to read absence", absence.getLine(), "absence");
+        assertEquals("Expected to read absence", "absence", t.getLine());
+        assertEquals("Expected to read absence", "absence", tru.getLine());
+        assertEquals("Expected to read absence", "absence", yes.getLine());
+        assertEquals("Expected to read absence", "absence", absent.getLine());
+        assertEquals("Expected to read absence", "absence", absence.getLine());
     }
     
     @Test
@@ -152,11 +152,11 @@ public class NXFNormaliserTest {
         NXFLine presence = normaliser.normalise(new NXFLine("PRESENCE"));
         
         //Then
-        assertEquals("Expected to read absence", f.getLine(), "presence");
-        assertEquals("Expected to read absence", fals.getLine(), "presence");
-        assertEquals("Expected to read absence", no.getLine(), "presence");
-        assertEquals("Expected to read absence", present.getLine(), "presence");
-        assertEquals("Expected to read absence", presence.getLine(), "presence");
+        assertEquals("Expected to read absence", "presence", f.getLine());
+        assertEquals("Expected to read absence", "presence", fals.getLine());
+        assertEquals("Expected to read absence", "presence", no.getLine());
+        assertEquals("Expected to read absence", "presence", present.getLine());
+        assertEquals("Expected to read absence", "presence", presence.getLine());
     }
     
     @Test

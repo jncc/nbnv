@@ -1,10 +1,13 @@
 package uk.org.nbn.nbnv.api.nxf;
 
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 
 /**
  * The NBN Exchange Format files which are submitted to the NBN Gateway don't
@@ -56,10 +59,28 @@ public class NXFNormaliser {
     public NXFLine header() {
         List<String> toReturn = new ArrayList<>(nxfHeaders);
         if(addSRSColumn()) {
-            toReturn.add("SRS");
+            toReturn.add(NXFHeading.SRS.name());
         }
         if(!attrHeaders.isEmpty()) {
-            toReturn.add("DYNAMICPROPERTIES");
+            toReturn.add(NXFHeading.DYNAMICPROPERTIES.name());
+        }
+        return new NXFLine(toReturn);
+    }
+    
+    /**
+     * This takes a map of normalised NXF data and turns it into a tab delimited
+     * row.  The data is in the correct order to match the headings that this.header()
+     * returns.
+     * @param data the normalised data
+     * @return the normalised data as an NXFLine
+     */
+    public NXFLine data(Map<String,String> data) throws JSONException {
+        List<String> toReturn = new ArrayList<>(getHeadings(nxfHeaders, data));
+        if(addSRSColumn()) {
+            toReturn.add(data.get(NXFHeading.SRS.name()));
+        }
+        if(!attrHeaders.isEmpty()){
+            toReturn.add(getAttributes(attrHeaders, data));
         }
         return new NXFLine(toReturn);
     }
@@ -71,10 +92,33 @@ public class NXFNormaliser {
      * @param line to normalise
      * @return the normalised line
      */
-    public NXFLine normalise(NXFLine line) {
-        Map<String, String> data = getData(line);
-        data.put(NXFHeading.SENSITIVE.name(), doBoolean(data.get(NXFHeading.SENSITIVE.name())));
-        return null;
+    public NXFLine normalise(NXFLine line) throws JSONException {
+        Map<String,String> data = getData(line);
+        if(data.containsKey(NXFHeading.SENSITIVE.name())){
+            data.put(NXFHeading.SENSITIVE.name(), getSensitive(data.get(NXFHeading.SENSITIVE.name())));
+        }
+        if(data.containsKey(NXFHeading.DATETYPE.name())){
+            data.put(NXFHeading.DATETYPE.name(), getDateTypePToOO(data.get(NXFHeading.DATETYPE.name())));
+        }
+        if(data.containsKey(NXFHeading.GRIDREFERENCE.name())){
+            data.put(NXFHeading.GRIDREFERENCE.name(), getGridRef(data.get(NXFHeading.GRIDREFERENCE.name())));
+        }
+        if(data.containsKey(NXFHeading.ZEROABUNDANCE.name())){
+            data.put(NXFHeading.ZEROABUNDANCE.name(), getZeroAbundance(data.get(NXFHeading.ZEROABUNDANCE.name())));
+        }
+        if(data.containsKey(NXFHeading.PRECISION.name())){
+            data.put(NXFHeading.PRECISION.name(), getPrecision(data.get(NXFHeading.PRECISION.name())));
+        }
+        data.put(NXFHeading.SRS.name(), getSRSValue(data));
+        return data(data);
+    }
+    
+    private List<String> getHeadings(List<String> headings, Map<String,String> data) {
+        List<String> toReturn = new ArrayList<>();
+        for(String heading : headings){
+            toReturn.add(data.get(heading));
+        }
+        return toReturn;
     }
     
     private Map<String,String> getData(NXFLine line) {
@@ -87,21 +131,82 @@ public class NXFNormaliser {
     }
     
     private boolean addSRSColumn() {
-        return nxfHeaders.contains("GRIDREFCOL") && !nxfHeaders.contains("SRS");
+        return nxfHeaders.contains("PROJECTION") && !nxfHeaders.contains("SRS");
     }
     
-    /**
-     * Normalises a string that is masquerading as a boolean
-     * @param toTidy the string that needs normalising to true/false
-     * @return the normalised string
-     */
-    private String doBoolean(String toTidy){
+    private String getSensitive(String toTidy){
         if (toTidy.equalsIgnoreCase("T") || toTidy.equalsIgnoreCase("true") || toTidy.equalsIgnoreCase("yes")) {
-            return "true";
+            toTidy = "true";
         } else if (toTidy.equalsIgnoreCase("F") || toTidy.equalsIgnoreCase("false") || toTidy.equalsIgnoreCase("no")) {
-            return "false";
-        } else {
-            return toTidy;
+            toTidy = "false";
         }
+        return toTidy;
+    }
+    
+    private String getDateTypePToOO(String toTidy){
+        if(toTidy.endsWith("P")){
+            toTidy = "OO";
+        }
+        return toTidy;
+    }
+    
+    private String getGridRef(String toTidy){
+        return toTidy.replaceAll(" ", "").replaceAll("-", "");
+    }
+    
+    private String getSRSValue(Map<String,String> data){
+        String toReturn = (data.get(NXFHeading.SRS.name())!=null) ? data.get(NXFHeading.SRS.name()) : "";
+        if(data.containsKey(NXFHeading.PROJECTION.name())){
+            if(data.get(NXFHeading.PROJECTION.name()).equals("WGS84")){
+                toReturn = "4326";
+            }
+        }
+        return toReturn;
+    }
+    
+    private String getZeroAbundance(String toTidy) {
+        if (toTidy.equalsIgnoreCase("T") || toTidy.equalsIgnoreCase("true") || toTidy.equalsIgnoreCase("yes") || toTidy.equalsIgnoreCase("absent") || toTidy.equalsIgnoreCase("absence")) {
+            toTidy = "absence";
+        } else if (toTidy.equalsIgnoreCase("F") || toTidy.equalsIgnoreCase("false") || toTidy.equalsIgnoreCase("no") || toTidy.equalsIgnoreCase("present") || toTidy.equalsIgnoreCase("presence")) {
+            toTidy = "presence";
+        }
+        return toTidy;
+    }
+    
+    private String getPrecision(String toTidy) {
+        toTidy = toTidy.trim();
+        if (!toTidy.isEmpty()) {
+            try{
+                int data = Integer.parseInt(toTidy);
+                if (data <= 100) {
+                    data = 100;
+                } else if (data <= 1000) {
+                    data = 1000;
+                } else if (data <= 2000) {
+                    data = 2000;
+                } else if (data <= 10000) {
+                    data = 10000;
+                } else {
+                    return toTidy;
+                }
+                toTidy = Integer.toString(data);
+            } catch (NumberFormatException ex){
+                //Do nothing - let toTidy be returned as is
+            }
+        }
+        return toTidy;
+    }
+    
+    private String getAttributes(List<String> headings, Map<String,String> data) throws JSONException {
+        JSONObject toReturn = new JSONObject();
+        for(String heading : headings){
+            String value = Normalizer.normalize(data.get(heading).trim(), Normalizer.Form.NFD)
+                .replaceAll("\\p{InCombiningDiacriticalMarks}+", "")
+                .replaceAll("[^\\p{ASCII}]", "")
+                .replaceAll("^\"|\"$", "");
+            value = value.substring(0,Math.min(value.length(), 255));
+            toReturn.put(heading.toUpperCase(),value);
+        }
+        return toReturn.toString();
     }
 }
