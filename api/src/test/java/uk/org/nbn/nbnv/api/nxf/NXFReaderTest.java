@@ -158,4 +158,23 @@ public class NXFReaderTest {
         assertEquals("Expected the correct data in the first line", data1.getValues(), Arrays.asList("other", "Some data Split over Multiple Lines"));
         assertEquals("Expected the correct data in the second line", data2.getValues(), Arrays.asList("Next", "Line"));
     }
+    
+    @Test(expected=IOException.class)
+    public void checkThatNXFLineWhichAppearsOverMultipleLinesAndIsTooLongCausesException() throws IOException {
+        //Given
+        LineNumberReader input = mock(LineNumberReader.class);
+        when(input.readLine())
+                .thenReturn("Heading")
+                .thenReturn("A value which is")
+                .thenReturn("seperated over many lines")
+                .thenReturn(null);
+        NXFReader reader = new NXFReader(input, 40);
+        
+        //When
+        NXFLine header = reader.readLine();
+        NXFLine data = reader.readLine();
+        
+        //Then
+        fail("Expected to fail with IOException as the line was too long");
+    }
 }

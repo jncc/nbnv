@@ -11,17 +11,24 @@ import java.io.Reader;
  * @author cjohn
  */
 public class NXFReader implements Closeable {
+    private static final int DEFAULT_LINE_LIMIT = 1048576;
     private final LineNumberReader reader;
+    private final int limit;
     private int columns = -1;
     private String nextLine;
     
-    public NXFReader(LineNumberReader reader) {
+    public NXFReader(LineNumberReader reader, int limit) {
         this.reader = reader;
+        this.limit = limit;
+    }
+    
+    public NXFReader(LineNumberReader reader) {
+        this(reader, DEFAULT_LINE_LIMIT);
     }
      
     public NXFReader(Reader reader) {
-        this.reader = new LineNumberReader(reader);
-    }    
+        this(new LineNumberReader(reader));
+    }
     
     /**
      * Read the current line from the stream and return it as a NXFLine object.
@@ -31,10 +38,11 @@ public class NXFReader implements Closeable {
      * 
      * An NXFLine may exist over multiple lines in an NXF file. This can happen
      * if there are carriage returns in a value. Any carriage returns in a given
-     * value will be replaces with a 'space' character.
+     * value will be replaced with a 'space' character.
      * @return the current line which has been read or null if there is no line
-     * @throws IOException if there was a problem reading the line or the line
-     *  contained the wrong amount of columns
+     * @throws IOException if there was a problem reading the line, the line
+     *  contained the wrong amount of columns or the length of a line which was
+     *  concatenated together was too long.
      */
     public NXFLine readLine() throws IOException {
         String readLine = nextLine == null ? reader.readLine() : nextLine;        
@@ -57,7 +65,10 @@ public class NXFReader implements Closeable {
             while( (nextLine = reader.readLine()) != null ) {
                 NXFLine concat = new NXFLine(readLine + " " + nextLine);
                 
-                if(concat.getValues().size() > columns) {
+                if(concat.getLine().length() > limit) {
+                    throw new IOException("Line number " + reader.getLineNumber() + " contains too much data");
+                }
+                else if(concat.getValues().size() > columns) {
                     break;
                 }
                 else {
