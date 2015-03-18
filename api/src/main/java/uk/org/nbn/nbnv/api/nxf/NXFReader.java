@@ -13,6 +13,7 @@ import java.io.Reader;
 public class NXFReader implements Closeable {
     private final LineNumberReader reader;
     private int columns = -1;
+    private String nextLine;
     
     public NXFReader(LineNumberReader reader) {
         this.reader = reader;
@@ -26,34 +27,57 @@ public class NXFReader implements Closeable {
      * Read the current line from the stream and return it as a NXFLine object.
      * If the amount of columns for this line differs to ones which have been 
      * previously read, then the method will throw an IOException as the NXF 
-     * stream is corrupt
+     * stream is corrupt.
+     * 
+     * An NXFLine may exist over multiple lines in an NXF file. This can happen
+     * if there are carriage returns in a value. Any carriage returns in a given
+     * value will be replaces with a 'space' character.
      * @return the current line which has been read or null if there is no line
      * @throws IOException if there was a problem reading the line or the line
      *  contained the wrong amount of columns
      */
     public NXFLine readLine() throws IOException {
-        String readLine = reader.readLine();
+        String readLine = nextLine == null ? reader.readLine() : nextLine;        
         if(readLine != null) {
+            // If we have not yet populated the columsn value then we haven't
+            // yet read the Header line in. The header line is our reference to
+            // how many columns are in the NXF input.
+            if(columns == -1) {
+                NXFLine firstLine = new NXFLine(readLine);
+                columns = firstLine.getValues().size();
+                return firstLine;
+            }
+            
+            // Delimiter-separated values (such as the nbn exchange format) may
+            // have values which contain carriage returns. Lists are commonly
+            // presented in this format. In order to read in the full line, we
+            // may need to read in multiple lines of data in order to get a 
+            // complete NXF line of data. Keep reading until we get more than
+            // enough columns.
+            while( (nextLine = reader.readLine()) != null ) {
+                NXFLine concat = new NXFLine(readLine + " " + nextLine);
+                
+                if(concat.getValues().size() > columns) {
+                    break;
+                }
+                else {
+                    readLine = concat.getLine(); //Update the readLine and carry on
+                }
+            }
+            
+            // The loop has completed, readLine will either contain the correct
+            // amount of columns or too little. 
             NXFLine line = new NXFLine(readLine);
-            int currLineColumns = line.getValues().size();
-            if(columns != -1 && columns != line.getValues().size()) {
+            if(line.getValues().size() == columns) {
+                return line;
+            }
+            else {
                 throw new IOException("Line number " + reader.getLineNumber() + " contains the wrong amount of columns");
             }
-            columns = currLineColumns;
-            return line;
         }
         else {
             return null;
         }
-    }
-    
-    /**
-     * Check if there is any content on the stream to read
-     * @return true if there are more lines to read
-     * @throws IOException if there was a problem reading from the stream
-     */
-    public boolean ready() throws IOException {
-        return reader.ready();
     }
     
     @Override
