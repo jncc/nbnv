@@ -96,6 +96,7 @@
 	}
 
 	function doFirstVisitToPage() {
+		refreshObservationData($('#nbn-site-report-form'));
 	}
 
 	function setupDownloadRecordsLink() {
