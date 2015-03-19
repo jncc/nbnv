@@ -73,7 +73,7 @@ public class NXFNormaliserTest {
     @Test
     public void checkThatReplacesValuesInSRSColumnIfPresent() {
         //Given
-        NXFLine origHeader = new NXFLine("Srs\tGrid Reference");
+        NXFLine origHeader = new NXFLine("Srs\tProjection");
         NXFNormaliser normaliser = new NXFNormaliser(origHeader);
         
         //When
@@ -82,9 +82,9 @@ public class NXFNormaliserTest {
         NXFLine other = normaliser.normalise(new NXFLine("leave me \t hmm"));
         
         //Then
-        assertEquals("Expected columns in standard order", "GRIDREFERENCE\tSRS", header.getLine());
-        assertEquals("Expected srs to be filled in", wgs84.getLine(), "WGS84\t4326");
-        assertEquals("Expected srs to be left as is", other.getLine(), "hmm\tleave me");
+        assertEquals("Expected headers", "SRS\tPROJECTION", header.getLine());
+        assertEquals("Expected srs to be filled in", wgs84.getLine(), "4326\tWGS84");
+        assertEquals("Expected srs to be left as is", other.getLine(), "leave me\thmm");
     }
     
     @Test
@@ -339,10 +339,12 @@ public class NXFNormaliserTest {
         //When
         NXFLine onedp = normaliser.normalise(new NXFLine("100.0"));
         NXFLine fivedp = normaliser.normalise(new NXFLine("4321.12345"));
+        NXFLine edgeCase = normaliser.normalise(new NXFLine("100.9999"));
         
         //Then
         assertEquals("Expected a precision without decimal places", "100", onedp.getLine());
         assertEquals("Expected a precision without decimal places", "10000", fivedp.getLine());
+        assertEquals("Expected truncation of input to snap to a precision 'higher' rather than the normal case of 'lower'", "100", edgeCase.getLine());
     }
     
     @Test
@@ -355,10 +357,18 @@ public class NXFNormaliserTest {
         NXFLine veryWordy = normaliser.normalise(new NXFLine("I'm not a number"));
         NXFLine numberLike = normaliser.normalise(new NXFLine("123L"));
         NXFLine comma = normaliser.normalise(new NXFLine("12,3"));
+        NXFLine multipldDp = normaliser.normalise(new NXFLine("10.1.2.3"));
+        NXFLine scientificNumber = normaliser.normalise(new NXFLine("1.1E2"));
+        NXFLine nan = normaliser.normalise(new NXFLine("NaN"));
+        NXFLine infinity = normaliser.normalise(new NXFLine("Infinity"));
         
         //Then
-        assertEquals("Expected a precision without decimal places", "I'm not a number", veryWordy.getLine());
-        assertEquals("Expected a precision without decimal places", "123L", numberLike.getLine());
-        assertEquals("Expected a precision without decimal places", "12,3", comma.getLine());
+        assertEquals("Expected pure text to fail", "I'm not a number", veryWordy.getLine());
+        assertEquals("Expected number like thing to fail", "123L", numberLike.getLine());
+        assertEquals("Expected commas to fail", "12,3", comma.getLine());
+        assertEquals("Expected multiple dp to be thrown out", "10.1.2.3", multipldDp.getLine());
+        assertEquals("Expected scientific number to pass", "1000", scientificNumber.getLine());
+        assertEquals("Expected NaN to pass", "NaN", nan.getLine());
+        assertEquals("Expected NaN to pass", "Infinity", infinity.getLine());
     }
 }

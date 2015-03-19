@@ -6,8 +6,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
@@ -28,6 +26,7 @@ import org.codehaus.jettison.json.JSONObject;
  * @author Christopher Johnson
  */
 public class NXFNormaliser {
+    private final static List<String> ATTRS_TO_IGNORE = Arrays.asList("TAXONNAME", "TAXONGROUP", "COMMONNAME");
     private final List<String> origHeaders, nxfHeaders, attrHeaders;
 
     /**
@@ -37,26 +36,22 @@ public class NXFNormaliser {
      *  column names
      */
     public NXFNormaliser(NXFLine header) {
-        List<String> toRemoveFromAttrs = new ArrayList<>();
-        toRemoveFromAttrs.add("TAXONNAME");
-        toRemoveFromAttrs.add("TAXONGROUP");
-        toRemoveFromAttrs.add("COMMONNAME");
         if( header == null ) {
             throw new IllegalArgumentException("The NBN Exchange file was empty");
         }
         String cleanedHeader = header.getLine().toUpperCase().replaceAll(" |_|-|\"", "");
-        origHeaders = new ArrayList(Arrays.asList(cleanedHeader.split("\t")));
-        if(origHeaders.indexOf("SENSTIVE")!=-1){
+        origHeaders = new ArrayList<>(Arrays.asList(cleanedHeader.split("\t")));
+        if(origHeaders.contains("SENSTIVE")){
             origHeaders.set(origHeaders.indexOf("SENSTIVE"), "SENSITIVE");
         }
-        if(origHeaders.indexOf("SENITIVE")!=-1){
+        if(origHeaders.contains("SENITIVE")){
             origHeaders.set(origHeaders.indexOf("SENITIVE"), "SENSITIVE");
         }
         nxfHeaders = new ArrayList<>(origHeaders);
         nxfHeaders.retainAll(NXFHeading.stringValues());
         attrHeaders = new ArrayList<>(origHeaders);
         attrHeaders.removeAll(NXFHeading.stringValues());
-        attrHeaders.removeAll(toRemoveFromAttrs);
+        attrHeaders.removeAll(ATTRS_TO_IGNORE);
     }
     
     /**
@@ -81,28 +76,6 @@ public class NXFNormaliser {
     }
     
     /**
-     * This takes a map of normalised NXF data and turns it into a tab delimited
-     * row.  The data is in the correct order to match the headings that this.header()
-     * returns.
-     * @param data the normalised data
-     * @return the normalised data as an NXFLine
-     */
-    public NXFLine data(Map<String,String> data) {
-        List<String> toReturn = new ArrayList<>(getHeadings(nxfHeaders, data));
-        if(addSRSColumn()) {
-            toReturn.add(data.get(NXFHeading.SRS.name()));
-        }
-        if(!attrHeaders.isEmpty()){
-            try {
-                toReturn.add(getAttributes(attrHeaders, data));
-            } catch (JSONException ex) {
-                Logger.getLogger(NXFNormaliser.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-        return new NXFLine(toReturn);
-    }
-
-    /**
      * Simply take the given NXFLine and 'fix' any values. This will involve: -
      * Combining attributes in to one column - Replacing dodgy values with
      * standard ones - Removing bad characters from values
@@ -111,6 +84,7 @@ public class NXFNormaliser {
      */
     public NXFLine normalise(NXFLine line) {
         Map<String,String> data = getData(line);
+        // Normalise the data
         if(data.containsKey(NXFHeading.SENSITIVE.name())){
             data.put(NXFHeading.SENSITIVE.name(), getSensitive(data.get(NXFHeading.SENSITIVE.name())));
         }
@@ -127,7 +101,16 @@ public class NXFNormaliser {
             data.put(NXFHeading.PRECISION.name(), getPrecision(data.get(NXFHeading.PRECISION.name())));
         }
         data.put(NXFHeading.SRS.name(), getSRSValue(data));
-        return data(data);
+        
+        //Construct a line to return
+        List<String> toReturn = new ArrayList<>(getHeadings(nxfHeaders, data));
+        if(addSRSColumn()) {
+            toReturn.add(data.get(NXFHeading.SRS.name()));
+        }
+        if(!attrHeaders.isEmpty()){
+            toReturn.add(getAttributes(attrHeaders, data));
+        }
+        return new NXFLine(toReturn);
     }
     
     private List<String> getHeadings(List<String> headings, Map<String,String> data) {
@@ -152,19 +135,17 @@ public class NXFNormaliser {
     }
     
     private String getSensitive(String toTidy){
-        if (toTidy.equalsIgnoreCase("T") || toTidy.equalsIgnoreCase("true") || toTidy.equalsIgnoreCase("yes")) {
-            toTidy = "true";
-        } else if (toTidy.equalsIgnoreCase("F") || toTidy.equalsIgnoreCase("false") || toTidy.equalsIgnoreCase("no")) {
-            toTidy = "false";
+        if(Arrays.asList("t", "true", "yes").contains(toTidy.toLowerCase())) {
+            return "true";            
+        }
+        else if(Arrays.asList("f", "false", "no").contains(toTidy.toLowerCase())) {
+            return "false";
         }
         return toTidy;
     }
     
     private String getDateTypePToOO(String toTidy){
-        if(toTidy.endsWith("P")){
-            toTidy = "OO";
-        }
-        return toTidy;
+        return toTidy.endsWith("P") ? "00" : toTidy;
     }
     
     private String getGridRef(String toTidy){
@@ -172,20 +153,21 @@ public class NXFNormaliser {
     }
     
     private String getSRSValue(Map<String,String> data){
-        String toReturn = (data.get(NXFHeading.SRS.name())!=null) ? data.get(NXFHeading.SRS.name()) : "";
+        String toReturn = data.containsKey(NXFHeading.SRS.name()) ? data.get(NXFHeading.SRS.name()) : "";
         if(data.containsKey(NXFHeading.PROJECTION.name())){
             if(data.get(NXFHeading.PROJECTION.name()).equals("WGS84")){
-                toReturn = "4326";
+                return "4326";
             }
         }
         return toReturn;
     }
     
     private String getZeroAbundance(String toTidy) {
-        if (toTidy.equalsIgnoreCase("T") || toTidy.equalsIgnoreCase("true") || toTidy.equalsIgnoreCase("yes") || toTidy.equalsIgnoreCase("absent") || toTidy.equalsIgnoreCase("absence")) {
-            toTidy = "absence";
-        } else if (toTidy.equalsIgnoreCase("F") || toTidy.equalsIgnoreCase("false") || toTidy.equalsIgnoreCase("no") || toTidy.equalsIgnoreCase("present") || toTidy.equalsIgnoreCase("presence")) {
-            toTidy = "presence";
+        if(Arrays.asList("t", "true", "yes", "absent").contains(toTidy.toLowerCase())) {
+            return "absence";            
+        }
+        else if(Arrays.asList("f", "false", "no", "present").contains(toTidy.toLowerCase())) {
+            return "presence";
         }
         return toTidy;
     }
@@ -194,23 +176,20 @@ public class NXFNormaliser {
         toTidy = toTidy.trim();
         if (!toTidy.isEmpty()) {
             try{
-                int indexOfDecimal = toTidy.indexOf(".");
-                if(indexOfDecimal != -1){
-                    toTidy = toTidy.substring(0,indexOfDecimal);
-                }
-                int data = Integer.parseInt(toTidy);
-                if (data <= 100) {
-                    data = 100;
-                } else if (data <= 1000) {
-                    data = 1000;
-                } else if (data <= 2000) {
-                    data = 2000;
-                } else if (data <= 10000) {
-                    data = 10000;
-                } else {
+                Double value = Double.valueOf(toTidy);
+                if (value.isInfinite() || value.isNaN()) {
                     return toTidy;
                 }
-                toTidy = Integer.toString(data);
+                int data = value.intValue();
+                if (data <= 100) {
+                    return "100";
+                } else if (data <= 1000) {
+                    return "1000";
+                } else if (data <= 2000) {
+                    return "2000";
+                } else if (data <= 10000) {
+                    return "10000";
+                }
             } catch (NumberFormatException ex){
                 //Do nothing - let toTidy be returned as is
             }
@@ -218,15 +197,19 @@ public class NXFNormaliser {
         return toTidy;
     }
     
-    private String getAttributes(List<String> headings, Map<String,String> data) throws JSONException {
+    private String getAttributes(List<String> headings, Map<String,String> data)  {
         JSONObject toReturn = new JSONObject();
         for(String heading : headings){
-            String value = Normalizer.normalize(data.get(heading).trim(), Normalizer.Form.NFD)
-                .replaceAll("\\p{InCombiningDiacriticalMarks}+", "")
-                .replaceAll("[^\\p{ASCII}]", "")
-                .replaceAll("^\"|\"$", "");
-            value = value.substring(0,Math.min(value.length(), 255));
-            toReturn.put(heading.toUpperCase(),value);
+            try {
+                String value = Normalizer.normalize(data.get(heading).trim(), Normalizer.Form.NFD)
+                        .replaceAll("\\p{InCombiningDiacriticalMarks}+", "")
+                        .replaceAll("[^\\p{ASCII}]", "")
+                        .replaceAll("^\"|\"$", "");
+                value = value.substring(0,Math.min(value.length(), 255));
+                toReturn.put(heading.toUpperCase(),value);
+            } catch (JSONException ex) {
+                return "Logic Error: Failed to build attributes";
+            }
         }
         return toReturn.toString();
     }

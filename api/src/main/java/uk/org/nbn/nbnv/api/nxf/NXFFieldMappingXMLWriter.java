@@ -29,7 +29,6 @@ public class NXFFieldMappingXMLWriter {
 
         DARWIN_CORE_FIELDS.put(NXFHeading.RECORDKEY.name(),"http://rs.tdwg.org/dwc/terms/occurrenceID");
         DARWIN_CORE_FIELDS.put(NXFHeading.TAXONVERSIONKEY.name(),"http://rs.tdwg.org/dwc/terms/taxonID");
-        DARWIN_CORE_FIELDS.put(NXFHeading.SITEKEY.name(),"http://rs.tdwg.org/dwc/terms/locationID");
         DARWIN_CORE_FIELDS.put(NXFHeading.SITENAME.name(),"http://rs.tdwg.org/dwc/terms/locality");
         DARWIN_CORE_FIELDS.put(NXFHeading.NORTH.name(),VERBATIMLATITUDE);
         DARWIN_CORE_FIELDS.put(NXFHeading.EAST.name(),VERBATIMLONGITUDE);
