@@ -1,6 +1,9 @@
 (function ($) {
 
 	function refreshSiteListData(form) {
+		// Update Better Access href
+		$('#nbn-request-better-access').attr('href', nbn.portal.reports.utils.forms.getBetterAccessHref(form));		
+		
 		var $dataContainer = $('#nbn-species-site-list-data');
 		var ptvk = form.attr('ptvk');
 		var taxonOutputGroupKey = form.attr('taxonOutputGroupKey');
@@ -68,7 +71,6 @@
 			var $input = $(this);
 			if (nbn.portal.reports.utils.forms.isSiteReportFormFieldValid($input)) {
 				refreshSiteListData($('#nbn-species-site-list-form'));
-				$('#nbn-request-better-access').attr('href', nbn.portal.reports.utils.forms.getBetterAccessHref($('#nbn-site-report-form')));
 			}
 		});
 	}

@@ -3,6 +3,9 @@
 	var apiServer;
 
 	function refreshObservationData(form) {
+		$('#nbn-request-better-access').attr('href', nbn.portal.reports.utils.forms.getBetterAccessHref(form));
+		$('#nbn-interactive-map').attr('href', getIMTHref(form));
+		
 		var $dataContainer = $('#nbn-observation-container');
 		var featureID = form.attr('featureID');
 		var ptvk = form.attr('ptvk');
@@ -185,8 +188,6 @@
 			var $input = $(this);
 			if (nbn.portal.reports.utils.forms.isSiteReportFormFieldValid($input)) {
 				refreshObservationData($('#nbn-site-report-form'));
-				$('#nbn-request-better-access').attr('href', nbn.portal.reports.utils.forms.getBetterAccessHref($('#nbn-site-report-form')));
-				$('#nbn-interactive-map').attr('href', getIMTHref());
 			}
 		});
 	}
@@ -195,8 +196,7 @@
 		refreshObservationData($('#nbn-site-report-form'));
 	}
 	
-	function getIMTHref() {
-		var form = $('#nbn-site-report-form');
+	function getIMTHref(form) {
 		var keyValuePairs = nbn.portal.reports.utils.forms.getKeyValuePairsFromForm(form);
 		var url = '/imt?mode=SPECIES&species=' +
 				form.attr('ptvk');
