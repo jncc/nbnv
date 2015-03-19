@@ -145,7 +145,7 @@ public class NXFNormaliser {
     }
     
     private String getDateTypePToOO(String toTidy){
-        return toTidy.endsWith("P") ? "00" : toTidy;
+        return toTidy.endsWith("P") ? "OO" : toTidy;
     }
     
     private String getGridRef(String toTidy){
@@ -163,10 +163,10 @@ public class NXFNormaliser {
     }
     
     private String getZeroAbundance(String toTidy) {
-        if(Arrays.asList("t", "true", "yes", "absent").contains(toTidy.toLowerCase())) {
+        if(Arrays.asList("t", "true", "yes", "absent", "absence").contains(toTidy.toLowerCase())) {
             return "absence";            
         }
-        else if(Arrays.asList("f", "false", "no", "present").contains(toTidy.toLowerCase())) {
+        else if(Arrays.asList("f", "false", "no", "present", "presence").contains(toTidy.toLowerCase())) {
             return "presence";
         }
         return toTidy;

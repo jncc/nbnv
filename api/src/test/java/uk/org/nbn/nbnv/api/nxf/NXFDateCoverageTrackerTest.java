@@ -16,7 +16,7 @@ public class NXFDateCoverageTrackerTest {
     @Test
     public void checkThatCanDetermineDateRangeWithStartDateAndEndDateColumns() {
         //Given
-        NXFLine header = new NXFLine("StartDate\tEndDate");
+        NXFLine header = new NXFLine("STARTDATE\tENDDATE");
         NXFDateCoverageTracker tracker = new NXFDateCoverageTracker(header);
         
         //When
@@ -38,7 +38,7 @@ public class NXFDateCoverageTrackerTest {
     @Test
     public void checkThatCanDetermineDataRangeWithSingleDateColumn() {
         //Given
-        NXFLine header = new NXFLine("Date");
+        NXFLine header = new NXFLine("DATE");
         NXFDateCoverageTracker tracker = new NXFDateCoverageTracker(header);
         
         //When
@@ -60,7 +60,7 @@ public class NXFDateCoverageTrackerTest {
     @Test
     public void checkThatSkipsOverInvalidDates() {
         //Given
-        NXFLine header = new NXFLine("Date");
+        NXFLine header = new NXFLine("DATE");
         NXFDateCoverageTracker tracker = new NXFDateCoverageTracker(header);
         
         //When
