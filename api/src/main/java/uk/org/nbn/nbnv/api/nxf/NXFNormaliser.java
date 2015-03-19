@@ -29,6 +29,7 @@ import org.codehaus.jettison.json.JSONObject;
 public class NXFNormaliser {
     private final static List<String> ATTRS_TO_IGNORE = Arrays.asList("TAXONNAME", "TAXONGROUP", "COMMONNAME");
     private final List<String> origHeaders, nxfHeaders, attrHeaders;
+    private long recordKey = 1;
 
     /**
      * Initialises the transform based off of a raw NXFLine as supplied from an
@@ -82,6 +83,9 @@ public class NXFNormaliser {
         if(addSRSColumn()) {
             toReturn.add(NXFHeading.SRS.name());
         }
+        if(!nxfHeaders.contains(NXFHeading.RECORDKEY.name())) {
+            toReturn.add(NXFHeading.RECORDKEY.name());
+        }
         if(!attrHeaders.isEmpty()) {
             toReturn.add(NXFHeading.DYNAMICPROPERTIES.name());
         }
@@ -119,6 +123,9 @@ public class NXFNormaliser {
         List<String> toReturn = new ArrayList<>(getHeadings(nxfHeaders, data));
         if(addSRSColumn()) {
             toReturn.add(data.get(NXFHeading.SRS.name()));
+        }
+        if(!nxfHeaders.contains(NXFHeading.RECORDKEY.name())) {
+            toReturn.add(Long.toString(recordKey++));
         }
         if(!attrHeaders.isEmpty()){
             toReturn.add(getAttributes(attrHeaders, data));
