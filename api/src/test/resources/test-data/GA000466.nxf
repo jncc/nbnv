@@ -1,101 +1,101 @@
-RecordKey	Surveykey	StartDate	EndDate	DateType	Sensitive	TaxonVersionKey	GridReference	Precision	Projection	SiteName	Recorder	Determiner	Abundance	SiteKey	DynamicProperties
-87	3	24/02/2008	24/02/2008	D	false	NHMSYS0000530533	TL232839	100	OSGB	Woodwalton Fen	Graham French, Jane Squirrell	Graham French	1	3	{"Abundance":"1"}	
-88	3	13/04/2008	13/04/2008	D	false	NBNSYS0000000010	TL2385	1000	OSGB	Woodwalton Fen	Graham French	Graham French	1	3	{"Abundance":"1"}	
-89	3	24/02/2008	24/02/2008	D	false	NHMSYS0001688296	TL231840	100	OSGB	Woodwalton Fen	Graham French, Jane Squirrell	Graham French	3	3	{"Abundance":"3"}	
-90	3	24/02/2008	24/02/2008	D	false	NHMSYS0000530367	TL232839	100	OSGB	Woodwalton Fen	Graham French, Jane Squirrell	Graham French	2	3	{"Abundance":"2"}	
-91	3	24/02/2008	24/02/2008	D	false	NBNSYS0000000024	TL23248346	100	OSGB	Woodwalton Fen	Graham French, Jane Squirrell	Graham French	1	3	{"Abundance":"1"}	
-92	3	24/02/2008	24/02/2008	D	false	NBNSYS0000000024	TL23568493	100	OSGB	Woodwalton Fen	Graham French, Jane Squirrell	Graham French	1	3	{"Abundance":"1"}	
-93	3	13/04/2008	13/04/2008	D	false	NBNSYS0000000024	TL23448505	100	OSGB	Woodwalton Fen	Graham French	Graham French	1	3	{"Abundance":"1"}	
-94	3	24/02/2008	24/02/2008	D	false	NBNSYS0000000024	TL23128324	100	OSGB	Woodwalton Fen	Graham French, Jane Squirrell	Graham French	1	3	{"Abundance":"1"}	
-95	3	13/04/2008	13/04/2008	D	false	NHMSYS0001688296	TL234850	100	OSGB	Woodwalton Fen	Graham French	Graham French	1	3	{"Abundance":"1"}	
-96	3	24/02/2008	24/02/2008	D	false	NHMSYS0001688296	TL234846	100	OSGB	Woodwalton Fen	Graham French, Jane Squirrell	Graham French	1	3	{"Abundance":"1"}	
-97	3	24/02/2008	24/02/2008	D	false	NHMSYS0001688296	TL232839	100	OSGB	Woodwalton Fen	Graham French, Jane Squirrell	Graham French	2	3	{"Abundance":"2"}	
-98	3	24/02/2008	24/02/2008	D	false	NHMSYS0001688296	TL231841	100	OSGB	Woodwalton Fen	Graham French, Jane Squirrell	Graham French	1	3	{"Abundance":"1"}	
-99	3	24/02/2008	24/02/2008	D	false	NHMSYS0000530533	TL226846	100	OSGB	Woodwalton Fen	Graham French, Jane Squirrell	Graham French	2	3	{"Abundance":"2"}	
-100	3	24/02/2008	24/02/2008	D	false	NBNSYS0000000010	TL2384	1000	OSGB	Woodwalton Fen	Graham French, Jane Squirrell	Graham French	2	3	{"Abundance":"2"}	
-1	2	05/03/2008	05/03/2008	D	false	NHMSYS0000530533	TL196794	100	OSGB	Monks Wood	Graham French	Graham French	1	2	{"Abundance":"1"}	
-2	2	05/03/2008	05/03/2008	D	false	NHMSYS0000530674	TL195802	100	OSGB	Monks Wood	Graham French	Graham French	2	2	{"Abundance":"2"}	
-3	2	05/03/2008	05/03/2008	D	false	NHMSYS0000530674	TL196794	100	OSGB	Monks Wood	Graham French	Graham French	1	2	{"Abundance":"1"}	
-4	2	19/02/2008	19/02/2008	D	false	NHMSYS0000530674	TL197795	100	OSGB	Monks Wood	Graham French	Graham French	3	2	{"Abundance":"3"}	
-5	2	05/03/2008	05/03/2008	D	false	NHMSYS0000530367	TL197795	100	OSGB	Monks Wood	Graham French	Graham French	1	2	{"Abundance":"1"}	
-6	2	06/03/2008	06/03/2008	D	false	NHMSYS0000530674	TL200798	100	OSGB	Monks Wood	Graham French	Graham French	1	2	{"Abundance":"1"}	
-7	2	05/03/2008	05/03/2008	D	false	NHMSYS0000530739	TL195802	100	OSGB	Monks Wood	Graham French	Graham French	1	2	{"Abundance":"1"}	
-8	2	11/04/2008	11/04/2008	D	false	NHMSYS0000530739	TL200806	100	OSGB	Monks Wood	Graham French	Graham French	1	2	{"Abundance":"1"}	
-9	3	24/02/2008	24/02/2008	D	true	NHMSYS0000530266	TL232839	100	OSGB	Woodwalton Fen	Graham French, Jane Squirrell	Graham French	1	3	{"Abundance":"1"}	
-10	3	24/02/2008	24/02/2008	D	false	NHMSYS0000530533	TL234846	100	OSGB	Woodwalton Fen	Graham French, Jane Squirrell	Graham French	1	3	{"Abundance":"1"}	
-11	3	24/02/2008	24/02/2008	D	false	NHMSYS0000530674	TL232839	100	OSGB	Woodwalton Fen	Graham French, Jane Squirrell	Graham French	3	3	{"Abundance":"3"}	
-12	3	24/02/2008	24/02/2008	D	false	NHMSYS0000530671	TL226844	100	OSGB	Woodwalton Fen	Graham French, Jane Squirrell	Graham French	1	3	{"Abundance":"1"}	
-13	3	24/02/2008	24/02/2008	D	false	NHMSYS0000530671	TL231832	100	OSGB	Woodwalton Fen	Graham French, Jane Squirrell	Graham French	1	3	{"Abundance":"1"}	
-14	3	24/02/2008	24/02/2008	D	false	NHMSYS0000530133	TL234846	100	OSGB	Woodwalton Fen	Graham French, Jane Squirrell	Graham French	3	3	{"Abundance":"3"}	
-15	3	24/02/2008	24/02/2008	D	false	NHMSYS0000530671	TL232839	100	OSGB	Woodwalton Fen	Graham French, Jane Squirrell	Graham French	1	3	{"Abundance":"1"}	
-16	3	24/02/2008	24/02/2008	D	false	NHMSYS0000530133	TL231832	100	OSGB	Woodwalton Fen	Graham French, Jane Squirrell	Graham French	2	3	{"Abundance":"2"}	
-17	1	01/03/2008	01/03/2008	D	false	NHMSYS0000530133	TL213885	100	OSGB	Holme Fen	Graham French	Graham French	1	1	{"Abundance":"1"}	
-18	1	01/03/2008	01/03/2008	D	false	NHMSYS0000530739	TL214884	100	OSGB	Holme Fen	Graham French	Graham French	1	1	{"Abundance":"1"}	
-19	1	01/03/2008	01/03/2008	D	false	NHMSYS0001688296	TL215884	100	OSGB	Holme Fen	Graham French	Graham French	2	1	{"Abundance":"2"}	
-20	1	01/03/2008	01/03/2008	D	false	NHMSYS0000530671	TL213885	100	OSGB	Holme Fen	Graham French	Graham French	1	1	{"Abundance":"1"}	
-21	1	01/03/2008	01/03/2008	D	false	NHMSYS0001688296	TL218888	100	OSGB	Holme Fen	Graham French	Graham French	4	1	{"Abundance":"4"}	
-22	1	01/03/2008	01/03/2008	D	false	NHMSYS0001688296	TL214884	100	OSGB	Holme Fen	Graham French	Graham French	2	1	{"Abundance":"2"}	
-23	1	01/03/2008	01/03/2008	D	false	NHMSYS0000530133	TL216886	100	OSGB	Holme Fen	Graham French	Graham French	1	1	{"Abundance":"1"}	
-24	1	01/03/2008	01/03/2008	D	false	NHMSYS0000530133	TL218888	100	OSGB	Holme Fen	Graham French	Graham French	1	1	{"Abundance":"1"}	
-25	1	01/03/2008	01/03/2008	D	false	NHMSYS0000530133	TL215884	100	OSGB	Holme Fen	Graham French	Graham French	1	1	{"Abundance":"1"}	
-26	2	19/03/2008	19/03/2008	D	false	NHMSYS0000530739	TL200797	100	OSGB	Monks Wood	Graham French	Graham French	1	2	{"Abundance":"1"}	
-27	2	28/02/2008	28/02/2008	D	false	NHMSYS0000530739	TL204803	100	OSGB	Monks Wood	Graham French	Graham French	1	2	{"Abundance":"1"}	
-28	2	28/02/2008	28/02/2008	D	false	NHMSYS0001688296	TL203801	100	OSGB	Monks Wood	Graham French	Graham French	1	2	{"Abundance":"1"}	
-29	2	22/02/2008	22/02/2008	D	false	NHMSYS0001688296	TL201797	100	OSGB	Monks Wood	Graham French	Graham French	4	2	{"Abundance":"4"}	
-30	2	11/04/2008	11/04/2008	D	false	NHMSYS0001688296	TL200806	100	OSGB	Monks Wood	Graham French	Graham French	1	2	{"Abundance":"1"}	
-31	2	28/02/2008	28/02/2008	D	false	NHMSYS0001688296	TL201798	100	OSGB	Monks Wood	Graham French	Graham French	2	2	{"Abundance":"2"}	
-32	2	05/03/2008	05/03/2008	D	false	NHMSYS0001688296	TL200796	100	OSGB	Monks Wood	Graham French	Graham French	1	2	{"Abundance":"1"}	
-33	2	05/03/2008	05/03/2008	D	false	NHMSYS0001688296	TL197795	100	OSGB	Monks Wood	Graham French	Graham French	2	2	{"Abundance":"2"}	
-34	2	28/02/2008	28/02/2008	D	false	NHMSYS0000530739	TL201799	100	OSGB	Monks Wood	Graham French	Graham French	1	2	{"Abundance":"1"}	
-35	2	06/03/2008	06/03/2008	D	false	NHMSYS0000530739	TL200798	100	OSGB	Monks Wood	Graham French	Graham French	1	2	{"Abundance":"1"}	
-36	2	05/03/2008	05/03/2008	D	false	NHMSYS0001688296	TL199803	100	OSGB	Monks Wood	Graham French	Graham French	1	2	{"Abundance":"1"}	
-37	2	28/02/2008	28/02/2008	D	false	NHMSYS0000530674	TL201798	100	OSGB	Monks Wood	Graham French	Graham French	1	2	{"Abundance":"1"}	
-38	2	19/02/2008	19/02/2008	D	false	NHMSYS0000530739	TL200797	100	OSGB	Monks Wood	Graham French	Graham French	1	2	{"Abundance":"1"}	
-39	2	05/03/2008	05/03/2008	D	true	NHMSYS0000530266	TL199803	100	OSGB	Monks Wood	Graham French	Graham French	1	2	{"Abundance":"1"}	
-40	2	19/03/2008	19/03/2008	D	false	NHMSYS0001688296	TL200797	100	OSGB	Monks Wood	Graham French	Graham French	1	2	{"Abundance":"1"}	
-41	2	21/02/2008	21/02/2008	D	false	NHMSYS0001688296	TL200799	100	OSGB	Monks Wood	Graham French	Graham French	2	2	{"Abundance":"2"}	
-42	2	19/02/2008	19/02/2008	D	true	NHMSYS0000530266	TL199797	100	OSGB	Monks Wood	Graham French	Graham French	1	2	{"Abundance":"1"}	
-43	2	05/03/2008	05/03/2008	D	true	NHMSYS0000530266	TL196795	100	OSGB	Monks Wood	Graham French	Graham French	1	2	{"Abundance":"1"}	
-44	2	11/04/2008	11/04/2008	D	true	NHMSYS0000530266	TL202808	100	OSGB	Monks Wood	Graham French	Graham French	1	2	{"Abundance":"1"}	
-45	2	11/04/2008	11/04/2008	D	false	NHMSYS0000530133	TL202808	100	OSGB	Monks Wood	Graham French	Graham French	2	2	{"Abundance":"2"}	
-46	2	19/03/2008	19/03/2008	D	false	NHMSYS0000530133	TL200798	100	OSGB	Monks Wood	Graham French	Graham French	2	2	{"Abundance":"2"}	
-47	2	06/03/2008	06/03/2008	D	false	NHMSYS0000530133	TL199801	100	OSGB	Monks Wood	Graham French	Graham French	2	2	{"Abundance":"2"}	
-48	2	19/03/2008	19/03/2008	D	false	NHMSYS0001688296	TL194796	100	OSGB	Monks Wood	Graham French	Graham French	1	2	{"Abundance":"1"}	
-49	2	19/02/2008	19/02/2008	D	false	NHMSYS0001688296	TL197795	100	OSGB	Monks Wood	Graham French	Graham French	2	2	{"Abundance":"2"}	
-50	2	05/03/2008	05/03/2008	D	false	NHMSYS0001688296	TL195802	100	OSGB	Monks Wood	Graham French	Graham French	3	2	{"Abundance":"3"}	
-51	2	05/03/2008	05/03/2008	D	false	NHMSYS0001688296	TL198796	100	OSGB	Monks Wood	Graham French	Graham French	2	2	{"Abundance":"2"}	
-52	2	05/03/2008	05/03/2008	D	false	NHMSYS0001688296	TL196794	100	OSGB	Monks Wood	Graham French	Graham French	3	2	{"Abundance":"3"}	
-53	2	06/03/2008	06/03/2008	D	false	NHMSYS0001688296	TL199801	100	OSGB	Monks Wood	Graham French	Graham French	1	2	{"Abundance":"1"}	
-54	2	06/03/2008	06/03/2008	D	false	NHMSYS0001688296	TL200806	100	OSGB	Monks Wood	Graham French	Graham French	4	2	{"Abundance":"4"}	
-55	2	05/03/2008	05/03/2008	D	false	NHMSYS0000530739	TL196794	100	OSGB	Monks Wood	Graham French	Graham French	1	2	{"Abundance":"1"}	
-56	2	06/03/2008	06/03/2008	D	false	NHMSYS0001688296	TL201804	100	OSGB	Monks Wood	Graham French	Graham French	5	2	{"Abundance":"5"}	
-57	2	06/03/2008	06/03/2008	D	false	NHMSYS0001688296	TL199800	100	OSGB	Monks Wood	Graham French	Graham French	1	2	{"Abundance":"1"}	
-58	2	21/02/2008	21/02/2008	D	false	NHMSYS0000530133	TL200799	100	OSGB	Monks Wood	Graham French	Graham French	4	2	{"Abundance":"4"}	
-59	2	19/03/2008	19/03/2008	D	false	NHMSYS0000530671	TL194796	100	OSGB	Monks Wood	Graham French	Graham French	1	2	{"Abundance":"1"}	
-60	2	11/04/2008	11/04/2008	D	false	NHMSYS0000530533	TL201798	100	OSGB	Monks Wood	Graham French	Graham French	2	2	{"Abundance":"2"}	
-61	2	06/03/2008	06/03/2008	D	false	NHMSYS0000530533	TL199801	100	OSGB	Monks Wood	Graham French	Graham French	1	2	{"Abundance":"1"}	
-62	2	19/03/2008	19/03/2008	D	false	NHMSYS0000530739	TL194796	100	OSGB	Monks Wood	Graham French	Graham French	1	2	{"Abundance":"1"}	
-63	2	05/03/2008	05/03/2008	D	false	NHMSYS0000530739	TL200797	100	OSGB	Monks Wood	Graham French	Graham French	1	2	{"Abundance":"1"}	
-64	2	28/02/2008	28/02/2008	D	false	NHMSYS0000530533	TL204800	100	OSGB	Monks Wood	Graham French	Graham French	2	2	{"Abundance":"2"}	
-65	2	05/03/2008	05/03/2008	D	false	NHMSYS0000530533	TL198796	100	OSGB	Monks Wood	Graham French	Graham French	1	2	{"Abundance":"1"}	
-66	2	05/03/2008	05/03/2008	D	false	NHMSYS0000530533	TL199803	100	OSGB	Monks Wood	Graham French	Graham French	1	2	{"Abundance":"1"}	
-67	2	28/02/2008	28/02/2008	D	false	NHMSYS0000530533	TL201798	100	OSGB	Monks Wood	Graham French	Graham French	5	2	{"Abundance":"5"}	
-68	2	19/03/2008	19/03/2008	D	false	NHMSYS0000530671	TL200797	100	OSGB	Monks Wood	Graham French	Graham French	1	2	{"Abundance":"1"}	
-69	2	22/02/2008	22/02/2008	D	false	NHMSYS0000530533	TL201797	100	OSGB	Monks Wood	Graham French	Graham French	3	2	{"Abundance":"3"}	
-70	2	11/04/2008	11/04/2008	D	false	NHMSYS0000530671	TL202808	100	OSGB	Monks Wood	Graham French	Graham French	1	2	{"Abundance":"1"}	
-71	3	24/02/2008	24/02/2008	D	false	NHMSYS0001688296	TL231832	100	OSGB	Woodwalton Fen	Graham French, Jane Squirrell	Graham French	2	3	{"Abundance":"2"}	
-72	3	24/02/2008	24/02/2008	D	false	NHMSYS0000530671	TL232834	100	OSGB	Woodwalton Fen	Graham French, Jane Squirrell	Graham French	2	3	{"Abundance":"2"}	
-73	3	13/04/2008	13/04/2008	D	false	NHMSYS0000530133	TL233849	100	OSGB	Woodwalton Fen	Graham French	Graham French	2	3	{"Abundance":"2"}	
-74	3	24/02/2008	24/02/2008	D	false	NHMSYS0000530671	TL229847	100	OSGB	Woodwalton Fen	Graham French, Jane Squirrell	Graham French	1	3	{"Abundance":"1"}	
-75	3	13/04/2008	13/04/2008	D	false	NHMSYS0000530671	TL231849	100	OSGB	Woodwalton Fen	Graham French	Graham French	1	3	{"Abundance":"1"}	
-76	3	13/04/2008	13/04/2008	D	false	NHMSYS0000530533	TL234850	100	OSGB	Woodwalton Fen	Graham French	Graham French	2	3	{"Abundance":"2"}	
-77	3	13/04/2008	13/04/2008	D	false	NHMSYS0000530367	TL234850	100	OSGB	Woodwalton Fen	Graham French	Graham French	3	3	{"Abundance":"3"}	
-78	3	13/04/2008	13/04/2008	D	false	NHMSYS0000530739	TL233849	100	OSGB	Woodwalton Fen	Graham French	Graham French	1	3	{"Abundance":"1"}	
-79	3	24/02/2008	24/02/2008	D	false	NHMSYS0000530739	TL235849	100	OSGB	Woodwalton Fen	Graham French, Jane Squirrell	Graham French	1	3	{"Abundance":"1"}	
-80	3	24/02/2008	24/02/2008	D	false	NHMSYS0000530739	TL226846	100	OSGB	Woodwalton Fen	Graham French, Jane Squirrell	Graham French	1	3	{"Abundance":"1"}	
-81	3	13/04/2008	13/04/2008	D	false	NHMSYS0000530739	TL230854	100	OSGB	Woodwalton Fen	Graham French	Graham French	1	3	{"Abundance":"1"}	
-82	3	24/02/2008	24/02/2008	D	false	NHMSYS0000530739	TL231832	100	OSGB	Woodwalton Fen	Graham French, Jane Squirrell	Graham French	1	3	{"Abundance":"1"}	
-83	3	24/02/2008	24/02/2008	D	false	NHMSYS0000530367	TL235849	100	OSGB	Woodwalton Fen	Graham French, Jane Squirrell	Graham French	2	3	{"Abundance":"2"}	
-84	3	24/02/2008	24/02/2008	D	false	NHMSYS0000530367	TL231840	100	OSGB	Woodwalton Fen	Graham French, Jane Squirrell	Graham French	1	3	{"Abundance":"1"}	
-85	3	13/04/2008	13/04/2008	D	false	NBNSYS0000000010	TL2385	1000	OSGB	Woodwalton Fen	Graham French	Graham French	1	3	{"Abundance":"1"}	
-86	3	24/02/2008	24/02/2008	D	false	NBNSYS0000000010	TL2384	1000	OSGB	Woodwalton Fen	Graham French, Jane Squirrell	Graham French	2	3	{"Abundance":"2"}	
+RecordKey	Surveykey	StartDate	EndDate	DateType	Sensitive	TaxonVersionKey	GridReference	Precision	Projection	SiteName	Recorder	Determiner	Abundance	SiteKey
+87	3	24/02/2008	24/02/2008	D	FALSE	NHMSYS0000530533	TL232839	100	OSGB	Woodwalton Fen	"Graham French, Jane Squirrell"	Graham French	1	3
+88	3	13/04/2008	13/04/2008	D	FALSE	NBNSYS0000000010	TL2385	1000	OSGB	Woodwalton Fen	Graham French	Graham French	1	3
+89	3	24/02/2008	24/02/2008	D	FALSE	NHMSYS0001688296	TL231840	100	OSGB	Woodwalton Fen	"Graham French, Jane Squirrell"	Graham French	3	3
+90	3	24/02/2008	24/02/2008	D	FALSE	NHMSYS0000530367	TL232839	100	OSGB	Woodwalton Fen	"Graham French, Jane Squirrell"	Graham French	2	3
+91	3	24/02/2008	24/02/2008	D	FALSE	NBNSYS0000000024	TL23248346	100	OSGB	Woodwalton Fen	"Graham French, Jane Squirrell"	Graham French	1	3
+92	3	24/02/2008	24/02/2008	D	FALSE	NBNSYS0000000024	TL23568493	100	OSGB	Woodwalton Fen	"Graham French, Jane Squirrell"	Graham French	1	3
+93	3	13/04/2008	13/04/2008	D	FALSE	NBNSYS0000000024	TL23448505	100	OSGB	Woodwalton Fen	Graham French	Graham French	1	3
+94	3	24/02/2008	24/02/2008	D	FALSE	NBNSYS0000000024	TL23128324	100	OSGB	Woodwalton Fen	"Graham French, Jane Squirrell"	Graham French	1	3
+95	3	13/04/2008	13/04/2008	D	FALSE	NHMSYS0001688296	TL234850	100	OSGB	Woodwalton Fen	Graham French	Graham French	1	3
+96	3	24/02/2008	24/02/2008	D	FALSE	NHMSYS0001688296	TL234846	100	OSGB	Woodwalton Fen	"Graham French, Jane Squirrell"	Graham French	1	3
+97	3	24/02/2008	24/02/2008	D	FALSE	NHMSYS0001688296	TL232839	100	OSGB	Woodwalton Fen	"Graham French, Jane Squirrell"	Graham French	2	3
+98	3	24/02/2008	24/02/2008	D	FALSE	NHMSYS0001688296	TL231841	100	OSGB	Woodwalton Fen	"Graham French, Jane Squirrell"	Graham French	1	3
+99	3	24/02/2008	24/02/2008	D	FALSE	NHMSYS0000530533	TL226846	100	OSGB	Woodwalton Fen	"Graham French, Jane Squirrell"	Graham French	2	3
+100	3	24/02/2008	24/02/2008	D	FALSE	NBNSYS0000000010	TL2384	1000	OSGB	Woodwalton Fen	"Graham French, Jane Squirrell"	Graham French	2	3
+1	2	05/03/2008	05/03/2008	D	FALSE	NHMSYS0000530533	TL196794	100	OSGB	Monks Wood	Graham French	Graham French	1	2
+2	2	05/03/2008	05/03/2008	D	FALSE	NHMSYS0000530674	TL195802	100	OSGB	Monks Wood	Graham French	Graham French	2	2
+3	2	05/03/2008	05/03/2008	D	FALSE	NHMSYS0000530674	TL196794	100	OSGB	Monks Wood	Graham French	Graham French	1	2
+4	2	19/02/2008	19/02/2008	D	FALSE	NHMSYS0000530674	TL197795	100	OSGB	Monks Wood	Graham French	Graham French	3	2
+5	2	05/03/2008	05/03/2008	D	FALSE	NHMSYS0000530367	TL197795	100	OSGB	Monks Wood	Graham French	Graham French	1	2
+6	2	06/03/2008	06/03/2008	D	FALSE	NHMSYS0000530674	TL200798	100	OSGB	Monks Wood	Graham French	Graham French	1	2
+7	2	05/03/2008	05/03/2008	D	FALSE	NHMSYS0000530739	TL195802	100	OSGB	Monks Wood	Graham French	Graham French	1	2
+8	2	11/04/2008	11/04/2008	D	FALSE	NHMSYS0000530739	TL200806	100	OSGB	Monks Wood	Graham French	Graham French	1	2
+9	3	24/02/2008	24/02/2008	D	TRUE	NHMSYS0000530266	TL232839	100	OSGB	Woodwalton Fen	"Graham French, Jane Squirrell"	Graham French	1	3
+10	3	24/02/2008	24/02/2008	D	FALSE	NHMSYS0000530533	TL234846	100	OSGB	Woodwalton Fen	"Graham French, Jane Squirrell"	Graham French	1	3
+11	3	24/02/2008	24/02/2008	D	FALSE	NHMSYS0000530674	TL232839	100	OSGB	Woodwalton Fen	"Graham French, Jane Squirrell"	Graham French	3	3
+12	3	24/02/2008	24/02/2008	D	FALSE	NHMSYS0000530671	TL226844	100	OSGB	Woodwalton Fen	"Graham French, Jane Squirrell"	Graham French	1	3
+13	3	24/02/2008	24/02/2008	D	FALSE	NHMSYS0000530671	TL231832	100	OSGB	Woodwalton Fen	"Graham French, Jane Squirrell"	Graham French	1	3
+14	3	24/02/2008	24/02/2008	D	FALSE	NHMSYS0000530133	TL234846	100	OSGB	Woodwalton Fen	"Graham French, Jane Squirrell"	Graham French	3	3
+15	3	24/02/2008	24/02/2008	D	FALSE	NHMSYS0000530671	TL232839	100	OSGB	Woodwalton Fen	"Graham French, Jane Squirrell"	Graham French	1	3
+16	3	24/02/2008	24/02/2008	D	FALSE	NHMSYS0000530133	TL231832	100	OSGB	Woodwalton Fen	"Graham French, Jane Squirrell"	Graham French	2	3
+17	1	01/03/2008	01/03/2008	D	FALSE	NHMSYS0000530133	TL213885	100	OSGB	Holme Fen	Graham French	Graham French	1	1
+18	1	01/03/2008	01/03/2008	D	FALSE	NHMSYS0000530739	TL214884	100	OSGB	Holme Fen	Graham French	Graham French	1	1
+19	1	01/03/2008	01/03/2008	D	FALSE	NHMSYS0001688296	TL215884	100	OSGB	Holme Fen	Graham French	Graham French	2	1
+20	1	01/03/2008	01/03/2008	D	FALSE	NHMSYS0000530671	TL213885	100	OSGB	Holme Fen	Graham French	Graham French	1	1
+21	1	01/03/2008	01/03/2008	D	FALSE	NHMSYS0001688296	TL218888	100	OSGB	Holme Fen	Graham French	Graham French	4	1
+22	1	01/03/2008	01/03/2008	D	FALSE	NHMSYS0001688296	TL214884	100	OSGB	Holme Fen	Graham French	Graham French	2	1
+23	1	01/03/2008	01/03/2008	D	FALSE	NHMSYS0000530133	TL216886	100	OSGB	Holme Fen	Graham French	Graham French	1	1
+24	1	01/03/2008	01/03/2008	D	FALSE	NHMSYS0000530133	TL218888	100	OSGB	Holme Fen	Graham French	Graham French	1	1
+25	1	01/03/2008	01/03/2008	D	FALSE	NHMSYS0000530133	TL215884	100	OSGB	Holme Fen	Graham French	Graham French	1	1
+26	2	19/03/2008	19/03/2008	D	FALSE	NHMSYS0000530739	TL200797	100	OSGB	Monks Wood	Graham French	Graham French	1	2
+27	2	28/02/2008	28/02/2008	D	FALSE	NHMSYS0000530739	TL204803	100	OSGB	Monks Wood	Graham French	Graham French	1	2
+28	2	28/02/2008	28/02/2008	D	FALSE	NHMSYS0001688296	TL203801	100	OSGB	Monks Wood	Graham French	Graham French	1	2
+29	2	22/02/2008	22/02/2008	D	FALSE	NHMSYS0001688296	TL201797	100	OSGB	Monks Wood	Graham French	Graham French	4	2
+30	2	11/04/2008	11/04/2008	D	FALSE	NHMSYS0001688296	TL200806	100	OSGB	Monks Wood	Graham French	Graham French	1	2
+31	2	28/02/2008	28/02/2008	D	FALSE	NHMSYS0001688296	TL201798	100	OSGB	Monks Wood	Graham French	Graham French	2	2
+32	2	05/03/2008	05/03/2008	D	FALSE	NHMSYS0001688296	TL200796	100	OSGB	Monks Wood	Graham French	Graham French	1	2
+33	2	05/03/2008	05/03/2008	D	FALSE	NHMSYS0001688296	TL197795	100	OSGB	Monks Wood	Graham French	Graham French	2	2
+34	2	28/02/2008	28/02/2008	D	FALSE	NHMSYS0000530739	TL201799	100	OSGB	Monks Wood	Graham French	Graham French	1	2
+35	2	06/03/2008	06/03/2008	D	FALSE	NHMSYS0000530739	TL200798	100	OSGB	Monks Wood	Graham French	Graham French	1	2
+36	2	05/03/2008	05/03/2008	D	FALSE	NHMSYS0001688296	TL199803	100	OSGB	Monks Wood	Graham French	Graham French	1	2
+37	2	28/02/2008	28/02/2008	D	FALSE	NHMSYS0000530674	TL201798	100	OSGB	Monks Wood	Graham French	Graham French	1	2
+38	2	19/02/2008	19/02/2008	D	FALSE	NHMSYS0000530739	TL200797	100	OSGB	Monks Wood	Graham French	Graham French	1	2
+39	2	05/03/2008	05/03/2008	D	TRUE	NHMSYS0000530266	TL199803	100	OSGB	Monks Wood	Graham French	Graham French	1	2
+40	2	19/03/2008	19/03/2008	D	FALSE	NHMSYS0001688296	TL200797	100	OSGB	Monks Wood	Graham French	Graham French	1	2
+41	2	21/02/2008	21/02/2008	D	FALSE	NHMSYS0001688296	TL200799	100	OSGB	Monks Wood	Graham French	Graham French	2	2
+42	2	19/02/2008	19/02/2008	D	TRUE	NHMSYS0000530266	TL199797	100	OSGB	Monks Wood	Graham French	Graham French	1	2
+43	2	05/03/2008	05/03/2008	D	TRUE	NHMSYS0000530266	TL196795	100	OSGB	Monks Wood	Graham French	Graham French	1	2
+44	2	11/04/2008	11/04/2008	D	TRUE	NHMSYS0000530266	TL202808	100	OSGB	Monks Wood	Graham French	Graham French	1	2
+45	2	11/04/2008	11/04/2008	D	FALSE	NHMSYS0000530133	TL202808	100	OSGB	Monks Wood	Graham French	Graham French	2	2
+46	2	19/03/2008	19/03/2008	D	FALSE	NHMSYS0000530133	TL200798	100	OSGB	Monks Wood	Graham French	Graham French	2	2
+47	2	06/03/2008	06/03/2008	D	FALSE	NHMSYS0000530133	TL199801	100	OSGB	Monks Wood	Graham French	Graham French	2	2
+48	2	19/03/2008	19/03/2008	D	FALSE	NHMSYS0001688296	TL194796	100	OSGB	Monks Wood	Graham French	Graham French	1	2
+49	2	19/02/2008	19/02/2008	D	FALSE	NHMSYS0001688296	TL197795	100	OSGB	Monks Wood	Graham French	Graham French	2	2
+50	2	05/03/2008	05/03/2008	D	FALSE	NHMSYS0001688296	TL195802	100	OSGB	Monks Wood	Graham French	Graham French	3	2
+51	2	05/03/2008	05/03/2008	D	FALSE	NHMSYS0001688296	TL198796	100	OSGB	Monks Wood	Graham French	Graham French	2	2
+52	2	05/03/2008	05/03/2008	D	FALSE	NHMSYS0001688296	TL196794	100	OSGB	Monks Wood	Graham French	Graham French	3	2
+53	2	06/03/2008	06/03/2008	D	FALSE	NHMSYS0001688296	TL199801	100	OSGB	Monks Wood	Graham French	Graham French	1	2
+54	2	06/03/2008	06/03/2008	D	FALSE	NHMSYS0001688296	TL200806	100	OSGB	Monks Wood	Graham French	Graham French	4	2
+55	2	05/03/2008	05/03/2008	D	FALSE	NHMSYS0000530739	TL196794	100	OSGB	Monks Wood	Graham French	Graham French	1	2
+56	2	06/03/2008	06/03/2008	D	FALSE	NHMSYS0001688296	TL201804	100	OSGB	Monks Wood	Graham French	Graham French	5	2
+57	2	06/03/2008	06/03/2008	D	FALSE	NHMSYS0001688296	TL199800	100	OSGB	Monks Wood	Graham French	Graham French	1	2
+58	2	21/02/2008	21/02/2008	D	FALSE	NHMSYS0000530133	TL200799	100	OSGB	Monks Wood	Graham French	Graham French	4	2
+59	2	19/03/2008	19/03/2008	D	FALSE	NHMSYS0000530671	TL194796	100	OSGB	Monks Wood	Graham French	Graham French	1	2
+60	2	11/04/2008	11/04/2008	D	FALSE	NHMSYS0000530533	TL201798	100	OSGB	Monks Wood	Graham French	Graham French	2	2
+61	2	06/03/2008	06/03/2008	D	FALSE	NHMSYS0000530533	TL199801	100	OSGB	Monks Wood	Graham French	Graham French	1	2
+62	2	19/03/2008	19/03/2008	D	FALSE	NHMSYS0000530739	TL194796	100	OSGB	Monks Wood	Graham French	Graham French	1	2
+63	2	05/03/2008	05/03/2008	D	FALSE	NHMSYS0000530739	TL200797	100	OSGB	Monks Wood	Graham French	Graham French	1	2
+64	2	28/02/2008	28/02/2008	D	FALSE	NHMSYS0000530533	TL204800	100	OSGB	Monks Wood	Graham French	Graham French	2	2
+65	2	05/03/2008	05/03/2008	D	FALSE	NHMSYS0000530533	TL198796	100	OSGB	Monks Wood	Graham French	Graham French	1	2
+66	2	05/03/2008	05/03/2008	D	FALSE	NHMSYS0000530533	TL199803	100	OSGB	Monks Wood	Graham French	Graham French	1	2
+67	2	28/02/2008	28/02/2008	D	FALSE	NHMSYS0000530533	TL201798	100	OSGB	Monks Wood	Graham French	Graham French	5	2
+68	2	19/03/2008	19/03/2008	D	FALSE	NHMSYS0000530671	TL200797	100	OSGB	Monks Wood	Graham French	Graham French	1	2
+69	2	22/02/2008	22/02/2008	D	FALSE	NHMSYS0000530533	TL201797	100	OSGB	Monks Wood	Graham French	Graham French	3	2
+70	2	11/04/2008	11/04/2008	D	FALSE	NHMSYS0000530671	TL202808	100	OSGB	Monks Wood	Graham French	Graham French	1	2
+71	3	24/02/2008	24/02/2008	D	FALSE	NHMSYS0001688296	TL231832	100	OSGB	Woodwalton Fen	"Graham French, Jane Squirrell"	Graham French	2	3
+72	3	24/02/2008	24/02/2008	D	FALSE	NHMSYS0000530671	TL232834	100	OSGB	Woodwalton Fen	"Graham French, Jane Squirrell"	Graham French	2	3
+73	3	13/04/2008	13/04/2008	D	FALSE	NHMSYS0000530133	TL233849	100	OSGB	Woodwalton Fen	Graham French	Graham French	2	3
+74	3	24/02/2008	24/02/2008	D	FALSE	NHMSYS0000530671	TL229847	100	OSGB	Woodwalton Fen	"Graham French, Jane Squirrell"	Graham French	1	3
+75	3	13/04/2008	13/04/2008	D	FALSE	NHMSYS0000530671	TL231849	100	OSGB	Woodwalton Fen	Graham French	Graham French	1	3
+76	3	13/04/2008	13/04/2008	D	FALSE	NHMSYS0000530533	TL234850	100	OSGB	Woodwalton Fen	Graham French	Graham French	2	3
+77	3	13/04/2008	13/04/2008	D	FALSE	NHMSYS0000530367	TL234850	100	OSGB	Woodwalton Fen	Graham French	Graham French	3	3
+78	3	13/04/2008	13/04/2008	D	FALSE	NHMSYS0000530739	TL233849	100	OSGB	Woodwalton Fen	Graham French	Graham French	1	3
+79	3	24/02/2008	24/02/2008	D	FALSE	NHMSYS0000530739	TL235849	100	OSGB	Woodwalton Fen	"Graham French, Jane Squirrell"	Graham French	1	3
+80	3	24/02/2008	24/02/2008	D	FALSE	NHMSYS0000530739	TL226846	100	OSGB	Woodwalton Fen	"Graham French, Jane Squirrell"	Graham French	1	3
+81	3	13/04/2008	13/04/2008	D	FALSE	NHMSYS0000530739	TL230854	100	OSGB	Woodwalton Fen	Graham French	Graham French	1	3
+82	3	24/02/2008	24/02/2008	D	FALSE	NHMSYS0000530739	TL231832	100	OSGB	Woodwalton Fen	"Graham French, Jane Squirrell"	Graham French	1	3
+83	3	24/02/2008	24/02/2008	D	FALSE	NHMSYS0000530367	TL235849	100	OSGB	Woodwalton Fen	"Graham French, Jane Squirrell"	Graham French	2	3
+84	3	24/02/2008	24/02/2008	D	FALSE	NHMSYS0000530367	TL231840	100	OSGB	Woodwalton Fen	"Graham French, Jane Squirrell"	Graham French	1	3
+85	3	13/04/2008	13/04/2008	D	FALSE	NBNSYS0000000010	TL2385	1000	OSGB	Woodwalton Fen	Graham French	Graham French	1	3
+86	3	24/02/2008	24/02/2008	D	FALSE	NBNSYS0000000010	TL2384	1000	OSGB	Woodwalton Fen	"Graham French, Jane Squirrell"	Graham French	2	3

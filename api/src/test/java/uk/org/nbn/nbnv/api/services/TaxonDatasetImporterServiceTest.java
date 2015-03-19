@@ -242,7 +242,7 @@ public class TaxonDatasetImporterServiceTest {
     @Test
     public void canQueueUpDatasetUpload() throws IOException, TemplateException {
         //Given 
-        List<String> expectedDataTab = IOUtils.readLines(getClass().getResourceAsStream("/test-data/GA000466.nxf"));
+        List<String> expectedDataTab = IOUtils.readLines(getClass().getResourceAsStream("/test-data/GA000466-normalised.nxf"));
         List<String> expectedEml = IOUtils.readLines(getClass().getResourceAsStream("/test-data/GA000466-eml.xml"));
         List<String> expectedMappings = IOUtils.readLines(getClass().getResourceAsStream("/test-data/GA000466-meta.xml"));
         

@@ -10,8 +10,7 @@
 <field index="10" term="http://rs.tdwg.org/dwc/terms/locality"/>
 <field index="11" term="http://rs.tdwg.org/dwc/terms/recordedBy"/>
 <field index="12" term="http://rs.tdwg.org/dwc/terms/identifiedBy"/>
-<field index="13" term="http://rs.tdwg.org/dwc/terms/verbatimSRS"/>
-<field index="14" term="http://rs.tdwg.org/dwc/terms/dynamicProperties"/>
+<field index="15" term="http://rs.tdwg.org/dwc/terms/dynamicProperties"/>
 <id index="0"/>
 </core>
 <extension encoding="UTF-8" fieldsEnclosedBy="" fieldsTerminatedBy="\t" ignoreHeaderLines="1" linesTerminatedBy="\r\n" rowType="http://rs.nbn.org.uk/dwc/nxf/0.1/terms/nxfOccurrence">

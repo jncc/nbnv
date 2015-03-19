@@ -17,7 +17,7 @@ public class NXFFieldMappingXMLWriterTest {
     @Test
     public void checkThatCanMapNXFHeading() throws IOException, TemplateException {
         //Given
-        URL url = getClass().getResource("/test-data/GA000466-meta.xml");
+        URL url = getClass().getResource("/test-data/expected-mapping-meta.xml");
         String metaXml = FileUtils.readFileToString(new File(url.getFile()));
         NXFLine header = new NXFLine(
             "RECORDKEY\tSURVEYKEY\tSTARTDATE\tENDDATE\tDATETYPE\tSENSITIVE\t" +

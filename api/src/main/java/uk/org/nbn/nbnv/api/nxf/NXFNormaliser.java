@@ -47,10 +47,16 @@ public class NXFNormaliser {
         if(origHeaders.contains("SENITIVE")){
             origHeaders.set(origHeaders.indexOf("SENITIVE"), "SENSITIVE");
         }
+        // We need to remove the DynamicProperties heading to create a set of 
+        // standard NXF Headings. We use DynamicProperties during the normaliser
+        // process to concat any none NXF heading value into one column.
+        List<String> standardNXFHeadings = NXFHeading.stringValues();
+        standardNXFHeadings.remove(NXFHeading.DYNAMICPROPERTIES.name());
+        
         nxfHeaders = new ArrayList<>(origHeaders);
-        nxfHeaders.retainAll(NXFHeading.stringValues());
+        nxfHeaders.retainAll(standardNXFHeadings);
         attrHeaders = new ArrayList<>(origHeaders);
-        attrHeaders.removeAll(NXFHeading.stringValues());
+        attrHeaders.removeAll(standardNXFHeadings);
         attrHeaders.removeAll(ATTRS_TO_IGNORE);
     }
     
