@@ -1,4 +1,4 @@
-package uk.org.nbn.nbnv.api.utils;
+package uk.org.nbn.nbnv.api.nxf;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;
@@ -8,7 +8,6 @@ import java.io.Writer;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import uk.org.nbn.nbnv.api.model.Dataset;
 import uk.org.nbn.nbnv.api.model.TaxonDataset;
 
 /**

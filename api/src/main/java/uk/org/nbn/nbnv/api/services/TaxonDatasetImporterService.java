@@ -38,7 +38,7 @@ import uk.org.nbn.nbnv.api.nxf.NXFFieldMappingXMLWriter;
 import uk.org.nbn.nbnv.api.nxf.NXFLine;
 import uk.org.nbn.nbnv.api.nxf.NXFNormaliser;
 import uk.org.nbn.nbnv.api.nxf.NXFReader;
-import uk.org.nbn.nbnv.api.utils.EMLWriter;
+import uk.org.nbn.nbnv.api.nxf.EMLWriter;
 
 /**
  * The following service manages an uploaded dataset file such that an Importer 
@@ -118,12 +118,12 @@ public class TaxonDatasetImporterService {
             try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(upload.toFile()))) {
                 PrintWriter writer = new PrintWriter(new OutputStreamWriter(out));
                 out.putNextEntry(new ZipEntry("data.tab"));
-                writer.println(header.toString());
+                writer.println(header.getLine());
                 NXFLine nxfLine;
                 while( (nxfLine = nxf.readLine()) != null ) {
                     nxfLine = normaliser.normalise(nxfLine); // Normalise the line
                     temporalCoverage.read(nxfLine);          //Update the temporal coverage of the nxf file
-                    writer.println(nxfLine.toString());      //Write the original line to the new archive
+                    writer.println(nxfLine.getLine());       //Write the original line to the new archive
                 }
                 writer.flush();
                 out.putNextEntry(new ZipEntry("meta.xml"));

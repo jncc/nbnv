@@ -10,7 +10,6 @@
 <field index="10" term="http://rs.tdwg.org/dwc/terms/locality"/>
 <field index="11" term="http://rs.tdwg.org/dwc/terms/recordedBy"/>
 <field index="12" term="http://rs.tdwg.org/dwc/terms/identifiedBy"/>
-<field index="14" term="http://rs.tdwg.org/dwc/terms/locationID"/>
 <field index="15" term="http://rs.tdwg.org/dwc/terms/dynamicProperties"/>
 <id index="0"/>
 </core>

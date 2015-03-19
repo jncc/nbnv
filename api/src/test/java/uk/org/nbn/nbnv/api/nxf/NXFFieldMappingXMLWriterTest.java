@@ -20,9 +20,9 @@ public class NXFFieldMappingXMLWriterTest {
         URL url = getClass().getResource("/test-data/GA000466-meta.xml");
         String metaXml = FileUtils.readFileToString(new File(url.getFile()));
         NXFLine header = new NXFLine(
-            "RecordKey\tSurveykey\tStartDate\tEndDate\tDateType\tSensitive\t" +
-            "TaxonVersionKey\tGridReference\tPrecision\tProjection\tSiteName\t" +
-            "Recorder\tDeterminer\tAbundance\tSiteKey\tDynamicProperties");
+            "RECORDKEY\tSURVEYKEY\tSTARTDATE\tENDDATE\tDATETYPE\tSENSITIVE\t" +
+            "TAXONVERSIONKEY\tGRIDREFERENCE\tPRECISION\tPROJECTION\tSITENAME\t" +
+            "RECORDER\tDETERMINER\tABUNDANCE\tSITEKEY\tDYNAMICPROPERTIES");
         
         StringWriter writer = new StringWriter();
         NXFFieldMappingXMLWriter xmlWriter = new NXFFieldMappingXMLWriter(writer);
