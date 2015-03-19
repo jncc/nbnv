@@ -308,8 +308,10 @@ nbn.nbnv = nbn.nbnv || {};
 	}
 
 	function showExtendedString(reason) {
-		$('<div>').innerHtml(reason).dialog({
-			autoOpen: false,
+		var div = document.createElement('div');
+		div.innerHTML = reason;
+		div.dialog({
+			autoOpen: true,
 			modal: true,
 			title: "Download Reason",
 			buttons: {'Ok': function () {
