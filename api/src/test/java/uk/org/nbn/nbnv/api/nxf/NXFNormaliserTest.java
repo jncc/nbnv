@@ -384,4 +384,17 @@ public class NXFNormaliserTest {
         //Then
         assertEquals("Expected new lines to be removed", "I have new lines in me", lines.getLine());
     }
+    
+    @Test
+    public void checkThatDynamicPropertiesGetsHandledAsANormalAttribute() {
+        //Given
+        NXFLine header = new NXFLine("DynamicProperties");
+        NXFNormaliser normaliser = new NXFNormaliser(header);
+        
+        //When
+        NXFLine line = normaliser.normalise(new NXFLine("some data"));
+        
+        //Then
+        assertEquals("Expected dynamic properties gets wrapped like attribute", "{\"DYNAMICPROPERTIES\":\"some data\"}", line.getLine());
+    }
 }
