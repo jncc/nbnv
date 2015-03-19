@@ -118,12 +118,12 @@ public class TaxonDatasetImporterService {
             try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(upload.toFile()))) {
                 PrintWriter writer = new PrintWriter(new OutputStreamWriter(out));
                 out.putNextEntry(new ZipEntry("data.tab"));
-                writer.println(header.getLine());
+                writer.println(header.toString());
                 NXFLine nxfLine;
                 while( (nxfLine = nxf.readLine()) != null ) {
                     nxfLine = normaliser.normalise(nxfLine); // Normalise the line
                     temporalCoverage.read(nxfLine);          //Update the temporal coverage of the nxf file
-                    writer.println(nxfLine.getLine());       //Write the original line to the new archive
+                    writer.println(nxfLine.toString());       //Write the original line to the new archive
                 }
                 writer.flush();
                 out.putNextEntry(new ZipEntry("meta.xml"));

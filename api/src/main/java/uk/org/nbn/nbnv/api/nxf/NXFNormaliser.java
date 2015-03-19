@@ -39,7 +39,7 @@ public class NXFNormaliser {
         if( header == null ) {
             throw new IllegalArgumentException("The NBN Exchange file was empty");
         }
-        String cleanedHeader = header.getLine().toUpperCase().replaceAll(" |_|-|\"", "");
+        String cleanedHeader = header.toString().toUpperCase().replaceAll(" |_|-|\"", "");
         origHeaders = new ArrayList<>(Arrays.asList(cleanedHeader.split("\t")));
         if(origHeaders.contains("SENSTIVE")){
             origHeaders.set(origHeaders.indexOf("SENSTIVE"), "SENSITIVE");

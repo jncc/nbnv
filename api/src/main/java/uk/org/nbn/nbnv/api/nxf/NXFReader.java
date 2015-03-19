@@ -65,14 +65,14 @@ public class NXFReader implements Closeable {
             while( (nextLine = reader.readLine()) != null ) {
                 NXFLine concat = new NXFLine(readLine + "\n" + nextLine);
                 
-                if(concat.getLine().length() > limit) {
+                if(concat.toString().length() > limit) {
                     throw new IOException("Line number " + reader.getLineNumber() + " contains too much data");
                 }
                 else if(concat.getValues().size() > columns) {
                     break;
                 }
                 else {
-                    readLine = concat.getLine(); //Update the readLine and carry on
+                    readLine = concat.toString(); //Update the readLine and carry on
                 }
             }
             

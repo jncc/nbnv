@@ -49,8 +49,8 @@ public class NXFNormaliserTest {
         NXFLine data = normaliser.normalise(origData);
         
         //Then
-        assertEquals("Expected header to be DynamicProperties", "DYNAMICPROPERTIES", header.getLine());
-        assertEquals("Expected json in attribute column", "{\"ATTRIBUTE1\":\"my data\"}", data.getLine());
+        assertEquals("Expected header to be DynamicProperties", "DYNAMICPROPERTIES", header.toString());
+        assertEquals("Expected json in attribute column", "{\"ATTRIBUTE1\":\"my data\"}", data.toString());
     }
     
     @Test
@@ -65,9 +65,9 @@ public class NXFNormaliserTest {
         NXFLine other = normaliser.normalise(new NXFLine("some unkown type"));
         
         //Then
-        assertEquals("Expected srs column created", "PROJECTION\tSRS", header.getLine());
-        assertEquals("Expected srs to be filled in", "WGS84\t4326", wgs84.getLine());
-        assertEquals("Expected srs to be left blank", "some unkown type\t", other.getLine());
+        assertEquals("Expected srs column created", "PROJECTION\tSRS", header.toString());
+        assertEquals("Expected srs to be filled in", "WGS84\t4326", wgs84.toString());
+        assertEquals("Expected srs to be left blank", "some unkown type\t", other.toString());
     }
     
     @Test
@@ -82,9 +82,9 @@ public class NXFNormaliserTest {
         NXFLine other = normaliser.normalise(new NXFLine("leave me \t hmm"));
         
         //Then
-        assertEquals("Expected headers", "SRS\tPROJECTION", header.getLine());
-        assertEquals("Expected srs to be filled in", wgs84.getLine(), "4326\tWGS84");
-        assertEquals("Expected srs to be left as is", other.getLine(), "leave me\thmm");
+        assertEquals("Expected headers", "SRS\tPROJECTION", header.toString());
+        assertEquals("Expected srs to be filled in", wgs84.toString(), "4326\tWGS84");
+        assertEquals("Expected srs to be left as is", other.toString(), "leave me\thmm");
     }
     
     @Test
@@ -98,8 +98,8 @@ public class NXFNormaliserTest {
         NXFLine ddValue = normaliser.normalise(new NXFLine("DD"));
         
         //Then
-        assertEquals("Expected P to be turned to OO", pValue.getLine(), "OO");
-        assertEquals("Expected DD to have been left alone", ddValue.getLine(), "DD");
+        assertEquals("Expected P to be turned to OO", pValue.toString(), "OO");
+        assertEquals("Expected DD to have been left alone", ddValue.toString(), "DD");
     }
     
     @Test
@@ -113,8 +113,8 @@ public class NXFNormaliserTest {
         NXFLine sn42WithHyphen = normaliser.normalise(new NXFLine("SN-42"));
         
         //Then
-        assertEquals("Expected TL45 to be normalised", tl45.getLine(), "TL45");
-        assertEquals("Expected TL45 to be normalised", sn42WithHyphen.getLine(), "SN42");
+        assertEquals("Expected TL45 to be normalised", tl45.toString(), "TL45");
+        assertEquals("Expected TL45 to be normalised", sn42WithHyphen.toString(), "SN42");
     }
     
     @Test
@@ -131,11 +131,11 @@ public class NXFNormaliserTest {
         NXFLine absence = normaliser.normalise(new NXFLine("ABSENCE"));
         
         //Then
-        assertEquals("Expected to read absence", "absence", t.getLine());
-        assertEquals("Expected to read absence", "absence", tru.getLine());
-        assertEquals("Expected to read absence", "absence", yes.getLine());
-        assertEquals("Expected to read absence", "absence", absent.getLine());
-        assertEquals("Expected to read absence", "absence", absence.getLine());
+        assertEquals("Expected to read absence", "absence", t.toString());
+        assertEquals("Expected to read absence", "absence", tru.toString());
+        assertEquals("Expected to read absence", "absence", yes.toString());
+        assertEquals("Expected to read absence", "absence", absent.toString());
+        assertEquals("Expected to read absence", "absence", absence.toString());
     }
     
     @Test
@@ -152,11 +152,11 @@ public class NXFNormaliserTest {
         NXFLine presence = normaliser.normalise(new NXFLine("PRESENCE"));
         
         //Then
-        assertEquals("Expected to read absence", "presence", f.getLine());
-        assertEquals("Expected to read absence", "presence", fals.getLine());
-        assertEquals("Expected to read absence", "presence", no.getLine());
-        assertEquals("Expected to read absence", "presence", present.getLine());
-        assertEquals("Expected to read absence", "presence", presence.getLine());
+        assertEquals("Expected to read absence", "presence", f.toString());
+        assertEquals("Expected to read absence", "presence", fals.toString());
+        assertEquals("Expected to read absence", "presence", no.toString());
+        assertEquals("Expected to read absence", "presence", present.toString());
+        assertEquals("Expected to read absence", "presence", presence.toString());
     }
     
     @Test
@@ -169,7 +169,7 @@ public class NXFNormaliserTest {
         NXFLine value = normaliser.normalise(new NXFLine("Some Unkown Value"));
         
         //Then
-        assertEquals("Expected to gracefully handle unknown values", value.getLine(), "Some Unkown Value");
+        assertEquals("Expected to gracefully handle unknown values", value.toString(), "Some Unkown Value");
     }
     
     @Test
@@ -185,10 +185,10 @@ public class NXFNormaliserTest {
         NXFLine below10000 = normaliser.normalise(new NXFLine("9999"));
         
         //Then
-        assertEquals("Snapped to 100", below100.getLine(), "100");
-        assertEquals("Snapped to 1000", below1000.getLine(), "1000");
-        assertEquals("Snapped to 2000", below2000.getLine(), "2000");
-        assertEquals("Snapped to 10000", below10000.getLine(), "10000");
+        assertEquals("Snapped to 100", below100.toString(), "100");
+        assertEquals("Snapped to 1000", below1000.toString(), "1000");
+        assertEquals("Snapped to 2000", below2000.toString(), "2000");
+        assertEquals("Snapped to 10000", below10000.toString(), "10000");
     }
     
     @Test
@@ -205,11 +205,11 @@ public class NXFNormaliserTest {
         NXFLine gibberish = normaliser.normalise(new NXFLine("Some Unhandled Gibberish"));
         
         //Then
-        assertEquals("100 remained unchanged", exactly100.getLine(), "100");
-        assertEquals("1000 remained unchanged", exactly1000.getLine(), "1000");
-        assertEquals("2000 remained unchanged", exactly2000.getLine(), "2000");
-        assertEquals("10000 remained unchanged", exactly10000.getLine(), "10000");
-        assertEquals("Gibberish remained unchanged", gibberish.getLine(), "Some Unhandled Gibberish");
+        assertEquals("100 remained unchanged", exactly100.toString(), "100");
+        assertEquals("1000 remained unchanged", exactly1000.toString(), "1000");
+        assertEquals("2000 remained unchanged", exactly2000.toString(), "2000");
+        assertEquals("10000 remained unchanged", exactly10000.toString(), "10000");
+        assertEquals("Gibberish remained unchanged", gibberish.toString(), "Some Unhandled Gibberish");
     }
     
     @Test
@@ -224,9 +224,9 @@ public class NXFNormaliserTest {
         NXFLine yes = normaliser.normalise(new NXFLine("yEs"));
         
         //Then
-        assertEquals("Expected to read true", t.getLine(), "true");
-        assertEquals("Expected to read true", tru.getLine(), "true");
-        assertEquals("Expected to read true", yes.getLine(), "true");
+        assertEquals("Expected to read true", t.toString(), "true");
+        assertEquals("Expected to read true", tru.toString(), "true");
+        assertEquals("Expected to read true", yes.toString(), "true");
     }
     
     @Test
@@ -241,9 +241,9 @@ public class NXFNormaliserTest {
         NXFLine no = normaliser.normalise(new NXFLine("no"));
         
         //Then
-        assertEquals("Expected to read false", f.getLine(), "false");
-        assertEquals("Expected to read false", fals.getLine(), "false");
-        assertEquals("Expected to read false", no.getLine(), "false");
+        assertEquals("Expected to read false", f.toString(), "false");
+        assertEquals("Expected to read false", fals.toString(), "false");
+        assertEquals("Expected to read false", no.toString(), "false");
     }
     
     @Test
@@ -256,7 +256,7 @@ public class NXFNormaliserTest {
         NXFLine value = normaliser.normalise(new NXFLine("Some Unkown Value"));
         
         //Then
-        assertEquals("Expected to gracefully handle unknown values", value.getLine(), "Some Unkown Value");
+        assertEquals("Expected to gracefully handle unknown values", value.toString(), "Some Unkown Value");
     }
     
     @Test
@@ -270,8 +270,8 @@ public class NXFNormaliserTest {
         NXFLine site = normaliser.normalise(new NXFLine("my favourite location"));
         
         //Then
-        assertEquals("Expected site key to be bundled up in the attribute column", "DYNAMICPROPERTIES", header.getLine());
-        assertEquals("Expected site key to be bundled up in the attribute column", "{\"SITEKEY\":\"my favourite location\"}", site.getLine());
+        assertEquals("Expected site key to be bundled up in the attribute column", "DYNAMICPROPERTIES", header.toString());
+        assertEquals("Expected site key to be bundled up in the attribute column", "{\"SITEKEY\":\"my favourite location\"}", site.toString());
     }
     
     @Test
@@ -285,8 +285,8 @@ public class NXFNormaliserTest {
         NXFLine data = normaliser.normalise(new NXFLine("\"NBNSYS00\"00000001\""));
         
         //Then
-        assertEquals("Expected column heading not to have double quotes", "TAXONVERSIONKEY", header.getLine());
-        assertEquals("Expected data not to have double quotes", "NBNSYS0000000001", data.getLine());
+        assertEquals("Expected column heading not to have double quotes", "TAXONVERSIONKEY", header.toString());
+        assertEquals("Expected data not to have double quotes", "NBNSYS0000000001", data.toString());
     }
     
     @Test
@@ -300,8 +300,8 @@ public class NXFNormaliserTest {
         NXFLine site = normaliser.normalise(new NXFLine("Hippocrepis comosa\tVascular plant\tHorseshoe vetch\tNBNSYS0000000001"));
         
         //Then
-        assertEquals("Expected only a single colum", "TAXONVERSIONKEY", header.getLine());
-        assertEquals("Expected only a single piece of data", "NBNSYS0000000001", site.getLine());
+        assertEquals("Expected only a single colum", "TAXONVERSIONKEY", header.toString());
+        assertEquals("Expected only a single piece of data", "NBNSYS0000000001", site.toString());
     }
     
     @Test
@@ -314,7 +314,7 @@ public class NXFNormaliserTest {
         NXFLine header = normaliser.header();
         
         //Then
-        assertEquals("Expected correct spelling of senstivie column", "SENSITIVE", header.getLine());
+        assertEquals("Expected correct spelling of senstivie column", "SENSITIVE", header.toString());
     }
     
     @Test
@@ -327,7 +327,7 @@ public class NXFNormaliserTest {
         NXFLine header = normaliser.header();
         
         //Then
-        assertEquals("Expected correct spelling of senstivie column", "SENSITIVE", header.getLine());
+        assertEquals("Expected correct spelling of senstivie column", "SENSITIVE", header.toString());
     }
     
     @Test
@@ -342,9 +342,9 @@ public class NXFNormaliserTest {
         NXFLine edgeCase = normaliser.normalise(new NXFLine("100.9999"));
         
         //Then
-        assertEquals("Expected a precision without decimal places", "100", onedp.getLine());
-        assertEquals("Expected a precision without decimal places", "10000", fivedp.getLine());
-        assertEquals("Expected truncation of input to snap to a precision 'higher' rather than the normal case of 'lower'", "100", edgeCase.getLine());
+        assertEquals("Expected a precision without decimal places", "100", onedp.toString());
+        assertEquals("Expected a precision without decimal places", "10000", fivedp.toString());
+        assertEquals("Expected truncation of input to snap to a precision 'higher' rather than the normal case of 'lower'", "100", edgeCase.toString());
     }
     
     @Test
@@ -363,13 +363,13 @@ public class NXFNormaliserTest {
         NXFLine infinity = normaliser.normalise(new NXFLine("Infinity"));
         
         //Then
-        assertEquals("Expected pure text to fail", "I'm not a number", veryWordy.getLine());
-        assertEquals("Expected number like thing to fail", "123L", numberLike.getLine());
-        assertEquals("Expected commas to fail", "12,3", comma.getLine());
-        assertEquals("Expected multiple dp to be thrown out", "10.1.2.3", multipldDp.getLine());
-        assertEquals("Expected scientific number to pass", "1000", scientificNumber.getLine());
-        assertEquals("Expected NaN to pass", "NaN", nan.getLine());
-        assertEquals("Expected NaN to pass", "Infinity", infinity.getLine());
+        assertEquals("Expected pure text to fail", "I'm not a number", veryWordy.toString());
+        assertEquals("Expected number like thing to fail", "123L", numberLike.toString());
+        assertEquals("Expected commas to fail", "12,3", comma.toString());
+        assertEquals("Expected multiple dp to be thrown out", "10.1.2.3", multipldDp.toString());
+        assertEquals("Expected scientific number to pass", "1000", scientificNumber.toString());
+        assertEquals("Expected NaN to pass", "NaN", nan.toString());
+        assertEquals("Expected NaN to pass", "Infinity", infinity.toString());
     }
     
     @Test
@@ -382,7 +382,7 @@ public class NXFNormaliserTest {
         NXFLine lines = normaliser.normalise(new NXFLine("I have\nnew\nlines in me"));
         
         //Then
-        assertEquals("Expected new lines to be removed", "I have new lines in me", lines.getLine());
+        assertEquals("Expected new lines to be removed", "I have new lines in me", lines.toString());
     }
     
     @Test
@@ -395,6 +395,6 @@ public class NXFNormaliserTest {
         NXFLine line = normaliser.normalise(new NXFLine("some data"));
         
         //Then
-        assertEquals("Expected dynamic properties gets wrapped like attribute", "{\"DYNAMICPROPERTIES\":\"some data\"}", line.getLine());
+        assertEquals("Expected dynamic properties gets wrapped like attribute", "{\"DYNAMICPROPERTIES\":\"some data\"}", line.toString());
     }
 }

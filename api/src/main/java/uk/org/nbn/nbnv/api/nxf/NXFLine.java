@@ -24,11 +24,12 @@ public class NXFLine {
         line = StringUtils.join(values, '\t');
     }
     
-    public String getLine() {
-        return line;
-    }
-    
     public List<String> getValues() {
         return values;
+    }
+    
+    @Override
+    public String toString() {
+        return line;
     }
 }
