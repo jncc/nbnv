@@ -35,8 +35,23 @@
         },
         getTaxonFilter: function(keyPairs) {
             return getTaxonFilterValue(keyPairs);
-        }
+        },
+		getBetterAccessHref: function(form) {
+			return getBetterAccessHrefValue(form)
+		}
     });
+	
+	function getBetterAccessHrefValue(form) {
+		var keyValuePairs = nbn.portal.reports.utils.forms.getKeyValuePairsFromForm(form);
+		return '/AccessRequest/Create?json={' +
+				nbn.portal.reports.utils.forms.getSpatialFeatures(keyValuePairs, form.attr('gridSquare')) + ',' +
+				'taxon:{tvk:\'' + form.attr('ptvk') + '\'},' +
+				// Disabled as it selects publicly applicable
+				//nbn.portal.reports.utils.datasetfields.getSelectedDatasetsJSON() +
+				'dataset:{all:true},' +
+				nbn.portal.reports.utils.forms.getYearJSON(keyValuePairs) +
+				'}';
+	}
     
     function doIsSiteReportFormFieldValid($input){
         if($input.hasClass('nbn-year-input')){
