@@ -6,6 +6,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
@@ -35,15 +37,26 @@ public class NXFNormaliser {
      *  column names
      */
     public NXFNormaliser(NXFLine header) {
+        List<String> toRemoveFromAttrs = new ArrayList<>();
+        toRemoveFromAttrs.add("TAXONNAME");
+        toRemoveFromAttrs.add("TAXONGROUP");
+        toRemoveFromAttrs.add("COMMONNAME");
         if( header == null ) {
             throw new IllegalArgumentException("The NBN Exchange file was empty");
         }
-        String cleanedHeader = header.getLine().toUpperCase().replaceAll(" |_|-", "");
-        origHeaders = Arrays.asList(cleanedHeader.split("\t"));
+        String cleanedHeader = header.getLine().toUpperCase().replaceAll(" |_|-|\"", "");
+        origHeaders = new ArrayList(Arrays.asList(cleanedHeader.split("\t")));
+        if(origHeaders.indexOf("SENSTIVE")!=-1){
+            origHeaders.set(origHeaders.indexOf("SENSTIVE"), "SENSITIVE");
+        }
+        if(origHeaders.indexOf("SENITIVE")!=-1){
+            origHeaders.set(origHeaders.indexOf("SENITIVE"), "SENSITIVE");
+        }
         nxfHeaders = new ArrayList<>(origHeaders);
         nxfHeaders.retainAll(NXFHeading.stringValues());
         attrHeaders = new ArrayList<>(origHeaders);
         attrHeaders.removeAll(NXFHeading.stringValues());
+        attrHeaders.removeAll(toRemoveFromAttrs);
     }
     
     /**
@@ -74,13 +87,17 @@ public class NXFNormaliser {
      * @param data the normalised data
      * @return the normalised data as an NXFLine
      */
-    public NXFLine data(Map<String,String> data) throws JSONException {
+    public NXFLine data(Map<String,String> data) {
         List<String> toReturn = new ArrayList<>(getHeadings(nxfHeaders, data));
         if(addSRSColumn()) {
             toReturn.add(data.get(NXFHeading.SRS.name()));
         }
         if(!attrHeaders.isEmpty()){
-            toReturn.add(getAttributes(attrHeaders, data));
+            try {
+                toReturn.add(getAttributes(attrHeaders, data));
+            } catch (JSONException ex) {
+                Logger.getLogger(NXFNormaliser.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
         return new NXFLine(toReturn);
     }
@@ -92,7 +109,7 @@ public class NXFNormaliser {
      * @param line to normalise
      * @return the normalised line
      */
-    public NXFLine normalise(NXFLine line) throws JSONException {
+    public NXFLine normalise(NXFLine line) {
         Map<String,String> data = getData(line);
         if(data.containsKey(NXFHeading.SENSITIVE.name())){
             data.put(NXFHeading.SENSITIVE.name(), getSensitive(data.get(NXFHeading.SENSITIVE.name())));
@@ -125,7 +142,7 @@ public class NXFNormaliser {
         Map<String,String> data = new HashMap<>();
         List<String> values = line.getValues();
         for(int i=0; i<values.size(); i++) {
-            data.put(origHeaders.get(i), values.get(i));
+            data.put(origHeaders.get(i), values.get(i).replaceAll("\"", ""));
         }
         return data;
     }
@@ -177,6 +194,10 @@ public class NXFNormaliser {
         toTidy = toTidy.trim();
         if (!toTidy.isEmpty()) {
             try{
+                int indexOfDecimal = toTidy.indexOf(".");
+                if(indexOfDecimal != -1){
+                    toTidy = toTidy.substring(0,indexOfDecimal);
+                }
                 int data = Integer.parseInt(toTidy);
                 if (data <= 100) {
                     data = 100;

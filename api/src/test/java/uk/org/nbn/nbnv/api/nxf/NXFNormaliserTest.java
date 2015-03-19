@@ -258,4 +258,107 @@ public class NXFNormaliserTest {
         //Then
         assertEquals("Expected to gracefully handle unknown values", value.getLine(), "Some Unkown Value");
     }
+    
+    @Test
+    public void checkThatSiteKeyTreatedAsAnAttribute() {
+        //Given
+        NXFLine origHeader = new NXFLine("SITEKEY");
+        NXFNormaliser normaliser = new NXFNormaliser(origHeader);
+        
+        //When
+        NXFLine header = normaliser.header();
+        NXFLine site = normaliser.normalise(new NXFLine("my favourite location"));
+        
+        //Then
+        assertEquals("Expected site key to be bundled up in the attribute column", "DYNAMICPROPERTIES", header.getLine());
+        assertEquals("Expected site key to be bundled up in the attribute column", "{\"SITEKEY\":\"my favourite location\"}", site.getLine());
+    }
+    
+    @Test
+    public void checkThatDoubleQuotesRemoved() {
+        //Given
+        NXFLine origHeader = new NXFLine("\"TAXONVERSION\"KEY\"");
+        NXFNormaliser normaliser = new NXFNormaliser(origHeader);
+        
+        //When
+        NXFLine header = normaliser.header();
+        NXFLine data = normaliser.normalise(new NXFLine("\"NBNSYS00\"00000001\""));
+        
+        //Then
+        assertEquals("Expected column heading not to have double quotes", "TAXONVERSIONKEY", header.getLine());
+        assertEquals("Expected data not to have double quotes", "NBNSYS0000000001", data.getLine());
+    }
+    
+    @Test
+    public void checkThatUnwantedColumnsAreRemoved() {
+        //Given
+        NXFLine origHeader = new NXFLine("TAXONNAME\tTAXONGROUP\tCOMMONNAME\tTAXONVERSIONKEY");
+        NXFNormaliser normaliser = new NXFNormaliser(origHeader);
+        
+        //When
+        NXFLine header = normaliser.header();
+        NXFLine site = normaliser.normalise(new NXFLine("Hippocrepis comosa\tVascular plant\tHorseshoe vetch\tNBNSYS0000000001"));
+        
+        //Then
+        assertEquals("Expected only a single colum", "TAXONVERSIONKEY", header.getLine());
+        assertEquals("Expected only a single piece of data", "NBNSYS0000000001", site.getLine());
+    }
+    
+    @Test
+    public void checkThatMispelledSenitiveFixed() {
+        //Given
+        NXFLine origHeader = new NXFLine("senitive");
+        NXFNormaliser normaliser = new NXFNormaliser(origHeader);
+        
+        //When
+        NXFLine header = normaliser.header();
+        
+        //Then
+        assertEquals("Expected correct spelling of senstivie column", "SENSITIVE", header.getLine());
+    }
+    
+    @Test
+    public void checkThatMispelledSenstiveFixed() {
+        //Given
+        NXFLine origHeader = new NXFLine("senstive");
+        NXFNormaliser normaliser = new NXFNormaliser(origHeader);
+        
+        //When
+        NXFLine header = normaliser.header();
+        
+        //Then
+        assertEquals("Expected correct spelling of senstivie column", "SENSITIVE", header.getLine());
+    }
+    
+    @Test
+    public void checkThatDecimalRemovedFromPrecision() {
+        //Given
+        NXFLine origHeader = new NXFLine("precision");
+        NXFNormaliser normaliser = new NXFNormaliser(origHeader);
+        
+        //When
+        NXFLine onedp = normaliser.normalise(new NXFLine("100.0"));
+        NXFLine fivedp = normaliser.normalise(new NXFLine("4321.12345"));
+        
+        //Then
+        assertEquals("Expected a precision without decimal places", "100", onedp.getLine());
+        assertEquals("Expected a precision without decimal places", "10000", fivedp.getLine());
+    }
+    
+    @Test
+    public void checkThatPrecisionHandlesInvalidNumbers() {
+        //Given
+        NXFLine origHeader = new NXFLine("precision");
+        NXFNormaliser normaliser = new NXFNormaliser(origHeader);
+        
+        //When
+        NXFLine veryWordy = normaliser.normalise(new NXFLine("I'm not a number"));
+        NXFLine numberLike = normaliser.normalise(new NXFLine("123L"));
+        NXFLine comma = normaliser.normalise(new NXFLine("12,3"));
+        
+        //Then
+        assertEquals("Expected a precision without decimal places", "I'm not a number", veryWordy.getLine());
+        assertEquals("Expected a precision without decimal places", "123L", numberLike.getLine());
+        assertEquals("Expected a precision without decimal places", "12,3", comma.getLine());
+    }
 }
