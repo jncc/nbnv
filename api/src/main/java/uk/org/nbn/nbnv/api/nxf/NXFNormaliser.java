@@ -125,7 +125,9 @@ public class NXFNormaliser {
         Map<String,String> data = new HashMap<>();
         List<String> values = line.getValues();
         for(int i=0; i<values.size(); i++) {
-            data.put(origHeaders.get(i), values.get(i).replaceAll("\"", ""));
+            data.put(origHeaders.get(i), values.get(i)
+                                               .replaceAll("\"", "")
+                                               .replaceAll("\n", " "));
         }
         return data;
     }

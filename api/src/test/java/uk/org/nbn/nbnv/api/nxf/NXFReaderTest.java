@@ -130,7 +130,7 @@ public class NXFReaderTest {
         
         //Then
         assertEquals("Expected the correct data in the header", header.getValues(), Arrays.asList("First", "Line"));
-        assertEquals("Expected the correct data in the first line", data1.getValues(), Arrays.asList("Some data Split over Multiple Lines", "other"));
+        assertEquals("Expected the correct data in the first line", data1.getValues(), Arrays.asList("Some data\nSplit over\nMultiple\nLines", "other"));
         assertEquals("Expected the correct data in the second line", data2.getValues(), Arrays.asList("Next", "Line"));
     }
     
@@ -155,7 +155,7 @@ public class NXFReaderTest {
         
         //Then
         assertEquals("Expected the correct data in the header", header.getValues(), Arrays.asList("First", "Line"));
-        assertEquals("Expected the correct data in the first line", data1.getValues(), Arrays.asList("other", "Some data Split over Multiple Lines"));
+        assertEquals("Expected the correct data in the first line", data1.getValues(), Arrays.asList("other", "Some data\nSplit over\nMultiple\nLines"));
         assertEquals("Expected the correct data in the second line", data2.getValues(), Arrays.asList("Next", "Line"));
     }
     

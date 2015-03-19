@@ -38,7 +38,7 @@ public class NXFReader implements Closeable {
      * 
      * An NXFLine may exist over multiple lines in an NXF file. This can happen
      * if there are carriage returns in a value. Any carriage returns in a given
-     * value will be replaced with a 'space' character.
+     * value will be replaced with a 'new line' character.
      * @return the current line which has been read or null if there is no line
      * @throws IOException if there was a problem reading the line, the line
      *  contained the wrong amount of columns or the length of a line which was
@@ -63,7 +63,7 @@ public class NXFReader implements Closeable {
             // complete NXF line of data. Keep reading until we get more than
             // enough columns.
             while( (nextLine = reader.readLine()) != null ) {
-                NXFLine concat = new NXFLine(readLine + " " + nextLine);
+                NXFLine concat = new NXFLine(readLine + "\n" + nextLine);
                 
                 if(concat.getLine().length() > limit) {
                     throw new IOException("Line number " + reader.getLineNumber() + " contains too much data");

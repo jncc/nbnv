@@ -371,4 +371,17 @@ public class NXFNormaliserTest {
         assertEquals("Expected NaN to pass", "NaN", nan.getLine());
         assertEquals("Expected NaN to pass", "Infinity", infinity.getLine());
     }
+    
+    @Test
+    public void checkThatNewLinesCharactersAreReplacedWithSpaces() {
+        //Given
+        NXFLine origHeader = new NXFLine("precision");
+        NXFNormaliser normaliser = new NXFNormaliser(origHeader);
+        
+        //When
+        NXFLine lines = normaliser.normalise(new NXFLine("I have\nnew\nlines in me"));
+        
+        //Then
+        assertEquals("Expected new lines to be removed", "I have new lines in me", lines.getLine());
+    }
 }
