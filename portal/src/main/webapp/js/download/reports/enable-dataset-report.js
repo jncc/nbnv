@@ -310,7 +310,7 @@ nbn.nbnv = nbn.nbnv || {};
 	function showExtendedString(reason) {
 		var div = document.createElement('div');
 		div.innerHTML = reason;
-		div.dialog({
+		$(div).dialog({
 			autoOpen: true,
 			modal: true,
 			title: "Download Reason",
