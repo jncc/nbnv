@@ -2,7 +2,7 @@
 
 	function refreshSiteListData(form) {
 		// Update Better Access href
-		$('#nbn-request-better-access').attr('href', nbn.portal.reports.utils.forms.getBetterAccessHref(form));		
+		$('#nbn-request-better-access').attr('href', getBetterAccessHref());
 		
 		var $dataContainer = $('#nbn-species-site-list-data');
 		var ptvk = form.attr('ptvk');
@@ -102,6 +102,18 @@
 			e.preventDefault();
 		});
 
+	}
+
+	function getBetterAccessHref() {
+		var form = $('#nbn-species-site-list-form');
+		var keyValuePairs = nbn.portal.reports.utils.forms.getKeyValuePairsFromForm(form);
+		return '/AccessRequest/Create?json={' +
+				'taxon:{tvk:\'' + form.attr('ptvk') + '\'},' +
+				// Disabled as it selects publicly applicable
+				//nbn.portal.reports.utils.datasetfields.getSelectedDatasetsJSON() +
+				'dataset:{all:true},' +
+				nbn.portal.reports.utils.forms.getYearJSON(keyValuePairs) +
+				'}';
 	}
 
 	function doFirstVisitToPage() {

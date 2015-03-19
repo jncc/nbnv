@@ -2,7 +2,7 @@
 
 	function refreshGroupData(form) {
 		// Update Better Access href
-		$('#nbn-request-better-access').attr('href', nbn.portal.reports.utils.forms.getBetterAccessHref(form));
+		$('#nbn-request-better-access').attr('href', getBetterAccessHref($('#nbn-site-report-form')));
 		
 		var $dataContainer = $('#nbn-site-report-data-container');
 		var featureID = form.attr('featureID');
@@ -97,6 +97,19 @@
 
 	function doFirstVisitToPage() {
 		refreshGroupData($('#nbn-site-report-form'));
+	}
+
+	function getBetterAccessHref() {
+		var form = $('#nbn-site-report-form');
+		var keyValuePairs = nbn.portal.reports.utils.forms.getKeyValuePairsFromForm(form);
+		return '/AccessRequest/Create?json={' +
+				nbn.portal.reports.utils.forms.getSpatialFeatures(keyValuePairs, form.attr('gridSquare')) + ',' +
+				// Disabled as creates requests for all public datasets explicitly
+				// nbn.portal.reports.utils.datasetfields.getSelectedDatasetsJSON() + ',' +
+				'dataset:{all:true},' +
+				nbn.portal.reports.utils.forms.getYearJSON(keyValuePairs) + ',' +
+				nbn.portal.reports.utils.forms.getTaxonFilter(keyValuePairs) +
+				'}';
 	}
 
 	function setupDownloadRecordsLink() {

@@ -3,8 +3,9 @@
 	var apiServer;
 
 	function refreshObservationData(form) {
-		$('#nbn-request-better-access').attr('href', nbn.portal.reports.utils.forms.getBetterAccessHref(form));
-		$('#nbn-interactive-map').attr('href', getIMTHref(form));
+		// Update Better Access href and IMT href
+		$('#nbn-request-better-access').attr('href', getBetterAccessHref());
+		$('#nbn-interactive-map').attr('href', getIMTHref());
 		
 		var $dataContainer = $('#nbn-observation-container');
 		var featureID = form.attr('featureID');
@@ -195,8 +196,20 @@
 	function doFirstVisitToPage() {
 		refreshObservationData($('#nbn-site-report-form'));
 	}
+
+	function getBetterAccessHref() {
+		var form = $('#nbn-site-report-form');
+		var keyValuePairs = nbn.portal.reports.utils.forms.getKeyValuePairsFromForm(form);
+		return '/AccessRequest/Create?json={' +
+				nbn.portal.reports.utils.forms.getSpatialFeatures(keyValuePairs, form.attr('gridSquare')) + ',' +
+				'taxon:{tvk:\'' + form.attr('ptvk') + '\'},' +
+				'dataset:{all:true},' +
+				nbn.portal.reports.utils.forms.getYearJSON(keyValuePairs) +
+				'}';
+	}
 	
-	function getIMTHref(form) {
+	function getIMTHref() {
+		var form = $('#nbn-site-report-form');
 		var keyValuePairs = nbn.portal.reports.utils.forms.getKeyValuePairsFromForm(form);
 		var url = '/imt?mode=SPECIES&species=' +
 				form.attr('ptvk');

@@ -2,7 +2,7 @@
 
 	function refreshSpeciesData(form) {
 		// Update Better Access href
-		$('#nbn-request-better-access').attr('href', nbn.portal.reports.utils.forms.getBetterAccessHref(form));
+		$('#nbn-request-better-access').attr('href', getBetterAccessHref());
 		
 		var $dataContainer = $('#nbn-site-report-data-container');
 		var featureID = form.attr('featureID');
@@ -120,6 +120,18 @@
 			});
 			e.preventDefault();
 		});
+	}
+
+	function getBetterAccessHref() {
+		var form = $('#nbn-site-report-form');
+		var keyValuePairs = nbn.portal.reports.utils.forms.getKeyValuePairsFromForm(form);
+		return '/AccessRequest/Create?json={' +
+				'taxon:{all:false,output:\'' + form.attr('taxonOutputGroupKey') + '\'},' +
+				nbn.portal.reports.utils.forms.getSpatialFeatures(keyValuePairs, form.attr('gridSquare')) + ',' +
+				// Disabled as creates requests for all public datasets explicitly
+				// nbn.portal.reports.utils.datasetfields.getSelectedDatasetsJSON() + ',' +
+				'dataset:{all:true},' +
+				nbn.portal.reports.utils.forms.getYearJSON(keyValuePairs) + '}';
 	}
 
 	function setupDownloadRecordsLink() {
