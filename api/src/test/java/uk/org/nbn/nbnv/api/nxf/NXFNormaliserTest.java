@@ -397,4 +397,16 @@ public class NXFNormaliserTest {
         //Then
         assertEquals("Expected dynamic properties gets wrapped like attribute", "{\"DYNAMICPROPERTIES\":\"some data\"}", line.toString());
     }
+    
+    @Test(expected=IllegalArgumentException.class)
+    public void checkThatDuplicateAttributePropertiesCausesAFailure() {
+        //Given
+        NXFLine header = new NXFLine("Duplicate \t Duplicate");
+        
+        //When
+        NXFNormaliser normaliser = new NXFNormaliser(header);
+        
+        //Then
+        fail("Expected to fail as the header has duplicate columns");
+    }
 }

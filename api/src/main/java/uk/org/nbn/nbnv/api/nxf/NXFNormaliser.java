@@ -4,6 +4,7 @@ import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import org.codehaus.jettison.json.JSONException;
@@ -46,6 +47,12 @@ public class NXFNormaliser {
         }
         if(origHeaders.contains("SENITIVE")){
             origHeaders.set(origHeaders.indexOf("SENITIVE"), "SENSITIVE");
+        }
+        
+        // Make sure that the headers supplied does not contain any duplicate
+        // columns. These will cause confusion.
+        if(new HashSet<>(origHeaders).size() != origHeaders.size()) {
+            throw new IllegalArgumentException("Duplicate columns are not allowed");
         }
         // We need to remove the DynamicProperties heading to create a set of 
         // standard NXF Headings. We use DynamicProperties during the normaliser
