@@ -280,7 +280,7 @@ nbn.nbnv = nbn.nbnv || {};
 					.append($('<td>').text(value.downloadTimeString))
 					.append($('<td>').text(value.filterText))
 					.append($('<td>').text(value.purpose))
-					.append($('<td>').append(getTrimmedReason(value.reason)))
+					.append($('<td>').text(value.reason))
 					.append($('<td>').text(value.recordCount
 							+ ' records from this dataset in this download. This is '
 							+ (value.recordCount / value.totalRecords * 100).toFixed(1)
@@ -290,36 +290,11 @@ nbn.nbnv = nbn.nbnv || {};
 							)
 					);
 		});
-		$('.readMoreExtender').click(showExtendedString($(this).data('reason')));
 		$(divID).empty().append(output.append(outputBody));
 		// Setup user information dialogs - External Dependency (dialog_utils.js)
 		setupUsernameDialog(nbn.nbnv.api);
 		generateDownloadReportDatatable('#' + tableID);
 	}
-
-	function getTrimmedReason(reason) {
-		if (reason.length > 50) {
-			var shortReason = reason.substring(0, 50);
-			var retVal = $('<span>').html(shortReason + '<a class="readMoreExtender" data-reason="' + reason + '">...</a>');
-			return retVal;
-		} else {
-			return $('<span>').text(reason);
-		}
-	}
-
-	function showExtendedString(reason) {
-		var div = document.createElement('div');
-		div.innerHTML = reason;
-		$(div).dialog({
-			autoOpen: true,
-			modal: true,
-			title: "Download Reason",
-			buttons: {'Ok': function () {
-					$(this).dialog("close");
-				}}
-		});
-	}
-
 	function generateDownloadReportDatatable(tableID) {
 		$(tableID).dataTable({
 			"aaSorting": [[2, "desc"]],
