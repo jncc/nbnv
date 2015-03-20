@@ -49,9 +49,9 @@
         </#if>
 
         <#list status.importStatus.history as importStatus>
-          <#if importStatus.success>
+          <#if importStatus.state.name() == "SUCCESS">
             <@importResult icon="check" status="success" timestamp=importStatus.time value="Import completed successfully"></@importResult>
-          <#elseif importStatus.validationErrors?has_content>
+          <#elseif importStatus.state.name() == "VALIDATION_ERRORS">
             <@importResult icon="notice" status="warning" timestamp=importStatus.time value="Import failed with validation errors">
               <@importForm "Import valid records" "importValid" status.dataset.key importStatus.timestamp/>
               <table class="nbn-simple-table">
@@ -65,6 +65,21 @@
                 </#list>
               </table>
             </@importResult>
+	  <#elseif importStatus.state.name() == "BAD_FILE">
+            <@importResult icon="alert" status="error" timestamp=importStatus.time value="The uploaded file could not be imported">
+              <table class="nbn-simple-table">
+                <tr><th>Data Issue</th><th>Rule</th><th>Message</th></tr>
+                <#list importStatus.validationErrors as error>
+                  <tr>
+                    <td>${error.recordKey}</td>
+                    <td>${error.rule}</td>
+                    <td>${error.message}</td>
+                  </tr>
+                </#list>
+              </table>
+            </@importResult>
+          <#elseif importStatus.state.name() == "MISSING_SENSITIVE_COLUMN">
+            <@importResult icon="notice" status="warning" timestamp=importStatus.time value="Sensitive column is missing"></@importResult>
           <#else>
             <@importResult icon="alert" status="error" timestamp=importStatus.time value="Import failed. Please contact the NBN Gateway team to help resolve this"></@importResult>
           </#if>
