@@ -55,17 +55,14 @@ public class NXFNormaliser {
         if(new HashSet<>(origHeaders).size() != origHeaders.size()) {
             throw new IllegalArgumentException("Duplicate columns are not allowed");
         }
-        // We need to remove the DynamicProperties heading to create a set of 
-        // standard NXF Headings. We use DynamicProperties during the normaliser
-        // process to concat any none NXF heading value into one column.
-        List<String> standardNXFHeadings = NXFHeading.stringValues();
-        standardNXFHeadings.remove(NXFHeading.DYNAMICPROPERTIES.name());
-        
         nxfHeaders = new ArrayList<>(origHeaders);
-        nxfHeaders.retainAll(standardNXFHeadings);
+        nxfHeaders.retainAll(NXFHeading.stringValues());
         attrHeaders = new ArrayList<>(origHeaders);
-        attrHeaders.removeAll(standardNXFHeadings);
+        attrHeaders.removeAll(NXFHeading.stringValues());
         attrHeaders.removeAll(ATTRS_TO_IGNORE);
+        if(!attrHeaders.isEmpty() && nxfHeaders.contains(NXFHeading.DYNAMICPROPERTIES.name())){
+            throw new IllegalArgumentException("The NBN Exchange file contained both custom attributes and the internal 'DynamicProperties' column");
+        }
     }
     
     /**
