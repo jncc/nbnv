@@ -18,8 +18,11 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
@@ -28,9 +31,13 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.org.nbn.nbnv.api.model.ImporterResult;
+import static uk.org.nbn.nbnv.api.model.ImporterResult.State.MISSING_SENSITIVE_COLUMN;
+import static uk.org.nbn.nbnv.api.model.ImporterResult.State.SUCCESSFUL;
+import static uk.org.nbn.nbnv.api.model.ImporterResult.State.VALIDATION_ERRORS;
 import uk.org.nbn.nbnv.api.model.TaxonDataset;
 import uk.org.nbn.nbnv.api.model.ValidationError;
 import uk.org.nbn.nbnv.api.nxf.NXFDateCoverageTracker;
@@ -39,6 +46,7 @@ import uk.org.nbn.nbnv.api.nxf.NXFLine;
 import uk.org.nbn.nbnv.api.nxf.NXFNormaliser;
 import uk.org.nbn.nbnv.api.nxf.NXFReader;
 import uk.org.nbn.nbnv.api.nxf.EMLWriter;
+import uk.org.nbn.nbnv.api.nxf.NXFHeading;
 
 /**
  * The following service manages an uploaded dataset file such that an Importer 
@@ -56,6 +64,7 @@ public class TaxonDatasetImporterService {
     
     private static final Pattern VALIDATION_LOG_LINE = Pattern.compile("[0-9]{4}-[A-z]{3}-[0-9]{2}\\s[0-9]{2}\\:[0-9]{2}\\:[0-9]{2}\\sERROR\\sValidation.*");
     private static final Pattern EXCEPTION_LOG_ERROR = Pattern.compile("Exception.*");
+    private static final Pattern ISSUE_FILE_ARCHIVE = Pattern.compile(".*-[0-9]{18}-.*\\.zip");
     /**
      * Looks in the processing path and determines the dataset which is 
      * currently being processed by the importer service
@@ -123,7 +132,7 @@ public class TaxonDatasetImporterService {
                 while( (nxfLine = nxf.readLine()) != null ) {
                     nxfLine = normaliser.normalise(nxfLine); // Normalise the line
                     temporalCoverage.read(nxfLine);          //Update the temporal coverage of the nxf file
-                    writer.println(nxfLine.toString());       //Write the original line to the new archive
+                    writer.println(nxfLine.toString());      //Write the original line to the new archive
                 }
                 writer.flush();
                 out.putNextEntry(new ZipEntry("meta.xml"));
@@ -133,7 +142,12 @@ public class TaxonDatasetImporterService {
                 new EMLWriter(writer).write(dataset, temporalCoverage.getEarliestDate(), temporalCoverage.getLatestDate(), isUpsert);
                 writer.flush();
             }
-            Files.move(upload, getImporterPath("queue", dataset.getKey() + ".zip")); //Success. Move to queue
+            if(!header.getValues().contains(NXFHeading.SENSITIVE.name())) {
+                Files.move(upload, getIssuePath(dataset.getKey(), getCurrentTimeStamp(), MISSING_SENSITIVE_COLUMN));
+            }
+            else {
+                Files.move(upload, getImporterPath("queue", dataset.getKey() + ".zip")); //Success. Move to queue
+            }
         }
         finally {
             Files.deleteIfExists(upload);
@@ -150,14 +164,23 @@ public class TaxonDatasetImporterService {
      */
     public List<ImporterResult> getImportHistory(String datasetKey) throws IOException {
         List<ImporterResult> history = new ArrayList<>();
+        //Read in and process the history for all in the completed directory
         CompletedLogFilter completedImports = new CompletedLogFilter(datasetKey);
         File[] completed = getImporterPath("completed").toFile().listFiles(completedImports);
         for(File importArchive : completed) {
             String timestamp = importArchive.getName().substring(datasetKey.length() + 1);
             List<ValidationError> errors = getValidationErrors(new File(importArchive, "ConsoleOutput.txt"));
-            boolean success = isSuccessfulImport(new File(importArchive, "ConsoleErrors.txt"));
-            history.add(new ImporterResult(errors, success, timestamp));
+            ImporterResult.State state = getImporterResultState(new File(importArchive, "ConsoleErrors.txt"));
+            history.add(new ImporterResult(errors, state, timestamp));
         }
+        //Read in the history for the archives which have issues
+        IssueArchiveFilter issueImports = new IssueArchiveFilter(datasetKey);
+        File[] issues = getImporterPath("issues").toFile().listFiles(issueImports);
+        for(File importArchive: issues) {
+            String[] parts = importArchive.getName().split("-");
+            String state = StringUtils.removeEnd(parts[2], ".zip"); //remove the extension from the state
+            history.add(new ImporterResult(ImporterResult.State.valueOf(state), parts[1]));
+        }        
         Collections.sort(history); //Sort into the natural history order (Most recent first)
         return history;
     }
@@ -174,7 +197,7 @@ public class TaxonDatasetImporterService {
      */
     public ImporterResult getImportHistory(String datasetKey, String timestamp) throws IOException {
         for(ImporterResult result: getImportHistory(datasetKey)) {
-            if(!result.isSuccess() && timestamp.equals(result.getTimestamp())) {
+            if(result.getState() != SUCCESSFUL && timestamp.equals(result.getTimestamp())) {
                 return result;
             }
         }
@@ -221,21 +244,21 @@ public class TaxonDatasetImporterService {
     }
     
     /**
-     * Scan the given ConsoleErrors log file for any occurrances of the word
+     * Scan the given ConsoleErrors log file for any occurrences of the word
      * 'Exception'. If present, we assume that the import was a failure
      * @param consoleErrors 
-     * @return if the consoleErrors log does not have a line which starts with 'Exception'
+     * @return the state which can be determined by reading from the consoleErrors log
      * @throws IOException 
      */
-    protected boolean isSuccessfulImport(File consoleErrors) throws IOException {
+    protected ImporterResult.State getImporterResultState(File consoleErrors) throws IOException {
         try (BufferedReader in = new BufferedReader(new FileReader(consoleErrors))) {
             while(in.ready()) {
                 if(EXCEPTION_LOG_ERROR.matcher(in.readLine()).matches()) {
-                    return false;
+                    return VALIDATION_ERRORS;
                 }
             }
         }
-        return true;
+        return SUCCESSFUL;
     }
     
     /**
@@ -300,6 +323,15 @@ public class TaxonDatasetImporterService {
         return FileSystems.getDefault().getPath(location, parts);
     }
     
+    private Path getIssuePath(String datasetKey, String timestamp, ImporterResult.State issue) {
+        return getImporterPath("issues", datasetKey + "-" + timestamp + "-" + issue.name() + ".zip");
+    }
+    
+    private String getCurrentTimeStamp() {
+        DateFormat dateFormat = new SimpleDateFormat("yyyyMMddhhmmssSSS");
+        return dateFormat.format(Calendar.getInstance().getTime()) + "0";
+    }
+    
     private static class ProcessingLogFilter implements FilenameFilter {
         @Override
         public boolean accept(File dir, String name) {
@@ -318,5 +350,22 @@ public class TaxonDatasetImporterService {
         public boolean accept(File pathname) {
             return pathname.isDirectory() && pathname.getName().toLowerCase().startsWith(datasetKey.toLowerCase() + "-");
         }
+    }
+    
+    private static class IssueArchiveFilter implements FileFilter {
+        private final String datasetKey;
+        
+        public IssueArchiveFilter(String datasetKey) {
+            this.datasetKey = datasetKey;
+        }
+        
+        @Override
+        public boolean accept(File pathname) {
+            String name = pathname.getName();
+            return pathname.isFile()
+                   && ISSUE_FILE_ARCHIVE.matcher(name).matches() 
+                   && name.toLowerCase().startsWith(datasetKey.toLowerCase());
+        }
+        
     }
 }

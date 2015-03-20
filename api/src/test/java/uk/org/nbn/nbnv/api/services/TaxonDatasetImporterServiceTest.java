@@ -25,6 +25,10 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import static org.mockito.Mockito.mock;
 import uk.org.nbn.nbnv.api.model.ImporterResult;
+import uk.org.nbn.nbnv.api.model.ImporterResult.State;
+import static uk.org.nbn.nbnv.api.model.ImporterResult.State.MISSING_SENSITIVE_COLUMN;
+import static uk.org.nbn.nbnv.api.model.ImporterResult.State.SUCCESSFUL;
+import static uk.org.nbn.nbnv.api.model.ImporterResult.State.VALIDATION_ERRORS;
 import uk.org.nbn.nbnv.api.model.TaxonDataset;
 import uk.org.nbn.nbnv.api.model.ValidationError;
 import uk.org.nbn.nbnv.api.nxf.NXFReader;
@@ -44,6 +48,7 @@ public class TaxonDatasetImporterServiceTest {
         folder.newFolder("queue");
         folder.newFolder("processing");
         folder.newFolder("completed");
+        folder.newFolder("issues");
         
         service = new TaxonDatasetImporterService();
         service.properties = new Properties();
@@ -214,16 +219,16 @@ public class TaxonDatasetImporterServiceTest {
     }
     
     @Test
-    public void canDetectImportInErrors() throws IOException {
+    public void canDetectImportInValidationErrors() throws IOException {
         //Given
         URL url = getClass().getResource("/test-data/invalid-import/ConsoleErrors.txt");
         File errors = new File(url.getFile());
         
         //When
-        boolean success = service.isSuccessfulImport(errors);
+        State state = service.getImporterResultState(errors);
         
         //Then
-        assertFalse("Should not have been success", success);
+        assertEquals("Should have detected valdiation errors for import", VALIDATION_ERRORS, state);
     }
     
     @Test
@@ -233,10 +238,10 @@ public class TaxonDatasetImporterServiceTest {
         File errors = new File(url.getFile());
         
         //When
-        boolean success = service.isSuccessfulImport(errors);
+        State state = service.getImporterResultState(errors);
         
         //Then
-        assertTrue("Should have been success", success);
+        assertEquals("Should have detected a successful import", SUCCESSFUL, state);
     }
     
     @Test
@@ -290,5 +295,25 @@ public class TaxonDatasetImporterServiceTest {
         
         //Then
         assertFalse("Can't remove file which is not there", success);
+    }
+    
+    @Test
+    public void checkThatMissingSensitiveColumnGetsPutIntoTheIssuesDirectory() throws IOException, TemplateException {
+        //Given
+        InputStream datasetStream = getClass().getResourceAsStream("/test-data/GA000466.json");
+        TaxonDataset dataset = new ObjectMapper().readValue(datasetStream, TaxonDataset.class);
+        InputStream nxfFile = getClass().getResourceAsStream("/test-data/GA000466-no-sensitive.nxf");
+        NXFReader nxf = new NXFReader(new LineNumberReader(new InputStreamReader(nxfFile)));
+        
+        //When
+        service.importDataset(nxf, dataset, true);
+        
+        //Then
+        List<ImporterResult> history = service.getImportHistory("GA000466");
+        assertEquals("Expected only one result", history.size(), 1);
+        assertEquals("Expected result to have failed with missing column", history.get(0).getState(), MISSING_SENSITIVE_COLUMN);
+        
+        File[] filesInIssues = new File(folder.getRoot(), "issues").listFiles();
+        assertEquals("Expected one file in issue", 1, filesInIssues.length);
     }
 }

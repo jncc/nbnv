@@ -11,14 +11,23 @@ import javax.xml.bind.annotation.XmlTransient;
 public class ImporterResult implements Comparable<ImporterResult> {
     private List<ValidationError> validationErrors;
     private String timestamp;
-    private boolean success;
+    private State state;
+    
+    public enum State {
+        SUCCESSFUL, VALIDATION_ERRORS, BAD_FILE, MISSING_SENSITIVE_COLUMN
+    }
     
     public ImporterResult() {}
 
-    public ImporterResult(List<ValidationError> validationErrors, boolean success, String timestamp) {
+    public ImporterResult(List<ValidationError> validationErrors, State state, String timestamp) {
         this.validationErrors = validationErrors;
-        this.success = success;
+        this.state = state;
         this.timestamp = timestamp;
+    }
+    
+    public ImporterResult(State state, String timestamp) {
+        this.timestamp = timestamp;
+        this.state = state;
     }
     
     public List<ValidationError> getValidationErrors() {
@@ -37,12 +46,12 @@ public class ImporterResult implements Comparable<ImporterResult> {
         this.timestamp = timestamp;
     }
 
-    public boolean isSuccess() {
-        return success;
+    public State getState() {
+        return state;
     }
 
-    public void setSuccess(boolean success) {
-        this.success = success;
+    public void setState(State state) {
+        this.state = state;
     }
     
     @XmlTransient
