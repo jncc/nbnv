@@ -2,6 +2,8 @@ package uk.org.nbn.nbnv.api.services;
 
 import freemarker.template.TemplateException;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -9,11 +11,13 @@ import java.io.LineNumberReader;
 import java.net.URL;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.NoSuchFileException;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import java.util.zip.ZipOutputStream;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -329,5 +333,43 @@ public class TaxonDatasetImporterServiceTest {
         
         File[] filesInIssues = new File(folder.getRoot(), "issues").listFiles();
         assertEquals("Expected one file in issue", 1, filesInIssues.length);
+    }
+    
+    @Test
+    public void checkThatSensitiveColumnCanBeAppendedToImportWhichPreviouslyFailed() throws IOException, TemplateException {
+        //Given
+        File archive = folder.newFile("issues/GA000466-timestamp-MISSING_SENSITIVE_COLUMN.zip");
+        try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(archive))) {
+            out.putNextEntry(new ZipEntry("data.tab"));
+            IOUtils.write("HEADING\ndata", out);
+            out.putNextEntry(new ZipEntry("eml.xml"));
+            IOUtils.write("leave as is", out);
+        }
+        
+        //When
+        service.queueDatasetWithSensitiveColumnSet("GA000466", "timestamp", true);
+        
+        //Then
+        ZipFile fixedArchive = new ZipFile(new File(folder.getRoot(), "queue/GA000466.zip"));
+        List<String> dataTab = IOUtils.readLines(fixedArchive.getInputStream(fixedArchive.getEntry("data.tab")));
+        List<String> eml  = IOUtils.readLines(fixedArchive.getInputStream(fixedArchive.getEntry("eml.xml")));
+        String mappings  = IOUtils.toString(fixedArchive.getInputStream(fixedArchive.getEntry("meta.xml")));
+        
+        assertEquals("Expected sensitive column to be added", dataTab, Arrays.asList("HEADING\tSENSITIVE", "data\ttrue"));
+        assertEquals("Expected eml to be left as is", eml, Arrays.asList("leave as is"));
+        assertTrue("Expected the sensitive column to be mapped", mappings.contains("sensitiveOccurrence"));
+    }
+    
+    @Test(expected=FileNotFoundException.class)
+    public void checkThatFailsToSetSensitiveColumnForFileWhichDoesNotExist() throws IOException, TemplateException {
+        //Given
+        String datasetKey = "never uploaded";
+        String timestamp = "never uploaded";
+        
+        //When
+        service.queueDatasetWithSensitiveColumnSet(datasetKey, timestamp, true);
+        
+        //Then
+        fail("Expected to fail as file could not have been found");
     }
 }

@@ -246,6 +246,51 @@ public class TaxonDatasetImporterService {
     }
     
     /**
+     * Gets a dataset from the issues directory which has failed due to a missing
+     * sensitive column. Reads in the data from the archive and append the sensitive
+     * column with the supplied value set
+     * @param datasetKey of the dataset which previously failed due to missing column
+     * @param timestamp when this dataset failed
+     * @param sensitive the new value for the sensitive column
+     * @throws java.io.IOException if there is an issue with writing files
+     * @throws freemarker.template.TemplateException if there was a problem with an underlying template
+     */
+    public void queueDatasetWithSensitiveColumnSet(String datasetKey, String timestamp, boolean sensitive) throws IOException, TemplateException {
+        Path upload = Files.createTempFile(getImporterPath("uploads"), "new", ".zip");
+        try {
+            Path failedArchivePath = getIssuePath(datasetKey, timestamp, MISSING_SENSITIVE_COLUMN);
+            ZipFile failedArchive = new ZipFile(failedArchivePath.toFile());
+            ZipEntry failedDataTab = failedArchive.getEntry("data.tab");
+            BufferedReader failedData = new BufferedReader(new InputStreamReader(failedArchive.getInputStream(failedDataTab)));
+            String newHeader = failedData.readLine() + "\t" + NXFHeading.SENSITIVE.name(); //Add the sensitive column
+            
+            try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(upload.toFile()))) {
+                PrintWriter writer = new PrintWriter(new OutputStreamWriter(out));
+                out.putNextEntry(new ZipEntry("data.tab"));
+                writer.println(newHeader);
+                String line;
+                while( (line = failedData.readLine()) != null ) {
+                    //Append the supplied sensitive value to each line
+                    writer.println(line + "\t" + Boolean.toString(sensitive));
+                }
+                writer.flush();
+                out.putNextEntry(new ZipEntry("meta.xml"));
+                new NXFFieldMappingXMLWriter(writer).write(new NXFLine(newHeader));
+                writer.flush();
+                out.putNextEntry(new ZipEntry("eml.xml"));
+                ZipEntry failedEml = failedArchive.getEntry("eml.xml");
+                IOUtils.copy(failedArchive.getInputStream(failedEml), out);
+                writer.flush();
+            }
+            //Put the processed file back on to the queue
+            Files.move(upload, getImporterPath("queue", datasetKey + ".zip")); //Success. Move to queue
+        }
+        finally {
+            Files.deleteIfExists(upload);
+        }
+    }
+    
+    /**
      * Scan the given ConsoleErrors log file for any occurrences of the word
      * 'Exception'. If present, we assume that the import was a failure
      * @param consoleErrors 
