@@ -35,6 +35,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.org.nbn.nbnv.api.model.ImporterResult;
+import static uk.org.nbn.nbnv.api.model.ImporterResult.State.BAD_FILE;
 import static uk.org.nbn.nbnv.api.model.ImporterResult.State.MISSING_SENSITIVE_COLUMN;
 import static uk.org.nbn.nbnv.api.model.ImporterResult.State.SUCCESSFUL;
 import static uk.org.nbn.nbnv.api.model.ImporterResult.State.VALIDATION_ERRORS;
@@ -63,8 +64,9 @@ public class TaxonDatasetImporterService {
     @Autowired Properties properties;
     
     private static final Pattern VALIDATION_LOG_LINE = Pattern.compile("[0-9]{4}-[A-z]{3}-[0-9]{2}\\s[0-9]{2}\\:[0-9]{2}\\:[0-9]{2}\\sERROR\\sValidation.*");
-    private static final Pattern EXCEPTION_LOG_ERROR = Pattern.compile("Exception.*");
     private static final Pattern ISSUE_FILE_ARCHIVE = Pattern.compile(".*-[0-9]{18}-.*\\.zip");
+    private static final String BAD_FILE_LOG_ERROR = "invalid data file structure";
+    private static final String VALIDATION_ERRORS_LOG_ERROR = "validation errors";
     /**
      * Looks in the processing path and determines the dataset which is 
      * currently being processed by the importer service
@@ -252,9 +254,13 @@ public class TaxonDatasetImporterService {
      */
     protected ImporterResult.State getImporterResultState(File consoleErrors) throws IOException {
         try (BufferedReader in = new BufferedReader(new FileReader(consoleErrors))) {
-            while(in.ready()) {
-                if(EXCEPTION_LOG_ERROR.matcher(in.readLine()).matches()) {
+            String line;
+            while((line = in.readLine()) != null) {
+                if(line.contains(VALIDATION_ERRORS_LOG_ERROR)) {
                     return VALIDATION_ERRORS;
+                }
+                else if(line.contains(BAD_FILE_LOG_ERROR)) {
+                    return BAD_FILE;
                 }
             }
         }

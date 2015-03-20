@@ -1,0 +1,9 @@
+log4j:WARN No appenders could be found for logger (org.jboss.logging).
+log4j:WARN Please initialize the log4j system properly.
+Exception in thread "main" uk.org.nbn.nbnv.importer.BadDataException: Failed due to invalid data file structure, see log for details
+        at uk.org.nbn.nbnv.importer.validation.Validator.validate(Validator.scala:40)
+        at uk.org.nbn.nbnv.importer.Importer$$anonfun$run$1.apply$mcV$sp(Importer.scala:67)
+        at uk.org.nbn.nbnv.importer.Importer.withTopLevelExceptionHandling(Importer.scala:87)
+        at uk.org.nbn.nbnv.importer.Importer.run(Importer.scala:51)
+        at uk.org.nbn.nbnv.importer.Importer$.main(Importer.scala:22)
+        at uk.org.nbn.nbnv.importer.Importer.main(Importer.scala)

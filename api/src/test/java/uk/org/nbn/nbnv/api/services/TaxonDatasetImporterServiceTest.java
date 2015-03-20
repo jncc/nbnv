@@ -26,6 +26,7 @@ import org.junit.rules.TemporaryFolder;
 import static org.mockito.Mockito.mock;
 import uk.org.nbn.nbnv.api.model.ImporterResult;
 import uk.org.nbn.nbnv.api.model.ImporterResult.State;
+import static uk.org.nbn.nbnv.api.model.ImporterResult.State.BAD_FILE;
 import static uk.org.nbn.nbnv.api.model.ImporterResult.State.MISSING_SENSITIVE_COLUMN;
 import static uk.org.nbn.nbnv.api.model.ImporterResult.State.SUCCESSFUL;
 import static uk.org.nbn.nbnv.api.model.ImporterResult.State.VALIDATION_ERRORS;
@@ -216,6 +217,19 @@ public class TaxonDatasetImporterServiceTest {
         
         //Then
         fail("Expected to fail with exception");
+    }
+    
+    @Test
+    public void canDetectImportWithBadDataStructure() throws IOException {
+        //Given
+        URL url = getClass().getResource("/test-data/ConsoleErrors-invalid-structure.txt");        
+        File errors = new File(url.getFile());
+        
+        //When
+        State state = service.getImporterResultState(errors);
+        
+        //Then
+        assertEquals("Should have detected that the import log stated this was a bad file", BAD_FILE, state);
     }
     
     @Test
