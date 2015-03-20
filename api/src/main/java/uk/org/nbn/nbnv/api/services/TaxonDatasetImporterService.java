@@ -65,7 +65,7 @@ public class TaxonDatasetImporterService {
     
     private static final Pattern VALIDATION_LOG_LINE = Pattern.compile("[0-9]{4}-[A-z]{3}-[0-9]{2}\\s[0-9]{2}\\:[0-9]{2}\\:[0-9]{2}\\sERROR\\sValidation.*");
     private static final Pattern ISSUE_FILE_ARCHIVE = Pattern.compile(".*-[0-9]{18}-.*\\.zip");
-    private static final String BAD_FILE_LOG_ERROR = "invalid data file structure";
+    private static final String EXCEPTION_ERROR = "Exception";
     private static final String VALIDATION_ERRORS_LOG_ERROR = "validation errors";
     /**
      * Looks in the processing path and determines the dataset which is 
@@ -259,7 +259,7 @@ public class TaxonDatasetImporterService {
                 if(line.contains(VALIDATION_ERRORS_LOG_ERROR)) {
                     return VALIDATION_ERRORS;
                 }
-                else if(line.contains(BAD_FILE_LOG_ERROR)) {
+                else if(line.startsWith(EXCEPTION_ERROR)) { //default all exceptions to bad files
                     return BAD_FILE;
                 }
             }
