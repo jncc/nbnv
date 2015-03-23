@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import uk.org.nbn.nbnv.api.model.ImportCleanup;
+import static uk.org.nbn.nbnv.api.model.ImportCleanup.Operation.STRIP_INVALID_RECORDS;
 import uk.org.nbn.nbnv.api.model.TaxonDatasetWithImportStatus;
 
 @Controller
@@ -96,7 +98,7 @@ public class DatasetImporterController {
     public ModelAndView continueWithValidRecords(@RequestParam("datasetKey") String datasetKey, @RequestParam("timestamp") String timestamp) {
         ClientResponse response = resource
                 .path(String.format("taxonDatasets/%s/import/%s", datasetKey, timestamp))
-                .post(ClientResponse.class);
+                .post(ClientResponse.class, new ImportCleanup(STRIP_INVALID_RECORDS));
         
         ModelAndView model = getImporterDashboard();
         switch(response.getStatus()) {
