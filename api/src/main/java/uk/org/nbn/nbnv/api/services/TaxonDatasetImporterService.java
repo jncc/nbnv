@@ -261,21 +261,21 @@ public class TaxonDatasetImporterService {
             Path failedArchivePath = getIssuePath(datasetKey, timestamp, MISSING_SENSITIVE_COLUMN);
             ZipFile failedArchive = new ZipFile(failedArchivePath.toFile());
             ZipEntry failedDataTab = failedArchive.getEntry("data.tab");
-            BufferedReader failedData = new BufferedReader(new InputStreamReader(failedArchive.getInputStream(failedDataTab)));
-            String newHeader = failedData.readLine() + "\t" + NXFHeading.SENSITIVE.name(); //Add the sensitive column
+            NXFReader failedData = new NXFReader(new InputStreamReader(failedArchive.getInputStream(failedDataTab)));
+            NXFLine newHeader = failedData.readLine().append(NXFHeading.SENSITIVE.name()); //Add the sensitive column
             
             try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(upload.toFile()))) {
                 PrintWriter writer = new PrintWriter(new OutputStreamWriter(out));
                 out.putNextEntry(new ZipEntry("data.tab"));
-                writer.println(newHeader);
-                String line;
+                writer.println(newHeader.toString());
+                NXFLine line;
                 while( (line = failedData.readLine()) != null ) {
                     //Append the supplied sensitive value to each line
-                    writer.println(line + "\t" + Boolean.toString(sensitive));
+                    writer.println(line.append(Boolean.toString(sensitive)).toString());
                 }
                 writer.flush();
                 out.putNextEntry(new ZipEntry("meta.xml"));
-                new NXFFieldMappingXMLWriter(writer).write(new NXFLine(newHeader));
+                new NXFFieldMappingXMLWriter(writer).write(newHeader);
                 writer.flush();
                 out.putNextEntry(new ZipEntry("eml.xml"));
                 ZipEntry failedEml = failedArchive.getEntry("eml.xml");
