@@ -2,9 +2,11 @@ package uk.gov.nbn.data.portal.controllers;
 
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.GenericType;
+import com.sun.jersey.api.client.UniformInterfaceException;
 import com.sun.jersey.api.client.WebResource;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +19,7 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.fileupload.util.Streams;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -57,6 +60,7 @@ public class DatasetImporterController {
                 case 200: 
                     response.sendRedirect("/Import"); //Great stuff!! Jump back to the dashboard
                     return null;
+                case 401: throw new UniformInterfaceException(restResponse);
                 default:
                     //Get the error message from the response
                     data.put("status", restResponse.getEntity(Map.class).get("status"));
@@ -91,6 +95,7 @@ public class DatasetImporterController {
         ModelAndView model = getImporterDashboard();
         switch(response.getStatus()) {
             case 204: return model.addObject("message", "Dataset: " + datasetKey + " has been removed from the queue");
+            case 401: throw new UniformInterfaceException(response);
             case 404: return model.addObject("error", "Could not find " + datasetKey);
             default:  return model.addObject("error", "The NBN Gateway API failed. If this continues please contact us using the forums");
         }
@@ -119,6 +124,7 @@ public class DatasetImporterController {
         ModelAndView model = getImporterDashboard();
         switch(response.getStatus()) {
             case 200: return model.addObject("message", "Dataset: " + datasetKey + " has been queued for processing");
+            case 401: throw new UniformInterfaceException(response);
             case 404: return model.addObject("error", "Could not find an existing import for " + datasetKey + " with the timestamp " + timestamp);
             case 409: return model.addObject("error", "The dataset " + datasetKey + " is already queued for import. Please delete and try again.");
             default:  
@@ -134,6 +140,20 @@ public class DatasetImporterController {
         }
         else {
             throw new IllegalArgumentException("Expected to find the form field: " + name);
+        }
+    }
+    
+    // Handle any calls to the api which result in a 401 unauthorized exception
+    // We simply redirect to the sign in page. This should really be in a 
+    // controlleradvice class, however the version of spring we are using in 
+    // this project is too old
+    @ExceptionHandler(UniformInterfaceException.class)
+    public void handleUnauthorized(UniformInterfaceException exception, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        if(exception.getResponse().getStatus() == 401) {
+            response.sendRedirect("/User/SSO/Unauthorized?redirect=" + URLEncoder.encode(request.getRequestURL().toString()));
+        }
+        else {
+            throw exception;
         }
     }
 }
