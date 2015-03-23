@@ -143,6 +143,7 @@ public class TaxonDatasetImporterService {
                 out.putNextEntry(new ZipEntry("eml.xml"));
                 new EMLWriter(writer).write(dataset, temporalCoverage.getEarliestDate(), temporalCoverage.getLatestDate(), isUpsert);
                 writer.flush();
+                out.closeEntry();
             }
             if(!header.getValues().contains(NXFHeading.SENSITIVE.name())) {
                 Files.move(upload, getIssuePath(dataset.getKey(), getCurrentTimeStamp(), MISSING_SENSITIVE_COLUMN));
@@ -222,17 +223,13 @@ public class TaxonDatasetImporterService {
         ImporterResult status = getImportHistory(datasetKey, timestamp);
         Path upload = Files.createTempFile(getImporterPath("uploads"), "reimport", ".zip");
         Path archive = getImporterPath("completed", datasetKey + "-" + timestamp, datasetKey + ".zip");
-        try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(upload.toFile()))) {
-            try (ZipFile zipFile = new ZipFile(archive.toFile())) {
-                for(ZipEntry entry : Collections.list(zipFile.entries())) {
-                    out.putNextEntry(new ZipEntry(entry.getName()));
-                    InputStream in = zipFile.getInputStream(entry);
-                    if(entry.getName().equals("data.tab")) {
-                        copyWithoutValidationErrors(in, out, status.getValidationErrors());
-                    }
-                    else {
-                       IOUtils.copy(in, out); 
-                    }
+        try {
+            try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(upload.toFile()))) {
+                try (ZipFile zipFile = new ZipFile(archive.toFile())) {
+                    copyEntries(zipFile, out, Arrays.asList("data.tab")); //Copy all files other than data.tab
+                    InputStream in = zipFile.getInputStream(zipFile.getEntry("data.tab"));
+                    out.putNextEntry(new ZipEntry("data.tab"));
+                    copyWithoutValidationErrors(in, out, status.getValidationErrors());
                     out.closeEntry();
                 }
             }
@@ -255,32 +252,37 @@ public class TaxonDatasetImporterService {
      */
     public void queueDatasetWithSensitiveColumnSet(String datasetKey, String timestamp, boolean sensitive) throws IOException, TemplateException {
         Path upload = Files.createTempFile(getImporterPath("uploads"), "new", ".zip");
-        try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(upload.toFile()))) {
-            Path failedArchivePath = getIssuePath(datasetKey, timestamp, MISSING_SENSITIVE_COLUMN);
-            try (ZipFile failedArchive = new ZipFile(failedArchivePath.toFile())) {
-                ZipEntry failedDataTab = failedArchive.getEntry("data.tab");
-                NXFReader failedData = new NXFReader(new InputStreamReader(failedArchive.getInputStream(failedDataTab)));
-                NXFLine newHeader = failedData.readLine().append(NXFHeading.SENSITIVE.name()); //Add the sensitive column
+        try {
+            try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(upload.toFile()))) {
+                Path failedArchivePath = getIssuePath(datasetKey, timestamp, MISSING_SENSITIVE_COLUMN);
+                try (ZipFile failedArchive = new ZipFile(failedArchivePath.toFile())) {
+                    //Copy all the files other than the ones we need to modify
+                    copyEntries(failedArchive, out, Arrays.asList("data.tab", "meta.xml"));
+                    
+                    //Process the original data.tab and append the sensitive column
+                    ZipEntry failedDataTab = failedArchive.getEntry("data.tab");
+                    NXFReader failedData = new NXFReader(new InputStreamReader(failedArchive.getInputStream(failedDataTab)));
+                    NXFLine newHeader = failedData.readLine().append(NXFHeading.SENSITIVE.name()); //Add the sensitive column
 
-                PrintWriter writer = new PrintWriter(new OutputStreamWriter(out));
-                out.putNextEntry(new ZipEntry("data.tab"));
-                writer.println(newHeader.toString());
-                NXFLine line;
-                while( (line = failedData.readLine()) != null ) {
-                    //Append the supplied sensitive value to each line
-                    writer.println(line.append(Boolean.toString(sensitive)).toString());
+                    PrintWriter writer = new PrintWriter(new OutputStreamWriter(out));
+                    out.putNextEntry(new ZipEntry("data.tab"));
+                    writer.println(newHeader.toString());
+                    NXFLine line;
+                    while( (line = failedData.readLine()) != null ) {
+                        //Append the supplied sensitive value to each line
+                        writer.println(line.append(Boolean.toString(sensitive)).toString());
+                    }
+                    writer.flush();
+                    
+                    //The header will have changed so we need to recreate the meta.xml.
+                    out.putNextEntry(new ZipEntry("meta.xml"));
+                    new NXFFieldMappingXMLWriter(writer).write(newHeader);
+                    writer.flush();
+                    out.closeEntry();
                 }
-                writer.flush();
-                out.putNextEntry(new ZipEntry("meta.xml"));
-                new NXFFieldMappingXMLWriter(writer).write(newHeader);
-                writer.flush();
-                out.putNextEntry(new ZipEntry("eml.xml"));
-                ZipEntry failedEml = failedArchive.getEntry("eml.xml");
-                IOUtils.copy(failedArchive.getInputStream(failedEml), out);
-                writer.flush();
             }
             //Put the processed file back on to the queue
-            Files.move(upload, getImporterPath("queue", datasetKey + ".zip")); //Success. Move to queue
+            Files.move(upload, getImporterPath("queue", datasetKey + ".zip")); //Success. Move to queue   
         }
         finally {
             Files.deleteIfExists(upload);
@@ -380,6 +382,17 @@ public class TaxonDatasetImporterService {
         return dateFormat.format(Calendar.getInstance().getTime()) + "0";
     }
     
+    private void copyEntries(ZipFile in, ZipOutputStream out, List<String> omit) throws IOException {
+        for(ZipEntry entry : Collections.list(in.entries())) {
+            String name = entry.getName();
+            if(!omit.contains(name)) {
+                out.putNextEntry(new ZipEntry(name));
+                IOUtils.copy(in.getInputStream(entry), out);
+                out.closeEntry();
+            }
+        }
+    }
+    
     private static class ProcessingLogFilter implements FilenameFilter {
         @Override
         public boolean accept(File dir, String name) {
@@ -414,6 +427,5 @@ public class TaxonDatasetImporterService {
                    && ISSUE_FILE_ARCHIVE.matcher(name).matches() 
                    && name.toLowerCase().startsWith(datasetKey.toLowerCase());
         }
-        
     }
 }
