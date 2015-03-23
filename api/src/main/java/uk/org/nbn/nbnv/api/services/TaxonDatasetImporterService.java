@@ -191,22 +191,23 @@ public class TaxonDatasetImporterService {
     }
     
     /**
-     * Obtains an importer result for the given dataset key. The one obtained 
-     * will have occurred at the supplied timestamp. If no result importer result
-     * exists an IllegalArgumentException will be thrown
+     * Obtains an importer result for the given dataset key which occurred at
+     * the given timestamp and is in an expected state. If an importer result
+     * can not be located, then throw a NoSuchFileException
      * @param datasetKey of the dataset which was imported
      * @param timestamp of when the import occurred
+     * @param state which the result should be in
      * @return The importer history which occurred at "timestamp" for "datasetkey"
      * @throws IOException if there was a problem reading the import history
      * @throws NoSuchFileException if no importer result exists
      */
-    public ImporterResult getImportHistory(String datasetKey, String timestamp) throws IOException {
+    protected ImporterResult getImportHistory(String datasetKey, String timestamp, ImporterResult.State state) throws IOException {
         for(ImporterResult result: getImportHistory(datasetKey)) {
-            if(result.getState() != SUCCESSFUL && timestamp.equals(result.getTimestamp())) {
+            if(result.getState() == state && timestamp.equals(result.getTimestamp())) {
                 return result;
             }
         }
-        throw new NoSuchFileException("There is no archive which previously failed to import with the given timestamp");
+        throw new NoSuchFileException("Could not find an importer result for " + datasetKey + " in the " + state + " state at " + timestamp);
     }
     
     /**
@@ -222,7 +223,7 @@ public class TaxonDatasetImporterService {
      *  the queue
      */
     public void stripInvalidRecords(String datasetKey, String timestamp) throws IOException, NoSuchFileException, FileAlreadyExistsException {
-        ImporterResult status = getImportHistory(datasetKey, timestamp);
+        ImporterResult status = getImportHistory(datasetKey, timestamp, VALIDATION_ERRORS);
         Path upload = Files.createTempFile(getImporterPath("uploads"), "reimport", ".zip");
         Path archive = getImporterPath("completed", datasetKey + "-" + timestamp, datasetKey + ".zip");
         try {
