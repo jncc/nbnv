@@ -22,6 +22,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import uk.org.nbn.nbnv.api.model.ImportCleanup;
+import static uk.org.nbn.nbnv.api.model.ImportCleanup.Operation.SET_SENSITIVE_FALSE;
+import static uk.org.nbn.nbnv.api.model.ImportCleanup.Operation.SET_SENSITIVE_TRUE;
 import static uk.org.nbn.nbnv.api.model.ImportCleanup.Operation.STRIP_INVALID_RECORDS;
 import uk.org.nbn.nbnv.api.model.TaxonDatasetWithImportStatus;
 
@@ -96,13 +98,27 @@ public class DatasetImporterController {
     
     @RequestMapping(value="/Import", method = RequestMethod.POST, params="op=importValid")
     public ModelAndView continueWithValidRecords(@RequestParam("datasetKey") String datasetKey, @RequestParam("timestamp") String timestamp) {
+        return performImportCleanup(datasetKey, timestamp, STRIP_INVALID_RECORDS);
+    }
+    
+    @RequestMapping(value="/Import", method = RequestMethod.POST, params="op=sensitiveTrue")
+    public ModelAndView continueWithSensitiveSetToTrue(@RequestParam("datasetKey") String datasetKey, @RequestParam("timestamp") String timestamp) {
+        return performImportCleanup(datasetKey, timestamp, SET_SENSITIVE_TRUE);
+    }
+    
+    @RequestMapping(value="/Import", method = RequestMethod.POST, params="op=sensitiveFalse")
+    public ModelAndView continueWithSensitiveSetToFalse(@RequestParam("datasetKey") String datasetKey, @RequestParam("timestamp") String timestamp) {
+        return performImportCleanup(datasetKey, timestamp, SET_SENSITIVE_FALSE);
+    }
+    
+    private ModelAndView performImportCleanup(String datasetKey, String timestamp, ImportCleanup.Operation operation) {
         ClientResponse response = resource
                 .path(String.format("taxonDatasets/%s/import/%s", datasetKey, timestamp))
-                .post(ClientResponse.class, new ImportCleanup(STRIP_INVALID_RECORDS));
+                .post(ClientResponse.class, new ImportCleanup(operation));
         
         ModelAndView model = getImporterDashboard();
         switch(response.getStatus()) {
-            case 200: return model.addObject("message", "Dataset: " + datasetKey + " has been removed from the queue");
+            case 200: return model.addObject("message", "Dataset: " + datasetKey + " has been queued for processing");
             case 404: return model.addObject("error", "Could not find an existing import for " + datasetKey + " with the timestamp " + timestamp);
             case 409: return model.addObject("error", "The dataset " + datasetKey + " is already queued for import. Please delete and try again.");
             default:  

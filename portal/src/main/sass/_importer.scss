@@ -22,10 +22,11 @@
             i { font-style: italic; }
         }
     }
-    form {
+    .import-controls {
         position: absolute;
         top: 6px;
         right: 6px;
+        form { display: inline-block; }
     }
     .nbn-simple-table { margin-left: 2em; }
 }

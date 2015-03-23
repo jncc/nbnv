@@ -14,6 +14,10 @@
   </form>
 </#macro>
 
+<#macro importControls>
+  <div class="import-controls"><#nested></div>
+</#macro>
+
 <#macro importResult icon="" status="" value="" timestamp="">
   <li class="import-result import-result-${status}">
     <div class="import-status">
@@ -40,7 +44,7 @@
       <ul>
         <#if status.importStatus.isOnQueue>
           <@importResult icon="clock" status="inprogress" value="Dataset Queued">
-            <@importForm "Delete" "delete" status.dataset.key/>
+            <@importControls><@importForm "Delete" "delete" status.dataset.key/></@importControls>
           </@importResult>
         </#if>
 
@@ -53,7 +57,7 @@
             <@importResult icon="check" status="success" timestamp=importStatus.time value="Import completed successfully"></@importResult>
           <#elseif importStatus.state.name() == "VALIDATION_ERRORS">
             <@importResult icon="notice" status="warning" timestamp=importStatus.time value="Import failed with validation errors">
-              <@importForm "Import valid records" "importValid" status.dataset.key importStatus.timestamp/>
+              <@importControls><@importForm "Import valid records" "importValid" status.dataset.key importStatus.timestamp/></@importControls>
               <table class="nbn-simple-table">
                 <tr><th>Record Key</th><th>Rule</th><th>Message</th></tr>
                 <#list importStatus.validationErrors as error>
@@ -79,7 +83,12 @@
               </table>
             </@importResult>
           <#elseif importStatus.state.name() == "MISSING_SENSITIVE_COLUMN">
-            <@importResult icon="notice" status="warning" timestamp=importStatus.time value="Sensitive column is missing"></@importResult>
+            <@importResult icon="notice" status="warning" timestamp=importStatus.time value="Sensitive column is missing">
+              <@importControls>
+                <@importForm "Import all as Sensitive" "sensitiveTrue" status.dataset.key importStatus.timestamp/>
+                <@importForm "Import all as Non-Sensitive" "sensitiveFalse" status.dataset.key importStatus.timestamp/>
+              </@importControls>
+            </@importResult>
           <#else>
             <@importResult icon="alert" status="error" timestamp=importStatus.time value="Import failed. Please contact the NBN Gateway team to help resolve this"></@importResult>
           </#if>
