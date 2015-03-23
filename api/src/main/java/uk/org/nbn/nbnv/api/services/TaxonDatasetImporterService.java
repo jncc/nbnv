@@ -222,20 +222,18 @@ public class TaxonDatasetImporterService {
         ImporterResult status = getImportHistory(datasetKey, timestamp);
         Path upload = Files.createTempFile(getImporterPath("uploads"), "reimport", ".zip");
         Path archive = getImporterPath("completed", datasetKey + "-" + timestamp, datasetKey + ".zip");
-        try {
-            try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(upload.toFile()))) {
-                try (ZipFile zipFile = new ZipFile(archive.toFile())) {
-                    for(ZipEntry entry : Collections.list(zipFile.entries())) {
-                        out.putNextEntry(new ZipEntry(entry.getName()));
-                        InputStream in = zipFile.getInputStream(entry);
-                        if(entry.getName().equals("data.tab")) {
-                            copyWithoutValidationErrors(in, out, status.getValidationErrors());
-                        }
-                        else {
-                           IOUtils.copy(in, out); 
-                        }
-                        out.closeEntry();
+        try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(upload.toFile()))) {
+            try (ZipFile zipFile = new ZipFile(archive.toFile())) {
+                for(ZipEntry entry : Collections.list(zipFile.entries())) {
+                    out.putNextEntry(new ZipEntry(entry.getName()));
+                    InputStream in = zipFile.getInputStream(entry);
+                    if(entry.getName().equals("data.tab")) {
+                        copyWithoutValidationErrors(in, out, status.getValidationErrors());
                     }
+                    else {
+                       IOUtils.copy(in, out); 
+                    }
+                    out.closeEntry();
                 }
             }
             Files.move(upload, getImporterPath("queue", datasetKey + ".zip")); //Success. Move to queue
@@ -257,14 +255,13 @@ public class TaxonDatasetImporterService {
      */
     public void queueDatasetWithSensitiveColumnSet(String datasetKey, String timestamp, boolean sensitive) throws IOException, TemplateException {
         Path upload = Files.createTempFile(getImporterPath("uploads"), "new", ".zip");
-        try {
+        try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(upload.toFile()))) {
             Path failedArchivePath = getIssuePath(datasetKey, timestamp, MISSING_SENSITIVE_COLUMN);
-            ZipFile failedArchive = new ZipFile(failedArchivePath.toFile());
-            ZipEntry failedDataTab = failedArchive.getEntry("data.tab");
-            NXFReader failedData = new NXFReader(new InputStreamReader(failedArchive.getInputStream(failedDataTab)));
-            NXFLine newHeader = failedData.readLine().append(NXFHeading.SENSITIVE.name()); //Add the sensitive column
-            
-            try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(upload.toFile()))) {
+            try (ZipFile failedArchive = new ZipFile(failedArchivePath.toFile())) {
+                ZipEntry failedDataTab = failedArchive.getEntry("data.tab");
+                NXFReader failedData = new NXFReader(new InputStreamReader(failedArchive.getInputStream(failedDataTab)));
+                NXFLine newHeader = failedData.readLine().append(NXFHeading.SENSITIVE.name()); //Add the sensitive column
+
                 PrintWriter writer = new PrintWriter(new OutputStreamWriter(out));
                 out.putNextEntry(new ZipEntry("data.tab"));
                 writer.println(newHeader.toString());
