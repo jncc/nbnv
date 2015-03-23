@@ -15,17 +15,22 @@ import static org.mockito.Matchers.eq;
 import org.mockito.Mock;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.mockito.MockitoAnnotations;
 import org.springframework.mock.web.MockHttpServletRequest;
 import uk.org.nbn.nbnv.api.dao.warehouse.DatasetAdministratorMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.DatasetMapper;
+import uk.org.nbn.nbnv.api.model.ImportCleanup;
+import static uk.org.nbn.nbnv.api.model.ImportCleanup.Operation.SET_SENSITIVE_FALSE;
+import static uk.org.nbn.nbnv.api.model.ImportCleanup.Operation.SET_SENSITIVE_TRUE;
+import static uk.org.nbn.nbnv.api.model.ImportCleanup.Operation.STRIP_INVALID_RECORDS;
 import uk.org.nbn.nbnv.api.model.ImporterResult;
 import uk.org.nbn.nbnv.api.model.TaxonDataset;
 import uk.org.nbn.nbnv.api.model.TaxonDatasetWithImportStatus;
 import uk.org.nbn.nbnv.api.model.User;
-import uk.org.nbn.nbnv.api.services.TaxonDatasetImporterService;
 import uk.org.nbn.nbnv.api.nxf.NXFReader;
+import uk.org.nbn.nbnv.api.services.TaxonDatasetImporterService;
 
 /**
  *
@@ -256,5 +261,50 @@ public class TaxonDatasetResourceTest {
         //Then
         assertEquals("Expected only one dataset", statuses.size(), 1);
         assertEquals("Expected GA000001 import status to be present", statuses.get(0).getDataset().getKey(), "GA000001");
+    }
+    
+    @Test
+    public void checkThatRequestingImportShouldHaveInvalidRecordsStripped() throws TemplateException, IOException {
+        //Given
+        User user = mock(User.class);
+        String datasetKey = "dataset";
+        String timestamp = "what's the time mr wolf";
+        ImportCleanup cleanup = new ImportCleanup(STRIP_INVALID_RECORDS);
+        
+        //When
+        resource.reprocessHistoricalImport(user, datasetKey, timestamp, cleanup);
+        
+        //Then
+        verify(service).stripInvalidRecords(datasetKey, timestamp);
+    }
+            
+    @Test
+    public void appendingSensitiveColumnWithValuesSetToTrue() throws TemplateException, IOException {
+        //Given
+        User user = mock(User.class);
+        String datasetKey = "dataset";
+        String timestamp = "what's the time mr wolf";
+        ImportCleanup cleanup = new ImportCleanup(SET_SENSITIVE_TRUE);
+        
+        //When
+        resource.reprocessHistoricalImport(user, datasetKey, timestamp, cleanup);
+        
+        //Then
+        verify(service).queueDatasetWithSensitiveColumnSet(datasetKey, timestamp, true);
+    }
+    
+    @Test
+    public void appendingSensitiveColumnWithValuesSetToFalse() throws TemplateException, IOException {
+        //Given
+        User user = mock(User.class);
+        String datasetKey = "dataset";
+        String timestamp = "what's the time mr wolf";
+        ImportCleanup cleanup = new ImportCleanup(SET_SENSITIVE_FALSE);
+        
+        //When
+        resource.reprocessHistoricalImport(user, datasetKey, timestamp, cleanup);
+        
+        //Then
+        verify(service).queueDatasetWithSensitiveColumnSet(datasetKey, timestamp, false);
     }
 }

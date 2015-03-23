@@ -34,6 +34,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import uk.org.nbn.nbnv.api.model.ImportCleanup;
 import uk.org.nbn.nbnv.api.model.ImporterResult;
 import static uk.org.nbn.nbnv.api.model.ImporterResult.State.BAD_FILE;
 import static uk.org.nbn.nbnv.api.model.ImporterResult.State.MISSING_SENSITIVE_COLUMN;
@@ -41,6 +42,7 @@ import static uk.org.nbn.nbnv.api.model.ImporterResult.State.SUCCESSFUL;
 import static uk.org.nbn.nbnv.api.model.ImporterResult.State.UNKNOWN_ERROR;
 import static uk.org.nbn.nbnv.api.model.ImporterResult.State.VALIDATION_ERRORS;
 import uk.org.nbn.nbnv.api.model.TaxonDataset;
+import uk.org.nbn.nbnv.api.model.User;
 import uk.org.nbn.nbnv.api.model.ValidationError;
 import uk.org.nbn.nbnv.api.nxf.NXFDateCoverageTracker;
 import uk.org.nbn.nbnv.api.nxf.NXFFieldMappingXMLWriter;
@@ -399,6 +401,10 @@ public class TaxonDatasetImporterService {
                 out.closeEntry();
             }
         }
+    }
+
+    public void reprocessHistoricalImport(User user, String datasetKey, String timestamp, ImportCleanup cleanup) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     private static class ProcessingLogFilter implements FilenameFilter {

@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
@@ -37,6 +38,9 @@ import uk.org.nbn.nbnv.api.dao.warehouse.DatasetMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.SurveyMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.TaxonMapper;
 import uk.org.nbn.nbnv.api.model.*;
+import static uk.org.nbn.nbnv.api.model.ImportCleanup.Operation.SET_SENSITIVE_FALSE;
+import static uk.org.nbn.nbnv.api.model.ImportCleanup.Operation.SET_SENSITIVE_TRUE;
+import static uk.org.nbn.nbnv.api.model.ImportCleanup.Operation.STRIP_INVALID_RECORDS;
 import uk.org.nbn.nbnv.api.model.meta.DatasetAccessPositionsJSON;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenDatasetAdminUser;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenTaxonObservationAttributeAdminUser;
@@ -245,14 +249,21 @@ public class TaxonDatasetResource extends AbstractResource {
     }
     
     /**
-     * Takes an import which previously failed (due to validation errors) and 
-     * puts a subset of the records (which are valid) on to the importer queue.
+     * Takes an import which previously failed (perhaps due to validation errors
+     * or missing sensitive column) and performs the requested operation.
      * 
      * If successful, the import status will be returned for the given dataset 
      * which should identify that there is a dataset in the queue.
+     *
+     * Examples of a request are:
+     *  - {"operation":"STRIP_INVALID_RECORDS"}
+     *  - {"operation":"SET_SENSITIVE_TRUE"}
+     *  - {"operation":"SET_SENSITIVE_FALSE"}
+     * 
      * @param admin The Current User if they are a dataset admin for this 
      * @param id of the dataset which failed due to validation errors
      * @param timestamp of when the dataset import failed due to validation errors
+     * @param cleanup an object containing the operation which should be performed
      * @return an http response
      * @throws TemplateException 
      */
@@ -261,13 +272,25 @@ public class TaxonDatasetResource extends AbstractResource {
     @StatusCodes({
         @ResponseCode(code = 200, condition = "Dataset queued for appending"),
         @ResponseCode(code = 400, condition = "Failed to generate the new import"),
-        @ResponseCode(code = 404, condition = "Could not find a dataset import for the given timestamp"),
+        @ResponseCode(code = 404, condition = "Could not find a dataset import with the given timestamp for which the requested operation could be performed on"),
         @ResponseCode(code = 409, condition = "Already queued for import")
     })
     @Produces(MediaType.APPLICATION_JSON)
-    public Response continueWithValidRecords(@TokenDatasetAdminUser(path="id") User admin, @PathParam("id") String id, @PathParam("timestamp") String timestamp) throws TemplateException {
+    public Response reprocessHistoricalImport(
+            @TokenDatasetAdminUser(path="id") User admin, 
+            @PathParam("id") String id, 
+            @PathParam("timestamp") String timestamp,
+            @Valid ImportCleanup cleanup) throws TemplateException {
         try {
-            importerService.stripInvalidRecords(id, timestamp);
+            if(cleanup.getOperation() == STRIP_INVALID_RECORDS) {
+                importerService.stripInvalidRecords(id, timestamp);
+            }
+            else if(cleanup.getOperation() == SET_SENSITIVE_TRUE) {
+                importerService.queueDatasetWithSensitiveColumnSet(id, timestamp, true);
+            }
+            else if(cleanup.getOperation() == SET_SENSITIVE_FALSE) {
+                importerService.queueDatasetWithSensitiveColumnSet(id, timestamp, false);
+            }
             return Response.ok(getImportStatus(admin,id)).build();
         }
         catch(NoSuchFileException ex) {
@@ -278,7 +301,7 @@ public class TaxonDatasetResource extends AbstractResource {
         }
         catch(IOException io) {
            return Response.status(BAD_REQUEST)
-                        .entity(createErrorResponse(io.getMessage())).build();
+                          .entity(createErrorResponse(io.getMessage())).build();
         }
     }
     
