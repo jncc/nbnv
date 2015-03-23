@@ -6,9 +6,7 @@ import java.io.InputStreamReader;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.NoSuchFileException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.ws.rs.Consumes;
@@ -301,7 +299,7 @@ public class TaxonDatasetResource extends AbstractResource {
         }
         catch(IOException io) {
            return Response.status(BAD_REQUEST)
-                          .entity(createErrorResponse(io.getMessage())).build();
+                          .entity(new FriendlyResponse(false, io.getMessage())).build();
         }
     }
     
@@ -498,7 +496,7 @@ public class TaxonDatasetResource extends AbstractResource {
         if(dataset != null) {
             if(importerService.isQueued(id)) {
                 return Response.status(CONFLICT)
-                                .entity(createErrorResponse("This dataset already has an import queued. You will have to delete this first"))
+                                .entity(new FriendlyResponse(false, "This dataset already has an import queued. You will have to delete this first"))
                                 .build();
             }
             
@@ -509,18 +507,11 @@ public class TaxonDatasetResource extends AbstractResource {
             }
             catch(IOException io) {
                 return Response.status(BAD_REQUEST)
-                        .entity(createErrorResponse(io.getMessage())).build();
+                        .entity(new FriendlyResponse(false, io.getMessage())).build();
             }
         }
         else {
             return Response.status(NOT_FOUND).build();
         }
-    }
-    
-    private Map<String,Object> createErrorResponse(String message) {
-        Map<String,Object> toReturn = new HashMap<>();
-        toReturn.put("success", false);
-        toReturn.put("status", message);
-        return toReturn;
     }
 }
