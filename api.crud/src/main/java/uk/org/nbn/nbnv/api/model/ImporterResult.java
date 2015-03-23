@@ -14,7 +14,7 @@ public class ImporterResult implements Comparable<ImporterResult> {
     private State state;
     
     public enum State {
-        SUCCESSFUL, VALIDATION_ERRORS, BAD_FILE, MISSING_SENSITIVE_COLUMN
+        SUCCESSFUL, VALIDATION_ERRORS, BAD_FILE, MISSING_SENSITIVE_COLUMN, UNKNOWN_ERROR
     }
     
     public ImporterResult() {}

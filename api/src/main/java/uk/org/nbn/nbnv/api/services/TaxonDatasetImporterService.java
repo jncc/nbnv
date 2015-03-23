@@ -38,6 +38,7 @@ import uk.org.nbn.nbnv.api.model.ImporterResult;
 import static uk.org.nbn.nbnv.api.model.ImporterResult.State.BAD_FILE;
 import static uk.org.nbn.nbnv.api.model.ImporterResult.State.MISSING_SENSITIVE_COLUMN;
 import static uk.org.nbn.nbnv.api.model.ImporterResult.State.SUCCESSFUL;
+import static uk.org.nbn.nbnv.api.model.ImporterResult.State.UNKNOWN_ERROR;
 import static uk.org.nbn.nbnv.api.model.ImporterResult.State.VALIDATION_ERRORS;
 import uk.org.nbn.nbnv.api.model.TaxonDataset;
 import uk.org.nbn.nbnv.api.model.ValidationError;
@@ -67,6 +68,7 @@ public class TaxonDatasetImporterService {
     private static final Pattern ISSUE_FILE_ARCHIVE = Pattern.compile(".*-[0-9]{18}-.*\\.zip");
     private static final String EXCEPTION_ERROR = "Exception";
     private static final String VALIDATION_ERRORS_LOG_ERROR = "validation errors";
+    private static final String BAD_FILE_LOG_ERROR = "invalid data file structure";
     /**
      * Looks in the processing path and determines the dataset which is 
      * currently being processed by the importer service
@@ -303,8 +305,13 @@ public class TaxonDatasetImporterService {
                 if(line.contains(VALIDATION_ERRORS_LOG_ERROR)) {
                     return VALIDATION_ERRORS;
                 }
-                else if(line.startsWith(EXCEPTION_ERROR)) { //default all exceptions to bad files
+                else if(line.contains(BAD_FILE_LOG_ERROR)) {
                     return BAD_FILE;
+                }
+                else if(line.startsWith(EXCEPTION_ERROR)) {
+                    //The importer failed, for some unknown reason. This requires
+                    //the someone to manually review the logs for this import
+                    return UNKNOWN_ERROR;
                 }
             }
         }
