@@ -346,7 +346,7 @@ public class TaxonDatasetImporterService {
     
     //Process a dataTab input stream and remove any record keys which have failed validation
     private void copyWithoutValidationErrors(InputStream dataTab, OutputStream zip, List<ValidationError> errors) throws IOException {
-        BufferedReader in = new BufferedReader(new InputStreamReader(dataTab));
+        NXFReader in = new NXFReader(new InputStreamReader(dataTab));
         PrintWriter out = new PrintWriter(zip);
         
         // Create a list of the recordKeys which need to be skipped
@@ -355,15 +355,15 @@ public class TaxonDatasetImporterService {
             keysToSkip.add(error.getRecordKey());
         }
         
-        String header = in.readLine(); //Read the header from the original data.tab        
-        int recordKeyColumn = Arrays.asList(header.toUpperCase().split("\t")).indexOf("RECORDKEY"); //Locate the record key column
-        out.println(header);           //Write the original header to the new file
+        NXFLine header = in.readLine(); //Read the header from the original data.tab        
+        int recordKeyColumn = header.getValues().indexOf(NXFHeading.RECORDKEY.name()); //Locate the record key column
+        out.println(header.toString()); //Write the original header to the new file
         
-        //Copy all non-empty lines from the input file except ones with invalid record keys
-        while(in.ready()) {
-            String line = in.readLine();
-            if(line.trim().isEmpty() || !keysToSkip.contains(line.split("\t")[recordKeyColumn])) {
-                out.println(line);
+        //Copy all lines from the input file except ones with invalid record keys
+        NXFLine line;
+        while( (line = in.readLine()) != null ) {
+            if(!keysToSkip.contains(line.getValues().get(recordKeyColumn))) {
+                out.println(line.toString());
             }
             out.flush();
         }
