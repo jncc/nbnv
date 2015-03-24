@@ -34,7 +34,7 @@ import uk.org.nbn.nbnv.api.model.TaxonDatasetWithImportStatus;
 public class DatasetImporterController {
     @Autowired WebResource resource;
     
-    @RequestMapping(value    = "/Import/Existing", 
+    @RequestMapping(value    = "/Import/Replace", 
                     consumes = "multipart/form-data",
                     method   = RequestMethod.POST)
     public ModelAndView replaceDataset(
@@ -44,17 +44,13 @@ public class DatasetImporterController {
         ServletFileUpload upload = new ServletFileUpload();
         FileItemIterator iter = upload.getItemIterator(request);
         
-        boolean isReplace = Boolean.parseBoolean(getFormField("isReplace", iter));
         String datasetKey = getFormField("key", iter);
         Map<String, Object> data = new HashMap<>();
-        data.put("isReplace", isReplace);
         try {
             WebResource importer = resource.path(String.format("taxonDatasets/%s/import", datasetKey));
             
             InputStream nbnExchangeStream = iter.next().openStream();
-            ClientResponse restResponse = (isReplace) ?
-                    importer.put(ClientResponse.class, nbnExchangeStream) :
-                    importer.post(ClientResponse.class, nbnExchangeStream);
+            ClientResponse restResponse = importer.put(ClientResponse.class, nbnExchangeStream);
             
             switch(restResponse.getStatus()) {
                 case 200: 
@@ -68,14 +64,12 @@ public class DatasetImporterController {
         } catch (IOException ex) {
             data.put("status", "Failed to communicate with the NBN Rest API");
         }
-        return new ModelAndView("importExistingDataset", data);
+        return new ModelAndView("importReplacementDataset", data);
     }
     
-    @RequestMapping(value="/Import/Existing", method = RequestMethod.GET)
-    public ModelAndView getImportExistingPage(@RequestParam("isReplace") boolean isReplace) {
-        Map<String,Object> data = new HashMap<>();
-        data.put("isReplace", isReplace);
-        return new ModelAndView("importExistingDataset", data);
+    @RequestMapping(value="/Import/Replace", method = RequestMethod.GET)
+    public ModelAndView getImportExistingPage() {
+        return new ModelAndView("importReplacementDataset");
     }
     
     @RequestMapping(value="/Import", method = RequestMethod.GET)

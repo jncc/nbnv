@@ -2,15 +2,14 @@
 
 <@template.master title="NBN import">
 
-  <h1>${isReplace?string("Replace", "Append")} a dataset</h1>
+  <h1>Replace a dataset</h1>
   <#if status??>
     <div class="message error">${status!}</div>
   </#if>
   <fieldset>
-    <form method="post" enctype="multipart/form-data" action="/Import/Existing">
+    <form method="post" enctype="multipart/form-data" action="/Import/Replace">
       <#-- WARNING - This form is processed by the DatasetImporterController. It
            expects the fields in this order -->
-      <input type="hidden" name="isReplace" value="${isReplace?string("true", "false")}">
       <p>
         <select name="key">
           <#list datasets as dataset>
@@ -22,7 +21,7 @@
         <input type="file" name="file">
       </p>
       <p>
-        <input type="submit" value="Import Dataset">
+        <input type="submit" value="Import Replacement Dataset">
         <a href="/Import">Back to Dashboard</a>
       </p>
     </form>
