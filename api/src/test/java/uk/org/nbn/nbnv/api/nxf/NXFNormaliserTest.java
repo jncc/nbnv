@@ -384,16 +384,17 @@ public class NXFNormaliserTest {
         assertEquals("Expected new lines to be removed", "1\tI have new lines in me", lines.toString());
     }
     
-    @Test(expected=IllegalArgumentException.class)
-    public void checkThatIllegalArgumentExceptionThrownWithAttsAndDynamicProperties() {
+    @Test
+    public void checkThatDynamicPropertiesGetsHandledAsANormalAttribute() {
         //Given
-        NXFLine origHeader = new NXFLine("RecordKey\tCustomColumn\tDynamicProperties");
+        NXFLine header = new NXFLine("RecordKey\tDynamicProperties");
+        NXFNormaliser normaliser = new NXFNormaliser(header);
         
         //When
-        NXFNormaliser normaliser = new NXFNormaliser(origHeader);
+        NXFLine line = normaliser.normalise(new NXFLine("1\tsome data"));
         
         //Then
-        fail("Expected it to fail because both custom attribute columns and a dynamic property column exist in the header");
+        assertEquals("Expected dynamic properties gets wrapped like attribute", "1\t{\"DYNAMICPROPERTIES\":\"some data\"}", line.toString());
     }
     
     @Test(expected=IllegalArgumentException.class)
