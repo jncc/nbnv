@@ -49,7 +49,7 @@ public class TaxonDatasetImporterServiceTest {
     
     @Before
     public void init() {
-        folder.newFolder("uploads");
+        folder.newFolder("workspace");
         folder.newFolder("queue");
         folder.newFolder("processing");
         folder.newFolder("completed");

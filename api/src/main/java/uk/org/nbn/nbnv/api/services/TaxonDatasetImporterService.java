@@ -130,7 +130,7 @@ public class TaxonDatasetImporterService {
      * @throws TemplateException if there was a problem with an underlying template
      */
     public void importDataset(NXFReader nxf, TaxonDataset dataset, boolean isUpsert) throws IOException, TemplateException {
-        Path upload = Files.createTempFile(getImporterPath("uploads"), "new", ".zip");
+        Path upload = Files.createTempFile(getImporterPath("workspace"), "new", ".zip");
         try {
             NXFNormaliser normaliser = new NXFNormaliser(nxf.readLine());
             NXFLine header = normaliser.header();
@@ -244,7 +244,7 @@ public class TaxonDatasetImporterService {
             // chance one of the files in there may be locked. This should allow
             // us atomically hide the directory from the other methods on this
             // class. If successful, just delete
-            Path tmp = getImporterPath("uploads", archive);
+            Path tmp = getImporterPath("workspace", archive);
             Files.move(getImporterPath("completed", archive), tmp);
             FileUtils.deleteDirectory(tmp.toFile());    
         }
@@ -269,7 +269,7 @@ public class TaxonDatasetImporterService {
      */
     public void stripInvalidRecords(String datasetKey, String timestamp) throws IOException, NoSuchFileException, FileAlreadyExistsException {
         ImporterResult status = getImportHistory(datasetKey, timestamp, VALIDATION_ERRORS);
-        Path upload = Files.createTempFile(getImporterPath("uploads"), "reimport", ".zip");
+        Path upload = Files.createTempFile(getImporterPath("workspace"), "reimport", ".zip");
         Path archive = getImporterPath("completed", datasetKey + "-" + timestamp, datasetKey + ".zip");
         try {
             try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(upload.toFile()))) {
@@ -299,7 +299,7 @@ public class TaxonDatasetImporterService {
      * @throws freemarker.template.TemplateException if there was a problem with an underlying template
      */
     public void queueDatasetWithSensitiveColumnSet(String datasetKey, String timestamp, boolean sensitive) throws IOException, TemplateException {
-        Path upload = Files.createTempFile(getImporterPath("uploads"), "new", ".zip");
+        Path upload = Files.createTempFile(getImporterPath("workspace"), "new", ".zip");
         try {
             try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(upload.toFile()))) {
                 Path failedArchivePath = getIssuePath(datasetKey, timestamp, MISSING_SENSITIVE_COLUMN);
