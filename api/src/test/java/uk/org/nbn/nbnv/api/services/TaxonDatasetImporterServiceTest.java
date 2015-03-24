@@ -54,6 +54,7 @@ public class TaxonDatasetImporterServiceTest {
         folder.newFolder("processing");
         folder.newFolder("completed");
         folder.newFolder("issues");
+        folder.newFolder("archived");
         
         service = new TaxonDatasetImporterService();
         service.properties = new Properties();
@@ -371,5 +372,60 @@ public class TaxonDatasetImporterServiceTest {
         
         //Then
         fail("Expected to fail as file could not have been found");
+    }
+    
+    @Test
+    public void checkThatCanArchiveSuccessfulResults() throws IOException {
+        //Given
+        folder.newFolder("completed/DATASET-201503201542082419");
+        folder.newFile("completed/DATASET-201503201542082419/ConsoleErrors.txt");
+        folder.newFile("completed/DATASET-201503201542082419/ConsoleOutput.txt");
+        
+        //When
+        service.removeImporterResult("DATASET", "201503201542082419", SUCCESSFUL);
+        
+        //Then
+        File archived = new File(folder.getRoot(), "archived/DATASET-201503201542082419");
+        assertTrue("Expected the result to have been archived", archived.exists());
+        assertTrue("Expected the result to be a directory still", archived.isDirectory());
+    }
+    
+    @Test
+    public void checkThatResultFromTheIssuesDirectoryCanBeRemoved() throws IOException {
+        //Given
+        File issue = folder.newFile("issues/DATASET-201503191619484227-MISSING_SENSITIVE_COLUMN.zip");
+        
+        //When
+        service.removeImporterResult("DATASET", "201503191619484227", MISSING_SENSITIVE_COLUMN);
+        
+        //Then
+        assertFalse("Expected the file to have been deleted", issue.exists());
+    }
+    
+    @Test
+    public void checkThatValidationErrorsGetsRemoved() throws IOException {
+        //Given
+        File validationErrors = folder.newFolder("completed/DATASET-201503201542082419");
+        File errorsLog = folder.newFile("completed/DATASET-201503201542082419/ConsoleErrors.txt");
+        folder.newFile("completed/DATASET-201503201542082419/ConsoleOutput.txt");
+        FileUtils.write(errorsLog, "validation errors");
+        
+        //When
+        service.removeImporterResult("DATASET", "201503201542082419", VALIDATION_ERRORS);
+        
+        //Then
+        assertFalse("Expected the result to have been archived", validationErrors.exists());
+    }
+    
+    @Test(expected=NoSuchFileException.class)
+    public void checkThatFailsToRemoveResultWhichDoesNotExist() throws IOException {
+        //Given
+        //Nothing
+        
+        //When
+        service.removeImporterResult("DATASET", "201503201542082419", SUCCESSFUL);
+        
+        //Then
+        fail("Expected to fail as no result is present");
     }
 }
