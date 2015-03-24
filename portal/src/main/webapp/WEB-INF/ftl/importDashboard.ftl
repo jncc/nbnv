@@ -43,7 +43,7 @@
       <ul>
         <#if status.importStatus.isOnQueue>
           <@importResult icon="clock" status="inprogress" value="Dataset Queued">
-            <@importControls><@importForm "Delete" "unqueue" status.dataset.key/></@importControls>
+            <@importControls><@importForm "Remove" "unqueue" status.dataset.key/></@importControls>
           </@importResult>
         </#if>
 
