@@ -304,6 +304,41 @@ public class TaxonDatasetResource extends AbstractResource {
     }
     
     /**
+     * Removes the importer result (which is specified by dataset key and timestamp)
+     * so that it no longer appears in the import history for that dataset.
+     * @param admin The Current User if they are a dataset admin for this 
+     * @param id of the dataset which is going to have a result removed
+     * @param timestamp of when the dataset import result occurred
+     * @return an http response
+     */
+    @DELETE
+    @Path("/{id}/import/{timestamp}")
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "The specified importer result has been deleted"),
+        @ResponseCode(code = 400, condition = "Failed to delete the specified importer result"),
+        @ResponseCode(code = 404, condition = "Could not find a dataset import with the given timestamp for which the requested operation could be performed on"),
+    })
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response removeImporterResult(
+            @TokenDatasetAdminUser(path="id") User admin, 
+            @PathParam("id") String id, 
+            @PathParam("timestamp") String timestamp) {
+        try {
+            for(ImporterResult result : importerService.getImportHistory(id)) {
+                if(result.getTimestamp().equals(timestamp)) {
+                    importerService.removeImporterResult(id, timestamp, result.getState());
+                    return Response.ok().build();
+                }
+            }
+            return Response.status(NOT_FOUND).build();
+        }
+        catch(IOException io) {
+            return Response.status(BAD_REQUEST)
+                          .entity(new FriendlyResponse(false, io.getMessage())).build();
+        }
+    }
+            
+    /**
      * Return a list of Dataset Stats of the Taxon within a Taxon Dataset from 
      * the data warehouse
      * 
