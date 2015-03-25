@@ -40,7 +40,7 @@ import static uk.org.nbn.nbnv.api.model.ImportCleanup.Operation.SET_SENSITIVE_FA
 import static uk.org.nbn.nbnv.api.model.ImportCleanup.Operation.SET_SENSITIVE_TRUE;
 import static uk.org.nbn.nbnv.api.model.ImportCleanup.Operation.STRIP_INVALID_RECORDS;
 import uk.org.nbn.nbnv.api.model.meta.DatasetAccessPositionsJSON;
-import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenDatasetAdminUser;
+import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenDatasetOrOrgAdminUser;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenTaxonObservationAttributeAdminUser;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
 import uk.org.nbn.nbnv.api.services.TaxonDatasetImporterService;
@@ -172,7 +172,7 @@ public class TaxonDatasetResource extends AbstractResource {
         @ResponseCode(code = 403, condition = "You do not have admin rights over this dataset")}
     )
     @Produces(MediaType.APPLICATION_JSON)
-    public DatasetImportStatus getImportStatus(@TokenDatasetAdminUser(path="id") User admin, @PathParam("id") String id) throws IOException {
+    public DatasetImportStatus getImportStatus(@TokenDatasetOrOrgAdminUser(path="id") User admin, @PathParam("id") String id) throws IOException {
         return new DatasetImportStatus(
                 importerService.isQueued(id),
                 id.equalsIgnoreCase(importerService.getCurrentlyProcessedDataset()),
@@ -193,7 +193,7 @@ public class TaxonDatasetResource extends AbstractResource {
         @ResponseCode(code = 204, condition = "Removed the dataset queued for import"),
         @ResponseCode(code = 404, condition = "Dataset was not queued")
     })
-    public Response removeDatasetFromQueue(@TokenDatasetAdminUser(path="id") User admin, @PathParam("id") String id) throws IOException {
+    public Response removeDatasetFromQueue(@TokenDatasetOrOrgAdminUser(path="id") User admin, @PathParam("id") String id) throws IOException {
         if(importerService.removeFromQueue(id)) {
             return Response.noContent().build();
         }
@@ -220,7 +220,7 @@ public class TaxonDatasetResource extends AbstractResource {
         @ResponseCode(code = 409, condition = "Already queued for import")
     })
     @Produces(MediaType.APPLICATION_JSON)
-    public Response queueReplacementDataset(@TokenDatasetAdminUser(path="id") User admin, @PathParam("id") String id, @Context HttpServletRequest request) throws TemplateException {
+    public Response queueReplacementDataset(@TokenDatasetOrOrgAdminUser(path="id") User admin, @PathParam("id") String id, @Context HttpServletRequest request) throws TemplateException {
         return uploadDataset(admin, id, request, true);
     }
     
@@ -242,7 +242,7 @@ public class TaxonDatasetResource extends AbstractResource {
         @ResponseCode(code = 409, condition = "Already queued for import")
     })
     @Produces(MediaType.APPLICATION_JSON)
-    public Response queueAppendDataset(@TokenDatasetAdminUser(path="id") User admin, @PathParam("id") String id, @Context HttpServletRequest request) throws TemplateException {
+    public Response queueAppendDataset(@TokenDatasetOrOrgAdminUser(path="id") User admin, @PathParam("id") String id, @Context HttpServletRequest request) throws TemplateException {
         return uploadDataset(admin, id, request, false);
     }
     
@@ -275,7 +275,7 @@ public class TaxonDatasetResource extends AbstractResource {
     })
     @Produces(MediaType.APPLICATION_JSON)
     public Response reprocessHistoricalImport(
-            @TokenDatasetAdminUser(path="id") User admin, 
+            @TokenDatasetOrOrgAdminUser(path="id") User admin, 
             @PathParam("id") String id, 
             @PathParam("timestamp") String timestamp,
             @Valid ImportCleanup cleanup) throws TemplateException {
@@ -320,7 +320,7 @@ public class TaxonDatasetResource extends AbstractResource {
     })
     @Produces(MediaType.APPLICATION_JSON)
     public Response removeImporterResult(
-            @TokenDatasetAdminUser(path="id") User admin, 
+            @TokenDatasetOrOrgAdminUser(path="id") User admin, 
             @PathParam("id") String id, 
             @PathParam("timestamp") String timestamp) {
         try {
