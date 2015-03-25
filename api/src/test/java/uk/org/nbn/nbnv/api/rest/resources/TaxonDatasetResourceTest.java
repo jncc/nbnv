@@ -22,6 +22,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.mock.web.MockHttpServletRequest;
 import uk.org.nbn.nbnv.api.dao.warehouse.DatasetAdministratorMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.DatasetMapper;
+import uk.org.nbn.nbnv.api.dao.warehouse.OrganisationMembershipMapper;
 import uk.org.nbn.nbnv.api.model.ImportCleanup;
 import static uk.org.nbn.nbnv.api.model.ImportCleanup.Operation.SET_SENSITIVE_FALSE;
 import static uk.org.nbn.nbnv.api.model.ImportCleanup.Operation.SET_SENSITIVE_TRUE;
@@ -42,6 +43,7 @@ public class TaxonDatasetResourceTest {
     @Mock TaxonDatasetImporterService service;
     @Mock DatasetMapper datasetMapper;
     @Mock DatasetAdministratorMapper datasetAdministratorMapper;
+    @Mock OrganisationMembershipMapper organisationMembershipMapper;
     
     private TaxonDatasetResource resource;
     
@@ -52,6 +54,7 @@ public class TaxonDatasetResourceTest {
         resource.datasetMapper = datasetMapper;
         resource.importerService = service;
         resource.datasetAdministratorMapper = datasetAdministratorMapper;
+        resource.organisationMembershipMapper = organisationMembershipMapper;
     }
     
     @Test

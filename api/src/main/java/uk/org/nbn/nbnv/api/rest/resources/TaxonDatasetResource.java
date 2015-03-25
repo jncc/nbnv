@@ -33,6 +33,7 @@ import uk.org.nbn.nbnv.api.dao.core.OperationalAttributeMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.AttributeMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.DatasetAdministratorMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.DatasetMapper;
+import uk.org.nbn.nbnv.api.dao.warehouse.OrganisationMembershipMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.SurveyMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.TaxonMapper;
 import uk.org.nbn.nbnv.api.model.*;
@@ -46,18 +47,21 @@ import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
 import uk.org.nbn.nbnv.api.services.TaxonDatasetImporterService;
 import uk.org.nbn.nbnv.api.utils.LimitedLineLengthReader;
 import uk.org.nbn.nbnv.api.nxf.NXFReader;
+import uk.org.nbn.nbnv.api.services.TaxonDatasetPlaceholderService;
 
 @Component
 @Path("/taxonDatasets")
 public class TaxonDatasetResource extends AbstractResource {
 
     @Autowired DatasetMapper datasetMapper;
+    @Autowired OrganisationMembershipMapper organisationMembershipMapper;
     @Autowired TaxonMapper taxonMapper;
     @Autowired SurveyMapper surveyMapper;
     @Autowired AttributeMapper attributeMapper;
     @Autowired DatasetAdministratorMapper datasetAdministratorMapper;
     @Autowired OperationalAttributeMapper oAttributeMapper;
     @Autowired TaxonDatasetImporterService importerService;
+    @Autowired TaxonDatasetPlaceholderService datasetPlaceholderService;
     
     /**
      * Return a list of all Taxon Datasets from the data warehouse
@@ -94,7 +98,7 @@ public class TaxonDatasetResource extends AbstractResource {
         @ResponseCode(code = 200, condition = "Successfully returned a list of the current users adminable datasets")
     })
     @Produces(MediaType.APPLICATION_JSON)
-    public List<TaxonDataset> adminableDatasets(@TokenUser(allowPublic=false) User user) throws IOException {
+    public List<TaxonDataset> adminableDatasets(@TokenUser(allowPublic=false) User user) {
         return datasetAdministratorMapper.selectTaxonDatasetsByUser(user.getId());
     }
     
@@ -117,7 +121,7 @@ public class TaxonDatasetResource extends AbstractResource {
     @Produces(MediaType.APPLICATION_JSON)
     public List<TaxonDatasetWithImportStatus> getImportStatusForAdminableDatasets(@TokenUser(allowPublic=false) User user) throws IOException {
         List<TaxonDatasetWithImportStatus> toReturn = new ArrayList<>();
-        for(TaxonDataset dataset: adminableDatasets(user)) {
+        for(TaxonDataset dataset: adminableAndPlaceholderDatasets(user)) {
             DatasetImportStatus status = getImportStatus(user, dataset.getKey());
             if(status.isIsOnQueue() || status.isIsProcessing() || !status.getHistory().isEmpty()) {
                 toReturn.add(new TaxonDatasetWithImportStatus(dataset, status));
@@ -548,5 +552,15 @@ public class TaxonDatasetResource extends AbstractResource {
         else {
             return Response.status(NOT_FOUND).build();
         }
+    }    
+    
+    // Grab a list of datasets which the given user is an administrator. These
+    // can exist in the database and just as placeholder entries (word documents)
+    private List<TaxonDataset> adminableAndPlaceholderDatasets(User user) {
+        List<TaxonDataset> toReturn = new ArrayList<>(adminableDatasets(user));
+        for(OrganisationMembership membership: organisationMembershipMapper.selectAdminOrganisationsByUser(user.getId())) {
+            toReturn.addAll(datasetPlaceholderService.readTaxonDatasetsFor(membership.getOrganisation().getId()));
+        }
+        return toReturn;
     }
 }
