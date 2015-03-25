@@ -531,7 +531,7 @@ public class TaxonDatasetResource extends AbstractResource {
     }
     
     private Response uploadDataset(User admin, String id, HttpServletRequest request, boolean upsert) throws TemplateException {
-        TaxonDataset dataset = datasetMapper.selectTaxonDatasetByID(id);
+        TaxonDataset dataset = getAdminableOrPlaceholderDataset(id);
         if(dataset != null) {
             if(importerService.isQueued(id)) {
                 return Response.status(CONFLICT)
@@ -553,6 +553,13 @@ public class TaxonDatasetResource extends AbstractResource {
             return Response.status(NOT_FOUND).build();
         }
     }    
+    
+    protected TaxonDataset getAdminableOrPlaceholderDataset(String id) {
+        // First check the database to see if the requested dataset exists. If
+        // it doesn't, then check the placeholder service
+        TaxonDataset dataset = datasetMapper.selectTaxonDatasetByID(id);
+        return (dataset != null) ? dataset : datasetPlaceholderService.readTaxonDataset(id);
+    }
     
     // Grab a list of datasets which the given user is an administrator. These
     // can exist in the database and just as placeholder entries (word documents)

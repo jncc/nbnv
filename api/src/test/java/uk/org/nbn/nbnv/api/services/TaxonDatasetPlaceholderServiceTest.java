@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.Properties;
 import org.apache.commons.io.IOUtils;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -116,17 +116,34 @@ public class TaxonDatasetPlaceholderServiceTest {
         assertEquals("Expected mocked dataset", mockedDataset, dataset);
     }
     
-    @Test(expected=FileNotFoundException.class)
+    @Test
     public void failsWhenAttemptingToReadMetadataDocumentWhichDoesntExist() throws FileNotFoundException {
         //Given
         String datasetKey = "something that doesn't exist";
         int organisationId = 4000;
+        when(metadataFormService.readWordDocument(anyInt(), any(InputStream.class)))
+                .thenReturn(mock(TaxonDataset.class));
         
         //When
         TaxonDataset dataset = service.readTaxonDataset(organisationId, datasetKey);
         
         //Then
-        fail("Expected to not find the specified file");
+        assertNull("Expected to not find the specified file", dataset);
+    }
+    
+    @Test
+    public void checkCanLocatedPlaceholderDatasetWithoutSupplyingOrganisationId() throws IOException {
+        //Given
+        folder.newFile("5000-SomeDataset1.doc");
+        TaxonDataset mockedDataset = mock(TaxonDataset.class);
+        when(metadataFormService.readWordDocument(anyInt(), any(InputStream.class)))
+                .thenReturn(mockedDataset);
+        
+        //When
+        TaxonDataset dataset = service.readTaxonDataset("SomeDataset1");
+        
+        //Then
+        assertEquals("Expected mocked dataset", mockedDataset, dataset);
     }
     
     @Test
@@ -135,6 +152,8 @@ public class TaxonDatasetPlaceholderServiceTest {
         folder.newFile("5000-SomeDataset1.doc");
         folder.newFile("5000-SomeDataset2.doc");
         folder.newFile("3333-Someoneelses.doc");
+        when(metadataFormService.readWordDocument(anyInt(), any(InputStream.class)))
+                .thenReturn(mock(TaxonDataset.class));
         
         //When
         List<TaxonDataset> datasets = service.readTaxonDatasetsFor(5000);

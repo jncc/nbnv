@@ -34,6 +34,7 @@ import uk.org.nbn.nbnv.api.model.TaxonDatasetWithImportStatus;
 import uk.org.nbn.nbnv.api.model.User;
 import uk.org.nbn.nbnv.api.nxf.NXFReader;
 import uk.org.nbn.nbnv.api.services.TaxonDatasetImporterService;
+import uk.org.nbn.nbnv.api.services.TaxonDatasetPlaceholderService;
 
 /**
  *
@@ -44,6 +45,7 @@ public class TaxonDatasetResourceTest {
     @Mock DatasetMapper datasetMapper;
     @Mock DatasetAdministratorMapper datasetAdministratorMapper;
     @Mock OrganisationMembershipMapper organisationMembershipMapper;
+    @Mock TaxonDatasetPlaceholderService datasetPlaceholderService;
     
     private TaxonDatasetResource resource;
     
@@ -55,6 +57,7 @@ public class TaxonDatasetResourceTest {
         resource.importerService = service;
         resource.datasetAdministratorMapper = datasetAdministratorMapper;
         resource.organisationMembershipMapper = organisationMembershipMapper;
+        resource.datasetPlaceholderService = datasetPlaceholderService;
     }
     
     @Test
@@ -361,5 +364,34 @@ public class TaxonDatasetResourceTest {
         
         //Then
         assertEquals("Expected 400 response", 400, response.getStatus());
+    }
+    
+    @Test
+    public void checkCanLocateTaxonDatasetFromPlaceholderServiceIfNotInDatabase() {
+        //Given
+        String datasetKey = "something not in database";
+        TaxonDataset mockedDataset = mock(TaxonDataset.class);
+        when(datasetMapper.selectTaxonDatasetByID(datasetKey)).thenReturn(null);
+        when(datasetPlaceholderService.readTaxonDataset(datasetKey)).thenReturn(mockedDataset);
+        
+        //When
+        TaxonDataset dataset = resource.getAdminableOrPlaceholderDataset(datasetKey);
+        
+        //Then
+        assertEquals("Expected the mocked dataset", mockedDataset, dataset);
+    }
+        
+    @Test
+    public void checkCanLocateTaxonDatasetFromPlaceholderServiceWhenInDatabase() {
+        //Given
+        String datasetKey = "something not in database";
+        TaxonDataset mockedDataset = mock(TaxonDataset.class);
+        when(datasetMapper.selectTaxonDatasetByID(datasetKey)).thenReturn(mockedDataset);
+        
+        //When
+        TaxonDataset dataset = resource.getAdminableOrPlaceholderDataset(datasetKey);
+        
+        //Then
+        assertEquals("Expected the mocked dataset", mockedDataset, dataset);
     }
 }

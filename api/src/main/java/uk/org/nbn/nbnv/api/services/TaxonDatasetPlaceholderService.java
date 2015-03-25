@@ -80,13 +80,28 @@ public class TaxonDatasetPlaceholderService {
      * supplied organisation id as a TaxonDataset.
      * @param organisationId attributed to owning the dataset placeholder
      * @param datasetKey generated when the original word document was stored
-     * @return the taxon dataset represented by the data in the word document
-     * @throws FileNotFoundException if the specified datasetkey + organisation
-     *  doesn't exist
+     * @return the taxon dataset represented by the data in the word document or
+     *  null if no taxon dataset could be found
      */
-    public TaxonDataset readTaxonDataset(int organisationId, String datasetKey) throws FileNotFoundException {
-        File doc = getWordDocument(organisationId, datasetKey);
-        return metadataFormService.readWordDocument(organisationId, new FileInputStream(doc));
+    public TaxonDataset readTaxonDataset(int organisationId, String datasetKey) {
+        try {
+            File doc = getWordDocument(organisationId, datasetKey);
+            return metadataFormService.readWordDocument(organisationId, new FileInputStream(doc));
+        }
+        catch(FileNotFoundException fnfe) {
+            return null;
+        }
+    }
+    
+    /**
+     * Reads the placeholder taxon dataset which is represented by the supplied
+     * dataset key
+     * @param datasetKey to locate
+     * @return A taxon dataset representation of the word document or null if no
+     *  dataset could be found
+     */
+    public TaxonDataset readTaxonDataset(String datasetKey) {
+        return readTaxonDataset(getOwningOrganisationAdmin(datasetKey), datasetKey);
     }
     
     /**
@@ -116,13 +131,13 @@ public class TaxonDatasetPlaceholderService {
         File[] files = datasetsPath.listFiles(new OrganisationsDatasetMetadataFileFilter(organisationId));
         List<TaxonDataset> toReturn = new ArrayList<>();
         for(File metadataFile: files) {
-            try {
-                int start = metadataFile.getName().indexOf('-') + 1;
-                int end = metadataFile.getName().indexOf('.');
-                String datasetKey = metadataFile.getName().substring(start, end);
-                toReturn.add(readTaxonDataset(organisationId, datasetKey));
+            int start = metadataFile.getName().indexOf('-') + 1;
+            int end = metadataFile.getName().indexOf('.');
+            String datasetKey = metadataFile.getName().substring(start, end);
+            TaxonDataset dataset = readTaxonDataset(organisationId, datasetKey);
+            if(dataset != null) { //Files may have been removed post .listFiles
+                toReturn.add(dataset);
             }
-            catch(FileNotFoundException fnfe) {} //Files have been deleted whilst listing
         }
         return toReturn;
     }
