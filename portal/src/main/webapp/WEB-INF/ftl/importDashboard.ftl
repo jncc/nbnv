@@ -43,7 +43,7 @@
       <ul>
         <#if status.importStatus.isOnQueue>
           <@importResult icon="clock" status="inprogress" value="Dataset Queued">
-            <@importControls><@importForm "Delete" "delete" status.dataset.key/></@importControls>
+            <@importControls><@importForm "Remove" "unqueue" status.dataset.key/></@importControls>
           </@importResult>
         </#if>
 
@@ -52,11 +52,18 @@
         </#if>
 
         <#list status.importStatus.history as importStatus>
-          <#if importStatus.state.name() == "SUCCESS">
-            <@importResult icon="check" status="success" timestamp=importStatus.time value="Import completed successfully"></@importResult>
+          <#if importStatus.state.name() == "SUCCESSFUL">
+            <@importResult icon="check" status="success" timestamp=importStatus.time value="Import completed successfully">
+              <@importControls>
+                <@importForm "Remove" "remove" status.dataset.key importStatus.timestamp/>
+              </@importControls>
+            </@importResult>
           <#elseif importStatus.state.name() == "VALIDATION_ERRORS">
             <@importResult icon="notice" status="warning" timestamp=importStatus.time value="Import failed with validation errors">
-              <@importControls><@importForm "Import valid records" "importValid" status.dataset.key importStatus.timestamp/></@importControls>
+              <@importControls>
+                <@importForm "Import valid records" "importValid" status.dataset.key importStatus.timestamp/>
+                <@importForm "Remove" "remove" status.dataset.key importStatus.timestamp/>
+              </@importControls>
               <table class="nbn-simple-table">
                 <tr><th>Record Key</th><th>Rule</th><th>Message</th></tr>
                 <#list importStatus.validationErrors as error>
@@ -70,6 +77,9 @@
             </@importResult>
 	  <#elseif importStatus.state.name() == "BAD_FILE">
             <@importResult icon="alert" status="error" timestamp=importStatus.time value="The uploaded file could not be imported">
+              <@importControls>
+                <@importForm "Remove" "remove" status.dataset.key importStatus.timestamp/>
+              </@importControls>
               <table class="nbn-simple-table">
                 <tr><th>Data Issue</th><th>Rule</th><th>Message</th></tr>
                 <#list importStatus.validationErrors as error>
@@ -86,10 +96,15 @@
               <@importControls>
                 <@importForm "Import all as Sensitive" "sensitiveTrue" status.dataset.key importStatus.timestamp/>
                 <@importForm "Import all as Non-Sensitive" "sensitiveFalse" status.dataset.key importStatus.timestamp/>
+                <@importForm "Remove" "remove" status.dataset.key importStatus.timestamp/>
               </@importControls>
             </@importResult>
           <#else>
-            <@importResult icon="alert" status="error" timestamp=importStatus.time value="Import failed. Please contact the NBN Gateway team to help resolve this"></@importResult>
+            <@importResult icon="alert" status="error" timestamp=importStatus.time value="Import failed. Please contact the NBN Gateway team to help resolve this">
+              <@importControls>
+                <@importForm "Remove" "remove" status.dataset.key importStatus.timestamp/>
+              </@importControls>
+            </@importResult>
           </#if>
         </#list>
       </ul>

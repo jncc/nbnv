@@ -24,18 +24,21 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Properties;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.org.nbn.nbnv.api.model.ImportCleanup;
 import uk.org.nbn.nbnv.api.model.ImporterResult;
+import uk.org.nbn.nbnv.api.model.ImporterResult.State;
 import static uk.org.nbn.nbnv.api.model.ImporterResult.State.BAD_FILE;
 import static uk.org.nbn.nbnv.api.model.ImporterResult.State.MISSING_SENSITIVE_COLUMN;
 import static uk.org.nbn.nbnv.api.model.ImporterResult.State.SUCCESSFUL;
@@ -68,6 +71,8 @@ public class TaxonDatasetImporterService {
     
     private static final Pattern VALIDATION_LOG_LINE = Pattern.compile("[0-9]{4}-[A-z]{3}-[0-9]{2}\\s[0-9]{2}\\:[0-9]{2}\\:[0-9]{2}\\sERROR\\sValidation.*");
     private static final Pattern ISSUE_FILE_ARCHIVE = Pattern.compile(".*-[0-9]{18}-.*\\.zip");
+    private static final EnumSet<State> ISSUE_STATES = EnumSet.of(MISSING_SENSITIVE_COLUMN);
+    private static final EnumSet<State> COMPLETED_STATES = EnumSet.complementOf(ISSUE_STATES);
     private static final String EXCEPTION_ERROR = "Exception";
     private static final String VALIDATION_ERRORS_LOG_ERROR = "validation errors";
     private static final String BAD_FILE_LOG_ERROR = "invalid data file structure";
@@ -125,7 +130,7 @@ public class TaxonDatasetImporterService {
      * @throws TemplateException if there was a problem with an underlying template
      */
     public void importDataset(NXFReader nxf, TaxonDataset dataset, boolean isUpsert) throws IOException, TemplateException {
-        Path upload = Files.createTempFile(getImporterPath("uploads"), "new", ".zip");
+        Path upload = Files.createTempFile(getImporterPath("workspace"), "new", ".zip");
         try {
             NXFNormaliser normaliser = new NXFNormaliser(nxf.readLine());
             NXFLine header = normaliser.header();
@@ -213,6 +218,44 @@ public class TaxonDatasetImporterService {
     }
     
     /**
+     * Remove the importer result as specified by the given datasetkey, timestamp
+     * and state. This method will actually delete the result from disk in all
+     * cases other than when that result was successful. In which case it will
+     * be moved to the archive directory.
+     * @param datasetKey to find the import result of
+     * @param timestamp when the import result occurred
+     * @param state that the import result is expected to be in
+     * @throws IOException if there was a problem removing the result
+     * @throws NoSuchFileException if no importer result exists
+     */
+    public void removeImporterResult(String datasetKey, String timestamp, ImporterResult.State state) throws IOException {
+        //Make sure that the requested importer result actually exists
+        ImporterResult result = getImportHistory(datasetKey, timestamp, state);
+        String archive = datasetKey + "-" + result.getTimestamp();
+        if(state == SUCCESSFUL) {
+            // We want to keep the successful imports, but hide them from the
+            // end user. Just move them in to the archived directory to be moved
+            // at a later time
+            Files.move(getImporterPath("completed", archive), getImporterPath("archived", archive));
+        }
+        else if(COMPLETED_STATES.contains(state)) {
+            // Anything else in the completed directory should just be deleted.
+            // We move the directory into the workspace as there is a slight 
+            // chance one of the files in there may be locked. This should allow
+            // us atomically hide the directory from the other methods on this
+            // class. If successful, just delete
+            Path tmp = getImporterPath("workspace", archive);
+            Files.move(getImporterPath("completed", archive), tmp);
+            FileUtils.deleteDirectory(tmp.toFile());    
+        }
+        else if(ISSUE_STATES.contains(state)) {
+            // Issue states have not been processed by the importer and as such
+            // exist as a single file. Just delete
+            Files.delete(getIssuePath(datasetKey, timestamp, state));
+        }
+    }
+    
+    /**
      * Grab an archived upload from the completed directory and process the NBN 
      * Exchange Format file to remove any lines which have been flagged as invalid.
      * 
@@ -226,7 +269,7 @@ public class TaxonDatasetImporterService {
      */
     public void stripInvalidRecords(String datasetKey, String timestamp) throws IOException, NoSuchFileException, FileAlreadyExistsException {
         ImporterResult status = getImportHistory(datasetKey, timestamp, VALIDATION_ERRORS);
-        Path upload = Files.createTempFile(getImporterPath("uploads"), "reimport", ".zip");
+        Path upload = Files.createTempFile(getImporterPath("workspace"), "reimport", ".zip");
         Path archive = getImporterPath("completed", datasetKey + "-" + timestamp, datasetKey + ".zip");
         try {
             try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(upload.toFile()))) {
@@ -256,7 +299,7 @@ public class TaxonDatasetImporterService {
      * @throws freemarker.template.TemplateException if there was a problem with an underlying template
      */
     public void queueDatasetWithSensitiveColumnSet(String datasetKey, String timestamp, boolean sensitive) throws IOException, TemplateException {
-        Path upload = Files.createTempFile(getImporterPath("uploads"), "new", ".zip");
+        Path upload = Files.createTempFile(getImporterPath("workspace"), "new", ".zip");
         try {
             try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(upload.toFile()))) {
                 Path failedArchivePath = getIssuePath(datasetKey, timestamp, MISSING_SENSITIVE_COLUMN);

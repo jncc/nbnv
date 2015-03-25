@@ -80,7 +80,7 @@ public class DatasetImporterController {
         return new ModelAndView("importDashboard", data);
     }
     
-    @RequestMapping(value="/Import", method = RequestMethod.POST, params="op=delete")
+    @RequestMapping(value="/Import", method = RequestMethod.POST, params="op=unqueue")
     public ModelAndView deleteQueuedDataset(@RequestParam("datasetKey") String datasetKey) {
         ClientResponse response = resource
                 .path(String.format("taxonDatasets/%s/import", datasetKey))
@@ -92,6 +92,23 @@ public class DatasetImporterController {
             case 401: throw new UniformInterfaceException(response);
             case 404: return model.addObject("error", "Could not find " + datasetKey);
             default:  return model.addObject("error", "The NBN Gateway API failed. If this continues please contact us using the forums");
+        }
+    }
+    
+    @RequestMapping(value="/Import", method = RequestMethod.POST, params="op=remove")
+    public ModelAndView removeImporterResult(@RequestParam("datasetKey") String datasetKey, @RequestParam("timestamp") String timestamp) {
+        ClientResponse response = resource
+                .path(String.format("taxonDatasets/%s/import/%s", datasetKey, timestamp))
+                .delete(ClientResponse.class);
+        
+        ModelAndView model = getImporterDashboard();
+        switch(response.getStatus()) {
+            case 200: return model.addObject("message", "Removed dataset importer result for dataset: " + datasetKey);
+            case 401: throw new UniformInterfaceException(response);
+            case 404: return model.addObject("error", "Could not find an existing import for " + datasetKey + " with the timestamp " + timestamp);
+            default:  
+                String status = (String)response.getEntity(Map.class).get("status");
+                return model.addObject("error", "The NBN Gateway API failed. If this continues please contact us using the forums. " + status);
         }
     }
     

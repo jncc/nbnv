@@ -4,6 +4,7 @@ import freemarker.template.TemplateException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
@@ -26,6 +27,7 @@ import static uk.org.nbn.nbnv.api.model.ImportCleanup.Operation.SET_SENSITIVE_FA
 import static uk.org.nbn.nbnv.api.model.ImportCleanup.Operation.SET_SENSITIVE_TRUE;
 import static uk.org.nbn.nbnv.api.model.ImportCleanup.Operation.STRIP_INVALID_RECORDS;
 import uk.org.nbn.nbnv.api.model.ImporterResult;
+import static uk.org.nbn.nbnv.api.model.ImporterResult.State.SUCCESSFUL;
 import uk.org.nbn.nbnv.api.model.TaxonDataset;
 import uk.org.nbn.nbnv.api.model.TaxonDatasetWithImportStatus;
 import uk.org.nbn.nbnv.api.model.User;
@@ -306,5 +308,55 @@ public class TaxonDatasetResourceTest {
         
         //Then
         verify(service).queueDatasetWithSensitiveColumnSet(datasetKey, timestamp, false);
+    }
+    
+    @Test
+    public void removingAnImporterResultWhichExists() throws IOException {
+        //Given
+        User user = mock(User.class);
+        String datasetKey = "dataset";
+        String timestamp = "sponsored by accurist";
+        
+        when(service.getImportHistory(datasetKey)).thenReturn(Arrays.asList(
+            new ImporterResult(SUCCESSFUL, timestamp))
+        );
+        //When
+        Response response = resource.removeImporterResult(user, datasetKey, timestamp);
+        
+        //Then
+        verify(service).removeImporterResult(datasetKey, timestamp, SUCCESSFUL);
+        assertEquals("Expected 200 response", 200, response.getStatus());
+    }
+    
+    @Test
+    public void removingAnImporterResultWhichDoesntExist() throws IOException {
+        //Given
+        User user = mock(User.class);
+        String datasetKey = "dataset";
+        String timestamp = "hammer time";
+        
+        when(service.getImportHistory(datasetKey)).thenReturn(Collections.EMPTY_LIST);
+        
+        //When
+        Response response = resource.removeImporterResult(user, datasetKey, timestamp);
+        
+        //Then
+        assertEquals("Expected 404 response", 404, response.getStatus());
+    }
+    
+    @Test
+    public void removingAnImportResultWhichFails() throws IOException {
+        //Given
+        User user = mock(User.class);
+        String datasetKey = "dataset";
+        String timestamp = "October 21st 2015";
+        
+        when(service.getImportHistory(datasetKey)).thenThrow(new IOException("Epic fail"));
+        
+        //When
+        Response response = resource.removeImporterResult(user, datasetKey, timestamp);
+        
+        //Then
+        assertEquals("Expected 400 response", 400, response.getStatus());
     }
 }
