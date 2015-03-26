@@ -37,9 +37,30 @@ public class TaxonDatasetMetadataImportService {
         return getTaxonDataset(importer.parseDocument(paragraphs, paragraphsIt, new HashMap<String,String>(), messages));
     }
     
-    public TaxonDataset getTaxonDataset(Map<String,String> metadataMapping){
+    TaxonDataset getTaxonDataset(Map<String,String> metadata){
         TaxonDataset toReturn = new TaxonDataset();
         //TODO create TaxonDataset from metadata
+        
+        //No solution has been found to extract checkboxes from a Word document
+        //into Java.  Poi is the library used to work with Word documents in Java
+        //and it does not have an implementation for this.  Therefore, the best
+        //that can be done is to set the most conservative defaults for the public's
+        //view of resolution, attributes and recorder
+        toReturn.setPublicResolution("10000");
+        toReturn.setPublicAttribute(false);
+        toReturn.setPublicRecorder(false);
+        
+        toReturn.setTitle(metadata.get(WordImporter.META_TITLE));
+        toReturn.setDescription(metadata.get(WordImporter.META_DESC));
+        toReturn.setCaptureMethod(metadata.get(WordImporter.META_CAPTURE_METHOD));
+        toReturn.setPurpose(metadata.get(WordImporter.META_PURPOSE));
+        toReturn.setGeographicalCoverage(metadata.get(WordImporter.META_GEOCOVER));
+        toReturn.setTemporalCoverage(metadata.get(WordImporter.META_TEMPORAL));
+        toReturn.setQuality(metadata.get(WordImporter.META_DATA_CONFIDENCE));
+        toReturn.setAdditionalInformation(metadata.get(WordImporter.META_ADDITIONAL_INFO));
+        toReturn.setAccessConstraints(metadata.get(WordImporter.META_ACCESS_CONSTRAINT));
+        toReturn.setUseConstraints(metadata.get(WordImporter.META_USE_CONSTRAINT));
+        
         return toReturn;
     }
     
