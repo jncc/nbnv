@@ -153,7 +153,17 @@
             <artifactId>commons-codec</artifactId>
             <version>1.6</version>
         </dependency>
- 
+         <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>3.8</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-scratchpad</artifactId>
+            <version>3.8</version>
+        </dependency>        
+
         <!-- Jersey + Spring -->
         <dependency>
             <groupId>com.sun.jersey.contribs</groupId>
@@ -246,7 +256,13 @@
             <version>2.5</version>
             <scope>provided</scope>
         </dependency>
-        
+
+        <dependency>
+            <groupId>org.reflections</groupId>
+            <artifactId>reflections</artifactId>
+            <version>0.9.8</version>
+        </dependency>
+
         <!--Test-->            
         <dependency>
             <groupId>org.hsqldb</groupId>
