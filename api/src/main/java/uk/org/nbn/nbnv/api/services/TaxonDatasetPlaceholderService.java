@@ -86,7 +86,9 @@ public class TaxonDatasetPlaceholderService {
     public TaxonDataset readTaxonDataset(int organisationId, String datasetKey) {
         try {
             File doc = getWordDocument(organisationId, datasetKey);
-            return metadataFormService.readWordDocument(organisationId, new FileInputStream(doc));
+            TaxonDataset dataset = metadataFormService.readWordDocument(organisationId, new FileInputStream(doc));
+            dataset.setKey(datasetKey);
+            return dataset;
         }
         catch(FileNotFoundException fnfe) {
             return null;

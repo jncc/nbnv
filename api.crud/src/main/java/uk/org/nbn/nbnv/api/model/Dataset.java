@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 @XmlRootElement
 public class Dataset {
@@ -264,5 +265,20 @@ public class Dataset {
      */
     public void setContributingOrganisations(List<Organisation> contributingOrganisations) {
         this.contributingOrganisations = contributingOrganisations;
+    }
+    
+    /**
+     * A dataset is considered a placeholder dataset if it does not have a
+     * dataset key which is 8 characters long (e.g. not in the form GA000466).
+     * 
+     * This is useful for dealing with datasets which are not currently in the
+     * database. Such is the case when generating a dataset from a Species
+     * Metadata Word document. These are supplied to the NBN Gateway when a
+     * dataset is imported for the first time.
+     * @return if this is a placeholder dataset or not
+     */
+    @XmlTransient
+    public boolean isPlaceholder() {
+        return key != null && key.length() != 8;
     }
 }

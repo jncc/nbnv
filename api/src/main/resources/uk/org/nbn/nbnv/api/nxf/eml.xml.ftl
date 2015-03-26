@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <eml:eml xmlns:eml="eml://ecoinformatics.org/eml-2.1.1" xmlns="eml://ecoinformatics.org/eml-2.1.1" xmlns:dc="http://purl.org/dc/terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" packageId="NBN//eml-1.xml" scope="system" system="GBIF" xml:lang="en" xsi:schemaLocation="eml://ecoinformatics.org/eml-2.1.1 eml.xsd">
 <dataset>
+<#if dataset.isPlaceholder()>
+<alternateIdentifier/>
+<#else>
 <alternateIdentifier>${dataset.key}</alternateIdentifier>
+</#if>
 <title xml:lang="en">${dataset.title}</title>
 <creator>
 <organizationName>${dataset.organisationName}</organizationName>
