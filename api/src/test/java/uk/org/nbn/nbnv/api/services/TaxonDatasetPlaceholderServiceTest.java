@@ -18,8 +18,11 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import org.mockito.Mock;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.mockito.MockitoAnnotations;
+import uk.org.nbn.nbnv.api.dao.warehouse.OrganisationMapper;
+import uk.org.nbn.nbnv.api.model.Organisation;
 import uk.org.nbn.nbnv.api.model.TaxonDataset;
 
 /**
@@ -28,6 +31,7 @@ import uk.org.nbn.nbnv.api.model.TaxonDataset;
  */
 public class TaxonDatasetPlaceholderServiceTest {
     @Mock MetadataWordDocumentService metadataFormService;
+    @Mock OrganisationMapper organisationMapper;
     @Rule public TemporaryFolder folder = new TemporaryFolder();
     
     private TaxonDatasetPlaceholderService service;
@@ -39,6 +43,7 @@ public class TaxonDatasetPlaceholderServiceTest {
         service.properties = new Properties();
         service.properties.setProperty("taxondataset_metadata_forms", folder.getRoot().getAbsolutePath());
         service.metadataFormService = metadataFormService;
+        service.organisationMapper = organisationMapper;
         service.init();
     }
     
@@ -160,5 +165,22 @@ public class TaxonDatasetPlaceholderServiceTest {
         
         //Then
         assertEquals("Expected only two datasets to be loaded", datasets.size(), 2);
+    }
+    
+    @Test
+    public void checkThatCanDatasetHasOrganisationAttached() throws IOException {
+        //Given
+        folder.newFile("5000-SomeDataset1.doc");
+        TaxonDataset mockedDataset = mock(TaxonDataset.class);
+        Organisation mockedOrganisation = mock(Organisation.class);
+        when(metadataFormService.readWordDocument(anyInt(), any(InputStream.class)))
+                .thenReturn(mockedDataset);
+        when(organisationMapper.selectByID(5000)).thenReturn(mockedOrganisation);
+        
+        //When
+        service.readTaxonDataset(5000, "SomeDataset1");
+        
+        //Then
+        verify(mockedDataset).setOrganisation(mockedOrganisation);
     }
 }

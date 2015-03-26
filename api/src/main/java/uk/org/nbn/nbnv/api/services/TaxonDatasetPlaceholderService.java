@@ -15,6 +15,7 @@ import javax.annotation.PostConstruct;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import uk.org.nbn.nbnv.api.dao.warehouse.OrganisationMapper;
 import uk.org.nbn.nbnv.api.model.TaxonDataset;
 
 /**
@@ -34,6 +35,7 @@ import uk.org.nbn.nbnv.api.model.TaxonDataset;
 public class TaxonDatasetPlaceholderService {
     @Autowired Properties properties;
     @Autowired MetadataWordDocumentService metadataFormService;
+    @Autowired OrganisationMapper organisationMapper;
     
     private File datasetsPath;
     
@@ -88,6 +90,7 @@ public class TaxonDatasetPlaceholderService {
             File doc = getWordDocument(organisationId, datasetKey);
             TaxonDataset dataset = metadataFormService.readWordDocument(organisationId, new FileInputStream(doc));
             dataset.setKey(datasetKey);
+            dataset.setOrganisation(organisationMapper.selectByID(organisationId));
             return dataset;
         }
         catch(FileNotFoundException fnfe) {
