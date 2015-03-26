@@ -67,7 +67,7 @@ public class TaxonDatasetPlaceholderService {
             //open it
             FileUtils.copyInputStreamToFile(wordDocument, upload);
             //Make sure that we can actually read the supplied document
-            dataset = metadataFormService.readWordDocument(organisationId, wordDocument); 
+            dataset = metadataFormService.readWordDocument(wordDocument); 
             return placeholderKey;
         }
         finally {
@@ -88,7 +88,7 @@ public class TaxonDatasetPlaceholderService {
     public TaxonDataset readTaxonDataset(int organisationId, String datasetKey) {
         try {
             File doc = getWordDocument(organisationId, datasetKey);
-            TaxonDataset dataset = metadataFormService.readWordDocument(organisationId, new FileInputStream(doc));
+            TaxonDataset dataset = metadataFormService.readWordDocument(new FileInputStream(doc));
             dataset.setKey(datasetKey);
             dataset.setOrganisation(organisationMapper.selectByID(organisationId));
             return dataset;

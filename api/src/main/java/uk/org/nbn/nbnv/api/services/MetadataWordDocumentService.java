@@ -17,7 +17,7 @@ public class MetadataWordDocumentService {
     //
     // If the supplied input stream can not be fully transformed into a 
     // TaxonDataset we need to throw an exception.
-    public TaxonDataset readWordDocument(int organisationId, InputStream input) {
+    public TaxonDataset readWordDocument(InputStream input) {
         return new TaxonDataset();
     }
 }
