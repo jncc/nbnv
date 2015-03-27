@@ -1,5 +1,7 @@
 package uk.org.nbn.nbnv.api.nxf.metadata;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -8,7 +10,7 @@ import java.util.Map;
  *
  * @author Matt Debont
  */
-public interface WordImporter {      
+public interface WordImporter {
     
     // Default Organisation Descriptors
     public static final String ORG_ABBREVIATION = "Abbreviation";
@@ -50,6 +52,17 @@ public interface WordImporter {
         META_RECORDERS, META_RECORD_ATT, META_SET_GEORES, META_TEMPORAL,
         META_TITLE, META_USE_CONSTRAINT
     };  
+    
+    /**
+     * An array of the mandatory metadata elements that should be found when
+     * a Word metadata document is parsed
+     */
+    public static final String[] WORD_METADATA_MANDATORY_ELEMENTS = {
+        ORG_NAME, ORG_DESC, ORG_CONTACT_NAME, ORG_EMAIL, ORG_ADDRESS, ORG_POSTCODE,
+        ORG_PHONE, META_TITLE, META_DESC, META_CAPTURE_METHOD, META_PURPOSE, 
+        META_DATA_CONFIDENCE, META_ACCESS_CONSTRAINT
+    };
+    public static final HashSet<String> VALIDATION_KEYS = new HashSet<>(Arrays.asList(WORD_METADATA_MANDATORY_ELEMENTS));
     
     // Default Input form elements for Word doc
     public static final String INPUT_TEXT = "FORMTEXT";
