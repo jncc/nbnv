@@ -123,14 +123,15 @@ public class WordImporter_3_0 implements WordImporter {
                                 }
                                 if (matcher.group(6).replaceAll("âââââ", "").replaceAll("     ", "").trim().isEmpty()) {
                                     errors.add("No date provided in the NBN Gateway Data Provider Agreement section of Metadata form");
-                                }
-                                try {
-                                    if (df.parse(matcher.group(6).replaceAll("âââââ", "").replaceAll("     ", "")).after(new Date())) {
-                                        errors.add("Future date provided in the NBN Gateway Data Provider Agreement section of Metadata form");
+                                } else {
+                                    try {
+                                        if (df.parse(matcher.group(6).replaceAll("âââââ", "").replaceAll("     ", "")).after(new Date())) {
+                                            errors.add("Future date provided in the NBN Gateway Data Provider Agreement section of Metadata form");
+                                        }
+                                    } catch(ParseException ex) {
+                                        errors.add("Invalid date provided in the NBN Gateway Data Provider Agreement section of Metadata form: " + matcher.group(6));
                                     }
-                                } catch(ParseException ex) {
-                                    errors.add("Invalid date provided in the NBN Gateway Data Provider Agreement section of Metadata form: " + matcher.group(6));
-                                }                                    
+                                }
                             } else {
                                 errors.add("Unable to read the NBN Gateway Data Provider Agreement section of Metadata form");
                             }      

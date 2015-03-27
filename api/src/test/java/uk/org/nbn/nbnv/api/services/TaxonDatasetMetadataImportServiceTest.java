@@ -1,6 +1,7 @@
 package uk.org.nbn.nbnv.api.services;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.After;
@@ -165,9 +166,12 @@ public class TaxonDatasetMetadataImportServiceTest {
     public void taxonDatasetFromValid_3_1_document() throws IOException, InstantiationException, IllegalAccessException, MetadataValidationException {
         //Given
         TaxonDatasetMetadataImportService instance = new TaxonDatasetMetadataImportService();
+        TaxonDataset actual = null;
         
         //When
-        TaxonDataset actual = instance.getTaxonDataset(getClass().getResourceAsStream("/test-metadata/Metadata-Form-for-Species-Datasets-v3-1.doc"));
+        try(InputStream in = getClass().getResourceAsStream("/test-metadata/Metadata-Form-for-Species-Datasets-v3-1.doc")){
+            actual = instance.getTaxonDataset(in);
+        }
         
         //Then
         assertEquals("TaxonDataset has incorrect title", "TEST 1km-Demonstration dataset for record access on the NBN Gateway", actual.getTitle());
@@ -184,11 +188,16 @@ public class TaxonDatasetMetadataImportServiceTest {
 
     @Test
     public void taxonDatasetFromValid_3_3_document() throws IOException, InstantiationException, IllegalAccessException, MetadataValidationException {
+        
+        
         //Given
         TaxonDatasetMetadataImportService instance = new TaxonDatasetMetadataImportService();
-        
+        TaxonDataset actual = null;
+
         //When
-        TaxonDataset actual = instance.getTaxonDataset(getClass().getResourceAsStream("/test-metadata/Metadata-Form-for-Species-Datasets-v3-3.doc"));
+        try(InputStream in = getClass().getResourceAsStream("/test-metadata/Metadata-Form-for-Species-Datasets-v3-3.doc")){
+            actual = instance.getTaxonDataset(in);
+        }
         
         //Then
         assertEquals("TaxonDataset has incorrect title", "TEST 1km-Demonstration dataset for record access on the NBN Gateway", actual.getTitle());
@@ -201,5 +210,61 @@ public class TaxonDatasetMetadataImportServiceTest {
         assertEquals("TaxonDataset has incorrect additional information", "This is just a test metadata document", actual.getAdditionalInformation());
         assertEquals("TaxonDataset has incorrect access constraints", "TEST 1km-In future, to allow demonstration of the access controls on the NBN Gateway, a range of access constraints will be applied to this dataset. For demonstration the Treecreeper records are flagged as sensitive.", actual.getAccessConstraints());
         assertEquals("TaxonDataset has incorrect use constraint", "Use constraints limited to testing", actual.getUseConstraints());
+    }
+    
+    @Test
+    public void metadataForm_3_3_MandatoryFields() throws IOException, InstantiationException, IllegalAccessException {
+        //Given
+        TaxonDatasetMetadataImportService instance = new TaxonDatasetMetadataImportService();
+        List<String> errors = new ArrayList<>();
+        
+        //When
+        try{
+            instance.getTaxonDataset(getClass().getResourceAsStream("/test-metadata/v3-3-missing-mandatory.doc"));
+        }catch(MetadataValidationException ex){
+            errors = ex.getErrors();
+        }
+        
+        //Then
+        String messageTemplate = "No error for '%s'";
+        String expectedTemplate = "Missing required information '%s'";
+        assertTrue(String.format(messageTemplate, WordImporter.ORG_NAME), errors.contains(String.format(expectedTemplate, WordImporter.ORG_NAME)));
+        assertTrue(String.format(messageTemplate,WordImporter.ORG_DESC), errors.contains(String.format(expectedTemplate, WordImporter.ORG_DESC)));
+        assertTrue(String.format(messageTemplate,WordImporter.ORG_CONTACT_NAME), errors.contains(String.format(expectedTemplate, WordImporter.ORG_CONTACT_NAME)));
+        assertTrue(String.format(messageTemplate,WordImporter.ORG_EMAIL), errors.contains(String.format(expectedTemplate, WordImporter.ORG_EMAIL)));
+        assertTrue(String.format(messageTemplate,WordImporter.ORG_ADDRESS), errors.contains(String.format(expectedTemplate, WordImporter.ORG_ADDRESS)));
+        assertTrue(String.format(messageTemplate,WordImporter.ORG_POSTCODE), errors.contains(String.format(expectedTemplate, WordImporter.ORG_POSTCODE)));
+        assertTrue(String.format(messageTemplate,WordImporter.ORG_PHONE), errors.contains(String.format(expectedTemplate, WordImporter.ORG_PHONE)));
+        assertTrue(String.format(messageTemplate,WordImporter.META_NAME), errors.contains(String.format(expectedTemplate, WordImporter.META_NAME)));
+        assertTrue(String.format(messageTemplate,WordImporter.META_CONTACT_PHONE), errors.contains(String.format(expectedTemplate, WordImporter.META_CONTACT_PHONE)));
+        assertTrue(String.format(messageTemplate,WordImporter.META_EMAIL), errors.contains(String.format(expectedTemplate, WordImporter.META_EMAIL)));
+        assertTrue(String.format(messageTemplate,WordImporter.META_TITLE), errors.contains(String.format(expectedTemplate, WordImporter.META_TITLE)));
+        assertTrue(String.format(messageTemplate,WordImporter.META_DESC), errors.contains(String.format(expectedTemplate, WordImporter.META_DESC)));
+        assertTrue(String.format(messageTemplate,WordImporter.META_CAPTURE_METHOD), errors.contains(String.format(expectedTemplate, WordImporter.META_CAPTURE_METHOD)));
+        assertTrue(String.format(messageTemplate,WordImporter.META_PURPOSE), errors.contains(String.format(expectedTemplate, WordImporter.META_PURPOSE)));
+        assertTrue(String.format(messageTemplate,WordImporter.META_DATA_CONFIDENCE), errors.contains(String.format(expectedTemplate, WordImporter.META_DATA_CONFIDENCE)));
+        assertTrue(String.format(messageTemplate,WordImporter.META_ACCESS_CONSTRAINT), errors.contains(String.format(expectedTemplate, WordImporter.META_ACCESS_CONSTRAINT)));
+        assertTrue("No error for missing name in data provider agreement section ", errors.contains("No name provided in the NBN Gateway Data Provider Agreement section of Metadata form"));
+        assertTrue("No error for missing date in data provider agreement section ", errors.contains("No date provided in the NBN Gateway Data Provider Agreement section of Metadata form"));
+        assertFalse("Error found when there shouldn't be one for 'future date in data provider agreement section'", errors.contains("Future date provided in the NBN Gateway Data Provider Agreement section of Metadata form"));
+        assertFalse("Error found when there shouldn't be one for 'unreadable data provider agreement section'", errors.contains("Unable to read the NBN Gateway Data Provider Agreement section of Metadata form"));
+    }
+    
+    @Test
+    public void metadataForm_3_3_futureDate() throws IOException, InstantiationException, IllegalAccessException {
+        //Given
+        TaxonDatasetMetadataImportService instance = new TaxonDatasetMetadataImportService();
+        List<String> errors = new ArrayList<>();
+        
+        //When
+        try{
+            instance.getTaxonDataset(getClass().getResourceAsStream("/test-metadata/v3-3-future-date.doc"));
+        }catch(MetadataValidationException ex){
+            errors = ex.getErrors();
+        }
+        
+        //Then
+        assertEquals("Should only find 1 error message", 1, errors.size());
+        assertTrue("No error found for future date in the data provider agreement section ", errors.contains("Future date provided in the NBN Gateway Data Provider Agreement section of Metadata form"));
     }
 }
