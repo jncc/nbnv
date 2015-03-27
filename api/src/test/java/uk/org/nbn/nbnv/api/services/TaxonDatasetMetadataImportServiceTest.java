@@ -219,7 +219,7 @@ public class TaxonDatasetMetadataImportServiceTest {
         List<String> errors = new ArrayList<>();
         
         //When
-        try{InputStream in = getClass().getResourceAsStream("/test-metadata/v3-3-missing-mandatory.doc");
+        try(InputStream in = getClass().getResourceAsStream("/test-metadata/v3-3-missing-mandatory.doc")){
             instance.getTaxonDataset(in);
         }catch(MetadataValidationException ex){
             errors = ex.getErrors();
