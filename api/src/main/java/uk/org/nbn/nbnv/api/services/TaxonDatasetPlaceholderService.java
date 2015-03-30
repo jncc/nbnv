@@ -34,7 +34,7 @@ import uk.org.nbn.nbnv.api.model.TaxonDataset;
 @Service
 public class TaxonDatasetPlaceholderService {
     @Autowired Properties properties;
-    @Autowired MetadataWordDocumentService metadataFormService;
+    @Autowired TaxonDatasetMetadataArchiveService metadataFormService;
     @Autowired OrganisationMapper organisationMapper;
     
     private File datasetsPath;
@@ -87,8 +87,9 @@ public class TaxonDatasetPlaceholderService {
      * @param datasetKey generated when the original archived word document was stored
      * @return the taxon dataset represented by the data in the word document or
      *  null if no taxon dataset could be found
+     * @throws java.io.IOException if failed to read the document archive
      */
-    public TaxonDataset readTaxonDataset(int organisationId, String datasetKey) {
+    public TaxonDataset readTaxonDataset(int organisationId, String datasetKey) throws IOException {
         File doc = getWordDocument(organisationId, datasetKey);
         if(doc.exists()) {
             TaxonDataset dataset = metadataFormService.readWordDocument(doc);
@@ -107,8 +108,9 @@ public class TaxonDatasetPlaceholderService {
      * @param datasetKey to locate
      * @return A taxon dataset representation of the word document combined with
      *  the json object from the archive or null if no dataset could be found
+     * @throws java.io.IOException if failed to read the document archive
      */
-    public TaxonDataset readTaxonDataset(String datasetKey) {
+    public TaxonDataset readTaxonDataset(String datasetKey) throws IOException {
         return readTaxonDataset(getOwningOrganisationAdmin(datasetKey), datasetKey);
     }
     
@@ -134,8 +136,9 @@ public class TaxonDatasetPlaceholderService {
      * @param organisationId which is attributed to placeholder datasets
      * @return a list of placeholder TaxonDatasets associated with the provided
      *  organisationId
+     * @throws java.io.IOException if failed to read the document archive
      */
-    public List<TaxonDataset> readTaxonDatasetsFor(int organisationId) {
+    public List<TaxonDataset> readTaxonDatasetsFor(int organisationId) throws IOException {
         File[] files = datasetsPath.listFiles(new OrganisationsDatasetMetadataFileFilter(organisationId));
         List<TaxonDataset> toReturn = new ArrayList<>();
         for(File metadataFile: files) {

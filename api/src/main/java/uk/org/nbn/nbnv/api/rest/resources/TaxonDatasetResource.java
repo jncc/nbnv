@@ -531,30 +531,32 @@ public class TaxonDatasetResource extends AbstractResource {
     }
     
     private Response uploadDataset(User admin, String id, HttpServletRequest request, boolean upsert) throws TemplateException {
-        TaxonDataset dataset = getAdminableOrPlaceholderDataset(id);
-        if(dataset != null) {
-            if(importerService.isQueued(id)) {
-                return Response.status(CONFLICT)
-                                .entity(new FriendlyResponse(false, "This dataset already has an import queued. You will have to delete this first"))
-                                .build();
+        try {
+            TaxonDataset dataset = getAdminableOrPlaceholderDataset(id);
+            if(dataset != null) {
+                if(importerService.isQueued(id)) {
+                    return Response.status(CONFLICT)
+                                    .entity(new FriendlyResponse(false, "This dataset already has an import queued. You will have to delete this first"))
+                                    .build();
+                }
+
+                // Create a nxfreader which will fail when reading lines which are too long
+                try ( NXFReader nxf = new NXFReader(new LimitedLineLengthReader(new InputStreamReader(request.getInputStream()))) ) {
+                    importerService.importDataset(nxf, dataset, upsert);
+                    return Response.ok(getImportStatus(admin,id)).build();
+                }
             }
-            
-            // Create a nxfreader which will fail when reading lines which are too long
-            try ( NXFReader nxf = new NXFReader(new LimitedLineLengthReader(new InputStreamReader(request.getInputStream()))) ) {
-                importerService.importDataset(nxf, dataset, upsert);
-                return Response.ok(getImportStatus(admin,id)).build();
-            }
-            catch(IOException io) {
-                return Response.status(BAD_REQUEST)
-                        .entity(new FriendlyResponse(false, io.getMessage())).build();
+            else {
+                return Response.status(NOT_FOUND).build();
             }
         }
-        else {
-            return Response.status(NOT_FOUND).build();
+        catch(IOException io) {
+            return Response.status(BAD_REQUEST)
+                    .entity(new FriendlyResponse(false, io.getMessage())).build();
         }
     }    
     
-    protected TaxonDataset getAdminableOrPlaceholderDataset(String id) {
+    protected TaxonDataset getAdminableOrPlaceholderDataset(String id) throws IOException {
         // First check the database to see if the requested dataset exists. If
         // it doesn't, then check the placeholder service
         TaxonDataset dataset = datasetMapper.selectTaxonDatasetByID(id);
@@ -563,7 +565,7 @@ public class TaxonDatasetResource extends AbstractResource {
     
     // Grab a list of datasets which the given user is an administrator. These
     // can exist in the database and just as placeholder entries (word documents)
-    private List<TaxonDataset> adminableAndPlaceholderDatasets(User user) {
+    private List<TaxonDataset> adminableAndPlaceholderDatasets(User user) throws IOException {
         List<TaxonDataset> toReturn = new ArrayList<>(adminableDatasets(user));
         for(OrganisationMembership membership: organisationMembershipMapper.selectAdminOrganisationsByUser(user.getId())) {
             toReturn.addAll(datasetPlaceholderService.readTaxonDatasetsFor(membership.getOrganisation().getId()));

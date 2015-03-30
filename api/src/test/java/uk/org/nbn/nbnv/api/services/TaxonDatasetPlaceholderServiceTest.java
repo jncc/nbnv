@@ -1,7 +1,6 @@
 package uk.org.nbn.nbnv.api.services;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -29,7 +28,7 @@ import uk.org.nbn.nbnv.api.model.TaxonDataset;
  * @author cjohn
  */
 public class TaxonDatasetPlaceholderServiceTest {
-    @Mock MetadataWordDocumentService metadataFormService;
+    @Mock TaxonDatasetMetadataArchiveService metadataFormService;
     @Mock OrganisationMapper organisationMapper;
     @Rule public TemporaryFolder folder = new TemporaryFolder();
     
@@ -87,7 +86,7 @@ public class TaxonDatasetPlaceholderServiceTest {
     }
     
     @Test
-    public void checkThatFailureToReadMetadataFormYeildsNoWordDocumentOnDisk() {
+    public void checkThatFailureToReadMetadataFormYeildsNoWordDocumentOnDisk() throws IOException {
          //Given
         InputStream input = IOUtils.toInputStream("Not really a word document");
         int organisation = 7331;
@@ -121,7 +120,7 @@ public class TaxonDatasetPlaceholderServiceTest {
     }
     
     @Test
-    public void failsWhenAttemptingToReadMetadataDocumentWhichDoesntExist() {
+    public void failsWhenAttemptingToReadMetadataDocumentWhichDoesntExist() throws IOException {
         //Given
         String datasetKey = "something that doesn't exist";
         int organisationId = 4000;
