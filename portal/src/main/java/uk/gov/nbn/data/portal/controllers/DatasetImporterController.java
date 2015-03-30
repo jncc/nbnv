@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLEncoder;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
@@ -19,7 +20,9 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.fileupload.util.Streams;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -126,6 +129,28 @@ public class DatasetImporterController {
     public ModelAndView continueWithSensitiveSetToFalse(@RequestParam("datasetKey") String datasetKey, @RequestParam("timestamp") String timestamp) {
         return performImportCleanup(datasetKey, timestamp, SET_SENSITIVE_FALSE);
     }
+    
+    @RequestMapping(value="/Import/New/Metadata", method = RequestMethod.GET)
+    public ModelAndView getNewMetadatForm(){
+        return new ModelAndView("importNewDataset");
+    }
+    
+    
+    @RequestMapping(value="/Import/New/Metadata", method = RequestMethod.POST)
+    public ModelAndView uploadMetadata(){
+        //TODO: Forward the request to the api
+        //On success (api will give you the dataset key) return the next model 
+        //and view, otherwise return the importNewDatasetView
+        //return new 
+    }
+    
+    @RequestMapping(value="/Import/New", method = RequestMethod.POST)
+    public ModelAndView getImportNewDatasetPage() {
+        //Upload the dataset to new dataset key which was generated after upload
+        //of the word document
+        
+    }
+    
     
     private ModelAndView performImportCleanup(String datasetKey, String timestamp, ImportCleanup.Operation operation) {
         ClientResponse response = resource
