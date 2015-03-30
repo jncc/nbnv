@@ -1,6 +1,6 @@
 package uk.org.nbn.nbnv.api.services;
 
-import java.io.InputStream;
+import java.io.File;
 import org.springframework.stereotype.Service;
 import uk.org.nbn.nbnv.api.model.TaxonDataset;
 
@@ -17,7 +17,7 @@ public class MetadataWordDocumentService {
     //
     // If the supplied input stream can not be fully transformed into a 
     // TaxonDataset we need to throw an exception.
-    public TaxonDataset readWordDocument(InputStream input) {
+    public TaxonDataset readWordDocument(File input) {
         return new TaxonDataset();
     }
 }

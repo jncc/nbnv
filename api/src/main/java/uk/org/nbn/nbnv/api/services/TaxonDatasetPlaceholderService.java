@@ -70,7 +70,7 @@ public class TaxonDatasetPlaceholderService {
             //open it
             FileUtils.copyInputStreamToFile(wordDocument, upload);
             //Make sure that we can actually read the supplied document
-            dataset = metadataFormService.readWordDocument(wordDocument); 
+            dataset = metadataFormService.readWordDocument(upload); 
             return placeholderKey;
         }
         finally {
@@ -89,14 +89,14 @@ public class TaxonDatasetPlaceholderService {
      *  null if no taxon dataset could be found
      */
     public TaxonDataset readTaxonDataset(int organisationId, String datasetKey) {
-        try {
-            File doc = getWordDocument(organisationId, datasetKey);
-            TaxonDataset dataset = metadataFormService.readWordDocument(new FileInputStream(doc));
+        File doc = getWordDocument(organisationId, datasetKey);
+        if(doc.exists()) {
+            TaxonDataset dataset = metadataFormService.readWordDocument(doc);
             dataset.setKey(datasetKey);
             dataset.setOrganisation(organisationMapper.selectByID(organisationId));
             return dataset;
         }
-        catch(FileNotFoundException fnfe) {
+        else {
             return null;
         }
     }
