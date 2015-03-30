@@ -15,7 +15,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyInt;
 import org.mockito.Mock;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -50,7 +49,7 @@ public class TaxonDatasetPlaceholderServiceTest {
     @Test
     public void getOrganisationIdForOwnerOfPlaceholderDatasetKey() throws IOException {
         //Given
-        folder.newFile("12-My-Metadata-Placeholder-Key.doc");
+        folder.newFile("12-My-Metadata-Placeholder-Key.zip");
         
         //When
         int owningOrganisation = service.getOwningOrganisationAdmin("My-Metadata-Placeholder-Key");
@@ -109,7 +108,7 @@ public class TaxonDatasetPlaceholderServiceTest {
     @Test
     public void checkThatCanReadGivenOrganisationsDatasetFile() throws IOException {
         //Given
-        File wordDoc = folder.newFile("5000-SomeDataset.doc");
+        File wordDoc = folder.newFile("5000-SomeDataset.zip");
         TaxonDataset mockedDataset = mock(TaxonDataset.class);
         when(metadataFormService.readWordDocument(any(InputStream.class)))
                 .thenReturn(mockedDataset);
@@ -139,7 +138,7 @@ public class TaxonDatasetPlaceholderServiceTest {
     @Test
     public void checkCanLocatedPlaceholderDatasetWithoutSupplyingOrganisationId() throws IOException {
         //Given
-        folder.newFile("5000-SomeDataset1.doc");
+        folder.newFile("5000-SomeDataset1.zip");
         TaxonDataset mockedDataset = mock(TaxonDataset.class);
         when(metadataFormService.readWordDocument(any(InputStream.class)))
                 .thenReturn(mockedDataset);
@@ -154,9 +153,9 @@ public class TaxonDatasetPlaceholderServiceTest {
     @Test
     public void checkThatCanObtainAListOfDatasetsAttributedToAGivenOrganisationId() throws IOException {
         //Given
-        folder.newFile("5000-SomeDataset1.doc");
-        folder.newFile("5000-SomeDataset2.doc");
-        folder.newFile("3333-Someoneelses.doc");
+        folder.newFile("5000-SomeDataset1.zip");
+        folder.newFile("5000-SomeDataset2.zip");
+        folder.newFile("3333-Someoneelses.zip");
         when(metadataFormService.readWordDocument(any(InputStream.class)))
                 .thenReturn(mock(TaxonDataset.class));
         
@@ -170,7 +169,7 @@ public class TaxonDatasetPlaceholderServiceTest {
     @Test
     public void checkThatCanDatasetHasOrganisationAttached() throws IOException {
         //Given
-        folder.newFile("5000-SomeDataset1.doc");
+        folder.newFile("5000-SomeDataset1.zip");
         TaxonDataset mockedDataset = mock(TaxonDataset.class);
         Organisation mockedOrganisation = mock(Organisation.class);
         when(metadataFormService.readWordDocument(any(InputStream.class)))
