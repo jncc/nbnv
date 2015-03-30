@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import uk.org.nbn.nbnv.api.model.ImportCleanup;
 import static uk.org.nbn.nbnv.api.model.ImportCleanup.Operation.SET_SENSITIVE_FALSE;
@@ -132,24 +133,38 @@ public class DatasetImporterController {
     
     @RequestMapping(value="/Import/New/Metadata", method = RequestMethod.GET)
     public ModelAndView getNewMetadatForm(){
-        return new ModelAndView("importNewDataset");
+        return new ModelAndView("importNewMetadata");
     }
     
-    
-    @RequestMapping(value="/Import/New/Metadata", method = RequestMethod.POST)
-    public ModelAndView uploadMetadata(){
+    @RequestMapping(value    = "/Import/New/Metadata", 
+                    consumes = "multipart/form-data",
+                    method   = RequestMethod.POST)
+    @ResponseBody
+    public String uploadMetadata(HttpServletRequest request,
+            HttpServletResponse response) throws FileUploadException, IOException{
+        
+        ServletFileUpload upload = new ServletFileUpload();
+        FileItemIterator iter = upload.getItemIterator(request);
+        
+        String resolution = getFormFieldOrEmptyString("resolution", iter);
+        String recordAtts = getFormFieldOrEmptyString("recordAtts", iter);
+        String recorderNames = getFormFieldOrEmptyString("recorderNames", iter);
+        
+        return resolution + ", " + recordAtts + ", " + recorderNames;
+        
         //TODO: Forward the request to the api
         //On success (api will give you the dataset key) return the next model 
         //and view, otherwise return the importNewDatasetView
         //return new 
     }
-    
-    @RequestMapping(value="/Import/New", method = RequestMethod.POST)
-    public ModelAndView getImportNewDatasetPage() {
-        //Upload the dataset to new dataset key which was generated after upload
-        //of the word document
-        
-    }
+//    
+//    @RequestMapping(value="/Import/New", method = RequestMethod.POST)
+//    public ModelAndView getImportNewDatasetPage() {
+//        //Upload the dataset to new dataset key which was generated after upload
+//        //of the word document
+//        return null;
+//        
+//    }
     
     
     private ModelAndView performImportCleanup(String datasetKey, String timestamp, ImportCleanup.Operation operation) {
@@ -176,6 +191,16 @@ public class DatasetImporterController {
         }
         else {
             throw new IllegalArgumentException("Expected to find the form field: " + name);
+        }
+    }
+    
+    private String getFormFieldOrEmptyString(String name, FileItemIterator iterator) throws FileUploadException, IOException {
+        FileItemStream field = iterator.next();
+        if(field.isFormField() && field.getFieldName().equals(name)) {
+            return Streams.asString(field.openStream());
+        }
+        else {
+            return "";
         }
     }
     
