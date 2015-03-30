@@ -6,11 +6,14 @@ import com.sun.jersey.api.client.UniformInterfaceException;
 import com.sun.jersey.api.client.WebResource;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 import java.net.URLEncoder;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.fileupload.FileItemIterator;
@@ -18,20 +21,20 @@ import org.apache.commons.fileupload.FileItemStream;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.fileupload.util.Streams;
+import org.apache.commons.io.IOUtils;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import uk.org.nbn.nbnv.api.model.ImportCleanup;
 import static uk.org.nbn.nbnv.api.model.ImportCleanup.Operation.SET_SENSITIVE_FALSE;
 import static uk.org.nbn.nbnv.api.model.ImportCleanup.Operation.SET_SENSITIVE_TRUE;
 import static uk.org.nbn.nbnv.api.model.ImportCleanup.Operation.STRIP_INVALID_RECORDS;
+import uk.org.nbn.nbnv.api.model.TaxonDatasetAdditions;
 import uk.org.nbn.nbnv.api.model.TaxonDatasetWithImportStatus;
 
 @Controller
@@ -41,34 +44,15 @@ public class DatasetImporterController {
     @RequestMapping(value    = "/Import/Replace", 
                     consumes = "multipart/form-data",
                     method   = RequestMethod.POST)
-    public ModelAndView replaceDataset(
-            HttpServletRequest request,
-            HttpServletResponse response) throws IOException, FileUploadException{
+    public ModelAndView replaceDataset(HttpServletRequest request, HttpServletResponse response) {
+        return handleDatasetUpload("importReplacementDataset", request, response);
+    }    
         
-        ServletFileUpload upload = new ServletFileUpload();
-        FileItemIterator iter = upload.getItemIterator(request);
-        
-        String datasetKey = getFormField("key", iter);
-        Map<String, Object> data = new HashMap<>();
-        try {
-            WebResource importer = resource.path(String.format("taxonDatasets/%s/import", datasetKey));
-            
-            InputStream nbnExchangeStream = iter.next().openStream();
-            ClientResponse restResponse = importer.put(ClientResponse.class, nbnExchangeStream);
-            
-            switch(restResponse.getStatus()) {
-                case 200: 
-                    response.sendRedirect("/Import"); //Great stuff!! Jump back to the dashboard
-                    return null;
-                case 401: throw new UniformInterfaceException(restResponse);
-                default:
-                    //Get the error message from the response
-                    data.put("status", restResponse.getEntity(Map.class).get("status"));
-            }
-        } catch (IOException ex) {
-            data.put("status", "Failed to communicate with the NBN Rest API");
-        }
-        return new ModelAndView("importReplacementDataset", data);
+    @RequestMapping(value    = "/Import/New", 
+                    consumes = "multipart/form-data",
+                    method   = RequestMethod.POST)
+    public ModelAndView newDataset(HttpServletRequest request, HttpServletResponse response) {
+        return handleDatasetUpload("importNewDataset", request, response);
     }
     
     @RequestMapping(value="/Import/Replace", method = RequestMethod.GET)
@@ -131,41 +115,103 @@ public class DatasetImporterController {
         return performImportCleanup(datasetKey, timestamp, SET_SENSITIVE_FALSE);
     }
     
-    @RequestMapping(value="/Import/New/Metadata", method = RequestMethod.GET)
+    @RequestMapping(value="/Import/NewMetadata", method = RequestMethod.GET)
     public ModelAndView getNewMetadatForm(){
         return new ModelAndView("importNewMetadata");
     }
     
-    @RequestMapping(value    = "/Import/New/Metadata", 
+    @RequestMapping(value    = "/Import/NewMetadata", 
                     consumes = "multipart/form-data",
                     method   = RequestMethod.POST)
-    @ResponseBody
-    public String uploadMetadata(HttpServletRequest request,
-            HttpServletResponse response) throws FileUploadException, IOException{
-        
+    public ModelAndView uploadMetadata(HttpServletRequest request, HttpServletResponse response){
         ServletFileUpload upload = new ServletFileUpload();
-        FileItemIterator iter = upload.getItemIterator(request);
-        
-        String resolution = getFormFieldOrEmptyString("resolution", iter);
-        String recordAtts = getFormFieldOrEmptyString("recordAtts", iter);
-        String recorderNames = getFormFieldOrEmptyString("recorderNames", iter);
-        
-        return resolution + ", " + recordAtts + ", " + recorderNames;
-        
-        //TODO: Forward the request to the api
-        //On success (api will give you the dataset key) return the next model 
-        //and view, otherwise return the importNewDatasetView
-        //return new 
-    }
-//    
-//    @RequestMapping(value="/Import/New", method = RequestMethod.POST)
-//    public ModelAndView getImportNewDatasetPage() {
-//        //Upload the dataset to new dataset key which was generated after upload
-//        //of the word document
-//        return null;
-//        
-//    }
+        Map<String, Object> data = new HashMap<>();
+        try {
+            FileItemIterator iter = upload.getItemIterator(request);
+
+            String organisationId = getFormFieldOrEmptyString("organisation", iter);
+            TaxonDatasetAdditions additions = new TaxonDatasetAdditions();
+            additions.setResolution(getFormFieldOrEmptyString("resolution", iter));
+            additions.setRecordAttributes(Boolean.parseBoolean(getFormFieldOrEmptyString("recordAtts", iter)));
+            additions.setRecorderNames(Boolean.parseBoolean(getFormFieldOrEmptyString("recorderNames", iter)));
+
+            InputStream wordDocumentInputStream = iter.next().openStream();
+
+            WebResource importer = resource.path(String.format("organisations/%s/datasets", organisationId));
+            
+            ClientResponse restResponse = importer
+                    .type("application/zip")
+                    .post(ClientResponse.class, zip(additions, wordDocumentInputStream));
+            
+            switch(restResponse.getStatus()) {
+                case 200:
+                    data.put("datasetKey", restResponse.getEntity(String.class));
+                    return new ModelAndView("importNewDataset", data);
+                case 401: throw new UniformInterfaceException(restResponse);
+                default:
+                    //Get the error message from the response
+                    data.put("status", restResponse.getEntity(Map.class).get("status"));
+            }
+        } catch (IOException ex) {
+            data.put("status", "Failed to communicate with the NBN Rest API");
+        } catch (FileUploadException ex) {
+            data.put("status", "There was an issue whilst uploading " + ex.getMessage());
+        }
+        return new ModelAndView("importNewMetadata", data);
+    }    
     
+    private ModelAndView handleDatasetUpload(String view, HttpServletRequest request, HttpServletResponse response) {
+        ServletFileUpload upload = new ServletFileUpload();
+        Map<String, Object> data = new HashMap<>();
+        try {
+            FileItemIterator iter = upload.getItemIterator(request);
+
+            String datasetKey = getFormField("key", iter);
+            data.put("datasetKey", datasetKey);
+            WebResource importer = resource.path(String.format("taxonDatasets/%s/import", datasetKey));
+            
+            InputStream nbnExchangeStream = iter.next().openStream();
+            ClientResponse restResponse = importer.put(ClientResponse.class, nbnExchangeStream);
+            
+            switch(restResponse.getStatus()) {
+                case 200: 
+                    response.sendRedirect("/Import"); //Great stuff!! Jump back to the dashboard
+                    return null;
+                case 401: throw new UniformInterfaceException(restResponse);
+                default:
+                    //Get the error message from the response
+                    data.put("status", restResponse.getEntity(Map.class).get("status"));
+            }
+        } catch (IOException ex) {
+            data.put("status", "Failed to communicate with the NBN Rest API");
+        } catch (FileUploadException ex) {
+            data.put("status", "There was an issue whilst uploading " + ex.getMessage());
+        }
+        return new ModelAndView(view, data);
+    }
+    
+    // Wrap the TaxonDatasetAdditions and the input stream of a word document
+    // and produce an input stream which represents a zip with both contained
+    // inside
+    private InputStream zip(final TaxonDatasetAdditions additions, final InputStream wordDocument) throws IOException {
+        final PipedOutputStream src = new PipedOutputStream();
+        PipedInputStream toReturn = new PipedInputStream(src);
+        
+        new Thread() {
+            @Override
+            public void run() {
+                try (ZipOutputStream out = new ZipOutputStream(src)) {
+                    out.putNextEntry(new ZipEntry("form.doc"));
+                    IOUtils.copyLarge(wordDocument, out);
+                    out.putNextEntry(new ZipEntry("additions.json"));
+                    new ObjectMapper().writeValue(out, additions);
+                    out.closeEntry();
+                }
+                catch(IOException io) {}
+            }
+        }.start();
+        return toReturn;
+    }
     
     private ModelAndView performImportCleanup(String datasetKey, String timestamp, ImportCleanup.Operation operation) {
         ClientResponse response = resource
