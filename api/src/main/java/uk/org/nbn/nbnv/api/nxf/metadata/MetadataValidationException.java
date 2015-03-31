@@ -29,7 +29,7 @@ public class MetadataValidationException extends Exception{
     }
 
     @Override
-    public String getMessage(){
+    public String toString(){
         return "Encountered these errors in the Word metadata document:\n" + StringUtils.join(errors, "\n");
     }
 }

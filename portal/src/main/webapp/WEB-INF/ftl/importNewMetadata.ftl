@@ -5,7 +5,7 @@
     Before you can add a new taxon dataset you must provide its metadata.  Do this by filling in the form below, which includes uploading a Word metadata document you have previously filled in (available <a href="http://www.nbn.org.uk/Share-Data/Providing-Data/Metadata-form-for-species-datasets.aspx">here</a>).  Press 'Import Metadata' to submit and go to the Taxon Dataset Upload page.
   </p>
   <#if status??>
-    <div class="message error">${status?html?replace("\n", "<br>")?replace("uk.org.nbn.nbnv.api.nxf.metadata.MetadataValidationException: ", "")}</div>
+    <div class="message error">${status?html?replace("\n", "<br>")}</div>
   </#if>
   <fieldset>
     <form action="NewMetadata" method="POST" enctype="multipart/form-data" >
