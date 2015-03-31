@@ -32,6 +32,7 @@
 
 <@template.master title="NBN import" csss=["//ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/themes/smoothness/jquery-ui.css"]>
   <div class="import-page-generated">Generated: ${.now} <a href="/Import">Refresh</a></div>
+  <h1>Importer Dashboard</h1>
 
   <p>
     <#if statuses?has_content>
