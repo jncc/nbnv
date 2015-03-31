@@ -291,7 +291,7 @@ public class OrganisationResource extends AbstractResource {
      * 
      * Where:
      * - resolution is the geographic resolution which the general public 
-     * will see records at. (i.e. one of 10km, 2km, 1km, 100m)
+     * will see records at. (i.e. one of 10km, 2km, 1km, 100m or 'No Access')
      * - recorderNames is a boolean indicating weather or not the recorder name(s)
      *  are made publicly available
      * - recorderAttributes is a boolean indicating weather or not the dataset 

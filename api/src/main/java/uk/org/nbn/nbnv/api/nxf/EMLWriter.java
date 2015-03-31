@@ -8,6 +8,7 @@ import java.io.Writer;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.commons.lang.ObjectUtils;
 import uk.org.nbn.nbnv.api.model.TaxonDataset;
 
 /**

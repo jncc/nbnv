@@ -135,12 +135,9 @@ public class DatasetImporterController {
         Map<String, Object> data = new HashMap<>();
         try {
             FileItemIterator iter = upload.getItemIterator(request);
-
-            String organisationId = getFormFieldOrEmptyString("organisation", iter);
+            
             TaxonDatasetAdditions additions = new TaxonDatasetAdditions();
-            additions.setResolution(getFormFieldOrEmptyString("resolution", iter));
-            additions.setRecordAttributes(Boolean.parseBoolean(getFormFieldOrEmptyString("recordAtts", iter)));
-            additions.setRecorderNames(Boolean.parseBoolean(getFormFieldOrEmptyString("recorderNames", iter)));
+            String organisationId = readNewDatasetOrganisation(iter, additions);
 
             InputStream wordDocumentInputStream = iter.next().openStream();
 
@@ -244,8 +241,8 @@ public class DatasetImporterController {
     
     private String getFormField(String name, FileItemIterator iterator) throws FileUploadException, IOException {
         FileItemStream field = iterator.next();
-        if(field.isFormField() && field.getFieldName().equals(name)) {
-            return Streams.asString(field.openStream());
+        if(field.getFieldName().equals(name)) {
+            return readFormField(field);
         }
         else {
             throw new IllegalArgumentException("Expected to find the form field: " + name);
@@ -260,6 +257,39 @@ public class DatasetImporterController {
         else {
             return "";
         }
+    }
+    
+    private String readFormField(FileItemStream field) throws IOException {
+        if(field.isFormField()) {
+            return Streams.asString(field.openStream());
+        }
+        else {
+            throw new IllegalArgumentException("Expected to get a form field");
+        }
+    }
+    
+    // On the ImportNewMetadata form, read in all the TaxonDatasetAdditions 
+    // values and populate the provided TaxonDatasetAdditions object. Do this
+    // until we read the 'Organisation' field, then return this as a value.
+    // The File Upload should be present after this
+    private String readNewDatasetOrganisation(FileItemIterator iter, TaxonDatasetAdditions additions) throws FileUploadException, IOException {
+        while (iter.hasNext()) {
+            FileItemStream field = iter.next();
+            String value = readFormField(field);
+            switch (field.getFieldName()) {
+                case "resolution":
+                    additions.setResolution(value);                    
+                break;
+                case "recordAtts":
+                    additions.setRecordAttributes(Boolean.parseBoolean(value));
+                break;
+                case "recorderNames":
+                    additions.setRecorderNames(Boolean.parseBoolean(value));
+                break;
+                case "organisation": return value;
+            }
+        }
+        throw new IllegalArgumentException("Reached the end of the iterator before reading an organisation");
     }
     
     // Handle any calls to the api which result in a 401 unauthorized exception
