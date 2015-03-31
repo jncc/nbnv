@@ -1,5 +1,3 @@
-<#assign organisations = json.readURL("${api}/user/adminOrganisations")/>
-
 <@template.master title="NBN import" javascripts=["/js/metadata/new-taxon-dataset-access-levels.js"]>
 
   <h1>Upload a new taxon dataset - metadata upload</h1>
@@ -33,20 +31,18 @@
             <input type="radio" id="recNamesFalse" name="recorderNames" value="false" checked="checked"><label for="recNames">No</label>
         </span>
         <br /><br />
-    </fieldset>                
-    <#if organisations?has_content>
-        <#if organisations?size=1>
-            <input type="hidden" name="organisation" value="${organisations[0].id}">
-        <#else>
-            <p>
-            <label for="organisation">Select the organisation your new dataset belongs to: </label>
-            <select name="organisation">
-              <#list organisations as organisation>
-               <option value="${organisation.id}">${organisation.name}</option>
-              </#list>
-            </select>
-            </p>
-        </#if>
+    </fieldset>
+    <#if organisations?size=1>
+        <input type="hidden" name="organisation" value="${organisations[0].id}">
+    <#else>
+        <p>
+        <label for="organisation">Select the organisation your new dataset belongs to: </label>
+        <select name="organisation">
+          <#list organisations as organisation>
+           <option value="${organisation.id}">${organisation.name}</option>
+          </#list>
+        </select>
+        </p>
     </#if>
     <p>
       <input type="file" name="file">
