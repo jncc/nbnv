@@ -49,7 +49,12 @@ public class DatasetImporterController {
     public ModelAndView replaceDataset(HttpServletRequest request, HttpServletResponse response) {
         return handleDatasetUpload("importReplacementDataset", request, response);
     }    
-        
+    
+    @RequestMapping(value="/Import/New", method=RequestMethod.GET)
+    public ModelAndView getNewDatasetForm(@RequestParam("datasetKey") String datasetKey) {
+        return new ModelAndView("importNewDataset", "datasetKey", datasetKey);
+    }
+    
     @RequestMapping(value    = "/Import/New", 
                     consumes = "multipart/form-data",
                     method   = RequestMethod.POST)
@@ -148,8 +153,12 @@ public class DatasetImporterController {
             
             switch(restResponse.getStatus()) {
                 case 200:
-                    data.put("dataset", restResponse.getEntity(TaxonDataset.class));
-                    return new ModelAndView("importNewDataset", data);
+                    // We have successfulyl created a new dataset redirect to 
+                    // next page so that the user can upload a NBN Exchange 
+                    // Format dataset
+                    String key = restResponse.getEntity(TaxonDataset.class).getKey();
+                    response.sendRedirect("/Import/New?datasetKey=" + key);
+                    return null;
                 case 401: throw new UniformInterfaceException(restResponse);
                 default:
                     //Get the error message from the response
@@ -169,7 +178,7 @@ public class DatasetImporterController {
         try {
             FileItemIterator iter = upload.getItemIterator(request);
 
-            String datasetKey = getFormField("key", iter);
+            String datasetKey = getFormField("datasetKey", iter);
             data.put("datasetKey", datasetKey);
             WebResource importer = resource.path(String.format("taxonDatasets/%s/import", datasetKey));
             

@@ -8,7 +8,7 @@
     <form method="post" enctype="multipart/form-data" action="/Import/New">
       <#-- WARNING - This form is processed by the DatasetImporterController. It
            expects the fields in this order -->
-      <input type="hidden" name="key" value="${dataset.key}">
+      <input type="hidden" name="datasetKey" value="${datasetKey}">
       <p>
         <input type="file" name="file">
       </p>

@@ -11,7 +11,7 @@
       <#-- WARNING - This form is processed by the DatasetImporterController. It
            expects the fields in this order -->
       <p>
-        <select name="key">
+        <select name="datasetKey">
           <#list datasets as dataset>
            <option value="${dataset.key}">${dataset.key}: ${dataset.title}</option>
           </#list>
