@@ -22,9 +22,12 @@ import org.codehaus.enunciate.jaxrs.StatusCodes;
 import org.codehaus.enunciate.jaxrs.TypeHint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import uk.org.nbn.nbnv.api.dao.providers.ProviderHelper;
+import uk.org.nbn.nbnv.api.dao.warehouse.FeatureMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.GridMapSquareMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.TaxonMapper;
+import uk.org.nbn.nbnv.api.model.Feature;
 import uk.org.nbn.nbnv.api.model.GridMapSquare;
 import uk.org.nbn.nbnv.api.model.Taxon;
 import uk.org.nbn.nbnv.api.model.TaxonDataset;
@@ -41,6 +44,7 @@ public class GridMapSquareResource extends AbstractResource {
     @Autowired GridMapSquareMapper gridMapSquareMapper;
     @Autowired TaxonMapper taxonMapper;
     @Autowired DownloadHelper downloadHelper;
+    @Autowired FeatureMapper featureMapper;
 
     /**
      * Returns a list of grid squares matching a name and / or resolution 
@@ -73,7 +77,7 @@ public class GridMapSquareResource extends AbstractResource {
      * (Injected Token no need to pass)
      * @param ptvk The Taxon Version Key we are looking for
      * @param resolution What resolution we are looking for
-     * @param bands A list of bands
+     * @param bands A list of bands i.e. band=2000-2012,ff0000,000000
      * @param datasets A list of datasets to restrict the search to
      * @param viceCountyIdentifier An identifier for a Vice County
      * 
@@ -92,16 +96,23 @@ public class GridMapSquareResource extends AbstractResource {
             @Context HttpServletResponse response,
             @TokenUser() final User user,
             @PathParam("ptvk") final String ptvk,
-            @QueryParam("resolution") @DefaultValue("") final String resolution,
+            @QueryParam("resolution") @DefaultValue("10km") final String resolution,
             @QueryParam("band") @DefaultValue("") final List<String> bands,
             @QueryParam("datasets") @DefaultValue(ObservationResourceDefaults.defaultDatasetKey) final List<String> datasets,
             @QueryParam("feature") @DefaultValue(ObservationResourceDefaults.defaultFeatureID) final String viceCountyIdentifier,
             @QueryParam("verification") @DefaultValue("") final List<String> verifications)
             throws IOException {
 	
-	// Set the filename to get around a bug with Firefox not adding the extension properly
+        // Check bands are valid before we start doing anything
+        for (String band : bands) {
+            if (!StringUtils.hasText(band) && band.matches("\\d{4}\\-\\d{4},[A-Fa-f0-9]{6},[A-Fa-f0-9]{6}")) {
+                throw new IllegalArgumentException("One of the band argument supplied is not valid expected (eg band=2000-2012,ff0000,000000) but found '" + band + "'");
+            }
+        }
+		
+		// Set the filename to get around a bug with Firefox not adding the extension properly
         response.setHeader("Content-Disposition", String.format("attachment; filename=\"%s_grid_squares.zip\"", ptvk));
-        
+       
         return new StreamingOutput() {
             
             @Override
@@ -133,37 +144,56 @@ public class GridMapSquareResource extends AbstractResource {
         String title = "Grid map square download from the NBN Gateway";
         HashMap<String, String> filters = new HashMap<String, String>();
         filters.put("Taxon", taxon.getName() + " " + taxon.getAuthority());
-        filters.put("Resolution ", resolution);
+        filters.put("Resolution", resolution);
         int i = 1;
         for(String band: bands){
             filters.put("Year range " + i++, band.substring(0,band.indexOf(",")));
         }
+        if (StringUtils.hasText(viceCountyIdentifier)) {
+            Feature feature = featureMapper.getFeature(viceCountyIdentifier);
+            if (feature != null) {
+                filters.put("Vice County", feature.getLabel());
+            }
+        }
+
         i=1;
         for(Integer verificationKey : getVerificationKeys(verifications)){
             filters.put("Verification status " + i++, Status.get(verificationKey).name());
         }
         downloadHelper.addReadMe(zip, user, title, filters);
     }
+	}
+
+    /**
+     * 
+     * @param zip
+     * @param user
+     * @param ptvk
+     * @param resolution
+     * @param bands
+     * @param datasetKey
+     * @param viceCountyIdentifier
+     * @throws IOException 
+     */
     
     private void addGridRefs(ZipOutputStream zip, User user, String ptvk, String resolution, List<String> bands, List<String> datasetKeys, String viceCountyIdentifier, List<String> verifications) throws IOException {
-	List<Integer> verificationKeys = getVerificationKeys(verifications);
-	boolean isGroupByDate = isGroupByDate(verifications);
-	if(isGroupByDate){
-	    for (String band : bands) {
-		if (!"".equals(band)) {
-		    String title = "GridSquares_" + band.substring(0,band.indexOf(","));
-		    fetchAndAppendGridRefs(zip, user, ptvk, resolution, Arrays.asList(band), datasetKeys, viceCountyIdentifier, verificationKeys, title, isGroupByDate);
-		} else {
-		    throw new IllegalArgumentException("No year band arguments supplied, at least one 'band' argument is required (eg band=2000-2012,ff0000,000000)");
-		}
-	    }
-	}else{
-	    for (Integer verificationKey : verificationKeys){
-		String title = "GridSquares_" + Status.get(verificationKey);
-		fetchAndAppendGridRefs(zip, user, ptvk, resolution, bands, datasetKeys, viceCountyIdentifier, Arrays.asList(verificationKey), title, isGroupByDate);
-	    }
+		List<Integer> verificationKeys = getVerificationKeys(verifications);
+		boolean isGroupByDate = isGroupByDate(verifications);
+		if(isGroupByDate){
+		    for (String band : bands) {
+				if (!"".equals(band)) {
+				    String title = "GridSquares_" + band.substring(0,band.indexOf(","));
+				    fetchAndAppendGridRefs(zip, user, ptvk, resolution, Arrays.asList(band), datasetKeys, viceCountyIdentifier, verificationKeys, title, isGroupByDate);
+				} else {
+				    throw new IllegalArgumentException("No year band arguments supplied, at least one 'band' argument is required (eg band=2000-2012,ff0000,000000)");
+				}
+		    }
+		}else{
+		    for (Integer verificationKey : verificationKeys){
+			String title = "GridSquares_" + Status.get(verificationKey);
+			fetchAndAppendGridRefs(zip, user, ptvk, resolution, bands, datasetKeys, viceCountyIdentifier, Arrays.asList(verificationKey), title, isGroupByDate);
+		    }
 	}
-    }
 
     /**
     * @param bands list of Strings with year range and colours, eg: 2000-2012,ff0000,000000

@@ -98,7 +98,7 @@ public class ApiObservationViewStatistic {
 
     public void setViewTime(Date viewTime) {
         this.viewTime = viewTime;
-        this.viewTimeString = new SimpleDateFormat("EEE MMM dd yyyy HH:mm:ss '('zzz')'").format(viewTime);
+        this.viewTimeString = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(viewTime);
     }
 
     public String getViewTimeString() {
