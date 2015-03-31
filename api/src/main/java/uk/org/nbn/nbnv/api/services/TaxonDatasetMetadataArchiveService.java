@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.zip.ZipFile;
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,7 +39,7 @@ public class TaxonDatasetMetadataArchiveService {
                     zipFile.getInputStream(zipFile.getEntry("additions.json")), TaxonDatasetAdditions.class);
             
             if(!VALID_RESOLUTIONS.contains(additions.getResolution())) {
-                throw new IllegalArgumentException("The resolution must be one of " + VALID_RESOLUTIONS);
+                throw new IllegalArgumentException("The resolution must be one of " + StringUtils.join(VALID_RESOLUTIONS, ", "));
             }
             
             if((additions.isRecordAttributes() || additions.isRecorderNames()) && !additions.getResolution().equals("100m")) {
