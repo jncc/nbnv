@@ -35,7 +35,8 @@
   <#if error??><div class="message error">${error!}</div></#if>
   <#if message??><div class="message info">${message!}</div></#if>
 
-  <a href="/Import/Replace">Replace</a>
+  <#if canCreateDatasets><a href="/Import/NewMetadata">New</a></#if>
+  <#if canReplaceDatasets><a href="/Import/Replace">Replace</a></#if>
 
   <#list statuses as status>
     <div class="tabbed">

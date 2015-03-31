@@ -79,6 +79,8 @@ public class DatasetImporterController {
         GenericType<List<TaxonDatasetWithImportStatus>> type = new GenericType<List<TaxonDatasetWithImportStatus>>() {};
         Map<String,Object> data = new HashMap<>();
         data.put("statuses", resource.path("/taxonDatasets/adminable/import").get(type));
+        data.put("canCreateDatasets", !getAdminableOrganisations().isEmpty());
+        data.put("canReplaceDatasets", !getAdminableTaxonDatasets().isEmpty());
         return new ModelAndView("importDashboard", data);
     }
     
