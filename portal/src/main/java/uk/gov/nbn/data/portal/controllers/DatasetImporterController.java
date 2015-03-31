@@ -32,10 +32,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import uk.gov.nbn.data.portal.exceptions.ForbiddenException;
 import uk.org.nbn.nbnv.api.model.ImportCleanup;
 import static uk.org.nbn.nbnv.api.model.ImportCleanup.Operation.SET_SENSITIVE_FALSE;
 import static uk.org.nbn.nbnv.api.model.ImportCleanup.Operation.SET_SENSITIVE_TRUE;
 import static uk.org.nbn.nbnv.api.model.ImportCleanup.Operation.STRIP_INVALID_RECORDS;
+import uk.org.nbn.nbnv.api.model.Organisation;
 import uk.org.nbn.nbnv.api.model.TaxonDataset;
 import uk.org.nbn.nbnv.api.model.TaxonDatasetAdditions;
 import uk.org.nbn.nbnv.api.model.TaxonDatasetWithImportStatus;
@@ -65,7 +67,11 @@ public class DatasetImporterController {
     
     @RequestMapping(value="/Import/Replace", method = RequestMethod.GET)
     public ModelAndView getImportExistingPage() {
-        return new ModelAndView("importReplacementDataset");
+        List<TaxonDataset> datasets = getAdminableTaxonDatasets();
+        if(datasets.isEmpty()) {
+            throw new ForbiddenException(); //nothing to admin
+        }
+        return new ModelAndView("importReplacementDataset", "datasets", datasets);
     }
     
     @RequestMapping(value="/Import", method = RequestMethod.GET)
@@ -73,6 +79,8 @@ public class DatasetImporterController {
         GenericType<List<TaxonDatasetWithImportStatus>> type = new GenericType<List<TaxonDatasetWithImportStatus>>() {};
         Map<String,Object> data = new HashMap<>();
         data.put("statuses", resource.path("/taxonDatasets/adminable/import").get(type));
+        data.put("canCreateDatasets", !getAdminableOrganisations().isEmpty());
+        data.put("canReplaceDatasets", !getAdminableTaxonDatasets().isEmpty());
         return new ModelAndView("importDashboard", data);
     }
     
@@ -125,7 +133,11 @@ public class DatasetImporterController {
     
     @RequestMapping(value="/Import/NewMetadata", method = RequestMethod.GET)
     public ModelAndView getNewMetadatForm(){
-        return new ModelAndView("importNewMetadata");
+        List<Organisation> organisations = getAdminableOrganisations();
+        if(organisations.isEmpty()) {
+            throw new ForbiddenException();
+        }
+        return new ModelAndView("importNewMetadata", "organisations", organisations);
     }
     
     @RequestMapping(value    = "/Import/NewMetadata", 
@@ -167,8 +179,20 @@ public class DatasetImporterController {
         } catch (FileUploadException ex) {
             data.put("status", "There was an issue whilst uploading " + ex.getMessage());
         }
-        return new ModelAndView("importNewMetadata", data);
-    }    
+        return getNewMetadatForm().addAllObjects(data); //Base the result off of the original form
+    }
+    
+    //Return the list of organisations that the current user can administor
+    private List<Organisation> getAdminableOrganisations() {
+        GenericType<List<Organisation>> organisationsType = new GenericType<List<Organisation>>(){};
+        return resource.path("/user/adminOrganisations").get(organisationsType);
+    }
+    
+    //Return the list of taxon datasets which the current user can administor
+    private List<TaxonDataset> getAdminableTaxonDatasets() {
+        GenericType<List<TaxonDataset>> datasetsType = new GenericType<List<TaxonDataset>>(){};
+        return resource.path("/user/adminDatasets").get(datasetsType);
+    }
     
     private ModelAndView handleDatasetUpload(String view, HttpServletRequest request, HttpServletResponse response) {
         ServletFileUpload upload = new ServletFileUpload();
