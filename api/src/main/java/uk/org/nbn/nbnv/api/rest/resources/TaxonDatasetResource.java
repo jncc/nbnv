@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.NoSuchFileException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -33,6 +34,7 @@ import uk.org.nbn.nbnv.api.dao.core.OperationalAttributeMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.AttributeMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.DatasetAdministratorMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.DatasetMapper;
+import uk.org.nbn.nbnv.api.dao.warehouse.OrganisationMembershipMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.SurveyMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.TaxonMapper;
 import uk.org.nbn.nbnv.api.model.*;
@@ -40,24 +42,27 @@ import static uk.org.nbn.nbnv.api.model.ImportCleanup.Operation.SET_SENSITIVE_FA
 import static uk.org.nbn.nbnv.api.model.ImportCleanup.Operation.SET_SENSITIVE_TRUE;
 import static uk.org.nbn.nbnv.api.model.ImportCleanup.Operation.STRIP_INVALID_RECORDS;
 import uk.org.nbn.nbnv.api.model.meta.DatasetAccessPositionsJSON;
-import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenDatasetAdminUser;
+import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenDatasetOrOrgAdminUser;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenTaxonObservationAttributeAdminUser;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
 import uk.org.nbn.nbnv.api.services.TaxonDatasetImporterService;
 import uk.org.nbn.nbnv.api.utils.LimitedLineLengthReader;
 import uk.org.nbn.nbnv.api.nxf.NXFReader;
+import uk.org.nbn.nbnv.api.services.TaxonDatasetPlaceholderService;
 
 @Component
 @Path("/taxonDatasets")
 public class TaxonDatasetResource extends AbstractResource {
 
     @Autowired DatasetMapper datasetMapper;
+    @Autowired OrganisationMembershipMapper organisationMembershipMapper;
     @Autowired TaxonMapper taxonMapper;
     @Autowired SurveyMapper surveyMapper;
     @Autowired AttributeMapper attributeMapper;
     @Autowired DatasetAdministratorMapper datasetAdministratorMapper;
     @Autowired OperationalAttributeMapper oAttributeMapper;
     @Autowired TaxonDatasetImporterService importerService;
+    @Autowired TaxonDatasetPlaceholderService datasetPlaceholderService;
     
     /**
      * Return a list of all Taxon Datasets from the data warehouse
@@ -94,7 +99,7 @@ public class TaxonDatasetResource extends AbstractResource {
         @ResponseCode(code = 200, condition = "Successfully returned a list of the current users adminable datasets")
     })
     @Produces(MediaType.APPLICATION_JSON)
-    public List<TaxonDataset> adminableDatasets(@TokenUser(allowPublic=false) User user) throws IOException {
+    public List<TaxonDataset> adminableDatasets(@TokenUser(allowPublic=false) User user) {
         return datasetAdministratorMapper.selectTaxonDatasetsByUser(user.getId());
     }
     
@@ -117,7 +122,7 @@ public class TaxonDatasetResource extends AbstractResource {
     @Produces(MediaType.APPLICATION_JSON)
     public List<TaxonDatasetWithImportStatus> getImportStatusForAdminableDatasets(@TokenUser(allowPublic=false) User user) throws IOException {
         List<TaxonDatasetWithImportStatus> toReturn = new ArrayList<>();
-        for(TaxonDataset dataset: adminableDatasets(user)) {
+        for(TaxonDataset dataset: adminableAndPlaceholderDatasets(user)) {
             DatasetImportStatus status = getImportStatus(user, dataset.getKey());
             if(status.isIsOnQueue() || status.isIsProcessing() || !status.getHistory().isEmpty()) {
                 toReturn.add(new TaxonDatasetWithImportStatus(dataset, status));
@@ -172,7 +177,7 @@ public class TaxonDatasetResource extends AbstractResource {
         @ResponseCode(code = 403, condition = "You do not have admin rights over this dataset")}
     )
     @Produces(MediaType.APPLICATION_JSON)
-    public DatasetImportStatus getImportStatus(@TokenDatasetAdminUser(path="id") User admin, @PathParam("id") String id) throws IOException {
+    public DatasetImportStatus getImportStatus(@TokenDatasetOrOrgAdminUser(path="id") User admin, @PathParam("id") String id) throws IOException {
         return new DatasetImportStatus(
                 importerService.isQueued(id),
                 id.equalsIgnoreCase(importerService.getCurrentlyProcessedDataset()),
@@ -193,7 +198,7 @@ public class TaxonDatasetResource extends AbstractResource {
         @ResponseCode(code = 204, condition = "Removed the dataset queued for import"),
         @ResponseCode(code = 404, condition = "Dataset was not queued")
     })
-    public Response removeDatasetFromQueue(@TokenDatasetAdminUser(path="id") User admin, @PathParam("id") String id) throws IOException {
+    public Response removeDatasetFromQueue(@TokenDatasetOrOrgAdminUser(path="id") User admin, @PathParam("id") String id) throws IOException {
         if(importerService.removeFromQueue(id)) {
             return Response.noContent().build();
         }
@@ -220,7 +225,7 @@ public class TaxonDatasetResource extends AbstractResource {
         @ResponseCode(code = 409, condition = "Already queued for import")
     })
     @Produces(MediaType.APPLICATION_JSON)
-    public Response queueReplacementDataset(@TokenDatasetAdminUser(path="id") User admin, @PathParam("id") String id, @Context HttpServletRequest request) throws TemplateException {
+    public Response queueReplacementDataset(@TokenDatasetOrOrgAdminUser(path="id") User admin, @PathParam("id") String id, @Context HttpServletRequest request) throws TemplateException {
         return uploadDataset(admin, id, request, true);
     }
     
@@ -242,7 +247,7 @@ public class TaxonDatasetResource extends AbstractResource {
         @ResponseCode(code = 409, condition = "Already queued for import")
     })
     @Produces(MediaType.APPLICATION_JSON)
-    public Response queueAppendDataset(@TokenDatasetAdminUser(path="id") User admin, @PathParam("id") String id, @Context HttpServletRequest request) throws TemplateException {
+    public Response queueAppendDataset(@TokenDatasetOrOrgAdminUser(path="id") User admin, @PathParam("id") String id, @Context HttpServletRequest request) throws TemplateException {
         return uploadDataset(admin, id, request, false);
     }
     
@@ -275,7 +280,7 @@ public class TaxonDatasetResource extends AbstractResource {
     })
     @Produces(MediaType.APPLICATION_JSON)
     public Response reprocessHistoricalImport(
-            @TokenDatasetAdminUser(path="id") User admin, 
+            @TokenDatasetOrOrgAdminUser(path="id") User admin, 
             @PathParam("id") String id, 
             @PathParam("timestamp") String timestamp,
             @Valid ImportCleanup cleanup) throws TemplateException {
@@ -320,7 +325,7 @@ public class TaxonDatasetResource extends AbstractResource {
     })
     @Produces(MediaType.APPLICATION_JSON)
     public Response removeImporterResult(
-            @TokenDatasetAdminUser(path="id") User admin, 
+            @TokenDatasetOrOrgAdminUser(path="id") User admin, 
             @PathParam("id") String id, 
             @PathParam("timestamp") String timestamp) {
         try {
@@ -527,26 +532,48 @@ public class TaxonDatasetResource extends AbstractResource {
     }
     
     private Response uploadDataset(User admin, String id, HttpServletRequest request, boolean upsert) throws TemplateException {
+        try {
+            TaxonDataset dataset = getAdminableOrPlaceholderDataset(id);
+            if(dataset != null) {
+                if(importerService.isQueued(id)) {
+                    return Response.status(CONFLICT)
+                                    .entity(new FriendlyResponse(false, "This dataset already has an import queued. You will have to delete this first"))
+                                    .build();
+                }
+
+                // Create a nxfreader which will fail when reading lines which are too long
+                try ( NXFReader nxf = new NXFReader(new LimitedLineLengthReader(new InputStreamReader(request.getInputStream()))) ) {
+                    //We are about to replace the dataset, set the current time 
+                    //as the date uploaded.
+                    dataset.setDateUploaded(Calendar.getInstance().getTime());
+                    importerService.importDataset(nxf, dataset, upsert);
+                    return Response.ok(getImportStatus(admin,id)).build();
+                }
+            }
+            else {
+                return Response.status(NOT_FOUND).build();
+            }
+        }
+        catch(IOException io) {
+            return Response.status(BAD_REQUEST)
+                    .entity(new FriendlyResponse(false, io.getMessage())).build();
+        }
+    }    
+    
+    protected TaxonDataset getAdminableOrPlaceholderDataset(String id) throws IOException {
+        // First check the database to see if the requested dataset exists. If
+        // it doesn't, then check the placeholder service
         TaxonDataset dataset = datasetMapper.selectTaxonDatasetByID(id);
-        if(dataset != null) {
-            if(importerService.isQueued(id)) {
-                return Response.status(CONFLICT)
-                                .entity(new FriendlyResponse(false, "This dataset already has an import queued. You will have to delete this first"))
-                                .build();
-            }
-            
-            // Create a nxfreader which will fail when reading lines which are too long
-            try ( NXFReader nxf = new NXFReader(new LimitedLineLengthReader(new InputStreamReader(request.getInputStream()))) ) {
-                importerService.importDataset(nxf, dataset, upsert);
-                return Response.ok(getImportStatus(admin,id)).build();
-            }
-            catch(IOException io) {
-                return Response.status(BAD_REQUEST)
-                        .entity(new FriendlyResponse(false, io.getMessage())).build();
-            }
+        return (dataset != null) ? dataset : datasetPlaceholderService.readTaxonDataset(id);
+    }
+    
+    // Grab a list of datasets which the given user is an administrator. These
+    // can exist in the database and just as placeholder entries (word documents)
+    private List<TaxonDataset> adminableAndPlaceholderDatasets(User user) throws IOException {
+        List<TaxonDataset> toReturn = new ArrayList<>(adminableDatasets(user));
+        for(OrganisationMembership membership: organisationMembershipMapper.selectAdminOrganisationsByUser(user.getId())) {
+            toReturn.addAll(datasetPlaceholderService.readTaxonDatasetsFor(membership.getOrganisation().getId()));
         }
-        else {
-            return Response.status(NOT_FOUND).build();
-        }
+        return toReturn;
     }
 }

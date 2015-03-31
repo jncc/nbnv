@@ -22,6 +22,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.mock.web.MockHttpServletRequest;
 import uk.org.nbn.nbnv.api.dao.warehouse.DatasetAdministratorMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.DatasetMapper;
+import uk.org.nbn.nbnv.api.dao.warehouse.OrganisationMembershipMapper;
 import uk.org.nbn.nbnv.api.model.ImportCleanup;
 import static uk.org.nbn.nbnv.api.model.ImportCleanup.Operation.SET_SENSITIVE_FALSE;
 import static uk.org.nbn.nbnv.api.model.ImportCleanup.Operation.SET_SENSITIVE_TRUE;
@@ -33,6 +34,7 @@ import uk.org.nbn.nbnv.api.model.TaxonDatasetWithImportStatus;
 import uk.org.nbn.nbnv.api.model.User;
 import uk.org.nbn.nbnv.api.nxf.NXFReader;
 import uk.org.nbn.nbnv.api.services.TaxonDatasetImporterService;
+import uk.org.nbn.nbnv.api.services.TaxonDatasetPlaceholderService;
 
 /**
  *
@@ -42,6 +44,8 @@ public class TaxonDatasetResourceTest {
     @Mock TaxonDatasetImporterService service;
     @Mock DatasetMapper datasetMapper;
     @Mock DatasetAdministratorMapper datasetAdministratorMapper;
+    @Mock OrganisationMembershipMapper organisationMembershipMapper;
+    @Mock TaxonDatasetPlaceholderService datasetPlaceholderService;
     
     private TaxonDatasetResource resource;
     
@@ -52,6 +56,8 @@ public class TaxonDatasetResourceTest {
         resource.datasetMapper = datasetMapper;
         resource.importerService = service;
         resource.datasetAdministratorMapper = datasetAdministratorMapper;
+        resource.organisationMembershipMapper = organisationMembershipMapper;
+        resource.datasetPlaceholderService = datasetPlaceholderService;
     }
     
     @Test
@@ -358,5 +364,34 @@ public class TaxonDatasetResourceTest {
         
         //Then
         assertEquals("Expected 400 response", 400, response.getStatus());
+    }
+    
+    @Test
+    public void checkCanLocateTaxonDatasetFromPlaceholderServiceIfNotInDatabase() throws IOException {
+        //Given
+        String datasetKey = "something not in database";
+        TaxonDataset mockedDataset = mock(TaxonDataset.class);
+        when(datasetMapper.selectTaxonDatasetByID(datasetKey)).thenReturn(null);
+        when(datasetPlaceholderService.readTaxonDataset(datasetKey)).thenReturn(mockedDataset);
+        
+        //When
+        TaxonDataset dataset = resource.getAdminableOrPlaceholderDataset(datasetKey);
+        
+        //Then
+        assertEquals("Expected the mocked dataset", mockedDataset, dataset);
+    }
+        
+    @Test
+    public void checkCanLocateTaxonDatasetFromPlaceholderServiceWhenInDatabase() throws IOException {
+        //Given
+        String datasetKey = "something not in database";
+        TaxonDataset mockedDataset = mock(TaxonDataset.class);
+        when(datasetMapper.selectTaxonDatasetByID(datasetKey)).thenReturn(mockedDataset);
+        
+        //When
+        TaxonDataset dataset = resource.getAdminableOrPlaceholderDataset(datasetKey);
+        
+        //Then
+        assertEquals("Expected the mocked dataset", mockedDataset, dataset);
     }
 }

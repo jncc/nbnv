@@ -31,11 +31,22 @@
 </#macro>
 
 <@template.master title="NBN import" csss=["//ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/themes/smoothness/jquery-ui.css"]>
-  <h1>DASHBOARD!</h1>
+  <div class="import-page-generated">Generated: ${.now} <a href="/Import">Refresh</a></div>
+  <h1>Importer Dashboard</h1>
+
+  <p>
+    <#if statuses?has_content>
+      Here are your taxon datasets recently uploaded to the NBN Gateway.
+    <#else>
+      You have no taxon datasets recently uploaded to the NBN Gateway.
+    </#if>
+  </p>
   <#if error??><div class="message error">${error!}</div></#if>
   <#if message??><div class="message info">${message!}</div></#if>
-
-  <a href="/Import/Replace">Replace</a>
+  <ul>
+    <#if canCreateDatasets><li><a href="/Import/NewMetadata">Add</a> a new dataset</li></#if>
+    <#if canReplaceDatasets><li><a href="/Import/Replace">Replace</a> an existing dataset</li></#if>
+  </ul>
 
   <#list statuses as status>
     <div class="tabbed">

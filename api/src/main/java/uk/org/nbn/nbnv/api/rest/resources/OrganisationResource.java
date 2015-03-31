@@ -4,7 +4,9 @@
  */
 package uk.org.nbn.nbnv.api.rest.resources;
 
+import java.io.IOException;
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -13,7 +15,9 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import org.codehaus.enunciate.jaxrs.ResponseCode;
 import org.codehaus.enunciate.jaxrs.StatusCodes;
 import org.codehaus.enunciate.jaxrs.TypeHint;
@@ -23,12 +27,16 @@ import uk.org.nbn.nbnv.api.dao.core.OperationalOrganisationMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.DatasetMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.OrganisationMapper;
 import uk.org.nbn.nbnv.api.model.Dataset;
+import uk.org.nbn.nbnv.api.model.FriendlyResponse;
 import uk.org.nbn.nbnv.api.model.Organisation;
 import uk.org.nbn.nbnv.api.model.OrganisationMembership;
+import uk.org.nbn.nbnv.api.model.TaxonDataset;
 import uk.org.nbn.nbnv.api.model.User;
 import uk.org.nbn.nbnv.api.model.meta.OpResult;
+import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenOrganisationAdminUser;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenOrganisationUser;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
+import uk.org.nbn.nbnv.api.services.TaxonDatasetPlaceholderService;
 import uk.org.nbn.nbnv.api.solr.SolrResolver;
 
 /**
@@ -42,6 +50,7 @@ public class OrganisationResource extends AbstractResource {
     @Autowired OrganisationMapper organisationMapper;
     @Autowired OperationalOrganisationMapper oOrganisationMapper;
     @Autowired DatasetMapper datasetMapper;
+    @Autowired TaxonDatasetPlaceholderService taxonDatasetPlaceholderService;
 
     /**
      * Get a list of all organisations from the data warehouse
@@ -268,6 +277,51 @@ public class OrganisationResource extends AbstractResource {
     @Produces(MediaType.APPLICATION_JSON)
     public List<Dataset> getDatasetsByID(@PathParam("id") int id) {
         return datasetMapper.selectByOrganisationID(id);
+    }
+    
+    /**
+     * Allows for the creation of new taxon datasets given a Zip Archive which 
+     * contains:
+     *  - form.doc - A species metadata word document (http://www.nbn.org.uk/Share-Data/Providing-Data/Metadata-form-for-species-datasets.aspx)
+     *  - additional.json - A json object which contains the information which 
+     *      can not be read from a word document for technical reasons.
+     * 
+     * The additional.json requires three fields. This should look like
+     *  {"resolution":"10km", "recorderNames": true, "recordAttributes": true}
+     * 
+     * Where:
+     * - resolution is the geographic resolution which the general public 
+     * will see records at. (i.e. one of 10km, 2km, 1km, 100m or 'No Access')
+     * - recorderNames is a boolean indicating weather or not the recorder name(s)
+     *  are made publicly available
+     * - recorderAttributes is a boolean indicating weather or not the dataset 
+     * attributes are made available 
+     * 
+     * @param user a provided user who is an administrator of the given organisation
+     * @param id of an organisation stored on the NBN Gateway
+     * @param request http request containing a zip archive
+     * @return a new dataset taxon dataset with placeholder datasetkey added
+     */
+    @POST
+    @Path("/{id}/datasets")
+    @StatusCodes({
+        @ResponseCode(code = 200, condition = "Successfully created a new dataset to import against"),
+        @ResponseCode(code = 400, condition = "Failed to create the new dataset")
+    })
+    @Consumes("application/zip")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response storeNewDataset(@TokenOrganisationAdminUser(path = "id") User user, @PathParam("id") int id, @Context HttpServletRequest request) {
+        try {
+            TaxonDataset dataset = taxonDatasetPlaceholderService.storeMetadataWordDocument(id, request.getInputStream());
+            return Response.ok()
+                    .entity(dataset)
+                    .build();
+        }
+        catch (IOException ex) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(new FriendlyResponse(false, ex.getMessage()))
+                    .build();
+        }
     }
 
     /**

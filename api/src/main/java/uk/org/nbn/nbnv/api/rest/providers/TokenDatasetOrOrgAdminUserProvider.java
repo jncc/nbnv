@@ -17,8 +17,8 @@ import uk.org.nbn.nbnv.api.dao.warehouse.DatasetAdministratorMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.DatasetMapper;
 import uk.org.nbn.nbnv.api.dao.warehouse.OrganisationMembershipMapper;
 import uk.org.nbn.nbnv.api.model.User;
-import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenDatasetAdminUser;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenDatasetOrOrgAdminUser;
+import uk.org.nbn.nbnv.api.services.TaxonDatasetPlaceholderService;
 
 /**
  * The following Injectable Provider will produce users who have been checked for
@@ -33,6 +33,7 @@ public class TokenDatasetOrOrgAdminUserProvider implements InjectableProvider<To
     @Autowired private DatasetAdministratorMapper datasetAdministratorMapper;
     @Autowired private DatasetMapper datasetMapper;
     @Autowired private OrganisationMembershipMapper organisationMembershipMapper;
+    @Autowired private TaxonDatasetPlaceholderService placeholderService;
     @Autowired private UserProviderHelper userObtainer;
     @Context private UriInfo request;
     @Context private HttpHeaders headers;
@@ -72,8 +73,12 @@ public class TokenDatasetOrOrgAdminUserProvider implements InjectableProvider<To
         @Override public User getValue() {
             User user = userObtainer.getValue(headers, request, false); //get the logged in user
             String datasetKey = request.getPathParameters().getFirst(userAnnot.path());
-
+            
             if(datasetAdministratorMapper.isUserDatasetAdministrator(user.getId(), datasetKey)) {
+                return user;
+            }
+            
+            if(organisationMembershipMapper.isUserOrganisationAdmin(user.getId(), placeholderService.getOwningOrganisationAdmin(datasetKey))) {
                 return user;
             }
             
