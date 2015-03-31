@@ -7,7 +7,7 @@
     <div class="message error">${status!}</div>
   </#if>
   <fieldset>
-    <form action="Metadata" method="POST" enctype="multipart/form-data" >
+    <form action="NewMetadata" method="POST" enctype="multipart/form-data" >
     <fieldset>
         <#if organisations?has_content>
             size: ${organisations?size}
@@ -22,6 +22,8 @@
         </#if>
         <legend>Level of Public Access</legend>
         <span class="formlabel">Geographic Resolution</span>
+        <!-- This needs to be populated as a dropdown -->
+        <input type="hidden" value="12" name="organisation">
         <span class="formfield">
             <input type="radio" id="res100" name="resolution" value="100"><label for="res100">Full</label> 
             <input type="radio" id="res1000" name="resolution" value="1000"><label for="res1000">1km</label> 

@@ -34,7 +34,7 @@ import uk.org.nbn.nbnv.api.model.TaxonDataset;
 @Service
 public class TaxonDatasetPlaceholderService {
     @Autowired Properties properties;
-    @Autowired MetadataWordDocumentService metadataFormService;
+    @Autowired TaxonDatasetMetadataArchiveService metadataFormService;
     @Autowired OrganisationMapper organisationMapper;
     
     private File datasetsPath;
@@ -45,18 +45,21 @@ public class TaxonDatasetPlaceholderService {
     }
     
     /**
-     * Stores the supplied word document input stream as a file on disk. The
-     * given file name for the word document will be generated based upon the 
-     * owning organisation and a randomly assigned dataset key.
+     * Stores the supplied archive input stream as a file on disk. The given 
+     * file name for the archive will be generated based upon the owning 
+     * organisation and a randomly assigned dataset key.
      * 
-     * This method will attempt to process the word document into a Taxon Dataset.
-     * If that fails, an exception will be thrown and the word document will be
+     * The archive will contain the word document (metadata species form) and a
+     * json object of other data which can't be read from the metadata from.
+     * 
+     * This method will attempt to process the archive into a Taxon Dataset.
+     * If that fails, an exception will be thrown and the archive will be
      * removed from disk.
      * 
      * @param organisationId who is the assigned owner of the new taxon dataset
-     * @param wordDocument inputstream representing a word document
+     * @param wordDocument inputstream representing a word document in an archive
      * @return the assigned dataset key for this metadata form
-     * @throws IOException if failed to write the word document to disk
+     * @throws IOException if failed to write the archive to disk
      */
     public String storeMetadataWordDocument(int organisationId, InputStream wordDocument) throws IOException {
         String placeholderKey = UUID.randomUUID().toString(); //generate a new id to store the incoming word document as
@@ -67,7 +70,7 @@ public class TaxonDatasetPlaceholderService {
             //open it
             FileUtils.copyInputStreamToFile(wordDocument, upload);
             //Make sure that we can actually read the supplied document
-            dataset = metadataFormService.readWordDocument(wordDocument); 
+            dataset = metadataFormService.readWordDocument(upload); 
             return placeholderKey;
         }
         finally {
@@ -81,19 +84,20 @@ public class TaxonDatasetPlaceholderService {
      * Re-hydrates the specified metadata form which is registered against the
      * supplied organisation id as a TaxonDataset.
      * @param organisationId attributed to owning the dataset placeholder
-     * @param datasetKey generated when the original word document was stored
+     * @param datasetKey generated when the original archived word document was stored
      * @return the taxon dataset represented by the data in the word document or
      *  null if no taxon dataset could be found
+     * @throws java.io.IOException if failed to read the document archive
      */
-    public TaxonDataset readTaxonDataset(int organisationId, String datasetKey) {
-        try {
-            File doc = getWordDocument(organisationId, datasetKey);
-            TaxonDataset dataset = metadataFormService.readWordDocument(new FileInputStream(doc));
+    public TaxonDataset readTaxonDataset(int organisationId, String datasetKey) throws IOException {
+        File doc = getWordDocument(organisationId, datasetKey);
+        if(doc.exists()) {
+            TaxonDataset dataset = metadataFormService.readWordDocument(doc);
             dataset.setKey(datasetKey);
             dataset.setOrganisation(organisationMapper.selectByID(organisationId));
             return dataset;
         }
-        catch(FileNotFoundException fnfe) {
+        else {
             return null;
         }
     }
@@ -102,10 +106,11 @@ public class TaxonDatasetPlaceholderService {
      * Reads the placeholder taxon dataset which is represented by the supplied
      * dataset key
      * @param datasetKey to locate
-     * @return A taxon dataset representation of the word document or null if no
-     *  dataset could be found
+     * @return A taxon dataset representation of the word document combined with
+     *  the json object from the archive or null if no dataset could be found
+     * @throws java.io.IOException if failed to read the document archive
      */
-    public TaxonDataset readTaxonDataset(String datasetKey) {
+    public TaxonDataset readTaxonDataset(String datasetKey) throws IOException {
         return readTaxonDataset(getOwningOrganisationAdmin(datasetKey), datasetKey);
     }
     
@@ -131,8 +136,9 @@ public class TaxonDatasetPlaceholderService {
      * @param organisationId which is attributed to placeholder datasets
      * @return a list of placeholder TaxonDatasets associated with the provided
      *  organisationId
+     * @throws java.io.IOException if failed to read the document archive
      */
-    public List<TaxonDataset> readTaxonDatasetsFor(int organisationId) {
+    public List<TaxonDataset> readTaxonDatasetsFor(int organisationId) throws IOException {
         File[] files = datasetsPath.listFiles(new OrganisationsDatasetMetadataFileFilter(organisationId));
         List<TaxonDataset> toReturn = new ArrayList<>();
         for(File metadataFile: files) {
@@ -147,10 +153,10 @@ public class TaxonDatasetPlaceholderService {
         return toReturn;
     }
     
-    // Grab the file on disk where a word document should be stored based on the
+    // Grab the file on disk where a archive should be stored based on the
     // datasetkey and organisation id
     protected File getWordDocument(int organisation, String id) {
-        return new File(datasetsPath, organisation + "-" + id + ".doc");
+        return new File(datasetsPath, organisation + "-" + id + ".zip");
     }
     
     private static class OrganisationsDatasetMetadataFileFilter implements FileFilter {
@@ -164,7 +170,7 @@ public class TaxonDatasetPlaceholderService {
         public boolean accept(File pathname) {
             return pathname.isFile() 
                     && pathname.getName().startsWith(organisationId + "-")
-                    && pathname.getName().endsWith(".doc");
+                    && pathname.getName().endsWith(".zip");
         }
     }
     
@@ -180,7 +186,7 @@ public class TaxonDatasetPlaceholderService {
             int start = pathname.getName().indexOf('-') + 1;
             return start != 0 //Check that there is a - in the name
                     && pathname.isFile()
-                    && pathname.getName().substring(start).equalsIgnoreCase(datasetKey + ".doc");
+                    && pathname.getName().substring(start).equalsIgnoreCase(datasetKey + ".zip");
         }
     }
 }

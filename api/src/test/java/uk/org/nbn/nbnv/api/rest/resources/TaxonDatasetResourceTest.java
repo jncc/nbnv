@@ -367,7 +367,7 @@ public class TaxonDatasetResourceTest {
     }
     
     @Test
-    public void checkCanLocateTaxonDatasetFromPlaceholderServiceIfNotInDatabase() {
+    public void checkCanLocateTaxonDatasetFromPlaceholderServiceIfNotInDatabase() throws IOException {
         //Given
         String datasetKey = "something not in database";
         TaxonDataset mockedDataset = mock(TaxonDataset.class);
@@ -382,7 +382,7 @@ public class TaxonDatasetResourceTest {
     }
         
     @Test
-    public void checkCanLocateTaxonDatasetFromPlaceholderServiceWhenInDatabase() {
+    public void checkCanLocateTaxonDatasetFromPlaceholderServiceWhenInDatabase() throws IOException {
         //Given
         String datasetKey = "something not in database";
         TaxonDataset mockedDataset = mock(TaxonDataset.class);
