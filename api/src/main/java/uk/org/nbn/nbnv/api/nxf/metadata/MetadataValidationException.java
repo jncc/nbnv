@@ -1,6 +1,7 @@
 package uk.org.nbn.nbnv.api.nxf.metadata;
 
 import java.util.List;
+import org.apache.commons.lang.StringUtils;
 
 public class MetadataValidationException extends Exception{
     
@@ -25,5 +26,10 @@ public class MetadataValidationException extends Exception{
     
     public List<String> getErrors(){
         return errors;
+    }
+
+    @Override
+    public String getMessage(){
+        return "Encountered these errors in the Word metadata document:\n" + StringUtils.join(errors, "\n");
     }
 }

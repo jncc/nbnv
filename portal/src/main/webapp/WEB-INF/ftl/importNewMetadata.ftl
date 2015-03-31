@@ -1,11 +1,11 @@
 <@template.master title="NBN import" javascripts=["/js/metadata/new-taxon-dataset-access-levels.js"]>
 
-  <h1>Upload a new taxon dataset - metadata upload</h1>
+  <h1>New taxon dataset - metadata upload</h1>
   <p>
-    Before you can add your new taxon dataset you must provide its metadata.  Do this by filling in the form below, which includes uploading a pre-filled Word metadata document (available <a href="http://www.nbn.org.uk/Share-Data/Providing-Data/Metadata-form-for-species-datasets.aspx">here</a>).  Press 'Import Metadata' to submit and go to the taxon dataset upload page.
+    Before you can add a new taxon dataset you must provide its metadata.  Do this by filling in the form below, which includes uploading a Word metadata document you have previously filled in (available <a href="http://www.nbn.org.uk/Share-Data/Providing-Data/Metadata-form-for-species-datasets.aspx">here</a>).  Press 'Import Metadata' to submit and go to the Taxon Dataset Upload page.
   </p>
   <#if status??>
-    <div class="message error">${status!}</div>
+    <div class="message error">${status?html?replace("\n", "<br>")?replace("uk.org.nbn.nbnv.api.nxf.metadata.MetadataValidationException: ", "")}</div>
   </#if>
   <fieldset>
     <form action="NewMetadata" method="POST" enctype="multipart/form-data" >
