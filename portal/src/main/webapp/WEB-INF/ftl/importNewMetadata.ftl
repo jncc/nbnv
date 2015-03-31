@@ -1,29 +1,19 @@
-<#assign organisations = json.readURL("${api}/user/organisations")/>
+<#assign organisations = json.readURL("${api}/user/adminOrganisations")/>
 
 <@template.master title="NBN import" javascripts=["/js/metadata/new-taxon-dataset-access-levels.js"]>
 
-  <h1>Add a new dataset - metadata upload</h1>
+  <h1>Upload a new taxon dataset - metadata upload</h1>
+  <p>
+    Before you can add your new taxon dataset you must provide its metadata.  Do this by filling in the form below, which includes uploading a pre-filled Word metadata document (avaialble <a href="http://www.nbn.org.uk/Share-Data/Providing-Data/Metadata-form-for-species-datasets.aspx">here</a>).  Press 'Import Metadata' to submit and go to the taxon dataset upload page.
+  </p>
   <#if status??>
     <div class="message error">${status!}</div>
   </#if>
   <fieldset>
     <form action="NewMetadata" method="POST" enctype="multipart/form-data" >
     <fieldset>
-        <#if organisations?has_content>
-            size: ${organisations?size}
-            <p>
-            <label for="organisationId">Select your organisation</label>
-            <select name="organisationId">
-              <#list organisations as organisation>
-               <option value="${organisation.id}">${organisation.name}</option>
-              </#list>
-            </select>
-            </p>
-        </#if>
         <legend>Level of Public Access</legend>
         <span class="formlabel">Geographic Resolution</span>
-        <!-- This needs to be populated as a dropdown -->
-        <input type="hidden" value="12" name="organisation">
         <span class="formfield">
             <input type="radio" id="res100" name="resolution" value="100"><label for="res100">Full</label> 
             <input type="radio" id="res1000" name="resolution" value="1000"><label for="res1000">1km</label> 
@@ -32,13 +22,13 @@
             <input type="radio" id="resNone" name="resolution" value="null"><label for="resNone">No Access</label> 
         </span>
         <br /><br />
-        <span class="formlabel">Record Attributes</span>
+        <span class="formlabel">Record Attributes (only available when Geographic Resolution is set to Full)</span>
         <span class="formfield">
             <input type="radio" id="attsTrue" name="recordAtts" value="true"><label for="attsTrue">Yes</label>
             <input type="radio" id="attsFalse" name="recordAtts" value="false"><label for="attsFalse">No</label>
             <input type="radio" id="attsNone" name="recordAtts" value="null"><label for="attsNone">N/A</label>
         </span><br /><br />
-        <span class="formlabel">Recorder Names</span>
+        <span class="formlabel">Recorder Names (only available when Geographic Resolution is set to Full)</span>
         <span class="formfield">
             <input type="radio" id="recNamesTrue" name="recorderNames" value="true"><label for="recNamesTrue">Yes</label> 
             <input type="radio" id="recNamesFalse" name="recorderNames" value="false"><label for="recNames">No</label> 
@@ -46,6 +36,20 @@
         </span>
         <br /><br />
     </fieldset>                
+    <#if organisations?has_content>
+        <#if organisations?size=1>
+            <input type="hidden" name="organisation" value="${organisations[0].id}">
+        <#else>
+            <p>
+            <label for="organisationId">Select the organisation your new dataset belongs to: </label>
+            <select name="organisation">
+              <#list organisations as organisation>
+               <option value="${organisation.id}">${organisation.name}</option>
+              </#list>
+            </select>
+            </p>
+        </#if>
+    </#if>
     <p>
       <input type="file" name="file">
     </p>
