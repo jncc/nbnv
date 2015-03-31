@@ -1,3 +1,5 @@
+<#assign organisations = json.readURL("${api}/user/organisations")/>
+
 <@template.master title="NBN import" javascripts=["/js/metadata/new-taxon-dataset-access-levels.js"]>
 
   <h1>Add a new dataset - metadata upload</h1>
@@ -7,6 +9,17 @@
   <fieldset>
     <form action="NewMetadata" method="POST" enctype="multipart/form-data" >
     <fieldset>
+        <#if organisations?has_content>
+            size: ${organisations?size}
+            <p>
+            <label for="organisationId">Select your organisation</label>
+            <select name="organisationId">
+              <#list organisations as organisation>
+               <option value="${organisation.id}">${organisation.name}</option>
+              </#list>
+            </select>
+            </p>
+        </#if>
         <legend>Level of Public Access</legend>
         <span class="formlabel">Geographic Resolution</span>
         <!-- This needs to be populated as a dropdown -->
