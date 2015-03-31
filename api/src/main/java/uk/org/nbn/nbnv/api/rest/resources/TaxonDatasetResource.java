@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.NoSuchFileException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -542,6 +543,9 @@ public class TaxonDatasetResource extends AbstractResource {
 
                 // Create a nxfreader which will fail when reading lines which are too long
                 try ( NXFReader nxf = new NXFReader(new LimitedLineLengthReader(new InputStreamReader(request.getInputStream()))) ) {
+                    //We are about to replace the dataset, set the current time 
+                    //as the date uploaded.
+                    dataset.setDateUploaded(Calendar.getInstance().getTime());
                     importerService.importDataset(nxf, dataset, upsert);
                     return Response.ok(getImportStatus(admin,id)).build();
                 }

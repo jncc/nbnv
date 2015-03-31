@@ -2,8 +2,6 @@ package uk.org.nbn.nbnv.api.services;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -16,6 +14,7 @@ import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.org.nbn.nbnv.api.dao.warehouse.OrganisationMapper;
+import uk.org.nbn.nbnv.api.model.Organisation;
 import uk.org.nbn.nbnv.api.model.TaxonDataset;
 
 /**
@@ -58,20 +57,20 @@ public class TaxonDatasetPlaceholderService {
      * 
      * @param organisationId who is the assigned owner of the new taxon dataset
      * @param wordDocument inputstream representing a word document in an archive
-     * @return the assigned dataset key for this metadata form
+     * @return the newly generated dataset with placeholder datasetkey set
      * @throws IOException if failed to write the archive to disk
      */
-    public String storeMetadataWordDocument(int organisationId, InputStream wordDocument) throws IOException {
+    public TaxonDataset storeMetadataWordDocument(int organisationId, InputStream wordDocument) throws IOException {
         String placeholderKey = UUID.randomUUID().toString(); //generate a new id to store the incoming word document as
-        File upload = getWordDocument(organisationId, placeholderKey);
+        File upload = getTaxonDatasetPlaceholderArchive(organisationId, placeholderKey);
         TaxonDataset dataset = null;
         try {
             //Copy the supplied input stream to disk, once stored we can try and
             //open it
             FileUtils.copyInputStreamToFile(wordDocument, upload);
             //Make sure that we can actually read the supplied document
-            dataset = metadataFormService.readWordDocument(upload); 
-            return placeholderKey;
+            dataset = readTaxonDataset(organisationId, placeholderKey); 
+            return dataset;
         }
         finally {
             if(dataset == null) {
@@ -90,11 +89,14 @@ public class TaxonDatasetPlaceholderService {
      * @throws java.io.IOException if failed to read the document archive
      */
     public TaxonDataset readTaxonDataset(int organisationId, String datasetKey) throws IOException {
-        File doc = getWordDocument(organisationId, datasetKey);
+        File doc = getTaxonDatasetPlaceholderArchive(organisationId, datasetKey);
         if(doc.exists()) {
             TaxonDataset dataset = metadataFormService.readWordDocument(doc);
             dataset.setKey(datasetKey);
-            dataset.setOrganisation(organisationMapper.selectByID(organisationId));
+            Organisation organisation = organisationMapper.selectByID(organisationId);
+            dataset.setOrganisation(organisation);
+            dataset.setOrganisationID(organisation.getId());
+            dataset.setOrganisationName(organisation.getName());
             return dataset;
         }
         else {
@@ -155,7 +157,7 @@ public class TaxonDatasetPlaceholderService {
     
     // Grab the file on disk where a archive should be stored based on the
     // datasetkey and organisation id
-    protected File getWordDocument(int organisation, String id) {
+    protected File getTaxonDatasetPlaceholderArchive(int organisation, String id) {
         return new File(datasetsPath, organisation + "-" + id + ".zip");
     }
     

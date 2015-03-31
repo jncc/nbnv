@@ -74,14 +74,14 @@ public class TaxonDatasetPlaceholderServiceTest {
         //Given
         InputStream input = IOUtils.toInputStream("Not really a word document");
         int organisation = 7331;
-        TaxonDataset dataset = mock(TaxonDataset.class);
-        when(metadataFormService.readWordDocument(any(File.class))).thenReturn(dataset);
+        when(metadataFormService.readWordDocument(any(File.class))).thenReturn(new TaxonDataset());
+        when(organisationMapper.selectByID(organisation)).thenReturn(mock(Organisation.class));
         
         //When
-        String datasetKey = service.storeMetadataWordDocument(organisation, input);
+        TaxonDataset newDataset = service.storeMetadataWordDocument(organisation, input);
         
         //Then
-        File wordDocument = service.getWordDocument(organisation, datasetKey);
+        File wordDocument = service.getTaxonDatasetPlaceholderArchive(organisation, newDataset.getKey());
         assertTrue("Expected the word document to exist", wordDocument.exists());
     }
     
@@ -95,7 +95,7 @@ public class TaxonDatasetPlaceholderServiceTest {
         
         //When
         try {
-            String datasetKey = service.storeMetadataWordDocument(organisation, input);
+            TaxonDataset dataset = service.storeMetadataWordDocument(organisation, input);
         }
         catch(Exception e) {}
         
@@ -111,6 +111,7 @@ public class TaxonDatasetPlaceholderServiceTest {
         TaxonDataset mockedDataset = mock(TaxonDataset.class);
         when(metadataFormService.readWordDocument(any(File.class)))
                 .thenReturn(mockedDataset);
+        when(organisationMapper.selectByID(5000)).thenReturn(mock(Organisation.class));
         
         //When
         TaxonDataset dataset = service.readTaxonDataset(5000, "SomeDataset");
@@ -141,6 +142,7 @@ public class TaxonDatasetPlaceholderServiceTest {
         TaxonDataset mockedDataset = mock(TaxonDataset.class);
         when(metadataFormService.readWordDocument(any(File.class)))
                 .thenReturn(mockedDataset);
+        when(organisationMapper.selectByID(5000)).thenReturn(mock(Organisation.class));
         
         //When
         TaxonDataset dataset = service.readTaxonDataset("SomeDataset1");
@@ -157,6 +159,7 @@ public class TaxonDatasetPlaceholderServiceTest {
         folder.newFile("3333-Someoneelses.zip");
         when(metadataFormService.readWordDocument(any(File.class)))
                 .thenReturn(mock(TaxonDataset.class));
+        when(organisationMapper.selectByID(5000)).thenReturn(mock(Organisation.class));
         
         //When
         List<TaxonDataset> datasets = service.readTaxonDatasetsFor(5000);

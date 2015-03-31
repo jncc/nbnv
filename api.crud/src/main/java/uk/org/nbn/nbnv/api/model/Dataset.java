@@ -182,7 +182,7 @@ public class Dataset {
     }
     
     public String getFormattedDateUploaded(){
-        return (new SimpleDateFormat("dd-MMM-yyyy")).format(dateUploaded);
+        return getFormatedDate(dateUploaded);
     }
 
     public void setDateUploaded(Date dateUploaded) {
@@ -222,7 +222,7 @@ public class Dataset {
     }
 
     public String getFormattedMetadataLastEdited(){
-        return (new SimpleDateFormat("dd-MMM-yyyy")).format(metadataLastEdited);
+        return getFormatedDate(metadataLastEdited);
     }
 
     public void setMetadataLastEdited(Date metadataLastEdited) {
@@ -280,5 +280,14 @@ public class Dataset {
     @XmlTransient
     public boolean isPlaceholder() {
         return key != null && key.length() != 8;
+    }
+    
+    private static String getFormatedDate(Date date) {
+        if(date != null) {
+            return new SimpleDateFormat("dd-MMM-yyyy").format(date);
+        }
+        else {
+            return null;
+        }
     }
 }

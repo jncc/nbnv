@@ -16,6 +16,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.core.MediaType;
 import org.apache.commons.fileupload.FileItemIterator;
 import org.apache.commons.fileupload.FileItemStream;
 import org.apache.commons.fileupload.FileUploadException;
@@ -34,6 +35,7 @@ import uk.org.nbn.nbnv.api.model.ImportCleanup;
 import static uk.org.nbn.nbnv.api.model.ImportCleanup.Operation.SET_SENSITIVE_FALSE;
 import static uk.org.nbn.nbnv.api.model.ImportCleanup.Operation.SET_SENSITIVE_TRUE;
 import static uk.org.nbn.nbnv.api.model.ImportCleanup.Operation.STRIP_INVALID_RECORDS;
+import uk.org.nbn.nbnv.api.model.TaxonDataset;
 import uk.org.nbn.nbnv.api.model.TaxonDatasetAdditions;
 import uk.org.nbn.nbnv.api.model.TaxonDatasetWithImportStatus;
 
@@ -141,11 +143,12 @@ public class DatasetImporterController {
             
             ClientResponse restResponse = importer
                     .type("application/zip")
+                    .accept(MediaType.APPLICATION_JSON)
                     .post(ClientResponse.class, zip(additions, wordDocumentInputStream));
             
             switch(restResponse.getStatus()) {
                 case 200:
-                    data.put("datasetKey", restResponse.getEntity(String.class));
+                    data.put("dataset", restResponse.getEntity(TaxonDataset.class));
                     return new ModelAndView("importNewDataset", data);
                 case 401: throw new UniformInterfaceException(restResponse);
                 default:

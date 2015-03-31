@@ -30,6 +30,7 @@ import uk.org.nbn.nbnv.api.model.Dataset;
 import uk.org.nbn.nbnv.api.model.FriendlyResponse;
 import uk.org.nbn.nbnv.api.model.Organisation;
 import uk.org.nbn.nbnv.api.model.OrganisationMembership;
+import uk.org.nbn.nbnv.api.model.TaxonDataset;
 import uk.org.nbn.nbnv.api.model.User;
 import uk.org.nbn.nbnv.api.model.meta.OpResult;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenOrganisationAdminUser;
@@ -299,7 +300,7 @@ public class OrganisationResource extends AbstractResource {
      * @param user a provided user who is an administrator of the given organisation
      * @param id of an organisation stored on the NBN Gateway
      * @param request http request containing a zip archive
-     * @return a new dataset key
+     * @return a new dataset taxon dataset with placeholder datasetkey added
      */
     @POST
     @Path("/{id}/datasets")
@@ -307,12 +308,14 @@ public class OrganisationResource extends AbstractResource {
         @ResponseCode(code = 200, condition = "Successfully created a new dataset to import against"),
         @ResponseCode(code = 400, condition = "Failed to create the new dataset")
     })
-    @Produces(MediaType.TEXT_PLAIN)
     @Consumes("application/zip")
+    @Produces(MediaType.APPLICATION_JSON)
     public Response storeNewDataset(@TokenOrganisationAdminUser(path = "id") User user, @PathParam("id") int id, @Context HttpServletRequest request) {
         try {
-            String datasetKey = taxonDatasetPlaceholderService.storeMetadataWordDocument(id, request.getInputStream());
-            return Response.ok().entity(datasetKey).build();
+            TaxonDataset dataset = taxonDatasetPlaceholderService.storeMetadataWordDocument(id, request.getInputStream());
+            return Response.ok()
+                    .entity(dataset)
+                    .build();
         }
         catch (IOException ex) {
             return Response.status(Response.Status.BAD_REQUEST)
