@@ -67,7 +67,11 @@ public class DatasetImporterController {
     
     @RequestMapping(value="/Import/Replace", method = RequestMethod.GET)
     public ModelAndView getImportExistingPage() {
-        return new ModelAndView("importReplacementDataset");
+        List<TaxonDataset> datasets = getAdminableTaxonDatasets();
+        if(datasets.isEmpty()) {
+            throw new ForbiddenException(); //nothing to admin
+        }
+        return new ModelAndView("importReplacementDataset", "datasets", datasets);
     }
     
     @RequestMapping(value="/Import", method = RequestMethod.GET)
@@ -176,11 +180,16 @@ public class DatasetImporterController {
         return getNewMetadatForm().addAllObjects(data); //Base the result off of the original form
     }
     
-    //Return the list of organisations that the current user is an administrator
-    //of.
+    //Return the list of organisations that the current user can administor
     private List<Organisation> getAdminableOrganisations() {
         GenericType<List<Organisation>> organisationsType = new GenericType<List<Organisation>>(){};
         return resource.path("/user/adminOrganisations").get(organisationsType);
+    }
+    
+    //Return the list of taxon datasets which the current user can administor
+    private List<TaxonDataset> getAdminableTaxonDatasets() {
+        GenericType<List<TaxonDataset>> datasetsType = new GenericType<List<TaxonDataset>>(){};
+        return resource.path("/user/adminDatasets").get(datasetsType);
     }
     
     private ModelAndView handleDatasetUpload(String view, HttpServletRequest request, HttpServletResponse response) {

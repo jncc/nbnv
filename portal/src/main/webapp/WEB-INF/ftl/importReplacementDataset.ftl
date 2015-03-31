@@ -1,5 +1,3 @@
-<#assign datasets = json.readURL("${api}/user/adminDatasets")/>
-
 <@template.master title="NBN import">
 
   <h1>Replace a dataset</h1>
