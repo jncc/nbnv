@@ -11,6 +11,8 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.fileupload.FileItemIterator;
@@ -18,6 +20,8 @@ import org.apache.commons.fileupload.FileItemStream;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.fileupload.util.Streams;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.Errors;
@@ -139,8 +143,7 @@ public class DatasetImporterController {
     @RequestMapping(value    = "/Import/New/Metadata", 
                     consumes = "multipart/form-data",
                     method   = RequestMethod.POST)
-    @ResponseBody
-    public String uploadMetadata(HttpServletRequest request,
+    public ModelAndView uploadMetadata(HttpServletRequest request,
             HttpServletResponse response) throws FileUploadException, IOException{
         
         ServletFileUpload upload = new ServletFileUpload();
@@ -149,14 +152,45 @@ public class DatasetImporterController {
         String resolution = getFormFieldOrEmptyString("resolution", iter);
         String recordAtts = getFormFieldOrEmptyString("recordAtts", iter);
         String recorderNames = getFormFieldOrEmptyString("recorderNames", iter);
+
+        //Put permissions in a JSONObject ready for zip file
+        JSONObject permissionData = new JSONObject();
+        try {
+            permissionData.put("resolution", resolution);
+            permissionData.put("recordAtts", recordAtts);
+            permissionData.put("recorderNames", recorderNames);
+        } catch (JSONException ex) {
+            //This should never happen
+            throw new RuntimeException(ex);
+        }
         
-        return resolution + ", " + recordAtts + ", " + recorderNames;
-        
+        Map<String, Object> data = new HashMap<>();
+//        try {
+//            WebResource importer = resource.path(String.format("organisation/%s/dataset", datasetKey));
+//            WebResource importer = resource.path(String.format("taxonDatasets/%s/import", datasetKey));
+//            
+//            InputStream nbnExchangeStream = iter.next().openStream();
+//            ClientResponse restResponse = importer.post(ClientResponse.class, nbnExchangeStream);
+//            
+//            switch(restResponse.getStatus()) {
+//                case 200: 
+//                      return new ModelAndView("importNewDataset", data);//data will have datasetkey in it
+//                    response.sendRedirect("/Import"); //Great stuff!! Jump back to the dashboard
+//                    return null;
+//                case 401: throw new UniformInterfaceException(restResponse);
+//                default:
+//                    //Get the error message from the response
+//                    data.put("status", restResponse.getEntity(Map.class).get("status"));
+//            }
+//        } catch (IOException ex) {
+//            data.put("status", "Failed to communicate with the NBN Rest API");
+//        }
+//
         //TODO: Forward the request to the api
         //On success (api will give you the dataset key) return the next model 
         //and view, otherwise return the importNewDatasetView
         //return new 
-    }
+//    }
 //    
 //    @RequestMapping(value="/Import/New", method = RequestMethod.POST)
 //    public ModelAndView getImportNewDatasetPage() {
