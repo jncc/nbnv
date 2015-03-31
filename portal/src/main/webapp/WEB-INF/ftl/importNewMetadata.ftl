@@ -25,14 +25,12 @@
         <span class="formlabel">Record Attributes (only available when Geographic Resolution is set to Full)</span>
         <span class="formfield">
             <input type="radio" id="attsTrue" name="recordAtts" value="true"><label for="attsTrue">Yes</label>
-            <input type="radio" id="attsFalse" name="recordAtts" value="false"><label for="attsFalse">No</label>
-            <input type="radio" id="attsNone" name="recordAtts" value="false" checked="checked"><label for="attsNone">N/A</label>
+            <input type="radio" id="attsFalse" name="recordAtts" value="false" checked="checked"><label for="attsFalse">No</label>
         </span><br /><br />
         <span class="formlabel">Recorder Names (only available when Geographic Resolution is set to Full)</span>
         <span class="formfield">
             <input type="radio" id="recNamesTrue" name="recorderNames" value="true"><label for="recNamesTrue">Yes</label> 
-            <input type="radio" id="recNamesFalse" name="recorderNames" value="false"><label for="recNames">No</label> 
-            <input type="radio" id="recNamesNone" name="recorderNames" value="false" checked="checked"><label for="recNamesNone">N/A</label> 
+            <input type="radio" id="recNamesFalse" name="recorderNames" value="false" checked="checked"><label for="recNames">No</label>
         </span>
         <br /><br />
     </fieldset>                

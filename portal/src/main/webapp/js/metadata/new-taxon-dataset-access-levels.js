@@ -3,7 +3,7 @@
 (function($) {
     
     $(document).ready(function() {
-        $('input[name="resolution"]').change(updateControls());
+        $('input[name="resolution"]').change(updateControls);
         updateControls(); //run once on startup
     });
     
