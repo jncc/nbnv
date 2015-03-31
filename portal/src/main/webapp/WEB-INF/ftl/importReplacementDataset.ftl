@@ -1,6 +1,9 @@
 <@template.master title="NBN import">
 
-  <h1>Replace a dataset</h1>
+  <h1>Replace a taxon dataset</h1>
+  <p>
+    Use this form to upload your replacement taxon dataset.  Once it has uploaded, check the <a href="/Import">dashboard</a> to see where it is in the queue and whether there any problem records.
+  </p>
   <#if status??>
     <div class="message error">${status!}</div>
   </#if>
