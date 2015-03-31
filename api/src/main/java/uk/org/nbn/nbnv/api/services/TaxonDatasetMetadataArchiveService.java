@@ -40,6 +40,11 @@ public class TaxonDatasetMetadataArchiveService {
             if(!VALID_RESOLUTIONS.contains(additions.getResolution())) {
                 throw new IllegalArgumentException("The resolution must be one of " + VALID_RESOLUTIONS);
             }
+            
+            if((additions.isRecordAttributes() || additions.isRecorderNames()) && !additions.getResolution().equals("100m")) {
+                throw new IllegalArgumentException("You must grant 100m public access if you wish to allow recorder names or attributes to be public");
+            }
+            
             taxonDataset.setPublicResolution(additions.getResolution());
             taxonDataset.setPublicAttribute(additions.isRecordAttributes());
             taxonDataset.setPublicRecorder(additions.isRecorderNames());

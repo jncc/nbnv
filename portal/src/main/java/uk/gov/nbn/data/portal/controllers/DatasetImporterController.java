@@ -23,6 +23,7 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.fileupload.util.Streams;
 import org.apache.commons.io.IOUtils;
+import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -210,10 +211,12 @@ public class DatasetImporterController {
             @Override
             public void run() {
                 try (ZipOutputStream out = new ZipOutputStream(src)) {
+                    ObjectMapper mapper = new ObjectMapper();
+                    mapper.configure(JsonGenerator.Feature.AUTO_CLOSE_TARGET, false);
                     out.putNextEntry(new ZipEntry("form.doc"));
                     IOUtils.copyLarge(wordDocument, out);
                     out.putNextEntry(new ZipEntry("additions.json"));
-                    new ObjectMapper().writeValue(out, additions);
+                    mapper.writeValue(out, additions);
                     out.closeEntry();
                 }
                 catch(IOException io) {}
