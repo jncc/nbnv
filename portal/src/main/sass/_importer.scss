@@ -1,0 +1,33 @@
+@import "_nbn-colour-scheme";
+
+.import-page-generated { float: right; }
+.import-result {
+    position: relative;
+    margin-bottom: 1em;
+    
+    &.import-result-success    .import-status { background-color: $successColour; }
+    &.import-result-warning    .import-status { background-color: $warningColour; }
+    &.import-result-error      .import-status { background-color: $errorColour; }
+    &.import-result-inprogress .import-status { background-color: $infoColour; }
+    
+    .import-status {
+        padding: 10px;
+        .ui-icon {
+            position: absolute;
+            top: 7px;
+            left: 14px;
+        }
+        .import-message {
+            font-weight: bold;
+            margin-left: 30px;
+            i { font-style: italic; }
+        }
+    }
+    .import-controls {
+        position: absolute;
+        top: 6px;
+        right: 6px;
+        form { display: inline-block; }
+    }
+    .nbn-simple-table { margin-left: 2em; }
+}

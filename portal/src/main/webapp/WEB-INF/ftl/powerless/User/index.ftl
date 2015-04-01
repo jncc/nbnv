@@ -108,6 +108,7 @@
         <p><a href="/AccessRequest/Admin">Manage Access Requests</a></p>
         <p><a href="/AccessRequest/Create/Grant">Create New Dataset Access</a></p>
         <p><a href="/Reports/Download">View Download Log For Your Datasets</a></p>
+        <p><a href="/Import">Manage dataset uploads</a></p>
         <table class="sTable">
             <thead>
                 <tr>

@@ -1,0 +1,31 @@
+[EL Info]: 2015-02-19 10:55:44.895--ServerSession(1527864689)--EclipseLink, version: Eclipse Persistence Services - 2.5.0.v20130507-3faac2b
+[EL Info]: connection: 2015-02-19 10:55:45.395--ServerSession(1527864689)--file:/E:/nbn-importer/importer.jar_NBNCore-PU_url=jdbc:sqlserver://nbn-b.nerc-lancaster.ac.uk;databaseName=TestNBNCore_user=NBNImporter login successful
+2015-Feb-19 10:55:45 INFO  Welcome! Starting the NBN Gateway importer
+2015-Feb-19 10:55:45 INFO  Options are: 
+  flush       25
+  archivePath e:\nbn-importer\importertemp\invalid-multipleerrors.zip
+  logLevel    INFO
+  tempDir     e:\nbn-importer\importertemp
+  target      commit
+  logDir      e:\nbn-importer\mount\logs
+
+
+2015-Feb-19 10:55:45 INFO  JDBC Databse Connection: jdbc:sqlserver://nbn-b.nerc-lancaster.ac.uk;databaseName=TestNBNCore
+2015-Feb-19 10:55:45 INFO  API URL: https://data.nbn.org.uk/api
+2015-Feb-19 10:55:45 INFO  Opening archive e:\nbn-importer\importertemp\invalid-multipleerrors.zip
+2015-Feb-19 10:55:45 INFO  Validating metadata...
+2015-Feb-19 10:55:45 INFO  Validating archive...
+2015-Feb-19 10:55:46 ERROR Validation [3] NBNV-73: The same date must be used for both the StartDate and EndDate for a date with DateType 'Some(D)'
+2015-Feb-19 10:55:46 ERROR Validation [16] NBNV-284: The StartDate must be the first day of the specified year for a date with DateType 'Some(Y)'
+2015-Feb-19 10:55:46 ERROR Validation [16] NBNV-284: The EndDate must be the last day of the specified year for a date with DateType 'Some(Y)'
+2015-Feb-19 10:55:46 ERROR Validation [33] NBNV-73: The same date must be used for both the StartDate and EndDate for a date with DateType 'Some(D)'
+2015-Feb-19 10:55:46 INFO  Validated 100 records
+2015-Feb-19 10:55:46 INFO  Validation complete. 4 validation errors
+2015-Feb-19 10:55:46 ERROR Import run failed
+uk.org.nbn.nbnv.importer.BadDataException: Failed due to validation errors, see log for details
+	at uk.org.nbn.nbnv.importer.validation.Validator.validate(Validator.scala:119)
+	at uk.org.nbn.nbnv.importer.Importer$$anonfun$run$1.apply$mcV$sp(Importer.scala:67)
+	at uk.org.nbn.nbnv.importer.Importer.withTopLevelExceptionHandling(Importer.scala:87)
+	at uk.org.nbn.nbnv.importer.Importer.run(Importer.scala:51)
+	at uk.org.nbn.nbnv.importer.Importer$.main(Importer.scala:22)
+	at uk.org.nbn.nbnv.importer.Importer.main(Importer.scala)
