@@ -2,7 +2,7 @@
 
   <h1>New taxon dataset - dataset upload</h1>
   <p>
-    Use this form to upload your new taxon dataset.  Once it has uploaded, check the <a href="/Import">dashboard</a> to see where it is in the queue and whether there any problem records.
+    Use this form to upload your new taxon dataset.  Once it has uploaded, check the <a href="/Import">dashboard</a> to see where it is in the queue and whether there are any problem records.
   </p>
   <#if status??>
     <div class="message error">${status!}</div>
