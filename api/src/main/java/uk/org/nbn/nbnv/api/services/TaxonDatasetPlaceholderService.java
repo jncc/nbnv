@@ -91,12 +91,9 @@ public class TaxonDatasetPlaceholderService {
     public TaxonDataset readTaxonDataset(int organisationId, String datasetKey) throws IOException {
         File doc = getTaxonDatasetPlaceholderArchive(organisationId, datasetKey);
         if(doc.exists()) {
-            TaxonDataset dataset = metadataFormService.readWordDocument(doc);
-            dataset.setKey(datasetKey);
             Organisation organisation = organisationMapper.selectByID(organisationId);
-            dataset.setOrganisation(organisation);
-            dataset.setOrganisationID(organisation.getId());
-            dataset.setOrganisationName(organisation.getName());
+            TaxonDataset dataset = metadataFormService.readWordDocument(doc, organisation);
+            dataset.setKey(datasetKey);
             return dataset;
         }
         else {

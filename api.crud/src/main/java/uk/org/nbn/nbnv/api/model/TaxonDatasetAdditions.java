@@ -12,9 +12,17 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement
 public class TaxonDatasetAdditions {
-    private String resolution;
-    
+    private String resolution, adminEmail;
+
     private boolean recordAttributes, recorderNames;
+    
+    public String getAdminEmail() {
+        return adminEmail;
+    }
+
+    public void setAdminEmail(String adminEmail) {
+        this.adminEmail = adminEmail;
+    }    
 
     public String getResolution() {
         return resolution;
@@ -39,5 +47,4 @@ public class TaxonDatasetAdditions {
     public void setRecorderNames(boolean recorderNames) {
         this.recorderNames = recorderNames;
     }
-    
 }

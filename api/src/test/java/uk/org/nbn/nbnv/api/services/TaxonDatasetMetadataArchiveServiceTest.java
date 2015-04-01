@@ -22,6 +22,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.mockito.MockitoAnnotations;
+import uk.org.nbn.nbnv.api.model.Organisation;
 import uk.org.nbn.nbnv.api.model.TaxonDataset;
 import uk.org.nbn.nbnv.api.model.TaxonDatasetAdditions;
 import uk.org.nbn.nbnv.api.nxf.metadata.MetadataValidationException;
@@ -51,9 +52,10 @@ public class TaxonDatasetMetadataArchiveServiceTest {
         additions.setResolution("No Access");
         additions.setRecorderNames(true);
         File archive = createZipArchive(new ByteArrayInputStream(new byte[]{}), additions);
+        Organisation organisation = mock(Organisation.class);
                 
         //When
-        service.readWordDocument(archive);
+        service.readWordDocument(archive, organisation);
         
         //Then
         fail("Expected to throw an Illegal Argument Exception");
@@ -66,9 +68,10 @@ public class TaxonDatasetMetadataArchiveServiceTest {
         additions.setResolution("No Access");
         additions.setRecordAttributes(true);
         File archive = createZipArchive(new ByteArrayInputStream(new byte[]{}), additions);
-                
+        Organisation organisation = mock(Organisation.class);
+        
         //When
-        service.readWordDocument(archive);
+        service.readWordDocument(archive, organisation);
         
         //Then
         fail("Expected to throw an Illegal Argument Exception");
@@ -81,18 +84,22 @@ public class TaxonDatasetMetadataArchiveServiceTest {
         additions.setResolution("100m");
         additions.setRecordAttributes(true);
         additions.setRecorderNames(true);
+        additions.setAdminEmail("admin@email.com");
         File archive = createZipArchive(new ByteArrayInputStream(new byte[]{}), additions);
         TaxonDataset dataset = mock(TaxonDataset.class);
         when(wordReader.getTaxonDataset(any(InputStream.class))).thenReturn(dataset);
+        Organisation organisation = mock(Organisation.class);
         
         //When
-        TaxonDataset loaded = service.readWordDocument(archive);
+        TaxonDataset loaded = service.readWordDocument(archive, organisation);
         
         //Then
         assertEquals("Expected to get document loaded from word reader", dataset, loaded);
         verify(loaded).setPublicResolution("100m");
         verify(loaded).setPublicAttribute(true);
         verify(loaded).setPublicRecorder(true);
+        verify(loaded).setOrganisation(organisation);
+        verify(organisation).setContactEmail("admin@email.com");
     }
     
     private File createZipArchive(InputStream wordDoc, TaxonDatasetAdditions additions) throws IOException {       

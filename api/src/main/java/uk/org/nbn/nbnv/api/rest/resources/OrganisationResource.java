@@ -287,7 +287,7 @@ public class OrganisationResource extends AbstractResource {
      *      can not be read from a word document for technical reasons.
      * 
      * The additional.json requires three fields. This should look like
-     *  {"resolution":"10km", "recorderNames": true, "recordAttributes": true}
+     *  {"resolution":"10km", "recorderNames": true, "recordAttributes": true, "adminEmail": "inital@admin.com"}
      * 
      * Where:
      * - resolution is the geographic resolution which the general public 
@@ -295,7 +295,9 @@ public class OrganisationResource extends AbstractResource {
      * - recorderNames is a boolean indicating weather or not the recorder name(s)
      *  are made publicly available
      * - recorderAttributes is a boolean indicating weather or not the dataset 
-     * attributes are made available 
+     * attributes are made available
+     * - adminEmail is an email address of a user on the NBN Gateway who will
+     * be the administrator for the dataset
      * 
      * @param user a provided user who is an administrator of the given organisation
      * @param id of an organisation stored on the NBN Gateway

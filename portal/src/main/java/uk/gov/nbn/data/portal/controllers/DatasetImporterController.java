@@ -41,6 +41,7 @@ import uk.org.nbn.nbnv.api.model.Organisation;
 import uk.org.nbn.nbnv.api.model.TaxonDataset;
 import uk.org.nbn.nbnv.api.model.TaxonDatasetAdditions;
 import uk.org.nbn.nbnv.api.model.TaxonDatasetWithImportStatus;
+import uk.org.nbn.nbnv.api.model.User;
 
 @Controller
 public class DatasetImporterController {
@@ -150,6 +151,7 @@ public class DatasetImporterController {
             FileItemIterator iter = upload.getItemIterator(request);
             
             TaxonDatasetAdditions additions = new TaxonDatasetAdditions();
+            additions.setAdminEmail(resource.path("user").get(User.class).getEmail());
             String organisationId = readNewDatasetOrganisation(iter, additions);
 
             InputStream wordDocumentInputStream = iter.next().openStream();
