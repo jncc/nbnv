@@ -1,0 +1,939 @@
+[EL Info]: 2015-02-20 13:54:47.179--ServerSession(1527864689)--EclipseLink, version: Eclipse Persistence Services - 2.5.0.v20130507-3faac2b
+[EL Info]: connection: 2015-02-20 13:54:47.668--ServerSession(1527864689)--file:/E:/nbn-importer/importer.jar_NBNCore-PU_url=jdbc:sqlserver://nbn-b.nerc-lancaster.ac.uk;databaseName=TestNBNCore_user=NBNImporter login successful
+2015-Feb-20 13:54:48 INFO  Welcome! Starting the NBN Gateway importer
+2015-Feb-20 13:54:48 INFO  Options are: 
+  flush       25
+  archivePath e:\nbn-importer\importertemp\valid.zip
+  logLevel    INFO
+  tempDir     e:\nbn-importer\importertemp
+  target      commit
+  logDir      e:\nbn-importer\mount\logs
+
+
+2015-Feb-20 13:54:48 INFO  JDBC Databse Connection: jdbc:sqlserver://nbn-b.nerc-lancaster.ac.uk;databaseName=TestNBNCore
+2015-Feb-20 13:54:48 INFO  API URL: https://data.nbn.org.uk/api
+2015-Feb-20 13:54:48 INFO  Opening archive e:\nbn-importer\importertemp\valid.zip
+2015-Feb-20 13:54:48 INFO  Validating metadata...
+2015-Feb-20 13:54:48 INFO  Validating archive...
+2015-Feb-20 13:54:48 INFO  Validated 100 records
+2015-Feb-20 13:54:48 INFO  Validation complete. 0 validation errors
+2015-Feb-20 13:54:48 INFO  Finished validation in 0 seconds
+2015-Feb-20 13:54:48 INFO  Inserting new dataset GA000466
+2015-Feb-20 13:54:48 INFO  Upserting survey 3 for dataset GA000466
+2015-Feb-20 13:54:48 INFO  Ingested 1 records in 0 seconds
+2015-Feb-20 13:54:48 INFO  Ingestion average is 59 milliseconds per record
+2015-Feb-20 13:54:48 INFO  Ingested 2 records in 0 seconds
+2015-Feb-20 13:54:48 INFO  Ingestion average is 51 milliseconds per record
+2015-Feb-20 13:54:48 INFO  Ingested 3 records in 0 seconds
+2015-Feb-20 13:54:48 INFO  Ingestion average is 35 milliseconds per record
+2015-Feb-20 13:54:48 INFO  Ingested 4 records in 0 seconds
+2015-Feb-20 13:54:48 INFO  Ingestion average is 26 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 5 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 21 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 6 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 18 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 7 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 15 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 8 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 13 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 9 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 12 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 10 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 11 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 11 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 10 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 12 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 9 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 13 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 8 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 14 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 8 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Upserting survey 2 for dataset GA000466
+2015-Feb-20 13:54:49 INFO  Ingested 15 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 10 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 16 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 10 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 17 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 9 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 18 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 9 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 19 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 8 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 20 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 8 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 21 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 8 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 22 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 7 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 23 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 7 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 24 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 7 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 25 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 6 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 26 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 6 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 27 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 6 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 28 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 6 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 29 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 6 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 30 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 6 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Upserting survey 1 for dataset GA000466
+2015-Feb-20 13:54:49 INFO  Ingested 31 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 6 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 32 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 7 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 33 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 6 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 34 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 6 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 35 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 6 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 36 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 6 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 37 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 6 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 38 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 6 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 39 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 5 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 40 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 5 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 41 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 5 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 42 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 5 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 43 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 5 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 44 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 5 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 45 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 5 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 46 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 5 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 47 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 5 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 48 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 5 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 49 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 4 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 50 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 4 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 51 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 4 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 52 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 4 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 53 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 4 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 54 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 4 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 55 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 4 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 56 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 4 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 57 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 4 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 58 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 4 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 59 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 4 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 60 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 4 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 61 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 4 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 62 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 4 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 63 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 4 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 64 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 4 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 65 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 4 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 66 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 3 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 67 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 3 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 68 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 3 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 69 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 3 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 70 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 3 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 71 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 3 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 72 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 3 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 73 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 3 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 74 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 3 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 75 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 3 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 76 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 3 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 77 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 3 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 78 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 3 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 79 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 3 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 80 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 3 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 81 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 3 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 82 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 3 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 83 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 3 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 84 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 3 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 85 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 3 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 86 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 3 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 87 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 3 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 88 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 3 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 89 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 3 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 90 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 3 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 91 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 3 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 92 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 3 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 93 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 3 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 94 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 3 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 95 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 3 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 96 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 3 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 97 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 3 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 98 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 3 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 99 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 3 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 100 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 3 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Upserting sample 1 for survey 3
+2015-Feb-20 13:54:49 INFO  Ingested 1 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 375 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 2 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 195 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 3 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 130 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 4 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 98 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 5 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 78 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 6 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 65 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 7 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 56 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 8 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 49 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 9 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 43 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 10 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 39 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 11 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 36 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 12 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 33 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 13 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 30 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 14 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 28 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Upserting sample 1 for survey 2
+2015-Feb-20 13:54:49 INFO  Ingested 15 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 27 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 16 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 27 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 17 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 25 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 18 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 24 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 19 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 22 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 20 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 21 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 21 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 20 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 22 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 19 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 23 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 18 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 24 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 18 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 25 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 17 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 26 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 16 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 27 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 16 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 28 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 16 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 29 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 15 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 30 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 15 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Upserting sample 1 for survey 1
+2015-Feb-20 13:54:49 INFO  Ingested 31 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 14 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 32 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 14 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 33 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 14 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 34 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 13 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 35 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 13 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 36 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 13 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 37 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 12 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 38 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 12 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 39 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 12 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 40 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 11 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 41 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 11 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 42 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 11 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 43 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 11 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 44 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 10 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 45 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 10 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 46 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 10 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 47 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 10 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 48 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 10 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 49 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 9 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 50 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 9 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 51 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 9 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 52 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 9 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 53 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 9 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 54 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 9 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 55 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 9 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 56 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 9 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 57 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 9 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 58 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 8 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 59 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 8 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 60 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 8 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 61 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 8 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 62 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 8 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 63 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 8 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 64 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 8 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 65 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 7 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 66 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 7 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 67 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 7 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 68 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 7 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 69 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 7 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 70 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 7 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 71 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 7 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 72 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 7 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 73 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 7 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 74 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 7 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 75 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 6 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 76 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 6 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 77 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 6 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 78 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 6 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 79 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 6 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 80 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 6 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 81 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 6 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 82 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 6 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 83 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 6 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 84 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 6 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 85 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 6 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 86 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 6 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 87 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 6 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 88 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 6 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 89 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 6 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 90 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 6 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 91 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 6 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 92 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 6 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 93 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 5 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 94 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 5 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 95 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 5 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 96 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 5 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 97 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 5 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 98 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 5 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 99 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 5 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 100 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 5 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Upserting recorder Graham French 
+2015-Feb-20 13:54:49 INFO  Upserting recorder Graham French, Jane Squirrell 
+2015-Feb-20 13:54:49 INFO  Ingested 1 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 573 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 2 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 290 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 3 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 194 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 4 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 145 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 5 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 116 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 6 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 97 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 7 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 83 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 8 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 73 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 9 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 65 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 10 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 58 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 11 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 53 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 12 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 48 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 13 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 45 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 14 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 41 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 15 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 39 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 16 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 36 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 17 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 34 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 18 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 32 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 19 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 30 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 20 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 29 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 21 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 28 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 22 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 26 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 23 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 25 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 24 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 24 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 25 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 23 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 26 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 22 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 27 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 22 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 28 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 21 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 29 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 20 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 30 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 19 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 31 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 19 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 32 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 18 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 33 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 18 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 34 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 17 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 35 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 17 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 36 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 16 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 37 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 16 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 38 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 15 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 39 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 15 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 40 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 15 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 41 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 14 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 42 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 14 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 43 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 13 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 44 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 13 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 45 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 13 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 46 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 13 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 47 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 12 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 48 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 12 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 49 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 12 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 50 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 12 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 51 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 11 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 52 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 11 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 53 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 11 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 54 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 11 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 55 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 11 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 56 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 10 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 57 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 10 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 58 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 10 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 59 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 10 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 60 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 10 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 61 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 10 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 62 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 9 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 63 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 9 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 64 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 9 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 65 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 9 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 66 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 9 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 67 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 9 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 68 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 9 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 69 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 8 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 70 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 8 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 71 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 8 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 72 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 8 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 73 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 8 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 74 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 8 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 75 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 8 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 76 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 8 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 77 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 8 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 78 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 7 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 79 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 7 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 80 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 7 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 81 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 7 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 82 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 7 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 83 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 7 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 84 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 7 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 85 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 7 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 86 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 7 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 87 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 7 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 88 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 7 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 89 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 7 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 90 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 6 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 91 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 6 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 92 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 6 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 93 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 6 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 94 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 6 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 95 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 6 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 96 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 6 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 97 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 6 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 98 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 6 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 99 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 6 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Ingested 100 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 6 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Upserting record 87
+2015-Feb-20 13:54:49 INFO  Ingested 1 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 791 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Upserting record 88
+2015-Feb-20 13:54:49 INFO  Ingested 2 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 429 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Upserting record 89
+2015-Feb-20 13:54:49 INFO  Ingested 3 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 299 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Upserting record 90
+2015-Feb-20 13:54:49 INFO  Ingested 4 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 237 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Upserting record 91
+2015-Feb-20 13:54:49 INFO  Ingested 5 records in 0 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 194 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Upserting record 92
+2015-Feb-20 13:54:49 INFO  Ingested 6 records in 1 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 169 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Upserting record 93
+2015-Feb-20 13:54:49 INFO  Ingested 7 records in 1 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 149 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Upserting record 94
+2015-Feb-20 13:54:49 INFO  Ingested 8 records in 1 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 135 milliseconds per record
+2015-Feb-20 13:54:49 INFO  Upserting record 95
+2015-Feb-20 13:54:49 INFO  Ingested 9 records in 1 seconds
+2015-Feb-20 13:54:49 INFO  Ingestion average is 122 milliseconds per record
+2015-Feb-20 13:54:50 INFO  Upserting record 96
+2015-Feb-20 13:54:50 INFO  Ingested 10 records in 1 seconds
+2015-Feb-20 13:54:50 INFO  Ingestion average is 115 milliseconds per record
+2015-Feb-20 13:54:50 INFO  Upserting record 97
+2015-Feb-20 13:54:50 INFO  Ingested 11 records in 1 seconds
+2015-Feb-20 13:54:50 INFO  Ingestion average is 105 milliseconds per record
+2015-Feb-20 13:54:50 INFO  Upserting record 98
+2015-Feb-20 13:54:50 INFO  Ingested 12 records in 1 seconds
+2015-Feb-20 13:54:50 INFO  Ingestion average is 99 milliseconds per record
+2015-Feb-20 13:54:50 INFO  Upserting record 99
+2015-Feb-20 13:54:50 INFO  Ingested 13 records in 1 seconds
+2015-Feb-20 13:54:50 INFO  Ingestion average is 96 milliseconds per record
+2015-Feb-20 13:54:50 INFO  Upserting record 100
+2015-Feb-20 13:54:50 INFO  Ingested 14 records in 1 seconds
+2015-Feb-20 13:54:50 INFO  Ingestion average is 93 milliseconds per record
+2015-Feb-20 13:54:50 INFO  Upserting record 1
+2015-Feb-20 13:54:50 INFO  Ingested 15 records in 1 seconds
+2015-Feb-20 13:54:50 INFO  Ingestion average is 96 milliseconds per record
+2015-Feb-20 13:54:50 INFO  Upserting record 2
+2015-Feb-20 13:54:50 INFO  Ingested 16 records in 1 seconds
+2015-Feb-20 13:54:50 INFO  Ingestion average is 95 milliseconds per record
+2015-Feb-20 13:54:50 INFO  Upserting record 3
+2015-Feb-20 13:54:50 INFO  Ingested 17 records in 1 seconds
+2015-Feb-20 13:54:50 INFO  Ingestion average is 90 milliseconds per record
+2015-Feb-20 13:54:50 INFO  Upserting record 4
+2015-Feb-20 13:54:50 INFO  Ingested 18 records in 1 seconds
+2015-Feb-20 13:54:50 INFO  Ingestion average is 88 milliseconds per record
+2015-Feb-20 13:54:50 INFO  Upserting record 5
+2015-Feb-20 13:54:50 INFO  Ingested 19 records in 1 seconds
+2015-Feb-20 13:54:50 INFO  Ingestion average is 84 milliseconds per record
+2015-Feb-20 13:54:50 INFO  Upserting record 6
+2015-Feb-20 13:54:50 INFO  Ingested 20 records in 1 seconds
+2015-Feb-20 13:54:50 INFO  Ingestion average is 84 milliseconds per record
+2015-Feb-20 13:54:50 INFO  Upserting record 7
+2015-Feb-20 13:54:50 INFO  Ingested 21 records in 1 seconds
+2015-Feb-20 13:54:50 INFO  Ingestion average is 81 milliseconds per record
+2015-Feb-20 13:54:50 INFO  Upserting record 8
+2015-Feb-20 13:54:50 INFO  Ingested 22 records in 1 seconds
+2015-Feb-20 13:54:50 INFO  Ingestion average is 80 milliseconds per record
+2015-Feb-20 13:54:50 INFO  Upserting record 9
+2015-Feb-20 13:54:50 INFO  Ingested 23 records in 1 seconds
+2015-Feb-20 13:54:50 INFO  Ingestion average is 77 milliseconds per record
+2015-Feb-20 13:54:50 INFO  Upserting record 10
+2015-Feb-20 13:54:50 INFO  Ingested 24 records in 1 seconds
+2015-Feb-20 13:54:50 INFO  Ingestion average is 75 milliseconds per record
+2015-Feb-20 13:54:50 INFO  Upserting record 11
+2015-Feb-20 13:54:50 INFO  Ingested 25 records in 1 seconds
+2015-Feb-20 13:54:50 INFO  Ingestion average is 73 milliseconds per record
+2015-Feb-20 13:54:50 INFO  Upserting record 12
+2015-Feb-20 13:54:50 INFO  Ingested 26 records in 1 seconds
+2015-Feb-20 13:54:50 INFO  Ingestion average is 72 milliseconds per record
+2015-Feb-20 13:54:50 INFO  Upserting record 13
+2015-Feb-20 13:54:50 INFO  Ingested 27 records in 2 seconds
+2015-Feb-20 13:54:50 INFO  Ingestion average is 77 milliseconds per record
+2015-Feb-20 13:54:50 INFO  Upserting record 14
+2015-Feb-20 13:54:51 INFO  Ingested 28 records in 2 seconds
+2015-Feb-20 13:54:51 INFO  Ingestion average is 77 milliseconds per record
+2015-Feb-20 13:54:51 INFO  Upserting record 15
+2015-Feb-20 13:54:51 INFO  Ingested 29 records in 2 seconds
+2015-Feb-20 13:54:51 INFO  Ingestion average is 75 milliseconds per record
+2015-Feb-20 13:54:51 INFO  Upserting record 16
+2015-Feb-20 13:54:51 INFO  Ingested 30 records in 2 seconds
+2015-Feb-20 13:54:51 INFO  Ingestion average is 73 milliseconds per record
+2015-Feb-20 13:54:51 INFO  Upserting record 17
+2015-Feb-20 13:54:51 INFO  Ingested 31 records in 2 seconds
+2015-Feb-20 13:54:51 INFO  Ingestion average is 73 milliseconds per record
+2015-Feb-20 13:54:51 INFO  Upserting record 18
+2015-Feb-20 13:54:51 INFO  Ingested 32 records in 2 seconds
+2015-Feb-20 13:54:51 INFO  Ingestion average is 72 milliseconds per record
+2015-Feb-20 13:54:51 INFO  Upserting record 19
+2015-Feb-20 13:54:51 INFO  Ingested 33 records in 2 seconds
+2015-Feb-20 13:54:51 INFO  Ingestion average is 71 milliseconds per record
+2015-Feb-20 13:54:51 INFO  Upserting record 20
+2015-Feb-20 13:54:51 INFO  Ingested 34 records in 2 seconds
+2015-Feb-20 13:54:51 INFO  Ingestion average is 69 milliseconds per record
+2015-Feb-20 13:54:51 INFO  Upserting record 21
+2015-Feb-20 13:54:51 INFO  Ingested 35 records in 2 seconds
+2015-Feb-20 13:54:51 INFO  Ingestion average is 68 milliseconds per record
+2015-Feb-20 13:54:51 INFO  Upserting record 22
+2015-Feb-20 13:54:51 INFO  Ingested 36 records in 2 seconds
+2015-Feb-20 13:54:51 INFO  Ingestion average is 66 milliseconds per record
+2015-Feb-20 13:54:51 INFO  Upserting record 23
+2015-Feb-20 13:54:51 INFO  Ingested 37 records in 2 seconds
+2015-Feb-20 13:54:51 INFO  Ingestion average is 65 milliseconds per record
+2015-Feb-20 13:54:51 INFO  Upserting record 24
+2015-Feb-20 13:54:51 INFO  Ingested 38 records in 2 seconds
+2015-Feb-20 13:54:51 INFO  Ingestion average is 63 milliseconds per record
+2015-Feb-20 13:54:51 INFO  Upserting record 25
+2015-Feb-20 13:54:51 INFO  Ingested 39 records in 2 seconds
+2015-Feb-20 13:54:51 INFO  Ingestion average is 62 milliseconds per record
+2015-Feb-20 13:54:51 INFO  Upserting record 26
+2015-Feb-20 13:54:51 INFO  Ingested 40 records in 2 seconds
+2015-Feb-20 13:54:51 INFO  Ingestion average is 63 milliseconds per record
+2015-Feb-20 13:54:51 INFO  Upserting record 27
+2015-Feb-20 13:54:51 INFO  Ingested 41 records in 2 seconds
+2015-Feb-20 13:54:51 INFO  Ingestion average is 62 milliseconds per record
+2015-Feb-20 13:54:51 INFO  Upserting record 28
+2015-Feb-20 13:54:51 INFO  Ingested 42 records in 2 seconds
+2015-Feb-20 13:54:51 INFO  Ingestion average is 61 milliseconds per record
+2015-Feb-20 13:54:51 INFO  Upserting record 29
+2015-Feb-20 13:54:51 INFO  Ingested 43 records in 2 seconds
+2015-Feb-20 13:54:51 INFO  Ingestion average is 60 milliseconds per record
+2015-Feb-20 13:54:51 INFO  Upserting record 30
+2015-Feb-20 13:54:51 INFO  Ingested 44 records in 2 seconds
+2015-Feb-20 13:54:51 INFO  Ingestion average is 60 milliseconds per record
+2015-Feb-20 13:54:51 INFO  Upserting record 31
+2015-Feb-20 13:54:51 INFO  Ingested 45 records in 2 seconds
+2015-Feb-20 13:54:51 INFO  Ingestion average is 59 milliseconds per record
+2015-Feb-20 13:54:51 INFO  Upserting record 32
+2015-Feb-20 13:54:51 INFO  Ingested 46 records in 2 seconds
+2015-Feb-20 13:54:51 INFO  Ingestion average is 58 milliseconds per record
+2015-Feb-20 13:54:51 INFO  Upserting record 33
+2015-Feb-20 13:54:51 INFO  Ingested 47 records in 2 seconds
+2015-Feb-20 13:54:51 INFO  Ingestion average is 58 milliseconds per record
+2015-Feb-20 13:54:51 INFO  Upserting record 34
+2015-Feb-20 13:54:51 INFO  Ingested 48 records in 2 seconds
+2015-Feb-20 13:54:51 INFO  Ingestion average is 58 milliseconds per record
+2015-Feb-20 13:54:51 INFO  Upserting record 35
+2015-Feb-20 13:54:51 INFO  Ingested 49 records in 2 seconds
+2015-Feb-20 13:54:51 INFO  Ingestion average is 57 milliseconds per record
+2015-Feb-20 13:54:51 INFO  Upserting record 36
+2015-Feb-20 13:54:51 INFO  Ingested 50 records in 2 seconds
+2015-Feb-20 13:54:51 INFO  Ingestion average is 57 milliseconds per record
+2015-Feb-20 13:54:51 INFO  Upserting record 37
+2015-Feb-20 13:54:51 INFO  Ingested 51 records in 2 seconds
+2015-Feb-20 13:54:51 INFO  Ingestion average is 56 milliseconds per record
+2015-Feb-20 13:54:51 INFO  Upserting record 38
+2015-Feb-20 13:54:51 INFO  Ingested 52 records in 2 seconds
+2015-Feb-20 13:54:51 INFO  Ingestion average is 56 milliseconds per record
+2015-Feb-20 13:54:51 INFO  Upserting record 39
+2015-Feb-20 13:54:51 INFO  Ingested 53 records in 2 seconds
+2015-Feb-20 13:54:51 INFO  Ingestion average is 55 milliseconds per record
+2015-Feb-20 13:54:51 INFO  Upserting record 40
+2015-Feb-20 13:54:51 INFO  Ingested 54 records in 2 seconds
+2015-Feb-20 13:54:51 INFO  Ingestion average is 55 milliseconds per record
+2015-Feb-20 13:54:51 INFO  Upserting record 41
+2015-Feb-20 13:54:51 INFO  Ingested 55 records in 3 seconds
+2015-Feb-20 13:54:51 INFO  Ingestion average is 54 milliseconds per record
+2015-Feb-20 13:54:51 INFO  Upserting record 42
+2015-Feb-20 13:54:51 INFO  Ingested 56 records in 3 seconds
+2015-Feb-20 13:54:51 INFO  Ingestion average is 54 milliseconds per record
+2015-Feb-20 13:54:51 INFO  Upserting record 43
+2015-Feb-20 13:54:51 INFO  Ingested 57 records in 3 seconds
+2015-Feb-20 13:54:51 INFO  Ingestion average is 53 milliseconds per record
+2015-Feb-20 13:54:51 INFO  Upserting record 44
+2015-Feb-20 13:54:51 INFO  Ingested 58 records in 3 seconds
+2015-Feb-20 13:54:51 INFO  Ingestion average is 53 milliseconds per record
+2015-Feb-20 13:54:51 INFO  Upserting record 45
+2015-Feb-20 13:54:52 INFO  Ingested 59 records in 3 seconds
+2015-Feb-20 13:54:52 INFO  Ingestion average is 52 milliseconds per record
+2015-Feb-20 13:54:52 INFO  Upserting record 46
+2015-Feb-20 13:54:52 INFO  Ingested 60 records in 3 seconds
+2015-Feb-20 13:54:52 INFO  Ingestion average is 52 milliseconds per record
+2015-Feb-20 13:54:52 INFO  Upserting record 47
+2015-Feb-20 13:54:52 INFO  Ingested 61 records in 3 seconds
+2015-Feb-20 13:54:52 INFO  Ingestion average is 52 milliseconds per record
+2015-Feb-20 13:54:52 INFO  Upserting record 48
+2015-Feb-20 13:54:52 INFO  Ingested 62 records in 3 seconds
+2015-Feb-20 13:54:52 INFO  Ingestion average is 52 milliseconds per record
+2015-Feb-20 13:54:52 INFO  Upserting record 49
+2015-Feb-20 13:54:52 INFO  Ingested 63 records in 3 seconds
+2015-Feb-20 13:54:52 INFO  Ingestion average is 51 milliseconds per record
+2015-Feb-20 13:54:52 INFO  Upserting record 50
+2015-Feb-20 13:54:52 INFO  Ingested 64 records in 3 seconds
+2015-Feb-20 13:54:52 INFO  Ingestion average is 51 milliseconds per record
+2015-Feb-20 13:54:52 INFO  Upserting record 51
+2015-Feb-20 13:54:52 INFO  Ingested 65 records in 3 seconds
+2015-Feb-20 13:54:52 INFO  Ingestion average is 50 milliseconds per record
+2015-Feb-20 13:54:52 INFO  Upserting record 52
+2015-Feb-20 13:54:52 INFO  Ingested 66 records in 3 seconds
+2015-Feb-20 13:54:52 INFO  Ingestion average is 50 milliseconds per record
+2015-Feb-20 13:54:52 INFO  Upserting record 53
+2015-Feb-20 13:54:52 INFO  Ingested 67 records in 3 seconds
+2015-Feb-20 13:54:52 INFO  Ingestion average is 49 milliseconds per record
+2015-Feb-20 13:54:52 INFO  Upserting record 54
+2015-Feb-20 13:54:52 INFO  Ingested 68 records in 3 seconds
+2015-Feb-20 13:54:52 INFO  Ingestion average is 49 milliseconds per record
+2015-Feb-20 13:54:52 INFO  Upserting record 55
+2015-Feb-20 13:54:52 INFO  Ingested 69 records in 3 seconds
+2015-Feb-20 13:54:52 INFO  Ingestion average is 49 milliseconds per record
+2015-Feb-20 13:54:52 INFO  Upserting record 56
+2015-Feb-20 13:54:52 INFO  Ingested 70 records in 3 seconds
+2015-Feb-20 13:54:52 INFO  Ingestion average is 48 milliseconds per record
+2015-Feb-20 13:54:52 INFO  Upserting record 57
+2015-Feb-20 13:54:52 INFO  Ingested 71 records in 3 seconds
+2015-Feb-20 13:54:52 INFO  Ingestion average is 48 milliseconds per record
+2015-Feb-20 13:54:52 INFO  Upserting record 58
+2015-Feb-20 13:54:52 INFO  Ingested 72 records in 3 seconds
+2015-Feb-20 13:54:52 INFO  Ingestion average is 47 milliseconds per record
+2015-Feb-20 13:54:52 INFO  Upserting record 59
+2015-Feb-20 13:54:52 INFO  Ingested 73 records in 3 seconds
+2015-Feb-20 13:54:52 INFO  Ingestion average is 47 milliseconds per record
+2015-Feb-20 13:54:52 INFO  Upserting record 60
+2015-Feb-20 13:54:52 INFO  Ingested 74 records in 3 seconds
+2015-Feb-20 13:54:52 INFO  Ingestion average is 46 milliseconds per record
+2015-Feb-20 13:54:52 INFO  Upserting record 61
+2015-Feb-20 13:54:52 INFO  Ingested 75 records in 3 seconds
+2015-Feb-20 13:54:52 INFO  Ingestion average is 46 milliseconds per record
+2015-Feb-20 13:54:52 INFO  Upserting record 62
+2015-Feb-20 13:54:52 INFO  Ingested 76 records in 3 seconds
+2015-Feb-20 13:54:52 INFO  Ingestion average is 45 milliseconds per record
+2015-Feb-20 13:54:52 INFO  Upserting record 63
+2015-Feb-20 13:54:52 INFO  Ingested 77 records in 3 seconds
+2015-Feb-20 13:54:52 INFO  Ingestion average is 45 milliseconds per record
+2015-Feb-20 13:54:52 INFO  Upserting record 64
+2015-Feb-20 13:54:52 INFO  Ingested 78 records in 3 seconds
+2015-Feb-20 13:54:52 INFO  Ingestion average is 45 milliseconds per record
+2015-Feb-20 13:54:52 INFO  Upserting record 65
+2015-Feb-20 13:54:52 INFO  Ingested 79 records in 3 seconds
+2015-Feb-20 13:54:52 INFO  Ingestion average is 46 milliseconds per record
+2015-Feb-20 13:54:52 INFO  Upserting record 66
+2015-Feb-20 13:54:52 INFO  Ingested 80 records in 3 seconds
+2015-Feb-20 13:54:52 INFO  Ingestion average is 45 milliseconds per record
+2015-Feb-20 13:54:52 INFO  Upserting record 67
+2015-Feb-20 13:54:52 INFO  Ingested 81 records in 3 seconds
+2015-Feb-20 13:54:52 INFO  Ingestion average is 45 milliseconds per record
+2015-Feb-20 13:54:52 INFO  Upserting record 68
+2015-Feb-20 13:54:52 INFO  Ingested 82 records in 3 seconds
+2015-Feb-20 13:54:52 INFO  Ingestion average is 45 milliseconds per record
+2015-Feb-20 13:54:52 INFO  Upserting record 69
+2015-Feb-20 13:54:52 INFO  Ingested 83 records in 3 seconds
+2015-Feb-20 13:54:52 INFO  Ingestion average is 44 milliseconds per record
+2015-Feb-20 13:54:52 INFO  Upserting record 70
+2015-Feb-20 13:54:52 INFO  Ingested 84 records in 3 seconds
+2015-Feb-20 13:54:52 INFO  Ingestion average is 44 milliseconds per record
+2015-Feb-20 13:54:52 INFO  Upserting record 71
+2015-Feb-20 13:54:52 INFO  Ingested 85 records in 3 seconds
+2015-Feb-20 13:54:52 INFO  Ingestion average is 44 milliseconds per record
+2015-Feb-20 13:54:52 INFO  Upserting record 72
+2015-Feb-20 13:54:52 INFO  Ingested 86 records in 3 seconds
+2015-Feb-20 13:54:52 INFO  Ingestion average is 43 milliseconds per record
+2015-Feb-20 13:54:52 INFO  Upserting record 73
+2015-Feb-20 13:54:52 INFO  Ingested 87 records in 3 seconds
+2015-Feb-20 13:54:52 INFO  Ingestion average is 43 milliseconds per record
+2015-Feb-20 13:54:52 INFO  Upserting record 74
+2015-Feb-20 13:54:52 INFO  Ingested 88 records in 3 seconds
+2015-Feb-20 13:54:52 INFO  Ingestion average is 43 milliseconds per record
+2015-Feb-20 13:54:52 INFO  Upserting record 75
+2015-Feb-20 13:54:52 INFO  Ingested 89 records in 3 seconds
+2015-Feb-20 13:54:52 INFO  Ingestion average is 43 milliseconds per record
+2015-Feb-20 13:54:52 INFO  Upserting record 76
+2015-Feb-20 13:54:52 INFO  Ingested 90 records in 3 seconds
+2015-Feb-20 13:54:52 INFO  Ingestion average is 43 milliseconds per record
+2015-Feb-20 13:54:52 INFO  Upserting record 77
+2015-Feb-20 13:54:52 INFO  Ingested 91 records in 3 seconds
+2015-Feb-20 13:54:52 INFO  Ingestion average is 42 milliseconds per record
+2015-Feb-20 13:54:52 INFO  Upserting record 78
+2015-Feb-20 13:54:52 INFO  Ingested 92 records in 3 seconds
+2015-Feb-20 13:54:52 INFO  Ingestion average is 42 milliseconds per record
+2015-Feb-20 13:54:52 INFO  Upserting record 79
+2015-Feb-20 13:54:52 INFO  Ingested 93 records in 3 seconds
+2015-Feb-20 13:54:52 INFO  Ingestion average is 42 milliseconds per record
+2015-Feb-20 13:54:52 INFO  Upserting record 80
+2015-Feb-20 13:54:52 INFO  Ingested 94 records in 3 seconds
+2015-Feb-20 13:54:52 INFO  Ingestion average is 42 milliseconds per record
+2015-Feb-20 13:54:52 INFO  Upserting record 81
+2015-Feb-20 13:54:52 INFO  Ingested 95 records in 3 seconds
+2015-Feb-20 13:54:52 INFO  Ingestion average is 41 milliseconds per record
+2015-Feb-20 13:54:52 INFO  Upserting record 82
+2015-Feb-20 13:54:52 INFO  Ingested 96 records in 3 seconds
+2015-Feb-20 13:54:52 INFO  Ingestion average is 41 milliseconds per record
+2015-Feb-20 13:54:52 INFO  Upserting record 83
+2015-Feb-20 13:54:52 INFO  Ingested 97 records in 3 seconds
+2015-Feb-20 13:54:52 INFO  Ingestion average is 41 milliseconds per record
+2015-Feb-20 13:54:52 INFO  Upserting record 84
+2015-Feb-20 13:54:52 INFO  Ingested 98 records in 4 seconds
+2015-Feb-20 13:54:52 INFO  Ingestion average is 40 milliseconds per record
+2015-Feb-20 13:54:52 INFO  Upserting record 85
+2015-Feb-20 13:54:52 INFO  Ingested 99 records in 4 seconds
+2015-Feb-20 13:54:52 INFO  Ingestion average is 40 milliseconds per record
+2015-Feb-20 13:54:52 INFO  Upserting record 86
+2015-Feb-20 13:54:52 INFO  Ingested 100 records in 4 seconds
+2015-Feb-20 13:54:52 INFO  Ingestion average is 40 milliseconds per record
+2015-Feb-20 13:54:52 INFO  Step 1 Complete: Ingested data into import staging tables
+2015-Feb-20 13:54:52 INFO  Deleting existing records...
+2015-Feb-20 14:00:31 INFO  Importing records...
+2015-Feb-20 14:00:58 INFO  Imported records in 27 seconds
+2015-Feb-20 14:00:58 INFO  Committing ingestion transaction
+2015-Feb-20 14:00:58 INFO  Step 2 Complete: Imported data into core tables
+2015-Feb-20 14:02:45 INFO  Step 3 Complete: Called API endpoints to reset dataset access
+2015-Feb-20 14:02:45 INFO  Processed dataset key: GA000466, Import type: new or update (upsert)
+2015-Feb-20 14:02:45 INFO  Finished import run in 477 seconds
+2015-Feb-20 14:02:45 INFO  Done with archive 'e:\nbn-importer\importertemp\valid.zip'

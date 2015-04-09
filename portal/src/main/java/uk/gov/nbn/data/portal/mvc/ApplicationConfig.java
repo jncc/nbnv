@@ -40,6 +40,7 @@ public class ApplicationConfig {
                 .put(JSONConfiguration.FEATURE_POJO_MAPPING, Boolean.TRUE);
 
         Client client = Client.create(config);
+        client.setChunkedEncodingSize(1024);
         client.addFilter(new JerseyCookieClientFilter(cookieFilter()));
         return client.resource(apiAddress);     
     }

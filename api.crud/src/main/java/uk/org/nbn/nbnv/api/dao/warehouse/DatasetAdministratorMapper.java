@@ -5,8 +5,6 @@
 package uk.org.nbn.nbnv.api.dao.warehouse;
 
 import java.util.List;
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.One;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Result;
@@ -14,6 +12,7 @@ import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.Select;
 import uk.org.nbn.nbnv.api.model.Dataset;
 import uk.org.nbn.nbnv.api.model.DatasetAdministrator;
+import uk.org.nbn.nbnv.api.model.TaxonDataset;
 import uk.org.nbn.nbnv.api.model.User;
 
 /**
@@ -37,6 +36,9 @@ public interface DatasetAdministratorMapper {
 
     @Select("SELECT d.* FROM DatasetAdministrator da INNER JOIN DatasetData d ON da.datasetKey = d.[key] WHERE da.userID = #{userKey}")
     List<Dataset> selectDatasetsByUser(@Param("userKey") int userKey);
+    
+    @Select("SELECT d.* FROM DatasetAdministrator da INNER JOIN DatasetData d ON da.datasetKey = d.[key] WHERE da.userID = #{userKey} AND d.typeName = 'Taxon'")
+    List<TaxonDataset> selectTaxonDatasetsByUser(@Param("userKey") int userKey);
 
     @Select("SELECT * FROM DatasetAdministrator WHERE datasetKey = #{datasetKey}")
     @Results(value={

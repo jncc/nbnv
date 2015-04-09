@@ -1,3 +1,5 @@
+@import "_nbn-colour-scheme";
+
 .message {
     display: block;
     margin: 10px;
@@ -5,6 +7,11 @@
 
     &.error {
         border: solid 1px #C00;
-        background-color: #FCC;
+        background-color: $errorColour;
+    }
+    
+    &.info {
+        border: solid 1px $majorColour;
+        background-color: $mediumBlue;
     }
 }
