@@ -149,7 +149,7 @@ public class TaxonObservationResource extends RequestResource {
      * @param datasetKey A dataset key
      * @param verification A comma separated list of verification statuses to 
      * filter to, from the list of statuses VERIFIED, INCORRECT, UNCERTAIN and
-     * UNVERIFIED (defaults to VERIFIED, UNCERTAIN and INCORRECT) 
+     * UNVERIFIED (defaults to VERIFIED, UNCERTAIN and UNVERIFIED) 
      * i.e. (...&verification=VERIFIED,UNVERIFIED&...)
      * @param callback Fix for jQuery callbacks not working entirely well with
      * streaming, do not use unless with jQuery callbacks
@@ -237,7 +237,7 @@ public class TaxonObservationResource extends RequestResource {
      * @param ptvk The Taxon Version Key to search for
      * @param verification A comma separated list of verification statuses to 
      * filter to, from the list of statuses VERIFIED, INCORRECT, UNCERTAIN and
-     * UNVERIFIED (defaults to VERIFIED, UNCERTAIN and INCORRECT) 
+     * UNVERIFIED (defaults to VERIFIED, UNCERTAIN and UNVERIFIED) 
      * i.e. (...&verification=VERIFIED,UNVERIFIED&...)
      * @param callback Fix for jQuery callbacks not working entirely well with
      * streaming, do not use unless with jQuery callbacks
@@ -380,7 +380,7 @@ public class TaxonObservationResource extends RequestResource {
      * have access to them, as a list of key pair values
      * @param verification A comma separated list of verification statuses to 
      * filter to, from the list of statuses VERIFIED, INCORRECT, UNCERTAIN and
-     * UNVERIFIED (defaults to VERIFIED, UNCERTAIN and INCORRECT) 
+     * UNVERIFIED (defaults to VERIFIED, UNCERTAIN and UNVERIFIED) 
      * i.e. (...&verification=VERIFIED,UNVERIFIED&...)
      * 
      * @return A list of Taxon Observations conforming to the provided search
@@ -443,7 +443,7 @@ public class TaxonObservationResource extends RequestResource {
      * have access to them, as a list of key pair values
      * @param verification A comma separated list of verification statuses to 
      * filter to, from the list of statuses VERIFIED, INCORRECT, UNCERTAIN and
-     * UNVERIFIED (defaults to VERIFIED, UNCERTAIN and INCORRECT) 
+     * UNVERIFIED (defaults to VERIFIED, UNCERTAIN and UNVERIFIED) 
      * i.e. (...&verification=VERIFIED,UNVERIFIED&...)
      * 
      * @return A list of Taxon Observations conforming to the provided search
@@ -575,7 +575,7 @@ public class TaxonObservationResource extends RequestResource {
      * @param polygon WKT WGS-84 polygon filter
      * @param verification A comma separated list of verification statuses to 
      * filter to, from the list of statuses VERIFIED, INCORRECT, UNCERTAIN and
-     * UNVERIFIED (defaults to VERIFIED, UNCERTAIN and INCORRECT) 
+     * UNVERIFIED (defaults to VERIFIED, UNCERTAIN and UNVERIFIED) 
      * i.e. (...&verification=VERIFIED,UNVERIFIED&...)
      * 
      * @return A list of TaxonObservationAttributeValue Records conforming to 
@@ -612,8 +612,8 @@ public class TaxonObservationResource extends RequestResource {
     }
 
     /**
-     * Returns a list of Taxon With Query Stats, essentially Taxon Observations
-     * by species, conforming to the provided search parameters
+     * Returns a list of Taxon With Query Stats, a series of statistics for each
+	 * of the matching taxa in this query
      * 
      * @param user The current user, determines what datasets they have access 
      * to (Injected Token no need to pass)
@@ -631,7 +631,7 @@ public class TaxonObservationResource extends RequestResource {
      * @param polygon WKT WGS-84 polygon filter
      * @param verification A comma separated list of verification statuses to 
      * filter to, from the list of statuses VERIFIED, INCORRECT, UNCERTAIN and
-     * UNVERIFIED (defaults to VERIFIED, UNCERTAIN and INCORRECT) 
+     * UNVERIFIED (defaults to VERIFIED, UNCERTAIN and UNVERIFIED) 
      * i.e. (...&verification=VERIFIED,UNVERIFIED&...)
      * 
      * @return A List of TaxonWithQueryStats conforming to the provided search
@@ -699,7 +699,7 @@ public class TaxonObservationResource extends RequestResource {
      * @param polygon WKT WGS-84 polygon filter
      * @param verification A comma separated list of verification statuses to 
      * filter to, from the list of statuses VERIFIED, INCORRECT, UNCERTAIN and
-     * UNVERIFIED (defaults to VERIFIED, UNCERTAIN and INCORRECT) 
+     * UNVERIFIED (defaults to VERIFIED, UNCERTAIN and UNVERIFIED) 
      * i.e. (...&verification=VERIFIED,UNVERIFIED&...)
      * 
      * @return A List of TaxonWithQueryStats conforming to the provided search
@@ -766,7 +766,7 @@ public class TaxonObservationResource extends RequestResource {
      * @param polygon WKT WGS-84 polygon filter
      * @param verification A comma separated list of verification statuses to 
      * filter to, from the list of statuses VERIFIED, INCORRECT, UNCERTAIN and
-     * UNVERIFIED (defaults to VERIFIED, UNCERTAIN and INCORRECT) 
+     * UNVERIFIED (defaults to VERIFIED, UNCERTAIN and UNVERIFIED) 
      * i.e. (...&verification=VERIFIED,UNVERIFIED&...)
      * 
      * @return A List of TaxonWithQueryStats conforming to the provided search
@@ -808,7 +808,7 @@ public class TaxonObservationResource extends RequestResource {
      * @param polygon WKT WGS-84 polygon filter
      * @param verification A comma separated list of verification statuses to 
      * filter to, from the list of statuses VERIFIED, INCORRECT, UNCERTAIN and
-     * UNVERIFIED (defaults to VERIFIED, UNCERTAIN and INCORRECT) 
+     * UNVERIFIED (defaults to VERIFIED, UNCERTAIN and UNVERIFIED) 
      * i.e. (...&verification=VERIFIED,UNVERIFIED&...)
      * 
      * @return A Zip file containing a list of TaxonWithQueryStats conforming to 
@@ -875,7 +875,7 @@ public class TaxonObservationResource extends RequestResource {
      * @param polygon WKT WGS-84 polygon filter
      * @param verification A comma separated list of verification statuses to 
      * filter to, from the list of statuses VERIFIED, INCORRECT, UNCERTAIN and
-     * UNVERIFIED (defaults to VERIFIED, UNCERTAIN and INCORRECT) 
+     * UNVERIFIED (defaults to VERIFIED, UNCERTAIN and UNVERIFIED) 
      * i.e. (...&verification=VERIFIED,UNVERIFIED&...)
      * 
      * @return A Zip file containing a list of TaxonWithQueryStats conforming to 
@@ -941,7 +941,7 @@ public class TaxonObservationResource extends RequestResource {
      * @param polygon WKT WGS-84 polygon filter
      * @param verification A comma separated list of verification statuses to 
      * filter to, from the list of statuses VERIFIED, INCORRECT, UNCERTAIN and
-     * UNVERIFIED (defaults to VERIFIED, UNCERTAIN and INCORRECT) 
+     * UNVERIFIED (defaults to VERIFIED, UNCERTAIN and UNVERIFIED) 
      * i.e. (...&verification=VERIFIED,UNVERIFIED&...)
      * 
      * @return A Zip file containing a list of TaxonWithQueryStats conforming to 
@@ -989,7 +989,7 @@ public class TaxonObservationResource extends RequestResource {
      * @param polygon WKT WGS-84 polygon filter
      * @param verification A comma separated list of verification statuses to 
      * filter to, from the list of statuses VERIFIED, INCORRECT, UNCERTAIN and
-     * UNVERIFIED (defaults to VERIFIED, UNCERTAIN and INCORRECT) 
+     * UNVERIFIED (defaults to VERIFIED, UNCERTAIN and UNVERIFIED) 
      * i.e. (...&verification=VERIFIED,UNVERIFIED&...)
      * 
      * @return A list of TaxonOutputGroupWithQueryStats based on the provided
@@ -1049,7 +1049,7 @@ public class TaxonObservationResource extends RequestResource {
      * @param polygon WKT WGS-84 polygon filter
      * @param verification A comma separated list of verification statuses to 
      * filter to, from the list of statuses VERIFIED, INCORRECT, UNCERTAIN and
-     * UNVERIFIED (defaults to VERIFIED, UNCERTAIN and INCORRECT) 
+     * UNVERIFIED (defaults to VERIFIED, UNCERTAIN, UNVERIFIED and INCORRECT) 
      * i.e. (...&verification=VERIFIED,UNVERIFIED&...)
      * 
      * @return Return a list of TaxonDatasetWithQueryStats constrained by the given 
@@ -1079,7 +1079,7 @@ public class TaxonObservationResource extends RequestResource {
             @QueryParam("orgSuppliedList") @DefaultValue(ObservationResourceDefaults.defaultOrgSuppliedList) int orgSuppliedList,
             @QueryParam("gridRef") @DefaultValue(ObservationResourceDefaults.defaultGridRef) String gridRef,
             @QueryParam("polygon") @DefaultValue(ObservationResourceDefaults.defaultPolygon) String polygon,
-            @QueryParam("verification") @DefaultValue(ObservationResourceDefaults.defaultVerifications) String verification) {
+            @QueryParam("verification") @DefaultValue(ObservationResourceDefaults.allVerifications) String verification) {
         //TODO: squareBlurring(?)
         return observationMapper.selectObservationDatasetsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, orgSuppliedList, gridRef, polygon, getVerificationIDs(verification));
     }
@@ -1104,7 +1104,7 @@ public class TaxonObservationResource extends RequestResource {
      * @param polygon WKT WGS-84 polygon filter
      * @param verification A comma separated list of verification statuses to 
      * filter to, from the list of statuses VERIFIED, INCORRECT, UNCERTAIN and
-     * UNVERIFIED (defaults to VERIFIED, UNCERTAIN and INCORRECT) 
+     * UNVERIFIED (defaults to VERIFIED, UNCERTAIN, UNVERIFIED and INCORRECT) 
      * i.e. (...&verification=VERIFIED,UNVERIFIED&...)
      * 
      * @return A list of all TaxonDatasetWithQueryStats constrained by the given
@@ -1134,7 +1134,7 @@ public class TaxonObservationResource extends RequestResource {
             @QueryParam("orgSuppliedList") @DefaultValue(ObservationResourceDefaults.defaultOrgSuppliedList) int orgSuppliedList,
             @QueryParam("gridRef") @DefaultValue(ObservationResourceDefaults.defaultGridRef) String gridRef,
             @QueryParam("polygon") @DefaultValue(ObservationResourceDefaults.defaultPolygon) String polygon,
-            @QueryParam("verification") @DefaultValue(ObservationResourceDefaults.defaultVerifications) String verification) {
+            @QueryParam("verification") @DefaultValue(ObservationResourceDefaults.allVerifications) String verification) {
         //TODO: squareBlurring(?)
         return observationMapper.selectAllObservationDatasetsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, orgSuppliedList, gridRef, polygon, getVerificationIDs(verification));
     }
@@ -1159,7 +1159,7 @@ public class TaxonObservationResource extends RequestResource {
      * @param polygon WKT WGS-84 polygon filter
      * @param verification A comma separated list of verification statuses to 
      * filter to, from the list of statuses VERIFIED, INCORRECT, UNCERTAIN and
-     * UNVERIFIED (defaults to VERIFIED, UNCERTAIN and INCORRECT) 
+     * UNVERIFIED (defaults to VERIFIED, UNCERTAIN and UNVERIFIED) 
      * i.e. (...&verification=VERIFIED,UNVERIFIED&...)
      * 
      * @return A list of all requestable TaxonDatasetWithQueryStats constrained
@@ -1322,7 +1322,7 @@ public class TaxonObservationResource extends RequestResource {
      * @param polygon WKT WGS-84 polygon filter
      * @param verification A comma separated list of verification statuses to 
      * filter to, from the list of statuses VERIFIED, INCORRECT, UNCERTAIN and
-     * UNVERIFIED (defaults to VERIFIED, UNCERTAIN and INCORRECT) 
+     * UNVERIFIED (defaults to VERIFIED, UNCERTAIN and UNVERIFIED) 
      * i.e. (...&verification=VERIFIED,UNVERIFIED&...)
      * 
      * @return A list of TaxonDatasets (Observations) constrained by the given
@@ -1382,7 +1382,7 @@ public class TaxonObservationResource extends RequestResource {
      * groupDatasetsByProvider method to generate output
      * @param verification A comma separated list of verification statuses to 
      * filter to, from the list of statuses VERIFIED, INCORRECT, UNCERTAIN and
-     * UNVERIFIED (defaults to VERIFIED, UNCERTAIN and INCORRECT) 
+     * UNVERIFIED (defaults to VERIFIED, UNCERTAIN, UNVERIFIED and INCORRECT) 
      * i.e. (...&verification=VERIFIED,UNVERIFIED&...)
      * 
      * @return A list of ProviderWithQueryStats constrained by the given 
@@ -1413,7 +1413,7 @@ public class TaxonObservationResource extends RequestResource {
             @QueryParam("gridRef") @DefaultValue(ObservationResourceDefaults.defaultGridRef) String gridRef,
             @QueryParam("polygon") @DefaultValue(ObservationResourceDefaults.defaultPolygon) String polygon,
             @QueryParam("returnAccessPositions") @DefaultValue("") String getPerm,
-            @QueryParam("verification") @DefaultValue(ObservationResourceDefaults.defaultVerifications) String verification) {
+            @QueryParam("verification") @DefaultValue(ObservationResourceDefaults.allVerifications) String verification) {
         //TODO: squareBlurring(?)
         List<TaxonDatasetWithQueryStats> datasetsWithQueryStats = observationMapper.selectObservationDatasetsByFilter(user, startYear, endYear, datasetKeys, taxa, spatialRelationship, featureID, sensitive, designation, taxonOutputGroup, orgSuppliedList, gridRef, polygon, getVerificationIDs(verification));
 
@@ -2064,7 +2064,7 @@ public class TaxonObservationResource extends RequestResource {
      * @param gridRef
      * @param verification A comma separated list of verification statuses to 
      * filter to, from the list of statuses VERIFIED, INCORRECT, UNCERTAIN and
-     * UNVERIFIED (defaults to VERIFIED, UNCERTAIN and INCORRECT) 
+     * UNVERIFIED (defaults to VERIFIED, UNCERTAIN and UNVERIFIED) 
      * i.e. (...&verification=VERIFIED,UNVERIFIED&...)
      * 
      * @throws IOException 
@@ -2115,7 +2115,7 @@ public class TaxonObservationResource extends RequestResource {
      * @param polygon
      * @param verification A comma separated list of verification statuses to 
      * filter to, from the list of statuses VERIFIED, INCORRECT, UNCERTAIN and
-     * UNVERIFIED (defaults to VERIFIED, UNCERTAIN and INCORRECT) 
+     * UNVERIFIED (defaults to VERIFIED, UNCERTAIN and UNVERIFIED) 
      * i.e. (...&verification=VERIFIED,UNVERIFIED&...)
      * @param includeAttributes
      * @param filterID

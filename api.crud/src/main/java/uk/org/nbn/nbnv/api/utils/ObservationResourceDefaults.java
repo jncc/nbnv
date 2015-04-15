@@ -21,5 +21,6 @@ public class ObservationResourceDefaults {
     public static final String defaultReasonType = "-1";
     public static final String defaultAbsence = "false";
     public static final String defaultVerifications = "UNVERIFIED,UNCERTAIN,VERIFIED";
+	public static final String allVerifications = "UNVERIFIED,UNCERTAIN,VERIFIED,INCORRECT";
 
 }
