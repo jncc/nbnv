@@ -148,7 +148,7 @@ public class DownloadReport {
 
     public void setDownloadTime(Date downloadTime) {
         this.downloadTime = downloadTime;
-        this.downloadTimeString = new SimpleDateFormat("EEE MMM dd yyyy HH:mm:ss '('zzz')'").format(downloadTime);
+        this.downloadTimeString = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(downloadTime);
     }
     
     public String getDownloadTimeString() {

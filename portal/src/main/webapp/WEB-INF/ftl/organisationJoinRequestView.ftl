@@ -5,7 +5,7 @@
     <#assign organisationId="${.data_model['organisationID']}">
     <#assign organisation=json.readURL("${api}/organisations/${organisationId}")>
     <#assign user=json.readURL("${api}/user")>
-    <#assign request=json.readURL("${api}/organisationMemberships/request/${.data_model['requestID']}")>
+    <#assign request=json.readURL("${api}/organisationMemberships/request/${.data_model['requestID']?c}")>
 
     <#include "/organisationJoinRequest.ftl" />
 </@template.master>
