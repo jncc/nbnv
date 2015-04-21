@@ -35,6 +35,8 @@ import org.codehaus.enunciate.jaxrs.StatusCodes;
 import org.codehaus.enunciate.jaxrs.TypeHint;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -61,6 +63,7 @@ import uk.org.nbn.nbnv.api.model.User;
 import uk.org.nbn.nbnv.api.model.UserEmailModify;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenAnyDatasetOrOrgAdminUser;
 import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
+import uk.org.nbn.nbnv.api.rest.resources.utils.throwables.CorelessException;
 
 /**
  *
@@ -71,6 +74,7 @@ import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
 public class UserResource extends AbstractResource {
 
     private static final String STRING_ENCODING = "UTF-8";
+	private static Logger logger = LoggerFactory.getLogger(UserResource.class);
     private final int tokenTTL;
     private final String tokenCookieKey;
     private final String domain;
@@ -162,23 +166,7 @@ public class UserResource extends AbstractResource {
             @QueryParam("username") String username,
             @QueryParam("password") String password,
             @DefaultValue("false") @QueryParam("remember") Boolean remember) throws InvalidCredentialsException, InvalidTokenException, ExpiredTokenException {
-        Token token = tokenAuth.generateToken(username, password, tokenTTL);
-
-        Map<String, Object> toReturn = new HashMap<String, Object>();
-        toReturn.put("success", true);
-        toReturn.put("user", tokenAuth.getUser(token));
-        toReturn.put("token", token.getBytes());
-        
-        oUserMapper.userLoggedIn(username);
-
-        return Response.ok(toReturn)
-                .cookie(new NewCookie(
-                tokenCookieKey,
-                Base64.encodeBase64URLSafeString(token.getBytes()),
-                "/", domain, "authentication token",
-                (remember) ? tokenTTL / 1000 : NewCookie.DEFAULT_MAX_AGE, 
-                Boolean.getBoolean(properties.getProperty("secure_cookie", "true"))))
-                .build();
+        return doLogin(username, password, remember);
     }
     
     /**
@@ -211,14 +199,25 @@ public class UserResource extends AbstractResource {
             @FormParam("username") String username,
             @FormParam("password") String password,
             @DefaultValue("false") @QueryParam("remember") Boolean remember) throws InvalidCredentialsException, InvalidTokenException, ExpiredTokenException {
+		return doLogin(username, password, remember);
+    }
+	
+	private Response doLogin(String username, String password, Boolean remember) 
+			throws InvalidCredentialsException, InvalidTokenException, ExpiredTokenException {
         Token token = tokenAuth.generateToken(username, password, tokenTTL);
 
         Map<String, Object> toReturn = new HashMap<String, Object>();
         toReturn.put("success", true);
         toReturn.put("user", tokenAuth.getUser(token));
         toReturn.put("token", token.getBytes());
-
-        oUserMapper.userLoggedIn(username);
+		
+		try {
+			oUserMapper.userLoggedIn(username);
+		} catch (CorelessException ex) {
+			// Do Nothing, core is set to offline
+		} catch (Exception ex) {
+			logger.warn("Caught a downed core server login, check core database is up");
+		}
         
         return Response.ok(toReturn)
                 .cookie(new NewCookie(
@@ -227,8 +226,8 @@ public class UserResource extends AbstractResource {
                 "/", domain, "authentication token",
                 (remember) ? tokenTTL / 1000 : NewCookie.DEFAULT_MAX_AGE, 
                 Boolean.getBoolean(properties.getProperty("secure_cookie", "true"))))
-                .build();
-    }    
+                .build();		
+	}
 
     /**
      * Change the current users password

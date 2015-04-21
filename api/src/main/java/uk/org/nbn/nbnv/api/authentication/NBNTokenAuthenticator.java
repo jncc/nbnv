@@ -32,6 +32,7 @@ public class NBNTokenAuthenticator implements TokenAuthenticator {
     
     @Autowired UserAuthenticationMapper userAuthentication;
     @Autowired OperationalUserAuthenticationMapper oUserAuthentication;
+	@Autowired UserAuthenticationMapper UserAuthenticationMapper;
     @Autowired UserMapper userMapper;
     
     
@@ -61,7 +62,15 @@ public class NBNTokenAuthenticator implements TokenAuthenticator {
         try {
             MessageDigest credentialsDigest = MessageDigest.getInstance(CREDENTIALS_DIGEST);
             byte[] usernameHash = credentialsDigest.digest(username.getBytes(STRING_ENCODING));
-            User user = oUserAuthentication.getUser(usernameHash, credentialsDigest.digest(password.getBytes(STRING_ENCODING)));
+			
+			User user;
+			
+			try {
+				user = oUserAuthentication.getUser(usernameHash, credentialsDigest.digest(password.getBytes(STRING_ENCODING)));
+			} catch (Exception ex) {
+				user = userAuthentication.getUser(usernameHash, credentialsDigest.digest(password.getBytes(STRING_ENCODING)));
+			}
+			
             if(user != null) { //check credentials are okay 
                 if (user.isActive()) {
                     return generator.generateToken(getIntAsBuffer(user.getId()), ttl);
@@ -78,7 +87,7 @@ public class NBNTokenAuthenticator implements TokenAuthenticator {
             throw new RuntimeException("A configuration error has occurred", ex);
         } catch (UnsupportedEncodingException ex) {
             throw new RuntimeException("A configuration error has occurred", ex);
-        }
+        } 
     }
     
     /**
@@ -95,7 +104,15 @@ public class NBNTokenAuthenticator implements TokenAuthenticator {
         try {
             MessageDigest credentialsDigest = MessageDigest.getInstance(CREDENTIALS_DIGEST);
             byte[] usernameHash = credentialsDigest.digest(username.getBytes(STRING_ENCODING));
-            User user = userAuthentication.getUserMD5(usernameHash, credentialsDigest.digest(md5Hash));
+			
+			User user;
+			
+			try {
+				user = oUserAuthentication.getUserMD5(usernameHash, credentialsDigest.digest(md5Hash));
+			} catch (Exception ex) {
+				user = userAuthentication.getUserMD5(usernameHash, credentialsDigest.digest(md5Hash));
+			}
+			
             if(user != null) //check credentials are okay
                 return generator.generateToken(getIntAsBuffer(user.getId()), ttl);
             else
