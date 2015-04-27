@@ -7,6 +7,19 @@ import static org.apache.ibatis.jdbc.SelectBuilder.*;
 
 public class ProviderHelper {
 
+	public static void addPTVKFilter(Map<String, Object> params) {
+		if (params.get("ptvk") instanceof List) {
+			List<String> ptvkArgs = (List<String>) params.get("ptvk");
+			if (ptvkArgs.size() > 0 && !"".equals(ptvkArgs.get(0))) {
+				INNER_JOIN("TaxonTree tt ON tt.childPTVK = o.pTaxonVersionKey");
+				WHERE("tt.nodePTVK IN " + taxaListToCommaList((List<String>) params.get("ptvk")));
+			}
+		} else {
+			INNER_JOIN("TaxonTree tt ON tt.childPTVK = o.pTaxonVersionKey");
+			WHERE("tt.nodePTVK = '" + params.get("ptvk") + "'");
+		}		
+	}
+	
     static void addDatasetKeysFilter(Map<String, Object> params) {
         if (params.containsKey("datasetKey") && !params.get("datasetKey").equals("")) {
             if (params.get("datasetKey") instanceof List) {
@@ -77,5 +90,4 @@ public class ProviderHelper {
         }
         return Integer.parseInt(endYear);
     }
-
 }

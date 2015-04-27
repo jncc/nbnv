@@ -32,14 +32,17 @@ import uk.org.nbn.nbnv.api.model.meta.DatasetRecordCount;
  */
 //@CacheNamespace(implementation=org.mybatis.caches.oscache.OSCache.class)
 public interface TaxonObservationMapper {
-    @Select("SELECT * FROM UserTaxonObservationData WHERE observationID = #{id} AND userID = #{userKey}")
-    public TaxonObservation selectById(@Param("id") int id, @Param("userKey") int userKey);
+    //@Select("SELECT * FROM UserTaxonObservationData WHERE observationID = #{id} AND userID = #{userKey}")
+    @SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectRecords")
+	public TaxonObservation selectById(@Param("user") User user, @Param("id") int id);
 
-    @Select("SELECT * FROM UserTaxonObservationData WHERE datasetKey = #{id} AND userID = #{userKey}")
-    public List<TaxonObservation> selectByDataset(@Param("id") String id, @Param("userKey") int userKey);
+    //@Select("SELECT * FROM UserTaxonObservationData WHERE datasetKey = #{id} AND userID = #{userKey}")
+	@SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectRecords")
+    public List<TaxonObservation> selectByDataset(@Param("user") User user, @Param("datasetKey") List<String> datasetKey);
 
-    @Select("SELECT * FROM UserTaxonObservationData WHERE pTaxonVersionKey = #{id} AND userID = #{userKey}")
-    public List<TaxonObservation> selectByPTVK(@Param("id") String id, @Param("userKey") int userKey);
+    //@Select("SELECT * FROM UserTaxonObservationData WHERE pTaxonVersionKey = #{id} AND userID = #{userKey}")
+	@SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectRecords")
+    public List<TaxonObservation> selectByPTVK(@Param("user") User user, @Param("ptvk") List<String> ptvk );
     
     @Select("SELECT TOP 1 absence FROM UserTaxonObservationData WHERE pTaxonVersionKey = #{id} AND userID = #{userKey} AND absence = #{absence}")
     public Integer pTVKHasGridAbsence(@Param("id") String id, @Param("userKey") int userKey, @Param("absence") Boolean absence);

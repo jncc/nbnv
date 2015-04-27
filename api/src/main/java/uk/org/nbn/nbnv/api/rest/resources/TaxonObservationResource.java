@@ -131,7 +131,7 @@ public class TaxonObservationResource extends RequestResource {
             @TokenUser(allowPublic = false) User user, 
             @Context HttpServletRequest request, 
             @PathParam("id") int id) {
-        TaxonObservation obs = observationMapper.selectById(id, user.getId());
+        TaxonObservation obs = observationMapper.selectById(user, id);
         if (obs != null) {
             ApiObservationView view = new ApiObservationView(user.getId(), request.getRemoteAddr(), "Single Record with the ID " + id, 1);
             oApiObservationViewMapper.addAPIObservationView(view);
@@ -182,7 +182,7 @@ public class TaxonObservationResource extends RequestResource {
                 ObservationResourceDefaults.defaultPolygon, 
                 false);        
                 
-        return observationMapper.selectByDataset(datasetKey, user.getId());
+        return observationMapper.selectByDataset(user, new ArrayList<String>(Arrays.asList(datasetKey)));
     }
 
     /**
@@ -228,7 +228,7 @@ public class TaxonObservationResource extends RequestResource {
                 ObservationResourceDefaults.defaultPolygon, 
                 false);
         
-        return observationMapper.selectByPTVK(ptvk, user.getId());
+        return observationMapper.selectByPTVK(user, new ArrayList<String>(Arrays.asList(ptvk)));
     }
     
     /**
