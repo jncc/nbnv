@@ -73,6 +73,7 @@ import uk.org.nbn.nbnv.api.rest.providers.annotations.TokenUser;
 import uk.org.nbn.nbnv.api.rest.resources.utils.DownloadHelper;
 import uk.org.nbn.nbnv.api.rest.resources.utils.TaxonObservationDownloadHandler;
 import uk.org.nbn.nbnv.api.rest.resources.utils.TaxonObservationHandler;
+import uk.org.nbn.nbnv.api.rest.resources.utils.TaxonObservationHelper;
 import uk.org.nbn.nbnv.api.utils.DownloadUtils;
 import uk.org.nbn.nbnv.api.utils.FilterToText;
 import uk.org.nbn.nbnv.api.utils.ObservationResourceDefaults;
@@ -130,13 +131,18 @@ public class TaxonObservationResource extends RequestResource {
     public TaxonObservation getObservation(
             @TokenUser(allowPublic = false) User user, 
             @Context HttpServletRequest request, 
-            @PathParam("id") int id) {
+            @PathParam("id") int id,
+            @QueryParam("includeAttributes") @DefaultValue("false") Boolean includeAttributes) {
         TaxonObservation obs = observationMapper.selectById(user, id);
+        
         if (obs != null) {
             ApiObservationView view = new ApiObservationView(user.getId(), request.getRemoteAddr(), "Single Record with the ID " + id, 1);
             oApiObservationViewMapper.addAPIObservationView(view);
             oApiObservationViewMapper.addAPIObservationViewStats(view.getId(), obs.getDatasetKey(), 1);
         }
+        
+        TaxonObservationHelper.setAttributeList(obs, includeAttributes);
+        
         return obs;
     }
 
@@ -160,29 +166,27 @@ public class TaxonObservationResource extends RequestResource {
         @ResponseCode(code = 200, condition = "Succesfully returned a list of taxon observations in this dataset")
     })
     @Produces(MediaType.APPLICATION_JSON)
-    public List<TaxonObservation> getObservationsByDataset(
+    public StreamingOutput getObservationsByDataset(
             @TokenUser(allowPublic = false) User user, 
             @Context HttpServletRequest request,
-            @PathParam("datasetKey") String datasetKey) {
+            @PathParam("datasetKey") String datasetKey,
+			@QueryParam("callback") @DefaultValue("") String callback,
+			@QueryParam("includeAttributes") @DefaultValue("false") Boolean includeAttributes) {
         List<String> datasetKeys = new ArrayList<String>();
         datasetKeys.add(datasetKey);
-
-        writeAPIViewRecordToDatabase(user, request.getRemoteAddr(),
-                Integer.parseInt(ObservationResourceDefaults.defaultStartYear), 
-                Integer.parseInt(ObservationResourceDefaults.defaultEndYear), 
-                datasetKeys, 
-                new ArrayList<String>(), 
-                ObservationResourceDefaults.SPATIAL_RELATIONSHIP_DEFAULT, 
-                ObservationResourceDefaults.defaultFeatureID, 
-                Boolean.parseBoolean(ObservationResourceDefaults.defaultSensitive), 
-                ObservationResourceDefaults.defaultDesignation,
-                ObservationResourceDefaults.defaultTaxonOutputGroup,
-                Integer.parseInt(ObservationResourceDefaults.defaultOrgSuppliedList),
-                ObservationResourceDefaults.defaultGridRef, 
-                ObservationResourceDefaults.defaultPolygon, 
-                false);        
-                
-        return observationMapper.selectByDataset(user, new ArrayList<String>(Arrays.asList(datasetKey)));
+               
+        //return observationMapper.selectByDataset(user, new ArrayList<String>(Arrays.asList(datasetKey)));
+		return retrieveStreamingObservations(user, request, Integer.parseInt(ObservationResourceDefaults.defaultStartYear), 
+				Integer.parseInt(ObservationResourceDefaults.defaultEndYear), datasetKeys, 
+				new ArrayList<String>(), ObservationResourceDefaults.SPATIAL_RELATIONSHIP_DEFAULT, 
+				ObservationResourceDefaults.defaultFeatureID, 
+				Boolean.parseBoolean(ObservationResourceDefaults.defaultSensitive), 
+				ObservationResourceDefaults.defaultDesignation, 
+				ObservationResourceDefaults.defaultTaxonOutputGroup, 
+				Integer.parseInt(ObservationResourceDefaults.defaultOrgSuppliedList), 
+				ObservationResourceDefaults.defaultGridRef, 
+				ObservationResourceDefaults.defaultPolygon, false, callback, 
+				includeAttributes);
     }
 
     /**
@@ -206,29 +210,27 @@ public class TaxonObservationResource extends RequestResource {
         @ResponseCode(code = 200, condition = "Succesfully returned a list of taxon observations for this PTVK")
     })    
     @Produces(MediaType.APPLICATION_JSON)
-    public List<TaxonObservation> getObservationsByTaxon(
+    public StreamingOutput getObservationsByTaxon(
             @TokenUser(allowPublic = false) User user, 
             @Context HttpServletRequest request, 
-            @PathParam("ptvk") String ptvk) {
+            @PathParam("ptvk") String ptvk,
+			@QueryParam("callback") @DefaultValue("") String callback,
+			@QueryParam("includeAttributes") @DefaultValue("false") Boolean includeAttributes) {
         List<String> ptvks = new ArrayList<String>();
         ptvks.add(ptvk);
-        
-        writeAPIViewRecordToDatabase(user, request.getRemoteAddr(),
-                Integer.parseInt(ObservationResourceDefaults.defaultStartYear), 
-                Integer.parseInt(ObservationResourceDefaults.defaultEndYear), 
-                new ArrayList<String>(), 
-                ptvks, 
-                ObservationResourceDefaults.SPATIAL_RELATIONSHIP_DEFAULT, 
-                ObservationResourceDefaults.defaultFeatureID, 
-                Boolean.parseBoolean(ObservationResourceDefaults.defaultSensitive), 
-                ObservationResourceDefaults.defaultDesignation,
-                ObservationResourceDefaults.defaultTaxonOutputGroup,
-                Integer.parseInt(ObservationResourceDefaults.defaultOrgSuppliedList),
-                ObservationResourceDefaults.defaultGridRef, 
-                ObservationResourceDefaults.defaultPolygon, 
-                false);
-        
-        return observationMapper.selectByPTVK(user, new ArrayList<String>(Arrays.asList(ptvk)));
+		
+        //return observationMapper.selectByPTVK(user, new ArrayList<String>(Arrays.asList(ptvk)));
+		return retrieveStreamingObservations(user, request, Integer.parseInt(ObservationResourceDefaults.defaultStartYear),
+				Integer.parseInt(ObservationResourceDefaults.defaultEndYear), new ArrayList<String>(),
+				ptvks, ObservationResourceDefaults.SPATIAL_RELATIONSHIP_DEFAULT,
+				ObservationResourceDefaults.defaultFeatureID,
+				Boolean.parseBoolean(ObservationResourceDefaults.defaultSensitive),
+				ObservationResourceDefaults.defaultDesignation,
+				ObservationResourceDefaults.defaultTaxonOutputGroup,
+				Integer.parseInt(ObservationResourceDefaults.defaultOrgSuppliedList),
+				ObservationResourceDefaults.defaultGridRef,
+				ObservationResourceDefaults.defaultPolygon, false, callback,
+				includeAttributes);
     }
     
     /**

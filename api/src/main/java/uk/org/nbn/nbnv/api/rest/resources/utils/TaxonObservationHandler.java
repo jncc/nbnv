@@ -7,12 +7,10 @@ package uk.org.nbn.nbnv.api.rest.resources.utils;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
-import org.apache.commons.lang.StringUtils;
 import org.apache.ibatis.session.ResultContext;
 import org.apache.ibatis.session.ResultHandler;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.ObjectWriter;
-import org.codehaus.jackson.map.SerializationConfig;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import uk.org.nbn.nbnv.api.model.TaxonObservation;
 
@@ -40,24 +38,7 @@ public class TaxonObservationHandler implements ResultHandler {
         om.setSerializationInclusion(JsonSerialize.Inclusion.NON_NULL);
         ObjectWriter ow = om.writer();
 
-        if (includeAttributes && (observation.isFullVersion() || observation.isPublicAttribute())) {
-            observation.setAttributes(new HashMap<String, String>());
-
-            String[] attVals = org.apache.commons.lang.StringUtils.split(
-                    org.springframework.util.StringUtils.hasText(observation.getAttrStr())
-                    ? observation.getAttrStr() : "", "¦");
-            for (String attVal : attVals) {
-                if (org.springframework.util.StringUtils.hasText(attVal)) {
-                    String[] vals = org.apache.commons.lang.StringUtils.split(attVal, "¬");
-                    if (vals.length == 2) {
-                        observation.getAttributes().put(vals[0], vals[1]);
-                    } else if (vals.length == 1) {
-                        observation.getAttributes().put(vals[0], "");
-                    }
-                }
-            }
-        }
-        observation.setAttrStr(null);
+        TaxonObservationHelper.setAttributeList(observation, includeAttributes);
 
         try {
             if (firstRecord) {
