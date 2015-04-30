@@ -139,9 +139,8 @@ public class TaxonObservationResource extends RequestResource {
             ApiObservationView view = new ApiObservationView(user.getId(), request.getRemoteAddr(), "Single Record with the ID " + id, 1);
             oApiObservationViewMapper.addAPIObservationView(view);
             oApiObservationViewMapper.addAPIObservationViewStats(view.getId(), obs.getDatasetKey(), 1);
+			TaxonObservationHelper.setAttributeList(obs, includeAttributes);
         }
-        
-        TaxonObservationHelper.setAttributeList(obs, includeAttributes);
         
         return obs;
     }
