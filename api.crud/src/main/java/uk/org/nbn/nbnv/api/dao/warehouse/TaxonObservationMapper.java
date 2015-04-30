@@ -36,19 +36,24 @@ public interface TaxonObservationMapper {
     @SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectRecords")
 	public TaxonObservation selectById(@Param("user") User user, @Param("id") int id);
 
-    //@Select("SELECT * FROM UserTaxonObservationData WHERE datasetKey = #{id} AND userID = #{userKey}")
-	@SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectRecords")
-    public List<TaxonObservation> selectByDataset(@Param("user") User user, @Param("datasetKey") List<String> datasetKey);
-
-    //@Select("SELECT * FROM UserTaxonObservationData WHERE pTaxonVersionKey = #{id} AND userID = #{userKey}")
-	@SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectRecords")
-    public List<TaxonObservation> selectByPTVK(@Param("user") User user, @Param("ptvk") List<String> ptvk );
+//    //@Select("SELECT * FROM UserTaxonObservationData WHERE datasetKey = #{id} AND userID = #{userKey}")
+//	@SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectRecords")
+//    public List<TaxonObservation> selectByDataset(@Param("user") User user, @Param("datasetKey") List<String> datasetKey);
+//
+//    //@Select("SELECT * FROM UserTaxonObservationData WHERE pTaxonVersionKey = #{id} AND userID = #{userKey}")
+//	@SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectRecords")
+//    public List<TaxonObservation> selectByPTVK(@Param("user") User user, @Param("ptvk") List<String> ptvk );
     
-    @Select("SELECT TOP 1 absence FROM UserTaxonObservationData WHERE pTaxonVersionKey = #{id} AND userID = #{userKey} AND absence = #{absence}")
-    public Integer pTVKHasGridAbsence(@Param("id") String id, @Param("userKey") int userKey, @Param("absence") Boolean absence);
-    
-    @Select("SELECT TOP 1 absence FROM UserTaxonObservationData WHERE pTaxonVersionKey = #{id} AND userID = #{userKey} AND polygonKey IS NOT NULL AND absence = #{absence}")
-    public Integer pTVKHasPolygonAbsence(@Param("id") String id, @Param("userKey") int userKey, @Param("absence") Boolean absence);
+//    //@Select("SELECT TOP 1 absence FROM UserTaxonObservationData WHERE pTaxonVersionKey = #{id} AND userID = #{userKey} AND absence = #{absence}")
+//	@SelectProvider(type=TaxonObservationProvider.class, method="pTVKHasAbsence")
+//    public Integer pTVKHasGridAbsence(@Param("id") String id, @Param("userKey") int userKey, @Param("absence") Boolean absence);
+//    
+//    //@Select("SELECT TOP 1 absence FROM UserTaxonObservationData WHERE pTaxonVersionKey = #{id} AND userID = #{userKey} AND polygonKey IS NOT NULL AND absence = #{absence}")
+//	@SelectProvider(type=TaxonObservationProvider.class, method="pTVKHasAbsence")
+//    public Integer pTVKHasPolygonAbsence(@Param("id") String id, @Param("userKey") int userKey, @Param("absence") Boolean absence, @Param("polygonQuery") Boolean polygonQuery);
+	
+	@SelectProvider(type=TaxonObservationProvider.class, method="pTVKHasAbsence")
+	public Integer pTVKHasAbsence(@Param("id") String id, @Param("userKey") int userKey, @Param("absence") Boolean absence, @Param("polygonQuery") Boolean polygonQuery);
     
     @SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectRecords")
     public List<TaxonObservation> selectObservationRecordsByFilter(
