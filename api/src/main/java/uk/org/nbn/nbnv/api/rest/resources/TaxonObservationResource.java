@@ -254,10 +254,10 @@ public class TaxonObservationResource extends RequestResource {
     @Path("/{ptvk : [A-Z]{3}SYS[0-9]{10}}/types")
     public JSONObject taxonHasPresence(@TokenUser() User user, @PathParam("ptvk") String taxonVersionKey) throws JSONException {
         return new JSONObject()
-                .put("hasGridAbsence", observationMapper.pTVKHasAbsence(taxonVersionKey, user.getId(), true, false) != null)
-                .put("hasGridPresence", observationMapper.pTVKHasAbsence(taxonVersionKey, user.getId(), false, false) != null)
-                .put("hasPolygonAbsence", observationMapper.pTVKHasAbsence(taxonVersionKey, user.getId(), true, true) != null)
-                .put("hasPolygonPresence", observationMapper.pTVKHasAbsence(taxonVersionKey, user.getId(), false, true) != null);
+                .put("hasGridAbsence", observationMapper.pTVKHasAbsence(user, taxonVersionKey, true, false) != null)
+                .put("hasGridPresence", observationMapper.pTVKHasAbsence(user, taxonVersionKey, false, false) != null)
+                .put("hasPolygonAbsence", observationMapper.pTVKHasAbsence(user, taxonVersionKey, true, true) != null)
+                .put("hasPolygonPresence", observationMapper.pTVKHasAbsence(user, taxonVersionKey, false, true) != null);
     }
 
     /*

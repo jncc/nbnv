@@ -309,13 +309,19 @@ public class TaxonObservationProvider {
 		
 		INNER_JOIN("FeatureData fd ON fd.id = o.featureID");
 		
-		if (params.containsKey("polygonQuery") && Boolean.parseBoolean((String) params.get("polygonQuery"))) {
-			WHERE("fd.type != 'GridRef'");
+		if (params.containsKey("polygonQuery") && ((Boolean) params.get("polygonQuery"))) {
+			WHERE("fd.type != 'GridSquare'");
 		} else {
-			WHERE("fd.type = 'GridRef'");
+			WHERE("fd.type = 'GridSquare'");
 		}
 		
-		WHERE("o.absence = " + params.get("absence"));
+		if (params.containsKey("absence") && params.get("absence") != null){
+            if((Boolean) params.get("absence")){
+                WHERE("absence = 1");
+            } else {
+                WHERE("absence = 0");
+            }
+        }
 		
 		return SQL();
 	}

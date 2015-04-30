@@ -53,7 +53,7 @@ public interface TaxonObservationMapper {
 //    public Integer pTVKHasPolygonAbsence(@Param("id") String id, @Param("userKey") int userKey, @Param("absence") Boolean absence, @Param("polygonQuery") Boolean polygonQuery);
 	
 	@SelectProvider(type=TaxonObservationProvider.class, method="pTVKHasAbsence")
-	public Integer pTVKHasAbsence(@Param("id") String id, @Param("userKey") int userKey, @Param("absence") Boolean absence, @Param("polygonQuery") Boolean polygonQuery);
+	public Integer pTVKHasAbsence(@Param("user") User user, @Param("ptvk") String ptvk, @Param("absence") Boolean absence, @Param("polygonQuery") Boolean polygonQuery);
     
     @SelectProvider(type=TaxonObservationProvider.class, method="filteredSelectRecords")
     public List<TaxonObservation> selectObservationRecordsByFilter(
