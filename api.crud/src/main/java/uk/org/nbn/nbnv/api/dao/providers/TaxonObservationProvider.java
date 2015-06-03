@@ -5,6 +5,7 @@ import java.util.Map;
 import static org.apache.ibatis.jdbc.SelectBuilder.*;
 import org.springframework.util.StringUtils;
 import uk.org.nbn.nbnv.api.utils.ObservationResourceDefaults;
+import uk.org.nbn.nbnv.api.utils.throwables.MissingParameterException;
 
 /**
  * key
@@ -277,6 +278,35 @@ public class TaxonObservationProvider {
         FROM(from);
         return SQL();
     }
+	
+	public String pTVKHasGridAbsence(Map<String, Object> params) {
+		BEGIN();
+		
+		
+		return SQL();
+	}
+	
+    String createSelectQueryAbsence(Map<String, Object> params, boolean full, String fields) {
+        BEGIN();
+        if (full) {
+            SELECT(fields + ", 1 AS fullVersion");
+            FROM("TaxonObservationDataEnhanced o");
+            INNER_JOIN("UserTaxonObservationID utoa ON utoa.observationID = o.id ");
+            WHERE("(utoa.userID = #{user.id})");
+        } else {
+            SELECT(fields + ", 0 AS fullVersion");
+            FROM("TaxonObservationDataPublic o");
+            WHERE("o.id NOT IN ( SELECT utoa.observationID FROM UserTaxonObservationID utoa WHERE utoa.userID = #{user.id})");
+        }
+		
+		if (params.containsKey("ptvk") && params.get("ptvk") != null && !params.get("ptvk").equals("")) {
+			ProviderHelper.addPTVKFilter(params);
+        } else {
+			throw new MissingParameterException("This function requires a PTVK to continue");
+		}
+		
+		return SQL();
+	}
     
     String createSelect(Map<String, Object> params, String fields) {
         String publicSelect = createSelectQuery(params, false, fields);
@@ -308,6 +338,10 @@ public class TaxonObservationProvider {
             WHERE("o.id NOT IN ( SELECT utoa.observationID FROM UserTaxonObservationID utoa WHERE utoa.userID = #{user.id})");
         }
 
+		if (params.containsKey("id")) {
+			WHERE("o.id = #{id}");
+		}
+		
         if (params.containsKey("startYear") && (Integer) params.get("startYear") > -1) {
             ProviderHelper.addStartYearFilter((Integer) params.get("startYear"));
         }
@@ -321,16 +355,7 @@ public class TaxonObservationProvider {
         }
 
         if (params.containsKey("ptvk") && params.get("ptvk") != null && !params.get("ptvk").equals("")) {
-            if (params.get("ptvk") instanceof List) {
-                List<String> ptvkArgs = (List<String>) params.get("ptvk");
-                if (ptvkArgs.size() > 0 && !"".equals(ptvkArgs.get(0))) {
-                    INNER_JOIN("TaxonTree tt ON tt.childPTVK = o.pTaxonVersionKey");
-                    WHERE("tt.nodePTVK IN " + taxaListToCommaList((List<String>) params.get("ptvk")));
-                }
-            } else {
-                INNER_JOIN("TaxonTree tt ON tt.childPTVK = o.pTaxonVersionKey");
-                WHERE("tt.nodePTVK = '" + params.get("ptvk") + "'");
-            }
+			ProviderHelper.addPTVKFilter(params);
         }
 
         if (params.containsKey("featureID") && params.get("featureID") != null && !params.get("featureID").equals("")) {
