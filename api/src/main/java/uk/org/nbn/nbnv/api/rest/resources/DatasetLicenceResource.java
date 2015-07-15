@@ -35,29 +35,29 @@ public class DatasetLicenceResource extends AbstractResource {
         @ResponseCode(code = 200, condition = "Successfully returned a list of all dataset licences")
     })
     @Produces(MediaType.APPLICATION_JSON)
-    public List<DatasetLicence> get() {
+    public List<DatasetLicence> getAll() {
         return datasetLicenceMapper.selectAllDatasetLicences();
     }    
 
     @GET
-    @Path("/{id}")
+    @Path("/{id: [0-9]+}")
     @TypeHint(DatasetLicence.class)
     @StatusCodes({
         @ResponseCode(code = 200, condition = "Successfully returned the requested dataset licence")
     })
     @Produces(MediaType.APPLICATION_JSON)
-    public DatasetLicence get(@PathParam("id") int id) {
+    public DatasetLicence getByID(@PathParam("id") int id) {
         return datasetLicenceMapper.getDatasetLicenceByID(id);
     }        
 
     @GET
-    @Path("/{abbrv}")
+    @Path("/abbrv/{abbrv}")
     @TypeHint(DatasetLicence.class)
     @StatusCodes({
         @ResponseCode(code = 200, condition = "Successfully returned the requested dataset licence")
     })
     @Produces(MediaType.APPLICATION_JSON)
-    public DatasetLicence get(@PathParam("abbrv") String abbrv) {
+    public DatasetLicence getByAbbrv(@PathParam("abbrv") String abbrv) {
         return datasetLicenceMapper.getDatasetLicenceByAbbrv(abbrv);
     }
     
