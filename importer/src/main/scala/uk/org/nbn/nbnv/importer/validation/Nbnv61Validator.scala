@@ -17,7 +17,7 @@ class Nbnv61Validator {
   def processRecord(record: NbnRecord) = {
 
     val code = "NBNV-61"
-    val key = record.key
+    val key = record.key.toUpperCase
 
     //duplicates NBNV-55
     if (key == None) {

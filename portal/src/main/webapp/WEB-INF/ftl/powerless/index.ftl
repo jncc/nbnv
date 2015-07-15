@@ -44,7 +44,6 @@
             <div class="link-header">Welcome</div>
             <div class="link-content">
 <p>This is the National Biodiversity Network's Gateway. Use it to explore UK biodiversity data, as contributed by participating <a href="/Organisations">data providers</a>.</p>
-<p>The previous version of the NBN Gateway is no longer being updated but can still be accessed <a href="http://old-data.nbn.org.uk">here</a>.</p>
 <p>Please post your comments and suggestions on the <a href="http://forums.nbn.org.uk/viewforum.php?id=22">NBN Forum</a>.</p>
 
             </div>
