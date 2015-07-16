@@ -25,7 +25,7 @@ public class Dataset {
     private boolean conditionsAccepted;
     private Organisation organisation;
     private List<Organisation> contributingOrganisations;
-    private int licenceID;
+    private Integer licenceID;
     private DatasetLicence datasetLicence;
     
     public Dataset(){}
@@ -59,8 +59,9 @@ public class Dataset {
     }
 
     public Dataset(String key, String title, String description, 
-                        String captureMethod, String purpose, String geographicalCoverage, String quality,
-                        String additionalInformation, String accessConstraints, String useConstraints, String temporalCoverage) {
+                        String captureMethod, String purpose, String geographicalCoverage, 
+						String quality, String additionalInformation, String accessConstraints, 
+						String useConstraints, String temporalCoverage, int licenceID) {
         this.key = key;
         this.title = title;
         this.description = description;
@@ -72,6 +73,7 @@ public class Dataset {
         this.accessConstraints = accessConstraints;
         this.useConstraints = useConstraints;
         this.temporalCoverage = temporalCoverage;
+		this.licenceID = licenceID;
     }
 
     public URI getHref() {
@@ -268,11 +270,11 @@ public class Dataset {
         this.contributingOrganisations = contributingOrganisations;
     }
 
-    public int getLicenceID() {
+    public Integer getLicenceID() {
             return licenceID;
     }
 
-    public void setLicenceID(int licenceID) {
+    public void setLicenceID(Integer licenceID) {
             this.licenceID = licenceID;
     }
 

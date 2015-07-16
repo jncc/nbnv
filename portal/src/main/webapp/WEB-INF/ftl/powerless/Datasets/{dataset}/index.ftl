@@ -107,7 +107,7 @@
                             <td>${taxonDataset.speciesCount}</td>
                         </tr>
                     </#if>
-					<#if dataset.licenceID != 0>
+					<#if dataset.licenceID?has_content>
 						<tr>
 							<th>Licenced Under</th>
 							<td>

@@ -3,6 +3,7 @@ package uk.org.nbn.nbnv.api.rest.resources;
 import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -189,6 +190,7 @@ public class DatasetResource extends AbstractResource {
      * @param accessConstraints Any Access Constraints applicable to this dataset
      * @param useConstraints Any Use Constraints applicable to this dataset
      * @param temporalCoverage The Temporal Coverage of this dataset
+	 * @param licenceID The ID of the licence that this dataset is published under
      * 
      * @return An OpResult detailing the success or failure of the action
      * 
@@ -214,8 +216,13 @@ public class DatasetResource extends AbstractResource {
             , @FormParam("additionalInformation") String additionalInformation
             , @FormParam("accessConstraints") String accessConstraints
             , @FormParam("useConstraints") String useConstraints
-            , @FormParam("temporalCoverage") String temporalCoverage) {
-        int result = oDatasetMapper.updateDataset(new Dataset(datasetKey, title, description, captureMethod, purpose, geographicalCoverage, quality, additionalInformation, accessConstraints, useConstraints, temporalCoverage));
+            , @FormParam("temporalCoverage") String temporalCoverage
+			, @FormParam("licenceID") @DefaultValue("-1") Integer licenceID) {
+		if (licenceID == -1) {
+			licenceID = null;
+		}
+
+        int result = oDatasetMapper.updateDataset(datasetKey, title, description, captureMethod, purpose, geographicalCoverage, quality, additionalInformation, accessConstraints, useConstraints, temporalCoverage, licenceID);
         
         if (result == 1 ) {
             return new OpResult();
