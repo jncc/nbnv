@@ -115,7 +115,7 @@
 								<#if licence.hasImg>
 									<img id="nbn-data-licence-logo" src="${licence.img_href}" class="nbn-provider-table-logo">
 								</#if>
-								<a href="/DatasetLicence/abbrv/${licence.abbreviation}">${licence.abbreviation}</a>
+								<a href="/DatasetLicence/${licence.abbreviation}">${licence.abbreviation}</a>
 							</td>
 						</tr>
 					</#if>
