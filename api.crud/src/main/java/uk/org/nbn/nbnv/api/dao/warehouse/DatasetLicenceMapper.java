@@ -18,7 +18,7 @@ public interface DatasetLicenceMapper {
     DatasetLicence getDatasetLicenceByAbbrv(@Param("abbrv") String abbrv);
     
     @Select("SELECT CASE WHEN img IS NULL THEN 0 ELSE 1 END as hasImg, id, "
-            + "abbreviation, name, summary, href FROM DatasetLicenceData"
+            + "abbreviation, name, summary, href FROM DatasetLicenceData "
 			+ "ORDER BY name")
     List<DatasetLicence> selectAllDatasetLicences();
     
