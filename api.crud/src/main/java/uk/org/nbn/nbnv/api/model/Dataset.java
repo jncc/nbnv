@@ -25,7 +25,8 @@ public class Dataset {
     private boolean conditionsAccepted;
     private Organisation organisation;
     private List<Organisation> contributingOrganisations;
-	private int licenceID;
+    private int licenceID;
+    private DatasetLicence datasetLicence;
     
     public Dataset(){}
 
@@ -267,11 +268,19 @@ public class Dataset {
         this.contributingOrganisations = contributingOrganisations;
     }
 
-	public int getLicenceID() {
-		return licenceID;
-	}
+    public int getLicenceID() {
+            return licenceID;
+    }
 
-	public void setLicenceID(int licenceID) {
-		this.licenceID = licenceID;
-	}
+    public void setLicenceID(int licenceID) {
+            this.licenceID = licenceID;
+    }
+
+    public DatasetLicence getDatasetLicence() {
+        return datasetLicence;
+    }
+
+    public void setDatasetLicence(DatasetLicence datasetLicence) {
+        this.datasetLicence = datasetLicence;
+    }    
 }

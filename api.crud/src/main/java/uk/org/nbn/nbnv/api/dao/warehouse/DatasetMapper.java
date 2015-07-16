@@ -27,7 +27,8 @@ public interface DatasetMapper {
         @Result(property="organisation", column="organisationID", javaType=Organisation.class, one=@One(select="uk.org.nbn.nbnv.api.dao.warehouse.OrganisationMapper.selectByID")),
         @Result(property="organisationID", column="organisationID"),
         @Result(property="key", column="key"),
-        @Result(property="contributingOrganisations", column="key", javaType=List.class, many=@Many(select="uk.org.nbn.nbnv.api.dao.warehouse.DatasetContributingOrganisationMapper.selectOrganisationsByDataset"))
+        @Result(property="contributingOrganisations", column="key", javaType=List.class, many=@Many(select="uk.org.nbn.nbnv.api.dao.warehouse.DatasetContributingOrganisationMapper.selectOrganisationsByDataset")),
+        @Result(property="datasetLicence", column="licenceID", javaType=DatasetLicence.class, one=@One(select="uk.org.nbn.nbnv.api.dao.warehouse.DatasetLicenceMapper.getDatasetLicenceByID"))
     })
     Dataset selectByDatasetKey(String key);
     
