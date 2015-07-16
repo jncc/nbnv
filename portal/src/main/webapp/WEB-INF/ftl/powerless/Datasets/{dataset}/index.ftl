@@ -107,6 +107,18 @@
                             <td>${taxonDataset.speciesCount}</td>
                         </tr>
                     </#if>
+					<#if dataset.licenceID != 0>
+						<tr>
+							<th>Licenced Under</th>
+							<td>
+								<#assign licence = dataset.datasetLicence>
+								<#if licence.hasImg>
+									<img id="nbn-data-licence-logo" src="${licence.img_href}" class="nbn-provider-table-logo">
+								</#if>
+								<a href="/DatasetLicence/abbrv/${licence.abbreviation}">${licence.abbreviation}</a>
+							</td>
+						</tr>
+					</#if>
                     <#if isAdmin>
                         <tr>
                             <td></td>
