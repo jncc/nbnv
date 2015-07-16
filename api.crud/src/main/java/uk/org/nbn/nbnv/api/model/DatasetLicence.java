@@ -14,7 +14,7 @@ public class DatasetLicence {
     private String href;
     
     private boolean hasImg;
-    @Ref(value="licence/${instance.id}/logo", condition="${instance.hasLogo}", 
+    @Ref(value="datasetLicence/${instance.id}/img", condition="${instance.hasImg}", 
             style=Ref.Style.ABSOLUTE) 
     private URI img_href;
 
