@@ -127,6 +127,24 @@ public class DatasetResource extends AbstractResource {
     public Dataset getEditDatasetByID(@TokenDatasetAdminUser(path="id") User admin, @PathParam("id") String id){
         return oDatasetMapper.selectByDatasetKey(id);
     }
+	
+	/**
+	 * Returns a list of datasets that are licenced under a given licence
+	 * 
+	 * @param abbrv The abbreviation of the licence to search for
+	 * 
+	 * @returns A list of datasets licenced under the given licence
+	 */
+	@GET
+	@Path("/licenced/{abbrv}")
+	@TypeHint(Dataset.class)
+	@StatusCodes({
+		@ResponseCode(code = 200, condition = "Successfully returned list of datasets")
+	})
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<Dataset> getDatasetsByLicence(@PathParam("abbrv") String abbrv) {
+		return datasetMapper.getDatasetsByLicence(abbrv);
+	}
     
     /**
      * Returns a list of the last 10 most recently uploaded datasets

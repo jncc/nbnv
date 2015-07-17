@@ -79,3 +79,39 @@
         <body><div id="container"><#nested></div></body>
     </html>
 </#macro>
+
+<#macro datasetsPage title datasets>
+    <div>
+        <h1>${title}</h1>
+        <table id="nbn-datasets-datatable" class="nbn-dataset-table">
+            <thead>
+                <tr>
+                    <th>Dataset key</th>
+                    <th>Dataset</th>
+                    <th>Provider</th>
+                    <th>Uploaded</th>
+                    <th>Type</th>
+                </tr>
+            </thead>
+            <tbody>
+                <#list datasets as dataset>
+                    <tr>
+                        <td>${dataset.key}</td>
+                        <td>
+							<a href="/Datasets/${dataset.key}">${dataset.title?html}</a>
+							<#if dataset.licenceID?has_content>
+								<#assign licence = dataset.datasetLicence>
+								<#if licence.hasImg>
+									<a href="${licence.href}" target="_blank"><img class="nbn-provider-table-logo" src="${licence.img_href}"/></a>
+								</#if>
+							</#if>
+						</td>
+                        <td><a href="/Organisations/${dataset.organisationID}">${dataset.organisationName?html}</a></td>
+                        <td>${dataset.formattedDateUploaded?html}</td>
+                        <td>${dataset.typeName?html}</td>
+                    </tr>
+                </#list>
+            </tbody>
+        </table>
+    </div>
+</#macro>

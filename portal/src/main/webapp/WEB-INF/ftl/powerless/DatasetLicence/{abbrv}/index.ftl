@@ -20,5 +20,9 @@
 				<th>URL</th>
 				<td><a href="${licence.href}">${licence.href}</a></td>
 			</tr>
+			<tr>
+				<th></th>
+				<td><a style="float:right;" href="/DatasetLicence/${URLParameters.abbrv}/Datasets">View Datasets licenced under this licence</a></td>
+			</tr>
 		</table>
 </@template.master>
