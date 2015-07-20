@@ -5,5 +5,5 @@
     <#assign datasets=json.readURL("${api}/datasets")>
 	<@template.datasetsPage "Datasets" datasets />
 	
-	<p>Find out more about NBN Dataset Licencing <a href="">here</a></p>
+	<p>Find out more about NBN Dataset Licencing <a href="/DatasetLicence">here</a></p>
 </@template.master>
