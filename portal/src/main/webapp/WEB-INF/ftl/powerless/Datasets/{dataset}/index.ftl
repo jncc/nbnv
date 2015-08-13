@@ -16,7 +16,20 @@
         "/js/jqplot/plugins/jqplot.cursor.min.js",
         "/js/dialog_spinner.js"] 
     csss=["/css/smoothness/jquery-ui-1.8.23.custom.css","/css/jquery.jqplot.min.css","/css/dataset-metadata.css","/css/dialog-spinner.css","/css/org-admin.css"] >
-        <h1>${dataset.title}</h1>
+		<div>
+        <h1 style="float:left; width:80%;">${dataset.title}</h1>
+		<#if dataset.licenceID?has_content>
+			<#assign licence = dataset.datasetLicence>
+			<#if licence.hasImg>
+				<div style="max-width:20%; float: right; top:5px; position:relative;">
+					<a href="${licence.href}" target="_blank">
+						<img id="nbn-data-licence-logo" src="${licence.img_href}">
+					</a>
+				</div>
+			</#if>
+		</#if>
+		</div>
+		<div style="clear:both;"/>
         <div id="nbn-tabs">
             <ul>
                 <li><a href="#tabs-1">General</a></li>
@@ -107,6 +120,17 @@
                             <td>${taxonDataset.speciesCount}</td>
                         </tr>
                     </#if>
+					<#if dataset.licenceID?has_content>
+						<tr>
+							<th>Licenced Under</th>
+							<td>
+								<#if licence.hasImg>
+									<img id="nbn-data-licence-logo" src="${licence.img_href}" class="nbn-provider-table-logo">
+								</#if>
+								<a href="/DatasetLicence/${licence.abbreviation}">${licence.abbreviation}</a>
+							</td>
+						</tr>
+					</#if>
                     <#if isAdmin>
                         <tr>
                             <td></td>
