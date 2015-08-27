@@ -43,15 +43,19 @@
     
 7.  You may not republish wholesale the material, data and/or information made 
     available to you, or exploit it for commercial or academic research purposes
-    without first obtaining written permission from the relevant Data Provider 
-    [the contact details of which are provided within the metadata of the 
-    relevant dataset].
+    (unless stated by the standard license) without first obtaining written 
+    permission from the relevant Data Provider [the contact details of which are 
+    provided within the metadata of the relevant dataset].
 
-8.  Any information product or publication that you make which contains any part 
+8.  Datasets with a standard data license (OGL, CC-BY, CC-BY-NC, etc) are 
+    governed by the particulars of the data license.  These licenses override 
+    sections 2 to 7 of the 'Use' section of the NBN Gateway Terms and Conditions.
+
+9.  Any information product or publication that you make which contains any part 
     of the material, data and/or information made available to you via this 
     website must contain a statement that the Data Provider, Original Recorder 
     [where identified], and the NBN Trust bear no responsibility for any further
     analysis or interpretation of that material, data and/or information.
 
-9.  Any use of Ordnance Survey map images must be acknowledged as follows:
+10.  Any use of Ordnance Survey map images must be acknowledged as follows:
     &copy; Crown copyright and database rights 2011 Ordnance Survey [100017955]
