@@ -104,7 +104,7 @@ public interface DatasetMapper {
 	@Select("SELECT drrcd.datasetKey, drrcd.count, r.label, r.id AS resolutionID FROM DatasetResolutionRecordCountData drrcd LEFT JOIN Resolution r ON r.label = drrcd.label WHERE datasetKey = #{datasetKey}")
 	List<DatasetResolutionRecordCount> getResolutionData(@Param("datasetKey") String datasetKey);
 	
-	@Select("SELECT * FROM DatasetData dd INNER JOIN DatasetLicenceData dld ON dd.licenceID = dld.id WHERE dld.abbreviation = #{licenceAbbrv} ORDER BY dd.title")
+	@Select("SELECT * FROM DatasetData dd INNER JOIN DatasetLicence dld ON dd.licenceID = dld.id WHERE dld.abbreviation = #{licenceAbbrv} ORDER BY dd.title")
 	@Results(value = {
 		@Result(property = "licenceID", column = "licenceID"),
 		@Result(property = "datasetLicence", column = "licenceID", javaType = DatasetLicence.class, one =
