@@ -1,7 +1,7 @@
 /* Cookies Directive - The rewrite. Now a jQuery plugin
- * Version: 2.0.0
+ * Version: 2.0.1
  * Author: Ollie Phillips
- * 3 October 2013
+ * 24 October 2013
  */
 
 ;(function($) {
@@ -73,7 +73,7 @@
 			if ((!sA.readyState || sA.readyState == "loaded" || sA.readyState == "complete")) {
 				return;
 			} 	
-		}
+		};
 		switch(settings.appendTo) {
 			case 'head':			
 				$('head').append(sA);
@@ -84,7 +84,7 @@
 			default: 
 				$('#' + elementId).append(sA);
 		}
-	}	 
+	};
 	
 	// Helper scripts
 	// Get cookie
@@ -94,29 +94,29 @@
 		for(var i=0;i < ca.length;i++) {
 			var c = ca[i];
 			while (c.charAt(0)==' ') c = c.substring(1,c.length);
-			if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+			if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length,c.length);
 		}
 		return null;
-	}
+	};
 	
 	// Set cookie
 	var setCookie = function(name,value,days) {
+		var expires = "";
 		if (days) {
 			var date = new Date();
 			date.setTime(date.getTime()+(days*24*60*60*1000));
-			var expires = "; expires="+date.toGMTString();
+			expires = "; expires="+date.toGMTString();
 		}
-		else var expires = "";
 		document.cookie = name+"="+value+expires+"; path=/";
-	}
+	};
 	
 	// Detect IE < 9
 	var checkIE = function(){
 		var version;
 		if (navigator.appName == 'Microsoft Internet Explorer') {
 	        var ua = navigator.userAgent;
-	        var re = new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})");
-	        if (re.exec(ua) != null) {
+	        var re = new RegExp("MSIE ([0-9]{1,}[\\.0-9]{0,})");
+	        if (re.exec(ua) !== null) {
 	            version = parseFloat(RegExp.$1);
 			}	
 			if (version <= 8.0) {
@@ -138,7 +138,7 @@
 	    } else {
 			return false;
 		}
-	}
+	};
 
 	// Disclosure routines
 	var disclosure = function(options) {
@@ -171,7 +171,7 @@
 		// Set our disclosure/message if one not supplied
 		var html = ''; 
 		html += '<div id="epd">';
-		html += '<div id="cookiesdirective" style="position:'+ settings.css +';'+ settings.position + ':-300px;left:0px;width:100%;'
+		html += '<div id="cookiesdirective" style="position:'+ settings.css +';'+ settings.position + ':-300px;left:0px;width:100%;';
 		html += 'height:auto;background:' + settings.backgroundColor + ';opacity:.' + settings.backgroundOpacity + ';';
 		html += '-ms-filter: “alpha(opacity=' + settings.backgroundOpacity + ')”; filter: alpha(opacity=' + settings.backgroundOpacity + ');';
 		html += '-khtml-opacity: .' + settings.backgroundOpacity + '; -moz-opacity: .' + settings.backgroundOpacity + ';';
@@ -196,15 +196,15 @@
 			// Explicit consent disclosure
 			html += scriptsDisclosure + 'You may delete and block all cookies from this site, but parts of the site will not work.';
 			html += 'To find out more about cookies on this website, see our <a style="color:'+ settings.linkColor + ';font-weight:bold;';
-			html += 'font-family:' + settings.fontFamily + ';font-size:' + settings.fontSize + ';" href="'+ settings.privacyPolicyUri + '">privacy policy</a><br/>';
-			html += '<div id="epdnotick" style="color:#ca0000;display:none;margin:2px;"><span style="background:#cecece;padding:2px;">You must tick the "I accept cookies from this site" box to accept</span></div>'
+			html += 'font-family:' + settings.fontFamily + ';font-size:' + settings.fontSize + ';" href="'+ settings.privacyPolicyUri + '">privacy policy</a>.<br/>';
+			html += '<div id="epdnotick" style="color:#ca0000;display:none;margin:2px;"><span style="background:#cecece;padding:2px;">You must tick the "I accept cookies from this site" box to accept</span></div>';
 			html += '<div style="margin-top:5px;">I accept cookies from this site <input type="checkbox" name="epdagree" id="epdagree" />&nbsp;';
 			html += '<input type="submit" name="explicitsubmit" id="explicitsubmit" value="Continue"/><br/></div></div>';
 		
 		} else {
 			// Implied consent disclosure
 			html += scriptsDisclosure + ' More details can be found in our <a style="color:'+ settings.linkColor + ';';
-			html += 'font-weight:bold;font-family:' + settings.fontFamily + ';font-size:' + settings.fontSize + ';" href="'+ settings.privacyPolicyUri + '">privacy policy</a>';
+			html += 'font-weight:bold;font-family:' + settings.fontFamily + ';font-size:' + settings.fontSize + ';" href="'+ settings.privacyPolicyUri + '">privacy policy</a>.';
 			html += '<div style="margin-top:5px;"><input type="submit" name="impliedsubmit" id="impliedsubmit" value="Do not show this message again"/></div></div>';	
 		}		
 		html += '</div></div>';
@@ -215,26 +215,26 @@
 		if(dp != 'top' && dp!= 'bottom') {
 			dp = 'top';
 		}	
-		var opts = new Array();
+		var opts = { in: null, out: null};
 		if(dp == 'top') {
-			opts['in'] = {'top':'0'};
-			opts['out'] = {'top':'-300'};
+			opts.in = {'top':'0'};
+			opts.out = {'top':'-300'};
 		} else {
-			opts['in'] = {'bottom':'0'};
-			opts['out'] = {'bottom':'-300'};
+			opts.in = {'bottom':'0'};
+			opts.out = {'bottom':'-300'};
 		}		
 
 		// Start animation
-		$('#cookiesdirective').animate(opts['in'], 1000, function() {
+		$('#cookiesdirective').animate(opts.in, 1000, function() {
 			// Set event handlers depending on type of disclosure
 			if(settings.explicitConsent) {
 				// Explicit, need to check a box and click a button
-				$('#explicitsubmit').live('click',function() {
+				$('#explicitsubmit').click(function() {
 					if($('#epdagree').is(':checked')) {	
 						// Set a cookie to prevent this being displayed again
 						setCookie('cookiesDirective',1,365);	
 						// Close the overlay
-						$('#cookiesdirective').animate(opts['out'],1000,function() { 
+						$('#cookiesdirective').animate(opts.out,1000,function() { 
 							// Remove the elements from the DOM and reload page
 							$('#cookiesdirective').remove();
 							location.reload(true);
@@ -246,25 +246,28 @@
 				});
 			} else {
 				// Implied consent, just a button to close it
-				$('#impliedsubmit').live('click',function() {
+				$('#impliedsubmit').click(function() {
 					// Set a cookie to prevent this being displayed again
 					setCookie('cookiesDirective',1,365);	
 					// Close the overlay
-					$('#cookiesdirective').animate(opts['out'],1000,function() { 
+					$('#cookiesdirective').animate(opts.out,1000,function() { 
 						// Remove the elements from the DOM and reload page
 						$('#cookiesdirective').remove();
 					});
 				});
 			}	
 			
-			// Set a timer to remove the warning after 'settings.duration' seconds
-			setTimeout(function(){
-				$('#cookiesdirective').animate({
-					opacity:'0'
-				},2000, function(){
-					$('#cookiesdirective').css(dp,'-300px');
-				});
-			}, settings.duration * 1000);
+			if(settings.duration > 0)
+			{
+				// Set a timer to remove the warning after 'settings.duration' seconds
+				setTimeout(function(){
+					$('#cookiesdirective').animate({
+						opacity:'0'
+					},2000, function(){
+						$('#cookiesdirective').css(dp,'-300px');
+					});
+				}, settings.duration * 1000);
+			}
 		});	
-	}
+	};
 })(jQuery);
