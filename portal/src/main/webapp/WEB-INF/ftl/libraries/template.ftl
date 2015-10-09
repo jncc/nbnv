@@ -11,7 +11,7 @@
             <script type="text/javascript" src="/js/json2.js"></script> <!-- IE7 support -->
             <script type="text/javascript" src="/js/enable-collapsible-list.js"></script>
             <script type="text/javascript" src="/js/enable-maphilight.js"></script>
-            <script type="text/javascript" src="/js/jquery.maphilight.min.js"></script>
+            <script type="text/javascript" src="/js/jquery.maphilight.js"></script>
             <script type="text/javascript" src="/js/jquery.query_string.js"></script>
             <script type="text/javascript" src="/js/nbn_namespace.js"></script>
             <script type="text/javascript" src="/js/jquery.slidorion.min.js"></script>
