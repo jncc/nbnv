@@ -61,7 +61,7 @@ nbn.nbnv.ui.filter.taxon = function(json) {
                 }
             });
         
-        speciesAutoComplete.data( "autocomplete" )._renderItem = function(ul, item) {
+        speciesAutoComplete.data( "uiAutocomplete" )._renderItem = function(ul, item) {
             return $( "<li></li>" )
                 .data( "item.autocomplete", item )
                 .append( '<a><span class="taxonTerm">' + item.searchMatchTitle + "</span><br>" + item.descript + "</a>" )

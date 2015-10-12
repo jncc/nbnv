@@ -65,7 +65,8 @@ nbn.nbnv.ui.createGrant = function (json, div) {
 
     this.div.accordion({
         autoHeight: false,
-        change: function(event, ui) {
+		heightStyle: "content",
+        activate: function(event, ui) {
             var newFilter = ui.newHeader.attr('filtertype');
             var oldFilter = ui.oldHeader.attr('filtertype');
 
