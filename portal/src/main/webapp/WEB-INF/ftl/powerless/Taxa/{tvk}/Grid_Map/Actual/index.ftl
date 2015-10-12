@@ -6,7 +6,7 @@
 
 <@template.master title="NBN Grid Map" 
     javascripts=["/js/jquery.dataset-selector-utils.js","/js/jquery.gridmap_utils.js","/js/report_utils.js","/js/colourpicker/colorpicker.js"]
-    csss=["/css/report.css","/css/gridmap.css","/css/colourpicker/colorpicker.css","/css/smoothness/jquery-ui-1.8.23.custom.css"]>
+    csss=["/css/report.css","/css/gridmap.css","/css/colourpicker/colorpicker.css"]>
     
     <h1>Grid map for ${taxon_utils.getLongName(taxon)}</h1>
     <form target="" id="nbn-grid-map-form" gis-server="${gis}" api-server="${api}">

@@ -2,8 +2,8 @@
 <#assign licences=json.readURL("${api}/datasetLicence")>
 
 <@template.master title="Metadata for ${dataset.title}"
-    javascripts=["/js/jquery-ui-1.8.23.custom.min.js","/js/jquery.dataTables.min.js","/js/admin/metadata.js"] 
-    csss=["/css/smoothness/jquery-ui-1.8.23.custom.css", "/css/admin-controls.css"]>
+    javascripts=["/js/jquery.dataTables.min.js","/js/admin/metadata.js"] 
+    csss=["/css/admin-controls.css"]>
             <form id="nbn-metadata-update" url="${api}/datasets/${dataset.key}">
                 <table class="nbn-dataset-table nbn-simple-table">
                     <tr>

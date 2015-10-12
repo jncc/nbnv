@@ -1,8 +1,8 @@
 <#assign dataset=json.readURL("${api}/datasets/${URLParameters.dataset}/edit")>
 
 <@template.master title="Contributing Organisations for ${dataset.title}"
-    javascripts=["/js/jquery-ui-1.8.23.custom.min.js","/js/jquery.dataTables.min.js","/js/admin/contributing.js","/js/dialog_spinner.js"] 
-    csss=["/css/smoothness/jquery-ui-1.8.23.custom.css", "/css/admin-controls.css", "/css/dialog-spinner.css"]>
+    javascripts=["/js/jquery.dataTables.min.js","/js/admin/contributing.js","/js/dialog_spinner.js"] 
+    csss=["/css/admin-controls.css", "/css/dialog-spinner.css"]>
 
     <#assign organisations=json.readURL("${api}/organisations")>
 

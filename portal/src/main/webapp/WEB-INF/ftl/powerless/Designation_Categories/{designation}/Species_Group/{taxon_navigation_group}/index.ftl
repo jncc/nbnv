@@ -1,6 +1,6 @@
 <@template.master title="NBN Gateway - designation"
-    csss=["/css/smoothness/jquery-ui-1.8.23.custom.css"]
-    javascripts=["/js/download/designations/designationDownload.js"]> 
+    csss=[]
+    javascripts=[]> 
 
     <#assign designationId="${URLParameters.designation}">
     <#assign taxonNavigationGroupId="${URLParameters.taxon_navigation_group}">

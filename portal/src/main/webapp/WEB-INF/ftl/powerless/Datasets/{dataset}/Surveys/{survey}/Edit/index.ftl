@@ -2,8 +2,8 @@
 <#assign survey=json.readURL("${api}/datasets/${URLParameters.dataset}/surveys/${URLParameters.survey}") />
 
 <@template.master title="NBN Gateway - Modify Survey Metadata"  
-    javascripts=["/js/jquery-ui-1.8.23.custom.min.js","/js/jquery.validate.min.js","/js/metadata/enable-survey-metadata-form.js"]
-    csss=["/css/smoothness/jquery-ui-1.8.23.custom.css", "/css/admin-controls.css"]>
+    javascripts=["/js/jquery.validate.min.js","/js/metadata/enable-survey-metadata-form.js"]
+    csss=["/css/admin-controls.css"]>
     <form method="POST" id="nbn-modify-survey-metadata" action="${api}/datasets/${dataset.key}/surveys/${URLParameters.survey}">
         <table class="nbn-dataset-table nbn-simple-table">
             <tr>

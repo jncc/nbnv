@@ -1,8 +1,8 @@
 <#assign form=JspTaglibs["http://www.springframework.org/tags/form"] />
 
 <@template.master title="NBN Gateway - Register"     
-    javascripts=["/js/jquery-ui-1.8.23.custom.min.js/","/js/passfield.min.js","/js/jquery.validate.min.js","/js/userAdmin/enable-user-register-validation.js"]
-    csss=["/css/smoothness/jquery-ui-1.8.23.custom.css", "/css/passField/passfield.min.css", "/css/user.css", "/css/registration.css"]>
+    javascripts=["/js/passfield.min.js","/js/jquery.validate.min.js","/js/userAdmin/enable-user-register-validation.js"]
+    csss=["/css/passField/passfield.min.css", "/css/user.css", "/css/registration.css"]>
     <@markdown>
 #Register as a NBN User
 

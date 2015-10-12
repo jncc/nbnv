@@ -2,11 +2,10 @@
 <#assign admins=json.readURL("${api}/datasets/${URLParameters.dataset}/admins")>
 
 <@template.master title="NBN Gateway - Dataset Administration"
-    javascripts=["/js/jquery-ui-1.8.23.custom.min.js/",
-        "/js/admin/datasets/admin.js",
+    javascripts=["/js/admin/datasets/admin.js",
         "/js/jquery.dataTables.min.js",
         "/js/dialog_spinner.js"] 
-    csss=["/css/smoothness/jquery-ui-1.8.23.custom.css","/css/dataset-metadata.css","/css/dialog-spinner.css","/css/org-admin.css"] >
+    csss=["/css/dataset-metadata.css","/css/dialog-spinner.css","/css/org-admin.css"] >
     <h1>Dataset Administration for "${full.title}"</h1>
 
     <div class="tabbed nbn-organisation-tabbed">
