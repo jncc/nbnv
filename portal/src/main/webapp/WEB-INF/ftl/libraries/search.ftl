@@ -11,7 +11,7 @@
         <#list filter.data as currentFacet>
             <option 
                 value="${currentFacet.key}"
-                ${RequestParameters[filter.id]?seq_contains(currentFacet.key)?string('selected="selected"','')}
+                ${RequestParameters[filter.id]?html?seq_contains(currentFacet.key)?string('selected="selected"','')}
                 >${currentFacet.name}</option>
         </#list>
     </select>
@@ -84,7 +84,7 @@
     <#assign search=json.readURL(url, query)/>
     <form class="nbn-search" nbn-search-node="${url}">    
         <div class="controls">
-            Search - <input type="text" name="q" value="${RequestParameters.q?first!''}"/>
+            Search - <input type="text" name="q" value="${RequestParameters.q?first?html!''}"/>
             Show - <@pagination.show defaultRows/> 
             <input type="submit" value="Filter"/>
         </div>
