@@ -17,7 +17,7 @@
     ,"/js/admin/access/requestInfoDialogs.js"
     ,"/js/dialog_spinner.js"
     ]
-    csss=["//ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/themes/smoothness/jquery-ui.css","/css/dialog-spinner.css"]>
+    csss=["/css/dialog-spinner.css"]>
 
     <script>
         nbn.nbnv.api = '${api}';

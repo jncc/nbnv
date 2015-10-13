@@ -9,9 +9,7 @@
         "/js/jquery.validate.min.js",
         "/js/download/reports/enable-dataset-portal-report.js",
         "/js/dialog_utils.js", "/js/jquery.fileDownload.js"] 
-    csss=[
-        "//ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/themes/smoothness/jquery-ui.css",
-        "/css/download/downloadFilters.css"]>
+    csss=["/css/download/downloadFilters.css"]>
     <script>
         nbn.nbnv.api = '${api}';
     </script>

@@ -4,7 +4,7 @@
 
 <@template.master title="Edit Attributes"
     javascripts=["/js/jquery.dataTables.min.js"]
-    csss=["//ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/themes/smoothness/jquery-ui.css"]>
+    csss=[]>
 
     <script>
         //nbn.nbnv.api = '${api}';

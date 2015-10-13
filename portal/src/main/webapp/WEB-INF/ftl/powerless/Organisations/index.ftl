@@ -1,6 +1,6 @@
 <@template.master title="NBN Gateway - Organisations"
     javascripts=["/js/jquery.dataTables.min.js"] 
-    csss=["//ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/themes/smoothness/jquery-ui.css"] >
+    csss=[] >
 
     
     <#assign organisations=json.readURL("${api}/organisations/contributing")>

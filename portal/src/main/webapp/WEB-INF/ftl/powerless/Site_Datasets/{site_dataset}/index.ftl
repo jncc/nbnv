@@ -1,7 +1,7 @@
 <#assign dataset=json.readURL("${api}/datasets/${URLParameters.site_dataset}")>
 
 <@template.master title="NBN Gateway - Site Boundaries"
-    csss=["//ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/themes/smoothness/jquery-ui.css"] 
+    csss=[] 
     javascripts=["/js/OpenLayers.js",
                 "/js/jquery.dataTables.min.js",
                 "/js/jquery.nbn_search.js",
