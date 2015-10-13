@@ -19,3 +19,5 @@ nbactions.xml
 *log.txt*
 *.log
 temp/
+api/api.resetcredentialskey
+api/api.authenticatorkey
