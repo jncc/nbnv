@@ -3,7 +3,7 @@
     <html>
         <head>
             <link type="text/css" rel="stylesheet" href="/css/screen.css" />
-            <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
+            <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css" />
             <#list csss as css>
                 <link type="text/css" rel="stylesheet" href="${css}" />
             </#list>
