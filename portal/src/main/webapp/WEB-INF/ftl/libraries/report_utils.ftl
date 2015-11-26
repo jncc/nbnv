@@ -257,10 +257,9 @@
         <#else>
             all polygons
         </#if>
-		</li>
         <#if accessPositions?has_content>
             <#list accessPositions as accessPosition>
-                <li>${accessPosition.owner} enhanced access: ${accessPosition.filterText}</li>
+                <li>${accessPosition.owner} enhanced access: ${accessPosition.filterText}
             </#list>
         </#if>
     </ul>

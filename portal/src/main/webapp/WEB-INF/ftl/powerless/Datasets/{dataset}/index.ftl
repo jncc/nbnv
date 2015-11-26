@@ -22,7 +22,7 @@
 			<#if licence.hasImg>
 				<div style="max-width:20%; float: right; top:5px; position:relative;">
 					<a href="${licence.href}" target="_blank">
-						<img id="nbn-data-licence-logo" src="${licence.img_href}" />
+						<img id="nbn-data-licence-logo" src="${licence.img_href}">
 					</a>
 				</div>
 			</#if>
@@ -49,7 +49,7 @@
                         <th>Provider</th>
                         <td>
                             <#if provider.hasLogo>
-                                <img id="nbn-provider-logo" src="${api}/organisations/${dataset.organisation.id}/logo" class="nbn-provider-table-logo" />
+                                <img id="nbn-provider-logo" src="${api}/organisations/${dataset.organisation.id}/logo" class="nbn-provider-table-logo">
                             </#if>
                             <a href="/Organisations/${dataset.organisationID}">${dataset.organisationName}</a>
                         </td>
