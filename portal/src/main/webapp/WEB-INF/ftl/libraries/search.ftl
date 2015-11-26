@@ -84,7 +84,7 @@
     <#assign search=json.readURL(url, query)/>
     <form class="nbn-search" nbn-search-node="${url}">    
         <div class="controls">
-            Search - <input type="text" name="q" value="${RequestParameters.q?first!''?html}"/>
+            Search - <input type="text" name="q" value="${RequestParameters.q?first?html!''}"/>
             Show - <@pagination.show defaultRows/> 
             <input type="submit" value="Filter"/>
         </div>
