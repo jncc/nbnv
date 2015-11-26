@@ -14,7 +14,7 @@
                 }
             });
             
-        ac.data( "uiAutocomplete" )._renderItem = function(ul, item) {
+        ac.data( "autocomplete" )._renderItem = function(ul, item) {
             var authority = item.authority ? item.authority : '';
             return $( "<li></li>" )
                 .data( "item.autocomplete", item )

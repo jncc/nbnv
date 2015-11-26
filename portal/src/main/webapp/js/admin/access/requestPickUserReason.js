@@ -47,7 +47,7 @@ nbn.nbnv.ui.requestPickUserReason = function(json) {
             }
         });
 
-        userSelect.data('uiAutocomplete')._renderItem = function(ul, item) {
+        userSelect.data('autocomplete')._renderItem = function(ul, item) {
             return $('<li></li>')
                     .data('item.autocomplete', item)
                     .append('<a><strong style="font-size: small;">' + item.forename + ' ' + item.surname + '</strong><br><span style="font-size: smaller;">' + item.email + '</span></a>')
@@ -64,7 +64,7 @@ nbn.nbnv.ui.requestPickUserReason = function(json) {
             }
         });
         
-        orgSelect.data('uiAutocomplete')._renderItem = function(ul, item) {
+        orgSelect.data('autocomplete')._renderItem = function(ul, item) {
             return $('<li></li>')
                     .data('item.autocomplete', item)
                     .append('<a><strong style="font-size: small;">' + item.name + '</strong><br><span style="font-size: smaller;">' + item.abbreviation + '</span></a>')

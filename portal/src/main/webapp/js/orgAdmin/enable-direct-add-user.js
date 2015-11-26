@@ -15,7 +15,7 @@
                 $('#nbn-org-add-user-id').val(ui.item.id);
             }
         })
-        .data('uiAutocomplete')._renderItem = function(ul, item) {
+        .data('autocomplete')._renderItem = function(ul, item) {
             var re = new RegExp(this.term, 'i');
             return $('<li></li>')
                     .data('item.autocomplete', item)

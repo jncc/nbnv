@@ -244,7 +244,7 @@ nbn.nbnv.ui.filter.spatial = function(json) {
                     $('#gridSquareSelector').text(ui.item.gridRef);
                 }
             })
-            .data('uiAutocomplete')._renderItem = function(ul, item) {
+            .data('autocomplete')._renderItem = function(ul, item) {
                 return $('<li></li>')
                         .data('item.autocomplete', item)
                         .append('<a><strong style="font-size: small;">' + item.gridRef + '</strong></a>')

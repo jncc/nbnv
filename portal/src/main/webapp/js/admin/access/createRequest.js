@@ -108,8 +108,7 @@ nbn.nbnv.ui.createRequest = function (json, div) {
 
     this.div.accordion({
         autoHeight: false,
-		heightStyle: "content",
-        activate: function(event, ui) {
+        change: function(event, ui) {
             var newFilter = ui.newHeader.attr('filtertype');
             var oldFilter = ui.oldHeader.attr('filtertype');
 

@@ -62,7 +62,7 @@ nbn.nbnv.ui.filter.dataset = function(json, isForDownload) {
                 }
             });
         
-        datasetAutoComplete.data( "uiAutocomplete" )._renderItem = function(ul, item) {
+        datasetAutoComplete.data( "autocomplete" )._renderItem = function(ul, item) {
             return $( "<li></li>" )
                 .data( "item.autocomplete", item )
                 .append( "<a><i>" + item.searchMatchTitle + "</i><br>" + item.organisationName + "</a>" )

@@ -41,8 +41,7 @@ nbn.nbnv.ui.editRequest = function (json, requester, dataset, id, div, orgReq) {
 
     this.div.accordion({
         autoHeight: false,
-		heightStyle: "content",
-        activate: function(event, ui) {
+        change: function(event, ui) {
             var newFilter = ui.newHeader.attr('filtertype');
             var oldFilter = ui.oldHeader.attr('filtertype');
 
