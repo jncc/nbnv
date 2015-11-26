@@ -15,7 +15,7 @@
         ,"/js/admin/access/requestResult.js"
         ,"/js/admin/access/timeLimit.js"
         ,"/js/admin/access/createRequest.js"] 
-    csss=["/css/jquery.qtip.min.css","/css/accessRequest.css"]>
+    csss=["//ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/themes/smoothness/jquery-ui.css","/css/jquery.qtip.min.css","/css/accessRequest.css"]>
 
     <script>
         nbn.nbnv.api = '${api}';

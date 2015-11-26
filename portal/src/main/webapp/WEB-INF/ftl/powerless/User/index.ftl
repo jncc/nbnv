@@ -6,7 +6,7 @@
 
 <@template.master title="National Biodiversity Network Gateway"
     javascripts=["/js/jquery.dataTables.min.js"]
-    csss=[]>
+    csss=["//ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/themes/smoothness/jquery-ui.css"]>
 
     <script>
         //nbn.nbnv.api = '${api}';
