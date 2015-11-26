@@ -2,8 +2,8 @@
 <#assign resultMsg="${.data_model['successMessage']}" >
 
 <@template.master title="NBN Gateway - User Modify"
-    javascripts=["/js/passfield.min.js","/js/jquery.validate.min.js","/js/userAdmin/enable-user-admin-tabs.js"]
-    csss=["/css/passField/passfield.min.css", "/css/user.css"]>
+    javascripts=["/js/jquery-ui-1.8.23.custom.min.js/","/js/passfield.min.js","/js/jquery.validate.min.js","/js/userAdmin/enable-user-admin-tabs.js"]
+    csss=["/css/smoothness/jquery-ui-1.8.23.custom.css", "/css/passField/passfield.min.css", "/css/user.css"]>
 
     <h1>Modify User Details</h1>
     <#if (resultMsg?length > 0)>

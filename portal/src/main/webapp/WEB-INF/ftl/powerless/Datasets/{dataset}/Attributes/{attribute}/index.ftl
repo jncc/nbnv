@@ -3,8 +3,8 @@
 <#assign dataset=json.readURL("${api}/datasets/${datasetId}")>
 <#assign attribute=json.readURL("${api}/taxonDatasets/${datasetId}/attributes/${attributeId}")>
 <@template.master title="NBN Gateway - Datasets"
-    javascripts=["/js/jquery.validate.min.js","/js/metadata/enable-taxonobs-attribute.js"] 
-    csss=["/css/admin-controls.css"] >
+    javascripts=["/js/jquery-ui-1.8.23.custom.min.js/","/js/jquery.validate.min.js","/js/metadata/enable-taxonobs-attribute.js"] 
+    csss=["/css/smoothness/jquery-ui-1.8.23.custom.css", "/css/admin-controls.css"] >
     <script type="text/javascript">
         var dataset = '${datasetId}';
     </script>

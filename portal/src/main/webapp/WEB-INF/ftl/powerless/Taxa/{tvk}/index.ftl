@@ -14,11 +14,12 @@
 
 <@template.master title="NBN Gateway - Taxon"
     javascripts=[
+        "/js/jquery-ui-1.8.23.custom.min.js",
         "/js/jquery.dataTables.min.js",
         "/js/taxon-page-utils.js",
         "/js/report_utils.js",
         "/js/taxon/conservationEvidence.js"]
-    csss=["/css/taxon-page.css"]>
+    csss=["/css/smoothness/jquery-ui-1.8.23.custom.css","/css/taxon-page.css"]>
     <h1>${taxon_utils.getLongName(taxon)}</h1>
     <div>
         <#if taxon.taxonVersionKey == ptaxon.taxonVersionKey>

@@ -12,7 +12,7 @@
 <#assign user=json.readURL("${api}/user/loggedIn")>
 
 <@template.master title="NBN Site Report" 
-    csss=["/css/report.css","/css/site-report.css"]
+    csss=["/css/report.css","/css/site-report.css","/css/smoothness/jquery-ui-1.8.23.custom.css"]
     javascripts=["/js/report_utils.js","/js/site_report_observations.js"]>
     <h1>${title}</h1>
     <form id="nbn-site-report-form" featureID="${featureID}" ptvk="${URLParameters.ptvk}" api-server="${api}" gridSquare="${is10kmReport?string}">

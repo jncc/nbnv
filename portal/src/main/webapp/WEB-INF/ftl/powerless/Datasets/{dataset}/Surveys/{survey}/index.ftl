@@ -3,7 +3,7 @@
 <#assign isAdmin=json.readURL("${api}/datasets/${URLParameters.dataset}/isAdmin") />
 
 <@template.master title="NBN Gateway - View Survey Metadata"  
-    csss=["/css/admin-controls.css"]>
+    csss=["/css/smoothness/jquery-ui-1.8.23.custom.css", "/css/admin-controls.css"]>
     <table class="nbn-dataset-table nbn-simple-table">
         <tr>
             <th>Dataset</th>

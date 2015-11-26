@@ -6,7 +6,8 @@
 <#assign user=json.readURL("${api}/user")>
 
 <@template.master title="NBN Gateway - Datasets"
-    javascripts=["/js/enable-dataset-metadata-tabs.js","/js/jquery.dataTables.min.js",
+    javascripts=["/js/jquery-ui-1.8.23.custom.min.js/"
+        ,"/js/enable-dataset-metadata-tabs.js","/js/jquery.dataTables.min.js",
         "/js/jqplot/jquery.jqplot.min.js","/js/jqplot/excanvas.min.js",
         "/js/jqplot/plugins/jqplot.json2.min.js",
         "/js/jqplot/plugins/jqplot.highlighter.min.js",
@@ -14,7 +15,7 @@
         "/js/jqplot/plugins/jqplot.canvasTextRenderer.min.js",
         "/js/jqplot/plugins/jqplot.cursor.min.js",
         "/js/dialog_spinner.js"] 
-    csss=["/css/jquery.jqplot.min.css","/css/dataset-metadata.css","/css/dialog-spinner.css","/css/org-admin.css"] >
+    csss=["/css/smoothness/jquery-ui-1.8.23.custom.css","/css/jquery.jqplot.min.css","/css/dataset-metadata.css","/css/dialog-spinner.css","/css/org-admin.css"] >
 		<div>
         <h1 style="float:left; width:80%;">${dataset.title}</h1>
 		<#if dataset.licenceID?has_content>
