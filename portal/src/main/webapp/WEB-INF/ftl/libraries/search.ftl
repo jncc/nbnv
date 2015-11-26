@@ -82,14 +82,9 @@
 -->
 <#macro search url display defaultRows=25 query={} filters=[]>
     <#assign search=json.readURL(url, query)/>
-    <#if RequestParameters.q?first??>
-        <#assign term="${RequestParameters.q?first?html}"/>
-    <#else>
-        <#assign term=""/>
-    </#if>
     <form class="nbn-search" nbn-search-node="${url}">    
         <div class="controls">
-            Search - <input type="text" name="q" value="${term}"/>
+            Search - <input type="text" name="q" value="${RequestParameters.q?first!''?html}"/>
             Show - <@pagination.show defaultRows/> 
             <input type="submit" value="Filter"/>
         </div>
