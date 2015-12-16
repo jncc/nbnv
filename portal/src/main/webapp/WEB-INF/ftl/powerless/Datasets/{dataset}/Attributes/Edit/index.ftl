@@ -39,7 +39,7 @@
                 <tr>
                     <td>${r.label}</td>
                     <td>${r.description}</td>
-                    <#if isAdmin><td><a href="${r.attributeID}">Edit metadata</a></td></#if>
+                    <#if isAdmin><td><a href="${r.attributeID?c}">Edit metadata</a></td></#if>
                 </tr>
             </#list>
             </tbody>
