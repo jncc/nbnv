@@ -6,8 +6,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import javax.xml.bind.annotation.XmlRootElement;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 @XmlRootElement
+@JsonIgnoreProperties(ignoreUnknown = true) 
 public class Dataset {
     @Ref(value="${resource.portalUrl}/Datasets/${instance.key}", style=Ref.Style.RELATIVE_PATH) 
     private URI href;
