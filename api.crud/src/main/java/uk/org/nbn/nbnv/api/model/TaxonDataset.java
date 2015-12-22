@@ -2,10 +2,8 @@ package uk.org.nbn.nbnv.api.model;
 
 import java.util.List;
 import javax.xml.bind.annotation.XmlRootElement;
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 @XmlRootElement
-@JsonIgnoreProperties(ignoreUnknown = true) 
 public class TaxonDataset extends Dataset{
     private String datasetKey, maxResolution, publicResolution;
     private boolean allowRecordValidation, publicAttribute, publicRecorder;
