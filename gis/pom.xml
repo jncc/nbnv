@@ -17,7 +17,7 @@
         <!--NBN Gateway API-->
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>nbnv-api-model</artifactId>
+            <artifactId>nbnv-api-crud</artifactId>
             <version>${project.version}</version>
         </dependency>
         <!--NBN Gateway Properties Reader-->
