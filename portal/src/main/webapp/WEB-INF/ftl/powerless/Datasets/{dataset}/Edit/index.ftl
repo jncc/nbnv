@@ -16,7 +16,7 @@
                     </tr>
                     <tr>
                         <th>Purpose of data capture</th>
-                        <td><textarea name="purpose"><#if dataset.purpose?has_content>dataset.purpose</#if></textarea></td>
+                        <td><textarea name="purpose"><#if dataset.purpose?has_content>${dataset.purpose}</#if></textarea></td>
                     </tr>
                     <tr>
                         <th>Methods of data capture</th>
